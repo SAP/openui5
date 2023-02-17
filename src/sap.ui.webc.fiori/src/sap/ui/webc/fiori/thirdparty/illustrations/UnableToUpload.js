@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogUnableToUpload = _interopRequireDefault(_sapIllusDialogUnableToUpload);
   _sapIllusSceneUnableToUpload = _interopRequireDefault(_sapIllusSceneUnableToUpload);
   _sapIllusSpotUnableToUpload = _interopRequireDefault(_sapIllusSpotUnableToUpload);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "UnableToUpload";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_UNABLETOUPLOAD;

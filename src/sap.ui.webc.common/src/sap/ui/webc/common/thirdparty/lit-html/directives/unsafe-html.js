@@ -5,7 +5,6 @@ sap.ui.define(["exports", "../lit-html", "../directive"], function (_exports, _l
     value: true
   });
   _exports.unsafeHTML = _exports.UnsafeHTMLDirective = void 0;
-
   /**
    * @license
    * Copyright 2017 Google LLC
@@ -15,7 +14,6 @@ sap.ui.define(["exports", "../lit-html", "../directive"], function (_exports, _l
     constructor(i) {
       if (super(i), this.it = _litHtml.nothing, i.type !== _directive.PartType.CHILD) throw Error(this.constructor.directiveName + "() can only be used in child bindings");
     }
-
     render(r) {
       if (r === _litHtml.nothing || null == r) return this.ft = void 0, this.it = r;
       if (r === _litHtml.noChange) return r;
@@ -29,9 +27,7 @@ sap.ui.define(["exports", "../lit-html", "../directive"], function (_exports, _l
         values: []
       };
     }
-
   }
-
   _exports.UnsafeHTMLDirective = e;
   e.directiveName = "unsafeHTML", e.resultType = 1;
   const o = (0, _directive.directive)(e);

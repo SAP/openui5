@@ -7,17 +7,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
   _exports.default = void 0;
   _Integer = _interopRequireDefault(_Integer);
   _TimePickerBase = _interopRequireDefault(_TimePickerBase);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @private
    */
   const metadata = {
     tag: "ui5-duration-picker",
-    properties:
-    /** @lends sap.ui.webcomponents.main.DurationPicker.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.DurationPicker.prototype */{
       /**
        * Defines a formatted time value.
        *
@@ -29,7 +25,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: String,
         defaultValue: "00:00:00"
       },
-
       /**
        * Defines the selection step for the minutes
        * @type {Integer}
@@ -41,7 +36,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: _Integer.default,
         defaultValue: 1
       },
-
       /**
        * Defines the selection step for the seconds
        * @type {Integer}
@@ -53,7 +47,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: _Integer.default,
         defaultValue: 1
       },
-
       /**
        * Defines a formatted maximal time that the user will be able to adjust.
        *
@@ -65,7 +58,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: String,
         defaultValue: "23:59:59"
       },
-
       /**
        * Defines whether a slider for seconds will be available. By default there are sliders for hours, minutes and seconds.
        * @type {boolean}
@@ -75,7 +67,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       hideSeconds: {
         type: Boolean
       },
-
       /**
        * Defines whether the slider for minutes will be available. By default there are sliders for hours, minutes and seconds.
        * @type {boolean}
@@ -86,7 +77,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       hideMinutes: {
         type: Boolean
       },
-
       /**
        * Defines whether the slider for hours will be available. By default there are sliders for hours, minutes and seconds.
        * @type {boolean}
@@ -99,17 +89,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       }
     }
   };
-
   const getNearestValue = (x, step, max) => {
     const down = Math.floor(x / step) * step; // closest value rounded down to the step
-
     const up = Math.ceil(x / step) * step; // closest value rounded up to the step
-
     if (up > max || x - down < up - x) {
       // if the rounded-up value is more than max, or x is closer to the rounded-down value, return down
       return down;
     }
-
     return up; // x is closer to the rounded-up value and it is not
   };
 
@@ -117,6 +103,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
     number = parseInt(number);
     return number < 9 ? `0${number}` : `${number}`;
   };
+
   /**
    * @class
    *
@@ -175,119 +162,96 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
    * @tagname ui5-duration-picker
    * @private
    */
-
-
   class DurationPicker extends _TimePickerBase.default {
     static get metadata() {
       return metadata;
     }
+
     /**
      * In order to keep the existing behavior (although not consistent with the other picker components), we enforce limits and step on each change and initially
      */
-
-
     onBeforeRendering() {
       const value = this.value;
-
       if (this.isValid(value)) {
         this.value = this.normalizeValue(value);
       }
     }
+
     /**
      * In order to keep the existing behavior (although not consistent with the other picker components), we do not update "value" on input, only fire event
      * @override
      */
-
-
     async _handleInputLiveChange(event) {
       const value = event.target.value;
       const valid = this.isValid(value);
-
       this._updateValueState(); // Change the value state to Error/None, but only if needed
-
-
       this.fireEvent("input", {
         value,
         valid
       });
     }
-
     get _formatPattern() {
       return "HH:mm:ss";
     }
+
     /**
      * The "value" property might be "02:03" (HH:ss) or just "12"(ss) but the ui5-time-selection component requires a value compliant with _formatPattern
      * We split the value and shift up to 3 times, filling the values for the configured units (based on hideHours, hideMinutes, hideSeconds)
      * @override
      */
-
-
     get _effectiveValue() {
       return this.isValid(this.value) ? this._toFullFormat(this.value) : "00:00:00";
     }
-
     get _timeSelectionValue() {
       return this._effectiveValue;
     }
+
     /**
      * @override
      */
-
-
     get openIconName() {
       return "fob-watch";
     }
+
     /**
      * Transforms the value to HH:mm:ss format to be compatible with time manipulation logic (keyboard handling, time selection component)
      * @private
      */
-
-
     _toFullFormat(value) {
       let hours = "00",
-          minutes = "00",
-          seconds = "00";
+        minutes = "00",
+        seconds = "00";
       const parts = value.split(":");
-
       if (parts.length && !this.hideHours) {
         hours = parts.shift();
       }
-
       if (parts.length && !this.hideMinutes) {
         minutes = parts.shift();
       }
-
       if (parts.length && !this.hideSeconds) {
         seconds = parts.shift();
       }
-
       return `${hours}:${minutes}:${seconds}`;
     }
+
     /**
      * Transforms the value from HH:mm:ss format to the needed partial format (f.e. HH:ss or mm or ss) to be displayed in the input
      * @private
      */
-
-
     _toPartialFormat(value) {
       const parts = value.split(":");
       const newParts = [];
-
       if (!this.hideHours) {
         newParts.push(parts[0]);
       }
-
       if (!this.hideMinutes) {
         newParts.push(parts[1]);
       }
-
       if (!this.hideSeconds) {
         newParts.push(parts[2]);
       }
-
       return newParts.join(":");
     }
-
     _enforceLimitsAndStep(fullFormatValue) {
       let [hours, minutes, seconds] = fullFormatValue.split(":");
       hours = Math.min(hours, this.maxHours);
@@ -297,15 +261,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       seconds = getNearestValue(seconds, this.secondsStep, this.maxSeconds);
       return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
     }
+
     /**
      * @override
      */
-
-
     normalizeValue(value) {
       let fullFormatValue = this._toFullFormat(value); // transform to full format (HH:mm:ss) if not already in this format, in order to normalize the value
-
-
       fullFormatValue = this._enforceLimitsAndStep(fullFormatValue);
       return this._toPartialFormat(fullFormatValue); // finally transform back to the needed format for the input
     }
@@ -313,19 +274,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
     get maxHours() {
       return parseInt(this.maxValue.split(":")[0]);
     }
-
     get maxMinutes() {
       return parseInt(this.maxValue.split(":")[1]);
     }
-
     get maxSeconds() {
       return parseInt(this.maxValue.split(":")[2]);
     }
-
     get dateAriaDescription() {
       return DurationPicker.i18nBundle.getText(_i18nDefaults.DURATION_INPUT_DESCRIPTION);
     }
-
     get accInfo() {
       return {
         "ariaRoledescription": this.dateAriaDescription,
@@ -336,9 +293,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         "ariaExpanded": this.isOpen()
       };
     }
-
   }
-
   DurationPicker.define();
   var _default = DurationPicker;
   _exports.default = _default;

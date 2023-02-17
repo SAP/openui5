@@ -7,17 +7,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-shellbar-item",
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.ShellBarItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.ShellBarItem.prototype */{
       /**
        * Defines the name of the item's icon.
        * @type {string}
@@ -27,7 +23,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: String
       },
-
       /**
        * Defines the item text.
        * @type {string}
@@ -37,7 +32,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       text: {
         type: String
       },
-
       /**
        * Defines the count displayed in the top-right corner.
        * @type {string}
@@ -49,9 +43,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.ShellBarItem.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.ShellBarItem.prototype */{
       /**
        * Fired, when the item is pressed.
        *
@@ -70,6 +62,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    * The <code>ui5-shellbar-item</code> represents a custom item, that
@@ -85,22 +78,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.fiori.IShellBarItem
    * @public
    */
-
   class ShellBarItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     get stableDomRef() {
       return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
     }
-
   }
-
   ShellBarItem.define();
   var _default = ShellBarItem;
   _exports.default = _default;

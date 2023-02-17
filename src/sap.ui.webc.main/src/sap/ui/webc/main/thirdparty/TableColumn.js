@@ -10,15 +10,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Integer = _interopRequireDefault(_Integer);
   _TableColumnTemplate = _interopRequireDefault(_TableColumnTemplate);
   _TableColumn = _interopRequireDefault(_TableColumn);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
+
   const metadata = {
     tag: "ui5-table-column",
-    slots:
-    /** @lends sap.ui.webcomponents.main.TableColumn.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.TableColumn.prototype */{
       /**
        * Defines the content of the column header.
        *
@@ -30,9 +27,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Node
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.main.TableColumn.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.TableColumn.prototype */{
       /**
        * Defines the minimum table width required to display this column. By default it is always displayed.
        * <br><br>
@@ -49,7 +44,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: Infinity
       },
-
       /**
        * The text for the column when it pops in.
        *
@@ -60,7 +54,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       popinText: {
         type: String
       },
-
       /**
        * According to your <code>minWidth</code> settings, the component can be hidden
        * in different screen sizes.
@@ -74,14 +67,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       demandPopin: {
         type: Boolean
       },
-
       /**
        * @private
        */
       first: {
         type: Boolean
       },
-
       /**
        * @private
        */
@@ -90,6 +81,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -115,26 +107,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.ITableColumn
    * @public
    */
-
   class TableColumn extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return _TableColumn.default;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _TableColumnTemplate.default;
     }
-
   }
-
   TableColumn.define();
   var _default = TableColumn;
   _exports.default = _default;

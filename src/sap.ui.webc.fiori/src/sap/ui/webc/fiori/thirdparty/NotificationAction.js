@@ -7,17 +7,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _ButtonDesign = _interopRequireDefault(_ButtonDesign);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-notification-action",
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.NotificationAction.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.NotificationAction.prototype */{
       /**
        * Defines the text of the <code>ui5-notification-action</code>.
        *
@@ -28,7 +24,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       text: {
         type: String
       },
-
       /**
        * Defines if the action is disabled.
        * <br><br>
@@ -41,7 +36,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines the action design.
        *
@@ -63,7 +57,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ButtonDesign.default,
         defaultValue: _ButtonDesign.default.Transparent
       },
-
       /**
        * Defines the <code>icon</code> source URI.
        * <br><br>
@@ -79,15 +72,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.NotificationAction.prototype */
-    {},
-    events:
-    /** @lends sap.ui.webcomponents.fiori.NotificationAction.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.NotificationAction.prototype */{},
+    events: /** @lends sap.ui.webcomponents.fiori.NotificationAction.prototype */{
       click: {}
     }
   };
+
   /**
    * @class
    * The <code>ui5-notification-action</code> represents an abstract action,
@@ -101,14 +91,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.fiori.INotificationAction
    * @public
    */
-
   class NotificationAction extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
   }
-
   NotificationAction.define();
   var _default = NotificationAction;
   _exports.default = _default;

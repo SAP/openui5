@@ -10,10 +10,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _isDefaultSlotProvided = _interopRequireDefault(_isDefaultSlotProvided);
   _BadgeTemplate = _interopRequireDefault(_BadgeTemplate);
   _Badge = _interopRequireDefault(_Badge);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -22,9 +21,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-badge",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Badge.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Badge.prototype */{
       /**
        * Defines the color scheme of the component.
        * There are 10 predefined schemes. Each scheme applies different values for the <code>background-color</code> and <code>border-color</code>.
@@ -39,7 +36,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: "1"
       },
-
       /**
        * Defines if the badge has an icon.
        * @private
@@ -47,7 +43,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _hasIcon: {
         type: Boolean
       },
-
       /**
        * Defines if the badge has only an icon (and no text).
        * @private
@@ -57,9 +52,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     },
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.Badge.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Badge.prototype */{
       /**
        * Defines the text of the component.
        * <br><b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
@@ -71,7 +64,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       "default": {
         type: Node
       },
-
       /**
        * Defines the icon to be displayed in the component.
        *
@@ -84,6 +76,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -110,51 +103,39 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @since 0.12.0
    * @public
    */
-
   class Badge extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _BadgeTemplate.default;
     }
-
     static get styles() {
       return _Badge.default;
     }
-
     static async onDefine() {
       Badge.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     onBeforeRendering() {
       this._hasIcon = this.hasIcon;
       this._iconOnly = this.iconOnly;
     }
-
     get hasText() {
       return (0, _isDefaultSlotProvided.default)(this);
     }
-
     get hasIcon() {
       return !!this.icon.length;
     }
-
     get iconOnly() {
       return this.hasIcon && !this.hasText;
     }
-
     get badgeDescription() {
       return Badge.i18nBundle.getText(_i18nDefaults.BADGE_DESCRIPTION);
     }
-
   }
-
   Badge.define();
   var _default = Badge;
   _exports.default = _default;

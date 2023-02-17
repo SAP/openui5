@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogResizeColumn = _interopRequireDefault(_sapIllusDialogResizeColumn);
   _sapIllusSceneResizeColumn = _interopRequireDefault(_sapIllusSceneResizeColumn);
   _sapIllusSpotResizeColumn = _interopRequireDefault(_sapIllusSpotResizeColumn);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "ResizeColumn";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_RESIZECOLUMN;

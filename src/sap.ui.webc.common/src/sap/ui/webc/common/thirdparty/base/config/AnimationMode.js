@@ -6,26 +6,19 @@ sap.ui.define(["exports", "../InitialConfiguration", "../types/AnimationMode"], 
   });
   _exports.setAnimationMode = _exports.getAnimationMode = void 0;
   _AnimationMode = _interopRequireDefault(_AnimationMode);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   let animationMode;
-
   const getAnimationMode = () => {
     if (animationMode === undefined) {
       animationMode = (0, _InitialConfiguration.getAnimationMode)();
     }
-
     return animationMode;
   };
-
   _exports.getAnimationMode = getAnimationMode;
-
   const setAnimationMode = newAnimationMode => {
     if (Object.values(_AnimationMode.default).includes(newAnimationMode)) {
       animationMode = newAnimationMode;
     }
   };
-
   _exports.setAnimationMode = setAnimationMode;
 });

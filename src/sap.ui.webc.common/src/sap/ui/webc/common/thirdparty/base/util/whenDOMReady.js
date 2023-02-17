@@ -5,7 +5,6 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.default = void 0;
-
   const whenDOMReady = () => {
     return new Promise(resolve => {
       if (document.body) {
@@ -17,7 +16,6 @@ sap.ui.define(["exports"], function (_exports) {
       }
     });
   };
-
   var _default = whenDOMReady;
   _exports.default = _default;
 });

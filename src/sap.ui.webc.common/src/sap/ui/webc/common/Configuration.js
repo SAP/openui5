@@ -1,3 +1,7 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
 	"./thirdparty/base/config/Theme",
 	"./thirdparty/base/config/Language"

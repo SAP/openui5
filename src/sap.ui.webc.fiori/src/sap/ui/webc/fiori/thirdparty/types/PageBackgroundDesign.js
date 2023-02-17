@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * Available Page Background Design.
    * @lends sap.ui.webcomponents.fiori.types.PageBackgroundDesign.prototype
@@ -22,7 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @public
      */
     List: "List",
-
     /**
      * A solid background color dependent on the theme.
      *
@@ -30,7 +27,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @public
     	 */
     Solid: "Solid",
-
     /**
      * Transparent background for the page.
      *
@@ -39,6 +35,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Transparent: "Transparent"
   };
+
   /**
    * Available Page Background Design.
    *
@@ -49,14 +46,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class PageBackgroundDesign extends _DataType.default {
     static isValid(value) {
       return !!PageBackgroundDesigns[value];
     }
-
   }
-
   PageBackgroundDesign.generateTypeAccessors(PageBackgroundDesigns);
   var _default = PageBackgroundDesign;
   _exports.default = _default;

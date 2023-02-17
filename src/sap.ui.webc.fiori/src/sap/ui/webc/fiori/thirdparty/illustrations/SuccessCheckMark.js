@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogSuccessCheckMark = _interopRequireDefault(_sapIllusDialogSuccessCheckMark);
   _sapIllusSceneSuccessCheckMark = _interopRequireDefault(_sapIllusSceneSuccessCheckMark);
   _sapIllusSpotSuccessCheckMark = _interopRequireDefault(_sapIllusSpotSuccessCheckMark);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "SuccessCheckMark";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_SUCCESSSCREEN;

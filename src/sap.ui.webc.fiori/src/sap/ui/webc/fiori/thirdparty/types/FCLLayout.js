@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * Different types of FCLLayout.
    * @lends sap.ui.webcomponents.fiori.types.FCLLayout.prototype
@@ -21,7 +19,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {OneColumn}
      */
     OneColumn: "OneColumn",
-
     /**
      *
      * Desktop: 67/33/-  Start (expanded) and Mid columns are displayed
@@ -34,7 +31,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @public
      */
     TwoColumnsStartExpanded: "TwoColumnsStartExpanded",
-
     /**
      * Desktop: 33/67/-  Start and Mid (expanded) columns are displayed
      * Tablet:  33/67/-  Start and Mid (expanded) columns are displayed
@@ -46,7 +42,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @public
      */
     TwoColumnsMidExpanded: "TwoColumnsMidExpanded",
-
     /**
      * Desktop: 25/50/25 Start, Mid (expanded) and End columns are displayed
      * Tablet:  0/67/33  Mid (expanded) and End columns are displayed, Start is accessible by a layout arrow
@@ -58,7 +53,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @public
      */
     ThreeColumnsMidExpanded: "ThreeColumnsMidExpanded",
-
     /**
      * Desktop: 25/25/50 Start, Mid and End (expanded) columns are displayed
      * Tablet:  0/33/67  Mid and End (expanded) columns are displayed, Start is accessible by layout arrows
@@ -70,7 +64,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type ThreeColumnsEndExpanded
      */
     ThreeColumnsEndExpanded: "ThreeColumnsEndExpanded",
-
     /**
      * Desktop: 67/33/0  Start (expanded) and Mid columns are displayed, End is accessible by layout arrows
      * Tablet:  67/33/0  Start (expanded) and Mid columns are displayed, End is accessible by layout arrows
@@ -83,7 +76,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type ThreeColumnsStartExpandedEndHidden
      */
     ThreeColumnsStartExpandedEndHidden: "ThreeColumnsStartExpandedEndHidden",
-
     /**
      * Desktop: 33/67/0  Start and Mid (expanded) columns are displayed, End is accessible by a layout arrow
      * Tablet:  33/67/0  Start and Mid (expanded) columns are displayed, End is accessible by a layout arrow
@@ -96,7 +88,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type ThreeColumnsMidExpandedEndHidden
      */
     ThreeColumnsMidExpandedEndHidden: "ThreeColumnsMidExpandedEndHidden",
-
     /**
      * Desktop: -/100/-  only the Mid column is displayed
      * Tablet:  -/100/-  only the Mid column is displayed
@@ -108,7 +99,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type MidColumnFullScreen
      */
     MidColumnFullScreen: "MidColumnFullScreen",
-
     /**
      * Desktop: -/-/100  only the End column is displayed
      * Tablet:  -/-/100  only the End column is displayed
@@ -121,6 +111,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     EndColumnFullScreen: "EndColumnFullScreen"
   };
+
   /**
    * The number of columns of <code>ui5-flexible-collcolumn-layout</code>.
    *
@@ -131,14 +122,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class FCLLayout extends _DataType.default {
     static isValid(value) {
       return !!FCLLayouts[value];
     }
-
   }
-
   FCLLayout.generateTypeAccessors(FCLLayouts);
   var _default = FCLLayout;
   _exports.default = _default;

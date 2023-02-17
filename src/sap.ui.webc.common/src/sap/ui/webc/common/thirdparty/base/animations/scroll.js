@@ -7,9 +7,7 @@ sap.ui.define(["exports", "./animate", "./config"], function (_exports, _animate
   _exports.default = void 0;
   _animate = _interopRequireDefault(_animate);
   _config = _interopRequireDefault(_config);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   var _default = ({
     element = _config.default.element,
     duration = _config.default.duration,
@@ -29,11 +27,9 @@ sap.ui.define(["exports", "./animate", "./config"], function (_exports, _animate
       progress: progress => {
         progressCallback(progress);
         element.scrollLeft = scrollLeft + progress * dx; // easing - linear
-
         element.scrollTop = scrollTop + progress * dy; // easing - linear
       }
     });
   };
-
   _exports.default = _default;
 });

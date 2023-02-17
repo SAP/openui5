@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.ListSeparators.prototype
    * @public
@@ -20,7 +18,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {All}
      */
     All: "All",
-
     /**
      * Separators between the items.
      * <b>Note:</b> This enumeration depends on the theme.
@@ -28,7 +25,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Inner}
      */
     Inner: "Inner",
-
     /**
      * No item separators.
      * @public
@@ -36,6 +32,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     None: "None"
   };
+
   /**
    * @class
    * Defines which separator style will be applied for the list items.
@@ -45,14 +42,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class ListSeparators extends _DataType.default {
     static isValid(value) {
       return !!ListSeparatorsTypes[value];
     }
-
   }
-
   ListSeparators.generateTypeAccessors(ListSeparatorsTypes);
   var _default = ListSeparators;
   _exports.default = _default;

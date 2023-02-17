@@ -6,6 +6,7 @@ sap.ui.define(["exports"], function (_exports) {
   });
   _exports.default = void 0;
   const querySets = {};
+
   /**
    * Initializes a screen width media query range set.
    *
@@ -33,13 +34,13 @@ sap.ui.define(["exports"], function (_exports) {
    * @function
    * @public
    */
-
   const _initRangeSet = (name, borders, names) => {
     querySets[name] = {
       borders,
       names
     };
   };
+
   /**
    * Returns information about the current active range of the range set with the given name.
    *
@@ -55,24 +56,20 @@ sap.ui.define(["exports"], function (_exports) {
    * @function
    * @public
    */
-
-
   const _getCurrentRange = (name, width = window.innerWidth) => {
     const querySet = querySets[name];
     let i = 0;
-
     if (!querySet) {
       return null;
     }
-
     for (; i < querySet.borders.length; i++) {
       if (width < querySet.borders[i]) {
         return querySet.names[i];
       }
     }
-
     return querySet.names[i];
   };
+
   /**
    * Enumeration containing the names and settings of predefined screen width media query range sets.
    *
@@ -80,8 +77,6 @@ sap.ui.define(["exports"], function (_exports) {
    * @name MediaRange.RANGESETS
    * @public
    */
-
-
   const RANGESETS = {
     /**
      * A 4-step range set (S-M-L-XL).
@@ -99,6 +94,7 @@ sap.ui.define(["exports"], function (_exports) {
      */
     RANGE_4STEPS: "4Step"
   };
+
   /**
    * API for screen width changes.
    *

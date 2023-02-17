@@ -16,9 +16,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _PanelAccessibleRole = _interopRequireDefault(_PanelAccessibleRole);
   _PanelTemplate = _interopRequireDefault(_PanelTemplate);
   _Panel = _interopRequireDefault(_Panel);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -29,9 +27,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     languageAware: true,
     managedSlots: true,
     fastNavigation: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.Panel.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Panel.prototype */{
       /**
        * Defines the component header area.
        * <br><br>
@@ -44,7 +40,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       header: {
         type: HTMLElement
       },
-
       /**
        * Defines the content of the component.
        * The content is visible only when the component is expanded.
@@ -57,9 +52,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.main.Panel.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Panel.prototype */{
       /**
        * This property is used to set the header text of the component.
        * The text is visible in both expanded and collapsed states.
@@ -73,7 +66,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       headerText: {
         type: String
       },
-
       /**
        * Determines whether the component is in a fixed state that is not
        * expandable/collapsible by user interaction.
@@ -85,7 +77,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       fixed: {
         type: Boolean
       },
-
       /**
        * Indicates whether the component is collapsed and only the header is displayed.
        *
@@ -96,7 +87,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       collapsed: {
         type: Boolean
       },
-
       /**
        * Indicates whether the transition between the expanded and the collapsed state of the component is animated. By default the animation is enabled.
        *
@@ -108,7 +98,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       noAnimation: {
         type: Boolean
       },
-
       /**
        * Sets the accessible aria role of the component.
        * Depending on the usage, you can change the role from the default <code>Form</code>
@@ -122,7 +111,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _PanelAccessibleRole.default,
         defaultValue: _PanelAccessibleRole.default.Form
       },
-
       /**
        * Defines the "aria-level" of component heading,
        * set by the <code>headerText</code>.
@@ -136,7 +124,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _TitleLevel.default,
         defaultValue: _TitleLevel.default.H2
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -148,7 +135,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * When set to <code>true</code>, the <code>accessibleName</code> property will be
        * applied not only on the panel root itself, but on its toggle button too.
@@ -160,7 +146,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       useAccessibleNameForToggleButton: {
         type: Boolean
       },
-
       /**
        * @private
        */
@@ -179,9 +164,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         noAttribute: true
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Panel.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Panel.prototype */{
       /**
        * Fired when the component is expanded/collapsed by user interaction.
        *
@@ -191,6 +174,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       toggle: {}
     }
   };
+
   /**
    * @class
    *
@@ -260,102 +244,79 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @tagname ui5-panel
    * @public
    */
-
   class Panel extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _PanelTemplate.default;
     }
-
     static get styles() {
       return _Panel.default;
     }
-
     constructor() {
       super();
       this._header = {};
     }
-
     onBeforeRendering() {
       // If the animation is running, it will set the content expanded state at the end
       if (!this._animationRunning) {
         this._contentExpanded = !this.collapsed;
       }
-
       this._hasHeader = !!this.header.length;
     }
-
     shouldToggle(node) {
       const customContent = this.header.length;
-
       if (customContent) {
         return node.classList.contains("ui5-panel-header-button");
       }
-
       return true;
     }
-
     shouldNotAnimate() {
       return this.noAnimation || (0, _AnimationMode2.getAnimationMode)() === _AnimationMode.default.None;
     }
-
     _headerClick(event) {
       if (!this.shouldToggle(event.target)) {
         return;
       }
-
       this._toggleOpen();
     }
-
     _toggleButtonClick(event) {
       if (event.x === 0 && event.y === 0) {
         event.stopImmediatePropagation();
       }
     }
-
     _headerKeyDown(event) {
       if (!this.shouldToggle(event.target)) {
         return;
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this._toggleOpen();
       }
-
       if ((0, _Keys.isSpace)(event)) {
         event.preventDefault();
       }
     }
-
     _headerKeyUp(event) {
       if (!this.shouldToggle(event.target)) {
         return;
       }
-
       if ((0, _Keys.isSpace)(event)) {
         this._toggleOpen();
       }
     }
-
     _toggleOpen() {
       if (this.fixed) {
         return;
       }
-
       this.collapsed = !this.collapsed;
-
       if (this.shouldNotAnimate()) {
         this.fireEvent("toggle");
         return;
       }
-
       this._animationRunning = true;
       const elements = this.getDomRef().querySelectorAll(".ui5-panel-content");
       const animations = [];
@@ -376,11 +337,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.fireEvent("toggle");
       });
     }
-
     _headerOnTarget(target) {
       return target.classList.contains("sapMPanelWrappingDiv");
     }
-
     get classes() {
       return {
         headerBtn: {
@@ -388,23 +347,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get toggleButtonTitle() {
       return Panel.i18nBundle.getText(_i18nDefaults.PANEL_ICON);
     }
-
     get expanded() {
       return !this.collapsed;
     }
-
     get accRole() {
       return this.accessibleRole.toLowerCase();
     }
-
     get effectiveAccessibleName() {
       return typeof this.accessibleName === "string" && this.accessibleName.length ? this.accessibleName : undefined;
     }
-
     get accInfo() {
       return {
         "button": {
@@ -421,35 +375,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "role": this.nonFixedInternalHeader ? "button" : undefined
       };
     }
-
     get ariaLabelledbyReference() {
       return this.nonFocusableButton && this.headerText ? `${this._id}-header-title` : undefined;
     }
-
     get header() {
       return this.getDomRef().querySelector(`#${this._id}-header-title`);
     }
-
     get headerAriaLevel() {
       return this.headerLevel.slice(1);
     }
-
     get headerTabIndex() {
       return this.header.length || this.fixed ? "-1" : "0";
     }
-
     get nonFixedInternalHeader() {
       return !this._hasHeader && !this.fixed;
     }
-
     get nonFocusableButton() {
       return !this.header.length;
     }
-
     get shouldRenderH1() {
       return !this.header.length && (this.headerText || !this.fixed);
     }
-
     get styles() {
       return {
         content: {
@@ -457,17 +403,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     static get dependencies() {
       return [_Button.default, _Icon.default];
     }
-
     static async onDefine() {
       Panel.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   Panel.define();
   var _default = Panel;
   _exports.default = _default;

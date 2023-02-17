@@ -6,18 +6,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
   * @public
   */
   const metadata = {
     tag: "ui5-breadcrumbs-item",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */{
       /**
        * Defines the link href.
        * <br><br>
@@ -30,7 +26,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       href: {
         type: String
       },
-
       /**
        * Defines the link target.
        * <br><br>
@@ -53,7 +48,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: String,
         defaultValue: undefined
       },
-
       /**
        * Defines the accessible aria name of the item.
        *
@@ -65,9 +59,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: String
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -81,10 +73,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: Node
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */
-    {}
+    events: /** @lends sap.ui.webcomponents.main.BreadcrumbsItem.prototype */{}
   };
+
   /**
    * @class
    *
@@ -101,18 +92,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @public
    * @since 1.0.0-rc.15
    */
-
   class BreadcrumbsItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     get stableDomRef() {
       return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
     }
-
   }
-
   BreadcrumbsItem.define();
   var _default = BreadcrumbsItem;
   _exports.default = _default;

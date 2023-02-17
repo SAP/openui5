@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.CalendarSelectionMode.prototype
    * @public
@@ -20,14 +18,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Single}
      */
     Single: "Single",
-
     /**
      * Several dates can be selected
      * @public
      * @type {Multiple}
      */
     Multiple: "Multiple",
-
     /**
      * A range defined by a start date and an end date can be selected
      * @public
@@ -35,6 +31,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Range: "Range"
   };
+
   /**
    * @class
    * Different date selection modes for <code>ui5-calendar</code>.
@@ -44,14 +41,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class CalendarSelectionMode extends _DataType.default {
     static isValid(value) {
       return !!CalendarSelectionModes[value];
     }
-
   }
-
   CalendarSelectionMode.generateTypeAccessors(CalendarSelectionModes);
   var _default = CalendarSelectionMode;
   _exports.default = _default;

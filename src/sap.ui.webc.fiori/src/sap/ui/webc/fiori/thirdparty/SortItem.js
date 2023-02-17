@@ -6,17 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-sort-item",
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */{
       /**
        * Defines the text of the component.
        *
@@ -27,7 +23,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       text: {
         type: String
       },
-
       /**
        * Defines if the component is selected.
        * @type {boolean}
@@ -38,15 +33,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */
-    {//
+    slots: /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */{
+      //
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */
-    {//
+    events: /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */{
+      //
     }
   };
+
   /**
    * @class
    *
@@ -69,14 +63,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @implements sap.ui.webcomponents.fiori.ISortItem
    * @public
    */
-
   class SortItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
   }
-
   SortItem.define();
   var _default = SortItem;
   _exports.default = _default;

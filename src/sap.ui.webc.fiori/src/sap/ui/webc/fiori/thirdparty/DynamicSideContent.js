@@ -13,30 +13,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _SideContentFallDown = _interopRequireDefault(_SideContentFallDown);
   _DynamicSideContentTemplate = _interopRequireDefault(_DynamicSideContentTemplate);
   _DynamicSideContent = _interopRequireDefault(_DynamicSideContent);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
+
   // Texts
+
   // Breakpoint-related constants
   const S_M_BREAKPOINT = 720,
-        // Breakpoint between S and M screen sizes
-  M_L_BREAKPOINT = 1024,
-        // Breakpoint between M and L screen sizes
-  L_XL_BREAKPOINT = 1440,
-        // Breakpoint between L and XL screen sizes
-  MINIMUM_WIDTH_BREAKPOINT = 960; // Minimum width of the control where main and side contents are side by side
+    // Breakpoint between S and M screen sizes
+    M_L_BREAKPOINT = 1024,
+    // Breakpoint between M and L screen sizes
+    L_XL_BREAKPOINT = 1440,
+    // Breakpoint between L and XL screen sizes
+    MINIMUM_WIDTH_BREAKPOINT = 960; // Minimum width of the control where main and side contents are side by side
 
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-dynamic-side-content",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.DynamicSideContent.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.DynamicSideContent.prototype */{
       /**
        * Defines the visibility of the main content.
        *
@@ -48,7 +45,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hideMainContent: {
         type: Boolean
       },
-
       /**
        * Defines the visibility of the side content.
        *
@@ -60,7 +56,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hideSideContent: {
         type: Boolean
       },
-
       /**
        * Defines whether the side content is positioned before the main content (left side
        * in LTR mode), or after the the main content (right side in LTR mode).
@@ -82,7 +77,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _SideContentPosition.default,
         defaultValue: _SideContentPosition.default.End
       },
-
       /**
        * Defines on which breakpoints the side content is visible.
        *
@@ -106,7 +100,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _SideContentVisibility.default,
         defaultValue: _SideContentVisibility.default.ShowAboveS
       },
-
       /**
        * Defines on which breakpoints the side content falls down below the main content.
        *
@@ -129,7 +122,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _SideContentFallDown.default,
         defaultValue: _SideContentFallDown.default.OnMinimumWidth
       },
-
       /**
        * Defines whether the component is in equal split mode. In this mode, the side and
        * the main content take 50:50 percent of the container on all screen sizes
@@ -144,7 +136,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       equalSplit: {
         type: Boolean
       },
-
       /**
       	 * @private
        */
@@ -153,7 +144,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: "0",
         noAttribute: true
       },
-
       /**
       	 * @private
        */
@@ -162,7 +152,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: "0",
         noAttribute: true
       },
-
       /**
       	 * @private
        */
@@ -170,7 +159,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean,
         noAttribute: true
       },
-
       /**
       	 * @private
        */
@@ -179,9 +167,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         noAttribute: true
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.DynamicSideContent.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.DynamicSideContent.prototype */{
       /**
        * Defines the main content.
        *
@@ -192,7 +178,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       "default": {
         type: HTMLElement
       },
-
       /**
        * Defines the side content.
        *
@@ -204,9 +189,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.DynamicSideContent.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.DynamicSideContent.prototype */{
       /**
        * Fires when the current breakpoint has been changed.
        * @event sap.ui.webcomponents.fiori.DynamicSideContent#layout-change
@@ -234,6 +217,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -311,78 +295,66 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.1.0
    */
-
   class DynamicSideContent extends _UI5Element.default {
     constructor() {
       super();
       this._handleResizeBound = this.handleResize.bind(this);
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return _DynamicSideContent.default;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _DynamicSideContentTemplate.default;
     }
-
     static async onDefine() {
       DynamicSideContent.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
-
     onAfterRendering() {
       this._resizeContents();
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this, this._handleResizeBound);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this._handleResizeBound);
     }
+
     /**
      * Toggles visibility of main and side contents on S screen size (mobile device).
      * @public
      */
-
-
     toggleContents() {
       if (this.breakpoint === this.sizeS && this.sideContentVisibility !== _SideContentVisibility.default.AlwaysShow) {
         this._toggled = !this._toggled;
       }
     }
-
     get classes() {
       const gridPrefix = "ui5-dsc-span",
-            mcSpan = this._toggled ? this._scSpan : this._mcSpan,
-            scSpan = this._toggled ? this._mcSpan : this._scSpan,
-            classes = {
-        main: {
-          "ui5-dsc-main": true
-        },
-        side: {
-          "ui5-dsc-side": true
-        }
-      };
+        mcSpan = this._toggled ? this._scSpan : this._mcSpan,
+        scSpan = this._toggled ? this._mcSpan : this._scSpan,
+        classes = {
+          main: {
+            "ui5-dsc-main": true
+          },
+          side: {
+            "ui5-dsc-side": true
+          }
+        };
       classes.main[`${gridPrefix}-${mcSpan}`] = true;
       classes.side[`${gridPrefix}-${scSpan}`] = true;
       return classes;
     }
-
     get styles() {
       const isToggled = this.breakpoint === this.sizeS && this._toggled,
-            mcSpan = isToggled ? this._scSpan : this._mcSpan,
-            scSpan = isToggled ? this._mcSpan : this._scSpan,
-            contentHeight = this.breakpoint === this.sizeS && this.sideContentVisibility !== _SideContentVisibility.default.AlwaysShow ? "100%" : "auto";
+        mcSpan = isToggled ? this._scSpan : this._mcSpan,
+        scSpan = isToggled ? this._mcSpan : this._scSpan,
+        contentHeight = this.breakpoint === this.sizeS && this.sideContentVisibility !== _SideContentVisibility.default.AlwaysShow ? "100%" : "auto";
       return {
         root: {
           "flex-wrap": this._mcSpan === "12" ? "wrap" : "nowrap"
@@ -397,68 +369,52 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get accInfo() {
       return {
         "label": DynamicSideContent.i18nBundle.getText(_i18nDefaults.DSC_SIDE_ARIA_LABEL)
       };
     }
-
     get sizeS() {
       return "S";
     }
-
     get sizeM() {
       return "M";
     }
-
     get sizeL() {
       return "L";
     }
-
     get sizeXL() {
       return "XL";
     }
-
     get span0() {
       return "0";
     }
-
     get span3() {
       return "3";
     }
-
     get span4() {
       return "4";
     }
-
     get span6() {
       return "6";
     }
-
     get span8() {
       return "8";
     }
-
     get span9() {
       return "9";
     }
-
     get span12() {
       return "12";
     }
-
     get spanFixed() {
       return "fixed";
     }
-
     get containerWidth() {
       return this.parentElement.clientWidth;
     }
-
     get breakpoint() {
       let size;
-
       if (this.containerWidth <= S_M_BREAKPOINT) {
         size = this.sizeS;
       } else if (this.containerWidth > S_M_BREAKPOINT && this.containerWidth <= M_L_BREAKPOINT) {
@@ -468,23 +424,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else {
         size = this.sizeXL;
       }
-
       return size;
     }
-
     handleResize() {
       this._resizeContents();
     }
-
     _resizeContents() {
-      let mainSize, sideSize, sideVisible; // initial set contents sizes
+      let mainSize, sideSize, sideVisible;
 
+      // initial set contents sizes
       switch (this.breakpoint) {
         case this.sizeS:
           mainSize = this.span12;
           sideSize = this.span12;
           break;
-
         case this.sizeM:
           if (this.sideContentFallDown === _SideContentFallDown.default.BelowXL || this.sideContentFallDown === _SideContentFallDown.default.BelowL || this.containerWidth <= MINIMUM_WIDTH_BREAKPOINT && this.sideContentFallDown === _SideContentFallDown.default.OnMinimumWidth) {
             mainSize = this.span12;
@@ -493,10 +446,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
             mainSize = this.equalSplit ? this.span6 : this.spanFixed;
             sideSize = this.equalSplit ? this.span6 : this.spanFixed;
           }
-
           sideVisible = this.sideContentVisibility === _SideContentVisibility.default.ShowAboveS || this.sideContentVisibility === _SideContentVisibility.default.AlwaysShow;
           break;
-
         case this.sizeL:
           if (this.sideContentFallDown === _SideContentFallDown.default.BelowXL) {
             mainSize = this.span12;
@@ -505,40 +456,36 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
             mainSize = this.equalSplit ? this.span6 : this.span8;
             sideSize = this.equalSplit ? this.span6 : this.span4;
           }
-
           sideVisible = this.sideContentVisibility === _SideContentVisibility.default.ShowAboveS || this.sideContentVisibility === _SideContentVisibility.default.ShowAboveM || this.sideContentVisibility === _SideContentVisibility.default.AlwaysShow;
           break;
-
         case this.sizeXL:
           mainSize = this.equalSplit ? this.span6 : this.span9;
           sideSize = this.equalSplit ? this.span6 : this.span3;
           sideVisible = this.sideContentVisibility !== _SideContentVisibility.default.NeverShow;
       }
-
       if (this.sideContentVisibility === _SideContentVisibility.default.AlwaysShow) {
         sideVisible = true;
-      } // modify sizes of the contents depending on hideMainContent and hideSideContent properties
+      }
 
-
+      // modify sizes of the contents depending on hideMainContent and hideSideContent properties
       if (this.hideSideContent) {
         mainSize = this.hideMainContent ? this.span0 : this.span12;
         sideSize = this.span0;
         sideVisible = false;
       }
-
       if (this.hideMainContent) {
         mainSize = this.span0;
         sideSize = this.hideSideContent ? this.span0 : this.span12;
         sideVisible = true;
-      } // set final sizes of the contents
+      }
 
-
+      // set final sizes of the contents
       if (!sideVisible) {
         mainSize = this.span12;
         sideSize = this.span0;
-      } // fire "layout-change" event
+      }
 
-
+      // fire "layout-change" event
       if (this._currentBreakpoint !== this.breakpoint) {
         const eventParams = {
           currentBreakpoint: this.breakpoint,
@@ -548,23 +495,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         };
         this.fireEvent("layout-change", eventParams);
         this._currentBreakpoint = this.breakpoint;
-      } // update contents sizes
+      }
 
-
+      // update contents sizes
       this._setSpanSizes(mainSize, sideSize);
     }
-
     _setSpanSizes(mainSize, sideSize) {
       this._mcSpan = mainSize;
       this._scSpan = sideSize;
-
       if (this.breakpoint !== this.sizeS) {
         this._toggled = false;
       }
     }
-
   }
-
   DynamicSideContent.define();
   var _default = DynamicSideContent;
   _exports.default = _default;

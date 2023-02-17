@@ -11,23 +11,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
   _ToastPlacement = _interopRequireDefault(_ToastPlacement);
   _ToastTemplate = _interopRequireDefault(_ToastTemplate);
   _Toast = _interopRequireDefault(_Toast);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
+
   // Constants
   const MIN_DURATION = 500;
   const MAX_DURATION = 1000;
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-toast",
-    properties:
-    /** @lends sap.ui.webcomponents.main.Toast.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Toast.prototype */{
       /**
        * Defines the duration in milliseconds for which component
        * remains on the screen before it's automatically closed.
@@ -43,7 +41,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: _Integer.default,
         defaultValue: 3000
       },
-
       /**
        * Defines the placement of the component.
        * <br><br>
@@ -68,7 +65,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: _ToastPlacement.default,
         defaultValue: _ToastPlacement.default.BottomCenter
       },
-
       /**
        * Indicates whether the component is open (visible).
        * @type {boolean}
@@ -77,7 +73,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       open: {
         type: Boolean
       },
-
       /**
        * Indicates whether the component is hovered.
        * @type {boolean}
@@ -86,7 +81,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       hover: {
         type: Boolean
       },
-
       /**
        * Indicates whether the component DOM is rendered.
        * @type {boolean}
@@ -96,9 +90,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.Toast.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Toast.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -113,6 +105,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       }
     }
   };
+
   /**
    * @class
    *
@@ -150,37 +143,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
    * @public
    * @since 1.0.0-rc.6
    */
-
   class Toast extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _Toast.default;
     }
-
     static get template() {
       return _ToastTemplate.default;
     }
-
     onAfterRendering() {
       if (this._reopen) {
         this._reopen = false;
-
         this._initiateOpening();
       }
     }
+
     /**
      * Shows the component.
      * @public
      */
-
-
     show() {
       if (this.open) {
         // If the Toast is already opened, we set the _reopen flag to true, in
@@ -193,18 +179,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         this._initiateOpening();
       }
     }
+
     /**
      * If the minimum duration is lower than 500ms, we force
      * it to be 500ms, as described in the documentation.
      * @private
      * @returns {*}
      */
-
-
     get effectiveDuration() {
       return this.duration < MIN_DURATION ? MIN_DURATION : this.duration;
     }
-
     get styles() {
       // Transition duration (animation) should be a third of the duration
       // property, but not bigger than the maximum allowed (1000ms).
@@ -221,33 +205,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         }
       };
     }
-
     _initiateOpening() {
       this.domRendered = true;
       requestAnimationFrame(_ => {
         this.open = true;
       });
     }
-
     _ontransitionend() {
       if (this.hover) {
         return;
       }
-
       this.domRendered = false;
       this.open = false;
     }
-
     _onmouseover() {
       this.hover = true;
     }
-
     _onmouseleave() {
       this.hover = false;
     }
-
   }
-
   Toast.define();
   var _default = Toast;
   _exports.default = _default;

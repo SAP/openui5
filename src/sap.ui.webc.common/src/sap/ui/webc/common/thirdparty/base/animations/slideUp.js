@@ -7,17 +7,16 @@ sap.ui.define(["exports", "./config", "./animate"], function (_exports, _config,
   _exports.default = void 0;
   _config = _interopRequireDefault(_config);
   _animate = _interopRequireDefault(_animate);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   var _default = ({
     element = _config.default.element,
     duration = _config.default.defaultDuration,
     progress: progressCallback = _config.default.identity
   }) => {
     // Get Computed styles
-    let computedStyles, paddingTop, paddingBottom, marginTop, marginBottom, height; // Store inline styles
+    let computedStyles, paddingTop, paddingBottom, marginTop, marginBottom, height;
 
+    // Store inline styles
     let storedOverflow, storedPaddingTop, storedPaddingBottom, storedMarginTop, storedMarginBottom, storedHeight;
     const animation = (0, _animate.default)({
       beforeStart: () => {
@@ -27,8 +26,9 @@ sap.ui.define(["exports", "./config", "./animate"], function (_exports, _config,
         paddingBottom = parseFloat(computedStyles.paddingBottom);
         marginTop = parseFloat(computedStyles.marginTop);
         marginBottom = parseFloat(computedStyles.marginBottom);
-        height = parseFloat(computedStyles.height); // Store inline styles
+        height = parseFloat(computedStyles.height);
 
+        // Store inline styles
         storedOverflow = element.style.overflow;
         storedPaddingTop = element.style.paddingTop;
         storedPaddingBottom = element.style.paddingBottom;
@@ -39,7 +39,6 @@ sap.ui.define(["exports", "./config", "./animate"], function (_exports, _config,
       },
       duration,
       element,
-
       progress(progress) {
         progressCallback(progress);
         element.style.paddingTop = `${paddingTop - paddingTop * progress}px`;
@@ -48,7 +47,6 @@ sap.ui.define(["exports", "./config", "./animate"], function (_exports, _config,
         element.style.marginBottom = `${marginBottom - marginBottom * progress}px`;
         element.style.height = `${height - height * progress}px`;
       }
-
     });
     animation.promise().then(oReason => {
       if (!(oReason instanceof Error)) {
@@ -63,6 +61,5 @@ sap.ui.define(["exports", "./config", "./animate"], function (_exports, _config,
     });
     return animation;
   };
-
   _exports.default = _default;
 });

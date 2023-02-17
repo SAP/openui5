@@ -13,10 +13,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ListMode = _interopRequireDefault(_ListMode);
   _TreeTemplate = _interopRequireDefault(_TreeTemplate);
   _Tree = _interopRequireDefault(_Tree);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -24,9 +23,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */
   const metadata = {
     tag: "ui5-tree",
-    properties:
-    /** @lends sap.ui.webcomponents.main.Tree.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Tree.prototype */{
       /**
        * Defines the mode of the component. Since the tree uses a <code>ui5-list</code> to display its structure,
        * the tree modes are exactly the same as the list modes, and are all applicable.
@@ -51,7 +48,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ListMode.default,
         defaultValue: _ListMode.default.None
       },
-
       /**
        * Defines the text that is displayed when the component contains no items.
        *
@@ -62,7 +58,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       noDataText: {
         type: String
       },
-
       /**
        * Defines the component header text.
        * <br><br>
@@ -75,7 +70,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       headerText: {
         type: String
       },
-
       /**
        * Defines the component footer text.
        *
@@ -86,7 +80,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       footerText: {
         type: String
       },
-
       /**
        * An array, containing a flat structure of list items to render
        *
@@ -96,7 +89,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Object,
         multiple: true
       },
-
       /**
        * Shows the toggle button at the end, rather than at the beginning of the items
        *
@@ -106,7 +98,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _toggleButtonEnd: {
         type: Boolean
       },
-
       /**
        * Represents the tree in a very minimal state - icons only with no text and no toggle buttons
        *
@@ -118,9 +109,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     },
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.Tree.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Tree.prototype */{
       /**
        * Defines the items of the component. Tree items may have other tree items as children.
        * <br><br>
@@ -135,7 +124,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         propertyName: "items",
         invalidateOnChildChange: true
       },
-
       /**
        * Defines the component header.
        * <br><br>
@@ -150,9 +138,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Tree.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Tree.prototype */{
       /**
        * Fired when a tree item is expanded or collapsed.
        * <i>Note:</i> You can call <code>preventDefault()</code> on the event object to suppress the event, if needed.
@@ -171,7 +157,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the mouse cursor enters the tree item borders.
        * @event sap.ui.webcomponents.main.Tree#item-mouseover
@@ -186,7 +171,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the mouse cursor leaves the tree item borders.
        * @event sap.ui.webcomponents.main.Tree#item-mouseout
@@ -201,7 +185,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when a tree item is activated.
        *
@@ -217,7 +200,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the Delete button of any tree item is pressed.
        * <br><br>
@@ -235,7 +217,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when selection is changed by user interaction
        * in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code> modes.
@@ -257,6 +238,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -310,86 +292,69 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.0.0-rc.8
    */
-
   class Tree extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _Tree.default;
     }
-
     static get template() {
       return _TreeTemplate.default;
     }
-
     static get dependencies() {
       return [_List.default, _TreeListItem.default, _TreeItem.default];
     }
-
     onBeforeRendering() {
       this._listItems = [];
       buildTree(this, 1, this._listItems);
     }
-
     get list() {
       return this.getDomRef();
     }
-
     get _role() {
       return "tree";
     }
-
     _onListItemStepIn(event) {
       const listItem = event.detail.item;
       const treeItem = listItem.treeItem;
-
       if (treeItem.items.length > 0) {
         const firstChild = treeItem.items[0];
         const firstChildListItem = this.list.getSlottedNodes("items").find(li => li.treeItem === firstChild);
         firstChildListItem && this.list.focusItem(firstChildListItem);
       }
     }
-
     _onListItemStepOut(event) {
       const listItem = event.detail.item;
       const treeItem = listItem.treeItem;
-
       if (treeItem.parentElement !== this) {
         const parent = treeItem.parentElement;
         const parentListItem = this.list.getSlottedNodes("items").find(li => li.treeItem === parent);
         parentListItem && this.list.focusItem(parentListItem);
       }
     }
-
     _onListItemToggle(event) {
       const listItem = event.detail.item;
       const treeItem = listItem.treeItem;
       const defaultPrevented = !this.fireEvent("item-toggle", {
         item: treeItem
       }, true);
-
       if (!defaultPrevented) {
         treeItem.toggle();
       }
     }
-
     _onListItemClick(event) {
       const listItem = event.detail.item;
       const treeItem = listItem.treeItem;
-
       if (!this.fireEvent("item-click", {
         item: treeItem
       }, true)) {
         event.preventDefault();
       }
     }
-
     _onListItemDelete(event) {
       const listItem = event.detail.item;
       const treeItem = listItem.treeItem;
@@ -397,21 +362,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         item: treeItem
       });
     }
-
     _onListItemMouseOver(event) {
       const treeItem = event.target.treeItem;
       this.fireEvent("item-mouseover", {
         item: treeItem
       });
     }
-
     _onListItemMouseOut(event) {
       const treeItem = event.target.treeItem;
       this.fireEvent("item-mouseout", {
         item: treeItem
       });
     }
-
     _onListSelectionChange(event) {
       const previouslySelectedItems = event.detail.previouslySelectedItems.map(item => item.treeItem);
       const selectedItems = event.detail.selectedItems.map(item => item.treeItem);
@@ -426,41 +388,35 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         selectedItems
       });
     }
+
     /**
      * Returns the corresponding list item for a given tree item
      *
      * @param item The tree item
      * @protected
      */
-
-
     _getListItemForTreeItem(item) {
       return this.list.items.find(listItem => listItem.treeItem === item);
     }
+
     /**
      * Perform Depth-First-Search walk on the tree and run a callback on each node
      *
      * @public
      * @param {function} callback function to execute on each node of the tree with 2 arguments: the node and the level
      */
-
-
     walk(callback) {
       walkTree(this, 1, callback);
     }
-
   }
-
   const walkTree = (el, level, callback) => {
     el.items.forEach(item => {
       callback(item, level);
-
       if (item.items.length > 0) {
         walkTree(item, level + 1, callback);
       }
     });
   };
-
   const buildTree = (el, level, result) => {
     el.items.forEach((item, index) => {
       const listItem = {
@@ -470,13 +426,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         level
       };
       result.push(listItem);
-
       if (item.expanded && item.items.length > 0) {
         buildTree(item, level + 1, result);
       }
     });
   };
-
   Tree.define();
   var _default = Tree;
   _exports.default = _default;

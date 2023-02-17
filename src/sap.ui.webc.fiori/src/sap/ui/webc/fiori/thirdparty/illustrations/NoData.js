@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogNoData = _interopRequireDefault(_sapIllusDialogNoData);
   _sapIllusSceneNoData = _interopRequireDefault(_sapIllusSceneNoData);
   _sapIllusSpotNoData = _interopRequireDefault(_sapIllusSpotNoData);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "NoData";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_NODATA;

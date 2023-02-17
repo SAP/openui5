@@ -7,17 +7,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _ValueState = _interopRequireDefault(_ValueState);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-tree-item",
-    properties:
-    /** @lends sap.ui.webcomponents.main.TreeItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.TreeItem.prototype */{
       /**
        * Defines the text of the tree item.
        *
@@ -28,7 +24,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       text: {
         type: String
       },
-
       /**
        * Defines whether the tree node is expanded or collapsed. Only has visual effect for tree nodes with children.
        *
@@ -39,7 +34,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       expanded: {
         type: Boolean
       },
-
       /**
       * Defines whether the selection of a tree node is displayed as partially selected.
       * <br><br>
@@ -61,7 +55,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       indeterminate: {
         type: Boolean
       },
-
       /**
        * Defines whether the tree node has children, even if currently no other tree nodes are slotted inside.
        * <br>
@@ -76,7 +69,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hasChildren: {
         type: Boolean
       },
-
       /**
        * Defines whether the tree node is selected by the user. Only has effect if the <code>ui5-tree</code> is in one of the
        * following modes: in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code>.
@@ -88,7 +80,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       selected: {
         type: Boolean
       },
-
       /**
        * If set, an icon will be displayed before the text, representing the tree item.
        *
@@ -99,7 +90,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: String
       },
-
       /**
        * Defines the <code>additionalText</code>, displayed in the end of the tree item.
        * @type {string}
@@ -109,7 +99,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       additionalText: {
         type: String
       },
-
       /**
        * Defines the state of the <code>additionalText</code>.
        * <br>
@@ -123,7 +112,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ValueState.default,
         defaultValue: _ValueState.default.None
       },
-
       /**
        * Defines the tooltip of the component.
        * @type {string}
@@ -136,9 +124,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     },
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.TreeItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.TreeItem.prototype */{
       /**
        * Defines the items of this component.
        *
@@ -153,6 +139,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -177,27 +164,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.ITreeItem
    * @since 1.0.0-rc.8
    */
-
   class TreeItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     get requiresToggleButton() {
       return this.hasChildren || this.items.length > 0;
     }
+
     /**
      * Call this method to manually switch the <code>expanded</code> state of a tree item.
      * @public
      */
-
-
     toggle() {
       this.expanded = !this.expanded;
     }
-
   }
-
   TreeItem.define();
   var _default = TreeItem;
   _exports.default = _default;

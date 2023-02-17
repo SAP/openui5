@@ -30,7 +30,7 @@ sap.ui.define([
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.ui.webc.common"],
 			noLibraryCSS: true,
-			designtime: "sap/ui/webc/main/designtime/library.designtime",
+			designtime: "sap/ui/webc/fiori/designtime/library.designtime",
 			interfaces: [
 				"sap.ui.webc.fiori.IBar",
 				"sap.ui.webc.fiori.IFilterItem",

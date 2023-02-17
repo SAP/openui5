@@ -11,9 +11,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _BarTemplate = _interopRequireDefault(_BarTemplate);
   _BarDesign = _interopRequireDefault(_BarDesign);
   _Bar = _interopRequireDefault(_Bar);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -23,9 +21,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-bar",
     managedSlots: true,
     fastNavigation: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.Bar.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.Bar.prototype */{
       /**
        * Defines the component's design.
        *
@@ -47,7 +43,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _BarDesign.default,
         defaultValue: _BarDesign.default.Header
       },
-
       /**
        * Defines if the component middle area needs to be centered between start and end area
        * @type {boolean}
@@ -57,9 +52,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.Bar.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.Bar.prototype */{
       /**
        * Defines the content at the start of the bar
        * @type {HTMLElement[]}
@@ -69,7 +62,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       startContent: {
         type: HTMLElement
       },
-
       /**
        * Defines the content in the middle of the bar
        * @type {HTMLElement[]}
@@ -80,7 +72,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement,
         propertyName: "middleContent"
       },
-
       /**
        * Defines the content at the end of the bar
        * @type {HTMLElement[]}
@@ -91,11 +82,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.Bar.prototype */
-    {//
+    events: /** @lends sap.ui.webcomponents.fiori.Bar.prototype */{
+      //
     }
   };
+
   /**
    * @class
    *
@@ -144,35 +135,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.0.0-rc.11
    */
-
   class Bar extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _Bar.default;
     }
-
     static get template() {
       return _BarTemplate.default;
     }
-
     get accInfo() {
       return {
         "label": this.design
       };
     }
-
     constructor() {
       super();
       this._handleResizeBound = this.handleResize.bind(this);
     }
-
     handleResize() {
       const bar = this.getDomRef();
       const barWidth = bar.offsetWidth;
@@ -180,7 +164,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         return barWidth / 3 < element.offsetWidth;
       });
     }
-
     get classes() {
       return {
         root: {
@@ -189,22 +172,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     onBeforeRendering() {
       // Next row is specific for IE11. Please remove after stop support and edit css file
       [...this.startContent, ...this.middleContent, ...this.endContent].forEach(element => element.classList.add("ui5-bar-content"));
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this, this._handleResizeBound);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this._handleResizeBound);
     }
-
   }
-
   Bar.define();
   var _default = Bar;
   _exports.default = _default;

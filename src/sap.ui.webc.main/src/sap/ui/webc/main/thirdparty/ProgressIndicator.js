@@ -13,9 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Icon = _interopRequireDefault(_Icon);
   _ProgressIndicatorTemplate = _interopRequireDefault(_ProgressIndicatorTemplate);
   _ProgressIndicator = _interopRequireDefault(_ProgressIndicator);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -23,9 +21,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */
   const metadata = {
     tag: "ui5-progress-indicator",
-    properties:
-    /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */{
       /**
        * Defines whether component is in disabled state.
        *
@@ -36,7 +32,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines whether the component value is shown.
        *
@@ -47,7 +42,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hideValue: {
         type: Boolean
       },
-
       /**
        * Specifies the numerical value in percent for the length of the component.
        *
@@ -61,7 +55,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 0
       },
-
       /**
        * Specifies the text value to be displayed in the bar.
        *
@@ -77,7 +70,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       displayValue: {
         type: String
       },
-
       /**
        * Defines the value state of the component.
        * <br><br>
@@ -99,15 +91,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: _ValueState.default.None
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */
-    {//
+    slots: /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */{
+      //
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */
-    {//
+    events: /** @lends sap.ui.webcomponents.main.ProgressIndicator.prototype */{
+      //
     }
   };
+
   /**
    * @class
    *
@@ -130,39 +121,31 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.0.0-rc.8
    */
-
   class ProgressIndicator extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _ProgressIndicator.default;
     }
-
     static get template() {
       return _ProgressIndicatorTemplate.default;
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
     constructor() {
       super();
       this._previousValue = 0;
       this._transitionDuration = 0;
     }
-
     onBeforeRendering() {
       this._transitionDuration = Math.abs(this._previousValue - this.validatedValue) * 20;
       this._previousValue = this.validatedValue;
     }
-
     valueStateTextMappings() {
       return {
         "Error": ProgressIndicator.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
@@ -171,7 +154,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Information": ProgressIndicator.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION)
       };
     }
-
     valueStateIconMappings() {
       return {
         "Error": "status-negative",
@@ -180,7 +162,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Information": "hint"
       };
     }
-
     get styles() {
       return {
         bar: {
@@ -189,7 +170,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get classes() {
       return {
         root: {
@@ -198,51 +178,39 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get validatedValue() {
       if (this.value < 0) {
         return 0;
       }
-
       if (this.value > 100) {
         return 100;
       }
-
       return this.value;
     }
-
     get showValueInRemainingBar() {
       return this.value <= 50;
     }
-
     get shouldAnimate() {
       return (0, _AnimationMode2.getAnimationMode)() !== _AnimationMode.default.None;
     }
-
     get valueStateText() {
       const percentValue = `${this.validatedValue}%`;
       const valueText = this.valueStateTextMappings()[this.valueState];
       return valueText ? `${percentValue} ${valueText}` : percentValue;
     }
-
     get showIcon() {
       return this.valueState !== _ValueState.default.None;
     }
-
     get valueStateIcon() {
       return this.valueStateIconMappings()[this.valueState];
     }
-
     get _ariaDisabled() {
       return this.disabled || undefined;
     }
-
     static async onDefine() {
       ProgressIndicator.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   ProgressIndicator.define();
   var _default = ProgressIndicator;
   _exports.default = _default;

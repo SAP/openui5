@@ -11,10 +11,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _WrappingType = _interopRequireDefault(_WrappingType);
   _TitleTemplate = _interopRequireDefault(_TitleTemplate);
   _Title = _interopRequireDefault(_Title);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -22,9 +21,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */
   const metadata = {
     tag: "ui5-title",
-    properties:
-    /** @lends sap.ui.webcomponents.main.Title.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Title.prototype */{
       /**
        * Defines how the text of a component will be displayed when there is not enough space.
        * Available options are:
@@ -41,7 +38,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _WrappingType.default,
         defaultValue: _WrappingType.default.None
       },
-
       /**
        * Defines the component level.
        * Available options are: <code>"H6"</code> to <code>"H1"</code>.
@@ -55,9 +51,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: _TitleLevel.default.H2
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.Title.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Title.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -72,6 +66,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -91,54 +86,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @tagname ui5-title
    * @public
    */
-
   class Title extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _TitleTemplate.default;
     }
-
     static get styles() {
       return _Title.default;
     }
-
     get normalizedLevel() {
       return this.level.toLowerCase();
     }
-
     get h1() {
       return this.normalizedLevel === "h1";
     }
-
     get h2() {
       return this.normalizedLevel === "h2";
     }
-
     get h3() {
       return this.normalizedLevel === "h3";
     }
-
     get h4() {
       return this.normalizedLevel === "h4";
     }
-
     get h5() {
       return this.normalizedLevel === "h5";
     }
-
     get h6() {
       return this.normalizedLevel === "h6";
     }
-
   }
-
   Title.define();
   var _default = Title;
   _exports.default = _default;

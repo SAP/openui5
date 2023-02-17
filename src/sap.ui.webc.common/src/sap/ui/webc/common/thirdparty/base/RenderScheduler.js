@@ -5,7 +5,6 @@ sap.ui.define(["exports", "./Render"], function (_exports, _Render) {
     value: true
   });
   _exports.default = void 0;
-
   /**
    * @deprecated Use the Render.js module instead
    */
@@ -19,36 +18,29 @@ sap.ui.define(["exports", "./Render"], function (_exports, _Render) {
      */
     static async renderDeferred(webComponent) {
       console.log("RenderScheduler.renderDeferred is deprecated, please use renderDeferred, exported by Render.js instead"); // eslint-disable-line
-
       await (0, _Render.renderDeferred)(webComponent);
     }
+
     /**
      * Renders a component synchronously
      *
      * @param webComponent
      * @deprecated Use renderImmediately from the Render.js module instead
      */
-
-
     static renderImmediately(webComponent) {
       console.log("RenderScheduler.renderImmediately is deprecated, please use renderImmediately, exported by Render.js instead"); // eslint-disable-line
-
       return (0, _Render.renderImmediately)(webComponent);
     }
+
     /**
      * @deprecated Use renderFinished from the Render.js module instead
      * @returns {Promise<void>}
      */
-
-
     static async whenFinished() {
       console.log("RenderScheduler.whenFinished is deprecated, please use renderFinished, exported by Render.js instead"); // eslint-disable-line
-
       await (0, _Render.renderFinished)();
     }
-
   }
-
   var _default = RenderScheduler;
   _exports.default = _default;
 });

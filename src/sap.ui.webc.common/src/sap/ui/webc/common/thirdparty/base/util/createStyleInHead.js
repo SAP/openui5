@@ -5,7 +5,6 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.default = void 0;
-
   /**
    * Creates a <style> tag in the <head> tag
    * @param cssText - the CSS
@@ -20,7 +19,6 @@ sap.ui.define(["exports"], function (_exports) {
     document.head.appendChild(style);
     return style;
   };
-
   var _default = createStyleInHead;
   _exports.default = _default;
 });

@@ -10,9 +10,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _CardTemplate = _interopRequireDefault(_CardTemplate);
   _Icon = _interopRequireDefault(_Icon);
   _Card = _interopRequireDefault(_Card);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -22,9 +20,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-card",
     languageAware: true,
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.Card.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Card.prototype */{
       /**
        * Defines the content of the component.
        * @type {HTMLElement[]}
@@ -35,7 +31,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         propertyName: "content",
         type: HTMLElement
       },
-
       /**
        * Defines the header of the component.
        * <br><br>
@@ -49,9 +44,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.main.Card.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Card.prototype */{
       /**
        * Defines the accessible name of the component, which is used as the name of the card region and should be unique per card.
        * <b>Note:</b> <code>accessibleName</code> should be always set, unless <code>accessibleNameRef</code> is set.
@@ -65,7 +58,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Defines the IDs of the elements that label the component.
        *
@@ -78,10 +70,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Card.prototype */
-    {}
+    events: /** @lends sap.ui.webcomponents.main.Card.prototype */{}
   };
+
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -111,55 +102,43 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @appenddocs CardHeader
    */
-
   class Card extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _CardTemplate.default;
     }
-
     static get styles() {
       return _Card.default;
     }
-
     get classes() {
       return {
         "ui5-card-root": true,
         "ui5-card--nocontent": !this.content.length
       };
     }
-
     get _hasHeader() {
       return !!this.header.length;
     }
-
     get _getAriaLabel() {
       const effectiveAriaLabelText = (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this),
-            effectiveAriaLabel = effectiveAriaLabelText ? ` ${effectiveAriaLabelText}` : "";
+        effectiveAriaLabel = effectiveAriaLabelText ? ` ${effectiveAriaLabelText}` : "";
       return Card.i18nBundle.getText(_i18nDefaults.ARIA_ROLEDESCRIPTION_CARD) + effectiveAriaLabel;
     }
-
     get _ariaCardContentLabel() {
       return Card.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_CARD_CONTENT);
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
     static async onDefine() {
       Card.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   Card.define();
   var _default = Card;
   _exports.default = _default;

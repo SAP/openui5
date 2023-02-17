@@ -11,10 +11,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _WrappingType = _interopRequireDefault(_WrappingType);
   _LinkTemplate = _interopRequireDefault(_LinkTemplate);
   _Link = _interopRequireDefault(_Link);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -23,9 +22,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-link",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Link.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Link.prototype */{
       /**
        * Defines whether the component is disabled.
        * <br><br>
@@ -38,7 +35,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines the component href.
        * <br><br>
@@ -51,7 +47,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       href: {
         type: String
       },
-
       /**
        * Defines the component target.
        * <br><br>
@@ -74,7 +69,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       target: {
         type: String
       },
-
       /**
        * Defines the component design.
        * <br><br>
@@ -88,7 +82,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _LinkDesign.default,
         defaultValue: _LinkDesign.default.Default
       },
-
       /**
        * Defines how the text of a component will be displayed when there is not enough space.
        * Available options are:
@@ -105,7 +98,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _WrappingType.default,
         defaultValue: _WrappingType.default.None
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -117,7 +109,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Receives id(or many ids) of the elements that label the input
        *
@@ -129,7 +120,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleNameRef: {
         type: String
       },
-
       /**
        * Defines the ARIA role of the component.
        * @defaultvalue ""
@@ -139,7 +129,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleRole: {
         type: String
       },
-
       /**
        * An object of strings that defines several additional accessibility attribute values
        * for customization depending on the use case.
@@ -178,7 +167,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         noAttribute: true
       },
-
       /**
        * Indicates if the element is on focus.
        * @private
@@ -187,9 +175,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.Link.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Link.prototype */{
       /**
        * Defines the text of the component.
        * <br><b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
@@ -202,9 +188,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Node
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Link.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Link.prototype */{
       /**
        * Fired when the component is triggered either with a mouse/tap
        * or by using the Enter key.
@@ -235,6 +219,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -275,80 +260,62 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @tagname ui5-link
    * @public
    */
-
   class Link extends _UI5Element.default {
     constructor() {
       super();
       this._dummyAnchor = document.createElement("a");
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _LinkTemplate.default;
     }
-
     static get styles() {
       return _Link.default;
     }
-
     onBeforeRendering() {
       const needsNoReferrer = this.target !== "_self" && this.href && this._isCrossOrigin();
-
       this._rel = needsNoReferrer ? "noreferrer noopener" : undefined;
     }
-
     _isCrossOrigin() {
       const loc = window.location;
       this._dummyAnchor.href = this.href;
       return !(this._dummyAnchor.hostname === loc.hostname && this._dummyAnchor.port === loc.port && this._dummyAnchor.protocol === loc.protocol);
     }
-
     get tabIndex() {
       if (this._tabIndex) {
         return this._tabIndex;
       }
-
       return this.disabled || !this.textContent.length ? "-1" : "0";
     }
-
     get ariaLabelText() {
       return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
     }
-
     get hasLinkType() {
       return this.design !== _LinkDesign.default.Default;
     }
-
     static typeTextMappings() {
       return {
         "Subtle": _i18nDefaults.LINK_SUBTLE,
         "Emphasized": _i18nDefaults.LINK_EMPHASIZED
       };
     }
-
     get linkTypeText() {
       return Link.i18nBundle.getText(Link.typeTextMappings()[this.design]);
     }
-
     get parsedRef() {
       return this.href && this.href.length > 0 ? this.href : undefined;
     }
-
     get effectiveAccRole() {
       return this.accessibleRole || "link";
     }
-
     static async onDefine() {
       Link.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     _onclick(event) {
       const {
         altKey,
@@ -363,47 +330,37 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         metaKey,
         shiftKey
       }, true);
-
       if (!executeEvent) {
         event.preventDefault();
       }
     }
-
     _onfocusin(event) {
       event.isMarked = "link";
       this.focused = true;
     }
-
     _onfocusout(event) {
       this.focused = false;
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isEnter)(event)) {
         this._onclick(event);
       } else if ((0, _Keys.isSpace)(event)) {
         event.preventDefault();
       }
-
       event.isMarked = "link";
     }
-
     _onkeyup(event) {
       if (!(0, _Keys.isSpace)(event)) {
         event.isMarked = "link";
         return;
       }
-
       this._onclick(event);
-
       if (this.href && !event.defaultPrevented) {
         const customEvent = new MouseEvent("click");
         this.getDomRef().dispatchEvent(customEvent);
       }
     }
-
   }
-
   Link.define();
   var _default = Link;
   _exports.default = _default;

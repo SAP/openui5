@@ -11,10 +11,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
   _Icon = _interopRequireDefault(_Icon);
   _TreeListItemTemplate = _interopRequireDefault(_TreeListItemTemplate);
   _TreeListItem = _interopRequireDefault(_TreeListItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -23,9 +22,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
   const metadata = {
     tag: "ui5-li-tree",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.TreeListItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.TreeListItem.prototype */{
       /**
        * Defines the indentation of the tree list item. Use level 1 for tree list items, representing top-level tree nodes.
        *
@@ -37,7 +34,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: _Integer.default,
         defaultValue: 1
       },
-
       /**
        * If set, an icon will be displayed before the text of the tree list item.
        *
@@ -48,7 +44,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       icon: {
         type: String
       },
-
       /**
        * Defines whether the tree list item should display an expand/collapse button.
        *
@@ -59,7 +54,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       showToggleButton: {
         type: Boolean
       },
-
       /**
        * Defines whether the tree list item will show a collapse or expand icon inside its toggle button.
        *
@@ -70,7 +64,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       expanded: {
         type: Boolean
       },
-
       /**
        * @private
        * @since 1.1.0
@@ -78,7 +71,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       indeterminate: {
         type: Boolean
       },
-
       /**
        * Defines the <code>additionalText</code>, displayed in the end of the tree item.
        * @type {string}
@@ -88,7 +80,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       additionalText: {
         type: String
       },
-
       /**
        * Defines the state of the <code>additionalText</code>.
        * <br>
@@ -102,7 +93,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: _ValueState.default,
         defaultValue: _ValueState.default.None
       },
-
       /**
        * Defines whether the toggle button is shown at the end, rather than at the beginning of the item
        *
@@ -112,7 +102,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       _toggleButtonEnd: {
         type: Boolean
       },
-
       /**
        * Defines whether the item shows minimal details - only icon (no text or toggle button)
        *
@@ -122,7 +111,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       _minimal: {
         type: Boolean
       },
-
       /**
        * @private
        * @since 1.0.0-rc.11
@@ -132,7 +120,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         defaultValue: 1,
         noAttribute: true
       },
-
       /**
        * @private
        * @since 1.0.0-rc.11
@@ -143,9 +130,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         noAttribute: true
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.TreeListItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.TreeListItem.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -159,9 +144,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         type: Node
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.TreeListItem.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.TreeListItem.prototype */{
       /**
        * Fired when the user interacts with the expand/collapse button of the tree list item.
        * @event
@@ -175,7 +158,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
           }
         }
       },
-
       /**
        * Fired when the user drills down into the tree hierarchy by pressing the right arrow on the tree node.
        *
@@ -190,7 +172,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
           }
         }
       },
-
       /**
        * Fired when the user goes up the tree hierarchy by pressing the left arrow on the tree node.
        *
@@ -207,6 +188,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       }
     }
   };
+
   /**
    * @class
    * The <code>ui5-li-tree</code> represents a node in a tree structure, shown as a <code>ui5-list</code>.
@@ -233,34 +215,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
    * @public
    * @since 1.0.0-rc.8
    */
-
   class TreeListItem extends _ListItem.default {
     static get template() {
       return _TreeListItemTemplate.default;
     }
-
     static get styles() {
       return [_ListItem.default.styles, _TreeListItem.default];
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get dependencies() {
       return [..._ListItem.default.dependencies, _Icon.default];
     }
-
     onBeforeRendering() {
       this.actionable = false;
     }
-
     get classes() {
       const allClasses = super.classes;
       allClasses.main["ui5-li-root-tree"] = true;
       return allClasses;
     }
-
     get styles() {
       return {
         preContent: {
@@ -268,31 +243,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         }
       };
     }
-
     get effectiveLevel() {
       return this.level - 1;
     }
-
     get hasParent() {
       return this.level > 1;
     }
-
     get _toggleIconName() {
       return this.expanded ? "navigation-down-arrow" : "navigation-right-arrow";
     }
-
     get _showToggleButtonBeginning() {
       return this.showToggleButton && !this._minimal && !this._toggleButtonEnd;
     }
-
     get _showToggleButtonEnd() {
       return this.showToggleButton && !this._minimal && this._toggleButtonEnd;
     }
-
     get _showTitle() {
       return this.textContent.length && !this._minimal;
     }
-
     get _accInfo() {
       return {
         role: "treeitem",
@@ -304,17 +272,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         listItemAriaLabel: TreeListItem.i18nBundle.getText(_i18nDefaults.TREE_ITEM_ARIA_LABEL)
       };
     }
-
     _toggleClick(event) {
       event.stopPropagation();
       this.fireEvent("toggle", {
         item: this
       });
     }
-
     _onkeydown(event) {
       super._onkeydown(event);
-
       if (this.showToggleButton && (0, _Keys.isRight)(event)) {
         if (!this.expanded) {
           this.fireEvent("toggle", {
@@ -326,7 +291,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
           });
         }
       }
-
       if ((0, _Keys.isLeft)(event)) {
         if (this.expanded) {
           this.fireEvent("toggle", {
@@ -339,17 +303,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         }
       }
     }
-
     get iconAccessibleName() {
       return this.expanded ? TreeListItem.i18nBundle.getText(_i18nDefaults.TREE_ITEM_COLLAPSE_NODE) : TreeListItem.i18nBundle.getText(_i18nDefaults.TREE_ITEM_EXPAND_NODE);
     }
-
     static async onDefine() {
       [TreeListItem.i18nBundle] = await Promise.all([(0, _i18nBundle.getI18nBundle)("@ui5/webcomponents"), super.onDefine()]);
     }
-
   }
-
   TreeListItem.define();
   var _default = TreeListItem;
   _exports.default = _default;

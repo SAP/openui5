@@ -15,11 +15,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _FCLLayout = _interopRequireDefault(_FCLLayout);
   _FlexibleColumnLayoutTemplate = _interopRequireDefault(_FlexibleColumnLayoutTemplate);
   _FlexibleColumnLayout = _interopRequireDefault(_FlexibleColumnLayout);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Texts
+
   // Template
+
   // Styles
 
   /**
@@ -28,9 +28,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-flexible-column-layout",
     fastNavigation: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.FlexibleColumnLayout.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.FlexibleColumnLayout.prototype */{
       /**
        * Defines the columns layout and their proportion.
        * <br><br>
@@ -60,7 +58,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _FCLLayout.default,
         defaultValue: _FCLLayout.default.OneColumn
       },
-
       /**
       * Defines the visibility of the arrows,
       * used for expanding and shrinking the columns.
@@ -73,7 +70,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hideArrows: {
         type: Boolean
       },
-
       /**
        * An object of strings that defines several additional accessibility texts for even further customization.
        *
@@ -95,7 +91,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibilityTexts: {
         type: Object
       },
-
       /**
        * An object of strings that defines additional accessibility roles for further customization.
        *
@@ -113,7 +108,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibilityRoles: {
         type: Object
       },
-
       /**
       * Defines the component width in px.
       *
@@ -125,7 +119,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Float.default,
         defaultValue: 0
       },
-
       /**
       * Defines the effective columns layout,
       * based on both the <code>layout</code> property and the screen size.
@@ -139,7 +132,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Object,
         defaultValue: undefined
       },
-
       /**
       * Defines the visible columns count - 1, 2 or 3.
       *
@@ -151,7 +143,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 0
       },
-
       /**
        * Allows the user to replace the whole layouts configuration
        *
@@ -164,9 +155,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: undefined
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.FlexibleColumnLayout.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.FlexibleColumnLayout.prototype */{
       /**
        * Defines the content in the start column.
        * @type {HTMLElement}
@@ -176,7 +165,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       startColumn: {
         type: HTMLElement
       },
-
       /**
        * Defines the content in the middle column.
        * @type {HTMLElement}
@@ -186,7 +174,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       midColumn: {
         type: HTMLElement
       },
-
       /**
        * Defines the content in the end column.
        * @type {HTMLElement}
@@ -197,9 +184,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.FlexibleColumnLayout.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.FlexibleColumnLayout.prototype */{
       /**
        * Fired when the layout changes via user interaction by clicking the arrows
        * or by changing the component size due to resizing.
@@ -241,6 +226,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -289,7 +275,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.0.0-rc.8
    */
-
   class FlexibleColumnLayout extends _UI5Element.default {
     constructor() {
       super();
@@ -297,38 +282,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.initialRendering = true;
       this._handleResize = this.handleResize.bind(this);
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _FlexibleColumnLayout.default;
     }
-
     static get template() {
       return _FlexibleColumnLayoutTemplate.default;
     }
-
     static get dependencies() {
       return [_Button.default];
     }
-
     static async onDefine() {
       FlexibleColumnLayout.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
-
     static get BREAKPOINTS() {
       return {
         "PHONE": 599,
         "TABLET": 1023
       };
     }
-
     static get MEDIA() {
       return {
         PHONE: "phone",
@@ -336,67 +313,58 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         DESKTOP: "desktop"
       };
     }
-
     static get ANIMATION_DURATION() {
       return (0, _AnimationMode2.getAnimationMode)() !== _AnimationMode.default.None ? 560 : 0;
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this, this._handleResize);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this._handleResize);
-
       ["start", "mid", "end"].forEach(column => {
         this[`${column}ColumnDOM`].removeEventListener("transitionend", this.columnResizeHandler);
       });
     }
-
     onAfterRendering() {
       if (this.initialRendering) {
         this.handleInitialRendering();
         return;
       }
-
       this.syncLayout();
     }
-
     handleInitialRendering() {
       this._prevLayout = this.layout;
       this.updateLayout();
       this.initialRendering = false;
     }
-
     handleResize() {
       if (this.initialRendering) {
         return;
-      } // store the previous layout
+      }
 
+      // store the previous layout
+      const prevLayoutHash = this.columnLayout.join();
 
-      const prevLayoutHash = this.columnLayout.join(); // update the column layout, based on the current width
+      // update the column layout, based on the current width
+      this.updateLayout();
 
-      this.updateLayout(); // fire layout-change if the column layout changed
-
+      // fire layout-change if the column layout changed
       if (prevLayoutHash !== this.columnLayout.join()) {
         this.fireLayoutChange(false, true);
       }
     }
-
     startArrowClick() {
       this.arrowClick({
         start: true,
         end: false
       });
     }
-
     endArrowClick() {
       this.arrowClick({
         start: false,
         end: true
       });
     }
-
     arrowClick({
       start,
       end
@@ -405,88 +373,82 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.layout = this.nextLayout(this.layout, {
         start,
         end
-      }); // update layout
+      });
 
-      this.updateLayout(); // fire layout-change
+      // update layout
+      this.updateLayout();
 
+      // fire layout-change
       this.fireLayoutChange(true, false);
     }
-
     updateLayout() {
       this._width = this.widthDOM;
       this._columnLayout = this.nextColumnLayout(this.layout);
       this._visibleColumns = this.calcVisibleColumns(this._columnLayout);
       this.toggleColumns();
     }
-
     syncLayout() {
       if (this._prevLayout !== this.layout) {
         this.updateLayout();
         this._prevLayout = this.layout;
       }
     }
-
     toggleColumns() {
       this.toggleColumn("start");
       this.toggleColumn("mid");
       this.toggleColumn("end");
     }
-
     toggleColumn(column) {
       const columnWidth = this[`${column}ColumnWidth`];
       const columnDOM = this[`${column}ColumnDOM`];
       const currentlyHidden = columnWidth === 0;
-      const previouslyHidden = columnDOM.style.width === "0px"; // no change
+      const previouslyHidden = columnDOM.style.width === "0px";
 
+      // no change
       if (currentlyHidden && previouslyHidden) {
         return;
-      } // column resizing: from 33% to 67%, from 25% to 50%, etc.
+      }
 
-
+      // column resizing: from 33% to 67%, from 25% to 50%, etc.
       if (!currentlyHidden && !previouslyHidden) {
         columnDOM.style.width = columnWidth;
         return;
-      } // hide column: 33% to 0, 25% to 0, etc .
+      }
 
-
+      // hide column: 33% to 0, 25% to 0, etc .
       if (currentlyHidden) {
         // animate the width
-        columnDOM.style.width = columnWidth; // hide column with delay to allow the animation runs entirely
+        columnDOM.style.width = columnWidth;
 
+        // hide column with delay to allow the animation runs entirely
         columnDOM.addEventListener("transitionend", this.columnResizeHandler);
         return;
-      } // show column: from 0 to 33%, from 0 to 25%, etc.
+      }
 
-
+      // show column: from 0 to 33%, from 0 to 25%, etc.
       if (previouslyHidden) {
         columnDOM.removeEventListener("transitionend", this.columnResizeHandler);
         columnDOM.classList.remove("ui5-fcl-column--hidden");
         columnDOM.style.width = columnWidth;
       }
     }
-
     columnResizeHandler(event) {
       event.target.classList.add("ui5-fcl-column--hidden");
     }
-
     nextLayout(layout, arrowsInfo = {}) {
       if (arrowsInfo.start) {
         return (0, _FCLLayout2.getNextLayoutByStartArrow)()[layout];
       }
-
       if (arrowsInfo.end) {
         return (0, _FCLLayout2.getNextLayoutByEndArrow)()[layout];
       }
     }
-
     nextColumnLayout(layout) {
       return this._effectiveLayoutsByMedia[this.media][layout].layout;
     }
-
     calcVisibleColumns(colLayot) {
       return colLayot.filter(col => col !== 0).length;
     }
-
     fireLayoutChange(arrowUsed, resize) {
       this.fireEvent("layout-change", {
         layout: this.layout,
@@ -501,6 +463,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         resize
       });
     }
+
     /**
      * Returns the current column layout, based on both the <code>layout</code> property and the screen size.
      * <br><br>
@@ -511,11 +474,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @defaultvalue ["100%", 0, 0]
      * @public
      */
-
-
     get columnLayout() {
       return this._columnLayout;
     }
+
     /**
      * Returns if the <code>start</code> column is visible.
      * @readonly
@@ -523,15 +485,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @type { boolean }
      * @public
      */
-
-
     get startColumnVisible() {
       if (this._columnLayout) {
         return this._columnLayout[0] !== 0;
       }
-
       return false;
     }
+
     /**
      * Returns if the <code>middle</code> column is visible.
      * @readonly
@@ -539,15 +499,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @defaultvalue false
      * @public
      */
-
-
     get midColumnVisible() {
       if (this._columnLayout) {
         return this._columnLayout[1] !== 0;
       }
-
       return false;
     }
+
     /**
      * Returns if the <code>end</code> column is visible.
      * @readonly
@@ -555,15 +513,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @defaultvalue false
      * @public
      */
-
-
     get endColumnVisible() {
       if (this._columnLayout) {
         return this._columnLayout[2] !== 0;
       }
-
       return false;
     }
+
     /**
      * Returns the number of currently visible columns.
      * @readonly
@@ -571,15 +527,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @defaultvalue 1
      * @public
      */
-
-
     get visibleColumns() {
       return this._visibleColumns;
     }
-
     get classes() {
       const hasAnimation = (0, _AnimationMode2.getAnimationMode)() !== _AnimationMode.default.None;
-
       return {
         root: {
           "ui5-fcl-root": true
@@ -603,7 +555,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get styles() {
       return {
         arrowsContainer: {
@@ -626,139 +577,105 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get startColumnWidth() {
       return this._columnLayout ? this._columnLayout[0] : "100%";
     }
-
     get midColumnWidth() {
       return this._columnLayout ? this._columnLayout[1] : 0;
     }
-
     get endColumnWidth() {
       return this._columnLayout ? this._columnLayout[2] : 0;
     }
-
     get showStartSeparator() {
       return this.effectiveArrowsInfo[0].separator || this.startArrowVisibility;
     }
-
     get showEndSeparator() {
       return this.effectiveArrowsInfo[1].separator || this.endArrowVisibility;
     }
-
     get showStartArrow() {
       return this.hideArrows ? false : this.startArrowVisibility;
     }
-
     get showEndArrow() {
       return this.hideArrows ? false : this.endArrowVisibility;
     }
-
     get startArrowVisibility() {
       return this.effectiveArrowsInfo[0].visible;
     }
-
     get endArrowVisibility() {
       return this.effectiveArrowsInfo[1].visible;
     }
-
     get startArrowDirection() {
       return this.effectiveArrowsInfo[0].dir;
     }
-
     get endArrowDirection() {
       return this.effectiveArrowsInfo[1].dir;
     }
-
     get effectiveArrowsInfo() {
       return this._effectiveLayoutsByMedia[this.media][this.layout].arrows;
     }
-
     get media() {
       if (this._width <= FlexibleColumnLayout.BREAKPOINTS.PHONE) {
         return FlexibleColumnLayout.MEDIA.PHONE;
       }
-
       if (this._width <= FlexibleColumnLayout.BREAKPOINTS.TABLET) {
         return FlexibleColumnLayout.MEDIA.TABLET;
       }
-
       return FlexibleColumnLayout.MEDIA.DESKTOP;
     }
-
     get widthDOM() {
       return this.getBoundingClientRect().width;
     }
-
     get startColumnDOM() {
       return this.shadowRoot.querySelector(".ui5-fcl-column--start");
     }
-
     get midColumnDOM() {
       return this.shadowRoot.querySelector(".ui5-fcl-column--middle");
     }
-
     get endColumnDOM() {
       return this.shadowRoot.querySelector(".ui5-fcl-column--end");
     }
-
     get accStartColumnText() {
       return this.accessibilityTexts.startColumnAccessibleName || FlexibleColumnLayout.i18nBundle.getText(_i18nDefaults.FCL_START_COLUMN_TXT);
     }
-
     get accMiddleColumnText() {
       return this.accessibilityTexts.midColumnAccessibleName || FlexibleColumnLayout.i18nBundle.getText(_i18nDefaults.FCL_MIDDLE_COLUMN_TXT);
     }
-
     get accEndColumnText() {
       return this.accessibilityTexts.endColumnAccessibleName || FlexibleColumnLayout.i18nBundle.getText(_i18nDefaults.FCL_END_COLUMN_TXT);
     }
-
     get accStartArrowContainerText() {
       return this.accessibilityTexts.startArrowContainerAccessibleName || undefined;
     }
-
     get accEndArrowContainerText() {
       return this.accessibilityTexts.endArrowContainerAccessibleName || undefined;
     }
-
     get accStartColumnRole() {
       if (this.startColumnVisible) {
         return this.accessibilityRoles.startColumnRole || "region";
       }
-
       return undefined;
     }
-
     get accMiddleColumnRole() {
       if (this.midColumnVisible) {
         return this.accessibilityRoles.midColumnRole || "region";
       }
-
       return undefined;
     }
-
     get accEndColumnRole() {
       if (this.endColumnVisible) {
         return this.accessibilityRoles.endColumnRole || "region";
       }
-
       return undefined;
     }
-
     get accStartArrowContainerRole() {
       return this.accessibilityRoles.startArrowContainerRole || undefined;
     }
-
     get accEndArrowContainerRole() {
       return this.accessibilityRoles.endArrowContainerRole || undefined;
     }
-
     get _effectiveLayoutsByMedia() {
       return this._layoutsConfiguration || (0, _FCLLayout2.getLayoutsByMedia)();
     }
-
     get _accAttributes() {
       return {
         columns: {
@@ -777,29 +694,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get accStartArrowText() {
       const customTexts = this.accessibilityTexts;
-
       if (this.startArrowDirection === "mirror") {
         return customTexts.startArrowLeftText || FlexibleColumnLayout.i18nBundle.getText(_i18nDefaults.FCL_START_COLUMN_COLLAPSE_BUTTON_TOOLTIP);
       }
-
       return customTexts.startArrowRightText || FlexibleColumnLayout.i18nBundle.getText(_i18nDefaults.FCL_START_COLUMN_EXPAND_BUTTON_TOOLTIP);
     }
-
     get accEndArrowText() {
       const customTexts = this.accessibilityTexts;
-
       if (this.endArrowDirection === "mirror") {
         return customTexts.endArrowRightText || FlexibleColumnLayout.i18nBundle.getText(_i18nDefaults.FCL_END_COLUMN_COLLAPSE_BUTTON_TOOLTIP);
       }
-
       return customTexts.endArrowLeftText || FlexibleColumnLayout.i18nBundle.getText(_i18nDefaults.FCL_END_COLUMN_EXPAND_BUTTON_TOOLTIP);
     }
-
   }
-
   FlexibleColumnLayout.define();
   var _default = FlexibleColumnLayout;
   _exports.default = _default;

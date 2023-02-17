@@ -12,21 +12,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _TimelineItemTemplate = _interopRequireDefault(_TimelineItemTemplate);
   _TimelineLayout = _interopRequireDefault(_TimelineLayout);
   _TimelineItem = _interopRequireDefault(_TimelineItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
+
   const SHORT_LINE_WIDTH = "ShortLineWidth";
   const LARGE_LINE_WIDTH = "LargeLineWidth";
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-timeline-item",
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.TimelineItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.TimelineItem.prototype */{
       /**
        * Determines the description of the <code>ui5-timeline-item</code>.
        *
@@ -38,9 +35,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Node
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.TimelineItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.TimelineItem.prototype */{
       /**
        * Defines the icon to be displayed as graphical element within the <code>ui5-timeline-item</code>.
        * SAP-icons font provides numerous options.
@@ -55,7 +50,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: String
       },
-
       /**
        * Defines the name of the item, displayed before the <code>title-text</code>.
        *
@@ -66,7 +60,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       name: {
         type: String
       },
-
       /**
        * Defines if the <code>name</code> is clickable.
        *
@@ -77,7 +70,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       nameClickable: {
         type: Boolean
       },
-
       /**
        * Defines the title text of the component.
        *
@@ -88,7 +80,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       titleText: {
         type: String
       },
-
       /**
        * Defines the subtitle text of the component.
        * @type {string}
@@ -103,7 +94,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: "-1",
         noAttribute: true
       },
-
       /**
        * Defines the items orientation.
        *
@@ -115,7 +105,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _TimelineLayout.default,
         defaultvalue: _TimelineLayout.default.Vertical
       },
-
       /**
        * Defines the indicator line width.
        *
@@ -126,9 +115,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.TimelineItem.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.TimelineItem.prototype */{
       /**
        * Fired when the item name is pressed either with a
        * click/tap or by using the Enter or Space key.
@@ -142,6 +129,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       "name-click": {}
     }
   };
+
   /**
    * @class
    *
@@ -157,36 +145,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.fiori.ITimelineItem
    * @public
    */
-
   class TimelineItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _TimelineItemTemplate.default;
     }
-
     static get styles() {
       return _TimelineItem.default;
     }
-
     constructor() {
       super();
     }
-
     onNamePress() {
       this.fireEvent("name-click", {});
     }
-
     static get dependencies() {
       return [_Icon.default, _Link.default];
     }
-
     get classes() {
       return {
         indicator: {
@@ -201,9 +181,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
   }
-
   TimelineItem.define();
   var _default = TimelineItem;
   _exports.default = _default;

@@ -6,17 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-side-navigation-sub-item",
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.SideNavigationSubItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.SideNavigationSubItem.prototype */{
       /**
        * Defines the text of the item.
        *
@@ -27,7 +23,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       text: {
         type: String
       },
-
       /**
        * Defines whether the subitem is selected.
        *
@@ -38,7 +33,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       selected: {
         type: Boolean
       },
-
       /**
        * Defines the icon of the item.
        * <br><br>
@@ -53,7 +47,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       icon: {
         type: String
       },
-
       /**
        * Defines the tooltip of the component.
        * @type {string}
@@ -65,10 +58,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: String
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.SideNavigationSubItem.prototype */
-    {}
+    events: /** @lends sap.ui.webcomponents.fiori.SideNavigationSubItem.prototype */{}
   };
+
   /**
    * @class
    *
@@ -89,18 +81,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @since 1.0.0-rc.8
    * @implements sap.ui.webcomponents.fiori.ISideNavigationSubItem
    */
-
   class SideNavigationSubItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     get _tooltip() {
       return this.title || this.text;
     }
-
   }
-
   SideNavigationSubItem.define();
   var _default = SideNavigationSubItem;
   _exports.default = _default;

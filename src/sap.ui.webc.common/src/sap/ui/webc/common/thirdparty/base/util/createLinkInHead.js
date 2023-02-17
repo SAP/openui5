@@ -5,7 +5,6 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.default = void 0;
-
   /**
    * Creates a <link> tag in the <head> tag
    * @param href - the CSS
@@ -21,7 +20,6 @@ sap.ui.define(["exports"], function (_exports) {
     document.head.appendChild(link);
     return link;
   };
-
   var _default = createLinkInHead;
   _exports.default = _default;
 });

@@ -13,10 +13,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _AvatarSize = _interopRequireDefault(_AvatarSize);
   _AvatarShape = _interopRequireDefault(_AvatarShape);
   _AvatarColorScheme = _interopRequireDefault(_AvatarColorScheme);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -26,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-avatar",
     languageAware: true,
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Avatar.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Avatar.prototype */{
       /**
        * Defines if the avatar is interactive (focusable and pressable).
        * @type {boolean}
@@ -38,7 +35,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       interactive: {
         type: Boolean
       },
-
       /**
        * Indicates if the elements is on focus
        * @private
@@ -46,7 +42,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       focused: {
         type: Boolean
       },
-
       /**
        * Defines the name of the UI5 Icon, that will be displayed.
        * <br>
@@ -66,7 +61,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: String
       },
-
       /**
        * Defines the displayed initials.
        * <br>
@@ -79,7 +73,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       initials: {
         type: String
       },
-
       /**
        * Defines the shape of the component.
        * <br><br>
@@ -96,7 +89,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _AvatarShape.default,
         defaultValue: _AvatarShape.default.Circle
       },
-
       /**
        * Defines predefined size of the component.
        * <br><br>
@@ -116,7 +108,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _AvatarSize.default,
         defaultValue: _AvatarSize.default.S
       },
-
       /**
        * @private
        */
@@ -124,7 +115,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: _AvatarSize.default.S
       },
-
       /**
        * Defines the background color of the desired image.
        * <br><br>
@@ -150,7 +140,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _AvatarColorScheme.default,
         defaultValue: _AvatarColorScheme.default.Accent6
       },
-
       /**
        * @private
        */
@@ -158,7 +147,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: _AvatarColorScheme.default.Accent6
       },
-
       /**
        * Defines the text alternative of the component.
        * If not provided a default text alternative will be set, if present.
@@ -171,7 +159,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Defines the aria-haspopup value of the component when <code>interactive</code> property is <code>true</code>.
        * <br><br>
@@ -190,9 +177,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.Avatar.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Avatar.prototype */{
       /**
        * Receives the desired <code>&lt;img&gt;</code> tag
        *
@@ -213,9 +198,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Avatar.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Avatar.prototype */{
       /**
       * Fired on mouseup, space and enter if avatar is interactive
       *
@@ -226,6 +209,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       click: {}
     }
   };
+
   /**
    * @class
    *
@@ -259,35 +243,29 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.IAvatar
    * @public
    */
-
   class Avatar extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _Avatar.default;
     }
-
     static get template() {
       return _AvatarTemplate.default;
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
     static async onDefine() {
       Avatar.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     get tabindex() {
       return this._tabIndex || (this.interactive ? "0" : "-1");
     }
+
     /**
      * Returns the effective avatar size.
      * @readonly
@@ -295,12 +273,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @defaultValue "S"
      * @private
      */
-
-
     get _effectiveSize() {
       // we read the attribute, because the "size" property will always have a default value
       return this.getAttribute("size") || this._size;
     }
+
     /**
      * Returns the effective background color.
      * @readonly
@@ -308,63 +285,48 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @defaultValue "Accent6"
      * @private
      */
-
-
     get _effectiveBackgroundColor() {
       // we read the attribute, because the "background-color" property will always have a default value
       return this.getAttribute("_color-scheme") || this._colorScheme;
     }
-
     get _role() {
       return this.interactive ? "button" : undefined;
     }
-
     get _ariaHasPopup() {
       return this._getAriaHasPopup();
     }
-
     get validInitials() {
       const validInitials = /^[a-zA-Z]{1,2}$/;
-
       if (this.initials && validInitials.test(this.initials)) {
         return this.initials;
       }
-
       return null;
     }
-
     get accessibleNameText() {
       if (this.accessibleName) {
         return this.accessibleName;
       }
-
       return Avatar.i18nBundle.getText(_i18nDefaults.AVATAR_TOOLTIP) || undefined;
     }
-
     get hasImage() {
       this._hasImage = !!this.image.length;
       return this._hasImage;
     }
-
     onBeforeRendering() {
       this._onclick = this.interactive ? this._onClickHandler.bind(this) : undefined;
     }
-
     _onClickHandler(event) {
       // prevent the native event and fire custom event to ensure the noConfict "ui5-click" is fired
       event.stopPropagation();
       this.fireEvent("click");
     }
-
     _onkeydown(event) {
       if (!this.interactive) {
         return;
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this.fireEvent("click");
       }
-
       if ((0, _Keys.isSpace)(event)) {
         event.preventDefault(); // prevent scrolling
       }
@@ -375,27 +337,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.fireEvent("click");
       }
     }
-
     _onfocusout() {
       this.focused = false;
     }
-
     _onfocusin() {
       if (this.interactive) {
         this.focused = true;
       }
     }
-
     _getAriaHasPopup() {
       if (!this.interactive || this.ariaHaspopup === "") {
         return;
       }
-
       return this.ariaHaspopup;
     }
-
   }
-
   Avatar.define();
   var _default = Avatar;
   _exports.default = _default;

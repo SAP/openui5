@@ -9,17 +9,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ValueState = _interopRequireDefault(_ValueState);
   _SuggestionListItem = _interopRequireDefault(_SuggestionListItem);
   _ListItemType = _interopRequireDefault(_ListItemType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-suggestion-item",
-    properties:
-    /** @lends sap.ui.webcomponents.main.SuggestionItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.SuggestionItem.prototype */{
       /**
        * Defines the text of the component.
        *
@@ -30,7 +26,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       text: {
         type: String
       },
-
       /**
        * Defines the visual indication and behavior of the item.
        * Available options are <code>Active</code> (by default), <code>Inactive</code> and <code>Detail</code>.
@@ -47,7 +42,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ListItemType.default,
         defaultValue: _ListItemType.default.Active
       },
-
       /**
        * Defines the description displayed right under the item text, if such is present.
        * @type {string}
@@ -57,7 +51,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       description: {
         type: String
       },
-
       /**
        * Defines the <code>icon</code> source URI.
        * <br><br>
@@ -71,7 +64,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: String
       },
-
       /**
        * Defines whether the <code>icon</code> should be displayed in the beginning of the item or in the end.
        * <br><br>
@@ -84,7 +76,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       iconEnd: {
         type: Boolean
       },
-
       /**
        * Defines the <code>image</code> source URI.
        * <br><br>
@@ -96,7 +87,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       image: {
         type: String
       },
-
       /**
        * Defines the <code>additionalText</code>, displayed in the end of the item.
        * @type {string}
@@ -106,7 +96,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       additionalText: {
         type: String
       },
-
       /**
        * Defines the state of the <code>additionalText</code>.
        * <br><br>
@@ -121,13 +110,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: _ValueState.default.None
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.SuggestionItem.prototype */
-    {},
-    events:
-    /** @lends sap.ui.webcomponents.main.SuggestionItem.prototype */
-    {}
+    slots: /** @lends sap.ui.webcomponents.main.SuggestionItem.prototype */{},
+    events: /** @lends sap.ui.webcomponents.main.SuggestionItem.prototype */{}
   };
+
   /**
    * @class
    * The <code>ui5-suggestion-item</code> represents the suggestion item of the <code>ui5-input</code>.
@@ -140,18 +126,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.IInputSuggestionItem
    * @public
    */
-
   class SuggestionItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get dependencies() {
       return [_SuggestionListItem.default];
     }
-
   }
-
   SuggestionItem.define();
   var _default = SuggestionItem;
   _exports.default = _default;

@@ -10,9 +10,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Icon = _interopRequireDefault(_Icon);
   _ProductSwitchItemTemplate = _interopRequireDefault(_ProductSwitchItemTemplate);
   _ProductSwitchItem = _interopRequireDefault(_ProductSwitchItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -20,9 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */
   const metadata = {
     tag: "ui5-product-switch-item",
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.ProductSwitchItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.ProductSwitchItem.prototype */{
       /**
         * Defines the title of the component.
         * @type {string}
@@ -33,7 +29,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       titleText: {
         type: String
       },
-
       /**
        * Defines the subtitle of the component.
        * @type {string}
@@ -44,7 +39,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       subtitleText: {
         type: String
       },
-
       /**
        * Defines the icon to be displayed as a graphical element within the component.
        * <br><br>
@@ -61,7 +55,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: String
       },
-
       /**
        * Defines a target where the <code>targetSrc</code> content must be open.
        * <br><br>
@@ -82,7 +75,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: "_self"
       },
-
       /**
        * Defines the component target URI. Supports standard hyperlink behavior.
        * @type {string}
@@ -92,7 +84,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       targetSrc: {
         type: String
       },
-
       /**
        * Used to switch the active state (pressed or not) of the component.
        * @private
@@ -100,7 +91,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       active: {
         type: Boolean
       },
-
       /**
        * Indicates whether the element is focused.
        * @private
@@ -108,7 +98,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       focused: {
         type: Boolean
       },
-
       /**
        * Used to set the selected state of the component. Only one selected in a sequence.
        * @private
@@ -122,12 +111,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         noAttribute: true
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.ProductSwitchItem.prototype */
-    {},
-    events:
-    /** @lends sap.ui.webcomponents.fiori.ProductSwitchItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.ProductSwitchItem.prototype */{},
+    events: /** @lends sap.ui.webcomponents.fiori.ProductSwitchItem.prototype */{
       /**
        * Fired when the <code>ui5-product-switch-item</code> is activated either with a
        * click/tap or by using the Enter or Space key.
@@ -139,6 +124,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _focused: {}
     }
   };
+
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -169,96 +155,75 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.fiori.IProductSwitchItem
    * @since 1.0.0-rc.5
    */
-
   class ProductSwitchItem extends _UI5Element.default {
     constructor() {
       super();
-
       this._deactivate = () => {
         if (this.active) {
           this.active = false;
         }
       };
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _ProductSwitchItem.default;
     }
-
     static get template() {
       return _ProductSwitchItemTemplate.default;
     }
-
     onEnterDOM() {
       document.addEventListener("mouseup", this._deactivate);
     }
-
     onExitDOM() {
       document.removeEventListener("mouseup", this._deactivate);
     }
-
     _onmousedown() {
       this.active = true;
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
         this.active = true;
       }
-
       if ((0, _Keys.isSpace)(event)) {
         event.preventDefault();
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this._fireItemClick();
       }
     }
-
     _onkeyup(event) {
       if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
         this.active = false;
       }
-
       if ((0, _Keys.isSpace)(event)) {
         if ((0, _Keys.isSpaceShift)(event)) {
           event.stopPropagation();
         }
-
         this._fireItemClick();
       }
     }
-
     _onfocusout() {
       this.active = false;
       this.focused = false;
     }
-
     _onfocusin(event) {
       this.focused = true;
       this.fireEvent("_focused", event);
     }
-
     _fireItemClick() {
       this.fireEvent("click", {
         item: this
       });
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
   }
-
   ProductSwitchItem.define();
   var _default = ProductSwitchItem;
   _exports.default = _default;

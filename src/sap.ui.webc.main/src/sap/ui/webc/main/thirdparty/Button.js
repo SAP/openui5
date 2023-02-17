@@ -12,22 +12,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ButtonTemplate = _interopRequireDefault(_ButtonTemplate);
   _Icon = _interopRequireDefault(_Icon);
   _Button = _interopRequireDefault(_Button);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
+
   let isGlobalHandlerAttached = false;
   let activeButton = null;
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-button",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Button.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Button.prototype */{
       /**
        * Defines the component design.
        *
@@ -51,7 +48,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ButtonDesign.default,
         defaultValue: _ButtonDesign.default.Default
       },
-
       /**
        * Defines whether the component is disabled.
        * A disabled component can't be pressed or
@@ -64,7 +60,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines the icon, displayed as graphical element within the component.
        * The SAP-icons font provides numerous options.
@@ -80,7 +75,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: String
       },
-
       /**
        * Defines whether the icon should be displayed after the component text.
        *
@@ -91,7 +85,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       iconEnd: {
         type: Boolean
       },
-
       /**
        * When set to <code>true</code>, the component will
        * automatically submit the nearest HTML form element on <code>press</code>.
@@ -106,7 +99,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       submits: {
         type: Boolean
       },
-
       /**
        * Defines the tooltip of the component.
        * <br>
@@ -119,7 +111,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       tooltip: {
         type: String
       },
-
       /**
        * Used to switch the active state (pressed or not) of the component.
        * @private
@@ -127,7 +118,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       active: {
         type: Boolean
       },
-
       /**
        * Defines if a content has been added to the default slot
        * @private
@@ -135,7 +125,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       iconOnly: {
         type: Boolean
       },
-
       /**
        * Indicates if the elements is on focus
        * @private
@@ -143,7 +132,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       focused: {
         type: Boolean
       },
-
       /**
        * Indicates if the elements has a slotted icon
        * @private
@@ -151,7 +139,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hasIcon: {
         type: Boolean
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -164,7 +151,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: undefined
       },
-
       /**
        * Receives id(or many ids) of the elements that label the component.
        *
@@ -177,7 +163,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: ""
       },
-
       /**
        * An object of strings that defines several additional accessibility attribute values
        * for customization depending on the use case.
@@ -209,7 +194,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibilityAttributes: {
         type: Object
       },
-
       /**
        * Indicates if the element if focusable
        * @private
@@ -220,7 +204,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _iconSettings: {
         type: Object
       },
-
       /**
        * Defines the tabIndex of the component.
        * @private
@@ -230,7 +213,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: "0",
         noAttribute: true
       },
-
       /**
        * @since 1.0.0-rc.13
        * @private
@@ -240,9 +222,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     },
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.Button.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Button.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -256,9 +236,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Node
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Button.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Button.prototype */{
       /**
        * Fired when the component is activated either with a
        * mouse/tap or by using the Enter or Space key.
@@ -273,6 +251,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       click: {}
     }
   };
+
   /**
    * @class
    *
@@ -317,65 +296,50 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.IButton
    * @public
    */
-
   class Button extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return _Button.default;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _ButtonTemplate.default;
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
     constructor() {
       super();
-
       this._deactivate = () => {
         if (activeButton) {
           activeButton.active = false;
         }
       };
-
       if (!isGlobalHandlerAttached) {
         document.addEventListener("mouseup", this._deactivate);
         isGlobalHandlerAttached = true;
       }
-
       const handleTouchStartEvent = event => {
         event.isMarked = "button";
-
         if (this.nonInteractive) {
           return;
         }
-
         this.active = true;
       };
-
       this._ontouchstart = {
         handleEvent: handleTouchStartEvent,
         passive: true
       };
     }
-
     onEnterDOM() {
       this._isTouch = ((0, _Device.isPhone)() || (0, _Device.isTablet)()) && !(0, _Device.isCombi)();
     }
-
     onBeforeRendering() {
       const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-
       if (this.submits && !FormSupport) {
         console.warn(`In order for the "submits" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
       }
@@ -383,29 +347,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.iconOnly = this.isIconOnly;
       this.hasIcon = !!this.icon;
     }
-
     _onclick(event) {
       if (this.nonInteractive) {
         return;
       }
-
       event.isMarked = "button";
       const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-
       if (FormSupport && this.submits) {
         FormSupport.triggerFormSubmit(this);
       }
-
       if ((0, _Device.isSafari)()) {
         this.getDomRef().focus();
       }
     }
-
     _onmousedown(event) {
       if (this.nonInteractive || this._isTouch) {
         return;
       }
-
       event.isMarked = "button";
       this.active = true;
       activeButton = this; // eslint-disable-line
@@ -413,70 +371,54 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
 
     _ontouchend(event) {
       this.active = false;
-
       if (activeButton) {
         activeButton.active = false;
       }
     }
-
     _onmouseup(event) {
       event.isMarked = "button";
     }
-
     _onkeydown(event) {
       event.isMarked = "button";
-
       if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
         this.active = true;
       }
     }
-
     _onkeyup(event) {
       if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
         this.active = false;
       }
     }
-
     _onfocusout(_event) {
       if (this.nonInteractive) {
         return;
       }
-
       this.active = false;
-
       if ((0, _Device.isDesktop)()) {
         this.focused = false;
       }
     }
-
     _onfocusin(event) {
       if (this.nonInteractive) {
         return;
       }
-
       event.isMarked = "button";
-
       if ((0, _Device.isDesktop)()) {
         this.focused = true;
       }
     }
-
     get hasButtonType() {
       return this.design !== _ButtonDesign.default.Default && this.design !== _ButtonDesign.default.Transparent;
     }
-
     get iconRole() {
       if (!this.icon) {
         return "";
       }
-
       return this.isIconOnly ? "img" : "presentation";
     }
-
     get isIconOnly() {
       return !(0, _isDefaultSlotProvided.default)(this);
     }
-
     static typeTextMappings() {
       return {
         "Positive": _i18nDefaults.BUTTON_ARIA_TYPE_ACCEPT,
@@ -484,35 +426,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Emphasized": _i18nDefaults.BUTTON_ARIA_TYPE_EMPHASIZED
       };
     }
-
     get buttonTypeText() {
       return Button.i18nBundle.getText(Button.typeTextMappings()[this.design]);
     }
-
     get tabIndexValue() {
       const tabindex = this.getAttribute("tabindex");
-
       if (tabindex) {
         return tabindex;
       }
-
       return this.nonInteractive ? "-1" : this._tabIndex;
     }
-
     get showIconTooltip() {
       return this.iconOnly && !this.tooltip;
     }
-
     get ariaLabelText() {
       return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
     }
-
     static async onDefine() {
       Button.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   Button.define();
   var _default = Button;
   _exports.default = _default;

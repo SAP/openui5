@@ -7,17 +7,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "./Gr
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _GroupHeaderListItem = _interopRequireDefault(_GroupHeaderListItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-cb-group-item",
-    properties:
-    /** @lends sap.ui.webcomponents.main.ComboBoxGroupItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.ComboBoxGroupItem.prototype */{
       /**
        * Defines the text of the component.
        *
@@ -28,7 +24,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "./Gr
       text: {
         type: String
       },
-
       /**
        * Indicates whether the input is focssed
        * @private
@@ -37,13 +32,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "./Gr
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.ComboBoxGroupItem.prototype */
-    {},
-    events:
-    /** @lends sap.ui.webcomponents.main.ComboBoxGroupItem.prototype */
-    {}
+    slots: /** @lends sap.ui.webcomponents.main.ComboBoxGroupItem.prototype */{},
+    events: /** @lends sap.ui.webcomponents.main.ComboBoxGroupItem.prototype */{}
   };
+
   /**
    * @class
    * The <code>ui5-cb-group-item</code> is type of suggestion item,
@@ -58,27 +50,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "./Gr
    * @implements sap.ui.webcomponents.main.IComboBoxItem
    * @since 1.0.0-rc.15
    */
-
   class ComboBoxGroupItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get dependencies() {
       return [_GroupHeaderListItem.default];
     }
+
     /**
      * Used to avoid tag name checks
      * @protected
      */
-
-
     get isGroupItem() {
       return true;
     }
-
   }
-
   ComboBoxGroupItem.define();
   var _default = ComboBoxGroupItem;
   _exports.default = _default;

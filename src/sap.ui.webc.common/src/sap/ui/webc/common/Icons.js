@@ -1,3 +1,7 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
 	"./thirdparty/icons/Assets",
 	"./thirdparty/icons/AllIcons",

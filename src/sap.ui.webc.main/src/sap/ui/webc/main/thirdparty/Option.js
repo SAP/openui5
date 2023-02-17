@@ -6,18 +6,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
   * @public
   */
   const metadata = {
     tag: "ui5-option",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Option.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Option.prototype */{
       /**
        * Defines the selected state of the component.
        * @type {boolean}
@@ -27,11 +23,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       selected: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is in disabled state.
        * <br><br>
-       * <b>Note:</b> A disabled component is hidden.
+       * <b>Note:</b> A disabled component is noninteractive.
        * @type {boolean}
        * @defaultvalue false
        * @public
@@ -40,7 +35,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines the tooltip of the component.
        * @type {string}
@@ -51,7 +45,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       title: {
         type: String
       },
-
       /**
        * Defines the <code>icon</code> source URI.
        * <br><br>
@@ -66,7 +59,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: String,
         defaultValue: null
       },
-
       /**
        * Defines the value of the <code>ui5-select</code> inside an HTML Form element when this component is selected.
        * For more information on HTML Form support, see the <code>name</code> property of <code>ui5-select</code>.
@@ -77,7 +69,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       value: {
         type: String
       },
-
       /**
        * Defines the additional text displayed at the end of the option element.
        * @type {string}
@@ -87,7 +78,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       additionalText: {
         type: String
       },
-
       /**
        * Defines the focused state of the component.
        * @type {boolean}
@@ -99,9 +89,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.Option.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Option.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -115,10 +103,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: Node
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Option.prototype */
-    {}
+    events: /** @lends sap.ui.webcomponents.main.Option.prototype */{}
   };
+
   /**
    * @class
    *
@@ -134,18 +121,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @implements sap.ui.webcomponents.main.ISelectOption
    * @public
    */
-
   class Option extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     get stableDomRef() {
       return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
     }
-
   }
-
   Option.define();
   var _default = Option;
   _exports.default = _default;

@@ -5,10 +5,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRender
     value: true
   });
   _exports.default = void 0;
-
   /* eslint no-unused-vars: 0 */
-  const block0 = (context, tags, suffix) => (0, _LitRenderer.html)`<td tabindex="-1" part="cell" role="cell"><slot></slot></td>`;
 
+  const block0 = (context, tags, suffix) => (0, _LitRenderer.html)`<td tabindex="-1" part="cell" role="cell"><slot></slot></td>`;
   var _default = block0;
   _exports.default = _default;
 });

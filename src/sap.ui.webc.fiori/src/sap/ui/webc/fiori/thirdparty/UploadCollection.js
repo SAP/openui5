@@ -15,10 +15,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _UploadCollectionDnDMode = _interopRequireDefault(_UploadCollectionDnDMode);
   _UploadCollectionTemplate = _interopRequireDefault(_UploadCollectionTemplate);
   _UploadCollection = _interopRequireDefault(_UploadCollection);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -27,9 +26,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-upload-collection",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.UploadCollection.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.UploadCollection.prototype */{
       /**
        * Defines the mode of the <code>ui5-upload-collection</code>.
        *
@@ -50,7 +47,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ListMode.default,
         defaultValue: _ListMode.default.None
       },
-
       /**
        * Allows you to set your own text for the 'No data' description.
        *
@@ -61,7 +57,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       noDataDescription: {
         type: String
       },
-
       /**
        * Allows you to set your own text for the 'No data' text.
        *
@@ -72,7 +67,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       noDataText: {
         type: String
       },
-
       /**
        * By default there will be drag and drop overlay shown over the <code>ui5-upload-collection</code> when files
        * are dragged. If you don't intend to use drag and drop, set this property.
@@ -87,7 +81,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hideDragOverlay: {
         type: Boolean
       },
-
       /**
        * Indicates what overlay to show when files are being dragged.
        *
@@ -99,7 +92,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: _UploadCollectionDnDMode.default.None
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -113,9 +105,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     },
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.UploadCollection.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.UploadCollection.prototype */{
       /**
        * Defines the items of the <code>ui5-upload-collection</code>.
        * <br><b>Note:</b> Use <code>ui5-upload-collection-item</code> for the intended design.
@@ -128,7 +118,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         propertyName: "items",
         type: HTMLElement
       },
-
       /**
        * Defines the <code>ui5-upload-collection</code> header.
        * <br><br>
@@ -144,9 +133,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.UploadCollection.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.UploadCollection.prototype */{
       /**
        * Fired when an element is dropped inside the drag and drop overlay.
        * <br><br>
@@ -159,7 +146,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
        * @native
        */
       drop: {},
-
       /**
        * Fired when the Delete button of any item is pressed.
        * <br><br>
@@ -176,7 +162,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when selection is changed by user interaction
        * in <code>SingleSelect</code> and <code>MultiSelect</code> modes.
@@ -194,6 +179,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -215,110 +201,85 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.0.0-rc.7
    */
-
   class UploadCollection extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _UploadCollection.default;
     }
-
     static get template() {
       return _UploadCollectionTemplate.default;
     }
-
     static get dependencies() {
       return [_Icon.default, _Label.default, _List.default, _Title.default];
     }
-
     static async onDefine() {
       UploadCollection.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
-
     constructor() {
       super();
-
       this._bodyDnDHandler = event => {
         if (this._dndOverlayMode !== _UploadCollectionDnDMode.default.Drop) {
           this._dndOverlayMode = event.mode;
         }
       };
     }
-
     onEnterDOM() {
       if (this.hideDragOverlay) {
         return;
       }
-
       (0, _UploadCollectionBodyDnD.attachBodyDnDHandler)(this._bodyDnDHandler);
     }
-
     onExitDOM() {
       if (this.hideDragOverlay) {
         return;
       }
-
       (0, _UploadCollectionBodyDnD.detachBodyDnDHandler)(this._bodyDnDHandler);
     }
-
     _ondragenter(event) {
       if (this.hideDragOverlay) {
         return;
       }
-
       if (!(0, _UploadCollectionBodyDnD.draggingFiles)(event)) {
         return;
       }
-
       this._dndOverlayMode = _UploadCollectionDnDMode.default.Drop;
     }
-
     _ondrop(event) {
       if (this.hideDragOverlay) {
         return;
       }
-
       if (event.target !== this.shadowRoot.querySelector(".uc-dnd-overlay")) {
         event.stopPropagation();
       }
-
       this._dndOverlayMode = _UploadCollectionDnDMode.default.None;
     }
-
     _ondragover(event) {
       if (this.hideDragOverlay) {
         return;
       }
-
       event.preventDefault();
     }
-
     _ondragleave() {
       if (this.hideDragOverlay) {
         return;
       }
-
       this._dndOverlayMode = _UploadCollectionDnDMode.default.Drag;
     }
-
     _onItemDelete(event) {
       this.fireEvent("item-delete", {
         item: event.detail.item
       });
     }
-
     _onSelectionChange(event) {
       this.fireEvent("selection-change", {
         selectedItems: event.detail.selectedItems
       });
     }
-
     get classes() {
       return {
         content: {
@@ -336,45 +297,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get _root() {
       return this.shadowRoot.querySelector(".ui5-uc-root");
     }
-
     get _dndOverlay() {
       return this._root.querySelector(".uc-dnd-overlay");
     }
-
     get _showDndOverlay() {
       return this._dndOverlayMode !== _UploadCollectionDnDMode.default.None;
     }
-
     get _showNoData() {
       return this.items.length === 0;
     }
-
     get _noDataText() {
       return this.noDataText || UploadCollection.i18nBundle.getText(_i18nDefaults.UPLOADCOLLECTION_NO_DATA_TEXT);
     }
-
     get _noDataDescription() {
       return this.noDataDescription || UploadCollection.i18nBundle.getText(_i18nDefaults.UPLOADCOLLECTION_NO_DATA_DESCRIPTION);
     }
-
     get _roleDescription() {
       return UploadCollection.i18nBundle.getText(_i18nDefaults.UPLOADCOLLECTION_ARIA_ROLE_DESCRIPTION);
     }
-
     get _dndOverlayText() {
       if (this._dndOverlayMode === _UploadCollectionDnDMode.default.Drag) {
         return UploadCollection.i18nBundle.getText(_i18nDefaults.UPLOADCOLLECTION_DRAG_FILE_INDICATOR);
       }
-
       return UploadCollection.i18nBundle.getText(_i18nDefaults.UPLOADCOLLECTION_DROP_FILE_INDICATOR);
     }
-
   }
-
   UploadCollection.define();
   var _default = UploadCollection;
   _exports.default = _default;

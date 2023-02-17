@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogBalloonSky = _interopRequireDefault(_sapIllusDialogBalloonSky);
   _sapIllusSceneBalloonSky = _interopRequireDefault(_sapIllusSceneBalloonSky);
   _sapIllusSpotBalloonSky = _interopRequireDefault(_sapIllusSpotBalloonSky);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "BalloonSky";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_BALLOONSKY;

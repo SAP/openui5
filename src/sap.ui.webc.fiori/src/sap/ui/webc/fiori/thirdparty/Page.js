@@ -12,10 +12,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _PageBackgroundDesign = _interopRequireDefault(_PageBackgroundDesign);
   _PageTemplate = _interopRequireDefault(_PageTemplate);
   _Page = _interopRequireDefault(_Page);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -25,9 +24,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-page",
     managedSlots: true,
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.Page.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.Page.prototype */{
       /**
        * Defines the background color of the <code>ui5-page</code>.
        * <br><br>
@@ -47,7 +44,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: _PageBackgroundDesign.default.Solid
       },
-
       /**
        * Disables vertical scrolling of page content.
        * If set to true, there will be no vertical scrolling at all.
@@ -59,7 +55,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disableScrolling: {
         type: Boolean
       },
-
       /**
        * Defines if the footer should float over the content.
        * <br><br>
@@ -71,7 +66,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       floatingFooter: {
         type: Boolean
       },
-
       /**
        * Defines the footer visibility.
        *
@@ -82,7 +76,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hideFooter: {
         type: Boolean
       },
-
       /**
        * Defines the current media query size.
        *
@@ -94,9 +87,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.Page.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.Page.prototype */{
       /**
        * Defines the header HTML Element.
        *
@@ -107,7 +98,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       header: {
         type: HTMLElement
       },
-
       /**
        * Defines the content HTML Element.
        *
@@ -119,7 +109,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         propertyName: "content",
         type: HTMLElement
       },
-
       /**
        * Defines the footer HTML Element.
        *
@@ -131,10 +120,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.Page.prototype */
-    {}
+    events: /** @lends sap.ui.webcomponents.fiori.Page.prototype */{}
   };
+
   /**
    * @class
    *
@@ -168,53 +156,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @since 1.0.0-rc.12
    * @public
    */
-
   class Page extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _Page.default;
     }
-
     static get template() {
       return _PageTemplate.default;
     }
-
     constructor() {
       super();
       this._updateMediaRange = this.updateMediaRange.bind(this);
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this, this._updateMediaRange);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this._updateMediaRange);
     }
-
     updateMediaRange() {
       this.mediaRange = _MediaRange.default.getCurrentRange(_MediaRange.default.RANGESETS.RANGE_4STEPS, this.getDomRef().offsetWidth);
     }
-
     get _contentBottom() {
       return !this.floatingFooter && !this.hideFooter ? "2.75rem" : "0";
     }
-
     get _contentPaddingBottom() {
       return this.floatingFooter && !this.hideFooter ? "3.5rem" : "0";
     }
-
     get _contentTop() {
       return this.header.length ? "2.75rem" : "0rem";
     }
-
     get styles() {
       return {
         content: {
@@ -225,9 +201,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         footer: {}
       };
     }
-
   }
-
   Page.define();
   var _default = Page;
   _exports.default = _default;

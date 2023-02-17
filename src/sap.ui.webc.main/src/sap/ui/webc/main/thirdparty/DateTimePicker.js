@@ -19,23 +19,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
   _DateTimePickerPopoverTemplate = _interopRequireDefault(_DateTimePickerPopoverTemplate);
   _DateTimePicker = _interopRequireDefault(_DateTimePicker);
   _DateTimePickerPopover = _interopRequireDefault(_DateTimePickerPopover);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // i18n texts
+
   // Template
+
   // Styles
+
   const PHONE_MODE_BREAKPOINT = 640; // px
 
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-datetime-picker",
-    properties:
-    /** @lends sap.ui.webcomponents.main.DateTimePicker.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.DateTimePicker.prototype */{
       /**
        * Defines the visibility of the time view in <code>phoneMode</code>.
        * For more information, see the <code>phoneMode</code> property.
@@ -50,7 +48,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
         type: Boolean,
         noAttribute: true
       },
-
       /**
        * Defines if the <code>DateTimePicker</code> should be displayed in phone mode.
        * The phone mode turns on when the component is used on small screens or phone devices.
@@ -63,7 +60,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
       _phoneMode: {
         type: Boolean
       },
-
       /**
        * Selected, but not yet confirmed date/time
        * @private
@@ -71,7 +67,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
       _previewValues: {
         type: Object
       },
-
       /**
        * @private
        */
@@ -81,6 +76,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
       }
     }
   };
+
   /**
    * @class
    *
@@ -152,54 +148,47 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
    * @since 1.0.0-rc.7
    * @public
    */
-
   class DateTimePicker extends _DatePicker.default {
     static get metadata() {
       return metadata;
     }
-
     static get staticAreaTemplate() {
       return _DateTimePickerPopoverTemplate.default;
     }
-
     static get styles() {
       return [super.styles, _DateTimePicker.default];
     }
-
     static get staticAreaStyles() {
       return [super.staticAreaStyles, _DateTimePickerPopover.default];
     }
-
     static get dependencies() {
       return [..._DatePicker.default.dependencies, _Calendar.default, _Button.default, _ToggleButton.default, _SegmentedButton.default, _TimeSelection.default];
     }
-
     constructor() {
       super();
       this._handleResizeBound = this._handleResize.bind(this);
     }
+
     /**
      * @override
      */
-
-
     onResponsivePopoverAfterClose() {
       super.onResponsivePopoverAfterClose();
       this._showTimeView = false;
       this._previewValues = {};
     }
+
     /**
      * LIFECYCLE METHODS
      */
 
-
     onEnterDOM() {
       _ResizeHandler.default.register(document.body, this._handleResizeBound);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(document.body, this._handleResizeBound);
     }
+
     /**
      * PUBLIC METHODS
      */
@@ -208,17 +197,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
      * Opens the picker.
      * @public
      */
-
-
     async openPicker() {
       await super.openPicker();
       this._currentTimeSlider = "hours";
       this._previewValues.timeSelectionValue = this.value || this.getFormat().format(new Date());
     }
+
     /**
      * Read-only getters
      */
-
 
     get classes() {
       return {
@@ -234,74 +221,60 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
         }
       };
     }
-
     get _formatPattern() {
       const hasHours = !!this.formatPattern.match(/H/i);
       const fallback = !this.formatPattern || !hasHours;
       const localeData = (0, _getCachedLocaleDataInstance.default)((0, _getLocale.default)());
       return fallback ? localeData.getCombinedDateTimePattern("medium", "medium", this._primaryCalendarType) : this.formatPattern;
     }
-
     get _calendarTimestamp() {
       return this._previewValues.calendarTimestamp ? this._previewValues.calendarTimestamp : super._calendarTimestamp;
     }
-
     get _calendarSelectedDates() {
       return this._previewValues.calendarValue ? [this._previewValues.calendarValue] : super._calendarSelectedDates;
     }
-
     get _timeSelectionValue() {
       return this._previewValues.timeSelectionValue ? this._previewValues.timeSelectionValue : this.value;
     }
-
     get openIconName() {
       return "date-time";
     }
-
     get btnOKLabel() {
       return DateTimePicker.i18nBundle.getText(_i18nDefaults.TIMEPICKER_SUBMIT_BUTTON);
     }
-
     get btnCancelLabel() {
       return DateTimePicker.i18nBundle.getText(_i18nDefaults.TIMEPICKER_CANCEL_BUTTON);
     }
-
     get btnDateLabel() {
       return DateTimePicker.i18nBundle.getText(_i18nDefaults.DATETIME_PICKER_DATE_BUTTON);
     }
-
     get btnTimeLabel() {
       return DateTimePicker.i18nBundle.getText(_i18nDefaults.DATETIME_PICKER_TIME_BUTTON);
     }
-
     get showFooter() {
       return true;
     }
-
     get showDateView() {
       return this.phone ? !this._showTimeView : true;
     }
-
     get showTimeView() {
       return this.phone ? this._showTimeView : true;
     }
-
     get phone() {
       return super.phone || this._phoneMode;
     }
-
     get dateAriaDescription() {
       return DateTimePicker.i18nBundle.getText(_i18nDefaults.DATETIME_DESCRIPTION);
     }
+
     /**
      * Defines whether the dialog on mobile should have header
      * @private
      */
-
-
     get _shouldHideHeader() {
       return true;
     }
+
     /**
      * EVENT HANDLERS
      */
@@ -309,32 +282,29 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
     /**
      * @override
      */
-
-
     onSelectedDatesChange(event) {
       event.preventDefault();
       const dateTimePickerContent = event.path ? event.path[1] : event.composedPath()[1];
-      this._previewValues = { ...this._previewValues,
+      this._previewValues = {
+        ...this._previewValues,
         calendarTimestamp: event.detail.timestamp,
         calendarValue: event.detail.values[0],
         timeSelectionValue: dateTimePickerContent.lastChild.value
       };
     }
-
     onTimeSelectionChange(event) {
-      this._previewValues = { ...this._previewValues,
+      this._previewValues = {
+        ...this._previewValues,
         timeSelectionValue: event.detail.value
       };
     }
-
     onTimeSliderChange(event) {
       this._currentTimeSlider = event.detail.slider;
     }
+
     /**
      * Handles document resize to switch between <code>phoneMode</code> and normal appearance.
      */
-
-
     _handleResize() {
       const documentWidth = document.body.offsetWidth;
       const toPhoneMode = documentWidth <= PHONE_MODE_BREAKPOINT;
@@ -344,88 +314,72 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHan
         this._phoneMode = toPhoneMode;
       }
     }
-
     get _submitDisabled() {
       return !this._calendarSelectedDates || !this._calendarSelectedDates.length;
     }
+
     /**
      * Handles clicking on the <code>submit</code> button, within the picker`s footer.
      */
-
-
     _submitClick() {
       const selectedDate = this.getSelectedDateTime();
       const value = this.getFormat().format(selectedDate);
-
       if (this.value !== value) {
         this._updateValueAndFireEvents(value, true, ["change", "value-changed"]);
       }
-
       this.closePicker();
     }
+
     /**
      * Handles clicking on the <code>cancel</code> button, within the picker`s footer,
      * that would disregard the user selection.
      */
-
-
     _cancelClick() {
       this.closePicker();
     }
+
     /**
      * Handles the date/time switch available in <code>phoneMode</code> to switch
      * between the date and time views.
      * @param {Event} event
      */
-
-
     _dateTimeSwitchChange(event) {
       this._showTimeView = event.target.getAttribute("key") === "Time";
-
       if (this._showTimeView) {
         this._currentTimeSlider = "hours";
       }
     }
+
     /**
      * @override
      */
-
-
     _modifyDateValue(amount, unit) {
       if (!this.dateValue) {
         return;
       }
-
       const modifiedDate = (0, _modifyDateBy.default)(_CalendarDate.default.fromLocalJSDate(this.dateValue), amount, unit, this._minDate, this._maxDate);
       const modifiedLocalDate = modifiedDate.toLocalJSDate();
       modifiedLocalDate.setHours(this.dateValue.getHours());
       modifiedLocalDate.setMinutes(this.dateValue.getMinutes());
       modifiedLocalDate.setSeconds(this.dateValue.getSeconds());
       const newValue = this.formatValue(modifiedLocalDate);
-
       this._updateValueAndFireEvents(newValue, true, ["change", "value-changed"]);
     }
-
     async getPicker() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector("[ui5-responsive-popover]");
     }
-
     getSelectedDateTime() {
       const selectedDate = this.getFormat().parse(this._calendarSelectedDates[0]);
       const selectedTime = this.getFormat().parse(this._timeSelectionValue);
-
       if (selectedTime) {
         selectedDate.setHours(selectedTime.getHours());
         selectedDate.setMinutes(selectedTime.getMinutes());
         selectedDate.setSeconds(selectedTime.getSeconds());
       }
-
       return selectedDate;
     }
-
   }
-
   DateTimePicker.define();
   var _default = DateTimePicker;
   _exports.default = _default;

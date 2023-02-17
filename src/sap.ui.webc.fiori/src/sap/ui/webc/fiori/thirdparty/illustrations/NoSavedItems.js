@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogNoSavedItems = _interopRequireDefault(_sapIllusDialogNoSavedItems);
   _sapIllusSceneNoSavedItems = _interopRequireDefault(_sapIllusSceneNoSavedItems);
   _sapIllusSpotNoSavedItems = _interopRequireDefault(_sapIllusSpotNoSavedItems);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "NoSavedItems";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_NOSAVEDITEMS;

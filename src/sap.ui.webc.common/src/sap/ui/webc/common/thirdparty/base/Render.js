@@ -7,9 +7,7 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
   _exports.renderImmediately = _exports.renderFinished = _exports.renderDeferred = _exports.reRenderAllUI5Elements = _exports.detachBeforeComponentRender = _exports.cancelRender = _exports.attachBeforeComponentRender = void 0;
   _EventProvider = _interopRequireDefault(_EventProvider);
   _RenderQueue = _interopRequireDefault(_RenderQueue);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const registeredElements = new Set();
   const eventProvider = new _EventProvider.default();
   const invalidatedWebComponents = new _RenderQueue.default(); // Queue for invalidated web components
@@ -17,70 +15,66 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
   let renderTaskPromise, renderTaskPromiseResolve;
   let mutationObserverTimer;
   let queuePromise;
+
   /**
    * Schedules a render task (if not already scheduled) to render the component
    *
    * @param webComponent
    * @returns {Promise}
    */
-
   const renderDeferred = async webComponent => {
     // Enqueue the web component
-    invalidatedWebComponents.add(webComponent); // Schedule a rendering task
+    invalidatedWebComponents.add(webComponent);
 
+    // Schedule a rendering task
     await scheduleRenderTask();
   };
+
   /**
    * Renders a component synchronously and adds it to the registry of rendered components
    *
    * @param webComponent
    */
-
-
   _exports.renderDeferred = renderDeferred;
-
   const renderImmediately = webComponent => {
     eventProvider.fireEvent("beforeComponentRender", webComponent);
     registeredElements.add(webComponent);
-
     webComponent._render();
   };
+
   /**
    * Cancels the rendering of a component, if awaiting to be rendered, and removes it from the registry of rendered components
    *
    * @param webComponent
    */
-
-
   _exports.renderImmediately = renderImmediately;
-
   const cancelRender = webComponent => {
     invalidatedWebComponents.remove(webComponent);
     registeredElements.delete(webComponent);
   };
+
   /**
    * Schedules a rendering task, if not scheduled already
    */
-
-
   _exports.cancelRender = cancelRender;
-
   const scheduleRenderTask = async () => {
     if (!queuePromise) {
       queuePromise = new Promise(resolve => {
         window.requestAnimationFrame(() => {
           // Render all components in the queue
+
           // console.log(`--------------------RENDER TASK START------------------------------`); // eslint-disable-line
-          invalidatedWebComponents.process(renderImmediately); // console.log(`--------------------RENDER TASK END------------------------------`); // eslint-disable-line
+          invalidatedWebComponents.process(renderImmediately);
+          // console.log(`--------------------RENDER TASK END------------------------------`); // eslint-disable-line
+
           // Resolve the promise so that callers of renderDeferred can continue
-
           queuePromise = null;
-          resolve(); // Wait for Mutation observer before the render task is considered finished
+          resolve();
 
+          // Wait for Mutation observer before the render task is considered finished
           if (!mutationObserverTimer) {
             mutationObserverTimer = setTimeout(() => {
               mutationObserverTimer = undefined;
-
               if (invalidatedWebComponents.isEmpty()) {
                 _resolveTaskPromise();
               }
@@ -89,19 +83,16 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
         });
       });
     }
-
     await queuePromise;
   };
+
   /**
    * return a promise that will be resolved once all invalidated web components are rendered
    */
-
-
   const whenDOMUpdated = () => {
     if (renderTaskPromise) {
       return renderTaskPromise;
     }
-
     renderTaskPromise = new Promise(resolve => {
       renderTaskPromiseResolve = resolve;
       window.requestAnimationFrame(() => {
@@ -113,31 +104,27 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
     });
     return renderTaskPromise;
   };
-
   const whenAllCustomElementsAreDefined = () => {
     const definedPromises = (0, _CustomElementsRegistry.getAllRegisteredTags)().map(tag => customElements.whenDefined(tag));
     return Promise.all(definedPromises);
   };
-
   const renderFinished = async () => {
     await whenAllCustomElementsAreDefined();
     await whenDOMUpdated();
   };
-
   _exports.renderFinished = renderFinished;
-
   const _resolveTaskPromise = () => {
     if (!invalidatedWebComponents.isEmpty()) {
       // More updates are pending. Resolve will be called again
       return;
     }
-
     if (renderTaskPromiseResolve) {
       renderTaskPromiseResolve();
       renderTaskPromiseResolve = undefined;
       renderTaskPromise = undefined;
     }
   };
+
   /**
    * Re-renders all UI5 Elements on the page, with the option to specify filters to rerender only some components.
    *
@@ -154,33 +141,25 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
    * @param {Object|undefined} filters - Object with keys that can be "rtlAware" or "languageAware"
    * @returns {Promise<void>}
    */
-
-
   const reRenderAllUI5Elements = async filters => {
     registeredElements.forEach(element => {
       const tag = element.constructor.getMetadata().getTag();
       const rtlAware = (0, _RTLAwareRegistry.isRtlAware)(element.constructor);
       const languageAware = element.constructor.getMetadata().isLanguageAware();
       const themeAware = element.constructor.getMetadata().isThemeAware();
-
       if (!filters || filters.tag === tag || filters.rtlAware && rtlAware || filters.languageAware && languageAware || filters.themeAware && themeAware) {
         renderDeferred(element);
       }
     });
     await renderFinished();
   };
-
   _exports.reRenderAllUI5Elements = reRenderAllUI5Elements;
-
   const attachBeforeComponentRender = listener => {
     eventProvider.attachEvent("beforeComponentRender", listener);
   };
-
   _exports.attachBeforeComponentRender = attachBeforeComponentRender;
-
   const detachBeforeComponentRender = listener => {
     eventProvider.detachEvent("beforeComponentRender", listener);
   };
-
   _exports.detachBeforeComponentRender = detachBeforeComponentRender;
 });

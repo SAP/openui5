@@ -24,14 +24,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
   _DatePicker = _interopRequireDefault(_DatePicker);
   _DatePickerPopover = _interopRequireDefault(_DatePickerPopover);
   _ResponsivePopoverCommon = _interopRequireDefault(_ResponsivePopoverCommon);
-
   function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
   function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // default calendar for bundling
+
   // Styles
 
   /**
@@ -41,9 +38,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
     tag: "ui5-date-picker",
     altTag: "ui5-datepicker",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.DatePicker.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.DatePicker.prototype */{
       /**
        * Defines a formatted date value.
        *
@@ -54,7 +49,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       value: {
         type: String
       },
-
       /**
        * Defines the value state of the component.
        * <br><br>
@@ -75,7 +69,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         type: _ValueState.default,
         defaultValue: _ValueState.default.None
       },
-
       /**
        * Defines whether the component is required.
        *
@@ -87,7 +80,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       required: {
         type: Boolean
       },
-
       /**
        * Determines whether the component is displayed as disabled.
        *
@@ -98,7 +90,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       disabled: {
         type: Boolean
       },
-
       /**
        * Determines whether the component is displayed as read-only.
        *
@@ -109,7 +100,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       readonly: {
         type: Boolean
       },
-
       /**
        * Defines a short hint, intended to aid the user with data entry when the
        * component has no value.
@@ -126,7 +116,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         type: String,
         defaultValue: undefined
       },
-
       /**
        * Determines the name with which the component will be submitted in an HTML form.
        *
@@ -146,7 +135,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       name: {
         type: String
       },
-
       /**
        * Defines the visibility of the week numbers column.
        * <br><br>
@@ -162,7 +150,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       hideWeekNumbers: {
         type: Boolean
       },
-
       /**
        * Defines the aria-label attribute for the component.
        *
@@ -173,7 +160,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       accessibleName: {
         type: String
       },
-
       /**
        * Receives id(or many ids) of the elements that label the component.
        *
@@ -198,9 +184,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         defaultValue: "day"
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.DatePicker.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.DatePicker.prototype */{
       /**
        * Defines the value state message that will be displayed as pop up under the component.
        * <br><br>
@@ -217,7 +201,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       valueStateMessage: {
         type: HTMLElement
       },
-
       /**
        * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
        * when <code>name</code> property is set.
@@ -229,9 +212,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.DatePicker.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.DatePicker.prototype */{
       /**
        * Fired when the input operation has finished by pressing Enter or on focusout.
        *
@@ -251,7 +232,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
           }
         }
       },
-
       /**
        * Fired when the value of the component is changed at each key stroke.
        *
@@ -273,6 +253,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       }
     }
   };
+
   /**
    * @class
    *
@@ -361,47 +342,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
    * @tagname ui5-date-picker
    * @public
    */
-
   class DatePicker extends _DateComponentBase.default {
     static get metadata() {
       return metadata;
     }
-
     static get template() {
       return _DatePickerTemplate.default;
     }
-
     static get staticAreaTemplate() {
       return _DatePickerPopoverTemplate.default;
     }
-
     static get styles() {
       return _DatePicker.default;
     }
-
     static get staticAreaStyles() {
       return [_ResponsivePopoverCommon.default, _DatePickerPopover.default];
     }
-
     constructor() {
       super();
       this.FormSupport = undefined;
     }
+
     /**
      * @protected
      */
-
-
     onResponsivePopoverAfterClose() {
       this._isPickerOpen = false;
-
       if ((0, _Device.isPhone)()) {
         this.blur(); // close device's keyboard and prevent further typing
       } else {
         this._getInput().focus();
       }
     }
-
     onBeforeRendering() {
       this.FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
       ["minDate", "maxDate"].forEach(prop => {
@@ -409,8 +381,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
           console.warn(`Invalid value for property "${prop}": ${this[prop]} is not compatible with the configured format pattern: "${this._displayFormat}"`); // eslint-disable-line
         }
       });
-      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
 
+      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
       if (FormSupport) {
         FormSupport.syncNativeHiddenInput(this);
       } else if (this.name) {
@@ -420,51 +392,44 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       this.value = this.normalizeValue(this.value) || this.value;
       this.liveValue = this.value;
     }
+
     /**
      * Override in derivatives to change calendar selection mode
      * @returns {string}
      * @protected
      */
-
-
     get _calendarSelectionMode() {
       return "Single";
     }
+
     /**
      * Used to provide a timestamp to the Calendar (to focus it to a relevant date when open) based on the component's state
      * Override in derivatives to provide the calendar a timestamp based on their properties
      * By default focus the calendar on the selected date if set, or the current day otherwise
      * @protected
      */
-
-
     get _calendarTimestamp() {
       if (this.value && this._checkValueValidity(this.value)) {
         const millisecondsUTC = this.dateValueUTC.getTime();
         return (0, _getRoundedTimestamp.default)(millisecondsUTC);
       }
-
       return (0, _getTodayUTCTimestamp.default)(this._primaryCalendarType);
     }
+
     /**
      * Used to provide selectedDates to the calendar based on the component's state
      * Override in derivatives to provide different rules for setting the calendar's selected dates
      * @protected
      */
-
-
     get _calendarSelectedDates() {
       if (this.value && this._checkValueValidity(this.value)) {
         return [this.value];
       }
-
       return [];
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isShow)(event)) {
         event.preventDefault(); // Prevent scroll on Alt/Option + Arrow Up/Down
-
         if (this.isOpen()) {
           if (!(0, _Keys.isF4)(event)) {
             this._toggleAndFocusInput();
@@ -473,63 +438,50 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
           this._toggleAndFocusInput();
         }
       }
-
       if (this.isOpen()) {
         return;
       }
-
       if ((0, _Keys.isEnter)(event)) {
         if (this.FormSupport) {
           this.FormSupport.triggerFormSubmit(this);
         }
       } else if ((0, _Keys.isPageUpShiftCtrl)(event)) {
         event.preventDefault();
-
         this._modifyDateValue(1, "year");
       } else if ((0, _Keys.isPageUpShift)(event)) {
         event.preventDefault();
-
         this._modifyDateValue(1, "month");
       } else if ((0, _Keys.isPageUp)(event)) {
         event.preventDefault();
-
         this._modifyDateValue(1, "day");
       } else if ((0, _Keys.isPageDownShiftCtrl)(event)) {
         event.preventDefault();
-
         this._modifyDateValue(-1, "year");
       } else if ((0, _Keys.isPageDownShift)(event)) {
         event.preventDefault();
-
         this._modifyDateValue(-1, "month");
       } else if ((0, _Keys.isPageDown)(event)) {
         event.preventDefault();
-
         this._modifyDateValue(-1, "day");
       }
     }
+
     /**
      *
      * @param amount
      * @param unit
      * @protected
      */
-
-
     _modifyDateValue(amount, unit) {
       if (!this.dateValue) {
         return;
       }
-
       const modifiedDate = (0, _modifyDateBy.default)(_CalendarDate.default.fromLocalJSDate(this.dateValue), amount, unit, this._minDate, this._maxDate);
       const newValue = this.formatValue(modifiedDate.toUTCJSDate());
-
       this._updateValueAndFireEvents(newValue, true, ["change", "value-changed"]);
     }
-
     _updateValueAndFireEvents(value, normalizeValue, events, updateValue = true) {
       const valid = this._checkValueValidity(value);
-
       if (valid && normalizeValue) {
         value = this.normalizeValue(value); // transform valid values (in any format) to the correct format
       }
@@ -544,26 +496,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
           executeEvent = false;
         }
       });
-
       if (!executeEvent) {
         return;
       }
-
       if (updateValue) {
         this._getInput().getInputDOMRef().then(innnerInput => {
           innnerInput.value = value;
         });
-
         this.value = value;
-
         this._updateValueState(); // Change the value state to Error/None, but only if needed
-
       }
     }
 
     _updateValueState() {
       const isValid = this._checkValueValidity(this.value);
-
       if (!isValid) {
         // If not valid - always set Error regardless of the current value state
         this.valueState = _ValueState.default.Error;
@@ -572,134 +518,112 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         this.valueState = _ValueState.default.None;
       }
     }
-
     _toggleAndFocusInput() {
       this.togglePicker();
-
       this._getInput().focus();
     }
-
     _getInput() {
       return this.shadowRoot.querySelector("[ui5-input]");
     }
+
     /**
      * The ui5-input "submit" event handler - fire change event when the user presses enter
      * @protected
      */
-
-
     _onInputSubmit(event) {}
+
     /**
      * The ui5-input "change" event handler - fire change event when the user focuses out of the input
      * @protected
      */
-
-
     _onInputChange(event) {
       this._updateValueAndFireEvents(event.target.value, true, ["change", "value-changed"]);
     }
+
     /**
      * The ui5-input "input" event handler - fire input even when the user types
      * @protected
      */
-
-
     async _onInputInput(event) {
       this._updateValueAndFireEvents(event.target.value, false, ["input"], false);
     }
+
     /**
      * @protected
      */
-
-
     _checkValueValidity(value) {
       if (value === "") {
         return true;
       }
-
       return this.isValid(value) && this.isInValidRange(value);
     }
-
     _click(event) {
       if ((0, _Device.isPhone)()) {
         this.responsivePopover.showAt(this);
         event.preventDefault(); // prevent immediate selection of any item
       }
     }
+
     /**
      * Checks if a value is valid against the current date format of the DatePicker.
      * @param {string} value A value to be tested against the current date format
      * @returns {boolean}
      * @public
      */
-
-
     isValid(value = "") {
       if (value === "") {
         return true;
       }
-
       return !!this.getFormat().parse(value);
     }
+
     /**
      * Checks if a date is between the minimum and maximum date.
      * @param {string} value A value to be checked
      * @returns {boolean}
      * @public
      */
-
-
     isInValidRange(value = "") {
       if (value === "") {
         return true;
       }
-
       const calendarDate = this._getCalendarDateFromString(value);
-
       return calendarDate.valueOf() >= this._minDate.valueOf() && calendarDate.valueOf() <= this._maxDate.valueOf();
     }
+
     /**
      * The parser understands many formats, but we need one format
      * @protected
      */
-
-
     normalizeValue(value) {
       if (value === "") {
         return value;
       }
-
       return this.getFormat().format(this.getFormat().parse(value, true), true); // it is important to both parse and format the date as UTC
     }
 
     get _displayFormat() {
       return this.getFormat().oFormatOptions.pattern;
     }
+
     /**
      * @protected
      */
-
-
     get _placeholder() {
       return this.placeholder !== undefined ? this.placeholder : this._displayFormat;
     }
-
     get _headerTitleText() {
       return DatePicker.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_TITLE);
     }
-
     get phone() {
       return (0, _Device.isPhone)();
     }
-
     get showHeader() {
       return this.phone;
     }
-
     get showFooter() {
       return this.phone;
     }
-
     get accInfo() {
       return {
         "ariaRoledescription": this.dateAriaDescription,
@@ -709,67 +633,57 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         "ariaLabel": (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this)
       };
     }
-
     get openIconTitle() {
       return DatePicker.i18nBundle.getText(_i18nDefaults.DATEPICKER_OPEN_ICON_TITLE);
     }
-
     get openIconName() {
       return "appointment-2";
     }
-
     get dateAriaDescription() {
       return DatePicker.i18nBundle.getText(_i18nDefaults.DATEPICKER_DATE_DESCRIPTION);
     }
+
     /**
      * Defines whether the dialog on mobile should have header
      * @private
      */
-
-
     get _shouldHideHeader() {
       return false;
     }
-
     async _respPopover() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector("[ui5-responsive-popover]");
     }
-
     _canOpenPicker() {
       return !this.disabled && !this.readonly;
     }
+
     /**
      * The user selected a new date in the calendar
      * @param event
      * @protected
      */
-
-
     onSelectedDatesChange(event) {
       event.preventDefault();
       const newValue = event.detail.values && event.detail.values[0];
-
       this._updateValueAndFireEvents(newValue, true, ["change", "value-changed"]);
-
       this.closePicker();
     }
+
     /**
      * The user clicked the "month" button in the header
      */
-
-
     onHeaderShowMonthPress() {
       this._calendarCurrentPicker = "month";
     }
+
     /**
      * The user clicked the "year" button in the header
      */
-
-
     onHeaderShowYearPress() {
       this._calendarCurrentPicker = "year";
     }
+
     /**
      * Formats a Java Script date object into a string representing a locale date
      * according to the <code>formatPattern</code> property of the DatePicker instance
@@ -777,35 +691,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
      * @returns {string} The date as string
      * @public
      */
-
-
     formatValue(date) {
       return this.getFormat().format(date);
     }
+
     /**
      * Closes the picker.
      * @public
      */
-
-
     closePicker() {
       this.responsivePopover.close();
     }
+
     /**
      * Opens the picker.
      * @public
      * @async
      * @returns {Promise} Resolves when the picker is open
      */
-
-
     async openPicker() {
       this._isPickerOpen = true;
       this._calendarCurrentPicker = "day";
       this.responsivePopover = await this._respPopover();
       this.responsivePopover.showAt(this);
     }
-
     togglePicker() {
       if (this.isOpen()) {
         this.closePicker();
@@ -813,16 +722,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         this.openPicker();
       }
     }
+
     /**
      * Checks if the picker is open.
      * @returns {boolean} true if the picker is open, false otherwise
      * @public
      */
-
-
     isOpen() {
       return !!this._isPickerOpen;
     }
+
     /**
      * Currently selected date represented as a Local JavaScript Date instance.
      *
@@ -830,16 +739,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
      * @type { Date }
      * @public
      */
-
-
     get dateValue() {
       return this.liveValue ? this.getFormat().parse(this.liveValue) : this.getFormat().parse(this.value);
     }
-
     get dateValueUTC() {
       return this.liveValue ? this.getFormat().parse(this.liveValue, true) : this.getFormat().parse(this.value);
     }
-
     get styles() {
       return {
         main: {
@@ -847,17 +752,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         }
       };
     }
-
     get type() {
       return _InputType.default.Text;
     }
-
     static get dependencies() {
       return [_Icon.default, _ResponsivePopover.default, _Calendar.default, CalendarDateComponent.default, _Input.default, _Button.default];
     }
-
   }
-
   DatePicker.define();
   var _default = DatePicker;
   _exports.default = _default;

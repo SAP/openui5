@@ -15,9 +15,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Slider = _interopRequireDefault(_Slider);
   _Label = _interopRequireDefault(_Label);
   _ColorPicker = _interopRequireDefault(_ColorPicker);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -25,9 +23,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */
   const metadata = {
     tag: "ui5-color-picker",
-    properties:
-    /** @lends sap.ui.webcomponents.main.ColorPicker.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.ColorPicker.prototype */{
       /**
        * Defines the currently selected color of the component.
        * <br><br>
@@ -39,7 +35,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _CSSColor.default,
         defaultValue: "rgba(255, 255, 255, 1)"
       },
-
       /**
        * Defines the HEX code of the currently selected color
        * *Note*: If Alpha(transperancy) is set it is not included in this property. Use <code>color</code> property.
@@ -51,7 +46,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: "ffffff",
         noAttribute: true
       },
-
       /**
        * Defines the current main color which is selected via the hue slider and is shown in the main color square.
        * @type {string}
@@ -64,14 +58,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _color: {
         type: Object
       },
-
       /**
        * @private
        */
       _selectedCoordinates: {
         type: Object
       },
-
       /**
        * @private
        */
@@ -79,7 +71,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Float.default,
         defaultValue: 1
       },
-
       /**
        * @private
        */
@@ -87,21 +78,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 0
       },
-
       /**
        * @private
        */
       _isSelectedColorChanged: {
         type: Boolean
       },
-
       /**
        * @private
        */
       _isHueValueChanged: {
         type: Boolean
       },
-
       /**
        * @private
        */
@@ -109,13 +97,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.ColorPicker.prototype */
-    {//
+    slots: /** @lends sap.ui.webcomponents.main.ColorPicker.prototype */{
+      //
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.ColorPicker.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.ColorPicker.prototype */{
       /**
        * Fired when the the selected color is changed
        *
@@ -125,6 +110,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       change: {}
     }
   };
+
   /**
    * @class
    *
@@ -156,40 +142,35 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @tagname ui5-color-picker
    * @public
    */
-
   class ColorPicker extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _ColorPicker.default;
     }
-
     static get template() {
       return _ColorPickerTemplate.default;
     }
-
     static get dependencies() {
       return [_Input.default, _Slider.default, _Label.default];
     }
-
     static async onDefine() {
       ColorPicker.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     constructor() {
-      super(); // Bottom Right corner
+      super();
 
+      // Bottom Right corner
       this._selectedCoordinates = {
         x: 256 - 6.5,
         y: 256 - 6.5
-      }; // Default main color is red
+      };
 
+      // Default main color is red
       this._mainColor = {
         r: 255,
         g: 0,
@@ -198,35 +179,29 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.selectedHue = 0;
       this.mouseDown = false;
     }
-
     onBeforeRendering() {
       // we have the color & _mainColor properties here
       this._color = (0, _ColorConversion.getRGBColor)(this.color);
       const tempColor = `rgba(${this._color.r}, ${this._color.g}, ${this._color.b}, 1)`;
-
       this._setHex();
-
       this._setValues();
-
       this.style.setProperty("--ui5_Color_Picker_Progress_Container_Color", tempColor);
     }
-
     _applySliderStyles() {
       const hueSlider = this.getDomRef().querySelector(".ui5-color-picker-hue-slider").shadowRoot,
-            alphaSlider = this.getDomRef().querySelector(".ui5-color-picker-alpha-slider").shadowRoot;
-
+        alphaSlider = this.getDomRef().querySelector(".ui5-color-picker-alpha-slider").shadowRoot;
       if (hueSlider.children.length === 0 || alphaSlider.children.length === 0) {
         return;
       }
-
       const hueProgressSlider = hueSlider.querySelector(".ui5-slider-progress-container"),
-            hueHandle = hueSlider.querySelector(".ui5-slider-handle"),
-            alphaProgressSlider = alphaSlider.querySelector(".ui5-slider-progress-container"),
-            alphaHandle = alphaSlider.querySelector(".ui5-slider-handle"),
-            linearGradientDirection = this.effectiveDir === "rtl" ? "right" : "left",
-            hueProgressSliderBackgroundImage = `${linearGradientDirection}, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00`,
-            alphaProgressSliderBackgroundImage = `${linearGradientDirection}, #fff, #979797`; // ui5-slider::part(slider-handle)
+        hueHandle = hueSlider.querySelector(".ui5-slider-handle"),
+        alphaProgressSlider = alphaSlider.querySelector(".ui5-slider-progress-container"),
+        alphaHandle = alphaSlider.querySelector(".ui5-slider-handle"),
+        linearGradientDirection = this.effectiveDir === "rtl" ? "right" : "left",
+        hueProgressSliderBackgroundImage = `${linearGradientDirection}, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00`,
+        alphaProgressSliderBackgroundImage = `${linearGradientDirection}, #fff, #979797`;
 
+      // ui5-slider::part(slider-handle)
       hueHandle.style.width = "11px";
       hueHandle.style.height = "1.25rem";
       hueHandle.style.background = "transparent";
@@ -236,10 +211,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       alphaHandle.style.height = "1.25rem";
       alphaHandle.style.background = "transparent";
       alphaHandle.style.marginLeft = "-2px";
-      alphaHandle.style.marginTop = "1px"; // ui5-slider::part(slider-handle)::after
-      // Skipped because it is pseudo element
-      // ui5-slider::part(progress-container)
+      alphaHandle.style.marginTop = "1px";
 
+      // ui5-slider::part(slider-handle)::after
+      // Skipped because it is pseudo element
+
+      // ui5-slider::part(progress-container)
       hueProgressSlider.style.width = "calc(100% + 11px)";
       hueProgressSlider.style.height = "18px";
       hueProgressSlider.style.position = "absolute";
@@ -251,47 +228,44 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       alphaProgressSlider.style.position = "absolute";
       alphaProgressSlider.style.marginTop = "-10px";
       alphaProgressSlider.style.borderRadius = "0";
-      alphaProgressSlider.style.border = "1px solid #89919a"; // ui5-slider.ui5-color-picker-hue-slider::part(progress-container)
+      alphaProgressSlider.style.border = "1px solid #89919a";
 
+      // ui5-slider.ui5-color-picker-hue-slider::part(progress-container)
       hueProgressSlider.style.backgroundSize = "100%";
       hueProgressSlider.style.backgroundImage = `-webkit-linear-gradient(${hueProgressSliderBackgroundImage}`;
       hueProgressSlider.style.backgroundImage = `-moz-linear-gradient(${hueProgressSliderBackgroundImage}`;
       hueProgressSlider.style.backgroundImage = `-ms-linear-gradient(${hueProgressSliderBackgroundImage}`;
       hueProgressSlider.style.backgroundImage = `linear-gradient(${hueProgressSliderBackgroundImage}`;
-      hueProgressSlider.style.backgroundColor = "none"; // ui5-slider.ui5-color-picker-alpha-slider::part(progress-container)
+      hueProgressSlider.style.backgroundColor = "none";
 
+      // ui5-slider.ui5-color-picker-alpha-slider::part(progress-container)
       alphaProgressSlider.style.backgroundImage = `-webkit-linear-gradient(${alphaProgressSliderBackgroundImage})`;
       alphaProgressSlider.style.backgroundImage = `-moz-linear-gradient(${alphaProgressSliderBackgroundImage})`;
       alphaProgressSlider.style.backgroundImage = `-ms-linear-gradient(${alphaProgressSliderBackgroundImage})`;
       alphaProgressSlider.style.backgroundImage = `linear-gradient(${alphaProgressSliderBackgroundImage})`;
-      alphaProgressSlider.style.backgroundColor = "none"; // ui5-slider::part(slider-progress)
+      alphaProgressSlider.style.backgroundColor = "none";
 
+      // ui5-slider::part(slider-progress)
       hueSlider.querySelector(".ui5-slider-progress").style.background = "Transparent";
       alphaSlider.querySelector(".ui5-slider-progress").style.background = "Transparent";
     }
-
     _handleMouseDown(event) {
       this.mouseDown = true;
       this.mouseIn = true;
-
       this._changeSelectedColor(event.offsetX, event.offsetY);
     }
-
     _handleMouseUp() {
       this.mouseDown = false;
     }
-
     _handleMouseOut(event) {
       if (!this.mouseIn || !this.mouseDown) {
         return;
       }
-
       const isLeft = event.offsetX <= 0;
       const isUp = event.offsetY <= 0;
       const isDown = event.offsetY >= event.target.offsetHeight;
       const isRight = event.offsetX >= event.target.offsetWidth;
       let x, y;
-
       if (isLeft) {
         x = 0;
       } else if (isRight) {
@@ -299,7 +273,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else {
         x = event.offsetX;
       }
-
       if (isUp) {
         y = 0;
       } else if (isDown) {
@@ -307,97 +280,79 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else {
         y = event.offsetY;
       }
-
       this._changeSelectedColor(x, y);
-
       this.mouseIn = false;
       this.mouseDown = false;
     }
-
     _handleMouseMove(event) {
       if (!this.mouseDown || !this.mouseIn) {
         return;
       }
-
       this._changeSelectedColor(event.offsetX, event.offsetY);
     }
-
     _handleAlphaInput(event) {
       this._alpha = parseFloat(event.target.value);
-
       this._setColor(this._color);
     }
-
     _handleHueInput(event) {
       this.selectedHue = event.target.value;
       this._hue = this.selectedHue;
-
-      this._setMainColor(this._hue); // Idication that changes to the hue value triggered as a result of user pressing over the hue slider.
-
-
+      this._setMainColor(this._hue);
+      // Idication that changes to the hue value triggered as a result of user pressing over the hue slider.
       this._isHueValueChanged = true;
-
       const tempColor = this._calculateColorFromCoordinates(this._selectedCoordinates.x + 6.5, this._selectedCoordinates.y + 6.5);
-
       if (tempColor) {
         this._setColor((0, _ColorConversion.HSLToRGB)(tempColor));
       }
     }
-
     _handleHEXChange(event) {
       let newValue = event.target.value.toLowerCase();
-      const hexRegex = new RegExp("^[<0-9 abcdef]+$"); // Shorthand Syntax
+      const hexRegex = new RegExp("^[<0-9 abcdef]+$");
 
+      // Shorthand Syntax
       if (newValue.length === 3) {
         newValue = `${newValue[0]}${newValue[0]}${newValue[1]}${newValue[1]}${newValue[2]}${newValue[2]}`;
       }
-
       if (newValue === this.hex) {
         return;
       }
-
       this.hex = newValue;
-
       if (newValue.length !== 6 || !hexRegex.test(newValue)) {
         this._wrongHEX = true;
       } else {
         this._wrongHEX = false;
-
         this._setColor((0, _ColorConversion.HEXToRGB)(this.hex));
       }
     }
-
     _handleRGBInputsChange(event) {
       const targetValue = parseInt(event.target.value) || 0;
       let tempColor;
-
       switch (event.target.id) {
         case "red":
-          tempColor = { ...this._color,
+          tempColor = {
+            ...this._color,
             r: targetValue
           };
           break;
-
         case "green":
-          tempColor = { ...this._color,
+          tempColor = {
+            ...this._color,
             g: targetValue
           };
           break;
-
         case "blue":
-          tempColor = { ...this._color,
+          tempColor = {
+            ...this._color,
             b: targetValue
           };
           break;
-
         default:
-          tempColor = { ...this._color
+          tempColor = {
+            ...this._color
           };
       }
-
       this._setColor(tempColor);
     }
-
     _setMainColor(hueValue) {
       if (hueValue <= 255) {
         this._mainColor = {
@@ -437,58 +392,51 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         };
       }
     }
-
     _handleAlphaChange(event) {
       this._alpha = this._alpha < 0 ? 0 : this._alpha;
       this._alpha = this._alpha > 1 ? 1 : this._alpha;
     }
-
     _changeSelectedColor(x, y) {
       this._selectedCoordinates = {
         x: x - 6.5,
         // Center the coordinates, because of the width of the circle
         y: y - 6.5 // Center the coordinates, because of the height of the circle
+      };
 
-      }; // Idication that changes to the color settings are triggered as a result of user pressing over the main color section.
-
+      // Idication that changes to the color settings are triggered as a result of user pressing over the main color section.
       this._isSelectedColorChanged = true;
-
       const tempColor = this._calculateColorFromCoordinates(x, y);
-
       if (tempColor) {
         this._setColor((0, _ColorConversion.HSLToRGB)(tempColor));
       }
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isEnter)(event)) {
         this._handleHEXChange(event);
       }
     }
-
     _calculateColorFromCoordinates(x, y) {
       // By using the selected coordinates(x = Lightness, y = Saturation) and hue(selected from the hue slider)
       // and HSL format, the color will be parsed to RGB
+
       const h = this._hue / 4.25,
-            // 0 ≤ H < 360
-      // 0 ≤ S ≤ 1
-      s = 1 - +(Math.round(y / 256 + "e+2") + "e-2"),
-            // eslint-disable-line
-      // 0 ≤ V ≤ 1
-      l = +(Math.round(x / 256 + "e+2") + "e-2"); // eslint-disable-line
+        // 0 ≤ H < 360
+        // 0 ≤ S ≤ 1
+        s = 1 - +(Math.round(y / 256 + "e+2") + "e-2"),
+        // eslint-disable-line
+        // 0 ≤ V ≤ 1
+        l = +(Math.round(x / 256 + "e+2") + "e-2"); // eslint-disable-line
 
       if (!s || !l) {
         // The event is finished out of the main color section
         return;
       }
-
       return {
         h,
         s,
         l
       };
     }
-
     _setColor(color = {
       r: undefined,
       g: undefined,
@@ -497,34 +445,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.color = `rgba(${color.r}, ${color.g}, ${color.b}, ${this._alpha})`;
       this.fireEvent("change");
     }
-
     _setHex() {
       let red = this._color.r.toString(16),
-          green = this._color.g.toString(16),
-          blue = this._color.b.toString(16);
-
+        green = this._color.g.toString(16),
+        blue = this._color.b.toString(16);
       if (red.length === 1) {
         red = `0${red}`;
       }
-
       if (green.length === 1) {
         green = `0${green}`;
       }
-
       if (blue.length === 1) {
         blue = `0${blue}`;
       }
-
       this.hex = red + green + blue;
     }
-
     _setValues() {
       const hslColours = (0, _ColorConversion.RGBToHSL)(this._color);
       this._selectedCoordinates = {
         x: Math.round(hslColours.l * 100) * 2.56 - 6.5,
         // Center the coordinates, because of the width of the circle
         y: 256 - Math.round(hslColours.s * 100) * 2.56 - 6.5 // Center the coordinates, because of the height of the circle
-
       };
 
       if (this._isSelectedColorChanged) {
@@ -537,46 +478,35 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else {
         this._hue = Math.round(hslColours.h * 4.25);
       }
-
       this._setMainColor(this._hue);
     }
-
     get hueSliderLabel() {
       return ColorPicker.i18nBundle.getText(_i18nDefaults.COLORPICKER_HUE_SLIDER);
     }
-
     get alphaSliderLabel() {
       return ColorPicker.i18nBundle.getText(_i18nDefaults.COLORPICKER_ALPHA_SLIDER);
     }
-
     get hexInputLabel() {
       return ColorPicker.i18nBundle.getText(_i18nDefaults.COLORPICKER_HEX);
     }
-
     get redInputLabel() {
       return ColorPicker.i18nBundle.getText(_i18nDefaults.COLORPICKER_RED);
     }
-
     get greenInputLabel() {
       return ColorPicker.i18nBundle.getText(_i18nDefaults.COLORPICKER_GREEN);
     }
-
     get blueInputLabel() {
       return ColorPicker.i18nBundle.getText(_i18nDefaults.COLORPICKER_BLUE);
     }
-
     get alphaInputLabel() {
       return ColorPicker.i18nBundle.getText(_i18nDefaults.COLORPICKER_ALPHA);
     }
-
     get inputsDisabled() {
       return this._wrongHEX ? true : undefined;
     }
-
     get hexInputErrorState() {
       return this._wrongHEX ? "Error" : undefined;
     }
-
     get styles() {
       const linearGradientDirection = this.effectiveDir === "rtl" ? "right" : "left";
       return {
@@ -595,9 +525,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
   }
-
   ColorPicker.define();
   var _default = ColorPicker;
   _exports.default = _default;

@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.ListItemType.prototype
    * @public
@@ -20,14 +18,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Inactive}
      */
     Inactive: "Inactive",
-
     /**
      * Indicates that the item is clickable via active feedback when item is pressed.
      * @public
      * @type {Active}
      */
     Active: "Active",
-
     /**
      * Enables detail button of the list item that fires detail-click event.
      * @public
@@ -35,6 +31,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Detail: "Detail"
   };
+
   /**
    * @class
    * Different types of ListItem.
@@ -44,14 +41,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class ListItemType extends _DataType.default {
     static isValid(value) {
       return !!ListItemTypes[value];
     }
-
   }
-
   ListItemType.generateTypeAccessors(ListItemTypes);
   var _default = ListItemType;
   _exports.default = _default;

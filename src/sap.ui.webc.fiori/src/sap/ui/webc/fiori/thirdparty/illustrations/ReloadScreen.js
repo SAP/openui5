@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogReloadScreen = _interopRequireDefault(_sapIllusDialogReloadScreen);
   _sapIllusSceneReloadScreen = _interopRequireDefault(_sapIllusSceneReloadScreen);
   _sapIllusSpotReloadScreen = _interopRequireDefault(_sapIllusSpotReloadScreen);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "ReloadScreen";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_UNABLETOLOAD;

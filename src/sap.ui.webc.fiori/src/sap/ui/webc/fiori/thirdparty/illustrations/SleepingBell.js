@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogSleepingBell = _interopRequireDefault(_sapIllusDialogSleepingBell);
   _sapIllusSceneSleepingBell = _interopRequireDefault(_sapIllusSceneSleepingBell);
   _sapIllusSpotSleepingBell = _interopRequireDefault(_sapIllusSpotSleepingBell);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "SleepingBell";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_NONOTIFICATIONS;

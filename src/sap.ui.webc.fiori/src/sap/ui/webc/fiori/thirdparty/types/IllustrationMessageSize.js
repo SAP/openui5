@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * Different types of IllustrationMessageSize.
    * @lends sap.ui.webcomponents.fiori.types.IllustrationMessageSize.prototype
@@ -27,7 +25,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @public
      */
     Auto: "Auto",
-
     /**
      * Base <code>Illustration</code> size (XS breakpoint). Suitable for cards (two columns).
      *
@@ -36,25 +33,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @public
      */
     Base: "Base",
-
     /**
      * Spot <code>Illustration</code> size (S breakpoint). Suitable for cards (four columns).
      * @public
      */
     Spot: "Spot",
-
     /**
      * Dialog <code>Illustration</code> size (M breakpoint). Suitable for dialogs.
      * @public
      */
     Dialog: "Dialog",
-
     /**
      * Scene <code>Illustration</code> size (L breakpoint). Suitable for a <code>Page</code> or a table.
      * @public
      */
     Scene: "Scene"
   };
+
   /**
    * @class
    * Different types of IllustrationMessageSize.
@@ -64,14 +59,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class IllustrationMessageSize extends _DataType.default {
     static isValid(value) {
       return !!IllustrationMessageSizes[value];
     }
-
   }
-
   IllustrationMessageSize.generateTypeAccessors(IllustrationMessageSizes);
   var _default = IllustrationMessageSize;
   _exports.default = _default;

@@ -12,10 +12,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Label = _interopRequireDefault(_Label);
   _BusyIndicatorTemplate = _interopRequireDefault(_BusyIndicatorTemplate);
   _BusyIndicator = _interopRequireDefault(_BusyIndicator);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -25,9 +24,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-busy-indicator",
     altTag: "ui5-busyindicator",
     languageAware: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.BusyIndicator.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.BusyIndicator.prototype */{
       /**
        * Determines the content over which the component will appear.
        *
@@ -39,9 +36,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Node
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.main.BusyIndicator.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.BusyIndicator.prototype */{
       /**
        * Defines text to be displayed below the component. It can be used to inform the user of the current operation.
        * @type {string}
@@ -52,7 +47,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       text: {
         type: String
       },
-
       /**
        * Defines the size of the component.
        *
@@ -73,7 +67,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _BusyIndicatorSize.default,
         defaultValue: _BusyIndicatorSize.default.Medium
       },
-
       /**
        * Defines if the busy indicator is visible on the screen. By default it is not.
        *
@@ -84,7 +77,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       active: {
         type: Boolean
       },
-
       /**
        * Defines the delay in milliseconds, after which the busy indicator will be visible on the screen.
        *
@@ -96,7 +88,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 1000
       },
-
       /**
        * Defines if the component is currently in busy state.
        * @private
@@ -106,6 +97,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -149,14 +141,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 0.12.0
    */
-
   class BusyIndicator extends _UI5Element.default {
     constructor() {
       super();
       this._keydownHandler = this._handleKeydown.bind(this);
       this._preventEventHandler = this._preventEvent.bind(this);
     }
-
     onEnterDOM() {
       this.addEventListener("keydown", this._keydownHandler, {
         capture: true
@@ -165,49 +155,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         capture: true
       });
     }
-
     onExitDOM() {
       if (this._busyTimeoutId) {
         clearTimeout(this._busyTimeoutId);
         delete this._busyTimeoutId;
       }
-
       this.removeEventListener("keydown", this._keydownHandler, true);
       this.removeEventListener("keyup", this._preventEventHandler, true);
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return _BusyIndicator.default;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _BusyIndicatorTemplate.default;
     }
-
     static get dependencies() {
       return [_Label.default];
     }
-
     static async onDefine() {
       BusyIndicator.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     get ariaTitle() {
       return BusyIndicator.i18nBundle.getText(_i18nDefaults.BUSY_INDICATOR_TITLE);
     }
-
     get labelId() {
       return this.text ? `${this._id}-label` : undefined;
     }
-
     get classes() {
       return {
         root: {
@@ -215,7 +194,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     onBeforeRendering() {
       if (this.active) {
         if (!this._isBusy && !this._busyTimeoutId) {
@@ -229,46 +207,39 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           clearTimeout(this._busyTimeoutId);
           delete this._busyTimeoutId;
         }
-
         this._isBusy = false;
       }
     }
-
     _handleKeydown(event) {
       if (!this._isBusy) {
         return;
       }
+      event.stopImmediatePropagation();
 
-      event.stopImmediatePropagation(); // move the focus to the last element in this DOM and let TAB continue to the next focusable element
-
+      // move the focus to the last element in this DOM and let TAB continue to the next focusable element
       if ((0, _Keys.isTabNext)(event)) {
         this.focusForward = true;
         this.shadowRoot.querySelector("[data-ui5-focus-redirect]").focus();
         this.focusForward = false;
       }
     }
-
     _preventEvent(event) {
       if (this._isBusy) {
         event.stopImmediatePropagation();
       }
     }
+
     /**
      * Moves the focus to busy area when coming with SHIFT + TAB
      */
-
-
     _redirectFocus(event) {
       if (this.focusForward) {
         return;
       }
-
       event.preventDefault();
       this.shadowRoot.querySelector(".ui5-busy-indicator-busy-area").focus();
     }
-
   }
-
   BusyIndicator.define();
   var _default = BusyIndicator;
   _exports.default = _default;

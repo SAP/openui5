@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogGroupTable = _interopRequireDefault(_sapIllusDialogGroupTable);
   _sapIllusSceneGroupTable = _interopRequireDefault(_sapIllusSceneGroupTable);
   _sapIllusSpotGroupTable = _interopRequireDefault(_sapIllusSpotGroupTable);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "GroupTable";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_GROUPTABLE;

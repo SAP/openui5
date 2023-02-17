@@ -6,17 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-cb-item",
-    properties:
-    /** @lends sap.ui.webcomponents.main.ComboBoxItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.ComboBoxItem.prototype */{
       /**
        * Defines the text of the component.
        *
@@ -27,7 +23,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       text: {
         type: String
       },
-
       /**
        * Defines the additional text of the component.
        *
@@ -41,6 +36,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       }
     }
   };
+
   /**
    * @class
    * The <code>ui5-cb-item</code> represents the item for a <code>ui5-combobox</code>.
@@ -53,14 +49,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @implements sap.ui.webcomponents.main.IComboBoxItem
    * @public
    */
-
   class ComboBoxItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
   }
-
   ComboBoxItem.define();
   var _default = ComboBoxItem;
   _exports.default = _default;

@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogSessionExpiring = _interopRequireDefault(_tntDialogSessionExpiring);
   _tntSceneSessionExpiring = _interopRequireDefault(_tntSceneSessionExpiring);
   _tntSpotSessionExpiring = _interopRequireDefault(_tntSpotSessionExpiring);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "SessionExpiring";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

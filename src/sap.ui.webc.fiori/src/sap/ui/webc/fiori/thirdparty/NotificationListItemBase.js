@@ -10,11 +10,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
   _Priority = _interopRequireDefault(_Priority);
   _NotificationOverflowActionsPopoverTemplate = _interopRequireDefault(_NotificationOverflowActionsPopoverTemplate);
   _NotificationOverflowActionsPopover = _interopRequireDefault(_NotificationOverflowActionsPopover);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Icons
+
   // Templates
+
   // Styles
 
   /**
@@ -22,9 +22,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
    */
   const metadata = {
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListItemBase.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.NotificationListItemBase.prototype */{
       /**
        * Defines the <code>titleText</code> of the item.
        * @type {string}
@@ -34,7 +32,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       titleText: {
         type: String
       },
-
       /**
        * Defines the <code>priority</code> of the item.
        * Available options are:
@@ -52,7 +49,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         type: _Priority.default,
         defaultValue: _Priority.default.None
       },
-
       /**
        * Defines if the <code>close</code> button would be displayed.
        * @type {boolean}
@@ -62,7 +58,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       showClose: {
         type: Boolean
       },
-
       /**
        * Defines if the <code>notification</code> is new or has been already read.
        * <br><br>
@@ -75,7 +70,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       read: {
         type: Boolean
       },
-
       /**
        * Defines if a busy indicator would be displayed over the item.
        * @type {boolean}
@@ -86,7 +80,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       busy: {
         type: Boolean
       },
-
       /**
        * Defines the delay in milliseconds, after which the busy indicator will show up for this component.
        *
@@ -99,9 +92,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         defaultValue: 1000
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListItemBase.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.NotificationListItemBase.prototype */{
       /**
        * Defines the actions, displayed in the top-right area.
        * <br><br>
@@ -115,9 +106,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListItemBase.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.NotificationListItemBase.prototype */{
       /**
        * Fired when the <code>Close</code> button is pressed.
        *
@@ -127,6 +116,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       close: {}
     }
   };
+
   /**
    * @class
    *
@@ -142,20 +132,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
    * @appenddocs NotificationAction
    * @public
    */
-
   class NotificationListItemBase extends _ListItemBase.default {
     static get metadata() {
       return metadata;
     }
-
     static get staticAreaTemplate() {
       return _NotificationOverflowActionsPopoverTemplate.default;
     }
-
     static get staticAreaStyles() {
       return _NotificationOverflowActionsPopover.default;
     }
-
     static priorityIconsMappings() {
       return {
         "High": "message-error",
@@ -163,43 +149,33 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         "Low": "message-success"
       };
     }
-
     get hasTitleText() {
       return !!this.titleText.length;
     }
-
     get hasPriority() {
       return this.priority !== _Priority.default.None;
     }
-
     get priorityIcon() {
       return NotificationListItemBase.priorityIconsMappings()[this.priority];
     }
-
     get overflowButtonDOM() {
       return this.shadowRoot.querySelector(".ui5-nli-overflow-btn");
     }
-
     get showOverflow() {
       return !!this.overflowActions.length;
     }
-
     get overflowActions() {
       if (this.actions.length <= 1) {
         return [];
       }
-
       return this.actionsInfo;
     }
-
     get standardActions() {
       if (this.actions.length > 1) {
         return [];
       }
-
       return this.actionsInfo;
     }
-
     get actionsInfo() {
       return this.actions.map(action => {
         return {
@@ -212,24 +188,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         };
       });
     }
+
     /**
      * Event handlers
      */
-
-
     _onBtnCloseClick() {
       this.fireEvent("close", {
         item: this
       });
     }
-
     _onBtnOverflowClick() {
       this.openOverflow();
     }
-
     _onCustomActionClick(event) {
       const refItemId = event.target.getAttribute("data-ui5-external-action-item-id");
-
       if (refItemId) {
         this.getActionByID(refItemId).fireEvent("click", {
           targetRef: event.target
@@ -237,44 +209,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         this.closeOverflow();
       }
     }
-
     _onkeydown(event) {
       super._onkeydown(event);
-
       if (event.isMarked === "button") {
         return;
       }
-
       if ((0, _Keys.isSpace)(event)) {
         event.preventDefault();
       }
     }
-
     getActionByID(id) {
       return this.actions.find(action => action._id === id);
     }
-
     async openOverflow() {
       const overflowPopover = await this.getOverflowPopover();
       overflowPopover.showAt(this.overflowButtonDOM);
     }
-
     async closeOverflow() {
       const overflowPopover = await this.getOverflowPopover();
       overflowPopover.close();
     }
-
     async getOverflowPopover() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector(".ui5-notification-overflow-popover");
     }
-
     static async onDefine() {
       NotificationListItemBase.i18nFioriBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
-
   }
-
   var _default = NotificationListItemBase;
   _exports.default = _default;
 });

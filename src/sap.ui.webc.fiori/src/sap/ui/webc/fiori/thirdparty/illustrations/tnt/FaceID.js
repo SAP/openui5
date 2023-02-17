@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogFaceID = _interopRequireDefault(_tntDialogFaceID);
   _tntSceneFaceID = _interopRequireDefault(_tntSceneFaceID);
   _tntSpotFaceID = _interopRequireDefault(_tntSpotFaceID);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "FaceID";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

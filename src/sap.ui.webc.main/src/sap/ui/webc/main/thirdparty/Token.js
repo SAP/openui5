@@ -10,9 +10,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Icon = _interopRequireDefault(_Icon);
   _TokenTemplate = _interopRequireDefault(_TokenTemplate);
   _Token = _interopRequireDefault(_Token);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -22,9 +20,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-token",
     languageAware: true,
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Token.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Token.prototype */{
       /**
        * Defines the text of the token.
        *
@@ -35,7 +31,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       text: {
         type: String
       },
-
       /**
        * Defines whether the component is read-only.
        * <br><br>
@@ -48,7 +43,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       readonly: {
         type: Boolean
       },
-
       /**
        * Set by the tokenizer when a token is in the "more" area (overflowing)
        * @type {boolean}
@@ -57,7 +51,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       overflows: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is selected or not.
        *
@@ -67,7 +60,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       selected: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is focused or not.
        *
@@ -77,7 +69,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       focused: {
         type: Boolean
       },
-
       /**
        * Defines the tabIndex of the component.
        * @type {string}
@@ -89,9 +80,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         noAttribute: true
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.Token.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Token.prototype */{
       /**
        * Defines the close icon for the token. If nothing is provided to this slot, the default close icon will be used.
        * Accepts <code>ui5-icon</code>.
@@ -105,9 +94,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Token.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Token.prototype */{
       /**
        * Fired when the backspace, delete or close icon of the token is pressed
        *
@@ -126,7 +113,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the the component is selected by user interaction with mouse or by clicking space.
        *
@@ -136,6 +122,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       select: {}
     }
   };
+
   /**
    * @class
    *
@@ -155,45 +142,35 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.IToken
    * @public
    */
-
   class Token extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _TokenTemplate.default;
     }
-
     static get styles() {
       return _Token.default;
     }
-
     _handleSelect() {
       this.selected = !this.selected;
       this.fireEvent("select");
     }
-
     _focusin() {
       this.focused = true;
     }
-
     _focusout() {
       this.focused = !this.focused;
     }
-
     _delete() {
       this.fireEvent("delete");
     }
-
     _keydown(event) {
       const isBS = (0, _Keys.isBackSpace)(event);
       const isD = (0, _Keys.isDelete)(event);
-
       if (!this.readonly && (isBS || isD)) {
         event.preventDefault();
         this.fireEvent("delete", {
@@ -201,36 +178,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           "delete": isD
         });
       }
-
       if ((0, _Keys.isSpace)(event) || (0, _Keys.isSpaceCtrl)(event)) {
         event.preventDefault();
-
         this._handleSelect();
       }
     }
-
     get tokenDeletableText() {
       return Token.i18nBundle.getText(_i18nDefaults.TOKEN_ARIA_DELETABLE);
     }
-
     get iconURI() {
       if ((0, _Theme.getTheme)().includes("sap_belize")) {
         return "sys-cancel";
       }
-
       return "decline";
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
     static async onDefine() {
       Token.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   Token.define();
   var _default = Token;
   _exports.default = _default;

@@ -8,10 +8,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./Li
   _ListItemBase = _interopRequireDefault(_ListItemBase);
   _GroupHeaderListItemTemplate = _interopRequireDefault(_GroupHeaderListItemTemplate);
   _GroupHeaderListItem = _interopRequireDefault(_GroupHeaderListItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -20,9 +19,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./Li
   const metadata = {
     tag: "ui5-li-groupheader",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.GroupHeaderListItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.GroupHeaderListItem.prototype */{
       /**
        * Defines the text alternative of the component.
        * Note: If not provided a default text alternative will be set, if present.
@@ -36,9 +33,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./Li
         type: String
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.GroupHeaderListItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.GroupHeaderListItem.prototype */{
       /**
        * Defines the text of the component.
        * <br>
@@ -52,10 +47,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./Li
         type: Node
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.GroupHeaderListItem.prototype */
-    {}
+    events: /** @lends sap.ui.webcomponents.main.GroupHeaderListItem.prototype */{}
   };
+
   /**
    * @class
    * The <code>ui5-li-groupheader</code> is a special list item, used only to separate other list items into logical groups.
@@ -68,38 +62,29 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./Li
    * @implements sap.ui.webcomponents.main.IListItem
    * @public
    */
-
   class GroupHeaderListItem extends _ListItemBase.default {
     static get template() {
       return _GroupHeaderListItemTemplate.default;
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return [_ListItemBase.default.styles, _GroupHeaderListItem.default];
     }
-
     get group() {
       return true;
     }
-
     get groupHeaderText() {
       return GroupHeaderListItem.i18nBundle.getText(_i18nDefaults.GROUP_HEADER_TEXT);
     }
-
     get ariaLabelText() {
       return [this.textContent, this.accessibleName].filter(Boolean).join(" ");
     }
-
     static async onDefine() {
       GroupHeaderListItem.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   GroupHeaderListItem.define();
   var _default = GroupHeaderListItem;
   _exports.default = _default;

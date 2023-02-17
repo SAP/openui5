@@ -11,10 +11,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _WrappingType = _interopRequireDefault(_WrappingType);
   _LabelTemplate = _interopRequireDefault(_LabelTemplate);
   _Label = _interopRequireDefault(_Label);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -22,9 +21,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */
   const metadata = {
     tag: "ui5-label",
-    properties:
-    /** @lends sap.ui.webcomponents.main.Label.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Label.prototype */{
       /**
        * Defines whether an asterisk character is added to the component text.
        * <br><br>
@@ -37,7 +34,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       required: {
         type: Boolean
       },
-
       /**
        * Defines how the text of a component will be displayed when there is not enough space.
        * Available options are:
@@ -54,7 +50,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _WrappingType.default,
         defaultValue: _WrappingType.default.None
       },
-
       /**
        * Defines whether colon is added to the component text.
        * <br><br>
@@ -63,10 +58,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
        * @defaultvalue false
        * @public
        */
+
       showColon: {
         type: Boolean
       },
-
       /**
        * Defines the labeled input by providing its ID.
        * <br><br>
@@ -80,9 +75,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.Label.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Label.prototype */{
       /**
        * Defines the text of the component.
        * <br><b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
@@ -96,6 +89,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -122,24 +116,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @tagname ui5-label
    * @public
    */
-
   class Label extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _LabelTemplate.default;
     }
-
     static get styles() {
       return _Label.default;
     }
-
     get classes() {
       return {
         textWrapper: {
@@ -148,22 +137,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     _onclick() {
       if (!this.for) {
         return;
       }
-
       const ownerNode = (0, _findNodeOwner.default)(this);
       const elementToFocus = ownerNode.querySelector(`#${this.for}`);
-
       if (elementToFocus) {
         elementToFocus.focus();
       }
     }
-
   }
-
   Label.define();
   var _default = Label;
   _exports.default = _default;

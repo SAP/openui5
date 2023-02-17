@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogUnableToLoadImage = _interopRequireDefault(_sapIllusDialogUnableToLoadImage);
   _sapIllusSceneUnableToLoadImage = _interopRequireDefault(_sapIllusSceneUnableToLoadImage);
   _sapIllusSpotUnableToLoadImage = _interopRequireDefault(_sapIllusSpotUnableToLoadImage);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "UnableToLoadImage";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_UNABLETOLOADIMAGE;

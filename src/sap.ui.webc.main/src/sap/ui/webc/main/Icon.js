@@ -33,15 +33,9 @@ sap.ui.define([
 	 *
 	 *
 	 * <ul>
-	 *     <li>
-	 *         {@link https://www.npmjs.com/package/@ui5/webcomponents-icons @ui5/webcomponents-icons} represents the "SAP-icons" collection and includes the following {@link demo:sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons icons}.
-	 *     </li>
-	 *     <li>
-	 *         {@link https://www.npmjs.com/package/@ui5/webcomponents-icons-tnt @ui5/webcomponents-icons-tnt} represents the "tnt" collection and includes the following {@link demo:sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT icons}.
-	 *     </li>
-	 *     <li>
-	 *         {@link https://www.npmjs.com/package/@ui5/webcomponents-icons-business-suite @ui5/webcomponents-icons-icons-business-suite} represents the "business-suite" collection and includes the following {@link https://ui5.sap.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/BusinessSuiteInAppSymbols icons}.
-	 *     </li>
+	 *     <li> {@link https://www.npmjs.com/package/@ui5/webcomponents-icons @ui5/webcomponents-icons} represents the "SAP-icons" collection and includes the following {@link demo:sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons icons}. </li>
+	 *     <li> {@link https://www.npmjs.com/package/@ui5/webcomponents-icons-tnt @ui5/webcomponents-icons-tnt} represents the "tnt" collection and includes the following {@link demo:sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT icons}. </li>
+	 *     <li> {@link https://www.npmjs.com/package/@ui5/webcomponents-icons-business-suite @ui5/webcomponents-icons-icons-business-suite} represents the "business-suite" collection and includes the following {@link https://ui5.sap.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/BusinessSuiteInAppSymbols icons}. </li>
 	 * </ul>
 	 *
 	 * 2. <b>After exploring the icons collections, add one or more of the packages as dependencies to your project.</b> <br>
@@ -149,7 +143,7 @@ sap.ui.define([
 				 * Defines the unique identifier (icon name) of the component. <br>
 				 *
 				 *
-				 * To browse all available icons, see the {@link demo:sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons SAP Icons}, {@link demo:sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT SAP TNT Icons} and {@link https://ui5.sap.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/BusinessSuiteInAppSymbols SAP Business Suite Icons} collections. <br>
+				 * To browse all available icons, see the {@link demo:sap/m/demokit/iconExplorer/webapp/index.html SAP Icons}, {@link demo:sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT SAP Fiori Tools} and {@link demo:sap/m/demokit/iconExplorer/webapp/index.html SAP Business Suite} collections. <br>
 				 *
 				 *
 				 * Example: <br>
