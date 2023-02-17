@@ -1463,7 +1463,7 @@ function (
 
 		// Check
 		assert.ok(isHeaderSnappedWithScroll(), "header is still snapped with scroll");
-		assert.ok(oScrollPositionSpy.calledOnce, "Called only once (from adjustSnap function)");
+		assert.strictEqual(oScrollPositionSpy.callCount, 0, "no adjusting of the scroll position when the modified header content is hidden");
 	});
 
 	QUnit.test("DynamicPage header resize with invalidation", function (assert) {

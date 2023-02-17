@@ -741,6 +741,11 @@ sap.ui.define([
 		}
 
 		oDynamicPageHeader.$().css("visibility", bTabbable ? "visible" : "hidden");
+
+		// ensure constant header height while the header is hidden in the scroll overflow
+		// in order to avoid unnecessary jumps of the scroll position
+		// due to reflow of the header content while in the scroll overflow
+		oDynamicPageHeader.$().css("height", bTabbable ? "" : this._getHeaderHeight() + "px");
 	};
 
 	/**
