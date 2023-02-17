@@ -4,6 +4,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/base/Log",
 	"sap/m/MessageBox",
+	"sap/m/MessageToast",
 	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/dt/DesignTimeMetadata",
@@ -27,6 +28,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	Log,
 	MessageBox,
+	MessageToast,
 	oCore,
 	Device,
 	DesignTimeMetadata,
@@ -284,9 +286,12 @@ sap.ui.define([
 		QUnit.test("when saving RTA without exiting,", function(assert) {
 			var fnDone = assert.async();
 			var oCVizUpdateSpy = sandbox.spy(ChangeVisualization.prototype, "updateAfterSave");
+			var oMessageToastShowSpy = sandbox.spy(MessageToast, "show");
+			var sExpectedMessageToastMessage = this.oRta._getTextResources().getText("MSG_SAVE_SUCCESS");
 
 			function fnChecks() {
 				assert.ok(this.oRta, "RTA is still up and running");
+				assert.ok(oMessageToastShowSpy.calledWith(sExpectedMessageToastMessage), "message toast save confirmation is triggered");
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
 				assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible.");
 				var oToolbar = this.oRta.getToolbar();
@@ -303,6 +308,51 @@ sap.ui.define([
 					);
 					fnDone();
 				});
+			}
+
+			// Simulate pressing the "save" button
+			this.oRta.getToolbar().fireSave({
+				callback: fnChecks.bind(this)
+			});
+		});
+
+		QUnit.test("when saving RTA including variants without exiting,", function(assert) {
+			var fnDone = assert.async();
+			var oMessageToastShowSpy = sandbox.spy(MessageToast, "show");
+			var sExpectedMessageToastMessage = this.oRta._getTextResources().getText("MSG_SAVE_DRAFT_SUCCESS");
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+
+			function fnChecks() {
+				assert.ok(this.oRta, "RTA is still up and running");
+				assert.ok(oMessageToastShowSpy.calledWith(sExpectedMessageToastMessage), "appropriate message toast save confirmation is triggered");
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
+				assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible");
+				assert.ok(this.oRta.getToolbar().getControl("versionButton").getVisible(), "and versionButton into the toolbar is visible");
+				fnDone();
+			}
+
+			// Simulate pressing the "save" button
+			this.oRta.getToolbar().fireSave({
+				callback: fnChecks.bind(this)
+			});
+		});
+
+		QUnit.test("when saving RTA without exiting with error in saving changes,", function(assert) {
+			var fnDone = assert.async();
+			var oMessageToastShowSpy = sandbox.spy(MessageToast, "show");
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.reject("Test Exception"));
+			var oMessageBoxStub = sandbox.stub(MessageBox, "error")
+			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
+			var sExpectedErrorMessage = this.oRta._getTextResources().getText("MSG_LREP_TRANSFER_ERROR");
+
+			function fnChecks() {
+				assert.ok(this.oRta, "RTA is still up and running");
+				assert.strictEqual(oMessageToastShowSpy.callCount, 0, "then message toast with confirmation message is not called");
+				assert.strictEqual(oMessageBoxStub.callCount, 1, "then the messagebox with the error message is called once");
+				assert.ok(oMessageBoxStub.getCall(0).args[0].includes(sExpectedErrorMessage), "then the expected messagebox is called");
+				assert.ok(this.oCommandStack.getAllExecutedCommands().length > 0, "command stack is not cleared");
+				assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible");
+				fnDone();
 			}
 
 			// Simulate pressing the "save" button
