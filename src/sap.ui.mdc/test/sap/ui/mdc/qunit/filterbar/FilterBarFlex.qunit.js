@@ -1,7 +1,23 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/FilterBar.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/util/reflection/XmlTreeModifier", "sap/ui/mdc/FilterBarDelegate", 'sap/ui/mdc/FilterField', "sap/ui/mdc/odata/TypeUtil"
-], function(createAppEnvironment, FilterBarFlexHandler, ChangesWriteAPI, JsControlTreeModifier, XMLTreeModifier, FilterBarDelegate, FilterField, TypeUtil) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
+	"sap/ui/mdc/flexibility/FilterBar.flexibility",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/mdc/FilterBarDelegate",
+	'sap/ui/mdc/FilterField',
+	'sap/ui/model/odata/type/String',
+	"sap/ui/mdc/odata/TypeUtil"
+], function(createAppEnvironment,
+	FilterBarFlexHandler,
+	ChangesWriteAPI,
+	JsControlTreeModifier,
+	XMLTreeModifier,
+	FilterBarDelegate,
+	FilterField,
+	StringType,
+	TypeUtil) {
 	'use strict';
 
 
