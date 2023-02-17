@@ -1409,7 +1409,7 @@ sap.ui.define([
 	 *   service. All (navigation) properties in the complete model matching such an absolute path
 	 *   are updated. Since 1.85.0, "14.4.11 Expression edm:String" is accepted as well.
 	 *
-	 *   Since 1.108.0, a property path matching the "com.sap.vocabularies.Common.v1.Messages"
+	 *   Since 1.108.8, a property path matching the "com.sap.vocabularies.Common.v1.Messages"
 	 *   annotation of a list binding's entity type is treated specially for a row context of a list
 	 *   binding: It is loaded even if it has not yet been requested by that list binding. This way,
 	 *   exactly the messages for a single row can be updated. Same for a "*" segment or an empty
