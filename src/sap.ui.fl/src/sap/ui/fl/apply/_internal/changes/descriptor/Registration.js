@@ -14,7 +14,6 @@ sap.ui.define([
 	 * Loads and registers all descriptor change mergers for client-side merging.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.Registration
-	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
 	 * @private
