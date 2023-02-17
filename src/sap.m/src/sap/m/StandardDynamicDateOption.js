@@ -402,10 +402,6 @@ sap.ui.define([
 
 			if (oValue && oValue.values) {
 				oValue.values = oValue.values.map(function(val) {
-					if (val instanceof Date) {
-						return oControl._reverseConvertDate(val);
-					}
-
 					return val;
 				});
 			}
@@ -423,10 +419,6 @@ sap.ui.define([
 				}
 
 				var oInputControl;
-				var bUTC = false;
-				if (oControl && oValue) {
-					bUTC = oControl._checkFormatterUTCTimezone(oValue.operator);
-				}
 
 				switch (aParams[iIndex].getType()) {
 					case "int":
@@ -438,18 +430,18 @@ sap.ui.define([
 						}
 						break;
 					case "date":
-						oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated, bUTC, sCalendarWeekNumbering);
+						oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated, sCalendarWeekNumbering);
 						break;
 					case "datetime":
 						if (aParams.length === 1) {
 							// creates "single" DateTime option (embedded in the DynamicDateRange popup)
-							oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated, bUTC, sCalendarWeekNumbering);
+							oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated, sCalendarWeekNumbering);
 						} else if (aParams.length === 2) {
-							oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated, bUTC, sCalendarWeekNumbering);
+							oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated, sCalendarWeekNumbering);
 						}
 						break;
 					case "daterange":
-						oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated, bUTC, sCalendarWeekNumbering);
+						oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated, sCalendarWeekNumbering);
 					break;
 					case "month":
 						oInputControl = this._createMonthControl(oValue, iIndex, fnControlsUpdated);
