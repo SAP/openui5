@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/mdc/util/TypeUtil"
+	"sap/ui/mdc/util/TypeUtil",
+	"sap/ui/model/type/String"
 ], function (
 	FilterBar,
 	Manifest,
@@ -27,7 +28,8 @@ sap.ui.define([
 	URLHandler,
 	FlexState,
 	FlexControllerFactory,
-	TypeUtil
+	TypeUtil,
+	StringType
 ) {
 	"use strict";
 
