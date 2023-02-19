@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/CheckBox",
 	"sap/m/App"
-], function(Shell, Label, Page, Toolbar, ToolbarSpacer, CheckBox, App, ComponentContainer) {
+], function(Shell, Label, Page, Toolbar, ToolbarSpacer, CheckBox, App) {
 	"use strict";
 
 	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
