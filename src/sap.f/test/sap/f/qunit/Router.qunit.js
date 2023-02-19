@@ -2,12 +2,14 @@
 sap.ui.define([
 	"sap/f/routing/Router",
 	"sap/m/NavContainer",
-	"sap/m/Page"
+	"sap/m/Page",
+	"sap/ui/core/mvc/View"
 ],
 function (
 	Router,
 	NavContainer,
-	Page
+	Page,
+	View
 ) {
 	"use strict";
 
@@ -35,19 +37,10 @@ function (
 	QUnit.module("Integration tests");
 
 	function createViewAndController(sName, oContent) {
-		sap.ui.controller(sName, {});
-		sap.ui.jsview(sName, {
-			createContent: function () {
-				if (oContent) {
-					return oContent;
-				}
-			},
-			getController: function () {
-				return sap.ui.controller(sName);
-			}
+		var oView = View.create({viewName: "sap.ui.test.views." + sName, type: "XML"
 		});
 
-		return sap.ui.jsview(sName);
+		return oView;
 	}
 
 
@@ -55,6 +48,7 @@ function (
 		//Arrange
 		var oNavContainer = new NavContainer(),
 				oInnerPage = new Page("innerPage"),
+				done = assert.async(),
 				oRouter = fnCreateRouter(
 						{
 							"route": {
@@ -63,32 +57,34 @@ function (
 							}
 						},
 						{
-							viewType: "JS",
+							viewType: "XML",
 							controlAggregation:"pages",
-							controlId: oNavContainer.getId()
+							controlId: oNavContainer.getId(),
+							async: true
 						},
 						null,
 						{
 							first: {
-								viewName: "first",
+								viewName: "sap.ui.test.views.first",
 								viewLevel: 1
 							},
 							second: {
 								parent: "first",
-								viewName: "second",
+								viewName: "sap.ui.test.views.second",
 								controlId: "innerPage",
 								controlAggregation: "content"
 							}
 						});
 
+			assert.expect(1);
 		// views
-		createViewAndController("first", oInnerPage);
-		createViewAndController("second");
-
-		assert.expect(1);
-
-		return oRouter.getTargets().display("second").then(function() {
-			assert.strictEqual(oInnerPage.getContent().length, 1, "the dependent view inserted with no error");
+		createViewAndController("first", oInnerPage).then(function(oFirstView){
+			createViewAndController("second").then(function() {
+				oRouter.getTargets().display("second").then(function() {
+					assert.strictEqual(oInnerPage.getContent().length, 1, "the dependent view inserted with no error");
+					done();
+				});
+			});
 		});
 	});
 });
