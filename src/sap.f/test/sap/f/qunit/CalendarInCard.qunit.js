@@ -4,15 +4,16 @@ sap.ui.define([
 	"sap/f/CalendarInCard",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/core/Core"
-], function(CalendarInCard, CalendarDate, DateTypeRange, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(CalendarInCard, CalendarDate, DateTypeRange, oCore, UI5Date) {
 	"use strict";
 
 	QUnit.module("Interaction", {
 		beforeEach: function () {
 			this.oCal = new CalendarInCard("PC", {
 				selectedDates: [ new DateTypeRange({
-					startDate: new Date(2019, 8, 2)
+					startDate: UI5Date.getInstance(2019, 8, 2)
 				})]
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -128,14 +129,14 @@ sap.ui.define([
 		oCalendar._handleNext();
 		oCore.applyChanges();
 		// Assert
-		assert.equal(oCalendar.getStartDate().getTime(), new Date(2020, 8, 1).getTime(), "startDate set correct");
+		assert.equal(oCalendar.getStartDate().getTime(), UI5Date.getInstance(2020, 8, 1).getTime(), "startDate set correct");
 		assert.equal(oPickerBtn.getText(), "2020", "picker text is correct");
 
 		// Act
 		oCalendar._handlePrevious();
 		oCore.applyChanges();
 		// Assert
-		assert.equal(oCalendar.getStartDate().getTime(), new Date(2019, 8, 1).getTime(), "startDate set correct");
+		assert.equal(oCalendar.getStartDate().getTime(), UI5Date.getInstance(2019, 8, 1).getTime(), "startDate set correct");
 		assert.equal(oPickerBtn.getText(), "2019", "picker text is correct");
 
 		// Act
@@ -172,8 +173,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Today button", function(assert) {
-		var oFakeNow = new Date(2020, 0, 1),
-			oOldDate = new Date(2019, 11, 1),
+		var oFakeNow = UI5Date.getInstance(2020, 0, 1),
+			oOldDate = UI5Date.getInstance(2019, 11, 1),
 			clock = sinon.useFakeTimers(oFakeNow.getTime()),
 			oCalendar = this.oCal,
 			oPickerBtn = oCalendar._oPickerBtn,
