@@ -1,0 +1,45 @@
+{
+  "1.112.0": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "dcec35e2fab873de1c1027f9a89eb469cfbc8563",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UI5Date: UTC setters invalidate cached date parts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380037594"
+          }
+        ]
+      },
+      {
+        "id": "c8a678a1d9de1e888d9347c8a965a6fd61a63b1a",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.04 and v4.16"
+      },
+      {
+        "id": "89fab24f42f43e0ff4442fb8875631784ee8e66a",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Consider AppCacheBuster",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380026114"
+          }
+        ]
+      },
+      {
+        "id": "4faa26efac20720fbab83c7964206f3f0883de74",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._AggregationCache#readCount: properly escape spaces...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380032202"
+          }
+        ]
+      }
+    ]
+  }
+}

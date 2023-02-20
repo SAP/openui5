@@ -3,6 +3,17 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "1d3b19cca223a808e8a14534fc22f1966dfd3653",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: improve menu items announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270140714"
+          }
+        ]
+      },
+      {
         "id": "5f26259d0d3340a01103a951970ac0b510f85a29",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarLegend: improved accessibility",

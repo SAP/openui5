@@ -3,6 +3,11 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "c8a678a1d9de1e888d9347c8a965a6fd61a63b1a",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.04 and v4.16"
+      },
+      {
         "id": "9e5486e392631b4e4f42636c84fe9ca9ccfab7aa",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: Correct alignment in Horizon",
