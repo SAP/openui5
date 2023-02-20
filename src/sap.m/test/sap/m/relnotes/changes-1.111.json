@@ -3,6 +3,39 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "6a5cddcdbbe539f707a61f7a445aff73e398bcb4",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Prevent scroll when focusing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001259822023"
+          }
+        ]
+      },
+      {
+        "id": "b6525d15e11b53058103ecfcea3b86814d9d64e5",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Fixed focusing item in hidden page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001259822023"
+          }
+        ]
+      },
+      {
+        "id": "6051b3c61313ffe5ca7813b89f12373889cf1605",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Improve sub items accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000485332023"
+          }
+        ]
+      },
+      {
         "id": "9e79fcd2ba73209cdd0edea518efbd44af608f9f",
         "type": "FEATURE",
         "text": " sap.m.DynamicDateRange: add more date range options"

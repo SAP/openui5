@@ -3,6 +3,17 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "afa9289077b25fed533b8736c4a938606542c122",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: improved accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380032801"
+          }
+        ]
+      },
+      {
         "id": "33b73ba889b45f8a379c7b76b719e2681df15c6f",
         "type": "FEATURE",
         "text": " sap.ui.unified.Calendar: adjust focus handling"
