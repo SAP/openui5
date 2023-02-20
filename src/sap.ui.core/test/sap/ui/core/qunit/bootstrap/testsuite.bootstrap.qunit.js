@@ -504,6 +504,9 @@ sap.ui.define(function() {
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
 			},
+			/**
+			 * @deprecated As of version 1.111
+			 */
 			"ThemeVersion-on-sync-customcss": {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - sync (with custom.css)",
@@ -521,6 +524,9 @@ sap.ui.define(function() {
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
 			},
+			/**
+			 * @deprecated As of version 1.111
+			 */
 			"ThemeVersion-on-sync": {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - sync",
