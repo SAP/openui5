@@ -159,7 +159,8 @@ sap.ui.define([
 
 	PersistenceProvider.prototype.exit = function () {
 		if (this._oWrapper) {
-			var oStatic = Core.getUIArea(Core.getStaticAreaRef());
+			var oStaticAreaRef = Core.getStaticAreaRef();
+			var oStatic = UIArea.registry.get(oStaticAreaRef.id);
 			oStatic.removeContent(this._oWrapper);
 
 			this._oWrapper.destroy();
