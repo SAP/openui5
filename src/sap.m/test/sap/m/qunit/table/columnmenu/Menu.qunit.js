@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/m/library",
+	"sap/ui/base/Event",
 	"sap/ui/core/Core",
 	"sap/ui/core/UIArea",
 	"sap/ui/layout/GridData",
@@ -26,6 +27,7 @@ sap.ui.define([
 	Button,
 	Dialog,
 	library,
+	Event,
 	oCore,
 	UIArea,
 	GridData,
@@ -928,19 +930,28 @@ sap.ui.define([
 		var oDialog = new Dialog({
 			content: [oButton1, oButton2]
 		});
+		var oFakeEvent = new Event();
 
 		oDialog.placeAt("content");
 		oCore.applyChanges();
 
 		oDialog.open();
 		this.oColumnMenu.openBy(oButton1);
+		this.clock.tick(1000);
 		assert.ok(this.oColumnMenu.isOpen());
-		QUnitUtils.triggerEvent("mousedown", this.oColumnMenu.getId());
+
+		oFakeEvent.type = "sapfocusleave";
+		oFakeEvent.relatedControlId = this.oColumnMenu._oPopover._oControl.getId();
+		this.oColumnMenu.onsapfocusleave(oFakeEvent);
+
+		assert.equal(document.activeElement.id, this.oColumnMenu.getId() + "-focusDummy");
 		assert.ok(this.oColumnMenu.isOpen());
-		QUnitUtils.triggerEvent("mousedown", oButton2.getId());
+		oFakeEvent.relatedControlId = oButton2.getId();
+		this.oColumnMenu.onsapfocusleave(oFakeEvent);
 		this.clock.tick(1000);
 		assert.notOk(this.oColumnMenu.isOpen());
 
+		oFakeEvent.destroy();
 		oDialog.destroy();
 		oButton1.destroy();
 		oButton2.destroy();
@@ -972,5 +983,41 @@ sap.ui.define([
 		QUnitUtils.triggerEvent("mousedown", oComboBox._getList().getItems()[0].$()[0].firstChild);
 		this.clock.tick(1000);
 		assert.ok(this.oColumnMenu.isOpen());
+	});
+
+	QUnit.test("Auto close behavior when the Menu item opens a dialog", function(assert) {
+		var oButtonInsideDialog = new Button();
+		var oDialog = new Dialog({
+			content: [oButtonInsideDialog]
+		});
+
+		var oButtonOpenDialog = new Button({
+			press: function() {
+				oDialog.open();
+			}
+		});
+
+		this.oColumnMenu.addItem(
+			new Item({
+				label: "test item",
+				content: oButtonOpenDialog
+			})
+		);
+
+		this.oColumnMenu.addDependent(oDialog);
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+
+		var sId = this.oColumnMenu.getItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		this.clock.tick(1000);
+
+		oButtonOpenDialog.firePress();
+		this.clock.tick(1000);
+		assert.ok(this.oColumnMenu.isOpen());
+		oButtonInsideDialog.firePress();
+		this.clock.tick(1000);
+		assert.ok(this.oColumnMenu.isOpen());
+		this.oColumnMenu.close();
 	});
 });
