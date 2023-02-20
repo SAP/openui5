@@ -588,10 +588,12 @@ sap.ui.define([
 
 	function showSaveConfirmation() {
 		var bVersionEnabled = this._oVersionsModel.getProperty("/versioningEnabled");
-		return Utils.showMessageBox("warning", "MSG_UNSAVED_CHANGES_ON_CLOSE", {
+		var sWarningMessageKey = bVersionEnabled ? "MSG_UNSAVED_DRAFT_CHANGES_ON_CLOSE" : "MSG_UNSAVED_CHANGES_ON_CLOSE";
+		var sSaveButtonTextKey = bVersionEnabled ? "BTN_UNSAVED_DRAFT_CHANGES_ON_CLOSE_SAVE" : "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE";
+		return Utils.showMessageBox("warning", sWarningMessageKey, {
 			titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
 			actionKeys: [
-				bVersionEnabled ? "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE_DRAFT" : "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
+				sSaveButtonTextKey,
 				"BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"
 			],
 			emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
