@@ -399,6 +399,38 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[true, false].forEach(function (bUsePreliminary) {
+	QUnit.test("constructor: with preliminary context, bUsePreliminaryContext=" + bUsePreliminary, function (assert) {
+		var oBinding,
+			oContext = {
+				isPreliminary : function () {}
+			},
+			oModel = {
+				checkFilterOperation : function () {},
+				createCustomParams : function () {},
+				resolve : function () {},
+				resolveDeep : function () {}
+			},
+			mParameters = {usePreliminaryContext : bUsePreliminary};
+
+		this.mock(oModel).expects("createCustomParams").withExactArgs(sinon.match.same(mParameters));
+		this.mock(oContext).expects("isPreliminary").withExactArgs().exactly(bUsePreliminary ? 0 : 1).returns(true);
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("relativePath", bUsePreliminary ? sinon.match.same(oContext) : undefined)
+			.returns("~deepPath"); // resolveDeep returns undefined for oContext === undefined
+		this.mock(oModel).expects("checkFilterOperation").withExactArgs([]);
+		this.mock(ODataListBinding.prototype).expects("checkExpandedList").withExactArgs().returns(true);
+		this.mock(ODataListBinding.prototype).expects("_reassignCreateActivate").withExactArgs();
+
+		// code under test
+		oBinding = new ODataListBinding(oModel, "relativePath", oContext, undefined, undefined, mParameters);
+
+		assert.strictEqual(oBinding.oContext, bUsePreliminary ? oContext : undefined);
+		assert.strictEqual(oBinding.sDeepPath, "~deepPath");
+	});
+});
+
+	//*********************************************************************************************
 ["resolvedPath", undefined, null].forEach(function (sResolvedPath) {
 	QUnit.test("_checkDataStateMessages: with deepPath: " + sResolvedPath, function (assert) {
 		var oModel = {
