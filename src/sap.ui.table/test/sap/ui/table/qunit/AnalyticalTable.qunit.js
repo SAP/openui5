@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/table/AnalyticalColumn",
+	"sap/ui/model/Filter",
 	"sap/ui/model/type/Float",
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
@@ -16,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
 	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
 ], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2, o4aFakeService,
-			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, TooltipBase, Core) {
+			TreeAutoExpandMode, AnalyticalColumn, Filter, FloatType, Row, library, TooltipBase, Core) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -29,6 +30,117 @@ sap.ui.define([
 	});
 
 	sinon.config.useFakeTimers = false;
+
+	function createResponseData(iSkip, iTop, iCount) {
+		var sRecordTemplate = "{\"__metadata\":{\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults('{index}')\","
+							  + "\"type\":\"tmp.u012345.cca.CCA.ActualPlannedCostsResultsType\"},"
+							  + "\"CostCenter\":\"CostCenter-{index}\""
+							  + ",\"PlannedCosts\":\"499.99\""
+							  + ",\"Currency\":\"EUR\""
+							  + "}";
+		var aRecords = [];
+		var sCount = iCount != null ? ",\"__count\":\"" + iCount + "\"" : "";
+
+		for (var i = iSkip, iLastIndex = iSkip + iTop; i < iLastIndex; i++) {
+			aRecords.push(sRecordTemplate.replace(/({index})/g, i));
+		}
+
+		return "{\"d\":{\"results\":[" + aRecords.join(",") + "]" + sCount + "}}";
+	}
+
+	function createResponse(iSkip, iTop, iCount, bGrandTotal, bGrandTotalEmpty) {
+		var sGrandTotal = "{\"__metadata\":{\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults(\'142544452006589331\')\","
+						  + "\"type\":\"tmp.u012345.cca.CCA.ActualPlannedCostsResultsType\"},"
+						  + "\"Currency\":\"USD\",\"PlannedCosts\":\"9848641.68\"}";
+		var sGrandTotalResponse =
+			bGrandTotal
+				? "--AAD136757C5CF75E21C04F59B8682CEA0\r\n" +
+				  "Content-Type: application/http\r\n" +
+				  "Content-Length: 356\r\n" +
+				  "content-transfer-encoding: binary\r\n" +
+				  "\r\n" +
+				  "HTTP/1.1 200 OK\r\n" +
+				  "Content-Type: application/json\r\n" +
+				  "content-language: en-US\r\n" +
+				  "Content-Length: 259\r\n" +
+				  "\r\n" +
+				  "{\"d\":{\"results\":[" + (bGrandTotalEmpty ? "" : sGrandTotal) + "],"
+				  + "\"__count\":\"" + (bGrandTotalEmpty ? "0" : "1") + "\"}}\r\n"
+				: "";
+
+		var sCountResponse =
+			iCount != null
+				? "--AAD136757C5CF75E21C04F59B8682CEA0\r\n" +
+				  "Content-Type: application/http\r\n" +
+				  "Content-Length: 131\r\n" +
+				  "content-transfer-encoding: binary\r\n" +
+				  "\r\n" +
+				  "HTTP/1.1 200 OK\r\n" +
+				  "Content-Type: application/json\r\n" +
+				  "content-language: en-US\r\n" +
+				  "Content-Length: 35\r\n" +
+				  "\r\n" +
+				  "{\"d\":{\"results\":[],\"__count\":\"" + iCount + "\"}}\r\n"
+				: "";
+
+		return sGrandTotalResponse +
+			   sCountResponse +
+			   "--AAD136757C5CF75E21C04F59B8682CEA0\r\n" +
+			   "Content-Type: application/http\r\n" +
+			   "Content-Length: 3113\r\n" +
+			   "content-transfer-encoding: binary\r\n" +
+			   "\r\n" +
+			   "HTTP/1.1 200 OK\r\n" +
+			   "Content-Type: application/json\r\n" +
+			   "content-language: en-US\r\n" +
+			   "Content-Length: 3015\r\n" +
+			   "\r\n" +
+			   createResponseData(iSkip, iTop, iCount) + "\r\n" +
+			   "--AAD136757C5CF75E21C04F59B8682CEA0--\r\n" +
+			   "";
+	}
+
+	o4aFakeService.addResponse({
+		batch: true,
+		uri: [
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=ActualCosts,Currency,PlannedCosts"
+			+ "&$filter=(CostCenter%20eq%20%27DoesNotExist%27)"
+			+ "&$top=100&$inlinecount=allpages",
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=CostCenter,CostCenterText,ActualCosts,Currency,PlannedCosts"
+			+ "&$filter=(CostCenter%20eq%20%27DoesNotExist%27)"
+			+ "&$orderby=CostCenter%20asc"
+			+ "&$top=110&$inlinecount=allpages",
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=CostCenter,CostElement,Currency"
+			+ "&$filter=(CostCenter%20eq%20%27DoesNotExist%27)"
+			+ "&$top=0&$inlinecount=allpages"
+		],
+		header: o4aFakeService.headers.BATCH,
+		content: createResponse(0, 0, 0, true, true)
+	});
+
+	o4aFakeService.addResponse({
+		batch: true,
+		uri: [
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=ActualCosts,Currency,PlannedCosts"
+			+ "&$filter=(CostCenter%20eq%20%27DoesNotExistButReturnsGrandTotal%27)"
+			+ "&$top=100&$inlinecount=allpages",
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=CostCenter,CostCenterText,ActualCosts,Currency,PlannedCosts"
+			+ "&$filter=(CostCenter%20eq%20%27DoesNotExistButReturnsGrandTotal%27)"
+			+ "&$orderby=CostCenter%20asc"
+			+ "&$top=110&$inlinecount=allpages",
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=CostCenter,CostElement,Currency"
+			+ "&$filter=(CostCenter%20eq%20%27DoesNotExistButReturnsGrandTotal%27)"
+			+ "&$top=0&$inlinecount=allpages"
+		],
+		header: o4aFakeService.headers.BATCH,
+		content: createResponse(0, 0, 0, true)
+	});
 
 	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
 		var iCalled = 0;
@@ -1347,10 +1459,36 @@ sap.ui.define([
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {
 					useBatchRequests: true
-				}
+				},
+				filters: [new Filter({path: "CostCenter", operator: "eq", value1: "DoesNotExist"})]
 			}
 		}, function(oTable) {
-			oTable.getBinding().getLength = function() { return 0; }; // It seems that the MockServer with the analytical fake service can't filter.
+			pDone = new Promise(function(resolve) {
+				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
+					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
+					resolve();
+				});
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
+			});
+		});
+
+		return pDone;
+	});
+
+	QUnit.test("After rendering without data but with the grand total", function(assert) {
+		var pDone;
+
+		this.oTable.destroy();
+		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
+			rows: {
+				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				parameters: {
+					useBatchRequests: true
+				},
+				filters: [new Filter({path: "CostCenter", operator: "eq", value1: "DoesNotExistButReturnsGrandTotal"})]
+			}
+		}, function(oTable) {
 			pDone = new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
