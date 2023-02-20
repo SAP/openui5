@@ -35,6 +35,7 @@ sap.ui.define([
 			},
 			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
 
+		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
 		if (bAsLeaf) { // must not make a difference
 			oElement["@$ui5.node.isExpanded"] = undefined;
 			oPlaceholder["@$ui5.node.isExpanded"] = undefined;
@@ -62,6 +63,7 @@ sap.ui.define([
 			// expandTo > 1
 			oPlaceholder = _AggregationHelper.createPlaceholder(0, 42, oCache);
 
+		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
 		this.mock(_Helper).expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
@@ -78,8 +80,9 @@ sap.ui.define([
 			},
 			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
 
+		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
 		assert.notOk("@$ui5.node.isExpanded" in oPlaceholder);
-		this.mock(_Helper).expects("copyPrivateAnnotation").twice()
+		this.mock(_Helper).expects("copyPrivateAnnotation").thrice()
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
@@ -87,12 +90,22 @@ sap.ui.define([
 
 		assert.strictEqual(oElement["@$ui5.node.isExpanded"], "~new~", "unchanged");
 
+		// Note: an initial placeholder cannot know "@$ui5.node.isExpanded"!
+		_Helper.setPrivateAnnotation(oPlaceholder, "placeholder", 1);
 		oPlaceholder["@$ui5.node.isExpanded"] = "~old~";
 
 		// code under test
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
 
 		assert.strictEqual(oElement["@$ui5.node.isExpanded"], "~old~");
+
+		delete oElement["@$ui5.node.isExpanded"];
+		delete oPlaceholder["@$ui5.node.isExpanded"];
+
+		// code under test
+		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+
+		assert.notOk("@$ui5.node.isExpanded" in oElement, "undefined not explicitly stored");
 	});
 
 	//*********************************************************************************************
@@ -109,6 +122,9 @@ sap.ui.define([
 			},
 			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
 
+		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
+		// Note: an initial placeholder cannot know "@$ui5.node.isExpanded"!
+		_Helper.setPrivateAnnotation(oPlaceholder, "placeholder", 1);
 		oPlaceholder["@$ui5.node.isExpanded"] = aIsExpandedValues[1];
 
 		assert.throws(function () {
@@ -122,6 +138,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("beforeOverwritePlaceholder: unexpected element", function (assert) {
+		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
+
 		assert.throws(function () {
 			// code under test
 			_AggregationHelper.beforeOverwritePlaceholder({}); // other args do not matter here
@@ -132,6 +150,8 @@ sap.ui.define([
 	QUnit.test("beforeOverwritePlaceholder: wrong placeholder", function (assert) {
 		var oCache = {},
 			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
+
+		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
 
 		assert.throws(function () {
 			// code under test
@@ -159,6 +179,7 @@ sap.ui.define([
 			oElement = {"@$ui5.node.level" : 9},
 			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
 
+		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
 		_Helper.setPrivateAnnotation(oElement, sAnnotation, 0);
 		_Helper.setPrivateAnnotation(oPlaceholder, sAnnotation, false);
 
@@ -172,20 +193,53 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("beforeOverwritePlaceholder: $NodeProperty", function (assert) {
 		var oCache = {},
-			oElement = {"@$ui5.node.level" : 9, SomeNodeID : [23]},
+			oElement = {"@$ui5.node.level" : 9},
+			oError = new Error("Unexpected structural change: Some/NodeID from ... to ..."),
 			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
 
-		// code under test (no ID known yet)
-		_AggregationHelper
-			.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42, "SomeNodeID");
-
-		oPlaceholder.SomeNodeID = "42";
+		this.mock(_AggregationHelper).expects("checkNodeProperty")
+			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oElement),
+				"Some/NodeID")
+			.throws(oError);
 
 		assert.throws(function () {
 			// code under test
 			_AggregationHelper
-				.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42, "SomeNodeID");
-		}, new Error('Unexpected structural change: SomeNodeID from "42" to [23]'));
+				.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42, "Some/NodeID");
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkNodeProperty", function (assert) {
+		var oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("drillDown").withExactArgs("~oOld~", "Some/NodeID").returns(undefined);
+		oHelperMock.expects("drillDown").withExactArgs("~oNew~", "Some/NodeID").returns("42");
+
+		// code under test
+		_AggregationHelper.checkNodeProperty("~oOld~", "~oNew~", "Some/NodeID");
+
+		oHelperMock.expects("drillDown").withExactArgs("~oOld~", "Some/NodeID").returns(undefined);
+		oHelperMock.expects("drillDown").withExactArgs("~oNew~", "Some/NodeID").returns("42");
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkNodeProperty("~oOld~", "~oNew~", "Some/NodeID", true);
+		}, new Error('Unexpected structural change: Some/NodeID from undefined to "42"'));
+
+		oHelperMock.expects("drillDown").withExactArgs("~oOld~", "Some/NodeID").returns("42");
+		oHelperMock.expects("drillDown").withExactArgs("~oNew~", "Some/NodeID").returns("42");
+
+		// code under test
+		_AggregationHelper.checkNodeProperty("~oOld~", "~oNew~", "Some/NodeID");
+
+		oHelperMock.expects("drillDown").withExactArgs("~oOld~", "Some/NodeID").returns("42");
+		oHelperMock.expects("drillDown").withExactArgs("~oNew~", "Some/NodeID").returns([23]);
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkNodeProperty("~oOld~", "~oNew~", "Some/NodeID");
+		}, new Error('Unexpected structural change: Some/NodeID from "42" to [23]'));
 	});
 
 	//*********************************************************************************************

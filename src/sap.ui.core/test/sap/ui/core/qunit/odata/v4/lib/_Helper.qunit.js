@@ -1988,10 +1988,39 @@ sap.ui.define([
 		assert.strictEqual(_Helper.drillDown(oObject, []), oObject);
 		assert.strictEqual(_Helper.drillDown(oObject, ["foo"]), "bar");
 		assert.strictEqual(_Helper.drillDown(oObject, ["bar", "baz"]), "qux");
+		assert.strictEqual(_Helper.drillDown(oObject, "bar/baz"), "qux");
 		assert.strictEqual(_Helper.drillDown(oObject, ["unknown"]), undefined);
 		assert.strictEqual(_Helper.drillDown(oObject, ["unknown", "value"]), undefined);
 		assert.strictEqual(_Helper.drillDown(oObject, ["null"]), null);
 		assert.strictEqual(_Helper.drillDown(oObject, ["null", "value"]), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteProperty", function (assert) {
+		var oObject = {
+				foo : "foo",
+				bar : "bar",
+				baz : "baz"
+			},
+			oDrilledDown = {
+				a : "abc",
+				qux : "qux",
+				x : "xyz"
+			};
+
+		// code under test
+		_Helper.deleteProperty(oObject, "bar");
+
+		assert.deepEqual(oObject, {foo : "foo", baz : "baz"});
+
+		this.mock(_Helper).expects("drillDown")
+			.withExactArgs(sinon.match.same(oObject), ["foo", "bar", "baz"])
+			.returns(oDrilledDown);
+
+		// code under test
+		_Helper.deleteProperty(oObject, "foo/bar/baz/qux");
+
+		assert.deepEqual(oDrilledDown, {a : "abc", x : "xyz"});
 	});
 
 	//*********************************************************************************************

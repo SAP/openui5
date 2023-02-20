@@ -844,7 +844,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, 0, 7].forEach(function (iDistanceFromRoot) {
-	[0, 42].forEach(function (iLimitedDescendantCount) {
+	// Note: null means no $LimitedDescendantCountProperty, undefined means not $select'ed
+	[null, undefined, 0, 42].forEach(function (iLimitedDescendantCount) {
 		["collapsed", "expanded", "leaf"].forEach(function (sDrillState) {
 			[undefined, {"@$ui5.node.level" : 41}].forEach(function (oGroupNode) {
 				var sTitle = "calculateKeyPredicateRH: DistanceFromRoot : " + iDistanceFromRoot
@@ -853,6 +854,7 @@ sap.ui.define([
 						+ ", oGroupNode : " + JSON.stringify(oGroupNode);
 
 				if (iDistanceFromRoot === undefined && iLimitedDescendantCount
+						|| iDistanceFromRoot !== undefined && oGroupNode
 						|| sDrillState === "expanded" && !iLimitedDescendantCount
 						|| sDrillState === "leaf" && iLimitedDescendantCount) {
 					return;
@@ -860,14 +862,15 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
-				$DistanceFromRootProperty : "DistFromRoot",
-				$DrillStateProperty : "myDrillState",
-				$LimitedDescendantCountProperty : "LtdDescendant_Count",
+				$DistanceFromRootProperty : "A/DistFromRoot",
+				$DrillStateProperty : "B/myDrillState",
+				$LimitedDescendantCountProperty : "C/LtdDescendant_Count",
 				$metaPath : "/meta/path",
 				$path : "n/a"
 			},
+			sDistanceFromRoot,
 			oElement = {
-				myDrillState : sDrillState,
+				// B: {myDrillState : sDrillState},
 				Foo : "bar",
 				XYZ : 42
 			},
@@ -878,12 +881,21 @@ sap.ui.define([
 				expanded : true,
 				leaf : undefined
 			}[sDrillState],
+			sLimitedDescendantCount,
 			mTypeForMetaPath = {"/meta/path" : {}};
 
 		if (iDistanceFromRoot !== undefined) {
-			oElement.LtdDescendant_Count = "" + iLimitedDescendantCount; // Edm.Int64!
-			oElement.DistFromRoot = "" + iDistanceFromRoot; // Edm.Int64!
 			iExpectedLevel = iDistanceFromRoot + 1;
+			sDistanceFromRoot = "" + iDistanceFromRoot; // Edm.Int64!
+			// oElement.A = {DistFromRoot : sDistanceFromRoot};
+		}
+		if (iLimitedDescendantCount === null) {
+			delete oAggregation.$LimitedDescendantCountProperty;
+		} else {
+			sLimitedDescendantCount = iLimitedDescendantCount === undefined
+				? undefined
+				: "" + iLimitedDescendantCount; // Edm.Int64!
+			// oElement.C = {LtdDescendant_Count : sLimitedDescendantCount};
 		}
 		if (oGroupNode) {
 			iExpectedLevel = 42;
@@ -895,6 +907,9 @@ sap.ui.define([
 			.returns("~predicate~");
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "predicate", "~predicate~");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(sinon.match.same(oElement), "B/myDrillState")
+			.returns(sDrillState);
 		oHelperMock.expects("getKeyFilter").never();
 		if (sDrillState === "collapsed") {
 			oHelperMock.expects("getKeyFilter")
@@ -904,12 +919,24 @@ sap.ui.define([
 			oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oElement), "filter", "~filter~");
 		}
+		oHelperMock.expects("deleteProperty")
+			.withExactArgs(sinon.match.same(oElement), "B/myDrillState");
+		oHelperMock.expects("drillDown").exactly(oGroupNode ? 0 : 1)
+			.withExactArgs(sinon.match.same(oElement), "A/DistFromRoot")
+			.returns(sDistanceFromRoot);
+		oHelperMock.expects("deleteProperty").exactly(sDistanceFromRoot ? 1 : 0)
+			.withExactArgs(sinon.match.same(oElement), "A/DistFromRoot");
 		this.mock(_AggregationHelper).expects("setAnnotations")
 			.withExactArgs(sinon.match.same(oElement), bIsExpanded, /*bIsTotal*/undefined,
 				iExpectedLevel);
 		oHelperMock.expects("setPrivateAnnotation").exactly(iLimitedDescendantCount ? 1 : 0)
 			.withExactArgs(sinon.match.same(oElement), "descendants",
 				/*parseInt!*/iLimitedDescendantCount);
+		oHelperMock.expects("drillDown").exactly(iLimitedDescendantCount === null ? 0 : 1)
+			.withExactArgs(sinon.match.same(oElement), "C/LtdDescendant_Count")
+			.returns(sLimitedDescendantCount);
+		oHelperMock.expects("deleteProperty").exactly(sLimitedDescendantCount ? 1 : 0)
+			.withExactArgs(sinon.match.same(oElement), "C/LtdDescendant_Count");
 
 		assert.strictEqual(
 			// code under test
@@ -945,9 +972,11 @@ sap.ui.define([
 	QUnit.test("calculateKeyPredicateRH: nested object", function (assert) {
 		var mTypeForMetaPath = {"/Artists" : {}};
 
+		this.mock(_Helper).expects("drillDown").never();
 		this.mock(_Helper).expects("getKeyPredicate").never();
 		this.mock(_Helper).expects("setPrivateAnnotation").never();
 		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_Helper).expects("deleteProperty").never();
 		this.mock(_AggregationHelper).expects("setAnnotations").never();
 
 		assert.strictEqual(
@@ -976,6 +1005,7 @@ sap.ui.define([
 				"/Artists/BestFriend" : {}
 			};
 
+		this.mock(_Helper).expects("drillDown").never();
 		this.mock(_Helper).expects("getKeyPredicate")
 			.withExactArgs(sinon.match.same(oElement), "/Artists/BestFriend",
 				sinon.match.same(mTypeForMetaPath))
@@ -983,6 +1013,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "predicate", "~predicate~");
 		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_Helper).expects("deleteProperty").never();
 		this.mock(_AggregationHelper).expects("setAnnotations").never();
 
 		assert.strictEqual(
@@ -2462,14 +2493,14 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sinon.match.same(aSpliced[2]))
 			.returns(SyncPromise.resolve(100));
 		if (bStale) {
-			oCacheMock.expects("replaceByPlaceholder")
-				.withExactArgs(2, sinon.match.same(aSpliced[0]), "('A')");
-			oCacheMock.expects("replaceByPlaceholder")
-				.withExactArgs(4, sinon.match.same(aSpliced[2]), "('C')");
-			oCacheMock.expects("replaceByPlaceholder")
-				.withExactArgs(200002, sinon.match.same(aSpliced[200000]), "('D')");
+			oCacheMock.expects("turnIntoPlaceholder")
+				.withExactArgs(sinon.match.same(aSpliced[0]), "('A')");
+			oCacheMock.expects("turnIntoPlaceholder")
+				.withExactArgs(sinon.match.same(aSpliced[2]), "('C')");
+			oCacheMock.expects("turnIntoPlaceholder")
+				.withExactArgs(sinon.match.same(aSpliced[200000]), "('D')");
 		} else {
-			oCacheMock.expects("replaceByPlaceholder").never();
+			oCacheMock.expects("turnIntoPlaceholder").never();
 		}
 
 		// code under test
@@ -3281,44 +3312,34 @@ sap.ui.define([
 	QUnit.test("beforeUpdateSelected", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X",
-				$NodeProperty : "SomeNodeID"
+				$NodeProperty : "Some/NodeID"
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oError = new Error("Unexpected structural change: Some/NodeID from ... to ...");
 
 		oCache.aElements.$byPredicate = {
-			"('A')" : {SomeNodeID : "42"}
+			"('A')" : "~oPlaceholder~"
 		};
-
-		// code under test
-		oCache.beforeUpdateSelected("('A')", {SomeNodeID : "42"});
+		this.mock(_AggregationHelper).expects("checkNodeProperty")
+			.withExactArgs("~oPlaceholder~", "~oNewValue~", "Some/NodeID", true)
+			.throws(oError);
 
 		assert.throws(function () {
 			// code under test
-			oCache.beforeUpdateSelected("('A')", {SomeNodeID : [23]});
-		}, new Error('Unexpected structural change: SomeNodeID from "42" to [23]'));
+			oCache.beforeUpdateSelected("('A')", "~oNewValue~");
+		}, oError);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("replaceByPlaceholder", function (assert) {
+	QUnit.test("turnIntoPlaceholder", function (assert) {
 		var oAggregation = {
-				hierarchyQualifier : "X",
-				$NodeProperty : "SomeNodeID"
+				hierarchyQualifier : "X"
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oHelperMock = this.mock(_Helper),
 			oParentCache = {
 				drop : function () {}
-			},
-			oElement = {
-				"@$ui5._" : {
-					index : 42,
-					parent : oParentCache
-				},
-				"@$ui5.node.isExpanded" : "~isExpanded~",
-				"@$ui5.node.level" : 9,
-				foo : "bar",
-				SomeNodeID : "a hierarchy node value"
-			},
-			oHelperMock = this.mock(_Helper);
+			};
 
 		oCache.aElements.$byPredicate = {
 			"('A')" : "~a~",
@@ -3327,25 +3348,18 @@ sap.ui.define([
 		};
 
 		oHelperMock.expects("hasPrivateAnnotation")
-			.withExactArgs(sinon.match.same(oElement), "placeholder").returns(false);
-		this.mock(_AggregationHelper).expects("markSplicedStale")
-			.withExactArgs(sinon.match.same(oElement));
-		this.mock(oElement["@$ui5._"].parent).expects("drop").withExactArgs(42, "('B')");
+			.withExactArgs("~oElement~", "placeholder").returns(false);
+		oHelperMock.expects("setPrivateAnnotation").withExactArgs("~oElement~", "placeholder", 1);
+		this.mock(_AggregationHelper).expects("markSplicedStale").withExactArgs("~oElement~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "parent")
+			.returns(oParentCache);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "index")
+			.returns(42);
+		this.mock(oParentCache).expects("drop").withExactArgs(42, "('B')");
 
 		// code under test
-		oCache.replaceByPlaceholder(7, oElement, "('B')");
+		oCache.turnIntoPlaceholder("~oElement~", "('B')");
 
-		assert.strictEqual(oCache.aElements[7]["@$ui5._"], oElement["@$ui5._"], "shared");
-		assert.deepEqual(oCache.aElements, [,,,,,,, {
-			"@$ui5._" : {
-				index : 42,
-				parent : oParentCache,
-				placeholder : true // added
-			},
-			"@$ui5.node.isExpanded" : "~isExpanded~",
-			"@$ui5.node.level" : 9,
-			SomeNodeID : "a hierarchy node value"
-		}]);
 		assert.deepEqual(oCache.aElements.$byPredicate, {
 			"('A')" : "~a~",
 			"('C')" : "~c~"
@@ -3354,18 +3368,10 @@ sap.ui.define([
 		oCache.aElements = null; // do not touch ;-)
 		// no other method calls expected!
 		oHelperMock.expects("hasPrivateAnnotation")
-			.withExactArgs(sinon.match.same(oElement), "placeholder").returns(true);
+			.withExactArgs("~oElement~", "placeholder").returns(true);
 
 		// code under test
-		oCache.replaceByPlaceholder(NaN, oElement, "n/a");
-
-		delete oElement["@$ui5._"];
-		assert.deepEqual(oElement, {
-			"@$ui5.node.isExpanded" : "~isExpanded~",
-			"@$ui5.node.level" : 9,
-			foo : "bar",
-			SomeNodeID : "a hierarchy node value"
-		}, "otherwise unchanged");
+		oCache.turnIntoPlaceholder("~oElement~", "n/a");
 	});
 
 	//*********************************************************************************************
@@ -3398,8 +3404,8 @@ sap.ui.define([
 		oCache.aElements = aElements.slice();
 		oAggregationHelperMock.expects("markSplicedStale")
 			.withExactArgs(sinon.match.same(aElements[0]));
-		this.mock(oCache).expects("replaceByPlaceholder")
-			.withExactArgs(1, sinon.match.same(aElements[1]), "('B')");
+		this.mock(oCache).expects("turnIntoPlaceholder")
+			.withExactArgs(sinon.match.same(aElements[1]), "('B')");
 		oAggregationHelperMock.expects("markSplicedStale")
 			.withExactArgs(sinon.match.same(aElements[2]));
 
