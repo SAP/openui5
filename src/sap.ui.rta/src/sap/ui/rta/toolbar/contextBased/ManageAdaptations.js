@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/date/UI5Date"
 ],
 function(
 	Log,
@@ -25,7 +26,8 @@ function(
 	Utils,
 	Filter,
 	FilterOperator,
-	JSONModel
+	JSONModel,
+	UI5Date
 ) {
 	"use strict";
 
@@ -116,12 +118,14 @@ function(
 	}
 
 	function formatCreatedChangedOnColumnCell(sModifiedBy, sModifiedDate) {
-		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-			pattern: "MMM d, yyyy"
-		});
-		var oDate = oDateFormat.format(new Date(sModifiedDate));
-
-		return sModifiedBy + "\n" + oDate;
+		var oUi5Date = UI5Date.getInstance(sModifiedDate);
+		var oOptions = {
+			year: "numeric",
+			month: "short",
+			day: "numeric"
+		};
+		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		return sModifiedBy + "\n" + oUi5Date.toLocaleDateString(sLanguage, oOptions);
 	}
 
 	function onSelectionChange(oEvent) {

@@ -8,7 +8,8 @@ sap.ui.define(
 		"./pages/contextBased/EditAdaptationDialog",
 		"./pages/contextVisibility/ContextsDialog",
 		"./pages/contextVisibility/ContextSharingVisibilityFragment",
-		"./pages/AppPage"
+		"./pages/AppPage",
+		"sap/ui/core/date/UI5Date"
 	],
 	function(opaTest, Opa5) {
 		"use strict";
@@ -43,6 +44,14 @@ sap.ui.define(
 			}
 		}
 
+		function testLanguageDependentDateFormat(Then, sExpectedFormat, iColumnRow, sPropertyPath) {
+			var sCurrentLanguage = sap.ui.getCore().getConfiguration().getLanguage().toLocaleLowerCase();
+			// This opa test will only be executed if the browser language is english
+			if (sCurrentLanguage === "en") {
+				Then.onTheManageAdaptationsDialogPage.iShouldSeeCorrectDateFormat(sExpectedFormat, iColumnRow, sPropertyPath);
+			}
+		}
+
 		// Show the demo page with one button to open the manage adaptations dialog
 		QUnit.module("Demo Page");
 		opaTest("Should open Manage Adaptations Dialog via demo page button", function(Given, When, Then) {
@@ -51,9 +60,9 @@ sap.ui.define(
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeManageContextBasedAdaptationDialogIsOpend();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeSaveButtonEnabled(false);
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeAllExpectedColumnHeaders("Priority", "Title", "Context", "Created On", "Changed On", "Actions");
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeCorrectDateFormat("May 25, 2022", 0, "createdBy");
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeCorrectDateFormat("Sep 7, 2022", 1, "changedAt");
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeAllExpectedColumnHeaders(6);
+			testLanguageDependentDateFormat(Then, "May 25, 2022", 0, "createdBy");
+			testLanguageDependentDateFormat(Then, "Sep 7, 2022", 1, "changedAt");
 		});
 
 		QUnit.module("Manage Adaptations Dialog");

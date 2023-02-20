@@ -288,7 +288,7 @@ sap.ui.define([
 						}
 					});
 				},
-				iShouldSeeAllExpectedColumnHeaders: function(sPriority, sTitle, sContext, sCreatedOn, sChangedOn, sActions) {
+				iShouldSeeAllExpectedColumnHeaders: function(iExpectedColumnCount) {
 					return this.waitFor({
 						controlType: "sap.m.Table",
 						bindingPath: {
@@ -300,13 +300,7 @@ sap.ui.define([
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.ok(oControl, "Manage Adaptations Table exist");
-							Opa5.assert.strictEqual(oControl.getColumns().length, 6, "Column size is as expected");
-							Opa5.assert.strictEqual(oControl.getColumns()[0].getHeader().getText(), sPriority, "Column header text is as expected");
-							Opa5.assert.strictEqual(oControl.getColumns()[1].getHeader().getText(), sTitle, "Column header text is as expected");
-							Opa5.assert.strictEqual(oControl.getColumns()[2].getHeader().getText(), sContext, "Column header text is as expected");
-							Opa5.assert.strictEqual(oControl.getColumns()[3].getHeader().getText(), sCreatedOn, "Column header text is as expected");
-							Opa5.assert.strictEqual(oControl.getColumns()[4].getHeader().getText(), sChangedOn, "Column header text is as expected");
-							Opa5.assert.strictEqual(oControl.getColumns()[5].getHeader().getText(), sActions, "Column header text is as expected");
+							Opa5.assert.strictEqual(oControl.getColumns().length, iExpectedColumnCount, "Column size is as expected");
 						}
 					});
 				},
