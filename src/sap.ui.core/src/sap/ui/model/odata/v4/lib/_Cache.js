@@ -1315,6 +1315,9 @@ sap.ui.define([
 	 *   The key predicate of the entity; only evaluated if <code>iIndex === undefined</code>
 	 * @param {boolean} [bKeepAlive]
 	 *   Whether the entity is kept-alive
+	 * @param {boolean} [bWithMessages]
+	 *   Whether the "@com.sap.vocabularies.Common.v1.Messages" path is treated specially, supported
+	 *   only for <code>sPath === ""</code>
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
@@ -1326,13 +1329,18 @@ sap.ui.define([
 	 * @public
 	 */
 	_Cache.prototype.refreshSingle = function (oGroupLock, sPath, iIndex, sPredicate, bKeepAlive,
-			fnDataRequested) {
-		var that = this;
+			bWithMessages, fnDataRequested) {
+		var bKeepReportedMessagesPath = false,
+			that = this;
 
 		this.checkSharedRequest();
 		return this.fetchValue(_GroupLock.$cached, sPath).then(function (aElements) {
-			var mQueryOptions
-					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
+			var sMessagesPath = bWithMessages && sPath === ""
+					&& that.oRequestor.getModelInterface().fetchMetadata(
+						that.sMetaPath + "/@com.sap.vocabularies.Common.v1.Messages/$Path"
+					).getResult(),
+				mQueryOptions = _Helper.clone(
+					_Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
 				sReadUrl;
 
 			if (iIndex !== undefined) {
@@ -1346,6 +1354,12 @@ sap.ui.define([
 				// bKeepAlive === true -> own cache of the list binding -> sPath === ''
 				// -> no need to apply _Helper.getQueryOptionsForPath
 				_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
+			}
+			if (sMessagesPath && mQueryOptions.$select
+				&& !mQueryOptions.$select.includes(sMessagesPath)) {
+				// Note: w/o existing $select, we must not end up w/ just messages
+				mQueryOptions.$select.push(sMessagesPath);
+				bKeepReportedMessagesPath = true;
 			}
 			// drop collection related system query options
 			delete mQueryOptions.$apply;
@@ -1364,7 +1378,8 @@ sap.ui.define([
 			]).then(function (aResult) {
 				var oElement = aResult[0];
 
-				that.replaceElement(aElements, iIndex, sPredicate, oElement, aResult[1], sPath);
+				that.replaceElement(aElements, iIndex, sPredicate, oElement, aResult[1], sPath,
+					bKeepReportedMessagesPath);
 			});
 		});
 	};
@@ -1623,11 +1638,13 @@ sap.ui.define([
 	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
 	 * @param {string} sPath
 	 *   The element collection's path within this cache, may be <code>""</code>
+	 * @param {boolean} [bKeepReportedMessagesPath]
+	 *   Whether <code>this.sReportedMessagesPath</code> should be kept unchanged
 	 *
 	 * @private
 	 */
 	_Cache.prototype.replaceElement = function (aElements, iIndex, sPredicate, oElement,
-			mTypeForMetaPath, sPath) {
+			mTypeForMetaPath, sPath, bKeepReportedMessagesPath) {
 		var oOldElement, sTransientPredicate;
 
 		if (iIndex === undefined) { // kept-alive element not in the list
@@ -1650,7 +1667,8 @@ sap.ui.define([
 
 		// Note: iStart is not needed here because we know we have a key predicate
 		this.visitResponse(oElement, mTypeForMetaPath,
-			_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, sPath)), sPath + sPredicate);
+			_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, sPath)), sPath + sPredicate,
+			false, undefined, bKeepReportedMessagesPath);
 	};
 
 	/**
@@ -2199,15 +2217,17 @@ sap.ui.define([
 	 * @param {boolean} [bKeepTransientPath] Whether the transient path shall be used to report
 	 *   messages
 	 * @param {number} [iStart]
-	 *    The index in the collection where "oRoot.value" needs to be inserted or undefined if
-	 *    "oRoot" references a single entity
+	 *   The index in the collection where "oRoot.value" needs to be inserted or undefined if
+	 *   "oRoot" references a single entity.
+	 * @param {boolean} [bKeepReportedMessagesPath]
+	 *   Whether <code>this.sReportedMessagesPath</code> should be kept unchanged
 	 * @throws {Error}
 	 *   If the cache is shared and OData messages would be reported
 	 *
 	 * @private
 	 */
 	_Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, sRootMetaPath, sRootPath,
-			bKeepTransientPath, iStart) {
+			bKeepTransientPath, iStart, bKeepReportedMessagesPath) {
 		var aCachePaths,
 			bHasMessages = false,
 			mPathToODataMessages = {},
@@ -2364,8 +2384,10 @@ sap.ui.define([
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages && !this.bSharedRequest) {
-			this.sReportedMessagesPath = this.sOriginalResourcePath;
-			this.oRequestor.getModelInterface().reportStateMessages(this.sReportedMessagesPath,
+			if (!bKeepReportedMessagesPath) {
+				this.sReportedMessagesPath = this.sOriginalResourcePath;
+			}
+			this.oRequestor.getModelInterface().reportStateMessages(this.sOriginalResourcePath,
 				mPathToODataMessages, aCachePaths);
 		}
 	};
@@ -3229,6 +3251,8 @@ sap.ui.define([
 	 * @param {boolean} bSingle
 	 *   Whether only the side effects for a single element are requested; no element is discarded
 	 *   in this case
+	 * @param {boolean} bWithMessages
+	 *   Whether the "@com.sap.vocabularies.Common.v1.Messages" path is treated specially
 	 * @returns {Promise|sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails
@@ -3239,7 +3263,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths, aPredicates,
-			bSingle) {
+			bSingle, bWithMessages) {
 		var aElements,
 			mMergeableQueryOptions,
 			mQueryOptions,
@@ -3252,7 +3276,7 @@ sap.ui.define([
 
 		mQueryOptions = _Helper.intersectQueryOptions(
 			Object.assign({}, this.mQueryOptions, this.mLateQueryOptions), aPaths,
-			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, "");
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, "", bWithMessages);
 		if (!mQueryOptions) {
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}
@@ -3313,7 +3337,7 @@ sap.ui.define([
 				}
 				// Note: iStart makes no sense here (use NaN instead), but is not needed because
 				// we know we have key predicates
-				that.visitResponse(oResult, mTypeForMetaPath, undefined, "", false, NaN);
+				that.visitResponse(oResult, mTypeForMetaPath, undefined, "", false, NaN, true);
 				for (i = 0, n = oResult.value.length; i < n; i += 1) {
 					oElement = oResult.value[i];
 					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");

@@ -3005,22 +3005,28 @@ sap.ui.define([
 	 *   server.
 	 * @param {boolean} [bKeepCacheOnError]
 	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
+	 * @param {boolean} [bWithMessages]
+	 *   Whether the "@com.sap.vocabularies.Common.v1.Messages" path is treated specially
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves without a defined value when the entity is updated in the cache,
 	 *   or rejects if the refresh failed.
 	 * @throws {Error}
-	 *   If the given context does not represent a single entity (see {@link #getHeaderContext})
+	 *   If the given context does not represent a single entity (see {@link #getHeaderContext}), or
+	 *   if <code>bAllowRemoval && bWithMessages</code> are combined
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval,
-			bKeepCacheOnError) {
+			bKeepCacheOnError, bWithMessages) {
 		var sContextPath = oContext.getPath(),
 			sResourcePathPrefix = sContextPath.slice(1),
 			that = this;
 
 		if (oContext === this.oHeaderContext) {
 			throw new Error("Unsupported header context: " + oContext);
+		}
+		if (bAllowRemoval && bWithMessages) {
+			throw new Error("Unsupported: bAllowRemoval && bWithMessages");
 		}
 
 		return this.withCache(function (oCache, sPath, oBinding) {
@@ -3090,7 +3096,7 @@ sap.ui.define([
 					? oCache.refreshSingleWithRemove(oGroupLock, sPath, oContext.getModelIndex(),
 						sPredicate, bKeepAlive, fireDataRequested, onRemove)
 					: oCache.refreshSingle(oGroupLock, sPath, oContext.getModelIndex(), sPredicate,
-						bKeepAlive, fireDataRequested))
+						bKeepAlive, bWithMessages, fireDataRequested))
 				.then(function () {
 					var aUpdatePromises = [];
 
@@ -3363,7 +3369,7 @@ sap.ui.define([
 			if (aPredicates) {
 				aPromises = this.oCache
 					? [this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths, aPredicates,
-						bSingle)]
+						bSingle, /*bWithMessages*/bSingle)]
 					: []; // can happen if invoked via absolute side effect
 				this.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined, aPromises);
 
@@ -3373,7 +3379,8 @@ sap.ui.define([
 			}
 		}
 		if (bSingle) {
-			return this.refreshSingle(oContext, this.lockGroup(sGroupId), false, true);
+			return this.refreshSingle(oContext, this.lockGroup(sGroupId), /*bAllowRemoval*/false,
+				/*bKeepCacheOnError*/true, /*bWithMessages*/true);
 		}
 		if (this.iCurrentEnd === 0) {
 			return SyncPromise.resolve();
