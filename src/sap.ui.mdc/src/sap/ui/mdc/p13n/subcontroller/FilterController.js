@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/enum/ProcessingStrategy', 'sap/ui/mdc/condition/FilterOperatorUtil', './SelectionController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/UriParameters'
-], function (ProcessingStrategy, FilterOperatorUtil, BaseController, P13nBuilder, FlexUtil, Log, merge, SAPUriParameters) {
+	'sap/ui/mdc/enum/ProcessingStrategy', 'sap/ui/mdc/condition/FilterOperatorUtil', './SelectionController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/deepEqual'
+], function (ProcessingStrategy, FilterOperatorUtil, BaseController, P13nBuilder, Log, merge, deepEqual) {
 	"use strict";
 
     var FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController", {
@@ -139,8 +139,152 @@ sap.ui.define([
                 }
             });
         }
-        return FlexUtil.getConditionDeltaChanges(mPropertyBag);
+        return getConditionDeltaChanges(mPropertyBag);
     };
+
+    /**
+    * Generates a set of changes based on the given arrays for a specified control
+    *
+    * @public
+    *
+    * @param {object} mDeltaInfo Map containing the necessary information to calculate the diff as change objects
+    * @param {array} mDeltaInfo.existingState An array describing the control state before a adaptation
+    * @param {array} mDeltaInfo.changedState An array describing the control state after a certain adaptation
+    * @param {object} mDeltaInfo.control Control instance which is being used to generate the changes
+    * @param {object} mDeltaInfo.changeOperations Map containing the changeOperations for the given Control instance
+    * @param {string} mDeltaInfo.changeOperations.add Name of the control specific 'add' changehandler
+    * @param {boolean} mDeltaInfo.applyAbsolute Indicates whether the appliance should also implicitly remove entries in case they are not provided in the new state
+    * @param {string} mDeltaInfo.changeOperations.remove Name of the control specific 'remove' changehandler
+    * @param {string} [mDeltaInfo.changeOperations.move] Name of the control specific 'move' changehandler
+    * @param {string} [mDeltaInfo.generator] Name of the change generator (E.g. the namespace of the UI creating the change object)
+    *
+    * @returns {array} Array containing the delta based created changes
+    */
+    var getConditionDeltaChanges = function(mDeltaInfo) {
+        var aConditionChanges = [];
+
+        var mNewConditionState = mDeltaInfo.changedState;
+        var mPreviousConditionState = mDeltaInfo.existingState;
+        var oAdaptationControl = mDeltaInfo.control;
+        var bAbsoluteAppliance = mDeltaInfo.hasOwnProperty("applyAbsolute") ? mDeltaInfo.applyAbsolute : true;
+        var aPropertyInfo = mDeltaInfo.propertyInfo;
+
+        for (var sFieldPath in mNewConditionState) {
+            var bValidProperty = _hasProperty(aPropertyInfo, sFieldPath);
+            if (!bValidProperty && oAdaptationControl.isA("sap.ui.mdc.Control") && oAdaptationControl.isPropertyHelperFinal()) {
+                Log.warning("property '" + sFieldPath + "' not supported");
+                continue;
+            }
+
+            var aFilterConditionChanges = _diffConditionPath(sFieldPath, mNewConditionState[sFieldPath], mPreviousConditionState[sFieldPath], oAdaptationControl, bAbsoluteAppliance);
+            aConditionChanges = aConditionChanges.concat(aFilterConditionChanges);
+        }
+
+        return aConditionChanges;
+    };
+
+    var _hasProperty = function(aPropertyInfo, sName) {
+        return aPropertyInfo.some(function(oProperty){
+            //First check unique name
+            var bValid = oProperty.name === sName || sName == "$search";
+
+            //Use path as Fallback
+            bValid = bValid ? bValid : oProperty.path === sName;
+
+            return bValid;
+        });
+    };
+
+    var createConditionChange = function(sChangeType, oControl, sFieldPath, oCondition) {
+        delete oCondition.filtered;
+        var oConditionChange = {
+            selectorElement: oControl,
+            changeSpecificData: {
+                changeType: sChangeType,
+                content: {
+                    name: sFieldPath,
+                    condition: oCondition
+                }
+            }
+        };
+
+        return oConditionChange;
+    };
+
+    /**
+    * Generates a set of changes based on the given conditions
+    *
+    * @public
+    * @param {array} sFieldPath The relevant fieldPath
+    * @param {array} aConditions The conditions after they have been changed
+    * @param {function} aOrigShadowConditions The conditions before they have been changed
+    * @param {object} oControl Control instance which is being used to generate the changes
+    * @param {boolean} [bAbsoluteAppliance] Indicates whether the appliance should also implicitly remove entries in case they are not provided in the new state
+    *
+    * @returns {array} Array containing the delta based created changes
+    */
+    var _diffConditionPath = function(sFieldPath, aConditions, aOrigShadowConditions, oControl, bAbsoluteAppliance){
+        var oChange, aChanges = [];
+        var aOrigConditions = merge([], aConditions);
+        var aShadowConditions = aOrigShadowConditions ? merge([], aOrigShadowConditions) : [];
+
+
+        if (deepEqual(aConditions, aShadowConditions)) {
+            return aChanges;
+        }
+
+        var fnRemoveSameConditions = function(aConditions, aShadowConditions){
+            var bRunAgain;
+
+            do  {
+                bRunAgain = false;
+
+                for (var i = 0; i < aConditions.length; i++) {
+
+                    var oNewCondition = aConditions[i];
+                    var nConditionIdx = FilterOperatorUtil.indexOfCondition(oNewCondition, aShadowConditions);
+                    if (nConditionIdx > -1) {
+
+                        aConditions.splice(i, 1);
+
+                        if (bAbsoluteAppliance) {
+                            aShadowConditions.splice(nConditionIdx, 1);
+                        }
+
+                        bRunAgain = true;
+                        break;
+                    }
+                }
+            }  while (bRunAgain);
+        };
+
+        fnRemoveSameConditions(aConditions, aShadowConditions);
+
+        if ((aConditions.length > 0) || (aShadowConditions.length > 0)) {
+
+            aShadowConditions.forEach(function(oCondition) {
+                //In case of absolute appliance always remove, in case of explicit appliance only remove if explicitly given in the new state via filtered=false
+                var iNewCondition = FilterOperatorUtil.indexOfCondition(oCondition, aOrigConditions);
+                var bNewConditionExplicitlyRemoved = iNewCondition > -1 && aOrigConditions[iNewCondition].filtered === false;
+                if (bAbsoluteAppliance || bNewConditionExplicitlyRemoved) {
+                    oChange = createConditionChange("removeCondition", oControl, sFieldPath, oCondition);
+                    aChanges.push(oChange);
+                }
+            });
+
+            aConditions.forEach(function(oCondition) {
+                if (bAbsoluteAppliance || (!oCondition.hasOwnProperty("filtered") || oCondition.filtered !== false)) {
+                    oChange = createConditionChange("addCondition", oControl, sFieldPath, oCondition);
+                    aChanges.push(oChange);
+                }
+            });
+
+        }
+
+        return aChanges;
+    };
+
+
 
     FilterController.prototype.model2State = function() {
         var oItems = {},
@@ -167,7 +311,7 @@ sap.ui.define([
         });
 
         P13nBuilder.sortP13nData({
-            visible: new SAPUriParameters(window.location.search).getAll("sap-ui-xx-filterQueryPanel")[0] === "true" ? "active" : null,//FIXME: remove with URL parameter
+            visible: "active",
             position: undefined
         }, oP13nData.items);
 

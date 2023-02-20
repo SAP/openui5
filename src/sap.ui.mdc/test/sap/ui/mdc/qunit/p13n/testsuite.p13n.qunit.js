@@ -140,24 +140,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"FlexUtil": {
-				group: "P13n logic",
-				module: "./FlexUtil.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"ChangeContent": {
-				group: "P13n Logic",
-				module: "./ChangeContent.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			"StateUtil": {
 				group: "state handling",
 				module: "./StateUtil.qunit",

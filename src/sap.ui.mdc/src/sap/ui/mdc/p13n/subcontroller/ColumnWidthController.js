@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"./SelectionController",
-	"sap/ui/mdc/p13n/FlexUtil",
+	"sap/m/p13n/FlexUtil",
     'sap/m/p13n/modules/xConfigAPI',
 	"sap/base/util/merge"
 ], function (BaseController, FlexUtil, xConfigAPI, merge) {
