@@ -77,6 +77,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}. Resets also
+	 * invalid user input.
+	 *
+	 * Note: This private function is needed in order to hide the additional parameter
+	 * <code>bIgnoreInactiveCaches</code> from the public API {@link #resetChanges}.
+	 *
+	 * @param {boolean} [bIgnoreInactiveCaches]
+	 *   Whether to ignore changes in inactive caches
+	 * @returns {Promise}
+	 *   A promise which is resolved without a defined result as soon as all changes in the binding
+	 *   itself and all dependent bindings are canceled
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended or if there is a change of this binding which
+	 *   has been sent to the server and for which there is no response yet
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype._resetChanges = function (bIgnoreInactiveCaches) {
+		var aPromises = [];
+
+		this.checkSuspended();
+		this.resetChangesForPath("", aPromises);
+		this.resetChangesInDependents(aPromises, bIgnoreInactiveCaches);
+		this.resetInvalidDataState();
+
+		return Promise.all(aPromises).then(function () {});
+	};
+
+	/**
 	 * Adjusts the paths of all contexts of this binding by replacing the given transient predicate
 	 * with the given predicate. Recursively adjusts all child bindings.
 	 *
@@ -1293,13 +1322,7 @@ sap.ui.define([
 	 * @since 1.40.1
 	 */
 	ODataBinding.prototype.resetChanges = function () {
-		var aPromises = [];
-
-		this.checkSuspended();
-		this.resetChangesForPath("", aPromises);
-		this.resetChangesInDependents(aPromises);
-		this.resetInvalidDataState();
-		return Promise.all(aPromises).then(function () {});
+		return this._resetChanges();
 	};
 
 	/**
