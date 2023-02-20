@@ -481,13 +481,18 @@ sap.ui.define([
 			.then(function(oResult) {
 				if (bDraft && oResult && oResult.response) {
 					var vChangeDefinition = oResult.response;
+					var aDraftFilenames = [];
 					if (Array.isArray(vChangeDefinition)) {
+						vChangeDefinition.forEach(function(change) {
+							aDraftFilenames.push(change.fileName);
+						});
 						// the reference and layer of all items are the same
 						vChangeDefinition = vChangeDefinition[0];
 					}
 					Versions.onAllChangesSaved({
 						reference: vChangeDefinition.reference,
-						layer: vChangeDefinition.layer
+						layer: vChangeDefinition.layer,
+						draftFilenames: aDraftFilenames
 					});
 				}
 				return oResult;
