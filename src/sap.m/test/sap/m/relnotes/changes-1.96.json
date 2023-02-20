@@ -1337,5 +1337,55 @@
         ]
       }
     ]
+  },
+  "1.96.17": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "bbd42aa5c58da795a5aa8e7284eeb5457b7ff98a",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbarAssociativePopover: Fixed function overriding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000978672023"
+          }
+        ]
+      },
+      {
+        "id": "e7052bc25b116a091913eae2c2e54e4e16c15085",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Fixed failing test on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154471"
+          }
+        ]
+      },
+      {
+        "id": "94bf0c4c688e5a3741afdff3d1735bf72ec30047",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust type announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006841702022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180399466"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270100219"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280073378"
+          }
+        ]
+      }
+    ]
   }
 }
