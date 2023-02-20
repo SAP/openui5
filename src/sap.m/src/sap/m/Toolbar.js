@@ -301,25 +301,25 @@ function(
 		}
 	};
 
+	Toolbar.prototype.getAccessibilityState = function () {
+		var aAriaLabelledBy = this.getAriaLabelledBy(),
+			bActive = this.getActive();
+
+		return {
+			role: !bActive ? this._getAccessibilityRole() : undefined, // active toolbar is rendered with sap.m.Button as native button
+			haspopup: bActive ? this.getAriaHasPopup() : undefined,
+			labelledby: aAriaLabelledBy.length ? this.getAriaLabelledBy() : this.getTitleId(),
+			roledescription: this._sAriaRoleDescription
+		};
+	};
+
 	Toolbar.prototype.assignAccessibilityState = function (mAriaProps) {
-			var sRole = this._getAccessibilityRole(),
-				bActive = this.getActive();
-			mAriaProps.role = sRole;
-
-			if (!this.getAriaLabelledBy().length && sRole) {
-				mAriaProps.labelledby = this.getTitleId();
+			if (!this._getAccessibilityRole() && !this.getActive()) {
+				// no role and not active -> no aria properties
+				return {};
 			}
 
-			if (this.getAriaLabelledBy().length) {
-				mAriaProps.labelledby = this.getAriaLabelledBy();
-			}
-
-			bActive && (mAriaProps.haspopup = this.getAriaHasPopup());
-
-			if (this._sAriaRoleDescription && sRole) {
-				mAriaProps.roledescription = this._sAriaRoleDescription;
-			}
-			return mAriaProps;
+			return Object.assign(mAriaProps, this.getAccessibilityState(mAriaProps));
 	};
 
 	Toolbar.prototype.init = function() {
