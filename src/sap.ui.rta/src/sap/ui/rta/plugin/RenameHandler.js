@@ -473,7 +473,7 @@ sap.ui.define([
 		 */
 		_onClick: function(oEvent) {
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-			if (this.isRenameEnabled([oOverlay]) && !oEvent.metaKey && !oEvent.ctrlKey) {
+			if (this.isRenameEnabled([oOverlay]) && !oEvent.metaKey && !oEvent.ctrlKey && !oEvent.shiftKey) {
 				this.startEdit(oOverlay);
 				RenameHandler._preventDefault.call(this, oEvent);
 			}
