@@ -79,7 +79,7 @@ sap.ui.define([],
 				oTabStripSelectedItem = oControl._toTabStripItem(sSelectedItemId);
 				if (oTabStripSelectedItem) {
 					// use aria prefixes as those properties can be used outside RenderManager.writeAccessabilityState method
-					mAccAttributes["aria-labelledby"] = oTabStripSelectedItem.getId();
+					mAccAttributes["labelledby"] = oTabStripSelectedItem.getId();
 				}
 			}
 			return mAccAttributes;
