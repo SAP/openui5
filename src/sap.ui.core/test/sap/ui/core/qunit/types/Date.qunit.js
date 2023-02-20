@@ -206,9 +206,10 @@ sap.ui.define([
 	QUnit.test("getModelFormat() with timestamp", function (assert) {
 		var oDateType = new DateType({source: {pattern: "timestamp"}}),
 			oDateValue = UI5Date.getInstance(2000, 1, 1),
-			oFormat = oDateType.getModelFormat();
+			oParsedTimestamp = oDateType.getModelFormat().parse(oDateValue.getTime());
 
-		assert.ok(oFormat.parse(oDateValue.getTime()) instanceof Date);
+		assert.ok(oParsedTimestamp instanceof Date);
+		assert.strictEqual(oParsedTimestamp.getDate(), 1);
 	});
 
 	//*****************************************************************************************************************
