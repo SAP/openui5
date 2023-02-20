@@ -66,6 +66,10 @@ sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 		if (src == null) {
 			return src;
 		} else if (src instanceof Date) {
+			if (src.clone) { // sap.ui.core.date.UI5Date
+				return src.clone();
+			}
+
 			// clone date object using #getTime(). Officially the date constructor does not support parameter Date.
 			return new Date(src.getTime());
 		} else if (Array.isArray(src)) {
