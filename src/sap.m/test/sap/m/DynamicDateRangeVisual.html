@@ -41,7 +41,8 @@
 				"sap/m/Label",
 				"sap/m/DynamicDateRange",
 				"sap/m/DynamicDateUtil",
-				"sap/m/Button"
+				"sap/m/Button",
+				"sap/ui/core/date/UI5Date"
 			], function(
 				App,
 				Page,
@@ -49,7 +50,8 @@
 				Label,
 				DynamicDateRange,
 				DynamicDateUtil,
-				Button
+				Button,
+				UI5Date
 			) {
 				"use strict";
 
@@ -107,7 +109,7 @@
 									width: '300px',
 									value: {
 										operator: 'DATETIME',
-										values: [new Date(2000, 11, 20, 17, 0, 0)]
+										values: [UI5Date.getInstance(2000, 11, 20, 17, 0, 0)]
 									},
 									change: handleChange,
 									options: [

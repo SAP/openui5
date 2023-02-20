@@ -17,6 +17,7 @@
 		<script>
 
 			jQuery.sap.require("sap.ui.model.type.Date");
+			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
@@ -67,7 +68,7 @@
 
 			var oMonth = new sap.ui.unified.calendar.Month("Month1",
 					{
-						date: new Date(2016, 0, 1) /* to make sure special dates are in visible range */,
+						date: UI5Date.getInstance(2016, 0, 1) /* to make sure special dates are in visible range */,
 						focus: function (oEvent) {
 							var oTF = sap.ui.getCore().byId("TF1");
 							var oDate = oEvent.getParameter("date");
@@ -143,17 +144,17 @@
 											if (bPressed) {
 												var oDate = oMonth.getDate();
 												if (oDate) {
-													oDate = new Date(oDate.getTime());
+													oDate = UI5Date.getInstance(oDate.getTime());
 												} else {
-													oDate = new Date();
+													oDate = UI5Date.getInstance();
 												}
 												oDate.setDate(2);
 												oMonth.addDisabledDate(new sap.ui.unified.DateRange({
 													startDate: oDate
 												}));
-												oStartDate = new Date(oDate);
+												oStartDate = UI5Date.getInstance(oDate);
 												oStartDate.setDate(10);
-												oEndDate = new Date(oDate);
+												oEndDate = UI5Date.getInstance(oDate);
 												oEndDate.setDate(20);
 												oMonth.addDisabledDate(new sap.ui.unified.DateRange({
 													startDate: oStartDate,

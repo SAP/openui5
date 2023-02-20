@@ -23,7 +23,8 @@
 				"sap/m/App",
 				"sap/m/FlexBox",
 				"sap/m/Page",
-				"sap/ui/unified/Calendar"
+				"sap/ui/unified/Calendar",
+				"sap/ui/core/date/UI5Date"
 			], function(
 				coreLibrary,
 				Core,
@@ -31,7 +32,8 @@
 				App,
 				FlexBox,
 				Page,
-				Calendar
+				Calendar,
+				UI5Date
 			) {
 				"use strict";
 				var CalendarType = coreLibrary.CalendarType,
@@ -44,12 +46,12 @@
 						title: "Calendar",
 						content : [
 							new FlexBox({
-                                items: [
+								items: [
 									new Calendar("Cal-Gregorian-Islamic", {
 										secondaryCalendarType: CalendarType.Islamic,
 										selectedDates: [
 											new DateRange({
-												startDate: new Date(2015, 0, 2)
+												startDate: UI5Date.getInstance(2015, 0, 2)
 											})
 										]
 									}).addStyleClass("sapUiTinyMargin"),
@@ -58,7 +60,7 @@
 										secondaryCalendarType: CalendarType.Japanese,
 										selectedDates: [
 											new DateRange({
-												startDate: new Date(2015, 0, 2)
+												startDate: UI5Date.getInstance(2015, 0, 2)
 											})
 										]
 									}).addStyleClass("sapUiTinyMargin"),
@@ -67,15 +69,15 @@
 										months: 2,
 										selectedDates: [
 											new DateRange({
-												startDate: new Date(2015, 0, 2)
+												startDate: UI5Date.getInstance(2015, 0, 2)
 											})
 										]
 									}).addStyleClass("sapUiTinyMargin")
-                                ]
-                            })
+								]
+							})
 						]
 					})
-                }).placeAt("body");
+				}).placeAt("body");
 
 			});
 		});

@@ -39,7 +39,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/ToolbarSeparator",
 	"sap/m/Page",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	unifiedLibrary,
 	PlanningCalendarLegend,
@@ -81,7 +82,8 @@ sap.ui.define([
 	Icon,
 	ToolbarSeparator,
 	Page,
-	Log
+	Log,
+	UI5Date
 ) {
 	"use strict";
 
@@ -311,7 +313,7 @@ sap.ui.define([
 	};
 
 	var handleAppointmentSelect = function (oEvent) {
-	    var oInput = sap.ui.getCore().byId("I1"),
+		var oInput = sap.ui.getCore().byId("I1"),
 			oAppointment = oEvent.getParameter("appointment"),
 			sPopoverValue,
 			bDiffType,
@@ -386,12 +388,12 @@ sap.ui.define([
 
 		if (aSelectedRows.length > 0 || oEventRow) {
 			var oRow = oEventRow || aSelectedRows[0];
-			var oAppointmentStartDate = new Date(oStartDate.getTime());
+			var oAppointmentStartDate = UI5Date.getInstance(oStartDate.getTime());
 			var oAppointmentEndDate;
 			if (oEventEndDate) {
-				oAppointmentEndDate = new Date(oEventEndDate);
+				oAppointmentEndDate = UI5Date.getInstance(oEventEndDate);
 			} else {
-				oAppointmentEndDate = new Date(oStartDate.getTime());
+				oAppointmentEndDate = UI5Date.getInstance(oStartDate.getTime());
 
 				switch (sViewKey) {
 					case CalendarIntervalType.Hour:
@@ -440,7 +442,7 @@ sap.ui.define([
 
 	var handleStartDateChange = function (oEvent) {
 		var oDf = DateFormat.getTimeInstance("HH:mm:ss");
-		setEventLog("startDateChange event at " + oDf.format(new Date()) + " with params:" + JSON.stringify(oEvent.mParameters));
+		setEventLog("startDateChange event at " + oDf.format(UI5Date.getInstance()) + " with params:" + JSON.stringify(oEvent.mParameters));
 	};
 
 	var handleRowSelectionChange = function (oEvent) {
@@ -598,8 +600,8 @@ sap.ui.define([
 		press: function (oEvent) {
 			if (oEvent.getParameter("pressed")) {
 				oPC1.addSpecialDate(new DateTypeRange({
-					startDate: new Date(2015, 0, 7),
-					endDate: new Date(2015, 0, 8),
+					startDate: UI5Date.getInstance(2015, 0, 7),
+					endDate: UI5Date.getInstance(2015, 0, 8),
 					type: CalendarDayType.NonWorking
 				}));
 			} else {
@@ -661,7 +663,7 @@ sap.ui.define([
 		type: ButtonType.Transparent,
 		press: function () {
 			if (!oDialog2) {
-			    sap.ui.getCore().loadLibrary("sap.ui.layout");
+				sap.ui.getCore().loadLibrary("sap.ui.layout");
 				var oForm = new SimpleForm("SimpleForm1", {
 					layout: SimpleFormLayout.ResponsiveGridLayout,
 					content: [
@@ -802,7 +804,7 @@ sap.ui.define([
 	});
 
 	var oPC1 = new PlanningCalendar("PC1", {
-		startDate: new Date("2015", "0", "1", "08", "00"),
+		startDate: UI5Date.getInstance("2015", "0", "1", "08", "00"),
 		rows: [
 			new PlanningCalendarRow("Row1", {
 				customData: new CustomData({key: "myKey", value: "myValue", writeToDom: true}),
@@ -812,15 +814,15 @@ sap.ui.define([
 				tooltip: "Header tooltip",
 				specialDates: [
 					new DateTypeRange({
-						startDate: new Date(2015, 0, 7),
-						endDate: new Date(2015, 0, 8),
+						startDate: UI5Date.getInstance(2015, 0, 7),
+						endDate: UI5Date.getInstance(2015, 0, 8),
 						type: CalendarDayType.NonWorking
 					})
 				],
 				intervalHeaders: [
 					new CalendarAppointment("R1H1", {
-						startDate: new Date("2015", "0", "1", "09", "00"),
-						endDate: new Date("2015", "0", "1", "11", "00"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
 						type: CalendarDayType.Type02,
 						title: "SAPUI5",
 						tooltip: "Test",
@@ -829,8 +831,8 @@ sap.ui.define([
 				],
 				appointments: [
 					new CalendarAppointment("R1A1", {
-						startDate: new Date("2015", "0", "1", "08", "00"),
-						endDate: new Date("2015", "0", "2", "09", "00"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "08", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "09", "00"),
 						type: CalendarDayType.Type03,
 						customContent: [
 							new FlexBox({
@@ -869,8 +871,8 @@ sap.ui.define([
 						text: "Room 1"
 					}),
 					new CalendarAppointment("R1A2", {
-						startDate: new Date("2014", "11", "31", "10", "45"),
-						endDate: new Date("2015", "0", "3", "09", "00"),
+						startDate: UI5Date.getInstance("2014", "11", "31", "10", "45"),
+						endDate: UI5Date.getInstance("2015", "0", "3", "09", "00"),
 						type: CalendarDayType.Type06,
 						title: "Appointment 2",
 						icon: "sap-icon://home",
@@ -879,16 +881,16 @@ sap.ui.define([
 						tentative: true
 					}),
 					new CalendarAppointment("R1A3", {
-						startDate: new Date("2014", "11", "31", "08", "30"),
-						endDate: new Date("2015", "0", "1", "09", "30"),
+						startDate: UI5Date.getInstance("2014", "11", "31", "08", "30"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "09", "30"),
 						type: CalendarDayType.Type02,
 						title: "Blocker 3",
 						icon: "sap-icon://home",
 						tooltip: "Tooltip 3"
 					}),
 					new CalendarAppointment("R1A4", {
-						startDate: new Date("2015", "0", "1", "09", "45"),
-						endDate: new Date("2015", "0", "1", "10", "45"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "09", "45"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "10", "45"),
 						type: CalendarDayType.Type09,
 						title: "Meeting 4",
 						tooltip: "Tooltip 4",
@@ -904,8 +906,8 @@ sap.ui.define([
 				},
 				intervalHeaders: [
 					new CalendarAppointment("R2H1", {
-						startDate: new Date("2015", "0", "2", "00", "00"),
-						endDate: new Date("2015", "0", "2", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "2", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "23", "59"),
 						type: CalendarDayType.Type01,
 						title: "SAPUI5",
 						tooltip: "Test",
@@ -914,8 +916,8 @@ sap.ui.define([
 				],
 				appointments: [
 					new CalendarAppointment("R2A1", {
-						startDate: new Date("2015", "0", "1", "00", "00"),
-						endDate: new Date("2015", "0", "2", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "23", "59"),
 						type: CalendarDayType.Type01,
 						title: "Event 1",
 						icon: "../ui/unified/images/m_01.png",
@@ -923,8 +925,8 @@ sap.ui.define([
 						text: "Room 1"
 					}),
 					new CalendarAppointment("R2A2", {
-						startDate: new Date("2015", "0", "2", "00", "00"),
-						endDate: new Date("2015", "0", "2", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "2", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "23", "59"),
 						type: CalendarDayType.Type02,
 						title: "Event 2",
 						icon: "sap-icon://home",
@@ -932,16 +934,16 @@ sap.ui.define([
 						text: "Home"
 					}),
 					new CalendarAppointment("R2A3", {
-						startDate: new Date("2015", "0", "3", "00", "00"),
-						endDate: new Date("2015", "0", "4", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "3", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "4", "23", "59"),
 						type: CalendarDayType.Type03,
 						title: "Event 3",
 						icon: "sap-icon://home",
 						tooltip: "Tooltip 3"
 					}),
 					new CalendarAppointment("R2A4", {
-						startDate: new Date("2015", "1", "1", "00", "00"),
-						endDate: new Date("2015", "1", "28", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "1", "1", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "1", "28", "23", "59"),
 						type: CalendarDayType.Type04,
 						title: "Event 4",
 						icon: "sap-icon://home",
@@ -955,88 +957,88 @@ sap.ui.define([
 				tooltip: "Colors",
 				intervalHeaders: [
 					new CalendarAppointment("R3H1", {
-						startDate: new Date("2015", "0", "1", "08", "00"),
-						endDate: new Date("2015", "0", "1", "08", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "08", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "08", "59"),
 						type: CalendarDayType.Type01,
 						title: "Type01",
 						tooltip: "Type01",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H2", {
-						startDate: new Date("2015", "0", "1", "09", "00"),
-						endDate: new Date("2015", "0", "1", "09", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "09", "59"),
 						type: CalendarDayType.Type02,
 						title: "Type02",
 						tooltip: "Type02",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H3", {
-						startDate: new Date("2015", "0", "1", "10", "00"),
-						endDate: new Date("2015", "0", "1", "10", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "10", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "10", "59"),
 						type: CalendarDayType.Type03,
 						title: "Type03",
 						tooltip: "Type03",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H4", {
-						startDate: new Date("2015", "0", "1", "11", "00"),
-						endDate: new Date("2015", "0", "1", "11", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "11", "59"),
 						type: CalendarDayType.Type04,
 						title: "Type04",
 						tooltip: "Type04",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H5", {
-						startDate: new Date("2015", "0", "1", "12", "00"),
-						endDate: new Date("2015", "0", "1", "12", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "12", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "12", "59"),
 						type: CalendarDayType.Type05,
 						title: "Type05",
 						tooltip: "Type05",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H6", {
-						startDate: new Date("2015", "0", "1", "13", "00"),
-						endDate: new Date("2015", "0", "1", "13", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "13", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "13", "59"),
 						type: CalendarDayType.Type06,
 						title: "Type06",
 						tooltip: "Type06",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H7", {
-						startDate: new Date("2015", "0", "1", "14", "00"),
-						endDate: new Date("2015", "0", "1", "14", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "14", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "14", "59"),
 						type: CalendarDayType.Type07,
 						title: "Type07",
 						tooltip: "Type07",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H8", {
-						startDate: new Date("2015", "0", "1", "15", "00"),
-						endDate: new Date("2015", "0", "1", "15", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "15", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "15", "59"),
 						type: CalendarDayType.Type08,
 						title: "Type08",
 						tooltip: "Type08",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H9", {
-						startDate: new Date("2015", "0", "1", "16", "00"),
-						endDate: new Date("2015", "0", "1", "16", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "16", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "16", "59"),
 						type: CalendarDayType.Type09,
 						title: "Type09",
 						tooltip: "Type09",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H10", {
-						startDate: new Date("2015", "0", "1", "17", "00"),
-						endDate: new Date("2015", "0", "1", "17", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "17", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "17", "59"),
 						type: CalendarDayType.Type10,
 						title: "Type10",
 						tooltip: "Type10",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R3H11", {
-						startDate: new Date("2015", "0", "1", "18", "00"),
-						endDate: new Date("2015", "0", "1", "18", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "18", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "18", "59"),
 						type: CalendarDayType.None,
 						title: "None",
 						tooltip: "None",
@@ -1045,88 +1047,88 @@ sap.ui.define([
 				],
 				appointments: [
 					new CalendarAppointment("R3A1", {
-						startDate: new Date("2015", "0", "1", "08", "00"),
-						endDate: new Date("2015", "0", "1", "08", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "08", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "08", "59"),
 						type: CalendarDayType.Type01,
 						title: "Type01",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 1"
 					}),
 					new CalendarAppointment("R3A2", {
-						startDate: new Date("2015", "0", "1", "09", "00"),
-						endDate: new Date("2015", "0", "1", "09", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "09", "59"),
 						type: CalendarDayType.Type02,
 						title: "Type02",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 2"
 					}),
 					new CalendarAppointment("R3A3", {
-						startDate: new Date("2015", "0", "1", "10", "00"),
-						endDate: new Date("2015", "0", "1", "10", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "10", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "10", "59"),
 						type: CalendarDayType.Type03,
 						title: "Type03",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 3"
 					}),
 					new CalendarAppointment("R3A4", {
-						startDate: new Date("2015", "0", "1", "11", "00"),
-						endDate: new Date("2015", "0", "1", "11", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "11", "59"),
 						type: CalendarDayType.Type04,
 						title: "Type04",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 4"
 					}),
 					new CalendarAppointment("R3A5", {
-						startDate: new Date("2015", "0", "1", "12", "00"),
-						endDate: new Date("2015", "0", "1", "12", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "12", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "12", "59"),
 						type: CalendarDayType.Type05,
 						title: "Type05",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 5"
 					}),
 					new CalendarAppointment("R3A6", {
-						startDate: new Date("2015", "0", "1", "13", "00"),
-						endDate: new Date("2015", "0", "1", "13", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "13", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "13", "59"),
 						type: CalendarDayType.Type06,
 						title: "Type06",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 6"
 					}),
 					new CalendarAppointment("R3A7", {
-						startDate: new Date("2015", "0", "1", "14", "00"),
-						endDate: new Date("2015", "0", "1", "14", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "14", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "14", "59"),
 						type: CalendarDayType.Type07,
 						title: "Type07",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 7"
 					}),
 					new CalendarAppointment("R3A8", {
-						startDate: new Date("2015", "0", "1", "15", "00"),
-						endDate: new Date("2015", "0", "1", "15", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "15", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "15", "59"),
 						type: CalendarDayType.Type08,
 						title: "Type08",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 8"
 					}),
 					new CalendarAppointment("R3A9", {
-						startDate: new Date("2015", "0", "1", "16", "00"),
-						endDate: new Date("2015", "0", "1", "16", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "16", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "16", "59"),
 						type: CalendarDayType.Type09,
 						title: "Type09",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 9"
 					}),
 					new CalendarAppointment("R3A10", {
-						startDate: new Date("2015", "0", "1", "17", "00"),
-						endDate: new Date("2015", "0", "1", "17", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "17", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "17", "59"),
 						type: CalendarDayType.Type10,
 						title: "Type10",
 						icon: "sap-icon://palette",
 						tooltip: "Tooltip 10"
 					}),
 					new CalendarAppointment("R3A11", {
-						startDate: new Date("2015", "0", "1", "18", "00"),
-						endDate: new Date("2015", "0", "1", "18", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "18", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "18", "59"),
 						type: CalendarDayType.None,
 						title: "None",
 						icon: "sap-icon://palette",
@@ -1139,24 +1141,24 @@ sap.ui.define([
 				tooltip: "Custom Colors",
 				intervalHeaders: [
 					new CalendarAppointment("R4H1", {
-						startDate: new Date("2015", "0", "1", "08", "00"),
-						endDate: new Date("2015", "0", "1", "10", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "08", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "10", "59"),
 						color: "#c14646",
 						title: "Red",
 						tooltip: "Red",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4H2", {
-						startDate: new Date("2015", "0", "1", "11", "00"),
-						endDate: new Date("2015", "0", "1", "13", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "13", "59"),
 						color: "#759421",
 						title: "Green",
 						tooltip: "Green",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4H3", {
-						startDate: new Date("2015", "0", "1", "14", "00"),
-						endDate: new Date("2015", "0", "1", "16", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "14", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "16", "59"),
 						color: "#0092d1",
 						title: "Blue",
 						tooltip: "Blue",
@@ -1165,72 +1167,72 @@ sap.ui.define([
 				],
 				appointments: [
 					new CalendarAppointment("R4A1", {
-						startDate: new Date("2015", "0", "1", "08", "00"),
-						endDate: new Date("2015", "0", "1", "08", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "08", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "08", "59"),
 						color: "#e09d00",
 						title: "#e09d00",
 						tooltip: "#e09d00",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4A2", {
-						startDate: new Date("2015", "0", "1", "09", "00"),
-						endDate: new Date("2015", "0", "1", "09", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "09", "59"),
 						color: "#e6600d",
 						title: "#e6600d",
 						tooltip: "#e6600d",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4A3", {
-						startDate: new Date("2015", "0", "1", "10", "00"),
-						endDate: new Date("2015", "0", "1", "10", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "10", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "10", "59"),
 						color: "#c14646",
 						title: "#c14646",
 						tooltip: "#c14646",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4A4", {
-						startDate: new Date("2015", "0", "1", "11", "00"),
-						endDate: new Date("2015", "0", "1", "11", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "11", "59"),
 						color: "#853808",
 						title: "#853808",
 						tooltip: "#853808",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4A5", {
-						startDate: new Date("2015", "0", "1", "12", "00"),
-						endDate: new Date("2015", "0", "1", "12", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "12", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "12", "59"),
 						color: "#de54c1",
 						title: "#de54c1",
 						tooltip: "#de54c1",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4A6", {
-						startDate: new Date("2015", "0", "1", "13", "00"),
-						endDate: new Date("2015", "0", "1", "13", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "13", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "13", "59"),
 						color: "#0092d1",
 						title: "#0092d1",
 						tooltip: "#0092d1",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4A7", {
-						startDate: new Date("2015", "0", "1", "14", "00"),
-						endDate: new Date("2015", "0", "1", "14", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "14", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "14", "59"),
 						color: "#1a9898",
 						title: "#1a9898",
 						tooltip: "#1a9898",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4A8", {
-						startDate: new Date("2015", "0", "1", "15", "00"),
-						endDate: new Date("2015", "0", "1", "15", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "15", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "15", "59"),
 						color: "#759421",
 						title: "#759421",
 						tooltip: "#759421",
 						icon: "sap-icon://palette"
 					}),
 					new CalendarAppointment("R4A9", {
-						startDate: new Date("2015", "0", "1", "16", "00"),
-						endDate: new Date("2015", "0", "1", "16", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "16", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "16", "59"),
 						color: "#1fbbff",
 						title: "#1fbbff",
 						tooltip: "#1fbbff",
@@ -1244,8 +1246,8 @@ sap.ui.define([
 				tooltip: "Header tooltip",
 				intervalHeaders: [
 					new CalendarAppointment("R5H1", {
-						startDate: new Date("2015", "0", "1", "09", "00"),
-						endDate: new Date("2015", "0", "1", "11", "00"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
 						type: CalendarDayType.Type02,
 						title: "SAPUI5",
 						tooltip: "Test",
@@ -1254,8 +1256,8 @@ sap.ui.define([
 				],
 				appointments: [
 					new CalendarAppointment("R5A1", {
-						startDate: new Date("2015", "0", "1", "08", "00"),
-						endDate: new Date("2015", "0", "2", "09", "00"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "08", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "09", "00"),
 						type: CalendarDayType.Type02,
 						title: "2 days meeting",
 						icon: "../ui/unified/images/m_01.png",
@@ -1263,8 +1265,8 @@ sap.ui.define([
 						text: "Room 1"
 					}),
 					new CalendarAppointment("R5A2", {
-						startDate: new Date("2014", "11", "31", "10", "45"),
-						endDate: new Date("2015", "0", "3", "09", "00"),
+						startDate: UI5Date.getInstance("2014", "11", "31", "10", "45"),
+						endDate: UI5Date.getInstance("2015", "0", "3", "09", "00"),
 						type: CalendarDayType.Type02,
 						title: "Appointment 2",
 						icon: "sap-icon://home",
@@ -1273,32 +1275,32 @@ sap.ui.define([
 						tentative: true
 					}),
 					new CalendarAppointment("R5A3", {
-						startDate: new Date("2014", "11", "31", "08", "30"),
-						endDate: new Date("2015", "0", "1", "09", "30"),
+						startDate: UI5Date.getInstance("2014", "11", "31", "08", "30"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "09", "30"),
 						type: CalendarDayType.Type02,
 						title: "Blocker 3",
 						icon: "sap-icon://home",
 						tooltip: "Tooltip 3"
 					}),
 					new CalendarAppointment("R5A4", {
-						startDate: new Date("2015", "0", "1", "09", "45"),
-						endDate: new Date("2015", "0", "1", "10", "45"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "09", "45"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "10", "45"),
 						type: CalendarDayType.Type02,
 						title: "Meeting 4",
 						tooltip: "Tooltip 4",
 						selected: true
 					}),
 					new CalendarAppointment("R5A5", {
-						startDate: new Date("2015", "0", "1", "11", "00"),
-						endDate: new Date("2015", "0", "1", "11", "30"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "11", "30"),
 						type: CalendarDayType.Type02,
 						title: "Meeting 5",
 						tooltip: "Tooltip 5",
 						selected: true
 					}),
 					new CalendarAppointment("R5A6", {
-						startDate: new Date("2015", "0", "1", "11", "30"),
-						endDate: new Date("2015", "0", "1", "12", "00"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "11", "30"),
+						endDate: UI5Date.getInstance("2015", "0", "1", "12", "00"),
 						type: CalendarDayType.Type02,
 						title: "Meeting 5",
 						tooltip: "Tooltip 5",
@@ -1309,35 +1311,35 @@ sap.ui.define([
 		],
 		specialDates: [
 			new DateTypeRange({
-				startDate: new Date(2015, 0, 1, 12, 0),
-				endDate: new Date(2015, 0, 1, 14, 0),
+				startDate: UI5Date.getInstance(2015, 0, 1, 12, 0),
+				endDate: UI5Date.getInstance(2015, 0, 1, 14, 0),
 				type: CalendarDayType.Type01,
 				tooltip: "Lunch"
 			}),
 			new DateTypeRange({
-				startDate: new Date(2015, 0, 6),
+				startDate: UI5Date.getInstance(2015, 0, 6),
 				type: CalendarDayType.Type02,
 				tooltip: "Heilige 3 Könige"
 			}),
 			new DateTypeRange({
-				startDate: new Date(2015, 0, 10),
+				startDate: UI5Date.getInstance(2015, 0, 10),
 				type: CalendarDayType.Type01,
 				tooltip: "Lunch"
 			}),
 			new DateTypeRange({
-				startDate: new Date(2015, 0, 6),
+				startDate: UI5Date.getInstance(2015, 0, 6),
 				type: CalendarDayType.NonWorking
 			}),
 			new DateTypeRange({
-				startDate: new Date(2015, 1, 1),
-				endDate: new Date(2015, 1, 3),
+				startDate: UI5Date.getInstance(2015, 1, 1),
+				endDate: UI5Date.getInstance(2015, 1, 3),
 				type: CalendarDayType.Type03,
 				tooltip: "Test",
 				secondaryType: CalendarDayType.NonWorking
 			}),
 			new DateTypeRange({
-				startDate: new Date(2015, 1, 4),
-				endDate: new Date(2015, 1, 4),
+				startDate: UI5Date.getInstance(2015, 1, 4),
+				endDate: UI5Date.getInstance(2015, 1, 4),
 				type: CalendarDayType.Type03,
 				color:"#4b0082",
 				tooltip: "Test"

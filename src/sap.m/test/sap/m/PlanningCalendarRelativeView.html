@@ -10,8 +10,10 @@
 			data-sap-ui-libs="sap.m, sap.ui.unified">
 		</script>
 		<script>
+
+			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 			var getFirstWeekOfYear = function() {
-				return new Date(2021, 0, 4);
+				return UI5Date.getInstance(2021, 0, 4);
 			};
 
 			var bToggle = false;
@@ -58,14 +60,14 @@
 					new sap.m.PlanningCalendarRow({
 						appointments: [
 							new sap.ui.unified.CalendarAppointment({
-								startDate: new Date(2021, 0, 4),
-								endDate: new Date(2021, 1, 1),
+								startDate: UI5Date.getInstance(2021, 0, 4),
+								endDate: UI5Date.getInstance(2021, 1, 1),
 								type: "Type05",
 								text: "first"
 							}),
 							new sap.ui.unified.CalendarAppointment({
-								startDate: new Date(2021, 1, 1),
-								endDate: new Date(2021, 2, 1),
+								startDate: UI5Date.getInstance(2021, 1, 1),
+								endDate: UI5Date.getInstance(2021, 2, 1),
 								type: "Type08",
 								text: "second"
 							})

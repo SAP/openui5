@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/TextArea",
 	"sap/ui/Device",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	DynamicDateOption,
 	DateFormat,
@@ -29,7 +30,8 @@ sap.ui.define([
 	Page,
 	TextArea,
 	Device,
-	JSONModel
+	JSONModel,
+	UI5Date
 ) {
 	"use strict";
 
@@ -123,7 +125,7 @@ sap.ui.define([
 					oSlider.getValue() <= (oSlider.getMax() / 2);
 			},
 			toDates: function(oValue) {
-				var now = new Date();
+				var now = UI5Date.getInstance();
 				return [now, now];
 			}
 		});
@@ -148,9 +150,9 @@ sap.ui.define([
 		}
 	}
 
-	var oToday = new Date();
-	var oBefore5Days = new Date(oToday.getFullYear(), oToday.getMonth(), oToday.getDate() - 5);
-	var oAfter5Days = new Date(oToday.getFullYear(), oToday.getMonth(), oToday.getDate() + 6);
+	var oToday = UI5Date.getInstance();
+	var oBefore5Days = UI5Date.getInstance(oToday.getFullYear(), oToday.getMonth(), oToday.getDate() - 5);
+	var oAfter5Days = UI5Date.getInstance(oToday.getFullYear(), oToday.getMonth(), oToday.getDate() + 6);
 
 	var iWidth = Device.system.phone ? '100%' : '350px';
 

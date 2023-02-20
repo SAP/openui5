@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/DateRangeSelection",
 	"sap/m/Text",
 	"sap/m/ToggleButton",
-	"sap/m/App"
+	"sap/m/App",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Bar,
 	Button,
@@ -29,7 +30,8 @@ sap.ui.define([
 	DateRangeSelection,
 	MText,
 	ToggleButton,
-	App
+	App,
+	UI5Date
 ) {
 	"use strict";
 
@@ -76,7 +78,7 @@ sap.ui.define([
 			oDRS = oCore.byId("DRS2");
 
 		if (!DateTypeRange) {
-		    oCore.loadLibrary("sap.ui.unified");
+			oCore.loadLibrary("sap.ui.unified");
 		}
 		if (!oLegend) {
 			oLegend = new CalendarLegend("Legend1", {
@@ -97,7 +99,7 @@ sap.ui.define([
 		}
 		if (bPressed) {
 			for (var i = 0; i < 10; i++) {
-				var oDate = new Date(oDRS.getDateValue());
+				var oDate = UI5Date.getInstance(oDRS.getDateValue());
 				oDate.setDate(oDate.getDate() + i);
 				var sType = "Type" + (i < 9 ? "0" + (i + 1) : "10");
 				var oSpecialDate = new DateTypeRange({startDate: oDate, type: sType});
@@ -110,13 +112,13 @@ sap.ui.define([
 
 	//Preparing input UTC dates for testing purposes:
 	//From: February 16, 2014  0:00 UTC
-	var dateFrom = new Date();
+	var dateFrom = UI5Date.getInstance();
 	dateFrom.setUTCDate(16);
 	dateFrom.setUTCMonth(1);
 	dateFrom.setUTCFullYear(2014);
 
 	//To: February 27, 2014  0:00 UTC
-	var dateTo = new Date();
+	var dateTo = UI5Date.getInstance();
 	dateTo.setUTCDate(27);
 	dateTo.setUTCMonth(1);
 	dateTo.setUTCFullYear(2014);
@@ -140,19 +142,19 @@ sap.ui.define([
 			new DateRangeSelection("DRS4", { displayFormatType: "Islamic", secondaryCalendarType: "Gregorian", change: handleChange }),
 
 			new Label({text: "DateRangeSelection with minDate=2016-01-01 and maxDate=2016-12-31", labelFor: "DRS7"}),
-			new DateRangeSelection("DRS7", { minDate: new Date("2016", "0", "01"), maxDate: new Date("2016", "11", "31"), change: handleChange }),
+			new DateRangeSelection("DRS7", { minDate: UI5Date.getInstance("2016", "0", "01"), maxDate: UI5Date.getInstance("2016", "11", "31"), change: handleChange }),
 
 			new Label({text: "DateRangeSelection with displayFormat=\"yyyy-MM\"", labelFor: "DRS8"}),
 			new DateRangeSelection("DRS8", { displayFormat: "yyyy-MM", change: handleChange}),
 
 			new Label({text: "DateRangeSelection with displayFormat=\"yyyy-MM\"", labelFor: "DRS9"}),
-			new DateRangeSelection("DRS9", { displayFormat: "yyyy-MM", change: handleChange, dateValue: new Date("2019", "5", "1"), secondDateValue: new Date("2019", "10", "1")}),
+			new DateRangeSelection("DRS9", { displayFormat: "yyyy-MM", change: handleChange, dateValue: UI5Date.getInstance("2019", "5", "1"), secondDateValue: UI5Date.getInstance("2019", "10", "1")}),
 
 			new Label({text: "DateRangeSelection with displayFormat=\"yyyy\"", labelFor: "DRS10"}),
 			new DateRangeSelection("DRS10", { displayFormat: "yyyy", change: handleChange }),
 
 			new Label({text: "DateRangeSelection with displayFormat=\"yyyy\"", labelFor: "DRS11"}),
-			new DateRangeSelection("DRS11", { displayFormat: "yyyy", change: handleChange, dateValue: new Date("2019", "5", "1"), secondDateValue: new Date("2023", "10", "1")}),
+			new DateRangeSelection("DRS11", { displayFormat: "yyyy", change: handleChange, dateValue: UI5Date.getInstance("2019", "5", "1"), secondDateValue: UI5Date.getInstance("2023", "10", "1")}),
 
 			new MText({width: "100%"}), new MText({width: "100%"}),
 			new MText({width: "100%"}), new MText({width: "100%"}), // 6 empty lines
