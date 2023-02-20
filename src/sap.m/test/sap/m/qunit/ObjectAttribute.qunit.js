@@ -805,4 +805,35 @@ sap.ui.define([
 		// Clean up
 		oAttr.destroy();
 	});
+
+	QUnit.test("Focus is applied on the first available anchor tag", function (assert) {
+		// Arrange
+		var oAttrActive = new ObjectAttribute({
+				text: "sample text",
+				active: true
+			}),
+			oAttrCustomLink = new ObjectAttribute({
+				text: "sample text",
+				customContent: new sap.m.Link({text: "sample link"})
+			});
+
+		oAttrActive.placeAt("qunit-fixture");
+		oAttrCustomLink.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oAttrActive.focus();
+
+		// Assert
+		assert.ok(document.activeElement.classList.contains("sapMObjectAttributeText"), "Focus is properly applied");
+
+		// Act
+		oAttrCustomLink.focus();
+
+		assert.ok(document.activeElement.classList.contains("sapMLnk"), "Focus is properly applied");
+
+		// Cleanup
+		oAttrActive.destroy();
+		oAttrCustomLink.destroy();
+	});
 });
