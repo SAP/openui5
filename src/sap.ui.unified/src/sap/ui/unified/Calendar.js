@@ -567,6 +567,7 @@ sap.ui.define([
 		this._updateHeader(oCalDate);
 
 		this._updateHeadersButtons();
+		this._adjustYearRangeDisplay();
 
 		this._updateLegendParent();
 		if (this.getInitialFocusedDate()) {
@@ -862,7 +863,6 @@ sap.ui.define([
 			i;
 
 		this.setProperty("primaryCalendarType", sCalendarType);
-		this._adjustYearRangeDisplay();
 
 		this._oYearFormat = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
 
@@ -2487,21 +2487,25 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._adjustYearRangeDisplay = function() {
-		var oYearRangePicker = this.getAggregation("yearRangePicker");
+		var oYearRangePicker = this.getAggregation("yearRangePicker"),
+			sLang = sap.ui.getCore().getConfiguration().getLanguage().toLocaleLowerCase(),
+			sPrimaryCalendarType = this.getPrimaryCalendarType();
 
 		if (!this._getSucessorsPickerPopup()) {
-			switch (this.getPrimaryCalendarType()) {
-				case CalendarType.Japanese:
-					oYearRangePicker.setColumns(1);
-					oYearRangePicker.setYears(4);
-					break;
-				case CalendarType.Gregorian:
-					oYearRangePicker.setColumns(3);
-					oYearRangePicker.setYears(9);
-					break;
-				default:
-					oYearRangePicker.setColumns(2);
-					oYearRangePicker.setYears(8);
+			// An evaluation about the count of year cells that could fit in the sap.ui.unified.calendar.YearRangePicker
+			// has to be made based not only on the sap.ui.core.CalendarType, but also on the language configuration.
+			// Based on those two criteria a couple of groups with different year cells count would be indicated and we
+			// could cover those scenarios with visual tests afterwards. Currently only the scenario with korean language
+			// is covered.
+			if (sPrimaryCalendarType == CalendarType.Japanese) {
+				oYearRangePicker.setColumns(1);
+				oYearRangePicker.setYears(4);
+			} else if (sLang == "ko" || sLang == "ko-kr" || sPrimaryCalendarType != CalendarType.Gregorian) {
+				oYearRangePicker.setColumns(2);
+				oYearRangePicker.setYears(8);
+			} else if (sPrimaryCalendarType == CalendarType.Gregorian) {
+				oYearRangePicker.setColumns(3);
+				oYearRangePicker.setYears(9);
 			}
 		}
 	};

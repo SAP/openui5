@@ -683,15 +683,17 @@ sap.ui.define([
 
 	QUnit.test("_adjustYearRangeDisplay is called in setPrimaryCalendarType", function(assert) {
 		// Prepare
-		var oCal = new Calendar().placeAt("qunit-fixture"),
+		var oCal = new Calendar({
+				primaryCalendarType: "Islamic"
+			}),
 			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
 
-		// Act
-		oCal.setPrimaryCalendarType("Islamic");
+		oCal.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
+		// Act
 		// Assert
-		assert.ok(oAdjustYearRangeDisplaySpy.calledOnce, "_adjustYearRangeDisplay is called once");
+		assert.ok(oAdjustYearRangeDisplaySpy.calledTwice, "_adjustYearRangeDisplay is called once");
 
 		// Clean
 		oCal.destroy();
