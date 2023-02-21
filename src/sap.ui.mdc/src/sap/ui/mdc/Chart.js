@@ -26,7 +26,8 @@ sap.ui.define([
         "sap/ui/events/KeyCodes",
         "sap/ui/mdc/util/InfoBar",
         "sap/m/Label",
-        "sap/ui/core/format/ListFormat"
+        "sap/ui/core/format/ListFormat",
+        "sap/ui/mdc/enum/ProcessingStrategy"
     ],
     function (
         Core,
@@ -52,7 +53,8 @@ sap.ui.define([
         KeyCodes,
         InfoBar,
         Label,
-        ListFormat
+        ListFormat,
+        ProcessingStrategy
     ) {
         "use strict";
 
@@ -596,7 +598,8 @@ sap.ui.define([
         };
 
         Chart.prototype._initInfoToolbar = function() {
-            this.setAggregation("_infoToolbar", new InfoBar(this.getId() + "--infoToolbar", {infoText: this._getFilterInfoText(),
+            this.setAggregation("_infoToolbar", new InfoBar(this.getId() + "--infoToolbar", {
+                infoText: this._getFilterInfoText(),
                 press: function() {
                     this.finalizePropertyHelper().then(function(){
                        return ChartSettings.showPanel(this, "Filter");
@@ -610,12 +613,24 @@ sap.ui.define([
                             });
 
                             if (bNoConditions && this.getAggregation("_toolbar")) {
-                                    this.getAggregation("_toolbar").getSettingsButton().focus();
+                                this.getAggregation("_toolbar").getSettingsButton().focus();
                             }
 
                         }.bind(this));
                     }.bind(this));
-                }.bind(this)}));
+                }.bind(this),
+                removeAllFilters: function(oEvent) {
+                    //this will only reset to the last variant and not clear all filters. this.getEngine().reset(this, ["Filter"]);
+                    this.getEngine().createChanges({
+                        control: this,
+                        key: "Filter",
+                        state: {},
+                        applyAbsolute: ProcessingStrategy.FullReplace
+                    });
+                    //Focus handling, setting the focus back tothe settoing button
+                    this._getToolbar().getSettingsButton().focus();
+                }.bind(this)
+            }));
 
             if (this.getDomRef()) {
                 this.getDomRef().setAttribute("aria-labelledby", this.getAggregation("_infoToolbar").getACCTextId());
