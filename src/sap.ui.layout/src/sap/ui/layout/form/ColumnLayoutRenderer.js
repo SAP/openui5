@@ -140,7 +140,7 @@ sap.ui.define([
 		var oLabel = oElement.getLabelControl();
 		var oOptions;
 
-		oRm.openStart("div", oElement);
+		oRm.openStart("p", oElement);
 		oRm.class("sapUiFormCLElement");
 		if (oElement.getTooltip_AsString()) {
 			oRm.attr('title', oElement.getTooltip_AsString());
@@ -190,7 +190,7 @@ sap.ui.define([
 				oRm.close("div");
 			}
 		}
-		oRm.close("div");
+		oRm.close("p");
 
 	};
 
