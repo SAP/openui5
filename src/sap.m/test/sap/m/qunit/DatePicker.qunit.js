@@ -2147,6 +2147,14 @@ sap.ui.define([
 		assert.strictEqual(sAriaText, sExpectedAria, "Aria contains text for the secondary calendar type");
 	});
 
+	QUnit.test("Default senatic accessible role gets used", function(assert) {
+		// Prepare
+		var oDP = new DatePicker();
+
+		// Assert
+		assert.strictEqual(oDP.getRenderer().getAriaRole() , "", "The role attribute is empty");
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oDP = new DatePicker("EDP").placeAt("uiArea6");
