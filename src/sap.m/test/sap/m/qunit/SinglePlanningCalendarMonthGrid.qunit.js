@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/unified/CalendarAppointment",
 	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/library',
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	SinglePlanningCalendar,
 	SinglePlanningCalendarMonthView,
@@ -14,17 +15,18 @@ sap.ui.define([
 	CalendarAppointment,
 	DateTypeRange,
 	unifiedLibrary,
-	oCore
+	oCore,
+	UI5Date
 ) {
 		"use strict";
 
 		var CalendarDayType = unifiedLibrary.CalendarDayType;
 
-		var o2Aug2018_00_00 = new Date(2018, 7, 2);
-		var o2Aug2018_18_00 = new Date(2018, 7, 2, 18, 0, 0);
-		var o3Aug2018_00_00 = new Date(2018, 7, 3);
-		var o3Aug2018_18_00 = new Date(2018, 7, 3, 18, 0, 0);
-		var o5Aug2018_00_00 = new Date(2018, 7, 5);
+		var o2Aug2018_00_00 = UI5Date.getInstance(2018, 7, 2);
+		var o2Aug2018_18_00 = UI5Date.getInstance(2018, 7, 2, 18, 0, 0);
+		var o3Aug2018_00_00 = UI5Date.getInstance(2018, 7, 3);
+		var o3Aug2018_18_00 = UI5Date.getInstance(2018, 7, 3, 18, 0, 0);
+		var o5Aug2018_00_00 = UI5Date.getInstance(2018, 7, 5);
 		var i30Jul2018_00_00_UTC_Timestamp = 1532908800000;
 		var i9Sep2018_00_00_UTC_Timestamp = 1536451200000;
 		var i2Aug2018_00_00_UTC_Timestamp = 1533168000000;
@@ -151,7 +153,7 @@ sap.ui.define([
 			// arrange, act
 			this.oSPC.addSpecialDate(new DateTypeRange({
 				type: CalendarDayType.Type05,
-				startDate: new Date(2018, 6, 30)
+				startDate: UI5Date.getInstance(2018, 6, 30)
 			}));
 			oCore.applyChanges();
 
@@ -170,12 +172,12 @@ sap.ui.define([
 							endDate: o2Aug2018_18_00
 						}),
 						new CalendarAppointment({
-							startDate: new Date(i30Jul2018_00_00_UTC_Timestamp),
+							startDate: UI5Date.getInstance(i30Jul2018_00_00_UTC_Timestamp),
 							endDate: o2Aug2018_00_00
 						}),
 						new CalendarAppointment({
-							startDate: new Date(i9Sep2018_00_00_UTC_Timestamp),
-							endDate: new Date(i9Sep2018_00_00_UTC_Timestamp + 1000)
+							startDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp),
+							endDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp + 1000)
 						})
 					]
 				}).placeAt("qunit-fixture");
@@ -212,8 +214,8 @@ sap.ui.define([
 			// arrange
 			var aAppointmentNodes;
 			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: new Date(i9Sep2018_00_00_UTC_Timestamp),
-				endDate: new Date(i9Sep2018_00_00_UTC_Timestamp)
+				startDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp),
+				endDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp)
 			}));
 			this.oSPC.addAppointment(new CalendarAppointment({
 				startDate: o2Aug2018_00_00,
@@ -233,8 +235,8 @@ sap.ui.define([
 			// arrange
 			var aAppointmentNodes;
 			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: new Date(i9Sep2018_00_00_UTC_Timestamp),
-				endDate: new Date(i9Sep2018_00_00_UTC_Timestamp)
+				startDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp),
+				endDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp)
 			}));
 			this.oSPC.addAppointment(new CalendarAppointment({
 				startDate: o2Aug2018_00_00,
@@ -254,12 +256,12 @@ sap.ui.define([
 			var aAppointmentNodes;
 			this.oSPC.destroyAppointments();
 			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: new Date(2018, 8, 10),
-				endDate: new Date(2018, 8, 11)
+				startDate: UI5Date.getInstance(2018, 8, 10),
+				endDate: UI5Date.getInstance(2018, 8, 11)
 			}));
 			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: new Date(2018, 6, 28),
-				endDate: new Date(2018, 6, 29)
+				startDate: UI5Date.getInstance(2018, 6, 28),
+				endDate: UI5Date.getInstance(2018, 6, 29)
 			}));
 			this.oSPC.addAppointment(new CalendarAppointment({
 				startDate: o2Aug2018_00_00
@@ -280,16 +282,16 @@ sap.ui.define([
 			var aAppointmentNodes;
 			this.oSPC.destroyAppointments();
 			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: new Date(2018, 2, 10),
-				endDate: new Date(2018, 7, 11)
+				startDate: UI5Date.getInstance(2018, 2, 10),
+				endDate: UI5Date.getInstance(2018, 7, 11)
 			}));
 			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: new Date(2018, 7, 10),
-				endDate: new Date(2018, 10, 11)
+				startDate: UI5Date.getInstance(2018, 7, 10),
+				endDate: UI5Date.getInstance(2018, 10, 11)
 			}));
 			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: new Date(2018, 2, 10),
-				endDate: new Date(2018, 10, 11)
+				startDate: UI5Date.getInstance(2018, 2, 10),
+				endDate: UI5Date.getInstance(2018, 10, 11)
 			}));
 
 			// act
@@ -303,8 +305,8 @@ sap.ui.define([
 			// arrange
 			this.oSPC.destroyAppointments();
 			var oAppointment = new CalendarAppointment("appointment_from_01_to_22",{
-				startDate: new Date(2018, 2, 1),
-				endDate: new Date(2018, 7, 22)
+				startDate: UI5Date.getInstance(2018, 2, 1),
+				endDate: UI5Date.getInstance(2018, 7, 22)
 				});
 
 			// act
@@ -403,13 +405,13 @@ sap.ui.define([
 			var oGrid = new SinglePlanningCalendarMonthGrid({
 					appointments: [
 						new CalendarAppointment({
-							startDate: new Date(2018, 6, 8, 5),
-							endDate: new Date(2018, 6, 8, 6),
+							startDate: UI5Date.getInstance(2018, 6, 8, 5),
+							endDate: UI5Date.getInstance(2018, 6, 8, 6),
 							selected: true
 						}),
 						new CalendarAppointment({
-							startDate: new Date(2018, 6, 9, 4),
-							endDate: new Date(2018, 6, 10, 4),
+							startDate: UI5Date.getInstance(2018, 6, 9, 4),
+							endDate: UI5Date.getInstance(2018, 6, 10, 4),
 							selected: true
 						})
 					]
@@ -440,11 +442,11 @@ sap.ui.define([
 		QUnit.test("_findSrcControl", function(assert) {
 			// Prepare
 			var oAppointment = new CalendarAppointment({
-					startDate: new Date(2022,0,20),
-					endDate: new Date(2022,11,31)
+					startDate: UI5Date.getInstance(2022,0,20),
+					endDate: UI5Date.getInstance(2022,11,31)
 				}),
 				oGrid = new SinglePlanningCalendarMonthGrid({
-					startDate: new Date(2022,0,25),
+					startDate: UI5Date.getInstance(2022,0,25),
 					appointments: [oAppointment]
 				}),
 				oFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
@@ -469,7 +471,7 @@ sap.ui.define([
 		QUnit.module("DOM attributes", {
 			beforeEach: function() {
 				this.oSPC = new SinglePlanningCalendar({
-					startDate: new Date(2020,11,1),
+					startDate: UI5Date.getInstance(2020,11,1),
 					enableAppointmentsDragAndDrop: false,
 					views: new SinglePlanningCalendarMonthView({
 						key: "Month",
@@ -478,8 +480,8 @@ sap.ui.define([
 					appointments:[
 						new CalendarAppointment({
 							title: "appointment for 2 rows",
-							startDate: new Date(2020,11,10),
-							endDate: new Date(2020,11,14)
+							startDate: UI5Date.getInstance(2020,11,10),
+							endDate: UI5Date.getInstance(2020,11,14)
 						})
 					]
 				}).placeAt("qunit-fixture");

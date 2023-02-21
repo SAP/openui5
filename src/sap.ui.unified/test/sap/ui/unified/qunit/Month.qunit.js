@@ -16,9 +16,27 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(Month, CalendarDate, CalendarLegend,
-	CalendarLegendItem, Button, DateRange, DateTypeRange, CalendarType, Element, InvisibleText, ItemNavigation, unifiedLibrary, KeyCodes, Device, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(
+	Month,
+	CalendarDate,
+	CalendarLegend,
+	CalendarLegendItem,
+	Button,
+	DateRange,
+	DateTypeRange,
+	CalendarType,
+	Element,
+	InvisibleText,
+	ItemNavigation,
+	unifiedLibrary,
+	KeyCodes,
+	Device,
+	jQuery,
+	oCore,
+	UI5Date
+) {
 	"use strict";
 
 	(function () {
@@ -37,10 +55,10 @@ sap.ui.define([
 			// Note setFullYear/setUTCFullYear needed to explicitly switch to years before 1901 which is not supported with the constructor
 			// or with the deprecated setYear setter
 			if (bUTC) {
-				oDate = new Date(Date.UTC(iYear, iMonth, iDay));
+				oDate = UI5Date.getInstance(Date.UTC(iYear, iMonth, iDay));
 				oDate.setUTCFullYear(iYear);
 			} else {
-				oDate = new Date(iYear, iMonth, iDay);
+				oDate = UI5Date.getInstance(iYear, iMonth, iDay);
 				oDate.setFullYear(iYear);
 			}
 			return oDate;
@@ -61,7 +79,7 @@ sap.ui.define([
 			if (bUTC) {
 				oCalDate = new CalendarDate(iYear, iMonth, iDay);
 			} else {
-				oCalDate = CalendarDate.fromLocalJSDate(new Date(iYear, iMonth, iDay));
+				oCalDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(iYear, iMonth, iDay));
 			}
 			return oCalDate;
 		};
@@ -293,7 +311,7 @@ sap.ui.define([
 				oItemNavSpy = this.spy(this.oM._oItemNavigation, "focusItem");
 
 			// Act
-			this.oM._focusDate(CalendarDate.fromLocalJSDate(new Date()));
+			this.oM._focusDate(CalendarDate.fromLocalJSDate(UI5Date.getInstance()));
 
 			// Assert
 			oAssert.strictEqual(oItemNavSpy.callCount, 0, "item navigation is not applying a focus");
@@ -337,11 +355,11 @@ sap.ui.define([
 		QUnit.test("specialDates outside current month are not rendered as such", function (oAssert) {
 			// Arrange
 			var $Date;
-			this.oM.setDate(new Date(2016, 6, 1));
+			this.oM.setDate(UI5Date.getInstance(2016, 6, 1));
 			this.oM.addSpecialDate(
 				new DateTypeRange({
-					startDate: new Date(2016, 5, 30),
-					endDate:  new Date(2016, 5, 30)
+					startDate: UI5Date.getInstance(2016, 5, 30),
+					endDate:  UI5Date.getInstance(2016, 5, 30)
 			}));
 
 			// Act
@@ -449,7 +467,7 @@ sap.ui.define([
 				oBrowserStub = this.stub(Device, "browser").value({edge: true});
 
 			//act
-			this.oM._handleMousedown(oMouseEvent, CalendarDate.fromLocalJSDate(new Date(2017, 6, 20), this.oM.getPrimaryCalendarType()));
+			this.oM._handleMousedown(oMouseEvent, CalendarDate.fromLocalJSDate(UI5Date.getInstance(2017, 6, 20), this.oM.getPrimaryCalendarType()));
 
 			//assert
 			assert.strictEqual(isSelectedDaySpy.called, false, "_handleMousedown does not invoke _selectDay in Edge");
@@ -510,7 +528,7 @@ sap.ui.define([
 		QUnit.test("setting startDate doesn't apply focus", function (assert) {
 			// Arrange
 			var oMonthFocusDateSpy = this.spy(this.oM, "setDate"),
-				oLastMonthDate = new Date();
+				oLastMonthDate = UI5Date.getInstance();
 
 			oLastMonthDate.setMonth(oLastMonthDate.getMonth() - 1);
 			this.oM.displayDate(oLastMonthDate);
@@ -518,7 +536,7 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			// Act
-			this.oM.displayDate(new Date());
+			this.oM.displayDate(UI5Date.getInstance());
 
 			// Assert
 			assert.equal(oMonthFocusDateSpy.callCount, 0, "select was fired");
@@ -539,17 +557,17 @@ sap.ui.define([
 				});
 
 				this.oSut = new Month({
-					date: new Date(2016, 0, 1),
+					date: UI5Date.getInstance(2016, 0, 1),
 					legend: this.oLegend,
 					specialDates: [
 						new DateTypeRange({
-							startDate: new Date(2016, 0, 1),
-							endDate:  new Date(2016, 0, 1),
+							startDate: UI5Date.getInstance(2016, 0, 1),
+							endDate:  UI5Date.getInstance(2016, 0, 1),
 							type: CalendarDayType.Type01 /* Calendar Legend Item exists for this type*/
 						}),
 						new DateTypeRange({
-							startDate: new Date(2016, 0, 2),
-							endDate:  new Date(2016, 0, 2),
+							startDate: UI5Date.getInstance(2016, 0, 2),
+							endDate:  UI5Date.getInstance(2016, 0, 2),
 							type: CalendarDayType.Type02 /* Calendar Legend Item DOES not exist for this type*/
 						})
 					]
@@ -644,7 +662,7 @@ sap.ui.define([
 
 
 			//Act
-			this.oSut._selectDay(CalendarDate.fromLocalJSDate(new Date(), "Gregorian"));
+			this.oSut._selectDay(CalendarDate.fromLocalJSDate(UI5Date.getInstance(), "Gregorian"));
 
 			//Assert
 			assert.ok(oInvisibleMessageSpy.calledOnce, "Selected state announcement is done");
@@ -670,7 +688,7 @@ sap.ui.define([
 		QUnit.test("Unfinished range in intervalSelection mode", function (assert) {
 			// Act
 			this.oMonth.setIntervalSelection(true);
-			this.oSelectedRange.setStartDate(new Date());
+			this.oSelectedRange.setStartDate(UI5Date.getInstance());
 
 			// Assert
 			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), true,
@@ -679,7 +697,7 @@ sap.ui.define([
 
 		QUnit.test("Unfinished range not in intervalSelection mode", function (assert) {
 			// Act
-			this.oSelectedRange.setStartDate(new Date());
+			this.oSelectedRange.setStartDate(UI5Date.getInstance());
 
 			// Assert
 			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), false,
@@ -689,8 +707,8 @@ sap.ui.define([
 		QUnit.test("Finished range in intervalSelection mode", function (assert) {
 			// Act
 			this.oMonth.setIntervalSelection(true);
-			this.oSelectedRange.setStartDate(new Date());
-			this.oSelectedRange.setEndDate(new Date());
+			this.oSelectedRange.setStartDate(UI5Date.getInstance());
+			this.oSelectedRange.setEndDate(UI5Date.getInstance());
 
 			// Assert
 			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), false,
@@ -699,8 +717,8 @@ sap.ui.define([
 
 		QUnit.test("Finished range not in intervalSelection mode", function (assert) {
 			// Act
-			this.oSelectedRange.setStartDate(new Date());
-			this.oSelectedRange.setEndDate(new Date());
+			this.oSelectedRange.setStartDate(UI5Date.getInstance());
+			this.oSelectedRange.setEndDate(UI5Date.getInstance());
 
 			// Assert
 			assert.strictEqual(this.oMonth._isMarkingUnfinishedRangeAllowed(), false,
@@ -724,9 +742,9 @@ sap.ui.define([
 			var aItemsMarkedAsBetween,
 				oMonth = new Month({
 					intervalSelection: true,
-					date: new Date(2018, 9, 16), // 2018, October 16
+					date: UI5Date.getInstance(2018, 9, 16), // 2018, October 16
 					selectedDates: new DateRange({
-						startDate: new Date(2018, 9, 14) // 2018, October 14
+						startDate: UI5Date.getInstance(2018, 9, 14) // 2018, October 14
 					})
 				});
 
@@ -745,11 +763,11 @@ sap.ui.define([
 			//arrange
 			var oMonth = new Month({
 					intervalSelection: true,
-					date: new Date(2017, 6, 19) //2017, July 19
+					date: UI5Date.getInstance(2017, 6, 19) //2017, July 19
 				}),
 				$HoveredDate,
 				$HoveredDateBefore,
-				oSelectedDate = new DateRange({ startDate: new Date(2017, 6, 19) });
+				oSelectedDate = new DateRange({ startDate: UI5Date.getInstance(2017, 6, 19) });
 
 			oMonth.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -776,7 +794,7 @@ sap.ui.define([
 			assert.equal(jQuery('.sapUiCalItemSelBetween').length, 6, 'selection feedback is applied on hovered dates before start date');
 
 			//act - finish selection and then hover
-			oMonth.getSelectedDates()[0].setEndDate(new Date(2017, 6, 12));
+			oMonth.getSelectedDates()[0].setEndDate(UI5Date.getInstance(2017, 6, 12));
 			oMonth.onmouseover({ target: $HoveredDate }); //2017, July 25
 
 			//assert
@@ -791,14 +809,14 @@ sap.ui.define([
 			var aItemsMarkedAsBetween,
 				oMonth = new Month({
 					intervalSelection: true,
-					date: new Date(2018, 8, 1)
+					date: UI5Date.getInstance(2018, 8, 1)
 				});
 
 			oMonth.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			oMonth._oMinDate = CalendarDate.fromLocalJSDate(new Date(2018, 8, 10));
-			oMonth._oMaxDate = CalendarDate.fromLocalJSDate(new Date(2018, 8, 20));
+			oMonth._oMinDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2018, 8, 10));
+			oMonth._oMaxDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2018, 8, 20));
 
 			// Act
 			oMonth._markDatesBetweenStartAndHoveredDate(20180810, 20220820);
@@ -831,8 +849,8 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oM = new Month();
 				this.oRangeSelection = new DateRange({
-					startDate: new Date(2018, 9, 14),
-					endDate: new Date(2018,9,24)
+					startDate: UI5Date.getInstance(2018, 9, 14),
+					endDate: UI5Date.getInstance(2018,9,24)
 				});
 			},
 			afterEach: function () {
@@ -854,7 +872,7 @@ sap.ui.define([
 		QUnit.test("_isIntervalSelected function with selected startDate and missing endDate", function(assert){
 			//act
 			this.oM.addSelectedDate(new DateRange({
-				startDate: new Date(2018,1,24)
+				startDate: UI5Date.getInstance(2018,1,24)
 			}));
 
 			// Assert
@@ -864,7 +882,7 @@ sap.ui.define([
 		QUnit.test("_isIntervalSelected function with selected endDate and missng startDate", function(assert){
 			//act
 			this.oM.addSelectedDate(new DateRange({
-				endDate: new Date(2018,1,24)
+				endDate: UI5Date.getInstance(2018,1,24)
 			}));
 
 			// Assert
@@ -874,8 +892,8 @@ sap.ui.define([
 		QUnit.test("_isIntervalSelected function with the different selected startDate, endDate and range selection date", function(assert){
 			//act
 			this.oM.addSelectedDate(new DateRange({
-				startDate: new Date(2018, 1, 14),
-				endDate: new Date(2018,1,24)
+				startDate: UI5Date.getInstance(2018, 1, 14),
+				endDate: UI5Date.getInstance(2018,1,24)
 			}));
 
 			// Assert
@@ -885,8 +903,8 @@ sap.ui.define([
 		QUnit.test("_isIntervalSelected function with the same startDate and endDate", function(assert){
 			//act
 			this.oM.addSelectedDate(new DateRange({
-				startDate: new Date(2018, 9, 14),
-				endDate: new Date(2018,9,24)
+				startDate: UI5Date.getInstance(2018, 9, 14),
+				endDate: UI5Date.getInstance(2018,9,24)
 			}));
 
 			// Assert
@@ -895,7 +913,7 @@ sap.ui.define([
 
 		QUnit.module("_getDateTypes function", {
 			beforeEach: function () {
-				this.oM = new Month({date: new Date(2017, 1, 1)}).placeAt("qunit-fixture");
+				this.oM = new Month({date: UI5Date.getInstance(2017, 1, 1)}).placeAt("qunit-fixture");
 				oCore.applyChanges();
 			},
 			afterEach: function () {
@@ -906,7 +924,7 @@ sap.ui.define([
 
 		QUnit.test("_getDateTypes when Type01 and NonWorking types are set", function (assert) {
 			var aDayTypes,
-				oDate = new Date(2017, 1, 20),
+				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
 					type: CalendarDayType.Type01,
 					startDate: oDate
@@ -929,7 +947,7 @@ sap.ui.define([
 
 		QUnit.test("_getDateTypes when NonWorking and Type01 types are set", function (assert) {
 			var aDayTypes,
-				oDate = new Date(2017, 1, 20),
+				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
 					type: CalendarDayType.NonWorking,
 					startDate: oDate
@@ -952,7 +970,7 @@ sap.ui.define([
 
 		QUnit.test("_getDateTypes when Type01, NonWorking and Type03 types are set", function (assert) {
 			var aDayTypes,
-				oDate = new Date(2017, 1, 20),
+				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
 					type: CalendarDayType.Type01,
 					startDate: oDate
@@ -980,7 +998,7 @@ sap.ui.define([
 
 		QUnit.test("_getDateTypes when Type02 and Type01 types are set", function (assert) {
 			var aDayTypes,
-				oDate = new Date(2017, 1, 20),
+				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
 					type: CalendarDayType.Type02,
 					startDate: oDate
@@ -1002,7 +1020,7 @@ sap.ui.define([
 
 		QUnit.test("_getDateTypes when only Type01 is set", function (assert) {
 			var aDayTypes,
-				oDate = new Date(2017, 1, 20),
+				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
 					type: CalendarDayType.Type01,
 					startDate: oDate
@@ -1019,7 +1037,7 @@ sap.ui.define([
 
 		QUnit.test("_getDateTypes when only NonWorking is set", function (assert) {
 			var aDayTypes,
-				oDate = new Date(2017, 1, 20),
+				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
 					type: CalendarDayType.NonWorking,
 					startDate: oDate
@@ -1278,10 +1296,10 @@ sap.ui.define([
 
 		QUnit.test("_handleWeekSelection", function(assert) {
 			// Prepare
-			var oStartDateInBounds = CalendarDate.fromLocalJSDate(new Date(2016, 0, 3)),
-				oStartDateOutBounds = CalendarDate.fromLocalJSDate(new Date(2016, 0, 10)),
-				oMinDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 1)),
-				oMaxDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 8)),
+			var oStartDateInBounds = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2016, 0, 3)),
+				oStartDateOutBounds = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2016, 0, 10)),
+				oMinDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2016, 0, 1)),
+				oMaxDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2016, 0, 8)),
 				oMinDateStub = this.stub(this.oM, "_oMinDate").value(oMinDate),
 				oMaxDateStub = this.stub(this.oM, "_oMaxDate").value(oMaxDate),
 				oGetParentStub = this.stub(this.oM, "getParent").returns({

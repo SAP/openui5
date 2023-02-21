@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(qutils, CalendarOneMonthInterval, CalendarDate, KeyCodes, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(qutils, CalendarOneMonthInterval, CalendarDate, KeyCodes, jQuery, oCore, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -18,7 +19,7 @@ sap.ui.define([
 
 	QUnit.module("Private API", {
 		beforeEach: function () {
-			this.oPCStartDate = new Date(2015, 0, 1, 8, 0, 0);
+			this.oPCStartDate = UI5Date.getInstance(2015, 0, 1, 8, 0, 0);
 			this.sut = new CalendarOneMonthInterval("CalP",{
 				startDate: this.oPCStartDate,
 				pickerPopup: true
@@ -46,12 +47,12 @@ sap.ui.define([
 		//assert
 		assert.equal(oSpySetFocusedDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set as focused date " +
 		"(call to _setFocusedDate)");
-		assert.equal(oSpySetFocusedDate.getCall(0).args[0].toUTCJSDate().toString(), new Date(Date.UTC(2015, 0, 31)).toString(),
+		assert.equal(oSpySetFocusedDate.getCall(0).args[0].toUTCJSDate().toString(), UI5Date.getInstance(Date.UTC(2015, 0, 31)).toString(),
 				"_setFocusedDate should be called with certain date parameter");
 
 		assert.equal(oSpyDatesRowSetDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set to " +
 		"datesrow(call to DatesRow#.setDate)");
-		assert.equal(oSpyDatesRowSetDate.getCall(0).args[0].toString(), new Date(2015, 0, 31).toString(),
+		assert.equal(oSpyDatesRowSetDate.getCall(0).args[0].toString(), UI5Date.getInstance(2015, 0, 31).toString(),
 				"DatesRow#setDate should be called with certain date parameter");
 	});
 
@@ -68,10 +69,10 @@ sap.ui.define([
 
 		//assert
 		assert.equal(oSpySetFocusedDate.getCall(0).args[0].toUTCJSDate().toString(),
-				new Date(Date.UTC(2015, 0, 1)).toString(),
+				UI5Date.getInstance(Date.UTC(2015, 0, 1)).toString(),
 				"_setFocusedDate should be called with certain date parameter");
 		assert.equal(oSpySetStartDate.getCall(0).args[0].toUTCJSDate().toString(),
-				new Date(Date.UTC(2015, 0, 1)).toString(),
+				UI5Date.getInstance(Date.UTC(2015, 0, 1)).toString(),
 				"_setStartDate should be called with certain date parameter");
 
 		iDays = -31; //to move to the previous month
@@ -79,10 +80,10 @@ sap.ui.define([
 
 		//assert
 		assert.equal(oSpySetFocusedDate.getCall(0).args[0].toUTCJSDate().toString(),
-				new Date(Date.UTC(2014, 11, 1)).toString(),
+				UI5Date.getInstance(Date.UTC(2014, 11, 1)).toString(),
 				"_setFocusedDate should be called with certain date parameter");
 		assert.equal(oSpySetStartDate.getCall(0).args[0].toUTCJSDate().toString(),
-				new Date(Date.UTC(2014, 11, 1)).toString(),
+				UI5Date.getInstance(Date.UTC(2014, 11, 1)).toString(),
 				"_setStartDate should be called with certain date parameter");
 	});
 
@@ -109,7 +110,7 @@ sap.ui.define([
 		// arrange
 		var $Date,
 			oCalP = new CalendarOneMonthInterval("CalP",{
-						startDate: new Date("2017", "7", "9"),
+						startDate: UI5Date.getInstance("2017", "7", "9"),
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
@@ -140,7 +141,7 @@ sap.ui.define([
 		// arrange
 		var $Date, oCalStartDate,
 			oCalP = new CalendarOneMonthInterval("CalP",{
-						startDate: new Date("2015", "7", "9"),
+						startDate: UI5Date.getInstance("2015", "7", "9"),
 						pickerPopup: true
 					}),
 			oSpyFireDateChange = this.spy(oCalP, "fireStartDateChange");
@@ -203,7 +204,7 @@ sap.ui.define([
 		// arrange
 		var $Date,
 			oCalP = new CalendarOneMonthInterval("CalP",{
-						startDate: new Date("2017", "4", "11"),
+						startDate: UI5Date.getInstance("2017", "4", "11"),
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
@@ -227,7 +228,7 @@ sap.ui.define([
 	QUnit.test("The user can select month & year, but cannot select dates", function(assert) {
 		// arrange
 		var oCalP = new CalendarOneMonthInterval("CalP",{
-						startDate: new Date("2017", "4", "11"),
+						startDate: UI5Date.getInstance("2017", "4", "11"),
 						pickerPopup: true
 					}).placeAt("content");
 
@@ -261,8 +262,8 @@ sap.ui.define([
 		// change the pickerPopup to true, this will destroy the yearPicker aggregation
 		oCalP.setPickerPopup(true);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickrPopup property to true, this will create the yearPicker aggregation
 		oCalP.setPickerPopup(false);
@@ -302,8 +303,8 @@ sap.ui.define([
 		// change the pickerPopup to false
 		oCalP.setPickerPopup(false);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickerPopup property to true, this will create the calendarPicker
 		oCalP.setPickerPopup(true);
@@ -324,9 +325,9 @@ sap.ui.define([
 
 	QUnit.test("Picker's navigation right is disabled when max date has been reached", function(assert) {
 		var oCalInterval = new CalendarOneMonthInterval("CalP", {
-				startDate: new Date(2019, 3, 30),
-				minDate: new Date(2019, 3, 29),
-				maxDate: new Date(2019, 4, 28)
+				startDate: UI5Date.getInstance(2019, 3, 30),
+				minDate: UI5Date.getInstance(2019, 3, 29),
+				maxDate: UI5Date.getInstance(2019, 4, 28)
 		}).placeAt("qunit-fixture"),
 			oHeader,
 			bEnabledPrevious,

@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Core",
-	"sap/ui/base/ManagedObjectObserver"
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -36,7 +37,8 @@ sap.ui.define([
 	KeyCodes,
 	DateRange,
 	oCore,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	UI5Date
 ) {
 	"use strict";
 
@@ -74,14 +76,14 @@ sap.ui.define([
 		}).placeAt("uiArea2");
 
 	var oDTP3 = new DateTimePicker("DTP3", {
-		dateValue: new Date("2016", "01", "17", "10", "11", "12"),
+		dateValue: UI5Date.getInstance("2016", "01", "17", "10", "11", "12"),
 		displayFormat: "short",
 		change: handleChange
 		}).placeAt("uiArea3");
 
 	var oModel = new JSONModel();
 	oModel.setData({
-		dateValue: new Date("2016", "01", "17", "10", "11", "12")
+		dateValue: UI5Date.getInstance("2016", "01", "17", "10", "11", "12")
 	});
 	oCore.setModel(oModel);
 
@@ -108,7 +110,7 @@ sap.ui.define([
 
 	//BCP: 	1970509170
 	var oDTP6 = new DateTimePicker("oDTP6", {
-		dateValue: new Date("2019", "9", "25", "11", "12", "13")
+		dateValue: UI5Date.getInstance("2019", "9", "25", "11", "12", "13")
 	}).placeAt("uiArea6");
 
 	QUnit.module("initialization");
@@ -117,11 +119,11 @@ sap.ui.define([
 		assert.ok(!oDTP1.getValue(), "DTP1: no value");
 		assert.ok(!oDTP1.getDateValue(), "DTP1: no DateValue");
 		assert.equal(oDTP2.getValue(), "2016-02-17,10-11-12", "DTP2: Value in internal format set");
-		assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP2: DateValue set");
+		assert.equal(oDTP2.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "17", "10", "11", "12").getTime(), "DTP2: DateValue set");
 		assert.equal(oDTP3.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP3: Value in internal format set");
-		assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP3: DateValue set");
+		assert.equal(oDTP3.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "17", "10", "11", "12").getTime(), "DTP3: DateValue set");
 		assert.equal(oDTP4.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP4: Value in internal format set");
-		assert.equal(oDTP4.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
+		assert.equal(oDTP4.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
 		assert.equal(oDTP6.getValue(), "Oct 25, 2019, 11:12:13 AM", "oDTP6: Default Value Format Set");
 	});
 
@@ -158,8 +160,8 @@ sap.ui.define([
 
 	QUnit.test("setMinDate/setMaxDate preserve the time part for internal oMinDate/oMaxDate properties", function (assert) {
 		//Prepare
-		var oDateTime1 = new Date(2017, 0, 1, 13, 12, 3),
-			oDateTime2 = new Date(2017, 0, 10, 13, 3, 12),
+		var oDateTime1 = UI5Date.getInstance(2017, 0, 1, 13, 12, 3),
+			oDateTime2 = UI5Date.getInstance(2017, 0, 10, 13, 3, 12),
 			oSut;
 
 		//Act
@@ -177,7 +179,7 @@ sap.ui.define([
 
 	QUnit.test("maxDate being yesterday should not throw error on open", function (assert) {
 		// Arrange
-		var oYesterdayDate = new Date(),
+		var oYesterdayDate = UI5Date.getInstance(),
 			oDP = new DateTimePicker("DatePicker").placeAt("qunit-fixture");
 
 		oYesterdayDate.setDate(oYesterdayDate.getDate() - 1);
@@ -208,7 +210,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("valueFormat and displayFormat when value is bound", function(assert) {
-		var oModel = new JSONModel({ date: new Date(Date.UTC(2016, 1, 18, 8, 0, 0)) }),
+		var oModel = new JSONModel({ date: UI5Date.getInstance(Date.UTC(2016, 1, 18, 8, 0, 0)) }),
 			oDTP,
 			oInputRef;
 
@@ -289,9 +291,9 @@ sap.ui.define([
 
 	QUnit.test("_fillDateRange works with min date when the current date is out of range", function(assert) {
 		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("uiArea1"),
-			oNewMinDate = new Date(2014, 0, 1),
-			oNewMaxDate = new Date(2014, 11, 31),
-			oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate())),
+			oNewMinDate = UI5Date.getInstance(2014, 0, 1),
+			oNewMaxDate = UI5Date.getInstance(2014, 11, 31),
+			oNewMinDateUTC = UI5Date.getInstance(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate())),
 			oFocusedDate;
 
 		//arrange
@@ -391,7 +393,7 @@ sap.ui.define([
 
 	QUnit.test("_fillDateRange should call Calendar's focusDate method and clocks _setTimeValues with initialFocusedDateValue if no value is set", function (assert) {
 		// prepare
-		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
+		var oExpectedDateValue = UI5Date.getInstance(2017, 4, 5, 6, 7, 8);
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
 		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
@@ -415,7 +417,7 @@ sap.ui.define([
 
 	QUnit.test("_fillDateRange should call Calendar's focusDate method and clocks _setTimeValues with currentDate if initialFocusedDateValue and value are not set", function (assert) {
 		// prepare
-		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
+		var oExpectedDateValue = UI5Date.getInstance(2017, 4, 5, 6, 7, 8);
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {}, removeAllSelectedDates: function() {} };
 		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
@@ -438,7 +440,7 @@ sap.ui.define([
 
 	QUnit.test("_fillDateRange should call Calendar's focusDate method and clocks _setTimeValues with valueDate", function (assert) {
 		// prepare
-		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8),
+		var oExpectedDateValue = UI5Date.getInstance(2017, 4, 5, 6, 7, 8),
 			oGetDateValue = this.stub(this.oDTp, "getDateValue").callsFake(function () { return oExpectedDateValue; });
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
 		this.oDTp._oOKButton = { setEnabled: function() {} };
@@ -475,7 +477,7 @@ sap.ui.define([
 		assert.equal(sValue, "37+02+2016:10+11", "Value of event has entered value if it is invalid");
 		assert.ok(!bValid, "Value is not valid");
 		assert.equal(oDTP2.getValue(), "37+02+2016:10+11", "Value has entered value if it is invalid");
-		assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DateValue not changed set");
+		assert.equal(oDTP2.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "17", "10", "11", "12").getTime(), "DateValue not changed set");
 
 		sValue = "";
 		bValid = true;
@@ -488,7 +490,7 @@ sap.ui.define([
 		assert.equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
 		assert.ok(bValid, "Value is valid");
 		assert.equal(oDTP2.getValue(), "2016-02-18,10-30-00", "Value has entered value if valid");
-		assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "18", "10", "30", "00").getTime(), "DateValue not changed set");
+		assert.equal(oDTP2.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "18", "10", "30", "00").getTime(), "DateValue not changed set");
 
 	});
 
@@ -548,7 +550,7 @@ sap.ui.define([
 			assert.equal(sId, "DTP3", "Change event fired");
 			assert.equal(sValue, "Feb 10, 2016, 11:11:00 AM", "Value in internal format priovided");
 			assert.equal(oDTP3.getValue(), "Feb 10, 2016, 11:11:00 AM", "Value in internal format set");
-			assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
+			assert.equal(oDTP3.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "10", "11", "11").getTime(), "DateValue set");
 			done();
 		});
 
@@ -702,7 +704,7 @@ sap.ui.define([
 		jQuery("html").addClass("sapUiMedia-Std-Phone");
 
 		var oDTP5 = new DateTimePicker("DTP5", {
-						dateValue: new Date()
+						dateValue: UI5Date.getInstance()
 					}).placeAt("uiArea5");
 		oCore.applyChanges();
 
@@ -723,7 +725,7 @@ sap.ui.define([
 
 	QUnit.test("Calendar hides when date is selected (on small screen)", function(assert) {
 		var oDTP5 = new DateTimePicker("DTP5", {
-				dateValue: new Date(2021, 10, 11)
+				dateValue: UI5Date.getInstance(2021, 10, 11)
 			}),
 			oCalendar,
 			oAfterRenderingDelegate = {
@@ -764,7 +766,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("data binding with sap.ui.model.odata.type.DateTime", function(assert) {
-		var oDate = new Date(2019, 5, 6, 3, 40, 46),
+		var oDate = UI5Date.getInstance(2019, 5, 6, 3, 40, 46),
 			oModel = new JSONModel({
 				myDate: undefined
 			}),
@@ -876,7 +878,7 @@ sap.ui.define([
 
 	QUnit.test("_selectFocusedDateValue should remove all selectedDates from the calendar and select the focused date", function (assert) {
 		// arrange
-		var oExpectedDate = new DateRange().setStartDate(new Date(2017, 5, 15)),
+		var oExpectedDate = new DateRange().setStartDate(UI5Date.getInstance(2017, 5, 15)),
 			oDateTimePicker = new DateTimePicker(),
 			oCalendar = oDateTimePicker._oCalendar = {
 				destroy: function () {},
@@ -920,7 +922,7 @@ sap.ui.define([
 	QUnit.test("DateTimePicker.prototype._parseValue", function(assert) {
 		// prepare
 		var oModel = new JSONModel({
-				myDate: new Date()
+				myDate: UI5Date.getInstance()
 			}),
 			oDTP = new DateTimePicker({
 				value: {
@@ -970,12 +972,12 @@ sap.ui.define([
 
 	QUnit.test("dateValue + timezone", function(assert) {
 		// arrange
-		var oTestDate = new Date(2022, 1, 2, 13, 25, 0);
+		var oTestDate = UI5Date.getInstance(2022, 1, 2, 13, 25, 0);
 		var oDTP = new DateTimePicker({
-			dateValue: new Date(oTestDate),
+			dateValue: UI5Date.getInstance(oTestDate),
 			timezone: "America/New_York"
 		});
-		var oDTPValueAsDate = new Date(oDTP.getValue());
+		var oDTPValueAsDate = UI5Date.getInstance(oDTP.getValue());
 		// assert
 		assert.equal(oDTPValueAsDate.getFullYear(), oTestDate.getFullYear(), "the year is correct 2022");
 		assert.equal(oDTPValueAsDate.getMonth(), oTestDate.getMonth(), "the month is correct 1");
@@ -987,9 +989,9 @@ sap.ui.define([
 		assert.equal(oDTP.getTimezone(), "America/New_York", "the Timezone value is correct");
 
 		// act
-		oTestDate = new Date(2022, 1, 2, 14, 25, 0);
+		oTestDate = UI5Date.getInstance(2022, 1, 2, 14, 25, 0);
 		oDTP.setDateValue(oTestDate);
-		oDTPValueAsDate = new Date(oDTP.getValue());
+		oDTPValueAsDate = UI5Date.getInstance(oDTP.getValue());
 
 		// assert
 		assert.equal(oDTPValueAsDate.getFullYear(), oTestDate.getFullYear(), "the year is correct 2022");
@@ -1028,7 +1030,7 @@ sap.ui.define([
 		this.stub(oCore.getConfiguration(), "getTimezone").callsFake(function() {
 			return "Europe/Sofia";
 		});
-		var oTestDate = new Date("Feb 1, 2022, 00:01:00 AM");
+		var oTestDate = UI5Date.getInstance("Feb 1, 2022, 00:01:00 AM");
 		var oDTP = new DateTimePicker("DTP",{
 			value: "Feb 1, 2022, 00:01:00 AM",
 			showTimezone: true ,
@@ -1037,7 +1039,7 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var oConvertDTPInputValueToDate = new Date(oDTP.$("inner").val());
+		var oConvertDTPInputValueToDate = UI5Date.getInstance(oDTP.$("inner").val());
 
 		// assert
 		assert.equal(oConvertDTPInputValueToDate.getFullYear(), oTestDate.getFullYear(), "value must be of the correct year value - 2022");
@@ -1064,7 +1066,7 @@ sap.ui.define([
 		qutils.triggerKeyup("DTP-OK", KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
-		oConvertDTPInputValueToDate = new Date(oDTP.$("inner").val());
+		oConvertDTPInputValueToDate = UI5Date.getInstance(oDTP.$("inner").val());
 
 		// assert
 		assert.equal(oConvertDTPInputValueToDate.getFullYear(), oTestDate.getFullYear(), "input value must be of the correct year value - 2022");
@@ -1129,7 +1131,7 @@ sap.ui.define([
 		assert.equal(oDTP.getValue(), "Feb 18, 2016, 10:00:00 AM", "value is not changed despite the DTP timezone change");
 		assert.equal(oDTP.getTimezone(), "America/New_York", "the value changes when the time zone changes");
 		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00 AM", "correct displayed value");
-		assert.equal(oDTP.getDateValue().getTime(), new Date(oDTP.getValue()).getTime(), "value is not changed despite the DTP timezone change");
+		assert.equal(oDTP.getDateValue().getTime(), UI5Date.getInstance(oDTP.getValue()).getTime(), "value is not changed despite the DTP timezone change");
 
 		// clean
 		oDTP.destroy();
@@ -1137,7 +1139,7 @@ sap.ui.define([
 
 	QUnit.test("bound dateValue + timezone", function(assert) {
 		// arrange
-		var oTestDate = new Date(2016, 1, 18, 15, 0, 0);
+		var oTestDate = UI5Date.getInstance(2016, 1, 18, 15, 0, 0);
 		var oModel = new JSONModel({ date: oTestDate }),
 			oDTP = new DateTimePicker("dtpb", {
 				dateValue: { path: '/date' },
@@ -1149,7 +1151,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		oInputRef = oDTP.$("inner");
-		var oDTPValueAsDate = new Date(oInputRef.val());
+		var oDTPValueAsDate = UI5Date.getInstance(oInputRef.val());
 		// assert
 		assert.equal(oDTPValueAsDate.getFullYear(), oTestDate.getFullYear(), "the year is correct 2016");
 		assert.equal(oDTPValueAsDate.getMonth(), oTestDate.getMonth(), "the month is correct 1");
@@ -1162,7 +1164,7 @@ sap.ui.define([
 		oInputRef.val("Feb 18, 2016, 9:00:00 AM");
 		qutils.triggerKeydown("dtpb-inner", KeyCodes.ENTER, false, false, false);
 		oInputRef.trigger("change");
-		oTestDate = new Date(2016, 1, 18, 9, 0, 0);
+		oTestDate = UI5Date.getInstance(2016, 1, 18, 9, 0, 0);
 
 		// assert
 		assert.equal(oDTP.getDateValue().getFullYear(), oTestDate.getFullYear(), "dateValue year has changed correctly after changing input val");
@@ -1178,7 +1180,7 @@ sap.ui.define([
 
 	QUnit.test("timezone + bound value type DateTime - order", function(assert) {
 		// arrange
-		var oTestDate = new Date(2016, 1, 18, 3, 0, 0);
+		var oTestDate = UI5Date.getInstance(2016, 1, 18, 3, 0, 0);
 		var oModel = new JSONModel({ date: oTestDate }),
 			oDTP = new DateTimePicker("dtpbo", {
 				timezone: "America/New_York" // UTC-5
@@ -1205,7 +1207,7 @@ sap.ui.define([
 
 	QUnit.test("timezone + bound value data type String", function(assert) {
 		// arrange
-		var oTestDate = new Date(2016, 1, 18, 3, 0, 0);
+		var oTestDate = UI5Date.getInstance(2016, 1, 18, 3, 0, 0);
 		var oModel = new JSONModel({ date: "Feb++18++2016, 3:00:00 AM" }),
 			oDTP = new DateTimePicker("dtpbs", {
 				valueFormat: "MMM++dd++yyyy, h:mm:ss a",
@@ -1279,7 +1281,7 @@ sap.ui.define([
 		oDTP.toggleOpen();
 
 		// assert
-		assert.equal(oDTP._getSelectedDate().getTime(), new Date(2022, 1, 11, 7, 16, 33).getTime(), "the selected date is as expected");
+		assert.equal(oDTP._getSelectedDate().getTime(), UI5Date.getInstance(2022, 1, 11, 7, 16, 33).getTime(), "the selected date is as expected");
 
 		// clean
 		oDTP.destroy();
@@ -1323,7 +1325,7 @@ sap.ui.define([
 			timezone: "UTC"
 		}).placeAt("qunit-fixture");
 
-		var oExpectedDate = new Date(oDTP.getValue());
+		var oExpectedDate = UI5Date.getInstance(oDTP.getValue());
 
 		oCore.applyChanges();
 		oDTP.toggleOpen();

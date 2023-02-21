@@ -628,7 +628,7 @@ sap.ui.define([
 			 **/
 			if (oBinding.getType().oFormatOptions && oBinding.getType().oFormatOptions.UTC) {
 				aDates = aDates.map(function (oUTCDate) {
-					return new Date(oUTCDate.getUTCFullYear(), oUTCDate.getUTCMonth(), oUTCDate.getUTCDate(),
+					return UI5Date.getInstance(oUTCDate.getUTCFullYear(), oUTCDate.getUTCMonth(), oUTCDate.getUTCDate(),
 						oUTCDate.getUTCHours(), oUTCDate.getUTCMinutes(), oUTCDate.getUTCSeconds());
 				});
 			}
@@ -732,10 +732,10 @@ sap.ui.define([
 					 * to UTC dates if the binding type formatter expects them in UTC
 					 **/
 					if (oBinding.getType().oFormatOptions && oBinding.getType().oFormatOptions.UTC) {
-						oDate1 = new Date(Date.UTC(oDateValue.getFullYear(), oDateValue.getMonth(), oDateValue.getDate(),
+						oDate1 = UI5Date.getInstance(Date.UTC(oDateValue.getFullYear(), oDateValue.getMonth(), oDateValue.getDate(),
 							oDateValue.getHours(), oDateValue.getMinutes(), oDateValue.getSeconds()));
 						if (oSecondDateValue) {
-							oDate2 = new Date(Date.UTC(oSecondDateValue.getFullYear(), oSecondDateValue.getMonth(), oSecondDateValue.getDate(),
+							oDate2 = UI5Date.getInstance(Date.UTC(oSecondDateValue.getFullYear(), oSecondDateValue.getMonth(), oSecondDateValue.getDate(),
 								oSecondDateValue.getHours(), oSecondDateValue.getMinutes(), oSecondDateValue.getSeconds()));
 						}
 					}

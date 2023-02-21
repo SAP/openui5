@@ -12,8 +12,24 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(qutils, CalendarLegendRenderer, CalendarRowRenderer, CalendarLegendItem, CalendarType, InvisibleText, DateFormat, CalendarRow, CalendarAppointment, unifiedLibrary, Device, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(
+	qutils,
+	CalendarLegendRenderer,
+	CalendarRowRenderer,
+	CalendarLegendItem,
+	CalendarType,
+	InvisibleText,
+	DateFormat,
+	CalendarRow,
+	CalendarAppointment,
+	unifiedLibrary,
+	Device,
+	jQuery,
+	oCore,
+	UI5Date
+) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -68,14 +84,14 @@ sap.ui.define([
 	};
 
 	var oRow1 = new CalendarRow("Row1",  {
-		startDate: new Date("2015", "01", "01", "10", "15"),
+		startDate: UI5Date.getInstance("2015", "01", "01", "10", "15"),
 		select: handleSelect,
 		startDateChange: handleStartDateChange,
 		intervalSelect: handleIntervalSelect,
 		leaveRow: handleLeaveRow,
 		appointments: [new CalendarAppointment("App0", {
-				startDate: new Date("2015", "01", "01", "08", "15"),
-				endDate: new Date("2015", "01", "01", "08", "20"),
+				startDate: UI5Date.getInstance("2015", "01", "01", "08", "15"),
+				endDate: UI5Date.getInstance("2015", "01", "01", "08", "20"),
 				type: CalendarDayType.None,
 				title: "Appointment 0",
 				tooltip: "Tooltip 0",
@@ -83,8 +99,8 @@ sap.ui.define([
 				key: "A0"
 			}),
 			new CalendarAppointment("App1", {
-				startDate: new Date("2015", "01", "01", "11", "15"),
-				endDate: new Date("2015", "01", "01", "13", "15"),
+				startDate: UI5Date.getInstance("2015", "01", "01", "11", "15"),
+				endDate: UI5Date.getInstance("2015", "01", "01", "13", "15"),
 				type: CalendarDayType.None,
 				title: "Appointment 1",
 				tooltip: "Tooltip 1",
@@ -93,8 +109,8 @@ sap.ui.define([
 				key: "A1"
 			}),
 			new CalendarAppointment("App2", {
-				startDate: new Date("2015", "01", "01", "09", "45"),
-				endDate: new Date("2015", "01", "01", "11", "45"),
+				startDate: UI5Date.getInstance("2015", "01", "01", "09", "45"),
+				endDate: UI5Date.getInstance("2015", "01", "01", "11", "45"),
 				type: CalendarDayType.Type01,
 				tentative: true,
 				title: "Appointment 2",
@@ -103,8 +119,8 @@ sap.ui.define([
 				key: "A2"
 			}),
 			new CalendarAppointment("App3", {
-				startDate: new Date("2015", "01", "01", "15", "00"),
-				endDate: new Date("2015", "01", "01", "15", "30"),
+				startDate: UI5Date.getInstance("2015", "01", "01", "15", "00"),
+				endDate: UI5Date.getInstance("2015", "01", "01", "15", "30"),
 				type: CalendarDayType.Type02,
 				title: "Appointment 3",
 				tooltip: "Tooltip 3",
@@ -112,8 +128,8 @@ sap.ui.define([
 				key: "A3"
 			}),
 			new CalendarAppointment("App4", {
-				startDate: new Date("2015", "01", "01", "15", "30"),
-				endDate: new Date("2015", "01", "01", "16", "00"),
+				startDate: UI5Date.getInstance("2015", "01", "01", "15", "30"),
+				endDate: UI5Date.getInstance("2015", "01", "01", "16", "00"),
 				type: CalendarDayType.Type03,
 				title: "Appointment 4",
 				tooltip: "Tooltip 4",
@@ -121,8 +137,8 @@ sap.ui.define([
 				key: "A4"
 			}),
 			new CalendarAppointment("App5", {
-				startDate: new Date("2015", "01", "02", "10", "30"),
-				endDate: new Date("2015", "01", "02", "11", "00"),
+				startDate: UI5Date.getInstance("2015", "01", "02", "10", "30"),
+				endDate: UI5Date.getInstance("2015", "01", "02", "11", "00"),
 				type: CalendarDayType.Type04,
 				title: "Appointment 5",
 				tooltip: "Tooltip 5",
@@ -130,8 +146,8 @@ sap.ui.define([
 				key: "A5"
 			}),
 			new CalendarAppointment("App6", {
-				startDate: new Date("2015", "01", "02", "0", "0"),
-				endDate: new Date("2015", "01", "02", "23", "59", "59"),
+				startDate: UI5Date.getInstance("2015", "01", "02", "0", "0"),
+				endDate: UI5Date.getInstance("2015", "01", "02", "23", "59", "59"),
 				type: CalendarDayType.Type05,
 				title: "Appointment 6",
 				tooltip: "Tooltip 6",
@@ -139,8 +155,8 @@ sap.ui.define([
 				key: "A6"
 			}),
 			new CalendarAppointment("App7", {
-				startDate: new Date("2015", "02", "01", "0", "0"),
-				endDate: new Date("2015", "04", "31", "23", "59", "59"),
+				startDate: UI5Date.getInstance("2015", "02", "01", "0", "0"),
+				endDate: UI5Date.getInstance("2015", "04", "31", "23", "59", "59"),
 				type: CalendarDayType.Type06,
 				title: "Appointment 7",
 				tooltip: "Tooltip 7",
@@ -148,8 +164,8 @@ sap.ui.define([
 				key: "A7"
 			}),
 			new CalendarAppointment("App8", {
-				startDate: new Date("2015", "05", "02", "0", "0"),
-				endDate: new Date("2015", "05", "02", "23", "59", "59"),
+				startDate: UI5Date.getInstance("2015", "05", "02", "0", "0"),
+				endDate: UI5Date.getInstance("2015", "05", "02", "23", "59", "59"),
 				type: CalendarDayType.Type07,
 				title: "Appointment 8",
 				tooltip: "Tooltip 8",
@@ -158,8 +174,8 @@ sap.ui.define([
 			})
 		],
 		intervalHeaders: [new CalendarAppointment("IHead1", {
-				startDate: new Date("2015", "01", "01", "12", "00"),
-				endDate: new Date("2015", "01", "01", "13", "00"),
+				startDate: UI5Date.getInstance("2015", "01", "01", "12", "00"),
+				endDate: UI5Date.getInstance("2015", "01", "01", "13", "00"),
 				type: CalendarDayType.None,
 				title: "Head 1",
 				tooltip: "Tooltip 1",
@@ -168,8 +184,8 @@ sap.ui.define([
 				key: "I1"
 			}),
 			new CalendarAppointment("IHead2", {
-				startDate: new Date("2015", "01", "03", "00", "00"),
-				endDate: new Date("2015", "01", "04", "23", "59"),
+				startDate: UI5Date.getInstance("2015", "01", "03", "00", "00"),
+				endDate: UI5Date.getInstance("2015", "01", "04", "23", "59"),
 				type: CalendarDayType.Type01,
 				title: "Head 2",
 				tooltip: "Tooltip 2",
@@ -177,8 +193,8 @@ sap.ui.define([
 				key: "I2"
 			}),
 			new CalendarAppointment("IHead3", {
-				startDate: new Date("2015", "02", "01", "00", "00"),
-				endDate: new Date("2015", "02", "31", "23", "59"),
+				startDate: UI5Date.getInstance("2015", "02", "01", "00", "00"),
+				endDate: UI5Date.getInstance("2015", "02", "31", "23", "59"),
 				type: CalendarDayType.Type02,
 				title: "Head 3",
 				tooltip: "Tooltip 3",
@@ -191,7 +207,7 @@ sap.ui.define([
 	var initializeRow1 = function(){
 		oRow1.setIntervals(12);
 		oRow1.setIntervalType(CalendarIntervalType.Hour);
-		oRow1.setStartDate(new Date("2015", "01", "01", "10", "15"));
+		oRow1.setStartDate(UI5Date.getInstance("2015", "01", "01", "10", "15"));
 		var aAppointments = oRow1.getAppointments();
 		for (var i = 1; i < aAppointments.length; i++){
 			aAppointments[i].setSelected(false);
@@ -201,7 +217,7 @@ sap.ui.define([
 	};
 
 	var oRow2 = new CalendarRow("Row2",  {
-		startDate: new Date("2015", "01", "01", "10", "15"),
+		startDate: UI5Date.getInstance("2015", "01", "01", "10", "15"),
 		height: "100px",
 		width: "500px",
 		intervals: 5,
@@ -212,20 +228,20 @@ sap.ui.define([
 		intervalSelect: handleIntervalSelect,
 		appointments: [
 			{
-				startDate: new Date("2015", "01", "07", "0", "0"),
-				endDate: new Date("2015", "01", "12", "23", "59"),
+				startDate: UI5Date.getInstance("2015", "01", "07", "0", "0"),
+				endDate: UI5Date.getInstance("2015", "01", "12", "23", "59"),
 				title: "Education",
 				type: "Type03"
 			},
 			{
-				startDate: new Date("2015", "01", "02", "0", "0"),
-				endDate: new Date("2015", "01", "01", "23", "59"),
+				startDate: UI5Date.getInstance("2015", "01", "02", "0", "0"),
+				endDate: UI5Date.getInstance("2015", "01", "01", "23", "59"),
 				title: "Education",
 				type: "Type03"
 			},
 			{
-				startDate: new Date("2015", "01", "1", "15", "0"),
-				endDate: new Date("2015", "01", "1", "15", "0"),
+				startDate: UI5Date.getInstance("2015", "01", "1", "15", "0"),
+				endDate: UI5Date.getInstance("2015", "01", "1", "15", "0"),
 				title: "Education",
 				type: "Type03"
 			}
@@ -499,7 +515,7 @@ sap.ui.define([
 	QUnit.test("Appointments - new start date", function(assert) {
 		var sLevel = jQuery("#App2").attr("data-sap-level");
 
-		var oDate = new Date();
+		var oDate = UI5Date.getInstance();
 		oDate.setHours(oDate.getHours() - 3);
 		oRow1.setStartDate(oDate);
 		oCore.applyChanges();
@@ -507,7 +523,7 @@ sap.ui.define([
 		assert.ok(jQuery("#Row1-Now").is(":visible"), "Now indicatior is visible");
 		initializeRow1();
 
-		oRow1.setStartDate(new Date("2015", "0", "31", "22", "15"));
+		oRow1.setStartDate(UI5Date.getInstance("2015", "0", "31", "22", "15"));
 		oCore.applyChanges();
 		var $Appointment0 = jQuery("#App0");
 		var $Appointment1 = jQuery("#App1");
@@ -582,8 +598,8 @@ sap.ui.define([
 	QUnit.test("Appointment - setSelected(false) updates internal array of selected appointments", function(assert) {
 		// Prepare
 		var oApp = new CalendarAppointment({
-			startDate: new Date(),
-			endDate: new Date(),
+			startDate: UI5Date.getInstance(),
+			endDate: UI5Date.getInstance(),
 			selected: true
 		}), oCalendarRow = new CalendarRow({
 			appointments: [oApp]});
@@ -607,8 +623,8 @@ sap.ui.define([
 	QUnit.test("Appointment - setSelected(true) updates internal array of selected appointments", function(assert) {
 		// Prepare
 		var oApp = new CalendarAppointment({
-			startDate: new Date(),
-			endDate: new Date(),
+			startDate: UI5Date.getInstance(),
+			endDate: UI5Date.getInstance(),
 			selected: false
 		}), oCalendarRow = new CalendarRow({
 			appointments: [oApp]});
@@ -1064,7 +1080,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("focusNearestAppointment", function(assert) {
-		oRow1.focusNearestAppointment(new Date("2015", "01", "01", "11", "00"));
+		oRow1.focusNearestAppointment(UI5Date.getInstance("2015", "01", "01", "11", "00"));
 		assert.equal(document.activeElement.id, "App1", "Appointment1 focused");
 	});
 
@@ -1125,24 +1141,24 @@ QUnit.module("RTL", {
 			oCore.getConfiguration().setRTL(true);
 
 			this.oRowRTL = new CalendarRow("RowRTL",  {
-				startDate: new Date("2015", "01", "01", "10", "15"),
+				startDate: UI5Date.getInstance("2015", "01", "01", "10", "15"),
 				intervalType: CalendarIntervalType.Day,
 				appointments: [
 					new CalendarAppointment("App0RTL", {
-						startDate: new Date("2015", "01", "01", "08", "15"),
-						endDate: new Date("2015", "01", "01", "08", "20")
+						startDate: UI5Date.getInstance("2015", "01", "01", "08", "15"),
+						endDate: UI5Date.getInstance("2015", "01", "01", "08", "20")
 					}),
 					new CalendarAppointment("App1RTL", {
-						startDate: new Date("2015", "01", "01", "11", "15"),
-						endDate: new Date("2015", "01", "01", "13", "15")
+						startDate: UI5Date.getInstance("2015", "01", "01", "11", "15"),
+						endDate: UI5Date.getInstance("2015", "01", "01", "13", "15")
 					}),
 					new CalendarAppointment("App2RTL", {
-							startDate: new Date("2015", "01", "01", "09", "45"),
-							endDate: new Date("2015", "01", "01", "11", "45")
+							startDate: UI5Date.getInstance("2015", "01", "01", "09", "45"),
+							endDate: UI5Date.getInstance("2015", "01", "01", "11", "45")
 						}),
 					new CalendarAppointment("App3RTL", {
-							startDate: new Date("2015", "01", "01", "15", "00"),
-							endDate: new Date("2015", "01", "01", "15", "30")
+							startDate: UI5Date.getInstance("2015", "01", "01", "15", "00"),
+							endDate: UI5Date.getInstance("2015", "01", "01", "15", "30")
 						})
 				]
 			});
@@ -1185,7 +1201,7 @@ QUnit.test("keyboard arrow navigation", function(assert) {
 });
 
 QUnit.test("Now indicator is displayed on the right", function(assert) {
-	var oDate = new Date();
+	var oDate = UI5Date.getInstance();
 	oDate.setHours(oDate.getHours() - 3);
 	this.oRowRTL.setStartDate(oDate);
 	oCore.applyChanges();
@@ -1196,12 +1212,12 @@ QUnit.test("Now indicator is displayed on the right", function(assert) {
 QUnit.module("Accessibility", {
 	beforeEach: function () {
 		this.sut = new CalendarRow({
-			startDate: new Date(2017, 3, 1, 12, 0, 0, 0),
+			startDate: UI5Date.getInstance(2017, 3, 1, 12, 0, 0, 0),
 			width: "100%",
 			appointments: [
 				new CalendarAppointment({
-					startDate: new Date(2017, 3, 1, 13, 0, 0, 0),
-					endDate: new Date(2017, 3, 1, 18, 30, 0, 0),
+					startDate: UI5Date.getInstance(2017, 3, 1, 13, 0, 0, 0),
+					endDate: UI5Date.getInstance(2017, 3, 1, 18, 30, 0, 0),
 					type: CalendarDayType.None,
 					title: "Appointment 0",
 					tooltip: "Tooltip 0",
@@ -1209,8 +1225,8 @@ QUnit.module("Accessibility", {
 					key: "app-0"
 				}),
 				new CalendarAppointment({
-					startDate: new Date(2017, 3, 1, 9, 15, 0, 0),
-					endDate: new Date(2017, 3, 1, 19, 45, 0, 0),
+					startDate: UI5Date.getInstance(2017, 3, 1, 9, 15, 0, 0),
+					endDate: UI5Date.getInstance(2017, 3, 1, 19, 45, 0, 0),
 					type: CalendarDayType.Type01,
 					title: "Appointment 1",
 					tooltip: "Tooltip 1",
@@ -1219,8 +1235,8 @@ QUnit.module("Accessibility", {
 					key: "app-1"
 				}),
 				new CalendarAppointment({
-					startDate: new Date(2017, 3, 1, 14, 0, 0, 0),
-					endDate: new Date(2017, 3, 1, 16, 0, 0, 0),
+					startDate: UI5Date.getInstance(2017, 3, 1, 14, 0, 0, 0),
+					endDate: UI5Date.getInstance(2017, 3, 1, 16, 0, 0, 0),
 					type: CalendarDayType.Type02,
 					tentative: true,
 					title: "Appointment 2",
@@ -1231,8 +1247,8 @@ QUnit.module("Accessibility", {
 			],
 			intervalHeaders: [
 				new CalendarAppointment({
-					startDate: new Date(2017, 3, 1, 14, 0, 0, 0),
-					endDate: new Date(2017, 3, 1, 16, 0, 0, 0),
+					startDate: UI5Date.getInstance(2017, 3, 1, 14, 0, 0, 0),
+					endDate: UI5Date.getInstance(2017, 3, 1, 16, 0, 0, 0),
 					text: "Test"
 				})
 			]
@@ -1293,7 +1309,7 @@ QUnit.test("_oFormatAria start/end format for 12-hour clocks", function (assert)
 	oCore.getConfiguration().setFormatLocale("en-US");
 
 	var oCalendarRow = new CalendarRow(),
-		oMockedDate = new Date(2019, 7, 5, 15),
+		oMockedDate = UI5Date.getInstance(2019, 7, 5, 15),
 		sExpectedResult = "Monday 05/08/2019 at 3:00:00 PM";
 
 	// Assert
@@ -1308,7 +1324,7 @@ QUnit.test("_oFormatAria start/end format for 24-hour clocks", function (assert)
 	oCore.getConfiguration().setFormatLocale("en-GB");
 
 	var oCalendarRow = new CalendarRow(),
-		oMockedDate = new Date(2019, 7, 5, 15),
+		oMockedDate = UI5Date.getInstance(2019, 7, 5, 15),
 		sExpectedResult = "Monday 05/08/2019 at 15:00:00";
 
 	// Assert

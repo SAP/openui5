@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery, oCore, UI5Date) {
 	"use strict";
 	(function () {
 
@@ -360,8 +361,8 @@ sap.ui.define([
 
 		QUnit.test("_isSelectionInProgress", function(assert) {
 			// arrange
-			var oSep_01_2019 = new Date(2019, 8, 1),
-				oNov_01_2019 = new Date(2019, 10, 1);
+			var oSep_01_2019 = UI5Date.getInstance(2019, 8, 1),
+				oNov_01_2019 = UI5Date.getInstance(2019, 10, 1);
 
 			this.MP.addSelectedDate(new DateRange({
 				startDate: oSep_01_2019
@@ -391,9 +392,9 @@ sap.ui.define([
 
 		QUnit.test("_fnShouldApplySelection", function(assert) {
 			// arrange
-			var oSep_01_2019 = new Date(2019, 8, 1),
-				oNov_01_2019 = new Date(2019, 10, 1),
-				oDec_01_2019 = new Date(2019, 11, 1);
+			var oSep_01_2019 = UI5Date.getInstance(2019, 8, 1),
+				oNov_01_2019 = UI5Date.getInstance(2019, 10, 1),
+				oDec_01_2019 = UI5Date.getInstance(2019, 11, 1);
 
 			this.MP.addSelectedDate(new DateRange({
 				startDate: oSep_01_2019,
@@ -420,10 +421,10 @@ sap.ui.define([
 
 		QUnit.test("_fnShouldApplySelectionBetween", function(assert) {
 			// arrange
-			var oSep_01_2019 = new Date(2019, 8, 1),
-				oOct_01_2019 = new Date(2019, 9, 1),
-				oNov_01_2019 = new Date(2019, 10, 1),
-				oDec_01_2019 = new Date(2019, 11, 1);
+			var oSep_01_2019 = UI5Date.getInstance(2019, 8, 1),
+				oOct_01_2019 = UI5Date.getInstance(2019, 9, 1),
+				oNov_01_2019 = UI5Date.getInstance(2019, 10, 1),
+				oDec_01_2019 = UI5Date.getInstance(2019, 11, 1);
 
 			this.MP.addSelectedDate(new DateRange({
 				startDate: oSep_01_2019,
@@ -455,9 +456,9 @@ sap.ui.define([
 
 		QUnit.test("_markInterval", function(assert) {
 			// arrange
-			var sCurrentYear = new Date().getFullYear(),
-				oSep_01_2019 = new Date(sCurrentYear, 8, 1),
-				oDec_01_2019 = new Date(sCurrentYear, 11, 1),
+			var sCurrentYear = UI5Date.getInstance().getFullYear(),
+				oSep_01_2019 = UI5Date.getInstance(sCurrentYear, 8, 1),
+				oDec_01_2019 = UI5Date.getInstance(sCurrentYear, 11, 1),
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");
@@ -479,10 +480,10 @@ sap.ui.define([
 		QUnit.test("_markInterval", function (assert) {
 			// Prepare
 			var aItemsMarkedAsBetween,
-				oBeforeStartDate = CalendarDate.fromLocalJSDate(new Date(2022, 1, 1)),
-				oIntervalStartDate = CalendarDate.fromLocalJSDate(new Date(2022, 3, 1)),
-				oIntervalEndDate = CalendarDate.fromLocalJSDate(new Date(2022, 8, 1)),
-				oAfterEndDate = CalendarDate.fromLocalJSDate(new Date(2022, 10, 1));
+				oBeforeStartDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 1, 1)),
+				oIntervalStartDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 3, 1)),
+				oIntervalEndDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 8, 1)),
+				oAfterEndDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 10, 1));
 
 			this.MP._iMinMonth = 3;
 			this.MP._iMaxMonth = 8;

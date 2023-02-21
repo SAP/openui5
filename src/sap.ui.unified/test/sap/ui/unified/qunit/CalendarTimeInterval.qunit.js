@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -63,7 +64,7 @@ sap.ui.define([
 
 	var oFormatYyyyMMddHHmm = DateFormat.getInstance({pattern: "yyyyMMddHHmm"});
 	//var oFormatTime = DateFormat.getTimeInstance({style: "short"});
-	var oNow = new Date();
+	var oNow = UI5Date.getInstance();
 	oNow.setMinutes(0); // to compare with interval starts
 
 	QUnit.module("Rendering", {
@@ -71,24 +72,24 @@ sap.ui.define([
 			this.oCal1 = new CalendarTimeInterval("Cal1").placeAt("qunit-fixture");
 			this.oCal2 = new CalendarTimeInterval("Cal2",{
 				width: "1500px",
-				startDate: new Date("2015", "7", "13", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "7", "13", "8", "57", "10"),
 				items: 24,
 				intervalMinutes: 120,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25"), endDate: UI5Date.getInstance("2015", "7", "13", "15", "45")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "15", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			this.oCal3 = new CalendarTimeInterval("Cal3",{
-				startDate: new Date("2015", "7", "13", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "7", "13", "8", "57", "10"),
 				items: 6,
 				intervalMinutes: 30,
 				singleSelection: false,
 				pickerPopup: true,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "08", "45")}),
-					new DateRange({startDate: new Date("2015", "7", "13", "10", "25")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "09", "11"), endDate: new Date("2015", "7", "13", "09", "45"), type: CalendarDayType.Type02, tooltip: "Text"})]
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "08", "45")}),
+					new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "09", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "09", "45"), type: CalendarDayType.Type02, tooltip: "Text"})]
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -139,7 +140,7 @@ sap.ui.define([
 		oCore.getConfiguration().setLanguage("ja_JP");
 
 		var oCalJ = new CalendarTimeInterval("CalJ",{
-			startDate: new Date("2015", "7", "13", "8", "57", "10")
+			startDate: UI5Date.getInstance("2015", "7", "13", "8", "57", "10")
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
@@ -161,7 +162,7 @@ sap.ui.define([
 		oCore.getConfiguration().setLanguage("zh_CN");
 
 		var oCalJ = new CalendarTimeInterval("CalJ",{
-			startDate: new Date("2015", "7", "13", "8", "57", "10")
+			startDate: UI5Date.getInstance("2015", "7", "13", "8", "57", "10")
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
@@ -183,7 +184,7 @@ sap.ui.define([
 		oCore.getConfiguration().setLanguage("JA");
 
 		var oCalJ = new CalendarTimeInterval("CalJ",{
-			startDate: new Date("2015", "7", "13", "8", "57", "10")
+			startDate: UI5Date.getInstance("2015", "7", "13", "8", "57", "10")
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
@@ -266,13 +267,13 @@ sap.ui.define([
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
 				width: "1500px",
-				startDate: new Date("2015", "7", "13", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "7", "13", "8", "57", "10"),
 				items: 24,
 				intervalMinutes: 120,
 				intervalSelection: true,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25"), endDate: UI5Date.getInstance("2015", "7", "13", "15", "45")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "15", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -283,7 +284,7 @@ sap.ui.define([
 		}
 	});
 	QUnit.test("setStartDate", function(assert) {
-		this.oCal1.setStartDate(new Date("2015", "2", "10", "10", "10"));
+		this.oCal1.setStartDate(UI5Date.getInstance("2015", "2", "10", "10", "10"));
 		oCore.applyChanges();
 		var $TimesRow = oCore.byId("Cal1").getAggregation("timesRow").$();
 		var aItems = $TimesRow.find(".sapUiCalItem");
@@ -295,7 +296,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("focusDate", function(assert) {
-		this.oCal2.focusDate(new Date("2015", "7", "13", "10", "10"));
+		this.oCal2.focusDate(UI5Date.getInstance("2015", "7", "13", "10", "10"));
 		var oStartDate = this.oCal2.getStartDate();
 		oCore.applyChanges();
 		assert.equal(oFormatYyyyMMddHHmm.format(oStartDate), "201508130857", "Calendar2: start date not changed");
@@ -304,7 +305,7 @@ sap.ui.define([
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201508130800", "Calendar2: rendered start item not changed");
 		assert.equal(jQuery(aItems[1]).attr("tabindex"), "0", "Calendar2: second item has focus");
 
-		this.oCal2.focusDate(new Date("2015", "3", "11", "11", "11"));
+		this.oCal2.focusDate(UI5Date.getInstance("2015", "3", "11", "11", "11"));
 		oCore.applyChanges();
 		oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyyMMddHHmm.format(oStartDate), "201504110800", "Calendar2: new start date");
@@ -323,13 +324,13 @@ sap.ui.define([
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
 				width: "1500px",
-				startDate: new Date("2015", "3", "11", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "3", "11", "8", "57", "10"),
 				items: 24,
 				intervalMinutes: 120,
 				intervalSelection: true,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25"), endDate: UI5Date.getInstance("2015", "7", "13", "15", "45")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "15", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -412,7 +413,7 @@ sap.ui.define([
 	QUnit.module("Day Picker", {
 		beforeEach: function () {
 			this.oCal1 = new CalendarTimeInterval("Cal1",{
-				startDate: new Date("2015", "2", "10", "10", "10", "00"),
+				startDate: UI5Date.getInstance("2015", "2", "10", "10", "10", "00"),
 				select: handleSelect,
 				startDateChange: handleStartDateChange
 			}).placeAt("qunit-fixture");
@@ -420,13 +421,13 @@ sap.ui.define([
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
 				width: "1500px",
-				startDate: new Date("2015", "2", "10", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "2", "10", "8", "57", "10"),
 				items: 24,
 				intervalMinutes: 120,
 				intervalSelection: true,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25"), endDate: UI5Date.getInstance("2015", "7", "13", "15", "45")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "15", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -496,11 +497,11 @@ sap.ui.define([
 	QUnit.test("Selecting a date from previous month", function(assert) {
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval("CTI", {
-				startDate: new Date("2018", "10", "01"),
+				startDate: UI5Date.getInstance("2018", "10", "01"),
 				pickerPopup: true
 			}).placeAt("qunit-fixture"),
 			oCalendar = oCalendarTimeInt._getCalendar(),
-			oLastDateOfOct = new Date("2018", "09", "31");
+			oLastDateOfOct = UI5Date.getInstance("2018", "09", "31");
 
 		oCore.applyChanges();
 
@@ -518,11 +519,11 @@ sap.ui.define([
 	QUnit.test("Selecting a date from next month", function(assert) {
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval("CTI", {
-				startDate: new Date("2018", "00", "31"),
+				startDate: UI5Date.getInstance("2018", "00", "31"),
 				pickerPopup: true
 			}).placeAt("qunit-fixture"),
 			oCalendar = oCalendarTimeInt._getCalendar(),
-			oFirstDateOfFeb = new Date("2018", "01", "01");
+			oFirstDateOfFeb = UI5Date.getInstance("2018", "01", "01");
 
 		oCore.applyChanges();
 
@@ -540,7 +541,7 @@ sap.ui.define([
 	QUnit.module("Month Picker", {
 		beforeEach: function () {
 			this.oCal = new CalendarTimeInterval("Cal1",{
-				startDate: new Date("2015", "2", "10", "10", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "2", "10", "10", "57", "10"),
 				select: handleSelect,
 				startDateChange: handleStartDateChange
 			}).placeAt("qunit-fixture");
@@ -548,13 +549,13 @@ sap.ui.define([
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
 				width: "1500px",
-				startDate: new Date("2015", "2", "10", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "2", "10", "8", "57", "10"),
 				items: 24,
 				intervalMinutes: 120,
 				intervalSelection: true,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25"), endDate: UI5Date.getInstance("2015", "7", "13", "15", "45")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "15", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -565,7 +566,7 @@ sap.ui.define([
 		}
 	});
 	QUnit.test("displayed months", function(assert) {
-		this.oCal.setStartDate(new Date("2015", "2", "10", "10", "10"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "2", "10", "10", "10"));
 		oCore.applyChanges();
 		assert.ok(!jQuery("#Cal1--MP").get(0), "Calendar1: Month picker not initial rendered");
 		qutils.triggerEvent("click", "Cal1--Head-B1");
@@ -637,7 +638,7 @@ sap.ui.define([
 			aSelectedDays;
 
 		// Act
-		oCalTimeInterval.addSelectedDate(new DateRange(new Date("1/1/2019"), new Date("1/1/2021")));
+		oCalTimeInterval.addSelectedDate(new DateRange(UI5Date.getInstance("1/1/2019"), UI5Date.getInstance("1/1/2021")));
 		aSelectedDays  = oMonthPicker.getSelectedDates();
 
 		// Assert
@@ -651,7 +652,7 @@ sap.ui.define([
 	QUnit.module("YearPicker", {
 		beforeEach: function () {
 			this.oCal = new CalendarTimeInterval("Cal1",{
-				startDate: new Date("2015", "2", "10", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "2", "10", "8", "57", "10"),
 				select: handleSelect,
 				startDateChange: handleStartDateChange
 			}).placeAt("qunit-fixture");
@@ -659,13 +660,13 @@ sap.ui.define([
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
 				width: "1500px",
-				startDate: new Date("2015", "3", "4", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "3", "4", "8", "57", "10"),
 				items: 24,
 				intervalMinutes: 120,
 				intervalSelection: true,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25"), endDate: UI5Date.getInstance("2015", "7", "13", "15", "45")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "15", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -746,13 +747,13 @@ sap.ui.define([
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
 				width: "1500px",
-				startDate: new Date("2015", "7", "13", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "7", "13", "8", "57", "10"),
 				items: 24,
 				intervalMinutes: 120,
 				intervalSelection: true,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25"), endDate: UI5Date.getInstance("2015", "7", "13", "15", "45")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "15", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -762,7 +763,7 @@ sap.ui.define([
 		}
 	});
 	QUnit.test("Min/Max", function(assert) {
-		this.oCal2.setStartDate(new Date(9999, 11, 29));
+		this.oCal2.setStartDate(UI5Date.getInstance(9999, 11, 29));
 		assert.ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
 		assert.ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
 		qutils.triggerEvent("click", "Cal2--Head-next");
@@ -776,7 +777,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "Cal2--Head-B2");
 		oCore.applyChanges();
 
-		var oDate = new Date(1, 0, 2);
+		var oDate = UI5Date.getInstance(1, 0, 2);
 		oDate.setFullYear(1);
 		this.oCal2.setStartDate(oDate);
 		oCore.applyChanges();
@@ -795,7 +796,7 @@ sap.ui.define([
 	QUnit.module("select time", {
 		beforeEach: function () {
 			this.oCal = new CalendarTimeInterval("Cal1",{
-				startDate: new Date("2015", "2", "10", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "2", "10", "8", "57", "10"),
 				select: handleSelect,
 				startDateChange: handleStartDateChange
 			}).placeAt("qunit-fixture");
@@ -803,26 +804,26 @@ sap.ui.define([
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
 				width: "1500px",
-				startDate: new Date("2022", "1", "4", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2022", "1", "4", "8", "57", "10"),
 				items: 24,
 				intervalMinutes: 120,
 				intervalSelection: true,
-				selectedDates: [new DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "7", "13", "10", "25"), endDate: UI5Date.getInstance("2015", "7", "13", "15", "45")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "15", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "19", "15"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			this.oCal3 = new CalendarTimeInterval("Cal3",{
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
 				width: "800px",
-				startDate: new Date("2015", "7", "13", "8", "57", "10"),
+				startDate: UI5Date.getInstance("2015", "7", "13", "8", "57", "10"),
 				items: 6,
 				intervalMinutes: 30,
 				singleSelection: false,
 				pickerPopup: true,
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "7", "13", "09", "11"), endDate: new Date("2015", "7", "13", "09", "45"), type: CalendarDayType.Type02, tooltip: "Text"})]
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "14"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "7", "13", "09", "11"), endDate: UI5Date.getInstance("2015", "7", "13", "09", "45"), type: CalendarDayType.Type02, tooltip: "Text"})]
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -997,7 +998,7 @@ sap.ui.define([
 		// arrange
 		var $Date,
 			oCalP = new CalendarTimeInterval("CalP",{
-				startDate: new Date("2015", "7", "13", "8", "0", "0"),
+				startDate: UI5Date.getInstance("2015", "7", "13", "8", "0", "0"),
 				pickerPopup: true
 			}).placeAt("qunit-fixture");
 
@@ -1030,7 +1031,7 @@ sap.ui.define([
 		var $Date, oCalStartDate,
 			oSpyFireDateChange = this.spy(CalendarTimeInterval.prototype, "fireStartDateChange"),
 			oCalP = new CalendarTimeInterval("CalP",{
-				startDate: new Date("2015", "7", "13", "8", "0", "0"),
+				startDate: UI5Date.getInstance("2015", "7", "13", "8", "0", "0"),
 				pickerPopup: true
 			}).placeAt("qunit-fixture");
 
@@ -1109,8 +1110,8 @@ sap.ui.define([
 		// change the pickerPopup to true, this will destroy the yearPicker aggregation
 		oCalP.setPickerPopup(true);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickrPopup property to true, this will create the yearPicker aggregation
 		oCalP.setPickerPopup(false);
@@ -1149,8 +1150,8 @@ sap.ui.define([
 		// change the pickerPopup to false
 		oCalP.setPickerPopup(false);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickerPopup property to true, this will create the calendarPicker
 		oCalP.setPickerPopup(true);

@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/Locale",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Core"
-], function(CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, oCore, UI5Date) {
 	"use strict";
 
 	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {
@@ -32,47 +33,47 @@ sap.ui.define([
 	});
 
 	QUnit.test("getFirstDateOfWeek() for US border case where the first date of the first week is in the previous year", function(assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 27, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 0, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2015, 11, 27, 0)).toString(),
 			"1 Jan 2016->27 Dec 2015");
 	});
 
 	QUnit.test("getFirstDateOfWeek() with custom 1st day of week - Tuesday", function(assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0)), { firstDayOfWeek: 2, minimalDaysInFirstWeek: 4 }).toString(), new Date(Date.UTC(2015, 11, 29, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 0, 1, 0)), { firstDayOfWeek: 2, minimalDaysInFirstWeek: 4 }).toString(), UI5Date.getInstance(Date.UTC(2015, 11, 29, 0)).toString(),
 			"1 Jan 2016->27 Dec 2015");
 	});
 
 	QUnit.test("getFirstDateOfWeek() with custom 1st day of week Monday", function(assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0)), { firstDayOfWeek: 1, minimalDaysInFirstWeek: 2 }).toString(), new Date(Date.UTC(2015, 11, 28, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 0, 1, 0)), { firstDayOfWeek: 1, minimalDaysInFirstWeek: 2 }).toString(), UI5Date.getInstance(Date.UTC(2015, 11, 28, 0)).toString(),
 			"1 Jan 2016->27 Dec 2015");
 	});
 
 	QUnit.test("getFirstDateOfWeek() for US border case where the first date of the first week matches the CLDR's firstDayOfWeek(i.e. Sunday, Monday)", function(assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2017, 0, 1, 0))).toString(), new Date(Date.UTC(2017, 0, 1, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2017, 0, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2017, 0, 1, 0)).toString(),
 			"1 Jan 2017->1 Jan 2017");
 	});
 
 	QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 15, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 4, 18, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 4, 15, 0)).toString(),
 			"18 May 2016->15 May 2016");
 	});
 
 	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 1, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 4, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 4, 1, 0)).toString(),
 			"1 May 2016->1 May 2016");
 	});
 
 	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 9, 1, 0))).toString(), new Date(Date.UTC(2016, 8, 25, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 9, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 8, 25, 0)).toString(),
 			"1 Oct 2016->25 Sep 2016");
 	});
 
 	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 5, 1, 0))).toString(), new Date(Date.UTC(2016, 4, 29, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 5, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 4, 29, 0)).toString(),
 			"1 Jun 2016->29 May 2016");
 	});
 
 	QUnit.test("getFirstDateOfMonth() returns the first date of the month for a given date", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfMonth(new Date(Date.UTC(2016, 5, 12, 0))).toString(), new Date(Date.UTC(2016, 5, 1, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfMonth(UI5Date.getInstance(Date.UTC(2016, 5, 12, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 5, 1, 0)).toString(),
 			"12 Jun 2016 -> 1 Jun 2016");
 	});
 
@@ -104,27 +105,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("getFirstDateOfWeek() for non US border case where the first date of the first week is in the previous year", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 28, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 0, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2015, 11, 28, 0)).toString(),
 			"1 Jan 2016->28 Dec 2015");
 	});
 
 	QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 18, 0))).toString(), new Date(Date.UTC(2016, 4, 16, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 4, 18, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 4, 16, 0)).toString(),
 			"18 May 2016->16 May 2016");
 	});
 
 	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the beginning of the week", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 1, 1, 0))).toString(), new Date(Date.UTC(2016, 1, 1, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 1, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 1, 1, 0)).toString(),
 			"1 Feb 2016->1 Feb 2016");
 	});
 
 	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the end of the week", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 4, 1, 0))).toString(), new Date(Date.UTC(2016, 3, 25, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 4, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 3, 25, 0)).toString(),
 			"1 May 2016->25 Apr 2016");
 	});
 
 	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
-		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 11, 1, 0))).toString(), new Date(Date.UTC(2016, 10, 28, 0)).toString(),
+		assert.equal(CalendarUtils.getFirstDateOfWeek(UI5Date.getInstance(Date.UTC(2016, 11, 1, 0))).toString(), UI5Date.getInstance(Date.UTC(2016, 10, 28, 0)).toString(),
 			"1 Dec 2016->25 Nov 2016");
 	});
 
@@ -193,7 +194,7 @@ sap.ui.define([
 			oLocale,
 			oLocaleData;
 
-		oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
+		oDate = UI5Date.getInstance(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
 		oLocale = new Locale('en-US');
 		oLocaleData = LocaleData.getInstance(oLocale);
 
@@ -208,8 +209,8 @@ sap.ui.define([
 
 	QUnit.test("Week numbers for the turn of the year when locale is en", function(assert) {
 		// prepare
-		var oDateLastWeek = new Date(2020, 11, 31, 6);
-		var oDateFirstWeek = new Date(2021, 0, 1, 6);
+		var oDateLastWeek = UI5Date.getInstance(2020, 11, 31, 6);
+		var oDateFirstWeek = UI5Date.getInstance(2021, 0, 1, 6);
 		var oLocale = new Locale('en');
 		var oLocaleData = LocaleData.getInstance(oLocale);
 
@@ -230,8 +231,8 @@ sap.ui.define([
 
 	QUnit.test("Week number for the turn of the year when locale is en_US", function(assert) {
 		// prepare
-		var oDateLastWeek = new Date(2020, 11, 31, 6);
-		var oDateFirstWeek = new Date(2021, 0, 1, 6);
+		var oDateLastWeek = UI5Date.getInstance(2020, 11, 31, 6);
+		var oDateFirstWeek = UI5Date.getInstance(2021, 0, 1, 6);
 		var oLocale = new Locale('en_US');
 		var oLocaleData = LocaleData.getInstance(oLocale);
 
@@ -252,8 +253,8 @@ sap.ui.define([
 
 	QUnit.test("Week number for the turn of the year when locale is de", function(assert) {
 		// prepare
-		var oDateLastWeek = new Date(2020, 11, 31, 6);
-		var oDateFirstWeek = new Date(2021, 0, 1, 6);
+		var oDateLastWeek = UI5Date.getInstance(2020, 11, 31, 6);
+		var oDateFirstWeek = UI5Date.getInstance(2021, 0, 1, 6);
 		var oLocale = new Locale('de');
 		var oLocaleData = LocaleData.getInstance(oLocale);
 
@@ -279,7 +280,7 @@ sap.ui.define([
 			oLocale,
 			oLocaleData;
 
-		oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
+		oDate = UI5Date.getInstance(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
 		oLocale = new Locale('en-GB');
 		oLocaleData = LocaleData.getInstance(oLocale);
 
@@ -302,11 +303,11 @@ sap.ui.define([
 	});
 
 	QUnit.test('_isNextMonth', function(assert) {
-		var oDate = new Date(2011, 10, 11);
-		assert.ok(CalendarUtils._isNextMonth(new Date(2012, 10, 11), oDate), 'month from the next year is some next month date');
-		assert.ok(CalendarUtils._isNextMonth(new Date(2012, 9, 11), oDate), 'previous month from the next year is some next month date');
-		assert.ok(!CalendarUtils._isNextMonth(new Date(2011, 10, 30), oDate), 'date from the same month is not a next month date');
-		assert.ok(!CalendarUtils._isNextMonth(new Date(2011, 9, 30), oDate), 'date from the prev month is not a next month date');
+		var oDate = UI5Date.getInstance(2011, 10, 11);
+		assert.ok(CalendarUtils._isNextMonth(UI5Date.getInstance(2012, 10, 11), oDate), 'month from the next year is some next month date');
+		assert.ok(CalendarUtils._isNextMonth(UI5Date.getInstance(2012, 9, 11), oDate), 'previous month from the next year is some next month date');
+		assert.ok(!CalendarUtils._isNextMonth(UI5Date.getInstance(2011, 10, 30), oDate), 'date from the same month is not a next month date');
+		assert.ok(!CalendarUtils._isNextMonth(UI5Date.getInstance(2011, 9, 30), oDate), 'date from the prev month is not a next month date');
 	});
 
 	QUnit.module("_DATE_getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
@@ -554,19 +555,19 @@ sap.ui.define([
 		}, "Without parameters");
 
 		assert.throws(function() {
-			CalendarUtils._hoursBetween(null, new Date());
+			CalendarUtils._hoursBetween(null, UI5Date.getInstance());
 		}, "Without first parameter");
 
 		assert.throws(function() {
-			CalendarUtils._hoursBetween(new Date());
+			CalendarUtils._hoursBetween(UI5Date.getInstance());
 		}, "Without second parameter");
 
-		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 1, 8, 0, 0), new Date(2017, 0, 1, 9, 0, 0)), 1, "1 hour in the same day");
-		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 1, 23, 0, 0), new Date(2017, 0, 2, 0, 0, 0)), 1, "1 hour in different days");
-		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 31, 23, 0, 0), new Date(2017, 1, 1, 0, 0, 0)), 1, "1 hour in different months");
-		assert.equal(CalendarUtils._hoursBetween(new Date(2016, 11, 31, 23, 0, 0), new Date(2017, 0, 1, 0, 0, 0)), 1, "1 hour in different years");
-		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 1, 9, 0, 0), new Date(2017, 0, 1, 8, 0, 0)), 1, "1 hour negative");
-		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 1, 8, 0, 0), new Date(2017, 0, 1, 8, 0, 0)), 0, "no delta");
+		assert.equal(CalendarUtils._hoursBetween(UI5Date.getInstance(2017, 0, 1, 8, 0, 0), UI5Date.getInstance(2017, 0, 1, 9, 0, 0)), 1, "1 hour in the same day");
+		assert.equal(CalendarUtils._hoursBetween(UI5Date.getInstance(2017, 0, 1, 23, 0, 0), UI5Date.getInstance(2017, 0, 2, 0, 0, 0)), 1, "1 hour in different days");
+		assert.equal(CalendarUtils._hoursBetween(UI5Date.getInstance(2017, 0, 31, 23, 0, 0), UI5Date.getInstance(2017, 1, 1, 0, 0, 0)), 1, "1 hour in different months");
+		assert.equal(CalendarUtils._hoursBetween(UI5Date.getInstance(2016, 11, 31, 23, 0, 0), UI5Date.getInstance(2017, 0, 1, 0, 0, 0)), 1, "1 hour in different years");
+		assert.equal(CalendarUtils._hoursBetween(UI5Date.getInstance(2017, 0, 1, 9, 0, 0), UI5Date.getInstance(2017, 0, 1, 8, 0, 0)), 1, "1 hour negative");
+		assert.equal(CalendarUtils._hoursBetween(UI5Date.getInstance(2017, 0, 1, 8, 0, 0), UI5Date.getInstance(2017, 0, 1, 8, 0, 0)), 0, "no delta");
 
 	});
 
@@ -576,11 +577,11 @@ sap.ui.define([
 			CalendarUtils._isMidnight();
 		}, "Without parameters");
 
-		assert.ok(CalendarUtils._isMidnight(new Date(2020, 10, 10)), "Date time part indicates midnight");
-		assert.notOk(CalendarUtils._isMidnight(new Date(2020, 10, 10, 1)), "Date time part doesn't indicate midnight");
-		assert.notOk(CalendarUtils._isMidnight(new Date(2020, 10, 10, 0, 1)), "Date time part doesn't indicate midnight");
-		assert.notOk(CalendarUtils._isMidnight(new Date(2020, 10, 10, 0, 0, 1)), "Date time part doesn't indicate midnight");
-		assert.notOk(CalendarUtils._isMidnight(new Date(2020, 10, 10, 0, 0, 0, 1)), "Date time part doesn't indicate midnight");
+		assert.ok(CalendarUtils._isMidnight(UI5Date.getInstance(2020, 10, 10)), "Date time part indicates midnight");
+		assert.notOk(CalendarUtils._isMidnight(UI5Date.getInstance(2020, 10, 10, 1)), "Date time part doesn't indicate midnight");
+		assert.notOk(CalendarUtils._isMidnight(UI5Date.getInstance(2020, 10, 10, 0, 1)), "Date time part doesn't indicate midnight");
+		assert.notOk(CalendarUtils._isMidnight(UI5Date.getInstance(2020, 10, 10, 0, 0, 1)), "Date time part doesn't indicate midnight");
+		assert.notOk(CalendarUtils._isMidnight(UI5Date.getInstance(2020, 10, 10, 0, 0, 0, 1)), "Date time part doesn't indicate midnight");
 	});
 
 	QUnit.test("_daysBetween", function(assert) {
@@ -615,22 +616,22 @@ sap.ui.define([
 		}, "Without parameters");
 
 		assert.throws(function() {
-			CalendarUtils._monthsBetween(null, new Date());
+			CalendarUtils._monthsBetween(null, UI5Date.getInstance());
 		}, "Without first parameter");
 
 		assert.throws(function() {
-			CalendarUtils._monthsBetween(new Date());
+			CalendarUtils._monthsBetween(UI5Date.getInstance());
 		}, "Without second parameter");
 
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 1, 1)), 1, "with abs(): 1 month in the same year");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2016, 11, 1)), 1, "with abs(): 1 month in different years");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 1, 1), new Date(2017, 0, 1)), 1, "with abs(): 1 month negative");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 0, 1)), 0, "with abs(): no delta");
+		assert.equal(CalendarUtils._monthsBetween(UI5Date.getInstance(2017, 0, 1), UI5Date.getInstance(2017, 1, 1)), 1, "with abs(): 1 month in the same year");
+		assert.equal(CalendarUtils._monthsBetween(UI5Date.getInstance(2017, 0, 1), UI5Date.getInstance(2016, 11, 1)), 1, "with abs(): 1 month in different years");
+		assert.equal(CalendarUtils._monthsBetween(UI5Date.getInstance(2017, 1, 1), UI5Date.getInstance(2017, 0, 1)), 1, "with abs(): 1 month negative");
+		assert.equal(CalendarUtils._monthsBetween(UI5Date.getInstance(2017, 0, 1), UI5Date.getInstance(2017, 0, 1)), 0, "with abs(): no delta");
 
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 1, 1), true), 1, "without abs(): 1 month in the same year");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2016, 11, 1), true), -1, "without abs(): 1 month in different years");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 1, 1), new Date(2017, 0, 1), true), -1, "without abs(): 1 month negative");
-		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 0, 1), true), 0, "without abs(): no delta");
+		assert.equal(CalendarUtils._monthsBetween(UI5Date.getInstance(2017, 0, 1), UI5Date.getInstance(2017, 1, 1), true), 1, "without abs(): 1 month in the same year");
+		assert.equal(CalendarUtils._monthsBetween(UI5Date.getInstance(2017, 0, 1), UI5Date.getInstance(2016, 11, 1), true), -1, "without abs(): 1 month in different years");
+		assert.equal(CalendarUtils._monthsBetween(UI5Date.getInstance(2017, 1, 1), UI5Date.getInstance(2017, 0, 1), true), -1, "without abs(): 1 month negative");
+		assert.equal(CalendarUtils._monthsBetween(UI5Date.getInstance(2017, 0, 1), UI5Date.getInstance(2017, 0, 1), true), 0, "without abs(): no delta");
 
 	});
 
@@ -683,8 +684,8 @@ sap.ui.define([
 
 	// BCP: 1970123874
 	QUnit.test("_isSameMonthAndYear Japanese", function(assert) {
-		var o11_Feb_31_Showa = CalendarDate.fromLocalJSDate(new Date(-438307200000), CalendarType.Japanese);
-		var o11_Feb_31_Heisei = CalendarDate.fromLocalJSDate(new Date(1549843200000), CalendarType.Japanese);
+		var o11_Feb_31_Showa = CalendarDate.fromLocalJSDate(UI5Date.getInstance(-438307200000), CalendarType.Japanese);
+		var o11_Feb_31_Heisei = CalendarDate.fromLocalJSDate(UI5Date.getInstance(1549843200000), CalendarType.Japanese);
 
 		assert.equal(
 			CalendarUtils._isSameMonthAndYear(o11_Feb_31_Showa, o11_Feb_31_Heisei),
@@ -809,7 +810,7 @@ sap.ui.define([
 
 	QUnit.test("Check if the given date is valid JavaScript date object", function (assert) {
 
-		CalendarUtils._checkJSDateObject(new Date());
+		CalendarUtils._checkJSDateObject(UI5Date.getInstance());
 		assert.ok(true, "given date is JavaScript date object");
 
 		assert.throws(function () {
@@ -834,14 +835,14 @@ sap.ui.define([
 			oAppStartDate,
 			oAppEndDate;
 
-		oAppStartDate = new Date("2018", "6", "9", "9", "0");
-		oAppEndDate = new Date("2018", "6", "9", "11", "00");
+		oAppStartDate = UI5Date.getInstance("2018", "6", "9", "9", "0");
+		oAppEndDate = UI5Date.getInstance("2018", "6", "9", "11", "00");
 
 		iMinutes = CalendarUtils._minutesBetween(oAppStartDate, oAppEndDate);
 		assert.equal(iMinutes, 120, "minutes between given dates should be 120");
 
-		oAppStartDate = new Date("2018", "6", "9", "9", "0", "10");
-		oAppEndDate = new Date("2018", "6", "9", "11", "00", "23");
+		oAppStartDate = UI5Date.getInstance("2018", "6", "9", "9", "0", "10");
+		oAppEndDate = UI5Date.getInstance("2018", "6", "9", "11", "00", "23");
 
 		iMinutes = CalendarUtils._minutesBetween(oAppStartDate, oAppEndDate);
 		assert.equal(iMinutes, 120, "minutes between given dates should be 120, the seconds will be rounded");
