@@ -20,12 +20,14 @@ module.exports = function(grunt) {
 		color: 'cyan'
 	});
 
-	// Check for valid required Node.js version from package.json
-	// npm does not validate this within the project itself; only if this project would be installed as a dependency (which is not the case as of now)
-	var pkg = grunt.file.readJSON(__dirname + "/package.json");
-	if (pkg.engines && pkg.engines.node && !semver.satisfies(process.version, pkg.engines.node)) {
+	// Check for required Node.js version for grunt setup.
+	// The "engines" entry from package.json is not used as it has been adopted for the non-grunt dev setup.
+	// But as there are still use-case via the "--config-extension" approach, the minimum version for grunt
+	// should not be raised.
+	var requiredNodeVersion = ">= 10";
+	if (!semver.satisfies(process.version, requiredNodeVersion)) {
 		grunt.log.error('!!! WARNING !!!');
-		grunt.log.error('Unsupported Node.js version: wanted "' + pkg.engines.node + '" (current: "' + process.version + '")');
+		grunt.log.error('Unsupported Node.js version: wanted "' + requiredNodeVersion + '" (current: "' + process.version + '")');
 		grunt.log.error('Please update your Node.js installation!');
 	}
 
