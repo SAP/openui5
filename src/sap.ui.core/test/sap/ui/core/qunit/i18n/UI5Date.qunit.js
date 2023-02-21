@@ -3,10 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/deepClone",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/TimezoneUtil"
-], function (Log, Configuration, UI5Date, TimezoneUtil) {
+], function (Log, deepClone, Configuration, UI5Date, TimezoneUtil) {
 	/*global QUnit, sinon*/
 	"use strict";
 
@@ -1184,6 +1185,8 @@ sap.ui.define([
 		assert.strictEqual(oDate.toLocaleDateString("de-DE"), "5.1.2023");
 		assert.strictEqual(oDate.toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit"}),
 			"05.01.");
+
+		checkLocal(deepClone(UI5Date.getInstance("2023-07-03T11:23")), 2023, 6, 3, 11, 23, 0, 0, 1);
 	});
 
 	//*********************************************************************************************
@@ -1214,5 +1217,15 @@ sap.ui.define([
 		assert.throws(function () {
 			UI5Date.checkDate(new Date("invalid"));
 		}, new Error("The given Date is not valid"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("clone", function (assert) {
+		var oUI5Date = new UI5Date([], "Europe/Berlin");
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs(oUI5Date).returns("~clone");
+
+		// code under test
+		assert.strictEqual(oUI5Date.clone(), "~clone");
 	});
 });

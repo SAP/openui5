@@ -190,6 +190,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Clones this UI5Date instance.
+	 *
+	 * @returns {Date|module:sap/ui/core/date/UI5Date}
+	 *
+	 * @private
+	 */
+	UI5Date.prototype.clone = function () {
+		return UI5Date.getInstance(this);
+	};
+
+	/**
 	 * Returns the day of the month of this date instance according to the configured time zone,
 	 * see <code>Date.prototype.getDate</code>.
 	 *
