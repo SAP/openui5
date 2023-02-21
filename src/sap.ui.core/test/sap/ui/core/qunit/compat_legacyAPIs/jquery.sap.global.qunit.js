@@ -360,7 +360,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 	});
 
 	QUnit.test("jQuery.support", function (assert) {
-		assert.ok(jQuery.browser);
+		assert.ok(jQuery.support);
 	});
 
 });
