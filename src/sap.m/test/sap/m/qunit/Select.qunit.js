@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/ValueStateSupport",
+	"sap/ui/dom/getFirstEditableInput",
 	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.Event.prototype.isMarked
 ],
 	function(
@@ -56,7 +57,8 @@ sap.ui.define([
 		IconPool,
 		Device,
 		SeparatorItem,
-		ValueStateSupport
+		ValueStateSupport,
+		getFirstEditableInput
 	) {
 		"use strict";
 
@@ -2672,7 +2674,6 @@ sap.ui.define([
 			// assert
 			assert.strictEqual(oSelectDomRef.attr("name"), "select-name0", 'The attribute name is "select-name0"');
 			assert.strictEqual(oSelectDomRef.attr("value"), "lorem");
-			assert.strictEqual(oSelectDomRef.attr("type"), "hidden");
 
 			// cleanup
 			oSelect.destroy();
@@ -11273,5 +11274,50 @@ sap.ui.define([
 
 			//Assert
 			assert.strictEqual(oSelect.getFormFormattedValue(), "", "OK");
+		});
+
+		QUnit.module("getFirstEditableInput", {
+			beforeEach: function () {
+				this.oSelect = new Select({
+					items: [
+						new Item({text: "First item text"}),
+						new Item({text: "Second item text"})
+					]
+				});
+				this.oSelect.placeAt("content");
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oSelect.destroy();
+			}
+		});
+
+		QUnit.test("test getFirstEditableInput finds enabled select", function (assert) {
+			assert.ok(getFirstEditableInput(this.oSelect.getDomRef()), "getFirstEditableInput returns the input");
+		});
+
+		QUnit.test("test getFirstEditableInput doesn't find disabled select", function (assert) {
+			this.oSelect.setEnabled(false);
+			Core.applyChanges();
+			assert.notOk(getFirstEditableInput(this.oSelect.getDomRef()), "getFirstEditableInput returns the input");
+		});
+
+		QUnit.test("test getFirstEditableInput doesn't find readonly select", function (assert) {
+			this.oSelect.setEditable(false);
+			Core.applyChanges();
+			assert.notOk(getFirstEditableInput(this.oSelect.getDomRef()), "getFirstEditableInput returns the input");
+		});
+
+		QUnit.test("test getFirstEditableInput finds readonly select with includeReadOnly", function (assert) {
+			this.oSelect.setEditable(false);
+			Core.applyChanges();
+			assert.ok(getFirstEditableInput(this.oSelect.getDomRef(), { includeReadOnly: true }), "getFirstEditableInput returns the input");
+		});
+
+		QUnit.test("test getFirstEditableInput doesn't find readonly and disabled select with includeReadOnly", function (assert) {
+			this.oSelect.setEditable(false);
+			this.oSelect.setEnabled(false);
+			Core.applyChanges();
+			assert.notOk(getFirstEditableInput(this.oSelect.getDomRef(), { includeReadOnly: true }), "getFirstEditableInput returns the input");
 		});
 	});
