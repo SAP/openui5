@@ -193,11 +193,6 @@ module.exports = function(grunt, config) {
 			'copy:bundle'
 		],
 
-		// Package task (execute optionally after 'build')
-		'package': [
-			'compress:target'
-		],
-
 		'lastchange': function() {
 			var done = this.async();
 
