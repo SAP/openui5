@@ -6103,7 +6103,6 @@ sap.ui.define([
 	 * If the abort method on the return object is called, all contained batch requests will be aborted and the error handler will be called for each of them.
 	 *
 	 * @param {object} [mParameters] A map which contains the following parameter properties:
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] Defines the group that should be submitted. If not specified, all deferred groups will be submitted. Requests belonging to the same group will be bundled in one batch request.
 	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully updated. The handler can have the following parameters: <code>oData</code>. <code>oData</code> contains the
 	 * parsed response data as a Javascript object. The batch response is in the <code>__batchResponses</code> property which may contain further <code>__changeResponses</code> in an array depending on the amount of changes
@@ -6111,6 +6110,13 @@ sap.ui.define([
 	 * The changeResponses contain the actual response of that change set in the <code>response</code> property.
 	 * For each change set there is also a <code>__changeResponse</code> property.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed. The handler can have the parameter: <code>oError</code> which contains additional error information
+	 * @param {string} [mParameters.batchGroupId]
+	 *   <b>Deprecated</b>, use <code>groupId</code> instead
+	 * @param {boolean} [mParameters.merge]
+	 *   <b>Deprecated</b> since 1.38.0; use the <code>defaultUpdateMethod</code> constructor parameter instead.
+	 *   If unset, the update method is determined from the <code>defaultUpdateMethod</code> constructor parameter.
+	 *   If <code>true</code>, <code>sap.ui.model.odata.UpdateMethod.Merge</code> is used for update operations;
+	 *   if set to <code>false</code>, <code>sap.ui.model.odata.UpdateMethod.Put</code> is used.
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request or requests
 	 *
 	 * @public
