@@ -8927,6 +8927,167 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: If a request for an AnalyticalBinding is cancelled because the analytical info has
+	// been updated before the request was processed, a "dataReceived" event has to be fired. Table
+	// counts the "dataRequested" and "dataReceived" event to show a busy indicator, so the number
+	// of "dataRequested" and "dataReceived" events has to be equal.
+	// BCP: 2380036006
+	QUnit.test("AnalyticalBinding: dataReceived is fired even if request is cancelled", function (assert) {
+		var oBinding, oTable,
+			iDataRequested = 0,
+			iDataReceived = 0,
+			iDataReceivedError = 0,
+			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
+			sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="false" leadingProperty="CompanyCode" template="CompanyCode"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>',
+			that = this;
+
+		function dataReceived(oEvent) {
+			iDataReceived += 1;
+			if (!oEvent.getParameter("data")) {
+				iDataReceivedError += 1;
+			}
+		}
+
+		function dataRequested() {
+			iDataRequested += 1;
+		}
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectHeadRequest()
+				.expectRequest({ // first level request
+					encodeRequestUri: false,
+					requestUri: "Items?"
+						+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20desc&$top=14&$inlinecount=allpages"
+				}, {
+					results: [
+						getFarCustomerLineItem("A3"),
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A0")
+					]
+				})
+				.expectRequest({ // grand total request
+					encodeRequestUri: false,
+					requestUri: "Items?$select=AmountInCompanyCodeCurrency,Currency"
+						+ "&$top=100&$inlinecount=allpages"
+				}, {
+					__count: 1,
+					results: [{
+						__metadata: {
+							uri: "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items(grandTotal)"
+						},
+						AmountInCompanyCodeCurrency: "140",
+						Currency: "USD"
+					}]
+				});
+
+			// bind it lately otherwise table resets numberOfExpandedLevels to 0
+			oTable.bindRows({
+				events: {
+					dataRequested: dataRequested,
+					dataReceived: dataReceived
+				},
+				path: "/Items",
+				parameters: {
+					autoExpandMode: "Sequential",
+					numberOfExpandedLevels: 0,
+					provideGrandTotals: false,
+					useBatchRequests: true
+				},
+				sorter: [new Sorter("CompanyCode", true)]
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A3", "1"],
+				["A2", "1"],
+				["A1", "1"],
+				["A0", "1"]
+			]);
+			assert.strictEqual(iDataRequested, 1);
+			assert.strictEqual(iDataReceived, 1);
+			assert.strictEqual(iDataReceivedError, 0);
+
+			that.expectRequest({ // first level request
+					encodeRequestUri: false,
+					requestUri: "Items?"
+						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20desc&$top=14&$inlinecount=allpages"
+				}, new Promise(function () {})) // pending request that gets aborted
+				.expectRequest({ // grand total request
+					encodeRequestUri: false,
+					requestUri: "Items?$select=AmountInCompanyCodeCurrency,Currency"
+						+ "&$top=100&$inlinecount=allpages"
+				}, new Promise(function () {}));  // pending request that gets aborted
+
+			oBinding = oTable.getBinding("rows");
+
+			oBinding.updateAnalyticalInfo([
+				{name: "CompanyCode", grouped: false, visible: true},
+				{name: "Customer", grouped: false, visible: true},
+				{name: "AmountInCompanyCodeCurrency", visible: true}
+			]);
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(iDataRequested, 2);
+			assert.strictEqual(iDataReceived, 1);
+			assert.strictEqual(iDataReceivedError, 0);
+
+			that.expectRequest({ // first level request
+					encodeRequestUri: false,
+					requestUri: "Items?"
+						+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc&$top=14&$inlinecount=allpages"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A3")
+					]
+				})
+				.expectRequest({ // grand total request
+					encodeRequestUri: false,
+					requestUri: "Items?$select=AmountInCompanyCodeCurrency,Currency"
+						+ "&$top=100&$inlinecount=allpages"
+				}, {
+					__count: 1,
+					results: [{
+						__metadata: {
+							uri: "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items(grandTotal)"
+						},
+						AmountInCompanyCodeCurrency: "140",
+						Currency: "USD"
+					}]
+				});
+
+			// code under test - new analytical info; sort aborts pending requests
+			oBinding.updateAnalyticalInfo([
+				{name: "CompanyCode", grouped: false, visible: true},
+				{name: "AmountInCompanyCodeCurrency", visible: true}
+			]);
+			oBinding.sort(new Sorter("CompanyCode", false));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(iDataRequested, 3);
+			assert.strictEqual(iDataReceived, 3);
+			assert.strictEqual(iDataReceivedError, 1);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Root entity returns a message for a *:0..1 navigation property which is
 	// <code>null</code>. The data for the navigation property is requested in an own request.
 	// The GET request for the navigation property returns a 204 No Content and does not have any
