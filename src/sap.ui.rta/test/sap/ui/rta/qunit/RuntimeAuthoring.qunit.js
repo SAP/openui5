@@ -450,10 +450,12 @@ sap.ui.define([
 				.then(function() {
 					assert.deepEqual(oMessageBoxStub.getCall(0).args[2], {
 						titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
-						actionKeys: ["BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE_DRAFT", "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"],
+						actionKeys: ["BTN_UNSAVED_DRAFT_CHANGES_ON_CLOSE_SAVE", "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"],
 						emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
 						showCancel: true
 					}, "and the message box is called with the right parameters (save draft button)");
+					assert.deepEqual(oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_DRAFT_CHANGES_ON_CLOSE",
+						"then message box message text is selected accordingly");
 					assert.ok(true, "then the promise gets resolved");
 					assert.ok(this.oRta, "RTA is still up and running");
 					assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible.");
