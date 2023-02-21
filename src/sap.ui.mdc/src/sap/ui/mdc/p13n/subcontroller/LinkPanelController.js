@@ -86,10 +86,10 @@ sap.ui.define([
 
         var oLinkItem = sap.ui.getCore().byId(sLinkItemId);
 
-        var aChanges = [];
+        var oAddRemoveChange;
 
         if (!oLinkItem) {
-            aChanges.push({
+            oAddRemoveChange = {
                 selectorElement: oControl,
                 changeSpecificData: {
                     changeType: "createItem",
@@ -97,18 +97,18 @@ sap.ui.define([
                         selector: sLinkItemId
                     }
                 }
-            });
+            };
         } else {
-            aChanges.push({
+            oAddRemoveChange = {
                 selectorElement: oLinkItem,
                 changeSpecificData: {
                     changeType: vOperations === "hideItem" ? "hideItem" : "revealItem",
                     content: {}
                 }
-            });
+            };
         }
 
-        return aChanges;
+        return oAddRemoveChange;
     };
 
     LinkPanelController.prototype.mixInfoAndState = function(oPropertyHelper) {
@@ -143,7 +143,7 @@ sap.ui.define([
         return oP13nData;
     };
 
-    LinkPanelController.prototype._createMoveChange = function(sId, sPropertyName, iNewIndex, sMoveOperation, oControl, bPersistId) {
+    LinkPanelController.prototype._createMoveChange = function(sPropertyName, iNewIndex, sMoveOperation, oControl) {
         return {
             selectorElement: oControl,
             changeSpecificData: {
