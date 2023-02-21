@@ -125,7 +125,10 @@
     "rimraf": "^3.0.2",
     "selenium-webdriver": "^3.6.0",
     "semver": "^4.3.0",
-    "wsrun": "^5.2.0"
+    "wsrun": "^5.2.0",
+    "cookie": "^0.4.2",
+    "http-proxy": "^1.18.1",
+    "set-cookie-parser": "^2.5.1"
   },
   "workspaces": [
     "src/!(testsuite-utils)"

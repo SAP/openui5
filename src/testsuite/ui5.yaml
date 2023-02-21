@@ -12,3 +12,19 @@ resources:
   configuration:
     paths:
       webapp: src/main/webapp
+server:
+  customMiddleware:
+  - name: ui5-middleware-proxy
+    afterMiddleware: versionInfo
+    mountPath: /proxy
+    configuration:
+      secure: false
+
+---
+specVersion: "2.0"
+kind: extension
+type: server-middleware
+metadata:
+  name: ui5-middleware-proxy
+middleware:
+  path: ../../lib/server/ui5-middleware-proxy/index.js
