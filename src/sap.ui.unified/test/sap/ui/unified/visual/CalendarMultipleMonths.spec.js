@@ -107,13 +107,14 @@ describe("sap.ui.unified.CalendarMultipleMonths", function() {
 		_initCalendar("8");
 		expect(takeScreenshot(oCal)).toLookAs("117_2th_january_focused");
 
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		expect(takeScreenshot(oCal)).toLookAs("118_first_month_button_focused");
-
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		var sShiftTab = protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB);
+		browser.actions().sendKeys(sShiftTab).perform();
 		expect(takeScreenshot(oCal)).toLookAs("119_first_year_button_focused");
 
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(sShiftTab).perform();
+		expect(takeScreenshot(oCal)).toLookAs("118_first_month_button_focused");
+
+		browser.actions().sendKeys(sShiftTab).perform();
 		expect(takeScreenshot(oCal)).toLookAs("120_focus_moves_after_the_calendar");
 	});
 

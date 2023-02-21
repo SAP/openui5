@@ -33,12 +33,6 @@ describe("sap.m.DateTimePicker", function() {
 		element(by.id("DTP2-icon")).click();
 		_takeScreenshot("DTP2", "forward_focus_calendar_grid");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		_takeScreenshot("DTP2", "forward_focus_month_button");
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		_takeScreenshot("DTP2", "forward_focus_year_button");
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		_takeScreenshot("DTP2", "forward_focus_today_button");
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		_takeScreenshot("DTP2", "forward_focus_hours_input");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		_takeScreenshot("DTP2", "forward_focus_minutes_input");
@@ -50,10 +44,22 @@ describe("sap.m.DateTimePicker", function() {
 		_takeScreenshot("DTP2", "forward_focus_ok_button");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		_takeScreenshot("DTP2", "forward_focus_cancel_button");
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		_takeScreenshot("DTP2", "forward_focus_month_button");
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		_takeScreenshot("DTP2", "forward_focus_year_button");
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		_takeScreenshot("DTP2", "forward_focus_today_button");
 	});
 
 	it("should verify that backward navigation with shift and tab works properly", function() {
 		var shiftTab = protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB);
+		_takeScreenshot("DTP2", "backward_focus_today_button");
+		browser.actions().sendKeys(shiftTab).perform();
+		_takeScreenshot("DTP2", "backward_focus_year_button");
+		browser.actions().sendKeys(shiftTab).perform();
+		_takeScreenshot("DTP2", "backward_focus_month_button");
+		browser.actions().sendKeys(shiftTab).perform();
 		_takeScreenshot("DTP2", "backward_focus_cancel_button");
 		browser.actions().sendKeys(shiftTab).perform();
 		_takeScreenshot("DTP2", "backward_focus_ok_button");
@@ -65,12 +71,6 @@ describe("sap.m.DateTimePicker", function() {
 		_takeScreenshot("DTP2", "backward_focus_minutes_input");
 		browser.actions().sendKeys(shiftTab).perform();
 		_takeScreenshot("DTP2", "backward_focus_hours_input");
-		browser.actions().sendKeys(shiftTab).perform();
-		_takeScreenshot("DTP2", "backward_focus_today_button");
-		browser.actions().sendKeys(shiftTab).perform();
-		_takeScreenshot("DTP2", "backward_focus_year_button");
-		browser.actions().sendKeys(shiftTab).perform();
-		_takeScreenshot("DTP2", "backward_focus_month_button");
 		browser.actions().sendKeys(shiftTab).perform();
 		_takeScreenshot("DTP2", "backward_focus_calendar_grid");
 	});
