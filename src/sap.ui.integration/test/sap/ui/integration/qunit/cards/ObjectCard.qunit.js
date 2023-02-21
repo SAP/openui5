@@ -496,6 +496,7 @@ sap.ui.define([
 				"json": {
 					"initialSelection": "reason1",
 					"initialComment": "Free text comment",
+					"initialValue": "Initial value",
 					"reasons": [
 						{
 							"id": "reason1",
@@ -541,6 +542,13 @@ sap.ui.define([
 								"value": "{/initialComment}",
 								"rows": 4,
 								"placeholder": "Comment"
+							},
+							{
+								"id": "userValue",
+								"label": "User Value",
+								"type": "Input",
+								"value": "{/initialValue}",
+								"placeholder": "Enter user value"
 							}
 						]
 					}
@@ -670,6 +678,18 @@ sap.ui.define([
 									{
 										"pattern": "^\\w+\\\\[\\w+\\.]+$",
 										"message": "You should enter a valid path."
+									}
+								]
+							},
+							{
+								"id": "inputId",
+								"label": "Input",
+								"type": "Input",
+								"placeholder": "Enter user value",
+								"validations": [
+									{
+										"required": true,
+										"message": "Value is required"
 									}
 								]
 							}
@@ -2067,7 +2087,8 @@ sap.ui.define([
 			var oLayout = oCard.getCardContent().getAggregation("_content").getItems()[0],
 				aItems = oLayout.getItems(),
 				oComboBox = aItems[1],
-				oTextArea = aItems[3];
+				oTextArea = aItems[3],
+				oInput = aItems[5];
 
 			// Assert Combo Box
 			assert.ok(oComboBox.isA("sap.m.ComboBox"), "ComboBox is created.");
@@ -2082,6 +2103,12 @@ sap.ui.define([
 			assert.strictEqual(oTextArea.getValue(), "Free text comment", "TextArea has correct value.");
 			assert.strictEqual(oTextArea.getRows(), 4, "TextArea has 4 rows.");
 			assert.strictEqual(oTextArea.getLabels()[0].getText(), "Comment:", "TextArea is referenced to the correct label.");
+
+			// Assert Input
+			assert.ok(oInput.isA("sap.m.Input"), "oInput is created.");
+			assert.strictEqual(oInput.getPlaceholder(), "Enter user value", "Input has correct placeholder.");
+			assert.strictEqual(oInput.getValue(), "Initial value", "Input has correct value.");
+			assert.strictEqual(oInput.getLabels()[0].getText(), "User Value:", "Input is referenced to the correct label.");
 
 			done();
 		});
@@ -2101,7 +2128,8 @@ sap.ui.define([
 						"key": "reason1",
 						"value": "Reason 1"
 					},
-					"comment": "Free text comment"
+					"comment": "Free text comment",
+					"userValue": "Initial value"
 				};
 
 			assert.deepEqual(mParameters.data, mExpectedData, "Data is properly passed to action handler.");
@@ -2220,7 +2248,8 @@ sap.ui.define([
 				oComboBox2 = aItems[3],
 				oTextArea = aItems[5],
 				oTextArea2 = aItems[7],
-				oTextArea3 = aItems[9];
+				oTextArea3 = aItems[9],
+				oInput = aItems[11];
 
 
 			assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control has no error");
@@ -2248,6 +2277,11 @@ sap.ui.define([
 						"bindingPath": "/path",
 						"message": "Value is required",
 						"type": "Error"
+					},
+					{
+						"bindingPath": "/inputId",
+						"message": "Value is required",
+						"type": "Error"
 					}
 				]
 			}, "messages model is correct");
@@ -2264,6 +2298,9 @@ sap.ui.define([
 
 			assert.strictEqual(oTextArea2.getValueState(), ValueState.Error, "Control has an error");
 			assert.strictEqual(oTextArea2.getValueStateText(), "Value is required", "Error text is correct");
+
+			assert.strictEqual(oInput.getValueState(), ValueState.Error, "Control has an error");
+			assert.strictEqual(oInput.getValueStateText(), "Value is required", "Error text is correct");
 
 			assert.deepEqual(oCard.getModel("messages").getData(), {
 				"hasErrors": true,
@@ -2286,6 +2323,11 @@ sap.ui.define([
 					},
 					{
 						"bindingPath": "/path",
+						"message": "Value is required",
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/inputId",
 						"message": "Value is required",
 						"type": "Error"
 					}
@@ -2335,6 +2377,11 @@ sap.ui.define([
 							"bindingPath": "/path",
 							"message": "You should enter a valid path.",
 							"type": "Error"
+						},
+						{
+							"bindingPath": "/inputId",
+							"message": "Value is required",
+							"type": "Error"
 						}
 					]
 				}, "messages model is correct");
@@ -2343,6 +2390,7 @@ sap.ui.define([
 			oTextArea.setValue("TextTextTextTextTextTextTextTextText");
 			oTextArea2.setValue("my@mymail.com");
 			oTextArea3.setValue("Folder\\file.pdf");
+			oInput.setValue("Some Value");
 
 			Core.applyChanges();
 			oCard.validateControls();
@@ -2351,6 +2399,7 @@ sap.ui.define([
 			assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Control doesn't have an error");
 			assert.strictEqual(oTextArea2.getValueState(), ValueState.None, "Control doesn't have an error");
 			assert.strictEqual(oTextArea3.getValueState(), ValueState.None, "Control doesn't have an error and backslashes are escaped correctly");
+			assert.strictEqual(oInput.getValueState(), ValueState.None, "Control doesn't have an error");
 
 			assert.deepEqual(oCard.getModel("messages").getData(), {
 				"hasErrors": false,

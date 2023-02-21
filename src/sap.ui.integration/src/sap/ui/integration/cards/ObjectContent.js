@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/integration/controls/ObjectStatus",
 	"sap/m/ComboBox",
 	"sap/m/TextArea",
+	"sap/m/Input",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
@@ -53,6 +54,7 @@ sap.ui.define([
 	ObjectStatus,
 	ComboBox,
 	TextArea,
+	Input,
 	Log,
 	isEmptyObject,
 	isPlainObject,
@@ -162,8 +164,13 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	ObjectContent.prototype._prepareValidationControl = function (oControl, oItem, sChangeFunction, sPath) {
+	ObjectContent.prototype._prepareValidationControl = function (oControl, oItem, sChangeFunction, sPath, fnUpdateValue) {
 		var oClonedItem = deepExtend({}, oItem);
+
+		oControl.attachChange(fnUpdateValue);
+		oControl.addEventDelegate({
+			onAfterRendering: fnUpdateValue
+		});
 
 		oControl.attachEvent(sChangeFunction, this._validationControlChanged.bind(this));
 		this._aValidationControls.push(oControl);
@@ -178,6 +185,21 @@ sap.ui.define([
 		}
 
 		oControl._oItem = oClonedItem;
+	};
+
+	ObjectContent.prototype._validateControlId = function (oItem) {
+		if (!oItem.id) {
+			Log.error("Each input element must have an ID.", "sap.ui.integration.widgets.Card");
+			return false;
+		}
+
+		if (this._formElementsIds.has(oItem.id)) {
+			Log.error("Duplicate form element ID - " + "'" + oItem.id + "'" , "sap.ui.integration.widgets.Card");
+		}
+
+		this._formElementsIds.add(oItem.id);
+
+		return true;
 	};
 
 	ObjectContent.prototype._hasData = function () {
@@ -463,6 +485,9 @@ sap.ui.define([
 			case "RatingIndicator":
 				oControl = this._createRatingIndicatorItem(oItem, vVisible);
 				break;
+			case "Input":
+				oControl = this._createInputItem(oItem, vVisible, oLabel, sPath);
+				break;
 
 			// deprecated types
 			case "link":
@@ -746,14 +771,9 @@ sap.ui.define([
 			});
 		}
 
-		if (!oItem.id) {
-			Log.error("Each input element must have an ID.", "sap.ui.integration.widgets.Card");
+		if (!this._validateControlId(oItem)) {
 			return oControl;
-		} else if (this._formElementsIds.has(oItem.id)) {
-			Log.error("Duplicate form element ID - " + "'" + oItem.id + "'" , "sap.ui.integration.widgets.Card");
 		}
-
-		this._formElementsIds.add(oItem.id);
 
 		fnUpdateValue = function () {
 			oFormModel.setProperty("/" + oItem.id, {
@@ -762,11 +782,7 @@ sap.ui.define([
 			});
 		};
 
-		oControl.attachChange(fnUpdateValue);
-		oControl.addEventDelegate({
-			onAfterRendering: fnUpdateValue
-		});
-		this._prepareValidationControl(oControl, oItem, "change", sPath);
+		this._prepareValidationControl(oControl, oItem, "change", sPath, fnUpdateValue);
 
 		return oControl;
 	};
@@ -787,24 +803,43 @@ sap.ui.define([
 			oLabel.setLabelFor(oControl);
 		}
 
-		if (!oItem.id) {
-			Log.error("Each input element must have an ID.", "sap.ui.integration.widgets.Card");
+		if (!this._validateControlId(oItem)) {
 			return oControl;
-		} else if (this._formElementsIds.has(oItem.id)) {
-			Log.error("Duplicate form element ID - " + "'" + oItem.id + "'" , "sap.ui.integration.widgets.Card");
 		}
-
-		this._formElementsIds.add(oItem.id);
 
 		fnUpdateValue = function () {
 			oFormModel.setProperty("/" + oItem.id, oControl.getValue());
 		};
 
-		oControl.attachChange(fnUpdateValue);
-		oControl.addEventDelegate({
-			onAfterRendering: fnUpdateValue
-		});
-		this._prepareValidationControl(oControl, oItem, "liveChange", sPath);
+		this._prepareValidationControl(oControl, oItem, "liveChange", sPath, fnUpdateValue);
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createInputItem = function (oItem, vVisible, oLabel, sPath) {
+		var oCard = this.getCardInstance(),
+			oFormModel = oCard.getModel("form"),
+			oControl = new Input({
+				required: Forms.getRequiredValidationValue(oItem),
+				value: oItem.value,
+				visible: BindingHelper.reuse(vVisible),
+				placeholder: oItem.placeholder
+			}),
+			fnUpdateValue;
+
+		if (oLabel) {
+			oLabel.setLabelFor(oControl);
+		}
+
+		if (!this._validateControlId(oItem)) {
+			return oControl;
+		}
+
+		fnUpdateValue = function () {
+			oFormModel.setProperty("/" + oItem.id, oControl.getValue());
+		};
+
+		this._prepareValidationControl(oControl, oItem, "liveChange", sPath, fnUpdateValue);
 
 		return oControl;
 	};

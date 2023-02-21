@@ -1450,6 +1450,7 @@
                 "IconGroup",
                 "ComboBox",
                 "TextArea",
+                "Input",
                 "RatingIndicator",
                 "phone",
                 "email",

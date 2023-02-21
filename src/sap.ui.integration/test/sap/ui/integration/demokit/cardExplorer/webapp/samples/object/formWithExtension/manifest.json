@@ -102,8 +102,7 @@
 						{
 							"id": "age",
 							"label": "Age",
-							"type": "TextArea",
-							"rows": 1,
+							"type": "Input",
 							"placeholder": "Age",
 							"validations": [
 								{

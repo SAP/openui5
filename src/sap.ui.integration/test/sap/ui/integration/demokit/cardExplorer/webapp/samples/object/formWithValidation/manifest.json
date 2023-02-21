@@ -132,8 +132,7 @@
 						{
 							"id": "e-mail",
 							"label": "E-mail",
-							"type": "TextArea",
-							"rows": 1,
+							"type": "Input",
 							"placeholder": "e-mail",
 							"validations": [
 								{
