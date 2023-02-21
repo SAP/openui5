@@ -1531,6 +1531,20 @@ sap.ui.define([
 		},
 
 		/**
+		 * Tells whether <code>sPath</code> has <code>sBasePath</code> as path prefix. It returns
+		 * <code>true</code> iff {@link .getRelativePath} does not return <code>undefined</code>.
+		 *
+		 * @param {string} sPath The path
+		 * @param {string} sBasePath The base path
+		 * @returns {boolean} true if sBasePath path is a prefix of sPath
+		 *
+		 * @see .getRelativePath
+		 */
+		hasPathPrefix : function (sPath, sBasePath) {
+			return _Helper.getRelativePath(sPath, sBasePath) !== undefined;
+		},
+
+		/**
 		 * Tells whether the given object has a private client-side instance annotation with the
 		 * given unqualified name (no matter what the value is).
 		 *
@@ -1766,20 +1780,6 @@ sap.ui.define([
 			}
 
 			return mResult;
-		},
-
-		/**
-		 * Tells whether <code>sPath</code> has <code>sBasePath</code> as path prefix. It returns
-		 * <code>true</code> iff {@link .getRelativePath} does not return <code>undefined</code>.
-		 *
-		 * @param {string} sPath The path
-		 * @param {string} sBasePath The base path
-		 * @returns {boolean} true if sBasePath path is a prefix of sPath
-		 *
-		 * @see .getRelativePath
-		 */
-		hasPathPrefix : function (sPath, sBasePath) {
-			return _Helper.getRelativePath(sPath, sBasePath) !== undefined;
 		},
 
 		/**
