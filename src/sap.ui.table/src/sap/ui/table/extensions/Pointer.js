@@ -732,6 +732,8 @@ sap.ui.define([
 					TableUtils.Menu.openContextMenu(this, oEvent.target);
 					delete oPointerExtension._bShowMenu;
 				}
+			} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
+				this._getSelectionPlugin().onHeaderSelectorPress();
 			} else if (oRow && oRow.isSummary()) {
 				// Sum row cannot be selected
 				oEvent.preventDefault();
@@ -746,23 +748,14 @@ sap.ui.define([
 					return;
 				}
 
-				if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
-					window.getSelection().empty();
-				}
-
 				var sSelectedText = window.getSelection().toString();
 				if (!oEvent.shiftKey && sSelectedText.length > 0 && sSelectedText !== "\n") {
 					Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
 					return;
 				}
 
-				// forward the event
 				if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
-					if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
-						this._getSelectionPlugin().onHeaderSelectorPress();
-					} else {
-						ExtensionHelper._handleClickSelection(oEvent, $Cell, this);
-					}
+					ExtensionHelper._handleClickSelection(oEvent, $Cell, this);
 				} else {
 					oEvent.preventDefault();
 				}

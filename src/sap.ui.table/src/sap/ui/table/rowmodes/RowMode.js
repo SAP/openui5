@@ -578,6 +578,13 @@ sap.ui.define([
 			iNewNumberOfRows++; // Create one additional row for partial row scrolling.
 		}
 
+		// Clear the text selection if text inside rows is selected and the content is going to change, for example on scroll.
+		var oRowContainer = oTable.getDomRef("tableCCnt");
+		var oSelection = window.getSelection();
+		if (oRowContainer && oSelection.containsNode(oRowContainer, true)) {
+			oSelection.empty();
+		}
+
 		// Destroy rows if they are invalid, but keep the DOM in case the table is going to render.
 		// Becomes obsolete with CPOUIFTEAMB-1379
 		if (oTable._bRowAggregationInvalid) {

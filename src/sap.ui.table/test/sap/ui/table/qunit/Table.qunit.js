@@ -6388,4 +6388,84 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.module("Clear text selection on update", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				visibleRowCount: 1,
+				models: TableQUnitUtils.createJSONModel(2),
+				columns: [
+					TableQUnitUtils.createTextColumn({text: "name", bind: true, label: "Name"})
+				],
+				extension: new Text({text: "Title"}),
+				footer: new Text({text: "Footer"})
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		selectTextInRow: function() {
+			window.getSelection().selectAllChildren(this.oTable.getRows()[0].getCells()[0].getDomRef());
+		},
+		assertTextSelection: function(assert, sText, sTitle) {
+			assert.strictEqual(window.getSelection().toString(), sText, "Selected text");
+		}
+	});
+
+	QUnit.test("Change 'firstVisibleRow'", function(assert) {
+		this.selectTextInRow();
+		this.oTable.setFirstVisibleRow(1);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertTextSelection(assert, "");
+		}.bind(this));
+	});
+
+	QUnit.test("Binding update", function(assert) {
+		this.selectTextInRow();
+		this.oTable.getBinding().refresh(true);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertTextSelection(assert, "");
+		}.bind(this));
+	});
+
+	QUnit.test("Text selection is outside of rows", function(assert) {
+		window.getSelection().selectAllChildren(this.oTable.getExtension()[0].getDomRef());
+		this.oTable.getBinding().refresh(true);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertTextSelection(assert, "Title");
+		}.bind(this));
+	});
+
+	QUnit.test("Text selection starts before rows and ends inside rows", function(assert) {
+		window.getSelection().setBaseAndExtent(this.oTable.getExtension()[0].getDomRef(), 0, this.oTable.getRows()[0].getCells()[0].getDomRef(), 1);
+		this.oTable.getBinding().refresh(true);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertTextSelection(assert, "");
+		}.bind(this));
+	});
+
+	QUnit.test("Text selection starts inside rows and ends after rows", function(assert) {
+		window.getSelection().setBaseAndExtent(this.oTable.getRows()[0].getCells()[0].getDomRef(), 0, this.oTable.getFooter().getDomRef(), 1);
+		this.oTable.getBinding().refresh(true);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertTextSelection(assert, "");
+		}.bind(this));
+	});
+
+	QUnit.test("Text selection starts before rows and ends after rows", function(assert) {
+		window.getSelection().setBaseAndExtent(this.oTable.getExtension()[0].getDomRef(), 0, this.oTable.getFooter().getDomRef(), 1);
+		this.oTable.getBinding().refresh(true);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertTextSelection(assert, "");
+		}.bind(this));
+	});
 });
