@@ -8378,6 +8378,7 @@ sap.ui.define([
 
 		aCollection.$byPredicate = {};
 		aCollection.$created = 0;
+		oCache.iActiveElements = 0;
 		oCache.fetchValue = function () {};
 		oCacheMock.expects("getValue").withExactArgs(sPathInCache).returns(aCollection);
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve({}));
@@ -8396,6 +8397,7 @@ sap.ui.define([
 			sTransientPredicate, oEntity0);
 
 		assert.strictEqual(aCollection.$created, 1);
+		assert.strictEqual(oCache.iActiveElements, 0); // since we create in a nested collection
 		sinon.assert.calledWithExactly(oRequestor.request, "POST", "TEAMS('0')/TEAM_2_EMPLOYEES",
 			sinon.match.same(oGroupLock), null, /*oPayload*/sinon.match.object,
 			/*fnSubmit*/sinon.match.func, /*fnCancel*/sinon.match.func, undefined,
@@ -8432,6 +8434,7 @@ sap.ui.define([
 			assert.ok(false, "unexpected success");
 		}, function (oError) {
 			assert.strictEqual(oError.canceled, true);
+			assert.strictEqual(oCache.iActiveElements, 0);
 		});
 	});
 
