@@ -2,6 +2,7 @@ sap.ui.define([
 	"./SEPMRA_PROD_MAN/mockServer",
 	"./graphql/mockServer",
 	"./activities/mockServer",
+	"./agenda/mockServer",
 	"./csrf/mockServer",
 	"./products/mockServer",
 	"./user/mockServer",
@@ -10,6 +11,7 @@ sap.ui.define([
 	SEPMRA_PROD_MAN_mockServer,
 	graphql_mockServer,
 	timeline_mockServer,
+	dateTime_mockServer,
 	csrf_mockServer,
 	products_mockServer,
 	user_mockSever,
@@ -23,6 +25,7 @@ sap.ui.define([
 		SEPMRA_PROD_MAN_mockServer,
 		graphql_mockServer,
 		timeline_mockServer,
+		dateTime_mockServer,
 		csrf_mockServer,
 		products_mockServer,
 		user_mockSever
