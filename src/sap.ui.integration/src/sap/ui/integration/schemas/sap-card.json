@@ -3052,8 +3052,11 @@
               "yesterday",
               "tomorrow",
               "dateRange",
+              "dateTimeRange",
               "from",
               "to",
+              "fromDateTime",
+              "toDateTime",
               "yearToDate",
               "lastDays",
               "lastWeeks",
@@ -3082,7 +3085,8 @@
               "quarter4",
               "thisYear",
               "lastYear",
-              "nextYear"
+              "nextYear",
+              "dateTime"
             ]
           }
         },
