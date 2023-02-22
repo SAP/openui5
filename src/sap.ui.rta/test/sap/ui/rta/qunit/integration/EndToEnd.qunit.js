@@ -496,8 +496,6 @@ sap.ui.define([
 					.then(function () {
 						var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 						assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
-						this.oRta.setMode("adaptation");
-						oCore.applyChanges();
 						// SimpleForm recreates all elements after cut&paste, thus we need to fetch them again
 						oFormContainer = oForm.getFormContainers()[0];
 						oFormField = oFormContainer.getFormElements()[0];
@@ -522,14 +520,19 @@ sap.ui.define([
 								}.bind(this));
 						}.bind(this)));
 
-						this.oRta._oDesignTime.attachEventOnce("synced", function () {
-							window.requestAnimationFrame(function () {
+						Promise.all([
+							new Promise(function(resolve) { this.oRta._oDesignTime.attachEventOnce("synced", resolve); }.bind(this)),
+							new Promise(function(resolve) { oFieldOverlay.attachEventOnce("movableChange", resolve); })
+						])
+							.then(function () {
 								oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function () {
 									QUnitUtils.triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
 								}, 0);
 								QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
 							});
-						});
+
+						this.oRta.setMode("adaptation");
+						oCore.applyChanges();
 					}.bind(this));
 			}.bind(this);
 
