@@ -1738,6 +1738,9 @@ sap.ui.define([
 				keyboardMode: ListKeyboardMode.Edit,
 				columns: [
 					new Column({
+						header: new InvisibleText({
+									text: this._oRb.getText("VARIANT_MANAGEMENT_FAVORITE_COLUMN")
+								}),
 						width: "3rem",
 						visible: {
 							path: "/supportFavorites",
@@ -1807,6 +1810,9 @@ sap.ui.define([
 						popinDisplay: PopinDisplay.Block,
 						minScreenWidth: ScreenSize.Tablet
 					}), new Column({
+						header: new InvisibleText({
+									text: this._oRb.getText("VARIANT_MANAGEMENT_ACTION_COLUMN")
+								}),
 						hAlign: TextAlign.Center
 					}), new Column({
 						visible: false
