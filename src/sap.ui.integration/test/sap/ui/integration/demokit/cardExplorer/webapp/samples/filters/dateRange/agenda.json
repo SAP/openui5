@@ -48,9 +48,6 @@
 				}
 			},
 			"item": {
-				"dateTime": {
-					"value": "{Time}"
-				},
 				"description": "{= format.dateTime(${Time}, {format: 'yMMMdHHmm'}) }",
 				"title": {
 					"value": "{Title}"
