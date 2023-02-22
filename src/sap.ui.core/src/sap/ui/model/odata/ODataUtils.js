@@ -740,7 +740,7 @@ sap.ui.define([
 	 *   the first value to compare
 	 * @param {any} vValue2
 	 *   the second value to compare
-	 * @param {string} [bAsDecimal=false]
+	 * @param {boolean} [bAsDecimal=false]
 	 *   if <code>true</code>, the string values <code>vValue1</code> and <code>vValue2</code> are
 	 *   compared as a decimal number (only sign, integer and fraction digits; no exponential
 	 *   format). Otherwise they are recognized by looking at their types.
