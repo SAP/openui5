@@ -10,11 +10,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings"
@@ -26,11 +27,12 @@ sap.ui.define([
 	FlexCustomData,
 	ChangesController,
 	DescriptorChangeTypes,
+	ManifestUtils,
 	Condenser,
 	FlexObjectState,
 	Storage,
-	ManifestUtils,
 	FeaturesAPI,
+	FlexInfoSession,
 	Layer,
 	LayerUtils,
 	Settings
@@ -131,7 +133,14 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.save = function(mPropertyBag) {
-		return FlexObjectState.saveFlexObjects(mPropertyBag);
+		return FlexObjectState.saveFlexObjects(mPropertyBag).then(function(oFlexObject) {
+			if (oFlexObject && oFlexObject.length !== 0) {
+				PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResult) {
+					FlexInfoSession.set(oResult, mPropertyBag.selector);
+				});
+			}
+			return oFlexObject;
+		});
 	};
 
 	/**

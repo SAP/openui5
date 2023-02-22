@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Layer",
@@ -41,6 +42,7 @@ sap.ui.define([
 	Storage,
 	FeaturesAPI,
 	PersistenceWriteAPI,
+	FlexInfoSession,
 	ChangePersistenceFactory,
 	ChangePersistence,
 	Layer,
@@ -254,13 +256,27 @@ sap.ui.define([
 		});
 
 		QUnit.test("when save is called", function(assert) {
-			var oFlexObjectStateSaveStub = sandbox.stub(FlexObjectState, "saveFlexObjects").returns("foo");
+			var oFlexObjectStateSaveStub = sandbox.stub(FlexObjectState, "saveFlexObjects").resolves();
 			var mPropertyBag = { foo: "bar" };
-			var sReturn = PersistenceWriteAPI.save(mPropertyBag);
+			PersistenceWriteAPI.save(mPropertyBag);
 
 			assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
 			assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
-			assert.equal("foo", sReturn, "the function returns whatever the FlexObjectState returns");
+		});
+
+		QUnit.test("when save dirty change and update flex info session", function(assert) {
+			FlexInfoSession.set({isResetEnabled: false});
+			var oFlexObjectStateSaveStub = sandbox.stub(FlexObjectState, "saveFlexObjects").resolves({change: "test"});
+			var oFlexInfo = {isResetEnabled: true};
+			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(oFlexInfo);
+			var mPropertyBag = { foo: "bar" };
+			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
+				assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
+				assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
+				assert.equal(oPersistenceWriteGetFlexInfoStub.callCount, 1, "the PersistenceWriteAPI getResetAndPublishInfo method was called");
+				assert.deepEqual(oPersistenceWriteGetFlexInfoStub.firstCall.args[0], mPropertyBag, "the PersistenceWriteAPI was called with the same arguments");
+				assert.deepEqual(oFlexInfo, FlexInfoSession.getByReference(), "session flex info is updated");
+			});
 		});
 
 		QUnit.test("when save is called with removeOtherLayerChanges", function(assert) {
@@ -294,10 +310,7 @@ sap.ui.define([
 				removeOtherLayerChanges: true
 			};
 			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
-				assert.strictEqual(
-					oChangePersistence.getDirtyChanges().length,
-					1,
-					"then dirty changes on other layers are removed"
+				assert.strictEqual(oChangePersistence.getDirtyChanges().length, 1, "then dirty changes on other layers are removed"
 				);
 			});
 		});
