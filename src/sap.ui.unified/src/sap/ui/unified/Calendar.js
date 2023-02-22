@@ -2140,15 +2140,19 @@ sap.ui.define([
 			oMonthPicker = this._getMonthPicker(),
 			iFocusedMonth = oMonthPicker.getProperty("_focusedMonth"),
 			iMonth = (iFocusedMonth || iFocusedMonth === 0) ? iFocusedMonth : oMonthPicker.getMonth(),
-			oSecondDate = oMonthPicker._iYear ?
-				new CalendarDate(oMonthPicker._iYear, iMonth - 1, 1) :
+			oSecondCalDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this.getPrimaryCalendarType());
+
+			oSecondCalDate = oMonthPicker._iYear ?
+				oSecondCalDate
+					.setYear(oMonthPicker._iYear)
+					.setMonth(iMonth - 1, 1) :
 				new CalendarDate(this._getFocusedDate().getYear(), iMonth - 1, 1);
 
 		if (_getMonths.call(this) > 1) {
-			if (this._bActionTriggeredFromSecondHeader && oSecondDate.getYear() >= CalendarUtils._minDate().getYear()) {
-				oFocusedDate.setYear(oSecondDate.getYear());
-				iMonth = oSecondDate.getMonth();
-			} else if (oFocusedDate.getYear() === CalendarUtils._maxDate().getYear() && iMonth === 11) {
+			if (this._bActionTriggeredFromSecondHeader && oSecondCalDate.getYear() >= CalendarUtils._minDate(this.getPrimaryCalendarType()).getYear()) {
+				oFocusedDate.setYear(oSecondCalDate.getYear());
+				iMonth = oSecondCalDate.getMonth();
+			} else if (oFocusedDate.getYear() === CalendarUtils._maxDate(this.getPrimaryCalendarType()).getYear() && iMonth === 11) {
 				iMonth -= 1;
 			}
 		}
