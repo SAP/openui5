@@ -265,17 +265,26 @@ sap.ui.define([
 
 		QUnit.test("when calling 'setModelPropertiesForControl'", function(assert) {
 			var fnDone = assert.async();
-			sandbox.stub(Settings, "getInstance").resolves({
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isKeyUser: function () {
+					return false;
+				},
+				isPublicFlVariantEnabled: function () {
+					return false;
+				},
 				isVariantPersonalizationEnabled: function () {
 					return false;
+				},
+				getUserId: function () {
+					return undefined;
 				}
 			});
 			this.oModel.getData()["variantMgmtId1"]._isEditable = true;
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.ok(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is initially true");
-			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[4].rename, "user variant can be renamed by default");
-			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[4].remove, "user variant can be removed by default");
-			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[4].change, "user variant can be changed by default");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[4].rename, false, "user variant cannot renamed by default");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[4].remove, false, "user variant cannot removed by default");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[4].change, false, "user variant cannot changed by default");
 			setTimeout(function() {
 				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[4].rename, "user variant can not be renamed after flp setting is received");
 				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[4].remove, "user variant can not be removed after flp setting is received");
@@ -286,46 +295,60 @@ sap.ui.define([
 			assert.notOk(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is set to false for bDesignTimeMode = true");
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.ok(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
-			Settings.getInstance.restore();
+			Settings.getInstanceOrUndef.restore();
 		});
 
 		QUnit.test("when calling 'setModelPropertiesForControl' of a PUBLIC variant", function(assert) {
 			var bIsKeyUser = false;
+			var bIsPublicFlVariantEnabled = true;
+			var sUserId;
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isKeyUser: function () {
 					return bIsKeyUser;
+				},
+				isPublicFlVariantEnabled: function () {
+					return bIsPublicFlVariantEnabled;
+				},
+				getUserId: function () {
+					return sUserId;
+				},
+				isVariantPersonalizationEnabled: function () {
+					return true;
 				}
 			});
 			this.oModel.getData()["variantMgmtId1"]._isEditable = true;
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is true");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].rename, true, "a user can renamed its own PUBLIC variant");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].remove, true, "a user can removed its own PUBLIC variant");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].change, true, "a user can changed its own PUBLIC variant");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, true, "a user can renamed another users PUBLIC variant in case the ushell user cannot be determined");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, true, "a user can removed another users PUBLIC variant in case the ushell user cannot be determined");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, true, "a user can changed another users PUBLIC variant in case the ushell user cannot be determined");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].rename, true, "a public view editor can renamed its own PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].remove, true, "a public view editor can removed its own PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].change, true, "a public view editor can changed its own PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, true, "a public view editor can renamed another users PUBLIC variant in case the user cannot be determined");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, true, "a public view editor can removed another users PUBLIC variant in case the user cannot be determined");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, true, "a public view editor can changed another users PUBLIC variant in case the user cannot be determined");
 
-			this.oModel._oUserInfoService = {
-				getUser: function () {
-					return {
-						getId: function () {
-							return "Me";
-						}
-					};
-				}
-			};
-
+			sUserId = 'OtherPerson';
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, false, "a user cannot renamed another users PUBLIC variant");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, false, "a user cannot removed another users PUBLIC variant");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, false, "a user cannot changed another users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, false, "a public view editor cannot renamed another users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, false, "a public view editor cannot removed another users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, false, "a public view editor cannot changed another users PUBLIC variant");
 
 			bIsKeyUser = true;
+			bIsPublicFlVariantEnabled = false;
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, true, "a key user can renamed another users PUBLIC variant");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, true, "a key user can removed another users PUBLIC variant");
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, true, "a eky user can changed another users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, true, "a key user can changed another users PUBLIC variant");
+
+			bIsKeyUser = false;
+			sUserId = 'Me';
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, false, "a end user cannot renamed its own users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, false, "a end user cannot removed its own users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, false, "a end user cannot changed its own users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[4].rename, true, "a end user can renamed its own users variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[4].remove, true, "a end user can removed its own users variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[4].change, true, "a end user can changed its own users variant");
+
 			Settings.getInstanceOrUndef.restore();
 		});
 
@@ -1093,6 +1116,37 @@ sap.ui.define([
 
 			var aChanges = this.oModel.collectModelChanges("variantMgmtId1", Layer.CUSTOMER);
 			assert.equal(aChanges.length, 6, "then 6 changes with mPropertyBags were created");
+		});
+
+		QUnit.test("when calling 'collectModelChanges' and public variant is enabled", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isPublicFlVariantEnabled: function () {
+					return true;
+				}
+			});
+			this.oModel.getData()["variantMgmtId1"].defaultVariant = "variant0";
+			// changes in public layer
+			this.oModel.getData()["variantMgmtId1"].variants[2].title = "test";
+			this.oModel.getData()["variantMgmtId1"].variants[2].favorite = true;
+			this.oModel.getData()["variantMgmtId1"].variants[2].visible = false;
+			// change in user layer
+			this.oModel.getData()["variantMgmtId1"].variants[4].visible = false;
+
+			var aChanges = this.oModel.collectModelChanges("variantMgmtId1", Layer.USER);
+			assert.equal(aChanges.length, 5, "then 5 changes with mPropertyBags were created");
+			aChanges.forEach(function(oChange) {
+				if (oChange.variantReference === "variant3" && oChange.changeType === "setVisible") {
+					assert.equal(oChange.layer, Layer.USER, "keep variant USER layer in setVisible change");
+				} else if (oChange.changeType === "setFavorite") {
+					assert.equal(oChange.layer, Layer.USER, "set USER layer in setFavorite change");
+				} else if (oChange.changeType === "setDefault") {
+					assert.equal(oChange.layer, Layer.USER, "set USER layer in setDefault change");
+				} else if (oChange.changeType === "setTitle") {
+					assert.equal(oChange.layer, Layer.PUBLIC, "keep variant PUBLIC layer in setTitle change");
+				} else if (oChange.variantReference === "variant1" && oChange.changeType === "setVisible") {
+					assert.equal(oChange.layer, Layer.PUBLIC, "keep variant PUBLIC layer in setVisible change");
+				}
+			});
 		});
 
 		QUnit.test("when calling 'manageVariants' in Adaptation mode once with changes and then without changes", function(assert) {

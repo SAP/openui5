@@ -228,13 +228,22 @@ sap.ui.define([
 	}
 
 	function updatePersonalVariantPropertiesWithFlpSettings(oVariant) {
-		Settings.getInstance().then(function (oSettings) {
-			if (!oSettings.isVariantPersonalizationEnabled()) {
-				oVariant.remove = false;
-				oVariant.rename = false;
-				oVariant.change = false;
-			}
-		});
+		var oSettings = Settings.getInstanceOrUndef();
+		if (oSettings && !oSettings.isVariantPersonalizationEnabled()) {
+			oVariant.remove = false;
+			oVariant.rename = false;
+			oVariant.change = false;
+		}
+	}
+
+	function updatePublicVariantPropertiesWithSettings(oVariant) {
+		var oSettings = Settings.getInstanceOrUndef();
+		var bUserIsAuthorized = oSettings &&
+			(oSettings.isKeyUser() || !oSettings.getUserId() ||
+			(oSettings.isPublicFlVariantEnabled() && oSettings.getUserId().toUpperCase() === oVariant.author.toUpperCase()));
+		oVariant.remove = bUserIsAuthorized;
+		oVariant.rename = bUserIsAuthorized;
+		oVariant.change = bUserIsAuthorized;
 	}
 
 	function isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet) {
@@ -259,6 +268,28 @@ sap.ui.define([
 		});
 	}
 
+	function initUshellServices() {
+		var oUShellContainer = Utils.getUshellContainer();
+		if (oUShellContainer) {
+			var aServicePromises = [
+				Utils.getUShellService("UserInfo"),
+				Utils.getUShellService("URLParsing"),
+				Utils.getUShellService("CrossApplicationNavigation"),
+				Utils.getUShellService("ShellNavigation")
+			];
+			return Promise.all(aServicePromises)
+				.then(function(aServices) {
+					setUShellService("UserInfo", aServices[0]);
+					setUShellService("URLParsing", aServices[1]);
+					setUShellService("CrossApplicationNavigation", aServices[2]);
+					setUShellService("ShellNavigation", aServices[3]);
+				})
+				.catch(function(vError) {
+					throw new Error("Error getting service from Unified Shell: " + vError);
+				});
+		}
+	}
+
 	/**
 	 * Constructor for a new sap.ui.fl.variants.VariantModel model.
 	 * @class Variant model implementation for JSON format.
@@ -271,10 +302,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component instance that is currently loading
 	 * @constructor
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl
 	 * @since 1.50
 	 * @alias sap.ui.fl.variants.VariantModel
-	 * @experimental Since 1.50. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	var VariantModel = JSONModel.extend("sap.ui.fl.variants.VariantModel", /** @lends sap.ui.fl.variants.VariantModel.prototype */ {
@@ -346,29 +376,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving when the VariantModel is initialized
 	 */
 	VariantModel.prototype.initialize = function() {
-		return Promise.resolve()
-			.then(function() {
-				var oUShellContainer = Utils.getUshellContainer();
-				if (oUShellContainer) {
-					var aServicePromises = [
-						Utils.getUShellService("UserInfo"),
-						Utils.getUShellService("URLParsing"),
-						Utils.getUShellService("CrossApplicationNavigation"),
-						Utils.getUShellService("ShellNavigation")
-					];
-					return Promise.all(aServicePromises)
-						.then(function(aServices) {
-							setUShellService("UserInfo", aServices[0]);
-							setUShellService("URLParsing", aServices[1]);
-							setUShellService("CrossApplicationNavigation", aServices[2]);
-							setUShellService("ShellNavigation", aServices[3]);
-						})
-						.catch(function(vError) {
-							throw new Error("Error getting service from Unified Shell: " + vError);
-						});
-				}
-				return undefined;
-			})
+		return Promise.all([Settings.getInstance(), initUshellServices()])
 			.then(function() {
 				//initialize hash data - variants map & model should exist at this point (set on constructor)
 				URLHandler.initialize({ model: this });
@@ -825,15 +833,18 @@ sap.ui.define([
 		var aModelVariants = oData.variants;
 		var aChanges = [];
 		var mPropertyBag = {};
+		var oSettings = Settings.getInstanceOrUndef();
 
 		aModelVariants.forEach(function(oVariant) {
+			// layer can be PUBLIC for setTitle, setExecuteOnSelect or setVisible, but never for setFavorite, setDefault or setContexts
+			var sLayerOfChange = oSettings && oSettings.isPublicFlVariantEnabled() && oVariant.layer === Layer.PUBLIC ? Layer.PUBLIC : sLayer;
 			if (oVariant.originalTitle !== oVariant.title) {
 				mPropertyBag = {
 					variantReference: oVariant.key,
 					changeType: "setTitle",
 					title: oVariant.title,
 					originalTitle: oVariant.originalTitle,
-					layer: sLayer
+					layer: sLayerOfChange
 				};
 				aChanges.push(mPropertyBag);
 			}
@@ -853,7 +864,7 @@ sap.ui.define([
 					changeType: "setExecuteOnSelect",
 					executeOnSelect: oVariant.executeOnSelect,
 					originalExecuteOnSelect: oVariant.originalExecuteOnSelect,
-					layer: sLayer
+					layer: sLayerOfChange
 				};
 				aChanges.push(mPropertyBag);
 			}
@@ -862,7 +873,7 @@ sap.ui.define([
 					variantReference: oVariant.key,
 					changeType: "setVisible",
 					visible: false,
-					layer: sLayer
+					layer: sLayerOfChange
 				};
 				aChanges.push(mPropertyBag);
 			}
@@ -1240,12 +1251,8 @@ sap.ui.define([
 						updatePersonalVariantPropertiesWithFlpSettings(oVariant);
 						break;
 					case Layer.PUBLIC:
-						var oUser = this._oUserInfoService && this._oUserInfoService.getUser();
-						var bUserIsAuthorized = !oUser || oUser.getId().toUpperCase() === oVariant.author.toUpperCase() || Settings.getInstanceOrUndef().isKeyUser();
-						oVariant.remove = bUserIsAuthorized;
-						oVariant.rename = bUserIsAuthorized;
-						oVariant.change = bUserIsAuthorized;
 						oVariant.sharing = this.sharing.PUBLIC;
+						updatePublicVariantPropertiesWithSettings(oVariant);
 						break;
 					default:
 						oVariant.rename = false;
