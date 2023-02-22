@@ -1272,23 +1272,6 @@ sap.ui.define([
             return this.getSortConditions() ? this.getSortConditions().sorters : [];
         };
 
-        /**
-         * Returns the fetched properties from the delegate
-         *
-         * @private
-         */
-        Chart.prototype._getPropertyData = function () {
-
-            if (!this.aFetchedProperties) {
-                //retrieve the data
-                this.aFetchedProperties = this.getControlDelegate().fetchProperties(this);
-            } else {
-                //take the already instantiated data
-                return this.aFetchedProperties;
-            }
-
-        };
-
         Chart.prototype._getTypeBtnActive = function(){
             return !!this._typeBtnActive;
         };
