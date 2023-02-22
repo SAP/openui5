@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function (
+], function(
 	DOMUtil,
 	Button,
 	jQuery,
@@ -317,7 +317,7 @@ sap.ui.define([
 			this.oDestDomElement = jQuery("<div class='child' id='second-child'></div>")
 				.appendTo("#qunit-fixture");
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when copyComputedStyle is called and css-attribute display is set to none", function(assert) {
 			this.oSrcDomElement.css({
 				display: "none"
@@ -368,10 +368,10 @@ sap.ui.define([
 			this.oPanel.remove();
 		}
 	}, function() {
-		QUnit.test("initial position", function (assert) {
+		QUnit.test("initial position", function(assert) {
 			assert.strictEqual(DOMUtil.getScrollLeft(this.oPanel), 0);
 		});
-		QUnit.test("scrolled to the most right position", function (assert) {
+		QUnit.test("scrolled to the most right position", function(assert) {
 			var iMaxScrollLeftValue = this.oPanel.scrollWidth - this.oPanel.clientWidth;
 
 			this.oPanel.scrollLeft = iMaxScrollLeftValue;
@@ -382,7 +382,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("hasHorizontalScrollBar()", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oInnerPanel = document.createElement("div");
 			this.oInnerPanel.style.width = "100px";
 			this.oInnerPanel.style.backgroundColor = "blue";
@@ -394,24 +394,65 @@ sap.ui.define([
 			this.oOuterPanel.append(this.oInnerPanel);
 			document.getElementById("qunit-fixture").append(this.oOuterPanel);
 		}
-	}, function () {
-		QUnit.test("initial", function (assert) {
+	}, function() {
+		QUnit.test("initial", function(assert) {
 			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.oOuterPanel), false);
 		});
-		QUnit.test("when there is only horizontal scrollbar", function (assert) {
+		QUnit.test("when there is only horizontal scrollbar", function(assert) {
 			this.oInnerPanel.style.width = "200px";
 			this.oInnerPanel.style.height = "100px";
 			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.oOuterPanel), true);
 		});
-		QUnit.test("when there is only vertical scrollbar", function (assert) {
+		QUnit.test("when there is only vertical scrollbar", function(assert) {
 			this.oInnerPanel.style.width = "100px";
 			this.oInnerPanel.style.height = "200px";
 			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.oOuterPanel), false);
 		});
-		QUnit.test("when both vertical and horizontal scrolling are presented", function (assert) {
+		QUnit.test("when both vertical and horizontal scrolling are presented", function(assert) {
 			this.oInnerPanel.style.width = "200px";
 			this.oInnerPanel.style.height = "200px";
 			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.oOuterPanel), true);
+		});
+		QUnit.test("when called with null as parameter value", function(assert) {
+			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(null), false);
+		});
+	});
+
+	QUnit.module("hasVerticalScrollBar()", {
+		beforeEach: function() {
+			this.oInnerPanel = document.createElement("div");
+			this.oInnerPanel.style.width = "100px";
+			this.oInnerPanel.style.height = "100px";
+			this.oInnerPanel.style.backgroundColor = "blue";
+			this.oOuterPanel = document.createElement("div");
+			this.oOuterPanel.style.width = "100px";
+			this.oOuterPanel.style.height = "100px";
+			this.oOuterPanel.style.overflow = "auto";
+			this.oOuterPanel.style.backgroundColor = "red";
+			this.oOuterPanel.append(this.oInnerPanel);
+			document.getElementById("qunit-fixture").append(this.oOuterPanel);
+		}
+	}, function() {
+		QUnit.test("initial", function(assert) {
+			assert.strictEqual(DOMUtil.hasVerticalScrollBar(this.oOuterPanel), false);
+		});
+		QUnit.test("when there is only vertical scrollbar", function(assert) {
+			this.oInnerPanel.style.width = "100px";
+			this.oInnerPanel.style.height = "200px";
+			assert.strictEqual(DOMUtil.hasVerticalScrollBar(this.oOuterPanel), true);
+		});
+		QUnit.test("when there is only horizontal scrollbar", function(assert) {
+			this.oInnerPanel.style.width = "200px";
+			this.oInnerPanel.style.height = "100px";
+			assert.strictEqual(DOMUtil.hasVerticalScrollBar(this.oOuterPanel), false);
+		});
+		QUnit.test("when both vertical and horizontal scrolling are presented", function(assert) {
+			this.oInnerPanel.style.width = "200px";
+			this.oInnerPanel.style.height = "200px";
+			assert.strictEqual(DOMUtil.hasVerticalScrollBar(this.oOuterPanel), true);
+		});
+		QUnit.test("when called with null as parameter value", function(assert) {
+			assert.strictEqual(DOMUtil.hasVerticalScrollBar(null), false);
 		});
 	});
 
@@ -436,7 +477,7 @@ sap.ui.define([
 			document.getElementById("qunit-fixture").append(this.oContainer);
 		}
 	}, function() {
-		QUnit.test("scrollTop/scrollLeft remain on the same positions", function (assert) {
+		QUnit.test("scrollTop/scrollLeft remain on the same positions", function(assert) {
 			this.oChild.scrollTop = 300;
 			this.oChild.scrollLeft = 200;
 			DOMUtil.appendChild(this.oContainer, this.oChild);
@@ -546,8 +587,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("contains()", function () {
-		QUnit.test("when nodes are real relatives", function (assert) {
+	QUnit.module("contains()", function() {
+		QUnit.test("when nodes are real relatives", function(assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
 
 			// Create Node1
@@ -562,7 +603,7 @@ sap.ui.define([
 			assert.strictEqual(DOMUtil.contains("node1", oNode2), true);
 		});
 
-		QUnit.test("when provided id doesn't exist", function (assert) {
+		QUnit.test("when provided id doesn't exist", function(assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
 			var oNode = document.createElement("div");
 			oFixtureNode.appendChild(oNode);
@@ -570,7 +611,7 @@ sap.ui.define([
 			assert.strictEqual(DOMUtil.contains("unknown-node-id", oNode), false);
 		});
 
-		QUnit.test("when both nodes are siblings", function (assert) {
+		QUnit.test("when both nodes are siblings", function(assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
 
 			// Create Node1
@@ -587,8 +628,8 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("setDraggable()", function () {
-		QUnit.test("basic functionality", function (assert) {
+	QUnit.module("setDraggable()", function() {
+		QUnit.test("basic functionality", function(assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
 			var oNode = document.createElement("div");
 			oFixtureNode.appendChild(oNode);
@@ -600,8 +641,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("getDraggable()", function () {
-		QUnit.test("check boolean result", function (assert) {
+	QUnit.module("getDraggable()", function() {
+		QUnit.test("check boolean result", function(assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
 			var oNode = document.createElement("div");
 			oFixtureNode.appendChild(oNode);
@@ -612,7 +653,7 @@ sap.ui.define([
 			assert.strictEqual(DOMUtil.getDraggable(oNode), true);
 		});
 
-		QUnit.test("check undefined if there is no attribute defined", function (assert) {
+		QUnit.test("check undefined if there is no attribute defined", function(assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
 			var oNode = document.createElement("div");
 			oFixtureNode.appendChild(oNode);
@@ -621,8 +662,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("syncScroll()", function () {
-		QUnit.test("basic functionality", function (assert) {
+	QUnit.module("syncScroll()", function() {
+		QUnit.test("basic functionality", function(assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
 
 			function createScrollableBlock() {

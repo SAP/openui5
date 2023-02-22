@@ -149,10 +149,7 @@ sap.ui.define([
 		return zIndex;
 	};
 
-	/**
-	 * @private
-	 */
-	DOMUtil._getElementDimensions = function (oDomRef, sMeasure, aDirection) {
+	DOMUtil._getElementDimensions = function(oDomRef, sMeasure, aDirection) {
 		var oRelevantDomRef = oDomRef[0] || oDomRef;
 		var iOffsetWidth = oRelevantDomRef["offset" + sMeasure];
 		var iValue = 0;
@@ -164,17 +161,11 @@ sap.ui.define([
 		return iOffsetWidth + iValue;
 	};
 
-	/**
-	 * @private
-	 */
-	DOMUtil._getElementWidth = function (oDomRef) {
+	DOMUtil._getElementWidth = function(oDomRef) {
 		return DOMUtil._getElementDimensions(oDomRef, "Width", ["Right", "Left"]);
 	};
 
-	/**
-	 * @private
-	 */
-	DOMUtil._getElementHeight = function (oDomRef) {
+	DOMUtil._getElementHeight = function(oDomRef) {
 		return DOMUtil._getElementDimensions(oDomRef, "Height", ["Top", "Bottom"]);
 	};
 
@@ -184,8 +175,11 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if vertical scrollbar is available on DOM Element.
 	 */
 	DOMUtil.hasVerticalScrollBar = function(oDomRef) {
-		var bOverflowYScroll = window.getComputedStyle(oDomRef)["overflow-y"] === "auto" || window.getComputedStyle(oDomRef)["overflow-y"] === "scroll";
-		return bOverflowYScroll && oDomRef.scrollHeight > DOMUtil._getElementHeight(oDomRef);
+		if (oDomRef) {
+			var bOverflowYScroll = window.getComputedStyle(oDomRef)["overflow-y"] === "auto" || window.getComputedStyle(oDomRef)["overflow-y"] === "scroll";
+			return bOverflowYScroll && oDomRef.scrollHeight > DOMUtil._getElementHeight(oDomRef);
+		}
+		return false;
 	};
 
 	/**
@@ -193,9 +187,12 @@ sap.ui.define([
 	 * @param {HTMLElement} oDomRef - DOM Element
 	 * @returns {boolean} <code>true</code> if horizontal scrollbar is available on DOM Element
 	 */
-	DOMUtil.hasHorizontalScrollBar = function (oDomRef) {
-		var bOverflowXScroll = window.getComputedStyle(oDomRef)["overflow-x"] === "auto" || window.getComputedStyle(oDomRef)["overflow-x"] === "scroll";
-		return bOverflowXScroll && oDomRef.scrollWidth > DOMUtil._getElementWidth(oDomRef);
+	DOMUtil.hasHorizontalScrollBar = function(oDomRef) {
+		if (oDomRef) {
+			var bOverflowXScroll = window.getComputedStyle(oDomRef)["overflow-x"] === "auto" || window.getComputedStyle(oDomRef)["overflow-x"] === "scroll";
+			return bOverflowXScroll && oDomRef.scrollWidth > DOMUtil._getElementWidth(oDomRef);
+		}
+		return false;
 	};
 
 	/**
@@ -267,6 +264,7 @@ sap.ui.define([
 				visible: this.isVisible(oDomRef)
 			};
 		}
+		return undefined;
 	};
 
 	DOMUtil.syncScroll = function(oSourceDom, oTargetDom) {
@@ -332,7 +330,7 @@ sap.ui.define([
 	 * @param {HTMLElement} oNode - Target node to add the attribute to
 	 * @param {boolean} bValue - Attribute value
 	 */
-	DOMUtil.setDraggable = function (oNode, bValue) {
+	DOMUtil.setDraggable = function(oNode, bValue) {
 		oNode.setAttribute("draggable", bValue);
 	};
 
@@ -341,14 +339,14 @@ sap.ui.define([
 	 * @param {HTMLElement} oNode - Target node to set the draggable attribute on
 	 * @returns {boolean|undefined} undefined when draggable is not set to the node
 	 */
-	DOMUtil.getDraggable = function (oNode) {
+	DOMUtil.getDraggable = function(oNode) {
 		switch (oNode.getAttribute("draggable")) {
 			case "true":
 				return true;
 			case "false":
 				return false;
 			default:
-				return;
+				return undefined;
 		}
 	};
 
@@ -444,7 +442,7 @@ sap.ui.define([
 	 * @param {HTMLElement} oTargetNode - Node to look for in a potential parent node
 	 * @returns {boolean} <code>true</code> if a potential parent contains the target node
 	 */
-	DOMUtil.contains = function (sId, oTargetNode) {
+	DOMUtil.contains = function(sId, oTargetNode) {
 		var oNode = document.getElementById(sId);
 		return !!oNode && oNode.contains(oTargetNode);
 	};
@@ -454,7 +452,7 @@ sap.ui.define([
 	 * @param {HTMLElement} oTargetNode - Target node to whom child has to be appended
 	 * @param {HTMLElement} oChildNode - Child node to be appended to specified target
 	 */
-	DOMUtil.appendChild = function (oTargetNode, oChildNode) {
+	DOMUtil.appendChild = function(oTargetNode, oChildNode) {
 		var iScrollTop = oChildNode.scrollTop;
 		var iScrollLeft = oChildNode.scrollLeft;
 		oTargetNode.appendChild(oChildNode);
