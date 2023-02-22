@@ -4,8 +4,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/Utils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
@@ -15,8 +13,6 @@ sap.ui.define([
 	Log,
 	XMLView,
 	FlexUtils,
-	Settings,
-	ManifestUtils,
 	ExtUtils,
 	ABAPAccess,
 	ABAPExtensibilityVariantFactory,
@@ -76,6 +72,8 @@ sap.ui.define([
 		oGetTextStub: null,
 		oServer: null,
 		beforeEach: function() {
+			ABAPAccess.reset();
+			ABAPExtensibilityVariantFactory.reset();
 			oSandbox.stub(ExtUtils, "getText").callsFake(function(sTextKey) {
 				return sTextKey;
 			});
@@ -136,37 +134,32 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("isExtensibilityEnabled with empty string as component class name", function(assert) {
+		QUnit.test("isExtensibilityEnabled with navigation URI", function(assert) {
 			var done = assert.async();
-			oSandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("");
-
-			return ABAPAccess.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
-				assert.equal(bExtensibilityEnabled, false, "the return value is false");
-				done();
-			});
-		});
-
-		QUnit.test("isExtensibilityEnabled with undefined as component class name", function(assert) {
-			var done = assert.async();
-			oSandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns();
-
-			return ABAPAccess.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
-				assert.equal(bExtensibilityEnabled, false, "the return value is false");
-				done();
-			});
-		});
-
-		QUnit.test("isExtensibilityEnabled with undefined as component class name", function(assert) {
-			var done = assert.async();
-			oSandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("name");
-			oSandbox.stub(Settings, "getInstance").resolves({
-				isAtoEnabled: function() {
-					return true;
+			var oExtensibilityVariant = {
+				getNavigationUri: function() {
+					return Promise.resolve("validUri");
 				}
-			});
+			};
+			oSandbox.stub(ABAPExtensibilityVariantFactory, "getInstance").resolves(oExtensibilityVariant);
 
 			return ABAPAccess.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
-				assert.equal(bExtensibilityEnabled, true, "the function returns the value if isAtoEnabled");
+				assert.equal(bExtensibilityEnabled, true, "the return value is true");
+				done();
+			});
+		});
+
+		QUnit.test("isExtensibilityEnabled without navigation URI", function(assert) {
+			var done = assert.async();
+			var oExtensibilityVariant = {
+				getNavigationUri: function() {
+					return Promise.resolve(null);
+				}
+			};
+			oSandbox.stub(ABAPExtensibilityVariantFactory, "getInstance").resolves(oExtensibilityVariant);
+
+			return ABAPAccess.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
+				assert.equal(bExtensibilityEnabled, false, "the return value is false");
 				done();
 			});
 		});
