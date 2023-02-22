@@ -1,15 +1,15 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/library'],
-	function(Renderer, InputBaseRenderer, coreLibrary) {
+sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/library'],
+	function(Renderer, DateTimeFieldRenderer, coreLibrary) {
 	"use strict";
 
 	/**
 	 * DatePicker renderer.
 	 * @namespace
 	 */
-	var DatePickerRenderer = Renderer.extend(InputBaseRenderer);
+	var DatePickerRenderer = Renderer.extend(DateTimeFieldRenderer);
 	DatePickerRenderer.apiVersion = 4;
 
 	/**
@@ -42,7 +42,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 	};
 
 	DatePickerRenderer.getAccessibilityState = function(oDP) {
-		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
+		var mAccessibilityState = DateTimeFieldRenderer.getAccessibilityState.apply(this, arguments);
 
 		mAccessibilityState["roledescription"] = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
 		mAccessibilityState["autocomplete"] = "none";
@@ -68,7 +68,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		if (oControl.getHideInput()) {
 			oRm.class("sapMDatePickerHiddenInput");
 		}
-		InputBaseRenderer.addOuterClasses.apply(this, arguments);
+		DateTimeFieldRenderer.addOuterClasses.apply(this, arguments);
 	};
 
 	return DatePickerRenderer;

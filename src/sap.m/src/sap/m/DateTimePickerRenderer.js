@@ -4,14 +4,14 @@
 sap.ui.define([
 	'sap/ui/core/Renderer',
 	'./DatePickerRenderer',
-	'./InputBaseRenderer',
+	'./DateTimeFieldRenderer',
 	'sap/ui/core/library',
 	'sap/ui/core/date/UI5Date'
 ],
 	function(
 		Renderer,
 		DatePickerRenderer,
-		InputBaseRenderer,
+		DateTimeFieldRenderer,
 		coreLibrary,
 		UI5Date
 ) {
@@ -35,7 +35,7 @@ sap.ui.define([
 
 	DateTimePickerRenderer.getDescribedByAnnouncement = function(oDP) {
 
-		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);
+		var sBaseAnnouncement = DateTimeFieldRenderer.getDescribedByAnnouncement.apply(this, arguments);
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATETIMEPICKER_TYPE") + " " + sBaseAnnouncement;
 
 	};
@@ -86,7 +86,7 @@ sap.ui.define([
 	};
 
 	DateTimePickerRenderer.getAriaDescribedBy = function(oControl) {
-		var sDescribedBy = InputBaseRenderer.getAriaDescribedBy.apply(this, arguments);
+		var sDescribedBy = DateTimeFieldRenderer.getAriaDescribedBy.apply(this, arguments);
 
 		if (oControl._getShowTimezone()) {
 			sDescribedBy += " " + oControl.getId() + "-timezoneID";

@@ -696,6 +696,14 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("Default senatic accessible role gets used", function(assert) {
+		// Prepare
+		var oDTP = new DateTimePicker();
+
+		// Assert
+		assert.strictEqual(oDTP.getRenderer().getAriaRole() , "", "The role attribute is empty");
+	});
+
 	QUnit.module("Calendar and TimePicker");
 
 	QUnit.test("Open picker on small screen", function(assert) {

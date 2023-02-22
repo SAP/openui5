@@ -98,6 +98,14 @@ sap.ui.define(
 				// Clean up
 				oDTF.destroy();
 			});
+
+			QUnit.test("Default semantic accessibility role is used", function(assert) {
+				// Arrange
+				var oDTF = new DateTimeField();
+
+				// Assert
+				assert.strictEqual(oDTF.getRenderer().getAriaRole() , "", "The role attribute is empty");
+			});
 		});
 	}
 );

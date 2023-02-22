@@ -1765,6 +1765,14 @@ sap.ui.define([
 		assert.ok(oPicker.$().attr("aria-labelledby").indexOf(sPlaceholderId) !== -1, "Placeholder reference can be found in the DOM");
 	});
 
+	QUnit.test("Default senatic accessible role gets used", function(assert) {
+		// Prepare
+		var oTP = new TimePicker();
+
+		// Assert
+		assert.strictEqual(oTP.getRenderer().getAriaRole() , "", "The role attribute is empty");
+	});
+
 	QUnit.module("MaskInput integration", {
 		beforeEach : function() {
 			this.clock = sinon.useFakeTimers();

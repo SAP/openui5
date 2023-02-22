@@ -979,6 +979,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Default senatic accessible role gets used", function(assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection();
+
+		// Assert
+		assert.strictEqual(oDRS.getRenderer().getAriaRole() , "", "The role attribute is empty");
+	});
+
 	QUnit.module("binding type DateInterval", {
 		beforeEach: function() {
 			this.model = new JSONModel({
