@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/Calendar",
+	"sap/ui/core/Configuration",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
@@ -24,6 +25,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	Calendar,
+	Configuration,
 	DateRange,
 	DateTypeRange,
 	CalendarLegend,
@@ -43,6 +45,7 @@ sap.ui.define([
 	oCore,
 	UI5Date
 	) {
+
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
 	oCore.getConfiguration().setLanguage("en_US");
@@ -2898,6 +2901,43 @@ sap.ui.define([
 		assert.equal(dummyCellSpy.callCount, 1, "The function wasn't called when calendar type is Islamic and showWeekNumber=false");
 		// clean up
 		oCalM.destroy();
+	});
+
+	QUnit.test("Islamic calendar year stays consistent", function(assert) {
+		// prepare
+		var oConfigStub = sinon.stub(Configuration, 'getCalendarType').returns("Islamic"),
+			oInitialDate = UI5Date.getInstance(2023, 7, 10),
+			oFocusedCalendarDate = CalendarDate.fromLocalJSDate(oInitialDate, CalendarType.Islamic),
+			oCal = new Calendar("CalTypeTest", {
+				months: 2,
+				initialFocusedDate: oInitialDate,
+				primaryCalendarType: CalendarType.Islamic
+			}),
+			oFocusDateSpy = this.spy(oCal, "_focusDate"),
+			oUi5DateOriginalGetInstance = UI5Date.getInstance,
+			oCurrentDateStub = sinon.stub(UI5Date, 'getInstance'),
+			sDateString;
+
+		oCurrentDateStub.callsFake(function () {
+		if (arguments.length > 0) {
+				return oUi5DateOriginalGetInstance.apply(UI5Date, arguments);
+			} else {
+				return oInitialDate;
+			}
+		});
+
+		this.stub(oCal, "_closePickers").returns(oCal);
+
+		oCal._getMonthPicker()._iYear = oFocusedCalendarDate.getYear();
+		oCal._bActionTriggeredFromSecondHeader = true;
+		// act
+		oCal._selectMonth();
+		sDateString = oFocusDateSpy.getCall(0).args[0].toString();
+		assert.strictEqual(sDateString, 'Islamic: 1444/12/23');
+
+		// clean up
+		oConfigStub.restore();
+		oCurrentDateStub.restore();
 	});
 
 	//================================================================================
