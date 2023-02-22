@@ -73,7 +73,13 @@ sap.ui.define([
 				getModel: function(sId) {
 					if (sId === "i18n") {
 						return {
-							getResourceBundle: function() {}
+							getResourceBundle: function() {
+								return {
+									getText: function() {
+										return "No roles selected.";
+									}
+								};
+							}
 						};
 					}
 					return new JSONModel();
@@ -82,6 +88,7 @@ sap.ui.define([
 
 			oController.onInit();
 			assert.strictEqual(oConnectorCall.callCount, 0, "then the back end request was not sent");
+			assert.strictEqual(oController.oSelectedContextsModel.getProperty("/noDataText"), undefined, "then noDataText in oSelectedContextsModel is not set");
 		});
 
 		QUnit.test("when rendering component with one pre-selected role, restricted radio button is selected", function (assert) {
@@ -94,10 +101,20 @@ sap.ui.define([
 					return {role: ["TEST"]};
 				}
 			});
-			oController.oSelectedContextsModel = new JSONModel({selected: ["TEST"]});
+			var sText = "No roles selected.";
+			oController.oI18n = {
+				getText: function() {
+					return sText;
+				}
+			};
+			oController.oSelectedContextsModel = new JSONModel({
+				selected: ["TEST"],
+				noDataText: undefined
+			});
 
 			return oController.onBeforeRendering().then(function() {
 				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
+				assert.strictEqual(oController.oSelectedContextsModel.getProperty("/noDataText"), sText, "then oSelectedContextsModel has a text");
 			});
 		});
 
@@ -111,11 +128,21 @@ sap.ui.define([
 					return {role: []};
 				}
 			});
-			oController.oSelectedContextsModel = new JSONModel({selected: []});
+			var sText = "No roles selected.";
+			oController.oI18n = {
+				getText: function() {
+					return sText;
+				}
+			};
+			oController.oSelectedContextsModel = new JSONModel({
+				selected: [],
+				noDataText: undefined
+			});
 
 			return oController.onBeforeRendering().then(function() {
 				assert.strictEqual(oConnectorCall.callCount, 0, "then the back end request was not sent");
 				assert.strictEqual(oRadioButtonGroup.getSelectedIndex(), 0, "then public radio button is selected");
+				assert.strictEqual(oController.oSelectedContextsModel.getProperty("/noDataText"), sText, "then oSelectedContextsModel has a text");
 			});
 		});
 

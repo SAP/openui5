@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/variants/context/controller/ContextVisibility.controller",
 	"sap/ui/fl/variants/context/Component",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/m/RadioButton",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ContextVisibilityController,
 	ContextVisibilityComponent,
 	WriteStorage,
 	RadioButton,
@@ -31,12 +29,22 @@ sap.ui.define([
 			this.oComp = new ContextVisibilityComponent("test");
 			this.oComp.setSelectedContexts({role: []});
 			sandbox.stub(WriteStorage, "loadContextDescriptions").resolves({});
+			// Ensure view is fully loaded
+			return this.oComp.getRootControl().oAsyncState.promise;
 		},
 		afterEach: function () {
 			sandbox.restore();
 			this.oComp.destroy();
 		}
 	}, function() {
+		QUnit.test("when the component is initialized", function(assert) {
+			assert.ok(this.oComp.setEmptyListTextWithAdvice, "then there is a setter for property 'noDataText'");
+			assert.notOk(this.oComp.getModel("selectedContexts").getProperty("/noDataText"), "the property is empty");
+			var sExpectedText = this.oComp.getRootControl().getController().oI18n.getText("NO_SELECTED_ROLES_WITH_ADVICE");
+			this.oComp.setEmptyListTextWithAdvice();
+			assert.strictEqual(this.oComp.getModel("selectedContexts").getProperty("/noDataText"), sExpectedText, "after function call the correct text is set");
+		});
+
 		QUnit.test("when getting selected contexts", function(assert) {
 			assert.equal(this.oComp.getSelectedContexts().role.length, 0, "then selected contexts array is empty");
 		});

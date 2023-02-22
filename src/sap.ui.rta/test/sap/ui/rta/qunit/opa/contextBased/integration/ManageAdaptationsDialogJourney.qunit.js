@@ -5,7 +5,6 @@ sap.ui.define(
 		"sap/ui/test/Opa5",
 		"./pages/contextBased/ManageAdaptationsDialog",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
-		"./pages/contextBased/EditAdaptationDialog",
 		"./pages/contextVisibility/ContextsDialog",
 		"./pages/contextVisibility/ContextSharingVisibilityFragment",
 		"./pages/AppPage",
@@ -25,16 +24,15 @@ sap.ui.define(
 			autoWait: true
 		});
 
-		/*var testData = {
-			newAdaptation: {
-				title: "New App Context Title",
-				description: "New App Context description"
-			},
+		/* var testData = {
 			editAdaptation: {
-				title: "Edited app context title",
-				description: "Edited app context description"
+				title: "England Admin",
+				changedTitle: "France Admin",
+				priority: "Insert after 'DLM Copilot' (Priority '3')",
+				description: "Edited app context description",
+				role: "INVENTORY_MANAGER"
 			}
-		};*/
+		}; */
 		var oDropBefore = { before: true };
 		var oDropAfter = { after: true };
 
@@ -60,7 +58,7 @@ sap.ui.define(
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeManageContextBasedAdaptationDialogIsOpend();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeSaveButtonEnabled(false);
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeAllExpectedColumnHeaders(6);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeAllExpectedColumnHeaders(5);
 			testLanguageDependentDateFormat(Then, "May 25, 2022", 0, "createdBy");
 			testLanguageDependentDateFormat(Then, "Sep 7, 2022", 1, "changedAt");
 		});
@@ -147,6 +145,25 @@ sap.ui.define(
 			Then.iTeardownMyApp();
 		});
 
+		/* opaTest("Should edit app context title", function(Give, When, Then) {
+			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
+			When.onTheManageAdaptationsDialogPage.iSelectAdaptation(testData.editAdaptation.title);
+			When.onTheManageAdaptationsDialogPage.iClickOnActionMenuOfAdaptationWithPriority(0);
+			When.onTheManageAdaptationsDialogPage.iClickOnEditActionButton();
+			Then.onTheAddAdaptationDialogPage.iShouldSeeEditAdaptationDialog();
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextSharingVisibilityContainer();
+			Then.onTheAddAdaptationDialogPage.iShouldSeeDialogTitle("Edit Adaptation");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle(testData.editAdaptation.title);
+			Then.onTheAddAdaptationDialogPage.iShouldSeeSelectedContextBasedAdaptationPriority(testData.editAdaptation.priority);
+			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRole(testData.editAdaptation.role);
+			Then.onTheContextSharingVisibilityFragmentPage.iShouldNotSeeMessageStrip();
+			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
+
+			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle(testData.editAdaptation.changedTitle);
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle(testData.editAdaptation.changedTitle);
+			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(true);
+		}); */
+
 		/**
 		 * disabled tests because the used features are part of another BLI and still need to be implemented
 
@@ -166,26 +183,6 @@ sap.ui.define(
 
 			When.onTheAddAdaptationDialogPage.iClickOnSave();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeAdaptationAtPosition(4, testData.newAdaptation.title);
-		});
-
-		opaTest("Should edit app context title and description", function(Give, When, Then) {
-			When.onTheManageAdaptationsDialogPage.iClickOnActionMenuOfAdaptationWithTitle(testData.newAdaptation.title);
-			When.onTheManageAdaptationsDialogPage.iClickOnEditActionButton();
-			Then.onTheEditAdaptationDialogPage.iShouldSeeEditAdaptationDialog();
-
-			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRoles("SAP_ACH_ADMIN");
-			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRoles("MW_ADMIN");
-
-			Then.onTheEditAdaptationDialogPage.iShouldSeeAdaptationTitle(testData.newAdaptation.title);
-			When.onTheEditAdaptationDialogPage.iEnterAdaptationTitle(testData.editAdaptation.title);
-			Then.onTheEditAdaptationDialogPage.iShouldSeeAdaptationTitle(testData.editAdaptation.title);
-
-			Then.onTheEditAdaptationDialogPage.iShouldSeeAdaptationDescription(testData.newAdaptation.description);
-			When.onTheEditAdaptationDialogPage.iEnterAdaptationDescription(testData.editAdaptation.description);
-			Then.onTheEditAdaptationDialogPage.iShouldSeeAdaptationDescription(testData.editAdaptation.description);
-
-			When.onTheEditAdaptationDialogPage.iClickOnEdit();
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeAdaptationAtPosition(4, testData.editAdaptation.title);
 		});
 
 		opaTest("Should delete penultimate app context out of five app contexts", function(Give, When, Then) {

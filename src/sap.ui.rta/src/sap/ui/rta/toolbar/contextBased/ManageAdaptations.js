@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/m/ColumnListItem",
 	"sap/ui/rta/Utils",
+	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
@@ -24,6 +25,7 @@ function(
 	ContextBasedAdaptationsAPI,
 	ColumnListItem,
 	Utils,
+	SaveAsAdaptation,
 	Filter,
 	FilterOperator,
 	JSONModel,
@@ -96,7 +98,7 @@ function(
 			this._oControlConfigurationModel = new JSONModel({isTableItemSelected: false});
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");
 			this._oManageAdaptationDialog.setModel(this._oControlConfigurationModel, "controlConfiguration");
-			initializeRanks(this.oAdaptationsModel);
+			this.oAdaptationsModel.initializeRanks();
 			getAdaptationsTable.call(this).attachSelectionChange(onSelectionChange.bind(this));
 			return this._oManageAdaptationDialog.open();
 		}.bind(this)
@@ -209,14 +211,6 @@ function(
 		oModel.refresh(true);
 	}
 
-	function initializeRanks(oModel) {
-		var aContexts = oModel.getProperty("/adaptations") || [];
-		aContexts.forEach(function(oContext, iIndex) {
-			oContext.rank = iIndex + 1;
-		});
-		oModel.setProperty("/adaptations", aContexts);
-	}
-
 	function moveSelectedItem(sDirection) {
 		var oTable = getAdaptationsTable.call(this);
 		var oSelectedItem = oTable.getSelectedItem(0);
@@ -277,7 +271,7 @@ function(
 		// set the rank property and update the model to refresh the bindings
 		this.oAdaptationsModel.setProperty("rank", iNewRank, oDraggedItemContext);
 		sortByRank(this.oAdaptationsModel);
-		initializeRanks(this.oAdaptationsModel);
+		this.oAdaptationsModel.initializeRanks();
 		enableSaveButton.call(this, true);
 	}
 

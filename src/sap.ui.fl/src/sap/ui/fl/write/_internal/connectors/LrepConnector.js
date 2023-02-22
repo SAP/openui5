@@ -57,6 +57,8 @@ sap.ui.define([
 		MANI_FIRST_SUPPORTED: "/sap/bc/ui2/app_index/ui5_app_mani_first_supported"
 	};
 
+	var ADAPTATIONS_SEGMENTATION = "/adaptations/";
+
 	/**
 	 * Write flex data into LRep back end or update an existing flex data stored in LRep back end
 	 *
@@ -87,9 +89,7 @@ sap.ui.define([
 		} else if (mPropertyBag.isCondensingEnabled) {
 			sRoute = ROUTES.CONDENSE;
 		} else if (mPropertyBag.isContextBasedAdaptationEnabled) {
-			sRoute = ROUTES.CONTEXT_BASED_ADAPTATION + mPropertyBag.reference + "/adaptations/";
-			//delete reference is needed, otherwise the reference occures twice in the route (is added again to the route in InitialUtils.getUrl())
-			delete mPropertyBag.reference;
+			sRoute = ROUTES.CONTEXT_BASED_ADAPTATION + mPropertyBag.appId + ADAPTATIONS_SEGMENTATION;
 		} else {
 			sRoute = ROUTES.CHANGES;
 		}
@@ -616,11 +616,17 @@ sap.ui.define([
 				mPropertyBag.method = "PUT";
 				return _doWrite(mPropertyBag);
 			},
+			update: function(mPropertyBag) {
+				mPropertyBag.isContextBasedAdaptationEnabled = true;
+				mPropertyBag.method = "PUT";
+				mPropertyBag.reference = mPropertyBag.adaptationId;
+				return _doWrite(mPropertyBag);
+			},
 			load: function(mPropertyBag) {
 				var aParameters = ["version"];
 				var mParameters = _pick(mPropertyBag, aParameters);
 				InitialConnector._addClientInfo(mParameters);
-				mPropertyBag.reference = mPropertyBag.reference + "/adaptations/";
+				mPropertyBag.reference = mPropertyBag.appId + ADAPTATIONS_SEGMENTATION;
 				var sDataUrl = InitialUtils.getUrl(ROUTES.CONTEXT_BASED_ADAPTATION, mPropertyBag, mParameters);
 				return InitialUtils.sendRequest(sDataUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
 					return oResult.response;

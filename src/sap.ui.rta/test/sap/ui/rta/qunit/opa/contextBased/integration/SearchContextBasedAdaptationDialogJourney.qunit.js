@@ -5,7 +5,6 @@ sap.ui.define(
 		"sap/ui/test/Opa5",
 		"./pages/contextBased/ManageAdaptationsDialog",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
-		"./pages/contextBased/EditAdaptationDialog",
 		"./pages/contextVisibility/ContextsDialog",
 		"./pages/contextVisibility/ContextSharingVisibilityFragment",
 		"./pages/AppPage"
