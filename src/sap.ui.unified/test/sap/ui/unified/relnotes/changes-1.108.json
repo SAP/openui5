@@ -95,5 +95,21 @@
         ]
       }
     ]
+  },
+  "1.108.5": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "69e17465e3c96da54fc2c3ef918ec9ef659c4f34",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004860722022"
+          }
+        ]
+      }
+    ]
   }
 }

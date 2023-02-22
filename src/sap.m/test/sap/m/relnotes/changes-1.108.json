@@ -607,5 +607,54 @@
         ]
       }
     ]
+  },
+  "1.108.5": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "69e17465e3c96da54fc2c3ef918ec9ef659c4f34",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004860722022"
+          }
+        ]
+      },
+      {
+        "id": "40fa9401416e063082ced090573bc531ec290c4d",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Fixed focusing item in hidden page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001259822023"
+          }
+        ]
+      },
+      {
+        "id": "82e05622fa9b5ca30c67ecf82848ab29cadc575f",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: adjust date ranges",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380031882"
+          }
+        ]
+      },
+      {
+        "id": "3f7fa76311625a561f1c19e19a8fee8071269cf0",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Add ARIA label to the items list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007520392022"
+          }
+        ]
+      }
+    ]
   }
 }

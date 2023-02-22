@@ -315,5 +315,32 @@
         ]
       }
     ]
+  },
+  "1.108.5": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "c9604eb1e54f0b869ac10082c86ad8b7e8bdceab",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding: Preliminary context in constructor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280184236"
+          }
+        ]
+      },
+      {
+        "id": "a23fa86d5af8e0c5d54b90def9ced08b68ccf24b",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Consider AppCacheBuster",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380026114"
+          }
+        ]
+      }
+    ]
   }
 }
