@@ -272,6 +272,10 @@ sap.ui.define([
 	function reportInvalidProperty(sMessage, oAdditionalInfo) {
 		// TODO: warning is logged momentarily so that consumers can adapt to have valid property definitions
 		//  valid use case would be to throw an error
+		if (Log.getLevel() < Log.WARNING) {
+			return; // Avoid stringification overhead if logging is not required.
+		}
+
 		var sAdditionalInfo = stringifyPlainObject(oAdditionalInfo);
 		Log.warning("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
 	}
