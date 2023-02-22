@@ -263,7 +263,7 @@ sap.ui.define([
 	 * @param {string} vParameters.alias the system alias which will be used as the origin
 	 * @param {string} vParameters.system the system id which will be used as the origin
 	 * @param {string} vParameters.client the system's client
-	 * @param {string} vParameters.force setting this flag to 'true' overrides the already existing origin
+	 * @param {boolean} vParameters.force setting this flag to 'true' overrides the already existing origin
 	 *
 	 * @public
 	 * @since 1.30.7
