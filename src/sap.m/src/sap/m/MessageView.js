@@ -416,6 +416,8 @@ sap.ui.define([
 
 			// TODO: adopt this to NavContainer's public API once a parameter for back navigation transition name is available
 			this._navContainer._pageStack[this._navContainer._pageStack.length - 1].transition = "slide";
+		} else if (aListItems.length === 0) {
+			this._navContainer.backToTop();
 		}
 
 		// Bind automatically to the MessageModel if no items are bound

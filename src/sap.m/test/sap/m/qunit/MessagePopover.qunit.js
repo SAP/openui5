@@ -639,6 +639,56 @@ sap.ui.define([
 		Core.getMessageManager().removeAllMessages();
 	});
 
+	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", function (assert) {
+		var oMessagePopover = new MessagePopover();
+		var fnAddMessage = function() {
+			Core.getMessageManager().addMessages(
+				new Message({
+					message: "Something wrong happend!",
+					description: "Some Description",
+					type: sap.ui.core.MessageType.Warning,
+					processor: new JSONModel()
+				})
+			);
+		};
+		var fnClearMessages = function() {
+			Core.getMessageManager().removeAllMessages();
+		};
+
+		var oBtn = new Button({
+			press: function (oEvent) {
+				oMessagePopover.openBy(oEvent.oSource);
+			}
+		}).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		fnClearMessages();
+		oBtn.firePress();
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		// store pages
+		var oMessagePopoverCurrentPage = oMessagePopover._oMessageView._navContainer.getCurrentPage();
+		assert.strictEqual(oMessagePopover._oMessageView._listPage, oMessagePopoverCurrentPage, "List Page should be visible");
+
+		fnAddMessage();
+		Core.applyChanges();
+
+		// store pages
+		oMessagePopoverCurrentPage = oMessagePopover._oMessageView._navContainer.getCurrentPage();
+		assert.strictEqual(oMessagePopover._oMessageView._detailsPage, oMessagePopoverCurrentPage, "Details Page should be visible");
+
+		fnClearMessages();
+		Core.applyChanges();
+
+		// store pages
+		oMessagePopoverCurrentPage = oMessagePopover._oMessageView._navContainer.getCurrentPage();
+		assert.strictEqual(oMessagePopover._oMessageView._listPage, oMessagePopoverCurrentPage, "List Page should be visible");
+
+		oBtn.destroy();
+		oMessagePopover.destroy();
+	});
+
 	QUnit.test("Filtering after resize should not reset the height of the Popover", function(assert) {
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);

@@ -606,6 +606,48 @@ sap.ui.define([
 		assert.equal(this.oMessageView.getItems().length, 1, "The message should be one - from MessageManager");
 	});
 
+	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", function (assert) {
+		var oMessageView = new MessageView().placeAt("qunit-fixture");
+		var fnAddMessage = function() {
+			Core.getMessageManager().addMessages(
+				new Message({
+					message: "Something wrong happend!",
+					description: "Some Description",
+					type: sap.ui.core.MessageType.Warning,
+					processor: new JSONModel()
+				})
+			);
+		};
+		var fnClearMessages = function() {
+			Core.getMessageManager().removeAllMessages();
+		};
+
+		fnClearMessages();
+
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		// store pages
+		var oMessageViewCurrentPage = oMessageView._navContainer.getCurrentPage();
+		assert.strictEqual(oMessageView._listPage, oMessageViewCurrentPage, "List Page should be visible");
+
+		fnAddMessage();
+		Core.applyChanges();
+
+		// store pages
+		oMessageViewCurrentPage = oMessageView._navContainer.getCurrentPage();
+		assert.strictEqual(oMessageView._detailsPage, oMessageViewCurrentPage, "Details Page should be visible");
+
+		fnClearMessages();
+		Core.applyChanges();
+
+		// store pages
+		oMessageViewCurrentPage = oMessageView._navContainer.getCurrentPage();
+		assert.strictEqual(oMessageView._listPage, oMessageViewCurrentPage, "List Page should be visible");
+
+		oMessageView.destroy();
+	});
+
 	QUnit.test("NavContainer should be child of the MessageView", function(assert) {
 		assert.equal(this.oMessageView._navContainer.getParent(), this.oMessageView, "Parent child relation is correct");
 	});
