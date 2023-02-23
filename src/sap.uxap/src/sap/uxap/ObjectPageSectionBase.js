@@ -166,7 +166,11 @@ sap.ui.define([
 			if (this._oGridContentObserver) {
 				this._oGridContentObserver.observe(this.getAggregation("_grid"), {
 					aggregations: [
-					"content"
+					 // both aggregation names are required
+					 // because the first ("content") is the actual
+					 // and the second ("subSections") is the publicly visible
+					 // due to aggregation forwarding
+					"content", "subSections"
 				]});
 			}
 		}
