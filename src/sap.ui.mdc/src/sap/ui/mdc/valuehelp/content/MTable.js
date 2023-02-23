@@ -120,7 +120,7 @@ sap.ui.define([
 	function _updateSelection () {
 		if (this._oTable) {
 			var aItems = this._oTable.getItems();
-			var aConditions = this.getConditions();
+			var aConditions = this.getSelectableConditions();
 			var bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
 
 			aItems.forEach(function(oItem) {

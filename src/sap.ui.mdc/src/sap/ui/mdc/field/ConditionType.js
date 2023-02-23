@@ -311,14 +311,48 @@ sap.ui.define([
 	 */
 	ConditionType.prototype.parseValue = function(vValue, sSourceType) {
 
-		if (this._bDestroyed) { // if destroyed do nothing
-			return null;
-		}
-
+		var bInputValidationEnabled = _isInputValidationEnabled.call(this);
 		if (!sSourceType) {
 			sSourceType = "string";
 		} else if (sSourceType === "any" && typeof vValue === "string") {
 			sSourceType = "string";
+		}
+
+		return this._parseValue(vValue, sSourceType, bInputValidationEnabled);
+
+	};
+
+	// own function as API for parseValue cannot be extended by inherited class
+	/**
+	 * Parses an external value of the given source type to a condition that holds the value in model
+	 * representation.
+	 * These values are parsed using the given data type. Depending of the operator
+	 * and the configuration (set in <code>FormatOptions</code>) a value will be determined via given value help or delegate.
+	 *
+	 * @param {any} vValue
+	 *	The value to be parsed
+	 * @param {string} sSourceType
+	 *	The type of the given value; see
+	 *	{@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
+	 *	In addition to the standard source types <code>sap.ui.mdc.raw</code> can be used. In this case the value is not parsed and just
+	 *	used in the condition. If the value of the condition is an array representing data for a <code>CompositeType</code> the index of the needed raw value can be added to the
+	 *	name (For example if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
+	 * @param {boolean} bInputValidationEnabled
+	 *	If set, input validation is enabled, otherwise disabled, even if delegate or ValueHelp allows it. (Pasting multiple values)
+	 * @return {null|sap.ui.mdc.condition.ConditionObject|Promise<null|sap.ui.mdc.condition.ConditionObject>}
+	 *	The condition or a <code>Promise</code> resolving with the condition.
+	 *  If there is no value <code>null</code> is returned.
+	 * @throws {sap.ui.model.ParseException}
+	 *	If parsing to the model type is not possible; the message of the exception is language
+	 *	dependent as it may be displayed on the UI
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.ConditionsType
+	 */
+	ConditionType.prototype._parseValue = function(vValue, sSourceType, bInputValidationEnabled) {
+
+		if (this._bDestroyed) { // if destroyed do nothing
+			return null;
 		}
 
 		var oNavigateCondition = this.oFormatOptions.navigateCondition;
@@ -331,7 +365,6 @@ sap.ui.define([
 		}
 
 		var sDisplay = _getDisplay.call(this);
-		var bInputValidationEnabled = _isInputValidationEnabled.call(this);
 		var oType = _getValueType.call(this);
 		var oOriginalType = _getOriginalType.call(this);
 		var aOperators = _getOperators.call(this);

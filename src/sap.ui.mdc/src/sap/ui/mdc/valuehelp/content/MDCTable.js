@@ -253,7 +253,7 @@ sap.ui.define([
 		if (this._oTableHelper && !this._bSelectionIsUpdating) {
 			this._bSelectionIsUpdating = true;
 			var aItems = this._oTableHelper.getItems();
-			var aConditions = this.getConditions();
+			var aConditions = this.getSelectableConditions();
 			var aModifications = [];
 			for (var iId in aItems) {
 				var oItem = aItems[iId];

@@ -1246,10 +1246,10 @@ sap.ui.define([
 			setTimeout(function () { // as past handling is async
 				var aConditions = oModel.getConditions("Name");
 				assert.equal(aConditions.length, 3, "3 Conditions exist");
-				assert.equal(aConditions[0].values[0], "AA", "1. Condition");
-				assert.equal(aConditions[1].values[0], "BB", "2. Condition");
-				assert.equal(aConditions[2].values[0], "C", "3. Condition BT");
-				assert.equal(aConditions[2].values[1], "D", "3. Condition BT");
+				assert.equal(aConditions[0].values[0], "BB", "1. Condition");
+				assert.equal(aConditions[1].values[0], "C", "2. Condition BT");
+				assert.equal(aConditions[1].values[1], "D", "2. Condition BT");
+				assert.equal(aConditions[2].values[0], "EE", "3. Condition");
 
 				fnDone();
 			}, 0);
@@ -1294,17 +1294,10 @@ sap.ui.define([
 			}
 
 			qutils.triggerEvent("paste", oControl.getFocusDomRef(), {clipboardData: oFakeClipboardData});
-			setTimeout(function () { // as past handling is async
+			setTimeout(function () { // as paste handling is async
 				var aConditions = oModel.getConditions("Name");
-				assert.equal(aConditions.length, 5, "5 Conditions exist");
-				assert.equal(aConditions[0].values[0], 1, "1. Condition");
-				assert.equal(aConditions[1].values[0], 2, "2. Condition");
-				assert.equal(aConditions[2].values[0], 1, "3. Condition BT");
-				assert.equal(aConditions[2].values[1], 10, "3. Condition BT");
-				assert.equal(aConditions[3].values[0], 4, "4. Condition BT");
-				assert.equal(aConditions[3].values[1], 8, "4. Condition BT");
-				assert.equal(aConditions[4].operator, "LT", "5. Condition LE");
-				assert.equal(aConditions[4].values[0], 10, "5. Condition LE");
+				assert.equal(aConditions.length, 1, "1 Condition exist"); // just dummy condition
+				assert.ok(oField.isInvalidInput(), "Field has error state"); // don't test valueState as this is set async by binding
 
 				fnDone();
 			}, 0);

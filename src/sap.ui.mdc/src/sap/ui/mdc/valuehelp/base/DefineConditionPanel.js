@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Operator',
-	'sap/ui/mdc/field/ConditionType',
+	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/enum/EditMode',
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/enum/BaseType',
@@ -23,6 +23,7 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/model/type/String',
+	'sap/ui/model/ParseException',
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/layout/Grid',
@@ -30,7 +31,12 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/m/Button',
 	'sap/m/Panel',
-	'sap/base/Log',
+	'sap/m/OverflowToolbar',
+	'sap/m/OverflowToolbarLayoutData',
+	'sap/m/ToolbarSpacer',
+	'sap/m/Text',
+	'sap/m/Title',
+	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/thirdparty/jquery'
 ], function(
@@ -41,7 +47,7 @@ sap.ui.define([
 		Condition,
 		FilterOperatorUtil,
 		Operator,
-		ConditionType,
+		ConditionsType,
 		EditMode,
 		FieldDisplay,
 		BaseType,
@@ -55,6 +61,7 @@ sap.ui.define([
 		JSONModel,
 		ResourceModel,
 		StringType,
+		ParseException,
 		coreLibrary,
 		InvisibleText,
 		Grid,
@@ -62,7 +69,12 @@ sap.ui.define([
 		mLibrary,
 		Button,
 		Panel,
-		Log,
+		OverflowToolbar,
+		OverflowToolbarLayoutData,
+		ToolbarSpacer,
+		Text,
+		Title,
+		IconPool,
 		InvisibleMessage,
 		jQuery
 		) {
@@ -70,13 +82,19 @@ sap.ui.define([
 
 	// translation utils
 	var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	sap.ui.getCore().attachLocalizationChanged(function() {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	});
 
 	var ButtonType = mLibrary.ButtonType;
 	var ValueState = coreLibrary.ValueState;
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+	var TextAlign = coreLibrary.TextAlign;
+	var BackgroundDesign = mLibrary.BackgroundDesign;
+	var ToolbarDesign = mLibrary.ToolbarDesign;
+	var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
 
 	/**
 	 * Constructor for a new <code>DefineConditionPanel</code>.
@@ -150,6 +168,18 @@ sap.ui.define([
 				inputOK: {
 					type: "boolean",
 					defaultValue: true
+				},
+
+				/**
+				 * Indicates if pagination is active
+				 *
+				 * @since 1.113.0
+				 * @private
+				 */
+				_pagination: {
+					type: "boolean",
+					defaultValue: false,
+					visibility: "hidden"
 				}
 
 			},
@@ -229,6 +259,15 @@ sap.ui.define([
 				properties: ["conditions", "config"]
 			});
 
+			this._iStartIndex = 0;
+			this._iShownConditions = 10;
+			this._iShownAdditionalConditions = 0; // to not switch page by addings conditions, new conditions are shown on the current page even if there are more than the limit
+			this._sOperatorHelpId = this.getId() + "--rowSelect-help";
+
+			this._oContentEventDelegate = {
+				onpaste: this.onPaste
+			};
+
 			_createInnerControls.call(this);
 			this.setModel(this._oManagedObjectModel, "$this");
 			this.setModel(this._oManagedObjectModel, "$condition"); // TODO: better solution to have 2 bindingContexts on one control
@@ -291,16 +330,18 @@ sap.ui.define([
 			// try to reset valueState and value of value Fields inside the removed row
 			var oGrid = this.byId("conditions");
 			var aGridContent = oGrid.getContent();
-			var iRow = 0;
-			for (var i = 0; i < aGridContent.length && iRow <= iIndex; i++) {
+			var iRow = -1;
+			for (var i = 0; i < aGridContent.length; i++) {
 				var oField = aGridContent[i];
-				if (iRow === iIndex && oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
-					if (oField.isInvalidInput()) { // TODO: better was to find out parsing error
+				if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
+					// Operator field starts new row
+					iRow++;
+				}
+
+				if (oField instanceof Field && oField.hasOwnProperty("_iValueIndex") && oField.getBindingContext("$this").getPath().startsWith(sPath)) {
+					if (oField.isInvalidInput()) { // TODO: better way to find out parsing error
 						oField.setValue(null); // to remove invalid value from parsing
 					}
-				}
-				if (oField instanceof Button && oField.getId().endsWith("-removeBtnLarge")) {
-					iRow++;
 				}
 			}
 
@@ -308,6 +349,11 @@ sap.ui.define([
 				// the only one existing condition is removed. -> add dummy condition to have it in update in one step
 				this.addDummyCondition(1); // TODO: without setProperty to update condition at once?
 				aConditions = this.getConditions();
+			}
+
+			if (iRow === 0 && this._iStartIndex > 0) {
+				// there was only one row on page -> after removing it, go to previous page
+				this._iStartIndex = this._iStartIndex - this._iShownConditions;
 			}
 
 			aConditions.splice(iIndex, 1);
@@ -322,10 +368,32 @@ sap.ui.define([
 			var oConfig = this.getConfig();
 			var iMaxConditions = oConfig.maxConditions;
 
+			var oGrid = this.byId("conditions");
+			var aGridContent = oGrid.getContent();
+			var iRows = 0;
+			var iIndex = -1;
+			for (var i = 0; i < aGridContent.length; i++) {
+				var oField = aGridContent[i];
+				if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
+					// Operator field starts new row
+					iRows++;
+					var oBindingContext = oField.getBindingContext("$this");
+					var sPath = oBindingContext.getPath();
+					var aMatch = sPath.match(/^.*\/(\d+)\/$/);
+					if (aMatch) {
+						iIndex = parseInt(aMatch[1]);
+					}
+				}
+			}
+
 			if (iMaxConditions === -1 || aConditions.length < iMaxConditions) {
 				// create a new dummy condition for a new condition on the UI - must be removed later if not used or filled correct
-				this.addDummyCondition(aConditions.length + 1);
+				this.addDummyCondition(iIndex + 1);
 				this._bFocusLastCondition = true; // as add-Button will disappear and focus should stay in DefineConditionPanel
+
+				if (iRows >= this._iShownConditions) {
+					this._iShownAdditionalConditions++;
+				}
 			}
 
 			this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
@@ -360,15 +428,15 @@ sap.ui.define([
 		},
 
 		updateDefineConditions: function() {
-			var aConditions = this.getConditions().filter(function(oCondition) {
-				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				return oCondition.validated !== ConditionValidated.Validated || oOperator.exclude;
-			});
+			var aConditions = _getDefineConditions.call(this);
 
 			_addStaticText.call(this, aConditions, true, false);
 
 			if (aConditions.length === 0) {
 				this.addDummyCondition();
+			}
+			if (aConditions.length < this._iStartIndex) {
+				this._iStartIndex = 0;
 			}
 		},
 
@@ -427,9 +495,11 @@ sap.ui.define([
 				var sOldKey = oField._sOldKey;
 				var oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
 				var oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
-				var oCondition = oField.getBindingContext("$this").getObject();
+				var oBindingContext = oField.getBindingContext("$this");
+				var oCondition = oBindingContext.getObject();
+				var sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
+				var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
 				var aConditions = this.getConditions();
-				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 				if (iIndex >= 0) {
 					oCondition = aConditions[iIndex]; // to get right instance
 				}
@@ -498,9 +568,11 @@ sap.ui.define([
 
 				delete oField._sOldKey;
 			}.bind(this)).catch(function (oException) { // if Operator in error state -> don't update values
-				var oCondition = oField.getBindingContext("$this").getObject();
+				var oBindingContext = oField.getBindingContext("$this");
+				var oCondition = oBindingContext.getObject();
+				var sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
+				var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
 				var aConditions = this.getConditions();
-				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 				if (iIndex >= 0) {
 					oCondition = aConditions[iIndex]; // to get right instance
 				}
@@ -513,83 +585,49 @@ sap.ui.define([
 		},
 
 		onPaste: function(oEvent) {
-			var sOriginalText;
-			var oSource = oEvent.srcControl;
-			var oConfig = this.getConfig();
-			var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
-			var sConditionPath = oSource.getBindingContext("$condition").getPath(); // Path to condition of the active control
-			var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition - to remove before adding new ones
+			// for the purpose to copy from column in Excel and paste as new conditions
+			var sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 
-			// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
-			if (window.clipboardData) {
-				//IE
-				sOriginalText = window.clipboardData.getData("Text");
-			} else {
-				// Chrome, Firefox, Safari
-				sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
-			}
-			var aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
+			if (sOriginalText.split(/\r\n|\r|\n/g).length > 1) { // if no linebreak just process normal paste-logic
+				var oSource = oEvent.srcControl;
+				var sConditionPath = oSource.getBindingContext("$condition").getPath(); // Path to condition of the active control
+				var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition - to remove before adding new ones
+				var aConditions = this.getConditions();
+				var oFormatOptions = merge({}, this.getConfig());
+				oFormatOptions.display = FieldDisplay.Value;
+				oFormatOptions.getConditions = function() {return aConditions;}; // as condition where inserted will be removed
+				oFormatOptions.defaultOperatorName = aConditions[iIndex].operator; // use current operator as default
+				oFormatOptions.valueType = oFormatOptions.dataType;
+				delete oFormatOptions.dataType;
+				var oConditionsType = new ConditionsType(oFormatOptions);
 
-			if (aSeparatedText && aSeparatedText.length > 1) {
-				setTimeout(function() {
-					var oFormatOptions = merge({}, this.getConfig());
-					oFormatOptions.maxConditions = 1;
-					oFormatOptions.display = FieldDisplay.Value;
-					oFormatOptions.valueType = oConfig.dataType;
-					delete oFormatOptions.dataType;
-					//oFormatOptions.valueType = this._getFieldType.call(this, oOperator.name, 0); //TODO using the _getFieldType for better support of types
-					var oConditionType = new ConditionType(oFormatOptions);
+				try {
+					aConditions.splice(iIndex, 1); // remove old condition that is overwitten by pasting
+					var aNewConditions = oConditionsType._parseValueToIndex(sOriginalText, "string", iIndex);
+					oConditionsType.validateValue(aConditions);
 
-					var iLength = aSeparatedText.length;
-					var aConditions = this.getConditions();
-					for (var i = 0; i < iLength; i++) {
-						if (aSeparatedText[i]) {
-							var sValue = aSeparatedText[i].trim();
-
-							var aValues = sValue.split(/\t/g); // if two values exist, use it as Between and create a "a...z" value
-							if (aValues.length == 2 && aValues[0] && aValues[1]) {
-								var oOperator = FilterOperatorUtil.getOperator("BT");
-
-								sValue = oOperator.tokenFormat;
-								for (var j = 0; j < 2; j++) {
-									sValue = sValue.replace(new RegExp("\\{" + j + "\\}", "g"), aValues[j]);
-								}
-
-							}
-
-							try {
-								var oCondition = oConditionType.parseValue(sValue, "string");
-								oConditionType.validateValue(oCondition);
-
-								if (aConditions.length > iIndex) {
-									// overwrite existing condition
-									aConditions.splice(iIndex, 1, oCondition);
-								} else {
-									// add new condition
-									aConditions.push(oCondition);
-								}
-								iIndex++;
-
-							} catch (error) {
-								Log.error("Paste handling", "the pasted value '" + sValue + "' could not be handled! " + error.message);
-							}
-						}
-					}
-
-					if (iMaxConditions >= 0 && aConditions.length > iMaxConditions) {
-						aConditions.splice(iMaxConditions, aConditions.length - iMaxConditions);
-					}
-
-					if (oSource.setDOMValue) {
-						oSource.setDOMValue(""); // otherwise binding update will be ignored
-					}
-
-					FilterOperatorUtil.checkConditionsEmpty(aConditions);
-					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+					FilterOperatorUtil.checkConditionsEmpty(aNewConditions);
+					this.setProperty("conditions", aNewConditions, true); // do not invalidate whole DefineConditionPanel
 
 					this.fireConditionProcessed();
+				} catch (error) {
+					var oException = new ParseException(oMessageBundle.getText("field.PASTE_ERROR"));
+					var mErrorParameters = {
+						element: oSource,
+						property: "value", // TODO: right property for custom content
+						type: oConditionsType,
+						newValue: sOriginalText,
+						oldValue: "", // TODO
+						exception: oException,
+						message: oException.message
+					};
+					oSource.fireParseError(mErrorParameters, false, true); // mParameters, bAllowPreventDefault, bEnableEventBubbling
+				}
 
-				}.bind(this), 0);
+				oConditionsType.destroy();
+
+				oEvent.stopImmediatePropagation(true); // to prevent controls own logic
+				oEvent.preventDefault(); // to prevent pasting string into INPUT
 			}
 		},
 
@@ -606,6 +644,11 @@ sap.ui.define([
 				}
 			}
 			this.setProperty("inputOK", true, true); // do not invalidate whole DefineConditionPanel
+			if (this._iStartIndex > 0 || this._iShownAdditionalConditions > 0) {
+				this._iStartIndex = 0;
+				this._iShownAdditionalConditions = 0;
+				_renderConditions.call(this); // to have right paging on reopening
+			}
 		},
 
 		/**
@@ -834,7 +877,7 @@ sap.ui.define([
 		if (oControl.attachChange) { // custom control might not have a change event
 			oControl.attachChange(this.onChange.bind(this));
 		}
-		oControl.onpaste = this.onPaste.bind(this);
+		oControl.addDelegate(this._oContentEventDelegate, true, this);
 		oControl.setLayoutData(new GridData({span: {parts: [{path: "$condition>"}, {path: "$this>/config"}], formatter: _getSpanForValue.bind(this)}}));
 		oControl.setBindingContext(oValueBindingContext, "$this");
 		oControl.setBindingContext(oBindingContext, "$condition");
@@ -989,7 +1032,7 @@ sap.ui.define([
 
 		var bHasMultipleGroups = _hasMultipleOperatorGroups.call(this);
 
-		var sFixedListId = this.getId() + "--rowSelect-help-pop-fl";
+		var sFixedListId = this._sOperatorHelpId + "-pop-fl";
 		var oFixedList = sap.ui.getCore().byId(sFixedListId);
 
 		var oTemplate;
@@ -1113,17 +1156,67 @@ sap.ui.define([
 
 	function _createInnerControls() {
 		var oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
+		var oTitle = new Title(this.getId() + "-title", {text: {path: "$this>/label"}});
+		var oButtonPrev = new Button(this.getId() + "--prev", {
+			icon: IconPool.getIconURI("navigation-left-arrow"),
+			tooltip: oMessageBundleM.getText("PAGINGBUTTON_PREVIOUS"),
+			visible: {path: "$this>/_pagination"},
+			layoutData: new OverflowToolbarLayoutData({
+				priority: OverflowToolbarPriority.NeverOverflow
+			}),
+			press: _handlePrevious.bind(this)
+		});
+		var oButtonNext = new Button(this.getId() + "--next", {
+			icon: IconPool.getIconURI("navigation-right-arrow"),
+			tooltip: oMessageBundleM.getText("PAGINGBUTTON_NEXT"),
+			visible: {path: "$this>/_pagination"},
+			layoutData: new OverflowToolbarLayoutData({
+				priority: OverflowToolbarPriority.NeverOverflow
+			}),
+			press: _handleNext.bind(this)
+		});
+		var oButtonRemoveAll = new Button(this.getId() + "--removeAll", {
+			text: oMessageBundleM.getText("CONDITIONPANEL_REMOVE_ALL"),
+			visible: {path: "$this>/_pagination"},
+			layoutData: new OverflowToolbarLayoutData({
+				priority: OverflowToolbarPriority.Low
+			}),
+			press: _handleRemoveAll.bind(this)
+		});
+		var oButtonInsert = new Button(this.getId() + "--insert", {
+			icon: IconPool.getIconURI("add"),
+			visible: {path: "$this>/_pagination"},
+			layoutData: new OverflowToolbarLayoutData({
+				priority: OverflowToolbarPriority.Low
+			}),
+			press: _handleInsert.bind(this)
+		});
+		var oPageCount = new Text(this.getId() + "--pageCount", {
+			text: _getPageText.call(this),
+			wrapping: false,
+			textAlign: TextAlign.Center,
+			visible: {path: "$this>/_pagination"},
+			layoutData: new OverflowToolbarLayoutData({
+				priority: OverflowToolbarPriority.NeverOverflow
+			})
+		});
+		var oToolbar = new OverflowToolbar(this.getId() + "--toolbar", {
+			width: "100%",
+			design: ToolbarDesign.Transparent,
+			content: [oTitle, new ToolbarSpacer(), oButtonPrev, oPageCount, oButtonNext, oButtonRemoveAll, oButtonInsert]
+		});
 
-		var oPanel = new Panel({headerText: "{$this>/label}",
+		var oPanel = new Panel(this.getId() + "--panel", {
+			headerToolbar: oToolbar,
 			expanded: true,
 			height: "100%",
-			backgroundDesign: "Transparent"}
+			backgroundDesign: BackgroundDesign.Transparent}
 		).addStyleClass("sapMdcDefineconditionPanel");
 
 		oPanel.addDependent(
-			new ValueHelp(this.getId() + "--rowSelect-help", {
-				typeahead: new Popover(this.getId() + "--rowSelect-help-pop", {
-									content: [new FixedList(this.getId() + "--rowSelect-help-pop-fl", {
+			new ValueHelp(this._sOperatorHelpId, {
+				typeahead: new Popover(this._sOperatorHelpId + "-pop", {
+									content: [new FixedList(this._sOperatorHelpId + "-pop-fl", {
 													filterList: false,
 													useFirstMatch: true
 												})]
@@ -1192,36 +1285,46 @@ sap.ui.define([
 
 		var aConditions = this.getConditions();
 		var oGrid = this.byId("conditions");
+		var oButtonPrev = this.byId("prev");
+		var oButtonNext = this.byId("next");
+		var oPageCount = this.byId("pageCount");
 		var aGridContent;
 		var iRow = -1;
 		var iIndex = 0;
+		var iDefineConditions = -1;
+		var iShownConditions = this._iShownConditions + this._iShownAdditionalConditions;
 
-		for (var i = 0; i < aConditions.length; i++) {
+		for (var i = 0; i < aConditions.length && iRow < iShownConditions; i++) {
 			var oCondition = aConditions[i];
 			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			if (oCondition.validated !== ConditionValidated.Validated || oOperator.exclude) {
 				// show only validated conditions
-				var oBindingContext = this._oManagedObjectModel.getContext("/conditions/" + i + "/");
-				iRow++;
+				iDefineConditions++;
+				if (iDefineConditions >= this._iStartIndex) {
+					// show only conditions on this page
+					iRow++;
+					if (iRow < iShownConditions) {
+						var oBindingContext = this._oManagedObjectModel.getContext("/conditions/" + i + "/");
 
-				if (!this.oOperatorModel) {
-					// init operatorModel if first row is created (needed to check operator)
-					this.oOperatorModel = new JSONModel();
-					this.setModel(this.oOperatorModel, "om");
-					_updateOperatorModel.call(this);
-				}
+						if (!this.oOperatorModel) {
+							// init operatorModel if first row is created (needed to check operator)
+							this.oOperatorModel = new JSONModel();
+							this.setModel(this.oOperatorModel, "om");
+							_updateOperatorModel.call(this);
+						}
 
-				aGridContent = oGrid.getContent(); // to have current content
-				if (aGridContent[iIndex] && aGridContent[iIndex].isA("sap.ui.mdc.Field")) {
-					// row already exists -> update it
-					iIndex = _updateRow.call(this, oCondition, oGrid, iIndex, oBindingContext, iRow);
-				} else {
-					// reate new row
-					iIndex = _createRow.call(this, oCondition, oGrid, iIndex, oBindingContext, iRow);
+						aGridContent = oGrid.getContent(); // to have current content
+						if (aGridContent[iIndex] && aGridContent[iIndex].isA("sap.ui.mdc.Field")) {
+							// row already exists -> update it
+							iIndex = _updateRow.call(this, oCondition, oGrid, iIndex, oBindingContext, iRow);
+						} else {
+							// reate new row
+							iIndex = _createRow.call(this, oCondition, oGrid, iIndex, oBindingContext, iRow);
+						}
+					}
 				}
 			}
 		}
-
 		// remove unused rows
 		aGridContent = oGrid.getContent();
 		while (aGridContent[iIndex] && aGridContent[iIndex] !== this.byId("addBtn")) {
@@ -1243,6 +1346,10 @@ sap.ui.define([
 			this._bFocusLastRemoveBtn = false;
 		}
 
+		oPageCount.setText(_getPageText.call(this));
+		oButtonPrev.setEnabled(this._iStartIndex > 0);
+		oButtonNext.setEnabled(iRow >= iShownConditions); // there is at least one more row than conditions are shown
+		this.setProperty("_pagination", iDefineConditions >= iShownConditions);
 	}
 
 	function _getGridIndexOfLastRowWithVisibleElement(aIdEndsWith) {
@@ -1306,7 +1413,7 @@ sap.ui.define([
 			display: FieldDisplay.Description,
 			editMode: EditMode.Editable,
 			multipleLines: false,
-			valueHelp: this.getId() + "--rowSelect-help",
+			valueHelp: this._sOperatorHelpId,
 			change: this.onSelectChange.bind(this),
 			ariaLabelledBy: this.getId() + "--ivtOperator"
 		})
@@ -1671,6 +1778,102 @@ sap.ui.define([
 		}
 
 		this.setProperty("inputOK", !bInvalid, true); // do not invalidate whole DefineConditionPanel
+
+	}
+
+	function _getDefineConditions() {
+
+		return this.getConditions().filter(function(oCondition) {
+			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			return oCondition.validated !== ConditionValidated.Validated || oOperator.exclude;
+		});
+
+	}
+
+	function _handleNext(oEvent) {
+
+		this._iStartIndex = this._iStartIndex + this._iShownConditions;
+		this._iShownAdditionalConditions = 0;
+		_renderConditions.call(this);
+
+	}
+
+	function _handlePrevious(oEvent) {
+
+		this._iStartIndex = this._iStartIndex - this._iShownConditions;
+		if (this._iStartIndex < 0) {
+			this._iStartIndex = 0;
+		}
+		this._iShownAdditionalConditions = 0;
+		_renderConditions.call(this);
+
+	}
+
+	function _handleRemoveAll(oEvent) {
+
+		var aConditions = this.getConditions().filter(function(oCondition) {
+			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			return oCondition.validated === ConditionValidated.Validated && !oOperator.exclude;
+		});
+		this.addDummyCondition(aConditions.length + 1);
+
+		this._iStartIndex = 0;
+		this._iShownAdditionalConditions = 0;
+		this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+		this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_REMOVECONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
+		this.fireConditionProcessed();
+
+	}
+
+	function _handleInsert(oEvent) {
+
+		var aConditions = this.getConditions();
+		var oFormatOptions = this.getFormatOptions();
+		var iMaxConditions = oFormatOptions.maxConditions;
+
+		// get Index of first row (as validated conditions might exist and are hidden)
+		var oGrid = this.byId("conditions");
+		var aGridContent = oGrid.getContent();
+		var iRows = 0;
+		var iIndex = -1;
+		for (var i = 0; i < aGridContent.length; i++) {
+			var oField = aGridContent[i];
+			if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
+				// Operator field starts new row
+				iRows++;
+				if (iRows === 1) {
+					// determine index for condition in first row
+					var oBindingContext = oField.getBindingContext("$this");
+					var sPath = oBindingContext.getPath();
+					var aMatch = sPath.match(/^.*\/(\d+)\/$/);
+					if (aMatch) {
+						iIndex = parseInt(aMatch[1]);
+					}
+				}
+			}
+		}
+
+		if (iMaxConditions === -1 || aConditions.length < iMaxConditions) {
+			// create a new dummy condition for a new condition on the UI - must be removed later if not used or filled correct
+			this.addDummyCondition(iIndex);
+
+			if (iRows >= this._iShownConditions) {
+				this._iShownAdditionalConditions++;
+			}
+		}
+
+		this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
+
+	}
+
+	function _getPageText() {
+
+		var aConditions = _getDefineConditions.call(this); // show only validated conditions
+		var iPages = Math.ceil((aConditions.length - this._iShownAdditionalConditions) / this._iShownConditions);
+		var iPage = Math.floor(this._iStartIndex / this._iShownConditions) + 1;
+		var sText = oMessageBundle.getText("valuehelp.PAGE_COUNT", [iPage, iPages]);
+
+		return sText;
 
 	}
 

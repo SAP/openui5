@@ -583,7 +583,8 @@ sap.ui.define([
 
 		onsapbackspace: _handleKeybordEvent,
 		onchange: _handleContentOnchange,
-		onsapfocusleave: _handleContentOnsapfocusleave
+		onsapfocusleave: _handleContentOnsapfocusleave,
+		onpaste: _handlePaste
 	};
 
 	var oContentEventDelegateAfter = {
@@ -1055,6 +1056,48 @@ sap.ui.define([
 
 			this.fireSubmit({ promise: oPromise });
 		}
+
+	}
+
+	function _handlePaste(oEvent) {
+
+		var iMaxConditions = this.getMaxConditions();
+
+		if (iMaxConditions === 1) { // only for multi-value
+			return;
+		}
+
+		// for the purpose to copy from column in excel and paste in FilterField/MultiValueField
+		var sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
+		var oControl = oEvent.srcControl;
+		var sBoundProperty;
+		for (var sProperty in oControl.getMetadata().getAllProperties()) {
+			if (oControl.getBindingPath(sProperty) === "/conditions") {
+				sBoundProperty = sProperty;
+				break;
+			}
+		}
+		oControl.updateModelProperty(sBoundProperty, sOriginalText, oControl.getProperty(sBoundProperty)); // Use normal parsing functionality to habe Async-handling and error handling
+
+		oEvent.stopImmediatePropagation(true); // to prevent MultiInputs own logic
+		oEvent.preventDefault(); // to prevent pasting string into INPUT
+
+		oEvent.source = oEvent.srcControl; // to align with other events
+		oEvent.parameters = {}; // to align with other events
+		// as change might be async
+		var iLength = this._aAsyncChanges.length;
+		var oPromise;
+		var bValid;
+		var aConditions;
+		if (iLength > 0) {
+			this._aAsyncChanges[iLength - 1].changeFired = true;
+			this._aAsyncChanges[iLength - 1].changeEvent = oEvent;
+			oPromise = this._aAsyncChanges[iLength - 1].promise;
+		} else {
+			bValid = !this._bParseError;
+			aConditions = this.getConditions();
+		}
+		_triggerChange.call(this, aConditions, bValid, undefined, oPromise);
 
 	}
 
@@ -2736,7 +2779,7 @@ sap.ui.define([
 				}
 
 				// take what ever comes from field help as valid - even if it is an empty key
-				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions); // check if already exist
+				var iIndex = bAdd ? FilterOperatorUtil.indexOfCondition(oCondition, aConditions) : -1; // check if already exist
 				if (iIndex === -1) { // new -> add
 					aConditions.push(oCondition);
 				} else if (oCondition.validated === ConditionValidated.Validated && oCondition.values.length > 1 && (aConditions[iIndex].values.length === 1 || oCondition.values[1] !== aConditions[iIndex].values[1])) {
