@@ -310,13 +310,18 @@ sap.ui.define([
 		}
 
 		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
-			if (containsOrEquals(this.getDomRef(), oEvent.target) || isInControlTree(this, Element.closestTo(oEvent.target))) {
+			if (containsOrEquals(this.getDomRef(), oEvent.target) ||
+				containsOrEquals(Core.getStaticAreaRef(), oEvent.target) ||
+				isInControlTree(this, Element.closestTo(oEvent.target))) {
 				isInMenuHierarchy = true;
 			}
 		} else if (oEvent.type == "sapfocusleave") {
 			if (oEvent.relatedControlId && containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) ||
 				isInControlTree(this, Core.byId(oEvent.relatedControlId))) {
 				isInMenuHierarchy = true;
+				if (oEvent.relatedControlId === this._oPopover._oControl.getId()) {
+					document.getElementById(this.getId() + "-focusDummy").focus();
+				}
 			}
 		}
 

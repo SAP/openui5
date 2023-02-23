@@ -15,6 +15,13 @@ sap.ui.define([], function () {
 		this.renderHiddenTexts(oRm, oMenu);
 		this.renderQuickActions(oRm, oMenu);
 		this.renderItems(oRm, oMenu);
+
+		oRm.openStart("div");
+		oRm.style("role", "none");
+		oRm.attr("id", oMenu.getId() + "-focusDummy");
+		oRm.attr("tabindex", "0");
+		oRm.openEnd().close("div");
+
 		oRm.close("div");
 	};
 
