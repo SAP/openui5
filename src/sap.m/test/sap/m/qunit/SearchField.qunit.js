@@ -270,6 +270,28 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("input's maxlength attribute remains rendered after every invalidation", function(assert) {
+		// arrange
+		this.oSearchField.setMaxLength(20);
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(this.oSearchField.getDomRef("I").getAttribute("maxlength"), "20", "attribute is present");
+
+		// act
+		this.oSearchField.invalidate();
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(this.oSearchField.getDomRef("I").getAttribute("maxlength"), "20", "attribute is present");
+
+		// act
+		this.oSearchField.invalidate();
+		Core.applyChanges();
+		// assert
+		assert.strictEqual(this.oSearchField.getDomRef("I").getAttribute("maxlength"), "20", "attribute is present");
+	});
+
 	QUnit.test("ARIA attributes for Chrome specific", function(assert) {
 		// arrange
 		var bHasAutocorrect;
