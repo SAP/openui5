@@ -1249,6 +1249,7 @@ sap.ui.define([
 	 */
 	UniversalDate.getEraByDate = function(sCalendarType, iYear, iMonth, iDay) {
 		var aEras = getEras(sCalendarType),
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			iTimestamp = new Date(0).setUTCFullYear(iYear, iMonth, iDay),
 			oEra;
 		for (var i = aEras.length - 1; i >= 0; i--) {
@@ -1364,6 +1365,7 @@ sap.ui.define([
 			iDay = parseInt(aParts[2]);
 		}
 		return {
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			timestamp: new Date(0).setUTCFullYear(iYear, iMonth, iDay),
 			year: iYear,
 			month: iMonth,
