@@ -278,6 +278,9 @@ sap.ui.define([
 			sPath = sPath.replace("#", "%23");
 		}
 
+		// remove non-standard URL encoding
+		sPath = sPath.replace(/[\[\]']+/g,''); // removing unwanted brackets from URL BCP: 2380008679
+
 		this.parse(sPath);
 
 		// Add new URL history and update URL
