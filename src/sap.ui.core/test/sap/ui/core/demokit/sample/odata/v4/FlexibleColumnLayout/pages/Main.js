@@ -30,6 +30,9 @@ sap.ui.define([
 				pressCancel : function () {
 					Helper.pressButton(this, sViewName, "cancel");
 				},
+				pressCreate : function () {
+					Helper.pressButton(this, sViewName, "create");
+				},
 				pressSave : function () {
 					Helper.pressButton(this, sViewName, "save");
 				}
@@ -237,8 +240,11 @@ sap.ui.define([
 					Helper.waitForSortedByID(this, {
 						id : /SO_2_SOITEM-trigger|lineItemsTitle/,
 						success : function (aControls) {
-							Helper.checkMoreButtonCount(aControls[0], "[5/" + iCount + "]");
-							Opa5.assert.strictEqual(aControls[1].getText(),
+							if (aControls.length === 2) {
+								Helper.checkMoreButtonCount(aControls.shift(),
+									"[5/" + iCount + "]");
+							}
+							Opa5.assert.strictEqual(aControls[0].getText(),
 								iCount + " Sales Order Line Items", "Count in title is " + iCount);
 						},
 						viewName : sViewName

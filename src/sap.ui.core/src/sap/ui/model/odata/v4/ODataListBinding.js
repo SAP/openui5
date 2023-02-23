@@ -133,6 +133,7 @@ sap.ui.define([
 		this.oHeaderContext = this.bRelative
 			? null
 			: Context.createNewContext(oModel, this, sPath);
+		this.bKeepCreated = false; // Whether the next createContexts shall keep created contexts
 		this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
 		// map<string,sap.ui.model.odata.v4.Context>
 		// Maps a string path to a v4.Context with that path. A context may either be
@@ -255,7 +256,8 @@ sap.ui.define([
 
 	/**
 	 * Adjusts the paths of all contexts of this binding by replacing the given transient predicate
-	 * with the given predicate. Recursively adjusts all child bindings.
+	 * with the given predicate. Recursively adjusts all child bindings. Creates a cache and copies
+	 * the created entities from the parent cache if necessary.
 	 *
 	 * @param {string} sTransientPredicate - The transient predicate to be replaced
 	 * @param {string} sPredicate - The new predicate
@@ -267,7 +269,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.adjustPredicate = function (sTransientPredicate, sPredicate,
 			oContext) {
-		var that = this;
+		var aElements,
+			that = this;
 
 		/*
 		 * Replace $uid also in previous data to avoid useless diff in ODLB#getContexts.
@@ -289,8 +292,17 @@ sap.ui.define([
 			// => reduced path may, but need not, be affected; other contexts for sure are!
 			asODataParentBinding.prototype.adjustPredicate.apply(this, arguments);
 			if (this.mCacheQueryOptions) {
+				aElements = that.oContext.getAndRemoveValue(that.sPath);
 				// Note: this.oCache === null because of #prepareDeepCreate
 				this.fetchCache(this.oContext, /*bIgnoreParentCache*/true);
+				if (aElements.length) { // after a deep create
+					this.oCachePromise.then(function (oCache) {
+						if (oCache) {
+							// copy the created elements into the newly created cache
+							oCache.setPersistedCollection(aElements);
+						}
+					});
+				}
 			}
 			this.oHeaderContext.adjustPredicate(sTransientPredicate, sPredicate);
 			this.aContexts.forEach(function (oContext) {
@@ -830,8 +842,7 @@ sap.ui.define([
 			that.fireEvent("createCompleted", {context : oContext, success : true});
 			sGroupId = that.getGroupId();
 			if (bSkipRefresh) {
-				oContext.refreshDependentBindings(oContext.getPath().slice(1), sGroupId,
-					/*bCheckUpdate*/true).catch(that.oModel.getReporter());
+				oContext.updateAfterCreate();
 				return; // do not wait for late property requests to be finished!
 			}
 			if (that.oModel.isApiGroup(sGroupId)) {
@@ -927,11 +938,17 @@ sap.ui.define([
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				oContext = this.mPreviousContextsByPath[sContextPath];
-				if (oContext && (!oContext.created() || oContext.isKeepAlive())) {
+				if (oContext
+						&& (that.bKeepCreated || !oContext.created() || oContext.isKeepAlive())) {
 					// reuse the previous context, unless it is created (and persisted), but not
 					// kept alive
 					delete this.mPreviousContextsByPath[sContextPath];
-					oContext.iIndex = i$skipIndex;
+					if (that.bKeepCreated) {
+						this.iCreatedContexts += 1;
+						this.iActiveContexts += 1;
+					} else {
+						oContext.iIndex = i$skipIndex;
+					}
 					oContext.checkUpdate();
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
@@ -939,6 +956,7 @@ sap.ui.define([
 				this.aContexts[iStart + i] = oContext;
 			}
 		}
+		that.bKeepCreated = false;
 		// destroy previous contexts which are not reused or kept-alive
 		this.destroyPreviousContextsLater(Object.keys(this.mPreviousContextsByPath));
 		if (iCount !== undefined) { // server count is available or "non-empty short read"
@@ -2932,7 +2950,6 @@ sap.ui.define([
 				iCreatedContexts = that.iCreatedContexts,
 				aContexts = that.aContexts.slice(0, iCreatedContexts),
 				aDependentBindings,
-				bDrop,
 				oKeptElementsPromise,
 				oPromise = that.oRefreshPromise;
 
@@ -2985,16 +3002,10 @@ sap.ui.define([
 			}
 			// Note: after reset the dependent bindings cannot be found anymore
 			aDependentBindings = that.getDependentBindings();
-			if (that.bDeepCreate) {
-				bDrop = false;
-				that.bDeepCreate = false; // after the final refresh deep create is finished
-			} else if (!oCache) {
-				bDrop = true;
-			} else if (bKeepCacheOnError) {
-				bDrop = false;
-			} // otherwise (default) undefined
-			// this may reset that.oRefreshPromise
-			that.reset(ChangeReason.Refresh, bDrop, sGroupId);
+			that.reset(ChangeReason.Refresh, !oCache || (bKeepCacheOnError ? false : undefined),
+					sGroupId); // this may reset that.oRefreshPromise
+			that.bKeepCreated = that.bDeepCreate;
+			that.bDeepCreate = false;
 			return SyncPromise.all(
 				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)
 			).then(function () {
@@ -3912,6 +3923,21 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#updateAfterCreate
+	 */
+	ODataListBinding.prototype.updateAfterCreate = function () {
+		// After a create in the parent binding a refresh is needed unless it was a deep create
+		var oPromise = this.iCreatedContexts
+				? asODataParentBinding.prototype.updateAfterCreate.apply(this) // deep create
+				: this.refreshInternal("");
+
+		this.bDeepCreate = false;
+
+		return oPromise;
 	};
 
 	/**

@@ -294,6 +294,48 @@ sap.ui.getCore().attachInit(function () {
 
 				Then.iTeardownMyUIComponent();
 			});
+
+			//*****************************************************************************
+			opaTest("Deep Create", function (Given, When, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
+					}
+				});
+
+				When.onTheApplication.pressCreate();
+				When.onTheObjectPage.changeNote("Deep Create");
+				Then.onTheListReport.checkSalesOrder(0, "", "Deep Create");
+				Then.onTheObjectPage.checkSalesOrderID("");
+				Then.onTheObjectPage.checkSalesOrderItemsCount(0);
+
+				When.onTheObjectPage.createSalesOrderItem();
+				Then.onTheObjectPage.checkSalesOrderItemsCount(1);
+				Then.onTheObjectPage.checkSalesOrderItem(0, "", "2.000");
+
+				When.onTheObjectPage.createSalesOrderItem();
+				Then.onTheObjectPage.checkSalesOrderItemsCount(2);
+				Then.onTheObjectPage.checkSalesOrderItem(1, "", "2.000");
+
+				When.onTheObjectPage.selectSalesOrderItem(1);
+				When.onTheSubObjectPage.changeQuantity("4");
+				Then.onTheObjectPage.checkSalesOrderItem(1, "", "4.000");
+
+				When.onTheApplication.pressSave();
+				// the list report might not be shown
+				Then.onTheObjectPage.checkSalesOrderID("0500000005");
+				Then.onTheObjectPage.checkGrossAmount("10,632.66");
+				Then.onTheObjectPage.checkSalesOrderItem(0, "0000000010", "2.000");
+				Then.onTheObjectPage.checkSalesOrderItem(1, "0000000020", "4.000");
+
+				When.onTheSubObjectPage.changeQuantity("3");
+				When.onTheApplication.pressSave();
+				Then.onTheObjectPage.checkGrossAmount("8,860.55");
+
+				Then.onAnyPage.checkLog();
+				Then.iTeardownMyUIComponent();
+			});
 		}
 
 		QUnit.start();

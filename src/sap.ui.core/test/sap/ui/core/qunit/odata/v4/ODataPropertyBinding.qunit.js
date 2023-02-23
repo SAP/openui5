@@ -2431,5 +2431,15 @@ sap.ui.define([
 	QUnit.test("onDelete", function () {
 		this.oModel.bindProperty("/EMPLOYEES('1')/AGE").onDelete();
 	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAfterCreate", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+		this.mock(oBinding).expects("checkUpdateInternal").withExactArgs().returns("~oPromise~");
+
+		// code under test
+		assert.strictEqual(oBinding.updateAfterCreate(), "~oPromise~");
+	});
 });
 // TODO read in initialize and refresh? This forces checkUpdate to use getProperty.

@@ -4115,4 +4115,59 @@ sap.ui.define([
 			oResult
 		);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getAndRemoveValue", function (assert) {
+		var oCache = {
+				getAndRemoveValue : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path"),
+			oExpectation;
+
+		oExpectation = this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, "relative/path", true)
+			.returns(SyncPromise.resolve("~valueFromWithCache~"));
+
+		// code under test
+		assert.strictEqual(oContext.getAndRemoveValue("relative/path"), "~valueFromWithCache~");
+
+		this.mock(oCache).expects("getAndRemoveValue").withExactArgs("cache/path")
+			.returns("~value~");
+
+		// code under test
+		assert.strictEqual(oExpectation.args[0][0](oCache, "cache/path"), "~value~");
+	});
+
+	//*********************************************************************************************
+[0, 1].forEach(function (iFailureIndex) {
+	QUnit.test("updateAfterCreate, fail=" + iFailureIndex, function () {
+		var oModel = {
+				getDependentBindings : function () {},
+				getReporter : function () {}
+			},
+			oContext = Context.create(oModel, {/*oBinding*/}, "/path"),
+			aDependents = [
+				{updateAfterCreate : function () {}},
+				{updateAfterCreate : function () {}}
+			],
+			fnReporter = sinon.spy(),
+			that = this;
+
+		this.mock(oModel).expects("getDependentBindings").withExactArgs(sinon.match.same(oContext))
+			.returns(aDependents);
+		this.mock(oModel).expects("getReporter").withExactArgs().returns(fnReporter);
+		// each test lets another dependent's updateAfterCreate fail to see that it is reported
+		aDependents.forEach(function (oDependent, i) {
+			that.mock(oDependent).expects("updateAfterCreate").withExactArgs()
+				.returns(i === iFailureIndex
+					? SyncPromise.reject("~oError~")
+					: SyncPromise.resolve());
+		});
+
+		// code under test
+		oContext.updateAfterCreate();
+
+		sinon.assert.calledWithExactly(fnReporter, "~oError~");
+	});
+});
 });

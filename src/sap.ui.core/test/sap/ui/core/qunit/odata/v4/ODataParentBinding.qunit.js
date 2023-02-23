@@ -3867,7 +3867,8 @@ sap.ui.define([
 			"destroy",
 			"doDeregisterChangeListener",
 			"getGeneration",
-			"hasPendingChangesForPath"
+			"hasPendingChangesForPath",
+			"updateAfterCreate"
 		].forEach(function (sMethod) {
 			assert.strictEqual(asODataParentBinding.prototype[sMethod], oBinding[sMethod]);
 		});
@@ -4050,6 +4051,46 @@ sap.ui.define([
 
 		// code under test
 		oBinding.onDelete("/canonical/path");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAfterCreate", function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oDependent0 = {
+				updateAfterCreate : function () {}
+			},
+			bDependent0Updated = false,
+			oDependent1 = {
+				updateAfterCreate : function () {}
+			},
+			bDependent1Updated = false,
+			oPromise;
+
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("updateAfterCreate").withExactArgs()
+			.returns(new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bDependent0Updated = true;
+					resolve();
+				});
+			}));
+		this.mock(oDependent1).expects("updateAfterCreate").withExactArgs()
+			.returns(new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bDependent1Updated = true;
+					resolve();
+				});
+			}));
+
+		// code under test
+		oPromise = oBinding.updateAfterCreate().then(function () {
+			assert.strictEqual(bDependent0Updated, true);
+			assert.strictEqual(bDependent1Updated, true);
+		});
+
+		assert.ok(oPromise.isPending(), "a SyncPromise");
+		return oPromise;
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit

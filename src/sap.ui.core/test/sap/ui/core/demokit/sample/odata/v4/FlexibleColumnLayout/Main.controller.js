@@ -47,7 +47,6 @@ sap.ui.define([
 
 		onCancel : function () {
 			this.getView().getModel().resetChanges("UpdateGroup");
-			this.setSelectionMode("SingleSelectMaster");
 			this.mChangedSalesOrders = {};
 		},
 
@@ -55,6 +54,7 @@ sap.ui.define([
 			var oContext,
 				oDeliveryDate = UI5Date.getInstance(),
 				oListBinding = this.byId("SO_2_SOITEM").getBinding("items"),
+				bDeepCreate = oListBinding.getContext().isTransient(),
 				sPath = oListBinding.getHeaderContext().getPath() + "/DeliveryDate",
 				oType = oListBinding.getModel().getMetaModel().getUI5Type(sPath);
 
@@ -67,14 +67,40 @@ sap.ui.define([
 				Quantity : "2.000",
 				QuantityUnit : "EA"
 			}, false).created().then(function () {
-				MessageToast.show("Line item created: " + oContext.getProperty("ItemPosition"));
+				if (!bDeepCreate) {
+					MessageToast.show("Line item created: " + oContext.getProperty("ItemPosition"));
+				}
 			}, function (oError) {
 				if (!oError.canceled) {
 					throw oError; // unexpected error
 				}
 			});
 			this.rememberChangedSalesOrderContext();
-			this.setSelectionMode("None");
+		},
+
+		onCreateSalesOrder : function () {
+			var oContext = this.byId("SalesOrderList").getBinding("items").create({
+					BuyerID : "0100000000",
+					LifecycleStatus : "N"
+				}, true),
+				that = this;
+
+			oContext.created().then(function () {
+				MessageToast.show("Sales Order with "
+					+ that.byId("SO_2_SOITEM").getBinding("items").getLength() + " items created: "
+					+ oContext.getProperty("SalesOrderID"));
+			}, function (oError) {
+				if (!oError.canceled) {
+					throw oError; // unexpected error
+				}
+				if (that.byId("objectPage").getBindingContext() === oContext) {
+					that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
+					that.oUIModel.setProperty("/bSalesOrderSelected", false);
+				}
+			});
+			this.byId("SalesOrderList").setSelectedItem(
+				this.byId("SalesOrderList").getItems()[oContext.getIndex()]);
+			this.selectSalesOrder(oContext);
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
@@ -185,24 +211,7 @@ sap.ui.define([
 		},
 
 		onSalesOrderSelect : function (oEvent) {
-			var oObjectPage = this.byId("objectPage"),
-				oContext = oEvent.getParameters().listItem.getBindingContext(),
-				that = this;
-
-			oContext.setKeepAlive(true, function () {
-				// Handle destruction of a kept-alive context
-				that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
-				that.oUIModel.setProperty("/bSalesOrderSelected", false);
-			}, /*bRequestMessages*/true);
-			if (oObjectPage.getBindingContext()) {
-				oObjectPage.getBindingContext().setKeepAlive(false);
-			}
-			oObjectPage.setBindingContext(oContext);
-			this.byId("lineItemsTitle").setBindingContext(
-				this.byId("SO_2_SOITEM").getBinding("items").getHeaderContext(), "headerContext");
-
-			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
-			this.oUIModel.setProperty("/bSalesOrderSelected", true);
+			this.selectSalesOrder(oEvent.getParameters().listItem.getBindingContext());
 		},
 
 		onSave : function () {
@@ -250,7 +259,33 @@ sap.ui.define([
 		rememberChangedSalesOrderContext : function () {
 			var oContext = this.byId("objectPage").getBindingContext();
 
-			this.mChangedSalesOrders[oContext.getPath()] = oContext;
+			if (!oContext.isTransient()) {
+				this.mChangedSalesOrders[oContext.getPath()] = oContext;
+			}
+		},
+
+		selectSalesOrder : function (oContext) {
+			var oObjectPage = this.byId("objectPage"),
+				oOldPageContext,
+				that = this;
+
+			if (!oContext.isTransient()) {
+				oContext.setKeepAlive(true, function () {
+					// Handle destruction of a kept-alive context
+					that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
+					that.oUIModel.setProperty("/bSalesOrderSelected", false);
+				}, /*bRequestMessages*/true);
+			}
+			oOldPageContext = oObjectPage.getBindingContext();
+			if (oOldPageContext && !oOldPageContext.isTransient()) {
+				oOldPageContext.setKeepAlive(false);
+			}
+			oObjectPage.setBindingContext(oContext);
+			this.byId("lineItemsTitle").setBindingContext(
+				this.byId("SO_2_SOITEM").getBinding("items").getHeaderContext(), "headerContext");
+
+			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
+			this.oUIModel.setProperty("/bSalesOrderSelected", true);
 		},
 
 		setSalesOrderLineItemBindingContext : function (oContext) {
@@ -280,33 +315,18 @@ sap.ui.define([
 			this.oUIModel.setProperty("/bSalesOrderItemSelected", !!oContext);
 		},
 
-		setSelectionMode : function (sMode) {
-			var oTable = this.getView().byId("SalesOrderList");
-
-			if (sMode === "SingleSelectMaster") {
-				oTable.setMode(sMode);
-				oTable.setSelectedItem(oTable.getItems()[this.iSelectedSalesOrder]);
-				this.iSelectedSalesOrder = undefined;
-			} else {
-				this.iSelectedSalesOrder = this.iSelectedSalesOrder
-					|| oTable.getSelectedItem().getBindingContext().getIndex();
-				oTable.setMode("None");
-			}
-		},
-
 		submitBatch : function (sGroupId) {
-			var oView = this.getView(),
-				that = this;
+			var oView = this.getView();
 
 			oView.setBusy(true);
 			// request new ETag for each sales order touched by changes on item level (containment)
-			Object.keys(this.mChangedSalesOrders).forEach(function (sPath) {
-				that.mChangedSalesOrders[sPath].requestSideEffects(["GrossAmount"])
+			Object.values(this.mChangedSalesOrders).forEach(function (oSalesOrderContext) {
+				oSalesOrderContext.requestSideEffects(["GrossAmount"])
 					.catch(function () { /*may fail because of previous request*/ });
 			});
+			this.mChangedSalesOrders = {};
 			return oView.getModel().submitBatch(sGroupId).finally(function () {
 				oView.setBusy(false);
-				that.setSelectionMode("SingleSelectMaster");
 			});
 		}
 	});

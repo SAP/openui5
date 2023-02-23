@@ -5547,34 +5547,65 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#addTransientCollection", function (assert) {
+		var that = this;
+
+		return new Promise(function (resolve) {
+			var oCache = new _Cache(that.oRequestor, "SalesOrders('1')"),
+				aElements,
+				oParent = {},
+				oPostBody = {};
+
+			oCache.fetchValue = function () {};
+			that.mock(oCache).expects("fetchValue")
+				.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
+				.returns(SyncPromise.resolve(oParent));
+			that.mock(oCache).expects("checkSharedRequest").withExactArgs();
+			that.mock(_Helper).expects("getPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oParent), "postBody")
+				.returns(oPostBody);
+			that.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~mTypeForMetaPath~");
+			that.mock(_Helper).expects("getMetaPath").withExactArgs("path/to/collection")
+				.returns("meta/path");
+			that.mock(that.oRequestor).expects("fetchType")
+				.withExactArgs("~mTypeForMetaPath~", "/SalesOrders/meta/path")
+				.callsFake(resolve);
+
+			// code under test
+			aElements = oCache.addTransientCollection("path/to/collection", "~mQueryOptions~");
+
+			assert.deepEqual(aElements, []);
+			assert.strictEqual(oParent.collection, aElements);
+			assert.strictEqual(aElements.$count, 0);
+			assert.strictEqual(aElements.$created, 0);
+			assert.deepEqual(aElements.$byPredicate, {});
+			assert.strictEqual(typeof aElements.$postBodyCollection, "function");
+			assert.strictEqual(aElements.$queryOptions, "~mQueryOptions~");
+
+			// code under test
+			aElements.$postBodyCollection();
+
+			assert.deepEqual(oPostBody.collection, []);
+			assert.strictEqual(oPostBody.collection, aElements.$postBodyCollection);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#getAndRemoveValue", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
-			aElements,
-			oParent = {},
-			oPostBody = {};
+			oParent = {
+				value : "~value~"
+			};
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
 			.returns(SyncPromise.resolve(oParent));
-		this.mock(_Helper).expects("getPrivateAnnotation")
-			.withExactArgs(sinon.match.same(oParent), "postBody")
-			.returns(oPostBody);
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 
 		// code under test
-		aElements = oCache.addTransientCollection("path/to/collection");
+		assert.strictEqual(oCache.getAndRemoveValue("path/to/value"), "~value~");
 
-		assert.deepEqual(aElements, []);
-		assert.strictEqual(oParent.collection, aElements);
-		assert.strictEqual(aElements.$count, 0);
-		assert.strictEqual(aElements.$created, 0);
-		assert.deepEqual(aElements.$byPredicate, {});
-		assert.strictEqual(typeof aElements.$postBodyCollection, "function");
-
-		// code under test
-		aElements.$postBodyCollection();
-
-		assert.deepEqual(oPostBody.collection, []);
-		assert.strictEqual(oPostBody.collection, aElements.$postBodyCollection);
+		assert.notOk("value" in oParent);
 	});
 
 	//*********************************************************************************************
@@ -5596,7 +5627,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#updateNestedCreates", function (assert) {
+[false, true].forEach(function (bHasQueryOptions) {
+	QUnit.test("Cache#updateNestedCreates: " + bHasQueryOptions, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
 			oChildEntity0 = {
 				"@$ui5.context.isTransient" : true
@@ -5618,6 +5650,7 @@ sap.ui.define([
 				property : 42
 			},
 			oHelperMock = this.mock(_Helper),
+			mQueryOptions = {$select : "~select~"},
 			fnResolve = [sinon.spy(), sinon.spy()];
 
 		function expectUpdates(oChildEntity, oCreatedChildEntity, i) {
@@ -5649,11 +5682,14 @@ sap.ui.define([
 		oEntity.deepCreateCollection.$byPredicate = {};
 		oEntity.deepCreateCollection.$postBodyCollection = "~postBodyCollection~";
 		oEntity.otherCollection.$postBodyCollection = "~postBodyCollection~";
+		if (bHasQueryOptions) {
+			oEntity.deepCreateCollection.$queryOptions = mQueryOptions;
+		}
 
-		oHelperMock.expects("getQueryOptionsForPath")
+		oHelperMock.expects("getQueryOptionsForPath").exactly(bHasQueryOptions ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions),
 				"path/to/entity/deepCreateCollection")
-			.returns({$select : "~select~"});
+			.returns(mQueryOptions);
 		expectUpdates(oChildEntity0, oCreatedChildEntity0, 0);
 		expectUpdates(oChildEntity1, oCreatedChildEntity1, 1);
 
@@ -5671,6 +5707,7 @@ sap.ui.define([
 		assert.notOk("$postBodyCollection" in oEntity.deepCreateCollection);
 		assert.notOk("$postBodyCollection" in oEntity.otherCollection);
 	});
+});
 
 	//*********************************************************************************************
 	[
@@ -8173,8 +8210,10 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bDropTransientElement) {
 	[undefined, false, true].forEach(function (bKeepTransientPath) {
-		var sTitle = "_Cache#create: bKeepTransientPath: " + bKeepTransientPath
-				+ ", bDropTransientElement: " + bDropTransientElement;
+		[undefined, "~mQueryOptions~"].forEach(function (mLateQueryOptions) {
+			var sTitle = "_Cache#create: bKeepTransientPath: " + bKeepTransientPath
+					+ ", bDropTransientElement: " + bDropTransientElement
+				+ ", mLateQueryOptions: " + mLateQueryOptions;
 
 		if (bKeepTransientPath !== false && bDropTransientElement) {
 			return;
@@ -8209,6 +8248,7 @@ sap.ui.define([
 				mTypeForMetaPath = {};
 
 			oCache.fetchValue = function () {};
+			oCache.mLateQueryOptions = mLateQueryOptions;
 			aCollection.$count = 0;
 			aCollection.$created = 0;
 			oHelperMock.expects("publicClone")
@@ -8264,7 +8304,8 @@ sap.ui.define([
 			}
 
 			oHelperMock.expects("getQueryOptionsForPath")
-				.withExactArgs(sinon.match.same(oCache.mQueryOptions), sPathInCache)
+				.withExactArgs(sinon.match.same(mLateQueryOptions || oCache.mQueryOptions),
+					sPathInCache)
 				.returns({$select : aSelectForPath});
 			oHelperMock.expects("updateSelected")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners),
@@ -8346,6 +8387,7 @@ sap.ui.define([
 					sinon.match.same(oCache.mPostRequests), sPathInCache,
 					sinon.match.same(oEntityDataCleaned));
 			});
+		});
 		});
 	});
 });
@@ -8439,11 +8481,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bSecond) {
-	QUnit.test("_Cache#create: nested create, " + bSecond, function (assert) {
+[
+	{first : true},
+	{first : false, atEnd : false},
+	{first : false, atEnd : true}
+].forEach(function (oFixture) {
+	QUnit.test("_Cache#create: nested create, " + JSON.stringify(oFixture), function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS", {/*mQueryOptions*/}),
 			oCacheMock = this.mock(oCache),
-			aCollection = bSecond ? [{}] : [],
+			aCollection = oFixture.first ? [] : [{}],
 			iCount = aCollection.length,
 			oCreatePromise,
 			oEntityDataCleaned = {},
@@ -8452,12 +8498,12 @@ sap.ui.define([
 				unlock : function () {}
 			},
 			oHelperMock = this.mock(_Helper),
-			aPostBodyCollection = bSecond ? [{}] : [];
+			aPostBodyCollection = _Helper.clone(aCollection);
 
 		oCache.fetchValue = function () {};
 		aCollection.$count = iCount;
 		aCollection.$created = iCount;
-		aCollection.$postBodyCollection = bSecond ? aPostBodyCollection : function () {};
+		aCollection.$postBodyCollection = oFixture.first ? function () {} : aPostBodyCollection;
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
 		oHelperMock.expects("publicClone")
 			.withExactArgs(sinon.match.same("~oInitialData~"), true)
@@ -8475,7 +8521,7 @@ sap.ui.define([
 		oHelperMock.expects("updateExisting") // addToCount
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "($uid='0')/TEAM_2_EMPLOYEES",
 				sinon.match.same(aCollection), {$count : iCount + 1});
-		if (!bSecond) {
+		if (oFixture.first) {
 			this.mock(aCollection).expects("$postBodyCollection").withExactArgs()
 				.callsFake(function () {
 					aCollection.$postBodyCollection = aPostBodyCollection;
@@ -8490,17 +8536,17 @@ sap.ui.define([
 
 		// code under test
 		oCreatePromise = oCache.create(oGroupLock, SyncPromise.resolve("EMPLOYEES"),
-			"($uid='0')/TEAM_2_EMPLOYEES", "($uid='1')", "~oInitialData~", null, false,
+			"($uid='0')/TEAM_2_EMPLOYEES", "($uid='1')", "~oInitialData~", oFixture.atEnd, null,
 			function fnSubmitCallback() {});
 
 		assert.strictEqual(oCreatePromise, "~oDeepCreatePromise~");
 		assert.strictEqual(aCollection.length, iCount + 1);
 		assert.strictEqual(aCollection.$created, iCount + 1);
-		assert.deepEqual(aCollection[0], oEntityDataCleaned);
+		assert.strictEqual(aCollection[oFixture.atEnd ? 1 : 0], oEntityDataCleaned);
 		assert.strictEqual(oEntityDataCleaned["@$ui5.context.isTransient"], true);
 		assert.strictEqual(aCollection.$byPredicate["($uid='1')"], oEntityDataCleaned);
 		assert.strictEqual(aPostBodyCollection.length, iCount + 1);
-		assert.deepEqual(aPostBodyCollection[0], "~oPostBody~");
+		assert.deepEqual(aPostBodyCollection[oFixture.atEnd ? 1 : 0], "~oPostBody~");
 	});
 });
 
@@ -12370,6 +12416,21 @@ sap.ui.define([
 			"('a')" : "~a~",
 			"('c')" : "~c~"
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#setPersistedCollection", function (assert) {
+		var oCache = _Cache.create(this.oRequestor, "SalesOrders"),
+			aElements = [{}, {}, {}];
+
+		aElements.$created = 3;
+
+		// code under test
+		oCache.setPersistedCollection(aElements);
+
+		assert.strictEqual(oCache.aElements, aElements);
+		assert.strictEqual(oCache.iActiveElements, 3);
+		assert.strictEqual(oCache.iLimit, 3);
 	});
 
 	//*********************************************************************************************

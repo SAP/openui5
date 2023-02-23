@@ -112,6 +112,26 @@ sap.ui.define([
 				},
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$select=GrossAmount,ItemPosition,Quantity,SalesOrderID&$filter=SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000080'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000090'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000050'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000030'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000100'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000010'&$top=6" : {
 					source : "SalesOrderList('0500000000')-requestSideEffects.json"
+				},
+				"POST SalesOrderList" : {
+					source : "POST-SalesOrderList.json"
+				},
+				"SalesOrderList('0500000005')?$select=SO_2_BP&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+					message : {
+						"@odata.etag" : "W/\"202302051220000.9682750 \"",
+						SO_2_BP : {
+							BusinessPartnerID : "010000000",
+							CompanyName : "SAP"
+						}
+					}
+				},
+				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000005'&$select=GrossAmount,SalesOrderID" : {
+					message : {
+						value : [{
+							GrossAmount : "8860.55",
+							SalesOrderID : "0500000005"
+						}]
+					}
 				}
 			},
 			sSourceBase : "sap/ui/core/sample/odata/v4/FlexibleColumnLayout/data"

@@ -1437,6 +1437,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#updateAfterCreate
+	 */
+	ODataParentBinding.prototype.updateAfterCreate = function () {
+		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
+			return oDependentBinding.updateAfterCreate();
+		}));
+	};
+
+	/**
 	 * Updates the aggregated query options of this binding with the values from the given
 	 * query options. "$select" and "$expand" are only updated if the aggregated query options are
 	 * still initial because these have been computed in {@link #fetchIfChildCanUseCache} otherwise.
@@ -1514,7 +1524,8 @@ sap.ui.define([
 		"destroy",
 		"doDeregisterChangeListener",
 		"getGeneration",
-		"hasPendingChangesForPath"
+		"hasPendingChangesForPath",
+		"updateAfterCreate"
 	].forEach(function (sMethod) { // method (still) not final, allow for "super" calls
 		asODataParentBinding.prototype[sMethod] = ODataParentBinding.prototype[sMethod];
 	});

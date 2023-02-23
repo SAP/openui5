@@ -828,6 +828,14 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#updateAfterCreate
+	 */
+	ODataPropertyBinding.prototype.updateAfterCreate = function () {
+		return this.checkUpdateInternal();
+	};
+
+	/**
+	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#visitSideEffects
 	 */
 	ODataPropertyBinding.prototype.visitSideEffects = function () {};

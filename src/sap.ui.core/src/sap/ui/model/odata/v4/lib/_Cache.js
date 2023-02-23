@@ -343,21 +343,26 @@ sap.ui.define([
 	 * Adds a collection below a transient element.
 	 *
 	 * @param {string} sPath - The collection path
+	 * @param {object} mQueryOptions - The binding's cache query options if it would create a cache;
+	 *   only $select is used to filter the relevant properties from the POST response
 	 * @returns {object[]} The elements collection (either from the initial data or empty)
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
 	 */
-	_Cache.prototype.addTransientCollection = function (sPath) {
+	_Cache.prototype.addTransientCollection = function (sPath, mQueryOptions) {
 		var aElements,
 			aSegments = sPath.split("/"),
 			sName = aSegments.pop(),
 			oParent = this.fetchValue(_GroupLock.$cached, aSegments.join("/")).getResult(),
-			oPostBody = _Helper.getPrivateAnnotation(oParent, "postBody");
+			oPostBody = _Helper.getPrivateAnnotation(oParent, "postBody"),
+			that = this;
 
 		function setPostBodyCollection() {
 			aElements.$postBodyCollection = oPostBody[sName] = [];
 		}
 
+		this.checkSharedRequest();
 		if (sName in oParent) {
 			throw new Error("Deep create with initial data is not supported yet");
 		}
@@ -366,6 +371,12 @@ sap.ui.define([
 		aElements.$byPredicate = {};
 		// allow creating on demand when there is a create in the child list
 		aElements.$postBodyCollection = setPostBodyCollection;
+		aElements.$queryOptions = mQueryOptions;
+		// add the collection type to mTypeForMetaPath
+		this.fetchTypes().then(function (mTypeForMetaPath) {
+			that.oRequestor.fetchType(mTypeForMetaPath,
+				that.sMetaPath + "/" + _Helper.getMetaPath(sPath));
+		});
 
 		return aElements;
 	};
@@ -571,7 +582,9 @@ sap.ui.define([
 					} // else: transient element was not kept by #reset, leave it like that!
 				}
 				// update the cache with the POST response
-				aSelect = _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath).$select;
+				aSelect = _Helper.getQueryOptionsForPath(
+					that.mLateQueryOptions || that.mQueryOptions, sPath
+				).$select;
 				sResultingPath = _Helper.buildPath(sPath, sPredicate || sTransientPredicate);
 				// update selected properties (incl. single-valued navigation properties), ETags,
 				// and predicates
@@ -653,7 +666,11 @@ sap.ui.define([
 				aCollection.$postBodyCollection(); // creation on demand
 			}
 			_Helper.setPrivateAnnotation(oEntityData, "transient", sGroupId);
-			aCollection.$postBodyCollection.unshift(oPostBody);
+			if (bAtEndOfCreated) {
+				aCollection.$postBodyCollection.push(oPostBody);
+			} else {
+				aCollection.$postBodyCollection.unshift(oPostBody);
+			}
 			oGroupLock.unlock();
 			return _Helper.addDeepCreatePromise(oEntityData);
 		}
@@ -1116,6 +1133,27 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.v4.lib._Cache#fetchValue
 	 * @public
 	 */
+
+	/**
+	 * Returns the value at the given path and removes it from the cache.
+	 *
+	 * @param {string} sPath - The relative path of the property
+	 * @returns {any} The value
+	 * @throws {Error} If the cache is shared
+	 *
+	 * @public
+	 */
+	_Cache.prototype.getAndRemoveValue = function (sPath) {
+		var aSegments = sPath.split("/"),
+			sName = aSegments.pop(),
+			oParent = this.fetchValue(_GroupLock.$cached, aSegments.join("/")).getResult(),
+			vValue = oParent[sName];
+
+		this.checkSharedRequest();
+		delete oParent[sName];
+
+		return vValue;
+	};
 
 	/**
 	 * Returns an array containing all current elements of a collection or single cache for the
@@ -2272,8 +2310,8 @@ sap.ui.define([
 				aCreatedCollection = oCreatedEntity[sSegment];
 				if (aCreatedCollection) { // otherwise no create was called in nested list binding
 					sCollectionPath = sPath + "/" + sSegment;
-					mQueryOptions
-						= _Helper.getQueryOptionsForPath(that.mQueryOptions, sCollectionPath);
+					mQueryOptions = vCollection.$queryOptions
+						|| _Helper.getQueryOptionsForPath(that.mQueryOptions, sCollectionPath);
 					aCreatedCollection.forEach(function (oCreatedChildEntity, i) {
 						var oChildEntity = vCollection[i],
 							sPredicate
@@ -3561,6 +3599,17 @@ sap.ui.define([
 			this.iLimit = this.oBackup.iLimit;
 		}
 		this.oBackup = null;
+	};
+
+	/**
+	 * Sets the cache's elements to the given collection after a deep create.
+	 *
+	 * @param {object} aElements - The elements from the deep create
+	 */
+	_CollectionCache.prototype.setPersistedCollection = function (aElements) {
+		this.aElements = aElements;
+		this.iActiveElements = aElements.$created;
+		this.iLimit = aElements.length;
 	};
 
 	//*********************************************************************************************

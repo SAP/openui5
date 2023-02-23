@@ -47606,6 +47606,193 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Deep create with $count, nested list binding with own cache. Create is called twice
+	// in the nested binding while the parent context is still transient. There is an additional :1
+	// navigation which is not part of the created data. Patch one nested entity while transient and
+	// when created persisted. See that the nested list does not refresh afterwards if created with
+	// bSkipRefresh, but refreshes correctly otherwise. See also that the :1 navigation is fetched
+	// in both cases.
+	// JIRA: CPOUI5ODATAV4-2033
+[false, true].forEach(function (bSkipRefresh) {
+	var sTitle = "CPOUI5ODATAV4-2033: Deep create, nested ODLB w/ own cache, bSkipRefresh="
+			+ bSkipRefresh;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedItemContext1,
+			oCreatedItemContext2,
+			oCreatedOrderContext,
+			oItemsBinding,
+			oOrdersBinding,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<Text id="orderCount" text="{$count}"/>\
+<Table id="orders" items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
+	<Text id="order" text="{SalesOrderID}"/>\
+</Table>\
+<Text id="itemCount" text="{$count}"/>\
+<FlexBox id="detail">\
+	<Text id="bp" text="{SO_2_BP/BusinessPartnerID}"/>\
+	<Text id="currency" text="{CurrencyCode}"/>\
+	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$count : true}}">\
+		<Input id="note" value="{Note}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=100", {
+				"@odata.count" : "1",
+				value : [{SalesOrderID : "1"}]
+			})
+			.expectChange("orderCount")
+			.expectChange("order", ["1"])
+			.expectChange("itemCount")
+			.expectChange("bp")
+			.expectChange("currency")
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("order", ["", "1"])
+				.expectChange("bp", null)
+				.expectChange("currency", "EUR") // default value
+				.expectChange("orderCount", "2")
+				.expectChange("itemCount", "0");
+
+			oOrdersBinding = that.oView.byId("orders").getBinding("items");
+			that.oView.byId("orderCount").setBindingContext(oOrdersBinding.getHeaderContext());
+			oItemsBinding = that.oView.byId("items").getBinding("items");
+
+			// code under test
+			oCreatedOrderContext = oOrdersBinding.create({}, bSkipRefresh);
+			that.oView.byId("detail").setBindingContext(oCreatedOrderContext);
+			that.oView.byId("itemCount").setBindingContext(oItemsBinding.getHeaderContext());
+
+			return that.waitForChanges(assert, "create order");
+		}).then(function () {
+			that.expectChange("note", ["note10", "note2"])
+				.expectChange("itemCount", "1")
+				.expectChange("itemCount", "2");
+
+			// code under test
+			oCreatedItemContext1 = oItemsBinding.create({Note : "note10"});
+			oCreatedItemContext2 = oItemsBinding.create({Note : "note2"}, false, true);
+
+			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
+			assert.strictEqual(oCreatedItemContext2.isTransient(), true);
+
+			return that.waitForChanges(assert, "create items");
+		}).then(function () {
+			that.expectChange("note", [, "note20"]);
+
+			return Promise.all([
+				// code under test
+				oCreatedItemContext2.setProperty("Note", "note20"),
+				that.waitForChanges(assert, "patch transient item")
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {
+						SO_2_SOITEM : [
+							{Note : "note10"},
+							{Note : "note20"}
+						]
+					}
+				}, {
+					"@odata.etag" : "etag",
+					CurrencyCode : "USD",
+					SalesOrderID : "new",
+					SO_2_SOITEM : [{
+						"@odata.etag" : "etag10",
+						GrossAmount : "42.99", // excess property
+						ItemPosition : "0010",
+						Note : "note*10",
+						SalesOrderID : "new"
+					}, {
+						"@odata.etag" : "etag20",
+						GrossAmount : "42.99", // excess property
+						ItemPosition : "0020",
+						Note : "note*20",
+						SalesOrderID : "new"
+					}]
+				})
+				.expectChange("order", ["new"])
+				.expectChange("note", ["note*10", "note*20"]);
+			if (bSkipRefresh) { // late property request
+				that.expectRequest("SalesOrderList('new')?$select=SO_2_BP"
+						+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
+						"@odata.etag" : "etag",
+						SO_2_BP : {BusinessPartnerID : "BP"}
+					});
+			} else { // refresh after POST
+				that.expectRequest("SalesOrderList('new')?$select=SalesOrderID", {
+						"@odata.etag" : "etag",
+						SalesOrderID : "new"
+					})
+					.expectRequest("SalesOrderList('new')/SO_2_SOITEM?$count=true"
+						+ "&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
+						"@odata.count" : "2",
+						value : [{
+							"@odata.etag" : "etag10",
+							ItemPosition : "0010",
+							Note : "note*10",
+							SalesOrderID : "new"
+						}, {
+							"@odata.etag" : "etag20",
+							ItemPosition : "0020",
+							Note : "note*20",
+							SalesOrderID : "new"
+						}]
+					})
+					// late property request
+					.expectRequest("SalesOrderList('new')?$select=CurrencyCode"
+						+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
+						"@odata.etag" : "etag",
+						CurrencyCode : "USD",
+						SO_2_BP : {BusinessPartnerID : "BP"}
+					});
+			}
+			that.expectChange("bp", "BP")
+				.expectChange("currency", "USD");
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oCreatedOrderContext.created(),
+				oCreatedItemContext2.created(),
+				that.waitForChanges(assert, "submit -> success")
+			]);
+		}).then(function () {
+			assert.notOk("SO_2_SOITEM" in oCreatedOrderContext.getObject());
+			assert.deepEqual(oCreatedItemContext2.getObject(), {
+				"@odata.etag" : "etag20",
+				// no GrossAmount
+				ItemPosition : "0020",
+				Note : "note*20",
+				SalesOrderID : "new"
+			});
+			assert.strictEqual(oCreatedItemContext2.isTransient(), false);
+
+			that.expectChange("note", [, "note**20"])
+				.expectRequest({
+					method : "PATCH",
+					headers : {"If-Match" : "etag20"},
+					url : "SalesOrderList('new')"
+						+ "/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')",
+					payload : {Note : "note**20"}
+				});
+
+			return Promise.all([
+				// code under test
+				oCreatedItemContext2.setProperty("Note", "note**20"),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, "patch created persisted item")
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario:
 	// (1) Binding for a part of a structural instance annotation works without binding the
 	//     property itself

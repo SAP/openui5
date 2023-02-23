@@ -1431,6 +1431,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Recursively updates all dependent bindings after a create.
+	 *
+	 * @returns [sap.ui.base.SyncPromise}
+	 *   A promise that resolves when the update is finished and rejects with an error if something
+	 *   went wrong.
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#updateAfterCreate
+	 * @private
+	 * @see sap.ui.model.odata.v4.ODataListBinding#create
+	 */
+
+	/**
 	 * Recursively visits all dependent bindings of (the given context of) this binding. Bindings
 	 * with an own cache will request side effects themselves as applicable.
 	 *

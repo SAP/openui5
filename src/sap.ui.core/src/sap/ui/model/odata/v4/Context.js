@@ -677,6 +677,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the value at the given path and removes it from the cache.
+	 *
+	 * @param {string} sPath - The relative path of the property
+	 * @returns {any} The value
+	 *
+	 * @private
+	 */
+	Context.prototype.getAndRemoveValue = function (sPath) {
+		return this.withCache(function (oCache, sCachePath) {
+			return oCache.getAndRemoveValue(sCachePath);
+		}, sPath, true).getResult();
+	};
+
+	/**
 	 * Returns the binding this context belongs to.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
@@ -1953,6 +1967,19 @@ sap.ui.define([
 		}
 
 		return this.sPath + sSuffix;
+	};
+
+	/**
+	 * Recursively updates all dependent bindings after a create. Does not wait, but reports an
+	 * error if something went wrong.
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v4.ODataListBinding#create
+	 */
+	Context.prototype.updateAfterCreate = function () {
+		SyncPromise.all(this.oModel.getDependentBindings(this).map(function (oDependentBinding) {
+			return oDependentBinding.updateAfterCreate();
+		})).catch(this.oModel.getReporter());
 	};
 
 	/**
