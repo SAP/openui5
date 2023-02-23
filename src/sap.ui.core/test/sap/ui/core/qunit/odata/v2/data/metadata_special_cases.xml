@@ -81,6 +81,22 @@
 				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="12" />
 				<Property Name="Time" Type="Edm.Time" Precision="0" />
 			</EntityType>
+			<EntityType Name="Product" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ProductID" />
+				</Key>
+				<Property Name="ProductID" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:unicode="false" sap:label="Product ID" sap:updatable="false" />
+				<Property Name="WeightMeasure" Type="Edm.Decimal" Precision="13"
+					Scale="3" sap:unicode="false" sap:unit="WeightUnit" sap:label="Wt. Measure" />
+				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3"
+					sap:unicode="false" sap:label="Qty. Unit" sap:semantics="unit-of-measure" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" sap:unicode="false" sap:label="Currency"
+					sap:semantics="currency-code" />
+				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3"
+					sap:unicode="false" sap:unit="CurrencyCode" sap:label="Unit Price" />
+			</EntityType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
 				<End Type="special.cases.DummyType" Multiplicity="1"
 					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
@@ -115,6 +131,7 @@
 				<EntitySet Name="C_BankConditionTP"
 					EntityType="special.cases.C_BankConditionTPType"/>
 				<EntitySet Name="Employees" EntityType="special.cases.Employee" />
+				<EntitySet Name="ProductSet" EntityType="special.cases.Product"/>
 				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
 					<End EntitySet="DummySet"

@@ -851,17 +851,17 @@ sap.ui.define([
 
 						return true;
 					},
-					source : "metadata.xml"
+					source : "../../../../../../qunit/odata/v2/data/ZUI5_GWSAMPLE_BASIC.metadata.xml"
 				}
 			}, {
 				regExp : /GET .*\/SAP__Currencies\?/,
 				response : {
-					source : "../../data/SAP__Currencies.json"
+					source : "../../../../../../qunit/odata/v2/data/SAP__Currencies.json"
 				}
 			}, {
 				regExp : /GET .*\/SAP__UnitsOfMeasure\?/,
 				response : {
-					source : "../../data/SAP__UnitsOfMeasure.json"
+					source : "../../../../../../qunit/odata/v2/data/SAP__UnitsOfMeasure.json"
 				}
 			}, {
 				/* Messages: Test Case III */

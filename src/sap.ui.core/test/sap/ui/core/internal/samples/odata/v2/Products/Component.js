@@ -21,7 +21,7 @@ sap.ui.define([
 		init : function () {
 			var bRealOData = TestUtils.isRealOData(),
 				sServicePrefix = "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/",
-				sURLPrefix = "test-resources/sap/ui/core/internal/samples/odata/v2/data/";
+				sURLPrefix = "test-resources/sap/ui/core/qunit/odata/v2/data/";
 
 			UIComponent.prototype.init.apply(this, arguments);
 
