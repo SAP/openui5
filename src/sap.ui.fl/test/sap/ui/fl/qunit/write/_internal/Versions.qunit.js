@@ -130,7 +130,7 @@ sap.ui.define([
 				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
 				return Versions.initialize(mPropertyBag);
 			}.bind(this)).then(function (oResponse) {
-				assert.equal(this.oStorageLoadVersionsStub.callCount, 2, "a second request is sent");
+				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "no further request is send");
 				assert.ok(oResponse instanceof JSONModel, "a model was returned");
 				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
 			}.bind(this));
@@ -715,11 +715,11 @@ sap.ui.define([
 				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
-
+			var sActiveVersion = "1";
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: "1"
+				version: sActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -742,14 +742,15 @@ sap.ui.define([
 			.then(function (oModel) {
 				var oData = oModel.getData();
 				var aVersions = oData.versions;
-				assert.equal(aVersions.length, 1, "and a getting the versions anew will return one version");
+				assert.equal(aVersions.length, 1, "and a getting the versions a new will return one version");
 				assert.equal(oDiscardStub.callCount, 1, "discardDraft was called once");
 				assert.equal(aVersions[0], oFirstVersion, "which is the activated version");
 				assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
 				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
 				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
 				assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
-				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), Version.Number.Draft, ", a displayedVersion property set to the draft version");
+				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
+				assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
 			}.bind(this));
 		});
 
@@ -886,7 +887,7 @@ sap.ui.define([
 					assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "some discarding took place");
 					assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
 					assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
-					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), Version.Number.Draft, ", a displayedVersion property set to the draft version");
+					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), "1", ", a displayedVersion property set to the active version");
 				}.bind(this));
 		});
 	});

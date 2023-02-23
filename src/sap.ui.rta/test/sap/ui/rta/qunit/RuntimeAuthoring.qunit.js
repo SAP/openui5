@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Layer",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/BaseCommand",
@@ -38,6 +39,7 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
+	Versions,
 	Layer,
 	QUnitUtils,
 	RTABaseCommand,
@@ -81,6 +83,7 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function(assert) {
+			Versions.clearInstances();
 			var fnDone = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -429,7 +432,6 @@ sap.ui.define([
 			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
 			var oMessageBoxSpy = sandbox.stub(RtaUtils, "showMessageBox");
 			sandbox.stub(this.oRta, "getLayer").returns(Layer.USER);
-
 			return this.oRta.stop(false, false)
 				.then(function() {
 					var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
@@ -562,7 +564,6 @@ sap.ui.define([
 
 		QUnit.test("when stopping rta with saving changes and versioning is enabled and condenseAnyLayer true", function(assert) {
 			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
-
 			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
 			return this.oRta._serializeToLrep(true)
