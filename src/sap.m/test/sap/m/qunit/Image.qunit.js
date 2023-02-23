@@ -47,6 +47,16 @@ sap.ui.define([
 		return new Image(sControlId, oImageProps);
 	}
 
+	function createSVGImage(oProps) {
+		var oImageProps = {
+			src: "https://openui5.org/7726d076e89ac67994e0a4d96106d534/B_OpenUI5_H.svg",
+			width: "150px",
+			height: "74px"
+		};
+		oProps && jQuery.extend(oImageProps, oProps);
+
+		return new Image(sControlId, oImageProps);
+	}
 	/* tests */
 	QUnit.module("Basic rendering");
 
@@ -1184,6 +1194,34 @@ sap.ui.define([
 
 		//setup
 		var oImage = createImage({
+				src: sSrc,
+				load: function () {
+					if (callCount < callLimit) {
+						callCount++;
+						oImage.invalidate();
+					} else {
+						assert.ok(true, 'Load after rerendering called ' + callCount + ' times');
+						done();
+						oImage.destroy();
+					}
+				}
+			});
+
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+	});
+
+	// This test is especially created to cover FF problem loading huge size SVG images,
+	// caused by wrongly reading naturalWidth property as '0'
+	QUnit.test("SVG Load is called on rerender", function (assert) {
+		var done = assert.async();
+		var callCount = 0;
+		var callLimit = 10;
+
+		assert.expect(1);
+
+		//setup
+		var oImage = createSVGImage({
 				src: sSrc,
 				load: function () {
 					if (callCount < callLimit) {
