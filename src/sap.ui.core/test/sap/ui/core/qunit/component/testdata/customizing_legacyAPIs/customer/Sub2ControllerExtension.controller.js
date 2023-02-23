@@ -13,7 +13,7 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension'],
 		customerAction: function() {
 			customSub2ControllerCalled();
 		},
-		override: {
+		overrides: {
 			onInit: function() {
 				aLifeCycleCalls.push("Sub2ControllerExtension Controller onInit()");
 			},

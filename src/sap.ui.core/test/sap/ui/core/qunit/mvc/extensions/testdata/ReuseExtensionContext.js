@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtens
 		onBeforeSomething: function() {
 
 		},
-		override: {
+		overrides: {
 			onInit: function() {
 				QUnit.config.current.assert.ok(this instanceof ControllerExtension, "onInit: Context is ControllerExtension 'Extension'");
 				QUnit.config.current.assert.equal(this.getMetadata().getNamespace(), "my.test.reuse", "onInit: Context is correct ControllerExtension 'Extension'");

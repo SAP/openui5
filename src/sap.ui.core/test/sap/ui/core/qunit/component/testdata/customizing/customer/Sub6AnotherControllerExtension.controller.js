@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension'],
 			}
 		},
 
-		override: {
+		overrides: {
 			onInit: function() {
 				oLifecycleSpy("Sub6AnotherControllerExtension Controller onInit()");
 			},
