@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/CalendarType",
-	'sap/ui/core/Configuration'
+	"sap/ui/core/Configuration"
 ], function(UniversalDateUtils, UniversalDate, CalendarType, Configuration) {
 	"use strict";
 
@@ -574,6 +574,22 @@ sap.ui.define([
 
 		oConfigStub.restore();
 		oClock.restore();
+	});
+
+	QUnit.test("_getDateFromWeekStartByDayOffset with custom timezone", function(assert) {
+		// prepare
+		var oUniversalDateWeekDay;
+
+		this.mock(UniversalDateUtils).expects("createNewUniversalDate")
+			.withExactArgs()
+			.atLeast(1)
+			.returns(new UniversalDate(675, 1, 1));
+
+		// act
+		oUniversalDateWeekDay = UniversalDateUtils._getDateFromWeekStartByDayOffset('WesternTraditional', 1);
+
+		//assert
+		testDate(assert, oUniversalDateWeekDay, 1, "DATE", 675, 1, 1, 0,0,0,0);
 	});
 
 
