@@ -17,7 +17,8 @@
 				Experimental feature since version 1.96. The API may change.
 			</div>
 			<p>
-				Date range filter allows users to select a relative or an absolute time period.
+				Date Range filter allows users to select a relative or an absolute time period. <br/>
+				The Date Range filter is implemented based on the <a data-demokit-href="#/api/sap.m.DynamicDateRange" target="_blank">sap.m.DynamicDateRange</a> control and follows the date and time format of the latter.
 			</p>
 
 			<h2 id="properties">Properties</h2>
@@ -117,6 +118,11 @@
 						<td>date</td>
 						<td>Specific date</td>
 						<td>[Date]</td>
+					</tr>
+					<tr>
+						<td>dateTime</td>
+						<td>Specific date and time</td>
+						<td>[Datetime]</td>
 					</tr>
 					<tr>
 						<td>today</td>
@@ -314,11 +320,6 @@
 						<td>nextYear</td>
 						<td></td>
 						<td>[]</td>
-					</tr>
-					<tr>
-						<td>dateTime</td>
-						<td></td>
-						<td>[Datetime]</td>
 					</tr>
 				</table>
 			</div>
