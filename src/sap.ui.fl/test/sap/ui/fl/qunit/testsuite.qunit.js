@@ -193,6 +193,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData"]
 				}
 			},
+			"apply/_internal/changes/descriptor/app/RemoveAllInboundsExceptOne": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/RemoveAllInboundsExceptOne"]
+				}
+			},
 			"apply/_internal/changes/descriptor/app/ChangeInbound": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
