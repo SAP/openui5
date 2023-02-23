@@ -1103,7 +1103,7 @@ sap.ui.define([
 			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
 			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().clientWidth);
 
-			var iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt($editableControl.parent().outerWidth());
+			var iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt($editableControl.outerWidth());
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
