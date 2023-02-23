@@ -568,7 +568,6 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var aRows = oTable.getRows();
 		var iNewNumberOfRows = this.getComputedRowCounts().count;
-		var i;
 		var bRowsAggregationChanged = false;
 
 		// There is no need to have rows in the aggregation if the NoData overlay is enabled and no binding is available.
@@ -596,28 +595,7 @@ sap.ui.define([
 			oSyncExtension.syncRowCount(iNewNumberOfRows);
 		});
 
-		if (aRows.length < iNewNumberOfRows) {
-			// Create missing rows.
-			var aNewRows = createRows(oTable, iNewNumberOfRows - aRows.length);
-
-			aRows = aRows.concat(aNewRows);
-
-			// Set the binding context before adding the new rows to the aggregation to avoid double propagation.
-			updateBindingContextsOfRows(this, aRows);
-
-			for (i = 0; i < aNewRows.length; i++) {
-				oTable.addAggregation("rows", aNewRows[i], true);
-			}
-		} else {
-			// Remove rows that are not required.
-			for (i = aRows.length - 1; i >= iNewNumberOfRows; i--) {
-				oTable.removeAggregation("rows", i, true);
-			}
-
-			aRows.splice(iNewNumberOfRows);
-			updateBindingContextsOfRows(this, aRows);
-		}
-
+		updateRowsAggregation(this, iNewNumberOfRows);
 		bRowsAggregationChanged = true;
 		oTable._bRowAggregationInvalid = false;
 
@@ -756,9 +734,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates the rows aggregation of the table. Updates the binding contexts of all rows and creates new rows if required.
+	 *
+	 * @param {sap.ui.table.Table} oTable The table that is or will be the parent of the rows.
+	 * @param {int} iNewNumberOfRows The number of rows that need to be in the aggregation.
+	 */
+	function updateRowsAggregation(oMode, iNewNumberOfRows) {
+		var oTable = oMode.getTable();
+		var aRows = oTable.getRows();
+
+		if (aRows.length < iNewNumberOfRows) {
+			// Create missing rows.
+			var aNewRows = createRows(oTable, iNewNumberOfRows - aRows.length);
+
+			aRows = aRows.concat(aNewRows);
+
+			// Set the binding context before adding the new rows to the aggregation to avoid double propagation.
+			updateBindingContextsOfRows(oMode, aRows);
+
+			aNewRows.forEach(function(oNewRow) {
+				oTable.addAggregation("rows", oNewRow, true);
+			});
+		} else {
+			// Remove rows that are not required.
+			for (var i = aRows.length - 1; i >= iNewNumberOfRows; i--) {
+				oTable.removeAggregation("rows", i, true);
+			}
+
+			aRows.splice(iNewNumberOfRows);
+			updateBindingContextsOfRows(oMode, aRows);
+		}
+	}
+
+	/**
 	 * Creates and returns the specified amount of rows.
 	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table that will be the parent of the rows.
+	 * @param {sap.ui.table.Table} oTable The table that will be the parent of the rows.
 	 * @param {int} iRowCount The number of rows to create.
 	 * @returns {sap.ui.table.Row[]} The created rows.
 	 */
@@ -777,8 +788,7 @@ sap.ui.define([
 	 * Updates binding contexts of the rows. The rows passed to this method must either be already in the rows aggregation of the table, or are
 	 * about to be added there. Also, they must be in the order as they are, or will be, in the aggregation.
 	 *
-	 * @param {sap.ui.table.rowmodes.RowMode} oMode Instance of the row mode that is associated with the table that is or will be the parent of the
-	 * rows.
+	 * @param {sap.ui.table.rowmodes.RowMode} oMode The row mode that is associated with the table that is or will be the parent of the rows.
 	 * @param {Array<sap.ui.table.Row>} [aRows] The rows for which the contexts are to be updated.
 	 */
 	function updateBindingContextsOfRows(oMode, aRows) {
