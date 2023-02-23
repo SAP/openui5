@@ -115,8 +115,7 @@ sap.ui.define([
 			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
 			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			// Threshold is 100, because binding is initialized before 'threshold' property is set (see ManagedObject#applySettings).
-			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
@@ -134,8 +133,7 @@ sap.ui.define([
 			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
 			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			// Threshold is 100, because binding is initialized before 'threshold' property is set (see ManagedObject#applySettings).
-			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount + 1);
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount + 1, iComputedRowCount + 1);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,

@@ -557,7 +557,7 @@ sap.ui.define([
 
 	function loadContexts(oBinding, iStartIndex, iLength) {
 		var aContexts = oBinding.getContexts(iStartIndex, iLength, 0, true);
-		var bContextsAvailable = aContexts.length === iLength && !aContexts.includes(undefined);
+		var bContextsAvailable = aContexts.length === Math.min(iLength, oBinding.getLength()) && !aContexts.includes(undefined);
 
 		if (bContextsAvailable) {
 			return Promise.resolve(aContexts);

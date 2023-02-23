@@ -144,13 +144,13 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(oGetContextsSpy.callCount, 6, "Call count of method to get contexts");
 
-			// The initial getContexts call does not consider fixed row counts and the threshold, because the binding is initialized before
+			// The initial getContexts call does not consider fixed row counts and the first visible row, because the binding is initialized before
 			// the corresponding properties are set (see ManagedObject#applySettings).
 			// Fixed bottom rows can't be requested if the count is unknown. As soon as the binding receives a getContexts call that triggers a
 			// request, it ignores subsequent calls.
 
 			// refreshRows
-			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 10, 100); // scrollable rows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 10, 10); // scrollable rows
 			// render
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, 1, 0, true); // fixed top rows
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 2, 3, 3); // scrollable rows
