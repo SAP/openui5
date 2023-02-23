@@ -23,17 +23,22 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<MessageStrip
-						text="This sample includes cards that demonstrate the additional logic for integration with the host environment. If you want to use it in SAP Business Application Studio, it has to be imported there as an application."
-						visible="{settings>/isApplication}"
-						class="sapUiSmallMargin"
-						showIcon="true"
-					/>
-					<MessageStrip text="This feature is experimental - it may be deleted, or incompatible API changes may be done before its official public release." visible="{= !!${/sample/experimental} || !!${/subSample/experimental} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
-					<MessageStrip text="This sample uses a mock server which may interfere with your data requests." visible="{= !!${/sample/mockServer} || !!${/subSample/mockServer} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
-					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }"></f:GridContainer>
-					<core:HTML id="iframeWrapper" visible="{= ${settings>/useIFrame} }" preferDOM="false" content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;
-								 &lt;/div&gt;'></core:HTML>
+					<VBox height="100%">
+						<MessageStrip
+							text="This sample includes cards that demonstrate the additional logic for integration with the host environment. If you want to use it in SAP Business Application Studio, it has to be imported there as an application."
+							visible="{settings>/isApplication}"
+							class="sapUiSmallMargin"
+							showIcon="true"
+						/>
+						<MessageStrip text="This feature is experimental - it may be deleted, or incompatible API changes may be done before its official public release." visible="{= !!${/sample/experimental} || !!${/subSample/experimental} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
+						<MessageStrip text="This sample uses a mock server which may interfere with your data requests." visible="{= !!${/sample/mockServer} || !!${/subSample/mockServer} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
+						<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }"></f:GridContainer>
+						<core:HTML id="iframeWrapper" visible="{= ${settings>/useIFrame} }" preferDOM="false" content='&lt;div style="height:100%;"&gt;&lt;/div&gt;'>
+							<core:layoutData>
+								<FlexItemData growFactor="1" />
+							</core:layoutData>
+						</core:HTML>
+					</VBox>
 				</Page>
 			</l:SplitPane>
 			<l:SplitPane requiredParentWidth="1">
