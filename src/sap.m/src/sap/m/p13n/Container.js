@@ -137,8 +137,8 @@ sap.ui.define([
 				});
 			}
 		}
-		this.oLayout.setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in default view
-		this.oLayout.setShowFooter(sKey !== this.DEFAULT_KEY); //Don't show footer in default view
+		this.getLayout().setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in default view
+		this.getLayout().setShowFooter(sKey !== this.DEFAULT_KEY); //Don't show footer in default view
 		this._getTabBar().setSelectedKey(sKey);
 		this._getNavBackBtn().setVisible(sKey !== this.DEFAULT_KEY);
 		this._getNavBackBtn().setText((this.getView(sKey) && this.getView(sKey).getText()) || sKey);
@@ -178,6 +178,16 @@ sap.ui.define([
 		oLastItem.addStyleClass("sapMMenuDivider");
 
 		return this;
+	};
+
+	/**
+	 * Returns the layout object.
+	 *
+	 * @returns {sap.m.Page} The layout object
+	 * @ui5-restricted sap.m.table.columnmenu.Menu
+	 */
+	Container.prototype.getLayout = function () {
+		return this.oLayout;
 	};
 
 	Container.prototype._getTabBar = function () {
