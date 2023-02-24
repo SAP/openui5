@@ -4,6 +4,7 @@
 
 // Provides control sap.m.MessagePopover.
 sap.ui.define([
+	'sap/ui/core/Core',
 	"./ResponsivePopover",
 	"./Button",
 	"./Toolbar",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"./semantic/SemanticPage",
 	"./Popover",
 	"./MessageView",
+	"./MessageItem",
 	"sap/ui/Device",
 	"./MessagePopoverRenderer",
 	"sap/base/Log",
@@ -20,6 +22,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 function(
+	Core,
 	ResponsivePopover,
 	Button,
 	Toolbar,
@@ -29,6 +32,7 @@ function(
 	SemanticPage,
 	Popover,
 	MessageView,
+	MessageItem,
 	Device,
 	MessagePopoverRenderer,
 	Log,
@@ -344,7 +348,7 @@ function(
 			var oPopupControl;
 			this._oOpenByControl = null;
 
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 			this._oMessageView = this._initMessageView();
 
@@ -385,6 +389,12 @@ function(
 					that.fireAfterClose({openBy: oEvent.getParameter("openBy")});
 				},
 				beforeOpen: function (oEvent) {
+					var aItems = that.getItems();
+
+					if (!that.getBindingInfo("items") && !aItems.length) {
+						that._bindToMessageModel();
+					}
+
 					that.fireBeforeOpen({openBy: oEvent.getParameter("openBy")});
 				},
 				beforeClose: function (oEvent) {
@@ -418,6 +428,26 @@ function(
 			}, this);
 
 			this._observeItems();
+		};
+
+		MessagePopover.prototype._bindToMessageModel = function() {
+			var that = this;
+
+			this.setModel(Core.getMessageManager().getMessageModel(), "message");
+
+			this._oMessageItemTemplate = new MessageItem({
+				type: "{message>type}",
+				title: "{message>message}",
+				description: "{message>description}",
+				longtextUrl: "{message>longtextUrl}"
+			});
+
+			this.bindAggregation("items",
+				{
+					path: "message>/",
+					template: that._oMessageItemTemplate
+				}
+			);
 		};
 
 		MessagePopover.prototype._observeItems = function () {
