@@ -3,11 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/type/DateTimeWithTimezone"
-], function (Configuration, Controller, JSONModel, ODataUtils, DateTimeWithTimezone) {
+], function (Configuration, UI5Date, Controller, JSONModel, ODataUtils, DateTimeWithTimezone) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.types.v2.DateTimeOffset.DateTimeOffset", {
@@ -60,7 +61,7 @@ sap.ui.define([
 				oTimestamp = this.getView().getBindingContext().getProperty("Timestamp");
 
 			// Copy the Date object for the timestamp from the OData model to the JSON model
-			this.oJSONModel.setProperty("/Timestamp", oTimestamp ? new Date(oTimestamp) : null);
+			this.oJSONModel.setProperty("/Timestamp", oTimestamp ? UI5Date.getInstance(oTimestamp) : null);
 
 			oDialog.bindObject({path: "/", model: "json"});
 			oDialog.open();
@@ -73,7 +74,7 @@ sap.ui.define([
 				oTimestamp = oView.getModel("json").getProperty("/Timestamp");
 
 			// Copy the Date object for the timestamp form the JSON model back to the OData model
-			oODataModel.setProperty("Timestamp", oTimestamp ? new Date(oTimestamp) : null, oContext);
+			oODataModel.setProperty("Timestamp", oTimestamp ? UI5Date.getInstance(oTimestamp) : null, oContext);
 
 			this.byId("dialog").close();
 		}
