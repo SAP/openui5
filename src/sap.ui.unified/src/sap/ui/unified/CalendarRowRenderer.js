@@ -536,7 +536,9 @@ sap.ui.define([
 		oRm.class("sapUiCalendarAppHeight" + iRowCount);
 		if (oAppointment.getSelected()) {
 			oRm.class("sapUiCalendarAppSel");
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
+			mAccProps["labelledby"].value = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED") + " " + mAccProps["labelledby"].value;
+		} else {
+			mAccProps["labelledby"].value = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_UNSELECTED") + " " + mAccProps["labelledby"].value;
 		}
 
 		if (oAppointment.getTentative()) {
