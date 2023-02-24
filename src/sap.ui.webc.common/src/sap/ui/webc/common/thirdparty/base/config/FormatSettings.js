@@ -6,15 +6,13 @@ sap.ui.define(["exports", "../InitialConfiguration"], function (_exports, _Initi
   });
   _exports.getFirstDayOfWeek = void 0;
   let formatSettings;
-
   const getFirstDayOfWeek = () => {
     if (formatSettings === undefined) {
       formatSettings = (0, _InitialConfiguration.getFormatSettings)();
     }
-
     return formatSettings.firstDayOfWeek;
-  }; // eslint-disable-line
+  };
 
-
+  // eslint-disable-line
   _exports.getFirstDayOfWeek = getFirstDayOfWeek;
 });

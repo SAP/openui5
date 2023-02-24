@@ -11,17 +11,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
   _Avatar = _interopRequireDefault(_Avatar);
   _WrappingType = _interopRequireDefault(_WrappingType);
   _StandardListItemTemplate = _interopRequireDefault(_StandardListItemTemplate);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-li",
-    properties:
-    /** @lends sap.ui.webcomponents.main.StandardListItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.StandardListItem.prototype */{
       /**
        * Defines the description displayed right under the item text, if such is present.
        * @type {string}
@@ -32,7 +28,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
       description: {
         type: String
       },
-
       /**
        * Defines the <code>icon</code> source URI.
        * <br><br>
@@ -46,7 +41,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
       icon: {
         type: String
       },
-
       /**
        * Defines whether the <code>icon</code> should be displayed in the beginning of the list item or in the end.
        * <br><br>
@@ -59,7 +53,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
       iconEnd: {
         type: Boolean
       },
-
       /**
        * Defines the <code>image</code> source URI.
        * <br><br>
@@ -71,7 +64,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
       image: {
         type: String
       },
-
       /**
        * Defines the <code>additionalText</code>, displayed in the end of the list item.
        * @type {string}
@@ -81,7 +73,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
       additionalText: {
         type: String
       },
-
       /**
        * Defines the state of the <code>additionalText</code>.
        * <br>
@@ -95,7 +86,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
         type: _ValueState.default,
         defaultValue: _ValueState.default.None
       },
-
       /**
        * Defines the text alternative of the component.
        * Note: If not provided a default text alternative will be set, if present.
@@ -108,7 +98,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
       accessibleName: {
         type: String
       },
-
       /**
        * Defines if the text of the component should wrap, they truncate by default.
        *
@@ -123,7 +112,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
         type: _WrappingType.default,
         defaultValue: _WrappingType.default.None
       },
-
       /**
        * Indicates if the list item has text content.
        * @type {boolean}
@@ -133,9 +121,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.StandardListItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.StandardListItem.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -150,6 +136,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
       }
     }
   };
+
   /**
    * @class
    * The <code>ui5-li</code> represents the simplest type of item for a <code>ui5-list</code>.
@@ -178,39 +165,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/ValueState",
    * @implements sap.ui.webcomponents.main.IListItem
    * @public
    */
-
   class StandardListItem extends _ListItem.default {
     static get template() {
       return _StandardListItemTemplate.default;
     }
-
     static get metadata() {
       return metadata;
     }
-
     onBeforeRendering(...params) {
       super.onBeforeRendering(...params);
       this.hasTitle = !!this.textContent;
     }
-
     get displayImage() {
       return !!this.image;
     }
-
     get displayIconBegin() {
       return this.icon && !this.iconEnd;
     }
-
     get displayIconEnd() {
       return this.icon && this.iconEnd;
     }
-
     static get dependencies() {
       return [..._ListItem.default.dependencies, _Icon.default, _Avatar.default];
     }
-
   }
-
   StandardListItem.define();
   var _default = StandardListItem;
   _exports.default = _default;

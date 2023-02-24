@@ -5,7 +5,6 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.getNextLayoutByStartArrow = _exports.getNextLayoutByEndArrow = _exports.getLayoutsByMedia = void 0;
-
   const getLayoutsByMedia = () => {
     return {
       desktop: {
@@ -317,9 +316,7 @@ sap.ui.define(["exports"], function (_exports) {
       }
     };
   };
-
   _exports.getLayoutsByMedia = getLayoutsByMedia;
-
   const getNextLayoutByStartArrow = () => {
     return {
       "TwoColumnsStartExpanded": "TwoColumnsMidExpanded",
@@ -330,9 +327,7 @@ sap.ui.define(["exports"], function (_exports) {
       "ThreeColumnsMidExpandedEndHidden": "ThreeColumnsStartExpandedEndHidden"
     };
   };
-
   _exports.getNextLayoutByStartArrow = getNextLayoutByStartArrow;
-
   const getNextLayoutByEndArrow = () => {
     return {
       "ThreeColumnsMidExpanded": "ThreeColumnsEndExpanded",
@@ -341,6 +336,5 @@ sap.ui.define(["exports"], function (_exports) {
       "ThreeColumnsMidExpandedEndHidden": "ThreeColumnsMidExpanded"
     };
   };
-
   _exports.getNextLayoutByEndArrow = getNextLayoutByEndArrow;
 });

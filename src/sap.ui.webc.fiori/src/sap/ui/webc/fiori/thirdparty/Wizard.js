@@ -21,12 +21,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _WizardPopoverTemplate = _interopRequireDefault(_WizardPopoverTemplate);
   _Wizard = _interopRequireDefault(_Wizard);
   _WizardPopover = _interopRequireDefault(_WizardPopover);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Texts
+
   // Step in header and content
+
   // Template and Styles
+
   const MIN_STEP_WIDTH_NO_TITLE = 64;
   const MIN_STEP_WIDTH_WITH_TITLE = 200;
   const EXPANDED_STEP = "data-ui5-wizard-expanded-tab";
@@ -38,17 +39,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     DEFAULT: 0.7,
     MAX: 1
   };
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-wizard",
     managedSlots: true,
     fastNavigation: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.Wizard.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.Wizard.prototype */{
       /**
        * Defines the width of the <code>ui5-wizard</code>.
        * @private
@@ -56,7 +55,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       width: {
         type: _Float.default
       },
-
       /**
        * Defines the threshold to switch between steps upon user scrolling.
        * <br><br>
@@ -78,7 +76,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Float.default,
         defaultValue: STEP_SWITCH_THRESHOLDS.DEFAULT
       },
-
       /**
        * Defines the height of the <code>ui5-wizard</code> content.
        * @private
@@ -91,9 +88,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         multiple: true
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.Wizard.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.Wizard.prototype */{
       /**
        * Defines the steps.
        * <br><br>
@@ -110,9 +105,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         invalidateOnChildChange: true
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.Wizard.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.Wizard.prototype */{
       /**
        * Fired when the step is changed by user interaction - either with scrolling,
        * or by clicking on the steps within the component header.
@@ -138,6 +131,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -229,28 +223,35 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @appenddocs WizardStep
    * @public
    */
-
   class Wizard extends _UI5Element.default {
     constructor() {
-      super(); // Stores the scroll offsets of the steps,
+      super();
+
+      // Stores the scroll offsets of the steps,
       // e.g. the steps' starting point.
+      this.stepScrollOffsets = [];
 
-      this.stepScrollOffsets = []; // Stores references to the grouped steps.
+      // Stores references to the grouped steps.
+      this._groupedTabs = [];
 
-      this._groupedTabs = []; // Keeps track of the currently selected step index.
+      // Keeps track of the currently selected step index.
+      this.selectedStepIndex = 0;
 
-      this.selectedStepIndex = 0; // Keeps track of the previously selected step index.
+      // Keeps track of the previously selected step index.
+      this.previouslySelectedStepIndex = 0;
 
-      this.previouslySelectedStepIndex = 0; // Indicates that selection will be changed
+      // Indicates that selection will be changed
       // due to user click.
+      this.selectionRequestedByClick = false;
 
-      this.selectionRequestedByClick = false; // Stores the previous width
+      // Stores the previous width
+      this._prevWidth = 0;
 
-      this._prevWidth = 0; // Stores the previous height
+      // Stores the previous height
+      this._prevContentHeight = 0;
 
-      this._prevContentHeight = 0; // Indicates that selection will be changed
+      // Indicates that selection will be changed
       // due to user scroll.
-
       this.selectionRequestedByScroll = false;
       this._itemNavigation = new _ItemNavigation.default(this, {
         navigationMode: _NavigationMode.default.Auto,
@@ -258,15 +259,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       this._onStepResize = this.onStepResize.bind(this);
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     get classes() {
       return {
         popover: {
@@ -276,57 +274,45 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     static get styles() {
       return _Wizard.default;
     }
-
     static get staticAreaStyles() {
       return _WizardPopover.default;
     }
-
     static get template() {
       return _WizardTemplate.default;
     }
-
     static get dependencies() {
       return [_WizardTab.default, _WizardStep.default, _ResponsivePopover.default, _Button.default];
     }
-
     static async onDefine() {
       Wizard.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
-
     static get PHONE_BREAKPOINT() {
       return 599;
     }
-
     static get SCROLL_DEBOUNCE_RATE() {
       return 25;
     }
-
     static get staticAreaTemplate() {
       return _WizardPopoverTemplate.default;
     }
-
     onExitDOM() {
       this.detachStepsResizeObserver();
     }
-
     onBeforeRendering() {
       this.syncSelection();
     }
-
     onAfterRendering() {
       this.storeStepScrollOffsets();
-
       if (this.previouslySelectedStepIndex !== this.selectedStepIndex) {
         this.scrollToSelectedStep();
       }
-
       this.attachStepsResizeObserver();
       this.previouslySelectedStepIndex = this.selectedStepIndex;
     }
+
     /**
      * Normalizes the step selection as follows:
      * (1) If there is no selected step - the first step is going to be selected.
@@ -334,70 +320,65 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * (3) If the selected step is also disabled - log a warning.
      * @private
      */
-
-
     syncSelection() {
       if (this.stepsCount === 0) {
         return;
-      } // If no selected steps -> select the first step.
+      }
 
-
+      // If no selected steps -> select the first step.
       if (this.selectedStepsCount === 0) {
         this.selectFirstStep();
         console.warn("Selecting the first step: no selected step is defined."); // eslint-disable-line
-      } // If there are multiple selected steps -> keep the last selected one.
+      }
 
-
+      // If there are multiple selected steps -> keep the last selected one.
       if (this.selectedStepsCount > 1) {
         this.selectLastSelectedStep();
         console.warn(`Selecting the last step defined as selected: multiple selected steps are defined.`); // eslint-disable-line
-      } // If the selected step is defined as disabled - log warning.
+      }
 
-
+      // If the selected step is defined as disabled - log warning.
       if (this.selectedStep && this.selectedStep.disabled) {
         console.warn("The selected step is disabled: you need to enable it in order to interact with the step."); // eslint-disable-line
-      } // Place for improvement: If the selected step is not the first, enable all the prior steps
+      }
 
-
+      // Place for improvement: If the selected step is not the first, enable all the prior steps
       this.selectedStepIndex = this.getSelectedStepIndex();
     }
+
     /**
      * Selects the first step.
      * @private
      */
-
-
     selectFirstStep() {
       this.deselectAll();
       this.slottedSteps[0].selected = true;
       this.slottedSteps[0].disabled = false;
     }
+
     /**
      * Selects the last step from multiple selected ones.
      * @private
      */
-
-
     selectLastSelectedStep() {
       const lastSelectedStep = this.lastSelectedStep;
-
       if (lastSelectedStep) {
         this.deselectAll();
         lastSelectedStep.selected = true;
         lastSelectedStep.disabled = false;
       }
     }
+
     /**
      * Deselects all steps.
      * @private
      */
-
-
     deselectAll() {
       this.slottedSteps.forEach(step => {
         step.selected = false;
       });
     }
+
     /**
      * Stores the scroll offsets of the steps,
      * e.g. the steps' starting point.
@@ -405,92 +386,79 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * <b>Note:</b> the disabled ones has negative offsets.
      * @private
      */
-
-
     storeStepScrollOffsets() {
       this.stepScrollOffsets = this.slottedSteps.map(step => {
         const contentItem = this.getStepWrapperByRefId(step._id);
         return contentItem.offsetTop + contentItem.offsetHeight;
       });
     }
+
     /**
      * Handles user click on steps' tabs within the header.
      * <b>Note:</b> the handler is bound in the template.
      * @param {Event} event
      * @private
      */
-
-
     onSelectionChangeRequested(event) {
       this.selectionRequestedByClick = true;
       this.changeSelectionByStepAction(event.target);
     }
+
     /**
      * Handles user scrolling with debouncing.
      * <b>Note:</b> the handler is bound in the template.
      * @param {Event} event
      * @private
      */
-
-
     onScroll(event) {
       if (this.selectionRequestedByClick) {
         this.selectionRequestedByClick = false;
         return;
       }
-
       (0, _debounce.default)(this.changeSelectionByScroll.bind(this, event.target.scrollTop), Wizard.SCROLL_DEBOUNCE_RATE);
     }
+
     /**
      * Handles when a step in the header is focused in order to update the <code>ItemNavigation</code>.
      * <b>Note:</b> the handler is bound in the template.
      * @param {Event} event
      * @private
      */
-
-
     onStepInHeaderFocused(event) {
       this._itemNavigation.setCurrentItem(event.target);
     }
+
     /**
      * Handles resize in order to:
      * (1) sync steps' scroll offset and selection
      * (2) adapt navition step header
      * @private
      */
-
-
     onStepResize() {
       this.width = this.getBoundingClientRect().width;
       this.contentHeight = this.getContentHeight();
-
       if (this._prevWidth !== this.width || this.contentHeight !== this._prevContentHeight) {
         this._closeRespPopover();
       }
-
       this._prevWidth = this.width;
       this._prevContentHeight = this.contentHeight;
     }
-
     attachStepsResizeObserver() {
       this.stepsDOM.forEach(stepDOM => {
         _ResizeHandler.default.deregister(stepDOM, this._onStepResize);
-
         _ResizeHandler.default.register(stepDOM, this._onStepResize);
       });
     }
-
     detachStepsResizeObserver() {
       this.stepsDOM.forEach(stepDOM => {
         _ResizeHandler.default.deregister(stepDOM, this._onStepResize);
       });
     }
+
     /**
      * Updates the expanded attribute for each ui5-wizard-tab based on the ui5-wizard width
      * @private
      */
-
-
     _adjustHeaderOverflow() {
       let counter = 0;
       let isForward = true;
@@ -498,38 +466,37 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const iCurrStep = this.getSelectedStepIndex();
       const iStepsToShow = this.steps.length ? Math.floor(iWidth / MIN_STEP_WIDTH_WITH_TITLE) : Math.floor(iWidth / MIN_STEP_WIDTH_NO_TITLE);
       const tabs = this.shadowRoot.querySelectorAll("[ui5-wizard-tab]");
-
       if (!tabs.length) {
         return;
       }
-
       [].forEach.call(tabs, (step, index) => {
         step.setAttribute(EXPANDED_STEP, false);
         step.setAttribute(BEFORE_EXPANDED_STEP, false);
-        step.setAttribute(AFTER_EXPANDED_STEP, false); // Add "data-ui5-wizard-after-current-tab" to all tabs after the current one
+        step.setAttribute(AFTER_EXPANDED_STEP, false);
 
+        // Add "data-ui5-wizard-after-current-tab" to all tabs after the current one
         if (index > iCurrStep) {
           tabs[index].setAttribute(AFTER_CURRENT_STEP, true);
         } else {
           tabs[index].removeAttribute(AFTER_CURRENT_STEP);
         }
-      }); // Add "data-ui5-wizard-expanded-tab" to the current step
+      });
 
+      // Add "data-ui5-wizard-expanded-tab" to the current step
       if (tabs[iCurrStep]) {
         tabs[iCurrStep].setAttribute(EXPANDED_STEP, true);
-      } // Set the "data-ui5-wizard-expanded-tab" to the steps that are expanded
+      }
+
+      // Set the "data-ui5-wizard-expanded-tab" to the steps that are expanded
       // The algorithm is as follows:
       // 1. A step towards the end is expanded
       // 	1.2. If there are no available steps towards the end a step towards the beginning is expanded
       // 2. A step towards the beginning is expanded
       // 	2.2. If there are no available steps towards the beginning a step towards the end is expanded
-
-
       for (let i = 1; i < iStepsToShow; i++) {
         if (isForward) {
           counter += 1;
         }
-
         if (isForward && tabs[iCurrStep + counter]) {
           tabs[iCurrStep + counter].setAttribute(EXPANDED_STEP, true);
           isForward = !isForward;
@@ -545,56 +512,47 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           counter += 1;
           isForward = false;
         }
-      } // mark the topmost steps of both groups (in the beginning and the end),
+      }
+
+      // mark the topmost steps of both groups (in the beginning and the end),
       // using the "data-ui5-wizard-after-current-tab" and "data-ui5-wizard-expanded-tab-prev" attributes
-
-
       for (let i = 0; i < tabs.length; i++) {
         if (tabs[i].getAttribute(EXPANDED_STEP) === "true" && tabs[i - 1] && tabs[i - 1].getAttribute(EXPANDED_STEP) === "false") {
           tabs[i - 1].setAttribute(BEFORE_EXPANDED_STEP, true);
         }
-
         if (tabs[i].getAttribute(EXPANDED_STEP) === "false" && tabs[i - 1] && tabs[i - 1].getAttribute(EXPANDED_STEP) === "true") {
           tabs[i].setAttribute(AFTER_EXPANDED_STEP, true);
           break;
         }
       }
     }
-
     _isGroupAtStart(selectedStep) {
       const iStepNumber = this.stepsInHeaderDOM.indexOf(selectedStep);
       return selectedStep.getAttribute(EXPANDED_STEP) === "false" && selectedStep.getAttribute(BEFORE_EXPANDED_STEP) === "true" && iStepNumber > 0;
     }
-
     _isGroupAtEnd(selectedStep) {
       const iStepNumber = this.stepsInHeaderDOM.indexOf(selectedStep);
       return selectedStep.getAttribute(EXPANDED_STEP) === "false" && selectedStep.getAttribute(AFTER_EXPANDED_STEP) === "true" && iStepNumber + 1 < this.steps.length;
     }
-
     async _showPopover(oDomTarget, bAtStart) {
       const tabs = Array.from(this.shadowRoot.querySelectorAll("[ui5-wizard-tab]"));
       this._groupedTabs = [];
       const iFromStep = bAtStart ? 0 : this.stepsInHeaderDOM.indexOf(oDomTarget);
       const iToStep = bAtStart ? this.stepsInHeaderDOM.indexOf(oDomTarget) : tabs.length - 1;
-
       for (let i = iFromStep; i <= iToStep; i++) {
         this._groupedTabs.push(tabs[i]);
       }
-
       const responsivePopover = await this._respPopover();
       responsivePopover.showAt(oDomTarget);
     }
-
     async _onGroupedTabClick(event) {
       if (this._isGroupAtStart(event.target)) {
         return this._showPopover(event.target, true);
       }
-
       if (this._isGroupAtEnd(event.target)) {
         return this._showPopover(event.target, false);
       }
     }
-
     _onOverflowStepButtonClick(event) {
       const tabs = Array.from(this.shadowRoot.querySelectorAll("[ui5-wizard-tab]"));
       const stepRefId = event.target.getAttribute("data-ui5-header-tab-ref-id");
@@ -602,44 +560,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const selectedStep = this.selectedStep;
       const newlySelectedIndex = this.slottedSteps.indexOf(stepToSelect);
       this.switchSelectionFromOldToNewStep(selectedStep, stepToSelect, newlySelectedIndex, true);
-
       this._closeRespPopover();
-
       tabs[newlySelectedIndex].focus();
     }
-
     async _closeRespPopover() {
       const responsivePopover = await this._respPopover();
       responsivePopover && responsivePopover.close();
     }
-
     async _respPopover() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector(`.ui5-wizard-responsive-popover`);
     }
+
     /**
      * Called upon <code>onScroll</code>.
      * Selects the closest step, based on the user scroll position.
      * @param {Integer} scrollPos the current scroll position
      * @private
      */
-
-
     changeSelectionByScroll(scrollPos) {
-      const newlySelectedIndex = this.getClosestStepIndexByScrollPos(scrollPos); // Skip if already selected - stop.
+      const newlySelectedIndex = this.getClosestStepIndexByScrollPos(scrollPos);
 
+      // Skip if already selected - stop.
       if (this.selectedStepIndex === newlySelectedIndex) {
         return;
-      } // If the calculated index is in range,
+      }
+
+      // If the calculated index is in range,
       // change selection and fire "step-change".
-
-
       if (newlySelectedIndex >= 0 && newlySelectedIndex <= this.stepsCount - 1) {
         const stepToSelect = this.slottedSteps[newlySelectedIndex];
         this.switchSelectionFromOldToNewStep(this.selectedStep, stepToSelect, newlySelectedIndex, false);
         this.selectionRequestedByScroll = true;
       }
     }
+
     /**
      * Called upon <code>onSelectionChangeRequested</code>.
      * Selects the external step (ui5-wizard-step),
@@ -647,8 +602,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @param {HTMLElement} stepInHeader the step equivalent in the header
      * @private
      */
-
-
     async changeSelectionByStepAction(stepInHeader) {
       const stepRefId = stepInHeader.getAttribute("data-ui5-content-ref-id");
       const selectedStep = this.selectedStep;
@@ -656,25 +609,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const bExpanded = stepInHeader.getAttribute(EXPANDED_STEP) === "true";
       const newlySelectedIndex = this.slottedSteps.indexOf(stepToSelect);
       const firstFocusableElement = await (0, _FocusableElements.getFirstFocusableElement)(stepToSelect.firstElementChild);
-
       if (firstFocusableElement) {
         // Focus the first focusable element within the step content corresponding to the currently focused tab
         firstFocusableElement.focus();
-      } // If the currently selected (active) step is clicked,
+      }
+
+      // If the currently selected (active) step is clicked,
       // just scroll to its starting point and stop.
-
-
       if (selectedStep === stepToSelect) {
         this.scrollToContentItem(this.selectedStepIndex);
         return;
       }
-
       if (bExpanded || !bExpanded && (newlySelectedIndex === 0 || newlySelectedIndex === this.steps.length - 1)) {
         // Change selection and fire "step-change".
         this.switchSelectionFromOldToNewStep(selectedStep, stepToSelect, newlySelectedIndex, true);
       }
     }
-
     getContentHeight() {
       let contentHeight = 0;
       this.stepsDOM.forEach(step => {
@@ -682,19 +632,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       return contentHeight;
     }
-
     getStepAriaLabelText(step, ariaLabel) {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_STEP_ARIA_LABEL, ariaLabel);
     }
-
     get stepsDOM() {
       return Array.from(this.shadowRoot.querySelectorAll(".ui5-wiz-content-item"));
     }
-
     get _stepsInHeader() {
       return this.getStepsInfo();
     }
-
     get _steps() {
       const lastEnabledStepIndex = this.getLastEnabledStepIndex();
       const stepsInfo = this.getStepsInfo();
@@ -704,126 +650,99 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         return step;
       });
     }
-
     get stepsCount() {
       return this.slottedSteps.length;
     }
-
     get selectedStep() {
       if (this.selectedStepsCount) {
         return this.selectedSteps[0];
       }
-
       return null;
     }
-
     get lastSelectedStep() {
       if (this.selectedStepsCount) {
         return this.selectedSteps[this.selectedStepsCount - 1];
       }
-
       return null;
     }
-
     get selectedSteps() {
       return this.slottedSteps.filter(step => step.selected);
     }
-
     get enabledSteps() {
       return this.slottedSteps.filter(step => !step.disabled);
     }
-
     get selectedStepsCount() {
       return this.selectedSteps.length;
     }
-
     get slottedSteps() {
       return this.getSlottedNodes("steps");
     }
-
     get contentDOM() {
       return this.shadowRoot.querySelector(`.ui5-wiz-content`);
     }
-
     get stepsInHeaderDOM() {
       return Array.from(this.shadowRoot.querySelectorAll("[ui5-wizard-tab]"));
     }
-
     get enabledStepsInHeaderDOM() {
       return this.stepsInHeaderDOM;
     }
-
     get phoneMode() {
       if ((0, _Device.isPhone)()) {
         return true;
       }
-
       return this.width <= Wizard.PHONE_BREAKPOINT;
     }
-
     get navAriaRoleDescription() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
     }
-
     get navAriaLabelText() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_NAV_ARIA_LABEL);
     }
-
     get navAriaDescribedbyText() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_LIST_ARIA_DESCRIBEDBY);
     }
-
     get listAriaLabelText() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_LIST_ARIA_LABEL);
     }
-
     get actionSheetStepsText() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_ACTIONSHEET_STEPS_ARIA_LABEL);
     }
-
     get navStepDefaultHeading() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_NAV_STEP_DEFAULT_HEADING);
     }
-
     get optionalStepText() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_OPTIONAL_STEP_ARIA_LABEL);
     }
-
     get activeStepText() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_STEP_ACTIVE);
     }
-
     get inactiveStepText() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_STEP_INACTIVE);
     }
-
     get ariaLabelText() {
       return Wizard.i18nBundle.getText(_i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
     }
-
     get effectiveStepSwitchThreshold() {
       return (0, _clamp.default)(this.stepSwitchThreshold, STEP_SWITCH_THRESHOLDS.MIN, STEP_SWITCH_THRESHOLDS.MAX);
     }
+
     /**
      * Returns an array of data objects, based on the user defined steps
      * to later build the steps (tabs) within the header.
      * @returns {Array<Object>}
      * @private
      */
-
-
     getStepsInfo() {
       const lastEnabledStepIndex = this.getLastEnabledStepIndex();
       const stepsCount = this.stepsCount;
       const selectedStepIndex = this.getSelectedStepIndex();
       let inintialZIndex = this.steps.length + 10;
       let accInfo;
-
       this._adjustHeaderOverflow();
-
       return this.steps.map((step, idx) => {
-        const pos = idx + 1; // Hide separator if it's the last step and it's not a branching one
+        const pos = idx + 1;
 
+        // Hide separator if it's the last step and it's not a branching one
         const hideSeparator = idx === stepsCount - 1 && !step.branching;
         const isOptional = step.subtitleText ? this.optionalStepText : "";
         const stepStateText = step.disabled ? this.inactiveStepText : this.activeStepText;
@@ -854,27 +773,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         };
       });
     }
+
     /**
      * Returns the index of the selected step.
      * @returns {Integer}
      * @private
      */
-
-
     getSelectedStepIndex() {
       if (this.selectedStep) {
         return this.slottedSteps.indexOf(this.selectedStep);
       }
-
       return 0;
     }
+
     /**
      * Returns the index of the last enabled step.
      * @returns {Integer}
      * @private
      */
-
-
     getLastEnabledStepIndex() {
       let lastEnabledStepIndex = 0;
       this.slottedSteps.forEach((step, idx) => {
@@ -884,31 +800,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       return lastEnabledStepIndex;
     }
-
     getStepByRefId(refId) {
       return this.slottedSteps.find(step => step._id === refId);
     }
-
     getStepWrapperByRefId(refId) {
       return this.shadowRoot.querySelector(`[data-ui5-content-item-ref-id=${refId}]`);
     }
-
     getStepWrapperByIdx(idx) {
       return this.getStepWrapperByRefId(this.steps[idx]._id);
     }
+
     /**
      * Scrolls to the content of the selected step, used in <code>onAfterRendering</cod>.
      * @private
      */
-
-
     scrollToSelectedStep() {
       if (!this.selectionRequestedByScroll) {
         this.scrollToContentItem(this.selectedStepIndex);
       }
-
       this.selectionRequestedByScroll = false;
     }
+
     /**
      * Scrolls to the content item within the <code>ui5-wizard</code> shadowDOM
      * by given step index.
@@ -916,59 +828,52 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @private
      * @param {Integer} stepIndex the index of a step
      */
-
-
     scrollToContentItem(stepIndex) {
       this.contentDOM.scrollTop = this.getClosestScrollPosByStepIndex(stepIndex);
     }
+
     /**
      * Returns to closest scroll position for the given step index.
      *
      * @private
      * @param {Integer} stepIndex the index of a step
      */
-
-
     getClosestScrollPosByStepIndex(stepIndex) {
       if (stepIndex === 0) {
         return 0;
-      } // It's possible to have [enabled - 0, disabled - 1, enabled - 2, disabled - 3] step definition and similar.
+      }
+
+      // It's possible to have [enabled - 0, disabled - 1, enabled - 2, disabled - 3] step definition and similar.
       // Consider selection of the third step at index 2, the wizard should scroll where the previous step ends,
       // but in this case the 2nd step is disabled, so we have to fallback to the first possible step.
-
-
       for (let closestStepIndex = stepIndex - 1; closestStepIndex >= 0; closestStepIndex--) {
         if (this.stepScrollOffsets[closestStepIndex] > 0) {
           return this.stepScrollOffsets[closestStepIndex];
         }
       }
-
       return 0;
     }
+
     /**
      * Returns the closest step index by given scroll position.
      * @private
      * @param {Integer} scrollPos the scroll position
      */
-
-
     getClosestStepIndexByScrollPos(scrollPos) {
       for (let closestStepIndex = 0; closestStepIndex <= this.stepScrollOffsets.length - 1; closestStepIndex++) {
         const stepScrollOffset = this.stepScrollOffsets[closestStepIndex];
         const step = this.getStepWrapperByIdx(closestStepIndex);
         const switchStepBoundary = step.offsetTop + step.offsetHeight * this.effectiveStepSwitchThreshold;
-
         if (stepScrollOffset > 0 && scrollPos < stepScrollOffset) {
           if (scrollPos > switchStepBoundary) {
             return closestStepIndex + 1;
           }
-
           return closestStepIndex;
         }
       }
-
       return this.selectedStepIndex;
     }
+
     /**
      * Switches the selection from the old step to the newly selected step.
      *
@@ -978,8 +883,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @param {boolean} changeWithClick the selection changed due to user click in the step navigation
      * @private
      */
-
-
     switchSelectionFromOldToNewStep(selectedStep, stepToSelect, stepToSelectIndex, changeWithClick) {
       if (selectedStep && stepToSelect) {
         // keep the selection if next step is disabled
@@ -987,7 +890,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           selectedStep.selected = false;
           stepToSelect.selected = true;
         }
-
         this.fireEvent("step-change", {
           step: stepToSelect,
           previousStep: selectedStep,
@@ -996,26 +898,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.selectedStepIndex = stepToSelectIndex;
       }
     }
+
     /**
      * Sorter method for sorting an array in ascending order.
      * @private
      */
-
-
     sortAscending(a, b) {
       if (a < b) {
         return -1;
       }
-
       if (a > b) {
         return 1;
       }
-
       return 0;
     }
-
   }
-
   Wizard.define();
   var _default = Wizard;
   _exports.default = _default;

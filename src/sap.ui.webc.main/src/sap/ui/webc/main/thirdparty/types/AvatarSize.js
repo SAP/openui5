@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * Different types of AvatarSize.
    * @lends sap.ui.webcomponents.main.types.AvatarSize.prototype
@@ -22,7 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {XS}
      */
     XS: "XS",
-
     /**
      * component size - 3rem
      * font size - 1.5rem
@@ -30,7 +27,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {S}
      */
     S: "S",
-
     /**
      * component size - 4rem
      * font size - 2rem
@@ -38,7 +34,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {M}
      */
     M: "M",
-
     /**
      * component size - 5rem
      * font size - 2.5rem
@@ -46,7 +41,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {L}
      */
     L: "L",
-
     /**
      * component size - 7rem
      * font size - 3rem
@@ -55,6 +49,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     XL: "XL"
   };
+
   /**
    * @class
    * Different types of AvatarSize.
@@ -64,14 +59,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class AvatarSize extends _DataType.default {
     static isValid(value) {
       return !!AvatarSizes[value];
     }
-
   }
-
   AvatarSize.generateTypeAccessors(AvatarSizes);
   var _default = AvatarSize;
   _exports.default = _default;

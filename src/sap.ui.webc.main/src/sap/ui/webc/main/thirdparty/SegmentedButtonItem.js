@@ -9,17 +9,13 @@ sap.ui.define(["exports", "./generated/templates/SegmentedButtonItemTemplate.lit
   _ToggleButton = _interopRequireDefault(_ToggleButton);
   _ButtonDesign = _interopRequireDefault(_ButtonDesign);
   _Icon = _interopRequireDefault(_Icon);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-segmented-button-item",
-    properties:
-    /** @lends sap.ui.webcomponents.main.SegmentedButtonItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.SegmentedButtonItem.prototype */{
       /**
        * <b>Note:</b> The property is inherited and not supported. If set, it won't take any effect.
        *
@@ -31,7 +27,6 @@ sap.ui.define(["exports", "./generated/templates/SegmentedButtonItemTemplate.lit
         type: _ButtonDesign.default,
         defaultValue: _ButtonDesign.default.Default
       },
-
       /**
        * <b>Note:</b> The property is inherited and not supported. If set, it won't take any effect.
        *
@@ -42,7 +37,6 @@ sap.ui.define(["exports", "./generated/templates/SegmentedButtonItemTemplate.lit
       iconEnd: {
         type: Boolean
       },
-
       /**
        * <b>Note:</b> The property is inherited and not supported. If set, it won't take any effect.
        *
@@ -53,7 +47,6 @@ sap.ui.define(["exports", "./generated/templates/SegmentedButtonItemTemplate.lit
       submits: {
         type: Boolean
       },
-
       /**
        * Defines the index of the item inside of the SegmentedButton.
        *
@@ -63,7 +56,6 @@ sap.ui.define(["exports", "./generated/templates/SegmentedButtonItemTemplate.lit
       posInSet: {
         type: String
       },
-
       /**
        * Defines how many items are inside of the SegmentedButton.
        *
@@ -75,6 +67,7 @@ sap.ui.define(["exports", "./generated/templates/SegmentedButtonItemTemplate.lit
       }
     }
   };
+
   /**
    * @class
    *
@@ -99,26 +92,20 @@ sap.ui.define(["exports", "./generated/templates/SegmentedButtonItemTemplate.lit
    * @implements sap.ui.webcomponents.main.ISegmentedButtonItem
    * @public
    */
-
   class SegmentedButtonItem extends _ToggleButton.default {
     static get metadata() {
       return metadata;
     }
-
     static get template() {
       return _SegmentedButtonItemTemplate.default;
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
     get ariaDescription() {
       return SegmentedButtonItem.i18nBundle.getText(_i18nDefaults.SEGMENTEDBUTTONITEM_ARIA_DESCRIPTION);
     }
-
   }
-
   SegmentedButtonItem.define();
   var _default = SegmentedButtonItem;
   _exports.default = _default;

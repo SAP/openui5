@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogConnection = _interopRequireDefault(_sapIllusDialogConnection);
   _sapIllusSceneConnection = _interopRequireDefault(_sapIllusSceneConnection);
   _sapIllusSpotConnection = _interopRequireDefault(_sapIllusSpotConnection);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "Connection";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_UNABLETOLOAD;

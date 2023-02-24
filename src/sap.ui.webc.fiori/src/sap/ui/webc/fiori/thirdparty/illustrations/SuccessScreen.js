@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogSuccessScreen = _interopRequireDefault(_sapIllusDialogSuccessScreen);
   _sapIllusSceneSuccessScreen = _interopRequireDefault(_sapIllusSceneSuccessScreen);
   _sapIllusSpotSuccessScreen = _interopRequireDefault(_sapIllusSpotSuccessScreen);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "SuccessScreen";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_SUCCESSSCREEN;

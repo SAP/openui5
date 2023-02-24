@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogAddPeople = _interopRequireDefault(_sapIllusDialogAddPeople);
   _sapIllusSceneAddPeople = _interopRequireDefault(_sapIllusSceneAddPeople);
   _sapIllusSpotAddPeople = _interopRequireDefault(_sapIllusSpotAddPeople);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "AddPeople";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_ADDPEOPLE;

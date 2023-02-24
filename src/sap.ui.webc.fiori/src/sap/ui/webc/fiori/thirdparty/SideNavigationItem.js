@@ -6,18 +6,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-side-navigation-item",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.SideNavigationItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.SideNavigationItem.prototype */{
       /**
        * Defines the text of the item.
        *
@@ -28,7 +24,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       text: {
         type: String
       },
-
       /**
        * Defines the icon of the item.
        * <br><br>
@@ -43,7 +38,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       icon: {
         type: String
       },
-
       /**
        * Defines if the item is expanded
        *
@@ -54,7 +48,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       expanded: {
         type: Boolean
       },
-
       /**
        * Defines whether the subitem is selected
        *
@@ -65,7 +58,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       selected: {
         type: Boolean
       },
-
       /**
        * Defines whether pressing the whole item or only pressing the icon will show/hide the items's sub items(if present).
        * If set to true, pressing the whole item will toggle the sub items, and it won't fire the <code>click</code> event.
@@ -79,7 +71,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       wholeItemToggleable: {
         type: Boolean
       },
-
       /**
        * Defines the tooltip of the component.
        * @type {string}
@@ -91,12 +82,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: String
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.SideNavigationItem.prototype */
-    {},
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.SideNavigationItem.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.SideNavigationItem.prototype */{},
+    slots: /** @lends sap.ui.webcomponents.fiori.SideNavigationItem.prototype */{
       /**
        * If you wish to nest menus, you can pass inner menu items to the default slot.
        *
@@ -111,6 +98,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       }
     }
   };
+
   /**
    * @class
    *
@@ -132,18 +120,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @since 1.0.0-rc.8
    * @implements sap.ui.webcomponents.fiori.ISideNavigationItem
    */
-
   class SideNavigationItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     get _tooltip() {
       return this.title || this.text;
     }
-
   }
-
   SideNavigationItem.define();
   var _default = SideNavigationItem;
   _exports.default = _default;

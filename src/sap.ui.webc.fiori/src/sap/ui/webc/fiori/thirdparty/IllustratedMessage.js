@@ -13,22 +13,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _IllustrationMessageSize = _interopRequireDefault(_IllustrationMessageSize);
   _IllustrationMessageType = _interopRequireDefault(_IllustrationMessageType);
   _IllustratedMessage = _interopRequireDefault(_IllustratedMessage);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
+
   const ILLUSTRATION_NOT_FOUND = "ILLUSTRATION_NOT_FOUND";
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-illustrated-message",
     languageAware: true,
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.IllustratedMessage.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.IllustratedMessage.prototype */{
       /**
        * Defines the title of the component.
        * <br><br>
@@ -40,7 +37,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       titleText: {
         type: String
       },
-
       /**
        * Defines the subtitle of the component.
        * <br><br>
@@ -54,7 +50,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       subtitleText: {
         type: String
       },
-
       /**
        * Determinates what is the current media of the component based on its width.
        * @private
@@ -62,7 +57,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       media: {
         type: String
       },
-
       /**
        * Determinates whether illustration is invalid.
        * @private
@@ -70,7 +64,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       invalid: {
         type: Boolean
       },
-
       /**
        * Defines the illustration name that will be displayed in the component.
        * <br><br>
@@ -184,7 +177,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _IllustrationMessageType.default,
         defaultValue: _IllustrationMessageType.default.BeforeSearch
       },
-
       /**
        * Determines which illustration breakpoint variant is used.
        * <br><br>
@@ -210,9 +202,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: _IllustrationMessageSize.default.Auto
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.IllustratedMessage.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.IllustratedMessage.prototype */{
       /**
        * Defines the component actions.
        * @type {sap.ui.webcomponents.main.IButton[]}
@@ -223,7 +213,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         propertyName: "actions",
         type: HTMLElement
       },
-
       /**
        * Defines the subtitle of the component.
        * <br><br>
@@ -237,11 +226,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.IllustratedMessage.prototype */
-    {//
+    events: /** @lends sap.ui.webcomponents.fiori.IllustratedMessage.prototype */{
+      //
     }
   };
+
   /**
    * @class
    *
@@ -289,33 +278,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.0.0-rc.15
    */
-
   class IllustratedMessage extends _UI5Element.default {
     constructor() {
       super();
       this._handleResize = this.handleResize.bind(this);
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _IllustratedMessage.default;
     }
-
     static get template() {
       return _IllustratedMessageTemplate.default;
     }
-
     static async onDefine() {
       IllustratedMessage.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori");
     }
-
     static get BREAKPOINTS() {
       return {
         DIALOG: 679,
@@ -323,7 +305,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         BASE: 259
       };
     }
-
     static get MEDIA() {
       return {
         BASE: "base",
@@ -332,47 +313,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         SCENE: "scene"
       };
     }
-
     static get dependencies() {
       return [_Title.default];
     }
-
     onBeforeRendering() {
       const illustrationData = (0, _Illustrations.getIllustrationDataSync)(this.name);
-
       if (illustrationData === ILLUSTRATION_NOT_FOUND) {
         this.invalid = true;
         const illustrationPath = this.name.includes("Tnt") ? `tnt/${this.name.replace("Tnt", "")}` : this.name;
-        /* eslint-disable-next-line */
 
+        /* eslint-disable-next-line */
         return console.warn(`Required illustration is not registered. You can either import the illustration as a module in order to use it e.g. "@ui5/webcomponents-fiori/dist/illustrations/${illustrationPath}.js".`);
       }
-
       this.invalid = false;
       this.spotSvg = illustrationData.spotSvg;
       this.dialogSvg = illustrationData.dialogSvg;
       this.sceneSvg = illustrationData.sceneSvg;
       this.illustrationTitle = IllustratedMessage.i18nBundle.getText(illustrationData.title);
       this.illustrationSubtitle = IllustratedMessage.i18nBundle.getText(illustrationData.subtitle);
-
       if (this.size !== _IllustrationMessageSize.default.Auto) {
         this._handleCustomSize();
       }
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this, this._handleResize);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this._handleResize);
     }
-
     handleResize() {
       if (this.size !== _IllustrationMessageSize.default.Auto) {
         return;
       }
-
       if (this.offsetWidth <= IllustratedMessage.BREAKPOINTS.BASE) {
         this.media = IllustratedMessage.MEDIA.BASE;
       } else if (this.offsetWidth <= IllustratedMessage.BREAKPOINTS.SPOT) {
@@ -383,75 +355,59 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.media = IllustratedMessage.MEDIA.SCENE;
       }
     }
+
     /**
      * Modifies the IM styles in accordance to the `size` property's value.
      * Note: The resize handler has no effect when size is different than "Auto".
      * @private
      * @since 1.5.0
      */
-
-
     _handleCustomSize() {
       switch (this.size) {
         case _IllustrationMessageSize.default.Base:
           this.media = IllustratedMessage.MEDIA.BASE;
           return;
-
         case _IllustrationMessageSize.default.Spot:
           this.media = IllustratedMessage.MEDIA.SPOT;
           return;
-
         case _IllustrationMessageSize.default.Dialog:
           this.media = IllustratedMessage.MEDIA.DIALOG;
           return;
-
         default:
           this.media = IllustratedMessage.MEDIA.SCENE;
       }
     }
-
     get effectiveIllustration() {
       switch (this.media) {
         case IllustratedMessage.MEDIA.SPOT:
           return this.spotSvg;
-
         case IllustratedMessage.MEDIA.DIALOG:
           return this.dialogSvg;
-
         case IllustratedMessage.MEDIA.SCENE:
           return this.sceneSvg;
-
         default:
           return "";
       }
     }
-
     get hasFormattedSubtitle() {
       return !!this.subtitle.length;
     }
-
     get effectiveTitleText() {
       return this.titleText ? this.titleText : this.illustrationTitle;
     }
-
     get effectiveSubitleText() {
       return this.subtitleText ? this.subtitleText : this.illustrationSubtitle;
     }
-
     get hasTitle() {
       return this.titleText || this.illustrationTitle;
     }
-
     get hasSubtitle() {
       return this.subtitleText || this.illustrationSubtitle;
     }
-
     get hasActions() {
       return !!this.actions.length && this.media !== IllustratedMessage.MEDIA.BASE;
     }
-
   }
-
   IllustratedMessage.define();
   var _default = IllustratedMessage;
   _exports.default = _default;

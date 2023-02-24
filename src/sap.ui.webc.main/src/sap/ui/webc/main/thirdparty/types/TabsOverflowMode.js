@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.TabsOverflowMode.prototype
    * @public
@@ -20,7 +18,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {End}
      */
     End: "End",
-
     /**
      * StartAndEnd type is used if there should be two overflows on both ends of the tab container.
      * @public
@@ -28,6 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     StartAndEnd: "StartAndEnd"
   };
+
   /**
    * @class
    * Different types of overflow modes.
@@ -37,14 +35,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class TabsOverflowMode extends _DataType.default {
     static isValid(value) {
       return !!TabsOverflowModes[value];
     }
-
   }
-
   TabsOverflowMode.generateTypeAccessors(TabsOverflowModes);
   var _default = TabsOverflowMode;
   _exports.default = _default;

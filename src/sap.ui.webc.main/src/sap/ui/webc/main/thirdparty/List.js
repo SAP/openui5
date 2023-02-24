@@ -20,26 +20,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ListTemplate = _interopRequireDefault(_ListTemplate);
   _List = _interopRequireDefault(_List);
   _BrowserScrollbar = _interopRequireDefault(_BrowserScrollbar);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
+
   // Texts
+
   const INFINITE_SCROLL_DEBOUNCE_RATE = 250; // ms
 
   const PAGE_UP_DOWN_SIZE = 10;
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-list",
     managedSlots: true,
     fastNavigation: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.List.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.List.prototype */{
       /**
        * Defines the component header.
        * <br><br>
@@ -53,7 +52,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       header: {
         type: HTMLElement
       },
-
       /**
        * Defines the items of the component.
        * <br><br>
@@ -68,9 +66,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.main.List.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.List.prototype */{
       /**
        * Defines the component header text.
        * <br><br>
@@ -83,7 +79,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       headerText: {
         type: String
       },
-
       /**
        * Defines the footer text.
        *
@@ -94,7 +89,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       footerText: {
         type: String
       },
-
       /**
        * Determines whether the component is indented.
        *
@@ -105,7 +99,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       indent: {
         type: Boolean
       },
-
       /**
        * Defines the mode of the component.
        * <br><br>
@@ -120,7 +113,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ListMode.default,
         defaultValue: _ListMode.default.None
       },
-
       /**
        * Defines the text that is displayed when the component contains no items.
        *
@@ -131,7 +123,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       noDataText: {
         type: String
       },
-
       /**
        * Defines the item separator style that is used.
        * <br><br>
@@ -151,7 +142,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ListSeparators.default,
         defaultValue: _ListSeparators.default.All
       },
-
       /**
        * Defines whether the component will have growing capability either by pressing a <code>More</code> button,
        * or via user scroll. In both cases <code>load-more</code> event is fired.
@@ -178,7 +168,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ListGrowingMode.default,
         defaultValue: _ListGrowingMode.default.None
       },
-
       /**
        * Defines if the component would display a loading indicator over the list.
        *
@@ -190,7 +179,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       busy: {
         type: Boolean
       },
-
       /**
        * Defines the delay in milliseconds, after which the busy indicator will show up for this component.
        *
@@ -202,7 +190,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 1000
       },
-
       /**
        * Defines the accessible name of the component.
        *
@@ -214,7 +201,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Defines the IDs of the elements that label the input.
        *
@@ -227,7 +213,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: ""
       },
-
       /**
        * Defines the accessible role of the component.
        * <br><br>
@@ -240,7 +225,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: "list"
       },
-
       /**
        * Defines if the entire list is in view port.
        * @private
@@ -248,7 +232,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _inViewport: {
         type: Boolean
       },
-
       /**
        * Defines the active state of the <code>More</code> button.
        * @private
@@ -257,9 +240,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.List.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.List.prototype */{
       /**
        * Fired when an item is activated, unless the item's <code>type</code> property
        * is set to <code>Inactive</code>.
@@ -276,7 +257,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the <code>Close</code> button of any item is clicked
        * <br><br>
@@ -295,7 +275,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the <code>Toggle</code> button of any item is clicked.
        * <br><br>
@@ -313,7 +292,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the Delete button of any item is pressed.
        * <br><br>
@@ -331,7 +309,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when selection is changed by user interaction
        * in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code> modes.
@@ -352,7 +329,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           selectionComponentPressed: {
             type: Boolean
           } // protected, indicates if the user used the selection components to change the selection
-
         }
       },
 
@@ -368,6 +344,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       "load-more": {}
     }
   };
+
   /**
    * @class
    *
@@ -435,43 +412,40 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @appenddocs StandardListItem CustomListItem GroupHeaderListItem
    * @public
    */
-
   class List extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _ListTemplate.default;
     }
-
     static get styles() {
       return [_BrowserScrollbar.default, _List.default];
     }
-
     static async onDefine() {
       List.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     static get dependencies() {
       return [_BusyIndicator.default];
     }
-
     constructor() {
       super();
-      this.initItemNavigation(); // Stores the last focused item within the internal ul element.
+      this.initItemNavigation();
 
-      this._previouslyFocusedItem = null; // Indicates that the List is forwarding the focus before or after the internal ul.
+      // Stores the last focused item within the internal ul element.
+      this._previouslyFocusedItem = null;
 
+      // Indicates that the List is forwarding the focus before or after the internal ul.
       this._forwardingFocus = false;
-      this._previouslySelectedItem = null; // Indicates that the List has already subscribed for resize.
+      this._previouslySelectedItem = null;
 
-      this.resizeListenerAttached = false; // Indicates if the IntersectionObserver started observing the List
+      // Indicates that the List has already subscribed for resize.
+      this.resizeListenerAttached = false;
 
+      // Indicates if the IntersectionObserver started observing the List
       this.listEndObserved = false;
       this.addEventListener("ui5-_press", this.onItemPress.bind(this));
       this.addEventListener("ui5-close", this.onItemClose.bind(this));
@@ -481,142 +455,110 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.addEventListener("ui5-_forward-before", this.onForwardBefore.bind(this));
       this.addEventListener("ui5-_selection-requested", this.onSelectionRequested.bind(this));
       this.addEventListener("ui5-_focus-requested", this.focusUploadCollectionItem.bind(this));
-      this._handleResize = this.checkListInViewport.bind(this); // Indicates the List bottom most part has been detected by the IntersectionObserver
-      // for the first time.
+      this._handleResize = this.checkListInViewport.bind(this);
 
+      // Indicates the List bottom most part has been detected by the IntersectionObserver
+      // for the first time.
       this.initialIntersection = true;
     }
-
     onExitDOM() {
       this.unobserveListEnd();
       this.resizeListenerAttached = false;
-
       _ResizeHandler.default.deregister(this.getDomRef(), this._handleResize);
     }
-
     onBeforeRendering() {
       this.prepareListItems();
     }
-
     onAfterRendering() {
       if (this.growsOnScroll) {
         this.observeListEnd();
       } else if (this.listEndObserved) {
         this.unobserveListEnd();
       }
-
       if (this.grows) {
         this.checkListInViewport();
         this.attachForResize();
       }
     }
-
     attachForResize() {
       if (!this.resizeListenerAttached) {
         this.resizeListenerAttached = true;
-
         _ResizeHandler.default.register(this.getDomRef(), this._handleResize);
       }
     }
-
     get shouldRenderH1() {
       return !this.header.length && this.headerText;
     }
-
     get headerID() {
       return `${this._id}-header`;
     }
-
     get modeLabelID() {
       return `${this._id}-modeLabel`;
     }
-
     get listEndDOM() {
       return this.shadowRoot.querySelector(".ui5-list-end-marker");
     }
-
     get hasData() {
       return this.getSlottedNodes("items").length !== 0;
     }
-
     get showNoDataText() {
       return !this.hasData && this.noDataText;
     }
-
     get isDelete() {
       return this.mode === _ListMode.default.Delete;
     }
-
     get isSingleSelect() {
       return [_ListMode.default.SingleSelect, _ListMode.default.SingleSelectBegin, _ListMode.default.SingleSelectEnd, _ListMode.default.SingleSelectAuto].includes(this.mode);
     }
-
     get isMultiSelect() {
       return this.mode === _ListMode.default.MultiSelect;
     }
-
     get ariaLabelledBy() {
       if (this.accessibleNameRef || this.accessibleName) {
         return undefined;
       }
-
       const ids = [];
-
       if (this.isMultiSelect || this.isSingleSelect || this.isDelete) {
         ids.push(this.modeLabelID);
       }
-
       if (this.shouldRenderH1) {
         ids.push(this.headerID);
       }
-
       return ids.length ? ids.join(" ") : undefined;
     }
-
     get ariaLabelTxt() {
       return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
     }
-
     get ariaLabelModeText() {
       if (this.isMultiSelect) {
         return List.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_MULTISELECTABLE);
       }
-
       if (this.isSingleSelect) {
         return List.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_SELECTABLE);
       }
-
       if (this.isDelete) {
         return List.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_DELETABLE);
       }
-
       return undefined;
     }
-
     get grows() {
       return this.growing !== _ListGrowingMode.default.None;
     }
-
     get growsOnScroll() {
       return this.growing === _ListGrowingMode.default.Scroll;
     }
-
     get growsWithButton() {
       return this.growing === _ListGrowingMode.default.Button;
     }
-
     get _growingButtonText() {
       return List.i18nBundle.getText(_i18nDefaults.LOAD_MORE_TEXT);
     }
-
     get busyIndPosition() {
       if (!this.grows) {
         return "absolute";
       }
-
       return this._inViewport ? "absolute" : "sticky";
     }
-
     get styles() {
       return {
         busyInd: {
@@ -624,7 +566,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     initItemNavigation() {
       this._itemNavigation = new _ItemNavigation.default(this, {
         skipItemsSize: PAGE_UP_DOWN_SIZE,
@@ -633,7 +574,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         getItemsCallback: () => this.getEnabledItems()
       });
     }
-
     prepareListItems() {
       const slottedItems = this.getSlottedNodes("items");
       slottedItems.forEach((item, key) => {
@@ -644,7 +584,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       this._previouslySelectedItem = null;
     }
-
     async observeListEnd() {
       if (!this.listEndObserved) {
         await (0, _Render.renderFinished)();
@@ -652,7 +591,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.listEndObserved = true;
       }
     }
-
     unobserveListEnd() {
       if (this.growingIntersectionObserver) {
         this.growingIntersectionObserver.disconnect();
@@ -660,33 +598,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.listEndObserved = false;
       }
     }
-
     onInteresection(entries) {
       if (this.initialIntersection) {
         this.initialIntersection = false;
         return;
       }
-
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           (0, _debounce.default)(this.loadMore.bind(this), INFINITE_SCROLL_DEBOUNCE_RATE);
         }
       });
     }
+
     /*
     * ITEM SELECTION BASED ON THE CURRENT MODE
     */
-
-
     onSelectionRequested(event) {
       const previouslySelectedItems = this.getSelectedItems();
       let selectionChange = false;
       this._selectionRequested = true;
-
       if (this[`handle${this.mode}`]) {
         selectionChange = this[`handle${this.mode}`](event.detail.item, event.detail.selected);
       }
-
       if (selectionChange) {
         this.fireEvent("selection-change", {
           selectedItems: this.getSelectedItems(),
@@ -696,134 +629,106 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
       }
     }
-
     handleSingleSelect(item) {
       if (item.selected) {
         return false;
       }
-
       this.deselectSelectedItems();
       item.selected = true;
       return true;
     }
-
     handleSingleSelectBegin(item) {
       return this.handleSingleSelect(item);
     }
-
     handleSingleSelectEnd(item) {
       return this.handleSingleSelect(item);
     }
-
     handleSingleSelectAuto(item) {
       return this.handleSingleSelect(item);
     }
-
     handleMultiSelect(item, selected) {
       item.selected = selected;
       return true;
     }
-
     handleDelete(item) {
       this.fireEvent("item-delete", {
         item
       });
     }
-
     deselectSelectedItems() {
       this.getSelectedItems().forEach(item => {
         item.selected = false;
       });
     }
-
     getSelectedItems() {
       return this.getSlottedNodes("items").filter(item => item.selected);
     }
-
     getEnabledItems() {
       return this.getSlottedNodes("items").filter(item => !item.disabled);
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isTabNext)(event)) {
         this._handleTabNext(event);
       }
     }
-
     _onLoadMoreKeydown(event) {
       if ((0, _Keys.isSpace)(event)) {
         event.preventDefault();
         this._loadMoreActive = true;
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this._onLoadMoreClick();
-
         this._loadMoreActive = true;
       }
-
       if ((0, _Keys.isTabNext)(event)) {
         this.focusAfterElement();
       }
-
       if ((0, _Keys.isTabPrevious)(event)) {
         if (this.getPreviouslyFocusedItem()) {
           this.focusPreviouslyFocusedItem();
         } else {
           this.focusFirstItem();
         }
-
         event.preventDefault();
       }
     }
-
     _onLoadMoreKeyup(event) {
       if ((0, _Keys.isSpace)(event)) {
         this._onLoadMoreClick();
       }
-
       this._loadMoreActive = false;
     }
-
     _onLoadMoreMousedown() {
       this._loadMoreActive = true;
     }
-
     _onLoadMoreMouseup() {
       this._loadMoreActive = false;
     }
-
     _onLoadMoreClick() {
       this.loadMore();
     }
-
     checkListInViewport() {
       this._inViewport = (0, _isElementInView.default)(this.getDomRef());
     }
-
     loadMore() {
       this.fireEvent("load-more");
     }
+
     /*
     * KEYBOARD SUPPORT
     */
-
-
     _handleTabNext(event) {
       // If forward navigation is performed, we check if the List has headerToolbar.
       // If yes - we check if the target is at the last tabbable element of the headerToolbar
       // to forward correctly the focus to the selected, previously focused or to the first list item.
       let lastTabbableEl;
       const target = this.getNormalizedTarget(event.target);
-
       if (this.headerToolbar) {
         lastTabbableEl = this.getHeaderToolbarLastTabbableElement();
       }
-
       if (!lastTabbableEl) {
         return;
       }
-
       if (lastTabbableEl === target) {
         if (this.getFirstItem(x => x.selected && !x.disabled)) {
           this.focusFirstSelectedItem();
@@ -832,75 +737,62 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         } else {
           this.focusFirstItem();
         }
-
         event.stopImmediatePropagation();
         event.preventDefault();
       }
     }
-
     _onfocusin(event) {
-      const target = this.getNormalizedTarget(event.target); // If the focusin event does not origin from one of the 'triggers' - ignore it.
-
+      const target = this.getNormalizedTarget(event.target);
+      // If the focusin event does not origin from one of the 'triggers' - ignore it.
       if (!this.isForwardElement(target)) {
         event.stopImmediatePropagation();
         return;
-      } // The focus arrives in the List for the first time.
+      }
+
+      // The focus arrives in the List for the first time.
       // If there is selected item - focus it or focus the first item.
-
-
       if (!this.getPreviouslyFocusedItem()) {
         if (this.growsWithButton && this.isForwardAfterElement(target)) {
           this.focusGrowingButton();
         } else {
           this.focusFirstItem();
         }
-
         event.stopImmediatePropagation();
         return;
-      } // The focus returns to the List,
+      }
+
+      // The focus returns to the List,
       // focus the first selected item or the previously focused element.
-
-
       if (!this.getForwardingFocus()) {
         if (this.growsWithButton && this.isForwardAfterElement(target)) {
           this.focusGrowingButton();
           event.stopImmediatePropagation();
           return;
         }
-
         this.focusPreviouslyFocusedItem();
         event.stopImmediatePropagation();
       }
-
       this.setForwardingFocus(false);
     }
-
     isForwardElement(node) {
       const nodeId = node.id;
       const beforeElement = this.getBeforeElement();
-
       if (this._id === nodeId || beforeElement && beforeElement.id === nodeId) {
         return true;
       }
-
       return this.isForwardAfterElement(node);
     }
-
     isForwardAfterElement(node) {
       const nodeId = node.id;
       const afterElement = this.getAfterElement();
       return afterElement && afterElement.id === nodeId;
     }
-
     onItemFocused(event) {
       const target = event.target;
-
       this._itemNavigation.setCurrentItem(target);
-
       this.fireEvent("item-focused", {
         item: target
       });
-
       if (this.mode === _ListMode.default.SingleSelectAuto) {
         this.onSelectionRequested({
           detail: {
@@ -912,16 +804,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
       }
     }
-
     onItemPress(event) {
       const pressedItem = event.detail.item;
-
       if (!this.fireEvent("item-click", {
         item: pressedItem
       }, true)) {
         return;
       }
-
       if (!this._selectionRequested && this.mode !== _ListMode.default.Delete) {
         this._selectionRequested = true;
         this.onSelectionRequested({
@@ -933,32 +822,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         });
       }
-
       this._selectionRequested = false;
-    } // This is applicable to NoficationListItem
+    }
 
-
+    // This is applicable to NoficationListItem
     onItemClose(event) {
       this.fireEvent("item-close", {
         item: event.detail.item
       });
     }
-
     onItemToggle(event) {
       this.fireEvent("item-toggle", {
         item: event.detail.item
       });
     }
-
     onForwardBefore(event) {
       this.setPreviouslyFocusedItem(event.target);
       this.focusBeforeElement();
       event.stopImmediatePropagation();
     }
-
     onForwardAfter(event) {
       this.setPreviouslyFocusedItem(event.target);
-
       if (!this.growsWithButton) {
         this.focusAfterElement();
       } else {
@@ -966,143 +850,112 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         event.preventDefault();
       }
     }
-
     focusBeforeElement() {
       this.setForwardingFocus(true);
       this.getBeforeElement().focus();
     }
-
     focusAfterElement() {
       this.setForwardingFocus(true);
       this.getAfterElement().focus();
     }
-
     focusGrowingButton() {
       const growingBtn = this.getGrowingButton();
-
       if (growingBtn) {
         growingBtn.focus();
       }
     }
-
     getGrowingButton() {
       return this.shadowRoot.querySelector(`#${this._id}-growing-btn`);
     }
+
     /**
      * Focuses the first list item and sets its tabindex to "0" via the ItemNavigation
      * @protected
      */
-
-
     focusFirstItem() {
       // only enabled items are focusable
       const firstItem = this.getFirstItem(x => !x.disabled);
-
       if (firstItem) {
         firstItem.focus();
       }
     }
-
     focusPreviouslyFocusedItem() {
       const previouslyFocusedItem = this.getPreviouslyFocusedItem();
-
       if (previouslyFocusedItem) {
         previouslyFocusedItem.focus();
       }
     }
-
     focusFirstSelectedItem() {
       // only enabled items are focusable
       const firstSelectedItem = this.getFirstItem(x => x.selected && !x.disabled);
-
       if (firstSelectedItem) {
         firstSelectedItem.focus();
       }
     }
+
     /**
      * Focuses a list item and sets its tabindex to "0" via the ItemNavigation
      * @protected
      * @param item
      */
-
-
     focusItem(item) {
       this._itemNavigation.setCurrentItem(item);
-
       item.focus();
     }
-
     focusUploadCollectionItem(event) {
       setTimeout(() => {
         this.setPreviouslyFocusedItem(event.target);
         this.focusPreviouslyFocusedItem();
       }, 0);
     }
-
     setForwardingFocus(forwardingFocus) {
       this._forwardingFocus = forwardingFocus;
     }
-
     getForwardingFocus() {
       return this._forwardingFocus;
     }
-
     setPreviouslyFocusedItem(item) {
       this._previouslyFocusedItem = item;
     }
-
     getPreviouslyFocusedItem() {
       return this._previouslyFocusedItem;
     }
-
     getFirstItem(filter) {
       const slottedItems = this.getSlottedNodes("items");
       let firstItem = null;
-
       if (!filter) {
         return !!slottedItems.length && slottedItems[0];
       }
-
       for (let i = 0; i < slottedItems.length; i++) {
         if (filter(slottedItems[i])) {
           firstItem = slottedItems[i];
           break;
         }
       }
-
       return firstItem;
     }
-
     getAfterElement() {
       if (!this._afterElement) {
         this._afterElement = this.shadowRoot.querySelector(`#${this._id}-after`);
       }
-
       return this._afterElement;
     }
-
     getBeforeElement() {
       if (!this._beforeElement) {
         this._beforeElement = this.shadowRoot.querySelector(`#${this._id}-before`);
       }
-
       return this._beforeElement;
     }
-
     getHeaderToolbarLastTabbableElement() {
       return (0, _TabbableElements.getLastTabbableElement)(this.headerToolbar.getDomRef()) || this.headerToolbar.getDomRef();
     }
-
     getNormalizedTarget(target) {
       let focused = target;
-
       if (target.shadowRoot && target.shadowRoot.activeElement) {
         focused = target.shadowRoot.activeElement;
       }
-
       return focused;
     }
-
     getIntersectionObserver() {
       if (!this.growingIntersectionObserver) {
         this.growingIntersectionObserver = new IntersectionObserver(this.onInteresection.bind(this), {
@@ -1111,12 +964,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           threshold: 1.0
         });
       }
-
       return this.growingIntersectionObserver;
     }
-
   }
-
   List.define();
   var _default = List;
   _exports.default = _default;

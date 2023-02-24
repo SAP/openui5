@@ -6,17 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-menu-item",
-    properties:
-    /** @lends sap.ui.webcomponents.main.MenuItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.MenuItem.prototype */{
       /**
        * Defines the text of the tree item.
        *
@@ -27,7 +23,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       text: {
         type: String
       },
-
       /**
        * Defines the icon to be displayed as graphical element within the component.
        * The SAP-icons font provides numerous options.
@@ -42,7 +37,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       icon: {
         type: String
       },
-
       /**
        * Defines whether a visual separator should be rendered before the item.
        *
@@ -53,7 +47,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       startsSection: {
         type: Boolean
       },
-
       /**
        * Defines whether <code>ui5-menu-item</code> is in disabled state.
        * <br><br>
@@ -65,7 +58,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       disabled: {
         type: Boolean
       },
-
       /**
        * Indicates if the any of the element siblings have children items.
        * @type {boolean}
@@ -75,7 +67,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: Boolean,
         noAttribute: true
       },
-
       /**
        * Indicates if the any of the element siblings have icon.
        * @type {boolean}
@@ -85,7 +76,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: Boolean,
         noAttribute: true
       },
-
       /**
        * Stores Menu object with submenu items
        * @type {object}
@@ -94,7 +84,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       _subMenu: {
         type: Object
       },
-
       /**
        * Defines whether the submenu closing must be prevented
        * @type {boolean}
@@ -106,9 +95,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       }
     },
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.MenuItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.MenuItem.prototype */{
       /**
        * Defines the items of this component.
        *
@@ -123,6 +110,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       }
     }
   };
+
   /**
    * @class
    *
@@ -151,26 +139,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @since 1.3.0
    * @public
    */
-
   class MenuItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     get hasChildren() {
       return !!this.items.length;
     }
-
     get hasDummyIcon() {
       return this._siblingsWithIcon && !this.icon;
     }
-
     get subMenuOpened() {
       return !!Object.keys(this._subMenu).length;
     }
-
   }
-
   MenuItem.define();
   var _default = MenuItem;
   _exports.default = _default;

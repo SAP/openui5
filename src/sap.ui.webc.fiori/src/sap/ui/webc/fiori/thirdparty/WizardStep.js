@@ -6,17 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-wizard-step",
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */{
       /**
        * Defines the <code>titleText</code> of the step.
        * <br><br>
@@ -31,7 +27,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       titleText: {
         type: String
       },
-
       /**
        * Defines the <code>subtitleText</code> of the step.
        * <br><br>
@@ -46,7 +41,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       subtitleText: {
         type: String
       },
-
       /**
        * Defines the <code>icon</code> of the step.
        * <br><br>
@@ -63,7 +57,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       icon: {
         type: String
       },
-
       /**
        * Defines if the step is <code>disabled</code>. When disabled the step is displayed,
        * but the user can't select the step by clicking or navigate to it with scrolling.
@@ -79,7 +72,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines the step's <code>selected</code> state - the step that is currently active.
        * <br><br>
@@ -94,7 +86,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       selected: {
         type: Boolean
       },
-
       /**
        * When <code>branching</code> is enabled a dashed line would be displayed after the step,
        * meant to indicate that the next step is not yet known and depends on user choice in the current step.
@@ -111,9 +102,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */{
       /**
        * Defines the step content.
        * @type {Node[]}
@@ -124,10 +113,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
         type: Node
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */
-    {}
+    events: /** @lends sap.ui.webcomponents.fiori.WizardStep.prototype */{}
   };
+
   /**
    * @class
    *
@@ -157,14 +145,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @implements sap.ui.webcomponents.fiori.IWizardStep
    * @public
    */
-
   class WizardStep extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
   }
-
   WizardStep.define();
   var _default = WizardStep;
   _exports.default = _default;

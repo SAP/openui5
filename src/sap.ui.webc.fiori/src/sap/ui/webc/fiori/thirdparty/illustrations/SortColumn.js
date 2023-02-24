@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogSortColumn = _interopRequireDefault(_sapIllusDialogSortColumn);
   _sapIllusSceneSortColumn = _interopRequireDefault(_sapIllusSceneSortColumn);
   _sapIllusSpotSortColumn = _interopRequireDefault(_sapIllusSpotSortColumn);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "SortColumn";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_SORTCOLUMN;

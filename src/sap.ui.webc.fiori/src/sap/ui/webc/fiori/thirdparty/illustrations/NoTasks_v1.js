@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogNoTasks_v = _interopRequireDefault(_sapIllusDialogNoTasks_v);
   _sapIllusSceneNoTasks_v = _interopRequireDefault(_sapIllusSceneNoTasks_v);
   _sapIllusSpotNoTasks_v = _interopRequireDefault(_sapIllusSpotNoTasks_v);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "NoTasks_v1";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_NOTASKS;

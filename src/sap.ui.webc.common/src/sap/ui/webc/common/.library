@@ -35,7 +35,7 @@
 				<pattern>sap/ui/webc/common/thirdparty/icons-tnt/*.*</pattern>
 				<pattern>sap/ui/webc/common/thirdparty/icons-business-suite/*.*</pattern>
 			</lib>
-			<lib name="lit-html" displayName="lit-html" npmName="lit-html" version="2.2.2" hash="c4908d4f4bd86a4d71c8c017a0139055" homepage="https://lit-html.polymer-project.org">
+			<lib name="lit-html" displayName="lit-html" npmName="lit-html" version="2.2.2" hash="94bafc7d74b032d0b543afb10cae9b08" homepage="https://lit-html.polymer-project.org">
 				<license url="https://github.com/lit/lit/blob/main/LICENSE" type="BSD-3-Clause"></license>
 				<copyright>Google LLC</copyright>
 				<pattern>sap/ui/webc/common/thirdparty/lit-html/*.*</pattern>

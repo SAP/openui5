@@ -1,3 +1,7 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
 	"sap/ui/webc/common/thirdparty/base/CSP"
 ], function(CSP) {

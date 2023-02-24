@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogFingerprint = _interopRequireDefault(_tntDialogFingerprint);
   _tntSceneFingerprint = _interopRequireDefault(_tntSceneFingerprint);
   _tntSpotFingerprint = _interopRequireDefault(_tntSpotFingerprint);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "Fingerprint";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

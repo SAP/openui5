@@ -10,9 +10,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _CSSColor = _interopRequireDefault(_CSSColor);
   _ColorPaletteItemTemplate = _interopRequireDefault(_ColorPaletteItemTemplate);
   _ColorPaletteItem = _interopRequireDefault(_ColorPaletteItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -21,9 +19,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-color-palette-item",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.ColorPaletteItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.ColorPaletteItem.prototype */{
       /**
        * Defines the colour of the component.
        * <br><br>
@@ -35,7 +31,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       value: {
         type: _CSSColor.default
       },
-
       /**
        * Defines the tab-index of the element, helper information for the ItemNavigation.
        * @private
@@ -45,7 +40,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: "-1",
         noAttribute: true
       },
-
       /**
        * Defines the index of the item inside of the ColorPalette.
        * @private
@@ -54,7 +48,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       index: {
         type: String
       },
-
       /**
        * Defines if the ColorPalette is on phone mode.
        * @private
@@ -63,7 +56,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       phone: {
         type: Boolean
       },
-
       /**
        * @private
        * @type {boolean}
@@ -73,13 +65,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.ColorPaletteItem.prototype */
-    {},
-    events:
-    /** @lends sap.ui.webcomponents.main.ColorPaletteItem.prototype */
-    {}
+    slots: /** @lends sap.ui.webcomponents.main.ColorPaletteItem.prototype */{},
+    events: /** @lends sap.ui.webcomponents.main.ColorPaletteItem.prototype */{}
   };
+
   /**
    * @class
    *
@@ -96,41 +85,32 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.IColorPaletteItem
    * @public
    */
-
   class ColorPaletteItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _ColorPaletteItem.default;
     }
-
     static get template() {
       return _ColorPaletteItemTemplate.default;
     }
-
     static async onDefine() {
       ColorPaletteItem.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     constructor() {
       super();
     }
-
     onBeforeRendering() {
       this._disabled = !this.value;
       this.phone = (0, _Device.isPhone)();
     }
-
     get colorLabel() {
       return ColorPaletteItem.i18nBundle.getText(_i18nDefaults.COLORPALETTE_COLOR_LABEL);
     }
-
     get styles() {
       return {
         root: {
@@ -138,9 +118,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
   }
-
   ColorPaletteItem.define();
   var _default = ColorPaletteItem;
   _exports.default = _default;

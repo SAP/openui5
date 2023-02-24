@@ -9,23 +9,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _IconTemplate = _interopRequireDefault(_IconTemplate);
   _Icon = _interopRequireDefault(_Icon);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
+
   const ICON_NOT_FOUND = "ICON_NOT_FOUND";
   const PRESENTATION_ROLE = "presentation";
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-icon",
     languageAware: true,
     themeAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Icon.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Icon.prototype */{
       /**
        * Defines if the icon is interactive (focusable and pressable)
        * @type {boolean}
@@ -36,7 +33,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       interactive: {
         type: Boolean
       },
-
       /**
        * Defines the unique identifier (icon name) of the component.
        * <br>
@@ -75,7 +71,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       name: {
         type: String
       },
-
       /**
        * Defines the text alternative of the component.
        * If not provided a default text alternative will be set, if present.
@@ -90,7 +85,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Defines whether the component should have a tooltip.
        *
@@ -101,7 +95,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       showTooltip: {
         type: Boolean
       },
-
       /**
        * Defines the accessibility role of the component.
        * @type {string}
@@ -112,7 +105,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleRole: {
         type: String
       },
-
       /**
        * Defines the aria hidden state of the component.
        * Note: If the role is presentation the default value of aria-hidden will be true.
@@ -122,7 +114,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       ariaHidden: {
         type: String
       },
-
       /**
        * @private
        */
@@ -130,7 +121,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         noAttribute: true
       },
-
       /**
        * @private
        */
@@ -138,21 +128,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Object,
         noAttribute: true
       },
-
       /**
        * @private
        */
       focused: {
         type: Boolean
       },
-
       /**
       * @private
       */
       invalid: {
         type: Boolean
       },
-
       /**
        * @private
        */
@@ -162,9 +149,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         noAttribute: true
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Icon.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Icon.prototype */{
       /**
        * Fired on mouseup, space and enter if icon is interactive
        * @private
@@ -173,6 +158,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       click: {}
     }
   };
+
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -264,43 +250,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.IIcon
    * @public
    */
-
   class Icon extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _IconTemplate.default;
     }
-
     static get styles() {
       return _Icon.default;
     }
-
     _onFocusInHandler(event) {
       if (this.interactive) {
         this.focused = true;
       }
     }
-
     _onFocusOutHandler(event) {
       this.focused = false;
     }
-
     _onkeydown(event) {
       if (!this.interactive) {
         return;
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this.fireEvent("click");
       }
-
       if ((0, _Keys.isSpace)(event)) {
         event.preventDefault(); // prevent scrolling
       }
@@ -311,82 +288,64 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.fireEvent("click");
       }
     }
-
     _onClickHandler(event) {
       // prevent the native event and fire custom event to ensure the noConfict "ui5-click" is fired
       event.stopPropagation();
       this.fireEvent("click");
     }
+
     /**
     * Enforce "ltr" direction, based on the icons collection metadata.
     */
-
-
     get _dir() {
       return this.ltr ? "ltr" : undefined;
     }
-
     get effectiveAriaHidden() {
       if (this.ariaHidden === "") {
         if (this.isDecorative) {
           return true;
         }
-
         return;
       }
-
       return this.ariaHidden;
     }
-
     get tabIndex() {
       return this.interactive ? "0" : undefined;
     }
-
     get isDecorative() {
       return this.effectiveAccessibleRole === PRESENTATION_ROLE;
     }
-
     get effectiveAccessibleRole() {
       if (this.accessibleRole) {
         return this.accessibleRole;
       }
-
       if (this.interactive) {
         return "button";
       }
-
       return this.effectiveAccessibleName ? "img" : PRESENTATION_ROLE;
     }
-
     async onBeforeRendering() {
       const name = this.name;
-
       if (!name) {
         /* eslint-disable-next-line */
         return console.warn("Icon name property is required", this);
       }
-
       let iconData = (0, _Icons.getIconDataSync)(name);
-
       if (!iconData) {
         iconData = await (0, _Icons.getIconData)(name);
       }
-
       if (iconData === ICON_NOT_FOUND) {
         this.invalid = true;
         /* eslint-disable-next-line */
-
         return console.warn(`Required icon is not registered. You can either import the icon as a module in order to use it e.g. "@ui5/webcomponents-icons/dist/${name.replace("sap-icon://", "")}.js", or setup a JSON build step and import "@ui5/webcomponents-icons/dist/AllIcons.js".`);
       }
-
       if (!iconData) {
         this.invalid = true;
         /* eslint-disable-next-line */
-
         return console.warn(`Required icon is not registered. Invalid icon name: ${this.name}`);
-      } // in case a new valid name is set, show the icon
+      }
 
-
+      // in case a new valid name is set, show the icon
       this.invalid = false;
       this.pathData = iconData.pathData;
       this.accData = iconData.accData;
@@ -395,7 +354,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._onclick = this.interactive ? this._onClickHandler.bind(this) : undefined;
       this._onfocusout = this.interactive ? this._onFocusOutHandler.bind(this) : undefined;
       this._onfocusin = this.interactive ? this._onFocusInHandler.bind(this) : undefined;
-
       if (this.accessibleName) {
         this.effectiveAccessibleName = this.accessibleName;
       } else if (this.accData) {
@@ -403,13 +361,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.effectiveAccessibleName = i18nBundle.getText(this.accData) || undefined;
       }
     }
-
     get hasIconTooltip() {
       return this.showTooltip && this.effectiveAccessibleName;
     }
-
   }
-
   Icon.define();
   var _default = Icon;
   _exports.default = _default;

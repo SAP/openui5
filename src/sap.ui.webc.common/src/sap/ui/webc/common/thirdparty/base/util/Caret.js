@@ -5,7 +5,6 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.setCaretPosition = _exports.getCaretPosition = void 0;
-
   /**
    * Returns the caret (cursor) position of the specified text field (field).
    * Return value range is 0-field.value.length.
@@ -13,17 +12,13 @@ sap.ui.define(["exports"], function (_exports) {
   const getCaretPosition = field => {
     // Initialize
     let caretPos = 0;
-
     if (field.selectionStart || field.selectionStart === "0") {
       // Firefox support
       caretPos = field.selectionDirection === "backward" ? field.selectionStart : field.selectionEnd;
     }
-
     return caretPos;
   };
-
   _exports.getCaretPosition = getCaretPosition;
-
   const setCaretPosition = (field, caretPos) => {
     if (field.createTextRange) {
       const range = field.createTextRange();
@@ -36,6 +31,5 @@ sap.ui.define(["exports"], function (_exports) {
       field.focus();
     }
   };
-
   _exports.setCaretPosition = setCaretPosition;
 });

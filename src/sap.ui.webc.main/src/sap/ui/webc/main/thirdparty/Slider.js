@@ -9,10 +9,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Float", "sap
   _SliderBase = _interopRequireDefault(_SliderBase);
   _Icon = _interopRequireDefault(_Icon);
   _SliderTemplate = _interopRequireDefault(_SliderTemplate);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Texts
 
   /**
@@ -22,9 +21,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Float", "sap
     tag: "ui5-slider",
     languageAware: true,
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Slider.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Slider.prototype */{
       /**
        * Current value of the slider
        *
@@ -38,6 +35,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Float", "sap
       }
     }
   };
+
   /**
    * @class
    *
@@ -108,26 +106,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Float", "sap
    * @since 1.0.0-rc.11
    * @public
    */
-
   class Slider extends _SliderBase.default {
     static get metadata() {
       return metadata;
     }
-
     static get template() {
       return _SliderTemplate.default;
     }
-
     constructor() {
       super();
       this._stateStorage.value = null;
-
       this._setInitialValue("value", null);
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
+
     /**
      *
      * Check if the previously saved state is outdated. That would mean
@@ -139,151 +133,129 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Float", "sap
      * Update the visual UI representation of the Slider.
      *
      */
-
-
     onBeforeRendering() {
       if (!this.isCurrentStateOutdated()) {
         return;
       }
-
       this.notResized = true;
       this.syncUIAndState("value");
-
       this._updateHandleAndProgress(this.value);
     }
+
     /**
      * Called when the user starts interacting with the slider
      *
      * @private
      */
-
-
     _onmousedown(event) {
       // If step is 0 no interaction is available because there is no constant
       // (equal for all user environments) quantitative representation of the value
       if (this.disabled || this.step === 0) {
         return;
       }
-
       const newValue = this.handleDownBase(event);
-      this._valueOnInteractionStart = this.value; // Set initial value if one is not set previously on focus in.
-      // It will be restored if ESC key is pressed.
+      this._valueOnInteractionStart = this.value;
 
-      if (this._getInitialValue("value") === null) {
-        this._setInitialValue("value", this.value);
-      } // Do not yet update the Slider if press is over a handle. It will be updated if the user drags the mouse.
-
-
-      if (!this._isHandlePressed(this.constructor.getPageXValueFromEvent(event))) {
-        this._updateHandleAndProgress(newValue);
-
-        this.updateValue("value", newValue);
-      }
-    }
-
-    _onfocusin(event) {
       // Set initial value if one is not set previously on focus in.
       // It will be restored if ESC key is pressed.
       if (this._getInitialValue("value") === null) {
         this._setInitialValue("value", this.value);
       }
 
+      // Do not yet update the Slider if press is over a handle. It will be updated if the user drags the mouse.
+      if (!this._isHandlePressed(this.constructor.getPageXValueFromEvent(event))) {
+        this._updateHandleAndProgress(newValue);
+        this.updateValue("value", newValue);
+      }
+    }
+    _onfocusin(event) {
+      // Set initial value if one is not set previously on focus in.
+      // It will be restored if ESC key is pressed.
+      if (this._getInitialValue("value") === null) {
+        this._setInitialValue("value", this.value);
+      }
       if (this.showTooltip) {
         this._tooltipVisibility = _SliderBase.default.TOOLTIP_VISIBILITY.VISIBLE;
       }
     }
-
     _onfocusout(event) {
       // Prevent focusout when the focus is getting set within the slider internal
       // element (on the handle), before the Slider' customElement itself is finished focusing
       if (this._isFocusing()) {
         this._preventFocusOut();
-
         return;
-      } // Reset focus state and the stored Slider's initial
+      }
+
+      // Reset focus state and the stored Slider's initial
       // value that was saved when it was first focused in
-
-
       this._setInitialValue("value", null);
-
       if (this.showTooltip) {
         this._tooltipVisibility = _SliderBase.default.TOOLTIP_VISIBILITY.HIDDEN;
       }
     }
+
     /**
      * Called when the user moves the slider
      *
      * @private
      */
-
-
     _handleMove(event) {
-      event.preventDefault(); // If step is 0 no interaction is available because there is no constant
-      // (equal for all user environments) quantitative representation of the value
+      event.preventDefault();
 
+      // If step is 0 no interaction is available because there is no constant
+      // (equal for all user environments) quantitative representation of the value
       if (this.disabled || this._effectiveStep === 0) {
         return;
       }
-
       const newValue = this.constructor.getValueFromInteraction(event, this._effectiveStep, this._effectiveMin, this._effectiveMax, this.getBoundingClientRect(), this.directionStart);
-
       this._updateHandleAndProgress(newValue);
-
       this.updateValue("value", newValue);
     }
+
     /** Called when the user finish interacting with the slider
      *
      * @private
      */
-
-
     _handleUp(event) {
       if (this._valueOnInteractionStart !== this.value) {
         this.fireEvent("change");
       }
-
       this.handleUpBase();
       this._valueOnInteractionStart = null;
     }
+
     /** Determines if the press is over the handle
      *
      * @private
      */
-
-
     _isHandlePressed(clientX) {
       const sliderHandleDomRect = this._sliderHandle.getBoundingClientRect();
-
       return clientX >= sliderHandleDomRect.left && clientX <= sliderHandleDomRect.right;
     }
+
     /** Updates the UI representation of the progress bar and handle position
      *
      * @private
      */
-
-
     _updateHandleAndProgress(newValue) {
       const max = this._effectiveMax;
-      const min = this._effectiveMin; // The progress (completed) percentage of the slider.
+      const min = this._effectiveMin;
 
-      this._progressPercentage = (newValue - min) / (max - min); // How many pixels from the left end of the slider will be the placed the affected  by the user action handle
-
+      // The progress (completed) percentage of the slider.
+      this._progressPercentage = (newValue - min) / (max - min);
+      // How many pixels from the left end of the slider will be the placed the affected  by the user action handle
       this._handlePositionFromStart = this._progressPercentage * 100;
     }
-
     _handleActionKeyPress(event) {
       const min = this._effectiveMin;
       const max = this._effectiveMax;
       const currentValue = this.value;
       const newValue = (0, _Keys.isEscape)(event) ? this._getInitialValue("value") : this.constructor.clipValue(this._handleActionKeyPressBase(event, "value") + currentValue, min, max);
-
       if (newValue !== currentValue) {
         this._updateHandleAndProgress(newValue);
-
         this.updateValue("value", newValue);
       }
     }
-
     get styles() {
       return {
         progress: {
@@ -305,50 +277,37 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Float", "sap
         }
       };
     }
-
     get _sliderHandle() {
       return this.shadowRoot.querySelector(".ui5-slider-handle");
     }
-
     get labelItems() {
       return this._labelItems;
     }
-
     get tooltipValue() {
       const stepPrecision = this.constructor._getDecimalPrecisionOfNumber(this._effectiveStep);
-
       return this.value.toFixed(stepPrecision);
     }
-
     get _ariaDisabled() {
       return this.disabled || undefined;
     }
-
     get _ariaLabelledByText() {
       return Slider.i18nBundle.getText(_i18nDefaults.SLIDER_ARIA_DESCRIPTION);
     }
-
     static async onDefine() {
       Slider.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     get tickmarksObject() {
       const count = this._tickmarksCount;
       const arr = [];
-
       if (this._hiddenTickmarks) {
         return [true, false];
       }
-
       for (let i = 0; i <= count; i++) {
         arr.push(this._effectiveMin + i * this.step <= this.value);
       }
-
       return arr;
     }
-
   }
-
   Slider.define();
   var _default = Slider;
   _exports.default = _default;

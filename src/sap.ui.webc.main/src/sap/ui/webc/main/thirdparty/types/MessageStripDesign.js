@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.MessageStripDesign.prototype
    * @public
@@ -20,21 +18,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Information}
      */
     Information: "Information",
-
     /**
      * Message is a success message
      * @public
      * @type {Positive}
      */
     Positive: "Positive",
-
     /**
      * Message is an error
      * @public
      * @type {Negative}
      */
     Negative: "Negative",
-
     /**
      * Message is a warning
      * @public
@@ -42,6 +37,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Warning: "Warning"
   };
+
   /**
    * @class
    * Defines different types of MessageStrip.
@@ -51,14 +47,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class MessageStripDesign extends _DataType.default {
     static isValid(value) {
       return !!MessageStripDesigns[value];
     }
-
   }
-
   MessageStripDesign.generateTypeAccessors(MessageStripDesigns);
   var _default = MessageStripDesign;
   _exports.default = _default;

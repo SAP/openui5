@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogChartOrg = _interopRequireDefault(_tntDialogChartOrg);
   _tntSceneChartOrg = _interopRequireDefault(_tntSceneChartOrg);
   _tntSpotChartOrg = _interopRequireDefault(_tntSpotChartOrg);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "ChartOrg";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

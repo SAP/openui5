@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogChartBPMNFlow = _interopRequireDefault(_tntDialogChartBPMNFlow);
   _tntSceneChartBPMNFlow = _interopRequireDefault(_tntSceneChartBPMNFlow);
   _tntSpotChartBPMNFlow = _interopRequireDefault(_tntSpotChartBPMNFlow);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "ChartBPMNFlow";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

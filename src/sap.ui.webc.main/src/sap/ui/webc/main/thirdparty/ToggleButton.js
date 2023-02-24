@@ -8,9 +8,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
   _Button = _interopRequireDefault(_Button);
   _ToggleButtonTemplate = _interopRequireDefault(_ToggleButtonTemplate);
   _ToggleButton = _interopRequireDefault(_ToggleButton);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -19,9 +17,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
   const metadata = {
     tag: "ui5-toggle-button",
     altTag: "ui5-togglebutton",
-    properties:
-    /** @lends sap.ui.webcomponents.main.ToggleButton.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.ToggleButton.prototype */{
       /**
        * Determines whether the component is displayed as pressed.
        *
@@ -34,6 +30,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       }
     }
   };
+
   /**
    * @class
    *
@@ -59,39 +56,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
    * @tagname ui5-toggle-button
    * @public
    */
-
   class ToggleButton extends _Button.default {
     static get metadata() {
       return metadata;
     }
-
     static get template() {
       return _ToggleButtonTemplate.default;
     }
-
     static get styles() {
       return [_Button.default.styles, _ToggleButton.default];
     }
-
     _onclick() {
       this.pressed = !this.pressed;
-
       if ((0, _Device.isSafari)()) {
         this.getDomRef().focus();
       }
     }
-
     _onkeyup(event) {
       if ((0, _Keys.isSpaceShift)(event)) {
         event.preventDefault();
         return;
       }
-
       super._onkeyup(event);
     }
-
   }
-
   ToggleButton.define();
   var _default = ToggleButton;
   _exports.default = _default;

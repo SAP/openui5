@@ -5,16 +5,13 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.default = void 0;
-
   const findNodeOwner = node => {
     if (!(node instanceof HTMLElement)) {
       throw new Error("Argument node should be of type HTMLElement");
     }
-
     const ownerTypes = [HTMLHtmlElement, HTMLIFrameElement];
     let currentShadowRootFlag = true;
     let currentCustomElementFlag = true;
-
     while (node) {
       if (node.toString() === "[object ShadowRoot]") {
         // Web Component
@@ -22,7 +19,6 @@ sap.ui.define(["exports"], function (_exports) {
         if (currentShadowRootFlag) {
           currentShadowRootFlag = false;
         }
-
         if (!currentCustomElementFlag && !currentShadowRootFlag) {
           return node;
         }
@@ -36,11 +32,9 @@ sap.ui.define(["exports"], function (_exports) {
         // Document or Iframe reached
         return node;
       }
-
       node = node.parentNode || node.host;
     }
   };
-
   var _default = findNodeOwner;
   _exports.default = _default;
 });

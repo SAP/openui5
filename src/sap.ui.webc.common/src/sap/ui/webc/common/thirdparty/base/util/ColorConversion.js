@@ -5,7 +5,6 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.getRGBColor = _exports.RGBToHSL = _exports.HSLToRGB = _exports.HEXToRGB = void 0;
-
   /**
    *
    * @param {String} color Color in one of the following formats: RGBA or HEX
@@ -164,17 +163,15 @@ sap.ui.define(["exports"], function (_exports) {
     yellowgreen: "9acd32",
     transparent: "00000000"
   };
-
   const getRGBColor = color => {
     if (color.startsWith("rgba")) {
       return RGBAToRGB(color);
     }
-
     if (color.startsWith("rgb")) {
       return RGBToRGB(color);
-    } // HEX
+    }
 
-
+    // HEX
     if (color.indexOf("#") === 0) {
       // Shorthand Syntax
       if (color.length === 4) {
@@ -182,63 +179,54 @@ sap.ui.define(["exports"], function (_exports) {
       } else {
         color = color.slice(1, color.length);
       }
-    } // Css Color
+    }
 
-
+    // Css Color
     if (Object.keys(CSSColors).includes(color)) {
       color = CSSColors[color];
     }
-
     return HEXToRGB(color);
   };
+
   /**
    * Return an object with the properties for each of the main colors(red, green, blue)
    * @param {String} color Receives a color in the following format: "rgba(0, 0, 0, 1)
    */
-
-
   _exports.getRGBColor = getRGBColor;
-
   const RGBAToRGB = color => {
     const openingBracketIndex = color.indexOf("("),
-          commasIndexes = [];
-
+      commasIndexes = [];
     for (let i = 0; i < color.length; i++) {
       if (color[i] === ",") {
         commasIndexes.push(i);
       }
     }
-
     return {
       r: parseInt(color.slice(openingBracketIndex + 1, commasIndexes[0]).trim()),
       g: parseInt(color.slice(commasIndexes[0] + 1, commasIndexes[1]).trim()),
       b: parseInt(color.slice(commasIndexes[1] + 1, commasIndexes[2]).trim())
     };
   };
+
   /**
    * Return an object with the properties for each of the main colors(red, green, blue)
    * @param {String} color Receives a color in the following format: "rgb(0, 0, 0)
    */
-
-
   const RGBToRGB = color => {
     const openingBracketIndex = color.indexOf("("),
-          closingBraketIndex = color.indexOf(")"),
-          commasIndexes = [];
-
+      closingBraketIndex = color.indexOf(")"),
+      commasIndexes = [];
     for (let i = 0; i < color.length; i++) {
       if (color[i] === ",") {
         commasIndexes.push(i);
       }
     }
-
     return {
       r: parseInt(color.slice(openingBracketIndex + 1, commasIndexes[0]).trim()),
       g: parseInt(color.slice(commasIndexes[0] + 1, commasIndexes[1]).trim()),
       b: parseInt(color.slice(commasIndexes[1] + 1, closingBraketIndex).trim())
     };
   };
-
   const HSLToRGB = (color = {
     h: undefined,
     s: undefined,
@@ -246,10 +234,9 @@ sap.ui.define(["exports"], function (_exports) {
   }) => {
     // Formula taken from https://www.rapidtables.com/convert/color/hsl-to-rgb.html
     const C = (1 - Math.abs(2 * color.l - 1)) * color.s,
-          X = C * (1 - Math.abs(color.h / 60 % 2 - 1)),
-          m = color.l - C / 2;
+      X = C * (1 - Math.abs(color.h / 60 % 2 - 1)),
+      m = color.l - C / 2;
     let tempColor = {};
-
     switch (Math.round(color.h / 60)) {
       // 0 ≤ H < 60
       case 0:
@@ -259,8 +246,8 @@ sap.ui.define(["exports"], function (_exports) {
           b: 0
         };
         break;
-      // 60 ≤ H < 120
 
+      // 60 ≤ H < 120
       case 1:
         tempColor = {
           r: X,
@@ -268,8 +255,8 @@ sap.ui.define(["exports"], function (_exports) {
           b: 0
         };
         break;
-      // 120 ≤ H < 180
 
+      // 120 ≤ H < 180
       case 2:
         tempColor = {
           r: 0,
@@ -277,8 +264,8 @@ sap.ui.define(["exports"], function (_exports) {
           b: X
         };
         break;
-      // 180 ≤ H < 240
 
+      // 180 ≤ H < 240
       case 3:
         tempColor = {
           r: 0,
@@ -286,8 +273,8 @@ sap.ui.define(["exports"], function (_exports) {
           b: C
         };
         break;
-      // 240 ≤ H < 300
 
+      // 240 ≤ H < 300
       case 4:
         tempColor = {
           r: X,
@@ -295,8 +282,8 @@ sap.ui.define(["exports"], function (_exports) {
           b: C
         };
         break;
-      // 300 ≤ H < 360
 
+      // 300 ≤ H < 360
       default:
         tempColor = {
           r: C,
@@ -304,19 +291,17 @@ sap.ui.define(["exports"], function (_exports) {
           b: X
         };
     }
-
     return {
       r: Math.floor((tempColor.r + m) * 255),
       g: Math.floor((tempColor.g + m) * 255),
       b: Math.floor((tempColor.b + m) * 255)
     };
   };
-
   _exports.HSLToRGB = HSLToRGB;
-
   const HEXToRGB = hex => {
     // Please make sure you pass a valid 6 digit hex color
     // In the implementation of this method we assume that the hex argument is a 6 digit valid hex color
+
     const rgbValues = {
       r: hex.substr(0, 2),
       g: hex.substr(2, 2),
@@ -328,22 +313,21 @@ sap.ui.define(["exports"], function (_exports) {
     });
     return rgbValues;
   };
-
   _exports.HEXToRGB = HEXToRGB;
-
   const RGBToHSL = (color = {
     r: undefined,
     g: undefined,
     b: undefined
   }) => {
     const R = color.r / 255,
-          G = color.g / 255,
-          B = color.b / 255,
-          max = Math.max(R, G, B),
-          min = Math.min(R, G, B),
-          delta = max - min;
-    let h, s; // Hue calculation
+      G = color.g / 255,
+      B = color.b / 255,
+      max = Math.max(R, G, B),
+      min = Math.min(R, G, B),
+      delta = max - min;
+    let h, s;
 
+    // Hue calculation
     if (delta === 0) {
       h = 0;
     } else if (max === R) {
@@ -352,23 +336,22 @@ sap.ui.define(["exports"], function (_exports) {
       h = 60 * ((B - R) / delta + 2);
     } else if (max === B) {
       h = 60 * ((R - G) / delta + 4);
-    } // Lightness calculation
+    }
 
+    // Lightness calculation
+    const l = (max + min) / 2;
 
-    const l = (max + min) / 2; // Saturation calculation
-
+    // Saturation calculation
     if (delta === 0) {
       s = 0;
     } else {
       s = delta / (1 - Math.abs(2 * l - 1));
     }
-
     return {
       h,
       s,
       l
     };
   };
-
   _exports.RGBToHSL = RGBToHSL;
 });

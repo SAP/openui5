@@ -17,9 +17,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _TextArea = _interopRequireDefault(_TextArea);
   _ValueStateMessage = _interopRequireDefault(_ValueStateMessage);
   _BrowserScrollbar = _interopRequireDefault(_BrowserScrollbar);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -29,9 +27,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-textarea",
     languageAware: true,
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.TextArea.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.TextArea.prototype */{
       /**
        * Defines the value of the component.
        *
@@ -42,7 +38,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       value: {
         type: String
       },
-
       /**
        * Indicates whether the user can interact with the component or not.
        * <br><br>
@@ -55,7 +50,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is read-only.
        * <br><br>
@@ -69,7 +63,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       readonly: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is required.
        *
@@ -81,7 +74,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       required: {
         type: Boolean
       },
-
       /**
        * Defines a short hint intended to aid the user with data entry when the component has no value.
        *
@@ -92,7 +84,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       placeholder: {
         type: String
       },
-
       /**
        * Defines the value state of the component.
        * <br><br>
@@ -117,7 +108,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ValueState.default,
         defaultValue: _ValueState.default.None
       },
-
       /**
        * Defines the number of visible text lines for the component.
        * <br><br>
@@ -136,7 +126,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 0
       },
-
       /**
        * Defines the maximum number of characters that the <code>value</code> can have.
        *
@@ -148,7 +137,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: null
       },
-
       /**
        * Determines whether the characters exceeding the maximum allowed character count are visible
        * in the component.
@@ -165,7 +153,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       showExceededText: {
         type: Boolean
       },
-
       /**
        * Enables the component to automatically grow and shrink dynamically with its content.
        * <br><br>
@@ -177,7 +164,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       growing: {
         type: Boolean
       },
-
       /**
        * Defines the maximum number of lines that the component can grow.
        *
@@ -189,7 +175,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 0
       },
-
       /**
        * Determines the name with which the component will be submitted in an HTML form.
        *
@@ -209,7 +194,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       name: {
         type: String
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -220,7 +204,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Receives id(or many ids) of the elements that label the textarea.
        *
@@ -232,21 +215,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleNameRef: {
         type: String
       },
-
       /**
        * @private
        */
       focused: {
         type: Boolean
       },
-
       /**
        * @private
        */
       exceeding: {
         type: Boolean
       },
-
       /**
        * @private
        */
@@ -255,7 +235,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         multiple: true,
         defaultValue: ""
       },
-
       /**
        * @private
        */
@@ -263,7 +242,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         noAttribute: true
       },
-
       /**
        * @private
        */
@@ -271,9 +249,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.TextArea.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.TextArea.prototype */{
       /**
        * Defines the value state message that will be displayed as pop up under the component.
        *
@@ -291,7 +267,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       valueStateMessage: {
         type: HTMLElement
       },
-
       /**
        * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
        * when <code>name</code> property is set.
@@ -303,9 +278,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.TextArea.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.TextArea.prototype */{
       /**
        * Fired when the text has changed and the focus leaves the component.
        *
@@ -313,7 +286,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
        * @public
        */
       change: {},
-
       /**
        * Fired when the value of the component changes at each keystroke or when
        * something is pasted.
@@ -325,6 +297,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       input: {}
     }
   };
+
   /**
    * @class
    *
@@ -355,59 +328,46 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @tagname ui5-textarea
    * @public
    */
-
   class TextArea extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return [_BrowserScrollbar.default, _TextArea.default];
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _TextAreaTemplate.default;
     }
-
     static get staticAreaTemplate() {
       return _TextAreaPopoverTemplate.default;
     }
-
     static get staticAreaStyles() {
       return _ValueStateMessage.default;
     }
-
     constructor() {
       super();
       this._firstRendering = true;
       this._openValueStateMsgPopover = false;
       this._fnOnResize = this._onResize.bind(this);
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this, this._fnOnResize);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this._fnOnResize);
     }
-
     onBeforeRendering() {
       this._exceededTextProps = this._calcExceededText();
       this._mirrorText = this._tokenizeText(this.value);
       this.exceeding = this._exceededTextProps.leftCharactersCount < 0;
-
       if (this.growingMaxLines) {
         // this should be complex calc between line height and paddings - TODO: make it stable
         this._maxHeight = `${this.growingMaxLines * 1.4 * 14 + 9}px`;
       }
-
       const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-
       if (FormSupport) {
         FormSupport.syncNativeHiddenInput(this);
       } else if (this.name) {
@@ -419,14 +379,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.toggleValueStateMessage(this.openValueStateMsgPopover);
       this._firstRendering = false;
     }
-
     getInputDomRef() {
       return this.getDomRef().querySelector("textarea");
     }
-
     _onkeydown(event) {
       this._keyDown = true;
-
       if ((0, _Keys.isEscape)(event)) {
         const nativeTextArea = this.getInputDomRef();
         this.value = this.previousValue;
@@ -434,50 +391,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.fireEvent("input");
       }
     }
-
     _onkeyup() {
       this._keyDown = false;
     }
-
     _onfocusin() {
       this.focused = true;
       this._openValueStateMsgPopover = true;
       this.previousValue = this.getInputDomRef().value;
     }
-
     _onfocusout(event) {
       const focusedOutToValueStateMessage = event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.querySelector(".ui5-valuestatemessage-root");
       this.focused = false;
-
       if (!focusedOutToValueStateMessage) {
         this._openValueStateMsgPopover = false;
       }
     }
-
     _onchange() {
       this.fireEvent("change", {});
     }
-
     _oninput(event) {
       const nativeTextArea = this.getInputDomRef();
-
       if (event.target === nativeTextArea) {
         // stop the native event, as the semantic "input" would be fired.
         event.stopImmediatePropagation();
       }
-
       this.value = nativeTextArea.value;
-      this.fireEvent("input", {}); // Angular two way data binding
+      this.fireEvent("input", {});
 
+      // Angular two way data binding
       this.fireEvent("value-changed");
     }
-
     _onResize() {
       if (this.displayValueStateMessagePopover) {
         this._width = this.offsetWidth;
       }
     }
-
     toggleValueStateMessage(toggle) {
       if (toggle) {
         this.openPopover();
@@ -485,32 +433,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.closePopover();
       }
     }
-
     async openPopover() {
       this.popover = await this._getPopover();
       this.popover && this.popover.showAt(this.shadowRoot.querySelector(".ui5-textarea-inner"));
     }
-
     async closePopover() {
       this.popover = await this._getPopover();
       this.popover && this.popover.close();
     }
-
     async _getPopover() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector("[ui5-popover]");
     }
-
     _tokenizeText(value) {
       const tokenizedText = value.replace(/&/gm, "&amp;").replace(/"/gm, "&quot;").replace(/'/gm, "&apos;").replace(/</gm, "&lt;").replace(/>/gm, "&gt;").split("\n");
-
       if (tokenizedText.length < this.rows) {
         return this._mapTokenizedTextToObject([...tokenizedText, ...Array(this.rows - tokenizedText.length).fill("")]);
       }
-
       return this._mapTokenizedTextToObject(tokenizedText);
     }
-
     _mapTokenizedTextToObject(tokenizedText) {
       return tokenizedText.map((token, index) => {
         return {
@@ -519,16 +460,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         };
       });
     }
-
     _calcExceededText() {
       let calcedMaxLength, exceededText, leftCharactersCount;
-
       if (this.showExceededText) {
         const maxLength = this.maxlength || 0;
-
         if (maxLength) {
           leftCharactersCount = maxLength - this.value.length;
-
           if (leftCharactersCount >= 0) {
             exceededText = TextArea.i18nBundle.getText(_i18nDefaults.TEXTAREA_CHARACTERS_LEFT, leftCharactersCount);
           } else {
@@ -538,14 +475,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else {
         calcedMaxLength = this.maxlength;
       }
-
       return {
         exceededText,
         leftCharactersCount,
         calcedMaxLength
       };
     }
-
     get classes() {
       return {
         valueStateMsg: {
@@ -555,7 +490,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get styles() {
       const lineHeight = 1.4 * 16;
       const mainHeight = this.rows * lineHeight + (this.showExceededText ? 32 : 0);
@@ -576,81 +510,62 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get tabIndex() {
       return this.disabled ? undefined : "0";
     }
-
     get ariaLabelText() {
       const effectiveAriaLabelText = (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
-
       if (this.showExceededText) {
         if (effectiveAriaLabelText) {
           return `${effectiveAriaLabelText} ${this._exceededTextProps.exceededText}`;
         }
-
         return this._exceededTextProps.exceededText;
       }
-
       return effectiveAriaLabelText;
     }
-
     get ariaDescribedBy() {
       return this.hasValueState ? `${this._id}-valueStateDesc` : undefined;
     }
-
     get ariaValueStateHiddenText() {
       if (!this.hasValueState) {
         return;
       }
-
       if (this.hasCustomValueState) {
         return this.valueStateMessageText.map(el => el.textContent).join(" ");
       }
-
       return this.valueStateText;
     }
-
     get ariaInvalid() {
       return this.valueState === "Error" ? "true" : undefined;
     }
-
     get openValueStateMsgPopover() {
       return !this._firstRendering && this._openValueStateMsgPopover && this.displayValueStateMessagePopover;
     }
-
     get displayValueStateMessagePopover() {
       return !this.readonly && (this.hasCustomValueState || this.hasValueState);
     }
-
     get hasCustomValueState() {
       return !!this.valueStateMessage.length && this.hasValueState;
     }
-
     get hasValueState() {
       return this.valueState === _ValueState.default.Error || this.valueState === _ValueState.default.Warning || this.valueState === _ValueState.default.Information;
     }
-
     get valueStateMessageText() {
       return this.valueStateMessage.map(x => x.cloneNode(true));
     }
-
     get valueStateText() {
       if (this.valueState !== _ValueState.default.Error) {
         return this.valueStateTextMappings()[_ValueState.default.Warning];
       }
-
       return this.valueStateTextMappings()[this.valueState];
     }
-
     get _valueStatePopoverHorizontalAlign() {
       return this.effectiveDir !== "rtl" ? "Left" : "Right";
     }
+
     /**
      * This method is relevant for sap_horizon theme only
      */
-
-
     get _valueStateMessageIcon() {
       const iconPerValueState = {
         Error: "error",
@@ -660,7 +575,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       };
       return this.valueState !== _ValueState.default.None ? iconPerValueState[this.valueState] : "";
     }
-
     valueStateTextMappings() {
       return {
         "Information": TextArea.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION),
@@ -668,17 +582,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Warning": TextArea.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING)
       };
     }
-
     static get dependencies() {
       return [_Popover.default, _Icon.default];
     }
-
     static async onDefine() {
       TextArea.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   TextArea.define();
   var _default = TextArea;
   _exports.default = _default;

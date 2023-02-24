@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogComponents = _interopRequireDefault(_tntDialogComponents);
   _tntSceneComponents = _interopRequireDefault(_tntSceneComponents);
   _tntSpotComponents = _interopRequireDefault(_tntSpotComponents);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "Components";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

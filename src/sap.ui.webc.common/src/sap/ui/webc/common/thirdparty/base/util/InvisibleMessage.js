@@ -7,12 +7,9 @@ sap.ui.define(["exports", "../types/InvisibleMessageMode", "./getSingletonElemen
   _exports.default = void 0;
   _InvisibleMessageMode = _interopRequireDefault(_InvisibleMessageMode);
   _getSingletonElementInstance = _interopRequireDefault(_getSingletonElementInstance);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   let politeSpan;
   let assertiveSpan;
-
   const setOutOfViewportStyles = el => {
     el.style.position = "absolute";
     el.style.clip = "rect(1px,1px,1px,1px)";
@@ -21,12 +18,10 @@ sap.ui.define(["exports", "../types/InvisibleMessageMode", "./getSingletonElemen
     el.style.top = "-1000px";
     el.style.pointerEvents = "none";
   };
-
   (0, _Boot.attachBoot)(() => {
     if (politeSpan && assertiveSpan) {
       return;
     }
-
     politeSpan = document.createElement("span");
     assertiveSpan = document.createElement("span");
     politeSpan.classList.add("ui5-invisiblemessage-polite");
@@ -40,25 +35,24 @@ sap.ui.define(["exports", "../types/InvisibleMessageMode", "./getSingletonElemen
     (0, _getSingletonElementInstance.default)("ui5-static-area").appendChild(politeSpan);
     (0, _getSingletonElementInstance.default)("ui5-static-area").appendChild(assertiveSpan);
   });
+
   /**
    * Inserts the string into the respective span, depending on the mode provided.
    *
    * @param {string} message String to be announced by the screen reader.
    * @param {sap.ui.core.InvisibleMessageMode} mode The mode to be inserted in the aria-live attribute.
    */
-
   const announce = (message, mode) => {
     // If no type is presented, fallback to polite announcement.
-    const span = mode === _InvisibleMessageMode.default.Assertive ? assertiveSpan : politeSpan; // Set textContent to empty string in order to trigger screen reader's announcement.
+    const span = mode === _InvisibleMessageMode.default.Assertive ? assertiveSpan : politeSpan;
 
+    // Set textContent to empty string in order to trigger screen reader's announcement.
     span.textContent = "";
     span.textContent = message;
-
     if (mode !== _InvisibleMessageMode.default.Assertive && mode !== _InvisibleMessageMode.default.Polite) {
       console.warn(`You have entered an invalid mode. Valid values are: "Polite" and "Assertive". The framework will automatically set the mode to "Polite".`); // eslint-disable-line
     }
   };
-
   var _default = announce;
   _exports.default = _default;
 });

@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.fiori.types.SideContentFallDown.prototype
    * @public
@@ -20,21 +18,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {BelowXL}
      */
     BelowXL: "BelowXL",
-
     /**
      * Side content falls down on breakpoints below L
      * @public
      * @type {BelowL}
      */
     BelowL: "BelowL",
-
     /**
      * Side content falls down on breakpoints below M
      * @public
      * @type {BelowM}
      */
     BelowM: "BelowM",
-
     /**
      * Side content falls down on breakpoint M and the minimum width for the side content
      * @public
@@ -42,6 +37,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     OnMinimumWidth: "OnMinimumWidth"
   };
+
   /**
    * @class
    * SideContent FallDown options.
@@ -51,14 +47,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class SideContentFallDown extends _DataType.default {
     static isValid(value) {
       return !!SideContentFallDownTypes[value];
     }
-
   }
-
   SideContentFallDown.generateTypeAccessors(SideContentFallDownTypes);
   var _default = SideContentFallDown;
   _exports.default = _default;

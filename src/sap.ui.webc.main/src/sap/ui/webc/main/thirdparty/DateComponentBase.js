@@ -12,17 +12,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _CalendarType2 = _interopRequireDefault(_CalendarType2);
   _getLocale = _interopRequireDefault(_getLocale);
   _CalendarDate = _interopRequireDefault(_CalendarDate);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.DateComponentBase.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.DateComponentBase.prototype */{
       /**
        * Sets a calendar type used for display.
        * If not set, the calendar type of the global configuration is used.
@@ -32,7 +28,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       primaryCalendarType: {
         type: _CalendarType2.default
       },
-
       /**
        * Defines the secondary calendar type.
        * If not set, the calendar will only show the primary calendar type.
@@ -44,7 +39,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       secondaryCalendarType: {
         type: _CalendarType2.default
       },
-
       /**
        * Determines the minimum date available for selection.
        *
@@ -56,7 +50,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       minDate: {
         type: String
       },
-
       /**
        * Determines the maximum date available for selection.
        *
@@ -68,7 +61,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       maxDate: {
         type: String
       },
-
       /**
        * Determines the format, displayed in the input field.
        *
@@ -81,6 +73,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -96,33 +89,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @extends sap.ui.webcomponents.base.UI5Element
    * @public
    */
-
   class DateComponentBase extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     constructor() {
       super();
     }
-
     get _primaryCalendarType() {
       const localeData = (0, _getCachedLocaleDataInstance.default)((0, _getLocale.default)());
       return this.primaryCalendarType || (0, _CalendarType.getCalendarType)() || localeData.getPreferredCalendarType();
     }
-
     get _minDate() {
       return this.minDate && this.getFormat().parse(this.minDate) ? this._getCalendarDateFromString(this.minDate) : (0, _ExtremeDates.getMinCalendarDate)(this._primaryCalendarType);
     }
-
     get _maxDate() {
       return this.maxDate && this.getFormat().parse(this.maxDate) ? this._getCalendarDateFromString(this.maxDate) : (0, _ExtremeDates.getMaxCalendarDate)(this._primaryCalendarType);
     }
-
     get _formatPattern() {
       return this.formatPattern || "medium"; // get from config
     }
@@ -130,28 +116,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _isPattern() {
       return this._formatPattern !== "medium" && this._formatPattern !== "short" && this._formatPattern !== "long";
     }
-
     _getCalendarDateFromString(value) {
       const jsDate = this.getFormat().parse(value);
-
       if (jsDate) {
         return _CalendarDate.default.fromLocalJSDate(jsDate, this._primaryCalendarType);
       }
     }
-
     _getTimeStampFromString(value) {
       const calDate = this._getCalendarDateFromString(value);
-
       if (calDate) {
         return calDate.toUTCJSDate().valueOf();
       }
     }
-
     _getStringFromTimestamp(timestamp) {
       const localDate = new Date(timestamp);
       return this.getFormat().format(localDate, true);
     }
-
     getFormat() {
       return this._isPattern ? _DateFormat.default.getInstance({
         strictParsing: true,
@@ -163,13 +143,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         calendarType: this._primaryCalendarType
       });
     }
-
     static async onDefine() {
       [DateComponentBase.i18nBundle] = await Promise.all([(0, _i18nBundle.getI18nBundle)("@ui5/webcomponents"), (0, _LocaleData.fetchCldr)((0, _getLocale.default)().getLanguage(), (0, _getLocale.default)().getRegion(), (0, _getLocale.default)().getScript())]);
     }
-
   }
-
   var _default = DateComponentBase;
   _exports.default = _default;
 });

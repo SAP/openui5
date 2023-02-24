@@ -9,9 +9,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _TableCellTemplate = _interopRequireDefault(_TableCellTemplate);
   _TableCell = _interopRequireDefault(_TableCell);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -19,9 +17,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */
   const metadata = {
     tag: "ui5-table-cell",
-    slots:
-    /** @lends sap.ui.webcomponents.main.TableCell.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.TableCell.prototype */{
       /**
        * Specifies the content of the component.
        *
@@ -33,16 +29,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Node
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.main.TableCell.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.TableCell.prototype */{
       /**
        * @private
        */
       lastInRow: {
         type: Boolean
       },
-
       /**
        * @private
        */
@@ -50,10 +43,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.TableCell.prototype */
-    {}
+    events: /** @lends sap.ui.webcomponents.main.TableCell.prototype */{}
   };
+
   /**
    * @class
    *
@@ -78,26 +70,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.ITableCell
    * @public
    */
-
   class TableCell extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return _TableCell.default;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _TableCellTemplate.default;
     }
-
   }
-
   TableCell.define();
   var _default = TableCell;
   _exports.default = _default;

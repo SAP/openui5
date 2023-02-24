@@ -12,7 +12,7 @@ sap.ui.define(["exports"], function (_exports) {
     patch: 0,
     suffix: "",
     isNext: false,
-    buildTime: 1657807887
+    buildTime: 1656937916
   };
   var _default = VersionInfo;
   _exports.default = _default;

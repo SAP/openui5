@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogSimpleMail = _interopRequireDefault(_sapIllusDialogSimpleMail);
   _sapIllusSceneSimpleMail = _interopRequireDefault(_sapIllusSceneSimpleMail);
   _sapIllusSpotSimpleMail = _interopRequireDefault(_sapIllusSpotSimpleMail);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "SimpleMail";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_NOMAIL;

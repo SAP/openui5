@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogUnableToLoad = _interopRequireDefault(_tntDialogUnableToLoad);
   _tntSceneUnableToLoad = _interopRequireDefault(_tntSceneUnableToLoad);
   _tntSpotUnableToLoad = _interopRequireDefault(_tntSpotUnableToLoad);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "UnableToLoad";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

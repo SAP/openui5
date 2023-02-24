@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogPageNotFound = _interopRequireDefault(_sapIllusDialogPageNotFound);
   _sapIllusScenePageNotFound = _interopRequireDefault(_sapIllusScenePageNotFound);
   _sapIllusSpotPageNotFound = _interopRequireDefault(_sapIllusSpotPageNotFound);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "PageNotFound";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_PAGENOTFOUND;

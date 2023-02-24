@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogEmptyList = _interopRequireDefault(_sapIllusDialogEmptyList);
   _sapIllusSceneEmptyList = _interopRequireDefault(_sapIllusSceneEmptyList);
   _sapIllusSpotEmptyList = _interopRequireDefault(_sapIllusSpotEmptyList);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "EmptyList";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_NOENTRIES;

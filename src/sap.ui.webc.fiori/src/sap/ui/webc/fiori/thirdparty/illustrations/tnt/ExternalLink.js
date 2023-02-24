@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogExternalLink = _interopRequireDefault(_tntDialogExternalLink);
   _tntSceneExternalLink = _interopRequireDefault(_tntSceneExternalLink);
   _tntSpotExternalLink = _interopRequireDefault(_tntSpotExternalLink);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "ExternalLink";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

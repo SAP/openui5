@@ -13,10 +13,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _TabSeparatorInOverflowTemplate = _interopRequireDefault(_TabSeparatorInOverflowTemplate);
   _TabSeparatorInStrip = _interopRequireDefault(_TabSeparatorInStrip);
   _TabSeparatorInOverflow = _interopRequireDefault(_TabSeparatorInOverflow);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Templates
+
   // Styles
 
   /**
@@ -25,6 +24,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-tab-separator"
   };
+
   /**
    * @class
    * The <code>ui5-tab-separator</code> represents a vertical line to separate tabs inside a <code>ui5-tabcontainer</code>.
@@ -37,58 +37,43 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.ITab
    * @public
    */
-
   class TabSeparator extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get stripTemplate() {
       return _TabSeparatorInStripTemplate.default;
     }
-
     static get overflowTemplate() {
       return _TabSeparatorInOverflowTemplate.default;
     }
-
     get classes() {
       return {
         "ui5-tc__separator": true
       };
     }
-
     get isSeparator() {
       return true;
     }
-
     getTabInStripDomRef() {
       return this._tabInStripDomRef;
     }
-
     get stableDomRef() {
       return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
     }
-
     get stripPresentation() {
       return (0, _executeTemplate.default)(this.constructor.stripTemplate, this);
     }
-
     get overflowPresentation() {
       return (0, _executeTemplate.default)(this.constructor.overflowTemplate, this);
     }
-
   }
-
   TabSeparator.define();
-
   _TabContainer.default.registerTabStyles(_TabSeparatorInStrip.default);
-
   _TabContainer.default.registerStaticAreaTabStyles(_TabSeparatorInOverflow.default);
-
   var _default = TabSeparator;
   _exports.default = _default;
 });

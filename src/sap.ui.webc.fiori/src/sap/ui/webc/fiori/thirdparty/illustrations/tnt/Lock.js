@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogLock = _interopRequireDefault(_tntDialogLock);
   _tntSceneLock = _interopRequireDefault(_tntSceneLock);
   _tntSpotLock = _interopRequireDefault(_tntSpotLock);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "Lock";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

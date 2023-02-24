@@ -6,17 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
   * @public
   */
   const metadata = {
     tag: "ui5-date",
-    properties:
-    /** @lends sap.ui.webcomponents.main.CalendarDate.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.CalendarDate.prototype */{
       /**
        * The date formatted according to the <code>formatPattern</code> property of the <code>ui5-calendar</code> that hosts the component
        *
@@ -28,6 +24,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
       }
     }
   };
+
   /**
    * @class
    *
@@ -43,14 +40,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * @implements sap.ui.webcomponents.main.ICalendarDate
    * @public
    */
-
   class CalendarDate extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
   }
-
   CalendarDate.define();
   var _default = CalendarDate;
   _exports.default = _default;

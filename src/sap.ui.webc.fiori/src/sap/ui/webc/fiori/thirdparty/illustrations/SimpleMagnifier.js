@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogSimpleMagnifier = _interopRequireDefault(_sapIllusDialogSimpleMagnifier);
   _sapIllusSceneSimpleMagnifier = _interopRequireDefault(_sapIllusSceneSimpleMagnifier);
   _sapIllusSpotSimpleMagnifier = _interopRequireDefault(_sapIllusSpotSimpleMagnifier);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "SimpleMagnifier";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_BEFORESEARCH;

@@ -7,9 +7,7 @@ sap.ui.define(["exports", "../FeaturesRegistry", "../generated/css/BusyIndicator
   _exports.default = void 0;
   _BusyIndicator = _interopRequireDefault(_BusyIndicator);
   _merge = _interopRequireDefault(_merge);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const busyIndicatorMetadata = {
     properties: {
       __isBusy: {
@@ -17,11 +15,9 @@ sap.ui.define(["exports", "../FeaturesRegistry", "../generated/css/BusyIndicator
       }
     }
   };
-
   const getBusyIndicatorStyles = () => {
     return _BusyIndicator.default;
   };
-
   const wrapTemplateResultInBusyMarkup = (html, host, templateResult) => {
     if (host.isOpenUI5Component && host.__isBusy) {
       templateResult = html`
@@ -45,14 +41,11 @@ sap.ui.define(["exports", "../FeaturesRegistry", "../generated/css/BusyIndicator
 			</div>
 		</div>`;
     }
-
     return templateResult;
   };
-
   const enrichBusyIndicatorMetadata = UI5Element => {
     UI5Element.metadata = (0, _merge.default)(UI5Element.metadata, busyIndicatorMetadata);
   };
-
   const enrichBusyIndicatorMethods = UI5ElementPrototype => {
     Object.defineProperties(UI5ElementPrototype, {
       "__redirectFocus": {
@@ -75,7 +68,6 @@ sap.ui.define(["exports", "../FeaturesRegistry", "../generated/css/BusyIndicator
             passive: false
           };
         }
-
       },
       "isOpenUI5Component": {
         get: () => {
@@ -83,27 +75,21 @@ sap.ui.define(["exports", "../FeaturesRegistry", "../generated/css/BusyIndicator
         }
       }
     });
-
     UI5ElementPrototype.__suppressFocusIn = function handleFocusIn() {
       const busyIndicator = this.shadowRoot.querySelector("[busy-indicator]");
-
       if (busyIndicator && this.__redirectFocus) {
         busyIndicator.focus();
       }
     };
-
     UI5ElementPrototype.getDomRef = function getDomRef() {
       // If a component set _getRealDomRef to its children, use the return value of this function
       if (typeof this._getRealDomRef === "function") {
         return this._getRealDomRef();
       }
-
       if (!this.shadowRoot || this.shadowRoot.children.length === 0) {
         return;
       }
-
       const children = [...this.shadowRoot.children].filter(child => !["link", "style"].includes(child.localName));
-
       if (children.length !== 1) {
         console.warn(`The shadow DOM for ${this.constructor.getMetadata().getTag()} does not have a top level element, the getDomRef() method might not work as expected`); // eslint-disable-line
       }
@@ -111,16 +97,13 @@ sap.ui.define(["exports", "../FeaturesRegistry", "../generated/css/BusyIndicator
       if (this.__isBusy) {
         return children[0].querySelector(".busy-indicator-wrapper > :not([busy-indicator-before-span]):not(.busy-indicator-overlay):not(.busy-indicator-busy-area)");
       }
-
       return children[0];
     };
   };
-
   const enrichBusyIndicatorSettings = UI5Element => {
     enrichBusyIndicatorMetadata(UI5Element);
     enrichBusyIndicatorMethods(UI5Element.prototype);
   };
-
   const OpenUI5Enablement = {
     enrichBusyIndicatorSettings,
     wrapTemplateResultInBusyMarkup,

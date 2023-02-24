@@ -5,7 +5,6 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.default = void 0;
-
   /**
    * Returns a value clamped between an upper bound 'max' and lower bound 'min'.
    * @param {number} val value
@@ -16,7 +15,6 @@ sap.ui.define(["exports"], function (_exports) {
   const clamp = (val, min, max) => {
     return Math.min(Math.max(val, min), max);
   };
-
   var _default = clamp;
   _exports.default = _default;
 });

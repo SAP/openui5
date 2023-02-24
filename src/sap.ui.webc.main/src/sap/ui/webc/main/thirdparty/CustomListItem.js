@@ -8,9 +8,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "./ListItem
   _ListItem = _interopRequireDefault(_ListItem);
   _CustomListItemTemplate = _interopRequireDefault(_CustomListItemTemplate);
   _CustomListItem = _interopRequireDefault(_CustomListItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -18,9 +16,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "./ListItem
    */
   const metadata = {
     tag: "ui5-li-custom",
-    slots:
-    /** @lends sap.ui.webcomponents.main.CustomListItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.CustomListItem.prototype */{
       /**
        * Defines the content of the component.
        * @type {Node[]}
@@ -31,9 +27,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "./ListItem
         type: Node
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.main.CustomListItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.CustomListItem.prototype */{
       /**
        * Defines the text alternative of the component.
        * Note: If not provided a default text alternative will be set, if present.
@@ -48,6 +42,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "./ListItem
       }
     }
   };
+
   /**
    * @class
    *
@@ -64,48 +59,36 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "./ListItem
    * @implements sap.ui.webcomponents.main.IListItem
    * @public
    */
-
   class CustomListItem extends _ListItem.default {
     static get metadata() {
       return metadata;
     }
-
     static get template() {
       return _CustomListItemTemplate.default;
     }
-
     static get styles() {
       return [_ListItem.default.styles, _CustomListItem.default];
     }
-
     _onkeydown(event) {
       const isTab = (0, _Keys.isTabNext)(event) || (0, _Keys.isTabPrevious)(event);
-
       if (!isTab && !this.focused) {
         return;
       }
-
       super._onkeydown(event);
     }
-
     _onkeyup(event) {
       const isTab = (0, _Keys.isTabNext)(event) || (0, _Keys.isTabPrevious)(event);
-
       if (!isTab && !this.focused) {
         return;
       }
-
       super._onkeyup(event);
     }
-
     get classes() {
       const result = super.classes;
       result.main["ui5-custom-li-root"] = true;
       return result;
     }
-
   }
-
   CustomListItem.define();
   var _default = CustomListItem;
   _exports.default = _default;

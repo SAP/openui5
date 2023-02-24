@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.TabContainerTabsPlacement.prototype
    * @private
@@ -20,7 +18,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Top}
      */
     Top: "Top",
-
     /**
      * The tab strip is displayed below the tab content
      * @private
@@ -28,6 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Bottom: "Bottom"
   };
+
   /**
    * @class
    * Different options for the position of the tab strip relative to the tab content area.
@@ -37,14 +35,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @private
    * @enum {string}
    */
-
   class TabContainerTabsPlacement extends _DataType.default {
     static isValid(value) {
       return !!TabContainerTabsPlacements[value];
     }
-
   }
-
   TabContainerTabsPlacement.generateTypeAccessors(TabContainerTabsPlacements);
   var _default = TabContainerTabsPlacement;
   _exports.default = _default;

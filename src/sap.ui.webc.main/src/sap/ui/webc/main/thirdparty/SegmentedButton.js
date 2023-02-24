@@ -12,10 +12,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _SegmentedButtonItem = _interopRequireDefault(_SegmentedButtonItem);
   _SegmentedButtonTemplate = _interopRequireDefault(_SegmentedButtonTemplate);
   _SegmentedButton = _interopRequireDefault(_SegmentedButton);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -25,9 +24,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-segmented-button",
     altTag: "ui5-segmentedbutton",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */{
       /**
        * Defines the accessible aria name of the component.
        *
@@ -42,9 +39,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     },
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */{
       /**
        * Defines the items of <code>ui5-segmented-button</code>.
        * <br><br>
@@ -60,9 +55,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */{
       /**
        * Fired when the selected item changes.
        *
@@ -79,6 +72,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -103,55 +97,43 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @appenddocs SegmentedButtonItem
    * @public
    */
-
   class SegmentedButton extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _SegmentedButtonTemplate.default;
     }
-
     static get styles() {
       return _SegmentedButton.default;
     }
-
     static get dependencies() {
       return [_SegmentedButtonItem.default];
     }
-
     static async onDefine() {
       SegmentedButton.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     constructor() {
       super();
       this._itemNavigation = new _ItemNavigation.default(this, {
         getItemsCallback: () => this.getSlottedNodes("items")
       });
       this.absoluteWidthSet = false; // set to true whenever we set absolute width to the component
-
       this.percentageWidthSet = false; //  set to true whenever we set 100% width to the component
-
       this.hasPreviouslyFocusedItem = false;
       this._handleResizeBound = this._doLayout.bind(this);
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this.parentNode, this._handleResizeBound);
     }
-
     onExitDOM() {
       if (this.parentNode) {
         _ResizeHandler.default.deregister(this.parentNode, this._handleResizeBound);
       }
     }
-
     onBeforeRendering() {
       const items = this.getSlottedNodes("items");
       items.forEach((item, index, arr) => {
@@ -160,18 +142,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       this.normalizeSelection();
     }
-
     async onAfterRendering() {
       await this._doLayout();
     }
-
     prepareToMeasureItems() {
       this.style.width = "";
       this.items.forEach(item => {
         item.style.width = "";
       });
     }
-
     async measureItemsWidth() {
       await (0, _Render.renderFinished)();
       this.prepareToMeasureItems();
@@ -180,10 +159,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         return item.offsetWidth + 1;
       });
     }
-
     normalizeSelection() {
       this._selectedItem = this.items.filter(item => item.pressed).pop();
-
       if (this._selectedItem) {
         this.items.forEach(item => {
           item.pressed = false;
@@ -191,36 +168,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._selectedItem.pressed = true;
       }
     }
-
     _selectItem(event) {
       if (event.target.disabled || event.target === this.getDomRef()) {
         return;
       }
-
       if (event.target !== this._selectedItem) {
         if (this._selectedItem) {
           this._selectedItem.pressed = false;
         }
-
         this._selectedItem = event.target;
         this.fireEvent("selection-change", {
           selectedItem: this._selectedItem
         });
       }
-
       this._selectedItem.pressed = true;
-
       this._itemNavigation.setCurrentItem(this._selectedItem);
-
       return this;
     }
-
     _onclick(event) {
       this._selectItem(event);
-
       this.selectedItem.focus();
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isEnter)(event)) {
         this._selectItem(event);
@@ -228,56 +196,46 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         event.preventDefault();
       }
     }
-
     _onkeyup(event) {
       if ((0, _Keys.isSpace)(event)) {
         this._selectItem(event);
       }
     }
-
     _onfocusin(event) {
       // If the component was previously focused,
       // update the ItemNavigation to sync butons` tabindex values
       if (this.hasPreviouslyFocusedItem) {
         this._itemNavigation.setCurrentItem(event.target);
-
         return;
-      } // If the component is focused for the first time
+      }
+
+      // If the component is focused for the first time
       // focus the selected item if such present
-
-
       if (this.selectedItem) {
         this.selectedItem.focus();
-
         this._itemNavigation.setCurrentItem(this._selectedItem);
-
         this.hasPreviouslyFocusedItem = true;
       }
     }
-
     async _doLayout() {
       const itemsHaveWidth = this.widths && this.widths.some(item => item.offsetWidth > 2); // 2 are the pixel's added for rounding & IE
-
       if (!itemsHaveWidth) {
         await this.measureItemsWidth();
       }
-
       const parentWidth = this.parentNode ? this.parentNode.offsetWidth : 0;
-
       if (!this.style.width || this.percentageWidthSet) {
         this.style.width = `${Math.max(...this.widths) * this.items.length}px`;
         this.absoluteWidthSet = true;
       }
-
       this.items.forEach(item => {
         item.style.width = "100%";
       });
-
       if (parentWidth <= this.offsetWidth && this.absoluteWidthSet) {
         this.style.width = "100%";
         this.percentageWidthSet = true;
       }
     }
+
     /**
      * Currently selected item.
      *
@@ -285,22 +243,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @type { sap.ui.webcomponents.main.ISegmentedButtonItem }
      * @public
      */
-
-
     get selectedItem() {
       return this._selectedItem;
     }
-
     get ariaDescribedBy() {
       return SegmentedButton.i18nBundle.getText(_i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIBEDBY);
     }
-
     get ariaDescription() {
       return SegmentedButton.i18nBundle.getText(_i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIPTION);
     }
-
   }
-
   SegmentedButton.define();
   var _default = SegmentedButton;
   _exports.default = _default;

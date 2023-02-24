@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.PopoverHorizontalAlign.prototype
    * @public
@@ -20,21 +18,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Center}
      */
     Center: "Center",
-
     /**
      * Popover opens on the left side of the target
      * @public
      * @type {Left}
      */
     Left: "Left",
-
     /**
      * Popover opens on the right side of the target
      * @public
      * @type {Right}
      */
     Right: "Right",
-
     /**
      * Popover is stretched
      * @public
@@ -42,6 +37,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Stretch: "Stretch"
   };
+
   /**
    * @class
    * Defines the horizontal alignment of <code>ui5-popover</code>
@@ -51,14 +47,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class PopoverHorizontalAlign extends _DataType.default {
     static isValid(value) {
       return !!PopoverHorizontalAligns[value];
     }
-
   }
-
   PopoverHorizontalAlign.generateTypeAccessors(PopoverHorizontalAligns);
   var _default = PopoverHorizontalAlign;
   _exports.default = _default;

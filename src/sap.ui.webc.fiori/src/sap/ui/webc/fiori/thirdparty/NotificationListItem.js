@@ -16,11 +16,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
   _NotificationListItemBase = _interopRequireDefault(_NotificationListItemBase);
   _NotificationListItemTemplate = _interopRequireDefault(_NotificationListItemTemplate);
   _NotificationListItem = _interopRequireDefault(_NotificationListItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Texts
+
   // Templates
+
   // Styles
 
   /**
@@ -30,9 +30,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
     tag: "ui5-li-notification",
     languageAware: true,
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */{
       /**
        * Defines if the <code>titleText</code> and <code>description</code> should wrap,
        * they truncate by default.
@@ -49,7 +47,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         type: _WrappingType.default,
         defaultValue: _WrappingType.default.None
       },
-
       /**
        * Defines the state of the <code>titleText</code> and <code>description</code>,
        * if less or more information is displayed.
@@ -58,7 +55,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       _showMorePressed: {
         type: Boolean
       },
-
       /**
        * Defines the visibility of the <code>showMore</code> button.
        * @private
@@ -67,9 +63,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */{
       /**
        * Defines the avatar, displayed in the <code>ui5-li-notification</code>.
        *
@@ -87,7 +81,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       avatar: {
         type: HTMLElement
       },
-
       /**
        * Defines the elements, displayed in the footer of the of the component.
        * @type {HTMLElement[]}
@@ -98,7 +91,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         type: HTMLElement,
         individualSlots: true
       },
-
       /**
        * Defines the content of the <code>ui5-li-notification</code>,
        * usually a description of the notification.
@@ -115,12 +107,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         type: Node
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.NotificationListItem.prototype */{
       _press: {}
     }
   };
+
   /**
    * @class
    *
@@ -167,110 +158,87 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
    * @implements sap.ui.webcomponents.fiori.INotificationListItem, sap.ui.webcomponents.main.IListItem
    * @public
    */
-
   class NotificationListItem extends _NotificationListItemBase.default {
     constructor() {
-      super(); // the titleText overflow height
+      super();
 
-      this._titleTextOverflowHeight = 0; // the description overflow height
+      // the titleText overflow height
+      this._titleTextOverflowHeight = 0;
 
-      this._descOverflowHeight = 0; // the resize handler
+      // the description overflow height
+      this._descOverflowHeight = 0;
 
+      // the resize handler
       this.onResizeBind = this.onResize.bind(this);
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return _NotificationListItem.default;
     }
-
     static get template() {
       return _NotificationListItemTemplate.default;
     }
-
     static get dependencies() {
       return [_Button.default, _Icon.default, _BusyIndicator.default, _Link.default, _Popover.default];
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this, this.onResizeBind);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this.onResizeBind);
     }
-
     get hasDesc() {
       return !!this.description.length;
     }
-
     get hasFootNotes() {
       return !!this.footnotes.length;
     }
-
     get showMoreText() {
       if (this._showMorePressed) {
         return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_SHOW_LESS);
       }
-
       return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_SHOW_MORE);
     }
-
     get overflowBtnAccessibleName() {
       return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_OVERLOW_BTN_TITLE);
     }
-
     get closeBtnAccessibleName() {
       return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_CLOSE_BTN_TITLE);
     }
-
     get hideShowMore() {
       if (this.wrappingType === _WrappingType.default.None && this._showMore) {
         return undefined;
       }
-
       return true;
     }
-
     get descriptionDOM() {
       return this.shadowRoot.querySelector(".ui5-nli-description");
     }
-
     get titleTextDOM() {
       return this.shadowRoot.querySelector(".ui5-nli-title-text");
     }
-
     get titleTextHeight() {
       return this.titleTextDOM.offsetHeight;
     }
-
     get descriptionHeight() {
       return this.descriptionDOM.offsetHeight;
     }
-
     get titleTextOverflows() {
       const titleText = this.titleTextDOM;
-
       if (!titleText) {
         return false;
       }
-
       return titleText.offsetHeight < titleText.scrollHeight;
     }
-
     get descriptionOverflows() {
       const description = this.descriptionDOM;
-
       if (!description) {
         return false;
       }
-
       return description.offsetHeight < description.scrollHeight;
     }
-
     get footerItems() {
       return this.footnotes.map((el, idx, arr) => {
         return {
@@ -279,128 +247,100 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
         };
       });
     }
-
     get ariaLabelledBy() {
       const id = this._id;
       const ids = [];
-
       if (this.hasTitleText) {
         ids.push(`${id}-title-text`);
       }
-
       if (this.hasDesc) {
         ids.push(`${id}-description`);
       }
-
       if (this.hasFootNotes) {
         ids.push(`${id}-footer`);
       }
-
       ids.push(`${id}-invisibleText`);
       return ids.join(" ");
     }
-
     get priorityText() {
       if (this.priority === _Priority.default.High) {
         return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_HIGH_PRIORITY_TXT);
       }
-
       if (this.priority === _Priority.default.Medium) {
         return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_MEDIUM_PRIORITY_TXT);
       }
-
       if (this.priority === _Priority.default.Low) {
         return NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_LOW_PRIORITY_TXT);
       }
-
       return "";
     }
-
     get accInvisibleText() {
       const notificationText = NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_TXT);
       const readText = this.read ? NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_READ) : NotificationListItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_UNREAD);
       const priorityText = this.priorityText;
       return `${notificationText} ${readText} ${priorityText}`;
     }
+
     /**
      * Event handlers
      */
-
-
     _onclick(event) {
       this.fireItemPress(event);
     }
-
     _onShowMoreClick(event) {
       event.preventDefault();
       this._showMorePressed = !this._showMorePressed;
     }
-
     _onkeydown(event) {
       super._onkeydown(event);
-
       if ((0, _Keys.isEnter)(event)) {
         this.fireItemPress(event);
       }
     }
-
     _onkeyup(event) {
       super._onkeyup(event);
-
       const space = (0, _Keys.isSpace)(event);
-
       if (space && event.isMarked === "link") {
         this._onShowMoreClick(event);
-
         return;
       }
-
       if (space) {
         this.fireItemPress(event);
       }
     }
+
     /**
      * Private
      */
-
-
     fireItemPress(event) {
       if (event.isMarked === "button" || event.isMarked === "link") {
         return;
       }
-
       this.fireEvent("_press", {
         item: this
       });
     }
-
     onResize() {
       if (this.wrappingType === _WrappingType.default.Normal) {
         this._showMore = false;
         return;
       }
-
       const titleTextWouldOverflow = this.titleTextHeight > this._titleTextOverflowHeight;
       const descWouldOverflow = this.hasDesc && this.descriptionHeight > this._descOverflowHeight;
       const overflows = titleTextWouldOverflow || descWouldOverflow;
-
       if (this._showMorePressed && overflows) {
         this._showMore = true;
         return;
       }
-
       if (this.titleTextOverflows || this.descriptionOverflows) {
         this._titleTextOverflowHeight = this.titleTextHeight;
         this._descOverflowHeight = this.hasDesc ? this.descriptionHeight : 0;
         this._showMore = true;
         return;
       }
-
       this._showMore = false;
     }
-
   }
-
   NotificationListItem.define();
   var _default = NotificationListItem;
   _exports.default = _default;

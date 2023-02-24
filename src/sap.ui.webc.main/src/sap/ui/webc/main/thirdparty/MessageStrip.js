@@ -12,9 +12,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Icon = _interopRequireDefault(_Icon);
   _Button = _interopRequireDefault(_Button);
   _MessageStrip = _interopRequireDefault(_MessageStrip);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -25,9 +23,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     altTag: "ui5-messagestrip",
     languageAware: true,
     fastNavigation: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */{
       /**
        * Defines the component type.
        * <br><br>
@@ -43,7 +39,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _MessageStripDesign.default,
         defaultValue: _MessageStripDesign.default.Information
       },
-
       /**
        * Defines whether the MessageStrip will show an icon in the beginning.
        * You can directly provide an icon with the <code>icon</code> slot. Otherwise, the default icon for the type will be used.
@@ -56,7 +51,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       hideIcon: {
         type: Boolean
       },
-
       /**
        * Defines whether the MessageStrip renders close button.
        *
@@ -69,9 +63,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     },
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -84,7 +76,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       "default": {
         type: Node
       },
-
       /**
        * Defines the content to be displayed as graphical element within the component.
        * <br><br>
@@ -102,9 +93,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */{
       /**
        * Fired when the close button is pressed either with a
        * click/tap or by using the Enter or Space key.
@@ -115,6 +104,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       close: {}
     }
   };
+
   /**
    * @class
    *
@@ -150,40 +140,31 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 0.9.0
    */
-
   class MessageStrip extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _MessageStripTemplate.default;
     }
-
     static get styles() {
       return _MessageStrip.default;
     }
-
     constructor() {
       super();
     }
-
     _closeClick() {
       this.fireEvent("close", {});
     }
-
     static get dependencies() {
       return [_Icon.default, _Button.default];
     }
-
     static async onDefine() {
       MessageStrip.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     static designClassesMappings() {
       return {
         "Information": "ui5-message-strip-root--info",
@@ -192,7 +173,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Warning": "ui5-message-strip-root--warning"
       };
     }
-
     static iconMappings() {
       return {
         "Information": "information",
@@ -201,7 +181,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Warning": "alert"
       };
     }
-
     static designAnnouncementMappings() {
       return {
         "Information": MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_INFORMATION),
@@ -210,19 +189,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Warning": MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_WARNING)
       };
     }
-
     get hiddenText() {
       return `${MessageStrip.designAnnouncementMappings()[this.design]} ${this.hideCloseButton ? "" : this._closableText}`;
     }
-
     get _closeButtonText() {
       return MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_CLOSE_BUTTON);
     }
-
     get _closableText() {
       return MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_CLOSABLE);
     }
-
     get classes() {
       return {
         root: {
@@ -233,21 +208,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get iconProvided() {
       return this.icon.length > 0;
     }
-
     get standardIconName() {
       return MessageStrip.iconMappings()[this.design];
     }
-
     get designClasses() {
       return MessageStrip.designClassesMappings()[this.design];
     }
-
   }
-
   MessageStrip.define();
   var _default = MessageStrip;
   _exports.default = _default;

@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogNoNotifications = _interopRequireDefault(_sapIllusDialogNoNotifications);
   _sapIllusSceneNoNotifications = _interopRequireDefault(_sapIllusSceneNoNotifications);
   _sapIllusSpotNoNotifications = _interopRequireDefault(_sapIllusSpotNoNotifications);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "NoNotifications";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_NONOTIFICATIONS;

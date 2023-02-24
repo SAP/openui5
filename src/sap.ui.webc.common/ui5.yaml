@@ -62,7 +62,7 @@ customConfiguration:
           "^@ui5\/webcomponents-base\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/base/$1"
         reverseAliases:
           "^/resources/sap/ui/webc/common/thirdparty/base/(.*?)$": "@ui5/webcomponents-base/dist/$1"
-        inputPath: "../../node_modules/@ui5/webcomponents-base/dist/"
+        inputPath: "dist/"
         outputPath: "src/sap/ui/webc/common/thirdparty/base/"
         inputPathFilters:
           - "**/*{.js,.json,.css}"
@@ -81,7 +81,7 @@ customConfiguration:
         reverseAliases:
           "^/resources/sap/ui/webc/common/thirdparty/theming/(.*?)$": "@ui5/webcomponents-theming/dist/$1"
         outputPath: "src/sap/ui/webc/common/thirdparty/theming/"
-        inputPath: "../../node_modules/@ui5/webcomponents-theming/dist/"
+        inputPath: "dist/"
         inputPathFilters:
           - "**/*{.js,.json,.css}"
           - "!**/*-static.js"
@@ -91,7 +91,7 @@ customConfiguration:
           "^@ui5\/webcomponents-localization\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/localization/$1"
         reverseAliases:
           "^/resources/sap/ui/webc/common/thirdparty/localization/(.*?)$": "@ui5/webcomponents-localization/dist/$1"
-        inputPath: "../../node_modules/@ui5/webcomponents-localization/dist/"
+        inputPath: "dist/"
         outputPath: "src/sap/ui/webc/common/thirdparty/localization/"
         inputPathFilters:
           - "**/*{.js,.json,.css}"
@@ -106,7 +106,7 @@ customConfiguration:
           "^@ui5\/webcomponents-icons\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons/$1"
         reverseAliases:
           "^/resources/sap/ui/webc/common/thirdparty/icons/(.*?)$": "@ui5/webcomponents-icons/dist/$1"
-        inputPath: "../../node_modules/@ui5/webcomponents-icons/dist/"
+        inputPath: "dist/"
         outputPath: "src/sap/ui/webc/common/thirdparty/icons/"
         inputPathFilters:
           - "**/*{.js,.json,.css}"
@@ -117,7 +117,7 @@ customConfiguration:
           "^@ui5\/webcomponents-icons-tnt\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons-tnt/$1"
         reverseAliases:
           "^/resources/sap/ui/webc/common/thirdparty/icons-tnt/(.*?)$": "@ui5/webcomponents-icons-tnt/dist/$1"
-        inputPath: "../../node_modules/@ui5/webcomponents-icons-tnt/dist/"
+        inputPath: "dist/"
         outputPath: "src/sap/ui/webc/common/thirdparty/icons-tnt/"
         inputPathFilters:
           - "**/*{.js,.json,.css}"
@@ -128,7 +128,7 @@ customConfiguration:
           "^@ui5\/webcomponents-icons-business-suite\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons-business-suite/$1"
         reverseAliases:
           "^/resources/sap/ui/webc/common/thirdparty/icons-business-suite/(.*?)$": "@ui5/webcomponents-icons-business-suite/dist/$1"
-        inputPath: "../../node_modules/@ui5/webcomponents-icons-business-suite/dist/"
+        inputPath: "dist/"
         outputPath: "src/sap/ui/webc/common/thirdparty/icons-business-suite/"
         inputPathFilters:
           - "**/*{.js,.json,.css}"
@@ -141,7 +141,7 @@ customConfiguration:
         reverseAliases:
           "^/resources/sap/ui/webc/common/thirdparty/lit-html/(.*?)$": "lit-html/$1"
           "^/resources/sap/ui/webc/common/thirdparty/lit-html/lit-html$": "lit-html"
-        inputPath: "../../node_modules/lit-html/"
+        inputPath: "/"
         outputPath: "src/sap/ui/webc/common/thirdparty/lit-html/"
         inputPathFilters:
           - "lit-html.js"

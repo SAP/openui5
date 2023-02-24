@@ -12,9 +12,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _RatingIndicatorTemplate = _interopRequireDefault(_RatingIndicatorTemplate);
   _Icon = _interopRequireDefault(_Icon);
   _RatingIndicator = _interopRequireDefault(_RatingIndicator);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -23,9 +21,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-rating-indicator",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.RatingIndicator.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.RatingIndicator.prototype */{
       /**
        * The indicated value of the rating.
        * <br><br>
@@ -43,7 +39,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Float.default,
         defaultValue: 0
       },
-
       /**
        * The number of displayed rating symbols.
        * @type {Integer}
@@ -55,7 +50,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 5
       },
-
       /**
        * Defines whether the component is disabled.
        *
@@ -68,7 +62,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is read-only.
        * <br><br>
@@ -82,7 +75,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       readonly: {
         type: Boolean
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -95,7 +87,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: undefined
       },
-
       /**
        * @private
        */
@@ -103,7 +94,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Object,
         multiple: true
       },
-
       /**
        * @private
        */
@@ -111,13 +101,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.RatingIndicator.prototype */
-    {//
+    slots: /** @lends sap.ui.webcomponents.main.RatingIndicator.prototype */{
+      //
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.RatingIndicator.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.RatingIndicator.prototype */{
       /**
        * The event is fired when the value changes.
        *
@@ -127,6 +114,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       change: {}
     }
   };
+
   /**
    * @class
    *
@@ -168,32 +156,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.0.0-rc.8
    */
-
   class RatingIndicator extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _RatingIndicator.default;
     }
-
     static get template() {
       return _RatingIndicatorTemplate.default;
     }
-
     static async onDefine() {
       RatingIndicator.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
     constructor() {
       super();
       this._liveValue = null; // stores the value to determine when to fire change
@@ -202,15 +183,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     onBeforeRendering() {
       this.calcState();
     }
-
     calcState() {
       this._stars = [];
-
       for (let i = 1; i < this.max + 1; i++) {
         const remainder = Math.round((this.value - Math.floor(this.value)) * 10);
         let halfStar = false,
-            tempValue = this.value;
-
+          tempValue = this.value;
         if (Math.floor(this.value) + 1 === i && remainder > 2 && remainder < 8) {
           halfStar = true;
         } else if (remainder <= 2) {
@@ -218,7 +196,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         } else if (remainder >= 8) {
           tempValue = Math.ceil(this.value);
         }
-
         this._stars.push({
           selected: i <= tempValue,
           index: i,
@@ -226,39 +203,31 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
       }
     }
-
     _onclick(event) {
       if (this.disabled || this.readonly) {
         return;
       }
-
       this.value = parseInt(event.target.getAttribute("data-ui5-value"));
-
       if (this.value === 1 && this._liveValue === 1) {
         this.value = 0;
       }
-
       if (this._liveValue !== this.value) {
         this.fireEvent("change");
         this._liveValue = this.value;
       }
     }
-
     _onkeydown(event) {
       if (this.disabled || this.readonly) {
         return;
       }
-
       const isDecrease = (0, _Keys.isDown)(event) || (0, _Keys.isLeft)(event);
       const isIncrease = (0, _Keys.isRight)(event) || (0, _Keys.isUp)(event);
       const isIncreaseWithReset = (0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event);
       const isMin = (0, _Keys.isHome)(event);
       const isMax = (0, _Keys.isEnd)(event);
       const isNumber = event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode >= 96 && event.keyCode <= 105;
-
       if (isDecrease || isIncrease || isIncreaseWithReset || isMin || isMax || isNumber) {
         event.preventDefault();
-
         if (isDecrease && this.value > 0) {
           this.value = Math.round(this.value - 1);
         } else if (isIncrease && this.value < this.max) {
@@ -274,50 +243,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           const pressedNumber = parseInt(event.key);
           this.value = pressedNumber > this.max ? this.max : pressedNumber;
         }
-
         this.fireEvent("change");
       }
     }
-
     _onfocusin() {
       if (this.disabled) {
         return;
       }
-
       this._focused = true;
       this._liveValue = this.value;
     }
-
     _onfocusout() {
       this._focused = false;
     }
-
     get tabIndex() {
       return this.disabled ? "-1" : "0";
     }
-
     get tooltip() {
       return this.getAttribute("title") || this.defaultTooltip;
     }
-
     get defaultTooltip() {
       return RatingIndicator.i18nBundle.getText(_i18nDefaults.RATING_INDICATOR_TOOLTIP_TEXT);
     }
-
     get _ariaRoleDescription() {
       return RatingIndicator.i18nBundle.getText(_i18nDefaults.RATING_INDICATOR_TEXT);
     }
-
     get _ariaDisabled() {
       return this.disabled || undefined;
     }
-
     get ariaReadonly() {
       return this.readonly ? "true" : undefined;
     }
-
   }
-
   RatingIndicator.define();
   var _default = RatingIndicator;
   _exports.default = _default;

@@ -8,18 +8,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
   _getLocale = _interopRequireDefault(_getLocale);
   _getCachedLocaleDataInstance = _interopRequireDefault(_getCachedLocaleDataInstance);
   _TimePickerBase = _interopRequireDefault(_TimePickerBase);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-time-picker",
     altTag: "ui5-timepicker",
-    properties:
-    /** @lends sap.ui.webcomponents.main.TimePickerBase.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.TimePickerBase.prototype */{
       /**
        * Defines a short hint, intended to aid the user with data entry when the
        * component has no value.
@@ -36,7 +32,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
         type: String,
         defaultValue: undefined
       },
-
       /**
        * Determines the format, displayed in the input field.
        *
@@ -54,6 +49,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
       }
     }
   };
+
   /**
    * @class
    *
@@ -119,26 +115,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
    * @public
    * @since 1.0.0-rc.6
    */
-
   class TimePicker extends _TimePickerBase.default {
     static get metadata() {
       return metadata;
     }
-
     get _formatPattern() {
       const hasHours = !!this.formatPattern.match(/H/i);
       const fallback = !this.formatPattern || !hasHours;
       const localeData = (0, _getCachedLocaleDataInstance.default)((0, _getLocale.default)());
       return fallback ? localeData.getTimePattern("medium") : this.formatPattern;
     }
-
     get _displayFormat() {
       return this.getFormat().oFormatOptions.pattern;
     }
-
     get _placeholder() {
       return this.placeholder !== undefined ? this.placeholder : this._displayFormat;
     }
+
     /**
      * Currently selected time represented as JavaScript Date instance
      *
@@ -146,12 +139,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
      * @type { Date }
      * @public
      */
-
-
     get dateValue() {
       return this.getFormat().parse(this._effectiveValue);
     }
-
     get accInfo() {
       return {
         "ariaRoledescription": this.dateAriaDescription,
@@ -160,13 +150,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/locale/getLocale",
         "ariaControls": `${this._id}-responsive-popover`
       };
     }
-
     get dateAriaDescription() {
       return TimePicker.i18nBundle.getText(_i18nDefaults.TIMEPICKER_INPUT_DESCRIPTION);
     }
-
   }
-
   TimePicker.define();
   var _default = TimePicker;
   _exports.default = _default;

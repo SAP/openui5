@@ -13,25 +13,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
   _WrappingType = _interopRequireDefault(_WrappingType);
   _RadioButtonTemplate = _interopRequireDefault(_RadioButtonTemplate);
   _RadioButton = _interopRequireDefault(_RadioButton);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // i18n
+
   // Styles
+
   let isGlobalHandlerAttached = false;
   let activeRadio = null;
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-radio-button",
     altTag: "ui5-radiobutton",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.RadioButton.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.RadioButton.prototype */{
       /**
        * Defines whether the component is disabled.
        * <br><br>
@@ -44,7 +43,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is read-only.
        * <br><br>
@@ -58,7 +56,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       readonly: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is checked or not.
        * <br><br>
@@ -74,7 +71,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       checked: {
         type: Boolean
       },
-
       /**
        * Defines the text of the component.
        *
@@ -85,7 +81,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       text: {
         type: String
       },
-
       /**
        * Defines the value state of the component.
        * <br><br>
@@ -106,7 +101,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         defaultValue: _ValueState.default.None,
         type: _ValueState.default
       },
-
       /**
        * Defines the name of the component.
        * Radio buttons with the same <code>name</code> will form a radio button group.
@@ -135,7 +129,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       name: {
         type: String
       },
-
       /**
        * Defines the form value of the component.
        * When a form with a radio button group is submitted, the group's value
@@ -151,7 +144,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       value: {
         type: String
       },
-
       /**
        * Defines whether the component text wraps when there is not enough space.
        * <br><br>
@@ -169,7 +161,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         type: _WrappingType.default,
         defaultValue: _WrappingType.default.None
       },
-
       /**
        * Defines the accessible name of the component.
        *
@@ -181,7 +172,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       accessibleName: {
         type: String
       },
-
       /**
        * Defines the IDs of the elements that label the component.
        *
@@ -198,7 +188,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         defaultValue: "-1",
         noAttribute: true
       },
-
       /**
        * Defines the active state (pressed or not) of the component.
        * @private
@@ -207,9 +196,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.RadioButton.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.RadioButton.prototype */{
       /**
        * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
        * when <code>name</code> property is set.
@@ -221,9 +208,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.RadioButton.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.RadioButton.prototype */{
       /**
        * Fired when the component checked state changes.
        *
@@ -234,6 +219,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       change: {}
     }
   };
+
   /**
    * @class
    *
@@ -267,65 +253,51 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    * @tagname ui5-radio-button
    * @public
    */
-
   class RadioButton extends _UI5Element.default {
     constructor() {
       super();
-
       this._deactivate = () => {
         if (activeRadio) {
           activeRadio.active = false;
         }
       };
-
       if (!isGlobalHandlerAttached) {
         document.addEventListener("mouseup", this._deactivate);
         isGlobalHandlerAttached = true;
       }
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _RadioButtonTemplate.default;
     }
-
     static get styles() {
       return _RadioButton.default;
     }
-
     static get dependencies() {
       return [_Label.default];
     }
-
     static async onDefine() {
       RadioButton.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     onBeforeRendering() {
       this.syncGroup();
-
       this._enableFormSupport();
     }
-
     syncGroup() {
       const oldGroup = this._name;
       const currentGroup = this.name;
       const oldChecked = this._checked;
       const currentChecked = this.checked;
-
       if (currentGroup !== oldGroup) {
         if (oldGroup) {
           // remove the control from the previous group
           _RadioButtonGroup.default.removeFromGroup(this, oldGroup);
         }
-
         if (currentGroup) {
           // add the control to the existing group
           _RadioButtonGroup.default.addToGroup(this, currentGroup);
@@ -333,18 +305,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       } else if (currentGroup) {
         _RadioButtonGroup.default.enforceSingleSelection(this, currentGroup);
       }
-
       if (this.name && currentChecked !== oldChecked) {
         _RadioButtonGroup.default.updateTabOrder(this.name);
       }
-
       this._name = this.name;
       this._checked = this.checked;
     }
-
     _enableFormSupport() {
       const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-
       if (FormSupport) {
         FormSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
           nativeInput.disabled = element.disabled || !element.checked;
@@ -358,59 +326,44 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     _onclick() {
       return this.toggle();
     }
-
     _handleDown(event) {
       const currentGroup = this.name;
-
       if (!currentGroup) {
         return;
       }
-
       event.preventDefault();
-
       _RadioButtonGroup.default.selectNextItem(this, currentGroup);
     }
-
     _handleUp(event) {
       const currentGroup = this.name;
-
       if (!currentGroup) {
         return;
       }
-
       event.preventDefault();
-
       _RadioButtonGroup.default.selectPreviousItem(this, currentGroup);
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isSpace)(event)) {
         this.active = true;
         return event.preventDefault();
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this.active = true;
         return this.toggle();
       }
-
       if ((0, _Keys.isDown)(event) || (0, _Keys.isRight)(event)) {
         this._handleDown(event);
       }
-
       if ((0, _Keys.isUp)(event) || (0, _Keys.isLeft)(event)) {
         this._handleUp(event);
       }
     }
-
     _onkeyup(event) {
       if ((0, _Keys.isSpace)(event)) {
         this.toggle();
       }
-
       this.active = false;
     }
-
     _onmousedown() {
       this.active = true;
       activeRadio = this; // eslint-disable-line
@@ -419,31 +372,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     _onmouseup() {
       this.active = false;
     }
-
     _onfocusout() {
       this.active = false;
     }
-
     toggle() {
       if (!this.canToggle()) {
         return this;
       }
-
       if (!this.name) {
         this.checked = !this.checked;
         this.fireEvent("change");
         return this;
       }
-
       _RadioButtonGroup.default.selectItem(this, this.name);
-
       return this;
     }
-
     canToggle() {
       return !(this.disabled || this.readonly || this.checked);
     }
-
     valueStateTextMappings() {
       return {
         "Error": RadioButton.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
@@ -452,7 +398,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         "Information": RadioButton.i18nBundle.getText(_i18nDefaults.VALUE_STATE_INFORMATION)
       };
     }
-
     get classes() {
       return {
         main: {},
@@ -461,51 +406,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         }
       };
     }
-
     get ariaReadonly() {
       return this.readonly ? "true" : undefined;
     }
-
     get ariaDisabled() {
       return this.disabled ? "true" : undefined;
     }
-
     get ariaLabelText() {
       return [(0, _AriaLabelHelper.getEffectiveAriaLabelText)(this), this.text].filter(Boolean).join(" ");
     }
-
     get ariaDescribedBy() {
       return this.hasValueState ? `${this._id}-descr` : undefined;
     }
-
     get hasValueState() {
       return this.valueState !== _ValueState.default.None;
     }
-
     get valueStateText() {
       return this.valueStateTextMappings()[this.valueState];
     }
-
     get tabIndex() {
       const tabindex = this.getAttribute("tabindex");
-
       if (this.disabled) {
         return "-1";
       }
-
       if (this.name) {
         return this._tabIndex;
       }
-
       return tabindex || "0";
     }
-
     get strokeWidth() {
       return this.valueState === "None" ? "1" : "2";
     }
-
   }
-
   RadioButton.define();
   var _default = RadioButton;
   _exports.default = _default;

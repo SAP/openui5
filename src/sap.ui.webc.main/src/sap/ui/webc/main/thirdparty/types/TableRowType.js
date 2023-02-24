@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.TableRowType.prototype
    * @public
@@ -20,7 +18,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Inactive}
      */
     Inactive: "Inactive",
-
     /**
      * Indicates that the table row is clickable via active feedback when item is pressed.
      * @public
@@ -28,6 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Active: "Active"
   };
+
   /**
    * @class
    * Different types of TableRow.
@@ -37,14 +35,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class TableRowType extends _DataType.default {
     static isValid(value) {
       return !!TableRowTypes[value];
     }
-
   }
-
   TableRowType.generateTypeAccessors(TableRowTypes);
   var _default = TableRowType;
   _exports.default = _default;

@@ -15,9 +15,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Input = _interopRequireDefault(_Input);
   _InputType = _interopRequireDefault(_InputType);
   _StepInput = _interopRequireDefault(_StepInput);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -26,9 +24,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-step-input",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.StepInput.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.StepInput.prototype */{
       /**
        * Defines a value of the component.
        *
@@ -40,7 +36,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Float.default,
         defaultValue: 0
       },
-
       /**
        * Defines a minimum value of the component.
        *
@@ -50,7 +45,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       min: {
         type: _Float.default
       },
-
       /**
        * Defines a maximum value of the component.
        *
@@ -60,7 +54,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       max: {
         type: _Float.default
       },
-
       /**
        * Defines a step of increasing/decreasing the value of the component.
        *
@@ -72,7 +65,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Float.default,
         defaultValue: 1
       },
-
       /**
        * Defines the value state of the component.
        * <br><br>
@@ -93,7 +85,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ValueState.default,
         defaultValue: _ValueState.default.None
       },
-
       /**
        * Defines whether the component is required.
        *
@@ -104,7 +95,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       required: {
         type: Boolean
       },
-
       /**
        * Determines whether the component is displayed as disabled.
        *
@@ -115,7 +105,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Determines whether the component is displayed as read-only.
        *
@@ -126,7 +115,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       readonly: {
         type: Boolean
       },
-
       /**
        * Defines a short hint, intended to aid the user with data entry when the
        * component has no value.
@@ -143,7 +131,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: undefined
       },
-
       /**
        * Determines the name with which the component will be submitted in an HTML form.
        *
@@ -163,7 +150,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       name: {
         type: String
       },
-
       /**
        * Determines the number of digits after the decimal point of the component.
        *
@@ -175,7 +161,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _Integer.default,
         defaultValue: 0
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -186,7 +171,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Receives id(or many ids) of the elements that label the component.
        *
@@ -207,7 +191,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean,
         noAttribute: true
       },
-
       /**
        * @type {boolean}
        * @private
@@ -249,9 +232,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         noAttribute: true
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.StepInput.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.StepInput.prototype */{
       /**
        * Defines the value state message that will be displayed as pop up under the component.
        * <br><br>
@@ -267,7 +248,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       valueStateMessage: {
         type: HTMLElement
       },
-
       /**
        * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
        * when <code>name</code> property is set.
@@ -279,9 +259,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.StepInput.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.StepInput.prototype */{
       /**
        * Fired when the input operation has finished by pressing Enter or on focusout.
        *
@@ -290,13 +268,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       */
       change: {}
     }
-  }; // Spin variables
+  };
 
+  // Spin variables
   const INITIAL_WAIT_TIMEOUT = 500; // milliseconds
-
   const ACCELERATION = 0.8;
   const MIN_WAIT_TIMEOUT = 50; // milliseconds
-
   const INITIAL_SPEED = 120; // milliseconds
 
   /**
@@ -346,80 +323,64 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @since 1.0.0-rc.13
    * @public
    */
-
   class StepInput extends _UI5Element.default {
     constructor() {
       super();
     }
-
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _StepInput.default;
     }
-
     static get template() {
       return _StepInputTemplate.default;
     }
-
     static get dependencies() {
       return [_Icon.default, _Input.default];
     }
-
     static async onDefine() {
       StepInput.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     get type() {
       return _InputType.default.Number;
-    } // icons-related
+    }
 
+    // icons-related
 
     get decIconTitle() {
       return StepInput.i18nBundle.getText(_i18nDefaults.STEPINPUT_DEC_ICON_TITLE);
     }
-
     get decIconName() {
       return "less";
     }
-
     get incIconTitle() {
       return StepInput.i18nBundle.getText(_i18nDefaults.STEPINPUT_INC_ICON_TITLE);
     }
-
     get incIconName() {
       return "add";
     }
-
     get _decIconClickable() {
       return !this._decIconDisabled && !this.readonly && !this.disabled;
     }
-
     get _incIconClickable() {
       return !this._incIconDisabled && !this.readonly && !this.disabled;
     }
-
     get _isFocused() {
       return this.focused;
     }
-
     get _valuePrecisioned() {
       return this.value.toFixed(this.valuePrecision);
     }
-
     get accInfo() {
       return {
         "ariaRequired": this.required,
         "ariaLabel": (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this)
       };
     }
-
     get inputAttributes() {
       return {
         min: this.min === undefined ? undefined : this.min,
@@ -427,16 +388,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         step: this.step
       };
     }
-
     onBeforeRendering() {
       this._setButtonState();
-
       if (this._previousValue === undefined) {
         this._previousValue = this.value;
       }
-
       const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-
       if (FormSupport) {
         FormSupport.syncNativeHiddenInput(this);
       } else if (this.name) {
@@ -447,11 +404,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get input() {
       return this.shadowRoot.querySelector("[ui5-input]");
     }
-
     get inputOuter() {
       return this.shadowRoot.querySelector(".ui5-step-input-input");
     }
-
     _onButtonFocusOut() {
       setTimeout(() => {
         if (!this._inputFocused) {
@@ -459,35 +414,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }, 0);
     }
-
     _onInputFocusIn() {
       this._inputFocused = true;
     }
-
     _onInputFocusOut() {
       this._inputFocused = false;
-
       this._onInputChange();
     }
-
     _setButtonState() {
       this._decIconDisabled = this.min !== undefined && this.value <= this.min;
       this._incIconDisabled = this.max !== undefined && this.value >= this.max;
     }
-
     _validate() {
       if (this._previousValueState === "") {
         this._previousValueState = this.valueState !== "" ? this.valueState : _ValueState.default.None;
       }
-
       this.valueState = this.min !== undefined && this.value < this.min || this.max !== undefined && this.value > this.max ? _ValueState.default.Error : this._previousValueState;
     }
-
     _preciseValue(value) {
       const pow = 10 ** this.valuePrecision;
       return Math.round(value * pow) / pow;
     }
-
     _fireChangeEvent() {
       if (this._previousValue !== this.value) {
         this._previousValue = this.value;
@@ -496,6 +443,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
       }
     }
+
     /**
      * Value modifier - modifies the value of the component, validates the new value and enables/disables increment and
      * decrement buttons according to the value and min/max values (if set). Fires <code>change</code> event when requested
@@ -503,33 +451,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @param {Float} modifier modifies the value of the component with the given modifier (positive or negative)
      * @param {boolean} fireChangeEvent if <code>true</code>, fires <code>change</code> event when the value is changed
      */
-
-
     _modifyValue(modifier, fireChangeEvent) {
       let value;
       this.value = this._preciseValue(parseFloat(this.input.value));
       value = this.value + modifier;
-
       if (this.min !== undefined && value < this.min) {
         value = this.min;
       }
-
       if (this.max !== undefined && value > this.max) {
         value = this.max;
       }
-
       value = this._preciseValue(value);
-
       if (value !== this.value) {
         this.value = value;
-
         this._validate();
-
         this._setButtonState();
-
         this.focused = true;
         this.inputOuter.setAttribute("focused", "");
-
         if (fireChangeEvent) {
           this._fireChangeEvent();
         } else {
@@ -537,62 +475,45 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }
     }
-
     _incValue(event) {
       if (this._incIconClickable && event.isTrusted && !this.disabled && !this.readonly) {
         this._modifyValue(this.step, true);
-
         this._previousValue = this.value;
       }
     }
-
     _decValue(event) {
       if (this._decIconClickable && event.isTrusted && !this.disabled && !this.readonly) {
         this._modifyValue(-this.step, true);
-
         this._previousValue = this.value;
       }
     }
-
     _onInputChange(event) {
       if (this.input.value === "") {
         this.input.value = this.min || 0;
       }
-
       const inputValue = this._preciseValue(parseFloat(this.input.value));
-
       if (this.value !== this._previousValue || this.value !== inputValue) {
         this.value = inputValue;
-
         this._validate();
-
         this._setButtonState();
-
         this._fireChangeEvent();
       }
     }
-
     _onfocusin() {
       this.focused = true;
     }
-
     _onfocusout() {
       this.focused = false;
     }
-
     _onkeydown(event) {
       let preventDefault = true;
-
       if (this.disabled || this.readonly) {
         return;
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this._onInputChange();
-
         return;
       }
-
       if ((0, _Keys.isUp)(event)) {
         // step up
         this._modifyValue(this.step);
@@ -612,90 +533,75 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else if (!(0, _Keys.isUpCtrl)(event) && !(0, _Keys.isDownCtrl)(event) && !(0, _Keys.isUpShift)(event) && !(0, _Keys.isDownShift)(event)) {
         preventDefault = false;
       }
-
       if (preventDefault) {
         event.preventDefault();
       }
     }
-
     _decSpin() {
       if (!this._decIconDisabled) {
         this._spinValue(false, true);
       }
     }
-
     _incSpin() {
       if (!this._incIconDisabled) {
         this._spinValue(true, true);
       }
     }
+
     /**
      * Calculates the time which should be waited until _spinValue function is called.
      */
-
-
     _calcWaitTimeout() {
       this._speed *= ACCELERATION;
       this._waitTimeout = this._waitTimeout - this._speed < MIN_WAIT_TIMEOUT ? MIN_WAIT_TIMEOUT : this._waitTimeout - this._speed;
       return this._waitTimeout;
     }
+
     /**
      * Called when the increment or decrement button is pressed and held to set new value.
      * @param {boolean} increment - is this the increment button or not so the values should be spin accordingly up or down
      * @param {boolean} resetVariables - whether to reset the spin-related variables or not
      */
-
-
     _spinValue(increment, resetVariables) {
       if (resetVariables) {
         this._waitTimeout = INITIAL_WAIT_TIMEOUT;
         this._speed = INITIAL_SPEED;
         this._btnDown = true;
       }
-
       this._spinTimeoutId = setTimeout(() => {
         if (this._btnDown) {
           this._spinStarted = true;
-
           this._modifyValue(increment ? this.step : -this.step);
-
           this._setButtonState();
-
           if (!this._incIconDisabled && increment || !this._decIconDisabled && !increment) {
             this._spinValue(increment);
           } else {
             this._resetSpin();
-
             this._fireChangeEvent();
           }
         }
       }, this._calcWaitTimeout());
     }
+
     /**
     * Resets spin process
     */
-
-
     _resetSpin() {
       clearTimeout(this._spinTimeoutId);
       this._btnDown = false;
       this._spinStarted = false;
     }
+
     /**
     * Resets spin process when mouse outs + or - buttons
     */
-
-
     _resetSpinOut() {
       if (this._btnDown) {
         this._resetSpin();
-
         this._fireChangeEvent();
       }
     }
-
   }
-
   StepInput.define();
   var _default = StepInput;
   _exports.default = _default;

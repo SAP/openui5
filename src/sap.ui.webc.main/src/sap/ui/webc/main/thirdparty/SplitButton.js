@@ -11,9 +11,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ButtonDesign = _interopRequireDefault(_ButtonDesign);
   _Button = _interopRequireDefault(_Button);
   _SplitButton = _interopRequireDefault(_SplitButton);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -22,9 +20,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-split-button",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.SplitButton.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.SplitButton.prototype */{
       /**
        * Defines the icon to be displayed as graphical element within the component.
        * The SAP-icons font provides numerous options.
@@ -40,7 +36,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: String
       },
-
       /**
        * Defines the icon to be displayed in active state as graphical element within the component.
        *
@@ -51,7 +46,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       activeIcon: {
         type: String
       },
-
       /**
        * Defines the component design.
        *
@@ -75,7 +69,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ButtonDesign.default,
         defaultValue: _ButtonDesign.default.Default
       },
-
       /**
        * Defines whether the component is disabled.
        * A disabled component can't be pressed or
@@ -88,7 +81,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -100,7 +92,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: undefined
       },
-
       /**
        * Indicates if the elements is on focus
        * @type {boolean}
@@ -110,7 +101,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       focused: {
         type: Boolean
       },
-
       /**
        * Accessibility-related properties for inner elements of the Split Button
        *
@@ -120,7 +110,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _splitButtonAccInfo: {
         type: Object
       },
-
       /**
        * Defines the tabIndex of the component.
        * @type {string}
@@ -132,7 +121,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: "0",
         noAttribute: true
       },
-
       /**
        * Indicates if there is Space key pressed
        * @type {boolean}
@@ -143,7 +131,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean,
         noAttribute: true
       },
-
       /**
        * Indicates if there is SHIFT or ESCAPE key pressed
        * @type {boolean}
@@ -154,7 +141,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean,
         noAttribute: true
       },
-
       /**
        * Defines the active state of the text button
        * @type {boolean}
@@ -165,7 +151,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Boolean,
         noAttribute: true
       },
-
       /**
        * Defines the icon of the text button
        * @type {string}
@@ -176,7 +161,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         noAttribute: true
       },
-
       /**
        * Defines the active state of the arrow button
        * @type {boolean}
@@ -188,9 +172,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         noAttribute: true
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.SplitButton.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.SplitButton.prototype */{
       /**
        * Defines the text of the component.
        * <br><br>
@@ -205,16 +187,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         propertyName: "text"
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.SplitButton.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.SplitButton.prototype */{
       /**
        * Fired when the user clicks on the default action.
        * @event
        * @public
        */
       "click": {},
-
       /**
        * Fired when the user clicks on the arrow action.
        * @event sap.ui.webcomponents.main.SplitButton#arrow-click
@@ -223,6 +202,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       "arrow-click": {}
     }
   };
+
   /**
    * @class
    *
@@ -274,161 +254,123 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.1.0
    */
-
   class SplitButton extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _SplitButton.default;
     }
-
     static get template() {
       return _SplitButtonTemplate.default;
     }
-
     static get dependencies() {
       return [_Button.default];
     }
-
     static async onDefine() {
       SplitButton.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     constructor() {
       super();
-
       const handleTouchStartEvent = event => {
         this._textButtonActive = true;
         this.focused = false;
-
         this._setTabIndexValue();
       };
-
       this._textButtonPress = {
         handleEvent: handleTouchStartEvent,
         passive: true
       };
     }
-
     onBeforeRendering() {
       this._textButtonIcon = this.textButton && this.activeIcon !== "" && this._textButtonActive && !this._shiftOrEscapePressed ? this.activeIcon : this.icon;
-
       if (this.disabled) {
         this._tabIndex = "-1";
       }
     }
-
     _onFocusOut(event) {
       if (this.disabled || event.isMarked) {
         return;
       }
-
       this._shiftOrEscapePressed = false;
       this.focused = false;
-
       this._setTabIndexValue();
     }
-
     _onFocusIn(event) {
       if (this.disabled || event.isMarked) {
         return;
       }
-
       this._shiftOrEscapePressed = false;
       this.focused = true;
     }
-
     _onKeyDown(event) {
       if ((0, _Keys.isDown)(event) || (0, _Keys.isUp)(event) || (0, _Keys.isDownAlt)(event) || (0, _Keys.isUpAlt)(event) || (0, _Keys.isF4)(event)) {
         event.preventDefault();
         this._arrowButtonActive = true;
-
         this._fireArrowClick();
       } else if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
         event.preventDefault();
         this._textButtonActive = true;
-
         if ((0, _Keys.isEnter)(event)) {
           this._fireClick();
         } else {
           this._spacePressed = true;
         }
       }
-
       if (this._spacePressed && ((0, _Keys.isEscape)(event) || (0, _Keys.isShift)(event))) {
         this._shiftOrEscapePressed = true;
         this._textButtonActive = false;
       }
-
       this._setTabIndexValue();
     }
-
     _onKeyUp(event) {
       if ((0, _Keys.isDown)(event) || (0, _Keys.isUp)(event) || (0, _Keys.isDownAlt)(event) || (0, _Keys.isUpAlt)(event) || (0, _Keys.isF4)(event)) {
         this._arrowButtonActive = false;
       } else if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
         this._textButtonActive = false;
-
         if ((0, _Keys.isSpace)(event)) {
           event.preventDefault();
           event.stopPropagation();
-
           this._fireClick();
-
           this._spacePressed = false;
         }
       }
-
       this._setTabIndexValue();
     }
-
     _fireClick(event) {
       event && event.stopPropagation();
-
       if (!this._shiftOrEscapePressed) {
         this.fireEvent("click");
       }
-
       this._shiftOrEscapePressed = false;
     }
-
     _fireArrowClick(event) {
       event && event.stopPropagation();
       this.fireEvent("arrow-click");
     }
-
     _textButtonRelease() {
       this._textButtonActive = false;
       this._textButtonIcon = this.textButton && this.activeIcon !== "" && this._textButtonActive && !this._shiftOrEscapePressed ? this.activeIcon : this.icon;
-
       this._setTabIndexValue();
     }
-
     _setTabIndexValue() {
       const textButton = this.textButton,
-            arrowButton = this.arrowButton,
-            buttonsAction = textButton && (textButton.focused || textButton.active) || arrowButton && (arrowButton.focused || arrowButton.active);
+        arrowButton = this.arrowButton,
+        buttonsAction = textButton && (textButton.focused || textButton.active) || arrowButton && (arrowButton.focused || arrowButton.active);
       this._tabIndex = this.disabled || buttonsAction ? "-1" : "0";
     }
-
     get textButtonAccText() {
       return this.textContent;
     }
-
     get textButton() {
       return this.getDomRef() && this.getDomRef().querySelector(".ui5-split-text-button");
     }
-
     get arrowButton() {
       return this.getDomRef() && this.getDomRef().querySelector(".ui5-split-arrow-button");
     }
-
     get accessibilityInfo() {
       return {
         // affects arrow button
@@ -439,13 +381,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         keyboardHint: SplitButton.i18nBundle.getText(_i18nDefaults.SPLIT_BUTTON_KEYBOARD_HINT)
       };
     }
-
     get ariaLabelText() {
       return [SplitButton.i18nBundle.getText(_i18nDefaults.SPLIT_BUTTON_DESCRIPTION), SplitButton.i18nBundle.getText(_i18nDefaults.SPLIT_BUTTON_KEYBOARD_HINT)].join(" ");
     }
-
   }
-
   SplitButton.define();
   var _default = SplitButton;
   _exports.default = _default;

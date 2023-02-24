@@ -21,27 +21,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ResponsivePopoverCommon = _interopRequireDefault(_ResponsivePopoverCommon);
   _ValueStateMessage = _interopRequireDefault(_ValueStateMessage);
   _Suggestions = _interopRequireDefault(_Suggestions);
-
   function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
   function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Templates
+
   // Styles
+
   const rgxFloat = new RegExp(/(\+|-)?\d+(\.|,)\d+/);
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-input",
     languageAware: true,
     managedSlots: true,
-    slots:
-    /** @lends sap.ui.webcomponents.main.Input.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.Input.prototype */{
       /**
        * Defines the icon to be displayed in the component.
        *
@@ -52,7 +48,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       icon: {
         type: HTMLElement
       },
-
       /**
        * Defines the suggestion items.
        * <br><br>
@@ -91,7 +86,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         propertyName: "suggestionItems",
         type: HTMLElement
       },
-
       /**
        * The slot is used for native <code>input</code> HTML element to enable form submit,
        * when <code>name</code> property is set.
@@ -101,7 +95,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       formSupport: {
         type: HTMLElement
       },
-
       /**
        * Defines the value state message that will be displayed as pop up under the component.
        * <br><br>
@@ -122,9 +115,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     },
-    properties:
-    /** @lends sap.ui.webcomponents.main.Input.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Input.prototype */{
       /**
        * Defines whether the component is in disabled state.
        * <br><br>
@@ -137,7 +128,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines if characters within the suggestions are to be highlighted
        * in case the input value matches parts of the suggestions text.
@@ -152,7 +142,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       highlight: {
         type: Boolean
       },
-
       /**
        * Defines a short hint intended to aid the user with data entry when the
        * component has no value.
@@ -163,7 +152,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       placeholder: {
         type: String
       },
-
       /**
        * Defines whether the component is read-only.
        * <br><br>
@@ -177,7 +165,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       readonly: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is required.
        *
@@ -189,7 +176,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       required: {
         type: Boolean
       },
-
       /**
        * Defines whether the value will be autcompleted to match an item
        *
@@ -201,7 +187,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       noTypeahead: {
         type: Boolean
       },
-
       /**
        * Defines the HTML type of the component.
        * Available options are: <code>Text</code>, <code>Email</code>,
@@ -223,7 +208,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _InputType.default,
         defaultValue: _InputType.default.Text
       },
-
       /**
        * Defines the value of the component.
        * <br><br>
@@ -236,7 +220,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       value: {
         type: String
       },
-
       /**
        * Defines the value state of the component.
        * <br><br>
@@ -257,7 +240,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _ValueState.default,
         defaultValue: _ValueState.default.None
       },
-
       /**
        * Determines the name with which the component will be submitted in an HTML form.
        *
@@ -277,7 +259,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       name: {
         type: String
       },
-
       /**
        * Defines whether the component should show suggestions, if such are present.
        * <br><br>
@@ -290,7 +271,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       showSuggestions: {
         type: Boolean
       },
-
       /**
        * Sets the maximum number of characters available in the input field.
        * <br><br>
@@ -302,7 +282,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       maxlength: {
         type: _Integer.default
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -313,7 +292,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Receives id(or many ids) of the elements that label the input.
        *
@@ -326,7 +304,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: String,
         defaultValue: ""
       },
-
       /**
        * Defines whether the clear icon of the input will be shown.
        *
@@ -338,7 +315,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       showClearIcon: {
         type: Boolean
       },
-
       /**
        * Defines whether the clear icon is visible.
        *
@@ -350,7 +326,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       effectiveShowClearIcon: {
         type: Boolean
       },
-
       /**
        * @private
        */
@@ -363,7 +338,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       open: {
         type: Boolean
       },
-
       /**
        * Determines whether to manually show the suggestions popover
        * @private
@@ -371,7 +345,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       _forceOpen: {
         type: Boolean
       },
-
       /**
        * Indicates whether the visual focus is on the value state header
        * @private
@@ -403,9 +376,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         noAttribute: true
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Input.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Input.prototype */{
       /**
        * Fired when the input operation has finished by pressing Enter or on focusout.
        *
@@ -413,7 +384,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
        * @public
        */
       change: {},
-
       /**
        * Fired when the value of the component changes at each keystroke,
        * and when a suggestion item has been selected.
@@ -422,7 +392,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
        * @public
        */
       input: {},
-
       /**
        * Fired when a suggestion item, that is displayed in the suggestion popup, is selected.
        *
@@ -437,7 +406,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the user navigates to a suggestion item via the ARROW keys,
        * as a preview, before the final selection.
@@ -458,7 +426,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           }
         }
       },
-
       /**
        * Fired when the user scrolls the suggestion popover.
        *
@@ -480,6 +447,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -530,95 +498,97 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @implements sap.ui.webcomponents.main.IInput
    * @public
    */
-
   class Input extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _InputTemplate.default;
     }
-
     static get staticAreaTemplate() {
       return _InputPopoverTemplate.default;
     }
-
     static get styles() {
       return _Input.default;
     }
-
     static get staticAreaStyles() {
       return [_ResponsivePopoverCommon.default, _ValueStateMessage.default, _Suggestions.default];
     }
-
     constructor() {
-      super(); // Indicates if there is selected suggestionItem.
+      super();
+      // Indicates if there is selected suggestionItem.
+      this.hasSuggestionItemSelected = false;
 
-      this.hasSuggestionItemSelected = false; // Represents the value before user moves selection from suggestion item to another
+      // Represents the value before user moves selection from suggestion item to another
       // and its value is updated after each move.
       // Note: Used to register and fire "input" event upon [SPACE] or [ENTER].
       // Note: The property "value" is updated upon selection move and can`t be used.
+      this.valueBeforeItemSelection = "";
 
-      this.valueBeforeItemSelection = ""; // Represents the value before user moves selection between the suggestion items
+      // Represents the value before user moves selection between the suggestion items
       // and its value remains the same when the user navigates up or down the list.
       // Note: Used to cancel selection upon [ESC].
+      this.valueBeforeItemPreview = "";
 
-      this.valueBeforeItemPreview = ""; // Indicates if the user selection has been canceled with [ESC].
+      // Indicates if the user selection has been canceled with [ESC].
+      this.suggestionSelectionCanceled = false;
 
-      this.suggestionSelectionCanceled = false; // Indicates if the change event has already been fired
+      // Indicates if the change event has already been fired
+      this._changeFiredValue = null;
 
-      this._changeFiredValue = null; // tracks the value between focus in and focus out to detect that change event should be fired.
+      // tracks the value between focus in and focus out to detect that change event should be fired.
+      this.previousValue = undefined;
 
-      this.previousValue = undefined; // Indicates, if the component is rendering for first time.
+      // Indicates, if the component is rendering for first time.
+      this.firstRendering = true;
 
-      this.firstRendering = true; // The value that should be highlited.
+      // The value that should be highlited.
+      this.highlightValue = "";
 
-      this.highlightValue = ""; // The last value confirmed by the user with "ENTER"
+      // The last value confirmed by the user with "ENTER"
+      this.lastConfirmedValue = "";
 
-      this.lastConfirmedValue = ""; // The value that the user is typed in the input
+      // The value that the user is typed in the input
+      this.valueBeforeAutoComplete = "";
 
-      this.valueBeforeAutoComplete = ""; // Indicates, if the user pressed the BACKSPACE key.
+      // Indicates, if the user pressed the BACKSPACE key.
+      this._backspaceKeyDown = false;
 
-      this._backspaceKeyDown = false; // Indicates, if the user is typing. Gets reset once popup is closed
+      // Indicates, if the user is typing. Gets reset once popup is closed
+      this.isTyping = false;
 
-      this.isTyping = false; // all sementic events
-
+      // all sementic events
       this.EVENT_CHANGE = "change";
       this.EVENT_INPUT = "input";
-      this.EVENT_SUGGESTION_ITEM_SELECT = "suggestion-item-select"; // all user interactions
+      this.EVENT_SUGGESTION_ITEM_SELECT = "suggestion-item-select";
 
+      // all user interactions
       this.ACTION_ENTER = "enter";
-      this.ACTION_USER_INPUT = "input"; // Suggestions array initialization
+      this.ACTION_USER_INPUT = "input";
 
+      // Suggestions array initialization
       this.suggestionsTexts = [];
       this._handleResizeBound = this._handleResize.bind(this);
     }
-
     onEnterDOM() {
       _ResizeHandler.default.register(this, this._handleResizeBound);
     }
-
     onExitDOM() {
       _ResizeHandler.default.deregister(this, this._handleResizeBound);
     }
-
     onBeforeRendering() {
       if (this.showSuggestions) {
         this.enableSuggestions();
         this.suggestionsTexts = this.Suggestions.defaultSlotProperties(this.highlightValue);
       }
-
       this.effectiveShowClearIcon = this.showClearIcon && !!this.value && !this.readonly && !this.disabled;
       this.FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
       const hasItems = this.suggestionItems.length;
       const hasValue = !!this.value;
       const isFocused = this.shadowRoot.querySelector("input") === (0, _getActiveElement.default)();
-
       if (this._isPhone) {
         this.open = this.openOnMobile;
       } else if (this._forceOpen) {
@@ -626,7 +596,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else {
         this.open = hasValue && hasItems && isFocused && this.isTyping;
       }
-
       if (this.FormSupport) {
         this.FormSupport.syncNativeHiddenInput(this);
       } else if (this.name) {
@@ -635,24 +604,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
 
       const value = this.value;
       const innerInput = this.getInputDOMRefSync();
-
       if (!innerInput || !value) {
         return;
       }
+      const autoCompletedChars = innerInput.selectionEnd - innerInput.selectionStart;
 
-      const autoCompletedChars = innerInput.selectionEnd - innerInput.selectionStart; // Typehead causes issues on Android devices, so we disable it for now
+      // Typehead causes issues on Android devices, so we disable it for now
       // If there is already a selection the autocomplete has already been performed
-
       if (this._shouldAutocomplete && !(0, _Device.isAndroid)() && !autoCompletedChars && !this._isKeyNavigation) {
-        const item = this._getFirstMatchingItem(value); // Keep the original typed in text intact
+        const item = this._getFirstMatchingItem(value);
 
-
+        // Keep the original typed in text intact
         this.valueBeforeAutoComplete += value.slice(this.valueBeforeAutoComplete.length, value.length);
-
         this._handleTypeAhead(item, value);
       }
     }
-
     async onAfterRendering() {
       if (this.Suggestions && this.showSuggestions) {
         this.Suggestions.toggle(this.open, {
@@ -660,138 +626,109 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
         this._listWidth = await this.Suggestions._getListWidth();
       }
-
       if (this.shouldDisplayOnlyValueStateMessage) {
         this.openPopover();
       } else {
         this.closePopover();
       }
     }
-
     _onkeydown(event) {
       this._isKeyNavigation = true;
       this._shouldAutocomplete = !this.noTypeahead && !((0, _Keys.isBackSpace)(event) || (0, _Keys.isDelete)(event) || (0, _Keys.isEscape)(event));
-
       if ((0, _Keys.isUp)(event)) {
         return this._handleUp(event);
       }
-
       if ((0, _Keys.isDown)(event)) {
         return this._handleDown(event);
       }
-
       if ((0, _Keys.isSpace)(event)) {
         return this._handleSpace(event);
       }
-
       if ((0, _Keys.isTabNext)(event)) {
         return this._handleTab(event);
       }
-
       if ((0, _Keys.isEnter)(event)) {
         return this._handleEnter(event);
       }
-
       if ((0, _Keys.isPageUp)(event)) {
         return this._handlePageUp(event);
       }
-
       if ((0, _Keys.isPageDown)(event)) {
         return this._handlePageDown(event);
       }
-
       if ((0, _Keys.isHome)(event)) {
         return this._handleHome(event);
       }
-
       if ((0, _Keys.isEnd)(event)) {
         return this._handleEnd(event);
       }
-
       if ((0, _Keys.isEscape)(event)) {
         return this._handleEscape(event);
       }
-
       if ((0, _Keys.isBackSpace)(event)) {
         this._backspaceKeyDown = true;
         this._selectedText = window.getSelection().toString();
       }
-
       if (this.showSuggestions) {
         this._clearPopoverFocusAndSelection();
       }
-
       this._keyDown = true;
       this._isKeyNavigation = false;
     }
-
     _onkeyup(event) {
       this._keyDown = false;
       this._backspaceKeyDown = false;
     }
+
     /* Event handling */
-
-
     _handleUp(event) {
       if (this.Suggestions && this.Suggestions.isOpened()) {
         this.Suggestions.onUp(event);
       }
     }
-
     _handleDown(event) {
       if (this.Suggestions && this.Suggestions.isOpened()) {
         this.Suggestions.onDown(event);
       }
     }
-
     _handleSpace(event) {
       if (this.Suggestions) {
         this.Suggestions.onSpace(event);
       }
     }
-
     _handleTab(event) {
       if (this.Suggestions && this.previousValue !== this.value) {
         this.Suggestions.onTab(event);
       }
     }
-
     _handleEnter(event) {
       const itemPressed = !!(this.Suggestions && this.Suggestions.onEnter(event));
-      const innerInput = this.getInputDOMRefSync(); // Check for autocompleted item
-
+      const innerInput = this.getInputDOMRefSync();
+      // Check for autocompleted item
       const matchingItem = this.suggestionItems.find(item => {
         return item.text && item.text === this.value || item.textContent === this.value;
       });
-
       if (matchingItem) {
         const itemText = matchingItem.text ? matchingItem.text : matchingItem.textContent;
         this.getInputDOMRefSync().setSelectionRange(itemText.length, itemText.length);
-
         if (!itemPressed) {
           this.selectSuggestion(matchingItem, true);
           this.open = false;
         }
       }
-
       if (this._isPhone && !this.suggestionItems.length) {
         innerInput.setSelectionRange(this.value.length, this.value.length);
       }
-
       if (!itemPressed) {
         this.fireEventByAction(this.ACTION_ENTER, event);
         this.lastConfirmedValue = this.value;
-
         if (this.FormSupport) {
           this.FormSupport.triggerFormSubmit(this);
         }
-
         return;
       }
-
       this.focused = true;
     }
-
     _handlePageUp(event) {
       if (this._isSuggestionsFocused) {
         this.Suggestions.onPageUp(event);
@@ -799,7 +736,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         event.preventDefault();
       }
     }
-
     _handlePageDown(event) {
       if (this._isSuggestionsFocused) {
         this.Suggestions.onPageDown(event);
@@ -807,140 +743,112 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         event.preventDefault();
       }
     }
-
     _handleHome(event) {
       if (this._isSuggestionsFocused) {
         this.Suggestions.onHome(event);
       }
     }
-
     _handleEnd(event) {
       if (this._isSuggestionsFocused) {
         this.Suggestions.onEnd(event);
       }
     }
-
     _handleEscape() {
       const hasSuggestions = this.showSuggestions && !!this.Suggestions;
       const isOpen = hasSuggestions && this.open;
       const innerInput = this.getInputDOMRefSync();
       const isAutoCompleted = innerInput.selectionEnd - innerInput.selectionStart > 0;
-
       if (!isOpen) {
         this.value = this.lastConfirmedValue ? this.lastConfirmedValue : this.previousValue;
         return;
       }
-
       if (hasSuggestions && isOpen && this.Suggestions._isItemOnTarget()) {
         // Restore the value.
-        this.value = this.valueBeforeAutoComplete || this.valueBeforeItemPreview; // Mark that the selection has been canceled, so the popover can close
-        // and not reopen, due to receiving focus.
+        this.value = this.valueBeforeAutoComplete || this.valueBeforeItemPreview;
 
+        // Mark that the selection has been canceled, so the popover can close
+        // and not reopen, due to receiving focus.
         this.suggestionSelectionCanceled = true;
         this.focused = true;
         return;
       }
-
       if (isAutoCompleted) {
         this.value = this.valueBeforeAutoComplete;
       }
-
       if (this._isValueStateFocused) {
         this._isValueStateFocused = false;
         this.focused = true;
       }
     }
-
     async _onfocusin(event) {
       await this.getInputDOMRef();
       this.valueBeforeAutoComplete = "";
       this.focused = true; // invalidating property
-
       this.previousValue = this.value;
       this.valueBeforeItemPreview = this.value;
       this._inputIconFocused = event.target && event.target === this.querySelector("[ui5-icon]");
     }
-
     _onfocusout(event) {
       const focusedOutToSuggestions = this.Suggestions && event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.contains(this.Suggestions.responsivePopover);
       const focusedOutToValueStateMessage = event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.querySelector(".ui5-valuestatemessage-root");
-
       if (this.showClearIcon && !this.effectiveShowClearIcon) {
         this._clearIconClicked = false;
-
         this._handleChange();
-      } // if focusout is triggered by pressing on suggestion item or value state message popover, skip invalidation, because re-rendering
+      }
+
+      // if focusout is triggered by pressing on suggestion item or value state message popover, skip invalidation, because re-rendering
       // will happen before "itemPress" event, which will make item "active" state not visualized
-
-
       if (focusedOutToSuggestions || focusedOutToValueStateMessage) {
         event.stopImmediatePropagation();
         return;
       }
-
       const toBeFocused = event.relatedTarget;
-
       if (toBeFocused && toBeFocused.classList.contains(this._id)) {
         return;
       }
-
       this.open = false;
-
       this._clearPopoverFocusAndSelection();
-
       this.previousValue = "";
       this.lastConfirmedValue = "";
       this.focused = false; // invalidating property
-
       this.isTyping = false;
       this._forceOpen = false;
     }
-
     _clearPopoverFocusAndSelection() {
       if (!this.showSuggestions || !this.Suggestions) {
         return;
       }
-
       this._isValueStateFocused = false;
       this.hasSuggestionItemSelected = false;
-
       this.Suggestions._deselectItems();
-
       this.Suggestions._clearItemFocus();
     }
-
     _click(event) {
       if ((0, _Device.isPhone)() && !this.readonly && this.Suggestions) {
         this.blur();
         this.openOnMobile = true;
       }
     }
-
     _handleChange() {
       if (this._clearIconClicked) {
         this._clearIconClicked = false;
         return;
       }
-
       if (this._changeFiredValue !== this.getInputDOMRefSync().value) {
         this._changeFiredValue = this.getInputDOMRefSync().value;
         this.fireEvent(this.EVENT_CHANGE);
       }
     }
-
     _clear() {
       this.value = "";
       this.fireEvent(this.EVENT_INPUT);
-
       if (!this._isPhone) {
         this.focus();
       }
     }
-
     _iconMouseDown() {
       this._clearIconClicked = true;
     }
-
     _scroll(event) {
       const detail = event.detail;
       this.fireEvent("suggestion-scroll", {
@@ -948,42 +856,42 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         scrollContainer: detail.targetRef
       });
     }
-
     _handleInput(event) {
       const inputDomRef = this.getInputDOMRefSync();
       const emptyValueFiredOnNumberInput = this.value && this.isTypeNumber && !inputDomRef.value;
       const eventType = event.inputType || event.detail.inputType;
       this._shouldAutocomplete = eventType !== "deleteContentBackward" && !this.noTypeahead;
       this.suggestionSelectionCanceled = false;
-
       if (emptyValueFiredOnNumberInput && !this._backspaceKeyDown) {
         // For input with type="Number", if the delimiter is entered second time,
         // the inner input is firing event with empty value
         return;
       }
-
       if (emptyValueFiredOnNumberInput && this._backspaceKeyDown) {
         // Issue: when the user removes the character(s) after the delimeter of numeric Input,
         // the native input is firing event with an empty value and we have to manually handle this case,
         // otherwise the entire input will be cleared as we sync the "value".
+
         // There are tree scenarios:
         // Example: type "123.4" and press BACKSPACE - the native input is firing event with empty value.
         // Example: type "123.456", select/mark "456" and press BACKSPACE - the native input is firing event with empty value.
         // Example: type "123.456", select/mark "123.456" and press BACKSPACE - the native input is firing event with empty value,
         // but this time that's really the case.
+
         // Perform manual handling in case of floating number
         // and if the user did not select the entire input value
         if (this._selectedText.indexOf(",") > -1) {
           this._selectedText = this._selectedText.replace(",", ".");
         }
-
         if (rgxFloat.test(this.value) && this._selectedText !== this.value) {
-          const newValue = this.removeFractionalPart(this.value); // update state
+          const newValue = this.removeFractionalPart(this.value);
 
+          // update state
           this.value = newValue;
           this.highlightValue = newValue;
-          this.valueBeforeItemPreview = newValue; // fire events
+          this.valueBeforeItemPreview = newValue;
 
+          // fire events
           this.fireEvent(this.EVENT_INPUT, {
             inputType: event.inputType
           });
@@ -991,46 +899,37 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           return;
         }
       }
-
       if (event.target === inputDomRef) {
-        this.focused = true; // stop the native event, as the semantic "input" would be fired.
+        this.focused = true;
 
+        // stop the native event, as the semantic "input" would be fired.
         event.stopImmediatePropagation();
       }
-
       this.fireEventByAction(this.ACTION_USER_INPUT, event);
       this.hasSuggestionItemSelected = false;
       this._isValueStateFocused = false;
-
       if (this.Suggestions) {
         this.Suggestions.updateSelectedItemPosition(null);
       }
-
       this.isTyping = true;
     }
-
     _startsWithMatchingItems(str) {
       const textProp = this.suggestionItems[0].text ? "text" : "textContent";
       return Filters.StartsWith(str, this.suggestionItems, textProp);
     }
-
     _getFirstMatchingItem(current) {
       if (!this.suggestionItems.length) {
         return;
       }
-
       const matchingItems = this._startsWithMatchingItems(current).filter(item => !item.groupItem);
-
       if (matchingItems.length) {
         return matchingItems[0];
       }
     }
-
     _handleTypeAhead(item, filterValue) {
       if (!item) {
         return;
       }
-
       const value = item.text ? item.text : item.textContent || "";
       const innerInput = this.getInputDOMRefSync();
       filterValue = filterValue || "";
@@ -1041,112 +940,92 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }, 0);
       this._shouldAutocomplete = false;
     }
-
     _handleResize() {
       this._inputWidth = this.offsetWidth;
     }
-
     _closeRespPopover(preventFocusRestore) {
       this.Suggestions.close(preventFocusRestore);
     }
-
     async _afterOpenPopover() {
       // Set initial focus to the native input
       if ((0, _Device.isPhone)()) {
         (await this.getInputDOMRef()).focus();
       }
     }
-
     _afterClosePopover() {
-      this.announceSelectedItem(); // close device's keyboard and prevent further typing
+      this.announceSelectedItem();
 
+      // close device's keyboard and prevent further typing
       if ((0, _Device.isPhone)()) {
         this.blur();
         this.focused = false;
       }
-
       this.isTyping = false;
       this.openOnMobile = false;
       this.open = false;
       this._forceOpen = false;
     }
+
     /**
      * Checks if the value state popover is open.
      * @returns {boolean} true if the value state popover is open, false otherwise
      */
-
-
     isValueStateOpened() {
       return !!this._isPopoverOpen;
     }
-
     async openPopover() {
       const popover = await this._getPopover();
-
       if (popover) {
         this._isPopoverOpen = true;
         popover.showAt(this);
       }
     }
-
     async closePopover() {
       const popover = await this._getPopover();
       popover && popover.close();
     }
-
     async _getPopover() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem && staticAreaItem.querySelector("[ui5-popover]");
     }
+
     /**
      * Manually opens the suggestions popover, assuming suggestions are enabled. Items must be preloaded for it to open.
      * @since 1.3.0
      * @public
      */
-
-
     openPicker() {
       if (!this.suggestionItems.length || this.disabled || this.readonly) {
         return;
       }
-
       this._forceOpen = true;
     }
-
     enableSuggestions() {
       if (this.Suggestions) {
         return;
       }
-
       const Suggestions = (0, _FeaturesRegistry.getFeature)("InputSuggestions");
-
       if (Suggestions) {
         this.Suggestions = new Suggestions(this, "suggestionItems", true);
       } else {
         throw new Error(`You have to import "@ui5/webcomponents/dist/features/InputSuggestions.js" module to use ui5-input suggestions`);
       }
     }
-
     selectSuggestion(item, keyboardUsed) {
       if (item.group) {
         return;
       }
-
       const itemText = item.text || item.textContent; // keep textContent for compatibility
-
       const fireInput = keyboardUsed ? this.valueBeforeItemSelection !== itemText : this.valueBeforeAutoComplete !== itemText;
       this.hasSuggestionItemSelected = true;
-
       if (fireInput) {
         this.value = itemText;
         this.valueBeforeItemSelection = itemText;
         this.lastConfirmedValue = itemText;
         this.getInputDOMRefSync().value = itemText;
         this.fireEvent(this.EVENT_INPUT);
-
         this._handleChange();
       }
-
       this.valueBeforeItemPreview = "";
       this.suggestionSelectionCanceled = false;
       this.fireEvent(this.EVENT_SUGGESTION_ITEM_SELECT, {
@@ -1156,19 +1035,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.openOnMobile = false;
       this._forceOpen = false;
     }
-
     previewSuggestion(item) {
       this.valueBeforeItemSelection = this.value;
       this.updateValueOnPreview(item);
       this.announceSelectedItem();
       this._previewItem = item;
     }
+
     /**
      * Updates the input value on item preview.
      * @param {Object} item The item that is on preview
      */
-
-
     updateValueOnPreview(item) {
       const noPreview = item.type === "Inactive" || item.group;
       const innerInput = this.getInputDOMRefSync();
@@ -1177,29 +1054,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       innerInput.value = itemValue;
       innerInput.setSelectionRange(this.valueBeforeAutoComplete.length, this.value.length);
     }
+
     /**
      * The suggestion item on preview.
      * @type { sap.ui.webcomponents.main.IInputSuggestionItem }
      * @readonly
      * @public
      */
-
-
     get previewItem() {
       if (!this._previewItem) {
         return null;
       }
-
       return this.getSuggestionByListItem(this._previewItem);
     }
-
     async fireEventByAction(action, event) {
       await this.getInputDOMRef();
-
       if (this.disabled || this.readonly) {
         return;
       }
-
       const inputValue = await this.getInputValue();
       const isUserInput = action === this.ACTION_USER_INPUT;
       const input = await this.getInputDOMRef();
@@ -1207,7 +1079,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.value = inputValue;
       this.highlightValue = inputValue;
       this.valueBeforeItemPreview = inputValue;
-
       if ((0, _Device.isSafari)()) {
         // When setting the value by hand, Safari moves the cursor when typing in the middle of the text (See #1761)
         setTimeout(() => {
@@ -1215,89 +1086,72 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           input.selectionEnd = cursorPosition;
         }, 0);
       }
-
       if (isUserInput) {
         // input
         this.fireEvent(this.EVENT_INPUT, {
           inputType: event.inputType
-        }); // Angular two way data binding
-
+        });
+        // Angular two way data binding
         this.fireEvent("value-changed");
       }
     }
-
     async getInputValue() {
       const domRef = this.getDomRef();
-
       if (domRef) {
         return (await this.getInputDOMRef()).value;
       }
-
       return "";
     }
-
     async getInputDOMRef() {
       if ((0, _Device.isPhone)() && this.Suggestions) {
         await this.Suggestions._getSuggestionPopover();
         return this.Suggestions && this.Suggestions.responsivePopover.querySelector(".ui5-input-inner-phone");
       }
-
       return this.nativeInput;
     }
-
     getInputDOMRefSync() {
       if ((0, _Device.isPhone)() && this.Suggestions && this.Suggestions.responsivePopover) {
         return this.Suggestions.responsivePopover.querySelector(".ui5-input-inner-phone").shadowRoot.querySelector("input");
       }
-
       return this.nativeInput;
     }
+
     /**
      * Returns a reference to the native input element
      * @protected
      */
-
-
     get nativeInput() {
       return this.getDomRef() && this.getDomRef().querySelector(`input`);
     }
-
     get nativeInputWidth() {
       return this.nativeInput && this.nativeInput.offsetWidth;
     }
-
     getLabelableElementId() {
       return this.getInputId();
     }
-
     getSuggestionByListItem(item) {
       const key = parseInt(item.getAttribute("data-ui5-key"));
       return this.suggestionItems[key];
     }
+
     /**
      * Returns if the suggestions popover is scrollable.
      * The method returns <code>Promise</code> that resolves to true,
      * if the popup is scrollable and false otherwise.
      * @returns {Promise}
      */
-
-
     isSuggestionsScrollable() {
       if (!this.Suggestions) {
         return Promise.resolve(false);
       }
-
       return this.Suggestions._isScrollable();
     }
-
     getInputId() {
       return `${this._id}-inner`;
     }
+
     /* Suggestions interface  */
-
-
     onItemFocused() {}
-
     onItemMouseOver(event) {
       const item = event.target;
       const suggestion = this.getSuggestionByListItem(item);
@@ -1306,7 +1160,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         targetRef: item
       });
     }
-
     onItemMouseOut(event) {
       const item = event.target;
       const suggestion = this.getSuggestionByListItem(item);
@@ -1315,15 +1168,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         targetRef: item
       });
     }
-
     onItemMouseDown(event) {
       event.preventDefault();
     }
-
     onItemSelected(item, keyboardUsed) {
       this.selectSuggestion(item, keyboardUsed);
     }
-
     onItemPreviewed(item) {
       this.previewSuggestion(item);
       this.fireEvent("suggestion-item-preview", {
@@ -1331,11 +1181,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         targetRef: item
       });
     }
-
     onOpen() {}
-
     onClose() {}
-
     valueStateTextMappings() {
       return {
         "Success": Input.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS),
@@ -1344,41 +1191,32 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Warning": Input.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING)
       };
     }
-
     announceSelectedItem() {
       const invisibleText = this.shadowRoot.querySelector(`#${this._id}-selectionText`);
-
       if (this.Suggestions && this.Suggestions._isItemOnTarget()) {
         invisibleText.textContent = this.itemSelectionAnnounce;
       } else {
         invisibleText.textContent = "";
       }
     }
-
     get _readonly() {
       return this.readonly && !this.disabled;
     }
-
     get _headerTitleText() {
       return Input.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_TITLE);
     }
-
     get inputType() {
       return this.type.toLowerCase();
     }
-
     get isTypeNumber() {
       return this.type === _InputType.default.Number;
     }
-
     get suggestionsTextId() {
       return this.showSuggestions ? `${this._id}-suggestionsText` : "";
     }
-
     get valueStateTextId() {
       return this.hasValueState ? `${this._id}-valueStateDesc` : "";
     }
-
     get accInfo() {
       const ariaHasPopupDefault = this.showSuggestions ? "true" : undefined;
       const ariaAutoCompleteDefault = this.showSuggestions ? "list" : undefined;
@@ -1398,7 +1236,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get nativeInputAttributes() {
       return {
         "min": this.isTypeNumber ? this._nativeInputAttributes.min : undefined,
@@ -1406,23 +1243,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "step": this.isTypeNumber ? this._nativeInputAttributes.step || "any" : undefined
       };
     }
-
     get ariaValueStateHiddenText() {
       if (!this.hasValueStateMessage) {
         return;
       }
-
       if (this.shouldDisplayDefaultValueStateMessage) {
         return this.valueStateText;
       }
-
       return this.valueStateMessageText.map(el => el.textContent).join(" ");
     }
-
     get itemSelectionAnnounce() {
       return this.Suggestions ? this.Suggestions.itemSelectionAnnounce : undefined;
     }
-
     get classes() {
       return {
         popover: {
@@ -1439,7 +1271,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get styles() {
       const remSizeIxPx = parseInt(getComputedStyle(document.documentElement).fontSize);
       const stylesObject = {
@@ -1456,34 +1287,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         },
         innerInput: {}
       };
-
       if (this.nativeInputWidth < 48) {
         stylesObject.innerInput.padding = "0";
       }
-
       return stylesObject;
     }
-
     get suggestionSeparators() {
       return "None";
     }
-
     get valueStateMessageText() {
       return this.getSlottedNodes("valueStateMessage").map(el => el.cloneNode(true));
     }
-
     get shouldDisplayOnlyValueStateMessage() {
       return this.hasValueStateMessage && !this.readonly && !this.open && this.focused;
     }
-
     get shouldDisplayDefaultValueStateMessage() {
       return !this.valueStateMessage.length && this.hasValueStateMessage;
     }
-
     get hasValueState() {
       return this.valueState !== _ValueState.default.None;
     }
-
     get hasValueStateMessage() {
       return this.hasValueState && this.valueState !== _ValueState.default.Success && (!this._inputIconFocused // Handles the cases when valueStateMessage is forwarded (from datepicker e.g.)
       || this._isPhone && this.Suggestions); // Handles Input with suggestions on mobile
@@ -1492,53 +1315,43 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get valueStateText() {
       return this.valueStateTextMappings()[this.valueState];
     }
-
     get suggestionsText() {
       return Input.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS);
     }
-
     get availableSuggestionsCount() {
       if (this.showSuggestions && (this.value || this.Suggestions.isOpened())) {
         switch (this.suggestionsTexts.length) {
           case 0:
             return Input.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_NO_HIT);
-
           case 1:
             return Input.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_ONE_HIT);
-
           default:
             return Input.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_MORE_HITS, this.suggestionsTexts.length);
         }
       }
-
       return undefined;
     }
-
     get step() {
       return this.isTypeNumber ? "any" : undefined;
     }
-
     get _isPhone() {
       return (0, _Device.isPhone)();
     }
-
     get _isSuggestionsFocused() {
       return !this.focused && this.Suggestions && this.Suggestions.isOpened();
     }
+
     /**
      * Returns the placeholder value.
      * @protected
      */
-
-
     get _placeholder() {
       return this.placeholder;
     }
+
     /**
      * This method is relevant for sap_horizon theme only
      */
-
-
     get _valueStateInputIcon() {
       const iconPerValueState = {
         Error: `<path xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" d="M10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10C20 15.5228 15.5228 20 10 20ZM7.70711 13.7071C7.31658 14.0976 6.68342 14.0976 6.29289 13.7071C5.90237 13.3166 5.90237 12.6834 6.29289 12.2929L8.58579 10L6.29289 7.70711C5.90237 7.31658 5.90237 6.68342 6.29289 6.29289C6.68342 5.90237 7.31658 5.90237 7.70711 6.29289L10 8.58579L12.2929 6.29289C12.6834 5.90237 13.3166 5.90237 13.7071 6.29289C14.0976 6.68342 14.0976 7.31658 13.7071 7.70711L11.4142 10L13.7071 12.2929C14.0976 12.6834 14.0976 13.3166 13.7071 13.7071C13.3166 14.0976 12.6834 14.0976 12.2929 13.7071L10 11.4142L7.70711 13.7071Z" fill="#EE3939"/>`,
@@ -1553,15 +1366,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
 		`;
       return this.valueState !== _ValueState.default.None ? result : "";
     }
-
     get _valueStatePopoverHorizontalAlign() {
       return this.effectiveDir !== "rtl" ? "Left" : "Right";
     }
+
     /**
      * This method is relevant for sap_horizon theme only
      */
-
-
     get _valueStateMessageInputIcon() {
       const iconPerValueState = {
         Error: "error",
@@ -1571,55 +1382,46 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       };
       return this.valueState !== _ValueState.default.None ? iconPerValueState[this.valueState] : "";
     }
+
     /**
      * Returns the caret position inside the native input
      * @protected
      */
-
-
     getCaretPosition() {
       return (0, _Caret.getCaretPosition)(this.nativeInput);
     }
+
     /**
      * Sets the caret to a certain position inside the native input
      * @protected
      * @param pos
      */
-
-
     setCaretPosition(pos) {
       (0, _Caret.setCaretPosition)(this.nativeInput, pos);
     }
+
     /**
      * Removes the fractional part of floating-point number.
      * @param {string} value the numeric value of Input of type "Number"
      */
-
-
     removeFractionalPart(value) {
       if (value.includes(".")) {
         return value.slice(0, value.indexOf("."));
       }
-
       if (value.includes(",")) {
         return value.slice(0, value.indexOf(","));
       }
-
       return value;
     }
-
     static get dependencies() {
       const Suggestions = (0, _FeaturesRegistry.getFeature)("InputSuggestions");
       return [_Popover.default, _Icon.default].concat(Suggestions ? Suggestions.dependencies : []);
     }
-
     static async onDefine() {
       const Suggestions = (0, _FeaturesRegistry.getFeature)("InputSuggestions");
       [Input.i18nBundle] = await Promise.all([(0, _i18nBundle.getI18nBundle)("@ui5/webcomponents"), Suggestions ? Suggestions.init() : Promise.resolve()]);
     }
-
   }
-
   Input.define();
   var _default = Input;
   _exports.default = _default;

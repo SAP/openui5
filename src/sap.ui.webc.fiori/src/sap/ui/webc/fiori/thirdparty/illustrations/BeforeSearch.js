@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogBeforeSearch = _interopRequireDefault(_sapIllusDialogBeforeSearch);
   _sapIllusSceneBeforeSearch = _interopRequireDefault(_sapIllusSceneBeforeSearch);
   _sapIllusSpotBeforeSearch = _interopRequireDefault(_sapIllusSpotBeforeSearch);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "BeforeSearch";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_BEFORESEARCH;

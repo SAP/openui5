@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogEmptyPlanningCalendar = _interopRequireDefault(_sapIllusDialogEmptyPlanningCalendar);
   _sapIllusSceneEmptyPlanningCalendar = _interopRequireDefault(_sapIllusSceneEmptyPlanningCalendar);
   _sapIllusSpotEmptyPlanningCalendar = _interopRequireDefault(_sapIllusSpotEmptyPlanningCalendar);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "EmptyPlanningCalendar";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_EMPTYPLANNINGCALENDAR;

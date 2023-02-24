@@ -13,23 +13,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
   _WrappingType = _interopRequireDefault(_WrappingType);
   _CheckBoxTemplate = _interopRequireDefault(_CheckBoxTemplate);
   _CheckBox = _interopRequireDefault(_CheckBox);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
+
   let isGlobalHandlerAttached = false;
   let activeCb = null;
+
   /**
    * @public
    */
-
   const metadata = {
     tag: "ui5-checkbox",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.CheckBox.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.CheckBox.prototype */{
       /**
        * Receives id(or many ids) of the elements that label the component
        * @type {string}
@@ -41,7 +39,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         type: String,
         defaultValue: ""
       },
-
       /**
        * Defines the accessible aria name of the component.
        *
@@ -53,7 +50,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       accessibleName: {
         type: String
       },
-
       /**
        * Defines whether the component is disabled.
        * <br><br>
@@ -66,7 +62,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is read-only.
        * <br><br>
@@ -80,7 +75,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       readonly: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is required.
        *
@@ -92,7 +86,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       required: {
         type: Boolean
       },
-
       /**
       * Defines whether the component is displayed as partially checked.
       * <br><br>
@@ -113,7 +106,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       indeterminate: {
         type: Boolean
       },
-
       /**
        * Defines if the component is checked.
        * <br><br>
@@ -128,7 +120,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       checked: {
         type: Boolean
       },
-
       /**
        * Defines the text of the component.
        *
@@ -139,7 +130,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       text: {
         type: String
       },
-
       /**
        * Defines the value state of the component.
        *
@@ -162,7 +152,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         type: _ValueState.default,
         defaultValue: _ValueState.default.None
       },
-
       /**
        * Defines whether the component text wraps when there is not enough space.
        * <br><br>
@@ -180,7 +169,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         type: _WrappingType.default,
         defaultValue: _WrappingType.default.None
       },
-
       /**
        * Determines the name with which the component will be submitted in an HTML form.
        *
@@ -200,7 +188,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       name: {
         type: String
       },
-
       /**
        * Defines the active state (pressed or not) of the component.
        * @private
@@ -209,9 +196,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         type: Boolean
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.CheckBox.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.CheckBox.prototype */{
       /**
        * Fired when the component checked state changes.
        *
@@ -220,9 +205,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
        */
       change: {}
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.CheckBox.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.CheckBox.prototype */{
       /**
        * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
        * when <code>name</code> property is set.
@@ -235,6 +218,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       }
     }
   };
+
   /**
    * @class
    *
@@ -281,46 +265,36 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    * @tagname ui5-checkbox
    * @public
    */
-
   class CheckBox extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _CheckBoxTemplate.default;
     }
-
     static get styles() {
       return _CheckBox.default;
     }
-
     constructor() {
       super();
-
       this._deactivate = () => {
         if (activeCb) {
           activeCb.active = false;
         }
       };
-
       if (!isGlobalHandlerAttached) {
         document.addEventListener("mouseup", this._deactivate);
         isGlobalHandlerAttached = true;
       }
     }
-
     onBeforeRendering() {
       this._enableFormSupport();
     }
-
     _enableFormSupport() {
       const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-
       if (FormSupport) {
         FormSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
           nativeInput.disabled = element.disabled || !element.checked;
@@ -334,12 +308,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     _onclick() {
       this.toggle();
     }
-
     _onmousedown() {
       if (this.readonly || this.disabled) {
         return;
       }
-
       this.active = true;
       activeCb = this; // eslint-disable-line
     }
@@ -347,31 +319,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     _onmouseup() {
       this.active = false;
     }
-
     _onfocusout() {
       this.active = false;
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isSpace)(event)) {
         event.preventDefault();
         this.active = true;
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this.toggle();
         this.active = true;
       }
     }
-
     _onkeyup(event) {
       if ((0, _Keys.isSpace)(event)) {
         this.toggle();
       }
-
       this.active = false;
     }
-
     toggle() {
       if (this.canToggle()) {
         if (this.indeterminate) {
@@ -380,19 +346,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         } else {
           this.checked = !this.checked;
         }
-
-        this.fireEvent("change"); // Angular two way data binding
-
+        this.fireEvent("change");
+        // Angular two way data binding
         this.fireEvent("value-changed");
       }
-
       return this;
     }
-
     canToggle() {
       return !(this.disabled || this.readonly);
     }
-
     valueStateTextMappings() {
       return {
         "Error": CheckBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
@@ -400,11 +362,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         "Success": CheckBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS)
       };
     }
-
     get ariaLabelText() {
       return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
     }
-
     get classes() {
       return {
         main: {
@@ -412,58 +372,44 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         }
       };
     }
-
     get ariaReadonly() {
       return this.readonly ? "true" : undefined;
     }
-
     get ariaDisabled() {
       return this.disabled ? "true" : undefined;
     }
-
     get ariaChecked() {
       return this.indeterminate && this.checked ? "mixed" : this.checked;
     }
-
     get ariaLabelledBy() {
       if (!this.ariaLabelText) {
         return this.text ? `${this._id}-label` : undefined;
       }
-
       return undefined;
     }
-
     get ariaDescribedBy() {
       return this.hasValueState ? `${this._id}-descr` : undefined;
     }
-
     get hasValueState() {
       return this.valueState !== _ValueState.default.None;
     }
-
     get valueStateText() {
       return this.valueStateTextMappings()[this.valueState];
     }
-
     get tabIndex() {
       const tabindex = this.getAttribute("tabindex");
       return this.disabled ? undefined : tabindex || "0";
     }
-
     get isCompletelyChecked() {
       return this.checked && !this.indeterminate;
     }
-
     static get dependencies() {
       return [_Label.default, _Icon.default];
     }
-
     static async onDefine() {
       CheckBox.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   CheckBox.define();
   var _default = CheckBox;
   _exports.default = _default;

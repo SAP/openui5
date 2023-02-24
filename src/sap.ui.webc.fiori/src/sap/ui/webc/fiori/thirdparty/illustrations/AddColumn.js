@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogAddColumn = _interopRequireDefault(_sapIllusDialogAddColumn);
   _sapIllusSceneAddColumn = _interopRequireDefault(_sapIllusSceneAddColumn);
   _sapIllusSpotAddColumn = _interopRequireDefault(_sapIllusSpotAddColumn);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "AddColumn";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_ADDCOLUMN;

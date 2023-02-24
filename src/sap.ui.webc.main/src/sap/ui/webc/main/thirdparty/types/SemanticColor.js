@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @lends sap.ui.webcomponents.main.types.SemanticColor.prototype
    * @public
@@ -20,28 +18,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Default}
      */
     Default: "Default",
-
     /**
      * Positive color
      * @public
      * @type {Positive}
      */
     Positive: "Positive",
-
     /**
      * Negative color
      * @public
      * @type {Negative}
      */
     Negative: "Negative",
-
     /**
      * Critical color
      * @public
      * @type {Critical}
      */
     Critical: "Critical",
-
     /**
      * Neutral color.
      * @public
@@ -49,6 +43,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Neutral: "Neutral"
   };
+
   /**
    * @class
    * Defines the semantic color
@@ -58,14 +53,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class SemanticColor extends _DataType.default {
     static isValid(value) {
       return !!SemanticColors[value];
     }
-
   }
-
   SemanticColor.generateTypeAccessors(SemanticColors);
   var _default = SemanticColor;
   _exports.default = _default;

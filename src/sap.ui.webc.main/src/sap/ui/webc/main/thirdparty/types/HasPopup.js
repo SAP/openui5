@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * Different types of HasPopup.
    * @lends sap.ui.webcomponents.main.types.HasPopup.prototype
@@ -21,28 +19,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {Dialog}
      */
     Dialog: "Dialog",
-
     /**
      * Grid popup type.
      * @public
      * @type {Grid}
      */
     Grid: "Grid",
-
     /**
      * ListBox popup type.
      * @public
      * @type {ListBox}
      */
     ListBox: "ListBox",
-
     /**
      * Menu popup type.
      * @public
      * @type {Menu}
      */
     Menu: "Menu",
-
     /**
      * Tree popup type.
      * @public
@@ -50,6 +44,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Tree: "Tree"
   };
+
   /**
    * @class
    * Different types of HasPopup.
@@ -59,14 +54,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class HasPopup extends _DataType.default {
     static isValid(value) {
       return !!PopupTypes[value];
     }
-
   }
-
   HasPopup.generateTypeAccessors(PopupTypes);
   var _default = HasPopup;
   _exports.default = _default;

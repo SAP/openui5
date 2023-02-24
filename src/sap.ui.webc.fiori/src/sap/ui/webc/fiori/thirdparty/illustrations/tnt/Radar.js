@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _tntDialogRadar = _interopRequireDefault(_tntDialogRadar);
   _tntSceneRadar = _interopRequireDefault(_tntSceneRadar);
   _tntSpotRadar = _interopRequireDefault(_tntSpotRadar);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "Radar";
   const set = "tnt";
   (0, _Illustrations.registerIllustration)(name, {

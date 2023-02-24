@@ -16,9 +16,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _SideNavigationItemPopoverContentTemplate = _interopRequireDefault(_SideNavigationItemPopoverContentTemplate);
   _SideNavigation = _interopRequireDefault(_SideNavigation);
   _SideNavigationPopover = _interopRequireDefault(_SideNavigationPopover);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -28,9 +26,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-side-navigation",
     managedSlots: true,
     fastNavigation: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.SideNavigation.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.SideNavigation.prototype */{
       /**
        * Defines whether the <code>ui5-side-navigation</code> is expanded or collapsed.
        *
@@ -41,7 +37,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       collapsed: {
         type: Boolean
       },
-
       /**
        * @private
        */
@@ -49,9 +44,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: Object
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.SideNavigation.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.SideNavigation.prototype */{
       /**
        * Defines the main items of the <code>ui5-side-navigation</code>. Use the <code>ui5-side-navigation-item</code> component
        * for the top-level items, and the <code>ui5-side-navigation-sub-item</code> component for second-level items, nested
@@ -66,7 +59,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         invalidateOnChildChange: true,
         type: HTMLElement
       },
-
       /**
        * Defines the header of the <code>ui5-side-navigation</code>.
        *
@@ -81,7 +73,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       header: {
         type: HTMLElement
       },
-
       /**
        * Defines the fixed items at the bottom of the <code>ui5-side-navigation</code>. Use the <code>ui5-side-navigation-item</code> component
        * for the fixed items, and optionally the <code>ui5-side-navigation-sub-item</code> component to provide second-level items inside them.
@@ -97,9 +88,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         invalidateOnChildChange: true
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.SideNavigation.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.SideNavigation.prototype */{
       /**
        * Fired when the selection has changed via user interaction
        *
@@ -117,6 +106,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -161,36 +151,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @appenddocs SideNavigationItem SideNavigationSubItem
    * @public
    */
-
   class SideNavigation extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get staticAreaStyles() {
       return [_SideNavigationPopover.default];
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return _SideNavigation.default;
     }
-
     static get template() {
       return _SideNavigationTemplate.default;
     }
-
     static get staticAreaTemplate() {
       return _SideNavigationItemPopoverContentTemplate.default;
     }
-
     static get dependencies() {
       return [_List.default, _StandardListItem.default, _Tree.default, _TreeItem.default, _ResponsivePopover.default];
     }
-
     onBeforeRendering() {
       this._items = this.items.map(item => {
         return {
@@ -205,21 +187,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         };
       });
     }
-
     _setSelectedItem(item) {
       if (!this.fireEvent("selection-change", {
         item
       }, true)) {
         return;
       }
-
       this._walk(current => {
         current.selected = false;
       });
-
       item.selected = true;
     }
-
     _buildPopoverContent(item) {
       this._popoverContent = {
         mainItem: item,
@@ -227,75 +205,58 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         subItems: item.items
       };
     }
-
     handleTreeItemClick(event) {
       const treeItem = event.detail.item;
       const item = treeItem.associatedItem;
-
       if (!item.wholeItemToggleable) {
         item.fireEvent("click");
       } else {
         item.expanded = !item.expanded;
       }
-
       if (item.selected && !this.collapsed) {
         return;
       }
-
       if (this.collapsed && item.items.length) {
         this._buildPopoverContent(item);
-
         const currentTree = this._itemsTree === event.target ? this._itemsTree : this._fixedItemsTree;
         this.openPicker(currentTree._getListItemForTreeItem(treeItem));
       } else {
         this._setSelectedItem(item);
       }
     }
-
     handleListItemClick(event) {
       const listItem = event.detail.item;
       const item = listItem.associatedItem;
       item.fireEvent("click");
-
       if (item.selected) {
         return;
       }
-
       this._setSelectedItem(item);
-
       this.closePicker();
     }
-
     async getPicker() {
       return (await this.getStaticAreaItemDomRef()).querySelector("[ui5-responsive-popover]");
     }
-
     async openPicker(opener) {
       const responsivePopover = await this.getPicker();
       responsivePopover.showAt(opener);
     }
-
     async closePicker(opener) {
       const responsivePopover = await this.getPicker();
       responsivePopover.close();
     }
-
     get hasHeader() {
       return !!this.header.length;
     }
-
     get showHeader() {
       return this.hasHeader && !this.collapsed;
     }
-
     get _itemsTree() {
       return this.getDomRef().querySelector("#ui5-sn-items-tree");
     }
-
     get _fixedItemsTree() {
       return this.getDomRef().querySelector("#ui5-sn-fixed-items-tree");
     }
-
     _walk(callback) {
       this.items.forEach(current => {
         callback(current);
@@ -310,9 +271,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
       });
     }
-
   }
-
   SideNavigation.define();
   var _default = SideNavigation;
   _exports.default = _default;

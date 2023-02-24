@@ -14,11 +14,11 @@ sap.ui.define(["exports", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/
   _NotificationListItemBase = _interopRequireDefault(_NotificationListItemBase);
   _NotificationListGroupItemTemplate = _interopRequireDefault(_NotificationListGroupItemTemplate);
   _NotificationListGroupItem = _interopRequireDefault(_NotificationListGroupItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Texts
+
   // Templates
+
   // Styles
 
   /**
@@ -28,9 +28,7 @@ sap.ui.define(["exports", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/
     tag: "ui5-li-notification-group",
     languageAware: true,
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListGroupItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.fiori.NotificationListGroupItem.prototype */{
       /**
        * Defines if the group is collapsed or expanded.
        * @type {boolean}
@@ -40,7 +38,6 @@ sap.ui.define(["exports", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/
       collapsed: {
         type: Boolean
       },
-
       /**
        * Defines if the items <code>counter</code> would be displayed.
        * @type {boolean}
@@ -51,9 +48,7 @@ sap.ui.define(["exports", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/
         type: Boolean
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListGroupItem.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.fiori.NotificationListGroupItem.prototype */{
       /**
        * Defines the items of the <code>ui5-li-notification-group</code>,
        * usually <code>ui5-li-notification</code> items.
@@ -67,9 +62,7 @@ sap.ui.define(["exports", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/
         type: HTMLElement
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.fiori.NotificationListGroupItem.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.fiori.NotificationListGroupItem.prototype */{
       /**
        * Fired when the <code>ui5-li-notification-group</code> is expanded/collapsed by user interaction.
        *
@@ -79,6 +72,7 @@ sap.ui.define(["exports", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/
       toggle: {}
     }
   };
+
   /**
    * @class
    *
@@ -123,128 +117,101 @@ sap.ui.define(["exports", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/
    * @implements sap.ui.webcomponents.main.IListItem
    * @public
    */
-
   class NotificationListGroupItem extends _NotificationListItemBase.default {
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return _NotificationListGroupItem.default;
     }
-
     static get template() {
       return _NotificationListGroupItemTemplate.default;
     }
-
     onBeforeRendering() {
       if (this.busy) {
         this.clearChildBusyIndicator();
       }
     }
+
     /**
      * Clears child items busy state to show a single busy over the entire group,
      * instead of multiple BusyIndicator instances
      */
-
-
     clearChildBusyIndicator() {
       this.items.forEach(item => {
         item.busy = false;
       });
     }
-
     static get dependencies() {
       return [_List.default, _Button.default, _Icon.default, _BusyIndicator.default, _Popover.default];
     }
-
     get itemsCount() {
       return this.items.length;
     }
-
     get overflowBtnAccessibleName() {
       return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_OVERLOW_BTN_TITLE);
     }
-
     get closeBtnAccessibleName() {
       return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_CLOSE_BTN_TITLE);
     }
-
     get toggleBtnAccessibleName() {
       if (this.collapsed) {
         return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TOGGLE_BTN_EXPAND_TITLE);
       }
-
       return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TOGGLE_BTN_COLLAPSE_TITLE);
     }
-
     get priorityText() {
       if (this.priority === _Priority.default.High) {
         return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_HIGH_PRIORITY_TXT);
       }
-
       if (this.priority === _Priority.default.Medium) {
         return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_MEDIUM_PRIORITY_TXT);
       }
-
       if (this.priority === _Priority.default.Low) {
         return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_LOW_PRIORITY_TXT);
       }
-
       return "";
     }
-
     get accInvisibleText() {
       return `${this.groupText} ${this.readText} ${this.priorityText} ${this.counterText}`;
     }
-
     get readText() {
       if (this.read) {
         return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_READ);
       }
-
       return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_ITEM_UNREAD);
     }
-
     get groupText() {
       return NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TXT);
     }
-
     get counterText() {
       const text = NotificationListGroupItem.i18nFioriBundle.getText(_i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_COUNTER_TXT);
       return this.showCounter ? `${text} ${this.itemsCount}` : "";
     }
-
     get ariaLabelledBy() {
       const id = this._id;
       const ids = [];
-
       if (this.hasTitleText) {
         ids.push(`${id}-title-text`);
       }
-
       ids.push(`${id}-invisibleText`);
       return ids.join(" ");
     }
-
     get ariaExpanded() {
       return !this.collapsed;
     }
+
     /**
      * Event handlers
      *
      */
-
-
     _onBtnToggleClick() {
       this.collapsed = !this.collapsed;
       this.fireEvent("toggle", {
         item: this
       });
     }
-
   }
-
   NotificationListGroupItem.define();
   var _default = NotificationListGroupItem;
   _exports.default = _default;

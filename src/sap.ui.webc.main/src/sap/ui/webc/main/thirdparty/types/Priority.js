@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * Different types of Priority.
    * @lends sap.ui.webcomponents.main.types.Priority.prototype
@@ -21,21 +19,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {High}
      */
     High: "High",
-
     /**
      * Medium priority.
      * @public
      * @type {Medium}
      */
     Medium: "Medium",
-
     /**
      * Low priority.
      * @public
      * @type {Low}
      */
     Low: "Low",
-
     /**
      * Default, none priority.
      * @public
@@ -43,6 +38,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     None: "None"
   };
+
   /**
    * @class
    * Different types of Priority.
@@ -52,14 +48,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class Priority extends _DataType.default {
     static isValid(value) {
       return !!Priorities[value];
     }
-
   }
-
   Priority.generateTypeAccessors(Priorities);
   var _default = Priority;
   _exports.default = _default;

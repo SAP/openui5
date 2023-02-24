@@ -15,9 +15,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Title = _interopRequireDefault(_Title);
   _ResponsivePopover = _interopRequireDefault(_ResponsivePopover);
   _ColorPalette = _interopRequireDefault(_ColorPalette);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Styles
 
   /**
@@ -26,9 +24,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-color-palette-popover",
     managedSlots: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.ColorPalettePopover.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.ColorPalettePopover.prototype */{
       /**
        * Defines whether the user can see the last used colors in the bottom of the component
        * @type {boolean}
@@ -38,7 +34,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       showRecentColors: {
         type: Boolean
       },
-
       /**
        * Defines whether the user can choose a custom color from a component.
        * <b>Note:</b> In order to use this property you need to import the following module: <code>"@ui5/webcomponents/dist/features/ColorPaletteMoreColors.js"</code>
@@ -49,7 +44,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       showMoreColors: {
         type: Boolean
       },
-
       /**
        * Defines whether the user can choose the default color from a button.
        * @type {boolean}
@@ -59,7 +53,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       showDefaultColor: {
         type: Boolean
       },
-
       /**
        * Defines the default color of the component.
        * <b>Note:</b> The default color should be a part of the ColorPalette colors</code>
@@ -70,9 +63,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _CSSColor.default
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.ColorPalettePopover.prototype */
-    {
+    slots: /** @lends sap.ui.webcomponents.main.ColorPalettePopover.prototype */{
       /**
        * Defines the content of the component.
        * @type {sap.ui.webcomponents.main.IColorPaletteItem[]}
@@ -85,9 +76,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         individualSlots: true
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.ColorPalettePopover.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.ColorPalettePopover.prototype */{
       /**
        * Fired when the user selects a color.
        *
@@ -104,6 +93,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
   };
+
   /**
    * @class
    *
@@ -133,55 +123,46 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 1.0.0-rc.16
    */
-
   class ColorPalettePopover extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get styles() {
       return [_ResponsivePopoverCommon.default, _ColorPalettePopover.default];
     }
-
     static get template() {
       return _ColorPalettePopoverTemplate.default;
     }
-
     static get dependencies() {
       return [_ResponsivePopover.default, _Button.default, _Title.default, _ColorPalette.default];
     }
-
     static async onDefine() {
       ColorPalettePopover.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
     constructor() {
       super();
     }
-
     _respPopover() {
       this.responsivePopover = this.shadowRoot.querySelector("[ui5-responsive-popover]");
       return this.responsivePopover;
     }
-
     _colorPalette() {
       return this.responsivePopover.content[0].querySelector("[ui5-color-palette]");
     }
+
     /**
      * Shows the ColorPalettePopover.
      * @param {HTMLElement} opener the element that the popover is shown at
      * @public
      * @since 1.1.1
      */
-
-
     showAt(opener) {
       this._openPopover(opener);
     }
+
     /**
      * Shows the ColorPalettePopover.
      * <b>Note:</b> The method is deprecated and will be removed in future, use <code>showAt</code> instead.
@@ -190,34 +171,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @since 1.0.0-rc.16
      * @deprecated The method is deprecated in favour of <code>showAt</code>.
      */
-
-
     openPopover(opener) {
       console.warn("The method 'openPopover' is deprecated and will be removed in future, use 'showAt' instead."); // eslint-disable-line
-
       this._openPopover(opener);
     }
-
     _openPopover(opener) {
       this._respPopover();
-
       this.responsivePopover.showAt(opener, true);
-
       if (this.showDefaultColor) {
         this._colorPalette().colorPaletteNavigationElements[0].focus();
       } else {
         this._colorPalette().focusColorElement(this._colorPalette().colorPaletteNavigationElements[0], this._colorPalette()._itemNavigation);
       }
     }
-
     closePopover() {
       this.responsivePopover.close();
     }
-
     onSelectedColor(event) {
       this.closePopover();
       this.fireEvent("item-click", event.detail);
     }
+
     /**
      * Returns if the component is opened.
      *
@@ -225,28 +199,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @since 1.0.0-rc.16
      * @returns {boolean}
      */
-
-
     isOpen() {
       this._respPopover();
-
       return this.responsivePopover.opened;
     }
-
     get colorPaletteColors() {
       return this.getSlottedNodes("colors");
     }
-
     get _colorPaletteTitle() {
       return ColorPalettePopover.i18nBundle.getText(_i18nDefaults.COLORPALETTE_POPOVER_TITLE);
     }
-
     get _cancelButtonLabel() {
       return ColorPalettePopover.i18nBundle.getText(_i18nDefaults.COLOR_PALETTE_DIALOG_CANCEL_BUTTON);
     }
-
   }
-
   ColorPalettePopover.define();
   var _default = ColorPalettePopover;
   _exports.default = _default;

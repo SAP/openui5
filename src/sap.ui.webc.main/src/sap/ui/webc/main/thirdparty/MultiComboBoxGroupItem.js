@@ -7,17 +7,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "./Gr
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _GroupHeaderListItem = _interopRequireDefault(_GroupHeaderListItem);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * @public
    */
   const metadata = {
     tag: "ui5-mcb-group-item",
-    properties:
-    /** @lends sap.ui.webcomponents.main.MultiComboBoxGroupItem.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.MultiComboBoxGroupItem.prototype */{
       /**
        * Defines the text of the component.
        *
@@ -29,13 +25,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "./Gr
         type: String
       }
     },
-    slots:
-    /** @lends sap.ui.webcomponents.main.MultiComboBoxGroupItem.prototype */
-    {},
-    events:
-    /** @lends sap.ui.webcomponents.main.MultiComboBoxGroupItem.prototype */
-    {}
+    slots: /** @lends sap.ui.webcomponents.main.MultiComboBoxGroupItem.prototype */{},
+    events: /** @lends sap.ui.webcomponents.main.MultiComboBoxGroupItem.prototype */{}
   };
+
   /**
    * @class
    * The <code>ui5-mcb-group-item</code> is type of suggestion item,
@@ -50,31 +43,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "./Gr
    * @implements sap.ui.webcomponents.main.IMultiComboBoxItem
    * @since 1.4.0
    */
-
   class MultiComboBoxGroupItem extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get dependencies() {
       return [_GroupHeaderListItem.default];
     }
+
     /**
      * Used to avoid tag name checks
      * @protected
      */
-
-
     get isGroupItem() {
       return true;
     }
-
     get stableDomRef() {
       return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
     }
-
   }
-
   MultiComboBoxGroupItem.define();
   var _default = MultiComboBoxGroupItem;
   _exports.default = _default;

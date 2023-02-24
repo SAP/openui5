@@ -6,9 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
   });
   _exports.default = void 0;
   _DataType = _interopRequireDefault(_DataType);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   /**
    * Different types of wrapping.
    * @lends sap.ui.webcomponents.main.types.WrappingType.prototype
@@ -21,7 +19,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * @type {None}
      */
     None: "None",
-
     /**
      * The text will wrap. The words will not be broken based on hyphenation.
      * @public
@@ -29,6 +26,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      */
     Normal: "Normal"
   };
+
   /**
    * @class
    * Defines how the text of a component will be displayed when there is not enough space.
@@ -38,14 +36,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
    * @public
    * @enum {string}
    */
-
   class WrappingType extends _DataType.default {
     static isValid(value) {
       return !!WrappingTypes[value];
     }
-
   }
-
   WrappingType.generateTypeAccessors(WrappingTypes);
   var _default = WrappingType;
   _exports.default = _default;

@@ -25,9 +25,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   _sapIllusDialogErrorScreen = _interopRequireDefault(_sapIllusDialogErrorScreen);
   _sapIllusSceneErrorScreen = _interopRequireDefault(_sapIllusSceneErrorScreen);
   _sapIllusSpotErrorScreen = _interopRequireDefault(_sapIllusSpotErrorScreen);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   const name = "ErrorScreen";
   const set = "fiori";
   const title = _i18nDefaults.IM_TITLE_UNABLETOUPLOAD;

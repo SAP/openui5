@@ -11,10 +11,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _SwitchDesign = _interopRequireDefault(_SwitchDesign);
   _SwitchTemplate = _interopRequireDefault(_SwitchTemplate);
   _Switch = _interopRequireDefault(_Switch);
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
   // Template
+
   // Styles
 
   /**
@@ -23,9 +22,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   const metadata = {
     tag: "ui5-switch",
     languageAware: true,
-    properties:
-    /** @lends sap.ui.webcomponents.main.Switch.prototype */
-    {
+    properties: /** @lends sap.ui.webcomponents.main.Switch.prototype */{
       /**
        * Defines the component design.
        * <br><br>
@@ -40,7 +37,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: _SwitchDesign.default,
         defaultValue: _SwitchDesign.default.Textual
       },
-
       /**
        * Defines if the component is checked.
        * <br><br>
@@ -53,7 +49,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       checked: {
         type: Boolean
       },
-
       /**
        * Defines whether the component is disabled.
        * <br><br>
@@ -66,7 +61,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       disabled: {
         type: Boolean
       },
-
       /**
        * Defines the text, displayed when the component is checked.
        *
@@ -80,7 +74,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       textOn: {
         type: String
       },
-
       /**
        * Defines the text, displayed when the component is not checked.
        * <br><br>
@@ -93,7 +86,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       textOff: {
         type: String
       },
-
       /**
        * Sets the accessible aria name of the component.
        *
@@ -107,7 +99,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       accessibleName: {
         type: String
       },
-
       /**
        * Receives id(or many ids) of the elements that label the component.
        *
@@ -123,9 +114,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         defaultValue: ""
       }
     },
-    events:
-    /** @lends sap.ui.webcomponents.main.Switch.prototype */
-    {
+    events: /** @lends sap.ui.webcomponents.main.Switch.prototype */{
       /**
        * Fired when the component checked state changes.
        *
@@ -135,6 +124,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       change: {}
     }
   };
+
   /**
    * @class
    *
@@ -175,77 +165,61 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @public
    * @since 0.8.0
    */
-
   class Switch extends _UI5Element.default {
     static get metadata() {
       return metadata;
     }
-
     static get styles() {
       return _Switch.default;
     }
-
     static get render() {
       return _LitRenderer.default;
     }
-
     static get template() {
       return _SwitchTemplate.default;
     }
-
     get sapNextIcon() {
       return this.checked ? "accept" : "less";
     }
-
     _onclick(event) {
       this.toggle();
     }
-
     _onkeydown(event) {
       if ((0, _Keys.isSpace)(event)) {
         event.preventDefault();
       }
-
       if ((0, _Keys.isEnter)(event)) {
         this.toggle();
       }
     }
-
     _onkeyup(event) {
       if ((0, _Keys.isSpace)(event)) {
         this.toggle();
       }
     }
-
     toggle() {
       if (!this.disabled) {
         this.checked = !this.checked;
-        this.fireEvent("change"); // Angular two way data binding;
-
+        this.fireEvent("change");
+        // Angular two way data binding;
         this.fireEvent("value-changed");
       }
     }
-
     get graphical() {
       return this.design === _SwitchDesign.default.Graphical;
     }
-
     get hasNoLabel() {
       return !(this.graphical || this.textOn || this.textOff);
     }
-
     get _textOn() {
       return this.graphical ? "" : this.textOn;
     }
-
     get _textOff() {
       return this.graphical ? "" : this.textOff;
     }
-
     get tabIndex() {
       return this.disabled ? undefined : "0";
     }
-
     get classes() {
       const hasLabel = this.graphical || this.textOn || this.textOff;
       return {
@@ -258,37 +232,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-
     get ariaDisabled() {
       return this.disabled ? "true" : undefined;
     }
-
     get accessibilityOnText() {
       return this._textOn;
     }
-
     get accessibilityOffText() {
       return this._textOff;
     }
-
     get hiddenText() {
       return this.checked ? this.accessibilityOnText : this.accessibilityOffText;
     }
-
     get ariaLabelText() {
       return [(0, _AriaLabelHelper.getEffectiveAriaLabelText)(this), this.hiddenText].join(" ").trim();
     }
-
     static get dependencies() {
       return [_Icon.default];
     }
-
     static async onDefine() {
       Switch.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-
   }
-
   Switch.define();
   var _default = Switch;
   _exports.default = _default;
