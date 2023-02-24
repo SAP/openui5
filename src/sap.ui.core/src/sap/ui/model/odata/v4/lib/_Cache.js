@@ -516,7 +516,9 @@ sap.ui.define([
 			aCollection.splice(iIndex, 1);
 			aCollection.$created -= 1;
 			if (!oEntityData["@$ui5.context.isInactive"]) {
-				that.iActiveElements -= 1;
+				if (!sPath) {
+					that.iActiveElements -= 1;
+				}
 				addToCount(that.mChangeListeners, sPath, aCollection, -1);
 			}
 			delete aCollection.$byPredicate[sTransientPredicate];
@@ -630,7 +632,9 @@ sap.ui.define([
 				_Helper.publicClone(oEntityData, true));
 			oEntityData["@$ui5.context.isInactive"] = true;
 		} else {
-			this.iActiveElements += 1;
+			if (!sPath) {
+				this.iActiveElements += 1;
+			}
 			addToCount(this.mChangeListeners, sPath, aCollection, 1);
 		}
 
