@@ -12,12 +12,9 @@
 
 	<div class="topic">
 		<div class="content">
-			<h1>
+			<h1 id="overview">
 				CSRF Tokens
 			</h1>
-			<h2 id="overview">
-				Overview
-			</h2>
 			<p>
 				A CSRF (Cross Site Request Forgery) Token is a secret, unique and unpredictable value a
 				server-side application generates in order to protect CSRF vulnerable resources.
@@ -34,7 +31,7 @@
 				These tokens can be referred inside a data request using a placeholder like
 				<code>{{CSRFTokens.myCSRFToken}}</code>. See the example below.
 			</p>
-			<h3>CSRF Token properties:</h3>
+			<h3 id="properties">CSRF Token properties</h3>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -124,13 +121,6 @@
 	}
 }</pre>
 			<a class="try-button" href="../../../index.html#/explore/data/csrf" target="_parent">Try it Out</a>
-		</div>
-		<div class="navigation">
-			<h4>Table of Contents</h4>
-			<div><a href="#overview">Overview</a></div>
-			<div><a href="#inTheManifest">In The Manifest</a></div>
-			<div><a href="#inTheHostEnvironment">In The Host Environment</a></div>
-			<div><a href="#examples">Example</a></div>
 		</div>
 	</div>
 </body>

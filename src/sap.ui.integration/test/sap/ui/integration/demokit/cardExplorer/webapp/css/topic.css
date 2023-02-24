@@ -6,7 +6,6 @@
 	white-space: nowrap;
 	font-size: 1rem;
 	line-height: 22px;
-
 	color: #32363A;
 }
 
@@ -32,6 +31,13 @@
 	font-size: 16px;
 	line-height: 18px;
 	font-weight: bold;
+}
+
+.topic .boldBlock {
+	font-size: 16px;
+	line-height: 18px;
+	font-weight: bold;
+	margin: 21px 0;
 }
 
 .topic .navigation h4 {
@@ -73,29 +79,30 @@
 	display: inline-block;
 	box-sizing: border-box;
 	width: 10rem;
+	padding-right: 0.25rem;
 }
 
-.navigation [data-indent='0'] {
+.navigation [data-indent='0'] a {
 	padding-left: 0;
 }
 
-.navigation [data-indent='1'] {
+.navigation [data-indent='1'] a {
 	padding-left: 0.5rem;
 }
 
-.navigation [data-indent='2'] {
+.navigation [data-indent='2'] a {
 	padding-left: 1rem;
 }
 
-.navigation [data-indent='3'] {
+.navigation [data-indent='3'] a {
 	padding-left: 1.5rem;
 }
 
-.navigation [data-indent='4'] {
+.navigation [data-indent='4'] a {
 	padding-left: 2rem;
 }
 
-.navigation [data-indent='5'] {
+.navigation [data-indent='5'] a {
 	padding-left: 2.5rem;
 }
 

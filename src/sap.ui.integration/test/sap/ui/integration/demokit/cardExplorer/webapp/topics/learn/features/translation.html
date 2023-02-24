@@ -13,13 +13,10 @@
 	<div class="topic">
 		<div class="content">
 
-			<h1>
+			<h1 id="overview">
 				Card Translations
 			</h1>
 
-			<h2 id="overview">
-				Overview
-			</h2>
 			<p>
 				Cards can be translated into other languages without changing the manifest. To achieve this you should create a resource bundle.
 				The resource bundle is a collection of <code>&lt;filename&gt;_&lt;locale&gt;.properties</code> files. Each file contains key-value
@@ -65,7 +62,7 @@
 				Examples
 			</h2>
 
-			<h4>Translating properties during manifest processing</h4>
+			<strong>Translating properties during manifest processing</strong>
 			<p>i18n/i18n.properties</p>
 			<pre class="lang-properties">
 TITLE=My Products
@@ -97,8 +94,8 @@ SUBTITLE=Gro\u00DFartige Produkte
 	}
 }</pre>
 
-			<h4>Translations in binding syntaxes by using the i18n model of the card (where the user i18n files contain
-				keys <code>EXPECTED_ITEMS</code> and <code>subtitle</code>):</h4>
+			<strong>Translations in binding syntaxes by using the i18n model of the card (where the user i18n files contain
+				keys <code>EXPECTED_ITEMS</code> and <code>subtitle</code>):</strong>
 			<pre class="lang-json">
 {
 	"sap.app": {
@@ -127,13 +124,6 @@ SUBTITLE=Gro\u00DFartige Produkte
 
 			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/translation"
 				target="_parent">Try it Out</a>
-		</div>
-		<div class="navigation">
-			<h4>Table of Contents</h4>
-			<div><a href="#overview">Overview</a></div>
-			<div><a href="#predefinedTranslationKeys">Predefined Translation Keys</a></div>
-			<div><a href="#textsWithPlaceholders">Texts with Placeholders</a></div>
-			<div><a href="#examples">Examples</a></div>
 		</div>
 	</div>
 

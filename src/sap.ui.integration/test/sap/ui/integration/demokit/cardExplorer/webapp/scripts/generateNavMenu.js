@@ -1,14 +1,6 @@
 (function () {
 	"use strict";
 
-	var isOverviewSection = document.location.href.includes("/topics/overview/");
-	var isIntegrateSection = document.location.href.includes("/topics/integrate/");
-	var generateNavTree = isOverviewSection || isIntegrateSection;
-
-	if (!generateNavTree) {
-		return;
-	}
-
 	var treeWalker = document.createTreeWalker(
 		document.body,
 		NodeFilter.SHOW_ELEMENT,
