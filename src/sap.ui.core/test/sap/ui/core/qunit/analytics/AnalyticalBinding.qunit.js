@@ -8,6 +8,8 @@ sap.ui.define([
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/AnalyticalBinding",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
+	"sap/ui/model/analytics/AnalyticalVersionInfo",
+	"sap/ui/model/analytics/BatchResponseCollector",
 	"sap/ui/model/analytics/ODataModelAdapter",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
@@ -29,9 +31,9 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
 ], function (Log, deepExtend, extend, odata4analytics, AnalyticalBinding,
-		AnalyticalTreeBindingAdapter, ODataModelAdapter, ChangeReason, Filter, FilterOperator,
-		FilterProcessor, Sorter, TreeAutoExpandMode, CountMode, ODataModelV1, ODataUtils,
-		ODataModelV2, o4aFakeService) {
+		AnalyticalTreeBindingAdapter, AnalyticalVersionInfo, BatchResponseCollector,
+		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter,
+		TreeAutoExpandMode, CountMode, ODataModelV1, ODataUtils, ODataModelV2, o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -3798,4 +3800,71 @@ sap.ui.define([
 	// number of entries for that group which causes in _processGroupMembersQueryResponse that the
 	// final length is not set for that group. So the watermark is set wrongly and data is requested
 	// twice.
+
+	//*********************************************************************************************
+	// BCP: 2380036006 fire data received also in error case and updated analytical info
+	QUnit.test("_executeBatchRequest: ensure dataReceived event in error case", function (assert) {
+		var oSetupExpectation,
+			oAnalyticalQueryRequest = {
+				getURIQueryOptionValue: function () {},
+				getURIToQueryResultEntries: function () {}
+			},
+			oError = {statusText: "abort"},
+			oModel = {read: function () {}},
+			oBinding = {
+				iAnalyticalInfoVersionNumber: 1,
+				oModel: oModel,
+				iModelVersion: AnalyticalVersionInfo.V2,
+				_getIdForNewRequestHandle: function () {},
+				_getQueryODataRequestOptions: function () {},
+				_isRequestPending: function () {},
+				_registerNewRequest: function () {},
+				_registerNewRequestHandle: function () {},
+				fireDataReceived: function () {},
+				fireDataRequested: function () {}
+			},
+			aRequestDetails = [{
+				oAnalyticalQueryRequest: oAnalyticalQueryRequest,
+				bIsLeafGroupsRequest: "~isLeafGroupsRequest",
+				sRequestId: "~requestId"
+			}];
+
+		this.mock(oAnalyticalQueryRequest).expects("getURIQueryOptionValue")
+			.withExactArgs("$select")
+			.returns("~select");
+		this.mock(oAnalyticalQueryRequest).expects("getURIToQueryResultEntries")
+			.withExactArgs()
+			.returns("~path");
+		this.mock(oBinding).expects("_isRequestPending").withExactArgs("~requestId").returns(false);
+		this.mock(oBinding).expects("_registerNewRequest").withExactArgs("~requestId");
+		this.mock(oBinding).expects("_getQueryODataRequestOptions")
+			.withExactArgs(sinon.match.same(oAnalyticalQueryRequest), "~isLeafGroupsRequest", {encode: true})
+			.returns("~urlParameters");
+		this.mock(oModel).expects("read").withExactArgs("/~path", {
+					success: sinon.match.func,
+					error: sinon.match.func,
+					context: undefined,
+					urlParameters: "~urlParameters"
+			})
+			.returns("~requestHandle");
+		this.mock(oBinding).expects("_getIdForNewRequestHandle").withExactArgs().returns("~newHandle");
+		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
+		oSetupExpectation = this.mock(BatchResponseCollector.prototype).expects("setup")
+			.withExactArgs({
+				executedRequests: [sinon.match.same(aRequestDetails[0])],
+				binding: sinon.match.same(oBinding),
+				success: sinon.match.func,
+				error: sinon.match.func
+			});
+		this.mock(oBinding).expects("_registerNewRequestHandle").withExactArgs("~newHandle", sinon.match.object);
+
+		// code under test
+		AnalyticalBinding.prototype._executeBatchRequest.call(oBinding, aRequestDetails);
+
+		oBinding.iAnalyticalInfoVersionNumber = 2; // new analytical info causes abort of pending requests
+		this.mock(oBinding).expects("fireDataReceived").withExactArgs();
+
+		// code under test - simulate abort and call error handler
+		oSetupExpectation.args[0][0].error(oError);
+	});
 });
