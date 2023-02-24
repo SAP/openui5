@@ -2,11 +2,9 @@
 
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
-	// "sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	// "sap/ui/core/UIComponent",
-	// "sap/ui/mdc/TableDelegate",
+	"delegates/TableDelegate",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -18,11 +16,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
-	// ComponentContainer,
 	XMLView,
 	JsControlTreeModifier,
-	// UIComponent,
-	// TableDelegate,
+	TableDelegate,
 	Applier,
 	Reverter,
 	FlexObjectFactory,
@@ -805,40 +801,14 @@ sap.ui.define([
 		});
 	});
 
-	/*
-	//the tests work only with enablement of mdc change handlers
-	QUnit.module("Condenser with MDC changes", {
+	QUnit.module("Given a mdc Table", {
 		before: function() {
-			var UIComp = UIComponent.extend("mdcComponent", {
-				metadata: {
-					manifest: {
-						"sap.app": {
-							id: "",
-							type: "application"
-						}
-					}
-				},
-				createContent: function() {
-					// store it in outer scope
-					var oView = sap.ui.view({
-						async: false,
-						type: "XML",
-						id: this.createId("view"),
-						viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:table="sap.ui.mdc.table"><Table id="mdcTable"><columns><table:Column id="mdcTable--column0" header="column 0" dataProperties="column0"><m:Text text="{column0}" id="mdcTable--text0" /></table:Column><table:Column id="mdcTable--column1" header="column 1" dataProperties="column1"><m:Text text="{column1}" id="mdcTable--text1" /></table:Column><table:Column id="mdcTable--column2" header="column 2" dataProperties="column2"><m:Text text="{column2}" id="mdcTable--text2" /></table:Column></columns></Table></mvc:View>'
-					});
-					return oView;
-				}
+			return XMLView.create({
+				viewName: "sap.ui.fl.testResources.condenser.MdcTable",
+				id: "view"
+			}).then(function(oView) {
+				oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "componentId", undefined, oView);
 			});
-			oAppComponent = new UIComp("comp");
-			this.oUiComponentContainer = new ComponentContainer({
-				component: oAppComponent,
-				async: false
-			});
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oView = oAppComponent.getRootControl();
-			this.oTable = this.oView.byId("mdcTable");
 		},
 		beforeEach: function() {
 			this.aChanges = [];
@@ -853,6 +823,7 @@ sap.ui.define([
 					name: "column3"
 				}
 			]);
+			sandbox.stub(TableDelegate, "updateBindingInfo");
 		},
 		afterEach: function() {
 			return revertMultipleChanges(this.aChanges).then(function() {
@@ -860,50 +831,66 @@ sap.ui.define([
 			});
 		},
 		after: function() {
-			this.oUiComponentContainer.destroy();
+			oAppComponent._restoreGetAppComponentStub();
+			oAppComponent.destroy();
 		}
 	}, function() {
 		// MDC Table move
-		QUnit.test("move with no difference at the end", function(assert) {
+		QUnit.test("move columns with no difference at the end", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcMoveChanges_1.json", 8, 0, assert);
 		});
 
-		QUnit.test("move within one container", function(assert) {
+		QUnit.test("move columns within one container", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcMoveChanges_2.json", 5, 1, assert);
 		});
 
 		// MDC Table only remove => 2 remove changes stay
-		QUnit.test("remove on multiple controls", function(assert) {
+		QUnit.test("remove columns on multiple controls", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcRemoveChanges.json", 2, 2, assert);
 		});
 
 		// MDC Table: combination of move and remove => only remove change stays
-		QUnit.test("move / remove", function(assert) {
+		QUnit.test("move / remove columns", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcMoveRemoveChanges.json", 6, 1, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
-				var oTable = oAppComponent.byId("view--mdcTable");
+				var oTable = sap.ui.getCore().byId("view--mdcTable");
 				var aColumns = oTable.getColumns();
 				assert.strictEqual(aColumns.length, 2, "Expected number of MDC columns: " + 2);
-				assert.strictEqual(aColumns[0].getId(), "comp---view--mdcTable--column0", sValueMsg + "column0");
-				assert.strictEqual(aColumns[1].getId(), "comp---view--mdcTable--column2", sValueMsg + "column2");
+				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", sValueMsg + "column0");
+				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column2", sValueMsg + "column2");
 			});
 		});
 
 		// MDC Table: combination of add, move and remove => no change stays at the end
-		QUnit.test("add / move / remove with no difference at the end", function(assert) {
+		QUnit.test("add / move / remove columns with no difference at the end", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcAddMoveRemoveChanges.json", 7, 0, assert);
 		});
 
 		// MDC Table: combination of remove and add => both changes stay (ideally both changes be converted to move change)
-		QUnit.test("remove / add", function(assert) {
+		QUnit.test("remove / add columns", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 2, 2, assert).then(function(aRemainingChanges) {
 				assert.strictEqual(aRemainingChanges[0].getChangeType(), "removeColumn", "the changes are in the right order");
 				assert.strictEqual(aRemainingChanges[1].getChangeType(), "addColumn", "the changes are in the right order");
 			});
 		});
+
+		QUnit.test("addSort/moveSort/removeSort (custom aggregation)", function(assert) {
+			return loadApplyCondenseChanges.call(this, "mdcSort.json", 9, 2, assert).then(function(aRemainingChanges) {
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), "addSort", "the remaining changes are of type addSort");
+				assert.strictEqual(aRemainingChanges[1].getChangeType(), "addSort", "the remaining changes are of type addSort");
+				var aSorters = sap.ui.getCore().byId("view--mdcTable").getSortConditions().sorters;
+				assert.deepEqual(aSorters[0], {
+					name: "sorter2",
+					descending: false
+				}, "the content of the first change is correct");
+				assert.deepEqual(aSorters[1], {
+					name: "sorter1",
+					descending: true
+				}, "the content of the second change is correct");
+			});
+		});
 	});
-	*/
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
