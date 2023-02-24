@@ -1,5 +1,9 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library'],
-	function(Controller, DateFormat, coreLibrary) {
+sap.ui.define([
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/library',
+		'sap/ui/core/date/UI5Date'
+	], function(Controller, DateFormat, coreLibrary, UI5Date) {
 	"use strict";
 
 	var CalendarType = coreLibrary.CalendarType;
@@ -26,7 +30,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/format/DateFormat', 's
 
 		handleFocusToday: function() {
 			var oCalendar = this.byId("calendar");
-			oCalendar.focusDate(new Date());
+			oCalendar.focusDate(UI5Date.getInstance());
 		}
 	});
 

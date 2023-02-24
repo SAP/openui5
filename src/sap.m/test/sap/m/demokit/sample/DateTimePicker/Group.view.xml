@@ -14,7 +14,7 @@
 			placeholder="Enter Date"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
-		<Label text="With initialFocusedDateValue new Date(2017, 5, 13, 11, 12, 13)" labelFor="DTP6"/>
+		<Label text="With initialFocusedDateValue UI5Date.getInstance(2017, 5, 13, 11, 12, 13)" labelFor="DTP6"/>
 		<DateTimePicker
 			id="DTP6"
 			placeholder="Enter Date"
@@ -25,15 +25,21 @@
 			id="DTP2"
 			showCurrentDateButton="true"
 			showCurrentTimeButton="true"
-			value="2016-02-18-10-32-30" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long"
+			value= "{
+				'path': '/valueDTP2',
+				'type': 'sap.ui.model.type.DateTime',
+				'formatOptions': {
+					'style': 'long'
+				}
+			}"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
 		<Label text="DateTimePicker with given Value and Formatter" labelFor="DTP3"/>
 		<DateTimePicker
 			id="DTP3"
 			value= "{
+				'path': '/valueDTP3',
 				'type': 'sap.ui.model.type.DateTime',
-				'path': '/value',
 				'formatOptions': {
 					'pattern': 'M/d/yy h:mm a'
 				}
@@ -43,10 +49,14 @@
 		<Label text="DateTimePicker with Islamic date and secondary Gregorian date in calendar" labelFor="DTP4"/>
 		<DateTimePicker
 			id="DTP4"
-			value="2016-02-18-10-32-30"
-			valueFormat="yyyy-MM-dd-HH-mm-ss"
-			displayFormat="short"
-			displayFormatType="Islamic"
+			value= "{
+				'path': '/valueDTP4',
+				'type': 'sap.ui.model.type.DateTime',
+				'formatOptions': {
+					'calendarType': 'Islamic',
+					'style': 'short'
+				}
+			}"
 			secondaryCalendarType="Gregorian"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
@@ -70,7 +80,7 @@
 		<DateTimePicker
 			id="DTP5"
 			value="{
-				path:'/value',
+				path:'/valueDTP5',
 				type:'sap.ui.model.type.DateTime',
 				formatOptions: {
 					style: 'medium',
@@ -81,7 +91,7 @@
 		<Text
 			id="textResultForDataBinding"
 			text="{
-				path:'/value',
+				path:'/valueDTP5',
 				type:'sap.ui.model.type.DateTime',
 				formatOptions: {
 					style: 'long'
@@ -103,8 +113,13 @@
 		<Label text="Showing the timezone label" labelFor="DTP8"/>
 		<DateTimePicker
 			id="DTP8"
-			value="2016-02-18-10-32-30"
-			valueFormat="yyyy-MM-dd-HH-mm-ss"
+			value="{
+				path:'/valueDTP8',
+				type:'sap.ui.model.type.DateTime',
+				formatOptions: {
+					'style': 'medium'
+				}
+			}"
 			showTimezone="true"
 			timezone="America/New_York"
 			class="sapUiSmallMarginBottom" />
@@ -112,10 +127,10 @@
 		<DateTimePicker
 			id="DTP9"
 			value="{
-				'path':'/value',
+				'path':'/valueDTP9',
 				'type': 'sap.ui.model.type.DateTime',
 				'formatOptions': {
-						'style': 'medium'
+					'style': 'medium'
 				}
 			}"
 			timezone="America/New_York"

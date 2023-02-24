@@ -1,5 +1,10 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library'],
-	function(Controller, DateRange, DateFormat, coreLibrary) {
+sap.ui.define([
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/unified/DateRange',
+		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/library',
+		'sap/ui/core/date/UI5Date'
+	], function(Controller, DateRange, DateFormat, coreLibrary, UI5Date) {
 	"use strict";
 
 	var CalendarType = coreLibrary.CalendarType;
@@ -29,7 +34,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui
 			var oCalendar = this.byId("calendar");
 
 			oCalendar.removeAllSelectedDates();
-			oCalendar.addSelectedDate(new DateRange({startDate: new Date()}));
+			oCalendar.addSelectedDate(new DateRange({startDate: UI5Date.getInstance()}));
 			this._updateText(oCalendar);
 		}
 	});

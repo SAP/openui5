@@ -2,8 +2,9 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/library',
-	"sap/ui/core/Core"
-], function(Controller, JSONModel, coreLibrary, Core) {
+	'sap/ui/core/Core',
+	'sap/ui/core/date/UI5Date'
+], function(Controller, JSONModel, coreLibrary, Core, UI5Date) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -15,10 +16,15 @@ sap.ui.define([
 			// create model
 			var oModel = new JSONModel();
 			oModel.setData({
-				value: new Date()
+				valueDTP2: UI5Date.getInstance(2016, 1, 18, 10, 32, 30),
+				valueDTP3: UI5Date.getInstance(),
+				valueDTP4: UI5Date.getInstance(2016, 1, 18, 10, 32, 30),
+				valueDTP5: UI5Date.getInstance(),
+				valueDTP8: UI5Date.getInstance(2016, 1, 18, 10, 32, 30),
+				valueDTP9: UI5Date.getInstance()
 			});
 			this.getView().setModel(oModel);
-			this.byId("DTP6").setInitialFocusedDateValue(new Date(2017, 5, 13, 11, 12, 13));
+			this.byId("DTP6").setInitialFocusedDateValue(UI5Date.getInstance(2017, 5, 13, 11, 12, 13));
 
 			this._iEvent = 0;
 
