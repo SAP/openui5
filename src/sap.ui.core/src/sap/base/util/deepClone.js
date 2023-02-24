@@ -49,12 +49,13 @@ sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 	 * @param {int} [maxDepth=10] Maximum recursion depth for the clone operation, deeper structures will throw an error
 	 * @returns {any} A clone of the source value
 	 * @throws {TypeError} When a non-plain object is encountered or when the max structure depth is exceeded
+	 * @deprecated as of version XXX. Use the standard API <code>structuredClone</code> instead.
 	 */
 	var fnDeepClone = function(src, maxDepth) {
 		if (!maxDepth) {
 			maxDepth = 10;
 		}
-		return clone(src, 0, maxDepth);
+		return structuredClone ? structuredClone(src) : clone(src, 0, maxDepth);
 	};
 
 	function clone(src, depth, maxDepth) {
