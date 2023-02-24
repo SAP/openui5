@@ -495,7 +495,7 @@ sap.ui.define([
      * Returns the relevant property infos based on the metadata used with the MDC chart instance.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @returns {array} Array of the property infos to be used within MDC chart
+     * @returns {Promise<sap.ui.mdc.chart.PropertyInfo[]>} Array of the property infos to be used within the chart
      *
      * @experimental
      * @private

@@ -35,7 +35,40 @@ sap.ui.define([
 		constructor: function(aProperties, oParent) {
 			PropertyHelperBase.call(this, aProperties, oParent, {
 				filterable: true,
-				sortable: true
+				sortable: true,
+				propertyInfos: true,
+
+				//Additional attributes
+				groupable: {
+					type: "boolean"
+				},
+				aggregatable: {
+					type: "boolean"
+				},
+				propertyPath: {
+					type: "string"
+				},
+				aggregationMethod : {
+					type: "string"
+				},
+				role : {
+					type: "string"
+				},
+				datapoint : {
+					type: "object"
+				},
+				criticality : {
+					type: "object"
+				},
+				textProperty : {
+					type: "string"
+				},
+				availableRoles : {
+					type: "object"
+				},
+				kind: {
+					type: "string"
+				}
 			});
 		}
 	});
