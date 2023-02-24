@@ -66,13 +66,22 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 		var bIsExpandable = oControl.getExpandable(),
 			bIsExpanded = oControl.getExpanded(),
 			oHeaderTBar = oControl.getHeaderToolbar(),
-			sHeaderClass,
-			sHeaderElement = oHeaderTBar ? "header" : "div";
+			sHeaderClass;
+
+		oRm.openStart("div");
+		oRm.class("sapMPanelHeadingDiv");
+
+		if (!oHeaderTBar) {
+			oRm.attr('role', 'heading');
+			oRm.attr('aria-level', '2');
+		}
+
+		oRm.openEnd();
 
 		if (bIsExpandable) {
 			// we need a wrapping div around button and header
 			// otherwise the border needed for both do not exact align
-			oRm.openStart(sHeaderElement);
+			oRm.openStart("div");
 			if (oHeaderTBar) {
 				sHeaderClass = "sapMPanelWrappingDivTb";
 			} else {
@@ -101,16 +110,18 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			oRm.renderControl(oHeaderTBar);
 
 		} else if (sHeaderText || bIsExpandable) {
-			oRm.openStart("h2", oControl.getId() + "-header");
+			oRm.openStart("div", oControl.getId() + "-header");
 			oRm.class("sapMPanelHdr");
 			oRm.openEnd();
 			oRm.text(sHeaderText);
-			oRm.close("h2");
+			oRm.close("div");
 		}
 
 		if (bIsExpandable) {
-			oRm.close(sHeaderElement);
+			oRm.close("div");
 		}
+
+		oRm.close("div");
 
 		var oInfoTBar = oControl.getInfoToolbar();
 

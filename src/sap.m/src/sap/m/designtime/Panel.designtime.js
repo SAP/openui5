@@ -54,7 +54,7 @@ sap.ui.define([],
 		aggregations: {
 			headerToolbar: {
 				// When we have an expandable panel we need an additional selector, because the toolbar is wrapped in additional sapMPanelWrappingDivTb div.
-				domRef: ":sap-domref > .sapMPanelHeaderTB, :sap-domref > .sapMPanelWrappingDivTb .sapMPanelHeaderTB, :sap-domref > .sapUiDtEmptyHeader"
+				domRef: ":sap-domref > .sapMPanelHeadingDiv .sapMPanelHeaderTB, :sap-domref > .sapMPanelHeadingDiv .sapMPanelWrappingDivTb .sapMPanelHeaderTB, :sap-domref > .sapUiDtEmptyHeader"
 			},
 			infoToolbar: {
 				domRef: ":sap-domref > .sapMPanelInfoTB, :sap-domref > .sapUiDtEmptyInfoToolbar"
