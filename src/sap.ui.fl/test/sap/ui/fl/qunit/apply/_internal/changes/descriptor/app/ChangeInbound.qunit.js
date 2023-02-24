@@ -47,6 +47,47 @@ sap.ui.define([
 				}
 			});
 
+			this.oChangeSingleSignatureParameters = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
+				content: {
+					inboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "signature/parameters/id/required",
+							operation: "UPSERT",
+							propertyValue: false
+						}
+				}
+			});
+
+			this.oChangeArraySignatureParameters = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
+				content: {
+					inboundId: "Risk-configure",
+					entityPropertyChange: [
+						{
+							propertyPath: "signature/parameters/id/required",
+							operation: "UPSERT",
+							propertyValue: false
+						},
+						{
+							propertyPath: "signature/parameters/pathToProertyUpdate/propertyUpdate",
+							operation: "UPDATE",
+							propertyValue: "updatedValue"
+						},
+						{
+							propertyPath: "signature/parameters/pathToProertyInsert/propertyInsert",
+							operation: "UPSERT",
+							propertyValue: "insertedValue"
+						}
+					]
+				}
+			});
+
 			this.oChangeUnsupportedChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_app_changeInbound"
@@ -58,6 +99,21 @@ sap.ui.define([
 							propertyPath: "semanticObject",
 							operation: "UPSERT",
 							propertyValue: "newObject"
+						}
+				}
+			});
+
+			this.oChangeGenericPathUnsupportedChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
+				content: {
+					inboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "signature/parameter/id",
+							operation: "UPSERT",
+							propertyValue: false
 						}
 				}
 			});
@@ -174,6 +230,65 @@ sap.ui.define([
 			assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"].icon, "newicon", "inbound is updated correctly");
 		});
 
+		QUnit.test("when calling '_applyChange' with single change for signature/parameters", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						inbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								title: "some",
+								subTitle: "some",
+								icon: "icon",
+								signature: {
+									parameters: {
+										id: {
+											required: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			var oNewManifest = ChangeInbound.applyChange(oManifest, this.oChangeSingleSignatureParameters);
+			assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"]["signature"]["parameters"]["id"].required, false, "inbound is updated correctly");
+		});
+
+		QUnit.test("when calling '_applyChange' with more then one change for signature/parameters", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						inbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								title: "some",
+								subTitle: "some",
+								icon: "icon",
+								signature: {
+									parameters: {
+										id: {
+											required: true
+										},
+										pathToProertyUpdate: {
+											propertyUpdate: "value"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			var oNewManifest = ChangeInbound.applyChange(oManifest, this.oChangeArraySignatureParameters);
+			assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"]["signature"]["parameters"]["id"].required, false, "inbound is updated correctly");
+			assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"]["signature"]["parameters"]["pathToProertyUpdate"].propertyUpdate, "updatedValue", "inbound is updated correctly");
+			assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"]["signature"]["parameters"]["pathToProertyInsert"].propertyInsert, "insertedValue", "inbound is inserted correctly");
+		});
+
 		QUnit.test("when calling '_applyChange' with no inbound exists", function (assert) {
 			var oManifest = {
 				"sap.app": {
@@ -204,7 +319,37 @@ sap.ui.define([
 			};
 			assert.throws(function () {
 				ChangeInbound.applyChange(oManifest, this.oChangeUnsupportedChange);
-			}, Error("Changing semanticObject is not supported. The supported 'propertyPath' is: title|subTitle|icon"), "throws an error");
+			}, Error("Changing semanticObject is not supported. The supported 'propertyPath' is: title|subTitle|icon|signature/parameters/*"), "throws an error");
+		});
+
+		QUnit.test("when calling '_applyChange' with unsupported change for gernic path", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						inbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								title: "some",
+								subTitle: "some",
+								signature: {
+									parameters: {
+										id: {
+											required: true
+										},
+										pathToProertyUpdate: {
+											propertyUpdate: "value"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			assert.throws(function () {
+				ChangeInbound.applyChange(oManifest, this.oChangeGenericPathUnsupportedChange);
+			}, Error("Changing signature/parameter/id is not supported. The supported 'propertyPath' is: title|subTitle|icon|signature/parameters/*"), "throws an error");
 		});
 
 		QUnit.test("when calling '_applyChange' with an unsupported operation", function (assert) {
