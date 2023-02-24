@@ -2370,7 +2370,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated As of 1.37.0, use {@link #getObject}.
+	 * Use {@link #getObject}.
+	 *
 	 * @function
 	 * @public
 	 * @see sap.ui.model.Model#getProperty
