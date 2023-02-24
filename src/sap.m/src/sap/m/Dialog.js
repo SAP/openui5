@@ -346,6 +346,7 @@ function(
 
 					/**
 					 * The footer of this dialog. It is always located at the bottom of the dialog. The footer aggregation can not  be used together with the buttons aggregation.
+					 * @since 1.110
 					 */
 					footer: {type: "sap.m.Toolbar", multiple: false},
 
