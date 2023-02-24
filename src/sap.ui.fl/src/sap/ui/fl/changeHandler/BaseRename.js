@@ -109,6 +109,8 @@ sap.ui.define([
 
 							if (typeof (mSpecificChangeInfo.value) === "string") {
 								oChange.setText(sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
+							} else if (typeof (mSpecificChangeInfo.content.value) === "string") {
+								oChange.setText(sChangePropertyName, mSpecificChangeInfo.content.value, sTranslationTextType);
 							} else {
 								return Promise.reject(new Error("oSpecificChangeInfo.value attribute required"));
 							}

@@ -347,5 +347,20 @@ sap.ui.define([
 		return aCommands;
 	};
 
+	/**
+	 * Combines the last two commands into a composite command
+	 *
+	 * @private
+	 */
+	Stack.prototype.compositeLastTwoCommands = function() {
+		var oLastCommand = this.pop();
+		var oSecondLastCommand = this.pop();
+
+		var oCompositeCommand = new CompositeCommand();
+		oCompositeCommand.addCommand(oSecondLastCommand);
+		oCompositeCommand.addCommand(oLastCommand);
+		this.push(oCompositeCommand);
+	};
+
 	return Stack;
 });

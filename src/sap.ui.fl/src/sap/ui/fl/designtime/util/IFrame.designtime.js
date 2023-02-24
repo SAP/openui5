@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/m/library"
 ], function(
+	Core,
 	AddIFrameDialog
 ) {
 	"use strict";
@@ -13,7 +15,17 @@ sap.ui.define([
 	function editIFrame (oIFrame/*, mPropertyBag*/) {
 		var oAddIFrameDialog = new AddIFrameDialog();
 		var oSettings = oIFrame.get_settings();
+		var mRenameInfo = oIFrame.getRenameInfo();
 		var mDialogSettings;
+		var oContainer;
+
+		// The title of the iFrame container could have changed
+		// so we need to retrieve it before opening the dialog
+		if (mRenameInfo) {
+			oContainer = Core.byId(mRenameInfo.sourceControlId);
+			oSettings.title = oContainer.getProperty(mRenameInfo.propertyName);
+		}
+
 		return AddIFrameDialog.buildUrlBuilderParametersFor(oIFrame)
 			.then(function(mURLParameters) {
 				mDialogSettings = {
@@ -21,6 +33,8 @@ sap.ui.define([
 					frameUrl: oSettings.url,
 					frameWidth: oSettings.width,
 					frameHeight: oSettings.height,
+					title: oSettings.title,
+					asContainer: !!oSettings.title,
 					updateMode: true
 				};
 				return oAddIFrameDialog.open(mDialogSettings);
@@ -41,17 +55,34 @@ sap.ui.define([
 				} else {
 					sHeight = "100%";
 				}
-				return [{
+				var aChanges = [];
+				var mUpdateChange = {
 					selectorControl: oIFrame,
 					changeSpecificData: {
 						changeType: "updateIFrame",
 						content: {
 							url: mSettings.frameUrl,
 							width: sWidth,
-							height: sHeight
+							height: sHeight,
+							title: mSettings.title
 						}
 					}
-				}];
+				};
+				aChanges.push(mUpdateChange);
+				// If the title changes a rename change must be created
+				if (mSettings.title !== oSettings.title) {
+					var mRenameChange = {
+						selectorControl: Core.byId(mRenameInfo.selectorControlId),
+						changeSpecificData: {
+							changeType: "rename",
+							content: {
+								value: mSettings.title
+							}
+						}
+					};
+					aChanges.push(mRenameChange);
+				}
+				return aChanges;
 			});
 	}
 

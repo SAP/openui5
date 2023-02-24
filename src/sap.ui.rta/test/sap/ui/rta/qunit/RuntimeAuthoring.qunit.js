@@ -227,6 +227,40 @@ sap.ui.define([
 			oCore.applyChanges();
 		});
 
+		QUnit.test("when handleElementModified is called if a title is already available when the container is created", function(assert) {
+			var done = assert.async();
+			var sNewControlId;
+			var oCreateContainerPlugin = this.oRta.getPlugins()["createContainer"];
+
+			var oFireElementModifiedStub = sandbox.stub(oCreateContainerPlugin, "fireElementModified").callsFake(function(oParams) {
+				sNewControlId = oParams.newControlId;
+				oFireElementModifiedStub.wrappedMethod.call(
+					oCreateContainerPlugin,
+					{
+						command: oParams.command,
+						newControlId: oParams.newControlId,
+						action: oParams.action,
+						title: "Potato"
+					}
+				);
+			});
+
+			var oSmartForm = oCore.byId("Comp1---idMain1--MainForm");
+			var oSmartFormOverlay = OverlayRegistry.getOverlay(oSmartForm);
+
+			var oCreateRenameCommandSpy = sandbox.spy(this.oRta.getPlugins()["rename"], "createRenameCommand");
+
+			sandbox.stub(this.oRta.getCommandStack(), "compositeLastTwoCommands")
+				.callsFake(function() {
+					assert.ok(oCreateRenameCommandSpy.calledWith(OverlayRegistry.getOverlay(sNewControlId), "Potato"), "then the rename command was created");
+					assert.ok(true, "and the commands were combined in a composite command");
+					done();
+				});
+
+			oCreateContainerPlugin.handleCreate(false, oSmartFormOverlay);
+			oCore.applyChanges();
+		});
+
 		QUnit.test("when handleElementModified is called if a create container command was executed on an empty form", function(assert) {
 			var done = assert.async();
 

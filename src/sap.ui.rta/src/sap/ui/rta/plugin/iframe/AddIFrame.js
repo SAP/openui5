@@ -46,7 +46,8 @@ sap.ui.define([
 			index: mSettings.index,
 			url: mSettings.frameUrl,
 			width: sWidth,
-			height: sHeight
+			height: sHeight,
+			title: mSettings.title
 		}, oDesignTimeMetadata, sVariantManagementKey);
 	}
 
@@ -67,11 +68,17 @@ sap.ui.define([
 
 		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
 
+		// providing an action will trigger the rename plugin, which we only want in case of addIFrame as container
+		// in that case the function getCreatedContainerId has to be provided
+		var bAsContainer = !!oAction.getCreatedContainerId;
+
 		var oAddIFrameDialog = new AddIFrameDialog();
+		var sNewContainerTitle;
 		AddIFrameDialog.buildUrlBuilderParametersFor(oParent)
 			.then(function(mURLParameters) {
 				var mAddIFrameDialogSettings = {
-					parameters: mURLParameters
+					parameters: mURLParameters,
+					asContainer: bAsContainer
 				};
 				return oAddIFrameDialog.open(mAddIFrameDialogSettings);
 			})
@@ -81,15 +88,15 @@ sap.ui.define([
 				}
 				mSettings.index = iIndex;
 				mSettings.aggregation = oAction.aggregation;
+				sNewContainerTitle = mSettings.title;
 				return getAddIFrameCommand.call(this, oParent, mSettings, oDesignTimeMetadata, sVariantManagementReference);
 			}.bind(this))
 			.then(function(oCommand) {
-				// providing an action will trigger the rename plugin, which we only want in case of addIFrame as section
-				// in that case the function getCreatedContainerId has to be provided
 				this.fireElementModified({
 					command: oCommand,
 					newControlId: oCommand.getBaseId(),
-					action: oAction.getCreatedContainerId ? oAction : undefined
+					action: bAsContainer ? oAction : undefined,
+					title: sNewContainerTitle
 				});
 			}.bind(this))
 			.catch(function(vError) {

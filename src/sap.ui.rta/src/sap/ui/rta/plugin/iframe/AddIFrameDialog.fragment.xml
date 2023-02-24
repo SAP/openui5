@@ -21,52 +21,77 @@
 					id="sapUiRtaAddIFrameDialog_VL"
 					width="100%"
 					class="sapUiRtaAddIFrameDialogVlWrapper">
-				<Label id="sapUiRtaAddIFrameDialog_SizeTitle" text="{/text/sizeTitle}" class="sapUiRtaAddIFrameDialogSizeTitle" design="Bold"/>
-				<layout:Grid
-						id="sapUiRtaAddIFrameDialog_SizeGrid"
-						containerQuery="true" position="Center"
-						class="sapUiRtaAddIFrameDialogSizeGrid"
-						defaultSpan="XL6 L6 M6 S12">
-					<form:SimpleForm
-							id="sapUiRtaAddIFrameDialog_WidthForm" editable="true" layout="ResponsiveGridLayout" class="sapUiRtaAddIFrameDialogWidthForm"
-							adjustLabelSpan="false" singleContainerFullSize="false" ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthLabel"
-							labelSpanXL="2" labelSpanL="2" labelSpanM="2" labelSpanS="4"
-							emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
-					>
-						<form:content>
-							<Label id="sapUiRtaAddIFrameDialog_WidthLabel" class="sapUiRtaAddIFrameDialogWidthLabel" labelFor="sapUiRtaAddIFrameDialog_WidthInput"
-								   text="{/text/widthLabel}">
-							</Label>
-							<Input id="sapUiRtaAddIFrameDialog_WidthInput" class="sapUiRtaAddIFrameDialogWidthInput"
-								   value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
-								   valueState="{/frameWidth/valueState}"/>
-							<Select id="sapUiRtaAddIFrameDialog_WidthUnit" class="sapUiRtaAddIFrameDialogWidthUnit"
-									ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthUnitLabel" change="onSizeUnitChange"
-									selectedKey="{/frameWidthUnit/value}" items="{/unitsOfMeasure}">
-								<core:Item key="{name}" text="{name}" />
-							</Select>
-						</form:content>
-					</form:SimpleForm>
-					<form:SimpleForm
-							id="sapUiRtaAddIFrameDialog_HeightForm" editable="true" layout="ResponsiveGridLayout" class="sapUiRtaAddIFrameDialogHeightForm"
-							adjustLabelSpan="false" singleContainerFullSize="false" ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightLabel"
-							labelSpanXL="2" labelSpanL="2" labelSpanM="2" labelSpanS="4"
-							emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
-					>
-						<form:content>
-							<Label id="sapUiRtaAddIFrameDialog_HeightLabel" class="sapUiRtaAddIFrameDialogHeightLabel" labelFor="sapUiRtaAddIFrameDialog_HeightInput"
-								   text="{/text/heightLabel}"/>
-							<Input id="sapUiRtaAddIFrameDialog_HeightInput" class="sapUiRtaAddIFrameDialogHeightInput"
-								   value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
-								   valueState="{/frameHeight/valueState}"/>
-							<Select id="sapUiRtaAddIFrameDialog_HeightUnit" class="sapUiRtaAddIFrameDialogHeightUnit"
-									ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightUnitLabel" change="onSizeUnitChange"
-									selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
-								<core:Item key="{name}" text="{name}" />
-							</Select>
-						</form:content>
-					</form:SimpleForm>
-				</layout:Grid>
+				<VBox visible="{/asContainer/value}" class="sapUiRtaAddIFrameDialogContainerTitleVBox" renderType="Bare">
+					<items>
+						<Label
+							id="sapUiRtaAddIFrameDialog_ContainerTitleLabel"
+							text="{/text/containerTitleLabel}"
+							class="sapUiRtaAddIFrameDialogContainerTitleLabel"
+							design="Bold"
+						/>
+						<Input
+							id="sapUiRtaAddIFrameDialog_ContainerTitle_TitleInput"
+							class="sapUiRtaAddIFrameDialogContainerTitleInput"
+							value="{
+								path : '/title/value',
+								type : 'sap.ui.model.type.String'
+							}"
+							liveChange=".onContainerTitleChange"
+							valueLiveUpdate="true"
+							valueState="{/title/valueState}"
+						/>
+					</items>
+				</VBox>
+				<VBox>
+					<items>
+						<Label id="sapUiRtaAddIFrameDialog_SizeTitle" text="{/text/sizeTitle}" class="sapUiRtaAddIFrameDialogSizeTitle" design="Bold"/>
+						<layout:Grid
+								id="sapUiRtaAddIFrameDialog_SizeGrid"
+								containerQuery="true" position="Center"
+								class="sapUiRtaAddIFrameDialogSizeGrid"
+								defaultSpan="XL6 L6 M6 S12">
+							<form:SimpleForm
+									id="sapUiRtaAddIFrameDialog_WidthForm" editable="true" layout="ResponsiveGridLayout" class="sapUiRtaAddIFrameDialogWidthForm"
+									adjustLabelSpan="false" singleContainerFullSize="false" ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthLabel"
+									labelSpanXL="2" labelSpanL="2" labelSpanM="2" labelSpanS="4"
+									emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
+							>
+								<form:content>
+									<Label id="sapUiRtaAddIFrameDialog_WidthLabel" class="sapUiRtaAddIFrameDialogWidthLabel" labelFor="sapUiRtaAddIFrameDialog_WidthInput"
+										text="{/text/widthLabel}">
+									</Label>
+									<Input id="sapUiRtaAddIFrameDialog_WidthInput" class="sapUiRtaAddIFrameDialogWidthInput"
+										value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
+										valueState="{/frameWidth/valueState}"/>
+									<Select id="sapUiRtaAddIFrameDialog_WidthUnit" class="sapUiRtaAddIFrameDialogWidthUnit"
+											ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthUnitLabel" change="onSizeUnitChange"
+											selectedKey="{/frameWidthUnit/value}" items="{/unitsOfMeasure}">
+										<core:Item key="{name}" text="{name}" />
+									</Select>
+								</form:content>
+							</form:SimpleForm>
+							<form:SimpleForm
+									id="sapUiRtaAddIFrameDialog_HeightForm" editable="true" layout="ResponsiveGridLayout" class="sapUiRtaAddIFrameDialogHeightForm"
+									adjustLabelSpan="false" singleContainerFullSize="false" ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightLabel"
+									labelSpanXL="2" labelSpanL="2" labelSpanM="2" labelSpanS="4"
+									emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
+							>
+								<form:content>
+									<Label id="sapUiRtaAddIFrameDialog_HeightLabel" class="sapUiRtaAddIFrameDialogHeightLabel" labelFor="sapUiRtaAddIFrameDialog_HeightInput"
+										text="{/text/heightLabel}"/>
+									<Input id="sapUiRtaAddIFrameDialog_HeightInput" class="sapUiRtaAddIFrameDialogHeightInput"
+										value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
+										valueState="{/frameHeight/valueState}"/>
+									<Select id="sapUiRtaAddIFrameDialog_HeightUnit" class="sapUiRtaAddIFrameDialogHeightUnit"
+											ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightUnitLabel" change="onSizeUnitChange"
+											selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
+										<core:Item key="{name}" text="{name}" />
+									</Select>
+								</form:content>
+							</form:SimpleForm>
+						</layout:Grid>
+					</items>
+				</VBox>
 				<layout:Grid
 						id="sapUiRtaAddIFrameDialog_PercentGrid"
 						class="sapUiRtaAddIFrameDialogPercentGrid"
@@ -85,9 +110,9 @@
 							<Label id="sapUiRtaAddIFrameDialog_ParametersLabel" text="{/text/parametersLabel}" labelFor="sapUiRtaAddIFrameDialog_ParameterTable"
 								   class="sapUiRtaAddIFrameDialogParametersLabel" design="Bold"/>
 							<SearchField
-								id="sapUiRtaAddIFrameDialog_ParametersSearch" 
+								id="sapUiRtaAddIFrameDialog_ParametersSearch"
 								ariaLabelledBy="sapUiRtaAddIFrameDialog_ParameterSearchLabel"
-								class="sapUiRtaAddIFrameDialogParametersSearch" 
+								class="sapUiRtaAddIFrameDialogParametersSearch"
 								liveChange="onLiveChange"
 								showSearchButton="false"
 							/>
