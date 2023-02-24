@@ -295,7 +295,7 @@ sap.ui.define([
 		if (this.isTransient()) {
 			sGroupId = null;
 		} else if (sGroupId === null) {
-			if (!(this.bKeepAlive && this.iIndex === undefined)) {
+			if (!(this.isKeepAlive() && this.iIndex === undefined)) {
 				throw new Error("Cannot delete " + this);
 			}
 		}
@@ -545,7 +545,7 @@ sap.ui.define([
 						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent,
-						that.isKeepAlive.bind(that), that.bInactive
+						that.isKeepAlive.bind(that), that.isInactive()
 					).then(function () {
 						firePatchCompleted(true);
 					}, function (oError) {
@@ -962,7 +962,7 @@ sap.ui.define([
 	Context.prototype.hasPendingChanges = function () {
 		return this.isTransient() && this.isInactive() !== true
 			|| this.oDeletePromise && this.oDeletePromise.isPending()
-			|| this.getBinding().hasPendingChangesForPath(this.sPath)
+			|| this.oBinding.hasPendingChangesForPath(this.sPath)
 			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
 				return oDependentBinding.oCache
 					? oDependentBinding._hasPendingChanges(false, true)
@@ -1195,7 +1195,7 @@ sap.ui.define([
 			throw new Error("Cannot replace " + this);
 		}
 		if (oOtherContext.oBinding !== this.oBinding || oOtherContext.iIndex !== undefined
-			|| oOtherContext.isDeleted() || !oOtherContext.bKeepAlive) {
+			|| oOtherContext.isDeleted() || !oOtherContext.isKeepAlive()) {
 			throw new Error("Cannot replace with " + oOtherContext);
 		}
 		oElement = oOtherContext.getValue();
@@ -1594,7 +1594,7 @@ sap.ui.define([
 		}
 
 		for (;;) {
-			oBinding = oCandidate.getBinding();
+			oBinding = oCandidate.oBinding;
 			sPath = oBinding.getPath();
 			oParentContext = oBinding.getContext();
 			if (oBinding.oCache && (!oContext || oBinding.oCache.hasChangeListeners())) {
@@ -1610,7 +1610,7 @@ sap.ui.define([
 			oCandidate = oParentContext;
 		}
 
-		oBinding = oContext.getBinding();
+		oBinding = oContext.oBinding;
 
 		aAbsolutePaths.forEach(function (sAbsolutePath) {
 			var sRelativePath = _Helper.getRelativePath(sAbsolutePath, oContext.getPath());
@@ -1940,7 +1940,7 @@ sap.ui.define([
 						break;
 
 					case true:
-						sSuffix = this.bInactive ? ";inactive" : ";transient";
+						sSuffix = this.isInactive() ? ";inactive" : ";transient";
 						break;
 
 					// no default

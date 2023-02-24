@@ -1133,8 +1133,9 @@ sap.ui.define([
 			},
 			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')");
 
-		oContext.bKeepAlive = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isKeepAlive").exactly(sGroupId ? 0 : 1)
+			.withExactArgs().returns(true);
 		this.mock(_Helper).expects("checkGroupId").exactly(sGroupId ? 1 : 0)
 			.withExactArgs("myGroup");
 		this.mock(oContext).expects("fetchCanonicalPath").exactly(sGroupId ? 1 : 0).withExactArgs()
@@ -1226,8 +1227,8 @@ sap.ui.define([
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/0", 0);
 
-		oContext.bKeepAlive = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns(true);
 
 		// code under test
 		assert.throws(function () {
@@ -1571,14 +1572,15 @@ sap.ui.define([
 			oOtherContext = {
 				oBinding : oBinding,
 				iIndex : undefined,
-				bKeepAlive : true,
 				getValue : function () {},
-				isDeleted : function () {}
+				isDeleted : function () {},
+				isKeepAlive : function () {}
 			};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oOtherContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oOtherContext).expects("isKeepAlive").withExactArgs().returns(true);
 		this.mock(oOtherContext).expects("getValue").withExactArgs().returns("~value~");
 		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
 			.returns("('23')");
@@ -1658,13 +1660,15 @@ sap.ui.define([
 					SyncPromise.resolve(Promise.resolve())),
 			oOtherContext = {
 				isDeleted : function () {},
-				bKeepAlive : oFixture.bKeepAlive
+				isKeepAlive : function () {}
 			};
 
 		oOtherContext.oBinding = oBinding;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oOtherContext).expects("isDeleted").withExactArgs().returns(oFixture.bDeleted);
+		this.mock(oOtherContext).expects("isKeepAlive").exactly(oFixture.bDeleted ? 0 : 1)
+			.withExactArgs().returns(oFixture.bKeepAlive);
 
 		assert.throws(function () {
 			// code under test
