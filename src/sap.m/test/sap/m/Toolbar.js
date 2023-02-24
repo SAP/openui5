@@ -63,9 +63,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
-	// shortcut for sap.m.ToolbarDesign
-	var ToolbarDesign = mobileLibrary.ToolbarDesign;
-
 	// shortcut for sap.m.SelectType
 	var SelectType = mobileLibrary.SelectType;
 
@@ -338,7 +335,7 @@ sap.ui.define([
 				design : ToolbarDesign.Transparent,
 				content : [
 					new Label({
-						text : "Segmented Button",
+						text : "Segmented Button in Transparent Toolbar",
 						tooltip : "Segmented Button"
 					}),
 					new ToolbarSpacer(),
