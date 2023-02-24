@@ -79,6 +79,7 @@ function (
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 		assert.strictEqual(parseInt($oDynamicPageHeader[0].style.height), iHeaderHeight, "Header height is fixed");
+		assert.strictEqual($oDynamicPageHeader[0].style.overflow, "hidden", "Header height is restricted");
 		oSetPropertySpy.resetHistory();
 
 		oDynamicPage.setHeaderExpanded(true);
@@ -88,6 +89,7 @@ function (
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", true, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
 		assert.strictEqual($oDynamicPageHeader[0].style.height, "", "Header height is restored to the default value");
+		assert.strictEqual($oDynamicPageHeader[0].style.overflow, "", "Header overflow is restored to the default value");
 		oSetPropertySpy.resetHistory();
 
 		oDynamicPage._snapHeader();
@@ -96,6 +98,7 @@ function (
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 		assert.strictEqual(parseInt($oDynamicPageHeader[0].style.height), iHeaderHeight, "Header height is fixed");
+		assert.strictEqual($oDynamicPageHeader[0].style.overflow, "hidden", "Header height is restricted");
 	});
 
 	QUnit.test("DynamicPage Header - expanding/collapsing by clicking the title", function (assert) {

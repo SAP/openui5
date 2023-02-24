@@ -746,6 +746,7 @@ sap.ui.define([
 		// in order to avoid unnecessary jumps of the scroll position
 		// due to reflow of the header content while in the scroll overflow
 		oDynamicPageHeader.$().css("height", bTabbable ? "" : this._getHeaderHeight() + "px");
+		oDynamicPageHeader.$().css("overflow", bTabbable ? "" : "hidden");
 	};
 
 	/**
