@@ -43,7 +43,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92
 		 * @alias sap.m.DynamicDateOption
-		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 */
 		var DynamicDateOption = Element.extend("sap.m.DynamicDateOption", /** @lends sap.m.DynamicDateOption.prototype */ {
 			metadata: {
@@ -78,10 +77,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Defines the UI types of the option. They are used to create predefined
-		 * UI for the DynamicDateRange's value help dialog corresponding to this option.
+		 * Defines the UI types of the option. They are used to create predefined UI for
+		 * the DynamicDateRange's value help dialog corresponding to this option.
 		 * The types are DynamicDateValueHelpUIType instances. Their possible values are "date",
-		 * "daterange", "month", "int". The created UI consists of Calendar or Input controls.
+		 * "datetime", "daterange", "month", "int". The created UI consists of Calendar or Input controls.
 		 *
 		 * @param {sap.m.DynamicDateRange} oControl The control instance
 		 * @returns {sap.m.DynamicDateValueHelpUIType[]} An array with the option's UI types
@@ -93,7 +92,8 @@ sap.ui.define([
 
 		/**
 		 * Creates the option's value help UI. Mainly used for custom scenarios where
-		 * getValueHelpUITypes is not enough to define the UI.
+		 * getValueHelpUITypes is not enough to define the UI. In custom options, you can
+		 * create different controls that are used by the user to input data via interaction.
 		 *
 		 * @param {sap.m.DynamicDateRange} oControl The control instance
 		 * @param {function(sap.ui.base.Event)} fnControlsUpdated A callback invoked when any of the created controls updates its value
@@ -250,6 +250,12 @@ sap.ui.define([
 		 * Provides the order index of the option's group.
 		 * Used for grouping within the options list inside a DynamicDateRange's popup.
 		 * Standard options are arranged in 6 groups - from 1 to 6.
+		 * 1 - Single Dates
+		 * 2 - Date Ranges
+		 * 3 - Weeks
+		 * 4 - Months
+		 * 5 - Quarters
+		 * 6 - Years
 		 *
 		 * @returns {int} A group index
 		 * @public

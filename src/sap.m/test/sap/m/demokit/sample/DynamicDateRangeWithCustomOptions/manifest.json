@@ -21,6 +21,8 @@
 		"config": {
 			"sample": {
 				"files": [
+					"CustomPreviousXWeekend.js",
+					"CustomPreviousXWorkWeek.js",
 					"DynamicDateRangeWithCustomOptions.view.xml",
 					"DynamicDateRangeWithCustomOptions.controller.js",
 					"manifest.json"
