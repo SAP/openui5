@@ -53,5 +53,5 @@ sap.ui.define([
 		});
 
 	oApp.addPage(oPage);
-	oApp.placeAt("content");
+	oApp.placeAt("body");
 });
