@@ -248,6 +248,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Override the parent setter to preserve the externally visible parent-child relationship
+	 * @override
+	 * @returns {this} Returns <code>this</code> to allow method chaining
+	 */
+	ObjectPageSubSection.prototype.setParent = function () {
+		var oResult = ObjectPageSectionBase.prototype.setParent.apply(this, arguments),
+			oPublicParent = this.getParent();
+		if (oPublicParent && oPublicParent.isA("sap.uxap.ObjectPageSection")
+			&& this.sParentAggregationName !== "subSections") {
+				this.sParentAggregationName = "subSections";
+		}
+		return oResult;
+	};
+
+	/**
 	 * Getter for the private "_columnSpan" property
 	 * @returns {string}
 	 * @restricted

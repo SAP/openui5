@@ -1278,41 +1278,48 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 		});
 	});
 
-    QUnit.module("SubSection access to parent ObjectPage", {
-        beforeEach: function () {
-            this.oObjectPageLayout = new ObjectPageLayout({
-                sections: [
-                    new ObjectPageSection("section1", {
-                        title: "section 1",
-                        subSections: [
-                            new ObjectPageSubSectionClass({
-                                title:"subsection 1",
-                                blocks: [
-                                    new Button({ text: 'notext' })
-                                ]
-                            })
-                        ]
-                    })
-                ]
-            });
-            this.oObjectPageLayout.placeAt('qunit-fixture');
-            Core.applyChanges();
-        },
-        afterEach: function () {
-            this.oObjectPageLayout.destroy();
-        }
-    });
+	QUnit.module("SubSection access to parent", {
+		beforeEach: function () {
+			this.oObjectPageLayout = new ObjectPageLayout({
+				sections: [
+					new ObjectPageSection("section1", {
+						title: "section 1",
+						subSections: [
+							new ObjectPageSubSectionClass({
+								title:"subsection 1",
+								blocks: [
+									new Button({ text: 'notext' })
+								]
+							})
+						]
+					})
+				]
+			});
+			this.oObjectPageLayout.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oObjectPageLayout.destroy();
+		}
+	});
 
-    QUnit.test("No error when accessing a property of parent ObjectPage", function(assert) {
-        // note that selected section is the last visible one
-        var oSection = this.oObjectPageLayout.getSections()[0],
-            oSubSection;
+	QUnit.test("No error when accessing a property of parent ObjectPage", function(assert) {
+		// note that selected section is the last visible one
+		var oSection = this.oObjectPageLayout.getSections()[0],
+			oSubSection;
 
-        //act
-        oSubSection = oSection.removeSubSection(0);
+		//act
+		oSubSection = oSection.removeSubSection(0);
 
-        assert.ok(!oSubSection._getUseTitleOnTheLeft(), "falsy value is returned");
-    });
+		assert.ok(!oSubSection._getUseTitleOnTheLeft(), "falsy value is returned");
+	});
+
+	QUnit.test("sParentAggregationName matches parent", function(assert) {
+		var oSection = this.oObjectPageLayout.getSections()[0],
+			oSubSection = oSection.getSubSections()[0];
+
+		assert.equal(oSubSection.sParentAggregationName, "subSections", "the parent aggregation name matches the public parent");
+	});
 
 	QUnit.module("Accessibility", {
 		beforeEach: function() {
