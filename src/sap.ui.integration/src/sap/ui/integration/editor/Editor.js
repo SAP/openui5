@@ -1204,6 +1204,8 @@ sap.ui.define([
 	};
 
 	Editor.prototype.initDestinations = function (vHost) {
+		this._destinationsModel = new JSONModel({});
+		this.setModel(this._destinationsModel, "destinations");
 		var oHostInstance = this.getHostInstance();
 
 		if (vHost && !oHostInstance) {
@@ -2063,6 +2065,9 @@ sap.ui.define([
 				},
 				context: {
 					path: "context>/"
+				},
+				destinations: {
+					path: "destinations>/"
 				}
 			},
 			visible: oConfig.visible
@@ -3086,6 +3091,7 @@ sap.ui.define([
 		this._beforeManifestModel = null;
 		this._oInitialManifestModel = null;
 		this._settingsModel = null;
+		this._destinationsModel = null;
 		document.body.style.removeProperty("--sapUiIntegrationEditorFormWidth");
 		document.body.style.removeProperty("--sapUiIntegrationEditorFormHeight");
 		Control.prototype.destroy.apply(this, arguments);
@@ -3290,19 +3296,17 @@ sap.ui.define([
 				if (typeof oItems[n + ".destination"].label === "undefined") {
 					oItems[n + ".destination"].label = n;
 				}
-				if (oHost) {
-					oItems[n + ".destination"]._loading = true;
-				}
 			});
 			var getDestinationsDone = false;
 			if (oHost) {
+				this._destinationsModel.setProperty("/_loading", true);
+				this._destinationsModel.checkUpdate(true);
 				this.getHostInstance().getDestinations().then(function (a) {
 					getDestinationsDone = true;
-					Object.keys(oConfiguration.destinations).forEach(function (n) {
-						oItems[n + ".destination"]._values = a;
-						oItems[n + ".destination"]._loading = false;
-						this._settingsModel.checkUpdate(true);
-					}.bind(this));
+					this._destinationsModel.setProperty("/_values", a);
+					this._destinationsModel.setProperty("/_loading", false);
+					this._destinationsModel.setSizeLimit(a.length);
+					this._destinationsModel.checkUpdate(true);
 				}.bind(this)).catch(function () {
 					//Fix DIGITALWORKPLACE-4359, retry once for the timeout issue
 					return this.getHostInstance().getDestinations();
@@ -3310,16 +3314,13 @@ sap.ui.define([
 					if (getDestinationsDone) {
 						return;
 					}
-					Object.keys(oConfiguration.destinations).forEach(function (n) {
-						oItems[n + ".destination"]._values = b;
-						oItems[n + ".destination"]._loading = false;
-						this._settingsModel.checkUpdate(true);
-					}.bind(this));
+					this._destinationsModel.setProperty("/_values", b);
+					this._destinationsModel.setProperty("/_loading", false);
+					this._destinationsModel.setSizeLimit(b.length);
+					this._destinationsModel.checkUpdate(true);
 				}.bind(this)).catch(function (e) {
-					Object.keys(oConfiguration.destinations).forEach(function (n) {
-						oItems[n + ".destination"]._loading = false;
-						this._settingsModel.checkUpdate(true);
-					}.bind(this));
+					this._destinationsModel.setProperty("/_loading", false);
+					this._destinationsModel.checkUpdate(true);
 					Log.error("Can not get destinations list from '" + oHost.getId() + "'.");
 				}.bind(this));
 			}

@@ -16,7 +16,7 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	oHost.getDestinations = function () {
 		return new Promise(function (resolve) {
 			setTimeout(function () {
-				resolve([
+				var items = [
 					{
 						"name": "Products"
 					},
@@ -32,7 +32,11 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 					{
 						"name": "local"
 					}
-				]);
+				];
+				for (var i = 0; i < 1000; i++) {
+					items.push({name: i + 1});
+				}
+				resolve(items);
 			}, 1000);
 		});
 	};

@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/base/i18n/ResourceBundle"
+	"sap/base/i18n/ResourceBundle",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -24,7 +25,8 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	KeyCodes,
-	ResourceBundle
+	ResourceBundle,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -3714,7 +3716,6 @@ sap.ui.define([
 			}
 		}
 	}, function () {
-
 		QUnit.test("Check Loading animation on destination", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "MyDestination" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
@@ -3737,17 +3738,203 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var DestinationSelect = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
+					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
-					assert.ok(DestinationSelect.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
 					setTimeout(function () {
 						//should resolve the destination within 1000ms
-						assert.ok(DestinationSelect.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
-						assert.equal(DestinationSelect.getItems().length, 4, "Content of Form contains: Destination Field items lengh OK");
-						assert.equal(DestinationSelect.getSelectedIndex(), 3, "Content of Form contains: Destination Field selectedItem: Index OK");
-						assert.equal(DestinationSelect.getSelectedItem().getKey(), "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
-						assert.equal(DestinationSelect.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
+						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
+						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+						assert.equal(DestinationComboBox.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
+						assert.equal(DestinationComboBox.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
+						var oItems = DestinationComboBox.getItems();
+						assert.equal(oItems.length, 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oItems[0].getKey(), "Northwind", "Content of Form contains: Destination Field item 0 Key OK");
+						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
+						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
+						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
 						resolve();
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Large number of destinations", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oHost.getDestinations = function () {
+				return new Promise(function (resolve) {
+					setTimeout(function () {
+						var items = [
+							{
+								"name": "Products"
+							},
+							{
+								"name": "Orders"
+							},
+							{
+								"name": "Portal"
+							},
+							{
+								"name": "Northwind"
+							}
+						];
+						for (var i = 1000; i > 0; i--) {
+							items.push({name: i});
+						}
+						resolve(items);
+					}, 1000);
+				});
+			};
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oEditor = new Editor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Check number of destinations", function (assert) {
+			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					setTimeout(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
+						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+						assert.equal(DestinationComboBox.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
+						assert.equal(DestinationComboBox.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
+						var oItems = DestinationComboBox.getItems();
+						assert.equal(oItems.length, 1004, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oItems[0].getKey(), "Northwind", "Content of Form contains: Destination Field item 0 Key OK");
+						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
+						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
+						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
+						for (var i = 1; i < 1001; i++) {
+							assert.equal(oItems[(i + 3)].getKey(), i, "Content of Form contains: Destination Field item " + (i + 3) + " Key OK");
+						}
+						resolve();
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Filter destinations 1", function (assert) {
+			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					setTimeout(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
+						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+						assert.equal(DestinationComboBox.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
+						assert.equal(DestinationComboBox.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
+						assert.equal(DestinationComboBox.getVisibleItems().length, 0, "Content of Form contains: Destination Field visible items lengh OK");
+						DestinationComboBox.focus();
+						EditorQunitUtils.setInputValue(DestinationComboBox, "o");
+						setTimeout(function () {
+							assert.ok(DestinationComboBox._getSuggestionsPopover().isOpen(), "Content of Form contains: suggestion popover is open");
+							assert.equal(DestinationComboBox.getVisibleItems().length, 1, "Field: Destination Field visible items lengh OK");
+							assert.equal(DestinationComboBox.getVisibleItems()[0].getKey(), "Orders", "Field: Destination Field visible item 0 Key OK");
+							resolve();
+						}, 2000);
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Filter destinations 2", function (assert) {
+			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					setTimeout(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
+						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+						assert.equal(DestinationComboBox.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
+						assert.equal(DestinationComboBox.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
+						assert.equal(DestinationComboBox.getVisibleItems().length, 0, "Content of Form contains: Destination Field visible items lengh OK");
+						DestinationComboBox.focus();
+						EditorQunitUtils.setInputValue(DestinationComboBox, "p");
+						setTimeout(function () {
+							assert.ok(DestinationComboBox._getSuggestionsPopover().isOpen(), "Content of Form contains: suggestion popover is open");
+							assert.equal(DestinationComboBox.getVisibleItems().length, 2, "Field: Destination Field visible items lengh OK");
+							assert.equal(DestinationComboBox.getVisibleItems()[0].getKey(), "Portal", "Field: Destination Field visible item 0 Key OK");
+							assert.equal(DestinationComboBox.getVisibleItems()[1].getKey(), "Products", "Field: Destination Field visible item 1 Key OK");
+							resolve();
+						}, 2000);
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Filter destinations 3", function (assert) {
+			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					setTimeout(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
+						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+						assert.equal(DestinationComboBox.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
+						assert.equal(DestinationComboBox.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
+						assert.equal(DestinationComboBox.getVisibleItems().length, 0, "Content of Form contains: Destination Field visible items lengh OK");
+						DestinationComboBox.focus();
+						EditorQunitUtils.setInputValue(DestinationComboBox, "1");
+						setTimeout(function () {
+							assert.ok(DestinationComboBox._getSuggestionsPopover().isOpen(), "Content of Form contains: suggestion popover is open");
+							var aVisibleItems = DestinationComboBox.getVisibleItems();
+							assert.equal(aVisibleItems.length, 112, "Content of Form contains: Destination Field visible items lengh OK");
+							assert.equal(aVisibleItems[0].getKey(), "1", "Content of Form contains: Destination Field visible item 0 Key OK");
+							assert.equal(aVisibleItems[1].getKey(), "10", "Content of Form contains: Destination Field visible item 1 Key OK");
+							assert.equal(aVisibleItems[2].getKey(), "11", "Content of Form contains: Destination Field visible item 2 Key OK");
+							assert.equal(aVisibleItems[3].getKey(), "12", "Content of Form contains: Destination Field visible item 3 Key OK");
+							assert.equal(aVisibleItems[4].getKey(), "13", "Content of Form contains: Destination Field visible item 4 Key OK");
+							assert.equal(aVisibleItems[5].getKey(), "14", "Content of Form contains: Destination Field visible item 5 Key OK");
+							assert.equal(aVisibleItems[6].getKey(), "15", "Content of Form contains: Destination Field visible item 6 Key OK");
+							assert.equal(aVisibleItems[7].getKey(), "16", "Content of Form contains: Destination Field visible item 7 Key OK");
+							assert.equal(aVisibleItems[8].getKey(), "17", "Content of Form contains: Destination Field visible item 8 Key OK");
+							assert.equal(aVisibleItems[9].getKey(), "18", "Content of Form contains: Destination Field visible item 9 Key OK");
+							assert.equal(aVisibleItems[10].getKey(), "19", "Content of Form contains: Destination Field visible item 10 Key OK");
+							for (var i = 0; i < 100; i++) {
+								assert.equal(aVisibleItems[(i + 11)].getKey(), i + 100, "Content of Form contains: Destination Field item " + (i + 11) + " Key OK");
+							}
+							assert.equal(aVisibleItems[111].getKey(), "1000", "Content of Form contains: Destination Field visible item 111 Key OK");
+							resolve();
+						}, 2000);
 					}, 1500);
 				}.bind(this));
 			}.bind(this));

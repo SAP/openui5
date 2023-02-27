@@ -317,7 +317,7 @@
 			},
 			"destinations": {
 				"string": {
-					"name": "Simple"
+					"name": "Northwind"
 				},
 				"local": {
 					"name": "local"
@@ -326,7 +326,7 @@
 					"name": "JAM"
 				},
 				"destLabel": {
-					"name": "products",
+					"name": "Products",
 					"label": "Direct Destination Label"
 				},
 				"destLabelTrans": {
