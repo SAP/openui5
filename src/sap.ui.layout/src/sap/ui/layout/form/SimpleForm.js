@@ -1652,7 +1652,7 @@ sap.ui.define([
 		var mSettings = {};
 
 		if (oLabel) {
-			sId = oLabel.getId() + "--FE";
+			sId = this.getId() + "--" + oLabel.getId() + "--FE";
 			oLabel.addStyleClass("sapUiFormLabel-CTX");
 			if (!_getFieldLayoutData.call(this, oLabel)) {
 				_createFieldLayoutData.call(this, oLabel, this._iLabelWeight, false, true, this.getLabelMinWidth());
@@ -1704,7 +1704,7 @@ sap.ui.define([
 		var mSettings = {};
 
 		if (oTitle) {
-			sId = oTitle.getId() + "--FC";
+			sId = this.getId() + "--" + oTitle.getId() + "--FC";
 			if (oTitle.isA("sap.ui.core.Title")) {
 				mSettings["title"] = oTitle;
 			} else if (oTitle.isA("sap.ui.core.Toolbar")) {
