@@ -3,11 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/type/DateTimeWithTimezone"
-], function (Configuration, Controller, JSONModel, ODataUtils, DateTimeWithTimezone) {
+], function (Configuration, UI5Date, Controller, JSONModel, ODataUtils, DateTimeWithTimezone) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.types.v2.DateTime.DateTime", {
@@ -65,8 +66,8 @@ sap.ui.define([
 				oEndDate = oBindingContext.getProperty("EndDate");
 
 			// Copy the Date object from the OData model to the JSON model
-			this.oJSONModel.setProperty("/Date", oDate ? new Date(oDate) : null);
-			this.oJSONModel.setProperty("/EndDate", oEndDate ? new Date(oEndDate) : null);
+			this.oJSONModel.setProperty("/Date", oDate ? UI5Date.getInstance(oDate) : null);
+			this.oJSONModel.setProperty("/EndDate", oEndDate ? UI5Date.getInstance(oEndDate) : null);
 
 			oDialog.bindObject({path: "/", model: "json"});
 			oDialog.open();
@@ -81,8 +82,8 @@ sap.ui.define([
 				oODataModel = oContext.getModel();
 
 			// Copy the Date object form the JSON model back to the OData model
-			oODataModel.setProperty("Date", oDate ? new Date(oDate) : null, oContext);
-			oODataModel.setProperty("EndDate", oEndDate ? new Date(oEndDate) : null, oContext);
+			oODataModel.setProperty("Date", oDate ? UI5Date.getInstance(oDate) : null, oContext);
+			oODataModel.setProperty("EndDate", oEndDate ? UI5Date.getInstance(oEndDate) : null, oContext);
 
 			this.byId("dialog").close();
 		}
