@@ -690,6 +690,29 @@ sap.ui.define([
 		oSut.destroy();
 	});
 
+	QUnit.test("minDate and maxDate are correctly switched when minDate is before maxDate", function(assert) {
+		// Prepare
+		var oDP1 = new DatePicker({
+			minDate: new Date(2023, 1, 14),
+			maxDate: new Date(2023, 1, 1)
+		});
+
+		oDP1.placeAt("qunit-fixture");
+
+		// Act - Dates are switched after control is updated
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oDP1.getMinDate().getTime(), new Date(2023, 1, 1, 0, 0, 0, 0).getTime(),
+				"minDate is correct and hours are set to the beginning of the day");
+
+		assert.equal(oDP1.getMaxDate().getTime(), new Date(2023, 1, 14, 23, 59, 59, 999).getTime(),
+				"maxDate is correct and hours are set to the end of the day");
+
+		// Cleanup
+		oDP1.destroy();
+	});
+
 	QUnit.test("minDate and value in databinding scenario where the order of setters is not known",
 		function (assert) {
 			assert.ok(Log, "Log module should be available");
