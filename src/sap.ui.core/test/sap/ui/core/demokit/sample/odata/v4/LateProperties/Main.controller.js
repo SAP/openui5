@@ -13,12 +13,13 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/core/Title",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
 ], function (UriParameters, Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text,
-		Controller, Title, SimpleForm, Sorter, ODataModel, TestUtils) {
+		Controller, Title, UI5Date, SimpleForm, Sorter, ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -27,7 +28,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
 		onCleanUpOptimisticBatchCache : function (oEvent) {
-			var oTimeStamp = new Date(Date.now()
+			var oTimeStamp = UI5Date.getInstance(Date.now()
 				- parseInt(oEvent.getParameter("id").split("days")[1]) * 60 * 60 * 24 * 1000);
 
 			ODataModel.cleanUpOptimisticBatch(oTimeStamp).then(function () {

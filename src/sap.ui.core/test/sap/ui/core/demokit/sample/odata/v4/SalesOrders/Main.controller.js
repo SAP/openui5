@@ -610,7 +610,7 @@ sap.ui.define([
 		onUpdateFavoriteProduct : function (/*oEvent*/) {
 			var oBinding = this.byId("favoriteProduct").getBinding("value");
 
-			oBinding.setValue(oDateFormat.format(new Date()));
+			oBinding.setValue(oDateFormat.format(UI5Date.getInstance()));
 		},
 
 		onUndoSalesOrderDeletion : function () {
