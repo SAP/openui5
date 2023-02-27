@@ -25,7 +25,7 @@ sap.ui.define([
 		 * @param {string} sText - Text value
 		 * @param {string} sType - Translation text type, e.g. XBUT, XTIT, XTOL, XFLD
 		 *
-		 * @deprecated
+		 * @deprecated As of version 1.107
 		 * @private
 		 * @ui5-restricted
 		 */
