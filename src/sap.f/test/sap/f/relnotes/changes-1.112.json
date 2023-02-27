@@ -1,0 +1,34 @@
+{
+  "1.112.0": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "aa8829a9b2eec0faed6b3630ec776a6b9775ac86",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Prevent overflow of hidden content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380025608"
+          }
+        ]
+      },
+      {
+        "id": "d52fdc15be9ebe6c331be04edbe351f24cb9c3f1",
+        "type": "FEATURE",
+        "text": " Integration cards: Input control can be used in the Object Card"
+      },
+      {
+        "id": "43526a73faad2f1c391923279351f74da6da9ad1",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Scroll issue upon resize corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380025608"
+          }
+        ]
+      }
+    ]
+  }
+}

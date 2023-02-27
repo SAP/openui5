@@ -1,0 +1,12 @@
+{
+  "1.112.0": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "d52fdc15be9ebe6c331be04edbe351f24cb9c3f1",
+        "type": "FEATURE",
+        "text": " Integration cards: Input control can be used in the Object Card"
+      }
+    ]
+  }
+}

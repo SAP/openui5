@@ -3,6 +3,28 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "5130748dd29216b7169f1a113b396f40c237e47c",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: fire data received event if request is aborted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380036006"
+          }
+        ]
+      },
+      {
+        "id": "d2e8039f12d8f17d155233385704390a238951d6",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding: Preliminary context in constructor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280184236"
+          }
+        ]
+      },
+      {
         "id": "dcec35e2fab873de1c1027f9a89eb469cfbc8563",
         "type": "FIX",
         "text": " sap.ui.core.date.UI5Date: UTC setters invalidate cached date parts",

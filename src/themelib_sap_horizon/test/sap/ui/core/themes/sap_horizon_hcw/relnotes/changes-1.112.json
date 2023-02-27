@@ -3,6 +3,25 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "78060d9cd410d38c382aceeef491e7bdf80001c6",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Styles in table are now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270157289"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380031176"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380026183"
+          }
+        ]
+      },
+      {
         "id": "c8a678a1d9de1e888d9347c8a965a6fd61a63b1a",
         "type": "FEATURE",
         "text": " sap.ui.core.IconPool: Update icon font v5.04 and v4.16"

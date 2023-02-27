@@ -3,6 +3,140 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "b65bb4ed9cc4c32596125c6d10ee2619303c627f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust appointments announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162468"
+          }
+        ]
+      },
+      {
+        "id": "00d7737fe43259441f6193d70de8902dbb5b5a25",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fixed focus outline when active ObjectStatus is placed in table cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380003711"
+          }
+        ]
+      },
+      {
+        "id": "139a49e1d0a4641c408c5e20e44a33bdda688386",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Navigate back when all messages from Message Model are cleared",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380028487"
+          }
+        ]
+      },
+      {
+        "id": "7d6589a2e83a84097ade838612642b011a5cb9ab",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Added \"since\" tag for the footer aggregation documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380042665"
+          }
+        ]
+      },
+      {
+        "id": "c3416a73488466a09539db65f8494d2036b1f8ab",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Using canonical name for maxlength attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380042522"
+          }
+        ]
+      },
+      {
+        "id": "337a21b31c6abc110ddedcaa85a1ad7ca94ef8a7",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Tooltip correctly shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380042250"
+          }
+        ]
+      },
+      {
+        "id": "9e35f6ce43460e798b98b205cd16fe06816b308d",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: remove redundant role attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270176784"
+          }
+        ]
+      },
+      {
+        "id": "224751d02c1813fe08297db4094aa06b04fe92e0",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: test page is now shown"
+      },
+      {
+        "id": "896c12bd1df88c123dd92b3bb0475340f06464bc",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: added SR speech for date's week number",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270172494"
+          }
+        ]
+      },
+      {
+        "id": "36babe9500eb9dfb31ef095952bb56787ea22560",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: apply focus properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270132961"
+          }
+        ]
+      },
+      {
+        "id": "bf59d4a30eb5dc657f26c6483fce10bb6cf21eb0",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: adjust aria attribute names",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380029140"
+          }
+        ]
+      },
+      {
+        "id": "78060d9cd410d38c382aceeef491e7bdf80001c6",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Styles in table are now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270157289"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380031176"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380026183"
+          }
+        ]
+      },
+      {
         "id": "c8a678a1d9de1e888d9347c8a965a6fd61a63b1a",
         "type": "FEATURE",
         "text": " sap.ui.core.IconPool: Update icon font v5.04 and v4.16"
