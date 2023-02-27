@@ -49,10 +49,10 @@ sap.ui.define([
 				return Promise.reject(new Error("no Control provided for renaming"));
 			}
 
-			return oModifier.getProperty(oRenamedElement, "text").then(function(sProperty) {
+			return oModifier.getPropertyBindingOrProperty(oRenamedElement, "text").then(function(sProperty) {
 				oChangeWrapper.setRevertData(sProperty);
 				var sValue = oTexts.formText.value;
-				oModifier.setProperty(oRenamedElement, "text", sValue);
+				oModifier.setPropertyBindingOrProperty(oRenamedElement, "text", sValue);
 			});
 		} else {
 			return Promise.resolve();
@@ -80,7 +80,7 @@ sap.ui.define([
 		var oRenamedElement = oModifier.bySelector(vSelector, oAppComponent, oView);
 
 		if (sOldText || sOldText === "") {
-			oModifier.setProperty(oRenamedElement, "text", sOldText);
+			oModifier.setPropertyBindingOrProperty(oRenamedElement, "text", sOldText);
 			// In some cases the SimpleForm does not properly update the value, so the invalidate call is required
 			oRenamedElement.getParent().invalidate();
 			oChangeWrapper.resetRevertData();
