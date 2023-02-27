@@ -107,6 +107,9 @@ sap.ui.define([
 					});
 			});
 
+			/**
+			 * @deprecated Since version 1.108
+			 */
 			QUnit.test("given isContextSharingEnabled is called for all existing layer in a" + (bValueToBeSet ? "n ABAP system" : " non ABAP system"), function (assert) {
 				sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 					bValueToBeSet ? {connector: "LrepConnector"} : {connector: "NeoLrepConnector"}
