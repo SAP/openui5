@@ -787,6 +787,8 @@ sap.ui.define([
 			Log.warning("minDate > MaxDate -> dates switched", this);
 			var oMaxDate = UI5Date.getInstance(this._oMinDate.getTime());
 			var oMinDate = UI5Date.getInstance(this._oMaxDate.getTime());
+			oMaxDate.setHours(23, 59, 59, 999);
+			oMinDate.setHours(0, 0, 0, 0);
 			this._oMinDate = UI5Date.getInstance(oMinDate.getTime());
 			this._oMaxDate = UI5Date.getInstance(oMaxDate.getTime());
 			this.setProperty("minDate", oMinDate, true);
