@@ -201,7 +201,7 @@
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery-compat.js</pattern>
         </lib>
-        <lib name="jquery_mobile" displayName="jQuery Mobile" npmName="n/a" version="1.3.1" hash="9455e32c6b83390085754590a3d71707" homepage="http://jquerymobile.com" id="73554900106100002438">
+        <lib name="jquery_mobile" displayName="jQuery Mobile" npmName="n/a" version="1.3.1" hash="353b22bfd4f4c0fabb02c05a36b93efb" homepage="http://jquerymobile.com" id="73554900106100002438">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2010, 2013 jQuery Foundation, Inc. and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery-mobile-custom.js</pattern>
