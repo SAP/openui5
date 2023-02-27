@@ -2717,11 +2717,12 @@ function(
 	 * the list is scrolled to the last available item.
 	 *
 	 * Growing in combination with <code>growingScrollToLoad=true</code> can result in loading of
-	 * new items when scrolling to the bottom of the list.
+	 * new items when scrolling to the bottom of the list.<br>
+	 * <b>Note:</b> This method only works if the control is placed inside a scrollable container (for example, <code>sap.m.Page</code>).
+	 * Calling this method if the <code>ListBase</code> control is placed outside the container, will reject the <code>Promise</code> by throwing an error.
 	 *
 	 * @param {number} iIndex The list item index that must be scrolled into the viewport
-	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row with the given index.<br>
-	 * <b>Note:</b> This method can only be used if the control is inside a scrollable scroll container (e.g <code>sap.m.Page</code>).
+	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row with the given index.
 	 *
 	 * @since 1.76
 	 * @public
