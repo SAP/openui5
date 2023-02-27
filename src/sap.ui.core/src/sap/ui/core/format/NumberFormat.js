@@ -46,6 +46,8 @@ sap.ui.define([
 
 	var rAllWhiteSpaces = /\s/g,
 		rDigit = /\d/,
+		// Regex for checking if a number has leading zeros
+		rLeadingZeros = /^(-?)0+(\d)/,
 		// Not matching Sc (currency symbol) and Z (separator) characters
 		// https://www.unicode.org/reports/tr44/#General_Category_Values
 		rNotSAndNotZ = /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6\u0020\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/,
@@ -2020,9 +2022,9 @@ sap.ui.define([
 		} else if (typeof vValue === "string") {
 			if (parseFloat(vValue) === 0 && iStep >= 0) {
 				// input "00000" should become "0"
-				// input "1e-1337" should remain "1e-1337"
-				// in order to keep the precision
-				return rOnlyZeros.test(vValue) ? "0" : vValue;
+				// input "000.000" should become "0.000" to keep precision of decimals
+				// input "1e-1337" should remain "1e-1337" in order to keep the precision
+				return vValue.replace(rLeadingZeros, "$1$2");
 			}
 			// In case of a negative value the leading minus needs to be cut off before shifting the decimal point.
 			// Otherwise the minus will affect the positioning by index 1.
@@ -2071,7 +2073,7 @@ sap.ui.define([
 			sDecimal = vValue.substring(iAfterMovePos);
 
 			// remove unnecessary leading zeros
-			sInt = sInt.replace(/^(-?)0+(\d)/, "$1$2");
+			sInt = sInt.replace(rLeadingZeros, "$1$2");
 
 			return sMinus + sInt + (sDecimal ? ("." + sDecimal) : "");
 		} else {

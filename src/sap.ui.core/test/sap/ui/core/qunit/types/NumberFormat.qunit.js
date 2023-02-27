@@ -1270,6 +1270,18 @@ sap.ui.define([
 		assert.ok(oSpy.calledWith(1.23456, 3), "Custom rounding function is called with correct parameters");
 	});
 
+	QUnit.test("parse trims leading zeros but keeps trailing decimals", function (assert) {
+		var oFormat = NumberFormat.getFloatInstance({parseAsString: true});
+
+		assert.strictEqual(oFormat.parse("001.200"), "1.200");
+		assert.strictEqual(oFormat.parse("001.000"), "1.000");
+		assert.strictEqual(oFormat.parse("000.200"), "0.200");
+		assert.strictEqual(oFormat.parse("000.000"), "0.000");
+		assert.strictEqual(oFormat.parse("000"), "0");
+		assert.strictEqual(oFormat.parse("001.20e-1337"), "1.20e-1337");
+		assert.strictEqual(oFormat.parse("-001.20e-1337"), "-1.20e-1337");
+	});
+
 
 	QUnit.module("Unit Format", {
 		afterEach : function () {
