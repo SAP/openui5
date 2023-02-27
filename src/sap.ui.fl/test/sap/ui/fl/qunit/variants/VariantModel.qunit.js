@@ -978,6 +978,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'copyVariant'", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				getUserId: function() {return "test user";}
+			});
 			var oAddVariantStub = sandbox.stub(VariantManagementState, "addVariantToVariantManagement").returns(3);
 			var oVariantData = {
 				instance: createVariant({
@@ -987,7 +990,7 @@ sap.ui.define([
 					reference: "Dummy",
 					layer: Layer.CUSTOMER,
 					title: "Text for TextDemo",
-					author: ""
+					author: "test user"
 				}),
 				controlChanges: [],
 				variantChanges: {}
@@ -1010,6 +1013,49 @@ sap.ui.define([
 					variantData: oVariantData
 				}), "then function to add variant to variants map was called");
 				assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.instance.getId(), "then variant added to VariantModel");
+				assert.equal(this.oModel.oData['variantMgmtId1'].variants[3].author, oVariantData.instance.getSupportInformation().user, "then the variant has an author");
+				assert.equal(aChanges[0].getId(), oVariantData.instance.getId(), "then the returned variant is the duplicate variant");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'copyVariant' with vendor layer", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				getUserId: function() {return "test user";}
+			});
+			var oAddVariantStub = sandbox.stub(VariantManagementState, "addVariantToVariantManagement").returns(3);
+			var oVariantData = {
+				instance: createVariant({
+					fileName: "variant0",
+					variantManagementReference: "variantMgmtId1",
+					variantReference: "",
+					reference: "Dummy",
+					layer: Layer.VENDOR,
+					title: "Text for TextDemo",
+					author: "SAP"
+				}),
+				controlChanges: [],
+				variantChanges: {}
+			};
+			sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
+			sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
+			sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange").returnsArg(0);
+
+			var mPropertyBag = {
+				variantManagementReference: "variantMgmtId1",
+				appComponent: this.oComponent,
+				generator: "myFancyGenerator",
+				layer: Layer.VENDOR
+			};
+			return this.oModel.copyVariant(mPropertyBag).then(function(aChanges) {
+				assert.ok(oAddVariantStub.calledOnce, "then function to add variant to variants map was called");
+
+				assert.ok(oAddVariantStub.calledWith({
+					reference: this.oModel.sFlexReference,
+					vmReference: "variantMgmtId1",
+					variantData: oVariantData
+				}), "then function to add variant to variants map was called");
+				assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.instance.getId(), "then variant added to VariantModel");
+				assert.equal(this.oModel.oData['variantMgmtId1'].variants[3].author, oVariantData.instance.getSupportInformation().user, "then the variant has an author");
 				assert.equal(aChanges[0].getId(), oVariantData.instance.getId(), "then the returned variant is the duplicate variant");
 			}.bind(this));
 		});

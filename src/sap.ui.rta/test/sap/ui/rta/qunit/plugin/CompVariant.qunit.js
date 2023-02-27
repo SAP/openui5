@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CompVariant",
@@ -28,6 +29,7 @@ sap.ui.define([
 	KeyCodes,
 	SmartVariantManagementApplyAPI,
 	SmartVariantManagementWriteAPI,
+	Settings,
 	Layer,
 	CommandFactory,
 	CompVariant,
@@ -80,6 +82,7 @@ sap.ui.define([
 			});
 		},
 		beforeEach: function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId: function() {return undefined;}});
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
 				commandFactory: new CommandFactory()
@@ -465,6 +468,7 @@ sap.ui.define([
 			});
 		},
 		beforeEach: function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId: function() {return undefined;}});
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
 				commandFactory: new CommandFactory()

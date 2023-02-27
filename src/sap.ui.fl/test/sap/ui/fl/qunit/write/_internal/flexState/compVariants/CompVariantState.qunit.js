@@ -240,7 +240,11 @@ sap.ui.define([
 			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
 		});
 
-		QUnit.test("also stores passed executeOnSelection and favorite and contexts", function (assert) {
+		QUnit.test("also stores passed executeOnSelection, favorite, contexts and author", function (assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				getUserId: function() {return "test user";},
+				isPublicLayerAvailable: function() {return false;}
+			});
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
 			var mPropertyBag = {
@@ -269,6 +273,7 @@ sap.ui.define([
 
 			assert.ok(oAddedObject.getSupportInformation().sapui5Version, "the version was filled in the support");
 			updateSapui5VersionTo1(oAddedObject); // avoid broken tests with version changes
+			assert.equal(oAddedObject.getSupportInformation().user, "test user", "the user name is set correctly");
 			assert.strictEqual(oAddedObject.getExecuteOnSelection(), true, "executeOnSelection is set");
 			assert.strictEqual(oAddedObject.getFavorite(), true, "favorite is set");
 			assert.deepEqual(oAddedObject.getContexts(), {
@@ -684,7 +689,8 @@ sap.ui.define([
 				contexts: {foo: "bar"},
 				name: "newName"
 			});
-
+			assert.strictEqual(this.oVariant.getLayer(), Layer.VENDOR, "the layer of the variant is VENDOR");
+			assert.strictEqual(this.oVariant.getSupportInformation().user, "SAP", "the author is SAP");
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was set to false for the variant");
 			assert.strictEqual(this.oVariant.getChanges().length, 0, "no change was written");
 		});

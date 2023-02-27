@@ -252,6 +252,18 @@ sap.ui.define([
 		return oVariant;
 	}
 
+	function setAuthor(oChangeSpecificData) {
+		if (oChangeSpecificData.layer === Layer.VENDOR) {
+			oChangeSpecificData.support = {
+				user: "SAP"
+			};
+		} else if (Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().getUserId()) {
+			oChangeSpecificData.support = {
+				user: Settings.getInstanceOrUndef().getUserId()
+			};
+		}
+	}
+
 	/**
 	 * CompVariant state class to handle the state of the compVariants and its changes.
 	 * This class is in charge of updating the maps stored in the <code>sap.ui.fl.apply._internal.flexState.FlexState</code>.
@@ -386,6 +398,7 @@ sap.ui.define([
 		oChangeSpecificData.layer = determineLayer(oChangeSpecificData);
 		oChangeSpecificData.changeType = oChangeSpecificData.type;
 		oChangeSpecificData.texts = getTexts(oChangeSpecificData);
+		setAuthor(oChangeSpecificData);
 		var oFileContent = Object.assign({}, oChangeSpecificData, _omit(mPropertyBag, "changeSpecificData"));
 		var oFlexObject = FlexObjectFactory.createCompVariant(oFileContent);
 
