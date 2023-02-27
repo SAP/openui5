@@ -272,6 +272,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("format: bad input type", function (assert) {
+			// no need to use UI5Date.getInstance as date value doesn't matter
 			var oBadModelValue = new Date(),
 				oType = createType();
 

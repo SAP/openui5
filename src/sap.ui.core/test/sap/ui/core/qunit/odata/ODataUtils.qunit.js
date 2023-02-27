@@ -22,7 +22,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("formatValue", function(assert) {
+		// no need to use UI5Date.getInstance as only the UTC timestamp is used
 		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			oDateTimeMs = new Date(Date.UTC(2015, 4, 30, 13, 47, 26, 253)),
 			oTime = time(49646000);
 
@@ -59,6 +61,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("formatValue with different CalendarType", function(assert) {
+		// no need to use UI5Date.getInstance as only the UTC timestamp is used
 		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
 			sOldCalendarType = Configuration.getCalendarType(),
 			oTime = time(49646000);
@@ -84,7 +87,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseValue", function(assert) {
+		// no need to use UI5Date.getInstance as only the UTC timestamp is used
 		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			oDateTimeMs = new Date(Date.UTC(2015, 4, 30, 13, 47, 26, 253)),
 			oTime = time(49646000);
 
@@ -147,7 +152,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseValue with different CalendarType", function(assert) {
+		// no need to use UI5Date.getInstance as only the UTC timestamp is used
 		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			oDateTimeMs = new Date(Date.UTC(2015, 4, 30, 13, 47, 26, 253)),
 			sOldCalendarType = Configuration.getCalendarType(),
 			oTime = time(49646000);
@@ -187,19 +194,29 @@ sap.ui.define([
 			// d: a test description prefix (t is taken if d is not given)
 			{t: "Edm.Boolean", s1: false, s2: false, gt: true},
 			{t: "Edm.Byte", s1: 0, s2: 0, gt: 1},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.Date", s1: new Date(iDate1), s2: new Date(iDate1), gt: new Date(iDate2)},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.Date", s1: new Date(iDate1), s2: iDate1, gt: iDate2, d: "Edm.Date+millis"},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.Date", s1: iDate1, s2: new Date(iDate1), gt: new Date(iDate2),
 				d: "millis+Edm.Date"},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.DateTime", s1: new Date(iDate1), s2: new Date(iDate1), gt: new Date(iDate2)},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.DateTime", s1: new Date(iDate1), s2: iDate1, gt: iDate2,
 				d: "Edm.DateTime+millis"},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.DateTime", s1: iDate1, s2: new Date(iDate1), gt: new Date(iDate2),
 				d: "millis+Edm.DateTime"},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.DateTimeOffset", s1: new Date(iDate1), s2: new Date(iDate1),
+				// no need to use UI5Date.getInstance as only the UTC timestamp is used
 				gt: new Date(iDate2)},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.DateTimeOffset", s1: new Date(iDate1), s2: iDate1, gt: iDate2,
 				d: "Edm.DateTimeOffset+millis"},
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			{t: "Edm.DateTimeOffset", s1: iDate1, s2: new Date(iDate1), gt: new Date(iDate2),
 				d: "millis+Edm.DateTimeOffset"},
 			{t: "Edm.Double", s1: 0, s2: 0, gt: 1},

@@ -3,12 +3,13 @@
  */
 sap.ui.define([
 	"sap/base/util/isEmptyObject",
-	'sap/ui/core/format/DateFormat',
-	'sap/ui/model/CompositeType',
-	'sap/ui/model/FormatException',
-	'sap/ui/model/ParseException',
-	'sap/ui/model/ValidateException'
-], function (isEmptyObject, DateFormat, CompositeType, FormatException, ParseException,
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/CompositeType",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException"
+], function (isEmptyObject, UI5Date, DateFormat, CompositeType, FormatException, ParseException,
 		ValidateException) {
 	"use strict";
 
@@ -123,7 +124,7 @@ sap.ui.define([
 									oValue = parseInt(oValue);
 								}
 							}
-							oValue = new Date(oValue);
+							oValue = UI5Date.getInstance(oValue);
 						} else {
 							oValue = that.oInputFormat.parse(oValue);
 							if (oValue == null) {

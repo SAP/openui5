@@ -177,7 +177,8 @@ sap.ui.define([
 	DateTimeBase.prototype._getErrorMessage = function () {
 		var iFullYear = UI5Date.getInstance().getFullYear(),
 			oDate = isDateOnly(this)
-				? new Date(Date.UTC(iFullYear, 11, 31)) // UTC
+				// no need to use UI5Date.getInstance as only the UTC timestamp is used
+				? new Date(Date.UTC(iFullYear, 11, 31))
 				: UI5Date.getInstance(iFullYear, 11, 31, 23, 59, 58), // configured time zone
 			sText = isDateOnly(this) ? "EnterDate" : "EnterDateTime",
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
