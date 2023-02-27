@@ -250,7 +250,7 @@ sap.ui.define(
          * </pre></code>
          *
          * @param {sap.ui.test.Opa5} [oOpaInstance] the Opa5 instance to operate on
-         * @param {sap.ui.test.Opa5.SingleControlSelector | sap.ui.test.Opa5.MultiControlSelector} [oOptions] the initial {@link sap.ui.test.Opa5#waitFor} options
+         * @param {sap.ui.test.Opa5.SingleControlSelector|sap.ui.test.Opa5.MultiControlSelector} [oOptions] the initial {@link sap.ui.test.Opa5#waitFor} options
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @alias sap.ui.test.OpaBuilder
          * @public
@@ -265,8 +265,8 @@ sap.ui.define(
          * Set or get the default options to be used as the builder base.
          * If no options are provided, the current default options are returned.
          *
-         * @param {sap.ui.test.Opa5.SingleControlSelector | sap.ui.test.Opa5.MultiControlSelector} [oOptions] the new default options to be used
-         * @returns {sap.ui.test.Opa5.SingleControlSelector | sap.ui.test.Opa5.MultiControlSelector} the default {@link sap.ui.test.Opa5#waitFor} options
+         * @param {sap.ui.test.Opa5.SingleControlSelector|sap.ui.test.Opa5.MultiControlSelector} [oOptions] the new default options to be used
+         * @returns {sap.ui.test.Opa5.SingleControlSelector|sap.ui.test.Opa5.MultiControlSelector} the default {@link sap.ui.test.Opa5#waitFor} options
          * @public
          * @static
          */
@@ -282,12 +282,12 @@ sap.ui.define(
          * Convenience creation and initialization of a new OpaBuilder.
          *
          * @param {sap.ui.test.Opa5} [oOpaInstance] the Opa5 instance to operate on
-         * @param {string | RegExp} [vId] the id of the target control(s)
+         * @param {string|RegExp} [vId] the id of the target control(s)
          * @param {string} [sControlType] the type of the target control(s)
          * @param {boolean} [bDialogElement] if true, only popover and dialogs are searched for
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vMatchers] additional matchers to filter target control(s)
-         * @param {sap.ui.test.actions.Action | function | Array} [vActions] the actions to be performed on target control(s)
-         * @param {sap.ui.test.Opa5.SingleControlSelector | sap.ui.test.Opa5.MultiControlSelector} [oOptions] oOptions the {@link sap.ui.test.Opa5#waitFor} options to apply
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]} [vMatchers] additional matchers to filter target control(s)
+         * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]} [vActions] the actions to be performed on target control(s)
+         * @param {sap.ui.test.Opa5.SingleControlSelector|sap.ui.test.Opa5.MultiControlSelector} [oOptions] oOptions the {@link sap.ui.test.Opa5#waitFor} options to apply
          * @returns {sap.ui.test.OpaBuilder} a new OpaBuilder instance
          * @public
          * @static
@@ -315,7 +315,7 @@ sap.ui.define(
         /**
          * Apply custom options. The options might override previously defined options of the OpaBuilder.
          *
-         * @param {sap.ui.test.Opa5.SingleControlSelector | sap.ui.test.Opa5.MultiControlSelector} [oOptions] the {@link sap.ui.test.Opa5#waitFor} options to apply
+         * @param {sap.ui.test.Opa5.SingleControlSelector|sap.ui.test.Opa5.MultiControlSelector} [oOptions] the {@link sap.ui.test.Opa5#waitFor} options to apply
          * @returns {this} this OpaBuilder instance
          * @public
          */
@@ -404,7 +404,7 @@ sap.ui.define(
         /**
          * Defines the id of the target control(s).
          *
-         * @param {string | RegExp} vId the id of the target control(s)
+         * @param {string|RegExp} vId the id of the target control(s)
          * @returns {this} this OpaBuilder instance
          * @public
          */
@@ -426,7 +426,7 @@ sap.ui.define(
         /**
          * Defines additional matchers for the target control(s).
          *
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vMatchers additional matchers to filter target control(s)
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]} vMatchers additional matchers to filter target control(s)
          * @param {boolean} [bReplace] true to replace all previous defined matchers, false to add it (default)
          * @returns {this} this OpaBuilder instance
          * @public
@@ -463,7 +463,7 @@ sap.ui.define(
          * Adds matchers to aggregation items, that at least one aggregation item must match.
          *
          * @param {string} sAggregationName the aggregation name
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vMatchers] matchers to filter aggregation items
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]} [vMatchers] matchers to filter aggregation items
          * @returns {this} this OpaBuilder instance
          * @public
          */
@@ -499,7 +499,7 @@ sap.ui.define(
         /**
          * Adds a matcher that checks whether at least one child fulfilling given matcher(s).
          *
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder}
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|sap.ui.test.OpaBuilder}
          *                [vBuilderOrMatcher] the matchers to filter child items
          * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
          * @returns {this} this OpaBuilder instance
@@ -512,9 +512,9 @@ sap.ui.define(
         /**
          * Adds a matcher that checks states for given conditions. It is internally using {@link sap.ui.test.OpaBuilder.Matchers.conditional}.
          *
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean} vConditions conditions to pre-check
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vSuccessMatcher actual matcher that is executed if conditions are met
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vElseMatcher] actual matcher that is executed if conditions are not met
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|boolean} vConditions conditions to pre-check
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|Object} vSuccessMatcher actual matcher that is executed if conditions are met
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|Object} [vElseMatcher] actual matcher that is executed if conditions are not met
          * @returns {this} this OpaBuilder instance
          * @public
          */
@@ -525,7 +525,7 @@ sap.ui.define(
         /**
          * Adds a group of matchers that requires only one of them to actually match. It is internally using {@link sap.ui.test.OpaBuilder.Matchers.some}.
          *
-         * @param [aMatchers=[{sap.ui.test.matchers.Matcher | function | Array | Object}]] aMatchers list of matchers where one must be met
+         * @param [aMatchers=[{sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]}]] aMatchers list of matchers where one must be met
          * @returns {this} this OpaBuilder instance
          * @public
          */
@@ -580,7 +580,7 @@ sap.ui.define(
         /**
          * Add a check function. If another check function already exists, the functions are chained.
          *
-         * @param {function((sap.ui.core.Element | sap.ui.core.Element[])):boolean} fnCheck the check that is executed on matched controls
+         * @param {function((sap.ui.core.Element|sap.ui.core.Element[])):boolean} fnCheck the check that is executed on matched controls
          * @param {boolean} [bReplace] true to replace all previous defined matchers, false to add it (default)
          * @returns {this} this OpaBuilder instance
          * @public
@@ -611,7 +611,7 @@ sap.ui.define(
         /**
          * Add an action to be performed on all matched controls.
          *
-         * @param {sap.ui.test.actions.Action | function | Array}
+         * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]}
          *            vActions the action(s) to be performed on matched controls
          * @param {boolean} [bReplace] true to replace all previous defined actions, false to add it (default)
          * @returns {this} this OpaBuilder instance
@@ -628,11 +628,11 @@ sap.ui.define(
         /**
          * Add an action that is only performed if target control fulfills the conditions. It is internally using {@link sap.ui.test.OpaBuilder.Actions.conditional}.
          *
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean}
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|boolean}
          *            vConditions target control is checked against these given conditions
-         * @param {sap.ui.test.actions.Action | function | Array}
+         * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]}
          *            vSuccessActions the actions to be performed when conditions are fulfilled
-         * @param {sap.ui.test.actions.Action | function | Array}
+         * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]}
          *            [vElseActions] the action(s) to be performed when conditions are not fulfilled
          * @returns {this} this OpaBuilder instance
          * @public
@@ -675,9 +675,9 @@ sap.ui.define(
          * Performs given actions on all items of an aggregation fulfilling the matchers.
          *
          * @param {string} sAggregationName the aggregation name
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]}
          *                [vMatchers] the matchers to filter aggregation items
-         * @param {sap.ui.test.actions.Action | function | Array}
+         * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]}
          *                vActions the actions to be performed on matching aggregation items
          * @returns {this} this OpaBuilder instance
          * @public
@@ -698,8 +698,8 @@ sap.ui.define(
          * Executes a builder with matching controls being descendants of matching target control(s).
          * Children are any controls in the control tree beneath this target control(s).
          *
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder} [vChildBuilderOrMatcher] the child builder or child matcher
-         * @param {sap.ui.test.actions.Action | function | Array}
+         * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|sap.ui.test.OpaBuilder} [vChildBuilderOrMatcher] the child builder or child matcher
+         * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]}
          *                [vActions] the actions to be performed on matching child items
          * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
          * @returns {this} this OpaBuilder instance
@@ -738,7 +738,7 @@ sap.ui.define(
         /**
          * Adds a success message or function. When providing an OpaBuilder, the action will execute it.
          *
-         * @param {string | function | sap.ui.test.OpaBuilder} vSuccess the message that will be shown (or function executed) on success
+         * @param {string|function|sap.ui.test.OpaBuilder} vSuccess the message that will be shown (or function executed) on success
          * @param {boolean} [bReplace] true to replace all previous defined success functions, false to add it (default)
          * @returns {this} this OpaBuilder instance
          * @public
@@ -751,7 +751,7 @@ sap.ui.define(
         /**
          * Adds an error message or function.
          *
-         * @param {string | function} vErrorMessage the message to be shown (or function executed) on failure
+         * @param {string|function} vErrorMessage the message to be shown (or function executed) on failure
          * @param {boolean} [bReplace] true to replace all previous defined error functions, false to add it (default)
          * @returns {this} this OpaBuilder instance
          * @public
@@ -766,7 +766,7 @@ sap.ui.define(
         /**
          * Build the final {@link sap.ui.test.Opa5#waitFor} options object and returns it.
          *
-         * @returns {sap.ui.test.Opa5.SingleControlSelector | sap.ui.test.Opa5.MultiControlSelector} the final options object
+         * @returns {sap.ui.test.Opa5.SingleControlSelector|sap.ui.test.Opa5.MultiControlSelector} the final options object
          * @public
          */
         OpaBuilder.prototype.build = function () {
@@ -869,7 +869,7 @@ sap.ui.define(
              *     </pre>
              * </code>
              *
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]}
              *                [vMatchers] the matchers that will actually be executed
              * @returns {function(sap.ui.core.Element):boolean} the matcher function returns the negated result of the matcher chain
              * @public
@@ -890,7 +890,7 @@ sap.ui.define(
 
             /**
              * Creates a declarative matcher definition for {@link sap.ui.test.matchers.Ancestor}.
-             * @param {object | string} vAncestor the ancestor control to check, if undefined, validates every control to true. Can be a control or a control ID
+             * @param {object|string} vAncestor the ancestor control to check, if undefined, validates every control to true. Can be a control or a control ID
              * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
              * @returns {{ ancestor: Array<sap.ui.test.matchers.AncestorDefinition>}} a declarative matcher definition for {@link sap.ui.test.matchers.Ancestor}
              * @public
@@ -910,7 +910,7 @@ sap.ui.define(
 
             /**
              * Creates a declarative matcher definition for {@link sap.ui.test.matchers.Descendant}.
-             * @param {object | string} vDescendent the descendant control to check. If undefined, it validates every control to true. Can be a control or a control ID
+             * @param {object|string} vDescendent the descendant control to check. If undefined, it validates every control to true. Can be a control or a control ID
              * @param {boolean} [bDirect] specifies if the descendant should be a direct child
              * @returns {{descendant: Array<sap.ui.test.matchers.DescendantDefinition>}} a declarative matcher definition for {@link sap.ui.test.matchers.Descendant}
              * @public
@@ -1057,7 +1057,7 @@ sap.ui.define(
              * Creates a matcher function that returns all children fulfilling given matcher(s).
              * The result will always be an array, even if only one child was found.
              *
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder}
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|sap.ui.test.OpaBuilder}
              *                [vBuilderOrMatcher] the matchers to filter child items
              * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
              * @returns {function(sap.ui.core.Element):sap.ui.core.Element[]} matcher function returning all matching children
@@ -1084,7 +1084,7 @@ sap.ui.define(
             /**
              * Creates a matcher function that checks whether one children fulfilling given matcher(s).
              *
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder}
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|sap.ui.test.OpaBuilder}
              *                [vBuilderOrMatcher] the matchers to filter child items
              * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
              * @returns {function(sap.ui.core.Element):boolean} matcher function
@@ -1103,7 +1103,7 @@ sap.ui.define(
              * The result will always be an array, even if it is a non-multiple aggregation.
              *
              * @param {string} sAggregationName the aggregation name
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]}
              *                [vMatchers] the matchers to filter aggregation items
              * @returns {function(sap.ui.core.Element):sap.ui.core.Element[]} matcher function returning all matching aggregation items
              * @public
@@ -1120,7 +1120,7 @@ sap.ui.define(
              * Checks whether at least one aggregation item fulfills given matcher(s).
              *
              * @param {string} sAggregationName the aggregation name
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]}
              *                [vMatchers] the matchers to filter aggregation items
              * @returns {function(sap.ui.core.Element):boolean} matcher function
              * @public
@@ -1243,9 +1243,9 @@ sap.ui.define(
             /**
              * Creates a matcher that checks states for given conditions.
              *
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean} vConditions conditions to pre-check
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vSuccessMatcher actual matcher that is executed if conditions are met
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vElseMatcher] actual matcher that is executed if conditions are not met
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|boolean} vConditions conditions to pre-check
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]} vSuccessMatcher actual matcher that is executed if conditions are met
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]} [vElseMatcher] actual matcher that is executed if conditions are not met
              * @returns {function(sap.ui.core.Element)} a matcher function
              * @public
              * @static
@@ -1282,7 +1282,7 @@ sap.ui.define(
             /**
              * Creates a matcher that checks for at least one successful match from a group of matchers.
              *
-             * @param [aMatchers=[{sap.ui.test.matchers.Matcher | function | Array | Object}]] aMatchers list of matchers were one must be met
+             * @param [aMatchers=[{sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]}]] aMatchers list of matchers were one must be met
              * @returns {function(sap.ui.core.Element):(boolean|any)} a matcher function
              * @public
              * @static
@@ -1307,9 +1307,9 @@ sap.ui.define(
              * Creates a matcher that checks all inputs against given matchers. The input can be an array or a single
              * element. The result will always be an array. If the input is a single element, the result will be
              * an array containing the given element (or empty if not matching the matchers).
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]}
              *                [vMatchers] the matchers to check all items against
-             * @returns {function((sap.ui.core.Element | sap.ui.core.Element[])):sap.ui.core.Element[]} the matcher function returns an array with all matching items
+             * @returns {function((sap.ui.core.Element|sap.ui.core.Element[])):sap.ui.core.Element[]} the matcher function returns an array with all matching items
              * @public
              * @static
              */
@@ -1328,9 +1328,9 @@ sap.ui.define(
 
             /**
              * Creates a matcher that checks a single input against all defined matchers.
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]}
              *                [vMatchers] the matchers to check all items against
-             * @returns {function((sap.ui.core.Element | sap.ui.core.Element[])):boolean} the matcher function returns the result of the matcher chain
+             * @returns {function((sap.ui.core.Element|sap.ui.core.Element[])):boolean} the matcher function returns the result of the matcher chain
              * @public
              * @static
              */
@@ -1388,11 +1388,11 @@ sap.ui.define(
             /**
              * Creates an action that is only performed if target control fulfills the conditions.
              *
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean}
+             * @param {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]|boolean}
              *            vConditions target control is checked against these given conditions
-             * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
+             * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]|sap.ui.test.OpaBuilder}
              *            vSuccessBuilderOrOptions the actions to be performed when conditions are fulfilled
-             * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
+             * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]|sap.ui.test.OpaBuilder}
              *            [vElseBuilderOptions] the action(s) to be performed when conditions are not fulfilled
              * @returns {function(sap.ui.core.Element)} an action function
              * @public
@@ -1426,8 +1426,8 @@ sap.ui.define(
              * Creates an action function that executes all given actions on a single or an array of controls.
              * This method can be used as a helper for handling the different kinds of action definitions and inputs.
              *
-             * @param {sap.ui.test.actions.Action | function | Array} vActions the actions to be executed
-             * @returns {function((sap.ui.core.Element | sap.ui.core.Element[]))} an action function
+             * @param {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]} vActions the actions to be executed
+             * @returns {function((sap.ui.core.Element|sap.ui.core.Element[]))} an action function
              * @public
              * @static
              */

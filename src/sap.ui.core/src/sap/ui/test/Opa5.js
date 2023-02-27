@@ -476,6 +476,18 @@ sap.ui.define([
 		 */
 
 		/**
+		 * @typedef {function(sap.ui.core.Element)|Object<string,object>|sap.ui.test.matchers.Matcher} sap.ui.test.Opa5.Matcher
+		 * @description Matchers used to filter controls.
+		 * @public
+		 */
+
+		/**
+		 * @typedef {function((sap.ui.core.Element|null))|sap.ui.test.actions.Action} sap.ui.test.Opa5.Action
+		 * @description An action simulates user interaction on a control
+		 * @public
+		 */
+
+		/**
 		 * @typedef {sap.ui.test.Opa5.BaseParameters} sap.ui.test.Opa5.ControlsBaseSelector
 		 * @description Configuration parameters for an individual {@link sap.ui.test.Opa5#waitFor} call.
 		 * @property {string} [viewName] The name of a view.
@@ -486,7 +498,7 @@ sap.ui.define([
 		 *
 		 * @property {string} [fragmentId] @since 1.63 The ID of a fragment. If set, controls will match only if their IDs contain the fragment ID prefix.
 		 *
-		 * @property {function(sap.ui.core.Element)|Object<string,object>|sap.ui.test.matchers.Matcher|Array<function(sap.ui.core.Element)>|Array<Object<string,object>>|sap.ui.test.matchers.Matcher[]} [matchers] Matchers used to filter controls.
+		 * @property {sap.ui.test.Opa5.Matcher|sap.ui.test.Opa5.Matcher[]} [matchers] Matchers used to filter controls.
 		 * Could be a function, a single matcher instance, an array of matcher instances, or, since version 1.72, a plain
 		 * object to specify matchers declaratively. For a full list of built-in matchers, see {@link sap.ui.test.matchers}.
 		 *
@@ -570,7 +582,7 @@ sap.ui.define([
 		 * @property {string} [errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa5 is QUnit.
 		 * This message is displayed if Opa5 has reached its timeout before QUnit has reached it.
-		 * @property {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} [actions]
+		 * @property {sap.ui.test.Opa5.Action|sap.ui.test.Opa5.Action[]} [actions]
 		 * Available since 1.34.0. An array of functions or Actions or a mixture of both.
 		 * An action has an 'executeOn' function that will receive a single control as a parameter.
 		 * If there are multiple actions defined all of them
