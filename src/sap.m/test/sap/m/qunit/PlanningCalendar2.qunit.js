@@ -1538,6 +1538,7 @@ sap.ui.define([
 		// Arrange
 		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
 			sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED"),
+			sUnselectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_UNSELECTED"),
 			$appointmentRef;
 
 		oSut.placeAt("bigUiArea");
@@ -1546,20 +1547,21 @@ sap.ui.define([
 		$appointmentRef = jQuery("#PC-R1A1");
 
 		// Assert
-		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId), -1,
-			"The appointment shouldn't have a hidden 'Selected' text");
+		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sUnselectedTextId) > -1, "The appointment should have a hidden 'Unselected' text");
+		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId), -1, "The appointment shouldn't have a hidden 'Selected' text");
 
 		// Act - click on an appointment to select it
 		qutils.triggerEvent("tap", "PC-R1A1");
 
 		// Assert
-		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId) > -1,
-			"The appointment should have a hidden 'Selected' text");
+		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId) > -1, "The appointment should have a hidden 'Selected' text");
+		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sUnselectedTextId), -1, "The appointment shouldn't have a hidden 'Unselected' text");
 
 		// Act - click on an appointment again to deselect it
 		qutils.triggerEvent("tap", "PC-R1A1");
-		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId), -1,
-			"The 'Selected' text should be removed from the references");
+
+		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId), -1, "The 'Selected' text should be removed from the references");
+		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sUnselectedTextId) > -1, "The appointment should have a hidden 'Unselected' text");
 
 		oSut.destroy();
 	});
