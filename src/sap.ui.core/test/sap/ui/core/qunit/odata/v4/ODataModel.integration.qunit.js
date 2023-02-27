@@ -11672,6 +11672,91 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Execute a bound action a 2nd time while the 1st POST is still "in flight"
+	// BCP: 2380023421
+	QUnit.test("Lazy determination of ETag by ODataContextBinding#execute", function (assert) {
+		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oContext,
+			oExecutePromise1,
+			oExecutePromise2,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			fnRespond,
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}"/>\
+	<Text id="teamId" text="{TEAM_ID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,TEAM_ID", {
+				"@odata.etag" : "ETag0",
+				ID : "1",
+				Name : "Jonathan Smith",
+				TEAM_ID : "01"
+			})
+			.expectChange("name", "Jonathan Smith")
+			.expectChange("teamId", "01");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("name").getBindingContext();
+
+			that.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "ETag0"},
+					url : "EMPLOYEES('1')/" + sAction,
+					payload : {TeamID : "42"}
+				}, new Promise(function (resolve) {
+					fnRespond = resolve.bind(null, {
+						"@odata.etag" : "ETag1",
+						ID : "1",
+						Name : "Jonathan Smith junior",
+						TEAM_ID : "42"
+					});
+				}));
+
+			oExecutePromise1 = oModel.bindContext(sAction + "(...)", oContext)
+				.setParameter("TeamID", "42")
+				.execute();
+
+			return that.waitForChanges(assert, "1st #execute");
+		}).then(function () {
+			// expect no 2nd POST yet!
+
+			oExecutePromise2 = oModel.bindContext(sAction + "(...)", oContext)
+				.setParameter("TeamID", "23")
+				.execute();
+
+			return that.waitForChanges(assert, "2nd #execute");
+		}).then(function () {
+			that.expectChange("name", "Jonathan Smith junior")
+				.expectChange("teamId", "42")
+				.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "ETag1"},
+					url : "EMPLOYEES('1')/" + sAction,
+					payload : {TeamID : "23"}
+				}, {
+					"@odata.etag" : "ETag2",
+					ID : "1",
+					Name : "Jonathan Smith senior",
+					TEAM_ID : "23"
+				})
+				.expectChange("name", "Jonathan Smith senior")
+				.expectChange("teamId", "23");
+
+			fnRespond();
+
+			return Promise.all([
+				oExecutePromise1,
+				oExecutePromise2.then(function () {
+					assert.strictEqual(oContext.getProperty("@odata.etag"), "ETag2");
+				}),
+				that.waitForChanges(assert, "1st response triggers 2nd request")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Modify a property while an update request is not yet resolved. The second PATCH
 	// request must wait for the first one to finish and use the eTag returned in its response.
 	// JIRA: CPOUI5UISERVICESV3-1450

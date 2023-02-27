@@ -3863,7 +3863,17 @@ sap.ui.define([
 				? {"If-Match" : bIgnoreETag && "@odata.etag" in oEntity ? "*" : oEntity}
 				: {},
 			sHttpMethod = "POST",
+			oRequestLock,
 			that = this;
+
+		/*
+		 * Synchronous callback called when the request is put on the wire. Locks the group (for
+		 * bound actions) so that further requests created via {@link ODataModel#submitBatch} wait
+		 * until this request has returned.
+		 */
+		function onSubmit() {
+			oRequestLock = that.oRequestor.lockGroup(oGroupLock.getGroupId(), that, true);
+		}
 
 		function post(oGroupLock0) {
 			that.bPosting = true;
@@ -3871,16 +3881,24 @@ sap.ui.define([
 			// BEWARE! Avoid finally here! BCP: 2070200175
 			return SyncPromise.all([
 				that.oRequestor.request(sHttpMethod,
-					that.sResourcePath + that.sQueryString, oGroupLock0, mHeaders, oData),
+					that.sResourcePath + that.sQueryString, oGroupLock0, mHeaders, oData,
+					oEntity && onSubmit),
 				that.fetchTypes()
 			]).then(function (aResult) {
 				that.buildOriginalResourcePath(aResult[0], aResult[1], fnGetOriginalResourcePath);
 				that.visitResponse(aResult[0], aResult[1]);
 				that.bPosting = false;
+				if (oRequestLock) {
+					oRequestLock.unlock();
+				}
 
 				return aResult[0];
 			}, function (oError) {
 				that.bPosting = false;
+				if (oRequestLock) {
+					oRequestLock.unlock();
+					oRequestLock = undefined; // in case we fail again before next submit
+				}
 				if (fnOnStrictHandlingFailed && oError.strictHandlingFailed) {
 					return fnOnStrictHandlingFailed(oError).then(function (bConfirm) {
 						var oCanceledError;

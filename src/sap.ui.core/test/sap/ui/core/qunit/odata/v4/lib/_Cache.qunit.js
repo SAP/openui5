@@ -10748,7 +10748,8 @@ sap.ui.define([
 		this.mock(oGroupLock0).expects("getGroupId").withExactArgs().returns("updateGroup");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock0),
-				{"If-Match" : sinon.match.same(oEntity)}, sinon.match.same(oPostData))
+				{"If-Match" : sinon.match.same(oEntity)}, sinon.match.same(oPostData),
+				sinon.match.func)
 			.resolves(oResult1);
 		assert.strictEqual(oCache.oPromise, null);
 
@@ -10787,7 +10788,7 @@ sap.ui.define([
 
 			that.oRequestorMock.expects("request")
 				.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1), {},
-					sinon.match.same(oPostData))
+					sinon.match.same(oPostData), undefined)
 				.resolves(oResult2);
 
 			// code under test
@@ -10814,17 +10815,20 @@ sap.ui.define([
 				oEntity = {},
 				oGroupLock = {getGroupId : function () {}},
 				oPromise,
+				oRequestExpectation,
+				oRequestLock = {unlock : function () {}},
 				sResourcePath = "LeaveRequest('1')/Submit",
 				oCache = this.createSingle(sResourcePath, undefined, true);
 
-			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
+			this.mock(oGroupLock).expects("getGroupId").twice().withExactArgs().returns("group");
 			this.oRequestorMock.expects("relocateAll")
 				.withExactArgs("$parked.group", "group", sinon.match.same(oEntity));
 			this.oRequestorMock.expects("isActionBodyOptional").withExactArgs().returns(bOptional);
-			this.oRequestorMock.expects("request")
+			oRequestExpectation = this.oRequestorMock.expects("request")
 				.withExactArgs("PUT", sResourcePath, sinon.match.same(oGroupLock),
 					{"If-Match" : sinon.match.same(oEntity)},
-					bOptional ? undefined : sinon.match.same(oData))
+					bOptional ? undefined : sinon.match.same(oData),
+					sinon.match.func)
 				.resolves();
 
 			// code under test
@@ -10832,6 +10836,15 @@ sap.ui.define([
 
 			assert.strictEqual(oCache.oPromise, oPromise);
 			assert.strictEqual(oCache.bSentRequest, true);
+
+			this.oRequestorMock.expects("lockGroup")
+				.withExactArgs("group", sinon.match.same(oCache), true)
+				.returns(oRequestLock);
+
+			// code under test
+			oRequestExpectation.args[0][5](); // call onSubmit
+
+			this.mock(oRequestLock).expects("unlock").withExactArgs();
 
 			return oPromise.then(function () {
 					assert.deepEqual(oData, {});
@@ -10851,7 +10864,8 @@ sap.ui.define([
 		this.oRequestorMock.expects("relocateAll").never();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), {}, undefined)
+			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), {}, undefined,
+				undefined)
 			.resolves();
 
 		// code under test
@@ -10867,7 +10881,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("relocateAll").never();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), {}, undefined)
+			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), {}, undefined, undefined)
 			.resolves();
 
 		// code under test
@@ -10877,24 +10891,28 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bHasETag) {
 	QUnit.test("SingleCache: post for bound operation, has ETag: " + bHasETag, function (assert) {
-		var oGroupLock = {getGroupId : function () {}},
-			sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type",
-			sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
+		var sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
 			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, false, undefined,
-				true, sMetaPath),
+				true, "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type"),
 			oEntity = bHasETag ? {"@odata.etag" : 'W/"19700101000000.0000000"'} : {},
+			oGroupLock = {getGroupId : function () {}},
+			oGroupLockMock = this.mock(oGroupLock),
 			oPathExpectation,
+			oRequestExpectation,
+			oRequestLock = {unlock : function () {}},
+			oResult,
 			oReturnValue = {},
 			oResponseExpectation,
-			mTypes = {};
+			mTypes = {},
+			oUnlockExpectation;
 
-		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
+		oGroupLockMock.expects("getGroupId").withExactArgs().returns("group");
 		this.oRequestorMock.expects("relocateAll")
 			.withExactArgs("$parked.group", "group", sinon.match.same(oEntity));
 		this.oRequestorMock.expects("isActionBodyOptional").never();
-		this.oRequestorMock.expects("request")
+		oRequestExpectation = this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock),
-				{"If-Match" : bHasETag ? "*" : {}}, null)
+				{"If-Match" : bHasETag ? "*" : {}}, null, sinon.match.func)
 			.resolves(oReturnValue);
 		this.mock(oCache).expects("fetchTypes")
 			.withExactArgs()
@@ -10906,10 +10924,22 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes));
 
 		// code under test
-		return oCache.post(oGroupLock, /*oData*/null, oEntity, /*bIgnoreETag*/true,
-				undefined, "fnGetOriginalResourcePath")
-			.then(function (oResult) {
+		oResult = oCache.post(oGroupLock, /*oData*/null, oEntity, /*bIgnoreETag*/true, undefined,
+			"fnGetOriginalResourcePath");
+
+		oGroupLockMock.expects("getGroupId").withExactArgs().returns("~group~");
+		this.oRequestorMock.expects("lockGroup")
+			.withExactArgs("~group~", sinon.match.same(oCache), true)
+			.returns(oRequestLock);
+
+		// code under test
+		oRequestExpectation.args[0][5](); // call onSubmit
+
+		oUnlockExpectation = this.mock(oRequestLock).expects("unlock").withExactArgs();
+
+		return oResult.then(function (oResult) {
 				assert.strictEqual(oResult, oReturnValue);
+				assert.ok(oUnlockExpectation.calledAfter(oResponseExpectation));
 				assert.ok(oResponseExpectation.calledAfter(oPathExpectation));
 			});
 	});
@@ -10929,7 +10959,7 @@ sap.ui.define([
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), {},
-				sinon.match.same(oPostData))
+				sinon.match.same(oPostData), undefined)
 			.rejects(new Error(sMessage));
 
 		// code under test
@@ -10942,7 +10972,7 @@ sap.ui.define([
 
 			that.oRequestorMock.expects("request")
 				.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1), {},
-					sinon.match.same(oPostData))
+					sinon.match.same(oPostData), undefined)
 				.rejects(new Error(sMessage));
 
 			// code under test
@@ -10980,10 +11010,17 @@ sap.ui.define([
 				getUnlockedCopy : function () {}
 			},
 			oPostData = {},
+			oRequestExpectation,
+			oRequestLock = {unlock : function () {}},
 			oResponse = {},
+			oResult,
+			oUnlockExpectation,
 			fnOnStrictHandlingFailed = sinon.spy(function (oError0) {
 				assert.strictEqual(oError0, oError);
 				assert.strictEqual(oCache.bPosting, false);
+				if (oUnlockExpectation) {
+					assert.ok(oUnlockExpectation.calledOnce, "unlocked");
+				}
 
 				return Promise.resolve().then(function () {
 					if (!bConfirm) {
@@ -10994,7 +11031,7 @@ sap.ui.define([
 						.returns("~GroupLockCopy~");
 					that.oRequestorMock.expects("request")
 						.withExactArgs("POST", sResourcePath, "~GroupLockCopy~", mExpectedHeaders1,
-							sinon.match.same(oPostData))
+							sinon.match.same(oPostData), bBound ? sinon.match.func : undefined)
 						.callsFake(function () {
 							assert.strictEqual(oCache.bPosting, true);
 
@@ -11011,22 +11048,34 @@ sap.ui.define([
 			mExpectedHeaders0["If-Match"] = mExpectedHeaders1["If-Match"] = oEntity;
 		}
 		oError.strictHandlingFailed = true;
-		this.mock(oGroupLock).expects("getGroupId").exactly(bBound ? 1 : 0)
+		this.mock(oGroupLock).expects("getGroupId").exactly(bBound ? 2 : 0)
 			.withExactArgs()
 			.returns("groupId");
 		this.mock(this.oRequestor).expects("relocateAll").exactly(bBound ? 1 : 0)
 			.withExactArgs("$parked.groupId", "groupId", sinon.match.same(oEntity));
-		this.oRequestorMock.expects("request")
+		oRequestExpectation = this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), mExpectedHeaders0,
-				sinon.match.same(oPostData))
+				sinon.match.same(oPostData), bBound ? sinon.match.func : undefined)
 			.rejects(oError);
 		this.mock(oCache).expects("fetchTypes").exactly(bConfirm ? 2 : 1)
 			.withExactArgs().resolves("~types~");
 
 		// code under test
-		return oCache.post(oGroupLock, oPostData, bBound ? oEntity : undefined, undefined,
-				fnOnStrictHandlingFailed)
-			.then(function (oResult) {
+		oResult = oCache.post(oGroupLock, oPostData, bBound ? oEntity : undefined, undefined,
+			fnOnStrictHandlingFailed);
+
+		if (bBound) {
+			this.oRequestorMock.expects("lockGroup")
+				.withExactArgs("groupId", sinon.match.same(oCache), true)
+				.returns(oRequestLock);
+
+			// code under test
+			oRequestExpectation.args[0][5](); // call onSubmit
+
+			oUnlockExpectation = this.mock(oRequestLock).expects("unlock").withExactArgs();
+		}
+
+		return oResult.then(function (oResult) {
 				assert.ok(bConfirm);
 				assert.strictEqual(oCache.bPosting, false);
 				assert.strictEqual(oResult, oResponse);
