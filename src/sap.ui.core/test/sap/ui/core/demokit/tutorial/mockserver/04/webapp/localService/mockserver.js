@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/util/MockServer",
 	"sap/base/Log"
-], function(jQuery, MockServer, Log) {
+], function(jQuery, UI5Date, MockServer, Log) {
 	"use strict";
 
 	return {
@@ -30,7 +31,7 @@ sap.ui.define([
 				path: new RegExp("FindUpcomingMeetups(.*)"),
 				response: function(oXhr) {
 					Log.debug("Incoming request for FindUpcomingMeetups");
-					var today = new Date();
+					var today = UI5Date.getInstance();
 					today.setHours(0); // or today.toUTCString(0) due to timezone differences
 					today.setMinutes(0);
 					today.setSeconds(0);
