@@ -74,11 +74,9 @@ sap.ui.define([
 						icon : "sap-icon://message-information",
 						text : "With Information Messages",
 						type : MessageType.Information
-					}],
-					oLastModified = oModel.getMetaModel().getLastModified();
+					}];
 
-				Log.debug("Last-Modified: " + oLastModified,
-					oLastModified && oLastModified.toISOString(),
+				Log.debug("ETags: " + JSON.stringify(oModel.getMetaModel().getETags()),
 					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
 
 				this.runAsOwner(function () {

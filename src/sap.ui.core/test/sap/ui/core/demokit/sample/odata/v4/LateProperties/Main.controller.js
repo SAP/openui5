@@ -70,6 +70,7 @@ sap.ui.define([
 			var oDialog = new Dialog({
 					title : "Edit Delivery Date",
 					content : new SimpleForm({
+						layout : "ColumnLayout",
 						content : [
 							new Title({text : "Sales Order"}),
 							new Label({text : "Sales Order ID "}),
