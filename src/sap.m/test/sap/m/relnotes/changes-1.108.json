@@ -656,5 +656,21 @@
         ]
       }
     ]
+  },
+  "1.108.6": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "c223170cef879f650e24cd79911d5083227227a6",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Using canonical name for maxlength attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380042522"
+          }
+        ]
+      }
+    ]
   }
 }
