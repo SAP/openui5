@@ -5676,6 +5676,8 @@ sap.ui.define([
 			oHelperMock.expects("deletePrivateAnnotation")
 				.withExactArgs(sinon.match.same(oChildEntity), "resolve");
 			oHelperMock.expects("deletePrivateAnnotation")
+				.withExactArgs(sinon.match.same(oChildEntity), "reject");
+			oHelperMock.expects("deletePrivateAnnotation")
 				.withExactArgs(sinon.match.same(oChildEntity), "transient");
 		}
 
@@ -5708,6 +5710,35 @@ sap.ui.define([
 		assert.notOk("$postBodyCollection" in oEntity.otherCollection);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("Cache#cancelNestedCreates", function () {
+		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
+			oCreatedElement0 = {},
+			oCreatedElement1 = {},
+			oElement = {
+				SO_2_SOITEM : [oCreatedElement0, oCreatedElement1],
+				nulled : null,
+				otherCollection : [{}]
+			},
+			fnReject0 = sinon.spy(),
+			fnReject1 = sinon.spy();
+
+		_Helper.setPrivateAnnotation(oCreatedElement0, "reject", fnReject0);
+		_Helper.setPrivateAnnotation(oCreatedElement1, "reject", fnReject1);
+		oElement.SO_2_SOITEM.$postBodyCollection = "~postBodyCollection~";
+
+		// code under test
+		oCache.cancelNestedCreates(oElement, "post/path", "update");
+
+		[fnReject0, fnReject1].forEach(function (fnReject) {
+			sinon.assert.calledWithExactly(fnReject, sinon.match(function (oParameter) {
+				return oParameter instanceof Error && oParameter.canceled
+					&& oParameter.message === "Deep create of SO_2_SOITEM canceled with POST"
+						+ " post/path; group: update";
+			}));
+		});
+	});
 
 	//*********************************************************************************************
 	[
@@ -6125,7 +6156,7 @@ sap.ui.define([
 			};
 
 		oError.canceled = true;
-		this.mock(oUpdateGroupLock).expects("getGroupId").withExactArgs().returns("update");
+		this.mock(oUpdateGroupLock).expects("getGroupId").twice().withExactArgs().returns("update");
 		this.mock(oUpdateGroupLock).expects("cancel").withExactArgs();
 		oExpectation = this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees", sinon.match.same(oUpdateGroupLock), null,
@@ -7988,7 +8019,7 @@ sap.ui.define([
 				assert.strictEqual(oCache.iActiveElements, 0);
 				assert.strictEqual(oCache.iLimit, 26);
 
-				that.mock(oGroupLock).expects("getGroupId").withExactArgs()
+				that.mock(oGroupLock).expects("getGroupId").twice().withExactArgs()
 					.returns(bInactive ? "$inactive.$auto" : "$direct");
 				oPostRequest = that.oRequestorMock.expects("request")
 					.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
@@ -8053,8 +8084,9 @@ sap.ui.define([
 
 		return this.mockRequestAndRead(oCache, 0, sResourcePath, 0, 10, 10, undefined, "26")
 			.then(function () {
-				that.mock(oGroupLock).expects("getGroupId").withExactArgs()
-					.returns("$inactive.$auto");
+				that.mock(oGroupLock).expects("getGroupId")
+					.exactly(bResetAndKeep && bInactive ? 1 : 2)
+					.withExactArgs().returns("$inactive.$auto");
 				oPostRequest = that.oRequestorMock.expects("request")
 					.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
 						sinon.match.object, sinon.match.func, sinon.match.func, undefined,
@@ -8070,6 +8102,10 @@ sap.ui.define([
 
 				oCache.aElements[0]["@$ui5.context.isInactive"] = bInactive;
 
+				that.mock(oCache).expects("cancelNestedCreates")
+					.exactly(bResetAndKeep && bInactive ? 0 : 1)
+					.withExactArgs(sinon.match.same(oCache.aElements[0]), "Employees",
+						"$inactive.$auto");
 				that.mock(_Helper).expects("removeByPath")
 					.withExactArgs(sinon.match.same(oCache.mPostRequests), "",
 						sinon.match.same(oCache.aElements[0]))
@@ -8425,7 +8461,7 @@ sap.ui.define([
 		oCacheMock.expects("getValue").withExactArgs(sPathInCache).returns(aCollection);
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve({}));
 		this.mock(oGroupLock).expects("getGroupId")
-			.twice() // once by _Cache#create and once by _Requestor#request
+			.thrice() // twice by _Cache#create and once by _Requestor#request
 			.withExactArgs().returns("updateGroup");
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 		this.mock(oGroupLock).expects("getSerialNumber").withExactArgs().returns(42);
@@ -9305,7 +9341,7 @@ sap.ui.define([
 
 		oCanceledError.canceled = true;
 
-		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
+		this.mock(oGroupLock).expects("getGroupId").twice().withExactArgs().returns("updateGroup");
 		this.mock(oGroupLock).expects("cancel").withExactArgs();
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
@@ -9547,7 +9583,7 @@ sap.ui.define([
 		this.spy(oRequestor, "request");
 		this.mock(oCache).expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve({}));
 		this.mock(oGroupLock).expects("getGroupId")
-			.twice() // once by _Cache#create and once by _Requestor#request
+			.thrice() // twice by _Cache#create and once by _Requestor#request
 			.withExactArgs().returns("updateGroup");
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 		this.mock(oGroupLock).expects("getSerialNumber").withExactArgs().returns(42);

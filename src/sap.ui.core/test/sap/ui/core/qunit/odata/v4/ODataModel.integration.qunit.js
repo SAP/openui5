@@ -47615,6 +47615,8 @@ sap.ui.define([
 	// bSkipRefresh, but refreshes correctly otherwise. See also that the :1 navigation is fetched
 	// in both cases.
 	// JIRA: CPOUI5ODATAV4-2033
+	//
+	// POST first fails, then is repeated (CPOUI5ODATAV4-2034)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-2033: Deep create, nested ODLB w/ own cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -47690,6 +47692,30 @@ sap.ui.define([
 				// code under test
 				oCreatedItemContext2.setProperty("Note", "note20"),
 				that.waitForChanges(assert, "patch transient item")
+			]);
+		}).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("POST on 'SalesOrderList' failed; will be repeated automatically");
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {
+						SO_2_SOITEM : [
+							{Note : "note10"},
+							{Note : "note20"}
+						]
+					}
+				}, createErrorInsideBatch())
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			return Promise.all([
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, "submit -> error")
 			]);
 		}).then(function () {
 			that.expectRequest({
@@ -47793,6 +47819,52 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Deep create, nested list binding with own cache. No initial data for the nested
+	// list. An item is created. The deep creation is canceled.
+	// JIRA: CPOUI5ODATAV4-2034
+	QUnit.test("CPOUI5ODATAV4-2034: Deep create canceled", function (assert) {
+		var oCreatedItemContext1,
+			oCreatedItemContext2,
+			oCreatedOrderContext,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<Table id="orders" items="{/SalesOrderList}">\
+	<Text id="order" text="{SalesOrderID}"/>\
+</Table>\
+<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {value : []});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oCreatedOrderContext = that.oView.byId("orders").getBinding("items").create();
+			that.oView.byId("items").setBindingContext(oCreatedOrderContext);
+
+			return that.waitForChanges(assert, "create order");
+		}).then(function () {
+			var oItemsBinding = that.oView.byId("items").getBinding("items");
+
+			oCreatedItemContext1 = oItemsBinding.create({Note : "note10"}, true, true);
+			oCreatedItemContext2 = oItemsBinding.create({Note : "note20"}, true, true);
+
+			return that.waitForChanges(assert, "create items");
+		}).then(function () {
+			// code under test
+			oModel.resetChanges();
+
+			return Promise.all([
+				checkCanceled(assert, oCreatedOrderContext.created()),
+				checkCanceled(assert, oCreatedItemContext1.created()),
+				checkCanceled(assert, oCreatedItemContext2.created()),
+				that.waitForChanges(assert, "resetChanges")
+			]);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario:
