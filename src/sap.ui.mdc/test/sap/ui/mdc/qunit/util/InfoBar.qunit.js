@@ -56,6 +56,7 @@ function(
 
         assert.ok(this.oMDCInfoBar.oText, "Text is instantiated during InfoBar init");
         assert.ok(this.oMDCInfoBar.oInvisibleText, "InvisibleText is instantiated during InfoBar init");
+        assert.ok(this.oMDCInfoBar.oRemoveAllFiltersBtn, "RemoveAllButton is instantiated during InfoBar init");
         assert.ok(this.oMDCInfoBar.getAggregation("_toolbar"), "Toolbar is instantiated during init");
 
         assert.equal(this.oMDCInfoBar.oText.getText(), "", "No default text should be set on the Text");
@@ -109,5 +110,24 @@ function(
     QUnit.test("getACCTextId function", function(assert) {
         assert.equal(this.oMDCInfoBar.getACCTextId(), this.oMDCInfoBar.oInvisibleText.getId(), "Correct Id returned");
     });
+
+    QUnit.test("testing event handling", function(assert) {
+        var iCalled = 0;
+        function testOnFirePress(oEvent) {
+            iCalled++;
+        }
+
+        this.oMDCInfoBar.attachEvent("press", testOnFirePress);
+        this.oMDCInfoBar.firePress();
+        assert.equal(iCalled, 1, "Event press was fired once");
+        iCalled = 0;
+
+        this.oMDCInfoBar.attachEvent("removeAllFilters", testOnFirePress);
+        this.oMDCInfoBar.fireRemoveAllFilters();
+        assert.equal(iCalled, 1, "Event removeAllFilters was fired once");
+        iCalled = 0;
+
+    });
+
 
 });
