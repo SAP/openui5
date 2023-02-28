@@ -1979,6 +1979,9 @@ sap.ui.define([
 		/*eslint-enable no-eval */
 	};
 
+	/**
+	 * @deprecated As of version 1.112
+	 */
 	(function() {
 
 		var b = Device.browser;
