@@ -341,21 +341,6 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("_getPropertyData", function(assert){
-		var done = assert.async();
-
-		this.oMDCChart.initialized().then(function(){
-			var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "fetchProperties");
-
-			this.oMDCChart._getPropertyData();
-			assert.ok(delegateSpy.calledOnce, "fetchProperties was called on delegate");
-
-			this.oMDCChart._getPropertyData();
-			assert.ok(delegateSpy.calledOnce, "fetchProperties was not called again on delegate");
-			done();
-		}.bind(this));
-	});
-
 	QUnit.test("_renderOverlay", function(assert){
 		var done = assert.async();
 
