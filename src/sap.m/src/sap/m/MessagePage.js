@@ -74,6 +74,7 @@ sap.ui.define([
 		 *
 		 * @constructor
 		 * @public
+		 * @deprecated as of version 1.112 Use the {@link sap.m.IllustratedMessage} instead.
 		 * @since 1.28
 		 * @alias sap.m.MessagePage
 		 */
