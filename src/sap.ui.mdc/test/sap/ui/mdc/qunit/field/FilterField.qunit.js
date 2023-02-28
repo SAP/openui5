@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/type/String", // make sure types are loaded
 	"sap/ui/model/type/Integer",
-	"sap/ui/model/type/Date"
+	"sap/ui/model/type/Date",
+	"sap/ui/model/ParseException"
 ], function (
 		jQuery,
 		qutils,
@@ -37,7 +38,8 @@ sap.ui.define([
 		oCore,
 		StringType,
 		IntegerType,
-		DateType
+		DateType,
+		ParseException
 	) {
 	"use strict";
 
@@ -193,7 +195,7 @@ sap.ui.define([
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		assert.ok(oFilterField._bParseError, "ParseError fired");
+		assert.ok(oFilterField._isInvalidInput(), "ParseError fired");
 		assert.equal(iCount, 1, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
 		assert.equal(sValue, "XXXX", "Value of change event");
@@ -205,7 +207,7 @@ sap.ui.define([
 				fnDone();
 			}).catch(function(oException) {
 				assert.ok(true, "Promise rejected");
-				assert.equal(oException, "XXXX", "wrongValue");
+				assert.ok(oException instanceof ParseException, "ParseExpetion returned");
 				assert.equal(oFilterField.getValueState(), "Error", "ValueState");
 
 				// cleanup should remove valueState
@@ -236,7 +238,7 @@ sap.ui.define([
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		assert.ok(oFilterField._bParseError, "ParseError fired");
+		assert.ok(oFilterField._isInvalidInput(), "ParseError fired");
 		assert.equal(iCount, 1, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
 		assert.equal(sValue, "XXXX", "Value of change event");
@@ -248,7 +250,7 @@ sap.ui.define([
 				fnDone();
 			}).catch(function(oException) {
 				assert.ok(true, "Promise rejected");
-				assert.equal(oException, "XXXX", "wrongValue");
+				assert.ok(oException instanceof ParseException, "ParseExpetion returned");
 				assert.equal(oFilterField.getValueState(), "Error", "ValueState");
 
 				// cleanup should remove valueState

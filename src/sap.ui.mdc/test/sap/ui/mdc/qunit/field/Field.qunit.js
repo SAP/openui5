@@ -744,7 +744,7 @@ sap.ui.define([
 				fnDone();
 			}).catch(function(oException) {
 				assert.ok(true, "Promise rejected");
-				assert.equal(oException, "XXXX", "wrongValue");
+				assert.ok(oException instanceof ParseException, "ParseExpetion returned");
 				assert.equal(oField.getValueState(), "Error", "ValueState");
 				oContent.getFocusDomRef().blur();
 				// cleanup should remove valueState
