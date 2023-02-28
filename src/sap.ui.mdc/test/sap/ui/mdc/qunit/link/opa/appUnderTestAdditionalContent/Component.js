@@ -8,8 +8,8 @@
  * ${version}
  */
 sap.ui.define([
-	'sap/ui/core/UIComponent', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/core/util/MockServer', 'sap/ui/mdc/link/FakeFlpConnector', 'sap/ui/fl/FakeLrepConnectorLocalStorage'
-], function(UIComponent, ODataModel, MockServer, FakeFlpConnector, FakeLrepConnectorLocalStorage) {
+	'sap/ui/core/UIComponent', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/core/util/MockServer', 'sap/ui/mdc/link/FakeFlpConnector'
+], function(UIComponent, ODataModel, MockServer, FakeFlpConnector) {
 	"use strict";
 
 	return UIComponent.extend("appUnderTestAdditionalContent.Component", {
@@ -98,7 +98,6 @@ sap.ui.define([
 					]
 				}
 			});
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 
 			var sMockServerUrl = "/odata/";
 
@@ -124,7 +123,6 @@ sap.ui.define([
 
 		exit: function() {
 			FakeFlpConnector.disableFakeConnector();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	});
 });
