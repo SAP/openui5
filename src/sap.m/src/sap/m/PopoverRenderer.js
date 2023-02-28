@@ -53,7 +53,9 @@ sap.ui.define([
 				.openEnd();
 
 			if (oControl.getResizable()) {
-				oRm.icon("sap-icon://resize-corner", ["sapMPopoverResizeHandle"], { "title" : ""});
+				oRm.icon("sap-icon://resize-corner", ["sapMPopoverResizeHandle"], {
+					"aria-hidden": true
+				});
 			}
 
 			this.renderContent(oRm, oControl);

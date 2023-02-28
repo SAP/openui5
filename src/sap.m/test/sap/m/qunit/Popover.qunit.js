@@ -1598,15 +1598,16 @@ sap.ui.define([
 			assert.equal(domQueryLength,  0, "Arrow not found in popover because not desktop device");
 		} else {
 			// Assert when resizable
-			var domQueryLength = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
-			assert.equal(domQueryLength,  1, "Arrow found in popover");
+			var domQuery = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle');
+			assert.equal(domQuery.length,  1, "Arrow found in popover");
+			assert.equal(domQuery[0].getAttribute("aria-hidden"), "true", "Aria-hidden should be added to the icon.");
 
 			this.oPopover.setResizable(false);
 			this.oPopover.rerender();
 
 			// Assert when not resizable
-			var domQueryLength = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
-			assert.equal(domQueryLength,  0, "Arrow not found in popover");
+			domQuery = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle');
+			assert.equal(domQuery.length,  0, "Arrow not found in popover");
 		}
 	});
 
