@@ -1,13 +1,14 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Core, Control, Renderer, RenderManager, InvisibleText, EnabledPropagator, DragInfo, createAndAppendDiv) {
+], function(Core, Control, Element, Renderer, RenderManager, InvisibleText, EnabledPropagator, DragInfo, createAndAppendDiv) {
 
 	"use strict";
 	/*global QUnit,sinon*/
@@ -1339,6 +1340,272 @@ sap.ui.define([
 
 		assert.equal(this.oBeforeRenderingSpy.callCount, 4, "oBeforeRenderingSpy is called for the root control and every control within the root control");
 		assert.equal(cleanupMutations(this.oObserver.takeRecords()).length, 2, "String rendering control must be removed and inserted on parent rerendering");
+	});
+
+	QUnit.module("invalidation during rendering", {
+		before: function() {
+			this.InvalidatingChild = Control.extend("InvalidatingChild", {
+				metadata: {
+					properties: {
+						count: {
+							type: "int"
+						},
+						text: {
+							type: "string",
+							defaultValue: "initial"
+						}
+					}
+				},
+				renderer: {
+					apiVersion: 1,
+					render: function(rm, ctrl) {
+						rm.openStart("div", ctrl).openEnd();
+						rm.text(ctrl.getText());
+						rm.close("div");
+					}
+				},
+				update: function() {
+					var count = this.getCount() + 1;
+					this.setCount(count);
+					this.setText("updated" + (count > 1 ? " " + count : ""));
+				}
+			});
+			this.InvalidatingChildContainer = Element.extend("InvalidatingChildContainer", {
+				metadata: {
+					aggregations: {
+						content: {
+							type: "InvalidatingChild",
+							multiple: false
+						}
+					}
+				}
+			});
+			this.ParentWithInvalidatingChildren = Control.extend("ParentWithInvalidatingChildren", {
+				metadata: {
+					aggregations: {
+						invalidatesBefore: {
+							type: "InvalidatingChild",
+							multiple: false
+						},
+						invalidatesAfter: {
+							type: "InvalidatingChild",
+							multiple: false
+						},
+						neverRendered: {
+							type: "InvalidatingChild",
+							multiple: false
+						},
+						container: {
+							type: "InvalidatingChildContainer",
+							multiple: false
+						}
+					}
+				},
+				renderer: {
+					apiVersion: 1,
+					render: function(rm, ctrl) {
+						rm.openStart("div", ctrl).openEnd();
+						var before = ctrl.getInvalidatesBefore();
+						var after = ctrl.getInvalidatesAfter();
+						var never = ctrl.getNeverRendered();
+						var container = ctrl.getContainer();
+						var content = container && container.getContent();
+
+						// some children invalidate before being rendered
+						before && before.update();
+						content && content.update();
+
+						// render children
+						before && rm.renderControl(before);
+						after && rm.renderControl(after);
+						content && rm.renderControl(content);
+
+						// some children invalidate after being rendered
+						after && after.update();
+
+						// some children invalidate but are never rendered
+						never && never.update();
+
+						rm.close("div");
+					}
+				}
+			});
+		},
+		beforeEach: function() {
+			this.onBeforeRenderingSpy = this.spy();
+			this.oChild = new this.InvalidatingChild({
+				text: "old"
+			});
+			this.oChild.addEventDelegate({
+				onBeforeRendering: this.onBeforeRenderingSpy
+			});
+		},
+		afterEach: function() {
+			this.oChild.destroy();
+		}
+	});
+
+	QUnit.test("child invalidates while parent renders initially, but before parent renders it", function(assert) {
+		var oParent = new this.ParentWithInvalidatingChildren({
+			invalidatesBefore: this.oChild
+		}).placeAt("qunit-fixture");
+		var oParentOnBeforeRenderingSpy = this.spy();
+		oParent.addEventDelegate({
+			onBeforeRendering: oParentOnBeforeRenderingSpy
+		});
+
+		// act
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
+		// TODO check rendering loop - no interceptable method yet
+		assert.strictEqual(this.onBeforeRenderingSpy.callCount, 1, "child only rendered once");
+		assert.strictEqual(this.oChild.$().text(), this.oChild.getText(), "child DOM is up-to-date");
+
+		// cleanup
+		oParent.destroy();
+	});
+
+	QUnit.test("child in an element container invalidates while parent renders initially, but before parent renders it", function(assert) {
+		var oContainer = new this.InvalidatingChildContainer({
+			content: this.oChild
+		});
+		var oParent = new this.ParentWithInvalidatingChildren({
+			container: oContainer
+		}).placeAt("qunit-fixture");
+		var oParentOnBeforeRenderingSpy = this.spy();
+		oParent.addEventDelegate({
+			onBeforeRendering: oParentOnBeforeRenderingSpy
+		});
+
+		// act
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent that contains element only rendered once");
+		assert.strictEqual(this.onBeforeRenderingSpy.callCount, 1, "child in an element container only rendered once");
+		assert.strictEqual(this.oChild.$().text(), this.oChild.getText(), "child DOM is up-to-date");
+
+		// cleanup
+		oParent.destroy();
+	});
+
+	QUnit.test("child invalidates while parent renders initially, but after parent has rendered it", function(assert) {
+		var oParent = new this.ParentWithInvalidatingChildren({
+			invalidatesAfter: this.oChild
+		}).placeAt("qunit-fixture");
+		var oParentOnBeforeRenderingSpy = this.spy();
+		oParent.addEventDelegate({
+			onBeforeRendering: oParentOnBeforeRenderingSpy
+		});
+
+		// act
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
+		assert.strictEqual(this.onBeforeRenderingSpy.callCount, 2, "child rendered twice");
+		assert.strictEqual(this.oChild.$().text(), this.oChild.getText(), "child DOM is up-to-date");
+
+		// cleanup
+		oParent.destroy();
+	});
+
+	QUnit.test("child invalidates while parent renders initially, but parent does never render it", function(assert) {
+		var oParent = new this.ParentWithInvalidatingChildren({
+			neverRendered: this.oChild
+		}).placeAt("qunit-fixture");
+		var oParentOnBeforeRenderingSpy = this.spy();
+		oParent.addEventDelegate({
+			onBeforeRendering: oParentOnBeforeRenderingSpy
+		});
+
+		// act
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
+		assert.strictEqual(this.onBeforeRenderingSpy.callCount, 0, "child was never rendered");
+		assert.strictEqual(this.oChild.getDomRef(), null, "child has no DOM");
+
+		// cleanup
+		oParent.destroy();
+	});
+
+	QUnit.test("child invalidates while parent re-renders, but before parent renders it", function(assert) {
+		var oParent = new this.ParentWithInvalidatingChildren({
+			invalidatesBefore: this.oChild
+		}).placeAt("qunit-fixture");
+		var oParentOnBeforeRenderingSpy = this.spy();
+		oParent.addEventDelegate({
+			onBeforeRendering: oParentOnBeforeRenderingSpy
+		});
+		Core.applyChanges();
+		this.onBeforeRenderingSpy.resetHistory();
+		oParentOnBeforeRenderingSpy.resetHistory();
+
+		// act
+		oParent.invalidate();
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
+		assert.strictEqual(this.onBeforeRenderingSpy.callCount, 1, "child only rendered once");
+		assert.strictEqual(this.oChild.$().text(), this.oChild.getText(), "child DOM is up-to-date");
+
+		// cleanup
+		oParent.destroy();
+	});
+
+	QUnit.test("child invalidates while parent re-renders, but after parent has rendered it", function(assert) {
+		var oParent = new this.ParentWithInvalidatingChildren({
+			invalidatesAfter: this.oChild
+		}).placeAt("qunit-fixture");
+		var oParentOnBeforeRenderingSpy = this.spy();
+		oParent.addEventDelegate({
+			onBeforeRendering: oParentOnBeforeRenderingSpy
+		});
+		Core.applyChanges();
+		this.onBeforeRenderingSpy.resetHistory();
+		oParentOnBeforeRenderingSpy.resetHistory();
+
+		// act
+		oParent.invalidate();
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
+		assert.strictEqual(this.onBeforeRenderingSpy.callCount, 1, "child only rendered once");
+		assert.strictEqual(this.oChild.$().text(), this.oChild.getText(), "child DOM is up-to-date");
+
+		// cleanup
+		oParent.destroy();
+	});
+
+	QUnit.test("child invalidates while parent re-renders, but parent does never render it", function(assert) {
+		var oParent = new this.ParentWithInvalidatingChildren({
+			neverRendered: this.oChild
+		}).placeAt("qunit-fixture");
+		var oParentOnBeforeRenderingSpy = this.spy();
+		oParent.addEventDelegate({
+			onBeforeRendering: oParentOnBeforeRenderingSpy
+		});
+		Core.applyChanges();
+		this.onBeforeRenderingSpy.resetHistory();
+		oParentOnBeforeRenderingSpy.resetHistory();
+
+		// act
+		oParent.invalidate();
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
+		assert.strictEqual(this.onBeforeRenderingSpy.callCount, 0, "child was never rendered");
+		assert.strictEqual(this.oChild.getDomRef(), null, "child DOM is up-to-date");
+
+		// cleanup
+		oParent.destroy();
 	});
 
 });
