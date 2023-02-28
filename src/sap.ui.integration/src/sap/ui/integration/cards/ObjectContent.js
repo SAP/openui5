@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Label",
 	"sap/m/RatingIndicator",
+	"sap/m/Image",
 	"sap/ui/integration/controls/ObjectStatus",
 	"sap/m/ComboBox",
 	"sap/m/TextArea",
@@ -50,6 +51,7 @@ sap.ui.define([
 	Link,
 	Label,
 	RatingIndicator,
+	Image,
 	ObjectStatus,
 	ComboBox,
 	TextArea,
@@ -378,7 +380,7 @@ sap.ui.define([
 
 		oControl = this._createItem(oItem, vVisible, oLabel, sPath);
 
-		if (oControl) {
+		if (oControl && !oControl.isA("sap.m.Image")) {
 			oControl.addStyleClass("sapFCardObjectItemValue");
 		}
 
@@ -451,6 +453,9 @@ sap.ui.define([
 				break;
 			case "RatingIndicator":
 				oControl = this._createRatingIndicatorItem(oItem, vVisible);
+				break;
+			case "Image":
+				oControl = this._createImage(oItem, vVisible);
 				break;
 			case "Input":
 				oControl = this._createInputItem(oItem, vVisible, oLabel, sPath);
@@ -799,6 +804,25 @@ sap.ui.define([
 			visualMode: oItem.visualMode,
 			visible: BindingHelper.reuse(vVisible)
 		});
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createImage = function (oItem, vVisible) {
+		var vSrc = BindingHelper.formattedProperty(oItem.src, function (sValue) {
+			return this._oIconFormatter.formatSrc(sValue);
+		}.bind(this));
+
+		var oControl = new Image({
+			src: vSrc,
+			alt: oItem.alt,
+			tooltip: oItem.tooltip,
+			visible: BindingHelper.reuse(vVisible)
+		}).addStyleClass("sapFCardObjectImage");
+
+		if (oItem.fullWidth) {
+			oControl.addStyleClass("sapFCardObjectImageFullWidth");
+		}
 
 		return oControl;
 	};

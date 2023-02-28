@@ -7,7 +7,7 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
 
-	var aCardIds = ["card1", "card2", "card3", "cardLongLabelAvatar"];
+	var aCardIds = ["cardDataHandling", "cardStaticData", "cardForm", "cardLongLabelAvatar", "cardImageNoHeader", "cardImage", "cardImageOnlyInGroup", "cardImageSmall", "cardImageOnly", "justImage", "cardImageOnlyWithFooter", "cardImageWithFooter", "cardImageNoHeaderAndNoFooter"];
 
 	it("Object Card", function () {
 		utils.navigateTo("Object Card");
@@ -20,7 +20,7 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 					interaction: "root",
 					id: sId
 				}
-			}, "Object_Card_" + sId);
+			}, "Object_" + sId);
 		});
 	});
 
@@ -35,7 +35,7 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 					interaction: "root",
 					id: sId
 				}
-			}, "Compact_Object_Card_" + sId);
+			}, "Compact_Object_" + sId);
 		});
 	});
 });

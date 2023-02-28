@@ -46,7 +46,8 @@
         "1.33.0",
         "1.34.0",
         "1.35.0",
-        "1.36.0"
+        "1.36.0",
+        "1.37.0"
       ]
     },
     "designtime": {
@@ -1455,7 +1456,8 @@
                 "phone",
                 "email",
                 "link",
-                "text"
+                "text",
+                "Image"
               ],
               "default": "Default"
             },
@@ -1638,6 +1640,26 @@
                 "Half"
               ],
               "default": "Half"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "src" : {
+          "type": "string",
+          "description": "Represents image source URL"
+        },
+        "alt" :{
+          "type": "string",
+          "description": "The alternative text that is displayed in case the image is not available, or cannot be displayed."
+        },
+        "fullWidth" : {
+          "description": "Defines if the image will take the full width of the group, including the paddings. If set to false there will be padding. For best result use together with 'alignment': 'Stretched' for the group",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
             },
             {
               "$ref": "#/definitions/simpleBinding"

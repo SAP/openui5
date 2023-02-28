@@ -1,16 +1,12 @@
 
 {
 	"sap.app": {
-		"id": "card.explorer.object.todo",
+		"id": "card.explorer.object.image",
 		"type": "card",
-		"title": "Sample of an Object Card",
-		"subTitle": "Sample of an Object Card",
+		"title": "Sample of an Object Card with Image",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
-		"shortTitle": "A short title for this Card",
-		"info": "Additional information about this Card",
-		"description": "A long description for this Card",
 		"tags": {
 			"keywords": [
 				"Object",
@@ -28,17 +24,20 @@
 	"sap.card": {
 		"type": "Object",
 		"header": {
-			"icon": {
-				"src": "./images/DonnaMoore.png"
-			},
 			"title": "Donna Moore",
-			"subTitle": "Complete your time recording"
+			"subTitle": "Complete your time recording",
+			"visible": false
 		},
 		"content": {
 			"groups": [
 				{
 					"alignment": "Stretch",
 					"items": [
+						{
+							"type": "Image",
+							"src": "./images/workingWithTablet.jpg",
+							"fullWidth" : true
+						},
 						{
 							"type": "NumericData",
 							"mainIndicator": {
