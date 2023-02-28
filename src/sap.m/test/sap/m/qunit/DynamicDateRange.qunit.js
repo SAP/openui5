@@ -12,7 +12,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Icon",
 	"sap/m/Label",
-	'sap/ui/Device'
+	"sap/ui/Device",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Configuration"
 ], function(
 	DynamicDateRange,
 	CustomDynamicDateOption,
@@ -26,7 +28,9 @@ sap.ui.define([
 	Button,
 	Icon,
 	Label,
-	Device
+	Device,
+	UI5Date,
+	Configuration
 ) {
 	"use strict";
 
@@ -1181,7 +1185,7 @@ sap.ui.define([
 		assert.ok(aValueHelpUITypes1[0].isDestroyed(), "the UI types are destroyed with the option");
 	});
 
-	QUnit.test("labels are redirected to the inner input", function (assert) {
+	QUnit.test("labels are redirected to the inner input", function(assert) {
 		// Prepare
 		var oDynamicDateRange = new DynamicDateRange(),
 			oLabel = new Label({
@@ -1354,4 +1358,262 @@ sap.ui.define([
 		assert.strictEqual(oIcon.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
 	});
 
+	QUnit.test("DynamicDateRange.toDates method with timezones", function(assert) {
+		var oTimezoneStub = this.stub(Configuration, 'getTimezone').returns("Pacific/Chatham"),
+			myGetInstance = UI5Date.getInstance,
+			oCurrentDateStub = this.stub(UI5Date, 'getInstance'),
+			aDateRange;
+
+		oCurrentDateStub.callsFake(function() {
+			if (arguments.length > 0) {
+				return myGetInstance.apply(UI5Date, arguments);
+			} else {
+				return UI5Date.getInstance(2023, 0, 8);
+			}
+		});
+
+		aDateRange = DynamicDateRange.toDates({operator: "TODAYFROMTO", values: [3, 4]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Thu Jan 05 2023 00:00:00 GMT+1345", "Range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Thu Jan 12 2023 23:59:59 GMT+1345", "Range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATE", values: [UI5Date.getInstance(2023, 0, 8)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT+1345", "Range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 23:59:59 GMT+1345", "Range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATETIME", values: [UI5Date.getInstance(2023, 0, 8, 6, 0, 0)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 06:00:00 GMT+1345", "Range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 06:00:00 GMT+1345", "Range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATERANGE", values: [UI5Date.getInstance(2023, 0, 8), UI5Date.getInstance(2023, 0, 9)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT+1345", "Range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 23:59:59 GMT+1345", "Range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATETIMERANGE", values: [UI5Date.getInstance(2023, 0, 8, 6, 0, 0), UI5Date.getInstance(2023, 0, 9, 6, 1, 0)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 06:00:00 GMT+1345", "Range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 06:01:00 GMT+1345", "Range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "YESTERDAY", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sat Jan 07 2023 00:00:00 GMT+1345", "Yesterday range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT+1345", "Yesterday range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "TOMORROW", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT+1345", "Tomorrow range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 23:59:59 GMT+1345", "Tomorrow range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "TODAY", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT+1345", "Today range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 23:59:59 GMT+1345", "Today range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "THISWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT+1345", "This week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 14 2023 23:59:59 GMT+1345", "This week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 01 2023 00:00:00 GMT+1345", "Last week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT+1345", "Last week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 15 2023 00:00:00 GMT+1345", "Next Week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 21 2023 23:59:59 GMT+1345", "Next Week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTDAYS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Fri Jan 06 2023 00:00:00 GMT+1345", "Last X Days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT+1345", "Last X Days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTDAYS", values: [-2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT+1345", "Last -X Days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Tue Jan 10 2023 23:59:59 GMT+1345", "Last -X Days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTDAYS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT+1345", "Next X Days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Tue Jan 10 2023 23:59:59 GMT+1345", "Next X Days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTDAYS", values: [-2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Fri Jan 06 2023 00:00:00 GMT+1345", "Next -X Days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT+1345", "Next -X Days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTWEEKS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Dec 25 2022 00:00:00 GMT+1345", "Last weeks range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT+1345", "Last weeks range end is correct");
+
+		oTimezoneStub.returns("Pacific/Honolulu");
+
+		aDateRange = DynamicDateRange.toDates({operator: "TODAYFROMTO", values: [3, 4]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Thu Jan 05 2023 00:00:00 GMT-1000", "Today from-to range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Thu Jan 12 2023 23:59:59 GMT-1000", "Today from-to range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATE", values: [UI5Date.getInstance(2023, 0, 8)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-1000", "Date range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 23:59:59 GMT-1000", "Date range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATETIME", values: [UI5Date.getInstance(2023, 0, 8, 6, 0, 0)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 06:00:00 GMT-1000", "DateTime range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 06:00:00 GMT-1000", "DateTime range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATERANGE", values: [UI5Date.getInstance(2023, 0, 8), UI5Date.getInstance(2023, 0, 9)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-1000", "DateRange start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 23:59:59 GMT-1000", "DateRange end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATETIMERANGE", values: [UI5Date.getInstance(2023, 0, 8, 0, 0, 0), UI5Date.getInstance(2023, 0, 9, 0, 0, 0)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-1000", "DateTimeRange start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 00:00:00 GMT-1000", "DateTimeRange end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "TODAY", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-1000", "Today range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 23:59:59 GMT-1000", "Today range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "YESTERDAY", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sat Jan 07 2023 00:00:00 GMT-1000", "Yesterday range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-1000", "Yesterday range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "TOMORROW", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT-1000", "Tomorrow range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 23:59:59 GMT-1000", "Tomorrow range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "THISWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-1000", "This week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 14 2023 23:59:59 GMT-1000", "This week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 01 2023 00:00:00 GMT-1000", "Last week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-1000", "Last week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 15 2023 00:00:00 GMT-1000", "Next week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 21 2023 23:59:59 GMT-1000", "Next week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTDAYS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Fri Jan 06 2023 00:00:00 GMT-1000", "Last X days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-1000", "Last X days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTDAYS", values: [-2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT-1000", "Last -X Days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Tue Jan 10 2023 23:59:59 GMT-1000", "Last -X Days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTDAYS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT-1000", "Next X days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Tue Jan 10 2023 23:59:59 GMT-1000", "Next X days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTDAYS", values: [-2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Fri Jan 06 2023 00:00:00 GMT-1000", "Next -X Days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-1000", "Next -X Days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTWEEKS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Dec 25 2022 00:00:00 GMT-1000", "Last X weeks range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-1000", "Last X weeks range end is correct");
+
+		oTimezoneStub.returns("America/Chicago");
+
+		aDateRange = DynamicDateRange.toDates({operator: "TODAYFROMTO", values: [3, 4]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Thu Jan 05 2023 00:00:00 GMT-0600", "Today from-to range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Thu Jan 12 2023 23:59:59 GMT-0600", "Today from-to range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATE", values: [UI5Date.getInstance(2023, 0, 8)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-0600", "Date range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 23:59:59 GMT-0600", "Date range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATETIME", values: [UI5Date.getInstance(2023, 0, 8, 6, 0, 0)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 06:00:00 GMT-0600", "DateTime range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 06:00:00 GMT-0600", "DateTimeange end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATERANGE", values: [UI5Date.getInstance(2023, 0, 8), UI5Date.getInstance(2023, 0, 9)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-0600", "DateRange start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 23:59:59 GMT-0600", "DateRange end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "DATETIMERANGE", values: [UI5Date.getInstance(2023, 0, 8), UI5Date.getInstance(2023, 0, 9 ,1)]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-0600", "DateTimeRange start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 01:00:00 GMT-0600", "DateTimeRange end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "TODAY", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-0600", "Today range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sun Jan 08 2023 23:59:59 GMT-0600", "Today range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "YESTERDAY", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sat Jan 07 2023 00:00:00 GMT-0600", "Yesterday range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-0600", "Yesterday range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "TOMORROW", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT-0600", "Tomorrow range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Mon Jan 09 2023 23:59:59 GMT-0600", "Tomorrow range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "THISWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 08 2023 00:00:00 GMT-0600", "This week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 14 2023 23:59:59 GMT-0600", "This week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 01 2023 00:00:00 GMT-0600", "Last week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-0600", "Last week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTWEEK", values: []}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Jan 15 2023 00:00:00 GMT-0600", "Next week range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 21 2023 23:59:59 GMT-0600", "Next week range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTDAYS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Fri Jan 06 2023 00:00:00 GMT-0600", "Last X days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-0600", "Last X days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTDAYS", values: [-2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT-0600", "Last -X Days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Tue Jan 10 2023 23:59:59 GMT-0600", "Last -X Days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTDAYS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Mon Jan 09 2023 00:00:00 GMT-0600", "Next X days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Tue Jan 10 2023 23:59:59 GMT-0600", "Next X days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "NEXTDAYS", values: [-2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Fri Jan 06 2023 00:00:00 GMT-0600", "Next -X Days range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-0600", "Next -X Days range end is correct");
+
+		aDateRange = DynamicDateRange.toDates({operator: "LASTWEEKS", values: [2]}, "WesternTraditional");
+
+		assert.strictEqual(aDateRange[0].toString(), "Sun Dec 25 2022 00:00:00 GMT-0600", "Last X Weeks range start is correct");
+		assert.strictEqual(aDateRange[1].toString(), "Sat Jan 07 2023 23:59:59 GMT-0600", "Last X Weeks range end is correct");
+	});
 });
