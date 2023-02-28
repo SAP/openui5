@@ -5,6 +5,8 @@
 // Provides control sap.m.SinglePlanningCalendarGrid.
 sap.ui.define([
 		'./SinglePlanningCalendarUtilities',
+		'./library',
+		'sap/ui/unified/DateRange',
 		'sap/ui/core/Control',
 		'sap/ui/core/LocaleData',
 		'sap/ui/core/Locale',
@@ -26,11 +28,14 @@ sap.ui.define([
 		'./PlanningCalendarLegend',
 		'sap/ui/core/InvisibleMessage',
 		'sap/ui/core/library',
+		"sap/ui/core/date/CalendarUtils",
 		"sap/ui/core/Configuration",
 		"sap/ui/core/date/UI5Date"
 	],
 	function (
 		SinglePlanningCalendarUtilities,
+		library,
+		DateRange,
 		Control,
 		LocaleData,
 		Locale,
@@ -52,6 +57,7 @@ sap.ui.define([
 		PlanningCalendarLegend,
 		InvisibleMessage,
 		coreLibrary,
+		CalendarDateUtils,
 		Configuration,
 		UI5Date
 	) {
@@ -68,8 +74,9 @@ sap.ui.define([
 			DAY_MARKER_HEIGHT = 0.4375, // Unit in rem, equals 7px with default font size
 			FIRST_HOUR_OF_DAY = 0,
 			LAST_HOUR_OF_DAY = 24,
-			InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
-
+			InvisibleMessageMode = coreLibrary.InvisibleMessageMode,
+			CalendarType = coreLibrary.CalendarType,
+			SinglePlanningCalendarSelectionMode = library.SinglePlanningCalendarSelectionMode;
 
 		/**
 		 * Constructor for a new SinglePlanningCalendarGrid.
@@ -188,7 +195,12 @@ sap.ui.define([
 					 * If not set, the calendar week numbering of the global configuration is used.
 					 * @since 1.110.0
 					 */
-					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
+					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
+
+					/* Determines whether more than one day will be selectable.
+					* <b>Note:</b> selecting more than one day is possible with a combination of <code>Ctrl + mouse click</code>
+					*/
+					dateSelectionMode: { type: "sap.m.SinglePlanningCalendarSelectionMode", group: "Behavior", defaultValue: SinglePlanningCalendarSelectionMode.SingleSelect }
 				},
 				aggregations: {
 
@@ -217,7 +229,14 @@ sap.ui.define([
 					_columnHeaders: {type: "sap.ui.unified.calendar.DatesRow", multiple: false, visibility: "hidden"},
 
 					_intervalPlaceholders : {type : "sap.m.SinglePlanningCalendarGrid._internal.IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}},
-					_blockersPlaceholders : {type : "sap.m.SinglePlanningCalendarGrid._internal.IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}}
+					_blockersPlaceholders : {type : "sap.m.SinglePlanningCalendarGrid._internal.IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}},
+					/**
+				 	* Dates or date ranges for selected dates.
+				 	*
+				 	* To set a single date (instead of a range), set only the <code>startDate</code> property
+				 	* of the {@link sap.ui.unified.DateRange} class.
+				 	*/
+					selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"}
 
 				},
 				dnd: true,
@@ -356,6 +375,7 @@ sap.ui.define([
 				oDatesRow = new DatesRow(this.getId() + "-columnHeaders", {
 					showDayNamesLine: false,
 					showWeekNumbers: false,
+					singleSelection: false,
 					startDate: oStartDate,
 					calendarWeekNumbering: this.getCalendarWeekNumbering()
 				}).addStyleClass("sapMSinglePCColumnHeader"),
@@ -377,6 +397,8 @@ sap.ui.define([
 			this._oFormatAriaFullDayCell = DateFormat.getDateTimeInstance({
 				pattern: "EEEE dd/MM/yyyy"
 			});
+
+			this._oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
 			//the id of the SPC's legend if any
 			this._sLegendId = undefined;
@@ -1106,6 +1128,14 @@ sap.ui.define([
 			});
 		};
 
+		SinglePlanningCalendarGrid.prototype.setDateSelectionMode = function (sSelectionMode){
+			this.setProperty("dateSelectionMode", sSelectionMode);
+			return this;
+		};
+
+		SinglePlanningCalendarGrid.prototype._isMultiDatesSelectionHeaderAllowed = function () {
+			return SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
+		};
 
 		/*
 		 * PRIVATE API
@@ -1226,6 +1256,15 @@ sap.ui.define([
 			}
 		};
 
+		SinglePlanningCalendarGrid.prototype.onmouseup = function (oEvent) {
+			var bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
+			if (!bMultiDateSelection && !(oEvent.metaKey || oEvent.ctrlKey)) {
+				this.removeAllSelectedDates();
+			}
+			this._bMultiDateSelect = true;
+			this._fireSelectionEvent(oEvent);
+		};
+
 		/**
 		 * Handles the <code>tap</code> event on the grid.
 		 *
@@ -1235,13 +1274,40 @@ sap.ui.define([
 			this._fireSelectionEvent(oEvent);
 		};
 
+		SinglePlanningCalendarGrid.prototype.removeAllSelectedDates = function(oEvent) {
+			this.removeAllAggregation("selectedDates", true);
+		};
+
+		/**
+		 * Handles the <code>keyup</code> event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		SinglePlanningCalendarGrid.prototype.onkeyup = function(oEvent) {
+			var bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
+			if ((oEvent.which === KeyCodes.ARROW_LEFT || oEvent.which === KeyCodes.ARROW_RIGHT) && oEvent.shiftKey && bMultiDateSelection) {
+				this._bMultiDateSelectWithArrow = true;
+			} else if (oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey && bMultiDateSelection) {
+				this._bMultiDateSelect = true;
+			}
+			this._fireSelectionEvent(oEvent);
+			// Prevent scrolling
+			oEvent.preventDefault();
+		};
+
 		/**
 		 * Handles the <code>keydown</code> event when any key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		SinglePlanningCalendarGrid.prototype.onkeydown = function (oEvent) {
-			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+			var bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
+			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER ||
+				oEvent.which === KeyCodes.ARROW_LEFT || oEvent.which === KeyCodes.ARROW_RIGHT) {
+				if (oEvent.which === KeyCodes.SPACE && oEvent.shiftKey && bMultiDateSelection) {
+					this._bCurrentWeekSelection = true;
+				}
+
 				this._fireSelectionEvent(oEvent);
 
 				var oControl = this._findSrcControl(oEvent);
@@ -1314,7 +1380,120 @@ sap.ui.define([
 					appointment: oControl,
 					appointments: this._toggleAppointmentSelection(oControl, !(oEvent.ctrlKey || oEvent.metaKey))
 				});
+			} else {
+				var oColumnGridHeaderCell;
+				if (!oGridCell.classList.contains("sapUiCalItem")){
+					oColumnGridHeaderCell = oGridCell.parentElement;
+				} else {
+					oColumnGridHeaderCell = oGridCell;
+				}
+
+				if (!oColumnGridHeaderCell.getAttribute("data-sap-day")) {
+					return;
+				}
+				var oStartDateFromGrid = this._oFormatYyyymmdd.parse(oColumnGridHeaderCell.getAttribute("data-sap-day"));
+				var oStartDate = new CalendarDate(oStartDateFromGrid.getFullYear(),oStartDateFromGrid.getMonth(), oStartDateFromGrid.getDate());
+				this._handelMultiDateSelection(oStartDate, oColumnGridHeaderCell);
+				this.fireEvent("selectDate", {startDate: oStartDate});
 			}
+		};
+
+		SinglePlanningCalendarGrid.prototype._handelMultiDateSelection = function(oStartDate, oColumnGridHeaderCell){
+			if (this._bMultiDateSelect || this._bMultiDateSelectWithArrow) {
+				this._bMultiDateSelect = false;
+				this._bMultiDateSelectWithArrow = false;
+				this._toggleMarkCell(oStartDate, oColumnGridHeaderCell);
+			} else if (this._bCurrentWeekSelection && this.getAggregation("selectedDates")){
+				this._bCurrentWeekSelection = false;
+				this._rangeSelection();
+			}
+		};
+
+		SinglePlanningCalendarGrid.prototype._rangeSelection = function() {
+			var aSelectedCellInHeader = this.getAggregation("_columnHeaders")._oItemNavigation.aItemDomRefs;
+			var oColumnGridHeaderCell;
+			var oStartDateFromGrid;
+			var oCurrentStartDate;
+			var i;
+			var _bSelectWeek = false;
+
+			for (i = 0; i < aSelectedCellInHeader.length; i++) {
+				oColumnGridHeaderCell = aSelectedCellInHeader[i];
+				oStartDateFromGrid = this._oFormatYyyymmdd.parse(oColumnGridHeaderCell.getAttribute("data-sap-day"));
+				oCurrentStartDate = new CalendarDate(oStartDateFromGrid.getFullYear(),oStartDateFromGrid.getMonth(), oStartDateFromGrid.getDate());
+				if (!this._checkDateSelected(oCurrentStartDate)) {
+					_bSelectWeek = true;
+					break;
+				}
+			}
+
+			for (i = 0; i < aSelectedCellInHeader.length; i++) {
+				oColumnGridHeaderCell = aSelectedCellInHeader[i];
+				oStartDateFromGrid = this._oFormatYyyymmdd.parse(oColumnGridHeaderCell.getAttribute("data-sap-day"));
+				oCurrentStartDate = new CalendarDate(oStartDateFromGrid.getFullYear(),oStartDateFromGrid.getMonth(), oStartDateFromGrid.getDate());
+
+				if (_bSelectWeek && this._checkDateSelected(oCurrentStartDate)){
+					continue;
+				}
+				this._toggleMarkCell(oCurrentStartDate);
+			}
+		};
+
+		SinglePlanningCalendarGrid.prototype._toggleMarkCell = function (oStartDate, oColumnGridHeaderCell) {
+			var oUTCDate = oStartDate.toUTCJSDate();
+			if (!this._checkDateSelected(oStartDate)){
+				if (oColumnGridHeaderCell && !oColumnGridHeaderCell.classList.contains("sapUiCalItemSel")) {
+					oColumnGridHeaderCell.classList.add("sapUiCalItemSel");
+				}
+				this.addAggregation("selectedDates", new DateRange({startDate: oUTCDate}));
+			} else {
+				var aSelectedDates = this.getAggregation("selectedDates");
+				oColumnGridHeaderCell && oColumnGridHeaderCell.classList.remove("sapUiCalItemSel");
+				if (!aSelectedDates) {
+					return;
+				}
+
+				for (var i = 0; i < aSelectedDates.length; i++){
+					var oUTCStartDate = UI5Date.getInstance(Date.UTC(0, 0, 1));
+					var oSlectStartDate = aSelectedDates[i].getStartDate();
+					oUTCStartDate.setUTCFullYear(oSlectStartDate.getFullYear(), oSlectStartDate.getMonth(), oSlectStartDate.getDate());
+					if (oUTCStartDate.getTime() === oUTCDate.getTime()) {
+						this.removeAggregation("selectedDates", i);
+						break;
+					}
+				}
+			}
+		};
+
+		SinglePlanningCalendarGrid.prototype._checkDateSelected = function(oDay) {
+			var oSelectedDate = this.getAggregation("selectedDates");
+			if (!oSelectedDate || (oSelectedDate && oSelectedDate.length === 0)) {
+				return false;
+			}
+
+			var oTimeStamp = oDay.toUTCJSDate().getTime();
+			var oUTCDate = UI5Date.getInstance(Date.UTC(0, 0, 1));
+			for (var i = 0; i < oSelectedDate.length; i++){
+				var oRange = oSelectedDate[i];
+				var oStartDate = oRange.getStartDate();
+				var oStartTimeStamp = CalendarUtils.MAX_MILLISECONDS; //max date
+				if (oStartDate) {
+					oUTCDate.setUTCFullYear(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate());
+					oStartTimeStamp = oUTCDate.getTime();
+				}
+				var oEndDate = oRange.getEndDate();
+				var oEndTimeStamp = -CalendarUtils.MAX_MILLISECONDS; //min date
+				if (oEndDate) {
+					oUTCDate.setUTCFullYear(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate());
+					oEndTimeStamp = oUTCDate.getTime();
+				}
+
+				if ((oTimeStamp === oStartTimeStamp && !oEndDate) || (oTimeStamp >= oStartTimeStamp && oTimeStamp <= oEndTimeStamp)) {
+					return true;
+				}
+			}
+
+			return false;
 		};
 
 		/**

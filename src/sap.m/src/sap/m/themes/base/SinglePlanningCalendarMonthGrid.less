@@ -87,10 +87,10 @@
 html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMarker::after {
 	content: "";
 	position: absolute;
-	top: 0.125rem;
-	left: 0.125rem;
-	right: 0.125rem;
-	bottom: 0.125rem;
+	top: 0.0625rem;
+	left: 0.0625rem;
+	right: 0.0625rem;
+	bottom: 0.0625rem;
 	border: 0.0625rem dotted @sapUiContentFocusColor;
 	pointer-events: none;
 	z-index: 3;
@@ -166,13 +166,34 @@ html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMar
 html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0.0625rem;
+  left: 0.0625rem;
+  right: 0.0625rem;
+  bottom: 0.0625rem;
   border: 0.0625rem dotted @sapUiContentFocusColor;
   pointer-events: none;
   z-index: 3;
+}
+
+.sapMSPCMonthDay.sapMSPCMonthDaySelected.sapMSPCMonthDayToday .sapMSPCMonthNowMarker::before {
+	content: "";
+	position: absolute;
+	top: 0.125rem;
+	left: 0.125rem;
+	right: 0.125rem;
+	bottom: 0.125rem;
+	border: 0.0625rem solid @sapList_SelectionBorderColor;
+	pointer-events: none;
+	z-index: 3;
+}
+
+.sapMSPCMonthDay.sapMSPCMonthDaySelected:not(.sapMSPCMonthDayToday) {
+	background: @sapList_SelectionBackgroundColor;
+	border: 0.0625rem solid @sapList_SelectionBorderColor;
+}
+
+.sapMSPCMonthDay.sapMSPCMonthDaySelected:not(.sapMSPCMonthDayToday):hover {
+	background: @sapList_Hover_SelectionBackground;
 }
 
 .sapUiSizeCompact {
@@ -201,6 +222,15 @@ html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after {
 		height: 1.563rem;
 		line-height: 1.563rem;
 	}
+}
+
+html.sap-desktop .sapMSPCMonthDaysapMSPCMonthGrid .sapMSPCMonthLnkMore {
+	right: 0.25rem;
+}
+
+html.sap-desktop .sapMSPCMonthDaysapMSPCMonthGrid .specialDateIndicator {
+	top:  0.25rem;
+	right:  0.25rem;
 }
 
 html.sap-phone {

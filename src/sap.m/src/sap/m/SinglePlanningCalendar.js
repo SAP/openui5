@@ -43,13 +43,14 @@ function(
 	DateTypeRange,
 	unifiedLibrary,
 	ManagedObjectObserver,
-    UI5Date,
+	UI5Date,
 	jQuery,
 	CalendarWeekNumbering
 ) {
 	"use strict";
 
 	var PlanningCalendarStickyMode = library.PlanningCalendarStickyMode;
+	var SinglePlanningCalendarSelectionMode = library.SinglePlanningCalendarSelectionMode;
 	var HEADER_RESIZE_HANDLER_ID = "_sHeaderResizeHandlerId";
 	var MAX_NUMBER_OF_VIEWS_IN_SEGMENTED_BUTTON = 4;
 	var SEGMENTEDBUTTONITEM__SUFFIX = "--item";
@@ -224,7 +225,13 @@ function(
 				 * Note: This property should not be used with firstDayOfWeek property.
 				 * @since 1.110.0
 				 */
-				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
+				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
+
+				/**
+				 * Determines whether more than one day will be selectable.
+				 * <b>Note:</b> selecting more than one day is possible with a combination of <code>Ctrl + mouse click</code>
+				 */
+				 dateSelectionMode: { type: "sap.m.SinglePlanningCalendarSelectionMode", group: "Behavior", defaultValue: SinglePlanningCalendarSelectionMode.SingleSelect }
 			},
 
 			aggregations : {
@@ -301,7 +308,23 @@ function(
 				 *
 				 * @private
 				 */
-				_mvgrid: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
+				_mvgrid: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Dates or date ranges for selected dates.
+				 *
+				 * To set a single date (instead of a range), set only the <code>startDate</code> property
+				 * of the {@link sap.ui.unified.DateRange} class.
+				 */
+				selectedDates : {
+					type : "sap.ui.unified.DateRange",
+					multiple : true,
+					singularName : "selectedDate",
+					forwarding: {
+						getter: "_getCurrentGrid",
+						aggregation: "selectedDates"
+					}
+				}
 
 			},
 
@@ -648,6 +671,13 @@ function(
 		this.getAggregation("_grid").setEnableAppointmentsCreate(bEnabled);
 
 		return this.setProperty("enableAppointmentsCreate", bEnabled, true);
+	};
+
+	SinglePlanningCalendar.prototype.setDateSelectionMode = function (sDateSelectionMode) {
+		this.getAggregation("_mvgrid").setDateSelectionMode(sDateSelectionMode);
+		this.getAggregation("_grid").setDateSelectionMode(sDateSelectionMode);
+
+		return this.setProperty("dateSelectionMode", sDateSelectionMode);
 	};
 
 	/**
@@ -1319,6 +1349,7 @@ function(
 		var oNextGrid = this._getCurrentGrid(),
 			aApps,
 			aSpecialDates,
+			aSelectedDates,
 			i;
 
 		if (oPreviousGrid.getId() !== oNextGrid.getId()) {
@@ -1332,6 +1363,12 @@ function(
 
 			for (i = 0; i < aSpecialDates.length; i++) {
 				oNextGrid.addAggregation("specialDates", aSpecialDates[i], true);
+			}
+
+			aSelectedDates = oPreviousGrid.removeAllAggregation("selectedDates", true);
+
+			for (i = 0; i < aSelectedDates.length; i++) {
+				oNextGrid.addAggregation("selectedDates", aSelectedDates[i], true);
 			}
 		}
 	};

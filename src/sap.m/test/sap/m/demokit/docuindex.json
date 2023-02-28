@@ -1067,6 +1067,7 @@
 				"sap.m.sample.SinglePlanningCalendarWithLegend",
 				"sap.m.sample.SinglePlanningCalendarDND",
 				"sap.m.sample.SinglePlanningCalendarWithZoomInZoomOut",
+				"sap.m.sample.SinglePlanningCalendarDateSelection",
 				"sap.m.sample.SinglePlanningCalendarSnappingHeader",
 				"sap.m.sample.SinglePlanningCalendarCreateApp",
 				"sap.m.sample.SinglePlanningCalendarWeekNumbering"]
@@ -3776,6 +3777,11 @@
 			"id": "sap.m.sample.SinglePlanningCalendarWithZoomInZoomOut",
 			"name": "Single Planning Calendar with Zoom In and Zoom Out behavior",
 			"description": "SinglePlanningCalendar with enabled Zoom In and Zoom Out functionality."
+		},
+		{
+			"id": "sap.m.sample.SinglePlanningCalendarDateSelection",
+			"name": "Single Planning Calendar with Multiple Date Selection",
+			"description": "SinglePlanningCalendar with multiple date selection functionality."
 		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendarDND",

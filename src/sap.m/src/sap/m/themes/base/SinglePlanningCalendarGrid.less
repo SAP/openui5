@@ -203,6 +203,77 @@
 	width: 100%;
 }
 
+/* SELECTED COLUMNS */
+.sapMSinglePCGrid .sapUiCalColumnSelected,
+.sapMSinglePCGrid .sapUiCalColumnSelected.sapMSinglePCColumnWeekend {
+	background: @sapList_SelectionBackgroundColor;
+}
+
+.sapMSinglePCGrid .sapUiCalColumnSelected,
+.sapMSinglePCGrid .sapUiCalColumnSelected.sapMSinglePCColumnWeekend {
+	.sapMSinglePCRow::before {
+		top: -0.625rem;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		border: 0.0625rem solid @sapList_SelectionBorderColor;
+		content: "";
+		pointer-events: none;
+		border-top: none;
+		border-bottom: none;
+	}
+
+	.sapMSinglePCRow:last-child::before{
+		border-bottom: 0.0625rem solid @sapList_SelectionBorderColor;
+	}
+
+	&.sapMSinglePCBlockersColumn::before {
+		position: absolute;
+		content: "";
+		pointer-events: none;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		border: 0.0625rem solid @sapList_SelectionBorderColor;
+		bottom: -0.0625rem;
+		border-bottom: none;
+	}
+}
+
+.sapMSinglePCGrid .sapUiCalColumnSelected.sapUiCalColumnSelectedStartBlocker::before {
+	right: -0.0625rem;
+	border-right: none;
+}
+
+.sapMSinglePCGrid .sapUiCalColumnSelected.sapUiCalColumnSelectedStartColumn {
+	.sapMSinglePCRow::before {
+		border-right: none;
+	}
+}
+
+.sapMSinglePCGrid .sapUiCalColumnSelected.sapUiCalColumnSelectedEndBlocker::before {
+	border-left: none;
+	left: -0.0625rem;
+}
+
+.sapMSinglePCGrid .sapUiCalColumnSelected.sapUiCalColumnSelectedEndColumn .sapMSinglePCRow::before {
+	border-left: none;
+}
+
+.sapMSinglePCGrid .sapUiCalColumnSelected.sapUiCalColumnSelectedBetweenBlocker::before {
+	border-left: none;
+	border-right: none;
+	left: -0.1875rem;
+	right: -0.1875rem;
+}
+
+.sapMSinglePCGrid .sapUiCalColumnSelected.sapUiCalColumnSelectedBetweenColumn .sapMSinglePCRow::before {
+	border-left: none;
+	border-right: none;
+}
+
 /* APPOINTMENTS */
 .sapMSinglePCAppointments,
 .sapMSinglePCBlockers {
@@ -260,10 +331,10 @@ html.sap-desktop {
 	.sapMSinglePCGridContent .sapMSinglePCColumns .sapMSinglePCRow:focus::after {
 		content: "";
 		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		top: 0.0625rem;
+		left: 0.0625rem;
+		right: 0.0625rem;
+		bottom: 0.0625rem;
 		border: 0.0625rem dotted @sapUiContentFocusColor;
 		pointer-events: none;
 		z-index: 3;

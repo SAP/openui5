@@ -1304,7 +1304,10 @@ sap.ui.define([
 				oMaxDateStub = this.stub(this.oM, "_oMaxDate").value(oMaxDate),
 				oGetParentStub = this.stub(this.oM, "getParent").returns({
 					_oMinDate: oMinDate,
-					_oMaxDate: oMaxDate
+					_oMaxDate: oMaxDate,
+					isA: function () {
+						return false;
+					}
 				}),
 				oGetIntervalSelectionStub = this.stub(this.oM, "getIntervalSelection").returns(true),
 				oGetSingleSelectionStub,
