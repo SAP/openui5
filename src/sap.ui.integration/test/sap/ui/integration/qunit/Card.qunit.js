@@ -4586,5 +4586,110 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("Card grouping items count", {
+			beforeEach: function () {
+				this.oCard = new Card();
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Cards content items count", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+
+			this.oCard.attachEventOnce("_ready", function () {
+				// Assert
+				assert.strictEqual(this.oCard.getCardHeader().getStatusText(), "5 of 20", "The group headers are not counted as visible list items");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest({
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"type": "Numeric",
+						"status": {
+							"text": {
+								"format": {
+									"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+									"parts": [
+										"parameters>/visibleItems",
+										"20"
+									]
+								}
+							}
+						},
+						"title": "Top 5 products sales",
+						"subTitle": "By average price",
+						"unitOfMeasurement": "EUR",
+						"mainIndicator": {
+							"number": "{number}",
+							"unit": "{unit}",
+							"trend": "{trend}",
+							"state": "{state}"
+						},
+						"details": "{details}"
+					},
+					"content": {
+						"data": {
+							"json": [{
+									"Name": "Comfort Easy",
+									"Description": "32 GB Digital Assistant with high-resolution color screen",
+									"Sales": "150",
+									"State": "Warning"
+								},
+								{
+									"Name": "ITelO Vault",
+									"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+									"Sales": "540",
+									"State": "Success"
+								},
+								{
+									"Name": "Notebook Professional 15",
+									"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+									"Sales": "350",
+									"State": "Success"
+								},
+								{
+									"Name": "Ergo Screen E-I",
+									"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+									"Sales": "100",
+									"State": "Error"
+								},
+								{
+									"Name": "Laser Professional Eco",
+									"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+									"Sales": "200",
+									"State": "Warning"
+								}
+							]
+						},
+						"item": {
+							"title": "{Name}",
+							"description": "{Description}",
+							"info": {
+								"value": "{Sales} K",
+								"state": "{State}"
+							}
+						},
+						"group": {
+							"title": "{= ${Sales} > 150 ? 'Over 150' : 'Under 150'}",
+							"order": {
+								"path": "Sales",
+								"dir": "ASC"
+							}
+						}
+					}
+				}
+			});
+		});
+
 	}
 );

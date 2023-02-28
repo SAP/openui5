@@ -562,7 +562,15 @@ sap.ui.define([
 			// Use high level getter for aggregation - getItems(), getContent(), ...
 			// Some controls like ListBase override the getter and it should be used.
 			oAggregation = oControl.getMetadata().getAggregation(sAggregation).get(oControl);
-			oParamsModel.setProperty("/visibleItems", oAggregation.length);
+
+			var sVisibleItemsCount = oAggregation.length;
+			oAggregation.forEach(function (oItem) {
+				if (oItem.isA("sap.m.GroupHeaderListItem")){
+					sVisibleItemsCount -= 1;
+				}
+			});
+
+			oParamsModel.setProperty("/visibleItems", sVisibleItemsCount);
 		});
 
 		oObserver.observe(oControl, {
