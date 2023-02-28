@@ -1262,7 +1262,7 @@ sap.ui.define([
 			},
 
 			shortSurveyRedirect: function () {
-				var sQueryParams = "?product=SAPUI5&product_filter=UI5&cluster=BTP&page=" + encodeURI(document.location.href),
+				var sQueryParams = "?product=SAPUI5%2FOpenUI5&product_filter=UI5&cluster=BTP&page=" + encodeURIComponent(document.location.href),
 					sProdURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_2gcfdw3EYYOIz5A" + sQueryParams,
 					sDevURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_d3UPNymSgUHAb9Y" + sQueryParams,
 					bProd = !this.getModel("versionData").getProperty("/isDevEnv");
@@ -1274,7 +1274,7 @@ sap.ui.define([
 
 			longSurveyRedirect: function () {
 				var sBaseURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_7X5P63Zg5zXC5zE",
-					sBaseQueryParams = "?product=SAPUI5&product_filter=UI5&cluster=BTP&page=" + encodeURI(document.location.href),
+					sBaseQueryParams = "?product=SAPUI5%2FOpenUI5&product_filter=UI5&cluster=BTP&page=" + encodeURIComponent(document.location.href),
 					sProdURL = sBaseURL + sBaseQueryParams,
 					sDevURL = sBaseURL + sBaseQueryParams + "&Q_CHL=preview&Q_SurveyVersionID=current",
 					bProd = !this.getModel("versionData").getProperty("/isDevEnv");
