@@ -909,8 +909,10 @@ sap.ui.define([
 		 * @param {string} sTypeClass
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		liftSAPData : function (o, sTypeClass) {
+		liftSAPData : function (o, sTypeClass, bIgnoreAnnotationsFromMetadata) {
 			if (!o.extensions) {
 				return;
 			}
@@ -918,9 +920,15 @@ sap.ui.define([
 			o.extensions.forEach(function (oExtension) {
 				if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
 					o["sap:" + oExtension.name] = oExtension.value;
-					Utils.addV4Annotation(o, oExtension, sTypeClass);
+					if (!bIgnoreAnnotationsFromMetadata) {
+						Utils.addV4Annotation(o, oExtension, sTypeClass);
+					}
 				}
 			});
+			if (bIgnoreAnnotationsFromMetadata) {
+				return;
+			}
+
 			// after all SAP V2 annotations are lifted up add V4 annotations that are calculated
 			// by multiple V2 annotations or that have a different default value
 			switch (sTypeClass) {
@@ -953,8 +961,10 @@ sap.ui.define([
 		 *   metadata "JSON"
 		 * @param {sap.ui.model.odata.ODataMetaModel} oMetaModel
 		 *   the metamodel
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		merge : function (oAnnotations, oData, oMetaModel) {
+		merge : function (oAnnotations, oData, oMetaModel, bIgnoreAnnotationsFromMetadata) {
 			var aSchemas = oData.dataServices.schema;
 
 			if (!aSchemas) {
@@ -966,10 +976,10 @@ sap.ui.define([
 				// remove datajs artefact for inline annotations in $metadata
 				delete oSchema.annotations;
 
-				Utils.liftSAPData(oSchema);
+				Utils.liftSAPData(oSchema, bIgnoreAnnotationsFromMetadata);
 				oSchema.$path = "/dataServices/schema/" + i;
 				sSchemaVersion = oSchema["sap:schema-version"];
-				if (sSchemaVersion) {
+				if (sSchemaVersion && !bIgnoreAnnotationsFromMetadata) {
 					oSchema["Org.Odata.Core.V1.SchemaVersion"] = {
 						String : sSchemaVersion
 					};
@@ -978,34 +988,46 @@ sap.ui.define([
 
 				Utils.visitParents(oSchema, oAnnotations, "association",
 					function (oAssociation, mChildAnnotations) {
+						// as per https://www.sap.com/Protocols/SAPData there are no sap: annotations for assocation
+						// => parameter bIgnoreAnnotationsFromMetadata is irrelevant
 						Utils.visitChildren(oAssociation.end, mChildAnnotations);
 					});
 
 				Utils.visitParents(oSchema, oAnnotations, "complexType",
 					function (oComplexType, mChildAnnotations) {
-						Utils.visitChildren(oComplexType.property, mChildAnnotations, "Property");
-						Utils.addSapSemantics(oComplexType);
+						Utils.visitChildren(oComplexType.property, mChildAnnotations, "Property",
+							/*aSchemas*/undefined, /*fnCallback*/undefined, /*iStartIndex*/undefined,
+							bIgnoreAnnotationsFromMetadata);
+						if (!bIgnoreAnnotationsFromMetadata) {
+							Utils.addSapSemantics(oComplexType);
+						}
 					});
 
 				// visit all entity types before visiting the entity sets to ensure that V2
 				// annotations are already lifted up and can be used for calculating entity
 				// set annotations which are based on V2 annotations on entity properties
-				Utils.visitParents(oSchema, oAnnotations, "entityType", Utils.visitEntityType);
+				Utils.visitParents(oSchema, oAnnotations, "entityType", Utils.visitEntityType,
+					/*iIndex*/ undefined, bIgnoreAnnotationsFromMetadata);
 			});
 
 			aSchemas.forEach(function (oSchema) {
 				// visit entity container after all entity types of all schemas are visited
 				Utils.visitParents(oSchema, oAnnotations, "entityContainer",
 					function (oEntityContainer, mChildAnnotations) {
+						// for association sets, visitChildren does not create V4-annotations
+						// => parameter bIgnoreAnnotationsFromMetadata is irrelevant
 						Utils.visitChildren(oEntityContainer.associationSet, mChildAnnotations);
 						Utils.visitChildren(oEntityContainer.entitySet, mChildAnnotations,
-							"EntitySet", aSchemas);
+							"EntitySet", aSchemas, /*fnCallback*/undefined, /*iStartIndex*/undefined,
+							bIgnoreAnnotationsFromMetadata);
 						Utils.visitChildren(oEntityContainer.functionImport, mChildAnnotations,
-							"", null, Utils.visitParameters.bind(this,
-								oAnnotations, oSchema, oEntityContainer));
+							"", null, Utils.visitParameters.bind(this, oAnnotations, oSchema, oEntityContainer),
+							/*iStartIndex*/undefined, bIgnoreAnnotationsFromMetadata);
 					});
 			});
-			Utils.addUnitAnnotations(aSchemas, oMetaModel);
+			if (!bIgnoreAnnotationsFromMetadata) {
+				Utils.addUnitAnnotations(aSchemas, oMetaModel);
+			}
 		},
 
 		/**
@@ -1025,9 +1047,11 @@ sap.ui.define([
 		 *   optional callback for each child
 		 * @param {number} [iStartIndex=0]
 		 *   optional start index in the given array
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
 		visitChildren : function (aChildren, mChildAnnotations, sTypeClass, aSchemas, fnCallback,
-				iStartIndex) {
+				iStartIndex, bIgnoreAnnotationsFromMetadata) {
 			if (!aChildren) {
 				return;
 			}
@@ -1036,12 +1060,12 @@ sap.ui.define([
 			}
 			aChildren.forEach(function (oChild) {
 				// lift SAP data for easy access to SAP Annotations for OData V 2.0
-				Utils.liftSAPData(oChild, sTypeClass);
+				Utils.liftSAPData(oChild, sTypeClass, bIgnoreAnnotationsFromMetadata);
 			});
 			aChildren.forEach(function (oChild) {
 				var oEntityType;
 
-				if (sTypeClass === "EntitySet") {
+				if (sTypeClass === "EntitySet" && !bIgnoreAnnotationsFromMetadata) {
 					// calculated entity set annotations need to be added before V4
 					// annotations are merged
 					oEntityType = Utils.getObject(aSchemas, "entityType", oChild.entityType);
@@ -1049,7 +1073,7 @@ sap.ui.define([
 				}
 
 				if (fnCallback) {
-					fnCallback(oChild);
+					fnCallback(oChild, bIgnoreAnnotationsFromMetadata);
 				}
 				// merge V4 annotations after child annotations are processed
 				extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
@@ -1063,11 +1087,19 @@ sap.ui.define([
 		 *   the entity type
 		 * @param {object} mChildAnnotations
 		 *   map from child name (or role) to annotations
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		visitEntityType : function (oEntityType, mChildAnnotations) {
-			Utils.visitChildren(oEntityType.property, mChildAnnotations, "Property");
+		visitEntityType : function (oEntityType, mChildAnnotations, bIgnoreAnnotationsFromMetadata) {
+			Utils.visitChildren(oEntityType.property, mChildAnnotations, "Property",
+				/*aSchemas*/undefined, /*fnCallback*/undefined, /*iStartIndex*/undefined,
+				bIgnoreAnnotationsFromMetadata);
+			// for navigation properties, visitChildren does not create V4-annotations
+			// => parameter bIgnoreAnnotationsFromMetadata is irrelevant
 			Utils.visitChildren(oEntityType.navigationProperty, mChildAnnotations);
-			Utils.addSapSemantics(oEntityType);
+			if (!bIgnoreAnnotationsFromMetadata) {
+				Utils.addSapSemantics(oEntityType);
+			}
 		},
 
 		/**
@@ -1081,8 +1113,11 @@ sap.ui.define([
 		 *   the entity container
 		 * @param {object} oFunctionImport
 		 *   a function import's V2 metadata object
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		visitParameters : function (oAnnotations, oSchema, oEntityContainer, oFunctionImport) {
+		visitParameters : function (oAnnotations, oSchema, oEntityContainer, oFunctionImport,
+				bIgnoreAnnotationsFromMetadata) {
 			var mAnnotations;
 
 			if (!oFunctionImport.parameter) {
@@ -1092,7 +1127,7 @@ sap.ui.define([
 				oSchema.namespace + "." + oEntityContainer.name, true);
 			oFunctionImport.parameter.forEach(
 				function (oParam) {
-					Utils.liftSAPData(oParam);
+					Utils.liftSAPData(oParam, /*sTypeClass*/undefined, bIgnoreAnnotationsFromMetadata);
 					extend(oParam, mAnnotations[oFunctionImport.name + "/" + oParam.name]);
 				}
 			);
@@ -1113,8 +1148,11 @@ sap.ui.define([
 		 *   mandatory callback for each parent, child annotations are passed in
 		 * @param {number} [iIndex]
 		 *   optional index of a single parent to visit; default is to visit all
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   whether annotations from metadata are ignored, so that no V4 annotations are created for them
 		 */
-		visitParents : function (oSchema, oAnnotations, sArrayName, fnCallback, iIndex) {
+		visitParents : function (oSchema, oAnnotations, sArrayName, fnCallback, iIndex,
+				bIgnoreAnnotationsFromMetadata) {
 			var aParents = oSchema[sArrayName];
 
 			function visitParent(oParent, j) {
@@ -1122,12 +1160,12 @@ sap.ui.define([
 					mChildAnnotations = Utils.getChildAnnotations(oAnnotations, sQualifiedName,
 						sArrayName === "entityContainer");
 
-				Utils.liftSAPData(oParent);
+				Utils.liftSAPData(oParent, /*sTypeClass*/undefined, bIgnoreAnnotationsFromMetadata);
 				// @see sap.ui.model.odata.ODataMetadata#_getEntityTypeByName
 				oParent.namespace = oSchema.namespace;
 				oParent.$path = oSchema.$path + "/" + sArrayName + "/" + j;
 
-				fnCallback(oParent, mChildAnnotations);
+				fnCallback(oParent, mChildAnnotations, bIgnoreAnnotationsFromMetadata);
 				// merge V4 annotations after child annotations are processed
 				extend(oParent, oAnnotations[sQualifiedName]);
 			}

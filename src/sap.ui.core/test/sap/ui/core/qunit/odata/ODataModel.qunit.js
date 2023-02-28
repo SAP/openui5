@@ -1775,7 +1775,7 @@ sap.ui.define([
 
 		// called in ODataMetaModel constructor
 		this.mock(_ODataMetaModelUtils).expects("merge")
-			.withExactArgs({}, oData, sinon.match.same(oMetaModel));
+			.withExactArgs({}, oData, sinon.match.same(oMetaModel), undefined);
 
 		this.mock(oModel).expects("checkUpdate").withExactArgs(false, false, null, true)
 			.callsFake(function () {

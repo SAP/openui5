@@ -154,6 +154,70 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[{
+	parameter : undefined, member : false
+}, {
+	parameter : false, member : false
+}, {
+	parameter : true, member : true
+}, {
+	parameter : 42, member : true
+}].forEach(function (oFixture, i) {
+	QUnit.test("constructor: bIgnoreAnnotationsFromMetadata, " + i, function (assert) {
+		var oDataModelMock = this.mock(ODataModel),
+			oMetadata = {
+				oMetadata : {
+					isLoaded : function () {},
+					loaded : function () {}
+				}
+			},
+			mParameters = {
+				annotationURI : "~annotationURI",
+				serviceUrl : "~serviceUrl",
+				ignoreAnnotationsFromMetadata : oFixture.parameter,
+				tokenHandling : false
+			},
+			oPromise = Promise.resolve("~metadata");
+
+		this.mock(ODataModel.prototype).expects("createCodeListModelParameters")
+			.withExactArgs(sinon.match.same(mParameters))
+			.returns("~codeListModelParameters");
+		this.mock(ODataModel.prototype).expects("setDeferredGroups").withExactArgs(["changes"]);
+		this.mock(ODataModel.prototype).expects("setChangeGroups").withExactArgs({"*":{groupId: "changes"}});
+		this.mock(ODataModel.prototype).expects("setHeaders").withExactArgs(undefined)
+			.callThrough(/*initializes this.mCustomHeaders*/);
+		this.mock(ODataModel.prototype).expects("_getServerUrl").withExactArgs().returns("~serverUrl");
+		this.mock(ODataModel.prototype).expects("_createMetadataUrl")
+			.withExactArgs("/$metadata")
+			.returns("~metadataUrl");
+		oDataModelMock.expects("_getSharedData").withExactArgs("server", "~serverUrl").returns(undefined);
+		oDataModelMock.expects("_getSharedData").withExactArgs("service", "~serviceUrl").returns(undefined);
+		oDataModelMock.expects("_getSharedData").withExactArgs("meta", "~metadataUrl").returns(oMetadata);
+		this.mock(ODataModel.prototype).expects("_cacheSupported").withExactArgs("~metadataUrl").returns(false);
+		this.mock(ODataModel.prototype).expects("_getAnnotationCacheKey")
+			.withExactArgs("~metadataUrl")
+			.returns(undefined);
+		// called in ODataModel#constructor and ODataAnnotations#constructor
+		this.mock(oMetadata.oMetadata).expects("loaded")
+			.withExactArgs()
+			.exactly(oFixture.parameter ? 2 : 3)
+			.returns(oPromise);
+		this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		this.mock(ODataModel.prototype).expects("_initializeMetadata").withExactArgs();
+		this.mock(ODataAnnotations.prototype).expects("addSource")
+			.withExactArgs(oFixture.parameter
+				? "~annotationURI"
+				: [{type : "xml", data : sinon.match.instanceOf(Promise)}, "~annotationURI"]);
+		this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("~languageTag");
+
+		// code under test
+		var oModel = new ODataModel(mParameters);
+
+		assert.strictEqual(oModel.bIgnoreAnnotationsFromMetadata, oFixture.member);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("_read: updateAggregatedMessages and bSideEffects are passed to _createRequest",
 			function (assert) {
 		var bCanonicalRequest = "{boolean} bCanonicalRequest",
@@ -5954,7 +6018,7 @@ sap.ui.define([
 
 		// called in ODataMetaModel constructor
 		this.mock(_ODataMetaModelUtils).expects("merge")
-			.withExactArgs({}, oData, sinon.match.same(oMetaModel));
+			.withExactArgs({}, oData, sinon.match.same(oMetaModel), /*bIgnoreAnnotationsFromMetadata*/undefined);
 
 		this.mock(oModel).expects("checkUpdate").withExactArgs(false, false, null, true)
 			.callsFake(function () {
@@ -8045,4 +8109,36 @@ sap.ui.define([
 		assert.notOk(oModel.oTransitionMessagesOnlyGroups.has("~group"));
 		assert.strictEqual(oModel.oTransitionMessagesOnlyGroups.size, 0);
 	});
+
+	//*********************************************************************************************
+[{
+	annotationURI : undefined,
+	cacheKey : "~metadataUrl#annotations",
+	ignoreAnnotationsFromMetadata : false
+}, {
+	annotationURI : "~annotationURI",
+	cacheKey : "~metadataUrl#annotations_~annotationURI#annotations",
+	ignoreAnnotationsFromMetadata : false
+}, {
+	annotationURI : undefined,
+	cacheKey : undefined,
+	ignoreAnnotationsFromMetadata : true
+}, {
+	annotationURI : "~annotationURI",
+	cacheKey : "~annotationURI#annotations",
+	ignoreAnnotationsFromMetadata : true
+}].forEach(function (oFixture, i) {
+	QUnit.test("_getAnnotationCacheKey, with ignoreAnnotationsFromMetadata, " + i, function (assert) {
+		var oModel = {
+				sAnnotationURI : oFixture.annotationURI,
+				bIgnoreAnnotationsFromMetadata : oFixture.ignoreAnnotationsFromMetadata,
+				bSkipMetadataAnnotationParsing : false,
+				bUseCache : true
+			};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._getAnnotationCacheKey.call(oModel, "~metadataUrl"),
+			oFixture.cacheKey);
+	});
+});
 });

@@ -133,6 +133,11 @@ sap.ui.define([
 	 *   <code>tokenHandling</code> is <code>true</code>; supported since 1.79.0.
 	 * @param {Object<string,string>} [mParameters.headers]
 	 *   Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
+	 * @param {boolean} [mParameters.ignoreAnnotationsFromMetadata]
+	 *   <b>Experimental</b> as of version 1.112.0; may change behavior or be removed in future versions.
+	 *   Whether to ignore all annotations from service metadata, so that they are not available as V4 annotations
+	 *   in this model's metamodel; see {@link #getMetaModel}. Only annotations from annotation files are loaded;
+	 *   see the <code>annotationURI</code> parameter.
 	 * @param {boolean} [mParameters.json=true]
 	 *   If set to <code>true</code>, request payloads will be JSON, XML for <code>false</code>
 	 * @param {boolean} [mParameters.loadAnnotationsJoined]
@@ -173,10 +178,6 @@ sap.ui.define([
 	 * @param {Object<string,string>} [mParameters.serviceUrlParams]
 	 *   Map of URL parameters (name/value pairs) - these parameters will be attached to all
 	 *   requests, except for the <code>$metadata</code> request
-	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing]
-	 *   Whether to skip the automated loading of annotations from the metadata document. Loading
-	 *   annotations from metadata does not have any effects (except the lost performance by
-	 *   invoking the parser) if there are not annotations inside the metadata document
 	 * @param {boolean} [mParameters.tokenHandling=true]
 	 *   Enable/disable security token handling
 	 * @param {boolean} [mParameters.tokenHandlingForGet=false]
@@ -190,6 +191,12 @@ sap.ui.define([
 	 * @param {string} [mParameters.password]
 	 *   <b>Deprecated</b> for security reasons. Use strong server side authentication instead.
 	 *   Password for the service.
+	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing]
+	 *   <b>Deprecated</b> This parameter does not prevent creation of annotations from the metadata
+	 *   document in this model's metamodel.
+	 *   Whether to skip the automated loading of annotations from the metadata document. Loading
+	 *   annotations from metadata does not have any effects (except the lost performance by
+	 *   invoking the parser) if there are no annotations inside the metadata document
 	 * @param {string} [mParameters.user]
 	 *   <b>Deprecated</b> for security reasons. Use strong server side authentication instead.
 	 *   UserID for the service.
@@ -245,6 +252,7 @@ sap.ui.define([
 				bTokenHandlingForGet,
 				bEarlyTokenRequest,
 				bPersistTechnicalMessages,
+				bIgnoreAnnotationsFromMetadata,
 				that = this;
 
 			if (typeof (vServiceUrl) === "object") {
@@ -289,6 +297,7 @@ sap.ui.define([
 				bTokenHandlingForGet = mParameters.tokenHandlingForGet;
 				bEarlyTokenRequest = mParameters.earlyTokenRequest;
 				bPersistTechnicalMessages = mParameters.persistTechnicalMessages;
+				bIgnoreAnnotationsFromMetadata = mParameters.ignoreAnnotationsFromMetadata;
 			}
 
 			/* Path cache to avoid multiple expensive resolve operations
@@ -353,6 +362,8 @@ sap.ui.define([
 			// a set of group IDs for which the "sap-messages" header must be "transientOnly" for
 			// all create and change requests, which were caused by #createEntry or #setProperty
 			this.oTransitionMessagesOnlyGroups = new Set();
+			// whether annotations from metadata are ignored
+			this.bIgnoreAnnotationsFromMetadata = !!bIgnoreAnnotationsFromMetadata;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -432,7 +443,7 @@ sap.ui.define([
 
 			this.oAnnotations = new ODataAnnotations(this.oMetadata, {
 				source: this.sAnnotationURI,
-				skipMetadata: this.bSkipMetadataAnnotationParsing,
+				skipMetadata: this.bSkipMetadataAnnotationParsing || this.bIgnoreAnnotationsFromMetadata,
 				headers: this.mCustomHeaders,
 				combineEvents: true,
 				cacheKey: this._getAnnotationCacheKey(this.sMetadataUrl),
@@ -8111,10 +8122,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._getAnnotationCacheKey = function(sMetadataUrl) {
-		var sCacheKey;
+		var bIgnoreAnnotationsFromMetadata =
+				this.bSkipMetadataAnnotationParsing || this.bIgnoreAnnotationsFromMetadata,
+			sCacheKey;
 
 		if (this.bUseCache) {
-			if (!this.bSkipMetadataAnnotationParsing) {
+			if (!bIgnoreAnnotationsFromMetadata) {
 				sCacheKey = sMetadataUrl + "#annotations";
 			}
 
@@ -8125,7 +8138,9 @@ sap.ui.define([
 				this.sAnnotationURI = this.sAnnotationURI.map(function(sUrl) {
 					return sUrl + "#annotations";
 				});
-				sCacheKey = this.bSkipMetadataAnnotationParsing ? this.sAnnotationURI.join("_") : sCacheKey + "_" + this.sAnnotationURI.join("_");
+				sCacheKey = bIgnoreAnnotationsFromMetadata
+					? this.sAnnotationURI.join("_")
+					: sCacheKey + "_" + this.sAnnotationURI.join("_");
 			}
 		}
 		return sCacheKey;

@@ -228,7 +228,8 @@ sap.ui.define([
 					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
 					that.oModel = new JSONModel(oData);
 					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
-					Utils.merge(oAnnotations ? oAnnotations.getData() : {}, oData, that);
+					Utils.merge(oAnnotations ? oAnnotations.getData() : {}, oData, that,
+						oDataModel.bIgnoreAnnotationsFromMetadata);
 					Measurement.end(sPerformanceLoad);
 				}
 
@@ -240,7 +241,7 @@ sap.ui.define([
 				this.sDefaultBindingMode = BindingMode.OneTime;
 				this.oLoadedPromise = oAnnotationsLoadedPromise
 					? oAnnotationsLoadedPromise.then(load)
-					: new Promise(function (fnResolve, fnReject) {
+					: new Promise(function (fnResolve) {
 							load();
 							fnResolve();
 						}); // call load() synchronously!
