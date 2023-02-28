@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/ValueStateSupport",
 	"sap/ui/dom/getFirstEditableInput",
+	"sap/uxap/HierarchicalSelect",
 	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.Event.prototype.isMarked
 ],
 	function(
@@ -58,7 +59,8 @@ sap.ui.define([
 		Device,
 		SeparatorItem,
 		ValueStateSupport,
-		getFirstEditableInput
+		getFirstEditableInput,
+		HierarchicalSelect
 	) {
 		"use strict";
 
@@ -11319,5 +11321,81 @@ sap.ui.define([
 			this.oSelect.setEnabled(false);
 			Core.applyChanges();
 			assert.notOk(getFirstEditableInput(this.oSelect.getDomRef(), { includeReadOnly: true }), "getFirstEditableInput returns the input");
+		});
+
+		QUnit.module("HierarchicalSelect tests");
+
+		QUnit.test("onsapenter - open the control`s popup", function (assert) {
+
+			// system under test
+			var oHierarchicalSelect = new HierarchicalSelect({
+				items: [
+					new Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new Item({
+						key: "1",
+						text: "item 1"
+					})
+				]
+			});
+
+			// arrange
+			oHierarchicalSelect.placeAt("content");
+			Core.applyChanges();
+			oHierarchicalSelect.focus();
+
+			var fnEnterSpy = this.spy(oHierarchicalSelect, "onsapenter");
+			var fnOpenSpy = this.spy(oHierarchicalSelect, "open");
+
+			// act
+			qutils.triggerKeydown(oHierarchicalSelect.getDomRef(), KeyCodes.ENTER);
+
+			// assert
+			assert.strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
+			assert.strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
+
+			// cleanup
+			oHierarchicalSelect.destroy();
+		});
+
+		QUnit.test("onsapenter - close the control`s popup if it is open", function (assert) {
+
+			// system under test
+			var oHierarchicalSelect = new HierarchicalSelect({
+				items: [
+					new Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new Item({
+						key: "1",
+						text: "item 1"
+					})
+				]
+			});
+
+			// arrange
+			oHierarchicalSelect.placeAt("content");
+			Core.applyChanges();
+			oHierarchicalSelect.focus();
+			oHierarchicalSelect.open();
+			this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+			var fnEnterSpy = this.spy(oHierarchicalSelect, "onsapenter");
+			var fnCloseSpy = this.spy(oHierarchicalSelect, "close");
+
+			// act
+			qutils.triggerKeydown(oHierarchicalSelect.getDomRef(), KeyCodes.ENTER);
+
+			// assert
+			assert.strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
+			assert.strictEqual(fnCloseSpy.callCount, 1, "close() method was called exactly once");
+
+			// cleanup
+			oHierarchicalSelect.destroy();
 		});
 	});
