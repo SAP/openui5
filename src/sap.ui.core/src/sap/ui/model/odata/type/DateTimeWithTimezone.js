@@ -98,6 +98,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DateTimeWithTimezone.prototype._getErrorMessage = function () {
+		// no need to use UI5Date.getInstance as only the UTC timestamp is used
 		var oDemoDateTime = new Date(Date.UTC(UI5Date.getInstance().getFullYear(), 11, 31, 23, 59, 58)),
 			sMessageKey = !this.bShowDate && !this.bShowTime
 				? "EnterDateTimeTimezone"

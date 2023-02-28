@@ -1174,7 +1174,7 @@ sap.ui.define([
 				// 2018: 48 = 1948 (diff: 30)
 				// 2018: 47 = 2047 (diff: 29)
 				if (sCalendarType !== CalendarType.Japanese && sPart.length <= 2) {
-					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
+					var oCurrentDate = UniversalDate.getInstance(UI5Date.getInstance(), sCalendarType),
 						iCurrentYear = oCurrentDate.getUTCFullYear(),
 						iCurrentCentury = Math.floor(iCurrentYear / 100),
 						iYearDiff = iCurrentCentury * 100 + iYear - iCurrentYear;
@@ -1231,7 +1231,7 @@ sap.ui.define([
 				var iWeekYear = iYear;
 				// Find the right century for two-digit years
 				if (sCalendarType !== CalendarType.Japanese && sPart.length <= 2) {
-					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
+					var oCurrentDate = UniversalDate.getInstance(UI5Date.getInstance(), sCalendarType),
 						iCurrentYear = oCurrentDate.getUTCFullYear(),
 						iCurrentCentury = Math.floor(iCurrentYear / 100),
 						iYearDiff = iCurrentCentury * 100 + iWeekYear - iCurrentYear;
@@ -2661,6 +2661,7 @@ sap.ui.define([
 		var oDate,
 			iYear = typeof oDateValue.year === "number" ? oDateValue.year : 1970;
 
+		// no need to use UI5Date.getInstance as only the UTC timestamp is used
 		oDate = UniversalDate.getInstance(new Date(0), sCalendarType);
 		oDate.setUTCEra(oDateValue.era || UniversalDate.getCurrentEra(sCalendarType));
 		oDate.setUTCFullYear(iYear);
@@ -3083,9 +3084,10 @@ sap.ui.define([
 	 * @private
 	 */
 	DateFormat.prototype.formatRelative = function(oJSDate, bUTC, aRange, sTimezone) {
-		var oToday = convertToTimezone(new Date(), sTimezone), oDateUTC,
-			sScale = this.oFormatOptions.relativeScale || "day",
-			iDiff, sPattern, iDiffSeconds;
+		var oDateUTC, iDiff, iDiffSeconds, sPattern,
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
+			oToday = convertToTimezone(new Date(), sTimezone),
+			sScale = this.oFormatOptions.relativeScale || "day";
 
 		iDiffSeconds = (oJSDate.getTime() - oToday.getTime()) / 1000;
 		if (this.oFormatOptions.relativeScale === "auto") {
@@ -3099,8 +3101,10 @@ sap.ui.define([
 
 		// For dates normalize to UTC to avoid issues with summer-/wintertime
 		if (sScale === "year" || sScale === "month" || sScale === "day") {
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			oToday = new Date(Date.UTC(oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate()));
 
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			oDateUTC = new Date(0);
 
 			// The Date.UTC function doesn't accept years before 1900 (converts years before 100 into 1900 + years).
@@ -3214,16 +3218,10 @@ sap.ui.define([
 	 * @returns {Date} copy of the date with the modified values
 	 */
 	function cutDateFields(oDate, iStartIndex) {
-		var aFields = [
-			"FullYear",
-			"Month",
-			"Date",
-			"Hours",
-			"Minutes",
-			"Seconds",
-			"Milliseconds"
-		], sMethodName;
-		var oDateCopy = new Date(oDate.getTime());
+		var sMethodName,
+			aFields = ["FullYear", "Month", "Date", "Hours", "Minutes", "Seconds", "Milliseconds"],
+			// no need to use UI5Date.getInstance as only the UTC timestamp is used
+			oDateCopy = new Date(oDate.getTime());
 
 		for (var i = iStartIndex; i < aFields.length; i++) {
 			sMethodName = "setUTC" + aFields[iStartIndex];
