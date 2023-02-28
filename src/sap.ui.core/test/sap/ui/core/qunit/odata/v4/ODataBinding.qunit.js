@@ -2504,21 +2504,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkBindingParameters, $$ignoreMessages", function (assert) {
-		var aAllowedParams = ["$$ignoreMessages"],
-			oBinding = new ODataBinding({});
+[
+	"$$ignoreMessages", "$$sharedRequest"
+].forEach(function (sName) {
+	QUnit.test("checkBindingParameters, " + sName, function (assert) {
+		var aAllowedParams = [sName],
+			oBinding = new ODataBinding({}),
+			mParameters = {};
 
 		assert.throws(function () {
-			oBinding.checkBindingParameters({$$ignoreMessages : undefined}, aAllowedParams);
-		}, new Error("Unsupported value for binding parameter '$$ignoreMessages': undefined"));
+			mParameters[sName] = undefined;
+			// code under test
+			oBinding.checkBindingParameters(mParameters, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '" + sName + "': undefined"));
 		assert.throws(function () {
-			oBinding.checkBindingParameters({$$ignoreMessages : "foo"}, aAllowedParams);
-		}, new Error("Unsupported value for binding parameter '$$ignoreMessages': foo"));
+			mParameters[sName] = "foo";
+			// code under test
+			oBinding.checkBindingParameters(mParameters, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '" + sName + "': foo"));
 
-		// code under test
-		oBinding.checkBindingParameters({$$ignoreMessages : true}, aAllowedParams);
-		oBinding.checkBindingParameters({$$ignoreMessages : false}, aAllowedParams);
+		[true, false].forEach(function (bValue) {
+			mParameters[sName] = bValue;
+			// code under test
+			oBinding.checkBindingParameters(mParameters, aAllowedParams);
+		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("checkBindingParameters, $$inheritExpandSelect", function (assert) {
@@ -2649,7 +2660,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	"$$canonicalPath", "$$noPatch", "$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest"
+	"$$canonicalPath", "$$noPatch", "$$ownRequest", "$$patchWithoutSideEffects"
 ].forEach(function (sName) {
 	QUnit.test("checkBindingParameters, " + sName, function (assert) {
 		var aAllowedParameters = [sName],

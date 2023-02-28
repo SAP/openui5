@@ -146,7 +146,9 @@ sap.ui.define([
 		this.aPreviousData = [];
 		this.bRefreshKeptElements = false; // refresh kept elements when resuming?
 		this.sResumeAction = undefined; // a special resume action for $$sharedRequest
-		this.bSharedRequest = mParameters.$$sharedRequest || oModel.bSharedRequests;
+		this.bSharedRequest = "$$sharedRequest" in mParameters
+			? mParameters.$$sharedRequest
+			: oModel.bSharedRequests;
 		this.aSorters = _Helper.toArray(vSorters);
 		this.sUpdateGroupId = mParameters.$$updateGroupId;
 		// Note: $$operationMode is validated before, oModel.sOperationMode also
