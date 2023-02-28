@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/Context",
@@ -25,10 +26,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, Configuration, Message, _Helper, BaseContext, FilterProcessor,
-		Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel,
-		ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations,
-		ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
+], function (Log, SyncPromise, Configuration, UI5Date, Message, _Helper, BaseContext,
+		FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser,
+		ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context,
+		ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding,
+		TestUtils
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -7155,11 +7157,11 @@ sap.ui.define([
 	vOriginalValue : {ms : 0, __edmType : "Edm.Time"},
 	oContext : {hasTransientParent : function () {}}
 }, {
-	vChangedValue : new Date(120000),
+	vChangedValue : UI5Date.getInstance(120000),
 	bMergeRequired : false,
-	vNewValue : new Date(60000),
-	vNewValueClone : new Date(60000),
-	vOriginalValue : new Date(60000),
+	vNewValue : UI5Date.getInstance(60000),
+	vNewValueClone : UI5Date.getInstance(60000),
+	vOriginalValue : UI5Date.getInstance(60000),
 	oContext : {hasTransientParent : function () {}}
 }, {
 	vChangedValue : 13,

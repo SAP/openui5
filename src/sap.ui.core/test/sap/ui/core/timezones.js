@@ -1,33 +1,22 @@
 sap.ui.define([
-	'sap/ui/core/UIComponent',
-	'sap/ui/core/Locale',
-	'sap/ui/core/LocaleData',
-	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/mvc/XMLView',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/Column',
-	'sap/m/ColumnListItem',
-	'sap/m/Label',
-	'sap/m/Text'
-], function (
-	UIComponent,
-	Locale,
-	LocaleData,
-	DateFormat,
-	XMLView,
-	JSONModel,
-	Column,
-	ColumnListItem,
-	Label,
-	Text
-) {
-	'use strict';
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Label",
+	"sap/m/Text",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/model/json/JSONModel"
+], function (Column, ColumnListItem, Label, Text, Locale, LocaleData, UI5Date, DateFormat, XMLView, JSONModel) {
+	"use strict";
 
 	var aTimezones = Object.keys(LocaleData.getInstance(new Locale("en")).getTimezoneTranslations());
 
 	//dimensions: locales, timezones
 	var aActiveLocales = ["de", "fr", "en", "tr"];
-	var oDate = new Date();
+	var oDate = UI5Date.getInstance();
 	var oEntities = {};
 	var getEntities = function(aLocales) {
 		aLocales.forEach(function (sLocale) {

@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
@@ -13,8 +14,9 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, ChangeReason, Context, Filter, FilterOperator, FilterProcessor, CountMode,
-		ODataUtils, OperationMode, ODataListBinding, TestUtils) {
+], function (Log, UI5Date, ChangeReason, Context, Filter, FilterOperator, FilterProcessor,
+		CountMode, ODataUtils, OperationMode, ODataListBinding, TestUtils
+) {
 	/*global QUnit,sinon*/
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
@@ -507,11 +509,11 @@ sap.ui.define([
 				aFilters : [
 					new Filter("string", FilterOperator.EQ, "abc123' !\"§$%&/()=:;/?+"),
 					new Filter("datetime", FilterOperator.EQ,
-						new Date(Date.UTC(2021, 5, 18, 9, 50, 58))),
+						UI5Date.getInstance(Date.UTC(2021, 5, 18, 9, 50, 58))),
 					new Filter("datetimems", FilterOperator.EQ,
-						new Date(Date.UTC(2021, 5, 19, 9, 50, 58, 123))),
+						UI5Date.getInstance(Date.UTC(2021, 5, 19, 9, 50, 58, 123))),
 					new Filter("datetimeoffset", FilterOperator.EQ,
-						new Date(Date.UTC(2021, 5, 20, 9, 50, 58))),
+						UI5Date.getInstance(Date.UTC(2021, 5, 20, 9, 50, 58))),
 					new Filter("time", FilterOperator.EQ,
 						{"__edmType" : "Edm.Time", "ms" : 34936000}),
 					new Filter("guid", FilterOperator.EQ, "42010aef-0de5-1edb-aead-63ba217fb0e7"),

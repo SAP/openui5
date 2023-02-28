@@ -8,13 +8,15 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
 	"sap/ui/performance/Measurement"
-], function (Log, deepEqual, BindingParser, ManagedObject, CalendarType, Configuration, DateFormat,
-		JSONModel, Basics, Expression, Measurement) {
+], function (Log, deepEqual, BindingParser, ManagedObject, CalendarType, Configuration, UI5Date,
+		DateFormat, JSONModel, Basics, Expression, Measurement
+) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -1029,7 +1031,7 @@ sap.ui.define([
 			oResult = {result : "constant", category : "date", value : "2015-04-15"};
 
 		this.mock(Expression).expects("parseDate")
-			.withExactArgs(oResult.value).returns(new Date(iDate));
+			.withExactArgs(oResult.value).returns(UI5Date.getInstance(iDate));
 
 		assert.strictEqual(Expression.formatOperand({}, 42, oResult, true), String(iDate));
 	});
@@ -1057,7 +1059,7 @@ sap.ui.define([
 			oResult = {result : "constant", category : "datetime", value : "2014-04-15T13:12:11Z"};
 
 		this.mock(Expression).expects("parseDateTimeOffset")
-			.withExactArgs(oResult.value).returns(new Date(iDate));
+			.withExactArgs(oResult.value).returns(UI5Date.getInstance(iDate));
 
 		assert.strictEqual(Expression.formatOperand({}, 42, oResult, true), String(iDate));
 	});
@@ -1085,7 +1087,7 @@ sap.ui.define([
 			oResult = {result : "constant", category : "time", value : "23:59:59.123"};
 
 		this.mock(Expression).expects("parseTimeOfDay")
-			.withExactArgs(oResult.value).returns(new Date(iDate));
+			.withExactArgs(oResult.value).returns(UI5Date.getInstance(iDate));
 
 		assert.strictEqual(Expression.formatOperand({}, 42, oResult, true), String(iDate));
 	});

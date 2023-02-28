@@ -25,12 +25,12 @@ sap.ui.define([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
+	var oDateOnly = UI5Date.getInstance(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
 		oDateTime = UI5Date.getInstance(2014, 10, 27, 13, 47, 26),
 		sDateTimeOffset = "2014-11-27T13:47:26" + getTimezoneOffset(oDateTime),
 		sDateTimeOffsetWithMS = "2014-11-27T13:47:26.456" + getTimezoneOffset(oDateTime),
 		sDateTimeOffsetYear0 = "0000-11-27T13:47:26" + getTimezoneOffset(oDateTime),
-		oDateTimeUTC = new Date(Date.UTC(2014, 10, 27, 13, 47, 26)),
+		oDateTimeUTC = UI5Date.getInstance(Date.UTC(2014, 10, 27, 13, 47, 26)),
 		oDateTimeWithMS = UI5Date.getInstance(2014, 10, 27, 13, 47, 26, 456),
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
@@ -285,7 +285,7 @@ sap.ui.define([
 		//*****************************************************************************************
 		QUnit.test("format option UTC", function (assert) {
 			var oType = createInstance(sTypeName, {UTC : true}),
-				oDateTime = new Date(Date.UTC(2014, 10, 27, 13, 47, 26)),
+				oDateTime = UI5Date.getInstance(Date.UTC(2014, 10, 27, 13, 47, 26)),
 				sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM";
 
 			assert.strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime);
@@ -345,12 +345,13 @@ sap.ui.define([
 			that = this;
 
 		TestUtils.withNormalizedMessages(function () {
-			var oType = new DateTimeBase({}, {isDateOnly: true});
+			var oExpectedDate = UI5Date.getInstance(Date.UTC(2022, 11, 31)),
+				oType = new DateTimeBase({}, {isDateOnly: true});
 
 			oUI5DateMock.expects("getInstance").withExactArgs().returns(oDate);
 			oDateMock.expects("getFullYear").withExactArgs().returns(2022);
 			that.mock(oType).expects("formatValue")
-				.withExactArgs(new Date(Date.UTC(2022, 11, 31)), "string")
+				.withExactArgs(oExpectedDate, "string")
 				.returns("~formattedDate");
 
 			// code under test: Date
@@ -782,7 +783,7 @@ sap.ui.define([
 		var oType = new DateTimeOffset({UTC : true}, {V4 : true}),
 			sDateTime = "2014-11-27T13:47:26Z",
 			sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
-			oFormattedDateTime = new Date(Date.UTC(2014, 10, 27, 13, 47, 26));
+			oFormattedDateTime = UI5Date.getInstance(Date.UTC(2014, 10, 27, 13, 47, 26));
 
 		oType._resetModelFormatter();
 		this.mock(DateFormat).expects("getDateInstance") // getModelFormatter
