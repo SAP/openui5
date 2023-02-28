@@ -1853,12 +1853,18 @@ if ( eventCaptureSupported ) {
 	// and mouseup event which have delay reach on the underneath input.
 	// Thus the mousedown and mouseup events should also be suppressed.
 	//
-	// The mousedown, mouseup and click events are suppressed only when their
-	// coordinate is proximitely the same as the coordinate of recorded touch
-	// events and the mouse event's target is different than the target of the
-	// touch event.
+	// Moreover, mobile browsers, such as mobile Safari fires mouseover
+	// event with delay as well. This event may also be dispatched wrongly
+	// to the underneath element when the top element is removed in one of
+	// the touch* event handler.
+	//
+	// The mousedown, mouseup, mouseover and click events are suppressed
+	// only when their coordinate is proximately the same as the coordinate
+	// of recorded touch events and the mouse event's target is different
+	// than the target of the touch event.
 	document.addEventListener( "mousedown", suppressEvent, true );
 	document.addEventListener( "mouseup", suppressEvent, true );
+	document.addEventListener( "mouseover", suppressEvent, true );
 	document.addEventListener( "click", suppressEvent, true );
 }
 })( jQuery, window, document );
