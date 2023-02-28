@@ -77,6 +77,8 @@ sap.ui.define([
 	 * <li>the column header control's 'title' property if neither 'text' nor 'caption' property are available</li>
 	 * <li>the column id is displayed as last fallback, if none of the above is at hand. In that case, a warning is logged. </li></ul>
 	 *
+	 * @deprecated since 1.115. Please use the {@link sap.m.p13n.Popup Popup} for personalization instead.
+	 *
 	 * @param {string}
 	 *			[sId] optional id for the new control; generated automatically if
 	 *			no non-empty id is given Note: this can be omitted, no matter
@@ -85,7 +87,6 @@ sap.ui.define([
 	 *			[mSettings] optional map/JSON-object with initial settings for the
 	 *			new component instance
 	 * @public
-	 *
 	 * @class Table Personalization Dialog
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP
@@ -102,6 +103,7 @@ sap.ui.define([
 		},
 
 		metadata : {
+			deprecated: true,
 			properties: {
 				"contentWidth": {type: "sap.ui.core.CSSSize"},
 				"contentHeight": {type: "sap.ui.core.CSSSize", since: "1.22"},

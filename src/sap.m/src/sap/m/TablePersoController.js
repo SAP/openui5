@@ -25,6 +25,8 @@ sap.ui.define([
 	 * a personalization dialog for, with a persistence service such as one provided by
 	 * the unified shell.
 	 *
+	 * @deprecated since 1.115. Please use the {@link sap.m.p13n.Engine Engine} for personalization instead.
+	 *
 	 * @param {string}
 	 *			[sId] optional id for the new control; generated automatically if
 	 *			no non-empty id is given Note: this can be omitted, no matter
@@ -33,7 +35,6 @@ sap.ui.define([
 	 *			[mSettings] optional map/JSON-object with initial settings for the
 	 *			new component instance
 	 * @public
-	 *
 	 * @class Table Personalization Controller
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP
@@ -50,6 +51,7 @@ sap.ui.define([
 		},
 
 		metadata: {
+			deprecated: true,
 			properties: {
 				"contentWidth": {type: "sap.ui.core.CSSSize"},
 				"contentHeight": {type: "sap.ui.core.CSSSize", since: "1.22"},

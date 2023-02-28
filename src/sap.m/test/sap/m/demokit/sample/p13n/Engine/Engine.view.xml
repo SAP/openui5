@@ -11,7 +11,7 @@
 
     <VBox class="sapUiSmallMargin" alignItems="Start">
 
-        <Table id="persoTable" items="{path: '/items'}" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex">
+        <Table id="persoTable" items="{path: '/items'}">
 
             <headerToolbar>
                 <Toolbar>

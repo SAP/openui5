@@ -106,6 +106,9 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+			/**
+			 * @deprecated since 1.115
+			 */
 			"TablePersoController": {
 				ui5: {
 					// sap.ui.table.TablePersoController requires sap.m.TablePersoDialog

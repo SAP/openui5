@@ -28,7 +28,8 @@
 					"sap.ui.table.sample.OData2",
 					"sap.ui.table.sample.RowAction",
 					"sap.ui.table.sample.RowHighlights",
-					"sap.ui.table.sample.DnD"
+					"sap.ui.table.sample.DnD",
+					"sap.m.sample.p13n.EngineGridTable"
 				]
 			},
 			{

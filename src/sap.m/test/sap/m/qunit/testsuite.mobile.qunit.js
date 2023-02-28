@@ -1536,12 +1536,21 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			/**
+			 * @deprecated since 1.115
+			 */
 			TablePersoController: {
 				title: "QUnit Page for sap.m.TablePersoController"
 			},
+				/**
+			 * @deprecated since 1.115
+			 */
 			TablePersoControllerMigrationInComponent: {
 				title: "QUnit Page for sap.m.TablePersoDialog - Migration in Component"
 			},
+			/**
+			 * @deprecated since 1.115
+			 */
 			TablePersoDialog: {
 				title: "QUnit Page for sap.m.TablePersoController",
 				ui5: {
