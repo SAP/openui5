@@ -221,14 +221,12 @@ sap.ui.define([
 		var oItem = oEvent.getParameter("listItem");
 		var oItemContext = this._getListItemBindingContext(oItem);
 		var oValues = this._getItemFromContext(oItemContext);
-		var bIsSingleSelect = this._isSingleSelect();
-		var bSelected = bIsSingleSelect ? true : !oItem.getSelected();
-		var sSelectType = SelectType.Set;
+		var oTable = this._getTable();
+		var bSingleSelectMaster = oTable.getMode() === ListMode.SingleSelectMaster; // Only in this mode the item will already have the desired selection state.
+		var bSelected = bSingleSelectMaster ? oItem.getSelected() : !oItem.getSelected();
+		oItem.setSelected(bSelected);
+		var sSelectType = bSelected ? SelectType.Add : SelectType.Remove;
 
-		if (!bIsSingleSelect) {
-			oItem.setSelected(bSelected);
-			sSelectType = bSelected ? SelectType.Add : SelectType.Remove;
-		}
 		var oCondition = this._createCondition(oValues.key, oValues.description, oValues.payload);
 		this._fireSelect({type: sSelectType, conditions: [oCondition]});
 		if (this.isTypeahead()) {

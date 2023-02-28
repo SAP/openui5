@@ -236,10 +236,13 @@ sap.ui.define([
 			var aNewConditions = [
 				Condition.createItemCondition("I3", "X-Item 3")
 			];
+
+			oItem.setSelected(true); // In SingleSelectMaster MTable will not update the items selection, as the table already did it.
 			oTable.fireItemPress({listItem: oItem});
+
 			assert.equal(iSelect, 1, "select event fired");
 			assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-			assert.equal(sType, SelectType.Set, "select event type");
+			assert.equal(sType, SelectType.Add, "select event type");
 			assert.equal(iConfirm, 1, "confirm event fired");
 			// TODO: clarify if Conditions should really not be updated and items not selected - so it is somehow not in sync
 			// assert.deepEqual(oMTable.getConditions(), aNewConditions, "MTable conditions");
