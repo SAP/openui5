@@ -1,11 +1,17 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/test/RecordReplay',
+	'sap/ui/core/ListItem',
+	'sap/m/Button',
+	'sap/m/Input',
+	'sap/m/MultiInput',
+	'sap/m/OverflowToolbar',
+	'sap/m/Popover',
 	'sap/m/SearchField',
 	"sap/ui/thirdparty/jquery",
 	'sap/m/App',
 	'sap/ui/core/mvc/XMLView'
-], function (RecordReplay, SearchField, $, App, XMLView) {
+], function (RecordReplay, ListItem, Button, Input, MultiInput, OverflowToolbar, Popover, SearchField, $, App, XMLView) {
 	"use strict";
 
 	QUnit.module("RecordReplay - control selector", {
@@ -197,6 +203,125 @@ sap.ui.define([
 			this.oSearchField.setShowSearchButton(true);
 			fnDone();
 		}.bind(this));
+	});
+
+	QUnit.test("Should open Suggestions Popover through EnterText Action on MultiInput", function (assert) {
+		var fnDone = assert.async(),
+			oMultiInput = new MultiInput({
+				value: "",
+				showSuggestion: true,
+				showValueHelp: false,
+				suggestionItems: [
+					new ListItem({text: "Item 1"}),
+					new ListItem({text: "Item 2"})
+				]
+			}),
+			oPopover = oMultiInput._getSuggestionsPopover().getPopover();
+
+		oPopover.attachAfterOpen(function () {
+			assert.ok(true, "Suggest list is shown");
+			assert.strictEqual(oMultiInput.getValue(), "Item", "Should enter search text");
+
+			oMultiInput.destroy();
+			fnDone();
+		});
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		RecordReplay.interactWithControl({
+			selector: {controlType: "sap.m.MultiInput"},
+			interactionType: RecordReplay.InteractionType.EnterText,
+			enterText: "Item",
+			keepFocus: true
+		});
+	});
+
+	QUnit.test("Should enter text in Popover - Popover should remain open", function (assert) {
+		var fnDone = assert.async(),
+			oButton = new Button({
+				id: "open"
+			}),
+			oInput1 = new Input({
+				id: "test1"
+			}),
+			oInput2 = new Input({
+				id: "test2"
+			}),
+			oPopover = new Popover({
+				content: [
+					oInput1,
+					oInput2
+				]
+			});
+
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oPopover.openBy(oButton);
+		oPopover.$().css("display", "block");
+
+		oInput1.attachEvent("change", function () {
+			assert.strictEqual(oInput1.getValue(), "value");
+			assert.ok(oPopover.isOpen());
+
+			setTimeout(function () {
+				oInput2.attachEvent("change", function () {
+					assert.strictEqual(oInput2.getValue(), "value");
+					assert.ok(oPopover.isOpen());
+
+					setTimeout(function () {
+						oButton.destroy();
+						oPopover.destroy();
+						fnDone();
+					}, 100);
+				});
+
+				RecordReplay.interactWithControl({
+					selector: {id: "test2"},
+					interactionType: RecordReplay.InteractionType.EnterText,
+					enterText: "value",
+					pressEnterKey: true
+				});
+			}, 100);
+		});
+
+		RecordReplay.interactWithControl({
+			selector: {id: "test1"},
+			interactionType: RecordReplay.InteractionType.EnterText,
+			enterText: "value",
+			pressEnterKey: true
+		});
+	});
+
+	QUnit.test("Should interact with Control with provided idSuffix", function (assert) {
+		var fnDone = assert.async(),
+			oOFT = new OverflowToolbar({
+				content: [
+					new Button({text: "Button 1", width: "100%"}),
+					new Button({text: "Button 2"})
+				]
+			}),
+			oPopover = oOFT._getPopover();
+
+		oOFT.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oPopover.attachAfterOpen(function () {
+			assert.ok(true, "Overflow button of OverflowToolbar is pressed");
+
+			oOFT.destroy();
+			fnDone();
+		});
+
+		RecordReplay.interactWithControl({
+			selector: {
+				controlType: "sap.m.OverflowToolbar",
+				interaction: {
+					idSuffix: "overflowButton"
+				}
+			},
+			interactionType: RecordReplay.InteractionType.Press
+		});
 	});
 
 	QUnit.test("Should complain when interaction is not supported", function (assert) {

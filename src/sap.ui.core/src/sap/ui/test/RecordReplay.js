@@ -148,17 +148,21 @@ sap.ui.define([
 	 * To see the interaction details and options, see {@link sap.ui.test.actions}
 	 * @param {string} oOptions.enterText Text for the EnterText interaction
 	 * @param {string} [oOptions.clearTextFirst=true] Clear existing text before interaction
+	 * @param {boolean} oOptions.pressEnterKey If ENTER key will be entered after the text
+	 * @param {boolean} oOptions.keepFocus If the input will remain focused after text is entered
 	 * @returns {Promise<undefined|Error>} Promise to be resolved when the interaction is done or rejected if interaction is not possible
 	 * @public
 	 */
 	RecordReplay.interactWithControl = function (oOptions) {
-		var sControl = JSON.stringify(oOptions.selector);
+		var sControl = JSON.stringify(oOptions.selector),
+			oInteraction = oOptions.selector && oOptions.selector.interaction,
+			sIdSuffix = (oInteraction && typeof oInteraction === "object") ? oInteraction.idSuffix : "";
 
 		return new Promise(function (resolve, reject) {
 			var oAction;
 			switch (oOptions.interactionType) {
-				case RecordReplay.InteractionType.Press: oAction = new Press(); break;
-				case RecordReplay.InteractionType.EnterText: oAction = new EnterText({text:oOptions.enterText}); break;
+				case RecordReplay.InteractionType.Press: oAction = new Press({idSuffix: sIdSuffix}); break;
+				case RecordReplay.InteractionType.EnterText: oAction = new EnterText({text:oOptions.enterText, pressEnterKey: oOptions.pressEnterKey, keepFocus: oOptions.keepFocus, idSuffix: sIdSuffix}); break;
 				default: reject(new Error("Could not interact with control " + sControl +
 					". Unsupported interaction type: " + oOptions.interactionType +
 					" . Supported interaction types are: " + Object.keys(RecordReplay.InteractionType).join(", ")));
