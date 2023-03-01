@@ -1085,7 +1085,14 @@ sap.ui.define([
 		this._aResourceBundles = [];
 		//according to the language list, load each resource bundle
 		for (var p in Editor._oLanguages) {
-			var oResourceBundleTemp;
+			var oResourceBundleObject = {
+				"language": Editor._oLanguages[p],
+				"isSupportedLocale": true
+			};
+			if (Array.isArray(aSupportedLocales) && !aSupportedLocales.includes(p) && !aSupportedLocales.includes(p.replace('-', '_'))) {
+				oResourceBundleObject.isSupportedLocale = false;
+			}
+			this._aResourceBundles[p] = oResourceBundleObject;
 			if (sResourceBundleURL) {
 				var aFallbacks = [p];
 				if (p.indexOf("-") > -1) {
@@ -1095,22 +1102,15 @@ sap.ui.define([
 				if (!aFallbacks.includes("en")) {
 					aFallbacks.push("en");
 				}
-				oResourceBundleTemp = ResourceBundle.create({
+				ResourceBundle.create({
 					url: sResourceBundleURL,
-					async: false,
+					async: true,
 					locale: p,
 					supportedLocales: aFallbacks
-				});
+				}).then(function(oBundle) {
+					this.resourceBundle = oBundle;
+				}.bind(oResourceBundleObject));
 			}
-			var oResourceBundleObject = {
-				"language": Editor._oLanguages[p],
-				"resourceBundle": oResourceBundleTemp,
-				"isSupportedLocale": true
-			};
-			if (Array.isArray(aSupportedLocales) && !aSupportedLocales.includes(p) && !aSupportedLocales.includes(p.replace('-', '_'))) {
-				oResourceBundleObject.isSupportedLocale = false;
-			}
-			this._aResourceBundles[p] = oResourceBundleObject;
 		}
 	};
 
@@ -2749,35 +2749,74 @@ sap.ui.define([
 	 * Returns the current language specific text for a given key or "" if no translation for the key exists
 	 */
 	Editor.prototype._getCurrentLanguageSpecificText = function (sKey) {
-		if (!this._oTranslationBundle && this._language) {
-			var aFallbacks = [];
-			if (this._language.indexOf("-") > -1) {
-				aFallbacks.push(this._language.substring(0, this._language.indexOf("-")));
+		if (this._oTranslationBundle) {
+			var sText = this._oTranslationBundle.getText(sKey, [], true);
+			if (sText === undefined) {
+				return "";
+			}
+			return sText;
+		}
+		var sLanguage = this._language;
+		if (!sLanguage) {
+			return "";
+		}
+		var vI18n = this._oEditorManifest.get("/sap.app/i18n"),
+			sResourceBundleURL,
+			aSupportedLocales;
+		if (!vI18n) {
+			return "";
+		}
+		if (typeof vI18n === "string") {
+			sResourceBundleURL = this.getBaseUrl() + vI18n;
+		} else if (typeof vI18n === "object") {
+			if (vI18n.bundleUrl) {
+				sResourceBundleURL = this.getBaseUrl() + vI18n.bundleUrl;
+			}
+			if (vI18n.supportedLocales && Array.isArray(vI18n.supportedLocales)) {
+				aSupportedLocales = vI18n.supportedLocales;
+				for (var i = 0; i < aSupportedLocales.length; i++) {
+					aSupportedLocales[i] = aSupportedLocales[i].replaceAll('_', '-');
+				}
+			}
+		}
+		if (sResourceBundleURL) {
+			var aFallbacks = [sLanguage];
+			if (sLanguage.indexOf("-") > -1) {
+				aFallbacks.push(sLanguage.substring(0, sLanguage.indexOf("-")));
 			}
 			//add en into fallbacks
 			if (!aFallbacks.includes("en")) {
 				aFallbacks.push("en");
 			}
-			if (this._aResourceBundles[this._language] && this._aResourceBundles[this._language].isSupportedLocale) {
-				this._oTranslationBundle = this._aResourceBundles[this._language];
-			} else {
-				for (var i = 0; i < aFallbacks.length; i++) {
-					if (this._aResourceBundles[aFallbacks[i]] && this._aResourceBundles[aFallbacks[i]].isSupportedLocale) {
-						this._oTranslationBundle = this._aResourceBundles[aFallbacks[i]];
-						break;
-					}
-				}
-			}
-		}
-		if (this._oTranslationBundle && this._oTranslationBundle.resourceBundle) {
-			var sText = this._oTranslationBundle.resourceBundle.getText(sKey, [], true);
-			if (sText === undefined) {
-				return "";
-			}
-			return sText;
+			aFallbacks = this._filterSupportedFallbackLanguages(aFallbacks, aSupportedLocales);
+			// load the ResourceBundle relative to the manifest
+			this._oTranslationBundle = ResourceBundle.create({
+				url: sResourceBundleURL,
+				async: false,
+				locale: aFallbacks[0],
+				supportedLocales: aFallbacks,
+				fallbackLocale: "en"
+			});
+			return this._getCurrentLanguageSpecificText(sKey);
 		} else {
 			return "";
 		}
+	};
+
+	/**
+	 * Filter the supported fallback languages
+	 */
+	Editor.prototype._filterSupportedFallbackLanguages = function (aFallbacks, aSupportedLocales) {
+		if (Array.isArray(aSupportedLocales)) {
+			var aSupportedFallbacks = [];
+			for (var i = 0; i < aFallbacks.length; i++) {
+				if (aSupportedLocales.includes(aFallbacks[i])) {
+					aSupportedFallbacks.push(aFallbacks[i]);
+				}
+			}
+			aFallbacks = aSupportedFallbacks;
+		}
+		return aFallbacks;
 	};
 
 	/**
