@@ -7,7 +7,7 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<f:SimpleForm binding="{path: '/ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)',
 			parameters : {$$patchWithoutSideEffects : true}}"
-			editable="true" id="contact" layout="columnLayout" title="Field Groups"
+			editable="true" id="contact" layout="ColumnLayout" title="Field Groups"
 			validateFieldGroup="onValidateFieldGroup">
 		<Label labelFor="firstName" text="First Name"/>
 		<Input fieldGroupIds="nameGroup" id="firstName" value="{FirstName}"
