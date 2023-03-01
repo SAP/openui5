@@ -2536,6 +2536,9 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 
 		if (oFieldHelp) {
+			if (this._fnLiveChangeTimer) { // as live change might pending we need to update the filterValue
+				this._fnLiveChangeTimer.flush();
+			}
 			oFieldHelp.setFilterValue(this._sFilterValue); // use types value for filtering, even if reopening FieldHelp
 			var aConditions = this.getConditions();
 			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
