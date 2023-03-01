@@ -1,12 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
-		"sap/ui/core/format/DateFormat",
-		'sap/ui/core/format/DateFormatTimezoneDisplay',
-		"sap/ui/core/LocaleData",
-		"sap/ui/core/Locale",
-		"sap/ui/core/Configuration"
-	],
-	function (DateFormat, DateFormatTimezoneDisplay, LocaleData, Locale, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/format/DateFormatTimezoneDisplay"
+], function (Configuration, Locale, LocaleData, UI5Date, DateFormat, DateFormatTimezoneDisplay) {
 		"use strict";
 
 		var getTimezoneStub;
@@ -32,7 +32,7 @@ sap.ui.define([
 
 		QUnit.test("showTimezone format option parameter is ignored and bUTC parameter is truthy (backward compatibility)", function (assert) {
 			var oDateFormat;
-			var oDate = new Date("2021-10-13T13:22:33Z");
+			var oDate = UI5Date.getInstance("2021-10-13T13:22:33Z");
 
 			oDateFormat = DateFormat.getDateTimeInstance({
 				showTimezone: DateFormatTimezoneDisplay.Show
@@ -55,7 +55,7 @@ sap.ui.define([
 
 		QUnit.test("showTimezone format option parameter is ignored and bUTC parameter is truthy", function (assert) {
 			var oDateFormat;
-			var oDate = new Date("2021-10-13T13:22:33Z");
+			var oDate = UI5Date.getInstance("2021-10-13T13:22:33Z");
 
 			oDateFormat = DateFormat.getDateTimeInstance({
 				showTimezone: true,
@@ -209,7 +209,7 @@ sap.ui.define([
 			var oDateFormat;
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu
-			var oDateEDT = new Date("2021-10-13T13:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T13:22:33Z");
 
 			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({
 				showTimezone: DateFormatTimezoneDisplay.Show
@@ -253,12 +253,12 @@ sap.ui.define([
 			});
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu, EDT Eastern Daylight Time
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
 				"Oct 12, 2021, 10:22:33 PM Americas, New York", "date was converted and timezone name was added.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu, EST Eastern Standard Time
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"),
 				"Nov 13, 2021, 8:22:33 AM Americas, New York", "date was converted and timezone name was added.");
 		});
@@ -270,12 +270,12 @@ sap.ui.define([
 			});
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu, EDT Eastern Daylight Time
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
 				"Oct 12, 2021 Americas, New York", "date was converted and timezone name was added.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu, EST Eastern Standard Time
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"),
 				"Nov 13, 2021 Americas, New York", "date was converted and timezone name was added.");
 		});
@@ -287,12 +287,12 @@ sap.ui.define([
 			});
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu, EDT Eastern Daylight Time
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
 				"10:22:33 PM Americas, New York", "date was converted and timezone name was added.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu, EST Eastern Standard Time
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"),
 				"8:22:33 AM Americas, New York", "date was converted and timezone name was added.");
 		});
@@ -304,14 +304,14 @@ sap.ui.define([
 			});
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"),
 				"Nov 2021, 8 AM Americas, New York", "New timezone should be be applied.");
 		});
 
 		QUnit.test("Timezone parameter is empty string, null or undefined", function (assert) {
 			var oDateTimeWithTimezoneFormat = DateFormat.getDateTimeWithTimezoneInstance();
-			var oDateEDT = new Date("2021-10-13T13:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T13:22:33Z");
 
 			assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, ""), "Oct 13, 2021, 3:22:33 PM Europe, Berlin", "default to Europe, Berlin");
 			assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, null), "Oct 13, 2021, 3:22:33 PM Europe, Berlin", "default to Europe, Berlin");
@@ -335,7 +335,7 @@ sap.ui.define([
 			var oDateFormat;
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu
-			var oDateEDT = new Date("2021-10-13T13:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T13:22:33Z");
 
 			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({
 				showTimezone: DateFormatTimezoneDisplay.Show
@@ -362,12 +362,12 @@ sap.ui.define([
 			});
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu, EDT Eastern Daylight Time
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
 				"12.10.2021, 22:22:33 Amerika, New York", "date was converted and timezone name was added.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu, EST Eastern Standard Time
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"),
 				"13.11.2021, 08:22:33 Amerika, New York", "date was converted and timezone name was added.");
 		});
@@ -379,7 +379,7 @@ sap.ui.define([
 			});
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"),
 				"Nov. 2021, 8 Uhr AM Amerika, New York", "New timezone should be be applied.");
 		});
@@ -460,7 +460,7 @@ sap.ui.define([
 				}
 			].forEach(function (oFormatOptions) {
 				var oDateTimeWithTimezoneFormatOnly = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
-				assert.strictEqual(oDateTimeWithTimezoneFormatOnly.format(new Date(), "NotValid"), "",
+				assert.strictEqual(oDateTimeWithTimezoneFormatOnly.format(UI5Date.getInstance(), "NotValid"), "",
 					"invalid timezone parameter supplied");
 			});
 		});
@@ -470,14 +470,14 @@ sap.ui.define([
 				showTimezone: DateFormatTimezoneDisplay.Show
 			});
 
-			var oDateEDT = new Date("2021-10-13T13:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T13:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEDT, "foo"), "",
 				"invalid timezone specified");
 		});
 
 		QUnit.test("Timezone parameter of improper value", function (assert) {
 			var oDateTimeWithTimezoneFormat = DateFormat.getDateTimeWithTimezoneInstance();
-			var oDateEDT = new Date("2021-10-13T13:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T13:22:33Z");
 
 			[true, false, 0, 1, {}].forEach(function(sTimezone) {
 				assert.throws(function() {
@@ -491,7 +491,7 @@ sap.ui.define([
 				showTimezone: DateFormatTimezoneDisplay.Only
 			});
 
-			[null, "", undefined, new Date("invalid")].forEach(function(oDate) {
+			[null, "", undefined, UI5Date.getInstance("invalid")].forEach(function(oDate) {
 				assert.strictEqual(oDateTimeWithTimezoneFormatOnly.format(oDate, "America/New_York"), "Americas, New York",
 					"Timezone is displayed");
 			});
@@ -501,7 +501,7 @@ sap.ui.define([
 			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({
 				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS VV"
 			});
-			var oDateEDT = new Date("2021-10-13T13:22:33.456Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T13:22:33.456Z");
 			assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
 				"2021-10-13T09:22:33.456 Americas, New York", "milliseconds are shown");
 		});
@@ -513,7 +513,7 @@ sap.ui.define([
 			});
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"), "2021-11-13T08:22:33 GMT-05:00", "date was converted and new timezone should be be applied.");
 			// UTC flag
 			assert.deepEqual(oDateFormat.format(oDateEST, "America/New_York"), oDateFormat.format(oDateEST, "America/New_York", true), "UTC flag (true) is ignored and set to false.");
@@ -521,7 +521,7 @@ sap.ui.define([
 
 
 		QUnit.test("Custom pattern with timezones (z, Z, x and VV)", function (assert) {
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 
 			var oDateFormat1 = DateFormat.getDateTimeWithTimezoneInstance({
 				pattern: "yyyy-MM-dd'T'HH:mm:ss z VV",
@@ -547,7 +547,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Custom pattern with timezones (z and XX but without VV pattern)", function (assert) {
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 
 			var oDateFormat1 = DateFormat.getDateTimeWithTimezoneInstance({
 				pattern: "yyyy-MM-dd'T'HH:mm:ss z XX",
@@ -651,28 +651,28 @@ sap.ui.define([
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT)
 			var sDateEDT = "Oct 13, 2021, 9:22:33 AM Americas, New York";
-			var iTimestampExpectedEDT = new Date(Date.UTC(2021, 9, 13, 13, 22, 33));
+			var iTimestampExpectedEDT = UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33));
 			var oParseResultEDT = oDateFormat.parse(sDateEDT, "America/New_York");
 			assert.strictEqual(oParseResultEDT[0].getTime(), iTimestampExpectedEDT.getTime(), "The timezone is provided in date string and parameter, it is used to calculate the date.");
 			assert.strictEqual(oParseResultEDT[1], "America/New_York", "The timezone is provided in date string and parameter, it is used to calculate the date.");
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT) (change to next day)
 			var sDateEDT2 = "Oct 13, 2021, 10:22:33 PM Americas, New York";
-			var iTimestampExpectedEDT2 = new Date(Date.UTC(2021, 9, 14, 2, 22, 33));
+			var iTimestampExpectedEDT2 = UI5Date.getInstance(Date.UTC(2021, 9, 14, 2, 22, 33));
 			var oParseResultEDT2 = oDateFormat.parse(sDateEDT2, "America/New_York");
 			assert.strictEqual(oParseResultEDT2[0].getTime(), iTimestampExpectedEDT2.getTime(), "The timezone is provided in date string and parameter, it is used to calculate the date and the day changes to yesterday.");
 			assert.strictEqual(oParseResultEDT2[1], "America/New_York", "The timezone is provided in date string and parameter, it is used to calculate the date and the day changes to yesterday.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST)
 			var sDateEST = "Nov 13, 2021, 8:22:33 AM Americas, New York";
-			var iTimestampExpectedEST = new Date(Date.UTC(2021, 10, 13, 13, 22, 33));
+			var iTimestampExpectedEST = UI5Date.getInstance(Date.UTC(2021, 10, 13, 13, 22, 33));
 			var oParseResultEST = oDateFormat.parse(sDateEST, "America/New_York");
 			assert.strictEqual(oParseResultEST[0].getTime(), iTimestampExpectedEST.getTime(), "The timezone is provided in date string and parameter, it is used to calculate the date.");
 			assert.strictEqual(oParseResultEST[1], "America/New_York", "The timezone is provided in date string and parameter, it is used to calculate the date.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST) (change to next day)
 			var sDateEST2 = "Nov 13, 2021, 11:22:33 PM Americas, New York";
-			var iTimestampExpectedEST2 = new Date(Date.UTC(2021, 10, 14, 4, 22, 33));
+			var iTimestampExpectedEST2 = UI5Date.getInstance(Date.UTC(2021, 10, 14, 4, 22, 33));
 			var oParseResultEST2 = oDateFormat.parse(sDateEST2, "America/New_York", false, true);
 			assert.strictEqual(oParseResultEST2[0].getTime(), iTimestampExpectedEST2.getTime(), "The timezone is provided in date string and parameter, it is used to calculate the date (UTC option is set to false).");
 			assert.strictEqual(oParseResultEST2[1], "America/New_York", "The timezone is provided in date string and parameter, it is used to calculate the date (UTC option is set to false).");
@@ -684,7 +684,7 @@ sap.ui.define([
 			});
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT)
 			var sDateEDT = "Oct 13, 2021, 9:22:33 AM";
-			var iTimestampExpectedEDT = new Date(Date.UTC(2021, 9, 13, 13, 22, 33));
+			var iTimestampExpectedEDT = UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33));
 			var oParseResultEDT = oDateFormat.parse(sDateEDT, "America/New_York");
 			assert.strictEqual(oParseResultEDT[0].getTime(), iTimestampExpectedEDT.getTime(), "The timezone is provided in date string, it is used to calculate the date.");
 			assert.strictEqual(oParseResultEDT[1], undefined, "The timezone is provided in date string, it is used to calculate the date.");
@@ -727,7 +727,7 @@ sap.ui.define([
 			// * To Americas, New York 9:22 + 4h diff = 13:22
 			// * From Americas, New York => Europe, Berlin 13:22 - 6h diff = 7:22
 			var sDateCEST = "Oct 13, 2021, 9:22:33 AM Europe, Berlin";
-			var iTimestampExpectedCEST = new Date(Date.UTC(2021, 9, 13, 7, 22, 33));
+			var iTimestampExpectedCEST = UI5Date.getInstance(Date.UTC(2021, 9, 13, 7, 22, 33));
 			var oParseResultCEST = oDateFormat.parse(sDateCEST, "America/New_York");
 			assert.strictEqual(oParseResultCEST[0].getTime(), iTimestampExpectedCEST.getTime(), "The timezone is provided in date string, it is used to calculate the date.");
 			assert.strictEqual(oParseResultCEST[1], "Europe/Berlin", "The timezone is provided in date string, it is used to calculate the date.");
@@ -737,7 +737,7 @@ sap.ui.define([
 			// * To Europe, Berlin 9:22 - 2h diff = 7:22
 			// * From Europe, Berlin => Americas, New York 7:22 + 6h diff = 13:22
 			var sDateEDT = "Oct 13, 2021, 9:22:33 AM Americas, New York";
-			var iTimestampExpectedEDT = new Date(Date.UTC(2021, 9, 13, 13, 22, 33));
+			var iTimestampExpectedEDT = UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33));
 			var oParseResultEDT = oDateFormat.parse(sDateEDT, "Europe/Berlin");
 			assert.strictEqual(oParseResultEDT[0].getTime(), iTimestampExpectedEDT.getTime(), "The timezone is provided in date string, it is used to calculate the date.");
 			assert.strictEqual(oParseResultEDT[1], "America/New_York", "The timezone is provided in date string, it is used to calculate the date.");
@@ -798,9 +798,15 @@ sap.ui.define([
 			var sDate = "Oct 13, 2021, 9:22:33 AM Americas, New York";
 			var iTimestampExpectedEDT = Date.UTC(2021, 9, 13, 13, 22, 33, 0);
 
-			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, ""), [new Date(iTimestampExpectedEDT), "America/New_York"], "use the timezone from the parsed string");
-			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, null), [new Date(iTimestampExpectedEDT), "America/New_York"], "use the timezone from the parsed string");
-			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, undefined), [new Date(iTimestampExpectedEDT), "America/New_York"], "use the timezone from the parsed string");
+			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, ""),
+				[UI5Date.getInstance(iTimestampExpectedEDT), "America/New_York"],
+				"use the timezone from the parsed string");
+			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, null),
+				[UI5Date.getInstance(iTimestampExpectedEDT), "America/New_York"],
+				"use the timezone from the parsed string");
+			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, undefined),
+				[UI5Date.getInstance(iTimestampExpectedEDT), "America/New_York"],
+				"use the timezone from the parsed string");
 		});
 
 		QUnit.module("DateTimeWithTimezone parse de-DE", {
@@ -823,28 +829,28 @@ sap.ui.define([
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT)
 			var sDateEDT = "13.10.2021, 09:22:33 Amerika, New York";
-			var iTimestampExpectedEDT = new Date(Date.UTC(2021, 9, 13, 13, 22, 33));
+			var iTimestampExpectedEDT = UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33));
 			var oParseResultEDT = oDateFormat.parse(sDateEDT, "America/New_York");
 			assert.strictEqual(oParseResultEDT[0].getTime(), iTimestampExpectedEDT.getTime(), "The timezone is provided in date string and parameter, it is used to calculate the date.");
 			assert.strictEqual(oParseResultEDT[1], "America/New_York", "The timezone is provided in date string and parameter, it is used to calculate the date.");
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT) (change to next day)
 			var sDateEDT2 = "13.10.2021, 22:22:33 Amerika, New York";
-			var iTimestampExpectedEDT2 = new Date(Date.UTC(2021, 9, 14, 2, 22, 33));
+			var iTimestampExpectedEDT2 = UI5Date.getInstance(Date.UTC(2021, 9, 14, 2, 22, 33));
 			var oParseResultEDT2 = oDateFormat.parse(sDateEDT2, "America/New_York");
 			assert.strictEqual(oParseResultEDT2[0].getTime(), iTimestampExpectedEDT2.getTime(), "The timezone is provided in date string and parameter, it is used to calculate the date and the day changes to yesterday.");
 			assert.strictEqual(oParseResultEDT2[1], "America/New_York", "The timezone is provided in date string and parameter, it is used to calculate the date and the day changes to yesterday.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST)
 			var sDateEST = "13.11.2021, 08:22:33 Amerika, New York";
-			var iTimestampExpectedEST = new Date(Date.UTC(2021, 10, 13, 13, 22, 33));
+			var iTimestampExpectedEST = UI5Date.getInstance(Date.UTC(2021, 10, 13, 13, 22, 33));
 			var oParseResultEST = oDateFormat.parse(sDateEST, "America/New_York");
 			assert.strictEqual(oParseResultEST[0].getTime(), iTimestampExpectedEST.getTime(), "The timezone is provided in date string and parameter, it is used to calculate the date.");
 			assert.strictEqual(oParseResultEST[1], "America/New_York", "The timezone is provided in date string and parameter, it is used to calculate the date.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST) (change to next day)
 			var sDateEST2 = "13.11.2021, 23:22:33 Amerika, New York";
-			var iTimestampExpectedEST2 = new Date(Date.UTC(2021, 10, 14, 4, 22, 33));
+			var iTimestampExpectedEST2 = UI5Date.getInstance(Date.UTC(2021, 10, 14, 4, 22, 33));
 			var oParseResultEST2 = oDateFormat.parse(sDateEST2, "America/New_York", false, true);
 			assert.strictEqual(oParseResultEST2[0].getTime(), iTimestampExpectedEST2.getTime(), "The timezone is provided in date string and parameter, it is used to calculate the date (UTC option is set to false).");
 			assert.strictEqual(oParseResultEST2[1], "America/New_York", "The timezone is provided in date string and parameter, it is used to calculate the date (UTC option is set to false).");
@@ -856,7 +862,7 @@ sap.ui.define([
 			});
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT)
 			var sDateEDT = "13.10.2021, 09:22:33";
-			var iTimestampExpectedEDT = new Date(Date.UTC(2021, 9, 13, 13, 22, 33));
+			var iTimestampExpectedEDT = UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33));
 			var oParseResultEDT = oDateFormat.parse(sDateEDT, "America/New_York");
 			assert.strictEqual(oParseResultEDT[0].getTime(), iTimestampExpectedEDT.getTime(), "The timezone is provided in date string, it is used to calculate the date.");
 			assert.strictEqual(oParseResultEDT[1], undefined, "The timezone is provided in date string, it is used to calculate the date.");
@@ -899,7 +905,7 @@ sap.ui.define([
 			// * To Americas, New York 9:22 + 4h diff = 13:22
 			// * From Americas, New York => Europe, Berlin 13:22 - 6h diff = 7:22
 			var sDateCEST = "13.10.2021, 09:22:33 Europa, Berlin";
-			var iTimestampExpectedCEST = new Date(Date.UTC(2021, 9, 13, 7, 22, 33));
+			var iTimestampExpectedCEST = UI5Date.getInstance(Date.UTC(2021, 9, 13, 7, 22, 33));
 			var oParseResultCEST = oDateFormat.parse(sDateCEST, "America/New_York");
 			assert.strictEqual(oParseResultCEST[0].getTime(), iTimestampExpectedCEST.getTime(), "The timezone is provided in date string, it is used to calculate the date.");
 			assert.strictEqual(oParseResultCEST[1], "Europe/Berlin", "The timezone is provided in date string, it is used to calculate the date.");
@@ -909,7 +915,7 @@ sap.ui.define([
 			// * To Europe, Berlin 9:22 - 2h diff = 7:22
 			// * From Europe, Berlin => Americas, New York 7:22 + 6h diff = 13:22
 			var sDateEDT = "13.10.2021, 09:22:33 Amerika, New York";
-			var iTimestampExpectedEDT = new Date(Date.UTC(2021, 9, 13, 13, 22, 33));
+			var iTimestampExpectedEDT = UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33));
 			var oParseResultEDT = oDateFormat.parse(sDateEDT, "Europe/Berlin");
 			assert.strictEqual(oParseResultEDT[0].getTime(), iTimestampExpectedEDT.getTime(), "The timezone is provided in date string, it is used to calculate the date.");
 			assert.strictEqual(oParseResultEDT[1], "America/New_York", "The timezone is provided in date string, it is used to calculate the date.");
@@ -1087,7 +1093,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Timezone parameter is null", function (assert) {
-			var oDate = new Date("2021-10-13T02:22:33Z");
+			var oDate = UI5Date.getInstance("2021-10-13T02:22:33Z");
 			var oLocale = new Locale("de");
 
 			// Default
@@ -1143,7 +1149,7 @@ sap.ui.define([
 		});
 
 		["ar", "he", "tr", "de", "en", "uk", "th", "zh_TW", "zh_CN"].forEach(function(sLocale) {
-			var oDate = new Date("2021-10-13T02:22:33Z");
+			var oDate = UI5Date.getInstance("2021-10-13T02:22:33Z");
 			QUnit.test("Timezone integration all timezones for " + sLocale, function (assert) {
 				var oLocale = new Locale(sLocale);
 				var oLocaleData = LocaleData.getInstance(oLocale);
@@ -1164,7 +1170,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Timezone translation special cases", function (assert) {
-			var oDate = new Date("2021-10-04T02:22:33Z");
+			var oDate = UI5Date.getInstance("2021-10-04T02:22:33Z");
 
 			// Etc/GMT offset timezones
 			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({style: "long"}, new Locale("de"));
@@ -1258,7 +1264,7 @@ sap.ui.define([
 				sFormatted;
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu, EDT Eastern Daylight Time
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 			sFormatted = oDateFormat.format(oDateEDT, "America/New_York");
 			assert.strictEqual(sFormatted,
 				"Oct 12, 2021 Americas, New York", "date was converted and timezone name was added.");
@@ -1268,7 +1274,7 @@ sap.ui.define([
 
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu, EST Eastern Standard Time
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			sFormatted = oDateFormat.format(oDateEST, "America/New_York");
 			assert.strictEqual(sFormatted,
 				"Nov 13, 2021 Americas, New York", "date was converted and timezone name was added.");
@@ -1285,7 +1291,7 @@ sap.ui.define([
 				sFormatted;
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu, EDT Eastern Daylight Time
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 			sFormatted = oDateFormat.format(oDateEDT, "America/New_York");
 			assert.strictEqual(sFormatted,
 				"10:22:33 PM Americas, New York", "date was converted and timezone name was added.");
@@ -1294,7 +1300,7 @@ sap.ui.define([
 			}, new TypeError("The input can only be parsed back to date if both date and time are supplied."));
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu, EST Eastern Standard Time
-			var oDateEST = new Date("2021-11-13T13:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 			sFormatted = oDateFormat.format(oDateEST, "America/New_York");
 			assert.strictEqual(sFormatted,
 				"8:22:33 AM Americas, New York", "date was converted and timezone name was added.");
@@ -1304,13 +1310,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("timezone handling timezone position in pattern (fa and zh_CN)", function (assert) {
-			var oDate = new Date("2021-10-13T02:22:33Z");
+			var oDate = UI5Date.getInstance("2021-10-13T02:22:33Z");
 
 			// fa.json, timezone append pattern: "{0} ({1})"
 			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(new Locale("fa"));
 
 			var sFormattedFA = oDateFormat.format(oDate, "America/New_York");
-			assert.strictEqual(sFormattedFA, "12 اکتبر 2021،‏ 22:22:33 (امریکا, نیویورک)", "New timezone should be be applied.");
+			assert.strictEqual(sFormattedFA, "12 اکتبر 2021،\u200f 22:22:33 (امریکا, نیویورک)",
+				"New timezone should be be applied.");
 
 			var oParsedDateFA = oDateFormat.parse(sFormattedFA, "America/New_York");
 			assert.deepEqual(oDate, oParsedDateFA[0], "dates match");
@@ -1337,7 +1344,7 @@ sap.ui.define([
 				showTimezone: DateFormatTimezoneDisplay.Show
 			});
 
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT)
 			var sFormattedEDT = oDateFormat.format(oDateEDT, "America/New_York");
@@ -1351,7 +1358,7 @@ sap.ui.define([
 			assert.deepEqual(oDateFormat.format(oParsedDateEDT[0], oParsedDateEDT[1]), sFormattedEDT, "parsed results are passed to format");
 
 
-			var oDateEST = new Date("2021-11-13T02:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T02:22:33Z");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST)
 			var sFormattedEST = oDateFormat.format(oDateEST, "America/New_York");
@@ -1372,7 +1379,7 @@ sap.ui.define([
 				showTimezone: DateFormatTimezoneDisplay.Show
 			});
 
-			var oDateEDT = new Date("2021-10-13T02:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT)
 			var sFormattedEDT = oDateFormat.format(oDateEDT, "America/New_York");
@@ -1384,7 +1391,7 @@ sap.ui.define([
 			assert.notOk(oParsedDateEDT[1], "timezone not part of the pattern");
 
 
-			var oDateEST = new Date("2021-11-13T02:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T02:22:33Z");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST)
 			var sFormattedEST = oDateFormat.format(oDateEST, "America/New_York");
@@ -1550,19 +1557,19 @@ sap.ui.define([
 			[
 				{
 					input: "10/13/21, 9:22 AM Americas, New York", // M/d/yy, h:mm a VV
-					expectedDate: new Date(Date.UTC(2021, 9, 13, 13, 22, 0))
+					expectedDate: UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 0))
 				},
 				{
 					input: "Oct 13, 21, 9:22:33 AM Americas, New York", // MMM d, y, h:mm:ss a VV
-					expectedDate: new Date(Date.UTC(2021, 9, 13, 13, 22, 33))
+					expectedDate: UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33))
 				},
 				{
 					input: "2021-10-13T09:22:33 Americas, New York", // yyyy-MM-dd'T'HH:mm:ss VV
-					expectedDate: new Date(Date.UTC(2021, 9, 13, 13, 22, 33))
+					expectedDate: UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33))
 				},
 				{
 					input: "20211013 092233 Americas, New York", // yyyyMMdd HHmmss VV
-					expectedDate: new Date(Date.UTC(2021, 9, 13, 13, 22, 33))
+					expectedDate: UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33))
 				}
 			].forEach(function(oFixture) {
 				var oParseResultEDT = oDateFormat.parse(oFixture.input, "America/New_York");
@@ -1579,19 +1586,19 @@ sap.ui.define([
 			[
 				{
 					input: "10/13/21, 9:22 AM", // M/d/yy, h:mm a
-					expectedDate: new Date(Date.UTC(2021, 9, 13, 13, 22, 0))
+					expectedDate: UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 0))
 				},
 				{
 					input: "Oct 13, 21, 9:22:33 AM", // MMM d, y, h:mm:ss a
-					expectedDate: new Date(Date.UTC(2021, 9, 13, 13, 22, 33))
+					expectedDate: UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33))
 				},
 				{
 					input: "2021-10-13T09:22:33", // yyyy-MM-dd'T'HH:mm:ss
-					expectedDate: new Date(Date.UTC(2021, 9, 13, 13, 22, 33))
+					expectedDate: UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33))
 				},
 				{
 					input: "20211013 092233", // yyyyMMdd HHmmss
-					expectedDate: new Date(Date.UTC(2021, 9, 13, 13, 22, 33))
+					expectedDate: UI5Date.getInstance(Date.UTC(2021, 9, 13, 13, 22, 33))
 				}
 			].forEach(function(oFixture) {
 				var oParseResultEDT = oDateFormat.parse(oFixture.input, "America/New_York");

@@ -1,12 +1,13 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/ClientListBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/message/MessageListBinding",
 	"sap/ui/test/TestUtils"
-], function(Log, Message, ClientListBinding, JSONModel, MessageListBinding, TestUtils) {
+], function (Log, UI5Date, Message, ClientListBinding, JSONModel, MessageListBinding, TestUtils) {
 	"use strict";
 
 	QUnit.module("sap.ui.model.message.MessageListBinding", {
@@ -75,7 +76,7 @@ sap.ui.define([
 
 		oModel.getData()[3].setMessage("message12");
 		oModel.getData()[5].setMessage("messa121");
-		oModel.getData()[1].setDate(new Date());
+		oModel.getData()[1].setDate(UI5Date.getInstance());
 		oMessageManager.addMessages(createMessage("for323", "rel4"));
 
 		var fnContextLengthChangedHandler = function(){

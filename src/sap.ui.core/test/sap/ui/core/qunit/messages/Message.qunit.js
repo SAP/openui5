@@ -45,7 +45,7 @@ sap.ui.define([
 			message: "Test message",
 			description: "Test description",
 			type: MessageType.Error,
-			date: new Date(),
+			date: Date.now(),
 			additionalText: "test",
 			code: 123,
 			target: oFixture.vTarget,

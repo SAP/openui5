@@ -1,14 +1,15 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"./data/JSONModelFakeService",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Context",
 	"sap/m/Label",
 	"sap/m/List",
 	"sap/m/StandardListItem",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/Context",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery"
-], function(fakeService, JSONModel, Context, Label, List, ListItem, VerticalLayout, jQuery) {
+], function (fakeService, Label, List, ListItem, UI5Date, VerticalLayout, Context, JSONModel, jQuery) {
 	"use strict";
 
 	var oLabel,
@@ -124,7 +125,7 @@ sap.ui.define([
 			number: 123,
 			bool: true,
 			func: function() {},
-			date: new Date(Date.UTC(2022,0,1))
+			date: UI5Date.getInstance(2022, 0, 1)
 		};
 		var oModel = new JSONModel(oData, true),
 			oString = oModel.bindProperty("/string"),
@@ -179,7 +180,7 @@ sap.ui.define([
 		assert.ok(bBool, "Boolean change event fired");
 
 		assert.equal(oDate.getValue(), oData.date, "Date old value");
-		oData.date = new Date();
+		oData.date = UI5Date.getInstance();
 		assert.equal(oDate.getValue(), oData.date, "Date new value");
 		assert.ok(bDate, "Date change event fired");
 

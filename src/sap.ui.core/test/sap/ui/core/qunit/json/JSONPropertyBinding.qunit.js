@@ -1,8 +1,10 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/util/deepClone",
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/FormatException",
@@ -12,8 +14,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Date"
-], function(Label, Input, Configuration, ChangeReason, BindingMode, FormatException, ParseException,
-		SimpleType, ValidateException, JSONModel, FloatType, DateType) {
+], function (deepClone, Label, Input, Configuration, UI5Date, ChangeReason, BindingMode, FormatException,
+		ParseException, SimpleType, ValidateException, JSONModel, FloatType, DateType
+) {
 	"use strict";
 
 	var sDefaultLanguage = Configuration.getLanguage();
@@ -39,15 +42,11 @@ sap.ui.define([
 			{value : 5.322},
 			{value : 222.322}
 		],
-		rawdate: new Date(2018,3,30),
+		rawdate: UI5Date.getInstance(2018, 3, 30),
 		rawnumber: 3,
 		internaldate: "2018-04-30",
 		internalnumber: "3.000"
 	};
-
-	function clone(data) {
-		return JSON.parse(JSON.stringify(constTestData));
-	}
 
 	var AsyncFloat = SimpleType.extend("AsyncFloat", {
 		constructor: function(oFormatOptions, oConstraints) {
@@ -99,8 +98,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Basic functionality", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
-			this.currentTestData = clone(constTestData);
-			this.currentTestData.rawdate = new Date(2018,3,30); //JSON cloning breaks Date objects
+			this.currentTestData = deepClone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
@@ -213,7 +211,8 @@ sap.ui.define([
 			oFloatBinding = this.oModel.bindProperty("/rawnumber");
 		oDateBinding.setType(new DateType({pattern:"yyyy-MM-dd"}), "string");
 		oFloatBinding.setType(new FloatType({decimals: 3}), "string");
-		assert.deepEqual(oDateBinding.getRawValue(), new Date(2018,3,30), "getRawValues returns raw values");
+		assert.deepEqual(oDateBinding.getRawValue(), UI5Date.getInstance(2018, 3, 30),
+			"getRawValues returns raw values");
 		assert.strictEqual(oFloatBinding.getRawValue(), 3, "getRawValues returns raw values");
 	});
 
@@ -222,7 +221,7 @@ sap.ui.define([
 			oFloatBinding = this.oModel.bindProperty("/rawnumber");
 		oDateBinding.setType(new DateType({pattern:"yyyy-MM-dd"}), "string");
 		oFloatBinding.setType(new FloatType({decimals: 3}), "string");
-		oDateBinding.setRawValue(new Date(2018,7,30));
+		oDateBinding.setRawValue(UI5Date.getInstance(2018, 7, 30));
 		assert.equal(oDateBinding.getExternalValue(), "2018-08-30", "setRawValue changes binding value");
 		oFloatBinding.setRawValue(5);
 		assert.equal(oFloatBinding.getExternalValue(), "5.000", "setRawValue changes binding value");
@@ -233,7 +232,8 @@ sap.ui.define([
 			oFloatBinding = this.oModel.bindProperty("/internalnumber");
 		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "string");
 		oFloatBinding.setType(new FloatType({source:{decimals: 3}}), "string");
-		assert.deepEqual(oDateBinding.getInternalValue(), new Date(2018,3,30), "getInternvalValues returns internal values");
+		assert.deepEqual(oDateBinding.getInternalValue(), UI5Date.getInstance(2018, 3, 30),
+			"getInternvalValues returns internal values");
 		assert.strictEqual(oFloatBinding.getInternalValue(), 3, "getInternvalValues returns internal values");
 	});
 
@@ -242,7 +242,7 @@ sap.ui.define([
 			oFloatBinding = this.oModel.bindProperty("/inernalnumber");
 		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "string");
 		oFloatBinding.setType(new FloatType({source:{decimals: 3}}), "string");
-		oDateBinding.setInternalValue(new Date(2018,7,30));
+		oDateBinding.setInternalValue(UI5Date.getInstance(2018, 7, 30));
 		assert.equal(oDateBinding.getRawValue(), "2018-08-30", "setInternalValue changes binding value");
 		oFloatBinding.setInternalValue(5);
 		assert.equal(oFloatBinding.getRawValue(), "5.000", "setInternalValue changes binding value");
@@ -257,7 +257,8 @@ sap.ui.define([
 		assert.strictEqual(oFloatBinding.getExternalValue(), "3.000", "getExternalValue returns raw values");
 		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "internal");
 		oFloatBinding.setType(new FloatType({source:{decimals: 3}}), "internal");
-		assert.deepEqual(oDateBinding.getExternalValue(), new Date(2018,3,30), "getExternalValue returns internal values");
+		assert.deepEqual(oDateBinding.getExternalValue(), UI5Date.getInstance(2018, 3, 30),
+			"getExternalValue returns internal values");
 		assert.strictEqual(oFloatBinding.getExternalValue(), 3, "getExternalValue returns internal values");
 	});
 
@@ -271,7 +272,7 @@ sap.ui.define([
 		assert.equal(oBinding.getBindingMode(), BindingMode.TwoWay, "Binding mode = TwoWay");
 
 		var oOtherModel = new JSONModel();
-		oOtherModel.setData(clone(constTestData));
+		oOtherModel.setData(deepClone(constTestData));
 		oOtherModel.setDefaultBindingMode(BindingMode.OneWay);
 		oLabel.setModel(oOtherModel);
 		oBinding = oLabel.getBinding("text");
@@ -288,8 +289,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Async Type", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
-			this.currentTestData = clone(constTestData);
-			this.currentTestData.rawdate = new Date(2018,3,30); //JSON cloning breaks Date objects
+			this.currentTestData = deepClone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
@@ -396,8 +396,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Suspend/Resume", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
-			this.currentTestData = clone(constTestData);
-			this.currentTestData.rawdate = new Date(2018,3,30); //JSON cloning breaks Date objects
+			this.currentTestData = deepClone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
@@ -553,8 +552,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.json.JSONPropertyBinding: PropertyChange event", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
-			this.currentTestData = clone(constTestData);
-			this.currentTestData.rawdate = new Date(2018,3,30); //JSON cloning breaks Date objects
+			this.currentTestData = deepClone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
