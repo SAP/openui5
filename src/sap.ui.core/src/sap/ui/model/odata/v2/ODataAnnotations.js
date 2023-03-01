@@ -739,6 +739,7 @@ sap.ui.define([
 				mSource.xml = oXHR.responseText;
 
 				if (oXHR.getResponseHeader("Last-Modified")) {
+					// no need to use UI5Date.getInstance as only the UTC timestamp is relevant
 					mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
 				}
 
