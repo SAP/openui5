@@ -63,21 +63,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler for Change of the Size Unit Selections
-		 */
-		onSizeUnitChange: function() {
-			//set the percent info text visible/hidden
-			var oWidthSizeUnit = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_WidthUnit").getSelectedKey();
-			var oHeightSizeUnit = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_HeightUnit").getSelectedKey();
-			var oInfoText = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PercentText");
-			if (oWidthSizeUnit !== "%" && oHeightSizeUnit !== "%") {
-				oInfoText.addStyleClass("sapUiRtaAddIFrameDialogPercentText-invisible");
-			} else {
-				oInfoText.removeStyleClass("sapUiRtaAddIFrameDialogPercentText-invisible");
-			}
-		},
-
-		/**
 		 * Event handler for save button
 		 */
 		onSavePress: function() {

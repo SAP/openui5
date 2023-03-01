@@ -63,10 +63,17 @@
 									<Input id="sapUiRtaAddIFrameDialog_WidthInput" class="sapUiRtaAddIFrameDialogWidthInput"
 										value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
 										valueState="{/frameWidth/valueState}"/>
-									<Select id="sapUiRtaAddIFrameDialog_WidthUnit" class="sapUiRtaAddIFrameDialogWidthUnit"
-											ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthUnitLabel" change="onSizeUnitChange"
-											selectedKey="{/frameWidthUnit/value}" items="{/unitsOfMeasure}">
-										<core:Item key="{name}" text="{name}" />
+									<Select
+										id="sapUiRtaAddIFrameDialog_WidthUnit"
+										class="sapUiRtaAddIFrameDialogWidthUnit"
+										ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthUnitLabel"
+										selectedKey="{/frameWidthUnit/value}"
+										items="{/unitsOfWidthMeasure}"
+										showSecondaryValues= "true"
+										columnRatio="1:5"
+										width="auto"
+										maxWidth="400px">
+											<core:ListItem key="{unit}" text="{unit}" additionalText="{descriptionText}"/>
 									</Select>
 								</form:content>
 							</form:SimpleForm>
@@ -82,10 +89,17 @@
 									<Input id="sapUiRtaAddIFrameDialog_HeightInput" class="sapUiRtaAddIFrameDialogHeightInput"
 										value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
 										valueState="{/frameHeight/valueState}"/>
-									<Select id="sapUiRtaAddIFrameDialog_HeightUnit" class="sapUiRtaAddIFrameDialogHeightUnit"
-											ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightUnitLabel" change="onSizeUnitChange"
-											selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
-										<core:Item key="{name}" text="{name}" />
+									<Select
+										id="sapUiRtaAddIFrameDialog_HeightUnit"
+										class="sapUiRtaAddIFrameDialogHeightUnit"
+										ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightUnitLabel"
+										selectedKey="{/frameHeightUnit/value}"
+										items="{/unitsOfHeightMeasure}"
+										showSecondaryValues= "true"
+										columnRatio="1:5"
+										width="auto"
+										maxWidth="400px">
+											<core:ListItem key="{unit}" text="{= ${unit} === 'vh' ? '%' : ${unit}}" additionalText="{descriptionText}"/>
 									</Select>
 								</form:content>
 							</form:SimpleForm>
