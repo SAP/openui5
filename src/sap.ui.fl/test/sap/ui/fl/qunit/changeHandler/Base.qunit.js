@@ -15,6 +15,9 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
+	/**
+	 * @deprecated As of version 1.107
+	 */
 	QUnit.module("sap.ui.fl.changeHandler.Base", {
 		beforeEach: function () {
 			this.oBaseHandler = Base;
