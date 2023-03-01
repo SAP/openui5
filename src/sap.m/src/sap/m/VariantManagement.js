@@ -485,6 +485,7 @@ sap.ui.define([
 	VariantManagement.MAX_NAME_LEN = 100;
 	VariantManagement.COLUMN_FAV_IDX = 0;
 	VariantManagement.COLUMN_NAME_IDX = 1;
+	VariantManagement.COLUMN_DEFAULT_IDX = 3;
 
 	/*
 	 * Constructs and initializes the <code>VariantManagement</code> control.
@@ -1218,6 +1219,23 @@ sap.ui.define([
 					path: "/supportDefault",
 					model: "$mVariants"
 				},
+				select: function(oEvent) {
+					if (this._sStyleClass) {
+						if (oEvent.getParameter("selected")) {
+							var mContexts = this._getContextInfoChanges();
+							if (this._isRestricted(mContexts)) {
+								this.oDefault.setValueState(ValueState.Error);
+								this.oDefault.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_NO_DEFAULT_ON_RESTRICTED_VIEWS"));
+							} else {
+								this.oDefault.setValueState(ValueState.None);
+								this.oDefault.setValueStateText("");
+							}
+						} else if (this.oDefault.getValueState() != ValueState.None){
+							this.oDefault.setValueState(ValueState.None);
+							this.oDefault.setValueStateText("");
+						}
+					}
+				}.bind(this),
 				width: "100%"
 			});
 
@@ -1366,12 +1384,18 @@ sap.ui.define([
 		return this._oRolesComponentContainer.getComponentInstance().hasErrorsAndShowErrorMessage();
 	};
 
-	VariantManagement.prototype._determineRolesSpecificText = function(mContexts, oTextControl) {
+	VariantManagement.prototype._isRestricted = function(mContexts) {
 		if (!mContexts) {
 			mContexts = { role: []};
 		}
-		if (mContexts && oTextControl) {
-			oTextControl.setText(this._oRb.getText((mContexts.role && mContexts.role.length > 0) ? "VARIANT_MANAGEMENT_VISIBILITY_RESTRICTED" : "VARIANT_MANAGEMENT_VISIBILITY_NON_RESTRICTED"));
+
+		return (mContexts.role && mContexts.role.length > 0);
+	};
+
+	VariantManagement.prototype._determineRolesSpecificText = function(oItem, oTextControl) {
+
+		if (oTextControl) {
+			oTextControl.setText(this._oRb.getText((this._isRestricted(oItem.getContexts())) ? "VARIANT_MANAGEMENT_VISIBILITY_RESTRICTED" : "VARIANT_MANAGEMENT_VISIBILITY_NON_RESTRICTED"));
 		}
 	};
 
@@ -1453,7 +1477,10 @@ sap.ui.define([
 						var oItem = this._getItemByKey(sKey);
 						if (oItem) {
 							oItem.setContexts(mContexts);
-							this._determineRolesSpecificText(mContexts, oTextControl);
+							this._determineRolesSpecificText(oItem, oTextControl);
+
+                            this._checkDefaultEnabled(oItem);
+
 						}
 					} else {
 						return false;
@@ -1525,6 +1552,7 @@ sap.ui.define([
 		this.oInputName.setValueState(ValueState.None);
 		this.oInputName.setValueStateText(null);
 
+		this.oDefault.setEnabled(true);
 		this.oDefault.setSelected(false);
 		this.oPublic.setSelected(false);
 		this.oExecuteOnSelect.setSelected(false);
@@ -1570,6 +1598,23 @@ sap.ui.define([
 			sKey = sManualKey;
 		}
 
+		var mContexts = this._getContextInfoChanges();
+		var bIsRestricted = this._isRestricted(mContexts);
+		if (bIsRestricted && this.oDefault.getSelected()) {
+			this.oDefault.setValueState(ValueState.Error);
+			this.oDefault.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_NO_DEFAULT_ON_RESTRICTED_VIEWS"));
+			return false;
+		} else if (!bIsRestricted){
+			var bWasInErrorState = this.oDefault.getValueState() !== ValueState.None;
+
+			this.oDefault.setValueState(ValueState.None);
+			this.oDefault.setValueStateText("");
+
+			if (bWasInErrorState){
+				return false; // otherwise the error state is still visible on the UI and the Save completes...
+			}
+		}
+
 		if (this.oSaveAsDialog) {
 			this.oSaveAsDialog.close();
 		}
@@ -1585,7 +1630,7 @@ sap.ui.define([
 				def: this.oDefault.getSelected(),
 				execute: this.oExecuteOnSelect.getSelected(),
 				"public": this.getSupportPublic() ? this.oPublic.getSelected() : undefined,
-				contexts: this._getContextInfoChanges()
+				contexts: mContexts
 		};
 
 		if (this._getShowCreateTile() && this.oCreateTile) {
@@ -1909,6 +1954,20 @@ sap.ui.define([
 		}
 	};
 
+	VariantManagement.prototype._checkDefaultEnabled = function(oItem) {
+		var bDefaultEnabled = true;
+		if (this._isRestricted(oItem.getContexts())) {
+			bDefaultEnabled = false;
+			if (oItem.getKey() === this.getDefaultKey()) {
+				this.setDefaultKey(this.getStandardVariantKey());
+			}
+		}
+		var oRow = this._getRowForKey(oItem.getKey());
+		if (oRow) {
+			oRow.getCells()[VariantManagement.COLUMN_DEFAULT_IDX].setEnabled(bDefaultEnabled);
+		}
+	};
+
 	VariantManagement.prototype._templateFactoryManagementDialog = function(sId, oContext) {
 		var sTooltip = null;
 		var oDeleteButton;
@@ -2033,9 +2092,10 @@ sap.ui.define([
 		}
 
 		// roles
-		if (this._sStyleClass && (oItem.getKey() !== this.getStandardVariantKey())) {
-			var oText = new Text({ wrapping: false });
-			this._determineRolesSpecificText(oItem.getContexts(), oText);
+		var oText;
+		if (this._sStyleClass && this.getSupportContexts() && (oItem.getKey() !== this.getStandardVariantKey())) {
+			oText = new Text({ wrapping: false });
+			this._determineRolesSpecificText(oItem, oText);
 			var oIcon = new Icon({
 				src: "sap-icon://edit",
 				press: fRolesPressed
@@ -2045,14 +2105,35 @@ sap.ui.define([
 			oRolesCell = new HBox(sIdPrefix + "-role-" + nPos, {
 				items: [oText, oIcon]
 			});
+
 		} else {
 			oRolesCell = new Text();
 		}
 
+		var oDefaultRadioButton = new RadioButton(sIdPrefix + "-def-" + nPos, {
+			groupName: this.getId(),
+			select: fSelectRB,
+			selected: {
+				path: "/defaultKey",
+				model: sModelName,
+				formatter: function(sKey) {
+					return oItem.getKey() === sKey;
+				}
+			}
+		});
+
+		if (oText && this._isRestricted(oItem.getContexts())) {
+			oDefaultRadioButton.setEnabled(false);
+			if (this.getDefaultKey() === oItem.getKey())  {
+				this.setDefaultKey(this.getStandardVariantKey());
+			}
+		}
 
 		return new ColumnListItem({
 			cells: [
-				oFavoriteIcon, oNameControl, new Text(sIdPrefix + "-type-" + nPos, {
+				oFavoriteIcon,
+				oNameControl,
+				new Text(sIdPrefix + "-type-" + nPos, {
 					text: {
 						path: "sharing",
 						model: sModelName,
@@ -2061,20 +2142,16 @@ sap.ui.define([
 						}.bind(this)
 					},
 					textAlign: "Center"
-				}), new RadioButton(sIdPrefix + "-def-" + nPos, {
-					groupName: this.getId(),
-					select: fSelectRB,
-					selected: {
-						path: "/defaultKey",
-						model: sModelName,
-						formatter: function(sKey) {
-							return oItem.getKey() === sKey;
-						}
-					}
-				}), oExecuteOnSelectCtrl, oRolesCell, new Text(sIdPrefix + "-author-" + nPos, {
+				}),
+				oDefaultRadioButton,
+				oExecuteOnSelectCtrl,
+				oRolesCell,
+				new Text(sIdPrefix + "-author-" + nPos, {
 					text: '{' + sModelName + ">author}",
 					textAlign: "Begin"
-				}), oDeleteButton, new Text({
+				}),
+				oDeleteButton,
+				new Text({
 					text: '{' + sModelName + ">key}"
 				})
 			]
