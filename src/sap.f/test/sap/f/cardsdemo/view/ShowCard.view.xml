@@ -29,6 +29,13 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card
+				id="showCard4"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/approve/biteManifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>

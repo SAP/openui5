@@ -250,6 +250,18 @@ sap.ui.define([
 						target: 'learnDetail',
 						key: 'custom',
 						experimental: true
+					},
+					{
+						title: 'ShowCard',
+						target: 'learnDetail',
+						key: 'showCard',
+						experimental: true
+					},
+					{
+						title: 'HideCard',
+						target: 'learnDetail',
+						key: 'hideCard',
+						experimental: true
 					}
 				]
 			},

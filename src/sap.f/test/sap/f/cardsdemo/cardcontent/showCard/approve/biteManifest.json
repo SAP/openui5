@@ -1,0 +1,83 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.showCard.approve.bite",
+		"type": "card",
+		"title": "Sample of a Bite to Snack Card",
+		"subTitle": "Sample of Bite Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"extension": "./ApproveCardExtension",
+		"header": {
+			"icon": {
+				"text": "JN"
+			},
+			"title": "Julia Neil",
+			"subTitle": "Procurement Purchase Requisition"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "15,000.00 EUR",
+							"type": "Status",
+							"state": "Information"
+						},
+						{
+							"value": "For Ultra Jet Super Highspeed"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Approve",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"type": "Submit",
+							"parameters": {
+								"status": "approved"
+							}
+						}
+					]
+				},
+				{
+					"text": "Deny",
+					"buttonType": "Reject",
+					"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./snackManifest.json"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}
