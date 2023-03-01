@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration"
-], function(UniversalDateUtils, UniversalDate, CalendarType, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date"
+], function (UniversalDateUtils, UniversalDate, CalendarType, Configuration, UI5Date) {
 	"use strict";
 
 	var testDate = function(assert, oDate, iDuration, sUnit, iFullYear, iMonth, iDate, iHours, iMinutes, iSecond, iMilliseconds) {
@@ -514,7 +515,7 @@ sap.ui.define([
 	QUnit.test("CalendarType calendarWeekNumbering date calculation Stability", function(assert) {
 
 		var sCalendarWeekNumbering = "WesternTraditional",
-			oCurrentDate = new Date('2023-01-08T00:13:37'),
+			oCurrentDate = UI5Date.getInstance('2023-01-08T00:13:37'),
 			oClock = sinon.useFakeTimers(oCurrentDate.getTime()),
 			oConfigStub = sinon.stub(Configuration, "getCalendarType").returns("Islamic"),
 			//lastWeek
@@ -562,7 +563,7 @@ sap.ui.define([
 
 	QUnit.test("_getDateFromWeekStartByDayOffset", function(assert) {
 		var sCalendarWeekNumbering = 'WesternTraditional',
-			oCurrentDate = new Date('2023-01-09T00:13:37'),
+			oCurrentDate = UI5Date.getInstance('2023-01-09T00:13:37'),
 			oClock = sinon.useFakeTimers(oCurrentDate.getTime()),
 			oConfigStub = sinon.stub(Configuration, "getCalendarType").returns("Islamic"),
 			oFirstDateOfWeek = UniversalDateUtils._getDateFromWeekStartByDayOffset(sCalendarWeekNumbering);
@@ -602,7 +603,7 @@ sap.ui.define([
 		var fFixedDateTime = Date.now();
 
 		Object.keys(CalendarType).forEach(function(sCalendarType) {
-			var oDate = new Date(fFixedDateTime),
+			var oDate = UI5Date.getInstance(fFixedDateTime),
 				oInput = UniversalDate.getInstance(oDate, sCalendarType),
 				oOutput;
 

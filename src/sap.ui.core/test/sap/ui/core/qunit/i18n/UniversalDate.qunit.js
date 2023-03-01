@@ -101,6 +101,7 @@ sap.ui.define([
 
 	QUnit.test("getInstance creates UI5Date", function(assert) {
 		var oInnerDate = UI5Date.getInstance(),
+			// no need to use UI5Date.getInstance as native Date is tested
 			oNativeDate = new Date(),
 			oUI5DateMock = this.mock(UI5Date),
 			oUniversalDate = UniversalDate.getInstance();
@@ -771,7 +772,7 @@ sap.ui.define([
 	QUnit.test("invalid date object", function (assert) {
 		this.dateSpy.restore();
 
-		var oInvalidDate = new Date("");
+		var oInvalidDate = UI5Date.getInstance("");
 
 		// call #getUTCWeek
 		var oUniversalDateInstance = new UniversalDate(oInvalidDate);

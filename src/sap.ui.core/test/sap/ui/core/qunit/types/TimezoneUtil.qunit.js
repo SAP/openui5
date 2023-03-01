@@ -1,7 +1,12 @@
 /*global QUnit, sinon */
-sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/TimezoneUtil",
-	"sap/ui/core/Locale", "sap/ui/core/LocaleData"],
-	function (timezones, Log, TimezoneUtil, Locale, LocaleData) {
+sap.ui.define([
+	"../i18n/helper/_timezones",
+	"sap/base/Log",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/format/TimezoneUtil"
+], function (timezones, Log, Locale, LocaleData, UI5Date, TimezoneUtil) {
 		"use strict";
 
 		/**
@@ -51,18 +56,18 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 			assert.notOk(TimezoneUtil.isValidTimezone(null), "null should not be a valid timezone.");
 			assert.notOk(TimezoneUtil.isValidTimezone("SAP/Walldorf"), "SAP/Walldorf should not be a valid timezone.");
 			assert.notOk(TimezoneUtil.isValidTimezone("Asia/Hanoi"), "Asia/Hanoi should not be a valid timezone.");
-			assert.notOk(TimezoneUtil.isValidTimezone(new Date()), "A date should not be a valid timezone.");
+			assert.notOk(TimezoneUtil.isValidTimezone(UI5Date.getInstance()), "A date should not be a valid timezone.");
 		});
 
 		QUnit.module("calculateOffset");
 
 		QUnit.test("Calculate offset Europe/Berlin", function (assert) {
-			var oDate = new Date("2021-10-13T13:22:33Z");
+			var oDate = UI5Date.getInstance("2021-10-13T13:22:33Z");
 			assert.equal(TimezoneUtil.calculateOffset(oDate, "Europe/Berlin"), -2 * 3600, "Timezone difference of -2 hours should match.");
 		});
 
 		QUnit.test("Calculate offset America/New_York", function (assert) {
-			var oDate = new Date("2021-10-13T15:22:33Z");
+			var oDate = UI5Date.getInstance("2021-10-13T15:22:33Z");
 			assert.equal(TimezoneUtil.calculateOffset(oDate, "America/New_York"), 4 * 3600, "Timezone difference of 4 hours should match.");
 		});
 
@@ -70,35 +75,35 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 			[
 				// 1730 (UTC+0:53:28)
 				{
-					inputDate:  new Date("1730-01-01T00:00:00Z"),
+					inputDate: UI5Date.getInstance("1730-01-01T00:00:00Z"),
 					diff: -3208
 				},
 				{
-					inputDate:  new Date("1893-01-01T00:00:00Z"),
+					inputDate: UI5Date.getInstance("1893-01-01T00:00:00Z"),
 					diff: -3208
 				},
 				// 1893	Sat, 1 Apr, 00:00	LMT → CET (UTC+1)
 				{
-					inputDate:  new Date("1893-04-01T01:00:00Z"),
+					inputDate: UI5Date.getInstance("1893-04-01T01:00:00Z"),
 					diff: -3600
 				},
 				// 1941	(UTC+2)
 				{
-					inputDate:  new Date("1941-01-01T00:00:00Z"),
+					inputDate: UI5Date.getInstance("1941-01-01T00:00:00Z"),
 					diff: -2 * 3600
 				},
 				{
-					inputDate:  new Date("1941-06-01T00:00:00Z"),
+					inputDate: UI5Date.getInstance("1941-06-01T00:00:00Z"),
 					diff: -2 * 3600
 				},
 				// 1945 Thu, 24 May, 02:00	CEST → CEMT	(UTC+3)
 				{
-					inputDate:  new Date("1945-05-24T03:00:00Z"),
+					inputDate: UI5Date.getInstance("1945-05-24T03:00:00Z"),
 					diff: -3 * 3600
 				},
 				// 1946 Sun, 14 Apr, 02:00	CET → CEST hour (UTC+2)
 				{
-					inputDate:  new Date("1946-04-14T03:00:00Z"),
+					inputDate: UI5Date.getInstance("1946-04-14T03:00:00Z"),
 					diff: -2 * 3600
 				}
 			].forEach(function(oFixture) {
@@ -351,8 +356,11 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 					timezoneDiff: -14
 				}
 			].forEach(function (oFixture) {
-				assert.equal(TimezoneUtil.calculateOffset(new Date(oFixture.targetDate), oFixture.targetTimezone), oFixture.timezoneDiff * 3600,
-					"Timezone difference of " + oFixture.timezoneDiff + " hours in " + oFixture.targetTimezone + " for input date " + new Date(oFixture.targetDate) + ".");
+				assert.equal(
+					TimezoneUtil.calculateOffset(UI5Date.getInstance(oFixture.targetDate), oFixture.targetTimezone),
+					oFixture.timezoneDiff * 3600,
+					"Timezone difference of " + oFixture.timezoneDiff + " hours in " + oFixture.targetTimezone
+						+ " for input date " + UI5Date.getInstance(oFixture.targetDate) + ".");
 			});
 		});
 
@@ -363,46 +371,46 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 			var oDate = Date.UTC(2018, 9, 7, 2, 30);
 			// Sun Oct 07 2018 15:30:00 GMT+0200
 			var iExpectedEDT = Date.UTC(2018, 9, 7, 13, 30);
-			assert.equal(TimezoneUtil.convertToTimezone(new Date(oDate), "Australia/Sydney").getTime(), iExpectedEDT,
-				"Date should be converted.");
+			assert.equal(TimezoneUtil.convertToTimezone(UI5Date.getInstance(oDate), "Australia/Sydney").getTime(),
+				iExpectedEDT, "Date should be converted.");
 
 			var oDate1 = Date.UTC(2018, 9, 6, 16, 30);
 			var iExpectedEDT1 = Date.UTC(2018, 9, 7, 3, 30);
-			assert.equal(TimezoneUtil.convertToTimezone(new Date(oDate1), "Australia/Sydney").getTime(), iExpectedEDT1,
-				"Date should be converted.");
+			assert.equal(TimezoneUtil.convertToTimezone(UI5Date.getInstance(oDate1), "Australia/Sydney").getTime(),
+				iExpectedEDT1, "Date should be converted.");
 
 
 			var oDate2 = Date.UTC(2018, 9, 6, 15, 30);
 			var iExpectedEDT2 = Date.UTC(2018, 9, 7, 1, 30);
-			assert.equal(TimezoneUtil.convertToTimezone(new Date(oDate2), "Australia/Sydney").getTime(), iExpectedEDT2,
-				"Date should be converted.");
+			assert.equal(TimezoneUtil.convertToTimezone(UI5Date.getInstance(oDate2), "Australia/Sydney").getTime(),
+				iExpectedEDT2, "Date should be converted.");
 
 			var oDate3 = Date.UTC(2018, 9, 6, 14, 30);
 			var iExpectedEDT3 = Date.UTC(2018, 9, 7, 0, 30);
-			assert.equal(TimezoneUtil.convertToTimezone(new Date(oDate3), "Australia/Sydney").getTime(), iExpectedEDT3,
-				"Date should be converted.");
+			assert.equal(TimezoneUtil.convertToTimezone(UI5Date.getInstance(oDate3), "Australia/Sydney").getTime(),
+				iExpectedEDT3, "Date should be converted.");
 		});
 
 		QUnit.test("convert to America/New_York", function (assert) {
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT)
-			var oDateEDT = new Date("2021-10-13T15:22:33Z");
+			var oDateEDT = UI5Date.getInstance("2021-10-13T15:22:33Z");
 			var iExpectedEDT = Date.UTC(2021, 9, 13, 11, 22, 33);
 			assert.equal(TimezoneUtil.convertToTimezone(oDateEDT, "America/New_York").getTime(), iExpectedEDT, "Date should be converted.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST)
-			var oDateEST = new Date("2021-11-13T15:22:33Z");
+			var oDateEST = UI5Date.getInstance("2021-11-13T15:22:33Z");
 			var iExpectedEST = Date.UTC(2021, 10, 13, 10, 22, 33);
 			assert.equal(TimezoneUtil.convertToTimezone(oDateEST, "America/New_York").getTime(), iExpectedEST, "Date should be converted.");
 		});
 
 		QUnit.test("convert to Europe/Berlin", function (assert) {
 			// Timezone difference UTC+2 (Central European Summer Time)
-			var oDateSummer = new Date("2021-10-13T15:22:33Z");
+			var oDateSummer = UI5Date.getInstance("2021-10-13T15:22:33Z");
 			var iExpectedSummer = Date.UTC(2021, 9, 13, 17, 22, 33);
 			assert.equal(TimezoneUtil.convertToTimezone(oDateSummer, "Europe/Berlin").getTime(), iExpectedSummer, "Date should be converted.");
 
 			// Timezone difference UTC+1 (Central European Standard Time)
-			var oDateStandard = new Date("2021-11-13T15:22:33Z");
+			var oDateStandard = UI5Date.getInstance("2021-11-13T15:22:33Z");
 			var iExpectedStandard = Date.UTC(2021, 10, 13, 16, 22, 33);
 			assert.equal(TimezoneUtil.convertToTimezone(oDateStandard, "Europe/Berlin").getTime(), iExpectedStandard, "Date should be converted.");
 		});
@@ -411,36 +419,36 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 			[
 				// 1730 (UTC+0:53:28)
 				{
-					inputDate:  new Date("1730-01-01T00:00:00Z"),
-					outputDate: new Date("1730-01-01T00:53:28Z")
+					inputDate: UI5Date.getInstance("1730-01-01T00:00:00Z"),
+					outputDate: UI5Date.getInstance("1730-01-01T00:53:28Z")
 				},
 				{
-					inputDate:  new Date("1893-01-01T00:00:00Z"),
-					outputDate: new Date("1893-01-01T00:53:28Z")
+					inputDate: UI5Date.getInstance("1893-01-01T00:00:00Z"),
+					outputDate: UI5Date.getInstance("1893-01-01T00:53:28Z")
 				},
 				// 1893	Sat, 1 Apr, 00:00	LMT → CET (UTC+1)
 				{
-					inputDate:  new Date("1893-04-01T00:00:00Z"),
-					outputDate: new Date("1893-04-01T01:00:00Z")
+					inputDate: UI5Date.getInstance("1893-04-01T00:00:00Z"),
+					outputDate: UI5Date.getInstance("1893-04-01T01:00:00Z")
 				},
 				// 1941	(UTC+2)
 				{
-					inputDate:  new Date("1941-01-01T00:00:00Z"),
-					outputDate: new Date("1941-01-01T02:00:00Z")
+					inputDate: UI5Date.getInstance("1941-01-01T00:00:00Z"),
+					outputDate: UI5Date.getInstance("1941-01-01T02:00:00Z")
 				},
 				{
-					inputDate:  new Date("1941-06-01T00:00:00Z"),
-					outputDate: new Date("1941-06-01T02:00:00Z")
+					inputDate: UI5Date.getInstance("1941-06-01T00:00:00Z"),
+					outputDate: UI5Date.getInstance("1941-06-01T02:00:00Z")
 				},
 				// 1945 Thu, 24 May, 02:00	CEST → CEMT	(UTC+3)
 				{
-					inputDate:  new Date("1945-05-24T02:00:00Z"),
-					outputDate: new Date("1945-05-24T05:00:00Z")
+					inputDate: UI5Date.getInstance("1945-05-24T02:00:00Z"),
+					outputDate: UI5Date.getInstance("1945-05-24T05:00:00Z")
 				},
 				// 1946 Sun, 14 Apr, 02:00	CET → CEST hour (UTC+2)
 				{
-					inputDate:  new Date("1946-05-24T02:00:00Z"),
-					outputDate: new Date("1946-05-24T04:00:00Z")
+					inputDate: UI5Date.getInstance("1946-05-24T02:00:00Z"),
+					outputDate: UI5Date.getInstance("1946-05-24T04:00:00Z")
 				}
 			].forEach(function(oFixture) {
 				assert.deepEqual(TimezoneUtil.convertToTimezone(oFixture.inputDate, "Europe/Berlin"), oFixture.outputDate,
@@ -453,31 +461,31 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 				{
 					// year 1
 					createInputDate: function() {
-						return new Date("0001-01-01T00:00:00Z");
+						return UI5Date.getInstance("0001-01-01T00:00:00Z");
 					},
 					createOutputDate: function() {
-						return new Date("0001-01-01T00:53:28Z");
+						return UI5Date.getInstance("0001-01-01T00:53:28Z");
 					}
 				},
 				{
 					// year 0
 					createInputDate: function() {
-						return new Date("0000-01-01T00:00:00Z");
+						return UI5Date.getInstance("0000-01-01T00:00:00Z");
 					},
 					createOutputDate: function() {
-						var oDate = new Date("0000-01-01T00:53:28Z");
+						var oDate = UI5Date.getInstance("0000-01-01T00:53:28Z");
 						return oDate;
 					}
 				},
 				{
 					// year -1
 					createInputDate: function() {
-						var oDate = new Date("0000-01-01T00:00:00Z");
+						var oDate = UI5Date.getInstance("0000-01-01T00:00:00Z");
 						oDate.setUTCFullYear(-1);
 						return oDate;
 					},
 					createOutputDate: function() {
-						var oDate = new Date("0000-01-01T00:53:28Z");
+						var oDate = UI5Date.getInstance("0000-01-01T00:53:28Z");
 						oDate.setUTCFullYear(-1);
 						return oDate;
 					}
@@ -485,12 +493,12 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 				{
 					// year -1 in May
 					createInputDate: function() {
-						var oDate = new Date("0000-05-03T12:00:00Z");
+						var oDate = UI5Date.getInstance("0000-05-03T12:00:00Z");
 						oDate.setUTCFullYear(-1);
 						return oDate;
 					},
 					createOutputDate: function() {
-						var oDate = new Date("0000-05-03T12:53:28Z");
+						var oDate = UI5Date.getInstance("0000-05-03T12:53:28Z");
 						oDate.setUTCFullYear(-1);
 						return oDate;
 					}
@@ -498,12 +506,12 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 				{
 					// year -1000
 					createInputDate: function() {
-						var oDate = new Date("0000-01-01T00:00:00Z");
+						var oDate = UI5Date.getInstance("0000-01-01T00:00:00Z");
 						oDate.setUTCFullYear(-1000);
 						return oDate;
 					},
 					createOutputDate: function() {
-						var oDate = new Date("0000-01-01T00:53:28Z");
+						var oDate = UI5Date.getInstance("0000-01-01T00:53:28Z");
 						oDate.setUTCFullYear(-1000);
 						return oDate;
 					}
@@ -525,7 +533,7 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 
 		QUnit.module("Fixed date with end of January", {
 			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(new Date("2022-01-31T15:22:33Z").getTime());
+				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2022-01-31T15:22:33Z").getTime());
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -538,7 +546,7 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 			// Otherwise if created from a new Date() with date January 31st when calling
 			// setUTCMonth, it would automatically shift to the next month, because February does
 			// not have the 31 days.
-			var oDate = new Date("2021-11-13T15:22:33Z");
+			var oDate = UI5Date.getInstance("2021-11-13T15:22:33Z");
 			assert.deepEqual(TimezoneUtil.convertToTimezone(oDate, "UTC"), oDate, "Date should be converted.");
 		});
 
@@ -551,7 +559,7 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 		});
 
 		QUnit.test("convertToTimezone + calculateOffset + isValidTimezone", function (assert) {
-			var oDate = new Date(Date.UTC(2018, 9, 7, 2, 30));
+			var oDate = UI5Date.getInstance(Date.UTC(2018, 9, 7, 2, 30));
 			aTimezoneIDs.forEach(function (sTimezone) {
 
 				assert.ok(TimezoneUtil.isValidTimezone(sTimezone), "timezone is valid: " + sTimezone);
@@ -573,7 +581,7 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/
 			var oParts;
 
 			// code under test
-			oParts = TimezoneUtil._getParts(new Date(0), "Europe/Berlin");
+			oParts = TimezoneUtil._getParts(UI5Date.getInstance(0), "Europe/Berlin");
 
 			assert.deepEqual(oParts, {
 					day: "01",

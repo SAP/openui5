@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Component",
 	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
@@ -17,8 +18,8 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/ui/util/XMLHelper"
 ], function (Log, ObjectPath, BindingParser, ManagedObject, SyncPromise, Component,
-		XMLTemplateProcessor, XMLPreprocessor, BindingMode, ChangeReason, Context, JSONModel,
-		Measurement, XMLHelper) {
+		XMLTemplateProcessor, UI5Date, XMLPreprocessor, BindingMode, ChangeReason, Context,
+		JSONModel, Measurement, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
@@ -1271,7 +1272,7 @@ sap.ui.define([
 				models: new JSONModel({
 					"string" : "[object Object]",
 					"Array" : [],
-					"Date" : new Date(),
+					"Date" : UI5Date.getInstance(),
 					"Object" : {}
 				})
 			}, [
