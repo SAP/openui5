@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/core/date/UI5Date",
 	"sap/m/DateTimeInput",
 	"sap/m/Input",
 	"sap/m/Label",
@@ -20,9 +21,10 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column"
-], function(each, isEmptyObject, DateTimeInput, Input, Label, List, Panel, ListItem, library,
-	Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel, DateTime,
-	createAndAppendDiv, Table, Column ) {
+], function (each, isEmptyObject, UI5Date, DateTimeInput, Input, Label, List, Panel, ListItem,
+		library, Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel,
+		DateTime, createAndAppendDiv, Table, Column
+) {
 
 	"use strict";
 
@@ -1257,7 +1259,7 @@ sap.ui.define([
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				var vDate = oModel.getProperty("/ProductSet('AD-1000')/CreatedAt");
-				oModel.setProperty("/ProductSet('AD-1000')/CreatedAt", new Date());
+				oModel.setProperty("/ProductSet('AD-1000')/CreatedAt", UI5Date.getInstance());
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
 				oModel.setProperty("/ProductSet('AD-1000')/CreatedAt", vDate);
 				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");

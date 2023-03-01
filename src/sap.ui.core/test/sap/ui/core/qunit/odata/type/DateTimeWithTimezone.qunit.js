@@ -176,7 +176,7 @@ sap.ui.define([
 [
 	undefined,
 	null,
-	[new Date(), undefined],
+	[UI5Date.getInstance(), undefined],
 	[undefined, "~timezone"]
 ].forEach(function (aValues, i) {
 	var sTitle = "formatValue: no values, undefined timezone or timestamp lead to null, #" + i;
@@ -250,14 +250,14 @@ sap.ui.define([
 
 		// code under test
 		assert.throws(function () {
-			oType.formatValue([new Date(), "~timezone"], "~targetType");
+			oType.formatValue([UI5Date.getInstance(), "~timezone"], "~targetType");
 		}, new FormatException("Don't know how to format ~DateTimeWithTimezone to ~targetType"));
 	});
 });
 
 	//*********************************************************************************************
 	QUnit.test("formatValue: to string", function (assert) {
-		var oDate = new Date(),
+		var oDate = UI5Date.getInstance(),
 			oFormat = {format : function () {}},
 			oFormatMock = this.mock(oFormat),
 			oType = new DateTimeWithTimezone(),
@@ -296,7 +296,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oType.formatValue([new Date(), "~timezone"], "~targetType");
+			oType.formatValue([UI5Date.getInstance(), "~timezone"], "~targetType");
 		}, new FormatException("For type 'object', at least one of the format options 'showDate' or"
 			+ " 'showTime' must be enabled"));
 	});
@@ -311,7 +311,7 @@ sap.ui.define([
 	{showDate : true, showTime : false, showTimezone : false}
 ].forEach(function (oFormatOptions, i) {
 	QUnit.test("formatValue: to object", function (assert) {
-		var oDate = new Date(),
+		var oDate = UI5Date.getInstance(),
 			oType = new DateTimeWithTimezone(oFormatOptions);
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("~targetType").returns("object");
@@ -324,23 +324,23 @@ sap.ui.define([
 	//*********************************************************************************************
 [{
 	formatOptions : {showDate : false, showTime : false, showTimezone : true},
-	values : [new Date(), "Europe/Berlin"],
+	values : [UI5Date.getInstance(), "Europe/Berlin"],
 	result : "Europe, Berlin"
 }, {
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
-	values : [new Date(Date.UTC(2021, 11, 30, 4, 0, 0)), "Europe/Berlin"],
+	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "Europe/Berlin"],
 	result : "Dec 30, 2021, 5:00:00 AM Europe, Berlin"
 }, {
 	formatOptions : {showDate : true, showTime : true, showTimezone : false},
-	values : [new Date(Date.UTC(2021, 11, 30, 4, 0, 0)), "Europe/Berlin"],
+	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "Europe/Berlin"],
 	result : "Dec 30, 2021, 5:00:00 AM"
 }, {
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
-	values : [new Date(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
+	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
 	result : "Dec 29, 2021, 11:00:00 PM Americas, New York"
 }, {
 	formatOptions : {showDate : true, showTime : true, showTimezone : false},
-	values : [new Date(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
+	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
 	result : "Dec 29, 2021, 11:00:00 PM"
 }, {
 	formatOptions : {showDate : false, showTime : false, showTimezone : true},
@@ -352,19 +352,19 @@ sap.ui.define([
 	result : "Europe, Berlin"
 }, {
 	formatOptions : {showDate : true, showTime : false, showTimezone : true},
-	values : [new Date(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
+	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
 	result : "Dec 29, 2021 Americas, New York"
 }, {
 	formatOptions : {showDate : false, showTime : true, showTimezone : true},
-	values : [new Date(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
+	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
 	result : "11:00:00 PM Americas, New York"
 }, {
 	formatOptions : {showDate : true, showTime : false, showTimezone : false},
-	values : [new Date(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
+	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
 	result : "Dec 29, 2021"
 }, {
 	formatOptions : {showDate : false, showTime : true, showTimezone : false},
-	values : [new Date(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
+	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
 	result : "11:00:00 PM"
 }].forEach(function (oFixture, i) {
 	QUnit.test("formatValue: Integrative tests: " + oFixture.result + ", #" + i, function (assert) {
@@ -524,7 +524,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oType.parseValue(new Date(), "~sourceType", [null, "Europe/Berlin"]);
+			oType.parseValue(UI5Date.getInstance(), "~sourceType", [null, "Europe/Berlin"]);
 		}, new ParseException("For type 'object', at least one of the format options 'showDate' or"
 			+ " 'showTime' must be enabled"));
 	});
@@ -566,7 +566,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseValue: to object", function (assert) {
-		var oDate = new Date(),
+		var oDate = UI5Date.getInstance(),
 			aResult,
 			oType = new DateTimeWithTimezone({showTimezone : false});
 
@@ -594,22 +594,22 @@ sap.ui.define([
 	currentTimezone : "Europe/Berlin",
 	formatOptions : {showDate : true, showTime : true, showTimezone : false},
 	value : "Dec 30, 2021, 8:00:00 AM",
-	result : [new Date(Date.UTC(2021, 11, 30, 7, 0, 0)), undefined]
+	result : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 7, 0, 0)), undefined]
 }, {
 	currentTimezone : "Europe/Berlin",
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
 	value : "Dec 30, 2021, 8:00:00 AM Europe/Berlin",
-	result : [new Date(Date.UTC(2021, 11, 30, 7, 0, 0)), "Europe/Berlin"]
+	result : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 7, 0, 0)), "Europe/Berlin"]
 }, {
 	currentTimezone : "Europe/Berlin",
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
 	value : "Dec 30, 2021, 8:00:00 AM",
-	result : [new Date(Date.UTC(2021, 11, 30, 7, 0, 0)), undefined]
+	result : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 7, 0, 0)), undefined]
 }, {
 	currentTimezone : null,
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
 	value : "Dec 30, 2021, 8:00:00 AM Europe/Berlin",
-	result : [new Date(Date.UTC(2021, 11, 30, 7, 0, 0)), "Europe/Berlin"]
+	result : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 7, 0, 0)), "Europe/Berlin"]
 }
 	// TODO Timezone Configuration: Configuration#setTimezone currently does not change the timezone
 	// configuration.
@@ -680,7 +680,7 @@ sap.ui.define([
 	messageKey : "EnterDateTime"
 }].forEach(function (oFixture, i) {
 	QUnit.test("_getErrorMessage: #" + i, function (assert) {
-		var oDemoDate = new Date(Date.UTC(UI5Date.getInstance().getFullYear(), 11, 31, 23, 59, 58)),
+		var oDemoDate = UI5Date.getInstance(Date.UTC(UI5Date.getInstance().getFullYear(), 11, 31, 23, 59, 58)),
 			oType = new DateTimeWithTimezone(oFixture.formatOptions);
 
 		this.mock(UI5Date).expects("getInstance").withExactArgs().callThrough();

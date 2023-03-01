@@ -119,9 +119,9 @@ sap.ui.define([
 			{i : "foo", t : "any", o : "foo"},
 			{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
 			{i : "2014-11-34", t : "string", o : "2014-11-34"},
-			{i : new Date(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"},
+			{i : UI5Date.getInstance(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"},
 			{i : "2014-11-27", t : "object", o : UI5Date.getInstance(2014, 10, 27)},
-			{i : new Date(Date.UTC(2014, 10, 27)), t : "object", o : UI5Date.getInstance(2014, 10, 27)}
+			{i : UI5Date.getInstance(Date.UTC(2014, 10, 27)), t : "object", o : UI5Date.getInstance(2014, 10, 27)}
 		].forEach(function (oFixture) {
 			var oType = new DateType();
 			assert.deepEqual(oType.formatValue(oFixture.i, oFixture.t), oFixture.o, oFixture.i);
@@ -130,11 +130,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("format value uses UI5Date", function (assert) {
-		var oType = new DateType();
+		var oDate = UI5Date.getInstance(Date.UTC(2014, 10, 27)),
+			oType = new DateType();
 
 		this.mock(UI5Date).expects("getInstance").withExactArgs(2014, 10, 27).returns("~ui5Date");
 
-		assert.strictEqual(oType.formatValue(new Date(Date.UTC(2014, 10, 27)), "object"), "~ui5Date");
+		assert.strictEqual(oType.formatValue(oDate, "object"), "~ui5Date");
 	});
 
 	//*********************************************************************************************

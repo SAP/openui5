@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -18,9 +19,11 @@ sap.ui.define([
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, NumberFormat, FormatException, ParseException, ValidateException, BooleanType,
-		CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType, IntegerType, StringType, TimeType,
-		TimeIntervalType, UnitType, TestUtils) {
+], function (Log, Configuration, UI5Date, NumberFormat, FormatException, ParseException,
+		ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType,
+		FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType,
+		TestUtils
+) {
 	"use strict";
 
 	function checkValidateException(oEx) {
@@ -733,7 +736,7 @@ sap.ui.define([
 
 	QUnit.test("dateTime formatValue", function (assert) {
 		// as date object is locale dependend fill it manually
-		var dateValue = new Date(2003, 1, 1, 4, 5, 6, 7);
+		var dateValue = UI5Date.getInstance(2003, 1, 1, 4, 5, 6, 7);
 
 		var dateType = new DateTimeType();
 
@@ -755,18 +758,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("dateTime parseValue", function (assert) {
-		var dateValue = new Date(2003, 1, 1, 4, 5, 6);
+		var dateValue = UI5Date.getInstance(2003, 1, 1, 4, 5, 6);
 		var dateType = new DateTimeType();
 		assert.strictEqual(dateType.parseValue("Feb 1, 2003, 4:05:06 AM", "string").getTime(), dateValue.getTime(), "parse test");
 
-		dateValue = new Date(2003, 1, 1, 4, 5, 6, 7);
+		dateValue = UI5Date.getInstance(2003, 1, 1, 4, 5, 6, 7);
 		dateType = new DateTimeType({ pattern: "yy-MM-dd HH:mm:ss'+'SSS'" });
 		assert.strictEqual(dateType.parseValue("03-02-01 04:05:06+007", "string").getTime(), dateValue.getTime(), "parse test with pattern");
 
 		dateType = new DateTimeType({ source: { pattern: "yyyy/MM/dd HHmmssSSS" }, pattern: "dd.MM.yyyy HH-mm-ss.SSS" });
 		assert.strictEqual(dateType.parseValue("01.02.2003 04-05-06.007", "string"), "2003/02/01 040506007", "parse test with source pattern");
 
-		dateValue = new Date(2012, 0, 24, 14, 33, 0);
+		dateValue = UI5Date.getInstance(2012, 0, 24, 14, 33, 0);
 		dateType = new DateTimeType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yyyy HH:mm" });
 		assert.strictEqual(dateType.parseValue("24.01.2012 14:33", "string"), dateValue.getTime(), "parse test with timestamp");
 
@@ -805,8 +808,8 @@ sap.ui.define([
 	QUnit.test("DateTimeInterval formatValue", function (assert) {
 		var oDateTimeIntervalType = new DateTimeIntervalType();
 
-		var oDateTime1 = new Date(2003, 1, 1, 4, 5, 6);
-		var oDateTime2 = new Date(2003, 1, 2, 5, 6, 7);
+		var oDateTime1 = UI5Date.getInstance(2003, 1, 1, 4, 5, 6);
+		var oDateTime2 = UI5Date.getInstance(2003, 1, 2, 5, 6, 7);
 
 		assert.strictEqual(oDateTimeIntervalType.formatValue([oDateTime1, oDateTime2], "string"), "Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "dates can be formatted as interval");
 
@@ -819,8 +822,8 @@ sap.ui.define([
 	QUnit.test("DateTimeInterval parseValue", function (assert) {
 		var oDateTimeIntervalType = new DateTimeIntervalType();
 
-		var oDateTime1 = new Date(2003, 1, 1, 4, 5, 6);
-		var oDateTime2 = new Date(2003, 1, 2, 5, 6, 7);
+		var oDateTime1 = UI5Date.getInstance(2003, 1, 1, 4, 5, 6);
+		var oDateTime2 = UI5Date.getInstance(2003, 1, 2, 5, 6, 7);
 
 		assert.deepEqual(oDateTimeIntervalType.parseValue("Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "string"), [oDateTime1, oDateTime2], "Interval string can be parsed into an array of dates");
 
@@ -832,8 +835,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("DateTimeInterval validateValue", function (assert) {
-		var oDateTime1 = new Date(2003, 1, 1, 4, 5, 6);
-		var oDateTime2 = new Date(2003, 1, 2, 5, 6, 7);
+		var oDateTime1 = UI5Date.getInstance(2003, 1, 1, 4, 5, 6);
+		var oDateTime2 = UI5Date.getInstance(2003, 1, 2, 5, 6, 7);
 
 		var oDateTimeIntervalType = new DateTimeIntervalType({}, {
 			minimum: oDateTime1,
@@ -1550,7 +1553,7 @@ sap.ui.define([
 	QUnit.test("time formatValue", function (assert) {
 		var timeType = new TimeType();
 		// as date object is locale dependend fill it manually
-		var timeValue = new Date(2003, 1, 1, 16, 58, 49);
+		var timeValue = UI5Date.getInstance(2003, 1, 1, 16, 58, 49);
 
 		assert.strictEqual(timeType.formatValue(timeValue, "string"), "4:58:49 PM", "format test");
 
@@ -1571,7 +1574,7 @@ sap.ui.define([
 
 	QUnit.test("time parseValue", function (assert) {
 		// as date object is locale dependend fill it manually
-		var timeValue = new Date(1970, 0, 1, 16, 58, 49);
+		var timeValue = UI5Date.getInstance(1970, 0, 1, 16, 58, 49);
 
 		var timeType = new TimeType();
 		assert.strictEqual(timeType.parseValue("04:58:49 PM", "string").getTime(), timeValue.getTime(), "parse test");
@@ -1619,8 +1622,8 @@ sap.ui.define([
 
 	QUnit.test("TimeInterval formatValue", function (assert) {
 		var oTimeIntervalType = new TimeIntervalType();
-		var oTime1 = new Date(2003, 1, 1, 16, 58, 49);
-		var oTime2 = new Date(2003, 1, 1, 17,  0,  0);
+		var oTime1 = UI5Date.getInstance(2003, 1, 1, 16, 58, 49);
+		var oTime2 = UI5Date.getInstance(2003, 1, 1, 17, 0, 0);
 
 		assert.strictEqual(oTimeIntervalType.formatValue([oTime1, oTime2], "string"), "4:58:49 PM – 5:00:00 PM", "dates can be formatted as interval");
 
@@ -1632,8 +1635,8 @@ sap.ui.define([
 
 	QUnit.test("TimeInterval parseValue", function (assert) {
 		var oTimeIntervalType = new TimeIntervalType();
-		var oTime1 = new Date(1970, 0, 1, 16, 58, 49);
-		var oTime2 = new Date(1970, 0, 1, 17,  0,  0);
+		var oTime1 = UI5Date.getInstance(1970, 0, 1, 16, 58, 49);
+		var oTime2 = UI5Date.getInstance(1970, 0, 1, 17, 0, 0);
 
 		var aTimeIntervalResult = oTimeIntervalType.parseValue("4:58:49 PM –  5:00:00 PM", "string");
 
@@ -1647,8 +1650,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("TimeInterval validateValue", function (assert) {
-		var oTime1 = new Date(1970, 0, 1, 16, 58, 49);
-		var oTime2 = new Date(1970, 0, 1, 17,  0,  0);
+		var oTime1 = UI5Date.getInstance(1970, 0, 1, 16, 58, 49);
+		var oTime2 = UI5Date.getInstance(1970, 0, 1, 17, 0, 0);
 		var oTimeIntervalType = new TimeIntervalType({}, {
 			minimum: oTime1,
 			maximum: oTime2

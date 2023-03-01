@@ -2,13 +2,16 @@ sap.ui.define([
 	"./FormatHelper",
 	"sap/base/util/deepEqual",
 	"sap/base/util/JSTokenizer",
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/Locale",
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/CalendarWeekNumbering"
-], function(FormatHelper, deepEqual, JSTokenizer, DateFormat, Locale, Controller, JSONModel, Configuration, CalendarWeekNumbering) {
+	"sap/ui/core/Locale",
+	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel"
+], function (FormatHelper, deepEqual, JSTokenizer, Configuration, Locale, CalendarWeekNumbering,
+		UI5Date, DateFormat, Controller, JSONModel
+) {
 	"use strict";
 
 	return Controller.extend("DateFormat", {
@@ -30,8 +33,8 @@ sap.ui.define([
 				aHashParams = [
 					{name: "formatOptions", "default": {}},
 					{name: "type", "default": "Date"},
-					{name: "date", "default": new Date()},
-					{name: "todate", "default": new Date()}
+					{name: "date", "default": UI5Date.getInstance()},
+					{name: "todate", "default": UI5Date.getInstance()}
 				],
 				oSupportedOptions = {
 					format: {
@@ -116,8 +119,8 @@ sap.ui.define([
 			}
 
 			var oModel = new JSONModel({
-				date: new Date(),
-				todate: new Date(),
+				date: UI5Date.getInstance(),
+				todate: UI5Date.getInstance(),
 				formatOptions: {},
 				type: "Date",
 				locales: FormatHelper.locales,

@@ -195,7 +195,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("formatValue uses UI5Date", function (assert) {
-		var oDate = new Date(Date.UTC(2022, 3, 4, 2, 53, 49)),
+		var oDate = UI5Date.getInstance(Date.UTC(2022, 3, 4, 2, 53, 49)),
 			oModelFormat = {parse : function () {}},
 			oType = new TimeOfDay();
 
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parse", function (assert) {
-		var oDate = new Date(1970, 0, 1, 2, 53, 49),
+		var oDate = UI5Date.getInstance(1970, 0, 1, 2, 53, 49),
 			oType = new TimeOfDay(),
 			oTypePrecision = new TimeOfDay({pattern : "HH:mm:ss.SSS a"}, {precision : 5});
 

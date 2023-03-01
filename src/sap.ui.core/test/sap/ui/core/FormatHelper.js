@@ -5,14 +5,17 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/base/util/deepEqual",
 	"sap/base/util/JSTokenizer",
-	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Locale",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/CompositeBinding",
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/ValidateException"
-], function(Button, Dialog, ListItemBase, Text, deepEqual, JSTokenizer, NumberFormat, Locale, CompositeBinding, CompositeType, ParseException, SimpleType, ValidateException) {
+], function (Button, Dialog, ListItemBase, Text, deepEqual, JSTokenizer, Locale, UI5Date,
+		NumberFormat, CompositeBinding, CompositeType, ParseException, SimpleType, ValidateException
+) {
 	"use strict";
 
 	var aLocales = [
@@ -294,7 +297,7 @@ sap.ui.define([
 					vValue = JSTokenizer.parseJS(vValue);
 				}
 				if (sName === "date" || sName === "todate") {
-					vValue = new Date(parseFloat(vValue));
+					vValue = UI5Date.getInstance(parseFloat(vValue));
 				}
 				if (sName === "number") {
 					vValue = NumberFormat.getFloatInstance({

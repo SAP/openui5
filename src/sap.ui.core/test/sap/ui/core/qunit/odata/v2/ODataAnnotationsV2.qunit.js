@@ -770,7 +770,7 @@ sap.ui.define([
 		});
 
 		oModel.annotationsLoaded().then(function(aAnnotations) {
-			var iLastModified = new Date("Wed, 15 Nov 1995 04:58:08 GMT").getTime();
+			var iLastModified = Date.UTC(1995, 10, 15, 4, 58, 8); // "Wed, 15 Nov 1995 04:58:08 GMT"
 
 			assert.equal(Date.parse(aAnnotations[0].lastModified), iLastModified, "LastModified header exists for first annotation document");
 			assert.equal(Date.parse(aAnnotations[1].lastModified), iLastModified, "LastModified header exists for second annotation document");
@@ -815,7 +815,7 @@ sap.ui.define([
 		});
 
 		oModel.annotationsLoaded().then(function(aAnnotations) {
-			var iEtag = new Date("Wed, 15 Nov 1995 04:58:08 GMT").getTime();
+			var iEtag = Date.UTC(1995, 10, 15, 4, 58, 8); // "Wed, 15 Nov 1995 04:58:08 GMT"
 
 			assert.equal(Date.parse(aAnnotations[0].eTag), iEtag, "ETag header exists for first annotation document");
 			assert.equal(Date.parse(aAnnotations[1].eTag), iEtag, "ETag header exists for second annotation document");

@@ -5020,6 +5020,7 @@ usePreliminaryContext : false}}">\
 					},
 					carrid : "1",
 					connid : "10",
+					// no need to use UI5Date.getInstance as datajs returns JavaScript Dates
 					fldate : new Date(1432993646253)
 				}, {
 					__metadata : {
@@ -5028,6 +5029,7 @@ usePreliminaryContext : false}}">\
 					},
 					carrid : "1",
 					connid : "20",
+					// no need to use UI5Date.getInstance as datajs returns JavaScript Dates
 					fldate : new Date(1435672046253)
 				}]
 			})
@@ -6994,7 +6996,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					method : "POST",
 					urlParameters : {
 						BankFeeConditionID : "F&FF",
-						ValidityStartDate : new Date(Date.UTC(2022, 5, 16, 10, 30, 0))
+						ValidityStartDate : UI5Date.getInstance(Date.UTC(2022, 5, 16, 10, 30, 0))
 					}
 				}, {
 					"C_BankConditionTPPrepare" : {
@@ -7902,6 +7904,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest()
 			.expectRequest("DateTimeWithTimezoneSet('1')", {
+				// no need to use UI5Date.getInstance as datajs returns JavaScript Dates
 				DateTime : new Date(1642413288000),
 				ID : "1",
 				TimezoneID : "America/New_York"
@@ -7923,6 +7926,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			var oTimezoneWarning = that.createResponseMessage("TimezoneID", "Bar", "warning");
 
 			that.expectRequest("DateTimeWithTimezoneSet('1')", {
+					// no need to use UI5Date.getInstance as datajs returns JavaScript Dates
 					DateTime : new Date(1642413288000),
 					ID : "1",
 					TimezoneID : "America/New_York"
@@ -7976,6 +7980,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest()
 			.expectRequest("DateTimeWithTimezoneSet('1')", {
+				// no need to use UI5Date.getInstance as datajs returns JavaScript Dates
 				DateTime : new Date(1642413288000),
 				ID : "1",
 				TimezoneID : ""
