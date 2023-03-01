@@ -184,9 +184,20 @@ sap.ui.define([
 				showTimezone: { type: "boolean", group: "Behavior" },
 
 				/**
-				 * The IANA timezone ID, e.g <code>"Europe/Berlin"</code>. Date and time are displayed in this timezone.
-				 * The <code>value</code> property string is treated as if it is formatted in this timezone.
-				 * The <code>dateValue</code> property should not be used as this could lead to an unpredictable results. Use <code>getValue()</code> instead.
+				 * The IANA timezone ID, e.g <code>"Europe/Berlin"</code>.
+				 * For display purposes only in combination with <code>showTimezone</code> property.
+				 * The <code>value</code> property is a string representation of a date and time and is not related to the displayed time zone.
+				 * The <code>dateValue</code> property should not be used as this could lead to unpredictable results. Use <code>getValue()</code> instead.
+				 *
+				 * @example <caption> Converting <code>value</code> and <code>timezone</code> properties to a single moment in time</caption>
+				 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+				 *
+				 * var sValue = "Dec 24, 2021, 8:37:00 AM";
+				 * var sTimezone = "America/New_York";
+				 * sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance({showTimezone: false}).parse(sValue, sTimezone)});
+				 * // output: [oDate, undefined]
+				 *
+				 * @see sap.ui.core.format.DateFormat.DateTimeWithTimezone.parse
 				 * @since 1.99
 				 */
 				timezone: { type: "string", group: "Data" }
