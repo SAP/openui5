@@ -531,12 +531,14 @@ sap.ui.define([
 				break;
 			case "Edm.Time":
 				if (typeof vValue === "object") {
+					// no need to use UI5Date.getInstance as only the UTC timestamp is used
 					sValue = oTimeFormat.format(new Date(vValue.ms), true);
 				} else {
 					sValue = "time'" + vValue + "'";
 				}
 				break;
 			case "Edm.DateTime":
+				// no need to use UI5Date.getInstance as only the UTC timestamp is used
 				oDate = vValue instanceof Date ? vValue : new Date(vValue);
 				if (oDate.getMilliseconds() > 0) {
 					sValue = oDateTimeFormatMs.format(oDate, true);
@@ -545,6 +547,7 @@ sap.ui.define([
 				}
 				break;
 			case "Edm.DateTimeOffset":
+				// no need to use UI5Date.getInstance as only the UTC timestamp is used
 				oDate = vValue instanceof Date ? vValue : new Date(vValue);
 				sValue = oDateTimeOffsetFormat.format(oDate, true);
 				break;

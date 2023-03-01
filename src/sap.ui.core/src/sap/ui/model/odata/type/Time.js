@@ -103,6 +103,7 @@ sap.ui.define([
 			throw new FormatException("Illegal sap.ui.model.odata.type.Time value: "
 				+ toString(oTime));
 		}
+		// no need to use UI5Date.getInstance as only the UTC timestamp is relevant
 		return new Date(oTime.ms);
 	}
 
