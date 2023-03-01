@@ -2181,4 +2181,29 @@ sap.ui.define([
 		this.oDialog.open();
 		this.clock.tick(3000);
 	});
+
+	QUnit.module("Focus on element", {
+		beforeEach: function () {
+
+			this.oCarousel = new Carousel("myCrsl", {
+				customLayout: new CarouselLayout({
+					visiblePagesCount: 3
+				}),
+				pages: [
+					new Page("page1")
+				]
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+		}
+	});
+
+	QUnit.test("Focus on multiInput element", function (assert) {
+		var oCarousel = this.oCarousel;
+
+		assert.strictEqual(oCarousel._getPageIndex(), 0, "Page indexing does not return undefined");
+	});
 });

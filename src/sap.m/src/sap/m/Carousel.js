@@ -822,7 +822,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Carousel.prototype._getPageIndex = function(sPageId) {
-		var i, result;
+		var i, result = 0;
 
 		for (i = 0; i < this.getPages().length; i++) {
 			if (this.getPages()[i].getId() == sPageId) {
