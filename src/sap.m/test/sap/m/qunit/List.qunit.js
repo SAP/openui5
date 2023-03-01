@@ -2077,6 +2077,47 @@ sap.ui.define([
 		oList.destroy();
 	});
 
+	QUnit.test("StandardListItem wrapping", function(assert) {
+		var oData = {
+			names: [
+				{firstName: "Peter", lastName: undefined},
+				{firstName: "Petra", lastName: "Maier"}
+			]
+		};
+		var oModel = new JSONModel();
+		oModel.setData(oData);
+
+		var oList = new List({
+			headerText:"Names",
+			mode:"MultiSelect"
+		});
+
+		oList.bindItems({
+			path : "/names",
+			template : new StandardListItem({
+				wrapping: true,
+				title: "{lastName}",
+				info: "{firstName}"
+			})
+		});
+
+		oList.setModel(oModel);
+		oList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var oItemDomRef = document.getElementById(oList.getItems()[0].getId() + "-info");
+		assert.equal(oList.getItems()[0].getTitle(), "", "title is empty string");
+		assert.equal(oList.getItems()[0].getInfo(), "Peter", "info is given");
+		assert.ok(oItemDomRef, "info is rendered although title is empty string");
+
+		oItemDomRef = document.getElementById(oList.getItems()[1].getId() + "-info");
+		assert.equal(oList.getItems()[1].getTitle(), "Maier", "title is given");
+		assert.equal(oList.getItems()[1].getInfo(), "Petra", "info is given");
+		assert.ok(oItemDomRef, "info is rendered");
+
+		oList.destroy();
+	});
+
 	QUnit.module("ListItemBase");
 
 	QUnit.test("ListItemBase RenderOutlineClass", function(assert) {
