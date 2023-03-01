@@ -369,7 +369,7 @@ sap.ui.define([
 		var $panel = this.oPanel.$();
 
 		assert.ok($panel.hasClass("sapMPanel"), "should have sapMPanel class on root element");
-		assert.ok(jQuery("h2:first-of-type", $panel).hasClass("sapMPanelHdr"), "should have sapMPanelHdr class present on first header");
+		assert.ok(jQuery(".sapMPanelHeadingDiv div:first-child", $panel).hasClass("sapMPanelHdr"), "should have sapMPanelHdr class present on first header");
 	});
 
 	QUnit.test("Expandable panel with headerText", function(assert) {
@@ -767,8 +767,11 @@ sap.ui.define([
 
 	QUnit.test("Panel with header text and content", function(assert) {
 		var $panel = this.oPanel.$(),
-			sPanelHeaderId = this.oPanel.getId() + '-header';
+			sPanelHeaderId = this.oPanel.getId() + '-header',
+			sHeadingDiv = $panel.find(".sapMPanelHeadingDiv");
 
+		assert.strictEqual(sHeadingDiv.attr("role"), "heading", "Should have a heading element wrapping the header button.");
+		assert.strictEqual(sHeadingDiv.attr("aria-level"), "2", "Should have a heading element with aria-level=2");
 		assert.strictEqual($panel.attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
 
 		this.oPanel.setExpandable(true);
@@ -778,9 +781,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Panel with header text and header toolbar", function(assert) {
+		var sHeadingDiv = this.oPanel.$().find(".sapMPanelHeadingDiv");
+
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
 		oCore.applyChanges();
 
+		assert.notOk(sHeadingDiv.attr("role"), "Should not have a heading element wrapper.");
+		assert.notOk(sHeadingDiv.attr("aria-level"), "Should not have an aria-level set");
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), this.oPanel.getHeaderToolbar().getTitleId(), "should have a labelledby reference to the toolbar title.");
 	});
 
