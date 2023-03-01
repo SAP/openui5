@@ -666,8 +666,9 @@ sap.ui.define([
 	* @private
 	* @ui5-restricted sap.ui.integration
 	* @param {boolean} bShowValueState Defines if the input controls should display their value state
+	* @param {boolean} bSkipFiringStateChangedEvent Defines if the firing of stateChanged event should not happen
 	 */
-	BaseContent.prototype.validateControls = function (bShowValueState) { };
+	BaseContent.prototype.validateControls = function (bShowValueState, bSkipFiringStateChangedEvent) { };
 
 	BaseContent.prototype.getCardInstance = function () {
 		return Core.byId(this.getCard());

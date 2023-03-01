@@ -16,12 +16,33 @@
 		</subHeader>
 		<VBox renderType="Bare" height="100%">
 			<OverflowToolbar>
+				<Select
+					width="200px"
+					selectedKey="{stateChangedEventPage>/selectedKey}"
+					items="{stateChangedEventPage>/manifests}"
+					change=".onChangeManifest">
+					<core:Item key="{stateChangedEventPage>key}" text="{stateChangedEventPage>text}" />
+				</Select>
 				<Button text="Refresh Card" press=".onRefresh" type="Emphasized" />
 				<Button text="Refresh Card Data" press=".onRefreshData" />
-				<Button text="Previous Page" press=".onPreviousPage" />
-				<Button text="Next Page" press=".onNextPage" />
-				<Button text="Change Filter" press=".onChangeSelectFilter" />
-				<Button text="Initial Filter" press=".onInitialSelectFilter" />
+
+				<Button text="Previous Page" press=".onPreviousPage"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
+				<Button text="Next Page" press=".onNextPage"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
+				<Button text="Change Filter" press=".onChangeSelectFilter"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
+				<Button text="Initial Filter" press=".onInitialSelectFilter"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
+
+				<Button text="Simulate live input" press=".onSimulateLiveInput"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
+				<Button text="Enter valid input" press=".onEnterValidInput"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
+				<Button text="Enter invalid input" press=".onEnterInvalidInput"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
+				<Button text="Submit" press=".onSimulateSubmit" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
 			</OverflowToolbar>
 			<HBox>
 				<layoutData>
@@ -34,7 +55,7 @@
 								width="300px"
 								stateChanged=".onStateChanged"
 								class="sapUiSmallMargin"
-								manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/mobileSdk/manifest.json" />
+								manifest="{cardsPlayground>/playgroundBaseUrl}{stateChangedEventPage>/selectedManifest}" />
 						<layoutData>
 							<FlexItemData growFactor="1"></FlexItemData>
 						</layoutData>
@@ -42,9 +63,7 @@
 				</VBox>
 				<VBox>
 					<Title text="Output" class="sapUiTinyMargin" />
-					<editor:CodeEditor
-							id="output"
-							type="json">
+					<editor:CodeEditor id="output" type="json" editable="false">
 						<editor:layoutData>
 							<FlexItemData growFactor="1"></FlexItemData>
 						</editor:layoutData>

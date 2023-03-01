@@ -485,7 +485,7 @@ sap.ui.define([
 		}
 	};
 
-	var oManifest_ObjectCardFormElements = {
+	var oManifest_ObjectCardFormControls = {
 		"sap.app": {
 			"id": "test.cards.object.card5",
 			"type": "card"
@@ -557,7 +557,7 @@ sap.ui.define([
 		}
 	};
 
-	var oManifest_ObjectCardFormElementsWithValidation = {
+	var oManifest_ObjectCardFormControlsWithValidation = {
 		"sap.app": {
 			"id": "test.cards.object.card5",
 			"type": "card"
@@ -700,7 +700,7 @@ sap.ui.define([
 		}
 	};
 
-	var oManifest_ObjectCardFormElementsWithValidationNoDataNoBinding = {
+	var oManifest_ObjectCardFormControlsWithValidationNoDataNoBinding = {
 		"sap.app": {
 			"id": "test.cards.object.card5",
 			"type": "card"
@@ -738,7 +738,7 @@ sap.ui.define([
 		}
 	};
 
-	var oManifest_ObjectCardFormElementsSpecialValue = {
+	var oManifest_ObjectCardFormControlsSpecialValue = {
 		"sap.app": {
 			"id": "test.cards.object.card5",
 			"type": "card"
@@ -1803,7 +1803,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Actionable elements should be labeled", function (assert) {
+	QUnit.test("Actionable controls should be labeled", function (assert) {
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
@@ -1845,7 +1845,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Actionable elements with missing label", function (assert) {
+	QUnit.test("Actionable controls with missing label", function (assert) {
 		var done = assert.async(),
 			oLogSpy = this.spy(Log, "warning");
 
@@ -1970,7 +1970,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Elements are properly nested", function (assert) {
+	QUnit.test("Controls are properly nested", function (assert) {
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
@@ -2064,7 +2064,7 @@ sap.ui.define([
 		return oObjectContent;
 	});
 
-	QUnit.module("Form elements", {
+	QUnit.module("Form controls", {
 		beforeEach: function () {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
@@ -2079,7 +2079,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Elements are properly created", function (assert) {
+	QUnit.test("Form controls are properly created", function (assert) {
 		var done = assert.async(),
 			oCard = this.oCard;
 
@@ -2113,11 +2113,11 @@ sap.ui.define([
 			done();
 		});
 
-		oCard.setManifest(oManifest_ObjectCardFormElements);
+		oCard.setManifest(oManifest_ObjectCardFormControls);
 		Core.applyChanges();
 	});
 
-	QUnit.test("Element values are properly passed on submit action", function (assert) {
+	QUnit.test("Form control values are properly passed on submit action", function (assert) {
 		var done = assert.async(),
 			oCard = this.oCard;
 
@@ -2144,11 +2144,11 @@ sap.ui.define([
 			});
 		});
 
-		oCard.setManifest(oManifest_ObjectCardFormElements);
+		oCard.setManifest(oManifest_ObjectCardFormControls);
 		Core.applyChanges();
 	});
 
-	QUnit.test("Check for duplicate ID in form elements", function (assert) {
+	QUnit.test("Check for duplicate ID in form controls", function (assert) {
 		var done = assert.async(),
 			oLogSpy = this.spy(Log, "error"),
 			oCard = this.oCard;
@@ -2157,7 +2157,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
-			assert.ok(oLogSpy.calledWithExactly(sinon.match("Duplicate form element ID"), "sap.ui.integration.widgets.Card"), "Error for duplicate ID should be logged");
+			assert.ok(oLogSpy.calledWithExactly(sinon.match("Duplicate form control ID"), "sap.ui.integration.widgets.Card"), "Error for duplicate ID should be logged");
 			done();
 		});
 
@@ -2190,7 +2190,7 @@ sap.ui.define([
 		Core.applyChanges();
 	});
 
-	QUnit.test("Element values are properly passed on submit action - special value", function (assert) {
+	QUnit.test("Form control values are properly passed on submit action - special value", function (assert) {
 		var done = assert.async(),
 			oCard = this.oCard,
 			oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
@@ -2218,10 +2218,10 @@ sap.ui.define([
 			done();
 		});
 
-		oCard.setManifest(oManifest_ObjectCardFormElementsSpecialValue);
+		oCard.setManifest(oManifest_ObjectCardFormControlsSpecialValue);
 	});
 
-	QUnit.module("Form elements with Validation", {
+	QUnit.module("Form controls with Validation", {
 		beforeEach: function () {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
@@ -2410,7 +2410,7 @@ sap.ui.define([
 			done();
 		});
 
-		oCard.setManifest(oManifest_ObjectCardFormElementsWithValidation);
+		oCard.setManifest(oManifest_ObjectCardFormControlsWithValidation);
 		Core.applyChanges();
 	});
 
@@ -2437,7 +2437,7 @@ sap.ui.define([
 			done();
 		});
 
-		oCard.setManifest(oManifest_ObjectCardFormElementsWithValidationNoDataNoBinding);
+		oCard.setManifest(oManifest_ObjectCardFormControlsWithValidationNoDataNoBinding);
 		Core.applyChanges();
 	});
 

@@ -589,17 +589,17 @@ sap.ui.define([
 			switch (sModelName) {
 				case "context":
 					oModel = new ContextModel();
-				break;
+					break;
 				case "i18n":
 					oModel = new ResourceModel({
 						bundle: this._oIntegrationRb
 					});
-				break;
+					break;
 				case "parameters":
 					oModel = new JSONModel(
 						ParameterMap.getParamsForModel()
 					);
-				break;
+					break;
 				case "messages":
 					oModel = new JSONModel({
 						hasErrors: false,
@@ -609,7 +609,6 @@ sap.ui.define([
 					break;
 				default:
 					oModel = new JSONModel();
-				break;
 			}
 
 			this.setModel(oModel, sModelName);
@@ -939,10 +938,10 @@ sap.ui.define([
 		return !this.getModel("messages").getProperty("/hasErrors");
 	};
 
-	Card.prototype._validateContentControls = function (bShowValueState) {
+	Card.prototype._validateContentControls = function (bShowValueState, bSkipFiringStateChangedEvent) {
 		var oCardContent = this.getCardContent();
 		if (oCardContent && oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
-			oCardContent.validateControls(bShowValueState);
+			oCardContent.validateControls(bShowValueState, bSkipFiringStateChangedEvent);
 		}
 	};
 
@@ -1133,6 +1132,41 @@ sap.ui.define([
 		});
 
 		oFilter.setValueFromOutside(vValue);
+	};
+
+	/**
+	 * Sets the values of form fields in the Object card.
+	 * Each value in the aFormValues array must have a
+	 * key and the respective value for ObjectGroupItems as defined in the card's manifest:
+	 * <code>[
+	 *     {
+	 *         "id": "textAreaItemId",
+	 *         "value": "New value"
+	 *     },
+	 *     {
+	 *         "id": "textAreaItemId",
+	 *         "value": "New value"
+	 *     },
+	 *     {
+	 *         "id": "comboBoxItemId",
+	 *         "selectedKey": "key"
+	 *     }
+	 * ]</code>
+	 *
+	 * @private
+	 * @ui5-restricted
+	 * @param {object[]} aFormValues Array key and value
+	 */
+	Card.prototype.setFormValues = function (aFormValues) {
+		var oContent  = this.getCardContent();
+		if (oContent && !oContent.isA("sap.ui.integration.cards.ObjectContent")) {
+			Log.error("Setting form element values is available only on an Object card" , "sap.ui.integration.widgets.Card");
+			return;
+		}
+
+		aFormValues.forEach(function (oFieldData) {
+			oContent.setFormFieldValue(oFieldData);
+		});
 	};
 
 	/**
@@ -2556,7 +2590,7 @@ sap.ui.define([
 	Card.prototype._onReady = function () {
 		this._bReady = true;
 		this._setActionButtonsEnabled(true);
-		this._validateContentControls();
+		this._validateContentControls(false, true);
 		this.fireEvent("_ready");
 		this._fireStateChanged();
 	};

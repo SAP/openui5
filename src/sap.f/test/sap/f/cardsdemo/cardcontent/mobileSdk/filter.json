@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "card.explorer.filters.search.multiple",
+		"id": "cardsdemo.mobileSdk.filter",
 		"type": "card",
 		"title": "Sample of a Card with Filters"
 	},
