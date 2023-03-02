@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/mdc/link/FakeFlpConnector",
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/UriParameters"
-], function (UIComponent, FakeFlpConnector, LoaderExtensions, UriParameters) {
+	"sap/base/util/UriParameters",
+	"sap/m/routing/Router" // make sure Router is loaded
+], function (UIComponent, FakeFlpConnector, LoaderExtensions, UriParameters, Router) {
 	"use strict";
 
 	var fnLoadManifest = function() {
