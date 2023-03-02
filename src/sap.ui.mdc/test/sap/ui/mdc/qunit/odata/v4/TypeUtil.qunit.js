@@ -94,11 +94,12 @@ sap.ui.define([
 		sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01T10:10:10+0100", oType); // old variant value for DateTime FilterField
 		assert.equal(sTypedValue, oType.parseValue(sString, "string"), "expected value returned"); // compare with parsing result as string depends on browser timezone
 
-		// oType.destroy();
-		// oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss", UTC: true}, {V4: true});
-		// oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
-		// sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01T10:10:10Z", oType);
-		// assert.equal(sTypedValue, oType.parseValue("2000 1 1 10 10 10", "string"), "expected value returned"); // compare with parsing result as string depends on browser timezone
+		// with UTC (UTC date is shown as locale date)
+		oType.destroy();
+		oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss", UTC: true}, {V4: true});
+		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
+		sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01T10:10:10Z", oType);
+		assert.equal(sTypedValue, oType.parseValue("2000 1 1 10 10 10", "string"), "expected value returned"); // compare with parsing result
 
 		oType.destroy();
 		oType = new ODataTimeOfDay();
@@ -120,7 +121,6 @@ sap.ui.define([
 
 		oType.destroy();
 		oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss", UTC: true}, {V4: true});
-		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10));
 		sStringifiedValue = ODataV4TypeUtil.externalizeValue(oType.parseValue("2000 1 1 10 10 10", "string"), oType);
 		assert.equal(sStringifiedValue, "2000-01-01T10:10:10.000Z", "stringified value returned");
 
