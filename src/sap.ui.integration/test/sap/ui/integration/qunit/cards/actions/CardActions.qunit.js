@@ -2152,17 +2152,22 @@ sap.ui.define([
 				oCard = this.oCard;
 
 			oCard.attachEvent("_ready", function () {
+
 				var oActionsStrip = oCard.getAggregation("_footer").getActionsStrip(),
-					aButtons = oActionsStrip._getToolbar().getContent();
+					aButtons = oActionsStrip._getToolbar().getContent(),
+					oDialog = oCard.getDependents()[0];
 
 				// Assert
-				assert.notOk(sap.ui.getCore().byId("__card1"), "Snack card is not available yet");
+				assert.notOk(oDialog, "Snack card dialog is not available yet");
 
 				// Act
 				aButtons[1].firePress();
+				oDialog = oCard.getDependents()[0];
+
 				// Assert
-				var oSnackCard = (sap.ui.getCore().byId("__card1"));
-				assert.ok(sap.ui.getCore().byId("__card1"), "Snack card is available, 'showCard' action is working");
+				var oSnackCard = oDialog.getContent()[0];
+				assert.ok(oSnackCard, "Snack card is available, 'showCard' action is working");
+				assert.ok(oSnackCard.isA("sap.ui.integration.widgets.Card"), "Card is correctly found");
 
 				oSnackCard.attachEventOnce("_ready", function () {
 					var oDialog = oSnackCard.getParent();
