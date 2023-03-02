@@ -49401,10 +49401,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: (5a) Context#resetChanges within a relative ODLB below an object page ODCB w/ own
-	// cache and an intermediate ODCB w/o cache. For the first sales order patch a property in the
-	// object page and one line item in the relative ODLB, patch another line item for a different
-	// sales order. Select the sales order of the first patched line item and call #resetChanges.
-	// Submit changes and see that only the 2nd patch is sent.
+	// cache, below and not below an intermediate ODCB w/o cache. For the first sales order patch a
+	// property in the object page and one line item in the relative ODLB, patch another line item
+	// for a different sales order. Select the sales order of the first patched line item and call
+	// #resetChanges. Submit changes and see that only the 2nd patch is sent.
 	// JIRA: CPOUI5ODATAV4-1818
 	//
 	// See that edited inactive creation rows are also reset to their initial state.
