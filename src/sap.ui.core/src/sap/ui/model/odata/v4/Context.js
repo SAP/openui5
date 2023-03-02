@@ -664,7 +664,9 @@ sap.ui.define([
 				throw new Error("Invalid header path: " + sPath);
 			}
 		}
-		if (!sPath || sPath[0] !== "/") {
+		if (!sPath) {
+			sPath = this.sPath;
+		} else if (sPath[0] !== "/") {
 			// Create an absolute path based on the context's path and reduce it. This is only
 			// necessary for data access via Context APIs, bindings already use absolute paths.
 			sPath = this.oModel.resolve(sPath, this);
@@ -908,9 +910,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the value for the given path relative to this context. The function allows access to
-	 * the complete data the context points to (if <code>sPath</code> is "") or any part thereof.
-	 * The data is a JSON structure as described in <a href=
+	 * Returns the value for the given path. The function allows access to the complete data the
+	 * context points to (if <code>sPath</code> is "") or any part thereof. The data is a JSON
+	 * structure as described in <a href=
 	 * "https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html"
 	 * >"OData JSON Format Version 4.0"</a>.
 	 * Note that the function returns the cache instance. Do not modify the result, use
@@ -919,7 +921,7 @@ sap.ui.define([
 	 * Returns <code>undefined</code> if the data is not (yet) available; no request is triggered.
 	 *
 	 * @param {string} [sPath=""]
-	 *   A path relative to this context
+	 *   A path, absolute or relative to this context
 	 * @returns {any}
 	 *   The requested value
 	 * @throws {Error}

@@ -262,9 +262,8 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bAutoExpandSelect) {
 	[false, true].forEach(function (bHeaderContext) {
-		[undefined, "", "bar"].forEach(function (sPath) {
-			var sTitle = "fetchValue: relative, path=" + sPath + ", headerContext=" + bHeaderContext
-					+ " , autoExpandSelect=" + bAutoExpandSelect;
+		var sTitle = "fetchValue: relative, path='bar', headerContext=" + bHeaderContext
+				+ " , autoExpandSelect=" + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
 			var bCached = {/*false,true*/},
@@ -290,7 +289,7 @@ sap.ui.define([
 					.withExactArgs().returns({/* some other Context */});
 			}
 			this.mock(oModel).expects("resolve")
-				.withExactArgs(sPath, sinon.match.same(oContext)).returns("/~");
+				.withExactArgs("bar", sinon.match.same(oContext)).returns("/~");
 			if (bAutoExpandSelect) {
 				this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs()
 					.returns("/base");
@@ -302,9 +301,32 @@ sap.ui.define([
 					sinon.match.same(bCached))
 				.returns(oResult);
 
-			assert.strictEqual(oContext.fetchValue(sPath, oListener, bCached), oResult);
+			assert.strictEqual(oContext.fetchValue("bar", oListener, bCached), oResult);
 		});
-		});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHeaderContext) {
+	[undefined, ""].forEach(function (sPath) {
+		var sTitle = "fetchValue: relative, path=" + sPath + ", headerContext=" + bHeaderContext;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				fetchValue : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/foo", 42);
+
+		if (bHeaderContext) {
+			oBinding.getHeaderContext = function () {};
+			this.mock(oBinding).expects("getHeaderContext")
+				.withExactArgs().returns({/* some other Context */});
+		}
+		this.mock(oBinding).expects("fetchValue").withExactArgs("/foo", "~oListener~", "~bCached~")
+			.returns("~value~");
+
+		assert.strictEqual(oContext.fetchValue(sPath, "~oListener~", "~bCached~"), "~value~");
+	});
 	});
 });
 
