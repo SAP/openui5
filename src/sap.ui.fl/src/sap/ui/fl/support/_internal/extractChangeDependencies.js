@@ -27,6 +27,7 @@ sap.ui.define([
 	function getAppComponentInstance(sComponentName) {
 		var oCorrectAppComponent;
 		var aComponentContainers = document.querySelector(".sapUiComponentContainer");
+		aComponentContainers = Array.isArray(aComponentContainers) ? aComponentContainers : [aComponentContainers];
 		aComponentContainers.some(function(oComponentContainerDomRef) {
 			var oComponentContainer = sap.ui.getCore().byId(oComponentContainerDomRef.id);
 			var oAppComponent = oComponentContainer && oComponentContainer.getComponentInstance();
