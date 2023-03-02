@@ -1267,6 +1267,7 @@ sap.ui.define([
 				_decreaseDeferredRequestCount : function () {},
 				decreaseLaundering : function () {},
 				fireRequestCompleted : function () {},
+				getDeepPathForCanonicalPath : function () {},
 				_getEntity : function () {},
 				_importData : function () {},
 				oMetadata : {
@@ -1310,6 +1311,9 @@ sap.ui.define([
 			.withExactArgs("normalizedCannonicalPath","requestData");
 		oModelMock.expects("_decreaseDeferredRequestCount")
 			.withExactArgs(sinon.match.same(oRequest));
+		oModelMock.expects("getDeepPathForCanonicalPath")
+			.withExactArgs("functionTarget")
+			.returns(undefined);
 		// test that bFunctionImport is propagated to _importData
 		if (sRequestKey) {
 			oModelMock.expects("_importData").withExactArgs(oResponse.data,
@@ -1638,6 +1642,19 @@ sap.ui.define([
 		// deepPath is updated by calling adjustDeepPath; parameter mParameters.deepPath is taken
 		// from sDeepPath which is calculated using getDeepPathForCanonicalPath
 		deepPath : "/correct/deep/path",
+		functionTarget : "/function/target"
+	}
+}, {
+	getDeepPathForCanonicalPath : {
+		inputParam : "/function/target",
+		result : "/new/deep/path"
+	},
+	functionMetadata : true,
+	headers : {},
+	result : {
+		// In case no location header is provided, the deepPath has to be calculated based on the
+		// function target
+		deepPath : "/new/deep/path",
 		functionTarget : "/function/target"
 	}
 }].forEach(function (oFixture, i) {
