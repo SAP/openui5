@@ -122,7 +122,6 @@ sap.ui.define([
 
 	opaTest("When I look at the screen of appUnderTest, a table with links should appear", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html');
-		Given.iEnableTheLocalLRep();
 		Given.iClearTheLocalStorageFromRtaRestart();
 
 		Then.iShouldSeeStartRtaButton();

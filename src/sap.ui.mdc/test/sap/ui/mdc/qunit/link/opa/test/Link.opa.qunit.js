@@ -25,7 +25,6 @@ sap.ui.define([
 	opaTest("When I click on a Link with 'beforeNavigationCallback', I should see a popup to confirm the navigation", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html");
 
-		Given.iEnableTheLocalLRep();
 		Given.iClearTheLocalStorageFromRtaRestart();
 
 		Then.iShouldSeeVisibleColumnsInOrder("sap.m.Column", [
