@@ -150,7 +150,7 @@
 						<uxap:ObjectPageSection id="ObjectPageSectionWithSmartForm" title="{SectionTitle4}">
 							<uxap:ObjectPageSubSection>
 								<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
-									<smartForm:Group id="MainFormExpandable.FirstGroup" label="1. Group">
+									<smartForm:Group id="MainFormExpandable.FirstGroup" title="1. Group">
 										<smartForm:GroupElement label="One Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton" >
 											<TextArea id="textarea1" value="CreatedByUser" />
 										</smartForm:GroupElement>
@@ -162,7 +162,7 @@
 											<Button id="button2" text="No Binding" />
 										</smartForm:GroupElement>
 									</smartForm:Group>
-									<smartForm:Group label="2. Group" id="MainFormExpandable.SecondGroup">
+									<smartForm:Group title="2. Group" id="MainFormExpandable.SecondGroup">
 										<smartForm:GroupElement label="Two Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
 											<Button id="button3" text="buttontext 2" />
 											<TextArea id="textarea3" value="Some Text" />

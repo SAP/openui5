@@ -94,7 +94,7 @@
 
 			<Panel expandable="true" headerText="Panel with expandable SmartForm" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
-					<smartForm:Group id="MainFormExpandable.GeneralLedgerDocument" label="General Ledger Document" expandable="true">
+					<smartForm:Group id="MainFormExpandable.GeneralLedgerDocument" title="General Ledger Document" expandable="true">
 						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.Name" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocument}"/>
 						</smartForm:GroupElement>
@@ -142,7 +142,7 @@
 							<smartField:SmartField value="{RequestedDeliveryDate}" />
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group label="Dates" id="MainFormExpandable.Dates" expandable="true">
+					<smartForm:Group title="Dates" id="MainFormExpandable.Dates" expandable="true">
 						<smartForm:GroupElement label="Not Adaptable" id="Dates.NotAdaptable" sap.ui.dt:designtime="not-adaptable">
 							<Text text="My field can't be adapted" id="NotAdaptable" />
 						</smartForm:GroupElement>
@@ -173,7 +173,7 @@
 							<Text text="settings action dialog includes another dialog can be opened by selection control. Both dialogs shouldn't be adaptable" id="customSetting.Test" />
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group label="Reversal" id="MainFormExpandable.Reversal">
+					<smartForm:Group title="Reversal" id="MainFormExpandable.Reversal">
 						<smartForm:GroupElement label="Storniert mit" id="Reversal.ReversalDocument">
 							<smartField:SmartField value="{ReverseDocument}" />
 						</smartForm:GroupElement>
@@ -357,15 +357,12 @@
 
 			<Panel expandable="true" headerText="Panel with SmartForm without stable IDs" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm title="SmartForm without stable ids" entityType="Header, Tax">
-					<smartForm:layout>
-						<smartForm:Layout columnsL="2" breakpointL="900" />
-					</smartForm:layout>
-					<smartForm:Group label="General Ledger Document" >
+					<smartForm:Group title="General Ledger Document" >
 						<smartForm:GroupElement label="Ship-to-Party">
 							<smartField:SmartField value="{CompanyCode}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group label="Dates" >
+					<smartForm:Group title="Dates" >
 						<smartForm:GroupElement label="BLA42" >
 							<smartField:SmartField value="{DocumentDate}" />
 						</smartForm:GroupElement>
@@ -387,8 +384,7 @@
 
 			<Panel id="smartFilterLayout" expandable="true" headerText="Panel with SmartFilterBar / SmartTable" width="auto" class="sapUiResponsiveMargin">
 				<Button id="toggleUpdateMode" text="Change to 'LiveMode'" press="toggleUpdateMode"></Button>
-				<smartFilterBar:SmartFilterBar id="smartFilterBar"
-											   entityType="LineItems">
+				<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="LineItems">
 					<smartFilterBar:controlConfiguration>
 						<smartFilterBar:ControlConfiguration
 								key="MyOwnFilterField" index="1" label="Custom Filter Field"
@@ -420,12 +416,12 @@
 
 			<Panel expandable="true" headerText="Panel with SmartForm" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">
-					<smartForm:Group id="SmartFormGroup01" label="SmartForm Group 01">
+					<smartForm:Group id="SmartFormGroup01" title="SmartForm Group 01">
 						<smartForm:GroupElement id="SmartFormGroup01.CompanyCodeName" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{CompanyCodeName}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group id="SmartFormGroup02" label="SmartForm Group 02" >
+					<smartForm:Group id="SmartFormGroup02" title="SmartForm Group 02" >
 						<smartForm:GroupElement id="SmartFormGroup01.CreationTime" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{CreationTime}"/>
 						</smartForm:GroupElement>
@@ -437,14 +433,6 @@
 							<Button text="No Binding"></Button>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group id="SmartFormGroup03" label="SmartForm Group 03 with GridData ('L6 M6 S6')">
-						<smartForm:layout>
-							<sap.ui.layout:GridData span="L6 M6 S6" />
-						</smartForm:layout>
-						<smartForm:GroupElement id="SmartFormGroup01.ReferenceDocumentTypeName" >
-							<smartField:SmartField editable="true" contextEditable="true" value="{ReferenceDocumentTypeName}"/>
-						</smartForm:GroupElement>
-					</smartForm:Group>
 				</smartForm:SmartForm>
 			</Panel>
 
@@ -453,12 +441,12 @@
 					<smartForm:layout>
 						<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
 					</smartForm:layout>
-					<smartForm:Group id="SmartForm02Group01" label="SmartForm Group 01" >
+					<smartForm:Group id="SmartForm02Group01" title="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentType" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentType}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group id="SmartForm02Group02" label="SmartForm Group 02">
+					<smartForm:Group id="SmartForm02Group02" title="SmartForm Group 02">
 						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentStatus" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentStatus}"/>
 						</smartForm:GroupElement>
@@ -473,54 +461,20 @@
 			<Panel expandable="true" headerText="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="SmartForm03" title="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" editable="true" entityType="Header" ignoredFields="TransactionCode">
 					<smartForm:layout>
-						<smartForm:Layout gridDataSpan="L1 M1 S1" />
 						<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
 					</smartForm:layout>
-					<smartForm:Group id="SmartForm03Group01" label="SmartForm Group 01" >
+					<smartForm:Group id="SmartForm03Group01" title="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm03Group01.AlternativeReferenceDocument" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AlternativeReferenceDocument}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group id="SmartForm03Group02" label="SmartForm Group 02">
+					<smartForm:Group id="SmartForm03Group02" title="SmartForm Group 02">
 						<smartForm:GroupElement id="SmartForm03Group01.CoCodeCurrency" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{CoCodeCurrency}"/>
 							<smartField:SmartField editable="true" contextEditable="true" value="{TransactionCurrency}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</Panel>
-
-			<Panel expandable="true" headerText="Panel with Form with GridLayout" width="auto" class="sapUiResponsiveMargin">
-				<form:Form id="LayoutFormGeneralFormGridLayout" width="100%" title="GridLayout Form - all actions should be disabled">
-					<form:layout>
-						<form:GridLayout/>
-					</form:layout>
-
-					<form:formContainers>
-						<form:FormContainer id="LayoutFormGeneralFormContainerGrid" title="General">
-							<form:formElements>
-								<form:FormElement id="LayoutFormGeneralLedgerDocumentLabelGrid" label="Accounting Document">
-									<form:fields>
-										<Text id="LayoutFormGeneralLedgerDocumentTextGrid" text="{AccountingDocument}"/>
-									</form:fields>
-								</form:FormElement>
-
-								<form:FormElement id="LayoutFormGeneralLedgerCompanyCodeLabelGrid" label="Company Code">
-									<form:fields>
-										<Text id="LayoutFormGeneralLedgerCompanyCodeTextGrid" text="{CompanyCode}"/>
-									</form:fields>
-								</form:FormElement>
-
-								<form:FormElement id="LayoutFormGeneralLedgerCreatedByLabelGrid" label="Created by">
-									<form:fields>
-										<Text id="LayoutFormGeneralLedgerCreatedByTextGrid" text="{CreatedByUserName}"/>
-									</form:fields>
-								</form:FormElement>
-							</form:formElements>
-						</form:FormContainer>
-					</form:formContainers>
-
-				</form:Form>
 			</Panel>
 
 			<Panel

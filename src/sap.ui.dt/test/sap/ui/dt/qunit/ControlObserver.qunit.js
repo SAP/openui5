@@ -45,6 +45,7 @@ function (
 				done();
 			});
 
+			this.oButton.invalidate();
 			this.oButton.rerender();
 		});
 	});

@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
-	"sap/base/util/ObjectPath"
+	"sap/ui/base/ManagedObject"
 ], function (
-	ManagedObject,
-	ObjectPath
+	ManagedObject
 ) {
 	"use strict";
 
@@ -78,14 +76,24 @@ sap.ui.define([
 		window.clearTimeout(this._iTimeout);
 		this._bNotSupported = false;
 		this._bError = false;
-
-		var oElement = ObjectPath.get(this.getType() || "");
-		try {
-			return oElement.getMetadata().loadDesignTime();
-		} catch (e) {
-			this._bError = true;
-			return Promise.reject(e);
-		}
+		return new Promise(function(fnResolve, fnReject) {
+			sap.ui.require(
+				[this.getType().replaceAll(".", "/")],
+				function(oModule) {
+					fnResolve(oModule);
+				},
+				function(oError) {
+					fnReject(oError);
+				}
+			);
+		}.bind(this))
+			.then(function(oElement) {
+				return oElement.getMetadata().loadDesignTime();
+			})
+			.catch(function(oError) {
+				this._bError = true;
+				return Promise.reject(oError);
+			});
 	};
 
 

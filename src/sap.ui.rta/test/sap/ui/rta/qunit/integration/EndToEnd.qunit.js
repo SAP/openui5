@@ -375,7 +375,7 @@ sap.ui.define([
 								if (oFirstExecutedCommand &&
 									oFirstExecutedCommand.getName() === "rename") {
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
-										assert.strictEqual(this.oDatesGroup.getLabel(), "Test", "then title of the group is Test");
+										assert.strictEqual(this.oDatesGroup.getTitle(), "Test", "then title of the group is Test");
 										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 										fnResolveOnCommandAdded();

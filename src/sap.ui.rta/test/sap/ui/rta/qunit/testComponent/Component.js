@@ -22,7 +22,7 @@ sap.ui.define([
 				id: this.createId("myView"),
 				viewName: "testComponent.View",
 				type: ViewType.XML,
-				async: false // test timing
+				async: true
 			});
 
 			return view;
