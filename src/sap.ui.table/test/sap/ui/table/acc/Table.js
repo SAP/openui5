@@ -149,7 +149,7 @@ sap.ui.define([
 
 	// sap.m.Checkbox
 	oControl = new CheckBox({selected: "{checked}", text: "{lastName}"});
-	oColumn = new Column({label: new Label({text: "Kilo"}), template: oControl, width: "50px"});
+	oColumn = new Column({label: new Label({text: "Kilo"}), template: oControl, width: "150px"});
 	oTable.addColumn(oColumn);
 
 	// sap.m.Link

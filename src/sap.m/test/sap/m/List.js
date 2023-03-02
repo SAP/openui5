@@ -940,7 +940,8 @@ sap.ui.define([
 					type: "Navigation",
 					unread : true,
 					counter: 1,
-					press: handlePress
+					press: handlePress,
+					wrapping: true
 				}).data("approved", false),
 				new StandardListItem({
 					title : "Tracy Thompson",
@@ -952,7 +953,8 @@ sap.ui.define([
 					type: "Navigation",
 					unread : true,
 					counter: 3,
-					press: handlePress
+					press: handlePress,
+					wrapping: true
 				}).data("approved", false),
 				new StandardListItem({
 					title : "Steven John Parker",
@@ -962,7 +964,8 @@ sap.ui.define([
 					type: "Navigation",
 					unread : true,
 					counter: 2,
-					press: handlePress
+					press: handlePress,
+					wrapping: true
 				}).data("approved", false)
 			]
 		}), oSwipeList2 = new List({
@@ -1494,7 +1497,8 @@ sap.ui.define([
 		title : "{title}",
 		type : "{type}",
 		unread: "{unread}",
-		press : handlePress
+		press : handlePress,
+		wrapping: true
 	});
 
 	var oItemTemplateStandardThumb = new StandardListItem({
@@ -1509,7 +1513,8 @@ sap.ui.define([
 		selected: "{selected}",
 		info: "{info}",
 		infoState: "{infoState}",
-		press : handlePress
+		press : handlePress,
+		wrapping: true
 	});
 
 	var oItemTemplateStandardIcon = new StandardListItem({
@@ -1524,7 +1529,8 @@ sap.ui.define([
 		info: "{info}",
 		infoState: "{infoState}",
 		detailPress : handleDetailPress,
-		press: handlePress
+		press: handlePress,
+		wrapping: true
 	});
 
 	var oItemTemplateStandardTitle = new StandardListItem({
@@ -1535,7 +1541,8 @@ sap.ui.define([
 		infoState: "{infoState}",
 		activeIcon: "{activeIcon}",
 		unread: "{unread}",
-		press : handlePress
+		press : handlePress,
+		wrapping: true
 	});
 
 	var oItemTemplateStandardNoImage = new StandardListItem({
@@ -1543,7 +1550,8 @@ sap.ui.define([
 		description : "{description}",
 		type : "{type}",
 		unread: "{unread}",
-		press : handlePress
+		press : handlePress,
+		wrapping: true
 	});
 
 	var oItemTemplateStandardAvatar = new StandardListItem({
@@ -1563,7 +1571,8 @@ sap.ui.define([
 			press: function(){MessageToast.show("Avatar pressed");}
 		}),
 		unread: "{unread}",
-		press : handlePress
+		press : handlePress,
+		wrapping: true
 	});
 
 	var oItemTemplateDisplay = new DisplayListItem({
@@ -1607,7 +1616,7 @@ sap.ui.define([
 								{path: "city"}
 							],
 			formatter: function(firstName, lastName, age, city) {
-					return "<div><div>Name: " + firstName + " " + lastName
+					return "<div style='padding: 1rem;'><div>Name: " + firstName + " " + lastName
 					+ "</div><div>Age: " + age + "</div><div>City: " + city + "</div></div>";
 			}
 			}}),
@@ -1622,7 +1631,8 @@ sap.ui.define([
 		activeIcon: "{activeIcon}",
 		type : "{type}",
 		unread: "{unread}",
-		press : handlePress
+		press : handlePress,
+		wrapping: true
 	});
 
 
@@ -1642,7 +1652,7 @@ sap.ui.define([
 			{
 				inset : false,
 				showUnread: true,
-				backgroundDesign: "Transparent",
+				backgroundDesign: "Solid",
 				'delete': deleteItem,
 				headerText : "Travel [StandardListThumb]",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
@@ -1905,7 +1915,8 @@ sap.ui.define([
 					key : "xyz",
 					value: "detailPage"
 				})
-			]
+			],
+			wrapping: true
 		});
 		oListStandardThumb.addItem(addedItem);
 	}});
@@ -2059,10 +2070,12 @@ sap.ui.define([
 		jQuery.each(data,function(iIndex, oEntry){
 
 			if (oEntry == deleteId) {
-			data.splice(iIndex, 1);
-			return false;
+				data.splice(iIndex, 1);
+				MessageToast.show("List item deleted");
+				return false;
 			}
-	});
+		}
+	);
 	model.setData(model.getData());
 	}
 

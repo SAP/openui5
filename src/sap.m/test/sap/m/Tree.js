@@ -1034,6 +1034,7 @@ sap.ui.define([
 
 	var oPage = new Page("TreeTest", {
 		title : "Test Page for sap.m.Tree - JSON",
+		titleLevel: "H1",
 		content : [oTree],
 		footer : new OverflowToolbar({
 			content: [

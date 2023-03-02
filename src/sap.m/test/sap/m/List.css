@@ -4,11 +4,11 @@
 	padding: 3px 6px;
 }
 
-.SmallPaddingBegin {
+.sapMCLI.SmallPaddingBegin {
 	padding-left: 1rem;
 }
 
-html[dir=rtl] .SmallPaddingBegin {
+html[dir=rtl] .sapMCLI.SmallPaddingBegin {
 	padding-right: 1rem;
 	padding-left: 0;
 }
