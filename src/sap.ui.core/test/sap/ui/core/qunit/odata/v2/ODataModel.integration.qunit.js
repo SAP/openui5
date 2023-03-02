@@ -6784,6 +6784,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: Messages returned by a function import for an entity contained in a relative
 	// collection don't get the correct full target without a location header.
 	// JIRA: CPOUI5MODELS-230
+	// Scenario 2: Function import returns a complex type with a message for an entity.
+	// Use the entity's deep path for which the function is called as the root for messages.
+	// BCP: 2380037458
 	QUnit.test("Messages: function import for relative list entry; no location", function (assert) {
 		var oModel = createSalesOrdersModelMessageScope(),
 			oNoteError = this.createResponseMessage("('1')/Note"),
@@ -6834,21 +6837,19 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
-					requestUri : "SalesOrder_Confirm?SalesOrderID='1'"
+					requestUri : "SalesOrder_FixItems?SalesOrderID='1'"
 				}, {
-					__metadata : {uri : "SalesOrderSet('1')"},
-					SalesOrderID : "1"
+					__metadata : {type : "gwsample_basic.CT_String"},
+					String : "foo bar"
 				}, {
 					"sap-message" : getMessageHeader([oGrossAmountError, oToItem20QuantityError])
 				})
 				.expectMessage(oGrossAmountError, "/SalesOrderSet('1')/",
-					undefined, true)
+					"/BusinessPartnerSet('100')/ToSalesOrders('1')/", true)
 				.expectMessage(oItem20QuantityError, "/SalesOrderLineItemSet",
-					"/SalesOrderSet('1')/ToLineItems")
-				.expectMessage(oItem10NoteError, "/SalesOrderLineItemSet",
 					"/BusinessPartnerSet('100')/ToSalesOrders('1')/ToLineItems");
 
-			oPromise = oModel.callFunction("/SalesOrder_Confirm", {
+			oPromise = oModel.callFunction("/SalesOrder_FixItems", {
 				method : "POST",
 				refreshAfterChange : false,
 				urlParameters : {
