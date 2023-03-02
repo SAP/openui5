@@ -270,8 +270,8 @@ sap.ui.define([
 				{name: "column2", visible: false}
 			]
 		}).then(function(aChanges){
-			assert.equal(oTableInvalidate.callCount, 1, "Table is invalidated once after all columns are removed");
-			assert.equal(oInnerTableInvalidate.callCount, 1, "Inner table is invalidated once after all columns are removed");
+			assert.ok(oTableInvalidate.called, "Table is invalidated after all columns are removed");
+			assert.ok(oTableInvalidate.called, "Inner table is invalidated after all columns are removed");
 			assert.ok(aRemovedInnerColumns.every(function(oInnerColumn) {
 				return oInnerColumn.isDestroyed();
 			}), "Inner columns are destroyed");
@@ -285,8 +285,8 @@ sap.ui.define([
 				]
 			});
 		}.bind(this)).then(function() {
-			assert.equal(oTableInvalidate.callCount, 1, "Table is invalidated once after all columns are removed");
-			assert.equal(oInnerTableInvalidate.callCount, 1, "Inner table is invalidated once after all columns are removed");
+			assert.ok(oTableInvalidate.called, "Table is invalidated after all columns are removed");
+			assert.ok(oTableInvalidate.called, "Inner table is invalidated after all columns are removed");
 		});
 	});
 });

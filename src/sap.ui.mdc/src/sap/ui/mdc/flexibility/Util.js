@@ -36,7 +36,12 @@ sap.ui.define([
 			oControl.iSuppressInvalidate = 1;
 			Engine.getInstance().waitForChanges(oControl).then(function() {
 				oControl.iSuppressInvalidate = 0;
-				oControl.invalidate("InvalidationSuppressedByMDCFlex");
+				oControl.findElements(false, function(oElement) {
+					if (oElement.isA("sap.ui.core.Control")) {
+						oElement.invalidate();
+					}
+				});
+				oControl.invalidate();
 			});
 		}
 	}
