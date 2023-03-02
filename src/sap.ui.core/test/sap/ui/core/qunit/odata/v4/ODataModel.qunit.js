@@ -537,6 +537,9 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	/**
+	 * @deprecated since 1.39.0
+	 */
 	QUnit.test("requestCanonicalPath", function (assert) {
 		var oModel = this.createModel(),
 			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42");
@@ -860,6 +863,14 @@ sap.ui.define([
 		assert.throws(function () { //TODO implement
 			oModel.isList();
 		}, new Error("Unsupported operation: v4.ODataModel#isList"));
+	});
+
+	//*********************************************************************************************
+	/**
+	 * @deprecated since 1.88.0
+	 */
+	QUnit.test("forbidden & deprecated", function (assert) {
+		var oModel = this.createModel();
 
 		assert.throws(function () {
 			oModel.setLegacySyntax();
@@ -2470,7 +2481,7 @@ sap.ui.define([
 		assert.strictEqual(oUI5Message.getTechnical(), "technical");
 		assert.strictEqual(oUI5Message.processor, oModel);
 		assert.strictEqual(oUI5Message.getPersistent(), true);
-		assert.strictEqual(oUI5Message.getTarget(), "");
+		assert.strictEqual(oUI5Message.getTargets()[0], "");
 		assert.strictEqual(oUI5Message.getTechnicalDetails(), "~technicalDetails~");
 	});
 
@@ -2518,7 +2529,7 @@ sap.ui.define([
 		oUI5Message = oModel.createUI5Message(oRawMessage, "~path~");
 
 		assert.strictEqual(oUI5Message.getDescriptionUrl(), "~absoluteLongtextUrl~");
-		assert.strictEqual(oUI5Message.getTarget(), oRawMessage.target
+		assert.strictEqual(oUI5Message.getTargets()[0], oRawMessage.target
 			? "/~path~/~normalizedTarget~"
 			: "");
 	});

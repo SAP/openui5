@@ -39536,11 +39536,11 @@ sap.ui.define([
 			assert.strictEqual(aMessages.length, 2);
 			assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
 			assert.strictEqual(aMessages[0].getCode(), "CODE1");
-			assert.strictEqual(aMessages[0].getTarget(), "/SalesOrderList('1')/Note");
+			assert.strictEqual(aMessages[0].getTargets()[0], "/SalesOrderList('1')/Note");
 			assert.strictEqual(aMessages[0].getType(), "Warning");
 			assert.strictEqual(aMessages[1].getMessage(), "Some unbound info");
 			assert.strictEqual(aMessages[1].getCode(), "CODE2");
-			assert.strictEqual(aMessages[1].getTarget(), "");
+			assert.strictEqual(aMessages[1].getTargets()[0], "");
 			assert.strictEqual(aMessages[1].getType(), "Information");
 
 			return new Promise(function (resolve) {
