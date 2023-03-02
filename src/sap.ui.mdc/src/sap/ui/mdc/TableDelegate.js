@@ -11,13 +11,15 @@ sap.ui.define([
 	"./library",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/library",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/UriParameters"
 ], function(
 	AggregationBaseDelegate,
 	library,
 	Sorter,
 	coreLibrary,
-	Core
+	Core,
+	UriParameters
 ) {
 	"use strict";
 
@@ -241,7 +243,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TableDelegate.isExportSupported = function(oTable) {
-		return !oTable._isOfType(TableType.TreeTable);
+		return !oTable._isOfType(TableType.TreeTable) || UriParameters.fromURL(window.location.href).has("sap-ui-xx-mdc-tree-export");
 	};
 
 	/**
