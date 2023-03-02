@@ -6,6 +6,7 @@ sap.ui.define([
 	"./ObjectContentRenderer",
 	"sap/ui/integration/library",
 	"sap/m/library",
+	"sap/m/IllustratedMessageType",
 	"sap/m/FlexItemData",
 	"sap/m/HBox",
 	"sap/m/VBox",
@@ -43,6 +44,7 @@ sap.ui.define([
 	ObjectContentRenderer,
 	library,
 	mLibrary,
+	IllustratedMessageType,
 	FlexItemData,
 	HBox,
 	VBox,
@@ -140,7 +142,10 @@ sap.ui.define([
 		var oCard = this.getCardInstance();
 
 		if (!this._hasData()) {
-			oCard._handleError("No items available", true);
+			oCard._handleError({
+				type: IllustratedMessageType.NoData,
+				title: this.getParent().getTranslatedText("CARD_NO_ITEMS_ERROR_CHART")
+			});
 		}
 
 		this._getForm().updateModel();

@@ -339,6 +339,11 @@ sap.ui.define([
 					only: ["sap/ui/integration/util/Destinations"]
 				}
 			},
+			"util/ErrorHandler": {
+				coverage: {
+					only: ["sap/ui/integration/util/ErrorHandler"]
+				}
+			},
 			"util/CsrfTokenHandler": {
 				coverage: {
 					only: ["sap/ui/integration/util/CsrfTokenHandler"]

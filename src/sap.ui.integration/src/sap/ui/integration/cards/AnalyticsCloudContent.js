@@ -8,8 +8,16 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/core/HTML",
 	"sap/ui/integration/util/BindingResolver",
+	"sap/m/IllustratedMessageType",
 	"sap/base/Log"
-], function (AnalyticsCloudContentRenderer, BaseContent, library, HTML, BindingResolver, Log) {
+], function (
+	AnalyticsCloudContentRenderer,
+	BaseContent,
+	library,
+	HTML,
+	BindingResolver,
+	IllustratedMessageType,
+	Log) {
 	"use strict";
 
 	var ActionArea = library.CardActionArea;
@@ -142,7 +150,11 @@ sap.ui.define([
 
 		// is Highcharts library available
 		if (!window.Highcharts) {
-			this.handleError("There was a problem with loading Highcharts library. Could not initialize AnalyticsCloud card content.");
+			this.handleError({
+				type: IllustratedMessageType.ErrorScreen,
+				title: oCard.getTranslatedText("CARD_DATA_LOAD_ERROR"),
+				description: oCard.getTranslatedText("CARD_ERROR_HIGHCHARTS_DESCRIPTION")
+			});
 			return;
 		}
 

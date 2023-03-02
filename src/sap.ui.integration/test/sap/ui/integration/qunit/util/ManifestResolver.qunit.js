@@ -413,14 +413,18 @@ sap.ui.define([
 				var oExpectedResult = {
 					"message": {
 						"type": "error",
-						"title": oResourceBundle.getText("CARD_DATA_LOAD_ERROR"),
-						"illustrationType": "sapIllus-UnableToLoad",
-						"illustrationSize": "Auto"
+						"title": "404 " + oResourceBundle.getText("CARD_ERROR_REQUEST_NOTFOUND_TITLE"),
+						"illustrationType": "sapIllus-PageNotFound",
+						"illustrationSize": "Auto",
+						"description": oResourceBundle.getText("CARD_ERROR_REQUEST_DESCRIPTION")
 					}
-				};
+				},
+				oResult = oRes["sap.card"].content;
+
+				delete oResult.message.details;
 
 				// Assert
-				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "The content contains a message when there is error with data loading.");
+				assert.deepEqual(oResult, oExpectedResult, "The content contains a message when there is error with data loading.");
 
 				oCard.destroy();
 			});
@@ -638,10 +642,10 @@ sap.ui.define([
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"message": {
+						"type": "noData",
 						"illustrationSize": "Auto",
-						"illustrationType": "sapIllus-NoData",
-						"title": oResourceBundle.getText("CARD_NO_ITEMS_ERROR_LISTS"),
-						"type": "noData"
+						"illustrationType": "sapIllus-NoEntries",
+						"title": oResourceBundle.getText("CARD_NO_ITEMS_ERROR_LISTS")
 					}
 				};
 
@@ -1441,10 +1445,10 @@ sap.ui.define([
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"message": {
+						"type": "noData",
 						"illustrationSize": "Auto",
 						"illustrationType": "sapIllus-NoEntries",
-						"title": oResourceBundle.getText("CARD_NO_ITEMS_ERROR_LISTS"),
-						"type": "noData"
+						"title": oResourceBundle.getText("CARD_NO_ITEMS_ERROR_LISTS")
 					}
 				};
 

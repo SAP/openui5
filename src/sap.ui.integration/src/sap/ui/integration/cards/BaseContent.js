@@ -396,7 +396,10 @@ sap.ui.define([
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
-				this.handleError(oEvent.getParameter("message"));
+				this.handleError({
+					requestErrorParams: oEvent.getParameters(),
+					requestSettings: this._oDataProvider.getSettings()
+				});
 				this.onDataRequestComplete();
 			}.bind(this));
 
@@ -582,14 +585,12 @@ sap.ui.define([
 		return this._bReady;
 	};
 
-	/**
-	 * @protected
-	 * @param {string} sLogMessage Message that will be logged.
-	 */
-	BaseContent.prototype.handleError = function (sLogMessage) {
-		this.fireEvent("_error", {
-			logMessage: sLogMessage
-		});
+	/*
+	* @protected
+	@ param {object} mErrorInfo The error information object.
+	*/
+	BaseContent.prototype.handleError = function (mErrorInfo) {
+		this.fireEvent("_error", { errorInfo: mErrorInfo });
 	};
 
 	BaseContent.prototype.setServiceManager = function (oServiceManager) {

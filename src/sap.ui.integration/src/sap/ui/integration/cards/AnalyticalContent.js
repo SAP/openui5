@@ -4,6 +4,7 @@
 sap.ui.define([
 	"./AnalyticalContentRenderer",
 	"./BaseContent",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/base/Log",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function (
 	AnalyticalContentRenderer,
 	BaseContent,
+	IllustratedMessageType,
 	library,
 	BindingResolver,
 	Log,
@@ -151,8 +153,12 @@ sap.ui.define([
 					&& vizDS._FlatTableD._data
 					&& Array.isArray(vizDS._FlatTableD._data)
 					&& (!vizDS._FlatTableD._data.length);
+
 			if (noData) {
-				this.getParent()._handleError("No data available", true);
+				this.getParent()._handleError({
+					type: IllustratedMessageType.NoEntries,
+					title: this.getParent().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS")
+				});
 			}
 		}
 	};

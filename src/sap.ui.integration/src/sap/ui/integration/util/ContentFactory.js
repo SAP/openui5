@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"./BaseFactory",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/AnalyticalContent",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/WebPageContent"
 ], function (
 	BaseFactory,
+	IllustratedMessageType,
 	CardActions,
 	AdaptiveContent,
 	AnalyticalContent,
@@ -87,7 +89,12 @@ sap.ui.define([
 				return true;
 			}).catch(function (sError) {
 				if (sError) {
-					oCard._handleError(sError);
+					oCard._handleError({
+						type: IllustratedMessageType.ErrorScreen,
+						title: oCard.getTranslatedText("CARD_DATA_LOAD_DEPENDENCIES_ERROR"),
+						description: oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION"),
+						details: sError
+					});
 				}
 				return false;
 			})

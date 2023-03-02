@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/integration/util/BindingResolver",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/library",
 	"sap/base/Log",
 	"sap/ui/model/Sorter"
 ], function (
 	BaseContent,
 	BindingResolver,
+	IllustratedMessageType,
 	library,
 	Log,
 	Sorter
@@ -242,8 +244,11 @@ sap.ui.define([
 			sPath = oBindingInfo.getPath(),
 			aItems = oModel.getProperty(sPath);
 
-		if (aItems && aItems.length === 0){
-			this.getParent()._handleError("No items available", true);
+		if (aItems && aItems.length === 0) {
+			this.getParent()._handleError({
+				type: IllustratedMessageType.NoEntries,
+				title: this.getParent().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS")
+			});
 		}
 	};
 

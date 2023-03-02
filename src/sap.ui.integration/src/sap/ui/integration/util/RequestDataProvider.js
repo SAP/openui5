@@ -211,7 +211,7 @@ sap.ui.define([
 				}.bind(this)
 			).fail(
 				function (jqXHR, sTextStatus, sError) {
-					var aError = [sError, jqXHR];
+					var aError = [sError, jqXHR, oRequest];
 
 					if (this.bIsDestroyed) {
 						reject("RequestDataProvider is already destroyed while error in the response occurred.");

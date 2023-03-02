@@ -2648,7 +2648,9 @@ sap.ui.define([
 		QUnit.test("Handler call", function (assert) {
 			// Arrange
 			var oLogSpy = sinon.spy(Log, "error"),
-				sLogMessage = "Log this error in the console.";
+				mErrorInfo = {
+					description: "Log this error in the console."
+				};
 
 			this.oCard.setManifest(oManifest_ListCard);
 			this.oCard.setDataMode(CardDataMode.Active);
@@ -2656,22 +2658,23 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Act
-			this.oCard._handleError(sLogMessage);
+			this.oCard._handleError(mErrorInfo);
 			Core.applyChanges();
 
 			// Assert
-			assert.ok(oLogSpy.calledOnceWith(sLogMessage), "Provided message should be logged to the console.");
+			assert.ok(oLogSpy.calledOnceWith(mErrorInfo.description), "Provided message should be logged to the console.");
 
 			// Clean up
 			oLogSpy.restore();
 		});
 
 		QUnit.test("IllustratedMessage should be set by developer", function (assert) {
-
 			// Arrange
 			var done = assert.async();
+
 			this.oCard.attachEventOnce("_ready", function () {
 					Core.applyChanges();
+
 					var oErrorConfiguration = {
 						"noData": {
 							"type": "NoEntries",
@@ -2680,7 +2683,10 @@ sap.ui.define([
 							"size": "Auto"
 						}
 					};
-					var oFlexBox = this.oCard._getIllustratedMessage(oErrorConfiguration, true),
+
+					var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
+							type: IllustratedMessageType.NoEntries
+						}, oErrorConfiguration),
 						oIllustratedMessage = oFlexBox.getItems()[0];
 
 					// Assert
@@ -2699,15 +2705,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("IllustratedMessage should be used for no data case in List Card", function (assert) {
-
 			// Arrange
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oFlexBox = this.oCard._getIllustratedMessage(),
+				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
+						type: IllustratedMessageType.NoEntries
+					}),
 					oIllustratedMessage = oFlexBox.getItems()[0];
 				// Assert
-				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.UnableToLoad, "Default message type is used for list");
+				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Default message type is used for list");
 
 				// Clean up
 				done();
@@ -2723,7 +2730,9 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oFlexBox = this.oCard._getIllustratedMessage(undefined, true),
+				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
+						type: IllustratedMessageType.NoData
+					}),
 					oIllustratedMessage = oFlexBox.getItems()[0];
 				// Assert
 				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for List Card");
@@ -2743,7 +2752,9 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oFlexBox = this.oCard._getIllustratedMessage(undefined, true),
+				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
+						type: IllustratedMessageType.NoEntries
+					}),
 					oIllustratedMessage = oFlexBox.getItems()[0];
 
 				// Assert
@@ -2764,7 +2775,9 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oFlexBox = this.oCard._getIllustratedMessage(undefined, true),
+				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
+						type: IllustratedMessageType.NoData
+					}),
 					oIllustratedMessage = oFlexBox.getItems()[0];
 
 				// Assert
@@ -2841,7 +2854,7 @@ sap.ui.define([
 						"size": "Auto"
 					}
 				};
-				var oFlexBox = this.oCard._getIllustratedMessage(oErrorConfiguration, true);
+				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({}, oErrorConfiguration);
 
 				// Assert
 				assert.strictEqual(initialCardHeight, oFlexBox.getHeight(), "Height of the card content is not changed (Illustrated message is with the same height as the card before the error)");

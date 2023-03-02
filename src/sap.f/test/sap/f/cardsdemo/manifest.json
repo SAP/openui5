@@ -105,6 +105,11 @@
 					"target": "calendarContent"
 				},
 				{
+					"pattern": "cardErrors",
+					"name": "cardErrors",
+					"target": "cardErrors"
+				},
+				{
 					"pattern": "tableContent",
 					"name": "tableContent",
 					"target": "tableContent"
@@ -339,6 +344,11 @@
 				"calendarContent": {
 					"id": "calendarContent",
 					"name": "calendarContent",
+					"level": 1
+				},
+				"cardErrors": {
+					"id": "cardErrors",
+					"name": "cardErrors",
 					"level": 1
 				},
 				"tableContent": {
