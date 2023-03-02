@@ -208,7 +208,6 @@
 	},
 	{
 		"title": "Preview",
-		"description": "To be used only inside the designtime",
 		"route": "preview",
 		"group": "Other Card Examples"
 	},

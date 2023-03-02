@@ -2044,16 +2044,11 @@ sap.ui.define([
 			isSkeleton: function () {
 				return false;
 			},
-			addActiveLoadingProvider: function () {
-
-			},
-			removeActiveLoadingProvider: function () {
-
-			},
-
-			getManifestEntry: function () {
-
-			}
+			addActiveLoadingProvider: function () { },
+			removeActiveLoadingProvider: function () { },
+			getManifestEntry: function () { },
+			getPreviewMode: function () { },
+			getHeight: function () {}
 		});
 
 		oObjectContent.setActions(new CardActions());

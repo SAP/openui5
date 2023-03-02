@@ -169,6 +169,7 @@ sap.ui.define(function () {
 			"cards/AdaptiveCard": {},
 			"cards/AnalyticalCard": {},
 			"cards/CalendarCard": {},
+			"cards/ComponentCard": {},
 			"cards/ListCard": {},
 			"cards/TableCard": {},
 			"cards/ObjectCard": {},

@@ -3,17 +3,21 @@
  */
 
 sap.ui.define([
-	"sap/ui/integration/cards/BaseContent",
+	"./BaseContent",
 	"./ComponentContentRenderer",
+	"sap/ui/integration/library",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component"
 ], function (
 	BaseContent,
 	ComponentContentRenderer,
+	library,
 	ComponentContainer,
 	Component
 ) {
 	"use strict";
+
+	var CardPreviewMode = library.CardPreviewMode;
 
 	/**
 	 * Constructor for a new <code>Component</code> Card Content.
@@ -57,6 +61,12 @@ sap.ui.define([
 		oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
+			return;
+		}
+
+		if (this.getCardInstance().getPreviewMode() === CardPreviewMode.Abstract) {
+			// TODO _updated event is always needed, so that the busy indicator knows when to stop. We should review this for contents which do not have data.
+			this.fireEvent("_actionContentReady");
 			return;
 		}
 

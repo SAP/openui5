@@ -1,19 +1,18 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/library"
+], function (Controller, JSONModel, integrationLibrary) {
 	"use strict";
 
-	return Controller.extend("sap.f.cardsdemo.controller.Preview", {
+	var CardPreviewMode = integrationLibrary.CardPreviewMode;
 
+	return Controller.extend("sap.f.cardsdemo.controller.Preview", {
 		onInit: function () {
-			[
-				"card1",
-				"card2",
-				"card3",
-				"card4"
-			].forEach(function (sCardId) {
-				this.byId(sCardId)._setPreviewMode(true);
-			}.bind(this));
+			this.getView().setModel(new JSONModel({
+				allModes: Object.values(CardPreviewMode),
+				selectedMode: CardPreviewMode.Abstract
+			}), "previewModes");
 		}
 	});
 });

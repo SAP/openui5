@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/base/Log",
 	"sap/ui/integration/Host",
+	"sap/ui/integration/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration"
 ], function (
@@ -20,6 +21,7 @@ sap.ui.define([
 	Card,
 	Log,
 	Host,
+	integrationLibrary,
 	jQuery,
 	Configuration
 ) {
@@ -185,9 +187,80 @@ sap.ui.define([
 			}.bind(this),
 			"Exception is thrown when settingsJson is bound to illegal input"
 		);
+	});
 
-		// Cleanup
-		this.oDataProviderFactory.destroy();
+	QUnit.test("Configuration settings shouldn't be modified", function (assert) {
+		// Arrange
+		var oSettings = {
+			request: {
+				parameters: {
+					reason: "{form>/reason/value}"
+				}
+			},
+			mockData: {
+				json: {}
+			}
+		};
+		var oOriginalSettings = JSON.parse(JSON.stringify(oSettings));
+		this.oCard.setPreviewMode(integrationLibrary.CardPreviewMode.MockData);
+
+		// Act
+		this.oDataProviderFactory.create(oSettings);
+
+		// Assert
+		assert.deepEqual(oSettings, oOriginalSettings, "Settings given to #create method were modified");
+	});
+
+	QUnit.test("'liveDataFallback' event when mock data configuration is missing", function (assert) {
+		// Arrange
+		var oHandlerStub = this.stub();
+		this.oDataProviderFactory.attachEventOnce("liveDataFallback", oHandlerStub);
+		this.oCard.setPreviewMode(integrationLibrary.CardPreviewMode.MockData);
+
+		// Act
+		this.oDataProviderFactory.create({
+			request: {
+				url: "some/url"
+			}
+		});
+
+		// Assert
+		assert.ok(oHandlerStub.called, "'liveDataFallback' should be fired");
+	});
+
+	QUnit.test("'liveDataFallback' event when mock data configuration is provided", function (assert) {
+		// Arrange
+		var oHandlerStub = this.stub();
+		this.oDataProviderFactory.attachEventOnce("liveDataFallback", oHandlerStub);
+		this.oCard.setPreviewMode(integrationLibrary.CardPreviewMode.MockData);
+
+		// Act
+		this.oDataProviderFactory.create({
+			request: {
+				url: "some/url"
+			},
+			mockData: {
+				request: "some/other/url"
+			}
+		});
+
+		// Assert
+		assert.ok(oHandlerStub.notCalled, "'liveDataFallback' should NOT be fired");
+	});
+
+	QUnit.test("'liveDataFallback' event when data configuration is with 'path' only", function (assert) {
+		// Arrange
+		var oHandlerStub = this.stub();
+		this.oDataProviderFactory.attachEventOnce("liveDataFallback", oHandlerStub);
+		this.oCard.setPreviewMode(integrationLibrary.CardPreviewMode.MockData);
+
+		// Act
+		this.oDataProviderFactory.create({
+			path: "/"
+		});
+
+		// Assert
+		assert.ok(oHandlerStub.notCalled, "'liveDataFallback' should NOT be fired");
 	});
 
 	QUnit.module("DataProvider", {

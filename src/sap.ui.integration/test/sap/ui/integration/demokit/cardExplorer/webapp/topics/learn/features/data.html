@@ -108,6 +108,18 @@
 						<td>1.15.0</td>
 						<td>1.65</td>
 					</tr>
+					<tr>
+						<td>mockData</td>
+						<td><a href="#mockDataProperties">MockData</a></td>
+						<td>No</td>
+						<td>
+							Mock data configuration. It is used when the card preview mode is set to "MockData" by the hosting environment.
+							For more information see <a data-demokit-href="#/api/sap.ui.integration.widgets.Card/controlProperties" target="_blank">Card's previewMode property</a>.<br>
+							<b>Note:</b> This property is experimental.
+						</td>
+						<td>1.52.0</td>
+						<td>1.112</td>
+					</tr>
 				</table>
 			</div>
 
@@ -378,6 +390,46 @@
 						<td>The arguments with which the method will be called.</td>
 						<td></td>
 						<td>1.79</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="mockDataProperties" class="boldBlock">MockData Properties (Experimental)</div>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>request</td>
+						<td><a href="#requestProperties">Request</a></td>
+						<td>No</td>
+						<td>An object defining a request.</td>
+						<td>1.52.0</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>json</td>
+						<td>Object</td>
+						<td>No</td>
+						<td>A data object.</td>
+						<td>1.52.0</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>extension</td>
+						<td><a href="#extensionProperties">Extension</a></td>
+						<td>No</td>
+						<td>An object defining which method of an Extension to be called for fetching the data.
+						</td>
+						<td>1.52.0</td>
+						<td>1.112</td>
 					</tr>
 				</table>
 			</div>

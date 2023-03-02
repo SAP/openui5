@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/util/RequestDataProvider"
+	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/library"
 ], function (
 	Card,
-	RequestDataProvider
+	RequestDataProvider,
+	library
 ) {
 	"use strict";
 
@@ -85,4 +87,60 @@ sap.ui.define([
 
 		this.oCard.setManifest(oManifestWithRequest);
 	});
+
+	QUnit.module("Cleanup of internal models", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("Default model", function (assert) {
+		var done = assert.async();
+		assert.expect(3);
+		assert.deepEqual(this.oCard.getModel().getData(), {}, "The default model should be empty");
+
+		this.oCard.attachEventOnce("_ready", function () {
+			// Assert
+			assert.notDeepEqual(this.oCard.getModel().getData(), {}, "The default model should be populated with data");
+
+			this.oCard.attachEventOnce("_ready", function () {
+				// Assert 2
+				assert.deepEqual(this.oCard.getModel().getData(), {}, "The default model should be empty");
+				done();
+			}.bind(this));
+
+			// Act 2
+			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
+		}.bind(this));
+
+		// Act 1
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.cleanup.defaultModel"
+			},
+			"sap.card": {
+				"data": {
+					"json": [{
+						"title": "item 1"
+					}]
+				},
+				"type": "List",
+				"header": {
+					"title": "Available Trainings"
+				},
+				"content": {
+					"item": {
+						"title": "{title}"
+					}
+				}
+			}
+		});
+	});
+
 });

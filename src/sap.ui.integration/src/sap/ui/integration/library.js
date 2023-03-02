@@ -203,6 +203,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Preview modes for <code>{@link sap.ui.integration.widgets.Card}</code>.
+	 * Helpful in scenarios when the end user is choosing or configuring a card.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @experimental since 1.112
+	 * @since 1.112
+	 */
+	thisLib.CardPreviewMode = {
+		/**
+		 * Card displays real data.
+		 * @public
+		 */
+		Off: "Off",
+
+		/**
+		 * Card displays mocked data, loaded using a data request as configured in the manifest.
+		 * @public
+		 */
+		MockData: "MockData",
+
+		/**
+		 * Card displays abstract preview. No data requests are made.
+		 * @public
+		 */
+		Abstract: "Abstract"
+	};
+
+	/**
 	 * Defines the layout type of the List card attributes.
 	 * @enum {string}
 	 * @public

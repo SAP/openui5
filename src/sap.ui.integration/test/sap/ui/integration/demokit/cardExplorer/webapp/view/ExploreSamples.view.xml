@@ -3,9 +3,7 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.f"
-	xmlns:m="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
-	xmlns:editor="sap.ui.codeeditor"
 	xmlns:cardExplorer="sap.ui.demo.cardExplorer.controls">
 	<l:ResponsiveSplitter id="splitView">
 		<l:PaneContainer orientation="Horizontal">
