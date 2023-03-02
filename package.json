@@ -5,13 +5,13 @@
   "private": true,
   "scripts": {
     "start": "node lib/server/testsuiteServer.js",
-    "start-grunt": "grunt serve",
+    "start-grunt": "node lib/checkNodeVersion.js && grunt serve",
     "testsuite": "cross-env OPENUI5_SRV_OPEN=/test-resources/testsuite/testframe.html node lib/server/testsuiteServer.js",
     "sdk": "npm run build-sdk && npm run serve-sdk",
     "build-sdk": "node lib/builder/jsdocBuilder.js",
     "serve-sdk": "ws --compress -d src/testsuite/dist",
     "test": "npm run lint",
-    "lint": "eslint ./src --quiet",
+    "lint": "node lib/checkNodeVersion.js && eslint ./src --quiet",
     "eslint": "eslint",
     "link-all": "wsrun --serial link",
     "unlink-all": "wsrun --serial unlink",
@@ -64,7 +64,8 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "engines": {
-    "node": ">= 10"
+    "node": ">=18.14.0",
+    "npm": ">=9"
   },
   "devDependencies": {
     "@ui5/builder": "^2.11.9",
