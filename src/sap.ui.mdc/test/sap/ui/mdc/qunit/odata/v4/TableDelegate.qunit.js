@@ -1200,7 +1200,7 @@ sap.ui.define([
 			}));
 
 			return this.oTable._fullyInitialized().then(function() {
-				this.oTable.bindRows();
+                this.oTable._rebind();
 				this.oInnerTable = this.oTable._oTable;
 				this.oRowBinding = this.oTable.getRowBinding();
 				this.oSetAggregationSpy = sinon.spy(this.oInnerTable.getDependents()[0], "setAggregationInfo");
@@ -1261,6 +1261,14 @@ sap.ui.define([
 		);
 		assert.ok(this.oRebindSpy.notCalled, "Aggregation binding was not replaced");
 		assert.equal(this.oClearSelectionSpy.callCount, 1, "Table#clearSelection called once");
+
+        this.oTable.setType(TableType.ResponsiveTable);
+        return this.oTable._fullyInitialized().then(function() {
+            this.oTable._rebind(); // Creates the binding
+            this.oClearSelectionSpy.resetHistory();
+            this.oTable._rebind(); // Actual rebind
+            assert.ok(this.oClearSelectionSpy.notCalled, "Table#clearSelection not called if type is 'ResponsiveTable'");
+        }.bind(this));
 	});
 
 	QUnit.test("Update suspended binding", function(assert) {
