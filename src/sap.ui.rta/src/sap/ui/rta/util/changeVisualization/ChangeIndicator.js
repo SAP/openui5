@@ -113,6 +113,10 @@ sap.ui.define([
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiRtaChangeIndicator");
 				oRm.class("sapUiRtaChangeIndicatorChange");
+				var sTooltip = oControl.getTooltip_AsString();
+				if (sTooltip) {
+					oRm.attr("title", sTooltip);
+				}
 				if (oControl.getChanges().length > 4) {
 					oRm.class("sapUiRtaChangeIndicatorColorDark");
 				} else if (oControl.getChanges().length > 1) {
@@ -121,6 +125,13 @@ sap.ui.define([
 					oRm.class("sapUiRtaChangeIndicatorColorLight");
 				}
 				oRm.openEnd();
+				if (sTooltip) {
+					oRm.openStart("span", oControl.getId() + "-tooltip");
+					oRm.class("sapUiInvisibleText");
+					oRm.openEnd();
+					oRm.text(sTooltip);
+					oRm.close("span");
+				}
 				oRm.close("div");
 			}
 		},
@@ -328,8 +339,14 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype.setChanges = function(aChanges) {
+		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 		this.setProperty("changes", aChanges);
 		this._oDetailModel.setData((aChanges || []).reverse().map(formatChangesModelItem.bind(this, this.getOverlayId())));
+		if (aChanges && aChanges.length === 1) {
+			this.setTooltip(oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_INDICATOR_TOOLTIP_SING"));
+		} else if (aChanges) {
+			this.setTooltip(oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_INDICATOR_TOOLTIP_PLUR", [aChanges.length]));
+		}
 	};
 
 	ChangeIndicator.prototype._onSelect = function(oEvent) {
