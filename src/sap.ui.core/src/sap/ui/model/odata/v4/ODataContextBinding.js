@@ -1126,9 +1126,7 @@ sap.ui.define([
 			oPromise;
 
 		if (oContext) {
-			// use absolute path to avoid unnecessary (but poss. failing) path reduction
-			oEntity = oContext.getValue(oContext.getPath());
-
+			oEntity = oContext.getValue();
 			// avoid problems in fetchCanonicalPath (leading to an ODM#reportError)
 			if (oEntity && _Helper.hasPrivateAnnotation(oEntity, "predicate")) {
 				oPromise = oContext.fetchCanonicalPath();
