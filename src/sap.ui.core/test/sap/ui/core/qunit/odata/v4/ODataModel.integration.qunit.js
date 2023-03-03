@@ -2842,8 +2842,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: requestElements on a list binding with only a property from a different entity, so
-	// that the $select is converted to a $expand. Ensure that $select does not become empty.
+	// Scenario: requestContexts on a list binding with only properties from a different entity, so
+	// that all $select entries move to $expand. Ensure that $select does not become empty. Do the
+	// same using a table in the view to see that this produces the same result. (One property must
+	// be bound to get a row template.)
 	QUnit.test("BCP: 2280192214", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -2858,10 +2860,10 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBinding = oModel.bindList("/SalesOrderList", undefined, undefined, undefined,
-					{$select : ["SO_2_BP/BusinessPartnerID"]});
+					{$select : ["SO_2_BP/CompanyName", "SO_2_BP/BusinessPartnerID"]});
 
 			that.expectRequest("SalesOrderList?$select=SO_2_BP"
-					+ "&$expand=SO_2_BP($select=BusinessPartnerID)&$skip=0&$top=3",
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=3",
 					{value : []}
 				);
 
