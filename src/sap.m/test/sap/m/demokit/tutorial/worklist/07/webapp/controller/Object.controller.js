@@ -1,13 +1,14 @@
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/routing/History",
 	"mycompany/myapp/MyWorklistApp/model/formatter",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
 ], function (
-	BaseController, JSONModel, History, formatter, DateFormat, Filter, FilterOperator) {
+	BaseController, JSONModel, UI5Date, History, formatter, DateFormat, Filter, FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("mycompany.myapp.MyWorklistApp.controller.Object", {
@@ -150,7 +151,7 @@ sap.ui.define([
 		 */
 		onPost: function (oEvent) {
 			var oFormat = DateFormat.getDateTimeInstance({style: "medium"});
-			var sDate = oFormat.format(new Date());
+			var sDate = oFormat.format(UI5Date.getInstance());
 			var oObject = this.getView().getBindingContext().getObject();
 			var sValue = oEvent.getParameter("value");
 			var oEntry = {
