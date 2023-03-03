@@ -57,6 +57,44 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "sap.ui.base.Object",
+				"methods": [
+					{
+						"name": "isA",
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "this is T"
+							}
+						},
+						"typeParameters": [
+							{
+								"name": "T",
+								"type": "sap.ui.base.Object",
+								"default": "sap.ui.base.Object"
+							}
+						]
+					},
+					{
+						"name": "isA",
+						"static": true,
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "oObject is T"
+							}
+						},
+						"typeParameters": [
+							{
+								"name": "T",
+								"type": "sap.ui.base.Object",
+								"default": "sap.ui.base.Object"
+							}
+						]
+					}
+				]
 			}
 		]
 	}
