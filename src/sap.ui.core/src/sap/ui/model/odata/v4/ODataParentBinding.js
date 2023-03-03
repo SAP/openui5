@@ -1459,8 +1459,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.updateAggregatedQueryOptions = function (mNewQueryOptions) {
-		var aAllKeys = Object.keys(mNewQueryOptions),
-			mAggregatedQueryOptions = this.mAggregatedQueryOptions,
+		var mAggregatedQueryOptions = this.mAggregatedQueryOptions,
+			aAllKeys = Object.keys(mNewQueryOptions),
 			that = this;
 
 		if (mAggregatedQueryOptions) {
