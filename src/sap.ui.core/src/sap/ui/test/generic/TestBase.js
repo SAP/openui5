@@ -12,6 +12,8 @@ sap.ui.define([
 ], function(BaseObject, Utils, includeStylesheet, Element, require) {
 	"use strict";
 
+	var globalSetOfUndestroyableIDs = new Set();
+
 	/**
 	 * Handles test setup and execution.
 	 * Single controls/elements are to be tested via the specific sub-classes by
@@ -127,9 +129,17 @@ sap.ui.define([
 				includeElements: mParams && mParams.includeElements
 			}).then(function(aClassInfo) {
 				QUnit.module(this.getMetadata().getName() + " Tests - " + this._sLibName, {
-					afterEach: function() {
+					afterEach: function(assert) {
 						Element.registry.forEach(function(oElement, sId) {
-							oElement.destroy();
+							try {
+								oElement.destroy();
+							} catch (error) {
+								// destroy failed for some reason
+								if (!globalSetOfUndestroyableIDs.has(sId)) {
+									globalSetOfUndestroyableIDs.add(sId);
+									assert.notOk(sId, "Destruction of element with id '" + sId + "' failed.");
+								}
+							}
 						});
 					}
 				});
