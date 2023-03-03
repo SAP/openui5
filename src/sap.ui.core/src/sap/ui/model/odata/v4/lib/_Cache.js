@@ -342,25 +342,24 @@ sap.ui.define([
 	/**
 	 * Adds a collection below a transient element.
 	 *
-	 * @param {string} sPath - The collection path
-	 * @param {object} mQueryOptions - The binding's cache query options if it would create a cache;
-	 *   only $select is used to filter the relevant properties from the POST response
-	 * @returns {object[]} The elements collection (either from the initial data or empty)
+	 * @param {string} sPath
+	 *   The collection path
+	 * @param {string[]} [aSelect]
+	 *   The binding's $select if it would create a cache; later used for updateSelected (either
+	 *   taking this aSelect or calculating it from the path)
+	 * @returns {object[]}
+	 *   The elements collection (either from the initial data or empty)
 	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
 	 */
-	_Cache.prototype.addTransientCollection = function (sPath, mQueryOptions) {
+	_Cache.prototype.addTransientCollection = function (sPath, aSelect) {
 		var aElements,
 			aSegments = sPath.split("/"),
 			sName = aSegments.pop(),
 			oParent = this.fetchValue(_GroupLock.$cached, aSegments.join("/")).getResult(),
 			oPostBody = _Helper.getPrivateAnnotation(oParent, "postBody"),
 			that = this;
-
-		function setPostBodyCollection() {
-			aElements.$postBodyCollection = oPostBody[sName] = [];
-		}
 
 		this.checkSharedRequest();
 		if (sName in oParent) {
@@ -370,8 +369,10 @@ sap.ui.define([
 		aElements.$count = aElements.$created = 0;
 		aElements.$byPredicate = {};
 		// allow creating on demand when there is a create in the child list
-		aElements.$postBodyCollection = setPostBodyCollection;
-		aElements.$queryOptions = mQueryOptions;
+		aElements.$postBodyCollection = function () {
+			aElements.$postBodyCollection = oPostBody[sName] = [];
+		};
+		aElements.$select = aSelect;
 		// add the collection type to mTypeForMetaPath
 		this.fetchTypes().then(function (mTypeForMetaPath) {
 			that.oRequestor.fetchType(mTypeForMetaPath,
@@ -2304,14 +2305,15 @@ sap.ui.define([
 			var vCollection = oEntity[sSegment],
 				sCollectionPath,
 				aCreatedCollection,
-				mQueryOptions;
+				aSelect;
 
 			if (vCollection && vCollection.$postBodyCollection) {
 				aCreatedCollection = oCreatedEntity[sSegment];
 				if (aCreatedCollection) { // otherwise no create was called in nested list binding
 					sCollectionPath = sPath + "/" + sSegment;
-					mQueryOptions = vCollection.$queryOptions
-						|| _Helper.getQueryOptionsForPath(that.mQueryOptions, sCollectionPath);
+					aSelect = vCollection.$select
+						|| _Helper.getQueryOptionsForPath(that.mQueryOptions, sCollectionPath)
+							.$select;
 					aCreatedCollection.forEach(function (oCreatedChildEntity, i) {
 						var oChildEntity = vCollection[i],
 							sPredicate
@@ -2324,7 +2326,7 @@ sap.ui.define([
 							sPredicate);
 						vCollection.$byPredicate[sPredicate] = oChildEntity;
 						_Helper.updateSelected(that.mChangeListeners, sCollectionPath + sPredicate,
-							oChildEntity, oCreatedChildEntity, mQueryOptions.$select,
+							oChildEntity, oCreatedChildEntity, aSelect,
 							/*fnCheckKeyPredicate*/undefined, true);
 						_Helper.deletePrivateAnnotation(oChildEntity, "postBody");
 						_Helper.deletePrivateAnnotation(oChildEntity, "resolve");
@@ -2334,6 +2336,7 @@ sap.ui.define([
 					});
 				}
 				delete vCollection.$postBodyCollection;
+				delete vCollection.$select;
 			}
 		});
 	};

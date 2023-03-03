@@ -1433,7 +1433,7 @@ sap.ui.define([
 	/**
 	 * Recursively updates all dependent bindings after a create.
 	 *
-	 * @returns [sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that resolves when the update is finished and rejects with an error if something
 	 *   went wrong.
 	 *

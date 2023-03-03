@@ -292,15 +292,13 @@ sap.ui.define([
 			// => reduced path may, but need not, be affected; other contexts for sure are!
 			asODataParentBinding.prototype.adjustPredicate.apply(this, arguments);
 			if (this.mCacheQueryOptions) {
-				aElements = that.oContext.getAndRemoveValue(that.sPath);
-				// Note: this.oCache === null because of #prepareDeepCreate
+				// There are cache query options, but #prepareDeepCreate prevented its creation
+				aElements = this.oContext.getAndRemoveValue(this.sPath);
 				this.fetchCache(this.oContext, /*bIgnoreParentCache*/true);
 				if (aElements.length) { // after a deep create
 					this.oCachePromise.then(function (oCache) {
-						if (oCache) {
-							// copy the created elements into the newly created cache
-							oCache.setPersistedCollection(aElements);
-						}
+						// copy the created elements into the newly created cache
+						oCache.setPersistedCollection(aElements);
 					});
 				}
 			}
@@ -2902,7 +2900,7 @@ sap.ui.define([
 		// (in adjustPredicate)
 		this.mCacheQueryOptions = mQueryOptions;
 		oContext.withCache(function (oCache, sPath) {
-			oCache.addTransientCollection(sPath, mQueryOptions);
+			oCache.addTransientCollection(sPath, mQueryOptions && mQueryOptions.$select);
 		}, this.sPath);
 
 		return true;
@@ -3003,7 +3001,7 @@ sap.ui.define([
 			// Note: after reset the dependent bindings cannot be found anymore
 			aDependentBindings = that.getDependentBindings();
 			that.reset(ChangeReason.Refresh, !oCache || (bKeepCacheOnError ? false : undefined),
-					sGroupId); // this may reset that.oRefreshPromise
+				sGroupId); // this may reset that.oRefreshPromise
 			that.bKeepCreated = that.bDeepCreate;
 			that.bDeepCreate = false;
 			return SyncPromise.all(
