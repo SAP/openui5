@@ -47276,6 +47276,65 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: List of orders and items in one request. Create one item (nested in the cache),
+	// request more orders causing a short read. See that the count is calculated correctly.
+	QUnit.test("Nested create & inactive contexts", function (assert) {
+		var oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "noSubmit"}),
+			oOrdersTable,
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<Table id="orders" growing="true" growingThreshold="2" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Table items="{path : \'SO_2_SOITEM\', templateShareable : true}">\
+		<Text id="position" text="{ItemPosition}"/>\
+	</Table>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=0&$top=2", {
+				value : [
+					{SalesOrderID : "1", SO_2_SOITEM : []},
+					{SalesOrderID : "2", SO_2_SOITEM : []}
+				]
+			})
+			.expectChange("count")
+			.expectChange("id", ["1", "2"])
+			.expectChange("position", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("count", null);
+
+			oOrdersTable = that.oView.byId("orders");
+			that.oView.byId("count").setBindingContext(
+				oOrdersTable.getBinding("items").getHeaderContext()
+			);
+
+			return that.waitForChanges(assert, "count");
+		}).then(function () {
+			that.expectChange("position", [""]);
+
+			oOrdersTable.getItems()[0].getCells()[1].getBinding("items").create();
+
+			return that.waitForChanges(assert, "nested create");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=2&$top=2", {
+					value : [
+						{SalesOrderID : "3", SO_2_SOITEM : []}
+					]
+				})
+				.expectChange("id", [,, "3"])
+				.expectChange("count", "3");
+
+			oOrdersTable.requestItems();
+
+			return that.waitForChanges(assert, "more");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Creation rows: reset changes with default values", function (assert) {
 		var oBinding,
 			aCells,
