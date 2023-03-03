@@ -566,18 +566,21 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				SELECTIONPLUGIN: {
 					text: "Selection Plugin",
 					value: function(oTable) {
-						return (oTable._getSelectionPlugin().isA("sap.ui.table.plugins.MultiSelectionPlugin") ? "MULTISELECTION" : "NONE");
+						var oSelectionPlugin = oTable._getSelectionPlugin();
+						var sName = oSelectionPlugin ? oSelectionPlugin.getMetadata().getName().split(".").pop().toUpperCase() : "NONE";
+						return sName in this.choice ? sName : "NONE";
 					},
 					choice: {
 						NONE: {
 							text: "None",
 							action: function(oTable) {
-								oTable.removeAllPlugins();
+								oTable.destroyPlugins();
 							}
 						},
-						MULTISELECTION: {
+						MULTISELECTIONPLUGIN: {
 							text: "MultiSelection",
 							action: function(oTable) {
+								oTable.destroyPlugins();
 								var oPlugin = new MultiSelectionPlugin({
 									limit: 20,
 									enableNotification: true
@@ -1752,41 +1755,45 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}
 	};
 
-	TABLESETTINGS.addServiceSettings = function(oTable, sKey, fnUpdate) {
-		var mServiceSettings = JSON.parse(window.localStorage.getItem(sKey));
-
-		oTable.addExtension(new Toolbar({
+	TABLESETTINGS.addServiceSettings = function(oTable, sKey, fnOnSettingsChange, fnInitToolbar) {
+		var mServiceSettings = JSON.parse(window.localStorage.getItem(sKey)) || {};
+		var oToolbar = new Toolbar({
 			content: [
 				new Input("TableSettings_ServiceUrl", {
-					value: mServiceSettings ? mServiceSettings.url : undefined,
+					value: mServiceSettings.url,
 					tooltip: "Service Url",
 					placeholder: "Enter Service Url"
 				}),
 				new Input("TableSettings_Collection", {
-					value: mServiceSettings ? mServiceSettings.collection : undefined,
+					value: mServiceSettings.collection,
 					tooltip: "Service Collection",
 					placeholder: "Enter Service Collection"
-				}),
-				new Button({
-					tooltip: "Go",
-					icon: "sap-icon://restart",
-					press: function() {
-						var mNewServiceSettings = {
-							url: oCore.byId("TableSettings_ServiceUrl").getValue(),
-							collection: oCore.byId("TableSettings_Collection").getValue()
-						};
-
-						mNewServiceSettings.defaultProxyUrl = "../../../../proxy/" + mNewServiceSettings.url.replace("://", "/");
-
-						window.localStorage.setItem(sKey, JSON.stringify(mNewServiceSettings));
-						fnUpdate(mNewServiceSettings);
-					}
 				})
 			]
+		});
+
+		if (fnInitToolbar) {
+			fnInitToolbar(oToolbar, mServiceSettings);
+		}
+
+		oToolbar.addContent(new Button({
+			tooltip: "Go",
+			icon: "sap-icon://restart",
+			press: function() {
+				var mNewServiceSettings = {
+					url: oCore.byId("TableSettings_ServiceUrl").getValue(),
+					collection: oCore.byId("TableSettings_Collection").getValue()
+				};
+
+				mNewServiceSettings.defaultProxyUrl = "../../../../proxy/" + mNewServiceSettings.url.replace("://", "/");
+				fnOnSettingsChange(mNewServiceSettings);
+				window.localStorage.setItem(sKey, JSON.stringify(mNewServiceSettings));
+			}
 		}));
+		oTable.addExtension(oToolbar);
 
 		if (mServiceSettings) {
-			fnUpdate(mServiceSettings);
+			fnOnSettingsChange(mServiceSettings);
 		}
 	};
 
