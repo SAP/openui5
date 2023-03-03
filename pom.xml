@@ -262,7 +262,7 @@
 					<plugin>
 						<groupId>com.sap.ui5.tools.maven</groupId>
 						<artifactId>eslintnode-maven-plugin</artifactId>
-						<version>0.2.3</version>
+						<version>0.2.4</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
