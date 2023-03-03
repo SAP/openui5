@@ -1036,7 +1036,8 @@ sap.ui.define([
 				throw new Error("GET " + sRequestPath + ": Key predicate changed from "
 					+ sOldPredicate + " to " + sNewPredicate);
 			}
-			// we expect the server to always or never send an ETag for this entity
+			// only check for ETag change if the cache contains one; otherwise either the cache
+			// element is empty (via #createEmptyElement) or the server did not send one last time
 			if (oResource["@odata.etag"] && oData["@odata.etag"] !== oResource["@odata.etag"]) {
 				throw new Error("GET " + sRequestPath + ": ETag changed");
 			}
@@ -3003,7 +3004,9 @@ sap.ui.define([
 			if (sPredicate) {
 				oKeptElement = aElements.$byPredicate[sPredicate];
 				if (oKeptElement) {
-					// we expect the server to always or never send an ETag for this entity
+					// only check for ETag change if the cache contains one; otherwise either the
+					// cache element is empty (via #createEmptyElement) or the server did not send
+					// one last time
 					if (!oKeptElement["@odata.etag"]
 							|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
 						if (iCreated && aElements.lastIndexOf(oKeptElement, iCreated - 1) >= 0) {
