@@ -18,8 +18,9 @@ sap.ui.define(['sap/ui/core/UIComponent','sap/ui/core/mvc/XMLView'],
 	});
 
 	Component.prototype.createContent = function () {
-		this._rootView = sap.ui.xmlview({ viewName : "view.Table" });
-		return this._rootView;
+		XMLView.create({ viewName : "view.Table" }).then(function(oView) {
+			return oView;
+		});
 	};
 
 	return Component;

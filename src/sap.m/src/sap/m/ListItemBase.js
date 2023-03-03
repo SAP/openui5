@@ -959,7 +959,7 @@ function(
 		var oSelection = window.getSelection(),
 			sTextSelection = oSelection.toString().replace("\n", "");
 
-		return sTextSelection && jQuery.contains(oDomRef, oSelection.focusNode);
+		return sTextSelection && (oDomRef !== oSelection.focusNode && oDomRef.contains(oSelection.focusNode));
 	};
 
 	ListItemBase.prototype.ontap = function(oEvent) {

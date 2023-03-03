@@ -8,9 +8,11 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Item",
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Button",
+	"sap/m/ComboBox",
 	"sap/m/Dialog",
 	"sap/m/library",
 	"sap/ui/base/Event",
+	"sap/ui/core/Item",
 	"sap/ui/core/Core",
 	"sap/ui/core/UIArea",
 	"sap/ui/layout/GridData",
@@ -25,9 +27,11 @@ sap.ui.define([
 	Item,
 	ActionItem,
 	Button,
+	ComboBox,
 	Dialog,
 	library,
 	Event,
+	CoreItem,
 	oCore,
 	UIArea,
 	GridData,
@@ -958,10 +962,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Auto close behavior when the Menu contains a control that opens a popup", function(assert) {
-		var oComboBox = new sap.m.ComboBox({
+		var oComboBox = new ComboBox({
 			items: [
-				new sap.ui.core.Item({key: "v1", text: "Value 1"}),
-				new sap.ui.core.Item({key: "v2", text: "Value 2"})
+				new CoreItem({key: "v1", text: "Value 1"}),
+				new CoreItem({key: "v2", text: "Value 2"})
 			]
 		});
 
