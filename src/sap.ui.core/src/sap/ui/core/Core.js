@@ -918,23 +918,32 @@ sap.ui.define([
 			this._executeInitialization();
 		} else {
 			Rendering.suspend();
+
+			var whenThemeAppliedThen = function(fnCallback) {
+				this._getThemeManager().then(function(ThemeManager) {
+					if ( ThemeManager.themeLoaded ) {
+						fnCallback();
+					} else {
+						ThemeManager.attachEventOnce("ThemeChanged", fnCallback);
+					}
+				});
+			}.bind(this);
+
 			if (sWaitForTheme === "rendering") {
 				Rendering.notifyInteractionStep();
 				this._executeInitialization();
 				Rendering.getLogger().debug("delay initial rendering until theme has been loaded");
-				_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
+				whenThemeAppliedThen(function() {
 					Rendering.resume("after theme has been loaded");
-				}, this);
+				});
 			} else if (sWaitForTheme === "init") {
 				Rendering.getLogger().debug("delay init event and initial rendering until theme has been loaded");
 				Rendering.notifyInteractionStep();
-				_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
+				whenThemeAppliedThen(function() {
 					this._executeInitialization();
 					Rendering.resume("after theme has been loaded");
-				}, this);
+				}.bind(this));
 			}
-			// Require ThemeManager if not already done to ensure ThemeManager is available and ThemeChanged event will be fired
-			this._getThemeManager();
 		}
 	};
 
