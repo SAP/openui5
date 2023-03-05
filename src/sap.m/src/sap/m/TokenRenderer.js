@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 * @namespace
 	 */
 	var TokenRenderer = {
-		apiVersion: 4
+		apiVersion: 2
 	};
 
 

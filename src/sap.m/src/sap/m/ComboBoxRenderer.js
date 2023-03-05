@@ -12,7 +12,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUti
 		 * @namespace
 		 */
 		var ComboBoxRenderer = Renderer.extend(ComboBoxBaseRenderer);
-			ComboBoxRenderer.apiVersion = 4;
+			ComboBoxRenderer.apiVersion = 2;
 		/**
 		 * CSS class to be applied to the root element of the ComboBox.
 		 *

@@ -19,7 +19,7 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS", "sap/ui/core/libr
 	 * @namespace
 	 */
 	var ImageRenderer = {
-		apiVersion: 4
+		apiVersion: 2
 	};
 
 

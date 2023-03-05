@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKe
 	 * @namespace
 	 */
 	var LabelRenderer = {
-		apiVersion: 4
+		apiVersion: 2
 	};
 
 	/**
