@@ -21,12 +21,12 @@ sap.ui.define([
 	var FilterbarInOutValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
 
-	FilterbarInOutValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
+	FilterbarInOutValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
 
 		var aInParameters = oPayload.inParameters || [];
-		var oConditions = BaseValueHelpDelegate.getInitialFilterConditions(oPayload, oContent);
+		var oConditions = BaseValueHelpDelegate.getFilterConditions(arguments);
 
-		var oFilterField = oControl;
+		var oFilterField = (oConfig && oConfig.control) || (oContent && oContent.getControl());
 		var oFilterBar = oFilterField && oFilterField.getParent();
 		if (oFilterBar && oFilterBar.isA("sap.ui.mdc.filterbar.FilterBarBase")) {
 

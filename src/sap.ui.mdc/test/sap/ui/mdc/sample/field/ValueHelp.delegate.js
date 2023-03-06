@@ -57,9 +57,10 @@ sap.ui.define([
 
 	};
 
-	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
+	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
 
 		var oConditions = {};
+		var oControl = (oConfig && oConfig.control) || (oContent && oContent.getControl());
 
 		if (oPayload.in && oControl) {
 			var oContext;
@@ -214,7 +215,7 @@ sap.ui.define([
 			var sModelName = oContent._getListBindingInfo().model;
 			var oContext = oItem && oItem.getBindingContext(sModelName);
 			var oItemData = oContent._getItemFromContext(oContext);
-			var oInConditions = this.getInitialFilterConditions(oPayload, oContent, oContent.getControl()); // to use if no payload is provided
+			var oInConditions = this.getFilterConditions(oPayload, oContent, {control: oContent && oContent.getControl()}); // to use if no payload is provided
 			aConditions = merge([], aConditions);
 			_mapInOutToPayload(aConditions, oPayload);
 

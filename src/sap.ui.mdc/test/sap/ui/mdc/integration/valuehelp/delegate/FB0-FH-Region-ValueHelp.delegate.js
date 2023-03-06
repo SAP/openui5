@@ -184,7 +184,7 @@ sap.ui.define([
 	} */
 
 
-	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
+	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
 
 		// Tooling experiments BEG
 		/* var sConditionModelCountry = _resolveConditionModelValue('$filters', '/conditions/country_code', oContent);
@@ -196,7 +196,7 @@ sap.ui.define([
 		// Tooling experiments END
 
 
-		var oConditions = ODataV4ValueHelpDelegate.getInitialFilterConditions(oPayload, oContent, oControl);
+		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
 		var oCountry = Core.byId("FB0-FF6");
 		var aCountryConditions = oCountry && oCountry.getConditions();

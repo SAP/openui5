@@ -171,8 +171,8 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
-	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
-		var oConditions = ODataV4ValueHelpDelegate.getInitialFilterConditions(oPayload, oContent, oControl);
+	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
 		var oCountry = Core.byId("FB0-FF6");
 		var aCountryConditions = oCountry && oCountry.getConditions();
