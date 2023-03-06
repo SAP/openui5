@@ -3097,7 +3097,6 @@ function(
 	 * @returns {void}
 	 *
 	 * @since 1.64
-	 * @experimental Since 1.64
 	 * @public
 	 */
 	Input.prototype.showItems = function (fnFilter) {

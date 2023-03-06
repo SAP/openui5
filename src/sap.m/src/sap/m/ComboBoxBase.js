@@ -1525,7 +1525,6 @@ sap.ui.define([
 		 * @returns {void}
 		 *
 		 * @since 1.64
-		 * @experimental Since 1.64
 		 * @public
 		 */
 		ComboBoxBase.prototype.showItems = function (fnFilter) {
