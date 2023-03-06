@@ -332,6 +332,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mParametersClone));
 		oODataListBindingMock.expects("setContext").withExactArgs(sinon.match.same(oContext));
 
+		this.oModel.bSharedRequests = true; // must not win
+
 		// code under test
 		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", oContext, vSorters, vFilters,
 			mParameters);

@@ -904,8 +904,8 @@ sap.ui.define([
 	 *   <code>true</code> is allowed.
 	 * @param {boolean} [mParameters.$$sharedRequest]
 	 *   Whether multiple bindings for the same resource path share the data, so that it is
-	 *   requested only once; only the value <code>true</code> is allowed. This parameter can be
-	 *   inherited from the model's parameter "sharedRequests", see
+	 *   requested only once.
+	 *   This parameter can be inherited from the model's parameter "sharedRequests", see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}. Supported since 1.80.0
 	 *   <b>Note:</b> These bindings are read-only, so they may be especially useful for value
 	 *   lists; state messages (since 1.108.0) and the following APIs are <b>not</b> allowed

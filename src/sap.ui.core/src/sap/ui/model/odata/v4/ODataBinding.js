@@ -189,9 +189,10 @@ sap.ui.define([
 						"Unsupported value for binding parameter '" + sKey + "': ");
 					break;
 				case "$$ignoreMessages":
+				case "$$sharedRequest":
 					if (vValue !== true && vValue !== false) {
-						throw new Error("Unsupported value for binding parameter "
-							+ "'$$ignoreMessages': " + vValue);
+						throw new Error("Unsupported value for binding parameter '" + sKey + "': "
+							+ vValue);
 					}
 					break;
 				case "$$inheritExpandSelect":
@@ -230,7 +231,6 @@ sap.ui.define([
 				case "$$noPatch":
 				case "$$ownRequest":
 				case "$$patchWithoutSideEffects":
-				case "$$sharedRequest":
 					if (vValue !== true) {
 						throw new Error("Unsupported value for binding parameter '" + sKey + "': "
 							+ vValue);
