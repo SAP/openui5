@@ -780,6 +780,10 @@ sap.ui.define([
 	 */
 	CompVariantState.persist = function(mPropertyBag) {
 		function writeObjectAndAddToState(oFlexObject, oStoredResponse, sParentVersion) {
+			// new public variant should not be visible for other users
+			if (oFlexObject.getLayer() === Layer.PUBLIC) {
+				oFlexObject.setFavorite(false);
+			}
 			// TODO: remove this line as soon as layering and a condensing is in place
 			return Storage.write({
 				flexObjects: [oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition()],
