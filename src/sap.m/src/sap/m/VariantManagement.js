@@ -1226,6 +1226,7 @@ sap.ui.define([
 							if (this._isRestricted(mContexts)) {
 								this.oDefault.setValueState(ValueState.Error);
 								this.oDefault.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_NO_DEFAULT_ON_RESTRICTED_VIEWS"));
+								this.oDefault.focus();
 							} else {
 								this.oDefault.setValueState(ValueState.None);
 								this.oDefault.setValueStateText("");
@@ -1554,6 +1555,11 @@ sap.ui.define([
 
 		this.oDefault.setEnabled(true);
 		this.oDefault.setSelected(false);
+		if (this.oDefault.getValueState() !== ValueState.None) {
+			this.oDefault.setValueState(ValueState.None);
+			this.oDefault.setValueStateText("");
+		}
+
 		this.oPublic.setSelected(false);
 		this.oExecuteOnSelect.setSelected(false);
 		this.oCreateTile.setSelected(false);
@@ -1603,6 +1609,7 @@ sap.ui.define([
 		if (bIsRestricted && this.oDefault.getSelected()) {
 			this.oDefault.setValueState(ValueState.Error);
 			this.oDefault.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_NO_DEFAULT_ON_RESTRICTED_VIEWS"));
+			this.oDefault.focus();
 			return false;
 		} else if (!bIsRestricted){
 			var bWasInErrorState = this.oDefault.getValueState() !== ValueState.None;
