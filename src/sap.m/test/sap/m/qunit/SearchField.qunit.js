@@ -33,6 +33,7 @@ sap.ui.define([
 
 	var sPlaceholder = "search for..",
 		sValue = "value",
+		sTooltip = "Search city",
 		sQuery = "",
 		sLive  = "",
 		aEvents = [];
@@ -74,6 +75,7 @@ sap.ui.define([
 		placeholder: sPlaceholder,
 		value: sValue,
 		enabled: true,
+		tooltip: sTooltip,
 		search:onSearch,
 		liveChange: onLiveChange
 	}).placeAt(DOM_RENDER_LOCATION);
@@ -132,6 +134,7 @@ sap.ui.define([
 	QUnit.test("Properties", function(assert) {
 		assert.equal(this.sf1.getValue(), sValue, "Value property, UI5");
 		assert.equal(this.sf1Dom.value, sValue, "Value property, DOM");
+		assert.equal(this.sf1.getInputElement().getAttribute("title"), sTooltip, "Tooltip correctly set");
 		assert.equal(this.sf2.getEnabled(), false, "Enabled property, UI5");
 		assert.equal(this.sf2Dom.disabled, true, "Disabled property, DOM");
 		assert.ok(this.sf2.$().hasClass("sapMSFDisabled"),"CSS class name for \"disabled\" is set");

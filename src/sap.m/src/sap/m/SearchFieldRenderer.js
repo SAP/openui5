@@ -105,6 +105,11 @@ sap.ui.define([
 				rm.attr("inputmode", "none");
 			}
 
+			var sTooltip = oSF.getTooltip_AsString();
+			if (sTooltip) {
+				rm.attr("title", sTooltip);
+			}
+
 			if (!oSF.getEnabled()) {
 				rm.attr("disabled", "disabled");
 			}
