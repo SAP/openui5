@@ -1,7 +1,23 @@
 {
   "1.112.0": {
-    "date": "February 2023",
+    "date": "March 2023",
     "notes": [
+      {
+        "id": "ff2cca5782da323b5d287f0702dd60132a595f54",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon centered vertically in table with Horizon"
+      },
+      {
+        "id": "3d5a3f9c9a73a44d69390478c6758bdc9fa9381e",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon centered vertically in table with Horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380034458"
+          }
+        ]
+      },
       {
         "id": "78060d9cd410d38c382aceeef491e7bdf80001c6",
         "type": "FIX",

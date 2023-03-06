@@ -1,7 +1,12 @@
 {
   "1.112.0": {
-    "date": "February 2023",
+    "date": "March 2023",
     "notes": [
+      {
+        "id": "60edfabbf2e60c14d13b4b2a1570d2154f05a0c4",
+        "type": "FEATURE",
+        "text": " Integration Cards: New experimental property previewMode added"
+      },
       {
         "id": "aa8829a9b2eec0faed6b3630ec776a6b9775ac86",
         "type": "FIX",

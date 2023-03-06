@@ -1,7 +1,40 @@
 {
   "1.112.0": {
-    "date": "February 2023",
+    "date": "March 2023",
     "notes": [
+      {
+        "id": "059fc5fd665ded8f8ce3e5860520d55bf162f2c2",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDateUtils: Remove usage of JS Date for Timezone support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380044028"
+          }
+        ]
+      },
+      {
+        "id": "64dda775b4ef2be3159bdaa127c60201d9205916",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Fix parsing of numbers equal zero",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380012359"
+          }
+        ]
+      },
+      {
+        "id": "5bcd2e0bd6d4f2970be6192bf1a5307e9bdd88fa",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: suppress wrongly dispatched 'mouseover' event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270186247"
+          }
+        ]
+      },
       {
         "id": "5130748dd29216b7169f1a113b396f40c237e47c",
         "type": "FIX",

@@ -1,7 +1,45 @@
 {
   "1.112.0": {
-    "date": "February 2023",
+    "date": "March 2023",
     "notes": [
+      {
+        "id": "7025e7e8211f588f28bbb99838d3d7836d85325f",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Corrected page indexing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380042288"
+          }
+        ]
+      },
+      {
+        "id": "c32889184c004696a6aec30b920f2accb5ce56f9",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Switch hours when minDate is after maxDate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370001157"
+          }
+        ]
+      },
+      {
+        "id": "397fe8cfe8c25b3bbec0c1003e64a4e42412d27f",
+        "type": "FEATURE",
+        "text": " m.VM: restricted view must not be defaulted in UI adaptation"
+      },
+      {
+        "id": "e428c9c11479af0b0cf0531c3e4a2e1608bdb516",
+        "type": "FIX",
+        "text": " sap.m.Popover: Accessibility of resize icon corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380026751"
+          }
+        ]
+      },
       {
         "id": "b65bb4ed9cc4c32596125c6d10ee2619303c627f",
         "type": "FIX",

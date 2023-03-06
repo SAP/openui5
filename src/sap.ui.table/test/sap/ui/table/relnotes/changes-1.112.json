@@ -3,13 +3,13 @@
     "date": "March 2023",
     "notes": [
       {
-        "id": "e3dd109b79885a6abadc88174a0fc69c32a32946",
+        "id": "fb3f2e6c6f2a01d1da5980e0c5532cdcd8dd1609",
         "type": "FIX",
-        "text": " Avoid assertion violation in RenderManager#openEnd",
+        "text": " Table: Clear text selection on update (for example on scroll)",
         "references": [
           {
             "type": "BCP",
-            "reference": "2380031904"
+            "reference": "2380008695"
           }
         ]
       }
