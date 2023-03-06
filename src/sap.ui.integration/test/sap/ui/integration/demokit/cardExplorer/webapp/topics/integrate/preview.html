@@ -13,12 +13,12 @@
 		<div class="content">
 			<h1 id="overview">Preview</h1>
 			<div class="messageStripWarning">Experimental feature since version 1.112.</div>
-			<p>When the end user is choosing or configuring a card, it can be displayed in different preview modes.</p>
+			<p>Displaying cards in preview mode is handy for the situations where the end user is exploring, selecting or configuring proposed or available cards.</p>
 
 			<h2 id="modes">Usage</h2>
 			<p>
-				What preview is displayed by the card is controlled by its <a data-demokit-href="#/api/sap.ui.integration.widgets.Card%23controlProperties" target="_blank"><code>previewMode</code></a> property.
-				It has to be set by the hosting environment.
+				It is up to the host environment to trigger card rendering into preview mode, depending on specific use cases or scenarios where this mode is applicable.
+				The public <a data-demokit-href="#/api/sap.ui.integration.widgets.Card%23controlProperties" target="_blank"><code>previewMode</code></a> property is provided to set the desired preview mode.
 			</p>
 
 			<h2 id="modes">Modes</h2>
@@ -31,7 +31,7 @@
 				<li>
 					<p>"MockData" - In this mode if the card is configured with mock data, it is displayed instead of the real data.</p>
 					<img src="../images/previewMockData.png" alt="Caching Diagram" style="max-width: 100%;">
-					<p>If the card is missing mock data configuration, it will fall back to real data.</p>
+					<p>If the card is missing mock data configuration (the <code>mockData</code> sub-section in the manifests' data section), it will fall back to display real data with a message notification like:</p>
 					<img src="../images/previewMockDataMissingConfiguration.png" alt="Caching Diagram" style="max-width: 100%;">
 				</li>
 				<li>
@@ -50,7 +50,7 @@
 &lt;/mvc:View&gt;
 </pre>
 
-			<a class="try-button" href="../../index.html#/explore/previewMode" target="_parent">Try it Out</a>
+			<a class="try-button" href="../../index.html#/explore/preview" target="_parent">Try it Out</a>
 		</div>
 	</div>
 </body>
