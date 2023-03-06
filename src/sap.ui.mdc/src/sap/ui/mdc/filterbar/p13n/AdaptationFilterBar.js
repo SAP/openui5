@@ -13,7 +13,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The <code>AdaptationFilterBar</code> control is used for a lightweight FilterBar implementation for p13n use cases.
-	 * The <code>AdaptationFilterBar</code> should only be used if the consuming control implements atleast the <code>IFilterSource</code>
+	 * The <code>AdaptationFilterBar</code> should only be used if the consuming control implements at least the <code>IFilterSource</code>
 	 * interface to provide basic filter functionality.
 	 *
 	 * @extends sap.ui.mdc.filterbar.FilterBarBase
@@ -21,12 +21,26 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.p13n.AdaptationFilterBar
 	 */
 	var AdaptationFilterBar = FilterBarBase.extend("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar", {
 		metadata: {
 			library: "sap.ui.mdc",
+			properties: {
+				/**
+				 * Determines whether the <code>AdaptationFilterBar</code> has a fixed width.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
+				 */
+				_useFixedWidth: {
+					type: "boolean",
+					defaultValue: false,
+					visibility: "hidden"
+				}
+			},
 			associations: {
 				/**
 				 * Determines the parent on which the condition changes should be applied on.
@@ -46,6 +60,8 @@ sap.ui.define([
 		},
 		renderer: FilterBarBaseRenderer
 	});
+
+	AdaptationFilterBar.prototype.WIDTH = "30rem";
 
 	AdaptationFilterBar.prototype.init = function() {
 		FilterBarBase.prototype.init.apply(this,arguments);
@@ -83,6 +99,17 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype.getInitialFocusedControl = function() {
 		return this._oFilterBarLayout.getInitialFocusedControl();
+	};
+
+	/**
+	 * Getter for the fixed width of the <code>AdaptationFilterBar</code>
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @returns {string} The fixed width of the <code>AdaptationFilterBar</code>
+	 */
+	AdaptationFilterBar.prototype.getWidth = function() {
+		return this.WIDTH;
 	};
 
 	AdaptationFilterBar.prototype.applySettings = function() {

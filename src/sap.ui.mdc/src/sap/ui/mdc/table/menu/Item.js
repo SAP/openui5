@@ -3,9 +3,11 @@
  */
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/Device",
 	"sap/m/table/columnmenu/Item"
 ], function(
 	Core,
+	Device,
 	ItemBase
 ) {
 	"use strict";
@@ -35,6 +37,10 @@ sap.ui.define([
 		}
 
 		return oTable.getEngine().uimanager.create(oTable, [sKey]).then(function(aPanels) {
+			if (!Device.system.phone) {
+				aPanels[0].setProperty("_useFixedWidth", true);
+			}
+
 			this.setContent(aPanels[0]);
 			this.setLabel(oController.getUISettings().title);
 

@@ -61,6 +61,18 @@ sap.ui.define([
 				enableReorder: {
 					type: "boolean",
 					defaultValue: true
+				},
+
+				/**
+				 * Determines whether the panel has a fixed width.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
+				 */
+				_useFixedWidth: {
+					type: "boolean",
+					defaultValue: false,
+					visibility: "hidden"
 				}
 			},
 			aggregations: {
@@ -116,6 +128,9 @@ sap.ui.define([
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.style("height", "100%");
+				if (oControl.getProperty("_useFixedWidth")) {
+					oRm.style("width", oControl.getWidth());
+				}
 				oRm.openEnd();
 				oRm.renderControl(oControl.getAggregation("_content"));
 				oRm.close("div");
@@ -136,6 +151,7 @@ sap.ui.define([
 
 	//defines the name of the attribute describing the presence/active state
 	BasePanel.prototype.PRESENCE_ATTRIBUTE = "visible";
+	BasePanel.prototype.WIDTH = "30rem";
 
 	BasePanel.prototype.init = function() {
 		Control.prototype.init.apply(this, arguments);
@@ -233,6 +249,17 @@ sap.ui.define([
 	 */
 	BasePanel.prototype.getMessageStrip = function(){
 		return this._oMessageStrip;
+	};
+
+	/**
+	 * Getter for the fixed panel width
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @returns {string} The fixed panel width
+	 */
+	BasePanel.prototype.getWidth = function() {
+		return this.WIDTH;
 	};
 
 	/**

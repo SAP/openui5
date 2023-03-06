@@ -107,6 +107,7 @@ sap.ui.define([
         return this.getAdaptationControl().retrieveInbuiltFilter().then(function(oAdaptationFilterBar){
             oAdaptationFilterBar.setP13nData(oAdaptationData);
             oAdaptationFilterBar.setLiveMode(false);
+            oAdaptationFilterBar.setProperty("_useFixedWidth", false);
             oAdaptationFilterBar.getTitle = function() {
                 return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE");
             };
