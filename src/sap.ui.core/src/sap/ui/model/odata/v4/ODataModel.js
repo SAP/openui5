@@ -879,8 +879,9 @@ sap.ui.define([
 	 *   Whether this binding is considered for a match when {@link #getKeepAliveContext} is called;
 	 *   only the value <code>true</code> is allowed. Must not be combined with <code>$apply</code>,
 	 *   <code>$$aggregation</code>, <code>$$canonicalPath</code>, or <code>$$sharedRequest</code>.
-	 *   If the binding is relative, <code>$$ownRequest</code> must be set as well.
-	 *   Supported since 1.99.0
+	 *   If the binding is relative, <code>$$ownRequest</code> must be set as well. Supported since
+	 *   1.99.0; since 1.113.0 it can be combined with <code>$$aggregation</code> for a recursive
+	 *   hierarchy.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the

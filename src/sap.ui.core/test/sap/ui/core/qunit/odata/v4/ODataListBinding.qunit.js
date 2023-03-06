@@ -6329,15 +6329,33 @@ sap.ui.define([
 [false, true].forEach(function (bWithOld) {
 	[false, true].forEach(function (bFromModel) {
 		[false, true].forEach(function (bShared) {
-	var sTitle = (bWithOld
-		? "doCreateCache w/ old cache, but w/o kept-alive elements"
-		: "doCreateCache w/o old cache") + ", bFromModel=" + bFromModel + ", bShared=" + bShared;
+			[false, true].forEach(function (bAggregation) {
+				var sTitle = (bWithOld
+						? "doCreateCache w/ old cache, but w/o kept-alive elements"
+						: "doCreateCache w/o old cache")
+					+ ", bFromModel=" + bFromModel
+					+ ", bShared=" + bShared
+					+ ", bAggregation=" + bAggregation;
+
+				if (bAggregation && (!bFromModel || bShared)) {
+					return;
+				}
 
 	QUnit.test(sTitle, function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oCache = { // #setLateQueryOptions must not be called
-				registerChangeListener : function () {}
+		var oAggregationCache = {
+				addKeptElement : function () { throw new Error("must be mocked"); }
 			},
+			oAggregationCacheMock = this.mock(oAggregationCache),
+			oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			oCache = { // #setLateQueryOptions must not be called
+				getValue : function () { throw new Error("must be mocked"); },
+				registerChangeListener : function () {},
+				setActive : function () { throw new Error("must be mocked"); }
+			},
+			oCacheMock = this.mock(oCache),
+			oGetExpectation,
+			oMoveExpectation,
 			oOldCache = {
 				$deepResourcePath : "deep/resource/path",
 				getResourcePath : function () {}
@@ -6346,32 +6364,48 @@ sap.ui.define([
 
 		this.oModel.bAutoExpandSelect = "~autoExpandSelect~";
 		oBinding.bSharedRequest = bShared;
+		if (bAggregation) {
+			oBinding.mParameters.$$aggregation = {/*hierarchyQualifier : "X"*/};
+		}
 		if (bWithOld) {
 			this.mock(oOldCache).expects("getResourcePath").withExactArgs()
 				.returns("resource/path");
-			this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs().returns([]);
+			oBindingMock.expects("getKeepAlivePredicates").withExactArgs().returns([]);
 		}
-		this.mock(oBinding).expects("inheritQueryOptions")
+		oBindingMock.expects("inheritQueryOptions")
 			.withExactArgs("~queryOptions~", "~context~").returns("~mergedQueryOptions~");
-		this.mock(oBinding).expects("getCacheAndMoveKeepAliveContexts")
+		oMoveExpectation = oBindingMock.expects("getCacheAndMoveKeepAliveContexts")
 			.withExactArgs("resource/path", "~mergedQueryOptions~")
 			.returns(bFromModel ? oCache : undefined);
-		this.mock(oBinding).expects("isGrouped").exactly(bFromModel ? 0 : 1).withExactArgs()
-			.returns("~isGrouped~");
-		this.mock(_AggregationCache).expects("create").exactly(bFromModel ? 0 : 1)
+		if (bFromModel && bAggregation) {
+			oGetExpectation = oBindingMock.expects("getKeepAlivePredicates").withExactArgs()
+				.returns(["(1)", "(3)"]);
+			oCacheMock.expects("getValue").withExactArgs("(1)").returns("~1~");
+			oCacheMock.expects("getValue").withExactArgs("(3)").returns("~3~");
+			oCacheMock.expects("setActive").withExactArgs(false);
+			oAggregationCacheMock.expects("addKeptElement").withExactArgs("~1~");
+			oAggregationCacheMock.expects("addKeptElement").withExactArgs("~3~");
+		}
+		oBindingMock.expects("isGrouped").exactly(bFromModel && !bAggregation ? 0 : 1)
+			.withExactArgs().returns("~isGrouped~");
+		this.mock(_AggregationCache).expects("create").exactly(bFromModel && !bAggregation ? 0 : 1)
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
 				"~mergedQueryOptions~", "~autoExpandSelect~", bShared, "~isGrouped~")
-			.returns(oCache);
-		this.mock(oCache).expects("registerChangeListener").exactly(bShared ? 1 : 0)
+			.returns(bAggregation ? oAggregationCache : oCache);
+		oCacheMock.expects("registerChangeListener").exactly(bShared ? 1 : 0)
 			.withExactArgs("", sinon.match.same(oBinding));
 
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
 				"deep/resource/path", undefined, bWithOld ? oOldCache : undefined),
-			oCache);
+			bAggregation ? oAggregationCache : oCache);
+		if (oGetExpectation) {
+			assert.ok(oMoveExpectation.calledBefore(oGetExpectation));
+		}
 	});
+			});
 		});
 	});
 });
@@ -9277,14 +9311,16 @@ sap.ui.define([
 		oBinding.createContexts(3, createData(3, 3, true, 6, true)); // simulate a read
 		oContext = oBinding.aContexts[4];
 		oContext.fnOnBeforeDestroy = "~fnOnBeforeDestroy~";
+		this.mock(oBinding).expects("checkKeepAlive").withExactArgs();
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("~sGroupId~");
 		this.mock(oContext).expects("setKeepAlive")
 			.withExactArgs(true, "~fnOnBeforeDestroy~", "~bRequestMessages~");
 
 		assert.strictEqual(
 			// code under test
-			oBinding.getKeepAliveContext("/EMPLOYEES('4')", "~bRequestMessages~"),
+			oBinding.getKeepAliveContext("/EMPLOYEES('4')", "~bRequestMessages~", "~sGroupId~"),
 			oContext);
 	});
 
@@ -9296,14 +9332,16 @@ sap.ui.define([
 
 		oBinding.mPreviousContextsByPath[sPath] = oContext;
 		oContext.fnOnBeforeDestroy = "~fnOnBeforeDestroy~";
+		this.mock(oBinding).expects("checkKeepAlive").withExactArgs();
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("~sGroupId~");
 		this.mock(oContext).expects("setKeepAlive")
 			.withExactArgs(true, "~fnOnBeforeDestroy~", "~bRequestMessages~");
 
 		assert.strictEqual(
 			// code under test
-			oBinding.getKeepAliveContext(sPath, "~bRequestMessages~"),
+			oBinding.getKeepAliveContext(sPath, "~bRequestMessages~", "~sGroupId~"),
 			oContext);
 	});
 
@@ -9336,6 +9374,7 @@ sap.ui.define([
 			};
 
 		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
+		this.mock(oBinding).expects("checkKeepAlive").withExactArgs();
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		oHelperMock.expects("checkGroupId").withExactArgs(sGroupId);
@@ -9388,6 +9427,11 @@ sap.ui.define([
 	QUnit.test("getKeepAliveContext: unresolved", function (assert) {
 		var oBinding = this.bindList("EMPLOYEES");
 
+		this.mock(oBinding).expects("checkKeepAlive").withExactArgs();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(undefined);
+
 		assert.throws(function () {
 			// code under test
 			oBinding.getKeepAliveContext("/EMPLOYEES('1')");
@@ -9396,12 +9440,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getKeepAliveContext: missing path", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oError = new Error();
+
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs(undefined).throws(oError);
 
 		assert.throws(function () {
 			// code under test
 			oBinding.getKeepAliveContext();
-		}, new Error("Not a list context path to an entity: undefined"));
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -9410,8 +9457,12 @@ sap.ui.define([
 			oBinding = this.bindList("EMPLOYEES", oParentContext),
 			sPath = "/TEAMS('1')";
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
 		this.mock(_Helper).expects("getPredicateIndex").withExactArgs(sPath).returns(6);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
+		this.mock(oBinding).expects("checkKeepAlive").withExactArgs();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(undefined);
 
 		assert.throws(function () {
 			// code under test

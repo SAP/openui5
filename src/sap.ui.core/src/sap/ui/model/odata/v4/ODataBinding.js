@@ -220,8 +220,9 @@ sap.ui.define([
 							"$$getKeepAliveContext requires $$ownRequest in a relative binding");
 					}
 					["$$aggregation", "$$canonicalPath", "$$sharedRequest"]
-						.forEach(function (sForbidden) {
-							if (sForbidden in mParameters) {
+						.forEach(function (sForbidden, i) {
+							if (sForbidden in mParameters
+									&& (i > 0 || _Helper.isDataAggregation(mParameters))) {
 								throw new Error("Cannot combine $$getKeepAliveContext and "
 									+ sForbidden);
 							}
