@@ -33,7 +33,7 @@ sap.ui.define([
 	label4.addStyleClass("label");
 
 	var label5 = new Label({
-		text: "IconTabBar with tabs which have no icons, only labels. Tabs are expandable. Semanctic colors are used."
+		text: "IconTabBar with tabs which have no icons, only labels. Tabs are expandable. Semantic colors are used."
 	});
 	label5.addStyleClass("label");
 
@@ -60,8 +60,8 @@ sap.ui.define([
 						iconColor: IconColor.Neutral,
 						count: "377",
 						key: "key1",
-						text: "Neutral with long text",
-						tooltip: "Neutral with long text",
+						text: "Claim Overweight",
+						tooltip: "Claim Overweight",
 						content: [
 							new Label({
 								text: "info info info"
@@ -85,8 +85,8 @@ sap.ui.define([
 					new IconTabFilter({
 						icon: "sap-icon://attachment",
 						iconColor: IconColor.Negative,
-						text: "Negative lorem long long",
-						tooltip: "Negative lorem long long",
+						text: "Check Heavys",
+						tooltip: "Check Heavys",
 						key: "key3",
 						content: [
 							new MText({
@@ -97,8 +97,8 @@ sap.ui.define([
 					new IconTabFilter({
 						icon: "sap-icon://collaborate",
 						iconColor: IconColor.Positive,
-						text: "Positive lorem",
-						tooltip: "Positive lorem",
+						text: "Confirm Notes",
+						tooltip: "Confirm Notes",
 						key: "key4",
 						count: "57",
 						content: [
@@ -110,8 +110,8 @@ sap.ui.define([
 					new IconTabFilter({
 						icon: "sap-icon://alert",
 						iconColor: IconColor.Negative,
-						text: "Negative lorem",
-						tooltip: "Negative lorem",
+						text: "Check Heavys",
+						tooltip: "Check Heavys",
 						key: "key5",
 						count: "1988",
 						content: [
@@ -125,8 +125,8 @@ sap.ui.define([
 						iconColor: IconColor.Neutral,
 						count: "39",
 						key: "key6",
-						text: "Neutral with long text",
-						tooltip: "Neutral with long text",
+						text: "Claim Overweight",
+						tooltip: "Claim Overweight",
 						content: [
 							new Label({
 								text: "info info info"
@@ -151,8 +151,8 @@ sap.ui.define([
 						visible: false,
 						icon: "sap-icon://attachment",
 						iconColor: IconColor.Negative,
-						text: "Invisible Negative lorem",
-						tooltip: "Invisible Negative lorem",
+						text: "Invisible Check Heavys",
+						tooltip: "Invisible Check Heavys",
 						key: "key8",
 						content: [
 							new MText({
@@ -177,8 +177,8 @@ sap.ui.define([
 					new IconTabFilter({
 						icon: "sap-icon://alert",
 						iconColor: IconColor.Negative,
-						text: "Negative lorem",
-						tooltip: "Negative lorem",
+						text: "Check Heavys",
+						tooltip: "Check Heavys",
 						key: "key10",
 						count: "1900",
 						content: [
@@ -278,7 +278,7 @@ sap.ui.define([
 						iconColor: IconColor.Neutral,
 						count: "377",
 						key: "key1",
-						tooltip: "Neutral with long text",
+						tooltip: "Claim Overweight",
 						content: [
 							new Label({
 								text: "info info info"
