@@ -773,9 +773,23 @@ sap.ui.define([
 			originalContexts: oDuplicateVariantData.instance.getContexts(),
 			contexts: oDuplicateVariantData.instance.getContexts()
 		};
+		var aChanges = [];
+
+		// when created a new public variant other users do not see the new public variant
+		if (mPropertyBag.layer === Layer.PUBLIC) {
+			oDuplicateVariantData.instance.setFavorite(false);
+			var oChangeProperties = {
+				selector: JsControlTreeModifier.getSelector(mPropertyBag.newVariantReference, mPropertyBag.appComponent),
+				changeType: "setFavorite",
+				fileType: "ctrl_variant_change",
+				generator: mPropertyBag.generator,
+				layer: Layer.USER,
+				content: {favorite: true}
+			};
+			aChanges.push(this.oFlexController.createBaseChange(oChangeProperties, mPropertyBag.appComponent));
+		}
 
 		// sets copied variant and associated changes as dirty
-		var aChanges = [];
 		[oDuplicateVariantData.instance].concat(oDuplicateVariantData.controlChanges).forEach(function(oChange) {
 			aChanges.push(this.oChangePersistence.addDirtyChange(oChange));
 		}.bind(this));
