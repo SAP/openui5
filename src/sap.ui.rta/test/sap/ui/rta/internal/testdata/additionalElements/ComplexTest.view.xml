@@ -57,7 +57,7 @@
 							<!--This SmartForm is bound to EntityType02 in the controller -->
 							<smartForm:SmartForm id="MainForm" title="Smart Form bound to EntityType02" editable="true" entityType="EntityType01" ignoredFields="Property05, Property07">
 								<!--This Group is bound to EntityType01 in the controller -->
-								<smartForm:Group id="GroupEntityType01" label="Group1 bound to  EntityType01" >
+								<smartForm:Group id="GroupEntityType01" title="Group1 bound to  EntityType01" >
 									<smartForm:GroupElement id="EntityType01.Prop1" >
 										<smartField:SmartField editable="true" contextEditable="true" value="{Property01}"/>
 									</smartForm:GroupElement>
@@ -125,7 +125,7 @@
 									</smartForm:GroupElement>
 								</smartForm:Group>
 								<!--This Group is bound to EntityType02 because the form is bound to EntityType02 -->
-								<smartForm:Group id="GroupEntityType02" label="Group2 bound to EntityType02" >
+								<smartForm:Group id="GroupEntityType02" title="Group2 bound to EntityType02" >
 									<smartForm:GroupElement id="EntityType02.CompProp1" >
 										<smartField:SmartField editable="true" contextEditable="true" value="{EntityType02_Complex/ComplexProperty01}"/>
 									</smartForm:GroupElement>
@@ -317,12 +317,12 @@
 						<uxap:ObjectPageSubSection id="ObjectPageSubSectionForNavigation" blocks="{ path: 'to_EntityType01Nav', length: 1, templateShareable: false }">
 							<!-- This form is bound to EntityTypeNav through navigation in the controller -->
 							<smartForm:SmartForm id="NavPropertyForm" title="Smart Form bound to EntityTypeNav using navigation">
-									<smartForm:Group id="NavPropertyGroup" label="Group for navigation property">
+									<smartForm:Group id="NavPropertyGroup" title="Group for navigation property">
 										<smartForm:GroupElement id="NavPropertyGroupElement" label="Relative navigation property">
 											<smartField:SmartField value="{NavProperty}"/>
 										</smartForm:GroupElement>
 									</smartForm:Group>
-									<smartForm:Group id="OtherGroup" label="Other Group" >
+									<smartForm:Group id="OtherGroup" title="Other Group" >
 										<smartForm:GroupElement id="NavForm.EntityType01.Prop1" label="Element bound to EntityType01" binding="{path: &quot;/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')&quot;}">
 											<smartField:SmartField editable="true" contextEditable="true" value="{Property01}"/>
 										</smartForm:GroupElement>
@@ -339,7 +339,7 @@
 						<uxap:ObjectPageSubSection id="ObjectPageSubSectionForNavigationWithoutOtherGroup" blocks="{ path: 'to_EntityType01Nav', length: 1, templateShareable: false }">
 							<!-- This form is bound to EntityTypeNav through navigation in the controller -->
 							<smartForm:SmartForm id="OnlyNavPropertyForm" title="Smart Form bound to EntityTypeNav using navigation only">
-									<smartForm:Group id="OnlyNavPropertyGroup" label="Group for navigation property only">
+									<smartForm:Group id="OnlyNavPropertyGroup" title="Group for navigation property only">
 										<smartForm:GroupElement id="OnlyNavPropertyGroupElement" label="Relative navigation property only">
 											<smartField:SmartField value="{NavProperty}"/>
 										</smartForm:GroupElement>
@@ -352,7 +352,7 @@
 						<uxap:ObjectPageSubSection id="ObjectPageSubSectionForAggrBinding" blocks="{ path: 'to_EntityType01Nav', templateShareable: false }">
 							<!-- This form is bound to EntityTypeNav through navigation in the controller -->
 							<smartForm:SmartForm id="NavPropertyFormForAggrBinding" title="Smart Form bound to EntityTypeNav">
-									<smartForm:Group id="NavPropertyGroupForAggrBinding" label="Group" >
+									<smartForm:Group id="NavPropertyGroupForAggrBinding" title="Group" >
 										<smartForm:GroupElement id="EntityType01_Prop1" label="First bound element">
 											<smartField:SmartField editable="true" contextEditable="true" value="{EntityTypeNav_Property01}"/>
 										</smartForm:GroupElement>
@@ -389,7 +389,7 @@
 							<form:SimpleForm title="SimpleForm with titles" id="SimpleForm"
 								maxContainerCols="3"
 								editable="true"
-								layout="ResponsiveGridLayout"
+								layout="ColumnLayout"
 								labelSpanXL="4"
 								labelSpanL="4"
 								labelSpanM="4"

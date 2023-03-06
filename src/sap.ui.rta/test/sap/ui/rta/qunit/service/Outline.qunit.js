@@ -762,13 +762,13 @@ sap.ui.define([
 	});
 
 	function createController(sController, oData) {
-		var MyController = Controller.extend(sController, {
+		Controller.extend(sController, {
 			onInit: function () {
 				var oModel = new JSONModel(oData);
 				this.getView().setModel(oModel);
 			}
 		});
-		return new MyController();
+		return Controller.create({name: sController});
 	}
 
 	QUnit.module("Given that xmlView with table and extensionPoint (RuntimeAuthoring and outline service are started) - Template case", {
@@ -794,8 +794,10 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			var oController = createController("myController", oData);
-			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+			return createController("myController", oData)
+				.then(function(oController) {
+					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				}.bind(this))
 				.then(function() {
 					return this.oOutline.get();
 				}.bind(this))
@@ -864,8 +866,10 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			var oController = createController("myController", oData);
-			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+			return createController("myController", oData)
+				.then(function(oController) {
+					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				}.bind(this))
 				.then(function() {
 					return this.oOutline.get();
 				}.bind(this))
@@ -917,8 +921,10 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			var oController = createController("myController", oData);
-			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+			return createController("myController", oData)
+				.then(function(oController) {
+					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				}.bind(this))
 				.then(function() {
 					return this.oOutline.get();
 				}.bind(this))
@@ -970,8 +976,10 @@ sap.ui.define([
 			var oData = {
 				ProductCollection: []
 			};
-			var oController = createController("myController", oData);
-			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+			return createController("myController", oData)
+				.then(function(oController) {
+					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				}.bind(this))
 				.then(function() {
 					return this.oOutline.get();
 				}.bind(this))
@@ -1017,8 +1025,10 @@ sap.ui.define([
 					{ PotatoId: "French Fries", Category: "Fried" }
 				]
 			};
-			var oController = createController("myController", oData);
-			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+			return createController("myController", oData)
+				.then(function(oController) {
+					return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+				}.bind(this))
 				.then(function() {
 					return this.oOutline.get();
 				}.bind(this))

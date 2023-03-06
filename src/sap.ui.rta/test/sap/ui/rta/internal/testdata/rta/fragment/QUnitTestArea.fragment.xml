@@ -24,7 +24,7 @@
 		</contentRight>
 	</Bar>
 	<smartForm:SmartForm id="MainForm" title="Information" editable="true" entityType="Header" ignoredFields="TransactionCode">
-		<smartForm:Group id="GeneralLedgerDocument" label="General Ledger Document">
+		<smartForm:Group id="GeneralLedgerDocument" title="General Ledger Document">
 			<smartForm:GroupElement id="GeneralLedgerDocument.Name">
 				<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocument}" />
 			</smartForm:GroupElement>
@@ -35,7 +35,7 @@
 				<smartField:SmartField value="{CompanyCode}" />
 			</smartForm:GroupElement>
 		</smartForm:Group>
-		<smartForm:Group label="Dates" id="Dates">
+		<smartForm:Group title="Dates" id="Dates">
 			<smartForm:GroupElement label="With specific flexibility definition" id="Dates.SpecificFlexibility" sap.ui.fl:flexibility="sap/ui/rta/test/GroupElementTest.flexibility" sap.ui.dt:designtime="sap/ui/rta/test/InstanceSpecificScopedGroupElement.designtime">
 				<Input value="My label can only be renamed to capital letters" id="InputSpecificFlexibility" />
 			</smartForm:GroupElement>
@@ -44,7 +44,7 @@
 				<TextArea value="{CreationDate}"></TextArea>
 			</smartForm:GroupElement>
 		</smartForm:Group>
-		<smartForm:Group label="Group without stable Id">
+		<smartForm:Group title="Group without stable Id">
 			<smartForm:GroupElement id="FieldInGroupWithoutStableId">
 				<smartField:SmartField value="{FiscalYear}" />
 			</smartForm:GroupElement>

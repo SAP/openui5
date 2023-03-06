@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/ElementUtil",
 	"sap/m/Label",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/Title",
@@ -12,11 +11,9 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/ui/core/Core"
-],
-function(
+], function(
 	DesignTime,
 	OverlayRegistry,
-	ElementUtil,
 	Label,
 	SimpleForm,
 	Title,
@@ -35,6 +32,7 @@ function(
 			this.oSimpleForm = new SimpleForm("Form1", {
 				maxContainerCols: 2,
 				editable: true,
+				layout: "ColumnLayout",
 				content: [
 					new Title({text: "Person"}),
 					this.oLabel,

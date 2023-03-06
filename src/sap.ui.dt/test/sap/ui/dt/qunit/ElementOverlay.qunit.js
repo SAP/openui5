@@ -170,6 +170,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("elementModified event — property change ('visible')", function(assert) {
+			var fnDone = assert.async();
 			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 
 			this.oElementOverlay.attachEventOnce("elementModified", function(oEvent) {
@@ -177,12 +178,14 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter("name"), "visible");
 				assert.equal(oEvent.getParameter("value"), false);
 				assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was called");
+				fnDone();
 			}, this);
-
+			this.oButton.invalidate();
 			this.oButton.setVisible(false);
 		});
 
 		QUnit.test("elementModified event — property change ('text')", function(assert) {
+			var fnDone = assert.async();
 			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 
 			this.oElementOverlay.attachEventOnce("elementModified", function(oEvent) {
@@ -190,23 +193,27 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter("name"), "text");
 				assert.equal(oEvent.getParameter("value"), "My Button");
 				assert.equal(oSetRelevantSpy.callCount, 0, "and setRelevantOverlays was not called");
+				fnDone();
 			}, this);
 
 			this.oButton.setText("My Button");
 		});
 
 		QUnit.test("elementModified event — after rendering", function(assert) {
+			var fnDone = assert.async();
 			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 
 			this.oElementOverlay.attachEventOnce("elementModified", function(oEvent) {
 				assert.equal(oEvent.getParameter("type"), "afterRendering");
 				assert.equal(oSetRelevantSpy.callCount, 0, "and setRelevantOverlays was not called");
+				fnDone();
 			}, this);
 
-			this.oButton.rerender();
+			this.oButton.rerender(true);
 		});
 
 		QUnit.test("elementModified event — setParent", function(assert) {
+			var fnDone = assert.async();
 			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 			var oLayout = new VerticalLayout();
 
@@ -215,6 +222,7 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter("value"), oLayout);
 				assert.equal(oSetRelevantSpy.callCount, 0, "and setRelevantOverlays was not called");
 				oLayout.destroy();
+				fnDone();
 			}, this);
 
 			this.oButton.setParent(oLayout);
