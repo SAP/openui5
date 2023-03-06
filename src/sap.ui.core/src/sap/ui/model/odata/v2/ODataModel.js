@@ -4296,7 +4296,10 @@ sap.ui.define([
 						response : merge({}, oResponse)
 					});
 				} else if (!sDeepPath) {
-					oRequest.deepPath = oRequest.functionTarget;
+					if (!sHeadersLocation) {
+						sDeepPath = this.getDeepPathForCanonicalPath(oRequest.functionTarget);
+					}
+					oRequest.deepPath = sDeepPath || oRequest.functionTarget;
 				}
 				if (mContentID2KeyAndDeepPath && oRequest.contentID) {
 					mContentID2KeyAndDeepPath[oRequest.contentID].deepPath = oRequest.deepPath;
