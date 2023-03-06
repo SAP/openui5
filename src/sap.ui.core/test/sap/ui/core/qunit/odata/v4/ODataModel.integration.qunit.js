@@ -47335,57 +47335,59 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Inactive rows for entities with default values.
+	// Reset an edited inactive row and see that the value is reset to the default value (from
+	// metadata).
+	// JIRA: CPOUI5ODATAV4-1967
 	QUnit.test("Creation rows: reset changes with default values", function (assert) {
 		var oBinding,
 			aCells,
 			oContext,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oNoteBinding,
-			oNoteLangBinding,
+			oNoteLanguageBinding,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Input id="id" value="{SalesOrderID}"/>\
 	<Input id="note" value="{Note}"/>\
-	<Input id="noteLang" value="{NoteLanguage}"/>\
+	<Input id="noteLanguage" value="{NoteLanguage}"/>\
 	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
 </Table>',
 			that = this;
 
 		this.expectRequest("SalesOrderList?$select=Note,NoteLanguage,SalesOrderID&$skip=0&$top=100",
 				{value : []})
-			.expectChange("id", [])
 			.expectChange("note", [])
-			.expectChange("noteLang", []);
+			.expectChange("noteLanguage", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
 
-			that.expectChange("id", ["43"])
-				.expectChange("note", [""])
-				.expectChange("noteLang", ["E"]);
-
 			oBinding.attachCreateActivate(function (oEvent) {
 				oEvent.preventDefault();
 			});
-			oContext = oBinding.create({SalesOrderID : "43"}, true, true, /*bInactive*/true);
+
+			that.expectChange("note", [""])
+				.expectChange("noteLanguage", ["E"]);
+
+			oContext = oBinding.create(undefined, true, true, /*bInactive*/true);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			aCells = that.oView.byId("table").getItems()[0].getCells();
-			oNoteBinding = aCells[1].getBinding("value");
-			oNoteLangBinding = aCells[2].getBinding("value");
+			oNoteBinding = aCells[0].getBinding("value");
+			oNoteLanguageBinding = aCells[1].getBinding("value");
 
 			that.expectChange("note", ["My Note"]);
-			that.expectChange("noteLang", ["D"]);
+			that.expectChange("noteLanguage", ["D"]);
 
 			// code under test
 			oNoteBinding.setValue("My Note");
-			oNoteLangBinding.setValue("D");
+			oNoteLanguageBinding.setValue("D");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("note", [""]);
-			that.expectChange("noteLang", ["E"]);
+			that.expectChange("noteLanguage", ["E"]);
 
 			// code under test
 			oContext.resetChanges();
@@ -47393,11 +47395,11 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("note", ["My Note 2"]);
-			that.expectChange("noteLang", ["C"]);
+			that.expectChange("noteLanguage", ["C"]);
 
 			// code under test
 			oNoteBinding.setValue("My Note 2");
-			oNoteLangBinding.setValue("C");
+			oNoteLanguageBinding.setValue("C");
 
 			return that.waitForChanges(assert);
 		});
