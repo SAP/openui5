@@ -6,44 +6,48 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/Label",
-	"sap/m/Text"
-], function (extend, Button, Column, Label, Text) {
+	"sap/m/Text",
+	"sap/ui/core/sample/odata/v4/SalesOrders/Main.controller"
+], function (extend, Button, Column, Label, Text, Controller) {
 	"use strict";
 
-	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
-
+	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
 		onInit : function () {
-			var oView = this.getView(),
-				oAdaptSalesOrdersButton = new Button({
+			var oView,
+				that = this;
+
+			Controller.prototype.onInit.apply(this, arguments);
+
+			oView = this.getView();
+			this.iIdCounter = 0;
+			this.loadFragment({
+				name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog"
+			}).then(function () {
+				that.byId("salesOrderListToolbar").addContent(new Button({
 					icon : "sap-icon://settings",
 					id : oView.createId("AdaptUISalesOrdersTable"),
-					press : this.onAdaptSalesOrders.bind(this),
+					press : that.onAdaptSalesOrders.bind(that),
 					tooltip : "Adapt Sales Orders Table"
-				});
-
-			this.iIdCounter = 0;
-			oAdaptSalesOrdersButton.addDependent(sap.ui.xmlfragment(oView.getId(),
-				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog", this));
-			this.byId("salesOrderListToolbar").addContent(oAdaptSalesOrdersButton);
-
-			this.byId("salesOrderDetailsToolbar").addContent(new Button({
-				icon : "sap-icon://settings",
-				id : oView.createId("AdaptUISalesOrdersDetails"),
-				press : this.onAdaptSODetails.bind(this),
-				tooltip : "Adapt Sales Order Details"
-			}));
-			this.byId("SO_2_BP::detail").addContent(new Button({
-				icon : "sap-icon://settings",
-				id : oView.createId("AdaptUIBusinessPartner"),
-				press : this.onAdaptBusinessPartner.bind(this),
-				tooltip : "Adapt Business Partner Details"
-			}));
-			this.byId("lineItemsToolbar").addContent(new Button({
-				icon : "sap-icon://settings",
-				id : oView.createId("AdaptUISalesOrderLineItems"),
-				press : this.onAdaptSalesOrderItems.bind(this),
-				tooltip : "Adapt Sales Order Line Items Table"
-			}));
+				}));
+				that.byId("salesOrderDetailsToolbar").addContent(new Button({
+					icon : "sap-icon://settings",
+					id : oView.createId("AdaptUISalesOrdersDetails"),
+					press : that.onAdaptSODetails.bind(that),
+					tooltip : "Adapt Sales Order Details"
+				}));
+				that.byId("SO_2_BP::detail").addContent(new Button({
+					icon : "sap-icon://settings",
+					id : oView.createId("AdaptUIBusinessPartner"),
+					press : that.onAdaptBusinessPartner.bind(that),
+					tooltip : "Adapt Business Partner Details"
+				}));
+				that.byId("lineItemsToolbar").addContent(new Button({
+					icon : "sap-icon://settings",
+					id : oView.createId("AdaptUISalesOrderLineItems"),
+					press : that.onAdaptSalesOrderItems.bind(that),
+					tooltip : "Adapt Sales Order Line Items Table"
+				}));
+			});
 		},
 
 		/**
