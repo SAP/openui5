@@ -11,7 +11,7 @@ sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer', "sap/ui/core/Core"],
 	 * @namespace
 	 */
 	var MultiInputRenderer = Renderer.extend(InputRenderer);
-	MultiInputRenderer.apiVersion = 4;
+	MultiInputRenderer.apiVersion = 2;
 
 	MultiInputRenderer.prependInnerContent = function (oRm, oControl) {
 		oRm.renderControl(oControl.getAggregation("tokenizer"));

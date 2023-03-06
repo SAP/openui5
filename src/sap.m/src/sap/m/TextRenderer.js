@@ -37,7 +37,7 @@ sap.ui.define([
 		 * @namespace
 		 */
 		var TextRenderer = {
-			apiVersion: 4
+			apiVersion: 2
 		};
 
 		/**

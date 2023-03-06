@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 		 * @namespace
 		 */
 		var TimePickerRenderer = Renderer.extend(DateTimeFieldRenderer);
-		TimePickerRenderer.apiVersion = 4;
+		TimePickerRenderer.apiVersion = 2;
 
 		TimePickerRenderer.CSS_CLASS = "sapMTimePicker";
 

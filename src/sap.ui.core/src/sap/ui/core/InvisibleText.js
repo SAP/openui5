@@ -49,7 +49,7 @@ sap.ui.define([
 		},
 
 		renderer : {
-			apiVersion : 4,
+			apiVersion : 2,
 			render: function(oRm, oControl) {
 				// The text is hidden through "display: none" in the shared CSS class
 				// "sapUiInvisibleText", as an alternative in case screen readers have trouble with

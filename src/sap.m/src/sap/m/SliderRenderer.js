@@ -11,7 +11,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText", "sap/ui/core/Co
 		 * @namespace
 		 */
 		var SliderRenderer = {
-			apiVersion: 4
+			apiVersion: 2
 		};
 
 		/**

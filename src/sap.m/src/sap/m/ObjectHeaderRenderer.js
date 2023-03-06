@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @namespace
 	 */
 	var ObjectHeaderRenderer = {
-		apiVersion: 4
+		apiVersion: 2
 	};
 
 	/**

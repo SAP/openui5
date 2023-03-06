@@ -12,7 +12,7 @@ sap.ui.define(['./library', 'sap/ui/core/Core'],
 	 * @namespace
 	 */
 	var ObjectIdentifierRenderer = {
-		apiVersion: 4
+		apiVersion: 2
 	};
 
 	// shortcut for sap.m.EmptyIndicator

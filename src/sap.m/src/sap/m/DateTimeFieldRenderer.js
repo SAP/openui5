@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 	 * @namespace
 	 */
 	var DateTimeFieldRenderer = Renderer.extend(InputBaseRenderer);
-	DateTimeFieldRenderer.apiVersion = 4;
+	DateTimeFieldRenderer.apiVersion = 2;
 
 	/**
 	 * Returns aria accessibility role for the control.
