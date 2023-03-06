@@ -1849,6 +1849,7 @@ sap.ui.define([
 				editable: false,
 				enabled: false,
 				placeholder: 'useful placeholder',
+				tooltip: 'useful tooltip',
 				min: 0,
 				max: 10,
 				value: 15
@@ -1867,6 +1868,8 @@ sap.ui.define([
 		assert.ok($Input.is("[aria-valuemax]"), "Internal Input has 'aria-valuemax' attribute");
 		assert.strictEqual($Input.attr("aria-valuemax"), "10", "Internal input's 'aria-valuemax' attribute has correct value");
 		/* Inherited InputBase aria properties */
+		assert.ok(oInput.$().is("[title]"), "Internal Input wrapper has 'title' attribute");
+		assert.strictEqual(oInput.$().attr("title"), 'useful tooltip', "Internal input's wrapper 'title' attribute has correct value");
 		assert.ok($Input.is("[name]"), "Internal Input has 'name' attribute");
 		assert.strictEqual($Input.attr("name"), 'useful name', "Internal input's 'name' attribute has correct value");
 		assert.ok($Input.is("[placeholder]"), "Internal Input has 'placeholder' attribute");
