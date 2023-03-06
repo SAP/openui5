@@ -1878,13 +1878,13 @@ sap.ui.define([
 			this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = true;
 		}
 
-		return this.awaitPendingModification().then(function(aChangesProcessed){
+		return this.awaitPendingModification().then(function(aAffectedControllers){
 			//clean-up fields in error state
 			this._cleanUpAllFilterFieldsInErrorState();
 
 			// ensure that the initial filters are applied --> only trigger search & validate when no filterbar changes exists.
 			// Filterbar specific changes will be handled via _onModifications.
-			if (this._bInitialFiltersApplied && (aChangesProcessed.length === 0)) {
+			if (this._bInitialFiltersApplied && (aAffectedControllers.indexOf("Filter") === -1)) {
 				this._reportModelChange({
 					triggerFilterUpdate: false,
 					triggerSearch: this._bExecuteOnSelect
