@@ -1194,5 +1194,32 @@
         ]
       }
     ]
+  },
+  "1.102.15": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "d45c6c96982282ff8927d321c65bc451bff5eb16",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Switch hours when minDate is after maxDate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370001157"
+          }
+        ]
+      },
+      {
+        "id": "114cc74922609190a67c961c36d0f4095a55034c",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Fixed failing test on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154471"
+          }
+        ]
+      }
+    ]
   }
 }

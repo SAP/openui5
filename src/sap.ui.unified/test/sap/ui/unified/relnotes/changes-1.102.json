@@ -212,5 +212,21 @@
         ]
       }
     ]
+  },
+  "1.102.15": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "b19cc04c10a92865ee62e52a5aa44d05e545a244",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Adjust week selection when Min & Max dates are set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280178657"
+          }
+        ]
+      }
+    ]
   }
 }
