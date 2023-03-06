@@ -2043,6 +2043,23 @@ sap.ui.define([
 				});
 			});
 		});
+
+		QUnit.test("appdescr_fe_changePageConfiguration", function(assert) {
+			return AppVariantInlineChangeFactory.create_fe_changePageConfiguration({
+				changeType: "appdescr_fe_changePageConfiguration",
+				content: {
+					page: "FioriElementsv4Page",
+					entityPropertyChange: {
+						propertyPath: "variantManagement",
+						operation: "UPSERT",
+						propertyValue: 'Control'
+					}
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_fe_changePageConfiguration");
+			});
+		});
 	});
 
 	QUnit.done(function () {
