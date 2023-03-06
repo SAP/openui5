@@ -199,7 +199,9 @@ sap.ui.define([
 		// When changes are made in the binding with multiple API calls, the binding fires a change event with the consolidated reason "change".
 		// The information that there is a sort or filter change is lost, hence the GridTable does not clear the selection. The changes could
 		// affect the indices and make the current selection invalid. Therefore, the delegate has to clear the selection here.
-		oTable.clearSelection();
+        if (oTable._isOfType(TableType.Table)) {
+            oTable.clearSelection();
+        }
 	};
 
 	/**
