@@ -347,7 +347,7 @@ function(
 			this._getInput().setValueState(this.getValueState());
 			this._getOrCreateDecrementButton().setVisible(bEditable);
 			this._getOrCreateIncrementButton().setVisible(bEditable);
-
+			this._getInput().setTooltip(this.getTooltip());
 			this._disableButtons(vValue, fMax, fMin);
 			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			if (this._bNeedsVerification && !this._bValueStatePreset) {
