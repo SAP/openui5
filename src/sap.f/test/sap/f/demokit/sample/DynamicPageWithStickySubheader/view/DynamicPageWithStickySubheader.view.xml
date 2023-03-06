@@ -56,7 +56,6 @@
 					</f:actions>
 					<f:navigationActions>
 						<Button icon="sap-icon://full-screen" type="Transparent" />
-						<Button icon="sap-icon://exit-full-screen" type="Transparent" />
 						<Button icon="sap-icon://decline" type="Transparent" />
 					</f:navigationActions>
 				</f:DynamicPageTitle>
