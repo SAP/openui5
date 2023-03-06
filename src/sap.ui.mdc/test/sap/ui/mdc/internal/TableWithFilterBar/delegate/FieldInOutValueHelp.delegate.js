@@ -19,12 +19,12 @@ sap.ui.define([
 	var FieldInOutValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
 
-	FieldInOutValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
+	FieldInOutValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
 
 		var aInParameters = oPayload.inParameters || [];
-		var oConditions = BaseValueHelpDelegate.getInitialFilterConditions(oPayload, oContent);
+		var oConditions = BaseValueHelpDelegate.getFilterConditions(arguments);
 
-		var oField = oControl;
+		var oField = (oConfig && oConfig.control) || (oContent && oContent.getControl());
 		if (oField && oField.isA("sap.ui.mdc.Field")) {
 			var sContentId = oContent.getId();
 			var aPropertyPromises = [];

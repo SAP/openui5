@@ -258,8 +258,8 @@ sap.ui.define([
 			}
 	};
 
-	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
-		var oConditions = ODataV4ValueHelpDelegate.getInitialFilterConditions(oPayload, oContent, oControl);
+	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
 		var bIsTypeahead = oContent.isTypeahead();
 
