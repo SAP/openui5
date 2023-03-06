@@ -373,7 +373,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("ariaLabelledBy external label", function(assert) {
+	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal labels", function(assert) {
 		// Arrange + System under Test
 		var oLabel = new Label({
 			text : "Toolbar Label"
@@ -386,7 +386,9 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//Assert
-		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby external label");
+		var oInvisibleText = document.getElementById(oTB.getId() + "-InvisibleText");
+		assert.notOk(oInvisibleText, "Invisible text is not rendered in the static area");
+		assert.strictEqual(oTB.$().attr("aria-labelledby"), undefined, "Toolbar does not have attribute aria-labelledby - external label");
 
 		oTB.applyTagAndContextClassFor("header");
 		Core.applyChanges();
@@ -396,7 +398,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("ariaLabelledBy internal and external labels", function(assert) {
+	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal and external labels", function(assert) {
 		// Arrange + System under Test
 		var oLabel = new Label({
 			text : "Toolbar Label"
@@ -409,7 +411,9 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//Assert
-		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby for internal and external labels");
+		var oInvisibleText = document.getElementById(oTB.getId() + "-InvisibleText");
+		assert.notOk(oInvisibleText, "Invisible text is not rendered in the static area");
+		assert.strictEqual(oTB.$().attr("aria-labelledby"), undefined, "Toolbar does not have attribute aria-labelledby - external label");
 
 		//Cleanup
 		oLabel.destroy();

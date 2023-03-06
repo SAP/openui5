@@ -503,6 +503,42 @@ function(
 			Dialog._mIcons[ValueState.Information] = IconPool.getIconURI("information");
 		};
 
+		/**
+		 * Returns an invisible text control that can be used to label the header toolbar of
+		 * the dialog for accessibility purposes.
+		 *
+		 * @param {string} sId - The ID to use for the invisible text control.
+		 * @returns {sap.ui.core.InvisibleText} The invisible text control for the header toolbar.
+		 * @private
+		 */
+		Dialog._getHeaderToolbarAriaLabelledByText = function() {
+			if (!Dialog._oHeaderToolbarInvisibleText) {
+				Dialog._oHeaderToolbarInvisibleText = new InvisibleText("__headerActionsToolbar-invisibleText", {
+					text: Core.getLibraryResourceBundle("sap.m").getText("ARIA_LABEL_TOOLBAR_HEADER_ACTIONS")
+				}).toStatic();
+			}
+
+			return Dialog._oHeaderToolbarInvisibleText;
+		};
+
+		/**
+		 * Returns an invisible text control that can be used to label the footer toolbar of
+		 * the dialog for accessibility purposes.
+		 *
+		 * @param {string} sId - The ID to use for the invisible text control.
+		 * @returns {sap.ui.core.InvisibleText} The invisible text control for the header toolbar.
+		 * @private
+		 */
+		Dialog._getFooterToolbarAriaLabelledByText = function() {
+			if (!Dialog._oFooterToolbarInvisibleText) {
+				Dialog._oFooterToolbarInvisibleText = new InvisibleText("__footerActionsToolbar-invisibleText", {
+					text: Core.getLibraryResourceBundle("sap.m").getText("ARIA_LABEL_TOOLBAR_FOOTER_ACTIONS")
+				}).toStatic();
+			}
+
+			return Dialog._oFooterToolbarInvisibleText;
+		};
+
 		/* =========================================================== */
 		/*                  begin: Lifecycle functions                 */
 		/* =========================================================== */
@@ -1394,7 +1430,8 @@ function(
 			if (!this._header) {
 				// set parent of header to detect changes on title
 				this._header = new Bar(this.getId() + "-header", {
-					titleAlignment: this.getTitleAlignment()
+					titleAlignment: this.getTitleAlignment(),
+					ariaLabelledBy: Dialog._getHeaderToolbarAriaLabelledByText()
 				});
 
 				this.setAggregation("_header", this._header);
@@ -1752,7 +1789,10 @@ function(
 		 */
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
-				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders");
+				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer", {
+					ariaLabelledBy: Dialog._getFooterToolbarAriaLabelledByText()
+				}).addStyleClass("sapMTBNoBorders");
+
 				this._oToolbar.addDelegate({
 					onAfterRendering: function () {
 						if (this.getType() === DialogType.Message) {

@@ -24,17 +24,30 @@ sap.ui.define(['./BarInPageEnabler'],
 	ToolbarRenderer.render = BarInPageEnabler.prototype.render;
 
 	/**
-	 * Writes the accessibility state.
+	 * Writes the accessibility state of the given toolbar using the given renderer manager.
 	 * To be overwritten by subclasses.
 	 *
 	 * @private
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.m.Toolbar} oToolbar An object representation of the control that should be rendered.
+	 * @param {sap.ui.core.RenderManager} oRm - The renderer manager to use for writing the accessibility state.
+	 * @param {sap.m.Toolbar} oToolbar - The toolbar to write the accessibility state for.
+	 * @returns {void}
+	 *
+	 * @description
+	 * This function uses the `assignAccessibilityState` method of the toolbar to obtain a map of ARIA properties to set on
+	 * the rendered toolbar element. If the map is empty, the accessibility state is set to `null` to ensure that no
+	 * unnecessary ARIA attributes are present. Otherwise, the accessibility state is set to the toolbar.
+	 * The purpose of this logic is to ensure that the rendered toolbar has appropriate ARIA attributes for accessibility
+	 * purposes, while avoiding unnecessary attributes that could be confusing or misleading to users of assistive technology.
 	 */
 	ToolbarRenderer.writeAccessibilityState = function(oRm, oToolbar) {
-		var oAccInfo = {};
+		var oAccInfo = {},
+			mAriaProps = oToolbar.assignAccessibilityState(oAccInfo);
 
-		oRm.accessibilityState(oToolbar, oToolbar.assignAccessibilityState(oAccInfo));
+		if (!Object.keys(mAriaProps).length) {
+			oRm.accessibilityState(null);
+		} else {
+			oRm.accessibilityState(oToolbar, mAriaProps);
+		}
 	};
 
 	/**
