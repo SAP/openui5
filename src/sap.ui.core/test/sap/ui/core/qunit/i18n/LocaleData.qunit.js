@@ -883,9 +883,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 // Tests from https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
-// with the following changes
+// with the following changes (as the "e" operand may be redefined in the future):
 // - leave out the "e" operand, as this is a deprecated alias for "c" and code in LocaleData only uses "c"
-// - number literals containing "c" are changed to use "e" as this is the scientific notation in JavaScript
+// - number literals containing "c" are also tested with an "e" variant as this is the scientific notation in JavaScript
 [{
 	sNumber: "1",
 	oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
@@ -911,17 +911,29 @@ sap.ui.define([
 	sNumber: "1200000",
 	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 0}
 }, {
+	sNumber: "1.2c6",
+	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+}, {
 	sNumber: "1.2e6",
 	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
 }, {
+	sNumber: "123c6",
+	oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+}, {
 	sNumber: "123e6",
 	oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+}, {
+	sNumber: "123c5",
+	oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
 }, {
 	sNumber: "123e5",
 	oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
 }, {
 	sNumber: "1200.50",
 	oOperands: {n: 1200.50, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 0}
+}, {
+	sNumber: "1.20050c3",
+	oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
 }, {
 	sNumber: "1.20050e3",
 	oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
@@ -935,6 +947,31 @@ sap.ui.define([
 		// code under test: check plural operands for number
 		// note: plural test function for "one" is always called as this is the first category
 		assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+	});
+});
+
+	//*********************************************************************************************
+	// See: https://unicode-org.github.io/cldr-staging/charts/41/supplemental/language_plural_rules.html
+	// Interesting: "1c6" and "1000000.0" have the same numeric value but lead to another plural category
+[{
+	category: "one",
+	examples: ["0", "1", "1.5"]
+}, {
+	category: "many",
+	examples: ["1000000", "1c6", "2c6", "3c6", "4c6", "5c6", "6c6",
+		"1.0000001c6", "1.1c6", "2.0000001c6", "2.1c6", "3.0000001c6", "3.1c6"]
+}, {
+	category: "other",
+	examples: ["2", "16", "100", "1000", "10000", "100000", "1c3", "2c3", "3c3", "4c3", "5c3", "6c3",
+		"2.0", "3.5", "10.0", "100.0", "1000.0", "10000.0", "100000.0", "1000000.0", "1.0001c3", "1.1c3",
+		"2.0001c3", "2.1c3", "3.0001c3", "3.1c3"]
+}].forEach(function (oFixture) {
+	QUnit.test("getPluralCategory: 'fr' examples; category=" + oFixture.category, function (assert) {
+		var oLocaleData = LocaleData.getInstance(new Locale("fr"));
+
+		oFixture.examples.forEach(function (sNumber) {
+			assert.strictEqual(oLocaleData.getPluralCategory(sNumber), oFixture.category);
+		});
 	});
 });
 

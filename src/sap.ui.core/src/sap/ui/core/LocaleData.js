@@ -7,7 +7,8 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 	function(extend, BaseObject, CalendarType, Locale, assert, LoaderExtensions, Configuration) {
 	"use strict";
 
-	var rEIgnoreCase = /e/i,
+	var rCIgnoreCase = /c/i,
+		rEIgnoreCase = /e/i,
 		/*
 		* With the upgrade of the CLDR to version 41 some unit keys have changed.
 		* For compatibility reasons this map is used for formatting units.
@@ -1879,20 +1880,29 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 
 		/**
 		 * Returns the plural category (zero, one, two, few, many or other) for the given number value.
-		 * The number should be passed as a string with dot as decimal separator and the number of decimal/fraction digits
-		 * as used in the final output. This is needed in order to preserve trailing zeros which are relevant to
-		 * determine the right plural category.
+		 * The number must be passed as an unformatted number string with dot as decimal
+		 * separator (for example "12345.67"). To determine the correct plural category, it
+		 * is also necessary to keep the same number of decimal digits as given in the formatted
+		 * output string. For example "1" and "1.0" could be in different plural categories as
+		 * the number of decimal digits is different.
 		 *
-		 * @param {string|number} sNumber The number to find the plural category for
+		 * Compact numbers (for example in "short" format) must be provided in the
+		 * locale-independent CLDR compact notation. This notation uses the plural rule operand "c"
+		 * for the compact decimal exponent, for example "1.2c3" for "1.2K" (1200) or "4c6" for
+		 * "4M" (4000000).
+		 *
+		 * Note that the operand "e" is deprecated, but is a synonym corresponding to the CLDR
+		 * specification for "c" and may be redefined in the future.
+		 *
+		 * @param {string|number} vNumber The number to find the plural category for
 		 * @returns {string} The plural category
 		 * @public
 		 * @since 1.50
 		 */
-		getPluralCategory: function(sNumber) {
-			var oPlurals = this._get("plurals");
-			if (typeof sNumber === "number") {
-				sNumber = sNumber.toString();
-			}
+		getPluralCategory: function(vNumber) {
+			var sNumber = (typeof vNumber === "number") ? vNumber.toString() : vNumber,
+				oPlurals = this._get("plurals");
+
 			if (!this._pluralTest) {
 				this._pluralTest = {};
 			}
@@ -2079,8 +2089,11 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 				throw new Error("Not completely parsed");
 			}
 			return function(sValue) {
-				var iDotPos, iExponent, sFraction, sFractionNoZeros, sInteger, o,
-					iExponentPos = sValue.search(rEIgnoreCase);
+				var iDotPos, iExponent, iExponentPos, sFraction, sFractionNoZeros, sInteger, o;
+
+				// replace compact operand "c" to scientific "e" to be convertible in LocaleData.convertToDecimal
+				sValue = sValue.replace(rCIgnoreCase, "e");
+				iExponentPos = sValue.search(rEIgnoreCase);
 
 				iExponent = iExponentPos < 0 ? 0 : parseInt(sValue.slice(iExponentPos + 1));
 				sValue = LocaleData.convertToDecimal(sValue);
@@ -2093,7 +2106,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 				} else {
 					sInteger = sValue.slice(0, iDotPos);
 					sFraction = sValue.slice(iDotPos + 1);
-					sFractionNoZeros = sFraction.replace(rTrailingZeroes, '');
+					sFractionNoZeros = sFraction.replace(rTrailingZeroes, "");
 				}
 
 				o = {
