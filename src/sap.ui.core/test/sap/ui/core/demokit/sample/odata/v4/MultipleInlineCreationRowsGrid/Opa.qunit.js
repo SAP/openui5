@@ -38,7 +38,9 @@ sap.ui.getCore().attachInit(function () {
 					"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.legacy",
 					bLegacyPosition);
 
-				When.onAnyPage.applySupportAssistant();
+				if (!bLegacyPosition && !bSubmitModeAPI) {
+					When.onAnyPage.applySupportAssistant();
+				}
 				Given.iStartMyUIComponent({
 					autoWait : true,
 					componentConfig : {
@@ -331,7 +333,6 @@ sap.ui.getCore().attachInit(function () {
 	opaTest(sTitle, function (Given, When, Then) {
 		var aExpectedLogs = [];
 
-		When.onAnyPage.applySupportAssistant();
 		Given.iStartMyUIComponent({
 			autoWait : true,
 			componentConfig : {
