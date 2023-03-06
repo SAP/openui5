@@ -3166,7 +3166,7 @@ sap.ui.define([
 		}
 
 		if (mRenderConfig.headerSelector.type === "toggle") {
-			var bAllRowsSelected = TableUtils.areAllRowsSelected(this);
+			var bAllRowsSelected = mRenderConfig.headerSelector.selected;
 
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
@@ -3228,24 +3228,26 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onSelectionChanged = function(oEvent) {
+		this._updateSelection();
+
+		// If a selection plugin is applied to the table, the "rowSelectionChange" event should not be fired.
+		if (this._hasSelectionPlugin()) {
+			return;
+		}
+
 		var oSelectionPlugin = this._getSelectionPlugin();
 		var aRowIndices = oEvent.getParameter("rowIndices");
 		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : oSelectionPlugin.getSelectedIndex();
 
-		this._updateSelection();
-
-		// If a selection plugin is applied to the table, the "rowSelectionChange" event should not be fired.
-		if (!this._hasSelectionPlugin()) {
-			this.setProperty("selectedIndex", oSelectionPlugin.getSelectedIndex(), true);
-			this.fireRowSelectionChange({
-				rowIndex: iRowIndex,
-				rowContext: this.getContextByIndex(iRowIndex),
-				rowIndices: aRowIndices,
-				selectAll: bSelectAll,
-				userInteraction: this._iSourceRowIndex !== undefined
-			});
-		}
+		this.setProperty("selectedIndex", oSelectionPlugin.getSelectedIndex(), true);
+		this.fireRowSelectionChange({
+			rowIndex: iRowIndex,
+			rowContext: this.getContextByIndex(iRowIndex),
+			rowIndices: aRowIndices,
+			selectAll: bSelectAll,
+			userInteraction: this._iSourceRowIndex !== undefined
+		});
 	};
 
 	/**
@@ -3938,29 +3940,6 @@ sap.ui.define([
 				oBinding.sort(aSorters);
 			}
 		}
-	};
-
-	/**
-	 * Toggles the selection state of all cells.
-	 * @private
-	 */
-	Table.prototype._toggleSelectAll = function() {
-		if (!TableUtils.hasData(this) || this.getSelectionMode() !== SelectionMode.MultiToggle) {
-			return;
-		}
-
-		var oSelectionPlugin = this._getSelectionPlugin();
-
-		// in order to fire the rowSelectionChanged event, the SourceRowIndex mus be set to -1
-		// to indicate that the selection was changed by user interaction
-		if (TableUtils.areAllRowsSelected(this)) {
-			this._iSourceRowIndex = -1;
-			oSelectionPlugin.clearSelection();
-		} else {
-			this._iSourceRowIndex = 0;
-			oSelectionPlugin.selectAll();
-		}
-		this._iSourceRowIndex = undefined;
 	};
 
 	Table.prototype.setBusy = function(bBusy) {

@@ -320,29 +320,14 @@ sap.ui.define([
 				 * Selects one or multiple rows.
 				 *
 				 * @function
-				 * @name iSelectSomeRows
+				 * @name iSelectRows
 				 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
 				 * @param {Number} iStartIndex Index from which the selection starts
 				 * @param {Number} iEndIndex Index up to the selection ends
 				 * @returns {Promise} OPA waitFor
 				 */
-				iSelectSomeRows: function(oControl, iStartIndex, iEndIndex) {
-					return TableActions.iSelectSomeRows.call(this, oControl, iStartIndex, iEndIndex);
-				},
-
-				/**
-				 * Removes the selection for one or multiple rows.
-				 *
-				 * @function
-				 * @name iDeselectSomeRows
-				 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-				 * @param {Number} iStartIndex Index from which the selection starts
-				 * @param {Number} iEndIndex Index up to the selection ends
-				 * @returns {Promise} OPA waitFor
-				 * @private
-				 */
-				iDeselectSomeRows: function(oControl, iStartIndex, iEndIndex) {
-					return TableActions.iDeselectSomeRows.call(this, oControl, iStartIndex, iEndIndex);
+				iSelectRows: function(oControl, iStartIndex, iEndIndex) {
+					return TableActions.iSelectRows.call(this, oControl, iStartIndex, iEndIndex);
 				},
 
 				iCloseTheColumnMenu: function() {

@@ -267,6 +267,22 @@ sap.ui.define([
 		}
 	}
 
+	function waitForRowsUpdated(oTable) {
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("_rowsUpdated", resolve);
+		});
+	}
+
+	function waitForData(oTable) {
+		if (oTable._hasPendingRequests()) {
+			return waitForRowsUpdated(oTable).then(function() {
+				return waitForData(oTable);
+			});
+		}
+
+		return Promise.resolve();
+	}
+
 	function scrollDown(oTable, oEvent, bPage, fnFocus) {
 		var bScrolledToEnd = oTable._getFirstRenderedRowIndex() === oTable._getMaxFirstRenderedRowIndex();
 
@@ -274,21 +290,17 @@ sap.ui.define([
 			return null;
 		}
 
-		_scroll(oTable, oEvent, true, bPage, fnFocus);
-
-		return true;
+		return _scroll(oTable, oEvent, true, bPage, fnFocus);
 	}
 
 	function scrollUp(oTable, oEvent, bPage, fnFocus) {
 		var bScrolledToTop = oTable._getFirstRenderedRowIndex() === 0;
 
 		if (bScrolledToTop) {
-			return false;
+			return null;
 		}
 
-		_scroll(oTable, oEvent, false, bPage, fnFocus);
-
-		return true;
+		return _scroll(oTable, oEvent, false, bPage, fnFocus);
 	}
 
 	function _scroll(oTable, oEvent, bDown, bPage, fnFocus) {
@@ -307,15 +319,13 @@ sap.ui.define([
 			oTable._getScrollExtension().scrollVertically(bDown === true, bPage);
 		}
 
-		if (bActionModeNavigation || fnFocus) {
-			oTable.attachEventOnce("rowsUpdated", function() {
-				if (fnFocus) {
-					fnFocus();
-				} else {
-					focusCell(oTable, oCellInfo.type, oCellInfo.rowIndex, oCellInfo.columnIndex, true);
-				}
-			});
-		}
+		return waitForRowsUpdated(oTable).then(function() {
+			if (fnFocus) {
+				fnFocus();
+			} else if (bActionModeNavigation) {
+				focusCell(oTable, oCellInfo.type, oCellInfo.rowIndex, oCellInfo.columnIndex, true);
+			}
+		});
 	}
 
 	function scrollDownAndFocus(oTable, oEvent) {
@@ -519,9 +529,8 @@ sap.ui.define([
 		function selectItems() {
 			var _doSelect = null;
 			if (oTable._legacyMultiSelection) {
-				_doSelect = function(iRowIndex) {
-					oTable._legacyMultiSelection(iRowIndex, oEvent);
-					return true;
+				_doSelect = function(oRow) {
+					oTable._legacyMultiSelection(oRow.getIndex(), oEvent);
 				};
 			}
 			TableUtils.toggleRowSelection(oTable, oEvent.target, null, _doSelect);
@@ -573,6 +582,19 @@ sap.ui.define([
 		}
 
 		return -1;
+	}
+
+	function moveRangeSelection(oTable, iRowIndex, bReverse) {
+		if (!bReverse) {
+			if (oTable._oRangeSelection.selected) {
+				TableUtils.toggleRowSelection(oTable, iRowIndex, true);
+			} else {
+				TableUtils.toggleRowSelection(oTable, iRowIndex, false);
+			}
+		} else {
+			// When moving back down to the row where the range selection started, the rows always get deselected.
+			TableUtils.toggleRowSelection(oTable, iRowIndex, false);
+		}
 	}
 
 	/**
@@ -888,7 +910,8 @@ sap.ui.define([
 
 	function startRangeSelectionMode(oTable) {
 		var iFocusedRowIndex = TableUtils.getRowIndexOfFocusedCell(oTable);
-		var iDataRowIndex = oTable.getRows()[iFocusedRowIndex].getIndex();
+		var oRow = oTable.getRows()[iFocusedRowIndex];
+		var iAbsoluteRowIndex = oRow.getIndex();
 		var oSelectionPlugin = oTable._getSelectionPlugin();
 
 		/**
@@ -900,8 +923,8 @@ sap.ui.define([
 		 * @private
 		 */
 		oTable._oRangeSelection = {
-			startIndex: iDataRowIndex,
-			selected: oSelectionPlugin.isIndexSelected(iDataRowIndex)
+			startIndex: iAbsoluteRowIndex,
+			selected: oSelectionPlugin.isSelected(oRow)
 		};
 	}
 
@@ -1193,7 +1216,7 @@ sap.ui.define([
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 			handleSpaceAndEnter(this, oEvent);
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE, ModKey.SHIFT)) {
-			TableUtils.toggleRowSelection(this, this.getRows()[oCellInfo.rowIndex].getIndex());
+			TableUtils.toggleRowSelection(this, oCellInfo.rowIndex);
 
 			startRangeSelectionMode(this);
 		} else if (this._legacyMultiSelection && !oCellInfo.isOfType(CellType.COLUMNROWHEADER) &&
@@ -1430,30 +1453,35 @@ sap.ui.define([
 				}
 
 				var iFocusedRowIndex = TableUtils.getRowIndexOfFocusedCell(this);
-				var iDataRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
+				var iAbsoluteRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
+				var bReverse = this._oRangeSelection.startIndex > iAbsoluteRowIndex;
+				var pScroll;
 
 				// If we are in the last data row of the table we don't need to do anything.
-				if (iDataRowIndex === this._getTotalRowCount() - 1) {
+				if (iAbsoluteRowIndex === this._getTotalRowCount() - 1) {
 					return;
 				}
 
 				if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
-					var bScrolled = scrollDown(this, oEvent);
-					if (bScrolled) {
+					if (this._oRangeSelection.pScroll) { // A previous selection is still ongoing.
 						preventItemNavigation(oEvent);
+						return;
+					} else {
+						pScroll = scrollDown(this, oEvent);
+						this._oRangeSelection.pScroll = pScroll;
 					}
 				}
 
-				if (this._oRangeSelection.startIndex <= iDataRowIndex) {
-					iDataRowIndex++;
-					if (this._oRangeSelection.selected) {
-						TableUtils.toggleRowSelection(this, iDataRowIndex, true);
-					} else {
-						TableUtils.toggleRowSelection(this, iDataRowIndex, false);
-					}
+				if (pScroll) {
+					preventItemNavigation(oEvent);
+					pScroll.then(function() {
+						return waitForData(this);
+					}.bind(this)).then(function() {
+						moveRangeSelection(this, iFocusedRowIndex - (bReverse ? 1 : 0), bReverse);
+						delete this._oRangeSelection.pScroll;
+					}.bind(this));
 				} else {
-					// When moving back down to the row where the range selection started, the rows always get deselected.
-					TableUtils.toggleRowSelection(this, iDataRowIndex, false);
+					moveRangeSelection(this, iFocusedRowIndex + (bReverse ? 0 : 1), bReverse);
 				}
 
 			} else {
@@ -1510,31 +1538,36 @@ sap.ui.define([
 				}
 
 				var iFocusedRowIndex = TableUtils.getRowIndexOfFocusedCell(this);
-				var iDataRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
+				var iAbsoluteRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
+				var bReverse = this._oRangeSelection.startIndex < iAbsoluteRowIndex;
+				var pScroll;
 
 				// Do not move up to the header when performing a range selection.
-				if (iDataRowIndex === 0) {
+				if (iAbsoluteRowIndex === 0) {
 					preventItemNavigation(oEvent);
 					return;
 				}
 
 				if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
-					var bScrolled = scrollUp(this, oEvent);
-					if (bScrolled) {
+					if (this._oRangeSelection.pScroll) { // A previous selection is still ongoing.
 						preventItemNavigation(oEvent);
+						return;
+					} else {
+						pScroll = scrollUp(this, oEvent);
+						this._oRangeSelection.pScroll = pScroll;
 					}
 				}
 
-				if (this._oRangeSelection.startIndex >= iDataRowIndex) {
-					iDataRowIndex--;
-					if (this._oRangeSelection.selected) {
-						TableUtils.toggleRowSelection(this, iDataRowIndex, true);
-					} else {
-						TableUtils.toggleRowSelection(this, iDataRowIndex, false);
-					}
+				if (pScroll) {
+					preventItemNavigation(oEvent);
+					pScroll.then(function() {
+						return waitForData(this);
+					}.bind(this)).then(function() {
+						moveRangeSelection(this, bReverse ? 1 : 0, bReverse);
+						delete this._oRangeSelection.pScroll;
+					}.bind(this));
 				} else {
-					// When moving back up to the row where the range selection started, the rows always get deselected.
-					TableUtils.toggleRowSelection(this, iDataRowIndex, false);
+					moveRangeSelection(this, iFocusedRowIndex - (bReverse ? 0 : 1), bReverse);
 				}
 
 			} else {

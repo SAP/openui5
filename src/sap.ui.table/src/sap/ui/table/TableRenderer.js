@@ -435,7 +435,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		var sSelectAllResourceTextID;
 		if (mRenderConfig.headerSelector.visible) {
-			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
+			var bAllRowsSelected = mRenderConfig.headerSelector.selected;
 
 			if (mRenderConfig.headerSelector.type === "toggle") {
 				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
@@ -676,7 +676,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 	};
 
 	TableRenderer.renderRowAddon = function(rm, oTable, oRow, iRowIndex, bHeader) {
-		var bRowSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
+		var bRowSelected = oTable._getSelectionPlugin().isSelected(oRow);
 
 		rm.openStart("div");
 		var oRowSettings = oRow.getAggregation("_settings");
@@ -724,7 +724,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		rm.openEnd();
 		if (bHeader) {
 			this.writeRowHighlightContent(rm, oTable, oRow, iRowIndex);
-			this.writeRowSelectorContent(rm, oTable, oRow, iRowIndex);
+			this.writeRowSelectorContent(rm, oTable, oRow);
 		} else {
 			var oAction = oRow.getRowAction();
 			if (oAction) {
@@ -946,8 +946,8 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		rm.close("table");
 	};
 
-	TableRenderer.writeRowSelectorContent = function(rm, oTable, oRow, iRowIndex) {
-		oTable._getAccRenderExtension().writeAccRowSelectorText(rm, oTable, oRow, iRowIndex);
+	TableRenderer.writeRowSelectorContent = function(rm, oTable, oRow) {
+		oTable._getAccRenderExtension().writeAccRowSelectorText(rm, oTable, oRow);
 
 		if (TableUtils.Grouping.isInGroupMode(oTable)) {
 			rm.openStart("div");
@@ -1103,7 +1103,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 			if (bDraggable && bFixedTable) {
 				rm.attr("draggable", true);
 			}
-			if (oSelectionPlugin.isIndexSelected(oRow.getIndex())) {
+			if (oSelectionPlugin.isSelected(oRow)) {
 				rm.class("sapUiTableRowSel");
 			}
 		}
@@ -1127,7 +1127,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		rm.openEnd();
 
-		var bSelected = !oRow.isEmpty() && oSelectionPlugin.isIndexSelected(oRow.getIndex()); //see TableRenderer.renderRowAddon
+		var bSelected = !oRow.isEmpty() && oSelectionPlugin.isSelected(oRow); //see TableRenderer.renderRowAddon
 		var aCells = oRow.getCells();
 
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {

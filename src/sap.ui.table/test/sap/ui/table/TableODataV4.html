@@ -34,9 +34,10 @@
 <script>
 	sap.ui.require([
 		"sap/ui/table/plugins/V4Aggregation",
+		"sap/ui/table/plugins/ODataV4Selection",
 		"sap/ui/model/odata/v4/ODataModel",
 		"sap/ui/model/json/JSONModel"
-	], function(V4Aggregation, ODataModel, JSONModel) {
+	], function(V4Aggregation, ODataV4Selection, ODataModel, JSONModel) {
 		var oTable = new sap.ui.table.Table({
 			extension: [
 				new sap.m.OverflowToolbar({
@@ -424,6 +425,7 @@
 
 		// TODO: The "plugins" aggregation is currently of type sap.ui.table.plugins.SelectionPlugin
 		oTable.addDependent(window.V4Plugin);
+		oTable.addPlugin(new ODataV4Selection({enableNotification: true}));
 
 		TABLESETTINGS.addServiceSettings(oTable, "TableODataV4ServiceSettings", function(mServiceSettings) {
 			oTable.setModel(new ODataModel({

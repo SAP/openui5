@@ -995,7 +995,7 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				that.oTable.attachEventOnce("rowsUpdated", function() {
-					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
+					assert.equal(oSelectionSpy.callCount, 2, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 4, "Table is scrolled at the correct position");
 					resolve();
 				});

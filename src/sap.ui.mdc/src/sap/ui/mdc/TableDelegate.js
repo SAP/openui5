@@ -8,12 +8,14 @@
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
 	"./AggregationBaseDelegate",
+	"./util/loadModules",
 	"./library",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/library",
 	"sap/ui/core/Core"
 ], function(
 	AggregationBaseDelegate,
+	loadModules,
 	library,
 	Sorter,
 	coreLibrary,
@@ -84,7 +86,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.Sorter | undefined} New sorter
 	 * @protected
 	 */
-	TableDelegate.getGroupSorter = function(oTable, sPropertyName){
+	TableDelegate.getGroupSorter = function(oTable, sPropertyName) {
 		var oSortedProperty = oTable._getSortedProperties().find(function(oProperty) {
 			return oProperty.name === sPropertyName;
 		});
@@ -230,7 +232,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.fetchExportCapabilities = function(oTable) {
-		return Promise.resolve({ XLSX: {} });
+		return Promise.resolve({XLSX: {}});
 	};
 
 	/**
@@ -239,7 +241,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @protected
 	 */
-	TableDelegate.expandAll = function (oTable) {
+	TableDelegate.expandAll = function(oTable) {
 		throw Error("Unsupported operation: TableDelegate does not support #expandAll");
 	};
 
@@ -249,8 +251,166 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @protected
 	 */
-	TableDelegate.collapseAll = function (oTable) {
+	TableDelegate.collapseAll = function(oTable) {
 		throw Error("Unsupported operation: TableDelegate does not support #collapseAll");
+	};
+
+	/**
+	 * This is called after the table has loaded the necessary libraries and modules and initialized its content, but before it resolves its
+	 * <code>initialized</code> Promise. It can be used to make changes to the content as part of the initialization.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @returns {Promise} A promise that resolves after the content is initialized
+	 * @private
+	 */
+	TableDelegate.initializeContent = function(oTable) {
+		return this.initializeSelection(oTable);
+	};
+
+	/**
+	 * This is called after the table has loaded the necessary libraries and modules and initialized its content, but before it resolves its
+	 * <code>initialized</code> Promise. It can be used to make changes to the selection as part of the initialization.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @returns {Promise} A promise that resolves after the content is initialized
+	 * @private
+	 */
+	TableDelegate.initializeSelection = function(oTable) {
+		if (oTable._isOfType(TableType.Table, true)) {
+			return initializeGridTableSelection(oTable);
+		} else {
+			return initializeResponsiveTableSelection(oTable);
+		}
+	};
+
+	function initializeGridTableSelection(oTable) {
+		var mSelectionModeMap = {
+			Single: "Single",
+			SingleMaster: "Single",
+			Multi: "MultiToggle"
+		};
+
+		return loadModules("sap/ui/table/plugins/MultiSelectionPlugin").then(function(aModules) {
+			var MultiSelectionPlugin = aModules[0];
+
+			oTable._oTable.addPlugin(new MultiSelectionPlugin({
+				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
+				enableNotification: true,
+				showHeaderSelector: "{$sap.ui.mdc.Table#type>/showHeaderSelector}",
+				selectionMode: {
+					path: "$sap.ui.mdc.Table>/selectionMode",
+					formatter: function(sSelectionMode) {
+						return mSelectionModeMap[sSelectionMode];
+					}
+				},
+				enabled: {
+					path: "$sap.ui.mdc.Table>/selectionMode",
+					formatter: function(sSelectionMode) {
+						return sSelectionMode in mSelectionModeMap;
+					}
+				},
+				selectionChange: function(oEvent) {
+					// TODO: Add something sililar like TableTypeBase#callHook -> move to reusable util? Use here and in other places in delegates.
+					oTable._onSelectionChange({
+						selectAll: oEvent.getParameter("selectAll")
+					});
+				}
+			}));
+		});
+	}
+
+	function initializeResponsiveTableSelection(oTable) {
+		var mSelectionModeMap = {
+			Single: "SingleSelectLeft",
+			SingleMaster: "SingleSelectMaster",
+			Multi: "MultiSelect"
+		};
+		var mMultiSelectModeMap = {
+			Default: "SelectAll",
+			ClearAll: "ClearAll"
+		};
+
+		oTable._oTable.bindProperty("mode", {
+			path: "$sap.ui.mdc.Table>/selectionMode",
+			formatter: function(sSelectionMode) {
+				return mSelectionModeMap[sSelectionMode]; // Default is "None"
+			}
+		});
+
+		oTable._oTable.bindProperty("multiSelectMode", {
+			path: "$sap.ui.mdc.Table>/multiSelectMode",
+			formatter: function(sMultiSelectMode) {
+				return mMultiSelectModeMap[sMultiSelectMode] || "SelectAll"; // Default is "Default"
+			}
+		});
+
+		oTable._oTable.attachSelectionChange(function(oEvent) {
+			oTable._onSelectionChange({
+				selectAll: oEvent.getParameter("selectAll")
+			});
+		});
+
+		return Promise.resolve();
+	}
+
+	/**
+	 * Gets the selected contexts.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {sap.ui.model.Context[]} The selected contexts
+	 * @private
+	 */
+	TableDelegate.getSelectedContexts = function(oTable) {
+		if (!oTable._oTable) {
+			return [];
+		}
+
+		if (oTable._isOfType(TableType.Table, true)) {
+			var oGridTable = oTable._oTable;
+			var oMultiSelectionPlugin = oGridTable.getPlugins().find(function(oPlugin) {
+				return oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin");
+			});
+
+			if (!oMultiSelectionPlugin) {
+				return [];
+			}
+
+			return oMultiSelectionPlugin.getSelectedIndices().map(function(iIndex) {
+				return oGridTable.getContextByIndex(iIndex);
+			}, this);
+		}
+
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
+			return oTable._oTable.getSelectedContexts();
+		}
+
+		return [];
+	};
+
+	/**
+	 * Clears the selection.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @private
+	 */
+	TableDelegate.clearSelection = function(oTable) {
+		if (!oTable._oTable) {
+			return;
+		}
+
+		if (oTable._isOfType(TableType.Table, true)) {
+			var oSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
+				return oPlugin.isA("sap.ui.table.plugins.SelectionPlugin");
+			});
+
+			if (oSelectionPlugin) {
+				oSelectionPlugin.clearSelection();
+			}
+		}
+
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
+			oTable._oTable.removeSelections(true);
+		}
 	};
 
 	/**
@@ -263,9 +423,8 @@ sap.ui.define([
 	TableDelegate.getSupportedFeatures = function(oTable) {
 		return {
 			"export": true,
-			"selection": !oTable._isOfType(TableType.TreeTable),
-			"expandAll": false,
-			"collapseAll": false
+			expandAll: false,
+			collapseAll: false
 		};
 	};
 

@@ -1,51 +1,103 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/Table",
-	"sap/ui/mdc/table/Column",
-	"sap/ui/mdc/odata/v4/TableDelegate",
-	"sap/ui/mdc/library",
 	"../../table/QUnitUtils",
 	"../../util/createAppEnvironment",
+	"sap/ui/mdc/odata/v4/TableDelegate",
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/GridTableType",
+	"sap/ui/mdc/table/TreeTableType",
+	"sap/ui/mdc/table/ResponsiveTableType",
+	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/library",
 	"sap/m/Text",
+	"sap/m/plugins/PluginBase",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
-	"sap/ui/base/ManagedObjectObserver"
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/test/TestUtils"
 ], function(
-	Table,
-	Column,
-	TableDelegate,
-	Library,
 	TableQUnitUtils,
 	createAppEnvironment,
+	TableDelegate,
+	Table,
+	GridTableType,
+	TreeTableType,
+	ResponsiveTableType,
+	Column,
+	library,
 	Text,
+	PluginBase,
 	ControlPersonalizationWriteAPI,
 	Core,
 	coreLibrary,
 	ODataModel,
 	Sorter,
 	Filter,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	TestUtils
 ) {
 	"use strict";
 
-	var TableType = Library.TableType;
+	var TableType = library.TableType;
+	var SelectionMode = library.SelectionMode;
+	var MultiSelectMode = library.MultiSelectMode;
+	var iDataCount = 400;
 
 	sap.ui.define("odata.v4.TestDelegate", [
 		"sap/ui/mdc/odata/v4/TableDelegate"
 	], function(TableDelegate) {
 		var TestDelegate = Object.assign({}, TableDelegate);
 
-		TestDelegate.updateBindingInfo = function(oMDCTable, oBindingInfo) {
+		TestDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 			TableDelegate.updateBindingInfo.apply(this, arguments);
-			oBindingInfo.path = "/ProductList";
+			oBindingInfo.path = oTable.getPayload() ? oTable.getPayload().collectionPath : "/ProductList";
 		};
 
 		return TestDelegate;
 	});
+
+	function createData(iStartIndex, iLength) {
+		var aData = [];
+
+		if (iStartIndex + iLength > iDataCount) {
+			iLength = iDataCount - iStartIndex;
+		}
+
+		for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
+			aData.push({
+				Name: "Test Product (" + i + ")"
+			});
+		}
+
+		return aData;
+	}
+
+	TestUtils.useFakeServer(sinon.sandbox.create(), "sap/ui/core/qunit/odata/v4/data", null, [{
+		regExp: /^GET \/MyService\/\$metadata$/,
+		response: {
+			source: "metadata_tea_busi_product.xml"
+		}
+	}, {
+		regExp: /^GET \/MyService\/Products\?(\$count=true&)?\$skip=(\d+)\&\$top=(\d+)$/,
+		response: {
+			buildResponse: function(aMatches, oResponse) {
+				var bWithCount = !!aMatches[1];
+				var iSkip = parseInt(aMatches[2]);
+				var iTop = parseInt(aMatches[3]);
+				var mResponse = {value: createData(iSkip, iTop)};
+
+				if (bWithCount) {
+					mResponse["@odata.count"] = iDataCount;
+				}
+
+				oResponse.message = JSON.stringify(mResponse);
+			}
+		}
+	}]);
 
 	Core.loadLibrary("sap.ui.fl");
 
@@ -90,7 +142,230 @@ sap.ui.define([
 		return sType === "QuickAction" ? aQuickActions : aQuickActions[0];
 	}
 
-	QUnit.module("Initialization", {
+	QUnit.module("Initialization of selection", {
+		before: function() {
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
+				name: "Name",
+				path: "Name_Path",
+				label: "Name_Label"
+			}]);
+		},
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		},
+		after: function() {
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
+		},
+		initTable: function(mSettings, fnBeforeInit) {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+
+			this.oTable = new Table(Object.assign({
+				delegate: {
+					name: "odata.v4.TestDelegate",
+					payload: {
+						collectionPath: "/Products"
+					}
+				},
+				columns: [
+					new Column({
+						dataProperty: "Name",
+						header: new Text({
+							text: "Column A"
+						}),
+						template: new Text({
+							text: "{Name}"
+						})
+					})
+				],
+				models: new ODataModel({
+					serviceUrl: "/MyService/"
+				})
+			}, mSettings));
+
+			if (fnBeforeInit) {
+				fnBeforeInit(this.oTable);
+			}
+
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			return this.oTable.initialized();
+		}
+	});
+
+	QUnit.test("GridTableType", function(assert) {
+		var mSelectionChangeParameters;
+		var oSelectionChangeStub = sinon.stub();
+
+		oSelectionChangeStub.callsFake(function(oEvent) {
+			mSelectionChangeParameters = oEvent.getParameters();
+			delete mSelectionChangeParameters.id;
+		});
+
+		return this.initTable({
+			selectionMode: SelectionMode.Single,
+			selectionChange: oSelectionChangeStub,
+			type: new GridTableType({
+				selectionLimit: 1337,
+				showHeaderSelector: false
+			})
+		}, function(oTable) {
+			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
+		}).then(function(oTable) {
+			var oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
+
+			assert.ok(oPlugin, "Applied sap.ui.table.plugins.ODataV4Selection");
+			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
+			assert.ok(oPlugin.getEnableNotification(), "Limit notification enabled");
+			assert.ok(oPlugin.getHideHeaderSelector(), "Hide header selector");
+			assert.equal(oPlugin.getSelectionMode(), "Single", "Selection mode");
+			assert.ok(oPlugin.getEnabled(), "Selection plugin enabled");
+			oPlugin.fireSelectionChange({selectAll: true});
+			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the plugin");
+			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
+
+			oTable.setSelectionMode(SelectionMode.None);
+			assert.notOk(oPlugin.getEnabled(), "Set selection mode to 'None': Selection plugin disabled");
+
+			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			assert.equal(oPlugin.getSelectionMode(), "Single", "Set selection mode to 'SingleMaster': Selection mode of plugin set to 'Single'");
+
+			oTable.setSelectionMode(SelectionMode.Multi);
+			assert.equal(oPlugin.getSelectionMode(), "MultiToggle", "Set selection mode to 'Multi': Selection mode of plugin set to 'MultiToggle'");
+
+			oTable.getType().setSelectionLimit(123);
+			assert.equal(oPlugin.getLimit(), 123, "A 'selectionLimit' change correctly affects the plugin");
+
+			oTable.getType().setShowHeaderSelector(true);
+			assert.notOk(oPlugin.getHideHeaderSelector(), "A 'showHeaderSelector' change correctly affects the plugin");
+
+			return new Promise(function(resolve) {
+				oTable._oTable.attachEventOnce("rowsUpdated", function() {
+					resolve(oTable);
+				});
+			});
+		}).then(function(oTable) {
+			oTable._oTable.getRows()[1].getBindingContext().setSelected(true);
+			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getRows()[1].getBindingContext()],
+				"#getSelectedContexts after initialization");
+		});
+	});
+
+	QUnit.test("TreeTableType", function(assert) {
+		var mSelectionChangeParameters;
+		var oSelectionChangeStub = sinon.stub();
+
+		oSelectionChangeStub.callsFake(function(oEvent) {
+			mSelectionChangeParameters = oEvent.getParameters();
+			delete mSelectionChangeParameters.id;
+		});
+
+		return this.initTable({
+			selectionMode: SelectionMode.Single,
+			selectionChange: oSelectionChangeStub,
+			type: new TreeTableType({
+				selectionLimit: 1337,
+				showHeaderSelector: false
+			})
+		}, function(oTable) {
+			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
+		}).then(function(oTable) {
+			var oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
+
+			assert.ok(oPlugin, "Applied sap.ui.table.plugins.ODataV4Selection");
+			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
+			assert.ok(oPlugin.getEnableNotification(), "Limit notification enabled");
+			assert.ok(oPlugin.getHideHeaderSelector(), "Hide header selector");
+			assert.equal(oPlugin.getSelectionMode(), "Single", "Selection mode");
+			assert.ok(oPlugin.getEnabled(), "Selection plugin enabled");
+			oPlugin.fireSelectionChange({selectAll: true});
+			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the plugin");
+			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
+
+			oTable.setSelectionMode(SelectionMode.None);
+			assert.notOk(oPlugin.getEnabled(), "Set selection mode to 'None': Selection plugin disabled");
+
+			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			assert.equal(oPlugin.getSelectionMode(), "Single", "Set selection mode to 'SingleMaster': Selection mode of plugin set to 'Single'");
+
+			oTable.setSelectionMode(SelectionMode.Multi);
+			assert.equal(oPlugin.getSelectionMode(), "MultiToggle", "Set selection mode to 'Multi': Selection mode of plugin set to 'MultiToggle'");
+
+			oTable.getType().setSelectionLimit(123);
+			assert.equal(oPlugin.getLimit(), 123, "A 'selectionLimit' change correctly affects the plugin");
+
+			oTable.getType().setShowHeaderSelector(true);
+			assert.notOk(oPlugin.getHideHeaderSelector(), "A 'showHeaderSelector' change correctly affects the plugin");
+
+			return new Promise(function(resolve) {
+				oTable._oTable.attachEventOnce("rowsUpdated", function() {
+					resolve(oTable);
+				});
+			});
+		}).then(function(oTable) {
+			oTable._oTable.getRows()[1].getBindingContext().setSelected(true);
+			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getRows()[1].getBindingContext()],
+				"#getSelectedContexts after initialization");
+		});
+	});
+
+	QUnit.test("ResponsiveTableType", function(assert) {
+		var mSelectionChangeParameters;
+		var oSelectionChangeStub = sinon.stub();
+
+		oSelectionChangeStub.callsFake(function(oEvent) {
+			mSelectionChangeParameters = oEvent.getParameters();
+			delete mSelectionChangeParameters.id;
+		});
+
+		return this.initTable({
+			selectionMode: SelectionMode.Single,
+			multiSelectMode: MultiSelectMode.ClearAll,
+			selectionChange: oSelectionChangeStub,
+			type: new ResponsiveTableType()
+		}, function(oTable) {
+			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
+		}).then(function(oTable) {
+			var oInnerTable = oTable._oTable;
+
+			assert.equal(oInnerTable.getMode(), "SingleSelectLeft", "Selection mode");
+			assert.equal(oInnerTable.getMultiSelectMode(), "ClearAll", "Multi select mode");
+			oInnerTable.fireSelectionChange({selectAll: true});
+			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the inner table");
+			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
+
+			oTable.setSelectionMode(SelectionMode.None);
+			assert.equal(oInnerTable.getMode(), "None", "Set selection mode to 'None': Inner table selection mode set to 'None'");
+
+			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			assert.equal(oInnerTable.getMode(), "SingleSelectMaster",
+				"Set selection mode to 'SingleMaster': Inner table selection mode set to 'SingleSelectMaster'");
+
+			oTable.setSelectionMode(SelectionMode.Multi);
+			assert.equal(oInnerTable.getMode(), "MultiSelect",
+				"Set selection mode to 'Multi': Inner table selection mode set to 'MultiSelect'");
+
+			oTable.setMultiSelectMode(MultiSelectMode.Default);
+			assert.equal(oInnerTable.getMultiSelectMode(), "SelectAll",
+				"Multi select mode set to 'Default': Inner table multi select mode set to 'SelectAll'");
+
+			return new Promise(function(resolve) {
+				oInnerTable.attachEventOnce("updateFinished", function() {
+					resolve(oTable);
+				});
+			});
+		}).then(function(oTable) {
+			oTable._oTable.getItems()[1].setSelected(true);
+			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getItems()[1].getBindingContext()],
+				"#getSelectedContexts after initialization");
+		});
+	});
+
+	QUnit.module("Initialization of analytics", {
 		afterEach: function() {
 			if (this.oTable) {
 				this.oFetchProperties.restore();
@@ -1210,7 +1485,6 @@ sap.ui.define([
 				this.oSortSpy = sinon.spy(this.oRowBinding, "sort");
 				this.oSuspendSpy = sinon.spy(this.oRowBinding, "suspend");
 				this.oResumeSpy = sinon.spy(this.oRowBinding, "resume");
-				this.oClearSelectionSpy = sinon.spy(this.oTable, "clearSelection");
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -1222,7 +1496,6 @@ sap.ui.define([
 			this.oSortSpy.restore();
 			this.oSuspendSpy.restore();
 			this.oResumeSpy.restore();
-			this.oClearSelectionSpy.restore();
 		},
 		after: function() {
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
@@ -1260,15 +1533,6 @@ sap.ui.define([
 			this.oResumeSpy
 		);
 		assert.ok(this.oRebindSpy.notCalled, "Aggregation binding was not replaced");
-		assert.equal(this.oClearSelectionSpy.callCount, 1, "Table#clearSelection called once");
-
-        this.oTable.setType(TableType.ResponsiveTable);
-        return this.oTable._fullyInitialized().then(function() {
-            this.oTable._rebind(); // Creates the binding
-            this.oClearSelectionSpy.resetHistory();
-            this.oTable._rebind(); // Actual rebind
-            assert.ok(this.oClearSelectionSpy.notCalled, "Table#clearSelection not called if type is 'ResponsiveTable'");
-        }.bind(this));
 	});
 
 	QUnit.test("Update suspended binding", function(assert) {
@@ -1282,7 +1546,6 @@ sap.ui.define([
 		assert.ok(this.oSuspendSpy.notCalled, "Binding#suspend not called");
 		assert.ok(this.oResumeSpy.notCalled, "Binding#resume not called");
 		assert.ok(this.oRebindSpy.notCalled, "Aggregation binding was not replaced");
-		assert.equal(this.oClearSelectionSpy.callCount, 1, "Table#clearSelection called once");
 	});
 
 	QUnit.test("Sort", function(assert) {
@@ -1368,11 +1631,6 @@ sap.ui.define([
 		assert.equal(this.oChangeParametersSpy.callCount, 2);
 		assert.equal(this.oRebindSpy.callCount, 0);
 
-		this.oClearSelectionSpy.resetHistory();
-		this.oTable._rebind();
-		assert.equal(this.oRebindSpy.callCount, 1);
-		assert.equal(this.oClearSelectionSpy.callCount, 1, "Table#clearSelection called once");
-
 		oUpdateBindingInfoStub.restore();
 	});
 
@@ -1385,7 +1643,6 @@ sap.ui.define([
 		assert.equal(this.oSortSpy.callCount, 0);
 		assert.equal(this.oSetAggregationSpy.callCount, 1);
 		assert.equal(this.oRebindSpy.callCount, 1);
-		assert.equal(this.oClearSelectionSpy.callCount, 0, "Table#clearSelection not called");
 	});
 
 	QUnit.test("Change path", function(assert) {
@@ -1437,20 +1694,17 @@ sap.ui.define([
 
 		return fnTest(TableType.Table, {
 			"export": true,
-			"selection": true,
 			"expandAll": false,
 			"collapseAll": false
 		}).then(function() {
 			return fnTest(TableType.TreeTable, {
 				"export": true,
-				"selection": false,
 				"expandAll": true,
 				"collapseAll": true
 			});
 		}).then(function() {
 			return fnTest(TableType.ResponsiveTable, {
 				"export": true,
-				"selection": true,
 				"expandAll": false,
 				"collapseAll": false
 			});

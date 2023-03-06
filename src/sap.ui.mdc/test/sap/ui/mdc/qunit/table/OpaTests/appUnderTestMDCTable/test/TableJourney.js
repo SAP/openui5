@@ -198,10 +198,11 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, true);
 		When.onTheAppUnderTestMDCTable.iClearSelection(sTableId); // <- public action
 		Then.onTheAppUnderTestMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
-		When.onTheAppUnderTestMDCTable.iSelectSomeRows(sTableId, 3, 6); // <- public action
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 3); // <- public action
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 4);
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 5);
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 6);
 		Then.onTheAppUnderTestMDCTable.iShouldSeeSomeRowsSelected(sTableId, 3, 6);
-		When.onTheAppUnderTestMDCTable.iDeselectSomeRows(sTableId, 6, 6); // <- public action
-		Then.onTheAppUnderTestMDCTable.iShouldSeeSomeRowsSelected(sTableId, 3, 5);
 		When.onTheAppUnderTestMDCTable.iClearSelection(sTableId); // <- public action
 		Then.onTheAppUnderTestMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
 	});
@@ -263,11 +264,14 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, true);
 		When.onTheAppUnderTestMDCTable.iClearSelection(sTableId); // <- public action
 		Then.onTheAppUnderTestMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
-		When.onTheAppUnderTestMDCTable.iSelectSomeRows(sTableId, 2, 8); // <- public action
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 2); // <- public action
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 3);
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 4);
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 5);
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 6);
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 7);
+		When.onTheAppUnderTestMDCTable.iSelectRows(sTableId, 8);
 		Then.onTheAppUnderTestMDCTable.iShouldSeeSomeRowsSelected(sTableId, 2, 8);
-		When.onTheAppUnderTestMDCTable.iDeselectSomeRows(sTableId, 6, 6); // <- public action
-		Then.onTheAppUnderTestMDCTable.iShouldSeeSomeRowsSelected(sTableId, 2, 5);
-		Then.onTheAppUnderTestMDCTable.iShouldSeeSomeRowsSelected(sTableId, 7, 8);
 		When.onTheAppUnderTestMDCTable.iClearSelection(sTableId); // <- public action
 		Then.onTheAppUnderTestMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
 	});

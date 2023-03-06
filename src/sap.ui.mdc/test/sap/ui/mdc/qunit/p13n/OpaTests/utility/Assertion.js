@@ -459,17 +459,10 @@ sap.ui.define([
 
 		iShouldSeeVisibleItemsInTable: function(iItems, bResponsiveTable){
 			return this.waitFor({
-				controlType: bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table",
-				matchers: {
-					ancestor: {
-						controlType: "sap.ui.mdc.Table"
-					}
-				},
+				controlType: "sap.ui.mdc.Table",
 				success: function(aTable) {
-					var oTable = aTable[0];
-
-					Opa5.assert.equal(bResponsiveTable ? oTable.getItems().length : oTable.getPlugins()[0].getSelectableCount() , iItems, "The Table holds the correct amount of items: " + iItems + " items found");
-
+					Opa5.assert.equal(aTable[0].getRowBinding().getLength(), iItems,
+						"The Table holds the correct amount of items: " + iItems + " items found");
 				}
 			});
 		},

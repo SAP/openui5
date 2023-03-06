@@ -5,11 +5,15 @@
 /**
  * Initialization Code and shared classes of library sap.ui.table.
  */
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
-	'sap/ui/core/library', // library dependency
-	'sap/ui/unified/library'], // library dependency
-	function(Core, TreeAutoExpandMode) {
-
+sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/model/TreeAutoExpandMode",
+	"sap/ui/core/library", // library dependency
+	"sap/ui/unified/library" // library dependency
+], function(
+	Core,
+	TreeAutoExpandMode
+) {
 	"use strict";
 
 	/**
@@ -34,7 +38,8 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.SelectionMode",
 			"sap.ui.table.SortOrder",
 			"sap.ui.table.VisibleRowCountMode",
-			"sap.ui.table.TreeAutoExpandMode" /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
+			"sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
+			"sap.ui.table.plugins.SelectionMode"
 		],
 		interfaces: [],
 		controls: [
@@ -56,8 +61,9 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.rowmodes.FixedRowMode",
 			"sap.ui.table.rowmodes.InteractiveRowMode",
 			"sap.ui.table.rowmodes.AutoRowMode",
+			"sap.ui.table.plugins.SelectionPlugin",
 			"sap.ui.table.plugins.MultiSelectionPlugin",
-			"sap.ui.table.plugins.SelectionPlugin"
+			"sap.ui.table.plugins.ODataV4Selection"
 		],
 		extensions: {
 			flChangeHandlers: {
@@ -356,6 +362,27 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @public
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
+
+	/**
+	 * Mode of a selection plugin
+	 *
+	 * @version ${version}
+	 * @enum {string}
+	 * @private
+	 */
+	thisLib.plugins.SelectionMode = {
+		/**
+		 * Only one row can be selected at a time.
+		 * @public
+		 */
+		Single: "Single",
+
+		/**
+		 * Multiple rows can be selected.
+		 * @public
+		 */
+		MultiToggle: "MultiToggle"
+	};
 
 	//factory for table to create labels and textviews to be overwritten by commons and mobile library
 	if (!thisLib.TableHelper) {

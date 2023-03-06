@@ -351,7 +351,7 @@ sap.ui.define([
 	 */
 	Row.prototype._updateSelection = function() {
 		var oTable = this.getTable();
-		var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(this.getIndex());
+		var bIsSelected = oTable._getSelectionPlugin().isSelected(this);
 
 		this._setSelected(bIsSelected);
 		oTable._getAccExtension().updateSelectionStateOfRow(this);

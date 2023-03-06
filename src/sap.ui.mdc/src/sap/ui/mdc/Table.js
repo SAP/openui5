@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/Sorter",
+	"sap/ui/model/base/ManagedObjectModel",
 	"sap/base/strings/capitalize",
 	"sap/base/util/deepEqual",
 	"sap/base/util/Deferred",
@@ -73,6 +74,7 @@ sap.ui.define([
 	coreLibrary,
 	KeyCodes,
 	Sorter,
+	ManagedObjectModel,
 	capitalize,
 	deepEqual,
 	Deferred,
@@ -560,18 +562,6 @@ sap.ui.define([
 				selectionChange: {
 					parameters: {
 						/**
-						 * The binding context of the pressed row
-						 */
-						bindingContext: {
-							type: "sap.ui.model.Context"
-						},
-						/**
-						 * The new selection state of the item
-						 */
-						selected: {
-							type: "boolean"
-						},
-						/**
 						 * Identifies whether the Select All checkbox was pressed
 						 */
 						selectAll: {
@@ -711,6 +701,9 @@ sap.ui.define([
 
 		this._setPropertyHelperClass(PropertyHelper);
 		this._setupPropertyInfoStore("propertyInfo");
+
+		this._oManagedObjectModel = new ManagedObjectModel(this);
+		this.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table");
 	};
 
 	/**
@@ -968,18 +961,6 @@ sap.ui.define([
 			this._oTable.setBusyIndicatorDelay(iDelay);
 		}
 
-		return this;
-	};
-
-	Table.prototype.setSelectionMode = function(sMode) {
-		this.setProperty("selectionMode", sMode, true);
-		this._getType().updateSelectionSettings();
-		return this;
-	};
-
-	Table.prototype.setMultiSelectMode = function(sMultiSelectMode) {
-		this.setProperty("multiSelectMode", sMultiSelectMode, true);
-		this._getType().updateSelectionSettings();
 		return this;
 	};
 
@@ -1438,15 +1419,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oDelegate = this.getControlDelegate();
-
 			this._updateAdaptation();
-
-			if (oDelegate.preInit) {
-				// Call after libraries are loaded, but before initializing controls.
-				// This allows the delegate to load additional modules, e.g. from previously loaded libraries, in parallel.
-				this._pDelegatePreInit = oDelegate.preInit(this);
-			}
 
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
 			if (!this._bTableExists && oType.constructor === this._getType().constructor) {
@@ -1480,16 +1453,16 @@ sap.ui.define([
 		this._updateCollapseAllButton();
 		this._updateExportButton();
 		this.getColumns().forEach(this._insertInnerColumn, this);
-		this.setAggregation("_content", this._oTable);
-		this._onAfterTableCreated(true); // Resolve any pending promise if table exists
 
-		Promise.all([
-			this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(),
-			this._pDelegatePreInit,
-			this.initialized()
-		]).then(function() {
-			delete this._pDelegatePreInit;
+		this.getControlDelegate().initializeContent(this).then(function() {
+			this.setAggregation("_content", this._oTable);
+			this._onAfterTableCreated(true); // Resolve any pending promise if table exists
 
+			return Promise.all([
+				this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(),
+				this.initialized() // Required for the CreationRow binding context handling.
+			]);
+		}.bind(this)).then(function() {
 			// Add this to the micro task execution queue to enable consumers to handle this correctly.
 			// For example to add a binding context between the initialized promise and binding the rows.
 			var oCreationRow = this.getCreationRow();
@@ -1788,7 +1761,7 @@ sap.ui.define([
 	Table.prototype.getSupportedP13nModes = function() {
 		var aSupportedP13nModes = getIntersection(Object.keys(P13nMode), this._getType().getSupportedP13nModes());
 
-		if (this.bDelegateInitialized) {
+		if (this.isControlDelegateInitialized()) {
 			aSupportedP13nModes = getIntersection(aSupportedP13nModes, this.getControlDelegate().getSupportedP13nModes(this));
 		}
 
@@ -1836,8 +1809,8 @@ sap.ui.define([
 
 	Table.prototype._isExportEnabled = function() {
 		return this.getEnableExport()
-			&& this.bDelegateInitialized
-			&& this.getControlDelegate().getSupportedFeatures(this)["export"];
+			&& this.isControlDelegateInitialized()
+			&& this.getControlDelegate().getSupportedFeatures(this).export;
 	};
 
 	Table.prototype._updateExportButton = function() {
@@ -1905,7 +1878,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._isCollapseAllEnabled = function() {
-		return this.bDelegateInitialized && this.getControlDelegate().getSupportedFeatures(this)["collapseAll"];
+		return this.isControlDelegateInitialized() && this.getControlDelegate().getSupportedFeatures(this).collapseAll;
 	};
 
 	/**
@@ -1920,7 +1893,7 @@ sap.ui.define([
 		if (bNeedCollapseAllButton && !this._oCollapseAllButton) {
 			this._oCollapseAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
 				function() {
-					this.getControlDelegate().collapseAll(this, this.getRowBinding());
+					this.getControlDelegate().collapseAll(this);
 				}, this
 			], false);
 		}
@@ -1938,7 +1911,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._isExpandAllEnabled = function() {
-		return this.bDelegateInitialized && this.getControlDelegate().getSupportedFeatures(this)["expandAll"];
+		return this.isControlDelegateInitialized() && this.getControlDelegate().getSupportedFeatures(this).expandAll;
 	};
 
 	/**
@@ -1953,7 +1926,7 @@ sap.ui.define([
 		if (bNeedExpandAllButton && !this._oExpandAllButton) {
 			this._oExpandAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
 				function() {
-					this.getControlDelegate().expandAll(this, this.getRowBinding());
+					this.getControlDelegate().expandAll(this);
 				}, this
 			], true);
 		}
@@ -2239,8 +2212,6 @@ sap.ui.define([
 	Table.prototype._onSelectionChange = function(mPropertyBag) {
 		if (!this._bSelectionChangedByAPI) {
 			this.fireSelectionChange({
-				bindingContext: mPropertyBag.bindingContext,
-				selected: mPropertyBag.selected,
 				selectAll: mPropertyBag.selectAll
 			});
 		}
@@ -2397,7 +2368,11 @@ sap.ui.define([
 	 * @experimental The API is subject to change.
 	 */
 	Table.prototype.getSelectedContexts = function() {
-		return this._getType().getSelectedContexts();
+		if (this.isControlDelegateInitialized()) {
+			return this.getControlDelegate().getSelectedContexts(this);
+		}
+
+		return [];
 	};
 
 	/**
@@ -2408,9 +2383,11 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.clearSelection = function() {
-		this._bSelectionChangedByAPI = true;
-		this._getType().clearSelection();
-		this._bSelectionChangedByAPI = false;
+		if (this.isControlDelegateInitialized()) {
+			this._bSelectionChangedByAPI = true;
+			this.getControlDelegate().clearSelection(this);
+			this._bSelectionChangedByAPI = false;
+		}
 	};
 
 	Table.prototype._registerInnerFilter = function(oFilter) {
@@ -2435,7 +2412,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.bindRows = function() {
-		if (!this.bDelegateInitialized || !this._oTable) {
+		if (!this.isControlDelegateInitialized() || !this._oTable) {
 			return;
 		}
 
@@ -2749,6 +2726,9 @@ sap.ui.define([
 			this._oColumnHeaderMenu.destroy();
 			this._oColumnHeaderMenu = null;
 		}
+
+		this._oManagedObjectModel.destroy();
+		delete this._oManagedObjectModel;
 
 		Control.prototype.exit.apply(this, arguments);
 	};

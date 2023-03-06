@@ -457,24 +457,33 @@ sap.ui.define([
 		},
 
 		/**
-		 * Changes the {@link sap.ui.table.plugins.MultiSelectionPlugin#limit} property
-		 * that is bound to the MDCTable.
+		 * Changes the selection limit.
 		 * Succeeds only if {@link sap.ui.mdc.Table#type} is set to <code>Table</code>.
 		 *
 		 * @function
 		 * @name iChangeLimit
 		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @param {Number} iLimit The new value for the limit property
+		 * @param {Number} iLimit The new limit
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
 		iChangeLimit: function(oControl, iLimit) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
-					var oInnerTable = oTable._oTable;
-					var oSelectionPlugin = oInnerTable.getPlugins()[0];
-
-					oSelectionPlugin.setLimit(iLimit);
+					return this.waitFor({
+						controlType: "sap.ui.mdc.table.GridTableType",
+						visible: false,
+						matchers: [{
+							ancestor: oTable
+						}],
+						success: function (aGridTableTypes) {
+							if (aGridTableTypes.length > 1) {
+								throw new Error("Found too many instances of GridTableType");
+							}
+							aGridTableTypes[0].setSelectionLimit(iLimit);
+						},
+						errorMessage: "GridTableType not found"
+					});
 				},
 				errorMessage: "No table found"
 			});

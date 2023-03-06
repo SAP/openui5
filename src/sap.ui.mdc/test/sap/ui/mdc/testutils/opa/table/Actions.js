@@ -105,10 +105,19 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Selects all visible rows available in the MDCTable.
-		 * Succeeds only if {@link sap.ui.mdc.Table#multiSelectMode} is set to <code>Default</code>
-		 * when using a ResponsiveTable or if {@link sap.ui.table.plugins.MultiSelectionPlugin#limit} is set
-		 * to <code>0</code> when using a GridTable.
+		 * Selects all visible rows.
+		 *
+		 * Succeeds only if the following prerequisites are met:
+		 * <ul>
+		 *  <li>
+		 *   {@link sap.ui.mdc.Table#getMultiSelectMode multiSelectMode} is set to <code>Default</code> when using the
+		 *   {@link sap.ui.mdc.table.ResponsiveTableType}.
+		 *  </li>
+		 *  <li>
+		 *   {@link sap.ui.mdc.table.GridTableType#getSelectionLimit selectionLimit} is set to <code>0</code> when using the
+		 *   {@link sap.ui.mdc.table.GridTableType}.
+		 *  </li>
+		 * </ul>
 		 *
 		 * @function
 		 * @name iSelectAllRows
@@ -119,98 +128,62 @@ sap.ui.define([
 		iSelectAllRows: function(oControl) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
-					var oInnerTable = oTable._oTable;
+					this.iWaitForPromise(oTable.initialized()).then(function() {
+						var oInnerTable = oTable._oTable;
 
-					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						oInnerTable.selectAll();
-					} else {
-						var oSelectionPlugin = oInnerTable.getPlugins()[0];
-						oSelectionPlugin.selectAll();
-					}
-				},
+						if (oTable._isOfType(TableType.ResponsiveTable)) {
+							new Press({idSuffix: "sa"}).executeOn(oInnerTable);
+						} else {
+							new Press({idSuffix: "selall"}).executeOn(oInnerTable);
+						}
+					});
+				}.bind(this),
 				errorMessage: "No table found"
 			});
 		},
 
 		/**
-		 * Removes all selections from the MDCTable.
+		 * Removes all selections.
 		 *
 		 * @function
 		 * @name iClearSelection
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the table
 		 * @returns {Promise} OPA waitFor
 		 * @public
 		 */
 		iClearSelection: function(oControl) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
-					var oInnerTable = oTable._oTable;
-
-					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						oInnerTable.removeSelections(true);
-					} else {
-						var oSelectionPlugin = oInnerTable.getPlugins()[0];
-						oSelectionPlugin.clearSelection();
-					}
+					oTable.clearSelection();
 				},
 				errorMessage: "No table found"
 			});
 		},
 
 		/**
-		 * Selects one or multiple rows.
+		 * Selects a visible row.
 		 *
 		 * @function
-		 * @name iSelectSomeRows
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @param {Number} iStartIndex Index from which the selection starts
-		 * @param {Number} iEndIndex Index up to the selection ends
+		 * @name iSelectRows
+		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the table
+		 * @param {Number} iIndex The 0-based index of visible rows
 		 * @returns {Promise} OPA waitFor
 		 * @public
 		 */
-		iSelectSomeRows: function(oControl, iStartIndex, iEndIndex) {
+		iSelectRows: function(oControl, iIndex) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
-					var oInnerTable = oTable._oTable;
+					this.iWaitForPromise(oTable.initialized()).then(function() {
+						var oInnerTable = oTable._oTable;
 
-					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						for (var iIndex = iStartIndex; iIndex <= iEndIndex; iIndex++) {
-							oInnerTable.setSelectedItem(oInnerTable.getItems()[iIndex]);
+						if (oTable._isOfType(TableType.ResponsiveTable)) {
+							var oItem = oInnerTable.getItems()[iIndex];
+							new Press().executeOn(oItem.getMultiSelectControl() || oItem.getSingleSelectControl());
+						} else {
+							new Press({idSuffix: "rowsel" + iIndex}).executeOn(oInnerTable);
 						}
-					} else {
-						var oSelectionPlugin = oInnerTable.getPlugins()[0];
-						oSelectionPlugin.addSelectionInterval(iStartIndex, iEndIndex);
-					}
-				},
-				errorMessage: "No table found"
-			});
-		},
-
-		/**
-		 * Removes the selection for one or multiple rows.
-		 *
-		 * @function
-		 * @name iDeselectSomeRows
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @param {Number} iStartIndex Index from which the selection starts
-		 * @param {Number} iEndIndex Index up to the selection ends
-		 * @returns {Promise} OPA waitFor
-		 * @public
-		 */
-		iDeselectSomeRows: function(oControl, iStartIndex, iEndIndex) {
-			return waitForTable.call(this, oControl, {
-				success: function(oTable) {
-					var oInnerTable = oTable._oTable;
-
-					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						for (var iIndex = iStartIndex; iIndex <= iEndIndex; iIndex++) {
-							oInnerTable.setSelectedItem(oInnerTable.getItems()[iIndex], false);
-						}
-					} else {
-						var oSelectionPlugin = oInnerTable.getPlugins()[0];
-						oSelectionPlugin.removeSelectionInterval(iStartIndex, iEndIndex);
-					}
-				},
+					});
+				}.bind(this),
 				errorMessage: "No table found"
 			});
 		},
