@@ -28,10 +28,11 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText"
 ], function (Control, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
 			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod,
-			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core) {
+			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText) {
 	"use strict";
 
 	/**
@@ -511,6 +512,9 @@ sap.ui.define([
 		this._aGroupHeadersAdded = [];
 		this._iFileUploaderPH = null;
 		this._oItemToUpdate = null;
+		//Setting invisible text
+		this._oInvisibleText = new InvisibleText();
+		this._oInvisibleText.toStatic();
 		var oIllustratedMessage = new IllustratedMessage({
 				illustrationType: IllustratedMessageType.NoData,
 				illustrationSize: IllustratedMessageSize.Auto,
@@ -519,9 +523,11 @@ sap.ui.define([
 			});
 
 		this.setAggregation("_illustratedMessage", oIllustratedMessage);
-		oIllustratedMessage.addIllustrationAriaLabelledBy(oIllustratedMessage.getId());
+		oIllustratedMessage.addIllustrationAriaLabelledBy(this._oInvisibleText.getId());
+		this._oInvisibleText.setText(this._oRb.getText("UPLOAD_SET_ILLUSTRATED_MESSAGE"));
 		this._cloudFilePickerControl = null;
 		this._oListEventDelegate = null;
+		this.addDependent(this._oInvisibleText);
 	};
 
 	UploadSet.prototype.exit = function () {

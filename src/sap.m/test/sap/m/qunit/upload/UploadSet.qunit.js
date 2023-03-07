@@ -384,7 +384,6 @@ sap.ui.define([
 		assert.equal(this.oUploadSet._oList.getNoDataText(), sNoDataText + " " + sNoDataDescription, "Nodata Text is set in the List");
 		assert.equal(oIllustratedMessage.getTitle(), sNoDataText, "default text is rendered in Upload set");
 		assert.equal(oIllustratedMessage.getDescription(), sNoDataDescription, "default discription is rendered in Upload set");
-		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), oIllustratedMessage.getId(), "AriaLabelledBy is set correctly.");
 	});
 
 	QUnit.test("No data type illustrated message rendering", function(assert) {
@@ -395,7 +394,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		//Assert
 		assert.equal(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "The no data illustrated message is rendred");
-		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), oIllustratedMessage.getId(), "AriaLabelledBy is set correctly.");
+		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
 	});
 
 	QUnit.test("No data rendering - with user specified no data text", function(assert) {
@@ -408,7 +407,7 @@ sap.ui.define([
 		//Assert
 		assert.equal(oIllustratedMessage.getTitle(), "myNoDataText", "The no data text set by user is rendered");
 		assert.equal(this.oUploadSet._oList.getNoDataText(), "myNoDataText" + " " + this.oUploadSet.getNoDataDescription(), "Nodata Text is set in the List");
-		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), oIllustratedMessage.getId(), "AriaLabelledBy is set correctly.");
+		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
 	});
 
 	QUnit.test("No data rendering - with user specified no data description", function(assert) {
@@ -421,7 +420,7 @@ sap.ui.define([
 		//Assert
 		assert.equal(oIllustratedMessage.getDescription(), "myNoDataDescription", "The no data description set by user is rendered");
 		assert.equal(this.oUploadSet._oList.getNoDataText(), this.oUploadSet.getNoDataText() + " " + "myNoDataDescription", "Nodata Text is set in the List");
-		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), oIllustratedMessage.getId(), "AriaLabelledBy is set correctly.");
+		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
 	});
 
 	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", function (assert) {
