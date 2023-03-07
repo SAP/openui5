@@ -29,3 +29,28 @@
 .sapMIBar.sapMTB .sapMBarChild.sapUiCalMonthView {
 	margin-left: 0;
 }
+
+html.sap-phone:not(.sapUiMedia-Std-Tablet),
+html.sapUiMedia-Std-Phone:not(.sapUiMedia-Std-Tablet) {
+	.sapMPCHeadNavToolbar {
+		padding: 0 0 0 0.125rem;
+
+		.sapMBarChild,
+		.sapMBarChild ~ .sapMBarChild {
+			margin: 0 0.5rem 0 0;
+
+			&:last-of-type {
+				margin: 0;
+			}
+		}
+
+		.sapMBtn {
+			max-width: 100%;
+
+			bdi {
+				overflow: inherit;
+				text-overflow: inherit;
+			}
+		}
+	}
+}
