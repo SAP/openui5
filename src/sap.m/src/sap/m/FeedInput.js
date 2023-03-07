@@ -467,7 +467,7 @@ sap.ui.define([
 			this._oButton = new Button(this.getId() + "-button", {
 				enabled : false,
 				type : ButtonType.Default,
-				icon : "sap-icon://paper-plane",
+				icon : "sap-icon://feeder-arrow",
 				tooltip : this.getButtonTooltip(),
 				press : jQuery.proxy(function () {
 					this._oTextArea.focus();
