@@ -627,7 +627,14 @@ sap.ui.define([
 		this.oVariantPopoverTrigger = new ToggleButton(this.getId() + "-trigger", {
 			icon: "sap-icon://slim-arrow-down",
 			type: ButtonType.Transparent,
-			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT")
+			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT"),
+			enabled: {
+				path: "/isDesignMode",
+				model: VariantManagement.INNER_MODEL_NAME,
+				formatter: function(bValue) {
+					return !bValue;
+				}
+			}
 		});
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
