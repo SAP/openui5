@@ -427,8 +427,8 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 }
 
 .sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before,
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader:not(.sapFCardHeaderToolbarFocused)::before, // focus inside Grid Container
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { // ... focus on a card without header
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard > .sapFCardHeader:not(.sapFCardHeaderToolbarFocused)::before, // focus inside Grid Container
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard.sapFCardNoHeader::before { // ... focus on a card without header
 	content: '';
 	display: block;
 	position: absolute;
@@ -441,7 +441,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	pointer-events: none;
 }
 
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { // focus inside GridContainer on a card without header
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard.sapFCardNoHeader::before { // focus inside GridContainer on a card without header
 	bottom: 1px;
 	z-index: 1;
 }
