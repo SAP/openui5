@@ -90,7 +90,7 @@ sap.ui.define([
 		iYear = oRangeMidDate.getFullYear();
 		CalendarUtils._checkYearInValidRange(iYear);
 
-		oCalDate = CalendarDate.fromLocalJSDate(oRangeMidDate, this.getPrimaryCalendarType());
+		oCalDate = CalendarDate.fromLocalJSDate(oRangeMidDate, this._getPrimaryCalendarType());
 		oCalDate.setMonth(0, 1);
 
 		this.setProperty("date", oRangeMidDate);
@@ -99,7 +99,7 @@ sap.ui.define([
 
 		iYears = this.getYears();
 		iHalfRange = Math.floor(iYears / 2);
-		oFirstDate = new CalendarDate(this._oDate, this.getPrimaryCalendarType());
+		oFirstDate = new CalendarDate(this._oDate, this._getPrimaryCalendarType());
 		oFirstDate = this._checkFirstDate(oFirstDate);
 
 		this._iSelectedIndex = iHalfRange;
@@ -117,18 +117,18 @@ sap.ui.define([
 
 		// check if first date is outside of min and max date
 		var iYears = this.getYears();
-		var oMaxStartYear = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+		var oMaxStartYear = new CalendarDate(this._oMaxDate, this._getPrimaryCalendarType());
 
-		if (!oMaxStartYear.isSame(CalendarUtils._maxDate(this.getPrimaryCalendarType()))) {
+		if (!oMaxStartYear.isSame(CalendarUtils._maxDate(this._getPrimaryCalendarType()))) {
 			return oDate;
 		}
 
 		oMaxStartYear.setYear(oMaxStartYear.getYear() - Math.floor(iYears / 2) * this.getRangeSize() + 1 - Math.floor(this.getRangeSize() / 2));
 		if (oDate.isAfter(oMaxStartYear) && oDate.getYear() != oMaxStartYear.getYear()) {
-			oDate = new CalendarDate(oMaxStartYear, this.getPrimaryCalendarType());
+			oDate = new CalendarDate(oMaxStartYear, this._getPrimaryCalendarType());
 			oDate.setMonth(0, 1);
 		} else if (oDate.isBefore(this._oMinDate) && oDate.getYear() != this._oMinDate.getYear()) {
-			oDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
+			oDate = new CalendarDate(this._oMinDate, this._getPrimaryCalendarType());
 			oDate.setMonth(0, 1);
 		}
 
@@ -139,12 +139,12 @@ sap.ui.define([
 	YearRangePicker.prototype._updatePage = function (bForward, iSelectedIndex, bFireEvent){
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
-			oFirstDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start")), this.getPrimaryCalendarType()),
+			oFirstDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start")), this._getPrimaryCalendarType()),
 			iYears = this.getYears(),
 			iYearRangeSize = this.getRangeSize();
 
 		if (bForward) {
-			var oMaxDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+			var oMaxDate = new CalendarDate(this._oMaxDate, this._getPrimaryCalendarType());
 			oMaxDate.setYear(oMaxDate.getYear() - iYears * iYearRangeSize + 1);
 			if (oFirstDate.isBefore(oMaxDate)) {
 				oFirstDate.setYear(oFirstDate.getYear() + iYears * iYearRangeSize + Math.floor(iYearRangeSize / 2) + Math.floor(iYears / 2) * iYearRangeSize);
@@ -156,7 +156,7 @@ sap.ui.define([
 			if (oFirstDate.isAfter(this._oMinDate)) {
 				oFirstDate.setYear(oFirstDate.getYear() - iYears * iYearRangeSize);
 				if (oFirstDate.isBefore(this._oMinDate)) {
-					oFirstDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
+					oFirstDate = new CalendarDate(this._oMinDate, this._getPrimaryCalendarType());
 				}
 				oFirstDate.setYear(oFirstDate.getYear() + Math.floor(iYears / 2) * iYearRangeSize + Math.floor(iYearRangeSize / 2));
 				oFirstDate = this._checkFirstDate(oFirstDate);
@@ -189,7 +189,7 @@ sap.ui.define([
 		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
 			$DomRef = jQuery(aDomRefs[iIndex]),
 			sYyyymmdd = $DomRef.attr("data-sap-year-start"),
-			oDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+			oDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 		if ($DomRef.hasClass("sapUiCalItemDsbl")) {
 			return false; // don't select disabled items
