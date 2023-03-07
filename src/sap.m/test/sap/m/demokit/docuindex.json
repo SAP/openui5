@@ -2057,7 +2057,7 @@
 		{
 		  "id": "sap.m.sample.FlexBoxRenderType",
 		  "name": "Flex Box - Render Type",
-		  "description": "Flex items can be rendered differently. By default, they are wrapped in a <div> element. Optionally, the bare controls can be rendered directly. This can affect the resulting layout."
+		  "description": "Flex items can be rendered differently. By default, they are wrapped in a <code>div</code> element. Optionally, the bare controls can be rendered directly. This can affect the resulting layout."
 		},
 		{
 		  "id": "sap.m.sample.FormattedText",
