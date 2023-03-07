@@ -527,7 +527,7 @@ sap.ui.define([
 
 		var oCalItems, aMonths, aYears, $Date;
 
-		assert.equal(this.oCal2.getPrimaryCalendarType(), oCore.getConfiguration().getCalendarType(), "Calendar2: PrimaryCalendarType default");
+		assert.equal(this.oCal2.getPrimaryCalendarType(), undefined, "Calendar2: PrimaryCalendarType default");
 		this.oCal2.focusDate(new Date(2011, 0, 1)); // to be sure where focus is
 		this.oCal2.setPrimaryCalendarType(CalendarType.Islamic);
 		oCore.applyChanges();
