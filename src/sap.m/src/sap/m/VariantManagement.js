@@ -1626,10 +1626,6 @@ sap.ui.define([
 			this.oSaveAsDialog.close();
 		}
 
-		if (this.oDefault.getSelected()) {
-			this.setDefaultKey(this.oDefault.getSelected());
-		}
-
 		var oObj = {
 				key: sKey,
 				name: sName,
