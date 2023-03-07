@@ -1565,13 +1565,15 @@ sap.ui.define([
 		/**
 		 * Fires change events for all properties that differ between the old and the new value.
 		 * The function recursively handles modified, added or removed structural properties
-		 * and fires change events for all modified/added/removed primitive properties therein.
+		 * and fires change events for all modified/added/removed primitive properties therein. If
+		 * the new value is <code>undefined</code>, the event is fired with <code>null</code> as a
+		 * value unless <code>bAllowUndefined</code> is set.
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
 		 * @param {string} sPath The path of both values in mChangeListeners
 		 * @param {any} vOld The old value
 		 * @param {any} vNew The new value
-		 * @param {boolean} [bAllowUndefined] Allow firing undefined as new value instead of null
+		 * @param {boolean} [bAllowUndefined] Allows undefined values
 		 */
 		informAll : function (mChangeListeners, sPath, vOld, vNew, bAllowUndefined) {
 			if (vNew === vOld) {
