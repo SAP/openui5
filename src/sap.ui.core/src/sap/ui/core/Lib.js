@@ -460,13 +460,10 @@ sap.ui.define([
 
 			var sFileType = this._getFileType(mOptions.json),
 				sLibPackage = this.name.replace(/\./g, '/'),
-				bLibLoaded = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js'),
+				bEntryModuleExists = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js'),
 				bHttp2 = Configuration.getDepCache();
 
-			if (sFileType === 'none' || bLibLoaded) {
-				// When a library's entry module is already available (either loaded or preloaded), a resolved promise
-				// is returned instead of this._loadingStatus.promise to avoid the deadlock between 2 libraries which
-				// have dependency of each other
+			if (sFileType === 'none') {
 				return mOptions.sync ? this : Promise.resolve(this);
 			}
 
@@ -476,25 +473,32 @@ sap.ui.define([
 
 			this._loadingStatus = this._loadingStatus || {};
 
+			if (this._loadingStatus.pending) {
+				if (mOptions.sync) {
+					if (mOptions.lazy) {
+						// ignore a lazy request when an eager request is already pending
+						return this;
+					} else if (this._loadingStatus.async) {
+						Log.warning("request to load " + this.name + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
+						// fall through and preload synchronously
+					} else {
+						// sync cycle -> ignore nested call (would nevertheless be a dependency cycle)
+						Log.warning("request to load " + this.name + " synchronously while sync loading is pending (cycle, ignored)");
+						return this;
+					}
+				} else if (this._loadingStatus.preloadFinished) { // async
+					// When it's already in progress for loading a library and loading its own preload file (either JS,
+					// JSON or doesn't need to load the preload at all) is finished, a dependency cycle between
+					// libraries is detected. A resolved promise is returned instead of this._loadingStatus.promise to
+					// avoid the deadlock between the libraries which have dependency of each other
+					return Promise.resolve(this);
+				}
+			}
+
 			if ((mOptions.sync && this._loadingStatus.pending === false)
 				|| (!mOptions.sync && this._loadingStatus.promise)) {
 				// in the sync case, we can do a immediate return only when the library is fully loaded.
 				return mOptions.sync ? this : this._loadingStatus.promise;
-			}
-
-
-			if (this._loadingStatus.pending && mOptions.sync) {
-				if (mOptions.lazy) {
-					// ignore a lazy request when an eager request is already pending
-					return this;
-				} else if (this._loadingStatus.async) {
-					Log.warning("request to load " + this.name + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
-					// fall through and preload synchronously
-				} else {
-					// sync cycle -> ignore nested call (would nevertheless be a dependency cycle)
-					Log.warning("request to load " + this.name + " synchronously while sync loading is pending (cycle, ignored)");
-					return this;
-				}
 			}
 
 			if (mOptions.lazy) {
@@ -520,8 +524,12 @@ sap.ui.define([
 			this._loadingStatus.pending = true;
 			this._loadingStatus.async = !mOptions.sync;
 
-			// first preload code, resolves with list of dependencies (or undefined)
-			var pPreload = sFileType !== 'json' ?
+			var pPreload;
+			if (bEntryModuleExists) {
+				pPreload = (mOptions.sync ? SyncPromise : Promise).resolve();
+			} else {
+				// first preload code, resolves with list of dependencies (or undefined)
+				pPreload = sFileType !== 'json' ?
 					/* 'js' or 'both', not forced to JSON */
 					this._preloadJSFormat({
 						fallbackToJSON: sFileType !== "js",
@@ -529,9 +537,15 @@ sap.ui.define([
 						sync: mOptions.sync
 					})
 					: this._preloadJSONFormat({sync: mOptions.sync});
+			}
 
 			// load dependencies, if there are any
 			this._loadingStatus.promise = pPreload.then(function(aDependencies) {
+				// resolve dependencies via manifest "this._getDependencies()" except for libary-preload.json
+				aDependencies = aDependencies || this._getDependencies();
+
+				this._loadingStatus.preloadFinished = true;
+
 				var oManifest = this.getManifest(),
 					aPromises;
 
@@ -622,9 +636,7 @@ sap.ui.define([
 				pResult = sap.ui.loader._.loadJSResourceAsync(sPreloadModule);
 			}
 
-			return pResult.then(function() {
-				return that._getDependencies();
-			}, function(e) {
+			return pResult.catch(function(e) {
 				if (mOptions.fallbackToJSON) {
 					var bFallback;
 					if (mOptions.sync) {
