@@ -51,7 +51,7 @@ sap.ui.define([
 						controlType : "sap.ui.table.Table",
 						id : "businessPartnerTable",
 						success : function (oTable) {
-							Opa5.assert.strictEqual(oTable.getTitle().getText(), sTitle,
+							Opa5.assert.strictEqual(oTable.getExtension()[0].getText(), sTitle,
 								"Grid table title: " + sTitle);
 						},
 						viewName : sViewName

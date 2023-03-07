@@ -23,6 +23,9 @@ sap.ui.getCore().attachInit(function () {
 				TestUtils.setData("sap.ui.core.sample.odata.v4.ServerDrivenPaging.$count",
 					bCount);
 
+				if (bCount) {
+					When.onAnyPage.applySupportAssistant();
+				}
 				Given.iStartMyUIComponent({
 					autoWait : true,
 					componentConfig : {
@@ -54,6 +57,9 @@ sap.ui.getCore().attachInit(function () {
 				}
 
 				Then.onAnyPage.checkLog();
+				if (bCount) {
+					Then.onAnyPage.analyzeSupportAssistant();
+				}
 				Then.iTeardownMyUIComponent();
 			});
 		});

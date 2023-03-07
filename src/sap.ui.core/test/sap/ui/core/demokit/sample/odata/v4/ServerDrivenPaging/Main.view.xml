@@ -10,7 +10,8 @@
 				<Table id="businessPartnerList" growing="true" growingThreshold="21">
 					<headerToolbar>
 						<Toolbar>
-							<Title id="businessPartnerListTitle" text="{$count} Business Partners"/>
+							<Title id="businessPartnerListTitle" level="H1"
+								text="{$count} Business Partners"/>
 						</Toolbar>
 					</headerToolbar>
 					<columns>
@@ -27,8 +28,11 @@
 				</Table>
 			</IconTabFilter>
 			<IconTabFilter id="table" text="table.Table">
-				<t:Table id="businessPartnerTable" selectionMode="None"
-						title="{$count} Business Partners" visibleRowCount="21">
+				<t:Table ariaLabelledBy="title" id="businessPartnerTable" selectionMode="None"
+						visibleRowCount="21">
+					<t:extension>
+						<Title id="title" text="{$count} Business Partners" level="H1"/>
+					</t:extension>
 					<t:Column>
 						<Label text="Index"/>
 						<t:template>
