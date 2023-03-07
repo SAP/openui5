@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/layout/ResponsiveFlowLayout",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
 	"sap/ui/layout/form/ResponsiveLayout" // provides layout for simple form
-], function(Button, CheckBox, Input, Label, Popover, Controller, XMLView, ResponsiveFlowLayout, ResponsiveFlowLayoutData) {
+], function(Button, CheckBox, Input, Label, Popover, CoreController, XMLView, ResponsiveFlowLayout, ResponsiveFlowLayoutData) {
 	"use strict";
 
 	var bResponsive = true;
@@ -206,7 +206,7 @@ sap.ui.define([
 			+ '        </form:SimpleForm>'
 			+ '</mvc:View>';
 
-	var Controller = Controller.extend("sampleController", {
+	var Controller = CoreController.extend("sampleController", {
 		openForm : function(oEvent) {
 			if (oTP.isOpen()) {
 				oTP.close();

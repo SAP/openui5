@@ -582,8 +582,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Hyphenation.prototype.isLanguageInitialized = function (sLang) {
-		var sLang = getLanguage(sLang);
-		return Object.keys(oHyphenateMethods).indexOf(sLang) != -1;
+		var sLanguage = getLanguage(sLang);
+		return Object.keys(oHyphenateMethods).indexOf(sLanguage) != -1;
 	};
 
 	/**

@@ -655,7 +655,7 @@ sap.ui.define([
 	 * Set the body's OS-related attribute and CSS class
 	 * @private
 	 */
-	Core.prototype._setupOS = function(html) {
+	Core.prototype._setupOS = function() {
 		var html = document.documentElement;
 
 		html.dataset.sapUiOs = Device.os.name + Device.os.versionStr;

@@ -17,7 +17,6 @@ sap.ui.define([
 	var GenericTagDesign = library.GenericTagDesign,
 		GenericTagValueState = library.GenericTagValueState,
 		ValueState = coreLibrary.ValueState,
-		oCore = sap.ui.getCore(),
 		TESTS_DOM_CONTAINER = "qunit-fixture",
 		GENERICTAG_TEXT_ID_SUFFIX = "-text",
 		GENERICTAG_STATUSTEXT_ID_SUFFIX = "-status";

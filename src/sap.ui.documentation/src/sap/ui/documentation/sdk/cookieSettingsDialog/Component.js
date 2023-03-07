@@ -8,10 +8,10 @@ sap.ui.define([
 		"sap/ui/VersionInfo",
 		"sap/base/util/merge",
 		"sap/base/util/UriParameters"
-	], function(Component, Controller, VersionInfo, merge, UriParameters) {
+	], function(CoreComponent, Controller, VersionInfo, merge, UriParameters) {
 	"use strict";
 
-	var Component = Component.extend("sap.ui.documentation.sdk.cookieSettingsDialog.Component", {
+	var Component = CoreComponent.extend("sap.ui.documentation.sdk.cookieSettingsDialog.Component", {
 
 		"COOKIE_NAMES": {
 			"APPROVAL_REQUESTED": "dk_approval_requested",

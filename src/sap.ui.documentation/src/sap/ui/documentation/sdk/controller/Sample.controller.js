@@ -344,7 +344,7 @@ sap.ui.define([
 			},
 
 			_saveLocalSettings: function(sTheme, sDensityMode, bRTL) {
-				var sDensityMode = this._presetDensity(sDensityMode);
+				sDensityMode = this._presetDensity(sDensityMode);
 				this.oModel.setData({
 					theme: sTheme,
 					rtl: bRTL,
@@ -365,8 +365,9 @@ sap.ui.define([
 			 * @private
 			 */
 			_applyAppConfiguration: function(sThemeActive, sDensityMode, bRTL){
-				var oIframe = this._oHtmlControl.getDomRef(),
-					sDensityMode = this._presetDensity(sDensityMode);
+				var oIframe = this._oHtmlControl.getDomRef();
+
+				sDensityMode = this._presetDensity(sDensityMode);
 				oIframe.contentWindow.postMessage({
 					type: "SETTINGS",
 					reason: "set",
