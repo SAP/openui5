@@ -276,7 +276,7 @@ sap.ui.define([
 			return sHref;
 		},
 
-		formatImportantMessage: function (sMsg, sParam) {
+		formatImportantMessage: function (sMsg) {
 			var sParam = this._getUI5Distribution();
 			return formatMessage(sMsg, sParam);
 		},

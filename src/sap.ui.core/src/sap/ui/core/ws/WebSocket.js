@@ -401,7 +401,7 @@ sap.ui.define([
 	 * @private
 	 */
 	WebSocket.prototype._openConnection = function(sUrl, aProtocols) {
-		var sUrl = this._resolveFullUrl(sUrl);
+		sUrl = this._resolveFullUrl(sUrl);
 		this._oWs = (typeof (aProtocols) === 'undefined')
 			? new window.WebSocket(sUrl)
 			: new window.WebSocket(sUrl, aProtocols);

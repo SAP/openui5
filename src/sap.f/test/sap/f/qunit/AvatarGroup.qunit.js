@@ -20,7 +20,7 @@ function (
 		sControlId = "AvatarGroupId";
 
 	function createAvatarGroup(oProps, sId) {
-		var sId = sId || sControlId;
+		sId = sId || sControlId;
 
 		return new AvatarGroup(sId, oProps);
 	}

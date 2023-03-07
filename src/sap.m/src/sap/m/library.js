@@ -5336,7 +5336,7 @@ sap.ui.define([
 			 * @public
 			 */
 			triggerEmail: function(sEmail, sSubject, sBody, sCC, sBCC, bNewWindow) {
-				var bNewWindow = bNewWindow || false;
+				bNewWindow = bNewWindow || false;
 				this.redirect(this.normalizeEmail.apply(0, [sEmail, sSubject, sBody, sCC, sBCC]), bNewWindow);
 			},
 

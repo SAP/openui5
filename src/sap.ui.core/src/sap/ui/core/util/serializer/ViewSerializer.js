@@ -187,8 +187,8 @@ sap.ui.define(['sap/ui/base/EventProvider', './HTMLViewSerializer', './XMLViewSe
 					fnGetControlId,
 					fnGetEventHandlerName);
 		} else {
-			var sType = (oView) ? oView.constructor : "?";
-			throw Error("View type '" + sType + "' is not supported for conversion. Only HTML and XML is supported");
+			var sViewType = (oView) ? oView.constructor : "?";
+			throw Error("View type '" + sViewType + "' is not supported for conversion. Only HTML and XML is supported");
 		}
 	};
 

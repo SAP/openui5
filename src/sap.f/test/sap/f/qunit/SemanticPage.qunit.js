@@ -999,8 +999,7 @@ function (
 		var oSnappedTitle = oFactory.getTitle(),
 			oExpandedTitle = oFactory.getDynamicPageTitle(),
 			oPage = this.oSemanticPage._getPage(),
-			done = assert.async(),
-			assert = assert;
+			done = assert.async();
 
 		this.oSemanticPage.setHeaderExpanded(false);
 		this.oSemanticPage.addTitleSnappedContent(oSnappedTitle);

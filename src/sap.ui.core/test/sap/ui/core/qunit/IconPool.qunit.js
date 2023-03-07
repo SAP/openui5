@@ -507,7 +507,7 @@ sap.ui.define([
 			assert.ok(oIconInfo.then, "While loading still a promise is returned");
 
 			resolve(oIconInfo);
-		}).then(function(oIconInfo) {
+		}).then(function(/* ignored oIconInfo */) {
 			var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakeasync/python", undefined, "async");
 			oIconInfo.then(function(oIconInfo) {
 				assert.ok(oIconInfo, "After loading the promise is resolved with the icon info");
@@ -576,7 +576,7 @@ sap.ui.define([
 			assert.ok(oIconInfo.then, "While loading still a promise is returned");
 
 			resolve(oIconInfo);
-		}).then(function(oIconInfo) {
+		}).then(function(/* ignored oIconInfo */) {
 			var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakemixed/python", undefined, "mixed");
 			assert.ok(oIconInfo.content, "After loading the icon information is returned immediately");
 			assert.equal(oIconInfo.collection, "tntfakemixed", "Icon collection is correct");

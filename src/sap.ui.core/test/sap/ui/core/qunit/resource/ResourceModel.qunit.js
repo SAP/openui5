@@ -1087,7 +1087,7 @@ sap.ui.define([
 		assert.equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 
-		oModel.getResourceBundle().then(function(oBundle) {
+		oModel.getResourceBundle().then(function(/* ignored oBundle */) {
 			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 			var oBundle = ResourceBundle.create({url: sCustomMessagesProperties});

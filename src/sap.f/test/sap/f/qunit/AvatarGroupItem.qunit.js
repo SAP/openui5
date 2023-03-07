@@ -14,7 +14,7 @@ function (
 		sControlId = "AvatarGroupItemId";
 
 	function createAvatarGroupItem(oProps, sId) {
-		var sId = sId || sControlId;
+		sId = sId || sControlId;
 
 		return new AvatarGroupItem(sId, oProps);
 	}

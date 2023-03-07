@@ -698,8 +698,9 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 
 			}
 
-			var oClass = new oClass().getMetadata().getClass(); // resolves proxy
-			var oPredefinedValues = oPredefinedValues || {};
+			oClass = new oClass().getMetadata().getClass(); // resolves proxy
+			oPredefinedValues = oPredefinedValues || {};
+
 			var result = {};
 			var oProps = oClass.getMetadata().getAllProperties();
 			for (var name in oProps) {
@@ -726,8 +727,9 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				return;
 			}
 
-			var oClass = new oClass().getMetadata().getClass(); // resolves proxy
-			var oTestConfig = oTestConfig || {};
+			oClass = new oClass().getMetadata().getClass(); // resolves proxy
+			oTestConfig = oTestConfig || {};
+
 			var oTestValues = QUtils.createSettingsDomain(oClass, oTestConfig.allPairTestValues || {});
 
 			info("domain");
