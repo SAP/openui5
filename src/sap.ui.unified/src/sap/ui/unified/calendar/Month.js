@@ -475,8 +475,10 @@ sap.ui.define([
 
 	/**
 	 * Sets a date for the month.
+	 *
 	 * @param {Date} oDate a JavaScript date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	Month.prototype.setDate = function(oDate){
 		if (oDate) {

@@ -464,9 +464,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set the start date of the row
+	 * Set the start date of the row.
+	 *
 	 * @param {Date} [oStartDate] Start date, as JavaScript Date object, of the row
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	CalendarRow.prototype.setStartDate = function(oStartDate){
 
@@ -490,6 +492,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the start date of the row.
+	 *
 	 * @returns {sap.ui.core.date.UniversalDate} in UTC timezone
 	 * @private
 	 */

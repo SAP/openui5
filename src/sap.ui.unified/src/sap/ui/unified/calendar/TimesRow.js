@@ -287,9 +287,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter <code>date</code> value.
+	 * Setter for the <code>date</code> property.
+	 *
 	 * @param {Date} oDate A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	TimesRow.prototype.setDate = function(oDate){
 
@@ -315,9 +317,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets start date, as JavaScript Date object of the row.
+	 * Sets start date, as JavaScript Date object, of the row.
+	 *
 	 * @param {Date} oStartDate A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	TimesRow.prototype.setStartDate = function(oStartDate){
 

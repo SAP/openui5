@@ -101,9 +101,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a start date.
+	 * Sets start date of the row.
+	 *
 	 * @param {Date} oStartDate A JavaScript date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	DatesRow.prototype.setStartDate = function(oStartDate){
 
@@ -167,7 +169,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * displays the a given date without setting the focus
+	 * Displays the given date without setting the focus
 	 *
 	 * Property <code>date</code> date to be focused or displayed. It must be in the displayed date range
 	 * beginning with <code>startDate</code> and <code>days</code> days
@@ -267,6 +269,7 @@ sap.ui.define([
 
 	/**
 	 * Checks if given date is focusable.
+	 *
 	 * @param {Date} oDate JavaScript (local) date.
 	 * @returns {boolean} true if the date is focusable, false otherwise.
 	 */
@@ -340,6 +343,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the weeks with their length and number for the displayed dates.
+	 *
 	 * @returns {Array} Array with objects containing info about the weeks. Example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
 	 * @private
 	 */
