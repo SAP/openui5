@@ -814,7 +814,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// BCP: 002028376600003415642020
-	QUnit.test("merge: order of visiting nodes", function (assert) {
+[false, "~ignoreAnnotationsFromMetadata"].forEach(function (ignoreAnnotationsFromMetadata, i) {
+	QUnit.test("merge: order of visiting nodes, " + i, function (assert) {
 		var oLift0, oLift1, oVisitAssociation0, oVisitAssociation1, oVisitComplexType0,
 			oVisitComplexType1, oVisitEntityContainer0, oVisitEntityContainer1, oVisitEntityType0,
 			oVisitEntityType1,
@@ -836,7 +837,8 @@ sap.ui.define([
 			oUtilsMock = this.mock(Utils);
 
 		// Associations, ComplexTypes and EntityType of Schema0
-		oLift0 = oUtilsMock.expects("liftSAPData").withExactArgs(sinon.match.same(oSchema0));
+		oLift0 = oUtilsMock.expects("liftSAPData").withExactArgs(sinon.match.same(oSchema0),
+			ignoreAnnotationsFromMetadata);
 		oVisitAssociation0 = oUtilsMock.expects("visitParents")
 			.withExactArgs(sinon.match.same(oSchema0), sinon.match.same(oAnnotations),
 				"association", sinon.match.func);
@@ -845,9 +847,10 @@ sap.ui.define([
 				"complexType", sinon.match.func);
 		oVisitEntityType0 = oUtilsMock.expects("visitParents")
 			.withExactArgs(sinon.match.same(oSchema0), sinon.match.same(oAnnotations),
-				"entityType", sinon.match.same(Utils.visitEntityType));
+				"entityType", sinon.match.same(Utils.visitEntityType), undefined, ignoreAnnotationsFromMetadata);
 		// Associations, ComplexTypes and EntityType of Schema1
-		oLift1 = oUtilsMock.expects("liftSAPData").withExactArgs(sinon.match.same(oSchema1));
+		oLift1 = oUtilsMock.expects("liftSAPData").withExactArgs(sinon.match.same(oSchema1),
+			ignoreAnnotationsFromMetadata);
 		oVisitAssociation1 = oUtilsMock.expects("visitParents")
 			.withExactArgs(sinon.match.same(oSchema1), sinon.match.same(oAnnotations),
 				"association", sinon.match.func);
@@ -856,7 +859,7 @@ sap.ui.define([
 				"complexType", sinon.match.func);
 		oVisitEntityType1 = oUtilsMock.expects("visitParents")
 			.withExactArgs(sinon.match.same(oSchema1), sinon.match.same(oAnnotations),
-				"entityType", sinon.match.same(Utils.visitEntityType));
+				"entityType", sinon.match.same(Utils.visitEntityType), undefined, ignoreAnnotationsFromMetadata);
 		// EntityContainers of each Schema after all Associations, ComplexTypes and EntityTypes of
 		// all Schemas are processed
 		oVisitEntityContainer0 = oUtilsMock.expects("visitParents")
@@ -867,7 +870,7 @@ sap.ui.define([
 				"entityContainer", sinon.match.func);
 
 		// code under test
-		Utils.merge(oAnnotations, oData);
+		Utils.merge(oAnnotations, oData, {/*oMetaModel*/}, ignoreAnnotationsFromMetadata);
 
 		// verify order
 		assert.ok(oVisitAssociation0.calledAfter(oLift0));
@@ -887,8 +890,9 @@ sap.ui.define([
 		oVisitAssociation0.args[0][3](/*oAssociation*/{end : "~end"}, "~mChildAnnotations");
 
 		oUtilsMock.expects("visitChildren")
-			.withExactArgs("~property", "~mChildAnnotations", "Property");
-		oUtilsMock.expects("addSapSemantics")
+			.withExactArgs("~property", "~mChildAnnotations", "Property", undefined, undefined, undefined,
+				ignoreAnnotationsFromMetadata);
+		oUtilsMock.expects("addSapSemantics").exactly(ignoreAnnotationsFromMetadata ? 0 : 1)
 			.withExactArgs(sinon.match.same(oComplexType));
 
 		// code under test
@@ -897,13 +901,15 @@ sap.ui.define([
 		oUtilsMock.expects("visitChildren").withExactArgs("~associationSet", "~mChildAnnotations");
 		oUtilsMock.expects("visitChildren")
 			.withExactArgs("~entitySet", "~mChildAnnotations", "EntitySet",
-				sinon.match.same(aSchemas));
+				sinon.match.same(aSchemas), undefined, undefined, ignoreAnnotationsFromMetadata);
 		oUtilsMock.expects("visitChildren")
-			.withExactArgs("~functionImport", "~mChildAnnotations", "", null, sinon.match.func);
+			.withExactArgs("~functionImport", "~mChildAnnotations", "", null, sinon.match.func, undefined,
+				ignoreAnnotationsFromMetadata);
 
 		// code under test
 		oVisitEntityContainer0.args[0][3](oEntityContainer, "~mChildAnnotations");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("addFilterRestriction: adding valid filter-restrictions", function (assert) {
@@ -1521,5 +1527,43 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(Utils.findIndex(aArray, oValue, "foo"), 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("liftSAPData w/ ignoreAnnotationsFromMetadata: keeps sap:-attributes", function (assert) {
+		var o = {
+				extensions : [{
+					namespace : "http://www.sap.com/Protocols/SAPData",
+					name : "~name0",
+					value : "~value0"
+				}, {
+					namespace : "http://www.sap.com/Protocols/SAPData",
+					name : "~name1",
+					value : "~value1"
+				}]
+			};
+
+		// code under test
+		Utils.liftSAPData(o, "~sTypeClass", /*bIgnoreAnnotationsFromMetadata*/true);
+
+		assert.strictEqual(o["sap:~name0"], "~value0");
+		assert.strictEqual(o["sap:~name1"], "~value1");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("liftSAPData w/ ignoreAnnotationsFromMetadata: never creates V4-annotations", function (assert) {
+		var o = {
+				extensions : [{
+					namespace : "http://www.sap.com/Protocols/SAPData",
+					name : "searchable",
+					value : "false"
+				}]
+			};
+
+		// code under test
+		Utils.liftSAPData(o, "EntitySet", /*bIgnoreAnnotationsFromMetadata*/true);
+
+		assert.strictEqual(o["sap:searchable"], "false");
+		assert.notOk(o["Org.OData.Capabilities.V1.SearchRestrictions"]);
 	});
 });

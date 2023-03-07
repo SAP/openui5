@@ -820,7 +820,7 @@ sap.ui.define([
 			.returns({foo : "bar"});
 		this.mock(Utils).expects("merge")
 			.withExactArgs({/*no oAnnotations*/}, /*copy of service metadata*/{foo : "bar"},
-				sinon.match.same(oDataMetaModel));
+				sinon.match.same(oDataMetaModel), /*bIgnoreAnnotationsFromMetadata*/undefined);
 
 		// code under test
 		fnResolve("~annotationLoaded");
@@ -888,7 +888,7 @@ sap.ui.define([
 		this.mock(oAnnotations).expects("getData").withExactArgs().returns("~annotationData");
 		this.mock(Utils).expects("merge")
 			.withExactArgs("~annotationData", /*copy of service metadata*/{foo : "bar"},
-				sinon.match.same(oDataMetaModel));
+				sinon.match.same(oDataMetaModel), /*bIgnoreAnnotationsFromMetadata*/undefined);
 
 		// code under test
 		fnResolve("~annotationLoaded");
@@ -4370,6 +4370,92 @@ sap.ui.define([
 			ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing.call(oMetaModel,
 				"~collectionPath");
 		}, oFixture.error);
+	});
+});
+
+	//****************************************************************************************************************
+	// If a model is loaded with parameter ignoreAnnotationsFromMetadata, embedded annotations
+	// from its $metadata are not available; annotations from external annotation files are however still available.
+	QUnit.test("ignoreAnnotationsFromMetadata", function (assert) {
+		var oDataModel, oMetaModel,
+			sBPPath = "/dataServices/schema/0/entityType/[${name}==='BusinessPartner']/";
+
+		oDataModel = new ODataModel("/fake/service", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			ignoreAnnotationsFromMetadata : true
+		});
+
+		// code under test
+		oMetaModel = oDataModel.getMetaModel();
+
+		return oMetaModel.loaded().then(function () {
+			assert.strictEqual(oMetaModel.getObject(sBPPath +
+				"Org.OData.Capabilities.V1.InsertRestrictions"), undefined,
+				"metadata: external annotation *not* available");
+			assert.strictEqual(oMetaModel.getObject(sBPPath +
+				"property/[${name}==='BusinessPartnerID']/com.sap.vocabularies.Common.v1.Label"), undefined,
+				"metadata: external annotation for lifted annotation *not* available");
+			assert.ok(oMetaModel.getObject(sBPPath + "property/[${name}==='BusinessPartnerID']/sap:label"),
+				"metadata: lifted annotation/sap:-attribute *available*");
+			assert.ok(oMetaModel.getObject(sBPPath +
+				"com.sap.vocabularies.UI.v1.HeaderInfo"), "annotation from annotation file *available*");
+		});
+	});
+
+	//****************************************************************************************************************
+	// If a model is loaded with parameter ignoreAnnotationsFromMetadata and without external annotation files, the
+	// metamodel must not contain V4 annotations (recognized in the test as property names containing a ".").
+[
+	// improve test-performance: comment tests for services which do not lead to new issues
+	// "/fake/currencyCodeViaPath",
+	// "/fake/emptyDataServices",
+	// "/fake/emptyEntityType",
+	"/fake/service",
+	// "/fake/special",
+	// "/fake/valueListMetadata",
+	"/FAR_CUSTOMER_LINE_ITEMS"
+	// "/GWSAMPLE_BASIC"
+].forEach(function (sServiceUrl) {
+	QUnit.test("ignoreAnnotationsFromMetadata: no V4 annotations created from metadata in "
+			+ sServiceUrl, function (assert) {
+		var oDataModel, oMetaModel;
+
+		oDataModel = new ODataModel(sServiceUrl, {ignoreAnnotationsFromMetadata : true});
+
+		// code under test
+		oMetaModel = oDataModel.getMetaModel();
+
+		function getV4AnnotationPaths(sPath, oData) {
+			var aProperties = Object.keys(oData),
+				aV4AnnotationPaths = aProperties.filter(function (sProperty) {
+					return sProperty.includes(".");
+				}).map(function (sProperty) {
+					return sPath + "/" + sProperty;
+				});
+
+			aProperties.filter(function (sProperty) {
+				return !sProperty.includes(".") && typeof oData[sProperty] === "object" && oData[sProperty];
+			}).forEach(function (sProperty) {
+				// use names for index properties to find the location in the metadata more easily
+				var sPropertyPath = sPath + "/";
+
+				if (isNaN(Number(sProperty)) || !oData[sProperty].name) {
+					sPropertyPath += sProperty;
+				} else {
+					sPropertyPath += oData[sProperty].name;
+				}
+
+				aV4AnnotationPaths = aV4AnnotationPaths.concat(getV4AnnotationPaths(sPropertyPath, oData[sProperty]));
+			});
+
+			return aV4AnnotationPaths;
+		}
+
+		return oMetaModel.loaded().then(function () {
+			var aV4AnnotationPaths = getV4AnnotationPaths("", oMetaModel.getObject("/"));
+
+			assert.deepEqual(aV4AnnotationPaths, []);
+		});
 	});
 });
 
