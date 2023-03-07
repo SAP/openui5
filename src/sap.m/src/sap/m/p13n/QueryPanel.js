@@ -350,7 +350,12 @@ sap.ui.define([
 							this._addQueryRow();
 						}
 						//In case an item has been removed, focus the Select control of the new 'none' row
-						this.getInitialFocusedControl().focus();
+						//Needs timeout because the new queryRow and control might not be rendered
+						setTimeout(function() {
+							if (!this.bIsDestroyed) {
+								this.getInitialFocusedControl().focus();
+							}
+						}.bind(this), 0);
 
 						this._getP13nModel().checkUpdate(true);
 					}.bind(this)
