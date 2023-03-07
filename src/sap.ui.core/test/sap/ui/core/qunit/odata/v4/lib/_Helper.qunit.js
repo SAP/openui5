@@ -5031,5 +5031,15 @@ sap.ui.define([
 		assert.strictEqual(oPromise.isPending(), true);
 		_Helper.getPrivateAnnotation(oElement, "resolve")("foo");
 		assert.strictEqual(oPromise.getResult(), "foo");
+
+		// code under test
+		oPromise = _Helper.addDeepCreatePromise(oElement);
+
+		assert.strictEqual(oPromise.isPending(), true);
+		_Helper.getPrivateAnnotation(oElement, "reject")("~oError~");
+		assert.strictEqual(oPromise.isRejected(), true);
+		oPromise.catch(function (oError) {
+			assert.strictEqual(oError, "~oError~");
+		});
 	});
 });

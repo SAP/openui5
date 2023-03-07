@@ -449,6 +449,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Cancels all nested creates within the given element.
+	 *
+	 * @param {object} oElement - The entity data in the cache
+	 * @param {string} sPostPath - The request path of the POST request
+	 * @param {string} sGroupId - The group ID of the POST request
+	 *
+	 * @private
+	 */
+	_Cache.prototype.cancelNestedCreates = function (oElement, sPostPath, sGroupId) {
+		Object.keys(oElement).forEach(function (sKey) {
+			var oError,
+				vProperty = oElement[sKey];
+
+			if (vProperty && vProperty.$postBodyCollection) {
+				oError = new Error("Deep create of " + sKey + " canceled with POST " + sPostPath
+					+ "; group: " + sGroupId);
+				oError.canceled = true;
+				vProperty.forEach(function (oChildElement) {
+					_Helper.getPrivateAnnotation(oChildElement, "reject")(oError);
+				});
+			}
+		});
+	};
+
+	/**
 	 * Throws an error if the cache shares requests.
 	 *
 	 * @throws {Error} If the cache has bSharedRequest
@@ -524,6 +549,8 @@ sap.ui.define([
 				return true;
 			}
 
+			that.cancelNestedCreates(oEntityData, oPostPathPromise.getResult(),
+				oGroupLock.getGroupId());
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 			aCollection.splice(iIndex, 1);
 			aCollection.$created -= 1;
@@ -2330,6 +2357,7 @@ sap.ui.define([
 							oChildEntity, oCreatedChildEntity, aSelect,
 							/*fnCheckKeyPredicate*/undefined, true);
 						_Helper.deletePrivateAnnotation(oChildEntity, "postBody");
+						_Helper.deletePrivateAnnotation(oChildEntity, "reject");
 						_Helper.deletePrivateAnnotation(oChildEntity, "resolve");
 						_Helper.deletePrivateAnnotation(oChildEntity, "transient");
 						delete oChildEntity["@$ui5.context.isTransient"];

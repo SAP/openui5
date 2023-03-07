@@ -96,8 +96,9 @@ sap.ui.define([
 		 * @returns {sap.ui.base.SyncPromise} The promise
 		 */
 		addDeepCreatePromise : function (oElement) {
-			return new SyncPromise(function (fnResolve) {
+			return new SyncPromise(function (fnResolve, fnReject) {
 				_Helper.setPrivateAnnotation(oElement, "resolve", fnResolve);
+				_Helper.setPrivateAnnotation(oElement, "reject", fnReject);
 			});
 		},
 
