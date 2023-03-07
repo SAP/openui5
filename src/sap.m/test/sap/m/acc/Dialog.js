@@ -3,6 +3,8 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
 	"sap/m/Dialog",
+	"sap/m/FlexItemData",
+	"sap/m/HBox",
 	"sap/m/Label",
 	"sap/m/library",
 	"sap/m/Page",
@@ -12,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
 	"sap/ui/core/library"
-], function(App, Bar, Button, Dialog, Label, mobileLibrary, Page, SearchField, MText, Title, HTML, Icon, coreLibrary) {
+], function(App, Bar, Button, Dialog, FlexItemData, HBox, Label, mobileLibrary, Page, SearchField, MText, Title, HTML, Icon, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.aria.HasPopup
@@ -143,12 +145,20 @@ sap.ui.define([
 			title: "Dialog with Search Field",
 			subHeader: new Bar({
 				contentMiddle: [
-					new Label({
-						text: "Search Text:",
-						labelFor: "sf1",
-						width: "100px"
-					}),
-					new SearchField("sf1")
+					new HBox({
+						width: "100%",
+						items: [
+							new Label({
+								text: "Search Text:",
+								labelFor: "sf1"
+							}).addStyleClass("sapUiTinyMarginEnd"),
+							new SearchField("sf1", {
+								layoutData: new FlexItemData({
+									growFactor: 1
+								})
+							})
+						]
+					})
 				]
 			}),
 			content: new HTML({
