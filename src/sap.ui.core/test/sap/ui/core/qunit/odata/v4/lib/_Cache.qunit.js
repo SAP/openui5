@@ -5571,7 +5571,7 @@ sap.ui.define([
 				.callsFake(resolve);
 
 			// code under test
-			aElements = oCache.addTransientCollection("path/to/collection", "~mQueryOptions~");
+			aElements = oCache.addTransientCollection("path/to/collection", "~aSelect~");
 
 			assert.deepEqual(aElements, []);
 			assert.strictEqual(oParent.collection, aElements);
@@ -5579,7 +5579,7 @@ sap.ui.define([
 			assert.strictEqual(aElements.$created, 0);
 			assert.deepEqual(aElements.$byPredicate, {});
 			assert.strictEqual(typeof aElements.$postBodyCollection, "function");
-			assert.strictEqual(aElements.$queryOptions, "~mQueryOptions~");
+			assert.strictEqual(aElements.$select, "~aSelect~");
 
 			// code under test
 			aElements.$postBodyCollection();
@@ -5627,8 +5627,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bHasQueryOptions) {
-	QUnit.test("Cache#updateNestedCreates: " + bHasQueryOptions, function (assert) {
+[false, true].forEach(function (bHasSelect) {
+	QUnit.test("Cache#updateNestedCreates: " + bHasSelect, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
 			oChildEntity0 = {
 				"@$ui5.context.isTransient" : true
@@ -5682,11 +5682,11 @@ sap.ui.define([
 		oEntity.deepCreateCollection.$byPredicate = {};
 		oEntity.deepCreateCollection.$postBodyCollection = "~postBodyCollection~";
 		oEntity.otherCollection.$postBodyCollection = "~postBodyCollection~";
-		if (bHasQueryOptions) {
-			oEntity.deepCreateCollection.$queryOptions = mQueryOptions;
+		if (bHasSelect) {
+			oEntity.deepCreateCollection.$select = "~select~";
 		}
 
-		oHelperMock.expects("getQueryOptionsForPath").exactly(bHasQueryOptions ? 0 : 1)
+		oHelperMock.expects("getQueryOptionsForPath").exactly(bHasSelect ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions),
 				"path/to/entity/deepCreateCollection")
 			.returns(mQueryOptions);
@@ -5705,6 +5705,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(fnResolve[0], sinon.match.same(oChildEntity0));
 		sinon.assert.calledWithExactly(fnResolve[1], sinon.match.same(oChildEntity1));
 		assert.notOk("$postBodyCollection" in oEntity.deepCreateCollection);
+		assert.notOk("$select" in oEntity.deepCreateCollection);
 		assert.notOk("$postBodyCollection" in oEntity.otherCollection);
 	});
 });

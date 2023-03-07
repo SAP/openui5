@@ -8158,8 +8158,7 @@ sap.ui.define([
 [
 	{mCacheQueryOptions : undefined},
 	{mCacheQueryOptions : {}, aElements : []},
-	{mCacheQueryOptions : {}, aElements : [{}], bHasCache : false},
-	{mCacheQueryOptions : {}, aElements : [{}], bHasCache : true}
+	{mCacheQueryOptions : {}, aElements : [{}, {}]}
 ].forEach(function (oFixture) {
 	QUnit.test("adjustPredicate: " + JSON.stringify(oFixture), function (assert) {
 		var oBinding = this.bindList("SO_2_SOITEM",
@@ -8183,10 +8182,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oBinding.oContext), true)
 			.callsFake(function () {
 				done = assert.async();
-				oBinding.oCachePromise
-					= SyncPromise.resolve(Promise.resolve(oFixture.bHasCache ? oCache : null));
+				oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
 				that.mock(oCache).expects("setPersistedCollection")
-					.exactly(oFixture.bHasCache ? 1 : 0)
+					.exactly(oFixture.aElements.length ? 1 : 0)
 					.withExactArgs(sinon.match.same(oFixture.aElements));
 			});
 		this.mock(oBinding.oHeaderContext).expects("adjustPredicate")
@@ -9829,6 +9827,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bHasQueryOptions) {
 	QUnit.test("prepareDeepCreate", function (assert) {
 		var oBinding = this.bindList("SO_2_SOITEM"),
 			oCache = {
@@ -9838,24 +9837,26 @@ sap.ui.define([
 				isTransient : function () {},
 				withCache : function () {}
 			},
-			oExpectation;
+			oExpectation,
+			mQueryOptions = bHasQueryOptions ? {$select : "~select~"} : undefined;
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
 		oExpectation = this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.func, "SO_2_SOITEM");
 
 		// code under test
-		assert.strictEqual(oBinding.prepareDeepCreate(oContext, "~mQueryOptions~"), true);
+		assert.strictEqual(oBinding.prepareDeepCreate(oContext, mQueryOptions), true);
 
-		assert.strictEqual(oBinding.mCacheQueryOptions, "~mQueryOptions~");
+		assert.strictEqual(oBinding.mCacheQueryOptions, mQueryOptions);
 		assert.strictEqual(oBinding.bDeepCreate, true);
 
 		this.mock(oCache).expects("addTransientCollection")
-			.withExactArgs("path/in/cache", "~mQueryOptions~");
+			.withExactArgs("path/in/cache", bHasQueryOptions ? "~select~" : undefined);
 
 		// code under test - callback
 		oExpectation.args[0][0](oCache, "path/in/cache");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("updateAfterCreate: delegate", function (assert) {
