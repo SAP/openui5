@@ -1968,6 +1968,7 @@ sap.ui.define([
 		var oRow = this._getRowForKey(oItem.getKey());
 		if (oRow) {
 			oRow.getCells()[VariantManagement.COLUMN_DEFAULT_IDX].setEnabled(bDefaultEnabled);
+			this._toggleIconActivityState(oRow.getCells()[0], oItem, false);
 		}
 	};
 
