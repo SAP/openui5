@@ -1095,16 +1095,6 @@ sap.ui.define([
 		var DynamicDateRangeInputRenderer = Renderer.extend(InputRenderer);
 		DynamicDateRangeInputRenderer.apiVersion = 2;
 
-		/**
-		 * Returns ARIA accessibility role for the control.
-		 *
-		 * @param {sap.ui.core.Control} oControl an object representation of the control
-		 * @returns {String}
-		 */
-		DynamicDateRangeInputRenderer.getAriaRole = function(oControl) {
-			return "combobox";
-		};
-
 		DynamicDateRangeInputRenderer.writeInnerAttributes = function(oRm, oControl) {
 			oRm.attr("type", "text");
 		};
@@ -1139,7 +1129,6 @@ sap.ui.define([
 
 			mAccessibilityState.roledescription = oResourceBundle.getText("ACC_CTR_TYPE_DYNAMIC_DATE_RANGE");
 			mAccessibilityState.role = this.getAriaRole();
-			mAccessibilityState.expanded = oDynamicDateRange._oPopup ? oDynamicDateRange._oPopup.isOpen() : false;
 			mAccessibilityState.haspopup = coreLibrary.aria.HasPopup.ListBox.toLowerCase();
 			mAccessibilityState.autocomplete = "list";
 			mAccessibilityState.controls = oDynamicDateRange._oPopup && oDynamicDateRange._oPopup.getDomRef() ?

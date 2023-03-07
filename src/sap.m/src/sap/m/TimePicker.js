@@ -574,23 +574,9 @@ function(
 			var oClocks = this._getClocks();
 
 			if (oClocks) {
-				//WAI-ARIA region
-				this._handleAriaOnExpandCollapse(true);
-
 				oClocks.showFirstClock();
 				oClocks._focusActiveButton();
 			}
-		};
-
-		/**
-		 * Called before the clock picker closes.
-		 *
-		 * @override
-		 * @public
-		 */
-		 TimePicker.prototype.onBeforeClose = function() {
-			//WAI-ARIA region
-			this._handleAriaOnExpandCollapse(false);
 		};
 
 		/**
@@ -638,31 +624,6 @@ function(
 			}
 
 			oInputs._setTimeValues(oDateValue, TimePickerInternals._isHoursValue24(sDisplayFormattedValue, iIndexOfHH, iIndexOfH));
-		};
-
-		/**
-		 * Called after the numeric picker appears.
-		 *
-		 * @private
-		 */
-		TimePicker.prototype.onAfterNumericOpen = function() {
-			var oInputs = this._getInputs();
-
-			if (oInputs) {
-				//WAI-ARIA region
-				this._handleAriaOnExpandCollapse(true);
-			}
-
-		};
-
-		/**
-		 * Called before the numeric picker closes.
-		 *
-		 * @private
-		 */
-		TimePicker.prototype.onBeforeNumericClose = function() {
-			//WAI-ARIA region
-			this._handleAriaOnExpandCollapse(false);
 		};
 
 		/**
@@ -1446,7 +1407,6 @@ function(
 				],
 				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME"),
 				beforeOpen: this.onBeforeOpen.bind(this),
-				beforeClose: this.onBeforeClose.bind(this),
 				afterOpen: this.onAfterOpen.bind(this),
 				afterClose: this.onAfterClose.bind(this)
 			});
@@ -1553,9 +1513,7 @@ function(
 				],
 
 				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME"),
-				beforeOpen: this.onBeforeNumericOpen.bind(this),
-				afterOpen: this.onAfterNumericOpen.bind(this),
-				beforeClose: this.onBeforeNumericClose.bind(this)
+				beforeOpen: this.onBeforeNumericOpen.bind(this)
 			});
 
 			oPicker.open = function() {
@@ -1735,15 +1693,6 @@ function(
 
 			return sValue;
 
-		};
-
-		/**
-		 * Handles the correct value for ARIA expanded attribute on the TimePicker's input field.
-		 *
-		 * @private
-		 */
-		TimePicker.prototype._handleAriaOnExpandCollapse = function (bExpanded) {
-			this.getFocusDomRef().setAttribute("aria-expanded", bExpanded);
 		};
 
 		/**
@@ -2211,7 +2160,6 @@ function(
 				type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"),
 				description: [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim(),
 				autocomplete: "none",
-				expanded: false,
 				haspopup: true,
 				owns: this.getId() + "-clocks"
 			});

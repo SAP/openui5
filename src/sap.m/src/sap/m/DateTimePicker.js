@@ -730,7 +730,6 @@ sap.ui.define([
 	};
 
 	function _handleAfterOpen(oEvent){
-		this.$("inner").attr("aria-expanded", true);
 		this._oCalendar.focus();
 		this._oSliders._onOrientationChanged();
 
@@ -739,7 +738,6 @@ sap.ui.define([
 
 	function _handleAfterClose(){
 		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
-		this.$("inner").attr("aria-expanded", false);
 
 		this._oCalendar._closePickers();
 		Device.media.detachHandler(this._handleWindowResize, this);
