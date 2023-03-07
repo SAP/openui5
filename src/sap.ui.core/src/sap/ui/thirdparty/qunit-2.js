@@ -3810,7 +3810,10 @@
   		// Show the source of the test when showing assertions
   		if (details.source) {
   			sourceName = document$$1.createElement("p");
-  			sourceName.innerHTML = "<strong>Source: </strong>" + details.source;
+  			//### BEGIN MODIFIED BY SAP
+  			// sourceName.innerHTML = "<strong>Source: </strong>" + details.source;
+  			sourceName.innerHTML = "<strong>Source: </strong>" + escapeText( details.source );
+  			//### END MODIFIED BY SAP
   			addClass(sourceName, "qunit-source");
   			if (testPassed) {
   				addClass(sourceName, "qunit-collapsed");
