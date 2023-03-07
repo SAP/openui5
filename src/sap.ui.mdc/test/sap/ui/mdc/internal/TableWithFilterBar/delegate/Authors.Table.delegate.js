@@ -34,6 +34,8 @@ sap.ui.define([
 					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
 				} else if (oProperty.name === "cityOfOrigin_city") {
 					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
+				} else if (oProperty.name === "createdAt") {
+					oProperty.maxConditions = 1;
 				}
 			});
 
