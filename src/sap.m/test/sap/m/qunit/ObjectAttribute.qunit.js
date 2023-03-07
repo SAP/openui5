@@ -836,4 +836,37 @@ sap.ui.define([
 		oAttrActive.destroy();
 		oAttrCustomLink.destroy();
 	});
+
+	QUnit.test("getFocusDomRef returns null when the control is hidden", function (assert) {
+		// Arrange
+		var oAttrActive = new ObjectAttribute({
+				text: "sample text",
+				active: true
+			}),
+			oAttrCustomLink = new ObjectAttribute({
+				text: "sample text",
+				customContent: new sap.m.Link({text: "sample link"})
+			});
+
+		oAttrActive.placeAt("qunit-fixture");
+		oAttrCustomLink.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oAttrActive.getFocusDomRef(), "Active ObjectAttribute focus DOM ref is returned when the control is visible");
+		assert.ok(oAttrCustomLink.getFocusDomRef(), "Custom link ObjectAttribute focus DOM ref is returned when the control is visible");
+
+		// Act
+		oAttrActive.setVisible(false);
+		oAttrCustomLink.setVisible(false);
+		oCore.applyChanges();
+
+		// Assert
+		assert.notOk(oAttrActive.getFocusDomRef(), "Active ObjectAttribute focus DOM ref isn't returned when the control is hidden");
+		assert.notOk(oAttrCustomLink.getFocusDomRef(), "Custom link ObjectAttribute focus DOM ref isn't returned when the control is hidden");
+
+		// Cleanup
+		oAttrActive.destroy();
+		oAttrCustomLink.destroy();
+	});
 });

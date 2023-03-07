@@ -325,10 +325,14 @@ function(library, Control, coreLibrary, Text, Element, KeyCodes, ObjectAttribute
 	 * @returns {Element|null} Returns the DOM Element that should get the focus or <code>null</code>
 	 */
 	ObjectAttribute.prototype.getFocusDomRef = function() {
-		if (this._isSimulatedLink()) {
-			return this.getDomRef().querySelector(".sapMObjectAttributeText");
-		} else if (this._isClickable()) {
-			return this.getAggregation("customContent").getDomRef();
+		var oDomRef = this.getDomRef();
+
+		if (oDomRef) {
+			if (this._isSimulatedLink()) {
+				return oDomRef.querySelector(".sapMObjectAttributeText");
+			} else if (this._isClickable()) {
+				return this.getAggregation("customContent").getDomRef();
+			}
 		}
 
 		return Element.prototype.getFocusDomRef.apply(this, arguments);
