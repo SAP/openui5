@@ -60,6 +60,10 @@ sap.ui.define([
 		"cardWithSevereError": {
 			path: "sap/f/cardsdemo/cardcontent/withSevereError.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/"
+		},
+		"cardWithExtension": {
+			path: "sap/f/cardsdemo/cardcontent/withExtension.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/"
 		}
 	};
 
