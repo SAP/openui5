@@ -1014,6 +1014,50 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when calling 'copyVariant' with public layer", function(assert) {
+			var oAddVariantStub = sandbox.stub(VariantManagementState, "addVariantToVariantManagement").returns(3);
+			var oVariantData = {
+				instance: createVariant({
+					fileName: "variant0",
+					variantManagementReference: "variantMgmtId1",
+					variantReference: "",
+					reference: "Dummy",
+					layer: Layer.PUBLIC,
+					title: "Text for TextDemo",
+					author: ""
+				}),
+				controlChanges: [],
+				variantChanges: {}
+			};
+			sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
+			sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
+			sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange").returnsArg(0);
+
+			var mPropertyBag = {
+				variantManagementReference: "variantMgmtId1",
+				appComponent: this.oComponent,
+				generator: "myFancyGenerator",
+				layer: Layer.PUBLIC
+			};
+			return this.oModel.copyVariant(mPropertyBag).then(function(aChanges) {
+				assert.ok(oAddVariantStub.calledOnce, "then function to add variant to variants map was called");
+
+				assert.ok(oAddVariantStub.calledWith({
+					reference: this.oModel.sFlexReference,
+					vmReference: "variantMgmtId1",
+					variantData: oVariantData
+				}), "then function to add variant to variants map was called");
+				assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.instance.getId(), "then variant added to VariantModel");
+				assert.equal(oVariantData.instance.getFavorite(), false, "then variant has favorit set to false");
+				assert.equal(aChanges.length, 2, "then there are 2 changes");
+				assert.equal(aChanges[0].getLayer(), Layer.USER, "the first change is a user layer change");
+				assert.equal(aChanges[0].getChangeType(), "setFavorite", "with changeType 'setFavorite'");
+				assert.deepEqual(aChanges[0].getContent(), {favorite: true}, "and favorit set to true");
+				assert.equal(aChanges[1].getLayer(), Layer.PUBLIC, "then the second change is a public layer change");
+				assert.equal(aChanges[1].getId(), oVariantData.instance.getId(), "then the returned variant is the duplicate variant");
+			}.bind(this));
+		});
+
 		QUnit.test("when calling 'removeVariant' with a component", function(assert) {
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var oChangeInVariant = {
