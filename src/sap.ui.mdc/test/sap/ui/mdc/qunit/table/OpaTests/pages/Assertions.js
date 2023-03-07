@@ -708,12 +708,11 @@ sap.ui.define([
 			return Util.waitForColumnMenu.call(this, {
 				success: function(oColumnMenu) {
 					this.waitFor({
-						controlType: "sap.m.Button",
+						controlType: "sap.m.Text",
 						matchers: [{
 							ancestor: oColumnMenu,
 							properties: {
-								text: sTitle,
-								type: "Back"
+								text: sTitle
 							}
 						}],
 						success: function(aButtons) {
