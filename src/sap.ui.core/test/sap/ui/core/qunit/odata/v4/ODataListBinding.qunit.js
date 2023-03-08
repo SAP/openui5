@@ -472,6 +472,7 @@ sap.ui.define([
 				custom : "baz"
 			});
 
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(oBinding).expects("resetKeepAlive").withExactArgs();
 		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
 		this.mock(oBinding).expects("applyParameters").withExactArgs({
@@ -495,6 +496,7 @@ sap.ui.define([
 				custom : "baz"
 			});
 
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(oBinding).expects("resetKeepAlive").never();
 		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
 		this.mock(oBinding).expects("applyParameters").withExactArgs({
@@ -3316,6 +3318,7 @@ sap.ui.define([
 					oFixture.mParameters);
 				oBinding.setContext(oContext);
 
+				this.mock(oBinding).expects("checkTransient").withExactArgs();
 				this.mock(oBinding).expects("checkSuspended").never();
 				this.mock(oBinding).expects("hasPendingChanges").returns(false);
 				oHelperMock.expects("toArray")
@@ -3455,6 +3458,7 @@ sap.ui.define([
 
 				oHelperMock.expects("toArray").withExactArgs(sinon.match.same(oFilter))
 					.returns(aFilters);
+				oBindingMock.expects("checkTransient").withExactArgs();
 				oHelperMock.expects("deepEqual").exactly(sFilterType === FilterType.Control ? 1 : 0)
 					.withExactArgs(sinon.match.same(aFilters), sinon.match.same(oBinding.aFilters))
 					.returns(false);
@@ -3515,6 +3519,7 @@ sap.ui.define([
 				oBinding.aApplicationFilters.push("~filter~");
 			}
 
+			this.mock(oBinding).expects("checkTransient").withExactArgs();
 			oHelperMock.expects("toArray").withExactArgs(sinon.match.same("~filter~"))
 				.returns(aFilters);
 			oHelperMock.expects("deepEqual").withExactArgs(sinon.match.same(aFilters),
@@ -4300,6 +4305,7 @@ sap.ui.define([
 				sPath = "-1";
 			}
 			oContext1Mock.expects("isDeleted").withExactArgs().returns(false);
+			oBindingMock.expects("checkTransient").withExactArgs();
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
 			oDeleteCall = oContext1Mock.expects("doDelete")
@@ -4478,6 +4484,7 @@ sap.ui.define([
 		};
 
 		this.mock(oKeptAliveContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		oBindingMock.expects("destroyPreviousContexts").never();
 		oHelperMock.expects("getRelativePath")
 			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");
@@ -8265,6 +8272,7 @@ sap.ui.define([
 			oExpectation,
 			oPromise = {};
 
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(oBinding).expects("isResolved").returns(true);
 		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
 
@@ -8667,6 +8675,8 @@ sap.ui.define([
 	QUnit.test("requestFilterForMessages, (with unresolved binding)", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES");
 
+		this.mock(oBinding).expects("checkTransient");
+
 		// code under test
 		return oBinding.requestFilterForMessages().then(function (oFilter) {
 			assert.strictEqual(oFilter, null);
@@ -8728,6 +8738,7 @@ sap.ui.define([
 
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
 			.returns("/TEAMS");
+		this.mock(oBinding).expects("checkTransient");
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/TEAMS").returns("~meta~path~");
 		this.mock(this.oModel.oMetaModel).expects("requestObject").withExactArgs("~meta~path~/")
 			.callsFake(function () {
@@ -9257,6 +9268,7 @@ sap.ui.define([
 		oContext = oBinding.aContexts[4];
 		oContext.fnOnBeforeDestroy = "~fnOnBeforeDestroy~";
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(oContext).expects("setKeepAlive")
 			.withExactArgs(true, "~fnOnBeforeDestroy~", "~bRequestMessages~");
 
@@ -9275,6 +9287,7 @@ sap.ui.define([
 		oBinding.mPreviousContextsByPath[sPath] = oContext;
 		oContext.fnOnBeforeDestroy = "~fnOnBeforeDestroy~";
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(oContext).expects("setKeepAlive")
 			.withExactArgs(true, "~fnOnBeforeDestroy~", "~bRequestMessages~");
 
@@ -9311,6 +9324,7 @@ sap.ui.define([
 
 		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
 		this.mock(_Helper).expects("getPredicateIndex").withExactArgs(sPath).returns(10);

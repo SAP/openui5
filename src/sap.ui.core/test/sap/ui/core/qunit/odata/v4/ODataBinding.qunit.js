@@ -646,6 +646,7 @@ sap.ui.define([
 	QUnit.test("resetChanges", function (assert) {
 		var oBinding = new ODataBinding();
 
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(oBinding).expects("_resetChanges").withExactArgs()
 			.returns("~bResult~");
 
@@ -3361,6 +3362,25 @@ sap.ui.define([
 
 		// code under test
 		assert.notOk(oBinding.isTransient());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkTransient", function (assert) {
+		var oBinding = new ODataBinding(),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("isTransient").withExactArgs().returns(false);
+
+		// code under test
+		oBinding.checkTransient();
+
+		oBindingMock.expects("isTransient").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkTransient();
+		}, new Error("Must not call method when the binding is part of a deep create: "
+			+ oBinding));
 	});
 
 	//*********************************************************************************************

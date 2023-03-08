@@ -1005,6 +1005,7 @@ sap.ui.define([
 		if (oContext.isDeleted()) {
 			return oContext.oDeletePromise; // do not delete twice
 		}
+		this.checkTransient();
 
 		this.iDeletedContexts += 1;
 
@@ -1488,13 +1489,15 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise<string>}
 	 *   A promise that is resolved with the download URL.
 	 * @throws {Error}
-	 *   If the binding is unresolved
+	 *   If the binding is unresolved or is {@link #isTransient transient} (part of a
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchDownloadUrl = function () {
 		var mUriParameters = this.oModel.mUriParameters;
 
+		this.checkTransient();
 		if (!this.isResolved()) {
 			throw new Error("Binding is unresolved");
 		}
@@ -1788,10 +1791,14 @@ sap.ui.define([
 	 *   The filter type to be used
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
-	 * @throws {Error}
-	 *   If there are pending changes that cannot be ignored or an unsupported operation mode is
-	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
-	 *   <br>
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> there are pending changes that cannot be ignored,
+	 *     <li> the binding is {@link #isTransient transient} (part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
+	 *     <li> an unsupported operation mode is used (see
+	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   </ul>
 	 *   The following pending changes are ignored:
 	 *   <ul>
 	 *     <li> changes relating to a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
@@ -1810,6 +1817,7 @@ sap.ui.define([
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
 		var aFilters = _Helper.toArray(vFilters);
 
+		this.checkTransient();
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -2510,7 +2518,9 @@ sap.ui.define([
 	 *     <li> the binding is unresolved,
 	 *     <li> the given context path does not match this binding,
 	 *     <li> the binding's root binding is suspended,
-	 *     <li> or {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
+	 *     <li> the binding is {@link #isTransient transient} (part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}).
+	 *     <li> {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
 	 *   </ul>
 	 *
 	 * @public
@@ -2526,6 +2536,7 @@ sap.ui.define([
 			sResolvedPath = this.getResolvedPath();
 
 		this.checkSuspended();
+		this.checkTransient();
 		_Helper.checkGroupId(sGroupId);
 		if (!oContext) {
 			if (!sResolvedPath) {
@@ -3325,6 +3336,9 @@ sap.ui.define([
 	 *   A Promise that resolves with an {@link sap.ui.model.Filter} representing the entries with
 	 *   messages; it resolves with <code>null</code> if the binding is not resolved or if there is
 	 *   no message for any entry
+	 * @throws {Error}
+	 *   If the binding is {@link #isTransient transient} (part of a
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}).
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#requestFilterForMessages
@@ -3337,6 +3351,7 @@ sap.ui.define([
 			sResolvedPath = this.oHeaderContext && this.oHeaderContext.getPath(),
 			that = this;
 
+		this.checkTransient();
 		if (!sResolvedPath) {
 			return Promise.resolve(null);
 		}
@@ -3733,7 +3748,9 @@ sap.ui.define([
 	 *       context,
 	 *     <li> there are pending changes,
 	 *     <li> a recursive hierarchy is requested, but the model does not use the
-	 *       <code>autoExpandSelect</code> parameter.
+	 *       <code>autoExpandSelect</code> parameter,
+	 *     <li> the binding is {@link #isTransient transient} (part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
 	 *   </ul>
 	 *
 	 * @example <caption>First group level is product category including subtotals for the net
@@ -3768,6 +3785,7 @@ sap.ui.define([
 			});
 		}
 
+		this.checkTransient();
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot set $$aggregation due to pending changes");
 		}
@@ -3874,9 +3892,14 @@ sap.ui.define([
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If there are pending changes that cannot be ignored or an unsupported operation mode is
-	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
-	 *   <br>
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> there are pending changes that cannot be ignored,
+	 *     <li> the binding is {@link #isTransient transient} (part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
+	 *     <li> an unsupported operation mode is used (see
+	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   </ul>
 	 *   The following pending changes are ignored:
 	 *   <ul>
 	 *     <li> changes relating to a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
@@ -3894,6 +3917,7 @@ sap.ui.define([
 	ODataListBinding.prototype.sort = function (vSorters) {
 		var aSorters = _Helper.toArray(vSorters);
 
+		this.checkTransient();
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}

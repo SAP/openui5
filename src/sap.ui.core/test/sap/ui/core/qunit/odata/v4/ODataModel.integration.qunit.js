@@ -47273,6 +47273,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: List of orders and items in one request. Create one item (nested in the cache),
 	// request more orders causing a short read. See that the count is calculated correctly.
+	// JIRA: CPOUI5ODATAV4-2039
 	QUnit.test("Nested create & inactive contexts", function (assert) {
 		var oModel = this.createSalesOrdersModel(
 				{autoExpandSelect : true, updateGroupId : "noSubmit"}),
@@ -47514,6 +47515,7 @@ sap.ui.define([
 	// nested binding while the parent context is still transient. Patch one nested entity while
 	// transient and when created-persisted.
 	// JIRA: CPOUI5ODATAV4-1973
+	// Forbidden methods (CPOUI5ODATAV4-2035)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-1973: Deep create, nested ODLB w/o cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -47562,6 +47564,17 @@ sap.ui.define([
 
 			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
 			assert.strictEqual(oCreatedItemContext2.isTransient(), true);
+
+			// code under test - CPOUI5ODATAV4-2035
+			[
+				"changeParameters", "filter", "getDownloadUrl", "requestDownloadUrl",
+				"resetChanges", "setAggregation", "sort"
+			].forEach(function (sMethod) {
+				assert.throws(function () {
+					oItemsBinding[sMethod]();
+				}, new Error("Must not call method when the binding is part of a deep create: "
+					+ oItemsBinding), sMethod);
+			});
 
 			return that.waitForChanges(assert, "create items");
 		}).then(function () {

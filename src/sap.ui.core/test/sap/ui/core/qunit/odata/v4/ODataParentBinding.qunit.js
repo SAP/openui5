@@ -256,6 +256,7 @@ sap.ui.define([
 					applyParameters : function () {}
 				});
 
+			this.mock(oBinding).expects("checkTransient").withExactArgs();
 			this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 			this.mock(oBinding).expects("applyParameters").withExactArgs(
 				oFixture.mExpectedParameters, oFixture.sChangeReason || ChangeReason.Change);

@@ -266,6 +266,9 @@ sap.ui.define([
 	 *       {@link #isKeepAlive kept alive},
 	 *     <li> the context is already being deleted,
 	 *     <li> the context's binding is a list binding with data aggregation,
+	 *     <li> the context's binding is
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#isTransient transient} (part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}).
 	 *   </ul>
 	 *
 	 * @function
