@@ -92,7 +92,7 @@ In the OpenUI5 **root directory**:
 
 
 ### Legacy Setup
-The legacy Grunt-based setup will be discontinued in the near future. It is recommended to already switch to the setup described above for working with the OpenUI5 repository.
+> The legacy Grunt-based setup will be discontinued in the near future. It is recommended to already switch to the setup described above for working with the OpenUI5 repository.
 
 To use the legacy setup, execute `npm run start-grunt`. Note that in the past this was the default `npm start` behavior.
 
