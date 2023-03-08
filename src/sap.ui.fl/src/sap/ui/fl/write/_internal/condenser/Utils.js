@@ -72,7 +72,7 @@ sap.ui.define([
 		return Promise.resolve(aCustomAggregation || JsControlTreeModifier.getAggregation(oContainer, sAggregationName))
 		.then(function(aContainerElements) {
 			return aContainerElements.map(function(oElement) {
-				return sAffectedControlIdProperty ? oElement.sAffectedControlIdProperty : oElement.getId();
+				return sAffectedControlIdProperty ? oElement[sAffectedControlIdProperty] : oElement.getId();
 			});
 		});
 	};
