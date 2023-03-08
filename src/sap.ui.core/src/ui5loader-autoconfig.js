@@ -39,6 +39,8 @@
 		}
 	}
 
+	var Object_hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+
 	function ensureSlash(path) {
 		return path && path[path.length - 1] !== '/' ? path + '/' : path;
 	}
@@ -234,7 +236,7 @@
 			return attrValue;
 		}
 		// ... or an entry in the global config object
-		if ( Object.prototype.hasOwnProperty.call(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
+		if ( Object_hasOwn(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
 			return oCfg[name];
 		}
 		// compat fallback

@@ -45,6 +45,8 @@ sap.ui.define([
 	var VERSION = "${version}";
 
 	// Helper Functions
+	var Object_hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+
 	function detectLanguage() {
 
 		function navigatorLanguage() {
@@ -1880,7 +1882,7 @@ sap.ui.define([
 		 */
 		getValue: function(sName) {
 			var vValue;
-			if (typeof sName !== "string" || !Object.prototype.hasOwnProperty.call(M_SETTINGS, sName)) {
+			if (typeof sName !== "string" || !Object_hasOwn(M_SETTINGS, sName)) {
 				throw new TypeError(
 					"Parameter 'sName' must be the name of a valid configuration option (one of "
 					+ Object.keys(M_SETTINGS).map(function(key) {

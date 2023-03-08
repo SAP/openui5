@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/ObjectPath',
+	'sap/base/strings/capitalize',
 	'sap/base/strings/escapeRegExp',
 	'sap/base/util/merge',
 	'sap/base/util/isPlainObject',
@@ -20,6 +21,7 @@ function(
 	Log,
 	assert,
 	ObjectPath,
+	capitalize,
 	escapeRegExp,
 	merge,
 	isPlainObject,
@@ -90,11 +92,7 @@ function(
 	ManagedObjectMetadata.prototype = Object.create(Metadata.prototype);
 	ManagedObjectMetadata.prototype.constructor = ManagedObjectMetadata;
 
-	var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-	function capitalize(sName) {
-		return sName.charAt(0).toUpperCase() + sName.slice(1);
-	}
+	var Object_hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
 
 	var rPlural = /(children|ies|ves|oes|ses|ches|shes|xes|s)$/i;
 	var mSingular = {'children' : -3, 'ies' : 'y', 'ves' : 'f', 'oes' : -2, 'ses' : -2, 'ches' : -2, 'shes' : -2, 'xes' : -2, 's' : -1 };
@@ -117,7 +115,7 @@ function(
 		var result = null;
 
 		for (var n in info) {
-			if ( hasOwnProperty.call(info, n) && typeof obj[n] === 'undefined' ) {
+			if ( Object_hasOwn(info, n) && typeof obj[n] === 'undefined' ) {
 				result = result || {};
 				result[n] = info[n];
 			}
@@ -835,7 +833,7 @@ function(
 
 			if ( mInfoMap ) {
 				for (sName in mInfoMap) {
-					if ( hasOwnProperty.call(mInfoMap, sName) ) {
+					if ( Object_hasOwn(mInfoMap, sName) ) {
 						mResult[sName] = new FNClass(that, sName, mInfoMap[sName]);
 					}
 				}
@@ -1745,7 +1743,7 @@ function(
 			sName;
 
 		for ( sName in mSettings ) {
-			if ( hasOwnProperty.call(mValidKeys, sName) ) {
+			if ( Object_hasOwn(mValidKeys, sName) ) {
 				mResult[sName] = mSettings[sName];
 			}
 		}
