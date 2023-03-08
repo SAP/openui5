@@ -124,7 +124,7 @@
     "opn": "^5.4.0",
     "pacote": "^9.5.12",
     "pretty-ms": "^7.0.1",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.3.1",
     "selenium-webdriver": "^3.6.0",
     "semver": "^4.3.0",
     "set-cookie-parser": "^2.5.1",
