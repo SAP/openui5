@@ -806,6 +806,7 @@ sap.ui.define([
 	UploadSet.prototype.setMaxFileNameLength = function (iNewMax) {
 		if (this.getMaxFileNameLength() !== iNewMax) {
 			this.setProperty("maxFileNameLength", iNewMax, true);
+			this.getDefaultFileUploader().setMaximumFilenameLength(iNewMax);
 			this._checkRestrictions();
 		}
 		return this;
@@ -1173,6 +1174,7 @@ sap.ui.define([
 				enabled: this.getUploadEnabled(),
 				fileType: this.getFileTypes(),
 				mimeType: this.getMediaTypes(),
+				maximumFilenameLength: this.getMaxFileNameLength(),
 				icon: "",
 				iconFirst: false,
 				multiple: this.getDirectory() ? false : this.getMultiple(),

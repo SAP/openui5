@@ -439,6 +439,56 @@ sap.ui.define([
 		assert.equal(oItem.getEditState(), true, "New edit state of the item returned sucessfully.");
 	});
 
+	QUnit.test("Test if UploadSet maxFileNameLength is set to null, file name with extension", function(assert) {
+		// Setup
+		this.oUploadSet.setMaxFileNameLength(null);
+		var oItem = this.oUploadSet.getItems()[0];
+		oItem.setFileName("withExtension.pgn");
+		oItem._setInEditMode(true);
+
+		// Asserts
+		assert.strictEqual(this.oUploadSet.getMaxFileNameLength(), 0, "UploadSet.getMaxFileNameLength() is set to 0");
+		assert.strictEqual(oItem._getFileNameEdit().getProperty("maxLength"), 0, "Input field maxLength is 0");
+	});
+
+	QUnit.test("Test if edit item name don't have extension", function(assert) {
+		// Setup
+		this.oUploadSet.setMaxFileNameLength(50);
+		var oItem = this.oUploadSet.getItems()[0];
+		oItem.setFileName("noExtension");
+		oItem._setInEditMode(true);
+
+		// Asserts
+		assert.strictEqual(this.oUploadSet.getMaxFileNameLength(), 50, "UploadSet.getMaxFileNameLength() is set to 50");
+		assert.strictEqual(oItem._getFileNameEdit().getProperty("maxLength"), 50, "Input field maxLength is 50");
+	});
+
+	QUnit.test("Test if edit item name have extension", function(assert) {
+		// Setup
+		this.oUploadSet.setMaxFileNameLength(50);
+		var oItem = this.oUploadSet.getItems()[0],
+			sExtension = ".png";
+		oItem.setFileName("withExtension" + sExtension);
+		oItem._setInEditMode(true);
+
+		// Asserts
+		assert.strictEqual(this.oUploadSet.getMaxFileNameLength(), 50, "UploadSet.getMaxFileNameLength() is set to 50");
+		assert.strictEqual(oItem._getFileNameEdit().getProperty("maxLength"), 50 - sExtension.length, "Input field maxLength is 46");
+	});
+
+	QUnit.test("Test if edit item name extension length is bigger that getMaxFileNameLength()", function(assert) {
+		// Setup
+		this.oUploadSet.setMaxFileNameLength(2);
+		var oItem = this.oUploadSet.getItems()[0],
+			sExtension = ".png";
+		oItem.setFileName("withExtension" + sExtension);
+		oItem._setInEditMode(true);
+
+		// Asserts
+		assert.strictEqual(this.oUploadSet.getMaxFileNameLength(), 2, "UploadSet.getMaxFileNameLength() is set to 2");
+		assert.strictEqual(oItem._getFileNameEdit().getProperty("maxLength"), 0, "Input field maxLength is 0");
+	});
+
 	QUnit.module("UploadSetItem Accessibility Tests", {
 		beforeEach: function () {
 			this.fnSpy = this.spy(Element.prototype, "setTooltip");

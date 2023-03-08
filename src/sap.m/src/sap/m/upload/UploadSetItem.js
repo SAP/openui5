@@ -727,7 +727,13 @@ sap.ui.define([
 
 	UploadSetItem.prototype._setInEditMode = function (bInEditMode) {
 		if (bInEditMode && !this._bInEditMode) {
-			var oSplit = UploadSetItem._splitFileName(this.getFileName());
+			var oSplit = UploadSetItem._splitFileName(this.getFileName()),
+				iMaxLength = this.getParent().getMaxFileNameLength(),
+				iFileExtensionLength = oSplit.extension ? oSplit.extension.length + 1 : 0;
+			iMaxLength = iMaxLength ? iMaxLength : 0;
+			var iNameMaxLength = iMaxLength - iFileExtensionLength;
+			iNameMaxLength = iNameMaxLength < 0 ? 0 : iNameMaxLength;
+			this._getFileNameEdit().setProperty("maxLength", iNameMaxLength, true);
 			this._getFileNameEdit().setValue(oSplit.name);
 		}
 		this._bInEditMode = bInEditMode;

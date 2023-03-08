@@ -479,6 +479,15 @@ sap.ui.define([
 		assert.equal(this.oUploadSet.getUploadUrl(), "/test", "Uploader uploadUrl is updated successfuly");
 	});
 
+	QUnit.test("UploadSet.setMaxFileNameLength updates maxFileNameLength and maximumFilenameLength properties", function(assert) {
+		//Arrange
+		this.oUploadSet.setMaxFileNameLength(50);
+
+		//Assert
+		assert.equal(this.oUploadSet.getMaxFileNameLength(), 50, "UploadSet maxFileNameLength is 50");
+		assert.equal(this.oUploadSet.getDefaultFileUploader().getMaximumFilenameLength(), 50, "File Uploader maximumFilenameLength is 50");
+	});
+
 	function createNativeDragEventDummy(sEventType) {
 		var oEvent;
 
@@ -719,6 +728,7 @@ sap.ui.define([
 			this.oUploadSet = new UploadSet("uploadSet", {
 				fileTypes:"txt,doc,png",
 				mediaTypes:"text/plain,application/msword,image/jpeg,image/png",
+				maxFileNameLength: 50,
 				items: {
 					path: "/items",
 					template: TestUtils.createItemTemplate(),
@@ -814,6 +824,91 @@ sap.ui.define([
 			if (oItem) {
 				assert.equal(oItem.getMetadata().getName(), "sap.m.upload.UploadSetItem", "mismatched UploadSetItem received");
 			}
+			done();
+		});
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
+			}
+		});
+	});
+
+	QUnit.test("Test for file name maximum length, upload attempt", function(assert) {
+		//arrange
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader(),
+			sLongFileName = "12345678901234567890123456789012345678901234567890.txt",
+			oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			1: {
+				name: sLongFileName,
+				size: 1,
+				type: "text/plain"
+			},
+			2: {
+				name: "Sample File 3.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			length: 3
+		};
+
+		var done = assert.async();
+
+		this.oUploadSet.attachEventOnce("fileNameLengthExceeded",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "item is present");
+
+			var oItem = oEvent.getParameter("item");
+			assert.equal(oItem.getParameter("fileName"), sLongFileName, "event contain correct invalid file name");
+			done();
+		});
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
+			}
+		});
+	});
+
+	QUnit.test("Test for file name maximum length, change Upload set maxFileNameLength value and make upload attempt", function(assert) {
+		//arrange
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader(),
+			sLongFileName = "12345678901234567890.txt",
+			oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			1: {
+				name: sLongFileName,
+				size: 1,
+				type: "text/plain"
+			},
+			2: {
+				name: "Sample File 3.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			length: 3
+		};
+		this.oUploadSet.setMaxFileNameLength(20);
+
+		var done = assert.async();
+
+		this.oUploadSet.attachEventOnce("fileNameLengthExceeded",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "item is present");
+
+			var oItem = oEvent.getParameter("item");
+			assert.equal(oItem.getParameter("fileName"), sLongFileName, "event contain correct invalid file name");
 			done();
 		});
 
