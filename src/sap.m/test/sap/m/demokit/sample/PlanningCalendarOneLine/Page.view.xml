@@ -20,7 +20,7 @@
 				<Title text="Title" titleStyle="H4"/>
 				<ToggleButton
 					id="MultiSelect"
-					icon="sap-icon://multi-select"
+					icon="sap-icon://select-appointments"
 					tooltip="Enable multiple appointments selection"
 					press=".onPress">
 					<layoutData>
