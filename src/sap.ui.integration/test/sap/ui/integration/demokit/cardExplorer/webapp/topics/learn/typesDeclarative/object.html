@@ -179,6 +179,7 @@
 								<li>"TextArea" (experimental since 1.104) - see <a href="#textAreaProperties">Additional Properties for ObjectGroupItem of type TextArea</a></li>
 								<li>"Input" (experimental since 1.112) - see <a href="#inputProperties">Additional Properties for ObjectGroupItem of type Input</a></li>
 								<li>"RatingIndicator" (experimental since 1.111) - see <a href="#ratingIndicatorProperties">Additional Properties for ObjectGroupItem of type RatingIndicator</a></li>
+								<li>"Image" (experimental since 1.112) - see <a href="#imageProperties">Additional Properties for ObjectGroupItem of type Image</a></li>
 							</ul>
 						</td>
 						<td>1.15.0</td>
@@ -976,6 +977,48 @@
 						<td>Defines how float values are visualized: Full (values are rounded to the nearest integer value (e.g. 1.7 -> 2)) or  Half (values are rounded to the nearest half value (e.g. 1.7 -> 1.5))</td>
 						<td>1.51</td>
 						<td>1.111</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="imageProperties" class="boldBlock">Image Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>src</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Image source URL.</td>
+						<td>1.52</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>аlt</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The alternative text that is displayed in case the image is not available, or cannot be displayed.</td>
+						<td>1.52</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>fullWidth</td>
+						<td>boolean</td>
+						<td>false</td>
+						<td>No</td>
+						<td>Defines if the image will take the full width of the group, including the paddings. If set to false there will be padding. For best result use together with "alignment": "Stretched" for the group.</td>
+						<td>1.52</td>
+						<td>1.112</td>
 					</tr>
 				</table>
 			</div>

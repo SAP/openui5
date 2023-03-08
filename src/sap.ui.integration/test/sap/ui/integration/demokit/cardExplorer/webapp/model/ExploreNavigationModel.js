@@ -351,6 +351,21 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Image',
+								key: 'objectCardWithImage',
+								experimental: true,
+								settings: {
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/object/image/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},

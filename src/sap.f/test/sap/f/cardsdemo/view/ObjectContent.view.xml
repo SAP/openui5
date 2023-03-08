@@ -15,7 +15,7 @@
 		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
 		<Panel>
 			<w:Card
-				id="card1"
+				id="cardDataHandling"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/datahandling_manifest.json"
 				width="auto"
 				class="sapUiTinyMargin" />
@@ -34,7 +34,7 @@
 				height="275px"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="card2"
+				id="cardStaticData"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/staticData.json"
 				width="auto"
 				class="sapUiTinyMargin" />
@@ -51,7 +51,7 @@
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="card3"
+				id="cardForm"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/form.json"
 				width="400px"
 				class="sapUiTinyMargin" />
@@ -60,6 +60,51 @@
 				class="sapUiTinyMargin" />
 			<w:Card
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/formWithValidations.json"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImageNoHeader"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageNoHeader.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImage"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/image.json"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImageOnlyInGroup"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/ImageOnlyInGroup.json"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImageSmall"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageSmall.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImageOnly"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageOnly.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardJustImage"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImage.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImageOnlyWithFooter"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageOnlyWithFooter.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImageWithFooter"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageWithFooter.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImageNoHeaderAndNoFooter"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageNoHeaderAndNoFooter.json"
 				width="400px"
 				class="sapUiTinyMargin" />
 
