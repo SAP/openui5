@@ -3,6 +3,33 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "9a3a4bba909176f4ab4a57dfcc0fa30b86fc06f0",
+        "type": "FEATURE",
+        "text": " core/Lib: ensure async loading of resource bundle during library loading"
+      },
+      {
+        "id": "4a18db2c15ffbe9319b63daa4dd3b714037073fd",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: Fix calculation of deep path for function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380037458"
+          }
+        ]
+      },
+      {
+        "id": "12667e14f2dab973a1768f7123a6120c1ced5278",
+        "type": "FIX",
+        "text": " Core: don't miss themeChanged event when using waitForTheme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370006426"
+          }
+        ]
+      },
+      {
         "id": "059fc5fd665ded8f8ce3e5860520d55bf162f2c2",
         "type": "FIX",
         "text": " sap.ui.core.date.UniversalDateUtils: Remove usage of JS Date for Timezone support",

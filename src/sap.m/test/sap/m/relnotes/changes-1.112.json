@@ -3,6 +3,60 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "1b319baace2d1e54a849901efa9f394e2a719339",
+        "type": "FIX",
+        "text": " ColumnResizer: Resizer should not be visible when table is busy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000376762023"
+          }
+        ]
+      },
+      {
+        "id": "1ef1297336f4436e2f653ee6f29c16f3cd5483e5",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: fixed JS error when try to get getFocusDomRef of hidden control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370000677"
+          }
+        ]
+      },
+      {
+        "id": "2c87053b9541ed25cf9aeb1e2129b7a0bf0cb504",
+        "type": "FEATURE",
+        "text": " sap.m.Input, sap.MultiInput, sap.m.ComboBox, sap.m.MultiComboBox: Remove showItems experimental flag"
+      },
+      {
+        "id": "09406a763d79a134b7618c75ab2f271846914115",
+        "type": "FIX",
+        "text": " m.VariantManagement: remove wrong setDefaultkey assignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380045728"
+          }
+        ]
+      },
+      {
+        "id": "6de86433075a02da7145326e71b651b85be2457d",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Update demokit samples"
+      },
+      {
+        "id": "7a454358310d6505aebabc850003b5326ea1f851",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Tooltip is working again",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370004948"
+          }
+        ]
+      },
+      {
         "id": "7025e7e8211f588f28bbb99838d3d7836d85325f",
         "type": "FIX",
         "text": " sap.m.Carousel: Corrected page indexing",

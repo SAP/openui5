@@ -3,6 +3,11 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "f6958c6c7db03f532239b9fb10239742e9d8e0e1",
+        "type": "FEATURE",
+        "text": " Integration Cards: Image can be used in the Object Card"
+      },
+      {
         "id": "7845e62151ef68daf28535034b4bb91a3d94064f",
         "type": "FIX",
         "text": " Integration Cards: Fix unstable test",

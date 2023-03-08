@@ -3,6 +3,11 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "6de86433075a02da7145326e71b651b85be2457d",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Update demokit samples"
+      },
+      {
         "id": "b65bb4ed9cc4c32596125c6d10ee2619303c627f",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: adjust appointments announcement",
