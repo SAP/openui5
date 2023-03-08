@@ -132,6 +132,11 @@ sap.ui.define([
 				typeToISO: function(vDate, oType, sBaseType) {
 
 					var oDate = this.typeToDate(vDate, oType, sBaseType);
+
+					// if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the local date to UTC
+					// 	oDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+					// }
+
 					return oDate.toISOString();
 
 				},
@@ -150,6 +155,11 @@ sap.ui.define([
 				ISOToType: function(sISODate, oType, sBaseType) {
 
 					var oDate = UI5Date.getInstance(sISODate); // can also interpret string with pattern "yyyy-MM-ddTHH:mm:ssZ"
+
+					if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the UTC to local date
+						oDate = UI5Date.getInstance(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
+					}
+
 					return this.dateToType(oDate, oType, sBaseType);
 
 				},
