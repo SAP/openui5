@@ -7,8 +7,9 @@
 sap.ui.define([
 	"sap/ui/mdc/table/PropertyHelper",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/util/TypeUtil",
 	"sap/base/Log"
-], function(PropertyHelper, Column, Log) {
+], function(PropertyHelper, Column, TypeUtil, Log) {
 	"use strict";
 
 	QUnit.module("Validation", {
@@ -95,6 +96,9 @@ sap.ui.define([
 				tooltip: "",
 				caseSensitive: true,
 				exportSettings: {},
+				clipboardSettings: {
+					template: ""
+				},
 				filterable: true,
 				group: "",
 				groupLabel: "",
@@ -127,6 +131,9 @@ sap.ui.define([
 				label: "Complex Property",
 				tooltip: "",
 				exportSettings: {},
+				clipboardSettings: {
+					template: ""
+				},
 				filterable: false,
 				group: "",
 				groupLabel: "",
@@ -182,6 +189,16 @@ sap.ui.define([
 
 	QUnit.module("API", {
 		beforeEach: function() {
+			sinon.stub(PropertyHelper.prototype, "getParent").returns({
+				getControlDelegate: sinon.stub().returns({
+					getTypeUtil: sinon.stub().returns({
+						getTypeConfig: function() {
+							return TypeUtil.getTypeConfig.apply(TypeUtil, arguments);
+						}
+					})
+				})
+			});
+
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "propA",
 				label: "Property A",
@@ -206,8 +223,8 @@ sap.ui.define([
 				name: "propC",
 				path: "propCPath",
 				label: "Property C",
-				dataType: "String",
-				exportSettings: null
+				exportSettings: null,
+				clipboardSettings: null
 			}, {
 				name: "complexPropA",
 				path: "complexPropA",
@@ -216,6 +233,9 @@ sap.ui.define([
 				exportSettings: {
 					template: "{0} ({1})",
 					width: 25
+				},
+				clipboardSettings: {
+					template: "{0} ({1})"
 				},
 				visible: false
 			}, {
@@ -288,6 +308,11 @@ sap.ui.define([
 				hAlign: "End"
 			});
 
+			this.oColumnPropC = new Column({
+				id: "propCColumn",
+				dataProperty: "propC"
+			});
+
 			this.oColumnComplexPropA = new Column({
 				id: "columnComplexPropA",
 				header: "Complex Property A",
@@ -339,10 +364,12 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
+			PropertyHelper.prototype.getParent.restore();
 			this.oPropertyHelper.destroy();
 			this.aProperties = null;
 			this.oColumnPropA.destroy();
 			this.oColumnPropB.destroy();
+			this.oColumnPropC.destroy();
 			this.oColumnComplexPropA.destroy();
 			this.oColumnComplexPropB.destroy();
 			this.oColumnComplexPropC.destroy();
@@ -447,6 +474,33 @@ sap.ui.define([
 			width: "",
 			property: "propBPath"
 		}], "Complex property without exportSettings referencing property with exportSettings=null");
+	});
+
+	QUnit.test("getColumnClipboardSettings", function(assert) {
+		assert.deepEqual(this.oPropertyHelper.getColumnClipboardSettings(this.oInvalidColumn), null, "Column pointing to invalid property");
+		assert.deepEqual(this.oPropertyHelper.getColumnClipboardSettings(this.oColumnPropA), {
+			properties: ["propAPath"],
+			types: [this.oPropertyHelper.getProperty("propA").typeConfig.typeInstance],
+			template: "{0}"
+		}, "Expected column clipboard settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnClipboardSettings(this.oColumnPropC), null, "Expected column clipboard settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnClipboardSettings(this.oColumnComplexPropA), {
+			properties: ["propAPath", "propBPath"],
+			types: [
+				this.oPropertyHelper.getProperty("propA").typeConfig.typeInstance,
+				this.oPropertyHelper.getProperty("propB").typeConfig.typeInstance
+			],
+			template: "{0} ({1})"
+		}, "Expected column export settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnClipboardSettings(this.oColumnComplexPropD), {
+			properties: ["propAPath", "propBPath", "propCPath"],
+			types: [
+				this.oPropertyHelper.getProperty("propA").typeConfig.typeInstance,
+				this.oPropertyHelper.getProperty("propB").typeConfig.typeInstance,
+				undefined
+			],
+			template: "{0} {1} {2}"
+		}, "Expected column export settings returned");
 	});
 
 	QUnit.module("Property", {

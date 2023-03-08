@@ -25,14 +25,6 @@ sap.ui.define([
 			this.oDataStatePlugin.showMessage(oEvent.getParameter("data"));
 		},
 
-		extractData: function(oContext, oColumn) {
-			return oContext.getProperty(oColumn.getDataProperty());
-		},
-
-		onCopyPress: function() {
-			this.byId("copyProviderPlugin").copySelectionData();
-		},
-
 		onMessagePopoverPress : function (oEvent) {
 			var oSourceControl = oEvent.getSource();
 			this._getMessagePopover().then(function(oMessagePopover){

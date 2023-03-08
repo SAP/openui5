@@ -118,6 +118,9 @@ sap.ui.define([
 				tooltip: "",
 				caseSensitive: true,
 				exportSettings: {},
+				clipboardSettings: {
+					template: ""
+				},
 				filterable: true,
 				group: "",
 				groupLabel: "",
@@ -156,6 +159,9 @@ sap.ui.define([
 				label: "Complex Property",
 				tooltip: "",
 				exportSettings: {},
+				clipboardSettings: {
+					template: ""
+				},
 				filterable: false,
 				group: "",
 				groupLabel: "",

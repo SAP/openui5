@@ -14,8 +14,10 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/base/util/Deferred",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Core"
-], function(Text, Table, Column, ColumnListItem, GridTable, GridColumn, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, ManagedObjectObserver, Deferred, CustomData, Core) {
+	"sap/ui/core/Core",
+	"test-resources/sap/ui/mdc/qunit/QUnitUtils",
+	"test-resources/sap/ui/mdc/qunit/table/QUnitUtils"
+], function(Text, Table, Column, ColumnListItem, GridTable, GridColumn, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, ManagedObjectObserver, Deferred, CustomData, Core, MDCQUnitUtils, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global sinon, QUnit */
@@ -35,19 +37,6 @@ sap.ui.define([
 		oDomRef = oDomRef || document.querySelector(".sapMLIBFocusable") || document.querySelector(".sapUiTableCell");
 		oDomRef.focus();
 		oDomRef.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyC", ctrlKey: true, bubbles: true, cancelable: true }));
-	}
-
-	function waitForBinding(oTable) {
-		var oBindingReady = new Deferred();
-		var oMOM = new ManagedObjectObserver(function(mChange) {
-			if (mChange.mutation == "ready") {
-				oMOM.disconnect();
-				Core.applyChanges();
-				oBindingReady.resolve();
-			}
-		});
-		oMOM.observe(oTable, { bindings: ["rows", "items"] });
-		return oBindingReady.promise;
 	}
 
 	function createResponsiveTable(mSettings) {
@@ -128,7 +117,8 @@ sap.ui.define([
 		return oTable;
 	}
 
-	QUnit.test("Is Applicable", function(assert) {
+	QUnit.module("isApplicable");
+	QUnit.test("Standalone usage, extractData is mandatory", function(assert) {
 		assert.throws(function() {
 			new Table({dependents: new CopyProvider()});
 		}, "extractData property is missing in the constructor");
@@ -140,6 +130,32 @@ sap.ui.define([
 			})});
 		}, "not in a secure context");
 		oClipboardStub.restore();
+	});
+
+	QUnit.test("extractData is managed by the CopyProvider, this method must be empty", function(assert) {
+		var oCopyProvider = new CopyProvider({
+			extractData: Function.prototype
+		});
+
+		var oTable = createMDCTable();
+		return oTable.initialized().then(function() {
+			assert.throws(function() {
+				oTable.setCopyProvider(oCopyProvider);
+			}, "extractData property must be managed by the CopyProvider");
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("extractData is managed by the CopyProvider, getColumnClipboardSettings method must be implemented", function(assert) {
+		var oCopyProvider = new CopyProvider();
+		var oTable = createMDCTable();
+		oTable.getColumnClipboardSettings = undefined;
+		return oTable.initialized().then(function() {
+			assert.throws(function() {
+				oTable.setCopyProvider(oCopyProvider);
+			}, "getColumnClipboardSettings method must be implemented by the parent of CopyProvider");
+			oTable.destroy();
+		});
 	});
 
 	var TableModule = function(fnTableFactory, mSettings) {
@@ -180,12 +196,17 @@ sap.ui.define([
 			},
 			beforeEach: function() {
 				this.oTable = fnTableFactory(mSettings);
-				this.oCopyProvider = new CopyProvider({
-					extractData: function(oContext, oColumn) {
-						return oContext.getProperty(oColumn.data("property"));
-					}
-				});
-				this.oTable.addDependent(this.oCopyProvider);
+				var oCopyProvider = this.oTable.getAggregation("copyProvider");
+				if (oCopyProvider) {
+					this.oCopyProvider = oCopyProvider;
+				} else {
+					this.oCopyProvider = new CopyProvider({
+						extractData: function(oContext, oColumn) {
+							return oContext.getProperty(oColumn.data("property"));
+						}
+					});
+					this.oTable.addDependent(this.oCopyProvider);
+				}
 				this.oCopyProviderInvalidateSpy = sinon.spy(this.oCopyProvider, "invalidate");
 			},
 			afterEach: function() {
@@ -357,10 +378,124 @@ sap.ui.define([
 			return oContext.getProperty(oColumn.getDataProperty());
 		});
 		return this.oTable._fullyInitialized().then(function() {
-			return waitForBinding(that.oTable._oTable);
+			return MDCTableQUnitUtils.waitForBinding(that.oTable);
 		}).then(function() {
 			apiTest.call(that, assert);
 		});
+	});
+
+	function createMDCTableWithCopyProvider(mSettings) {
+		mSettings = Object.assign({
+			type: "ResponsiveTable",
+			delegate: {
+				name: "test-resources/sap/ui/mdc/delegates/TableDelegate",
+				payload: {
+					collectionPath: "/"
+				}
+			},
+			selectionMode: "Multi",
+			copyProvider: new CopyProvider(),
+			columns: [
+				new MDCColumn({
+					header: "Name-ID",
+					dataProperty: "name-id",
+					template: new Text({ text: "{name} ({id})" })
+				}),
+				new MDCColumn({
+					header: "NoCopy",
+					dataProperty: "nocopy",
+					template: new Text({ text: "You cannot copy this cell" })
+				}),
+				new MDCColumn({
+					header: "ID-Name-Color",
+					dataProperty: "id-name-color",
+					template: new Text({ text: "{id} {name} {color}" })
+				})
+			],
+			models: oJSONModel
+		}, mSettings);
+
+		var oTable = new MDCTable(mSettings);
+		MDCQUnitUtils.stubPropertyInfos(oTable, [{
+				name: "id",
+				path: "id",
+				label: "ID",
+				dataType: "Integer"
+			}, {
+				name: "name",
+				path: "name",
+				label: "Name",
+				dataType: "String"
+			}, {
+				name: "color",
+				path: "color",
+				label: "Color",
+				dataType: "String"
+			}, {
+				name: "nocopy",
+				path: "id",
+				label: "NoCopy",
+				dataType: "String",
+				clipboardSettings: null
+			}, {
+				name: "name-id",
+				label: "Name-ID",
+				propertyInfos: ["id", "name"],
+				clipboardSettings: {
+					template: "{1} ({0})"
+				}
+			}, {
+				name: "id-name-color",
+				label: "ID-Name-Color",
+				propertyInfos: ["id", "name", "color"]
+		}]);
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+		return oTable;
+	}
+
+	QUnit.module("MDCTableWithCopyProvider", TableModule(createMDCTableWithCopyProvider));
+
+	QUnit.test("API", function(assert) {
+		return this.oTable._fullyInitialized().then(function() {
+			return MDCTableQUnitUtils.waitForBinding(this.oTable);
+		}.bind(this)).then(function() {
+			var oCopyButton = this.oCopyProvider.getCopyButton();
+			assert.ok(oCopyButton, "Copy button is created successfully");
+
+			this.selectRow(1);
+			this.selectRow(3);
+
+			var fnCopyHandlerSpy = sinon.spy();
+			this.oCopyProvider.attachEventOnce("copy", fnCopyHandlerSpy);
+			oCopyButton.firePress();
+			assert.ok(fnCopyHandlerSpy.calledOnce, "Copy event is fired from the plugin when the copy button is pressed");
+			assert.equal(this.getClipboardText(), "name1 (1)\t1 name1 color1\nname3 (3)\t3 name3 color3", "Selection is copied via copy button");
+
+			this.oCopyProvider.setEnabled(false);
+			assert.notOk(oCopyButton.getEnabled(), "Disabling the plugin disables the copy button");
+
+			this.oCopyProvider.setEnabled(true);
+			assert.ok(oCopyButton.getEnabled(), "Enabling the plugin enables the copy button");
+			this.oCopyProvider.setVisible(false);
+			assert.notOk(oCopyButton.getVisible(), "The copy button is invisible after plugins visible property is set");
+
+			this.oCopyProvider.setVisible(true);
+			this.oTable.setCopyProvider();
+			assert.ok(oCopyButton.isDestroyed(), "Removing the plugin destroy the copy button");
+
+			var oNewCopyProvider = new CopyProvider();
+			this.oTable.setCopyProvider(oNewCopyProvider);
+			var oNewCopyButton = oNewCopyProvider.getCopyButton();
+			assert.notEqual(oNewCopyButton, oCopyButton, "New plugin creates a new copy button");
+
+			this.setClipboardText("DummyClipboardText");
+			oNewCopyButton.firePress();
+			assert.equal(this.getClipboardText(), "name1 (1)\t1 name1 color1\nname3 (3)\t3 name3 color3", "Selection is copied via new copy button");
+
+			oNewCopyProvider.destroy();
+			assert.ok(oNewCopyProvider.isDestroyed(), "Destroying the plugin destroys the copy button");
+		}.bind(this));
 	});
 
 });

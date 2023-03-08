@@ -50,6 +50,9 @@
 		<mdc:type>
 			<mdc:table.ResponsiveTableType growingMode="Scroll" detailsButtonSetting="None" showDetailsButton="true"/>
 		</mdc:type>
+		<mdc:copyProvider>
+			<plugins:CopyProvider />
+		</mdc:copyProvider>
 		<mdc:dataStateIndicator>
 			<plugins:DataStateIndicator id="dataStatePlugin" filter=".dataStateFilter" />
 		</mdc:dataStateIndicator>
