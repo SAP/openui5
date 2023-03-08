@@ -180,7 +180,7 @@ sap.ui.define([
 				assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was called");
 				fnDone();
 			}, this);
-			this.oButton.invalidate();
+
 			this.oButton.setVisible(false);
 		});
 
@@ -209,6 +209,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 
+			this.oButton.invalidate();
 			this.oButton.rerender(true);
 		});
 
