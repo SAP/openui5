@@ -13,7 +13,7 @@ sap.ui.define([
 	var MessageType = CoreLibrary.MessageType;
 
 	/*
-	 * Validates whether title or aria-labelledby is correctly set
+	 * Validates whether aria-labelledby is correctly set
 	 */
 	var oAccessibleLabel = SupportHelper.normalizeRule({
 		id: "AccessibleLabel",
@@ -21,7 +21,7 @@ sap.ui.define([
 		categories: [Categories.Accessibility],
 		title: "Accessible Label",
 		description: "Checks whether 'sap.ui.table.Table' controls have an accessible label.",
-		resolution: "Use the 'title' aggregation or the 'ariaLabelledBy' association of the 'sap.ui.table.Table' control "
+		resolution: "Use the 'ariaLabelledBy' association of the 'sap.ui.table.Table' control "
 					+ "to define a proper accessible labeling.",
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
