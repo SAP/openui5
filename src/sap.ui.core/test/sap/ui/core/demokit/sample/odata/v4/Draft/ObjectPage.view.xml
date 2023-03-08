@@ -59,8 +59,7 @@
 						$orderby : 'ID',
 						$$ownRequest : true
 					},
-					path : '_Parts',
-					templateShareable : false
+					path : '_Parts'
 				}">
 			<headerToolbar>
 				<Toolbar>

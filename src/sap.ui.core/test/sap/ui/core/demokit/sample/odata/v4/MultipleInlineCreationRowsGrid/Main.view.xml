@@ -119,8 +119,7 @@
 					<f:midColumnPages>
 						<t:Table ariaLabelledBy="Product Parts" id="parts" rows="{
 								path : '_Parts',
-								parameters : {$count : true, $$ownRequest : true},
-								templateShareable : true
+								parameters : {$count : true, $$ownRequest : true}
 							}"
 							selectionMode="None"
 							visibleRowCount="20">

@@ -5298,7 +5298,7 @@ sap.ui.define([
 			var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				oTable,
 				sView = '\
-<Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
+<Table id="table" items="{/EMPLOYEES}">\
 	<Text id="text" text="{Name}"/>\
 	<Text id="age" text="{AGE}"/>\
 </Table>\
@@ -7747,8 +7747,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'42\\\')\', \
 		parameters : {$select : \'Messages\'}}">\
 	<Text id="salesOrderID" text="{SalesOrderID}"/>\
-	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}, \
-			templateShareable : false}">\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 		<Text id="quantity" text="{Quantity}"/>\
 	</Table>\
 </FlexBox>',
@@ -16454,7 +16453,7 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
-<Table id="table" items="{path : \'/Equipments\', suspended : true, templateShareable : false}">\
+<Table id="table" items="{path : \'/Equipments\', suspended : true}">\
 	<Text id="idCategory" text="{Category}"/>\
 	<Text id="idEmployeeId" text="{EmployeeId}"/>\
 </Table>',
@@ -16577,7 +16576,7 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
-<Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+<Table id="table" items="{/Equipments}">\
 	<Text id="idCategory" text="{Category}"/>\
 	<Text id="idEmployeeId" text="{EmployeeId}"/>\
 </Table>',
@@ -17262,8 +17261,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
-	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false,\
-			parameters : {$$ownRequest : true}}">\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
 		<Text id="age" text="{AGE}"/>\
 		<Text id="name" text="{Name}"/>\
 	</Table>\
@@ -17382,7 +17380,7 @@ sap.ui.define([
 		var oForm,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+<Table id="table" items="{/Equipments}">\
 	<Text id="idEquipmentName" text="{Name}"/>\
 </Table>\
 <FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$ownRequest : true}}">\
@@ -29575,7 +29573,7 @@ sap.ui.define([
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
-<Table id="table" items="{path : \'/TEAMS\', templateShareable : false}">\
+<Table id="table" items="{/TEAMS}">\
 	<Text id="text" text="{Name}"/>\
 </Table>\
 <Table id="detailTable" items="{\
@@ -32546,8 +32544,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}"/>\
-	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}, \
-			templateShareable : false}">\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 		<Text id="position" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
@@ -39870,8 +39867,7 @@ sap.ui.define([
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name1" text="{Name}"/>\
 	<List id="list1" growing="true" growingThreshold="3" \
-			items="{parameters : {$$sharedRequest : true}, path : \'/MANAGERS\',\
-			templateShareable : false}">\
+			items="{parameters : {$$sharedRequest : true}, path : \'/MANAGERS\'}">\
 		<CustomListItem>\
 			<Text id="id1" text="{ID}"/>\
 		</CustomListItem>\
@@ -39880,8 +39876,7 @@ sap.ui.define([
 <FlexBox binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="name2" text="{Name}"/>\
 	<List id="list2" growing="true" growingThreshold="3" \
-			items="{parameters : {$$sharedRequest : true}, path : \'/MANAGERS\',\
-			templateShareable : false}">\
+			items="{parameters : {$$sharedRequest : true}, path : \'/MANAGERS\'}">\
 		<CustomListItem>\
 			<Text id="id2" text="{ID}"/>\
 		</CustomListItem>\
@@ -40529,7 +40524,7 @@ sap.ui.define([
 <FlexBox binding="{/ProductList(\'1\')}">\
 	<Text id="typeCode1" text="{TypeCode}"/>\
 	<List id="list1"\
-		items="{path : \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable : false}">\
+		items="{path : \'/D_PR_TYPE_FV_SET\', suspended : true}">\
 		<CustomListItem>\
 			<Text id="description1" text="{DESCRIPTION}"/>\
 		</CustomListItem>\
@@ -40538,7 +40533,7 @@ sap.ui.define([
 <FlexBox binding="{/ProductList(\'2\')}">\
 	<Text id="typeCode2" text="{TypeCode}"/>\
 	<List id="list2"\
-		items="{path : \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable : false}">\
+		items="{path : \'/D_PR_TYPE_FV_SET\', suspended : true}">\
 		<CustomListItem>\
 			<Text id="description2" text="{DESCRIPTION}"/>\
 		</CustomListItem>\

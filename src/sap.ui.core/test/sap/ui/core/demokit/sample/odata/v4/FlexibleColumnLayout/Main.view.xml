@@ -114,8 +114,7 @@
 							$orderby : 'ItemPosition',
 							$$ownRequest : true
 						},
-						path : 'SO_2_SOITEM',
-						templateShareable : false
+						path : 'SO_2_SOITEM'
 					}" mode="SingleSelectMaster" selectionChange="onSalesOrderLineItemSelect">
 					<dependents>
 						<plugins:DataStateIndicator/>
