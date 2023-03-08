@@ -94,6 +94,12 @@ sap.ui.define([], function () {
 		NoDimensionsSet: "sapIllus-NoDimensionsSet",
 
 		/**
+		 * "No Columns Set" illustration type.
+		 * @public
+		 */
+		NoColumnsSet: "sapIllus-NoColumnsSet",
+
+		/**
 		 * "Unable To Load" illustration type.
 		 * @public
 		 */
