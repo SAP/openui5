@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/unified/library",
-	"sap/ui/unified/DateTypeRange"
-], function(Controller, JSONModel, Core, CoreLibrary, UnifiedLibrary, DateTypeRange) {
+	"sap/ui/unified/DateTypeRange",
+	"sap/ui/core/date/UI5Date"
+], function(Controller, JSONModel, Core, CoreLibrary, UnifiedLibrary, DateTypeRange, UI5Date) {
 	"use strict";
 	var CalendarDayType = UnifiedLibrary.CalendarDayType,
 		ValueState = CoreLibrary.ValueState;
@@ -15,23 +16,29 @@ sap.ui.define([
 		onInit: function () {
 			// create model
 			var oModel = new JSONModel();
+
 			oModel.setData({
-				value: new Date(),
-				valueDP6: new Date(2016, 1, 16)
+				valueDP2: UI5Date.getInstance(2014, 2, 26),
+				valueDP4: UI5Date.getInstance(),
+				valueDP5: UI5Date.getInstance(2015, 10, 23),
+				valueDP6: UI5Date.getInstance(2016, 1, 16),
+				valueDP7: UI5Date.getInstance(2015, 10, 23),
+				valueDP10: UI5Date.getInstance(2015, 10, 23),
+				valueDP11: UI5Date.getInstance(2015, 10, 23)
 			});
 			this.getView().setModel(oModel);
 
-			this.byId("DP8").setInitialFocusedDateValue(new Date(2017, 5, 13));
-			this.byId("DP6").setMinDate(new Date(2016, 0, 1));
-			this.byId("DP6").setMaxDate(new Date(2016, 11, 31));
+			this.byId("DP8").setInitialFocusedDateValue(UI5Date.getInstance(2017, 5, 13));
+			this.byId("DP6").setMinDate(UI5Date.getInstance(2016, 0, 1));
+			this.byId("DP6").setMaxDate(UI5Date.getInstance(2016, 11, 31));
 			this.byId("DP7").addSpecialDate(new DateTypeRange({
-				startDate: new Date(2015, 10, 5),
-				endDate: new Date(2015, 10, 25),
+				startDate: UI5Date.getInstance(2015, 10, 5),
+				endDate: UI5Date.getInstance(2015, 10, 25),
 				type: CalendarDayType.NonWorking
 			}));
 
-			this.byId("DP9").setMinDate(new Date(2016, 0, 1));
-			this.byId("DP9").setMaxDate(new Date(2019, 11, 31));
+			this.byId("DP9").setMinDate(UI5Date.getInstance(2016, 0, 1));
+			this.byId("DP9").setMaxDate(UI5Date.getInstance(2019, 11, 31));
 
 			this._iEvent = 0;
 

@@ -1,5 +1,9 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library'],
-	function(Controller, DateFormat, coreLibrary) {
+sap.ui.define([
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/library',
+		'sap/ui/core/date/UI5Date'
+	], function(Controller, DateFormat, coreLibrary, UI5Date) {
 	"use strict";
 
 	var CalendarType = coreLibrary.CalendarType;
@@ -9,7 +13,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/format/DateFormat', 's
 
 		onInit: function() {
 			this.oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
-			this.getView().byId("calendar").displayDate(new Date(2021, 6, 1));
+			this.getView().byId("calendar").displayDate(UI5Date.getInstance(2021, 6, 1));
 		},
 
 		handleCalendarSelect: function(oEvent) {

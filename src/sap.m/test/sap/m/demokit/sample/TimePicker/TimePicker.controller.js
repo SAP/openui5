@@ -1,9 +1,10 @@
-sap.ui.define(['sap/m/library',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/library',
-		'sap/ui/core/Core',
-		'sap/ui/model/json/JSONModel'],
-	function(library, Controller, coreLibrary, Core, JSONModel) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/library',
+	'sap/ui/core/Core',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/date/UI5Date'
+	], function(Controller, coreLibrary, Core, JSONModel, UI5Date) {
 		"use strict";
 
 		var ValueState = coreLibrary.ValueState;
@@ -29,7 +30,7 @@ sap.ui.define(['sap/m/library',
 							"placeholder" :"Enter meeting end time"
 						},
 						"TP3": {
-							"value": new Date(),
+							"value": UI5Date.getInstance(),
 							"placeholder" :"Enter daily task deadline"
 						},
 						"TP4": {
@@ -38,7 +39,7 @@ sap.ui.define(['sap/m/library',
 						},
 						"TP5": {
 							"format": "hh:mm:ss a",
-							"initialFocusedDateValue": new Date(2017, 8, 9, 10, 11, 12),
+							"initialFocusedDateValue": UI5Date.getInstance(2017, 8, 9, 10, 11, 12),
 							"placeholder" :"Enter time"
 						},
 						"TP6": {

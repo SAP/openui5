@@ -1,5 +1,9 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/core/format/DateFormat'],
-	function(Controller, JSONModel, DateFormat) {
+sap.ui.define([
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/date/UI5Date'
+	], function(Controller, JSONModel, DateFormat, UI5Date) {
 	"use strict";
 
 	return Controller.extend("sap.ui.unified.sample.CalendarMinMax.CalendarMinMax", {
@@ -10,11 +14,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 
 			var oModel = new JSONModel();
 			oModel.setData({
-				minDate: new Date(2000, 0, 1),
-				maxDate: new Date(2050, 11, 31),
-				disabled: [{start: new Date(2016, 0, 4), end: new Date(2016, 0, 10)},
-						   {start: new Date(2016, 0, 15)}
-						  ]
+				minDate: UI5Date.getInstance(2000, 0, 1),
+				maxDate: UI5Date.getInstance(2050, 11, 31),
+				disabled: [
+					{start: UI5Date.getInstance(2016, 0, 4), end: UI5Date.getInstance(2016, 0, 10)},
+					{start: UI5Date.getInstance(2016, 0, 15)}
+				]
 			});
 			this.getView().setModel(oModel);
 
