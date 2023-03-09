@@ -3776,17 +3776,56 @@ sap.ui.define([
 		+ bInactive;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path", -1,
+				new SyncPromise(function () {}), bInactive);
 
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
-		this.mock(oContext).expects("isInactive").withExactArgs().returns(bInactive);
+		this.mock(oContext).expects("isTransient").withExactArgs().twice().returns(true);
+		this.mock(oContext).expects("isInactive").withExactArgs().twice().returns(bInactive);
 
 		assert.throws(function () {
 			// code under test
 			oContext.resetChanges();
-		}, new Error("Cannot reset a transient context: /path"));
+		}, new Error("Cannot reset: /path[-1;transient]"));
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges: throws error on header context", function (assert) {
+		var oBinding = {getHeaderContext : function () {}},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
+
+		assert.throws(function () {
+			// code under test
+			oContext.resetChanges();
+		}, new Error("Cannot reset: /path"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges: throws error on parameter context", function (assert) {
+		var oBinding = {getParameterContext : function () {}},
+			oContext = Context.create({/*oModel*/}, oBinding, "/Operation(...)/$Parameter");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getParameterContext").withExactArgs().returns(oContext);
+
+		assert.throws(function () {
+			// code under test
+			oContext.resetChanges();
+		}, new Error("Cannot reset: /Operation(...)/$Parameter"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges: throws error for a virtual context", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {}, "/foo/" + Context.VIRTUAL, Context.VIRTUAL);
+
+		assert.throws(function () {
+			// code under test
+			oContext.resetChanges();
+		}, new Error("Cannot reset: /foo/-9007199254740991[-9007199254740991]"));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("resetKeepAlive", function (assert) {

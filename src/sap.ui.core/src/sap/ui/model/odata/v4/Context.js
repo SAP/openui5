@@ -1662,7 +1662,9 @@ sap.ui.define([
 	 * this method cancels the deletion and restores the context.
 	 *
 	 * Note: This is an experimental API. Currently only row contexts of an
-	 * {@link sap.ui.model.odata.v4.ODataListBinding} are supported.
+	 * {@link sap.ui.model.odata.v4.ODataListBinding} and the
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getBoundContext bound context} of an
+	 * {@link sap.ui.model.odata.v4.ODataContextBinding} are supported.
 	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the context
@@ -1674,6 +1676,10 @@ sap.ui.define([
 	 *     yet,
 	 *   <li> this context is transient, but not inactive and therefore should rather be reset via
 	 *     {@link #delete}.
+	 *   <li> this context is a
+	 *     {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context}.
+	 *   <li> this context is a
+	 *     {@link sap.ui.model.odata.v4.ODataContextBinding#getParameterContext parameter context}.
 	 * </ul>
 	 *
 	 * @experimental As of version 1.109.0
@@ -1685,8 +1691,10 @@ sap.ui.define([
 				? [this.oDeletePromise.catch(function () { /*already handled in #delete*/ })]
 				: [];
 
-		if (this.isTransient() && !this.isInactive()) {
-			throw new Error("Cannot reset a transient context: " + this);
+		if (this.iIndex === iVIRTUAL || this.isTransient() && !this.isInactive()
+			|| this.oBinding.getHeaderContext && this === this.oBinding.getHeaderContext()
+			|| this.oBinding.getParameterContext && this === this.oBinding.getParameterContext()) {
+			throw new Error("Cannot reset: " + this);
 		}
 
 		this.oBinding.checkSuspended();
