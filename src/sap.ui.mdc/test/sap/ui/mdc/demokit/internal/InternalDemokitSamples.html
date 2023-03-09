@@ -35,9 +35,13 @@
 						mode: "None",
 						itemPress: function(oEvent) {
 							var sPathname = window.location.pathname.split('/')[1];
-							var sBaseUrl = window.location.origin + "/" + sPathname + "/";
+							var sBaseUrl;
 							if (sPathname === "testsuite") {
-								sBaseUrl += "documentation.html"
+								sBaseUrl = window.location.origin + "/" + sPathname + "/documentation.html";
+							} else if (sPathname === "test-resources") {
+								sBaseUrl = window.location.origin + "/documentation.html"
+							} else {
+								sBaseUrl = window.location.origin + "/" + sPathname + "/";
 							}
 							var sSampleId = oEvent.getParameter("listItem").getBindingContext().getProperty("id");
 							openWindow(sBaseUrl + "#/entity/sap.ui.mdc.sample.Table/sample/" + sSampleId);
