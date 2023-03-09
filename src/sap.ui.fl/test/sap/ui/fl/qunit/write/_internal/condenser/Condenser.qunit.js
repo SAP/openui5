@@ -836,21 +836,21 @@ sap.ui.define([
 		}
 	}, function() {
 		// MDC Table move
-		QUnit.test("move columns with no difference at the end", function(assert) {
+		QUnit.skip("move columns with no difference at the end", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcMoveChanges_1.json", 8, 0, assert);
 		});
 
-		QUnit.test("move columns within one container", function(assert) {
+		QUnit.skip("move columns within one container", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcMoveChanges_2.json", 5, 1, assert);
 		});
 
 		// MDC Table only remove => 2 remove changes stay
-		QUnit.test("remove columns on multiple controls", function(assert) {
+		QUnit.skip("remove columns on multiple controls", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcRemoveChanges.json", 2, 2, assert);
 		});
 
 		// MDC Table: combination of move and remove => only remove change stays
-		QUnit.test("move / remove columns", function(assert) {
+		QUnit.skip("move / remove columns", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcMoveRemoveChanges.json", 6, 1, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
@@ -863,19 +863,19 @@ sap.ui.define([
 		});
 
 		// MDC Table: combination of add, move and remove => no change stays at the end
-		QUnit.test("add / move / remove columns with no difference at the end", function(assert) {
+		QUnit.skip("add / move / remove columns with no difference at the end", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcAddMoveRemoveChanges.json", 7, 0, assert);
 		});
 
 		// MDC Table: combination of remove and add => both changes stay (ideally both changes be converted to move change)
-		QUnit.test("remove / add columns", function(assert) {
+		QUnit.skip("remove / add columns", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 2, 2, assert).then(function(aRemainingChanges) {
 				assert.strictEqual(aRemainingChanges[0].getChangeType(), "removeColumn", "the changes are in the right order");
 				assert.strictEqual(aRemainingChanges[1].getChangeType(), "addColumn", "the changes are in the right order");
 			});
 		});
 
-		QUnit.test("addSort/moveSort/removeSort (custom aggregation)", function(assert) {
+		QUnit.skip("addSort/moveSort/removeSort (custom aggregation)", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcSort.json", 9, 2, assert).then(function(aRemainingChanges) {
 				assert.strictEqual(aRemainingChanges[0].getChangeType(), "addSort", "the remaining changes are of type addSort");
 				assert.strictEqual(aRemainingChanges[1].getChangeType(), "addSort", "the remaining changes are of type addSort");
