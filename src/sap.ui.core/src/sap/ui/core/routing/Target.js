@@ -171,7 +171,7 @@ sap.ui.define([
 			/**
 			 * Will be fired when a target is displayed
 			 *
-			 * Could be triggered by calling the display function or by the @link sap.ui.core.routing.Router when a target is referenced in a matching route.
+			 * Could be triggered by calling the display function or by the {@link sap.ui.core.routing.Router} when a target is referenced in a matching route.
 			 *
 			 * @name sap.ui.core.routing.Target#display
 			 * @event

@@ -67,7 +67,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Performs an Press action on {@type sap.m.SegmentedButtonItem}
+				 * Performs a Press action on {@link sap.m.SegmentedButtonItem}
 				 * 'showDetails' to display hidden columns in the pop-in area.
 				 *
 				 * @function
@@ -81,7 +81,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Performs an Press action on {@type sap.m.SegmentedButtonItem}
+				 * Performs a Press action on {@link sap.m.SegmentedButtonItem}
 				 * 'hideDetails' to hide hidden columns from the pop-in area.
 				 *
 				 * @function
@@ -95,7 +95,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Performs an Press action on {@type sap.m.Button}
+				 * Performs a Press action on {@link sap.m.Button}
 				 * 'export-internalSplitBtn-textButton' to start the Excel export.
 				 *
 				 * @function
@@ -109,9 +109,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Performs an Press action on {@type sap.m.Button}
+				 * Performs a Press action on {@link sap.m.Button}
 				 * 'export-internalSplitBtn-arrowButton' that shows up the
-				 * additional {@type sap.ui.unified.Menu} with the items
+				 * additional {@link sap.ui.unified.Menu} with the items
 				 * <ul>
 				 *     <li>Export</li>
 				 *     <li>Export as...</li>
@@ -128,8 +128,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Performs an Press action on {@type sap.ui.unified.MenuItem} 'Export'
-				 * that is shown up from {@see iPressExportMenuButton}.
+				 * Performs a Press action on {@link sap.ui.unified.MenuItem} 'Export'
+				 * that is shown up from {@link #iPressExportMenuButton}.
 				 *
 				 * @function
 				 * @name iPressExportMenuButton
@@ -141,8 +141,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Performs an Press action on {@type sap.ui.unified.MenuItem} 'Export as...'
-				 * that is shown up from {@see iPressExportMenuButton}.
+				 * Performs a Press action on {@link sap.ui.unified.MenuItem} 'Export as...'
+				 * that is shown up from {@link #iPressExportMenuButton}.
 				 *
 				 * @function
 				 * @name iPressExportAsButtonInMenu
@@ -154,8 +154,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fills in the data in the {@type sap.m.Dialog} 'exportSettingsDialog'
-				 * that is shown up from {@see iPressExportAsButtonInMenu} and triggers the excel export.
+				 * Fills in the data in the {@link sap.m.Dialog} 'exportSettingsDialog'
+				 * that is shown up from {@link #iPressExportAsButtonInMenu} and triggers the excel export.
 				 *
 				 * @function
 				 * @name iFillInExportSettingsDialog
@@ -173,8 +173,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Performs Press action on {@type sap.m.Button} 'exportSettingsDialog-exportButton'
-				 * in {@type sap.m.Dialog} 'exportSettingsDialog'.
+				 * Performs Press action on {@link sap.m.Button} 'exportSettingsDialog-exportButton'
+				 * in {@link sap.m.Dialog} 'exportSettingsDialog'.
 				 *
 				 * @function
 				 * @name iPressExportButtonInExportSettingsDialog
@@ -507,8 +507,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Checks if the sap.ui.unified.Menu shows up after
-				 * pressing on the arrow button performed in {@see iPressExportMenuButton}.
+				 * Checks if the {@link sap.ui.unified.Menu} shows up after
+				 * pressing on the arrow button performed in {@link #iPressExportMenuButton}.
 				 *
 				 * @function
 				 * @name iShouldSeeExportMenu
@@ -521,7 +521,7 @@ sap.ui.define([
 
 				/**
 				 * Checks if the sap.m.Dialog 'exportSettingsDialog' is visible on the screen after
-				 * pressing on the 'Export as...' button performed in {@see iPressExportAsButtonInMenu}.
+				 * pressing on the 'Export as...' button performed in {@link #iPressExportAsButtonInMenu}.
 				 *
 				 * @function
 				 * @name iShouldSeeExportSettingsDialog

@@ -439,8 +439,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the {@type sap.ui.unified.Menu} shows up after
-		 * pressing on the arrow button performed in {@see iPressExportArrowButton}.
+		 * Checks if the {@link sap.ui.unified.Menu} shows up after
+		 * pressing on the arrow button performed in {@link #iPressExportArrowButton}.
 		 *
 		 * @function
 		 * @name iShouldSeeExportMenu
@@ -458,8 +458,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the {@type sap.m.Dialog} 'exportSettingsDialog' is visible on the screen after
-		 * pressing on the 'Export as...' button performed in {@see iPressExportAsButtonInMenu}.
+		 * Checks if the {@link sap.m.Dialog} 'exportSettingsDialog' is visible on the screen after
+		 * pressing on the 'Export as...' button performed in {@link #iPressExportAsButtonInMenu}.
 		 *
 		 * @function
 		 * @name iShouldSeeExportSettingsDialog

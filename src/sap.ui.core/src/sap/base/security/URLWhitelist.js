@@ -183,7 +183,7 @@ sap.ui.define(["sap/base/security/URLListValidator"], function(URLListValidator)
 	 *
 	 * </pre>
 	 *
-	 * When a allowlist has been configured using {@link #add and @link #delete},
+	 * When an allowlist has been configured using {@link #add} and {@link #delete},
 	 * any URL that passes the syntactic checks above, additionally will be tested against
 	 * the content of the allowlist.
 	 *

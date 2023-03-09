@@ -704,7 +704,8 @@ sap.ui.define([
 	};
 
 	/*
-	 * Initialize the control @private
+	 * Initialize the control
+	 * @private
 	 */
 	P13nConditionPanel.prototype.init = function() {
 		// init some resources
@@ -1017,7 +1018,8 @@ sap.ui.define([
 	};
 
 	/*
-	 * removes all condition rows from the main ConditionGrid. @private
+	 * removes all condition rows from the main ConditionGrid.
+	 * @private
 	 */
 	P13nConditionPanel.prototype._clearConditions = function() {
 		var aGrid = this._oConditionsGrid.getContent();
@@ -1037,7 +1039,8 @@ sap.ui.define([
 	};
 
 	/*
-	 * creates all condition rows and updated the values of the fields. @private
+	 * creates all condition rows and updated the values of the fields.
+	 * @private
 	 */
 	P13nConditionPanel.prototype._fillConditions = function() {
 		var oCondition, sConditionKey;
@@ -1065,7 +1068,8 @@ sap.ui.define([
 	};
 
 	/*
-	 * add one condition @private
+	 * add one condition
+	 * @private
 	 */
 	P13nConditionPanel.prototype._addCondition = function(oCondition) {
 		var i = 0;

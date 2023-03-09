@@ -34,7 +34,7 @@ sap.ui.define([
 	var _mVariantIdChangeHandlers = {};
 
 	/**
-	 * URL handler utility for <code>sap.ui.fl variants</code> (@see sap.ui.fl.variants.VariantManagement}
+	 * URL handler utility for <code>sap.ui.fl variants</code> (see {@link sap.ui.fl.variants.VariantManagement})
 	 *
 	 * @namespace
 	 * @alias sap.ui.fl.apply._internal.controlVariants.URLHandler
@@ -107,7 +107,7 @@ sap.ui.define([
 	 * @param {string} sNewHash - New hash
 	 *
 	 * @returns {string} Value that signifies "Continue" navigation in the "ShellNavigation" service of ushell
-	 * {@see sap.ushell.services.ShellNavigation}
+	 * (see {@link sap.ushell.services.ShellNavigation})
 	 *
 	 * @private
 	 */
@@ -273,8 +273,8 @@ sap.ui.define([
 	URLHandler.variantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 
 	/**
-	 * Initializes hash data for the passed variant model.
-	 * {@see sap.ui.fl.variants.VariantModel}
+	 * Initializes hash data for the passed variant model
+	 * (see {@link sap.ui.fl.variants.VariantModel}).
 	 *
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant model
@@ -459,8 +459,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current hash parameters from the variant model's hash data.
-	 * {@see sap.ui.fl.variants.VariantModel}
+	 * Returns the current hash parameters from the variant model's hash data
+	 * (see {@link sap.ui.fl.variants.VariantModel}).
 	 *
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant model

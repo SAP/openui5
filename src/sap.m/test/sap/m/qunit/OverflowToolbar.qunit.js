@@ -95,8 +95,8 @@ sap.ui.define([
 	/**
 	 * Generates some content that will be used for creating toolbars
 	 * Important: do not modify this array, some elements are referenced by their index in the returned array
-	 * [] @param {boolean} [bWithLayout]
-	 * @returns {*[]}
+	 * @param {boolean} [bWithLayout]
+	 * @returns {sap.ui.core.Control[]}
 	 */
 	function getDefaultContent(bWithLayout) {
 		return [

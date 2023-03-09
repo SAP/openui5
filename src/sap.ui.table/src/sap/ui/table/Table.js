@@ -1656,8 +1656,8 @@ sap.ui.define([
 	/**
 	 * Sets the focus to the stored focus DOM reference.
 	 *
-	 * If {@param oFocusInfo.targetInfo} is of type {@type sap.ui.core.message.Message},
-	 * the focus will be set as accurately as possible according to the information provided by {@type sap.ui.core.message.Message}.
+	 * If <code>oFocusInfo.targetInfo</code> is of type {@link sap.ui.core.message.Message},
+	 * the focus will be set as accurately as possible according to the information provided by {@link sap.ui.core.message.Message}.
 	 *
 	 * @param {object} [oFocusInfo={}] Options for setting the focus
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 If set to <code>true</code>, the focused
