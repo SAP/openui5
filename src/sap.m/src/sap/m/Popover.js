@@ -1709,7 +1709,7 @@ sap.ui.define([
 		 * Calculate outerHeight of the element; used as hook for SVG elements
 		 * @param {HTMLElement} oElement An Element for which outerHeight will be calculated.
 		 * @param {boolean} [bIncludeMargin=false] Determines if the margins should be included in the calculated outerHeight
-		 * * @returns {number} The outer height of the element
+		 * @returns {number} The outer height of the element
 		 * @protected
 		 */
 		Popover.outerHeight = function (oElement, bIncludeMargin) {

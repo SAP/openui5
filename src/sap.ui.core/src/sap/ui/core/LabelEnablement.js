@@ -249,7 +249,7 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 	 * <b>What does this function do?</b>
 	 *
 	 * A mechanism is added that ensures that a bidirectional reference between the label and its labeled control is established:
-	 * The label references the labeled control via the HTML 'for' attribute (@see sap.ui.core.LabelEnablement#writeLabelForAttribute).
+	 * The label references the labeled control via the HTML 'for' attribute (see {@link sap.ui.core.LabelEnablement#writeLabelForAttribute}).
 	 * If the labeled control supports the aria-labelledby attribute, a reference to the label is added automatically.
 	 *
 	 * In addition an alternative to apply a 'for' reference without influencing the labelFor association of the API is applied (e.g. used by Form).

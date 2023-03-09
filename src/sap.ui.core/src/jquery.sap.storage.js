@@ -115,7 +115,7 @@ sap.ui.define([
 	 * Stores the passed state string in the session, under the key
 	 * sStorageKeyPrefix + sId.
 	 *
-	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
+	 * sStorageKeyPrefix is the id prefix defined for the storage instance ({@link jQuery.sap#storage})
 	 *
 	 * @param {string} sId Id for the state to store
 	 * @param {string} sStateToStore content to store
@@ -129,7 +129,7 @@ sap.ui.define([
 	 * Retrieves the state string stored in the session under the key
 	 * sStorageKeyPrefix + sId.
 	 *
-	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
+	 * sStorageKeyPrefix is the id prefix defined for the storage instance ({@link jQuery.sap#storage})
 	 *
 	 * @param {string} sId Id for the state to retrieve
 	 * @return {string|null} the string from the storage, if the retrieval
@@ -143,7 +143,7 @@ sap.ui.define([
 	 * Deletes the state string stored in the session under the key
 	 * sStorageKeyPrefix + sId.s
 	 *
-	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
+	 * sStorageKeyPrefix is the id prefix defined for the storage instance ({@link jQuery.sap#storage})
 	 *
 	 * @param {string} sId Id for the state to delete
 	 * @return {boolean} true if the deletion
@@ -158,7 +158,7 @@ sap.ui.define([
 	 * Deletes all state strings stored in the session under the key prefix
 	 * sStorageKeyPrefix + sIdPrefix.
 	 *
-	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
+	 * sStorageKeyPrefix is the id prefix defined for the storage instance ({@link jQuery.sap#storage})
 	 *
 	 * @param {string} sIdPrefix Id prefix for the states to delete
 	 * @return {boolean} true if the deletion

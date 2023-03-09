@@ -553,7 +553,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * {@see sap.ui.model.Binding#hasValidation}
+	 * @see {@link sap.ui.model.Binding#hasValidation}
 	 *
 	 * @returns {boolean}
 	 *   Whether the binding throws a validation exception when an invalid value is set on it

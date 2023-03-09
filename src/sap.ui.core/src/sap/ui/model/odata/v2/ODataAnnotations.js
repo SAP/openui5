@@ -410,9 +410,10 @@ sap.ui.define([
 	 * Parameters of the <code>loaded</code> event.
 	 *
 	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.loadedParameters
-	 * @property {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} result An array of results and Errors
-	 *           (@see sap.ui.model.v2.ODataAnnotations#success and @see sap.ui.model.v2.ODataAnnotations#error) that
-	 *           occurred while loading a group of annotations
+	 * @property {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} result
+	 *         An array of results and Errors (see {@link sap.ui.model.v2.ODataAnnotations#success}
+	 *         and {@link sap.ui.model.v2.ODataAnnotations#error}) that occurred while loading
+	 *         a group of annotations
 	 * @public
 	 */
 

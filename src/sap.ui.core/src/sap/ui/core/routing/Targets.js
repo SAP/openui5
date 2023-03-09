@@ -388,7 +388,7 @@ sap.ui.define([
 			 *     When switching to a different route, then the dynamic target will be suspended.
 			 * @property {boolean} [ignoreInitialHash=false] Since 1.90. Whether the router of the "Component" target ignores the browser hash when it's re-initialized.
 			 *     This parameter only has effect when the target is of type "Component" and its router is currently stopped. It has no effect on the first call of
-			 *     {link sap.ui.core.routing.Router#initialize}, because this is done by the application and not by the UI5 routing.
+			 *     {@link sap.ui.core.routing.Router#initialize}, because this is done by the application and not by the UI5 routing.
 			 * @protected
 			 * @since 1.84.0
 			 */

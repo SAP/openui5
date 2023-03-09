@@ -401,7 +401,7 @@ sap.ui.define([
 
 	/**
 	 * Toggles the visibility of the Show Details button.<br>
-	 * If {@param bValue} is set to <code>true</code>, it sets the <code>hiddenInPopin</code> property on the inner <code>ResponsiveTable</code> to
+	 * If <code>bValue</code> is set to <code>true</code>, it sets the <code>hiddenInPopin</code> property on the inner <code>ResponsiveTable</code> to
 	 * hide columns based on the <code>Table</code> configuration (<code>showDetailsButton</code> and <code>detailsButtonSetting</code> properties).
 	 * Otherwise an empty array is set to show all columns.
 	 *

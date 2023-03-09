@@ -21,7 +21,7 @@ sap.ui.define([
 		return BaseObject.extend("sap.ui.test.pipelines.PipelineFactory", /** @lends sap.ui.test.pipelines.PipelineFactory.prototype */ {
 
 			/**
-			 * Usage example is here: @link{sap.ui.test.pipelines.PipelineFactory.create}
+			 * Usage example is here: {@link sap.ui.test.pipelines.PipelineFactory.create}
 			 * @param {object} options an Object containing all options for the validator
 			 * @param {string} options.name the name of the object under validation used for logging
 			 * @param {string} options.functionName the name of the function that is present on all object returned by this Factory
@@ -34,7 +34,7 @@ sap.ui.define([
 
 			/**
 			 * Creates a pipeline which is an array of objects that contain a function with a specified
-			 * @link{sap.ui.test.pipelines.PipelineFactory.constructor} functionName
+			 * {@link sap.ui.test.pipelines.PipelineFactory.constructor} functionName
 			 * Example:
 			 *
 			 * <pre>

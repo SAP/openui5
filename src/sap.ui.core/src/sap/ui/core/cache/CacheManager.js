@@ -22,7 +22,7 @@ sap.ui.define([
 		 *  <li>Google Chrome(version >=49) for desktop</li>
 		 *  <li>Internet Explorer(version >=11) for desktop.</li>
 		 * </ul>
-		 * For all other environments a dummy (NOP) implementation will be loaded (@see sap.ui.core.cache.CacheManagerNOP).
+		 * For all other environments, a dummy (NOP) implementation will be loaded, see {@link sap.ui.core.cache.CacheManagerNOP}.
 		 *
 		 * This object is not meant for application developer's use, but for core UI5 framework purposes.
 		 *
