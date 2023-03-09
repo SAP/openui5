@@ -2,8 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/library", "sap/m/library", "sap/m/IllustratedMessage", "sap/m/library"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib) {
+	"sap/m/OverflowToolbarButton",
+	"sap/m/ButtonRenderer",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/library",
+	"sap/m/library",
+	"sap/m/IllustratedMessage",
+	"sap/m/library",
+	"sap/base/util/merge"
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib, merge) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -16,7 +23,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc"
 		},
-		constructor: function(oMDCChart) {
+		constructor: function(oMDCChart, mSettings) {
 
 			if (!oMDCChart) {
 				OverflowToolbarButton.apply(this);
@@ -24,7 +31,7 @@ sap.ui.define([
 			}
 
 			this.oMDCChartModel = oMDCChart.getManagedObjectModel();
-			var mSettings = {
+			mSettings = merge(mSettings, {
 				type: "Transparent",
 				press: function(oEvent) {
 					this.displayChartTypes(oEvent.getSource(), oMDCChart);
@@ -34,7 +41,7 @@ sap.ui.define([
 				tooltip: '{$chart>/getChartTypeInfo/text}',
 				text: '{$chart>/getChartTypeInfo/text}',
 				ariaHasPopup: HasPopup.ListBox
-			};
+			});
 			this.oMDCChart = oMDCChart;
 			OverflowToolbarButton.apply(this, [
 				mSettings
