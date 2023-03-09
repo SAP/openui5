@@ -265,10 +265,7 @@ sap.ui.define([
 	 *     <li> a <code>null</code> group ID is used with a context which is not
 	 *       {@link #isKeepAlive kept alive},
 	 *     <li> the context is already being deleted,
-	 *     <li> the context's binding is a list binding with data aggregation,
-	 *     <li> the context's binding is
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#isTransient transient} (part of a
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}).
+	 *     <li> the context's binding is a list binding with data aggregation.
 	 *   </ul>
 	 *
 	 * @function

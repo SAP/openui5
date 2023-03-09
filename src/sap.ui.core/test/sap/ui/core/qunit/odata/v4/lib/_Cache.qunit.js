@@ -702,6 +702,55 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#_delete: nested in deep create", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+			fnCallback = sinon.spy(),
+			oElement = {},
+			aElements = [{}, oElement, {}],
+			oGroupLock = {},
+			oHelperMock = this.mock(_Helper),
+			aPostBodyCollection = ["~a~", "~b~", "~c~"],
+			oPromise,
+			fnReject = sinon.stub(),
+			oRemoveElementExpectation;
+
+		oCache.fetchValue = function () {};
+		aElements.$postBodyCollection = aPostBodyCollection;
+		aElements.$created = 2;
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "SO_2_SOITEM")
+			.returns(SyncPromise.resolve(aElements));
+		this.mock(_Cache).expects("from$skip").withExactArgs("-1", sinon.match.same(aElements))
+			.returns(1);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "predicate").returns("n/a");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "transient").returns("updateGroup");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "transientPredicate").returns("($uid=1)");
+		this.mock(this.oRequestor).expects("removePost").never();
+		oRemoveElementExpectation = this.mock(oCache).expects("removeElement")
+			.withExactArgs(sinon.match.same(aElements), 1, "($uid=1)", "SO_2_SOITEM");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "reject").returns(fnReject);
+		fnReject.callsFake(function (oError) {
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.canceled, true);
+			assert.strictEqual(oError.message, "Deleted from deep create");
+			assert.deepEqual(aPostBodyCollection, ["~a~", "~c~"]);
+			sinon.assert.called(oRemoveElementExpectation);
+			sinon.assert.calledWithExactly(fnCallback, 1, -1);
+		});
+
+		// code under test
+		oPromise = oCache._delete(oGroupLock, undefined, "SO_2_SOITEM/-1", null, fnCallback);
+
+		assert.strictEqual(oPromise.getResult(), undefined);
+		assert.deepEqual(aPostBodyCollection, ["~a~", "~c~"]);
+		sinon.assert.calledOnce(fnReject);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Cache#addDeleted", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			oDeleted0,

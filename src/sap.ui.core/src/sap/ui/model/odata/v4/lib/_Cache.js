@@ -166,6 +166,7 @@ sap.ui.define([
 				oEntity = vDeleteProperty
 					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
 					: vCacheData, // deleting at root level
+				oError,
 				sGroupId,
 				aMessages,
 				mHeaders,
@@ -221,8 +222,16 @@ sap.ui.define([
 				if (typeof sTransientGroup !== "string") {
 					throw new Error("No 'delete' allowed while waiting for server response");
 				}
-				that.oRequestor.removePost(sTransientGroup, oEntity);
-
+				if (vCacheData.$postBodyCollection) { // within a deep create
+					vCacheData.$postBodyCollection.splice(iIndex, 1);
+					that.removeElement(vCacheData, iIndex, sTransientPredicate, sParentPath);
+					fnCallback(iIndex, -1);
+					oError = new Error("Deleted from deep create");
+					oError.canceled = true;
+					_Helper.getPrivateAnnotation(oEntity, "reject")(oError);
+				} else {
+					that.oRequestor.removePost(sTransientGroup, oEntity);
+				}
 				return undefined;
 			}
 

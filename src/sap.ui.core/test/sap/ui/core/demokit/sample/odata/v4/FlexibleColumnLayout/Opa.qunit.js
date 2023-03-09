@@ -318,12 +318,21 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkSalesOrderItemsCount(2);
 				Then.onTheObjectPage.checkSalesOrderItem(1, "", "2.000");
 
+				When.onTheObjectPage.createSalesOrderItem();
+				Then.onTheObjectPage.checkSalesOrderItemsCount(3);
+				Then.onTheObjectPage.checkSalesOrderItem(2, "", "2.000");
+
+				When.onTheObjectPage.selectSalesOrderItem(1);
+				When.onTheSubObjectPage.deleteSalesOrderItem();
+				When.onTheApplication.closeDialog("Success");
+				Then.onTheObjectPage.checkSalesOrderItemsCount(2);
+
 				When.onTheObjectPage.selectSalesOrderItem(1);
 				When.onTheSubObjectPage.changeQuantity("4");
 				Then.onTheObjectPage.checkSalesOrderItem(1, "", "4.000");
 
 				When.onTheApplication.pressSave();
-				// the list report might not be shown
+				// do not check in the list report; it might be hidden
 				Then.onTheObjectPage.checkSalesOrderID("0500000005");
 				Then.onTheObjectPage.checkGrossAmount("10,632.66");
 				Then.onTheObjectPage.checkSalesOrderItem(0, "0000000010", "2.000");
