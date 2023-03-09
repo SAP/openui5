@@ -995,11 +995,13 @@ sap.ui.define([
 		this.clock.tick(500);
 		this.oTableSelectDialog.setModel(oModel);
 		this.oTableSelectDialog.bindAggregation("items", "/navigation", template);
+		this.oTableSelectDialog._oDialog.getContent()[1].attachEventOnce("updateFinished", function() {
+			this.clock.tick(1);
+			// Assert
+			assert.strictEqual(this.oTableSelectDialog._oDialog.getContent()[1].getItems()[0].getFocusDomRef(), document.activeElement, 'First row should be focused when items appear later');
+
+		}.bind(this));
 		this.clock.tick(500);
-
-		// Assert
-		assert.strictEqual(this.oTableSelectDialog._oDialog.getContent()[1].getItems()[0].getFocusDomRef(), document.activeElement, 'First row should be focused when items appear later');
-
 	});
 
 	/********************************************************************************/
