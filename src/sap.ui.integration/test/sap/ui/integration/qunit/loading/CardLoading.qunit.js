@@ -6,6 +6,7 @@ sap.ui.define([
 		"sap/ui/core/Core",
 		"sap/ui/integration/util/LoadingProvider",
 		"sap/ui/integration/cards/BaseContent",
+		"sap/ui/integration/cards/AnalyticalContent",
 		"sap/ui/integration/cards/Header",
 		"sap/ui/integration/cards/filters/SelectFilter",
 		"sap/ui/integration/library",
@@ -17,6 +18,7 @@ sap.ui.define([
 		Core,
 		LoadingProvider,
 		BaseContent,
+		AnalyticalContent,
 		Header,
 		Filter,
 		integrationLibrary,
@@ -575,6 +577,71 @@ sap.ui.define([
 						{
 							"label": "{measures/costLabel}",
 							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		};
+		var oManifest_AnalyticalCard_JSONData = {
+			"sap.app": {
+				"id": "test.card.loading.analytical.card2"
+			},
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"title": "Project Cloud Transformation"
+				},
+				"content": {
+					"chartType": "Line",
+					"data": {
+						"json": {
+							"list": [
+								{
+									"Week": "CW14",
+									"Revenue": 431000.22,
+									"Cost": 230000.00,
+									"Cost1": 24800.63,
+									"Cost2": 205199.37,
+									"Cost3": 199999.37,
+									"Target": 500000.00,
+									"Budget": 210000.00
+								}
+							]
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"name": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"name": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"name": "Costs",
+							"value": "{Cost}"
+						}
+					],
+					"feeds": [
+						{
+							"uid": "valueAxis",
+							"type": "Measure",
+							"values": [
+								"Revenue",
+								"Costs"
+							]
+						},
+						{
+							"uid": "categoryAxis",
+							"type": "Dimension",
+							"values": [
+								"Weeks"
+							]
 						}
 					]
 				}
@@ -2012,6 +2079,22 @@ sap.ui.define([
 
 			QUnit.test("Analytical - Loading indicator should be present - content level request", function (assert) {
 				isLoadingIndicatorShowingContent(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", true, ".sapFCardContentAnalyticalPlaceholder", assert);
+			});
+
+			QUnit.test("Analytical - Loading indicator should be present when the dependencies are loaded slowly", function (assert) {
+				this.stub(AnalyticalContent.prototype, "loadDependencies").returns(new Promise(function () { })); // never resolve the dependencies
+
+				isLoadingIndicatorShowingContent(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", true, ".sapFCardContentAnalyticalPlaceholder", assert);
+			});
+
+			QUnit.test("Analytical - Loading indicator should be present when the dependencies are loaded slowly and data provider is JSON", function (assert) {
+				this.stub(AnalyticalContent.prototype, "loadDependencies").returns(new Promise(function () { })); // never resolve the dependencies
+
+				isLoadingIndicatorShowingContent(oManifest_AnalyticalCard_JSONData, this.oCard, "Analytical content has a loading placeholder", true, ".sapFCardContentAnalyticalPlaceholder", assert);
+			});
+
+			QUnit.test("Analytical - Loading indicator should not be present after the dependencies are loaded", function (assert) {
+				isLoadingIndicatorShowingContentDataReady(oManifest_AnalyticalCard_JSONData, this.oCard, "Analytical content does not have a loading placeholder", false, ".sapFCardContentAnalyticalPlaceholder", assert);
 			});
 
 		}).catch(function () {

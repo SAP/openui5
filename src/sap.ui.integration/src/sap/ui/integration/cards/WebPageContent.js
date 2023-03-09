@@ -106,15 +106,14 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	WebPageContent.prototype.setConfiguration = function (oConfiguration) {
-		BaseContent.prototype.setConfiguration.apply(this, arguments);
-		oConfiguration = this.getParsedConfiguration();
+	WebPageContent.prototype.applyConfiguration = function () {
+		var oConfiguration = this.getParsedConfiguration();
 
 		//workaround until actions refactor
 		this.fireEvent("_actionContentReady"); // todo
 
 		if (!oConfiguration) {
-			return this;
+			return;
 		}
 
 		var oSrcBinding = BindingHelper.formattedProperty(oConfiguration.src, function (sValue) {
@@ -136,8 +135,6 @@ sap.ui.define([
 		} else {
 			this.setMinHeight(oConfiguration.minHeight);
 		}
-
-		return this;
 	};
 
 	WebPageContent.prototype._checkSrc = function () {

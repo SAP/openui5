@@ -147,24 +147,23 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	TableContent.prototype.setConfiguration = function (oConfiguration) {
-		BaseListContent.prototype.setConfiguration.apply(this, arguments);
-		oConfiguration = this.getParsedConfiguration();
+	TableContent.prototype.applyConfiguration = function () {
+		BaseListContent.prototype.applyConfiguration.apply(this, arguments);
+
+		var oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
-			return this;
+			return;
 		}
 
 		if (oConfiguration.rows && oConfiguration.columns) {
 			this._setStaticColumns(oConfiguration.rows, oConfiguration.columns);
-			return this;
+			return;
 		}
 
 		if (oConfiguration.row && oConfiguration.row.columns) {
 			this._setColumns(oConfiguration.row);
 		}
-
-		return this;
 	};
 
 	/**

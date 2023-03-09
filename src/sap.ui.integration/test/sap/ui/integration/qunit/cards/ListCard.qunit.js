@@ -1584,7 +1584,7 @@ sap.ui.define([
 				assert.ok(bMaxWidthIsSame, "All charts have same max width");
 
 				done();
-			}, 0);
+			}, 100);
 		}.bind(this));
 	});
 
@@ -1612,7 +1612,7 @@ sap.ui.define([
 				assert.ok(bMaxWidthIsSame, "All charts have same max width");
 
 				done();
-			}, 0);
+			}, 100);
 		}.bind(this));
 	});
 

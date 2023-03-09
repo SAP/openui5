@@ -113,12 +113,11 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	BaseListContent.prototype.setConfiguration = function (oConfiguration) {
-		BaseContent.prototype.setConfiguration.apply(this, arguments);
-		oConfiguration = this.getConfiguration();
+	BaseListContent.prototype.applyConfiguration = function () {
+		var oConfiguration = this.getConfiguration();
 
 		if (!oConfiguration) {
-			return this;
+			return;
 		}
 
 		var oList = this.getInnerList(),
@@ -138,8 +137,6 @@ sap.ui.define([
 		}
 
 		this._fMinHeight = 0;
-
-		return this;
 	};
 
 	/**

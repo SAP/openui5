@@ -81,11 +81,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * @inheritdoc
+	 * @override
 	 */
-	AnalyticsCloudContent.prototype.setConfiguration = function (oConfiguration) {
-		BaseContent.prototype.setConfiguration.apply(this, arguments);
-		oConfiguration = this.getParsedConfiguration();
+	AnalyticsCloudContent.prototype.applyConfiguration = function () {
+		var oConfiguration = this.getParsedConfiguration();
 
 		//workaround until actions refactor
 		this.fireEvent("_actionContentReady");

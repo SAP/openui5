@@ -116,24 +116,23 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	TimelineContent.prototype.setConfiguration = function (oConfiguration) {
-		BaseListContent.prototype.setConfiguration.apply(this, arguments);
-		oConfiguration = this.getParsedConfiguration();
+	TimelineContent.prototype.applyConfiguration = function () {
+		BaseListContent.prototype.applyConfiguration.apply(this, arguments);
+
+		var oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
-			return this;
+			return;
 		}
 
 		if (oConfiguration.items) {
 			this._setStaticItems(oConfiguration.items);
-			return this;
+			return;
 		}
 
 		if (oConfiguration.item) {
 			this._setItem(oConfiguration.item);
 		}
-
-		return this;
 	};
 
 	/**

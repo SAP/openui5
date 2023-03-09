@@ -145,12 +145,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Setter for configuring a <code>sap.ui.integration.cards.AdaptiveContent</code>.
-		 *
-		 * @public
-		 * @param {Object} oConfiguration Configuration object used to create Adaptive card.
+		 * @override
 		 */
-		AdaptiveContent.prototype.setConfiguration = function (oConfiguration) {
+		AdaptiveContent.prototype.applyConfiguration = function () {
+			var oConfiguration = this.getConfiguration();
 			this._oCardConfig = oConfiguration;
 
 			// if oConfiguration.request is present, load the adaptive card manifest from url
@@ -161,10 +159,6 @@ sap.ui.define([
 
 			this._handleMarkDown();
 			this._setupMSCardContent();
-		};
-
-		AdaptiveContent.prototype.getConfiguration = function () {
-			return this._oCardConfig;
 		};
 
 		AdaptiveContent.prototype.onThemeChanged = function () {

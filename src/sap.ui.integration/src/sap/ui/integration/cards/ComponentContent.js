@@ -56,9 +56,8 @@ sap.ui.define([
 		}
 	};
 
-	ComponentContent.prototype.setConfiguration = function (oConfiguration) {
-		BaseContent.prototype.setConfiguration.apply(this, arguments);
-		oConfiguration = this.getParsedConfiguration();
+	ComponentContent.prototype.applyConfiguration = function () {
+		var oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
 			return;

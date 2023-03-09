@@ -224,21 +224,16 @@ sap.ui.define([
 		};
 
 		/**
-		 * Setter for configuring a <code>sap.ui.integration.cards.CalendarContent</code>.
-		 *
-		 * @public
-		 * @param {Object} oConfiguration Configuration object used to create the internal calendar.
-		 * @returns {this} Pointer to the control instance to allow method chaining.
+		 * @override
 		 */
-		CalendarContent.prototype.setConfiguration = function (oConfiguration) {
-			BaseContent.prototype.setConfiguration.apply(this, arguments);
-			oConfiguration = this.getParsedConfiguration();
+		CalendarContent.prototype.applyConfiguration = function () {
+			var oConfiguration = this.getParsedConfiguration();
 
 			//workaround until actions refactor
 			this.fireEvent("_actionContentReady"); // todo
 
 			if (!oConfiguration) {
-				return this;
+				return;
 			}
 
 			if (oConfiguration.item) {
@@ -276,8 +271,6 @@ sap.ui.define([
 					control: this._getMoreButton()
 				});
 			}
-
-			return this;
 		};
 
 		/**
