@@ -176,10 +176,14 @@ sap.ui.define([
 
 	/**
 	 * The 'createActivate' event is fired when a property is changed on a context in an 'inactive'
-	 * state (see {@link #create}). The context then changes its state to 'transient'.
+	 * state (see {@link #create}). The context then changes its state to 'transient'. Since
+	 * 1.113.0, this default behavior can be prevented by calling
+	 * {@link sap.ui.base.Event#preventDefault}. The context will then remain in the 'inactive'
+	 * state.
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
-	 * @param {sap.ui.model.odata.v2.ODataListBinding} oEvent.getSource() This binding
+	 * @param {sap.ui.model.odata.v2.ODataListBinding} oEvent.getSource This binding
+	 * @param {sap.ui.model.odata.v2.Context} oEvent.getParameters.context The affected context
 	 *
 	 * @event sap.ui.model.odata.v2.ODataListBinding#createActivate
 	 * @public
@@ -1988,9 +1992,7 @@ sap.ui.define([
 		oCreatedContextsCache.addContext(oCreatedContext, sResolvedPath,
 			this.sCreatedEntitiesKey, bAtEnd);
 		if (mCreateParameters.inactive) {
-			oCreatedContext.fetchActivated().then(function () {
-				that.fireEvent("createActivate");
-			});
+			oCreatedContext.fetchActivationStarted().then(that.fireCreateActivate.bind(that, oCreatedContext));
 		}
 		this._fireChange({reason : ChangeReason.Add});
 
@@ -2226,8 +2228,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Assigns the "createActivate"-event to all already exisiting inactive contexts which are
-	 * belonging to this binding.
+	 * Assigns the "createActivate"-event to all already existing inactive contexts which belong to
+	 * this binding.
 	 *
 	 * @private
 	 */
@@ -2236,11 +2238,28 @@ sap.ui.define([
 
 		this._getCreatedContexts().forEach(function (oContext) {
 			if (oContext.isInactive()) {
-				oContext.fetchActivated().then(function () {
-					that.fireEvent("createActivate");
-				});
+				oContext.fetchActivationStarted().then(that.fireCreateActivate.bind(that, oContext));
 			}
 		});
+	};
+
+	/**
+	 * Fires the 'createActivate' event and deactivates the given context in case the application's event handler
+	 * calls <code>preventDefault</code> on the event.
+	 *
+	 * @param {sap.ui.model.odata.v2.Context} oContext
+	 *   The context which is activated
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fireCreateActivate = function (oContext) {
+		if (this.fireEvent("createActivate", {context : oContext}, /*bAllowPreventDefault*/true)) {
+			oContext.finishActivation();
+			this._fireChange({reason : ChangeReason.Change});
+		} else {
+			oContext.cancelActivation();
+			oContext.fetchActivationStarted().then(this.fireCreateActivate.bind(this, oContext));
+		}
 	};
 
 	return ODataListBinding;

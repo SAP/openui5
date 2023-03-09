@@ -6173,9 +6173,10 @@ sap.ui.define([
 
 			each(mChangedEntities, function(sKey, oData) {
 				var oCreatedInfo, oRequest, oRequestHandle0,
+					oContext = that.getContext("/" + sKey),
 					oGroupInfo = that._resolveGroup(sKey);
 
-				if (that.getContext("/" + sKey).hasTransientParent()) {
+				if (oContext.hasTransientParent() || oContext.isInactive()) {
 					return;
 				}
 
@@ -6369,10 +6370,11 @@ sap.ui.define([
 	 * path.
 	 *
 	 * If <code>bDeleteCreatedEntities</code> is set, the entity is completely removed, provided it
-	 * has been created
+	 * has been created by one of the following methods:
 	 * <ul>
-	 *   <li>via {@link #createEntry} and it is not yet persisted in the back end, or</li>
-	 *   <li>via {@link #callFunction}.</li>
+	 *   <li>{@link #createEntry}, provided it is not yet persisted in the back end
+	 *      and is active (see {@link sap.ui.model.odata.v2.Context#isInactive}),</li>
+	 *   <li>{@link #callFunction}.</li>
 	 * </ul>
 	 *
 	 * @param {array} [aPath]
@@ -6449,8 +6451,11 @@ sap.ui.define([
 			});
 		} else {
 			each(this.mChangedEntities, function (sKey, oChangedEntity) {
-				that._discardEntityChanges(sKey,
-					oChangedEntity.__metadata.created && bDeleteCreatedEntities);
+				var bDeleteEntity = that.getContext("/" + sKey).isInactive()
+						? false // inactive entities are not removed, but only changes are reset
+						: oChangedEntity.__metadata.created && bDeleteCreatedEntities;
+
+				that._discardEntityChanges(sKey, bDeleteEntity);
 			});
 		}
 		this.getBindings().forEach(function (oBinding) {
@@ -6489,7 +6494,8 @@ sap.ui.define([
 		var oContextToActivate, oChangeObject, bCreated, sDeepPath, oEntityMetadata, oEntityType,
 			oEntry, sGroupId, oGroupInfo, bIsNavPropExpanded, sKey, mKeys, oNavPropRefInfo, oOriginalEntry,
 			oOriginalValue, mParams, aParts, sPropertyPath, oRef, bRefreshAfterChange, oRequest,
-			mRequests, oRequestHandle, sResolvedPath,
+			mRequests, oRequestHandle, oRequestQueueingPromise, sResolvedPath,
+			oActivatedPromise = SyncPromise.resolve(),
 			mChangedEntities = {},
 			oEntityInfo = {},
 			bFunction = false,
@@ -6581,6 +6587,15 @@ sap.ui.define([
 			oChangeObject[oNavPropRefInfo.name] = { __ref: oRef };
 		}
 
+		if (oEntry.__metadata.created && !oEntry.__metadata.created.functionImport) {
+			oContextToActivate = this.oCreatedContextsCache.findCreatedContext(sResolvedPath);
+			if (oContextToActivate) {
+				oContextToActivate.startActivation();
+				oActivatedPromise = oContextToActivate.fetchActivated();
+			}
+		}
+		oRequestQueueingPromise = Promise.all([this.oMetadata.loaded(), oActivatedPromise]);
+
 		//reset clone if oValue equals the original value
 		if (deepEqual(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
 			//delete metadata to check if object has changes
@@ -6596,7 +6611,7 @@ sap.ui.define([
 				mChangedEntities[sKey] = true;
 				this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
 
-				that.oMetadata.loaded().then(function() {
+				oRequestQueueingPromise.then(function() {
 					//setProperty with no change does not create a request the first time so no handle exists
 					that.abortInternalRequest(that._resolveGroup(sKey).groupId, {requestKey: sKey});
 				});
@@ -6620,13 +6635,7 @@ sap.ui.define([
 
 		bRefreshAfterChange = this._getRefreshAfterChange(undefined, sGroupId);
 
-		if (oEntry.__metadata.created && !oEntry.__metadata.created.functionImport) {
-			oContextToActivate = this.oCreatedContextsCache.findCreatedContext(sResolvedPath);
-			if (oContextToActivate) {
-				oContextToActivate.activate();
-			}
-		}
-		this.oMetadata.loaded().then(function () {
+		oRequestQueueingPromise.then(function () {
 			oRequestHandle = {
 				abort: function() {
 					oRequest._aborted = true;

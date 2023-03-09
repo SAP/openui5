@@ -93,6 +93,12 @@ sap.ui.define([
 				this.bUpdated = false;
 				// whether the context is inactive
 				this.bInactive = !!bInactive;
+				// the function to start activation of this context (which may be prevented by apps)
+				this.fnStartActivation = undefined;
+				// the promise on activation start of this context
+				this.oStartActivationPromise = bInactive
+					? new SyncPromise(function (resolve) { that.fnStartActivation = resolve; })
+					: SyncPromise.resolve();
 				// the function to activate this context
 				this.fnActivate = undefined;
 				// the promise on activation of this context
@@ -105,18 +111,6 @@ sap.ui.define([
 				this.oTransientParent = oTransientParent;
 			}
 		});
-
-	/**
-	 * Activates this context.
-	 *
-	 * @private
-	 */
-	Context.prototype.activate = function () {
-		this.bInactive = false;
-		if (this.fnActivate) {
-			this.fnActivate();
-		}
-	};
 
 	/**
 	 * Adds the given transient context as sub-context to this transient context under the given
@@ -136,6 +130,17 @@ sap.ui.define([
 		} else {
 			this.mSubContexts[sNavProperty] = oSubContext;
 		}
+	};
+
+	/**
+	 * Cancels activation of this inactive context. A new activation promise is created.
+	 *
+	 * @private
+	 */
+	Context.prototype.cancelActivation = function () {
+		var that = this;
+
+		this.oStartActivationPromise = new SyncPromise(function (resolve) { that.fnStartActivation = resolve; });
 	};
 
 	/**
@@ -263,6 +268,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the promise which resolves with <code>undefined</code> when activation of this context is started
+	 * or if this context is already active; the promise never rejects.
+	 *
+	 * @returns {sap.ui.base.SyncPromise} The promise on activation start of this context
+	 *
+	 * @private
+	 */
+	Context.prototype.fetchActivationStarted = function () {
+		return this.oStartActivationPromise;
+	};
+
+	/**
+	 * Finishes activation of this context.
+	 *
+	 * @private
+	 */
+	Context.prototype.finishActivation = function () {
+		this.bInactive = false;
+		if (this.fnActivate) {
+			this.fnActivate();
+		}
+	};
+
+	/**
 	 * Gets the absolute deep path including all intermediate paths of the binding hierarchy. This
 	 * path is used to compute the full target of messages.
 	 *
@@ -380,11 +409,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether this context is inactive. An inactive context will only be sent to the
-	 * server after the first property update. From then on it behaves like any other created
-	 * context. The result of this function can also be accessed via the
-	 * "@$ui5.context.isInactive" instance annotation at the entity, see
-	 * {@link sap.ui.model.odata.v2.ODataModel#getProperty} for details.
+	 * Returns whether this context is inactive. An inactive context will not be sent to the
+	 * server until it is activated. From then on it behaves like any other created context.
+	 * The result of this function can also be accessed via the "@$ui5.context.isInactive" instance
+	 * annotation at the entity, see {@link sap.ui.model.odata.v2.ODataModel#getProperty} for details.
 	 *
 	 * @return {boolean} Whether this context is inactive
 	 *
@@ -551,6 +579,18 @@ sap.ui.define([
 	 */
 	Context.prototype.setUpdated = function (bUpdated) {
 		this.bUpdated = bUpdated;
+	};
+
+	/**
+	 * Starts activation of this inactive context. The promise returned by {@link #fetchActivationStarted}
+	 * is resolved.
+	 *
+	 * @private
+	 */
+	Context.prototype.startActivation = function () {
+		if (this.fnStartActivation) {
+			this.fnStartActivation();
+		}
 	};
 
 	return Context;

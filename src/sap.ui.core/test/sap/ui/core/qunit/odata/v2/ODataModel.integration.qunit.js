@@ -14029,11 +14029,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test: activate by edit
 			oTable.getRows()[1].getCells()[1].setValue("ACME");
 
+			return that.waitForChanges(assert);
+		}).then(function () {
 			// code under test: Scenario 3
 			assert.strictEqual(oTable.getBinding("rows").getCount(), 2);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
 			// evaluate Scenario 2
 			assert.strictEqual(iCreateActivateCalled, 1);
 
@@ -19173,6 +19173,127 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// if context is still "updated", further dependent bindings will continuously send read requests
 			// as they assume a change: an "endless loop of $batch"
 			assert.strictEqual(oObjectPage.getObjectBinding().getBoundContext().isUpdated(), false);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: On creation of an inactive entity, it remains inactive as long as a createActivate event handler
+	// cancels the event. The corresponding edit is considered a pending change: ODataModel#resetChanges resets it,
+	// ODataModel#hasPendingChanges returns true; there must however be no POST request on ODataModel#submitChanges.
+	// A following not cancelled createActivate event on the inactive entity activates the context; submitChanges
+	// triggers a POST request.
+	// JIRA: CPOUI5MODELS-940
+	QUnit.test("Create inactive entity and cancel activation", function (assert) {
+		var oCreatedContext, oTable,
+			bCancelCreateActivate = true,
+			iCreateActivateCalled = 0,
+			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+	<Input id="company" value="{CompanyName}"/>\
+	<Input id="mail" value="{EmailAddress}"/>\
+</t:Table>',
+			that = this;
+
+		function onCreateActivate(oEvent) {
+			iCreateActivateCalled += 1;
+			assert.strictEqual(oEvent.getParameter("context"), oCreatedContext, "context passed to event handler");
+			assert.strictEqual(oCreatedContext.isInactive(), true, "context inactive in event handler");
+			if (bCancelCreateActivate) {
+				oEvent.preventDefault();
+			}
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {
+				results : [{
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					CompanyName : "SAP",
+					EmailAddress : "Mail0"
+				}]
+			})
+			.expectValue("id", ["42", ""])
+			.expectValue("company", ["SAP", ""])
+			.expectValue("mail", ["Mail0", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			that.expectValue("company", "Initial", 1)
+				.expectValue("mail", "Mail1", 1);
+
+			// code under test
+			oTable.getBinding("rows").attachEvent("createActivate", onCreateActivate);
+
+			oCreatedContext = oTable.getBinding("rows").create({
+				CompanyName : "Initial",
+				EmailAddress : "Mail1"
+			}, /*bAtEnd*/true, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "ACME", 1);
+
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+
+			// code under test: activation cancelled
+			oTable.getRows()[1].getCells()[1].setValue("ACME");
+
+			assert.strictEqual(oModel.hasPendingChanges(), true, "edit in still inactive context is a change");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "Initial", 1); // resetChanges => fall back to initial data
+
+			return Promise.all([
+				// code under test: resetChanges removes properties, but not still inactive row
+				oModel.resetChanges(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("company", "ACME2", 1)
+				.expectValue("mail", "Mail2", 1);
+
+			assert.strictEqual(oTable.getBinding("rows").getLength(), 2, "inactive row not removed by resetChanges");
+
+			// code under test: activation done
+			bCancelCreateActivate = false;
+			oTable.getRows()[1].getCells()[1].setValue("ACME2");
+			oTable.getRows()[1].getCells()[2].setValue("Mail2");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(iCreateActivateCalled, 2);
+			assert.strictEqual(oCreatedContext.isInactive(), false);
+
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.BusinessPartner"},
+						CompanyName : "ACME2",
+						EmailAddress : "Mail2"
+					},
+					method : "POST",
+					requestUri : "BusinessPartnerSet"
+				}, {
+					data : {
+						__metadata : {uri : "BusinessPartnerSet('43')"},
+						BusinessPartnerID : "43",
+						CompanyName : "ACME2",
+						EmailAddress : "Mail2"
+					},
+					statusCode : 201
+				})
+				.expectValue("id", "43", 1);
+
+			// code under test
+			oModel.submitChanges();
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });
