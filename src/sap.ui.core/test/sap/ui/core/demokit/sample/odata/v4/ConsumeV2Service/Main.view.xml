@@ -54,7 +54,7 @@
 			<Text id="time" text="{Time}"/>
 		</form:SimpleForm>
 		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
-			items="{path : '/EdmTypesCollection', templateShareable : false}">
+			items="{/EdmTypesCollection}">
 			<columns>
 				<Column>
 					<Text text="ID"/>

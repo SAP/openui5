@@ -126,8 +126,7 @@
 					events : {
 						dataReceived : '.onDataEvents',
 						dataRequested : '.onDataEvents'
-					},
-					templateShareable : false
+					}
 				}"
 			mode="{= ${ui>/bCreateItemPending} ? 'None' : 'SingleSelectMaster'}"
 			selectionChange="onSalesOrdersSelect">
@@ -409,16 +408,12 @@
 							$$ownRequest : true,
 							$$updateGroupId : 'SalesOrderUpdateGroup'
 						},
-						path : 'SO_2_SOITEM',
-						templateShareable : false
+						path : 'SO_2_SOITEM'
 					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
 				<dependents>
 					<plugins:DataStateIndicator/>
 				</dependents>
-				<!--Note: templateShareable has to be false in order to ensure that the
-					template is destroyed by the framework, otherwise the reuse of the template
-					(e.g. within OPA test sequence) leads to duplicate ID errors-->
 				<headerToolbar>
 					<Toolbar id="lineItemsToolbar">
 						<Title id="lineItemsTitle"
