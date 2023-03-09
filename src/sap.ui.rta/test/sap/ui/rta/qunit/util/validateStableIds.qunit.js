@@ -84,7 +84,7 @@ function (
 		});
 	});
 
-	QUnit.module("Fiori Elements Application", {
+	QUnit.module("Fiori Elements Application with extension", {
 		beforeEach: function (assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
@@ -182,7 +182,6 @@ function (
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
 		afterEach: function () {
-			// this.oComponentContainer.destroy();
 			sandbox.restore();
 		}
 	}, function () {
@@ -190,6 +189,66 @@ function (
 			assert.strictEqual(
 				validateStableIds(this.oDesignTime.getElementOverlays(), this.oComponent).length,
 				1
+			);
+		});
+	});
+
+	var mManifest = {};
+
+	QUnit.module("Fiori Elements Applications without extensions", {
+		beforeEach: function () {
+			this.aDummyOverlays = ["overlay1", "overlay2"];
+			this.oComponent = {
+				getManifest: function() {
+					return mManifest;
+				}
+			};
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("V2", function (assert) {
+			mManifest = {
+				"sap.ui.generic.app": {}
+			};
+
+			assert.strictEqual(
+				validateStableIds(this.aDummyOverlays, this.oComponent).length,
+				0,
+				"no unstable overlays returned"
+			);
+		});
+
+		QUnit.test("V4", function (assert) {
+			mManifest = {
+				"sap.ui5": {
+					dependencies: {
+						libs: {
+							dummyLibrary: {},
+							"sap.fe.templates": {},
+							anotherDummyLibrary: {}
+						}
+					}
+				}
+			};
+
+			assert.strictEqual(
+				validateStableIds(this.aDummyOverlays, this.oComponent).length,
+				0,
+				"no unstable overlays returned"
+			);
+		});
+
+		QUnit.test("OVP", function (assert) {
+			mManifest = {
+				"sap.ovp": {}
+			};
+
+			assert.strictEqual(
+				validateStableIds(this.aDummyOverlays, this.oComponent).length,
+				0,
+				"no unstable overlays returned"
 			);
 		});
 	});

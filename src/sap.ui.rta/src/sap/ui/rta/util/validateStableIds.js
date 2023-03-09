@@ -20,9 +20,12 @@ sap.ui.define([
 	"use strict";
 
 	function isFioriElementsApp(oComponent) {
-		var oManifest = oComponent.getManifest();
+		var mManifest = oComponent.getManifest();
 
-		return ObjectPath.get(["sap.ui.generic.app"], oManifest);
+		var isV4 = !!ObjectPath.get(["sap.ui5", "dependencies", "libs", "sap.fe.templates"], mManifest);
+		var isV2 = !!ObjectPath.get(["sap.ui.generic.app"], mManifest);
+		var isOVP = !!ObjectPath.get(["sap.ovp"], mManifest);
+		return isV2 || isV4 || isOVP;
 	}
 
 	function getFioriElementsExtensions(oComponent) {
