@@ -825,7 +825,7 @@
 						</mdc:items>
 					</mdc:Chart>
 
-					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate='\{"name": "sap/ui/v4demo/delegate/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" enableAutoColumnWidth="true">
+					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter', 'Group']}" delegate='\{"name": "sap/ui/v4demo/delegate/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" enableAutoColumnWidth="true">
 						<mdc:actions>
 							<mdcat:ActionToolbarAction id="tableAction1">
 								<Button type="Emphasized" text="Dummy Action" id="tableButton1" />
