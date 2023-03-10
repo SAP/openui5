@@ -659,6 +659,77 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("and changes in 'delete' state are returned by condenser - local reset case", function (assert) {
+			var aAllChanges = createChangesAndSetState(["delete", "delete", "delete"]);
+			aAllChanges[0].setState(States.LifecycleState.DELETED);
+			aAllChanges[1].setState(States.LifecycleState.DELETED);
+			aAllChanges[2].setState(States.LifecycleState.DELETED);
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [],
+				reference: "reference"
+			};
+
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: ["c0", "c1", "c2"]
+				}
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense");
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+			});
+		});
+
+		QUnit.test("and changes in 'delete' state are returned by condenser - local reset together with other changes", function (assert) {
+			var aAllChanges = createChangesAndSetState(["delete", "delete", "update", "select"]);
+			aAllChanges[0].setState(States.LifecycleState.DELETED);
+			aAllChanges[1].setState(States.LifecycleState.DELETED);
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[2], aAllChanges[3]],
+				reference: "reference"
+			};
+
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: ["c0", "c1"]
+				},
+				update: {
+					change: [
+						{c2: {
+							content: {
+								prop: "some Content 2"
+							}}
+						}
+					]
+				},
+				create: {
+					change: [
+						{
+							c3: aAllChanges[3].convertToFileContent()
+						}
+					]
+				}
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense");
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+			});
+		});
+
 		QUnit.test("and the changes are updated by condenser", function (assert) {
 			var aAllChanges = createChangesAndSetState(["update", "update", "select"]);
 			var mCondenseExpected = {

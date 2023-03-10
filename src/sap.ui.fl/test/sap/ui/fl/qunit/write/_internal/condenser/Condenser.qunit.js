@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -27,6 +28,7 @@ sap.ui.define([
 	ChangeHandlerStorage,
 	Condenser,
 	Layer,
+	LocalResetAPI,
 	sinon
 ) {
 	"use strict";
@@ -179,11 +181,15 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			this.aChanges = [];
+			this.bSkipRevertOnEnd = false;
 		},
 		afterEach: function() {
-			return revertMultipleChanges(this.aChanges).then(function() {
-				sandbox.restore();
-			});
+			if (!this.bSkipRevertOnEnd) {
+				return revertMultipleChanges(this.aChanges).then(function() {
+					sandbox.restore();
+				});
+			}
+			return sandbox.restore();
 		},
 		after: function() {
 			oAppComponent.destroy();
@@ -216,6 +222,22 @@ sap.ui.define([
 					assert.ok(aRemainingChanges.includes(oFailedChange), "then the failed change is not condensed");
 					assert.strictEqual(aRemainingChanges.length, 4, "then there is one more remaining change");
 				});
+		});
+
+		QUnit.test("rename changes, then trigger condensing while another variant is active (= changes are reverted)", function(assert) {
+			var aChanges;
+			return loadChangesFromPath("renameChanges.json", assert, 9).then(function(aLoadedChanges) {
+				this.aChanges = this.aChanges.concat(aLoadedChanges);
+				aChanges = aLoadedChanges.splice(0);
+				return applyChangeSequentially(aChanges);
+			}.bind(this)).then(function() {
+				// Simulate changing the active variant - revert the applied changes
+				this.bSkipRevertOnEnd = true;
+				return revertMultipleChanges(this.aChanges)
+					.then(Condenser.condense.bind(this, oAppComponent, aChanges));
+			}.bind(this)).then(function(aRemainingChanges) {
+				assert.strictEqual(aRemainingChanges.length, 9, "Reverted changes are not condensed");
+			});
 		});
 
 		QUnit.test("multiple hide changes on the same control", function(assert) {
@@ -334,7 +356,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("move and add within one group", function(assert) {
-			return loadApplyCondenseChanges.call(this, "addMoveNoCondensePossible.json", 3, 2, assert)
+			return loadApplyCondenseChanges.call(this, "addMoveSameGroup.json", 3, 2, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
 				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
@@ -348,6 +370,31 @@ sap.ui.define([
 				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 2) + sComplexProperty01FieldId);
 				assert.strictEqual(aFirstGroupElements[3].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 3) + sNameFieldId);
 			});
+		});
+
+		QUnit.test("move and add within one group, then do a local reset (= delete all changes)", function(assert) {
+			return loadApplyCondenseChanges.call(this, "addMoveSameGroup.json", 3, 2, assert, [0, 1, 2])
+			.then(function() {
+				this.bSkipRevertOnEnd = true;
+				return LocalResetAPI.resetChanges(this.aChanges, oAppComponent);
+			}.bind(this))
+			.then(function() {
+				return Condenser.condense(oAppComponent, this.aChanges);
+			}.bind(this))
+			.then(function(aRemainingChanges) {
+				assert.notOk(aRemainingChanges.length, "then the condenser does not return any changes after local reset");
+				this.aChanges.forEach(function(oChange) {
+					assert.strictEqual(oChange.condenserState, "delete", "then each change is marked for deletion by the condenser after local reset");
+				});
+				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
+				var aGroups = oSmartForm.getGroups();
+				var aFirstGroupElements = aGroups[0].getGroupElements();
+				// Initial UI = Final UI [ Name, Victim, Code ]
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
+				assert.notOk(aFirstGroupElements[3], "new field is not on UI");
+			}.bind(this));
 		});
 
 		QUnit.test("move within one group", function(assert) {

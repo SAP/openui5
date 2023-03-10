@@ -604,10 +604,9 @@ sap.ui.define([
 		return aPersistedAndSameLayerChanges.concat(aDirtyChanges);
 	}
 
-	function canSingleRequestBeUsed(aDirtyChanges) {
+	function checkLayerAndSingleTransportRequest(aDirtyChanges) {
 		if (aDirtyChanges.length) {
 			var aRequests = getRequests(aDirtyChanges);
-			var aStates = getStates(aDirtyChanges);
 			var bCheckLayer = true;
 			if (Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().hasPersoConnector()) {
 				// Created public fl-Variant as default variant will created public and user changes
@@ -615,9 +614,43 @@ sap.ui.define([
 				var aLayers = getLayers(aDirtyChanges);
 				bCheckLayer = aLayers.length === 1;
 			}
-			return aStates.length === 1 && aRequests.length === 1 && aStates[0] === States.LifecycleState.NEW && bCheckLayer;
+			return aRequests.length === 1 && bCheckLayer;
 		}
 		return true;
+	}
+
+	function executeWriteAndRemoveCalls(sCurrentLayer, sRequest, sParentVersion, bSkipUpdateCache, aAllChanges, aCondensedChanges) {
+		var aCondensedDeleteChanges = [];
+		var pRemoveCallsPromise = Promise.resolve();
+		var aNewChanges = aCondensedChanges.filter(function(oCondensedChange) {
+			if (oCondensedChange.getState() === States.LifecycleState.DELETED) {
+				aCondensedDeleteChanges.push(oCondensedChange);
+				return false;
+			}
+			return true;
+		});
+
+		// "remove" only supports a single change; multiple calls are required
+		if (aCondensedDeleteChanges.length) {
+			pRemoveCallsPromise = this.saveSequenceOfDirtyChanges(aCondensedDeleteChanges, bSkipUpdateCache, sParentVersion);
+		}
+
+		// "write" supports multiple changes at once
+		return pRemoveCallsPromise.then(function() {
+			if (aNewChanges.length) {
+				return Storage.write({
+					layer: sCurrentLayer,
+					flexObjects: prepareDirtyChanges(aNewChanges),
+					transport: sRequest,
+					isLegacyVariant: false,
+					parentVersion: sParentVersion
+				}).then(function(oResponse) {
+					updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aNewChanges, bSkipUpdateCache);
+					return oResponse;
+				}.bind(this));
+			}
+			return this._deleteNotSavedChanges(aAllChanges, aCondensedChanges);
+		}.bind(this));
 	}
 
 	/**
@@ -649,7 +682,8 @@ sap.ui.define([
 		var aChangesClone = aAllChanges.slice(0);
 		var aRequests = getRequests(aDirtyChanges);
 
-		if (canSingleRequestBeUsed(aDirtyChanges)) {
+		// Condensing is only allowed if all dirty changes belong to the same Transport Request
+		if (checkLayerAndSingleTransportRequest(aDirtyChanges)) {
 			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
 			if (canGivenChangesBeCondensed(oAppComponent, aChangesClone, bCondenseAnyLayer)) {
 				oCondensedChangesPromise = Condenser.condense(oAppComponent, aChangesClone);
@@ -669,22 +703,10 @@ sap.ui.define([
 						return oResponse;
 					}.bind(this));
 				}
-				if (aCondensedChanges.length) {
-					return Storage.write({
-						layer: sCurrentLayer,
-						flexObjects: prepareDirtyChanges(aCondensedChanges),
-						transport: sRequest,
-						isLegacyVariant: false,
-						parentVersion: sParentVersion
-					}).then(function(oResponse) {
-						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache);
-						return oResponse;
-					}.bind(this));
-				}
-				this._deleteNotSavedChanges(aAllChanges, aCondensedChanges);
+				// Non-condensing route
+				return executeWriteAndRemoveCalls.call(this, sCurrentLayer, sRequest, sParentVersion, bSkipUpdateCache, aAllChanges, aCondensedChanges);
 			}.bind(this));
 		}
-
 		return this.saveSequenceOfDirtyChanges(aDirtyChanges, bSkipUpdateCache, sParentVersion);
 	};
 
@@ -737,6 +759,7 @@ sap.ui.define([
 					parentVersion: sParentVersion
 				});
 			default:
+				return Promise.resolve();
 		}
 	}
 
@@ -798,19 +821,6 @@ sap.ui.define([
 		});
 
 		return aRequests;
-	}
-
-	function getStates(aDirtyChanges) {
-		var aStates = [];
-
-		aDirtyChanges.forEach(function(oChange) {
-			var sState = oChange.getState();
-			if (aStates.indexOf(sState) === -1) {
-				aStates.push(sState);
-			}
-		});
-
-		return aStates;
 	}
 
 	function getLayers(aDirtyChanges) {

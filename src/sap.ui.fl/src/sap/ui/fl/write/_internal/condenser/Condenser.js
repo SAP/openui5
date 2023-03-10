@@ -544,11 +544,18 @@ sap.ui.define([
 		var aAllIndexRelatedChanges = [];
 
 		// filter out objects which are not of type change, e.g. Variants, AppVariants, AppVariantInlineChange
+		// or are not applied (e.g. not part of the active variant) or were deleted
 		var aNotCondensableChanges = [];
 		var aCondensableChanges = [];
 		aChanges.slice(0).reverse().forEach(function(oChange) {
-			if (oChange instanceof UIChange && oChange.isSuccessfullyApplied()) {
-				aCondensableChanges.push(oChange);
+			if (oChange instanceof UIChange) {
+				if (oChange.getState() === States.LifecycleState.DELETED) {
+					oChange.condenserState = "delete";
+				} else if (oChange.isSuccessfullyApplied()) {
+					aCondensableChanges.push(oChange);
+				} else {
+					aNotCondensableChanges.push(oChange);
+				}
 			} else {
 				aNotCondensableChanges.push(oChange);
 			}
