@@ -185,7 +185,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes the OData entity this context points to.
+	 * Deletes the OData entity this context points to. Persisted contexts are only removed from the UI after their
+	 * successful deletion in the back end. In this case, the <code>Promise</code> returned by this method is only
+	 * resolved when the back-end request has been successful.
+	 * <b>Example:</b> A persisted entry in a table control is deleted by this method. It remains visible on the UI and
+	 * only disappears upon successful deletion in the back end.
 	 * <b>Note:</b> The context must not be used anymore after successful deletion.
 	 *
 	 * @param {object} [mParameters]
