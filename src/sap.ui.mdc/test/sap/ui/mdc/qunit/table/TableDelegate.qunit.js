@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/library",
-	"../QUnitUtils",
+	"./QUnitUtils",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/model/Filter",
@@ -17,7 +17,7 @@ sap.ui.define([
 	Text,
 	Table,
 	library,
-	MDCQUnitUtils,
+	TableQUnitUtils,
 	Core,
 	coreLibrary,
 	Filter,
@@ -41,7 +41,7 @@ sap.ui.define([
 
 	QUnit.module("API", {
 		before: function() {
-			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
 				path: "Name_Path",
 				label: "Name_Label",
@@ -93,7 +93,7 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		after: function() {
-			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		}
 	});
 
@@ -114,7 +114,7 @@ sap.ui.define([
 	QUnit.test("updateBindingInfo", function(assert) {
 		var oTable = this.oTable;
 
-		return MDCQUnitUtils.waitForBindingInfo(oTable).then(function() {
+		return TableQUnitUtils.waitForBindingInfo(oTable).then(function() {
 			oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
 			oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 			oTable.rebind();

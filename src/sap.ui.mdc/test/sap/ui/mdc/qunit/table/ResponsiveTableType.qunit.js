@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Text",
 	"sap/ui/core/Icon",
-	"../QUnitUtils",
+	"./QUnitUtils",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/model/json/JSONModel",
@@ -15,7 +15,7 @@ sap.ui.define([
 	Core,
 	Text,
 	Icon,
-	MDCQUnitUtils,
+	TableQUnitUtils,
 	Table,
 	Column,
 	JSONModel,
@@ -139,7 +139,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		return oTable._fullyInitialized().then(function () {
-			return MDCQUnitUtils.waitForBindingInfo(oTable);
+			return TableQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function () {
 			var aColumns = oTable._oTable.getColumns();
 

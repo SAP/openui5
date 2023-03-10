@@ -17,7 +17,6 @@ sap.ui.define([
 	'sap/base/util/merge',
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"../QUnitUtils",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler"
 ], function (
 	QUnitUtils,
@@ -34,7 +33,6 @@ sap.ui.define([
 	merge,
 	CoreLibrary,
 	oCore,
-	MDCQUnitUtils,
 	TestModificationHandler
 ) {
 	"use strict";
@@ -314,7 +312,6 @@ sap.ui.define([
 		},
 		destroyTestObjects: function() {
 			oFilterBar.destroy();
-			MDCQUnitUtils.restorePropertyInfos(oFilterBar);
 		}
 	});
 

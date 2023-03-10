@@ -114,8 +114,8 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				group: "Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/link/testsuite.link.qunit.html"
 			},
-			"MDCTable Testsuite": {
-				title: "MDCTable Testsuite",
+			"Table Testsuite": {
+				title: "Table Testsuite",
 				group: "Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/table/testsuite.table.qunit.html"
 			},

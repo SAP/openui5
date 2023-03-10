@@ -90,10 +90,6 @@ sap.ui.define([
 						title: sTitle,
 						close: function(oEvt){
 
-							if (mSettings.close instanceof Function) {
-								mSettings.close(oEvt);
-							}
-
 							var sReason = oEvt.getParameter("reason");
 							if (sReason == "Ok") {
 								that.oAdaptationProvider.handleP13n(oControl, aPanelKeys);
@@ -108,6 +104,9 @@ sap.ui.define([
 
 							that.setActiveP13n(oControl, null);
 							oP13nContainer._oPopup.attachAfterClose(function(){
+								if (mSettings.close instanceof Function) {
+									mSettings.close();
+								}
 								oP13nContainer.destroy();
 							});
 						},

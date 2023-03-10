@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/odata/v4/TableDelegate",
 	"sap/ui/mdc/library",
-	"../../QUnitUtils",
+	"../../table/QUnitUtils",
 	"../../util/createAppEnvironment",
 	"sap/m/Text",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -19,7 +19,7 @@ sap.ui.define([
 	Column,
 	TableDelegate,
 	Library,
-	MDCQUnitUtils,
+	TableQUnitUtils,
 	createAppEnvironment,
 	Text,
 	ControlPersonalizationWriteAPI,
@@ -88,15 +88,6 @@ sap.ui.define([
 		});
 
 		return sType === "QuickAction" ? aQuickActions : aQuickActions[0];
-	}
-
-	function openColumnMenu(oTable, iColumnIndex) {
-		var oColumn = oTable._oTable.getColumns()[iColumnIndex];
-		Core.byId(oColumn.getHeaderMenu()).openBy(oColumn);
-
-		return oTable._fullyInitialized().then(function() {
-			return oTable.propertiesFinalized();
-		});
 	}
 
 	QUnit.module("Initialization", {
@@ -307,7 +298,7 @@ sap.ui.define([
 
 	QUnit.module("Basic functionality with JsControlTreeModifier", {
 		before: function() {
-			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
 				label: "Name",
 				path: "Name",
@@ -348,7 +339,7 @@ sap.ui.define([
 			this.destroyTestObjects();
 		},
 		after: function() {
-			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
 			return createAppEnvironment(sTableView1, "Table").then(function(mCreatedApp){
@@ -401,7 +392,7 @@ sap.ui.define([
 				search: undefined
 			}), "Plugin#setAggregationInfo call");
 
-			return openColumnMenu(oTable, 0);
+			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup");
 			assert.ok(oQuickAction, "The first column has a quick group");
@@ -409,7 +400,7 @@ sap.ui.define([
 			oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal");
 			assert.ok(oQuickAction, "The first column has a quick total");
 
-			return openColumnMenu(oTable, 2);
+			return TableQUnitUtils.openColumnMenu(oTable, 2);
 		}).then(function() {
 			oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup");
 			assert.strictEqual(oQuickAction.getItems().length, 2, "The last column has complex property with list of two items");
@@ -466,7 +457,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
-			return openColumnMenu(oTable, 0);
+			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			 oTable._fullyInitialized().then(function() {
 				var oPlugin = oTable._oTable.getDependents()[0];
@@ -505,7 +496,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
-			return openColumnMenu(oTable, 1);
+			return TableQUnitUtils.openColumnMenu(oTable, 1);
 		}).then(function() {
 			oTable._fullyInitialized().then(function() {
 				var oDelegate = oTable.getControlDelegate();
@@ -544,7 +535,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
-			return openColumnMenu(oTable, 0);
+			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			var oDelegate = oTable.getControlDelegate();
 			var oPlugin = oTable._oTable.getDependents()[0];
@@ -569,7 +560,7 @@ sap.ui.define([
 				fSetAggregationSpy.restore();
 				oDelegate.rebind = fnRebind;
 
-				openColumnMenu(oTable, 1).then(function() {
+				TableQUnitUtils.openColumnMenu(oTable, 1).then(function() {
 					var oDelegate = oTable.getControlDelegate();
 					var oPlugin = oTable._oTable.getDependents()[0];
 					var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
@@ -611,7 +602,7 @@ sap.ui.define([
 		var oDelegate, oPlugin, fSetAggregationSpy, fnRebind;
 
 		return oTable._fullyInitialized().then(function() {
-			return openColumnMenu(oTable, 0);
+			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			oDelegate = oTable.getControlDelegate();
 			oPlugin = oTable._oTable.getDependents()[0];
@@ -643,7 +634,7 @@ sap.ui.define([
 			});
 
 		}).then(function() {
-			return openColumnMenu(oTable, 0);
+			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			fSetAggregationSpy.reset();
 
@@ -844,7 +835,7 @@ sap.ui.define([
 
 	QUnit.module("Tests with specific propertyInfos", {
 		before: function() {
-			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
 				label: "Name",
 				path: "Name",
@@ -874,7 +865,7 @@ sap.ui.define([
 			this.destroyTestObjects();
 		},
 		after: function() {
-			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
 			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp){
@@ -899,7 +890,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			return openColumnMenu(oTable, 0);
+			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			assert.ok(getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup"), "The first column has group menu item");
 			assert.notOk(getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal"), "The first column doesn't have an aggregate menu item");
@@ -908,7 +899,7 @@ sap.ui.define([
 
 	QUnit.module("Column state to plugin", {
 		before: function() {
-			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [
 				{name: "CountryKey", path: "Country", label: "CountryKey", groupable: true, text: "CountryText"},
 				{name: "CountryText", path: "CountryText", label: "CountryText", groupable: true},
 				{name: "CountryKeyAndText", label: "CountryKey+CountryText", propertyInfos: ["CountryKey", "CountryText"]},
@@ -990,7 +981,7 @@ sap.ui.define([
 			this.destroyTestObjects();
 		},
 		after: function() {
-			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
 			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp){
@@ -1131,7 +1122,7 @@ sap.ui.define([
 				fnOriginalUpdateBindingInfo(oTable, oBindingInfo);
 				oBindingInfo.parameters["$search"] = "Name";
 			};
-			return MDCQUnitUtils.waitForBindingInfo(oTable);
+			return TableQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function() {
 			var oPlugin = oTable._oTable.getDependents()[0];
 			var oBindRowsSpy = sinon.spy(oTable._oTable, "bindRows");
@@ -1167,7 +1158,7 @@ sap.ui.define([
 
 	QUnit.module("#updateBinding", {
 		before: function() {
-			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
 				path: "Name",
 				label: "Name",
@@ -1225,7 +1216,7 @@ sap.ui.define([
 			this.oClearSelectionSpy.restore();
 		},
 		after: function() {
-			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		}
 	});
 

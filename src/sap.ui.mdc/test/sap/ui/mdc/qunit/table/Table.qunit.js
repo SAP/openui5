@@ -2,7 +2,7 @@
 // These are some globals generated due to fl (signals, hasher) and m (hyphenation) libs.
 
 sap.ui.define([
-	"../QUnitUtils",
+	"./QUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
+	"sap/ui/mdc/table/utils/Personalization",
 	"sap/ui/mdc/FilterBar",
 	"sap/m/Text",
 	"sap/m/Button",
@@ -20,7 +21,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/mdc/table/TableSettings",
 	"sap/ui/Device",
 	"sap/m/VBox",
 	"sap/m/Link",
@@ -49,7 +49,7 @@ sap.ui.define([
 	"sap/base/util/Deferred",
 	"sap/ui/base/ManagedObjectObserver"
 ], function(
-	MDCQUnitUtils,
+	TableQUnitUtils,
 	QUtils,
 	KeyCodes,
 	Core,
@@ -58,6 +58,7 @@ sap.ui.define([
 	Column,
 	GridTableType,
 	ResponsiveTableType,
+	PersonalizationUtils,
 	FilterBar,
 	Text,
 	Button,
@@ -67,7 +68,6 @@ sap.ui.define([
 	JSONModel,
 	UI5Event,
 	containsOrEquals,
-	TableSettings,
 	Device,
 	VBox,
 	Link,
@@ -217,7 +217,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
+			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
@@ -381,7 +381,7 @@ sap.ui.define([
 			return oWaitForChanges.promise;
 		}).then(function() {
 			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after changes have been applied");
-			return MDCQUnitUtils.waitForBindingInfo(oTable);
+			return TableQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function() {
 			assert.ok(oTable._oTable.isBound("rows"), "Table is bound");
 		}).finally(function() {
@@ -405,7 +405,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(oRebindSpy.notCalled, "Table#rebind not called after property finalization");
 		}).then(function() {
-			return MDCQUnitUtils.waitForBindingInfo(oTable);
+			return TableQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function() {
 			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after initialization");
 			assert.ok(oTable._oTable.isBound("rows"), "Table is bound");
@@ -637,7 +637,7 @@ sap.ui.define([
 		});
 
 		return this.oTable._fullyInitialized().then(function() {
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			assert.ok(this.oTable._oTable.isBound("items"));
 			assert.strictEqual(this.oTable._oTable.getBindingInfo("items").path, "/testPath");
@@ -724,7 +724,7 @@ sap.ui.define([
 			})
 		});
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "column1",
 				path: "column1",
@@ -748,7 +748,7 @@ sap.ui.define([
 					{name: "column1"}
 				]
 			});
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var aItems = this.oTable._oTable.getItems();
 			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "Grouping applied as expected");
@@ -985,7 +985,7 @@ sap.ui.define([
 		});
 
 		return this.oTable._fullyInitialized().then(function() {
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
 			var fDataReceived = oBindingInfo.events["dataReceived"];
@@ -1040,7 +1040,7 @@ sap.ui.define([
 					dataReceived: fCustomDataReceived
 				};
 			};
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRowBinding = sinon.createStubInstance(ODataListBinding);
 
@@ -1200,7 +1200,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
 				path: "name",
@@ -1241,7 +1241,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
 				label: "name",
@@ -1280,7 +1280,7 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
 				path: "name",
@@ -1327,16 +1327,13 @@ sap.ui.define([
 			dataProperty: "age"
 		}));
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "name",
-				label: "name"
-			},
-			{
-				name: "age",
-				label: "age"
-			}
-		]);
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
+			name: "name",
+			label: "name"
+		}, {
+			name: "age",
+			label: "age"
+		}]);
 
 		this.oTable.initialized().then(function() {
 			oTable.setSortConditions({
@@ -1360,7 +1357,10 @@ sap.ui.define([
 				};
 				this.oTable.getEngine()._setModificationHandler(this.oTable, oTestModificationHandler);
 
-				TableSettings.createSort(oTable, "name", false, true);
+				PersonalizationUtils.createSortChange(oTable, {
+					property: "name",
+					sortOrder: "Ascending"
+				});
 
 			}.bind(this));
 
@@ -1523,7 +1523,7 @@ sap.ui.define([
 				invalidateSpy.resetHistory();
 
 				var oNoData = new IllustratedMessage();
-				var fnOpenTableSettingsStub = sinon.stub(TableSettings, "showPanel");
+				var fnOpenSettingsDialogStub = sinon.stub(PersonalizationUtils, "openSettingsDialog");
 				this.oTable.setNoData(oNoData);
 
 				assert.ok(setNoDataSpy.returned(this.oTable));
@@ -1535,9 +1535,9 @@ sap.ui.define([
 				assert.notOk(this.oTable._oTable.getAggregation("_noColumnsMessage").getEnableVerticalResponsiveness());
 
 				this.oTable._oTable.getAggregation("_noColumnsMessage").getAdditionalContent()[0].firePress();
-				assert.ok(fnOpenTableSettingsStub.calledOnce);
-				assert.ok(fnOpenTableSettingsStub.calledWith(this.oTable, "Columns"));
-				fnOpenTableSettingsStub.restore();
+				assert.ok(fnOpenSettingsDialogStub.calledOnce);
+				assert.ok(fnOpenSettingsDialogStub.calledWith(this.oTable));
+				fnOpenSettingsDialogStub.restore();
 
 				oNoData.setTitle("Title");
 				oNoData.setDescription("Description");
@@ -1671,12 +1671,15 @@ sap.ui.define([
 
 	QUnit.test("rearrange columns", function(assert) {
 		var done = assert.async();
-		var fMoveColumnSpy = sinon.spy(TableSettings, "moveColumn");
+		var oCreateColumnReordeChangeSpy = sinon.spy(PersonalizationUtils, "createColumnReorderChange");
 		//move from 0 --> 1
 		fnRearrangeTest.bind(this)(0, 1).then(function() {
-			assert.ok(fMoveColumnSpy.calledOnce);
-			assert.ok(fMoveColumnSpy.calledWithExactly(this.oTable, this.oTable.getColumns()[0], 1));
-			fMoveColumnSpy.restore();
+			assert.ok(oCreateColumnReordeChangeSpy.calledOnce);
+			assert.ok(oCreateColumnReordeChangeSpy.calledWithExactly(this.oTable, {
+				column: this.oTable.getColumns()[0],
+				index: 1
+			}));
+			oCreateColumnReordeChangeSpy.restore();
 			done();
 		}.bind(this));
 	});
@@ -2376,7 +2379,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("noDataAggregation - Table with FilterBar and not bound", function(assert) {
+	QUnit.test("noData aggregation - Table with FilterBar and not bound", function(assert) {
 		this.oTable.setAutoBindOnInit(false);
 		this.oTable.setNoData(new IllustratedMessage());
 
@@ -2414,7 +2417,7 @@ sap.ui.define([
 	QUnit.test("noDataText - Table with FilterBar without any filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilter(new FilterBar());
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"),
@@ -2426,7 +2429,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilter(new FilterBar());
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
@@ -2440,7 +2443,7 @@ sap.ui.define([
 			var oFilterBar = new FilterBar("FB1");
 			sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: "EQ", values: ["Pr"]}]});
 			this.oTable.setFilter(oFilterBar);
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
@@ -2454,7 +2457,7 @@ sap.ui.define([
 			var oFilterBar = new FilterBar("FB2");
 			sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: "EQ", values: ["Pr"]}]});
 			this.oTable.setFilter(oFilterBar);
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
@@ -2468,7 +2471,7 @@ sap.ui.define([
 	QUnit.test("noDataText - Table without FilterBar but with internal filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available'");
@@ -2479,7 +2482,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available'");
@@ -2488,7 +2491,7 @@ sap.ui.define([
 
 	QUnit.test("noDataText - Table without FilterBar and internal filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
@@ -2498,7 +2501,7 @@ sap.ui.define([
 	QUnit.test("noDataAggregation - Table without FilterBar and internal filters and the table is bound", function(assert) {
 		this.oTable.setNoData(new IllustratedMessage());
 		return this.oTable._fullyInitialized().then(function() {
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
@@ -2509,7 +2512,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl();
 			this.oTable.setFilter(oFilterControl);
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"),
@@ -2522,7 +2525,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl();
 			this.oTable.setFilter(oFilterControl);
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
@@ -2536,7 +2539,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
 			this.oTable.setFilter(oFilterControl);
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
@@ -2549,7 +2552,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
 			this.oTable.setFilter(oFilterControl);
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
@@ -2564,7 +2567,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
 			this.oTable.setFilter(oFilterControl);
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
+			return TableQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), "NoData Title");
 			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), "NoData Description");
@@ -2984,7 +2987,7 @@ sap.ui.define([
 		});
 
 		oTable.initialized().then(function() {
-			MDCQUnitUtils.stubPropertyInfos(oTable, [
+			TableQUnitUtils.stubPropertyInfos(oTable, [
 				{
 					name: "SampleField",
 					path: "SampleField",
@@ -3269,7 +3272,7 @@ sap.ui.define([
 			}
 		];
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "firstName",
 				path: "firstName",
@@ -3362,31 +3365,31 @@ sap.ui.define([
 			this.oTable.setP13nMode(["Column", "Sort"]);
 			Core.applyChanges();
 
-			var oTableSettingsShowPanelStub = sinon.stub(TableSettings, "showPanel");
+			var oOpenSettingsDialogStub = sinon.stub(PersonalizationUtils, "openSettingsDialog");
 
 			this.oTable._oP13nButton.firePress();
-			assert.ok(oTableSettingsShowPanelStub.calledOnceWithExactly(this.oTable, "Columns"), "TableSettings.showPanel called");
-			oTableSettingsShowPanelStub.reset();
+			assert.ok(oOpenSettingsDialogStub.calledOnceWithExactly(this.oTable), "utils.Personalization.openSettingsDialog called");
+			oOpenSettingsDialogStub.reset();
 
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
-			assert.ok(oTableSettingsShowPanelStub.calledOnceWithExactly(this.oTable, "Columns"), "TableSettings.showPanel called");
-			oTableSettingsShowPanelStub.reset();
+			assert.ok(oOpenSettingsDialogStub.calledOnceWithExactly(this.oTable), "utils.Personalization.openSettingsDialog called");
+			oOpenSettingsDialogStub.reset();
 
 			this.oTable._setShowP13nButton(false);
 			Core.applyChanges();
 
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
-			assert.ok(oTableSettingsShowPanelStub.notCalled, "TableSettings.showPanel not called");
-			oTableSettingsShowPanelStub.reset();
+			assert.ok(oOpenSettingsDialogStub.notCalled, "utils.Personalization.openSettingsDialog not called");
+			oOpenSettingsDialogStub.reset();
 
 			this.oTable.setP13nMode([]);
 			this.oTable._setShowP13nButton(true);
 			Core.applyChanges();
 
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
-			assert.ok(oTableSettingsShowPanelStub.notCalled, "TableSettings.showPanel not called");
+			assert.ok(oOpenSettingsDialogStub.notCalled, "utils.Personalization.openSettingsDialog not called");
 
-			oTableSettingsShowPanelStub.restore();
+			oOpenSettingsDialogStub.restore();
 		}.bind(this));
 	});
 
@@ -3769,7 +3772,7 @@ sap.ui.define([
 			required: true
 		}));
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "firstName",
 				path: "firstName",
@@ -3950,7 +3953,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test enableAutoColumnWidth for TreeTable type columns", function(assert) {
-		MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+		TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 			name: "firstName",
 			path: "firstName",
 			label: "First name",
@@ -4008,7 +4011,7 @@ sap.ui.define([
 			assert.equal(aTreeTableColumns[1].getWidth(), aTableColumns[1].getWidth(), "The column width is not changed for the the second column");
 			this.oTreeTable.destroy();
 		}.bind(this)).finally(function() {
-			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		});
 	});
 
@@ -4186,7 +4189,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
+			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		},
 		getFilterInfoBar: function(oMDCTable) {
 			var oTable = this.oTable || oMDCTable;
@@ -4236,7 +4239,7 @@ sap.ui.define([
 	QUnit.test("Filter info bar (filter disabled)", function(assert) {
 		var that = this;
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
 				label: "NameLabel"
@@ -4291,7 +4294,7 @@ sap.ui.define([
 			var oListFormat = ListFormat.getInstance();
 
 			this.oTable.destroy();
-			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [
 				{
 					name: "name",
 					label: "NameLabel"
@@ -4451,7 +4454,7 @@ sap.ui.define([
 				that.oTable.destroy();
 				assert.ok(oFilterInfoBar.bIsDestroyed, "Filter info bar is destroyed when the table is destroyed");
 				assert.equal(that.oTable._oFilterInfoBarInvisibleText, null, "The invisible text is set to null");
-				MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+				TableQUnitUtils.restorePropertyInfos(Table.prototype);
 			});
 		});
 	});
@@ -4504,7 +4507,7 @@ sap.ui.define([
 		}));
 		this.oTable.setP13nMode(["Filter"]);
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [{
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
 			label: "NameLabel",
 			dataType: "sap.ui.model.type.String"
@@ -4524,13 +4527,13 @@ sap.ui.define([
 		}).then(function() {
 			return that.waitForFilterInfoBarRendered();
 		}).then(function() {
-			var oTableSettingsShowPanelStub = sinon.stub(TableSettings, "showPanel").resolves();
+			var oOpenFilterDialogStub = sinon.stub(PersonalizationUtils, "openFilterDialog").resolves();
 			var oFilterInfoBar = that.getFilterInfoBar();
 
 			oFilterInfoBar.firePress();
-			assert.ok(oTableSettingsShowPanelStub.calledOnceWith(that.oTable, "Filter"),
-				"Pressing the filter info bar calls TableSettings.showPanel with the correct arguments");
-			oTableSettingsShowPanelStub.restore();
+			assert.ok(oOpenFilterDialogStub.calledOnceWith(that.oTable),
+				"Pressing the filter info bar calls utils.Personalization.openFilterDialog with the correct arguments");
+			oOpenFilterDialogStub.restore();
 
 			// Simulate setting the focus when the filter dialog is closed and all filters have been removed.
 			// The filter info bar will be hidden in this case. The focus should still be somewhere in the table and not on the document body.
@@ -4549,20 +4552,7 @@ sap.ui.define([
 			oFilterInfoBar.focus();
 			oFilterInfoBar.firePress(); // Opens the filter dialog
 
-			// Wait for filter dialog
-			return new Promise(function(resolve) {
-				new ManagedObjectObserver(function(oChange) {
-					if (oChange.mutation === "insert" && oChange.child.isA("sap.m.p13n.Popup")) {
-						var fnOriginalOpen = oChange.child.open;
-						oChange.child.open = function() {
-							fnOriginalOpen.apply(this, arguments);
-							resolve(oChange.child._oPopup);
-						};
-					}
-				}).observe(that.oTable, {
-					aggregations: ["dependents"]
-				});
-			});
+			return TableQUnitUtils.waitForSettingsDialog(that.oTable);
 		}).then(function(oP13nDialog) {
 			return new Promise(function(resolve) {
 				oP13nDialog.attachEventOnce("afterClose", function() {
@@ -5235,7 +5225,7 @@ sap.ui.define([
 
 	QUnit.module("Column resize", {
 		before: function() {
-			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [
 				{
 					name: "Name",
 					label: "Name",
@@ -5265,7 +5255,7 @@ sap.ui.define([
 
 		},
 		after: function() {
-			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		afterEach: function() {
 			this.destroyTestObjects();
@@ -5500,7 +5490,7 @@ sap.ui.define([
 		var oFilter = new FilterBar();
 		var fnAnnounceTableUpdate = sinon.spy(this.oTable, "_announceTableUpdate");
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [{
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
 			label: "Name",
 			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
@@ -5527,7 +5517,7 @@ sap.ui.define([
 			this.oTable.getRowBinding()._fireChange();
 			// in some cases OData V4 doesn't trigger a data request, but the binding context changes and the item count has to be announced
 			assert.ok(fnAnnounceTableUpdate.calledTwice, "_announceTableUpdate is called on binding change even if no data request is sent.");
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
+			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}.bind(this));
 	});
 
@@ -5563,7 +5553,7 @@ sap.ui.define([
 		var fnOnDataReceived = sinon.spy(this.oTable, "_onDataReceived");
 		var fnAnnounceTableUpdate = sinon.spy(this.oTable, "_announceTableUpdate");
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [{
+		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
 			label: "Name",
 			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
@@ -5578,7 +5568,7 @@ sap.ui.define([
 			assert.ok(fnOnDataReceived.called, "Event dataReceived is fired.");
 			assert.equal(this.oTable._bAnnounceTableUpdate, undefined, "Table internal flag _bAnnounceTableUpdate is undefined");
 			assert.notOk(fnAnnounceTableUpdate.called, "Function _announceTableUpdate is never called.");
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
+			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}.bind(this));
 	});
 
@@ -5731,7 +5721,7 @@ sap.ui.define([
 				name: "age",
 				path: "age"
 			}];
-			MDCQUnitUtils.stubPropertyInfos(Table.prototype, this.aProperties);
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, this.aProperties);
 		},
 		afterEach: function() {
 			if (this.oTable) {
@@ -5741,7 +5731,7 @@ sap.ui.define([
 			if (this.oFetchPropertiesSpy) {
 				this.oFetchPropertiesSpy.restore();
 			}
-			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTable: function(mSettings) {
 			this.oTable = new Table(Object.assign({

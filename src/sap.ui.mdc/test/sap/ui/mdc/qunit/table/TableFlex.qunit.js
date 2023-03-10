@@ -32,7 +32,6 @@ sap.ui.define([
 ) {
 	'use strict';
 
-	oCore.loadLibrary("sap.ui.fl");
 	var aPropertyInfo = [
 		{
 			name: "column0",

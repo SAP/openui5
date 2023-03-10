@@ -495,8 +495,10 @@ sap.ui.define([
      */
     SelectionController.prototype.update = function(oPropertyHelper) {
         if (this._oPanel) {
-            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
-            this._oPanel.setP13nData(oAdaptationData.items);
+			if (!this._oPanel.isDestroyed()) {
+				var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+				this._oPanel.setP13nData(oAdaptationData.items);
+			}
         } else if (this._oAdaptationModel){
             //'setData' causes unnecessary rerendering in some cases
             var oP13nData = this.mixInfoAndState(oPropertyHelper);

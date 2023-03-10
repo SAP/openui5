@@ -1,18 +1,20 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"../QUnitUtils",
+	"./QUnitUtils",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/table/utils/Personalization",
 	"sap/m/Text",
 	"sap/m/plugins/ColumnResizer"
 ], function(
-	MDCQUnitUtils,
+	TableQUnitUtils,
 	Core,
 	Table,
 	GridTableType,
 	Column,
+	PersonalizationUtils,
 	Text,
 	ColumnResizer
 ) {
@@ -26,19 +28,9 @@ sap.ui.define([
 		});
 	}
 
-	function openColumnMenu(oTable, iColumnIndex) {
-		var oColumn = oTable._oTable.getColumns()[iColumnIndex];
-		Core.byId(oColumn.getHeaderMenu()).openBy(oColumn);
-
-		return oTable._fullyInitialized().then(function() {
-			return oTable.propertiesFinalized();
-		});
-	}
-
 	QUnit.module("Menu", {
 		beforeEach: function() {
 			this.oTable = new Table({
-				type: "ResponsiveTable",
 				columns: [
 					new Column({
 						header: "test",
@@ -54,54 +46,50 @@ sap.ui.define([
 				}
 			});
 
-			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
-
-			MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+			TableQUnitUtils.stubPropertyInfos(this.oTable, [
 				{
 					name: "test",
 					label: "Test",
 					path: "test"
 				}
 			]);
+
+			return this.oTable.initialized().then(function() {
+				this.oTable.placeAt("qunit-fixture");
+				Core.applyChanges();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
+			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
 	QUnit.test("Initialize", function(assert) {
-		var oTable = this.oTable, oInnerColumn, oColumnMenu, oOpenSpy;
+		var oTable = this.oTable;
+		var oOpenSpy = sinon.spy(oTable._oColumnHeaderMenu, "openBy");
+
 		oTable.setP13nMode([
 			"Sort"
 		]);
+		oTable.setEnableColumnResize(false);
 
-		return oTable._fullyInitialized().then(function () {
-			oTable.setEnableColumnResize(false);
+		assert.ok(oTable._oColumnHeaderMenu, "The ColumnMenu is initialized");
+		assert.ok(oTable._oColumnHeaderMenu.isA("sap.m.table.columnmenu.Menu"), "The ColumnMenu is instance of the correct class");
+		assert.ok(oTable._oQuickActionContainer, "The QuickActionContainer is initialized");
+		assert.ok(oTable._oQuickActionContainer.isA("sap.m.table.columnmenu.QuickActionContainer"),
+			"The QuickActionContainer is instance of the correct class");
+		assert.ok(oTable._oItemContainer, "The ItemContainer is initialized");
+		assert.ok(oTable._oItemContainer.isA("sap.m.table.columnmenu.ItemContainer"),
+			"The Item Container is instance of the correct class");
+		assert.equal(oTable._oQuickActionContainer.getEffectiveQuickActions().length, 0, "The ColumnMenu contains no quick actions");
+		assert.equal(oTable._oItemContainer.getEffectiveItems().length, 0, "The ColumnMenu contains no items");
+		assert.ok(!oTable._oColumnHeaderMenu._oPopover, "The popover is not initialized");
 
-			assert.ok(oTable._oColumnHeaderMenu, "The ColumnMenu is initialized");
-			assert.ok(oTable._oColumnHeaderMenu.isA("sap.m.table.columnmenu.Menu"), "The ColumnMenu is instance of the correct class");
-			assert.ok(oTable._oQuickActionContainer, "The QuickActionContainer is initialized");
-			assert.ok(oTable._oQuickActionContainer.isA("sap.m.table.columnmenu.QuickActionContainer"),
-				"The QuickActionContainer is instance of the correct class");
-			assert.ok(oTable._oItemContainer, "The ItemContainer is initialized");
-			assert.ok(oTable._oItemContainer.isA("sap.m.table.columnmenu.ItemContainer"),
-				"The Item Container is instance of the correct class");
-			assert.equal(oTable._oQuickActionContainer.getEffectiveQuickActions().length, 0, "The ColumnMenu contains no quick actions");
-			assert.equal(oTable._oItemContainer.getEffectiveItems().length, 0, "The ColumnMenu contains no items");
-			assert.ok(!oTable._oColumnHeaderMenu._oPopover, "The popover is not initialized");
-
-			oInnerColumn = oTable._oTable.getColumns()[0];
-			oColumnMenu = oTable._oColumnHeaderMenu;
-			oColumnMenu.openBy(oInnerColumn);
-			oOpenSpy = sinon.spy(oColumnMenu, "openBy");
-
-			return wait(0);
-		}).then(function() {
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			assert.equal(oTable._oQuickActionContainer.getEffectiveQuickActions().length, 1, "The ColumnMenu contains quick actions");
 			assert.equal(oTable._oItemContainer.getEffectiveItems().length, 1, "The ColumnMenu contains items");
-			assert.ok(oOpenSpy.calledWithExactly(oInnerColumn, true), "openBy is called once with the correct parameters");
+			assert.ok(oOpenSpy.calledWithExactly(oTable.getColumns()[0].getInnerColumn(), true), "openBy is called once with the correct parameters");
 		});
 	});
 
@@ -139,7 +127,6 @@ sap.ui.define([
 	QUnit.module("QuickActionContainer", {
 		beforeEach: function() {
 			this.oTable = new Table({
-				type: "ResponsiveTable",
 				columns: [
 					new Column({
 						header: "test",
@@ -155,54 +142,48 @@ sap.ui.define([
 				}
 			});
 
-			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			TableQUnitUtils.stubPropertyInfos(this.oTable, [{
+				name: "test",
+				label: "Test",
+				path: "test",
+				sortable: true,
+				groupable: true
+			}]);
 
-			MDCQUnitUtils.stubPropertyInfos(this.oTable, [
-				{
-					name: "test",
-					label: "Test",
-					path: "test",
-					sortable: true,
-					groupable: true
-				}
-			]);
+			return this.oTable.initialized().then(function() {
+				this.oTable.placeAt("qunit-fixture");
+				Core.applyChanges();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
+			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
 	QUnit.test("Responsive table - Sort", function(assert) {
-		var oTable = this.oTable, oInnerColumn, oColumnMenu;
+		var oTable = this.oTable;
 
-		return oTable._fullyInitialized().then(function () {
-			oTable.setP13nMode([
-				"Sort"
-			]);
+		oTable.setType("ResponsiveTable");
+		oTable.setP13nMode([
+			"Sort"
+		]);
 
-			oInnerColumn = oTable._oTable.getColumns()[0];
-			oColumnMenu = oTable._oColumnHeaderMenu;
-			oColumnMenu.openBy(oInnerColumn);
-
-			return Promise.all([
-				wait(0),
-				new Promise(function(resolve) {
-					sap.ui.require(["sap/ui/mdc/table/TableSettings"], resolve);
-				})
-			]);
-		}).then(function(aResult) {
+		return oTable._fullyInitialized().then(function() {
+			 return TableQUnitUtils.openColumnMenu(oTable, 0);
+		}).then(function() {
 			var oQuickAction = oTable._oQuickActionContainer.getQuickActions()[0];
 			assert.ok(oQuickAction.isA("sap.m.table.columnmenu.QuickSort"), "The QuickActionContainer contains a QuickSort");
 
-			var TableSettings = aResult[1];
-			var fSortSpy = sinon.spy(TableSettings, "createSort");
+			var fSortSpy = sinon.spy(PersonalizationUtils, "createSortChange");
 			var aSortItemContent =  oQuickAction.getItems()[0]._getAction().getContent();
 
 			aSortItemContent[0].firePress();
-			assert.ok(fSortSpy.calledOnce, "createSort is called");
-			assert.ok(fSortSpy.calledWithExactly(oTable, "test", "None", true), "createSort is called with the correct parameters");
+			assert.ok(fSortSpy.calledOnce, "createSortChange is called");
+			assert.ok(fSortSpy.calledWithExactly(oTable, {
+				property: "test",
+				sortOrder: "None"
+			}), "createSortChange is called with the correct parameters");
 
 			fSortSpy.restore();
 		});
@@ -211,9 +192,12 @@ sap.ui.define([
 	QUnit.test("Responsive table - Resize on touch devices", function(assert) {
 		var oTable = this.oTable;
 
+		sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
+		oTable.setType("ResponsiveTable");
+
 		return oTable._fullyInitialized().then(function() {
-			sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
-			return openColumnMenu(oTable, 0);
+			Core.applyChanges();
+			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			var oQuickAction = oTable._oQuickActionContainer.getQuickActions()[0];
 			assert.equal(oQuickAction.getLabel(), "", "label is empty");
@@ -230,37 +214,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("Grid table - Group", function(assert) {
-		var oTable = this.oTable, oInnerColumn, oColumnMenu;
+		var oTable = this.oTable;
 
-		return oTable._fullyInitialized().then(function () {
-			oTable.setType("Table");
-			return oTable._fullyInitialized();
-		}).then(function(){
-			oTable.setP13nMode([
-				"Group"
-			]);
+		oTable.setP13nMode([
+			"Group"
+		]);
 
-			oInnerColumn = oTable._oTable.getColumns()[0];
-			oColumnMenu = oInnerColumn.getHeaderMenuInstance();
-			oColumnMenu.openBy(oInnerColumn);
-
-			return Promise.all([
-				wait(0),
-				new Promise(function(resolve) {
-					sap.ui.require(["sap/ui/mdc/table/TableSettings"], resolve);
-				})
-			]);
-		}).then(function(aResult) {
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			var oQuickAction = oTable._oQuickActionContainer.getQuickActions()[0];
 			assert.ok(oQuickAction.isA("sap.m.table.columnmenu.QuickGroup"), "The QuickActionContainer contains a QuickGroup");
 
-			var TableSettings = aResult[1];
-			var fGroupSpy = sinon.spy(TableSettings, "createGroup");
+			var fGroupSpy = sinon.spy(PersonalizationUtils, "createGroupChange");
 			var aGroupItemContent =  oQuickAction.getContent();
 
 			aGroupItemContent[0].firePress();
-			assert.ok(fGroupSpy.calledOnce, "createGroup is called");
-			assert.ok(fGroupSpy.calledWithExactly(oTable, "test"), "createGroup is called with the correct parameters");
+			assert.ok(fGroupSpy.calledOnce, "createGroupChange is called");
+			assert.ok(fGroupSpy.calledWithExactly(oTable, {
+				property: "test"
+			}), "createGroupChange is called with the correct parameters");
 
 			fGroupSpy.restore();
 		});
@@ -283,12 +254,11 @@ sap.ui.define([
 			});
 		}
 
-		return oTable._fullyInitialized().then(function () {
-			oTable.setP13nMode([
-				"Sort", "Group"
-			]);
-			return openColumnMenu(oTable, 0);
-		}).then(function() {
+		oTable.setP13nMode([
+			"Sort", "Group"
+		]);
+
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			oTable._getSortedProperties = function() {
 				return [{ name: "test", Descending: false }];
 			};
@@ -310,7 +280,7 @@ sap.ui.define([
 	QUnit.module("ItemContainer", {
 		beforeEach: function() {
 			this.oTable = new Table({
-				type: "ResponsiveTable",
+				p13nMode: ["Sort", "Filter", "Group", "Column"],
 				columns: [
 					new Column({
 						header: "test",
@@ -326,10 +296,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
-
-			MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+			TableQUnitUtils.stubPropertyInfos(this.oTable, [
 				{
 					name: "test",
 					label: "Test",
@@ -337,30 +304,26 @@ sap.ui.define([
 					groupable: true
 				}
 			]);
+
+			return this.oTable.initialized().then(function() {
+				this.oTable.placeAt("qunit-fixture");
+				Core.applyChanges();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
+			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
 	QUnit.test("Initialize Items", function(assert) {
 		var oTable = this.oTable;
-		oTable.setP13nMode([
-			"Sort", "Filter", "Group", "Column"
-		]);
 
-		return oTable._fullyInitialized().then(function () {
-			oTable.setType("Table");
-			return oTable._fullyInitialized();
-		}).then(function () {
-			oTable.getSupportedP13nModes = function() {
-				return ["Sort", "Filter", "Group", "Column"];
-			};
-			return openColumnMenu(oTable, 0);
-		}).then(function() {
-			return wait(0);
-		}).then(function() {
+		oTable.getSupportedP13nModes = function() {
+			return ["Sort", "Filter", "Group", "Column"];
+		};
+
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			var aItems = oTable._oItemContainer.getItems();
 			var oItem;
 
@@ -387,26 +350,19 @@ sap.ui.define([
 
 	QUnit.test("Item", function(assert) {
 		var oTable = this.oTable,
-			oInnerColumn,
-			oColumnMenu,
 			fUpdateSpy,
 			fHandleP13nSpy,
 			fResetSpy,
 			fUpdateQuickActionsSpy;
 
-		return oTable._fullyInitialized().then(function () {
-			oTable.setP13nMode([
-				"Sort"
-			]);
-			oTable.getSupportedP13nModes = function() {
-				return ["Sort"];
-			};
-			oInnerColumn = oTable._oTable.getColumns()[0];
-			oColumnMenu = oTable._oColumnHeaderMenu;
-			oColumnMenu.openBy(oInnerColumn);
+		oTable.setP13nMode([
+			"Sort"
+		]);
+		oTable.getSupportedP13nModes = function() {
+			return ["Sort"];
+		};
 
-			return wait(0);
-		}).then(function() {
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			var aItems = oTable._oItemContainer.getItems();
 			var oItem = aItems[0];
 
