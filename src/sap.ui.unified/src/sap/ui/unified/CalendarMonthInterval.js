@@ -345,9 +345,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets start date of the interval.
+	 * Sets start date for the interval.
+	 *
 	 * @param {Date} oStartDate A JavaScript date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	CalendarMonthInterval.prototype.setStartDate = function(oStartDate){
 
@@ -622,8 +624,10 @@ sap.ui.define([
 
 	/**
 	 * Sets a minimum date for the calendar.
+	 *
 	 * @param {Date} [oDate] A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	CalendarMonthInterval.prototype.setMinDate = function(oDate){
 
@@ -681,8 +685,10 @@ sap.ui.define([
 
 	/**
 	 * Sets a maximum date for the calendar.
+	 *
 	 * @param {Date} [oDate] A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	CalendarMonthInterval.prototype.setMaxDate = function(oDate){
 

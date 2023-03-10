@@ -209,9 +209,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a date.
+	 * Setter for the <code>date</code> property
+	 *
 	 * @param {Date} oDate a JavaScript date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	YearPicker.prototype.setDate = function(oDate){
 		var oMaxYear = CalendarUtils._maxDate(this.getProperty("primaryCalendarType")).getYear(),

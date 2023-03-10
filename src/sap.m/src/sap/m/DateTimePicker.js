@@ -546,6 +546,13 @@ sap.ui.define([
 		return DateTimeFormatStyles.Medium;
 	};
 
+	/**
+	 * Set minimum date that can be shown and selected in the <code>DateTimePicker</code>. This must be a JavaScript date object.
+	 *
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	DateTimePicker.prototype.setMinDate = function (oDate) {
 		DatePicker.prototype.setMinDate.call(this, oDate);
 
@@ -555,6 +562,13 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Set maximum date that can be shown and selected in the <code>DateTimePicker</code>. This must be a JavaScript date object.
+	 *
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	DateTimePicker.prototype.setMaxDate = function (oDate) {
 		DatePicker.prototype.setMaxDate.call(this, oDate);
 

@@ -410,9 +410,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set start date of the interval
+	 * Set start date for the interval.
+	 *
 	 * @param {Date} oStartDate A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	CalendarDateInterval.prototype.setStartDate = function(oStartDate){
 
@@ -464,10 +466,11 @@ sap.ui.define([
 
 	// needs to be overwritten because differently implemented in Calendar
 	/**
-	 * Gets current value of property startDate.
+	 * Returns the start date of the interval.
 	 *
 	 * Start date of the Interval
 	 * @returns {Date} JavaScript date object for property <code>startDate</code>
+	 * @public
 	 */
 	CalendarDateInterval.prototype.getStartDate = function(){
 

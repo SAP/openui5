@@ -686,8 +686,10 @@ sap.ui.define([
 
 	/**
 	 * Set minimum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
+	 *
 	 * @param {Date} oDate A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	DatePicker.prototype.setMinDate = function(oDate) {
 
@@ -732,8 +734,10 @@ sap.ui.define([
 
 	/**
 	 * Set maximum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
+	 *
 	 * @param {Date} oDate A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	DatePicker.prototype.setMaxDate = function(oDate) {
 

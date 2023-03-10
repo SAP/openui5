@@ -303,8 +303,10 @@ sap.ui.define([
 
 	/**
 	 * Sets a date for the months row.
+	 *
 	 * @param {Date} oDate a JavaScript date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	MonthsRow.prototype.setDate = function(oDate){
 		if (oDate) {
@@ -363,8 +365,10 @@ sap.ui.define([
 
 	/**
 	 * Sets start date of the month row.
+	 *
 	 * @param {Date} oStartDate A JavaScript date
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 * @public
 	 */
 	MonthsRow.prototype.setStartDate = function(oStartDate){
 		CalendarUtils._checkJSDateObject(oStartDate);
