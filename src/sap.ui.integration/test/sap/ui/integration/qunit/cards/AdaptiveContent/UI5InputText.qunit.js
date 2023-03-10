@@ -61,8 +61,9 @@ function (
 
 	QUnit.module("UI5InputText", {
 		beforeEach: function () {
-			this.oAdaptiveContent = new AdaptiveContent();
-			this.oAdaptiveContent._oCardConfig = oManifest;
+			this.oAdaptiveContent = new AdaptiveContent({
+				configuration: oManifest
+			});
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
