@@ -124,7 +124,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 
 		if (bWrapping) {
 			this.renderWrapping(rm, oLI, "title");
-			if (sTitle && sInfo && !sDescription) {
+			if (sInfo && !sDescription) {
 				this.renderInfo(rm, oLI);
 			}
 		} else {
