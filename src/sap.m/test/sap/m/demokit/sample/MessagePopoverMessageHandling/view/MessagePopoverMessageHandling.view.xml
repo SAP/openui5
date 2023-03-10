@@ -119,7 +119,7 @@
 					press=".handleMessagePopoverPress"
 					ariaHasPopup="Dialog"/>
 				<ToolbarSpacer/>
-				<Button type="Emphasized" text="Save" press="_generateInvalidUserInput" />
+				<Button type="Emphasized" text="Save" press="generateInvalidUserInput" />
 				<Button text="Cancel" />
 			</OverflowToolbar>
 		</footer>
