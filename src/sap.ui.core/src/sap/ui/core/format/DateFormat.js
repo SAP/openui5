@@ -248,6 +248,12 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] since 1.32.10, 1.34.4 the style of the relative format. The valid values are "wide", "short", "narrow"
 	 * @param {boolean} [oFormatOptions.interval=false] since 1.48.0 if true, the {@link sap.ui.core.format.DateFormat#format format} method expects an array with two dates as the first argument and formats them as interval. Further interval "Jan 10, 2008 - Jan 12, 2008" will be formatted as "Jan 10-12, 2008" if the 'format' option is set with necessary symbols.
 	 *   Otherwise the two given dates are formatted separately and concatenated with local dependent pattern.
+	 * @param {string} [oFormatOptions.intervalDelimiter]
+	 *   Since 1.113.0, a delimiter for intervals. With a given interval delimiter a specific interval format is
+	 *   created. <b>Example:</b> If <code>oFormatOptions.intervalDelimiter</code> is set to "...", an interval would be
+	 *   given as "Jan 10, 2008...Feb 12, 2008".
+	 *   <b>Note:</b> If this format option is set, the locale-specific interval notation is overruled, for example
+	 *   "Jan 10 – Feb 12, 2008" becomes "Jan 10, 2008...Feb 12, 2008".
 	 * @param {boolean} [oFormatOptions.singleIntervalValue=false] Only relevant if oFormatOptions.interval is set to 'true'. This allows to pass an array with only one date object to the {@link sap.ui.core.format.DateFormat#format format} method.
 	 * @param {boolean} [oFormatOptions.UTC] if true, the date is formatted and parsed as UTC instead of the local timezone
 	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
@@ -286,6 +292,12 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] since 1.32.10, 1.34.4 the style of the relative format. The valid values are "wide", "short", "narrow"
 	 * @param {boolean} [oFormatOptions.interval=false] since 1.48.0 if true, the {@link sap.ui.core.format.DateFormat#format format} method expects an array with two dates as the first argument and formats them as interval. Further interval "Jan 10, 2008 - Jan 12, 2008" will be formatted as "Jan 10-12, 2008" if the 'format' option is set with necessary symbols.
 	 *   Otherwise the two given dates are formatted separately and concatenated with local dependent pattern.
+	 * @param {string} [oFormatOptions.intervalDelimiter]
+	 *   Since 1.113.0, a delimiter for intervals. With a given interval delimiter a specific interval format is
+	 *   created. <b>Example:</b> If <code>oFormatOptions.intervalDelimiter</code> is set to "...", an interval would be
+	 *   given as "Jan 10, 2008, 9:15:00 AM...Jan 10, 2008, 11:45:00 AM".
+	 *   <b>Note:</b> If this format option is set, the locale-specific interval notation is overruled, for example
+	 *   "Jan 10, 2008, 9:15 – 11:45 AM" becomes "Jan 10, 2008, 9:15 AM...Jan 10, 2008, 11:45 AM".
 	 * @param {boolean} [oFormatOptions.singleIntervalValue=false] Only relevant if oFormatOptions.interval is set to 'true'. This allows to pass an array with only one date object to the {@link sap.ui.core.format.DateFormat#format format} method.
 	 * @param {boolean} [oFormatOptions.UTC] if true, the date is formatted and parsed as UTC instead of the local timezone
 	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
@@ -491,6 +503,12 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] since 1.32.10, 1.34.4 the style of the relative format. The valid values are "wide", "short", "narrow"
 	 * @param {boolean} [oFormatOptions.interval=false] since 1.48.0 if true, the {@link sap.ui.core.format.DateFormat#format format} method expects an array with two dates as the first argument and formats them as interval. Further interval "Jan 10, 2008 - Jan 12, 2008" will be formatted as "Jan 10-12, 2008" if the 'format' option is set with necessary symbols.
 	 *   Otherwise the two given dates are formatted separately and concatenated with local dependent pattern.
+	 * @param {string} [oFormatOptions.intervalDelimiter]
+	 *   Since 1.113.0, a delimiter for intervals. With a given interval delimiter a specific interval format is
+	 *   created. <b>Example:</b> If <code>oFormatOptions.intervalDelimiter</code> is set to "...", an interval would be
+	 *   given as "09:15 AM...11:45 AM".
+	 *   <b>Note:</b> If this format option is set, the locale-specific interval notation is overruled, for example
+	 *   "09:15 – 11:45 AM" becomes "9:15 AM...11:45 AM".
 	 * @param {boolean} [oFormatOptions.singleIntervalValue=false] Only relevant if oFormatOptions.interval is set to 'true'. This allows to pass an array with only one date object to the {@link sap.ui.core.format.DateFormat#format format} method.
 	 * @param {boolean} [oFormatOptions.UTC] if true, the time is formatted and parsed as UTC instead of the local timezone
 	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
@@ -593,6 +611,8 @@ sap.ui.define([
 		}
 
 		if (oFormat.oFormatOptions.interval) {
+			var sSinglePattern,
+				sDelimiter = oFormat.oFormatOptions.intervalDelimiter;
 
 			if (oFormat.oFormatOptions.format) {
 				// when 'format' option is set, generate the pattern based on the greatest difference
@@ -603,10 +623,14 @@ sap.ui.define([
 					oFormat.intervalPatterns = [oFormat.intervalPatterns];
 				}
 
-				// Put the single date pattern, which is generated based on the oFormatOptions.format, into the array in case the date interval is formatted as a single date
-				oFormat.intervalPatterns.push(oFormat.oLocaleData.getCustomDateTimePattern(oFormat.oFormatOptions.format, oFormat.oFormatOptions.calendarType));
+				sSinglePattern = oFormat.oLocaleData.getCustomDateTimePattern(oFormat.oFormatOptions.format,
+					oFormat.oFormatOptions.calendarType);
+				// Put the single date pattern, which is generated based on the oFormatOptions.format, into the array in
+				// case the date interval is formatted as a single date
+				oFormat.intervalPatterns.push(sSinglePattern);
 
 			} else {
+				sSinglePattern = oFormat.oFormatOptions.pattern;
 				oFormat.intervalPatterns = [
 					// when 'format' option is not set, generate the combined interval pattern
 					oFormat.oLocaleData.getCombinedIntervalPattern(oFormat.oFormatOptions.pattern, oFormat.oFormatOptions.calendarType),
@@ -616,6 +640,11 @@ sap.ui.define([
 			}
 			var sCommonConnectorPattern = createIntervalPatternWithNormalConnector(oFormat);
 			oFormat.intervalPatterns.push(sCommonConnectorPattern);
+			if (sDelimiter) { // use delimiter pattern as first choice
+				sDelimiter = sDelimiter.replace(/'/g, "''");
+				sDelimiter = "'" + sDelimiter + "'";
+				oFormat.intervalPatterns.unshift(sSinglePattern + sDelimiter + sSinglePattern);
+			}
 		}
 
 		// if the current format isn't a fallback format, create its fallback formats
@@ -2397,27 +2426,54 @@ sap.ui.define([
 		return sResult;
 	};
 
-	DateFormat.prototype._formatInterval = function(aJSDates, bUTC) {
-		var sCalendarType = this.oFormatOptions.calendarType;
-		var oFromDate = UniversalDate.getInstance(aJSDates[0], sCalendarType);
-		var oToDate = UniversalDate.getInstance(aJSDates[1], sCalendarType);
-		var oDate;
-		var oPart;
-		var sSymbol;
-		var aBuffer = [];
-		var sPattern;
-		var aFormatArray = [];
+	/**
+	 * Checks whether the interval to be formatted has to use the pattern of a custom interval delimiter.
+	 *
+	 * @param {object} oDiffFields
+	 *   An object describing which date information is required for this instance's interval format,
+	 *   for example <code>{"Day": true, "Minutes": true}</code>
+	 * @returns {boolean}
+	 *   Whether to use the custom interval delimiter pattern
+	 *
+	 * @private
+	 */
+	DateFormat.prototype._useCustomIntervalDelimiter = function (oDiffFields) {
+		var aTokens;
 
-		var oDiffField = this._getGreatestDiffField([oFromDate, oToDate]);
+		if (!this.oFormatOptions.intervalDelimiter) {
+			return false;
+		}
+		// If there are no differences in the date/time parts specified by "oFormatOptions.format", a single value is
+		// formatted and there is no need to use the custom delimiter pattern.
+		if (this.oFormatOptions.format) {
+			aTokens = this.oLocaleData._parseSkeletonFormat(this.oFormatOptions.format);
+
+			return aTokens.some(function (oToken) {
+				return oDiffFields[oToken.group];
+			});
+		}
+
+		return true;
+	};
+
+	DateFormat.prototype._formatInterval = function(aJSDates, bUTC) {
+		var oDate, oPart, sPattern, sSymbol,
+			aBuffer = [],
+			sCalendarType = this.oFormatOptions.calendarType,
+			aFormatArray = [],
+			oFromDate = UniversalDate.getInstance(aJSDates[0], sCalendarType),
+			oToDate = UniversalDate.getInstance(aJSDates[1], sCalendarType),
+			oDiffField = this._getGreatestDiffField([oFromDate, oToDate]);
 
 		if (!oDiffField) {
 			return this._format(aJSDates[0], bUTC);
 		}
 
-		if (this.oFormatOptions.format) {
+		if (this._useCustomIntervalDelimiter(oDiffField)) {
+			sPattern = this.intervalPatterns[0];
+		} else if (this.oFormatOptions.format) {
 			// when 'format' option is set, generate the pattern based on the greatest difference
 			sPattern = this.oLocaleData.getCustomIntervalPattern(this.oFormatOptions.format, oDiffField, sCalendarType);
-
 		} else {
 			sPattern = this.oLocaleData.getCombinedIntervalPattern(this.oFormatOptions.pattern, sCalendarType);
 		}

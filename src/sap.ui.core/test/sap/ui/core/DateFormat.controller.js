@@ -101,6 +101,15 @@ sap.ui.define([
 						type: "boolean",
 						help: "To enable interval formatting set to \"true\""
 					},
+					intervalDelimiter: {
+						type: "string",
+						regex: /.+/,
+						help: "The delimiter symbol between the dates"
+					},
+					singleIntervalValue: {
+						type: "boolean",
+						help: "To enable interval formatting set to \"true\""
+					},
 					UTC: {
 						type: "boolean",
 						help: "To format as UTC time instead of local time, set to \"true\""
