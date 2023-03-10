@@ -32,9 +32,6 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
             autostart: true
         },
         tests: {
-			"Condenser": {
-				sinon: false
-			},
             "Chart": {
                 module: "./Chart.qunit",
                 /*coverage: {

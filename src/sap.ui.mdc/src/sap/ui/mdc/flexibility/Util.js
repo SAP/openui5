@@ -120,8 +120,7 @@ sap.ui.define([
 
 						});
 					});
-				},
-				getCondenserInfo: mSettings.getCondenserInfo
+				}
 			},
 			"layers": {
 				"USER": true

@@ -151,20 +151,6 @@ sap.ui.define(function () {
 					]
 				},
 				autostart: false
-			},
-			"ChangeCondenser": {
-				module: "./Condenser.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				},
-				loader: {
-					paths: {
-						"sap/ui/mdc/qunit": "test-resources/sap/ui/mdc/qunit"
-					}
-				},
-				sinon: false
 			}
 		}
 	};
