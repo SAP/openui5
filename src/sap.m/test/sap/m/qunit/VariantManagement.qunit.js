@@ -2,13 +2,12 @@
 sap.ui.define([
 	"sap/m/VariantItem",
 	"sap/m/VariantManagement",
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/m/Page",
 	"sap/m/App",
 	'sap/ui/qunit/QUnitUtils',
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(VariantItem, VariantManagement, FeaturesAPI, ContextSharingAPI, Page, App, QUnitUtils, createAndAppendDiv) {
+], function(VariantItem, VariantManagement, ContextSharingAPI, Page, App, QUnitUtils, createAndAppendDiv) {
 	"use strict";
 
 	// prepare DOM
@@ -1578,9 +1577,6 @@ sap.ui.define([
 		this.oVM.attachManage(function(oEvent) {
 			var mParameters = oEvent.getParameters();
 			assert.ok(mParameters);
-
-			FeaturesAPI.isContextSharingEnabled.restore();
-
 			assert.ok(this.oCompContainer, "context sharing component exists");
 
 			done();
@@ -1681,8 +1677,6 @@ sap.ui.define([
 
 		}.bind(this));
 
-		sinon.stub(FeaturesAPI, "isContextSharingEnabled").returns(Promise.resolve(true));
-
 		var oContextSharing = ContextSharingAPI.createComponent({ layer: "CUSTOMER" });
 		oContextSharing.then(function(oCompContainer) {
 			this.oCompContainer = oCompContainer;
@@ -1718,8 +1712,6 @@ sap.ui.define([
 		assert.ok(this.oVM.oSaveAsDialog, "saveas dialog exists");
 
 		this.oVM.oSaveAsDialog.attachAfterClose(function() {
-			FeaturesAPI.isContextSharingEnabled.restore();
-
 			assert.ok(this.oCompContainer, "context sharing component exists");
 			done();
 		}.bind(this));
@@ -1747,8 +1739,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(6000);
 		}.bind(this));
-
-		sinon.stub(FeaturesAPI, "isContextSharingEnabled").returns(Promise.resolve(true));
 
 		var oContextSharing = ContextSharingAPI.createComponent({ layer: "CUSTOMER" });
 		oContextSharing.then(function(oCompContainer) {
