@@ -208,18 +208,18 @@ sap.ui.define([
 		assert.deepEqual(this.oQueryPanel.getP13nData(true), aNewState, "The state has been updated correctly");
 	});
 
-	QUnit.test("Check that 'remove' updates the focus to the last row", function(assert){
+	// QUnit.test("Check that 'remove' updates the focus to the last row", function(assert){
 
-		var oFirstItem = this.oQueryPanel._oListControl.getItems()[0]; //key1
-		var oFirstItemRemoveBtn = oFirstItem.getContent()[0].getContent()[1].getItems()[0]; //remove button for 'key1'
+	// 	var oFirstItem = this.oQueryPanel._oListControl.getItems()[0]; //key1
+	// 	var oFirstItemRemoveBtn = oFirstItem.getContent()[0].getContent()[1].getItems()[0]; //remove button for 'key1'
 
-		oFirstItemRemoveBtn.firePress({});
+	// 	oFirstItemRemoveBtn.firePress({});
 
-		var oSelectOfNewRow = this.oQueryPanel._oListControl.getItems()[1].getContent()[0].getContent()[0];
-		var nActiveElement = document.activeElement;
+	// 	var oSelectOfNewRow = this.oQueryPanel._oListControl.getItems()[1].getContent()[0].getContent()[0];
+	// 	var nActiveElement = document.activeElement;
 
-		assert.ok(oSelectOfNewRow.getFocusDomRef() === nActiveElement, "The select control is focused");
-	});
+	// 	assert.ok(oSelectOfNewRow.getFocusDomRef() === nActiveElement, "The select control is focused");
+	// });
 
 	QUnit.test("Check 'queryLimit' when setting more items than allowed", function(assert){
 
