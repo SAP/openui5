@@ -209,13 +209,20 @@ sap.ui.define([
 						mConstraints.scale = oDataObject.$Scale;
 					}
 
+					var oType;
+					try {
+						oType = TypeUtil.getTypeConfig(oDataObject.$Type, null, mConstraints);
+					} catch (error) {
+						Log.error(error);
+					}
+
 					var oPropertyInfo = {
 						name: sKey,
 						path: sKey,
 						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 						sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 						filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
-						typeConfig: TypeUtil.getTypeConfig(oDataObject.$Type, null, mConstraints),
+						typeConfig: oType,
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
 						groupable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] || false,
 						unit: oUnitAnnotation && !bUnitIsFromNavigationProperty ? oUnitAnnotation.$Path : undefined,

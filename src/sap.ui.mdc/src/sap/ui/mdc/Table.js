@@ -1440,6 +1440,8 @@ sap.ui.define([
 		this._createTable();
 		this._updateColumnResize();
 		this._updateRowActions();
+		this._updateExpandAllButton();
+		this._updateCollapseAllButton();
 		this._updateExportButton();
 		this.getColumns().forEach(this._insertInnerColumn, this);
 		this.setAggregation("_content", this._oTable);
@@ -1790,7 +1792,9 @@ sap.ui.define([
 	};
 
 	Table.prototype._isExportEnabled = function() {
-		return this.getEnableExport() && this.bDelegateInitialized && this.getControlDelegate().isExportSupported(this);
+		return this.getEnableExport()
+			&& this.bDelegateInitialized
+			&& this.getControlDelegate().getSupportedFeatures(this)["export"];
 	};
 
 	Table.prototype._updateExportButton = function() {
@@ -1855,6 +1859,72 @@ sap.ui.define([
 			}, this);
 			return aSheetColumns;
 		}.bind(this));
+	};
+
+	Table.prototype._isCollapseAllEnabled = function() {
+		return this.bDelegateInitialized && this.getControlDelegate().getSupportedFeatures(this)["collapseAll"];
+	};
+
+	/**
+	 * Retrieves the "Collapse All" button. Creates the button if necessary.
+	 *
+	 * @returns {sap.m.MenuButton} button for "Expand All"
+	 * @private
+	 */
+	Table.prototype._updateCollapseAllButton = function() {
+		var bNeedCollapseAllButton = this._oToolbar != null && this._isCollapseAllEnabled();
+
+		if (bNeedCollapseAllButton && !this._oCollapseAllButton) {
+			this._oCollapseAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
+				function() {
+					this.getControlDelegate().collapseAll(this, this.getRowBinding());
+				}, this
+			], false);
+		}
+
+		if (!this._oCollapseAllButton) {
+			return;
+		}
+
+		if (this._oToolbar && !this._oToolbar.getEnd().includes(this._oCollapseAllButton)) {
+			this._oToolbar.insertEnd(this._oCollapseAllButton, 0);
+		}
+
+		this._oCollapseAllButton.setEnabled(this._getRowCount(false) > 0);
+		this._oCollapseAllButton.setVisible(this._isCollapseAllEnabled());
+	};
+
+	Table.prototype._isExpandAllEnabled = function() {
+		return this.bDelegateInitialized && this.getControlDelegate().getSupportedFeatures(this)["expandAll"];
+	};
+
+	/**
+	 * Retrieves the "Collapse All" button. Creates the button if necessary.
+	 *
+	 * @returns {sap.m.MenuButton} button for "Expand All"
+	 * @private
+	 */
+	Table.prototype._updateExpandAllButton = function() {
+		var bNeedExpandAllButton = this._oToolbar != null && this._isExpandAllEnabled();
+
+		if (bNeedExpandAllButton && !this._oExpandAllButton) {
+			this._oExpandAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
+				function() {
+					this.getControlDelegate().expandAll(this, this.getRowBinding());
+				}, this
+			], true);
+		}
+
+		if (!this._oExpandAllButton) {
+			return;
+		}
+
+		if (this._oToolbar && !this._oToolbar.getEnd().includes(this._oExpandAllButton)) {
+			this._oToolbar.insertEnd(this._oExpandAllButton, 0);
+		}
+
+		this._oExpandAllButton.setEnabled(this._getRowCount(false) > 0);
+		this._oExpandAllButton.setVisible(this._isExpandAllEnabled());
 	};
 
 	/**
@@ -2386,6 +2456,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onBindingChange = function() {
+		this._updateExpandAllButton();
+		this._updateCollapseAllButton();
 		this._updateExportButton();
 
 		/* skip calling of _updateHeaderText till data is received otherwise _announceTableUpdate

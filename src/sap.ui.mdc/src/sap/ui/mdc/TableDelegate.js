@@ -11,15 +11,13 @@ sap.ui.define([
 	"./library",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
-	"sap/base/util/UriParameters"
+	"sap/ui/core/Core"
 ], function(
 	AggregationBaseDelegate,
 	library,
 	Sorter,
 	coreLibrary,
-	Core,
-	UriParameters
+	Core
 ) {
 	"use strict";
 
@@ -236,25 +234,39 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether data export is supported by the combination of this delegate and the current table state (e.g. type).
+	 * Expands all nodes.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
-	 * @returns {boolean} Whether data export is supported.
-	 * @private
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @protected
 	 */
-	TableDelegate.isExportSupported = function(oTable) {
-		return !oTable._isOfType(TableType.TreeTable) || UriParameters.fromURL(window.location.href).has("sap-ui-xx-mdc-tree-export");
+	TableDelegate.expandAll = function (oTable) {
+		throw Error("Unsupported operation: TableDelegate does not support #expandAll");
 	};
 
 	/**
-	 * Checks whether selection is supported by the combination of this delegate and the current table state (e.g. type).
+	 * Collapses all nodes.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
-	 * @returns {boolean} Whether selection is supported.
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @protected
+	 */
+	TableDelegate.collapseAll = function (oTable) {
+		throw Error("Unsupported operation: TableDelegate does not support #collapseAll");
+	};
+
+	/**
+	 * Gets the features that are supported by the combination of this delegate and the current table state (e.g. type).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable
+	 * @returns {object} The supported features
 	 * @private
 	 */
-	TableDelegate.isSelectionSupported = function(oTable) {
-		return !oTable._isOfType(TableType.TreeTable);
+	TableDelegate.getSupportedFeatures = function(oTable) {
+		return {
+			"export": true,
+			"selection": !oTable._isOfType(TableType.TreeTable),
+			"expandAll": false,
+			"collapseAll": false
+		};
 	};
 
 	/**

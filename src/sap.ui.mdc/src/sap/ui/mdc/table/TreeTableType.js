@@ -71,7 +71,7 @@ sap.ui.define([
 
 	TreeTableType.prototype.getTableSettings = function() {
 		var oTable = this.getTable();
-		var bSelectionSupported = oTable ? oTable.bDelegateInitialized && oTable.getControlDelegate().isSelectionSupported(oTable) : false;
+		var bSelectionSupported = oTable ? oTable.bDelegateInitialized && oTable.getControlDelegate().getSupportedFeatures(oTable)["selection"] : false;
 		var mTableSettings = GridTableType.prototype.getTableSettings.apply(this, arguments);
 
 		if (!bSelectionSupported) {
