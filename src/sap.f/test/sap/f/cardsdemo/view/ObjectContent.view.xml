@@ -103,7 +103,7 @@
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="cardImageNoHeaderAndNoFooter"
+				id="cardImageNoHeaderNoFooter"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageNoHeaderAndNoFooter.json"
 				width="400px"
 				class="sapUiTinyMargin" />
