@@ -1,10 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/date/Japanese",
-	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration"
-], function(Japanese, UniversalDate, CalendarType, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/Japanese",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/date/UniversalDate"
+], function(CalendarType, Configuration, Japanese, UI5Date, UniversalDate) {
 	"use strict";
 
 	// Test data
@@ -32,7 +33,7 @@ sap.ui.define([
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 1, January 45 Showa
 		var oJapaneseDate = new Japanese(); //1, January 45 Showa
-		var now = new Date();// 1, January 1970
+		var now = UI5Date.getInstance();// 1, January 1970
 		verifyDate(assert, "Constructor with no parameters must always return the Japanese date corresponding to the current " +
 		"Gregorian one.", oJapaneseDate, 234, 45, 0, 1, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 		clock.restore();
@@ -48,18 +49,18 @@ sap.ui.define([
 		assert.ok(isInvalid(oJapaneseDate), "Constructor with object as parameter must return an invalid date");
 
 		oJapaneseDate = new Japanese(0); //1, January 1970 = 1, January 45 Showa
-		var now = new Date(0);
+		var now = UI5Date.getInstance(0);
 
 		verifyDate(assert, "Constructor with value(timestamp)=0 must represents JapaneseDate corresponding to the date of 1st January 1970 Gregorian/(1389/10/22 Japanese)",
 				oJapaneseDate, 234, 45, 0, 1, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 
 		var iOneDay = 24 * 60 * 60 * 1000;
 		oJapaneseDate = new Japanese(iOneDay); //2, January 1970 = 1, January 45 Showa
-		var oGregorianDate = new Date(iOneDay);
+		var oGregorianDate = UI5Date.getInstance(iOneDay);
 		verifyDate(assert, "Constructor with value(timestamp)= 'one day after 01.01.1970' must represents JapaneseDate corresponding to the date of 2nd January 1970 Gregorian/(1389/10/23 Japanese)",
 				oJapaneseDate, 234, 45, 0, 2, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
 
-		oGregorianDate = new Date(-iOneDay);
+		oGregorianDate = UI5Date.getInstance(-iOneDay);
 		oJapaneseDate = new Japanese(-iOneDay); //31, December 1969 = 1, January 45 Showa
 		verifyDate(assert, "Constructor with value(timestamp)= 'one day before 01.01.1970' must represents JapaneseDate corresponding to the date of 31st December 1970 Gregorian/(1389/10/21 Japanese)",
 				oJapaneseDate, 234, 44, 11, 31, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());

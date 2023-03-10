@@ -1,7 +1,9 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/core/date/Buddhist", "sap/ui/core/Configuration"
-], function(Buddhist, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/Buddhist",
+	"sap/ui/core/date/UI5Date"
+], function(Configuration, Buddhist, UI5Date) {
 	"use strict";
 
 	// Test data
@@ -21,7 +23,7 @@ sap.ui.define([
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 1, January 2513
 		var oBuddhistDate = new Buddhist(); //1, January 2513
-		var now = new Date();// 1, January 1970
+		var now = UI5Date.getInstance();// 1, January 1970
 		verifyDate(assert, "Constructor with no parameters must always return the Buddhist date corresponding to the current " +
 		"Gregorian one.", oBuddhistDate, 2513, 0, 1, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 		clock.restore();
@@ -37,18 +39,18 @@ sap.ui.define([
 		assert.ok(isInvalid(oBuddhistDate), "Constructor with object as parameter must return an invalid date");
 
 		oBuddhistDate = new Buddhist(0); //1, January 1970 = 1, January 2513
-		var now = new Date(0);
+		var now = UI5Date.getInstance(0);
 
 		verifyDate(assert, "Constructor with value(timestamp)=0 must represents BuddhistDate corresponding to the date of 1st January 1970 Gregorian/(1389/10/22 Buddhist)",
 				oBuddhistDate, 2513, 0, 1, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 
 		var iOneDay = 24 * 60 * 60 * 1000;
 		oBuddhistDate = new Buddhist(iOneDay); //2, January 1970 = 1, January 2513
-		var oGregorianDate = new Date(iOneDay);
+		var oGregorianDate = UI5Date.getInstance(iOneDay);
 		verifyDate(assert, "Constructor with value(timestamp)= 'one day after 01.01.1970' must represents BuddhistDate corresponding to the date of 2nd January 1970 Gregorian/(1389/10/23 Buddhist)",
 				oBuddhistDate, 2513, 0, 2, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
 
-		oGregorianDate = new Date(-iOneDay);
+		oGregorianDate = UI5Date.getInstance(-iOneDay);
 		oBuddhistDate = new Buddhist(-iOneDay); //31, December 1969 = 1, January 2513
 		verifyDate(assert, "Constructor with value(timestamp)= 'one day before 01.01.1970' must represents BuddhistDate corresponding to the date of 31st December 1970 Gregorian/(1389/10/21 Buddhist)",
 				oBuddhistDate, 2512, 11, 31, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
