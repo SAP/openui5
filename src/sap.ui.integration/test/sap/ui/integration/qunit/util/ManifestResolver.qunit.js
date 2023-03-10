@@ -1807,9 +1807,11 @@ sap.ui.define([
 			});
 	});
 
-	QUnit.test("Invalid actions binding", function (assert) {
+	QUnit.test("Actions binding with stringified json", function (assert) {
 		// Arrange
-		var oManifest = {
+		var sExpectedValue1 = "{\"presentationVariant\":{\"SortOrder\":[{\"Property\":\"BillingDocDateYearMonth\",\"Descending\":false}]},\"sensitiveProps\":{}}",
+			sExpectedValue2 = "{\"value\":\"Berlin\",\"presentationVariant\":{\"SortOrder\":[{\"Property\":\"BillingDocDateYearMonth\",\"Descending\":false}]},\"sensitiveProps\":{}}",
+			oManifest = {
 			"sap.app": {
 				"id": "sap.ui.integration.test"
 			},
@@ -1835,7 +1837,8 @@ sap.ui.define([
 							{
 								"type": "Navigation",
 								"parameters": {
-									"title": "{= extension.formatters.toUpperCase(${parameters>/state/value}) }"
+									"value1": "{parameters>/state/value}",
+									"value2": "{= extension.formatters.stringifiedJsonSample(${city}) }"
 								}
 							}
 						]
@@ -1852,8 +1855,12 @@ sap.ui.define([
 		// Act
 		return ManifestResolver.resolveCard(oCard)
 			.then(function (oRes) {
+				var oAction = oRes["sap.card"].content.groups[0].items[0].actions[0],
+					oParams = oAction.parameters;
+
 				// Assert
-				assert.strictEqual(oRes["sap.card"].content.message.type, "error", "an error message is returned");
+				assert.strictEqual(oParams.value1, sExpectedValue1, "Action parameter from parameters is resolved correctly.");
+				assert.strictEqual(oParams.value2, sExpectedValue2, "Action parameter from extension formatter is resolved correctly.");
 				oCard.destroy();
 			});
 	});

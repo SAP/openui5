@@ -9,6 +9,20 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 		this.setFormatters({
 			toUpperCase: function (sValue) {
 				return sValue.toUpperCase();
+			},
+			stringifiedJsonSample: function (sValue) {
+				return JSON.stringify({
+					"value": sValue,
+					"presentationVariant": {
+						"SortOrder": [
+							{
+								"Property": "BillingDocDateYearMonth",
+								"Descending": false
+							}
+						]
+					},
+					"sensitiveProps": {}
+				});
 			}
 		});
 	};

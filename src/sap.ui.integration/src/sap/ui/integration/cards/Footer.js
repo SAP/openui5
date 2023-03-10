@@ -162,7 +162,7 @@ sap.ui.define([
 
 	Footer.create = function (oCard, oConfiguration) {
 		return new Footer({
-			configuration: oConfiguration,
+			configuration: BindingHelper.createBindingInfos(oConfiguration, oCard.getBindingNamespaces()),
 			card: oCard,
 			actionsStrip: ActionsStrip.create(oCard, oConfiguration.actionsStrip, true),
 			paginator: Paginator.create(oCard, oConfiguration.paginator),
