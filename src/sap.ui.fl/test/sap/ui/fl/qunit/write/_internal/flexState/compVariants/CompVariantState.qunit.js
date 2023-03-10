@@ -548,6 +548,9 @@ sap.ui.define([
 			assert.strictEqual(oChange2.getLayer(), Layer.USER, "The default layer is still set to USER");
 		});
 
+		/**
+		 * @deprecated Since version 1.86
+		 */
 		QUnit.test("Given setDefault is called once for USER layer and twice for CUSTOMER layer and then reverted three times", function(assert) {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sComponentId);
 			sandbox.stub(CompVariantUtils, "getPersistencyKey").returns(this.sPersistencyKey);

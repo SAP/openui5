@@ -212,6 +212,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated Since version 1.86
+	 */
 	QUnit.module("SmartVariantManagementApplyAPI.getDefaultVariantId", {
 		beforeEach: function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
