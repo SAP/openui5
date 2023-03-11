@@ -29,6 +29,8 @@ sap.ui.define([
 	oDIV.id = "content";
 	document.body.appendChild(oDIV);
 	var sandbox = sinon.createSandbox();
+	var SYNC = true;
+	var ASYNC = false;
 
 	// UI Construction
 	var oComponent;
@@ -37,15 +39,28 @@ sap.ui.define([
 	var oSpyWriteProcessorExtensionPoint;
 	var oSpyRegisterExtensionPoint;
 
-	function createComponentAndContainer() {
+	function createComponentAndContainer(bSync) {
 		oSpyApplyProcessorExtensionPoint = sandbox.spy(ExtensionPointApplyProcessor, "applyExtensionPoint");
 		oSpyWriteProcessorExtensionPoint = sandbox.spy(ExtensionPointWriteProcessor, "applyExtensionPoint");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
 		sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: []}});
 
+		if (bSync) {
+			oComponent = sap.ui.component({ // legacy-relevant: Sync creation of component
+				name: "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
+				id: "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
+				async: false
+			});
+			oComponentContainer = new ComponentContainer({
+				component: oComponent
+			});
+			oComponentContainer.placeAt("content");
+			return oComponent.getRootControl().byId("async").loaded();
+		}
+
 		return Component.create({
-			name: "sap.ui.fl.qunit.extensionPoint.testApp",
-			id: "sap.ui.fl.qunit.extensionPoint.testApp.async",
+			name: "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
+			id: "sap.ui.fl.qunit.extensionPoint.testAppLegacy.async",
 			componentData: {}
 		}).then(function(_oComp) {
 			oComponent = _oComp;
@@ -68,8 +83,8 @@ sap.ui.define([
 		sandbox.restore();
 	}
 
-	function baseCheck(assert) {
-		var sReference = "sap.ui.fl.qunit.extensionPoint.testApp.async";
+	function baseCheck(bSync, assert) {
+		var sReference = bSync ? "sap.ui.fl.qunit.extensionPoint.testAppLegacy" : "sap.ui.fl.qunit.extensionPoint.testAppLegacy.async";
 		var done = assert.async();
 		var oView = oComponent.getRootControl();
 
@@ -102,21 +117,26 @@ sap.ui.define([
 
 		var fnAssert = function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
+			checkView("sync");
 			checkView("async");
 			assert.equal(oSpyApplyProcessorExtensionPoint.callCount, 0, "applyExtensionPoint of the apply proceesor is not called");
-			assert.equal(oSpyWriteProcessorExtensionPoint.callCount, 7, "number of applyExtensionPoint called correct");
-			assert.equal(oSpyRegisterExtensionPoint.callCount, 11, "number of registerExtensionPoint called correct in the ExtensionPointRegistry");
+			assert.equal(oSpyWriteProcessorExtensionPoint.callCount, 14, "number of applyExtensionPoint called correct");
+			assert.equal(oSpyRegisterExtensionPoint.callCount, 22, "number of registerExtensionPoint called correct in the ExtensionPointRegistry");
 
 			done();
 		};
 
 		// we poll for the panels aggregation content until all ExtensionPoints have been resolved
 		var iPoll = setInterval(function() {
-			var aPanelContent = oView.byId("async").byId("Panel").getContent();
-			var aTableCells = oView.byId("async").byId('fragmentWithExtensionPoint3--customTable').getItems()[0].getCells();
+			var aPanelContent1 = oView.byId("sync").byId("Panel").getContent();
+			var aPanelContent2 = oView.byId("async").byId("Panel").getContent();
+			var aTableCells1 = oView.byId("sync").byId('fragmentWithExtensionPoint3--customTable').getItems()[0].getCells();
+			var aTableCells2 = oView.byId("async").byId('fragmentWithExtensionPoint3--customTable').getItems()[0].getCells();
 			if (
-				aPanelContent.length === 15
-				&& aTableCells.length === 1
+				aPanelContent1.length === 15
+				&& aPanelContent2.length === 15
+				&& aTableCells1.length === 1
+				&& aTableCells2.length === 1
 			) {
 				fnAssert();
 				clearInterval(iPoll);
@@ -124,16 +144,29 @@ sap.ui.define([
 		}, 500);
 	}
 
-	QUnit.module("ExtensionPoints with async view when component is created async with 'flexExtensionPointEnabled: false'", {
+	QUnit.module("ExtensionPoints with sync and async view when component is created sync with 'flexExtensionPointEnabled: false'", {
 		before: function () {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
 			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
-			return createComponentAndContainer();
+			return createComponentAndContainer(SYNC);
 		},
-		after: destroyComponentAndContainer
+		after: destroyComponentAndContainer.bind(null, SYNC)
 	}, function () {
 		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
-			baseCheck(assert);
+			baseCheck(SYNC, assert);
+		});
+	});
+
+	QUnit.module("ExtensionPoints with sync and async view when component is created async with 'flexExtensionPointEnabled: false'", {
+		before: function () {
+			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
+			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			return createComponentAndContainer(ASYNC);
+		},
+		after: destroyComponentAndContainer.bind(null, ASYNC)
+	}, function () {
+		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
+			baseCheck(ASYNC, assert);
 		});
 	});
 

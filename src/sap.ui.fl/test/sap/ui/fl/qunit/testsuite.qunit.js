@@ -508,6 +508,20 @@ sap.ui.define([
 					}
 				}
 			},
+			/**
+			 * @deprecated Since 1.77
+			 */
+			"apply/_internal/extensionPoint/ProcessorLegacy": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/extensionPoint/ProcessorLegacy"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
 			"write/api/AppVariantWriteAPI": {
 				group: "Write API",
 				coverage: {
@@ -715,6 +729,20 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/extensionPoint/Processor"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
+			/**
+			 * @deprecated Since 1.77
+			 */
+			"write/_internal/extensionPoint/ProcessorLegacy": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/extensionPoint/ProcessorLegacy"]
 				},
 				ui5: {
 					resourceroots: {
