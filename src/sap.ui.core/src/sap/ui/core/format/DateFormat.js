@@ -645,6 +645,7 @@ sap.ui.define([
 				sDelimiter = "'" + sDelimiter + "'";
 				oFormat.intervalPatterns.unshift(sSinglePattern + sDelimiter + sSinglePattern);
 			}
+			oFormat.intervalPatterns = Array.from(new Set(oFormat.intervalPatterns));
 		}
 
 		// if the current format isn't a fallback format, create its fallback formats
