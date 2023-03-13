@@ -1,0 +1,23 @@
+{
+  "1.113.0": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "1b28ca25ccd1f52c39684b82e39bb71790e07259",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Update documentation for public methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370007787"
+          }
+        ]
+      },
+      {
+        "id": "61e6d05e078c27f1a7e15af0fa791d4e72b93d2b",
+        "type": "FIX",
+        "text": " JSDoc: Correct misplaced block tags"
+      }
+    ]
+  }
+}
