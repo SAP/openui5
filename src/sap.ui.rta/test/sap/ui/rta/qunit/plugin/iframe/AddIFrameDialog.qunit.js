@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
-	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/library",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel"
 ], function(
 	AddIFrameDialog,
-	Log,
 	isEmptyObject,
 	coreLibrary,
 	AddIFrameDialogController,
@@ -27,12 +25,25 @@ sap.ui.define([
 	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 	var aTextInputFields = ["frameUrl"];
 	var aNumericInputFields = ["frameWidth", "frameHeight"];
-	var aUnitsOfMeasure = [{
-		name: "px"
+	var aUnitsOfWidthMeasure = [{
+		unit: "%",
+		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT")
 	}, {
-		name: "%"
+		unit: "px",
+		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX")
 	}, {
-		name: "rem"
+		unit: "rem",
+		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM")
+	}];
+	var aUnitsOfHeightMeasure = [{
+		unit: "vh",
+		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_VH")
+	}, {
+		unit: "px",
+		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX")
+	}, {
+		unit: "rem",
+		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM")
 	}];
 	var mParameters = {
 		frameUrl: "http://blabla.company.com",
@@ -72,8 +83,7 @@ sap.ui.define([
 			asContainer: true,
 			frameWidth: "16px",
 			frameHeight: "9rem",
-			frameUrl: "https_url",
-			unitsOfMeasure: aUnitsOfMeasure
+			frameUrl: "https_url"
 		},
 		expectedResults: {
 			asContainer: true,
@@ -82,18 +92,19 @@ sap.ui.define([
 			frameWidthUnit: "px",
 			frameHeightUnit: "rem",
 			frameUrl: "https_url",
-			unitsOfMeasure: aUnitsOfMeasure
+			unitsOfWidthMeasure: aUnitsOfWidthMeasure,
+			unitsOfHeightMeasure: aUnitsOfHeightMeasure
 		}
 	}, {
 		input: {
 			frameWidth: "50.5%",
-			frameHeight: "75.5%"
+			frameHeight: "75.5vh"
 		},
 		expectedResults: {
 			frameWidth: 50.5,
 			frameHeight: 75.5,
 			frameWidthUnit: "%",
-			frameHeightUnit: "%"
+			frameHeightUnit: "vh"
 		}
 	}];
 	var mTestURLBuilderData = {
@@ -101,7 +112,8 @@ sap.ui.define([
 		frameWidth: "16px",
 		frameHeight: "9rem",
 		frameUrl: "https_url",
-		unitsOfMeasure: aUnitsOfMeasure,
+		unitsOfWidthMeasure: aUnitsOfWidthMeasure,
+		unitsOfHeightMeasure: aUnitsOfHeightMeasure,
 		urlBuilderParameters: [{
 			label: "Guid",
 			key: "{Guid}",
@@ -396,7 +408,7 @@ sap.ui.define([
 					oData[sFieldName].value = 100;
 				});
 				oData.frameWidthUnit.value = "rem";
-				oData.frameHeightUnit.value = "%";
+				oData.frameHeightUnit.value = "vh";
 				updateSaveButtonEnablement(!!oData.frameUrl.value);
 				clickOnSave();
 			}, this);
@@ -406,7 +418,7 @@ sap.ui.define([
 					assert.strictEqual(mSettings[sFieldName], 100, "Setting for " + sFieldName + " is correct");
 				});
 				assert.strictEqual(mSettings.frameWidthUnit, "rem", "Setting for frameWidthUnit is correct");
-				assert.strictEqual(mSettings.frameHeightUnit, "%", "Setting for frameHeightUnit is correct");
+				assert.strictEqual(mSettings.frameHeightUnit, "vh", "Setting for frameHeightUnit is correct");
 			});
 		});
 
@@ -415,7 +427,11 @@ sap.ui.define([
 				this.oAddIFrameDialog.attachOpened(function () {
 					var oData = this.oAddIFrameDialog._oJSONModel.getData();
 					Object.keys(mData.expectedResults).forEach(function (sFieldName) {
-						assert.strictEqual(oData[sFieldName].value, mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
+						if (Array.isArray(oData[sFieldName])) {
+							assert.deepEqual(oData[sFieldName], mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
+						} else {
+							assert.strictEqual(oData[sFieldName].value, mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
+						}
 					});
 					clickOnCancel();
 				}, this);
