@@ -36,7 +36,7 @@ sap.ui.define([
 	DateRange,
 	Configuration,
 	Core,
-    UI5Date
+	UI5Date
 ) {
 	"use strict";
 
@@ -184,7 +184,7 @@ sap.ui.define([
 	}, renderer: MonthsRowRenderer});
 
 	MonthsRow.prototype.init = function(){
-		var sCalendarType = this.getProperty("primaryCalendarType");
+		var sCalendarType = this._getPrimaryCalendarType();
 		//need day in pattern because in islamic calendar 2 Month can start in one gregorianic calendar
 		this._oFormatYyyymm = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sCalendarType});
 		this._oFormatOnlyYearLong = DateFormat.getInstance({pattern: "yyyy", calendarType: sCalendarType});
@@ -202,8 +202,11 @@ sap.ui.define([
 		return this;
 	};
 
+	MonthsRow.prototype._getPrimaryCalendarType = function(){
+		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
+	};
+
 	MonthsRow.prototype.setSecondaryCalendarType = function (sCalendarType){
-		this._bSecondaryCalendarTypeSet = true;
 		this.setProperty("secondaryCalendarType", sCalendarType);
 		this._oFormatYearInSecType = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
 		this._oFormatLongInSecType = DateFormat.getInstance({pattern: "MMMM y", calendarType: sCalendarType});
@@ -212,13 +215,10 @@ sap.ui.define([
 	};
 
 	MonthsRow.prototype._getSecondaryCalendarType = function () {
-		var sSecondaryCalendarType;
+		var sSecondaryCalendarType = this.getSecondaryCalendarType();
 
-		if (this._bSecondaryCalendarTypeSet) {
-			sSecondaryCalendarType = this.getSecondaryCalendarType();
-			if (sSecondaryCalendarType === this.getPrimaryCalendarType()) {
-				sSecondaryCalendarType = undefined;
-			}
+		if (sSecondaryCalendarType === this._getPrimaryCalendarType()) {
+			return undefined;
 		}
 
 		return sSecondaryCalendarType;
@@ -334,7 +334,7 @@ sap.ui.define([
 		if (this._oDate) {
 			oDate = new CalendarDate(this._oDate);
 		} else {
-			oDate = new CalendarDate(CalendarDate.fromLocalJSDate(UI5Date.getInstance()), this.getPrimaryCalendarType());
+			oDate = new CalendarDate(CalendarDate.fromLocalJSDate(UI5Date.getInstance()), this._getPrimaryCalendarType());
 		}
 
 		oDate.setYear(iCurrentYear);

@@ -149,18 +149,16 @@ sap.ui.define([
 	/* eslint-disable no-lonely-if */
 
 	YearPicker.prototype.init = function(){
-
-		// set default calendar type from configuration
-		var sCalendarType = Configuration.getCalendarType();
-		this.setProperty("primaryCalendarType", sCalendarType);
-
 		// to format year with era in Japanese
-		this._oYearFormat = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
 		this._oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
-		this._oMinDate = CalendarUtils._minDate(this.getPrimaryCalendarType());
-		this._oMaxDate = CalendarUtils._maxDate(this.getPrimaryCalendarType());
+		this._oMinDate = CalendarUtils._minDate(this._getPrimaryCalendarType());
+		this._oMaxDate = CalendarUtils._maxDate(this._getPrimaryCalendarType());
+	};
 
+	YearPicker.prototype.onBeforeRendering = function() {
+		// to format year with era in Japanese
+		this._oYearFormat = DateFormat.getDateInstance({format: "y", calendarType: this._getPrimaryCalendarType()});
 	};
 
 	YearPicker.prototype.onAfterRendering = function(){
@@ -187,7 +185,7 @@ sap.ui.define([
 		this.setProperty("year", iYear);
 		iYear = this.getProperty("year"); // to have type conversion, validation....
 
-		var oDate = new CalendarDate(iYear, 0, 1, this.getPrimaryCalendarType()),
+		var oDate = new CalendarDate(iYear, 0, 1, this._getPrimaryCalendarType()),
 			oSelectedDates = this._getSelectedDates()[0],
 			oYearPickerSelectedDates = this.getAggregation("selectedDates");
 
@@ -226,7 +224,7 @@ sap.ui.define([
 		iYear = oDate.getFullYear();
 		CalendarUtils._checkYearInValidRange(iYear);
 
-		oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
+		oCalDate = CalendarDate.fromLocalJSDate(oDate, this._getPrimaryCalendarType());
 		oCalDate.setMonth(0, 1);
 
 		this.setProperty("date", oDate);
@@ -257,11 +255,15 @@ sap.ui.define([
 
 		if (!this._oDate) {
 			var iYear = this.getYear();
-			this._oDate = new CalendarDate(iYear, 0, 1, this.getPrimaryCalendarType());
+			this._oDate = new CalendarDate(iYear, 0, 1, this._getPrimaryCalendarType());
 		}
 
 		return this._oDate;
 
+	};
+
+	YearPicker.prototype._getPrimaryCalendarType = function(){
+		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
 	};
 
 	/**
@@ -378,13 +380,13 @@ sap.ui.define([
 		}
 
 		if (oSelectedDates.getStartDate()) {
-			oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this.getPrimaryCalendarType());
+			oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this._getPrimaryCalendarType());
 			oStartDate.setMonth(0, 1);
 		}
 
 		if (oTarget.classList.contains("sapUiCalItem")) {
 			sYyyymmdd = oTarget.getAttribute("data-sap-year-start");
-			oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+			oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 			if (this._isSelectionInProgress()) {
 				this._markInterval(oStartDate, oFocusedDate);
@@ -411,8 +413,8 @@ sap.ui.define([
 
 			if (this.getIntervalSelection() && oTarget.classList.contains("sapUiCalItem") && oSelectedDates) {
 				sYyyymmdd = oTarget.getAttribute("data-sap-year-start");
-				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
-				oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this.getPrimaryCalendarType());
+				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
+				oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this._getPrimaryCalendarType());
 				oStartDate.setMonth(0, 1);
 
 				if (!oFocusedDate.isSame(oStartDate) && !oSelectedDates.getEndDate()) {
@@ -447,7 +449,7 @@ sap.ui.define([
 
 		for (i = 0; i < aDomRefs.length; ++i) {
 			sYyyymmdd = aDomRefs[i].getAttribute("data-sap-year-start");
-			oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+			oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 			if (this._bMousedownChange) {
 				if ((oFocusedDate.isSame(oStartDate) || oFocusedDate.isSame(oEndDate)) && !CalendarUtils._isOutside(oFocusedDate, this._oMinDate, this._oMaxDate)) {
@@ -510,10 +512,16 @@ sap.ui.define([
 
 	/**
 	 * Returns if there is secondary calendar type set and if it is different from the primary one.
-	 * @returns {boolean} if there is secondary calendar type set and if it is different from the primary one
+	 * @returns {string} if there is secondary calendar type set and if it is different from the primary one
 	 */
 	YearPicker.prototype._getSecondaryCalendarType = function(){
-		return this.getSecondaryCalendarType() === this.getPrimaryCalendarType() ? undefined : this.getSecondaryCalendarType();
+		var sSecondaryCalendarType = this.getSecondaryCalendarType();
+
+		if (sSecondaryCalendarType === this._getPrimaryCalendarType()) {
+			return undefined;
+		}
+
+		return sSecondaryCalendarType;
 	};
 
 	/**
@@ -587,18 +595,18 @@ sap.ui.define([
 
 		// check if first date is outside of min and max date
 		var iYears = this.getYears(),
-			oMaxStartYear = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+			oMaxStartYear = new CalendarDate(this._oMaxDate, this._getPrimaryCalendarType());
 
-		if (!oMaxStartYear.isSame(CalendarUtils._maxDate(this.getPrimaryCalendarType()))) {
+		if (!oMaxStartYear.isSame(CalendarUtils._maxDate(this._getPrimaryCalendarType()))) {
 			return oDate;
 		}
 
 		oMaxStartYear.setYear(oMaxStartYear.getYear() - iYears + 1);
 		if (oDate.isAfter(oMaxStartYear) && oDate.getYear() != oMaxStartYear.getYear()) {
-			oDate = new CalendarDate(oMaxStartYear, this.getPrimaryCalendarType());
+			oDate = new CalendarDate(oMaxStartYear, this._getPrimaryCalendarType());
 			oDate.setMonth(0, 1);
 		} else if (oDate.isBefore(this._oMinDate) && oDate.getYear() != this._oMinDate.getYear()) {
-			oDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
+			oDate = new CalendarDate(this._oMinDate, this._getPrimaryCalendarType());
 			oDate.setMonth(0, 1);
 		}
 
@@ -627,11 +635,11 @@ sap.ui.define([
 	YearPicker.prototype._updatePage = function (bForward, iSelectedIndex, bFireEvent){
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var oFirstDate =  CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start")), this.getPrimaryCalendarType());
+		var oFirstDate =  CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start")), this._getPrimaryCalendarType());
 		var iYears = this.getYears();
 
 		if (bForward) {
-			var oMaxDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+			var oMaxDate = new CalendarDate(this._oMaxDate, this._getPrimaryCalendarType());
 			oMaxDate.setYear(oMaxDate.getYear() - iYears + 1);
 			if (oFirstDate.isBefore(oMaxDate)) {
 				oFirstDate.setYear(oFirstDate.getYear() + iYears);
@@ -640,7 +648,7 @@ sap.ui.define([
 					if (iSelectedIndex > iYears - 1) {
 						iSelectedIndex = iYears - 1;
 					}
-					oFirstDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+					oFirstDate = new CalendarDate(this._oMaxDate, this._getPrimaryCalendarType());
 					this._oDate.setMonth(0, 1);
 				}
 			} else {
@@ -654,7 +662,7 @@ sap.ui.define([
 					if (iSelectedIndex < 0) {
 						iSelectedIndex = 0;
 					}
-					oFirstDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
+					oFirstDate = new CalendarDate(this._oMinDate, this._getPrimaryCalendarType());
 				}
 			} else {
 				return;
@@ -676,7 +684,7 @@ sap.ui.define([
 		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
 			$DomRef = jQuery(aDomRefs[iIndex]),
 			sYyyymmdd = $DomRef.attr("data-sap-year-start"),
-			oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType()),
+			oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType()),
 			oSelectedDates = this._getSelectedDates()[0],
 			oYearPickerSelectedDates = this.getAggregation("selectedDates"),
 			oStartDate;
@@ -708,7 +716,7 @@ sap.ui.define([
 			if (!oSelectedDates.getStartDate()) {
 				oSelectedDates.setStartDate(oFocusedDate.toLocalJSDate(), bSuppressInvalidate);
 			} else if (!oSelectedDates.getEndDate()) {
-				oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this.getPrimaryCalendarType());
+				oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this._getPrimaryCalendarType());
 				if (oFocusedDate.isBefore(oStartDate)) {
 					oSelectedDates.setEndDate(oStartDate.toLocalJSDate(), bSuppressInvalidate);
 					oSelectedDates.setStartDate(oFocusedDate.toLocalJSDate(), bSuppressInvalidate);
@@ -725,7 +733,7 @@ sap.ui.define([
 			for (var i = 0; i < aDomRefs.length; i++) {
 				$DomRef = jQuery(aDomRefs[i]);
 				sYyyymmdd = $DomRef.attr("data-sap-year-start");
-				var oCurrentDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+				var oCurrentDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 				var bApplySelection = this._fnShouldApplySelection(oCurrentDate);
 				var bApplySelectionBetween = this._fnShouldApplySelectionBetween(oCurrentDate);
@@ -764,7 +772,7 @@ sap.ui.define([
 	function _initItemNavigation(){
 
 		var oFocusedDate = this.getDate()
-			? CalendarDate.fromLocalJSDate(this.getDate(), this.getPrimaryCalendarType())
+			? CalendarDate.fromLocalJSDate(this.getDate(), this._getPrimaryCalendarType())
 			: this._getDate(),
 			oRootDomRef = this.getDomRef(),
 			aDomRefs = this.$().find(".sapUiCalItem"),
@@ -772,7 +780,7 @@ sap.ui.define([
 
 		for (i = 0; i < aDomRefs.length; ++i) {
 			sYyyymmdd = aDomRefs[i].getAttribute("data-sap-year-start");
-			oCurrentDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+			oCurrentDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 			if (oCurrentDate.isSame(oFocusedDate)) {
 				iIndex = i;
@@ -826,12 +834,12 @@ sap.ui.define([
 		}
 
 			if (oSelectedDates.getStartDate()) {
-				oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this.getPrimaryCalendarType());
+				oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this._getPrimaryCalendarType());
 				oStartDate.setMonth(0, 1);
 	}
 
 			sYyyymmdd = oTarget.getAttribute("data-sap-year-start");
-			oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+			oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 			if (this._isSelectionInProgress()) {
 				this._markInterval(oStartDate, oFocusedDate);
@@ -873,7 +881,7 @@ sap.ui.define([
 			oStartDate, oFocusedDate, sYyyymmdd;
 
 		if (oSelectedDates && oSelectedDates.getStartDate()) {
-			oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this.getPrimaryCalendarType());
+			oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this._getPrimaryCalendarType());
 			oStartDate.setMonth(0, 1);
 		}
 
@@ -887,14 +895,14 @@ sap.ui.define([
 			case "sapnextmodifiers":
 				if (oEvent.keyCode === KeyCodes.ARROW_DOWN && iColumns < iYears) {
 					sYyyymmdd = aDomRefs[iIndex - iYears + iColumns].getAttribute("data-sap-year-start");
-					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 					//same column in first row of next group (only if more than one row)
 					this._updatePage(true, iIndex - iYears + iColumns, true);
 					this._iSelectedIndex = iIndex - iYears + iColumns;
 				} else {
 					sYyyymmdd = aDomRefs[0].getAttribute("data-sap-year-start");
-					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 					// first year in next group
 					this._updatePage(true, 0, true);
@@ -905,14 +913,14 @@ sap.ui.define([
 			case "sappreviousmodifiers":
 				if (oEvent.keyCode === KeyCodes.ARROW_UP && iColumns < iYears) {
 					sYyyymmdd = aDomRefs[iYears - iColumns + iIndex].getAttribute("data-sap-year-start");
-					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 					//same column in last row of previous group (only if more than one row)
 					this._updatePage(false, iYears - iColumns + iIndex, true);
 					this._iSelectedIndex = iYears - iColumns + iIndex;
 				} else {
 					sYyyymmdd = aDomRefs[iYears - 1].getAttribute("data-sap-year-start");
-					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 					// last year in previous group
 					this._updatePage(false, iYears - 1, true);
@@ -921,7 +929,7 @@ sap.ui.define([
 
 			case "sappagedown":
 				sYyyymmdd = aDomRefs[iIndex].getAttribute("data-sap-year-start");
-				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 				// same index in next group
 				this._updatePage(true, iIndex, true);
@@ -929,7 +937,7 @@ sap.ui.define([
 
 			case "sappageup":
 				sYyyymmdd = aDomRefs[iIndex].getAttribute("data-sap-year-start");
-				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
 				// same index in previous group
 				this._updatePage(false, iIndex, true);
@@ -962,12 +970,12 @@ sap.ui.define([
 		oEndDate = oSelectedDates.getEndDate();
 
 		if (oStartDate) {
-			oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this.getPrimaryCalendarType());
+			oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
 			oStartDate.setMonth(0, 1);
 		}
 
 		if (this.getIntervalSelection() && oStartDate && oEndDate) {
-			oEndDate = CalendarDate.fromLocalJSDate(oEndDate, this.getPrimaryCalendarType());
+			oEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
 			oEndDate.setMonth(0, 1);
 			if (oCurrentDate.isSame(oStartDate) || oCurrentDate.isSame(oEndDate)) {
 				return true;
@@ -995,9 +1003,9 @@ sap.ui.define([
 		oEndDate = oSelectedDates.getEndDate();
 
 		if (this.getIntervalSelection() && oStartDate && oEndDate) {
-			oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this.getPrimaryCalendarType());
+			oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
 			oStartDate.setMonth(0, 1);
-			oEndDate = CalendarDate.fromLocalJSDate(oEndDate, this.getPrimaryCalendarType());
+			oEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
 			oEndDate.setMonth(0, 1);
 			if (CalendarUtils._isBetween(oCurrentDate, oStartDate, oEndDate)) {
 				return true;
