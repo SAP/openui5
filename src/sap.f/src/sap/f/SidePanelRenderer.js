@@ -42,6 +42,10 @@ sap.ui.define([
 			!bActionBarExpanded && oRm.attr("title", sItemText);
 			oRm.class("sapFSPItem");
 
+			if (!oItem.getEnabled()) {
+				oRm.class("sapFSPDisabled");
+			}
+
 			if ((!bOverflowItem && bItemSelected) || (bOverflowItem && oControl._bOverflowMenuOpened)) {
 				oRm.class("sapFSPSelected");
 				oRm.attr(sAriaAttribute, "true");

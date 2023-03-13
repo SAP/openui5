@@ -55,6 +55,14 @@ describe("sap.f.SidePanelVisual", function() {
 
 	}, iDefaultTimeout);
 
+	it("SidePanel - try to select disabled action item", function() {
+		var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
+			oDiabledItem = element(by.css("#SidePanel1 .sapFSPItem.sapFSPDisabled"));
+
+		oDiabledItem.click();
+		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_disabled_item_not_selected");
+
+	}, iDefaultTimeout);
 
 	// SidePanel with single action item
 

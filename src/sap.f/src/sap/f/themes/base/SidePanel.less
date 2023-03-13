@@ -244,6 +244,14 @@
 					cursor: pointer;
 				}
 
+				&.sapFSPDisabled {
+					opacity: @sapUiContentDisabledOpacity;
+
+					&:hover {
+						background-color: initial;
+					}
+				}
+
 				&.sapFSPOverflowItem {
 					visibility: hidden;
 
@@ -403,7 +411,14 @@
 		font-weight: 600;
 	}
 
-	&:not(.sapUiMnuItmHov:active) .sapUiMnuItmTxt {
+	&.sapUiMnuItmDsbl {
+		.sapUiMnuItmTxt {
+			opacity: @sapUiContentDisabledOpacity;
+		}
+	}
+
+	&:not(.sapUiMnuItmHov:active) .sapUiMnuItmTxt,
+	&.sapUiMnuItmDsbl.sapUiMnuItmHov:active .sapUiMnuItmTxt {
 		color: @sapUiBaseText;
 	}
 }

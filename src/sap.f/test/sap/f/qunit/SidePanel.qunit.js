@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/f/SidePanel",
 	"sap/f/SidePanelItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -24,7 +25,8 @@ sap.ui.define([
 	SidePanel,
 	SidePanelItem,
 	KeyCodes,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 
@@ -39,7 +41,8 @@ sap.ui.define([
 		},
 		{
 			icon: "sap-icon://building",
-			text: "Go to the office"
+			text: "Go to the office",
+			enabled: false
 		},
 		{
 			icon: "sap-icon://bed",
@@ -71,7 +74,8 @@ sap.ui.define([
 		},
 		{
 			icon: "sap-icon://lab",
-			text: "Do a research"
+			text: "Do a research",
+			enabled: false
 		},
 		{
 			icon: "sap-icon://theater",
@@ -118,7 +122,8 @@ sap.ui.define([
 		do {
 			oSidePanel.addItem(new SidePanelItem({
 				text: aItems[iAdded].text,
-				icon: aItems[iAdded].icon
+				icon: aItems[iAdded].icon,
+				enabled: aItems[iAdded].enabled
 			}));
 			iAdded++;
 		} while (iAdded < iCount && iAdded < aItems.length);
@@ -205,6 +210,7 @@ sap.ui.define([
 
 	QUnit.test("setSelectedItem", function (assert) {
 		var	oSelectedItem = this.oSP.getItems()[1], // action item with index '1' will be selected later
+			oDisabledItem = this.oSP.getItems()[2],
 			sSideContentHeaderId = this.oSP.getId() + "-header";
 
 		// assert
@@ -230,6 +236,37 @@ sap.ui.define([
 		assert.notOk(this.oSP.getSelectedItem(), "There is no selected action item");
 		assert.notOk(this.oSP._getSideContentExpanded(), "The side content is not expanded");
 		assert.notOk(document.getElementById(sSideContentHeaderId), "Side content title doesn't exists");
+
+		// act - try to select disabled action item
+		this.oSP.setSelectedItem(oDisabledItem.getId());
+		oCore.applyChanges();
+
+		// assert
+		assert.notOk(this.oSP.getSelectedItem(), "The disabled action item is not selected, there is no selected item");
+	});
+
+	QUnit.test("_toggleItemSelection", function (assert) {
+		var	oEnabledItem = this.oSP.getItems()[1],
+			oDisabledItem = this.oSP.getItems()[2],
+			$itemWrapper = jQuery(oEnabledItem.getDomRef()),
+			oFakeEvent = new jQuery.Event("tap"),
+			oFakeEvent2 = new jQuery.Event("tap"),
+			oSelectedItem;
+
+		// act - toggle to enabled item
+		$itemWrapper.trigger(oFakeEvent);
+
+		// assert
+		oSelectedItem = this.oSP.getSelectedItem();
+		assert.strictEqual(oSelectedItem, oEnabledItem.getId(), "Proper action item is selected");
+
+		// act - try to select disabled  actionitem
+		$itemWrapper = jQuery(oDisabledItem.getDomRef());
+		$itemWrapper.trigger(oFakeEvent2);
+
+		// assert
+		oSelectedItem = this.oSP.getSelectedItem();
+		assert.strictEqual(oSelectedItem, oEnabledItem.getId(), "The disabled action item is not selected; The previously selected item remains selected");
 	});
 
 	QUnit.test("ariaLabel", function (assert) {
