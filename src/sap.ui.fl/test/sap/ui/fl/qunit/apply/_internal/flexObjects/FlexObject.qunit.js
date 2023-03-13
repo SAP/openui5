@@ -271,6 +271,10 @@ sap.ui.define([
 				States.LifecycleState.PERSISTED,
 				"then the state can be changed to PERSISTED"
 			);
+			assert.ok(
+				this.oFlexObject.isPersisted(),
+				"then the state can be changed to PERSISTED"
+			);
 			this.oFlexObject.setContent({});
 			assert.strictEqual(
 				this.oFlexObject.getState(),
