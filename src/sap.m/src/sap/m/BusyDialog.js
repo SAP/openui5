@@ -385,7 +385,9 @@ sap.ui.define(['./library',
 				if (sText) {
 					this._oLabel = new Label(this.getId() + '-TextLabel', {text: sText}).addStyleClass('sapMBusyDialogLabel');
 					this._oDialog.insertAggregation('content', this._oLabel, 0);
-					this._oDialog.addAriaLabelledBy(this._oLabel.getId());
+					if (this._oDialog.getShowHeader()) {
+						this._oDialog.addAriaLabelledBy(this._oLabel.getId());
+					}
 				}
 			} else {
 				if (sText) {
