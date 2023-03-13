@@ -1035,7 +1035,8 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.sDeletedItemId, sItemId, "The internal id of the item that may be deleted is updated correctly");
 		assert.equal(oMessageBoxStub.getCall(0).args[1].dialogId, "messageBoxDeleteFile", "Correct dialog id has been handed to the show function");
 		assert.equal(oMessageBoxStub.getCall(0).args[1].actions[0], MessageBox.Action.OK, "OK action is included in the MessageBox call");
-		assert.equal(oMessageBoxStub.getCall(0).args[1].actions[1], MessageBox.Action.CANCEL, "Cancel action is included in the MessageBox call");
+		assert.equal(oMessageBoxStub.getCall(0).args[1].emphasizedAction, MessageBox.Action.OK, "OK action is emphasized in the MessageBox call" );
+        assert.equal(oMessageBoxStub.getCall(0).args[1].actions[1], MessageBox.Action.CANCEL, "Cancel action is included in the MessageBox call");
 		assert.equal(oMessageBoxStub.getCall(0).args[1].styleClass, sCompactClass, "Compact class has been handed from UploadCollection to the MessageBox successfully");
 	});
 

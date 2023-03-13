@@ -2211,6 +2211,7 @@ sap.ui.define([
 			MessageBox.show(sMessageText, {
 				title: this._oRb.getText("UPLOADCOLLECTION_DELETE_TITLE"),
 				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                emphasizedAction: MessageBox.Action.OK,
 				onClose: this._onCloseMessageBoxDeleteItem.bind(this),
 				dialogId: "messageBoxDeleteFile",
 				styleClass: sCompact
