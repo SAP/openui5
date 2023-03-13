@@ -186,6 +186,11 @@ sap.ui.define(function () {
 			"Router": {
 				coverage: {
 					only: ["sap/f/Router"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.test": "test-resources/sap/f/qunit/"
+					}
 				}
 			},
 			"SearchManager": {
