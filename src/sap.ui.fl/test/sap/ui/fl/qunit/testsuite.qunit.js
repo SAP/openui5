@@ -289,6 +289,9 @@ sap.ui.define([
 					only: ["sap/ui/fl/util/DescriptorChangeCheck"]
 				}
 			},
+			/**
+			 * @deprecated Since 1.84
+			 */
 			"apply/_internal/connectors/ObjectStorageConnector": {
 				group: "Apply Internal",
 				coverage: {
@@ -1124,6 +1127,9 @@ sap.ui.define([
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
+			/**
+			 * @deprecated Since 1.70
+			 */
 			FakeLrepConnector: {
 				coverage: {
 					only: ["sap/ui/fl/FakeLrepConnector"]
