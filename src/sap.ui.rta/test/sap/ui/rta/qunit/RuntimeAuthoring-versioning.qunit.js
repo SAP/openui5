@@ -78,7 +78,7 @@ sap.ui.define([
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
-		sandbox.stub(Utils, "showMessageBox").callsFake(
+		return sandbox.stub(Utils, "showMessageBox").callsFake(
 			function (oMessageType, sMessageKey) {
 				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
 				return Promise.resolve();
@@ -329,15 +329,47 @@ sap.ui.define([
 			var oLoadDraftForApplication = sandbox.stub(VersionsAPI, "loadDraftForApplication").returns(Promise.resolve());
 			var oLoadVersionForApplication = sandbox.stub(VersionsAPI, "loadVersionForApplication").returns(Promise.resolve());
 
-			whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
+			var oConfirmMessageStub = whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
 
 			var oReloadInfo = {
-				hasDraftChanges: false,
-				hasHigherLayerChanges: true
+				isDraftAvailable: false,
+				hasHigherLayerChanges: true,
+				URLParsingService: this.oURLParsingService
 			};
-			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
+
+			var oFlexSettings = this.oRta.getFlexSettings();
+			oFlexSettings.developerMode = false;
+			this.oRta.setFlexSettings(oFlexSettings);
+
+			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function (bReloadResult) {
+				assert.ok(bReloadResult, "then the reload is successful");
 				assert.equal(oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is called once");
 				assert.equal(oLoadVersionForApplication.callCount, 1, "then loadVersionForApplication is not called");
+				assert.equal(oConfirmMessageStub.callCount, 1, "then messagebox was shown and confirmed");
+			});
+		});
+
+		QUnit.test("and a reload is needed on start because of personalization changes in visual editor", function (assert) {
+			var oLoadDraftForApplication = sandbox.stub(VersionsAPI, "loadDraftForApplication").returns(Promise.resolve());
+			var oLoadVersionForApplication = sandbox.stub(VersionsAPI, "loadVersionForApplication").returns(Promise.resolve());
+
+
+			var oFlexSettings = this.oRta.getFlexSettings();
+			oFlexSettings.developerMode = true;
+			this.oRta.setFlexSettings(oFlexSettings);
+
+			var oConfirmMessageStub = whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
+
+			var oReloadInfo = {
+				isDraftAvailable: false,
+				hasHigherLayerChanges: true,
+				URLParsingService: this.oURLParsingService
+			};
+			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function (bReloadResult) {
+				assert.ok(bReloadResult, "then the reload is successful");
+				assert.equal(oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is called once");
+				assert.equal(oLoadVersionForApplication.callCount, 1, "then loadVersionForApplication is not called");
+				assert.equal(oConfirmMessageStub.callCount, 0, "then messagebox is not called");
 			});
 		});
 	});

@@ -1789,7 +1789,7 @@ function(
 		if (!sReason) {
 			return Promise.resolve();
 		}
-		return Utils.showMessageBox("information", sReason)
+		return (this.getFlexSettings().developerMode ? Promise.resolve() : Utils.showMessageBox("information", sReason))
 		.then(function() {
 			RuntimeAuthoring.enableRestart(oReloadInfo.layer);
 			if (FlexUtils.getUshellContainer()) {
