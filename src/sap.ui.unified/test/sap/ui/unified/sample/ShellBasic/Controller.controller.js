@@ -45,15 +45,6 @@ sap.ui.define([
 				return;
 			}
 
-			// create Overlay only once
-			if (!this._overlay) {
-				this._overlay = sap.ui.xmlfragment(
-					"sap.ui.unified.sample.ShellBasic.ShellOverlay",
-					this
-				);
-				this.getView().addDependent(this._overlay);
-			}
-
 			// mock data
 			var aResultData = [];
 			for (var i = 0; i < 10; i++) {
@@ -68,11 +59,32 @@ sap.ui.define([
 						};
 			var oModel = new JSONModel();
 			oModel.setData(oData);
-			this._overlay.setModel(oModel);
 
-			// set reference to shell and open overlay
-			this._overlay.setShell(this.byId("myShell"));
-			this._overlay.open();
+			this.getOverlay().then(function(oOverlay) {
+				oOverlay.setModel(oModel);
+
+				// set reference to shell and open overlay
+				oOverlay.setShell(this.byId("myShell"));
+				oOverlay.open();
+			}.bind(this));
+		},
+
+		getOverlay: function() {
+			return new Promise(function(resolve) {
+				// create Overlay only once
+				if (!this._overlay) {
+					Fragment.load({
+						type: "XML",
+						name: "sap.ui.unified.sample.ShellBasic.ShellOverlay",
+						controller: this
+					}).then(function(oOverlay) {
+						this._overlay = oOverlay;
+						resolve(oOverlay);
+					}.bind(this));
+				} else {
+					resolve(this._overlay);
+				}
+			}.bind(this));
 		}
 	});
 

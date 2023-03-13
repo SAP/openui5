@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/Title",
 	"sap/m/Button",
+	"sap/m/plugins/CopyProvider",
 	"sap/m/plugins/PasteProvider",
 	"sap/m/Column",
 	"sap/m/Link",
@@ -48,6 +49,7 @@ sap.ui.define([
 	Icon,
 	Title,
 	Button,
+	CopyProvider,
 	PasteProvider,
 	Column,
 	Link,
@@ -539,7 +541,7 @@ sap.ui.define([
 		infoToolbar : oTableInfo,
 		swipeContent : oSwipe,
 		columns : aColumns,
-		dependents: new sap.m.plugins.CopyProvider({
+		dependents: new CopyProvider({
 			extractData: function(oContext, oColumn) {
 				return oContext.getProperty(oColumn.data("clipboard"));
 			}
