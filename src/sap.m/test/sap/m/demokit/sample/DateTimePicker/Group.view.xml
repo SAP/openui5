@@ -88,16 +88,40 @@
 				}
 			}"
 			class="sapUiSmallMarginBottom"/>
-		<Text
-			id="textResultForDataBinding"
-			text="{
-				path:'/valueDTP5',
-				type:'sap.ui.model.type.DateTime',
-				formatOptions: {
-					style: 'long'
-				}
+		<Label text="DateTimePicker using DataBinding with value and timezone" labelFor="DTP10"/>
+		<DateTimePicker
+			id="DTP10"
+			value="{
+				parts:[{
+						path: '/valueDTP10',
+						type: 'sap.ui.model.odata.type.DateTimeOffset'
+					},
+					{
+						path: '/timezoneDTP10',
+						type: 'sap.ui.model.odata.type.String'
+					}
+				],
+				type: 'sap.ui.model.odata.type.DateTimeWithTimezone'
 			}"
-			class="sapUiSmallMargin"/>
+			class="sapUiSmallMarginBottom"/>
+			<Label text="DateTimePicker using DataBinding with null value and timezone" labelFor="DTP11"/>
+		<DateTimePicker
+			id="DTP11"
+			showTimezone="true"
+			showCurrentTimeButton="true"
+			value="{
+				parts:[{
+						path: '/valueDTP11',
+						type: 'sap.ui.model.odata.type.DateTimeOffset'
+					},
+					{
+						path: '/timezoneDTP11',
+						type: 'sap.ui.model.odata.type.String'
+					}
+				],
+				type: 'sap.ui.model.odata.type.DateTimeWithTimezone'
+			}"
+			class="sapUiSmallMarginBottom"/>
 	</Panel>
 	<form:SimpleForm
 		id="simpleForm"
@@ -123,20 +147,5 @@
 			showTimezone="true"
 			timezone="America/New_York"
 			class="sapUiSmallMarginBottom" />
-		<Label text="Not showing the timezone label, showing the current time in New York" labelFor="DTP9" />
-		<DateTimePicker
-			id="DTP9"
-			value="{
-				'path':'/valueDTP9',
-				'type': 'sap.ui.model.type.DateTime',
-				'formatOptions': {
-					'style': 'medium'
-				}
-			}"
-			timezone="America/New_York"
-			class="sapUiSmallMarginBottom"/>
-		<Input editable="false" value="America/New_York">
-			<layoutData><layout:GridData span="XL2 L3 M4 S4"/></layoutData>
-		</Input>
 	</form:SimpleForm>
 </mvc:View>
