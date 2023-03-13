@@ -24,7 +24,7 @@
             <variants:VariantManagement id="mdcTable-vm" for="mdcTable" />
         </mdc:variant>
         <mdc:columns>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--CreatedAt" header="Created On" tooltip="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
+            <mdcTable:Column id="mdcTable-vm--mdcTable--CreatedAt" header="Created On" tooltip="Created On" dataProperty="CreatedAt" importance="Low">
                 <Text text="{CreatedAt}" />
             </mdcTable:Column>
             <mdcTable:Column id="mdcTable-vm--mdcTable--ProductID" header="Product ID" tooltip="Product ID" dataProperty="ProductID" importance="High">

@@ -1099,18 +1099,17 @@ sap.ui.define([
 			type: "ResponsiveTable",
 			columns: [
 				new Column({
-					id: "foo1",
-					initialIndex: 1,
-					header: "Test1",
-					template: new Text({
-						text: "template1"
-					})
-				}), new Column({
 					id: "foo0",
-					initialIndex: 0,
 					header: "Test0",
 					template: new Text({
 						text: "template0"
+					})
+				}),
+				new Column({
+					id: "foo1",
+					header: "Test1",
+					template: new Text({
+						text: "template1"
 					})
 				})
 
@@ -1120,7 +1119,7 @@ sap.ui.define([
 			})
 		});
 
-		return this.oTable._fullyInitialized().then(function() {
+		return this.oTable.initialized().then(function() {
 			return waitForBinding(this.oTable);
 		}.bind(this)).then(function() {
 			var aMDCColumns = this.oTable.getColumns();

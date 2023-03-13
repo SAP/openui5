@@ -58,19 +58,19 @@
 							selectionMode="Multi"
 							delegate='\{"name": "sap/ui/mdc/sample/FilterBar/GridTable.delegate", "payload": \{"collectionName": "Books"\}\}' threshold="50">
 							<mdc:columns>
-								<mdc:table.Column id="VH2-Dia-Table-ColId" header="ID" dataProperty="ID" initialIndex="1">
+								<mdc:table.Column id="VH2-Dia-Table-ColId" header="ID" dataProperty="ID">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH2-Dia-Table-ColIitle" header="Title" dataProperty="title" initialIndex="2">
+								<mdc:table.Column id="VH2-Dia-Table-ColIitle" header="Title" dataProperty="title">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{title}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH2-Dia-Table-ColDescr" header="Description" dataProperty="descr" initialIndex="3">
+								<mdc:table.Column id="VH2-Dia-Table-ColDescr" header="Description" dataProperty="descr">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{descr}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH2-Dia-Table-ColPub" header="Published" dataProperty="published" initialIndex="4">
+								<mdc:table.Column id="VH2-Dia-Table-ColPub" header="Published" dataProperty="published">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{published}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH2-Dia-Table-ColGenre" header="Genre Code" dataProperty="genre_code" initialIndex="5">
+								<mdc:table.Column id="VH2-Dia-Table-ColGenre" header="Genre Code" dataProperty="genre_code">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{genre_code}" additionalValue="{genre/label}" editMode="Display" display="Description"/>
 								</mdc:table.Column>
 							</mdc:columns>
@@ -144,13 +144,13 @@
 							selectionMode="Multi"
 							delegate='\{"name": "sap/ui/mdc/sample/FilterBar/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}' threshold="50">
 							<mdc:columns>
-								<mdc:table.Column id="VH1-Dia-Table-ColId" header="ID" dataProperty="ID" initialIndex="1">
+								<mdc:table.Column id="VH1-Dia-Table-ColId" header="ID" dataProperty="ID">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH1-Dia-Table-ColName" header="Name" dataProperty="name" initialIndex="2">
+								<mdc:table.Column id="VH1-Dia-Table-ColName" header="Name" dataProperty="name">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{name}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH1-Dia-Table-ColDateOfBirth" header="Date of Birth" dataProperty="dateOfBirth" initialIndex="2">
+								<mdc:table.Column id="VH1-Dia-Table-ColDateOfBirth" header="Date of Birth" dataProperty="dateOfBirth">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{dateOfBirth}" editMode="Display"/>
 								</mdc:table.Column>
 							</mdc:columns>

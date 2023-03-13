@@ -65,10 +65,10 @@
 									delegate='\{"name": "delegates/odata/v4/TableDelegate", "payload": \{"collectionName": "Books"\}\}'
 									threshold="50">
 									<mdc:columns>
-										<mdc:table.Column id="ColId" header="ID" dataProperty="ID" initialIndex="1">
+										<mdc:table.Column id="ColId" header="ID" dataProperty="ID">
 											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 										</mdc:table.Column>
-										<mdc:table.Column id="ColTitle" header="Title" dataProperty="title" initialIndex="2">
+										<mdc:table.Column id="ColTitle" header="Title" dataProperty="title">
 											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{title}" editMode="Display"/>
 										</mdc:table.Column>
 									</mdc:columns>
