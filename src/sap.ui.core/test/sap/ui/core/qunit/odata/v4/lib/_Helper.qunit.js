@@ -314,6 +314,7 @@ sap.ui.define([
 			statusText : "Internal Server Error"
 		}
 	}, {
+		// no need to use UI5Date.getInstance as only the timestamp is relevant
 		retryAfter : new Date(1234567890),
 		message : "message: 503 Service Unavailable",
 		response : {
@@ -324,6 +325,7 @@ sap.ui.define([
 			statusText : "Service Unavailable"
 		}
 	}, {
+		// no need to use UI5Date.getInstance as only the timestamp is relevant
 		retryAfter : new Date(1234567890 + 42 * 1000),
 		message : "message: 503 Service Unavailable",
 		response : {
@@ -334,6 +336,7 @@ sap.ui.define([
 			statusText : "Service Unavailable"
 		}
 	}, {
+		// no need to use UI5Date.getInstance as only the timestamp is relevant
 		retryAfter : new Date("Fri, 16 Jul 2021 14:04:39 GMT"),
 		message : "message: 503 Service Unavailable",
 		response : {

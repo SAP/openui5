@@ -2192,6 +2192,7 @@ sap.ui.define([
 	// Also check sap-statistics (JIRA: CPOUI5ODATAV4-1165)
 	QUnit.test("error response: $direct (framework test)", function (assert) {
 		var oModel,
+			// no need to use UI5Date.getInstance as only the timestamp is relevant
 			dRetryAfter = new Date(),
 			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
