@@ -11,11 +11,6 @@ sap.ui.define([
 	var app = new App("myApp", {
 			initialPage: "page1"
 		}),
-		busyImage = new BusyIndicator({
-			text: 'Busy indicator with a custom icon',
-			customIcon: '../images/synchronise_48.png',
-			customIconRotationSpeed: 5000
-		}),
 		busyCSSText = new BusyIndicator({
 			text: 'Medium sized busy indicator'
 		}),
@@ -29,7 +24,6 @@ sap.ui.define([
 		oPage = new Page("page1", {
 			title: "BusyIndicator Accessibility Test Page",
 			content:[
-				busyImage,
 				busyCSSText
 			],
 			footer: new Toolbar({
