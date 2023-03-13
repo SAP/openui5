@@ -212,12 +212,17 @@ sap.ui.define([
 	 */
 	function updateTargetIndex(mReducedChanges, mUIReconstructions) {
 		function updateCondenserChange(iIndex, oCondenserChange) {
-			// setting the target index will most likely make the change dirty,
-			// but the condenser needs the current state of the change.
-			// so in this function the state should not change
-			var sOldState = oCondenserChange.change.getState();
-			oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
-			oCondenserChange.change.setState(sOldState);
+			if (getTargetIndex(oCondenserChange) !== iIndex) {
+				// setting the target index will most likely make the change dirty,
+				// but the condenser needs the current state of the change.
+				// so in this function the state should not change
+				var sOldState = oCondenserChange.change.getState();
+				oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
+				oCondenserChange.change.setState(sOldState);
+				if (oCondenserChange.change.isPersisted()) {
+					oCondenserChange.change.condenserState = "update";
+				}
+			}
 		}
 
 		function adjustReconstructionMap(mUIStates, sContainerId, mUIAggregationState) {

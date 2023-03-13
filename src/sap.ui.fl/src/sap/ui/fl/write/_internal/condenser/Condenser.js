@@ -392,7 +392,7 @@ sap.ui.define([
 				return;
 			}
 			oCondenserInfo.update(oChange, oUpdateCondenserInfo.updateContent);
-			if (oChange.getState() === States.LifecycleState.PERSISTED) {
+			if (oChange.isPersisted()) {
 				oChange.condenserState = "update";
 			}
 		}

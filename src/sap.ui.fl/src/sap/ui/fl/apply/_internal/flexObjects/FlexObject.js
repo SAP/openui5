@@ -247,6 +247,10 @@ sap.ui.define([
 		return this;
 	};
 
+	FlexObject.prototype.isPersisted = function() {
+		return this.getState() === States.LifecycleState.PERSISTED;
+	};
+
 	/**
 	 * Changes the state of the flex object to DELETED.
 	 */
