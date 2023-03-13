@@ -2326,8 +2326,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates key predicates and updates listeners for nested entity collections after a deep
-	 * create.
+	 * Creates key predicates and rebuilds the nested entity collections after a deep create (in the
+	 * assumption that the response may differ significantly from the request regarding order and
+	 * count).
 	 *
 	 * @param {string} sPath - The path of the created entity within the cache
 	 * @param {object} oEntity - The entity in the cache
@@ -2346,31 +2347,27 @@ sap.ui.define([
 
 			if (vCollection && vCollection.$postBodyCollection) {
 				aCreatedCollection = oCreatedEntity[sSegment];
-				if (aCreatedCollection) { // otherwise no create was called in nested list binding
+				if (aCreatedCollection) { // it really is a deep create
 					sCollectionPath = sPath + "/" + sSegment;
 					aSelect = vCollection.$select
 						|| _Helper.getQueryOptionsForPath(that.mQueryOptions, sCollectionPath)
 							.$select;
+					// call all resolve functions
+					vCollection.forEach(function (oElement) {
+						_Helper.getPrivateAnnotation(oElement, "resolve")();
+					});
+					// rebuild the collection from the response only taking the selected properties
+					vCollection.$created = 0;
+					vCollection.$byPredicate = {};
+					vCollection.length = vCollection.$count = aCreatedCollection.length;
 					aCreatedCollection.forEach(function (oCreatedChildEntity, i) {
-						var oChildEntity = vCollection[i],
-							sPredicate
-								= _Helper.getPrivateAnnotation(oCreatedChildEntity, "predicate"),
-							fnResolve = _Helper.getPrivateAnnotation(oChildEntity, "resolve"),
-							sTransientPredicate = _Helper.getPrivateAnnotation(oChildEntity,
-								"transientPredicate");
+						var sPredicate
+								= _Helper.getPrivateAnnotation(oCreatedChildEntity, "predicate");
 
-						_Helper.updateTransientPaths(that.mChangeListeners, sTransientPredicate,
-							sPredicate);
-						vCollection.$byPredicate[sPredicate] = oChildEntity;
-						_Helper.updateSelected(that.mChangeListeners, sCollectionPath + sPredicate,
-							oChildEntity, oCreatedChildEntity, aSelect,
-							/*fnCheckKeyPredicate*/undefined, true);
-						_Helper.deletePrivateAnnotation(oChildEntity, "postBody");
-						_Helper.deletePrivateAnnotation(oChildEntity, "reject");
-						_Helper.deletePrivateAnnotation(oChildEntity, "resolve");
-						_Helper.deletePrivateAnnotation(oChildEntity, "transient");
-						delete oChildEntity["@$ui5.context.isTransient"];
-						fnResolve(oChildEntity); // resolve the create promise
+						vCollection.$byPredicate[sPredicate] = vCollection[i] = {};
+						// no change events, the listeners are recreated anyway
+						_Helper.updateSelected({}, sCollectionPath + sPredicate, vCollection[i],
+							oCreatedChildEntity, aSelect, /*fnCheckKeyPredicate*/undefined, true);
 					});
 				}
 				delete vCollection.$postBodyCollection;

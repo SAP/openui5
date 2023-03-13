@@ -133,7 +133,6 @@ sap.ui.define([
 		this.oHeaderContext = this.bRelative
 			? null
 			: Context.createNewContext(oModel, this, sPath);
-		this.bKeepCreated = false; // Whether the next createContexts shall keep created contexts
 		this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
 		// map<string,sap.ui.model.odata.v4.Context>
 		// Maps a string path to a v4.Context with that path. A context may either be
@@ -712,7 +711,10 @@ sap.ui.define([
 	 * method then adds a transient entity to the parent's navigation property, which is sent with
 	 * the payload of the parent entity. Such a nested context also has a
 	 * {@link sap.ui.model.odata.v4.Context#created created} promise, which resolves when the deep
-	 * create resolves. Deep create is an <b>experimental</b> API.
+	 * create resolves. <b>Beware:</b> After a succesful creation of the main entity the context
+	 * returned for a nested entity is no longer valid. New contexts are created for the nested
+	 * collection because it is not possible to reliably assign the response entities to those of
+	 * the request, especially if the count differs. Deep create is an <b>experimental</b> API.
 	 *
 	 * Note: Creating at the end is only allowed if the final length of the binding is known (see
 	 * {@link #isLengthFinal}), so that there is a clear position to place this entity at. This is
@@ -828,6 +830,9 @@ sap.ui.define([
 		).then(function (oCreatedEntity) { // the entity was created on the server
 			var sGroupId, sPredicate;
 
+			if (that.isTransient()) {
+				return;
+			}
 			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
 				// refreshSingle requires the new key predicate in oContext.getPath()
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
@@ -835,9 +840,6 @@ sap.ui.define([
 					that.adjustPredicate(sTransientPredicate, sPredicate, oContext);
 					that.oModel.checkMessages();
 				}
-			}
-			if (that.isTransient()) {
-				return;
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
 			sGroupId = that.getGroupId();
@@ -938,17 +940,11 @@ sap.ui.define([
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				oContext = this.mPreviousContextsByPath[sContextPath];
-				if (oContext
-						&& (that.bKeepCreated || !oContext.created() || oContext.isKeepAlive())) {
+				if (oContext && (!oContext.created() || oContext.isKeepAlive())) {
 					// reuse the previous context, unless it is created (and persisted), but not
 					// kept alive
 					delete this.mPreviousContextsByPath[sContextPath];
-					if (that.bKeepCreated) {
-						this.iCreatedContexts += 1;
-						this.iActiveContexts += 1;
-					} else {
-						oContext.iIndex = i$skipIndex;
-					}
+					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
@@ -956,7 +952,6 @@ sap.ui.define([
 				this.aContexts[iStart + i] = oContext;
 			}
 		}
-		that.bKeepCreated = false;
 		// destroy previous contexts which are not reused or kept-alive
 		this.destroyPreviousContextsLater(Object.keys(this.mPreviousContextsByPath));
 		if (iCount !== undefined) { // server count is available or "non-empty short read"
@@ -3017,7 +3012,6 @@ sap.ui.define([
 			aDependentBindings = that.getDependentBindings();
 			that.reset(ChangeReason.Refresh, !oCache || (bKeepCacheOnError ? false : undefined),
 				sGroupId); // this may reset that.oRefreshPromise
-			that.bKeepCreated = that.bDeepCreate;
 			that.bDeepCreate = false;
 			return SyncPromise.all(
 				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)
@@ -3956,10 +3950,14 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#updateAfterCreate
 	 */
 	ODataListBinding.prototype.updateAfterCreate = function () {
-		// After a create in the parent binding a refresh is needed unless it was a deep create
-		var oPromise = this.iCreatedContexts
-				? asODataParentBinding.prototype.updateAfterCreate.apply(this) // deep create
-				: this.refreshInternal("");
+		var oPromise;
+
+		if (this.iCreatedContexts) { // deep create
+			this.reset(ChangeReason.Change, true); // throw the old, transient contexts away
+			oPromise = asODataParentBinding.prototype.updateAfterCreate.apply(this);
+		} else {
+			oPromise = this.refreshInternal(""); // full refresh to see if the server created some
+		}
 
 		this.bDeepCreate = false;
 

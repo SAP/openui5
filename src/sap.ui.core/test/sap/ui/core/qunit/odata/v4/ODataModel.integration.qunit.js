@@ -47557,6 +47557,7 @@ sap.ui.define([
 	// transient and when created-persisted.
 	// JIRA: CPOUI5ODATAV4-1973
 	// Forbidden methods (CPOUI5ODATAV4-2035)
+	// Create three, but only get two in different order (CPOUI5ODATAV4-2079)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-1973: Deep create, nested ODLB w/o cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -47565,6 +47566,7 @@ sap.ui.define([
 		var oCreatedItemContext1,
 			oCreatedItemContext2,
 			oCreatedOrderContext,
+			oCreatedItemContext3,
 			oItemsBinding,
 			oOrdersBinding,
 			oModel = this.createSalesOrdersModel(
@@ -47594,17 +47596,19 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "create order");
 		}).then(function () {
-			that.expectChange("note", ["note20", "note1"]);
+			that.expectChange("note", ["CC", "BB", "A"]);
 
 			oItemsBinding = that.oView.byId("orders").getItems()[0].getCells()[1]
 				.getBinding("items");
 
 			// code under test
-			oCreatedItemContext1 = oItemsBinding.create({Note : "note1"});
-			oCreatedItemContext2 = oItemsBinding.create({Note : "note20"});
+			oCreatedItemContext1 = oItemsBinding.create({Note : "A"});
+			oCreatedItemContext2 = oItemsBinding.create({Note : "BB"});
+			oCreatedItemContext3 = oItemsBinding.create({Note : "CC"});
 
 			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
 			assert.strictEqual(oCreatedItemContext2.isTransient(), true);
+			assert.strictEqual(oCreatedItemContext3.isTransient(), true);
 
 			// code under test - CPOUI5ODATAV4-2035
 			[
@@ -47619,11 +47623,11 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "create items");
 		}).then(function () {
-			that.expectChange("note", [, "note10"]);
+			that.expectChange("note", [,, "AA"]);
 
 			return Promise.all([
 				// code under test
-				oCreatedItemContext1.setProperty("Note", "note10"),
+				oCreatedItemContext1.setProperty("Note", "AA"),
 				that.waitForChanges(assert, "patch transient item")
 			]);
 		}).then(function () {
@@ -47632,43 +47636,44 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {
 						SO_2_SOITEM : [
-							{Note : "note20"},
-							{Note : "note10"}
+							{Note : "CC"},
+							{Note : "BB"},
+							{Note : "AA"}
 						]
 					}
 				}, {
 					"@odata.etag" : "etag",
 					SalesOrderID : "new",
 					SO_2_SOITEM : [{
-						"@odata.etag" : "etag20",
-						GrossAmount : "42.99", // excess property
-						ItemPosition : "0020",
-						Note : "note*20",
-						SalesOrderID : "new"
-					}, {
 						"@odata.etag" : "etag10",
 						GrossAmount : "42.99", // excess property
 						ItemPosition : "0010",
-						Note : "note*10",
+						Note : "AAA",
+						SalesOrderID : "new"
+					}, {
+						"@odata.etag" : "etag20",
+						GrossAmount : "42.99", // excess property
+						ItemPosition : "0020",
+						Note : "BBB",
 						SalesOrderID : "new"
 					}]
 				})
 				.expectChange("order", ["new"])
-				.expectChange("note", ["note*20", "note*10"]);
+				.expectChange("note", ["AAA", "BBB"]);
 			if (!bSkipRefresh) {
 				that.expectRequest("SalesOrderList('new')?$select=SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
 					"@odata.etag" : "etag",
 					SalesOrderID : "new",
 					SO_2_SOITEM : [{
-						"@odata.etag" : "etag20",
-						ItemPosition : "0020",
-						Note : "note*20",
-						SalesOrderID : "new"
-					}, {
 						"@odata.etag" : "etag10",
 						ItemPosition : "0010",
-						Note : "note*10",
+						Note : "AAA",
+						SalesOrderID : "new"
+					}, {
+						"@odata.etag" : "etag20",
+						ItemPosition : "0020",
+						Note : "BBB",
 						SalesOrderID : "new"
 					}]
 				});
@@ -47682,36 +47687,38 @@ sap.ui.define([
 				that.waitForChanges(assert, "submit POST")
 			]);
 		}).then(function () {
-			assert.strictEqual(oCreatedItemContext1, oItemsBinding.getCurrentContexts()[1]);
-			assert.strictEqual(oCreatedItemContext1.isTransient(), false);
-			assert.strictEqual(oCreatedItemContext1.getPath(),
-				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')");
-			assert.strictEqual(oCreatedItemContext2, oItemsBinding.getCurrentContexts()[0]);
-			assert.strictEqual(oCreatedItemContext2.isTransient(), false);
-			assert.strictEqual(oCreatedItemContext2.getPath(),
-				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')");
-			assert.deepEqual(oCreatedItemContext1.getObject(), {
-				"@odata.etag" : "etag10",
-				// no GrossAmount
-				ItemPosition : "0010",
-				Note : "note*10",
-				SalesOrderID : "new"
-			});
+			var aContexts = oItemsBinding.getAllCurrentContexts();
 
-			that.expectChange("note", [, "note**10"])
+			assert.deepEqual(aContexts.map(getPath), [
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')",
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')"
+			]);
+			assert.deepEqual(aContexts.map(getObject), [{
+				"@odata.etag" : "etag10",
+				ItemPosition : "0010",
+				Note : "AAA",
+				SalesOrderID : "new"
+			}, {
+				"@odata.etag" : "etag20",
+				ItemPosition : "0020",
+				Note : "BBB",
+				SalesOrderID : "new"
+			}]);
+
+			that.expectChange("note", ["AAAA"])
 				.expectRequest({
 					method : "PATCH",
 					headers : {"If-Match" : "etag10"},
 					url : "SalesOrderList('new')"
 						+ "/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')",
-					payload : {Note : "note**10"}
+					payload : {Note : "AAAA"}
 				});
 
 			return Promise.all([
 				// code under test
-				oCreatedItemContext1.setProperty("Note", "note**10"),
+				oItemsBinding.getCurrentContexts()[0].setProperty("Note", "AAAA"),
 				oModel.submitBatch("update"),
-				that.waitForChanges(assert, "patch created-persisted item")
+				that.waitForChanges(assert, "patch persisted item")
 			]);
 		});
 	});
@@ -47728,6 +47735,7 @@ sap.ui.define([
 	//
 	// POST first fails, then is repeated (CPOUI5ODATAV4-2034)
 	// Create an addtional item and delete it before submitting (CPOUI5ODATAV4-1975)
+	// The response is reordered and contains an additional item (CPOUI5ODATAV4-2079)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-2033: Deep create, nested ODLB w/ own cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -47738,6 +47746,7 @@ sap.ui.define([
 			oCreatedItemContext3,
 			oCreatedOrderContext,
 			oItemsBinding,
+			oItemsTable,
 			oOrdersBinding,
 			oModel = this.createSalesOrdersModel(
 				{autoExpandSelect : true, updateGroupId : "update"}),
@@ -47776,7 +47785,8 @@ sap.ui.define([
 
 			oOrdersBinding = that.oView.byId("orders").getBinding("items");
 			that.oView.byId("orderCount").setBindingContext(oOrdersBinding.getHeaderContext());
-			oItemsBinding = that.oView.byId("items").getBinding("items");
+			oItemsTable = that.oView.byId("items");
+			oItemsBinding = oItemsTable.getBinding("items");
 
 			// code under test
 			oCreatedOrderContext = oOrdersBinding.create({}, bSkipRefresh);
@@ -47785,16 +47795,16 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "create order");
 		}).then(function () {
-			that.expectChange("note", ["note10", "noSubmit", "note2"])
+			that.expectChange("note", ["AA", "noSubmit", "B"])
 				.expectChange("itemCount", "1")
 				.expectChange("itemCount", "2")
 				.expectChange("itemCount", "3");
 
 			// code under test
-			oCreatedItemContext1 = oItemsBinding.create({Note : "note10"});
+			oCreatedItemContext1 = oItemsBinding.create({Note : "AA"});
 			// this one is deleted again before submitting (intentionally in between)
 			oCreatedItemContext3 = oItemsBinding.create({Note : "noSubmit"}, false, true);
-			oCreatedItemContext2 = oItemsBinding.create({Note : "note2"}, false, true);
+			oCreatedItemContext2 = oItemsBinding.create({Note : "B"}, false, true);
 
 			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
 			assert.strictEqual(oCreatedItemContext2.isTransient(), true);
@@ -47802,7 +47812,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "create items");
 		}).then(function () {
-			that.expectChange("note", [, "note2"])
+			that.expectChange("note", [, "B"])
 				.expectChange("itemCount", "2");
 
 			// code under test
@@ -47813,11 +47823,11 @@ sap.ui.define([
 				that.waitForChanges(assert, "delete an item")
 			]);
 		}).then(function () {
-			that.expectChange("note", [, "note20"]);
+			that.expectChange("note", [, "BB"]);
 
 			return Promise.all([
 				// code under test
-				oCreatedItemContext2.setProperty("Note", "note20"),
+				oCreatedItemContext2.setProperty("Note", "BB"),
 				that.waitForChanges(assert, "patch transient item")
 			]);
 		}).then(function () {
@@ -47828,8 +47838,8 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {
 						SO_2_SOITEM : [
-							{Note : "note10"},
-							{Note : "note20"}
+							{Note : "AA"},
+							{Note : "BB"}
 						]
 					}
 				}, createErrorInsideBatch())
@@ -47850,8 +47860,8 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {
 						SO_2_SOITEM : [
-							{Note : "note10"},
-							{Note : "note20"}
+							{Note : "AA"},
+							{Note : "BB"}
 						]
 					}
 				}, {
@@ -47862,18 +47872,24 @@ sap.ui.define([
 						"@odata.etag" : "etag10",
 						GrossAmount : "42.99", // excess property
 						ItemPosition : "0010",
-						Note : "note*10",
+						Note : "BBB",
 						SalesOrderID : "new"
 					}, {
 						"@odata.etag" : "etag20",
 						GrossAmount : "42.99", // excess property
 						ItemPosition : "0020",
-						Note : "note*20",
+						Note : "additional",
+						SalesOrderID : "new"
+					}, {
+						"@odata.etag" : "etag30",
+						GrossAmount : "42.99", // excess property
+						ItemPosition : "0030",
+						Note : "AAA",
 						SalesOrderID : "new"
 					}]
 				})
 				.expectChange("order", ["new"])
-				.expectChange("note", ["note*10", "note*20"]);
+				.expectChange("note", ["BBB", "additional", "AAA"]);
 			if (bSkipRefresh) { // late property request
 				that.expectRequest("SalesOrderList('new')?$select=SO_2_BP"
 						+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
@@ -47887,16 +47903,21 @@ sap.ui.define([
 					})
 					.expectRequest("SalesOrderList('new')/SO_2_SOITEM?$count=true"
 						+ "&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
-						"@odata.count" : "2",
+						"@odata.count" : "3",
 						value : [{
 							"@odata.etag" : "etag10",
 							ItemPosition : "0010",
-							Note : "note*10",
+							Note : "BBB",
 							SalesOrderID : "new"
 						}, {
 							"@odata.etag" : "etag20",
 							ItemPosition : "0020",
-							Note : "note*20",
+							Note : "additional",
+							SalesOrderID : "new"
+						}, {
+							"@odata.etag" : "etag30",
+							ItemPosition : "0030",
+							Note : "AAA",
 							SalesOrderID : "new"
 						}]
 					})
@@ -47908,7 +47929,8 @@ sap.ui.define([
 						SO_2_BP : {BusinessPartnerID : "BP"}
 					});
 			}
-			that.expectChange("bp", "BP")
+			that.expectChange("itemCount", "3")
+				.expectChange("bp", "BP")
 				.expectChange("currency", "USD");
 
 			return Promise.all([
@@ -47918,30 +47940,45 @@ sap.ui.define([
 				that.waitForChanges(assert, "submit -> success")
 			]);
 		}).then(function () {
-			assert.notOk("SO_2_SOITEM" in oCreatedOrderContext.getObject());
-			assert.deepEqual(oCreatedItemContext2.getObject(), {
-				"@odata.etag" : "etag20",
-				// no GrossAmount
-				ItemPosition : "0020",
-				Note : "note*20",
-				SalesOrderID : "new"
-			});
-			assert.strictEqual(oCreatedItemContext2.isTransient(), false);
+			var aContexts = oItemsBinding.getAllCurrentContexts();
 
-			that.expectChange("note", [, "note**20"])
+			assert.deepEqual(aContexts.map(getPath), [
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')",
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')",
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0030')"
+			]);
+			assert.deepEqual(aContexts.map(getObject), [{
+				"@odata.etag" : "etag10",
+				ItemPosition : "0010",
+				Note : "BBB",
+				SalesOrderID : "new"
+			}, {
+				"@odata.etag" : "etag20",
+				ItemPosition : "0020",
+				Note : "additional",
+				SalesOrderID : "new"
+			}, {
+				"@odata.etag" : "etag30",
+				ItemPosition : "0030",
+				Note : "AAA",
+				SalesOrderID : "new"
+			}]);
+
+			that.expectChange("note", [, "BBBB"])
 				.expectRequest({
 					method : "PATCH",
 					headers : {"If-Match" : "etag20"},
 					url : "SalesOrderList('new')"
 						+ "/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')",
-					payload : {Note : "note**20"}
+					payload : {Note : "BBBB"}
 				});
 
+			// code under test
+			oItemsTable.getItems()[1].getCells()[0].getBinding("value").setValue("BBBB");
+
 			return Promise.all([
-				// code under test
-				oCreatedItemContext2.setProperty("Note", "note**20"),
 				oModel.submitBatch("update"),
-				that.waitForChanges(assert, "patch created persisted item")
+				that.waitForChanges(assert, "patch persisted item")
 			]);
 		});
 	});
@@ -47981,8 +48018,8 @@ sap.ui.define([
 		}).then(function () {
 			var oItemsBinding = that.oView.byId("items").getBinding("items");
 
-			oCreatedItemContext1 = oItemsBinding.create({Note : "note10"});
-			oCreatedItemContext2 = oItemsBinding.create({Note : "note20"});
+			oCreatedItemContext1 = oItemsBinding.create({Note : "AA"});
+			oCreatedItemContext2 = oItemsBinding.create({Note : "BB"});
 
 			return that.waitForChanges(assert, "create items");
 		}).then(function () {

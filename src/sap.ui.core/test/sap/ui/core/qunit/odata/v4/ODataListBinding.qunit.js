@@ -206,7 +206,6 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("bHasAnalyticalInfo"));
 		assert.ok(oBinding.hasOwnProperty("oHeaderContext"));
-		assert.strictEqual(oBinding.bKeepCreated, false);
 		assert.ok(oBinding.hasOwnProperty("bLengthFinal"));
 		assert.ok(oBinding.hasOwnProperty("iMaxLength"));
 		assert.ok(oBinding.hasOwnProperty("sOperationMode"));
@@ -2569,7 +2568,6 @@ sap.ui.define([
 			oFixture.success ? Promise.resolve() : Promise.reject(oError));
 
 		assert.strictEqual(oBinding.bDeepCreate, false);
-		assert.strictEqual(oBinding.bKeepCreated, "~bDeepCreate~");
 
 		return oRefreshResult.then(function (oResult) {
 			assert.ok(oFixture.success);
@@ -4229,42 +4227,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createContexts: reuse contexts after deep create", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"), // would be relative, but irrelevant here
-			oCreatedContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -2,
-				SyncPromise.resolve(), false),
-			oCreatedContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')", -1,
-				SyncPromise.resolve(), false);
-
-		oBinding.mPreviousContextsByPath = {
-			"/EMPLOYEES('1')" : oCreatedContext1,
-			"/EMPLOYEES('2')" : oCreatedContext2
-		};
-		oBinding.bKeepCreated = true;
-		this.mock(Context).expects("create").never();
-		this.mock(oBinding).expects("destroyPreviousContextsLater").withExactArgs([]);
-		this.mock(oCreatedContext1).expects("destroy").never();
-		this.mock(oCreatedContext1).expects("checkUpdate").withExactArgs();
-		this.mock(oCreatedContext2).expects("destroy").never();
-		this.mock(oCreatedContext2).expects("checkUpdate").withExactArgs();
-
-		// code under test
-		oBinding.createContexts(0, [{
-			"@$ui5._" : {predicate : "('1')"}
-		}, {
-			"@$ui5._" : {predicate : "('2')"}
-		}]);
-
-		assert.strictEqual(oBinding.aContexts[0], oCreatedContext1);
-		assert.strictEqual(oBinding.aContexts[1], oCreatedContext2);
-		assert.strictEqual(oCreatedContext1.iIndex, -2);
-		assert.strictEqual(oCreatedContext2.iIndex, -1);
-		assert.strictEqual(oBinding.iCreatedContexts, 2);
-		assert.strictEqual(oBinding.iActiveContexts, 2);
-		assert.strictEqual(oBinding.bKeepCreated, false);
-	});
-
-	//*********************************************************************************************
 // undefined -> the reinsertion callback is not called because the binding already has another cache
 [undefined, false, true].forEach(function (bSuccess) {
 	[false, true].forEach(function (bCreated) { // the deleted context is created-persisted
@@ -4706,11 +4668,13 @@ sap.ui.define([
 				oContextMock = this.mock(oContextPrototype),
 				aContexts = [],
 				iCreateNo = 0,
+				aCreatedElements = ["~element0~", "~element1~"],
 				oCreatePathPromise = {},
 				aCreatePromises = [
-					SyncPromise.resolve(Promise.resolve({})),
-					SyncPromise.resolve(Promise.resolve({}))
+					SyncPromise.resolve(Promise.resolve(aCreatedElements[0])),
+					SyncPromise.resolve(Promise.resolve(aCreatedElements[1]))
 				],
+				oHelperMock = this.mock(_Helper),
 				oModelMock = this.mock(this.oModel),
 				aRefreshSingleFinished = [false, false],
 				aRefreshSinglePromises = [
@@ -4767,6 +4731,12 @@ sap.ui.define([
 				oContextMock.expects("fetchValue").withExactArgs().resolves({});
 
 				aCreatePromises[iCurrentCreateNo].then(function () {
+					oHelperMock.expects("getPrivateAnnotation").exactly(oFixture.bTransient ? 0 : 1)
+						.withExactArgs(aCreatedElements[iCurrentCreateNo], "predicate")
+						.returns("~predicate~");
+					oBindingMock.expects("adjustPredicate").exactly(oFixture.bTransient ? 0 : 1)
+						.withExactArgs(sinon.match(rTransientPredicate), "~predicate~",
+							sinon.match.same(aContexts[iCurrentCreateNo]));
 					oBindingMock.expects("fireEvent").exactly(oFixture.bTransient ? 0 : 1)
 						.withExactArgs("createCompleted", {
 							context : sinon.match.same(aContexts[iCurrentCreateNo]),
@@ -9882,17 +9852,22 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("updateAfterCreate: delegate", function (assert) {
-		var oBinding = this.bindList("SO_2_SOITEM");
+		var oBinding = this.bindList("SO_2_SOITEM"),
+			oResetExpectation,
+			oUpdateExpectation;
 
 		oBinding.bDeepCreate = true;
 		oBinding.iCreatedContexts = 5;
-		this.mock(asODataParentBinding.prototype).expects("updateAfterCreate")
+		oResetExpectation = this.mock(oBinding).expects("reset")
+			.withExactArgs(ChangeReason.Change, true);
+		oUpdateExpectation = this.mock(asODataParentBinding.prototype).expects("updateAfterCreate")
 			.withExactArgs().returns("~oPromise~");
 
 		// code under test
 		assert.strictEqual(oBinding.updateAfterCreate(), "~oPromise~");
 
 		assert.strictEqual(oBinding.bDeepCreate, false);
+		assert.ok(oUpdateExpectation.calledAfter(oResetExpectation));
 	});
 
 	//*********************************************************************************************
