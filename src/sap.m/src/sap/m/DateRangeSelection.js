@@ -438,20 +438,47 @@ sap.ui.define([
 
 	//Following setters/getters are due to backward compatibility with original primary version of composite sap.m.DateRangeSelection,
 	//that consisted of original primary sap.m.DateRangeSelection
+
+	/**
+	 * Set the start date of the range.
+	 * @param {Date} oFrom A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 * @deprecated since version 1.22.0, replaced by <code>dateValue</code> property of the {@link sap.m.DateTimeField}
+	 */
 	DateRangeSelection.prototype.setFrom = function(oFrom) {
 		this.setDateValue(oFrom);
 		return this;
 	};
 
+	/**
+	 * Get the start date of the range.
+	 * @returns {Date} the start date of the date range
+	 * @public
+	 * @deprecated since version 1.22.0, replaced by <code>dateValue</code> property of the {@link sap.m.DateTimeField}
+	 */
 	DateRangeSelection.prototype.getFrom = function() {
 		return this.getDateValue();
 	};
 
+	/**
+	 * Set the end date of the range.
+	 * @param {Date} oTo A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 * @deprecated since version 1.22.0, replaced by <code>secondDateValue</code> property
+	 */
 	DateRangeSelection.prototype.setTo = function(oTo) {
 		this.setSecondDateValue(oTo);
 		return this;
 	};
 
+	/**
+	 * Get the end date of the range.
+	 * @returns {Date} the end date of the date range
+	 * @public
+	 * @deprecated since version 1.22.0, replaced by <code>secondDateValue</code> property
+	 */
 	DateRangeSelection.prototype.getTo = function() {
 		return this.getSecondDateValue();
 	};
@@ -550,6 +577,7 @@ sap.ui.define([
 	 * Set minimum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
 	 * @param {Date} oDate A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	DateRangeSelection.prototype.setMinDate = function(oDate) {
 
@@ -570,6 +598,7 @@ sap.ui.define([
 	 * Set maximum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
 	 * @param {Date} oDate A JavaScript Date
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	DateRangeSelection.prototype.setMaxDate = function(oDate) {
 
