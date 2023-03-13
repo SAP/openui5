@@ -962,6 +962,7 @@ sap.ui.define([
 	QUnit.test("bring Drop here illustrated message, when Dragged into target area", function(assert) {
 		var oTargetDomRef = this.oUploadSet.getList().getDomRef();
 		oTargetDomRef.focus();
+		this.oUploadSet.removeAllItems(); // illustrated message only renders when there are no items in the list.
 		var oDropInfo = this.oUploadSet.getList().getDragDropConfig()[1];
 		oDropInfo.attachDragEnter(function(oEvent) {
 			assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.UploadCollection, "The Drop file here illustrated message is rendred");

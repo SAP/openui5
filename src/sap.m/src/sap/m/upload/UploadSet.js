@@ -502,7 +502,6 @@ sap.ui.define([
 		this._mListItemIdToItemMap = {};
 		this._oUploadButton = null;
 		this._oDragIndicator = false;
-		this._bAttachEventListener = false;
 
 		// Drag&drop
 		this._$Body = null;
@@ -920,7 +919,8 @@ sap.ui.define([
 
 	UploadSet.prototype._getIllustratedMessage = function () {
 		var oAggregation = this.getAggregation("_illustratedMessage");
-		if (oAggregation) {
+		// Invoke rendering of illustrated message only when the list is empty else no scope of illustrated message.
+		if (oAggregation && this._oList && this._oList.getItems && !this._oList.getItems().length) {
 			if (this._getDragIndicator()) {
 				oAggregation.setIllustrationType(IllustratedMessageType.UploadCollection);
 				oAggregation.setTitle(this.getDragDropText());
@@ -1013,13 +1013,6 @@ sap.ui.define([
 	UploadSet.prototype._onDragEnterFile = function (oEvent) {
 		var oDragSession = oEvent.getParameter("dragSession");
 		var oDraggedControl = oDragSession.getDragControl();
-		if (!this._bAttachEventListener) {
-            window.addEventListener("focus", function() {
-                this._oDragIndicator = false;
-                this._getIllustratedMessage();
-            }.bind(this), true);
-            this._bAttachEventListener = true;
-        }
 		this._oDragIndicator = true;
         this._getIllustratedMessage();
 		if (oDraggedControl) {
@@ -2087,6 +2080,17 @@ sap.ui.define([
 			enableDuplicateCheck:this.getSameFilenameAllowed(),
 			select: this._onCloudPickerFileChange.bind(this)
 		});
+	};
+
+	// Using UploadSet's dragleave abstract method with custom implementation to capture UploadSet dragleave event
+	UploadSet.prototype.ondragleave = function (oEvent) {
+		var oDragSession = oEvent.dragSession;
+		// condition to reset the illustrated message to deafult message from drag & drop message on leaving the drop area.
+		// getDropControl returns the valid drop target underneath the drop control, if no dropcontrol available UploadSet control to reset the illustrated message
+		if (!oDragSession || !oDragSession.getDropControl()) {
+			this._oDragIndicator = false;
+            this._getIllustratedMessage();
+		}
 	};
 
 	return UploadSet;
