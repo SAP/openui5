@@ -6,6 +6,8 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "appUnderTest.view.Main"
+		"rootView": "appUnderTest.view.Main",
+		"type": "XML",
+		"async": true
 	}
 }
