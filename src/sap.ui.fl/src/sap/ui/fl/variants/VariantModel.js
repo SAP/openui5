@@ -755,6 +755,10 @@ sap.ui.define([
 	VariantModel.prototype.copyVariant = function(mPropertyBag) {
 		var oDuplicateVariantData = this._duplicateVariant(mPropertyBag);
 		oDuplicateVariantData.generator = mPropertyBag.generator;
+		var sAuthor = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().getUserId() ? Settings.getInstanceOrUndef().getUserId() : undefined;
+		if (mPropertyBag.layer === Layer.VENDOR) {
+			sAuthor = "SAP";
+		}
 		var oVariantModelData = {
 			key: oDuplicateVariantData.instance.getId(),
 			layer: mPropertyBag.layer,
@@ -771,7 +775,8 @@ sap.ui.define([
 			originalVisible: true,
 			sharing: mPropertyBag.layer === Layer.USER ? this.sharing.PRIVATE : this.sharing.PUBLIC,
 			originalContexts: oDuplicateVariantData.instance.getContexts(),
-			contexts: oDuplicateVariantData.instance.getContexts()
+			contexts: oDuplicateVariantData.instance.getContexts(),
+			author: sAuthor
 		};
 		var aChanges = [];
 
