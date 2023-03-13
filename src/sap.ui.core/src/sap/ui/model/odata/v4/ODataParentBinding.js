@@ -331,19 +331,27 @@ sap.ui.define([
 	 * @param {object} mParameters
 	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
-	 * @throws {Error}
-	 *   If there are pending changes that cannot be ignored or if <code>mParameters</code> is
-	 *   missing, contains binding-specific or unsupported parameters, contains unsupported values,
-	 *   or contains the property "$expand" or "$select" when the model is in auto-$expand/$select
-	 *   mode. Since 1.90.0, binding-specific parameters are ignored if they are unchanged. Since
-	 *   1.93.0, string values for "$expand" and "$select" are ignored if they are unchanged;
-	 *   pending changes are ignored if all parameters are unchanged. Since 1.97.0, pending changes
-	 *   are ignored if they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
-	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 *   of a {@link #getRootBinding root binding} do not count as pending changes. Since 1.108.0,
-	 *   {@link sap.ui.model.odata.v4.Context#delete deleted} contexts do not count as pending
-	 *   changes.
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> there are pending changes that cannot be ignored,
+	 *     <li> the binding is {@link #isTransient transient} (part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
+	 *     <li> <code>mParameters</code> is missing, contains binding-specific or unsupported
+	 *       parameters, contains unsupported values, or contains the property "$expand" or
+	 *       "$select" when the model is in auto-$expand/$select mode.
+	 *   </ul>
+	 *   The following exceptions apply:
+	 *   <ul>
+	 *     <li> Since 1.90.0, binding-specific parameters are ignored if they are unchanged.
+	 *     <li> Since 1.93.0, string values for "$expand" and "$select" are ignored if they are
+	 *       unchanged; pending changes are ignored if all parameters are unchanged.
+	 *     <li> Since 1.97.0, pending changes are ignored if they relate to a
+	 *       {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
+	 *     <li> Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
+	 *       of a {@link #getRootBinding root binding} do not count as pending changes.
+	 *     <li> Since 1.108.0, {@link sap.ui.model.odata.v4.Context#delete deleted} contexts do not
+	 *       count as pending changes.
+	 *   </ul>
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -384,6 +392,7 @@ sap.ui.define([
 			}
 		}
 
+		this.checkTransient();
 		if (!mParameters) {
 			throw new Error("Missing map of binding parameters");
 		}

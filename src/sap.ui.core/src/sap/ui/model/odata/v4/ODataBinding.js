@@ -264,6 +264,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Throws an Error if the binding is {@link #isTransient transient}.
+	 *
+	 * @throws {Error} If the binding is transient
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.checkTransient = function () {
+		if (this.isTransient()) {
+			throw new Error("Must not call method when the binding is part of a deep create: "
+				+ this);
+		}
+	};
+
+	/**
 	 * Calls {@link #checkUpdateInternal}.
 	 *
 	 * @param {boolean} [bForceUpdate]
@@ -1346,14 +1360,20 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the binding
 	 *   itself and all dependent bindings are canceled (since 1.72.0)
-	 * @throws {Error}
-	 *   If the binding's root binding is suspended or if there is a change of this binding which
-	 *   has been sent to the server and for which there is no response yet
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the binding's root binding is suspended,
+	 *     <li> there is a change of this binding which has been sent to the server and for which
+	 *       there is no response yet,
+	 *     <li> the binding is {@link #isTransient transient} (part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}).
+	 *   </ul>
 	 *
 	 * @public
 	 * @since 1.40.1
 	 */
 	ODataBinding.prototype.resetChanges = function () {
+		this.checkTransient();
 		return this._resetChanges();
 	};
 
