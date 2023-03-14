@@ -28,7 +28,7 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 
 		oRm.openStart("div", oControl).class('sapUxAPObjectPageHeader');
 		/**
-		 * @deprecated Since version 1.40.1
+		 * @deprecated As of version 1.40.1
 		 */
 		oRm.class('sapUxAPObjectPageHeaderDesign-' + oControl.getHeaderDesign());
 		oRm.openEnd();

@@ -235,6 +235,7 @@ sap.ui.define([
 
 				/**
 				 * Event is fired when the user clicks on the control. (This event is deprecated, use the press event instead)
+				 * @deprecated As of version 1.107.0
 				 */
 				tap : {},
 
@@ -532,7 +533,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Image.prototype.ontouchstart = function(oEvent) {
+		/**
+		 * @deprecated event
+		 */
 		if (oEvent.srcControl.mEventRegistry["press"] || oEvent.srcControl.mEventRegistry["tap"]) {
+
 			// mark the event for components that needs to know if the event was handled by the Image
 			oEvent.setMarked();
 		}
@@ -594,6 +599,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Image.prototype.ontap = function(oEvent) {
+		/**
+		 * @deprecated event
+		 */
 		this.fireTap({/* no parameters */}); //	(This event is deprecated, use the press event instead)
 		this.firePress({/* no parameters */});
 	};

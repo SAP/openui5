@@ -7,7 +7,6 @@
 	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>
 			<ObjectPageHeader id="header"
-							  headerDesign="Light"
 							  objectTitle="Denise Smith"
 							  showTitleSelector="true"
 							  showMarkers="true"

@@ -170,6 +170,7 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 */
+
 	thisLib.ObjectPageHeaderDesign = {
 
 		/**

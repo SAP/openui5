@@ -710,7 +710,7 @@ sap.ui.define([
 		this._createHeaderContent();
 
 		/**
-		 * @deprecated Since version 1.40.1
+		 * @deprecated As of version 1.40.1
 		 */
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
 
@@ -3711,7 +3711,6 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._createHeaderContent = function () {
 		var oHeaderTitle = this.getHeaderTitle(),
-			sHeaderTitleBackgroundDesign = oHeaderTitle && oHeaderTitle.supportsBackgroundDesign() && oHeaderTitle.getBackgroundDesign(),
 			oHeaderContent = this.getAggregation("_headerContent"),
 			oOldHeaderContent,
 			oNewHeaderContent;
@@ -3730,14 +3729,13 @@ sap.ui.define([
 			oNewHeaderContent = fnHeaderContentClass.createInstance(
 				this.getAggregation("headerContent"),
 				this.getShowHeaderContent(),
-				this._getHeaderDesign(),
+				"",
 				this.getHeaderContentPinnable(),
 				this.getId() + "-OPHeaderContent"
 			);
 
 			oNewHeaderContent.getContent().forEach(this._replaceHeaderContentParent, this);
 
-			sHeaderTitleBackgroundDesign && oNewHeaderContent.setBackgroundDesign(sHeaderTitleBackgroundDesign);
 			this.setAggregation("_headerContent", oNewHeaderContent, true);
 		}
 	};
@@ -3747,7 +3745,7 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 
 		/**
-		 * @deprecated Since version 1.40.1
+		 * @deprecated As of version 1.40.1
 		 */
 		if (oHeaderTitle && oHeaderTitle.getHeaderDesign() == "Dark") {
 
@@ -3772,7 +3770,7 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 
 		/**
-		 * @deprecated Since version 1.40.1
+		 * @deprecated As of version 1.40.1
 		 */
 		if (oHeaderTitle && oHeaderTitle.getHeaderDesign() == "Dark") {
 			if (this._bStickyAnchorBar) {
@@ -3944,7 +3942,7 @@ sap.ui.define([
 			sDesign = library.ObjectPageHeaderDesign.Light;
 
 		/**
-		 * @deprecated Since version 1.40.1
+		 * @deprecated As of version 1.40.1
 		 */
 		if (oHeader != null) {
 			sDesign = oHeader.getHeaderDesign();
