@@ -43687,6 +43687,8 @@ sap.ui.define([
 	// with $$getKeepAliveContext. Modify a property. Resume the list and see that list and object
 	// page are in sync.
 	// JIRA: CPOUI5ODATAV4-1525
+	//
+	// Consider kept-alive contexts w/o key properties (BCP: 2380040680)
 	QUnit.test("getKeepAliveContext: suspended", function (assert) {
 		var oContext,
 			oListBinding,
@@ -43751,6 +43753,38 @@ sap.ui.define([
 			oListBinding.resume();
 
 			return that.waitForChanges(assert, "resume");
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='3',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity", {
+					ArtistID : "3",
+					IsActiveEntity : false
+				}) // Note: key properties for kept-alive contexts are always requested
+				.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,defaultChannel,"
+					// BCP 2380040680: the filter is not invalid because of missing key for '3'
+					+ "lastUsedChannel&$filter=ArtistID eq '1' and IsActiveEntity eq false", {
+					value : [{
+						ArtistID : "1",
+						IsActiveEntity : false,
+						Name : "The Beatles (changed)",
+						defaultChannel : "01"
+					}]
+				})
+				.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,defaultChannel"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						ArtistID : "1",
+						IsActiveEntity : false,
+						Name : "The Beatles (changed)",
+						defaultChannel : "01"
+					}]
+				});
+
+			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)");
+
+			return Promise.all([
+				oContext.getBinding().requestRefresh(),
+				that.waitForChanges(assert, "BCP: 2380040680")
+			]);
 		}).then(function () {
 			oListBinding.suspend();
 
