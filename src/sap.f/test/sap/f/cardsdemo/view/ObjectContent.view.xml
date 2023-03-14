@@ -74,7 +74,7 @@
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="cardImageOnlyInGroup"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/ImageOnlyInGroup.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageOnlyInGroup.json"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<w:Card
