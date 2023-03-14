@@ -74,7 +74,7 @@ sap.ui.define([
 
 	Item.prototype.destroyContent = function() {
 		// The AdaptationFilterBar must not be destroyed! A new one cannot be created.
-		if (this.getKey() !== "Filter") {
+		if (this.getKey() === "Filter") {
 			return this;
 		}
 		return this.destroyAggregation("content");

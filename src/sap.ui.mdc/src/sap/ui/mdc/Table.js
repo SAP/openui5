@@ -2035,7 +2035,7 @@ sap.ui.define([
 				_quickActions: [this._oQuickActionContainer],
 				_items: [this._oItemContainer]
 			});
-
+			this.addDependent(this._oColumnHeaderMenu);
 			this._oColumnHeaderMenu.attachBeforeOpen(this._createColumnMenuContent, this);
 		}
 	};
