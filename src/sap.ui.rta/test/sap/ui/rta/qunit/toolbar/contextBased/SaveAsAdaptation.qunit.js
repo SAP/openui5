@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Control,
 	Fragment,
 	Layer,
+	ManifestUtils,
 	ContextBasedAdaptationsAPI,
 	Version,
 	JSONModel,
@@ -78,6 +80,9 @@ sap.ui.define([
 
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
 		beforeEach: function() {
+			this.oGetAppComponentStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
+			this.oModel = ContextBasedAdaptationsAPI.createModel([]);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
 			this.oToolbar = initializeToolbar();
 			this.oSaveAsAdaptation = new SaveAsAdaptation({ toolbar: this.oToolbar });
 			this.oEvent = {
@@ -97,11 +102,6 @@ sap.ui.define([
 		QUnit.module("the save as adaptation dialog is created with empty data", {
 			beforeEach: function() {
 				this.oSaveAsAdaptation = new SaveAsAdaptation({ toolbar: this.oToolbar });
-				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(
-					new JSONModel({
-						adaptations: []
-					})
-				);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oSaveAsAdaptation.openAddAdaptationDialog().then(function (oDialog) {
 					this.oDialog = oDialog;
@@ -130,7 +130,7 @@ sap.ui.define([
 		QUnit.module("the save as adaptation dialog is opened and two context-based adaptations already exist", {
 			beforeEach: function() {
 				this.sManageAdaptationsDialog = "manageAdaptationDialog";
-				this.oContextBasedAdaptatations = new JSONModel({
+				this.oContextBasedAdaptatations = {
 					adaptations: [{
 						id: "id-1591275572834-1",
 						contexts: {
@@ -155,13 +155,13 @@ sap.ui.define([
 						changedBy: "Test User 2",
 						changedAt: "2022-09-07T10:30:32Z"
 					}]
-				});
+				};
 				this.aPriorityList = [
 					{ key: 0, title: "Insert before all (Priority '1')" },
 					{ key: "1", title: "Insert after 'German Admin' (Priority '2')" },
 					{ key: "2", title: "Insert after 'DLM Copilot' (Priority '3')" }
 				];
-				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(this.oContextBasedAdaptatations);
+				this.oModel.updateAdaptations(this.oContextBasedAdaptatations.adaptations);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oSaveAsAdaptation.openAddAdaptationDialog().then(function (oDialog) {
 					this.oDialog = oDialog;
@@ -252,5 +252,9 @@ sap.ui.define([
 				assert.notOk(oSaveButton.getEnabled(), "save button is not enabled");
 			});
 		});
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

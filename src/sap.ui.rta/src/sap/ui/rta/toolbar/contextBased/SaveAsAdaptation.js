@@ -81,30 +81,22 @@ sap.ui.define([
 			return createContextSharingComponent.call(this, sLayer);
 		}.bind(this)).then(function() {
 			var oRtaInformation = this.getToolbar().getRtaInformation();
-			return ContextBasedAdaptationsAPI.load({
-				control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer
-			});
-		}.bind(this)).catch(function(oError) {
-			Log.error(oError.stack);
-			this.oAdaptationsModel = new JSONModel({ adaptations: [] });
-			return this.oAdaptationsModel;
-		}.bind(this)).then(function(oAdaptationsModel) {
-			this.oAdaptationsModel = oAdaptationsModel;
-			return openDialog.call(this, oAdaptationsModel);
+			this.oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel({ control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer });
+			return openDialog.call(this);
 		}.bind(this));
 	};
 
 	// ------ open dialog -----
-	function openDialog(oAdaptationsModel) {
-		formatPriorityText.call(this, oAdaptationsModel.getData());
+	function openDialog() {
+		formatPriorityText.call(this, this.oAdaptationsModel.getProperty("/adaptations"));
 		return this._oAddAdaptationDialog.open();
 	}
 
 	// ------ formatting ------
-	function formatPriorityText(oAdaptationsModelData) {
+	function formatPriorityText(aAdaptations) {
 		var aItems = [{ key: 0, title: this.oTextResources.getText("TXT_SELECT_FIRST_PRIO") }];
 		var sPriorityTextTemplate = this.oTextResources.getText("TXT_SELECT_PRIO");
-		oAdaptationsModelData.adaptations.forEach(function(oAdaptation, iIndex) {
+		aAdaptations.forEach(function(oAdaptation, iIndex) {
 			aItems.push({
 				key: (iIndex + 1).toString(),
 				title: formatMessage(sPriorityTextTemplate, [oAdaptation.title, iIndex + 2])
