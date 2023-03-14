@@ -180,6 +180,7 @@ function(
 		return this.oRta.start()
 		.then(function() {
 			this.oToolbar = this.oRta.getToolbar();
+			oCore.applyChanges();
 		}.bind(this));
 	}
 
