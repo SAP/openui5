@@ -3000,8 +3000,10 @@ sap.ui.define([
 		}
 
 		/*
-		 * Tells whether a refresh is needed for the given predicate. Transient predicates and
-		 * elements with pending changes need no refresh.
+		 * Tells whether a refresh is needed for the given predicate. Transient predicates,
+		 * elements with pending changes, and empty elements just created via
+		 * {@link sap.ui.model.odata.v4.ODataModel#getKeepAliveContext} but not yet read, need no
+		 * refresh.
 		 *
 		 * @param {string} sPredicate - A key predicate
 		 * @returns {boolean} - Whether a refresh is needed
@@ -3010,6 +3012,7 @@ sap.ui.define([
 			var oElement = that.aElements.$byPredicate[sPredicate];
 
 			return _Helper.getPrivateAnnotation(oElement, "predicate") === sPredicate
+				&& Object.keys(oElement).length > 1 // entity has key properties
 				&& !that.hasPendingChangesForPath(sPredicate);
 		}
 

@@ -12074,10 +12074,11 @@ sap.ui.define([
 	},
 	sFilter : "~Foo~"
 }, {
-	sTitle : "refreshKeptElements with two kept contexts",
+	sTitle : "refreshKeptElements with three kept contexts, two w/ and one w/o key property",
 	mKeptAliveElementsByPredicate : {
 		"('Foo')" : {key : "Foo", "@$ui5._" : {predicate : "('Foo')"}},
-		"('Bar')" : {key : "Bar", "@$ui5._" : {predicate : "('Bar')"}}
+		"('Bar')" : {key : "Bar", "@$ui5._" : {predicate : "('Bar')"}},
+		"('Baz')" : {"@$ui5._" : {predicate : "('Baz')"}}
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
