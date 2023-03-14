@@ -21,7 +21,11 @@ sap.ui.define([
 				valueDTP4: UI5Date.getInstance(2016, 1, 18, 10, 32, 30),
 				valueDTP5: UI5Date.getInstance(),
 				valueDTP8: UI5Date.getInstance(2016, 1, 18, 10, 32, 30),
-				valueDTP9: UI5Date.getInstance()
+				valueDTP9: UI5Date.getInstance(),
+				valueDTP10: UI5Date.getInstance(2023, 2, 31, 10, 32, 30),
+				valueDTP11: null,
+				timezoneDTP10: "Australia/Sydney",
+				timezoneDTP11: "Asia/Tokyo"
 			});
 			this.getView().setModel(oModel);
 			this.byId("DTP6").setInitialFocusedDateValue(UI5Date.getInstance(2017, 5, 13, 11, 12, 13));
