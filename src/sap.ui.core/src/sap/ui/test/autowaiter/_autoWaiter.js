@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/autowaiter/_XHRWaiter",
+	"sap/ui/test/autowaiter/_fetchWaiter",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/ui/test/autowaiter/_navigationContainerWaiter",
@@ -21,6 +22,7 @@ sap.ui.define([
 	UI5Object,
 	_OpaLogger,
 	_XHRWaiter,
+	_fetchWaiter,
 	_timeoutWaiter,
 	_promiseWaiter,
 	_navigationContainerWaiter,
@@ -106,6 +108,7 @@ sap.ui.define([
 	var oAutoWaiter = new AutoWaiter();
 	var mDefaultWaiters = {
 		xhrWaiter: _XHRWaiter,
+		fetchWaiter: _fetchWaiter,
 		timeoutWaiter: _timeoutWaiter,
 		promiseWaiter: _promiseWaiter,
 		navigationWaiter: _navigationContainerWaiter,

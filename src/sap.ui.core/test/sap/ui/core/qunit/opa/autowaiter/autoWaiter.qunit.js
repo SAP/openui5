@@ -6,6 +6,7 @@ sap.ui.define([
 	"./_navigationContainerWaiter",
 	"./_cssTransitionWaiter",
 	"./_cssAnimationWaiter",
+	"./_fetchWaiter",
 	"./_jsAnimationWaiter",
 	"./_timeoutWaiter",
 	"./_promiseWaiter",
