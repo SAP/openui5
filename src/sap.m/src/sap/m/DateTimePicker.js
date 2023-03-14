@@ -200,7 +200,18 @@ sap.ui.define([
 				 * @see sap.ui.core.format.DateFormat.DateTimeWithTimezone.parse
 				 * @since 1.99
 				 */
-				timezone: { type: "string", group: "Data" }
+				timezone: { type: "string", group: "Data" },
+
+				/**
+				 * This property is inherited from <code>DatePicker</code> but its usage makes no sense in <code>DateTimePicker</code>
+				 * because <code>DateTimePicker</code> always have footer with buttons.
+				 * Additionally, the setter for this property is overriden to deny changing its value.
+				 *
+				 * @since 1.70
+				 */
+				showFooter : {type : "boolean", group : "Misc", defaultValue : false}
+
+
 			},
 			designtime: "sap/m/designtime/DateTimePicker.designtime",
 			dnd: { draggable: false, droppable: true }
@@ -398,6 +409,14 @@ sap.ui.define([
 		DatePicker.prototype.init.apply(this, arguments);
 
 		this._bOnlyCalendar = false;
+	};
+
+	/**
+	 * This setter is overriden because the property is inherited from <code>DatePicker</code> but its usage makes no sense
+	 * in <code>DateTimePicker</code> as it always have footer with buttons. Setting the property won't have an effect at all.
+	 */
+	DateTimePicker.prototype.setShowFooter = function() {
+		return this;
 	};
 
 	DateTimePicker.prototype.setTimezone = function(sTimezone) {
