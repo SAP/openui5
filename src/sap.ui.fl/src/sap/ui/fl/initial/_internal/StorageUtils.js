@@ -190,6 +190,7 @@ sap.ui.define([
 
 			aResponses = aResponses.filter(function (oResponse) {
 				return oResponse.changes.length > 0
+					|| oResponse.appDescriptorChanges.length > 0
 					|| oResponse.variants.length > 0
 					|| oResponse.variantChanges.length > 0
 					|| oResponse.variantManagementChanges.length > 0

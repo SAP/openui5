@@ -1,12 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/merge",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/core/Core",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
+	merge,
 	sinon,
 	Layer,
 	Utils,
@@ -182,6 +184,25 @@ sap.ui.define([
 
 		QUnit.test("with an empty array", function(assert) {
 			assert.deepEqual(Utils.getGroupedFlexObjects([]), this.oEmptyResponse, "the return is correct");
+		});
+
+		QUnit.test("filterAndSortResponses", function(assert) {
+			var oEmptyResponse1 = merge({}, this.oEmptyResponse);
+			oEmptyResponse1.USER.changes = [this.oChangeUser];
+			oEmptyResponse1.PUBLIC.appDescriptorChanges = [this.oAppDescriptorCustomer];
+			oEmptyResponse1.CUSTOMER.variants = [this.oAppDescriptorCustomer];
+			oEmptyResponse1.CUSTOMER_BASE.variantChanges = [this.oAppDescriptorCustomer];
+			oEmptyResponse1.VENDOR.variantManagementChanges = [this.oAppDescriptorCustomer];
+			oEmptyResponse1.BASE.variantDependentControlChanges = [this.oAppDescriptorCustomer];
+			assert.strictEqual(Utils.filterAndSortResponses(oEmptyResponse1).length, 6, "no response was filtered out");
+
+			var oEmptyResponse2 = merge({}, this.oEmptyResponse);
+			oEmptyResponse2.USER.comp.variants = [this.oChangeUser];
+			oEmptyResponse2.PUBLIC.comp.changes = [this.oAppDescriptorCustomer];
+			oEmptyResponse2.CUSTOMER.comp.defaultVariants = [this.oAppDescriptorCustomer];
+			oEmptyResponse2.CUSTOMER_BASE.comp.standardVariants = [this.oAppDescriptorCustomer];
+
+			assert.strictEqual(Utils.filterAndSortResponses(oEmptyResponse2).length, 4, "two responses were filtered out");
 		});
 	});
 
