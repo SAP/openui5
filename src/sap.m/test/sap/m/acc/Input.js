@@ -155,7 +155,7 @@ sap.ui.define([
 					new Input("I4", {type: InputType.Tel, change: handleChange}),
 					new Label({text: "link", labelFor: "I5"}),
 					new Input("I5", {type: InputType.Url, change: handleChange}),
-					new Label({text: "password is required", required: true, labelFor: "I6"}),
+					new Label({text: "Passcode", required: true, labelFor: "I6"}),
 					new Input("I6", {type: InputType.Password, required: true, change: handleChange}),
 					new Label({text: "Name", labelFor: "I7"}),
 					new Input("I7", { placeholder: "choose name", showValueHelp: true, valueHelpRequest: handleValueHelp, change: handleChange}),
