@@ -101,27 +101,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when control is initialized.
-	 */
-	ListContent.prototype.init = function () {
-		BaseListContent.prototype.init.apply(this, arguments);
-
-		var oList = this._getList();
-		var that = this;
-
-		this.setAggregation("_content", oList);
-
-		oList.attachUpdateFinished(function () {
-			if (that._iVisibleItems) {
-				var aItems = oList.getItems();
-				for (var i = that._iVisibleItems + 1; i < aItems.length; i++) {
-					aItems[i].setVisible(false);
-				}
-			}
-		});
-	};
-
-	/**
 	 * Called when control is destroyed.
 	 */
 	ListContent.prototype.exit = function () {
@@ -241,7 +220,16 @@ sap.ui.define([
 			this._oList = new List({
 				id: this.getId() + "-list",
 				growing: false,
-				showNoData: false
+				showNoData: false,
+				ariaLabelledBy: this.getHeaderTitleId(),
+				updateFinished: function () {
+					if (this._iVisibleItems) {
+						var aItems = this._oList.getItems();
+						for (var i = this._iVisibleItems + 1; i < aItems.length; i++) {
+							aItems[i].setVisible(false);
+						}
+					}
+				}.bind(this)
 			});
 
 			this._oList.addEventDelegate({
@@ -260,6 +248,8 @@ sap.ui.define([
 					}
 				}
 			}, this);
+
+			this.setAggregation("_content", this._oList);
 		}
 
 		return this._oList;

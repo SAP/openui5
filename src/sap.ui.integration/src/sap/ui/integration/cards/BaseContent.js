@@ -745,5 +745,19 @@ sap.ui.define([
 		return this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"];
 	};
 
+	/*
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 */
+	BaseContent.prototype.getHeaderTitleId = function () {
+		var oCard = this.getCardInstance();
+
+		if (!oCard) {
+			return undefined;
+		}
+
+		return oCard.getId() + "-header-title-inner";
+	};
+
 	return BaseContent;
 });

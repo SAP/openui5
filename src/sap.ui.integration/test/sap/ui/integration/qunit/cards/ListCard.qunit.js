@@ -730,6 +730,9 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
+			assert.equal(oList.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId() + "-inner", "Should have correct table aria label");
+
+			// Assert
 			assert.ok(oContent, "List Card content form manifest should be set");
 
 			// items highlight
@@ -1735,6 +1738,9 @@ sap.ui.define([
 		var oListContent = new ListContent();
 
 		sinon.stub(oListContent, "getCardInstance").returns({
+			getId: function () {
+				return "id1";
+			},
 			getBindingContext: function () {
 				return undefined;
 			},

@@ -59,10 +59,9 @@ sap.ui.define([
 			throw new Error(sType.toUpperCase() + " content type is not supported.");
 		}
 
-		var oContent = new Content();
-
-		// Set the card ID as association to the content
-		oContent.setCard(oCard);
+		var oContent = new Content({
+			card: oCard
+		});
 
 		if (oContent instanceof AdaptiveContent) {
 			oContent.setCardDataProvider(oCard._oDataProvider);
