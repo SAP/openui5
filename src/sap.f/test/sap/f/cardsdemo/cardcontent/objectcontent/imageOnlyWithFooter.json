@@ -5,13 +5,6 @@
 	},
 	"sap.card": {
 		"type": "Object",
-		"header": {
-			"icon": {
-				"src": "sap-icon://business-objects-experience"
-			},
-			"title": "Object Card",
-			"subTitle": "With Image Only with Footer"
-		},
 		"content": {
 			"groups": [
 				{

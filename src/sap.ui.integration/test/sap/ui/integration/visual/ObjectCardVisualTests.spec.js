@@ -7,7 +7,21 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
 
-	var aCardIds = ["cardDataHandling", "cardStaticData", "cardForm", "cardLongLabelAvatar", "cardImageNoHeader", "cardImage", "cardImageOnlyInGroup", "cardImageSmall", "cardImageOnly", "justImage", "cardImageOnlyWithFooter", "cardImageWithFooter", "cardImageNoHeaderAndNoFooter"];
+	var aCardIds = [
+		"cardDataHandling",
+		"cardStaticData",
+		"cardForm",
+		"cardLongLabelAvatar",
+		"cardImageNoHeader",
+		"cardImage",
+		"cardImageOnlyInGroup",
+		"cardImageSmall",
+		"cardImageOnly",
+		"cardJustImage",
+		"cardImageOnlyWithFooter",
+		"cardImageWithFooter",
+		"cardImageNoHeaderNoFooter"
+	];
 
 	it("Object Card", function () {
 		utils.navigateTo("Object Card");
