@@ -38,7 +38,7 @@
 			<OverflowToolbarButton icon="sap-icon://activate" tooltip="Apply table state config" press="applyTableStateConfig"/>
 		</mdc:actions>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
+			<mdcTable:Column id="create" header="Created On"dataProperty="CreatedAt" importance="Low">
 				<Text text="{CreatedAt}"/>
 			</mdcTable:Column>
 			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" dataProperty="ProductID" importance="High">

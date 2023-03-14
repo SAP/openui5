@@ -34,7 +34,7 @@
 			<mdcTable:GridTableType rowCountMode="Fixed" rowCount="20"/>
 		</mdc:type>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperty="CreatedAt">
+			<mdcTable:Column id="create" header="Created On" dataProperty="CreatedAt">
 				<Text text="{CreatedAt}"/>
 			</mdcTable:Column>
 			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" dataProperty="ProductID">

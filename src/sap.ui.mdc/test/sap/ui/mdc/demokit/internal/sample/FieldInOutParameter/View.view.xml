@@ -74,10 +74,10 @@
 								delegate='\{"name": "sap/ui/mdc/sample/FieldInOutParameter/GridTable.delegate", "payload": \{"collectionName": "Genres"\}\}'
 								threshold="50">
 								<mdc:columns>
-									<mdc:table.Column id="codeColumn" header="Code" dataProperty="code" initialIndex="1">
+									<mdc:table.Column id="codeColumn" header="Code" dataProperty="code">
 										<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{code}" editMode="Display"/>
 									</mdc:table.Column>
-									<mdc:table.Column id="titleColumn" header="Title" dataProperty="title" initialIndex="2">
+									<mdc:table.Column id="titleColumn" header="Title" dataProperty="title">
 										<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{title}" editMode="Display"/>
 									</mdc:table.Column>
 								</mdc:columns>
@@ -151,13 +151,13 @@
 								delegate='\{"name": "sap/ui/mdc/sample/FieldInOutParameter/GridTable.delegate", "payload": \{"collectionName": "SubGenres"\}\}'
 								threshold="50">
 								<mdc:columns>
-									<mdc:table.Column id="SubGenreCodeColumn" header="Code" dataProperty="code" initialIndex="1">
+									<mdc:table.Column id="SubGenreCodeColumn" header="Code" dataProperty="code">
 										<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{code}" editMode="Display"/>
 									</mdc:table.Column>
-									<mdc:table.Column id="SubGenreTitleColumn" header="Title" dataProperty="title" initialIndex="2">
+									<mdc:table.Column id="SubGenreTitleColumn" header="Title" dataProperty="title">
 										<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{title}" editMode="Display"/>
 									</mdc:table.Column>
-									<mdc:table.Column id="SubGenreGenreColumn" header="Genre Code" dataProperty="genre_code" initialIndex="3">
+									<mdc:table.Column id="SubGenreGenreColumn" header="Genre Code" dataProperty="genre_code">
 										<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{genre_code}" editMode="Display"/>
 									</mdc:table.Column>
 								</mdc:columns>

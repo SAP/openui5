@@ -627,7 +627,6 @@ sap.ui.define([
 			Control.apply(this, arguments);
 			this.bCreated = true;
 			this._updateAdaptation();
-			this._doOneTimeOperations();
 			this._initializeContent();
 		},
 		renderer: {
@@ -1415,14 +1414,6 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Table.prototype._doOneTimeOperations = function() {
-		// Order the Columns once after init
-		if (!this.bColumnsOrdered) {
-			this.bColumnsOrdered = true;
-			this._orderColumns();
-		}
-	};
-
 	Table.prototype._onAfterTableCreated = function(bResult) {
 		if (this._oTableReady) {
 			this._oTableReady[bResult ? "resolve" : "reject"](this);
@@ -2150,27 +2141,6 @@ sap.ui.define([
 		} else {
 			this._oTable.insertColumn(oInnerColumn, iIndex);
 		}
-	};
-
-	Table.prototype._orderColumns = function() {
-		var iInitialIndex, aColumnInfos = [], aMDCColumns = this.getColumns();
-		aMDCColumns.forEach(function(oColumn) {
-			iInitialIndex = oColumn.getInitialIndex();
-			if (iInitialIndex > -1) {
-				aColumnInfos.push({
-					index: iInitialIndex,
-					column: this.removeColumn(oColumn)
-				});
-			}
-		}, this);
-
-		aColumnInfos.sort(function(oColInfo1, oColInfo2) {
-			return oColInfo1 - oColInfo2;
-		});
-
-		aColumnInfos.forEach(function(oColumnInfo) {
-			this.insertColumn(oColumnInfo.column, oColumnInfo.index);
-		}, this);
 	};
 
 	/**
