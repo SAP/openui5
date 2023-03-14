@@ -1074,7 +1074,7 @@ sap.ui.define([
 					+ sOldPredicate + " to " + sNewPredicate);
 			}
 			// only check for ETag change if the cache contains one; otherwise either the cache
-			// element is empty (via #createEmptyElement) or the server did not send one last time
+			// element is empty (via #addKeptElement) or the server did not send one last time
 			if (oResource["@odata.etag"] && oData["@odata.etag"] !== oResource["@odata.etag"]) {
 				throw new Error("GET " + sRequestPath + ": ETag changed");
 			}
@@ -2666,27 +2666,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates an empty element for the given predicate to the cache, adds it to the cache and
-	 * returns it.
-	 *
-	 * @param {string} sPredicate - The predicate
-	 * @returns {object} The empty element
-	 * @throws {Error}
-	 *   If the cache is shared
-	 *
-	 * @public
-	 */
-	_CollectionCache.prototype.createEmptyElement = function (sPredicate) {
-		var oElement = {};
-
-		this.checkSharedRequest();
-		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
-		this.aElements.$byPredicate[sPredicate] = oElement;
-
-		return oElement;
-	};
-
-	/**
 	 * Replaces the old element at the given index with the given new element.
 	 *
 	 * @param {number} iIndex - The index
@@ -3045,7 +3024,7 @@ sap.ui.define([
 				oKeptElement = aElements.$byPredicate[sPredicate];
 				if (oKeptElement) {
 					// only check for ETag change if the cache contains one; otherwise either the
-					// cache element is empty (via #createEmptyElement) or the server did not send
+					// cache element is empty (via #addKeptElement) or the server did not send
 					// one last time
 					if (!oKeptElement["@odata.etag"]
 							|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {

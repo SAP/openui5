@@ -12383,21 +12383,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#createEmptyElement", function (assert) {
-		var oCache = this.createCache("Employees"),
-			oElement;
-
-		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-
-		// code under test
-		oElement = oCache.createEmptyElement("('foo')");
-
-		assert.deepEqual(oElement, {"@$ui5._" : {predicate : "('foo')"}});
-		assert.strictEqual(oCache.aElements.$byPredicate["('foo')"], oElement);
-		assert.notOk(oCache.aElements.includes(oElement));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("CollectionCache#doReplaceWith: no old element", function (assert) {
 		var oCache = this.createCache("Employees"),
 			oElement = {};

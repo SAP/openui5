@@ -9303,18 +9303,21 @@ sap.ui.define([
 	// The test always fails in requestProperty to check that the reporter is attached correctly
 	QUnit.test(sTitle, function (assert) {
 		var done = assert.async(),
+			oAddKeptElementExpectation,
 			oParentContext = this.oModel.createBindingContext("/"),
 			oBinding = this.bindList("EMPLOYEES", oParentContext),
 			oCache = {
-				createEmptyElement : function () {}
+				addKeptElement : function () {}
 			},
 			oContext = {
 				requestProperty : function () {},
 				setKeepAlive : function () {}
 			},
 			oError = new Error(),
-			bHasEmptyElement = false,
+			oGroupExpectation,
+			oHelperMock = this.mock(_Helper),
 			sPath = "/EMPLOYEES('4')",
+			oPredicateExpectation,
 			oSetKeepAliveExpectation,
 			oType = {
 				$Key : ["a", {b : "c/d"}, "e", {f : "g/h"}]
@@ -9323,28 +9326,32 @@ sap.ui.define([
 		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
-		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
+		oHelperMock.expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
-		this.mock(_Helper).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
+		oHelperMock.expects("getPredicateIndex").withExactArgs(sPath).returns(10);
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), sPath)
 			.returns(oContext);
 		oSetKeepAliveExpectation = this.mock(oContext).expects("setKeepAlive")
 			.withExactArgs(true, undefined, "~bRequestMessages~");
-		this.mock(_Helper).expects("getMetaPath").withExactArgs("/EMPLOYEES").returns("/meta/path");
+		oHelperMock.expects("getMetaPath").withExactArgs("/EMPLOYEES").returns("/meta/path");
 		this.mock(this.oModel.getMetaModel()).expects("requestObject")
 			.withExactArgs("/meta/path/").resolves(oType);
-		this.mock(oCache).expects("createEmptyElement").withExactArgs("('4')")
-			.callsFake(function () {
-				bHasEmptyElement = true;
-				return "~oElement~";
-			});
-		this.mock(_Helper).expects("setPrivateAnnotation").exactly(sGroupId ? 1 : 0)
-			.withExactArgs("~oElement~", "groupId", sGroupId);
+		oPredicateExpectation = oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs({}, "predicate", "('4')");
+		oAddKeptElementExpectation = this.mock(oCache).expects("addKeptElement").withExactArgs({});
+		oGroupExpectation = oHelperMock.expects("setPrivateAnnotation").exactly(sGroupId ? 1 : 0)
+			.withExactArgs({}, "groupId", sGroupId);
 		this.mock(oContext).expects("requestProperty").withExactArgs(["a", "c/d", "e", "g/h"])
 			.callsFake(function () {
 				assert.ok(oSetKeepAliveExpectation.called);
-				assert.strictEqual(bHasEmptyElement, true);
+				assert.ok(oAddKeptElementExpectation.called);
+				assert.strictEqual(oPredicateExpectation.args[0][0],
+					oAddKeptElementExpectation.args[0][0], "same empty object");
+				if (sGroupId) {
+					assert.strictEqual(oGroupExpectation.args[0][0],
+						oAddKeptElementExpectation.args[0][0], "same empty object");
+				}
 				return Promise.reject(oError);
 			});
 		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(function (oError0) {

@@ -2548,8 +2548,10 @@ sap.ui.define([
 			this.mPreviousContextsByPath[sPath] = oContext;
 			this.oCachePromise.then(function (oCache) {
 				// call ASAP so that dependent property bindings find the entity in the cache
-				var oElement = oCache.createEmptyElement(sPath.slice(iPredicateIndex));
+				var oElement = {};
 
+				_Helper.setPrivateAnnotation(oElement, "predicate", sPath.slice(iPredicateIndex));
+				oCache.addKeptElement(oElement);
 				if (sGroupId) {
 					_Helper.setPrivateAnnotation(oElement, "groupId", sGroupId);
 				}
