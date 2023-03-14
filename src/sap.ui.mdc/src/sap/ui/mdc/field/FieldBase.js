@@ -1813,6 +1813,7 @@ sap.ui.define([
 			var sId = _getIdForInternalControl.call(this);
 			this._oCreateContentPromise = this._getContentFactory().createContent(oContentType, sContentMode, sId);
 			this._oCreateContentPromise.then(function(aControls) {
+				delete this._oCreateContentPromise; // after finished new creation request can be sync again (clear at the beginning as error might break function before end)
 				for (var iIndex = 0; iIndex < aControls.length; iIndex++) {
 					var oControl = aControls[iIndex];
 					oControl.attachEvent("parseError", _handleParseError, this);
@@ -1828,7 +1829,9 @@ sap.ui.define([
 				}
 
 				_refreshLabel.call(this);
-				delete this._oCreateContentPromise; // after finished new creation request can be sync again
+			}.bind(this)).catch(function(oException) {
+				delete this._oCreateContentPromise; // clean up to not run into endless loop
+				throw oException;
 			}.bind(this));
 		}
 	}
