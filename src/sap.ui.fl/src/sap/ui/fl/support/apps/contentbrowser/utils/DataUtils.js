@@ -8,7 +8,15 @@ sap.ui.define([
 	GroupHeaderListItem
 ) {
 	"use strict";
-
+	var aExcludeList = [{
+		category: "NS",
+		name: "LREP_HOME_CONTENT",
+		ns: "UIF/"
+	}, {
+		category: "NS",
+		name: "virtual~",
+		ns: "/"
+	}];
 	/**
 	 * Provides data utility functions for the Content Browser.
 	 *
@@ -19,16 +27,6 @@ sap.ui.define([
 	 * @experimental Since 1.45
 	 */
 	var DataUtils = {
-		aExcludeList: [{
-			category: "NS",
-			name: "LREP_HOME_CONTENT",
-			ns: "UIF/"
-		}, {
-			category: "NS",
-			name: "virtual~",
-			ns: "/"
-		}],
-
 		/**
 		 * Pretty printer for specific file types.
 		 *
@@ -80,7 +78,7 @@ sap.ui.define([
 		 */
 		isNotExcluded: function (oContentItem) {
 			var bNotExcluded = true;
-			this.aExcludeList.forEach(function (mExcludeListElement) {
+			aExcludeList.forEach(function (mExcludeListElement) {
 				var bAllPropertiesMatched = true;
 
 				Object.entries(mExcludeListElement).forEach(function (aEntry) {
