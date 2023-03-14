@@ -276,7 +276,24 @@ sap.ui.define([
 			var oToken = oEvent.getSource();
 			var aSelectedTokens = this.getSelectedTokens();
 
-			// compatibility
+			this._fireCompatibilityEvents(oToken, aSelectedTokens);
+			this.fireEvent("tokenDelete", {
+				tokens: [oToken]
+			});
+
+			oEvent.cancelBubble();
+		}, this);
+	};
+
+	/**
+	 * Fires deprecated events for backwards compatibility
+	 *
+	 * @private
+	 * @param {object} oToken Updated token
+	 * @param {array} aSelectedTokens Array of selected changed tokens
+	 * @deprecated As of version 1.82, replaced by <code>tokenDelete</code> event
+	 */
+	Tokenizer.prototype._fireCompatibilityEvents = function(oToken, aSelectedTokens) {
 			this.fireTokenChange({
 				type: Tokenizer.TokenChangeType.Removed,
 				token: oToken,
@@ -285,19 +302,11 @@ sap.ui.define([
 				removedTokens: aSelectedTokens.length ? aSelectedTokens : [oToken]
 			});
 
-			// compatibility
 			this.fireTokenUpdate({
 				type: Tokenizer.TokenChangeType.Removed,
 				addedTokens: [],
 				removedTokens: aSelectedTokens.length ? aSelectedTokens : [oToken]
 			});
-
-			this.fireEvent("tokenDelete", {
-				tokens: [oToken]
-			});
-
-			oEvent.cancelBubble();
-		}, this);
 	};
 
 	/**
