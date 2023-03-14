@@ -897,9 +897,8 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "mdcRemoveChanges.json", 2, 2, assert);
 		});
 
-		// TODO: does not work in voter, no issues locally
 		// MDC Table: combination of move and remove => only remove change stays
-		QUnit.skip("move / remove columns", function(assert) {
+		QUnit.test("move / remove columns", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcMoveRemoveChanges.json", 6, 1, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
