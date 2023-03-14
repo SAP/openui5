@@ -25,7 +25,8 @@
 		"rootView": {
 			"viewName": "sap.ui.fl.qunit.extensionPoint.testApp.view.Main",
 			"type": "XML",
-			"id": "mainView"
+			"id": "mainView",
+			"async": true
 		},
 		"dependencies": {
 			"minUI5Version": "1.46",
