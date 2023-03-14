@@ -19,7 +19,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				}
 			},
 			"preview": {
-				"modes": "MockAbstract",
+				"modes": "MockDataAbstract",
 				"interactive": true
 			}
 		});

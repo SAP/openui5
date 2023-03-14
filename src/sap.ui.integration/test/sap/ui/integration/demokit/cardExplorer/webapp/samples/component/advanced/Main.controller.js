@@ -1,7 +1,9 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/integration/library"
+], function (Controller, library) {
 	"use strict";
+	var CardPreviewMode = library.CardPreviewMode;
 
 	return Controller.extend("my.component.sample.advanced.Main", {
 		onInit: function () {
@@ -9,8 +11,8 @@ sap.ui.define([
 				oCard = oComponent.card,
 				oParameters = oCard.getCombinedParameters(),
 				sCity = oParameters.city;
-			if (oCard.getProperty("useMockData")) {
-				sCity = "Mock " + sCity;
+			if (oCard.getPreviewMode() === CardPreviewMode.MockData) {
+				sCity = "MockData " + sCity;
 			}
 
 			this.byId("cityValue").setText(sCity);
