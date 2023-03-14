@@ -171,11 +171,9 @@
 											<Input value="I have an ID" id="InputFieldWithID" />
 											<Input value="I have no ID" />
 										</smartForm:GroupElement>
-										<smartForm:GroupElement label="With horizontal layout inside" id="Dates.HorizontalLayoutInside">
-											<l:HorizontalLayout id="GroupElementHorizontalLayout">
-												<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
-												<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
-											</l:HorizontalLayout>
+										<smartForm:GroupElement label="With horizontal SmartLink inside" id="Dates.SmartLink">
+											<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
+											<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
 										</smartForm:GroupElement>
 									</smartForm:Group>
 								</smartForm:SmartForm>

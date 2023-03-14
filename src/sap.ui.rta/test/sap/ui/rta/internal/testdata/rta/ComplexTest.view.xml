@@ -163,11 +163,9 @@
 							<Input value="I have an ID" id="InputFieldWithID" />
 							<Input value="I have no ID" />
 						</smartForm:GroupElement>
-						<smartForm:GroupElement label="With horizontal layout inside" id="Dates.HorizontalLayoutInside">
-							<sap.ui.layout:HorizontalLayout id="GroupElementHorizontalLayout">
-								<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
-								<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
-							</sap.ui.layout:HorizontalLayout>
+						<smartForm:GroupElement label="With horizontal SmartLink inside" id="Dates.SmartLink">
+							<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
+							<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
 						</smartForm:GroupElement>
 						<smartForm:GroupElement label="With custom settings action" id="Dates.customSetting" sap.ui.dt:designtime="sap/ui/rta/test/SubDialogSetting.designtime">
 							<Text text="settings action dialog includes another dialog can be opened by selection control. Both dialogs shouldn't be adaptable" id="customSetting.Test" />
@@ -404,10 +402,11 @@
 						<FlexItemData shrinkFactor="0"/>
 					</smartFilterBar:layoutData>
 				</smartFilterBar:SmartFilterBar>
-				<smartTable:SmartTable id="smartTable" entitySet="LineItemsSet"
-									   smartFilterId="smartFilterBar" tableType="Table" useExportToExcel="true"
-									   useVariantManagement="false" useTablePersonalisation="true" header="Line Items"
-									   showRowCount="true">
+				<smartTable:SmartTable
+						id="smartTable" entitySet="LineItemsSet"
+						smartFilterId="smartFilterBar" tableType="Table" enableExport="true"
+						useVariantManagement="false" useTablePersonalisation="true" header="Line Items"
+						showRowCount="true">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%" />
 					</smartTable:layoutData>
