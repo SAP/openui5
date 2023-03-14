@@ -47686,6 +47686,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2033
 	//
 	// POST first fails, then is repeated (CPOUI5ODATAV4-2034)
+	// Create an addtional item and delete it before submitting (CPOUI5ODATAV4-1975)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-2033: Deep create, nested ODLB w/ own cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -47693,6 +47694,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oCreatedItemContext1,
 			oCreatedItemContext2,
+			oCreatedItemContext3,
 			oCreatedOrderContext,
 			oItemsBinding,
 			oOrdersBinding,
@@ -47742,18 +47744,33 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "create order");
 		}).then(function () {
-			that.expectChange("note", ["note10", "note2"])
+			that.expectChange("note", ["note10", "noSubmit", "note2"])
 				.expectChange("itemCount", "1")
-				.expectChange("itemCount", "2");
+				.expectChange("itemCount", "2")
+				.expectChange("itemCount", "3");
 
 			// code under test
 			oCreatedItemContext1 = oItemsBinding.create({Note : "note10"});
+			// this one is deleted again before submitting (intentionally in between)
+			oCreatedItemContext3 = oItemsBinding.create({Note : "noSubmit"}, false, true);
 			oCreatedItemContext2 = oItemsBinding.create({Note : "note2"}, false, true);
 
 			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
 			assert.strictEqual(oCreatedItemContext2.isTransient(), true);
+			assert.strictEqual(oCreatedItemContext3.isTransient(), true);
 
 			return that.waitForChanges(assert, "create items");
+		}).then(function () {
+			that.expectChange("note", [, "note2"])
+				.expectChange("itemCount", "2");
+
+			// code under test
+			oCreatedItemContext3.delete();
+
+			return Promise.all([
+				checkCanceled(assert, oCreatedItemContext3.created()),
+				that.waitForChanges(assert, "delete an item")
+			]);
 		}).then(function () {
 			that.expectChange("note", [, "note20"]);
 
@@ -47891,9 +47908,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Deep create, nested list binding with own cache. No initial data for the nested
-	// list. An item is created. The deep creation is canceled.
+	// list. Items are created. The deep creation is canceled.
 	// JIRA: CPOUI5ODATAV4-2034
-	QUnit.test("CPOUI5ODATAV4-2034: Deep create canceled", function (assert) {
+	// Alternatively delete the created (top-level) order context (CPOUI5ODATAV4-1975)
+[false, true].forEach(function (bDelete) {
+	var sTitle = "CPOUI5ODATAV4-2034: Deep create, "
+			+ (bDelete ? "delete top-level context" : "reset changes");
+
+	QUnit.test(sTitle, function (assert) {
 		var oCreatedItemContext1,
 			oCreatedItemContext2,
 			oCreatedOrderContext,
@@ -47918,19 +47940,72 @@ sap.ui.define([
 		}).then(function () {
 			var oItemsBinding = that.oView.byId("items").getBinding("items");
 
-			oCreatedItemContext1 = oItemsBinding.create({Note : "note10"}, true, true);
-			oCreatedItemContext2 = oItemsBinding.create({Note : "note20"}, true, true);
+			oCreatedItemContext1 = oItemsBinding.create({Note : "note10"});
+			oCreatedItemContext2 = oItemsBinding.create({Note : "note20"});
 
 			return that.waitForChanges(assert, "create items");
 		}).then(function () {
-			// code under test
-			oModel.resetChanges();
-
 			return Promise.all([
+				// code under test
+				bDelete
+					? oCreatedOrderContext.delete()
+					: oModel.resetChanges(),
 				checkCanceled(assert, oCreatedOrderContext.created()),
 				checkCanceled(assert, oCreatedItemContext1.created()),
 				checkCanceled(assert, oCreatedItemContext2.created()),
-				that.waitForChanges(assert, "resetChanges")
+				that.waitForChanges(assert, bDelete ? "delete" : "resetChanges")
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Deep create, nested list binding with own cache. Create an item, delete it again,
+	// and submit. See that there is a deep create with an empty collection.
+	// CPOUI5ODATAV4-1975
+	QUnit.test("CPOUI5ODATAV4-1975: Deep create, delete nested", function (assert) {
+		var oCreatedItemContext,
+			oCreatedOrderContext,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<Table id="orders" items="{/SalesOrderList}">\
+	<Text id="order" text="{SalesOrderID}"/>\
+</Table>\
+<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {value : []});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oCreatedOrderContext = that.oView.byId("orders").getBinding("items").create({}, true);
+			that.oView.byId("items").setBindingContext(oCreatedOrderContext);
+
+			return that.waitForChanges(assert, "create order");
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {SO_2_SOITEM : []}
+				}, {
+					SalesOrderID : "new1",
+					SO_2_SOITEM : []
+				})
+				// TODO unnecessary request -> CPOUI5ODATAV4-2036
+				.expectRequest("SalesOrderList('new1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {value : []});
+
+			oCreatedItemContext = that.oView.byId("items").getBinding("items")
+				.create({Note : "noSubmit"});
+			oCreatedItemContext.delete();
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				checkCanceled(assert, oCreatedItemContext.created()),
+				oCreatedOrderContext.created(),
+				that.waitForChanges(assert, "create and delete")
 			]);
 		});
 	});

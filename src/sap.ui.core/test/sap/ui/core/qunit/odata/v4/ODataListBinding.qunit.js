@@ -4305,7 +4305,6 @@ sap.ui.define([
 				sPath = "-1";
 			}
 			oContext1Mock.expects("isDeleted").withExactArgs().returns(false);
-			oBindingMock.expects("checkTransient").withExactArgs();
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
 			oDeleteCall = oContext1Mock.expects("doDelete")
@@ -4484,7 +4483,6 @@ sap.ui.define([
 		};
 
 		this.mock(oKeptAliveContext).expects("isDeleted").withExactArgs().returns(false);
-		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		oBindingMock.expects("destroyPreviousContexts").never();
 		oHelperMock.expects("getRelativePath")
 			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");

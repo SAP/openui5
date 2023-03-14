@@ -110,8 +110,12 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrderItem : function (oEvent) {
-			this.byId("objectPage").getBindingContext().requestSideEffects(["GrossAmount"], "$auto")
+			var oOrderContext = this.byId("objectPage").getBindingContext();
+
+			if (!oOrderContext.isTransient()) {
+				oOrderContext.requestSideEffects(["GrossAmount"], "$auto")
 					.catch(function () { /*may fail because of previous request*/ });
+			}
 
 			oEvent.getSource().getBindingContext().delete("$auto").then(function () {
 				MessageBox.success("Sales order line item deleted");

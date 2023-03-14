@@ -1005,7 +1005,6 @@ sap.ui.define([
 		if (oContext.isDeleted()) {
 			return oContext.oDeletePromise; // do not delete twice
 		}
-		this.checkTransient();
 
 		this.iDeletedContexts += 1;
 
