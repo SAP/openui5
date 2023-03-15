@@ -249,6 +249,11 @@ sap.ui.define([
 
 		sTarget = getHref(oAnchorElement);
 
+		/*eslint-disable no-script-url */
+		if (sTarget === "javascript:void(0)") {
+			return;
+		}
+
 		bParsed = /^blob:/.test(sTarget)
 			|| /^https?:\/\//.test(sTarget)
 			|| /^test-resources\//.test(sTarget)
