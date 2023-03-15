@@ -7,13 +7,15 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/json/JSONPropertyBinding',
 	'sap/base/util/merge',
-	'sap/base/util/deepEqual'
+	'sap/base/util/deepEqual',
+	'sap/ui/core/date/UI5Date'
 ],
 	function(
 			ChangeReason,
 			JSONPropertyBinding,
 			merge,
-			deepEqual
+			deepEqual,
+			UI5Date
 		) {
 	"use strict";
 
@@ -87,7 +89,7 @@ sap.ui.define([
 		} else if (Array.isArray(oValue)) {
 			oCopy = merge([], oValue);
 		} else if (oValue instanceof Date) {
-			oCopy = new Date(oValue);
+			oCopy = UI5Date.getInstance(oValue);
 		} else if (typeof oValue === "object") {
 			oCopy = merge({}, oValue);
 		} else {
