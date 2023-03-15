@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/CustomData",
+	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/ui/integration/util/Utils"
 ], function (
 	BaseField,
@@ -67,6 +68,7 @@ sap.ui.define([
 	CustomListItem,
 	Sorter,
 	CustomData,
+	EditorResourceBundles,
 	Utils
 ) {
 	"use strict";
@@ -1222,8 +1224,9 @@ sap.ui.define([
 	// get origin values in i18n files
 	ObjectField.prototype.getOriginTranslatedValues = function(sKey) {
 		var aOriginTranslatedValues = [];
-		for (var p in this._aResourceBundles) {
-			var oResourceBundleTemp = this._aResourceBundles[p];
+		var aEditorResourceBundles = EditorResourceBundles.getInstance();
+		for (var p in aEditorResourceBundles) {
+			var oResourceBundleTemp = aEditorResourceBundles[p];
 			var sTranslatedValue = "";
 			var sOriginValue = "";
 			if (sKey && oResourceBundleTemp) {
@@ -1251,10 +1254,11 @@ sap.ui.define([
 	// build origin translation values if translation type is "property"
 	ObjectField.prototype.buildPropertyTranslationValues = function(sKey) {
 		var aOriginTranslatedValues = [];
-		for (var p in this._aResourceBundles) {
+		var aEditorResourceBundles = EditorResourceBundles.getInstance();
+		for (var p in aEditorResourceBundles) {
 			aOriginTranslatedValues.push({
 				"key": p,
-				"desription": this._aResourceBundles[p].language,
+				"desription": aEditorResourceBundles[p].language,
 				"value": sKey,
 				"originValue": sKey,
 				"editable": true

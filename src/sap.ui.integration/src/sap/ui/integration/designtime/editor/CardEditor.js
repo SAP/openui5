@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
 	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/dom/includeStylesheet",
@@ -23,6 +24,7 @@ sap.ui.define([
 	JSONModel,
 	merge,
 	ResourceModel,
+	EditorResourceBundles,
 	LoaderExtensions,
 	Parameters,
 	includeStylesheet,
@@ -198,7 +200,7 @@ sap.ui.define([
 		this._manifestModel = new JSONModel(oManifestJson);
 		this._isManifestReady = true;
 		this.fireManifestReady();
-		this._createResourceBundlesForMultiTranslation();
+		this._initResourceBundlesForMultiTranslation();
 		//add a context model
 		this._createContextModel();
 		if (this._oEditorManifest && this._oEditorManifest.getResourceBundle()) {
