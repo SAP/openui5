@@ -491,6 +491,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the container parent has a dialog inside the value help
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {boolean} True if parent has a dialog
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
+	 */
+	Container.prototype.hasDialog = function () {
+		var oValueHelp = this.getParent();
+		return !!(oValueHelp && (oValueHelp.getDialog()));
+	};
+
+	/**
 	 * Determines if the container provides a own scroll functionality.
 	 * If not, the <code>Content</code> needs to provide a scrolling solution like a {@link sap.m.ScrollContainer ScrollContainer}.
 	 *

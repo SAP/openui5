@@ -474,6 +474,18 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("hasDialog", function(assert) {
+
+		var bDialog = oContainer.hasDialog();
+		assert.notOk(bDialog, "container value help does not have a dialog");
+
+		sinon.stub(oValueHelp, "getDialog").returns(oContainer);
+		bDialog = oContainer.isDialog();
+		assert.ok(bDialog, "has a dialog");
+		oValueHelp.getDialog.restore();
+
+	});
+
 	QUnit.test("providesScrolling", function(assert) {
 
 		var bScrolling = oContainer.providesScrolling();

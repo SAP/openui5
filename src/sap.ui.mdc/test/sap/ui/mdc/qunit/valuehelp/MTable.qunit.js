@@ -121,6 +121,9 @@ sap.ui.define([
 		},
 		getFilterValue: function () {
 			return undefined;
+		},
+		hasDialog: function() {
+			return true;
 		}
 	};
 
