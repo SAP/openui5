@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class
+	 * @class Resource Bundles of Editor
 	 * @alias sap.ui.integration.editor.EditorResourceBundles
 	 * @author SAP SE
 	 * @since 1.94.0
