@@ -1184,7 +1184,7 @@ sap.ui.define([
 			oAggregation.$NodeProperty = "SomeNodeID";
 		}
 		if (bAllLevels) {
-			iExpectedLevels = 9;
+			iExpectedLevels = 999;
 			aExpectedSelect = ["ID", "SomeNodeID", "DistFromRoot"];
 			oExpectedAggregation = {
 				$DistanceFromRootProperty : "DistFromRoot"
