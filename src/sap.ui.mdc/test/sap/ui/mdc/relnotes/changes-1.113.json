@@ -1,0 +1,23 @@
+{
+  "1.113.0": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "61e6d05e078c27f1a7e15af0fa791d4e72b93d2b",
+        "type": "FIX",
+        "text": " JSDoc: Correct misplaced block tags"
+      },
+      {
+        "id": "7c5d9dbdff2319f3b3c9ea4115fe8626e6b0490c",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: enhance check during variant appliance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370002082"
+          }
+        ]
+      }
+    ]
+  }
+}
