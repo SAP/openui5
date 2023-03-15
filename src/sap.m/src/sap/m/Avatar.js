@@ -430,7 +430,7 @@ sap.ui.define([
 	 * @private
 	 */
 	 Avatar.prototype._areInitialsValid = function (sInitials) {
-		var validInitials = /^[a-zA-Zà-üÀ-Ü]{1,3}$/;
+		var validInitials = /^[a-zA-Z\xc0-\xd6\xd8-\xdc\xe0-\xf6\xf8-\xfc]{1,3}$/;
 		if (!validInitials.test(sInitials)) {
 			Log.warning("Initials should consist of only 1,2 or 3 latin letters", this);
 			this._sActualType = AvatarType.Icon;
