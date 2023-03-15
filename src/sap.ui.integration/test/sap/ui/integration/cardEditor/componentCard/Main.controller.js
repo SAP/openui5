@@ -1,43 +1,44 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/library"
+], function (Controller, JSONModel, library) {
 	"use strict";
-
+	var CardPreviewMode = library.CardPreviewMode;
 	return Controller.extend("my.component.sample.cardContentControls.Main", {
 		onInit: function () {
 			var oComponent = this.getOwnerComponent(),
 				oCard = oComponent.card,
 				oData;
-			if (oCard.getProperty("useMockData")) {
+			if (oCard.getPreviewMode() === CardPreviewMode.MockData) {
 				oData = {
 					"cities": [
 						{
-							"text": "Mock_Berlin",
+							"text": "MockData_Berlin",
 							"key": "BR"
 						},
 						{
-							"text": "Mock_London",
+							"text": "MockData_London",
 							"key": "LN"
 						},
 						{
-							"text": "Mock_Madrid",
+							"text": "MockData_Madrid",
 							"key": "MD"
 						},
 						{
-							"text": "Mock_Prague",
+							"text": "MockData_Prague",
 							"key": "PR"
 						},
 						{
-							"text": "Mock_Paris",
+							"text": "MockData_Paris",
 							"key": "PS"
 						},
 						{
-							"text": "Mock_Sofia",
+							"text": "MockData_Sofia",
 							"key": "SF"
 						},
 						{
-							"text": "Mock_Vienna",
+							"text": "MockData_Vienna",
 							"key": "VN"
 						}
 					]
