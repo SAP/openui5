@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/p13n/FlexUtil",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core"
-], function (FlexModificationHandler, FlexUtil, FlexRuntimeInfoAPI, MDCControl, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+], function (FlexModificationHandler, FlexUtil, FlexRuntimeInfoAPI, MDCControl, oCore, ControlPersonalizationWriteAPI) {
 	"use strict";
 
 	QUnit.module("FlexModificationHandler API tests", {
@@ -49,21 +50,17 @@ sap.ui.define([
 
 	QUnit.test("Check FlexModificationHandler 'processChanges' inner function execution", function(assert){
 
-		var done = assert.async();
-
 		//Spy
 		var oAddSpy = sinon.spy(FlexUtil, "handleChanges");
 
 		//Method calls
-		this.oHandler.processChanges([], this.oPayload)
+		return this.oHandler.processChanges([], this.oPayload)
 		.then(function(){
 			//Asserts
 			assert.ok(oAddSpy.called, "FlexUtil called");
 
 			//Restore originals
 			FlexUtil.handleChanges.restore();
-
-			done();
 		});
 	});
 
@@ -74,16 +71,24 @@ sap.ui.define([
 			hasVM: false
 		};
 
+		sinon.stub(ControlPersonalizationWriteAPI, "save");
 		var oHandleChangesStub = sinon.spy(FlexUtil, "handleChanges");
 
 		//Method calls
-		this.oHandler.processChanges([], oAutoGlobalPayload);
+		return this.oHandler.processChanges([], oAutoGlobalPayload)
+		.then(function(){
+			//Asserts
+			assert.ok(oHandleChangesStub.calledWith([], true, false), "Global changes in case no VM reference provided.");
 
-		assert.ok(oHandleChangesStub.calledWith([], true, false), "Global changes in case no VM reference provided.");
-		FlexUtil.handleChanges.restore();
+			//Restore originals
+			FlexUtil.handleChanges.restore();
+			ControlPersonalizationWriteAPI.save.restore();
+		});
 	});
 
 	QUnit.test("Check FlexModificationHandler 'processChanges' execution for 'Auto' mode with VM reference", function(assert){
+
+		var done = assert.async();
 
 		var oAutoGlobalPayload = {
 			mode: "Auto",
@@ -95,10 +100,18 @@ sap.ui.define([
 		var oHandleChangesStub = sinon.spy(FlexUtil, "handleChanges");
 
 		//Method calls
-		this.oHandler.processChanges([], oAutoGlobalPayload);
+		this.oHandler.processChanges([], oAutoGlobalPayload)
+		.then(function(){
+			//Asserts
+			assert.ok(oHandleChangesStub.calledWith([], false, false), "Explicit changes in case a VM reference is provided. (--> no global changes!)");
 
-		assert.ok(oHandleChangesStub.calledWith([], false, false), "Explicit changes in case a VM reference is provided. (--> no global changes!)");
-		FlexUtil.handleChanges.restore();
+			//Restore originals
+			FlexUtil.handleChanges.restore();
+			done();
+		});
+
+		//Method calls
+		this.oHandler.processChanges([], oAutoGlobalPayload);
 	});
 
 	QUnit.test("Check FlexModificationHandler 'isModificationSupported' inner function execution", function(assert){
@@ -107,13 +120,15 @@ sap.ui.define([
 		var oSupportedSpy = sinon.spy(FlexRuntimeInfoAPI, "isFlexSupported");
 
 		//Method calls
-		this.oHandler.isModificationSupported({selector: this.oControl}, this.oPayload);
+		return this.oHandler.isModificationSupported({selector: this.oControl}, this.oPayload)
+		.then(function(){
+			//Asserts
+			assert.ok(oSupportedSpy.calledOnce, "FlexRuntimeInfoAPI called");
 
-		//Asserts
-		assert.ok(oSupportedSpy.calledOnce, "FlexRuntimeInfoAPI called");
+			//Restore originals
+			FlexRuntimeInfoAPI.isFlexSupported.restore();
+		});
 
-		//Restore originals
-		FlexRuntimeInfoAPI.isFlexSupported.restore();
 	});
 
 	QUnit.test("Check FlexModificationHandler 'reset' inner function execution", function(assert){
@@ -152,6 +167,8 @@ sap.ui.define([
 
 	QUnit.test("VM: false, PP: false, mode: Auto", function(assert){
 
+		var done = assert.async();
+
 		var oResetSpy = sinon.spy(FlexUtil, "reset");
 		var oRestoreSpy = sinon.spy(FlexUtil, "restore");
 
@@ -162,15 +179,20 @@ sap.ui.define([
 		};
 
 		//Standard case --> reset should only discard dirty changes
-		this.oHandler.reset(this.mPropertyBag, oModificationPayload);
-		assert.ok(oResetSpy.callCount === 0);
-		assert.ok(oRestoreSpy.callCount === 1);
-		FlexUtil.reset.restore();
-		FlexUtil.restore.restore();
+		this.oHandler.reset(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.ok(oResetSpy.callCount === 0);
+			assert.ok(oRestoreSpy.callCount === 1);
+			FlexUtil.reset.restore();
+			FlexUtil.restore.restore();
+
+			done();
+		});
 
 	});
 
 	QUnit.test("VM: false, PP: true, mode: Auto", function(assert){
+
+		var done = assert.async();
 
 		var oResetSpy = sinon.spy(FlexUtil, "reset");
 		var oRestoreSpy = sinon.spy(FlexUtil, "restore");
@@ -181,17 +203,21 @@ sap.ui.define([
 			mode: "Auto"
 		};
 
-		this.oHandler.reset(this.mPropertyBag, oModificationPayload);
-
 		//No VM but PP --> reset should delete persisted changes
-		assert.ok(oResetSpy.callCount === 1);
-		assert.ok(oRestoreSpy.callCount === 0);
-		FlexUtil.reset.restore();
-		FlexUtil.restore.restore();
+		this.oHandler.reset(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.ok(oResetSpy.callCount === 1);
+			assert.ok(oRestoreSpy.callCount === 0);
+			FlexUtil.reset.restore();
+			FlexUtil.restore.restore();
+
+			done();
+		});
 
 	});
 
 	QUnit.test("VM: true, PP: true, mode: Auto", function(assert){
+
+		var done = assert.async();
 
 		var oResetSpy = sinon.spy(FlexUtil, "reset");
 		var oRestoreSpy = sinon.spy(FlexUtil, "restore");
@@ -203,15 +229,20 @@ sap.ui.define([
 		};
 
 		//If both exists, VM will be used --> only discard dirty changes
-		this.oHandler.reset(this.mPropertyBag, oModificationPayload);
-		assert.ok(oResetSpy.callCount === 0);
-		assert.ok(oRestoreSpy.callCount === 1);
-		FlexUtil.reset.restore();
-		FlexUtil.restore.restore();
+		this.oHandler.reset(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.ok(oResetSpy.callCount === 0);
+			assert.ok(oRestoreSpy.callCount === 1);
+			FlexUtil.reset.restore();
+			FlexUtil.restore.restore();
+
+			done();
+		});
 
 	});
 
 	QUnit.test("mode: Transient --> only discard dirty changes (independent of VM and PP)", function(assert){
+
+		var done = assert.async();
 
 		var oResetSpy = sinon.spy(FlexUtil, "reset");
 		var oRestoreSpy = sinon.spy(FlexUtil, "restore");
@@ -223,15 +254,20 @@ sap.ui.define([
 		};
 
 		//If both exists, VM will be used --> only discard dirty changes
-		this.oHandler.reset(this.mPropertyBag, oModificationPayload);
-		assert.ok(oResetSpy.callCount === 0);
-		assert.ok(oRestoreSpy.callCount === 1);
-		FlexUtil.reset.restore();
-		FlexUtil.restore.restore();
+		this.oHandler.reset(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.ok(oResetSpy.callCount === 0);
+			assert.ok(oRestoreSpy.callCount === 1);
+			FlexUtil.reset.restore();
+			FlexUtil.restore.restore();
+
+			done();
+		});
 
 	});
 
 	QUnit.test("mode: Global --> reset persisted changes (independent of VM and PP)", function(assert){
+
+		var done = assert.async();
 
 		var oResetSpy = sinon.spy(FlexUtil, "reset");
 		var oRestoreSpy = sinon.spy(FlexUtil, "restore");
@@ -243,12 +279,14 @@ sap.ui.define([
 		};
 
 		//If both exists, VM will be used --> only discard dirty changes
-		this.oHandler.reset(this.mPropertyBag, oModificationPayload);
-		assert.ok(oResetSpy.callCount === 1);
-		assert.ok(oRestoreSpy.callCount === 0);
-		FlexUtil.reset.restore();
-		FlexUtil.restore.restore();
+		this.oHandler.reset(this.mPropertyBag, oModificationPayload).finally(function(){
+			assert.ok(oResetSpy.callCount === 1);
+			assert.ok(oRestoreSpy.callCount === 0);
+			FlexUtil.reset.restore();
+			FlexUtil.restore.restore();
 
+			done();
+		});
 	});
 
 });

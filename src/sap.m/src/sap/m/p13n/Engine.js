@@ -148,11 +148,6 @@ sap.ui.define([
 			}
 
 		}.bind(this));
-
-		if (oRegistryEntry && oRegistryEntry.modification) {
-			this.getModificationHandler(oControl).initialize(oControl);
-		}
-
 	};
 
 

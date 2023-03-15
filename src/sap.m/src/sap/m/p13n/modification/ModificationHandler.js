@@ -77,10 +77,10 @@ sap.ui.define([
 	 * @param {object} mPropertyBag A propertybag containing modification specific configuration
 	 * @param {sap.ui.core.Element} mPropertyBag.selector The according element which should be checked
 	 * @param {object} oModificationPayload An object providing a modification handler specific payload
- 	 * @returns {boolean} reflects the modification support state
+ 	 * @returns {Promise<boolean>} reflects the modification support state
 	 */
 	ModificationHandler.prototype.isModificationSupported = function(mPropertyBag, oModificationPayload){
-		return false;
+		return Promise.resolve(true);
 	};
 
 	/**

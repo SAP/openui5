@@ -664,17 +664,12 @@ sap.ui.define([
 		}
 	};
 
-	FilterBarBase.prototype._isPersistenceSupported = function(oEvent) {
-		return this.getEngine().isModificationSupported(this);
-	};
-
 	FilterBarBase.prototype.getPropertyInfoSet = function() {
 		return this.getPropertyHelper() ? this.getPropertyHelper().getProperties() : [];
 	};
 
 
 	FilterBarBase.prototype._addConditionChange = function(pConditionState) {
-
 		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
 			control: this,
 			applySequentially: true,
@@ -702,7 +697,7 @@ sap.ui.define([
 
 				var sFieldPath = sPath.substring("/conditions/".length);
 
-				if (this._bPersistValues && this._isPersistenceSupported()) {
+				if (this._bPersistValues) {
 
 					var aConditions = oEvent.getParameter("value");
 

@@ -353,7 +353,6 @@ sap.ui.define([
 
 	QUnit.test("check _handleConditionModelPropertyChange with liveMode=false and p13nValue=true", function (assert) {
 
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.spy(oFilterBar.getEngine(), "createChanges");
 		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
 		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
@@ -409,7 +408,6 @@ sap.ui.define([
 
 	QUnit.test("check _handleConditionModelPropertyChange with liveMode=true and p13nValue=true", function (assert) {
 
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.spy(oFilterBar.getEngine(), "createChanges");
 		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
 		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
@@ -645,8 +643,6 @@ sap.ui.define([
 			aResultingChanges = aResultingChanges.concat(aChanges);
 		};
 
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
-
 		sinon.stub(FlexUtil, "handleChanges").callsFake(fnStoreChanges);
 
 		oFilterBar.setP13nMode(["Value"]);
@@ -704,8 +700,6 @@ sap.ui.define([
 		this.destroyTestObjects();
 		this.createTestObjects(aPropertyInfo);
 
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
-
 		sinon.stub(oFilterBar, "_getPropertyByName").callsFake(function(sName) {
 			return FilterUtil.getPropertyByKey(aPropertyInfo, sName);
 		});
@@ -759,7 +753,6 @@ sap.ui.define([
 		};
 
 		sinon.stub(FlexUtil, "handleChanges").callsFake(fnStoreChanges);
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.stub(oFilterBar, "_getPropertyByName").callsFake(function(sName) {
 			return FilterUtil.getPropertyByKey(aPropertyInfo, sName);
 		});
@@ -834,7 +827,6 @@ sap.ui.define([
 		sinon.stub(oFilterBar, "_getPropertyByName").callsFake(function(sName) {
 			return FilterUtil.getPropertyByKey(aPropertyInfo, sName);
 		});
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
 
 		oFilterBar._waitForMetadata().then(function () {
@@ -892,7 +884,6 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
 		sinon.stub(oFilterBar, "_getPropertyByName").callsFake(function(sName) {
 			return FilterUtil.getPropertyByKey(aPropertyInfo, sName);
@@ -1334,7 +1325,6 @@ sap.ui.define([
 		var oCondition;
 
 		sinon.stub(oFilterBar, "_getP13nModeValue").returns(true);
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.stub(oFilterBar, "_getPropertyByName").returns({});
 		oFilterBar.setP13nMode(["Value"]);
 		sinon.stub(oFilterBar.getEngine(), "createChanges").callsFake(function(mConfig) {
@@ -1363,7 +1353,6 @@ sap.ui.define([
 			aResultingChanges = aResultingChanges.concat(aChanges);
 		};
 
-		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty]);
 		sinon.stub(FlexUtil, "handleChanges").callsFake(fnStoreChanges);
 
