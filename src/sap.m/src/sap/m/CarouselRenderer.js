@@ -40,7 +40,7 @@ sap.ui.define([
 			iPageCount = aPages.length,
 			sPageIndicatorPlacement = oCarousel.getPageIndicatorPlacement(),
 			sArrowsPlacement = oCarousel.getArrowsPlacement(),
-			iIndex = oCarousel._getPageIndex(oCarousel.getActivePage());
+			iIndex = oCarousel._iCurrSlideIndex;
 
 		this._renderOpeningDiv(oRM, oCarousel);
 		this._renderDummyArea(oRM, oCarousel, "before");
@@ -310,7 +310,7 @@ sap.ui.define([
 	CarouselRenderer._renderArrow = function (oRM, oCarousel, sDirection) {
 		var sShort = sDirection.slice(0, 4);
 
-		oRM.openStart("span")
+		oRM.openStart("span", oCarousel.getId() + "-arrow-" + sDirection)
 			.class("sapMCrslArrow")
 			.class("sapMCrsl" + capitalize(sShort))
 			.attr("data-slide", sShort)

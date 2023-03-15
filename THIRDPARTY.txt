@@ -143,12 +143,6 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/swipe-view.js
 
-Component: Mobify.js, version: 1.1
-Copyright: Mobify R&D Inc.
-License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/mobify-carousel.js
-
 Component: Zynga Scroller, version: 1.2.1-0-g5d43806
 Copyright: 2011 Zynga Inc.
 License: MIT
