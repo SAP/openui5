@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Popup",
 	"sap/base/i18n/ResourceBundle",
+	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
@@ -69,6 +70,7 @@ sap.ui.define([
 	Log,
 	Popup,
 	ResourceBundle,
+	EditorResourceBundles,
 	includeStylesheet,
 	LoaderExtensions,
 	Parameters,
@@ -1051,7 +1053,7 @@ sap.ui.define([
 				this._manifestModel = new JSONModel(oManifestJson);
 				this._isManifestReady = true;
 				this.fireManifestReady();
-				this._createResourceBundlesForMultiTranslation();
+				this._initResourceBundlesForMultiTranslation();
 				//use the translations
 				this._loadDefaultTranslations();
 				//add a context model
@@ -1066,9 +1068,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Create the Resource Bundles for Multi Translation
+	 * Init the Resource Bundles for Multi Translation
 	 */
-	Editor.prototype._createResourceBundlesForMultiTranslation = function () {
+	Editor.prototype._initResourceBundlesForMultiTranslation = function () {
 		var vI18n = this._oEditorManifest.get("/sap.app/i18n");
 		var sResourceBundleURL;
 		var aSupportedLocales;
@@ -1082,35 +1084,11 @@ sap.ui.define([
 				aSupportedLocales = vI18n.supportedLocales;
 			}
 		}
-		this._aResourceBundles = [];
-		//according to the language list, load each resource bundle
-		for (var p in Editor._oLanguages) {
-			var oResourceBundleObject = {
-				"language": Editor._oLanguages[p],
-				"isSupportedLocale": true
-			};
-			if (Array.isArray(aSupportedLocales) && !aSupportedLocales.includes(p) && !aSupportedLocales.includes(p.replace('-', '_'))) {
-				oResourceBundleObject.isSupportedLocale = false;
-			}
-			this._aResourceBundles[p] = oResourceBundleObject;
-			if (sResourceBundleURL) {
-				var aFallbacks = [p];
-				if (p.indexOf("-") > -1) {
-					aFallbacks.push(p.substring(0, p.indexOf("-")));
-				}
-				//add en into fallbacks
-				if (!aFallbacks.includes("en")) {
-					aFallbacks.push("en");
-				}
-				ResourceBundle.create({
-					url: sResourceBundleURL,
-					async: true,
-					locale: p,
-					supportedLocales: aFallbacks
-				}).then(function(oBundle) {
-					this.resourceBundle = oBundle;
-				}.bind(oResourceBundleObject));
-			}
+		if (sResourceBundleURL && EditorResourceBundles.getResourceBundleURL() !== sResourceBundleURL) {
+			EditorResourceBundles.setResourceBundleURL(sResourceBundleURL);
+		}
+		if (aSupportedLocales) {
+			EditorResourceBundles.setSupportedLocales(aSupportedLocales);
 		}
 	};
 
@@ -2127,7 +2105,6 @@ sap.ui.define([
 		if (oConfig.layout) {
 			oField._layout = oConfig.layout;
 		}
-		oField._aResourceBundles = this._aResourceBundles;
 		oField.setAssociation("_messageStrip", MessageStripId);
 		return oField;
 	};
