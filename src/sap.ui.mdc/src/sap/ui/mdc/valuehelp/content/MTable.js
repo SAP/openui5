@@ -769,7 +769,9 @@ sap.ui.define([
 					return this._retrievePromise("footer", function () {
 						return this._retrievePromise("listBinding").then(function (oListBinding) {
 							var oBindingInfo = this._getListBindingInfo();
-							if (oBindingInfo && oBindingInfo.length) {
+							var bDialogExist = this.getParent().hasDialog();
+
+							if (bDialogExist && oBindingInfo && oBindingInfo.length) {
 								return loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then(function (aModules) {
 									var Button = aModules[0];
 									var Toolbar = aModules[1];
