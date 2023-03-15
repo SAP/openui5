@@ -5530,9 +5530,9 @@ sap.ui.define([
 						__FAKE__Messages : [{
 							code : "1",
 							message : "Text",
-							transition : false,
+							numericSeverity : 3,
 							target : "Name",
-							numericSeverity : 3
+							transition : false
 						}]
 					}
 				}]
@@ -5554,9 +5554,9 @@ sap.ui.define([
 							__FAKE__Messages : [{
 								code : "2",
 								message : "Text2",
-								transition : false,
+								numericSeverity : 3,
 								target : "Name",
-								numericSeverity : 3
+								transition : false
 							}]
 						}
 					}]
@@ -12832,8 +12832,8 @@ sap.ui.define([
 						code : "23",
 						message : "Just A Message",
 						numericSeverity : 1,
-						transition : false,
-						target : "Name"
+						target : "Name",
+						transition : false
 					}],
 					Name : "Queen"
 				})
@@ -12891,8 +12891,8 @@ sap.ui.define([
 						code : "23",
 						message : "Just Another Message",
 						numericSeverity : 1,
-						transition : false,
-						target : "Name"
+						target : "Name",
+						transition : false
 					}],
 					Name : "After Refresh"
 				})
@@ -12927,8 +12927,8 @@ sap.ui.define([
 						code : "CODE",
 						message : "What a nice acronym!",
 						numericSeverity : 1,
-						transition : false,
-						target : "Name"
+						target : "Name",
+						transition : false
 					}],
 					Name : "T.A.F.K.A.P."
 				})
@@ -18194,8 +18194,8 @@ sap.ui.define([
 			oTransitionMessage = {
 				code : "code 2",
 				message : "Only multiples of 2 are allowed",
-				target : sQuantityTarget,
 				persistent : true,
+				target : sQuantityTarget,
 				technical : true,
 				type : "Error"
 			},
@@ -27158,15 +27158,15 @@ sap.ui.define([
 						code : "23",
 						message : "Just A Message",
 						numericSeverity : 1,
-						transition : true,
-						target : "Name"
+						target : "Name",
+						transition : true
 					}]
 				})
 				.expectMessages([{
 					code : "23",
 					message : "Just A Message",
-					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 					persistent : true,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 					type : "Success"
 				}]);
 
@@ -28352,8 +28352,8 @@ sap.ui.define([
 			oJustAMessage = {
 				code : "23",
 				message : "Just A Message",
-				target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 				persistent : true,
+				target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 				type : "Success"
 			},
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
@@ -34537,8 +34537,8 @@ sap.ui.define([
 					code : "23",
 					message : "Just A Message",
 					numericSeverity : 1,
-					transition : true,
-					target : "Price"
+					target : "Price",
+					transition : true
 				}],
 				PublicationID : "42-0",
 				Price : "3.33"
@@ -34547,11 +34547,11 @@ sap.ui.define([
 			.expectMessages([{
 				code : "23",
 				message : "Just A Message",
+				persistent : true,
 				// Note: We cannot know whether PreparationAction changed the target of
 				// BestPublication, but as long as the form still displays "42-0", we might as well
 				// keep it up-to-date and show messages there...
 				target : "/Artists(ArtistID='42',IsActiveEntity=true)/BestPublication/Price",
-				persistent : true,
 				type : "Success"
 			}]);
 
@@ -42450,8 +42450,8 @@ sap.ui.define([
 				})
 				.expectMessages([{
 					message : "Just a message",
-					type : "Information",
-					target : "/SalesOrderList('1')/GrossAmount"
+					target : "/SalesOrderList('1')/GrossAmount",
+					type : "Information"
 				}]);
 
 			oContext = that.oView.byId("table").getItems()[0].getBindingContext();
@@ -43370,8 +43370,8 @@ sap.ui.define([
 				.expectChange("publication", ["P1"])
 				.expectMessages([{
 					message : "Active message",
-					type : "Information",
-					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel",
+					type : "Information"
 				}]);
 			expectDataEvents(2);
 
@@ -43450,12 +43450,12 @@ sap.ui.define([
 				}, oResponse)
 				.expectMessages([{
 					message : "Active message",
-					type : "Information",
-					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel",
+					type : "Information"
 				}, {
 					message : "Draft message",
-					type : "Information",
-					target : "/Artists(ArtistID='A1',IsActiveEntity=false)/defaultChannel"
+					target : "/Artists(ArtistID='A1',IsActiveEntity=false)/defaultChannel",
+					type : "Information"
 				}]);
 
 			return Promise.all([
@@ -43511,12 +43511,12 @@ sap.ui.define([
 				.expectChange("defaultChannel", "Channel 3*")
 				.expectMessages([{
 					message : "Active message",
-					type : "Information",
-					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel",
+					type : "Information"
 				}, {
 					message : "Updated message",
-					type : "Information",
-					target : "/Artists(ArtistID='A1',IsActiveEntity=false)/defaultChannel"
+					target : "/Artists(ArtistID='A1',IsActiveEntity=false)/defaultChannel",
+					type : "Information"
 				}]);
 			if (bListResolved) {
 				that.expectChange("listChannel", ["Channel 3"])
@@ -43538,8 +43538,8 @@ sap.ui.define([
 				.expectChange("publication", ["P1"])
 				.expectMessages([{
 					message : "Active message",
-					type : "Information",
-					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel",
+					type : "Information"
 				}])
 				.expectRequest({
 					method : "DELETE",
