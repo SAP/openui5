@@ -219,8 +219,9 @@ sap.ui.define([
 				if (Array.isArray(oResult) && oResult.length > 0) {
 					this.fireError({
 						message: oResult[0],
-						jqXHR: oResult[1],
-						settings: oResult[2]
+						response: oResult[1],
+						responseText: oResult[2],
+						settings: oResult[3]
 					});
 				} else {
 					this.fireError({message: oResult});

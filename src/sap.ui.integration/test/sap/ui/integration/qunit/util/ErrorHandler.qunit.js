@@ -103,12 +103,10 @@ sap.ui.define([
 							a: "A",
 							b: "B"
 						},
-						jqXHR: {
+						response: {
 							status: "404",
 							statusText: "Not Found",
-							getAllResponseHeaders: function () {
-								return "Headers";
-							}
+							headers: new Headers({"Headers": "Test"})
 						}
 					},
 					requestSettings: {
@@ -130,7 +128,7 @@ sap.ui.define([
 			oButton = oIllustratedMessage.getAdditionalContent()[0];
 
 			assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.ErrorScreen, "Error message type is correct");
-			assert.strictEqual(oIllustratedMessage.getTitle(), mErrorInfo.requestErrorParams.jqXHR.status + " " + mErrorInfo.requestErrorParams.jqXHR.statusText, "Error message title is correct");
+			assert.strictEqual(oIllustratedMessage.getTitle(), mErrorInfo.requestErrorParams.response.status + " " + mErrorInfo.requestErrorParams.response.statusText, "Error message title is correct");
 			assert.strictEqual(oIllustratedMessage.getDescription(), this.oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION"), "Error message description is correct");
 			assert.strictEqual(oButton.getText(), this.oCard.getTranslatedText("CARD_BUTTON_SHOW_MORE"), "Details button is correctly created");
 

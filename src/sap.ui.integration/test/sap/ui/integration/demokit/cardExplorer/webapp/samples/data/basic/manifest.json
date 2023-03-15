@@ -33,7 +33,6 @@
 				"request": {
 					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
 					"method": "GET",
-					"timeout": 15000,
 					"parameters": {
 						"$format": "json"
 					}
