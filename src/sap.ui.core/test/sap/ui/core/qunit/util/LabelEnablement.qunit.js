@@ -8,6 +8,11 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Input",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/ColumnLayout",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/mdc/Field",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	Control,
@@ -17,6 +22,11 @@ sap.ui.define([
 	Button,
 	Link,
 	Input,
+	Form,
+	ColumnLayout,
+	FormContainer,
+	FormElement,
+	Field,
 	createAndAppendDiv
 ) {
 	"use strict";
@@ -324,4 +334,65 @@ sap.ui.define([
 		assert.strictEqual(this.oLabel3.$().attr("for"), undefined, "No for attribute for non-labelable elements");
 	});
 
+	QUnit.module("Label For", {
+		beforeEach : function () {
+			var oForm = new Form({
+				title: "Form",
+				editable: true,
+				layout: new ColumnLayout(),
+				formContainers: [
+					new FormContainer({
+						formElements: [
+							new FormElement({
+								label: new Label("lbl1", {text: "Editable"}),
+								fields: [
+									new Field("fld1", {
+										editMode: "Editable",
+										value: "Text",
+										multipleLines: false
+									})
+								]
+							}),
+							new FormElement({
+								label: new Label("lbl2", {text: "Display"}),
+								fields: [
+									new Field("fld2", {
+										editMode: "Display",
+										value: "Text",
+										multipleLines: false
+									})
+								]
+							})
+						]
+					})
+				]
+			}).placeAt('content');
+
+			this.oForm = oForm;
+
+			Core.applyChanges();
+		},
+		afterEach : function () {
+			this.oForm.destroy();
+		}
+	});
+
+	QUnit.test("label is rendered correctly", function(assert) {
+		var done = assert.async();
+		var oForm = this.oForm;
+
+		setTimeout(function () {
+			var oLabel1DomRef = oForm.getDomRef().querySelector("#lbl1");
+			var oLabel2DomRef = oForm.getDomRef().querySelector("#lbl2");
+
+			var oField1DomRef = oForm.getDomRef().querySelector("#fld1");
+
+			assert.strictEqual(oLabel1DomRef.tagName, "LABEL", "Label is rendered with 'label' tag.");
+			assert.strictEqual(oLabel2DomRef.tagName, "SPAN", "Label is rendered with 'span' tag.");
+
+			assert.strictEqual(oLabel1DomRef.getAttribute("for"), oField1DomRef.getAttribute("id") + "-inner-inner", "'for' attribute is correct");
+			assert.notOk(oLabel2DomRef.getAttribute("for"), "'for' attribute is not set");
+			done();
+		}, 300);
+	});
 });

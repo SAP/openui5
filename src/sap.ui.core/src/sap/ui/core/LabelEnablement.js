@@ -298,6 +298,14 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 		oControl.getLabelForRendering = function() {
 			var sId = this.getLabelFor() || this._sAlternativeId;
 			var oControl = toControl(sId);
+			var oLabelForControl;
+
+			if (oControl && oControl.getIdForLabel && oControl.getIdForLabel()) {
+				oLabelForControl = sap.ui.getCore().byId(oControl.getIdForLabel());
+				if (oLabelForControl) {
+					oControl = oLabelForControl;
+				}
+			}
 
 			return isLabelableControl(oControl) ? sId : "";
 		};
