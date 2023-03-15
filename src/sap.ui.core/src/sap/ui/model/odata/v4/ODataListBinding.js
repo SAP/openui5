@@ -1893,8 +1893,9 @@ sap.ui.define([
 	 *     <li> "$NodeProperty" holds the path to the property which provides the hierarchy node
 	 *       value. That property is always $select'ed automatically and can be accessed as usual.
 	 *   </ul>
-	 * @returns {object}
-	 *   The current data aggregation object, incl. some default values
+	 * @returns {object|undefined}
+	 *   The current data aggregation object, incl. some default values, or <code>undefined</code>
+	 *   if there is no data aggregation
 	 *
 	 * @public
 	 * @since 1.109.0
