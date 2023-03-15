@@ -161,11 +161,17 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.isLoading = function () {
-		var oLoadingProvider = this.getAggregation("_loadingProvider"),
-			oCard = this.getCardInstance(),
-			bCardLoading = oCard && oCard.isA("sap.ui.integration.widgets.Card") ? oCard.isLoading() : false;
+		if (!this.isReady()) {
+			return true;
+		}
 
-		return !oLoadingProvider.isDataProviderJson() && (oLoadingProvider.getLoading() || bCardLoading);
+		if (this._oDataProvider) {
+			return this.getAggregation("_loadingProvider").getLoading();
+		}
+
+		var oCard = this.getCardInstance();
+
+		return oCard && oCard.isLoading();
 	};
 
 	/**
@@ -216,8 +222,6 @@ sap.ui.define([
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
-
 		if (oDataSettings && oDataSettings.name) {
 			oModel = oCard.getModel(oDataSettings.name);
 		} else if (this._oDataProvider) {
@@ -261,7 +265,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	NumericHeader.prototype.showLoadingPlaceholders = function () {
-		this.getAggregation("_loadingProvider").setLoading(true);
+		if (!this._isDataProviderJson()) {
+			this.getAggregation("_loadingProvider").setLoading(true);
+		}
 	};
 
 	/**
@@ -285,6 +291,10 @@ sap.ui.define([
 	 */
 	NumericHeader.prototype.getCardInstance = function () {
 		return Core.byId(this.getCard());
+	};
+
+	NumericHeader.prototype._isDataProviderJson = function () {
+		return this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"];
 	};
 
 	return NumericHeader;

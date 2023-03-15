@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"../cards/ListContentRenderer",
-	"sap/ui/integration/library",
 	"sap/ui/core/Element",
 	"sap/f/cards/loading/GenericPlaceholder",
 	"sap/f/cards/loading/ListPlaceholder",
@@ -17,7 +16,6 @@ sap.ui.define([
 	"../cards/AnalyticalContentRenderer"
 ], function (
 	ListContentRenderer,
-	library,
 	Element,
 	GenericPlaceholder,
 	ListPlaceholder,
@@ -63,25 +61,11 @@ sap.ui.define([
 	});
 
 	LoadingProvider.prototype.setLoading = function (bLoading) {
-		if (this.isDataProviderJson() || (this._bAwaitPagination && !bLoading)) {
+		if (this._bAwaitPagination && !bLoading) {
 			return this;
 		}
 
 		return this.setProperty("loading", bLoading);
-	};
-
-	LoadingProvider.prototype.isDataProviderJson = function () {
-		return !!(this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"]);
-	};
-
-	LoadingProvider.prototype.setDataProvider = function (oDataProvider) {
-		this._oDataProvider = oDataProvider;
-	};
-
-	LoadingProvider.prototype.destroy = function () {
-		this._oDataProvider = null;
-
-		Element.prototype.destroy.apply(this, arguments);
 	};
 
 	LoadingProvider.prototype.createContentPlaceholder = function (oConfiguration, sType, oCard) {

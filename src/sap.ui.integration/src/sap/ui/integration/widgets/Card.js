@@ -1694,8 +1694,6 @@ sap.ui.define([
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
-
 		if (oDataSettings.name) {
 			oModel = this.getModel(oDataSettings.name);
 		} else if (this._oDataProvider) {
@@ -1710,6 +1708,10 @@ sap.ui.define([
 		}
 
 		oModel.attachEvent("change", function () {
+			if (this.isDestroyed()) {
+				return;
+			}
+
 			var oCardContent = this.getCardContent();
 			if (oCardContent && !oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
 				this._applyContentManifestSettings();
@@ -2349,9 +2351,7 @@ sap.ui.define([
 	 * @returns {boolean} Should card has a loading placeholder based on card level data provider.
 	 */
 	Card.prototype.isLoading = function () {
-		var oLoadingProvider = this.getAggregation("_loadingProvider");
-
-		return oLoadingProvider ? oLoadingProvider.getLoading() : false;
+		return this.getAggregation("_loadingProvider").getLoading();
 	};
 
 	/**
@@ -2600,7 +2600,8 @@ sap.ui.define([
 	 */
 	Card.prototype._setLoadingProviderState = function (bLoading) {
 		var oLoadingProvider = this.getAggregation("_loadingProvider");
-		if (!oLoadingProvider) {
+
+		if (this._isDataProviderJson()) {
 			return;
 		}
 
@@ -2843,6 +2844,10 @@ sap.ui.define([
 		this.attachEventOnce("manifestApplied", function () {
 			this.showMessage(this._oIntegrationRb.getText("CARD_MISSING_PREVIEW_CONFIGURATION"), MessageType.Information);
 		}.bind(this));
+	};
+
+	Card.prototype._isDataProviderJson = function () {
+		return this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"];
 	};
 
 	return Card;

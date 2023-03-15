@@ -182,19 +182,19 @@ sap.ui.define([
 		return !!vResolvedValue;
 	};
 
-	ObjectContent.prototype.setConfiguration = function (oConfiguration) {
-		BaseContent.prototype.setConfiguration.apply(this, arguments);
-		oConfiguration = this.getParsedConfiguration();
+	/**
+	 * @override
+	 */
+	ObjectContent.prototype.applyConfiguration = function () {
+		var oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
-			return this;
+			return;
 		}
 
 		if (oConfiguration.groups) {
 			this._addGroups(oConfiguration);
 		}
-
-		return this;
 	};
 
 	/**

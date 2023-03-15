@@ -75,6 +75,13 @@ sap.ui.define([
 					type: "sap.ui.integration.CardDesign",
 					group: "Appearance",
 					defaultValue: CardDesign.Solid
+				},
+
+				/**
+				 * Content configuration from the manifest
+				 */
+				configuration: {
+					type: "object"
 				}
 			},
 			aggregations: {
@@ -210,6 +217,13 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
+	/**
+	 * Called after the dependencies are loaded and it's safe to apply the configuration.
+	 * To be implemented by subclasses.
+	 * @abstract
+	 */
+	BaseContent.prototype.applyConfiguration = function () { };
+
 	BaseContent.prototype.setLoadDependenciesPromise = function (oPromise) {
 		this._pLoadDependencies = oPromise;
 		this.awaitEvent("_loadDependencies");
@@ -246,7 +260,7 @@ sap.ui.define([
 
 		this._bReady = false;
 		this._oAwaitedEvents.add(sEvent);
-		this.showLoadingPlaceholders();
+		this.showLoadingPlaceholders(true);
 		this.attachEventOnce(sEvent, function () {
 			this._oAwaitedEvents.delete(sEvent);
 
@@ -259,32 +273,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * @public
-	 * @param {object} oConfiguration Content configuration from the manifest
-	 * @returns {this} Pointer to the control instance to allow method chaining
-	 */
-	BaseContent.prototype.setConfiguration = function (oConfiguration) {
-		this._oConfiguration = oConfiguration;
-
-		if (!oConfiguration) {
-			return this;
-		}
-
-		return this;
-	};
-
-	BaseContent.prototype.getConfiguration = function () {
-		return this._oConfiguration;
-	};
-
-	/**
 	 * Parses the configuration. As binding infos are modified when used once,
 	 * new object is returned every time.
 	 * @protected
 	 * @returns {object} Parsed configuration - with binding infos
 	 */
 	BaseContent.prototype.getParsedConfiguration = function () {
-		var oResult = merge({}, this._oConfiguration),
+		var oResult = merge({}, this.getConfiguration()),
 			oDataSettings = oResult.data;
 
 		// do not create binding info for data
@@ -362,7 +357,6 @@ sap.ui.define([
 		}
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
-		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
 
 		if (oDataSettings.name) {
 			oModel = oCard.getModel(oDataSettings.name);
@@ -443,15 +437,16 @@ sap.ui.define([
 
 	/**
 	 * @private
+	 * @param {boolean} [bForce] Show the loading placeholders regardless of the data provider type
 	 * @ui5-restricted
 	 */
-	BaseContent.prototype.showLoadingPlaceholders = function () {
-		var oLoadingProvider = this.getAggregation("_loadingProvider"),
-			oCard = this.getCardInstance();
-
-		if (!oLoadingProvider) {
+	BaseContent.prototype.showLoadingPlaceholders = function (bForce) {
+		if (!bForce && this._isDataProviderJson()) {
 			return;
 		}
+
+		var oLoadingProvider = this.getAggregation("_loadingProvider"),
+			oCard = this.getCardInstance();
 
 		oLoadingProvider.setLoading(true);
 
@@ -612,11 +607,18 @@ sap.ui.define([
 		return this;
 	};
 
-	BaseContent.prototype.isLoading = function () {
-		var oLoadingProvider = this.getAggregation("_loadingProvider"),
-			oCard = this.getCardInstance();
+	BaseContent.prototype.isLoading  = function () {
+		if (!this.isReady()) {
+			return true;
+		}
 
-		return !oLoadingProvider.isDataProviderJson() && (oLoadingProvider.getLoading() || (oCard && oCard.isLoading()));
+		if (this._oDataProvider) {
+			return this.getAggregation("_loadingProvider").getLoading();
+		}
+
+		var oCard = this.getCardInstance();
+
+		return oCard && oCard.isLoading();
 	};
 
 	BaseContent.prototype.attachPress = function () {
@@ -697,6 +699,10 @@ sap.ui.define([
 		}
 
 		return oMessageContainer;
+	};
+
+	BaseContent.prototype._isDataProviderJson = function () {
+		return this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"];
 	};
 
 	return BaseContent;

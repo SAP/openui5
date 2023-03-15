@@ -73,6 +73,7 @@ sap.ui.define([
 		oContent.setActions(new CardActions({
 			card: oCard
 		}));
+		oContent.setConfiguration(mConfig.contentManifest);
 
 		if (!(oContent instanceof AdaptiveContent)) {
 			oContent.setDataConfiguration(mConfig.contentManifest.data);
@@ -95,7 +96,7 @@ sap.ui.define([
 		oContent.getLoadDependenciesPromise()
 			.then(function (bLoadSuccessful) {
 				if (bLoadSuccessful && !oContent.isDestroyed()) {
-					oContent.setConfiguration(mConfig.contentManifest);
+					oContent.applyConfiguration();
 				}
 			});
 
