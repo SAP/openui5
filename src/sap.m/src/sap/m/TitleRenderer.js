@@ -18,7 +18,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/Hyphenation
 	 * @namespace
 	 */
 	var TitleRenderer = {
-		apiVersion: 4
+		apiVersion: 2
 	};
 
 	/**
