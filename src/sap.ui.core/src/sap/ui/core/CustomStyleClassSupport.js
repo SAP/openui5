@@ -38,8 +38,11 @@ sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log"],
 	 * }, true);
 	 * </pre>
 	 *
-	 * Furthermore, the function <code>oRenderManager.writeClasses(oElement);</code> ({@link sap.ui.core.RenderManager#writeClasses}) must be called within
-	 * the renderer of the control to which the element belongs, when writing the root tag of the element. This ensures the classes are written to the HTML.
+	 * The classes are written to the HTML automatically when using the {@link sap.ui.core.RenderManager
+	 * Semantic Rendering API}. To ensure that the classes are written to the HTML with the traditional
+	 * string-based rendering, when writing the root tag of the element you must call the function
+	 * <code>oRenderManager.writeClasses(oElement);</code> ({@link sap.ui.core.RenderManager#writeClasses})
+	 * within the renderer of the control to which the element belongs.
 	 *
 	 * This function adds the following functions to the elements prototype:
 	 * <ul>
