@@ -80,9 +80,7 @@ sap.ui.define([
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
 		afterEach: function () {
-			if (sap["ushell_abap"]) {
-				sap["ushell_abap"] = null;
-			}
+			sandbox.stub(FlUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(undefined));
 			sandbox.restore();
 		},
 		after: function() {

@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FeaturesAPI,
 	Settings,
 	Layer,
+	Utils,
 	oCore,
 	sinon
 ) {
@@ -61,12 +63,24 @@ sap.ui.define([
 					}
 				});
 
-				sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, { /* gravity todo */
-					someKey: "someValue"
-				});
+				sandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve("DummyService"));
 
 				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function (bReturnValue) {
 					assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
+				});
+			});
+
+			QUnit.test("when isSaveAsAvailable() is called for " + (bValueToBeSet ? "not a" : "a") + " steampunk system and standalone app without CrossApplicationNavigation service", function (assert) {
+				sandbox.stub(Settings, "getInstance").resolves({
+					isAppVariantSaveAsEnabled: function () {
+						return bValueToBeSet;
+					}
+				});
+
+				sandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.reject("DummyService"));
+
+				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function (bReturnValue) {
+					assert.strictEqual(bReturnValue, false, "then false is returned");
 				});
 			});
 
