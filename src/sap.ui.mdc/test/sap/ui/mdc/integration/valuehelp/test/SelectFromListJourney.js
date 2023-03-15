@@ -206,26 +206,39 @@ sap.ui.define([
 	};
 
 	Object.keys(oFilterBarConfigs).forEach(function (sModuleName) {
-		QUnit.module(sModuleName);
+        QUnit.module(sModuleName);
 
-		opaTest("Initial conditions", function (Given, When, Then) {
-			Given.iStartMyAppInAFrame(oFilterBarConfigs[sModuleName]);
-			When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "doug", {keepFocus: true, clearTextFirst: true});
-			When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
-			Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");
-			Then.onTheOPAPage.iShouldSeeValueHelpListItems("Douglass, Frederick");
-		});
+        opaTest("Initial conditions", function (Given, When, Then) {
+            Given.iStartMyAppInAFrame(oFilterBarConfigs[sModuleName]);
+            When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "doug", {keepFocus: true, clearTextFirst: true});
+            When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+            Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");
+            Then.onTheOPAPage.iShouldSeeValueHelpListItems("Douglass, Frederick");
+            When.onTheOPAPage.iCloseTheValueHelpDialog(true);
+            When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+            Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");  // Testing repeated opening
+            Then.onTheOPAPage.iShouldSeeValueHelpListItems("Douglass, Frederick");
+            When.onTheOPAPage.iCloseTheValueHelpDialog(true);
+            When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "", {keepFocus: true, clearTextFirst: true});
+            When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+            Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField(""); // Testing reset
+            Then.onTheOPAPage.iShouldSeeValueHelpListItems("Kafka, Franz");
+            When.onTheOPAPage.iCloseTheValueHelpDialog(true);
+        });
 
-		opaTest("Reverting to initial conditions ", function (Given, When, Then) {
-			When.onTheOPAPage.iEnterTextOnTheValueHelpDialogSearchField("carrol", {keepFocus: true, clearTextFirst: true, pressEnterKey: true});
-			Then.onTheOPAPage.iShouldSeeValueHelpListItems("Carroll, Lewis");
-			When.onTheOPAPage.iCloseTheValueHelpDialog(true);
-			When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
-			Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");
-			Then.iTeardownMyAppFrame();
+        opaTest("Reverting to initial conditions after dialog search", function (Given, When, Then) {
+            When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "doug", {keepFocus: true, clearTextFirst: true});
+            When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+            When.onTheOPAPage.iEnterTextOnTheValueHelpDialogSearchField("carrol", {keepFocus: true, clearTextFirst: true, pressEnterKey: true});
+            Then.onTheOPAPage.iShouldSeeValueHelpListItems("Carroll, Lewis");
+            When.onTheOPAPage.iCloseTheValueHelpDialog(true);
+            When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+            Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");
+            Then.iTeardownMyAppFrame();
 
-		});
-	});
+        });
+    });
+
 
 	QUnit.module("MTable");
 
