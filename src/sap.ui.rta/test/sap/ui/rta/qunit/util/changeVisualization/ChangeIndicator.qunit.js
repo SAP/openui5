@@ -115,6 +115,11 @@ sap.ui.define([
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
 				"then the indicator is vertically centered"
 			);
+			assert.strictEqual(
+				this.oChangeIndicator.getDomRef().title,
+				"1 change",
+				"then the correct title (tooltip) is set"
+			);
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
 			return oOpenPopoverPromise
@@ -381,6 +386,11 @@ sap.ui.define([
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorMedium"),
 				"then the correct indicator color is used"
 			);
+			assert.strictEqual(
+				this.oChangeIndicator.getDomRef().title,
+				"2 changes",
+				"then the correct title (tooltip) is set"
+			);
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
 			return oOpenPopoverPromise
@@ -434,6 +444,11 @@ sap.ui.define([
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorDark"),
 				"then the correct indicator color is used"
+			);
+			assert.strictEqual(
+				this.oChangeIndicator.getDomRef().title,
+				"5 changes",
+				"then the correct title (tooltip) is set"
 			);
 		});
 
