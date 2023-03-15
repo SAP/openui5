@@ -516,7 +516,7 @@ sap.ui.define([
 					+ (sPath || "")
 					+ ",HierarchyQualifier='" + sHierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty
-					+ "',Levels=" + (bAllLevels ? 9 : oAggregation.expandTo || 1)
+					+ "',Levels=" + (bAllLevels ? 999 : oAggregation.expandTo || 1)
 					+ ")";
 				if (bAllLevels) {
 					select("DistanceFromRootProperty");

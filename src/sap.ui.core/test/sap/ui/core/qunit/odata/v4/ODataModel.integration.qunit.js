@@ -24180,7 +24180,7 @@ sap.ui.define([
 	//
 	// Request various side effects that do not affect the hierarchy (JIRA: CPOUI5ODATAV4-1785).
 	// Check that create, delete, and refresh are not supported (JIRA: CPOUI5ODATAV4-1851).
-	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920).
+	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920, BCP: 2370011296).
 	// Retrieve "DistanceFromRoot" property path via ODLB#getAggregation (JIRA: CPOUI5ODATAV4-1961).
 	//
 	// NodeID is selected automatically, even w/o UI, but "parent node ID" is not.
@@ -24191,7 +24191,7 @@ sap.ui.define([
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-				+ ",NodeProperty='_/NodeID',Levels=9)"
+				+ ",NodeProperty='_/NodeID',Levels=999)"
 				+ "&$select=ArtistID,IsActiveEntity,_/DistanceFromRoot,_/NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
 			oHeaderContext,
@@ -24658,7 +24658,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1851
 	//
 	// Use relative ODLB with an initially suspended parent (JIRA: CPOUI5ODATAV4-1985 etc.)
-	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920).
+	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920. BCP: 2370011296).
 	QUnit.test("Recursive Hierarchy: edit w/ currency", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oChild,
@@ -24732,7 +24732,7 @@ sap.ui.define([
 				sTeaBusi + "TEAMS('42')/TEAM_2_EMPLOYEES"
 				+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 					+ "HierarchyNodes=$root/TEAMS('42')/TEAM_2_EMPLOYEES"
-					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=9)"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
 				+ "&$select=DistanceFromRoot,ID,MANAGER_ID,SALARY/BONUS_CURR"
 					+ ",SALARY/YEARLY_BONUS_AMOUNT,TEAM_ID",
 				"JIRA: CPOUI5ODATAV4-1920");
@@ -24881,7 +24881,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1785
 	//
 	// Use $count (JIRA: CPOUI5ODATAV4-1855).
-	// Additionally ODLB#getDownloadUrl is tested w/ sort (JIRA: CPOUI5ODATAV4-1920).
+	//
+	// Additionally ODLB#getDownloadUrl is tested w/ sort.
+	// JIRA: CPOUI5ODATAV4-1920
+	// BCP: 2370011296
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oListBinding,
@@ -24985,7 +24988,7 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getDownloadUrl(), sTeaBusi + "EMPLOYEES"
 				+ "?$apply=orderby(AGE%20desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=9)"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
 				+ "&$select=AGE,DistanceFromRoot,ID,MANAGER_ID,Name",
 				"JIRA: CPOUI5ODATAV4-1920");
 
@@ -25232,7 +25235,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1675
 	//
 	// Use $count w/ $direct (JIRA: CPOUI5ODATAV4-1855).
-	// Additionally ODLB#getDownloadUrl is tested w/ filter/sort (JIRA: CPOUI5ODATAV4-1920).
+	//
+	// Additionally ODLB#getDownloadUrl is tested w/ filter/sort.
+	// JIRA: CPOUI5ODATAV4-1920
+	// BCP: 2370011296
 	//
 	// Use a filter with spaces (BCP: 2380032202).
 	QUnit.test("Recursive Hierarchy: expand root, w/ filter, search & orderby", function (assert) {
@@ -25285,7 +25291,7 @@ sap.ui.define([
 					+ ",filter(AGE%20ge%200%20and%20(Is_Manager))/search(covfefe),keep%20start)"
 				+ "/orderby(AGE%20desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=9)"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
 				+ "&$select=DistanceFromRoot,ID",
 				"JIRA: CPOUI5ODATAV4-1920");
 
