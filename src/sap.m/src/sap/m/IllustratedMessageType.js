@@ -346,6 +346,12 @@ sap.ui.define([], function () {
 		SuccessScreen: "sapIllus-SuccessScreen",
 
 		/**
+		 * "Survey" illustration type.
+		 * @public
+		 */
+		Survey: "sapIllus-Survey",
+
+		/**
 		 * "Tent" illustration type.
 		 * @public
 		 */

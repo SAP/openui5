@@ -40,7 +40,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 						{ key: oIllustratedMessageType.UnableToLoadImage, text: 'UnableToLoadImage'},
 						{ key: oIllustratedMessageType.BalloonSky, text: 'BalloonSky'},
 						{ key: oIllustratedMessageType.SuccessScreen, text: 'SuccessScreen'},
-						{ key: oIllustratedMessageType.SuccessHighFive, text: 'SuccessHighFive'}
+						{ key: oIllustratedMessageType.SuccessHighFive, text: 'SuccessHighFive'},
+						{ key: oIllustratedMessageType.Survey, text: 'Survey'}
 					];
 
 				Object.keys(oIllustratedMessageSize).forEach(function (sKey) {
