@@ -415,6 +415,11 @@ sap.ui.define([
 			 * The actions of rows can be defined with the {@link sap.ui.table.Table#setRowActionTemplate rowActionTemplate} aggregation of the table.
 			 * Furthermore, row-specific settings can be defined with the {@link sap.ui.table.Table#setRowSettingsTemplate rowSettingsTemplate}
 			 * aggregation of the table.
+			 *
+			 * <b>Note:</b> During the binding of rows, the (exact) count needs to be available in the table and has to be requested.
+			 * If the count is not requested, this may lead to unexpected behavior in the table, such as scrolling, accessibility, or keyboard issues.
+			 * Please refer to the documentation of the used model for information on requesting the count, for example, {@link sap.ui.model.odata.v2.ODataModel}
+			 * or {@link sap.ui.model.odata.v4.ODataModel}.
 			 */
 			rows: {type: "sap.ui.table.Row", multiple: true, singularName: "row", bindable: "bindable", selector: "#{id}-tableCCnt", dnd: true},
 
