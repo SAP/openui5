@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/base/util/restricted/_debounce",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/base/util/deepClone",
 	"sap/ui/model/Sorter",
 	"sap/m/GroupHeaderListItem",
@@ -45,7 +44,6 @@ sap.ui.define([
 	_debounce,
 	Core,
 	JSONModel,
-	EditorResourceBundles,
 	deepClone,
 	Sorter,
 	GroupHeaderListItem,
@@ -336,7 +334,7 @@ sap.ui.define([
 	//get origin values in i18n files
 	StringField.prototype.getOriginTranslatedValues = function(oConfig) {
 		var aOriginTranslatedValues = [];
-		var aEditorResourceBundles = EditorResourceBundles.getInstance();
+		var aEditorResourceBundles = this._oEditorResourceBundles.getResourceBundles();
 		//get translation key of the value
 		var sKey;
 		if (oConfig._translatedDefaultPlaceholder && oConfig._translatedDefaultPlaceholder.startsWith("{i18n>") && oConfig._translatedDefaultPlaceholder.endsWith("}")) {

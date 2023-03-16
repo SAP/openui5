@@ -1084,12 +1084,11 @@ sap.ui.define([
 				aSupportedLocales = vI18n.supportedLocales;
 			}
 		}
-		if (sResourceBundleURL && EditorResourceBundles.getResourceBundleURL() !== sResourceBundleURL) {
-			EditorResourceBundles.setResourceBundleURL(sResourceBundleURL);
-		}
-		if (aSupportedLocales) {
-			EditorResourceBundles.setSupportedLocales(aSupportedLocales);
-		}
+		this._oEditorResourceBundles = new EditorResourceBundles({
+			url: sResourceBundleURL,
+			languages: Editor._oLanguages,
+			supportedLocales: aSupportedLocales
+		});
 	};
 
 	/**
@@ -2110,6 +2109,7 @@ sap.ui.define([
 		if (oConfig.layout) {
 			oField._layout = oConfig.layout;
 		}
+		oField._oEditorResourceBundles = this._oEditorResourceBundles;
 		oField.setAssociation("_messageStrip", MessageStripId);
 		return oField;
 	};
