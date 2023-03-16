@@ -222,7 +222,7 @@ sap.ui.define([
 
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
-			async: true,
+			manifest: true,
 			name: "qunit.placeholder.component.NavContainer"
 		});
 
@@ -314,7 +314,7 @@ sap.ui.define([
 
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
-			async: true,
+			manifest: true,
 			name: "qunit.placeholder.component.SplitContainer"
 		});
 
@@ -471,7 +471,7 @@ sap.ui.define([
 
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
-			async: true,
+			manifest: true,
 			name: "qunit.placeholder.component.FlexibleColumnLayout"
 		});
 

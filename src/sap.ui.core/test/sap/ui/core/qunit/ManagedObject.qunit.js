@@ -87,7 +87,7 @@ sap.ui.define([
 		// needed for grouping test
 		addSubObjGroup : function(oGroup, oControl) {
 			if (!oControl) {
-				oControl = new sap.ui.core.TestManagedObject({value: oGroup.key, booleanValue: true});
+				oControl = new TestManagedObject({value: oGroup.key, booleanValue: true});
 			}
 			this.addSubObj(oControl);
 		}

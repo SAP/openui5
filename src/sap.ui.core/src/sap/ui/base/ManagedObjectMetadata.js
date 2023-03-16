@@ -6,9 +6,9 @@
 sap.ui.define([
 	'./DataType',
 	'./Metadata',
+	'./Object',
 	'sap/base/Log',
 	'sap/base/assert',
-	'sap/base/util/ObjectPath',
 	'sap/base/strings/capitalize',
 	'sap/base/strings/escapeRegExp',
 	'sap/base/util/merge',
@@ -18,9 +18,9 @@ sap.ui.define([
 function(
 	DataType,
 	Metadata,
+	BaseObject,
 	Log,
 	assert,
-	ObjectPath,
 	capitalize,
 	escapeRegExp,
 	merge,
@@ -1863,7 +1863,7 @@ function(
 	 */
 	function loadInstanceDesignTime(oInstance) {
 		var sInstanceSpecificModule =
-			oInstance instanceof ObjectPath.get('sap.ui.base.ManagedObject')
+			BaseObject.isA(oInstance, "sap.ui.base.ManagedObject")
 			&& typeof oInstance.data === "function"
 			&& oInstance.data("sap-ui-custom-settings")
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"]

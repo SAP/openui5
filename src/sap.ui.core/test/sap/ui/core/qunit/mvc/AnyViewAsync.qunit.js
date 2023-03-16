@@ -2,14 +2,13 @@
 sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/mvc/View",
+	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery"
-], function(ObjectPath, View, jQuery) {
+], function(ObjectPath, View, createAndAppendDiv, jQuery) {
 	"use strict";
 
 	// create content div
-	var oDIV = document.createElement("div");
-	oDIV.id = "content";
-	document.body.appendChild(oDIV);
+	createAndAppendDiv("content");
 
 	QUnit.module("Start-up");
 

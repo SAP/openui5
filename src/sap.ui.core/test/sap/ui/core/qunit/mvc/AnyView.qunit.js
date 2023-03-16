@@ -1,18 +1,16 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/base/util/ObjectPath",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/qunit/QUnitUtils"
-], function(ObjectPath, Device, Controller, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function(Device, Controller, qutils, createAndAppendDiv) {
 	"use strict";
 
 	QUnit.config.reorder = false;
 
 	// create content div
-	var oDIV = document.createElement("div");
-	oDIV.id = "content";
-	document.body.appendChild(oDIV);
+	createAndAppendDiv("content");
 
 	function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 
@@ -30,8 +28,7 @@ sap.ui.define([
 
 				view = oView;
 				assert.ok(view, "view must exist after creation");
-				var fnClass = ObjectPath.get(oConfig.viewClassName);
-				assert.ok(view instanceof fnClass, "view must be instance of " + oConfig.viewClassName);
+				assert.ok(view instanceof oConfig.viewClass, "view must be instance of " + oConfig.viewClass.getMetadata().getName());
 				return oView;
 			});
 		});

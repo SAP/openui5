@@ -342,7 +342,7 @@ sap.ui.define([
 		init: function() {
 			this.bInitialized = true;
 
-			this.oFormatSettings = new Configuration.FormatSettings(this);
+			this.oFormatSettings = new FormatSettings(this);
 
 			/* Object that carries the real configuration data */
 			var config = this; // eslint-disable-line consistent-this
@@ -385,10 +385,12 @@ sap.ui.define([
 				this._compatversion[n] = _getCVers(n);
 			}
 
+			var oUriParams;
+
 			// apply the settings from the url (only if not blocked by app configuration)
 			if ( !config.ignoreUrlParams ) {
 				var sUrlPrefix = "sap-ui-";
-				var oUriParams = UriParameters.fromQuery(window.location.search);
+				oUriParams = UriParameters.fromQuery(window.location.search);
 
 				// first map SAP parameters, can be overwritten by "sap-ui-*" parameters
 				if ( oUriParams.has('sap-language') ) {
@@ -2036,11 +2038,11 @@ sap.ui.define([
 	 * the modifications. To be on the safe side, applications should do any modifications
 	 * early in their lifecycle or recreate any model/UI that is locale dependent.
 	 *
-	 * @name sap.ui.core.Configuration.FormatSettings
+	 * @alias sap.ui.core.Configuration.FormatSettings
 	 * @extends sap.ui.base.Object
 	 * @public
 	 */
-	BaseObject.extend("sap.ui.core.Configuration.FormatSettings", /** @lends sap.ui.core.Configuration.FormatSettings.prototype */ {
+	var FormatSettings = BaseObject.extend("sap.ui.core.Configuration.FormatSettings", /** @lends sap.ui.core.Configuration.FormatSettings.prototype */ {
 		constructor : function(oConfiguration) {
 			this.oConfiguration = oConfiguration;
 			this.mSettings = {};

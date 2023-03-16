@@ -2020,9 +2020,12 @@ sap.ui.define([
 		for (var sModelName in mModelConfigurations) {
 			var oModelConfig = mModelConfigurations[sModelName];
 
-			// The tests for the Model creation make use of a constructor stub,
-			// and this only works from the global namespace export.
-			var fnModelClass = ObjectPath.get(oModelConfig.type);
+			// TODO The tests for the Model creation make use of a constructor stub,
+			// and this only works from the global namespace export, not via probing require.
+			// To keep those tests working, the global name is checked first. Only in a context
+			// where global names don't exist or when the model is unknown, the fallback will be used.
+			var fnModelClass = ObjectPath.get(oModelConfig.type)
+				|| sap.ui.require(oModelConfig.type.replace(/\./g, "/"));
 
 			// create arguments array with leading "null" value so that it can be passed to the apply function
 			var aArgs = [null].concat(oModelConfig.settings || []);

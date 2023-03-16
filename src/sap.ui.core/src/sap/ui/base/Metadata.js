@@ -12,6 +12,9 @@ sap.ui.define([
 	function(ObjectPath, assert, Log, uniqueSort) {
 	"use strict";
 
+	function isFunction(obj) {
+		return typeof obj === "function";
+	}
 
 	/**
 	 * Creates a new metadata object from the given static infos.
@@ -44,7 +47,7 @@ sap.ui.define([
 			oClassInfo.metadata.__version = 1.0;
 		}
 		oClassInfo.metadata.__version = oClassInfo.metadata.__version || 2.0;
-		if ( typeof oClassInfo.constructor !== "function" ) {
+		if ( !isFunction(oClassInfo.constructor) ) {
 			throw Error("constructor for class " + sClassName + " must have been declared before creating metadata for it");
 		}
 
@@ -74,17 +77,25 @@ sap.ui.define([
 			oPrototype;
 
 		if ( oStaticInfo.baseType ) {
-			// lookup base class by its name - same reasoning as above
-			var oParentClass = ObjectPath.get(oStaticInfo.baseType);
-			if ( typeof oParentClass !== "function" ) {
-				Log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
+			var oParentClass;
+			if ( isFunction(oStaticInfo.baseType) ) {
+				oParentClass = oStaticInfo.baseType;
+				if ( !isFunction(oParentClass.getMetadata) ) {
+					throw new TypeError("baseType must be a UI5 class with a static getMetadata function");
+				}
+			} else {
+				// lookup base class by its name - same reasoning as above
+				oParentClass = ObjectPath.get(oStaticInfo.baseType);
+				if ( !isFunction(oParentClass) ) {
+					Log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
+				}
 			}
 			// link metadata with base metadata
 			if ( oParentClass.getMetadata ) {
 				this._oParent = oParentClass.getMetadata();
 				assert(oParentClass === oParentClass.getMetadata().getClass(), "Metadata: oParentClass must match the class in the parent metadata");
 			} else {
-				// fallback, if base class has no metadata
+				// fallback, if base class has no metadata - can only happen if baseType is a string
 				this._oParent = new Metadata(oStaticInfo.baseType, {});
 			}
 		} else {
@@ -415,14 +426,14 @@ sap.ui.define([
 			fnBaseClass = null;
 		}
 
-		assert(!fnBaseClass || typeof fnBaseClass === "function");
+		assert(!fnBaseClass || isFunction(fnBaseClass));
 		assert(typeof sClassName === "string" && !!sClassName);
 		assert(!oClassInfo || typeof oClassInfo === "object");
-		assert(!FNMetaImpl || typeof FNMetaImpl === "function");
+		assert(!FNMetaImpl || isFunction(FNMetaImpl));
 
 		// allow metadata class to preprocess
 		FNMetaImpl = FNMetaImpl || Metadata;
-		if ( typeof FNMetaImpl.preprocessClassInfo === "function" ) {
+		if ( isFunction(FNMetaImpl.preprocessClassInfo) ) {
 			oClassInfo = FNMetaImpl.preprocessClassInfo(oClassInfo);
 		}
 
@@ -434,7 +445,7 @@ sap.ui.define([
 		}
 
 		var fnClass = oClassInfo.constructor;
-		assert(!fnClass || typeof fnClass === "function");
+		assert(!fnClass || isFunction(fnClass));
 
 		// ensure defaults
 		if ( fnBaseClass ) {
@@ -457,7 +468,7 @@ sap.ui.define([
 			fnClass.prototype = Object.create(fnBaseClass.prototype);
 			fnClass.prototype.constructor = fnClass;
 			// enforce correct baseType
-			oClassInfo.metadata.baseType = fnBaseClass.getMetadata().getName();
+			oClassInfo.metadata.baseType = fnBaseClass;
 		} else {
 			// default constructor does nothing
 			fnClass = fnClass || function() { };

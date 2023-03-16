@@ -52,7 +52,8 @@ sap.ui.define([
 	});
 
 	var oConfig = {
-		viewClassName : "sap.ui.core.mvc.XMLView",
+		viewClass : XMLView,
+		viewClassName : XMLView.getMetadata().getName(),
 		idsToBeChecked : ["myPanel", "Button1", "localTableId"]
 	};
 

@@ -424,7 +424,8 @@ sap.ui.define([
 	function getConstructorFunctionFor (vRoutingObjectConstructor) {
 		var fnConstructor;
 		if (typeof vRoutingObjectConstructor === "string") {
-			fnConstructor = ObjectPath.get(vRoutingObjectConstructor);
+			fnConstructor = sap.ui.require(vRoutingObjectConstructor.replace(/\./g, "/"))
+				|| ObjectPath.get(vRoutingObjectConstructor);
 			if (!fnConstructor) {
 				Log.error("The specified class for router or targets '" + vRoutingObjectConstructor + "' is undefined.", this);
 			}
