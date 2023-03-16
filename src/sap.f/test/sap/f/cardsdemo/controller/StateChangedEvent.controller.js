@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/integration/util/ManifestResolver",
+	"sap/ui/integration/util/SkeletonCard",
 	"sap/ui/integration/library",
 	"sap/ui/integration/Host",
 	"sap/m/MessageToast"
-], function (Controller, JSONModel, ManifestResolver, library, Host, MessageToast) {
+], function (Controller, JSONModel, SkeletonCard, library, Host, MessageToast) {
 	"use strict";
 
 	var Submit = library.CardActionType.Submit;
@@ -13,6 +13,10 @@ sap.ui.define([
 	return Controller.extend("sap.f.cardsdemo.controller.StateChangedEvent", {
 
 		onInit: function () {
+			this._oSkeletonCard = new SkeletonCard({
+				stateChanged: this.onStateChanged.bind(this)
+			});
+
 			var oHost = new Host();
 			oHost.getContextValue = function (sPath) {
 				return new Promise(function (resolve, reject) {
@@ -25,25 +29,30 @@ sap.ui.define([
 					}, 1000);
 				});
 			};
-			this.byId("card1").setHost(oHost);
+			this.byId("demoCard").setHost(oHost);
+			this._oSkeletonCard.setHost(oHost);
 
 			var aManifests = [
 				{
 					key: "filter",
 					text: "Filter example",
-					path: "cardcontent/mobileSdk/filter.json"
+					path: sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/mobileSdk/filter.json")
 				},
 				{
 					key: "form",
 					text: "Form example",
-					path: "cardcontent/mobileSdk/form.json"
+					path: sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/mobileSdk/form.json")
 				}
 			];
+
 			this._setModel({
 				manifests: aManifests,
 				selectedKey: aManifests[1].key,
 				selectedManifest: aManifests[1].path
 			});
+
+			this._oSkeletonCard.setManifest(aManifests[1].path);
+			this._oSkeletonCard.startManifestProcessing();
 		},
 
 		_setModel: function (oData) {
@@ -63,12 +72,12 @@ sap.ui.define([
 		},
 
 		resolveManifest: function () {
-			var oCard = this.byId("card1"),
-				oCodeEditor = this.byId("output");
+			var oCodeEditor = this.byId("output");
 
-			ManifestResolver.resolveCard(oCard).then(function (oRes) {
-				oCodeEditor.setValue(JSON.stringify(oRes, null, "\t"));
-			});
+			this._oSkeletonCard.resolveManifest()
+				.then(function (oRes) {
+					oCodeEditor.setValue(JSON.stringify(oRes, null, "\t"));
+				});
 		},
 
 		onChangeManifest: function (oEvent) {
@@ -79,38 +88,43 @@ sap.ui.define([
 			});
 
 			this._getModel().setProperty("/selectedManifest", oManifest.path);
+
+			this._oSkeletonCard.setManifest(oManifest.path);
+			this._oSkeletonCard.startManifestProcessing();
 		},
 
 		onRefresh: function () {
-			this.byId("card1").refresh();
+			this._oSkeletonCard.refresh();
+			this.byId("demoCard").refresh();
 		},
 
 		onRefreshData: function () {
-			this.byId("card1").refreshData();
+			this._oSkeletonCard.refreshData();
+			this.byId("demoCard").refreshData();
 		},
 
 		onPreviousPage: function () {
-			var oCard = this.byId("card1");
-			oCard.getCardFooter().getPaginator().previous();
+			this._oSkeletonCard.getCardFooter().getPaginator().previous();
+			this.byId("demoCard").getCardFooter().getPaginator().previous();
 		},
 
 		onNextPage: function () {
-			var oCard = this.byId("card1");
-			oCard.getCardFooter().getPaginator().next();
+			this._oSkeletonCard.getCardFooter().getPaginator().next();
+			this.byId("demoCard").getCardFooter().getPaginator().next();
 		},
 
 		onChangeSelectFilter: function () {
-			var oCard = this.byId("card1");
-			oCard.setFilterValue("shipper", "2");
+			this._oSkeletonCard.setFilterValue("shipper", "2");
+			this.byId("demoCard").setFilterValue("shipper", "2");
 		},
 
 		onInitialSelectFilter: function () {
-			var oCard = this.byId("card1");
-			oCard.setFilterValue("shipper", "3");
+			this._oSkeletonCard.setFilterValue("shipper", "3");
+			this.byId("demoCard").setFilterValue("shipper", "3");
 		},
 
 		onSimulateLiveInput: function () {
-			var oCard = this.byId("card1");
+			var oCard = this.byId("demoCard");
 			var iTimerDelay = 1000;
 
 			this.byId("output").getInternalEditorInstance().scrollToLine(Infinity); // scroll to last
@@ -120,14 +134,16 @@ sap.ui.define([
 					"id": "activity",
 					"key": "activity2"
 				}];
+				this._oSkeletonCard.setFormValues(aFirstUpdate);
 				oCard.setFormValues(aFirstUpdate);
-			}, iTimerDelay);
+			}.bind(this), iTimerDelay);
 
 			function fnWrite(sText) {
 				var aSecondUpdate = [{
 					"id": "email",
 					"value": sText
 				}];
+				this._oSkeletonCard.setFormValues(aSecondUpdate);
 				oCard.setFormValues(aSecondUpdate);
 			}
 
@@ -138,15 +154,13 @@ sap.ui.define([
 			for (var i = 1; i <= sText.length; i++) {
 				sInput = sText.substring(0, i);
 
-				setTimeout(fnWrite, iTimerDelay, sInput);
+				setTimeout(fnWrite.bind(this), iTimerDelay, sInput);
 				iTimerDelay = iTimerDelay + iKeyboardTypingDelay;
 			}
 		},
 
 		onEnterValidInput: function () {
-			var oCard = this.byId("card1");
-
-			oCard.setFormValues([{
+			var aFormValues = [{
 				"id": "activity",
 				"key": "activity2"
 			},{
@@ -155,13 +169,14 @@ sap.ui.define([
 			}, {
 				"id": "email",
 				"value": "testaddress@sap.com"
-			}]);
+			}];
+
+			this._oSkeletonCard.setFormValues(aFormValues);
+			this.byId("demoCard").setFormValues(aFormValues);
 		},
 
 		onEnterInvalidInput: function () {
-			var oCard = this.byId("card1");
-
-			oCard.setFormValues([{
+			var aFormValues = [{
 				"id": "activity",
 				"value": "invalid value"
 			},{
@@ -170,12 +185,15 @@ sap.ui.define([
 			}, {
 				"id": "email",
 				"value": "no"
-			}]);
+			}];
+
+			this._oSkeletonCard.setFormValues(aFormValues);
+			this.byId("demoCard").setFormValues(aFormValues);
 		},
 
 		onSimulateSubmit: function () {
-			var oCard = this.byId("card1");
-			oCard.triggerAction({ type: Submit });
+			this._oSkeletonCard.triggerAction({ type: Submit });
+			this.byId("demoCard").triggerAction({ type: Submit });
 		}
 
 	});

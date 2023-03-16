@@ -138,6 +138,10 @@ sap.ui.define([
 		this._validateAndUpdate(oControl);
 	};
 
+	Form.prototype.updateModel = function () {
+		this._mControls.forEach(this._updateModel.bind(this));
+	};
+
 	Form.prototype._setComboBoxValue = function (oComboBox, oControlData) {
 		var oSelectedItem;
 
@@ -175,16 +179,16 @@ sap.ui.define([
 
 	Form.prototype._syncToFormModelOn = function (sEventType, oControl, oItem, sPath) {
 		this._prepareValidationForControl(oControl, oItem, sPath);
-
 		oControl.attachEvent(sEventType, this._validateAndUpdate, this);
-		oControl.addEventDelegate({ onAfterRendering: this._updateModel }, this);
+
+		if (oItem.value && !BindingResolver.isBindingInfo(oItem.value)) {
+			this._updateModel(oControl);
+		}
 
 		this._mControls.set(oItem.id, oControl);
 	};
 
-	Form.prototype._updateModel = function (oControlOrEvent) {
-		var oControl = oControlOrEvent.srcControl ? oControlOrEvent.srcControl : oControlOrEvent;
-
+	Form.prototype._updateModel = function (oControl) {
 		this.getModel("form").setProperty("/" + oControl._oItem.id, _getValue(oControl));
 	};
 
@@ -427,7 +431,7 @@ sap.ui.define([
 		if (oControl.isA("sap.m.ComboBox")) {
 			return {
 				key: oControl.getSelectedKey(),
-				value: oControl.getValue()
+				value: oControl.getValue() // TODO: ComboBox syncrhonizes selectedKey with the value in onBeforeRendering. Therefore we cannot rely on getValue() here
 			};
 		} else {
 			return oControl.getValue();
