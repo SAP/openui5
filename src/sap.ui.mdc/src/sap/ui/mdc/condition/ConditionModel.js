@@ -11,7 +11,8 @@ sap.ui.define([
 		'sap/base/util/deepEqual',
 		'sap/base/Log',
 		'sap/ui/mdc/condition/Condition',
-		"sap/ui/mdc/condition/FilterConverter"
+		"sap/ui/mdc/condition/FilterConverter",
+		'sap/ui/core/date/UI5Date'
 	],
 	function (
 		ConditionModelPropertyBinding,
@@ -23,7 +24,8 @@ sap.ui.define([
 		deepEqual,
 		Log,
 		Condition,
-		FilterConverter
+		FilterConverter,
+		UI5Date
 	) {
 		"use strict";
 
@@ -672,7 +674,7 @@ sap.ui.define([
 				if (!isNaN(parseInt(key)) && (typeof value === 'string')) {
 					a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$/.exec(value);
 					if (a) {
-						return new Date(value);
+						return UI5Date.getInstance(value);
 					}
 				}
 				return value;
