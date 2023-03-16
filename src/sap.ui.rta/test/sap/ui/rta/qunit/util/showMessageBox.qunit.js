@@ -41,8 +41,8 @@ function (
 
 			var oMessageBoxDialog = oCore.byId("messagebox");
 
-			oMessageBoxDialog.attachAfterOpen(function (oEvent) {
-				assert.strictEqual(oEvent.getSource().$("cont").text(), sMessage);
+			oMessageBoxDialog.attachAfterOpen(function () {
+				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);
 				assert.ok(messageBoxSpy.calledOnce, "MessageBox Type was set correctly");
 				oMessageBoxDialog.destroy();
 				fnDone();
@@ -61,13 +61,13 @@ function (
 
 				var oMessageBoxDialog = oCore.byId("messagebox");
 
-				oMessageBoxDialog.attachAfterOpen(function (oEvent) {
+				oMessageBoxDialog.attachAfterOpen(function () {
 					var sMessage = "My custom message";
-					assert.strictEqual(oEvent.getSource().$("cont").text(), sMessage);
-					var oLink = oEvent.getSource().$("cont").find("a");
-					assert.strictEqual(oLink.length, 1);
-					assert.strictEqual(oLink.attr("href"), "http://example.com/");
-					assert.strictEqual(oLink.text(), "custom");
+					assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);
+					var aLink = Array.from(document.getElementById("messagebox-cont").querySelectorAll("a"));
+					assert.strictEqual(aLink.length, 1);
+					assert.strictEqual(aLink[0].getAttribute("href"), "http://example.com/");
+					assert.strictEqual(aLink[0].textContent, "custom");
 					assert.ok(messageBoxSpy.calledOnce, "MessageBox Type was set correctly");
 					oMessageBoxDialog.destroy();
 					fnDone();
@@ -86,22 +86,22 @@ function (
 
 			var oMessageBoxDialog = oCore.byId("messagebox");
 
-			oMessageBoxDialog.attachAfterOpen(function (oEvent) {
-				assert.strictEqual(oEvent.getSource().$("cont").text(), sMessage);
-				var oLinks = oEvent.getSource().$("cont").find("a");
-				assert.strictEqual(oLinks.length, 3);
+			oMessageBoxDialog.attachAfterOpen(function () {
+				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);
+				var aLinks = Array.from(document.getElementById("messagebox-cont").querySelectorAll("a"));
+				assert.strictEqual(aLinks.length, 3);
 
-				var oLink0 = oLinks.eq(0);
-				assert.strictEqual(oLink0.attr("href"), "http://example.com/0");
-				assert.strictEqual(oLink0.text(), "custom");
+				var oLink0 = aLinks[0];
+				assert.strictEqual(oLink0.getAttribute("href"), "http://example.com/0");
+				assert.strictEqual(oLink0.textContent, "custom");
 
-				var oLink1 = oLinks.eq(1);
-				assert.strictEqual(oLink1.attr("href"), "http://example.com/1");
-				assert.strictEqual(oLink1.text(), "multiple");
+				var oLink1 = aLinks[1];
+				assert.strictEqual(oLink1.getAttribute("href"), "http://example.com/1");
+				assert.strictEqual(oLink1.textContent, "multiple");
 
-				var oLink2 = oLinks.eq(2);
-				assert.strictEqual(oLink2.attr("href"), "http://example.com/2");
-				assert.strictEqual(oLink2.text(), "links");
+				var oLink2 = aLinks[2];
+				assert.strictEqual(oLink2.getAttribute("href"), "http://example.com/2");
+				assert.strictEqual(oLink2.textContent, "links");
 				assert.ok(messageBoxSpy.calledOnce, "MessageBox Type was set correctly");
 
 				oMessageBoxDialog.destroy();
@@ -124,12 +124,12 @@ function (
 
 			var oMessageBoxDialog = oCore.byId("messagebox");
 
-			oMessageBoxDialog.attachAfterOpen(function (oEvent) {
-				assert.strictEqual(oEvent.getSource().$("cont").text(), sMessage);
-				var oLink = oEvent.getSource().$("cont").find("a");
-				assert.strictEqual(oLink.length, 1);
-				assert.strictEqual(oLink.attr("href"), "http://example.com/");
-				assert.strictEqual(oLink.text(), "custom");
+			oMessageBoxDialog.attachAfterOpen(function () {
+				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);
+				var aLink = Array.from(document.getElementById("messagebox-cont").querySelectorAll("a"));
+				assert.strictEqual(aLink.length, 1);
+				assert.strictEqual(aLink[0].getAttribute("href"), "http://example.com/");
+				assert.strictEqual(aLink[0].textContent, "custom");
 				assert.ok(messageBoxSpy.calledOnce, "MessageBox Type was set correctly");
 				oMessageBoxDialog.destroy();
 				fnDone();

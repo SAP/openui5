@@ -517,7 +517,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ControlVariant.prototype._createSetTitleCommand = function(mPropertyBag) {
-		this._$oEditableControlDomRef.text(mPropertyBag.text);
+		this._oEditableControlDomRef.textContent = mPropertyBag.text;
 
 		return this.getCommandFactory().getCommandFor(mPropertyBag.element, "setTitle", {
 			newText: mPropertyBag.text

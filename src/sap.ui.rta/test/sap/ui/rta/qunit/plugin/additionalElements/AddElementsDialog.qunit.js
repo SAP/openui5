@@ -95,9 +95,9 @@ sap.ui.define([
 
 				this.oAddElementsDialog.attachOpened(function() {
 					var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
-					oTargetItem.$().trigger("focus");
+					oTargetItem.getDomRef().focus();
 					assert.strictEqual(document.activeElement, oTargetItem.getDomRef());
-					oTargetItem.$().trigger("tap");
+					oTargetItem.getDomRef().dispatchEvent(new Event("touchstart"));
 
 					// Wait until list is re-rendered
 					setTimeout(function () {

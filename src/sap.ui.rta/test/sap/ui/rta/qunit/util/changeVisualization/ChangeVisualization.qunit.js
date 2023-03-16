@@ -197,7 +197,6 @@ sap.ui.define([
 		return waitForMethodCall(oRta.getToolbar(), "setModel");
 	}
 
-
 	function getIndicatorForElement(aIndicators, sId) {
 		return aIndicators.find(function(oIndicator) {
 			return oIndicator.getSelectorId() === sId;
@@ -886,8 +885,7 @@ sap.ui.define([
 					assert.strictEqual(this.oChangeVisualization.getRootControlId(), "Comp1", "then the RootControlId is set afterwards");
 					assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization is active afterwards");
 					var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
-					var oMouseEvent = new Event("click");
-					oRootOverlay.getDomRef().dispatchEvent(oMouseEvent);
+					oRootOverlay.getDomRef().dispatchEvent(new Event("click"));
 					assert.ok(fnClickSpy.called, "then the click event handler is added to the Root Overlay DomRef");
 					fnDone();
 				}.bind(this));
@@ -902,8 +900,7 @@ sap.ui.define([
 				this.oChangeVisualization.triggerModeChange("Comp1", this.oRta.getToolbar());
 				assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization is inactive afterwards");
 				var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
-				var oMouseEvent = new Event("click");
-				oRootOverlay.getDomRef().dispatchEvent(oMouseEvent);
+				oRootOverlay.getDomRef().dispatchEvent(new Event("click"));
 				assert.notOk(fnClickSpy.called, "then the click event handler was removed from the Root Overlay DomRef");
 			}.bind(this));
 		});

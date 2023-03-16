@@ -783,10 +783,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	RuntimeAuthoring.prototype.destroy = function() {
-		jQuery.map(this._dependents, function(oDependent, sName) {
-			this.removeDependent(sName);
+		var aDependentKeys = Object.keys(this._dependents);
+		aDependentKeys.forEach(function(sDependentKey) {
 			// Destroy should be called with suppress invalidate = true here to prevent static UI Area invalidation
-			oDependent.destroy(true);
+			this._dependents[sDependentKey].destroy(true);
+			this.removeDependent(sDependentKey);
 		}.bind(this));
 
 		Object.keys(this._mServices).forEach(function(sServiceName) {

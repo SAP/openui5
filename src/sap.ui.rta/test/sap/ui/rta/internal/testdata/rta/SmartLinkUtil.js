@@ -1,11 +1,9 @@
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/ui/comp/navpopover/Factory",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/comp/navpopover/Factory"
 ], function(
 	BaseObject,
-	Factory,
-	jQuery
+	Factory
 ) {
 	"use strict";
 
@@ -49,11 +47,11 @@ sap.ui.define([
 							for (var sSemanticObject in mSetting) {
 								aSemanticObjects.push(sSemanticObject);
 							}
-							var oDeferred = jQuery.Deferred();
-							setTimeout(function() {
-								oDeferred.resolve(aSemanticObjects);
-							}, 0);
-							return oDeferred.promise();
+							return new Promise(function (resolve) {
+								setTimeout(function() {
+									resolve(aSemanticObjects);
+								}, 0);
+							});
 						},
 						getLinks: function(aParams) {
 							var aLinks = [];
@@ -68,11 +66,11 @@ sap.ui.define([
 									]);
 								});
 							}
-							var oDeferred = jQuery.Deferred();
-							setTimeout(function() {
-								oDeferred.resolve(aLinks);
-							}, 0);
-							return oDeferred.promise();
+							return new Promise(function (resolve) {
+								setTimeout(function() {
+									resolve(aLinks);
+								}, 0);
+							});
 						}
 					};
 				case "URLParsing":

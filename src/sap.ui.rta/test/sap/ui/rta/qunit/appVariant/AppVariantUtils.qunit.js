@@ -66,11 +66,11 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When getId() method is called with an id which does not have a 'customer' prefix", function (assert) {
-			assert.notEqual(AppVariantUtils.getId("testId"), "customer.testId", "then the id is concatenated with prefix customer and suffix jquery uid");
+			assert.notEqual(AppVariantUtils.getId("testId"), "customer.testId", "then the id is concatenated with prefix customer and suffix generated UID");
 		});
 
 		QUnit.test("When getId() method is called with an id which has a 'customer' prefix", function (assert) {
-			assert.notEqual(AppVariantUtils.getId("customer.testId"), "customer.testId", "then the id is concatenated with suffix generated jquery UID");
+			assert.notEqual(AppVariantUtils.getId("customer.testId"), "customer.testId", "then the id is concatenated with suffix generated UID");
 		});
 
 		QUnit.test("When trimIdIfRequired() method is called with an id which has a 'customer' prefix and more than 56 characters long", function (assert) {
@@ -78,8 +78,8 @@ sap.ui.define([
 			assert.equal(sTrimmedId.length, 56, "then the id trimmed to 56 characters");
 		});
 
-		QUnit.test("When getId() method is called with an id which has a 'customer' prefix and has a jquery UID as a suffix", function (assert) {
-			assert.notEqual(AppVariantUtils.getId("customer.testId.id_1234567"), "customer.testId.id_1234567", "then the id is replaced with suffix generated jquery UID");
+		QUnit.test("When getId() method is called with an id which has a 'customer' prefix and has a generated UID as a suffix", function (assert) {
+			assert.notEqual(AppVariantUtils.getId("customer.testId.id_1234567"), "customer.testId.id_1234567", "then the id is replaced with suffix generated UID");
 			assert.notEqual(AppVariantUtils.getId("customer.testId.id_1234567890123456789012345678901234567890"), "customer.testId.id_1234567890123456789012345678901234567890", "then the guid has been changed");
 		});
 
@@ -91,7 +91,7 @@ sap.ui.define([
 			assert.ok(sTrimmedId.length < 56, "then the id has been trimmed properly and will never complain of already exisiting id");
 		});
 
-		QUnit.test("When getNewAppVariantId() method is called with an id which has a 'customer' prefix and has a jquery UID as a suffix", function (assert) {
+		QUnit.test("When getNewAppVariantId() method is called with an id which has a 'customer' prefix and has a generated UID as a suffix", function (assert) {
 			var sGeneratedId = AppVariantUtils.getId("customer.testId.id_1234567");
 			assert.strictEqual(AppVariantUtils.getNewAppVariantId(), sGeneratedId, "then the id is correct");
 		});
