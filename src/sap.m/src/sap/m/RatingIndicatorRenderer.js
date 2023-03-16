@@ -47,6 +47,8 @@ sap.ui.define(
 
 			oRm.style("width", this._iWidth + "px");
 			oRm.style("height", this._iHeight + "px");
+			oRm.style("font-size", this._iHeight + "px");
+
 			if (bEnabled && !bDisplayOnly) {
 				// Interactive
 				oRm.attr("tabindex", "0");
@@ -253,7 +255,7 @@ sap.ui.define(
 				case "SELECTED":
 					return oControl.getIconSelected() || IconPool.getIconURI("favorite");
 				case "UNSELECTED":
-					if (oControl.getEditable() && !oControl.getDisplayOnly()) {
+					if (oControl.getEditable() && !oControl.getDisplayOnly() && oControl.getEnabled()) {
 						return oControl.getIconUnselected() || IconPool.getIconURI("unfavorite");
 					} else {
 						return oControl.getIconUnselected() || IconPool.getIconURI("favorite");
