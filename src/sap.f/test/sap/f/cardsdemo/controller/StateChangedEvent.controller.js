@@ -42,6 +42,16 @@ sap.ui.define([
 					key: "form",
 					text: "Form example",
 					path: sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/mobileSdk/form.json")
+				},
+				{
+					key: "calendar",
+					text: "Calendar example",
+					path: sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/mobileSdk/calendar.json")
+				},
+				{
+					key: "calendarExtended",
+					text: "Calendar example with extension",
+					path: sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/mobileSdk/calendarExtension/manifest.json")
 				}
 			];
 
@@ -69,6 +79,32 @@ sap.ui.define([
 			});
 
 			this.resolveManifest();
+		},
+
+		onChangeDate: function () {
+			var oCard = this.byId("demoCard");
+
+			if (this._oChangedDate && this._oChangedDate.getDate() === 13) {
+				this._oChangedDate = new Date(2019, 8, 18);
+			} else {
+				this._oChangedDate = new Date(2019, 8, 13);
+			}
+
+			this._oSkeletonCard.getCardContent().changeDate(this._oChangedDate);
+			oCard.getCardContent().changeDate(this._oChangedDate);
+		},
+
+		onChangeMonth: function () {
+			var oCard = this.byId("demoCard");
+
+			if (this._oViewedMonth && this._oViewedMonth === 7) {
+				this._oViewedMonth = 8;
+			} else {
+				this._oViewedMonth = 7;
+			}
+
+			this._oSkeletonCard.getCardContent().changeMonth(this._oViewedMonth);
+			oCard.getCardContent().changeMonth(this._oViewedMonth);
 		},
 
 		resolveManifest: function () {

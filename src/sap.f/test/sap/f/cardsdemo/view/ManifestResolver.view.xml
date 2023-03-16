@@ -31,6 +31,7 @@
 				<Select id="manifestId" selectedKey="objectCard" change=".onManifestChange">
 					<core:Item text="Object Card" key="objectCard" />
 					<core:Item text="Object Card Form Inputs" key="objectCardFormInputs" />
+					<core:Item text="Calendar Card" key="calendarCard" />
 					<core:Item text="List Card" key="listCard" />
 					<core:Item text="List Card with Grouping" key="listCardGrouping" />
 					<core:Item text="List Card No Data" key="listCardNoData" />
