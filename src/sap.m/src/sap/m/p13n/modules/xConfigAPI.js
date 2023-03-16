@@ -263,7 +263,10 @@ sap.ui.define([
 		//var oControlMetadata = oModificationPayload.controlMetadata || oControl.getMetadata();
 		var sAffectedProperty = oModificationPayload.property;
 		var oConfig = oExistingConfig || {};
-		oConfig.properties = {};
+
+		if (!oConfig.properties) {
+			oConfig.properties = {};
+		}
 
 		if (!oConfig.properties.hasOwnProperty(sAffectedProperty)) {
 			oConfig.properties[sAffectedProperty] = [];

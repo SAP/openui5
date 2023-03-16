@@ -2,7 +2,6 @@
     height="100%"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:p13n="sap.m.p13n"
     xmlns:ce="sap.ui.codeeditor"
     xmlns:sap.ui.fl="sap.ui.fl"
     xmlns:sap.ui.dt="sap.ui.dt"
@@ -12,15 +11,16 @@
 
     <VBox class="sapUiSmallMargin" alignItems="Start">
 
-        <vm:VariantManagement for="persoTable"/>
-
         <Table id="persoTable" items="{path: '/items'}" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex">
 
             <headerToolbar>
                 <Toolbar>
                     <content>
-                        <ToolbarSpacer/>
-                        <Button icon="sap-icon://action-settings" press="openPersoDialog"/>
+                    <Title id="title" text="Persons"/>
+                    <ToolbarSeparator/>
+                    <vm:VariantManagement for="persoTable"/>
+                    <ToolbarSpacer/>
+                     <Button icon="sap-icon://action-settings" press="openPersoDialog"/>
                     </content>
                 </Toolbar>
             </headerToolbar>

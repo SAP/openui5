@@ -69,13 +69,15 @@ sap.ui.define([
 		var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
 		oFMHStub.returns(Promise.resolve());
 
-		Engine.getInstance()._processChanges(this.oControl, [{
-			selectorElement: this.oControl,
-			changeSpecificData: {
-				changeType: "someTestChange",
-				content: {}
-			}
-		}]);
+		Engine.getInstance()._processChanges(this.oControl, {
+			ModificationHandlerTest: [{
+				selectorElement: this.oControl,
+				changeSpecificData: {
+					changeType: "someTestChange",
+					content: {}
+				}
+			}]
+		});
 
 		var aProvidedEngineChanges = oFMHStub.getCall(0).args[0];
 		var oModificationPayload = oFMHStub.getCall(0).args[1];
@@ -113,13 +115,15 @@ sap.ui.define([
 		var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
 		oFMHStub.returns(Promise.resolve());
 
-		Engine.getInstance()._processChanges(this.oControl, [{
-			selectorElement: this.oControl,
-			changeSpecificData: {
-				changeType: "someTestChange",
-				content: {}
-			}
-		}]);
+		Engine.getInstance()._processChanges(this.oControl, {
+			ModificationHandlerTest: [{
+				selectorElement: this.oControl,
+				changeSpecificData: {
+					changeType: "someTestChange",
+					content: {}
+				}
+			}]
+		});
 
 		var aProvidedEngineChanges = oFMHStub.getCall(0).args[0];
 		var oModificationPayload = oFMHStub.getCall(0).args[1];

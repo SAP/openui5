@@ -6,13 +6,11 @@ sap.ui.define([
 	'sap/m/p13n/SortController',
 	'sap/m/p13n/GroupController',
 	'sap/m/p13n/MetadataHelper',
-	'sap/ui/model/Sorter',
-	'sap/m/ColumnListItem',
-	'sap/m/Text'
-], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, ColumnListItem, Text) {
+	'sap/ui/table/library'
+], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, tableLibrary) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.p13n.Engine.Page", {
+	return Controller.extend("sap.m.sample.p13n.EngineGridTable.Page", {
 
 		onInit: function() {
 			var oData = {
@@ -64,10 +62,34 @@ sap.ui.define([
 		openPersoDialog: function(oEvt) {
 			var oTable = this.byId("persoTable");
 
-			Engine.getInstance().show(oTable, ["Columns", "Sorter", "Groups"], {
+			Engine.getInstance().show(oTable, ["Columns", "Sorter"], {
 				contentHeight: "35rem",
 				contentWidth: "32rem",
 				source: oEvt.getSource()
+			});
+		},
+
+		onSort: function(oEvt) {
+
+			var oTable = this.byId("persoTable");
+			var sAffectedProperty = oEvt.getParameter("column").getSortProperty();
+			var sSortOrder = oEvt.getParameter("sortOrder");
+
+			//Apply the state programatically on sorting through the column menu
+			//1) Retrieve the current personalization state
+			Engine.getInstance().retrieveState(oTable).then(function(oState){
+
+				//2) Modify the existing personalization state
+				oState.Sorter.forEach(function(oSorter){
+					oSorter.sorted = false;
+				});
+				oState.Sorter.push({
+					key: sAffectedProperty,
+					descending:  sSortOrder === tableLibrary.SortOrder.Descending
+				});
+
+				//3) Apply the modified personalization state to persist it in the VariantManagement
+				Engine.getInstance().applyState(oTable, oState);
 			});
 		},
 
@@ -79,31 +101,9 @@ sap.ui.define([
 			var oTable = this.byId("persoTable");
 			var oState = oEvt.getParameter("state");
 
-			if (!oState) {
-				return;
-			}
-
-			var aSorter = [];
-			oState.Sorter.forEach(function(oSorter) {
-				aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
-			});
-
-			oState.Groups.forEach(function(oGroup) {
-				var oExistingSorter = aSorter.find(function(oSorter){
-					return oSorter.sPath === oGroup.key;
-				});
-
-				if (oExistingSorter) {
-					oExistingSorter.vGroup = true;
-				} else {
-					aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oGroup.key).path, false, true));
-				}
-			}.bind(this));
-
 			oTable.getColumns().forEach(function(oColumn, iIndex){
 				oColumn.setVisible(false);
 			});
-
 			oState.Columns.forEach(function(oProp, iIndex){
 				var oCol = this.byId(oProp.key);
 				oCol.setVisible(true);
@@ -112,20 +112,10 @@ sap.ui.define([
 				oTable.insertColumn(oCol, iIndex);
 			}.bind(this));
 
-			var aCells = oState.Columns.map(function(oColumnState) {
-				return new Text({
-					text: "{" + oColumnState.key + "}"
-				});
-			});
-
-			oTable.bindItems({
-				templateShareable: false,
-				path: '/items',
-				sorter: aSorter,
-				template: new ColumnListItem({
-					cells: aCells
-				})
-			});
+			oTable.sort();
+			oState.Sorter.forEach(function(oSorter) {
+				oTable.sort(this.byId(oSorter.key), oSorter.descending ? tableLibrary.SortOrder.Descending : tableLibrary.SortOrder.Ascending, false);
+			}.bind(this));
 
 		}
 	});
