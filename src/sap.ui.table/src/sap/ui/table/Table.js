@@ -1582,7 +1582,7 @@ sap.ui.define([
 			var oDummyColumn = this.getDomRef("dummycolhdr");
 
 			if (oDummyColumn) {
-				var bDummyColumnHasWidth = oDummyColumn.clientWidth > 0;
+				var bDummyColumnHasWidth = oDummyColumn.clientWidth > 1;
 
 				if (!bHasFlexibleRowActions && bDummyColumnHasWidth) {
 					var iColumnsWidth = this.getColumns().reduce(function(iColumnsWidth, oColumn) {
