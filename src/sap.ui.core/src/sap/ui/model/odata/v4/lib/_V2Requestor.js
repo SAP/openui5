@@ -113,6 +113,7 @@ sap.ui.define([
 		if (!aMatches) {
 			throw new Error("Not a valid Edm.DateTime value '" + sV2Value + "'");
 		}
+		// no need to use UI5Date.getInstance as only UTC is relevant
 		oDate = new Date(parseInt(aMatches[1]));
 		if (Number(aMatches[1] % (24 * 60 * 60 * 1000)) !== 0) {
 			throw new Error("Cannot convert Edm.DateTime value '" + sV2Value
@@ -169,6 +170,7 @@ sap.ui.define([
 				UTC : true
 			});
 		}
+		// no need to use UI5Date.getInstance as only UTC is relevant
 		return mPattern2Formatter[sPattern].format(new Date(iTicks)) + sOffset;
 	};
 
@@ -399,6 +401,7 @@ sap.ui.define([
 		}
 
 		iTicks = Date.UTC(1970, 0, 1, aMatches[1] || 0, aMatches[2] || 0, aMatches[3] || 0);
+		// no need to use UI5Date.getInstance as only UTC is relevant
 		oDate = new Date(iTicks);
 		return oTimeFormatter.format(oDate) + (aMatches[4] || "");
 	};

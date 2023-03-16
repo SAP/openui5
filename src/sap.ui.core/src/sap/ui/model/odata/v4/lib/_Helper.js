@@ -505,6 +505,7 @@ sap.ui.define([
 			}
 			if (sRetryAfter) {
 				iRetryAfter = parseInt(sRetryAfter);
+				// no need to use UI5Date.getInstance as only the timestamp is relevant
 				oResult.retryAfter = new Date(Number.isNaN(iRetryAfter)
 					? sRetryAfter
 					: Date.now() + iRetryAfter * 1000);

@@ -4633,7 +4633,9 @@ sap.ui.define([
 		mETags = this.oMetaModel.getETags();
 
 		assert.deepEqual(mETags, {
+			// no need to use UI5Date.getInstance as only the timestamp is relevant
 			"/~/A" : new Date(Date.UTC(2017, 3, 7, 11, 21, 50)),
+			// no need to use UI5Date.getInstance as only the timestamp is relevant
 			"/~/B" : new Date(Date.UTC(2017, 3, 18, 14, 40, 29)),
 			"/~/C" : null,
 			"/~/D" : sETag // wins over null!
