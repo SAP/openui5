@@ -442,7 +442,7 @@ sap.ui.define([
 			}, this],
 			afterViewSwitch: [function (oEvent) {
 				var mParameters = oEvent.getParameters();
-				oEvent.getSource().oLayout.setShowFooter(mParameters.target !== "$default");
+				this._oItemsContainer.getLayout().setShowFooter(mParameters.target !== "$default");
 
 				this._previousView = mParameters.source;
 				if (mParameters.target !== "$default") {
@@ -454,7 +454,6 @@ sap.ui.define([
 					}
 				} else {
 					this._focusItem();
-					this._oPopover && this._oPopover.invalidate();
 				}
 			}, this]
 		});

@@ -24,6 +24,7 @@
 					"SortDialog.fragment.xml",
 					"FilterDialog.fragment.xml",
 					"GroupDialog.fragment.xml",
+					"ColumnMenu.fragment.xml",
 					"Formatter.js",
 					"manifest.json"
 				]
