@@ -317,6 +317,23 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "-123,456.79", "123456.789 EUR");
 	});
 
+	//*********************************************************************************************
+	QUnit.test("#format: use correct plural rule for compact currency representations", function (assert) {
+		var oFormat = getCurrencyInstance({style: "short"}, new Locale("de")),
+			oStub = this.stub(oFormat.oLocaleData, "_get");
+
+		// return fake "currencyFormat-short" in CLDR data to make different plural rules testable
+		oStub.withArgs("currencyFormat-short").returns({
+			"1000000-one": "0 Million ¤",
+			"1000000-other": "0 Millionen ¤"
+		});
+		// do not stub other LocaleData#_get calls
+		oStub.callThrough();
+
+		assert.strictEqual(oFormat.format("1000000", "EUR"), "1 Million EUR");
+		assert.strictEqual(oFormat.format("1200000", "EUR"), "1,2 Millionen EUR");
+	});
+
 	QUnit.module("Custom currencies - Unknown currencies", {
 		afterEach: function() {
 			// reset global configuration

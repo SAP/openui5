@@ -1282,6 +1282,37 @@ sap.ui.define([
 		assert.strictEqual(oFormat.parse("-001.20e-1337"), "-1.20e-1337");
 	});
 
+	//*********************************************************************************************
+[{
+	sIntegerPart: "2",
+	sNumberToCheck: "2"
+}, {
+	sIntegerPart: "2",
+	sFractionPart: "4",
+	sNumberToCheck: "2.4"
+}, {
+	sIntegerPart: "2",
+	oShortFormat: {magnitude: 1000},
+	sNumberToCheck: "2c+3"
+}, {
+	sIntegerPart: "2",
+	sFractionPart: "4",
+	oShortFormat: {magnitude: 1000000},
+	sNumberToCheck: "2.4c+6"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_getPluralCategory #" + i, function (assert) {
+		var oFormat = NumberFormat.getInstance();
+
+		this.mock(oFormat.oLocaleData).expects("getPluralCategory")
+			.withExactArgs(oFixture.sNumberToCheck)
+			.returns("~result");
+
+		// code under test
+		assert.strictEqual(
+			oFormat._getPluralCategory(oFixture.sIntegerPart, oFixture.sFractionPart, oFixture.oShortFormat),
+			"~result");
+	});
+});
 
 	QUnit.module("Unit Format", {
 		afterEach : function () {
@@ -1878,6 +1909,63 @@ sap.ui.define([
 
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("#format: uses correct plural rule", function (assert) {
+		var oFormat, oFormat2,
+			oLocale = new Locale("fr"),
+			fnGetUnitFormat = function(oFormatOptions) {
+				oFormatOptions.customUnits = {
+					"foo": {
+						"displayName": "custom unit",
+						"unitPattern-count-one": "{0} foo one",
+						"unitPattern-count-many": "{0} foo many",
+						"unitPattern-count-other": "{0} foo other"
+					}
+				};
+
+				return NumberFormat.getUnitInstance(oFormatOptions, oLocale);
+			};
+
+		// Scenario style="standard":
+		// The unit pattern to be used depends on the plural rule of the complete number.
+		// The CLDR decimalFormat is not relevant.
+		oFormat = fnGetUnitFormat({style: "standard"});
+		assert.strictEqual(oFormat.format("1", "foo"), "1 foo one");
+		assert.strictEqual(oFormat.format("1000", "foo"), "1\u202F000 foo other");
+		assert.strictEqual(oFormat.format("1000000", "foo"), "1\u202F000\u202F000 foo many");
+
+		// Scenario style="short":
+		// The unit pattern to be used depends on the plural rule of the compact number.
+		// Additionally, in "short" the CLDR decimalFormat has equal plural values and is therefore not relevant.
+		oFormat = fnGetUnitFormat({style: "short"});
+		assert.strictEqual(oFormat.format("1000", "foo"), "1\xa0k foo other"); // "1c3" -> "other" unit
+		assert.strictEqual(oFormat.format("2000", "foo"), "2\xa0k foo other"); // "2c3" -> "other" unit
+		assert.strictEqual(oFormat.format("1000000", "foo"), "1\xa0M foo many"); // "1c6" -> "many" unit
+		assert.strictEqual(oFormat.format("2000000", "foo"), "2\xa0M foo many"); // "2c6" -> "many" unit
+
+		// Scenario style="long":
+		// The unit pattern to be used depends on the plural rule of the compact number.
+		// Additionally, in "long" the CLDR decimalFormat has different plural values and needs to be distinguished
+		// based on the shortened number without compact notation.
+		oFormat = fnGetUnitFormat({style: "long"});
+		// checks "1.5" for number part ("one" -> "millier") and "1.5c3" for unit part ("other")
+		assert.strictEqual(oFormat.format("1500", "foo"), "1,5 millier foo other");
+		// checks "2.5" for number part ("other" -> "mille") and "2.5c3" for unit part ("other")
+		assert.strictEqual(oFormat.format("2500", "foo"), "2,5 mille foo other");
+		// checks "1" for number part ("one" -> "million") and "1c6" for unit part ("many")
+		assert.strictEqual(oFormat.format("1000000", "foo"), "1 million foo many");
+		// checks "2" for number part ("other" -> "millions") and "2c6" for unit part ("many")
+		assert.strictEqual(oFormat.format("2000000", "foo"), "2 millions foo many");
+
+		// Scenario showNumber=false:
+		// The resulting unit must be independent of style, as the style only applies to the number part
+		oFormat = fnGetUnitFormat({showNumber: false, style: "standard"});
+		oFormat2 = fnGetUnitFormat({showNumber: false, style: "short"});
+		assert.strictEqual(oFormat.format("1", "foo"), oFormat2.format("1", "foo"), "foo one");
+		assert.strictEqual(oFormat.format("1000", "foo"), oFormat2.format("1000", "foo"), "foo other");
+		assert.strictEqual(oFormat.format("1000000", "foo"), oFormat2.format("1000000", "foo"), "foo many");
+	});
 
 	QUnit.module("Unit Format using configuration", {
 		beforeEach: function (assert) {
