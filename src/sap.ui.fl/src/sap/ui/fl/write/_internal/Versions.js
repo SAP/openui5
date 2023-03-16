@@ -194,6 +194,9 @@ sap.ui.define([
 		return Settings.getInstance()
 			.then(function (oSettings) {
 				var bVersionsEnabled = oSettings.isVersioningEnabled(sLayer);
+				if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
+					return _mInstances[sReference][sLayer];
+				}
 				var aVersionsPromise = bVersionsEnabled ? Storage.versions.load(mPropertyBag) : Promise.resolve([]);
 				return aVersionsPromise
 					.then(function (aVersions) {
@@ -347,7 +350,8 @@ sap.ui.define([
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
 			oModel.setProperty("/activateEnabled", false);
-			oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
+			oModel.setProperty("/displayedVersion", oModel.getProperty("/activeVersion"));
+			oModel.setProperty("/persistedVersion", oModel.getProperty("/activeVersion"));
 			oModel.updateBindings(true);
 			// in case of a existing draft known by the backend;
 			// we remove dirty changes only after successful DELETE request

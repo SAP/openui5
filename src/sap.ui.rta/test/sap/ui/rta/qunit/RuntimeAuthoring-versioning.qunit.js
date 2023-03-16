@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -19,6 +20,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	Version,
 	VersionsAPI,
+	Versions,
 	FlexUtils,
 	ReloadManager,
 	RuntimeAuthoring,
@@ -61,6 +63,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP", {
 		beforeEach: function() {
+			Versions.clearInstances();
 			this.oRestartFlpStub = sandbox.stub();
 			givenAnFLP(this.oRestartFlpStub, {});
 			this.oRta = new RuntimeAuthoring({
