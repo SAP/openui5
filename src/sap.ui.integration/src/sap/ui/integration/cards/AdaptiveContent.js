@@ -59,23 +59,22 @@ sap.ui.define([
 		AdaptiveContent.prototype.init = function () {
 			BaseContent.prototype.init.apply(this, arguments);
 
+			this.awaitEvent("_adaptiveCardElementsReady");
 			//workaround until actions refactor
 			this.fireEvent("_actionContentReady"); // todo
 			this.setComponentsReady(false);
-			this._bAdaptiveCardElementsReady = false;
 			this._setupCardContent();
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
-			this._renderMSCardContent(this._oCardTemplate || this._oCardConfig);
+			this._renderMSCardContent(this._oCardTemplate || this.getConfiguration());
 		};
 
 		/**
 		 * @override
 		 */
 		AdaptiveContent.prototype.loadDependencies = function (oCardManifest) {
-			this._loadWebcomponents();
-			var aPromises = [];
+			var aPromises = [this._loadWebcomponents()];
 
 			// load adaptivecards and modules that depend on it here
 			aPromises.push(new Promise(function (resolve, reject) {
@@ -149,7 +148,6 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype.applyConfiguration = function () {
 			var oConfiguration = this.getConfiguration();
-			this._oCardConfig = oConfiguration;
 
 			// if oConfiguration.request is present, load the adaptive card manifest from url
 			if (oConfiguration && oConfiguration.request && oConfiguration.request.url) {
@@ -202,7 +200,7 @@ sap.ui.define([
 			oData.loadData(sUrl)
 				.then(function () {
 					// set the data from the url as a card config
-					that._oCardConfig = Object.assign(that._oCardConfig, oData.getData());
+					that.setConfiguration(Object.assign(that.getConfiguration(), oData.getData()));
 				}).then(function () {
 					that._handleMarkDown();
 					that._setupMSCardContent();
@@ -211,9 +209,12 @@ sap.ui.define([
 					oData.destroy();
 					oData = null;
 				}).catch(function () {
+					this.fireEvent("_dataReady");
+					this.fireEvent("_adaptiveCardElementsReady");
+
 					// notify the user that the provided URL is not correct
 					Log.error("No JSON file found on this URL. Please provide a correct path to the JSON-serialized card object model file.");
-				});
+				}.bind(this));
 		};
 
 		/**
@@ -350,7 +351,7 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._setupMSCardContent = function () {
-			var oConfiguration = this._oCardConfig,
+			var oConfiguration = this.getConfiguration(),
 				oContentTemplateData,
 				oCardDataProvider = this._oCardDataProvider;
 
@@ -390,9 +391,8 @@ sap.ui.define([
 				oData = this.getModel().getProperty(sPath);
 
 			// Аttaches the data with the card template
-			this._oCardTemplate = this._setTemplating(this._oCardConfig, oData);
-			// Marks the loading as finished manually, because hideLoadingPlaceholders() is called too early in this case
-			this.getAggregation("_loadingProvider").setLoading(false);
+			this._oCardTemplate = this._setTemplating(this.getConfiguration(), oData);
+
 			// Re-renders the card with the new data
 			this.invalidate();
 		};
@@ -414,20 +414,13 @@ sap.ui.define([
 			if (this.adaptiveCardInstance && oCard && oDom.length) {
 				this.adaptiveCardInstance.parse(oCard);
 				oDom.html(this.adaptiveCardInstance.render());
-				this._bAdaptiveCardElementsReady = true;
-				this._fireCardReadyEvent();
+
+				this.fireEvent("_adaptiveCardElementsReady");
 
 				// avoid additional tab stop
 				if (this.adaptiveCardInstance.renderedElement) {
 					this.adaptiveCardInstance.renderedElement.tabIndex = -1;
 				}
-			}
-		};
-
-		AdaptiveContent.prototype._fireCardReadyEvent = function () {
-			if (this._bAdaptiveCardElementsReady && this.getComponentsReady()) {
-				this._bReady = true;
-				this.fireReady();
 			}
 		};
 
@@ -460,24 +453,27 @@ sap.ui.define([
 		AdaptiveContent.prototype._loadWebcomponents = function () {
 			if (this.getComponentsReady()) {
 				Log.debug("WebComponents were already loaded");
-				this._fireCardReadyEvent();
 
-				return;
+				return Promise.resolve();
 			}
 
-			// Thе timeout is needed to delay the check if UI5 WebComponents gets loaded from elsewhere.
-			// This detection relies on the assumption that there's the full bundle and the ui5-button is present.
-			setTimeout(function(){
-				if (!window.customElements.get("ui5-button")) {
+			return new Promise(function (resolve, reject) {
+				// Thе timeout is needed to delay the check if UI5 WebComponents gets loaded from elsewhere.
+				// This detection relies on the assumption that there's the full bundle and the ui5-button is present.
+				setTimeout(function(){
+					if (window.customElements.get("ui5-button")) {
+						resolve();
+						return;
+					}
+
 					includeScript({
 						id: "webcomponents-bundle",
 						attributes: {type: "module"},
 						url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
-					});
-				}
-
+					}).then(resolve);
+				});
+			}).then(function () {
 				this.setComponentsReady(true);
-				this._fireCardReadyEvent();
 			}.bind(this));
 		};
 
