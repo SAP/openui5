@@ -299,6 +299,51 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
+		QUnit.test("Given persist is called with public variant with favorit check", function(assert) {
+			var sPersistencyKey = "persistency.key";
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false at beginning");
+			var oVariant = CompVariantState.addVariant({
+				changeSpecificData: {
+					type: "pageVariant",
+					content: {}
+				},
+				layer: Layer.PUBLIC,
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after add a new variant");
+			CompVariantState.updateVariant({
+				id: oVariant.getVariantId(),
+				isUserDependent: true,
+				favorite: true,
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after update variant");
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
+
+			var oWriteStub = sandbox.stub(Storage, "write").resolves();
+			var oUpdateStub = sandbox.stub(Storage, "update").resolves();
+			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
+
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			})
+			.then(function () {
+				assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false after persisting all changes");
+				assert.strictEqual(oWriteStub.callCount, 2, "then the write method was called 2 times,");
+				assert.strictEqual(oUpdateStub.callCount, 0, "no update was called");
+				assert.strictEqual(oRemoveStub.callCount, 0, "and no delete was called");
+				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getState(), States.LifecycleState.PERSISTED, "the variant is persisted");
+				assert.strictEqual(oCompVariantStateMapForPersistencyKey.changes[0].getState(), States.LifecycleState.PERSISTED, "the addFavorite change is persisted");
+				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getLayer(), Layer.PUBLIC, "it is a public variant");
+				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getFavorite(), false, "with favorite set to false");
+				assert.strictEqual(oCompVariantStateMapForPersistencyKey.changes[0].getLayer(), Layer.USER, "the variant has a user layer change");
+				assert.deepEqual(oCompVariantStateMapForPersistencyKey.changes[0].getContent(), {favorite: true}, "with favorit set to true");
+			});
+		});
+
 		QUnit.test("Given persist is called with all kind of objects (variants, changes, defaultVariant) present", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false at beginning");
