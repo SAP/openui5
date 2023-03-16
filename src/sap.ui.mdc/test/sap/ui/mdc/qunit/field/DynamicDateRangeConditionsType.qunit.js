@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
 	"sap/ui/mdc/field/FieldBaseDelegate",
 	"sap/ui/mdc/condition/Condition",
+	'sap/ui/mdc/condition/ConditionValidateException',
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
@@ -20,6 +21,7 @@ sap.ui.define([
 		DynamicDateRangeConditionsType,
 		FieldBaseDelegate,
 		Condition,
+		ConditionValidateException,
 		FilterOperatorUtil,
 		Operator,
 		OperatorDynamicDateOption,
@@ -461,7 +463,9 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
-		assert.ok(oException instanceof ValidateException, "ValidateException fired");
+		assert.ok(oException instanceof ConditionValidateException, "ConditionValidateException fired");
+		assert.notOk(oException && oException.getCondition(), "exception condition");
+		assert.deepEqual(oException && oException.getConditions(), "XXX", "exception conditions");
 
 		oException = undefined;
 		try {
@@ -470,7 +474,9 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
-		assert.ok(oException instanceof ValidateException, "ValidateException fired");
+		assert.ok(oException instanceof ConditionValidateException, "ConditionValidateException fired");
+		assert.deepEqual(oException && oException.getCondition(), "XXX", "exception condition");
+		assert.deepEqual(oException && oException.getConditions(), ["XXX"], "exception conditions");
 
 	});
 
@@ -485,7 +491,9 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
-		assert.ok(oException instanceof ValidateException, "ValidateException fired");
+		assert.ok(oException instanceof ConditionValidateException, "ConditionValidateException fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException && oException.getConditions(), [oCondition], "exception conditions");
 
 	});
 
@@ -500,7 +508,9 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
-		assert.ok(oException instanceof ValidateException, "ValidateException fired");
+		assert.ok(oException instanceof ConditionValidateException, "ConditionValidateException fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException && oException.getConditions(), [oCondition], "exception conditions");
 
 	});
 

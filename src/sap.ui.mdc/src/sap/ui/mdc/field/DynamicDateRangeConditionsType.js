@@ -5,6 +5,7 @@
 // Provides the base implementation for all model implementations
 sap.ui.define([
 	'sap/ui/mdc/field/ConditionsType',
+	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/condition/Condition',
@@ -15,10 +16,12 @@ sap.ui.define([
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
-	'sap/m/library'
+	'sap/m/library',
+	'sap/base/util/merge'
 ],
 	function(
 		ConditionsType,
+		ConditionValidateException,
 		FilterOperatorUtil,
 		Operator,
 		Condition,
@@ -29,7 +32,8 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		ValidateException,
-		mLibrary
+		mLibrary,
+		merge
 		) {
 	"use strict";
 
@@ -208,7 +212,7 @@ sap.ui.define([
 		}
 
 		if (!Array.isArray(aConditions)) {
-			throw new ValidateException("No valid conditions provided");
+			throw new ConditionValidateException("No valid conditions provided", undefined, undefined, aConditions);
 		}
 
 		var oType = _getValueType.call(this);
@@ -218,16 +222,24 @@ sap.ui.define([
 			var oCondition = aConditions[i];
 			if (typeof oCondition !== "object" || !oCondition.operator || !oCondition.values ||
 					!Array.isArray(oCondition.values)) {
-				throw new ValidateException(this._oResourceBundle.getText("field.VALUE_NOT_VALID"));
+				throw new ConditionValidateException(this._oResourceBundle.getText("field.VALUE_NOT_VALID"), undefined, typeof oCondition === "object" ? merge({}, oCondition) : oCondition, aConditions);
 			}
 
 			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 
 			if (!oOperator || aOperators.indexOf(oOperator.name) === -1) {
-				throw new ValidateException("No valid condition provided, Operator wrong.");
+				throw new ConditionValidateException("No valid condition provided, Operator wrong.", undefined, merge({}, oCondition), aConditions);
 			}
 
-			oOperator.validate(oCondition.values, oType);
+			try {
+				oOperator.validate(oCondition.values, oType);
+			} catch (oException) {
+				if (oException instanceof ValidateException) {
+					// add condition to exception to improve mapping in FieldBase handleValidationError
+					throw new ConditionValidateException(oException.message, oException.violatedConstraints, merge({}, oCondition), aConditions);
+				}
+				throw oException;
+			}
 		}
 
 	};
