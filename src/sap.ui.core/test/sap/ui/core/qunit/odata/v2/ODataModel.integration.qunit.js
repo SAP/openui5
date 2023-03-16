@@ -19296,4 +19296,74 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A navigation property, for example "to_BusinessPartnerCustomer", is expanded via
+	// $expand and the target entity has more than 1 key property. For a property, for example
+	// "BusinessPartner", a referential constraint for the expanded navigation property is defined.
+	// If the user sets the same value as it was before, there are no pending changes and
+	// submitChanges does not send a request.
+	// BCP: 2380045943
+	QUnit.test("Referential constraints: no pending changes if same value is set", function (assert) {
+		var oObjectPage,
+			oModel = createSpecialCasesModel(),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="BusinessPartner" text="{BusinessPartner}"/>\
+	<Text id="Name" text="{to_BusinessPartnerCustomer/Name}"/>\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oObjectPage = that.oView.byId("objectPage");
+
+			that.expectHeadRequest()
+				.expectRequest(
+					"C_BPAdditionalCustomer(BusinessPartner='pb1',Customer='c1',"
+						+ "IsActiveEntity=false)?$expand=to_BusinessPartnerCustomer",
+					{
+						data: {
+							__metadata: {
+								uri: "C_BPAdditionalCustomer(BusinessPartner='bp1',Customer='c1',"
+									+ "IsActiveEntity=false)"
+							},
+							BusinessPartner: "bp1",
+							Customer: "c1",
+							IsActiveEntity: false,
+							// eslint-disable-next-line camelcase
+							to_BusinessPartnerCustomer: {
+								__metadata: {
+									uri: "C_BusinessPartnerCustomer(BusinessPartner='bp1',"
+										+ "IsActiveEntity=false)"
+								},
+								BusinessPartner: "bp1",
+								IsActiveEntity: false,
+								Name: "name"
+							}
+						},
+						statusCode: 201
+					})
+				.expectValue("BusinessPartner", "bp1")
+				.expectValue("Name", "name");
+
+			// code under test: bind object page
+			oObjectPage.bindObject({
+				path: "/C_BPAdditionalCustomer(BusinessPartner='pb1',Customer='c1',IsActiveEntity=false)",
+				parameters: {expand: "to_BusinessPartnerCustomer"}});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test: set the same property value
+			oModel.setProperty("BusinessPartner", "bp1", oObjectPage.getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.notOk(oModel.hasPendingChanges());
+
+			// code under test: no request is triggered
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
