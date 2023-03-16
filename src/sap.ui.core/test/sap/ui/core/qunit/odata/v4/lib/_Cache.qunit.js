@@ -12736,6 +12736,7 @@ sap.ui.define([
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
 }, {
+	bDropApply : true,
 	sTitle : "a created element is deleted",
 	mKeptAliveElementsByPredicate : {
 		"('Foo')" : {
@@ -12755,6 +12756,7 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			mLateQueryOptions = {},
 			mQueryOptionsCopy = {
+				$apply : "A.P.P.L.E.",
 				$count : true,
 				$orderby : "~orderby~",
 				$search : "~search~"
@@ -12809,6 +12811,9 @@ sap.ui.define([
 					&& oValue.$filter === oFixture.sFilter
 					&& "$top" in oValue === "iTop" in oFixture
 					&& oValue.$top === oFixture.iTop
+					&& (oFixture.bDropApply
+					? !("$apply" in oValue)
+					: oValue.$apply === "A.P.P.L.E.") // not dropped
 					&& !("$count" in oValue)
 					&& !("$orderby" in oValue)
 					&& !("$search" in oValue);
@@ -12832,7 +12837,8 @@ sap.ui.define([
 			});
 
 		// code under test
-		return oCache.refreshKeptElements(oGroupLock, fnOnRemove).then(function (oResult) {
+		return oCache.refreshKeptElements(oGroupLock, fnOnRemove, oFixture.bDropApply)
+		.then(function (oResult) {
 			var mByPredicateAfterRefresh = {},
 				iCallCount = 0;
 

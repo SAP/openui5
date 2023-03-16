@@ -40,6 +40,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._AggregationCache
 	 * @borrows sap.ui.model.odata.v4.lib._CollectionCache#requestSideEffects as #requestSideEffects
+	 * @borrows sap.ui.model.odata.v4.lib._CollectionCache#restore as #restore
 	 * @constructor
 	 * @extends sap.ui.model.odata.v4.lib._Cache
 	 * @private
@@ -79,6 +80,7 @@ sap.ui.define([
 		}
 		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal || !!fnLeaves);
 		this.requestSideEffects = this.oFirstLevel.requestSideEffects; // @borrows ...
+		this.restore = this.oFirstLevel.restore; // @borrows ...
 		this.oGrandTotalPromise = undefined;
 		if (bHasGrandTotal) {
 			this.oGrandTotalPromise = new SyncPromise(function (resolve) {
@@ -135,11 +137,12 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.addElements = function (vReadElements, iOffset, oCache, iStart) {
 		var aElements = this.aElements,
+			sHierarchyQualifier = this.oAggregation.hierarchyQualifier,
 			sNodeProperty = this.oAggregation.$NodeProperty;
 
 		function addElement(oElement, i) {
 			var oOldElement = aElements[iOffset + i],
-				oOtherElement,
+				oKeptElement,
 				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
 			if (oOldElement) { // check before overwriting
@@ -151,10 +154,13 @@ sap.ui.define([
 			} else if (iOffset + i >= aElements.length) {
 				throw new Error("Array index out of bounds: " + (iOffset + i));
 			}
-			oOtherElement = aElements.$byPredicate[sPredicate];
-			if (oOtherElement && oOtherElement !== oElement
-					&& !(oOtherElement instanceof SyncPromise)) {
-				throw new Error("Duplicate predicate: " + sPredicate);
+			oKeptElement = aElements.$byPredicate[sPredicate];
+			if (oKeptElement && oKeptElement !== oElement
+					&& !(oKeptElement instanceof SyncPromise)) {
+				if (!sHierarchyQualifier) {
+					throw new Error("Duplicate predicate: " + sPredicate);
+				}
+				_Helper.updateNonExisting(oElement, oKeptElement);
 			}
 
 			aElements.$byPredicate[sPredicate] = aElements[iOffset + i] = oElement;
@@ -957,12 +963,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the kept-alive elements. Nothing to do here, we have no kept-alive elements.
-	 *
-	 * @public
-	 * @see sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
+	 * @override sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
 	 */
-	_AggregationCache.prototype.refreshKeptElements = function () {};
+	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
+		// @borrows ...
+		return this.oFirstLevel.refreshKeptElements.call(this, oGroupLock, fnOnRemove, true);
+	};
+
+	/**
+	 * @override sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
+	 */
+	_AggregationCache.prototype.reset = function (aKeptElementPredicates, _sGroupId) {
+		var that = this;
+
+		this.oFirstLevel.reset.apply(this, arguments); // @borrows ...
+		this.oFirstLevel.reset([]);
+		aKeptElementPredicates.forEach(function (sPredicate) {
+			var oKeptElement = that.aElements.$byPredicate[sPredicate];
+
+			if (_Helper.hasPrivateAnnotation(oKeptElement, "placeholder")) {
+				throw new Error("Unexpected placeholder");
+			}
+			delete oKeptElement["@$ui5.node.isExpanded"];
+			delete oKeptElement["@$ui5.node.level"];
+			delete oKeptElement["@$ui5._"];
+			_Helper.setPrivateAnnotation(oKeptElement, "predicate", sPredicate);
+		});
+	};
 
 	/**
 	 * Returns the cache's URL.
