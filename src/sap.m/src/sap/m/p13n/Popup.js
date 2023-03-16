@@ -411,6 +411,7 @@ sap.ui.define([
 	};
 
 	Popup.prototype.exit = function() {
+		Control.prototype.exit.apply(this, arguments);
 		if (this._oPopup) {
 			this._oPopup.destroy();
 		}

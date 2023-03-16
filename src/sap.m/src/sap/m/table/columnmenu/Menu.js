@@ -190,10 +190,6 @@ sap.ui.define([
 		}
 		this._initQuickActionContainer();
 
-		if (this._oItemsContainer) {
-			this._oItemsContainer.destroy();
-			this._oItemsContainer = null;
-		}
 		this._initItemsContainer();
 
 		if (!this.getParent()) {
@@ -236,7 +232,15 @@ sap.ui.define([
 			if (this._oQuickActionContainer) {
 				this._oQuickActionContainer.destroyFormContainers();
 			}
-
+			if (this._oItemsContainer) {
+				this._getAllEffectiveItems().forEach(function(oMenuItem){
+					if (oMenuItem.destroyContent instanceof Function) {
+						oMenuItem.destroyContent();
+					}
+				});
+				this._oItemsContainer.destroy();
+				this._oItemsContainer = null;
+			}
 			this._oPopover.close();
 			ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		}
