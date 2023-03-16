@@ -9344,11 +9344,14 @@ sap.ui.define([
 			.withExactArgs({}, "groupId", sGroupId);
 		this.mock(oContext).expects("requestProperty").withExactArgs(["a", "c/d", "e", "g/h"])
 			.callsFake(function () {
-				assert.ok(oSetKeepAliveExpectation.called);
-				assert.ok(oAddKeptElementExpectation.called);
+				assert.ok(oSetKeepAliveExpectation.calledOnce);
+				assert.ok(oPredicateExpectation.calledOnce);
+				assert.ok(oAddKeptElementExpectation.calledOnce);
+				assert.ok(oPredicateExpectation.calledBefore(oAddKeptElementExpectation));
 				assert.strictEqual(oPredicateExpectation.args[0][0],
 					oAddKeptElementExpectation.args[0][0], "same empty object");
-				if (sGroupId) {
+				if (sGroupId) { // Note: order not important for this call
+					assert.ok(oGroupExpectation.calledOnce);
 					assert.strictEqual(oGroupExpectation.args[0][0],
 						oAddKeptElementExpectation.args[0][0], "same empty object");
 				}
@@ -9364,7 +9367,7 @@ sap.ui.define([
 			oBinding.getKeepAliveContext(sPath, "~bRequestMessages~", sGroupId),
 			oContext);
 		assert.strictEqual(oBinding.mPreviousContextsByPath[sPath], oContext);
-		assert.ok(oSetKeepAliveExpectation.called);
+		assert.ok(oSetKeepAliveExpectation.calledOnce);
 	});
 	});
 });
