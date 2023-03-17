@@ -393,7 +393,7 @@ sap.ui.define([
 		if (!sId) {
 			// remove selected action item (if any) and collapse its side content
 			sSelectedItem && this._toggleItemSelection(Core.byId(sSelectedItem));
-		} else if (oItem && sId !== sSelectedItem && sId !== this.getAggregation("_overflowItem").getId()) {
+		} else if (oItem && oItem.getEnabled() && sId !== sSelectedItem && sId !== this.getAggregation("_overflowItem").getId()) {
 			// select an action item and expand its side content
 			this._toggleItemSelection(oItem);
 			this.setAssociation("selectedItem", oItem, true);
@@ -744,15 +744,18 @@ sap.ui.define([
 		// find a collection of all action items
 		aItems.forEach(function(oItem, iIndex) {
 			if (iIndex < iMaxItems) {
-				oItemDomRef = this._getFocusDomRef(oItem);
-				oItemDomRef.setAttribute("tabindex", "-1");
-				aItemsDomRef.push(oItemDomRef);
-				oItem.$().css("display", "flex");
+				if (oItem.getEnabled()){
+					oItemDomRef = this._getFocusDomRef(oItem);
+					oItemDomRef.setAttribute("tabindex", "-1");
+					aItemsDomRef.push(oItemDomRef);
+					oItem.$().css("display", "flex");
+				}
 			} else {
 				oItem.$().css("display", "none");
 				oMenuItem = new MenuItem({
 					text: oItem.getText(),
-					icon: oItem.getIcon()
+					icon: oItem.getIcon(),
+					enabled: oItem.getEnabled()
 				});
 				oOverflowMenu.addItem(oMenuItem);
 				this._mOverflowItemsMap[oMenuItem.getId()] = oItem;
@@ -928,6 +931,11 @@ sap.ui.define([
 
 		if (oItemDomRef && oItemDomRef.classList.contains("sapFSPOverflowItem")) {
 			this._toggleOverflowMenu(oItemDomRef);
+			return;
+		}
+
+		// disabled items cannot be selected
+		if (!oItem.getEnabled()){
 			return;
 		}
 
