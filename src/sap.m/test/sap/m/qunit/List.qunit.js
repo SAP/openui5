@@ -2590,10 +2590,10 @@ sap.ui.define([
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			assert.ok(oGroupItem.isA("sap.m.CustomListItem"), "GroupHeader is the sap.m.CustomListItem, since groupHeaderFactory is defined");
 			var $GroupItem = oGroupItem.$();
-			assert.strictEqual($GroupItem.attr("role"), "option", "role=option assigned to CustomListItem, since its groupHeader and parent's role=listbox");
+			assert.strictEqual($GroupItem.attr("role"), "group", "role=group assigned to CustomListItem, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset not added, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize not added, since its groupHeader");
-			assert.notOk($GroupItem.attr("aria-owns"), "aria-owns not added");
+			assert.ok($GroupItem.attr("aria-owns"), "aria-owns added");
 		});
 	});
 
