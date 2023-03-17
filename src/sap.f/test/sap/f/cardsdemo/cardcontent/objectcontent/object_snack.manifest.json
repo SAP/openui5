@@ -115,7 +115,7 @@
 							"maxLines": 2
 						},
 						{
-							"value": "Fact 1 - 1 lines, truncation with elipsis",
+							"value": "Fact 1 - 1 lines, truncation with ellipsis",
 							"maxLines": 3,
 							"type": "Status",
 							"state": "Success"
@@ -143,6 +143,20 @@
 							"state": "Information",
 							"type": "Status",
 							"showStateIcon": true
+						},
+						{
+							"value": "Information - custom state icon",
+							"state": "Information",
+							"type": "Status",
+							"showStateIcon": true,
+							"customStateIcon": "sap-icon://hint"
+						},
+						{
+							"value": "Information - custom state icon",
+							"state": "Information",
+							"type": "Status",
+							"showStateIcon": false,
+							"customStateIcon": "sap-icon://warning"
 						}
 					]
 				},

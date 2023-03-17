@@ -50,7 +50,9 @@ sap.ui.define([
 							"percent": 70,
 							"percentValue": "70 of 100",
 							"progressState": "Success",
-							"iconSrc": "sap-icon://help"
+							"iconSrc": "sap-icon://help",
+							"showStateIcon": true,
+							"customStateIcon": "sap-icon://bbyd-active-sales"
 						},
 						{
 							"salesOrder": "5000010052",
@@ -61,7 +63,8 @@ sap.ui.define([
 							"percent": 55,
 							"percentValue": "55GB of 100",
 							"progressState": "Warning",
-							"iconSrc": "sap-icon://help"
+							"iconSrc": "sap-icon://help",
+							"showStateIcon": true
 						}
 					]
 				},
@@ -80,7 +83,9 @@ sap.ui.define([
 							"title": "Status",
 							"value": "{status}",
 							"state": "{statusState}",
-							"hAlign": "End"
+							"hAlign": "End",
+							"showStateIcon": "{showStateIcon}",
+							"customStateIcon": "{customStateIcon}"
 						},
 						{
 							"title": "Order ID",
@@ -521,6 +526,8 @@ sap.ui.define([
 			var oTable = oCardContent.getAggregation("_content");
 			var aColumns = oTable.getColumns();
 			var aCells = oTable.getItems()[0].getCells();
+			var aCellsSecondRow = oTable.getItems()[1].getCells();
+			var aCellsThirdRow = oTable.getItems()[2].getCells();
 
 			Core.applyChanges();
 
@@ -560,6 +567,15 @@ sap.ui.define([
 			assert.equal(aCells[4].getState(), oManifestData[0].progressState, "Should have correct progress state.");
 			assert.equal(aCells[5].getSrc(), oManifestData[0].iconSrc, "Should have correct icon src.");
 			assert.ok(aCells[6].getTitleActive(), "Should be active identifier.");
+
+			// Second and third row - Object Status
+			assert.ok(aCellsSecondRow[2].getShowStateIcon(), "Should have 'showStateIcon' correctly set to true.");
+			assert.equal(aCellsSecondRow[2].getIcon(), oManifestData[1].customStateIcon, "Should have custom icon with src '" + oManifestData[1].customStateIcon + "'");
+			assert.notOk(aCellsSecondRow[2].hasStyleClass("sapMObjStatusShowIcon"),  "Default State Icon is not shown");
+			assert.ok(aCellsSecondRow[2].hasStyleClass("sapMObjStatusShowCustomIcon"),  "Custom State Icon is shown");
+			assert.equal(aCellsThirdRow[2].getShowStateIcon(), oManifestData[2].showStateIcon, "Should have 'showStateIcon' correctly set to " + oManifestData[2].showStateIcon);
+			assert.ok(aCellsThirdRow[2].hasStyleClass("sapMObjStatusShowIcon"),  "Default State Icon is shown");
+			assert.notOk(aCellsThirdRow[2].hasStyleClass("sapMObjStatusShowCustomIcon"),  "Custom State Icon is not shown");
 
 			done();
 		}.bind(this));

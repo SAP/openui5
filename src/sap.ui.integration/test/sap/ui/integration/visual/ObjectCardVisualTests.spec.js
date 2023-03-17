@@ -9,6 +9,7 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 
 	var aCardIds = [
 		"cardDataHandling",
+		"cardSnackAndObjectStatus",
 		"cardStaticData",
 		"cardForm",
 		"cardLongLabelAvatar",

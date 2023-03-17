@@ -283,6 +283,7 @@ sap.ui.define([
 				info: mItem.info && mItem.info.value,
 				infoState: mItem.info && mItem.info.state,
 				showInfoStateIcon: mItem.info && mItem.info.showStateIcon,
+				customInfoStatusIcon: mItem.info && mItem.info.customStateIcon,
 				attributes: []
 			};
 
@@ -316,7 +317,8 @@ sap.ui.define([
 					state: attr.state,
 					emptyIndicatorMode: EmptyIndicatorMode.On,
 					visible: attr.visible,
-					showStateIcon: attr.showStateIcon
+					showStateIcon: attr.showStateIcon,
+					icon: attr.customStateIcon
 				});
 
 				mSettings.attributes.push(oObjectStatus);

@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/ProgressIndicator",
 	"sap/m/ObjectIdentifier",
-	"sap/m/ObjectStatus",
+	"sap/ui/integration/controls/ObjectStatus",
 	"sap/m/Avatar",
 	"sap/ui/core/library",
 	"sap/m/library",
@@ -414,7 +414,9 @@ sap.ui.define([
 		if (oColumn.state) {
 			return new ObjectStatus({
 				text: oColumn.value,
-				state: oColumn.state
+				state: oColumn.state,
+				showStateIcon: oColumn.showStateIcon,
+				icon: oColumn.customStateIcon
 			});
 		}
 

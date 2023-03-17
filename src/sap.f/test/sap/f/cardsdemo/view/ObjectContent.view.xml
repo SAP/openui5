@@ -39,6 +39,7 @@
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
+				id="cardSnackAndObjectStatus"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/object_snack.manifest.json"
 				width="auto"
 				class="sapUiTinyMargin" />

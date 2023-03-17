@@ -5,7 +5,6 @@
 
 .sapUiIntCard {
 	.sapMObjStatus.sapMObjStatusShowIcon {
-		display: inline-flex;
 		align-items: center;
 
 		.sapMObjStatusText {
@@ -14,7 +13,10 @@
 		}
 	}
 
-	.sapUiIntLCIInfo.sapUiIntLCIInfoShowIcon:before,
+	.sapMObjStatus:not(.sapMObjStatusShowCustomIcon) .sapMObjStatusIcon {
+		display: none
+	}
+
 	.sapMObjStatus.sapMObjStatusShowIcon:before {
 		font-size: 1rem;
 		line-height: 1;
@@ -22,25 +24,21 @@
 		padding-inline-end: 0.25rem;
 	}
 
-	.sapUiIntLCIInfoShowIcon.sapUiIntLCIInfoError:before,
 	.sapMObjStatusShowIcon.sapMObjStatusError:before {
 		color: @sapNegativeElementColor;
 		content: "\e1ec";
 	}
 
-	.sapUiIntLCIInfoShowIcon.sapUiIntLCIInfoWarning:before,
 	.sapMObjStatusShowIcon.sapMObjStatusWarning:before {
 		color: @sapCriticalElementColor;
 		content: "\e053";
 	}
 
-	.sapUiIntLCIInfoShowIcon.sapUiIntLCIInfoSuccess:before,
 	.sapMObjStatusShowIcon.sapMObjStatusSuccess:before {
 		color: @sapPositiveElementColor;
 		content: "\e1c1";
 	}
 
-	.sapUiIntLCIInfoShowIcon.sapUiIntLCIInfoInformation:before,
 	.sapMObjStatusShowIcon.sapMObjStatusInformation:before {
 		color: @sapInformativeElementColor;
 		content: "\e289";

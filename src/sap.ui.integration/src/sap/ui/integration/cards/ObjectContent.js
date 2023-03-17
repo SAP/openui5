@@ -559,7 +559,8 @@ sap.ui.define([
 			text: oItem.value,
 			visible: BindingHelper.reuse(vVisible),
 			state: oItem.state,
-			showStateIcon: oItem.showStateIcon
+			showStateIcon: oItem.showStateIcon,
+			icon: oItem.customStateIcon
 		});
 
 		return oControl;

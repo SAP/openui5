@@ -63,14 +63,17 @@
 						"customerName": "Development Para O Governo",
 						"netAmount": "7K USD",
 						"status": "Delivered",
-						"statusState": "Success"
+						"statusState": "Success",
+						"showStateIcon": true
 					},
 					{
 						"salesOrder": "5000010050",
 						"customerName": "Robert Brown Entertainment",
 						"netAmount": "2K USD",
 						"status": "Delivered",
-						"statusState": "Success"
+						"statusState": "Success",
+						"showStateIcon": true,
+						"customStateIcon": "sap-icon://activity-2"
 					},
 					{
 						"salesOrder": "5000010051",
@@ -146,7 +149,9 @@
 						"title": "{/columns/3/title}",
 						"value": "{status}",
 						"state": "{statusState}",
-						"visible": "{/columns/3/visibleFlag}"
+						"visible": "{/columns/3/visibleFlag}",
+						"showStateIcon": "{showStateIcon}",
+						"customStateIcon": "{customStateIcon}"
 					}
 				]
 			}

@@ -114,15 +114,27 @@
 			"isActive": true,
 			"name": "Quimica Madrilenos",
 			"netAmount": "25K USD",
-			"status": "Delivered",
-			"statusState": "Success"
+			"status": "Canceled",
+			"statusState": "Error",
+			"showStateIcon": true
 		},
 		{
 			"salesOrder": "5000010054",
 			"name": "Development Para O Governo",
 			"netAmount": "7K USD",
-			"status": "Delivered",
-			"statusState": "Success"
+			"status": "Canceled",
+			"statusState": "Error",
+			"showStateIcon": true,
+			"customStateIcon": "sap-icon://cancel"
+		},
+		{
+			"salesOrder": "5000010054",
+			"name": "Development Para O Governo",
+			"netAmount": "7K USD",
+			"status": "Canceled",
+			"statusState": "Error",
+			"showStateIcon": false,
+			"customStateIcon": "sap-icon://cancel"
 		}
 	]
 }

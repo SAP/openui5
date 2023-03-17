@@ -64,7 +64,9 @@ sap.ui.define([
 						"url": "http://www.company_a.example.com"
 					},
 					"showErrorStateIcon": true,
-					"showWarningStateIcon": false
+					"showWarningStateIcon": false,
+					"showInformationStateIcon": true,
+					"CustomSuccessStateIcon": "sap-icon://activity-2"
 				}
 			},
 			"header": {
@@ -120,6 +122,13 @@ sap.ui.define([
 								"state": "Warning",
 								"type": "Status",
 								"showStateIcon": "{showWarningStateIcon}"
+							},
+							{
+								"value": "Success value",
+								"state": "Success",
+								"type": "Status",
+								"showStateIcon": "{showInformationStateIcon}",
+								"customStateIcon": "{CustomSuccessStateIcon}"
 							}
 						]
 					},
@@ -835,7 +844,7 @@ sap.ui.define([
 			assert.equal(oHeader.getIconSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct header icon source.");
 
 			// Group 1 assertions
-			assert.equal(aGroups[0].getItems().length, 11, "Should have 11 items.");
+			assert.equal(aGroups[0].getItems().length, 12, "Should have 12 items.");
 			assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
 			assert.equal(aGroups[0].getItems()[1].getText(), oManifestContent.groups[0].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
@@ -845,6 +854,8 @@ sap.ui.define([
 			assert.equal(aGroups[0].getItems()[6].getItems()[0].getText(), oData.phone, "Should have correct item value.");
 			assert.equal(aGroups[0].getItems()[9].getShowStateIcon(), oData.showErrorStateIcon, "Should have correct status icon value.");
 			assert.equal(aGroups[0].getItems()[10].getShowStateIcon(), oData.showWarningStateIcon, "Should have correct status icon value.");
+			assert.equal(aGroups[0].getItems()[11].getIcon(), oData.CustomSuccessStateIcon, "Should have correct custom status icon value.");
+			assert.ok(aGroups[0].getItems()[11].hasStyleClass("sapMObjStatusShowCustomIcon"), "Should have correct class for custom state icon");
 
 			// Group 2 assertions
 			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
