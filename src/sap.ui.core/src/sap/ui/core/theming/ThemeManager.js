@@ -124,8 +124,9 @@ sap.ui.define([
 				/* as soon as css has been loaded, look if there is a flag for custom css inclusion inside, but only
 				 * if this has not been checked successfully before for the same theme
 				 */
-				if (oThemeManager._themeCheckedForCustom != sThemeName) {
-					// custom css is supported for custom themes, so this check is skipped for standard themes
+				// Only need to adjust custom css in case the theme changed or we have no custom.css yet
+				if (!oThemeManager._customCSSAdded || oThemeManager._themeCheckedForCustom != sThemeName) {
+					// custom css is only supported for custom themes
 					if (!bIsStandardTheme && checkCustom(lib)) {
 						// load custom css available at sap/ui/core/themename/custom.css
 						var sCustomCssPath = sPath;
@@ -142,7 +143,8 @@ sap.ui.define([
 						oThemeManager._themeCheckedForCustom = sThemeName;
 						res = false;
 						return false;
-					}	else {
+					// only remove custom css in case a custom.css was added
+					} else if (oThemeManager._customCSSAdded) {
 						// remove stylesheet once the particular class is not available (e.g. after theme switch)
 						/*check for custom theme was not successful, so we need to make sure there are no custom style sheets attached*/
 						var oCustomCssLink = document.querySelector("LINK[id='" +  oThemeManager._CUSTOMID + "']");
@@ -152,6 +154,7 @@ sap.ui.define([
 						}
 						oThemeManager._customCSSAdded = false;
 					}
+
 				}
 			}
 
