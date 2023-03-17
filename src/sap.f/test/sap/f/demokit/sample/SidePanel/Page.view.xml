@@ -47,6 +47,7 @@
 						</VBox>
 					</f:SidePanelItem>
 					<f:SidePanelItem icon="sap-icon://building" text="Go to office" />
+					<f:SidePanelItem icon="sap-icon://flight" text="Fly abroad" enabled="false" />
 				</f:items>
 			</f:SidePanel>
 		</content>

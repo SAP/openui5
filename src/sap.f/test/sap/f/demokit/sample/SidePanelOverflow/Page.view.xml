@@ -46,7 +46,7 @@
 							<Button text="Touch me" />
 						</VBox>
 					</f:SidePanelItem>
-					<f:SidePanelItem icon="sap-icon://building" text="Go to office" />
+					<f:SidePanelItem icon="sap-icon://building" text="Go to office" enabled="false" />
 					<f:SidePanelItem icon="sap-icon://bed" text="Go to sleep" />
 					<f:SidePanelItem icon="sap-icon://flight" text="Fly abroad" />
 					<f:SidePanelItem icon="sap-icon://cargo-train" text="Travel" />
@@ -55,13 +55,13 @@
 					<f:SidePanelItem icon="sap-icon://create-leave-request" text="Go on vacation" />
 					<f:SidePanelItem icon="sap-icon://family-protection" text="Meet your family" />
 					<f:SidePanelItem icon="sap-icon://lab" text="Do a research" />
-					<f:SidePanelItem icon="sap-icon://theater" text="Go to the theater" />
+					<f:SidePanelItem icon="sap-icon://theater" text="Go to the theater" enabled="false" />
 					<f:SidePanelItem icon="sap-icon://taxi" text="Take a taxi" />
 					<f:SidePanelItem icon="sap-icon://vehicle-repair" text="Repair your car" />
 					<f:SidePanelItem icon="sap-icon://wounds-doc" text="Visit a doctor" />
 					<f:SidePanelItem icon="sap-icon://umbrella" text="Take an umbrella" />
 					<f:SidePanelItem icon="sap-icon://puzzle" text="Solve a puzzle" />
-					<f:SidePanelItem icon="sap-icon://picture" text="Draw a picture" />
+					<f:SidePanelItem icon="sap-icon://picture" text="Draw a picture" enabled="false" />
 				</f:items>
 			</f:SidePanel>
 		</content>
