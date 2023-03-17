@@ -10,7 +10,7 @@
 		 * The followong namespaces don't exist at runtime. They're only documented
 		 * to document the relationship between module and implemented jQuery plugin.
 		 *
-		 * To avoid dtslint errors ('no-empty-interfaces'), they're suppressed 
+		 * To avoid dtslint errors ('no-empty-interfaces'), they're suppressed
 		 * in the dtslint generation.
 		 */
 		"module:sap/ui/dom/jquery/Aria",
@@ -54,6 +54,21 @@
 						"name": "getId",
 						"returnValue": {
 							"type": "string"
+						}
+					}
+				]
+			},
+			{
+				"name": "sap.ui.core.format.DateFormat.DateTimeWithTimezone",
+				"methods": [
+					{
+						"name": "parse",
+						"static": true,
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type":"[Date|import('sap/ui/core/date/UI5Date').default|undefined, string|undefined]|null"
+							}
 						}
 					}
 				]
