@@ -98,7 +98,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("toDateString: on invalid date", function (assert) {
 		var sResult,
-			oDate = new Date("invalid"),
+			oDate = new Date("invalid"), // no need to use UI5Date.getInstance
 			oDateSpy = this.spy(oDate, "toDateString"),
 			oUI5Date = {oDate: oDate};
 
@@ -185,7 +185,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("toString: on invalid date", function (assert) {
 		var sResult,
-			oDate = new Date("invalid"),
+			oDate = new Date("invalid"), // no need to use UI5Date.getInstance
 			oDateSpy = this.spy(oDate, "toString"),
 			oUI5Date = {oDate: oDate};
 
@@ -211,7 +211,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("toTimeString: on invalid date", function (assert) {
 		var sResult,
-			oDate = new Date("invalid"),
+			oDate = new Date("invalid"), // no need to use UI5Date.getInstance
 			oDateSpy = this.spy(oDate, "toTimeString"),
 			oUI5Date = {oDate: oDate};
 
@@ -243,7 +243,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("valueOf: (cannot be mocked)", function (assert) {
-		var oUI5Date = {oDate: new Date()};
+		var oUI5Date = {oDate: new Date()}; // no need to use UI5Date.getInstance
 
 		// code under test
 		assert.strictEqual(UI5Date.prototype.valueOf.call(oUI5Date), oUI5Date.oDate.valueOf());
@@ -257,7 +257,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_getPart: return NaN for invalid dates", function (assert) {
-		var oUI5Date = {oDate: new Date("invalid")};
+		var oUI5Date = {oDate: new Date("invalid")}; // no need to use UI5Date.getInstance
 
 		this.mock(TimezoneUtil).expects("_getParts").never();
 
@@ -267,7 +267,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_getPart", function (assert) {
-		var oDate = new Date(),
+		var oDate = new Date(), // no need to use UI5Date.getInstance
 			oDateParts = {
 				day: "19",
 				era: "A",
@@ -322,6 +322,7 @@ sap.ui.define([
 		var oDateParts = { // other parts are not relevant
 				weekday: oFixture.weekday
 			},
+			// no need to use UI5Date.getInstance
 			oUI5Date = {oDate: new Date(), oDateParts: oDateParts};
 
 		// code under test
@@ -365,7 +366,7 @@ sap.ui.define([
 ].forEach(function (sPart) {
 	QUnit.test("_setParts: invalid date needs year to set parts: " + sPart, function (assert) {
 		var oUI5Date = {
-				oDate: new Date("invalid"),
+				oDate: new Date("invalid"), // no need to use UI5Date.getInstance
 				setTime: function () {}
 			};
 
@@ -405,11 +406,11 @@ sap.ui.define([
 ].forEach(function (oFixture, i) {
 	QUnit.test("_setParts: starting with invalid date, #" + i, function (assert) {
 		var oUI5Date = {
-				oDate: new Date("invalid"),
+				oDate: new Date("invalid"), // no need to use UI5Date.getInstance
 				sTimezoneID: "~timezoneID",
 				setTime: function () {}
 			},
-			oNewDate = new Date(42);
+			oNewDate = new Date(42); // no need to use UI5Date.getInstance
 
 		this.mock(TimezoneUtil).expects("_getDateFromParts")
 			.withExactArgs(oFixture.oExpectedParts)
@@ -505,13 +506,13 @@ sap.ui.define([
 ].forEach(function (oFixture, i) {
 	QUnit.test("_setParts: merging existing date parts, #" + i, function (assert) {
 		var oUI5Date = {
-				oDate: new Date(123),
+				oDate: new Date(123), // no need to use UI5Date.getInstance
 				oDateParts: {day: "25", era: "B", fractionalSecond: "345", hour: "21",
 					minute: "59", month: "11", second: "47", year: "25"},
 				sTimezoneID: "~timezoneID",
 				setTime: function () {}
 			},
-			oNewDate = new Date(42);
+			oNewDate = new Date(42); // no need to use UI5Date.getInstance
 
 		this.mock(TimezoneUtil).expects("_getDateFromParts")
 			.withExactArgs(oFixture.oExpectedParts)
@@ -533,11 +534,11 @@ sap.ui.define([
 		var oDateParts = {day: "25", era: "B", fractionalSecond: "345", hour: "21",
 				minute: "59", month: "11", second: "47", year: "25"},
 			oUI5Date = {
-				oDate: new Date(123),
+				oDate: new Date(123), // no need to use UI5Date.getInstance
 				sTimezoneID: "~timezoneID",
 				setTime: function () {}
 			},
-			oNewDate = new Date(42);
+			oNewDate = new Date(42); // no need to use UI5Date.getInstance
 
 		this.mock(TimezoneUtil).expects("_getParts")
 			.withExactArgs(sinon.match.same(oUI5Date.oDate), "~timezoneID")
@@ -708,7 +709,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("setTime()", function (assert) {
-		var oUI5Date = {oDate: new Date(), oDateParts: "~dateParts"};
+		var oUI5Date = {oDate: new Date(), oDateParts: "~dateParts"}; // no need to use UI5Date.getInstance
 
 		this.mock(oUI5Date.oDate).expects("setTime").withExactArgs("~newValue").returns("~timestamp");
 
@@ -762,7 +763,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_createDateInstance: first argument is a Date instance", function (assert) {
 		var oUI5Date, oValueOfSpy,
-			oDate = new Date(),
+			oDate = new Date(), // no need to use UI5Date.getInstance
 			iValueOf = oDate.valueOf(),
 			oDateSpy = this.spy(window, "Date");
 
@@ -791,7 +792,7 @@ sap.ui.define([
 	[2011, 9, 6, 18, 45, 57, 931],
 	[2011, 9, 6, 18, 45, 57, 931, 1],
 	["2011", "9", "6", "18", "45", "57", "931"],
-	[new Date()]
+	[new Date()] // no need to use UI5Date.getInstance
 ].forEach(function (aArguments) {
 	var sTitle = "getInstance: same time zone, " + aArguments.length + " argument(s)";
 	QUnit.test(sTitle, function (assert) {
@@ -835,6 +836,7 @@ sap.ui.define([
 		assert.ok(oUI5Date instanceof Date, "is also instance of Date");
 		// module:sap/base/util/deepEqual checks constructor before checking instance of date
 		// ensure that constructors are the same
+		// no need to use UI5Date.getInstance as UI5Date has to have the same constructor as Date
 		assert.ok(oUI5Date.constructor === new Date().constructor, "same constructor");
 		assert.ok(UI5Date.prototype !== Date.prototype);
 		// required for example in qunit to identify dates
@@ -865,7 +867,7 @@ sap.ui.define([
 ].forEach(function (aTimestampParts) {
 	QUnit.test("UI5Date: timestamp parts are in local time zone", function (assert) {
 		var oExpectation, oUI5Date,
-			oJSDate = new Date(),
+			oJSDate = new Date(), // no need to use UI5Date.getInstance
 			oJSDateMock = this.mock(oJSDate);
 
 		this.mock(UI5Date).expects("_createDateInstance")
@@ -898,7 +900,7 @@ sap.ui.define([
 	QUnit.test("UI5Date: timestamp string is interpreted as a local timestamp", function (assert) {
 		var oExpectation, oUI5Date,
 			aArguments = [sLocalTimestamp],
-			oJSDate = new Date(),
+			oJSDate = new Date(), // no need to use UI5Date.getInstance
 			oJSDateMock = this.mock(oJSDate);
 
 		this.mock(UI5Date).expects("_createDateInstance")
@@ -938,7 +940,7 @@ sap.ui.define([
 ].forEach(function (sLocalTimestamp) {
 	QUnit.test("UI5Date: timestamp string is interpreted as a UTC timestamp", function (assert) {
 		var aArguments = [sLocalTimestamp],
-			oJSDate = new Date(),
+			oJSDate = new Date(), // no need to use UI5Date.getInstance
 			oJSDateMock = this.mock(oJSDate);
 
 		this.mock(UI5Date).expects("_createDateInstance")
@@ -962,7 +964,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("UI5Date: 1 numeric argument ", function (assert) {
 		var aArguments = [2023], // interpreted as timestamp
-			oJSDate = new Date(),
+			oJSDate = new Date(), // no need to use UI5Date.getInstance
 			oJSDateMock = this.mock(oJSDate);
 
 		this.mock(UI5Date).expects("_createDateInstance")
@@ -986,7 +988,7 @@ sap.ui.define([
 	QUnit.test("UI5Date: timestamp parts contain invalid values", function (assert) {
 		var oUI5Date,
 			aArguments = [2023, "foo"],
-			oJSDate = new Date("invalid"),
+			oJSDate = new Date("invalid"), // no need to use UI5Date.getInstance
 			oJSDateMock = this.mock(oJSDate);
 
 		this.mock(UI5Date).expects("_createDateInstance")
@@ -1191,7 +1193,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("checkDate", function (assert) {
-		var oDate = new Date(),
+		var oDate = new Date(), // no need to use UI5Date.getInstance
 			oConfigurationMock = this.mock(Configuration),
 			oTimezoneUtilMock = this.mock(TimezoneUtil);
 
@@ -1215,7 +1217,7 @@ sap.ui.define([
 
 		// code under test
 		assert.throws(function () {
-			UI5Date.checkDate(new Date("invalid"));
+			UI5Date.checkDate(new Date("invalid")); // no need to use UI5Date.getInstance
 		}, new Error("The given Date is not valid"));
 	});
 

@@ -1,7 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/date/Persian"
-], function(Persian) {
+	"sap/ui/core/date/Persian",
+	"sap/ui/core/date/UI5Date"
+], function(Persian, UI5Date) {
 	"use strict";
 
 	// Test data
@@ -26,7 +27,7 @@ sap.ui.define([
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 11 Dey 1348 (11.10.1348)
 		var oPersianDate = new Persian(); //11 Dey 1348 (11.10.1348)
-		var now = new Date();// 1, January 1970
+		var now = UI5Date.getInstance();// 1, January 1970
 		verifyDate(assert, "Constructor with no parameters must always return the Persian date corresponding to the current " +
 		"Gregorian one.", oPersianDate, 1348, 9, 11, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 		clock.restore();
@@ -42,18 +43,18 @@ sap.ui.define([
 		assert.ok(isInvalid(oPersianDate), "Constructor with object as parameter must return an invalid date");
 
 		oPersianDate = new Persian(0); //1, January 1970 = 11 Dey 1348 (11.10.1348)
-		var now = new Date(0);
+		var now = UI5Date.getInstance(0);
 
 		verifyDate(assert, "Constructor with value(timestamp)=0 must represents PersianDate corresponding to the date of 1st January 1970 Gregorian/(11.10.1348 Persian)",
 				oPersianDate, 1348, 9, 11, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 
 		var iOneDay = 24 * 60 * 60 * 1000;
 		oPersianDate = new Persian(iOneDay); //2, January 1970 = 12 Dey 1348 (11.10.1348)
-		var oGregorianDate = new Date(iOneDay);
+		var oGregorianDate = UI5Date.getInstance(iOneDay);
 		verifyDate(assert, "Constructor with value(timestamp)= 'one day after 01.01.1970' must represents PersianDate corresponding to the date of 2nd January 1970 Gregorian/(10.10.1348 Persian)",
 				oPersianDate, 1348, 9, 12, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
 
-		oGregorianDate = new Date(-iOneDay);
+		oGregorianDate = UI5Date.getInstance(-iOneDay);
 		oPersianDate = new Persian(-iOneDay); //31, December 1969 = 10 Dey 1348 (11.10.1348)
 		verifyDate(assert, "Constructor with value(timestamp)= 'one day before 01.01.1970' must represents PersianDate corresponding to the date of 31st December 1969 Gregorian/(12.10.1348 Persian)",
 				oPersianDate, 1348, 9, 10, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());

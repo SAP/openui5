@@ -1,7 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/date/Islamic", "sap/ui/core/Configuration"
-], function(Islamic, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/Islamic",
+	"sap/ui/core/date/UI5Date"
+], function(Configuration, Islamic, UI5Date) {
 	"use strict";
 
 	//@formatter:off
@@ -177,7 +179,7 @@ sap.ui.define([
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
 		var oIslamicDate = new Islamic(); //22 Shawwal 1389(22.10.1389)
-		var now = new Date();// 1, January 1970
+		var now = UI5Date.getInstance();// 1, January 1970
 		verifyDate(assert, "Constructor with no parameters must always return the Islamic date corresponding to the current " +
 		"Gregorian one.", oIslamicDate, 1389, 9, 22, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 		clock.restore();
@@ -193,18 +195,18 @@ sap.ui.define([
 		assert.ok(isInvalid(oIslamicDate), "Constructor with object as parameter must return an invalid date");
 
 		oIslamicDate = new Islamic(0); //1, January 1970 = 22 Shawwal 1389(22.10.1389)
-		var now = new Date(0);
+		var now = UI5Date.getInstance(0);
 
 		verifyDate(assert, "Constructor with value(timestamp)=0 must represents IslamicDate corresponding to the date of 1st January 1970 Gregorian/(1389/10/22 Islamic)",
 				oIslamicDate, 1389, 9, 22, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 
 		var iOneDay = 24 * 60 * 60 * 1000;
 		oIslamicDate = new Islamic(iOneDay); //2, January 1970 = 23 Shawwal 1389(23.10.1389)
-		var oGregorianDate = new Date(iOneDay);
+		var oGregorianDate = UI5Date.getInstance(iOneDay);
 		verifyDate(assert, "Constructor with value(timestamp)= 'one day after 01.01.1970' must represents IslamicDate corresponding to the date of 2nd January 1970 Gregorian/(1389/10/23 Islamic)",
 				oIslamicDate, 1389, 9, 23, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
 
-		oGregorianDate = new Date(-iOneDay);
+		oGregorianDate = UI5Date.getInstance(-iOneDay);
 		oIslamicDate = new Islamic(-iOneDay); //31, December 1969 = 21 Shawwal 1389(21.10.1389)
 		verifyDate(assert, "Constructor with value(timestamp)= 'one day before 01.01.1970' must represents IslamicDate corresponding to the date of 31st December 1970 Gregorian/(1389/10/21 Islamic)",
 				oIslamicDate, 1389, 9, 21, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
@@ -812,7 +814,7 @@ sap.ui.define([
 		for (sTestDate in testDataset) {
 			var oLocalIslamicDate = createIslamicDateFromTestEntry(testDataset[sTestDate], true);
 			var oExpectedLocalGregorianDate = createGregorianDateFromTestEntry(testDataset[sTestDate], true);
-			var oRealLocalGregorianDate = new Date(oLocalIslamicDate.getTime());
+			var oRealLocalGregorianDate = UI5Date.getInstance(oLocalIslamicDate.getTime());
 			compareTwoDates(assert, "Islamic2Gregorian " + sTestDate, oRealLocalGregorianDate, oExpectedLocalGregorianDate);
 		}
 	}
