@@ -5493,6 +5493,7 @@ sap.ui.define([
 			tooltip: "Tooltip",
 			placeholder: "Placeholder",
 			items: [
+				new SeparatorItem({text: "Group Header"}),
 				new Item({key: "Item1", text: "Item1"}),
 				new Item({key: "Item2", text: "Item2"}),
 				new Item({key: "Item3", text: "Item3"})
@@ -5536,6 +5537,8 @@ sap.ui.define([
 		var oList = oMultiComboBox._getList();
 		assert.ok(oList, "List control available");
 		assert.strictEqual(oList.$("listUl").attr("role"), "listbox", "role='listbox' applied to the list");
+		assert.strictEqual(oList.getItems()[0].$().attr("role"), "group", "role='group' applied to the group header");
+		assert.strictEqual(oList.getItems()[1].$().attr("role"), "option", "role='option' applied to the items");
 
 		oMultiComboBox.close();
 		this.clock.restore();
