@@ -5888,7 +5888,8 @@ sap.ui.define([
 			.expectChange("teamId");
 
 		return this.createView(assert, sView).then(function () {
-			var oOperationBinding = that.oModel.bindContext("/ChangeTeamBudgetByID(...)");
+			var oOperationBinding = that.oModel.bindContext("/ChangeTeamBudgetByID(...)"),
+				oParameterContext = oOperationBinding.getParameterContext();
 
 			oOperationBinding
 				.setParameter("Budget", "1234.1234")
@@ -5897,7 +5898,12 @@ sap.ui.define([
 			that.expectChange("budget", "1,234.1234")
 				.expectChange("teamId", "TEAM_01");
 
-			that.oView.byId("form").setBindingContext(oOperationBinding.getParameterContext());
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2014)
+				oParameterContext.resetChanges();
+			}, new Error("Cannot reset: " + oParameterContext));
+
+			that.oView.byId("form").setBindingContext(oParameterContext);
 
 			return that.waitForChanges(assert);
 		});
@@ -8570,10 +8576,17 @@ sap.ui.define([
 			} else if (i === 1) {
 				that.oModel.resetChanges();
 			} else if (i === 2) {
+				var oHeaderContext = oCreatedContext.getBinding().getHeaderContext();
+
 				assert.throws(function () {
-					// code under test CPOUI5ODATAV4-1880: Scenario (3), resetChanges throws error
+					// code under test (JIRA: CPOUI5ODATAV4-2014)
+					oHeaderContext.resetChanges();
+				}, new Error("Cannot reset: " + oHeaderContext));
+
+				assert.throws(function () {
+					// code under test (JIRA: CPOUI5ODATAV4-1880)
 					oCreatedContext.resetChanges();
-				}, new Error("Cannot reset a transient context: " + oCreatedContext));
+				}, new Error("Cannot reset: " + oCreatedContext));
 
 				return oCreatedContext.delete();
 			}
