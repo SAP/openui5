@@ -3236,6 +3236,8 @@ sap.ui.define([
 	 * @param {function(string,number)} fnOnRemove
 	 *   A function which is called with predicate and index if a kept-alive or created element does
 	 *   no longer exist after refresh; the index is undefined for a non-created element
+	 * @param {boolean} [bDropApply]
+	 *   Whether to drop the "$apply" system query option from the resulting GET
 	 * @returns {Promise|undefined}
 	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
 	 *   fails, or <code>undefined</code> if there are no kept-alive elements.
@@ -3244,7 +3246,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_CollectionCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
+	_CollectionCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove, bDropApply) {
 		var that = this,
 			// Note: at this time only kept-alive and created elements are in the cache, but we
 			// don't care if $byPredicate still contains two entries for the same element
@@ -3263,6 +3265,9 @@ sap.ui.define([
 
 			if (that.mLateQueryOptions) {
 				_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
+			}
+			if (bDropApply) {
+				delete mQueryOptions.$apply;
 			}
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;

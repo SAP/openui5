@@ -622,7 +622,7 @@ sap.ui.define([
 		if (oContext === this.oHeaderContext) {
 			throw new Error("Unsupported header context " + oContext);
 		}
-		if (this.mParameters.$$aggregation) {
+		if (_Helper.isDataAggregation(this.mParameters)) {
 			throw new Error("Unsupported $$aggregation at " + this);
 		}
 		if (this.bSharedRequest) {
@@ -3642,7 +3642,8 @@ sap.ui.define([
 
 	/**
 	 * Sets a new data aggregation object and derives the system query option <code>$apply</code>
-	 * implicitly from it.
+	 * implicitly from it. No context is
+	 * {@link sap.ui.model.odata.v4.Context#setKeepAlive kept alive} anymore.
 	 *
 	 * @param {object} [oAggregation]
 	 *   An object holding the information needed for data aggregation; see also

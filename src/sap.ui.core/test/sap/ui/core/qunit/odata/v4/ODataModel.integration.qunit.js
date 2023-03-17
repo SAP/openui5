@@ -1895,7 +1895,8 @@ sap.ui.define([
 					|| (vRequest.method === "GET" ? null : {});
 			vRequest.url = vRequest.url.replace(/ /g, "%20");
 			if (rCountTrue.test(vRequest.url) && vResponse
-					&& !(vResponse instanceof Promise)) {
+					&& !(vResponse instanceof Error || vResponse instanceof Promise
+						|| typeof vResponse === "function")) {
 				if (!("@odata.count" in vResponse)) {
 					throw new Error('Missing "@odata.count" in response for ' + vRequest.method
 						+ " " + vRequest.url);
@@ -24201,6 +24202,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1849
 	//
 	// Selection on header and root context (JIRA: CPOUI5ODATAV4-1943).
+	//
+	// Root is kept alive and requests messages, then list is refreshed and the kept-alive node is
+	// neither the root nor a leaf anymore ;-)
+	// JIRA: CPOUI5ODATAV4-2030
 	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -24209,6 +24214,7 @@ sap.ui.define([
 				+ "&$select=ArtistID,IsActiveEntity,_/DistanceFromRoot,_/NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
 			oHeaderContext,
+			oKeptAliveNode,
 			oListBinding,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oRoot,
@@ -24438,6 +24444,195 @@ sap.ui.define([
 					}),
 				that.waitForChanges(assert, "side effect: * for single row w/ hierarchy change")
 			]);
+		}).then(function () {
+			checkTable("after side effect", assert, oTable, [
+				"/Artists(ArtistID='0',IsActiveEntity=true)"
+			], [
+				[undefined, 1, "Friend #01 (updated)"],
+				["", "", ""],
+				["", "", ""]
+			]);
+			assert.strictEqual(oRoot.getProperty("defaultChannel"), "260", "360 has been ignored");
+
+			that.expectMessages([]);
+			sap.ui.getCore().getMessageManager().removeAllMessages(); // clean up
+
+			// Note: why is there no separate GET? because we have already loaded messages above!
+			// that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=Messages");
+
+			// code under test
+			oRoot.setKeepAlive(true, /*fnOnBeforeDestroy*/null, /*bRequestMessages*/true);
+
+			oKeptAliveNode = oRoot;
+
+			return that.waitForChanges(assert, "keep alive");
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 7,
+					url : "Artists?$select=ArtistID,IsActiveEntity,Messages,defaultChannel"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true"
+				}, {
+					value : [{
+						ArtistID : "0",
+						BestFriend : {
+							ArtistID : "01",
+							IsActiveEntity : true,
+							Name : "Friend #01 (updated again)"
+						},
+						IsActiveEntity : true,
+						Messages : [],
+						defaultChannel : "460"
+					}]
+				})
+				.expectRequest({
+					batchNo : 7,
+					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+						+ ",NodeProperty='_/NodeID',Levels=1)"
+						+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ "&$count=true&$skip=0&$top=3"
+				}, {
+					"@odata.count" : "1",
+					value : [{
+						ArtistID : "1",
+						BestFriend : null,
+						IsActiveEntity : true,
+						_ : {
+							DrillState : "collapsed",
+							NodeID : "1,true"
+						}
+					}]
+				});
+
+			return Promise.all([
+				// Note: "Cannot refresh " + oRoot + " when using data aggregation"
+				// code under test
+				oListBinding.requestRefresh(),
+				that.waitForChanges(assert, "refresh w/ kept-alive root")
+			]);
+		}).then(function () {
+			var oError = new Error("418 I'm a teapot");
+
+			checkTable("after refresh w/ kept-alive root", assert, oTable, [
+				"/Artists(ArtistID='1',IsActiveEntity=true)",
+				"/Artists(ArtistID='0',IsActiveEntity=true)"
+			], [
+				[false, 1, ""],
+				["", "", ""],
+				["", "", ""]
+			], 1);
+			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
+				"still kept alive");
+			assert.deepEqual(oKeptAliveNode.getObject(), {
+					ArtistID : "0",
+					BestFriend : {
+						ArtistID : "01",
+						IsActiveEntity : true,
+						Name : "Friend #01 (updated again)"
+					},
+					IsActiveEntity : true,
+					Messages : [],
+					_ : {
+						NodeID : "0,true"
+					},
+					defaultChannel : "460"
+				}, "after refresh");
+
+			// refresh via side effect fails
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,defaultChannel"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", oError)
+				.expectRequest("Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='_/NodeID',Levels=1)"
+					+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$count=true&$skip=0&$top=3", oError)
+				.expectMessages([{
+					message : oError.message,
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to refresh kept-alive elements", sinon.match(oError.message),
+					sODLB);
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to get contexts for /special/cases/Artists with start index"
+					+ " 0 and length 3", sinon.match(oError.message), sODLB);
+
+			return Promise.all([
+				// code under test
+				// Note: $direct avoids "HTTP request was not processed because $batch failed"
+				oListBinding.getHeaderContext().requestSideEffects([""], "$direct")
+					.then(mustFail(assert), function (oError0) {
+						assert.strictEqual(oError0, oError);
+					}),
+				that.waitForChanges(assert, "failed side-effects refresh w/ kept-alive node")
+			]);
+		}).then(function () {
+			checkTable("after failed side-effects refresh w/ kept-alive node", assert, oTable, [
+				"/Artists(ArtistID='1',IsActiveEntity=true)",
+				"/Artists(ArtistID='0',IsActiveEntity=true)"
+			], [
+				[false, 1, ""],
+				["", "", ""],
+				["", "", ""]
+			], 1);
+
+			that.expectRequest("Artists?$apply=descendants($root/Artists,OrgChart,_/NodeID"
+						+ ",filter(ArtistID eq '1' and IsActiveEntity eq true),1)"
+					+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$count=true&$skip=0&$top=3", {
+					"@odata.count" : "1",
+					value : [{
+						ArtistID : "0",
+						BestFriend : {
+							ArtistID : "01",
+							IsActiveEntity : true,
+							Name : "Friend #01 (updated once more)"
+						},
+						IsActiveEntity : true,
+						_ : {
+							DrillState : "collapsed",
+							NodeID : "0,true"
+						}
+					}]
+				});
+
+			oListBinding.getCurrentContexts()[0].expand();
+
+			return that.waitForChanges(assert, "expand");
+		}).then(function () {
+			checkTable("after expand", assert, oTable, [
+				"/Artists(ArtistID='1',IsActiveEntity=true)",
+				"/Artists(ArtistID='0',IsActiveEntity=true)"
+			], [
+				[true, 1, ""],
+				[false, 2, "Friend #01 (updated once more)"],
+				["", "", ""]
+			]);
+			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
+				"still kept alive");
+			assert.deepEqual(oKeptAliveNode.getObject(), {
+					"@$ui5.node.isExpanded" : false,
+					"@$ui5.node.level" : 2,
+					ArtistID : "0",
+					BestFriend : {
+						ArtistID : "01",
+						IsActiveEntity : true,
+						Name : "Friend #01 (updated once more)"
+					},
+					IsActiveEntity : true,
+					Messages : [],
+					_ : {
+						NodeID : "0,true"
+					},
+					defaultChannel : "460"
+				}, "after expand");
 		});
 	});
 

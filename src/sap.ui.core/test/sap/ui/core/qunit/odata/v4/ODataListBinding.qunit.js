@@ -8378,12 +8378,24 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkKeepAlive: $$aggregation", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
-				{$$aggregation : {}});
+				{$$aggregation : {}}); // Note: no hierarchyQualifier!
 
 		assert.throws(function () {
 			// code under test
 			oBinding.checkKeepAlive({/*oContext*/});
 		}, new Error("Unsupported $$aggregation at " + oBinding));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkKeepAlive: $$aggregation w/ hierarchyQualifier", function () {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+
+		// code under test (look, Ma - no error!)
+		oBinding.checkKeepAlive({/*oContext*/});
 	});
 
 	//*********************************************************************************************

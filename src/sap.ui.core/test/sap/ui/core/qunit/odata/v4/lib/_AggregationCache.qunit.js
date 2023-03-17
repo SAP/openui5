@@ -312,7 +312,8 @@ sap.ui.define([
 			oCache,
 			oEnhanceCacheWithGrandTotalExpectation,
 			oFirstLevelCache = {
-				requestSideEffects : "~requestSideEffects~"
+				requestSideEffects : "~requestSideEffects~",
+				restore : "~restore~"
 			},
 			oGetDownloadUrlExpectation,
 			oGrandTotal = {},
@@ -391,6 +392,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
 		assert.strictEqual(oCache.requestSideEffects, oFirstLevelCache.requestSideEffects,
 			"@borrows ...");
+		assert.strictEqual(oCache.restore, oFirstLevelCache.restore, "@borrows ...");
 		if (bCountLeaves) {
 			assert.strictEqual(oCache.mQueryOptions.$$leaves, true);
 			assert.ok(oCache.oCountPromise instanceof SyncPromise);
@@ -3149,16 +3151,132 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("addElements: known predicate -> kept element", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {}),
+			aElements = [{},, {}],
+			oElement = {},
+			oKeptElement = {};
+
+		oCache.aElements = aElements.slice();
+		oCache.aElements.$byPredicate = {"(1)" : oKeptElement};
+		_Helper.setPrivateAnnotation(oElement, "predicate", "(1)");
+		this.mock(_Helper).expects("updateNonExisting")
+			.withExactArgs(sinon.match.same(oElement), sinon.match.same(oKeptElement));
+
+		// code under test
+		oCache.addElements(oElement, 1, "~parent~", 42);
+
+		assert.strictEqual(oCache.aElements.length, 3);
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
+		assert.strictEqual(oCache.aElements[1], oElement);
+		assert.strictEqual(oCache.aElements[2], aElements[2]);
+		assert.deepEqual(oCache.aElements.$byPredicate, {"(1)" : oElement}, "no others");
+		assert.strictEqual(oCache.aElements.$byPredicate["(1)"], oElement, "right reference");
+		assert.deepEqual(oElement,
+			{"@$ui5._" : {index : 42, parent : "~parent~", predicate : "(1)"}});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refreshKeptElements", function (assert) {
-		var oAggregation = { // filled before by buildApply
-				aggregate : {},
-				group : {},
-				groupLevels : ["a"]
+		var oAggregation = {
+				hierarchyQualifier : "X"
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 
+		this.mock(oCache.oFirstLevel).expects("refreshKeptElements").on(oCache)
+			.withExactArgs("~oGroupLock~", "~fnOnRemove~", /*bDropApply*/true)
+			.returns("~result~");
+
+		assert.strictEqual(
+			// code under test
+			oCache.refreshKeptElements("~oGroupLock~", "~fnOnRemove~", "~bDropApply~"),
+			"~result~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reset", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oFirstLevelMock = this.mock(oCache.oFirstLevel),
+			aKeptElementPredicates = ["foo", "bar"];
+
+		oCache.aElements.$byPredicate = {
+			bar : {
+				"@$ui5._" : {a : 0, b : 1, predicate : "bar"},
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.isTotal" : "n/a",
+				"@$ui5.node.level" : 1,
+				name : "bar"
+			},
+			baz : {
+				"@$ui5._" : {a : -1, b : 2, predicate : "baz"},
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.isTotal" : "n/a",
+				"@$ui5.node.level" : 2,
+				name : "baz"
+			},
+			foo : {
+				"@$ui5._" : {a : -2, b : 3, predicate : "foo"},
+				"@$ui5.node.isExpanded" : undefined,
+				"@$ui5.node.isTotal" : "n/a",
+				"@$ui5.node.level" : 3,
+				name : "foo"
+			}
+		};
+		oFirstLevelMock.expects("reset").on(oCache)
+			.withExactArgs(sinon.match.same(aKeptElementPredicates), "~group~");
+		oFirstLevelMock.expects("reset").on(oCache.oFirstLevel).withExactArgs([]);
+
 		// code under test
-		assert.strictEqual(oCache.refreshKeptElements(), undefined);
+		oCache.reset(aKeptElementPredicates, "~group~");
+
+		assert.deepEqual(oCache.aElements.$byPredicate, {
+			bar : {
+				"@$ui5._" : {predicate : "bar"},
+				"@$ui5.node.isTotal" : "n/a",
+				name : "bar"
+			},
+			baz : {
+				"@$ui5._" : {a : -1, b : 2, predicate : "baz"},
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.isTotal" : "n/a",
+				"@$ui5.node.level" : 2,
+				name : "baz"
+			},
+			foo : {
+				"@$ui5._" : {predicate : "foo"},
+				"@$ui5.node.isTotal" : "n/a",
+				name : "foo"
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reset: placeholder", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oFirstLevelMock = this.mock(oCache.oFirstLevel),
+			aKeptElementPredicates = ["foo"];
+
+		oCache.aElements.$byPredicate = {foo : {}};
+		oFirstLevelMock.expects("reset").on(oCache)
+			.withExactArgs(sinon.match.same(aKeptElementPredicates), "~group~");
+		oFirstLevelMock.expects("reset").on(oCache.oFirstLevel).withExactArgs([]);
+		this.mock(_Helper).expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oCache.aElements.$byPredicate.foo), "placeholder")
+			.returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oCache.reset(aKeptElementPredicates, "~group~");
+		}, new Error("Unexpected placeholder"));
 	});
 
 	//*********************************************************************************************
