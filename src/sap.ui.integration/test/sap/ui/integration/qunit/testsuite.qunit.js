@@ -1,9 +1,23 @@
-sap.ui.define(function () {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery"
+	], function (jQuery) {
 	"use strict";
+
+	// check whether suite-ui-commons is available
+	var bSuiteUiCommonsAvailable = false;
+	jQuery.ajax({
+		type: "HEAD",
+		url: sap.ui.require.toUrl("sap/suite/ui/commons/library.js"),
+		async: false,
+		success: function() {
+			bSuiteUiCommonsAvailable = true;
+		}
+	});
 
 	return {
 		name: "QUnit TestSuite for sap.ui.integration",
 		defaults: {
+			skip: bSuiteUiCommonsAvailable,
 			qunit: {
 				version: "edge"
 			},
@@ -173,7 +187,9 @@ sap.ui.define(function () {
 			"cards/ListCard": {},
 			"cards/TableCard": {},
 			"cards/ObjectCard": {},
-			"cards/TimelineCard": {},
+			"cards/TimelineCard": {
+				skip: !bSuiteUiCommonsAvailable
+			},
 			"cards/WebPageCard": {},
 			"cards/AnalyticsCloudContent": {
 				coverage: {
