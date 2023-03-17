@@ -156,6 +156,34 @@ sap.ui.define([
 		testApplyTheme(assert, "sap_hcb");
 	});
 
+	QUnit.test("Provide custom css using metadata of custom lib after core was booted and theme fully applied", function(assert) {
+		assert.expect(3);
+		var mExpectedLinkURIs = {
+			"sap-ui-theme-sap.ui.core": "/sap/ui/core/themes/sap_hcb/library.css", // Fallback to sap_hcb for core lib because of theme metadata
+			"sap-ui-theme-testlibs.customCss.lib1": "/libraries/customCss/lib1/themes/customTheme/library.css"
+		};
+		var checkLoadedCss = function () {
+			var aAllThemeLinksForLibs = document.querySelectorAll("link[id^=sap-ui-theme]");
+			var aCustomCssLink = document.querySelectorAll("link[id=" + ThemeManager._CUSTOMID + "]");
+			aAllThemeLinksForLibs.forEach(function ($link) {
+				// Depending on order of test execution there could be more link tags as expected by this test
+				// Only do asserts here for the expected link tags and check for complete test execution by assert.expect
+				if (mExpectedLinkURIs[$link.id]) {
+					assert.ok($link.getAttribute("href").endsWith(mExpectedLinkURIs[$link.id]), "URI of library.css link tag is correct");
+				}
+			});
+			assert.ok(aCustomCssLink[0].getAttribute("href")
+				.endsWith("/libraries/customCss/sap/ui/core/themes/customTheme/custom.css"), "URI of custom.css link tag is correct");
+		};
+		ThemeManager.applyTheme("customTheme");
+
+		return themeApplied().then(function () {
+			return sap.ui.getCore().loadLibrary("testlibs.customCss.lib1", true).then(function () {
+				return themeApplied().then(checkLoadedCss);
+			});
+		});
+	});
+
 	QUnit.test("RTL switch doesn't use suppress FOUC feature", function(assert) {
 
 		Configuration.setRTL(true);
