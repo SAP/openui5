@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/form/GridElementData",
@@ -9,6 +9,9 @@ sap.ui.require([
 	"sap/ui/core/Item",
 	"sap/ui/core/ListItem",
 	"sap/m/Button",
+	"sap/m/CheckBox",
+	"sap/m/FormattedText",
+	"sap/m/Link",
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Label",
@@ -18,8 +21,7 @@ sap.ui.require([
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/model/json/JSONModel"
 	],
 	function(
 		SimpleForm,
@@ -32,6 +34,9 @@ sap.ui.require([
 		Item,
 		ListItem,
 		Button,
+		CheckBox,
+		FormattedText,
+		Link,
 		Title,
 		ToolbarSpacer,
 		Label,
@@ -41,8 +46,7 @@ sap.ui.require([
 		HBox,
 		VBox,
 		Sorter,
-		JSONModel,
-		jQuery
+		JSONModel
 	){
 
 		"use strict";
@@ -99,10 +103,10 @@ sap.ui.require([
 			placeholder: "Error value message text with link",
 			valueState: "Error",
 			width: "300px",
-			formattedValueStateText: new sap.m.FormattedText({
+			formattedValueStateText: new FormattedText({
 				htmlText: "Error value state message with formatted text containing %%0",
 				controls: [
-					new sap.m.Link({
+					new Link({
 						text: "link",
 						href: "https://www.sap.com"
 					})
@@ -120,10 +124,10 @@ sap.ui.require([
 			placeholder: "Information value message text with link",
 			valueState: "Information",
 			width: "300px",
-			formattedValueStateText: new sap.m.FormattedText({
+			formattedValueStateText: new FormattedText({
 				htmlText: "Information value state message with formatted text containing %%0",
 				controls: [
-					new sap.m.Link({
+					new Link({
 						text: "link",
 						href: "https://www.sap.com"
 					})
@@ -408,11 +412,11 @@ sap.ui.require([
 			}
 		});
 
-		var theCompactMode = new sap.m.CheckBox("compactMode", {
+		var theCompactMode = new CheckBox("compactMode", {
 			text: "Compact Mode",
 			selected : false,
 			select : function() {
-				jQuery("body").toggleClass("sapUiSizeCompact");
+				document.body.classList.toggle("sapUiSizeCompact");
 			}
 		});
 

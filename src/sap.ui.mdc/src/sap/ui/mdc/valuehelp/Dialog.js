@@ -298,7 +298,7 @@ sap.ui.define([
 			aContentPromises.push(this._getIconTabBar(oDialog));
 		} else {
 			if (!this._oStandaloneTab) {
-				this._oStandaloneTab = new DialogTab(this.getId() + "-Standalone-DT", {content: {path: "/_selectableContents/0/displayContent", model: "$help"}, layoutData: new sap.m.FlexItemData({growFactor: 1, minHeight: "0"})});
+				this._oStandaloneTab = new DialogTab(this.getId() + "-Standalone-DT", {content: {path: "/_selectableContents/0/displayContent", model: "$help"}, layoutData: new FlexItemData({growFactor: 1, minHeight: "0"})});
 			}
 			aContentPromises.push(this._oStandaloneTab);
 		}

@@ -14,6 +14,9 @@ sap.ui.define([
 	// shortcut for sap.m.PageBackgroundDesign
 	var PageBackgroundDesign = library.PageBackgroundDesign;
 
+	// shortcut for sap.m.WizardRenderMode
+	var WizardRenderMode = library.WizardRenderMode;
+
 	QUnit.module("Wizard Public API", {
 		sWizardId: "wizard-id",
 		oSpies: {},
@@ -1280,8 +1283,8 @@ sap.ui.define([
 				oBtn
 			]
 		});
-		var oWizard = new sap.m.Wizard({
-			renderMode: sap.m.WizardRenderMode.Page,
+		var oWizard = new Wizard({
+			renderMode: WizardRenderMode.Page,
 			steps: [
 				new WizardStep({
 					title:"Step 1"

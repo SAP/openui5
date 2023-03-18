@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define(
 	[
-		"sap/ui/core/ValueState",
+		"sap/ui/core/library",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
@@ -9,8 +9,11 @@ sap.ui.define(
 		"./pages/contextVisibility/ContextSharingVisibilityFragment",
 		"./pages/AppPage"
 	],
-	function(ValueState, opaTest, Opa5) {
+	function(coreLibrary, opaTest, Opa5) {
 		"use strict";
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		var arrangements = new Opa5({
 			iStartMyApp: function() {

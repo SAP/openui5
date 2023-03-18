@@ -2214,8 +2214,8 @@ sap.ui.define([
 		var oInput = new Input({
 			showSuggestion : true,
 			suggestionColumns : [
-				new sap.m.Column({
-					header : new sap.m.Label({text : "A"})
+				new Column({
+					header : new Label({text : "A"})
 				})
 			],
 			suggestionItemSelected: function (oEvent) {
@@ -2241,9 +2241,9 @@ sap.ui.define([
 		oInput.setModel(new sap.ui.model.json.JSONModel(aData));
 		oInput.bindAggregation("suggestionRows", {
 			path : "/",
-			template : new sap.m.ColumnListItem({
+			template : new ColumnListItem({
 				cells : [
-					new sap.m.Label({text : "{a}"})
+					new Label({text : "{a}"})
 				]
 			})
 		});
@@ -5568,13 +5568,13 @@ sap.ui.define([
 				{key: "key9", value: "test9"}
 			]
 		};
-		var oModel = new sap.ui.model.json.JSONModel();
-		var oInput = new sap.m.Input("dynamic-input", {
+		var oModel = new JSONModel();
+		var oInput = new Input("dynamic-input", {
 			showSuggestion: true,
 			filterSuggests: false,
 			suggestionItems: {
 				path: "/items",
-				template: new sap.ui.core.Item({key: "{key}", text: "{value}"})
+				template: new Item({key: "{key}", text: "{value}"})
 			},
 			suggest: function (oEvent) {
 				var aItems = oData.items.filter(function(oItem) {

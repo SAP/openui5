@@ -1,32 +1,33 @@
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	"jquery.sap.global",
-	"sap/ui/thirdparty/sinon"
-], function (ManagedObject, jQuery, sinon) {
+	"sap/ui/base/ManagedObject",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon",
+	"require"
+], function (ManagedObject, jQuery, sinon, require) {
 	"use strict";
 
-	return ManagedObject.extend("sap.ovp.Mockserver.mockServer", {
+	return ManagedObject.extend("sap.m.sample.UploadSetCloudUpload.mockserver.mockServer", {
 		started: null,
 		init: function () {
-			this.started = jQuery.get("test-resources/sap/m/demokit/sample/UploadSetCloudUpload/mockserver/FileShareItems.json").then(function (data, status, jqXHR) {
+			this.started = jQuery.get(require.toUrl("./FileShareItems.json")).then(function (data, status, jqXHR) {
 				this.mockData = data;
-				return jQuery.get("test-resources/sap/m/demokit/sample/UploadSetCloudUpload/mockserver/metadata.xml");
+				return jQuery.get(require.toUrl("./metadata.xml"));
 			}.bind(this)).then(function (data, status, jqXHR) {
 				this.metadata = jqXHR.responseText;
 
-				var fServer = sinon.fakeServer.create();
-				fServer.autoRespond = true;
-				fServer.xhr.useFilters = true;
+				var oServer = sinon.fakeServer.create();
+				oServer.autoRespond = true;
+				oServer.xhr.useFilters = true;
 
-				fServer.xhr.addFilter(function (method, url) {
+				oServer.xhr.addFilter(function (method, url) {
 					// whenever the this returns true the request will not faked
 					return !url.match(/\/sap\/opu\/odata4\//);
 				});
 				var metaData = this.metadata;
 				var mockData = this.mockData;
-				generateResponse(fServer);
-				function generateResponse(fServer) {
-					fServer.respondWith("GET", RegExp("/sap","i"), function (xhr, id) {
+				generateResponse(oServer);
+				function generateResponse(oServer) {
+					oServer.respondWith("GET", RegExp("/sap","i"), function (xhr, id) {
 						if (xhr.url.indexOf("metadata") > -1) {
 							return xhr.respond(200, {
 								"Content-Type": "application/xml",
@@ -34,7 +35,7 @@ sap.ui.define([
 							}, metaData);
 						}
 					});
-					fServer.respondWith("POST", RegExp("/sap","i"), function (xhr, id) {
+					oServer.respondWith("POST", RegExp("/sap","i"), function (xhr, id) {
 						var rBatch = new RegExp("\\$batch([?#].*)?");
 						var obj = {};
 						obj['@odata.context'] = mockData["@odata.context"];
@@ -100,21 +101,21 @@ sap.ui.define([
 				}
 
 				// Building string for each GET response in $batch request
-			function fnBuildResponseString(oResponse, sContentType) {
-				var sResponseData;
+				function fnBuildResponseString(oResponse, sContentType) {
+					var sResponseData;
 
-				sResponseData = JSON.stringify(oResponse) || "";
-				// default the content type to application/json
-				sContentType = sContentType || "application/json;ieee754compatible=true;odata.metadata=minimal";
+					sResponseData = JSON.stringify(oResponse) || "";
+					// default the content type to application/json
+					sContentType = sContentType || "application/json;ieee754compatible=true;odata.metadata=minimal";
 
-				// if a content type is defined we override the incoming response content type
-				return (
-					'HTTP/1.1 ' +
-					'200 OK' +
-					'\r\nContent-Type:' + sContentType + '\r\nContent-Length: ' + sResponseData.length + '\r\nodata-version: 4.0' +
-					'\r\ncache-control: no-cache, no-store, must-revalidate\r\n\r\n' + sResponseData + '\r\n'
-				);
-			}
+					// if a content type is defined we override the incoming response content type
+					return (
+						'HTTP/1.1 ' +
+						'200 OK' +
+						'\r\nContent-Type:' + sContentType + '\r\nContent-Length: ' + sResponseData.length + '\r\nodata-version: 4.0' +
+						'\r\ncache-control: no-cache, no-store, must-revalidate\r\n\r\n' + sResponseData + '\r\n'
+					);
+				}
 			}.bind(this));
 		}
 	});

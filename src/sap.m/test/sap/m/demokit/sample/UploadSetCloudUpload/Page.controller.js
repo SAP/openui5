@@ -1,16 +1,18 @@
 sap.ui.define([
 	"sap/m/library",
+	"sap/m/upload/Uploader",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/upload/Uploader",
-	"sap/m/sample/UploadSetCloudUpload/mockserver/mockServer"
-], function (MobileLibrary, Controller, Item, JSONModel, Uploader, MockServer) {
+	"sap/ui/model/odata/v4/ODataModel",
+	"./mockserver/mockServer",
+	"require"
+], function (MobileLibrary, Uploader, Controller, Item, JSONModel, ODataModel, MockServer, require) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadSetCloudUpload.Page", {
 		onInit: function () {
-			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadSet/items.json");
+			var sPath = require.toUrl("./items.json");
 
 			this.getView().setModel(new JSONModel(sPath));
 
@@ -33,7 +35,7 @@ sap.ui.define([
 					select: oUploadSet._onCloudPickerFileChange.bind(oUploadSet)
 				});
 
-				var oModel = new sap.ui.model.odata.v4.ODataModel({
+				var oModel = new ODataModel({
 				 serviceUrl: oCloudPickerInstance.getContent()[0].getModel().sServiceUrl,
 				 synchronizationMode: "None",
 				 earlyRequests: false

@@ -797,7 +797,7 @@ sap.ui.define([
 					contentHeight: "300px",
 					resizable: true,
 					content: oSeparatePreview,
-					endButton: new sap.m.Button({
+					endButton: new Button({
 						text: "Close",
 						press: function () {
 							oSeparatePreviewDialog.destroyContent();

@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/mdc/enum/EditMode",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element"
-], function(jQuery,
+], function(
 	qutils,
 	Device,
 	EditMode,

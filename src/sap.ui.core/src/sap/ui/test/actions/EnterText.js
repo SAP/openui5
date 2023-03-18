@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/base/util/extend",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/test/actions/Action",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
-], function (ManagedObject, Action, KeyCodes, jQueryDOM) {
+], function (extend, ManagedObject, Action, KeyCodes, jQuery) {
 	"use strict";
 
 	/**
@@ -85,7 +86,7 @@ sap.ui.define([
 
 		init: function () {
 			Action.prototype.init.apply(this, arguments);
-			this.controlAdapters = jQueryDOM.extend(this.controlAdapters, EnterText.controlAdapters);
+			this.controlAdapters = extend(this.controlAdapters, EnterText.controlAdapters);
 		},
 
 		/**

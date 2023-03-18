@@ -3560,28 +3560,28 @@ sap.ui.define([
 					content: '<div>Lipsum limple text</div>'
 				}),
 				buttons: [
-					new sap.m.Button({
+					new Button({
 						text: "Accept"
 					}),
-					new sap.m.Button({
+					new Button({
 						text: "Reject",
 						icon: "sap-icon://employee"
 					})
 				],
-				footer: new sap.m.Toolbar({
-					content: [new sap.m.Button({
+				footer: new Toolbar({
+					content: [new Button({
 							icon: "sap-icon://error",
 							type: "Negative",
 							text: "2"
 						}),
-						new sap.m.Button({
+						new Button({
 							type: "Emphasized",
 							text: "Accept",
 							press: function () {
 								this.getParent().getParent().close();
 							}
 						}),
-						new sap.m.Button({
+						new Button({
 							text: "Reject"
 						})
 					]

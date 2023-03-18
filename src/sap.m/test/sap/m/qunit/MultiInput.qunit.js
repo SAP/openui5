@@ -1734,7 +1734,7 @@ sap.ui.define([
 			text: {path: "text"}
 		});
 
-		var oMI = new sap.m.MultiInput({
+		var oMI = new MultiInput({
 			tokens: {path: "/items", template: oTokenTemplate},
 			tokenUpdate: function(oEvent){
 				if (oEvent.getParameter("type") === "removed") {

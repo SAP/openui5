@@ -646,7 +646,7 @@ sap.ui.define([
 				new Message({
 					message: "Something wrong happend!",
 					description: "Some Description",
-					type: sap.ui.core.MessageType.Warning,
+					type: MessageType.Warning,
 					processor: new JSONModel()
 				})
 			);

@@ -9753,21 +9753,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("The tokens are rendered in the order they have been added in selectectedItems after opening the picker", function (assert) {
-		var items = [new sap.ui.core.Item({
+		var items = [new Item({
 			text : "Algeria"
-		}), new sap.ui.core.Item({
+		}), new Item({
 			text : "Bulgaria"
-		}), new sap.ui.core.Item({
+		}), new Item({
 			text : "Canada"
-		}), new sap.ui.core.Item({
+		}), new Item({
 			text : "Denmark"
-		}), new sap.ui.core.Item({
+		}), new Item({
 			text : "Estonia"
 		})];
 
 		var aSelection = [items[0], items[4], items[2], items[3], items[1]];
 		var aSelectedCountries = aSelection.map(function (itm) { return itm.getText(); });
-		var oMCB = new sap.m.MultiComboBox({
+		var oMCB = new MultiComboBox({
 			items : items,
 			selectedItems : aSelection
 			});

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/strings/formatMessage",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/ValueState",
+	"sap/ui/core/library",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
@@ -19,7 +19,7 @@ sap.ui.define([
 	Log,
 	formatMessage,
 	Fragment,
-	ValueState,
+	coreLibrary,
 	Layer,
 	ContextBasedAdaptationsAPI,
 	ContextSharingAPI,
@@ -28,6 +28,9 @@ sap.ui.define([
 	JSONModel
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Controller for the <code>sap.ui.rta.toolbar.contextBased.SaveAsAdaptation</code> controls.
