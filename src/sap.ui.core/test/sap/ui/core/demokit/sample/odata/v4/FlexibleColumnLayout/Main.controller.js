@@ -86,6 +86,7 @@ sap.ui.define([
 				that = this;
 
 			oContext.created().then(function () {
+				that.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
 				MessageToast.show("Sales Order with "
 					+ that.byId("SO_2_SOITEM").getBinding("items").getLength() + " items created: "
 					+ oContext.getProperty("SalesOrderID"));

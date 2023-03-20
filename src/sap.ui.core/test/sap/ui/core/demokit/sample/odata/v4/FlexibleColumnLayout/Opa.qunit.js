@@ -337,6 +337,10 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkGrossAmount("10,632.66");
 				Then.onTheObjectPage.checkSalesOrderItem(0, "0000000010", "2.000");
 				Then.onTheObjectPage.checkSalesOrderItem(1, "0000000020", "4.000");
+				Then.onTheApplication.checkSubObjectPageNotVisible();
+
+				When.onTheObjectPage.selectSalesOrderItem(1);
+				Then.onTheSubObjectPage.checkQuantity("4.000");
 
 				When.onTheSubObjectPage.changeQuantity("3");
 				When.onTheApplication.pressSave();

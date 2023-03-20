@@ -5676,88 +5676,76 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bHasSelect) {
-	QUnit.test("Cache#updateNestedCreates: " + bHasSelect, function (assert) {
+[
+	{count : 1, select : undefined},
+	{count : 3, select : "~select~"}
+].forEach(function (oFixture) {
+	QUnit.test("Cache#updateNestedCreates: " + JSON.stringify(oFixture), function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
-			oChildEntity0 = {
-				"@$ui5.context.isTransient" : true
-			},
-			oChildEntity1 = {
-				"@$ui5.context.isTransient" : true
-			},
-			oCreatedChildEntity0 = {},
-			oCreatedChildEntity1 = {},
 			oEntity = {
 				added : null,
-				deepCreateCollection : [oChildEntity0, oChildEntity1],
+				deepCreateCollection :
+					["~child0~", "~child1~", "~child2~"].slice(0, oFixture.count),
 				property : 42,
 				otherCollection : []
 			},
 			oCreatedEntity = {
 				added : "foo",
-				deepCreateCollection : [oCreatedChildEntity0, oCreatedChildEntity1],
+				deepCreateCollection : ["~created0~", "~created1~"],
 				property : 42
 			},
 			oHelperMock = this.mock(_Helper),
 			mQueryOptions = {$select : "~select~"},
-			fnResolve = [sinon.spy(), sinon.spy()];
+			aResolve = [sinon.spy(), sinon.spy(), sinon.spy()],
+			i;
 
-		function expectUpdates(oChildEntity, oCreatedChildEntity, i) {
-			oHelperMock.expects("getPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oCreatedChildEntity), "predicate")
-				.returns("~predicate~" + i);
-			oHelperMock.expects("getPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oChildEntity), "resolve")
-				.returns(fnResolve[i]);
-			oHelperMock.expects("getPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oChildEntity), "transientPredicate")
-				.returns("~transientPredicate~" + i);
-			oHelperMock.expects("updateTransientPaths")
-				.withExactArgs(sinon.match.same(oCache.mChangeListeners),
-					"~transientPredicate~" + i, "~predicate~" + i);
-			oHelperMock.expects("updateSelected")
-				.withExactArgs(sinon.match.same(oCache.mChangeListeners),
-					"path/to/entity/deepCreateCollection" + "~predicate~" + i,
-					sinon.match.same(oChildEntity), sinon.match.same(oCreatedChildEntity),
-					"~select~", undefined, true);
-			oHelperMock.expects("deletePrivateAnnotation")
-				.withExactArgs(sinon.match.same(oChildEntity), "postBody");
-			oHelperMock.expects("deletePrivateAnnotation")
-				.withExactArgs(sinon.match.same(oChildEntity), "resolve");
-			oHelperMock.expects("deletePrivateAnnotation")
-				.withExactArgs(sinon.match.same(oChildEntity), "reject");
-			oHelperMock.expects("deletePrivateAnnotation")
-				.withExactArgs(sinon.match.same(oChildEntity), "transient");
-		}
-
-		oEntity.deepCreateCollection.$byPredicate = {};
+		oEntity.deepCreateCollection.$byPredicate = {foo : "bar"};
+		oEntity.deepCreateCollection.$count = oEntity.deepCreateCollection.$created = 2;
 		oEntity.deepCreateCollection.$postBodyCollection = "~postBodyCollection~";
+		oEntity.deepCreateCollection.$select = oFixture.select;
 		oEntity.otherCollection.$postBodyCollection = "~postBodyCollection~";
-		if (bHasSelect) {
-			oEntity.deepCreateCollection.$select = "~select~";
-		}
 
-		oHelperMock.expects("getQueryOptionsForPath").exactly(bHasSelect ? 0 : 1)
+		oHelperMock.expects("getQueryOptionsForPath").exactly(oFixture.select ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions),
 				"path/to/entity/deepCreateCollection")
 			.returns(mQueryOptions);
-		expectUpdates(oChildEntity0, oCreatedChildEntity0, 0);
-		expectUpdates(oChildEntity1, oCreatedChildEntity1, 1);
+		oEntity.deepCreateCollection.forEach(function (oChildEntity, i) {
+			oHelperMock.expects("getPrivateAnnotation").withExactArgs(oChildEntity, "resolve")
+				.returns(aResolve[i]);
+		});
+		oCreatedEntity.deepCreateCollection.forEach(function (oCreatedChildEntity, i) {
+			oHelperMock.expects("getPrivateAnnotation")
+				.withExactArgs(oCreatedChildEntity, "predicate").returns("~predicate~" + i);
+			oHelperMock.expects("updateSelected")
+				.withExactArgs({}, "path/to/entity/deepCreateCollection~predicate~" + i,
+					{}, oCreatedChildEntity, "~select~", undefined, true)
+				.callsFake(function () {
+					arguments[2].origin = arguments[3];
+				});
+		});
 
 		// code under test
 		oCache.updateNestedCreates("path/to/entity", oEntity, oCreatedEntity);
 
-		assert.strictEqual(oEntity.deepCreateCollection.$byPredicate["~predicate~0"],
-			oChildEntity0);
-		assert.strictEqual(oEntity.deepCreateCollection.$byPredicate["~predicate~1"],
-			oChildEntity1);
-		assert.notOk("@$ui5.context.isTransient" in oChildEntity0);
-		assert.notOk("@$ui5.context.isTransient" in oChildEntity1);
-		sinon.assert.calledWithExactly(fnResolve[0], sinon.match.same(oChildEntity0));
-		sinon.assert.calledWithExactly(fnResolve[1], sinon.match.same(oChildEntity1));
+		assert.deepEqual(oEntity.deepCreateCollection, [
+			{origin : "~created0~"},
+			{origin : "~created1~"}
+		]);
+		assert.deepEqual(oEntity.deepCreateCollection.$byPredicate, {
+			"~predicate~0" : {origin : "~created0~"},
+			"~predicate~1" : {origin : "~created1~"}
+		});
+		assert.strictEqual(oEntity.deepCreateCollection.$count, 2);
+		assert.strictEqual(oEntity.deepCreateCollection.$created, 0);
 		assert.notOk("$postBodyCollection" in oEntity.deepCreateCollection);
 		assert.notOk("$select" in oEntity.deepCreateCollection);
 		assert.notOk("$postBodyCollection" in oEntity.otherCollection);
+		for (i = 0; i < oFixture.count; i += 1) {
+			sinon.assert.calledWithExactly(aResolve[i]);
+		}
+		for (i = oFixture.count; i < aResolve.length; i += 1) {
+			sinon.assert.notCalled(aResolve[i]);
+		}
 	});
 });
 
