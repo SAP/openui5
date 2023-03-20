@@ -16,6 +16,7 @@ sap.ui.define([
 	"./CarouselRenderer",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
+	"sap/m/ImageHelper",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/mobify-carousel",
 	"sap/ui/core/IconPool",
@@ -34,6 +35,7 @@ sap.ui.define([
 	CarouselRenderer,
 	KeyCodes,
 	Log,
+	ImageHelper,
 	jQuery
 	/*, mobifycarousel, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */
 ) {
@@ -41,9 +43,6 @@ sap.ui.define([
 
 	//shortcut for sap.ui.core.BusyIndicatorSize
 	var BusyIndicatorSize = coreLibrary.BusyIndicatorSize;
-
-	// shortcut for sap.m.ImageHelper
-	var ImageHelper = library.ImageHelper;
 
 	// shortcut for sap.m.CarouselArrowsPlacement
 	var CarouselArrowsPlacement = library.CarouselArrowsPlacement;
