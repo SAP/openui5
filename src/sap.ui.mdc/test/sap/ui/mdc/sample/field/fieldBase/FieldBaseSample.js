@@ -11,7 +11,8 @@ sap.ui.require([
 		settings: {
 			id : "fieldexample"
 		},
-		height: "100%"
+		height: "100%",
+		async: true
 	}).placeAt("content");
 
 });
