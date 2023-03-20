@@ -161,10 +161,6 @@ sap.ui.define([
 			oRm.openStart("div", oControl.getId() + "-scroll")
 				.class("sapMPopoverScroll");
 
-			if (!oControl.getHorizontalScrolling()) {
-				oRm.style(Configuration.getRTL() ? "margin-left" : "margin-right", getScrollbarSize().width + "px");
-			}
-
 			oRm.openEnd();
 
 			for (i = 0; i < contents.length; i++) {
