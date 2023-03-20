@@ -75,13 +75,7 @@ sap.ui.define([
 									new Tab({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										content: [
-
-										],
-										subTabs: [
-
-										]
+										text: "Some text..."
 									}),
 									new TabSeparator({
 
@@ -89,13 +83,7 @@ sap.ui.define([
 									new Tab({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										content: [
-
-										],
-										subTabs: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -133,13 +121,7 @@ sap.ui.define([
 									new Tab({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										content: [
-
-										],
-										subTabs: [
-
-										]
+										text: "Some text..."
 									}),
 									new TabSeparator({
 
@@ -147,13 +129,7 @@ sap.ui.define([
 									new Tab({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										content: [
-
-										],
-										subTabs: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							})
@@ -221,13 +197,7 @@ sap.ui.define([
 									new Tab({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										content: [
-
-										],
-										subTabs: [
-
-										]
+										text: "Some text..."
 									}),
 									new TabSeparator({
 
@@ -235,13 +205,7 @@ sap.ui.define([
 									new Tab({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										content: [
-
-										],
-										subTabs: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -279,13 +243,7 @@ sap.ui.define([
 									new Tab({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										content: [
-
-										],
-										subTabs: [
-
-										]
+										text: "Some text..."
 									}),
 									new TabSeparator({
 
@@ -293,13 +251,7 @@ sap.ui.define([
 									new Tab({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										content: [
-
-										],
-										subTabs: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							})

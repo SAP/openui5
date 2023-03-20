@@ -54,26 +54,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -85,26 +76,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -116,26 +98,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							})
@@ -154,26 +127,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -185,26 +149,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -216,26 +171,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							})
@@ -254,26 +200,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -285,26 +222,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -316,26 +244,17 @@ sap.ui.define([
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new TreeItem({
 										additionalText: "Some text...",
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							})

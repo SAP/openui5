@@ -7,14 +7,15 @@ sap.ui.define([
 	"sap/ui/webc/fiori/ShellBarItem",
 	"sap/ui/webc/main/Avatar",
 	"sap/ui/webc/main/Button",
+	"sap/ui/webc/fiori/NotificationListGroupItem",
+	"sap/ui/webc/fiori/NotificationAction",
+	"sap/ui/webc/fiori/NotificationListItem",
 	"sap/ui/webc/main/CustomListItem",
-	"sap/ui/webc/main/GroupHeaderListItem",
-	"sap/ui/webc/main/StandardListItem",
 	"sap/ui/webc/main/Input",
 	"sap/ui/webc/main/Icon",
 	"sap/ui/webc/main/SuggestionGroupItem",
 	"sap/ui/webc/main/SuggestionItem"
-], function(createAndAppendDiv, Core, ShellBar, ShellBarItem, Avatar, Button, CustomListItem, GroupHeaderListItem, StandardListItem, Input, Icon, SuggestionGroupItem, SuggestionItem) {
+], function(createAndAppendDiv, Core, ShellBar, ShellBarItem, Avatar, Button, NotificationListGroupItem, NotificationAction, NotificationListItem, CustomListItem, Input, Icon, SuggestionGroupItem, SuggestionItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -59,6 +60,234 @@ sap.ui.define([
 					}
 				}),
 				menuItems: [
+					new NotificationListGroupItem({
+						titleText: "Some text...",
+						actions: [
+							new NotificationAction({
+								icon: "employee",
+								text: "Some text..."
+							}),
+							new NotificationAction({
+								icon: "employee",
+								text: "Some text..."
+							}),
+							new NotificationAction({
+								icon: "employee",
+								text: "Some text..."
+							})
+						],
+						items: [
+							new NotificationListItem({
+								titleText: "Some text...",
+								actions: [
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									}),
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									}),
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									})
+								],
+								avatar: new Avatar({
+									icon: "employee",
+									click: function(oEvent) {
+										// console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
+									}
+								}),
+								footnotes: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								close: function(oEvent) {
+									// console.log("Event close fired for NotificationListItem with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new NotificationListItem({
+								titleText: "Some text...",
+								actions: [
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									}),
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									}),
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									})
+								],
+								avatar: new Avatar({
+									icon: "employee",
+									click: function(oEvent) {
+										// console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
+									}
+								}),
+								footnotes: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								close: function(oEvent) {
+									// console.log("Event close fired for NotificationListItem with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new NotificationListItem({
+								titleText: "Some text...",
+								actions: [
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									}),
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									}),
+									new NotificationAction({
+										icon: "employee",
+										text: "Some text..."
+									})
+								],
+								avatar: new Avatar({
+									icon: "employee",
+									click: function(oEvent) {
+										// console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
+									}
+								}),
+								footnotes: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								close: function(oEvent) {
+									// console.log("Event close fired for NotificationListItem with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
+						close: function(oEvent) {
+							// console.log("Event close fired for NotificationListGroupItem with parameters: ", oEvent.getParameters());
+						},
+						toggle: function(oEvent) {
+							// console.log("Event toggle fired for NotificationListGroupItem with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new NotificationListItem({
+						titleText: "Some text...",
+						actions: [
+							new NotificationAction({
+								icon: "employee",
+								text: "Some text..."
+							}),
+							new NotificationAction({
+								icon: "employee",
+								text: "Some text..."
+							}),
+							new NotificationAction({
+								icon: "employee",
+								text: "Some text..."
+							})
+						],
+						avatar: new Avatar({
+							icon: "employee",
+							image: new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							click: function(oEvent) {
+								// console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
+							}
+						}),
+						footnotes: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
+						close: function(oEvent) {
+							// console.log("Event close fired for NotificationListItem with parameters: ", oEvent.getParameters());
+						}
+					}),
 					new CustomListItem({
 						content: [
 							new Button({
@@ -85,17 +314,6 @@ sap.ui.define([
 						],
 						detailClick: function(oEvent) {
 							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new GroupHeaderListItem({
-						text: "Some text..."
-					}),
-					new StandardListItem({
-						additionalText: "Some text...",
-						icon: "employee",
-						text: "Some text...",
-						detailClick: function(oEvent) {
-							// console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
 						}
 					})
 				],
