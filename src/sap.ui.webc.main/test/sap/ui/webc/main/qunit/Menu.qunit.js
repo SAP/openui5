@@ -26,24 +26,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -53,24 +44,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -80,24 +62,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							})
@@ -113,24 +86,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -140,24 +104,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -167,24 +122,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							})
@@ -200,24 +146,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -227,24 +164,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							}),
@@ -254,24 +182,15 @@ sap.ui.define([
 								items: [
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									}),
 									new MenuItem({
 										icon: "employee",
-										text: "Some text...",
-										items: [
-
-										]
+										text: "Some text..."
 									})
 								]
 							})
