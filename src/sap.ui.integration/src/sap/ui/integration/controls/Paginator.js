@@ -164,7 +164,7 @@ sap.ui.define([
 		iTotalCount = this.getTotalCount() || oContent.getDataLength();
 
 		this.setPageCount(Math.ceil(iTotalCount / this.getPageSize()));
-		this.setPageNumber(Math.min(Math.max(0, this.getPageNumber()), this.getPageCount() - 1));
+		this.setPageNumber(Math.min(Math.max(0, this.getPageNumber()), this._getLastPageNumber()));
 
 		this.sliceData();
 	};
@@ -403,7 +403,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.setPageNumber(Math.min(this.getPageCount() - 1, this.getPageNumber() + 1));
+		this.setPageNumber(Math.min(this._getLastPageNumber(), this.getPageNumber() + 1));
 		this.sliceData();
 	};
 
@@ -425,6 +425,10 @@ sap.ui.define([
 			pageCount: this.getPageCount(),
 			pageIndex: this.getPageNumber()
 		};
+	};
+
+	Paginator.prototype._getLastPageNumber = function () {
+		return Math.max(0, this.getPageCount() - 1);
 	};
 
 	return Paginator;
