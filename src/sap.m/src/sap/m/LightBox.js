@@ -182,9 +182,7 @@ sap.ui.define([
 			oNativeImage = oImageContent._getNativeImage(),
 			sImageSrc = oImageContent.getImageSrc(),
 			sState = oImageContent._getImageState(),
-			sInvisiblePopupText = this._oRB.getText("LIGHTBOX_ARIA_ENLARGED", [oImageContent.getTitle(), oImageContent.getSubtitle()]),
-			sErrorMessageTitle = this._oRB.getText("LIGHTBOX_IMAGE_ERROR"),
-			sErrorMessageSubtitle = this._oRB.getText("LIGHTBOX_IMAGE_ERROR_DETAILS");
+			sInvisiblePopupText = this._oRB.getText("LIGHTBOX_ARIA_ENLARGED", [oImageContent.getTitle(), oImageContent.getSubtitle()]);
 
 		this._createErrorControls();
 
@@ -215,7 +213,6 @@ sap.ui.define([
 			case LightBoxLoadingStates.Error:
 			case LightBoxLoadingStates.TimeOutError:
 				clearTimeout(this._iTimeoutId);
-				sInvisiblePopupText += " " + sErrorMessageTitle + " " + sErrorMessageSubtitle;
 				break;
 			default:
 				break;
