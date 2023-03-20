@@ -188,7 +188,11 @@ sap.ui.define([
 		}
 
 		aIndexRelatedChanges.push(oChange);
-		return addIndexRelatedChange(mClassifications, mUIReconstructions, oCondenserInfo, oChange);
+		// with custom aggregations multiple aggregations can have the same affectedControl
+		if (!mClassifications[oCondenserInfo.targetAggregation]) {
+			mClassifications[oCondenserInfo.targetAggregation] = {};
+		}
+		return addIndexRelatedChange(mClassifications[oCondenserInfo.targetAggregation], mUIReconstructions, oCondenserInfo, oChange);
 	}
 
 	/**
@@ -308,9 +312,11 @@ sap.ui.define([
 	 * 				}
 	 * 				...
 	 * 				"indexRelated": {
-	 * 					"move": [oCondenserInfo],
-	 * 					"create": [oCondenserInfo],
-	 * 					"destroy": [oCondenserInfo]
+	 * 					"<targetAggregation>": {
+	 * 						"move": [oCondenserInfo],
+	 * 						"create": [oCondenserInfo],
+	 * 						"destroy": [oCondenserInfo]
+	 * 					}
 	 * 				}
 	 * 				...
 	 * 				"unclassified" : [oChange6, oChange7, oChange8]

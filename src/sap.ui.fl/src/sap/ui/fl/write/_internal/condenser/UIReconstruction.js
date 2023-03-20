@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/each",
+	"sap/base/util/ObjectPath",
 	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/write/_internal/condenser/classifications/Create",
 	"sap/ui/fl/write/_internal/condenser/classifications/Destroy",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function(
 	_isEqual,
 	each,
+	ObjectPath,
 	CondenserClassification,
 	Create,
 	Destroy,
@@ -70,7 +72,10 @@ sap.ui.define([
 
 			aTargetElementIds.forEach(function(sTargetElementId) {
 				aCondenserInfos.forEach(function(oCondenserInfo) {
-					if (sTargetElementId === oCondenserInfo.affectedControl) {
+					if (
+						sTargetElementId === oCondenserInfo.affectedControl
+						&& sAggregationName === oCondenserInfo.targetAggregation
+					) {
 						if (!mContainers[sContainerKey]) {
 							mContainers[sContainerKey] = {};
 						}
@@ -211,17 +216,15 @@ sap.ui.define([
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions
 	 */
 	function updateTargetIndex(mReducedChanges, mUIReconstructions) {
-		function updateCondenserChange(iIndex, oCondenserChange) {
-			if (getTargetIndex(oCondenserChange) !== iIndex) {
+		function updateCondenserChange(iIndex, oCondenserInfo) {
+			if (getTargetIndex(oCondenserInfo) !== iIndex) {
 				// setting the target index will most likely make the change dirty,
 				// but the condenser needs the current state of the change.
 				// so in this function the state should not change
-				var sOldState = oCondenserChange.change.getState();
-				oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
-				oCondenserChange.change.setState(sOldState);
-				if (oCondenserChange.change.isPersisted()) {
-					oCondenserChange.change.condenserState = "update";
-				}
+				var sOldState = oCondenserInfo.change.getState();
+				oCondenserInfo.setTargetIndex(oCondenserInfo.change, iIndex);
+				oCondenserInfo.change.setState(sOldState);
+				oCondenserInfo.change.condenserState = "update";
 			}
 		}
 
@@ -229,10 +232,10 @@ sap.ui.define([
 			mUIAggregationState[Utils.TARGET_UI].forEach(function(sTargetElementId, iIndex) {
 				if (!Utils.isUnknown(sTargetElementId)) {
 					var mTypes = mReducedChanges[sTargetElementId];
-					var mSubtypes = mTypes[Utils.INDEX_RELEVANT];
-					each(mSubtypes, function(sSubtypeKey, aCondenserChanges) {
+					var mAggregations = mTypes[Utils.INDEX_RELEVANT];
+					forEveryMapInMap(mAggregations, function(mSubtypes, sAggregationName, aCondenserInfos, sSubtypeKey) {
 						if (sSubtypeKey !== CondenserClassification.Destroy) {
-							aCondenserChanges.forEach(updateCondenserChange.bind(this, iIndex));
+							aCondenserInfos.forEach(updateCondenserChange.bind(this, iIndex));
 						}
 					});
 				}
@@ -257,7 +260,7 @@ sap.ui.define([
 				aTargetElementIds.forEach(function(sTargetElementId) {
 					var mTypes = mReducedChanges[sTargetElementId];
 					if (mTypes !== undefined) {
-						each(mTypes[Utils.INDEX_RELEVANT], function(sClassification, aCondenserInfos) {
+						forEveryMapInMap(mTypes[Utils.INDEX_RELEVANT], function(mSubtypes, sAggregationName, aCondenserInfos) {
 							aCondenserInfos.forEach(function(oCondenserInfo) {
 								oCondenserInfo.change.condenserState = "delete";
 							});
@@ -278,12 +281,12 @@ sap.ui.define([
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions
 	 */
 	function updateTargetUIReconstructions(mReducedChanges, mUIReconstructions) {
-		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState) {
+		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState, sAggregationName) {
 			var aInitialElementIds = mUIAggregationState[Utils.INITIAL_UI];
 			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
 			aInitialElementIds.forEach(function(initialElementId, index) {
 				var mTypes = mReducedChanges[initialElementId];
-				if (!mTypes || !mTypes[Utils.INDEX_RELEVANT]) {
+				if (!mTypes || !ObjectPath.get([Utils.INDEX_RELEVANT, sAggregationName], mTypes)) {
 					var sPlaceholder = Utils.PLACEHOLDER + index;
 					var iTargetIndex = aTargetElementIds.indexOf(initialElementId);
 					if (iTargetIndex >= 0) {
