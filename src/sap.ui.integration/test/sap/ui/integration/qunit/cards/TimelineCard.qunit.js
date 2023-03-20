@@ -39,6 +39,7 @@ sap.ui.define([
 			this.oTimelineContent.setConfiguration({
 				maxItems: 35
 			});
+			this.oTimelineContent.applyConfiguration();
 
 			// assert
 			assert.strictEqual(this.oTimelineContent.getInnerList().getGrowingThreshold(), 35, "Growing threshold should be set according to 'maxItems'");
