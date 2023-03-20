@@ -3,6 +3,102 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "8aa99ae56ff43d0ac4da8968c8faba8ce725756d",
+        "type": "FIX",
+        "text": ": incorrect error message while renaming the attachment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380032591"
+          }
+        ]
+      },
+      {
+        "id": "11e3f50243d1d42bd89c8bffd6e73159ace21b23",
+        "type": "FIX",
+        "text": " sap.m.Panel: Header background restored",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370014597"
+          }
+        ]
+      },
+      {
+        "id": "fbfaed302b354082ba499154949075da0f810ae0",
+        "type": "FIX",
+        "text": " sap.m.Popover: Remove unnecessary margin when having verticalScrolling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380041840"
+          }
+        ]
+      },
+      {
+        "id": "366d8c99b8ef0007d0da66da6f8860fb769e67d3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: date range button not truncated on 320px",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370004758"
+          }
+        ]
+      },
+      {
+        "id": "309cfafb394b20ebd1c62cf9226f3698ca77d0a6",
+        "type": "FIX",
+        "text": " sap.m.Input: Accessibility test page improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370014518"
+          }
+        ]
+      },
+      {
+        "id": "fbe5cf76df31b7edf1c5a15a27e1b0601cf9101e",
+        "type": "FIX",
+        "text": " Calendar controls: adjust calendar type API",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280203403"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280197317"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400001300602023"
+          }
+        ]
+      },
+      {
+        "id": "2056572cb531987e628beeb88d44244da11c7306",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: overriden showFooter setter and improved JSDoc",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380031930"
+          }
+        ]
+      },
+      {
+        "id": "576bbf9dd62b7167e37ea658362b36a4dcab0438",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fix Illustration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280180286"
+          }
+        ]
+      },
+      {
         "id": "1b28ca25ccd1f52c39684b82e39bb71790e07259",
         "type": "FIX",
         "text": " sap.m.DatePicker: Update documentation for public methods",
@@ -17,6 +113,17 @@
         "id": "61e6d05e078c27f1a7e15af0fa791d4e72b93d2b",
         "type": "FIX",
         "text": " JSDoc: Correct misplaced block tags"
+      },
+      {
+        "id": "742830bf62a0a757188714e9843fc0485232c96f",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Prevent layout breaking when Popover is open before navigation back animation is over",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380028487"
+          }
+        ]
       }
     ]
   }

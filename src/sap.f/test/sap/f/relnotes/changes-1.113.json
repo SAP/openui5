@@ -1,0 +1,28 @@
+{
+  "1.113.0": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "0f80f4489f52f0c92c1fde5730f09f6e6836e7ca",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: Update demokit samples"
+      },
+      {
+        "id": "c8b82bb1348e36f05b3ca272d6ae501bea296176",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: Add option to disable SidePanelItems"
+      },
+      {
+        "id": "c7c6b98db2ad32285f29e4cbcef57ee6b58c1106",
+        "type": "FIX",
+        "text": " Integration Cards: Image is no longer rounded when there is footer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370009855"
+          }
+        ]
+      }
+    ]
+  }
+}

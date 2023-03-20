@@ -1,0 +1,40 @@
+{
+  "1.113.0": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "48e53a88c24960976f81d4e4f1df998bd373acf5",
+        "type": "FIX",
+        "text": " Card Explorer: Expression in table card sample is now valid",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370014987"
+          }
+        ]
+      },
+      {
+        "id": "c7c6b98db2ad32285f29e4cbcef57ee6b58c1106",
+        "type": "FIX",
+        "text": " Integration Cards: Image is no longer rounded when there is footer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370009855"
+          }
+        ]
+      },
+      {
+        "id": "6a395020f0b2ee96852297bf462f6d9b5370ca9f",
+        "type": "FIX",
+        "text": " Integration Cards: Loading placeholder of Analytical card is now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380027532"
+          }
+        ]
+      }
+    ]
+  }
+}
