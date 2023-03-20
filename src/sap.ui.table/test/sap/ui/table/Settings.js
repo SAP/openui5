@@ -1792,7 +1792,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}));
 		oTable.addExtension(oToolbar);
 
-		if (mServiceSettings) {
+		if (Object.keys(mServiceSettings).length > 0) {
 			fnOnSettingsChange(mServiceSettings);
 		}
 	};
