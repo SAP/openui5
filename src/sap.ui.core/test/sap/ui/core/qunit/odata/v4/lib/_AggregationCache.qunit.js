@@ -3035,6 +3035,8 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder")
 			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(aReadElements[0]),
 				"~parent~", 42, "SomeNodeID");
+		this.mock(_Helper).expects("updateNonExisting").never();
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
 
 		// code under test
 		oCache.addElements(aReadElements, 2, "~parent~", 42);
@@ -3083,6 +3085,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oReadElement),
 				sinon.match.same(oGroupLevelCache), 42, undefined);
 		this.mock(_Helper).expects("setPrivateAnnotation").exactly(bWithParentCache ? 2 : 0);
+		this.mock(_Helper).expects("updateNonExisting").never();
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
 
 		// code under test
 		oCache.addElements(oReadElement, 1, oGroupLevelCache, 42);
@@ -3103,6 +3107,9 @@ sap.ui.define([
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLevelCache = {};
+
+		this.mock(_Helper).expects("updateNonExisting").never();
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
 
 		assert.throws(function () {
 			// code under test
@@ -3145,6 +3152,8 @@ sap.ui.define([
 		oCache.aElements[0] = {/*unexpected element*/};
 		oCache.aElements.$byPredicate["foo"] = oCache.aElements[0];
 		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
+		this.mock(_Helper).expects("updateNonExisting").never();
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
 
 		assert.throws(function () {
 			// code under test
@@ -3153,20 +3162,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addElements: known predicate -> kept element", function (assert) {
+[false, true].forEach(function (bIgnore) {
+	var sTitle = "addElements: known predicate -> kept element, ignore = " + bIgnore;
+
+	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {}),
 			aElements = [{},, {}],
-			oElement = {},
-			oKeptElement = {};
+			oElement = {"@odata.etag" : "X"},
+			oKeptElement = bIgnore ? {"@odata.etag" : "U"} : {};
 
 		oCache.aElements = aElements.slice();
 		oCache.aElements.$byPredicate = {"(1)" : oKeptElement};
 		_Helper.setPrivateAnnotation(oElement, "predicate", "(1)");
-		this.mock(_Helper).expects("updateNonExisting")
+		this.mock(_Helper).expects("updateNonExisting").exactly(bIgnore ? 0 : 1)
 			.withExactArgs(sinon.match.same(oElement), sinon.match.same(oKeptElement));
+		this.mock(oCache).expects("hasPendingChangesForPath").exactly(bIgnore ? 1 : 0)
+			.withExactArgs("(1)").returns(false);
 
 		// code under test
 		oCache.addElements(oElement, 1, "~parent~", 42);
@@ -3177,8 +3191,43 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements[2], aElements[2]);
 		assert.deepEqual(oCache.aElements.$byPredicate, {"(1)" : oElement}, "no others");
 		assert.strictEqual(oCache.aElements.$byPredicate["(1)"], oElement, "right reference");
-		assert.deepEqual(oElement,
-			{"@$ui5._" : {index : 42, parent : "~parent~", predicate : "(1)"}});
+		assert.deepEqual(oElement, {
+			"@odata.etag" : "X",
+			"@$ui5._" : {index : 42, parent : "~parent~", predicate : "(1)"}
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("addElements: Modified on client and on server", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {}),
+			aElements = [{},, {}],
+			oElement = {"@odata.etag" : "X"},
+			oKeptElement = {"@odata.etag" : "U"};
+
+		oCache.aElements = aElements.slice();
+		oCache.aElements.$byPredicate = {"(1)" : oKeptElement};
+		_Helper.setPrivateAnnotation(oElement, "predicate", "(1)");
+		this.mock(_Helper).expects("updateNonExisting").never();
+		this.mock(oCache).expects("hasPendingChangesForPath").withExactArgs("(1)").returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oCache.addElements(oElement, 1, "~parent~", 42);
+		}, new Error("Modified on client and on server: Foo(1)"));
+
+		assert.deepEqual(oCache.aElements, aElements);
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
+		assert.strictEqual(oCache.aElements[2], aElements[2]);
+		assert.deepEqual(oCache.aElements.$byPredicate, {"(1)" : oKeptElement}, "no others");
+		assert.strictEqual(oCache.aElements.$byPredicate["(1)"], oKeptElement, "right reference");
+		assert.deepEqual(oElement, {
+			"@odata.etag" : "X",
+			"@$ui5._" : {predicate : "(1)"}
+		}, "unchanged");
 	});
 
 	//*********************************************************************************************
