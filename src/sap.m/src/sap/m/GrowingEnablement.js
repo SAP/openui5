@@ -543,9 +543,8 @@ sap.ui.define([
 				this._oRM.renderControl(this._aChunk[i]);
 			}
 
-			var bHasFocus = (vInsert == false) && oDomRef.contains(document.activeElement);
+			this._bHadFocus = (vInsert == false) && oDomRef.contains(document.activeElement);
 			this._oRM.flush(oDomRef, false, this._getDomIndex(vInsert));
-			bHasFocus && this._oControl.focus();
 			this._aChunk = [];
 		},
 
@@ -779,8 +778,8 @@ sap.ui.define([
 
 		_updateTriggerDelayed: function(bLoading) {
 			if (this._oControl.getGrowingScrollToLoad()) {
-				this._iTriggerTimer && window.cancelAnimationFrame(this._iTriggerTimer);
-				this._iTriggerTimer = window.requestAnimationFrame(this._updateTrigger.bind(this, bLoading));
+				this._iTriggerTimer && clearTimeout(this._iTriggerTimer);
+				this._iTriggerTimer = setTimeout(this._updateTrigger.bind(this, bLoading));
 			} else {
 				this._updateTrigger(bLoading);
 			}
@@ -818,9 +817,15 @@ sap.ui.define([
 					oTriggerDomRef = oTrigger.getDomRef();
 
 				// put the focus to the newly added item if growing button is pressed
-				if (oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
-					(aItems[this._iLastItemsCount] || oControl).focus();
+				// or to the item if the focus was on the items container
+				var oFocusTarget;
+				if (this._bHadFocus) {
+					oFocusTarget = this._oControl;
+				} else if (oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
+					oFocusTarget = aItems[this._iLastItemsCount] || oControl;
 				}
+				oFocusTarget && setTimeout(oFocusTarget.focus.bind(oFocusTarget));
+				this._bHadFocus = false;
 
 				// show, update or hide the growing button
 				if (!iItemsLength || !this._iLimit || !iBindingLength ||

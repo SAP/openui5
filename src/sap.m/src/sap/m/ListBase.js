@@ -1310,7 +1310,7 @@ function(
 			this._hideBusyIndicator();
 
 			/* reset focused position */
-			if (this._oItemNavigation) {
+			if (this._oItemNavigation && document.activeElement.id != this.getId("nodata")) {
 				this._oItemNavigation.iFocusedIndex = -1;
 			}
 		}
