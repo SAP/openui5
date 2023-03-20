@@ -83,8 +83,22 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheObjectPage.sortByGrossAmount();
 				Then.onTheObjectPage.checkSalesOrderItemNotInTheList("0000000010");
 				Then.onTheSubObjectPage.checkItemPosition("0000000010");
-
 				Then.onTheSubObjectPage.checkQuantity("2.000");
+
+				When.onTheSubObjectPage.pressResetChanges(); //JIRA: CPOUI5ODATAV4-1819
+				Then.onTheSubObjectPage.checkQuantity("4.000");
+
+				When.onTheObjectPage.changeNote("Scenario (5): Reset via parent");
+				Then.onTheObjectPage.checkSalesOrderItemsCount(27);
+				When.onTheObjectPage.createSalesOrderItem();
+				Then.onTheObjectPage.checkSalesOrderItemsCount(28);
+				When.onTheSubObjectPage.changeQuantity(""); // an invalid data state
+				When.onTheObjectPage.pressResetChanges(); //JIRA: CPOUI5ODATAV4-1819
+				Then.onTheObjectPage.checkSalesOrderItemsCount(27);
+				Then.onTheObjectPage.checkNote("Test (original)");
+				Then.onTheSubObjectPage.checkQuantity("4.000");
+
+				When.onTheSubObjectPage.changeQuantity("2");
 				When.onTheObjectPage.pressMore();
 				Then.onTheSubObjectPage.checkQuantity("2.000");
 				Then.onTheObjectPage.checkSalesOrderItem(9, "0000000010", "2.000");

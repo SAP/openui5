@@ -209,6 +209,10 @@ sap.ui.define([
 			oBinding.refresh();
 		},
 
+		onResetContext : function (oEvent) {
+			oEvent.getSource().getBindingContext().resetChanges();
+		},
+
 		onSalesOrderLineItemSelect : function (oEvent) {
 			this.setSalesOrderLineItemBindingContext(
 				oEvent.getParameters().listItem.getBindingContext());
