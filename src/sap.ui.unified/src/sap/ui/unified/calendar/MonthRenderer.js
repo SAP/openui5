@@ -438,6 +438,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
 		}
 
+		if (this.renderWeekNumbers && oMonth._oDate) {
+			mAccProps["describedby"] = mAccProps["describedby"] + " " + oMonth.getId() + "-week-" + oMonth._calculateWeekNumber(oDay) + "-text";
+		}
+
 		if (bShouldBeMarkedAsSpecialDate) {
 			aDayTypes.forEach(function(oDayType) {
 				if (oDayType.type !== CalendarDayType.None) {
