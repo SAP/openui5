@@ -2643,6 +2643,12 @@ sap.ui.define([
 				$$sharedRequest : true
 			}, aAllowedParams);
 		}, new Error("Cannot combine $$getKeepAliveContext and $$sharedRequest"));
+
+		// code under test
+		oBinding.checkBindingParameters({
+			$$aggregation : {hierarchyQualifier : "X"},
+			$$getKeepAliveContext : true
+		}, aAllowedParams);
 	});
 
 	//*********************************************************************************************

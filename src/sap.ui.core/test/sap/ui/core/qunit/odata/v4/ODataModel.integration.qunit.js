@@ -25439,6 +25439,176 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A list with $$getKeepAliveContext would show the top pyramid of a recursive
+	// hierarchy, expanded to level 2, but is initially suspended or unresolved.
+	// ODataModel#getKeepAliveContext is used to show more properties in a form. The list merges
+	// this entity later when requesting nodes. The property MANAGER_ID is only used in the list,
+	// AGE and ROOM_ID only in the form, and Name is used in both.
+	// JIRA: CPOUI5ODATAV4-2030
+	//
+	// Note: This currently does not work with a t:Table!
+	// @see QUnit.skip("ODLB: resume/refresh/filter w/ submitBatch on a t:Table"
+[false, true].forEach(function (bSuspended) {
+	var sTitle = "Recursive Hierarchy: getKeepAliveContext, suspended = " + bSuspended;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext,
+			oListBinding,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="list" growing="true" growingThreshold="3" items="{\
+		parameters : {\
+			$$aggregation : {\
+				expandTo : 2,\
+				hierarchyQualifier : \'OrgChart\'\
+			},\
+			$$getKeepAliveContext : true,\
+			$$ownRequest : true\
+		}, path : \'' + (bSuspended ? "/" : "") + "EMPLOYEES',\
+		suspended : " + bSuspended + '}">\
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text text="{= %{@$ui5.node.level} }"/>\
+	<Text text="{ID}"/>\
+	<Text text="{MANAGER_ID}"/>\
+	<Text text="{Name}"/>\
+</Table>\
+<FlexBox id="form">\
+	<Text id="age" text="{AGE}"/>\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("age")
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("list");
+			oListBinding = oTable.getBinding("items");
+
+			that.expectRequest({
+					groupId : "$auto.heroes",
+					url : "EMPLOYEES('3')"
+						+ "?$select=AGE,ID,Name,ROOM_ID,__CT__FAKE__Message/__FAKE__Messages"
+				}, {
+					AGE : 57,
+					ID : "3",
+					ROOM_ID : "3.0",
+					Name : "Lambda",
+					__CT__FAKE__Message : {
+						__FAKE__Messages : [{
+							message : "You're looking younger than ever!",
+							numericSeverity : 2,
+							target : "AGE",
+							transition : false
+						}]
+					}
+				})
+				.expectChange("age", "57")
+				.expectChange("name", "Lambda")
+				.expectMessages([{
+					message : "You're looking younger than ever!",
+					persistent : false,
+					target : "/EMPLOYEES('3')/AGE",
+					type : "Information"
+				}]);
+
+			// code under test
+			oContext = oModel.getKeepAliveContext("/EMPLOYEES('3')", /*bRequestMessages*/true,
+				{$$groupId : "$auto.heroes"});
+
+			that.oView.byId("form").setBindingContext(oContext);
+
+			return Promise.all([
+				oContext.requestProperty("ROOM_ID"), // addt'l GET to be merged
+				that.waitForChanges(assert, "show form")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "3.0", "ROOM_ID");
+
+			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=2)"
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+					+ "&$count=true&$skip=0&$top=3", {
+					"@odata.count" : "3",
+					value : [{
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "collapsed",
+						ID : "1",
+						MANAGER_ID : "0",
+						Name : "Beta"
+					}, {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "2",
+						MANAGER_ID : "0",
+						Name : "Kappa"
+					}, {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "3",
+						MANAGER_ID : "0",
+						Name : "Lambda"
+					}]
+				});
+
+			if (bSuspended) {
+				// code under test
+				oListBinding.resume();
+			} else {
+				// code under test
+				oListBinding.setContext(oModel.createBindingContext("/"));
+			}
+
+			return that.waitForChanges(assert, "request nodes");
+		}).then(function () {
+			checkTable("after request nodes", assert, oTable, [
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')"
+			], [
+				[false, 2, "1", "0", "Beta"],
+				[undefined, 2, "2", "0", "Kappa"],
+				[undefined, 2, "3", "0", "Lambda"]
+			]);
+			assert.strictEqual(oListBinding.getAllCurrentContexts()[2], oContext, "reused");
+			assert.strictEqual(oContext.isKeepAlive(), true, "still kept alive");
+			assert.deepEqual(oContext.getObject(), {
+					// "@$ui5.node.isExpanded" : undefined,
+					"@$ui5.node.level" : 2,
+					AGE : 57,
+					ID : "3",
+					MANAGER_ID : "0",
+					Name : "Lambda",
+					ROOM_ID : "3.0",
+					__CT__FAKE__Message : {
+						__FAKE__Messages : [{
+							message : "You're looking younger than ever!",
+							numericSeverity : 2,
+							target : "AGE",
+							transition : false
+						}]
+					}
+				}, "merged");
+
+			//TODO what a stupid request :-(
+			that.expectRequest("EMPLOYEES('5')?$select=ID", {
+					ID : "5"
+				});
+
+			// code under test
+			oModel.getKeepAliveContext("/EMPLOYEES('5')");
+
+			return that.waitForChanges(assert, "ODLB#getKeepAliveContext");
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy and expand it. Use a filter and
 	// a search as well as a sort order.
 	// JIRA: CPOUI5ODATAV4-1675

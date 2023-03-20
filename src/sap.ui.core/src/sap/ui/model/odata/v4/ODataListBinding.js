@@ -1192,7 +1192,8 @@ sap.ui.define([
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
 			sDeepResourcePath, sGroupId, oOldCache) {
 		var oCache,
-			aKeepAlivePredicates;
+			aKeepAlivePredicates,
+			mKeptElementsByPredicate;
 
 		if (oOldCache && oOldCache.getResourcePath() === sResourcePath
 				&& oOldCache.$deepResourcePath === sDeepResourcePath) {
@@ -1208,12 +1209,25 @@ sap.ui.define([
 		}
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
-
-		oCache = this.getCacheAndMoveKeepAliveContexts(sResourcePath, mQueryOptions)
+		oCache = this.getCacheAndMoveKeepAliveContexts(sResourcePath, mQueryOptions);
+		if (oCache && this.mParameters.$$aggregation) {
+			mKeptElementsByPredicate = {};
+			aKeepAlivePredicates = this.getKeepAlivePredicates();
+			aKeepAlivePredicates.forEach(function (sPredicate) {
+				mKeptElementsByPredicate[sPredicate] = oCache.getValue(sPredicate);
+			});
+			oCache.setActive(false);
+			oCache = undefined; // create _AggregationCache instead of _CollectionCache
+		}
+		oCache = oCache
 			|| _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
 				this.mParameters.$$aggregation, mQueryOptions, this.oModel.bAutoExpandSelect,
 				this.bSharedRequest, this.isGrouped());
-		if (this.bSharedRequest) {
+		if (mKeptElementsByPredicate) {
+			aKeepAlivePredicates.forEach(function (sPredicate) {
+				oCache.addKeptElement(mKeptElementsByPredicate[sPredicate]);
+			});
+		} else if (this.bSharedRequest) {
 			oCache.registerChangeListener("", this);
 		}
 
@@ -2535,6 +2549,7 @@ sap.ui.define([
 			iPredicateIndex = _Helper.getPredicateIndex(sPath),
 			sResolvedPath = this.getResolvedPath();
 
+		this.checkKeepAlive();
 		this.checkSuspended();
 		this.checkTransient();
 		_Helper.checkGroupId(sGroupId);

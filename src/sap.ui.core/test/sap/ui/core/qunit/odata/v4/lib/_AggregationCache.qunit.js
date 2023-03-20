@@ -312,6 +312,7 @@ sap.ui.define([
 			oCache,
 			oEnhanceCacheWithGrandTotalExpectation,
 			oFirstLevelCache = {
+				addKeptElement : "~addKeptElement~",
 				requestSideEffects : "~requestSideEffects~",
 				restore : "~restore~"
 			},
@@ -390,6 +391,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.strictEqual(oCache.aElements.$created, 0);
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
+		assert.strictEqual(oCache.addKeptElement, oFirstLevelCache.addKeptElement, "@borrows ...");
 		assert.strictEqual(oCache.requestSideEffects, oFirstLevelCache.requestSideEffects,
 			"@borrows ...");
 		assert.strictEqual(oCache.restore, oFirstLevelCache.restore, "@borrows ...");
