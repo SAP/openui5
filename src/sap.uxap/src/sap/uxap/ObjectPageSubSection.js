@@ -328,6 +328,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @private
+	 */
+	 ObjectPageSubSection.prototype._getShouldLabelTitle = function () {
+		if (this._getUseTitleOnTheLeft()) {
+			// in case layout is "TitleOnTheLeft", the title of promoted section
+			// is visible and should be labeled if showTitle is true
+			return this.getShowTitle();
+		}
+
+		if (this._sBorrowedTitleDomId) {
+			// in case section is promoted the title is not displayed
+			// on the subsection level - we don't need to include it in the aria label
+			return false;
+		}
+
+		return this.getShowTitle();
+	};
+
+	/**
 	 * Returns Title DOM ID of the Title of this SubSection
 	 * @returns {string|boolean} DOM ID
 	 * @private
