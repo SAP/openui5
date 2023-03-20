@@ -294,7 +294,8 @@ sap.ui.define([
 				isKeyUser: true,
 				isVariantSharingEnabled: true,
 				isProductiveSystem: false,
-				isCondensingEnabled: true
+				isCondensingEnabled: true,
+				isContextSharingEnabled: false
 			});
 		},
 
