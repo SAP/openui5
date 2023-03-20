@@ -35,6 +35,15 @@ sap.ui.define([
 		assert.notOk(this.oPaginator.$().length, "not rendered");
 	});
 
+	QUnit.test("pageCount = 0", function (assert) {
+		this.oPaginator
+			.setPageCount(0)
+			.setPageSize(3);
+
+		assert.notOk(this.oPaginator._getLastPageNumber() < 0, "Last page number should NOT be negative number");
+		assert.strictEqual(this.oPaginator._getLastPageNumber(), 0, "Last page number should be 0 when there are no pages");
+	});
+
 	QUnit.test("arrows and dots", function (assert) {
 		assert.strictEqual(this.oPaginator.$().find(".sapMCrslPrev").length, 1, "prev arrow is rendered");
 		assert.strictEqual(this.oPaginator.$().find(".sapMCrslNext").length, 1, "next arrow is rendered");
