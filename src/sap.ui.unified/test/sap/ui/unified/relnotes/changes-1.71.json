@@ -583,5 +583,21 @@
         ]
       }
     ]
+  },
+  "1.71.55": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "0be390b2376f6d368425ef4273cd73e950851c01",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: added roles to legend and items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000890982023"
+          }
+        ]
+      }
+    ]
   }
 }

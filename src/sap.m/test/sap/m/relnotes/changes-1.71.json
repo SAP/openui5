@@ -3469,5 +3469,66 @@
         ]
       }
     ]
+  },
+  "1.71.55": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "8b251153638e68e819ff669c067f82507d71ed34",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: remove aria-expanded attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270176784"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270013284"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270013285"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270004311"
+          }
+        ]
+      },
+      {
+        "id": "7623054f8ecbdf8f4be59d8ae1cfef7d9e449ab2",
+        "type": "FIX",
+        "text": " sap.m.URLHelper: Fixed redirect method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "6450822022"
+          }
+        ]
+      },
+      {
+        "id": "36b6fb6cbff271ff5e10adf890c4a495370e9ef0",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbarAssociativePopover: Fixed function overriding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000978672023"
+          }
+        ]
+      },
+      {
+        "id": "63053e93979e90302138bebf048c1017d6923c7f",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Fixed failing test on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154471"
+          }
+        ]
+      }
+    ]
   }
 }
