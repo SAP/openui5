@@ -282,7 +282,7 @@ sap.ui.define([
 			ariaLabelledBy: this.getId() + "-menuDescription",
 			showArrow: false,
 			showHeader: Device.system.phone,
-			placement: library.PlacementType.Bottom,
+			placement: library.PlacementType.VerticalPreferredBottom,
 			content: new AssociativeControl({control: this, height: true}),
 			horizontalScrolling: false,
 			verticalScrolling: false,
