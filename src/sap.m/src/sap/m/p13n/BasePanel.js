@@ -174,6 +174,13 @@ sap.ui.define([
 	BasePanel.prototype.PRESENCE_ATTRIBUTE = "visible";
 	BasePanel.prototype.WIDTH = "30rem";
 
+	BasePanel.prototype.applySettings = function(mSettings) {
+		Control.prototype.applySettings.apply(this, arguments);
+		if (!mSettings || (mSettings && mSettings.enableReorder === undefined)) {
+			this._updateMovement(true);
+		}
+	};
+
 	BasePanel.prototype.init = function() {
 		Control.prototype.init.apply(this, arguments);
 
