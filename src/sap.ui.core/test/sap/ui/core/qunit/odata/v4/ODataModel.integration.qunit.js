@@ -47932,19 +47932,18 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Deep create, nested list binding w/o own cache; create is called twice in the
 	// nested binding while the parent context is still transient. Patch one nested entity while
-	// transient and when created-persisted.
+	// transient and when persisted.
 	// JIRA: CPOUI5ODATAV4-1973
+	//
 	// Forbidden methods (CPOUI5ODATAV4-2035)
-	// Create three, but only get two in different order (CPOUI5ODATAV4-2079)
+	// The response has fewer nested entities in different order (CPOUI5ODATAV4-2079)
+	// Nested entities via initial data and via #create (CPOUI5ODATAV4-2036)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-1973: Deep create, nested ODLB w/o cache, bSkipRefresh="
 			+ bSkipRefresh;
 
 	QUnit.test(sTitle, function (assert) {
-		var oCreatedItemContext1,
-			oCreatedItemContext2,
-			oCreatedOrderContext,
-			oCreatedItemContext3,
+		var oCreatedOrderContext,
 			oItemsBinding,
 			oOrdersBinding,
 			oModel = this.createSalesOrdersModel(
@@ -47965,28 +47964,60 @@ sap.ui.define([
 			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("order", [""]);
+			that.expectChange("order", [""])
+				.expectChange("note", ["A", "B"]);
 
 			oOrdersBinding = that.oView.byId("orders").getBinding("items");
 
 			// code under test
-			oCreatedOrderContext = oOrdersBinding.create({}, bSkipRefresh);
+			oCreatedOrderContext = oOrdersBinding.create({
+				SO_2_SOITEM : [
+					{Note : "A"},
+					{Note : "B"}
+				]
+			}, bSkipRefresh);
 
 			return that.waitForChanges(assert, "create order");
 		}).then(function () {
-			that.expectChange("note", ["CC", "BB", "A"]);
+			var aContexts;
 
 			oItemsBinding = that.oView.byId("orders").getItems()[0].getCells()[1]
 				.getBinding("items");
+			aContexts = oItemsBinding.getCurrentContexts();
+			assert.deepEqual(aContexts.map(getObject), [{
+				"@$ui5.context.isTransient" : true,
+				Note : "A"
+			}, {
+				"@$ui5.context.isTransient" : true,
+				Note : "B"
+			}]);
+			aContexts.forEach(function (oContext) {
+				assert.strictEqual(oContext.isTransient(), true);
+			});
+
+			that.expectChange("note", [,, "C", "D"]);
 
 			// code under test
-			oCreatedItemContext1 = oItemsBinding.create({Note : "A"});
-			oCreatedItemContext2 = oItemsBinding.create({Note : "BB"});
-			oCreatedItemContext3 = oItemsBinding.create({Note : "CC"});
+			oItemsBinding.create({Note : "C"}, false, true); // at end
+			oItemsBinding.create({Note : "D"}, false, true); // at end
 
-			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
-			assert.strictEqual(oCreatedItemContext2.isTransient(), true);
-			assert.strictEqual(oCreatedItemContext3.isTransient(), true);
+			aContexts = oItemsBinding.getCurrentContexts();
+			assert.deepEqual(aContexts.map(getObject), [{
+				"@$ui5.context.isTransient" : true,
+				Note : "A"
+			}, {
+				"@$ui5.context.isTransient" : true,
+				Note : "B"
+			}, {
+				"@$ui5.context.isTransient" : true,
+				Note : "C"
+			}, {
+				"@$ui5.context.isTransient" : true,
+				Note : "D"
+			}]);
+			aContexts.forEach(function (oContext) {
+				assert.strictEqual(oContext.isTransient(), true);
+			});
 
 			// code under test - CPOUI5ODATAV4-2035
 			[
@@ -48001,22 +48032,25 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "create items");
 		}).then(function () {
-			that.expectChange("note", [,, "AA"]);
+			that.expectChange("note", ["AA", "BB", "CC", "DD"]);
 
-			return Promise.all([
-				// code under test
-				oCreatedItemContext1.setProperty("Note", "AA"),
-				that.waitForChanges(assert, "patch transient item")
-			]);
+			return Promise.all(
+				oItemsBinding.getCurrentContexts().map(function (oContext) {
+					// code under test
+					oContext.setProperty("Note", oContext.getProperty("Note").repeat(2));
+				})
+				.concat(that.waitForChanges(assert, "patch transient items"))
+			);
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {
 						SO_2_SOITEM : [
-							{Note : "CC"},
+							{Note : "AA"},
 							{Note : "BB"},
-							{Note : "AA"}
+							{Note : "CC"},
+							{Note : "DD"}
 						]
 					}
 				}, {
@@ -48032,12 +48066,18 @@ sap.ui.define([
 						"@odata.etag" : "etag20",
 						GrossAmount : "42.99", // excess property
 						ItemPosition : "0020",
+						Note : "CCC",
+						SalesOrderID : "new"
+					}, {
+						"@odata.etag" : "etag30",
+						GrossAmount : "42.99", // excess property
+						ItemPosition : "0030",
 						Note : "BBB",
 						SalesOrderID : "new"
 					}]
 				})
 				.expectChange("order", ["new"])
-				.expectChange("note", ["AAA", "BBB"]);
+				.expectChange("note", ["AAA", "CCC", "BBB"]);
 			if (!bSkipRefresh) {
 				that.expectRequest("SalesOrderList('new')?$select=SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
@@ -48051,6 +48091,11 @@ sap.ui.define([
 					}, {
 						"@odata.etag" : "etag20",
 						ItemPosition : "0020",
+						Note : "CCC",
+						SalesOrderID : "new"
+					}, {
+						"@odata.etag" : "etag30",
+						ItemPosition : "0030",
 						Note : "BBB",
 						SalesOrderID : "new"
 					}]
@@ -48060,16 +48105,18 @@ sap.ui.define([
 			return Promise.all([
 				oModel.submitBatch("update"),
 				oCreatedOrderContext.created(),
-				oCreatedItemContext1.created(),
-				oCreatedItemContext2.created(),
+				oItemsBinding.getCurrentContexts().map(function (oContext) {
+					oContext.created();
+				}),
 				that.waitForChanges(assert, "submit POST")
-			]);
+			].flat());
 		}).then(function () {
 			var aContexts = oItemsBinding.getAllCurrentContexts();
 
 			assert.deepEqual(aContexts.map(getPath), [
 				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')",
-				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')"
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')",
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0030')"
 			]);
 			assert.deepEqual(aContexts.map(getObject), [{
 				"@odata.etag" : "etag10",
@@ -48079,6 +48126,11 @@ sap.ui.define([
 			}, {
 				"@odata.etag" : "etag20",
 				ItemPosition : "0020",
+				Note : "CCC",
+				SalesOrderID : "new"
+			}, {
+				"@odata.etag" : "etag30",
+				ItemPosition : "0030",
 				Note : "BBB",
 				SalesOrderID : "new"
 			}]);
@@ -48179,10 +48231,10 @@ sap.ui.define([
 				.expectChange("itemCount", "3");
 
 			// code under test
-			oCreatedItemContext1 = oItemsBinding.create({Note : "AA"});
+			oCreatedItemContext1 = oItemsBinding.create({Note : "B"});
 			// this one is deleted again before submitting (intentionally in between)
-			oCreatedItemContext3 = oItemsBinding.create({Note : "noSubmit"}, false, true);
-			oCreatedItemContext2 = oItemsBinding.create({Note : "B"}, false, true);
+			oCreatedItemContext3 = oItemsBinding.create({Note : "noSubmit"});
+			oCreatedItemContext2 = oItemsBinding.create({Note : "AA"});
 
 			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
 			assert.strictEqual(oCreatedItemContext2.isTransient(), true);
@@ -48205,7 +48257,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oCreatedItemContext2.setProperty("Note", "BB"),
+				oCreatedItemContext1.setProperty("Note", "BB"),
 				that.waitForChanges(assert, "patch transient item")
 			]);
 		}).then(function () {
@@ -48366,14 +48418,17 @@ sap.ui.define([
 	// Scenario: Deep create, nested list binding with own cache. No initial data for the nested
 	// list. Items are created. The deep creation is canceled.
 	// JIRA: CPOUI5ODATAV4-2034
+	//
 	// Alternatively delete the created (top-level) order context (CPOUI5ODATAV4-1975)
-[false, true].forEach(function (bDelete) {
+	// Initial data: Create 2 + 2 (CPOUI5ODATAV4-2036)
+	[false, true].forEach(function (bDelete) {
 	var sTitle = "CPOUI5ODATAV4-2034: Deep create, "
 			+ (bDelete ? "delete top-level context" : "reset changes");
 
 	QUnit.test(sTitle, function (assert) {
 		var oCreatedItemContext1,
-			oCreatedItemContext2,
+			oCreatedItemContext3,
+			oCreatedItemContext4,
 			oCreatedOrderContext,
 			oModel = this.createSalesOrdersModel(
 				{autoExpandSelect : true, updateGroupId : "update"}),
@@ -48389,15 +48444,18 @@ sap.ui.define([
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {value : []});
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oCreatedOrderContext = that.oView.byId("orders").getBinding("items").create();
+			oCreatedOrderContext = that.oView.byId("orders").getBinding("items").create({
+					SO_2_SOITEM : [{Note : "AA"}, {Note : "BB"}]
+			});
 			that.oView.byId("items").setBindingContext(oCreatedOrderContext);
 
 			return that.waitForChanges(assert, "create order");
 		}).then(function () {
 			var oItemsBinding = that.oView.byId("items").getBinding("items");
 
-			oCreatedItemContext1 = oItemsBinding.create({Note : "AA"});
-			oCreatedItemContext2 = oItemsBinding.create({Note : "BB"});
+			oCreatedItemContext1 = oItemsBinding.getCurrentContexts()[0];
+			oCreatedItemContext3 = oItemsBinding.create({Note : "CC"});
+			oCreatedItemContext4 = oItemsBinding.create({Note : "DD"});
 
 			return that.waitForChanges(assert, "create items");
 		}).then(function () {
@@ -48408,7 +48466,9 @@ sap.ui.define([
 					: oModel.resetChanges(),
 				checkCanceled(assert, oCreatedOrderContext.created()),
 				checkCanceled(assert, oCreatedItemContext1.created()),
-				checkCanceled(assert, oCreatedItemContext2.created()),
+				// do not check the 2nd context from initial data, await no "uncaught (in promise)"
+				checkCanceled(assert, oCreatedItemContext3.created()),
+				checkCanceled(assert, oCreatedItemContext4.created()),
 				that.waitForChanges(assert, bDelete ? "delete" : "resetChanges")
 			]);
 		});
