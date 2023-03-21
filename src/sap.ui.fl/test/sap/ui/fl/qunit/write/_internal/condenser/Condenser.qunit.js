@@ -472,7 +472,7 @@ sap.ui.define([
 							aCondenserStates.push(oChange.condenserState);
 						});
 						assert.propEqual(aChangeStates, [States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.NEW, States.LifecycleState.NEW], "all remaining changes have the correct change state");
-						assert.propEqual(aCondenserStates, ["update", "update", "update", "select", "select"], "all remaining changes have the correct condenser state");
+						assert.propEqual(aCondenserStates, ["update", "update", "update", "select", "update"], "all remaining changes have the correct condenser state");
 						aExpectedChangeOrder = [
 							"id_1579608135402_40_moveControls",
 							"id_1579608136945_41_moveControls",
@@ -923,24 +923,25 @@ sap.ui.define([
 			});
 		});
 
-		[[], [0, 1, 2, 3]].forEach(function(aBackendChanges) {
-			var sName = "addSort/moveSort/removeSort (custom aggregation)";
+		[[], [0, 2, 3, 4]].forEach(function(aBackendChanges) {
+			var sName = "addSort/moveSort/removeSort/addGroup (custom aggregations)";
 			if (aBackendChanges.length) {
 				sName += " with some backend changes";
 			}
 			QUnit.test(sName, function(assert) {
-				return loadApplyCondenseChanges.call(this, "mdcSort.json", 9, 2, assert).then(function(aRemainingChanges) {
-					assert.strictEqual(aRemainingChanges[0].getChangeType(), "addSort", "the remaining changes are of type addSort");
-					assert.strictEqual(aRemainingChanges[1].getChangeType(), "addSort", "the remaining changes are of type addSort");
+				return loadApplyCondenseChanges.call(this, "mdcSortingGrouping.json", 10, 3, assert).then(function(aRemainingChanges) {
+					assert.strictEqual(aRemainingChanges[0].getChangeType(), "addGroup", "the remaining changes are of type addSort and addGroup");
+					assert.strictEqual(aRemainingChanges[1].getChangeType(), "addSort", "the remaining changes are of type addSort and addGroup");
+					assert.strictEqual(aRemainingChanges[2].getChangeType(), "addSort", "the remaining changes are of type addSort and addGroup");
 					var aSorters = sap.ui.getCore().byId("view--mdcTable").getSortConditions().sorters;
 					assert.deepEqual(aSorters[0], {
 						name: "sorter2",
 						descending: false
-					}, "the content of the first change is correct");
+					}, "the content of the first sorter is correct");
 					assert.deepEqual(aSorters[1], {
 						name: "sorter1",
 						descending: true
-					}, "the content of the second change is correct");
+					}, "the content of the second sorter is correct");
 				});
 			});
 		});

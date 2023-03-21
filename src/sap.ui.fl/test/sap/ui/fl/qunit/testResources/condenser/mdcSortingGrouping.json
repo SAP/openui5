@@ -13,7 +13,21 @@
 			"idIsLocal": false
 		},
 		"layer": "USER",
-		"creation": "2020-01-31T06:33:51.192Z"
+		"creation": "2020-01-30T06:33:51.192Z"
+	},{
+		"fileName": "id_00_addGroup",
+		"changeType": "addGroup",
+		"reference": "test.Component",
+		"content": {
+			"index": 0,
+			"name": "group0"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-01-30T06:33:51.193Z"
 	},
 	{
 		"fileName": "id_01_addSort",
