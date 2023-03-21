@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/VersionInfo",
+	"./AnyViewAsync.qunit",
 	"./testdata/TestPreprocessor",
 	"sap/base/Log",
 	"sap/base/strings/hash",
@@ -22,6 +23,7 @@ sap.ui.define([
 	ViewType,
 	XMLView,
 	VersionInfo,
+	asyncTestsuite,
 	TestPreprocessor,
 	Log,
 	hash,
@@ -29,6 +31,30 @@ sap.ui.define([
 	Configuration
 ) {
 	"use strict";
+
+	var oConfig = {
+		type : "XML",
+		receiveSource : function(source) {
+			return new XMLSerializer().serializeToString(source);
+		}
+	};
+
+	// set generic view factory
+	oConfig.factory = function() {
+		return View.create({
+			type: ViewType.XML,
+			viewName : "testdata.mvc.Async"
+		});
+	};
+	asyncTestsuite("Generic View Factory", oConfig);
+
+	// set XMLView factory
+	oConfig.factory = function() {
+		return XMLView.create({
+			viewName : "testdata.mvc.Async"
+		});
+	};
+	asyncTestsuite("XMLView Factory", oConfig);
 
 	QUnit.module("Additional tests");
 
