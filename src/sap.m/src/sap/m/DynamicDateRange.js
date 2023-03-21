@@ -351,13 +351,17 @@ sap.ui.define([
 
 		MessageMixin.call(DynamicDateRange.prototype);
 
-		var aDateTimeOperators = [
-			"LASTHOURS",
+		var aLastDateTimeOperators = [
 			"LASTMINUTES",
-			"NEXTHOURS",
-			"NEXTMINUTES"
+			"LASTHOURS"
 		];
 
+		var aNextDateTimeOperators = [
+			"NEXTMINUTES",
+			"NEXTHOURS"
+		];
+
+		var aDateTimeOperators = aLastDateTimeOperators.concat(aNextDateTimeOperators);
 		var aLastOptions = ["LASTMINUTES", "LASTHOURS", "LASTDAYS", "LASTWEEKS", "LASTMONTHS", "LASTQUARTERS", "LASTYEARS"];
 		var aNextOptions = ["NEXTMINUTES", "NEXTHOURS", "NEXTDAYS", "NEXTWEEKS", "NEXTMONTHS", "NEXTQUARTERS", "NEXTYEARS"];
 
@@ -560,6 +564,7 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicDateRange.prototype._handleSuggest = function(oEvent) {
+			this._bSuggestionMode = true;
 			if (this._oPopup && this._oPopup.isOpen()) {
 				this._closePopup();
 			}
@@ -596,6 +601,7 @@ sap.ui.define([
 
 			var aMatchDigit = sQuery.match(/\d+/);
 			if (!aMatchDigit) {
+				this._bSuggestionMode = false;
 				return;
 			}
 
@@ -617,6 +623,7 @@ sap.ui.define([
 					this._addSuggestionGroupItem(option);
 				}
 			}, this);
+			this._bSuggestionMode = false;
 		};
 
 		/**
@@ -644,13 +651,14 @@ sap.ui.define([
 				aButtons = aPopupContent.getButtons ? aPopupContent.getButtons() : [],
 				aSuggestionItems = this.getAggregation('_input').getAggregation('suggestionItems'),
 				oValue = this.getValue(),
+				aOptionKeys = this.getOptions(),
+				sActualSelectedOptionKey = "",
+				aLastActualOrder = [],
+				aNextActualOrder = [],
 				oCustomData,
-				aPopupContent,
-				aButtons,
 				aValueHelpTypes,
 				sType,
 				iButtonSelectedIndex,
-				sRealOptionKey,
 				sSuggestionOptionKey;
 
 			if (
@@ -662,10 +670,26 @@ sap.ui.define([
 				oCustomData = aSuggestionItems[aSuggestionItems.length - 1].getCustomData()[0];
 			}
 
+			if (
+				this._bSuggestionMode &&
+				aSuggestionItems && aSuggestionItems.length &&
+				aSuggestionItems[aSuggestionItems.length - 1].getCustomData
+			) {
+					oCustomData = aSuggestionItems[aSuggestionItems.length - 1].getCustomData()[0];
+			}
+
+			aOptionKeys.forEach(function(sOption) {
+				if (aLastOptions.indexOf(sOption) > -1) {
+					aLastActualOrder.push(sOption);
+				} else if (aNextOptions.indexOf(sOption) > -1) {
+					aNextActualOrder.push(sOption);
+				}
+			});
+
 			if (oCustomData) {
 				sSuggestionOptionKey = oCustomData.getValue();
-				aLastOptionsSelectedIndex = aDateTimeOperators.indexOf(sSuggestionOptionKey);
-				aNextOptionsSelectedIndex = aDateTimeOperators.indexOf(sSuggestionOptionKey);
+				aLastOptionsSelectedIndex = aLastDateTimeOperators.indexOf(sSuggestionOptionKey);
+				aNextOptionsSelectedIndex = aNextDateTimeOperators.indexOf(sSuggestionOptionKey);
 			}
 
 			if (oCustomData && sSuggestionOptionKey) {
@@ -676,23 +700,22 @@ sap.ui.define([
 			}
 
 			//if option requires extra formatting.
-			if (this._oNavContainer && aButtons.length && (aLastOptionsSelectedIndex > -1 || aNextOptionsSelectedIndex > -1)) {
-				iButtonSelectedIndex = aButtons[0].getParent().getSelectedIndex();
-				if (aLastOptionsSelectedIndex > -1) {
-					sRealOptionKey = aLastOptions[iButtonSelectedIndex];
-				} else if (aNextOptionsSelectedIndex > -1) {
-					sRealOptionKey = aNextOptions[iButtonSelectedIndex];
+			if (
+				this._oNavContainer && !aButtons.length ||
+				(this._oNavContainer && aButtons.length && (aLastOptionsSelectedIndex > -1 || aNextOptionsSelectedIndex > -1))
+			) {
+				iButtonSelectedIndex = aButtons[0] ? aButtons[0].getParent().getSelectedIndex() : 0;
+				if (aLastDateTimeOperators.indexOf(sOptionKey) > -1) {
+					sActualSelectedOptionKey = aLastActualOrder[iButtonSelectedIndex];
+				} else if (aNextDateTimeOperators.indexOf(sOptionKey) > -1) {
+					sActualSelectedOptionKey = aNextActualOrder[iButtonSelectedIndex];
 				}
-				aValueHelpTypes = this._oSelectedOption ? this._oSelectedOption.getValueHelpUITypes() : [];
-				sType = aValueHelpTypes && aValueHelpTypes.length ? aValueHelpTypes[0].getType() : "";
 
-				if (aDateTimeOperators.indexOf(sRealOptionKey) > -1) {
+				if (aDateTimeOperators.indexOf(sActualSelectedOptionKey) > -1) {
 					sType = 'datetime';
+					return sType;
 				}
-
-				return sType;
 			}
-
 			aValueHelpTypes = this._oSelectedOption ? this._oSelectedOption.getValueHelpUITypes() : [];
 
 			return aValueHelpTypes && aValueHelpTypes.length ? aValueHelpTypes[0].getType() : "";
