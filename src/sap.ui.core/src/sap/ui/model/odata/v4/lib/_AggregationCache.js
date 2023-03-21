@@ -132,14 +132,16 @@ sap.ui.define([
 	 *   level cache is given
 	 * @throws {Error}
 	 *   In case an unexpected element or placeholder would be overwritten, if the given offset is
-	 *   negative, if a resulting array index is out of bounds, or in case of a duplicate predicate
+	 *   negative, if a resulting array index is out of bounds, in case of a duplicate predicate, or
+	 *   if a kept-alive element has been modified on both client and server
 	 *
 	 * @private
 	 */
 	_AggregationCache.prototype.addElements = function (vReadElements, iOffset, oCache, iStart) {
 		var aElements = this.aElements,
 			sHierarchyQualifier = this.oAggregation.hierarchyQualifier,
-			sNodeProperty = this.oAggregation.$NodeProperty;
+			sNodeProperty = this.oAggregation.$NodeProperty,
+			that = this;
 
 		function addElement(oElement, i) {
 			var oOldElement = aElements[iOffset + i],
@@ -161,7 +163,14 @@ sap.ui.define([
 				if (!sHierarchyQualifier) {
 					throw new Error("Duplicate predicate: " + sPredicate);
 				}
-				_Helper.updateNonExisting(oElement, oKeptElement);
+				if (!oKeptElement["@odata.etag"]
+						|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
+					// no ETag used or known yet, or ETag unchanged
+					_Helper.updateNonExisting(oElement, oKeptElement);
+				} else if (that.hasPendingChangesForPath(sPredicate)) {
+					throw new Error("Modified on client and on server: "
+						+ that.sResourcePath + sPredicate);
+				} // else: ETag changed, ignore kept element!
 			}
 
 			aElements.$byPredicate[sPredicate] = aElements[iOffset + i] = oElement;

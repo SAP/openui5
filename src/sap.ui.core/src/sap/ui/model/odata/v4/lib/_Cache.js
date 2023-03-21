@@ -2999,6 +2999,8 @@ sap.ui.define([
 	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
 	 * @returns {number}
 	 *   The number of newly created elements filtered out from the given result
+	 * @throws {Error}
+	 *   If a kept-alive element has been modified on both client and server
 	 *
 	 * @private
 	 */
@@ -3036,7 +3038,7 @@ sap.ui.define([
 					} else if (this.hasPendingChangesForPath(sPredicate)) {
 						throw new Error("Modified on client and on server: "
 							+ this.sResourcePath + sPredicate);
-					} // else: if POST and GET are in the same $batch, ETag cannot differ!
+					} // else: ETag changed, ignore kept element!
 				}
 				aElements.$byPredicate[sPredicate] = oElement;
 			}

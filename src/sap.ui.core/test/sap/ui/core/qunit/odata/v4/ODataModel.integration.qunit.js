@@ -24240,6 +24240,7 @@ sap.ui.define([
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
 				value : [{
+					"@odata.etag" : "etag0.0",
 					ArtistID : "0",
 					BestFriend : {
 						ArtistID : "01",
@@ -24284,6 +24285,7 @@ sap.ui.define([
 				["", "", ""]
 			]);
 			assert.deepEqual(oRoot.getObject(), {
+					"@odata.etag" : "etag0.0",
 					"@$ui5.node.level" : 1,
 					ArtistID : "0",
 					BestFriend : {
@@ -24312,6 +24314,7 @@ sap.ui.define([
 			assert.strictEqual(oHeaderContext.isSelected(), true);
 
 			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=defaultChannel", {
+					"@odata.etag" : "etag0.0",
 					defaultChannel : "60"
 				});
 
@@ -24330,6 +24333,7 @@ sap.ui.define([
 						+ "?$select=ArtistID,IsActiveEntity,Messages,_/NodeID,defaultChannel"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
+						"@odata.etag" : "etag0.1",
 						ArtistID : "0",
 						IsActiveEntity : true,
 						Messages : [],
@@ -24350,6 +24354,7 @@ sap.ui.define([
 			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,_/NodeID,defaultChannel"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
+						"@odata.etag" : "etag0.2",
 						ArtistID : "0",
 						IsActiveEntity : true,
 						_ : {
@@ -24370,6 +24375,7 @@ sap.ui.define([
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
+						"@odata.etag" : "etag0.2",
 						ArtistID : "0",
 						BestFriend : {
 							ArtistID : "01",
@@ -24418,6 +24424,7 @@ sap.ui.define([
 						+ "?$select=ArtistID,IsActiveEntity,Messages,_/NodeID,defaultChannel"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
+						"@odata.etag" : "etag0.3",
 						ArtistID : "0",
 						IsActiveEntity : true,
 						Messages : [],
@@ -24474,6 +24481,7 @@ sap.ui.define([
 						+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true"
 				}, {
 					value : [{
+						"@odata.etag" : "etag0.4",
 						ArtistID : "0",
 						BestFriend : {
 							ArtistID : "01",
@@ -24496,6 +24504,7 @@ sap.ui.define([
 				}, {
 					"@odata.count" : "1",
 					value : [{
+						"@odata.etag" : "etag1.0",
 						ArtistID : "1",
 						BestFriend : null,
 						IsActiveEntity : true,
@@ -24526,6 +24535,7 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
 			assert.deepEqual(oKeptAliveNode.getObject(), {
+					"@odata.etag" : "etag0.4",
 					ArtistID : "0",
 					BestFriend : {
 						ArtistID : "01",
@@ -24589,6 +24599,7 @@ sap.ui.define([
 					+ "&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "1",
 					value : [{
+						"@odata.etag" : "etag0.4",
 						ArtistID : "0",
 						BestFriend : {
 							ArtistID : "01",
@@ -24618,6 +24629,7 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
 			assert.deepEqual(oKeptAliveNode.getObject(), {
+					"@odata.etag" : "etag0.4",
 					"@$ui5.node.isExpanded" : false,
 					"@$ui5.node.level" : 2,
 					ArtistID : "0",
@@ -25491,6 +25503,7 @@ sap.ui.define([
 					url : "EMPLOYEES('3')"
 						+ "?$select=AGE,ID,Name,ROOM_ID,__CT__FAKE__Message/__FAKE__Messages"
 				}, {
+					"@odata.etag" : "etag3",
 					AGE : 57,
 					ID : "3",
 					ROOM_ID : "3.0",
@@ -25533,6 +25546,7 @@ sap.ui.define([
 					+ "&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "3",
 					value : [{
+						"@odata.etag" : "etag1",
 						DescendantCount : "0",
 						DistanceFromRoot : "1",
 						DrillState : "collapsed",
@@ -25540,6 +25554,7 @@ sap.ui.define([
 						MANAGER_ID : "0",
 						Name : "Beta"
 					}, {
+						"@odata.etag" : "etag2",
 						DescendantCount : "0",
 						DistanceFromRoot : "1",
 						DrillState : "leaf",
@@ -25547,6 +25562,7 @@ sap.ui.define([
 						MANAGER_ID : "0",
 						Name : "Kappa"
 					}, {
+						"@odata.etag" : "etag3",
 						DescendantCount : "0",
 						DistanceFromRoot : "1",
 						DrillState : "leaf",
@@ -25578,6 +25594,7 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[2], oContext, "reused");
 			assert.strictEqual(oContext.isKeepAlive(), true, "still kept alive");
 			assert.deepEqual(oContext.getObject(), {
+					"@odata.etag" : "etag3",
 					// "@$ui5.node.isExpanded" : undefined,
 					"@$ui5.node.level" : 2,
 					AGE : 57,
