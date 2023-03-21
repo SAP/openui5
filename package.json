@@ -100,7 +100,7 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-eslint": "^23.0.0",
     "grunt-git": "^1.0.1",
-    "grunt-jsdoc": "^2.2.1",
+    "grunt-jsdoc": "^2.4.1",
     "grunt-mocha-test": "^0.13.3",
     "grunt-openui5": "^0.18.4",
     "grunt-text-replace": "^0.4.0",
@@ -128,6 +128,11 @@
     "semver": "^4.3.0",
     "set-cookie-parser": "^2.5.1",
     "wsrun": "^5.2.0"
+  },
+  "overrides": {
+    "grunt-jsdoc": {
+      "jsdoc": "^4.0.2"
+    }
   },
   "workspaces": [
     "src/!(testsuite-utils)"
