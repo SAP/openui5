@@ -68,7 +68,8 @@ sap.ui.define([
 				items: {
 					type: "sap.ui.mdc.field.MultiValueFieldItem",
 					multiple: true,
-					singularName : "item"
+					singularName : "item",
+					bindable: "bindable"
 				}
 			},
 			defaultAggregation: "items",
@@ -356,6 +357,41 @@ sap.ui.define([
 	 * @deprecated Not supported, use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#getConditions
+	 * @function
+	 */
+
+	/**
+	 * Binds property <code>conditions</code> to model data.
+	 *
+	 * See {@link sap.ui.base.ManagedObject#bindProperty ManagedObject.bindProperty} for a detailed description of the possible properties of oBindingInfo
+	 *
+	 * Do not use the <code>conditions</code> property,
+	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
+	 *
+	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} oBindingInfo The binding information
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.MultiValueField#bindConditions
+	 * @function
+	 */
+
+	/**
+	 * Unbinds property <code>conditions</code> from model data.
+	 *
+	 * Do not use the <code>conditions</code> property,
+	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
+	 *
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.MultiValueField#unbindConditions
 	 * @function
 	 */
 
