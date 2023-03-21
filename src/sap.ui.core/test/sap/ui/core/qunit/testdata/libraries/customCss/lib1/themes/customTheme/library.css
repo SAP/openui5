@@ -1,0 +1,11 @@
+.sapUiCustomCssLib1Black {
+	color: black;
+}
+
+.sapUiThemeDesignerCustomCss{
+	content:'true'
+}
+
+.sapThemeMetaData-UI5-testlibs-customCss-lib1 {
+	background-image: url('data:text/plain;utf-8,{"Extends": ["sap_hcb","base"], "Version": { "Build":"1.0.0", "Source": "1.0.0", "Engine": "1.0.0"}}');
+}
