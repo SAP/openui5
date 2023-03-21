@@ -3364,9 +3364,9 @@ sap.ui.define([
 			assert.strictEqual(this.oErrorSpy.getCall(0).args[0], "The given date instance isn't valid.");
 		});
 
-		QUnit.module("interval behavior - greatest Diff");
+		QUnit.module("interval behavior");
 
-		QUnit.test("Greatest Diff Group: Date instance", function (assert) {
+		QUnit.test("_getDiffFields: Date instance", function (assert) {
 			var oIntervalFormat = DateFormat.getDateInstance({
 				interval: true,
 				format: "yMd"
@@ -3376,13 +3376,14 @@ sap.ui.define([
 			var oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)), CalendarType.Gregorian);
 			var oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 2 * 24 * 3600 * 1000), CalendarType.Gregorian);
 
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Day": true }, "correct diff returned");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), { "Day": true }, "correct diff returned");
 
 			// + 0.5 day
 			// if two dates are identical on the fields which we compare, no diff field will be returned
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 12 * 3600 * 1000));
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), null,
+				"if two dates are identical on the fields which we compare, 'null' will be returned");
 
 			oIntervalFormat = DateFormat.getDateInstance({
 				interval: true,
@@ -3392,28 +3393,31 @@ sap.ui.define([
 			// + 1 month and + 1 year
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2018, 4, 11)));
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Year": true, "Month": true, "Week": true }, "correct diff returned");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]),
+				{ "Year": true, "Month": true, "Week": true }, "correct diff returned");
 
 			// + 3 month
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)), CalendarType.Gregorian);
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 6, 11)), CalendarType.Gregorian);
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Quarter": true, "Month": true, "Week": true }, "correct diff returned");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]),
+				{ "Quarter": true, "Month": true, "Week": true }, "correct diff returned");
 		});
 
-		QUnit.test("Greatest Diff Group: Time instance", function (assert) {
+		QUnit.test("_getDiffFields: Time instance", function (assert) {
 			var oIntervalFormat = DateFormat.getTimeInstance({
 				interval: true,
 				format: "Hms"
 			});
 			var oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)));
 			var oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 5400 * 1000));
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Hour": true, "Minute": true }, "correct diff returned");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), { "Hour": true, "Minute": true },
+				"correct diff returned");
 
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 4, 11)));
-			assert.strictEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "'null' will be returned");
+			assert.strictEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), null, "'null' will be returned");
 
 			// if the diff field doesn't exist in the 'format' option, the default diff field is used.
 			oIntervalFormat = DateFormat.getTimeInstance({
@@ -3422,7 +3426,8 @@ sap.ui.define([
 			});
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 1800 * 1000));
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Minute": true }, "the correct diff returned.");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), { "Minute": true },
+				"the correct diff returned.");
 
 			oIntervalFormat = DateFormat.getTimeInstance({
 				interval: true,
@@ -3432,7 +3437,8 @@ sap.ui.define([
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11, 11)));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 4, 11, 12)));
 
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "DayPeriod": true, "Hour": true }, "correct diff returned");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), { "DayPeriod": true, "Hour": true },
+				"correct diff returned");
 
 			oIntervalFormat = DateFormat.getTimeInstance({
 				interval: true,
@@ -3442,23 +3448,25 @@ sap.ui.define([
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11, 11)));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 4, 11, 12)));
 
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "DayPeriod": true, "Hour": true }, "correct diff returned");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), { "DayPeriod": true, "Hour": true },
+				"correct diff returned");
 		});
 
-		QUnit.test("Greatest Diff Group: DateTime instance", function (assert) {
+		QUnit.test("_getDiffFields: DateTime instance", function (assert) {
 			var oIntervalFormat = DateFormat.getDateTimeInstance({
 				interval: true,
 				format: "Hms"
 			});
 			var oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)));
 			var oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 5400 * 1000));
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Hour": true, "Minute": true }, "correct diff returned");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), { "Hour": true, "Minute": true },
+				"correct diff returned");
 
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 999));
-			assert.strictEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "'null' will be returned");
+			assert.strictEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), null, "'null' will be returned");
 
 			// if the diff field doesn't exist in the 'format' option, the default diff field is used.
 			oIntervalFormat = DateFormat.getDateTimeInstance({
@@ -3467,7 +3475,8 @@ sap.ui.define([
 			});
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 1800 * 1000));
-			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Minute": true }, "correct diff returned.");
+			assert.deepEqual(oIntervalFormat._getDiffFields([oDate, oDate1]), { "Minute": true },
+				"correct diff returned.");
 		});
 
 		QUnit.module("format & parse interval");
