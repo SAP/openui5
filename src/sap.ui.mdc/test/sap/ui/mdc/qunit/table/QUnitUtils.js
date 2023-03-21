@@ -19,8 +19,11 @@ sap.ui.define([
 	"use strict";
 
 	var TableType = Library.TableType;
-
 	var QUnitUtils = Object.assign({}, MDCQUnitUtils);
+
+	function getRowsAggregationName(oTable) {
+		return oTable._isOfType(TableType.Table, true) ? "rows" : "items";
+	}
 
 	QUnitUtils.stubPropertyInfos = function(oTarget, aPropertyInfos) {
 		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
@@ -87,33 +90,60 @@ sap.ui.define([
 		}
 	};
 
-	QUnitUtils.poll = function(fnCheck, iTimeout) {
-		return new Promise(function(resolve, reject) {
-			if (fnCheck()) {
-				resolve();
-				return;
-			}
+	QUnitUtils.waitForBindingInfo = function(oTable) {
+		var sRowsAggregationName = getRowsAggregationName(oTable);
+		var oObserver;
 
-			var iRejectionTimeout = setTimeout(function() {
-				clearInterval(iCheckInterval);
-				reject("Polling timeout");
-			}, iTimeout == null ? 100 : iTimeout);
+		return oTable.initialized().then(function() {
+			return new Promise(function(resolve) {
+				var oInnerTable = oTable._oTable;
 
-			var iCheckInterval = setInterval(function() {
-				if (fnCheck()) {
-					clearTimeout(iRejectionTimeout);
-					clearInterval(iCheckInterval);
+				if (oInnerTable.getBindingInfo(sRowsAggregationName)) {
 					resolve();
+					return;
 				}
-			}, 10);
+
+				oObserver = new ManagedObjectObserver(function(oChange) {
+					if (oChange.mutation === "prepare") {
+						resolve();
+					}
+				}).observe(oInnerTable, {
+					bindings: [sRowsAggregationName]
+				});
+			});
+		}).finally(function() {
+			if (oObserver) {
+				oObserver.disconnect();
+			}
 		});
 	};
 
-	QUnitUtils.waitForBindingInfo = function(oTable, iTimeout) {
-		return this.poll(function() {
-			var oInnerTable = oTable._oTable;
-			return oInnerTable && oInnerTable.getBindingInfo(oTable._isOfType(TableType.Table, true) ? "rows" : "items");
-		}, iTimeout);
+	QUnitUtils.waitForBinding = function(oTable) {
+		var sRowsAggregationName = getRowsAggregationName(oTable);
+		var oObserver;
+
+		return oTable.initialized().then(function() {
+			return new Promise(function(resolve) {
+				var oInnerTable = oTable._oTable;
+
+				if (oInnerTable.getBinding(sRowsAggregationName)) {
+					resolve();
+					return;
+				}
+
+				oObserver = new ManagedObjectObserver(function(oChange) {
+					if (oChange.mutation === "ready") {
+						resolve();
+					}
+				}).observe(oInnerTable, {
+					bindings: [sRowsAggregationName]
+				});
+			});
+		}).finally(function() {
+			if (oObserver) {
+				oObserver.disconnect();
+			}
+		});
 	};
 
 	QUnitUtils.openColumnMenu = function(oTable, iColumnIndex) {

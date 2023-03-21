@@ -1453,8 +1453,7 @@ sap.ui.define([
 
 			if (this.getAutoBindOnInit()) {
 				var oEngine = this.getEngine();
-				oEngine.isModificationSupported(this)
-				.then(function(bModificationSupported) {
+				oEngine.isModificationSupported(this).then(function(bModificationSupported) {
 					if (bModificationSupported) {
 						oEngine.waitForChanges(this).then(function() {
 							this.rebind();

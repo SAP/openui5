@@ -60,7 +60,6 @@ sap.ui.define([
 			}]);
 		},
 		beforeEach: function(assert) {
-			this.oModel = sinon.createStubInstance(ODataModel);
 			this.oTable = new Table({
 				delegate: {
 					name: sDelegatePath,
@@ -87,7 +86,7 @@ sap.ui.define([
 			this.oType = this.oTable.getType();
 			Core.applyChanges();
 
-			return this.oTable._fullyInitialized();
+			return this.oTable.initialized();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -118,10 +117,6 @@ sap.ui.define([
 			oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
 			oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 			oTable.rebind();
-			return oTable._fullyInitialized()
-			.then(function(){
-				return oTable.getEngine().isModificationSupported(oTable);
-			});
 		}).then(function() {
 			var aSorter = [new Sorter("Name_Path", true)];
 			var oBindingInfo = {};
@@ -131,10 +126,7 @@ sap.ui.define([
 			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aSorter, filters: [], path: "/foo"});
 
 			oTable.setType("ResponsiveTable");
-			return oTable._fullyInitialized()
-			.then(function(){
-				return oTable.getEngine().isModificationSupported(oTable);
-			});
+			return TableQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function() {
 			var oSorter = oTable._oTable.getBindingInfo("items").sorter[0];
 
@@ -143,7 +135,6 @@ sap.ui.define([
 
 			oTable.setGroupConditions({groupLevels: [{name: "FirstName"}]});
 			oTable.rebind();
-			return oTable._fullyInitialized();
 		}).then(function() {
 			var aSorters = oTable._oTable.getBindingInfo("items").sorter;
 
@@ -159,7 +150,6 @@ sap.ui.define([
 
 			oTable.setGroupConditions();
 			oTable.rebind();
-			return oTable._fullyInitialized();
 		}).then(function() {
 			var aSorter = [new Sorter("Name_Path", true)];
 			var oBindingInfo = {};
