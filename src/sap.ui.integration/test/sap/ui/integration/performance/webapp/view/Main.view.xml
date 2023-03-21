@@ -5,8 +5,8 @@
 	xmlns:f="sap.f"
 	displayBlock="true">
 	<App>
-		<Page showHeader="false">
+		<ScrollContainer height="100%" vertical="true">
 			<f:GridContainer id="cardsContainer" class="sapUiSmallMargin" snapToRow="true"></f:GridContainer>
-		</Page>
+		</ScrollContainer>
 	</App>
 </mvc:View>
