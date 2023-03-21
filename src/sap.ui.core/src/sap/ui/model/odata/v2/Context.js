@@ -263,7 +263,7 @@ sap.ui.define([
 	 * Returns the promise which resolves with <code>undefined</code> on activation of this context
 	 * or if this context is already active; the promise never rejects.
 	 *
-	 * @return {sap.ui.base.SyncPromise} The promise on activation of this context
+	 * @returns {sap.ui.base.SyncPromise} The promise on activation of this context
 	 *
 	 * @private
 	 */
@@ -299,7 +299,7 @@ sap.ui.define([
 	 * Gets the absolute deep path including all intermediate paths of the binding hierarchy. This
 	 * path is used to compute the full target of messages.
 	 *
-	 * @return {string} The deep path
+	 * @returns {string} The deep path
 	 * @private
 	 */
 	Context.prototype.getDeepPath = function () {
@@ -381,7 +381,7 @@ sap.ui.define([
 	 * Whether this context has changed, which means it has been updated or a refresh of dependent
 	 * bindings needs to be enforced.
 	 *
-	 * @return {boolean} Whether this context has changed
+	 * @returns {boolean} Whether this context has changed
 	 * @private
 	 * @see sap.ui.model.odata.v2.Context#isUpdated
 	 * @see sap.ui.model.odata.v2.Context#isRefreshForced
@@ -393,7 +393,7 @@ sap.ui.define([
 	/**
 	 * Returns whether this context has at least one sub-context.
 	 *
-	 * @return {boolean} Whether this context has at least one sub-context
+	 * @returns {boolean} Whether this context has at least one sub-context
 	 *
 	 * @private
 	 */
@@ -404,7 +404,7 @@ sap.ui.define([
 	/**
 	 * Returns whether this context has a transient parent context.
 	 *
-	 * @return {boolean} Whether this context has a transient parent context
+	 * @returns {boolean} Whether this context has a transient parent context
 	 *
 	 * @private
 	 */
@@ -418,7 +418,7 @@ sap.ui.define([
 	 * The result of this function can also be accessed via the "@$ui5.context.isInactive" instance
 	 * annotation at the entity, see {@link sap.ui.model.odata.v2.ODataModel#getProperty} for details.
 	 *
-	 * @return {boolean} Whether this context is inactive
+	 * @returns {boolean} Whether this context is inactive
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v2.ODataListBinding#create
@@ -434,7 +434,7 @@ sap.ui.define([
 	 * if no data has been loaded for the context's entity. This can be used by dependent bindings
 	 * to send their requests in parallel to the request of the context binding.
 	 *
-	 * @return {boolean} Whether this context is preliminary
+	 * @returns {boolean} Whether this context is preliminary
 	 * @private
 	 * @ui5-restricted sap.suite.ui.generic
 	 */
@@ -446,7 +446,7 @@ sap.ui.define([
 	 * Whether dependent bindings of this context need to be refreshed, when the context is
 	 * propagated.
 	 *
-	 * @return {boolean} Whether dependent bindings need to be refreshed
+	 * @returns {boolean} Whether dependent bindings need to be refreshed
 	 * @private
 	 */
 	Context.prototype.isRefreshForced = function () {
@@ -486,7 +486,7 @@ sap.ui.define([
 	 * Whether this context was updated. For example the path changed from a preliminary path to the
 	 * canonical one.
 	 *
-	 * @return {boolean} Whether the context is updated
+	 * @returns {boolean} Whether the context is updated
 	 * @private
 	 */
 	Context.prototype.isUpdated = function () {
