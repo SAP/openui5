@@ -191,8 +191,7 @@ sap.ui.define([
 			bShowIndicatorArrows = Device.system.desktop && mSettings.sArrowsPlacement === CarouselArrowsPlacement.PageIndicator,
 			sId = oCarousel.getId(),
 			aOffsetClasses = [],
-			iNumberOfItemsToShow = oCarousel._getNumberOfItemsToShow(),
-			iPageNumber = 1;
+			iNumberOfItemsToShow = oCarousel._getNumberOfItemsToShow();
 
 		// If there is only one page - do not render the indicator
 		if (iPageCount <= oCarousel._getNumberOfItemsToShow()) {
@@ -241,15 +240,12 @@ sap.ui.define([
 
 			for (var i = 1; i <= iPageCount - iNumberOfItemsToShow + 1; i++) {
 				oRM.openStart("span")
-					.attr("data-slide", iPageNumber)
+					.attr("data-slide", i)
 					.accessibilityState({
 						role: "img",
 						label: oResourceBundle.getText("CAROUSEL_POSITION", [i, iPageCount])
 					}).openEnd()
-					.text(i)
 					.close("span");
-
-				iPageNumber++;
 			}
 
 		} else {
