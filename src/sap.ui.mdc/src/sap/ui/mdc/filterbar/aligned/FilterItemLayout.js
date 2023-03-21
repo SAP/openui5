@@ -14,8 +14,6 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 	 * @class Represents a filter item on the UI.
 	 * @extends sap.ui.layout.VerticalLayout
 	 * @constructor
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.filterbar.aligned.FilterItemLayout
 	 */

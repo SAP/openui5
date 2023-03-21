@@ -12,7 +12,7 @@ sap.ui.define([
 	 * Constructor for a new FilterBar.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The <code>FilterBar</code> control is used to display filter properties in a user-friendly manner to populate values for a query.
+	 * @class The <code>FilterBar</code> control is used to display filter attrtibutes in a user-friendly manner to populate values for a query.
 	 * The filters are arranged in a logical row that is divided depending on the space available and the width of the filters.
 	 * The Go button triggers the search event, and the Advanced Filters button shows the filter dialog.<br>
 	 * The <code>FilterBar</code> control creates and handles the filters based on the provided metadata information.
@@ -21,7 +21,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @experimental As of version 1.61
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -241,7 +240,6 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {
 
 		return this._retrieveMetadata().then(function() {
@@ -253,19 +251,29 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Returns the external conditions of the inner condition model.
+	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
+	 * @private
+	 * @ui5-restricted sap.fe, sap.mdc
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBar</code>
+	 */
 	FilterBar.prototype.getCurrentState = function() {
 		var oState = FilterBarBase.prototype.getCurrentState.apply(this, arguments);
 		if (!this.getProperty("_p13nModeItem")) {
 			delete oState.items;
 		}
+
 		return oState;
 	};
 
 	/**
-	 * Sets the focus to the first filter in error state.
+	 * Sets the focus on the first filter in error state.
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @returns {sap.ui.mdc.FilterField} Returns the first filter field in error state
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @returns {sap.ui.mdc.FilterField | null} Returns the first filter field in error state
 	 */
 	FilterBar.prototype.setFocusOnFirstErroneousField = function() {
 		return this._setFocusOnFirstErroneousField();
