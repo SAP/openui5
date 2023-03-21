@@ -1563,6 +1563,12 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Set minimum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	PlanningCalendar.prototype.setMinDate = function(oDate){
 
 		if (deepEqual(oDate, this.getMinDate())) {
@@ -1622,6 +1628,12 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Set maximum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	PlanningCalendar.prototype.setMaxDate = function(oDate){
 
 		if (deepEqual(oDate, this.getMaxDate())) {
