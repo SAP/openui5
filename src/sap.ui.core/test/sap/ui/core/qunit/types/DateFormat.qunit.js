@@ -180,6 +180,24 @@ sap.ui.define([
 		assert.deepEqual(oFormat.aFallbackFormats.length, 6);
 	});
 
+	//*********************************************************************************************
+	QUnit.test("Prevent duplicate interval patterns", function (assert) {
+		var oFormat,
+			oInfo = {oDefaultFormatOptions: {}, aFallbackFormatOptions: []},
+			oFormatOptions = {format: "yMd", interval: true, intervalDelimiter: "..."},
+			oLocale = new Locale("en");
+
+		// code under test
+		oFormat = DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
+
+		assert.deepEqual(oFormat.intervalPatterns, [
+			"M/d/y'...'M/d/y",
+			"M/d/y – M/d/y",
+			"M/d/y",
+			"M/d/y - M/d/y"
+		]);
+	});
+
 		QUnit.module("DateFormat format", {
 			beforeEach: function (assert) {
 				stubTimezone("Europe/Berlin");
