@@ -334,7 +334,7 @@ sap.ui.define([
 	 * Format a date object to a string according to the given timezone and format options.
 	 *
 	 * @example <caption>Format option showTimezone: true (default)</caption>
-	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
 	 *
 	 * DateFormat.getDateTimeWithTimezoneInstance().format(oDate, "Europe/Berlin");
 	 * // output: "Dec 24, 2021, 2:37:00 PM Europe, Berlin"
@@ -343,12 +343,12 @@ sap.ui.define([
 	 * // output: "Dec 24, 2021, 8:37:00 AM Americas, New York"
 	 *
 	 * @example <caption>Format option showTimezone: false</caption>
-	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
 	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: false}).format(oDate, "America/New_York");
 	 * // output: "Dec 24, 2021, 8:37:00 AM"
 	 *
 	 * @example <caption>Format option showDate: false and showTime:false</caption>
-	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
 	 * DateFormat.getDateTimeWithTimezoneInstance({showDate: false, showTime: false}).format(oDate, "America/New_York");
 	 * // output: "Americas, New York"
 	 *
@@ -369,7 +369,7 @@ sap.ui.define([
 	 * containing a date object and the timezone.
 	 *
 	 * @example <caption>Format option showTimezone: true (default)</caption>
-	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
 	 *
 	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 2:37:00 PM Europe, Berlin", "Europe/Berlin");
 	 * // output: [oDate, "Europe/Berlin"]
@@ -378,7 +378,7 @@ sap.ui.define([
 	 * // output: [oDate, "America/New_York"]
 	 *
 	 * @example <caption>Format option showTimezone: false</caption>
-	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
 	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: false}).parse("Dec 24, 2021, 8:37:00 AM", "America/New_York");
 	 * // output: [oDate, undefined]
 	 *
@@ -404,9 +404,12 @@ sap.ui.define([
 	 * <ul>
 	 *   <li>An array containing datetime and timezone depending on the showDate, showTime and showTimezone options
 	 *     <ul>
-	 *         <li>(Default): [Date, string], e.g. [new Date("2021-11-13T13:22:33Z"), "America/New_York"]</li>
-	 *         <li><code>showTimezone: false</code>: [Date, undefined], e.g. [new Date("2021-11-13T13:22:33Z"), undefined]</li>
-	 *         <li><code>showDate: false, showTime: false</code>: [undefined, string], e.g. [undefined, "America/New_York"]</li>
+	 *         <li>(Default): [Date, string], e.g.
+	 *           [UI5Date.getInstance("2021-11-13T13:22:33Z"), "America/New_York"]</li>
+	 *         <li><code>showTimezone: false</code>: [Date, undefined], e.g.
+	 *           [UI5Date.getInstance("2021-11-13T13:22:33Z"), undefined]</li>
+	 *         <li><code>showDate: false, showTime: false</code>: [undefined, string], e.g.
+	 *           [undefined, "America/New_York"]</li>
 	 *     </ul>
 	 *   </li>
 	 * </ul>
@@ -2332,7 +2335,7 @@ sap.ui.define([
 	 * {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance#format}.
 	 *
 	 * @example <caption>DateTime (assuming timezone "Europe/Berlin")</caption>
-	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
 	 * DateFormat.getDateTimeInstance().format(oDate);
 	 * // output: "Dec 24, 2021, 2:37:00 PM"
 	 *
@@ -2763,7 +2766,7 @@ sap.ui.define([
 		}
 		if (oDateValue.tzDiff) {
 			// tzDiff is in seconds for a higher precision (historical timezone might have differences in seconds)
-			// e.g. new Date(Date.UTC(1730, 0, 1))
+			// e.g. UI5Date.getInstance("1730-01-01T00:00:00Z")
 			// is in Berlin: Sun Jan 01 1730 00:53:28 GMT+0053 (Central European Standard Time)
 			oDate.setUTCSeconds(oDate.getUTCSeconds() + oDateValue.tzDiff);
 		}
@@ -2818,7 +2821,7 @@ sap.ui.define([
 	 * {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance#parse}.
 	 *
 	 * @example <caption>DateTime (assuming timezone "Europe/Berlin")</caption>
-	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
 	 * DateFormat.getDateTimeInstance().parse("Dec 24, 2021, 2:37:00 PM");
 	 * // output: oDate
 	 *
