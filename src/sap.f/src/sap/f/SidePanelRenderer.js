@@ -59,7 +59,8 @@ sap.ui.define([
 			oRm.openEnd();
 
 			oRm.renderControl(IconPool.createControlByURI({
-				src: iIndex === 0 && bSingleItem && bPhone ? "sap-icon://navigation-up-arrow" : oItem.getIcon()
+				src: iIndex === 0 && bSingleItem && bPhone ? "sap-icon://navigation-up-arrow" : oItem.getIcon(),
+				useIconTooltip: false
 			}));
 
 			if ((bSingleItem && bPhone)
