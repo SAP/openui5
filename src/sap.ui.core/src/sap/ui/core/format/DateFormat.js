@@ -2467,17 +2467,18 @@ sap.ui.define([
 			aFormatArray = [],
 			oFromDate = UniversalDate.getInstance(aJSDates[0], sCalendarType),
 			oToDate = UniversalDate.getInstance(aJSDates[1], sCalendarType),
-			oDiffField = this._getGreatestDiffField([oFromDate, oToDate]);
+			oDiffFields = this._getDiffFields([oFromDate, oToDate]);
 
-		if (!oDiffField) {
+		if (!oDiffFields) {
 			return this._format(aJSDates[0], bUTC);
 		}
 
-		if (this._useCustomIntervalDelimiter(oDiffField)) {
+		if (this._useCustomIntervalDelimiter(oDiffFields)) {
 			sPattern = this.intervalPatterns[0];
 		} else if (this.oFormatOptions.format) {
 			// when 'format' option is set, generate the pattern based on the greatest difference
-			sPattern = this.oLocaleData.getCustomIntervalPattern(this.oFormatOptions.format, oDiffField, sCalendarType);
+			sPattern = this.oLocaleData.getCustomIntervalPattern(this.oFormatOptions.format, oDiffFields,
+				sCalendarType);
 		} else {
 			sPattern = this.oLocaleData.getCombinedIntervalPattern(this.oFormatOptions.pattern, sCalendarType);
 		}
@@ -2512,8 +2513,18 @@ sap.ui.define([
 		Seconds: "Second"
 	};
 
-	// the expected dates are UTC and therefore their UTC functions are called, e.g. getUTCHours
-	DateFormat.prototype._getGreatestDiffField = function(aDates) {
+	/**
+	 * Returns an object containing the relevant date/time parts that differ in the two given dates.
+	 *
+	 * @param {sap.ui.core.date.UniversalDate[]} aDates
+	 *   An array with two UniversalDate instances representing the start and the end date of the interval;
+	 *   the dates are expected to be in UTC time zone
+	 * @returns {Object<string, boolean>|null}
+	 *   An object containing the different date/time parts, or <code>null</code> if the dates are the same
+	 *
+	 * @private
+	 */
+	DateFormat.prototype._getDiffFields = function(aDates) {
 		var bDiffFound = false,
 			mDiff = {};
 
