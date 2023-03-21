@@ -4633,4 +4633,173 @@ sap.ui.define([
 		oDate = oFormat.parse("2022 015");
 		assert.strictEqual(oFormat.format(oDate), "2022 015");
 	});
+
+	//*****************************************************************************************************************
+	QUnit.test("createInstance: creates interval pattern with custom delimiter", function (assert) {
+		var oFormat,
+			oInfo = {oDefaultFormatOptions: {}, aFallbackFormatOptions: []},
+			oLocale = new Locale("de");
+
+		// code under test: format option 'format'
+		oFormat = DateFormat.createInstance({interval: true, intervalDelimiter: "_", format: "yM"}, oLocale, oInfo);
+
+		assert.strictEqual(oFormat.intervalPatterns[0], "M.y'_'M.y");
+
+		// code under test: format option 'pattern'
+		oFormat = DateFormat.createInstance({interval: true, intervalDelimiter: "_", pattern: "foo"}, oLocale, oInfo);
+
+		assert.strictEqual(oFormat.intervalPatterns[0], "foo'_'foo");
+	});
+
+	//*****************************************************************************************************************
+[
+	{instanceFunction: "getDateInstance", defaults: DateFormat.oDateInfo},
+	{instanceFunction: "getDateTimeInstance", defaults: DateFormat.oDateTimeInfo},
+	{instanceFunction: "getTimeInstance", defaults: DateFormat.oTimeInfo}
+].forEach(function (oFixture) {
+	QUnit.test(oFixture.instanceFunction + ": Forward oFormatOptions and oLocale to createInstance", function (assert) {
+		this.mock(DateFormat).expects("createInstance")
+			.withExactArgs("~formatOptions", "~locale", sinon.match.same(oFixture.defaults))
+			.returns("~newInstance");
+
+		// code under test
+		assert.strictEqual(DateFormat[oFixture.instanceFunction]("~formatOptions", "~locale"), "~newInstance");
+	});
+});
+
+	//*****************************************************************************************************************
+[{
+	instanceFunction: "getDateInstance",
+	formattedInterval: "01.01.20 & 31.12.22",
+	fallbackInterval: "01.01.20 - 31.12.22",
+	singleValue: "01.01.20",
+	fromDate: [2020, 0, 1],
+	toDate: [2022, 11, 31]
+}, {
+	instanceFunction: "getDateTimeInstance",
+	formattedInterval: "01.01.20, 09:15 & 31.12.22, 11:45",
+	fallbackInterval: "01.01.20, 09:15 - 31.12.22, 11:45",
+	singleValue: "01.01.20, 09:15",
+	fromDate: [2020, 0, 1, 9, 15],
+	toDate: [2022, 11, 31, 11, 45]
+}, {
+	instanceFunction: "getTimeInstance",
+	formattedInterval: "09:15 & 11:45",
+	fallbackInterval: "09:15 - 11:45",
+	singleValue: "09:15",
+	fromDate: [1970, 0, 1, 9, 15],
+	toDate: [1970, 0, 1, 11, 45]
+}].forEach(function (oFixture) {
+	QUnit.test(oFixture.instanceFunction + ": format/parse with intervalDelimiter", function (assert) {
+		var oDate0 = UI5Date.getInstance.apply(null, oFixture.fromDate),
+			oDate1 = UI5Date.getInstance.apply(null, oFixture.toDate),
+			oFormatOptions = {interval: true, intervalDelimiter: " & ", style: "short"},
+			oLocale = new Locale("de"),
+			oFormat = DateFormat[oFixture.instanceFunction](oFormatOptions, oLocale);
+
+		// code under test: format
+		assert.strictEqual(oFormat.format([oDate0, oDate1]), oFixture.formattedInterval);
+
+		// code under test: parse with configured delimiter
+		assert.deepEqual(oFormat.parse(oFixture.formattedInterval), [oDate0, oDate1]);
+
+		// code under test: parse with fallback delimiter
+		assert.deepEqual(oFormat.parse(oFixture.fallbackInterval), [oDate0, oDate1]);
+
+		// ****************
+		// single intervals
+
+		// code under test: format + parse
+		assert.strictEqual(oFormat.format([oDate0, oDate0]), oFixture.singleValue);
+		assert.deepEqual(oFormat.parse(oFixture.singleValue), [oDate0, oDate0]);
+
+		oFormatOptions.singleIntervalValue = true;
+		oFormat = DateFormat[oFixture.instanceFunction](oFormatOptions, oLocale);
+
+		// code under test: format + parse (singleIntervalValue=true)
+		assert.strictEqual(oFormat.format([oDate0, null]), oFixture.singleValue);
+		assert.deepEqual(oFormat.parse(oFixture.singleValue), [oDate0, null]);
+	});
+});
+
+	//*****************************************************************************************************************
+	QUnit.test("getDateTimeInstance: format single interval (no diff in output format)", function (assert) {
+		var oFormat,
+			oDate0 = UI5Date.getInstance(2008, 0, 10, 9 , 15),
+			oDate1 = UI5Date.getInstance(2008, 0, 10, 11, 45),
+			oLocale = new Locale("en");
+
+		// code under test: createInstance with format
+		oFormat = DateFormat.getDateTimeInstance({interval: true, format: "yMMM"}, oLocale);
+		assert.strictEqual(oFormat.format([oDate0, oDate1]), "Jan 2008");
+
+		// code under test: createInstance with format
+		oFormat = DateFormat.getDateTimeInstance({interval: true, format: "yMMM", intervalDelimiter: "..."}, oLocale);
+		assert.strictEqual(oFormat.format([oDate0, oDate1]), "Jan 2008");
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("getDateTimeInstance: format interval (with diff in output format)", function (assert) {
+		var oFormat,
+			oDate0 = UI5Date.getInstance(2008, 0, 10, 9 , 15),
+			oDate1 = UI5Date.getInstance(2008, 0, 10, 11, 45),
+			oLocale = new Locale("en");
+
+		// code under test: createInstance with format
+		oFormat = DateFormat.getDateTimeInstance({interval: true, format: "yMMMdhm"}, oLocale);
+		assert.strictEqual(oFormat.format([oDate0, oDate1]), "Jan 10, 2008, 9:15 – 11:45 AM");
+
+		// code under test: createInstance with format
+		oFormat = DateFormat.getDateTimeInstance({interval: true, format: "yMMMdhm", intervalDelimiter: "..."},
+			oLocale);
+		assert.strictEqual(oFormat.format([oDate0, oDate1]), "Jan 10, 2008, 9:15 AM...Jan 10, 2008, 11:45 AM");
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("FormatOption 'intervalDelimiter': delimiter is handled as escaped literal text", function (assert) {
+		var oDate20 = UI5Date.getInstance(2020, 0, 1),
+			oDate22 = UI5Date.getInstance(2022, 0, 1),
+			oFormat = DateFormat.getDateInstance({interval: true, intervalDelimiter: " B'ar' ", pattern: "y"});
+
+		assert.strictEqual(oFormat.intervalPatterns[0], "y' B''ar'' 'y");
+		assert.strictEqual(oFormat.format([oDate20, oDate22]), "2020 B'ar' 2022");
+		assert.deepEqual(oFormat.parse("2020 B'ar' 2022"), [oDate20, oDate22]);
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("_useCustomIntervalDelimiter: no intervalDelimiter", function (assert) {
+		var oFormat = DateFormat.getDateTimeInstance({}, new Locale("en"));
+
+		this.mock(oFormat.oLocaleData).expects("_parseSkeletonFormat").never();
+
+		// code under test
+		assert.strictEqual(oFormat._useCustomIntervalDelimiter({}), false);
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("_useCustomIntervalDelimiter: with intervalDelimiter, use pattern", function (assert) {
+		var oFormat = DateFormat.getDateTimeInstance({intervalDelimiter: "&", pattern: "foo"}, new Locale("en"));
+
+		this.mock(oFormat.oLocaleData).expects("_parseSkeletonFormat").never();
+
+		// code under test
+		assert.strictEqual(oFormat._useCustomIntervalDelimiter({}), true);
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("_useCustomIntervalDelimiter: with intervalDelimiter, use format", function (assert) {
+		var oFormat = DateFormat.getDateTimeInstance({intervalDelimiter: "&", format: "yM"}, new Locale("en")),
+			oLocaleDataMock = this.mock(oFormat.oLocaleData),
+			aTokens = [{group: "~group0"}, {group: "~group1"}];
+
+		oLocaleDataMock.expects("_parseSkeletonFormat").withExactArgs("yM").returns(aTokens);
+
+		// code under test
+		assert.strictEqual(oFormat._useCustomIntervalDelimiter({"~group1": true}), true);
+
+		oLocaleDataMock.expects("_parseSkeletonFormat").withExactArgs("yM").returns(aTokens);
+
+		// code under test
+		assert.strictEqual(oFormat._useCustomIntervalDelimiter({"~group2": true}), false);
+	});
 });
