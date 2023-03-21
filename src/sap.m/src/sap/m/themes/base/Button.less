@@ -531,13 +531,17 @@ span.sapMBtnInner.sapMBtnEmphasized {
 
 .sapMTB-Info-CTX .sapMBtnInner,
 .sapMTB-Info-CTX .sapMBtnInner:hover {
-	color:@sapUiContentContrastIconColor;
+	color: @sapUiInfobarTextColor;
 	text-shadow: none;
 }
 
-.sapMTB-Info-CTX .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi, .sapMIBar-CTX .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi,
-.sapMTB-Info-CTX .sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) .sapUiIcon {
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi {
 	color: @sapUiContentContrastIconColor;
+}
+
+.sapMTB-Info-CTX .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi,
+.sapMTB-Info-CTX .sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) .sapUiIcon {
+	color: @sapUiListTextColor;
 }
 
 /* Button, used as a focus dom ref for active toolbar */
@@ -616,6 +620,15 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	background-color: @sapUiButtonLiteActiveBackground;
 	border-color:     @sapUiButtonLiteActiveBorderColor;
 	text-shadow:      none;
+}
+
+/* Transparent button in Light Info toolbar/Facet filter */
+.sapMTB-Info-CTX {
+	:not(.sapMBtnDisabled) .sapMBtnBack > .sapMBtnIcon,
+	:not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon,
+	:not(.sapMBtnDisabled) .sapMBtnGhost > .sapMBtnIcon {
+		color: @sapUiInfobarTextColor;
+	}
 }
 
 /* ------------------------------------------------ */
