@@ -9,15 +9,16 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/IllustratedMessage",
 	"sap/m/library",
-	"sap/base/util/merge"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib, merge) {
+	"sap/base/util/merge",
+	"sap/ui/model/Filter"
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib, merge, Filter) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
-	var ResponsivePopover, List, Bar, SearchField, StandardListItem, InvisibleText, Device, oRb;
+	var ResponsivePopover, List, SearchField, StandardListItem, InvisibleText, Device, oRb;
 
 	var ChartTypeButton = OverflowToolbarButton.extend("sap.ui.mdc.chart.ChartTypeButton", {
 		metadata: {
@@ -101,7 +102,7 @@ sap.ui.define([
 	/**
      * Shows popover to select chart type
      * @param oButton button opening the popover
-     * @param oMDCChart the inner chart
+     * @param oMDCChart the chart
      *
      * @experimental
      * @private
@@ -118,11 +119,10 @@ sap.ui.define([
 					resolve(true);
 				} else {
 					sap.ui.require([
-						"sap/m/ResponsivePopover", "sap/m/List", "sap/m/Bar", "sap/m/SearchField", "sap/m/StandardListItem", "sap/ui/core/InvisibleText", "sap/ui/Device"
-					], function(ResponsivePopoverLoaded, ListLoaded, BarLoaded, SearchFieldLoaded, StandardListItemLoaded, InvisibleTextLoaded, DeviceLoaded) {
+						"sap/m/ResponsivePopover", "sap/m/List", "sap/m/SearchField", "sap/m/StandardListItem", "sap/ui/core/InvisibleText", "sap/ui/Device"
+					], function(ResponsivePopoverLoaded, ListLoaded, SearchFieldLoaded, StandardListItemLoaded, InvisibleTextLoaded, DeviceLoaded) {
 						ResponsivePopover = ResponsivePopoverLoaded;
 						List = ListLoaded;
-						Bar = BarLoaded;
 						SearchField = SearchFieldLoaded;
 						StandardListItem = StandardListItemLoaded;
 						InvisibleText = InvisibleTextLoaded;
@@ -143,7 +143,7 @@ sap.ui.define([
 
 		this.oReadyPromise.then(function() {
 			if (!this.oPopover){
-				this.oPopover = this._createPopover(oButton, oMDCChart);
+				this.oPopover = this._createPopover(oMDCChart);
 				this.oPopover.attachAfterClose(function(){
 					this.oPopover.destroy();
 					delete this.oPopover;
@@ -155,14 +155,14 @@ sap.ui.define([
 
 	/**
 	 * Creates the popover
-	 * @param oButton button opening the popover
-	 * @param oMDCChart inner chart
+	 * @param {sap.ui.mdc.Chart} oMDCChart chart
+     * @returns {sap.m.ResponsivePopover} the instance of the created popover
 	 *
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	ChartTypeButton.prototype._createPopover = function(oButton, oMDCChart) {
+	ChartTypeButton.prototype._createPopover = function(oMDCChart) {
 		var oItemTemplate = new StandardListItem({
 			title: "{$chart>text}",
 			icon: "{$chart>icon}",
@@ -215,21 +215,20 @@ sap.ui.define([
 			}
 		});
 
-		var oSubHeader = new Bar();
 		var oSearchField = new SearchField({
 			placeholder: oRb.getText("chart.CHART_TYPE_SEARCH")
 		});
+
 		oSearchField.attachLiveChange(function(oEvent) {
 			if (oMDCChart){
 				this._triggerSearchInPopover(oEvent, oList);
 			}
 		}.bind(this));
-		oSubHeader.addContentRight(oSearchField);
 
 		var oPopover = new ResponsivePopover({
 			id: oMDCChart.getId() + "-btnChartTypePopover",
 			placement: PlacementType.VerticalPreferredBottom,
-			subHeader: oSubHeader,
+			subHeader: oSearchField,
 			contentWidth: "25rem"
 		});
 
@@ -251,13 +250,8 @@ sap.ui.define([
 		oPopover.addContent(oList);
 
 		if (oList.getItems().length < 7) {
-			oSubHeader.setVisible(false);
+			oSearchField.setVisible(false);
 		}
-
-		/*
-		oPopover.attachAfterClose(function(oEvent) {
-			oPopover.destroy();
-		});*/
 
 		return oPopover;
 	};
@@ -271,31 +265,16 @@ sap.ui.define([
 	 */
 	ChartTypeButton.prototype._triggerSearchInPopover = function(oEvent, oList) {
 
-		var parameters, i, sTitle, sTooltip, sValue, aItems;
-
 		if (!oEvent || !oList) {
 			return;
 		}
 
-		parameters = oEvent.getParameters();
-		if (!parameters) {
-			return;
+		var sSearchValue = oEvent.getParameter("newValue");
+		var oSearchFilter = [];
+		if (sSearchValue) {
+			oSearchFilter = new Filter("text", "Contains", sSearchValue);
 		}
-
-		sValue = parameters.newValue ? parameters.newValue.toLowerCase() : "";
-
-		aItems = oList.getItems();
-		for (i = 0; i < aItems.length; i++) {
-
-			sTooltip = aItems[i].getTooltip();
-			sTitle = aItems[i].getTitle();
-
-			if ((sTitle && (sTitle.toLowerCase().indexOf(sValue) > -1)) || (sTooltip && (sTooltip.toLowerCase().indexOf(sValue) > -1))) {
-				aItems[i].setVisible(true);
-			} else {
-				aItems[i].setVisible(false);
-			}
-		}
+		oList.getBinding("items").filter(oSearchFilter);
 	};
 
     /**
