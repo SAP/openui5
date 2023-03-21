@@ -6304,10 +6304,14 @@ sap.ui.define([
 		+ bDeleteCreatedEntities;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = {
+		var oContextBar = {isInactive : function () {}},
+			oContextBaz = {isInactive : function () {}},
+			oContextFoo = {isInactive : function () {}},
+			oModel = {
 				mChangedEntities : {
 					"key('Bar')" : {__metadata : {}},
-					"key('Foo')" : {__metadata : {created : {}}}
+					"key('Foo')" : {__metadata : {created : {}}},
+					"key('Baz')" : {__metadata : {created : {}}}
 				},
 				mDeferredGroups : {
 					deferred0 : {},
@@ -6319,7 +6323,8 @@ sap.ui.define([
 				_discardEntityChanges : function () {},
 				abortInternalRequest : function () {},
 				checkUpdate : function () {},
-				getBindings : function () {}
+				getBindings : function () {},
+				getContext : function () {}
 			},
 			oModelMock = this.mock(oModel),
 			fnResolve,
@@ -6328,10 +6333,18 @@ sap.ui.define([
 			});
 
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oPromise);
+		oModelMock.expects("getContext").withExactArgs("/key('Bar')").returns(oContextBar);
+		this.mock(oContextBar).expects("isInactive").withExactArgs().returns(false);
 		oModelMock.expects("_discardEntityChanges")
 			.withExactArgs("key('Bar')", undefined);
+		oModelMock.expects("getContext").withExactArgs("/key('Foo')").returns(oContextFoo);
+		this.mock(oContextFoo).expects("isInactive").withExactArgs().returns(false);
 		oModelMock.expects("_discardEntityChanges")
 			.withExactArgs("key('Foo')", bDeleteCreatedEntities);
+		oModelMock.expects("getContext").withExactArgs("/key('Baz')").returns(oContextBaz);
+		this.mock(oContextBaz).expects("isInactive").withExactArgs().returns(true);
+		oModelMock.expects("_discardEntityChanges")
+			.withExactArgs("key('Baz')", false);
 		oModelMock.expects("getBindings").withExactArgs().returns([]);
 		oModelMock.expects("checkUpdate").withExactArgs(true);
 
@@ -6773,7 +6786,10 @@ sap.ui.define([
 	expectedSuccess : undefined
 }].forEach(function (oFixture, i) {
 	QUnit.test("submitChanges: restore parameters for created entities; #" + i, function (assert) {
-		var oContext = {hasTransientParent : function () {}},
+		var oContext = {
+				hasTransientParent : function () {},
+				isInactive : function () {}
+			},
 			oGroupInfo = {changeSetId : "~changeSetId", groupId : "~groupId"},
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
@@ -6802,9 +6818,10 @@ sap.ui.define([
 		ODataModel.prototype.submitChanges.call(oModel);
 
 		// async, after metadata loaded promise is resolved
-		this.mock(oModel).expects("_resolveGroup").withExactArgs("~sKey").returns(oGroupInfo);
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
+		this.mock(oModel).expects("_resolveGroup").withExactArgs("~sKey").returns(oGroupInfo);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
 			.withExactArgs("~sKey", /*copy of*/oFixture.oData, "~groupId", undefined)
 			.returns(oRequest);
@@ -6826,7 +6843,10 @@ sap.ui.define([
 	QUnit.test("submitChanges: calls _submitChanges on ODataTreeBindingFlat; w/o given parameters",
 			function (assert) {
 		var aBindings = [{_submitChanges : function () {}}, {}, {_submitChanges : function () {}}],
-			oContext = {hasTransientParent : function () {}},
+			oContext = {
+				hasTransientParent : function () {},
+				isInactive : function () {}
+			},
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities : {"~sKey" : {}},
@@ -6874,11 +6894,12 @@ sap.ui.define([
 		ODataModel.prototype.submitChanges.call(oModel, /*mParameters*/undefined);
 
 		// async, after metadata loaded promise is resolved
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oModel).expects("_resolveGroup")
 			.withExactArgs("~sKey")
 			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
-		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
 			.withExactArgs("~sKey", {}, "~groupId", undefined)
 			.returns(oRequest);
@@ -6907,7 +6928,10 @@ sap.ui.define([
 	QUnit.test("submitChanges: calls _submitChanges on ODataTreeBindingFlat; w/ given parameters",
 			function (assert) {
 		var aBindings = [{_submitChanges : function () {}}, {_submitChanges : function () {}}],
-			oContext = {hasTransientParent : function () {}},
+			oContext = {
+				hasTransientParent : function () {},
+				isInactive : function () {}
+			},
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities : {"~sKey" : {}},
@@ -6957,11 +6981,12 @@ sap.ui.define([
 		ODataModel.prototype.submitChanges.call(oModel, mParameters);
 
 		// async, after metadata loaded promise is resolved
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oModel).expects("_resolveGroup")
 			.withExactArgs("~sKey")
 			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
-		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
 			.withExactArgs("~sKey", {}, "~groupId", undefined)
 			.returns(oRequest);
@@ -6989,8 +7014,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitChanges: skip changed entities for deep create", function (assert) {
-		var oContext = {hasTransientParent : function () {}},
+[true, false].forEach(function (bHasTransientParent, i) {
+	QUnit.test("submitChanges: skip changed entities, " + i, function (assert) {
+		var oContext = {
+				hasTransientParent : function () {},
+				isInactive : function () {}
+			},
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities : {"~sKey" : {}},
@@ -7009,9 +7038,10 @@ sap.ui.define([
 		ODataModel.prototype.submitChanges.call(oModel);
 
 		// async, after metadata loaded promise is resolved
-		this.mock(oModel).expects("_resolveGroup").withExactArgs("~sKey").returns(/*not relevant*/);
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
-		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(true);
+		this.mock(oModel).expects("_resolveGroup").withExactArgs("~sKey").returns(/*not relevant*/);
+		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(bHasTransientParent);
+		this.mock(oContext).expects("isInactive").withExactArgs().exactly(bHasTransientParent ? 0 : 1).returns(true);
 		this.mock(oModel).expects("_processRequestQueue")
 			.withExactArgs(sinon.match(function (mDeferredRequests) {
 				assert.deepEqual(mDeferredRequests, {});
@@ -7021,6 +7051,7 @@ sap.ui.define([
 
 		return oMetadataPromise;
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("setProperty: deferred request", function (assert) {
@@ -7119,7 +7150,8 @@ sap.ui.define([
 	expectFindCreatedContext : false
 }].forEach(function (oFixture, i) {
 	QUnit.test("setProperty: activate inactive context; " + i, function (assert) {
-		var oActivateCall, oMetadataLoadedCall, oRequestQueuedPromise,
+		var oActivatedPromise, oMetadataLoadedCall, fnResolveActivatedPromise, oStartActivationCall,
+			bActivatedPromiseResolved = false,
 			oContext = {hasTransientParent : function () {}},
 			oEntry = {
 				__metadata : oFixture.entryMetadata
@@ -7196,21 +7228,35 @@ sap.ui.define([
 			.withExactArgs("/resolved/path")
 			.exactly(oFixture.expectFindCreatedContext ? 1 : 0)
 			.returns(oFixture.createdContextFound ? oCreatedContext : undefined);
-		oActivateCall = this.mock(oCreatedContext).expects("activate")
+		oStartActivationCall = this.mock(oCreatedContext).expects("startActivation")
 			.withExactArgs()
 			.exactly(oFixture.createdContextFound ? 1 : 0);
+		oActivatedPromise = new SyncPromise(function(resolve) {
+			fnResolveActivatedPromise = resolve;
+		});
+		this.mock(oCreatedContext).expects("fetchActivated")
+			.withExactArgs()
+			.exactly(oFixture.createdContextFound ? 1 : 0)
+			.returns(oActivatedPromise);
 		oMetadataLoadedCall = this.mock(oModel.oMetadata).expects("loaded")
 			.withExactArgs()
 			.returns(oMetadataLoadedPromise);
 		oModelMock.expects("checkUpdate")
 			.withExactArgs(false, "~bAsyncUpdate", {"key" : true});
-		oRequestQueuedPromise = oMetadataLoadedPromise.then(function () {
-			oModelMock.expects("_pushToRequestQueue")
-				.withExactArgs("~mRequests", "~groupId", "~changeSetId", {key : "key"},
-					/*success*/ undefined, /*error*/ undefined,
-					/*oRequestHandle*/sinon.match.object, "~bRefreshAfterChange");
-			oModelMock.expects("_processRequestQueueAsync")
-				.withExactArgs("~mRequests");
+		oModelMock.expects("_pushToRequestQueue")
+			.withExactArgs("~mRequests", "~groupId", "~changeSetId", {key : "key"},
+				/*success*/ undefined, /*error*/ undefined,
+				/*oRequestHandle*/sinon.match.object, "~bRefreshAfterChange")
+			.callsFake(function () {
+				assert.ok(bActivatedPromiseResolved, "only called after activated promise is resolved");
+			});
+		oModelMock.expects("_processRequestQueueAsync")
+			.withExactArgs("~mRequests")
+			.callsFake(function () {
+				assert.ok(bActivatedPromiseResolved, "only called after activated promise is resolved");
+			});
+		oActivatedPromise.then(function () {
+			bActivatedPromiseResolved = true;
 		});
 
 		// code under test
@@ -7220,12 +7266,15 @@ sap.ui.define([
 			true);
 
 		if (oFixture.createdContextFound) {
-			assert.ok(oMetadataLoadedCall.calledAfter(oActivateCall),
+			assert.ok(oMetadataLoadedCall.calledAfter(oStartActivationCall),
 				"activation pushes the creation POST request to the queue; the change request must "
 				+ "be after that");
 		}
 
-		return oRequestQueuedPromise;
+		// code under test
+		fnResolveActivatedPromise();
+
+		return Promise.all([oMetadataLoadedPromise, oActivatedPromise]);
 	});
 });
 
