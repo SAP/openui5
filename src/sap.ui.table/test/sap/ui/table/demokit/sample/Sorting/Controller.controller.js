@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/m/ToolbarSpacer",
 	"sap/ui/table/library",
-	"sap/ui/thirdparty/jquery"
-], function(Log, Controller, Sorter, JSONModel, DateFormat, ToolbarSpacer, library, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/UI5Date"
+], function(Log, Controller, Sorter, JSONModel, DateFormat, ToolbarSpacer, library, jQuery, UI5Date) {
 	"use strict";
 
 	// shortcut for sap.ui.table.SortOrder
@@ -54,8 +55,8 @@ sap.ui.define([
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
-						oProduct.DeliveryDate = (new Date()).getTime() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
-						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
+						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
+						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 					}

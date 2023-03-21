@@ -19,8 +19,9 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/library",
 	"sap/ui/table/Table",
-	"sap/ui/unified/Currency"
-], function(deepExtend, Button, CheckBox, ComboBox, DatePicker, Input, Label, Link, MultiComboBox, ObjectStatus, Select, Text, Toolbar, Icon, Item, coreLibrary, JSONModel, Column, tableLibrary, Table, Currency) {
+	"sap/ui/unified/Currency",
+	"sap/ui/core/date/UI5Date"
+], function(deepExtend, Button, CheckBox, ComboBox, DatePicker, Input, Label, Link, MultiComboBox, ObjectStatus, Select, Text, Toolbar, Icon, Item, coreLibrary, JSONModel, Column, tableLibrary, Table, Currency, UI5Date) {
 	"use strict";
 
 	var HorizontalAlign = coreLibrary.HorizontalAlign;
@@ -58,7 +59,7 @@ sap.ui.define([
 
 	for (var i = 0, l = aData.length; i < l; i++) {
 		aData[i].lastName += " - " + (i + 1);
-		aData[i].birthdayDate = new Date(aData[i].birthday);
+		aData[i].birthdayDate = UI5Date.getInstance(aData[i].birthday);
 	}
 
 	// create table with supported sap.m controls

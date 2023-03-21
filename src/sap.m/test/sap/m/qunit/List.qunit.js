@@ -27,8 +27,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/ListItemBase",
 	"sap/base/Log",
-	"sap/ui/model/Sorter"
-], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, Element, ListItemBase, Log, Sorter) {
+	"sap/ui/model/Sorter",
+	"sap/ui/core/date/UI5Date"
+], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -270,7 +271,7 @@ sap.ui.define([
 			}),
 			swipe : function(e) {
 				var li = e.getParameter("listItem");
-				li.setLabel(li.getLabel() + " " + new Date().toLocaleTimeString());
+				li.setLabel(li.getLabel() + " " + UI5Date.getInstance().toLocaleTimeString());
 				swipeDirection = e.getParameter("swipeDirection");
 				Core.applyChanges();
 			},

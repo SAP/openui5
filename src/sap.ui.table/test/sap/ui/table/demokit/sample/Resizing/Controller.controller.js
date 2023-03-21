@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/thirdparty/jquery"
-], function(Log, Controller, JSONModel, MessageToast, DateFormat, ToolbarSpacer, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/UI5Date"
+], function(Log, Controller, JSONModel, MessageToast, DateFormat, ToolbarSpacer, jQuery, UI5Date) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Resizing.Controller", {
@@ -53,8 +54,8 @@ sap.ui.define([
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
-						oProduct.DeliveryDate = (new Date()).getTime() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
-						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
+						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
+						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 					}

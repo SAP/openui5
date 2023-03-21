@@ -33,7 +33,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/ui/unified/MenuTextFieldItem",
-	"sap/m/plugins/CellSelector"
+	"sap/m/plugins/CellSelector",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Log,
 	deepExtend,
@@ -69,7 +70,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	UnifiedMenu,
 	UnifiedMenuItem,
 	MenuTextFieldItem,
-	CellSelector
+	CellSelector,
+	UI5Date
 ) {
 	"use strict";
 
@@ -117,7 +119,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 
 	for (i = 0, l = TABLESETTINGS.listTestData.length; i < l; i++) {
 		TABLESETTINGS.listTestData[i].lastName += " - " + (i + 1);
-		TABLESETTINGS.listTestData[i].birthdayDate = new Date(TABLESETTINGS.listTestData[i].birthday);
+		TABLESETTINGS.listTestData[i].birthdayDate = UI5Date.getInstance(TABLESETTINGS.listTestData[i].birthday);
 	}
 
 	TABLESETTINGS.treeTestData = {
