@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
 <html>
-
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta charset="UTF-8">
@@ -17,13 +16,16 @@
 			data-sap-ui-resourceroots='{
 				"sap.ui.mdc.sample.field": "",
 				"delegates": "../../delegates"
-			}'>
+			}'
+			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
 		</script>
-
-		<script src="FieldSample.js"></script>
-
 	</head>
-	<body class="sapUiBody sapUiSizeCompact">
-		<div id="content"></div>
+	<body id="content" class="sapUiBody sapUiSizeCompact" role="application">
+		<div data-sap-ui-component
+			data-id="container"
+			data-name="sap.ui.mdc.sample.field"
+			data-settings='{"id" : "fieldexample"}'
+			data-handle-validation="true">
+   		</div>
 	</body>
 </html>
