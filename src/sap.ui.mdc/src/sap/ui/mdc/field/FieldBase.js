@@ -279,7 +279,8 @@ sap.ui.define([
 					type: "object[]",
 					group: "Data",
 					defaultValue: [],
-					byValue: true
+					byValue: true,
+					bindable: "bindable"
 				},
 
 				/**
