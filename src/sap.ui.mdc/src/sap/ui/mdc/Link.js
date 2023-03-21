@@ -175,6 +175,10 @@ sap.ui.define([
 	 */
 	Link.prototype.getDirectLinkHrefAndTarget = function() {
 		return this._retrieveDirectLinkItem().then(function(oDirectLinkItem) {
+			if (this.isDestroyed()) {
+				return null;
+			}
+
 			this.addDependent(oDirectLinkItem);
 			return oDirectLinkItem ? {
 				target: oDirectLinkItem.getTarget(),
