@@ -270,7 +270,9 @@ sap.ui.define([
 
 		this._oItemTemplate = new ColumnListItem({
 			cells: aCells,
-			vAlign: VerticalAlign.Middle
+			vAlign: VerticalAlign.Middle,
+			highlight: oRow.highlight,
+			highlightText: oRow.highlightText
 		});
 
 		this._oActions.attach({
@@ -309,7 +311,9 @@ sap.ui.define([
 
 		aRows.forEach(function (oRow) {
 			var oItem = new ColumnListItem({
-				vAlign: VerticalAlign.Middle
+				vAlign: VerticalAlign.Middle,
+				highlight: oRow.highlight,
+				highlightText: oRow.highlightText
 			});
 
 			if (oRow.cells && Array.isArray(oRow.cells)) {
@@ -364,7 +368,8 @@ sap.ui.define([
 			}
 
 			oControl = new ObjectIdentifier({
-				title: oColumn.value
+				title: oColumn.value,
+				text: oColumn.additionalText
 			});
 
 			if (oColumn.actions) {

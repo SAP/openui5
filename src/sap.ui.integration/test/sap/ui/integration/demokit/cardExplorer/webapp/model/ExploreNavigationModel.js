@@ -442,6 +442,20 @@ sap.ui.define([
 									name: 'manifest.json',
 									key: 'manifest.json'
 								}]
+							},
+							{
+								title: 'Highlight',
+								key: 'highlight',
+								settings: {
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/table/highlight.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					}, {

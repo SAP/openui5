@@ -31,6 +31,7 @@ sap.ui.define([
 				"data": {
 					"json": [
 						{
+							"product": "Beam Breaker B-1",
 							"salesOrder": "5000010050",
 							"customer": "Robert Brown Entertainment",
 							"status": "Delivered",
@@ -42,6 +43,7 @@ sap.ui.define([
 							"iconSrc": "sap-icon://help"
 						},
 						{
+							"product": "Beam Breaker B-2",
 							"salesOrder": "5000010051",
 							"customer": "Entertainment Argentinia",
 							"status": "Canceled",
@@ -55,6 +57,7 @@ sap.ui.define([
 							"customStateIcon": "sap-icon://bbyd-active-sales"
 						},
 						{
+							"product": "Beam Breaker B-3",
 							"salesOrder": "5000010052",
 							"customer": "Brazil Technologies",
 							"status": "In Progress",
@@ -69,10 +72,13 @@ sap.ui.define([
 					]
 				},
 				"row": {
+					"highlight": "{progressState}",
+					"highlightText": "{progressState}",
 					"columns": [
 						{
 							"title": "Sales Order",
-							"value": "{salesOrder}",
+							"value": "{product}",
+							"additionalText": "{salesOrder}",
 							"identifier": true
 						},
 						{
@@ -525,11 +531,22 @@ sap.ui.define([
 			var oCardContent = this.oCard.getAggregation("_content");
 			var oTable = oCardContent.getAggregation("_content");
 			var aColumns = oTable.getColumns();
-			var aCells = oTable.getItems()[0].getCells();
-			var aCellsSecondRow = oTable.getItems()[1].getCells();
-			var aCellsThirdRow = oTable.getItems()[2].getCells();
+			var aRows = oTable.getItems();
+			var aCells = aRows[0].getCells();
+			var aCellsSecondRow = aRows[1].getCells();
+			var aCellsThirdRow = aRows[2].getCells();
+
 
 			Core.applyChanges();
+
+			// row highlight
+			assert.equal(aRows[0].getHighlight(), oManifestData[0].progressState, "Should have correct highlight value");
+			assert.equal(aRows[1].getHighlight(), oManifestData[1].progressState, "Should have correct highlight value");
+			assert.equal(aRows[2].getHighlight(), oManifestData[2].progressState, "Should have correct highlight value");
+
+			assert.equal(aRows[0].getHighlightText(), oManifestData[0].progressState, "Should have correct highlight text");
+			assert.equal(aRows[1].getHighlightText(), oManifestData[1].progressState, "Should have correct highlight text");
+			assert.equal(aRows[2].getHighlightText(), oManifestData[2].progressState, "Should have correct highlight text");
 
 			// Assert
 			assert.equal(aColumns.length, 7, "Should have 7 columns.");
@@ -557,7 +574,7 @@ sap.ui.define([
 			assert.equal(aColumns[2].getHAlign(), "End", "The status column is aligned at 'End'");
 
 			// Column values
-			assert.equal(aCells[0].getTitle(), oManifestData[0].salesOrder, "Should have correct identifier value.");
+			assert.equal(aCells[0].getTitle(), oManifestData[0].product, "Should have correct identifier value.");
 			assert.equal(aCells[1].getText(), oManifestData[0].customer, "Should have correct text value.");
 			assert.equal(aCells[2].getText(), oManifestData[0].status, "Should have correct text value.");
 			assert.equal(aCells[2].getState(), oManifestData[0].statusState, "Should have correct state.");
