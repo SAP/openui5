@@ -1,0 +1,34 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Card Errors"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+		<f:GridContainer class="sapUiSmallMargin">
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/cardErrors/wrongUrl.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/cardErrors/timeout.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/cardErrors/invalidConfig.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

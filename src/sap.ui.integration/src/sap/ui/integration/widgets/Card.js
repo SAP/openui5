@@ -29,18 +29,15 @@ sap.ui.define([
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/integration/util/ErrorHandler",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/cards/filters/FilterBarFactory",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/CardObserver",
-	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
-	"sap/m/IllustratedMessageSize",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/ParameterMap",
-	"sap/ui/integration/util/Measurement",
-	"sap/m/HBox",
-	"sap/m/library"
+	"sap/ui/integration/util/Measurement"
 ], function (
 	CardRenderer,
 	Footer,
@@ -69,18 +66,15 @@ sap.ui.define([
 	HeaderFactory,
 	ContentFactory,
 	BindingResolver,
+	ErrorHandler,
 	IconFormatter,
 	FilterBarFactory,
 	CardActions,
 	CardObserver,
-	IllustratedMessage,
 	IllustratedMessageType,
-	IllustratedMessageSize,
 	Utils,
 	ParameterMap,
-	Measurement,
-	HBox,
-	mLibrary
+	Measurement
 ) {
 	"use strict";
 
@@ -118,12 +112,6 @@ sap.ui.define([
 	var CardPreviewMode = library.CardPreviewMode;
 
 	var CARD_DESTROYED_ERROR = "Card is destroyed!";
-
-	var FlexRendertype = mLibrary.FlexRendertype;
-
-	var FlexJustifyContent = mLibrary.FlexJustifyContent;
-
-	var FlexAlignItems = mLibrary.FlexAlignItems;
 
 	var MODULE_PREFIX = "module:";
 
@@ -599,6 +587,9 @@ sap.ui.define([
 			"getOpener",
 			"validateControls"
 		]);
+
+		this._oErrorHandler = new ErrorHandler();
+		this._oErrorHandler.setCard(this);
 	};
 
 	/**
@@ -1267,7 +1258,6 @@ sap.ui.define([
 	};
 
 	Card.prototype.exit = function () {
-
 		CardBase.prototype.exit.call(this);
 
 		this._destroyManifest();
@@ -1277,6 +1267,9 @@ sap.ui.define([
 		this._oIntegrationRb = null;
 		this._aActiveLoadingProviders = null;
 		this._oContentMessage = null;
+
+		this._oErrorHandler.destroy();
+		this._oErrorHandler = null;
 
 		if (this._oActionsToolbar) {
 			this._oActionsToolbar.destroy();
@@ -1713,7 +1706,8 @@ sap.ui.define([
 			}
 
 			var oCardContent = this.getCardContent();
-			if (oCardContent && !oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
+			if (oCardContent && !oCardContent.isA("sap.ui.integration.cards.BaseContent") &&
+				!this._oErrorHandler.getIsError()) {
 				this._applyContentManifestSettings();
 			}
 
@@ -1738,7 +1732,10 @@ sap.ui.define([
 			this._oDataProvider.attachError(function (oEvent) {
 				this.fireEvent("_dataReady");
 				this.fireEvent("_dataPassedToContent");
-				this._handleError("Data service unavailable. " + oEvent.getParameter("message"));
+				this._handleError({
+					requestErrorParams: oEvent.getParameters(),
+					requestSettings: this._oDataProvider.getSettings()
+				});
 				this.onDataRequestComplete();
 			}.bind(this));
 
@@ -1846,7 +1843,7 @@ sap.ui.define([
 		}
 
 		oHeader.attachEvent("_error", function (oEvent) {
-			this._handleError(oEvent.getParameter("message"));
+			this._handleError(oEvent.getParameter("errorInfo"));
 		}.bind(this));
 
 		this.setAggregation("_header", oHeader);
@@ -1934,7 +1931,12 @@ sap.ui.define([
 				appId: this._sAppId
 			});
 		} catch (e) {
-			this._handleError(e.message);
+			this._handleError({
+				type: IllustratedMessageType.ErrorScreen,
+				title: this.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
+				description: this.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
+				details: e.message
+			});
 			return;
 		}
 
@@ -2003,7 +2005,7 @@ sap.ui.define([
 	 */
 	Card.prototype._setCardContent = function (oContent) {
 		oContent.attachEvent("_error", function (oEvent) {
-			this._handleError(oEvent.getParameter("logMessage"));
+			this._handleError(oEvent.getParameter("errorInfo"));
 		}.bind(this));
 
 		this.setAggregation("_content", oContent);
@@ -2060,18 +2062,18 @@ sap.ui.define([
 	 * If the content is not provided in the manifest, the error message will be displayed in the header.
 	 * If a message is not provided, a default message will be displayed.
 	 *
-	 * @param {string} sLogMessage Message that will be logged.
-	 * @param {boolean} bNoItems No items are available after request.
 	 * @private
 	 */
-	Card.prototype._handleError = function (sLogMessage, bNoItems) {
-		if (!bNoItems) {
+	Card.prototype._handleError = function (mErrorInfo) {
+		var sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.description;
+
+		if (mErrorInfo.type !== IllustratedMessageType.NoData &&
+			mErrorInfo.type !== IllustratedMessageType.NoEntries) {
 			Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
 			this.fireEvent("_error", { message: sLogMessage });
 		}
 
-		var oErrorConfiguration = this._oCardManifest.get(MANIFEST_PATHS.ERROR_MESSAGES),
-			oError = this._getIllustratedMessage(oErrorConfiguration, bNoItems),
+		var oError = this._oErrorHandler.getIllustratedMessage(mErrorInfo),
 			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
 
 		if (oContentSection) {
@@ -2082,84 +2084,6 @@ sap.ui.define([
 		} else {
 			this.getCardHeader().setAggregation("_error", oError);
 		}
-	};
-
-	/**
-	 * Get Illustrated message.
-	 *
-	 * @param {object} oErrorConfiguration Error settings from manifest.
-	 * @param {boolean} bNoItems No items are available after request.
-	 * @private
-	 */
-	Card.prototype._getIllustratedMessage = function (oErrorConfiguration, bNoItems) {
-		var sIllustratedMessageType = IllustratedMessageType.UnableToLoad,
-			sIllustratedMessageSize = IllustratedMessageSize.Auto,
-			sBoxHeight = "",
-			sTitle = this._oIntegrationRb.getText("CARD_DATA_LOAD_ERROR"),
-			sDescription;
-
-		//no item from request default messages, for some card types
-		if (bNoItems && !oErrorConfiguration) {
-			switch (this._oCardManifest.get(MANIFEST_PATHS.TYPE)) {
-				case "List":
-				case "Timeline":
-					sIllustratedMessageType = IllustratedMessageType.NoData;
-					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_LISTS");
-					break;
-				case "Table":
-					sIllustratedMessageType = IllustratedMessageType.NoEntries;
-					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_LISTS");
-					break;
-				case "Analytical":
-					sIllustratedMessageType = IllustratedMessageType.NoEntries;
-					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_CHART");
-					break;
-				case "Object":
-					sIllustratedMessageType = IllustratedMessageType.NoData;
-					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_CHART");
-					break;
-			}
-		}
-
-		//custom no data message
-		if (oErrorConfiguration && oErrorConfiguration.noData && bNoItems) {
-			var oErrorData = oErrorConfiguration.noData;
-				sIllustratedMessageType = IllustratedMessageType[oErrorData.type];
-				sIllustratedMessageSize = IllustratedMessageSize[oErrorData.size];
-				sTitle = oErrorData.title;
-				sDescription = oErrorData.description;
-		}
-
-		this._oContentMessage = {
-			type: bNoItems ? "noData" : "error",
-			illustrationType: sIllustratedMessageType,
-			illustrationSize: sIllustratedMessageSize,
-			title: sTitle,
-			description: sDescription
-		};
-
-		var oIllustratedMessage = new IllustratedMessage({
-			illustrationType: sIllustratedMessageType,
-			illustrationSize: sIllustratedMessageSize,
-			title: sTitle,
-			enableDefaultTitleAndDescription: false,
-			enableVerticalResponsiveness: true,
-			description: sDescription
-		});
-
-		if (this.getCardContent() && this.getCardContent().getDomRef()) {
-			sBoxHeight = this.getCardContent().getDomRef().offsetHeight + "px";
-		}
-
-		var oFlexBox = new HBox({
-			renderType: FlexRendertype.Bare,
-			justifyContent: FlexJustifyContent.Center,
-			alignItems: FlexAlignItems.Center,
-			width: "100%",
-			height: sBoxHeight,
-			items: [oIllustratedMessage]
-		}).addStyleClass("sapFCardErrorContent");
-		return oFlexBox;
 	};
 
 	/**

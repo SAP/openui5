@@ -6,12 +6,14 @@ sap.ui.define([
 	"./BaseContent",
 	"./ComponentContentRenderer",
 	"sap/ui/integration/library",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component"
 ], function (
 	BaseContent,
 	ComponentContentRenderer,
 	library,
+	IllustratedMessageType,
 	ComponentContainer,
 	Component
 ) {
@@ -83,8 +85,14 @@ sap.ui.define([
 				this.fireEvent("_updated");
 			}.bind(this),
 			componentFailed: function () {
+				var oCard = oCard = this.getCardInstance();
+
 				this.fireEvent("_actionContentReady");
-				this.handleError("Card content failed to create component");
+				this.handleError({
+					type: IllustratedMessageType.ErrorScreen,
+					title: oCard.getTranslatedText("CARD_DATA_LOAD_ERROR"),
+					description: "Card content failed to create component"
+				});
 			}.bind(this)
 		});
 

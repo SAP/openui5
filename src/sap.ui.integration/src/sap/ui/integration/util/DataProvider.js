@@ -198,7 +198,7 @@ sap.ui.define([
 		this._iCurrentRequestNumber++;
 
 		if (oCard) {
-			sMeasureId = "UI5 Integration Cards " + oCard +  " " + this.getId() + " getData#" + this._iCurrentRequestNumber;
+			sMeasureId = "UI5 Integration Cards " + oCard + " " + this.getId() + " getData#" + this._iCurrentRequestNumber;
 			Measurement.start(sMeasureId, this.getDetails());
 		}
 
@@ -217,7 +217,11 @@ sap.ui.define([
 				}
 
 				if (Array.isArray(oResult) && oResult.length > 0) {
-					this.fireError({message: oResult[0], jqXHR: oResult[1]});
+					this.fireError({
+						message: oResult[0],
+						jqXHR: oResult[1],
+						settings: oResult[2]
+					});
 				} else {
 					this.fireError({message: oResult});
 				}

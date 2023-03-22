@@ -264,5 +264,11 @@
 		"description": "Play around with data requests.",
 		"route": "requests",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Card Errors",
+		"description": "Play around with Card errors.",
+		"route": "cardErrors",
+		"group": "Other Card Examples"
 	}
 ]

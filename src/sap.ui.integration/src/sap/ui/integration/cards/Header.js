@@ -177,8 +177,8 @@ sap.ui.define([
 		return oCard && oCard.isLoading();
 	};
 
-	Header.prototype._handleError = function (sLogMessage) {
-		this.fireEvent("_error", { logMessage: sLogMessage });
+	Header.prototype._handleError = function (mErrorInfo) {
+		this.fireEvent("_error", { errorInfo: mErrorInfo });
 	};
 
 	/**
@@ -265,7 +265,10 @@ sap.ui.define([
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
-				this._handleError(oEvent.getParameter("message"));
+				this._handleError({
+					requestErrorParams: oEvent.getParameters(),
+					requestSettings: this._oDataProvider.getSettings()
+				});
 				this.onDataRequestComplete();
 			}.bind(this));
 
