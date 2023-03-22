@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/FilterType",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/test/TestUtils"
-], function (Log, ChangeReason, Context, Filter, CountMode, OperationMode, ODataTreeBinding, Sorter,
-		TestUtils) {
+], function (Log, ChangeReason, Context, Filter, FilterProcessor, FilterType, CountMode, OperationMode,
+		ODataTreeBinding, Sorter, TestUtils) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -125,6 +127,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor: multiple Application filters are grouped", function (assert) {
+		var oBinding,
+			aFilters = ["~filter0", "~filter1"],
+			oModel = {checkFilterOperation: function () {}};
+
+		this.mock(FilterProcessor).expects("groupFilters")
+			.withExactArgs(sinon.match.same(aFilters))
+			.returns("~groupedFilters");
+		this.mock(oModel).expects("checkFilterOperation").withExactArgs(["~groupedFilters"]);
+
+		// code under test
+		oBinding = new ODataTreeBinding(oModel, "path", /*oContext*/{}, aFilters);
+
+		assert.deepEqual(oBinding.aApplicationFilters, ["~groupedFilters"]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("constructor: parameter defaulting, logging", function (assert) {
 		var oBinding,
 			oContext = {},
@@ -136,14 +155,13 @@ sap.ui.define([
 			},
 			oModelMock = this.mock(oModel);
 
-		oModelMock.expects("checkFilterOperation").withExactArgs(undefined);
+		oModelMock.expects("checkFilterOperation").withExactArgs([]);
 
 		// code under test
 		oBinding = new ODataTreeBinding(oModel, "path", oContext);
 
 		assert.deepEqual(oBinding.aSorters, []);
-		//TODO why not [] as default for aApplicationFilters like in TreeBinding?
-		assert.strictEqual(oBinding.aApplicationFilters, undefined);
+		assert.deepEqual(oBinding.aApplicationFilters, []);
 		assert.strictEqual(oBinding.bClientOperation, false);
 
 		// parameters
@@ -156,7 +174,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bUseServersideApplicationFilters, false);
 		assert.strictEqual(oBinding.bUsePreliminaryContext, "bPreliminaryContext");
 
-		oModelMock.expects("checkFilterOperation").withExactArgs(undefined);
+		oModelMock.expects("checkFilterOperation").withExactArgs([]);
 
 		// code under test
 		oBinding = new ODataTreeBinding(oModel, "path", oContext, undefined,
@@ -164,7 +182,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.sGroupId, "group");
 
-		oModelMock.expects("checkFilterOperation").withExactArgs(undefined);
+		oModelMock.expects("checkFilterOperation").withExactArgs([]);
 		this.oLogMock.expects("fatal").withExactArgs("To use an ODataTreeBinding at least "
 			+ "one CountMode must be supported by the service!");
 
@@ -1143,4 +1161,33 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(ODataTreeBinding.prototype._isRefreshAfterChangeAllowed(), true);
 	});
+
+	//*********************************************************************************************
+[
+	{filter: [], groupFilter: undefined, resultFilter: []},
+	{filter: ["filter0"], groupFilter: undefined, resultFilter: ["filter0"]},
+	{filter: ["filter0", "filter1"], groupFilter: "~groupedFilters", resultFilter: ["~groupedFilters"]}
+].forEach(function (oFixture, i) {
+	QUnit.test("filter: group filters of type Application #" + i, function (assert) {
+		var oBinding = {
+				aApplicationFilters: "~oldFilters",
+				oModel: {checkFilterOperation: function () {}},
+				_fireRefresh: function () {},
+				resetData: function () {}
+			};
+
+		this.mock(oBinding.oModel).expects("checkFilterOperation").withExactArgs(oFixture.filter);
+		this.mock(FilterProcessor).expects("groupFilters")
+			.withExactArgs(sinon.match.same(oFixture.filter))
+			.exactly(oFixture.groupFilter ? 1 : 0)
+			.returns(oFixture.groupFilter);
+		this.mock(oBinding).expects("resetData").withExactArgs();
+		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason: ChangeReason.Filter});
+
+		// code under test
+		ODataTreeBinding.prototype.filter.call(oBinding, oFixture.filter, FilterType.Application);
+
+		assert.deepEqual(oBinding.aApplicationFilters, oFixture.resultFilter);
+	});
+});
 });

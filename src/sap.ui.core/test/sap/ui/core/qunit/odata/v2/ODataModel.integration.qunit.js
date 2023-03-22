@@ -19411,4 +19411,153 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A table using ODataTreeBindingFlat uses the correctly grouped filters in requests.
+	// BCP: 2370010564
+	QUnit.test("ODataTreeBindingFlat: Filters are correctly grouped", function (assert) {
+		var oTable,
+			oModel = createHierarchyMaintenanceModel(),
+			oNode050 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='050')"},
+				CreatedByUser : "user0",
+				ErhaOrder : "1",
+				ErhaOrderItem : "050",
+				ErhaOrderItemName : "node050",
+				HierarchyNode : "050",
+				HierarchyParentNode : "",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 0,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode100 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
+				CreatedByUser : "user2",
+				ErhaOrder : "1",
+				ErhaOrderItem : "100",
+				ErhaOrderItemName : "node100",
+				HierarchyNode : "100",
+				HierarchyParentNode : "",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 0,
+				HierarchyDrillState : "collapsed",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode100NoFilter = Object.assign({}, oNode100, {HierarchyPreorderRank : 1, HierarchySiblingRank : 1}),
+			oNode200 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
+				CreatedByUser : "user2",
+				ErhaOrder : "1",
+				ErhaOrderItem : "200",
+				ErhaOrderItemName : "node200",
+				HierarchyNode : "200",
+				HierarchyParentNode : "100",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 1,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode300 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"},
+				CreatedByUser : "user2",
+				ErhaOrder : "1",
+				ErhaOrderItem : "300",
+				ErhaOrderItemName : "node300",
+				HierarchyNode : "300",
+				HierarchyParentNode : "100",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 1,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 1,
+				HierarchySiblingRank : 1
+			},
+			sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			path : \'/ErhaOrder(\\\'1\\\')/to_Item\',\
+			parameters : {\
+				countMode : \'Inline\',\
+				numberOfExpandedLevels : 0,\
+				restoreTreeStateAfterChange : true\
+			},\
+			filters : [\
+				{path : \'CreatedByUser\', operator : \'EQ\', value1 : \'user0\'},\
+				{path : \'CreatedByUser\', operator : \'EQ\', value1 : \'user1\'}\
+			]\
+		}"\
+		visibleRowCount="4"\
+		visibleRowCountMode="Fixed">\
+	<Text id="itemName" text="{ErhaOrderItemName}" />\
+</t:TreeTable>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
+					+ "&$filter=HierarchyDistanceFromRoot le 0"
+					+ " and (CreatedByUser eq 'user0' or CreatedByUser eq 'user1')"
+			}, {
+				__count : "1",
+				results : [oNode050]
+			})
+			.expectValue("itemName", ["node050", "", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest({
+					batchNo : 2,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
+						+ " and (CreatedByUser eq 'user2' or CreatedByUser eq 'user3')"
+				}, {
+					__count : "1",
+					results : [oNode100]
+				})
+				.expectValue("itemName", ["node100"], 0);
+
+			// code under test
+			oTable.getBinding("rows").filter([
+				new Filter("CreatedByUser", FilterOperator.EQ, "user2"),
+				new Filter("CreatedByUser", FilterOperator.EQ, "user3")
+			], FilterType.Application);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 3,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode eq '100'"
+						+ " and (CreatedByUser eq 'user2' or CreatedByUser eq 'user3')"
+				}, {
+					__count : "2",
+					results : [oNode200, oNode300]
+				})
+				.expectValue("itemName", ["node200", "node300"], 1);
+
+			oTable.expand(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 4,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
+				}, {
+					__count : "2",
+					results : [oNode050, oNode100NoFilter]
+				})
+				.expectValue("itemName", ["node050", "node100", ""]);
+
+			// code under test
+			oTable.getBinding("rows").filter([], FilterType.Application);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

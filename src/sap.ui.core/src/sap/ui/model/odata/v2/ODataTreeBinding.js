@@ -118,10 +118,14 @@ sap.ui.define([
 
 			this.mNormalizeCache = {};
 
+			vFilters = vFilters || [];
 			// The ODataTreeBinding expects there to be only an array in this.aApplicationFilters later on.
 			// Wrap the given application filters inside an array if necessary
 			if (vFilters instanceof Filter) {
 				vFilters = [vFilters];
+			}
+			if (vFilters.length > 1) {
+				vFilters = [FilterProcessor.groupFilters(vFilters)];
 			}
 			this.aApplicationFilters = vFilters;
 
@@ -1628,6 +1632,9 @@ sap.ui.define([
 		if (sFilterType === FilterType.Control) {
 			this.aFilters = aFilters;
 		} else {
+			if (aFilters.length > 1) {
+				aFilters = [FilterProcessor.groupFilters(aFilters)];
+			}
 			this.aApplicationFilters = aFilters;
 		}
 
