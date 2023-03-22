@@ -84,6 +84,9 @@
 							<Title id="objectPageTitle" level="H2" text="Sales Order Details"/>
 							<Button enabled="true" icon="sap-icon://delete" id="deleteSalesOrder"
 								press="onDeleteSalesOrder" tooltip="Delete sales order"/>
+							<Button enabled="true" icon="sap-icon://sys-cancel-2"
+								id="resetSalesOrder" press="onResetContext"
+								tooltip="Reset Sales Order"/>
 							<Button enabled="true" icon="sap-icon://refresh" id="refreshSalesOrder"
 								press="onRefreshSalesOrder" tooltip="Refresh Sales Order"/>
 							<Button enabled="true" icon="sap-icon://trend-up"
@@ -177,6 +180,9 @@
 							<Button enabled="true" icon="sap-icon://delete"
 								id="deleteSalesOrderItem" press="onDeleteSalesOrderItem"
 								tooltip="Delete sales order item"/>
+							<Button enabled="true" icon="sap-icon://sys-cancel-2"
+								id="resetLineItem" press="onResetContext"
+								tooltip="Reset Sales Order Line Item"/>
 						</Toolbar>
 					</form:toolbar>
 					<Label labelFor="SO_2_ITEM::productId" text="ProductId"/>

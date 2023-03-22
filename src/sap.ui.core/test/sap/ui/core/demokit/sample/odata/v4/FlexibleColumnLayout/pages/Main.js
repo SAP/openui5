@@ -171,6 +171,9 @@ sap.ui.define([
 				increaseSalesOrderItemsQuantity : function () {
 					Helper.pressButton(this, sViewName, "increaseSalesOrderItemsQuantity");
 				},
+				pressResetChanges : function () {
+					Helper.pressButton(this, sViewName, "resetSalesOrder");
+				},
 				refresh : function () {
 					Helper.pressButton(this, sViewName, "refreshSalesOrder");
 				},
@@ -259,6 +262,9 @@ sap.ui.define([
 				},
 				deleteSalesOrderItem : function () {
 					Helper.pressButton(this, sViewName, "deleteSalesOrderItem");
+				},
+				pressResetChanges : function () {
+					Helper.pressButton(this, sViewName, "resetLineItem");
 				}
 			},
 			assertions : {
