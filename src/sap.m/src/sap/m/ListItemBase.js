@@ -399,9 +399,10 @@ function(
 	ListItemBase.prototype.getAccessibilityDescription = function(oBundle) {
 		var aOutput = [],
 			sType = this.getType(),
-			sHighlight = this.getHighlight();
+			sHighlight = this.getHighlight(),
+			bIsTree = this.getListProperty("ariaRole") === "tree";
 
-		if (this.getSelected()) {
+		if (this.getSelected() && !bIsTree) {
 			aOutput.push(oBundle.getText("LIST_ITEM_SELECTED"));
 		}
 
@@ -444,7 +445,7 @@ function(
 			sContentAnnouncement && aOutput.push(sContentAnnouncement);
 		}
 
-		if (this.getListProperty("ariaRole") != "listbox" && this.isSelectable() && !this.getSelected()) {
+		if (this.getListProperty("ariaRole") !== "listbox" && !bIsTree && this.isSelectable() && !this.getSelected()) {
 			aOutput.push(oBundle.getText("LIST_ITEM_NOT_SELECTED"));
 		}
 
