@@ -39,8 +39,8 @@ sap.ui.define([
 	 *   Whether a grand total is needed
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._AggregationCache
+	 * @borrows sap.ui.model.odata.v4.lib._CollectionCache#addKeptElement as #addKeptElement
 	 * @borrows sap.ui.model.odata.v4.lib._CollectionCache#requestSideEffects as #requestSideEffects
-	 * @borrows sap.ui.model.odata.v4.lib._CollectionCache#restore as #restore
 	 * @constructor
 	 * @extends sap.ui.model.odata.v4.lib._Cache
 	 * @private
@@ -81,7 +81,6 @@ sap.ui.define([
 		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal || !!fnLeaves);
 		this.addKeptElement = this.oFirstLevel.addKeptElement; // @borrows ...
 		this.requestSideEffects = this.oFirstLevel.requestSideEffects; // @borrows ...
-		this.restore = this.oFirstLevel.restore; // @borrows ...
 		this.oGrandTotalPromise = undefined;
 		if (bHasGrandTotal) {
 			this.oGrandTotalPromise = new SyncPromise(function (resolve) {
@@ -976,18 +975,22 @@ sap.ui.define([
 	 * @override sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
 	 */
 	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
-		// @borrows ...
+		// "super" call (like @borrows ...)
 		return this.oFirstLevel.refreshKeptElements.call(this, oGroupLock, fnOnRemove, true);
 	};
 
 	/**
-	 * @override sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
+	 * @override sap.ui.model.odata.v4.lib._CollectionCache#reset
 	 */
-	_AggregationCache.prototype.reset = function (aKeptElementPredicates, _sGroupId) {
-		var that = this;
+	_AggregationCache.prototype.reset = function (aKeptElementPredicates, sGroupId, mQueryOptions,
+			oAggregation, bIsGrouped) {
+		var fnResolve,
+			that = this;
 
-		this.oFirstLevel.reset.apply(this, arguments); // @borrows ...
-		this.oFirstLevel.reset([]);
+		if (bIsGrouped) {
+			throw new Error("Unsupported grouping via sorter");
+		}
+
 		aKeptElementPredicates.forEach(function (sPredicate) {
 			var oKeptElement = that.aElements.$byPredicate[sPredicate];
 
@@ -999,6 +1002,35 @@ sap.ui.define([
 			delete oKeptElement["@$ui5._"];
 			_Helper.setPrivateAnnotation(oKeptElement, "predicate", sPredicate);
 		});
+
+		this.oAggregation = oAggregation;
+		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
+		// "super" call (like @borrows ...)
+		this.oFirstLevel.reset.call(this, aKeptElementPredicates, sGroupId, mQueryOptions);
+		if (sGroupId) {
+			this.oBackup.oCountPromise = this.oCountPromise;
+			this.oBackup.oFirstLevel = this.oFirstLevel;
+		}
+		this.oCountPromise = undefined;
+		if (mQueryOptions.$count) {
+			this.oCountPromise = new SyncPromise(function (resolve) {
+				fnResolve = resolve;
+			});
+			this.oCountPromise.$resolve = fnResolve;
+		}
+		this.oFirstLevel = this.createGroupLevelCache();
+	};
+
+	/**
+	 * @override sap.ui.model.odata.v4.lib._CollectionCache#restore
+	 */
+	_AggregationCache.prototype.restore = function (bReally) {
+		if (bReally) {
+			this.oCountPromise = this.oBackup.oCountPromise;
+			this.oFirstLevel = this.oBackup.oFirstLevel;
+		}
+		// "super" call (like @borrows ...)
+		this.oFirstLevel.restore.call(this, bReally);
 	};
 
 	/**
@@ -1197,10 +1229,6 @@ sap.ui.define([
 	 *   Example: Products
 	 * @param {string} sDeepResourcePath
 	 *   The deep resource path to be used to build the target path for bound messages
-	 * @param {object} [oAggregation]
-	 *   An object holding the information needed for data aggregation; see also "OData Extension
-	 *   for Data Aggregation Version 4.0"; must already be normalized by
-	 *   {@link _AggregationHelper.buildApply}
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
@@ -1209,6 +1237,10 @@ sap.ui.define([
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+	 * @param {object} [oAggregation]
+	 *   An object holding the information needed for data aggregation; see also "OData Extension
+	 *   for Data Aggregation Version 4.0"; must already be normalized by
+	 *   {@link _AggregationHelper.buildApply}
 	 * @param {boolean} [bSortExpandSelect]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string. When
 	 *   using min, max, grand total, or data aggregation they will always be sorted.
@@ -1231,8 +1263,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_AggregationCache.create = function (oRequestor, sResourcePath, sDeepResourcePath, oAggregation,
-			mQueryOptions, bSortExpandSelect, bSharedRequest, bIsGrouped) {
+	_AggregationCache.create = function (oRequestor, sResourcePath, sDeepResourcePath,
+			mQueryOptions, oAggregation, bSortExpandSelect, bSharedRequest, bIsGrouped) {
 		var bHasGrandTotal, bHasGroupLevels;
 
 		function checkExpandSelect() {

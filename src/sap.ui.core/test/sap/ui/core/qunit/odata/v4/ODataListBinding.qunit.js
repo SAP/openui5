@@ -424,93 +424,85 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setAggregation: kept-alive context", function (assert) {
+[0, 1, 2].forEach(function (i) {
+	[0, 1, 2].forEach(function (j) {
+	QUnit.test("setAggregation: " + i + " <-> " + j, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			oContext0 = {isKeepAlive : function () {}},
-			oContext1 = {isKeepAlive : function () {}};
-
-		oBinding.aContexts = [oContext0, undefined, oContext1];
-
-		this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.setAggregation({});
-		}, new Error("Cannot set $$aggregation due to a kept-alive context"));
-
-		assert.notOk("$$aggregation" in oBinding.mQueryOptions);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("setAggregation: hidden kept-alive context", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oContext0 = {isKeepAlive : function () {}},
-			oContext1 = {isKeepAlive : function () {}};
-
-		oBinding.mPreviousContextsByPath = {foo : oContext0, bar : oContext1};
-
-		this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.setAggregation({});
-		}, new Error("Cannot set $$aggregation due to a kept-alive context"));
-
-		assert.notOk("$$aggregation" in oBinding.mQueryOptions);
-	});
-
-	//*********************************************************************************************
-[null, {group : {dimension : {}}}].forEach(function (oAggregation, i) {
-	QUnit.test("setAggregation, " + i, function () {
-		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-				$$aggregation : {aggregate : {"n/a" : {}}},
+			mExpectedNewParameters = {
 				$$groupId : "foo",
 				$filter : "bar",
 				custom : "baz"
-			});
+			},
+			oNewAggregation = [
+				undefined,
+				{group : {dimension : {}}},
+				{hierarchyQualifier : "X"}
+			][j],
+			mParameters = {
+				$$groupId : "foo",
+				$filter : "bar",
+				custom : "baz"
+			};
 
+		if (i !== 0) {
+			mParameters.$$aggregation = [
+				,
+				{aggregate : {"n/a" : {}}},
+				{hierarchyQualifier : "U"}
+			][i];
+		}
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters = mParameters;
+		if (oNewAggregation !== undefined) {
+			mExpectedNewParameters.$$aggregation = "~oNewAggregation~cloned~";
+		}
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
-		this.mock(oBinding).expects("resetKeepAlive").withExactArgs();
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getKeepAlivePredicates").exactly(i === j ? 0 : 1)
+			.withExactArgs().returns(["('0')"]);
+		this.mock(oBinding).expects("resetKeepAlive").never();
+		this.mock(_Helper).expects("clone")
+			.exactly(i === j && oNewAggregation !== undefined ? 1 : 0)
+			.withExactArgs(sinon.match.same(oNewAggregation))
+			.returns("~oNewAggregation~cloned~");
 		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
-		this.mock(oBinding).expects("applyParameters").withExactArgs({
-				$$aggregation : oAggregation,
-				$$groupId : "foo",
-				$filter : "bar",
-				custom : "baz"
-			}, "");
+		this.mock(oBinding).expects("applyParameters").exactly(i === j ? 1 : 0)
+			.withExactArgs(mExpectedNewParameters, "");
 
-		// code under test
-		oBinding.setAggregation(oAggregation);
+		if (i === j) {
+			// code under test
+			oBinding.setAggregation(oNewAggregation);
+		} else {
+			assert.throws(function () {
+				// code under test
+				oBinding.setAggregation(oNewAggregation);
+			}, new Error("Cannot set $$aggregation due to a kept-alive context"));
+		}
+	});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("setAggregation: undefined", function () {
-		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-				$$aggregation : {aggregate : {"n/a" : {}}},
-				$$groupId : "foo",
-				$filter : "bar",
-				custom : "baz"
-			});
+	QUnit.test("setAggregation: null", function () {
+		var oBinding = this.bindList("/EMPLOYEES");
 
-		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		// Note: this is an artefact due to undefined !== null
+		this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs().returns([]);
 		this.mock(oBinding).expects("resetKeepAlive").never();
+		this.mock(_Helper).expects("clone").withExactArgs(null).returns(null);
 		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
 		this.mock(oBinding).expects("applyParameters").withExactArgs({
-				$$groupId : "foo",
-				$filter : "bar",
-				custom : "baz"
+				$$aggregation : null // Note: this will (later) fail!
 			}, "");
 
 		// code under test
-		oBinding.setAggregation();
+		oBinding.setAggregation(null);
 	});
 
 	//*********************************************************************************************
-[undefined, {group : {dimension : {}}}].forEach(function (oAggregation) {
-	QUnit.test("setAggregation: applyParameters fails", function (assert) {
+[undefined, {group : {dimension : {}}}].forEach(function (oAggregation, i) {
+	QUnit.test("setAggregation: applyParameters fails, #" + i, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 				$$aggregation : {aggregate : {"n/a" : {}}},
 				$$groupId : "foo",
@@ -525,10 +517,16 @@ sap.ui.define([
 			},
 			sOldValue = JSON.stringify(oBinding.mParameters.$$aggregation);
 
-		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
 		if (oAggregation) {
-			mExpectedParameters.$$aggregation = oAggregation;
+			mExpectedParameters.$$aggregation = "~oAggregation~cloned~";
 		}
+		this.mock(oBinding).expects("getKeepAlivePredicates").exactly(oAggregation ? 0 : 1)
+			.withExactArgs().returns([]);
+		this.mock(oBinding).expects("resetKeepAlive").never();
+		this.mock(_Helper).expects("clone").exactly(oAggregation ? 1 : 0)
+			.withExactArgs(sinon.match.same(oAggregation))
+			.returns("~oAggregation~cloned~");
+		// idea: #setAggregation(o) is like #changeParameters({$$aggregation : o})
 		this.mock(oBinding).expects("applyParameters").withExactArgs(mExpectedParameters, "")
 			.throws(oError);
 
@@ -6253,12 +6251,14 @@ sap.ui.define([
 			},
 			aPredicates = ["('0')", "('2')"];
 
+		oBinding.mParameters.$$aggregation = "~$$aggregation~";
 		this.mock(oOldCache).expects("getResourcePath").withExactArgs().returns("resource/path");
 		this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs()
 			.returns(aPredicates);
+		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
 		this.mock(oOldCache).expects("reset")
-			.withExactArgs(sinon.match.same(aPredicates), "myGroup");
-		this.mock(oOldCache).expects("setQueryOptions").withExactArgs("~queryOptions~", true);
+			.withExactArgs(sinon.match.same(aPredicates), "myGroup", "~queryOptions~",
+				"~$$aggregation~", "~isGrouped~");
 		this.mock(_AggregationCache).expects("create").never();
 
 		assert.strictEqual(
@@ -6281,8 +6281,9 @@ sap.ui.define([
 
 		oBinding[sProperty] = 1;
 		this.mock(oOldCache).expects("getResourcePath").withExactArgs().returns("resource/path");
-		this.mock(oOldCache).expects("reset").withExactArgs([], "myGroup");
-		this.mock(oOldCache).expects("setQueryOptions").withExactArgs("~queryOptions~", true);
+		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
+		this.mock(oOldCache).expects("reset")
+			.withExactArgs([], "myGroup", "~queryOptions~", undefined, "~isGrouped~");
 		this.mock(_AggregationCache).expects("create").never();
 
 		assert.strictEqual(
@@ -6358,8 +6359,9 @@ sap.ui.define([
 			.withExactArgs().returns("~isGrouped~");
 		this.mock(_AggregationCache).expects("create").exactly(bFromModel && !bAggregation ? 0 : 1)
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
-				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
-				"~mergedQueryOptions~", "~autoExpandSelect~", bShared, "~isGrouped~")
+				"deep/resource/path", "~mergedQueryOptions~",
+				sinon.match.same(oBinding.mParameters.$$aggregation), "~autoExpandSelect~", bShared,
+				"~isGrouped~")
 			.returns(bAggregation ? oAggregationCache : oCache);
 		oCacheMock.expects("registerChangeListener").exactly(bShared ? 1 : 0)
 			.withExactArgs("", sinon.match.same(oBinding));
@@ -6403,8 +6405,9 @@ sap.ui.define([
 		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
 		this.mock(_AggregationCache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
-				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
-				"~mergedQueryOptions~", "~autoExpandSelect~", "~sharedRequest~", "~isGrouped~")
+				"deep/resource/path", "~mergedQueryOptions~",
+				sinon.match.same(oBinding.mParameters.$$aggregation), "~autoExpandSelect~",
+				"~sharedRequest~", "~isGrouped~")
 			.returns(oCache);
 
 		assert.strictEqual(
@@ -9877,6 +9880,14 @@ sap.ui.define([
 			oBinding.getKeepAlivePredicates(), // code under test
 			["('0')", "('2')", "('4')"]
 		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAlivePredicates: unresolved", function (assert) {
+		var oBinding = this.bindList("n/a"); // relative, but path is irrelevant
+
+		// code under test
+		assert.deepEqual(oBinding.getKeepAlivePredicates(), []);
 	});
 
 	//*********************************************************************************************
