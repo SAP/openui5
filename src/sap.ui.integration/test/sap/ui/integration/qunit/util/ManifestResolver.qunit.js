@@ -2066,4 +2066,162 @@ sap.ui.define([
 				oCard.destroy();
 			});
 	});
+
+	QUnit.module("Resolving form elements", {
+		createManifestWithFormElement: function (oFormElement) {
+			return {
+				"sap.app": {
+					"id": "test.mobileSdk.form",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Object",
+					"data": {
+						"json": {
+							"activityTypes": [
+								{
+									"id": "activity1",
+									"title": "Processing"
+								},
+								{
+									"id": "activity2",
+									"title": "Monitoring"
+								}
+							],
+							"activityTypeSelectedKey": "activity1"
+						}
+					},
+					"content": {
+						"groups": [
+							{
+								"items": [
+									oFormElement
+								]
+							}
+						]
+					}
+				}
+			};
+		}
+	});
+
+	QUnit.test("ComboBox with 'selectedKey' and no 'value'", function (assert) {
+		// Arrange
+		var oManifest = this.createManifestWithFormElement({
+			"id": "activity",
+			"label": "Activity",
+			"type": "ComboBox",
+			"selectedKey": "{/activityTypeSelectedKey}",
+			"required": true,
+			"item": {
+				"path": "/activityTypes",
+				"template": {
+					"key": "{id}",
+					"title": "{title}"
+				}
+			},
+			"validations": [
+				{
+					"required": true,
+					"message": "Value is required"
+				},
+				{
+					"restrictToPredefinedOptions": true
+				}
+			]
+		});
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				var oExpectedResult = {
+					"groups": [
+						{
+							"items": [
+								{
+									"id": "activity",
+									"label": "Activity",
+									"type": "ComboBox",
+									"value": "",
+									"selectedKey": "activity1",
+									"required": true,
+									"items": [
+										{
+											"key": "activity1",
+											"title": "Processing"
+										},
+										{
+											"key": "activity2",
+											"title": "Monitoring"
+										}
+									],
+									"validations": [
+										{
+											"required": true,
+											"message": "Value is required"
+										},
+										{
+											"restrictToPredefinedOptions": true
+										}
+									]
+								}
+							]
+						}
+					]
+				};
+
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "Form elements should be resolved correctly.");
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("ComboBox with 'value' only", function (assert) {
+		// Arrange
+		var oManifest = this.createManifestWithFormElement({
+			"id": "activity",
+			"label": "Activity",
+			"type": "ComboBox",
+			"value": "option 1",
+			"required": true
+		});
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				var oExpectedResult = {
+					"groups": [
+						{
+							"items": [
+								{
+									"id": "activity",
+									"label": "Activity",
+									"type": "ComboBox",
+									"value": "option 1",
+									"required": true,
+									"selectedKey": ""
+								}
+							]
+						}
+					]
+				};
+
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "Form elements should be resolved correctly.");
+
+				oCard.destroy();
+			});
+	});
+
 });

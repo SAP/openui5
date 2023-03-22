@@ -143,6 +143,8 @@ sap.ui.define([
 			oCard._handleError("No items available", true);
 		}
 
+		this._getForm().updateModel();
+
 		if (oCard.isReady()) {
 			this.validateControls(false);
 		}
@@ -233,16 +235,21 @@ sap.ui.define([
 			aResolvedItems = [],
 			sFullPath = sObjectContentPath + sItemPath,
 			bHasValidations = ["TextArea", "Input", "ComboBox"].includes(oItem.type),
-			bHasItemsToResolve = ["ButtonGroup", "IconGroup", "ComboBox"].includes(oItem.type);
+			bHasItemsToResolve = ["ButtonGroup", "IconGroup"].includes(oItem.type);
 
 		if (bHasValidations) {
 			oResolvedGroupItem = merge(oResolvedGroupItem, this._getForm().resolveControl(oItem));
 		}
 
 		if (oItem.type === "ComboBox") {
-			sFullPath = sObjectContentPath + oItem.item.path.substring(1);
-			oItem.template = oItem.item.template;
-			delete oResolvedGroupItem.item;
+			if (oItem.item) {
+				bHasItemsToResolve = true;
+				sFullPath = sObjectContentPath + oItem.item.path.substring(1);
+				oItem.template = oItem.item.template;
+				delete oResolvedGroupItem.item;
+			} else {
+				bHasItemsToResolve = false;
+			}
 		}
 
 		if (bHasItemsToResolve) {

@@ -51,11 +51,10 @@
 				<VBox renderType="Bare">
 					<Title text="Card" class="sapUiTinyMargin" />
 					<ScrollContainer vertical="true">
-						<w:Card id="card1"
+						<w:Card id="demoCard"
 								width="300px"
-								stateChanged=".onStateChanged"
-								class="sapUiSmallMargin"
-								manifest="{cardsPlayground>/playgroundBaseUrl}{stateChangedEventPage>/selectedManifest}" />
+								class="sapUiSmallMargin disabledCard"
+								manifest="{stateChangedEventPage>/selectedManifest}" />
 						<layoutData>
 							<FlexItemData growFactor="1"></FlexItemData>
 						</layoutData>

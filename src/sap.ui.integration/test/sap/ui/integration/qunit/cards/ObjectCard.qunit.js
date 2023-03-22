@@ -2162,7 +2162,6 @@ sap.ui.define([
 			oLogSpy = this.spy(Log, "error"),
 			oCard = this.oCard;
 
-
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
@@ -2204,13 +2203,12 @@ sap.ui.define([
 			oCard = this.oCard,
 			oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
 
-
 		oCard.attachEvent("_ready", function () {
 			var oTextArea = oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[0];
 
 			// Act
-			oTextArea.setValue('{"reason": "{form>/reason/key}"}');
 			Core.applyChanges();
+			oTextArea.$("inner").val('{"reason": "{form>/reason/key}"}').trigger("input");
 			oCard.triggerAction({
 				type: CardActionType.Submit
 			});
@@ -2228,6 +2226,79 @@ sap.ui.define([
 		});
 
 		oCard.setManifest(oManifest_ObjectCardFormControlsSpecialValue);
+	});
+
+	QUnit.test("Initial form control values are stored in the 'form' model", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			// Assert
+			assert.strictEqual(oCard.getModel("form").getProperty("/comment"), "initial text area value", "Value should be stored in the 'form' model");
+
+			done();
+		});
+
+		oCard.setManifest({
+			"sap.app": {
+				"id": "test.cards.object.card5"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [
+						{
+							"items": [
+								{
+									"id": "comment",
+									"value": "initial text area value",
+									"type": "TextArea"
+								}
+							]
+						}
+					]
+				}
+			}
+		});
+	});
+
+	QUnit.test("Initial form control values that are bound are stored in the 'form' model", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			// Assert
+			assert.strictEqual(oCard.getModel("form").getProperty("/comment"), "initial text area value", "Value should be stored in the 'form' model");
+
+			done();
+		});
+
+		oCard.setManifest({
+			"sap.app": {
+				"id": "test.cards.object.card5"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"initialValue": "initial text area value"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"items": [
+								{
+									"id": "comment",
+									"value": "{initialValue}",
+									"type": "TextArea"
+								}
+							]
+						}
+					]
+				}
+			}
+		});
 	});
 
 	QUnit.module("Form controls with Validation", {
