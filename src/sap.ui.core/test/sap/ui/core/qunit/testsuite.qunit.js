@@ -42,6 +42,9 @@ sap.ui.define(function() {
 			"Browser Runtime": {
 				page: "test-resources/sap/ui/core/qunit/testsuites/testsuite.browser.runtime.qunit.html"
 			},
+			"Base Configuration": {
+				page: "test-resources/sap/ui/core/qunit/testsuites/testsuite.base.configuration.qunit.html"
+			},
 			"Control Framework": {
 				page: "test-resources/sap/ui/core/qunit/testsuites/testsuite.control.framework.qunit.html"
 			},

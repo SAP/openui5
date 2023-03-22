@@ -28,6 +28,7 @@ sap.ui.define([
 	'sap/base/util/isEmptyObject',
 	'sap/base/util/each',
 	'sap/ui/VersionInfo',
+	'sap/base/config',
 	'sap/ui/events/jquery/EventSimulation'
 ],
 	function(
@@ -55,6 +56,7 @@ sap.ui.define([
 		isEmptyObject,
 		each,
 		VersionInfo
+		/* ,BaseConfig */
 		/* ,EventSimulation */
 	) {
 
@@ -273,6 +275,8 @@ sap.ui.define([
 			Measurement.start("coreInit", "Core.js - init");
 
 			// freeze Config
+			var GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
+			GlobalConfigurationProvider.freeze();
 			Configuration.setCore(this);
 			// initialize frameOptions script (anti-clickjacking, etc.)
 			var oFrameOptionsConfig = Configuration.getValue("frameOptionsConfig") || {};

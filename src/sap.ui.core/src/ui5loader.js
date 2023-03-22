@@ -70,6 +70,15 @@
 
 	function noop() {}
 
+	var aEarlyLogs = [];
+
+	function earlyLog(level, message) {
+		aEarlyLogs.push({
+			level: level,
+			message: message
+		});
+	}
+
 	function forEach(obj, callback) {
 		Object.keys(obj).forEach(function(key) {
 			callback(key, obj[key]);
@@ -98,13 +107,14 @@
 	 * @type {{debug:function(),info:function(),warning:function(),error:function(),isLoggable:function():boolean}}
 	 * @private
 	 */
+
 	var log = {
-		debug: noop,
-		info: noop,
-		warning: noop,
-		error: noop,
+		debug: earlyLog.bind(this, 'debug'),
+		info: earlyLog.bind(this, 'info'),
+		warning: earlyLog.bind(this, 'warning'),
+		error: earlyLog.bind(this, 'error'),
 		isLoggable: noop
-	}; // Null Object pattern: dummy logger which is used as long as no logger is injected
+	};
 
 	/**
 	 * Basic assert functionality.
@@ -2569,6 +2579,9 @@
 			},
 			set: function(v) {
 				log = v;
+				aEarlyLogs.forEach(function(earlyLog) {
+					log[earlyLog.level](earlyLog.message);
+				});
 			}
 		},
 		measure: {
