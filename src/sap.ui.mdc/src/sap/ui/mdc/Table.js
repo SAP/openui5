@@ -10,6 +10,7 @@ sap.ui.define([
 	"./table/TreeTableType",
 	"./table/ResponsiveTableType",
 	"./table/PropertyHelper",
+	"./table/utils/Personalization",
 	"./mixin/FilterIntegrationMixin",
 	"./library",
 	"sap/m/Text",
@@ -50,6 +51,7 @@ sap.ui.define([
 	TreeTableType,
 	ResponsiveTableType,
 	PropertyHelper,
+	PersonalizationUtils,
 	FilterIntegrationMixin,
 	library,
 	Text,
@@ -770,7 +772,7 @@ sap.ui.define([
 			oDataStateIndicator[sAction + "ApplyFilter"](this._onApplyMessageFilter, this);
 			oDataStateIndicator[sAction + "ClearFilter"](this._onClearMessageFilter, this);
 			oDataStateIndicator[sAction + "Event"]("filterInfoPress", function() {
-				showFilterDialog(this);
+				PersonalizationUtils.openFilterDialog(this);
 			}, this);
 		}
 	};
@@ -1197,15 +1199,13 @@ sap.ui.define([
 				})
 			],
 			press: function() {
-				showFilterDialog(oTable).then(function(oP13nDialog) {
+				PersonalizationUtils.openFilterDialog(oTable, function() {
 					// Because the filter info bar was pressed, it must have had the focus when opening the dialog. When removing all filters in
 					// the dialog and confirming, the filter info bar will be hidden, and the dialog tries to restore the focus on the hidden filter
 					// info bar. To avoid a focus loss, the table gets the focus.
-					oP13nDialog.attachEventOnce("afterClose", function() {
-						if (getInternallyFilteredProperties(oTable).length === 0) {
-							oTable.focus();
-						}
-					});
+					if (getInternallyFilteredProperties(oTable).length === 0) {
+						oTable.focus();
+					}
 				});
 			}
 		});
@@ -1278,8 +1278,9 @@ sap.ui.define([
 
 			var oNoColumnsMessage = this._oTable.getAggregation("_noColumnsMessage");
 			if (!oNoColumnsMessage) {
-				var fnOpenColumnsPanel = TableSettings.showPanel.bind(TableSettings, this, "Columns");
-				oNoColumnsMessage = MTableUtil.getNoColumnsIllustratedMessage(fnOpenColumnsPanel);
+				oNoColumnsMessage = MTableUtil.getNoColumnsIllustratedMessage(function() {
+					PersonalizationUtils.openSettingsDialog(this);
+				}.bind(this));
 				oNoColumnsMessage.setEnableVerticalResponsiveness(!this._isOfType(TableType.ResponsiveTable));
 				this._oTable.setAggregation("_noColumnsMessage", oNoColumnsMessage);
 			}
@@ -1757,7 +1758,9 @@ sap.ui.define([
 
 	Table.prototype._getP13nButton = function() {
 		if (!this._oP13nButton) {
-			this._oP13nButton = TableSettings.createSettingsButton(this.getId(), [onShowSettingsDialog, this]);
+			this._oP13nButton = TableSettings.createSettingsButton(this.getId(), [function() {
+				PersonalizationUtils.openSettingsDialog(this);
+			}, this]);
 		}
 		this._updateP13nButton();
 		return this._oP13nButton;
@@ -2060,6 +2063,7 @@ sap.ui.define([
 			]).then(function() {
 				if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
 					this._oColumnHeaderMenu.openBy(oInnerColumn, true);
+					PersonalizationUtils.detectUserPersonalizationCompletion(this, this._oColumnHeaderMenu);
 				}
 			}.bind(this));
 		}.bind(this));
@@ -2081,7 +2085,10 @@ sap.ui.define([
 	};
 
 	Table.prototype._onColumnMove = function(mPropertyBag) {
-		TableSettings.moveColumn(this, mPropertyBag.column, mPropertyBag.newIndex);
+		PersonalizationUtils.createColumnReorderChange(this, {
+			column: mPropertyBag.column,
+			index: mPropertyBag.newIndex
+		});
 	};
 
 	Table.prototype._onCustomSort = function(oEvent, sSortOrder) {
@@ -2095,7 +2102,10 @@ sap.ui.define([
 			}
 		});
 
-		TableSettings.createSort(this, sSortProperty, sSortOrder, true);
+		PersonalizationUtils.createSortChange(this, {
+			property: sSortProperty,
+			sortOrder: sSortOrder
+		});
 	};
 
 	Table.prototype._onRowPress = function(mPropertyBag) {
@@ -2117,15 +2127,22 @@ sap.ui.define([
 	};
 
 	Table.prototype._onColumnResize = function(mPropertyBag) {
-		TableSettings.createColumnWidth(this, mPropertyBag.column.getDataProperty(), mPropertyBag.width);
+		PersonalizationUtils.createColumnWidthChange(this, {
+			column: mPropertyBag.column,
+			width: mPropertyBag.width
+		});
 	};
 
-	Table.prototype._onCustomGroup = function (sSortProperty) {
-		TableSettings.createGroup(this, sSortProperty);
+	Table.prototype._onCustomGroup = function(sProperty) {
+		PersonalizationUtils.createGroupChange(this, {
+			property: sProperty
+		});
 	};
 
-	Table.prototype._onCustomAggregate = function (sSortProperty) {
-		TableSettings.createAggregation(this, sSortProperty);
+	Table.prototype._onCustomAggregate = function (sProperty) {
+		PersonalizationUtils.createAggregateChange(this, {
+			property: sProperty
+		});
 	};
 
 	Table.prototype._insertInnerColumn = function(oColumn, iIndex) {
@@ -2540,14 +2557,6 @@ sap.ui.define([
 			this._fullyInitialized().then(this._rebind.bind(this));
 		}
 	};
-
-	function onShowSettingsDialog(oEvent) {
-		TableSettings.showPanel(this, "Columns");
-	}
-
-	function showFilterDialog(oTable) {
-		return TableSettings.showPanel(oTable, "Filter");
-	}
 
 	// TODO: move to a base util that can be used by most aggregations
 	Table.prototype._getSorters = function() {

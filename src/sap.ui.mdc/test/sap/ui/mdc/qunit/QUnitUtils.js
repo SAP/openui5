@@ -1,19 +1,14 @@
 /*!
  * ${copyright}
  */
-
-/**
- * Utilities for QUnit tests in MDC
- *
- * @private
- */
-sap.ui.define(["sap/ui/mdc/library"
-], function(Library) {
+sap.ui.define([
+], function(
+) {
 	"use strict";
 
-	var TableType = Library.TableType;
+	var QUnitUtils = {};
 
-	function stubPropertyInfos(oTarget, aPropertyInfos) {
+	QUnitUtils.stubPropertyInfos = function(oTarget, aPropertyInfos) {
 		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
 		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
 		var oDelegate;
@@ -70,46 +65,13 @@ sap.ui.define(["sap/ui/mdc/library"
 				oDelegate.fetchProperties = fnOriginalFetchProperties;
 			}
 		};
-	}
+	};
 
-	function restorePropertyInfos(oTarget) {
+	QUnitUtils.restorePropertyInfos = function(oTarget) {
 		if (oTarget.__restorePropertyInfos) {
 			oTarget.__restorePropertyInfos();
 		}
-	}
-
-	function poll(fnCheck, iTimeout) {
-		return new Promise(function(resolve, reject) {
-			if (fnCheck()) {
-				resolve();
-				return;
-			}
-
-			var iRejectionTimeout = setTimeout(function() {
-				clearInterval(iCheckInterval);
-				reject("Polling timeout");
-			}, iTimeout == null ? 100 : iTimeout);
-
-			var iCheckInterval = setInterval(function() {
-				if (fnCheck()) {
-					clearTimeout(iRejectionTimeout);
-					clearInterval(iCheckInterval);
-					resolve();
-				}
-			}, 10);
-		});
-	}
-
-	function waitForBindingInfo(oTable, iTimeout) {
-		return poll(function() {
-			var oInnerTable = oTable._oTable;
-			return oInnerTable && oInnerTable.getBindingInfo(oTable._isOfType(TableType.Table, true) ? "rows" : "items");
-		}, iTimeout);
-	}
-
-	return {
-		stubPropertyInfos: stubPropertyInfos,
-		restorePropertyInfos: restorePropertyInfos,
-		waitForBindingInfo: waitForBindingInfo
 	};
+
+	return QUnitUtils;
 });

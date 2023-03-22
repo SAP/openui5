@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../TableSettings",
 	"../ResponsiveTableType",
+	"../utils/Personalization",
 	"sap/m/table/columnmenu/QuickActionContainer",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickSort",
@@ -16,8 +16,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library"
 ], function(
-	TableSettings,
 	ResponsiveTableType,
+	PersonalizationUtils,
 	QuickActionContainerBase,
 	QuickAction,
 	QuickSort,
@@ -73,7 +73,10 @@ sap.ui.define([
 					}),
 					change: function(oEvent) {
 						var oItem = oEvent.getParameter("item");
-						TableSettings.createSort(oTable, oItem.getKey(), oItem.getSortOrder(), true);
+						PersonalizationUtils.createSortChange(oTable, {
+							property: oItem.getKey(),
+							sortOrder: oItem.getSortOrder()
+						});
 					}
 				}));
 			}
@@ -97,8 +100,9 @@ sap.ui.define([
 						});
 					}),
 					change: function(oEvent) {
-						var oItem = oEvent.getParameter("item");
-						TableSettings.createGroup(oTable, oItem.getKey());
+						PersonalizationUtils.createGroupChange(oTable, {
+							property: oEvent.getParameter("item").getKey()
+						});
 					}
 				}));
 			}
@@ -120,8 +124,9 @@ sap.ui.define([
 						});
 					}),
 					change: function(oEvent) {
-						var oItem = oEvent.getParameter("item");
-						TableSettings.createAggregation(oTable, oItem.getKey());
+						PersonalizationUtils.createAggregateChange(oTable, {
+							property: oEvent.getParameter("item").getKey()
+						});
 					}
 				}));
 			}
