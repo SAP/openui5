@@ -16,6 +16,7 @@ sap.ui.define([], function() {
 	 * @alias module:sap/base/util/Deferred
 	 * @since 1.90
 	 * @public
+	 * @template {any} [T=any]
 	 */
 	var Deferred = function() {
 		var that = this;
@@ -23,7 +24,7 @@ sap.ui.define([], function() {
 		/**
 		 * Promise instance of the Deferred
 		 *
-		 * @type {Promise}
+		 * @type {Promise<T>}
 		 * @public
 		 */
 		this.promise = new Promise(function(resolve, reject) {
@@ -36,7 +37,7 @@ sap.ui.define([], function() {
 	 * Proxy call to the <code>resolve</code> method of the wrapped Promise
 	 *
 	 * @name module:sap/base/util/Deferred#resolve
-	 * @param {any} [value] Fulfillment value
+	 * @param {T} [value] Fulfillment value
 	 * @function
 	 * @public
 	 */
