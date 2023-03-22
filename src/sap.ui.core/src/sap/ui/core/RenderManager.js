@@ -1043,6 +1043,9 @@ sap.ui.define([
 				// push them to the style stack that will be read by the first writeClasses/openEnd/voidEnd call to append additional classes
 				aStyleStack.push(oControlStyles);
 
+				// mark that the rendering phase has been started
+				oControl._bRenderingPhase = true;
+
 				// execute the control renderer according to rendering interface
 				if (bDomInterface) {
 
@@ -1078,6 +1081,9 @@ sap.ui.define([
 					// compare after rendering buffer size with the before rendering buffer size to determine whether the control produced any output
 					oControl.bOutput = (aBuffer.length != iBufferLength);
 				}
+
+				// mark that the rendering phase is over
+				oControl._bRenderingPhase = false;
 
 				// pop from the style stack after rendering for the next control
 				aStyleStack.pop();

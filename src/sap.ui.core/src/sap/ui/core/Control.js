@@ -305,6 +305,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines whether the control is in rendering phase.
+	 *
+	 * @returns {boolean}
+	 * @private
+	 */
+	function isInRenderingPhase(oControl) {
+		if (!oControl || !oControl.isA) {
+			return false;
+		}
+		if (oControl.isA("sap.ui.core.Control")) {
+			return oControl._bRenderingPhase;
+		}
+		return isInRenderingPhase(oControl.getParent());
+	}
+
+	/**
 	 * Marks this control and its children for a re-rendering, usually because its state has changed and now differs
 	 * from the rendered DOM.
 	 *
@@ -325,8 +341,8 @@ sap.ui.define([
 	Control.prototype.invalidate = function(oOrigin) {
 		var oUIArea;
 
-		// invalidations that happen in the onBeforeRendering hook of controls can be ignored
-		// since the rendering of the control has not yet been started
+		// Invalidations that happen in the onBeforeRendering hook of controls can be ignored
+		// since the rendering of the control is about to start.
 		if ( this._bOnBeforeRenderingPhase ) {
 			return;
 		}
@@ -337,8 +353,10 @@ sap.ui.define([
 		// This will be cleared by the RenderManager when the control is rendered completely.
 		this._bNeedsRendering = true;
 
-		if ( this.bOutput && (oUIArea = this.getUIArea()) ) {
+		var oParent = this.getParent();
+		if ( (this.bOutput || isInRenderingPhase(oParent)) && (oUIArea = this.getUIArea()) ) {
 			// if this control has been rendered before (bOutput)
+			// or if the invalidation happens while parent rendering (isInRenderingPhase(oParent))
 			// and if it is contained in a UIArea (!!oUIArea)
 			// then control re-rendering can be used (see UIArea.rerender() for details)
 			//
@@ -356,7 +374,6 @@ sap.ui.define([
 			}
 		} else {
 			// else we bubble up the hierarchy
-			var oParent = this.getParent();
 			if (oParent && (
 					this.bOutput /* && !this.getUIArea() */ ||
 					/* !this.bOutput && */ !(this.getVisible && this.getVisible() === false))) {
