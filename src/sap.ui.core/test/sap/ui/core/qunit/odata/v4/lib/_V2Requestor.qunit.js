@@ -974,8 +974,7 @@ sap.ui.define([
 		oRequestor.doConvertSystemQueryOptions("/Foo", {$filter : sFilter},
 			fnResultHandlerSpy);
 
-		sinon.assert.calledOnce(fnResultHandlerSpy);
-		sinon.assert.calledWithExactly(fnResultHandlerSpy, "$filter", "~");
+		sinon.assert.calledOnceWithExactly(fnResultHandlerSpy, "$filter", "~");
 	});
 
 	//*********************************************************************************************

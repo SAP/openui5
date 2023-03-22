@@ -224,16 +224,16 @@ sap.ui.define([
 	//*********************************************************************************************
 	["2.0", "4.0"].forEach(function (sODataVersion) {
 		QUnit.test("create requestors for odataVersion: " + sODataVersion, function (assert) {
-			var fnMetadataRequestorCreateSpy, oModel, fnRequestorCreateSpy;
+			var oMetadataRequestorCreateExpectation, oModel, oRequestorCreateExpectation;
 
-			fnRequestorCreateSpy = this.mock(_Requestor).expects("create")
+			oRequestorCreateExpectation = this.mock(_Requestor).expects("create")
 				.withExactArgs(sServiceUrl, sinon.match.object, {"Accept-Language" : "ab-CD"},
 					sinon.match.object, sODataVersion)
 				.returns({
 					checkForOpenRequests : function () {},
 					checkHeaderNames : function () {}
 				});
-			fnMetadataRequestorCreateSpy = this.mock(_MetadataRequestor).expects("create")
+			oMetadataRequestorCreateExpectation = this.mock(_MetadataRequestor).expects("create")
 				.withExactArgs({"Accept-Language" : "ab-CD"}, sODataVersion, undefined,
 					sinon.match.object)
 				.returns({});
@@ -242,10 +242,11 @@ sap.ui.define([
 			oModel = this.createModel("", {odataVersion : sODataVersion});
 
 			assert.strictEqual(oModel.getODataVersion(), sODataVersion);
-			assert.notStrictEqual(fnRequestorCreateSpy.args[0][2],
-				fnMetadataRequestorCreateSpy.args[0][0]);
-			assert.strictEqual(fnRequestorCreateSpy.args[0][2], oModel.mHeaders);
-			assert.strictEqual(fnMetadataRequestorCreateSpy.args[0][0], oModel.mMetadataHeaders);
+			assert.notStrictEqual(oRequestorCreateExpectation.args[0][2],
+				oMetadataRequestorCreateExpectation.args[0][0]);
+			assert.strictEqual(oRequestorCreateExpectation.args[0][2], oModel.mHeaders);
+			assert.strictEqual(oMetadataRequestorCreateExpectation.args[0][0],
+				oModel.mMetadataHeaders);
 		});
 	});
 

@@ -171,7 +171,7 @@ sap.ui.define([
 
 		oBinding = this.bindList("/EMPLOYEES");
 
-		sinon.assert.calledWithExactly(oExpectation, sinon.match.same(oBinding));
+		sinon.assert.calledOnceWithExactly(oExpectation, sinon.match.same(oBinding));
 	});
 
 	//*********************************************************************************************
@@ -188,7 +188,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("be V8-friendly", function (assert) {
-		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
+		var fnParentBindingSpy = this.spy(asODataParentBinding, "call"),
 			oBinding = this.bindList("/EMPLOYEES");
 
 		assert.strictEqual(oBinding.iActiveContexts, 0);
@@ -218,7 +218,7 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("aSorters"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
-		assert.ok(oParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
+		assert.ok(fnParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 	});
 
 	//*********************************************************************************************
@@ -4287,7 +4287,7 @@ sap.ui.define([
 
 					arguments[5](2, -1); // now call the callback with the adjusted index
 
-					sinon.assert.notCalled(fnUndelete);
+					assert.notOk(fnUndelete.called);
 
 					// expectations for then
 					oContext1Mock.expects("resetKeepAlive").exactly(bSuccess ? 1 : 0)
@@ -4346,8 +4346,7 @@ sap.ui.define([
 							oBinding.aContexts.forEach(function (oContext, i) {
 								assert.strictEqual(oContext.getModelIndex(), i);
 							});
-							sinon.assert.calledOnce(fnUndelete);
-							sinon.assert.calledWithExactly(fnUndelete);
+							sinon.assert.calledOnceWithExactly(fnUndelete);
 						}
 
 						fnReject("~oError~");
@@ -4494,14 +4493,13 @@ sap.ui.define([
 		// code under test - callback
 		oDeleteFromCacheExpectation.args[0][5](undefined, -1);
 
-		sinon.assert.notCalled(fnUndelete);
+		assert.notOk(fnUndelete.called);
 
 		if (oFixture.error) {
 			// code under test - callback for reinsertion
 			oDeleteFromCacheExpectation.args[0][5](undefined, 1);
 
-			sinon.assert.called(fnUndelete);
-			sinon.assert.calledWithExactly(fnUndelete);
+			sinon.assert.calledOnceWithExactly(fnUndelete);
 		}
 		return oPromise.then(function () {
 			assert.deepEqual(oBinding.aContexts, aContexts);
@@ -8946,9 +8944,9 @@ sap.ui.define([
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.callsFake(function () {
 				if (iIndex === undefined) {
-					assert.ok(oAddKeptElementExpectation.calledOnce);
+					assert.ok(oAddKeptElementExpectation.called);
 				} else {
-					assert.ok(oDoReplaceWithExpectation.calledOnce);
+					assert.ok(oDoReplaceWithExpectation.called);
 				}
 				assert.strictEqual(oExistingContext.iIndex, iIndex);
 				assert.strictEqual(oOldContext.iIndex, undefined);
@@ -9047,12 +9045,12 @@ sap.ui.define([
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.callsFake(function () {
 				if (iIndex === undefined) {
-					assert.ok(oAddKeptElementExpectation.calledOnce);
+					assert.ok(oAddKeptElementExpectation.called);
 				} else {
-					assert.ok(oDoReplaceWithExpectation.calledOnce);
+					assert.ok(oDoReplaceWithExpectation.called);
 				}
 				if (bKeepAlive) {
-					assert.ok(oSetKeepAliveExpectation.calledOnce);
+					assert.ok(oSetKeepAliveExpectation.called);
 					assert.ok(oSetKeepAliveExpectation.calledAfter(oDoReplaceWithExpectation));
 				}
 				assert.strictEqual(oOldContext.iIndex, undefined);
@@ -9365,14 +9363,14 @@ sap.ui.define([
 			.withExactArgs({}, "groupId", sGroupId);
 		this.mock(oContext).expects("requestProperty").withExactArgs(["a", "c/d", "e", "g/h"])
 			.callsFake(function () {
-				assert.ok(oSetKeepAliveExpectation.calledOnce);
-				assert.ok(oPredicateExpectation.calledOnce);
-				assert.ok(oAddKeptElementExpectation.calledOnce);
+				assert.ok(oSetKeepAliveExpectation.called);
+				assert.ok(oPredicateExpectation.called);
+				assert.ok(oAddKeptElementExpectation.called);
 				assert.ok(oPredicateExpectation.calledBefore(oAddKeptElementExpectation));
 				assert.strictEqual(oPredicateExpectation.args[0][0],
 					oAddKeptElementExpectation.args[0][0], "same empty object");
 				if (sGroupId) { // Note: order not important for this call
-					assert.ok(oGroupExpectation.calledOnce);
+					assert.ok(oGroupExpectation.called);
 					assert.strictEqual(oGroupExpectation.args[0][0],
 						oAddKeptElementExpectation.args[0][0], "same empty object");
 				}
@@ -9388,7 +9386,7 @@ sap.ui.define([
 			oBinding.getKeepAliveContext(sPath, "~bRequestMessages~", sGroupId),
 			oContext);
 		assert.strictEqual(oBinding.mPreviousContextsByPath[sPath], oContext);
-		assert.ok(oSetKeepAliveExpectation.calledOnce);
+		assert.ok(oSetKeepAliveExpectation.called);
 	});
 	});
 });

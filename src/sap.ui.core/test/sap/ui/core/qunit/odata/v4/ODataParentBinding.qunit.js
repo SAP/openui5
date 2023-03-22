@@ -56,7 +56,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("initialize members for mixin", function (assert) {
 		var oBinding = {},
-			oBindingSpy = this.spy(asODataBinding, "call");
+			fnBindingSpy = this.spy(asODataBinding, "call");
 
 		asODataParentBinding.call(oBinding);
 
@@ -71,7 +71,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oRefreshPromise, null);
 		assert.ok("oResumePromise" in oBinding);
 		assert.strictEqual(oBinding.oResumePromise, undefined);
-		assert.ok(oBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
+		assert.ok(fnBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 	});
 
 	//*********************************************************************************************

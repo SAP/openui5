@@ -183,18 +183,17 @@ sap.ui.define([
 
 		assert.strictEqual(oGroupLock.fnCancel, fnCancel);
 
-		sinon.assert.notCalled(fnCancel);
+		assert.notOk(fnCancel.called);
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 
 		// code under test
 		oGroupLock.cancel();
 
 		assert.ok(oGroupLock.isCanceled());
-		sinon.assert.calledOnce(fnCancel);
-		sinon.assert.calledWithExactly(fnCancel);
+		sinon.assert.calledOnceWithExactly(fnCancel);
 
 		oGroupLock.cancel();
 
-		sinon.assert.calledOnce(fnCancel); // cancel function must not be called again
+		sinon.assert.calledOnceWithExactly(fnCancel); // cancel function must not be called again
 	});
 });

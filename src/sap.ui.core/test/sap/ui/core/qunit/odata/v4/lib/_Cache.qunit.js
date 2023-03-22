@@ -407,7 +407,7 @@ sap.ui.define([
 			assert.strictEqual(aCacheData.$created, oFixture.bCreated ? 2 : 1);
 			assert.strictEqual(oCache.iActiveElements, oFixture.bCreated && !sPath ? 2 : 1);
 			if (oFixture.bInactive) {
-				sinon.assert.calledOnce(fnCallback);
+				sinon.assert.calledOnceWithExactly(fnCallback, 1, -1);
 			} else {
 				sinon.assert.calledTwice(fnCallback);
 				sinon.assert.calledWithExactly(fnCallback.secondCall, "~insert~", 1);
@@ -445,12 +445,10 @@ sap.ui.define([
 					// code under test - call fnCancel
 					oRequestExpectation.args[0][6]();
 
-					if (oFixture.bMessagesToRestore) {
-						sinon.assert.called(oMessageExpectation);
-					}
-					sinon.assert.called(oCountExpectation);
-					sinon.assert.called(oSpliceExpectation);
-					sinon.assert.called(oIndexExpectation);
+					assert.strictEqual(oMessageExpectation.called, !!oFixture.bMessagesToRestore);
+					assert.ok(oCountExpectation.called);
+					assert.ok(oSpliceExpectation.called);
+					assert.ok(oIndexExpectation.called);
 					checkCleanedUp();
 				}
 				throw oError;
@@ -515,8 +513,7 @@ sap.ui.define([
 			fnCallback);
 
 		assert.strictEqual(aCacheData[1]["@$ui5.context.isDeleted"], true);
-		sinon.assert.calledOnce(fnCallback);
-		sinon.assert.calledWithExactly(fnCallback, 1, -1);
+		sinon.assert.calledOnceWithExactly(fnCallback, 1, -1);
 
 		return oPromise.then(function () {
 			assert.ok(bSuccess);
@@ -641,8 +638,7 @@ sap.ui.define([
 		return oCache._delete(oGroupLock, "EMPLOYEES('1')", "('1')", "etag", fnCallback)
 			.then(function () {
 				assert.strictEqual(bDeleted, true);
-				sinon.assert.calledOnce(fnCallback);
-				sinon.assert.calledWithExactly(fnCallback, undefined, -1);
+				sinon.assert.calledOnceWithExactly(fnCallback, undefined, -1);
 			}, function (oError) {
 				assert.strictEqual(bDeleted, false);
 				assert.strictEqual(oError, "~oError~");
@@ -695,8 +691,7 @@ sap.ui.define([
 			fnCallback);
 
 		assert.ok(oPromise.isFulfilled());
-		sinon.assert.calledOnce(fnCallback);
-		sinon.assert.calledWithExactly(fnCallback, 1, -1);
+		sinon.assert.calledOnceWithExactly(fnCallback, 1, -1);
 
 		return oPromise;
 	});
@@ -711,8 +706,15 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			aPostBodyCollection = ["~a~", "~b~", "~c~"],
 			oPromise,
-			fnReject = sinon.stub(),
-			oRemoveElementExpectation;
+			oRemoveElementExpectation,
+			fnReject = sinon.spy(function (oError) {
+				assert.ok(oError instanceof Error);
+				assert.strictEqual(oError.canceled, true);
+				assert.strictEqual(oError.message, "Deleted from deep create");
+				assert.deepEqual(aPostBodyCollection, ["~a~", "~c~"]);
+				assert.ok(oRemoveElementExpectation.called);
+				sinon.assert.calledOnceWithExactly(fnCallback, 1, -1);
+			});
 
 		oCache.fetchValue = function () {};
 		aElements.$postBodyCollection = aPostBodyCollection;
@@ -733,21 +735,13 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(aElements), 1, "($uid=1)", "SO_2_SOITEM");
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "reject").returns(fnReject);
-		fnReject.callsFake(function (oError) {
-			assert.ok(oError instanceof Error);
-			assert.strictEqual(oError.canceled, true);
-			assert.strictEqual(oError.message, "Deleted from deep create");
-			assert.deepEqual(aPostBodyCollection, ["~a~", "~c~"]);
-			sinon.assert.called(oRemoveElementExpectation);
-			sinon.assert.calledWithExactly(fnCallback, 1, -1);
-		});
 
 		// code under test
 		oPromise = oCache._delete(oGroupLock, undefined, "SO_2_SOITEM/-1", null, fnCallback);
 
 		assert.strictEqual(oPromise.getResult(), undefined);
 		assert.deepEqual(aPostBodyCollection, ["~a~", "~c~"]);
-		sinon.assert.calledOnce(fnReject);
+		assert.ok(fnReject.calledOnce);
 	});
 
 	//*********************************************************************************************
@@ -2297,7 +2291,7 @@ sap.ui.define([
 					"/~/BusinessPartnerList('0')", sEntityPath, undefined,
 					oFixture.$$patchWithoutSideEffects, fnPatchSent)
 				.then(function (oResult) {
-					sinon.assert.notCalled(fnError);
+					assert.notOk(fnError.called);
 					assert.strictEqual(bCanceled, false);
 					assert.strictEqual(oResult, undefined, "no result");
 					if (oUpdateExistingCall.called) {
@@ -2305,7 +2299,7 @@ sap.ui.define([
 							"cache update happens before unlock");
 					}
 				}, function (oResult) {
-					sinon.assert.notCalled(fnError);
+					assert.notOk(fnError.called);
 					assert.strictEqual(bCanceled, true);
 					assert.strictEqual(oResult, oError);
 				});
@@ -2447,7 +2441,7 @@ sap.ui.define([
 				return oCache.update(oGroupLock, "ProductInfo/Amount", "123", fnError,
 						"ProductList('0')", "path/to/entity", "Pricing/Currency")
 					.then(function (oResult) {
-						sinon.assert.notCalled(fnError);
+						assert.notOk(fnError.called);
 						assert.strictEqual(oResult, undefined, "no result");
 					});
 			});
@@ -2628,15 +2622,13 @@ sap.ui.define([
 					bPatchWithoutSideEffects, fnPatchSent)
 				.then(function (oResult) {
 					assert.notOk(bCanceled);
-					sinon.assert.calledOnce(fnError0);
-					sinon.assert.calledWithExactly(fnError0, oError1);
+					sinon.assert.calledOnceWithExactly(fnError0, oError1);
 					assert.strictEqual(oResult, undefined, "no result");
 					assert.ok(oUnlockCall.calledBefore(oRequestCall2),
 						"unlock called before second PATCH request");
 				}, function (oError) {
 					assert.ok(bCanceled);
-					sinon.assert.calledOnce(fnError0);
-					sinon.assert.calledWithExactly(fnError0, oError1);
+					sinon.assert.calledOnceWithExactly(fnError0, oError1);
 					assert.strictEqual(oError, oError2);
 				});
 
@@ -2671,13 +2663,11 @@ sap.ui.define([
 					bPatchWithoutSideEffects, fnPatchSent)
 				.then(function (oResult) {
 					assert.notOk(bCanceled);
-					sinon.assert.calledOnce(fnError1);
-					sinon.assert.calledWithExactly(fnError0, oError1);
+					sinon.assert.calledOnceWithExactly(fnError0, oError1);
 					assert.strictEqual(oResult, undefined, "no result");
 				}, function (oResult) {
 					assert.ok(bCanceled);
-					sinon.assert.calledOnce(fnError1);
-					sinon.assert.calledWithExactly(fnError0, oError1);
+					sinon.assert.calledOnceWithExactly(fnError0, oError1);
 					assert.strictEqual(oResult, oError2);
 				});
 
@@ -2790,10 +2780,10 @@ sap.ui.define([
 
 		return oUpdatePromise.then(function () {
 			assert.notOk(bError);
-			sinon.assert.notCalled(fnError);
+			assert.notOk(fnError.called);
 		}, function (oResult) {
 			assert.ok(bError);
-			sinon.assert.calledWith(fnError, oError);
+			sinon.assert.calledOnceWithExactly(fnError, oError);
 			assert.strictEqual(oResult, oError);
 		}).finally(function () {
 			assert.deepEqual(oCache.mEditUrl2PatchPromise, {});
@@ -2862,8 +2852,7 @@ sap.ui.define([
 			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
-				sinon.assert.calledOnce(fnError);
-				sinon.assert.calledWithExactly(fnError, oError);
+				sinon.assert.calledOnceWithExactly(fnError, oError);
 				assert.strictEqual(oResult, oError);
 			});
 
@@ -4265,8 +4254,7 @@ sap.ui.define([
 		return oPromise.then(function () {
 			assert.deepEqual(arguments, {"0" : undefined});
 			if (bRemoved) {
-				sinon.assert.calledOnce(fnOnRemove);
-				sinon.assert.calledWithExactly(fnOnRemove, false);
+				sinon.assert.calledOnceWithExactly(fnOnRemove, false);
 			}
 		});
 	});
@@ -4393,8 +4381,7 @@ sap.ui.define([
 				assert.strictEqual(mQueryOptionsForPathCopy.$search, undefined);
 				if (!oFixture.inCollection) {
 					assert.ok(oReplaceExpectation.calledAfter(oRemoveExpectation));
-					sinon.assert.calledOnce(fnOnRemove);
-					sinon.assert.calledWithExactly(fnOnRemove, true);
+					sinon.assert.calledOnceWithExactly(fnOnRemove, true);
 				}
 		});
 	});
@@ -5741,10 +5728,10 @@ sap.ui.define([
 		assert.notOk("$select" in oEntity.deepCreateCollection);
 		assert.notOk("$postBodyCollection" in oEntity.otherCollection);
 		for (i = 0; i < oFixture.count; i += 1) {
-			sinon.assert.calledWithExactly(aResolve[i]);
+			sinon.assert.calledOnceWithExactly(aResolve[i]);
 		}
 		for (i = oFixture.count; i < aResolve.length; i += 1) {
-			sinon.assert.notCalled(aResolve[i]);
+			assert.notOk(aResolve[i].called, i);
 		}
 	});
 });
@@ -5770,7 +5757,7 @@ sap.ui.define([
 		oCache.cancelNestedCreates(oElement, "post/path", "update");
 
 		[fnReject0, fnReject1].forEach(function (fnReject) {
-			sinon.assert.calledWithExactly(fnReject, sinon.match(function (oParameter) {
+			sinon.assert.calledOnceWithExactly(fnReject, sinon.match(function (oParameter) {
 				return oParameter instanceof Error && oParameter.canceled
 					&& oParameter.message === "Deep create of SO_2_SOITEM canceled with POST"
 						+ " post/path; group: update";
@@ -5842,7 +5829,7 @@ sap.ui.define([
 			assert.ok(!oPromise.isFulfilled());
 			assert.ok(!oPromise.isRejected());
 			assert.ok(oCache.bSentRequest);
-			sinon.assert.calledWithExactly(oCache.fill, sinon.match.instanceOf(SyncPromise),
+			sinon.assert.calledOnceWithExactly(oCache.fill, sinon.match.instanceOf(SyncPromise),
 				oFixture.index, oFixture.index + oFixture.length);
 			return oPromise.then(function (oResult) {
 				var oExpectedResult = {
@@ -5857,7 +5844,7 @@ sap.ui.define([
 					});
 				}
 				if (oFixture.count) {
-					sinon.assert.calledWithExactly(_Helper.updateExisting,
+					sinon.assert.calledOnceWithExactly(_Helper.updateExisting,
 						sinon.match.same(oCache.mChangeListeners), "",
 						sinon.match.same(oCache.aElements), {$count : oFixture.count});
 				}
@@ -5936,7 +5923,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("waitForBatchResponseReceived").exactly(1 - iCount)
 			.withExactArgs("group")
 			.callsFake(function () {
-				assert.ok(oUnlockExpectation.calledOnce, "unlocked");
+				assert.ok(oUnlockExpectation.called, "unlocked");
 				that.oRequestorMock.expects("getUnlockedAutoCopy")
 					.withExactArgs(sinon.match.same(oGroupLock)).returns("~oUnlockedAutoCopy~");
 				that.mock(oCache).expects("read")
@@ -6079,7 +6066,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("waitForBatchResponseReceived")
 			.withExactArgs("group")
 			.callsFake(function () {
-				assert.ok(oUnlockExpectation.calledOnce, "unlocked");
+				assert.ok(oUnlockExpectation.called, "unlocked");
 				that.oRequestorMock.expects("getUnlockedAutoCopy")
 					.withExactArgs(sinon.match.same(oGroupLock)).returns("~oUnlockedAutoCopy~");
 				that.mock(oCache).expects("read")
@@ -6148,13 +6135,13 @@ sap.ui.define([
 				var fnSubmit = arguments[5];
 
 				return Promise.resolve().then(function () {
-					var oAddPendingRequestSpy
+					var oAddPendingRequestExpectation
 							= oCacheMock.expects("addPendingRequest").withExactArgs();
 
 					// code under test
 					fnSubmit();
 
-					assert.ok(oAddPendingRequestSpy.called);
+					assert.ok(oAddPendingRequestExpectation.called);
 				}).then(function () {
 					oCacheMock.expects("removePendingRequest").withExactArgs();
 
@@ -7955,7 +7942,7 @@ sap.ui.define([
 				});
 			});
 			return oPromise.then(function () {
-				sinon.assert.notCalled(fnDataRequested); // the requestor should call this
+				assert.notOk(fnDataRequested.called); // the requestor should call this
 				assert.strictEqual(oCache.aElements.$count, oFixture.expectedMaxElements);
 			});
 		});
@@ -7977,7 +7964,7 @@ sap.ui.define([
 				}));
 			});
 			return Promise.all(aPromises).then(function () {
-				sinon.assert.notCalled(fnDataRequested); // the requestor should call this
+				assert.notOk(fnDataRequested.called); // the requestor should call this
 				assert.strictEqual(oCache.aElements.$count, oFixture.expectedMaxElements);
 			});
 		});
@@ -8192,7 +8179,7 @@ sap.ui.define([
 						that.mock(oReadGroupLock).expects("unlock").withExactArgs();
 						assert.strictEqual(
 							oCache.read(0, 4, 0, oReadGroupLock).getResult().value.$count, 25);
-						sinon.assert.calledWithExactly(_Helper.updateExisting,
+						sinon.assert.calledOnceWithExactly(_Helper.updateExisting,
 							sinon.match.same(oCache.mChangeListeners), "",
 							sinon.match.same(oCache.aElements), {$count : 25});
 					});
@@ -8243,7 +8230,7 @@ sap.ui.define([
 					that.mock(oFetchValueGroupLock).expects("unlock").withExactArgs();
 					assert.strictEqual(
 						oCache.fetchValue(oFetchValueGroupLock, "0/list").getResult().$count, 25);
-					sinon.assert.calledWithExactly(_Helper.updateExisting,
+					sinon.assert.calledOnceWithExactly(_Helper.updateExisting,
 						sinon.match.same(oCache.mChangeListeners), "0/list",
 						sinon.match.same(aList), {$count : 25});
 				});
@@ -8414,7 +8401,11 @@ sap.ui.define([
 			assert.ok(oTransientPromiseWrapper.isPending()); // of course...
 
 			// request is added to mPostRequests
-			sinon.assert.calledWithExactly(_Helper.addByPath,
+			assert.ok(_Helper.addByPath.calledTwice);
+			sinon.assert.calledWithExactly(_Helper.addByPath.firstCall,
+				{"('0')/TEAM_2_EMPLOYEES/$count" : [oCountChangeListener]},
+				"('0')/TEAM_2_EMPLOYEES/$count", sinon.match.same(oCountChangeListener));
+			sinon.assert.calledWithExactly(_Helper.addByPath.secondCall,
 				sinon.match.same(oCache.mPostRequests), sPathInCache,
 				sinon.match.same(oEntityDataCleaned));
 
@@ -8457,7 +8448,7 @@ sap.ui.define([
 							oEntityDataCleaned);
 					}
 				}
-				sinon.assert.calledWithExactly(_Helper.removeByPath,
+				sinon.assert.calledOnceWithExactly(_Helper.removeByPath,
 					sinon.match.same(oCache.mPostRequests), sPathInCache,
 					sinon.match.same(oEntityDataCleaned));
 			});
@@ -8514,14 +8505,15 @@ sap.ui.define([
 
 		assert.strictEqual(aCollection.$created, 1);
 		assert.strictEqual(oCache.iActiveElements, 0); // since we create in a nested collection
-		sinon.assert.calledWithExactly(oRequestor.request, "POST", "TEAMS('0')/TEAM_2_EMPLOYEES",
-			sinon.match.same(oGroupLock), null, /*oPayload*/sinon.match.object,
-			/*fnSubmit*/sinon.match.func, /*fnCancel*/sinon.match.func, undefined,
+		sinon.assert.calledOnceWithExactly(oRequestor.request, "POST",
+			"TEAMS('0')/TEAM_2_EMPLOYEES", sinon.match.same(oGroupLock), null,
+			/*oPayload*/sinon.match.object, /*fnSubmit*/sinon.match.func,
+			/*fnCancel*/sinon.match.func, undefined,
 			"TEAMS('0')/TEAM_2_EMPLOYEES" + sTransientPredicate);
 		oEntityData = aCollection[0];
 		// request is added to mPostRequests
-		sinon.assert.calledWithExactly(_Helper.addByPath, sinon.match.same(oCache.mPostRequests),
-			sPathInCache, sinon.match.same(oEntityData));
+		sinon.assert.calledOnceWithExactly(_Helper.addByPath,
+			sinon.match.same(oCache.mPostRequests), sPathInCache, sinon.match.same(oEntityData));
 
 		// simulate a second create
 		aCollection.unshift(oEntity1);
@@ -8544,8 +8536,8 @@ sap.ui.define([
 		assert.strictEqual(aCollection.$count, 41);
 		assert.strictEqual(aCollection.$created, 1);
 		assert.strictEqual(aCollection[0], oEntity1);
-		sinon.assert.calledWithExactly(_Helper.removeByPath, sinon.match.same(oCache.mPostRequests),
-			sPathInCache, sinon.match.same(oEntityData));
+		sinon.assert.calledOnceWithExactly(_Helper.removeByPath,
+			sinon.match.same(oCache.mPostRequests), sPathInCache, sinon.match.same(oEntityData));
 		return oCreatePromise.then(function () {
 			assert.ok(false, "unexpected success");
 		}, function (oError) {
@@ -8663,7 +8655,7 @@ sap.ui.define([
 			"@$ui5.context.isTransient" : true
 		}]);
 		assert.strictEqual(aCollection.$created, 1);
-		sinon.assert.calledWithExactly(fnErrorCallback, sinon.match.same(oError));
+		sinon.assert.calledOnceWithExactly(fnErrorCallback, sinon.match.same(oError));
 
 		return oCreatePromise.then(function () {
 			assert.ok(false, "unexpected success");
@@ -8758,8 +8750,10 @@ sap.ui.define([
 				};
 
 			assert.strictEqual(oResult1, oError);
-			sinon.assert.calledWithExactly(oCache.fill, sinon.match.instanceOf(SyncPromise), 0, 5);
-			sinon.assert.calledWithExactly(oCache.fill, undefined, 0, 5);
+			assert.ok(oCache.fill.calledTwice);
+			sinon.assert.calledWithExactly(oCache.fill.firstCall,
+				sinon.match.instanceOf(SyncPromise), 0, 5);
+			sinon.assert.calledWithExactly(oCache.fill.secondCall, undefined, 0, 5);
 
 			that.mock(oGroupLock1).expects("getUnlockedCopy").withExactArgs()
 				.returns(oUnlockedCopy1);
@@ -8822,13 +8816,13 @@ sap.ui.define([
 				var fnSubmit = arguments[5];
 
 				return Promise.resolve().then(function () {
-					var oAddPendingRequestSpy
+					var oAddPendingRequestExpectation
 							= oCacheMock.expects("addPendingRequest").withExactArgs();
 
 					// code under test
 					fnSubmit();
 
-					assert.ok(oAddPendingRequestSpy.called);
+					assert.ok(oAddPendingRequestExpectation.called);
 				}).then(function () {
 					oCacheMock.expects("removePendingRequest").withExactArgs();
 
@@ -9469,9 +9463,9 @@ sap.ui.define([
 				var fnSubmit = arguments[5];
 
 				return Promise.resolve().then(function () {
-						var oAddPendingRequestSpy = that.mock(oCache)
+						var oAddPendingRequestExpectation = that.mock(oCache)
 								.expects("addPendingRequest").withExactArgs(),
-							oSubmitCallbackSpy
+							oSubmitCallbackExpectation
 								= oCallbacksMock.expects("submitCallback").withExactArgs();
 
 						oHelperMock.expects("setPrivateAnnotation")
@@ -9482,8 +9476,8 @@ sap.ui.define([
 						// code under test
 						fnSubmit();
 
-						assert.ok(oAddPendingRequestSpy.called);
-						assert.ok(oSubmitCallbackSpy.called);
+						assert.ok(oAddPendingRequestExpectation.called);
+						assert.ok(oSubmitCallbackExpectation.called);
 						oTransientPromiseWrapper = SyncPromise.resolve(
 							oEntityDataCleaned["@$ui5._"].transient);
 						assert.ok(oTransientPromiseWrapper.isPending()); // of course...
@@ -9636,7 +9630,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.length, 1);
 		oTransientElement = oCache.aElements[0];
 
-		sinon.assert.calledWithExactly(oRequestor.request, "POST", "Employees",
+		sinon.assert.calledOnceWithExactly(oRequestor.request, "POST", "Employees",
 			sinon.match.same(oGroupLock), null, sinon.match.object, sinon.match.func,
 			sinon.match.func, undefined, "Employees" + sTransientPredicate);
 		this.spy(oRequestor, "removePost");
@@ -9649,7 +9643,7 @@ sap.ui.define([
 				throw new Error();
 			});
 
-		sinon.assert.calledWithExactly(oRequestor.removePost, "updateGroup",
+		sinon.assert.calledOnceWithExactly(oRequestor.removePost, "updateGroup",
 			sinon.match(function (oParameter) {
 				return oParameter === oTransientElement;
 			}));
@@ -9731,7 +9725,7 @@ sap.ui.define([
 			return oCache._delete(oDeleteGroupLock, sEditUrl, /*TODO sTransientPredicate*/"-1",
 					null, fnCallback)
 				.then(function () {
-					sinon.assert.calledOnce(fnCallback);
+					sinon.assert.calledOnceWithExactly(fnCallback, 0, -1);
 					assert.strictEqual(oCache.aElements.length, 0);
 					assert.strictEqual(oCache.aElements.$created, 0);
 					assert.notOk("('4711')" in oCache.aElements.$byPredicate, "predicate gone");
@@ -11139,7 +11133,7 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 				assert.strictEqual(oCache.bPosting, false);
 				if (oUnlockExpectation) {
-					assert.ok(oUnlockExpectation.calledOnce, "unlocked");
+					assert.ok(oUnlockExpectation.called, "unlocked");
 				}
 
 				return Promise.resolve().then(function () {
@@ -11455,7 +11449,8 @@ sap.ui.define([
 							oExpectation.args[0][6]();
 
 							sinon.assert.calledTwice(fnCallback);
-							sinon.assert.calledWithExactly(fnCallback, undefined, 1);
+							sinon.assert.calledWithExactly(fnCallback.firstCall, undefined, -1);
+							sinon.assert.calledWithExactly(fnCallback.secondCall, undefined, 1);
 						}
 						throw oError;
 					}
@@ -11468,8 +11463,7 @@ sap.ui.define([
 			// code under test
 			oPromise = oCache._delete(oDeleteGroupLock, "Employees('42')", "", null, fnCallback);
 
-			sinon.assert.called(fnCallback);
-			sinon.assert.calledWithExactly(fnCallback, undefined, -1);
+			sinon.assert.calledOnceWithExactly(fnCallback, undefined, -1);
 			if (oFixture.inactive) {
 				oCache.iActiveUsages = 0;
 			}
@@ -11490,10 +11484,11 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 
 				if (oFixture.inactive) {
-					sinon.assert.calledOnce(fnCallback);
+					sinon.assert.calledOnceWithExactly(fnCallback, undefined, -1);
 				} else {
 					sinon.assert.calledTwice(fnCallback);
-					sinon.assert.calledWithExactly(fnCallback, undefined, 1);
+					sinon.assert.calledWithExactly(fnCallback.firstCall, undefined, -1);
+					sinon.assert.calledWithExactly(fnCallback.secondCall, undefined, 1);
 				}
 			});
 		});
@@ -11891,7 +11886,7 @@ sap.ui.define([
 		// code under test
 		oCache.buildOriginalResourcePath("~oRootEntity~", "~mTypeForMetaPath~", function (oValue) {
 			assert.strictEqual(oValue, "~oRootEntity~");
-			sinon.assert.called(oPredicateExpectation);
+			assert.ok(oPredicateExpectation.called);
 			return "new/original/resource/path";
 		});
 
@@ -12162,22 +12157,33 @@ sap.ui.define([
 		// code under test
 		oCache.visitResponse(oResult, mTypeForMetaPath);
 
-		sinon.assert.calledWithExactly(_Helper.updateExisting, {}, "", oResult.list, {$count : 3});
+		assert.strictEqual(_Helper.updateExisting.callCount, 6);
+		sinon.assert.calledWithExactly(_Helper.updateExisting.getCall(0),
+			{}, "", oResult.list, {$count : 3});
 		assert.strictEqual(oResult.list.$count, 3);
 		assert.strictEqual(oResult.list.$created, 0);
-		sinon.assert.calledWithExactly(_Helper.updateExisting, {}, "", oResult.list2,
-			{$count : 12});
+		sinon.assert.calledWithExactly(_Helper.updateExisting.getCall(1),
+			{}, "", oResult.list[2].nestedList, {$count : 1});
+		assert.strictEqual(oResult.list[2].nestedList.$count, 1);
+		assert.strictEqual(oResult.list[2].nestedList.$created, 0);
+		sinon.assert.calledWithExactly(_Helper.updateExisting.getCall(2),
+			{}, "", oResult.property.nestedList, {$count : 1});
+		assert.strictEqual(oResult.property.nestedList.$count, 1);
+		assert.strictEqual(oResult.property.nestedList.$created, 0);
+		sinon.assert.calledWithExactly(_Helper.updateExisting.getCall(3),
+			 {}, "", oResult.list2, {$count : 12});
 		assert.strictEqual(oResult.list2.$count, 12);
 		assert.strictEqual(oResult.list2.$created, 0);
+		// Note: _Helper.updateExisting not called due to @odata.nextLink
 		assert.ok("$count" in oResult.list3);
 		assert.strictEqual(oResult.list3.$count, undefined);
 		assert.strictEqual(oResult.list3.$created, 0);
-		assert.strictEqual(oResult.list[2].nestedList.$count, 1);
-		assert.strictEqual(oResult.list[2].nestedList.$created, 0);
-		assert.strictEqual(oResult.property.nestedList.$count, 1);
-		assert.strictEqual(oResult.property.nestedList.$created, 0);
+		sinon.assert.calledWithExactly(_Helper.updateExisting.getCall(4),
+			 {}, "", oResult.collectionValuedProperty, {$count : 2});
 		assert.strictEqual(oResult.collectionValuedProperty.$count, 2);
 		assert.strictEqual(oResult.collectionValuedProperty.$created, 0);
+		sinon.assert.calledWithExactly(_Helper.updateExisting.getCall(5),
+			 {}, "", oResult.collectionWithNullValue, {$count : 1});
 		assert.strictEqual(oResult.collectionWithNullValue.$count, 1);
 		assert.strictEqual(oResult.collectionWithNullValue.$created, 0);
 	});

@@ -179,8 +179,7 @@ sap.ui.define([
 		oBinding.checkUpdate("~bForceUpdate~");
 
 		return oPromise.catch(function () {
-			sinon.assert.calledOnce(fnReporter);
-			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 		});
 	});
 
@@ -367,8 +366,7 @@ sap.ui.define([
 		oBinding.refresh("groupId");
 
 		return oPromise.catch(function () {
-			sinon.assert.calledOnce(fnReporter);
-			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 		});
 	});
 
@@ -1504,8 +1502,7 @@ sap.ui.define([
 			})
 		]).then(function () {
 			assert.strictEqual(oBinding.sReducedPath, "/reduced/path/2");
-			sinon.assert.calledOnce(fnReporter);
-			sinon.assert.calledWithExactly(fnReporter, sinon.match.instanceOf(Error));
+			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.instanceOf(Error));
 		});
 	});
 
@@ -1550,8 +1547,7 @@ sap.ui.define([
 				assert.strictEqual(oBinding.mCacheQueryOptions, undefined,
 					"cache query options stored at binding are reset");
 				assert.strictEqual(oBinding.oCache, undefined);
-				sinon.assert.calledOnce(fnReporter);
-				sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+				sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 			}
 		);
 	});
