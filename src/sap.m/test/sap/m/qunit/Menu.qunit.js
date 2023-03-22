@@ -382,6 +382,68 @@ sap.ui.define([
 		assert.strictEqual(this.sut.getItems().length, 4, "MenuItem's press event is now handled");
 	});
 
+	QUnit.test("Event handlers", function(assert) {
+		// Prepare
+		var oMenu = this.sut;
+
+		// Assert
+		assert.ok(oMenu.hasListeners("propertyChanged"), "The 'propertyChanged' event listener is properly attached");
+		assert.ok(oMenu.hasListeners("aggregationChanged"), "The 'aggregationChanged' event listener is properly attached");
+	});
+
+	QUnit.test("sap.m.MenuItem change events do not bubble out of the root sap.m.Menu", function(assert) {
+		// Prepare
+		var Container = sap.ui.core.Control.extend("my.Container", {
+			metadata: {
+				aggregations: {
+					content: "sap.ui.core.Control"
+				},
+				events: {
+					"propertyChanged": {}
+				}
+			},
+			renderer: {
+				apiVersion: 2,
+				render: function(rm, container) {
+					rm.openStart("div", container).openEnd();
+					rm.openStart("div").openEnd().text("Container").close("div");
+					container.getContent().forEach(function(oChild) { rm.renderControl(oChild); });
+					rm.close("div");
+				}
+			}
+		});
+
+		var oContainer = new Container();
+		oContainer.fnPropertyChanged = function() {};
+		var oContainerPropertyChangedSpy = this.spy(oContainer, "fnPropertyChanged");
+		oContainer.addContent(this.sut);
+		oContainer.attachEvent("propertyChanged", oContainer.fnPropertyChanged);
+		oContainer.placeAt("qunit-fixture");
+
+		// Act
+		this.sut.getItems()[0].getItems()[0].setText("New text");
+
+		// Assert
+		assert.ok(oContainerPropertyChangedSpy.notCalled, "sap.m.MenuItem events do bubble properly");
+
+		// Clean
+		oContainer.destroy();
+	});
+
+	QUnit.test("Clone operation", function(assert) {
+		// Prepare
+		var oMenu = this.sut,
+			oClone;
+
+		// Act
+		oMenu.openBy();
+		oClone = oMenu.clone();
+		oClone.getItems()[0].getItems()[0].setText("New text");
+
+		// Assert
+		assert.ok(true, "Error isn't thrown.");
+	});
+
 	QUnit.module("[PHONE] Custom mutators", {
 		beforeEach: function() {
 			prepareMobilePlatform.call(this);
