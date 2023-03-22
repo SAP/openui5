@@ -1,10 +1,36 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/ui/model/odata/type/Currency", // to have it loaded
+	"sap/ui/model/odata/type/Decimal", // to have it loaded
+	"sap/ui/model/odata/type/Date", // to have it loaded
+	"sap/ui/model/odata/type/DateTimeOffset", // to have it loaded
+	"sap/ui/model/odata/type/DateTimeWithTimezone", // to have it loaded
+	"sap/ui/model/odata/type/Guid", // to have it loaded
+	"sap/ui/model/odata/type/Int32", // to have it loaded
+	"sap/ui/model/odata/type/String", // to have it loaded
+	"sap/ui/model/odata/type/TimeOfDay", // to have it loaded
+	"sap/ui/mdc/field/ConditionsType", // as used in XML view
 	"sap/ui/mdc/link/FakeFlpConnector",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/UriParameters",
 	"sap/m/routing/Router" // make sure Router is loaded
-], function (UIComponent, FakeFlpConnector, LoaderExtensions, UriParameters, Router) {
+], function (
+	UIComponent,
+	ODataCurrencyType,
+	ODataDecimalType,
+	ODataDateType,
+	ODataDateTimeOffsetType,
+	ODataDateTimeWithTimezoneType,
+	ODataGuidType,
+	ODataInt32Type,
+	ODataStringType,
+	ODataTimeOfDayType,
+	ConditionsType,
+	FakeFlpConnector,
+	LoaderExtensions,
+	UriParameters,
+	Router
+) {
 	"use strict";
 
 	var fnLoadManifest = function() {

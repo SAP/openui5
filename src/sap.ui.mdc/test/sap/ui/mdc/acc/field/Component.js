@@ -13,8 +13,23 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/odata/v2/ODataModel',
 	'sap/ui/core/util/MockServer',
-	"sap/ui/core/Core"
-], function(View, ViewType, UIComponent, ODataModel, MockServer, oCore) {
+	'sap/ui/core/Core',
+	'sap/ui/model/type/String', // to have it loaded
+	'sap/ui/model/type/Unit', // to have it loaded
+	'sap/ui/model/odata/type/DateTime', // to have it loaded
+	'sap/ui/model/odata/type/String' // to have it loaded
+], function(
+	View,
+	ViewType,
+	UIComponent,
+	ODataModel,
+	MockServer,
+	oCore,
+	StringType,
+	UnitType,
+	ODataDateTimeType,
+	ODataStringType
+) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.mdc.acc.field.Component", {
