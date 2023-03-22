@@ -69,7 +69,6 @@ sap.ui.define([
         renderer: InfoBarRenderer
     });
 
-
     InfoBar.prototype.applySettings = function () {
         Control.prototype.applySettings.apply(this, arguments);
 
@@ -83,6 +82,7 @@ sap.ui.define([
         this.oInvisibleText = new InvisibleText().toStatic();
 
         this.oRemoveAllFiltersBtn = new Button(this.getId() + "-RemoveAllFilters", {
+            type: mLibrary.ButtonType.Transparent,
             press: function (oEvent) {
                 this.fireRemoveAllFilters();
                 // TODO this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Polite);
