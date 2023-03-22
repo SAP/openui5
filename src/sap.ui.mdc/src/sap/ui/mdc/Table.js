@@ -14,6 +14,8 @@ sap.ui.define([
 	"./mixin/FilterIntegrationMixin",
 	"./library",
 	"sap/m/Text",
+	"sap/m/ToolbarSpacer",
+	"sap/m/Button",
 	"sap/m/Title",
 	"sap/m/OverflowToolbar",
 	"sap/m/library",
@@ -41,6 +43,7 @@ sap.ui.define([
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/table/menu/QuickActionContainer",
 	"sap/ui/mdc/table/menu/ItemContainer",
+	"sap/ui/mdc/enum/ProcessingStrategy",
 	"sap/ui/core/theming/Parameters",
 	"sap/base/Log"
 ], function(
@@ -55,6 +58,8 @@ sap.ui.define([
 	FilterIntegrationMixin,
 	library,
 	Text,
+	ToolbarSpacer,
+	Button,
 	Title,
 	OverflowToolbar,
 	MLibrary,
@@ -82,6 +87,7 @@ sap.ui.define([
 	ActionToolbarAction,
 	QuickActionContainer,
 	ItemContainer,
+	ProcessingStrategy,
 	ThemeParameters,
 	Log
 ) {
@@ -1182,6 +1188,7 @@ sap.ui.define([
 	function createFilterInfoBar(oTable) {
 		var sToolbarId = oTable.getId() + "-filterInfoBar";
 		var oFilterInfoToolbar = internal(oTable).oFilterInfoBar;
+		var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 		if (oFilterInfoToolbar && !oFilterInfoToolbar.bIsDestroyed) {
 			oFilterInfoToolbar.destroy();
@@ -1196,6 +1203,19 @@ sap.ui.define([
 				new Text({
 					id: sToolbarId + "-text",
 					wrapping: false
+				}),
+				new ToolbarSpacer(),
+				new Button({
+					tooltip: oRb.getText("infobar.REMOVEALLFILTERS"),
+					icon: "sap-icon://decline",
+					press: function () {
+						// Clear all filters. Makes current variant dirty.
+						PersonalizationUtils.createFilterChange(oTable, {
+							conditions: [],
+							strategy: ProcessingStrategy.FullReplace
+						});
+						oTable.focus();
+					}
 				})
 			],
 			press: function() {

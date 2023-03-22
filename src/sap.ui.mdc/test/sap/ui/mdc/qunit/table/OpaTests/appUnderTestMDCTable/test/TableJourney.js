@@ -8,6 +8,7 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Arrangements",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/AppUnderTestMDCTable",
+	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	"sap/ui/core/library"
 ], function(
 	/** @type sap.base.Log */ Log,
@@ -17,6 +18,7 @@ sap.ui.define([
 	/** @type sap.ui.test.Opa5 */ Arrangements,
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.PageObjectDefinition */ TestObjects,
+	/** @type sap.ui.test.Opa5 */ P13nActions,
 	coreLibrary) {
 	"use strict";
 
@@ -27,6 +29,9 @@ sap.ui.define([
 	Opa5.extendConfig({
 		viewNamespace: "appUnderTestMDCTable",
 		arrangements: new Arrangements(),
+		actions: {
+			P13nActions: new P13nActions()
+		},
 		autoWait: true,
 		async: true,
 		timeout: 40,
@@ -164,6 +169,30 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
 	});
 
+	opaTest("Filter and open filter info bar", function(Given, When, Then) {
+		// Filter 'Category' column
+		When.onTheMDCTable.iPersonalizeFilter(sTableId, [{key: "Category", values: ["*Notebooks*"], inputControl: sTableId + "--filter--Category"}]);
+
+		// Check if Info Filter Bar is visible
+		Then.onTheAppUnderTestMDCTable.iShouldSeeInfoFilterBarWithFilters(sTableId, ["Category"]);
+
+		// Press Info Filter Bar and check if filter is set
+		When.onTheAppUnderTestMDCTable.iPressFilterInfoBar(sTableId);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeP13nDialog();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeValuesInFilterDialog("Category", "Notebooks");
+
+		// Check Focus Handling when closing the dialog
+		When.P13nActions.iPressDialogOk();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
+	});
+
+	opaTest("Remove all filter via info filterbar", function(Given, When, Then) {
+		Then.onTheAppUnderTestMDCTable.iShouldSeeInfoFilterBarWithFilters(sTableId, ["Category"]);
+		When.onTheAppUnderTestMDCTable.iRemoveAllFiltersViaInfoFilterBar(sTableId);
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeInfoFilterBar(sTableId);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
+	});
+
 	/* =========================================================== */
 	/* opaTests when tableType is GridTableType                    */
 	/* =========================================================== */
@@ -273,8 +302,39 @@ sap.ui.define([
 	opaTest("Close column menu", function(Given, When, Then) {
 		When.onTheAppUnderTestMDCTable.iCloseTheColumnMenu();
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+	});
 
-		// Teardown
+	opaTest("Group with column menu quick action", function(Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		When.onTheAppUnderTestMDCTable.iUseColumnMenuQuickGroup({key: "Category", grouped: false});
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+	});
+
+	opaTest("Filter and open filter info bar", function(Given, When, Then) {
+		// Filter 'Category' column
+		When.onTheMDCTable.iPersonalizeFilter(sTableId, [{key: "Category", values: ["*Notebooks*"], inputControl: sTableId + "--filter--Category"}]);
+
+		// Check if Info Filter Bar is visible
+		Then.onTheAppUnderTestMDCTable.iShouldSeeInfoFilterBarWithFilters(sTableId, ["Category"]);
+
+		// Press Info Filter Bar and check if filter is set
+		When.onTheAppUnderTestMDCTable.iPressFilterInfoBar(sTableId);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeP13nDialog();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeValuesInFilterDialog("Category", "Notebooks");
+
+		// Check Focus Handling when closing the dialog
+		When.P13nActions.iPressDialogOk();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
+	});
+
+	opaTest("Remove all filter via info filterbar", function(Given, When, Then) {
+		Then.onTheAppUnderTestMDCTable.iShouldSeeInfoFilterBarWithFilters(sTableId, ["Category"]);
+		When.onTheAppUnderTestMDCTable.iRemoveAllFiltersViaInfoFilterBar(sTableId);
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeInfoFilterBar(sTableId);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
+
 		Then.onTheAppUnderTestMDCTable.iTeardownMyAppFrame();
 	});
+
 });

@@ -35,6 +35,26 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Wait for the P13n dialog.
+	 *
+	 * @param {object} mConfig config object
+	 * @param {boolean} mConfig.findAll finds all matching controls if true, otherwise will return the first found instance
+	 * @param {function} mConfig.success callback function for waitFor success
+	 * @returns {Promise} OPA waitFor
+	 */
+	Util.waitForP13nDialog = function(mConfig) {
+		return this.waitFor({
+			controlType: "sap.m.Dialog",
+			success: function (aDialogs) {
+				if (mConfig && mConfig.success) {
+					mConfig.success.call(this, mConfig.findAll ? aDialogs : aDialogs[0]);
+				}
+			},
+			errorMessage: "No dialog was found"
+		});
+	};
+
 	Util.getTextFromResourceBundle = function(sLibraryName, sTextKey, aValues) {
 		return Core.getLibraryResourceBundle(sLibraryName).getText(sTextKey, aValues);
 	};

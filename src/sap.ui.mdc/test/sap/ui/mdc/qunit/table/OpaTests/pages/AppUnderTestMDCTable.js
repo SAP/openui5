@@ -316,6 +316,25 @@ sap.ui.define([
 
 				iPressCancelInColumnMenuItemContent: function() {
 					return AppUnderTestActions.iPressCancelInColumnMenuItemContent.apply(this, arguments);
+				},
+
+				/**
+				 * Presses the filter info bar on the table.
+				 *
+				 * @param {string|sap.ui.core.Control} vControl control ID or control instance
+				 * @returns {Promise} OPA waitFor
+				 */
+				iPressFilterInfoBar: function(vControl) {
+					return AppUnderTestActions.iPressFilterInfoBar.apply(this, arguments);
+				},
+
+				/**
+				 * Removes all filters by pressing the "Remove All Filters" button on the filter info bar.
+				 *
+				 * @returns {Promise} OPA waitFor
+				 */
+				iRemoveAllFiltersViaInfoFilterBar: function() {
+					return AppUnderTestActions.iRemoveAllFiltersViaInfoFilterBar.apply(this, arguments);
 				}
 			},
 			assertions: {
@@ -578,6 +597,58 @@ sap.ui.define([
 
 				iShouldSeeColumnMenuItemContent: function(sTitle) {
 					return AppUnderTestAssertions.iShouldSeeColumnMenuItemContent.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if the P13n dialog is visible.
+				 *
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iShouldSeeP13nDialog: function() {
+					return AppUnderTestAssertions.iShouldSeeP13nDialog.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if the specified values in the filter dialog can be seen for the column.
+				 * @param {string} sColumn column name
+				 * @param {string} sValue filter value
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeValuesInFilterDialog: function(sColumn, sValue) {
+					return AppUnderTestAssertions.iShouldSeeValuesInFilterDialog.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if the filter info bar contains all the filtered columns.
+				 *
+				 * @param {sap.ui.core.Control|string} vControl control instance or control ID
+				 * @param {string[]} aFilteredColumns array of column names that should be visible
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeInfoFilterBarWithFilters: function(aFilteredColumns) {
+					return AppUnderTestAssertions.iShouldSeeInfoFilterBarWithFilters.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if the filter info bar is not visible.
+				 *
+				 * @param {sap.ui.core.Control|string} vControl control instance or control ID
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldNotSeeInfoFilterBar: function(vControl) {
+					return AppUnderTestAssertions.iShouldNotSeeInfoFilterBar.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if the focus is on a given control.
+				 *
+				 * @param {string|sap.ui.core.Control} vControl control instance or a control ID
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iShouldSeeFocusOnControl: function(vControl) {
+					return AppUnderTestAssertions.iShouldSeeFocusOnControl.apply(this, arguments);
 				}
 			}
 		}

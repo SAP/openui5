@@ -147,6 +147,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a filter change and applies it to the table.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change.
+	 * @param {object} mSettings The change details.
+	 * @param {Array} mSettings.conditions The filter conditions that should be applied to the table.
+	 * @param {sap.ui.mdc.enum.ProcessingStrategy|boolean} mSettings.strategy The processing strategy on how to apply the change.
+	 */
+	PersonalizationUtils.createFilterChange = function(oTable, mSettings) {
+		oTable.getEngine().createChanges({
+			control: oTable,
+			key: "Filter",
+			state: mSettings.conditions,
+			applyAbsolute: mSettings.strategy
+		});
+	};
+
+	/**
 	 * Creates an aggregate change and applies it to the table. The change is added to the current state.
 	 * It works like a switch. If an aggregate does not exist for this property, it will be added, otherwise it will be removed.
 	 *

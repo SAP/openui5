@@ -722,6 +722,103 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		/**
+		 * Checks if the filter info bar contains all the filtered columns.
+		 *
+		 * @param {sap.ui.core.Control|string} vControl control instance or control ID
+		 * @param {string[]} aFilteredColumns array of column names that should be visible
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldSeeInfoFilterBarWithFilters: function(vControl, aFilteredColumns) {
+			var sTableId = typeof vControl === "string" ? vControl : vControl.getId();
+
+			return this.waitFor({
+				id: sTableId + "-filterInfoBar",
+				controlType: "sap.m.OverflowToolbar",
+				success: function(oToolbar) {
+					aFilteredColumns.forEach(function(sFilteredColumns) {
+						Opa5.assert.ok(oToolbar.getContent()[0].getText().includes(sFilteredColumns), "Info filterbar is visible and contains expected columns.");
+					});
+				}
+			});
+		},
+
+		/**
+		 * Checks if the filter info bar is not visible.
+		 *
+		 * @param {sap.ui.core.Control|string} vControl control instance or control ID
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldNotSeeInfoFilterBar: function(vControl) {
+			var sTableId = typeof vControl === "string" ? vControl : vControl.getId();
+
+			return this.waitFor({
+				id: sTableId + "-filterInfoBar",
+				controlType: "sap.m.OverflowToolbar",
+				visible: false,
+				success: function(oFilterBar) {
+					Opa5.assert.notOk(oFilterBar.getVisible(), "Info Filterbar is not visible");
+				}
+			});
+		},
+
+		/**
+		 * Checks if the P13n dialog can be seen.
+		 *
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldSeeP13nDialog: function() {
+			return Util.waitForP13nDialog.call(this, {
+				success: function(oDialog) {
+					Opa5.assert.ok(oDialog.getParent().isA("sap.m.p13n.Popup"), "Dialog's parent is a P13n Popup");
+				}
+			});
+		},
+
+		/**
+		 * Checks if the specified values in the filter dialog can be seen for the column.
+		 * @param {string} sColumn column name
+		 * @param {string} sValue filter value
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldSeeValuesInFilterDialog: function(sColumn, sValue) {
+			return Util.waitForP13nDialog.call(this, {
+				success: function(oDialog) {
+					this.waitFor({
+						controlType: "sap.ui.mdc.FilterField",
+						matchers: [{
+							properties: {
+								label: sColumn
+							}
+						}],
+						success: function(aFilterFields) {
+							Opa5.assert.equal(aFilterFields.length, 1, "Only 1 field rendered");
+							var bContainsValue = aFilterFields[0].getConditions().some(function(oCondition) {
+								return oCondition.values.indexOf(sValue) > -1;
+							});
+							Opa5.assert.ok(bContainsValue, "Value is contained in filter field");
+						}
+					});
+				}
+			});
+		},
+
+		/**
+		 * Checks if the focus is on the given control
+		 * @param {sap.ui.core.Control|string} vControl control instance or control ID
+		 * @returns {Promsie} OPA waitFor
+		 */
+		iShouldSeeFocusOnControl: function(vControl) {
+			var sControlId = typeof vControl === "string" ? vControl : vControl.getId();
+
+			return this.waitFor({
+				id: sControlId,
+				success: function(oControl) {
+					Opa5.assert.ok(oControl.getDomRef().contains(Opa5.getWindow().document.activeElement), "Focus is on expected element");
+				}
+			});
 		}
 	};
 });

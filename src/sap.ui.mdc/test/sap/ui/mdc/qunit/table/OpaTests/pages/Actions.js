@@ -617,6 +617,45 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		/**
+		 * Presses the filter info bar on a given control.
+		 *
+		 * @param {string|sap.ui.core.Control} oControl control instance or control ID
+		 * @returns {Promise} OPA waitFor
+		 */
+		iPressFilterInfoBar: function(vControl) {
+			var sTableId = typeof vControl === "string" ? vControl : vControl.getId();
+			return this.waitFor({
+				id: sTableId + "-filterInfoBar",
+				controlType: "sap.m.OverflowToolbar",
+				actions: new Press(),
+				errorMessage: "Filter Info Bar could not be found"
+			});
+		},
+
+		iRemoveAllFiltersViaInfoFilterBar: function(oControl) {
+			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+
+			return this.waitFor({
+				id: sTableId + "-filterInfoBar",
+				controlType: "sap.m.OverflowToolbar",
+				success: function(oFilterBar) {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: [
+							new PropertyStrictEquals({
+								name: "icon",
+								value: "sap-icon://decline"
+							}
+						)],
+						actions: new Press(),
+						errorMessage: "Could not find 'Remove All Filters' Button in info toolbar"
+					});
+				},
+				errorMessage: "No visible filter bar was found"
+			});
 		}
 	};
 });
