@@ -339,7 +339,7 @@ sap.ui.define([
 			oImageContent._setImageState(LightBoxLoadingStates.Error);
 			this.LightBox.onBeforeRendering();
 
-			assert.ok(this.LightBox.getAggregation("_invisiblePopupText").getText().indexOf(this._oRB.getText('LIGHTBOX_IMAGE_ERROR_DETAILS')) > 0, "Error message is added to ACC info.");
+			assert.notOk(this.LightBox.getAggregation("_invisiblePopupText").getText().indexOf(this._oRB.getText('LIGHTBOX_IMAGE_ERROR_DETAILS')) > 0, "Error message is NOT added to ACC info.");
 		});
 
 		QUnit.test('ESC should close LightBox', function(assert) {
@@ -381,6 +381,7 @@ sap.ui.define([
 
 				assert.ok(sInvisibleText.indexOf(oImageContent.getTitle()) > -1, 'The invisible text should contain the title of the LightBox');
 				assert.ok(sInvisibleText.indexOf(oImageContent.getSubtitle()) > -1, 'The invisible text should contain the subtitle of the LightBox');
+				assert.strictEqual(this.LightBox.getDomRef().querySelector(".sapMLightBoxTitleSection").getAttribute("aria-hidden"), 'true', 'The title and subtitle are hidden');
 
 				done();
 			}.bind(this), LIGHTBOX_OPEN_TIME);
