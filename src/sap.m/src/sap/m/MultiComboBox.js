@@ -1097,12 +1097,13 @@ function(
 		}, this).length;
 
 		if (bAlreadySelected) {
-			this._sInitialValueState = this.getValueState();
-
-			this._sInitialValueStateText = this.getValueStateText();
-			this.setValueStateText(sAlreadySelectedText);
+			if (!this._bAlreadySelected) {
+				this._sInitialValueState = this.getValueState();
+				this._sInitialValueStateText = this.getValueStateText();
+			}
 
 			this._bAlreadySelected = true;
+			this.setValueStateText(sAlreadySelectedText);
 			this.setValueState("Error");
 
 			return;

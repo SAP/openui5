@@ -8101,6 +8101,47 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The invalid value is corrected");
 	});
 
+	QUnit.test("Value state should reset to None when not set onfocusout", function(assert) {
+		// act
+		this.oMultiComboBox.focus();
+		this.oMultiComboBox.open();
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+
+		this.oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(this.oMultiComboBox.getValueState(), "None", "Value state should be reset to None");
+	});
+
+	QUnit.test("Value state should reset to inintial value state set by the application onfocusout", function(assert) {
+		this.oMultiComboBox.setValueState("Warning");
+		Core.applyChanges();
+
+		// act
+		this.oMultiComboBox.focus();
+		this.oMultiComboBox.open();
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+
+		this.oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(this.oMultiComboBox.getValueState(), "Warning", "Value state should be reset to None");
+	});
+
 	QUnit.test("value state message for invalid input should be overwritten by the applications", function(assert) {
 		 var sCustomText = "This is application text. This is application text. This is application text. This is application text. This is application text. This is application text. This is application text.";
 
