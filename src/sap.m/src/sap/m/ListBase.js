@@ -2162,8 +2162,8 @@ function(
 			// alt/meta + left/right in the browser is used by default for navigating backwards or forwards in the browser history
 			// notify item navigation not to handle alt, meta key modifiers
 			this._oItemNavigation.setDisabledModifiers({
-				sapnext : ["alt", "meta"],
-				sapprevious : ["alt", "meta"]
+				sapnext : ["alt", "meta", "ctrl"],
+				sapprevious : ["alt", "meta", "ctrl"]
 			});
 		}
 
