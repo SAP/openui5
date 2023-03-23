@@ -27,7 +27,6 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
-	"sap/m/ToggleButton",
 	"sap/m/CheckBox",
 	"sap/m/Dialog",
 	"sap/m/Input",
@@ -68,7 +67,6 @@ sap.ui.define([
 	Toolbar,
 	ToolbarSpacer,
 	Button,
-	ToggleButton,
 	CheckBox,
 	Dialog,
 	Input,
@@ -624,7 +622,7 @@ sap.ui.define([
 		oVariantModifiedText.addStyleClass("sapMVarMngmtModified");
 		oVariantModifiedText.addStyleClass("sapMVarMngmtClickable");
 
-		this.oVariantPopoverTrigger = new ToggleButton(this.getId() + "-trigger", {
+		this.oVariantPopoverTrigger = new Button(this.getId() + "-trigger", {
 			icon: "sap-icon://slim-arrow-down",
 			type: ButtonType.Transparent,
 			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT"),
@@ -1113,10 +1111,8 @@ sap.ui.define([
 			],
 			afterOpen: function() {
 				this.bPopoverOpen = true;
-				this.oVariantPopoverTrigger.setPressed(true);
 			}.bind(this),
 			afterClose: function() {
-				this.oVariantPopoverTrigger.setPressed(false);
 				if (this.bPopoverOpen) {
 					setTimeout(function() {
 						this.bPopoverOpen = false;
