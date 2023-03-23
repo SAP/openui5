@@ -349,7 +349,7 @@ sap.ui.define([
 				success: function(oTable) {
 					oTable.setType(sType);
 
-					oTable._fullyInitialized().then(function() {
+					oTable.initialized().then(function() {
 						return waitForTable.call(this, oControl, {
 							success: function(oTable) {
 								Opa5.assert.ok(oTable.getType() === sType, "Table type changed to " + sType);

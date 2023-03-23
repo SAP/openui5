@@ -169,9 +169,7 @@ sap.ui.define([
 			"Sort"
 		]);
 
-		return oTable._fullyInitialized().then(function() {
-			 return TableQUnitUtils.openColumnMenu(oTable, 0);
-		}).then(function() {
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			var oQuickAction = oTable._oQuickActionContainer.getQuickActions()[0];
 			assert.ok(oQuickAction.isA("sap.m.table.columnmenu.QuickSort"), "The QuickActionContainer contains a QuickSort");
 
@@ -195,10 +193,7 @@ sap.ui.define([
 		sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
 		oTable.setType("ResponsiveTable");
 
-		return oTable._fullyInitialized().then(function() {
-			Core.applyChanges();
-			return TableQUnitUtils.openColumnMenu(oTable, 0);
-		}).then(function() {
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			var oQuickAction = oTable._oQuickActionContainer.getQuickActions()[0];
 			assert.equal(oQuickAction.getLabel(), "", "label is empty");
 			assert.equal(oQuickAction.getContent()[0].getText(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");

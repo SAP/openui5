@@ -138,9 +138,7 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		return oTable._fullyInitialized().then(function () {
-			return TableQUnitUtils.waitForBindingInfo(oTable);
-		}).then(function () {
+		return TableQUnitUtils.waitForBindingInfo(oTable).then(function () {
 			var aColumns = oTable._oTable.getColumns();
 
 			assert.ok(aColumns[0].getMergeDuplicates(), "First column property mergeDuplicates = true");
