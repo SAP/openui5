@@ -49716,14 +49716,18 @@ sap.ui.define([
 	// error message.
 	//
 	// BCP: 2270142577
+	//
+	// Test whether #resetChanges for a RVC works as expected (JIRA: CPOUI5ODATAV4-2062)
 	QUnit.test("BCP: 2270142577", function (assert) {
-		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+		var oDirtyControl,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="artist" binding="{/Artists(ArtistID=\'1\',IsActiveEntity=true)}">\
 	<Text id="artistId" text="{ArtistID}"/>\
 </FlexBox>\
 <FlexBox id="form">\
 	<Input id="user" value="{DraftAdministrativeData/InProcessByUser}"/>\
+	<Input id="sendsAutographs" value="{sendsAutographs}"/>\
 </FlexBox>',
 			that = this;
 
@@ -49732,6 +49736,7 @@ sap.ui.define([
 				{ArtistID : "1", IsActiveEntity : true})
 			.expectChange("artistId", "1")
 			.expectChange("user");
+			//.expectChange("sendsAutographs"); do not observe so that we can call Control#setValue
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oAction = oModel.bindContext("special.cases.EditAction(...)",
@@ -49752,12 +49757,13 @@ sap.ui.define([
 			]);
 		}).then(function (aResults) {
 			that.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
-					+ "?$select=DraftAdministrativeData"
+					+ "?$select=sendsAutographs"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 					DraftAdministrativeData : {
 						DraftID : "2",
 						InProcessByUser : "JOHNDOE"
-					}
+					},
+					sendsAutographs : false
 				})
 				.expectChange("user", "JOHNDOE");
 
@@ -49798,6 +49804,37 @@ sap.ui.define([
 			that.oView.byId("user").getBinding("value").setValue("invalid");
 
 			return that.waitForChanges(assert, "patch nested entity");
+		}).then(function () {
+			oDirtyControl = that.oView.byId("sendsAutographs");
+
+			oDirtyControl.setValue("bad"); // "bad" does not reach the model
+
+			assert.ok(oDirtyControl.getBinding("value").getDataState().isControlDirty());
+
+			return Promise.all([
+				that.checkValueState(assert, "user", "Error", "Invalid User"),
+				that.checkValueState(assert, "sendsAutographs", "Error", 'Enter "Yes" or "No".')
+			]);
+		}).then(function () {
+			that.expectChange("user", "JOHNDOE")
+				.expectCanceledError("Failed to update path /Artists(ArtistID='1',"
+					+ "IsActiveEntity=false)/DraftAdministrativeData/InProcessByUser",
+					"Request canceled: PATCH Artists(ArtistID='1',IsActiveEntity=false)"
+					+ "/DraftAdministrativeData; group: $parked.$auto");
+
+			return Promise.all([
+				// code under test (JIRA: CPOUI5ODATAV4-2062)
+				that.oView.byId("form").getBindingContext().resetChanges(),
+				that.waitForChanges(assert, "JIRA: CPOUI5ODATAV4-2062")
+			]);
+		}).then(function () {
+			assert.notOk(oDirtyControl.getBinding("value").getDataState().isControlDirty());
+
+			return Promise.all([
+				that.checkValueState(assert, "sendsAutographs", "None", ""),
+				// transition message must be removed by application code
+				that.checkValueState(assert, "user", "Error", "Invalid User")
+			]);
 		});
 	});
 
