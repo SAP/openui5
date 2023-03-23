@@ -126,7 +126,7 @@ sap.ui.define([
 		[oTable, oTreeTable].forEach(function(_oTable) {
 			_oTable.removeAllColumns();
 			TableQUnitUtils.addColumn(_oTable, "A Label", "A", false, true, true);
-			TableQUnitUtils.addColumn(_oTable, "B Label", "B");
+			TableQUnitUtils.addColumn(_oTable, "B Label", "B").setTooltip("B Label");
 			TableQUnitUtils.addColumn(_oTable, "C Label", "C", true).setTooltip("tooltip");
 			TableQUnitUtils.addColumn(_oTable, "D Label", "D", false, true, true).getTemplate().setVisible(false);
 			TableQUnitUtils.addColumn(_oTable, "E Label", "E", false, true, true).setLabel(new Label({text: "E Label", required: true}));
