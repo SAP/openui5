@@ -207,6 +207,8 @@ sap.ui.define([
 
 				this.oRouter = this.getRouter();
 
+				this._aNeoAppVersions = [];
+
 				this._selectHeader = this._oView.byId("selectHeader");
 				this._tabHeader = this._oView.byId("tabHeader");
 
