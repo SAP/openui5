@@ -144,7 +144,35 @@
 							"value": "{info}",
 							"state": "{infoState}"
 						}
+					},
+					"maxItems": 1
+				}
+			}
+		},
+		"hiddenStatus": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.hiddenStatus",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
 					}
+				},
+				"header": {
+					"title": "Card Status Should be Hidden",
+					"status": {
+						"text": "This text should be hidden",
+						"visible": false
+					}
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"title": "{Name}"
+					},
+					"maxItems": 1
 				}
 			}
 		}
@@ -817,7 +845,8 @@
 							"value": "{info}",
 							"state": "{infoState}"
 						}
-					}
+					},
+					"maxItems": 1
 				}
 			}
 		},
@@ -1050,7 +1079,36 @@
 					]
 				}
 			}
+		},
+		"hiddenStatus": {
+			"sap.app": {
+				"id": "cardsdemo.numericHeader.hiddenStatus",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"header": {
+					"type": "Numeric",
+					"title": "Card Status Should be Hidden",
+					"status": {
+						"text": "This text should be hidden",
+						"visible": false
+					}
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"title": "{Name}"
+					},
+					"maxItems": 1
+				}
+			}
 		}
+	
 	},
 	"manifestTests": {
 		"manifest": {

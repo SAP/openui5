@@ -36,7 +36,7 @@
 			}
 		}
 	},
-	"listCardWithProducts" : {
+	"listCardWithProducts": {
 		"sap.app": {
 			"type": "card",
 			"id": "listCardWithProducts"
@@ -45,13 +45,14 @@
 			"type": "List",
 			"data": {
 				"json": {
-					"products": [{
-						"Id": "HT-1000",
-						"Name": "Notebook Basic 15",
-						"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-						"CurrencyCode": "USD",
-						"Price": "956.00"
-					},
+					"products": [
+						{
+							"Id": "HT-1000",
+							"Name": "Notebook Basic 15",
+							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"CurrencyCode": "USD",
+							"Price": "956.00"
+						},
 						{
 							"Id": "HT-1001",
 							"Name": "Notebook Basic 17",
@@ -110,14 +111,16 @@
 					"title": "{Name}",
 					"description": "",
 					"info": {
-						"value":  "{Price}"
+						"value": "{Price}"
 					},
-					"actions": [{
-						"type": "Navigation",
-						"parameters": {
-							"url": ""
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": ""
+							}
 						}
-					}]
+					]
 				},
 				"maxItems": 7
 			}
@@ -875,6 +878,130 @@
 					"title": "{Name}"
 				},
 				"maxItems": 4
+			}
+		}
+	},
+	"listInvisibleDescription": {
+		"sap.app": {
+			"type": "card",
+			"id": "listCardWithInvisibleDescription"
+		},
+		"sap.card": {
+			"type": "List",
+			"data": {
+				"json": {
+					"products": [
+						{
+							"Id": "HT-1000",
+							"Name": "Notebook Basic 15",
+							"descriptionVisible": true
+						},
+						{
+							"Id": "HT-1001",
+							"Name": "Notebook Basic 17",
+							"descriptionVisible": true
+						},
+						{
+							"Id": "HT-1002",
+							"Name": "Notebook Basic 18",
+							"descriptionVisible": false
+						},
+						{
+							"Id": "HT-1003",
+							"Name": "Notebook Basic 19",
+							"descriptionVisible": false
+						}
+					]
+				}
+			},
+			"header": {
+				"title": "List Items with Invisible Descriptions and Infos"
+			},
+			"content": {
+				"data": {
+					"path": "/products"
+				},
+				"item": {
+					"title": "{Name}",
+					"description": {
+						"value": "{Id}",
+						"visible": "{descriptionVisible}"
+					},
+					"info": {
+						"value": "Info",
+						"visible": false
+					}
+				},
+				"maxItems": 4
+			}
+		}
+	},
+	"listInvisibleCharts": {
+		"sap.app": {
+			"type": "card",
+			"id": "listCardWithInvisibleCharts"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Items with Invisible Charts"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "ITelO Vault",
+							"Description": "Digital Organizer",
+							"Highlight": "Success",
+							"Expected": 230000,
+							"Actual": 225000,
+							"Target": 210000,
+							"ChartColor": "Good",
+							"ChartVisible": false
+						},
+						{
+							"Name": "Notebook Professional 15",
+							"Description": "Multitouch LCD",
+							"Highlight": "Success",
+							"Expected": 170000,
+							"Actual": 150000,
+							"Target": 149000,
+							"ChartColor": "Good",
+							"ChartVisible": true
+						},
+						{
+							"Name": "Ergo Screen E-I",
+							"Description": "Optimum Hi-Resolution max.",
+							"Highlight": "Warning",
+							"Expected": 120000,
+							"Actual": 100000,
+							"Target": 100000,
+							"ChartColor": "Neutral",
+							"ChartVisible": false
+						},
+						{
+							"Name": "Laser Professional Eco",
+							"Description": "Powerful 500 MHz processor",
+							"Highlight": "Error",
+							"Expected": 90000,
+							"Actual": 60000,
+							"Target": 75000,
+							"ChartColor": "Error",
+							"ChartVisible": true
+						}
+					]
+				},
+				"maxItems": 5,
+				"item": {
+					"title": "{Name}",
+					"chart": {
+						"visible": "{ChartVisible}",
+						"type": "Bullet",
+						"minValue": 0,
+						"maxValue": "{Expected}",
+						"value": "{Actual}"
+					}
+				}
 			}
 		}
 	}

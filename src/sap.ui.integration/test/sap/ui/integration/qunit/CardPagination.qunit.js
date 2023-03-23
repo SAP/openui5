@@ -77,7 +77,8 @@ sap.ui.define([
 			},
 			"footer": {
 				"paginator": {
-					"pageSize": 4
+					"pageSize": 4,
+					"visible": false
 				}
 			}
 		}
@@ -281,6 +282,22 @@ sap.ui.define([
 
 			assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
 			assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest(oManifestClientSideWithStaticData);
+	});
+
+	QUnit.test("Paginator visibility", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var oPaginator = this.oCard.getCardFooter().getPaginator();
+
+			assert.strictEqual(oPaginator.getVisible(), false, "paginator is not visible");
 
 			done();
 		}.bind(this));

@@ -1798,6 +1798,75 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("header status text when visible property is set to false", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				// Assert
+				assert.notOk(this.oCard.getCardHeader().getStatusVisible(), "Card Header status text is hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenStatus"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"data": {
+							"json": {
+								"statusVisible": false
+							}
+						},
+						"title": "Card title",
+						"status": {
+							"text": "4 of 20",
+							"visible": "{statusVisible}"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("header status when visible property is set to true", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(this.oCard.getCardHeader().getStatusVisible(), "Card Header status text is not hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenStatus"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"data": {
+							"json": {
+								"statusVisible": true
+							}
+						},
+						"title": "Card title",
+						"status": {
+							"text": "4 of 20",
+							"visible": "{statusVisible}"
+						}
+					}
+				}
+			});
+		});
+
 		QUnit.test("Default header icon when src is empty string and shape is 'Circle'", function (assert) {
 			// Arrange
 			var done = assert.async();

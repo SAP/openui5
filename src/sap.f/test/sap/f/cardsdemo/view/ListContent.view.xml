@@ -79,6 +79,16 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listInvisibleDescription}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listInvisibleCharts}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>

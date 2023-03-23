@@ -11,7 +11,9 @@
 			"icon": {
 				"src": "sap-icon://accept"
 			},
-			"status": "100 of 200"
+			"status": {
+				"text": "100 of 200"
+			}
 		},
 		"content": {
 			"data": {

@@ -77,7 +77,7 @@ sap.ui.define([
 
 		this.renderTitle(rm, oLI);
 
-		if (oLI.getDescription()) {
+		if (oLI.getDescription() && oLI.getDescriptionVisible()) {
 			this.renderDescription(rm, oLI);
 		}
 
