@@ -53,18 +53,20 @@ sap.ui.define([
 		columnUiValueLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL"),
 		containerTitleLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_LABEL"),
 		containerTitleDefaultValue: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_DEFAULT_VALUE_TEXT"),
-		selectAdditionalTextPercent: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT"),
+		selectAdditionalTextPercentSection: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_SECTION"),
+		selectAdditionalTextPercentHeader: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_HEADER"),
 		selectAdditionalTextVh: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_VH"),
 		selectAdditionalTextPx: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX"),
 		selectAdditionalTextRem: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM")
 	};
 
 	function createJSONModel(bSetUpdateTitle, bAsContainer, sFrameWidthValue, sFrameHeightValue) {
-		if (bSetUpdateTitle) {
-			_mText.dialogTitle = _mText.dialogUpdateTitle;
-		} else {
-			_mText.dialogTitle = _mText.dialogCreateTitle;
-		}
+		_mText.dialogTitle = bSetUpdateTitle ? _mText.dialogUpdateTitle : _mText.dialogCreateTitle;
+
+		var sSelectAdditionalTextPercent = bAsContainer
+			? _mText.selectAdditionalTextPercentSection
+			: _mText.selectAdditionalTextPercentHeader;
+
 		return new JSONModel({
 			text: _mText,
 			asContainer: {
@@ -102,7 +104,7 @@ sap.ui.define([
 			parameters: { value: [] },
 			unitsOfWidthMeasure: [{
 				unit: "%",
-				descriptionText: _mText.selectAdditionalTextPercent
+				descriptionText: sSelectAdditionalTextPercent
 			}, {
 				unit: "px",
 				descriptionText: _mText.selectAdditionalTextPx
