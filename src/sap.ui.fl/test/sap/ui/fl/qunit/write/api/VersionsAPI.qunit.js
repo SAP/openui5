@@ -427,30 +427,44 @@ sap.ui.define([
 		QUnit.test("when a control, a layer and context parameter were provided and the request returns a list", function (assert) {
 			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
+			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: sLayer,
 				control: new Control(),
-				allContexts: true
+				allContexts: true,
+				reference: sReference,
+				appComponent: this.oAppComponent
 			};
-			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
-					return [];
+			var sActiveVersion = "1";
+			var aReturnedBackendVersions = [
+				{
+					activatedBy: "qunit",
+					activatedAt: "a while ago",
+					version: sActiveVersion
 				}
-			});
-			var sReference = "com.sap.app";
+			];
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
-			var aReturnedVersions = [];
-			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves(aReturnedVersions);
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
+			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
 
-			return VersionsAPI.loadVersionForApplication(mPropertyBag)
+			return Versions.initialize(mPropertyBag)
+				.then(function (oVersionsModel) {
+					this.oVersionsModel = oVersionsModel;
+					sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
+					assert.equal(mPropertyBag.version, undefined, "version is not set yet");
+				}.bind(this))
+				.then(VersionsAPI.loadVersionForApplication.bind(undefined, mPropertyBag))
 				.then(function () {
 					assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
 					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
 					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
 					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
 					assert.equal(oInitializePropertyBag.allContexts, true, "and passing all contexts as true");
-				});
+					assert.equal(oInitializePropertyBag.version, sActiveVersion, "and active version is set bei version model");
+					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "and displayed version is active version");
+					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
+				}.bind(this));
 		});
 
 		QUnit.test("when a control and a layer were provided and the request returns a list of versions", function (assert) {
@@ -464,20 +478,38 @@ sap.ui.define([
 				version: Version.Number.Draft
 			};
 
+			var sActiveVersion = "1";
+			var aReturnedBackendVersions = [
+				{
+					activatedBy: "qunit",
+					activatedAt: "a while ago",
+					version: sActiveVersion
+				}
+			];
+
 			var sReference = "com.sap.app";
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
-			var aReturnedVersions = [];
-			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves(aReturnedVersions);
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
+			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
 
-			return VersionsAPI.loadVersionForApplication(mPropertyBag)
+			return Versions.initialize(mPropertyBag)
+				.then(function (oVersionsModel) {
+					this.oVersionsModel = oVersionsModel;
+					sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
+					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "displayed version is active version");
+					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
+				}.bind(this))
+				.then(VersionsAPI.loadVersionForApplication.bind(undefined, mPropertyBag))
 				.then(function () {
 					assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
 					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
 					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
 					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
 					assert.equal(oInitializePropertyBag.version, Version.Number.Draft, "and passing the version number accordingly");
-				});
+					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), Version.Number.Draft, "and displayed version is draft");
+					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), Version.Number.Draft, "and persisted version is draft");
+				}.bind(this));
 		});
 
 		QUnit.test("when a control and a layer but no version were provided and the request returns a list of versions", function (assert) {
@@ -494,7 +526,8 @@ sap.ui.define([
 			sandbox.stub(Versions, "getVersionsModel").returns({
 				getProperty: function () {
 					return sActiveVersion;
-				}
+				},
+				setProperty: function () {}
 			});
 
 			var sReference = "com.sap.app";

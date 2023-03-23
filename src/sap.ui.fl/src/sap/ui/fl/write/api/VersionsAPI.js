@@ -155,11 +155,13 @@ sap.ui.define([
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
-		if (mPropertyBag.version === undefined) {
-			var oModel = getVersionsModel(mPropertyBag);
-			if (oModel) {
+		var oModel = getVersionsModel(mPropertyBag);
+		if (oModel) {
+			if (mPropertyBag.version === undefined) {
 				mPropertyBag.version = oModel.getProperty("/activeVersion");
 			}
+			oModel.setProperty("/displayedVersion", mPropertyBag.version);
+			oModel.setProperty("/persistedVersion", mPropertyBag.version);
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
