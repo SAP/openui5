@@ -146,19 +146,19 @@ sap.ui.define([
 	AnalyticalContent.prototype.onDataChanged = function () {
 		this._createChart();
 		var oChart = this.getAggregation("_content");
+
 		if (oChart) {
 			var vizDS = oChart._getVizDataset(),
-				noData = vizDS
+				bHasData = vizDS
 					&& vizDS._FlatTableD
 					&& vizDS._FlatTableD._data
 					&& Array.isArray(vizDS._FlatTableD._data)
-					&& (!vizDS._FlatTableD._data.length);
+					&& vizDS._FlatTableD._data.length;
 
-			if (noData) {
-				this.getParent()._handleError({
-					type: IllustratedMessageType.NoEntries,
-					title: this.getParent().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS")
-				});
+			if (bHasData) {
+				this.destroyAggregation("_noDataMessage");
+			} else {
+				this.showNoDataMessage(IllustratedMessageType.NoEntries, this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS"));
 			}
 		}
 	};

@@ -74,6 +74,14 @@ sap.ui.define([
 		this._bIsFirstRendering = false;
 	};
 
+	BaseListContent.prototype.onDataChanged = function () {
+		if (this.hasData()) {
+			this.destroyAggregation("_noDataMessage");
+		} else {
+			this.showNoDataMessage(IllustratedMessageType.NoEntries, this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS"));
+		}
+	};
+
 	BaseListContent.prototype._keepHeight = function () {
 		if (!this.getDomRef()) {
 			return;
@@ -226,30 +234,18 @@ sap.ui.define([
 			}.bind(this));
 	};
 
-	/**
-	 * Used to show the illustrated message for no data retrieved from server.
-	 *
-	 * @protected
-	 * @param {Object} mItemConfig The item template.
-	 */
-	BaseListContent.prototype._handleNoItemsError = function (mItemConfig) {
-
-		if (!this.getInnerList()) {
-			return;
-		}
-
+	BaseListContent.prototype.hasData = function () {
 		var oInnerList = this.getInnerList(),
 			oBindingInfo = oInnerList.getBinding(oInnerList.getMetadata().getDefaultAggregationName()),
 			oModel = oBindingInfo.getModel(),
 			sPath = oBindingInfo.getPath(),
 			aItems = oModel.getProperty(sPath);
 
-		if (aItems && aItems.length === 0) {
-			this.getParent()._handleError({
-				type: IllustratedMessageType.NoEntries,
-				title: this.getParent().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS")
-			});
+		if (aItems && aItems.length) {
+			return true;
 		}
+
+		return false;
 	};
 
 	/**

@@ -141,11 +141,10 @@ sap.ui.define([
 	ObjectContent.prototype.onDataChanged = function () {
 		var oCard = this.getCardInstance();
 
-		if (!this._hasData()) {
-			oCard._handleError({
-				type: IllustratedMessageType.NoData,
-				title: this.getParent().getTranslatedText("CARD_NO_ITEMS_ERROR_CHART")
-			});
+		if (this._hasData()) {
+			this.destroyAggregation("_noDataMessage");
+		} else {
+			this.showNoDataMessage(IllustratedMessageType.NoData, this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_CHART"));
 		}
 
 		this._getForm().updateModel();

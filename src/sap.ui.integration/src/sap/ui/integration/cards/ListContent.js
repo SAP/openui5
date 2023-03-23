@@ -221,7 +221,8 @@ sap.ui.define([
 	 * Handler for when data is changed.
 	 */
 	ListContent.prototype.onDataChanged = function () {
-		this._handleNoItemsError(this.getParsedConfiguration().item);
+		BaseListContent.prototype.onDataChanged.apply(this, arguments);
+
 		this._checkHiddenNavigationItems(this.getParsedConfiguration().item);
 	};
 

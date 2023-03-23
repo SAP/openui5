@@ -32,12 +32,6 @@
 				}
 			}
 		},
-		"data": {
-			"request": {
-				"url": "./ShipperId{filters>/shipper/value}.json"
-			},
-			"path": "/value/"
-		},
 		"type": "List",
 		"header": {
 			"title": "Orders by shipper {filters>/shipper/selectedItem/title}",
@@ -46,6 +40,12 @@
 			}
 		},
 		"content": {
+			"data": {
+				"request": {
+					"url": "./ShipperId{filters>/shipper/value}.json"
+				},
+				"path": "/value/"
+			},
 			"item": {
 				"title": "{ShipName}",
 				"description": "{ShipAddress}"

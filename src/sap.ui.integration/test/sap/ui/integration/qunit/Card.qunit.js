@@ -680,24 +680,6 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest_No_Data_List = {
-			"sap.app": {
-				"id": "test.card.NoData"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {},
-				"content": {
-					"item": {
-						"title": ""
-					}
-				},
-				"data": {
-					"json": []
-				}
-			}
-		};
-
 		var oManifest_List_Simple = {
 			"sap.app": {
 				"id": "my.card.qunit.test.ListCardSimple"
@@ -745,20 +727,10 @@ sap.ui.define([
 					"json": {
 						"firstName": "Donna",
 						"lastName": "Moore",
-						"position": "Sales Executive",
-						"phone": "+1 202 555 5555",
-						"email": "my@mymail.com",
-						"photo": "./DonnaMoore.png",
-						"agendaUrl": "/agenda",
 						"manager": {
 						},
 						"company": {
-							"name": "Robert Brown Entertainment",
-							"address": "481 West Street, Anytown OH 45066, USA",
-							"email": "mail@mycompany.com",
-							"emailSubject": "Subject",
-							"website": "www.company_a.example.com",
-							"url": "https://www.company_a.example.com"
+							"name": "Robert Brown Entertainment"
 						}
 					}
 				},
@@ -772,144 +744,10 @@ sap.ui.define([
 								{
 									"label": "First Name",
 									"value": "{firstName}"
-								},
-								{
-									"label": "Last Name",
-									"value": "{lastName}"
-								},
-								{
-									"label": "Phone",
-									"value": "{phone}",
-									"actions": [
-										{
-											"type": "Navigation",
-											"parameters": {
-												"url": "tel:{phone}"
-											}
-										}
-									]
-								},
-								{
-									"label": "Email",
-									"value": "{email}",
-									"actions": [
-										{
-											"type": "Navigation",
-											"parameters": {
-												"url": "mailto:{email}"
-											}
-										}
-									]
-								},
-								{
-									"label": "Agenda",
-									"value": "Book a meeting",
-									"actions": [
-										{
-											"type": "Navigation",
-											"enabled": "{= ${agendaUrl}}",
-											"parameters": {
-												"url": "{agendaUrl}"
-											}
-										}
-									]
-								}
-							]
-						},
-						{
-							"title": "Company Details",
-							"items": [
-								{
-									"label": "Company Name",
-									"value": "{company/name}"
-								},
-								{
-									"label": "Address",
-									"value": "{company/address}"
-								},
-								{
-									"label": "Email",
-									"value": "{company/email}",
-									"actions": [
-										{
-											"type": "Navigation",
-											"parameters": {
-												"url": "mailto:{company/email}?subject={company/emailSubject}"
-											}
-										}
-									]
-								},
-								{
-									"label": "Website",
-									"value": "{company/website}",
-									"actions": [
-										{
-											"type": "Navigation",
-											"parameters": {
-												"url": "{company/url}"
-											}
-										}
-									]
-								}
-							]
-						},
-						{
-							"title": "Organizational Details",
-							"items": [
-								{
-									"label": "Direct Manager",
-									"value": "{manager/firstName} {manager/lastName}",
-									"icon": {
-										"src": "{manager/photo}"
-									}
 								}
 							]
 						}
 					]
-				}
-			}
-		};
-		var oManifest_No_Data_Table = {
-			"sap.app": {
-				"id": "test.card.NoData"
-			},
-			"sap.card": {
-				"type": "Table",
-				"header": {},
-				"content": {
-					"row": {
-						"columns": [{
-							"title": "Sales Order",
-							"value": "{salesOrder}",
-							"identifier": true
-						},
-							{
-								"title": "Customer",
-								"value": "{customerName}"
-							},
-							{
-								"title": "Net Amount",
-								"value": "{netAmount}",
-								"hAlign": "End"
-							},
-							{
-								"title": "Status",
-								"value": "{status}",
-								"state": "{statusState}"
-							},
-							{
-								"title": "Delivery Progress",
-								"progressIndicator": {
-									"percent": "{deliveryProgress}",
-									"text": "{= format.percent(${deliveryProgress} / 100)}",
-									"state": "{statusState}"
-								}
-							}
-						]
-					}
-				},
-				"data": {
-					json: []
 				}
 			}
 		};
@@ -2637,6 +2475,7 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oCard = new Card();
 				this.oRb = Core.getLibraryResourceBundle("sap.ui.integration");
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -2654,7 +2493,6 @@ sap.ui.define([
 
 			this.oCard.setManifest(oManifest_ListCard);
 			this.oCard.setDataMode(CardDataMode.Active);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 
 			// Act
@@ -2666,131 +2504,6 @@ sap.ui.define([
 
 			// Clean up
 			oLogSpy.restore();
-		});
-
-		QUnit.test("IllustratedMessage should be set by developer", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEventOnce("_ready", function () {
-					Core.applyChanges();
-
-					var oErrorConfiguration = {
-						"noData": {
-							"type": "NoEntries",
-							"title": "No new products",
-							"description": "Please review later",
-							"size": "Auto"
-						}
-					};
-
-					var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
-							type: IllustratedMessageType.NoEntries
-						}, oErrorConfiguration),
-						oIllustratedMessage = oFlexBox.getItems()[0];
-
-					// Assert
-					assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "The message type set by developer is correct");
-					assert.strictEqual(oIllustratedMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The message size set by developer is correct");
-					assert.strictEqual(oIllustratedMessage.getTitle(), "No new products", "The message title set by developer is correct");
-					assert.strictEqual(oIllustratedMessage.getDescription(), "Please review later", "The message description set by developer is correct");
-
-					// Clean up
-					done();
-			}.bind(this));
-			// Act
-			this.oCard.setManifest(oManifest_No_Data_List);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-		});
-
-		QUnit.test("IllustratedMessage should be used for no data case in List Card", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
-						type: IllustratedMessageType.NoEntries
-					}),
-					oIllustratedMessage = oFlexBox.getItems()[0];
-				// Assert
-				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Default message type is used for list");
-
-				// Clean up
-				done();
-			}.bind(this));
-			// Act
-			this.oCard.setManifest(oManifest_No_Data_List);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-		});
-
-		QUnit.test("IllustratedMessage should be used for error in no data scenario - List Card", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
-						type: IllustratedMessageType.NoData
-					}),
-					oIllustratedMessage = oFlexBox.getItems()[0];
-				// Assert
-				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for List Card");
-				assert.strictEqual(this.oCard.getCardContent().getItems()[0].getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
-
-				// Clean up
-				done();
-			}.bind(this));
-			// Act
-			this.oCard.setManifest(oManifest_No_Data_List);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-		});
-
-		QUnit.test("IllustratedMessage should be used for error in no data scenario - Table Card", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
-						type: IllustratedMessageType.NoEntries
-					}),
-					oIllustratedMessage = oFlexBox.getItems()[0];
-
-				// Assert
-				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Illustrated message type should be no data for Table Card");
-				assert.strictEqual(this.oCard.getCardContent().getItems()[0].getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
-
-				// Clean up
-				done();
-			}.bind(this));
-			// Act
-			this.oCard.setManifest(oManifest_No_Data_Table);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-		});
-
-		QUnit.test("IllustratedMessage should be used for error in no data scenario - Object Card", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({
-						type: IllustratedMessageType.NoData
-					}),
-					oIllustratedMessage = oFlexBox.getItems()[0];
-
-				// Assert
-				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for Object Card");
-				assert.strictEqual(this.oCard.getCardContent().getItems()[0].getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_CHART"), "Correct message is displayed");
-
-				// Clean up
-				done();
-			}.bind(this));
-			// Act
-			this.oCard.setManifest(oManifest_No_Data_Object);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("In a card with no content, the error is rendered in the header", function (assert) {
@@ -2808,8 +2521,6 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_DefaultHeader_NoContent);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Error is logged when binding syntax is not 'complex'", function (assert) {
@@ -2830,7 +2541,7 @@ sap.ui.define([
 			});
 
 			// Act
-			this.oCard.startManifestProcessing(DOM_RENDER_LOCATION);
+			this.oCard.startManifestProcessing();
 
 			// Assert
 			assert.ok(
@@ -2865,8 +2576,161 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_List_Simple);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+		});
+
+		QUnit.module("No Data", {
+			beforeEach: function () {
+				this.oCard = new Card();
+				this.oRb = Core.getLibraryResourceBundle("sap.ui.integration");
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+				this.oRb = null;
+			}
+		});
+
+		QUnit.test("IllustratedMessage should be set by developer", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEventOnce("_ready", function () {
+					Core.applyChanges();
+					var oIllustratedMessage = this.oCard.getCardContent().getAggregation("_noDataMessage").getItems()[0];
+
+					// Assert
+					assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "The message type set by developer is correct");
+					assert.strictEqual(oIllustratedMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The message size set by developer is correct");
+					assert.strictEqual(oIllustratedMessage.getTitle(), "No new products", "The message title set by developer is correct");
+					assert.strictEqual(oIllustratedMessage.getDescription(), "Please review later", "The message description set by developer is correct");
+
+					// Clean up
+					done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.NoData"
+				},
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"messages": {
+							"noData": {
+								"type": "NoEntries",
+								"title": "No new products",
+								"description": "Please review later",
+								"size": "Auto"
+							}
+						}
+					},
+					"header": {},
+					"content": {
+						"item": {
+							"title": ""
+						}
+					},
+					"data": {
+						"json": []
+					}
+				}
+			});
+		});
+
+		QUnit.test("Default IllustratedMessage in no data scenario - List Card", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+				var oIllustratedMessage = this.oCard.getCardContent().getAggregation("_noDataMessage").getItems()[0];
+
+				// Assert
+				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Default message type is used for list");
+				assert.strictEqual(oIllustratedMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
+
+				// Clean up
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.NoData"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {},
+					"content": {
+						"item": {
+							"title": ""
+						}
+					},
+					"data": {
+						"json": []
+					}
+				}
+			});
+		});
+
+		QUnit.test("Default IllustratedMessage in no data scenario - Table Card", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+				var oIllustratedMessage = this.oCard.getCardContent().getAggregation("_noDataMessage").getItems()[0];
+
+				// Assert
+				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Illustrated message type should be no data for Table Card");
+				assert.strictEqual(oIllustratedMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
+
+				// Clean up
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.NoData"
+				},
+				"sap.card": {
+					"type": "Table",
+					"header": {},
+					"content": {
+						"row": {
+							"columns": [
+								{
+									"title": "Customer",
+									"value": "{customerName}"
+								}
+							]
+						}
+					},
+					"data": {
+						"json": []
+					}
+				}
+			});
+		});
+
+		QUnit.test("Default IllustratedMessage in no data scenario - Object Card", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+				var oIllustratedMessage = this.oCard.getCardContent().getAggregation("_noDataMessage").getItems()[0];
+
+				// Assert
+				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for Object Card");
+				assert.strictEqual(oIllustratedMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_CHART"), "Correct message is displayed");
+
+				// Clean up
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_No_Data_Object);
 		});
 
 		QUnit.module("Component Card");

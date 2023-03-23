@@ -22,12 +22,10 @@ sap.ui.define([
 	QUnit.module("Filters in Card", {
 		beforeEach: function () {
 			this.oCard = new Card();
-			this.oRb = Core.getLibraryResourceBundle("sap.ui.integration");
 		},
 		afterEach: function () {
 			this.oCard.destroy();
 			this.oCard = null;
-			this.oRb = null;
 		}
 	});
 
@@ -108,14 +106,14 @@ sap.ui.define([
 			Core.applyChanges();
 
 			setTimeout(function () {
-				assert.strictEqual(this.oCard.getCardContent().getItems()[0].getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "an empty list is displayed");
+				assert.ok(this.oCard.getCardContent().getAggregation("_noDataMessage").getDomRef(), "an empty list is displayed");
 
 				// Act
 				this.oCard.getModel("filters").setProperty("/shipper/value", "3");
 				Core.applyChanges();
 
 				setTimeout(function () {
-					assert.ok(this.oCard.getCardContent().isA("sap.ui.integration.cards.ListContent"), "list content is displayed");
+					assert.ok(this.oCard.getCardContent().getAggregation("_content").getDomRef(), "list content is displayed");
 					done();
 				}.bind(this), 500);
 			}.bind(this), 500);
@@ -123,6 +121,34 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardFilteringNoDataForFilter/manifest.json");
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Show 'No Data' message and show valid data after that - data on content level", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			// Act
+			this.oCard.getModel("filters").setProperty("/shipper/value", "43");
+			Core.applyChanges();
+
+			setTimeout(function () {
+				assert.ok(this.oCard.getCardContent().getAggregation("_noDataMessage").getDomRef(), "an empty list is displayed");
+
+				// Act
+				this.oCard.getModel("filters").setProperty("/shipper/value", "3");
+				Core.applyChanges();
+
+				setTimeout(function () {
+					assert.ok(this.oCard.getCardContent().getAggregation("_content").getDomRef(), "list content is displayed");
+					done();
+				}.bind(this), 500);
+			}.bind(this), 500);
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardFilteringNoDataForFilter/manifest_content_data.json");
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
