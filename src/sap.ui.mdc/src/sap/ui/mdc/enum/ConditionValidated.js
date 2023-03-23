@@ -10,7 +10,7 @@ sap.ui.define(function() {
 	 * Enumeration of the validated state of conditions
 	 *
 	 * If a <code>Condition</code> is chosen from a field help or validated against a field help
-	 * it is set to be validated. In this case the corresponding item in the field help is
+	 * it is set to be validated. In this case the corresponding item in the value help is
 	 * shown as selected.
 	 *
 	 * If the validated state of the <code>Condition</code> is undefined this means
@@ -19,6 +19,7 @@ sap.ui.define(function() {
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.78.0
 	 * @alias sap.ui.mdc.enum.ConditionValidated
 	 */
@@ -27,6 +28,7 @@ sap.ui.define(function() {
 		 * Condition is not validated
 		 * @private
 		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		NotValidated: "NotValidated",
 
@@ -34,6 +36,7 @@ sap.ui.define(function() {
 		 * Condition is validated
 		 * @private
 		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Validated: "Validated"
 

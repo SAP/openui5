@@ -1192,6 +1192,17 @@
 	 */
 
 	/**
+	 * Enumerations for MDC library
+	 * @namespace
+	 * @name sap.ui.mdc.enum
+	 * @since 1.74.0
+	 * @private
+	 * @experimental As of version 1.74
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+
+	/**
 	 * @namespace
 	 * @name sap.ui.mdc.mixin
 	 * @private

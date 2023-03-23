@@ -6,7 +6,7 @@ sap.ui.define(function() {
 	"use strict";
 
 	/**
-	 * Defines in which mode the content of a <code>Field</code>, <code>FilterField</code> or <code>MultiValueField</code> is rendered.
+	 * Defines in which mode the content of a {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} is rendered.
 	 *
 	 * @enum {string}
 	 * @private

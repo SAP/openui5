@@ -85,7 +85,7 @@ sap.ui.define([
 						/**
 						 * The new items of the <code>MultiValueField</code> control.
 						 *
-						 * If a <code>FieldHelp</code> element is assigned to the <code>MultiValueField</code> control, the <code>key</code> of the items is used as key for the <code>FieldHelp</code> items.
+						 * If a <code>ValueHelp</code> element is assigned to the <code>MultiValueField</code> control, the <code>key</code> of the items is used as key for the <code>FieldHelp</code> items.
 						 */
 						items: { type: "sap.ui.mdc.field.MultiValueFieldItem[]" },
 
