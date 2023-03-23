@@ -902,8 +902,8 @@ sap.ui.define([
 			return oPromise.then(function (oResult) {
 				assert.strictEqual(oResult, oConvertedResponse);
 
-				sinon.assert.calledOnce(fnSubmit);
-				sinon.assert.notCalled(fnCancel);
+				sinon.assert.calledOnceWithExactly(fnSubmit);
+				assert.notOk(fnCancel.called);
 			});
 		});
 	});
@@ -1992,35 +1992,25 @@ sap.ui.define([
 		// code under test
 		aPromises.push(oRequestor.processBatch("groupId"));
 
-		sinon.assert.calledOnce(fnSubmit0);
-		sinon.assert.calledWithExactly(fnSubmit0);
-		sinon.assert.calledOnce(fnSubmit1);
-		sinon.assert.calledWithExactly(fnSubmit1);
-		sinon.assert.calledOnce(fnSubmit2);
-		sinon.assert.calledWithExactly(fnSubmit2);
-		sinon.assert.calledOnce(fnSubmit3);
-		sinon.assert.calledWithExactly(fnSubmit3);
-		sinon.assert.calledOnce(fnSubmit4);
-		sinon.assert.calledWithExactly(fnSubmit4);
+		sinon.assert.calledOnceWithExactly(fnSubmit0);
+		sinon.assert.calledOnceWithExactly(fnSubmit1);
+		sinon.assert.calledOnceWithExactly(fnSubmit2);
+		sinon.assert.calledOnceWithExactly(fnSubmit3);
+		sinon.assert.calledOnceWithExactly(fnSubmit4);
 
 		sinon.assert.calledThrice(fnMergePatch0);
 		sinon.assert.calledWithExactly(fnMergePatch0, "~oOldValue02~");
 		sinon.assert.calledWithExactly(fnMergePatch0, "~oOldValue03~");
 		sinon.assert.calledWithExactly(fnMergePatch0, "~oOldValue05~");
-		sinon.assert.calledOnce(fnMergePatch2);
-		sinon.assert.calledWithExactly(fnMergePatch2);
-		sinon.assert.calledOnce(fnMergePatch3);
-		sinon.assert.calledWithExactly(fnMergePatch3);
-		sinon.assert.notCalled(fnMergePatch4);
-		sinon.assert.calledOnce(fnMergePatch5);
-		sinon.assert.calledWithExactly(fnMergePatch5);
+		sinon.assert.calledOnceWithExactly(fnMergePatch2);
+		sinon.assert.calledOnceWithExactly(fnMergePatch3);
+		assert.notOk(fnMergePatch4.called);
+		sinon.assert.calledOnceWithExactly(fnMergePatch5);
 		sinon.assert.calledTwice(fnMergePatch6);
 		sinon.assert.calledWithExactly(fnMergePatch6, "~oOldValue07~");
 		sinon.assert.calledWithExactly(fnMergePatch6, "~oOldValue08~");
-		sinon.assert.calledOnce(fnMergePatch7);
-		sinon.assert.calledWithExactly(fnMergePatch7);
-		sinon.assert.calledOnce(fnMergePatch8);
-		sinon.assert.calledWithExactly(fnMergePatch8);
+		sinon.assert.calledOnceWithExactly(fnMergePatch7);
+		sinon.assert.calledOnceWithExactly(fnMergePatch8);
 		return Promise.all(aPromises).then(function (aResults) {
 			assert.deepEqual(aResults, [
 				{Name : "bar2", Note : "hello, world"}, // 1st PATCH
@@ -2377,10 +2367,8 @@ sap.ui.define([
 			assert.deepEqual(oResult, undefined);
 		}));
 
-		sinon.assert.calledOnce(fnMergePatch0);
-		sinon.assert.calledWithExactly(fnMergePatch0, "~oOldData~");
-		sinon.assert.calledOnce(fnMergePatch1);
-		sinon.assert.calledWithExactly(fnMergePatch1);
+		sinon.assert.calledOnceWithExactly(fnMergePatch0, "~oOldData~");
+		sinon.assert.calledOnceWithExactly(fnMergePatch1);
 
 		return Promise.all(aPromises);
 	});
@@ -2834,11 +2822,10 @@ sap.ui.define([
 		// code under test
 		oRequestor.cancelChanges("groupId", bResetInactive);
 
-		sinon.assert.calledOnce(fnCancel1);
-		sinon.assert.calledWithExactly(fnCancel1, sinon.match.same(bResetInactive));
-		sinon.assert.calledOnce(fnCancel2);
-		sinon.assert.calledOnce(fnCancel3);
-		sinon.assert.calledOnce(fnCancelPost1);
+		sinon.assert.calledOnceWithExactly(fnCancel1, sinon.match.same(bResetInactive));
+		sinon.assert.calledOnceWithExactly(fnCancel2, {});
+		sinon.assert.calledOnceWithExactly(fnCancel3, {});
+		sinon.assert.calledOnceWithExactly(fnCancelPost1, {});
 
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
@@ -2859,8 +2846,7 @@ sap.ui.define([
 		oRequestor.cancelChanges("groupId", bResetInactive);
 
 		assert.strictEqual(oRequestor.mBatchQueue.groupId.length, 3);
-		sinon.assert.calledOnce(fnCancelPost2);
-		sinon.assert.calledWithExactly(fnCancelPost2, sinon.match.same(bResetInactive));
+		sinon.assert.calledOnceWithExactly(fnCancelPost2, sinon.match.same(bResetInactive));
 
 		aExpectedRequests.iChangeSet = 1;
 		this.mock(oRequestor).expects("sendBatch")
@@ -3030,7 +3016,7 @@ sap.ui.define([
 		// code under test
 		oRequestor.removeChangeRequest(oPromise);
 
-		sinon.assert.calledOnce(fnCancel);
+		sinon.assert.calledOnceWithExactly(fnCancel, undefined);
 		this.mock(oRequestor).expects("request").never();
 		oRequestor.processBatch("groupId");
 		return oTestPromise;
@@ -3084,7 +3070,7 @@ sap.ui.define([
 		oRequestor.removeChangeRequest(oPromise);
 		oRequestor.processBatch("groupId");
 
-		sinon.assert.calledOnce(fnCancel);
+		sinon.assert.calledOnceWithExactly(fnCancel, undefined);
 
 		return Promise.all(aPromises);
 	});
@@ -3152,8 +3138,8 @@ sap.ui.define([
 		// code under test
 		oRequestor.processBatch("groupId");
 
-		sinon.assert.calledOnce(fnCancel1);
-		sinon.assert.notCalled(fnCancel2);
+		sinon.assert.calledOnceWithExactly(fnCancel1, undefined);
+		assert.notOk(fnCancel2.called);
 		return oTestPromise;
 	});
 
@@ -3179,7 +3165,7 @@ sap.ui.define([
 
 		// code under test
 		oRequestor.removePost("groupId", oEntity);
-		sinon.assert.calledOnce(fnCancel);
+		sinon.assert.calledOnceWithExactly(fnCancel, undefined);
 
 		this.mock(oRequestor).expects("request").never();
 		oRequestor.processBatch("groupId");
@@ -5213,8 +5199,7 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.processOptimisticBatch([{method : "GET"}], "n/a"), undefined);
 
 		assert.strictEqual(oRequestor.oOptimisticBatch, null);
-		sinon.assert.calledOnce(fnEnabler);
-		sinon.assert.calledWithExactly(fnEnabler, sKey);
+		sinon.assert.calledOnceWithExactly(fnEnabler, sKey);
 
 		// we have to wait for Promise.resolve() in productive code
 		return Promise.resolve(vEnablerResult);
@@ -5278,8 +5263,7 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.processOptimisticBatch(aRequests, sGroupId), undefined);
 
 		assert.strictEqual(oRequestor.oOptimisticBatch, null);
-		sinon.assert.calledOnce(fnEnabler);
-		sinon.assert.calledWithExactly(fnEnabler, sKey);
+		sinon.assert.calledOnceWithExactly(fnEnabler, sKey);
 
 		return Promise.all(aPromises);
 	});

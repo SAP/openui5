@@ -1368,8 +1368,8 @@ sap.ui.define([
 			oBinding, "~fnCallback~");
 
 		assert.ok(oContext.oDeletePromise.isPending());
-		sinon.assert.called(oExpectation0);
-		sinon.assert.called(oExpectation1);
+		assert.ok(oExpectation0.called);
+		assert.ok(oExpectation1.called);
 
 		return oPromise.then(function () {
 			assert.notOk(bFailure);
@@ -1557,8 +1557,7 @@ sap.ui.define([
 		oContext.refresh("groupId", "bAllowRemoval");
 
 		return oPromise.catch(function () {
-			sinon.assert.calledOnce(fnReporter);
-			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 		});
 	});
 
@@ -1579,8 +1578,7 @@ sap.ui.define([
 		oContext.refresh("groupId");
 
 		return oPromise.catch(function () {
-			sinon.assert.calledOnce(fnReporter);
-			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 		});
 	});
 
@@ -3005,8 +3003,7 @@ sap.ui.define([
 				}
 				if (oInactive) {
 					assert.ok(oSetPropertyExpectation.calledBefore(oFireCreateActivateExpectation));
-					sinon.assert.calledOnce(fnReporter);
-					sinon.assert.calledWithExactly(fnReporter, "~error~");
+					sinon.assert.calledOnceWithExactly(fnReporter, "~error~");
 				}
 			}, function (oError0) {
 				assert.ok(i < 2);
@@ -3381,8 +3378,7 @@ sap.ui.define([
 
 		return oResult.then(function (vResult) {
 				assert.strictEqual(vResult, "~result~");
-				sinon.assert.calledOnce(fnReporter);
-				sinon.assert.calledWithExactly(fnReporter, oError);
+				sinon.assert.calledOnceWithExactly(fnReporter, oError);
 			});
 	});
 });
@@ -3549,7 +3545,7 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.sPath, "/SalesOrderList('42')/SO_2_BP");
 		if (bCallback) {
-			sinon.assert.calledWith(fnPathChanged, "/SalesOrderList($uid=1)/SO_2_BP",
+			sinon.assert.calledOnceWithExactly(fnPathChanged, "/SalesOrderList($uid=1)/SO_2_BP",
 				"/SalesOrderList('42')/SO_2_BP");
 		}
 	});
@@ -3557,7 +3553,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {
-	QUnit.test("expand: success=" + bSuccess, function () {
+	QUnit.test("expand: success=" + bSuccess, function (assert) {
 		var oBinding = {
 				expand : function () {}
 			},
@@ -3578,10 +3574,9 @@ sap.ui.define([
 		oContext.expand();
 
 		return oPromise.then(function () {
-			sinon.assert.notCalled(fnReporter);
+			assert.notOk(fnReporter.called);
 		}, function () {
-			sinon.assert.calledOnce(fnReporter);
-			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 		});
 	});
 });
@@ -4228,7 +4223,7 @@ sap.ui.define([
 		// code under test
 		oContext.updateAfterCreate();
 
-		sinon.assert.calledWithExactly(fnReporter, "~oError~");
+		sinon.assert.calledOnceWithExactly(fnReporter, "~oError~");
 	});
 });
 });

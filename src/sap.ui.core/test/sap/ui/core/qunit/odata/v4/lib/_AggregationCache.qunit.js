@@ -1894,7 +1894,7 @@ sap.ui.define([
 				assert.strictEqual(oCache.aElements[7], aReadResult1[1]);
 			});
 
-		sinon.assert.called(oUnlockExpectation);
+		assert.ok(oUnlockExpectation.called);
 
 		return oReadPromise;
 	});

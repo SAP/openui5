@@ -151,10 +151,11 @@ sap.ui.define([
 		QUnit.test("bindProperty, sPath = '" + sPath + "'", function (assert) {
 			var bAbsolute = sPath[0] === "/",
 				oBinding,
-				oBindingSpy = this.spy(asODataBinding, "call"),
+				fnBindingSpy = this.spy(asODataBinding, "call"),
 				oCache = {},
 				oContext = Context.create(this.oModel, null, "/EMPLOYEES(ID='42')"),
-				oExpectation = this.mock(this.oModel).expects("bindingCreated");
+				oExpectation = this.mock(this.oModel).expects("bindingCreated")
+					.withExactArgs(sinon.match.object);
 
 			if (bAbsolute) {
 				this.mock(_Cache).expects("createProperty")
@@ -172,7 +173,7 @@ sap.ui.define([
 			oBinding = this.oModel.bindProperty(sPath, oContext);
 
 			assert.ok(oBinding instanceof ODataPropertyBinding);
-			sinon.assert.calledWithExactly(oExpectation, sinon.match.same(oBinding));
+			assert.strictEqual(oExpectation.args[0][0], oBinding);
 			assert.strictEqual(oBinding.getModel(), this.oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), sPath);
@@ -186,7 +187,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.bHasDeclaredType, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("vValue"), true);
 			assert.strictEqual(oBinding.vValue, undefined);
-			assert.ok(oBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
+			assert.ok(fnBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 		});
 	});
 
@@ -194,7 +195,8 @@ sap.ui.define([
 	QUnit.test("bindProperty with relative path and !v4.Context", function (assert) {
 		var oBinding,
 			oContext = {getPath : function () { return "/EMPLOYEES(ID='1')"; }},
-			oExpectation = this.mock(this.oModel).expects("bindingCreated"),
+			oExpectation = this.mock(this.oModel).expects("bindingCreated")
+				.withExactArgs(sinon.match.object),
 			sPath = "Name";
 
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
@@ -206,7 +208,7 @@ sap.ui.define([
 		//code under test
 		oBinding = this.oModel.bindProperty(sPath, oContext);
 
-		sinon.assert.calledWithExactly(oExpectation, sinon.match.same(oBinding));
+		assert.strictEqual(oExpectation.args[0][0], oBinding);
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getPath(), sPath);
@@ -1187,7 +1189,7 @@ sap.ui.define([
 					formatValue : function (vValue) { return vValue; },
 					getName : function () { return "foo"; }
 				},
-				oSpy = this.spy(ODataPropertyBinding.prototype, "checkUpdateInternal");
+				fnSpy = this.spy(ODataPropertyBinding.prototype, "checkUpdateInternal");
 
 			oCacheMock.expects("createProperty").returns(oCache);
 			this.mock(ODataPropertyBinding.prototype).expects("isMeta").withExactArgs()
@@ -1214,7 +1216,7 @@ sap.ui.define([
 			oBinding = oControl.getBinding("text");
 			return Promise.all([
 				oDataReceivedPromise,
-				oSpy.returnValues[0].then(function () {
+				fnSpy.returnValues[0].then(function () {
 					assert.strictEqual(oBinding.getType(), oRawType);
 					assert.strictEqual(oBinding.getValue(), undefined);
 				})
@@ -1687,8 +1689,7 @@ sap.ui.define([
 		// code under test
 		oBinding.onChange("~vValue~");
 
-		sinon.assert.calledOnce(fnReporter);
-		sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+		sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 	});
 
 	//*********************************************************************************************
@@ -2306,8 +2307,7 @@ sap.ui.define([
 		// code under test
 		oBinding.deregisterChangeListener();
 
-		sinon.assert.calledOnce(fnReporter);
-		sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+		sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 	});
 
 	//*********************************************************************************************
@@ -2364,8 +2364,7 @@ sap.ui.define([
 		// code under test
 		oBinding.resumeInternal(true);
 
-		sinon.assert.calledOnce(fnReporter);
-		sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+		sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 	});
 
 	//*********************************************************************************************

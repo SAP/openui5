@@ -35966,9 +35966,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			if (bKeepAlive) {
-				sinon.assert.called(fnOnDelete);
-			}
+			assert.strictEqual(fnOnDelete.called, bKeepAlive);
 		});
 	});
 });
@@ -42203,7 +42201,7 @@ sap.ui.define([
 				that.waitForChanges(assert, "submit")
 			]);
 		}).then(function () {
-			sinon.assert.called(fnOnBeforeDestroy);
+			sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
 		});
 	});
 });
@@ -42525,7 +42523,7 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "(3)");
 			}).then(function () {
-				sinon.assert.called(fnOnBeforeDestroy);
+				sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
 			});
 	});
 
@@ -42676,7 +42674,7 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "(2)");
 			}).then(function () {
-				sinon.assert.called(fnOnBeforeDestroy);
+				sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
 				assert.equal(
 					that.oView.byId("listReport").getItems()[0].getBindingContext().getPath(),
 					"/SalesOrderList('2')");
@@ -43146,7 +43144,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "Step 2: Refresh the list (w/ three kept contexts)");
 		}).then(function () {
-			sinon.assert.called(fnOnBeforeDestroy);
+			sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
 
 			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2' or SalesOrderID eq '4'"
 					+ " or SalesOrderID eq '1'&$select=GrossAmount,SalesOrderID&$top=3", {
@@ -43534,7 +43532,7 @@ sap.ui.define([
 					that.waitForChanges(assert, "(3) refresh the list")
 				]);
 		}).then(function () {
-			sinon.assert.called(fnOnBeforeDestroy);
+			sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
 		});
 	});
 

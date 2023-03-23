@@ -3027,8 +3027,7 @@ sap.ui.define([
 		// code under test
 		return this.oMetaModel.fetchUI5Type("/Foo/bar").then(function (oType) {
 			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
-			sinon.assert.calledOnce(fnReporter);
-			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 		});
 	});
 

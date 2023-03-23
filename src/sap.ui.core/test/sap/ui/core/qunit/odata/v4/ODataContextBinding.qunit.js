@@ -58,7 +58,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bindingCreated", function () {
+	QUnit.test("bindingCreated", function (assert) {
 		var oBinding,
 			oExpectation = this.mock(this.oModel).expects("bindingCreated")
 				.withExactArgs(sinon.match.object);
@@ -69,7 +69,7 @@ sap.ui.define([
 
 		oBinding = this.bindContext("/EMPLOYEES('42')");
 
-		sinon.assert.calledWithExactly(oExpectation, sinon.match.same(oBinding));
+		assert.strictEqual(oExpectation.args[0][0], oBinding);
 	});
 
 	//*********************************************************************************************
@@ -123,7 +123,7 @@ sap.ui.define([
 				$$inheritExpandSelect : bInheritExpandSelect,
 				$$updateGroupId : "updateGroup"
 			},
-			oParentBindingSpy = this.spy(asODataParentBinding, "call");
+			fnParentBindingSpy = this.spy(asODataParentBinding, "call");
 
 		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mParameters))
 			.returns(mParametersClone);
@@ -146,7 +146,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oReturnValueContext, null);
 		assert.strictEqual(oBinding.sUpdateGroupId, "updateGroup");
 
-		assert.ok(oParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
+		assert.ok(fnParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 	});
 
 	//*********************************************************************************************
@@ -179,7 +179,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("be V8-friendly", function (assert) {
-		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
+		var fnParentBindingSpy = this.spy(asODataParentBinding, "call"),
 			oBinding = this.bindContext("/EMPLOYEES('42')");
 
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
@@ -192,7 +192,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oReturnValueContext, null);
 		assert.strictEqual(oBinding.bHasFetchedExpandSelectProperties, false);
 
-		assert.ok(oParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
+		assert.ok(fnParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 	});
 
 	//*********************************************************************************************
@@ -317,8 +317,7 @@ sap.ui.define([
 
 				return oPromise.catch(function () {
 					if (bExecuteOperation) {
-						sinon.assert.calledOnce(fnReporter);
-						sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+						sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 					}
 				});
 			});
@@ -373,8 +372,7 @@ sap.ui.define([
 
 			return oPromise.catch(function () {
 				if (!bSuspended) {
-					sinon.assert.calledOnce(fnReporter);
-					sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+					sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 				}
 			});
 		});
@@ -3028,7 +3026,7 @@ sap.ui.define([
 		oExpectation.args[0][5](undefined, -1);
 
 		assert.strictEqual(oParentContext.oDeletePromise, "~oDeletePromise~");
-		sinon.assert.notCalled(fnUndelete);
+		assert.notOk(fnUndelete.called);
 		assert.ok(oContext.oDeletePromise.isPending());
 
 		if (bSuccess === false) {
@@ -3036,8 +3034,7 @@ sap.ui.define([
 			oExpectation.args[0][5](undefined, 1);
 
 			assert.strictEqual(oParentContext.oDeletePromise, null);
-			sinon.assert.calledOnce(fnUndelete);
-			sinon.assert.calledWithExactly(fnUndelete);
+			sinon.assert.calledOnceWithExactly(fnUndelete);
 		}
 
 		return oPromise.then(function () {
@@ -3048,7 +3045,8 @@ sap.ui.define([
 			assert.strictEqual(oError, "~Error~");
 			assert.strictEqual(oParent.oElementContext, oParentContext);
 			assert.strictEqual(oParentContext.oDeletePromise, null);
-			sinon.assert.calledWithExactly(fnUndelete);
+			assert.strictEqual(fnUndelete.callCount, bSuccess === undefined ? 1 : 2);
+			sinon.assert.alwaysCalledWithExactly(fnUndelete);
 		});
 	});
 });
@@ -3094,8 +3092,7 @@ sap.ui.define([
 				// code under test - callback
 				oExpectation.args[0][5]();
 
-				sinon.assert.calledOnce(fnUndelete);
-				sinon.assert.calledWithExactly(fnUndelete);
+				sinon.assert.calledOnceWithExactly(fnUndelete);
 				assert.strictEqual(oRowContext.oDeletePromise, null);
 			});
 
@@ -3444,8 +3441,7 @@ sap.ui.define([
 				} else {
 					assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
 				}
-				sinon.assert.calledOnce(fnReporter);
-				sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+				sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 			});
 	});
 	});
@@ -3589,8 +3585,7 @@ sap.ui.define([
 					bFetchResourcePathFails ? oYetAnotherError : oError);
 				assert.strictEqual(oBinding.oCache, oNewCache);
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oNewCache);
-				sinon.assert.calledOnce(fnReporter);
-				sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+				sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 			});
 	});
 });
@@ -3740,7 +3735,7 @@ sap.ui.define([
 
 		// code under test
 		return oBinding.refreshInternal("").then(function () {
-			sinon.assert.calledOnce(fnOnRefresh);
+			assert.ok(fnOnRefresh.calledOnce);
 		});
 	});
 
@@ -5132,10 +5127,8 @@ sap.ui.define([
 			oFetchPromise1.catch(function () {}),
 			oFetchPromise2.catch(function () {})
 		]).then(function () {
-			sinon.assert.calledOnce(fnReporter1);
-			sinon.assert.calledWithExactly(fnReporter1, "~oError1~");
-			sinon.assert.calledOnce(fnReporter2);
-			sinon.assert.calledWithExactly(fnReporter2, "~oError2~");
+			sinon.assert.calledOnceWithExactly(fnReporter1, "~oError1~");
+			sinon.assert.calledOnceWithExactly(fnReporter2, "~oError2~");
 		});
 	});
 });
