@@ -181,6 +181,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a date object for a given model value.
+	 *
+	 * @param {string|null} sModelValue
+	 *   The model value of this type. Can be retrieved via {@link sap.ui.base.DataType#getModelValue}.
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|null}
+	 *   An instance of <code>Date</code> for which the local getters <code>getDate()</code>, <code>getMonth()</code>
+	 *   and <code>getFullYear()</code> can be used to get the corresponding day, month and year of the given model
+	 *   value
+	 *
+	 * @since 1.113.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	EdmDate.prototype.getDateValue = function (sModelValue) {
+		var aDateParts, oResult;
+
+		if (!sModelValue) {
+			return null;
+		}
+
+		aDateParts = sModelValue.split("-");
+		oResult = UI5Date.getInstance();
+		oResult.setFullYear(parseInt(aDateParts[0]), parseInt(aDateParts[1]) - 1, parseInt(aDateParts[2]));
+		oResult.setHours(0, 0, 0, 0);
+
+		return oResult;
+	};
+
+	/**
 	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
 	 * methods: <code>format</code> takes a Date and returns a date as a String in the format
 	 * expected by the model, <code>parse</code> converts from the String to a Date.
