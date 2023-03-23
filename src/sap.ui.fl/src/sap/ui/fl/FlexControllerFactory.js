@@ -161,15 +161,9 @@ sap.ui.define([
 					oInitialPromise = FlexControllerFactory._componentInstantiationPromises.get(oAppComponent);
 				}
 				return oInitialPromise.then(function() {
-					var oExistingVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-					if (!oExistingVariantModel) {
-						// If variant model is not present on the app component
-						// then a new variant model should be set on it.
-						// Setting a variant model will ensure that at least a standard variant will exist
-						// for all variant management controls.
-						return _propagateChangesForAppComponent(oAppComponent);
-					}
-					return oExistingVariantModel;
+					// When there are multiple embedded components, this function will be called
+					// multiple times with the same app component and this can happen in parallel
+					return _propagateChangesForAppComponent(oAppComponent);
 				}).then(function (oVariantModel) {
 					// set app component's variant model on the embedded component
 					oComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
@@ -181,7 +175,10 @@ sap.ui.define([
 
 	/**
 	 * Sets propagation changes and listeners on the passed app component.
-	 * Also creates a variant model on this app component.
+	 * If variant model is not present on the app component then a new variant model should be set on it.
+	 * Setting a variant model will ensure that at least a standard variant will exist
+	 * for all variant management controls.
+	 *
 	 * @see sap.ui.fl.variant.VariantModel
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - App component instance
@@ -195,21 +192,25 @@ sap.ui.define([
 		var oVariantModel;
 		return oFlexController._oChangePersistence.loadChangesMapForComponent(oAppComponent)
 		.then(function (fnGetChangesMap) {
-			var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, oAppComponent, oFlexController);
-			fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
-			oAppComponent.addPropagationListener(fnPropagationListener);
-			oVariantModel = new VariantModel({}, {
-				flexController: oFlexController,
-				appComponent: oAppComponent
-			});
-			return oVariantModel.initialize();
+			oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+			if (!oVariantModel) {
+				var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, oAppComponent, oFlexController);
+				fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
+				oAppComponent.addPropagationListener(fnPropagationListener);
+				oVariantModel = new VariantModel({}, {
+					flexController: oFlexController,
+					appComponent: oAppComponent
+				});
+				oAppComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
+				// Initialization and component creation are asynchronous, so the model must be set on the component
+				// before the initialization is triggered - otherwise multiple equal models can be initialized in parallel
+				return oVariantModel.initialize();
+			}
+			return undefined;
 		})
 		.then(function() {
-			oAppComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 			Measurement.end("flexProcessing");
-			return oVariantModel;
-		}).then(function (oResult) {
-			return checkForRtaStartOnDraftAndReturnResult(oResult, oAppComponent);
+			return checkForRtaStartOnDraftAndReturnResult(oVariantModel, oAppComponent);
 		});
 	}
 
