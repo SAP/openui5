@@ -161,6 +161,7 @@ sap.ui.define([
 				mPropertyBag.version = oModel.getProperty("/activeVersion");
 			}
 			oModel.setProperty("/displayedVersion", mPropertyBag.version);
+			oModel.setProperty("/persistedVersion", mPropertyBag.version);
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);

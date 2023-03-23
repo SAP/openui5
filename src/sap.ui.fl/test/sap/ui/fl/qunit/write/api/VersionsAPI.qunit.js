@@ -479,6 +479,7 @@ sap.ui.define([
 					assert.equal(oInitializePropertyBag.allContexts, true, "and passing all contexts as true");
 					assert.equal(oInitializePropertyBag.version, sActiveVersion, "and active version is set bei version model");
 					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "and displayed version is active version");
+					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
 				}.bind(this));
 		});
 
@@ -513,6 +514,7 @@ sap.ui.define([
 					this.oVersionsModel = oVersionsModel;
 					sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
 					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "displayed version is active version");
+					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
 				}.bind(this))
 				.then(VersionsAPI.loadVersionForApplication.bind(undefined, mPropertyBag))
 				.then(function () {
@@ -522,6 +524,7 @@ sap.ui.define([
 					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
 					assert.equal(oInitializePropertyBag.version, Version.Number.Draft, "and passing the version number accordingly");
 					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), Version.Number.Draft, "and displayed version is draft");
+					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), Version.Number.Draft, "and persisted version is draft");
 				}.bind(this));
 		});
 

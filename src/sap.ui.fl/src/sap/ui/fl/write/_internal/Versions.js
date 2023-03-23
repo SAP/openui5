@@ -69,6 +69,7 @@ sap.ui.define([
 					}
 				});
 
+				// TODO: need to update wording or add description
 				var oModel = new JSONModel({
 					publishVersionEnabled: bPublishVersionEnabled,
 					versioningEnabled: bVersioningEnabled,
