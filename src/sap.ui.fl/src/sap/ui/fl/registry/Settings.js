@@ -421,8 +421,7 @@ sap.ui.define([
 			? bIsCustomerSystem
 			// Fallback if back end has no info, guess based on hostname
 			: !(
-				sHostname.endsWith(".sap" + ".corp") // Prevent SEC-236 violation
-				|| sHostname === "localhost"
+				sHostname === "localhost"
 				|| sHostname === "127.0.0.1"
 			);
 	};

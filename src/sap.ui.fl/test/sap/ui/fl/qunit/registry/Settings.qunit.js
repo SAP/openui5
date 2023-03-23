@@ -291,12 +291,6 @@ sap.ui.define([
 			assert.notOk(oSettings.isCustomerSystem(), "then isCustomerSystem returns false");
 		});
 
-		QUnit.test("when systemType is not set and hostname includes .sap .corp", function (assert) {
-			var oSettings = new Settings({});
-			sandbox.stub(oSettings, "_getHostname").returns("someSystem.wdf.sap" + ".corp");
-			assert.notOk(oSettings.isCustomerSystem(), "then isCustomerSystem returns false");
-		});
-
 		QUnit.test("when systemType is not set and hostname is not a SAP system", function (assert) {
 			var oSettings = new Settings({});
 			sandbox.stub(oSettings, "_getHostname").returns("example.com");
