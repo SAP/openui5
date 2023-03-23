@@ -188,6 +188,46 @@ function(
 		};
 
 		/**
+		 * Sanitizes the value of an HTMLElement's style attribute.
+		 * @param {string} a semicolon-separated list of css rules
+		 * @returns {string} the sanitized value
+		 * @private
+		 */
+		function sanitizeCSSStyles(value) {
+			var fnParseCssDeclarations = window['parseCssDeclarations'];
+
+			if (!fnParseCssDeclarations) {
+				return null;
+			}
+			var sanitizedDeclarations = [];
+			fnParseCssDeclarations(
+				value,
+				{
+				declaration: function (property, tokens) {
+					var normProp = property.toLowerCase();
+					if (normProp == "position") {
+						return;
+					}
+					sanitizedDeclarations.push(property + ': ' + tokens.join(' '));
+				}
+			});
+			return sanitizedDeclarations.length > 0 ? sanitizedDeclarations.join('; ') + ";" : null;
+		}
+
+		/**
+		 * Sanitizes the externally-specified css classes.
+		 * @param {string} sClasses a space-separated list of css classes
+		 * @returns {string} the filtered classes
+		 * @private
+		 */
+		function sanitizeCSSClasses(sClasses) {
+			return sClasses.split(" ").filter(function(sClass) {
+				// allow only the supported theming classes
+				return sClass.trim().startsWith("sapTheme");
+			}).join(" ");
+		}
+
+		/**
 		 * Sanitizes attributes on an HTML tag.
 		 *
 		 * @param {string} tagName An HTML tag name in lower case
@@ -230,10 +270,14 @@ function(
 				if (attr == "target") { // a::target already exists
 					addTarget = false;
 				}
+				if (attr == "style") {
+					attribs[i + 1] = sanitizeCSSStyles(value);
+				}
 
-				// add UI5 classes to the user defined
-				if (cssClass && attr.toLowerCase() == "class") {
-					attribs[i + 1] = cssClass + " " + value;
+				// filter the externally-defined classes and
+				// add the required UI5 classes
+				if (attr.toLowerCase() == "class") {
+					attribs[i + 1] = (cssClass + " " + sanitizeCSSClasses(value)).trim();
 					cssClass = "";
 				}
 			}
