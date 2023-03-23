@@ -152,6 +152,11 @@ sap.ui.define([
 		QUnit.test("checkPackage", function(assert) {
 			assert.equal(Utils.checkPackage("MYPACKAGE"), undefined);
 			assert.equal(Utils.checkPackage("/UI5/MYPACKAGE"), undefined);
+			assert.equal(Utils.checkPackage("MY-PACKAGE"), undefined);
+			assert.equal(Utils.checkPackage("$TMP"), undefined);
+			assert.equal(Utils.checkPackage("$LOCAL"), undefined);
+			assert.equal(Utils.checkPackage("MY1234ALLOWED"), undefined);
+			assert.equal(Utils.checkPackage("$/MY/MY_PACK-AGE"), undefined);
 		});
 
 		QUnit.test("checkPackage failure", function(assert) {
@@ -160,6 +165,15 @@ sap.ui.define([
 			});
 			assert.throws(function() {
 				Utils.checkPackage("wrongtype");
+			});
+			assert.throws(function() {
+				Utils.checkPackage("WRONGVERYLOOOOOOOOOOOOOOONGTYPE");
+			});
+			assert.throws(function() {
+				Utils.checkPackage("My_Package");
+			});
+			assert.throws(function() {
+				Utils.checkPackage("WroNgTyPe");
 			});
 		});
 
