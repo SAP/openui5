@@ -332,6 +332,17 @@ function(
 
 		FormattedText.prototype.onAfterRendering = function () {
 			this.$().find('a').on("click", openLink);
+			var aLinks = this.getControls(),
+				oTemplate;
+
+			aLinks.forEach(function(oLink, iCurrentIndex) {
+				oTemplate = this.getDomRef("$" + iCurrentIndex);
+				if (oTemplate) {
+					oTemplate.replaceWith(oLink.getDomRef());
+				} else {
+					oLink.getDomRef().style.display = "none";
+				}
+			}.bind(this));
 		};
 
 		FormattedText.prototype.onBeforeRendering = function () {

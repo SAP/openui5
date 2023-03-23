@@ -517,7 +517,6 @@ sap.ui.define([
 		assert.equal(this.oFeedListItem.getAggregation("_text").getConvertLinksToAnchorTags(), LinkConversion.All, "The convertLinksToAnchorTags property has been forwarded to sap.m.FormattedText");
 		assert.equal(this.oFeedListItem.getAggregation("_text").getConvertedLinksDefaultTarget(), sLinkTarget, "The ConvertedLinksDefaultTarget property has been forwarded to sap.m.FormattedText");
 		assert.equal(this.oFeedListItem._sFullText, sTransformed, "The anchor text has been added correctly");
-		assert.ok(oSpy.calledOnce, "The function onAfterRendering of sap.m.FormattedText has been called as part of the rendering cycle of FeedListItem");
 		//Restore
 		oSpy.restore();
 	});

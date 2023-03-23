@@ -217,17 +217,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("Successful placeholder replacement with one existing link", function (assert) {
-		var sText = "My favorite site is %%1. I like it!",
-			sLink = this.getLinkOutput(1),
-			sExpected = sText.replace("%%1", sLink),
-			sControl;
+		// Prepare
+		this.oFT.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		var aLinkRefs = this.oFT.getControls().map(function(oLink) {
+			return oLink.getDomRef();
+		});
 
-		this.oFT.setHtmlText(sText);
-		sControl = this.getControlOutput();
+		// Act
+		this.oFT.setHtmlText("My favorite sites are: <ul><li>%%1</li></ul>");
+		oCore.applyChanges();
 
-		// assert outputs (real ans expected)
-		assert.equal(sControl, sExpected, "The resulting output is as expected!");
-
+		// Assert
+		assert.strictEqual(aLinkRefs[0].style.display, "none", "The first link isn't displayed");
+		assert.strictEqual(aLinkRefs[0].parentElement.id, this.oFT.getId(), "The first link is rendered directly under the root element");
+		assert.notOk(aLinkRefs[1].style.display, "The second link is displayed");
+		assert.strictEqual(aLinkRefs[1].parentElement.tagName, "LI", "The second link DOM ref is replaced with the placeholder");
 	});
 
 	QUnit.test("Successful placeholder replacement with all existing link", function (assert) {
@@ -255,8 +260,6 @@ sap.ui.define([
 			sLink1 = this.getLinkOutput(1),
 			sLink2 = this.getLinkOutput(2),
 			sLink3 = this.getLinkOutput(3),
-			oSpyOriginal = this.spy(Log, "error"),
-			oSpyArgs,
 			sControl;
 
 		this.oFT.setHtmlText(sText);
@@ -269,11 +272,6 @@ sap.ui.define([
 
 		// assert outputs (real ans expected)
 		assert.notEqual(sControl, sText, "The resulting outputs is as expected!");
-
-		oSpyArgs = oSpyOriginal.args;
-		// assert error logging
-		assert.ok((oSpyOriginal.callCount === 1 && oSpyArgs[0] && oSpyArgs[0][0].substr(0, 37) === "Missing control for placeholder '%%3'"), "There is a proper error logged!");
-
 	});
 
 	QUnit.test("Placeholder replacement with 3 existing links and one of them tried to replace twice", function (assert) {
@@ -281,8 +279,6 @@ sap.ui.define([
 			sLink0 = this.getLinkOutput(0),
 			sLink1 = this.getLinkOutput(1),
 			sLink2 = this.getLinkOutput(2),
-			oSpyOriginal = this.spy(Log, "error"),
-			oSpyArgs,
 			sControl;
 
 		this.oFT.setHtmlText(sText);
@@ -294,13 +290,30 @@ sap.ui.define([
 
 		// assert outputs (real ans expected)
 		assert.notEqual(sControl, sText, "The resulting outputs is as expected!");
-
-		oSpyArgs = oSpyOriginal.args;
-		// assert error logging
-		assert.ok((oSpyOriginal.callCount === 1 && oSpyArgs[0] && oSpyArgs[0][0].substr(0, 22) === "Control with index '0'"), "There is a proper error logged!");
-
 	});
 
+	QUnit.test("The placeholder is properly replaced from inside of a 'li' element", function(assert) {
+		// Prepare
+		var oFT = new FormattedText({
+				htmlText: "<ul><li>%%0</li></ul>",
+				controls: [
+					new Link()
+				]
+			}),
+			oLinkNode, oListItemNode;
+
+		oFT.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		oLinkNode = oFT.getDomRef().querySelector("a");
+		oListItemNode = oFT.getDomRef().querySelector("li");
+
+		// Act
+		// Assert
+		assert.strictEqual(oLinkNode.parentElement.id, oListItemNode.id, "The anchor tag is properly nested");
+
+		// Clean
+		oFT.destroy();
+	});
 
 	QUnit.module("Others");
 

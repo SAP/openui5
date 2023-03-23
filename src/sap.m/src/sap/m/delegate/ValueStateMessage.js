@@ -96,11 +96,14 @@ sap.ui.define([
 			if (!oControl || !oControl.getDomRef() || !oPopup || !oMessageDomRef) {
 				return;
 			}
+			var sValueState = oControl.getValueState();
+			var vValueStateMessageText = this._getValueStateText(oControl, sValueState);
 
 			$Control = jQuery(oControl.getDomRefForValueStateMessage());
 
 			oPopup.setContent(oMessageDomRef);
 			oPopup.close(0);
+
 			if (oPopup.getContent()) {
 				oPopup.getContent().style.maxWidth = oControl.getDomRef().offsetWidth + "px";
 			} else {
@@ -117,6 +120,8 @@ sap.ui.define([
 				null,
 				Device.system.phone ? true : Popup.CLOSE_ON_SCROLL
 			);
+
+			this.createFormattedTextDOM(vValueStateMessageText, oMessageDomRef);
 
 			var $DomRef = jQuery(oMessageDomRef);
 
@@ -261,19 +266,25 @@ sap.ui.define([
 				oTextDomRef.id = sID + "-text";
 				oTextDomRef.appendChild(document.createTextNode(vValueStateMessageText));
 				oMessageDomRef.appendChild(oTextDomRef);
-			} else {
-				Core.createRenderManager().render(vValueStateMessageText, oMessageDomRef);
-				oMessageDomRef.lastElementChild.setAttribute("id", sID + "-text");
 			}
 
-			oMessageDomRef.id = sID;
 
 			// This element should be hidden from the accessibility tree, since it has only presentation role
 			// The value state announcement is present via hidden span, referenced via aria-describedby/aria-errormessage
 			oMessageDomRef.setAttribute("role", "presentation");
 			oMessageDomRef.setAttribute("aria-hidden", "true");
+			oMessageDomRef.id = sID;
 
 			return oMessageDomRef;
+		};
+
+		ValueStateMessage.prototype.createFormattedTextDOM = function(vValueStateMessageText, oMessageDomRef) {
+			if (typeof vValueStateMessageText === "string") {
+				return;
+			}
+
+			Core.createRenderManager().render(vValueStateMessageText, oMessageDomRef);
+			oMessageDomRef.lastElementChild.setAttribute("id", this.getId() + "-text");
 		};
 
 		ValueStateMessage.prototype.destroy = function() {
