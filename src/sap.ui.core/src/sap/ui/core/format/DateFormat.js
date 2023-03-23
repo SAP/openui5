@@ -419,6 +419,8 @@ sap.ui.define([
 	 * @function
 	 * @since 1.99
 	 */
+	// This method has a TypeScript specific overlay for a better return value documentation,
+	// see 'src/sap.ui.core/.dtsgenrc'
 
 	/**
 	 * Get a datetimeWithTimezone instance of the DateFormat, which can be used for formatting.
