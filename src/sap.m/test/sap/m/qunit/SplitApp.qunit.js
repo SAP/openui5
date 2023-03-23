@@ -84,17 +84,9 @@ sap.ui.define([
 	QUnit.module("Modes Check on desktop");
 	QUnit.test("PopoverMode_portrait", function(assert){
 		var done = assert.async();
-		var oSystem = {
-				desktop: true,
-				tablet: false,
-				phone: false
-			}, oPortrait = {
-				landscape: false,
-				portrait: true
-			};
 
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oPortrait);
+		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});
+		var orientationStub = this.stub(Device, "orientation").value({portrait: true, landscape: false});
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -139,6 +131,10 @@ sap.ui.define([
 			assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
 
 			//clean up
+
+			// explicitly restore Device.orientation to avoid error during oSplitApp.destroy
+			orientationStub.restore();
+
 			oSplitApp.destroy();
 			done();
 		}, 500);
