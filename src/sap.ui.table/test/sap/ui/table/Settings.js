@@ -1124,13 +1124,13 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			}
 		},
 		TOOLTIPS: {
-			text: "Standard Tooltips (private)",
+			text: "Hide Standard Tooltips (private)",
 			value: function(oTable) {
-				return oTable._getShowStandardTooltips();
+				return oTable._getHideStandardTooltips();
 			},
 			input: "boolean",
 			action: function(oTable, bValue) {
-				oTable._bHideStandardTooltips = !bValue;
+				oTable._setHideStandardTooltips(bValue);
 				oTable.invalidate();
 			}
 		},

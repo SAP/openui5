@@ -448,7 +448,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 				}
 			}
 
-			if (oTable._getShowStandardTooltips() && sSelectAllResourceTextID) {
+			if (sSelectAllResourceTextID) {
 				rm.attr("title", TableUtils.getResourceText(sSelectAllResourceTextID));
 			}
 			if (!bAllRowsSelected) {

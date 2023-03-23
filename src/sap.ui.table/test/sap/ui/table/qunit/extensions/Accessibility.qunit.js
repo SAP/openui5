@@ -1363,7 +1363,6 @@ sap.ui.define([
 		beforeEach: function() {
 			createTables();
 			_modifyTables();
-			this._sAdditionalLabeling = oTable._getShowStandardTooltips() ? "" : (" " + oTable.getId() + "-ariaselectall");
 		},
 		afterEach: function() {
 			destroyTables();
@@ -1376,13 +1375,13 @@ sap.ui.define([
 		var $Cell = getSelectAll(true, assert);
 
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sTableId + "-ariacount " + sTableId + "-ariaselection " + sTableId + "-colnumberofcols" + this._sAdditionalLabeling, "aria-labelledby of select all");
+			sTableId + "-ariacount " + sTableId + "-ariaselection " + sTableId + "-colnumberofcols", "aria-labelledby of select all");
 
 		$Cell = getCell(1, 1, true, assert); //set focus somewhere else on the table
 		testAriaLabelsForFocusedDataCell($Cell, 1, 1, assert, {firstTime: false, rowChange: true, colChange: true});
 
 		$Cell = getSelectAll(true, assert);
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(), sTableId + "-colnumberofcols" + this._sAdditionalLabeling,
+		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(), sTableId + "-colnumberofcols",
 			"aria-labelledby of select all");
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
@@ -1406,7 +1405,7 @@ sap.ui.define([
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell = getSelectAll(false, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			this._sAdditionalLabeling, "aria-labelledby of select all");
+			"", "aria-labelledby of select all");
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
@@ -1825,7 +1824,7 @@ sap.ui.define([
 
 	QUnit.test("HiddenTexts", function(assert) {
 		var aHiddenTexts = [
-			"ariacount", "toggleedit", "ariaselectall", "ariarowgrouplabel", "ariagrandtotallabel",
+			"ariacount", "toggleedit", "ariarowgrouplabel", "ariagrandtotallabel",
 			"ariagrouptotallabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariacolmenu",
 			"ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes", "ariafixedcolumn", "ariainvalid", "ariaselection",
 			"ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext", "rownavigatedtext", "ariarequired"
@@ -2082,7 +2081,7 @@ sap.ui.define([
 	QUnit.test("Hidden Standard Tooltips", function(assert) {
 
 		function checkTooltips(bEnable, sSelectionBehavior, sSelectionMode, iExpected) {
-			oTable._bHideStandardTooltips = !bEnable;
+			oTable._setHideStandardTooltips(!bEnable);
 			oTable.setSelectionBehavior(sSelectionBehavior);
 			oTable.setSelectionMode(sSelectionMode);
 			oCore.applyChanges();
@@ -2112,13 +2111,13 @@ sap.ui.define([
 		checkTooltips(true, "RowSelector", "Single", iRowSelectors + iActionItems);
 		checkTooltips(true, "RowSelector", "None", iActionItems);
 
-		checkTooltips(false, "Row", "MultiToggle", iActionItems);
+		checkTooltips(false, "Row", "MultiToggle", 1 /*SelAll*/ + iActionItems);
 		checkTooltips(false, "Row", "Single", iActionItems);
 		checkTooltips(false, "Row", "None", iActionItems);
-		checkTooltips(false, "RowOnly", "MultiToggle", iActionItems);
+		checkTooltips(false, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iActionItems);
 		checkTooltips(false, "RowOnly", "Single", iActionItems);
 		checkTooltips(false, "RowOnly", "None", iActionItems);
-		checkTooltips(false, "RowSelector", "MultiToggle", iActionItems);
+		checkTooltips(false, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iActionItems);
 		checkTooltips(false, "RowSelector", "Single", iActionItems);
 		checkTooltips(false, "RowSelector", "None", iActionItems);
 	});

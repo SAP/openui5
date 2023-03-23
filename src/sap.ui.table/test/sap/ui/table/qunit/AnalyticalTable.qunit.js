@@ -923,11 +923,16 @@ sap.ui.define([
 				var oColumn = this.oTable.getColumns()[1];
 				assert.equal(oColumn.getTooltip_AsString(), "Cost Center", "getTooltip_AsString: Default Tooltip");
 				assert.equal(oColumn.getTooltip_Text(), "Cost Center", "getTooltip_Text: Default Tooltip");
+				this.oTable._setHideStandardTooltips(true);
+				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Skipped Default Tooltip");
+				assert.ok(!oColumn.getTooltip_Text(), "getTooltip_Text: Skipped Default Tooltip");
 				oColumn.setTooltip("Some other tooltip");
 				assert.equal(oColumn.getTooltip_AsString(), "Some other tooltip", "getTooltip_AsString: Custom String Tooltip");
 				assert.equal(oColumn.getTooltip_Text(), "Some other tooltip", "getTooltip_Text: Custom String Tooltip");
 				oColumn.setTooltip(new TooltipBase());
 				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Custom Object Tooltip without text");
+				assert.ok(!oColumn.getTooltip_Text(), "getTooltip_Text: Custom Object Tooltip without text and skipped defaults");
+				this.oTable._setHideStandardTooltips(false);
 				assert.equal(oColumn.getTooltip_Text(), "Cost Center", "getTooltip_Text: Custom Object Tooltip without text");
 				oColumn.getTooltip().setText("Again some other tooltip");
 				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Custom Object Tooltip with text");
