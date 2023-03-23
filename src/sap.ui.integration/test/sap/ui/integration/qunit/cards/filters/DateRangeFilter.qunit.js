@@ -1,21 +1,23 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/m/DynamicDateUtil",
+	"sap/m/DynamicDateRange",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/integration/cards/filters/DateRangeFilter",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/date/UI5Date"
 ], function (
-	DynamicDateUtil,
+	DynamicDateRange,
 	Core,
 	coreLibrary,
 	KeyCodes,
 	DateRangeFilter,
 	Card,
-	QUnitUtils
+	QUnitUtils,
+	UI5Date
 ) {
 	"use strict";
 
@@ -135,8 +137,8 @@ sap.ui.define([
 
 	QUnit.test("Dates in the value are in ISO format", function (assert) {
 		// Arrange
-		var oDate = new Date("1997-05-01T00:00:00.000Z");
-		var aLocalDates = DynamicDateUtil.toDates({
+		var oDate = UI5Date.getInstance("1997-05-01T00:00:00.000Z");
+		var aLocalDates = DynamicDateRange.toDates({
 			operator: "DATE",
 			values: [oDate]
 		});
@@ -149,8 +151,8 @@ sap.ui.define([
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.range.start, aLocalDates[0].getJSDate().toISOString(), "Range start should be in ISO format");
-		assert.strictEqual(oModelValue.range.end, aLocalDates[1].getJSDate().toISOString(), "Range end should be in ISO format");
+		assert.strictEqual(oModelValue.range.start, aLocalDates[0].toISOString(), "Range start should be in ISO format");
+		assert.strictEqual(oModelValue.range.end, aLocalDates[1].toISOString(), "Range end should be in ISO format");
 	});
 
 	QUnit.test("Lower boundary of 'to' filter", function (assert) {
@@ -164,8 +166,8 @@ sap.ui.define([
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.range.start, new Date(-8640000000000000).toISOString(), "Lower boundary should be correct");
-		assert.strictEqual(oModelValue.rangeOData.start, new Date("1753-01-01").toISOString(), "Lower boundary of rangeOData should be correct");
+		assert.strictEqual(oModelValue.range.start, UI5Date.getInstance(-8640000000000000).toISOString(), "Lower boundary should be correct");
+		assert.strictEqual(oModelValue.rangeOData.start, UI5Date.getInstance("1753-01-01").toISOString(), "Lower boundary of rangeOData should be correct");
 	});
 
 	QUnit.test("Upper boundary of 'from' filter", function (assert) {
@@ -179,8 +181,8 @@ sap.ui.define([
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.range.end, new Date(8640000000000000).toISOString(), "Upper boundary should be correct");
-		assert.strictEqual(oModelValue.rangeOData.end, new Date("9999-12-31").toISOString(), "Upper boundary of rangeOData should be correct");
+		assert.strictEqual(oModelValue.range.end, UI5Date.getInstance(8640000000000000).toISOString(), "Upper boundary should be correct");
+		assert.strictEqual(oModelValue.rangeOData.end, UI5Date.getInstance("9999-12-31").toISOString(), "Upper boundary of rangeOData should be correct");
 	});
 
 	QUnit.test("Value is updated when new value is entered", function (assert) {
@@ -244,10 +246,10 @@ sap.ui.define([
 
 	QUnit.test("DateTimeRange in the value is in ISO format", function (assert) {
 		// Arrange
-		var oDateStart = new Date("2023-02-07T10:15:44.001Z");
-		var oDateEnd = new Date("2023-02-08T12:06:07.002Z");
+		var oDateStart = UI5Date.getInstance("2023-02-07T10:15:44.001Z");
+		var oDateEnd = UI5Date.getInstance("2023-02-08T12:06:07.002Z");
 
-		var aLocalDates = DynamicDateUtil.toDates({
+		var aLocalDates = DynamicDateRange.toDates({
 			operator: "DATETIMERANGE",
 			values: [oDateStart,oDateEnd]
 		});
@@ -263,15 +265,15 @@ sap.ui.define([
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.range.start, aLocalDates[0].getJSDate().toISOString(), "Range start should be in ISO format");
-		assert.strictEqual(oModelValue.range.end, aLocalDates[1].getJSDate().toISOString(), "Range end should be in ISO format");
+		assert.strictEqual(oModelValue.range.start, aLocalDates[0].toISOString(), "Range start should be in ISO format");
+		assert.strictEqual(oModelValue.range.end, aLocalDates[1].toISOString(), "Range end should be in ISO format");
 	});
 
 	QUnit.test("fromDateTime in the value is in ISO format", function (assert) {
 		// Arrange
-		var oDateFrom = new Date("2023-02-07T10:15:44.001Z");
+		var oDateFrom = UI5Date.getInstance("2023-02-07T10:15:44.001Z");
 
-		var aLocalDatesFrom = DynamicDateUtil.toDates({
+		var aLocalDatesFrom = DynamicDateRange.toDates({
 			operator: "FROMDATETIME",
 			values: [oDateFrom]
 		});
@@ -287,15 +289,15 @@ sap.ui.define([
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.range.start, aLocalDatesFrom[0].getJSDate().toISOString(), "Range start should be in ISO format");
-		assert.strictEqual(oModelValue.rangeOData.start, aLocalDatesFrom[0].getJSDate().toISOString(), "rangeOData start should be in ISO format");
+		assert.strictEqual(oModelValue.range.start, aLocalDatesFrom[0].toISOString(), "Range start should be in ISO format");
+		assert.strictEqual(oModelValue.rangeOData.start, aLocalDatesFrom[0].toISOString(), "rangeOData start should be in ISO format");
 	});
 
 	QUnit.test("toDateTime in the value is in ISO format", function (assert) {
 		// Arrange
-		var oDateTo = new Date("2023-02-08T12:06:07.002Z");
+		var oDateTo = UI5Date.getInstance("2023-02-08T12:06:07.002Z");
 
-		var aLocalDatesTo = DynamicDateUtil.toDates({
+		var aLocalDatesTo = DynamicDateRange.toDates({
 			operator: "TODATETIME",
 			values: [oDateTo]
 		});
@@ -311,8 +313,8 @@ sap.ui.define([
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.range.end, aLocalDatesTo[0].getJSDate().toISOString(), "Range end should be in ISO format");
-		assert.strictEqual(oModelValue.rangeOData.end, aLocalDatesTo[0].getJSDate().toISOString(), "rangeOData end should be in ISO format");
+		assert.strictEqual(oModelValue.range.end, aLocalDatesTo[0].toISOString(), "Range end should be in ISO format");
+		assert.strictEqual(oModelValue.rangeOData.end, aLocalDatesTo[0].toISOString(), "rangeOData end should be in ISO format");
 	});
 
 	QUnit.test("Lower boundary of 'toDateTime' filter", function (assert) {
@@ -329,8 +331,8 @@ sap.ui.define([
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.range.start, new Date(-8640000000000000).toISOString(), "Lower boundary should be correct");
-		assert.strictEqual(oModelValue.rangeOData.start, new Date("1753-01-01").toISOString(), "Lower boundary of rangeOData should be correct");
+		assert.strictEqual(oModelValue.range.start, UI5Date.getInstance(-8640000000000000).toISOString(), "Lower boundary should be correct");
+		assert.strictEqual(oModelValue.rangeOData.start, UI5Date.getInstance("1753-01-01").toISOString(), "Lower boundary of rangeOData should be correct");
 	});
 
 	QUnit.test("Upper boundary of 'fromDateTime' filter", function (assert) {
@@ -347,8 +349,8 @@ sap.ui.define([
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.range.end, new Date(8640000000000000).toISOString(), "Upper boundary should be correct");
-		assert.strictEqual(oModelValue.rangeOData.end, new Date("9999-12-31").toISOString(), "Upper boundary of rangeOData should be correct");
+		assert.strictEqual(oModelValue.range.end, UI5Date.getInstance(8640000000000000).toISOString(), "Upper boundary should be correct");
+		assert.strictEqual(oModelValue.rangeOData.end, UI5Date.getInstance("9999-12-31").toISOString(), "Upper boundary of rangeOData should be correct");
 	});
 
 	QUnit.test("DateTime value properties when config is set", function (assert) {
