@@ -653,6 +653,7 @@ sap.ui.define([
 					oAction.setVisible = function (bVisible) {
 						oAction._setInternalVisible(bVisible, true);
 						Button.prototype.setVisible.call(this, bVisible);
+						that._adaptLayout();
 					};
 
 					oAction.onAfterRendering = function () {

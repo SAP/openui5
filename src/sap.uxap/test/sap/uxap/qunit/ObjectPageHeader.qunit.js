@@ -883,26 +883,30 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		var oButton = new Button({
 			text : "Some button",
 			visible: false
-		});
+		}),
+		oSpy;
 
 		this._oHeader.addAction(oButton);
 
 		Core.applyChanges();
 
+		oSpy = this.spy(this._oHeader, "_adaptLayout");
 		oButton.setVisible(true);
 
 		Core.applyChanges();
 
 		assert.strictEqual(oButton._getInternalVisible(), true, "The button is visible");
 		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
+		assert.ok(oSpy.called, "_adaptLayout is called, when visibility of a button is changed");
 
+		oSpy.reset();
 		oButton.setVisible(false);
 
 		Core.applyChanges();
 
 		assert.strictEqual(oButton._getInternalVisible(), false, "The button is invisible");
 		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
-
+		assert.ok(oSpy.called, "_adaptLayout is called, when visibility of a button is changed");
 	});
 
 	QUnit.test("Correct hook states", function (assert) {
