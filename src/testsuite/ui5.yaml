@@ -19,6 +19,14 @@ server:
     mountPath: /proxy
     configuration:
       secure: false
+  - name: "@ui5/middleware-code-coverage"
+    afterMiddleware: compression
+    configuration:
+      report:
+        reporter:
+          - html
+          - lcov
+        report-dir: "../../tmp/coverage-reports"
 
 ---
 specVersion: "2.0"

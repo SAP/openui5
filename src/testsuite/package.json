@@ -51,6 +51,7 @@
     "@openui5/themelib_sap_horizon": "1.113.0-SNAPSHOT"
   },
   "devDependencies": {
-    "local-web-server": "^3.0.7"
+    "local-web-server": "^3.0.7",
+    "@ui5/middleware-code-coverage": "^1.0.0"
   }
 }

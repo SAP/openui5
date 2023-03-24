@@ -145,9 +145,10 @@
 				sap.ui.qunit.TestRunner.runTests(aTests, nStep).then(function(oResult) {
 					$this.val("Run");
 					jQuery("#stop").toggle();
-					if (sap.ui.qunit.TestRunner.hasCoverage() && window.blanket) {
-						window.blanket.report({});
-						jQuery("div.test-coverage").toggle();
+					if (sap.ui.qunit.TestRunner.hasCoverage()) {
+						var $testCoverage = jQuery("div.test-coverage");
+						$testCoverage.toggle();
+						sap.ui.qunit.TestRunner.reportCoverage( $testCoverage[0] );
 					}
 				}).then(function() {
 					$this.val("Run");
