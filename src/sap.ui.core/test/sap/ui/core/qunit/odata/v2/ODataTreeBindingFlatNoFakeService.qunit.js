@@ -35,6 +35,7 @@ sap.ui.define([
 				var oRecursionBreaker = {broken : false};
 
 				fnMap({key : "notMatched"}, oRecursionBreaker);
+				fnMap(/*server index node not yet read*/undefined, oRecursionBreaker);
 				assert.strictEqual(oRecursionBreaker.broken, false);
 			});
 

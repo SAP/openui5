@@ -1926,7 +1926,7 @@ sap.ui.define([
 		var bChangeDetected = false;
 
 		this._map(function (oNode, oRecursionBreaker) {
-			if (oNode.key in mChangedEntities) {
+			if (oNode && oNode.key in mChangedEntities) {
 				bChangeDetected = true;
 				oRecursionBreaker.broken = true;
 			}
