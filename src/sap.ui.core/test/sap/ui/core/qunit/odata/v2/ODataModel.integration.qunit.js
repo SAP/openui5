@@ -7422,6 +7422,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// change and the messages get the correct target/fullTarget. Navigation properties are expanded
 	// in the same $batch.
 	// JIRA: CPOUI5MODELS-221
+	// Scenario 2: setProperty on an entity represented by a context created via #callFunction must
+	// not lead to a duplicate request when #submitChanges is called again.
+	// BCP: 2370022357
 	QUnit.test("Messages: function import with expand and lazy parameters", function (assert) {
 		var oModel = createSalesOrdersModelSpecialFunctionImports({
 				defaultBindingMode : "TwoWay",
@@ -7491,6 +7494,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.oView.byId("soIDParameter").setValue("42");
 
 			// code under test
+			oModel.submitChanges({groupId : "changes"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test: Scenario 2
 			oModel.submitChanges({groupId : "changes"});
 
 			return that.waitForChanges(assert);

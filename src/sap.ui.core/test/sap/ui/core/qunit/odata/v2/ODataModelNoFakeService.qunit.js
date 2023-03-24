@@ -7149,10 +7149,8 @@ sap.ui.define([
 	entryMetadata : {created : {functionImport : true}},
 	expectFindCreatedContext : false
 }].forEach(function (oFixture, i) {
-	QUnit.test("setProperty: activate inactive context; " + i, function (assert) {
-		var oActivatedPromise, oMetadataLoadedCall, fnResolveActivatedPromise, oStartActivationCall,
-			bActivatedPromiseResolved = false,
-			oContext = {hasTransientParent : function () {}},
+	QUnit.test("setProperty: created context is already activated; " + i, function (assert) {
+		var oContext = {hasTransientParent : function () {}},
 			oEntry = {
 				__metadata : oFixture.entryMetadata
 			},
@@ -7224,25 +7222,141 @@ sap.ui.define([
 		oModelMock.expects("_getRefreshAfterChange")
 			.withExactArgs(undefined, "~groupId")
 			.returns("~bRefreshAfterChange");
+		this.mock(oModel.oMetadata).expects("loaded")
+			.withExactArgs()
+			.returns(oMetadataLoadedPromise);
 		this.mock(oModel.oCreatedContextsCache).expects("findCreatedContext")
 			.withExactArgs("/resolved/path")
 			.exactly(oFixture.expectFindCreatedContext ? 1 : 0)
 			.returns(oFixture.createdContextFound ? oCreatedContext : undefined);
-		oStartActivationCall = this.mock(oCreatedContext).expects("startActivation")
+		this.mock(oCreatedContext).expects("isInactive")
 			.withExactArgs()
-			.exactly(oFixture.createdContextFound ? 1 : 0);
+			.exactly(oFixture.createdContextFound ? 1 : 0)
+			.returns(false);
+		oModelMock.expects("checkUpdate")
+			.withExactArgs(false, "~bAsyncUpdate", {"key" : true});
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", oContext,
+				"~bAsyncUpdate"),
+			true);
+
+		oModelMock.expects("_pushToRequestQueue")
+			.withExactArgs("~mRequests", "~groupId", "~changeSetId", {key : "key"},
+				/*success*/ undefined, /*error*/ undefined,
+				/*oRequestHandle*/sinon.match.object, "~bRefreshAfterChange");
+		oModelMock.expects("_processRequestQueueAsync").withExactArgs("~mRequests");
+
+		return oMetadataLoadedPromise;
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty: activate inactive context", function (assert) {
+		var oActivatedPromise, fnResolveActivatedPromise,
+			bActivatedPromiseResolved = false,
+			oContext = {hasTransientParent : function () {}},
+			oEntry = {
+				__metadata : {created : {}}
+			},
+			oMetadataLoadedPromise = Promise.resolve(),
+			oModel = {
+				oCreatedContextsCache : {
+					findCreatedContext : function () {}
+				},
+				mChangedEntities : {
+					"key" : {}
+				},
+				mDeferredGroups : {},
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					loaded : function () {}
+				},
+				mRequests : "~mRequests",
+				checkUpdate : function () {},
+				getEntityByPath : function () {},
+				_getObject : function () {},
+				_getRefreshAfterChange : function () {},
+				_processChange : function () {},
+				_processRequestQueueAsync : function () {},
+				_pushToRequestQueue : function () {},
+				resolve : function () {},
+				resolveDeep : function () {},
+				_resolveGroup : function () {}
+			},
+			oCreatedContext = new Context(oModel, "~sContextPath"),
+			oModelMock = this.mock(oModel),
+			oOriginalEntry = {
+				__metadata : {}
+			},
+			oOriginalValue = {};
+
+		oModelMock.expects("resolve")
+			.withExactArgs("~sPath", sinon.match.same(oContext))
+			.returns("/resolved/path");
+		oModelMock.expects("resolveDeep")
+			.withExactArgs("~sPath", sinon.match.same(oContext))
+			.returns("deepPath");
+		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/resolved/path", null, /*by ref oEntityInfo*/{})
+			.callsFake(function (sResolvedPath, oContext, oEntityInfo) { // fill reference parameter
+				oEntityInfo.key = "key";
+				oEntityInfo.propertyPath = "";
+
+				return oEntry;
+			});
+		oModelMock.expects("_getObject")
+			.withExactArgs("/key", null, true)
+			.returns(oOriginalEntry);
+		oModelMock.expects("_getObject")
+			.withExactArgs("~sPath", sinon.match.same(oContext), true)
+			.returns(oOriginalValue);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("key")
+			.returns(/*oEntityType*/);
+		oModelMock.expects("_resolveGroup")
+			.withExactArgs("key")
+			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
+		oModelMock.expects("_getObject")
+			.withExactArgs("/key")
+			.returns("~oData");
+		oModelMock.expects("_processChange")
+			.withExactArgs("key", "~oData", "~groupId")
+			.returns(/*oRequest*/{});
+		oModelMock.expects("_getRefreshAfterChange")
+			.withExactArgs(undefined, "~groupId")
+			.returns("~bRefreshAfterChange");
+		this.mock(oModel.oMetadata).expects("loaded")
+			.withExactArgs()
+			.returns(oMetadataLoadedPromise);
+		this.mock(oModel.oCreatedContextsCache).expects("findCreatedContext")
+			.withExactArgs("/resolved/path")
+			.returns(oCreatedContext);
+		this.mock(oCreatedContext).expects("isInactive")
+			.withExactArgs()
+			.returns(true);
+		this.mock(oCreatedContext).expects("startActivation")
+			.withExactArgs();
 		oActivatedPromise = new SyncPromise(function(resolve) {
 			fnResolveActivatedPromise = resolve;
 		});
 		this.mock(oCreatedContext).expects("fetchActivated")
 			.withExactArgs()
-			.exactly(oFixture.createdContextFound ? 1 : 0)
 			.returns(oActivatedPromise);
-		oMetadataLoadedCall = this.mock(oModel.oMetadata).expects("loaded")
-			.withExactArgs()
-			.returns(oMetadataLoadedPromise);
 		oModelMock.expects("checkUpdate")
 			.withExactArgs(false, "~bAsyncUpdate", {"key" : true});
+		oActivatedPromise.then(function () {
+			bActivatedPromiseResolved = true;
+		});
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", oContext,
+				"~bAsyncUpdate"),
+			true);
+
 		oModelMock.expects("_pushToRequestQueue")
 			.withExactArgs("~mRequests", "~groupId", "~changeSetId", {key : "key"},
 				/*success*/ undefined, /*error*/ undefined,
@@ -7255,28 +7369,12 @@ sap.ui.define([
 			.callsFake(function () {
 				assert.ok(bActivatedPromiseResolved, "only called after activated promise is resolved");
 			});
-		oActivatedPromise.then(function () {
-			bActivatedPromiseResolved = true;
-		});
-
-		// code under test
-		assert.strictEqual(
-			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", oContext,
-				"~bAsyncUpdate"),
-			true);
-
-		if (oFixture.createdContextFound) {
-			assert.ok(oMetadataLoadedCall.calledAfter(oStartActivationCall),
-				"activation pushes the creation POST request to the queue; the change request must "
-				+ "be after that");
-		}
 
 		// code under test
 		fnResolveActivatedPromise();
 
 		return Promise.all([oMetadataLoadedPromise, oActivatedPromise]);
 	});
-});
 
 	//*********************************************************************************************
 [{

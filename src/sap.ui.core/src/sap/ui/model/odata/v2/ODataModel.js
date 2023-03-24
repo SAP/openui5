@@ -6495,7 +6495,6 @@ sap.ui.define([
 			oEntry, sGroupId, oGroupInfo, bIsNavPropExpanded, sKey, mKeys, oNavPropRefInfo, oOriginalEntry,
 			oOriginalValue, mParams, aParts, sPropertyPath, oRef, bRefreshAfterChange, oRequest,
 			mRequests, oRequestHandle, oRequestQueueingPromise, sResolvedPath,
-			oActivatedPromise = SyncPromise.resolve(),
 			mChangedEntities = {},
 			oEntityInfo = {},
 			bFunction = false,
@@ -6591,14 +6590,14 @@ sap.ui.define([
 			oChangeObject[oNavPropRefInfo.name] = { __ref: oRef };
 		}
 
+		oRequestQueueingPromise = this.oMetadata.loaded();
 		if (oEntry.__metadata.created && !oEntry.__metadata.created.functionImport) {
 			oContextToActivate = this.oCreatedContextsCache.findCreatedContext(sResolvedPath);
-			if (oContextToActivate) {
+			if (oContextToActivate && oContextToActivate.isInactive()) {
 				oContextToActivate.startActivation();
-				oActivatedPromise = oContextToActivate.fetchActivated();
+				oRequestQueueingPromise = Promise.all([oRequestQueueingPromise, oContextToActivate.fetchActivated()]);
 			}
 		}
-		oRequestQueueingPromise = Promise.all([this.oMetadata.loaded(), oActivatedPromise]);
 
 		//reset clone if oValue equals the original value
 		if (deepEqual(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
