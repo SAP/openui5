@@ -143,17 +143,9 @@ sap.ui.define([
 
 	QUnit.test("ShowHideMode_portrait", function(assert){
 		var done = assert.async();
-		var oSystem = {
-				desktop: true,
-				tablet: false,
-				phone: false
-			}, oPortrait = {
-				landscape: false,
-				portrait: true
-			};
+		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});
+		var orientationStub = this.stub(Device, "orientation").value({portrait: true, landscape: false});
 
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oPortrait);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -191,23 +183,16 @@ sap.ui.define([
 		oSplitApp.showMaster();
 		setTimeout(function(){
 			assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+
+			orientationStub.restore();
 			oSplitApp.destroy();
 			done();
 		}, 400);
 	});
 
 	QUnit.test("StretchCompressMode_portrait", function(assert){
-		var oSystem = {
-				desktop: true,
-				tablet: false,
-				phone: false
-			}, oPortrait = {
-				landscape: false,
-				portrait: true
-			};
-
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oPortrait);
+		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});
+		var orientationStub = this.stub(Device, "orientation").value({portrait: true, landscape: false});
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -239,21 +224,14 @@ sap.ui.define([
 		assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
 		assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 		assert.equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
+
+		orientationStub.restore();
 		oSplitApp.destroy();
 	});
 
 	QUnit.test("PopoverMode_landscape", function(assert){
-		var oSystem = {
-				desktop: true,
-				tablet: false,
-				phone: false
-			}, oLandscape = {
-				landscape: true,
-				portrait: false
-			};
-
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oLandscape);
+		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});
+		var orientationStub = this.stub(Device, "orientation").value({portrait: false, landscape: true});
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -286,21 +264,13 @@ sap.ui.define([
 		assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 		assert.equal(oSplitApp.$("Master").outerWidth(),320, "Master width should be 320px.");
 
+		orientationStub.restore();
 		oSplitApp.destroy();
 	});
 
 	QUnit.test("ShowHideMode_landscape", function(assert){
-		var oSystem = {
-				desktop: true,
-				tablet: false,
-				phone: false
-			}, oLandscape = {
-				landscape: true,
-				portrait: false
-			};
-
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oLandscape);
+		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});
+		var orientationStub = this.stub(Device, "orientation").value({portrait: false, landscape: true});
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -333,21 +303,13 @@ sap.ui.define([
 		assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 		assert.equal(oSplitApp.$("Master").outerWidth(), 320, "Master width should be 320px.");
 
+		orientationStub.restore();
 		oSplitApp.destroy();
 	});
 
 	QUnit.test("StretchCompressMode_landscape", function(assert){
-		var oSystem = {
-				desktop: true,
-				tablet: false,
-				phone: false
-			}, oLandscape = {
-				landscape: true,
-				portrait: false
-			};
-
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oLandscape);
+		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});
+		var orientationStub = this.stub(Device, "orientation").value({portrait: false, landscape: true});
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -381,6 +343,8 @@ sap.ui.define([
 
 		assert.ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should be visible.");
 		assert.equal(jQuery("#splitapp-Master").outerWidth(),320, "Master width should be 320px.");
+
+		orientationStub.restore();
 		oSplitApp.destroy();
 	});
 
@@ -429,17 +393,10 @@ sap.ui.define([
 	QUnit.module("Public Methods");
 	QUnit.test("ShowMaster", function(assert){
 		var done = assert.async();
-		var oSystem = {
-				desktop: true,
-				tablet: false,
-				phone: false
-			}, oPortrait = {
-				landscape: false,
-				portrait: true
-			};
 
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oPortrait);
+		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});
+		var orientationStub = this.stub(Device, "orientation").value({portrait: true, landscape: false});
+
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -475,6 +432,8 @@ sap.ui.define([
 
 			assert.ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should not be hidden.");
 			assert.equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
+
+			orientationStub.restore();
 			oSplitApp.destroy();
 			done();
 		}, 500);
