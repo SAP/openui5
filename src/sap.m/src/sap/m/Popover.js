@@ -799,7 +799,7 @@ sap.ui.define([
 		 * Opens the Popover and sets the Popover position according to the {@link #getPlacement() placement} property around the <code>oControl</code> parameter.
 		 *
 		 * @param {sap.ui.core.Control|HTMLElement} oControl This is the control to which the Popover will be placed. It can be not only a UI5 control, but also an existing DOM reference. The side of the placement depends on the placement property set in the Popover.
-		 * @param {boolean} bSkipInstanceManager Indicates whether popover should be managed by InstanceManager or not
+		 * @param {boolean} [bSkipInstanceManager=false] Indicates whether popover should be managed by InstanceManager or not.
 		 * @returns {this} Reference to the control instance for chaining
 		 * @public
 		 */
