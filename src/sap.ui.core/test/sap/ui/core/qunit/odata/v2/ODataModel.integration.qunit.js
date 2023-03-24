@@ -9778,9 +9778,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// MERGE request is followed by a GET request within the same batch request.
 	// BCP: 2070497030
 	// JIRA: CPOUI5MODELS-379
+	// Scenario 2: An update *outside* the tree leads to a change; in the customer scenario this is
+	// a low-level change through v2.ODataModel#update. The check for changes in
+	// ODataTreeBindingFlat#_hasChangedEntity when refreshing the model must consider that nodes
+	// may not yet be read from the server.
+	// BCP: 002075129400001959552023
 	QUnit.test("ODataTreeBindingFlat: refreshAfterChange leads to GET", function (assert) {
 		var oModel = createSpecialCasesModel({refreshAfterChange : true}),
 			sView = '\
+<Input id="person" value="{Person}" binding="{/I_UserContactCard(\'foo\')}"/>\
 <t:TreeTable id="table"\
 		rows="{\
 			parameters : {\
@@ -9798,6 +9804,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
+		threshold="0"\
 		visibleRowCount="1"\
 		visibleRowCountMode="Fixed">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
@@ -9807,21 +9814,29 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest({
 				batchNo : 1,
-				requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101&$inlinecount=allpages"
+				requestUri : "I_UserContactCard('foo')"
+			}, {
+				__metadata : {uri : "I_UserContactCard('foo')"},
+				Person : "Alice"
+			})
+			.expectRequest({
+				batchNo : 2,
+				requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=1&$inlinecount=allpages"
 					+ "&$filter=OrderOperationRowLevel le 0"
 			}, {
-				__count : "1",
+				__count : "2",
 				results : [{
 					__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
 					MaintenanceOrder : "Foo"
 				}]
 			})
+			.expectValue("person", "Alice")
 			.ignoreNullChanges("maintenanceOrder") //FIXME: unexpected change occurring in testsuite
 			.expectValue("maintenanceOrder", ["Foo"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-					batchNo : 2,
+					batchNo : 3,
 					data : {
 						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
 						MaintenanceOrder : "Bar"
@@ -9831,11 +9846,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					requestUri : "C_RSHMaintSchedSmltdOrdAndOp('1')"
 				}, NO_CONTENT)
 				.expectRequest({
-					batchNo : 2,
-					requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101"
+					batchNo : 3,
+					requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=1"
 						+ "&$inlinecount=allpages&$filter=OrderOperationRowLevel le 0"
 				}, {
-					__count : "1",
+					__count : "2",
 					results : [{
 						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
 						MaintenanceOrder : "Bar"
@@ -9846,6 +9861,28 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test
 			oModel.setProperty("/C_RSHMaintSchedSmltdOrdAndOp('1')/MaintenanceOrder", "Bar");
 			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 4,
+					data : {
+						Person : "Bob"
+					},
+					method : "MERGE",
+					requestUri : "I_UserContactCard('foo')"
+				})
+				.expectRequest({
+					batchNo : 4,
+					requestUri : "I_UserContactCard('foo')"
+				}, {
+					__metadata : {uri : "I_UserContactCard('foo')"},
+					Person : "Bob"
+				})
+				.expectValue("person", "Bob");
+
+			// code under test: scenario 2
+			oModel.update("/I_UserContactCard('foo')", {"Person" : "Bob"});
 
 			return that.waitForChanges(assert);
 		});
