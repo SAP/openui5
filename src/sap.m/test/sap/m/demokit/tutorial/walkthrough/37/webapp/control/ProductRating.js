@@ -63,6 +63,8 @@ sap.ui.define([
 		setValue: function (fValue) {
 			this.setProperty("value", fValue, true);
 			this.getAggregation("_rating").setValue(fValue);
+
+			return this;
 		},
 
 		reset: function () {
