@@ -1379,10 +1379,19 @@ function(
 	 */
 	MultiComboBox.prototype.onAfterRenderingPicker = function() {
 		var fnOnAfterRenderingPopupType = this["_onAfterRendering" + this.getPickerType()];
+		var iInputWidth = this.getDomRef().getBoundingClientRect().width;
+		var sPopoverMaxWidth = getComputedStyle(this.getDomRef()).getPropertyValue("--sPopoverMaxWidth");
 
 		if (fnOnAfterRenderingPopupType) {
 			fnOnAfterRenderingPopupType.call(this);
 		}
+
+		if (iInputWidth <= parseInt(sPopoverMaxWidth) && !Device.system.phone) {
+			this.getPicker().getDomRef().style.setProperty("max-width", "40rem");
+		} else {
+			this.getPicker().getDomRef().style.setProperty("max-width", iInputWidth + "px");
+		}
+
 	};
 
 	/**
@@ -1392,6 +1401,7 @@ function(
 	 */
 	MultiComboBox.prototype.onBeforeOpen = function() {
 		ComboBoxBase.prototype.onBeforeOpen.apply(this, arguments);
+		var oSuggestionsPopover = this._getSuggestionsPopover();
 		var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()],
 			oDomRef = this.getFocusDomRef();
 
@@ -1409,6 +1419,8 @@ function(
 		if (fnPickerTypeBeforeOpen) {
 			fnPickerTypeBeforeOpen.call(this);
 		}
+
+		oSuggestionsPopover.resizePopup(this);
 	};
 
 	/**

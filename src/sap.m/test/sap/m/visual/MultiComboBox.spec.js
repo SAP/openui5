@@ -266,6 +266,21 @@ describe('sap.m.MultiComboBox', function() {
 		});
 	});
 
+	// Suggestions' max-width should be 40rem
+	it("should limit the nMore popover max-width to 40rem", function() {
+		var mMultiComboLongSuggestions = element(by.id("multiComboBoxWrapping"));
+		var oMultiComboBoxArrow = element(by.id("multiComboBoxWrapping-arrow"));
+
+		mMultiComboLongSuggestions.click();
+
+		// Should open suggestions
+		browser.actions().sendKeys("l").perform();
+		expect(takeScreenshot(mMultiComboLongSuggestions)).toLookAs("multi-combobox-with-long-suggestions");
+
+		// Should close suggestions
+		oMultiComboBoxArrow.click();
+	});
+
 	//MultiComboBox Compact Mode
 	it("should select Compact mode", function(){
 		element(by.id("compactMode")).click();

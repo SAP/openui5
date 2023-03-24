@@ -233,4 +233,19 @@ describe("sap.m.InputVisualTests", function() {
 			expect(takeScreenshot()).toLookAs("no_value_clear_icon_hidden");
 		});
 	});
+
+	// Suggestions' max-width should be 40rem
+	it("should limit the SuggestionsPopover max-width to 40rem", function() {
+		var inputLongSuggestions = element(by.id("inputLongSugg"));
+		browser.executeScript('document.getElementById("inputLongSugg").scrollIntoView()').then(function() {
+			inputLongSuggestions.click();
+
+			// Should open the suggestions
+			browser.actions().sendKeys("l").perform();
+			expect(takeScreenshot(inputLongSuggestions)).toLookAs("input-with-long-suggestions");
+
+			// Should close the dropdown
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		});
+	});
 });

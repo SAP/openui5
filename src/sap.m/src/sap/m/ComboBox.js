@@ -567,11 +567,19 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onAfterRenderingPicker = function() {
 			var fnOnAfterRenderingPickerType = this["onAfterRendering" + this.getPickerType()];
+			var iInputWidth = this.getDomRef().getBoundingClientRect().width;
+			var sPopoverMaxWidth = getComputedStyle(this.getDomRef()).getPropertyValue("--sPopoverMaxWidth");
 
 			fnOnAfterRenderingPickerType && fnOnAfterRenderingPickerType.call(this);
 
 			// hide the list while scrolling to selected item, if necessary
 			fnSelectedItemOnViewPort.call(this, false);
+
+			if (iInputWidth <= parseInt(sPopoverMaxWidth) && !Device.system.phone) {
+				this.getPicker().getDomRef().style.setProperty("max-width", "40rem");
+			} else {
+				this.getPicker().getDomRef().style.setProperty("max-width", iInputWidth + "px");
+			}
 		};
 
 		/**
@@ -874,9 +882,10 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onBeforeOpen = function() {
 			ComboBoxBase.prototype.onBeforeOpen.apply(this, arguments);
+			var oSuggestionsPopover = this._getSuggestionsPopover();
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()];
 
-				this.setProperty("_open", true);
+			this.setProperty("_open", true);
 
 			// the dropdown list can be opened by calling the .open() method (without
 			// any end user interaction), in this case if items are not already loaded
@@ -888,6 +897,7 @@ sap.ui.define([
 			// call the hook to add additional content to the list
 			this.addContent();
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
+			oSuggestionsPopover.resizePopup(this);
 		};
 
 		/**

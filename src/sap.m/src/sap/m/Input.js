@@ -3056,10 +3056,28 @@ function(
 					oSuggPopover.resizePopup(this);
 					this._registerPopupResize();
 					this._bAfterOpenFinisihed = false;
-				}, this)
-				.attachAfterOpen(function () {
-					this._bAfterOpenFinisihed = true;
 				}, this);
+
+			oPopover.addEventDelegate({
+				onAfterRendering: function() {
+					var iInputWidth = this.getDomRef().getBoundingClientRect().width;
+					var sPopoverMaxWidth = getComputedStyle(this.getDomRef()).getPropertyValue("--sPopoverMaxWidth");
+
+					if (this.getMaxSuggestionWidth()) {
+						return;
+					}
+
+					if (iInputWidth <= parseInt(sPopoverMaxWidth) && !Device.system.phone) {
+						oSuggPopover.getPopover().getDomRef().style.setProperty("max-width", "40rem");
+					} else {
+						oSuggPopover.getPopover().getDomRef().style.setProperty("max-width", iInputWidth + "px");
+					}
+
+					oSuggPopover.getPopover().getDomRef().style.setProperty("min-width", iInputWidth + "px");
+
+					this._bAfterOpenFinisihed = true;
+				}
+			}, this);
 		}
 
 		// add popup to a hidden aggregation to also propagate the model and bindings to the content of the popover

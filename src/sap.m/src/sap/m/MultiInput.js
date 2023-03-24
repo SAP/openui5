@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/IconPool',
+	'sap/ui/Device',
 	'./MultiInputRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/completeTextSelected",
@@ -35,6 +36,7 @@ function(
 	ManagedObjectObserver,
 	ResizeHandler,
 	IconPool,
+	Device,
 	MultiInputRenderer,
 	containsOrEquals,
 	completeTextSelected,
@@ -274,6 +276,21 @@ function(
 
 			/* Prevent closing of n more popover when input is clicked */
 			._getPopup().setExtraContent([oTokenizer, this]);
+
+		oTokenizer.getTokensPopup().addEventDelegate({
+			onAfterRendering: function() {
+				var iInputWidth = this.getDomRef().getBoundingClientRect().width;
+				var sPopoverMaxWidth = getComputedStyle(this.getDomRef()).getPropertyValue("--sPopoverMaxWidth");
+
+				if (iInputWidth <= parseInt(sPopoverMaxWidth) && !Device.system.phone) {
+					oTokenizer.getTokensPopup().getDomRef().style.setProperty("max-width", "40rem");
+				} else {
+					oTokenizer.getTokensPopup().getDomRef().style.setProperty("max-width", iInputWidth + "px");
+				}
+
+				oTokenizer.getTokensPopup().getDomRef().style.setProperty("min-width", iInputWidth + "px");
+			}
+		}, this);
 
 		this.setAggregation("tokenizer", oTokenizer);
 
@@ -1522,25 +1539,8 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._onBeforeOpenTokensPicker = function () {
-		var oTokenizer = this.getAggregation("tokenizer"),
-			oPopover = oTokenizer.getTokensPopup(),
-			oDomRef = this.getDomRef(),
-			bEditable = this.getEditable(),
-			iCurrentWidth, iCalculatedWidth;
-
 		this._setValueVisible(false);
 		this._manageListsVisibility(true);
-
-		if (oDomRef && oPopover) {
-			// Popover's width was calculated once in its onBeforeOpen method and is set in PX
-			iCurrentWidth = parseInt(oPopover.getContentWidth());
-			iCalculatedWidth = isNaN(iCurrentWidth) || oDomRef.offsetWidth > iCurrentWidth ? oDomRef.offsetWidth : iCurrentWidth;
-
-			iCalculatedWidth = ((oTokenizer.getTokens().length === 1) || !bEditable) ? "auto" :
-				(iCalculatedWidth / parseFloat(library.BaseFontSize)) + "rem";
-
-			oPopover.setContentWidth(iCalculatedWidth);
-		}
 	};
 
 	/**
