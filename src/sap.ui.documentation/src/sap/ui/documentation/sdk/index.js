@@ -76,39 +76,39 @@
                     });
                 };
 
-                loadInfo().then(function(){
+                // the fl lib has to be loaded before the Component gets created
+                Promise.all([
+                    loadInfo(),
+                    sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
+                    sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
+                ]).then(function(){
 
                     Log.info("Samples paths added successfully");
                     var sCompId = 'sampleComp-' + sSampleId;
                     var sCompName = sSampleId;
 
-                    Promise.all([
-                        sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
-                        sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
-                    ]).then(function () {
-                        sap.ui.require([
-                            "sap/ui/fl/Utils",
-                            "sap/ui/fl/FakeLrepConnectorLocalStorage",
-                            "sap/ui/core/util/reflection/JsControlTreeModifier"
-                        ], function(Utils,
-                                FakeLrepConnectorLocalStorage,
-                                JsControlTreeModifier) {
-                                // fake stable IDs
-                                JsControlTreeModifier.checkControlId = function () {
-                                    return true;
-                                };
-                                Utils.checkControlId = function() {
-                                    return true;
-                                };
-                                FakeLrepConnectorLocalStorage.enableFakeConnector({
-                                    "isProductiveSystem": true
-                                });
-                                postMessageToOrigin({
-                                type: "RTA",
-                                data: {
-                                    "msg": "RTA is loaded"
-                                }
-                            });
+                    sap.ui.require([
+                        "sap/ui/fl/Utils",
+                        "sap/ui/core/util/reflection/JsControlTreeModifier"
+                    ], function(
+                        Utils,
+                        JsControlTreeModifier
+                    ) {
+                        // fake stable IDs and app component
+                        JsControlTreeModifier.checkControlId = function () {
+                            return true;
+                        };
+                        Utils.checkControlId = function() {
+                            return true;
+                        };
+                        Utils.isApplication = function() {
+                            return true;
+                        };
+                        postMessageToOrigin({
+                            type: "RTA",
+                            data: {
+                                "msg": "RTA is loaded"
+                            }
                         });
                     });
 
@@ -237,6 +237,7 @@
     oScriptTag.dataset.sapUiCompatversion = "edge";
     oScriptTag.dataset.sapUiOninit = "onInit";
     oScriptTag.dataset.sapUiBindingsyntax = "complex";
+    oScriptTag.dataset.sapUiFlexibilityservices = '[{"connector": "LocalStorageConnector"}]';
 
     document.write(oScriptTag.outerHTML);
 
