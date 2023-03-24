@@ -34,6 +34,8 @@
 					<PropertyRef Name="ContactCardID"/>
 				</Key>
 				<Property Name="ContactCardID" Type="Edm.String" Nullable="false" MaxLength="12"/>
+				<Property Name="Person" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="Person Number"/>
 			</EntityType>
 			<EntityType Name="UserAssignment">
 				<Key>
