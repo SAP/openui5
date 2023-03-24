@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	'sap/ui/core/date/UI5Date',
 	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/Device',
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
@@ -38,7 +39,8 @@ sap.ui.define([
 	jQuery,
 	Configuration,
 	UI5Date,
-	CalendarUtils
+	CalendarUtils,
+	Device
 ) {
 	"use strict";
 
@@ -110,7 +112,13 @@ sap.ui.define([
 				 * </ul>
 				 * @since 1.54
 				 */
-				initialFocusedDateValue: {type: "object", group: "Data", defaultValue: null}
+				initialFocusedDateValue: {type: "object", group: "Data", defaultValue: null},
+				
+				/**
+				 * If set to true, direct text input is disabled.
+				 * @since 
+				 */
+				valueHelpOnly : {type : "boolean", group : "Behavior", defaultValue : false}
 			},
 			events : {
 
@@ -620,6 +628,27 @@ sap.ui.define([
 		}
 
 		return sText;
+	};
+	
+	/**
+	 * Returns whether the icon for opening the clock picker is clicked or not.
+	 *
+	 * @private
+	 * @returns {boolean} true if the icon is clicked.
+	 */
+	 DateTimeField.prototype._isIconClicked = function (oEvent) {
+		return jQuery(oEvent.target).hasClass("sapUiIcon") || jQuery(oEvent.target).hasClass("sapMInputBaseIconContainer")
+			 || jQuery(oEvent.target).hasClass("sapUiIconTitle");
+	};
+	
+	/**
+	 * Returns whether the device is mobile or not.
+	 *
+	 * @private
+	 * @returns {boolean} true if the device is mobile.
+	 */
+	 DateTimeField.prototype._isMobileDevice = function() {
+		return !Device.system.desktop && (Device.system.phone || Device.system.tablet);
 	};
 
 	return DateTimeField;

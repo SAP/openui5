@@ -186,7 +186,9 @@ sap.ui.define([
 			new Label({text: "DateTimePicker events display", labelFor: "I2"}),
 			new Input("I2", {value: "Content of events DateTimePicker", editable: false}),
 			new Label({text: "DateTimePicker with minutesStep: 3, secondsStep: 5", labelFor: "DP9"}),
-			new DateTimePicker("DP9", { minutesStep: 3, secondsStep: 5 })
+			new DateTimePicker("DP9", { minutesStep: 3, secondsStep: 5 }),
+			new Label({text: "DateTimePicker - valueHelpOnly", labelFor: "DTP10"}),
+			new DateTimePicker("DTP10", { fieldGroupIds: ["group1"], valueHelpOnly : true }),
 		],
 		footer: createFooter()
 	});

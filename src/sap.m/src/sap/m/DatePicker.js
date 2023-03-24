@@ -421,6 +421,9 @@ sap.ui.define([
 			} else {
 				_open.call(this);
 			}
+			
+			this._openByFocusIn = false;
+			this._openByClick = false;
 		}
 	};
 
@@ -532,16 +535,45 @@ sap.ui.define([
 			InputBase.prototype.applyFocusInfo.apply(this, arguments);
 		}
 
+		this._openByFocusIn = false;
+		this._openByClick = false;
 	};
 
 	DatePicker.prototype.onfocusin = function(oEvent) {
 
+		if (this._openByClick) {
+			this._openByClick = false;
+			return;
+		}
+		
 		if (!jQuery(oEvent.target).hasClass("sapUiIcon")) {
-			DateTimeField.prototype.onfocusin.apply(this, arguments);
+			
+			if (this.getValueHelpOnly()) {
+				this.toggleOpen(this._bShouldClosePicker);
+				this._openByFocusIn = true;
+			} else{
+				DateTimeField.prototype.onfocusin.apply(this, arguments);
+			}
 		}
 
 		this._bFocusNoPopup = undefined;
-
+	};
+	
+	/**
+	 * Onclick handler assures opening/closing of the numeric picker.
+	 *
+	 * @private
+	 */
+	 DatePicker.prototype.onclick = function (oEvent) {
+		if (this._openByFocusIn) {
+			this._openByFocusIn = false;
+			return;
+		}
+		
+		if (this.getValueHelpOnly()) {
+			this.toggleOpen(this._bShouldClosePicker);
+			this._openByClick = true;
+		}
 	};
 
 	DatePicker.prototype.onsapshow = function(oEvent) {

@@ -33,12 +33,10 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 	 * @param {sap.m.DatePicker} oDP An object representation of the control that should be rendered.
 	 */
 	DatePickerRenderer.writeInnerAttributes = function(oRm, oDP) {
+		
+		DateTimeFieldRenderer.writeInnerAttributes.apply(this, arguments);
+		
 		oRm.attr("type", "text");
-
-		if (oDP._bMobile) {
-			// prevent keyboard in mobile devices
-			oRm.attr("readonly", "readonly");
-		}
 	};
 
 	DatePickerRenderer.getAccessibilityState = function(oDP) {

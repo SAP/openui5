@@ -545,7 +545,7 @@ function(
 				oNumericPicker = this._getNumericPicker(),
 				bOpen = oNumericPicker && oNumericPicker.isOpen();
 
-			if (!this._isMobileDevice()) {
+			if (!this._isMobileDevice() && !this.getValueHelpOnly()) {
 				DateTimeField.prototype.onfocusin.apply(this, arguments);
 				MaskEnabler.onfocusin.apply(this, arguments);
 			}
@@ -557,6 +557,12 @@ function(
 				this._openByClick = false;
 				return;
 			}
+			
+			if(this.getValueHelpOnly()){
+				this.toggleOpen(false);
+				return;
+			}
+			
 			if (!this._isMobileDevice()) {
 				return;
 			}
@@ -565,7 +571,7 @@ function(
 			}
 			this._openByFocusIn = true;
 		};
-
+		
 		/**
 		 * Onclick handler assures opening/closing of the numeric picker.
 		 *
@@ -580,6 +586,12 @@ function(
 				this._openByFocusIn = false;
 				return;
 			}
+			
+			if(this.getValueHelpOnly()){
+				this.toggleOpen(false);
+				return;
+			}
+			
 			if (!this._isMobileDevice()) {
 				return;
 			}
@@ -587,17 +599,6 @@ function(
 				this.toggleNumericOpen(bOpen);
 			}
 			this._openByClick = true;
-		};
-
-		/**
-		 * Returns whether the icon for opening the clock picker is clicked or not.
-		 *
-		 * @private
-		 * @returns {boolean} true if the icon is clicked.
-		 */
-		 TimePicker.prototype._isIconClicked = function (oEvent) {
-			return jQuery(oEvent.target).hasClass("sapUiIcon") || jQuery(oEvent.target).hasClass("sapMInputBaseIconContainer")
-				 || jQuery(oEvent.target).hasClass("sapUiIconTitle");
 		};
 
 		/**
@@ -658,16 +659,6 @@ function(
 			this.$().removeClass(InputBase.ICON_PRESSED_CSS_CLASS);
 			this._getClocks().showFirstClock(); // prepare for the next opening
 			this.fireAfterValueHelpClose();
-		};
-
-		/**
-		 * Returns whether the device is mobile or not.
-		 *
-		 * @private
-		 * @returns {boolean} true if the device is mobile.
-		 */
-		 TimePicker.prototype._isMobileDevice = function() {
-			return !Device.system.desktop && (Device.system.phone || Device.system.tablet);
 		};
 
 		/**

@@ -87,9 +87,9 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 		 * @param {sap.m.TimePicker} oControl an object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeInnerAttributes = function (oRm, oControl) {
-			if (oControl._isMobileDevice()) {
-				oRm.attr("readonly", "readonly"); // readonly for mobile devices
-			}
+			
+			DateTimeFieldRenderer.writeInnerAttributes.apply(this, arguments);
+			
 			if (oControl.getShowValueStateMessage()) {
 				oRm.attr("autocomplete", "off"); // autocomplete="off" needed so the native browser autocomplete is not shown?
 			}

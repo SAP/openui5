@@ -24,6 +24,19 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 	DateTimeFieldRenderer.getAriaRole = function (oControl) {
 		return "";
 	};
+	
+	/**
+	 * add extra attributes to Picker's Input
+	 *
+	 * @overrides sap.m.InputBaseRenderer.writeInnerAttributes
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.DateTimeField} oControl an object representation of the control that should be rendered
+	 */
+	DateTimeFieldRenderer.writeInnerAttributes = function (oRm, oControl) {
+		if (oControl._isMobileDevice() || oControl.getValueHelpOnly()) {
+			oRm.attr("readonly", "readonly"); // readonly for mobile devices
+		}
+	};	
 
 	return DateTimeFieldRenderer;
 
