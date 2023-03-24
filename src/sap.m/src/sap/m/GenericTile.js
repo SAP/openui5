@@ -237,7 +237,15 @@ sap.ui.define([
 				 * @experimental Since 1.106
 				 * @since 1.106
 				 */
-				 renderOnThemeChange: {type: "boolean", group: "Misc", defaultValue: false}
+				 renderOnThemeChange: {type: "boolean", group: "Misc", defaultValue: false},
+				/**
+				 * Show Badge Information associated with a Tile. Limited to 2 characters.
+				 * Only displayed for tile in IconMode in TwoByHalf frameType having a valid icon.
+				 * Characters currently trimmed to 2.
+				 * @experimental Since 1.114
+				 * @since 1.114
+				 */
+				tileBadge: { type: "string", group: "Misc", defaultValue: "" }
 			},
 			defaultAggregation: "tileContent",
 			aggregations: {

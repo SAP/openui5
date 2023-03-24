@@ -2322,6 +2322,22 @@ html[data-sap-ui-browser*='ff'] {
 	flex-shrink: 0;
 }
 
+.sapMGTTwoByHalfIcon.sapMGTIconBadge .sapMGTTileIcon {
+	font-size: 2.25rem !important;
+}
+
+.sapMGTTwoByHalfIcon .sapMGTileBadge {
+	background: @sapUiContentForegroundColor;
+	color: @sapUiBaseText;
+	padding: 0.3ch 0.625ch;
+	border-radius: 0.25rem;
+	left: 2.3125rem;
+	bottom: 0.375rem;
+	font-size: 0.625rem;
+	line-height: 0.625rem;
+	position: absolute;
+}
+
 .sapMGTTileIcon {
 	color: @sapUiContentContrastTextColor;
 }
@@ -2407,6 +2423,10 @@ html[data-sap-ui-browser*='ff'] {
 	.sapMGTHdrContent {
 		height: auto;
 		max-width: 12.5rem;
+	}
+
+	.sapMGTTwoByHalfIcon .sapMGTileBadge {
+		bottom: 0.8125rem;
 	}
 }
 

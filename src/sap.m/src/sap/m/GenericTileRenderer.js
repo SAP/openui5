@@ -261,12 +261,17 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 						oRm.openEnd();
 					}
 					oRm.openStart("div");
+
+					// Tile Badge: Consider only the first 2 characters for display
+					var sBadgeText = frameType === frameTypes.TwoByHalf && oControl.getTileBadge().trim().substring(0, 2);
 					if (frameType === frameTypes.OneByOne) {
 						oRm.class("sapMGTOneByOneIcon");
 					} else {
 						oRm.class("sapMGTTwoByHalfIcon");
-						if (!this._isThemeHighContrast()) {
-							oRm.style("background-color", sBGColor);
+						if (sBadgeText) {
+							oRm.class("sapMGTIconBadge");
+						} else if (!this._isThemeHighContrast()) {
+								oRm.style("background-color", sBGColor);
 						} else {
 							oRm.class("HighContrastTile");
 							oRm.style("border-color", sBGColor);
@@ -277,7 +282,16 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 					if (oControl.getTileIcon()) {
 						var sAggregation = oControl._generateIconAggregation(oControl.getTileIcon());
 						if (sAggregation) {
-							oRm.renderControl(oControl.getAggregation(sAggregation));
+							var oIcon = oControl.getAggregation(sAggregation);
+							if (sBadgeText) {
+								oIcon.setColor(sBGColor);
+							}
+							oRm.renderControl(oIcon);
+						}
+						if (sBadgeText) {
+							oRm.openStart("div", oControl.getId() + "-tileBadge").class("sapMGTileBadge").openEnd();
+							oRm.text(sBadgeText);
+							oRm.close("div");
 						}
 					}
 					oRm.close("div");

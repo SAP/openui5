@@ -5391,4 +5391,61 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			return generateEvent(type);
 		}
 	}
+
+	QUnit.module("Generic Tile: 'tileBadge' property tests", {
+		beforeEach: function () {
+			this.oGenericTile = new GenericTile({
+				id: "badge-tile",
+				header: "Test Header",
+				subheader: "Test Subheader",
+				mode: "IconMode",
+				frameType: "TwoByHalf",
+				backgroundColor: "black",
+				tileIcon: "sap-icon://folder-full",
+				tileBadge: "99"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Should Only be visible in IconMode and for TwoByHalf frameType and valid icon", function (assert) {
+		assert.ok(document.getElementById("badge-tile-tileBadge"), "tile badge rendered initially");
+
+		//Switch Mode
+		this.oGenericTile.setMode("ContentMode");
+		oCore.applyChanges();
+		assert.notOk(document.getElementById("badge-tile-tileBadge"), "tile badge not rendered for other mode");
+
+		//Switch Frame Type
+		this.oGenericTile.setFrameType(FrameType.OneByOne);
+		oCore.applyChanges();
+		assert.notOk(document.getElementById("badge-tile-tileBadge"), "tile badge not rendered for other frame type");
+
+		//Switch to invalid icon
+		this.oGenericTile.setTileIcon();
+		oCore.applyChanges();
+		assert.notOk(document.getElementById("badge-tile-tileBadge"), "tile badge not rendered for invalid icon");
+
+		//Switch back to original state
+		this.oGenericTile.setMode("IconMode");
+		this.oGenericTile.setFrameType(FrameType.TwoByHalf);
+		this.oGenericTile.setTileIcon("sap-icon://folder-full");
+		oCore.applyChanges();
+		assert.ok(document.getElementById("badge-tile-tileBadge"), "tile badge rendered again");
+	});
+
+	QUnit.test("Should only display 2 characters", function (assert) {
+		var sTestBadge = "1135";
+		assert.ok(document.getElementById("badge-tile-tileBadge"), "tile badge rendered initially");
+
+		//Change tile badge
+		this.oGenericTile.setTileBadge(sTestBadge);
+		oCore.applyChanges();
+		assert.equal(document.getElementById("badge-tile-tileBadge").innerText, sTestBadge.substring(0, 2), "only first 2 characters of the badge value are displayed");
+	});
+
 });
