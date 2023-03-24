@@ -19,7 +19,7 @@
 	  },
 	  {
 		"control": "sap.ui.layout.FixFlex",
-		"url": "../FixFlex.html",
+		"url": "FixFlex.html",
 		"appComponent": "CA-UI5-CTR-ROD"
 	  },
 	  {

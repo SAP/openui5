@@ -9,17 +9,17 @@ sap.ui.require([
 	"sap/m/IconTabFilter",
 	"sap/m/Image",
 	"sap/m/Input",
-	"sap/m/library",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectHeader",
 	"sap/m/ObjectStatus",
 	"sap/m/Page",
 	"sap/m/Panel",
 	"sap/m/RatingIndicator",
+	"sap/m/Text",
 	"sap/ui/core/library",
 	"sap/ui/layout/FixFlex",
 	"sap/ui/table/AnalyticalTable"
-], function(App, Bar, Button, Carousel, Dialog, FlexItemData, IconTabBar, IconTabFilter, Image, Input, mobileLibrary, ObjectAttribute, ObjectHeader, ObjectStatus, Page, Panel, RatingIndicator, coreLibrary, FixFlex, AnalyticalTable) {
+], function(App, Bar, Button, Carousel, Dialog, FlexItemData, IconTabBar, IconTabFilter, Image, Input,  ObjectAttribute, ObjectHeader, ObjectStatus, Page, Panel, RatingIndicator,  Text, coreLibrary, FixFlex, AnalyticalTable) {
 	"use strict";
 
 	var IconColor = coreLibrary.IconColor;
@@ -46,15 +46,17 @@ sap.ui.require([
 		})],
 
 		flexContent: new Carousel({
-			height:'800px',
+			height:'80%',
 
 			pages: [new Image({
 				src: "../../../../test-resources/sap/ui/documentation/sdk/images/HT-6100-large.jpg",
-				alt: "HT-6100",
+				alt: "item HT-6100",
+				decorative: false,
 				tooltip: "HT-6100"
 			}), new Image({
 				src: "../../../../test-resources/sap/ui/documentation/sdk/images/HT-1112.jpg",
-				alt: "HT-1112",
+				alt: "item HT-1112",
+				decorative: false,
 				tooltip: "HT-1112"
 			})]
 		})
@@ -89,15 +91,17 @@ sap.ui.require([
 			})],
 
 		flexContent: new Carousel({
-			width: '800px',
+			width: '50%',
 
 			pages: [new Image({
 				src: "../../../../test-resources/sap/ui/documentation/sdk/images/HT-6100-large.jpg",
-				alt: "HT-6100",
+				alt: "item HT-6100",
+				decorative: false,
 				tooltip: "HT-6100"
 			}), new Image({
 				src: "../../../../test-resources/sap/ui/documentation/sdk/images/HT-1112.jpg",
-				alt: "HT-1112",
+				alt: "item HT-1112",
+				decorative: false,
 				tooltip: "HT-1112"
 			})]
 		})
@@ -333,10 +337,8 @@ sap.ui.require([
 				text: 'Lorem',
 				count: '3',
 				key: 'k1',
-				content: [new AnalyticalTable({
-					visibleRowCountMode: 'Auto',
-					selectionMode: 'MultiToggle',
-					rowHeight: 32
+				content: [new Text({
+					text: 'Lorem Ipsum'
 				})]
 			}), new IconTabFilter({
 				iconColor: IconColor.Default,
@@ -360,11 +362,12 @@ sap.ui.require([
 	});
 
 	var oDialog = new Dialog({
+		title: "Some Title",
 		contentWidth: "90%",
 		contentHeight: "500px",
 		content: [
 			new Page({
-				title: 'asdf',
+				title: 'Test Page',
 				enableScrolling: false,
 				content: oFixFlex7
 			})
