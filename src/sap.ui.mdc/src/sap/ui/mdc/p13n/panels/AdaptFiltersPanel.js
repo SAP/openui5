@@ -368,6 +368,10 @@ sap.ui.define([
 		return this._oSearchField;
     };
 
+    AdaptFiltersPanel.prototype.getInitialFocusedControl = function() {
+		return this._getSearchField();
+    };
+
     AdaptFiltersPanel.prototype._onGroupModeChange = function(oEvt) {
 		this._sModeKey = oEvt.getParameters().selectedItem.getKey();
 		this._filterByModeAndSearch();
