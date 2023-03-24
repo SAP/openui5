@@ -105,7 +105,14 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput._getAvatar()._getActualDisplayType(),
 		"Icon", "Should have default placeholder icon");
 	});
-
+	QUnit.test("Post Button Icon", function (assert) {
+		this.oFeedInput.setEnabled(true);
+		oCore.applyChanges();
+		assert.strictEqual(this.oFeedInput._getPostButton().getIcon(), "sap-icon://paper-plane", "Button icon is paper plane");
+		this.oFeedInput.setEnabled(false);
+		oCore.applyChanges();
+		assert.strictEqual(this.oFeedInput._getPostButton().getIcon(), "sap-icon://paper-plane", "Button icon is paper plane");
+	});
 	QUnit.test("MaxLength", function (assert) {
 		this.oFeedInput.setMaxLength(1001);
 		assert.strictEqual(this.oFeedInput.getMaxLength(), 1001, "Getter should return correct non-default value");
