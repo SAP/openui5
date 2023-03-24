@@ -6,7 +6,6 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/ValidateException',
 	'sap/base/Log',
-	'sap/base/util/merge',
 	'sap/ui/mdc/enum/FieldDisplay',
 	'./Operator',
 	'./RangeOperator',
@@ -25,7 +24,6 @@ function(
 		Filter,
 		ValidateException,
 		Log,
-		merge,
 		FieldDisplay,
 		Operator,
 		RangeOperator,
@@ -64,6 +62,16 @@ function(
 		var FilterOperatorUtil = {
 
 				_mOperators: {
+					/**
+					 * @class
+					 * "Equal to" operator
+					 * @name sap.ui.mdc.condition.operators.EQ
+					 * @since 1.73.0
+					 * @private
+					 * @experimental As of version 1.73
+					 * @ui5-restricted sap.fe
+					 * @MDC_PUBLIC_CANDIDATE
+					 */
 					equal: new Operator({
 						name: "EQ",
 						alias: {Date: "DATE", DateTime: "DATETIME"},
@@ -1497,7 +1505,8 @@ function(
 				 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
 				 * @returns {sap.ui.mdc.condition.Operator|undefined} the operator object, or <code>undefined</code> if the operator with the requested name does not exist
 				 *
-				 * @protected
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.100.0
 				 */
 				 getOperatorForDynamicDateOption: function(sOption, sBaseType) {
@@ -1533,7 +1542,8 @@ function(
 				 * @param {object} oDynamicDateRangeKeys Keys for <code>DynamicDateOption</code>
 				 * @param {sap.ui.mdc.enum.BaseType} sBaseType Basic type
 				 * @returns {string} <code>DynamicDateOption</code>
-				 * @protected
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.100.0
 				 */
 				 getDynamicDateOptionForOperator: function(oOperator, oDynamicDateRangeKeys, sBaseType) {
@@ -1557,7 +1567,8 @@ function(
 				 * @param {sap.ui.mdc.condition.Operator} oOperator Condition to check
 				 * @param {sap.ui.mdc.enum.BaseType} sBaseType Basic type
 				 * @returns {string} <code>DynamicDateOption</code>
-				 * @protected
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
 				 * @since: 1.100.0
 				 */
 				 getCustomDynamicDateOptionForOperator: function(oOperator, sBaseType) {

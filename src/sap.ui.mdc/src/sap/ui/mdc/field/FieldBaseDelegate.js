@@ -160,22 +160,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the key, description, and the in and out parameters of a user input.
+	 * Determines the key, description, and payload of a user input.
 	 *
 	 * If this needs to be determined asynchronously, a <code>Promise</code> is returned.
-	 *
-	 * The result needs to be an object containing the following properties: description, key, and in and out parameters.
-	 * <ul>
-	 * <li><code>key</code>: Key of the item </li>
-	 * <li><code>description</code>: Description of the item </li>
-	 * <li><code>inParameters</code>: Object with in parameters and the corresponding value </li>
-	 * <li><code>outParameters</code>: Object with out parameters and the corresponding value </li>
-	 * </ul>
 	 *
 	 * If the item cannot be determined, a corresponding <code>ParseException<code> is thrown.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
 	 * @param {object} [oConfig] Configuration
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} oConfig.parsedValue Value parsed by data type to fit the data type of the key
@@ -183,7 +175,7 @@ sap.ui.define([
 	 * @param {boolean} oConfig.checkKey If set, it should be checked if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} oConfig.checkDescription If set, it should be checked if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @param {sap.ui.core.Control} oConfig.control Instance if the calling control
-	 * @returns {object|Promise} Object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @returns {sap.ui.mdc.valuehelp.ValueHelpItem|Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Object containing description, key, and payload. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
 	 * @since: 1.78.0
 	 * @private
@@ -201,7 +193,7 @@ sap.ui.define([
 	/**
 	 * Determines the description for a given key.
 	 *
-	 * This function is called while formatting the output of a <code>Field</code> or <code>FilterField</code> control
+	 * This function is called while formatting the output of a {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
 	 * in case a description is to be displayed but only a key is given.
 	 *
 	 * If this needs to be determined asynchronously, a <code>Promise</code> is returned.
@@ -211,10 +203,10 @@ sap.ui.define([
 	 * If the description cannot be determined, a corresponding <code>FormatException<code> is thrown.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
 	 * @param {any} vKey Key
-	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
-	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
+	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.) (Only filled in conditions of old variants.)
+	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.) (Only filled in conditions of old variants.)
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, if bound to one - NOT LONGER USED
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one - NOT LONGER USED

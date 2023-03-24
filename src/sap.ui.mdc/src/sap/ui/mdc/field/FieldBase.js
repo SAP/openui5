@@ -71,6 +71,17 @@ sap.ui.define([
 	var TextDirection = coreLibrary.TextDirection;
 
 	/**
+	 * Modules for {@link sap.ui.mdc.Field Field} and {@link sap.ui.mdc.FilterField FilterField}
+	 * @namespace
+	 * @name sap.ui.mdc.field
+	 * @since 1.58.0
+	 * @private
+	 * @experimental As of version 1.58
+	 * @ui5-restricted sap.ui.mdc sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+
+	/**
 	 * Constructor for a new <code>FieldBase</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -268,7 +279,7 @@ sap.ui.define([
 				 * <ul>
 				 * <li><code>$filters</code> as the name of the condition model</li>
 				 * <li><code>/conditions/</code> as a required static part of the binding</li>
-				 * <li><code>navPath#42;/</code> as the navigation property name</li>
+				 * <li><code>navPath&#42;/</code> as the navigation property name</li>
 				 * <li><code>propertyPath</code> as the property name</li>
 				 * </ul>
 				 * Between <code>navPath</code> and <code>propertyPath</code>, <b>&#42;/</b> is required.
@@ -440,15 +451,15 @@ sap.ui.define([
 				/**
 				 * Optional <code>FieldHelp</code>.
 				 *
-				 * This is an association that allows the usage of one <code>FieldHelp</code> instance for multiple fields.
+				 * This is an association that allows the usage of one <code>ValueHelp</code> instance for multiple fields.
 				 *
-				 * <b>Note:</b> If the field is inside of a table, do not set the <code>FieldHelp</code> instance as <code>dependent</code>
+				 * <b>Note:</b> If the field is inside of a table, do not set the <code>ValueHelp</code> instance as <code>dependent</code>
 				 * to the field. If you do, every field instance in every table row gets a clone of it.
-				 * Put the <code>FieldHelp</code> instance e.g. as dependent on the table or page.
+				 * Put the <code>ValueHelp</code> instance e.g. as dependent on the table or page.
 				 * The <code>FieldHelp</code> instance must be somewhere in the control tree, otherwise there might
 				 * be rendering or update issues.
 				 *
-				 * <b>Note:</b> For <code>Boolean</code> fields, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
+				 * <b>Note:</b> For <code>Boolean</code> fields, no <code>ValueHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
 				 */
 				fieldHelp: {
 					type: "sap.ui.mdc.ValueHelp",
@@ -1336,7 +1347,11 @@ sap.ui.define([
 	};
 
 	/*
-	 * If Field is inside of a SemanticFormElement return formatted value in display mode
+	 * If Field is inside of a {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} return formatted value in display mode
+	 *
+	 * @returns {string} formatted value of the field
+	 * @private
+	 * @ui5-restricted sap.ui.layout.form.SemanticFormElement
 	 */
 	FieldBase.prototype.getFormFormattedValue = function() {
 
@@ -1371,7 +1386,11 @@ sap.ui.define([
 	};
 
 	/*
-	 * If Field is inside of a SemanticFormElement return value holding property (don't use "value" property of Field as conditions are updares async)
+	 * If Field is inside of a {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} return value holding property (don't use "value" property of Field as conditions are updated async)
+	 *
+	 * @returns {string} name of the value holding property
+	 * @private
+	 * @ui5-restricted sap.ui.layout.form.SemanticFormElement
 	 */
 	FieldBase.prototype.getFormValueProperty = function() {
 
@@ -1490,16 +1509,16 @@ sap.ui.define([
 	}
 
 	/**
-	 * Assigns a <code>Label</code> control to the <code>Field</code> or </code>FilterField</code> controls.
+	 * Assigns a <code>Label</code> control to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} controls.
 	 *
-	 * The text of the label is taken from the <code>Field</code> or </code>FilterField</code> controls.
-	 * The <code>labelFor</code> association is set to the <code>Field</code> or </code>FilterField</code> control.
+	 * The text of the label is taken from the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} controls.
+	 * The <code>labelFor</code> association is set to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control.
 	 *
 	 * @param {sap.ui.core.Label} oLabel Label control
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 *
 	 * @private
-	 * @ui5-restricted sap.fe
+	 * @ui5-restricted sap.ui.mdc sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @experimental As of version 1.62.0
 	 * @since 1.62.0 Disclaimer: this function is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.

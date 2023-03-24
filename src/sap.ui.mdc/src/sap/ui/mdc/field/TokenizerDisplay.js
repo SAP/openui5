@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @constructor
 	 * @abstract
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.TokenizerDisplay
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.99.0
 	 * @alias sap.ui.mdc.field.TokenizerDisplay
 	 */

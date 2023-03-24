@@ -217,7 +217,7 @@ sap.ui.define([
 	/**
 	 * Adds an operator to the list of known operators.
 	 *
- 	 * <b>Note</b>: If no operator is set, the used type of the <code>FilterField</code> defines the set of default operators.
+ 	 * <b>Note</b>: If no operator is set, the used <code>datatType</code> of the <code>FilterField</code> defines the set of default operators.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 	 * @returns {this} Reference to <code>this</code> to allow method chaining

@@ -85,7 +85,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A <code>DefineConditionPanel</code> control is used inside the <code>ValueHelpPanel</code> control to enter different types
+	 * A <code>DefineConditionPanel</code> control is used inside the <code>ValueHelp</code> content to enter different types
 	 * of conditions.
 	 *
 	 * @extends sap.ui.core.Control
@@ -99,7 +99,7 @@ sap.ui.define([
 	 * @abstract
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.ValueHelpPanel, sap.ui.mdc.field.ConditionFieldHelp
+	 * @ui5-restricted sap.ui.mdc.valuehelp.content.Conditions
 	 */
 	var DefineConditionPanel = Control.extend("sap.ui.mdc.field.DefineConditionPanel", {
 		metadata: {
@@ -108,6 +108,7 @@ sap.ui.define([
 				/**
 				 * Sets the conditions that represent the selected values of the help.
 				 *
+				 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
 				 * @since 1.62.0
 				 */
 				conditions: {
@@ -119,7 +120,7 @@ sap.ui.define([
 
 				// TODO: better way to pass MaxConditions, Operators, ...
 				/**
-				 * The <code>formatOptions</code> for the <code>ConditionType</code> used to format tokens.
+				 * The <code>formatOptions</code> for the {@link sap.ui.mdc.field.ConditionType ConditionType} used to format tokens.
 				 *
 				 * @since 1.62.0
 				 */
@@ -142,7 +143,7 @@ sap.ui.define([
 				 * If set, there has been no invalid user input.
 				 *
 				 * <b>Note:</b> This property must not be set from outside. It is a property because that way it can be bound to the
-				 * <code>ManagedObjectModel</code> of the calling field help and automatically update it.
+				 * <code>ManagedObjectModel</code> of the calling value help and automatically update it.
 				 *
 				 * @since 1.87.0
 				 */
@@ -154,17 +155,7 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Optional content that can be rendered.
-				 *
-				 * <b>Note:</b> Bind the value-holding property of the control to <code>'$field>/conditions'</code>
-				 * using <code>sap.ui.mdc.field.ConditionsType</code> as type.
-				 *
-				 * If the control needs to show multiple conditions, bind its aggregation to </code>'$field>/conditions'</code>.
-				 * Bind the item controls value-holding property using <code>sap.ui.mdc.field.ConditionType</code> as type.
-				 *
-				 * <b>Warning:</b> Only controls allowed in a </code>Form</code> are allowed to be used for this optional content.
-				 * Other controls might break the layout.
-				 * This means the <code>sap.ui.core.IFormContent</code> interface needs to be implemented by these controls.
+				 * Internal content that is rendered.
 				 */
 				_content: {
 					type: "sap.ui.core.Control",
@@ -176,11 +167,11 @@ sap.ui.define([
 				/**
 				 * Optional <code>FieldHelp</code>.
 				 *
-				 * This is an association that allows the usage of one <code>FieldHelp</code> instance for the value fields for the <code>DefineConditionPanel</code>.
+				 * This is an association that allows the usage of one <code>ValueHelp</code> instance for the value fields for the <code>DefineConditionPanel</code>.
 
 				 * <b>Note:</b> The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp</code> with a <code>TypeAhead</code> and single-selection <code>MTable</code> can be used.
 
-				 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code>, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
+				 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code>, no <code>FieldHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
 				 */
 				fieldHelp: {
 					type: "sap.ui.mdc.ValueHelp",
