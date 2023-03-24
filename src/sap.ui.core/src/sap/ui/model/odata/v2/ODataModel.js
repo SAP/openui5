@@ -6573,7 +6573,11 @@ sap.ui.define([
 		oEntityType = this.oMetadata._getEntityTypeByPath(oEntityInfo.key);
 		oNavPropRefInfo = oEntityType && this.oMetadata._getNavPropertyRefInfo(oEntityType, sPropertyPath);
 		bIsNavPropExpanded = oNavPropRefInfo && oOriginalEntry[oNavPropRefInfo.name] && oOriginalEntry[oNavPropRefInfo.name].__ref;
-		if (bIsNavPropExpanded && oNavPropRefInfo.keys.length === 1) {
+		if (bIsNavPropExpanded && oNavPropRefInfo.keys.length === 1
+			// only if the referenced entity has exactly 1 key we can update the reference; more
+			// keys are not yet supported; for draft enabled entities not all key properties are
+			// maintained as referential constraints
+			&& this.oMetadata._getEntityTypeByPath(oNavPropRefInfo.entitySet).key.propertyRef.length === 1) {
 			if (oValue === null) {
 				oRef = null;
 			} else {

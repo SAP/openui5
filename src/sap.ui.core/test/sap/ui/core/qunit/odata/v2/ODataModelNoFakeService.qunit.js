@@ -7484,6 +7484,91 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setProperty: with same value for referential constraint", function (assert) {
+		var oContext = {},
+			oEntry = {__metadata: {}},
+			oLoadedPromise = Promise.resolve(),
+			oMetadata = {
+				_getEntityTypeByPath: function () {},
+				_getNavPropertyRefInfo: function () {},
+				loaded: function () {}
+			},
+			oMetadataMock = this.mock(oMetadata),
+			oModel = {
+				mChangedEntities: {},
+				oMetadata: oMetadata,
+				_getObject: function () {},
+				_resolveGroup: function () {},
+				abortInternalRequest: function () {},
+				checkUpdate: function () {},
+				createKey: function () {},
+				getEntityByPath: function () {},
+				isLaundering: function () {},
+				resolve: function () {},
+				resolveDeep: function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oNavPropRefInfo = {
+				entitySet: "~otherEntity",
+				keys: ["property"],
+				name: "navigagtionProperty"
+			},
+			oOriginalEntry = {
+				__metadata: {},
+				navigagtionProperty: {
+					__ref: "~navigationTarget"
+				},
+				property: "foo"
+			};
+
+		oModelMock.expects("resolve")
+			.withExactArgs("property", sinon.match.same(oContext))
+			.returns("/Entity(42)/property");
+		oModelMock.expects("resolveDeep")
+			.withExactArgs("property", sinon.match.same(oContext))
+			.returns("~deepPath");
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/Entity(42)/property", null, /*by ref oEntityInfo*/{})
+			.callsFake(function (sResolvedPath, oContext, oEntityInfo) { // fill reference parameter
+				oEntityInfo.key = "~key";
+				oEntityInfo.propertyPath = "~propertyPath";
+
+				return oEntry;
+			});
+		oModelMock.expects("_getObject").withExactArgs("/~key", null, true).returns(oOriginalEntry);
+		oModelMock.expects("_getObject")
+			.withExactArgs("property", sinon.match.same(oContext), true)
+			.returns("foo");
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("~key")
+			.returns("~oEntityType");
+		oMetadataMock.expects("_getNavPropertyRefInfo")
+			.withExactArgs("~oEntityType", "property")
+			.returns(oNavPropRefInfo);
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("~otherEntity")
+			.returns({
+				key: {
+					propertyRef: ["key1", "key2"]
+				}
+			});
+		oModelMock.expects("createKey").never();
+		oModelMock.expects("isLaundering").withExactArgs("/~key").returns(false);
+		oModelMock.expects("checkUpdate").withExactArgs(false, undefined, {"~key": true});
+		oMetadataMock.expects("loaded").withExactArgs().returns(oLoadedPromise);
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.setProperty.call(oModel, "property", "foo", oContext),
+			true);
+
+		oModelMock.expects("_resolveGroup").withExactArgs("~key").returns({groupId: "group"});
+		oModelMock.expects("abortInternalRequest").withExactArgs("group", {requestKey: "~key"});
+
+		return oLoadedPromise.then(function () {});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getObject: missing selected property for a created entity", function (assert) {
 		var oEntity = {
 				__metadata : {

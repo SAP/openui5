@@ -97,6 +97,35 @@
 				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3"
 					sap:unicode="false" sap:unit="CurrencyCode" sap:label="Unit Price" />
 			</EntityType>
+			<EntityType Name="C_BPAdditionalCustomerType" sap:label="BP Additional Customers"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BusinessPartner" />
+					<PropertyRef Name="Customer" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="BusinessPartner" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="Customer" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="to_BusinessPartnerCustomer"
+					Relationship="special.cases.assoc_1"
+					FromRole="ToRole_assoc_1"
+					ToRole="FromRole_assoc_1"/>
+			</EntityType>
+			<EntityType Name="C_BusinessPartnerCustomerType" sap:label="Business Partner"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BusinessPartner" />
+					<PropertyRef Name="IsActiveEntity" />
+				</Key>
+				<Property Name="BusinessPartner" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="Name" Type="Edm.String" MaxLength="40" />
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" />
+				<NavigationProperty Name="to_BPAdditionalCustomer"
+					Relationship="special.cases.assoc_1"
+					FromRole="FromRole_assoc_1"
+					ToRole="ToRole_assoc_1"/>
+			</EntityType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
 				<End Type="special.cases.DummyType" Multiplicity="1"
 					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
@@ -115,6 +144,22 @@
 				<End Type="special.cases.I_UserContactCardType" Multiplicity="*"
 					Role="ToRole_assoc_AllUserContactCards"/>
 			</Association>
+			<Association Name="assoc_1" sap:content-version="1">
+				<End Type="special.cases.C_BusinessPartnerCustomerType" Multiplicity="1"
+					Role="FromRole_assoc_1">
+					<OnDelete Action="Cascade" />
+				</End>
+				<End Type="special.cases.C_BPAdditionalCustomerType" Multiplicity="*"
+					Role="ToRole_assoc_1" />
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_1">
+						<PropertyRef Name="BusinessPartner" />
+					</Principal>
+					<Dependent Role="ToRole_assoc_1">
+						<PropertyRef Name="BusinessPartner" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
 			<EntityContainer Name="Container" m:IsDefaultEntityContainer="true"
 				sap:message-scope-supported="true">
 				<EntitySet Name="C_RSHMaintSchedSmltdOrdAndOp"
@@ -132,6 +177,10 @@
 					EntityType="special.cases.C_BankConditionTPType"/>
 				<EntitySet Name="Employees" EntityType="special.cases.Employee" />
 				<EntitySet Name="ProductSet" EntityType="special.cases.Product"/>
+				<EntitySet Name="C_BPAdditionalCustomer"
+					EntityType="special.cases.C_BPAdditionalCustomerType" sap:content-version="1"/>
+				<EntitySet Name="C_BusinessPartnerCustomer"
+					EntityType="special.cases.C_BusinessPartnerCustomerType" sap:content-version="1"/>
 				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
 					<End EntitySet="DummySet"
@@ -151,6 +200,10 @@
 					<End EntitySet="C_SubscrpnProductChargeTP"
 						Role="FromRole_assoc_AllUserContactCards"/>
 					<End EntitySet="I_UserContactCard" Role="ToRole_assoc_AllUserContactCards"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_1" Association="special.cases.assoc_1" sap:content-version="1">
+					<End EntitySet="C_BusinessPartnerCustomer" Role="FromRole_assoc_1" />
+					<End EntitySet="C_BPAdditionalCustomer" Role="ToRole_assoc_1" />
 				</AssociationSet>
 				<!-- BCP: 2170085431: function import returning a collection; result is bound to a
 					table -->
