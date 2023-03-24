@@ -295,7 +295,7 @@ sap.ui.define([
 		 * Converts the select paths into an object where each of the selected properties has the
 		 * value <code>true</code>, unless a (complex) parent property is also selected.
 		 *
-		 * @param {string[]} aSelect - The list of selected paths
+		 * @param {string[]} [aSelect] - The list of selected paths
 		 * @returns {object|boolean} - An object marking the selected properties or
 		 *    <code>true</code> if all properties are selected ("*")
 		 */
@@ -1401,6 +1401,25 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a list of properties that would be expected due to $select/$expand, but are
+		 * missing in vEntityOrCollection. Does not analyze $expand any further, only checks whether
+		 * there is data for the navigation property itself (relying on requestSideEffects to take
+		 * care of the details).
+		 *
+		 * @param {object|object[]} vEntityOrCollection - The entity (collection)
+		 * @param {object} mQueryOptions - The query options (only $select and $expand required)
+		 * @returns {string[]}
+		 *   A list of paths relative to vEntityOrCollection for which the property value is missing
+		 * @throws {Error} If there is a path containing "*"
+		 */
+		getMissingPropertyPaths : function (vEntityOrCollection, mQueryOptions) {
+			return (mQueryOptions.$select || []).concat(Object.keys(mQueryOptions.$expand || {}))
+				.filter(function (sPath) {
+					return _Helper.isMissingProperty(vEntityOrCollection, sPath);
+				});
+		},
+
+		/**
 		 * Returns the list of predicates corresponding to the given list of contexts, or
 		 * <code>null</code if at least one predicate is missing.
 		 *
@@ -1799,6 +1818,41 @@ sap.ui.define([
 			return mParameters
 				&& mParameters.$$aggregation
 				&& !mParameters.$$aggregation.hierarchyQualifier;
+		},
+
+		/**
+		 * Returns whether the given property is missing in vEntityOrCollection. This is the case if
+		 * there is no value for it. It is not missing if a parent has a <code>null</code> value. In
+		 * a collection it is missing if any member misses it.
+		 *
+		 * @param {object|object[]} vEntityOrCollection - The entity (collection)
+		 * @param {string} sPath - The property path
+		 * @returns {boolean} Whether the property is missing
+		 * @throws {Error} If there is a path containing "*"
+		 */
+		isMissingProperty : function (vEntityOrCollection, sPath) {
+			var aSegments = sPath.split("/");
+
+			// Checks whether the sub-path in aSegments starting at index i is missing in vValue
+			function isMissing(vValue, i) {
+				var vProperty;
+
+				if (Array.isArray(vValue)) {
+					return vValue.some(function (vItem) {
+						return isMissing(vItem, i);
+					});
+				}
+				vProperty = vValue[aSegments[i]];
+				if (vProperty && typeof vProperty === "object" && i + 1 < aSegments.length) {
+					return isMissing(vProperty, i + 1);
+				}
+				return vProperty === undefined;
+			}
+
+			if (sPath.includes("*")) {
+				throw new Error("Unsupported property path " + sPath);
+			}
+			return isMissing(vEntityOrCollection, 0);
 		},
 
 		/**
@@ -2525,7 +2579,7 @@ sap.ui.define([
 						// copy complete collection; no change events as long as collection-valued
 						// properties are not supported; transient entity collections from a deep
 						// insert are handled elsewhere
-						if (!(vTargetProperty && vTargetProperty.$transient)) {
+						if (!(vTargetProperty && vTargetProperty.$postBodyCollection)) {
 							oTarget[sProperty] = vSourceProperty;
 						}
 					} else if (vSourceProperty && typeof vSourceProperty === "object"

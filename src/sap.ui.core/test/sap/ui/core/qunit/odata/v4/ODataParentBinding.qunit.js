@@ -4069,14 +4069,16 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
 			.returns([oDependent0, oDependent1]);
-		this.mock(oDependent0).expects("updateAfterCreate").withExactArgs()
+		this.mock(oDependent0).expects("updateAfterCreate")
+			.withExactArgs("~bSkipRefresh~", "~sGroupId~")
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bDependent0Updated = true;
 					resolve();
 				});
 			}));
-		this.mock(oDependent1).expects("updateAfterCreate").withExactArgs()
+		this.mock(oDependent1).expects("updateAfterCreate")
+			.withExactArgs("~bSkipRefresh~", "~sGroupId~")
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bDependent1Updated = true;
@@ -4085,7 +4087,7 @@ sap.ui.define([
 			}));
 
 		// code under test
-		oPromise = oBinding.updateAfterCreate().then(function () {
+		oPromise = oBinding.updateAfterCreate("~bSkipRefresh~", "~sGroupId~").then(function () {
 			assert.strictEqual(bDependent0Updated, true);
 			assert.strictEqual(bDependent1Updated, true);
 		});

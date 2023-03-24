@@ -124,7 +124,9 @@ sap.ui.define([
 		// BEWARE: #doReplaceWith can insert a context w/ negative index, but w/o #created promise
 		// into aContexts' area of "created contexts"!
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
-		this.bDeepCreate = false; // Whether the binding is within a deep create
+		// Whether the binding is a nested binding within a deep create; it is true while using the
+		// parent cache so that it can contribute to the POST request (see #prepareDeepCreate)
+		this.bDeepCreate = false;
 		this.iDeletedContexts = 0; // number of (client-side) deleted contexts
 		this.oDiff = undefined;
 		this.aFilters = [];
@@ -714,7 +716,14 @@ sap.ui.define([
 	 * create resolves. <b>Beware:</b> After a succesful creation of the main entity the context
 	 * returned for a nested entity is no longer valid. New contexts are created for the nested
 	 * collection because it is not possible to reliably assign the response entities to those of
-	 * the request, especially if the count differs. Deep create is an <b>experimental</b> API.
+	 * the request, especially if the count differs.
+	 *
+	 * Deep create requires the <code>autoExpandSelect<code> parameter at the
+	 * {@link sap.ui.model.odata.v4.ODataModel#constructor model}. The refresh after a deep create
+	 * is optimized. Only the (navigation) properties missing from the POST response are actually
+	 * requested. If the POST response contains all required properties, no request is sent at all.
+	 *
+	 * Deep create is an <b>experimental</b> API.
 	 *
 	 * Note: Creating at the end is only allowed if the final length of the binding is known (see
 	 * {@link #isLengthFinal}), so that there is a clear position to place this entity at. This is
@@ -828,7 +837,7 @@ sap.ui.define([
 				that.fireEvent("createSent", {context : oContext});
 			}
 		).then(function (oCreatedEntity) { // the entity was created on the server
-			var sGroupId, sPredicate;
+			var bDeepCreate, sGroupId, sPredicate;
 
 			if (that.isTransient()) {
 				return;
@@ -842,16 +851,16 @@ sap.ui.define([
 				}
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
+			bDeepCreate = _Helper.getPrivateAnnotation(oCreatedEntity, "deepCreate");
+			_Helper.deletePrivateAnnotation(oCreatedEntity, "deepCreate");
 			sGroupId = that.getGroupId();
-			if (bSkipRefresh) {
-				oContext.updateAfterCreate();
-				return; // do not wait for late property requests to be finished!
-			}
 			if (that.oModel.isApiGroup(sGroupId)) {
 				sGroupId = "$auto";
 			}
-
-			return that.refreshSingle(oContext, that.lockGroup(sGroupId));
+			// currently the optimized update w/o bSkipRefresh is restricted to deep create
+			return bSkipRefresh || bDeepCreate
+				? oContext.updateAfterCreate(bSkipRefresh, sGroupId)
+				: that.refreshSingle(oContext, that.lockGroup(sGroupId));
 		}, function (oError) {
 			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
 			throw oError;
@@ -2900,7 +2909,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prepares the binding for a deep create if there is a transient parent context. Adds a
+	 * Prepares the nested binding for a deep create if there is a transient parent context. Adds a
 	 * transient collection to the parent binding's cache. Creates contexts for nested entities in
 	 * the initial data.
 	 *
@@ -2919,6 +2928,7 @@ sap.ui.define([
 
 		if (!(oContext && oContext.isTransient && oContext.isTransient()) || this.bDeepCreate) {
 			// only relevant if the context is transient and the binding is not in deep create yet
+			this.bDeepCreate = false;
 			return false;
 		}
 
@@ -3049,7 +3059,6 @@ sap.ui.define([
 			aDependentBindings = that.getDependentBindings();
 			that.reset(ChangeReason.Refresh, !oCache || (bKeepCacheOnError ? false : undefined),
 				sGroupId); // this may reset that.oRefreshPromise
-			that.bDeepCreate = false;
 			return SyncPromise.all(
 				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)
 			).then(function () {
@@ -3987,17 +3996,37 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#updateAfterCreate
 	 */
-	ODataListBinding.prototype.updateAfterCreate = function () {
-		var oPromise;
+	ODataListBinding.prototype.updateAfterCreate = function (bSkipRefresh, sGroupId) {
+		var oPromise,
+			oSideEffectsPromise,
+			that = this;
 
 		if (this.iCreatedContexts) { // deep create
-			this.reset(ChangeReason.Change, true); // throw the old, transient contexts away
-			oPromise = asODataParentBinding.prototype.updateAfterCreate.apply(this);
-		} else {
-			oPromise = this.refreshInternal(""); // full refresh to see if the server created some
+			if (bSkipRefresh) {
+				this.reset(ChangeReason.Change, true); // throw the old, transient contexts away
+			} else {
+				this.reset(undefined, true); // silently throw the old, transient contexts away
+				// ensure that we have new contexts
+				oSideEffectsPromise = this.fetchContexts(0, Infinity, 0, _GroupLock.$cached)
+					.then(function () {
+						that.iCurrentEnd = that.aContexts.length;
+						return that.requestSideEffects(sGroupId,
+							_Helper.getMissingPropertyPaths(
+								that.fetchValue("", null, true).getResult(),
+								that.mAggregatedQueryOptions));
+					}).then(function () {
+						// do not fire until requestSideEffects is finished to avoid unwanted
+						// late property requests
+						that._fireChange({reason : ChangeReason.Change});
+					});
+			}
+			oPromise = SyncPromise.all([
+				oSideEffectsPromise,
+				asODataParentBinding.prototype.updateAfterCreate.apply(this, arguments)
+			]);
+		} else { // full refresh to see if the server created some
+			oPromise = this.refreshInternal("", sGroupId);
 		}
-
-		this.bDeepCreate = false;
 
 		return oPromise;
 	};

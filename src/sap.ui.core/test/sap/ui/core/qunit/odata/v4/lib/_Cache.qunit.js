@@ -5751,6 +5751,10 @@ sap.ui.define([
 			oHelperMock.expects("getPrivateAnnotation").withExactArgs(oChildEntity, "resolve")
 				.returns(aResolve[i]);
 		});
+		oHelperMock.expects("updateExisting") // setCount
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners),
+				"path/to/entity/deepCreateCollection",
+				sinon.match.same(oEntity.deepCreateCollection), {$count : 2});
 		oCreatedEntity.deepCreateCollection.forEach(function (oCreatedChildEntity, i) {
 			oHelperMock.expects("getPrivateAnnotation")
 				.withExactArgs(oCreatedChildEntity, "predicate").returns("~predicate~" + i);
@@ -5762,8 +5766,10 @@ sap.ui.define([
 				});
 		});
 
-		// code under test
-		oCache.updateNestedCreates("path/to/entity", oEntity, oCreatedEntity);
+		assert.strictEqual(
+			// code under test
+			oCache.updateNestedCreates("path/to/entity", oEntity, oCreatedEntity),
+			true);
 
 		assert.deepEqual(oEntity.deepCreateCollection, [
 			{origin : "~created0~"},
@@ -5773,7 +5779,6 @@ sap.ui.define([
 			"~predicate~0" : {origin : "~created0~"},
 			"~predicate~1" : {origin : "~created1~"}
 		});
-		assert.strictEqual(oEntity.deepCreateCollection.$count, 2);
 		assert.strictEqual(oEntity.deepCreateCollection.$created, 0);
 		assert.notOk("$postBodyCollection" in oEntity.deepCreateCollection);
 		assert.notOk("$select" in oEntity.deepCreateCollection);
@@ -5784,6 +5789,11 @@ sap.ui.define([
 		for (i = oFixture.count; i < aResolve.length; i += 1) {
 			assert.notOk(aResolve[i].called, i);
 		}
+
+		assert.strictEqual(
+			// code under test
+			oCache.updateNestedCreates("path/to/entity", {}, {}),
+			false);
 	});
 });
 
@@ -6209,7 +6219,8 @@ sap.ui.define([
 			assert.deepEqual(oCache.aElements, [
 				{
 					"@$ui5._" : {
-						transientPredicate : "($uid=id-1-23)"
+						transientPredicate : "($uid=id-1-23)",
+						deepCreate : false
 					},
 					"@$ui5.context.isTransient" : false
 				},
@@ -8426,6 +8437,8 @@ sap.ui.define([
 					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult),
 					["ID", "Name"], undefined, true)
 				.callsFake(function () {
+					assert.strictEqual(arguments[3]["@$ui5.context.isTransient"], false);
+					arguments[2]["@$ui5.context.isTransient"] = false;
 					if (bKeepTransientPath === false) {
 						oEntityDataCleaned["@$ui5._"].predicate = sPredicate;
 					}
@@ -8434,7 +8447,11 @@ sap.ui.define([
 			oCacheMock.expects("updateNestedCreates")
 				.withExactArgs(sPathInCache
 						+ (bKeepTransientPath === false ? sPredicate : sTransientPredicate),
-					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult));
+					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult))
+				.returns("~bDeepCreate~");
+			oHelperMock.expects("setPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oEntityDataCleaned), "deepCreate", "~bDeepCreate~")
+				.callThrough();
 			// count is already updated when creating the transient entity
 			oCache.registerChangeListener(sPathInCache + "/$count", oCountChangeListener);
 
@@ -8479,6 +8496,7 @@ sap.ui.define([
 					oExpectedPrivateAnnotation.predicate = sPredicate;
 				}
 				oExpectedPrivateAnnotation.transientPredicate = sTransientPredicate;
+				oExpectedPrivateAnnotation.deepCreate = "~bDeepCreate~";
 				assert.deepEqual(oEntityData, {
 					"@$ui5._" : oExpectedPrivateAnnotation,
 					"@$ui5.context.isTransient" : false,

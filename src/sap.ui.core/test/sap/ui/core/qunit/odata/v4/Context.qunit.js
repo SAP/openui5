@@ -4214,14 +4214,15 @@ sap.ui.define([
 		this.mock(oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 		// each test lets another dependent's updateAfterCreate fail to see that it is reported
 		aDependents.forEach(function (oDependent, i) {
-			that.mock(oDependent).expects("updateAfterCreate").withExactArgs()
+			that.mock(oDependent).expects("updateAfterCreate")
+				.withExactArgs("~bSkipRefresh~", "~group~")
 				.returns(i === iFailureIndex
 					? SyncPromise.reject("~oError~")
 					: SyncPromise.resolve());
 		});
 
 		// code under test
-		oContext.updateAfterCreate();
+		oContext.updateAfterCreate("~bSkipRefresh~", "~group~");
 
 		sinon.assert.calledOnceWithExactly(fnReporter, "~oError~");
 	});

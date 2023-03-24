@@ -617,7 +617,8 @@ sap.ui.define([
 
 				_Helper.deletePrivateAnnotation(oEntityData, "postBody");
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
-				oEntityData["@$ui5.context.isTransient"] = false;
+				// ensure that change listeners are informed via updateSelected
+				aResult[0]["@$ui5.context.isTransient"] = false;
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 				that.visitResponse(oCreatedEntity, aResult[1],
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
@@ -645,8 +646,10 @@ sap.ui.define([
 				_Helper.updateSelected(that.mChangeListeners, sResultingPath, oEntityData,
 					oCreatedEntity, aSelect, /*fnCheckKeyPredicate*/ undefined,
 					/*bOkIfMissing*/ true);
-				// update properties from collections in a deep create
-				that.updateNestedCreates(sResultingPath, oEntityData, oCreatedEntity);
+				_Helper.setPrivateAnnotation(oEntityData, "deepCreate",
+					// update properties from collections in a deep create
+					that.updateNestedCreates(sResultingPath, oEntityData, oCreatedEntity)
+				);
 
 				that.removePendingRequest();
 				fnResolve(true);
@@ -2350,11 +2353,13 @@ sap.ui.define([
 	 * @param {string} sPath - The path of the created entity within the cache
 	 * @param {object} oEntity - The entity in the cache
 	 * @param {object} oCreatedEntity - The created entity from the response
+	 * @returns {boolean} Whether there actually was a deep create
 	 *
 	 * @private
 	 */
 	_Cache.prototype.updateNestedCreates = function (sPath, oEntity, oCreatedEntity) {
-		var that = this;
+		var bDeepCreate = false,
+			that = this;
 
 		Object.keys(oEntity).forEach(function (sSegment) {
 			var vCollection = oEntity[sSegment],
@@ -2376,7 +2381,9 @@ sap.ui.define([
 					// rebuild the collection from the response only taking the selected properties
 					vCollection.$created = 0;
 					vCollection.$byPredicate = {};
-					vCollection.length = vCollection.$count = aCreatedCollection.length;
+					vCollection.length = aCreatedCollection.length;
+					setCount(that.mChangeListeners, sCollectionPath, vCollection,
+						vCollection.length);
 					aCreatedCollection.forEach(function (oCreatedChildEntity, i) {
 						var sPredicate
 								= _Helper.getPrivateAnnotation(oCreatedChildEntity, "predicate");
@@ -2389,8 +2396,11 @@ sap.ui.define([
 				}
 				delete vCollection.$postBodyCollection;
 				delete vCollection.$select;
+				bDeepCreate = true;
 			}
 		});
+
+		return bDeepCreate;
 	};
 
 	/**

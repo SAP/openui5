@@ -2544,7 +2544,6 @@ sap.ui.define([
 		oBindingMock.verify();
 		oBinding.iCurrentEnd = 1;
 
-		oBinding.bDeepCreate = "~bDeepCreate~";
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false);
 		this.mock(oBinding).expects("removeCachesAndMessages")
@@ -2566,8 +2565,6 @@ sap.ui.define([
 		// simulate getContexts
 		oBinding.resolveRefreshPromise(
 			oFixture.success ? Promise.resolve() : Promise.reject(oError));
-
-		assert.strictEqual(oBinding.bDeepCreate, false);
 
 		return oRefreshResult.then(function (oResult) {
 			assert.ok(oFixture.success);
@@ -4542,7 +4539,7 @@ sap.ui.define([
 				false, sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve(oCreateInCachePromise0));
 		oCreateInCachePromise0.then(function () {
-			that.mock(oContext0).expects("updateAfterCreate").withExactArgs();
+			that.mock(oContext0).expects("updateAfterCreate").withExactArgs(true, "$auto");
 		});
 		this.mock(oContextPrototype).expects("fetchValue").twice().withExactArgs().resolves({});
 
@@ -4566,7 +4563,7 @@ sap.ui.define([
 				false, sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve(oCreateInCachePromise1));
 		oCreateInCachePromise1.then(function () {
-			that.mock(oContext1).expects("updateAfterCreate").withExactArgs();
+			that.mock(oContext1).expects("updateAfterCreate").withExactArgs(true, "$auto");
 		});
 
 		// code under test (create second entity, skip refresh)
@@ -4730,7 +4727,8 @@ sap.ui.define([
 
 				aCreatePromises[iCurrentCreateNo].then(function () {
 					oHelperMock.expects("getPrivateAnnotation").exactly(oFixture.bTransient ? 0 : 1)
-						.withExactArgs(aCreatedElements[iCurrentCreateNo], "predicate")
+						.withExactArgs(sinon.match.same(aCreatedElements[iCurrentCreateNo]),
+							"predicate")
 						.returns("~predicate~");
 					oBindingMock.expects("adjustPredicate").exactly(oFixture.bTransient ? 0 : 1)
 						.withExactArgs(sinon.match(rTransientPredicate), "~predicate~",
@@ -4740,6 +4738,10 @@ sap.ui.define([
 							context : sinon.match.same(aContexts[iCurrentCreateNo]),
 							success : true
 						});
+					oHelperMock.expects("getPrivateAnnotation").exactly(oFixture.bTransient ? 0 : 1)
+						.withExactArgs(sinon.match.same(aCreatedElements[iCurrentCreateNo]),
+							"deepCreate")
+						.returns(false);
 					oBindingMock.expects("lockGroup").exactly(oFixture.bTransient ? 0 : 1)
 						.withExactArgs(oFixture.sGroupId === "$direct" ? "$direct" : "$auto")
 						.returns(oGroupLock);
@@ -4804,8 +4806,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bSkipRefresh) {
-		QUnit.test("create: bSkipRefresh " + bSkipRefresh, function () {
+	[
+		{bSkipRefresh : true, bDeepCreate : false},
+		{bSkipRefresh : false, bDeepCreate : false, bRefreshSingle : true},
+		{bSkipRefresh : false, bDeepCreate : true}
+	].forEach(function (oFixture) {
+		QUnit.test("create: " + JSON.stringify(oFixture), function () {
 			var oBinding = this.bindList("/EMPLOYEES"),
 				oBindingMock = this.mock(oBinding),
 				oContext,
@@ -4814,6 +4820,7 @@ sap.ui.define([
 				oCreatePromise = SyncPromise.resolve(Promise.resolve(oCreatedEntity)),
 				oGroupLock0 = {},
 				oGroupLock1 = {},
+				oHelperMock = this.mock(_Helper),
 				oInitialData = {},
 				sPredicate = "(ID=42)",
 				oRefreshedEntity = {},
@@ -4831,7 +4838,7 @@ sap.ui.define([
 				.returns(oCreatePromise);
 			this.mock(oContextPrototype).expects("fetchValue").withExactArgs().resolves({});
 			oCreatePromise.then(function () {
-				that.mock(_Helper).expects("getPrivateAnnotation")
+				oHelperMock.expects("getPrivateAnnotation")
 					.withExactArgs(sinon.match.same(oCreatedEntity), "predicate")
 					.returns(sPredicate);
 				oBindingMock.expects("fireEvent")
@@ -4839,20 +4846,28 @@ sap.ui.define([
 						context : sinon.match.same(oContext),
 						success : true
 					});
+				oHelperMock.expects("getPrivateAnnotation")
+					.withExactArgs(sinon.match.same(oCreatedEntity), "deepCreate")
+					.returns(oFixture.bDeepCreate);
+				oHelperMock.expects("deletePrivateAnnotation")
+					.withExactArgs(sinon.match.same(oCreatedEntity), "deepCreate");
+				that.mock(oContext).expects("updateAfterCreate")
+					.exactly(oFixture.bRefreshSingle ? 0 : 1)
+					.withExactArgs(oFixture.bSkipRefresh, "$auto");
 				oBindingMock.expects("lockGroup").withExactArgs("$auto")
-					.exactly(bSkipRefresh ? 0 : 1)
+					.exactly(oFixture.bRefreshSingle ? 1 : 0)
 					.returns(oGroupLock1);
 				oBindingMock.expects("refreshSingle")
 					.withExactArgs(sinon.match(function (oContext0) {
 						return oContext0 === oContext
 							&& oContext0.getPath() === "/EMPLOYEES(ID=42)";
 					}), sinon.match.same(oGroupLock1))
-					.exactly(bSkipRefresh ? 0 : 1)
+				.exactly(oFixture.bRefreshSingle ? 1 : 0)
 					.returns(SyncPromise.resolve(oRefreshedEntity));
 			});
 
 			// code under test
-			oContext = oBinding.create(oInitialData, bSkipRefresh);
+			oContext = oBinding.create(oInitialData, oFixture.bSkipRefresh);
 
 			return oContext.created();
 		});
@@ -4887,6 +4902,7 @@ sap.ui.define([
 				oCreateInCachePromise = SyncPromise.resolve(Promise.resolve(oCreatedEntity)),
 				oCreatePathPromise = {},
 				oFetchDataGroupLock = {unlock : function () {}},
+				oHelperMock = this.mock(_Helper),
 				oRefreshGroupLock = {},
 				oRefreshPromise = oCreateInCachePromise.then(function () {
 					return SyncPromise.resolve(Promise.resolve());
@@ -4909,7 +4925,7 @@ sap.ui.define([
 					false, sinon.match.func, sinon.match.func)
 				.returns(oCreateInCachePromise);
 			oCreateInCachePromise.then(function () {
-				that.mock(_Helper).expects("getPrivateAnnotation")
+				oHelperMock.expects("getPrivateAnnotation")
 					.exactly(oFixture.sPredicate || oFixture.bGetPredicate ? 1 : 0)
 					.withExactArgs(sinon.match.same(oCreatedEntity), "predicate")
 					.returns(oFixture.sPredicate);
@@ -4918,6 +4934,9 @@ sap.ui.define([
 						sinon.match.same(oContext));
 				that.mock(that.oModel).expects("checkMessages").exactly(oFixture.sPredicate ? 1 : 0)
 					.withExactArgs();
+				oHelperMock.expects("getPrivateAnnotation")
+					.withExactArgs(sinon.match.same(oCreatedEntity), "deepCreate")
+					.returns(false);
 				oBindingMock.expects("getGroupId").withExactArgs().returns("$auto");
 				oBindingMock.expects("lockGroup").withExactArgs("$auto").returns(oRefreshGroupLock);
 				oBindingMock.expects("refreshSingle")
@@ -5122,7 +5141,7 @@ sap.ui.define([
 						return oBinding.bFirstCreateAtEnd === bArgs;
 					}));
 			this.mock(oNewContext0).expects("updateAfterCreate").exactly(bTransient ? 0 : 1)
-				.withExactArgs();
+				.withExactArgs(true, "$auto");
 
 			// code under test
 			oContext0 = oBinding.create(undefined, true, aAtEnd[0]);
@@ -5166,7 +5185,7 @@ sap.ui.define([
 						}));
 				this.mock(oNewContext1).expects("updateAfterCreate")
 					.exactly(bTransient ? 0 : 1)
-					.withExactArgs();
+					.withExactArgs(true, "$auto");
 
 				// code under test
 				oContext1 = oBinding.create(undefined, true, aAtEnd[1]);
@@ -9939,40 +9958,6 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("updateAfterCreate: delegate", function (assert) {
-		var oBinding = this.bindList("SO_2_SOITEM"),
-			oResetExpectation,
-			oUpdateExpectation;
-
-		oBinding.bDeepCreate = true;
-		oBinding.iCreatedContexts = 5;
-		oResetExpectation = this.mock(oBinding).expects("reset")
-			.withExactArgs(ChangeReason.Change, true);
-		oUpdateExpectation = this.mock(asODataParentBinding.prototype).expects("updateAfterCreate")
-			.withExactArgs().returns("~oPromise~");
-
-		// code under test
-		assert.strictEqual(oBinding.updateAfterCreate(), "~oPromise~");
-
-		assert.strictEqual(oBinding.bDeepCreate, false);
-		assert.ok(oUpdateExpectation.calledAfter(oResetExpectation));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateAfterCreate: deep create", function (assert) {
-		var oBinding = this.bindList("SO_2_SOITEM");
-
-		oBinding.bDeepCreate = true;
-		oBinding.iCreatedContexts = 0;
-		this.mock(oBinding).expects("refreshInternal").withExactArgs("").returns("~oPromise~");
-
-		// code under test
-		assert.strictEqual(oBinding.updateAfterCreate(), "~oPromise~");
-
-		assert.strictEqual(oBinding.bDeepCreate, false);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("prepareDeepCreate: nothing to do", function (assert) {
 		var oBinding = this.bindList("SO_2_SOITEM"),
 			oContext = {
@@ -9996,6 +9981,100 @@ sap.ui.define([
 
 		// code under test - binding already has a transient collection
 		assert.strictEqual(oBinding.prepareDeepCreate(oContext, "~mQueryOptions~"), false);
+
+		assert.strictEqual(oBinding.bDeepCreate, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAfterCreate: deep create, bSkipRefresh=true", function (assert) {
+		var oBinding = this.bindList("SO_2_SOITEM"),
+			oPromise,
+			oResetExpectation,
+			oUpdateExpectation;
+
+		oBinding.iCreatedContexts = 5;
+		oResetExpectation = this.mock(oBinding).expects("reset")
+			.withExactArgs(ChangeReason.Change, true);
+		oUpdateExpectation = this.mock(asODataParentBinding.prototype).expects("updateAfterCreate")
+			.withExactArgs(true, "group")
+			.returns(SyncPromise.reject("~oError~"));
+		this.mock(oBinding).expects("requestSideEffects").never();
+
+		// code under test
+		oPromise = oBinding.updateAfterCreate(true, "group");
+
+		return oPromise.then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError, "~oError~");
+			assert.ok(oUpdateExpectation.calledAfter(oResetExpectation));
+		});
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSideEffectFails) {
+	QUnit.test("updateAfterCreate: deep create, bSkipRefresh=false", function (assert) {
+		var oBinding = this.bindList("SO_2_SOITEM"),
+			oFetchContextsExpectation,
+			oResetExpectation,
+			oUpdateExpectation;
+
+		oBinding.iCreatedContexts = 5;
+		oResetExpectation = this.mock(oBinding).expects("reset").withExactArgs(undefined, true);
+		oFetchContextsExpectation = this.mock(oBinding).expects("fetchContexts")
+			.withExactArgs(0, Infinity, 0, sinon.match.same(_GroupLock.$cached))
+			.callsFake(function () {
+				return SyncPromise.resolve(Promise.resolve().then(function () {
+					oBinding.aContexts = [{}, {}, {}]; // unrealistic, would have 5 elements
+				}));
+			});
+		this.mock(oBinding).expects("fetchValue").withExactArgs("", null, true)
+			.returns(SyncPromise.resolve("~value~"));
+		this.mock(_Helper).expects("getMissingPropertyPaths")
+			.withExactArgs("~value~", sinon.match.same(oBinding.mAggregatedQueryOptions))
+			.returns("~aMissingProperties~");
+		this.mock(oBinding).expects("requestSideEffects")
+			.withExactArgs("group", "~aMissingProperties~")
+			.callsFake(function () {
+				assert.strictEqual(oBinding.iCurrentEnd, 3);
+				return bSideEffectFails
+					? SyncPromise.resolve(Promise.reject("~oError~"))
+					: SyncPromise.resolve(Promise.resolve());
+			});
+		this.mock(oBinding).expects("_fireChange").exactly(bSideEffectFails ? 0 : 1)
+			.withExactArgs({reason : ChangeReason.Change});
+		oUpdateExpectation = this.mock(asODataParentBinding.prototype).expects("updateAfterCreate")
+			.withExactArgs(false, "group")
+			.returns(bSideEffectFails
+				? SyncPromise.resolve(Promise.resolve())
+				: SyncPromise.resolve(Promise.reject("~oError~")));
+
+		// code under test
+		return oBinding.updateAfterCreate(false, "group").then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError, "~oError~");
+			assert.ok(oUpdateExpectation.calledAfter(oResetExpectation));
+			assert.ok(oFetchContextsExpectation.calledAfter(oResetExpectation));
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("updateAfterCreate: no deep create", function (assert) {
+		var oBinding = this.bindList("SO_2_SOITEM");
+
+		oBinding.iCreatedContexts = 0;
+		this.mock(oBinding).expects("refreshInternal")
+			.withExactArgs("", "group")
+			.returns(SyncPromise.reject("~oError~"));
+
+		// code under test
+		return oBinding.updateAfterCreate("~bSkipRefresh~", "group").then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError, "~oError~");
+		});
 	});
 });
 

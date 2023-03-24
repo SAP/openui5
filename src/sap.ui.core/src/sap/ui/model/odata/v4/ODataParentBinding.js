@@ -1449,9 +1449,9 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#updateAfterCreate
 	 */
-	ODataParentBinding.prototype.updateAfterCreate = function () {
+	ODataParentBinding.prototype.updateAfterCreate = function (bSkipRefresh, sGroupId) {
 		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
-			return oDependentBinding.updateAfterCreate();
+			return oDependentBinding.updateAfterCreate(bSkipRefresh, sGroupId);
 		}));
 	};
 
