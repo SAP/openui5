@@ -769,7 +769,7 @@ sap.ui.define([
 	 * The order of the given active terminologies is significant. The {@link module:sap/base/i18n/ResourceBundle ResourceBundle} API
 	 * documentation describes the processing behavior in more detail.
 	 * Please have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
-	 * @return {sap.ui.core.Manifest|Promise} Manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
+	 * @return {sap.ui.core.Manifest|Promise<sap.ui.core.Manifest>} Manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
 	 * @protected
 	 */
 	Manifest.load = function(mOptions) {

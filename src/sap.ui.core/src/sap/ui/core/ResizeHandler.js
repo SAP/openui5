@@ -227,7 +227,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {Element|sap.ui.core.Control} oRef The control or the DOM reference for which the given event handler should be registered (beside the window)
-	 * @param {function} fnHandler
+	 * @param {function({target: Element, size: {width: float, height: float}, oldSize: {width: float, height: float}, control=: sap.ui.core.Control})} fnHandler
 	 *             The event handler which should be called whenever the size of the given reference is changed.
 	 *             The event object is passed as first argument to the event handler. See the description of this function for more details about the available parameters of this event.
 	 * @returns {string|null}

@@ -380,6 +380,15 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @typedef {object} sap.ui.core.Popup.PositionInfo
+	 * @public
+	 *
+	 * @property {object} lastPosition The last position value
+	 * @property {DOMRect} lastOfRect The DOMRect of the previous "of" element
+	 * @property {DOMRect} currentOfRect The DOMRect of the current "of" element
+	 */
+
 	Popup.prototype.getChildPopups = function() {
 		return this.getAssociation("childPopups", []);
 	};
@@ -776,7 +785,7 @@ sap.ui.define([
 	 * @param {string} [offset='0 0'] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "10 0" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
 	 * @param {sap.ui.core.Collision} [collision='flip'] defines how the position of an element should be adjusted in case it overflows the within area in some direction.
 	 * @param {string | sap.ui.core.Element | Element | Window} [within=Window] defines the area the popup should be placed in. This affects the collision detection.
-	 * @param {boolean | function | null} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
+	 * @param {boolean | function(sap.ui.core.Popup.PositionInfo) | null} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
 	 * @ui5-omissible-params iDuration
 	 * @public
 	 */
@@ -2202,8 +2211,8 @@ sap.ui.define([
 	 * - the requested animation duration
 	 * - a function that MUST be called once the animation has completed
 	 *
-	 * @param {function} fnOpen The function which executes the custom opening animation
-	 * @param {function} fnClose The function  which executes the custom closing animation
+	 * @param {function(jQuery, int, function())} fnOpen The function which executes the custom opening animation
+	 * @param {function(jQuery, int, function())} fnClose The function  which executes the custom closing animation
 	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -2252,10 +2261,7 @@ sap.ui.define([
 	/**
 	 * Closes the popup instance
 	 *
-	 * @param {object} oEventParameters The event parameters
-	 * @param {object} oEventParameters.lastPosition The last position value
-	 * @param {object} oEventParameters.lastOfRect The last rect value
-	 * @param {object} oEventParameters.currentOfRect The current rect value
+	 * @param {sap.ui.core.Popup.PositionInfo} oEventParameters The event parameters
 	 * @private
 	 */
 	Popup.prototype._fnCloseOnScroll = function(oEventParameters) {
@@ -2266,7 +2272,7 @@ sap.ui.define([
 	 * This enabled/disables the Popup to follow its opening reference. If the Popup is open and a followOf should
 	 * be set the corresponding listener will be attached.
 	 *
-	 * @param {boolean | function | null} followOf a boolean value enabled/disables the default followOf-Handler. Or an individual handler can be given.
+	 * @param {boolean|function(sap.ui.core.Popup.PositionInfo)|null} followOf a boolean value enabled/disables the default followOf-Handler. Or an individual handler can be given.
 	 * null deletes all followOf settings.
 	 * @since 1.13.0
 	 * @public
@@ -2319,7 +2325,7 @@ sap.ui.define([
 	 * This returns true/false if the default followOf method should be used. If a separate followOf-handler was previously added
 	 * the corresponding function is returned.
 	 *
-	 * @returns {boolean | function} if a function was set it is returned otherwise a boolean value whether the follow of is activated
+	 * @returns {boolean|function(sap.ui.core.Popup.PositionInfo)} if a function was set it is returned otherwise a boolean value whether the follow of is activated
 	 * @since 1.13.0
 	 * @public
 	 */

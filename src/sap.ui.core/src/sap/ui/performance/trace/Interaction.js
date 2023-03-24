@@ -48,6 +48,52 @@ sap.ui.define([
 		return str.trim();
 	}
 
+	/**
+	 * The SAP Statistics for OData
+	 *
+	 * @typedef {object} module:sap/ui/performance/trace/Interaction.SAPStatistics
+	 * @public
+	 *
+	 * @property {string} url The url of the response
+	 * @property {string} statistics The response header under the key "sap-statistics"
+	 * @property {PerformanceResourceTiming} timing The last performance resource timing
+	 */
+
+	/**
+	 * Interaction Entry
+	 *
+	 * @typedef {object} module:sap/ui/performance/trace/Interaction.Entry
+	 * @public
+	 *
+	 * @property {string} event The event which triggered the interaction. The default value is "startup".
+	 * @property {string} trigger The control which triggered the interaction.
+	 * @property {string} component The identifier of the component or app that is associated with the
+	 *  interaction.
+	 * @property {string} appVersion The application version as from app descriptor
+	 * @property {float} start The start timestamp of the interaction which is initially set to the
+	 *  <code>fetchStart</code>
+	 * @property {float} end The end timestamp of the interaction
+	 * @property {float} navigation The sum over all navigation times
+	 * @property {float} roundtrip The time from first request sent to last received response end - without
+	 *  gaps and ignored overlap
+	 * @property {float} processing The client processing time
+	 * @property {float} duration The interaction duration
+	 * @property {Array<PerformanceResourceTiming>} requests The Performance API requests during interaction
+	 * @property {Array<module:sap/ui/performance/Measurement.Entry>} measurements The Performance
+	 *  measurements
+	 * @property {Array<module:sap/ui/performance/trace/Interaction.SAPStatistics>} sapStatistics The SAP
+	 *  Statistics for OData
+	 * @property {float} requestTime The sum over all requests in the interaction
+	 * @property {float} networkTime The request time minus server time from the header
+	 * @property {int} bytesSent The sum over all requests bytes
+	 * @property {int} bytesReceived The sum over all responses bytes
+	 * @property {"X"|""} requestCompression It's set with value "X" by default When compression does not
+	 *  match SAP rules, we report an empty string.
+	 * @property {float} busyDuration The sum of the global busy indicator duration during the interaction
+	 * @property {string} id The ID of the interaction
+	 * @property {string} passportAction The default PassportAction for startup
+	 */
+
 	function createMeasurement(iTime) {
 		return {
 			event: "startup", // event which triggered interaction - default is startup interaction
@@ -63,13 +109,13 @@ sap.ui.define([
 			requests: [], // Performance API requests during interaction
 			measurements: [], // Measurements
 			sapStatistics: [], // SAP Statistics for OData
-			requestTime: 0, // summ over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
+			requestTime: 0, // sum over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
 			networkTime: 0, // request time minus server time from the header
 			bytesSent: 0, // sum over all requests bytes
 			bytesReceived: 0, // sum over all response bytes
 			requestCompression: "X", // ok per default, if compression does not match SAP rules we report an empty string
 			busyDuration: 0, // summed GlobalBusyIndicator duration during this interaction
-			id: uid(), //Interaction id
+			id: uid(), //Interaction ID
 			passportAction: "undetermined_startup_0" //default PassportAction for startup
 		};
 	}
@@ -390,7 +436,7 @@ sap.ui.define([
 	 	 * Gets all interaction measurements.
 		 *
 		 * @param {boolean} bFinalize finalize the current pending interaction so that it is contained in the returned array
-		 * @return {object[]} all interaction measurements
+		 * @return {Array<module:sap/ui/performance/trace/Interaction.Entry>} all interaction measurements
 		 *
 		 * @static
 		 * @public
@@ -413,7 +459,7 @@ sap.ui.define([
 		 *     return InteractionMeasurement.duration > 0
 		 * }</code>
 		 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
-		 * @return {object[]} all interaction measurements passing the filter function successfully
+		 * @return {Array<module:sap/ui/performance/trace/Interaction.Entry>} all interaction measurements passing the filter function successfully
 		 *
 		 * @static
 		 * @public

@@ -48,7 +48,9 @@ sap.ui.define([
 		 * @class
 		 * @extends sap.ui.base.EventProvider
 		 *
-		 * @param {object|object[]} [oRoutes] may contain many Route configurations as {@link sap.ui.core.routing.Route#constructor}.<br/>
+		 * @param {Object<string,sap.ui.core.routing.$RouteSettings>|Array<sap.ui.core.routing.$RouteSettings>} [oRoutes]
+		 *  may contain many Route configurations as {@link sap.ui.core.routing.Route#constructor}.<br/>
+		 *
 		 * Each of the routes contained in the array/object will be added to the router.<br/>
 		 *
 		 * One way of defining routes is an array:
@@ -176,7 +178,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
 		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
-		 * @param {object} [oTargetsConfig] Since 1.28 the target configuration, see {@link sap.ui.core.routing.Targets#constructor} documentation (the options object).<br/>
+		 * @param {Object<string,sap.ui.core.routing.$TargetSettings>} [oTargetsConfig] Since 1.28 the target configuration, see {@link sap.ui.core.routing.Targets#constructor} documentation (the options object).<br/>
 		 * You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.<br/>
 		 * <b>Example:</b>
 		 * <pre>
@@ -347,7 +349,7 @@ sap.ui.define([
 			/**
 			 * Adds a route to the router.
 			 *
-			 * @param {object} oConfig Configuration object for the route @see sap.ui.core.routing.Route#constructor
+			 * @param {sap.ui.core.routing.$RouteSettings} oConfig Configuration object for the route @see sap.ui.core.routing.Route#constructor
 			 * @param {sap.ui.core.routing.Route} oParent The parent route - if a parent route is given, the <code>routeMatched</code> event of this route will also trigger the <code>routeMatched</code> of the parent and it will also create the view of the parent (if provided).
 			 * @public
 			 */

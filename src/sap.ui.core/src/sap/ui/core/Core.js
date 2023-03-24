@@ -1339,7 +1339,8 @@ sap.ui.define([
 	 * @param {string|boolean|object} [vUrl] URL to load the library from or the async flag or a complex configuration object
 	 * @param {boolean} [vUrl.async] Whether to load the library asynchronously
 	 * @param {string} [vUrl.url] URL to load the library from
-	 * @returns {object|Promise<object>} An info object for the library (sync) or a Promise on it (async).
+	 * @returns {sap.ui.core.LibraryInfo|Promise<sap.ui.core.LibraryInfo>} An info object for the library
+	 *  (sync) or a Promise on it (async).
 	 * @public
 	 */
 	Core.prototype.loadLibrary = function(sLibrary, vUrl) {
@@ -1385,8 +1386,10 @@ sap.ui.define([
 	 * @param {string[]} aLibraries set of libraries that should be loaded
 	 * @param {object} [mOptions] configuration options
 	 * @param {boolean} [mOptions.async=true] whether to load the libraries async (default)
-	 * @param {boolean} [mOptions.preloadOnly=false] whether to preload the libraries only (default is to require them as well)
-	 * @returns {Promise|undefined} returns a Promise in async mode, otherwise <code>undefined</code>
+	 * @param {boolean} [mOptions.preloadOnly=false] whether to preload the libraries only (default is to
+	 *  require them as well)
+	 * @returns {Promise<Array<sap.ui.core.LibraryInfo>>|undefined} returns a Promise in async mode, otherwise
+	 *  <code>undefined</code>
 	 *
 	 * @experimental Since 1.27.0 This API is not mature yet and might be changed or removed completely.
 	 * Productive code should not use it, except code that is delivered as part of UI5.
@@ -1479,6 +1482,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Info object for the library
+	 *
+	 * @typedef {object} sap.ui.core.LibraryInfo
+	 * @public
+	 *
+	 * @property {string} version Version of the library
+	 * @property {string} [name] Name of the library; when given it must match the name by which the library has been loaded
+	 * @property {string[]} [dependencies=[]] List of libraries that this library depends on; names are in dot
+	 *  notation (e.g. "sap.ui.core")
+	 * @property {string[]} [types=[]] List of names of types that this library provides; names are in dot notation
+	 *  (e.g. "sap.ui.core.CSSSize")
+	 * @property {string[]} [interfaces=[]] List of names of interface types that this library provides; names are
+	 *  in dot notation (e.g. "sap.ui.core.PopupInterface")
+	 * @property {string[]} [controls=[]] Names of control types that this library provides; names are in dot
+	 *  notation (e.g. "sap.ui.core.ComponentContainer")
+	 * @property {string[]} [elements=[]] Names of element types that this library provides (excluding controls);
+	 *  names are in dot notation (e.g. "sap.ui.core.Item")
+	 * @property {boolean} [noLibraryCSS=false] Indicates whether the library doesn't provide/use theming.  When set
+	 *  to true, no library.css will be loaded for this library
+	 * @property {Object<string,any>} [extensions] Potential extensions of the library metadata; structure not defined by the
+	 *  UI5 core framework.
+	 */
+
+	/**
 	 * Provides the framework with information about a library.
 	 *
 	 * This method is intended to be called exactly once while the main module of a library
@@ -1542,17 +1569,7 @@ sap.ui.define([
 	 * for UI5 libraries built with Maven), then the content of the <code>.library</code> and <code>library.js</code>
 	 * files must be kept in sync.
 	 *
-	 * @param {object} oLibInfo Info object for the library
-	 * @param {string} [oLibInfo.name] Name of the library; when given it must match the name by which the library has been loaded
-	 * @param {string} oLibInfo.version Version of the library
-	 * @param {string[]} [oLibInfo.dependencies=[]] List of libraries that this library depends on; names are in dot notation (e.g. "sap.ui.core")
-	 * @param {string[]} [oLibInfo.types=[]] List of names of types that this library provides; names are in dot notation (e.g. "sap.ui.core.CSSSize")
-	 * @param {string[]} [oLibInfo.interfaces=[]] List of names of interface types that this library provides; names are in dot notation (e.g. "sap.ui.core.PopupInterface")
-	 * @param {string[]} [oLibInfo.controls=[]] Names of control types that this library provides; names are in dot notation (e.g. "sap.ui.core.ComponentContainer")
-	 * @param {string[]} [oLibInfo.elements=[]] Names of element types that this library provides (excluding controls); names are in dot notation (e.g. "sap.ui.core.Item")
-	 * @param {boolean} [oLibInfo.noLibraryCSS=false] Indicates whether the library doesn't provide / use theming.
-	 *                        When set to true, no library.css will be loaded for this library
-	 * @param {object} [oLibInfo.extensions] Potential extensions of the library metadata; structure not defined by the UI5 core framework.
+	 * @param {sap.ui.core.LibraryInfo} oLibInfo Info object for the library
 	 * @return {object|undefined} As of version 1.101; returns the library namespace, based on the given library name. Returns 'undefined' if no library name is provided.
 	 * @public
 	 */

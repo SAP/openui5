@@ -1107,7 +1107,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * @param {string} sLocalServiceAlias Local service alias as defined in the manifest.json
-	 * @return {Promise} Promise which will be resolved with the Service interface
+	 * @return {Promise<sap.ui.core.service.Service>} Promise which will be resolved with the Service interface
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -1258,7 +1258,7 @@ sap.ui.define([
 	 * @param {boolean} [vUsage.async=true] Indicates whether the component creation is done asynchronously (You should use synchronous creation only if really necessary, because this has a negative impact on performance.)
 	 * @param {object} [vUsage.settings] Settings for the nested component like for {#link sap.ui.component} or the component constructor
 	 * @param {object} [vUsage.componentData] Initial data of the component (@see sap.ui.core.Component#getComponentData)
-	 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance (defaults to Promise / asynchronous behavior)
+	 * @return {sap.ui.core.Component|Promise<sap.ui.core.Component>} Component instance or Promise which will be resolved with the component instance (defaults to Promise / asynchronous behavior)
 	 * @public
 	 * @since 1.47.0
 	 */

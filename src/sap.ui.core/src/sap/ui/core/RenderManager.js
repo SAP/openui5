@@ -2101,7 +2101,7 @@ sap.ui.define([
 	 * Returns the renderer class for a given control instance
 	 *
 	 * @param {sap.ui.core.Control} oControl the control that should be rendered
-	 * @returns {object} the renderer class for a given control instance
+	 * @returns {sap.ui.core.ControlRenderer} the renderer class for a given control instance
 	 * @public
 	 */
 	RenderManager.prototype.getRenderer = function(oControl) {

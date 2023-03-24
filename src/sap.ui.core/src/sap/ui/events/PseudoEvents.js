@@ -41,8 +41,10 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 
 	/**
-	 * Enumeration of all so called "pseudo events", a useful classification
+	 * Map of all so called "pseudo events", a useful classification
 	 * of standard browser events as implied by SAP product standards.
+	 *
+	 * This map is intended to be used internally in UI5 framework and UI5 Controls.
 	 *
 	 * Whenever a browser event is recognized as one or more pseudo events, then this
 	 * classification is attached to the original {@link jQuery.Event} object and thereby
@@ -56,7 +58,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	 * be invoked only when that specific pseudo event has been recognized. This simplifies event
 	 * dispatching even further.
 	 *
-	 * @enum {object}
+	 * @type {Object<string, {sName: string, aTypes: string[], fnCheck: function(Event):boolean}>}
 	 * @public
 	 */
 	PseudoEvents.events = { // IMPORTANT: update the public documentation when extending this list

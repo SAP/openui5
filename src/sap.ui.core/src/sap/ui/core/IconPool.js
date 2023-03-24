@@ -30,12 +30,27 @@ sap.ui.define([
 		var IconPool = {};
 
 		/**
+		 * @typedef {object} sap.ui.core.IconPool.IconInfo
+		 * @property {string} name the name of the icon
+		 * @property {string} collection the collection name of the icon. For the default icon font with name 'SAP-icons',
+		 *  this property is set with <code>undefined</code>
+		 * @property {sap.ui.core.URI} uri The URI representing the icon following pattern
+		 *  <code>sap-icon://collection-name/icon-name</code>
+		 * @property {string} fontFamily the name of the font when importing the font using @font-face in CSS
+		 * @property {string} content the hexadecimal code in string format without the prefix, for example "e000"
+		 * @property {string} text the translated text for the icon under the current used locale
+		 * @property {boolean} suppressMirroring indicates whether this icon should NOT be mirrored in RTL (right to left) mode
+		 * @public
+		 */
+
+		/**
 		 * Creates an instance of {@link sap.ui.core.Icon} if the given URI is an icon URI, otherwise the given constructor is called.
 		 * The given URI is set to the src property of the control.
 		 *
 		 * @param {string|object} setting Contains the properties which will be used to instantiate the returned control.
 		 *  All properties of the associated constructor can be used. Unknown properties are ignored.
 		 *  It should contain at least a property named src. If it's given with a string type, it will be taken as the value of src property.
+		 * @param {sap.ui.core.URI} setting.src either an icon URI or the URL that points to the image file
 		 * @param {function} constructor The constructor function which is called when the given URI isn't an icon URI
 		 * @returns {sap.ui.core.Control} Either an instance of <code>sap.ui.core.Icon</code> or instance created by calling the given constructor
 		 * @static
@@ -77,7 +92,7 @@ sap.ui.define([
 		 * @param {boolean} [iconInfo.suppressMirroring=false] indicates whether this icon should NOT be mirrored in RTL (right to left) mode.
 		 * @param {module:sap/base/i18n/ResourceBundle} [iconInfo.resourceBundle] ResourceBundle to be used for translation. Key format: "Icon.<iconName>".
 		 *
-		 * @returns {{name: string, collection: string, uri: string, fontFamily: string, content: string | string[], suppressMirroring: boolean}} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
+		 * @returns {sap.ui.core.IconPool.IconInfo} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
 		 * @static
 		 * @public
 		 * @function
@@ -122,7 +137,7 @@ sap.ui.define([
 		 *   sync - font metadata is loaded synchronously and the icon info is returned immediately
 		 *   async - a promise is returned that returns the icon info when the font metadata is loaded
 		 *   mixed - until the font metadata is loaded a promise is returned, afterwards the icon info
-		 * @returns {object|Promise|undefined} Info object or Promise for the icon depending on the loadingMode
+		 * @returns {sap.ui.core.IconPool.IconInfo|undefined|Promise<sap.ui.core.IconPool.IconInfo|undefined>} Info object or Promise for the icon depending on the loadingMode
 		 *   or <code>undefined</code> when the icon can't be found or no icon name was given.
 		 * @static
 		 * @public
