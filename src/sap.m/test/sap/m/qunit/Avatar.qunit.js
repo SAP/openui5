@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/LightBox",
 	"sap/m/library",
 	"sap/base/Log",
-	"sap/base/util/extend"
+	"sap/base/util/extend",
+	"sap/ui/core/InvisibleText"
 ], function(
 	oCore,
 	coreLibrary,
@@ -22,7 +23,8 @@ sap.ui.define([
 	LightBox,
 	library,
 	Log,
-	extend
+	extend,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -687,6 +689,43 @@ sap.ui.define([
 
 		// check if aria-haspopup disappears
 		assert.notOk(oAvatarDomRef.getAttribute("aria-haspopup"), "There is no aria-haspopup attribute after the avatar property is being set to None.");
+	});
+
+	QUnit.test("Aria-labelledby", function(assert) {
+		// Arrange
+		var avatar = new Avatar({
+			id: "avatarID",
+			ariaLabelledBy: "id1"
+		}),
+			oAvatarDomRef,
+			sInitialsAriaLabelledBy,
+			sInitials;
+
+		// Setup
+		avatar.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		oAvatarDomRef = avatar.getDomRef();
+
+		//assert
+		assert.strictEqual(oAvatarDomRef.getAttribute("aria-labelledby"), "id1", "Aria-labelledby is set correctly");
+
+		// Act
+		avatar.setInitials("BP");
+		oCore.applyChanges();
+
+		sInitialsAriaLabelledBy = avatar.sId + "-InvisibleText";
+
+		// Assert
+		assert.strictEqual(oAvatarDomRef.getAttribute("aria-labelledby"), "id1 " + sInitialsAriaLabelledBy, "Avatar`s initials are part of aria-labelledby");
+
+		var sInvisibleMessage = document.getElementById(sInitialsAriaLabelledBy).innerText;
+		sInitials = avatar.getInitials();
+
+		// Assert
+		assert.strictEqual(sInitials, sInvisibleMessage, "The initials are contained inside the InvisibleMessage.");
+
+		// Cleanup
+		avatar.destroy();
 	});
 
 	QUnit.module("Avatar backgroundColor API", {
