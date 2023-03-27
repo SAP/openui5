@@ -684,6 +684,22 @@ sap.ui.define([
 		assert.notOk(this.oSPDomRef.querySelectorAll(".sapFSPItem")[0].getAttribute("title"), "When action bar is expanded, action items shouldn't have title");
 	});
 
+	QUnit.test("Action items icon tooltip", function (assert) {
+		var oFirstItemDomRef = this.oSPDomRef.querySelectorAll(".sapFSPItem")[0];
+		// Assert
+		assert.notOk(oFirstItemDomRef.querySelector(".sapUiIcon").getAttribute("aria-label"), "First action item icon doesn't have aria-label attribute");
+		assert.notOk(oFirstItemDomRef.querySelector(".sapUiIconTitle"), "First action item icon doesn't have tooltip");
+
+		// Act - set icon that have own tooltip to the first action item, and set different text to the item
+		this.oSP.getItems()[0].setIcon("sap-icon://add-filter").setText("filter");
+		oCore.applyChanges();
+		oFirstItemDomRef = this.oSPDomRef.querySelectorAll(".sapFSPItem")[0];
+
+		// Assert
+		assert.notOk(oFirstItemDomRef.querySelector(".sapUiIcon").getAttribute("aria-label"), "Action item icon doesn't have aria-label attribute");
+		assert.notOk(oFirstItemDomRef.querySelector(".sapUiIconTitle"), "Action item icon doesn't have tooltip");
+	});
+
 	QUnit.module("Misc", {
 		beforeEach : function() {
 			this.oSP = new SidePanel();
