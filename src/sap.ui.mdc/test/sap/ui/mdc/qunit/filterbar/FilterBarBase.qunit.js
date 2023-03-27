@@ -655,4 +655,27 @@ sap.ui.define([
 
     });
 
+
+	QUnit.test("check variantSwitch for non filterbar & for filterbar", function(assert) {
+
+		var aAffectedControls = ["Item"];
+
+		sinon.stub(this.oFilterBarBase, "awaitPendingModification").returns(Promise.resolve(aAffectedControls));
+		sinon.stub(this.oFilterBarBase, "_getExecuteOnSelectionOnVariant").returns(true);
+		sinon.stub(this.oFilterBarBase, "_reportModelChange");
+
+		this.oFilterBarBase._bInitialFiltersApplied = true;
+
+		return this.oFilterBarBase._handleVariantSwitch({}).then(function() {
+			assert.ok(this.oFilterBarBase._reportModelChange.called);
+			this.oFilterBarBase._reportModelChange.reset();
+			aAffectedControls.push("Filter");
+			return this.oFilterBarBase._handleVariantSwitch({}).then(function() {
+				assert.ok(!this.oFilterBarBase._reportModelChange.called);
+			}.bind(this));
+
+		}.bind(this));
+
+	});
+
 });

@@ -64,7 +64,12 @@ sap.ui.define(
          * @returns {Promise} Resolves after all control updates have been considered
          */
         AdaptationMixin.awaitPendingModification = function() {
-            return this._pPendingModification || Promise.resolve();
+			var pPendingModification = this._pPendingModification || Promise.resolve();
+            var aChangesProcessed = Engine.getInstance().getTrace(this);
+
+            return pPendingModification.then(function(){
+                return aChangesProcessed;
+            });
         };
 
         /**
