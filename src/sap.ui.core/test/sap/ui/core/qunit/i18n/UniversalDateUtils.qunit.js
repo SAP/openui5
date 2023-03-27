@@ -561,20 +561,60 @@ sap.ui.define([
 		oClock.restore();
 	});
 
-	QUnit.test("_getDateFromWeekStartByDayOffset", function(assert) {
-		var sCalendarWeekNumbering = 'WesternTraditional',
-			oCurrentDate = UI5Date.getInstance('2023-01-09T00:13:37'),
-			oClock = sinon.useFakeTimers(oCurrentDate.getTime()),
-			oConfigStub = sinon.stub(Configuration, "getCalendarType").returns("Islamic"),
-			oFirstDateOfWeek = UniversalDateUtils._getDateFromWeekStartByDayOffset(sCalendarWeekNumbering);
+	//*********************************************************************************************
+	QUnit.test("_getDateFromWeekStartByDayOffset", function (assert) {
+		var oFormatSettings = {getFormatLocale: function () {}},
+			oResult = new UniversalDate(),
+			oUniversalDate = {getWeek: function () {}};
 
-		testDate(assert, oFirstDateOfWeek, 1, "WEEKS", 1444, 5, 15, 0,0,0,0);
+		this.mock(Configuration).expects("getCalendarType").withExactArgs().returns("~CalendarType");
+		this.mock(Configuration).expects("getFormatSettings").withExactArgs().returns(oFormatSettings);
+		this.mock(oFormatSettings).expects("getFormatLocale").withExactArgs().returns("~oLocale");
+		this.mock(UniversalDateUtils).expects("createNewUniversalDate").withExactArgs().returns(oUniversalDate);
+		this.mock(oUniversalDate).expects("getWeek")
+			.withExactArgs("~oLocale", "~sCalendarWeekNumbering")
+			.returns({week: "~week", year: "~year"});
+		this.mock(UniversalDate).expects("getFirstDateOfWeek")
+			.withExactArgs("~CalendarType", "~year", "~week", "~oLocale", "~sCalendarWeekNumbering")
+			.returns({year: 2023, month: 0, day: 1});
+		// Mock implementation of constructor of UniversalDate
+		this.mock(UniversalDate).expects("getClass").withExactArgs().returns("~class");
+		this.mock(UniversalDate.prototype).expects("createDate")
+			.withExactArgs("~class", sinon.match(function (oArguments) {
+				assert.deepEqual(Array.from(oArguments), [2023, 0, 2, 0, 0, 0]);
+				return true;
+			}))
+			.returns(oResult);
 
-		oFirstDateOfWeek = UniversalDateUtils._getDateFromWeekStartByDayOffset(sCalendarWeekNumbering, 1);
-		testDate(assert, oFirstDateOfWeek, 1, "WEEKS", 1444, 5, 16, 0,0,0,0);
+		// Code under test
+		assert.strictEqual(UniversalDateUtils._getDateFromWeekStartByDayOffset("~sCalendarWeekNumbering", 1), oResult);
+	});
 
-		oConfigStub.restore();
-		oClock.restore();
+	//*********************************************************************************************
+	// Integration test for BCP: 2380029711
+	// This test is currently skipped due to missing functionality in Configuration.setFirstDayOfWeek,
+	// see TODO below and BCP 2370022908
+	QUnit.skip("_getDateFromWeekStartByDayOffset with a configured first day of week", function(assert) {
+		var oFirstDateOfWeek,
+			sCalendarWeekNumbering = 'Default',
+			sDefaultLanguage = Configuration.getLanguage();
+
+		this.mock(UniversalDateUtils).expects("createNewUniversalDate")
+			.withExactArgs()
+			.returns(new UniversalDate(2023, 0, 13));
+
+		Configuration.setLanguage('en-US');
+		Configuration.getFormatSettings().setFirstDayOfWeek(1);
+
+		// code under test
+		oFirstDateOfWeek = UniversalDateUtils._getDateFromWeekStartByDayOffset(sCalendarWeekNumbering);
+		// In en-US locale the first day of the second calendar week is actually the 8th (Sunday),
+		// but due to setting the firstDayOfWeek to 1 (Mon), the returned date should be the 9th of Jan
+		testDate(assert, oFirstDateOfWeek, 1, "WEEKS", 2023, 0, 9, 0, 0, 0, 0);
+
+		Configuration.setLanguage(sDefaultLanguage);
+		//TODO: The parameter null is documented in the setFirstDayOfWeek method but is currently not supported
+		Configuration.getFormatSettings().setFirstDayOfWeek(null);
 	});
 
 	QUnit.test("_getDateFromWeekStartByDayOffset with custom timezone", function(assert) {
@@ -592,7 +632,6 @@ sap.ui.define([
 		//assert
 		testDate(assert, oUniversalDateWeekDay, 1, "DATE", 675, 1, 1, 0,0,0,0);
 	});
-
 
 	/**
 	 * Tested invariant:
