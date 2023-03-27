@@ -3,6 +3,72 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "5bb74c779fe23821434ec4814dcc52b7d2d993f1",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Last/Next options date format is appropriate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380039217"
+          }
+        ]
+      },
+      {
+        "id": "e35f03d08b466b912b43cee28a52faa6efbb8779",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: fixed hover color for transparent Button in FacetFilter / Info Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270164524"
+          }
+        ]
+      },
+      {
+        "id": "fe986ae8141f8bf5ef5b5fb93d574f4c3135c33d",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Title and error message are no longer announced twice by JAWS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370015511"
+          }
+        ]
+      },
+      {
+        "id": "ec6065e0e0fb2bfbd44dc0d7357abaa07716d4f8",
+        "type": "FIX",
+        "text": " sap.m.Menu: adjust clone operation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380018237"
+          }
+        ]
+      },
+      {
+        "id": "dc2b9fb38ca1a28f47056a62611bdd9de408644e",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: adjust placeholder rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280180682"
+          }
+        ]
+      },
+      {
+        "id": "bae6a2657d3f6aecd66ae44409b60764e60264fe",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Enable sticky layouts in wizard step content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280148832"
+          }
+        ]
+      },
+      {
         "id": "8aa99ae56ff43d0ac4da8968c8faba8ce725756d",
         "type": "FIX",
         "text": ": incorrect error message while renaming the attachment",
@@ -58,6 +124,17 @@
         ]
       },
       {
+        "id": "03141a2c077ef854422848c1c2c4fbf8ad78ed05",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Return value state after already selected validation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370006854"
+          }
+        ]
+      },
+      {
         "id": "fbe5cf76df31b7edf1c5a15a27e1b0601cf9101e",
         "type": "FIX",
         "text": " Calendar controls: adjust calendar type API",
@@ -84,6 +161,21 @@
           {
             "type": "BCP",
             "reference": "2380031930"
+          }
+        ]
+      },
+      {
+        "id": "d3b76e5fde147de64301bc8f6e2aaad0d5a838a2",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Update documentation for public methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380043884"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370007787"
           }
         ]
       },

@@ -3,6 +3,22 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "60a7c3aa23bab30eea8d105734848b68cd2f071d",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Overflow style rule adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370003608"
+          }
+        ]
+      },
+      {
+        "id": "aaee1822ddd1cbe6490afac39305028100d65982",
+        "type": "FIX",
+        "text": " Integration Cards: Update form model values independently of the rendering"
+      },
+      {
         "id": "0f80f4489f52f0c92c1fde5730f09f6e6836e7ca",
         "type": "FEATURE",
         "text": " sap.f.SidePanel: Update demokit samples"

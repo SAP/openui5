@@ -14,6 +14,22 @@
         ]
       },
       {
+        "id": "3ce283eed8a435026093501020b76c0113b2f505",
+        "type": "FIX",
+        "text": " Integration Cards: Avoid error on paginator reset when there are no pages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370014927"
+          }
+        ]
+      },
+      {
+        "id": "aaee1822ddd1cbe6490afac39305028100d65982",
+        "type": "FIX",
+        "text": " Integration Cards: Update form model values independently of the rendering"
+      },
+      {
         "id": "c7c6b98db2ad32285f29e4cbcef57ee6b58c1106",
         "type": "FIX",
         "text": " Integration Cards: Image is no longer rounded when there is footer",

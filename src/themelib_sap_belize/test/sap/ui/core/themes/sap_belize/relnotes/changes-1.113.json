@@ -1,0 +1,18 @@
+{
+  "1.113.0": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "e35f03d08b466b912b43cee28a52faa6efbb8779",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: fixed hover color for transparent Button in FacetFilter / Info Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270164524"
+          }
+        ]
+      }
+    ]
+  }
+}
