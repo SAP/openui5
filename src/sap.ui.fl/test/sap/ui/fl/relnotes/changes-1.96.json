@@ -46,5 +46,21 @@
         ]
       }
     ]
+  },
+  "1.96.18": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "0af9f716d3b12b0eb27d00d79263049bd46d68ef",
+        "type": "FIX",
+        "text": " sap.ui.fl - enable package usage with '-' and '$'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002162272023"
+          }
+        ]
+      }
+    ]
   }
 }
