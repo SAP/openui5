@@ -47,8 +47,7 @@
 
 		// Set a valid non empty value for the href attribute representing that there is no navigation,
 		// so we don't confuse the screen readers.
-		/*eslint-disable no-script-url */
-		sHref = sHref && oControl._isHrefValid(sHref) && oControl.getEnabled() ? sHref : "javascript:void(0)";
+		sHref = sHref && oControl._isHrefValid(sHref) && oControl.getEnabled() ? sHref : "#";
 
 		// Link is rendered as a "<a>" element
 		oRm.openStart("a", oControl);
