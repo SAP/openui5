@@ -1594,4 +1594,19 @@ sap.ui.define([
 		iframe = null;
 		oDateRangeSelector = null;
 	});
+
+	QUnit.test("_inPreferredUserInteraction", function (assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection(),
+			oInPreferredUserInteractionSpy = this.spy(oDRS, "_inPreferredUserInteraction");
+
+		oDRS.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oInPreferredUserInteractionSpy.calledOnce, "Preferred interaction is handled during rendering");
+
+		// Clean
+		oDRS.destroy();
+	});
 });

@@ -19,7 +19,9 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 	 * @param {sap.m.DatePicker} oDP An object representation of the control that should be rendered.
 	 */
 	DatePickerRenderer.writeInnerValue = function(oRm, oDP) {
-		if (oDP._bValid || oDP._bOutOfAllowedRange) {
+		if (oDP._inPreferredUserInteraction()) {
+			oRm.attr("value", oDP._$input.val());
+		} else if (oDP._bValid || oDP._bOutOfAllowedRange) {
 			oRm.attr("value", oDP._formatValue(oDP.getDateValue()));
 		} else {
 			oRm.attr("value", oDP.getValue());

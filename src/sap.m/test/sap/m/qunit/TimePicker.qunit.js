@@ -3525,6 +3525,21 @@ sap.ui.define([
 		assert.ok(oFocusInSpy.calledOnce, "sap.m.DateTimeField.prototype.onfocusin method is called");
 	});
 
+	QUnit.test("_inPreferredUserInteraction", function (assert) {
+		// Prepare
+		var oTP = new TimePicker(),
+			oInPreferredUserInteractionSpy = this.spy(oTP, "_inPreferredUserInteraction");
+
+			oTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oInPreferredUserInteractionSpy.calledOnce, "Preferred interaction is handled during rendering");
+
+		// Clean
+		oTP.destroy();
+	});
+
 	function triggerMultipleKeypress(timePicker, sFeed) {
 		var aFeed = sFeed.split(""),
 				$TimePicker = timePicker.getDomRef(),
