@@ -126,7 +126,7 @@ sap.ui.define([
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 		});
 
-		QUnit.test("when getChangesForPropagate() is called for an embedded component with a preexisting VariantModel on it's application component", function(assert) {
+		QUnit.test("when getChangesAndPropagate() is called for an embedded component with a preexisting VariantModel on it's application component", function(assert) {
 			assert.expect(3);
 			var oExistingModel = {id: "existingVariantModel"};
 			var oAppComponent = {
@@ -171,76 +171,89 @@ sap.ui.define([
 
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
 
+			FlexControllerFactory._componentInstantiationPromises.set(oAppComponent, Promise.resolve());
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 		});
 
-		QUnit.test("when getChangesForPropagate() is called for an embedded component with a preexisting VariantModel on it's application component before it's done initializing", function(assert) {
-			assert.expect(5);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
-			sandbox.stub(FlexControllerFactory, "createForControl").returns({
-				_oChangePersistence: {
-					loadChangesMapForComponent: sandbox.stub().resolves(),
-					getComponentName: function() {return "foo";}
-				}
-			});
-			var oExistingModel;
-			var oAppComponent = {
-				name: "appComponent",
-				setModel: function(oModel, sModelName) {
-					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
-					if (oExistingModel) {
-						assert.notOk(true, "should only go here once");
+		[
+			"outer",
+			"inner"
+		].forEach(function(sFirstComponent) {
+			var sName = "when an outer and an inner component are initialized at the same time, " + sFirstComponent + " component being first";
+			QUnit.test(sName, function(assert) {
+				assert.expect(5);
+				sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
+				sandbox.stub(FlexControllerFactory, "createForControl").returns({
+					_oChangePersistence: {
+						loadChangesMapForComponent: sandbox.stub().resolves(),
+						getComponentName: function() {return "foo";}
 					}
-					oExistingModel = oModel;
-				},
-				getManifestObject: function() {},
-				getModel: function(sModelName) {
-					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then variant model called on the app component");
-					return oExistingModel;
-				},
-				addPropagationListener: sandbox.stub(),
-				getId: function() {return "appComponent";},
-				getComponentData: function() {}
-			};
+				});
+				var oExistingModel;
+				var oAppComponent = {
+					name: "appComponent",
+					setModel: function(oModel, sModelName) {
+						assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
+						if (oExistingModel) {
+							assert.notOk(true, "should only go here once");
+						}
+						oExistingModel = oModel;
+					},
+					getManifestObject: function() {},
+					getModel: function(sModelName) {
+						assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then variant model called on the app component");
+						return oExistingModel;
+					},
+					addPropagationListener: sandbox.stub(),
+					getId: function() {return "appComponent";},
+					getComponentData: function() {}
+				};
 
-			var oComponent = {
-				name: "embeddedComponent",
-				setModel: function(oModel, sModelName) {
-					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
-					assert.deepEqual(oModel, oExistingModel, "then the correct model was set");
-				},
-				getManifestObject: function() {},
-				addPropagationListener: function() {
-					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
-				},
-				getId: function() {return "embeddedComponent";},
-				getComponentData: function() {}
-			};
+				var oComponent = {
+					name: "embeddedComponent",
+					setModel: function(oModel, sModelName) {
+						assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
+						assert.deepEqual(oModel, oExistingModel, "then the correct model was set");
+					},
+					getManifestObject: function() {},
+					addPropagationListener: function() {
+						assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
+					},
+					getId: function() {return "embeddedComponent";},
+					getComponentData: function() {}
+				};
 
-			sandbox.stub(Utils, "isEmbeddedComponent").callsFake(function(oComponent) {
-				if (oComponent.name === "embeddedComponent") {
-					return true;
-				}
-				return false;
-			});
-			sandbox.stub(Utils, "isApplicationComponent").callsFake(function(oComponent) {
-				if (oComponent.name === "appComponent") {
-					return true;
-				}
-				return false;
-			});
-			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent).withArgs(oAppComponent).returns(oAppComponent);
+				sandbox.stub(Utils, "isEmbeddedComponent").callsFake(function(oComponent) {
+					if (oComponent.name === "embeddedComponent") {
+						return true;
+					}
+					return false;
+				});
+				sandbox.stub(Utils, "isApplicationComponent").callsFake(function(oComponent) {
+					if (oComponent.name === "appComponent") {
+						return true;
+					}
+					return false;
+				});
+				sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent).withArgs(oAppComponent).returns(oAppComponent);
 
-			return Promise.all([
-				FlexControllerFactory.getChangesAndPropagate(oAppComponent, {}),
-				FlexControllerFactory.getChangesAndPropagate(oComponent, {})
-			]).then(function() {
-				assert.equal(oAppComponent.addPropagationListener.callCount, 1, "should only be called once");
+				var aPromises = sFirstComponent === "outer" ?
+					[
+						FlexControllerFactory.getChangesAndPropagate(oAppComponent, {}),
+						FlexControllerFactory.getChangesAndPropagate(oComponent, {})
+					] :
+					[
+						FlexControllerFactory.getChangesAndPropagate(oComponent, {}),
+						FlexControllerFactory.getChangesAndPropagate(oAppComponent, {})
+					];
+				return Promise.all(aPromises).then(function() {
+					assert.equal(oAppComponent.addPropagationListener.callCount, 1, "should only be called once");
+				});
 			});
 		});
 
-		QUnit.test("when getChangesForPropagate() is called for an embedded component with no preexisting VariantModel on it's application component", function(assert) {
-			assert.expect(4);
+		QUnit.test("when getChangesAndPropagate() is called for two embedded components in parallel with no preexisting VariantModel on its application component", function(assert) {
+			assert.expect(7);
 			var oAppComponent = new Component();
 			sandbox.stub(Utils, "isApplication").returns(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
@@ -250,12 +263,12 @@ sap.ui.define([
 			sandbox.spy(oAppComponent, "setModel");
 			sandbox.spy(oAppComponent, "addPropagationListener");
 			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
-			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves(function() {
-			});
+			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves(function() {});
 			sandbox.stub(Applier, "applyAllChangesForControl");
 
 			var oComponent = {
 				setModel: function(oModelSet, sModelName) {
+					assert.ok(true, "then the model is set on the first embedded component");
 					assert.ok(oAppComponent.setModel.calledWith(sinon.match.instanceOf(VariantModel), ControlVariantApplyAPI.getVariantModelName()), "then app component's VariantModel was set");
 					assert.ok(oAppComponent.addPropagationListener.calledOnce, "then addPropagationListener was called for the app component");
 					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
@@ -267,17 +280,36 @@ sap.ui.define([
 				getId: function() {},
 				getComponentData: function() {}
 			};
-			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
+
+			var oComponent2SetModelStub = sandbox.stub();
+			var oComponent2 = {
+				setModel: oComponent2SetModelStub,
+				getManifestObject: function() {},
+				addPropagationListener: function() {
+					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
+				},
+				getId: function() {},
+				getComponentData: function() {}
+			};
+			sandbox.stub(Utils, "getAppComponentForControl")
+				.withArgs(oComponent).returns(oAppComponent)
+				.withArgs(oComponent2).returns(oAppComponent);
 
 			assert.notOk(oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName()), "then initially no variant model exists for the app component");
 
-			return FlexControllerFactory.getChangesAndPropagate(oComponent, {})
+			return Promise.all([
+				FlexControllerFactory.getChangesAndPropagate(oComponent, {}),
+				FlexControllerFactory.getChangesAndPropagate(oComponent2, {}),
+				FlexControllerFactory.getChangesAndPropagate(oAppComponent, {})
+			])
 				.then(function() {
+					assert.strictEqual(oAppComponent.setModel.callCount, 1, "then the model is only set on the app component once");
+					assert.ok(oComponent2SetModelStub.called, "then the model is also set on the second embedded component");
 					oAppComponent.destroy();
 				});
 		});
 
-		QUnit.test("when getChangesForPropagate() is called for an embedded component with a component not of type application", function(assert) {
+		QUnit.test("when getChangesAndPropagate() is called for an embedded component with a component not of type application", function(assert) {
 			var oAppComponent = new Component();
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 				.callThrough()
