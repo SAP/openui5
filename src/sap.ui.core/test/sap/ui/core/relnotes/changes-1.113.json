@@ -3,6 +3,49 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "716f29d4b901a17de2d77afc2383fab710f04dae",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: workaround for incomplete referential constraints",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380045943"
+          }
+        ]
+      },
+      {
+        "id": "918f5d7d1ba6efb5cafbd948f7b1fa95123aa0dd",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: introduce format option intervalDelimiter"
+      },
+      {
+        "id": "0c790440ff5437f41bc1386a3ce1f8d3054eb00e",
+        "type": "FIX",
+        "text": " theming.ThemeManager: Ensure adding of custom.css",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001514272023"
+          }
+        ]
+      },
+      {
+        "id": "b6afea9c381aafcd683c5dcede980e95e76a483d",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataListBinding: createActivate event allows to cancel context activation"
+      },
+      {
+        "id": "6b6cb0060390675476d86e807343732d0240a0e8",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat#format: Use correct plural rule for units",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380043244"
+          }
+        ]
+      },
+      {
         "id": "61e6d05e078c27f1a7e15af0fa791d4e72b93d2b",
         "type": "FIX",
         "text": " JSDoc: Correct misplaced block tags"

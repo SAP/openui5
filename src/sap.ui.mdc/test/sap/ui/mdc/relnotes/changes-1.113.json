@@ -3,6 +3,11 @@
     "date": "March 2023",
     "notes": [
       {
+        "id": "ce022ceece167e3cffb1bda46e2fe95b928ad58c",
+        "type": "FIX",
+        "text": " mdc.Link: check for being destroyed, before proceeding"
+      },
+      {
         "id": "61e6d05e078c27f1a7e15af0fa791d4e72b93d2b",
         "type": "FIX",
         "text": " JSDoc: Correct misplaced block tags"

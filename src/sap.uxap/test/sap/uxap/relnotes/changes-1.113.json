@@ -1,0 +1,29 @@
+{
+  "1.113.0": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "d1c062695db53450b2107511c4ab701c2d8cd790",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: prevent duplication of buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380035583"
+          }
+        ]
+      },
+      {
+        "id": "b8160361339aa3e0cce0cfd0e00770ed56272517",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Scroll callback",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380007299"
+          }
+        ]
+      }
+    ]
+  }
+}
