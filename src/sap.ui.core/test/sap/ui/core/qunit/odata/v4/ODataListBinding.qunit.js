@@ -9890,12 +9890,38 @@ sap.ui.define([
 				isTransient : function () {},
 				withCache : function () {}
 			},
+			aCollection = ["~a~", "~b~"],
+			oContextMock = this.mock(Context),
 			oExpectation,
-			mQueryOptions = bHasQueryOptions ? {$select : "~select~"} : undefined;
+			oHelperMock = this.mock(_Helper),
+			mQueryOptions = bHasQueryOptions ? {$select : "~select~"} : undefined,
+			that = this;
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
 		oExpectation = this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.func, "SO_2_SOITEM");
+			.withExactArgs(sinon.match.func, "SO_2_SOITEM")
+			.returns(SyncPromise.resolve(aCollection));
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
+		aCollection.forEach(function (oEntity, i) {
+			var oCreatedPromise = SyncPromise.reject(),
+				oCreatedContext = {
+					created : function () { return oCreatedPromise; }
+				};
+
+			oHelperMock.expects("getPrivateAnnotation")
+				.withExactArgs(oEntity, "transientPredicate").returns("~predicate~" + i);
+			oHelperMock.expects("getPrivateAnnotation")
+				.withExactArgs(oEntity, "promise").returns("~promise~" + i);
+			oContextMock.expects("create")
+				.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
+					"/resolved/path~predicate~" + i, i - 2, "~promise~" + i, false, true)
+				.returns(oCreatedContext);
+			oHelperMock.expects("setPrivateAnnotation")
+				.withExactArgs(oEntity, "context", sinon.match.same(oCreatedContext));
+			oHelperMock.expects("setPrivateAnnotation")
+				.withExactArgs(oEntity, "firstCreateAtEnd", false);
+			oHelperMock.expects("deletePrivateAnnotation").withExactArgs(oEntity, "promise");
+		});
 
 		// code under test
 		assert.strictEqual(oBinding.prepareDeepCreate(oContext, mQueryOptions), true);
@@ -9904,10 +9930,11 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bDeepCreate, true);
 
 		this.mock(oCache).expects("addTransientCollection")
-			.withExactArgs("path/in/cache", bHasQueryOptions ? "~select~" : undefined);
+			.withExactArgs("path/in/cache", bHasQueryOptions ? "~select~" : undefined)
+			.returns("~collection~");
 
 		// code under test - callback
-		oExpectation.args[0][0](oCache, "path/in/cache");
+		assert.strictEqual(oExpectation.args[0][0](oCache, "path/in/cache"), "~collection~");
 	});
 });
 

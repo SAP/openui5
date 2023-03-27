@@ -2901,7 +2901,8 @@ sap.ui.define([
 
 	/**
 	 * Prepares the binding for a deep create if there is a transient parent context. Adds a
-	 * transient collection to the parent binding's cache.
+	 * transient collection to the parent binding's cache. Creates contexts for nested entities in
+	 * the initial data.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The parent context or <code>undefined</code> for absolute bindings
@@ -2914,6 +2915,8 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.odata.v4.ODataBinding#prepareDeepCreate
 	ODataListBinding.prototype.prepareDeepCreate = function (oContext, mQueryOptions) {
+		var that = this;
+
 		if (!(oContext && oContext.isTransient && oContext.isTransient()) || this.bDeepCreate) {
 			// only relevant if the context is transient and the binding is not in deep create yet
 			return false;
@@ -2925,8 +2928,27 @@ sap.ui.define([
 		// (in adjustPredicate)
 		this.mCacheQueryOptions = mQueryOptions;
 		oContext.withCache(function (oCache, sPath) {
-			oCache.addTransientCollection(sPath, mQueryOptions && mQueryOptions.$select);
-		}, this.sPath);
+				return oCache.addTransientCollection(sPath, mQueryOptions && mQueryOptions.$select);
+			}, this.sPath
+		).then(function (aInitialDataCollection) {
+			var sResolvedPath = that.getResolvedPath();
+
+			aInitialDataCollection.forEach(function (oInitialData, i) {
+				var oContext,
+					sTransientPredicate
+						= _Helper.getPrivateAnnotation(oInitialData, "transientPredicate"),
+					oPromise = _Helper.getPrivateAnnotation(oInitialData, "promise");
+
+				oContext = Context.create(that.oModel, that, sResolvedPath + sTransientPredicate,
+					i - aInitialDataCollection.length, oPromise, false, true);
+				oContext.created().catch(function () { /* avoid "Uncaught (in promise) */ });
+
+				_Helper.setPrivateAnnotation(oInitialData, "context", oContext);
+				_Helper.setPrivateAnnotation(oInitialData, "firstCreateAtEnd", false);
+				_Helper.deletePrivateAnnotation(oInitialData, "promise");
+			});
+			// The binding gets these contexts via restoreCreated later
+		});
 
 		return true;
 	};

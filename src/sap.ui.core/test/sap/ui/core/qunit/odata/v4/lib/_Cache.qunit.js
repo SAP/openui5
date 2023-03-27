@@ -5582,7 +5582,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("Cache#addTransientCollection", function (assert) {
+	QUnit.test("Cache#addTransientCollection: no initial data", function (assert) {
 		var that = this;
 
 		return new Promise(function (resolve) {
@@ -5626,6 +5626,75 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#addTransientCollection: initial data", function (assert) {
+		var that = this;
+
+		return new Promise(function (resolve) {
+			var oCache = new _Cache(that.oRequestor, "SalesOrders('1')"),
+				aElements,
+				oHelperMock = that.mock(_Helper),
+				oPostBody = {
+					collection : ["~a~", "~b~"]
+				},
+				oParent = {
+					"@$ui5._" : {
+						postBody : oPostBody,
+						transient : "updateGroup"
+					},
+					collection : [{}, {}]
+				};
+
+			oCache.fetchValue = function () {};
+			that.mock(oCache).expects("fetchValue")
+				.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
+				.returns(SyncPromise.resolve(oParent));
+			that.mock(oCache).expects("checkSharedRequest").withExactArgs();
+			oHelperMock.expects("uid").withExactArgs().returns("~uid0~");
+			oHelperMock.expects("addDeepCreatePromise")
+				.withExactArgs(sinon.match.same(oParent.collection[0])).returns("~promise0~");
+			oHelperMock.expects("uid").withExactArgs().returns("~uid1~");
+			oHelperMock.expects("addDeepCreatePromise")
+				.withExactArgs(sinon.match.same(oParent.collection[1])).returns("~promise1~");
+			that.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~mTypeForMetaPath~");
+			oHelperMock.expects("getMetaPath").withExactArgs("path/to/collection")
+				.returns("meta/path");
+			that.mock(that.oRequestor).expects("fetchType")
+				.withExactArgs("~mTypeForMetaPath~", "/SalesOrders/meta/path")
+				.callsFake(resolve);
+
+			// code under test
+			aElements = oCache.addTransientCollection("path/to/collection", "~aSelect~");
+
+			assert.strictEqual(aElements, oParent.collection);
+			assert.strictEqual(aElements.$count, 2);
+			assert.strictEqual(aElements.$created, 2);
+			assert.deepEqual(aElements, [{
+				"@$ui5._" : {
+					postBody : "~a~",
+					promise : "~promise0~",
+					transient : "updateGroup",
+					transientPredicate : "($uid=~uid0~)"
+				},
+				"@$ui5.context.isTransient" : true
+			}, {
+				"@$ui5._" : {
+					postBody : "~b~",
+					promise : "~promise1~",
+					transient : "updateGroup",
+					transientPredicate : "($uid=~uid1~)"
+				},
+				"@$ui5.context.isTransient" : true
+			}]);
+			assert.deepEqual(aElements.$byPredicate, {
+				"($uid=~uid0~)" : aElements[0],
+				"($uid=~uid1~)" : aElements[1]
+			});
+			assert.strictEqual(aElements.$postBodyCollection, oPostBody.collection);
+			assert.strictEqual(aElements.$select, "~aSelect~");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Cache#getAndRemoveValue", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
 			oParent = {
@@ -5642,24 +5711,6 @@ sap.ui.define([
 		assert.strictEqual(oCache.getAndRemoveValue("path/to/value"), "~value~");
 
 		assert.notOk("value" in oParent);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Cache#addTransientCollection: initial data", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
-			oParent = {
-				collection : []
-			};
-
-		oCache.fetchValue = function () {};
-		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
-			.returns(SyncPromise.resolve(oParent));
-
-		assert.throws(function () {
-			// code under test
-			oCache.addTransientCollection("path/to/collection");
-		}, new Error("Deep create with initial data is not supported yet"));
 	});
 
 	//*********************************************************************************************

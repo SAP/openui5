@@ -368,20 +368,37 @@ sap.ui.define([
 			sName = aSegments.pop(),
 			oParent = this.fetchValue(_GroupLock.$cached, aSegments.join("/")).getResult(),
 			oPostBody = _Helper.getPrivateAnnotation(oParent, "postBody"),
+			aPostBodyCollection,
 			that = this;
 
-		this.checkSharedRequest();
-		if (sName in oParent) {
-			throw new Error("Deep create with initial data is not supported yet");
+		function setPostBodyCollection() {
+			aElements.$postBodyCollection = oPostBody[sName] = aPostBodyCollection;
 		}
-		aElements = oParent[sName] = [];
-		aElements.$count = aElements.$created = 0;
+
+		this.checkSharedRequest();
+		aElements = oParent[sName] = oParent[sName] || [];
+		aElements.$count = aElements.$created = aElements.length;
 		aElements.$byPredicate = {};
-		// allow creating on demand when there is a create in the child list
-		aElements.$postBodyCollection = function () {
-			aElements.$postBodyCollection = oPostBody[sName] = [];
-		};
+		aPostBodyCollection = oPostBody[sName] || [];
+		if (aElements.length) {
+			setPostBodyCollection();
+		} else {
+			// allow creating on demand when there is a create in the child list
+			aElements.$postBodyCollection = setPostBodyCollection;
+		}
 		aElements.$select = aSelect;
+		aElements.forEach(function (oElement, i) {
+			var sTransientPredicate = "($uid=" + _Helper.uid() + ")";
+
+			oElement["@$ui5.context.isTransient"] = true;
+			_Helper.setPrivateAnnotation(oElement, "postBody", aPostBodyCollection[i]);
+			_Helper.setPrivateAnnotation(oElement, "transient",
+				_Helper.getPrivateAnnotation(oParent, "transient"));
+			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
+			_Helper.setPrivateAnnotation(oElement, "promise",
+				_Helper.addDeepCreatePromise(oElement));
+			aElements.$byPredicate[sTransientPredicate] = oElement;
+		});
 		// add the collection type to mTypeForMetaPath
 		this.fetchTypes().then(function (mTypeForMetaPath) {
 			that.oRequestor.fetchType(mTypeForMetaPath,
