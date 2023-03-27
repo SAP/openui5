@@ -480,9 +480,10 @@ sap.ui.define([
 			this.mock(oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns([oBinding0, oBinding1]);
-			this.mock(oBinding0).expects("_hasPendingChanges").withExactArgs(false, true)
+			this.mock(oBinding0).expects("_hasPendingChanges").withExactArgs(false, sPath)
 				.returns(oFixture.aBindingHasPendingChanges[0]);
-			this.mock(oBinding1).expects("hasPendingChangesInDependents").withExactArgs(false, true)
+			this.mock(oBinding1).expects("hasPendingChangesInDependents")
+				.withExactArgs(false, sPath)
 				.exactly(oFixture.aBindingHasPendingChanges[0] ? 0 : 1)
 				.returns(oFixture.aBindingHasPendingChanges[1]);
 			this.mock(oModel).expects("withUnresolvedBindings")
@@ -3737,12 +3738,12 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext))
 			.returns([oDependentWithCache, oDependentWithOutCache]);
 		this.mock(oDependentWithCache).expects("_resetChanges")
-			.withExactArgs(true).returns(oPrivateResetChangesPromise);
+			.withExactArgs("/path").returns(oPrivateResetChangesPromise);
 		this.mock(oDependentWithOutCache).expects("resetInvalidDataState")
 			.withExactArgs();
 		this.mock(oDependentWithOutCache).expects("resetChangesInDependents")
-			.withExactArgs(sinon.match.array, true)
-			.callsFake(function (aPromises, _bIgnoreInactiveCaches) {
+			.withExactArgs(sinon.match.array, "/path")
+			.callsFake(function (aPromises, _sPathPrefix) {
 				assert.strictEqual(aPromises.length, 3);
 				aPromises[0].catch(function (oError0) {
 					assert.strictEqual(oError0, oError);

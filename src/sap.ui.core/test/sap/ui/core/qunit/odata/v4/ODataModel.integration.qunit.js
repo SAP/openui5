@@ -50466,4 +50466,127 @@ sap.ui.define([
 		});
 	});
 });
+	//*********************************************************************************************
+	// Scenario: Dependent ContextBinding below a dependent ListBinding, below of an absolute
+	// ListBinding, all w/ own cache. Set a row context of the absolute ListBinding as parent
+	// context for the dependent ListBinding, and a row context of the dependent ListBinding as
+	// parent context for the ContextBinding. A property in the ContextBinding is changed.
+	// Afterwards this change is parked by setting another row context of the dependent ListBinding
+	// as parent context of the ContextBinding. Now Context#resetChanges for the current parent
+	// context of the dependent ListBinding is called. Check that the parked change is reset.
+	// JIRA: CPOUI5ODATAV4-2015
+	QUnit.test("CPOUI5ODATAV4-2015", function (assert) {
+		var oItems,
+			aItemContexts,
+			oModel = this.createSalesOrdersModel({
+				updateGroupId : "update",
+				autoExpandSelect : true
+			}),
+			oOrders,
+			aOrderContexts,
+			oPatchPromise,
+			sView = '\
+<Table id="orders" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>\
+<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+	<Input id="note" value="{Note}"/>\
+</Table>\
+<FlexBox id="product" binding="{path : \'SOITEM_2_PRODUCT\', parameters : {$$ownRequest : true}}">\
+	<Input id="name" value="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"])
+			.expectChange("note", [])
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oOrders = that.oView.byId("orders").getBinding("items");
+			aOrderContexts = oOrders.getCurrentContexts();
+
+			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
+				+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						ItemPosition : 10, Note : "Item 2.10", SalesOrderID : "2"
+					}, {
+						ItemPosition : 20, Note : "Item 2.20", SalesOrderID : "2"
+					}]
+				})
+				.expectChange("note", ["Item 2.10", "Item 2.20"]);
+
+			oItems = that.oView.byId("items").setBindingContext(aOrderContexts[1]);
+
+			return that.waitForChanges(assert, "select order '2'");
+		}).then(function () {
+			oItems = that.oView.byId("items").getBinding("items");
+			aItemContexts = oItems.getCurrentContexts();
+
+			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM(SalesOrderID='2',ItemPosition='20')"
+				+ "/SOITEM_2_PRODUCT?$select=Name,ProductID", {
+					Name : "Notebook Basic 15",
+					ProductID : "HT-1000"
+				})
+				.expectChange("name", "Notebook Basic 15");
+
+			that.oView.byId("product").setBindingContext(aItemContexts[1]);
+
+			return that.waitForChanges(assert, "select item '20'");
+		}).then(function () {
+			that.expectChange("name", "Notebook Basic 15 - changed");
+
+			oPatchPromise = that.oView.byId("product").getBindingContext()
+				.setProperty("Name", "Notebook Basic 15 - changed");
+
+			return that.waitForChanges(assert, "patch 'HT-1000'");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM(SalesOrderID='2',ItemPosition='10')"
+				+ "/SOITEM_2_PRODUCT?$select=Name,ProductID", {
+					Name : "Notebook Basic 19",
+					ProductID : "HT-1003"
+				})
+				.expectChange("name", "Notebook Basic 19");
+
+			that.oView.byId("product").setBindingContext(aItemContexts[0]);
+
+			return that.waitForChanges(assert, "select item '10'");
+		}).then(function () {
+			assert.notOk(aOrderContexts[0].hasPendingChanges());
+			// below the current item (10) there is also no change visible
+			assert.notOk(that.oView.byId("product").getBindingContext().hasPendingChanges());
+			// but from the sales order root the change is reflected
+			assert.ok(aOrderContexts[1].hasPendingChanges());
+			// and also for the higher level bindings
+			assert.ok(oOrders.hasPendingChanges());
+			assert.ok(oItems.hasPendingChanges());
+			assert.notOk(// the ODCB is bound to HT-1003 and does not see the PATCH for HT-1000
+				that.oView.byId("product").getBindingContext().getBinding().hasPendingChanges());
+
+			that.expectCanceledError(
+				"Failed to update path /SalesOrderList('2')/"
+				+ "SO_2_SOITEM(SalesOrderID='2',ItemPosition='20')/SOITEM_2_PRODUCT/Name",
+				"Request canceled: PATCH ProductList('HT-1000'); group: update");
+
+			return Promise.all([
+				// code under test
+				aOrderContexts[1].resetChanges(),
+				checkCanceled(assert, oPatchPromise),
+				that.waitForChanges(assert, "reset all changes below order '2'")
+			]);
+		}).then(function () {
+			assert.notOk(that.oModel.hasPendingChanges());
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert, "no patch request")
+			]);
+		});
+	});
 });
+

@@ -976,13 +976,15 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	Context.prototype.hasPendingChanges = function () {
+		var that = this;
+
 		return this.isTransient() && this.isInactive() !== true
 			|| this.oDeletePromise && this.oDeletePromise.isPending()
 			|| this.oBinding.hasPendingChangesForPath(this.sPath)
 			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
 				return oDependentBinding.oCache
-					? oDependentBinding._hasPendingChanges(false, true)
-					: oDependentBinding.hasPendingChangesInDependents(false, true);
+					? oDependentBinding._hasPendingChanges(false, that.sPath)
+					: oDependentBinding.hasPendingChangesInDependents(false, that.sPath);
 			})
 			|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches", this.sPath.slice(1));
 	};
@@ -1689,7 +1691,8 @@ sap.ui.define([
 	Context.prototype.resetChanges = function () {
 		var aPromises = this.oDeletePromise
 				? [this.oDeletePromise.catch(function () { /*already handled in #delete*/ })]
-				: [];
+				: [],
+			that = this;
 
 		if (this.iIndex === iVIRTUAL || this.isTransient() && !this.isInactive()
 			|| this.oBinding.getHeaderContext && this === this.oBinding.getHeaderContext()
@@ -1704,9 +1707,9 @@ sap.ui.define([
 		}
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
 			if (oDependentBinding.oCache) {
-				aPromises.push(oDependentBinding._resetChanges(true));
+				aPromises.push(oDependentBinding._resetChanges(that.sPath));
 			} else {
-				oDependentBinding.resetChangesInDependents(aPromises, true);
+				oDependentBinding.resetChangesInDependents(aPromises, that.sPath);
 				oDependentBinding.resetInvalidDataState();
 			}
 		});

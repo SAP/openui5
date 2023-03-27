@@ -1064,7 +1064,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 */
 	ODataParentBinding.prototype.hasPendingChangesInDependents = function (bIgnoreKeptAlive0,
-			bIgnoreInactiveCaches) {
+			sPathPrefix) {
 		return this.getDependentBindings().some(function (oDependent) {
 			var oCache = oDependent.oCache,
 				bHasPendingChanges,
@@ -1087,20 +1087,20 @@ sap.ui.define([
 			} else if (oDependent.hasPendingChangesForPath("")) {
 				return true;
 			}
-			if (oDependent.mCacheByResourcePath && !bIgnoreInactiveCaches) {
+			if (oDependent.mCacheByResourcePath) {
 				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
 					.some(function (sPath) {
 						var oCacheForPath = oDependent.mCacheByResourcePath[sPath];
 
-						return oCacheForPath !== oCache // don't ask again
+						return (!sPathPrefix || sPath.startsWith(sPathPrefix.slice(1)))
+							&& oCacheForPath !== oCache // don't ask again
 							&& oCacheForPath.hasPendingChangesForPath("");
 					});
 				if (bHasPendingChanges) {
 					return true;
 				}
 			}
-			return oDependent.hasPendingChangesInDependents(bIgnoreKeptAlive,
-				bIgnoreInactiveCaches);
+			return oDependent.hasPendingChangesInDependents(bIgnoreKeptAlive, sPathPrefix);
 		})
 		|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches",
 				this.getResolvedPath().slice(1));
@@ -1224,8 +1224,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
 	 */
-	ODataParentBinding.prototype.resetChangesInDependents = function (aPromises,
-			bIgnoreInactiveCaches) {
+	ODataParentBinding.prototype.resetChangesInDependents = function (aPromises, sPathPrefix) {
 		this.getDependentBindings().forEach(function (oDependent) {
 			aPromises.push(oDependent.oCachePromise.then(function (oCache) {
 				if (oCache) {
@@ -1235,14 +1234,16 @@ sap.ui.define([
 			}).unwrap());
 
 			// mCacheByResourcePath may have changes nevertheless
-			if (oDependent.mCacheByResourcePath && !bIgnoreInactiveCaches) {
+			if (oDependent.mCacheByResourcePath) {
 				Object.keys(oDependent.mCacheByResourcePath).forEach(function (sPath) {
-					oDependent.mCacheByResourcePath[sPath].resetChangesForPath("");
+					if (!sPathPrefix || sPath.startsWith(sPathPrefix.slice(1))) {
+						oDependent.mCacheByResourcePath[sPath].resetChangesForPath("");
+					}
 				});
 			}
 			// Reset dependents, they might have no cache, but pending changes in
 			// mCacheByResourcePath
-			oDependent.resetChangesInDependents(aPromises, bIgnoreInactiveCaches);
+			oDependent.resetChangesInDependents(aPromises, sPathPrefix);
 		});
 	};
 

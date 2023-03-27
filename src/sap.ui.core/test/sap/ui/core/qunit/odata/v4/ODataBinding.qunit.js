@@ -476,18 +476,18 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding._hasPendingChanges("~bIgnoreKeptAlive~",
-			"~bIgnoreInactiveCaches~"), true);
+			"~sPathPrefix~"), true);
 
 		oBindingMock.expects("isResolved").withExactArgs().returns(true);
 		oBindingMock.expects("hasPendingChangesForPath").withExactArgs("", "~bIgnoreKeptAlive~")
 			.returns(false);
 		oBindingMock.expects("hasPendingChangesInDependents")
-			.withExactArgs("~bIgnoreKeptAlive~", "~bIgnoreInactiveCaches~")
+			.withExactArgs("~bIgnoreKeptAlive~", "~sPathPrefix~")
 			.returns(bResult);
 
 		// code under test
 		assert.strictEqual(oBinding._hasPendingChanges("~bIgnoreKeptAlive~",
-			"~bIgnoreInactiveCaches~"), bResult);
+			"~sPathPrefix~"), bResult);
 	});
 
 	//*********************************************************************************************
