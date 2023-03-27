@@ -495,8 +495,8 @@ sap.ui.define([
 				name: "sap.ui.core.mvc.EmptyControllerImpl"
 			}).then(connectToView);
 		} else {
-			sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl", {"_sap.ui.core.mvc.EmptyControllerImpl":true}); // legacy-relevant
-			oThis.oController = sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl");
+			sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl", {"_sap.ui.core.mvc.EmptyControllerImpl":true}); // legacy-relevant: Sync path
+			oThis.oController = sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl"); // legacy-relevant: Sync path
 		}
 	};
 
