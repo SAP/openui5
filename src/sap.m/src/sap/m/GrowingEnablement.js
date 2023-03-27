@@ -545,6 +545,10 @@ sap.ui.define([
 
 			this._bHadFocus = (vInsert == false) && oDomRef.contains(document.activeElement);
 			this._oRM.flush(oDomRef, false, this._getDomIndex(vInsert));
+			this._bHadFocus && this._oControl.focus();
+			if (!this._oControl.getBusy()) {
+				this._bHadFocus = false;
+			}
 			this._aChunk = [];
 		},
 
@@ -789,15 +793,12 @@ sap.ui.define([
 		_updateTrigger : function(bLoading) {
 			var oTrigger = this._oTrigger,
 				oControl = this._oControl,
-				bVisibleItems = oControl && oControl.getVisibleItems().length > 0;
+				bVisibleItems = oControl && oControl.getVisibleItems().length > 0,
+				oBinding = oControl && oControl.getBinding("items");
 
 			// If there are no visible columns or items then also hide the trigger.
-			if (!oTrigger || !oControl || !bVisibleItems || !oControl.shouldRenderItems() || !oControl.getDomRef()) {
-				return;
-			}
-
-			var oBinding = oControl.getBinding("items");
-			if (!oBinding) {
+			if (!oTrigger || !oControl || !bVisibleItems || !oBinding || !oControl.shouldRenderItems() || !oControl.getDomRef()) {
+				this._bHadFocus = false;
 				return;
 			}
 
@@ -818,14 +819,14 @@ sap.ui.define([
 
 				// put the focus to the newly added item if growing button is pressed
 				// or to the item if the focus was on the items container
-				var oFocusTarget;
+
 				if (this._bHadFocus) {
-					oFocusTarget = this._oControl;
+					this._bHadFocus = false;
+					jQuery(this._oControl.getNavigationRoot()).trigger("focus");
 				} else if (oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
-					oFocusTarget = aItems[this._iLastItemsCount] || oControl;
+					var oFocusTarget = aItems[this._iLastItemsCount] || oControl;
+					oFocusTarget && setTimeout(oFocusTarget.focus.bind(oFocusTarget));
 				}
-				oFocusTarget && setTimeout(oFocusTarget.focus.bind(oFocusTarget));
-				this._bHadFocus = false;
 
 				// show, update or hide the growing button
 				if (!iItemsLength || !this._iLimit || !iBindingLength ||
