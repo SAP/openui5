@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Avatar",
+	"sap/m/ImageCustomData",
 	"sap/m/LightBox",
 	"sap/m/library",
 	"sap/base/Log",
@@ -20,6 +21,7 @@ sap.ui.define([
 	URI,
 	qutils,
 	Avatar,
+	ImageCustomData,
 	LightBox,
 	library,
 	Log,
@@ -450,6 +452,54 @@ sap.ui.define([
 		//Act
 		this.oAvatar.setSrc(sImagePath);
 		oCore.applyChanges();
+	});
+
+	QUnit.module("Rendering with sap.m.ImageCustomData", {
+		beforeEach: function () {
+			this.oAvatar = createAvatar({
+				src: sImagePath,
+				customData: [
+					new ImageCustomData({ paramName: "xcache" })
+				]
+			});
+
+			this.oAvatar.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oAvatar.destroy();
+		}
+	});
+
+	QUnit.test("Avatar is rendered correctly with cache busting query parameter added to his source", function (assert) {
+		// Assert
+		var sAvatarUrl = this.oAvatar.$().find(".sapFAvatarImageHolder")[0].style.backgroundImage,
+			sAvatarParamValue = sAvatarUrl.match(/xcache=(\d+)/)[1];
+
+		assert.strictEqual(sAvatarParamValue, this.oAvatar._iCacheBustingValue.toString(), "Avatar is rendered with correct query parameter");
+	});
+
+	QUnit.test("Cache busting paramater value is not changed when Avatar gets invalidated ", function (assert) {
+		// Arrange
+		var sAvatarUrl = this.oAvatar.$().find(".sapFAvatarImageHolder")[0].style.backgroundImage,
+			sAvatarParamValue = sAvatarUrl.match(/xcache=(\d+)/)[1];
+
+		// Act
+		this.oAvatar.invalidate();
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(sAvatarParamValue, this.oAvatar._iCacheBustingValue.toString(), "Avatar is rendered with correct query parameter");
+	});
+
+	QUnit.test("Avatar's internal preloaded Image has correct url when used in cache busting context", function (assert) {
+		// Arrange
+		var sAvatarUrl = this.oAvatar.$().find(".sapFAvatarImageHolder")[0].style.backgroundImage;
+
+		if (this.oAvatar.preloadedImage) {
+			// Assert
+			assert.strictEqual(this.oAvatar.preloadedImage.src, sAvatarUrl.replace(/url\(\"(.*)\"\)/, "$1"), "Preloaded image has correct src");
+		}
 	});
 
 	QUnit.module("Aggregations", {

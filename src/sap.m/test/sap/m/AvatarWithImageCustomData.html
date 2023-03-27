@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>sap.m.Avatar test page</title>
+	<script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js" data-sap-ui-async="true"
+		data-sap-ui-compatVersion="edge" data-sap-ui-theme="sap_horizon">
+		</script>
+
+	<script id="myView" type="text/xml">
+		<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:tnt="sap.tnt"
+		height="100%">
+			<App id="myApp">
+				<Page title="Cache busting demo" titleAlignment="Center">
+					<FlexBox direction="Row" wrap="Wrap" alignItems="Center">
+						<Title text="Avatar force reload" level="H2" class="sapUiSmallMargin" />
+						<tnt:InfoLabel text="relative url" renderMode="Loose" colorScheme="3"/>
+					</FlexBox>
+
+					<FlexBox direction="Row" wrap="Wrap">
+						<Avatar
+							id="avatarWithRelativeSrc"
+							src="{/srcWithModificationsRelative}"
+							displaySize="XL"
+							showBorder="true"
+							imageFitType="Contain"
+							class="sapUiSmallMargin">
+							<customData>
+								<ImageCustomData paramName="xcache" />
+							</customData>
+						</Avatar>
+					</FlexBox>
+
+					<FlexBox direction="Row" wrap="Wrap" alignItems="Center">
+						<Title text="Avatar force reload" level="H2" class="sapUiSmallMargin" />
+						<tnt:InfoLabel text="absolute url" renderMode="Loose" colorScheme="6"/>
+					</FlexBox>
+
+					<FlexBox direction="Row" wrap="Wrap">
+						<Avatar
+							id="avatarWithAbsoluteSrc"
+							src="{/srcWithModificationsAbsolute}"
+							displaySize="XL"
+							showBorder="true"
+							imageFitType="Contain"
+							class="sapUiSmallMargin">
+							<customData>
+								<ImageCustomData paramName="xcache" />
+							</customData>
+						</Avatar>
+					</FlexBox>
+
+					<FlexBox direction="Row" wrap="Wrap" alignItems="Center">
+						<Title text="Avatar" level="H2" class="sapUiSmallMargin" />
+						<tnt:InfoLabel text="without cache busting" renderMode="Loose" colorScheme="1"/>
+					</FlexBox>
+
+					<FlexBox direction="Row" wrap="Wrap">
+						<Avatar
+							id="avatarWithAbsoluteSrcNormal"
+							src="{/srcWithoutModifications}"
+							displaySize="XL"
+							showBorder="true"
+							imageFitType="Contain"
+							class="sapUiSmallMargin">
+						</Avatar>
+					</FlexBox>
+				</Page>
+			</App>
+		</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			var oModel = new sap.ui.model.json.JSONModel({
+				srcWithModificationsRelative: "images/Woman_avatar_01.png",
+				srcWithModificationsAbsolute: "https://sapui5.hana.ondemand.com/test-resources/sap/m/images/Woman_avatar_02.png",
+				srcWithoutModifications: "https://sapui5.hana.ondemand.com/test-resources/sap/m/images/Woman_04.png",
+			});
+
+			sap.ui.getCore().setModel(oModel);
+			sap.ui.xmlview({ viewContent: $('#myView').html() }).placeAt("content");
+		});
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="content"></div>
+</body>
+
+</html>

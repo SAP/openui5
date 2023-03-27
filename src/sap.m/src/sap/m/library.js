@@ -409,6 +409,7 @@ sap.ui.define([
 			"sap.m.FeedListItemAction",
 			"sap.m.IconTabFilter",
 			"sap.m.IconTabSeparator",
+			"sap.m.ImageCustomData",
 			"sap.m.LightBoxItem",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",

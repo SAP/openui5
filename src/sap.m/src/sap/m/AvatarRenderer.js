@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides default renderer for controlsap.m.Avatar
+// Provides default renderer for control sap.m.Avatar
 sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	function (library, encodeCSS) {
 		"use strict";
@@ -22,6 +22,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			apiVersion: 2
 		};
 
+
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
@@ -29,6 +30,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		 * @param {sap.m.Avatar} oAvatar an object representation of the control that should be rendered
 		 */
 		AvatarRenderer.render = function (oRm, oAvatar) {
+
 			var sInitials = oAvatar.getInitials(),
 				sActualDisplayType = oAvatar._getActualDisplayType(),
 				sImageFallbackType = oAvatar._getImageFallbackType(),
@@ -37,7 +39,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				sImageFitType = oAvatar.getImageFitType(),
 				sCustomDisplaySize = oAvatar.getCustomDisplaySize(),
 				sCustomFontSize = oAvatar.getCustomFontSize(),
-				sSrc = oAvatar.getSrc(),
+				sSrc = oAvatar._getAvatarSrc(),
 				sAvatarClass = "sapFAvatar",
 				sTooltip = oAvatar.getTooltip_AsString(),
 				aLabelledBy = oAvatar._getAriaLabelledBy(),
