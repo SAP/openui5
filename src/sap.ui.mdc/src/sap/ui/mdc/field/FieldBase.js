@@ -364,6 +364,15 @@ sap.ui.define([
 					defaultValue: {},
 					byValue: true,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Internal property to bind the operators to the internal <code>DynamicDateRange</code> (or other) control.
+				 */
+				_operators: {
+					type: "string[]",
+					defaultValue: [],
+					visibility: "hidden"
 				}
 
 			},
@@ -3241,19 +3250,23 @@ sap.ui.define([
 	FieldBase.prototype._getOperators = function() {
 
 		var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
+		var aOperators;
 		if (regexp.test(this.getFieldPath()) && this.getMaxConditions() === 1) {
 			// for SearchField use Contains operator
-			return ["Contains"];
+			aOperators =  ["Contains"];
+		} else {
+			// get default operators for type
+			var sBaseType = this.getBaseType(); // TODO what if delegate not loaded
+
+			if (sBaseType === BaseType.Unit) {
+				sBaseType = BaseType.Numeric;
+			}
+
+			aOperators = FilterOperatorUtil.getOperatorsForType(sBaseType);
 		}
 
-		// get default operators for type
-		var sBaseType = this.getBaseType(); // TODO what if delegate not loaded
-
-		if (sBaseType === BaseType.Unit) {
-			sBaseType = BaseType.Numeric;
-		}
-
-		return FilterOperatorUtil.getOperatorsForType(sBaseType);
+		this.setProperty("_operators", aOperators, true);
+		return aOperators;
 
 	};
 

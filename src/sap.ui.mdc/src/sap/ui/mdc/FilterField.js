@@ -187,6 +187,8 @@ sap.ui.define([
 		if (aOperators.length === 0) {
 			// use default operators
 			aOperators = FieldBase.prototype._getOperators.apply(this, arguments);
+		} else {
+			this.setProperty("_operators", aOperators, true);
 		}
 
 		return aOperators;
@@ -208,6 +210,12 @@ sap.ui.define([
 				aOperatorNames.push(oOperator.name);
 			}
 		});
+
+		if (aOperatorNames.length === 0) {
+			FieldBase.prototype._getOperators.apply(this, []); // set default ones to _operators
+		} else {
+			this.setProperty("_operators", aOperatorNames, true);
+		}
 
 		this.setProperty("operators", aOperatorNames);
 		return this;
