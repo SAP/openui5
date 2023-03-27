@@ -65,8 +65,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	// Requests XML data, then serializes it to an Object
 	SharedDataExtension.prototype.getTrainingLocations = function () {
 		return this.getCard().request({
-			"url": "locations.xml",
-			"dataType": "xml"
+			"url": "locations.xml"
 		}).then(function (oXMLDocument) {
 			var aLocations = oXMLDocument.querySelectorAll("Location");
 

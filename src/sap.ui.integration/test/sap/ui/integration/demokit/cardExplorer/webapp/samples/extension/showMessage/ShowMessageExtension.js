@@ -49,7 +49,9 @@ sap.ui.define([
 			.catch(function (aResponse) {
 				var oResponse = aResponse[1];
 
-				oCard.showMessage(oResponse.responseText, MessageType.Error);
+				oResponse.text().then(function (sText) {
+					oCard.showMessage(sText,  MessageType.Error);
+				});
 
 				oActionSource.setEnabled(true);
 			});
@@ -65,8 +67,7 @@ sap.ui.define([
 			},
 			parameters: {
 				productId: sProductId
-			},
-			dataType: "text"
+			}
 		});
 	};
 
@@ -74,8 +75,7 @@ sap.ui.define([
 		// remove the item from the database and refresh the card data
 		return this.getCard().request({
 			url: "/products/" + sProductId,
-			method: "DELETE",
-			dataType: "text"
+			method: "DELETE"
 		});
 	};
 

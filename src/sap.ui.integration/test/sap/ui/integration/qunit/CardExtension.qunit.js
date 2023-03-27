@@ -1,17 +1,15 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/Extension",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/integration/Extension"
 ], function (
 	Log,
 	Core,
 	Card,
-	Extension,
-	jQuery
+	Extension
 ) {
 	"use strict";
 
@@ -277,10 +275,20 @@ sap.ui.define([
 	QUnit.test("Extension making request with custom dataType", function (assert) {
 		// arrange
 		var done = assert.async(),
-			deferred = new jQuery.Deferred();
+			oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
 
-		this.stub(jQuery, "ajax").callsFake(function () {
-			return deferred.promise();
+		oServer.respondImmediately = true;
+
+		oServer.respondWith(/.*\/some\/url/, function (oXhr) {
+			oXhr.respond(
+				200,
+				{
+					"Content-Type": "application/xml"
+				},
+				'<CitySet> <City Name="Paris"/> <City Name="Berlin" /> </CitySet>'
+			);
 		});
 
 		this.oCard.setManifest({
@@ -308,16 +316,13 @@ sap.ui.define([
 
 			// assert
 			assert.ok(aItems.length, "The data request is successful.");
-			assert.ok(jQuery.ajax.calledWithMatch({ dataType: "xml" }), "request was made with the expected dataType");
 
+			oServer.restore();
 			done();
-			jQuery.ajax.restore();
 		}.bind(this));
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-
-		deferred.resolve(new DOMParser().parseFromString('<CitySet> <City Name="Paris"/> <City Name="Berlin" /> </CitySet>', "application/xml"));
 	});
 
 	QUnit.module("Actions - Legacy", {

@@ -50,10 +50,10 @@ sap.ui.define([
 				method: "GET",
 				path: /.*/,
 				response: function (oXhr, sQuery) {
-					var requestHeaders = oXhr.requestHeaders;
+					var requestHeaders = new Headers(oXhr.requestHeaders);
 					var respondStatus = 200;
 
-					if (requestHeaders["X-CSRF-Token"] !== sTokenValue) {
+					if (requestHeaders.get("X-CSRF-Token") !== sTokenValue) {
 						respondStatus = 403;
 					}
 
@@ -65,10 +65,10 @@ sap.ui.define([
 				method: "HEAD",
 				path: /.*/,
 				response: function (oXhr, sQuery) {
-					var requestHeaders = oXhr.requestHeaders;
+					var requestHeaders = new Headers(oXhr.requestHeaders);
 					var headers = {};
 
-					if (requestHeaders["X-CSRF-Token"] === "Fetch") {
+					if (requestHeaders.get("X-CSRF-Token") === "Fetch") {
 						headers["X-CSRF-Token"] = sTokenValue;
 					}
 

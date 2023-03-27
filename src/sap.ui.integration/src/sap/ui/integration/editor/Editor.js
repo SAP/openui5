@@ -2286,36 +2286,53 @@ sap.ui.define([
 			}
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 			oField._hideValueState(true, true);
-		}.bind(this)).catch(function (oError) {
-			var sError = this._oResourceBundle.getText("EDITOR_BAD_REQUEST");
-			if (Array.isArray(oError) && oError.length > 0) {
-				sError = oError[0];
-				var jqXHR = oError[1];
-				if (jqXHR) {
-					var oErrorInResponse;
-					if (jqXHR.responseJSON) {
-						oErrorInResponse = jqXHR.responseJSON.error;
-					} else if (jqXHR.responseText) {
-						if (Utils.isJson(jqXHR.responseText)) {
-							oErrorInResponse = JSON.parse(jqXHR.responseText).error;
-						} else {
-							sError = jqXHR.responseText;
-						}
+		}.bind(this))
+		.catch(function (oError) {
+			var oErrorPromise = new Promise(function (resolve) {
+				var sError = this._oResourceBundle.getText("EDITOR_BAD_REQUEST");
+				if (Array.isArray(oError) && oError.length > 0) {
+					sError = oError[0];
+					var oResponse = oError[1];
+					if (oResponse) {
+						var oErrorInResponse;
+						oResponse.text().then(function (sResponseText) {
+							if (Utils.isJson(sResponseText)) {
+								oErrorInResponse = JSON.parse(sResponseText).error;
+							} else {
+								sError = sResponseText;
+							}
+
+							if (oErrorInResponse) {
+								sError = (oErrorInResponse.code || oErrorInResponse.errorCode || oResponse.status) + ": " + oErrorInResponse.message;
+							}
+
+							resolve(sError);
+						});
+						return;
+					} else {
+						resolve(sError);
+						return;
 					}
-					if (oErrorInResponse) {
-						sError = (oErrorInResponse.code || oErrorInResponse.errorCode || jqXHR.status) + ": " + oErrorInResponse.message;
-					}
+				} else if (typeof (oError) === "string") {
+					sError = oError;
+					resolve(sError);
+					return;
+				} else {
+					resolve(sError);
+					return;
 				}
-			} else if (typeof (oError) === "string") {
-				sError = oError;
-			}
-			var oValueModel = oField.getModel();
-			oValueModel.firePropertyChange();
-			if (oConfig.type === "object" || oConfig.type === "object[]") {
-				oField.mergeValueWithRequestResult();
-			}
-			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-			oField._showValueState("error", sError, true);
+			}.bind(this));
+
+			return oErrorPromise.then(function (sError) {
+				var oValueModel = oField.getModel();
+				oValueModel.firePropertyChange();
+				if (oConfig.type === "object" || oConfig.type === "object[]") {
+					oField.mergeValueWithRequestResult();
+				}
+				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+				oField._showValueState("error", sError, true);
+			}.bind(this));
+
 		}.bind(this));
 	};
 
@@ -2374,26 +2391,27 @@ sap.ui.define([
 			var sError = this._oResourceBundle.getText("EDITOR_BAD_REQUEST");
 			if (Array.isArray(oError) && oError.length > 0) {
 				sError = oError[0];
-				var jqXHR = oError[1];
-				if (jqXHR) {
+				var oResponse = oError[1];
+				if (oResponse) {
 					var oErrorInResponse;
-					if (jqXHR.responseJSON) {
-						oErrorInResponse = jqXHR.responseJSON.error;
-					} else if (jqXHR.responseText) {
-						if (Utils.isJson(jqXHR.responseText)) {
-							oErrorInResponse = JSON.parse(jqXHR.responseText).error;
+					oResponse.text().then(function (sResponseText) {
+						if (Utils.isJson(sResponseText)) {
+							oErrorInResponse = JSON.parse(sResponseText).error;
 						} else {
-							sError = jqXHR.responseText;
+							sError = sResponseText;
 						}
-					}
-					if (oErrorInResponse) {
-						sError = (oErrorInResponse.code || oErrorInResponse.errorCode || jqXHR.status) + ": " + oErrorInResponse.message;
-					}
+
+						if (oErrorInResponse) {
+							sError = (oErrorInResponse.code || oErrorInResponse.errorCode || oResponse.status) + ": " + oErrorInResponse.message;
+						}
+
+						Log.error("Request extension data failed, " + sError);
+					});
 				}
 			} else if (typeof (oError) === "string") {
 				sError = oError;
+				Log.error("Request extension data failed, " + sError);
 			}
-			Log.error("Request extension data failed, " + sError);
 		}.bind(this));
 	};
 

@@ -414,7 +414,9 @@ sap.ui.define([
 		/**
 		 * Modifies the card HTTP data request before sending.
 		 * Override if you need to change the default data request behavior.
-		 * @param {map} mRequest The current request. In format for jQuery.ajax function.
+		 * @param {map} mRequest The current request.
+		 * @param {string} mRequest.url The request url.
+		 * @param {object} mRequest.options The request options in the same format as for the native Request object.
 		 * @param {map} mSettings The map of request settings defined in the card manifest.
 		 * @param {sap.ui.integration.widgets.Card} [oCard] Optional. The card for which the request is made.
 		 * @returns {map} The modified request.

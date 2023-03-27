@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/integration/util/Utils",
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
@@ -21,6 +22,7 @@ sap.ui.define([
 	coreLibrary,
 	Device,
 	ManagedObject,
+	Utils,
 	IllustratedMessage,
 	IllustratedMessageType,
 	IllustratedMessageSize,
@@ -38,9 +40,18 @@ sap.ui.define([
 	var FlexJustifyContent = library.FlexJustifyContent;
 	var FlexAlignItems = library.FlexAlignItems;
 
-	 function formatJson(oJson) {
-		 return BindingParser.complexParser.escape(JSON.stringify(oJson, null, 4));
-	 }
+	function formatJson(oJson) {
+		return BindingParser.complexParser.escape(JSON.stringify(oJson, null, 4));
+	}
+
+	function formatRequest(oRequest) {
+		if (oRequest.options) {
+			oRequest.options.body = oRequest.body && oRequest.body.toString();
+			oRequest.options.headers = Object.fromEntries(oRequest.options.headers);
+		}
+
+		return formatJson(oRequest);
+	}
 
 	/**
 	 * Utility class for handling errors in the cards.
@@ -186,18 +197,19 @@ sap.ui.define([
 
 	ErrorHandler.prototype._configureDataRequestErrorInfo = function (mErrorInfo) {
 		var oCard = this.getCard(),
-			jqXHR = mErrorInfo.requestErrorParams.jqXHR,
+			oResponse = mErrorInfo.requestErrorParams.response,
+			sResponseText = mErrorInfo.requestErrorParams.responseText,
 			sType = IllustratedMessageType.ErrorScreen,
-			sTitle = jqXHR ? jqXHR.status + " " + jqXHR.statusText : oCard.getTranslatedText("CARD_ERROR_OCCURED"),
-			sDescription = jqXHR ? oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION") : mErrorInfo.requestErrorParams.message,
+			sTitle = oResponse ? oResponse.status + " " + oResponse.statusText : oCard.getTranslatedText("CARD_ERROR_OCCURED"),
+			sDescription = oResponse ? oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION") : mErrorInfo.requestErrorParams.message,
 			requestSettings = mErrorInfo.requestSettings,
 			sUrl = requestSettings.request ? requestSettings.request.url : "",
 			sDetails = oCard.getTranslatedText("CARD_ERROR_REQUEST_DETAILS", [sUrl]);
 
-		if (jqXHR) {
-			switch (jqXHR.status) {
+		if (oResponse) {
+			switch (oResponse.status) {
 				case 0:
-					switch (jqXHR.statusText) {
+					switch (oResponse.statusText) {
 						case "timeout":
 							sType = IllustratedMessageType.ReloadScreen;
 							sTitle = "408 " + oCard.getTranslatedText("CARD_ERROR_REQUEST_TIMEOUT_TITLE");
@@ -227,28 +239,28 @@ sap.ui.define([
 		sDetails = sTitle + "\n" +
 			sDescription + "\n\n";
 
-		if (jqXHR) {
+		if (oResponse) {
 			sDetails += oCard.getTranslatedText("CARD_LOG_MSG") + "\n" +
-				jqXHR.statusText + "\n\n";
+				oResponse.statusText + "\n\n";
 		}
 
 		sDetails += oCard.getTranslatedText("CARD_REQUEST_SETTINGS") + "\n" +
 			formatJson(requestSettings) + "\n\n";
 
-		if (jqXHR) {
+		if (oResponse) {
 			sDetails += oCard.getTranslatedText("CARD_REQUEST") + "\n" +
-				formatJson(mErrorInfo.requestErrorParams.settings) + "\n\n" +
+				formatRequest(mErrorInfo.requestErrorParams.settings) + "\n\n" +
 				oCard.getTranslatedText("CARD_RESPONSE_HEADERS") + "\n" +
-				jqXHR.getAllResponseHeaders() + "\n\n";
+				formatJson(Object.fromEntries(oResponse.headers)) + "\n\n";
 		}
 
-		if (jqXHR && jqXHR.responseText) {
+		if (oResponse && sResponseText) {
 			sDetails += oCard.getTranslatedText("CARD_RESPONSE") + "\n";
 
-			if (jqXHR.responseJSON) {
-				sDetails += formatJson(jqXHR.responseJSON);
+			if (Utils.isJson(sResponseText)) {
+				sDetails += formatJson(JSON.parse(sResponseText));
 			} else {
-				sDetails += jqXHR.responseText;
+				sDetails += sResponseText;
 			}
 
 			sDetails += "\n\n";
