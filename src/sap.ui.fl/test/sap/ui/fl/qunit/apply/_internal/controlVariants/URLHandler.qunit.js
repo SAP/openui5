@@ -32,15 +32,14 @@ sap.ui.define([
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function() {
 			this.oAppComponent = new Component("appComponent");
-			this.oGetUShellServiceStub = sandbox.stub();
 			this.oModel = {
 				oAppComponent: this.oAppComponent,
 				destroy: sandbox.stub().resolves(),
-				getUShellService: this.oGetUShellServiceStub,
-				sFlexReference: "flexReference"
+				getUShellService: function() {}
 			};
 			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			this.fnDestroyUnobserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "unobserve");
+			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
 		},
 		afterEach: function() {
 			if (this.oAppComponent instanceof Component) {
@@ -107,11 +106,14 @@ sap.ui.define([
 
 		QUnit.test("when app component is destroyed after attachHandlers() was already called", function(assert) {
 			var sVariantManagementReference = "sLocalControlId";
-			var oUnregisterNavigationFilterStub = sandbox.stub();
 
 			this.oGetUShellServiceStub.returns({
-				registerNavigationFilter: sandbox.stub(),
-				unregisterNavigationFilter: oUnregisterNavigationFilterStub,
+				registerNavigationFilter: function(fnHandler) {
+					assert.strictEqual(typeof fnHandler, "function", "then navigation filter was registered");
+				},
+				unregisterNavigationFilter: function(fnHandler) {
+					assert.strictEqual(typeof fnHandler, "function", "then navigation filer was de-registered");
+				},
 				parseShellHash: function() {}
 			});
 
@@ -133,11 +135,10 @@ sap.ui.define([
 
 			return this.oModel._oVariantSwitchPromise.then(function() {
 				var aCallArgs = this.fnDestroyUnobserverSpy.getCall(0).args;
-				assert.equal(this.oModel.destroy.callCount, 1, "then variant model destroy() was called");
+				assert.equal(this.oModel.destroy.callCount, 1, "then variant model resetMap() was called");
 				assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver unobserve() was called for the AppComponent");
 				assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver unobserve() was called for the destroy() method");
 				assert.ok(fnVariantSwitchPromiseStub.calledBefore(this.fnDestroyUnobserverSpy), "then first variant switch was resolved and then component's destroy callback was called");
-				assert.ok(oUnregisterNavigationFilterStub.called, "then the navigation filter is unregistered");
 			}.bind(this));
 		});
 
