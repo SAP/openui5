@@ -1854,11 +1854,11 @@ sap.ui.define([
 			assert.ok(aChanges);
 			assert.strictEqual(aChanges.length, 3);
 			assert.strictEqual(aChanges[0], newChange1);
-			assert.strictEqual(mChangesEntries["Gizorillus1"]. newChange1);
+			assert.strictEqual(mChangesEntries["Gizorillus1"], newChange1);
 			assert.strictEqual(aChanges[1], newChange2);
-			assert.strictEqual(mChangesEntries["Gizorillus2"]. newChange2);
+			assert.strictEqual(mChangesEntries["Gizorillus2"], newChange2);
 			assert.strictEqual(aChanges[2], newChange3);
-			assert.strictEqual(mChangesEntries["Gizorillus3"]. newChange3);
+			assert.strictEqual(mChangesEntries["Gizorillus3"], newChange3);
 		});
 
 		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function(assert) {

@@ -311,6 +311,7 @@ sap.ui.define([
 					assert.strictEqual(aDirtyChanges[0].getSelector().id, "Id1");
 					assert.strictEqual(aDirtyChanges[0].getNamespace(), "apps/testScenarioComponent/changes/");
 					assert.strictEqual(aDirtyChanges[0].getFlexObjectMetadata().reference, "testScenarioComponent");
+					oControl.destroy();
 				}.bind(this));
 		});
 
