@@ -135,7 +135,9 @@
 						{
 							"title": "Status",
 							"value": "{status}",
-							"state": "{statusState}"
+							"state": "{statusState}",
+							"showStateIcon": "{showStateIcon}",
+							"customStateIcon": "{customStateIcon}"
 						}
 					]
 				}

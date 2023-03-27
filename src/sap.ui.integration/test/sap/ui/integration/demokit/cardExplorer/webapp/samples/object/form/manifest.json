@@ -70,7 +70,8 @@
 							"value": "15,000.00 EUR",
 							"type": "Status",
 							"state": "Information",
-							"showStateIcon": true
+							"showStateIcon": true,
+							"customStateIcon": "sap-icon://hint"
 						},
 						{
 							"value": "For Ultra Jet Super Highspeed"

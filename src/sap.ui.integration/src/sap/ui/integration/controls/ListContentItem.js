@@ -5,6 +5,8 @@
 sap.ui.define([
 	"sap/ui/integration/library",
 	"./ListContentItemRenderer",
+	"sap/ui/integration/controls/ObjectStatus",
+	"sap/m/library",
 	"sap/m/Avatar",
 	"sap/m/AvatarShape",
 	"sap/m/AvatarSize",
@@ -14,6 +16,8 @@ sap.ui.define([
 ], function (
 	library,
 	ListContentItemRenderer,
+	ObjectStatus,
+	mLibrary,
 	Avatar,
 	AvatarShape,
 	AvatarSize,
@@ -25,6 +29,7 @@ sap.ui.define([
 
 	var AttributesLayoutType = library.AttributesLayoutType;
 	var ValueState = coreLibrary.ValueState;
+	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	/**
 	 * Constructor for a new ListContentItem.
@@ -113,6 +118,11 @@ sap.ui.define([
 				showInfoStateIcon: { type: "boolean", defaultValue: false },
 
 				/**
+				 * Defines the custom info status icon that should be shown.
+				 */
+				customInfoStatusIcon: { type : "string", group: "Misc", defaultValue: null },
+
+				/**
 				 * Defines the layout type of the attributes.
 				 */
 				attributesLayoutType: { type: "sap.ui.integration.AttributesLayoutType", defaultValue: AttributesLayoutType.TwoColumns }
@@ -127,7 +137,12 @@ sap.ui.define([
 				/**
 				 * Defines the inner avatar control.
 				 */
-				_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" }
+				_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Defines the inner object status control.
+				 */
+				_objectStatus: { type: "sap.m.ObjectStatus", multiple: false, visibility: "hidden" }
 			}
 		},
 		renderer: ListContentItemRenderer
@@ -224,6 +239,24 @@ sap.ui.define([
 			.setVisible(this.getIconVisible());
 
 		return oAvatar;
+	};
+
+	ListContentItem.prototype._getObjectStatus = function () {
+		var oObjectStatus = this.getAggregation("_objectStatus");
+
+		if (!oObjectStatus) {
+			oObjectStatus = new ObjectStatus();
+			this.setAggregation("_objectStatus", oObjectStatus);
+		}
+
+		oObjectStatus
+			.setText(this.getInfo())
+			.setState(this.getInfoState())
+			.setShowStateIcon(this.getShowInfoStateIcon())
+			.setIcon(this.getCustomInfoStatusIcon())
+			.setEmptyIndicatorMode(EmptyIndicatorMode.On);
+
+		return oObjectStatus;
 	};
 
 	ListContentItem.prototype._getVisibleAttributes = function () {

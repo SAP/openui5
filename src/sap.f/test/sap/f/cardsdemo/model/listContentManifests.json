@@ -192,7 +192,7 @@
 						},
 						{
 							"name": "Lean Pulp",
-							"description": "Raymond, Callifornia",
+							"description": "Raymond, California",
 							"info": "Success 236",
 							"infoState": "Success",
 							"showInfoStateIcon": true,
@@ -214,15 +214,24 @@
 						},
 						{
 							"name": "Lean Pulp",
-							"description": "Raymond, Callifornia",
-							"info": "Information 236",
+							"description": "Raymond, California",
+							"info": "Information 23627483928",
 							"infoState": "Information",
 							"showInfoStateIcon": true,
+							"attributesLayoutType": "OneColumn"
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, California",
+							"info": "Warning 236 (Custom Icon)",
+							"infoState": "Warning",
+							"showInfoStateIcon": true,
+							"customStateIcon": "sap-icon://quality-issue",
 							"attributesLayoutType": "OneColumn"
 						}
 					]
 				},
-				"maxItems": 4,
+				"maxItems": 5,
 				"item": {
 					"title": {
 						"value": "{name}"
@@ -233,7 +242,8 @@
 					"info": {
 						"value": "{info}",
 						"state": "{infoState}",
-						"showStateIcon": "{showInfoStateIcon}"
+						"showStateIcon": "{showInfoStateIcon}",
+						"customStateIcon": "{customStateIcon}"
 					},
 					"highlight": "{infoState}",
 					"attributesLayoutType": "{attributesLayoutType}",
@@ -645,6 +655,12 @@
 									"showStateIcon": true
 								},
 								{
+									"name": "Success (Custom Icon)",
+									"state": "Success",
+									"showStateIcon": true,
+									"customStateIcon": "sap-icon://activity-2"
+								},
+								{
 									"name": "Information",
 									"state": "Information",
 									"showStateIcon": true
@@ -747,7 +763,8 @@
 						{
 							"value": "{attributes/3/name}",
 							"state": "{attributes/3/state}",
-							"showStateIcon": "{attributes/3/showStateIcon}"
+							"showStateIcon": "{attributes/3/showStateIcon}",
+							"customStateIcon": "{attributes/3/customStateIcon}"
 						},
 						{
 							"value": "{attributes/4/name}",
@@ -758,6 +775,11 @@
 							"value": "{attributes/5/name}",
 							"state": "{attributes/5/state}",
 							"showStateIcon": "{attributes/5/showStateIcon}"
+						},
+						{
+							"value": "{attributes/6/name}",
+							"state": "{attributes/6/state}",
+							"showStateIcon": "{attributes/6/showStateIcon}"
 						}
 					]
 				}

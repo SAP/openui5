@@ -73,7 +73,10 @@ sap.ui.define([
 							"SubCategoryId": "Notebooks",
 							"state": "Warning",
 							"info": "9.45 EUR",
-							"infoState": "Error"
+							"infoState": "Error",
+							"showInfoStateIcon": true,
+							"customInfoStatusIcon": "sap-icon://hint"
+
 						}
 					]
 				},
@@ -84,7 +87,8 @@ sap.ui.define([
 					"info": {
 						"value": "{info}",
 						"state": "{infoState}",
-						"showStateIcon": "{showInfoStateIcon}"
+						"showStateIcon": "{showInfoStateIcon}",
+						"customStateIcon": "{customInfoStatusIcon}"
 					}
 				}
 			}
@@ -799,12 +803,16 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 
 			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
-				oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1];
+				oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1],
+				oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2];
 
 			Core.applyChanges();
 
-			assert.ok(oListItem1.$().find(".sapUiIntLCIInfo.sapUiIntLCIInfoShowIcon").length, "Status icon is shown");
-			assert.notOk(oListItem2.$().find(".sapUiIntLCIInfo.sapUiIntLCIInfoShowIcon").length, "Status icon is not shown");
+			assert.equal(oListItem1.$().find(".sapMObjStatusShowIcon").length, 1, "Status icon is shown");
+			assert.equal(oListItem2.$().find(".sapMObjStatusShowIcon").length, 0, "Status icon is not shown");
+			assert.equal(oListItem2.$().find(".sapMObjStatusIcon").length, 0, "Status icon div is not rendered");
+			assert.equal(oListItem3.$().find(".sapMObjStatusShowIcon").length, 0, "Default status icon is not shown");
+			assert.equal(oListItem3.$().find(".sapMObjStatusShowCustomIcon").length, 1, "Custom status icon is shown");
 
 			done();
 		}.bind(this));

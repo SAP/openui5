@@ -110,33 +110,6 @@
 	text-align: right;
 	margin-left: 1rem;
 	max-width: 40%;
-
-	.sapUiIntLCIInfoText {
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		flex: 1;
-	}
-
-	&.sapUiIntLCIInfoNone {
-		color: @sapUiNeutralText;
-	}
-
-	&.sapUiIntLCIInfoError {
-		color: @sapUiNegativeText;
-	}
-
-	&.sapUiIntLCIInfoWarning {
-		color: @sapUiCriticalText;
-	}
-
-	&.sapUiIntLCIInfoSuccess {
-		color: @sapUiPositiveText;
-	}
-
-	&.sapUiIntLCIInfoInformation {
-		color: @sapUiInformativeText;
-	}
 }
 
 .sapUiIntLCITitle,
@@ -147,6 +120,10 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.sapUiIntLCIContent .sapUiIntLCIInfo {
+	white-space: normal;
 }
 
 // Interactive states

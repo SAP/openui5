@@ -868,6 +868,10 @@
                 }
               ]
             },
+            "customStateIcon":{
+              "description": "The custom state icon",
+              "type": "string"
+            },
             "visible": {
               "description": "Visibility of the item",
               "oneOf": [
@@ -1578,6 +1582,10 @@
             }
           ]
         },
+        "customStateIcon": {
+          "description": "The custom state icon",
+          "type": "string"
+         },
         "id": {
           "description": "ID for input fields",
           "type": "string"
@@ -2005,7 +2013,22 @@
           "items": {
             "$ref": "#/definitions/action"
           }
-        }
+        },
+        "showStateIcon": {
+          "description": "Defines if a default state icon is shown",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "customStateIcon": {
+          "description": "The custom state icon",
+          "type": "string"
+         }
       }
     },
     "ContentType.Calendar": {

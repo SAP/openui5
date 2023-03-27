@@ -41,7 +41,11 @@ sap.ui.define([
 
 	ObjectStatus.prototype.onBeforeRendering = function () {
 		if (this.getShowStateIcon()) {
-			this.addStyleClass("sapMObjStatusShowIcon");
+			if (!this.getIcon()) {
+				this.addStyleClass("sapMObjStatusShowIcon");
+			} else {
+				this.addStyleClass("sapMObjStatusShowCustomIcon");
+			}
 		}
 	};
 
