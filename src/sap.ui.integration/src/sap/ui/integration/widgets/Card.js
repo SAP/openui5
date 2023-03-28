@@ -91,7 +91,7 @@ sap.ui.define([
 		DESTINATIONS: "/sap.card/configuration/destinations",
 		CSRF_TOKENS: "/sap.card/configuration/csrfTokens",
 		FILTERS: "/sap.card/configuration/filters",
-		ERROR_MESSAGES: "/sap.card/configuration/messages"
+		NO_DATA_MESSAGES: "/sap.card/configuration/messages/noData"
 	};
 
 	/**
@@ -1706,10 +1706,6 @@ sap.ui.define([
 			}
 
 			var oCardContent = this.getCardContent();
-			if (oCardContent && !oCardContent.isA("sap.ui.integration.cards.BaseContent") &&
-				!this._oErrorHandler.getIsError()) {
-				this._applyContentManifestSettings();
-			}
 
 			if (oCardContent && oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
 				oCardContent.onCardDataChanged();
@@ -1928,7 +1924,8 @@ sap.ui.define([
 				serviceManager: this._oServiceManager,
 				dataProviderFactory: this._oDataProviderFactory,
 				iconFormatter: this._oIconFormatter,
-				appId: this._sAppId
+				appId: this._sAppId,
+				noDataConfiguration: this._oCardManifest.get(MANIFEST_PATHS.NO_DATA_MESSAGES)
 			});
 		} catch (e) {
 			this._handleError({
@@ -2067,11 +2064,8 @@ sap.ui.define([
 	Card.prototype._handleError = function (mErrorInfo) {
 		var sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.description;
 
-		if (mErrorInfo.type !== IllustratedMessageType.NoData &&
-			mErrorInfo.type !== IllustratedMessageType.NoEntries) {
-			Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
-			this.fireEvent("_error", { message: sLogMessage });
-		}
+		Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
+		this.fireEvent("_error", { message: sLogMessage });
 
 		var oError = this._oErrorHandler.getIllustratedMessage(mErrorInfo),
 			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);

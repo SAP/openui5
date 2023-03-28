@@ -67,53 +67,40 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
-				card: {type: "object"},
-				isError: {type: "boolean"}
+				card: {type: "object"}
 			}
 		}
 	});
 
-	/*
+	/**
 	 * @private
 	 * @ui5-restricted sap.ui.integration.widgets.Card
+	 * @param {object} mErrorInfo Settings for illustration and information for the ocurred error, if it is error
+	 * @param {boolean} [bIsNoData] Whether the illustration is for no data case
+	 * @returns {sap.ui.core.Control} Illustration
 	 */
-	ErrorHandler.prototype.getIllustratedMessage = function (mErrorInfo, oErrorConfiguration) {
+	ErrorHandler.prototype.getIllustratedMessage = function (mErrorInfo, bIsNoData) {
 		if (mErrorInfo.requestErrorParams) {
 			mErrorInfo = this._configureDataRequestErrorInfo(mErrorInfo);
 		}
 
-		this.setIsError(mErrorInfo.type !== IllustratedMessageType.NoData && mErrorInfo.type !== IllustratedMessageType.NoEntries);
-
-		return this._createIllustratedMessage(mErrorInfo, oErrorConfiguration);
+		return this._createIllustratedMessage(mErrorInfo, bIsNoData);
 	};
 
 	/*
 	 * @private
 	 */
-	ErrorHandler.prototype._createIllustratedMessage = function (mErrorInfo, oErrorConfiguration) {
+	ErrorHandler.prototype._createIllustratedMessage = function (mErrorInfo, bIsNoData) {
 		var sIllustratedMessageType = mErrorInfo.type || IllustratedMessageType.ErrorScreen,
-			sIllustratedMessageSize = IllustratedMessageSize.Auto,
+			sIllustratedMessageSize = mErrorInfo.size || IllustratedMessageSize.Auto,
 			sBoxHeight = "",
 			sTitle = mErrorInfo.title,
 			sDescription =  mErrorInfo.description,
 			sDetails = mErrorInfo.details,
-			oCard = this.getCard(),
-			bIsNodata = sIllustratedMessageType === IllustratedMessageType.NoData || sIllustratedMessageType === IllustratedMessageType.NoEntries;
-
-		oErrorConfiguration = oErrorConfiguration || oCard._oCardManifest.get("/sap.card/configuration/messages");
-
-		// custom no data message
-		if (bIsNodata && oErrorConfiguration && oErrorConfiguration.noData) {
-			var oErrorData = oErrorConfiguration.noData;
-			sIllustratedMessageType = IllustratedMessageType[oErrorData.type] || sIllustratedMessageType;
-			sIllustratedMessageSize = IllustratedMessageSize[oErrorData.size] || sIllustratedMessageSize;
-			sTitle = oErrorData.title || sTitle;
-			sDescription = oErrorData.description || sDescription;
-			sDetails = oErrorData.details || sDetails;
-		}
+			oCard = this.getCard();
 
 		oCard._oContentMessage = {
-			type: this.getIsError() ? "error" : "noData",
+			type: bIsNoData ? "noData" : "error",
 			illustrationType: sIllustratedMessageType,
 			illustrationSize: sIllustratedMessageSize,
 			title: sTitle,

@@ -199,12 +199,12 @@ sap.ui.define([
 		}
 	};
 
-	var oManifestNoData = {
+	var oManifestWithError = {
 		"sap.app": {
 			"id": "test.card.NoData"
 		},
 		"sap.card": {
-			"type": "List",
+			"type": "List2",
 			"header": {},
 			"content": {
 				"item": {
@@ -611,7 +611,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Without data", function (assert) {
+	QUnit.test("When error message is displayed", function (assert) {
 
 		// Arrange
 		var done = assert.async();
@@ -623,12 +623,12 @@ sap.ui.define([
 
 			// Assert
 			oPaginator.next();
-			assert.strictEqual(oContent.sliceData, undefined, "Slice data is not defined on the content when there is no data");
+			assert.strictEqual(oContent.sliceData, undefined, "Slice data is not defined on the content when there is error");
 
 			done();
 		}.bind(this));
 		// Act
-		this.oCard.setManifest(oManifestNoData);
+		this.oCard.setManifest(oManifestWithError);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 	});

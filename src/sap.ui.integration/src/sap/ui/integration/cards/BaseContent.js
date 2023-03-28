@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/m/VBox",
 	"sap/m/library",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleMessage",
@@ -23,6 +25,8 @@ sap.ui.define([
 	MessageStrip,
 	VBox,
 	mLibrary,
+	IllustratedMessageType,
+	IllustratedMessageSize,
 	Core,
 	Control,
 	InvisibleMessage,
@@ -82,6 +86,13 @@ sap.ui.define([
 				 */
 				configuration: {
 					type: "object"
+				},
+
+				/**
+				 * No data configuration from the manifest
+				 */
+				noDataConfiguration: {
+					type: "object"
 				}
 			},
 			aggregations: {
@@ -114,6 +125,12 @@ sap.ui.define([
 
 				_messageContainer: {
 					type: "sap.m.VBox",
+					multiple: false,
+					visibility: "hidden"
+				},
+
+				_noDataMessage: {
+					type: "sap.ui.core.Control",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -330,6 +347,28 @@ sap.ui.define([
 		} else {
 			InvisibleMessage.getInstance().announce(sMessage, InvisibleMessageMode.Polite);
 		}
+	};
+
+	/**
+	 * @protected
+	 * @param {sap.m.IllustratedMessageType} sType Illustration type
+	 * @param {string} sTitle Illustration title
+	 */
+	BaseContent.prototype.showNoDataMessage = function (sType, sTitle) {
+		this.destroyAggregation("_noDataMessage");
+		var oNoDataConfiguration = this.getNoDataConfiguration() || {};
+
+		var oIllustrationSettings = {
+			type: IllustratedMessageType[oNoDataConfiguration.type] || sType,
+			size: IllustratedMessageSize[oNoDataConfiguration.size],
+			title: oNoDataConfiguration.title || sTitle,
+			description: oNoDataConfiguration.description
+		};
+
+		var oIllustratedMessage = this.getCardInstance()._oErrorHandler.getIllustratedMessage(oIllustrationSettings, true);
+		oIllustratedMessage.addStyleClass("sapFCardContentNoDataMsg");
+
+		this.setAggregation("_noDataMessage", oIllustratedMessage);
 	};
 
 	/**

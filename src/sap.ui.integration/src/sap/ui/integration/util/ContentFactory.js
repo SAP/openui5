@@ -76,6 +76,7 @@ sap.ui.define([
 			card: oCard
 		}));
 		oContent.setConfiguration(mConfig.contentManifest);
+		oContent.setNoDataConfiguration(mConfig.noDataConfiguration);
 
 		if (!(oContent instanceof AdaptiveContent)) {
 			oContent.setDataConfiguration(mConfig.contentManifest.data);

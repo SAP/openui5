@@ -38,7 +38,8 @@ sap.ui.define([
 			oCard = oCardContent.getCardInstance(),
 			bLoading = oCardContent.isLoading(),
 			bIsAbstractPreviewMode =  oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract,
-			oMessageContainer = oCardContent.getAggregation("_messageContainer");
+			oMessageContainer = oCardContent.getAggregation("_messageContainer"),
+			oNoDataMessage = oCardContent.getAggregation("_noDataMessage");
 
 		sClass += sType;
 
@@ -69,7 +70,11 @@ sap.ui.define([
 			oRm.renderControl(oMessageContainer);
 		}
 
-		this.renderContent(oRm, oCardContent);
+		if (oNoDataMessage) {
+			oRm.renderControl(oNoDataMessage);
+		} else {
+			this.renderContent(oRm, oCardContent);
+		}
 
 		oRm.close("div");
 	};
