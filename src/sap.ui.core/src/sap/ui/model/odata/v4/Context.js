@@ -1662,9 +1662,10 @@ sap.ui.define([
 	 * this method cancels the deletion and restores the context.
 	 *
 	 * Note: This is an experimental API. Currently only row contexts of an
-	 * {@link sap.ui.model.odata.v4.ODataListBinding} and the
-	 * {@link sap.ui.model.odata.v4.ODataListBinding#getBoundContext bound context} of an
-	 * {@link sap.ui.model.odata.v4.ODataContextBinding} are supported.
+	 * {@link sap.ui.model.odata.v4.ODataListBinding}, the
+	 * {@link sap.ui.model.odata.v4.ODataContextBinding#getBoundContext bound context}, and the
+	 * return value context (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute #execute})
+	 * of an {@link sap.ui.model.odata.v4.ODataContextBinding} are supported.
 	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the context
