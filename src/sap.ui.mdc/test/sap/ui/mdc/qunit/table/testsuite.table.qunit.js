@@ -107,6 +107,16 @@ sap.ui.define(function() {
 					]
 				}
 			},
+			"MDCTreeTableV4OPA": {
+				group: "Table UI Test",
+				module: "./OpaTests/MDCTreeTableV4Opa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				},
+				autostart: false
+			},
 			"ChangeCondenser": {
 				group: "Flexibility",
 				module: "./Condenser.qunit",

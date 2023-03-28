@@ -12,7 +12,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/Descendant",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
 	"test-resources/sap/ui/mdc/testutils/opa/table/Actions",
-	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util"
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
+	"sap/ui/test/actions/Drag",
+	"sap/ui/test/actions/Drop"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
 	/** @type sap.ui.mdc.library */ MdcLibrary,
@@ -23,7 +25,9 @@ sap.ui.define([
 	/** @type sap.ui.test.matchers.Descendant */ Descendant,
 	/** @type sap.ui.test.Opa5 */ waitForTable,
 	/** @type sap.ui.test.Opa5 */ TablePublicActions,
-	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util) {
+	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
+	/** @type sap.ui.test.actions.Drag */ Drag,
+	/** @type sap.ui.test.actions.Drop */ Drop) {
 	"use strict";
 
 	var TableType = MdcLibrary.TableType;
@@ -168,6 +172,96 @@ sap.ui.define([
 					}
 				},
 				errorMessage: "No table found"
+			});
+		},
+
+		/**
+		 * Emulates a click action on the expand all rows button.
+		 *
+		 * @function
+		 * @name iClickOnExpandAllRowsButton
+		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iClickOnExpandAllRowsButton: function(vControl) {
+			return waitForTable.call(this, vControl, {
+				success: function(oTable) {
+					return this.waitFor({
+						id: oTable.getId() + "-expandAll",
+						controlType: "sap.m.Button",
+						actions: new Press(),
+						errorMessage: "Could not press Expand Button"
+					});
+				}
+			});
+		},
+
+		/**
+		 * Emulates a click action on the collapse all rows button.
+		 *
+		 * @function
+		 * @name iClickOnCollapseAllRowsButton
+		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iClickOnCollapseAllRowsButton: function(vControl) {
+			return waitForTable.call(this, vControl, {
+				success: function(oTable) {
+					return this.waitFor({
+						id: oTable.getId() + "-collapseAll",
+						controlType: "sap.m.Button",
+						actions: new Press(),
+						errorMessage: "Could not press Collapse Button"
+					});
+				}
+			});
+		},
+
+		/**
+		 * Emulates a drag action on a column to move it.
+		 *
+		 * @function
+		 * @name iDragColumn
+		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+		 * @param {Number} iColumnIndex Index of Column to drag
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iDragColumn: function(vControl, iColumnIndex) {
+			return waitForTable.call(this, vControl, {
+				success: function(oTable) {
+					return this.waitFor({
+						id: oTable.getColumns()[iColumnIndex].getId() + "-innerColumn",
+						controlType: "sap.ui.table.Column",
+						actions: new Drag(),
+						errorMessage: "Could not drag Column"
+					});
+				}
+			});
+		},
+
+		/**
+		 * Emulates a drop action on a column to drop it after a defined column.
+		 *
+		 * @function
+		 * @name iDropColumnAfter
+		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+		 * @param {Number} iColumnIndex Index of Column on which Drop should be executed
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iDropColumnAfter: function(vControl, iColumnIndex) {
+			return waitForTable.call(this, vControl, {
+				success: function(oTable) {
+					return this.waitFor({
+						id: oTable.getColumns()[iColumnIndex].getId() + "-innerColumn",
+						controlType: "sap.ui.table.Column",
+						actions: new Drop({after: true}),
+						errorMessage: "Could not drop Column"
+					});
+				}
 			});
 		},
 

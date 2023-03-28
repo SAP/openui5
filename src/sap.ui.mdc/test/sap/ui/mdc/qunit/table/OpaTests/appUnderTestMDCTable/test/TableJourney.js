@@ -48,7 +48,7 @@ sap.ui.define([
 
 	opaTest("After starting the OPA tests and I look at the screen I should see an MDCTable", function(Given, When, Then) {
 		//insert application
-		Given.iStartMyApp();
+		Given.iStartMyApp("appUnderTestMDCTable");
 		When.onTheAppUnderTestMDCTable.iLookAtTheScreen();
 		Then.onTheAppUnderTestMDCTable.iShouldSeeATable(sTableId);
 	});

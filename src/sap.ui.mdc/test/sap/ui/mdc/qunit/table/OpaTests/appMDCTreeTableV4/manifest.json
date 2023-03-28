@@ -1,0 +1,47 @@
+{
+	"sap.app": {
+		"id": "sap.ui.mdc.tableOpaTests.appMDCTreeTableV4",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"id": "MyView",
+			"viewName": "sap.ui.mdc.tableOpaTests.appMDCTreeTableV4.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.mdc": {},
+				"sap.ui.table": {}
+			}
+		},
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server"
+				},
+				"type": "sap.ui.mdc.tableOpaTests.appMDCTreeTableV4.SandboxModel",
+				"uriSettingName": "serviceUrl"
+			}
+		}
+	}
+}

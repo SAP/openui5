@@ -409,6 +409,45 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks if row count is correct.
+		 *
+		 * @function
+		 * @name iCheckBindingLength
+		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+		 * @param {Number} iRowNumber Number of expected visible rows
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iCheckBindingLength: function(vControl, iRowNumber) {
+			return waitForTable.call(this, vControl, {
+				success: function(oTable) {
+					Opa5.assert.equal(oTable.getRowBinding().getLength(), iRowNumber, "All expected " + iRowNumber + " rows are visible");
+				},
+				errorMessage: "No table found"
+			});
+		},
+
+		/**
+		 * Checks if column is in correct position.
+		 *
+		 * @function
+		 * @name iCheckColumnPosition
+		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+		 * @param {String} sColumnId Column Id String
+		 * @param {Number} iColumnNumber Number of expected column position
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iCheckColumnPosition: function(vControl, sColumnId, iColumnNumber) {
+			return waitForTable.call(this, vControl, {
+				success: function(oTable) {
+					Opa5.assert.equal(oTable.getColumns()[iColumnNumber].getId(), sColumnId, "Column: " + sColumnId + " at expected position: " + iColumnNumber);
+				},
+				errorMessage: "No table found"
+			});
+		},
+
+		/**
 		 * Checks if the dialog, showing the actual process status of the export,
 		 * is visible on the screen.
 		 *
