@@ -34,6 +34,7 @@ sap.ui.require([
 		// ***************************************************************************************
 		"sap/ui/core/qunit/i18n/Buddhist.qunit",
 		"sap/ui/core/qunit/i18n/CalendarUtils.qunit",
+		"sap/ui/core/qunit/i18n/CalendarWeekNumbering.qunit",
 		"sap/ui/core/qunit/i18n/Islamic.qunit",
 		"sap/ui/core/qunit/i18n/Japanese.qunit",
 		"sap/ui/core/qunit/i18n/Persian.qunit",

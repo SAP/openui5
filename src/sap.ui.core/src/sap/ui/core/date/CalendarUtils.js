@@ -7,27 +7,8 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/LocaleData"
-], function(
-	CalendarWeekNumbering,
-	Configuration,
-	LocaleData
-) {
+], function(CalendarWeekNumbering, Configuration, LocaleData) {
 	"use strict";
-
-	var mWeekNumberingConfiguration = {
-			ISO_8601 : {
-				firstDayOfWeek : 1,
-				minimalDaysInFirstWeek : 4
-			},
-			MiddleEastern : {
-				firstDayOfWeek : 6,
-				minimalDaysInFirstWeek : 1
-			},
-			WesternTraditional : {
-				firstDayOfWeek : 0,
-				minimalDaysInFirstWeek : 1
-			}
-		};
 
 	/**
 	 * Provides calendar-related utilities.
@@ -63,10 +44,11 @@ sap.ui.define([
 		 * @since 1.108.0
 		 */
 		getWeekConfigurationValues : function (sCalendarWeekNumbering, oLocale) {
-			var oLocaleData;
+			var oLocaleData,
+				oWeekConfigurationValues = CalendarWeekNumbering.getWeekConfigurationValues(sCalendarWeekNumbering);
 
-			if (mWeekNumberingConfiguration.hasOwnProperty(sCalendarWeekNumbering)) {
-				return mWeekNumberingConfiguration[sCalendarWeekNumbering];
+			if (oWeekConfigurationValues) {
+				return oWeekConfigurationValues;
 			}
 			sCalendarWeekNumbering = sCalendarWeekNumbering || CalendarWeekNumbering.Default;
 			if (sCalendarWeekNumbering === CalendarWeekNumbering.Default) {

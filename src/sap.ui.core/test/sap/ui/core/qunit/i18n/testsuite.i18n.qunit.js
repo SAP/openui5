@@ -20,6 +20,11 @@ sap.ui.define(function() {
 					only : "sap/ui/core/date/CalendarUtils"
 				}
 			},
+			"CalendarWeekNumbering": {
+				coverage : {
+					only : "sap/ui/core/date/CalendarWeekNumbering"
+				}
+			},
 			"Buddhist": {
 				coverage : {
 					only : "sap/ui/core/date/Buddhist"
