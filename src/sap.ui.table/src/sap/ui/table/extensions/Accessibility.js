@@ -222,23 +222,32 @@ sap.ui.define([
 		},
 
 		/*
-		 * Returns the tooltip of the column or the contained label, if any.
+		 * Returns the tooltip of the column or the contained label, if any and if it differs from the label itself.
 		 */
 		getColumnTooltip: function(oColumn) {
 			if (!oColumn) {
 				return null;
 			}
 
+			var oLabel = oColumn.getLabel();
+
+			function isTooltipEqualToLabel(sTooltip) {
+				if (!sTooltip) {
+					return false;
+				}
+				var sText = oLabel && oLabel.getText ? oLabel.getText() : "";
+				return sTooltip == sText;
+			}
+
 			var sTooltip = oColumn.getTooltip_AsString();
-			if (sTooltip) {
+			if (!isTooltipEqualToLabel(sTooltip)) {
 				return sTooltip;
 			}
 
-			var oLabel = oColumn.getLabel();
 			if (TableUtils.isA(oLabel, "sap.ui.core.Control")) {
 				sTooltip = oLabel.getTooltip_AsString();
 			}
-			if (sTooltip) {
+			if (!isTooltipEqualToLabel(sTooltip)) {
 				return sTooltip;
 			}
 
