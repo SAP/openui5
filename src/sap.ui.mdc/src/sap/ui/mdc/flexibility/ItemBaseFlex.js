@@ -261,7 +261,7 @@ sap.ui.define([
 						// Continue? --> destroy the item (but only if it exists, it may not exist if an earlier layer removed it already)
 						if (bContinue && oControlAggregationItem) {
 							// destroy the item
-							sControlAggregationItemId = sControlAggregationItemId = oControlAggregationItem.getId ? oControlAggregationItem.getId() : oControlAggregationItem.id;
+							sControlAggregationItemId = oModifier.getId(oControlAggregationItem);
 							oModifier.destroy(oControlAggregationItem, "KeepDom");
 						}
 						this.afterApply(oChange.getChangeType(), oControl, bIsRevert);

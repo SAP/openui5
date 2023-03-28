@@ -353,5 +353,9 @@ sap.ui.define([
         //Nothing to do here for test delegate
     };
 
+    ChartDelegate.showOverlay = function(bValue) {
+
+    };
+
     return ChartDelegate;
 });

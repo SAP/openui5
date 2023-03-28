@@ -115,15 +115,17 @@ sap.ui.define([
 				onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {
 					mPropertyBag.modifier.getProperty(oControl, "delegate")
 					.then(function(oDelegate){
-						loadModules(oDelegate.name)
-						.then(function(aModules){
-							var oDelegate = aModules[0];
+						if (oDelegate) {
+							loadModules(oDelegate.name)
+							.then(function(aModules){
+								var oDelegate = aModules[0];
 
-							if (oDelegate.onAfterXMLChangeProcessing instanceof Function) {
-								oDelegate.onAfterXMLChangeProcessing(oControl, mPropertyBag);
-							}
+								if (oDelegate.onAfterXMLChangeProcessing instanceof Function) {
+									oDelegate.onAfterXMLChangeProcessing(oControl, mPropertyBag);
+								}
 
-						});
+							});
+						}
 					});
 				},
 				getCondenserInfo: mSettings.getCondenserInfo
