@@ -2,15 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/m/p13n/enum/PersistenceMode",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/UIArea",
-	"sap/ui/core/Core",
-	"sap/ui/core/StaticArea"
-], function(CoreControl, VariantManagement, ControlVariantApplyAPI, mode, VerticalLayout, UIArea, Core, StaticArea) {
+	"sap/ui/core/Control", 	"sap/m/p13n/enum/PersistenceMode"
+], function(CoreControl, mode) {
 	"use strict";
 
 	/**
@@ -60,71 +53,9 @@ sap.ui.define([
 		}
 	});
 
-	PersistenceProvider.prototype.init = function () {
-		CoreControl.prototype.init.apply(this, arguments);
-		this.attachModelContextChange(this._setModel, this);
-
-		this._oModelPromise = new Promise(function (resolve, reject) {
-			this._fnResolveModel = resolve;
-		}.bind(this));
-	};
-
-	PersistenceProvider.prototype._setModel = function () {
-
-		var oModel = this.getModel(ControlVariantApplyAPI.getVariantModelName());
-		if (oModel) {
-			this.reinitialize();
-			this._fnResolveModel(oModel);
-		}
-	};
-
 	PersistenceProvider.prototype.applySettings = function () {
 		CoreControl.prototype.applySettings.apply(this, arguments);
 		this._bmodeLocked = true;
-
-		if (this.getMode() === mode.Transient) {
-			var oVM = new VariantManagement(this.getId() + "--vm", {"for": this.getAssociation("for")});
-			this._oModelPromise.then(function (oModel) {
-				oVM.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
-			});
-			this._oWrapper = new VerticalLayout(this.getId() + "--accWrapper", {
-				visible: true,
-				content: [
-					oVM
-				]
-			});
-
-			this._oWrapper.onAfterRendering = function() {
-				VerticalLayout.prototype.onAfterRendering.apply(this, arguments);
-				this.getDomRef().setAttribute("aria-hidden", true);
-			};
-
-			StaticArea.getUIArea().addContent(this._oWrapper, true);
-			Core.createRenderManager().render(this._oWrapper, StaticArea.getDomRef());
-		}
-
-		return this;
-	};
-
-	PersistenceProvider.prototype.addFor = function (sControlId) {
-		this.addAssociation("for", sControlId);
-
-		var oVM = Core.byId(this.getId() + "--vm");
-		if (this.getMode() === mode.Transient && oVM) {
-			oVM.addFor(sControlId);
-		}
-
-		return this;
-	};
-
-	PersistenceProvider.prototype.removeFor = function (sControlId) {
-		this.removeAssociation("for", sControlId);
-
-		var oVM = Core.byId(this.getId() + "--vm");
-		if (this.getMode() === mode.Transient && oVM) {
-			oVM.removeFor(sControlId);
-		}
-
 		return this;
 	};
 
@@ -147,33 +78,7 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * This method reinitializes the inner <code>VariantManagement</code> control be providing the
-	 * variant model and triggering a reinitialize on the inner VM in the static area
-	 *
-	 * @ui5-restricted sap.m.p13n
-	 */
-	PersistenceProvider.prototype.reinitialize = function () {
-		var oVM = Core.byId(this.getId() + "--vm");
-		if (this.getMode() === mode.Transient && oVM) {
-			var oVariantModel = this.getModel(ControlVariantApplyAPI.getVariantModelName());
-			oVM.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
-			oVM.reinitialize();
-		}
-	};
-
 	PersistenceProvider.prototype.exit = function () {
-		if (this._oWrapper) {
-			var oStaticAreaRef = Core.getStaticAreaRef();
-			var oStatic = UIArea.registry.get(oStaticAreaRef.id);
-			oStatic.removeContent(this._oWrapper);
-
-			this._oWrapper.destroy();
-			this._oWrapper = null;
-		}
-
-		this._oModelPromise = null;
-		this._fnResolveModel = null;
 		this._bmodeLocked = null;
 
 		CoreControl.prototype.exit.apply(this, arguments);

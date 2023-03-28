@@ -1453,63 +1453,6 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement.getTitleStyle(), "H1");
 			assert.ok(this.oVariantManagement._getEmbeddedVM().oVariantText.getTitleStyle(), "H1");
 		});
-
-		QUnit.test("Check #reinitialize", function(assert) {
-			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
-			assert.ok(this.oVariantManagement.oContext, "Context provided");
-
-			var oFlexController2 = {
-				setVariantSwitchPromise: function() {},
-				_oChangePersistence: {
-					getComponentName: function() {
-						return "mockComponentName";
-					}
-				}
-			};
-
-			var oNewModel = new VariantModel({
-				One: {
-					currentVariant: "Standard",
-					originalCurrentVariant: "Standard",
-					defaultVariant: "Standard",
-					originalDefaultVariant: "Standard",
-					modified: false,
-					variantsEditable: true,
-					showFavorites: true,
-					showExecuteOnSelection: false,
-					variants: [
-						{
-							key: "Standard",
-							title: "Standard",
-							author: "A",
-							layer: Layer.VENDOR,
-							favorite: true,
-							originalFavorite: true,
-							visible: true
-						}, {
-							key: "SomeDifferentVariant",
-							title: "One",
-							author: "A",
-							layer: Layer.USER,
-							change: true,
-							favorite: true,
-							originalFavorite: true,
-							visible: true,
-							executeOnSelect: true
-						}
-					]
-				}
-			}, {
-				flexController: oFlexController2
-			});
-
-			return oNewModel.initialize()
-			.then(function() {
-				this.oVariantManagement.setModel(oNewModel, ControlVariantApplyAPI.getVariantModelName());
-				this.oVariantManagement.reinitialize();
-				assert.strictEqual(this.oVariantManagement.oContext.oModel, oNewModel, "Correct Context provided");
-			}.bind(this));
-		});
 	});
 
 	QUnit.done(function() {
