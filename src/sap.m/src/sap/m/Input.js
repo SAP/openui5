@@ -320,7 +320,7 @@ function(
 
 				/**
 				 * Specifies whether clear icon is shown.
-				 * Pressing the icon will clear input's value and fire the change and liveChange events.
+				 * Pressing the icon will clear input's value and fire the liveChange event.
 				 * @since 1.94
 				 */
 				showClearIcon: { type: "boolean", defaultValue: false },
