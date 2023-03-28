@@ -917,7 +917,8 @@ sap.ui.define([
 		if (!this._selectAllCheckBox) {
 			this._selectAllCheckBox = new CheckBox({
 				id: this.getId("sa"),
-				activeHandling: false
+				activeHandling: false,
+				tooltip: Core.getLibraryResourceBundle("sap.m").getText("TABLE_SELECT_ALL_TOOLTIP")
 			}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).attachSelect(function () {
 				if (this._selectAllCheckBox.getSelected()) {
 					this.selectAll(true);
