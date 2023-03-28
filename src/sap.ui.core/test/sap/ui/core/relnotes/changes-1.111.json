@@ -172,5 +172,21 @@
         ]
       }
     ]
+  },
+  "1.111.2": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "b95bab5619c3078e32dbafe27b83c4fefcb38417",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: Fix calculation of deep path for function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380037458"
+          }
+        ]
+      }
+    ]
   }
 }

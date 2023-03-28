@@ -366,5 +366,21 @@
         ]
       }
     ]
+  },
+  "1.111.2": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "cfa28f3c33e918b6f9d72fa9bddafaba12b40672",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Corrected page indexing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380042288"
+          }
+        ]
+      }
+    ]
   }
 }
