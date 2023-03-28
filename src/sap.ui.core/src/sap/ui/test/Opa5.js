@@ -401,60 +401,92 @@ sap.ui.define([
 		};
 
 		/**
-		 * Takes a superset of the parameters of {@link sap.ui.test.Opa#waitFor}.
-		 *
-		 * @param {object} options An object containing conditions for waiting and callbacks.
-		 *
-		 * The allowed keys are listed below. If a key is not allowed, an error is thrown, stating that
-		 * "the parameter is not defined in the API".
-		 *
-		 * As of version 1.72, in addition to the listed keys, declarative matchers are also allowed.
-		 * Any matchers declared on the root level of the options object are merged with those declared in <code>options.matchers</code>.
-		 * For details on declarative matchers, see the <code>options.matchers</code> property.
-		 *
-		 * @param {string|RegExp} [options.id] The global ID of a control, or the ID of a control inside a view.
-		 *
-		 * If a regex and a viewName is provided, Opa5 only looks for controls in the view with a matching ID.
-		 *
-		 * Example of a waitFor:
+		 * @typedef {sap.ui.test.Opa.BaseParameters} sap.ui.test.Opa5.BaseParameters
+		 * @description Configuration parameters for Opa5.
+		 * @property {string} [viewNamespace] viewName prefix. Recommended to be set in {@link sap.ui.test.Opa5.extendConfig} instead.
+		 * @property {boolean} [visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
+		 * @property {boolean} [enabled=false] @since 1.66 If set to false, Opa5 will look for both enabled and disabled controls.
+		 * Note that this option's default value is related to the autoWait mechanism:
+		 * <ul>
+		 *     <li> When autoWait is enabled globally or in the current waitFor, the default value for options.enabled is true. </li>
+		 *     <li> When autoWait is not used, the default value for options.enabled is false.</li>
+		 * </ul>
+		 * This means that if you use autoWait and you want to find a disabled control, you need to explicitly set options.enabled to false.
+		 * @property {boolean} [editable=false] @since 1.80 If set to true, Opa5 will match only editable controls.
+		 * If set to false, Opa5 will match both editable and non-editable controls.
+		 * @property {boolean} [autoWait=false] @since 1.42 Only has an effect if set to true. Since 1.53 it can also be a plain object.
+		 * When autoWait is true, the waitFor statement will not execute success callbacks as long as there is pending asynchronous work such as for example:
+		 * open XMLHTTPRequests (requests to a server), scheduled delayed work and promises, unfinished UI navigation.
+		 * In addition, the control state will be checked with the {@link sap.ui.test.matchers.Interactable} matcher, and the control will have to be enabled.
+		 * So when autoWait is enabled, success behaves like an action in terms of waiting.
+		 * It is recommended to set this value to true for all your waitFor statements using:
 		 * <pre>
-		 *     <code>
-		 *         this.waitFor({
-		 *             id: /my/,
-		 *             viewName: "myView"
-		 *         });
-		 *     </code>
+		 *     Opa5.extendConfig({
+		 *         autoWait: true
+		 *     });
 		 * </pre>
-		 * The view that is searched in:
+		 * Why it is recommended:
+		 * When writing a huge set of tests and executing them frequently you might face tests that are sometimes successful but sometimes they are not.
+		 * Setting the autoWait to true should stabilize most of those tests.
+		 * The default "false" could not be changed since it causes existing tests to fail.
+		 * There are cases where you do not want to wait for controls to be "Interactable":
+		 * For example when you are testing the Busy indication of your UI during the sending of a request.
+		 * But these cases are the exception so it is better to explicitly adding autoWait: false to this waitFor.
 		 * <pre>
-		 *     <code>
-		 *         &lt;mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"&gt;
-		 *             &lt;Button id="myButton"&gt;
-		 *             &lt;/Button&gt;
-		 *             &lt;Button id="bar"&gt;
-		 *             &lt;/Button&gt;
-		 *             &lt;Button id="baz"&gt;
-		 *             &lt;/Button&gt;
-		 *             &lt;Image id="myImage"&gt;&lt;/Image&gt;
-		 *         &lt;/mvc:View&gt;
-		 *     </code>
+		 *     this.waitFor({
+		 *         id: "myButton",
+		 *         autoWait: false,
+		 *         success: function (oButton) {
+		 *              Opa5.assert.ok(oButton.getBusy(), "My Button was busy");
+		 *         }
+		 *     });
 		 * </pre>
+		 * This is also the easiest way of migrating existing tests. First extend the config, then see which waitFors
+		 * will time out and finally disable autoWait in these tests.
 		 *
-		 * Will result in matching two controls, the image with the effective ID myView--myImage and the button myView--myButton.
-		 * Although the IDs of the controls myView--bar and myView--baz contain a my,
-		 * they will not be matched since only the part you really write in your views will be matched.
-		 *
-		 * @param {string} [options.viewName] The name of a view.
+		 * @since 1.53 autoWait option can be a plain object used to configure what autoWait will consider pending, for example:
+		 * <ul>
+		 *     <li> Maximum depth of a timeout chain. Longer chains are considered polling and are discarded as irrelevant to the application state in testing scenarios. </li>
+		 *     <li> Maximum delay, in milliseconds, of tracked timeouts and promises. Long runners are discarded as they do not influence application state.</li>
+		 * </ul>
+		 * This is the default autoWait configuration:
+		 * autoWait: {
+		 *     timeoutWaiter: {
+		 *         maxDepth: 3,
+		 *         maxDelay: 1000
+		 *    }
+		 * }
+		 * If autoWait is set to true or the object doesn't contain the recognized keys, the default autoWait configuration will be used.
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.test.Opa5.BaseParameters} sap.ui.test.Opa5.Config
+		 * @description The global configuration of Opa5.
+		 * @property {sap.ui.test.Opa5} [arrangements] A new Opa5 instance
+		 * @property {sap.ui.test.Opa5} [actions] A new Opa5 instance
+		 * @property {sap.ui.test.Opa5} [assertions] A new Opa5 instance
+		 * @property {int} [executionDelay] The value is a number representing milliseconds. The default values are 0 or 50 (depending on the browser).
+		 * 			The executionDelay will slow down the execution of every single waitFor statement to be delayed by the number of milliseconds.
+		 * 			This does not effect the polling interval it just adds an initial pause.
+		 * 			Use this parameter to slow down OPA when you want to watch your test during development or checking the UI of your app.
+		 * 			It is not recommended to use this parameter in any automated test executions.
+		 * @property {Object<string,string>} [appParams] object with URI parameters for the tested app - since 1.48
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.test.Opa5.BaseParameters} sap.ui.test.Opa5.ControlsBaseSelector
+		 * @description Configuration parameters for an individual {@link sap.ui.test.Opa5#waitFor} call.
+		 * @property {string} [viewName] The name of a view.
 		 * If viewName is set, controls will be searched only inside this view. If control ID is given, it will be considered to be relative to the view.
 		 *
-		 * @param {string} [options.viewNamespace] viewName prefix. Recommended to be set in {@link sap.ui.test.Opa5.extendConfig} instead.
-		 *
-		 * @param {string} [options.viewId] @since 1.62 The ID of a view. Can be used alone or in combination with viewName and viewNamespace.		 *
+		 * @property {string} [viewId] @since 1.62 The ID of a view. Can be used alone or in combination with viewName and viewNamespace.		 *
 		 * Always set view ID if there are multiple views with the same name.
 		 *
-		 * @param {string} [options.fragmentId] @since 1.63 The ID of a fragment. If set, controls will match only if their IDs contain the fragment ID prefix.
+		 * @property {string} [fragmentId] @since 1.63 The ID of a fragment. If set, controls will match only if their IDs contain the fragment ID prefix.
 		 *
-		 * @param {function(sap.ui.core.Element)|Object<string,object>|sap.ui.test.matchers.Matcher|Array<function(sap.ui.core.Element)>|Array<Object<string,object>>|sap.ui.test.matchers.Matcher[]} [options.matchers] Matchers used to filter controls.
+		 * @property {function(sap.ui.core.Element)|Object<string,object>|sap.ui.test.matchers.Matcher|Array<function(sap.ui.core.Element)>|Array<Object<string,object>>|sap.ui.test.matchers.Matcher[]} [matchers] Matchers used to filter controls.
 		 * Could be a function, a single matcher instance, an array of matcher instances, or, since version 1.72, a plain
 		 * object to specify matchers declaratively. For a full list of built-in matchers, see {@link sap.ui.test.matchers}.
 		 *
@@ -499,7 +531,7 @@ sap.ui.define([
 		 * </code></pre>
 		 * </li></ul>
 		 *
-		 * @param {string} [options.controlType] Selects all control by their type.
+		 * @property {string} [controlType] Selects all control by their type.
 		 * It is usually combined with a viewName or searchOpenDialogs. If no control is matching the type, an empty
 		 * array will be returned. Here are some samples:
 		 *     <pre>
@@ -529,47 +561,16 @@ sap.ui.define([
 		 *             }
 		 *         });
 		 *     </pre>
-		 * @param {boolean} [options.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
-		 * @param {boolean} [options.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
-		 * @param {boolean} [options.enabled=false] @since 1.66 If set to false, Opa5 will look for both enabled and disabled controls.
-		 * Note that this option's default value is related to the autoWait mechanism:
-		 * <ul>
-		 *     <li> When autoWait is enabled globally or in the current waitFor, the default value for options.enabled is true. </li>
-		 *     <li> When autoWait is not used, the default value for options.enabled is false.</li>
-		 * </ul>
-		 * This means that if you use autoWait and you want to find a disabled control, you need to explicitly set options.enabled to false.
-		 * @param {boolean} [options.interactable=false] @since 1.80 If set to true, the {@link sap.ui.test.matchers.Interactable} matcher will be applied.
+		 * @property {boolean} [searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
+		 * @property {boolean} [interactable=false] @since 1.80 If set to true, the {@link sap.ui.test.matchers.Interactable} matcher will be applied.
 		 * If autoWait is true, this option has no effect and interactable will always be true.
 		 * If autoWait is false, which is the default state, the value of the interactable property will have an effect.
 		 * When interactable is true, enabled will also be set to true, unless declared otherwise.
-		 * @param {boolean} [options.editable=false] @since 1.80 If set to true, Opa5 will match only editable controls.
-		 * If set to false, Opa5 will match both editable and non-editable controls.
-		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
-		 * @param {int} [options.debugTimeout=0] @since 1.47 (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
-		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
-		 * @param {function((sap.ui.core.Element|sap.ui.core.Element[])): boolean} [options.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
-		 * The first parameter passed into the function is the same value that gets passed to the success function.
-		 * Returning something other than boolean in check will not change the first parameter of success.
-		 * @param {function((sap.ui.core.Element|sap.ui.core.Element[]))} [options.success] Will get invoked after the following conditions are met:
-		 * <ol>
-		 *     <li>
-		 *         One or multiple controls were found using controlType, Id, viewName. If visible is true (it is by default), the controls also need to be rendered.
-		 *     </li>
-		 *     <li>
-		 *         The whole matcher pipeline returned true for at least one control, or there are no matchers
-		 *     </li>
-		 *     <li>
-		 *         The check function returned true, or there is no check function
-		 *     </li>
-		 * </ol>
-		 * The first parameter passed into the function is either a single control (when a single string ID was used),
-		 * or an array of controls (viewName, controlType, multiple ID's, regex ID's) that matched all matchers.
-		 * Matchers can alter the array or single control to something different. Please read the documentation of waitFor's matcher parameter.
-		 * @param {function} [options.error] Invoked when the timeout is reached and the check never returned true.
-		 * @param {string} [options.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
+		 * @property {function} [error] Invoked when the timeout is reached and the check never returned true.
+		 * @property {string} [errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa5 is QUnit.
 		 * This message is displayed if Opa5 has reached its timeout before QUnit has reached it.
-		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} [options.actions]
+		 * @property {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} [actions]
 		 * Available since 1.34.0. An array of functions or Actions or a mixture of both.
 		 * An action has an 'executeOn' function that will receive a single control as a parameter.
 		 * If there are multiple actions defined all of them
@@ -631,54 +632,93 @@ sap.ui.define([
 		 *     </pre>
 		 * Executing multiple actions will not wait between actions for a control to become "Interactable" again.
 		 * If you need waiting between actions you need to split the actions into multiple 'waitFor' statements.
-		 * @param {boolean} [options.autoWait=false] @since 1.42 Only has an effect if set to true. Since 1.53 it can also be a plain object.
-		 * When autoWait is true, the waitFor statement will not execute success callbacks as long as there is pending asynchronous work such as for example:
-		 * open XMLHTTPRequests (requests to a server), scheduled delayed work and promises, unfinished UI navigation.
-		 * In addition, the control state will be checked with the {@link sap.ui.test.matchers.Interactable} matcher, and the control will have to be enabled.
-		 * So when autoWait is enabled, success behaves like an action in terms of waiting.
-		 * It is recommended to set this value to true for all your waitFor statements using:
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.test.Opa5.ControlsBaseSelector} sap.ui.test.Opa5.MultiControlSelector
+		 * @description Configuration parameters for an individual {@link sap.ui.test.Opa5#waitFor} call. Contain criteria for selecting one or multiple controls.
+		 * @property {RegExp} [id] Regex for matching either the ID of a control, or the ID of a control inside a view.
+		 *
+		 * If both a regex and a viewName are provided, Opa5 only looks for controls in the view with a matching ID.
+		 *
+		 * Example of a waitFor:
 		 * <pre>
-		 *     Opa5.extendConfig({
-		 *         autoWait: true
-		 *     });
+		 *     <code>
+		 *         this.waitFor({
+		 *             id: /my/,
+		 *             viewName: "myView"
+		 *         });
+		 *     </code>
 		 * </pre>
-		 * Why it is recommended:
-		 * When writing a huge set of tests and executing them frequently you might face tests that are sometimes successful but sometimes they are not.
-		 * Setting the autoWait to true should stabilize most of those tests.
-		 * The default "false" could not be changed since it causes existing tests to fail.
-		 * There are cases where you do not want to wait for controls to be "Interactable":
-		 * For example when you are testing the Busy indication of your UI during the sending of a request.
-		 * But these cases are the exception so it is better to explicitly adding autoWait: false to this waitFor.
+		 * The view that is searched in:
 		 * <pre>
-		 *     this.waitFor({
-		 *         id: "myButton",
-		 *         autoWait: false,
-		 *         success: function (oButton) {
-		 *              Opa5.assert.ok(oButton.getBusy(), "My Button was busy");
-		 *         }
-		 *     });
+		 *     <code>
+		 *         &lt;mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"&gt;
+		 *             &lt;Button id="myButton"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Button id="bar"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Button id="baz"&gt;
+		 *             &lt;/Button&gt;
+		 *             &lt;Image id="myImage"&gt;&lt;/Image&gt;
+		 *         &lt;/mvc:View&gt;
+		 *     </code>
 		 * </pre>
-		 * This is also the easiest way of migrating existing tests. First extend the config, then see which waitFors
-		 * will time out and finally disable autoWait in these Tests.
 		 *
-		 * @since 1.53 autoWait option can be a plain object used to configure what autoWait will consider pending, for example:
-		 * <ul>
-		 *     <li> maximum depth of a timeout chain. Longer chains are considered polling and are discarded as irrelevant to the application state in testing scenarios. </li>
-		 *     <li> maximum delay, in milliseconds, of tracked timeouts and promises. Long runners are discarded as they do not influence application state.</li>
-		 * </ul>
-		 * This is the default autoWait configuration:
-		 * autoWait: {
-		 *     timeoutWaiter: {
-		 *         maxDepth: 3,
-		 *         maxDelay: 1000
-		 *    }
-		 * }
-		 * If autoWait is set to true or the object doesn't contain the recognized keys, the default autoWait configuration will be used.
+		 * Will result in matching two controls, the image with the effective ID myView--myImage and the button myView--myButton.
+		 * Although the IDs of the controls myView--bar and myView--baz contain a my,
+		 * they will not be matched since only the part you really write in your views will be matched.
 		 *
-		 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
-		 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
-		 *
-		 * @returns {object} an object extending a jQuery promise.
+		 * @property {function((sap.ui.core.Element[])):boolean} [check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * The first parameter passed into the function is the same value that gets passed to the success function.
+		 * Returning something other than boolean in check will not change the first parameter of success.
+		 * @property {function((sap.ui.core.Element[]))} [success] Will get invoked after the following conditions are met:
+		 * <ol>
+		 *     <li>
+		 *         One or multiple controls were found using controlType, Id, viewName. If visible is true (it is by default), the controls also need to be rendered.
+		 *     </li>
+		 *     <li>
+		 *         The whole matcher pipeline returned true for at least one control, or there are no matchers
+		 *     </li>
+		 *     <li>
+		 *         The check function returned true, or there is no check function
+		 *     </li>
+		 * </ol>
+		 * The first parameter passed into the function is an array of controls (viewName, controlType, multiple ID's, regex ID's) that matched all matchers.
+		 * Matchers can alter the array to something different. Please read the documentation of waitFor's matcher parameter.
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.test.Opa5.ControlsBaseSelector} sap.ui.test.Opa5.SingleControlSelector
+		 * @description Configuration parameters for an individual {@link sap.ui.test.Opa5#waitFor} call.
+		 * @property {string} id The global ID of a control, or the ID of a control inside a view.
+		 * @property {function(sap.ui.core.Element):boolean} [check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * The first parameter passed into the function is the same value that gets passed to the success function.
+		 * Returning something other than boolean in check will not change the first parameter of success.
+		 * @property {function(sap.ui.core.Element)} [success] Will get invoked if the following conditions are met:
+		 * <ol>
+		 *     <li>
+		 *         A control was found using viewName and Id that maches any addiotnally specified criteria e.g. controlType, matchers. If visible is true (it is by default), the control also needs to be rendered.
+		 *     </li>
+		 *     <li>
+		 *         The check function returned true, or there is no check function
+		 *     </li>
+		 * </ol>
+		 * @public
+		 */
+
+		/**
+		 * @typedef {sap.ui.test.Opa5} sap.ui.test.Opa5.Chain
+		 * @description Used as return value of the {@link sap.ui.test.Opa5#waitFor} to assist chaining
+		 * @property {sap.ui.test.Opa5} and A reference to the same <code>sap.ui.test.Opa5</code> instance that can be used for chaining statements
+		 * @public
+		 */
+
+		/**
+		 * @param {sap.ui.test.Opa5.SingleControlSelector|sap.ui.test.Opa5.MultiControlSelector} options a superset of the parameters of {@link sap.ui.test.Opa#waitFor}
+		 * @returns {sap.ui.test.Opa5.Chain} an object extending a jQuery promise.
 		 * The object is essentially a jQuery promise with an additional "and" method that can be used for chaining waitFor statements.
 		 * The promise is resolved when the waitFor completes successfully.
 		 * The promise is rejected with the options object, if an error occurs. In this case, options.errorMessage will contain a detailed error message containing the stack trace and Opa logs.
@@ -852,7 +892,7 @@ sap.ui.define([
 		/**
 		 * Returns the QUnit utils object in the current context. If an iframe is launched, it will return the iframe's QUnit utils.
 		 * @public
-		 * @returns {object} The QUnit utils
+		 * @returns {sap.ui.test.qunit.QUnitUtils} The QUnit utils
 		 */
 		Opa5.getUtils = function () {
 			return iFrameLauncher.getUtils() || QUnitUtils;
@@ -876,7 +916,7 @@ sap.ui.define([
 
 		/**
 		 *
-		 * Extends and overwrites default values of the {@link sap.ui.test.Opa.config}.
+		 * Extends and overwrites default values of the {@link sap.ui.test.Opa.Config}.
 		 * Most frequent usecase:
 		 * <pre>
 		 *     <code>
@@ -978,7 +1018,7 @@ sap.ui.define([
 		 *     </code>
 		 * </pre>
 		 *
-		 * @param {object} options The values to be added to the existing config
+		 * @param {sap.ui.test.Opa5.Config} options The values to be added to the existing config
 		 * @public
 		 * @function
 		 */
@@ -1036,7 +1076,7 @@ sap.ui.define([
 		 * access their configuration provided by the test in
 		 * the testLibs section in {@link sap.ui.test.Opa5.extendConfig}
 		 * @param {string} sTestLibName test library name
-		 * @returns {object} this test library config object or empty object if
+		 * @returns {Object<string,?string>} this test library config object or empty object if
 		 * configuration is not provided
 		 * @public
 		 * @since 1.49
@@ -1071,7 +1111,7 @@ sap.ui.define([
 		 * Gives access to a singleton object you can save values in.
 		 * See {@link sap.ui.test.Opa.getContext} for the description
 		 * @since 1.29.0
-		 * @returns {object} the context object
+		 * @returns {Object<string,any>} the context object
 		 * @public
 		 * @function
 		 */
@@ -1109,10 +1149,8 @@ sap.ui.define([
 		 */
 
 		/**
-		 * Settings for a new page object, consisting of actions and assertions.
-		 *
 		 * @typedef {object} sap.ui.test.PageObjectDefinition
-		 *
+		 * @description Settings for a new page object, consisting of actions and assertions.
 		 * @property {string} [viewName]
 		 *   When a <code>viewName</code> is given, all <code>waitFor</code> calls inside of the page object
 		 *   will get a <code>viewName</code> parameter.
