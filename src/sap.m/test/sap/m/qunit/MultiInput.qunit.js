@@ -937,6 +937,7 @@ sap.ui.define([
 				var removed = oEvent.getParameter("removedTokens");
 				var data = removed[0].data("my-extra-data");
 				assert.strictEqual(data, "data1", "Custom data is correct");
+				oMI.destroy();
 				fnDone();
 			}
 		});
@@ -951,7 +952,6 @@ sap.ui.define([
 		});
 
 		Core.applyChanges();
-		oMI.destroy();
 	});
 
 	QUnit.test("test keyboard navigation", function(assert){
