@@ -2,10 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/integration/library",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/ManifestResolver"
-], function (Card, ManifestResolver) {
+], function (library, Card, ManifestResolver) {
 	"use strict";
+
+	//Shortcut to sap.ui.integration.library.CardDataMode
+	var CardDataMode = library.CardDataMode;
 
 	/**
 	 * Constructor for a new <code>SkeletonCard</code>.
@@ -31,6 +35,11 @@ sap.ui.define([
 		}
 	});
 
+	SkeletonCard.prototype.init = function () {
+		Card.prototype.init.apply(this, arguments);
+		this.setDataMode(CardDataMode.Active);
+	};
+
 	/**
 	 * Resolves the card manifest to a static manifest.
 	 * Processes all bindings and translations then returns the result as a static manifest in which bindings and translations are resolved.
@@ -46,6 +55,14 @@ sap.ui.define([
 	 */
 	SkeletonCard.prototype.isSkeleton = function () {
 		return true;
+	};
+
+	/**
+	 * @override
+	 */
+	SkeletonCard.prototype.refresh = function () {
+		Card.prototype.refresh.apply(this);
+		this.startManifestProcessing();
 	};
 
 	/**

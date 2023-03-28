@@ -2151,7 +2151,7 @@ sap.ui.define([
 									"id": "activity",
 									"label": "Activity",
 									"type": "ComboBox",
-									"value": "",
+									"value": "Processing",
 									"selectedKey": "activity1",
 									"required": true,
 									"items": [

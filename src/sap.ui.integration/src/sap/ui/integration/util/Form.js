@@ -429,9 +429,10 @@ sap.ui.define([
 
 	function _getValue(oControl) {
 		if (oControl.isA("sap.m.ComboBox")) {
+			oControl.synchronizeSelection(); // force ComboBox to synchronize selectedKey with the value in cases where the card is not being rendered
 			return {
 				key: oControl.getSelectedKey(),
-				value: oControl.getValue() // TODO: ComboBox syncrhonizes selectedKey with the value in onBeforeRendering. Therefore we cannot rely on getValue() here
+				value: oControl.getValue()
 			};
 		} else {
 			return oControl.getValue();
