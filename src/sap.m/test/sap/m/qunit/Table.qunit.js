@@ -545,7 +545,7 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		//Check if multiselect checkboxes are visible
+		// Check if multiselect checkboxes are visible
 		var aSelectionChecks = sut.$().find(".sapMCb");
 		assert.ok(aSelectionChecks.length === 4, "Table displays selection checkboxes");
 
@@ -553,18 +553,21 @@ sap.ui.define([
 		var $selectAllCheckBox = sut.$().find(".sapMListTblHeader .sapMCb").first();
 		assert.strictEqual($selectAllCheckBox.attr('aria-label'), oBundle.getText("TABLE_CHECKBOX_SELECT_ALL"), "The select all checkbox has an aria-label assigned");
 
-		//Check if checkboxes are initially not selected
+		// Check if select all checkbox has correct tooltip assigned
+		assert.strictEqual(sut._selectAllCheckBox.getTooltip(), oBundle.getText("TABLE_SELECT_ALL_TOOLTIP"), "The select all checkbox has correct tooltip assigned");
+
+		// Check if checkboxes are initially not selected
 		var aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
 		assert.ok(aSelectionChecksMarked.length === 0, "Selection checkboxes not checked");
 
-		//Check if 'selectAll' marks all rows as selected
+		// Check if 'selectAll' marks all rows as selected
 		sut.selectAll();
 		Core.applyChanges();
 
 		aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
 		assert.ok(aSelectionChecksMarked.length === 4, "Selection checkboxes ALL checked");
 
-		//clean up
+		// clean up
 		sut.destroy();
 	});
 
