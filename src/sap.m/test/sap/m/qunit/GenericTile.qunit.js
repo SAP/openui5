@@ -5412,7 +5412,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		}
 	});
 
-	QUnit.test("Should Only be visible in IconMode and for TwoByHalf frameType and valid icon", function (assert) {
+	QUnit.test("Should Only be visible in IconMode and for TwoByHalf frameType", function (assert) {
 		assert.ok(document.getElementById("badge-tile-tileBadge"), "tile badge rendered initially");
 
 		//Switch Mode
@@ -5425,17 +5425,17 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		oCore.applyChanges();
 		assert.notOk(document.getElementById("badge-tile-tileBadge"), "tile badge not rendered for other frame type");
 
-		//Switch to invalid icon
-		this.oGenericTile.setTileIcon();
-		oCore.applyChanges();
-		assert.notOk(document.getElementById("badge-tile-tileBadge"), "tile badge not rendered for invalid icon");
-
 		//Switch back to original state
 		this.oGenericTile.setMode("IconMode");
 		this.oGenericTile.setFrameType(FrameType.TwoByHalf);
 		this.oGenericTile.setTileIcon("sap-icon://folder-full");
 		oCore.applyChanges();
 		assert.ok(document.getElementById("badge-tile-tileBadge"), "tile badge rendered again");
+
+		//Switch to invalid icon
+		this.oGenericTile.setTileIcon();
+		oCore.applyChanges();
+		assert.ok(document.getElementById("badge-tile-tileBadge"), "tile badge rendered even if invalid icon");
 	});
 
 	QUnit.test("Should only display 2 characters", function (assert) {
@@ -5445,7 +5445,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		//Change tile badge
 		this.oGenericTile.setTileBadge(sTestBadge);
 		oCore.applyChanges();
-		assert.equal(document.getElementById("badge-tile-tileBadge").innerText, sTestBadge.substring(0, 2), "only first 2 characters of the badge value are displayed");
+		assert.equal(document.getElementById("badge-tile-tileBadge").innerText, sTestBadge.substring(0, 3), "only first 2 characters of the badge value are displayed");
 	});
 
 });

@@ -239,11 +239,12 @@ sap.ui.define([
 				 */
 				 renderOnThemeChange: {type: "boolean", group: "Misc", defaultValue: false},
 				/**
-				 * Show Badge Information associated with a Tile. Limited to 2 characters.
-				 * Only displayed for tile in IconMode in TwoByHalf frameType having a valid icon.
-				 * Characters currently trimmed to 2.
-				 * @experimental Since 1.114
-				 * @since 1.114
+				 * Show Badge Information associated with a Tile. Limited to 3 characters.
+				 * When enabled, the badge information is displayed inside a folder icon.
+				 * Display limited only for tile in IconMode in TwoByHalf frameType.
+				 * Characters currently trimmed to 3.
+				 * @experimental Since 1.113
+				 * @since 1.113
 				 */
 				tileBadge: { type: "string", group: "Misc", defaultValue: "" }
 			},
@@ -1879,7 +1880,7 @@ sap.ui.define([
 			useIconTooltip: false,
 			src: oIcon
 		});
-		if (!this._oIcon){
+		if (!this._oIcon) {
 			this._oIcon = IconPool.createControlByURI({
 				height: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
 				width: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
@@ -1904,23 +1905,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns true if Current Tile is in IconMode, FrameType is OneByOne or TwoByHalf, backgroundColor, TileIcon Properties are set.
+	 * Checks if Current Tile is in IconMode, FrameType is OneByOne or TwoByHalf, backgroundColor, TileIcon Properties are set.
+	 * @returns {boolean} - indicates whether icon mode is supported or not.
 	 */
 	GenericTile.prototype._isIconMode = function () {
-		if (this.getMode() === GenericTileMode.IconMode
-			&& (this.getFrameType() === FrameType.OneByOne || this.getFrameType() === FrameType.TwoByHalf)){
-				if (this.getTileIcon() && this.getBackgroundColor()) {
-					return true;
-				} else {
-					if (!this.getIconLoaded()) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-		} else {
-			return false;
-		}
+		var sMode = this.getMode(),
+			sFrameType = this.getFrameType(),
+			sTileIcon = this.getTileIcon(),
+			sBackgroundColor = this.getBackgroundColor(),
+			bIsIconLoaded = this.getIconLoaded();
+
+		this._sTileBadge = sFrameType === FrameType.TwoByHalf && this.getTileBadge().trim().substring(0, 3);
+		return sMode === GenericTileMode.IconMode &&
+			(sFrameType === FrameType.OneByOne || sFrameType === FrameType.TwoByHalf) &&
+			((sTileIcon && sBackgroundColor) || (this._sTileBadge && sBackgroundColor) || !bIsIconLoaded);
 	};
 
 	/**

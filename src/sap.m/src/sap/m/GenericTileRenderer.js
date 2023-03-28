@@ -262,13 +262,11 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 					}
 					oRm.openStart("div");
 
-					// Tile Badge: Consider only the first 2 characters for display
-					var sBadgeText = frameType === frameTypes.TwoByHalf && oControl.getTileBadge().trim().substring(0, 2);
 					if (frameType === frameTypes.OneByOne) {
 						oRm.class("sapMGTOneByOneIcon");
 					} else {
 						oRm.class("sapMGTTwoByHalfIcon");
-						if (sBadgeText) {
+						if (oControl._sTileBadge) {
 							oRm.class("sapMGTIconBadge");
 						} else if (!this._isThemeHighContrast()) {
 								oRm.style("background-color", sBGColor);
@@ -279,18 +277,18 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 						}
 					}
 					oRm.openEnd();
-					if (oControl.getTileIcon()) {
-						var sAggregation = oControl._generateIconAggregation(oControl.getTileIcon());
+					if (oControl.getTileIcon() || oControl._sTileBadge) {
+						var sAggregation = oControl._generateIconAggregation(oControl._sTileBadge ? "sap-icon://folder-full" : oControl.getTileIcon());
 						if (sAggregation) {
 							var oIcon = oControl.getAggregation(sAggregation);
-							if (sBadgeText) {
+							if (oControl._sTileBadge) {
 								oIcon.setColor(sBGColor);
 							}
 							oRm.renderControl(oIcon);
 						}
-						if (sBadgeText) {
+						if (oControl._sTileBadge) {
 							oRm.openStart("div", oControl.getId() + "-tileBadge").class("sapMGTileBadge").openEnd();
-							oRm.text(sBadgeText);
+							oRm.text(oControl._sTileBadge);
 							oRm.close("div");
 						}
 					}
