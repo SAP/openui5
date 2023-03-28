@@ -257,9 +257,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.checkSuspended = function (bIfNoResumeChangeReason) {
-		var oRootBinding = this.getRootBinding();
-
-		if (oRootBinding && oRootBinding.isSuspended()
+		if (this.isRootBindingSuspended()
 				&& (!bIfNoResumeChangeReason || this.isRoot() || this.getResumeChangeReason())) {
 			throw new Error("Must not call method when the binding's root binding is suspended: "
 				+ this);
@@ -660,7 +658,7 @@ sap.ui.define([
 			if (bHasNonSystemQueryOptions) {
 				return wrapQueryOptions(oQueryOptionsPromise);
 			}
-			return oContext.getBinding()
+			return oContext.oBinding
 				.fetchIfChildCanUseCache(oContext, that.sPath, oQueryOptionsPromise,
 					!this.mParameters) // duck typing for property binding
 				.then(function (sReducedPath) {
@@ -885,12 +883,15 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	ODataBinding.prototype.getRootBinding = function () {
+		var oBinding;
+
 		if (this.bRelative) {
 			if (!this.oContext) {
 				return undefined;
 			}
-			if (this.oContext.getBinding) {
-				return this.oContext.getBinding().getRootBinding();
+			if (this.oContext.getBinding) { // API serves as a marker only
+				oBinding = this.oContext.getBinding();
+				return oBinding && oBinding.getRootBinding();
 			}
 		}
 		return this;

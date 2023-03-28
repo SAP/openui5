@@ -1053,13 +1053,14 @@ sap.ui.define([
 			},
 			oCachePromise = SyncPromise.resolve(oFixture.cache),
 			fnFetchMetadata = {/*function*/},
+			oParentBinding = new ODataParentBinding(),
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$select : "foo"},
 				bAggregatedQueryOptionsInitial : false,
 				oCache : oFixture.cache,
 				oCachePromise : oCachePromise,
 				oContext : {
-					getBinding : function () {}
+					oBinding : oParentBinding
 				},
 				doFetchQueryOptions : function () {},
 				isFirstCreateAtEnd : function () {},
@@ -1081,7 +1082,6 @@ sap.ui.define([
 			mLateQueryOptions = {},
 			oMetaModelMock = this.mock(oMetaModel),
 			oModelMock = this.mock(oBinding.oModel),
-			oParentBinding = new ODataParentBinding(),
 			oPromise;
 
 		if (oFixture.keptAlive) {
@@ -1123,9 +1123,6 @@ sap.ui.define([
 			this.mock(oFixture.cache).expects("setLateQueryOptions")
 				.withExactArgs(sinon.match.same(mLateQueryOptions));
 		}
-		this.mock(oBinding.oContext).expects("getBinding")
-			.exactly(oFixture.fetchIfChildCanUseCacheCallCount)
-			.withExactArgs().returns(oParentBinding);
 		this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 			.exactly(oFixture.fetchIfChildCanUseCacheCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext), "navigation",
@@ -1618,7 +1615,7 @@ sap.ui.define([
 			},
 			oBinding = new ODataParentBinding({
 				oContext : {
-					getBinding : function () { return oParentBinding; },
+					oBinding : oParentBinding,
 					getPath : function () { return "/Set('2')"; }
 				},
 				doFetchQueryOptions : function () {
@@ -1849,7 +1846,7 @@ sap.ui.define([
 				oCache : undefined,
 				oCachePromise : SyncPromise.resolve(Promise.resolve(null)),
 				oContext : {
-					getBinding : function () { return oParentBinding; },
+					oBinding : oParentBinding,
 					getPath : function () { return "/SalesOrderList('42')"; }
 				},
 				doFetchQueryOptions : function () {},
@@ -2349,9 +2346,7 @@ sap.ui.define([
 				createInCache : function () {}
 			},
 			oContext = {
-				getBinding : function () {
-					return oParentBinding;
-				},
+				oBinding : oParentBinding,
 				iIndex : 42
 			},
 			oBinding = new ODataParentBinding({
@@ -2920,7 +2915,7 @@ sap.ui.define([
 	QUnit.test("isPatchWithoutSideEffects: inherited", function (assert) {
 		var oParentBinding = new ODataParentBinding(),
 			oContext = {
-				getBinding : function () { return oParentBinding; }
+				oBinding : oParentBinding
 			},
 			oBinding = new ODataParentBinding({
 				oContext : oContext,
@@ -3643,7 +3638,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_findEmptyPathParentContext: Delegate to parent", function (assert) {
 		var oBinding = new ODataParentBinding(),
-			oContext = {},
+			oContext = {
+				getBinding : function () {} // API serves as a marker only
+			},
 			oParentBinding = {
 				_findEmptyPathParentContext : function (oMyContext) {
 					assert.strictEqual(oMyContext, oContext);
@@ -3651,7 +3648,7 @@ sap.ui.define([
 				}
 			};
 
-		oContext.getBinding = function () { return oParentBinding; };
+		oContext.oBinding = oParentBinding;
 		oBinding.sPath = "";
 		oBinding.oContext = oContext;
 
@@ -3684,9 +3681,7 @@ sap.ui.define([
 			},
 			oParentBinding = new ODataParentBinding({oModel : oModel}),
 			oContext = {
-				getBinding : function () {
-					return oParentBinding;
-				}
+				oBinding : oParentBinding
 			},
 			oBinding = new ODataParentBinding({
 				oContext : oContext,
@@ -3926,17 +3921,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getInheritableQueryOptions: inherit from parent", function (assert) {
-		var oBinding = new ODataParentBinding({
+		var oParentBinding = new ODataParentBinding(),
+			oBinding = new ODataParentBinding({
 				oContext : {
-					getBinding : function () {}
+					oBinding : oParentBinding
 				},
 				sPath : "~path~"
 			}),
 			mCacheQueryOptions = {},
-			mCacheQueryOptionsForPath = {},
-			oParentBinding = new ODataParentBinding();
+			mCacheQueryOptionsForPath = {};
 
-		this.mock(oBinding.oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
 		this.mock(oParentBinding).expects("getInheritableQueryOptions").withExactArgs()
 			.returns(mCacheQueryOptions);
 		this.mock(_Helper).expects("getQueryOptionsForPath")

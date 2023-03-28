@@ -3745,6 +3745,58 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getRootBinding: absolute", function (assert) {
+		var oBinding = {
+				getContext : function () { throw new Error("Do not call!"); },
+				isRelative : function () { return false; }
+			},
+			oContext = {
+				oBinding : oBinding
+			};
+
+		// code under test
+		assert.strictEqual(_Helper.getRootBinding(oContext), oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRootBinding: quasi-absolute", function (assert) {
+		var oParentContext = {/*not a v4.Context*/},
+			oBinding = {
+				getContext : function () { return oParentContext; },
+				isRelative : function () { return true; }
+			},
+			oContext = {
+				oBinding : oBinding
+			};
+
+		// code under test
+		assert.strictEqual(_Helper.getRootBinding(oContext), oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRootBinding: relative", function (assert) {
+		var oParentContext = {
+				getBinding : function () { throw new Error("API serves as a marker only"); }
+			},
+			oBinding = {
+				getContext : function () { return oParentContext; },
+				isRelative : function () { return true; }
+			},
+			oContext = {
+				oBinding : oBinding
+			},
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("getRootBinding").withExactArgs(sinon.match.same(oContext))
+			.callThrough(); // for "code under test"
+		oHelperMock.expects("getRootBinding").withExactArgs(sinon.match.same(oParentContext))
+			.returns("~oRootBinding~");
+
+		// code under test
+		assert.strictEqual(_Helper.getRootBinding(oContext), "~oRootBinding~");
+	});
+
+	//*********************************************************************************************
 [{
 	aggregated : {$select : ["Name"]},
 	additional : {$select : ["ID"]},

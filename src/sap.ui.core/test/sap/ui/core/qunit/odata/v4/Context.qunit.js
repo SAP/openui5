@@ -2082,19 +2082,17 @@ sap.ui.define([
 }, {
 	auto : false,
 	group : "different",
+	temporary : true,
 	text : "different group ID"
 }].forEach(function (oFixture) {
 	QUnit.test("requestSideEffects: " + oFixture.text, function (assert) {
 		var aAbsolutePaths = oFixture.absolute ? ["/foo", "/bar", "/baz"] : [],
-			oRootBinding = {
-				getResolvedPath : function () {}
-			},
+			sBase = "/base",
 			oBinding = {
 				oCache : {
 					hasChangeListeners : function () { return false; }
 				},
 				checkSuspended : function () {},
-				getRootBinding : function () { return oRootBinding; },
 				getPath : function () { return "/EMPLOYEES('42')"; },
 				isResolved : function () { return true; }
 			},
@@ -2148,27 +2146,31 @@ sap.ui.define([
 				"/~container~/baz"
 			]);
 		}
+		if (oFixture.temporary) {
+			sBase = "/EMPLOYEES('42')";
+		}
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs(oFixture.group);
-		this.mock(oRootBinding).expects("getResolvedPath").withExactArgs().returns("/base");
+		this.mock(_Helper).expects("getRootBinding").withExactArgs(sinon.match.same(oContext))
+			.returns({getResolvedPath : function () { return sBase; }});
 		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
 			.returns("~container~");
 		oMetaModelMock.expects("getAllPathReductions")
-			.withExactArgs("/EMPLOYEES('42')/TEAM_ID", "/base")
+			.withExactArgs("/EMPLOYEES('42')/TEAM_ID", sBase)
 			.returns(["/base/TEAM_ID", "/reduced/TEAM_ID"]);
 		oMetaModelMock.expects("getAllPathReductions")
-			.withExactArgs("/EMPLOYEES('42')/EMPLOYEE_2_MANAGER", "/base")
+			.withExactArgs("/EMPLOYEES('42')/EMPLOYEE_2_MANAGER", sBase)
 			.returns(["/base/EMPLOYEE_2_MANAGER"]);
 		oMetaModelMock.expects("getAllPathReductions")
-			.withExactArgs("/EMPLOYEES('42')/Address/*", "/base").returns(["/base/Address/*"]);
+			.withExactArgs("/EMPLOYEES('42')/Address/*", sBase).returns(["/base/Address/*"]);
 		oMetaModelMock.expects("getAllPathReductions").twice()
-			.withExactArgs("/EMPLOYEES('42')", "/base").returns(["/base/"]);
+			.withExactArgs("/EMPLOYEES('42')", sBase).returns(["/base/"]);
 		oMetaModelMock.expects("getAllPathReductions").twice()
-			.withExactArgs("/EMPLOYEES('42')/*", "/base").returns(["/base/*"]);
+			.withExactArgs("/EMPLOYEES('42')/*", sBase).returns(["/base/*"]);
 		oMetaModelMock.expects("getAllPathReductions")
-			.withExactArgs("/EMPLOYEES('42')/MANAGER_ID", "/base").returns(["/base/MANAGER_ID"]);
+			.withExactArgs("/EMPLOYEES('42')/MANAGER_ID", sBase).returns(["/base/MANAGER_ID"]);
 		oMetaModelMock.expects("getAllPathReductions")
-			.withExactArgs("/EMPLOYEES('42')/EMPLOYEE_2_TEAM/*", "/base")
+			.withExactArgs("/EMPLOYEES('42')/EMPLOYEE_2_TEAM/*", sBase)
 			.returns(["/base/EMPLOYEE_2_TEAM/*"]);
 		this.mock(_Helper).expects("filterPaths")
 			.withExactArgs(aAbsolutePaths, [
@@ -2259,13 +2261,9 @@ sap.ui.define([
 				+ bAbsolute;
 
 	QUnit.test(sTitle, function (assert) {
-		var oRootBinding = {
-				getResolvedPath : function () {}
-			},
-			oBinding = {
+		var oBinding = {
 				checkSuspended : function () {},
 				getPath : function () { return "/EMPLOYEES('42')"; },
-				getRootBinding : function () { return oRootBinding; },
 				isResolved : function () { return true; }
 			},
 			oMetaModel = {
@@ -2287,7 +2285,8 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs(undefined);
-		this.mock(oRootBinding).expects("getResolvedPath").withExactArgs().returns("/base");
+		this.mock(_Helper).expects("getRootBinding").withExactArgs(sinon.match.same(oContext))
+			.returns({getResolvedPath : function () { return "/base"; }});
 		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
 			.returns("~container~");
 		this.mock(oMetaModel).expects("getAllPathReductions")
