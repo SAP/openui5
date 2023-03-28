@@ -3545,13 +3545,22 @@ sap.ui.define([
 	 *   The group ID used for a side-effects refresh; if given, only inline creation
 	 *   rows and transient elements with a different batch group shall be kept in place and a
 	 *   backup shall be remembered for a later {@link #restore}
+	 * @param {object} [mQueryOptions]
+	 *   The new query options
+	 * @param {object} [_oAggregation]
+	 *   An object holding the information needed for data aggregation; see also "OData Extension
+	 *   for Data Aggregation Version 4.0"; must already be normalized by
+	 *   {@link _AggregationHelper.buildApply}
+	 * @param {boolean} [_bIsGrouped]
+	 *   Whether the list binding is grouped via its first sorter
 	 * @throws {Error}
 	 *   If a cache is shared and a group ID is given
 	 *
 	 * @public
 	 * @see _Cache#hasPendingChangesForPath
 	 */
-	_CollectionCache.prototype.reset = function (aKeptElementPredicates, sGroupId) {
+	_CollectionCache.prototype.reset = function (aKeptElementPredicates, sGroupId, mQueryOptions,
+			_oAggregation, _bIsGrouped) {
 		var mByPredicate = this.aElements.$byPredicate,
 			mChangeListeners = this.mChangeListeners,
 			iCreated = 0, // index (and finally number) of created elements that we keep
@@ -3572,6 +3581,10 @@ sap.ui.define([
 				$created : this.aElements.$created,
 				iLimit : this.iLimit
 			};
+		}
+
+		if (mQueryOptions) {
+			this.setQueryOptions(mQueryOptions, true);
 		}
 
 		for (i = 0; i < this.aElements.$created; i += 1) {

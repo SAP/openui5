@@ -10549,6 +10549,7 @@ sap.ui.define([
 			};
 		}
 		oCacheMock.expects("checkSharedRequest").exactly(sGroupId ? 1 : 0).withExactArgs();
+		oCacheMock.expects("setQueryOptions").never();
 
 		// code under test
 		oCache.reset(aKeptElementPredicates.slice(), sGroupId);
@@ -10686,7 +10687,9 @@ sap.ui.define([
 			oElement0 = {id : 0},
 			oElement1 = {id : 1},
 			oElement2 = {id : 2},
-			aElements = [oElement0, oElement1, oElement2];
+			aElements = [oElement0, oElement1, oElement2],
+			oFireChangeExpectation,
+			oSetQueryOptionsExpectation;
 
 		aElements.$byPredicate = {"(0)" : oElement0, "(1)" : oElement1, "(2)" : oElement2};
 		oCache.aElements = aElements;
@@ -10694,10 +10697,13 @@ sap.ui.define([
 		oCache.sContext = "~context~";
 		oCache.aElements.$count = oCache.iLimit = 3;
 
-		this.mock(_Helper).expects("fireChange").withExactArgs({"" : "~listeners~"}, "");
+		oSetQueryOptionsExpectation = this.mock(oCache).expects("setQueryOptions")
+			.withExactArgs("~mQueryOptions~", true);
+		oFireChangeExpectation = this.mock(_Helper).expects("fireChange")
+			.withExactArgs({"" : "~listeners~"}, "");
 
 		// code under test
-		oCache.reset([]);
+		oCache.reset([], undefined, "~mQueryOptions~");
 
 		assert.strictEqual(oCache.aElements, aElements);
 		assert.strictEqual(oCache.aElements.length, 0);
@@ -10706,6 +10712,7 @@ sap.ui.define([
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.strictEqual(oCache.iLimit, Infinity);
 		assert.deepEqual(oCache.mChangeListeners, {"" : "~listeners~"});
+		assert.ok(oSetQueryOptionsExpectation.calledBefore(oFireChangeExpectation));
 	});
 
 	//*********************************************************************************************

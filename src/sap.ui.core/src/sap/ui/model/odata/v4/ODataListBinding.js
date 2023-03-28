@@ -1194,10 +1194,10 @@ sap.ui.define([
 				&& oOldCache.$deepResourcePath === sDeepResourcePath) {
 			aKeepAlivePredicates = this.getKeepAlivePredicates();
 			if (this.iCreatedContexts || this.iDeletedContexts || aKeepAlivePredicates.length) {
-				oOldCache.reset(aKeepAlivePredicates, sGroupId);
 				// Note: #inheritQueryOptions as called below should not matter in case of own
 				// requests, which are a precondition for kept-alive elements
-				oOldCache.setQueryOptions(mQueryOptions, true);
+				oOldCache.reset(aKeepAlivePredicates, sGroupId, mQueryOptions,
+					this.mParameters.$$aggregation, this.isGrouped());
 
 				return oOldCache;
 			}
@@ -1216,7 +1216,7 @@ sap.ui.define([
 		}
 		oCache = oCache
 			|| _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
-				this.mParameters.$$aggregation, mQueryOptions, this.oModel.bAutoExpandSelect,
+				mQueryOptions, this.mParameters.$$aggregation, this.oModel.bAutoExpandSelect,
 				this.bSharedRequest, this.isGrouped());
 		if (mKeptElementsByPredicate) {
 			aKeepAlivePredicates.forEach(function (sPredicate) {
@@ -2591,7 +2591,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.getKeepAlivePredicates = function () {
-		var sBindingPath = this.getHeaderContext().getPath();
+		var sBindingPath;
+
+		if (!this.getHeaderContext()) {
+			return [];
+		}
+		sBindingPath = this.getHeaderContext().getPath();
 
 		return Object.values(this.mPreviousContextsByPath).concat(this.aContexts)
 			.filter(function (oContext) {
@@ -3673,8 +3678,7 @@ sap.ui.define([
 
 	/**
 	 * Sets a new data aggregation object and derives the system query option <code>$apply</code>
-	 * implicitly from it. No context is
-	 * {@link sap.ui.model.odata.v4.Context#setKeepAlive kept alive} anymore.
+	 * implicitly from it.
 	 *
 	 * @param {object} [oAggregation]
 	 *   An object holding the information needed for data aggregation; see also
@@ -3779,7 +3783,8 @@ sap.ui.define([
 	 *     <li> the given data aggregation object is unsupported,
 	 *     <li> the <code>$apply</code> system query option has been specified explicitly before,
 	 *     <li> the binding has a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
-	 *       context,
+	 *       context when switching the use case of data aggregation (recursive hierarchy, pure data
+	 *       aggregation, or none at all),
 	 *     <li> there are pending changes,
 	 *     <li> a recursive hierarchy is requested, but the model does not use the
 	 *       <code>autoExpandSelect</code> parameter,
@@ -3813,18 +3818,25 @@ sap.ui.define([
 	ODataListBinding.prototype.setAggregation = function (oAggregation) {
 		var mParameters;
 
-		function hasKeptAliveContext(aContexts) {
-			return aContexts.some(function (oContext) {
-				return oContext && oContext.isKeepAlive();
-			});
+		/*
+		 * Returns the use case of data aggregation (recursive hierarchy, pure data aggregation, or
+		 * none at all) as <code>true</code>, <code>false</code>, or <code>undefined</code>.
+		 *
+		 * @param {object} [oAggregation]
+		 *   An object holding the information needed for data aggregation
+		 * @returns {boolean|undefined}
+		 *   The use case of data aggregation
+		 */
+		function useCase(oDataAggregationObject) {
+			return oDataAggregationObject && !!oDataAggregationObject.hierarchyQualifier;
 		}
 
 		this.checkTransient();
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot set $$aggregation due to pending changes");
 		}
-		if (hasKeptAliveContext(this.aContexts)
-				|| hasKeptAliveContext(Object.values(this.mPreviousContextsByPath))) {
+		if (useCase(this.mParameters.$$aggregation) !== useCase(oAggregation)
+				&& this.getKeepAlivePredicates().length) {
 			throw new Error("Cannot set $$aggregation due to a kept-alive context");
 		}
 
@@ -3833,7 +3845,6 @@ sap.ui.define([
 			delete mParameters.$$aggregation;
 		} else {
 			mParameters.$$aggregation = _Helper.clone(oAggregation);
-			this.resetKeepAlive();
 		}
 		this.applyParameters(mParameters, "");
 	};

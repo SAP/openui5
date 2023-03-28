@@ -24202,10 +24202,14 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1849
 	//
 	// Selection on header and root context (JIRA: CPOUI5ODATAV4-1943).
+	// Use $count (JIRA: CPOUI5ODATAV4-1855).
 	//
 	// Root is kept alive and requests messages, then list is refreshed and the kept-alive node is
-	// neither the root nor a leaf anymore ;-)
+	// neither the root nor a leaf anymore ;-) A side-effects refresh fails and the new root is
+	// expanded to reveal the kept-alive node.
 	// JIRA: CPOUI5ODATAV4-2030
+	//
+	// The whole tree is expanded to two levels (JIRA: CPOUI5ODATAV4-2095).
 	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -24220,11 +24224,13 @@ sap.ui.define([
 			oRoot,
 			oTable,
 			sView = '\
+<Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'/Artists\',\
 		parameters : {\
 			$$aggregation : {\
 				hierarchyQualifier : \'OrgChart\'\
-			}\
+			},\
+			$count : true\
 		}}" threshold="0" visibleRowCount="3">\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
@@ -24232,12 +24238,19 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-				+ ",NodeProperty='_/NodeID',Levels=1)"
-				+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
-				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-				+ "&$count=true&$skip=0&$top=3", {
+		this.expectRequest({
+				batchNo : 1,
+				url : "Artists/$count"
+			}, 1)
+			.expectRequest({
+				batchNo : 1,
+				url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='_/NodeID',Levels=1)"
+					+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$count=true&$skip=0&$top=3"
+			}, {
 				"@odata.count" : "1",
 				value : [{
 					"@odata.etag" : "etag0.0",
@@ -24255,7 +24268,8 @@ sap.ui.define([
 						NodeID : "0,true"
 					}
 				}]
-			});
+			})
+			.expectChange("count");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
@@ -24284,9 +24298,10 @@ sap.ui.define([
 				["", "", ""],
 				["", "", ""]
 			]);
+			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 			assert.deepEqual(oRoot.getObject(), {
-					"@odata.etag" : "etag0.0",
 					"@$ui5.node.level" : 1,
+					"@odata.etag" : "etag0.0",
 					ArtistID : "0",
 					BestFriend : {
 						ArtistID : "01",
@@ -24312,6 +24327,15 @@ sap.ui.define([
 			// code under test
 			oHeaderContext.setSelected(true);
 			assert.strictEqual(oHeaderContext.isSelected(), true);
+
+			that.expectChange("count", "1");
+
+			// code under test
+			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+			return that.waitForChanges(assert, "$count");
+		}).then(function () {
+			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 
 			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=defaultChannel", {
 					"@odata.etag" : "etag0.0",
@@ -24345,6 +24369,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
+				// code under test
 				oRoot.requestSideEffects(["*"]),
 				that.waitForChanges(assert, "side effect: * for single row")
 			]);
@@ -24365,6 +24390,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
+				// code under test
 				oRoot.requestSideEffects(["defaultChannel"]),
 				that.waitForChanges(assert, "side effect: defaultChannel for single row")
 			]);
@@ -24390,6 +24416,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
+				// code under test
 				oHeaderContext.requestSideEffects(["BestFriend/Name"]),
 				that.waitForChanges(assert, "side effect: BestFriend/Name for all rows")
 			]);
@@ -24404,6 +24431,7 @@ sap.ui.define([
 				["", "", ""],
 				["", "", ""]
 			]);
+			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-1851)
@@ -24445,6 +24473,7 @@ sap.ui.define([
 					sinon.match(/Unexpected structural change: _\/NodeID/), sODLB);
 
 			return Promise.all([
+				// code under test
 				oRoot.requestSideEffects(["*"])
 					.then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message, sErrorMessage);
@@ -24459,6 +24488,7 @@ sap.ui.define([
 				["", "", ""],
 				["", "", ""]
 			]);
+			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 			assert.strictEqual(oRoot.getProperty("defaultChannel"), "260", "360 has been ignored");
 
 			that.expectMessages([]);
@@ -24495,6 +24525,10 @@ sap.ui.define([
 				})
 				.expectRequest({
 					batchNo : 7,
+					url : "Artists/$count"
+				}, 3)
+				.expectRequest({
+					batchNo : 7,
 					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
 						+ ",NodeProperty='_/NodeID',Levels=1)"
@@ -24513,7 +24547,8 @@ sap.ui.define([
 							NodeID : "1,true"
 						}
 					}]
-				});
+				})
+				.expectChange("count", "3");
 
 			return Promise.all([
 				// Note: "Cannot refresh " + oRoot + " when using data aggregation"
@@ -24532,6 +24567,7 @@ sap.ui.define([
 				["", "", ""],
 				["", "", ""]
 			], 1);
+			assert.strictEqual(oListBinding.getCount(), 3, "count of nodes"); // code under test
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
 			assert.deepEqual(oKeptAliveNode.getObject(), {
@@ -24554,6 +24590,7 @@ sap.ui.define([
 			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,defaultChannel"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", oError)
+				.expectRequest("Artists/$count", oError)
 				.expectRequest("Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
 					+ ",NodeProperty='_/NodeID',Levels=1)"
@@ -24591,6 +24628,9 @@ sap.ui.define([
 				["", "", ""],
 				["", "", ""]
 			], 1);
+			assert.strictEqual(oListBinding.getCount(), 3, "count of nodes"); // code under test
+			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
+				"still kept alive");
 
 			that.expectRequest("Artists?$apply=descendants($root/Artists,OrgChart,_/NodeID"
 						+ ",filter(ArtistID eq '1' and IsActiveEntity eq true),1)"
@@ -24614,6 +24654,7 @@ sap.ui.define([
 					}]
 				});
 
+			// code under test
 			oListBinding.getCurrentContexts()[0].expand();
 
 			return that.waitForChanges(assert, "expand");
@@ -24629,9 +24670,9 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
 			assert.deepEqual(oKeptAliveNode.getObject(), {
-					"@odata.etag" : "etag0.4",
 					"@$ui5.node.isExpanded" : false,
 					"@$ui5.node.level" : 2,
+					"@odata.etag" : "etag0.4",
 					ArtistID : "0",
 					BestFriend : {
 						ArtistID : "01",
@@ -24645,6 +24686,83 @@ sap.ui.define([
 					},
 					defaultChannel : "460"
 				}, "after expand");
+
+			that.expectRequest({
+					batchNo : 9,
+					url : "Artists/$count"
+				}, 3)
+				.expectRequest({
+					batchNo : 9,
+					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+						+ ",NodeProperty='_/NodeID',Levels=2)&$select=ArtistID,IsActiveEntity"
+						+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ "&$count=true&$skip=0&$top=3"
+				}, {
+					"@odata.count" : "2",
+					value : [{
+						"@odata.etag" : "etag1.1",
+						ArtistID : "1",
+						BestFriend : {
+							ArtistID : "01",
+							IsActiveEntity : true,
+							Name : "Friend #01 (no more)"
+						},
+						IsActiveEntity : true,
+						_ : {
+							DescendantCount : "1",
+							DistanceFromRoot : "0",
+							DrillState : "expanded",
+							NodeID : "1,true"
+						}
+					}, {
+						"@odata.etag" : "etag0.4",
+						ArtistID : "0",
+						BestFriend : null,
+						IsActiveEntity : true,
+						_ : {
+							DescendantCount : "0",
+							DistanceFromRoot : "1",
+							DrillState : "collapsed",
+							NodeID : "0,true"
+						}
+					}]
+				});
+
+			// code under test
+			// Note: overall count must not change here, just the "expansion state"
+			oListBinding.setAggregation({
+				expandTo : 2,
+				hierarchyQualifier : "OrgChart"
+			});
+
+			return that.waitForChanges(assert, "expandTo");
+		}).then(function () {
+			checkTable("after expandTo", assert, oTable, [
+				"/Artists(ArtistID='1',IsActiveEntity=true)",
+				"/Artists(ArtistID='0',IsActiveEntity=true)"
+			], [
+				[true, 1, "Friend #01 (no more)"],
+				[false, 2, ""],
+				["", "", ""]
+			]);
+			assert.strictEqual(oListBinding.getCount(), 3, "count of nodes"); // code under test
+			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
+				"still kept alive");
+			assert.deepEqual(oKeptAliveNode.getObject(), {
+					"@$ui5.node.isExpanded" : false,
+					"@$ui5.node.level" : 2,
+					"@odata.etag" : "etag0.4",
+					ArtistID : "0",
+					BestFriend : null,
+					IsActiveEntity : true,
+					Messages : [],
+					_ : {
+						NodeID : "0,true"
+					},
+					defaultChannel : "460"
+				}, "after expandTo");
 		});
 	});
 
