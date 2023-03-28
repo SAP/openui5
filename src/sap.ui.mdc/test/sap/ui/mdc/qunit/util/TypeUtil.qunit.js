@@ -117,7 +117,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("externalizeValue", function (assert) {
-		var oDate = new Date("2000-01-01 UTC");
+		var oDate = new Date(Date.UTC(2000,0,1));
 		var oStringifiedValue = TypeUtil.externalizeValue(oDate, new DateType());
 		assert.equal(oStringifiedValue, "2000-01-01", "stringified value returned");
 	});
