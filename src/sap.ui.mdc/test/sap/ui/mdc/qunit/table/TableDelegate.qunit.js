@@ -196,31 +196,33 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("isExportSupported", function(assert) {
-		var fnTest = function(sTableType, bExpectedSupport) {
+	QUnit.test("getSupportedFeatures", function(assert) {
+		var fnTest = function(sTableType, oExpectedFeatures) {
 			return this.oTable.setType(sTableType).initialized().then(function(oTable) {
-				assert.strictEqual(oTable.getControlDelegate().isExportSupported(oTable), bExpectedSupport, "Table type: " + sTableType);
+				var oFeatures = oTable.getControlDelegate().getSupportedFeatures(oTable);
+				assert.deepEqual(oFeatures, oExpectedFeatures, sTableType + ": supported features are correct");
 			});
 		}.bind(this);
 
-		return fnTest(TableType.Table, true).then(function() {
-			return fnTest(TableType.TreeTable, false);
+		return fnTest(TableType.Table, {
+			"export": true,
+			"selection": true,
+			"expandAll": false,
+			"collapseAll": false
 		}).then(function() {
-			return fnTest(TableType.ResponsiveTable, true);
-		});
-	});
-
-	QUnit.test("isSelectionSupported", function(assert) {
-		var fnTest = function(sTableType, bExpectedSupport) {
-			return this.oTable.setType(sTableType).initialized().then(function(oTable) {
-				assert.strictEqual(oTable.getControlDelegate().isSelectionSupported(oTable), bExpectedSupport, "Table type: " + sTableType);
+			return fnTest(TableType.TreeTable, {
+				"export": true,
+				"selection": false,
+				"expandAll": false,
+				"collapseAll": false
 			});
-		}.bind(this);
-
-		return fnTest(TableType.Table, true).then(function() {
-			return fnTest(TableType.TreeTable, false);
 		}).then(function() {
-			return fnTest(TableType.ResponsiveTable, true);
+			return fnTest(TableType.ResponsiveTable, {
+				"export": true,
+				"selection": true,
+				"expandAll": false,
+				"collapseAll": false
+			});
 		});
 	});
 });

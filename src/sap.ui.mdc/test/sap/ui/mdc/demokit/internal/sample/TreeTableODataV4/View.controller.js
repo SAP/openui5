@@ -80,8 +80,7 @@ sap.ui.define([
 			oVBox.setModel(new ODataModel({
 				serviceUrl: sProxyServiceUrl,
 				operationMode: "Server",
-				autoExpandSelect: true,
-				annotationURI: "test-resources/sap/ui/mdc/demokit/internal/sample/TreeTableODataV4//annotations.xml"
+				autoExpandSelect: true
 			}));
 
 			if (sUsername && sPassword) {

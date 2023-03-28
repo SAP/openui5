@@ -106,6 +106,23 @@ sap.ui.define([
 
 			return oMenuButton;
 		},
+		createExpandCollapseAllButton: function (sIdPrefix, aEventInfo, bIsExpand) {
+			if (!oRb) {
+				this._loadResourceBundle();
+			}
+
+			var sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll",
+				sText = bIsExpand ? oRb.getText("table.EXPAND_ALL") : oRb.getText("table.COLLAPSE_ALL");
+
+			var oButton = this._createButton(sId, {
+				icon: bIsExpand ? "sap-icon://expand-all" : "sap-icon://collapse-all",
+				text: sText,
+				press: aEventInfo,
+				tooltip: sText
+			});
+
+			return oButton;
+		},
 		_createButton: function(sId, mSettings) {
 			return new OverflowToolbarButton(sId, mSettings);
 		},

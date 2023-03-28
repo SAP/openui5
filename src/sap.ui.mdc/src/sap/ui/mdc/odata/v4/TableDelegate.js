@@ -291,6 +291,38 @@ sap.ui.define([
 		return TableDelegate.getGroupSorter.apply(this, arguments);
 	};
 
+	Delegate.getSupportedFeatures = function(oTable) {
+		var oSupportedFeatures = TableDelegate.getSupportedFeatures(oTable),
+			bIsTreeTable = oTable._isOfType(TableType.TreeTable);
+
+		return Object.assign(oSupportedFeatures, {
+			"expandAll": bIsTreeTable,
+			"collapseAll": bIsTreeTable
+		});
+	};
+
+	Delegate.expandAll = function (oTable) {
+		if (!oTable._isOfType(TableType.TreeTable)) {
+			return;
+		}
+
+		var oRowBinding = oTable.getRowBinding();
+		if (oRowBinding) {
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 999 }));
+		}
+	};
+
+	Delegate.collapseAll = function (oTable) {
+		if (!oTable._isOfType(TableType.TreeTable)) {
+			return;
+		}
+
+		var oRowBinding = oTable.getRowBinding();
+		if (oRowBinding) {
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 1 }));
+		}
+	};
+
 	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {
 		var aGroupChildren = aGroupProperties.map(function(oGroupProperty) {
 			return new Item({

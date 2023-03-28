@@ -1417,33 +1417,103 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#isExportSupported", function(assert) {
-		var fnTest = function(sTableType, bExpectedSupport) {
+	QUnit.test("#getSupportedFeatures", function(assert) {
+		var fnTest = function(sTableType, oExpectedFeatures) {
 			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable(sTableType);
 			return pInit.then(function(oTable) {
-				assert.strictEqual(oTable.getControlDelegate().isExportSupported(oTable), bExpectedSupport, "Table type: " + sTableType);
+				var oFeatures = oTable.getControlDelegate().getSupportedFeatures(oTable);
+				assert.deepEqual(oFeatures, oExpectedFeatures, sTableType + ": supported features are correct");
 			});
 		}.bind(this);
 
-		return fnTest(TableType.Table, true).then(function() {
-			return fnTest(TableType.TreeTable, false);
+		return fnTest(TableType.Table, {
+			"export": true,
+			"selection": true,
+			"expandAll": false,
+			"collapseAll": false
 		}).then(function() {
-			return fnTest(TableType.ResponsiveTable, true);
+			return fnTest(TableType.TreeTable, {
+				"export": true,
+				"selection": false,
+				"expandAll": true,
+				"collapseAll": true
+			});
+		}).then(function() {
+			return fnTest(TableType.ResponsiveTable, {
+				"export": true,
+				"selection": true,
+				"expandAll": false,
+				"collapseAll": false
+			});
 		});
 	});
 
-	QUnit.test("#isSelectionSupported", function(assert) {
-		var fnTest = function(sTableType, bExpectedSupport) {
+	QUnit.test("#expandAll", function(assert) {
+		var fnTest = function (sTableType, bExpandsAll) {
 			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable(sTableType);
 			return pInit.then(function(oTable) {
-				assert.strictEqual(oTable.getControlDelegate().isSelectionSupported(oTable), bExpectedSupport, "Table type: " + sTableType);
+				sinon.stub(oTable, "getRowBinding").returns({
+					setAggregation: function(oObject) {
+						assert.equal(oObject.expandTo, 999, sTableType + ": setAggregation called with expandTo: 999");
+						assert.equal(oObject.test, "Test", sTableType + ": test property not changed");
+					},
+					getAggregation: function(oObject) {
+						return {expandTo: 1, test: "Test"};
+					}
+				});
+				var oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
+
+				oTable.getControlDelegate().expandAll(oTable);
+				if (bExpandsAll) {
+					assert.ok(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was called");
+				} else {
+					assert.notOk(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was not called");
+				}
+
+				oTable.getRowBinding.restore();
+				oSetAggregationSpy.restore();
 			});
 		}.bind(this);
 
-		return fnTest(TableType.Table, true).then(function() {
-			return fnTest(TableType.TreeTable, false);
+		return fnTest(TableType.TreeTable, true).then(function() {
+			return fnTest(TableType.Table, false);
 		}).then(function() {
-			return fnTest(TableType.ResponsiveTable, true);
+			return fnTest(TableType.ResponsiveTable, false);
+		});
+	});
+
+	QUnit.test("#collapseAll", function(assert) {
+
+		var fnTest = function (sTableType, bExpandsAll) {
+			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable(sTableType);
+			return pInit.then(function(oTable) {
+				sinon.stub(oTable, "getRowBinding").returns({
+					setAggregation: function(oObject) {
+						assert.equal(oObject.expandTo, 1, "setAggregation called with expandTo: 999");
+						assert.equal(oObject.test, "Test", "test property not changed");
+					},
+					getAggregation: function(oObject) {
+						return {expandTo: 12, test: "Test"};
+					}
+				});
+				var oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
+
+				oTable.getControlDelegate().collapseAll(oTable);
+				if (bExpandsAll) {
+					assert.ok(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was called");
+				} else {
+					assert.notOk(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was not called");
+				}
+
+				oTable.getRowBinding.restore();
+				oSetAggregationSpy.restore();
+			});
+		}.bind(this);
+
+		return fnTest(TableType.TreeTable, true).then(function() {
+			return fnTest(TableType.Table, false);
+		}).then(function() {
+			return fnTest(TableType.ResponsiveTable, false);
 		});
 	});
 });

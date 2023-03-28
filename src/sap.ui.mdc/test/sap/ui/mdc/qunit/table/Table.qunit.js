@@ -2734,11 +2734,11 @@ sap.ui.define([
 		oTable.setEnableExport(true);
 
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "isExportSupported").returns(false);
+			sinon.stub(oDelegate, "getSupportedFeatures").returns({ "export": false });
 			return oTable.initialized();
 		}).then(function() {
 			assert.notOk(oTable._oExportButton, "Export button does not exist after table initialization");
-			oTable.getControlDelegate().isExportSupported.restore();
+			oTable.getControlDelegate().getSupportedFeatures.restore();
 		});
 	});
 
@@ -2766,12 +2766,12 @@ sap.ui.define([
 
 
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "isExportSupported").returns(false);
+			sinon.stub(oDelegate, "getSupportedFeatures").returns({ "export": false });
 			return oTable.initialized();
 		}).then(function() {
 			oTable.setEnableExport(true);
 			assert.notOk(oTable._oExportButton, "Export button does not exist");
-			oTable.getControlDelegate().isExportSupported.restore();
+			oTable.getControlDelegate().getSupportedFeatures.restore();
 		});
 	});
 
@@ -2782,10 +2782,10 @@ sap.ui.define([
 		oTable.setEnableExport(true);
 
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "isExportSupported").returns(false);
+			sinon.stub(oDelegate, "getSupportedFeatures").returns({ "export": false });
 			return oTable.initialized();
 		}).then(function() {
-			oTable.getControlDelegate().isExportSupported.returns(true);
+			oTable.getControlDelegate().getSupportedFeatures.returns({ "export": true });
 			oTable.setType(TableType.ResponsiveTable);
 			return oTable.initialized();
 		}).then(function() {
@@ -2795,7 +2795,7 @@ sap.ui.define([
 			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
 			assert.ok(oTable._oExportButton.getVisible(), "Export button is visible");
 
-			oTable.getControlDelegate().isExportSupported.returns(false);
+			oTable.getControlDelegate().getSupportedFeatures.returns({ "export": false });
 			oTable.setType(TableType.Table);
 			return oTable.initialized();
 		}).then(function() {
@@ -2804,7 +2804,7 @@ sap.ui.define([
 			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
 			assert.equal(oExportButton, oTable._oExportButton, "Same button instance is used");
 
-			oTable.getControlDelegate().isExportSupported.returns(true);
+			oTable.getControlDelegate().getSupportedFeatures.returns({ "export": true });
 			oTable.setType(TableType.ResponsiveTable);
 			return oTable.initialized();
 		}).then(function() {
@@ -2813,7 +2813,7 @@ sap.ui.define([
 			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
 			assert.equal(oExportButton, oTable._oExportButton, "Same button instance is used");
 		}).finally(function() {
-			oTable.getControlDelegate().isExportSupported.restore();
+			oTable.getControlDelegate().getSupportedFeatures.restore();
 		});
 	});
 
@@ -2826,7 +2826,7 @@ sap.ui.define([
 		oTable.setEnableExport(true);
 
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "isExportSupported").returns(true);
+			sinon.stub(oDelegate, "getSupportedFeatures").returns({ "export": true });
 			return oTable.initialized();
 		}).then(function() {
 			assert.ok(oTable._oExportButton, "Export button exists after initialization with toolbar actions");
@@ -2834,7 +2834,7 @@ sap.ui.define([
 			assert.ok(oTable._oExportButton.isA("sap.m.OverflowToolbarMenuButton"), "Export button is an OverflowToolbarMenuButton");
 			assert.ok(oTable._oExportButton.getVisible(), "Export button is visible");
 		}).finally(function() {
-			oTable.getControlDelegate().isExportSupported.restore();
+			oTable.getControlDelegate().getSupportedFeatures.restore();
 		});
 	});
 
@@ -2886,14 +2886,14 @@ sap.ui.define([
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
 			assert.ok(this.oTable._onExport.calledWith(true), "Export settings dialog opened");
 
-			sinon.stub(this.oTable.getControlDelegate(), "isExportSupported").returns(false);
+			sinon.stub(this.oTable.getControlDelegate(), "getSupportedFeatures").returns({ "export": false });
 			this.oTable.setType(TableType.ResponsiveTable);
 			return this.oTable.initialized();
 		}.bind(this)).then(function() {
 			this.oTable._onExport.resetHistory();
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
 			assert.ok(this.oTable._onExport.notCalled, "Export is not supported by delegate: Export not triggered");
-			this.oTable.getControlDelegate().isExportSupported.restore();
+			this.oTable.getControlDelegate().getSupportedFeatures.restore();
 		}.bind(this));
 	});
 
@@ -5752,5 +5752,98 @@ sap.ui.define([
 			assert.equal(this.oFinalizePropertyHelperSpy.callCount, 1, "Table#finalizePropertyHelper called");
 			assert.equal(this.oTable.getColumns()[2].getInnerColumn().getWidth(), "23.0625rem", "Inner column width");
 		}.bind(this));
+	});
+
+	QUnit.module("expand/collapse all", {
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+				this.oGetSupportedFeaturesStub.restore();
+				this.oExpandAllSpy.restore();
+				this.oCollapseAllSpy.restore();
+			}
+		},
+		createTable: function(mSettings, bExpandCollapseSupported) {
+			this.oTable = new Table(Object.assign({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
+				columns: [
+					new Column({
+						id: "lastnamecol",
+						template: new Text(),
+						dataProperty: "lastname"
+					}),
+					new Column({
+						id: "agecol",
+						template: new Text(),
+						dataProperty: "age"
+					})
+				]
+			}, mSettings));
+			this.oFinalizePropertyHelperSpy = sinon.spy(this.oTable, "finalizePropertyHelper");
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
+				this.oDelegate = oDelegate;
+				this.oGetSupportedFeaturesStub = sinon.stub(oDelegate, "getSupportedFeatures");
+				this.oGetSupportedFeaturesStub.returns({
+					expandAll: bExpandCollapseSupported,
+					collapseAll: bExpandCollapseSupported
+				});
+				this.oExpandAllSpy = sinon.spy(oDelegate, "expandAll");
+				this.oCollapseAllSpy = sinon.spy(oDelegate, "collapseAll");
+				return this.oTable._fullyInitialized();
+			}.bind(this));
+		}
+	});
+
+	QUnit.test("Delegate supports expand/collapse all", function(assert) {
+		return this.createTable({
+			models: new JSONModel({ testPath: [ {"lastname": "A"}, {"age": "B"} ] })
+		}, true).then(function(oTable) {
+			Core.applyChanges();
+
+			assert.ok(oTable._oExpandAllButton, "Expand All Button was created");
+			assert.ok(oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
+			assert.ok(oTable._oExpandAllButton.getEnabled(), "Expand All Button is enabled");
+			assert.ok(oTable._oExpandAllButton.getDomRef(), "Expand All button DOM ref exists");
+
+			assert.ok(oTable._oCollapseAllButton, "Collapse All Button was created");
+			assert.ok(oTable._oCollapseAllButton.getVisible(), "Collapse All Button is visible");
+			assert.ok(oTable._oCollapseAllButton.getEnabled(), "Collapse All Button is enabled");
+			assert.ok(oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
+		});
+	});
+
+	QUnit.test("Delegate supports expand/collapse all, but no data", function(assert) {
+		return this.createTable({}, true).then(function(oTable) {
+			Core.applyChanges();
+
+			assert.ok(oTable._oExpandAllButton, "Expand All Button was created");
+			assert.ok(oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
+			assert.notOk(oTable._oExpandAllButton.getEnabled(), "Expand All Button is not enabled");
+			assert.ok(oTable._oExpandAllButton.getDomRef(), "Expand All button DOM ref exists");
+
+			assert.ok(oTable._oCollapseAllButton, "Collapse All Button was created");
+			assert.ok(oTable._oCollapseAllButton.getVisible(), "Collapse All Button is visible");
+			assert.notOk(oTable._oCollapseAllButton.getEnabled(), "Collapse All Button is not enabled");
+			assert.ok(oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
+		});
+	});
+
+	QUnit.test("Delegate does not support expand/collapse all", function(assert) {
+		return this.createTable({
+			models: new JSONModel({ testPath: [ {"lastname": "A"}, {"age": "B"} ] })
+		}, false).then(function(oTable) {
+			Core.applyChanges();
+
+			assert.notOk(oTable._oExpandAllButton, "Expand All Button was not created");
+			assert.notOk(oTable._oCollapseAllButton, "Collapse All Button was not created");
+		});
 	});
 });
