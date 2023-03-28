@@ -1446,6 +1446,13 @@ sap.ui.define([
 		this._oEditedItem = null;
 	};
 
+	UploadSet.prototype.handleItemGetDisabled = function (oItem) {
+		if (!this._oEditedItem || this._oEditedItem.getId() !== oItem.getId()) {
+			return;
+		}
+		this._handleItemEditCancelation(null, oItem);
+	};
+
 	UploadSet.prototype._handleItemDelete = function (oEvent, oItem) {
 		var sMessageText;
 

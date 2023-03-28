@@ -330,6 +330,9 @@ sap.ui.define([
 			this.setProperty("enabledEdit", bEnable, true);
 			if (this.getParent()) {
 				this._getEditButton().setEnabled(bEnable);
+				if (!bEnable) {
+					this.getParent().handleItemGetDisabled(this);
+				}
 			}
 		}
 		return this;
@@ -340,6 +343,9 @@ sap.ui.define([
 			this.setProperty("visibleEdit", bVisible, true);
 			if (this.getParent()) {
 				this._getEditButton().setVisible(bVisible);
+				if (!bVisible) {
+					this.getParent().handleItemGetDisabled(this);
+				}
 			}
 		}
 		return this;
