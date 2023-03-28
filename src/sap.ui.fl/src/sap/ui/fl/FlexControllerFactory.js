@@ -44,6 +44,7 @@ sap.ui.define([
 	// in this object a promise is stored for every application component instance
 	// if the same instance is initialized twice the promise is replaced
 	FlexControllerFactory._componentInstantiationPromises = new WeakMap();
+	var oEmbeddedComponentsPromises = {};
 
 	/**
 	 * Creates or returns an instance of the FlexController
@@ -149,31 +150,34 @@ sap.ui.define([
 			var oReturnPromise = FlexState.initialize({
 				componentId: sComponentId,
 				asyncHints: vConfig.asyncHints
-			}).then(_propagateChangesForAppComponent.bind(this, oComponent));
+			})
+				.then(_propagateChangesForAppComponent.bind(this, oComponent))
+				.then(function() {
+					// update any potential embedded component waiting for this app component
+					if (oEmbeddedComponentsPromises[sComponentId]) {
+						oEmbeddedComponentsPromises[sComponentId].forEach(function(oEmbeddedComponent) {
+							var oVariantModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+							oEmbeddedComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
+						});
+						delete oEmbeddedComponentsPromises[sComponentId];
+					}
+				});
 			FlexControllerFactory._componentInstantiationPromises.set(oComponent, oReturnPromise);
+
 			return oReturnPromise;
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
 			if (oAppComponent && Utils.isApplicationComponent(oAppComponent)) {
-				var oInitialPromise = Promise.resolve();
+				// once the VModel is set to the outer component it also has to be set to any embedded component
 				if (FlexControllerFactory._componentInstantiationPromises.has(oAppComponent)) {
-					oInitialPromise = FlexControllerFactory._componentInstantiationPromises.get(oAppComponent);
+					return FlexControllerFactory._componentInstantiationPromises.get(oAppComponent).then(function() {
+						var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+						oComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
+					});
 				}
-				return oInitialPromise.then(function() {
-					var oExistingVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-					if (!oExistingVariantModel) {
-						// If variant model is not present on the app component
-						// then a new variant model should be set on it.
-						// Setting a variant model will ensure that at least a standard variant will exist
-						// for all variant management controls.
-						return _propagateChangesForAppComponent(oAppComponent);
-					}
-					return oExistingVariantModel;
-				}).then(function (oVariantModel) {
-					// set app component's variant model on the embedded component
-					oComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
-				});
+				oEmbeddedComponentsPromises[oAppComponent.getId()] = oEmbeddedComponentsPromises[oAppComponent.getId()] || [];
+				oEmbeddedComponentsPromises[oAppComponent.getId()].push(oComponent);
 			}
 			return Promise.resolve();
 		}
