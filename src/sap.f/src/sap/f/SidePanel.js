@@ -748,8 +748,8 @@ sap.ui.define([
 					oItemDomRef = this._getFocusDomRef(oItem);
 					oItemDomRef.setAttribute("tabindex", "-1");
 					aItemsDomRef.push(oItemDomRef);
-					oItem.$().css("display", "flex");
 				}
+				oItem.$().css("display", "flex");
 			} else {
 				oItem.$().css("display", "none");
 				oMenuItem = new MenuItem({
