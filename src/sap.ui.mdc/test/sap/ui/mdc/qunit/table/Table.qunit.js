@@ -5797,7 +5797,7 @@ sap.ui.define([
 				});
 				this.oExpandAllSpy = sinon.spy(oDelegate, "expandAll");
 				this.oCollapseAllSpy = sinon.spy(oDelegate, "collapseAll");
-				return this.oTable._fullyInitialized();
+				return TableQUnitUtils.waitForBinding(this.oTable);
 			}.bind(this));
 		}
 	});
@@ -5805,45 +5805,47 @@ sap.ui.define([
 	QUnit.test("Delegate supports expand/collapse all", function(assert) {
 		return this.createTable({
 			models: new JSONModel({ testPath: [ {"lastname": "A"}, {"age": "B"} ] })
-		}, true).then(function(oTable) {
+		}, true).then(function() {
 			Core.applyChanges();
 
-			assert.ok(oTable._oExpandAllButton, "Expand All Button was created");
-			assert.ok(oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
-			assert.ok(oTable._oExpandAllButton.getEnabled(), "Expand All Button is enabled");
-			assert.ok(oTable._oExpandAllButton.getDomRef(), "Expand All button DOM ref exists");
+			assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+			assert.ok(this.oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
+			assert.ok(this.oTable._oExpandAllButton.getEnabled(), "Expand All Button is enabled");
+			assert.ok(this.oTable._oExpandAllButton.getDomRef(), "Expand All button DOM ref exists");
 
-			assert.ok(oTable._oCollapseAllButton, "Collapse All Button was created");
-			assert.ok(oTable._oCollapseAllButton.getVisible(), "Collapse All Button is visible");
-			assert.ok(oTable._oCollapseAllButton.getEnabled(), "Collapse All Button is enabled");
-			assert.ok(oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
-		});
+			assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+			assert.ok(this.oTable._oCollapseAllButton.getVisible(), "Collapse All Button is visible");
+			assert.ok(this.oTable._oCollapseAllButton.getEnabled(), "Collapse All Button is enabled");
+			assert.ok(this.oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
+		}.bind(this));
 	});
 
 	QUnit.test("Delegate supports expand/collapse all, but no data", function(assert) {
-		return this.createTable({}, true).then(function(oTable) {
+		return this.createTable({
+			models: new JSONModel({ testPath: [] })
+		}, true).then(function() {
 			Core.applyChanges();
 
-			assert.ok(oTable._oExpandAllButton, "Expand All Button was created");
-			assert.ok(oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
-			assert.notOk(oTable._oExpandAllButton.getEnabled(), "Expand All Button is not enabled");
-			assert.ok(oTable._oExpandAllButton.getDomRef(), "Expand All button DOM ref exists");
+			assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+			assert.ok(this.oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
+			assert.notOk(this.oTable._oExpandAllButton.getEnabled(), "Expand All Button is not enabled");
+			assert.ok(this.oTable._oExpandAllButton.getDomRef(), "Expand All button DOM ref exists");
 
-			assert.ok(oTable._oCollapseAllButton, "Collapse All Button was created");
-			assert.ok(oTable._oCollapseAllButton.getVisible(), "Collapse All Button is visible");
-			assert.notOk(oTable._oCollapseAllButton.getEnabled(), "Collapse All Button is not enabled");
-			assert.ok(oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
-		});
+			assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+			assert.ok(this.oTable._oCollapseAllButton.getVisible(), "Collapse All Button is visible");
+			assert.notOk(this.oTable._oCollapseAllButton.getEnabled(), "Collapse All Button is not enabled");
+			assert.ok(this.oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
+		}.bind(this));
 	});
 
 	QUnit.test("Delegate does not support expand/collapse all", function(assert) {
 		return this.createTable({
-			models: new JSONModel({ testPath: [ {"lastname": "A"}, {"age": "B"} ] })
-		}, false).then(function(oTable) {
+			models: new JSONModel({ testPath: [ {"lastname": "A", "age": 10}, {"lastname": "B", "age": 20} ] })
+		}, false).then(function() {
 			Core.applyChanges();
 
-			assert.notOk(oTable._oExpandAllButton, "Expand All Button was not created");
-			assert.notOk(oTable._oCollapseAllButton, "Collapse All Button was not created");
-		});
+			assert.notOk(this.oTable._oExpandAllButton, "Expand All Button was not created");
+			assert.notOk(this.oTable._oCollapseAllButton, "Collapse All Button was not created");
+		}.bind(this));
 	});
 });
