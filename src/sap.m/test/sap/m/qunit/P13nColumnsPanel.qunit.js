@@ -945,10 +945,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("BCP 0020751294 0000593415 2018", function(assert) {
-		assert.equal(this.oPanel.$().find("tr").find("span").length, 5);
-		assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "D");
-		assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "E");
-		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "É");
-		assert.equal(this.oPanel.$().find("tr").find("span")[4].textContent, "F");
+		assert.equal(this.oPanel.$().find("tr").find("span").length, 6);
+		assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "D");
+		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "E");
+		assert.equal(this.oPanel.$().find("tr").find("span")[4].textContent, "É");
+		assert.equal(this.oPanel.$().find("tr").find("span")[5].textContent, "F");
 	});
 });
