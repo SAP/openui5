@@ -29,7 +29,7 @@ sap.ui.define([
 
 	QUnit.test("Can create a SkeletonCard", function (assert) {
 		// Arrange
-		var done = assert.async(),
+		var done = assert.async(1),
 			oCard = new SkeletonCard(oSampleManifest);
 
 		oCard.attachEvent("_ready", function () {
@@ -59,5 +59,27 @@ sap.ui.define([
 
 		// Clean up
 		oCard.destroy();
+	});
+
+	QUnit.test("Can be refreshed", function (assert) {
+		// Arrange
+		var done = assert.async(1),
+			oCard = new SkeletonCard(oSampleManifest),
+			fnStateChangedListener = function () {
+				// Assert
+				assert.ok(true, "Card was refreshed");
+
+				// Clean up
+				oCard.destroy();
+
+				done();
+			};
+
+		oCard.attachEvent("_ready", function () {
+			oCard.attachEvent("stateChanged", fnStateChangedListener);
+		});
+
+		// Act
+		oCard.refresh();
 	});
 });
