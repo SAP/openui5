@@ -449,6 +449,7 @@ sap.ui.define([
 
 			return this._loadUShellServicesPromise
 			.then(initVersioning.bind(this))
+			.then(initContextBasedAdaptations.bind(this))
 			/*
 			 Check if the application has personalized changes and reload without them;
 			 Also Check if the application has an available draft and if yes, reload with those changes.
@@ -1373,6 +1374,15 @@ sap.ui.define([
 		}.bind(this));
 	}
 
+	function initContextBasedAdaptations() {
+		return ContextBasedAdaptationsAPI.initialize({
+			control: this.getRootControlInstance(),
+			layer: this.getLayer()
+		}).then(function(oModel) {
+			this._oContextBasedAdaptationsModel = oModel;
+		}.bind(this));
+	}
+
 	function createToolsMenu(mButtonsAvailability) {
 		if (!this.getDependent("toolbar")) {
 			var bUserLayer = this.getLayer() === Layer.USER;
@@ -1501,6 +1511,7 @@ sap.ui.define([
 					}.bind(this));
 
 					this.getToolbar().setModel(this._oVersionsModel, "versions");
+					this.getToolbar().setModel(this._oContextBasedAdaptationsModel, "contextBasedAdaptation");
 					this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
 
 					return Promise.all([oTranslationPromise, oSaveAsPromise]);

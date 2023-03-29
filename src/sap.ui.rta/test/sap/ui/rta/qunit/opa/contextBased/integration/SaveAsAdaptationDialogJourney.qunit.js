@@ -156,7 +156,7 @@ sap.ui.define(
 
 		opaTest("Should set context-based priority", function(Give, When, Then) {
 			When.onTheAddAdaptationDialogPage.iClickOnPrioritySelection();
-			Then.onTheAddAdaptationDialogPage.iShouldSeePriorityItems(1);
+			Then.onTheAddAdaptationDialogPage.iShouldSeePriorityItems(5);
 			When.onTheAddAdaptationDialogPage.iSelectContextBasedAdaptationPriority(0);
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSelectedContextBasedAdaptationPriority("Insert before all (Priority '1')");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);

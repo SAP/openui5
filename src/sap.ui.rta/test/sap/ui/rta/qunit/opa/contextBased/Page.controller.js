@@ -10,12 +10,24 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/thirdparty/sinon-4"
-], function(Core, Control, Controller, Layer, WriteStorage, ContextBasedAdaptationsAPI,
-	JSONModel, Adaptation, ManageAdapationsDialog, AddAdaptationDialog, sinon) {
+], function(
+	Core,
+	Control,
+	Controller,
+	Layer,
+	WriteStorage,
+	ContextBasedAdaptationsAPI,
+	JSONModel,
+	Adaptation,
+	ManageAdapationsDialog,
+	AddAdaptationDialog,
+	sinon
+) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.rta.contextBased.Page", {
 		onInit: function() {
+			ContextBasedAdaptationsAPI.clearInstances();
 			this.oRolesModel = new JSONModel();
 			this.oRolesModel.loadData("./model/roles.json", "", false);
 			this.sandbox = sinon.createSandbox();
@@ -30,6 +42,9 @@ sap.ui.define([
 			});
 			this.oManageAdaptationsDialog = new ManageAdapationsDialog({ toolbar: this.oToolbar });
 			this.oAddAdaptationsDialog = new AddAdaptationDialog({ toolbar: this.oToolbar });
+			var oTempAdaptationsModel = new JSONModel();
+			oTempAdaptationsModel.loadData("./model/adaptations.json", "", false);
+			this.oModel = ContextBasedAdaptationsAPI.createModel(oTempAdaptationsModel.getProperty("/adaptations"));
 		},
 		onManageAdaptations: function() {
 			setStubsWithData.call(this);
@@ -55,6 +70,7 @@ sap.ui.define([
 		this.reorderStub = this.sandbox.stub(ContextBasedAdaptationsAPI, "reorder");
 		this.getContextsStub = this.sandbox.stub(WriteStorage, "getContexts");
 		this.loadContextDescriptionStub = this.sandbox.stub(WriteStorage, "loadContextDescriptions");
+		this.getAdaptationsModelStub = this.sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
 	}
 
 	function setStubsWithData() {
@@ -88,7 +104,7 @@ sap.ui.define([
 		this.loadStub.callsFake(function() {
 			var oAdaptationsModel = new JSONModel();
 			oAdaptationsModel.loadData("./model/adaptations.json", "", false);
-			return Promise.resolve(oAdaptationsModel);
+			return Promise.resolve(oAdaptationsModel.getData());
 		});
 
 		this.createStub.callsFake(function(mPropertyBag) {

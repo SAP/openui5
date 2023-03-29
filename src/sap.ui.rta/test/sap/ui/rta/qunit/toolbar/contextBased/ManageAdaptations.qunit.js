@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Adaptation",
@@ -17,6 +18,7 @@ sap.ui.define([
 	Control,
 	Fragment,
 	Layer,
+	ManifestUtils,
 	ContextBasedAdaptationsAPI,
 	JSONModel,
 	Adaptation,
@@ -56,6 +58,9 @@ sap.ui.define([
 
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
 		beforeEach: function() {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
+			this.oModel = ContextBasedAdaptationsAPI.createModel([]);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
 			this.oToolbar = initializeToolbar();
 			this.oManageAdaptations = new ManageAdaptations({ toolbar: this.oToolbar });
 			this.oEvent = {
@@ -74,11 +79,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.module("the manage adaptations dialog is created with empty ", {
 			beforeEach: function() {
-				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(
-					new JSONModel({
-						adaptations: []
-					})
-				);
+				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: []});
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oManageAdaptations.openManageAdaptationDialog()
 					.then(function (oDialog) {
@@ -106,7 +107,7 @@ sap.ui.define([
 		QUnit.module("the manage adaptations dialog is opened containing two adaptations", {
 			beforeEach: function() {
 				this.sManageAdaptationsDialog = "manageAdaptationDialog";
-				this.oContextBasedAdaptatations = new JSONModel({
+				this.oContextBasedAdaptations = {
 					adaptations: [{
 						id: "id-1591275572834-1",
 						contexts: {
@@ -131,8 +132,8 @@ sap.ui.define([
 						changedBy: "Test User 2",
 						changedAt: "2022-09-07T10:30:32Z"
 					}]
-				});
-				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(this.oContextBasedAdaptatations);
+				};
+				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(this.oContextBasedAdaptations);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oManageAdaptations.openManageAdaptationDialog()
 					.then(function (oDialog) {
@@ -144,7 +145,7 @@ sap.ui.define([
 			QUnit.test("and context-based adaptations are visible and correctly formatted", function(assert) {
 				assert.strictEqual(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 				assert.ok(this.oDialog.isOpen(), "the dialog is opened");
-				assert.deepEqual(this.oDialog.getModel("contextBased").getProperty("/adaptations"), this.oContextBasedAdaptatations.getProperty("/adaptations"), "correct context-based adaptations are shown");
+				assert.deepEqual(this.oDialog.getModel("contextBased").getProperty("/adaptations"), this.oContextBasedAdaptations.adaptations, "correct context-based adaptations are shown");
 			});
 
 			QUnit.test("and the priority of the context-based adaptations is changed using the up and down button", function(assert) {
@@ -209,7 +210,7 @@ sap.ui.define([
 		QUnit.module("the manage adaptations dialog is opened containing four adaptations", {
 			beforeEach: function() {
 				this.sManageAdaptationsDialog = "manageAdaptationDialog";
-				this.oContextBasedAdaptatations = new JSONModel({
+				this.oContextBasedAdaptations = {
 					adaptations: [{
 						id: "id-1591275572834-1",
 						contexts: {
@@ -258,8 +259,8 @@ sap.ui.define([
 						changedBy: "Test User 1",
 						changedAt: "2022-05-28T14:30:32Z"
 					}]
-				});
-				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(this.oContextBasedAdaptatations);
+				};
+				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(this.oContextBasedAdaptations);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oManageAdaptations.openManageAdaptationDialog()
 					.then(function (oDialog) {

@@ -85,12 +85,14 @@ function(
 			enableDragAndDropForAdaptationTable.call(this, true);
 			enableSaveButton.call(this, false);
 		}
-		return this._oManageAdaptationDialogPromise.then(function() {
-			var oRtaInformation = this.getToolbar().getRtaInformation();
-			return ContextBasedAdaptationsAPI.load({control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer});
-		}.bind(this)).then(function(oAdaptationsModel) {
-			this.oAdaptationsModel = oAdaptationsModel;
-			this.oReferenceAdaptationsData = JSON.parse(JSON.stringify(oAdaptationsModel.getData()));
+		return this._oManageAdaptationDialogPromise
+		.then(function() {
+			this._oRtaInformation = this.getToolbar().getRtaInformation();
+			return ContextBasedAdaptationsAPI.load({control: this._oRtaInformation.rootControl, layer: this._oRtaInformation.flexSettings.layer});
+		}.bind(this)).then(function(oAdaptations) {
+			this.oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel({control: this._oRtaInformation.rootControl, layer: this._oRtaInformation.flexSettings.layer});
+			this.oAdaptationsModel.updateAdaptations(oAdaptations.adaptations);
+			this.oReferenceAdaptationsData = JSON.parse(JSON.stringify(oAdaptations));
 			this._oControlConfigurationModel = new JSONModel({isTableItemSelected: false});
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");
 			this._oManageAdaptationDialog.setModel(this._oControlConfigurationModel, "controlConfiguration");
@@ -339,8 +341,8 @@ function(
 	function onCloseDialog() {
 		this._oControlConfigurationModel.setProperty("/isTableItemSelected", false);
 		getSearchField.call(this).setValue("");
+		getAdaptationsTable.call(this).getBinding("items").filter([]);
 		getDefaultApplicationTable.call(this).setVisible(true);
-		this._oManageAdaptationDialog.getModel("contextBased").setData(null);
 		this._oManageAdaptationDialog.close();
 	}
 
