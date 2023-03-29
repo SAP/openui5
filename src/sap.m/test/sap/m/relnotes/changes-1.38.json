@@ -6257,5 +6257,21 @@
         ]
       }
     ]
+  },
+  "1.38.59": {
+    "date": "March 2023",
+    "notes": [
+      {
+        "id": "b1ea4196fafd6921dbac8679404d8e3a4e2bff27",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
