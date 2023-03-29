@@ -1779,6 +1779,28 @@ sap.ui.define([
 										key: 'shared/lib/SharedExtension.js'
 									}
 								]
+							},
+							{
+								title: 'Shared Extension With Fetch',
+								key: 'sharedFetchExtension',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/extension/sharedFetchExtension/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/shared/lib/library.js',
+										name: 'shared/lib/library.js',
+										key: 'shared/lib/library.js'
+									},
+									{
+										url: '/samples/extension/shared/lib/SharedFetchExtension.js',
+										name: 'shared/lib/SharedFetchExtension.js',
+										key: 'shared/lib/SharedFetchExtension.js'
+									}
+								]
 							}
 						]
 					},

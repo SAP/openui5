@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/core/Core",
-	"sap/base/util/fetch"
-], function (DataProvider, Log, ODataUtils, Core, fetch) {
+	"sap/base/util/fetch",
+	"sap/base/util/deepClone"
+], function (DataProvider, Log, ODataUtils, Core, fetch, deepClone) {
 	"use strict";
 
 	/**
@@ -236,7 +237,8 @@ sap.ui.define([
 	};
 
 	RequestDataProvider.prototype._request = function (oRequest, bNoRetry) {
-		return fetch(oRequest.url, oRequest.options)
+		var fnFetch = this._getFetchMethod();
+		return fnFetch(oRequest.url, oRequest.options)
 			.then(function (oResponse) {
 				if (this.bIsDestroyed) {
 					return Promise.reject("RequestDataProvider is already destroyed before the response is received.");
@@ -327,6 +329,32 @@ sap.ui.define([
 		}
 
 		return parseInt(vRetryAfter);
+	};
+
+	/**
+	 * Gets the method which should execute the HTTP fetch.
+	 * @private
+	 * @returns {Function} The function to use for HTTP fetch.
+	 */
+	RequestDataProvider.prototype._getFetchMethod = function () {
+		var oRequestSettings = this.getSettings().request,
+			oCard = Core.byId(this.getCard()),
+			oExtension = oCard && oCard.getAggregation("_extension"),
+			oHost = Core.byId(this.getHost());
+
+		if (oExtension) {
+			return function (sResource, mOptions) {
+				return oExtension.fetch(sResource, mOptions, deepClone(oRequestSettings, 1000));
+			};
+		}
+
+		if (oHost) {
+			return function (sResource, mOptions) {
+				return oHost.fetch(sResource, mOptions, deepClone(oRequestSettings, 1000), oCard);
+			};
+		}
+
+		return fetch;
 	};
 
 	/**
