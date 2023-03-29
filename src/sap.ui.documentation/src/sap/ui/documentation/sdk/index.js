@@ -116,11 +116,11 @@
                         id: sCompId,
                         name: sCompName
                     }).then(function (oComponent) {
+                        var oConfig = oComponent.getManifestEntry("/sap.ui5/config");
 
                         var oContainer = new ComponentContainer({component : oComponent, height: "100%"})
                                 .placeAt("content");
 
-                        var oConfig = oComponent.getMetadata().getConfig();
                         var bOpenStandalone = new URLSearchParams(window.location.search).has("dk-sample-standalone");
                         // if dk-sample-standalone is used,
                         // display message for samples with own index.html
@@ -144,7 +144,7 @@
                             "msg": "fired after component container is placed in DOM"
                         };
 
-                        oMessage.config = oComponent.getMetadata().getConfig();
+                        oMessage.config = oConfig;
                         postMessageToOrigin(oMessage);
                         window.addEventListener("message", function(eMessage){
                             if (eMessage.data.type === "EXIT") {
