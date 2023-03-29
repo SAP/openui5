@@ -10,6 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("API and Rendering", {
 		beforeEach: function () {
@@ -27,6 +28,9 @@ sap.ui.define([
 
 	QUnit.test("rendered", function (assert) {
 		assert.strictEqual(this.oPaginator.$().length, 1, "rendered");
+
+		assert.strictEqual(this.oPaginator._getNavigationArrow("prev").getTooltip(), oResourceBundle.getText("PAGINGBUTTON_PREVIOUS"), "tooltip text is correct");
+		assert.strictEqual(this.oPaginator._getNavigationArrow("next").getTooltip(), oResourceBundle.getText("PAGINGBUTTON_NEXT"), "tooltip text is correct");
 	});
 
 	QUnit.test("pageCount <= 1", function (assert) {
