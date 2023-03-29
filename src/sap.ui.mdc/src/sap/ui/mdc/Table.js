@@ -1003,7 +1003,28 @@ sap.ui.define([
 		return this;
 	};
 
-	Table.prototype._onModifications = function() {
+	var fCheckIfRebindIsRequired = function(aAffectedP13nControllers) {
+		var bRebindRequired = false;
+		if (
+			aAffectedP13nControllers && (
+				aAffectedP13nControllers.indexOf("Sort") > -1 ||
+				aAffectedP13nControllers.indexOf("Column") > -1 ||
+				aAffectedP13nControllers.indexOf("Group") > -1 ||
+				aAffectedP13nControllers.indexOf("Aggregate") > -1 ||
+				aAffectedP13nControllers.indexOf("Filter") > -1
+			)
+		) {
+			bRebindRequired = true;
+		}
+
+		return bRebindRequired;
+	};
+
+	Table.prototype._onModifications = function(aAffectedP13nControllers) {
+		if (fCheckIfRebindIsRequired(aAffectedP13nControllers) && this.isTableBound()) {
+			this.rebind();
+		}
+
 		if (!this.isPropertyHelperFinal()) {
 			this._bFinalzingPropertiesOnModification = true;
 			this.finalizePropertyHelper().then(function() {

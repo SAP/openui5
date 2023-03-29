@@ -9,25 +9,6 @@ sap.ui.define([
 ], function(Engine, Util, FLChangeHandlerBase, CondenserClassification) {
 	"use strict";
 
-	var fRebindControl = function (oControl) {
-		var bExecuteRebindForTable = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound();
-		var bExecuteRebindForChart = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Chart");
-		if (bExecuteRebindForTable || bExecuteRebindForChart) {
-			if (!oControl._bWaitForBindChanges) {
-				oControl._bWaitForBindChanges = true;
-				Engine.getInstance().waitForChanges(oControl).then(function () {
-					if (bExecuteRebindForTable) {
-						oControl.rebind();
-					} else if (bExecuteRebindForChart) {
-						oControl.rebind();
-					}
-					delete oControl._bWaitForBindChanges;
-				});
-
-			}
-		}
-	};
-
 	var fFinalizeGroupChange = function (oChange, oControl, oGroupContent, bIsRevert) {
 		if (bIsRevert) {
 			// Clear the revert data on the change
@@ -36,8 +17,6 @@ sap.ui.define([
 			// Set revert data on the change
 			oChange.setRevertData(oGroupContent);
 		}
-		// Rebind Table if needed
-		fRebindControl(oControl);
 	};
 
 	var fAddGroup = function (oChange, oControl, mPropertyBag, sChangeReason) {

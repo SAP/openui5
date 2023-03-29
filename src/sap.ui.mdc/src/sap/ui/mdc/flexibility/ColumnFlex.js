@@ -9,20 +9,6 @@ sap.ui.define([
 
 	var ColumnFlex = Object.assign({}, ItemBaseFlex);
 
-	// Rebind triggered on the Control only during runtime JS change
-	var fRebindControl = function(oControl) {
-		if (oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound()) {
-			if (!oControl._bWaitForBindChanges) {
-				oControl._bWaitForBindChanges = true;
-				Engine.getInstance().waitForChanges(oControl).then(function() {
-					oControl.rebind();
-					delete oControl._bWaitForBindChanges;
-				});
-
-			}
-		}
-	};
-
 	ColumnFlex.findItem = function(oModifier, aColumns, sName) {
 		return aColumns.reduce(function(oPreviousPromise, oColumn) {
 			return oPreviousPromise
@@ -39,10 +25,6 @@ sap.ui.define([
 					return oFoundColumn;
 				});
 		}, Promise.resolve());
-	};
-
-	ColumnFlex.afterApply = function(sChangeType, oTable, bIsRevert) {
-		fRebindControl(oTable);
 	};
 
 	ColumnFlex.addColumn = ColumnFlex.createAddChangeHandler();

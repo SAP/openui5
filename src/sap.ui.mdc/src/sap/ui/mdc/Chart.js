@@ -1310,6 +1310,27 @@ sap.ui.define([
 			}
 		};
 
+        var fCheckIfRebindIsRequired = function(aAffectedP13nControllers) {
+            var bRebindRequired = false;
+            if (
+                aAffectedP13nControllers && (
+                    aAffectedP13nControllers.indexOf("Sort") > -1 ||
+                    aAffectedP13nControllers.indexOf("Item") > -1 ||
+                    aAffectedP13nControllers.indexOf("Filter") > -1
+                )
+            ) {
+                bRebindRequired = true;
+            }
+
+            return bRebindRequired;
+        };
+
+        Chart.prototype._onModifications = function(aAffectedP13nControllers) {
+            if (fCheckIfRebindIsRequired(aAffectedP13nControllers)) {
+                this.rebind();
+            }
+        };
+
         Chart.prototype.setVariant = function(oControl) {
             this.setAggregation("variant", oControl);
 
