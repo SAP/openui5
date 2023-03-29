@@ -101,6 +101,7 @@
 			"sap.ui.mdc.valuehelp.content.Bool",
 			"sap.ui.mdc.valuehelp.content.Conditions",
 			"sap.ui.mdc.valuehelp.content.FixedList",
+			"sap.ui.mdc.valuehelp.content.FixedListItem",
 			"sap.ui.mdc.valuehelp.content.MDCTable",
 			"sap.ui.mdc.valuehelp.content.MTable"
 		],

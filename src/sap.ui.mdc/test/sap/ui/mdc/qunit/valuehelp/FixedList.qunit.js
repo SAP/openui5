@@ -7,7 +7,7 @@
 sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/content/FixedList",
-	"sap/ui/mdc/field/ListFieldHelpItem",
+	"sap/ui/mdc/valuehelp/content/FixedListItem",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/SelectType",
 	"sap/ui/model/ParseException",
@@ -18,7 +18,7 @@ sap.ui.define([
 ], function (
 		ValueHelpDelegate,
 		FixedList,
-		ListFieldHelpItem,
+		FixedListItem,
 		Condition,
 		SelectType,
 		ParseException,
@@ -63,9 +63,9 @@ sap.ui.define([
 			var aConditions = [Condition.createItemCondition("I2", "My Item 2")];
 			oFixedList = new FixedList("FL1", {
 				items: [
-					new ListFieldHelpItem("I1", {key: "I1", text: "Item 1", additionalText: "My Item 1", groupKey: "G1", groupText: "Group 1"}),
-					new ListFieldHelpItem("I2", {key: "I2", text: "My Item   2", additionalText: "Item   2", groupKey: "G2", groupText: "Group 2", textDirection: coreLibrary.TextDirection.RTL}),
-					new ListFieldHelpItem("I3", {key: "I3", text: "item 3", additionalText: "My Item 3", groupKey: "G1", groupText: "Group 1"})
+					new FixedListItem("I1", {key: "I1", text: "Item 1", additionalText: "My Item 1", groupKey: "G1", groupText: "Group 1"}),
+					new FixedListItem("I2", {key: "I2", text: "My Item   2", additionalText: "Item   2", groupKey: "G2", groupText: "Group 2", textDirection: coreLibrary.TextDirection.RTL}),
+					new FixedListItem("I3", {key: "I3", text: "item 3", additionalText: "My Item 3", groupKey: "G1", groupText: "Group 1"})
 				],
 				conditions: aConditions, // don't need to test the binding of Container here
 				config: { // don't need to test the binding of Container here

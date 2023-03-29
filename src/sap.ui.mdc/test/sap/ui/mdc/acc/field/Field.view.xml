@@ -39,7 +39,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Status-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Status-FL" useFirstMatch="false" items="{path: '/StatusCollection'}">
-										<mdcField:ListFieldHelpItem key="{StatusId}" text="{Name}" additionalText="{StatusId}" />
+										<mdcValueHelpContent:FixedListItem key="{StatusId}" text="{Name}" additionalText="{StatusId}" />
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>

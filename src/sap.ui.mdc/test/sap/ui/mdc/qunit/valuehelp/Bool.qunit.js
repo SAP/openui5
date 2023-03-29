@@ -7,7 +7,7 @@
 sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/content/Bool",
-	"sap/ui/mdc/field/ListFieldHelpItem",
+	"sap/ui/mdc/valuehelp/content/FixedListItem",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/SelectType",
 	"sap/ui/model/ParseException",
@@ -18,7 +18,7 @@ sap.ui.define([
 ], function (
 		ValueHelpDelegate,
 		Bool,
-		ListFieldHelpItem,
+		FixedListItem,
 		Condition,
 		SelectType,
 		ParseException,
@@ -113,11 +113,11 @@ sap.ui.define([
 				// internal items
 				assert.equal(oBool.getItems().length, 2, "Number of items");
 				var oItem = oBool.getItems()[0];
-				assert.ok(oItem.isA("sap.ui.mdc.field.ListFieldHelpItem"), "Item0 is ListFieldHelpItem");
+				assert.ok(oItem.isA("sap.ui.mdc.valuehelp.content.FixedListItem"), "Item0 is FixedListItem");
 				assert.equal(oItem.getKey(), "true", "Item0 key");
 				assert.equal(oItem.getText(), oType.formatValue(true, "string"), "Item0 text"); // as text of type is language dependednt
 				oItem = oBool.getItems()[1];
-				assert.ok(oItem.isA("sap.ui.mdc.field.ListFieldHelpItem"), "Item1 is ListFieldHelpItem");
+				assert.ok(oItem.isA("sap.ui.mdc.valuehelp.content.FixedListItem"), "Item1 is FixedListItem");
 				assert.equal(oItem.getKey(), "false", "Item1 key");
 				assert.equal(oItem.getText(), oType.formatValue(false, "string"), "Item1 text"); // as text of type is language dependednt
 

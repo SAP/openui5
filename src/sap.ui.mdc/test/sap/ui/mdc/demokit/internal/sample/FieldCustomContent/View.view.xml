@@ -25,10 +25,10 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-EditMode-Pop">
 									<mdcValueHelpContent:FixedList id="VH-EditMode-FL" useFirstMatch="true" useAsValueHelp="true">
-										<mdcField:ListFieldHelpItem text="Disabled" key="Disabled"/>
-										<mdcField:ListFieldHelpItem text="Display" key="Display"/>
-										<mdcField:ListFieldHelpItem text="Editable" key="Editable"/>
-										<mdcField:ListFieldHelpItem text="ReadOnly" key="ReadOnly"/>
+										<mdcValueHelpContent:FixedListItem text="Disabled" key="Disabled"/>
+										<mdcValueHelpContent:FixedListItem text="Display" key="Display"/>
+										<mdcValueHelpContent:FixedListItem text="Editable" key="Editable"/>
+										<mdcValueHelpContent:FixedListItem text="ReadOnly" key="ReadOnly"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>

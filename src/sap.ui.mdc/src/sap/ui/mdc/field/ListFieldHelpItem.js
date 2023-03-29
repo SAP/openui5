@@ -2,11 +2,11 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.core.ListItem.
+// Provides control sap.ui.mdc.valuehelp.content.FixedListItem.
 sap.ui.define([
-	'sap/ui/core/ListItem'
+	'sap/ui/mdc/valuehelp/content/FixedListItem'
 ], function(
-		ListItem) {
+		FixedListItem) {
 	"use strict";
 
 	/**
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @class
 	 * An item that is used in the {@link sap.ui.mdc.valuehelp.content.FixedList FixedList}.
 	 *
-	 * @extends sap.ui.core.ListItem
+	 * @extends sap.ui.mdc.valuehelp.content.FixedListItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -27,31 +27,11 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.86.0
+	 * @deprecated as of 1.114.0, replaced by {@link sap.ui.mdc.valuehelp.content.FixedListItem FixedListItem}
 	 * @alias sap.ui.mdc.field.ListFieldHelpItem
 	 */
-	var ListFieldHelpItem = ListItem.extend("sap.ui.mdc.field.ListFieldHelpItem", /** @lends sap.ui.mdc.field.ListFieldHelpItem.prototype */ { metadata : {
-
-		library: "sap.ui.mdc",
-		properties: {
-
-			/**
-			 * Key of the group for what the items are grouped
-			 */
-			groupKey: {
-				type: "any",
-				group: "Appearance",
-				defaultValue : null
-			},
-
-			/**
-			 * Text of the group for what the items are grouped
-			 */
-			groupText: {
-				type: "string",
-				group: "Appearance",
-				defaultValue : null
-			}
-		}
+	var ListFieldHelpItem = FixedListItem.extend("sap.ui.mdc.field.ListFieldHelpItem", /** @lends sap.ui.mdc.field.ListFieldHelpItem.prototype */ { metadata : {
+		library: "sap.ui.mdc"
 	}});
 
 

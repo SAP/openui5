@@ -524,7 +524,7 @@
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH-WeightUnit-Pop">
 												<mdcValueHelpContent:FixedList id="VH-WeightUnit-FL" useFirstMatch="false" items="{view>/weightUnits}">
-													<mdcField:ListFieldHelpItem key="{view>id}" text="{view>unit}" additionalText="{view>text}"/>
+													<mdcValueHelpContent:FixedListItem key="{view>id}" text="{view>unit}" additionalText="{view>text}"/>
 												</mdcValueHelpContent:FixedList>
 											</mdcValueHelp:Popover>
 										</mdc:typeahead>
@@ -718,7 +718,7 @@
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH-MatrId-FL-Pop">
 												<mdcValueHelpContent:FixedList id="VH-MatrId-FL-Pop-FL" useFirstMatch="false" items="{path: '/MaterialCollection'}" >
-													<mdcField:ListFieldHelpItem key="{MatrId}" text="{Text}" additionalText="{MatrId}"/>
+													<mdcValueHelpContent:FixedListItem key="{MatrId}" text="{Text}" additionalText="{MatrId}"/>
 												</mdcValueHelpContent:FixedList>
 											</mdcValueHelp:Popover>
 										</mdc:typeahead>
