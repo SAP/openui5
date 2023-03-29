@@ -84,6 +84,7 @@ sap.ui.define([
 					"title": "{Name}",
 					"description": "{Description}",
 					"highlight": "{state}",
+					"highlightText": "{state}",
 					"info": {
 						"value": "{info}",
 						"state": "{infoState}",
@@ -722,11 +723,24 @@ sap.ui.define([
 
 		this.oCard.attachEvent("_ready", function () {
 			var oContent = this.oCard.getAggregation("_content");
+			var oList = oContent.getAggregation("_content");
+			var aItems = oList.getItems();
+			var oManifestData = oManifest_ListCard["sap.card"].content.data.json;
 
 			Core.applyChanges();
 
 			// Assert
 			assert.ok(oContent, "List Card content form manifest should be set");
+
+			// items highlight
+			assert.equal(aItems[0].getHighlight(), oManifestData[0].state, "Should have correct highlight value");
+			assert.equal(aItems[1].getHighlight(), oManifestData[1].state, "Should have correct highlight value");
+			assert.equal(aItems[2].getHighlight(), oManifestData[2].state, "Should have correct highlight value");
+
+			assert.equal(aItems[0].getHighlightText(), oManifestData[0].state, "Should have correct highlight text");
+			assert.equal(aItems[1].getHighlightText(), oManifestData[1].state, "Should have correct highlight text");
+			assert.equal(aItems[2].getHighlightText(), oManifestData[2].state, "Should have correct highlight text");
+
 			done();
 		}.bind(this));
 

@@ -281,6 +281,7 @@ sap.ui.define([
 				title: mItem.title && (mItem.title.value || mItem.title),
 				description: mItem.description && (mItem.description.value || mItem.description),
 				highlight: mItem.highlight,
+				highlightText: mItem.highlightText,
 				info: mItem.info && mItem.info.value,
 				infoState: mItem.info && mItem.info.state,
 				showInfoStateIcon: mItem.info && mItem.info.showStateIcon,
@@ -403,7 +404,8 @@ sap.ui.define([
 				icon: oItem.icon ? oItem.icon : "",
 				infoState: oItem.infoState ? oItem.infoState : "None",
 				info: oItem.info ? oItem.info : "",
-				highlight: oItem.highlight ? oItem.highlight : "None"
+				highlight: oItem.highlight ? oItem.highlight : "None",
+				highlightText: oItem.highlightText ? oItem.highlightText : ""
 			});
 
 			// Here can be called _attachAction so that navigation service can be used
