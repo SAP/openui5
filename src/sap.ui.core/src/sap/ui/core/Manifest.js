@@ -570,12 +570,12 @@ sap.ui.define([
 						var sControllerModule = sName.replace(/\./g, "/") + "/Component";
 						var iModuleState = sap.ui.loader._.getModuleState(sControllerModule + ".js");
 						if (iModuleState === -1 /* PRELOADED */) {
-							sap.ui.requireSync(sControllerModule);
+							sap.ui.requireSync(sControllerModule); // legacy-relevant: Sync path
 						} else if (iModuleState === 0 /* INITIAL */) {
 							Log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
 							// requireSync needed because of cyclic dependency
-							sap.ui.requireSync("sap/ui/core/Component");
-							sap.ui.component.load({
+							sap.ui.requireSync("sap/ui/core/Component"); // legacy-relevant: Sync path
+							sap.ui.component.load({ // legacy-relevant: Sync path
 								name: sName
 							});
 						}

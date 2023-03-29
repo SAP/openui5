@@ -3054,7 +3054,7 @@ sap.ui.define([
 
 				try {
 					sPreloadName = sController + '-preload'; // Module name
-					sap.ui.requireSync(sPreloadName.replace(/\./g, "/"));
+					sap.ui.requireSync(sPreloadName.replace(/\./g, "/")); // legacy-relevant: Sync path
 				} catch (e) {
 					errorLogging(sPreloadName, false)(e);
 				}

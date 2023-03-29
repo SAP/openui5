@@ -509,7 +509,7 @@ sap.ui.define([
 
 				if (mOptions.sync) {
 					try {
-						sap.ui.requireSync(sLibPackage + '/library-preload-lazy');
+						sap.ui.requireSync(sLibPackage + '/library-preload-lazy'); // legacy-relevant: Sync path
 					} catch (e) {
 						Log.error("failed to load '" + sLibPackage + "/library-preload-lazy.js" + "' synchronously (" + (e && e.message || e) + ")");
 					}

@@ -1680,7 +1680,7 @@ sap.ui.define([
 				"[\"sap.ui5\"][\"models\"][\"class-not-loaded\"]",
 				this.oComponent.getMetadata().getComponentName());
 
-			assert.ok(this.oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.ok(this.oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(this.oComponent.getManifest(), "Manifest is available");
 			assert.deepEqual(this.oComponent.getManifest(), this.oManifest, "Manifest matches the manifest behind manifestUrl");
 
@@ -1800,7 +1800,7 @@ sap.ui.define([
 				"[\"sap.ui5\"][\"models\"][\"class-not-loaded\"]",
 				this.oComponent.getMetadata().getComponentName());
 
-			assert.ok(this.oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.ok(this.oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(this.oComponent.getManifest(), "Manifest is available");
 			assert.deepEqual(this.oComponent.getManifest(), this.oManifest, "Manifest matches the manifest behind manifestUrl");
 

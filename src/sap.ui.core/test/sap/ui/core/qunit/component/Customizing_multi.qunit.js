@@ -39,13 +39,13 @@ sap.ui.define([
 	QUnit.module("", {
 		before: function() {
 			// define the custom component classes
-			sap.ui.predefine("testdata/customizing/another/Component", [
+			sap.ui.define("testdata/customizing/another/Component", [
 				"sap/ui/core/UIComponent"
 			], function(UIComponent) {
 				return UIComponent.extend("testdata.customizing.another.Component", {});
 			});
 
-			sap.ui.predefine("testdata/customizing/anothersub/Component", [
+			sap.ui.define("testdata/customizing/anothersub/Component", [
 				"testdata/customizing/another/Component"
 			], function(AnotherComponent) {
 				return AnotherComponent.extend("testdata.customizing.anothersub.Component", {
