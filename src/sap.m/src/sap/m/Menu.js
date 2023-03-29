@@ -474,18 +474,22 @@ sap.ui.define([
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
 			var sUfMenuItemId = this._generateUnifiedMenuItemId(oItem.getId()),
-				oUfMenuItem = Element.registry.get(sUfMenuItemId)
-					|| new UfdMenuItem({
-						id: sUfMenuItemId,
-						icon: oItem.getIcon(),
-						text: oItem.getText(),
-						startsSection: oItem.getStartsSection(),
-						tooltip: oItem.getTooltip(),
-						visible: oItem.getVisible(),
-						enabled: oItem.getEnabled()
-					}),
-					i,
-				aCustomData = oItem.getCustomData();
+				oUfMenuItem = Element.registry.get(sUfMenuItemId),
+				aCustomData = oItem.getCustomData(), i;
+
+			if (oUfMenuItem) {
+				return oUfMenuItem;
+			}
+
+			oUfMenuItem = new UfdMenuItem({
+				id: sUfMenuItemId,
+				icon: oItem.getIcon(),
+				text: oItem.getText(),
+				startsSection: oItem.getStartsSection(),
+				tooltip: oItem.getTooltip(),
+				visible: oItem.getVisible(),
+				enabled: oItem.getEnabled()
+			});
 
 			for (i = 0; i < aCustomData.length; i++) {
 				oItem._addCustomData(oUfMenuItem, aCustomData[i]);
