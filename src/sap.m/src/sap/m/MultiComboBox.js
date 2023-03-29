@@ -3151,7 +3151,11 @@ function(
 
 			// add the mapped item type of sap.m.StandardListItem to the list
 			// do not prevent invalidation as invalidations will stack
-			this._getList().addItem(oListItem);
+			if (oListItem.isA("sap.m.GroupHeaderListItem")) {
+				this._getList().addItemGroup(null, oListItem);
+			} else {
+				this._getList().addItem(oListItem);
+			}
 
 			// add active state to the selected item
 			if (this.isItemSelected(aItems[i])) {
