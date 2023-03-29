@@ -426,8 +426,11 @@ sap.ui.define([
 		When.iPressResetInDialog();
 		When.iConfirmResetWarning();
 
-		oFilterItems["Artists"][4].value = undefined;
+		//Only array will trigger a check --> reset should also clear filter values not just the selection
+		//[undefined] = no value in field
+		oFilterItems["Artists"][4].value = [undefined];
 		oFilterItems["Artists"][3].selected = false;
+
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 
 		When.iPressDialogOk();

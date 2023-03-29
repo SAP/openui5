@@ -238,6 +238,10 @@ sap.ui.define([
 	 */
 	Engine.prototype.reset = function (oControl, aKeys) {
 
+		if (aKeys === undefined) {
+			aKeys = this.getRegisteredControllers(oControl);
+		}
+
 		aKeys = aKeys instanceof Array ? aKeys : [aKeys];
 
 		var aSelectors = [];

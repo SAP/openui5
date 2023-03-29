@@ -160,6 +160,12 @@ sap.ui.define([
 	 */
 	Popup.prototype.setReset = function(fnReset) {
 		if (this._oPopup) {
+			var oCustomHeader = this._oPopup.getCustomHeader();
+
+			if (oCustomHeader) {
+				oCustomHeader.destroy();
+			}
+
 			this._oPopup.setCustomHeader(this._createTitle());
 			this._oPopup.invalidate();
 		}
