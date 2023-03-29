@@ -385,4 +385,45 @@ sap.ui.define([
 			oType.getModelValue(UI5Date.getInstance("0099-12-31T08:07:06"));
 		}, new ValidateException("~error"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getDateValue", function (assert) {
+		var oDate = {
+				setFullYear: function () {},
+				setHours: function () {}
+			},
+			oType = new DateType();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs().returns(oDate);
+		this.mock(oDate).expects("setFullYear").withExactArgs(1990, 4, 27);
+		this.mock(oDate).expects("setHours").withExactArgs(0, 0, 0, 0);
+
+		// code under test
+		assert.strictEqual(oType.getDateValue("1990-5-27"), oDate);
+
+		// code under test
+		assert.strictEqual(oType.getDateValue(null), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Integrative test getModelValue/getDateValue", function (assert) {
+		var oDateValue, sModelValue,
+			oType = new DateType();
+
+		// code under test
+		sModelValue = oType.getModelValue(UI5Date.getInstance("0099-12-31T08:07:06"));
+
+		assert.strictEqual(sModelValue, "0099-12-31");
+
+		// code under test
+		oDateValue = oType.getDateValue(sModelValue);
+
+		// The time added to the constructor, makes sure the created date a locale date
+		assert.deepEqual(oDateValue, UI5Date.getInstance("0099-12-31T00:00:00"));
+
+		// code under test
+		sModelValue = oType.getModelValue(oDateValue);
+
+		assert.deepEqual(sModelValue, "0099-12-31");
+	});
 });
