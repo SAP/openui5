@@ -6,7 +6,7 @@
 .sapUiIntCard {
 	&.sapFCardNoHeader,
 	&.sapFCardBottomHeader {
-		.sapFCardTableContent .sapMListTblHeader.sapMLIBFocusable:focus { // header of the table
+		& > .sapFCardContent > .sapFCardTableContent .sapMListTblHeader.sapMLIBFocusable:focus { // header of the table
 			> .sapMTblFirstVisibleCell::before {
 				border-top-left-radius: 1rem;
 			}
@@ -17,7 +17,7 @@
 	}
 
 	&:not(.sapUiIntCardWithFooter):not(.sapFCardBottomHeader):not(.sapFCardTransparent) {
-		.sapFCardTableContent .sapMTableTBody .sapUiIntTCIRoundedCorners.sapMLIBFocusable:last-child:focus { // last row in the table
+		& > .sapFCardContent > .sapFCardTableContent .sapMTableTBody .sapUiIntTCIRoundedCorners.sapMLIBFocusable:last-child:focus { // last row in the table
 			border-radius: 0 0 1rem 1rem;
 		}
 	}
