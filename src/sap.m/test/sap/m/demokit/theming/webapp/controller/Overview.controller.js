@@ -63,27 +63,59 @@ sap.ui.define([
 				"items": [
 					{
 						"key": "1",
-						"text": "Fiori 3"
+						"text": "Morning Horizon"
 					},
 					{
 						"key": "2",
-						"text": "Belize"
+						"text": "Evening Horizon"
 					},
 					{
 						"key": "3",
-						"text": "Belize Plus"
+						"text": "Horizon High Contrast Black"
 					},
 					{
 						"key": "4",
-						"text": "High Contrast White"
+						"text": "Horizon High Contrast White"
 					},
 					{
 						"key": "5",
-						"text": "High Contrast Black"
+						"text": "Quartz"
 					},
 					{
 						"key": "6",
+						"text": "Quartz Dark"
+					},
+					{
+						"key": "7",
+						"text": "Quartz High Contrast Black"
+					},
+					{
+						"key": "8",
+						"text": "Quartz High Contrast White"
+					},
+					{
+						"key": "9",
+						"text": "Belize"
+					},
+					{
+						"key": "10",
+						"text": "Belize Plus"
+					},
+					{
+						"key": "11",
+						"text": "Belize High Contrast Black"
+					},
+					{
+						"key": "12",
+						"text": "Belize High Contrast White"
+					},
+					{
+						"key": "13",
 						"text": "Blue Crystal"
+					},
+					{
+						"key": "14",
+						"text": "High Contrast Black"
 					}
 				]
 			};
@@ -648,29 +680,61 @@ sap.ui.define([
 			var value = oEvent.getParameter("value");
 			this.onAction();
 			switch (value) {
+				case "Morning Horizon":
+					oCore.applyTheme("sap_horizon");
+					this.byId("title").setText("Details for ''Morning Horizon''");
+					break;
+				case "Evening Horizon":
+					oCore.applyTheme("sap_horizon_dark");
+					this.byId("title").setText("Details for ''Evening Horizon''");
+					break;
+				case "Horizon High Contrast Black":
+					oCore.applyTheme("sap_horizon_hcb");
+					this.byId("title").setText("Details for ''Horizon High Contrast Black''");
+					break;
+				case "Horizon High Contrast White":
+					oCore.applyTheme("sap_horizon_hcw");
+					this.byId("title").setText("Details for ''Horizon High Contrast White''");
+					break;
+				case "Quartz":
+					oCore.applyTheme("sap_fiori_3");
+					this.byId("title").setText("Details for ''Quartz''");
+					break;
+				case "Quartz Dark":
+					oCore.applyTheme("sap_fiori_3_dark");
+					this.byId("title").setText("Details for ''Quartz Dark''");
+					break;
+				case "Quartz High Contrast Black":
+					oCore.applyTheme("sap_fiori_3_hcb");
+					this.byId("title").setText("Details for ''Quartz High Contrast Black''");
+					break;
+				case "Quartz High Contrast White":
+					oCore.applyTheme("sap_fiori_3_hcw");
+					this.byId("title").setText("Details for ''Quartz High Contrast White''");
+					break;
 				case "Belize":
 					oCore.applyTheme("sap_belize");
 					this.byId("title").setText("Details for ''Belize''");
-					break;
-				case "Blue Crystal":
-					oCore.applyTheme("sap_bluecrystal");
-					this.byId("title").setText("Details for ''Blue Crystal''");
-					break;
-				case "High Contrast White":
-					oCore.applyTheme("sap_belize_hcw");
-					this.byId("title").setText("Details for ''High Contrast White''");
 					break;
 				case "Belize Plus":
 					oCore.applyTheme("sap_belize_plus");
 					this.byId("title").setText("Details for ''Belize Plus''");
 					break;
-				case "High Contrast Black":
+				case "Belize High Contrast Black":
 					oCore.applyTheme("sap_belize_hcb");
-					this.byId("title").setText("Details for ''High Contrast Black''");
+					this.byId("title").setText("Details for ''Belize High Contrast Black''");
 					break;
-				case "Fiori 3":
-					oCore.applyTheme("sap_fiori_3");
-					this.byId("title").setText("Details for ''Fiori 3''");
+				case "Belize High Contrast White":
+					oCore.applyTheme("sap_belize_hcw");
+					this.byId("title").setText("Details for ''Belize High Contrast White''");
+					break;
+				case "Blue Crystal":
+					oCore.applyTheme("sap_bluecrystal");
+					this.byId("title").setText("Details for ''Blue Crystal''");
+					break;
+				case "High Contrast Black":
+					oCore.applyTheme("sap_hcb");
+					this.byId("title").setText("Details for ''High Contrast Black''");
 					break;
 			}
 		},
