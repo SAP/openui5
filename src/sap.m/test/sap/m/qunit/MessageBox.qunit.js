@@ -56,6 +56,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
+	// shortcut for sap.m.LinkAccessibleRole
+	var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
+
 	createAndAppendDiv("content");
 
 	var page = new Page("myFirstPage", {
@@ -430,6 +433,26 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		assert.strictEqual(document.activeElement.id, oMessageBox.getInitialFocus(), "Focus is set correctly after details are shown");
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("View details link rendering", function (assert) {
+		var oMessageBox,
+			oShowMoreLink;
+
+		MessageBox.show(sMessageText, {
+			title: sMessageTitle,
+			details: "Lorem ipsum",
+			id: "messageboxWithDetails"
+		});
+		oCore.applyChanges();
+
+		oMessageBox = oCore.byId("messageboxWithDetails");
+		oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
+
+		assert.ok(oShowMoreLink, "View details link is rendered");
+		assert.strictEqual(oShowMoreLink.getAccessibleRole(), LinkAccessibleRole.Button, "View details link is rendered");
+
 		oMessageBox.destroy();
 	});
 
