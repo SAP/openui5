@@ -976,6 +976,21 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("_inPreferredUserInteraction", function (assert) {
+		// Prepare
+		var oDTP = new DateTimePicker(),
+			oInPreferredUserInteractionSpy = this.spy(oDTP, "_inPreferredUserInteraction");
+
+			oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oInPreferredUserInteractionSpy.calledOnce, "Preferred interaction is handled during rendering");
+
+		// Clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Timezones");
 
 	QUnit.test("dateValue + timezone", function(assert) {

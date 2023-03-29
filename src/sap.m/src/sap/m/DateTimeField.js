@@ -205,6 +205,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if a user is currently typing into the input field and this interaction should be taken with priority.
+	 * @returns {boolean} True if a user interaction is currently getting handled with priority.
+	 */
+	DateTimeField.prototype._inPreferredUserInteraction = function() {
+		if (this._bPreferUserInteraction && this.getDomRef()) {
+			var oInnerDomRef = this.getFocusDomRef(),
+				sInputDOMValue = oInnerDomRef && this._getInputValue(),
+				sInputPropertyValue = this.getProperty("value"),
+				bInputFocused = document.activeElement === oInnerDomRef;
+
+			// if the user is currently in the field and he has typed a value,
+			// the changes from the model should not overwrite the user input
+			return bInputFocused && sInputDOMValue && (sInputPropertyValue !== sInputDOMValue);
+		}
+
+		return false;
+	};
+
+	/**
 	 * Setter for property <code>dateValue</code>.
 	 *
 	 * The date and time in DateTimeField as JavaScript Date object.

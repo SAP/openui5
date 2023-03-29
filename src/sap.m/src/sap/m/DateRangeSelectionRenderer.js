@@ -21,8 +21,9 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer'],
 	 * @param {sap.m.DateRangeSelection} oControl An object representation of the control that should be rendered.
 	 */
 	DateRangeSelectionRenderer.writeInnerValue = function(oRm, oControl) {
-
-		if (oControl._bValid) {
+		if (oControl._inPreferredUserInteraction()) {
+			oRm.attr("value", oControl._$input.val());
+		} else if (oControl._bValid) {
 			oRm.attr("value", oControl._formatValue(oControl.getDateValue(), oControl.getSecondDateValue()));
 		} else {
 			oRm.attr("value", oControl.getValue());

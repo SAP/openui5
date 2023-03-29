@@ -2603,7 +2603,7 @@ sap.ui.define([
 		oGetFocusDomRefStub.restore();
 	});
 
-	QUnit.test("Overwriting the user input with model updates will be prevented", function (assert) {
+	QUnit.test("handleInputValueConcurrency", function (assert) {
 		// Prepare
 		var oDP = new DatePicker(),
 			oHandleInputValueConcurrencySpy = this.spy(oDP, "handleInputValueConcurrency");
@@ -2617,6 +2617,21 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oHandleInputValueConcurrencySpy.calledOnce, "Model update is prevented");
+
+		// Clean
+		oDP.destroy();
+	});
+
+	QUnit.test("_inPreferredUserInteraction", function (assert) {
+		// Prepare
+		var oDP = new DatePicker(),
+			oInPreferredUserInteractionSpy = this.spy(oDP, "_inPreferredUserInteraction");
+
+		oDP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oInPreferredUserInteractionSpy.calledOnce, "Preferred interaction is handled during rendering");
 
 		// Clean
 		oDP.destroy();
