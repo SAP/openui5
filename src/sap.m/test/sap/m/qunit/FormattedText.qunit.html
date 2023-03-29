@@ -79,9 +79,13 @@
 			$a = oFT.$().find("span");
 			ok(!$a.attr("id"), "id is not rendered");
 			ok(!$a.attr("href"), "span::href is not rendered");
-			strictEqual($a.attr("class"), "aaa", "a::class is rendered");
+			strictEqual($a.attr("class"), "", "a::class is not rendered");
 			strictEqual($a[0].style.color, "red", "a::style is rendered");
 			ok(!$a.attr("target"), "span::target is not rendered");
+			setText('<a style="color:red;position:absolute;">"' + sFT + '</a>');
+			strictEqual($a[0].style.position, "", "inline style for position is removed");
+			setText('<a style="position:fixed;">"' + sFT + '</a>');
+			strictEqual($a[0].style.position, "", "inline style for position is removed");
 		});
 
 		test("css classes", function() {
@@ -92,11 +96,15 @@
 
 			setText("<h6 class='abc'>" + sFT + "</h6>");
 			$a = oFT.$().find("h6");
-			strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH6 abc", "h6::class is rendered correctly");
+			strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH6", "h6::class is rendered correctly");
 
 			setText('<a id="AAA" class="abc" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 			$a = oFT.$().find("a");
-			strictEqual($a.attr("class"), "sapMLnk abc", "a::class is rendered correctly");
+			strictEqual($a.attr("class"), "sapMLnk", "a::class is rendered correctly");
+
+			setText('<a class="abc sapThemeText-asColor" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
+			$a = oFT.$().find("a");
+			strictEqual($a.attr("class"), "sapMLnk sapThemeText-asColor", "a::class is rendered correctly");
 		});
 
 		module("Clean up");
