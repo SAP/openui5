@@ -44,7 +44,8 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @private
 	 * @experimental As of version 1.95
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 
 	/**
@@ -56,7 +57,8 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @private
 	 * @experimental As of version 1.95
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 
 	/**
@@ -68,7 +70,8 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @private
 	 * @experimental As of version 1.95
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 
 	/**
@@ -232,7 +235,7 @@ sap.ui.define([
 						/**
 						 * The container which will be opened
 						 */
-						container: {type: "object"}
+						container: {type: "sap.ui.mdc.valuehelp.base.Container"}
 					}
 				},
 
@@ -244,7 +247,7 @@ sap.ui.define([
 						/**
 						 * The container which was opened
 						 */
-						container: {type: "object"}
+						container: {type: "sap.ui.mdc.valuehelp.base.Container"}
 					}
 				},
 
@@ -847,10 +850,6 @@ sap.ui.define([
 		}
 
 	};
-
-//	ValueHelp.prototype.getUIArea = function() { // Ask Frank, if better way available
-//
-//	};
 
 	ValueHelp.prototype.getMaxConditions = function() { // ?
 		var oConfig = this.getProperty("_config");

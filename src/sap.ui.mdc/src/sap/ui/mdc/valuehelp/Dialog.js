@@ -52,7 +52,8 @@ sap.ui.define([
 	 * @constructor
 	 * @abstract
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.95.0
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.Dialog
@@ -83,7 +84,7 @@ sap.ui.define([
 				/**
 				 * Configuration for groups (collective search).
 				 */
-				groupConfig: {
+				groupConfig: { // TODO: explain in JS-Doc
 					type: "object",
 					defaultValue: {}
 				}

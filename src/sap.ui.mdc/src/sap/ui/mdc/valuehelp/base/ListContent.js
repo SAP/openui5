@@ -14,6 +14,8 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>ListContent</code>.
 	 *
+	 * This is the basis for different value help list contents. It cannot be used directly.
+	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
 	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element.
@@ -22,7 +24,8 @@ sap.ui.define([
 	 * @constructor
 	 * @abstract
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.95.0
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.base.ListContent

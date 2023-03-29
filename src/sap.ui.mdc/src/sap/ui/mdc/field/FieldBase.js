@@ -88,7 +88,8 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>FieldBase</code> control is the basic control to be used within the {@link sap.ui.mdc.Field Field} and {@link sap.ui.mdc.FilterField FilterField} controls.
+	 * The <code>FieldBase</code> control is the basic control to be used within the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
+	 * and {@link sap.ui.mdc.FilterField FilterField} controls.
 	 * It must not be used stand-alone.
 	 *
 	 * @extends sap.ui.mdc.Control
@@ -103,7 +104,8 @@ sap.ui.define([
 	 * @abstract
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @experimental As of version 1.58
 	 */
 	var FieldBase = Control.extend("sap.ui.mdc.field.FieldBase", /* @lends sap.ui.mdc.field.FieldBase.prototype */ {
