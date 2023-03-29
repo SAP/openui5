@@ -2122,6 +2122,16 @@ sap.ui.define([
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.notOk(bEqual, "2 Conditions, with different payload are not equal");
 
+		aConditions1 = [Condition.createCondition("BT", ["X", "Y", undefined])];
+		aConditions2 = [Condition.createCondition("BT", ["X", "Y", null])];
+		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		assert.notOk(bEqual, "Comparison discerns null from undefined");
+
+		aConditions1 = [Condition.createCondition("BT", ["X", "Y"], undefined, undefined, {in1: "X", out1: undefined})];
+		aConditions2 = [Condition.createCondition("BT", ["X", "Y"], undefined, undefined, {in1: "X", out1: null})];
+		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		assert.notOk(bEqual, "Comparison discerns nested null from undefined");
+
 	});
 
 	QUnit.test("checkConditionValidated", function(assert) {

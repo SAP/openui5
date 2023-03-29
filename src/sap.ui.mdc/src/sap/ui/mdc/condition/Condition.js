@@ -11,6 +11,12 @@ sap.ui.define([
 	) {
 		"use strict";
 
+		var fnSerializeCondition = function (oCondition) {
+			return JSON.stringify(Object.assign({}, oCondition, {isEmpty: undefined}), function (sKey, vValue) {
+				return vValue === undefined ? '[undefined]' : vValue;
+			});
+		};
+
 		/**
 		 * @namespace
 		 * @name sap.ui.mdc.condition
@@ -125,9 +131,8 @@ sap.ui.define([
 				 * @ui5-restricted sap.ui.mdc
 				 */
 				compareConditions: function(oCondition1, oCondition2) {
-					var oIgnoredKeys = {isEmpty: undefined};
-					var sCheckValue1 = JSON.stringify(Object.assign({}, oCondition1, oIgnoredKeys));
-					var sCheckValue2 = JSON.stringify(Object.assign({}, oCondition2, oIgnoredKeys));
+					var sCheckValue1 = fnSerializeCondition(oCondition1);
+					var sCheckValue2 = fnSerializeCondition(oCondition2);
 					return sCheckValue1 === sCheckValue2;
 
 				},

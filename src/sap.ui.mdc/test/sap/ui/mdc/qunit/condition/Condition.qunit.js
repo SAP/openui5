@@ -41,6 +41,15 @@ sap.ui.define([
 		assert.notOk(Condition.compareConditions(oCondition1, undefined), "compareConditions can handle undefined conditions");
 		assert.notOk(Condition.compareConditions(undefined, oCondition1), "compareConditions can handle undefined conditions");
 		assert.ok(Condition.compareConditions(undefined, undefined), "compareConditions can handle undefined conditions");
+
+		oCondition1 = Object.assign({}, oCondition1, {someKey: null});
+		oCondition2 = Object.assign({}, oCondition1, {someKey: undefined});
+		assert.notOk(Condition.compareConditions(oCondition1, oCondition2), "compareConditions can discern null from undefined values");
+
+		oCondition1 = Object.assign({}, oCondition1, {values: ['A', 'A', null]});
+		oCondition2 = Object.assign({}, oCondition1, {values: ['A', 'A', undefined]});
+		assert.notOk(Condition.compareConditions(oCondition1, oCondition2), "compareConditions can discern null from undefined values");
+
 	});
 
 
