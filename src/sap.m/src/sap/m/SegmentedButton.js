@@ -797,6 +797,10 @@ function(
 		}
 	};
 
+	SegmentedButton.prototype.getSelectedButton = function () {
+		return this.getAssociation("selectedButton");
+	};
+
 	/**
 	 * Setter for association <code>selectedButton</code>.
 	 *
