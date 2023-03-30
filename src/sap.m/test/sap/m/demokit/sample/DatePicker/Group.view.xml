@@ -1,141 +1,146 @@
 <mvc:View
+	height="100%"
 	controllerName="sap.m.sample.DatePicker.Group"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
-	<Panel
-		id="datePanel"
-		headerText="When DatePickers change events are fired the selected date is displayed in the Text control"
-		width="auto">
-		<Label text="simple DatePicker" labelFor="DP1"/>
-		<DatePicker
-			id="DP1"
-			placeholder="Enter Date"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
-		<Label text="DatePicker with OK button in the footer and initialFocusedDateValue UI5Date.getInstance(2017, 5, 13)" labelFor="DP8"/>
-		<DatePicker
-			id="DP8"
-			placeholder="Enter Date"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"
-			showFooter="true"/>
-		<Label text="DatePicker with given Value and Formatter" labelFor="DP2"/>
-		<DatePicker
-			id="DP2"
-			value="{
-				'path':'/valueDP2',
-				'type':'sap.ui.model.type.Date',
-				'formatOptions': {
-					'pattern': 'yyyy-MM-dd'
-				}
-			}"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
-		<Label text="DatePicker with islamic date and secondray gregorian date in calendar" labelFor="DP5"/>
-		<DatePicker
-			id="DP5"
-			value="{
-				'path':'/valueDP5',
-				'type':'sap.ui.model.type.Date',
-				'formatOptions': {
-					'calendarType': 'Islamic',
-					'style': 'long'
-				}
-			}"
-			secondaryCalendarType="Gregorian"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
-		<Label text="DatePicker with minDate=2016-01-01 and maxDate=2016-12-31" labelFor="DP6"/>
-		<DatePicker
-			id="DP6"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"
-			value="{
-				'path': '/valueDP6',
-				'type': 'sap.ui.model.type.Date',
-				'formatOptions': {
-					'pattern': 'dd/MM/y'
-				}
-			}"/>
-		<Label text="DatePicker with calendarWeekNumbering set to MiddleEastern" labelFor="DP17"/>
-		<DatePicker
-			id="DP17"
-			calendarWeekNumbering="MiddleEastern"
-			class="sapUiSmallMarginBottom"/>
-		<Label text="DatePicker with non-working days - 05.11.2015 - 25.11.2015 and with shortcut for today" labelFor="DP7"/>
-		<DatePicker
-			id="DP7"
-			value="{
-				'path':'/valueDP7',
-				'type':'sap.ui.model.type.Date'
-			}"
-			showCurrentDateButton="true"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
-		<Text id="textResult" text="Change event result" class="sapUiSmallMargin"/>
-	</Panel>
-	<Panel
-		id="dataPanelPickerFormat"
-		headerText="DatePickers types based on display format">
-		<Label text='DatePicker with display format for months and years' labelFor="DP10"/>
-		<DatePicker
-			id="DP10"
-			value="{
-				'path': '/valueDP10',
-				'type': 'sap.ui.model.type.Date',
-				'formatOptions': {
-					'pattern': 'MM-y'
-				}
-			}"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
-		<Label text="DatePicker with display format for years" labelFor="DP11"/>
-		<DatePicker
-			id="DP11"
-			value="{
-				'path': '/valueDP11',
-				'type': 'sap.ui.model.type.Date',
-				'formatOptions': {
-					'pattern': 'yyyy'
-				}
-			}"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
-	</Panel>
-	<Panel
-		id="dataBindingDatePanel"
-		headerText="DatePicker using data binding">
-		<Label text="DatePicker using DataBinding" labelFor="DP4"/>
-		<DatePicker
-			id="DP4"
-			value="{
-				path:'/valueDP4',
-				type:'sap.ui.model.type.Date',
-				formatOptions: {
-					style: 'medium',
-					strictParsing: true
-				}
-			}"
-			class="sapUiSmallMarginBottom"/>
-		<Text
-			text="{
-				path:'/valueDP4',
-				type:'sap.ui.model.type.Date',
-				formatOptions: {
-					style: 'long'
-				}
-			}"
-			class="sapUiSmallMargin"/>
-	</Panel>
-	<Panel headerText="DatePicker showing usage of isValidValue function.">
-		<Label text="DatePicker with minDate=2016-01-01 and maxDate=2019-12-31" labelFor="DP9"/>
-		<DatePicker
-			id="DP9" class="sapUiSmallMarginBottom"/>
-		<l:VerticalLayout>
-			<Label text="Enter value and press the button to check if it's valid." labelFor="btn1"/>
-			<Button text="Check value" press="handleBtnPress" />
-			<Text id="textResult2" text="" />
-		</l:VerticalLayout>
-	</Panel>
+	<Page>
+		<content>
+			<Panel
+				id="datePanel"
+				headerText="When DatePickers change events are fired the selected date is displayed in the Text control"
+				width="auto">
+				<Label text="simple DatePicker" labelFor="DP1"/>
+				<DatePicker
+					id="DP1"
+					placeholder="Enter Date"
+					change="handleChange"
+					class="sapUiSmallMarginBottom"/>
+				<Label text="DatePicker with OK button in the footer and initialFocusedDateValue UI5Date.getInstance(2017, 5, 13)" labelFor="DP8"/>
+				<DatePicker
+					id="DP8"
+					placeholder="Enter Date"
+					change="handleChange"
+					class="sapUiSmallMarginBottom"
+					showFooter="true"/>
+				<Label text="DatePicker with given Value and Formatter" labelFor="DP2"/>
+				<DatePicker
+					id="DP2"
+					value="{
+						'path':'/valueDP2',
+						'type':'sap.ui.model.type.Date',
+						'formatOptions': {
+							'pattern': 'yyyy-MM-dd'
+						}
+					}"
+					change="handleChange"
+					class="sapUiSmallMarginBottom"/>
+				<Label text="DatePicker with islamic date and secondray gregorian date in calendar" labelFor="DP5"/>
+				<DatePicker
+					id="DP5"
+					value="{
+						'path':'/valueDP5',
+						'type':'sap.ui.model.type.Date',
+						'formatOptions': {
+							'calendarType': 'Islamic',
+							'style': 'long'
+						}
+					}"
+					secondaryCalendarType="Gregorian"
+					change="handleChange"
+					class="sapUiSmallMarginBottom"/>
+				<Label text="DatePicker with minDate=2016-01-01 and maxDate=2016-12-31" labelFor="DP6"/>
+				<DatePicker
+					id="DP6"
+					change="handleChange"
+					class="sapUiSmallMarginBottom"
+					value="{
+						'path': '/valueDP6',
+						'type': 'sap.ui.model.type.Date',
+						'formatOptions': {
+							'pattern': 'dd/MM/y'
+						}
+					}"/>
+				<Label text="DatePicker with calendarWeekNumbering set to MiddleEastern" labelFor="DP17"/>
+				<DatePicker
+					id="DP17"
+					calendarWeekNumbering="MiddleEastern"
+					class="sapUiSmallMarginBottom"/>
+				<Label text="DatePicker with non-working days - 05.11.2015 - 25.11.2015 and with shortcut for today" labelFor="DP7"/>
+				<DatePicker
+					id="DP7"
+					value="{
+						'path':'/valueDP7',
+						'type':'sap.ui.model.type.Date'
+					}"
+					showCurrentDateButton="true"
+					change="handleChange"
+					class="sapUiSmallMarginBottom"/>
+				<Text id="textResult" text="Change event result" class="sapUiSmallMargin"/>
+			</Panel>
+			<Panel
+				id="dataPanelPickerFormat"
+				headerText="DatePickers types based on display format">
+				<Label text='DatePicker with display format for months and years' labelFor="DP10"/>
+				<DatePicker
+					id="DP10"
+					value="{
+						'path': '/valueDP10',
+						'type': 'sap.ui.model.type.Date',
+						'formatOptions': {
+							'pattern': 'MM-y'
+						}
+					}"
+					change="handleChange"
+					class="sapUiSmallMarginBottom"/>
+				<Label text="DatePicker with display format for years" labelFor="DP11"/>
+				<DatePicker
+					id="DP11"
+					value="{
+						'path': '/valueDP11',
+						'type': 'sap.ui.model.type.Date',
+						'formatOptions': {
+							'pattern': 'yyyy'
+						}
+					}"
+					change="handleChange"
+					class="sapUiSmallMarginBottom"/>
+			</Panel>
+			<Panel
+				id="dataBindingDatePanel"
+				headerText="DatePicker using data binding">
+				<Label text="DatePicker using DataBinding" labelFor="DP4"/>
+				<DatePicker
+					id="DP4"
+					value="{
+						path:'/valueDP4',
+						type:'sap.ui.model.type.Date',
+						formatOptions: {
+							style: 'medium',
+							strictParsing: true
+						}
+					}"
+					class="sapUiSmallMarginBottom"/>
+				<Text
+					text="{
+						path:'/valueDP4',
+						type:'sap.ui.model.type.Date',
+						formatOptions: {
+							style: 'long'
+						}
+					}"
+					class="sapUiSmallMargin"/>
+			</Panel>
+			<Panel headerText="DatePicker showing usage of isValidValue function.">
+				<Label text="DatePicker with minDate=2016-01-01 and maxDate=2019-12-31" labelFor="DP9"/>
+				<DatePicker
+					id="DP9" class="sapUiSmallMarginBottom"/>
+				<l:VerticalLayout>
+					<Label text="Enter value and press the button to check if it's valid." labelFor="btn1"/>
+					<Button text="Check value" press="handleBtnPress" />
+					<Text id="textResult2" text="" />
+				</l:VerticalLayout>
+			</Panel>
+		</content>
+	</Page>
 </mvc:View>
