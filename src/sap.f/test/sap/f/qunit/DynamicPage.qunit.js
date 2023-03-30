@@ -442,6 +442,23 @@ function (
 		}, 0);
 	});
 
+	QUnit.test("'sapFDynamicPageContentFitContainer' is not added, when scrollbar is needed", function (assert) {
+		// Arrange
+		var oStub = this.stub(this.oDynamicPage, "_needsVerticalScrollBar").returns(true);
+
+		//Act
+		this.oDynamicPage.setFitContent(true);
+		Core.applyChanges();
+		this.oDynamicPage._updateFitContainer();
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage.$contentFitContainer.hasClass("sapFDynamicPageContentFitContainer"), false,
+		"'sapFDynamicPageContentFitContainer' class is not added");
+
+		// Clean up
+		oStub.restore();
+	});
+
 	QUnit.test("BCP: 1870261908 Header title cursor CSS reset is applied", function (assert) {
 		// Arrange
 		var $MainHeading = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainHeading"),

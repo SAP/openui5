@@ -1354,11 +1354,9 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
-		var bNoScrollBar = typeof bNeedsVerticalScrollBar !== 'undefined' ? !bNeedsVerticalScrollBar : !this._needsVerticalScrollBar(),
-			bFitContent = this.getFitContent(),
-			bToggleClass = bFitContent || bNoScrollBar;
+		var bNoScrollBar = typeof bNeedsVerticalScrollBar !== 'undefined' ? !bNeedsVerticalScrollBar : !this._needsVerticalScrollBar();
 
-		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", bToggleClass);
+		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", bNoScrollBar);
 	};
 
 	/**
