@@ -301,6 +301,86 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Then enabling edit button, UploadSet.handleItemGetDisabled is not called", function (assert) {
+		var spyHandleItemGetDisabled = this.spy(this.oUploadSet, "handleItemGetDisabled");
+		var oItem = this.oUploadSet.getItems()[1];
+		assert.notOk(oItem.getEnabledEdit(), "Edit button initially is disabled");
+
+		oItem.setEnabledEdit(true);
+
+		assert.ok(oItem.getEnabledEdit(), "Edit button is enabled");
+		assert.ok(spyHandleItemGetDisabled.notCalled, "UploadSet.handleItemGetDisabled is not called");
+	});
+
+	QUnit.test("Then showing edit button, UploadSet.handleItemGetDisabled is not called", function (assert) {
+		var spyHandleItemGetDisabled = this.spy(this.oUploadSet, "handleItemGetDisabled");
+		var oItem = this.oUploadSet.getItems()[1];
+		assert.notOk(oItem.getVisibleEdit(), "Edit button initially is hidden");
+
+		oItem.setVisibleEdit(true);
+
+		assert.ok(oItem.getVisibleEdit(), "Edit button is visible");
+		assert.ok(spyHandleItemGetDisabled.notCalled, "UploadSet.handleItemGetDisabled is not called");
+	});
+
+	QUnit.test("Then disabling edit button, for item that is not in edit, UploadSet._handleItemEditCancelation is not called", function (assert) {
+		var spyHandleItemEditCancelation = this.spy(this.oUploadSet, "_handleItemEditCancelation");
+		var oItem = this.oUploadSet.getItems()[0];
+		assert.ok(oItem.getEnabledEdit(), "Edit button initially is enabled");
+
+		oItem.setEnabledEdit(false);
+
+		assert.notOk(oItem.getEnabledEdit(), "Edit button is disabled");
+		assert.ok(spyHandleItemEditCancelation.notCalled, "UploadSet._handleItemEditCancelation is not called");
+	});
+
+	QUnit.test("Then hiding edit button, for item that is not in edit, UploadSet._handleItemEditCancelation is not called", function (assert) {
+		var spyHandleItemEditCancelation = this.spy(this.oUploadSet, "_handleItemEditCancelation");
+		var oItem = this.oUploadSet.getItems()[0];
+		assert.ok(oItem.getVisibleEdit(), "Edit button initially is visible");
+
+		oItem.setVisibleEdit(false);
+
+		assert.notOk(oItem.getVisibleEdit(), "Edit button is hidden");
+		assert.ok(spyHandleItemEditCancelation.notCalled, "UploadSet._handleItemEditCancelation is not called");
+	});
+
+	QUnit.test("Then hiding edit button, for item that is not in edit, but there is another item in edit mode UploadSet._handleItemEditCancelation is not called", function (assert) {
+		var spyHandleItemEditCancelation = this.spy(this.oUploadSet, "_handleItemEditCancelation");
+		var oItem0 = this.oUploadSet.getItems()[0],
+			oItem1 = this.oUploadSet.getItems()[1];
+		oItem0.setVisibleEdit(true);
+		oItem1.setVisibleEdit(true);
+		assert.ok(oItem0.getVisibleEdit(), "First edit button initially is visible");
+		assert.ok(oItem1.getVisibleEdit(), "Second edit button initially is visible");
+
+		oItem0._getEditButton().firePress();
+		oCore.applyChanges();
+
+		oItem1.setVisibleEdit(false);
+
+		assert.notOk(oItem1.getVisibleEdit(), "Edit button is hidden");
+		assert.ok(spyHandleItemEditCancelation.notCalled, "UploadSet._handleItemEditCancelation is not called");
+	});
+
+	QUnit.test("Then hiding edit button, for item that is in edit, it's edit mode is cancelled", function (assert) {
+		var oItem = this.oUploadSet.getItems()[0];
+		oItem.setVisibleEdit(true);
+		assert.ok(oItem.getVisibleEdit(), "Edit button initially is visible");
+
+		oItem._getEditButton().firePress();
+		var sItemEditFileName = oItem._getFileNameEdit().getValue();
+		oItem._getFileNameEdit().setValue(sItemEditFileName + " - some additional text");
+
+		oItem.setVisibleEdit(false);
+		assert.notOk(oItem.getVisibleEdit(), "Edit button is hidden");
+
+		oItem.setVisibleEdit(true);
+		assert.ok(oItem.getVisibleEdit(), "Edit button is visible");
+
+		oItem._getEditButton().firePress();
+		assert.equal(oItem._getFileNameEdit().getValue(), sItemEditFileName, "File name didn't changed");
+	});
 
 	QUnit.test("Check filename with no extension", function (assert) {
 		//Arrange
