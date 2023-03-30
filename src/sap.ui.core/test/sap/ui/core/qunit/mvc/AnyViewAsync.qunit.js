@@ -75,73 +75,35 @@ sap.ui.define([
 			assert.ok(sSource !== undefined, "View content was preloaded synchronously");
 		});
 
-		QUnit.test("Rendering - synchronous resource loading", function (assert) {
-			assert.expect(3);
-			this.oView = fnFactory();
-			this.oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			assert.ok(this.oView, "Instance has been created");
-			assert.ok(this.oView instanceof View, "Instance is a View");
-			assert.ok(this.oView.$().children().length, "View content was rendered synchronously");
-		});
-
 		QUnit.test("Rendering - asynchronous resource loading", function (assert) {
-			assert.expect(5);
-			var done = assert.async();
-			this.oView = fnFactory(true); //true for async
+			assert.expect(2);
+			return fnFactory().then(function(oView) {
+				this.oView = oView;
+				this.oView.placeAt("content");
 
-			// event attachement needs to be done immediately, otherwise the event may be fired beforehands
-			var that = this;
-			this.oView.attachAfterInit(function() {
+				assert.ok(this.oView, "Instance has been created");
+				assert.ok(this.oView instanceof View, "Instance is a View");
 				sap.ui.getCore().applyChanges();
-				assert.ok(that.oView.$().children().length, "View content was rendered");
-				done();
-			});
-
-			this.oView.placeAt("content");
-			assert.ok(this.oView, "Instance has been created");
-			assert.ok(this.oView instanceof View, "Instance is a View");
-
-			sap.ui.getCore().applyChanges();
-			assert.ok(this.oView.$().length, "View was rendered empty");
-			assert.ok(!this.oView.$().children().length, "View content is not rendered yet");
-
-		});
-
-		QUnit.test("Promise - loaded() for sync view", function(assert) {
-			assert.expect(3);
-			var done = assert.async();
-			this.oView = fnFactory();
-
-			var oPromise = this.oView.loaded();
-			assert.ok(oPromise instanceof Promise, "Promise returned");
-
-			var that = this;
-			oPromise.then(function(oViewLoaded) {
-				assert.ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
-				assert.deepEqual(that.oView, oViewLoaded, "Views equal deeply");
-				done();
-			});
+			}.bind(this));
 		});
 
 
 		QUnit.test("Promise - loaded() for async view", function(assert) {
 			assert.expect(3);
-			var done = assert.async();
-			this.oView = fnFactory(true);
+			return fnFactory().then(function(oView) {
+				this.oView = oView;
 
-			var oPromise = this.oView.loaded();
-			assert.ok(oPromise instanceof Promise, "Promise returned");
+				var oPromise = this.oView.loaded();
+				assert.ok(oPromise instanceof Promise, "Promise returned");
 
-			var that = this;
-			oPromise.then(function(oViewLoaded) {
-				assert.ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
-				assert.deepEqual(that.oView, oViewLoaded, "Views equal deeply");
-				done();
-			});
+				var that = this;
+				return oPromise.then(function(oViewLoaded) {
+					assert.ok(that.oAfterInitSpy.calledOnce, "AfterInit event fired before resolving");
+					assert.deepEqual(that.oView, oViewLoaded, "Views equal deeply");
+
+				});
+			}.bind(this));
 		});
-
 	}
 
 	return asyncTestsuite;
