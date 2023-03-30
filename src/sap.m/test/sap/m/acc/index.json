@@ -473,7 +473,7 @@
 		},
 		{
 			"control": "sap.m.SearchField",
-			"url": "../SearchField.html",
+			"url": "SearchField.html",
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
