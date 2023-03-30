@@ -401,6 +401,9 @@ sap.ui.define([
 						vValue = oType ? oType.parseValue("", "string") : ""; // for empty value use initial value of type
 					}
 					var sReplace = this._formatValue(vValue, oType, aCompositeTypes);
+					if (typeof sReplace === "string") {
+						sReplace = sReplace.replace(/\$/g, '$$$'); // as "$$" has a special handling in replace, it will be transformed into "$"
+					}
 					// the regexp will replace placeholder like $0, 0$ and {0}
 					sTokenText = sTokenText.replace(new RegExp("\\$" + i + "|" + i + "\\$" + "|" + "\\{" + i + "\\}", "g"), sReplace);
 				}

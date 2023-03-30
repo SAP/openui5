@@ -500,6 +500,16 @@ sap.ui.define([
 						type: oDateTimeWithTimezoneType2,
 						compositeTypes: [oDateTimeOffsetType, oStringType],
 						compositePart: 1
+					},
+					{
+						formatArgs: [Condition.createCondition("EQ", ["@@$$"]), undefined, FieldDisplay.Value, false],
+						formatValue: "=@@$$",
+						parseArgs: ["=@@$$", undefined, FieldDisplay.Value],
+						parsedValue: "@@$$",
+						condition: Condition.createCondition("EQ", ["@@$$"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"NE": [{
@@ -1133,6 +1143,17 @@ sap.ui.define([
 						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("Contains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition("Contains", ["@@$$"]), oStringType, FieldDisplay.Value, false],
+						formatValue: "*@@$$*",
+						parseArgs: ["*@@$$*", oStringType, FieldDisplay.Value],
+						parsedValue: "@@$$",
+						condition: Condition.createCondition("Contains", ["@@$$"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
