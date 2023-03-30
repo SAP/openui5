@@ -336,17 +336,20 @@ sap.ui.define([
 		});
 
 		oVBox.placeAt("qunit-fixture");
-
-		assert.notOk(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on small screens");
-		assert.notOk(oPanel._getMoveTopButton().getVisible(), "Button is invisible on small screens");
-
-		oVBox.setWidth("420px");
 		oCore.applyChanges();
 
 		setTimeout(function(){
-			assert.ok(oPanel._getMoveBottomButton().getVisible(), "Button is visible on larger screens");
-			assert.ok(oPanel._getMoveTopButton().getVisible(), "Button is visible on larger screens");
-			done();
+			assert.notOk(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on larger screens");
+			assert.notOk(oPanel._getMoveTopButton().getVisible(), "Button is invisible on larger screens");
+
+			oVBox.setWidth("420px");
+			oCore.applyChanges();
+
+			setTimeout(function(){
+				assert.ok(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on small screens");
+				assert.ok(oPanel._getMoveTopButton().getVisible(), "Button is invisible on small screens");
+				done();
+			});
 		});
 
 	});
