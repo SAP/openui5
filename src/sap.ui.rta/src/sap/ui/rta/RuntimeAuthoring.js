@@ -1511,7 +1511,7 @@ sap.ui.define([
 					}.bind(this));
 
 					this.getToolbar().setModel(this._oVersionsModel, "versions");
-					this.getToolbar().setModel(this._oContextBasedAdaptationsModel, "contextBasedAdaptation");
+					this.getToolbar().setModel(this._oContextBasedAdaptationsModel, "contextBasedAdaptations");
 					this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
 
 					return Promise.all([oTranslationPromise, oSaveAsPromise]);
