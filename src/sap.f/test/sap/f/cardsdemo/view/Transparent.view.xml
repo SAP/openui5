@@ -5,7 +5,15 @@
 	xmlns:w="sap.ui.integration.widgets"
 	xmlns:f="sap.f"
 	displayBlock="true">
-	<Page title="{i18n>appTitle}" enableScrolling="false">
+	<Page title="{i18n>appTitle}">
+		<f:GridContainer class="sapUiTinyMargin">
+			<w:Card design="Transparent" id="component1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/transparent/component/manifest.json" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="30" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+
 		<f:Card id="containerCard" class="sapUiTinyMargin sapFCardTransparent" width="100%">
 			<f:content>
 				<HBox>
