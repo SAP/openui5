@@ -621,7 +621,12 @@ sap.ui.define([
 			}
 		},
 
-		onTriggerCreateActivateLineItem : function () {
+		onTriggerCreateActivateLineItem : function (oEvent) {
+			if (!oEvent.getParameter("context").getProperty("ProductID")) { // product id is required property
+				oEvent.preventDefault();
+				return;
+			}
+
 			this.createInactiveLineItem();
 		},
 
