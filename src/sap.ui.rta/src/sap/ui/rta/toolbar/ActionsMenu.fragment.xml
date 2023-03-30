@@ -72,11 +72,5 @@
 				visible="{= (${controls>/restore/visible} &amp;&amp; ((${controls>/modeSwitcher} === 'visualization') || (${controls>/modeSwitcher} === 'adaptation')))}"
 				press=".restore"
 				text="{i18n>BTN_RESTORE}" />
-		<MenuItem
-				id="sapUiRta_saveAsContextBasedAdaptation"
-				icon="sap-icon://save"
-				visible="{= (${controls>/contextBasedAdaptation/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
-				press=".saveAsContextBasedAdaptation"
-				text="{i18n>BTN_SAVE_AS}" />
 	</Menu>
 </core:FragmentDefinition>
