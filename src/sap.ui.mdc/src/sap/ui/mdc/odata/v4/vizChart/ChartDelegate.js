@@ -294,14 +294,11 @@ sap.ui.define([
 
     };
     /**
-     ** Returns the event handler for chartSelectionDetails as an object:
-     * {
-     *   "eventId": id of the selection event,
-     *   "listener": Reference to inner chart
-     *   }
+     * Returns the event handler for SelectionDetails as an object:
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @returns {object} Event handler for chartSelectionDetails
+     * @returns {sap.ui.mdc.SelectionDetails} Event handler for SelectionDetails
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -446,11 +443,12 @@ sap.ui.define([
      * @param {sap.ui.mdc.Chart.Item} oMDCItem MDC item to create a sorter for
      * @param {object} oSortProperty Sorting information
      * @returns {sap.ui.model.Sorter} Sorter for given item
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.getSorterForItem = function (oMDCItem, oSortProperty) {
+    ChartDelegate._getSorterForItem = function (oMDCItem, oSortProperty) {
         //TODO: Check wether we really need this method.
         //TODO: Right now it is needed since the name of a property does not include the aggregation method -> leads to an error when calling back-end
         //TODO: In old chart, aggragation method was included in name since every method had their own Item
@@ -709,16 +707,16 @@ sap.ui.define([
         }.bind(this));
     };
 
-    /**
-     * Creates initial content for the chart while metadata has not been retrieved yet.
-     * @param {sap.ui.mdc.chart} oMDCChart MDC chart
-     * @experimental
-     * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
-     */
-    ChartDelegate.createInitialChartContent = function(oMDCChart) {
-        //Not relevant for sap.chart.Chart
-    };
+    // /**
+    //  * Creates initial content for the chart while metadata has not been retrieved yet.
+    //  * @param {sap.ui.mdc.chart} oMDCChart MDC chart
+    //  * @experimental
+    //  * @private
+    //  * @ui5-restricted sap.fe, sap.ui.mdc
+    //  */
+    // ChartDelegate.createInitialChartContent = function(oMDCChart) {
+    //     //Not relevant for sap.chart.Chart
+    // };
 
     /**
      * Triggers invalidation on ChartImplContainer when external noData changed.
@@ -1169,8 +1167,7 @@ sap.ui.define([
      */
     ChartDelegate.getDrillStack = function (oMDCChart) {
         //TODO: Generify the return values here for other chart frameworks
-        var aDrillStack = [];
-        aDrillStack = Object.assign(aDrillStack, this._getChart(oMDCChart).getDrillStack());
+        var aDrillStack = Object.assign([], this._getChart(oMDCChart).getDrillStack());
 
         aDrillStack.forEach(function(oStackEntry) {
 			// loop over nested dimension arrays -> give them the correct name for filtering
@@ -1487,9 +1484,9 @@ sap.ui.define([
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-         ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
-            this.rebind(oMDCChart, oBindingInfo);
-        };
+    ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
+        this.rebind(oMDCChart, oBindingInfo);
+    };
 
     /**
      * Checks the binding of the chart and rebinds it if required.
@@ -1690,7 +1687,7 @@ sap.ui.define([
             }
 
             //TODO: Check for inResultDimensions
-            var oSorter = this.getSorterForItem(oMDCItem, oSortProp);
+            var oSorter = this._getSorterForItem(oMDCItem, oSortProp);
 
             if (aSorters) {
                 aSorters.push(oSorter);

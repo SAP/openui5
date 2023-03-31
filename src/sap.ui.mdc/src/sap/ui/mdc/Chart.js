@@ -6,10 +6,7 @@ sap.ui.define([
         "sap/ui/core/Core",
         "sap/ui/mdc/Control",
         "./chart/ChartSettings",
-        "sap/ui/mdc/util/loadModules",
         "./ChartRenderer",
-        "sap/ui/mdc/library",
-        "sap/m/Text",
         "sap/base/Log",
         "./chart/ChartToolbar",
         "./chart/PropertyHelper",
@@ -25,7 +22,6 @@ sap.ui.define([
         "sap/ui/core/library",
         "sap/ui/events/KeyCodes",
         "sap/ui/mdc/util/InfoBar",
-        "sap/m/Label",
         "sap/ui/core/format/ListFormat",
         "sap/ui/mdc/enum/ProcessingStrategy"
     ],
@@ -33,10 +29,7 @@ sap.ui.define([
         Core,
         Control,
         ChartSettings,
-        loadModules,
         ChartRenderer,
-        MDCLib,
-        Text,
         Log,
         ChartToolbar,
         PropertyHelper,
@@ -52,7 +45,6 @@ sap.ui.define([
         coreLibrary,
         KeyCodes,
         InfoBar,
-        Label,
         ListFormat,
         ProcessingStrategy
     ) {
@@ -66,15 +58,18 @@ sap.ui.define([
          *
          * @param {string} [sId] ID for the new control, generated automatically if no id is given
          * @param {object} [mSettings] Initial settings for the new control
+         *
          * @class The Chart control creates a chart based on metadata and the configuration specified.
          * @extends sap.ui.mdc.Control
          * @author SAP SE
          * @version ${version}
          * @constructor
+         *
          * @experimental As of version 1.88
          * @private
          * @ui5-restricted sap.fe
          * @MDC_PUBLIC_CANDIDATE
+         *
          * @since 1.88
          * @alias sap.ui.mdc.Chart
          */
@@ -88,6 +83,7 @@ sap.ui.define([
                 ],
                 defaultAggregation: "items",
                 properties: {
+
                     /**
 					 * Defines the width of the chart.
 					 */
@@ -97,6 +93,7 @@ sap.ui.define([
 						defaultValue: "100%",
 						invalidate: true
 					},
+
 					/**
 					 * Defines the height of the chart.
 					 */
@@ -106,6 +103,7 @@ sap.ui.define([
 						defaultValue: "100%",
 						invalidate: true
 					},
+
                     /**
                      * Defines the module path of the metadata delegate.
                      */
@@ -116,6 +114,7 @@ sap.ui.define([
                             name: "sap/ui/mdc/ChartDelegate"
                         }
                     },
+
                     /**
                      * Specifies header text that is shown in chart
                      */
@@ -124,14 +123,16 @@ sap.ui.define([
                         group: "Misc",
                         defaultValue: null
                     },
+
                     /**
                      * Defines the no data text shown in the chart.
                      * @since 1.88
                      */
                     noDataText: {
                         type: "string",
-                        defaultValue: "No data"
+                        defaultValue: "No data" //TODO WHy do we have a not translated default value?
                     },
+
                     /**
                      * Specifies the personalization options available for the chart.<br>
                      * <b>Note:</b> The order of the provided options does not influence the arrangement of the icons on the UI.
@@ -153,6 +154,7 @@ sap.ui.define([
                         group: "Misc",
                         defaultValue: true
                     },
+
                     /**
                      * Specifies which actions should not be available in the chart's toolbar.
                      *
@@ -162,6 +164,7 @@ sap.ui.define([
                         type: "sap.ui.mdc.ChartToolbarActionType[]",
                         defaultValue: []
                     },
+
                     //TODO: Do we really need this? Should be avoided.
                     /**
                      * The minimal width
@@ -172,6 +175,7 @@ sap.ui.define([
                         defaultValue: "240px",
                         invalidate: true
                     },
+
                     //TODO: Do we really need this? Should be avoided.
                     /**
                      * The minimal height
@@ -182,6 +186,7 @@ sap.ui.define([
                         defaultValue: "400px",
                         invalidate: true
                     },
+
                     /**
                      * Defines the sort conditions.
                      *
@@ -192,6 +197,7 @@ sap.ui.define([
                     sortConditions: {
                         type: "object"
                     },
+
                     /**
                      * Defines the filter conditions.
                      *
@@ -199,12 +205,13 @@ sap.ui.define([
                      *
                      * @since 1.99
                      */
-                     filterConditions: {
+                    filterConditions: {
                         type: "object",
                         defaultValue: {}
                     },
+
                     /**
-                     * Controls the visibility of the chart tooltip. If set to <code>true</code>, an instance of {@link sap.viz.ui5.controls.VizTooltip} is created and shown when hovering over a data point.
+                     * Controls the visibility of the chart tooltip. If set to <code>true</code>, a call of the delegate.setChartTooltipVisibility will be triggered and can be used to make the Char tooltip visible.
                      *
                      * @since 1.88
                      */
@@ -213,6 +220,7 @@ sap.ui.define([
                         group: "Misc",
                         defaultValue: true
                     },
+
                     /**
                      * If set to <code>true</code>, the chart is automatically bound after initialization.
                      * If set to <code>false</code>, the chart is bound after the first call to <code>rebind</code>.
@@ -231,6 +239,7 @@ sap.ui.define([
                         group: "Misc",
                         defaultValue: "column"
                     },
+
                     /**
                      * Enables the Details button in the chart toolbar.
                      */
@@ -239,10 +248,11 @@ sap.ui.define([
                         group: "Misc",
                         defaultValue: true
                     },
+
                     /**
                      * Specifies the chart metadata.<br>
                      * <b>Note</b>: This property must not be bound.<br>
-                     * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/ sap.fe. Do not use it otherwise.
+                     * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/sap.fe. Do not use it otherwise.
                      *
                      * @since 1.99
                      */
@@ -250,6 +260,7 @@ sap.ui.define([
                         type: "object",
                         defaultValue: []
                     },
+
                     /**
                     * Semantic level of the header.
                     * For more information, see {@link sap.m.Title#setLevel}.
@@ -261,6 +272,7 @@ sap.ui.define([
                         group: "Appearance",
                         defaultValue: TitleLevel.Auto
                     },
+
                     /**
                      * Determines whether the header text is shown in the chart. Regardless of its value, the given header text is used to label the chart
                      * correctly for accessibility purposes.
@@ -1300,7 +1312,7 @@ sap.ui.define([
         };
 
         /**
-         * Callback for when fuilters changed
+         * Callback for when filters changed
          * Activates the overlay on the MDC chart
          *
          * @param oEvent filter changed event

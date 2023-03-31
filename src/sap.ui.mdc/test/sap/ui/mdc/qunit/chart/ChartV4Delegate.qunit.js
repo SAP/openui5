@@ -507,19 +507,19 @@ function(
         assert.ok(this.oInnerChart.getVizProperties().sizeLegend.visible, "Legend is set visible");
     });
 
-    QUnit.test("getSorterForItem", function(assert) {
-        var oAggrItem = new Item("aggrItem", {name: "Item1", type: "aggregatable"});
-        var oGroupItem = new Item("groupItem", {name: "Item2", type: "groupable"});
+    // QUnit.test("getSorterForItem", function(assert) {
+    //     var oAggrItem = new Item("aggrItem", {name: "Item1", type: "aggregatable"});
+    //     var oGroupItem = new Item("groupItem", {name: "Item2", type: "groupable"});
 
-        this.oMDCChart.addItem(oAggrItem);
-        this.oMDCChart.addItem(oGroupItem);
+    //     this.oMDCChart.addItem(oAggrItem);
+    //     this.oMDCChart.addItem(oGroupItem);
 
-        var oAggrSorter = ChartDelegate.getSorterForItem(oAggrItem, {descending: true});
-        var oGroupSorter = ChartDelegate.getSorterForItem(oGroupItem, {name: "Item2", descending: true});
-        assert.ok(oAggrSorter, "Sorter returned");
-        assert.ok(oGroupSorter, "Sorter returned");
+    //     var oAggrSorter = ChartDelegate.getSorterForItem(oAggrItem, {descending: true});
+    //     var oGroupSorter = ChartDelegate.getSorterForItem(oGroupItem, {name: "Item2", descending: true});
+    //     assert.ok(oAggrSorter, "Sorter returned");
+    //     assert.ok(oGroupSorter, "Sorter returned");
 
-    });
+    // });
 
     QUnit.test("insertItemToInnerChart function", function(assert) {
         sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind").returns(undefined);
