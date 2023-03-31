@@ -1,7 +1,55 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/m/p13n/Engine", "test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "delegates/odata/v4/TypeUtil", "sap/m/p13n/modules/StateHandlerRegistry", "sap/ui/core/Core", "sap/base/util/merge"
-], function (Engine, createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil, StateHandlerRegistry, oCore, merge) {
+	"sap/m/p13n/Engine",
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
+	"sap/ui/mdc/TableDelegate",
+	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/p13n/StateUtil",
+	"sap/ui/mdc/FilterBarDelegate",
+	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/ChartDelegate",
+	"delegates/odata/v4/TypeUtil",
+	"sap/m/p13n/modules/StateHandlerRegistry",
+	"sap/ui/core/Core",
+	"sap/base/util/merge",
+	"sap/ui/model/odata/type/String", // to have types loaded, needed for legacy-free UI5
+	"sap/ui/model/odata/type/Boolean",
+	"sap/ui/model/odata/type/Int16",
+	"sap/ui/model/odata/type/Int32",
+	"sap/ui/model/odata/type/Int64",
+	"sap/ui/model/odata/type/SByte",
+	"sap/ui/model/odata/type/Decimal",
+	"sap/ui/model/odata/type/Double",
+	"sap/ui/model/odata/type/Date",
+	"sap/ui/model/odata/type/TimeOfDay",
+	"sap/ui/model/odata/type/DateTimeOffset",
+	"sap/ui/model/odata/type/Guid"
+], function (
+	Engine,
+	createAppEnvironment,
+	TableDelegate,
+	Column,
+	StateUtil,
+	FilterBarDelegate,
+	FilterField,
+	ChartDelegate,
+	TypeUtil,
+	StateHandlerRegistry,
+	oCore,
+	merge,
+	StringType,
+	BooleanType,
+	Int16Type,
+	Int32Type,
+	Int64Type,
+	SByteType,
+	DecimalType,
+	DoubleType,
+	DateType,
+	TimeOfDayType,
+	DateTimeOffsetType,
+	GuidType
+) {
 	"use strict";
 
 	oCore.loadLibrary("sap.ui.fl");

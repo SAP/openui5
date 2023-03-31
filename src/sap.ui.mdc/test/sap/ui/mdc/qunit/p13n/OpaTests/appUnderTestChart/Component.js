@@ -20,7 +20,8 @@ sap.ui.define([
 
 	return CommonComponent.extend("appUnderTestChart.Component", {
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			async: true
 		},
 
 		init: function () {
