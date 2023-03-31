@@ -192,6 +192,9 @@ describe("sap.m.Label", function() {
 		});
 
 		element(by.id('cozySwitch')).click();
+
+		// clean up - reset language
+		changeLanguage("en");
 	});
 
 	it("should visualize the Chinese language (Traditional Chinese zh-Hant)", function () {
@@ -209,13 +212,16 @@ describe("sap.m.Label", function() {
 		});
 
 		element(by.id('cozySwitch')).click();
+
+		// clean up - reset language
+		changeLanguage("en");
 	});
 
 	it("should visualize label with fixed width, asterisk and colon", function () {
 		var lbl = element(by.id('lblcolonrequired'));
 
 		browser.executeScript("document.getElementById('lblcolonrequired').scrollIntoView()").then(function () {
-			expect(takeScreenshot(lbl)).toLookAs("28_label_required_colon");
+			expect(takeScreenshot(lbl)).toLookAs("32_label_required_colon");
 		});
 	});
 });
