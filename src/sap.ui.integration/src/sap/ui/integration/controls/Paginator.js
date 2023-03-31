@@ -25,7 +25,8 @@ sap.ui.define([
 
 	var sAnimationMode = Core.getConfiguration().getAnimationMode(),
 		bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal,
-		iServerSideAfterTransitionDelay = 200;
+		iServerSideAfterTransitionDelay = 200,
+		oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Constructor for a new Paginator.
@@ -89,6 +90,7 @@ sap.ui.define([
 			src: "sap-icon://slim-arrow-left",
 			useIconTooltip: false,
 			decorative: false,
+			tooltip: oResourceBundle.getText("PAGINGBUTTON_PREVIOUS"),
 			press: this.previous.bind(this)
 		}));
 
@@ -96,6 +98,7 @@ sap.ui.define([
 			src: "sap-icon://slim-arrow-right",
 			useIconTooltip: false,
 			decorative: false,
+			tooltip: oResourceBundle.getText("PAGINGBUTTON_NEXT"),
 			press: this.next.bind(this)
 		}));
 	};
