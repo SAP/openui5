@@ -58,22 +58,23 @@ sap.ui.define([
 	 * Returns <code>true</code> if this binding or its dependent bindings have changes.
 	 *
 	 * Note: This private function is needed in order to hide the additional parameter
-	 * <code>bIgnoreInactiveCaches</code> from the public API {@link #hasPendingChanges}.
+	 * <code>sPathPrefix</code> from the public API {@link #hasPendingChanges}.
 	 *
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by certain APIs, see
 	 *   {@link #hasPendingChanges}
-	 * @param {boolean} [bIgnoreInactiveCaches]
-	 *   Whether to ignore changes in inactive caches
+	 * @param {boolean} [sPathPrefix]
+	 *   If supplied, only caches having a resource path starting with <code>sPathPrefix</code> are
+	 *   checked
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding is resolved and has pending changes
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype._hasPendingChanges = function (bIgnoreKeptAlive, bIgnoreInactiveCaches) {
+	ODataBinding.prototype._hasPendingChanges = function (bIgnoreKeptAlive, sPathPrefix) {
 		return this.isResolved()
 			&& (this.hasPendingChangesForPath("", bIgnoreKeptAlive)
-				|| this.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches));
+				|| this.hasPendingChangesInDependents(bIgnoreKeptAlive, sPathPrefix));
 	};
 
 	/**
@@ -81,10 +82,11 @@ sap.ui.define([
 	 * invalid user input.
 	 *
 	 * Note: This private function is needed in order to hide the additional parameter
-	 * <code>bIgnoreInactiveCaches</code> from the public API {@link #resetChanges}.
+	 * <code>sPathPrefix</code> from the public API {@link #resetChanges}.
 	 *
-	 * @param {boolean} [bIgnoreInactiveCaches]
-	 *   Whether to ignore changes in inactive caches
+	 * @param {boolean} [sPathPrefix]
+	 *   If supplied, only caches having a resource path starting with <code>sPathPrefix</code> are
+	 *   reset
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the binding
 	 *   itself and all dependent bindings are canceled
@@ -94,12 +96,12 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype._resetChanges = function (bIgnoreInactiveCaches) {
+	ODataBinding.prototype._resetChanges = function (sPathPrefix) {
 		var aPromises = [];
 
 		this.checkSuspended();
 		this.resetChangesForPath("", aPromises);
-		this.resetChangesInDependents(aPromises, bIgnoreInactiveCaches);
+		this.resetChangesInDependents(aPromises, sPathPrefix);
 		this.resetInvalidDataState();
 
 		return Promise.all(aPromises).then(function () {});
@@ -1028,8 +1030,9 @@ sap.ui.define([
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
 	 *   relate to a deleted context or a context which is kept alive
-	 * @param {boolean} [bIgnoreInactiveCaches]
-	 *   Whether to ignore changes in inactive caches
+	 * @param {boolean} [sPathPrefix]
+	 *   If supplied, only caches having a resource path starting with <code>sPathPrefix</code> are
+	 *   checked
 	 * @returns {boolean}
 	 *   <code>true</code> if this binding has pending changes
 	 *
@@ -1403,8 +1406,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.SyncPromise[]} aPromises
 	 *   List of promises which is extended for each call to {@link #resetChangesInDependents}.
-	 * @param {boolean} [bIgnoreInactiveCaches]
-	 *   Whether to ignore changes in inactive caches
+	 * @param {boolean} [sPathPrefix]
+	 *   If supplied, only caches having a resource path starting with <code>sPathPrefix</code> are
+	 *   reset
 	 * @throws {Error}
 	 *   If there is a change of this binding which has been sent to the server and for which there
 	 *   is no response yet.
