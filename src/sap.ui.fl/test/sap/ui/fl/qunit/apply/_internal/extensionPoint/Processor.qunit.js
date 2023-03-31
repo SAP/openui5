@@ -42,7 +42,6 @@ sap.ui.define([
 		oSpyApplyExtensionPoint = sandbox.spy(ExtensionPointProcessor, "applyExtensionPoint");
 		oSpyAddXMLAtExtensionPointApply = sandbox.spy(AddXMLAtExtensionPoint, "applyChange");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
-		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 
 		sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp.async")}});
 		return Component.create({
@@ -57,6 +56,7 @@ sap.ui.define([
 				});
 			});
 			oComponentContainer.placeAt("content");
+			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			return oComponent.getRootControl().loaded();
 		}).then(function() {
 			return oComponent.getRootControl().byId("async").loaded();

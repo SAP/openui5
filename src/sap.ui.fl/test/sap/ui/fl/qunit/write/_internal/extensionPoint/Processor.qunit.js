@@ -55,6 +55,7 @@ sap.ui.define([
 				});
 			});
 			oComponentContainer.placeAt("content");
+			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			return oComponent.getRootControl().loaded();
 		}).then(function() {
 			return oComponent.getRootControl().byId("async").loaded();
@@ -127,7 +128,6 @@ sap.ui.define([
 	QUnit.module("ExtensionPoints with async view when component is created async with 'flexExtensionPointEnabled: false'", {
 		before: function () {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			return createComponentAndContainer();
 		},
 		after: destroyComponentAndContainer
