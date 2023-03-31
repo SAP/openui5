@@ -16,7 +16,6 @@ sap.ui.define([
 		imageContent: new LightBoxItem({
 			imageSrc: '../images/demo/nature/elephant.jpg',
 			title: 'I am a title',
-			subtitle: 'Sample image',
 			alt: 'picture of elephant'
 		})
 	});
@@ -51,7 +50,7 @@ sap.ui.define([
 	var oLightBoxSquare = new LightBox('lB5', {
 		imageContent: new LightBoxItem({
 			title: 'I am a title',
-			subtitle: 'Image smaller than the minimal size of the light box',
+			subtitle: 'Smaller than the minimal size',
 			alt: 'picture of elephant',
 			imageSrc: '../images/demo/smallImgs/150x150.jpg'
 		})
@@ -60,7 +59,7 @@ sap.ui.define([
 	var oLightBoxVerticalMin = new LightBox('lB6', {
 		imageContent: new LightBoxItem({
 			title: 'Image with small width but',
-			subtitle: 'height bigger than the min size of the light box',
+			subtitle: 'Bigger than the min height',
 			alt: 'picture of elephant',
 			imageSrc: '../images/demo/smallImgs/150x288.jpg'
 		})
@@ -69,7 +68,7 @@ sap.ui.define([
 	var oLightBoxHorizontalMin = new LightBox('lB7', {
 		imageContent: new LightBoxItem({
 			title: 'Image with small height but',
-			subtitle: 'width bigger than the min size of the light box',
+			subtitle: 'Bigger than the min width',
 			alt: 'picture of elephant',
 			imageSrc: '../images/demo/smallImgs/320x150.jpg'
 		})
