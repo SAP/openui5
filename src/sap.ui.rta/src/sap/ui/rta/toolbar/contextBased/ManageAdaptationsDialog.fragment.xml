@@ -98,16 +98,7 @@
 						<Text text="{ parts: ['contextBased>contexts/role'], formatter: '.formatContextColumnCell'}"
 							tooltip="{ parts: ['contextBased>contexts/role'], formatter: '.formatContextColumnTooltip'}" />
 						<Text text="{ parts: ['contextBased>createdBy', 'contextBased>createdAt'], formatter: '.formatCreatedChangedOnColumnCell'}"/>
-						<Text text="{ parts: ['contextBased>changedBy', 'contextBased>changedAt'], formatter: '.formatCreatedChangedOnColumnCell'}"/>		
-						<!--
-						<MenuButton text="{i18n>CLM_HEADER_ADAPTATIONS_ACTIONS}">
-							<menu>
-								<Menu itemSelected=".onMenuAction">
-									<MenuItem text="{i18n>MENU_BTN_EDIT}" icon="sap-icon://edit"/>
-								</Menu>
-							</menu>
-						</MenuButton>
-						-->
+						<Text text="{ parts: ['contextBased>changedBy', 'contextBased>changedAt'], formatter: '.formatCreatedChangedOnColumnCell'}"/>
 					</cells>
 				</ColumnListItem>
 			</items>

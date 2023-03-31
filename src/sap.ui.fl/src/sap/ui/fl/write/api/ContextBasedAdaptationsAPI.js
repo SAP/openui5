@@ -119,27 +119,61 @@ sap.ui.define([
 			count: 0,
 			displayedAdaptation: {}
 		});
-		oModel.updateAdaptations = function(aAdaptations) {
+		oModel.updateAdaptations = function(aAdaptations, sAdaptationId) {
 			var aContextBasedAdaptations = aAdaptations.filter(function(oAdapation, iIndex) {
 				oAdapation.rank = iIndex + 1; // initialize ranks
 				return oAdapation.type !== Adaptations.Type.Default;
 			});
-			oModel.setProperty("/allAdaptations", aAdaptations);
 			oModel.setProperty("/adaptations", aContextBasedAdaptations);
+			oModel.setProperty("/allAdaptations", aAdaptations);
 			oModel.setProperty("/count", aContextBasedAdaptations.length);
+			var iAdaptationIndex = oModel.getIndexByAdaptationId(sAdaptationId) || 0;
 			if (aContextBasedAdaptations.length > 0) {
-				var oDisplayedAdaptation = oModel.getProperty("/adaptations/0/"); //TODO: might be changed in future
+				var oDisplayedAdaptation = oModel.getProperty("/adaptations/" + iAdaptationIndex + "/");
 				oModel.setProperty("/displayedAdaptation", oDisplayedAdaptation);
+			} else {
+				var oDefaultAdaptation = (aAdaptations.length > 0) ? aAdaptations[aAdaptations.length - 1] : {};
+				oModel.setProperty("/displayedAdaptation", oDefaultAdaptation);
 			}
 			oModel.updateBindings(true);
 		};
 		oModel.insertAdaptation = function(oNewAdaptation) {
-			aAdaptations = oModel.getProperty("/allAdaptations");
+			var aAdaptations = oModel.getProperty("/allAdaptations");
 			aAdaptations.splice(oNewAdaptation.priority, 0, oNewAdaptation);
 			delete oNewAdaptation.priority;
-			oModel.updateAdaptations(aAdaptations);
+			oModel.updateAdaptations(aAdaptations, oNewAdaptation.id);
 		};
-		oModel.updateAdaptations(aAdaptations);
+		oModel.deleteAdaptation = function() {
+			var iIndex = oModel.getProperty("/displayedAdaptation").rank - 1;
+			var aAdaptations = oModel.getProperty("/adaptations");
+			var iModelCount = oModel.getProperty("/count");
+			var sDisplayedAdaptationId;
+			if (iModelCount === 1) {
+				aAdaptations.splice(iIndex, 1);
+			} else {
+				sDisplayedAdaptationId = aAdaptations[iIndex + ((iIndex === iModelCount - 1) ? -1 : 1)].id;
+				aAdaptations.splice(iIndex, 1);
+			}
+			var oDefaultAdaptation = oModel.getProperty("/allAdaptations").pop();
+			aAdaptations.push(oDefaultAdaptation);
+			oModel.updateAdaptations(aAdaptations, sDisplayedAdaptationId);
+		};
+		oModel.switchDisplayedAdaptation = function(sAdaptationId) {
+			var iIndex = oModel.getIndexByAdaptationId(sAdaptationId);
+			var oNewDisplayedAdaptation = oModel.getProperty("/adaptations")[iIndex];
+			oModel.setProperty("/displayedAdaptation", oNewDisplayedAdaptation);
+			oModel.updateBindings(true);
+		};
+		oModel.getIndexByAdaptationId = function(sAdaptationId) {
+			var aAdaptations = oModel.getProperty("/adaptations");
+			var iAdaptationIndex = aAdaptations.findIndex(function(oAdaptation) {
+				return oAdaptation.id === sAdaptationId;
+			});
+			return (iAdaptationIndex > -1) ? iAdaptationIndex : undefined;
+		};
+		if (aAdaptations.length > 0) {
+			oModel.updateAdaptations(aAdaptations, aAdaptations[0].id);
+		}
 		return oModel;
 	};
 
@@ -272,7 +306,6 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.contextBasedAdaptation.title - Title of the new adaptation
 	 * @param {object} mPropertyBag.contextBasedAdaptation.contexts - Contexts of the new adaptation, for example roles for which the adaptation is created
 	 * @param {object} mPropertyBag.contextBasedAdaptation.priority - Priority of the new adaptation
-	 * @param {object} mPropertyBag.contextBasedAdaptation.priority - ID of the new adaptation
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
 	 */
 	ContextBasedAdaptationsAPI.create = function(mPropertyBag) {
@@ -342,7 +375,7 @@ sap.ui.define([
 			appId: mPropertyBag.appId,
 			adaptationId: mPropertyBag.adaptationId,
 			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
-		}).then(function (oResponse) {
+		}).then(function(oResponse) {
 			return handleResponseForVersioning(oResponse, 200, mPropertyBag);
 		});
 	};
@@ -372,7 +405,7 @@ sap.ui.define([
 			flexObjects: mPropertyBag.parameters,
 			appId: mPropertyBag.appId,
 			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
-		}).then(function (oResponse) {
+		}).then(function(oResponse) {
 			return handleResponseForVersioning(oResponse, 204, mPropertyBag);
 		});
 	};
@@ -397,12 +430,42 @@ sap.ui.define([
 			flexObject: mPropertyBag.parameters,
 			appId: mPropertyBag.appId,
 			version: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
-		}).then(function (oAdaptations) {
+		}).then(function(oAdaptations) {
 			if (!oAdaptations) {
 				oAdaptations = { adaptations: [] };
 			}
 			return oAdaptations;
 		});
 	};
+
+	/**
+	 * Deletes existing context-based adaptation
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer
+	 * @param {string} mPropertyBag.appId - Reference of the application
+	 * @returns {Promise} Promise that resolves with the context-based adaptation
+	 */
+	ContextBasedAdaptationsAPI.remove = function (mPropertyBag) {
+		if (!mPropertyBag.layer) {
+			return Promise.reject("No layer was provided");
+		}
+		if (!mPropertyBag.control) {
+			return Promise.reject("No control was provided");
+		}
+		if (!mPropertyBag.adaptationId) {
+			return Promise.reject("No adaptationId was provided");
+		}
+		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
+		return Storage.contextBasedAdaptation.remove({
+			layer: mPropertyBag.layer,
+			appId: mPropertyBag.appId,
+			adaptationId: mPropertyBag.adaptationId,
+			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
+		}).then(function(oResponse) {
+			return handleResponseForVersioning(oResponse, 204, mPropertyBag);
+		});
+	};
+
 	return ContextBasedAdaptationsAPI;
 });

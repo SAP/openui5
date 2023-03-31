@@ -189,6 +189,9 @@ sap.ui.define([
 			},
 			update: function() {
 				return Promise.reject("contextBasedAdaptation.update is not implemented");
+			},
+			remove: function() {
+				return Promise.reject("contextBasedAdaptation.remove is not implemented");
 			}
 		},
 		versions: {

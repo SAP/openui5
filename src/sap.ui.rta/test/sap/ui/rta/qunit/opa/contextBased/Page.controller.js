@@ -71,6 +71,7 @@ sap.ui.define([
 		this.getContextsStub = this.sandbox.stub(WriteStorage, "getContexts");
 		this.loadContextDescriptionStub = this.sandbox.stub(WriteStorage, "loadContextDescriptions");
 		this.getAdaptationsModelStub = this.sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
+		this.removeStub = this.sandbox.stub(ContextBasedAdaptationsAPI, "remove");
 	}
 
 	function setStubsWithData() {
@@ -119,6 +120,14 @@ sap.ui.define([
 
 		this.reorderStub.callsFake(function(mPropertyBag) {
 			return Promise.resolve(mPropertyBag);
+		});
+
+		this.removeStub.callsFake(function(mPropertyBag) {
+			sinon.assert.match(Object.keys(mPropertyBag).includes("layer"), true);
+			sinon.assert.match(mPropertyBag.layer, "CUSTOMER");
+			sinon.assert.match(Object.keys(mPropertyBag).includes("adaptationId"), true);
+			sinon.assert.match(Object.keys(mPropertyBag).includes("control"), true);
+			return Promise.resolve();
 		});
 	}
 

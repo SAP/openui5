@@ -3,29 +3,35 @@
  */
 
 sap.ui.define([
+	"./AdaptationRenderer",
+	"sap/base/Log",
+	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
-	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
-	"sap/ui/rta/toolbar/translation/Translation",
-	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
-	"sap/ui/rta/Utils",
-	"./AdaptationRenderer"
+	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
+	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
+	"sap/ui/rta/toolbar/translation/Translation",
+	"sap/ui/rta/toolbar/versioning/Versioning",
+	"sap/ui/rta/Utils"
 ], function(
+	AdaptationRenderer,
+	Log,
+	MessageBox,
 	Fragment,
 	Popup,
+	ContextBasedAdaptationsAPI,
 	Version,
-	SaveAsAdaptation,
-	ManageAdaptations,
-	Translation,
-	Versioning,
 	AppVariantFeature,
 	Base,
-	Utils,
-	AdaptationRenderer
+	ManageAdaptations,
+	SaveAsAdaptation,
+	Translation,
+	Versioning,
+	Utils
 ) {
 	"use strict";
 
@@ -298,6 +304,7 @@ sap.ui.define([
 				openChangeCategorySelectionPopover: this.eventHandler.bind(this, "OpenChangeCategorySelectionPopover"),
 				saveAsAdaptation: onSaveAsAdaptation.bind(this),
 				editAdaptation: onEditAdaptation.bind(this),
+				deleteAdaptation: onDeleteAdaptation.bind(this),
 				manageAdaptations: onManageAdaptations.bind(this),
 				formatAdaptationsMenuText: formatAdaptationsMenuText.bind(this),
 				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
@@ -336,6 +343,30 @@ sap.ui.define([
 
 	function onEditAdaptation() {
 		this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer, true /*bIsEditMode*/);
+	}
+
+	function onDeleteAdaptation() {
+		var oAdaptationsModel = this.getModel("contextBasedAdaptations");
+		var oRtaInformation = this.getRtaInformation();
+		Utils.showMessageBox("confirm", "DAC_DIALOG_DESCRIPTION", {
+			titleKey: "DAC_DIALOG_HEADER"
+		}).then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
+				ContextBasedAdaptationsAPI.remove({
+					control: oRtaInformation.rootControl,
+					layer: oRtaInformation.flexSettings.layer,
+					adaptationId: oAdaptationsModel.getProperty("/displayedAdaptation").id
+				}).then(function() {
+					oAdaptationsModel.deleteAdaptation();
+				}).catch(function(oError) {
+					Log.error(oError.stack);
+					var sMessage = "MSG_LREP_TRANSFER_ERROR";
+					var oOptions = { titleKey: "DAC_DIALOG_HEADER" };
+					oOptions.details = oError.userMessage;
+					Utils.showMessageBox("error", sMessage, oOptions);
+				});
+			}
+		});
 	}
 
 	function onManageAdaptations() {

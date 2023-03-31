@@ -1308,8 +1308,10 @@ sap.ui.define([
 		beforeEach: function () {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
+			this.sLayer = Layer.CUSTOMER;
 			this.sAppId = "ZDEMOTE_ST";
 			this.sAdaptationId = "id_12345678";
+
 			this.oStubWriteSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			this.oStubInitialUtilsSendRequest = sandbox.stub(InitialUtils, "sendRequest").callsFake(function () {
 				return Promise.resolve({response: {}});
@@ -1391,6 +1393,23 @@ sap.ui.define([
 				var oCallArguments = this.oStubInitialUtilsSendRequest.getCall(0).args;
 				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?version=" + mPropertyBag.version, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "GET", "the correct http method was passed");
+			}.bind(this));
+		});
+
+		QUnit.test("Given a mock server, when contextBasedAdaptation.remove is triggered", function (assert) {
+			var mPropertyBag = {
+				layer: this.sLayer,
+				appId: this.sAppId,
+				adaptationId: this.sAdaptationId,
+				url: "/sap/bc/lrep",
+				parentVersion: "4124001231923DHS91231230"
+			};
+
+			return WriteLrepConnector.contextBasedAdaptation.remove(mPropertyBag).then(function () {
+				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
+				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
+				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/" + mPropertyBag.adaptationId + "?parentVersion=" + mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[1], "DELETE", "the correct http method was passed");
 			}.bind(this));
 		});
 

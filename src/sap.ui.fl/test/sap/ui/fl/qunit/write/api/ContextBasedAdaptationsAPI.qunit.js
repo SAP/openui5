@@ -329,7 +329,18 @@ sap.ui.define([
 				allAdaptations: [this.oDefaultAdaptation],
 				adaptations: [],
 				count: 0,
-				displayedAdaptation: {}
+				displayedAdaptation: {
+					changedAt: "",
+					changedBy: "",
+					contexts: {},
+					createdAt: "",
+					createdBy: "",
+					description: "",
+					id: "DEFAULT",
+					rank: 1,
+					title: "",
+					type: "DEFAULT"
+				}
 			};
 		},
 		afterEach: function() {
@@ -372,6 +383,123 @@ sap.ui.define([
 			var oExpectedInsertedData = {allAdaptations: [oNewAdaptation, this.oDefaultAdaptation], adaptations: [oNewAdaptation], count: 1, displayedAdaptation: oNewAdaptation};
 			oModel.insertAdaptation(oNewAdaptation);
 			assert.deepEqual(oModel.getData(), oExpectedInsertedData, "then the adaptations model is updated correctly");
+		});
+
+		QUnit.test("when a list of adaptations is initialized and later 1 adaptation is inserted", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+			var oNewAdaptation = {
+				id: "id-1591275572999-1",
+				priority: 1,
+				contexts: {
+					role: ["ADMIN"]
+				},
+				title: "IT Chief Admin"
+			};
+			var oExpectedNewAdaptation = {
+				id: "id-1591275572999-1",
+				contexts: {
+					role: ["ADMIN"]
+				},
+				title: "IT Chief Admin",
+				rank: 2
+			};
+
+			var oAdaptation1 = this.oExpectedFilledData.adaptations[0];
+			var oAdaptation2 = this.oExpectedFilledData.adaptations[1];
+			// rank is expected to increase as a new adaptation is inserted in between
+			oAdaptation2.rank = 3;
+			var oExpectedFilledData = {
+				allAdaptations: [oAdaptation1, oExpectedNewAdaptation, oAdaptation2, this.oDefaultAdaptation],
+				adaptations: [oAdaptation1, oExpectedNewAdaptation, oAdaptation2],
+				count: 3,
+				displayedAdaptation: oExpectedNewAdaptation
+			};
+			oModel.insertAdaptation(oNewAdaptation);
+			assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is updated correctly");
+		});
+
+		QUnit.test("when a list of adaptations is initialized and later the first adaptation is deleted", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+			var oAdaptation = this.oExpectedFilledData.adaptations[1];
+			// rank is expected to decrease as the leading adaptation is deleted
+			oAdaptation.rank = 1;
+			var oExpectedFilledData = {
+				allAdaptations: [oAdaptation, this.oDefaultAdaptation],
+				adaptations: [oAdaptation],
+				count: 1,
+				displayedAdaptation: oAdaptation
+			};
+			oModel.deleteAdaptation();
+			assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is updated correctly");
+		});
+
+		QUnit.test("when a list of adaptations is initialized and later the last adaptation is deleted", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+			var oAdaptation = this.oExpectedFilledData.adaptations[0];
+			var oExpectedFilledData = {
+				allAdaptations: [oAdaptation, this.oDefaultAdaptation],
+				adaptations: [oAdaptation],
+				count: 1,
+				displayedAdaptation: oAdaptation
+			};
+			oModel.switchDisplayedAdaptation("id-1591275572835-1");
+			oModel.deleteAdaptation();
+			assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is updated correctly");
+		});
+
+		QUnit.test("when a list of adaptations is initialized and later an adaptation is created in the middle and then deleted again", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+			var oAdaptation1 = this.oExpectedFilledData.adaptations[0];
+			var oAdaptation2 = this.oExpectedFilledData.adaptations[1];
+			var oNewAdaptation3 = {
+				id: "id-1591275512345-1",
+				priority: 1,
+				contexts: {
+					role: ["HR_PARTNER"]
+				},
+				title: "HR Business Partner"
+			};
+			var oExpectedFilledData = {
+				allAdaptations: [oAdaptation1, oAdaptation2, this.oDefaultAdaptation],
+				adaptations: [oAdaptation1, oAdaptation2],
+				count: 2,
+				displayedAdaptation: oAdaptation2
+			};
+			oModel.insertAdaptation(oNewAdaptation3);
+			oModel.deleteAdaptation();
+			assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is updated correctly");
+		});
+
+		QUnit.test("when a list of adaptations is initialized and later all adaptations are deleted", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+			var oExpectedFilledData = {
+				allAdaptations: [this.oDefaultAdaptation],
+				adaptations: [],
+				count: 0,
+				displayedAdaptation: this.oDefaultAdaptation
+			};
+			oModel.deleteAdaptation();
+			oModel.deleteAdaptation();
+			assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is updated correctly");
+		});
+
+		QUnit.test("when a list of adaptations is initialized and later the displayed adaptation is switched", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+			var oExpectedDisplayedAdaptation = this.oExpectedFilledData.adaptations[1];
+			oModel.switchDisplayedAdaptation("id-1591275572835-1");
+			assert.deepEqual(oModel.getProperty("/displayedAdaptation"), oExpectedDisplayedAdaptation, "then the adaptations model is updated correctly");
+		});
+
+		QUnit.test("when a list of adaptations is initialized and getIndexByAdaptationId is called", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.strictEqual(oModel.getIndexByAdaptationId("id-1591275572834-1"), 0, "then the correct index is returned");
+			assert.strictEqual(oModel.getIndexByAdaptationId("id-1591275572835-1"), 1, "then the correct index is returned");
 		});
 	});
 
@@ -1111,6 +1239,102 @@ sap.ui.define([
 				assert.equal(oArgs.adaptationId, "id_12345", "then the correct adaptation is used");
 				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct appId is used");
 				assert.equal(sResult, "Success", "then the update was succesfull");
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Given ContextBasedAdaptationsAPI.remove is called", {
+		before: function () {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getManifestObject: function () {
+					return {
+						"sap.app": {
+							id: "com.sap.test.app"
+						}
+					};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
+		beforeEach: function () {
+			this.mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				control: new Control(),
+				contextBasedAdaptation: {},
+				adaptationId: "id_12345"
+			};
+			stubSettings(sandbox);
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when no control is provided", function (assert) {
+			delete this.mPropertyBag.control;
+			return ContextBasedAdaptationsAPI.remove(this.mPropertyBag).catch(function (sError) {
+				assert.equal(sError, "No control was provided", "then the correct error message is returned");
+			});
+		});
+
+		QUnit.test("when no layer is provided", function (assert) {
+			delete this.mPropertyBag.layer;
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			var sActiveVersion = 1;
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function () {
+					return sActiveVersion;
+				}
+			});
+			return ContextBasedAdaptationsAPI.remove(this.mPropertyBag).catch(function (sError) {
+				assert.equal(sError, "No layer was provided", "then the correct error message is returned");
+			});
+		});
+
+		QUnit.test("when no adaptationId is provided", function (assert) {
+			delete this.mPropertyBag.adaptationId;
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			var sActiveVersion = 1;
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function () {
+					return sActiveVersion;
+				}
+			});
+			return ContextBasedAdaptationsAPI.remove(this.mPropertyBag).catch(function (sError) {
+				assert.equal(sError, "No adaptationId was provided", "then the correct error message is returned");
+			});
+		});
+
+		QUnit.test("when control, layer, property and adaptationId are provided", function (assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			var sActiveVersion = 1;
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function () {
+					return sActiveVersion;
+				}
+			});
+
+			var oRemoveStub = sandbox.stub(Storage.contextBasedAdaptation, "remove").resolves("Success");
+			return ContextBasedAdaptationsAPI.remove(this.mPropertyBag).then(function (sResult) {
+				var oArgs = oRemoveStub.getCall(0).args[0];
+				assert.deepEqual(oArgs.flexObjects, this.mPropertyBag.parameters, "then the correct parameters with priority list is used");
+				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.equal(oArgs.parentVersion, 1, "then the correct version is used");
+				assert.equal(oArgs.adaptationId, "id_12345", "then the correct adaptation is used");
+				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct appId is used");
+				assert.equal(sResult, "Success", "then the remove was succesfull");
 			}.bind(this));
 		});
 	});

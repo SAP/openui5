@@ -424,6 +424,10 @@ sap.ui.define([
 		},
 		writeChange: function(mPropertyBag) {
 			return Storage.write(mPropertyBag);
+		},
+		remove: function(mPropertyBag) {
+			return _getWriteConnectors()
+				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.remove", mPropertyBag));
 		}
 	};
 

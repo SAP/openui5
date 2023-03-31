@@ -631,6 +631,12 @@ sap.ui.define([
 				return InitialUtils.sendRequest(sDataUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
 					return oResult.response;
 				});
+			},
+			remove: function(mPropertyBag) {
+				mPropertyBag.isContextBasedAdaptationEnabled = true;
+				mPropertyBag.method = "DELETE";
+				mPropertyBag.reference = mPropertyBag.adaptationId;
+				return _doWrite(mPropertyBag);
 			}
 		},
 		ui2Personalization: {
