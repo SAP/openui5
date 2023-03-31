@@ -144,11 +144,16 @@ sap.ui.define([
 		this.oReadyPromise.then(function() {
 			if (!this.oPopover){
 				this.oPopover = this._createPopover(oMDCChart);
+
 				this.oPopover.attachAfterClose(function(){
 					this.oPopover.destroy();
 					delete this.oPopover;
 				}.bind(this));
+
 				return this.oPopover.openBy(oButton);
+
+			} else if (this.oPopover) {
+				this.oPopover.close();
 			}
 		}.bind(this));
 	};
@@ -216,14 +221,13 @@ sap.ui.define([
 		});
 
 		var oSearchField = new SearchField({
-			placeholder: oRb.getText("chart.CHART_TYPE_SEARCH")
+			placeholder: oRb.getText("chart.CHART_TYPE_SEARCH"),
+			liveChange: function(oEvent) {
+				if (oMDCChart){
+					this._triggerSearchInPopover(oEvent, oList);
+				}
+			}.bind(this)
 		});
-
-		oSearchField.attachLiveChange(function(oEvent) {
-			if (oMDCChart){
-				this._triggerSearchInPopover(oEvent, oList);
-			}
-		}.bind(this));
 
 		var oPopover = new ResponsivePopover({
 			id: oMDCChart.getId() + "-btnChartTypePopover",

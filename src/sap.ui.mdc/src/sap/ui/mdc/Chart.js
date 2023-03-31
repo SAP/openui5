@@ -1026,6 +1026,7 @@ sap.ui.define([
         /**
          * shows the drill-down popover for selection a dimension to drill down to.
          * @param {sap.m.Button} oDrillBtn reference to the drill down button for loacation of the popover
+         * @returns {Promise} show dril stack promise
          *
          * @experimental
          * @private
@@ -1034,6 +1035,7 @@ sap.ui.define([
         Chart.prototype._showDrillDown = function (oDrillBtn) {
             if (!this.oDrillPopover) {
                 if (DrillStackHandler) {
+
                     this.oDrillPopover = DrillStackHandler.createDrillDownPopover(this);
                     this.oDrillPopover.attachAfterClose(function(){
                         delete this.oDrillPopover;
@@ -1047,6 +1049,7 @@ sap.ui.define([
                         "sap/ui/mdc/chart/DrillStackHandler"
                     ], function (DrillStackHandlerLoaded) {
                         DrillStackHandler = DrillStackHandlerLoaded;
+
                         this.oDrillPopover = DrillStackHandler.createDrillDownPopover(this);
                         this.oDrillPopover.attachAfterClose(function(){
                             delete this.oDrillPopover;
@@ -1058,6 +1061,8 @@ sap.ui.define([
                             });
                     }.bind(this));
                 }.bind(this));
+            } else if (this.oDrillPopover) {
+                this.oDrillPopover.close();
             }
         };
 
