@@ -884,7 +884,7 @@ sap.ui.define([
 			this._setAggregation(sAggregationName, aAggregation, bSuppressInvalidate);
 
 			if (oObject instanceof BlockBase || oObject instanceof ObjectPageLazyLoader) {
-				oObject.setParent(this); //let the block know of its parent subsection
+				oObject.setParent(this, "blocks"); //let the block know of its parent subsection
 			}
 
 		} else {
@@ -951,20 +951,33 @@ sap.ui.define([
 		return ObjectPageSectionBase.prototype.removeAllAggregation.apply(this, arguments);
 	};
 
-	ObjectPageSubSection.prototype.removeAggregation = function (sAggregationName, oObject) {
-		var bRemoved = false, aInternalAggregation;
+	ObjectPageSubSection.prototype.removeAggregation = function (sAggregationName, vObject) {
+		var bRemoved = false,
+			sTypeOfObject = typeof vObject,
+			aInternalAggregation,
+			oObject;
 
 		if (this.hasProxy(sAggregationName)) {
 			aInternalAggregation = this._getAggregation(sAggregationName);
-			aInternalAggregation.forEach(function (oObjectCandidate, iIndex) {
-				if (oObjectCandidate.getId() === oObject.getId()) {
-					aInternalAggregation.splice(iIndex, 1);
-					this._onRemoveBlock(oObject);
-					this._setAggregation(sAggregationName, aInternalAggregation);
-					bRemoved = true;
-				}
-				return !bRemoved;
-			}, this);
+
+			if (sTypeOfObject === "object" || sTypeOfObject === "string") {
+				oObject = sTypeOfObject === "string" ? Core.byId(vObject) : vObject;
+				aInternalAggregation.forEach(function (oObjectCandidate, iIndex) {
+					if (oObjectCandidate.getId() === oObject.getId()) {
+						aInternalAggregation.splice(iIndex, 1);
+						this._onRemoveBlock(oObject);
+						this._setAggregation(sAggregationName, aInternalAggregation);
+						bRemoved = true;
+					}
+					return !bRemoved;
+				}, this);
+			} else if (sTypeOfObject === "number") {
+				oObject = aInternalAggregation[vObject];
+				aInternalAggregation.splice(vObject, 1);
+				this._onRemoveBlock(oObject);
+				this._setAggregation(sAggregationName, aInternalAggregation);
+				bRemoved = true;
+			}
 
 			return (bRemoved ? oObject : null);
 		}
