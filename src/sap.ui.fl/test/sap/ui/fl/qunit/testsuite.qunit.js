@@ -1052,6 +1052,13 @@ sap.ui.define([
 				}
 			},
 
+			"designtime/util/IFrame.designtime": {
+				group: "Designtime",
+				coverage: {
+					only: ["sap/ui/fl/designtime/util/IFrame.designtime"]
+				}
+			},
+
 			// Variant tests:
 			"variants/VariantManagement": {
 				group: "Variants",
@@ -1148,7 +1155,7 @@ sap.ui.define([
 
 			// Rules
 			"rules/StableId": {
-				group: "rules",
+				group: "Rules",
 				ui5: {
 					resourceroots: {
 						"sap.ui.support.TestHelper": "test-resources/sap/ui/support/TestHelper"
@@ -1157,43 +1164,43 @@ sap.ui.define([
 			},
 			// Support
 			"support/apps/contentbrowser/controller/ContentDetails.controller": {
-				group: "support",
+				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
 			"support/apps/contentbrowser/controller/ContentDetailsEdit.controller": {
-				group: "support",
+				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
 			"support/apps/contentbrowser/controller/LayerContentMaster.controller": {
-				group: "support",
+				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
 			"support/apps/contentbrowser/controller/Layers.controller": {
-				group: "support",
+				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
 			"support/apps/contentbrowser/lrepConnector/LRepConnector": {
-				group: "support",
+				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
 			"support/apps/contentbrowser/utils/DataUtils": {
-				group: "support",
+				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
 			"support/apps/contentbrowser/utils/ErrorUtils": {
-				group: "support",
+				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
@@ -1201,28 +1208,28 @@ sap.ui.define([
 
 			// transport
 			"write/_internal/transport/TransportDialog": {
-				group: "transport",
+				group: "Transport",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/transport/TransportDialog"]
 				}
 			},
 			"write/_internal/transport/TransportSelection": {
-				group: "transport",
+				group: "Transport",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/transport/TransportSelection"]
 				}
 			},
 			"write/_internal/transport/Transports": {
-				group: "transport",
+				group: "Transport",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/transport/Transports"]
 				}
 			},
 			"designtime/Library": {
-				group: "designTime"
+				group: "DesignTime"
 			},
 			"integration/async/ComponentWithView": {
-				group: "integration/async",
+				group: "Integration/async",
 				ui5: {
 					resourceroots: {
 						"sap.ui.fl.qunit.integration.async": "test-resources/sap/ui/fl/qunit/integration/async"
@@ -1230,7 +1237,7 @@ sap.ui.define([
 				}
 			},
 			"integration/FlexInReuseComponents": {
-				group: "integration",
+				group: "Integration",
 				ui5: {
 					resourceroots: {
 						"sap.ui.fl.qunit.integration": "test-resources/sap/ui/fl/qunit/integration"
@@ -1238,7 +1245,7 @@ sap.ui.define([
 				}
 			},
 			"registry/Settings": {
-				group: "registry",
+				group: "Registry",
 				coverage: {
 					only: ["sap/ui/fl/registry/Settings"]
 				}
