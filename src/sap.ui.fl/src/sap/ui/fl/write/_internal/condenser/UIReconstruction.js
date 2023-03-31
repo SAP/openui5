@@ -224,7 +224,9 @@ sap.ui.define([
 				var sOldState = oCondenserInfo.change.getState();
 				oCondenserInfo.setTargetIndex(oCondenserInfo.change, iIndex);
 				oCondenserInfo.change.setState(sOldState);
-				oCondenserInfo.change.condenserState = "update";
+				if (oCondenserInfo.change.isPersisted()) {
+					oCondenserInfo.change.condenserState = "update";
+				}
 			}
 		}
 

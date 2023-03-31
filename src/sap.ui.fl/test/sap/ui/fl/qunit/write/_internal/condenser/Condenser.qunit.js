@@ -358,7 +358,32 @@ sap.ui.define([
 
 		QUnit.test("move and add within one group", function(assert) {
 			return loadApplyCondenseChanges.call(this, "addMoveSameGroup.json", 3, 2, assert)
-			.then(revertAndApplyNew.bind(this))
+			.then(function(aRemainingChanges) {
+				assert.strictEqual(aRemainingChanges[0].condenserState, "select", "then the move change has condenser state 'select'");
+				assert.strictEqual(aRemainingChanges[1].condenserState, "select", "then the add change has condenser state 'select'");
+				return revertAndApplyNew.call(this, aRemainingChanges);
+			}.bind(this))
+			.then(function() {
+				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
+				var aGroups = oSmartForm.getGroups();
+				var aFirstGroupElements = aGroups[0].getGroupElements();
+				// Initial UI [ Name, Victim, Code ]
+				// Target UI [ Victim, Code, Amount, Name ]
+				assert.strictEqual(aFirstGroupElements.length, 4, sContainerElementsMsg + 4);
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sCompanyCodeFieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 2) + sComplexProperty01FieldId);
+				assert.strictEqual(aFirstGroupElements[3].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 3) + sNameFieldId);
+			});
+		});
+
+		QUnit.test("move and add within one group and the add change is already persisted", function(assert) {
+			return loadApplyCondenseChanges.call(this, "addMoveSameGroup.json", 3, 2, assert, [0])
+			.then(function(aRemainingChanges) {
+				assert.strictEqual(aRemainingChanges[0].condenserState, "select", "then the move change has condenser state 'select'");
+				assert.strictEqual(aRemainingChanges[1].condenserState, "update", "then the add change has condenser state 'update'");
+				return revertAndApplyNew.call(this, aRemainingChanges);
+			}.bind(this))
 			.then(function() {
 				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
 				var aGroups = oSmartForm.getGroups();
@@ -472,7 +497,7 @@ sap.ui.define([
 							aCondenserStates.push(oChange.condenserState);
 						});
 						assert.propEqual(aChangeStates, [States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.NEW, States.LifecycleState.NEW], "all remaining changes have the correct change state");
-						assert.propEqual(aCondenserStates, ["update", "update", "update", "select", "update"], "all remaining changes have the correct condenser state");
+						assert.propEqual(aCondenserStates, ["update", "update", "update", "select", "select"], "all remaining changes have the correct condenser state");
 						aExpectedChangeOrder = [
 							"id_1579608135402_40_moveControls",
 							"id_1579608136945_41_moveControls",
