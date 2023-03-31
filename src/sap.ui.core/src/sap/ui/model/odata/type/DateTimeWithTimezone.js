@@ -54,6 +54,9 @@ sap.ui.define([
 	 * part. For this, the timestamp part has to be provided in the UTC time zone. When using this
 	 * type with the {@link sap.ui.model.odata.v2.ODataModel}, you need to set the parameter
 	 * <code>useUndefinedIfUnresolved</code> for both parts.
+	 *
+	 * For more information and some examples how to use this class, see
+	 * {@link topic:6c9e61dc157a40c19460660ece8368bc Dates, Times, Timestamps, and Time Zones}.
 	 * @extends sap.ui.model.CompositeType
 	 * @public
 	 * @see {sap.ui.model.odata.v2.ODataModel#bindProperty}
