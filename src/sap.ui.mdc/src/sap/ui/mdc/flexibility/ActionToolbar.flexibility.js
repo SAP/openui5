@@ -11,27 +11,31 @@ sap.ui.define([
     var oActionFlex = Object.assign({}, ItemBaseFlex);
 
 	oActionFlex.findItem = function(oModifier, aActions, sName) {
-		return sap.ui.getCore().byId(sName);
+		return aActions.find(function (oAction) {
+			return oModifier.getId(oAction) === sName;
+		});
 	};
 
 	oActionFlex.determineAggregation = function(oModifier, oControl) {
-		return Promise.resolve().then(function() {
+		return oModifier.getAggregation(oControl, "actions").then(function(aActions) {
 			return {
 				name: "actions",
-				items: oControl.getActions()
+				items: aActions
 			};
 		});
 	};
 
 	oActionFlex._applyMove = function(oChange, oControl, mPropertyBag, sChangeReason) {
 		var bIsRevert = sChangeReason === Util.REVERT ? true : false;
-		if (oControl.getParent()){
-			if (oControl.getParent().isA("sap.ui.mdc.Chart")) {
+		var oModifier = mPropertyBag.modifier;
+		if (oModifier.getParent(oControl)){
+			var oParent = oModifier.getParent(oControl);
+			if (oModifier.getControlType(oParent) === "sap.ui.mdc.Chart") {
 				// ActionToolbar of sap.ui.mdc.Chart
-				oControl = oControl.getParent();
-			} else if (oControl.getParent().getParent().isA("sap.ui.mdc.Table")) {
+				oControl = oParent;
+			} else if (oModifier.getParent(oParent) && oModifier.getControlType(oModifier.getParent(oParent)) === "sap.ui.mdc.Table") {
 				// ActionToolbar of sap.ui.mdc.Table
-				oControl = oControl.getParent().getParent();
+				oControl = oModifier.getParent(oParent);
 			}
 		}
 		this.beforeApply(oChange.getChangeType(), oControl, bIsRevert);
@@ -39,11 +43,11 @@ sap.ui.define([
 			this._delayInvalidate(oControl);
 		}
 
-		var oModifier = mPropertyBag.modifier;
 		var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 		var oControlAggregationItem;
 		var oAggregation;
 		var iOldIndex;
+		var sControlAggregationItemId;
 
 		// 1) Fetch existing item
 		var pMove = this.determineAggregation(oModifier, oControl)
@@ -60,6 +64,7 @@ sap.ui.define([
 			if (!oControlAggregationItem) {
 				throw new Error("No corresponding item in " + oAggregation.name + " found. Change to move item cannot be " + this._getOperationText(bIsRevert) + "at this moment");
 			}
+			sControlAggregationItemId = oModifier.getId(oControlAggregationItem);
 			return oModifier.findIndexInParentAggregation(oControlAggregationItem);
 		}.bind(this))
 
@@ -80,7 +85,8 @@ sap.ui.define([
 			} else {
 				oChange.setRevertData({
 					name: oChangeContent.name,
-					index: iOldIndex
+					index: iOldIndex,
+					item: sControlAggregationItemId
 				});
 			}
 			this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
