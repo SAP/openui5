@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/Host"
+	"sap/ui/integration/Host",
+	"sap/ui/integration/cards/BaseListContent"
 ], function (
 	deepExtend,
 	Core,
 	Card,
-	Host
+	Host,
+	BaseListContent
 ) {
 	"use strict";
 
@@ -654,6 +656,67 @@ sap.ui.define([
 		// Act
 		this.oCard.setManifest(oManifestClientSideWithStaticData);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
+
+	QUnit.test("No items", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+		var oBaseListContentSpy = this.spy(BaseListContent.prototype, "getDataLength");
+
+		this.oCard.attachEventOnce("_ready", function () {
+
+
+			Core.applyChanges();
+
+			var oPaginator = this.oCard.getCardFooter().getPaginator();
+			Core.applyChanges();
+			assert.strictEqual(oBaseListContentSpy.callCount, 0, "The getDataLength method is not called" );
+			assert.notOk(oPaginator.$().find(".sapMCrslBulleted span").length, "dots are not rendered");
+			assert.notOk(oPaginator.getDomRef(), "paginator is not rendered when there are no items");
+
+			var $numericIndicator = oPaginator.$().find(".sapMCrslNumeric span");
+			assert.notOk($numericIndicator.length, "numeric indicator is not rendered");
+
+			done();
+		}.bind(this));
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "card.pagination.no.data.list.card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": {
+						"parameters": {
+							"$format": "json",
+							"$top": 0
+						}
+					},
+					"path": "/value"
+				},
+				"header": {
+					"title": "Products",
+					"subTitle": "In Stock Information"
+				},
+				"content": {
+					"item": {
+						"title": "{ProductName}",
+						"description": "{UnitsInStock} units in stock",
+						"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+					}
+				},
+				"footer": {
+					"paginator": {
+						"pageSize": 5
+					}
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
 		Core.applyChanges();
 	});
 });

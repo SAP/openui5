@@ -137,7 +137,7 @@ sap.ui.define([
 			iTotalCount,
 			bInitialized;
 
-		if (!oContent || !oContent.isA("sap.ui.integration.cards.BaseContent")) {
+		if (!oContent || !oContent.isA("sap.ui.integration.cards.BaseContent") || !oContent.hasData()) {
 			this.setPageCount(0);
 			return;
 		}
