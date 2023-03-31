@@ -1077,7 +1077,7 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Filed contains a comboBox");
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					//settings button
-					var oButton = oButton = oField._settingsButton;
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();

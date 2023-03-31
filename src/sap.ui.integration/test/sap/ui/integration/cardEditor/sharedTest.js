@@ -276,7 +276,8 @@ function showEditorInDialog(oButton) {
 			"baseUrl": baseUrl
 		};
 		var oCardEditor = new CardEditor({
-			card: oCard
+			card: oCard,
+			allowSettings: true
 		});
 		var oSeparateEditorDialog= new Dialog({
 			title: "Card Editor In Dailog",

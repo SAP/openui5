@@ -120,7 +120,7 @@ sap.ui.define([
 		REGEXP_PARAMETERS = /\{\{parameters\.([^\}\}]+)/g,
 		CONTEXT_TIMEOUT = 5000,
 		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
-		MessageStripId = "__strip0",
+		MessageStripId = "_strip",
 		MODULE_PREFIX = "module:";
 
 	/**
@@ -618,7 +618,7 @@ sap.ui.define([
 													addColFieldsOfSubGroup();
 												}
 												if (oConfig.hint) {
-													var oHint = oControl._createHint(oConfig.hint);
+													var oHint = oControl._createHint(oConfig.hint, oItem.getParameterId());
 													var oColVBox = new VBox({
 														items: [
 															oHBox,
@@ -636,7 +636,7 @@ sap.ui.define([
 													addColFields();
 												}
 												if (oConfig.hint) {
-													var oHint = oControl._createHint(oConfig.hint);
+													var oHint = oControl._createHint(oConfig.hint, oItem.getParameterId());
 													var oColVBox = new VBox({
 														items: [
 															oHBox,
@@ -694,7 +694,7 @@ sap.ui.define([
 												]
 											});
 											if (oConfig.hint) {
-												var oHint = oControl._createHint(oConfig.hint);
+												var oHint = oControl._createHint(oConfig.hint, oItem.getParameterId());
 												oColVBox.addItem(oHint.addStyleClass("sapUiIntegrationEditorHint"));
 											}
 											oColVBox.addStyleClass("col1");
@@ -876,7 +876,7 @@ sap.ui.define([
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
 		this._mDestinationDataProviders = {};
-		var oMessageStrip = new MessageStrip({
+		var oMessageStrip = new MessageStrip(this.getId() + MessageStripId, {
 			showIcon: false
 		});
 		oMessageStrip.addStyleClass("sapUiIntegrationEditorFieldMessageStrip");
@@ -1864,8 +1864,8 @@ sap.ui.define([
 		});
 	};
 
-	Editor.prototype._createDescription = function (oConfig) {
-		var oDescIcon = new Icon({
+	Editor.prototype._createDescription = function (oConfig, sItemId) {
+		var oDescIcon = new Icon(this.getId() + "_" + sItemId + "_description_icon", {
 			src: "sap-icon://message-information",
 			color: "Marker",
 			size: "12px",
@@ -1896,9 +1896,9 @@ sap.ui.define([
 		return oDescIcon;
 	};
 
-	Editor.prototype._createMessageIcon = function (oField) {
+	Editor.prototype._createMessageIcon = function (oField, sItemId) {
 		var oConfig = oField.getConfiguration();
-		var oMsgIcon = new Icon({
+		var oMsgIcon = new Icon(this.getId() + "_" + sItemId + "_message_icon", {
 			src: "sap-icon://message-information",
 			size: "12px",
 			visible: oConfig.visible,
@@ -1927,10 +1927,11 @@ sap.ui.define([
 
 	/**
 	 * Creates a label based on the configuration settings
-	 * @param {} oConfig
+	 * @param {object} oConfig
+	 * @param {string} sItemId
 	 */
-	Editor.prototype._createLabel = function (oConfig) {
-		var oLabel = new Label({
+	Editor.prototype._createLabel = function (oConfig, sItemId) {
+		var oLabel = new Label(this.getId() + "_" + sItemId + "_label", {
 			text: oConfig.label,
 			tooltip: oConfig.tooltip || oConfig.label,
 			//mark only fields that are required and editable,
@@ -1960,9 +1961,9 @@ sap.ui.define([
 	/**
 	 * Create the settings button
 	 */
-	 Editor.prototype._createSettingsButton = function (oField) {
+	 Editor.prototype._createSettingsButton = function (oField, sItemId) {
 		var oConfig = oField.getConfiguration();
-		var oSettingsButton = new Button({
+		var oSettingsButton = new Button(this.getId() + "_" + sItemId + "_settings_btn", {
 			icon: "{= ${currentSettings>_hasDynamicValue} ? 'sap-icon://display-more' : 'sap-icon://enter-more'}",
 			type: "Transparent",
 			tooltip: this._oResourceBundle.getText("EDITOR_FIELD_MORE_SETTINGS"),
@@ -2016,7 +2017,7 @@ sap.ui.define([
 			text: ""
 		});
 		oText.addStyleClass("sapUiTinyMargin sapUiIntegrationEditorDescriptionText");
-		this._oPopover = new RPopover({
+		this._oPopover = new RPopover(this.getId() + "_popover", {
 			showHeader: false,
 			content: [oText]
 		});
@@ -2026,13 +2027,15 @@ sap.ui.define([
 
 	/**
 	 * Creates a Field based on the configuration settings
-	 * @param {*} oConfig
+	 * @param {object} oConfig
+	 * @param {string} sItemId
 	 */
-	Editor.prototype._createField = function (oConfig) {
-		var oField = new Editor.Fields[oConfig.type]({
+	Editor.prototype._createField = function (oConfig, sItemId) {
+		var oField = new Editor.Fields[oConfig.type](this.getId() + "_" + sItemId + "_field", {
 			configuration: oConfig,
 			mode: this.getMode(),
 			host: this.getHostInstance(),
+			parameterId: this.getId() + "_" + sItemId,
 			objectBindings: {
 				currentSettings: {
 					path: "currentSettings>" + oConfig._settingspath
@@ -2057,14 +2060,14 @@ sap.ui.define([
 					|| oConfig.validation
 					|| (oConfig.validations && oConfig.validations.length > 0)
 					|| (oConfig.values && oConfig.values.data && !oConfig.values.data.json)) {
-					var oMsgIcon = this._createMessageIcon(oField);
+					var oMsgIcon = this._createMessageIcon(oField, sItemId);
 					oField.setAssociation("_messageIcon", oMsgIcon);
 				}
 				if (oConfig.description && this.getMode() !== "translation") {
-					oField._descriptionIcon = this._createDescription(oConfig);
+					oField._descriptionIcon = this._createDescription(oConfig, sItemId);
 				}
 				if (oConfig._changeDynamicValues) {
-					oField._settingsButton = this._createSettingsButton(oField);
+					oField._settingsButton = this._createSettingsButton(oField, sItemId);
 					oField._applyButtonStyles();
 				}
 			}
@@ -2581,9 +2584,10 @@ sap.ui.define([
 
 	/**
 	 * Adds an item to the _formContent aggregation based on the config settings
-	 * @param {} oConfig
+	 * @param {object} oConfig
+	 * @param {string} sItemId
 	 */
-	 Editor.prototype._addItem = function (oConfig) {
+	 Editor.prototype._addItem = function (oConfig, sItemId) {
 		var sMode = this.getMode();
 		//force to turn off features for settings and dynamic values and set the default if not configured
 		if (this.getAllowDynamicValues() === false || !oConfig.allowDynamicValues) {
@@ -2601,10 +2605,10 @@ sap.ui.define([
 		//display subPanel as iconTabBar or Panel
 		if (oConfig.type === "group") {
 			oConfig.expanded = oConfig.expanded !== false;
-			var oField = this._createField(oConfig);
+			var oField = this._createField(oConfig, sItemId);
 			this.addAggregation("_formContent", oField);
 			if (oConfig.hint) {
-				this._addHint(oConfig.hint);
+				this._addHint(oConfig.hint, this.getId() + "_" + sItemId);
 			}
 			return;
 		}
@@ -2655,11 +2659,11 @@ sap.ui.define([
 				//the original language field shows only a text control. If empty we show a dash to avoid empty text.
 				origLangFieldConfig.value = "-";
 			}
-			var oLabel = this._createLabel(origLangFieldConfig);
+			var oLabel = this._createLabel(origLangFieldConfig, sItemId);
 			this.addAggregation("_formContent",
 				oLabel
 			);
-			var oOrigLanguageField = this._createField(origLangFieldConfig);
+			var oOrigLanguageField = this._createField(origLangFieldConfig, sItemId + "_ori");
 			oOrigLanguageField.isOrigLangField = true;
 			this.addAggregation("_formContent", oOrigLanguageField);
 
@@ -2676,7 +2680,7 @@ sap.ui.define([
 			//change the label for the translation field
 			oConfig.label = oConfig._translatedLabel || "";
 			oConfig.required = false; //translation is never required
-			var oTranslateLanguageField = this._createField(oConfig);
+			var oTranslateLanguageField = this._createField(oConfig, sItemId + "_trans");
 			//accessibility set aria-label
 			var tfDelegate = {
 				onAfterRendering: function(oEvent) {
@@ -2689,7 +2693,7 @@ sap.ui.define([
 				oTranslateLanguageField
 			);
 		} else {
-			oNewLabel = this._createLabel(oConfig);
+			oNewLabel = this._createLabel(oConfig, sItemId);
 			this.addAggregation("_formContent",
 				oNewLabel
 			);
@@ -2711,7 +2715,7 @@ sap.ui.define([
 					oConfig.value = sTranslateText;
 				}
 			}
-			var oField = this._createField(oConfig);
+			var oField = this._createField(oConfig, sItemId);
 			//accessibility set aria-label
 			var fDelegate = {
 				onAfterRendering: function(oEvent) {
@@ -2726,23 +2730,23 @@ sap.ui.define([
 		}
 		//add hint in the new row.
 		if (oConfig.hint && (!oConfig.cols || oConfig.cols === 2)) {
-			this._addHint(oConfig.hint);
+			this._addHint(oConfig.hint, this.getId() + "_" + sItemId);
 		}
 		//reset the cols to original
 		oConfig.cols = oConfig.__cols;
 		delete oConfig.__cols;
 	};
 
-	Editor.prototype._createHint = function (sHint) {
+	Editor.prototype._createHint = function (sHint, sHintIdPrefix) {
 		sHint = sHint.replace(/<a href/g, "<a target='blank' href");
-		var oFormattedText = new FormattedText({
+		var oFormattedText = new FormattedText(sHintIdPrefix + "_hint", {
 			htmlText: sHint
 		});
 		return oFormattedText;
 	};
 
-	Editor.prototype._addHint = function (sHint) {
-		var oHint = this._createHint(sHint);
+	Editor.prototype._addHint = function (sHint, sHintIdPrefix) {
+		var oHint = this._createHint(sHint, sHintIdPrefix);
 		this.addAggregation("_formContent", oHint);
 	};
 	/**
@@ -2875,7 +2879,7 @@ sap.ui.define([
 					expandable: false,
 					expanded: true,
 					label: this._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[sLanguage]
-				});
+				}, "translationTopPanel");
 			}
 			for (var n in aItems) {
 				var oItem = aItems[n];
@@ -3027,7 +3031,7 @@ sap.ui.define([
 
 		for (var n in aItems) {
 			var oItem = aItems[n];
-			this._addItem(oItem);
+			this._addItem(oItem, n);
 		}
 		// customize the size of card editor, define the size in dt.js
 		var editorHeight = this._settingsModel.getProperty("/form/height") !== undefined ? this._settingsModel.getProperty("/form/height") : "350px",
@@ -3254,7 +3258,7 @@ sap.ui.define([
 	};
 	/**
 	 * Adds additional settings for destinations section in admin mode
-	 * @param {} oConfiguration
+	 * @param {object} oConfiguration
 	 */
 	Editor.prototype._addDestinationSettings = function (oConfiguration) {
 		var oSettings = this._oDesigntimeInstance.getSettings(),

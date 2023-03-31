@@ -238,7 +238,7 @@ sap.ui.define([
 						placeholder: oConfig.placeholder,
 						valueHelpIconSrc: "sap-icon://translate",
 						showValueHelp: true,
-						valueHelpRequest: this.openTranslationListPopup,
+						valueHelpRequest: this.openTranslationListPopup.bind(this),
 						change: function(oEvent) {
 							//add current change into translation texts
 							var oControl = oEvent.getSource();
@@ -409,6 +409,7 @@ sap.ui.define([
 		var that = this;
 		var oControl = oEvent.getSource();
 		var oField = oControl.getParent();
+		var sParameterId = oField.getParameterId();
 		var oConfig = oField.getConfiguration();
 
 		if (!that._aOriginTranslatedValues) {
@@ -460,7 +461,7 @@ sap.ui.define([
 		}
 		var sPlacement = oField.getPopoverPlacement(oControl._oValueHelpIcon);
 		if (!that._oTranslationPopover) {
-			var oList = new List({
+			var oList = new List(sParameterId + "_translation_popover_value_list", {
 				//mode: "Delete",
 				items: {
 					path: "languages>/translatedLanguages",
@@ -493,7 +494,7 @@ sap.ui.define([
 					groupHeaderFactory: oField.getGroupHeader
 				}
 			});
-			that._oTranslationPopover = new Popover({
+			that._oTranslationPopover = new Popover(sParameterId + "_translation_popover", {
 				placement: sPlacement,
 				contentWidth: "300px",
 				contentHeight: "345px",
@@ -507,10 +508,10 @@ sap.ui.define([
 						}).addStyleClass("sapMHeaderTitle"),
 						new VBox({
 							items: [
-								new Text({
+								new Text(sParameterId + "_translation_popover_currentlanguage_desription_label", {
 									text: "{languages>/currentLanguage/desription}"
 								}),
-								new Input({
+								new Input(sParameterId + "_translation_popover_currentlanguage_value_input", {
 									value: "{languages>/currentLanguage/value}",
 									editable: false
 								})
@@ -525,7 +526,7 @@ sap.ui.define([
 				footer: new OverflowToolbar({
 					content: [
 						new ToolbarSpacer(),
-						new Button({
+						new Button(sParameterId + "_translation_popover_save_btn", {
 							type: "Emphasized",
 							text: oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_BUTTON_SAVE"),
 							enabled: "{languages>/isUpdated}",
@@ -549,7 +550,7 @@ sap.ui.define([
 								that._oTranslationPopover.close();
 							}
 						}),
-						new Button({
+						new Button(sParameterId + "_translation_popover_cancel_btn", {
 							text: oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_BUTTON_CANCEL"),
 							press: function () {
 								that._oTranslationPopover.close();

@@ -767,6 +767,15 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+			"editor/Ids": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"editor/Layout": {
 				group: "Runtime Editor",
 				coverage: {

@@ -107,7 +107,8 @@ sap.ui.define([
 	};
 
 	Settings.prototype.open = function (oField, oReferrer, oPreview, oHost, oParent, fnApply, fnCancel) {
-		var oCurrentData = this.getModel("currentSettings").getData();
+		var oCurrentData = this.getModel("currentSettings").getData(),
+			sParameterId = oParent.getParameterId();
 		//prepare fields in key
 		if (oCurrentData.values) {
 			this.prepareFieldsInKey(oCurrentData);
@@ -123,7 +124,7 @@ sap.ui.define([
 		oField.addDependent(this);
 		//adjust page admin values table height
 		if (!oCurrentData.allowDynamicValues && oCurrentData.values) {
-			Core.byId("settings_scroll_container").setHeight("155px");
+			Core.byId(sParameterId + "_settings_popover_scroll_container").setHeight("155px");
 		}
 		//force update of all bindings
 		this.getModel("currentSettings").checkUpdate(true, true);
@@ -147,13 +148,13 @@ sap.ui.define([
 		}
 		oCurrentModel = this.getModel("currentSettings");
 		if (oCurrentModel.getProperty("/_hasDynamicValue")) {
-			selectDynamic();
+			selectDynamic(sParameterId);
 		} else if (oCurrentModel.getProperty("/_hasSettings")) {
-			selectSettings();
+			selectSettings(sParameterId);
 		} else if (oCurrentModel.getProperty("/allowDynamicValues")) {
-			selectDynamic();
+			selectDynamic(sParameterId);
 		} else if (oCurrentModel.getProperty("/allowSettings")) {
-			selectSettings();
+			selectSettings(sParameterId);
 		}
 	};
 
@@ -171,13 +172,14 @@ sap.ui.define([
 	};
 
 	function createPopover(oData, oField) {
-		var oHeader = createHeader(),
-		    oResetToDefaultButton = createResetBtn(oData),
-		    oDynamicPanel = createDynamicPanel(),
-			oCurrentValue = createCurrentValuesBox(),
+		var sParameterId = oField.getParameterId(),
+			oHeader = createHeader(sParameterId),
+		    oResetToDefaultButton = createResetBtn(oData, sParameterId),
+		    oDynamicPanel = createDynamicPanel(sParameterId),
+			oCurrentValue = createCurrentValuesBox(sParameterId),
 		    oSettingsPanel = createSettingPanel(oData, oField),
 		    oPopover = new Popover({
-			id: "settings_popover",
+			id: sParameterId + "_settings_popover",
 			showArrow: true,
 			contentWidth: "400px",
 			showHeader: false,
@@ -188,13 +190,13 @@ sap.ui.define([
 				content: [
 					oResetToDefaultButton,
 					new ToolbarSpacer(),
-					new Button({
+					new Button(sParameterId + "_settings_popover_ok_btn", {
 						text: oResourceBundle.getText("EDITOR_MORE_OK"),
 						type: "Emphasized",
 						press: function () {
 							//handle page admin values
 							if (oData.values) {
-								var oTable = Core.byId("settings_pav_table"),
+								var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
 								selectedContexts = oTable.getSelectedContexts(),
 								selectedKeys = [];
 								if (oCurrentModel.getProperty("/selectedValues") === "Partion") {
@@ -213,7 +215,7 @@ sap.ui.define([
 							oPopover.close();
 						}
 					}),
-					new Button({
+					new Button(sParameterId + "_settings_popover_cancel_btn", {
 						text: oResourceBundle.getText("EDITOR_MORE_CANCEL"),
 						press: function () {
 							oPopover.close();
@@ -235,7 +237,7 @@ sap.ui.define([
 
 				//handle page admin values selection
 				if (oData.values) {
-					var oTable = Core.byId("settings_pav_table"),
+					var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
 					paValues = oCurrentModel.getProperty("/_next/pageAdminValues");
 					if (paValues !== undefined && paValues.length > 0) {
 						oTable.removeSelections();
@@ -268,22 +270,24 @@ sap.ui.define([
 		return oPopover;
 	}
 
-	function createSettingsButton() {
+	function createSettingsButton(sParameterId) {
 		oSettingsButton = new SegmentedButtonItem({
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
 			tooltip: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
 			key: "settings",
 			icon: "sap-icon://action-settings",
 			width: "50%",
-			press: selectSettings
+			press: function(oEvent) {
+				selectSettings(sParameterId);
+			}
 		}).addStyleClass("setbtn");
 
 		return oSettingsButton;
 	}
 
-	function createSegmentedButton() {
-		oSettingsButton = createSettingsButton();
-		oSegmentedButton = new SegmentedButton("settings_Segment_btn", {
+	function createSegmentedButton(sParameterId) {
+		oSettingsButton = createSettingsButton(sParameterId);
+		oSegmentedButton = new SegmentedButton(sParameterId + "_settings_popover_segmented_btn", {
 			width: "100%",
 			visible: "{= ${currentSettings>allowDynamicValues} && ${currentSettings>allowSettings}}",
 			items: [
@@ -293,7 +297,9 @@ sap.ui.define([
 					key: "dynamic",
 					icon: "{= ${currentSettings>_hasDynamicValue} ? 'sap-icon://display-more' : 'sap-icon://enter-more'}",
 					width: "50%",
-					press: selectDynamic
+					press: function(oEvent) {
+						selectDynamic(sParameterId);
+					}
 				}).addStyleClass("dynbtn sel"),
 				oSettingsButton
 			]
@@ -302,14 +308,14 @@ sap.ui.define([
 		return oSegmentedButton;
 	}
 
-	function createHeader() {
-		oSegmentedButton = createSegmentedButton();
-		var oDynamicValueText = new Text({
+	function createHeader(sParameterId) {
+		oSegmentedButton = createSegmentedButton(sParameterId);
+		var oDynamicValueText = new Text(sParameterId + "_settings_popover_dynamicvalue_txt", {
 			text: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
 			tooltip: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
 			visible: "{= ${currentSettings>allowDynamicValues} && !${currentSettings>allowSettings}}"
 		}).addStyleClass("sapUiTinyMagin");
-		var oSettingsText = new Text({
+		var oSettingsText = new Text(sParameterId + "_settings_popover_settings_txt", {
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
 			visible: "{= !${currentSettings>allowDynamicValues} && ${currentSettings>allowSettings}}"
 		}).addStyleClass("sapUiTinyMagin");
@@ -324,8 +330,8 @@ sap.ui.define([
 		return oTitle;
 	}
 
-	function createResetBtn(oData) {
-	    oResetToDefaultButton = new Button("settings_reset_to_default_btn", {
+	function createResetBtn(oData, sParameterId) {
+	    oResetToDefaultButton = new Button(sParameterId + "_settings_popover_reset_btn", {
 			type: "Transparent",
 			text: oResourceBundle.getText("EDITOR_MORE_RESET"),
 			enabled: "{= ${currentSettings>_next/visible} === (typeof(${currentSettings>visibleToUser}) === 'undefined' ? false : !${currentSettings>visibleToUser}) || ${currentSettings>_next/editable} === (typeof(${currentSettings>editableToUser}) === 'undefined' ? false : !${currentSettings>editableToUser}) || ${currentSettings>_next/allowDynamicValues} === (typeof(${currentSettings>allowDynamicValues}) === 'undefined' ? false : !${currentSettings>allowDynamicValues}) || ${currentSettings>_beforeValue} !== ${currentSettings>value}}",
@@ -334,7 +340,7 @@ sap.ui.define([
 				var bVisibleDefault = typeof (oCurrentModel.getProperty("/visibleToUser")) === 'undefined' ? true : oCurrentModel.getProperty("/visibleToUser");
 				var bEditableDefault = typeof (oCurrentModel.getProperty("/editableToUser")) === 'undefined' ? true : oCurrentModel.getProperty("/editableToUser");
 				var bAllowDynamicValuesDefault = typeof (oCurrentModel.getProperty("/allowDynamicValues")) === 'undefined' ? true : oCurrentModel.getProperty("/allowDynamicValues");
-				var oPopover = Core.byId("settings_popover");
+				var oPopover = Core.byId(sParameterId + "_settings_popover");
 				setNextSetting("visible", bVisibleDefault);
 				setNextSetting("editable", bEditableDefault);
 				setNextSetting("allowDynamicValues", bAllowDynamicValuesDefault);
@@ -351,7 +357,7 @@ sap.ui.define([
 
 				//reset table selection
 				if (oData.values) {
-					var oTable = Core.byId("settings_pav_table"),
+					var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
 						sItems = oCurrentModel.getProperty("/_next/pageAdminValues"),
 						aItems = oTable.getItems();
 					// 	pavItemKey = oCurrentModel.getData().values.item.key;
@@ -380,18 +386,18 @@ sap.ui.define([
 		return oResetToDefaultButton;
 	}
 
-	function selectSettings() {
+	function selectSettings(sParameterId) {
 		oSettingsPanel.setVisible(true);
 		oDynamicPanel.setVisible(false);
-		Core.byId("settings_Segment_btn").setSelectedKey("settings");
-		var oCurrentValue = Core.byId("settings_current_value");
+		Core.byId(sParameterId + "_settings_popover_segmented_btn").setSelectedKey("settings");
+		var oCurrentValue = Core.byId(sParameterId + "_settings_popover_currentvalue");
 		oCurrentValue.setVisible(false);
 	}
 
-	function selectDynamic() {
+	function selectDynamic(sParameterId) {
 		oSettingsPanel.setVisible(false);
 		oDynamicPanel.setVisible(true);
-		Core.byId("settings_Segment_btn").setSelectedKey("dynamic");
+		Core.byId(sParameterId + "_settings_popover_segmented_btn").setSelectedKey("dynamic");
 		var oFlat = oCurrentInstance.getModel("contextflat"),
 			o = oFlat._getValueObject(oCurrentModel.getProperty("/value"));
 		if (o && o.object.label) {
@@ -403,7 +409,7 @@ sap.ui.define([
 			updateCurrentValue(o);
 		}
 		//visible current value field
-		var oCurrentValue = Core.byId("settings_current_value");
+		var oCurrentValue = Core.byId(sParameterId + "_settings_popover_currentvalue");
 		oCurrentValue.setVisible(true);
 	}
 
@@ -469,10 +475,10 @@ sap.ui.define([
 		}
 	];
 
-	function createDynamicPanel() {
+	function createDynamicPanel(sParameterId) {
 		oDynamicPanel = new VBox({ visible: true });
 		oDynamicPanel.addStyleClass("sapUiSmallMargin");
-		oDynamicValueField = new Input({
+		oDynamicValueField = new Input(sParameterId + "_settings_popover_dynamicvalue_input", {
 			width: "100%",
 			showValueHelp: true,
 			valueHelpOnly: true,
@@ -502,7 +508,7 @@ sap.ui.define([
 
 		oDynamicValueField.addStyleClass("selectvariable");
 
-		var selectDynamicValueLabel = new Label({
+		var selectDynamicValueLabel = new Label(sParameterId + "_settings_popover_dynamicvalue_label", {
 			text: "Select a dynamic value"
 		});
 		oDynamicValueField.addAriaLabelledBy(selectDynamicValueLabel);
@@ -514,7 +520,7 @@ sap.ui.define([
 		});
 		oDynamicPanel.addItem(oVBox);
 
-		oDescriptionLabel = new Text({ text: "", maxLines: 6, renderWhitespace: true });
+		oDescriptionLabel = new Text(sParameterId + "_settings_popover_dynamicvalue_desc_txt", { text: "", maxLines: 6, renderWhitespace: true });
 		oVBox = new VBox({
 			width: "100%",
 			items: [
@@ -525,7 +531,7 @@ sap.ui.define([
 		oDynamicPanel.addItem(oVBox);
 		if (aFormatters.length === -1) {
 			//not applicable right now
-			oSelectFormat = new Select({
+			oSelectFormat = new Select(sParameterId + "_settings_popover_dynamicvalue_format_select", {
 				width: "100%",
 				enabled: true,
 				change: function () {
@@ -540,7 +546,7 @@ sap.ui.define([
 				]
 			});
 			oDynamicPanel.addItem(oVBox);
-			oFormatDescriptionLabel = new Text({ text: "", maxLines: 4, renderWhitespace: true });
+			oFormatDescriptionLabel = new Text(sParameterId + "_settings_popover_dynamicvalue_format_label", { text: "", maxLines: 4, renderWhitespace: true });
 			oFormatDescriptionLabel.addStyleClass("description");
 			oVBox = new VBox({
 				width: "100%",
@@ -556,18 +562,18 @@ sap.ui.define([
 		return oDynamicPanel;
 	}
 
-	function createCurrentValuesBox() {
-		var settingsActualValueTxt = new Text({
+	function createCurrentValuesBox(sParameterId) {
+		var settingsActualValueTxt = new Text(sParameterId + "_settings_popover_actualvalue_label", {
 			text: oResourceBundle.getText("EDITOR_ACTUAL_VALUE")
 		});
-		var settingsActualValueInput = new Input({
+		var settingsActualValueInput = new Input(sParameterId + "_settings_popover_actualvalue_input", {
 			value: {
 				path: "currentSettings>_currentContextValue"
 			},
 			editable: false
 		});
 		settingsActualValueInput.addAriaLabelledBy(settingsActualValueTxt);
-		var oCurrentValue = new VBox("settings_current_value", {
+		var oCurrentValue = new VBox(sParameterId + "_settings_popover_currentvalue", {
 			width: "100%",
 			items: [
 				settingsActualValueTxt,
@@ -579,6 +585,7 @@ sap.ui.define([
 	}
 
 	function createSettingPanel(oData, oField) {
+		var sParameterId = oField.getParameterId();
 		oSettingsPanel = new VBox({ visible: false });
 		var oBox = new VBox().addStyleClass("commonSettings");
 		oSettingsPanel.addItem(oBox);
@@ -586,11 +593,11 @@ sap.ui.define([
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN"),
 			wrapping: true
 		}).addStyleClass("stitle"));
-		var settingsAdminVisibleLabel = new Label({
+		var settingsAdminVisibleLabel = new Label(sParameterId + "_settings_popover_adminvisible_label", {
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VISIBLE"),
 			wrapping: true
 		});
-		var settingsAdminVisibleCKB = new CheckBox({
+		var settingsAdminVisibleCKB = new CheckBox(sParameterId + "_settings_popover_adminvisible_checkbox", {
 			selected: "{= ${currentSettings>_next/visible} !== false}",
 			select: function (oEvent) {
 				setNextSetting("visible", oEvent.getParameter("selected"));
@@ -603,11 +610,11 @@ sap.ui.define([
 				settingsAdminVisibleCKB
 			]
 		}).addStyleClass("cbrow"));
-		var settingsAdminEditLabel = new Label({
+		var settingsAdminEditLabel = new Label(sParameterId + "_settings_popover_admineditable_label", {
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_EDIT"),
 			wrapping: true
 		});
-		var settingsAdminEditCKB = new CheckBox({
+		var settingsAdminEditCKB = new CheckBox(sParameterId + "_settings_popover_admineditable_checkbox", {
 			selected: "{= ${currentSettings>_next/editable} !== false}",
 			enabled: "{= ${currentSettings>_next/visible} !== false}",
 			select: function (oEvent) {
@@ -621,11 +628,11 @@ sap.ui.define([
 				settingsAdminEditCKB
 			]
 		}).addStyleClass("cbrow"));
-		var settingsAdminDYNLabel = new Label({
+		var settingsAdminDYNLabel = new Label(sParameterId + "_settings_popover_allowdynamicvalues_label", {
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_DYN"),
 			wrapping: true
 		});
-		var settingsAdminDYNCKB = new CheckBox({
+		var settingsAdminDYNCKB = new CheckBox(sParameterId + "_settings_popover_allowdynamicvalues_checkbox", {
 			selected: "{= ${currentSettings>_next/allowDynamicValues} !== false}",
 			enabled: "{= ${currentSettings>_next/visible} !== false && ${currentSettings>_next/editable} !== false}",
 			select: function (oEvent) {
@@ -669,12 +676,12 @@ sap.ui.define([
 			oBox.addItem(new HBox({
 				visible: "{= ${currentSettings>_next/visible} !== false && ${currentSettings>_next/editable} !== false}",
 				items: [
-					new Label({
+					new Label(sParameterId + "_settings_popover_allowselectedvalues_label", {
 						text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VALUES_LIST"),
 						tooltip: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VALUES_LIST_TOOLTIPS"),
 						wrapping: false
 					}),
-					new Button({
+					new Button(sParameterId + "_settings_popover_allowselectedvalues_all_btn", {
 						type: "Transparent",
 						enabled: vData !== undefined,
 						icon: {
@@ -699,15 +706,19 @@ sap.ui.define([
 								}
 							}
 						},
-						press: onMultiSelectionClick
+						press: function () {
+							onMultiSelectionClick(sParameterId);
+						}
 					})
 				]
 			}).addStyleClass("cbrow"));
 			var pavTable = new Table({
-				id: "settings_pav_table",
+				id: sParameterId + "_settings_popover_pav_table",
 				mode: "MultiSelect",
 				width: "84%",
-				select: onTableSelection,
+				select: function (oEvent) {
+					onTableSelection(oEvent, sParameterId);
+				},
 				columns: [
 					new Column()
 				]
@@ -729,7 +740,7 @@ sap.ui.define([
 			}
 			pavTable.bindItems("/", oTemplate);
 			var oScrollContainer = new ScrollContainer({
-				id: "settings_scroll_container",
+				id: sParameterId + "_settings_popover_scroll_container",
 				height: "125px",
 				width: "94%",
 				vertical: true,
@@ -743,9 +754,9 @@ sap.ui.define([
 		return oSettingsPanel;
 	}
 
-	function onMultiSelectionClick() {
-		var oTable = Core.byId("settings_pav_table"),
-		    oResetBtn = Core.byId("settings_reset_to_default_btn"),
+	function onMultiSelectionClick(sParameterId) {
+		var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
+		    oResetBtn = Core.byId(sParameterId + "_settings_popover_reset_btn"),
 		    selectedValues = oCurrentModel.getProperty("/selectedValues");
 		if (selectedValues === "All") {
 			oTable.removeSelections();
@@ -759,11 +770,11 @@ sap.ui.define([
 		}
 	}
 
-	function onTableSelection(oEvent) {
+	function onTableSelection(oEvent, sParameterId) {
 		var oTable = oEvent.getSource(),
 		    selectedItems = oTable.getSelectedItems(),
 		    allItems = oTable.getItems(),
-			oResetBtn = Core.byId("settings_reset_to_default_btn");
+			oResetBtn = Core.byId(sParameterId + "_settings_popover_reset_btn");
 		if (selectedItems.length === allItems.length) {
 			oCurrentModel.setProperty("/selectedValues", "All");
 		} else if (selectedItems.length < allItems.length && selectedItems.length > 0) {

@@ -202,6 +202,7 @@ sap.ui.define([
 
 	ObjectField.prototype.createSimpleFormVisualization = function(oConfig) {
 		var that = this;
+		var sParameterId = that.getParameterId();
 		var oResourceBundle = that.getResourceBundle();
 		var fnChange = function() {
 			var oModel = this.getAggregation("_field").getModel();
@@ -219,7 +220,7 @@ sap.ui.define([
 			this.setValue(oValue);
 		}.bind(that);
 		var aObjectPropertyFormContents = that.createFormContents(fnChange, "/value/", false, that.openTranslationPopup);
-		var oEditModeButton = new Button({
+		var oEditModeButton = new Button(sParameterId + "_control_form_editmode_btn", {
 			icon: {
 				path: '/editMode',
 				formatter: function(oEditMode) {
@@ -250,7 +251,7 @@ sap.ui.define([
 				}
 			}
 		});
-		var oDeleteButon = new Button({
+		var oDeleteButon = new Button(sParameterId + "_control_form_delete_btn", {
 			icon: "sap-icon://delete",
 			tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DELETE"),
 			visible: oConfig.enabled,
@@ -337,11 +338,11 @@ sap.ui.define([
 		return oVisualization;
 	};
 
-	ObjectField.prototype.buildSelectionColumnLables = function() {
+	ObjectField.prototype.buildSelectionColumnLabels = function() {
 		var that = this;
 		var oConfig = that.getConfiguration();
 		var oResourceBundle = that.getResourceBundle();
-		return new Button({
+		return new Button(that.getParameterId() + "_control_table_column_selection_label_clearall_btn", {
 			icon: "sap-icon://clear-all",
 			type: "Transparent",
 			enabled: typeof oConfig.values === "undefined" ? false : "{/_hasSelected}",
@@ -352,13 +353,14 @@ sap.ui.define([
 
 	ObjectField.prototype.buildTableColumns = function() {
 		var that = this;
+		var sParameterId = that.getParameterId();
 		var oConfig = that.getConfiguration();
 		var aColumns = [];
 		var aKeys = Object.keys(oConfig.properties);
 		if (aKeys.length > 0) {
 			var oResourceBundle = that.getResourceBundle();
-			var oSelectionColumnLabels = that.buildSelectionColumnLables();
-			var oSelectionColumn = new Column({
+			var oSelectionColumnLabels = that.buildSelectionColumnLabels();
+			var oSelectionColumn = new Column(sParameterId + "_control_table_column_selection", {
 				width: "3.2rem",
 				hAlign: "Center",
 				// hide selection column for object list field with properties defined only
@@ -390,6 +392,7 @@ sap.ui.define([
 			});
 			aColumns.push(oSelectionColumn);
 			for (var n in oConfig.properties) {
+				var sPropertyId = sParameterId + "_control_table_column_property_" + n;
 				var oProperty = oConfig.properties[n];
 				var sDefaultLabel = oProperty.label || n;
 				var sDefaultValue = "{" + n + "}";
@@ -509,7 +512,7 @@ sap.ui.define([
 						break;
 				}
 				oColumnSettings.template = oCellTemplate;
-				var oColumn = new Column(oColumnSettings);
+				var oColumn = new Column(sPropertyId, oColumnSettings);
 				aColumns.push(oColumn);
 			}
 		}
@@ -529,6 +532,7 @@ sap.ui.define([
 
 	ObjectField.prototype.createTableToolbar = function(oConfig) {
 		var that = this;
+		var sParameterId = that.getParameterId();
 		var oResourceBundle = that.getResourceBundle();
 		// check if has filterProperty defined in each column of config.properties
 		var bHasFilterDefined = that.checkHasFilterDefined(oConfig);
@@ -539,39 +543,39 @@ sap.ui.define([
 		}
 		var oContents = [
 			new ToolbarSpacer(),
-			new Button({
+			new Button(sParameterId + "_control_table_add_btn", {
 				icon: "sap-icon://add",
 				visible: bAddButtonVisible,
 				tooltip: sAddButtonTooltip,
 				press: that.addNewObject.bind(that)
 			}),
-			new Button({
+			new Button(sParameterId + "_control_table_edit_btn", {
 				icon: "sap-icon://edit",
 				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_EDIT_TOOLTIP"),
 				enabled: "{= !!${/_hasTableSelected}}",
 				press: that.onEditOrViewDetail.bind(that)
 			}),
-			new Button({
+			new Button(sParameterId + "_control_table_delete_btn", {
 				icon: "sap-icon://delete",
 				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DELETE"),
 				enabled: "{= !!${/_canDelete}}",
 				press: that.onDelete.bind(that)
 			}),
-			new Button({
+			new Button(sParameterId + "_control_table_filter_btn", {
 				icon: "sap-icon://clear-filter",
 				visible: bHasFilterDefined,
 				enabled: "{= !!${/_hasFilter}}",
 				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_CLEAR_ALL_FILTERS_TOOLTIP"),
 				press: that.clearAllFilters.bind(that)
 			}),
-			new Button({
+			new Button(sParameterId + "_control_table_multiselect_all_btn", {
 				icon: "sap-icon://multiselect-all",
 				visible: false,
 				enabled: "{= !${/_hasTableAllSelected}}",
 				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_SELECT_ALL_SELETIONS_TOOLTIP"),
 				press: that.selectAllTableSelections.bind(that)
 			}),
-			new Button({
+			new Button(sParameterId + "_control_table_multiselect_none_btn", {
 				icon: "sap-icon://multiselect-none",
 				visible: false,
 				enabled: "{= !!${/_hasTableSelected}}",
@@ -581,13 +585,13 @@ sap.ui.define([
 		];
 		if (oConfig.type === "object[]") {
 			oContents = oContents.concat([
-				new Button({
+				new Button(sParameterId + "_control_table_navigationup_btn", {
 					icon: "sap-icon://navigation-up-arrow",
 					enabled: "{= !!${/_hasOnlyOneRowSelected}}",
 					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_MOVE_UP_TOOLTIP"),
 					press: that.moveRowUp.bind(that)
 				}),
-				new Button({
+				new Button(sParameterId + "_control_table_navigationdown_btn", {
 					icon: "sap-icon://navigation-down-arrow",
 					enabled: "{= !!${/_hasOnlyOneRowSelected}}",
 					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_MOVE_DOWN_TOOLTIP"),
@@ -929,11 +933,12 @@ sap.ui.define([
 	ObjectField.prototype.createFormContents = function (fnChange, sPathPrefix, bIsInPopover, fnNavToTranslation) {
 		var that = this;
 		var oConfig = that.getConfiguration();
-		var aContentList = that.createPropertyContents(fnChange, sPathPrefix, fnNavToTranslation);
+		var aContentList = that.createPropertyContents(fnChange, sPathPrefix, bIsInPopover, fnNavToTranslation);
 		aContentList.push(new Label({
 			visible: false
 		}).addStyleClass("sapFormLabel"));
-		aContentList.push(new TextArea({
+		var sTextAreaId = bIsInPopover ? that.getParameterId() + "_control_objectdetails_popover_form_textarea" : that.getParameterId() + "_control_form_textarea";
+		aContentList.push(new TextArea(sTextAreaId, {
 			value: {
 				path: sPathPrefix,
 				formatter: function(vValue) {
@@ -962,8 +967,10 @@ sap.ui.define([
 		return aContentList;
 	};
 
-	ObjectField.prototype.createPropertyContents = function (fnChange, sPathPrefix, fnNavToTranslation) {
+	ObjectField.prototype.createPropertyContents = function (fnChange, sPathPrefix, bIsInPopover, fnNavToTranslation) {
 		var that = this;
+		var sParameterId = that.getParameterId();
+		var sPropertyIdPrefix = bIsInPopover ? sParameterId + "_control_objectdetails_popover_form_property_" : sParameterId + "_control_form_property_";
 		var oConfig = that.getConfiguration();
 		var aPropertyContentList = [];
 		if (!sPathPrefix) {
@@ -1010,7 +1017,9 @@ sap.ui.define([
 				var sLabelKey = sLabelText.substring(2, sLabelText.length - 2);
 				sLabelText = "{i18n>" + sLabelKey + "}";
 			}
-			var oLable = new Label({
+			var sPropertyLabelId = sPropertyIdPrefix + n + "_label";
+			var sPropertyControlId = sPropertyIdPrefix + n + "_control";
+			var oLable = new Label(sPropertyLabelId, {
 				text: sLabelText,
 				visible: "{= ${/editMode} === 'Properties'}",
 				required: oProperty.required || false
@@ -1043,7 +1052,7 @@ sap.ui.define([
 							oSettings.customTextOff = oProperty.cell.customTextOff;
 						}
 						oSettings = merge(oSettings, oPropertySettings);
-						oValueControl = new Switch(oSettings);
+						oValueControl = new Switch(sPropertyControlId, oSettings);
 					} else {
 						oSettings = {
 							selected: "{" + sPathPrefix + n + "}",
@@ -1052,7 +1061,7 @@ sap.ui.define([
 							select: fnChange
 						};
 						oSettings = merge(oSettings, oPropertySettings);
-						oValueControl = new CheckBox(oSettings);
+						oValueControl = new CheckBox(sPropertyControlId, oSettings);
 					}
 					break;
 				case "int":
@@ -1069,7 +1078,7 @@ sap.ui.define([
 						change: fnChange
 					};
 					oSettings = merge(oSettings, oPropertySettings);
-					oValueControl = new Input(oSettings);
+					oValueControl = new Input(sPropertyControlId, oSettings);
 					break;
 				case "number":
 					oSettings = {
@@ -1084,7 +1093,7 @@ sap.ui.define([
 						change: fnChange
 					};
 					oSettings = merge(oSettings, oPropertySettings);
-					oValueControl = new Input(oSettings);
+					oValueControl = new Input(sPropertyControlId, oSettings);
 					break;
 				case "object":
 					oSettings = {
@@ -1109,7 +1118,7 @@ sap.ui.define([
 						rows: 3
 					};
 					oSettings = merge(oSettings, oPropertySettings);
-					oValueControl = new TextArea(oSettings);
+					oValueControl = new TextArea(sPropertyControlId, oSettings);
 					break;
 				default:
 					var oTextSettingsModel = new JSONModel({
@@ -1167,7 +1176,7 @@ sap.ui.define([
 							};
 						}
 					}
-					oValueControl = new Input(oSettings);
+					oValueControl = new Input(sPropertyControlId, oSettings);
 					oValueControl.setModel(oTextSettingsModel,"settings");
 			}
 			aPropertyContentList.push(oValueControl);
@@ -1267,6 +1276,7 @@ sap.ui.define([
 
 	ObjectField.prototype.openObjectDetailsPopover = function (oItem, oControl, sMode) {
 		var that = this;
+		var sParameterId = that.getParameterId();
 		var oResourceBundle = that.getResourceBundle();
 		var oItemCloned = deepClone(oItem, 500);
 		var oModel;
@@ -1275,7 +1285,7 @@ sap.ui.define([
 			sPlacement = this.getPopoverPlacement(oControl);
 		}
 		if (!that._oObjectDetailsPopover) {
-			var oAddButton = new Button({
+			var oAddButton = new Button(sParameterId + "_control_objectdetails_popover_add_btn", {
 				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_ADD"),
 				visible: sMode === "add",
 				enabled: {
@@ -1295,7 +1305,7 @@ sap.ui.define([
 				},
 				press: that.onAdd.bind(that)
 			});
-			var oUpdateButton = new Button({
+			var oUpdateButton = new Button(sParameterId + "_control_objectdetails_popover_update_btn", {
 				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_UPDATE"),
 				visible: sMode === "update",
 				enabled: {
@@ -1309,7 +1319,7 @@ sap.ui.define([
 				},
 				press: that.onUpdate.bind(that)
 			});
-			var oCancelButton = new Button({
+			var oCancelButton = new Button(sParameterId + "_control_objectdetails_popover_cancel_btn", {
 				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_CANCEL"),
 				visible: sMode !== "view",
 				press: function () {
@@ -1321,14 +1331,14 @@ sap.ui.define([
 					that._oObjectDetailsPopover.close();
 				}
 			});
-			var oCloseButton = new Button({
+			var oCloseButton = new Button(sParameterId + "_control_objectdetails_popover_close_btn", {
 				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_CLOSE"),
 				visible: sMode === "view",
 				press: function () {
 					that._oObjectDetailsPopover.close();
 				}
 			});
-			var oEditModeButton = new Button({
+			var oEditModeButton = new Button(sParameterId + "_control_objectdetails_popover_editmode_btn", {
 				icon: {
 					path: '/editMode',
 					formatter: function(oEditMode) {
@@ -1379,7 +1389,7 @@ sap.ui.define([
 				that._oNavContainer.back();
 				that._oObjectDetailsPage.focus();
 			};
-			var oList = that.buildTranslationsList();
+			var oList = that.buildTranslationsList(false);
 			var oTranslationsFooter = that.buildTranslationsFooter(oList, false);
 			that._oTranslationListPage = new Page({
 				title: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TRANSLATION_LIST_TITLE", "{languages>/property}"),
@@ -1426,7 +1436,7 @@ sap.ui.define([
 			_oTranslationListPage.addContent();
 			*/
 			that._oNavContainer.addPage(that._oTranslationListPage);
-			that._oObjectDetailsPopover = new Popover({
+			that._oObjectDetailsPopover = new Popover(sParameterId + "_control_objectdetails_popover", {
 				placement: sPlacement,
 				showHeader: false,
 				contentWidth: "300px",
@@ -1560,8 +1570,11 @@ sap.ui.define([
 		return oTranslatonsModel;
 	};
 
-	ObjectField.prototype.buildTranslationsList = function () {
-		return new List({
+	ObjectField.prototype.buildTranslationsList = function (bIsInTranslationPopover) {
+		var that = this;
+		var sParameterId = that.getParameterId();
+		var sIdPrefix = bIsInTranslationPopover ? sParameterId + "_control_translation_popover" : sParameterId + "_control_objectdetails_popover_translation_page";
+		return new List(sIdPrefix + "_value_list", {
 			items: {
 				path: "languages>/translatedLanguages",
 				template: new CustomListItem({
@@ -1596,9 +1609,11 @@ sap.ui.define([
 
 	ObjectField.prototype.buildTranslationsFooter = function (oList, bIsInTranslationPopover) {
 		var that = this;
+		var sParameterId = that.getParameterId();
 		var oResourceBundle = that.getResourceBundle();
 		var sCurrentLanugae = oResourceBundle.sLocale.replaceAll('_', '-');
-		var oSaveTranslationButton = new Button({
+		var sIdPrefix = bIsInTranslationPopover ? sParameterId + "_control_translation_popover" : sParameterId + "_control_objectdetails_popover_translation_page";
+		var oSaveTranslationButton = new Button(sIdPrefix + "_save_btn", {
 			type: "Emphasized",
 			text: oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_BUTTON_SAVE"),
 			enabled: "{languages>/isUpdated}",
@@ -1640,7 +1655,7 @@ sap.ui.define([
 				}
 			}
 		});
-		var oResetTranslationButton = new Button({
+		var oResetTranslationButton = new Button(sIdPrefix + "_reset_btn", {
 			text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_RESET"),
 			enabled: "{languages>/isUpdated}",
 			press: function(oEvent) {
@@ -1656,7 +1671,7 @@ sap.ui.define([
 				oTranslationModel.checkUpdate(true);
 			}
 		});
-		var oCancelButton = new Button({
+		var oCancelButton = new Button(sIdPrefix + "_cancel_btn", {
 			text: oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_BUTTON_CANCEL"),
 			visible: bIsInTranslationPopover,
 			press: function () {
@@ -1698,9 +1713,9 @@ sap.ui.define([
 		var oTranslatonsModel;
 		var sPlacement = this.getPopoverPlacement(oControl._oValueHelpIcon);
 		if (!that._oTranslationPopover) {
-			var oList = that.buildTranslationsList();
+			var oList = that.buildTranslationsList(true);
 			var oTranslationsFooter = that.buildTranslationsFooter(oList, true);
-			that._oTranslationPopover = new Popover({
+			that._oTranslationPopover = new Popover(that.getParameterId() + "_control_translation_popover", {
 				placement: sPlacement,
 				contentWidth: "300px",
 				contentHeight: "345px",

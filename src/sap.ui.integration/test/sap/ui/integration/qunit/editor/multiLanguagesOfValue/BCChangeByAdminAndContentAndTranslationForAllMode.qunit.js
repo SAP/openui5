@@ -194,7 +194,7 @@ sap.ui.define([
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
 						wait().then(function () {
-							var oTranslationPopover1 = oField1.getAggregation("_field")._oTranslationPopover;
+							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
 							assert.equal(aHeaderItems1[1].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_CURRENTLANGUAGE"), "oTranslationPopover1 Header: Current Language");
@@ -224,7 +224,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
 							wait().then(function () {
-								var oTranslationPopover3 = oField3.getAggregation("_field")._oTranslationPopover;
+								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
@@ -247,7 +247,7 @@ sap.ui.define([
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
 								wait().then(function () {
-									var oTranslationPopover4 = oField4.getAggregation("_field")._oTranslationPopover;
+									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Translation", "oTranslationPopover4 Header: String4 Value");
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
@@ -270,7 +270,7 @@ sap.ui.define([
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
 									wait().then(function () {
-										var oTranslationPopover5 = oField5.getAggregation("_field")._oTranslationPopover;
+										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["en"] || _oExpectedValues["string5"]["default"], "oTranslationPopover5 Header: String5 Value");
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
@@ -347,7 +347,7 @@ sap.ui.define([
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
 						wait().then(function () {
-							var oTranslationPopover1 = oField1.getAggregation("_field")._oTranslationPopover;
+							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
 							assert.equal(aHeaderItems1[1].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_CURRENTLANGUAGE"), "oTranslationPopover1 Header: Current Language");
@@ -377,7 +377,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
 							wait().then(function () {
-								var oTranslationPopover3 = oField3.getAggregation("_field")._oTranslationPopover;
+								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
@@ -400,7 +400,7 @@ sap.ui.define([
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
 								wait().then(function () {
-									var oTranslationPopover4 = oField4.getAggregation("_field")._oTranslationPopover;
+									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Translation", "oTranslationPopover4 Header: String4 Value");
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
@@ -423,7 +423,7 @@ sap.ui.define([
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
 									wait().then(function () {
-										var oTranslationPopover5 = oField5.getAggregation("_field")._oTranslationPopover;
+										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["en-GB"] || _oExpectedValues["string5"]["default"], "oTranslationPopover5 Header: String5 Value");
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
@@ -500,7 +500,7 @@ sap.ui.define([
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
 						wait().then(function () {
-							var oTranslationPopover1 = oField1.getAggregation("_field")._oTranslationPopover;
+							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
 							assert.equal(aHeaderItems1[1].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_CURRENTLANGUAGE"), "oTranslationPopover1 Header: Current Language");
@@ -530,7 +530,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
 							wait().then(function () {
-								var oTranslationPopover3 = oField3.getAggregation("_field")._oTranslationPopover;
+								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
@@ -553,7 +553,7 @@ sap.ui.define([
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
 								wait().then(function () {
-									var oTranslationPopover4 = oField4.getAggregation("_field")._oTranslationPopover;
+									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Translation", "oTranslationPopover4 Header: String4 Value");
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
@@ -576,7 +576,7 @@ sap.ui.define([
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
 									wait().then(function () {
-										var oTranslationPopover5 = oField5.getAggregation("_field")._oTranslationPopover;
+										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["fr"] || _oExpectedValues["string5"]["default"], "oTranslationPopover5 Header: String5 Value");
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
@@ -653,7 +653,7 @@ sap.ui.define([
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
 						wait().then(function () {
-							var oTranslationPopover1 = oField1.getAggregation("_field")._oTranslationPopover;
+							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
 							assert.equal(aHeaderItems1[1].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_CURRENTLANGUAGE"), "oTranslationPopover1 Header: Current Language");
@@ -683,7 +683,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
 							wait().then(function () {
-								var oTranslationPopover3 = oField3.getAggregation("_field")._oTranslationPopover;
+								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
@@ -706,7 +706,7 @@ sap.ui.define([
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
 								wait().then(function () {
-									var oTranslationPopover4 = oField4.getAggregation("_field")._oTranslationPopover;
+									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Translation", "oTranslationPopover4 Header: String4 Value");
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
@@ -729,7 +729,7 @@ sap.ui.define([
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
 									wait().then(function () {
-										var oTranslationPopover5 = oField5.getAggregation("_field")._oTranslationPopover;
+										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["ru"] || _oExpectedValues["string5"]["default"], "oTranslationPopover5 Header: String5 Value");
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
@@ -806,7 +806,7 @@ sap.ui.define([
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
 						wait().then(function () {
-							var oTranslationPopover1 = oField1.getAggregation("_field")._oTranslationPopover;
+							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
 							assert.equal(aHeaderItems1[1].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_CURRENTLANGUAGE"), "oTranslationPopover1 Header: Current Language");
@@ -836,7 +836,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
 							wait().then(function () {
-								var oTranslationPopover3 = oField3.getAggregation("_field")._oTranslationPopover;
+								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
@@ -859,7 +859,7 @@ sap.ui.define([
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
 								wait().then(function () {
-									var oTranslationPopover4 = oField4.getAggregation("_field")._oTranslationPopover;
+									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Translation", "oTranslationPopover4 Header: String4 Value");
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
@@ -882,7 +882,7 @@ sap.ui.define([
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
 									wait().then(function () {
-										var oTranslationPopover5 = oField5.getAggregation("_field")._oTranslationPopover;
+										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["ru"] || _oExpectedValues["string5"]["default"], "oTranslationPopover5 Header: String5 Value");
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
