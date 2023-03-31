@@ -21,8 +21,6 @@ sap.ui.define([
 
 	var app = new App("searchApp", {initialPage:"searchPage"});
 
-	new InvisibleText("SF_AD", {text: "Search"}).toStatic();
-
 	function onSearch(event) {
 		Log.debug("searchField: search for: " + event.getParameter("query"));
 		if (event.getParameter("refreshButtonPressed")){
@@ -92,9 +90,6 @@ sap.ui.define([
 			}),
 			new SearchField("SF7", { // showSearchButton = false
 				placeholder: "Without search button", showSearchButton: false, search: onSearch, liveChange: onLiveChange
-			}),
-			new SearchField("SF8", {
-				ariaDescribedBy: ["SF_AD"]
 			})
 		]
 	});

@@ -36,7 +36,7 @@ sap.ui.define([
 
 	var app = new App("searchApp", {initialPage:"searchPage"});
 
-	new InvisibleText("SF_AD", {text: "Search"}).toStatic();
+	new InvisibleText("SF_AD", {text: "Custom description"}).toStatic();
 
 	function onSearch(event) {
 		Log.debug("searchField: search for: " + event.getParameter("query"));
