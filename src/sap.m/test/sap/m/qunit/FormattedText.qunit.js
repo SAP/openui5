@@ -384,4 +384,34 @@ sap.ui.define([
 		// Cleanup
 		oFT.destroy();
 	});
+
+	QUnit.test("URL navigation can be cancelled", function (assert) {
+		// Arrange
+		var oFT = new FormattedText({
+			htmlText: '<a href="https://www.sap.com/">link</a>'
+		}),
+		rootElement = document.getElementById("qunit-fixture"),
+		fnPreventNavigation = function(oEvent) {
+			oEvent.preventDefault();
+		},
+		oSpy = this.spy(window, "open");
+
+		rootElement.addEventListener("click", fnPreventNavigation, true);
+		oFT.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oFT.getDomRef().querySelector("a").dispatchEvent(new MouseEvent("click", {
+			view: window,
+			bubbles: true,
+			cancelable: true
+		}));
+
+		// Assert
+		assert.ok(!oSpy.called, "No navigation");
+
+		// Cleanup
+		oFT.destroy();
+		rootElement.removeEventListener("click", fnPreventNavigation, true);
+	});
 });

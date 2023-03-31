@@ -367,6 +367,9 @@ function(
 
 		// open links href using safe API
 		function openLink (oEvent) {
+			if (oEvent.originalEvent.defaultPrevented) {
+				return;
+			}
 			oEvent.preventDefault();
 			var oLink = Core.byId(oEvent.currentTarget.id);
 			if (oLink && oLink.isA('sap.m.Link') && oLink.getAccessibleRole() === library.LinkAccessibleRole.Button) {

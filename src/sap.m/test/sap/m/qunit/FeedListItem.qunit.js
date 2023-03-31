@@ -601,6 +601,40 @@ sap.ui.define([
 		assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 	});
 
+	QUnit.test("URL navigation can be cancelled", function (assert) {
+		// Arrange
+		var oFLI = new FeedListItem({
+				sender: "Alexandrina Victoria",
+				info: "Request",
+				timestamp: "March 03 2013",
+				convertLinksToAnchorTags: "All",
+				text: "Lorem <strong>ipsum dolor sit amet</strong>, <em>consetetur sadipscing elitr</em>, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, <a href='http://www.sap.com'>sed diam voluptua</a>. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod <strong>tempor invidunt ut labore et dolore magna</strong> aliquyam erat, sed diam voluptua. <em>At vero eos et accusam et justo</em> duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, <u>sed diam nonumy eirmod tempor invidunt ut labore</u> et dolore magna aliquyam erat, sed diam voluptua. <strong>At vero eos et accusam</strong> et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod <a href='//www.sap.com'>tempor invidunt</a> ut labore et dolore magna aliquyam erat, sed diam voluptua. <em>At vero eos et accusam</em> et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum."
+			}),
+			rootElement = document.getElementById("qunit-fixture"),
+			fnPreventNavigation = function(oEvent) {
+				oEvent.preventDefault();
+			},
+			oSpy = this.spy(window, "open");
+
+		rootElement.addEventListener("click", fnPreventNavigation, true);
+		oFLI.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oFLI.getDomRef().querySelectorAll(".sapMFeedListItemTextString a")[0].dispatchEvent(new MouseEvent("click", {
+			view: window,
+			bubbles: true,
+			cancelable: true
+		}));
+
+		// Assert
+		assert.ok(!oSpy.called, "No navigation");
+
+		// Cleanup
+		oFLI.destroy();
+		rootElement.removeEventListener("click", fnPreventNavigation, true);
+	});
+
 	QUnit.module("Rendering behavior");
 
 	QUnit.test("Expanded text should appear also after rerendering", function (assert) {
