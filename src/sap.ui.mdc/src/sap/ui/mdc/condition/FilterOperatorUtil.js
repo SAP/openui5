@@ -115,6 +115,9 @@ function(
 									sTokenText = null; // some types (like Unit) return null if no value is given, in this case stop formating and return null
 									break;
 								}
+								if (typeof sReplace === "string") {
+									sReplace = sReplace.replace(/\$/g, '$$$'); // as "$$" has a special handling in replace, it will be transformed into "$"
+								}
 								sTokenText = sTokenText.replace(new RegExp("\\$" + i + "|" + i + "\\$" + "|" + "\\{" + i + "\\}", "g"), sReplace);
 							}
 
