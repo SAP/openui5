@@ -672,9 +672,6 @@ sap.ui.define([
 							}
 						}
 					}
-					if (!oTable._getShowStandardTooltips() && mRenderConfig.headerSelector.type === "toggle") {
-						mAttributes["aria-labelledby"] = [sTableId + "-ariaselectall"];
-					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.ROWHEADER:
@@ -861,11 +858,8 @@ sap.ui.define([
 							if (mParams && mParams.row) {
 								if (mParams.row.isExpandable()) {
 									var sText = TableUtils.getResourceText("TBL_COLLAPSE_EXPAND");
-									if (oTable._getShowStandardTooltips()) {
-										mAttributes["title"] = sText;
-									} else {
-										mAttributes["aria-label"] = sText;
-									}
+									mAttributes["title"] = sText;
+
 									mAttributes["aria-expanded"] = "" + (!!mParams.row.isExpanded());
 									mAttributes["aria-hidden"] = "false";
 									mAttributes["role"] = "button";
@@ -1225,7 +1219,7 @@ sap.ui.define([
 		}
 
 		var oTable = this.getTable();
-		var bShowRowTooltips = !oRow.isEmpty() && !oRow.isGroupHeader() && !oRow.isSummary() && oTable._getShowStandardTooltips();
+		var bShowRowTooltips = !oRow.isEmpty() && !oRow.isGroupHeader() && !oRow.isSummary() && !oTable._getHideStandardTooltips();
 
 		if ($Ref.row) {
 			if (bShowRowTooltips && TableUtils.isRowSelectionAllowed(oTable) && !$Ref.row.hasClass("sapUiTableRowHidden")) {
@@ -1401,7 +1395,7 @@ sap.ui.define([
 			sSelectionMode = oTable.getSelectionMode();
 		}
 
-		var bShowTooltips = oTable._getShowStandardTooltips();
+		var bShowTooltips = !oTable._getHideStandardTooltips();
 		var mTooltipTexts = {
 			mouse: {
 				rowSelect: "",

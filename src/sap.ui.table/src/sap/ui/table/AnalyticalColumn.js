@@ -299,7 +299,7 @@ sap.ui.define([
 
 	AnalyticalColumn.prototype._getDefaultTooltip = function() {
 		var oParent = this.getParent();
-		if (isInstanceOfAnalyticalTable(oParent)) {
+		if (isInstanceOfAnalyticalTable(oParent) && !oParent._getHideStandardTooltips()) {
 			var oBinding = oParent.getBinding();
 			if (oBinding && this.getLeadingProperty()) {
 				return oBinding.getPropertyQuickInfo(this.getLeadingProperty());
