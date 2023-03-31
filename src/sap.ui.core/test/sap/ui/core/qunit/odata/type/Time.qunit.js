@@ -351,4 +351,57 @@ sap.ui.define([
 			oType.getModelValue(UI5Date.getInstance("0099-12-31T14:15:56.789"));
 		}, new ValidateException("~error"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getDateValue", function (assert) {
+		var oModelValue = {
+				__edmType: 'Edm.Time',
+				ms: 29226000 // 08:07:06 as UTC
+			},
+			oTime = {
+				getUTCHours: function () {},
+				getUTCMilliseconds: function () {},
+				getUTCMinutes: function () {},
+				getUTCSeconds: function () {},
+				setFullYear: function () {},
+				setHours: function () {}
+			},
+			oType = new Time();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs(oModelValue.ms).returns(oTime);
+		this.mock(oTime).expects("setFullYear").withExactArgs(1970, 0, 1);
+		this.mock(oTime).expects("getUTCHours").withExactArgs().returns("~hours");
+		this.mock(oTime).expects("getUTCMinutes").withExactArgs().returns("~minutes");
+		this.mock(oTime).expects("getUTCSeconds").withExactArgs().returns("~seconds");
+		this.mock(oTime).expects("getUTCMilliseconds").withExactArgs().returns("~milliseconds");
+		this.mock(oTime).expects("setHours").withExactArgs("~hours", "~minutes", "~seconds", "~milliseconds");
+
+		// code under test
+		assert.strictEqual(oType.getDateValue(oModelValue), oTime);
+
+		// code under test
+		assert.strictEqual(oType.getDateValue(null), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Integrative test getModelValue/getDateValue", function (assert) {
+		var oDateValue, oModelValue,
+			oType = new Time();
+
+		// code under test, the time added to the constructor, makes sure the created date is a local date
+		oModelValue = oType.getModelValue(UI5Date.getInstance("2023-03-29T08:07:06"));
+
+		assert.deepEqual(oModelValue, {__edmType: 'Edm.Time', ms: 29226000});
+
+		// code under test
+		oDateValue = oType.getDateValue(oModelValue);
+
+		// The time added to the constructor, makes sure the created date is a local date
+		assert.deepEqual(oDateValue, UI5Date.getInstance("1970-01-01T08:07:06"));
+
+		// code under test
+		oModelValue = oType.getModelValue(oDateValue);
+
+		assert.deepEqual(oModelValue, {__edmType: 'Edm.Time', ms: 29226000});
+	});
 });
