@@ -410,7 +410,7 @@ sap.ui.define([
 		var oDateValue, sModelValue,
 			oType = new DateType();
 
-		// code under test
+		// code under test, the time added to the constructor, makes sure the created date is a local date
 		sModelValue = oType.getModelValue(UI5Date.getInstance("0099-12-31T08:07:06"));
 
 		assert.strictEqual(sModelValue, "0099-12-31");
@@ -418,7 +418,7 @@ sap.ui.define([
 		// code under test
 		oDateValue = oType.getDateValue(sModelValue);
 
-		// The time added to the constructor, makes sure the created date a locale date
+		// The time added to the constructor, makes sure the created date is a local date
 		assert.deepEqual(oDateValue, UI5Date.getInstance("0099-12-31T00:00:00"));
 
 		// code under test

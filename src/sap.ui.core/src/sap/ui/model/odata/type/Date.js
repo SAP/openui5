@@ -184,10 +184,10 @@ sap.ui.define([
 	 * Returns a date object for a given model value.
 	 *
 	 * @param {string|null} sModelValue
-	 *   The model value of this type. Can be retrieved via {@link sap.ui.base.DataType#getModelValue}.
+	 *   The model value of this type. Can be retrieved via {@link sap.ui.model.odata.type.Date#getModelValue}.
 	 * @returns {Date|module:sap/ui/core/date/UI5Date|null}
-	 *   An instance of <code>Date</code> for which the local getters <code>getDate()</code>, <code>getMonth()</code>
-	 *   and <code>getFullYear()</code> can be used to get the corresponding day, month and year of the given model
+	 *   An instance of <code>Date</code> for which the local getters <code>getDate()</code>, <code>getMonth()</code>,
+	 *   and <code>getFullYear()</code> can be used to get the corresponding day, month, and year of the given model
 	 *   value
 	 *
 	 * @since 1.113.0
