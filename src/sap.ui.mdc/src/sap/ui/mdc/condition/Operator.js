@@ -28,6 +28,12 @@ sap.ui.define([
 	) {
 		"use strict";
 
+		var fnSerializeForComparison = function (oObject) {
+			return JSON.stringify(oObject, function (sKey, vValue) {
+				return vValue === undefined ? '[undefined]' : vValue;
+			});
+		};
+
 		// translation utils
 		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		sap.ui.getCore().attachLocalizationChanged(function() {
@@ -856,8 +862,8 @@ sap.ui.define([
 					oCheckValue2.validated = oCondition2.validated;
 				}
 
-				var sCheckValue1 = JSON.stringify(oCheckValue1);
-				var sCheckValue2 = JSON.stringify(oCheckValue2);
+				var sCheckValue1 = fnSerializeForComparison(oCheckValue1);
+				var sCheckValue2 = fnSerializeForComparison(oCheckValue2);
 
 				if (sCheckValue1 === sCheckValue2) {
 					bEqual = true;
