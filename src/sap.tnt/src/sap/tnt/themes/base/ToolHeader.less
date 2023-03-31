@@ -26,11 +26,14 @@
 // ==========================================================================
 
 .sapMIBar.sapTntToolHeader .sapMBarChild.sapMITH {
-	height: @_sap_tnt_ToolHeader_IconTabHeader_Height;
-	box-shadow: none;
-	padding: @_sap_tnt_ToolHeader_Padding;
 	flex: 1;
 	min-width: 0; // fixes Chrome flex issue
+}
+
+.sapMIBar.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMBarChild.sapMITH {
+	box-shadow: none;
+	height: @_sap_tnt_ToolHeader_IconTabHeader_Height;
+	padding: @_sap_tnt_ToolHeader_Padding;
 
 	.sapMITBHead {
 		padding-top: 0;
@@ -53,7 +56,7 @@
 	}
 }
 
-.sapTntToolHeader .sapMITH .sapMITBContentArrow {
+.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMITH .sapMITBContentArrow {
 	margin: @_sap_tnt_ToolHeader_ArrowMargin;
 }
 
@@ -65,4 +68,14 @@
 	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnEmphasized.sapMBtnInner::after {
 		content: '\e287';
 	}
+}
+
+/* ------------------------------------------------ */
+/* Shell overrides                        */
+/* ------------------------------------------------ */
+
+.sapTntToolHeader.sapUshellShellToolHeader {
+	background-color: @sapUiShellNavigationBackground;
+	height: 2.75rem;
+	box-shadow: @sapUiShellShadow;
 }
