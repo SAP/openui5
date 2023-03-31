@@ -8,14 +8,12 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
     "sap/ui/mdc/enum/ActionToolbarActionAlignment",
-    "sap/ui/fl/FakeLrepConnectorLocalStorage",
     "sap/ui/mdc/ActionToolbarTesting/pages/App",
     "test-resources/sap/ui/rta/internal/integration/pages/Adaptation"
 ], function(
 	Opa5,
 	opaTest,
-    ActionToolbarActionAlignment,
-    FakeLrepConnectorLocalStorage
+    ActionToolbarActionAlignment
 ) {
 	"use strict";
 
@@ -32,41 +30,10 @@ sap.ui.define([
 		timeout: 45,
 
 		arrangements: {
-			iStartMyUIComponentInViewMode: function() {
-
-				// In some cases when a test fails in a success function,
-				// the UI component is not properly teardown.
-				// As a side effect, all the following tests in the stack
-				// fails when the UI component is started, as only one UI
-				// component can be started at a time.
-				// Teardown the UI component to ensure it is not started
-				// twice without a teardown, which results in less false
-				// positives and more reliable reporting.
-				if (this.hasUIComponentStarted()) {
-					this.iTeardownMyUIComponent();
-				}
-
-				return this.iStartMyUIComponent({
-					componentConfig: {
-						name: "sap.ui.mdc.ActionToolbarTesting",
-						async: true,
-                        settings: {
-                            id: "testingComponent"
-                        }
-					},
-					hash: "",
-					autoWait: true
-				});
-			},
-            iEnableTheLocalLRep: function() {
-                // Init LRep for VariantManagement (we have to fake the connection to LRep in order to be independent from backend)
-                FakeLrepConnectorLocalStorage.enableFakeConnector();
-                FakeLrepConnectorLocalStorage.forTesting.synchronous.clearAll();
-            },
-
             iClearTheLocalStorageFromRtaRestart: function() {
                 window.localStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
                 window.localStorage.removeItem("sap.ui.rta.restart.USER");
+                localStorage.clear();
             }
 		}
 	});
@@ -83,14 +50,14 @@ sap.ui.define([
             toolbarID: "---app--actionToolbarTable-toolbar",
             contextMenuEntries: ["Toolbar Actions"],
             renameActionID: "tableButton4",
-            variantManagementID: "testingComponent---app--IDVariantManagementOfTable"
+            variantManagementID: "ActionToolbarTesting---app--IDVariantManagementOfTable"
         },
         {
             name: "Chart",
             toolbarID: "---app--actionToolbarChart--toolbar",
             contextMenuEntries: ["Toolbar Actions"],
             renameActionID: "chartButton4",
-            variantManagementID: "testingComponent---app--IDVariantManagementOfChart"
+            variantManagementID: "ActionToolbarTesting---app--IDVariantManagementOfChart"
         }
     ];
 
@@ -98,11 +65,10 @@ sap.ui.define([
         QUnit.module("ActionToolbar RTA - " + oTestSetting.name, {});
 
         opaTest("Check initial state", function(Given, When, Then) {
-            Given.iStartMyUIComponentInViewMode();
-            Given.iEnableTheLocalLRep();
+            Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/actiontoolbar/index.html");
             Given.iClearTheLocalStorageFromRtaRestart();
 
-            Then.onTheApp.iShouldSeeActionToolbarWithActions("testingComponent" + oTestSetting.toolbarID, {
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("ActionToolbarTesting" + oTestSetting.toolbarID, {
                 "Action 1": {
                     alignment: ActionToolbarActionAlignment.Begin,
                     aggregationName: "end"
@@ -127,11 +93,11 @@ sap.ui.define([
         });
 
         opaTest("Hide 'Action 1'", function(Given, When, Then) {
-            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("testingComponent---app");
-            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("testingComponent---app", undefined);
+            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
+            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
 
             // Open Context Menu of ActionToolbar
-            When.onPageWithRTA.iRightClickOnAnElementOverlay("testingComponent" + oTestSetting.toolbarID);
+            When.onPageWithRTA.iRightClickOnAnElementOverlay("ActionToolbarTesting" + oTestSetting.toolbarID);
 
             Then.onPageWithRTA.iShouldSeetheContextMenu();
             Then.onPageWithRTA.iShouldSeetheContextMenuEntries(oTestSetting.contextMenuEntries);
@@ -153,7 +119,7 @@ sap.ui.define([
             When.onPageWithRTA.iExitRtaMode();
 
             // Check button order
-            Then.onTheApp.iShouldSeeActionToolbarWithActions("testingComponent" + oTestSetting.toolbarID, {
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("ActionToolbarTesting" + oTestSetting.toolbarID, {
                 "Action 4": {
                     alignment: ActionToolbarActionAlignment.Begin,
                     aggregationName: "end"
@@ -174,11 +140,11 @@ sap.ui.define([
         });
 
         opaTest("move 'Action 2' down, move 'Action 5' to top", function(Given, When, Then) {
-            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("testingComponent---app");
-            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("testingComponent---app", undefined);
+            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
+            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
 
             // Open Context Menu of ActionToolbar
-            When.onPageWithRTA.iRightClickOnAnElementOverlay("testingComponent" + oTestSetting.toolbarID);
+            When.onPageWithRTA.iRightClickOnAnElementOverlay("ActionToolbarTesting" + oTestSetting.toolbarID);
 
             Then.onPageWithRTA.iShouldSeetheContextMenu();
             Then.onPageWithRTA.iShouldSeetheContextMenuEntries(oTestSetting.contextMenuEntries);
@@ -195,7 +161,7 @@ sap.ui.define([
             When.onPageWithRTA.iExitRtaMode();
 
             // Check button order
-            Then.onTheApp.iShouldSeeActionToolbarWithActions("testingComponent" + oTestSetting.toolbarID, {
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("ActionToolbarTesting" + oTestSetting.toolbarID, {
                 "Action 5": {
                     alignment: ActionToolbarActionAlignment.Begin,
                     aggregationName: "end"
@@ -216,11 +182,11 @@ sap.ui.define([
         });
 
         opaTest("rename 'Action 4'", function(Given, When, Then) {
-            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("testingComponent---app");
-            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("testingComponent---app", undefined);
+            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
+            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
 
             // Open Context Menu of ActionToolbarAction
-            When.onPageWithRTA.iRightClickOnAnElementOverlay("testingComponent---app--" + oTestSetting.renameActionID);
+            When.onPageWithRTA.iRightClickOnAnElementOverlay("ActionToolbarTesting---app--" + oTestSetting.renameActionID);
             Then.onPageWithRTA.iShouldSeetheContextMenu();
             Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename"]);
             When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Rename");
@@ -231,7 +197,7 @@ sap.ui.define([
             When.onPageWithRTA.iExitRtaMode();
 
              // Check button order
-             Then.onTheApp.iShouldSeeActionToolbarWithActions("testingComponent" + oTestSetting.toolbarID, {
+             Then.onTheApp.iShouldSeeActionToolbarWithActions("ActionToolbarTesting" + oTestSetting.toolbarID, {
                 "Action 5": {
                     alignment: ActionToolbarActionAlignment.Begin,
                     aggregationName: "end"
@@ -250,16 +216,15 @@ sap.ui.define([
                 }
             });
 
-            Then.iTeardownMyUIComponent();
+            Then.iTeardownMyAppFrame();
         });
 
         if (oTestSetting.variantManagementID) {
             opaTest("check if contextMenu opens for VariantMangement in 'between' aggregation of ActionToolbar", function(Given, When, Then) {
-                Given.iStartMyUIComponentInViewMode();
-                Given.iEnableTheLocalLRep();
+                Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/actiontoolbar/index.html");
                 Given.iClearTheLocalStorageFromRtaRestart();
 
-                When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("testingComponent---app");
+                When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
 
                 // Open Context Menu of VariantManagement
                 When.onPageWithRTA.iRightClickOnAnElementOverlay(oTestSetting.variantManagementID);
@@ -269,7 +234,7 @@ sap.ui.define([
                 // Close RTA
                 When.onPageWithRTA.iExitRtaMode(false, /*bNoChanges =*/true);
 
-                Then.iTeardownMyUIComponent();
+                Then.iTeardownMyAppFrame();
             });
         }
 
