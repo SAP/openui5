@@ -159,7 +159,7 @@ sap.ui.define([
 				},
 				iShouldSeeAMessageToast: function () {
 					return this.waitFor({
-						pollingInterval: 100,
+						autoWait: false,
 						check: function() {
 							return !!Opa5.getJQuery()(".sapMMessageToast").length;
 						},
