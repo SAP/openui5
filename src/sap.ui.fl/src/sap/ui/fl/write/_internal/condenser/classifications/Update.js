@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/base/util/each"
 ], function(
-
+	each
 ) {
 	"use strict";
 
@@ -25,6 +26,14 @@ sap.ui.define([
 			} else {
 				oChange.condenserState = "delete";
 			}
+		},
+
+		getChangesFromMap: function(mObjects, sUniqueKey) {
+			var aChanges = [];
+			each(mObjects[sUniqueKey], function(sKey, oCondenserInfo) {
+				aChanges.push(oCondenserInfo.change);
+			});
+			return aChanges;
 		}
 	};
 });

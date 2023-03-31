@@ -847,6 +847,26 @@ sap.ui.define([
 				});
 			});
 		});
+
+		QUnit.test("only updateIFrame without addIFrame", function(assert) {
+			// Simulate having the addIFrame not part of the Condenser, e.g. because it's in an already active version
+			return loadChangesFromPath("updateIFrame.json", assert, 4)
+				.then(function(aLoadedChanges) {
+					this.aChanges = this.aChanges.concat(aLoadedChanges);
+					return applyChangeSequentially(this.aChanges);
+				}.bind(this))
+				.then(function() {
+					var aChanges = this.aChanges.slice(1);
+					return Condenser.condense(oAppComponent, aChanges);
+				}.bind(this))
+				.then(function(aRemainingChanges) {
+					assert.strictEqual(aRemainingChanges.length, 1, "the updates are condensed to 1 change");
+					var oContent = aRemainingChanges[0].getContent();
+					assert.strictEqual(oContent.height, "100px", "the height is correct");
+					assert.strictEqual(oContent.url, "https://www.example.com", "the url is correct");
+					assert.strictEqual(oContent.width, "10rem", "the width is correct");
+				});
+		});
 	});
 
 	QUnit.module("Given a mdc Table", {

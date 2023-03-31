@@ -391,13 +391,15 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change that is getting updated
 	 */
 	function condenseUpdateChange(mTypes, oCondenserInfo, oChange) {
-		var oUpdateCondenserInfo = ObjectPath.get([CondenserUtils.NOT_INDEX_RELEVANT, CondenserClassification.Update, oCondenserInfo.uniqueKey], mTypes);
+		var aPath = [CondenserUtils.NOT_INDEX_RELEVANT, CondenserClassification.Update, oCondenserInfo.uniqueKey];
+		var oUpdateCondenserInfo = ObjectPath.get(aPath, mTypes);
 		if (oUpdateCondenserInfo) {
 			oUpdateCondenserInfo.change.condenserState = "delete";
 			if (oChange.condenserState === "delete") {
 				return;
 			}
 			oCondenserInfo.update(oChange, oUpdateCondenserInfo.updateContent);
+			delete mTypes[CondenserUtils.NOT_INDEX_RELEVANT][CondenserClassification.Update][oCondenserInfo.uniqueKey];
 			if (oChange.isPersisted()) {
 				oChange.condenserState = "update";
 			}
