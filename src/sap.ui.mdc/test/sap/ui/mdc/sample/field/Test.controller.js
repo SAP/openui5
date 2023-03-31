@@ -194,7 +194,8 @@ sap.ui.define([
 
 		handleButton: function(oEvent) {
 			var oApp = this.byId("MyApp");
-			var sKey = oEvent.getParameter("key");
+			var oItem = oEvent.getParameter("item");
+			var sKey = oItem.getKey();
 			var oCurrentPage = oApp.getCurrentPage();
 			var oNewPage = this.byId(sKey);
 			var sPageId = oNewPage.getId();
