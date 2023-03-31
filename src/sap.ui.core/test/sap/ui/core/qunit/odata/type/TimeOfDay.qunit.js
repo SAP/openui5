@@ -438,4 +438,56 @@ sap.ui.define([
 			oType.getModelValue(UI5Date.getInstance("2022-12-31T14:15:56.789"));
 		}, new ValidateException("~error"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getDateValue", function (assert) {
+		var oType = new TimeOfDay();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs("1970-01-01T~modelValue").returns("~result");
+
+		// code under test
+		assert.strictEqual(oType.getDateValue("~modelValue"), "~result");
+
+		// code under test
+		assert.strictEqual(oType.getDateValue(null), null);
+	});
+
+	//*********************************************************************************************
+[{
+	constraints : undefined,
+	sInitialDate : "2023-03-29T08:07:06",
+	sExpectedDateValue : "1970-01-01T08:07:06",
+	sExpectedModelValue : "08:07:06"
+}, {
+	constraints : undefined,
+	sInitialDate : "2023-03-29T08:07",
+	sExpectedDateValue : "1970-01-01T08:07",
+	sExpectedModelValue : "08:07:00"
+}, {
+	constraints : {precision : 5},
+	sInitialDate : "2023-03-29T08:07:06.12345",
+	sExpectedDateValue : "1970-01-01T08:07:06.123",
+	sExpectedModelValue : "08:07:06.12300"
+}].forEach(function (oFixture, i) {
+	QUnit.test("Integrative test getModelValue/getDateValue " + i, function (assert) {
+		var oDateValue, sModelValue,
+			oType = new TimeOfDay(undefined, oFixture.constraints);
+
+		// code under test, the time added to the constructor, makes sure the created date a locale date
+		sModelValue = oType.getModelValue(UI5Date.getInstance(oFixture.sInitialDate));
+
+		assert.strictEqual(sModelValue, oFixture.sExpectedModelValue);
+
+		// code under test
+		oDateValue = oType.getDateValue(sModelValue);
+
+		// The time added to the constructor, makes sure the created date a locale date
+		assert.deepEqual(oDateValue, UI5Date.getInstance(oFixture.sExpectedDateValue));
+
+		// code under test
+		sModelValue = oType.getModelValue(oDateValue);
+
+		assert.strictEqual(sModelValue, oFixture.sExpectedModelValue);
+	});
+});
 });
