@@ -1663,12 +1663,6 @@ sap.ui.define([
 	 * context which is currently {@link #delete deleted} on the client, but not yet on the server,
 	 * this method cancels the deletion and restores the context.
 	 *
-	 * Note: This is an experimental API. Currently only row contexts of an
-	 * {@link sap.ui.model.odata.v4.ODataListBinding}, the
-	 * {@link sap.ui.model.odata.v4.ODataContextBinding#getBoundContext bound context}, and the
-	 * return value context (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute #execute})
-	 * of an {@link sap.ui.model.odata.v4.ODataContextBinding} are supported.
-	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the context
 	 *   and its current dependent bindings are canceled
@@ -1685,9 +1679,9 @@ sap.ui.define([
 	 *     {@link sap.ui.model.odata.v4.ODataContextBinding#getParameterContext parameter context}.
 	 * </ul>
 	 *
-	 * @experimental As of version 1.109.0
 	 * @public
 	 * @see #hasPendingChanges
+	 * @since 1.113.0
 	 */
 	Context.prototype.resetChanges = function () {
 		var aPromises = this.oDeletePromise
