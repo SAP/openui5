@@ -1,11 +1,13 @@
-/* global QUnit */
+/* global QUnit,sinon */
 
 sap.ui.define([
+		"sap/ui/core/Configuration",
 		"sap/ui/integration/widgets/Card",
 		"sap/ui/integration/util/ErrorHandler",
 		"sap/m/InstanceManager",
 		"sap/m/IllustratedMessageType"],
 	function (
+		Configuration,
 		Card,
 		ErrorHandler,
 		InstanceManager,
@@ -58,7 +60,8 @@ sap.ui.define([
 
 		QUnit.test("Create message with details", function (assert) {
 			// Act
-			var oErrorHandler = this.oErrorHandler,
+			var oDebugStub = sinon.stub(Configuration, "getDebug").returns(true),
+				oErrorHandler = this.oErrorHandler,
 				mErrorInfo = {
 					type: IllustratedMessageType.NoData,
 					title: "Some Title",
@@ -91,11 +94,13 @@ sap.ui.define([
 			assert.strictEqual(oDialog.getContent()[0].getText(), mErrorInfo.details, "Dialog content is correct");
 
 			InstanceManager.closeAllDialogs();
+
+			oDebugStub.restore();
 		});
 
 		QUnit.test("Create data request error message", function (assert) {
-			// Act
-			var oErrorHandler = this.oErrorHandler,
+			var oDebugStub = sinon.stub(Configuration, "getDebug").returns(true),
+				oErrorHandler = this.oErrorHandler,
 				mErrorInfo = {
 					requestErrorParams: {
 						message: "Description",
@@ -140,5 +145,7 @@ sap.ui.define([
 			assert.ok(oDialog.getContent()[0], "Dialog content is created");
 
 			InstanceManager.closeAllDialogs();
+
+			oDebugStub.restore();
 		});
 	});
