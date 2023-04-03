@@ -23,7 +23,6 @@ sap.ui.define([
         "use strict";
 
         /**
-         /**
          * Constructor for a new ChartSelectionDetails.
          *
          * @param {string} [sId] id for the new control, generated automatically if no id is given

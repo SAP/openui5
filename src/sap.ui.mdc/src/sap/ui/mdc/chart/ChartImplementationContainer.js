@@ -13,7 +13,7 @@ function (Control, Renderer, Core, jQuery
     "use strict";
 
     /**
-     * Constructor for a new Chart.
+     * Constructor for a new ChartContainer.
      *
      * @param {string} [sId] ID for the new control, generated automatically if no id is given
      * @param {object} [mSettings] Initial settings for the new control

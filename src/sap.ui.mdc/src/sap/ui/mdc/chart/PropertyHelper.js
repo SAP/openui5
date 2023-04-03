@@ -99,12 +99,12 @@ sap.ui.define([
 		};
 	};
 
-		/**
-		 * This returns the layout options for a specific type of Item (measure/dimension,groupable/aggregatable)
-		 * It is used by p13n to determine which layout options to show in the p13n panel
-		 * @param {string} sType the type for which the layout options are requested
-		 */
-		PropertyHelper.prototype._getLayoutOptionsForType = function(sType){
+	/**
+	 * This returns the layout options for a specific type of Item (measure/dimension,groupable/aggregatable)
+	 * It is used by p13n to determine which layout options to show in the p13n panel
+	 * @param {string} sType the type for which the layout options are requested
+	 */
+	PropertyHelper.prototype._getLayoutOptionsForType = function(sType){
 		var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		var oAvailableRoles = {
 			groupable: [
