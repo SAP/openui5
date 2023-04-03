@@ -388,18 +388,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getDateValue", function (assert) {
-		var oDate = {
-				setFullYear: function () {},
-				setHours: function () {}
-			},
-			oType = new DateType();
+		var oType = new DateType();
 
-		this.mock(UI5Date).expects("getInstance").withExactArgs().returns(oDate);
-		this.mock(oDate).expects("setFullYear").withExactArgs(1990, 4, 27);
-		this.mock(oDate).expects("setHours").withExactArgs(0, 0, 0, 0);
+		this.mock(UI5Date).expects("getInstance").withExactArgs("~modelValueT00:00").returns("~result");
 
 		// code under test
-		assert.strictEqual(oType.getDateValue("1990-5-27"), oDate);
+		assert.strictEqual(oType.getDateValue("~modelValue"), "~result");
 
 		// code under test
 		assert.strictEqual(oType.getDateValue(null), null);
@@ -424,6 +418,6 @@ sap.ui.define([
 		// code under test
 		sModelValue = oType.getModelValue(oDateValue);
 
-		assert.deepEqual(sModelValue, "0099-12-31");
+		assert.strictEqual(sModelValue, "0099-12-31");
 	});
 });

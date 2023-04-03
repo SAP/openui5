@@ -195,18 +195,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
 	 */
 	EdmDate.prototype.getDateValue = function (sModelValue) {
-		var aDateParts, oResult;
-
-		if (!sModelValue) {
-			return null;
-		}
-
-		aDateParts = sModelValue.split("-");
-		oResult = UI5Date.getInstance();
-		oResult.setFullYear(parseInt(aDateParts[0]), parseInt(aDateParts[1]) - 1, parseInt(aDateParts[2]));
-		oResult.setHours(0, 0, 0, 0);
-
-		return oResult;
+		return sModelValue ? UI5Date.getInstance(sModelValue + "T00:00") : null;
 	};
 
 	/**
