@@ -79,13 +79,15 @@ sap.ui.define([
 	/**
 	 * @private
 	 * @ui5-restricted sap.ui.integration.widgets.Card
-	 * @param {object} mErrorInfo Settings for illustration and information for the ocurred error, if it is error
+	 * @param {object} mErrorInfo Settings for illustration and information for the occurred error, if it is error
 	 * @param {boolean} [bIsNoData] Whether the illustration is for no data case
 	 * @returns {sap.ui.core.Control} Illustration
 	 */
 	ErrorHandler.prototype.getIllustratedMessage = function (mErrorInfo, bIsNoData) {
 		if (mErrorInfo.requestErrorParams) {
 			mErrorInfo = this._configureDataRequestErrorInfo(mErrorInfo);
+		} else if (!bIsNoData) {
+			mErrorInfo = this._configureErrorInfo(mErrorInfo);
 		}
 
 		return this._createIllustratedMessage(mErrorInfo, bIsNoData);
@@ -218,6 +220,9 @@ sap.ui.define([
 					break;
 				case 404:
 					sType = IllustratedMessageType.PageNotFound;
+					if (!oResponse.statusText) {
+						sTitle = "404 " + oCard.getTranslatedText("CARD_ERROR_REQUEST_NOTFOUND_TITLE");
+					}
 					break;
 				case 408:
 					sType = IllustratedMessageType.ReloadScreen;
@@ -255,7 +260,7 @@ sap.ui.define([
 			if (Utils.isJson(sResponseText)) {
 				sDetails += formatJson(JSON.parse(sResponseText));
 			} else {
-				sDetails += sResponseText;
+				sDetails += BindingParser.complexParser.escape(sResponseText);
 			}
 
 			sDetails += "\n\n";
@@ -269,6 +274,19 @@ sap.ui.define([
 			type: sType,
 			title: sTitle,
 			description: sDescription,
+			details: sDetails
+		};
+	};
+
+	ErrorHandler.prototype._configureErrorInfo = function (mErrorInfo) {
+		var oCard = this.getCard(),
+			sDetails = oCard.getTranslatedText("CARD_MANIFEST") + "\n" + formatJson(oCard._oCardManifest.getJson()) + "\n\n" +
+				oCard.getTranslatedText("CARD_STACK_TRACE") + "\n" + new Error().stack;
+
+		return {
+			type: mErrorInfo.type,
+			title: mErrorInfo.title,
+			description: mErrorInfo.description,
 			details: sDetails
 		};
 	};
