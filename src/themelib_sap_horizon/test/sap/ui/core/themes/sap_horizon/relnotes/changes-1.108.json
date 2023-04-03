@@ -128,5 +128,32 @@
         ]
       }
     ]
+  },
+  "1.108.8": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "39b2e2bd88256801b0137a0f658cd822ec1760ce",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: text no longer breaks on press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270123986"
+          }
+        ]
+      },
+      {
+        "id": "5887340a04a1a8dd22a120148263313b70a27145",
+        "type": "FIX",
+        "text": " Align ObjectStatus icon and text in Table cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370016220"
+          }
+        ]
+      }
+    ]
   }
 }

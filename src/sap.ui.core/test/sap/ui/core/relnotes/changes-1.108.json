@@ -342,5 +342,36 @@
         ]
       }
     ]
+  },
+  "1.108.8": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "77fa8dac4c3cab45b02dca14a0477e59255dabde",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_hasChangedEntity: node may be unset",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001959552023"
+          }
+        ]
+      },
+      {
+        "id": "883c3980ed13df5b3d295802ec6f229f21dac398",
+        "type": "FIX",
+        "text": " theming.ThemeManager: Ensure adding of custom.css",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001514272023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400001089912023"
+          }
+        ]
+      }
+    ]
   }
 }

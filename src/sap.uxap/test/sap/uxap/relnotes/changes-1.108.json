@@ -52,5 +52,25 @@
         "text": " sap.uxap.ObjectPageSection: wrapTitle property added"
       }
     ]
+  },
+  "1.108.8": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "143e1cf9360dd85e89810b4a67d3d3b37ea4d741",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Selecting Section with keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270113573"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370011663"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -111,5 +111,21 @@
         ]
       }
     ]
+  },
+  "1.108.8": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "752455f7fe29861bc23c7a359666da8ea3ab163b",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: added SR speech for date's week number",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270172494"
+          }
+        ]
+      }
+    ]
   }
 }
