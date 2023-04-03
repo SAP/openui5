@@ -4,6 +4,8 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/library",
+	"sap/ui/core/Configuration",
+	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/integration/util/Utils",
@@ -20,6 +22,8 @@ sap.ui.define([
 ], function (
 	library,
 	coreLibrary,
+	Configuration,
+	Log,
 	Device,
 	ManagedObject,
 	Utils,
@@ -118,52 +122,56 @@ sap.ui.define([
 		});
 
 		if (sDetails) {
-			oIllustratedMessage.addAdditionalContent(new Button({
-				text: oCard.getTranslatedText("CARD_BUTTON_SHOW_MORE"),
-				press: function () {
-					var oText = new Text({
-						renderWhitespace: true,
-						text: sDetails
-					}).addStyleClass("sapUiSmallMargin");
+			if (Configuration.getDebug()) {
+				oIllustratedMessage.addAdditionalContent(new Button({
+					text: oCard.getTranslatedText("CARD_BUTTON_SHOW_MORE"),
+					press: function () {
+						var oText = new Text({
+							renderWhitespace: true,
+							text: sDetails
+						}).addStyleClass("sapUiSmallMargin");
 
-					var oDialog = new Dialog({
-						stretch: Device.system.phone,
-						customHeader: new Bar({
-							contentMiddle: new Title({
-								text: oCard.getTranslatedText("CARD_ERROR_DIALOG_TITLE"),
-								level: TitleLevel.H1
+						var oDialog = new Dialog({
+							stretch: Device.system.phone,
+							customHeader: new Bar({
+								contentMiddle: new Title({
+									text: oCard.getTranslatedText("CARD_ERROR_DIALOG_TITLE"),
+									level: TitleLevel.H1
+								}),
+								contentRight: new Button({
+									icon: "sap-icon://copy",
+									tooltip: oCard.getTranslatedText("CARD_TEXT_COPY"),
+									press: function () {
+										var oRange = document.createRange(),
+											oTextDomRef = oText.getDomRef();
+
+										oRange.selectNode(oTextDomRef);
+										window.getSelection().removeAllRanges(); // clear current selection
+										window.getSelection().addRange(oRange); // to select text
+										window.navigator.clipboard.writeText(oTextDomRef.textContent);
+									}
+								})
 							}),
-							contentRight: new Button({
-								icon: "sap-icon://copy",
-								tooltip: oCard.getTranslatedText("CARD_TEXT_COPY"),
-								press: function () {
-									var oRange = document.createRange(),
-										oTextDomRef = oText.getDomRef();
+							content: oText,
+							buttons: [
+								new Button({
+									text: oCard.getTranslatedText("CARD_DIALOG_CLOSE_BUTTON"),
+									press: function () {
+										oDialog.close();
+									}
+								})
+							],
+							afterClose: function () {
+								oDialog.destroy();
+							}
+						});
 
-									oRange.selectNode(oTextDomRef);
-									window.getSelection().removeAllRanges(); // clear current selection
-									window.getSelection().addRange(oRange); // to select text
-									window.navigator.clipboard.writeText(oTextDomRef.textContent);
-								}
-							})
-						}),
-						content: oText,
-						buttons: [
-							new Button({
-								text: oCard.getTranslatedText("CARD_DIALOG_CLOSE_BUTTON"),
-								press: function () {
-									oDialog.close();
-								}
-							})
-						],
-						afterClose: function () {
-							oDialog.destroy();
-						}
-					});
-
-					oDialog.open();
-				}
-			}));
+						oDialog.open();
+					}
+				}));
+			} else {
+				Log.error(sDetails);
+			}
 		}
 
 		if (oCard.getCardContent() && oCard.getCardContent().getDomRef()) {
