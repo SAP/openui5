@@ -185,7 +185,7 @@ sap.ui.define([
 					};
 				}
 
-				// If more then one local property maps to the same target property (clash situation)
+				// If more than one local property maps to the same target property (clash situation)
 				// we take the value of the last property and write an error log
 				if (oResults[sSemanticObject][sAttributeNameMapped]) {
 					SapBaseLog.error("FlpLinkDelegate: The attribute " + sAttributeName + " can not be renamed to the attribute " + sAttributeNameMapped + " due to a clash situation. This can lead to wrong navigation later on.");

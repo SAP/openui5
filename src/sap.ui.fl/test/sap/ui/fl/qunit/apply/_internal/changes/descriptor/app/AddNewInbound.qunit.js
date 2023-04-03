@@ -124,7 +124,7 @@ sap.ui.define([
 				}
 			});
 
-			// More then one inbound
+			// More than one inbound
 			this.oChangeMoreThenOneInbound = new AppDescriptorChange({
 				changeType: "appdescr_app_addNewInbound",
 				layer: Layer.CUSTOMER,
@@ -202,11 +202,11 @@ sap.ui.define([
 			"throws error that the namespace is not compliance");
 		});
 
-		QUnit.test("when calling '_applyChange' adding more then one inbound in a manifest", function (assert) {
+		QUnit.test("when calling '_applyChange' adding more than one inbound in a manifest", function (assert) {
 			assert.throws(function() {
 				AddNewInbound.applyChange(this.oManifest, this.oChangeMoreThenOneInbound);
 			}, Error("It is not allowed to add more than one inbound"),
-			"throws error that you are not allowed to add more then one inbound");
+			"throws error that you are not allowed to add more than one inbound");
 		});
 	});
 });

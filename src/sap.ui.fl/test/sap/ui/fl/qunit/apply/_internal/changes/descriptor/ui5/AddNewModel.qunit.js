@@ -699,7 +699,7 @@ function (
 			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["equipmentDataSource"]["settings"]["annotations"][0], "customer.fancy_annotation1", ADDED_DATASOURCE.replace("{0}", "annotations customer.fancy_annotation1"));
 			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["equipmentDataSource"]["settings"]["annotations"][1], "customer.fancy_annotation2", ADDED_DATASOURCE.replace("{0}", "annotations customer.fancy_annotation2"));
 			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["equipmentDataSource"]["settings"]["annotations"][2], "customer.fancy_annotation3", ADDED_DATASOURCE.replace("{0}", "annotations customer.fancy_annotation3"));
-			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["equipmentDataSource"]["settings"]["annotations"][3], undefined, "There are not more then 3 sap.app dataSource annotations.");
+			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["equipmentDataSource"]["settings"]["annotations"][3], undefined, "There are not more than 3 sap.app dataSource annotations.");
 		});
 
 		QUnit.test("when calling '_applyChange' with adding a new model and 3 dataSources which has dataSource type 'ODataAnnotation' and one dataSource with type 'OData' but not including one of the typed 'ODataAnnotation' dataSources => ERROR", function (assert) {
