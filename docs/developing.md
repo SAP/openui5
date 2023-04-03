@@ -178,9 +178,18 @@ Testing UI5
 ### Running the Static Code Checks (ESLint)
 
 All UI5 code must conform to a certain ruleset which is checked with ESLint (http://eslint.org/).  
-To run an ESLint check, navigate to the root directory of the repository and execute:
+To run an ESLint check (not showing warnings), navigate to the root directory of the repository and execute:
 ```
 npm run lint
+```
+
+Use the `eslint` command directly to also see warnings and/or check a specific folder
+```
+# Same as above, but with warnings (no --quiet option)
+npx eslint ./src
+
+# Checks only a sub-folder but hides warnings
+npx eslint ./src/sap.ui.core --quiet
 ```
 
 ### Running Tests
