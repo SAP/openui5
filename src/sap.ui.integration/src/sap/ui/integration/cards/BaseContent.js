@@ -351,18 +351,21 @@ sap.ui.define([
 
 	/**
 	 * @protected
-	 * @param {sap.m.IllustratedMessageType} sType Illustration type
-	 * @param {string} sTitle Illustration title
+	 * @param {object} oSettings 'No Data' settings
+	 * @param {sap.m.IllustratedMessageType} oSettings.type Illustration type
+	 * @param {sap.m.IllustratedMessageSize} [oSettings.illustrationSize=sap.m.IllustratedMessageSize.Auto] Illustration size
+	 * @param {string} oSettings.title Title
+	 * @param {string} [oSettings.description] Description
 	 */
-	BaseContent.prototype.showNoDataMessage = function (sType, sTitle) {
+	BaseContent.prototype.showNoDataMessage = function (oSettings) {
 		this.destroyAggregation("_noDataMessage");
 		var oNoDataConfiguration = this.getNoDataConfiguration() || {};
 
 		var oIllustrationSettings = {
-			type: IllustratedMessageType[oNoDataConfiguration.type] || sType,
-			size: IllustratedMessageSize[oNoDataConfiguration.size],
-			title: oNoDataConfiguration.title || sTitle,
-			description: oNoDataConfiguration.description
+			type: IllustratedMessageType[oNoDataConfiguration.type] || oSettings.type,
+			size: IllustratedMessageSize[oNoDataConfiguration.size] || oSettings.size,
+			title: oNoDataConfiguration.title || oSettings.title,
+			description: oNoDataConfiguration.description || oSettings.description
 		};
 
 		var oIllustratedMessage = this.getCardInstance()._oErrorHandler.getIllustratedMessage(oIllustrationSettings, true);
@@ -514,6 +517,15 @@ sap.ui.define([
 		if (oCard) {
 			oCard.removeActiveLoadingProvider(oLoadingProvider);
 		}
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 * @returns {boolean} Whether the content has no data
+	 */
+	BaseContent.prototype.hasNoData = function () {
+		return !!this.getAggregation("_noDataMessage");
 	};
 
 	/**

@@ -4619,6 +4619,110 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("hasNoData", {
+			beforeEach: function () {
+				this.oCard = new Card();
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("hasNoData when the card is not ready", function (assert) {
+			assert.strictEqual(this.oCard.hasNoData(), false, "'false' should be returned when the card is not ready");
+		});
+
+		QUnit.test("hasNoData on 'stateChanged' event", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachStateChanged(function () {
+				assert.strictEqual(this.oCard.hasNoData(), true, "'true' should be returned");
+
+				done();
+			}, this);
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.NoData"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {},
+					"content": {
+						"item": {
+							"title": ""
+						}
+					},
+					"data": {
+						"json": []
+					}
+				}
+			});
+		});
+
+		QUnit.test("hasNoData when there is data", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachStateChanged(function () {
+				assert.strictEqual(this.oCard.hasNoData(), false, "'false' should be returned");
+
+				done();
+			}, this);
+
+			this.oCard.setManifest(oManifest_ListCard);
+		});
+
+		QUnit.test("hasNoData on content that doesn't support 'No Data'", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachStateChanged(function () {
+				assert.strictEqual(this.oCard.hasNoData(), false, "'false' should be returned");
+
+				done();
+			}, this);
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.NoData"
+				},
+				"sap.card": {
+					"type": "Calendar",
+					"data": {
+						"json": {
+							"item": []
+						}
+					},
+					"header": {
+						"title": "My calendar"
+					},
+					"content": {}
+				}
+			});
+		});
+
+		QUnit.test("hasNoData after showNoData", function (assert) {
+			var done = assert.async();
+			var stateChangedCount = 0;
+
+			this.oCard.attachStateChanged(function () {
+				stateChangedCount++;
+
+				if (stateChangedCount === 1) {
+					assert.strictEqual(this.oCard.hasNoData(), false, "'false' should be returned");
+
+					// Act
+					this.oCard.showNoData({});
+				} else if (stateChangedCount === 2) {
+					assert.strictEqual(this.oCard.hasNoData(), true, "'true' should be returned");
+					done();
+				}
+			}, this);
+
+			this.oCard.setManifest(oManifest_ListCard);
+		});
+
 	}
 );
 
