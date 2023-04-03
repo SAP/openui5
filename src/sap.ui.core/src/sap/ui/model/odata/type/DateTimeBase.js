@@ -128,6 +128,41 @@ sap.ui.define([
 		});
 
 	/**
+	 * Returns a date object for a given model value.
+	 *
+	 * @param {Date|module:sap/ui/core/date/UI5Date|string|null} vModelValue
+	 *   The model value of this type. Can be retrieved via this type's <code>getModelValue</code> function.
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|null}
+	 *   An instance of <code>Date</code> for which the local getters <code>getDate()</code>, <code>getMonth()</code>,
+	 *   <code>getFullYear()</code>, <code>getHours()</code>, <code>getMinutes()</code>, <code>getSeconds()</code>, and
+	 *   <code>getMilliseconds()</code> can be used to get the corresponding day, month, year, hours, minutes, seconds,
+	 *   and milliseconds of the given model value
+	 *
+	 * @since 1.113.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	DateTimeBase.prototype.getDateValue = function (vModelValue) {
+		var oResult;
+
+		if (!vModelValue) {
+			return null;
+		}
+
+		oResult = UI5Date.getInstance(vModelValue);
+		if (isDateOnly(this)) {
+			oResult.setFullYear(oResult.getUTCFullYear(), oResult.getUTCMonth(), oResult.getUTCDate());
+			oResult.setHours(0, 0, 0, 0);
+		} else if (this.oFormatOptions && this.oFormatOptions.UTC) {
+			oResult.setFullYear(oResult.getUTCFullYear(), oResult.getUTCMonth(), oResult.getUTCDate());
+			oResult.setHours(oResult.getUTCHours(), oResult.getUTCMinutes(),
+				oResult.getUTCSeconds(), oResult.getUTCMilliseconds());
+		}
+
+		return oResult;
+	};
+
+	/**
 	 * Formats the given value to the given target type.
 	 *
 	 * @param {Date} oValue
