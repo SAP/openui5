@@ -1727,5 +1727,115 @@
         ]
       }
     ]
+  },
+  "1.84.33": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "8812d4e28f47032f7dfe00cd7680dd4e5ffa90fb",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: reset filter button now clear indicator to selected items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380026705"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180213575"
+          }
+        ]
+      },
+      {
+        "id": "b60fced1930a14dec968f716fbb67fae930d45cb",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust type announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001393612023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180399466"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270100219"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280073378"
+          }
+        ]
+      },
+      {
+        "id": "967cab97e1da8e7d9dba8e2e06520587e00bf2a1",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: remove aria-expanded attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270176784"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270013284"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270013285"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270004311"
+          }
+        ]
+      },
+      {
+        "id": "16df1422278cbfacd3a467b01697f4ac5a28b752",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Switch hours when minDate is after maxDate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370001157"
+          }
+        ]
+      },
+      {
+        "id": "b16e967433d0bd2134606fb16ee95b4c79b59316",
+        "type": "FIX",
+        "text": " sap.m.URLHelper: Fixed redirect method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "6450822022"
+          }
+        ]
+      },
+      {
+        "id": "2025eaae256b239339f112afce411556928c2cd5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Title is now referenced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170030767"
+          }
+        ]
+      },
+      {
+        "id": "b1cd315e29a2efd68fcd3f72f0d5b10022b09f64",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbarAssociativePopover: Fixed function overriding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000978672023"
+          }
+        ]
+      }
+    ]
   }
 }
