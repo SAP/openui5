@@ -1,7 +1,29 @@
 {
   "1.113.0": {
-    "date": "March 2023",
+    "date": "April 2023",
     "notes": [
+      {
+        "id": "dd15a39b706dbd435a428ef93b4aa95e0211efac",
+        "type": "FIX",
+        "text": " mdc.ActionToolBar: correct move-change handler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370026435"
+          }
+        ]
+      },
+      {
+        "id": "d237c46bdb7da918d6b61cfe6677e3065908b7a0",
+        "type": "FIX",
+        "text": " Operator: formatting of \"$$\" wrong",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370025280"
+          }
+        ]
+      },
       {
         "id": "ce022ceece167e3cffb1bda46e2fe95b928ad58c",
         "type": "FIX",

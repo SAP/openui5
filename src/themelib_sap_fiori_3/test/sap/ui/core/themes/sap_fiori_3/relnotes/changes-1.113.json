@@ -14,17 +14,6 @@
         ]
       },
       {
-        "id": "57c7f3ab6020c3806f025df90ae9481694a8e943",
-        "type": "FIX",
-        "text": " sap.m.InputBase: Horizon styles adjusment",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2370008103"
-          }
-        ]
-      },
-      {
         "id": "6ecfdfa2830ec5a92e404bce09a64e3207bb7b63",
         "type": "FIX",
         "text": " sap.m.Panel: Styles adjustments",
@@ -32,17 +21,6 @@
           {
             "type": "BCP",
             "reference": "2370017041"
-          }
-        ]
-      },
-      {
-        "id": "efc549d5e7ffb642f8db5fe255ae48748e4e2573",
-        "type": "FIX",
-        "text": " sap.m.ActionSelect: Remove double focus",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2370014520"
           }
         ]
       }

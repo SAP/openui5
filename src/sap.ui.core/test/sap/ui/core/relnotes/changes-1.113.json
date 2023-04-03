@@ -1,7 +1,62 @@
 {
   "1.113.0": {
-    "date": "March 2023",
+    "date": "April 2023",
     "notes": [
+      {
+        "id": "cb6639651d0a8c199e484aa96a0dbf13ef143361",
+        "type": "FIX",
+        "text": " core.Locale: Fix cross reference in the JSDoc of getExtension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370030891"
+          }
+        ]
+      },
+      {
+        "id": "313f8888f0f58b660e2f9746081f82a4ba8af913",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding: Fix grouping of Application filters in OperationMode.Server",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370010564"
+          }
+        ]
+      },
+      {
+        "id": "6b1f62496447a74ab7db4dbf611540a59ebc1ec8",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now correctly rendered inside a Form",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370025954"
+          }
+        ]
+      },
+      {
+        "id": "e21f069a461748678590eaf5cce4ecf4a0f9bff5",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_hasChangedEntity: node may be unset",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001959552023"
+          }
+        ]
+      },
+      {
+        "id": "1a5e2ec5911bfeb55cac677d95ff3631286da9a1",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDateUtils#_getDateFromWeekStartByDayOffset: Fix usage of inconsistent locale",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380029711"
+          }
+        ]
+      },
       {
         "id": "716f29d4b901a17de2d77afc2383fab710f04dae",
         "type": "FIX",
@@ -44,6 +99,11 @@
             "reference": "2380043244"
           }
         ]
+      },
+      {
+        "id": "50a50d647921b8b923b5be18b575f9812c2ef5b8",
+        "type": "FEATURE",
+        "text": " sap.ui.test.RecordReplay: API Enhancements"
       },
       {
         "id": "61e6d05e078c27f1a7e15af0fa791d4e72b93d2b",

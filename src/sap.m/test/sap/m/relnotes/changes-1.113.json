@@ -1,7 +1,97 @@
 {
   "1.113.0": {
-    "date": "March 2023",
+    "date": "April 2023",
     "notes": [
+      {
+        "id": "deea2f0d070a135cc77e2c007dcfbf248617e986",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust default href attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006841702022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001393612023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          }
+        ]
+      },
+      {
+        "id": "a5449432363fde2e34521a293946ef64b3f0c39a",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Fixed speech output",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011052"
+          }
+        ]
+      },
+      {
+        "id": "ae5d1516746d02090a8d27a66f50d7a70826484c",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: AccessibleRole of the \"View details\" link is now 'button'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370015499"
+          }
+        ]
+      },
+      {
+        "id": "300801739d862750b16ae0af5ed12db0f36e70d3",
+        "type": "FIX",
+        "text": " sap.m.Menu: adjust adding custom data",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370024211"
+          }
+        ]
+      },
+      {
+        "id": "79a29c05927545497eed754b15e944a5fee33687",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust preferred user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370024534"
+          }
+        ]
+      },
+      {
+        "id": "9fcb1f966215d9022f03cb37cbf74cc5e08d1199",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Improve sample structure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380036835"
+          }
+        ]
+      },
+      {
+        "id": "34f8296f5fc37a84b128a56c273d8adbfaa67651",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Adjust unstable QUnit test in FF"
+      },
+      {
+        "id": "e7b53666db4378a3af4f26ae9835a86912201693",
+        "type": "FIX",
+        "text": " For cancelling then renaming attachments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370017751"
+          }
+        ]
+      },
       {
         "id": "5bb74c779fe23821434ec4814dcc52b7d2d993f1",
         "type": "FIX",
@@ -43,6 +133,17 @@
           {
             "type": "BCP",
             "reference": "2380018237"
+          }
+        ]
+      },
+      {
+        "id": "71986cc2f024d4583f8e7a7435bd259fbdad287b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Select All checkbox does not appear at wrong place on Tablet/Phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380023440"
           }
         ]
       },

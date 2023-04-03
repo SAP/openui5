@@ -1,7 +1,56 @@
 {
   "1.113.0": {
-    "date": "March 2023",
+    "date": "April 2023",
     "notes": [
+      {
+        "id": "6f9a1eef3140c552b2d275acb5b5881a9b8ba659",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix growing Table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380041732"
+          }
+        ]
+      },
+      {
+        "id": "6e50dfc0643ac036e4919091cf2ff6adc778aca4",
+        "type": "FIX",
+        "text": " sap.m.SidePanel: Fix vanishing SidePanelItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370021624"
+          }
+        ]
+      },
+      {
+        "id": "898bce3524ba98e348c228685050dfeeac7b2878",
+        "type": "FIX",
+        "text": " Integration Cards: Filtering now works after 'No Data' message is displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380041275"
+          }
+        ]
+      },
+      {
+        "id": "a878c20b952fedeb37e2717630de052bc1d0ae2e",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: set proper Side Panel Item icon tooltip",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370013738"
+          }
+        ]
+      },
+      {
+        "id": "9165d353150bd95722a6bd053c1a9ae84cc139f5",
+        "type": "FEATURE",
+        "text": " Integration Cards: Object Status icon can be custom"
+      },
       {
         "id": "60a7c3aa23bab30eea8d105734848b68cd2f071d",
         "type": "FIX",
