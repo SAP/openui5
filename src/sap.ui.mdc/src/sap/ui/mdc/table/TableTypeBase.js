@@ -144,6 +144,14 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Called whenever column is going to be inserted to the table.
+	 * @param {sap.ui.mdc.table.Column} oColumn - The mdc column instance
+	 * @private
+	 */
+	TableTypeBase.prototype._onColumnInsert = function(oColumn) {
+	};
+
 	// To be implemented in the subclass
 	TableTypeBase.prototype.loadModules = function() {return Promise.reject();};
 	TableTypeBase.prototype.updateTableByProperty = function(sProperty, vValue) {};

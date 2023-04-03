@@ -849,6 +849,20 @@ sap.ui.define([
 		assert.ok(!oOpenSpy.called, "Popover.openBy is not called");
 	});
 
+	QUnit.test("afterClose", function(assert) {
+		var clock = sinon.useFakeTimers();
+		var done = assert.async();
+
+		this.oColumnMenu.attachAfterClose(function(oEvent) {
+			assert.ok(oEvent.getParameters(), "Event Fired after the menu was closed");
+			done();
+		}, this);
+
+		this.oColumnMenu.openBy(this.oButton);
+		this.oColumnMenu.close();
+		clock.tick(500);
+	});
+
 	QUnit.test("ActionItem press", function(assert) {
 		var clock = sinon.useFakeTimers();
 		assert.expect(4);

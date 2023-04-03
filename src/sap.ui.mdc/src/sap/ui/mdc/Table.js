@@ -2270,6 +2270,7 @@ sap.ui.define([
 		} else {
 			this._oTable.insertColumn(oInnerColumn, iIndex);
 		}
+		this._getType()._onColumnInsert(oColumn);
 	};
 
 	/**

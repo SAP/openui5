@@ -127,6 +127,12 @@ sap.ui.define([
 						 */
 						openBy : {type : "sap.ui.core.Element"}
 					}
+				},
+				/**
+				 * Fires after the column menu is closed
+				 * @since 1.112
+				 */
+				afterClose: {
 				}
 			}
 		},
@@ -246,6 +252,10 @@ sap.ui.define([
 		}
 	};
 
+	Menu.prototype._onPopoverAfterClose = function () {
+		this.fireAfterClose();
+	};
+
 	Menu.prototype.exit = function () {
 		Control.prototype.exit.apply(this, arguments);
 		if (this._oPopover) {
@@ -286,7 +296,7 @@ sap.ui.define([
 			content: new AssociativeControl({control: this, height: true}),
 			horizontalScrolling: false,
 			verticalScrolling: false,
-			afterClose: [this.close, this]
+			afterClose: [this._onPopoverAfterClose, this]
 		});
 		this.addDependent(this._oPopover);
 		this._oPopover.addStyleClass("sapMTCMenuPopup");
