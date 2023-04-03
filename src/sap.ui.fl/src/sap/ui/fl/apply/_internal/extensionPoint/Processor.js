@@ -43,7 +43,7 @@ function(
 					aResolvedControls.splice(iControlIndex + iNestedControlIndex + iNestedEPAdditionalContentCounter, 0, oNestedControl);
 				});
 				oControl.index += iNestedEPAdditionalContentCounter;
-				// the iControlIndex counts the extensionpoint as 1 control. when the EP is replaced by content with more then one  control
+				// the iControlIndex counts the extensionpoint as 1 control. when the EP is replaced by content with more than one  control
 				// then we need to have an additional content counter for correct index calculations for the following extension points
 				return aNestedControls.length - 1;
 			});

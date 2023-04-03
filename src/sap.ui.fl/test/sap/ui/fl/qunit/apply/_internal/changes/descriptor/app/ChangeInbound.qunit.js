@@ -257,7 +257,7 @@ sap.ui.define([
 			assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"]["signature"]["parameters"]["id"].required, false, "inbound is updated correctly");
 		});
 
-		QUnit.test("when calling '_applyChange' with more then one change for signature/parameters", function (assert) {
+		QUnit.test("when calling '_applyChange' with more than one change for signature/parameters", function (assert) {
 			var oManifest = {
 				"sap.app": {
 					crossNavigation: {

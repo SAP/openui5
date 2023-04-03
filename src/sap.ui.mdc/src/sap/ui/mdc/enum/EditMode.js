@@ -45,7 +45,7 @@ sap.ui.define(function() {
 		 */
 		Disabled: "Disabled",
 		/**
-		 * If more then one control is rendered by the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} control,
+		 * If more than one control is rendered by the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} control,
 		 * the first part is editable, and the other parts are read-only.
 		 * @since 1.72.0
 		 * @private
@@ -54,7 +54,7 @@ sap.ui.define(function() {
 		 */
 		EditableReadOnly: "EditableReadOnly",
 		/**
-		 * If more then one control is rendered by the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} control,
+		 * If more than one control is rendered by the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} control,
 		 * the first part is editable, and the other parts are in display mode.
 		 * @since 1.72.0
 		 * @private

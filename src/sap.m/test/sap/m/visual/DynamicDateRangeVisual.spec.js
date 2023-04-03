@@ -29,7 +29,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	}, iDefaultTimeout);
 
-	it("Group headers disabled when there are more then ten options available", function() {
+	it("Group headers disabled when there are more than ten options available", function() {
 		var oDDRInputField = element(by.id("DDR3-input-inner")),
 			sAltArrowDown = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_DOWN),
 			sAltArrowUp = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_UP),
