@@ -371,6 +371,7 @@
 				</smartForm:SmartForm>
 				<form:SimpleForm
 					editable="true"
+					layout="ColumnLayout"
 					title="SimpleForm without stable id">
 					<form:content>
 						<core:Title id="SFWithoutStableIdTitle0" text="Address" />

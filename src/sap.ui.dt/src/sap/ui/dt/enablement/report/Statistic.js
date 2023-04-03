@@ -88,6 +88,7 @@ sap.ui.define([
 		_createForm: function() {
 			var oForm = new SimpleForm(this.getId() + "--form", {
 				editable: false,
+				layout: "ResponsiveGridLayout",
 				title: "Statistics",
 				content: [
 					new Label(this.getId() + "--form-supported-label", {text: "Supported"}),

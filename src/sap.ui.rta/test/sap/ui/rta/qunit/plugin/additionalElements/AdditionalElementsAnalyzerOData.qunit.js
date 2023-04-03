@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/m/Input",
-	"sap/ui/rta/util/BindingsExtractor",
 	"./TestUtils"
 ],
 function(
@@ -21,13 +20,14 @@ function(
 	FormContainer,
 	FormElement,
 	Input,
-	BindingsExtractor,
 	TestUtils
 ) {
 	"use strict";
 
 	function _createSimpleFormFakingFormElements(oView) {
-		var oNewSimpleForm = new SimpleForm();
+		var oNewSimpleForm = new SimpleForm({
+			layout: "ResponsiveGridLayout"
+		});
 		var oSimpleForm = oView.byId("SimpleForm");
 		var aFormElementActionObjects = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer) {
 			return aAllFormElements.concat(oFormContainer.getFormElements());

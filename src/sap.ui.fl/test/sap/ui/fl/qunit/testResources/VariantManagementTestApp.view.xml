@@ -44,6 +44,7 @@
 						<uxap:ObjectPageSubSection  id="ObjectPageSubSection1" title="SubSectionTitle1">
 							<form:SimpleForm class="sapUiSmallMargin"
 											 title="Simple Form"
+											 layout="ColumnLayout"
 											 id="MainForm"
 											 maxContainerCols="3"
 											 editable="true">
@@ -69,6 +70,7 @@
 							<form:SimpleForm class="sapUiNoMargin"
 											 title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
 											 maxContainerCols="3"
+											 layout="ColumnLayout"
 											 editable="true">
 								<form:content>
 									<core:Title id="Title3" text="Title 3" />
