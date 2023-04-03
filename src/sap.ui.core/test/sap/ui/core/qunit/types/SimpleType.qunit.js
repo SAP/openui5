@@ -81,4 +81,18 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(new SimpleType().getFormatOptions(), {});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("combineMessages", function (assert) {
+		// code under test
+		assert.strictEqual(SimpleType.prototype.combineMessages([]), "");
+		assert.strictEqual(SimpleType.prototype.combineMessages(["M0"]), "M0", "single message is unchanged");
+		assert.strictEqual(SimpleType.prototype.combineMessages(["M0."]), "M0.");
+
+		assert.strictEqual(SimpleType.prototype.combineMessages(["M0", "M1"]), "M0. M1.");
+		// BCP 2380043909: messages may end with a dot
+		assert.strictEqual(SimpleType.prototype.combineMessages(["M0.", "M1"]), "M0. M1.");
+		assert.strictEqual(SimpleType.prototype.combineMessages(["M0", "M1."]), "M0. M1.");
+		assert.strictEqual(SimpleType.prototype.combineMessages(["M0.", "M1."]), "M0. M1.");
+	});
 });

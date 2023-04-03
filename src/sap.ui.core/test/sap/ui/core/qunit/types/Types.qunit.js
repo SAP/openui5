@@ -1364,36 +1364,44 @@ sap.ui.define([
 	});
 
 	QUnit.test("Single constraint", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
-			sExpectedMessage = oBundle.getText("Integer.Minimum").replace("{0}", "1"),
+		var oBundle = {
+				getText : function () {}
+			},
 			oType = new IntegerType(null, {
 				minimum: 1
 			});
 
-		try {
+		this.mock(sap.ui.getCore()).expects("getLibraryResourceBundle").withExactArgs().returns(oBundle);
+		this.mock(oBundle).expects("getText").withExactArgs("Integer.Minimum", ["1"]).returns(">=1");
+
+		// code under test
+		assert.throws(function () {
 			oType.validateValue(0);
-		} catch (e) {
-			assert.ok(e instanceof ValidateException, "ValidateException is thrown");
-			assert.strictEqual(e.message, sExpectedMessage, "Validation message for constraint is returned");
-		}
+		}, function (e) {
+			return e instanceof ValidateException && e.message == ">=1";
+		}, "ValidateException is thrown with validation message for single contraint");
 	});
 
 	QUnit.test("Multiple constraints", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
-			sMessage1 = oBundle.getText("Integer.Minimum").replace("{0}", "2"),
-			sMessage2 = oBundle.getText("Integer.Maximum").replace("{0}", "0"),
-			sExpectedMessage = sMessage1 + ". " + sMessage2 + ".";
-		var oType = new IntegerType(null, {
-			minimum: 2,
-			maximum: 0
-		});
+		var oBundle = {
+				getText : function () {}
+			},
+			oBundleMock = this.mock(oBundle),
+			oType = new IntegerType(null, {
+				minimum: 2,
+				maximum: 0
+			});
 
-		try {
+		this.mock(sap.ui.getCore()).expects("getLibraryResourceBundle").withExactArgs().returns(oBundle);
+		oBundleMock.expects("getText").withExactArgs("Integer.Minimum", ["2"]).returns(">=2");
+		oBundleMock.expects("getText").withExactArgs("Integer.Maximum", ["0"]).returns("<=0");
+
+		// code under test
+		assert.throws(function () {
 			oType.validateValue(1);
-		} catch (e) {
-			assert.ok(e instanceof ValidateException, "ValidateException is thrown");
-			assert.strictEqual(e.message, sExpectedMessage, "Combined validation message for both contraints is returned");
-		}
+		}, function (e) {
+			return e instanceof ValidateException && e.message == ">=2. <=0.";
+		}, "ValidateException is thrown with combined validation message for both contraints");
 	});
 
 	//*********************************************************************************************
