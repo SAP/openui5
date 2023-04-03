@@ -644,6 +644,7 @@ sap.ui.define([
 			this.oLabel0 = new Label({id: "Label0"});
 			this.oInput0 = new Input({id: "Input0"});
 			this.oSimpleForm = new SimpleForm("SimpleForm", {
+				layout: "ResponsiveGridLayout",
 				title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0]
 			});
@@ -770,6 +771,7 @@ sap.ui.define([
 			this.oLabel0 = new Label();
 			this.oInput0 = new Input();
 			this.oSimpleForm = new SimpleForm("SimpleForm", {
+				layout: "ResponsiveGridLayout",
 				title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0]
 			});

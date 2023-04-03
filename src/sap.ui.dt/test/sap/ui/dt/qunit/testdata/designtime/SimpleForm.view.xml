@@ -6,9 +6,9 @@
 	controllerName="dt.view.SimpleForm">
 	<Page title="Title" id="Page" showFooter="true">
 		<content>
-			<f:SimpleForm editable="false" layout="ResponsiveGridLayout" id="SimpleForm">
-				<f:content id="FormContent">
-				<core:Title text="Title"/>
+			<f:SimpleForm editable="false" layout="ColumnLayout" id="SimpleForm">
+				<f:content>
+					<core:Title text="Title"/>
 					<Label text="Label 1" id="Label1"/>
 					<Input width="100%" id="Input1" value="Input 1" enabled="false"/>
 					<Input width="100%"  id="Input2" value="Input 2" enabled="false"/>

@@ -1,11 +1,11 @@
-<sap.ui.core.mvc:View 
+<sap.ui.core.mvc:View
 	height="100%" xmlns="sap.m" xmlns:sap.ui.layout="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core"
 	xmlns:sap.ui.core.mvc="sap.ui.core.mvc">
 	<Page title="Title">
 		<content>
 			<sap.ui.layout:HorizontalLayout>
-				<f:SimpleForm id="SimpleForm0" layout="ResponsiveLayout">
+				<f:SimpleForm id="SimpleForm0" layout="ResponsiveGridLayout">
 					<f:content>
 						<core:Title text="Title of Group 0" id="Group0" />
 

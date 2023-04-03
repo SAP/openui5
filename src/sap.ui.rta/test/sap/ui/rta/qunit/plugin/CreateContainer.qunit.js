@@ -428,6 +428,7 @@ sap.ui.define([
 			});
 			this.oTitle = new Title(oMockedViewWithStableId.createId("title"), { text: "title" });
 			this.oSimpleForm = new SimpleForm(oMockedViewWithStableId.createId("form"), {
+				layout: "ResponsiveGridLayout",
 				content: [this.oTitle]
 			});
 			this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {

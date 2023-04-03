@@ -394,6 +394,7 @@ sap.ui.define([
 
 			this.oSimpleForm = new SimpleForm("form", {
 				id: "SimpleForm",
+				layout: "ResponsiveGridLayout",
 				title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0]
 			});
