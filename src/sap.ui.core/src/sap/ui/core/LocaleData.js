@@ -512,12 +512,14 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 * }
 		 * </pre>
 		 *
-		 * @return {Object<string, string>} the mapping, with 'key' being the IANA timezone ID, and 'value' being the translation.
-		 * @ui5-restricted sap.ui.core.format.DateFormat, sap.ui.export
+		 * @return {Object<string, string>} the mapping, with 'key' being the IANA timezone ID, and
+		 * 'value' being the translation.
+		 * @ui5-restricted sap.ui.core.format.DateFormat, sap.ui.export, sap.ushell
 		 * @private
 		 */
 		getTimezoneTranslations: function() {
-			this.mTimezoneTranslations = this.mTimezoneTranslations || _resolveTimezoneTranslationStructure(this._get("timezoneNames"));
+			this.mTimezoneTranslations = this.mTimezoneTranslations ||
+				_resolveTimezoneTranslationStructure(this._get("timezoneNames"));
 
 			// retrieve a copy such that the original object won't be modified.
 			return Object.assign({}, this.mTimezoneTranslations);
