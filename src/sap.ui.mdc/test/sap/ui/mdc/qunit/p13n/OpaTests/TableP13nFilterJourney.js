@@ -92,7 +92,7 @@ sap.ui.define([
 		]);
 
 		//open column menu
-		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Founding Year");
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
 		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
 		Then.onTheAppUnderTestMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
 		Then.onTheAppUnderTestMDCTable.iShouldSeeNumberOfColumnMenuItems(4);

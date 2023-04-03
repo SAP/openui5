@@ -11,7 +11,8 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/PropertyStrictEquals"
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/Visible"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
 	/** @type sap.ui.core.library */ CoreLibrary,
@@ -21,7 +22,8 @@ sap.ui.define([
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.matchers.Ancestor */ Ancestor,
 	/** @type sap.ui.test.matchers.Properties */ Properties,
-	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals) {
+	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
+	/** @type sap.ui.test.matchers.Visible */ Visible) {
 	"use strict";
 
 	var TableType = MdcLibrary.TableType;
@@ -262,24 +264,26 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the P13n button is visible on the MDCTable.
+		 * Checks if the P13n button is visible/not visible on the MDCTable.
 		 *
 		 * @function
 		 * @name iShouldSeeTheP13nButton
 		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {Boolean} [bShowP13n] Flag if P13n button should be visible
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iShouldSeeTheP13nButton: function(oControl) {
+		iShouldSeeTheP13nButton: function(oControl, bShowP13n) {
 			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
-			return this.waitFor({
+			this.waitFor({
 				id: sTableId + "-settings",
 				controlType: "sap.m.Button",
+				visible: false,
 				success: function(oButton) {
-					Opa5.assert.ok(oButton, "P13n button is visible");
+					Opa5.assert.strictEqual(oButton.getVisible(), bShowP13n, "The P13n button is " + (bShowP13n ? "visible" : "not visible"));
 				},
-				errorMessage: "No P13n button found"
+				errorMessage: "P13n button was not found."
 			});
 		},
 
@@ -477,6 +481,25 @@ sap.ui.define([
 			});
 		},
 
+		/**
+		 * Checks if the ColumnMenu is visible.
+		 *
+		 * @function
+		 * @name iShouldSeeTheColumnMenu
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iShouldSeeTheColumnMenu: function() {
+			return this.waitFor({
+				autoWait: false,
+				controlType: "sap.m.table.columnmenu.Menu",
+				success: function(aMenu) {
+					Opa5.assert.ok(aMenu[0], "Columnmenu is visible");
+				},
+				errorMessage: "No columnmenu found"
+			});
+		},
+
 		iShouldSeeOneColumnMenu: function() {
 			return Util.waitForColumnMenu.call(this, {
 				findAll: true,
@@ -667,6 +690,13 @@ sap.ui.define([
 			});
 		},
 
+		/**
+		 * Checks if there are no QuickActions available in the column menu.
+		 *
+		 * @function
+		 * @name iShouldNotSeeColumnMenuItems
+		 * @returns {Promise} OPA waitFor
+		 */
 		iShouldNotSeeColumnMenuItems: function() {
 			return Util.waitForColumnMenu.call(this, {
 				success: function(oColumnMenu) {
@@ -719,6 +749,89 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Colum menu item content '" + sTitle + "' is visible");
 						},
 						errorMessage: "Colum menu item content '" + sTitle + "' is not visible"
+					});
+				}
+			});
+		},
+
+		/**
+		 * Checks if sorting configuration of the column matches the specified sorting settings.
+		 *
+		 * @function
+		 * @name iShouldSeeColumnSorted
+		 * @param {sap.ui.mdc.Table} oControl Instance of the MDCTable
+		 * @param {String|sap.ui.mdc.table.Column} vColumn Header name or control instance of the column
+		 * @param {Boolean} bDescending Sorting direction is descending
+		 */
+		iShouldSeeColumnSorted: function(oControl, vColumn, bDescending) {
+			var aSortConditions = oControl.getSortConditions().sorters;
+
+			for (var i = 0; i < aSortConditions.length; i++) {
+				if (typeof vColumn === 'object' && aSortConditions[i].name === vColumn.getHeader() && aSortConditions[i].descending === bDescending) {
+					Opa5.assert.equal(aSortConditions[i].name, vColumn.getHeader(), "Column " + vColumn + " has sorting condition");
+					Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + " is sorted " + ((bDescending) ? "descending" : "ascending"));
+					return;
+				} else if (aSortConditions[i].descending === bDescending && aSortConditions[i].name === vColumn){
+					Opa5.assert.equal(aSortConditions[i].name, vColumn, "Column " + vColumn + "has sorting condition");
+					Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + "is sorted " + ((bDescending) ? "descending" : "ascending"));
+					return;
+				}
+			}
+			Opa5.assert.notOk(true, "Either no sorting conditions were found or no conditions are matching the function parameters");
+		},
+
+		/**
+		 * Checks if the selected column of the sorting combobox matches the specified column in the parameter.
+		 *
+		 * @function
+		 * @name iShouldSeeSortedByColumnInColumnMenuItem
+		 * @param {String} sColumn Header of the column
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldSeeSortedByColumnInColumnMenuItem: function(sColumn) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.ComboBox",
+						matchers: [{
+							ancestor: oColumnMenu
+						}],
+						success: function(aComboBox) {
+							Opa5.assert.equal(aComboBox[0].getValue(), sColumn, "Selected item in combobox is " + aComboBox[0].getValue());
+						},
+						errorMessage: "Colum menu item content could not be confirmed"
+					});
+				}
+			});
+		},
+
+		/**
+		 * Checks if sorting direction inside the column menu matches the specified sorting direction.
+		 *
+		 * @function
+		 * @name iShouldSeeSortDirectionInColumnMenuItem
+		 * @param {Boolean} bDescending Sorting direction is descending
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldSeeSortDirectionInColumnMenuItem: function(bDescending) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.SegmentedButton",
+						matchers: [{
+							ancestor: oColumnMenu
+						}],
+						success: function(aSegmentedButton) {
+							var sButton = aSegmentedButton[0].getSelectedItem();
+							var aButtons = aSegmentedButton[0].getItems();
+
+							for (var i = 0; i < aButtons.length; i++) {
+								if (aButtons[i].getId() === sButton) {
+									Opa5.assert.equal(aButtons[i].getProperty("key"), ((bDescending) ? "desc" : "asc"), ((bDescending) ? "Descending" : "Ascending") + " is selected");
+								}
+							}
+						},
+						errorMessage: "Colum menu item content could not be confirmed"
 					});
 				}
 			});

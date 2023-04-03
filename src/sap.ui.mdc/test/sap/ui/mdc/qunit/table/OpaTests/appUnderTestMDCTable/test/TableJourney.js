@@ -80,8 +80,45 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeThePasteButton(sTableId);
 	});
 
+	opaTest("The table shouldn't have the p13n button", function(Given, When, Then) {
+		Given.iGetTheTableInstance(sTableId, function(oTable) {
+			oTable._setShowP13nButton(false);
+		});
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheP13nButton(sTableId, false);
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+	});
+
+	opaTest("The first table column header should have a visible ColumnMenu", function(Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Product ID");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheColumnMenu();
+	});
+
+	opaTest("The ColumnMenu shouldn't have any Table QuickActions", function(Give, When, Then) {
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeColumnMenuItems();
+	});
+
 	opaTest("The table should have the p13n button", function(Given, When, Then) {
-		Then.onTheAppUnderTestMDCTable.iShouldSeeTheP13nButton(sTableId);
+		Given.iGetTheTableInstance(sTableId, function(oTable) {
+			oTable._setShowP13nButton(true);
+		});
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheP13nButton(sTableId, true);
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeNumberOfColumnMenuItems(4);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuItems([
+			Util.P13nDialogInfo.Titles.sort,
+			Util.P13nDialogInfo.Titles.filter,
+			Util.P13nDialogInfo.Titles.group,
+			Util.P13nDialogInfo.Titles.columns
+		]);
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 
 	/* ================================================================ */
@@ -240,7 +277,7 @@ sap.ui.define([
 	/* =========================================================== */
 
 	opaTest("Open column menu", function(Given, When, Then) {
-		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
 		Then.onTheAppUnderTestMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
 		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.None});
@@ -254,43 +291,68 @@ sap.ui.define([
 		]);
 	});
 
-	// TODO: Re-enable tests that are commented out. They are using APIs from qunit/p13n/OpaTests/utility. Make them reusable.
-
 	opaTest("Sort with column menu quick action", function(Given, When, Then) {
 		When.onTheAppUnderTestMDCTable.iUseColumnMenuQuickSort({key: "Category", sortOrder: coreLibrary.SortOrder.Ascending});
-		//Then.onTheAppUnderTestMDCTable.iShouldSeeColumnSorted("Name", true, false);
+		Given.iGetTheTableInstance(sTableId, function(oTable) {
+			Then.onTheAppUnderTestMDCTable.iShouldSeeColumnSorted(oTable, "Category", false);
+		});
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.Ascending});
+		When.onTheAppUnderTestMDCTable.iCloseTheColumnMenu();
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 
 	opaTest("Group with column menu quick action", function(Given, When, Then) {
-		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
 		When.onTheAppUnderTestMDCTable.iUseColumnMenuQuickGroup({key: "Category", grouped: true});
-		//Then.onTheAppUnderTestMDCTable.iShouldSeeGroupConditions({groupLevels: [{name: "Category"}]});
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Category", label: "Category", grouped: true});
+		When.onTheAppUnderTestMDCTable.iCloseTheColumnMenu();
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 
 	opaTest("Sort with column menu item", function(Given, When, Then) {
-		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
 		When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);
 		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.sort);
-		//Then.onTheAppUnderTestMDCTable.iShouldSeeP13nSortItems([
-		//	{p13nItem: "Category", sorted: true, descending: false}
-		//]);
-		//When.onTheAppUnderTestMDCTable.iRemoveSorting();
+
+		When.onTheAppUnderTestMDCTable.iSortByColumnInColumnMenuItemContent("Product");
 		When.onTheAppUnderTestMDCTable.iPressConfirmInColumnMenuItemContent();
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
-		//Then.onTheAppUnderTestMDCTable.iShouldSeeColumnSorted("Category", false, false);
-		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
-		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.Ascending});
+		When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.sort);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeSortedByColumnInColumnMenuItem("Product");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeSortDirectionInColumnMenuItem(false);
+		When.onTheAppUnderTestMDCTable.iPressConfirmInColumnMenuItemContent();
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.None});
 		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Category", label: "Category", grouped: true});
+		When.onTheAppUnderTestMDCTable.iCloseTheColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Product ID");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "ProductID", label: "Product", sortOrder: coreLibrary.SortOrder.Ascending});
+		When.onTheAppUnderTestMDCTable.iCloseTheColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 
-	opaTest("Reset p13n changes", function(Given, When, Then) {
-		//When.onTheAppUnderTestMDCTable.iUseColumnMenuQuickSort({key: "Category", sortOrder: coreLibrary.SortOrder.Ascending});
-		//When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+	opaTest("Reset  changes", function(Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
 		When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);
 		When.onTheAppUnderTestMDCTable.iPressResetInColumnMenuItemContent();
@@ -305,7 +367,7 @@ sap.ui.define([
 	});
 
 	opaTest("Group with column menu quick action", function(Given, When, Then) {
-		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
 		When.onTheAppUnderTestMDCTable.iUseColumnMenuQuickGroup({key: "Category", grouped: false});
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
