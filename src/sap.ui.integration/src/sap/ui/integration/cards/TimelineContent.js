@@ -105,7 +105,8 @@ sap.ui.define([
 				id: this.getId() + "-Timeline",
 				showHeaderBar: false,
 				enableScroll: false,
-				growingThreshold: 0
+				growingThreshold: 0,
+				ariaLabelledBy: this.getHeaderTitleId()
 			});
 			this.setAggregation("_content", oTimeline);
 		}

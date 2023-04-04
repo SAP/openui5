@@ -49,7 +49,7 @@ sap.ui.define([
 	 */
 	var Header = FHeader.extend("sap.ui.integration.cards.Header", {
 
-		constructor: function (mConfiguration, oActionsToolbar, oIconFormatter) {
+		constructor: function (sId, mConfiguration, oActionsToolbar, oIconFormatter) {
 
 			mConfiguration = mConfiguration || {};
 
@@ -86,7 +86,7 @@ sap.ui.define([
 
 			mSettings.toolbar = oActionsToolbar;
 
-			FHeader.call(this, mSettings);
+			FHeader.call(this, sId, mSettings);
 
 			this._oConfiguration = mConfiguration;
 		},

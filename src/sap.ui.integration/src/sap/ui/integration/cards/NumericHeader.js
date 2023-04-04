@@ -42,7 +42,7 @@ sap.ui.define([
 	 */
 	var NumericHeader = FNumericHeader.extend("sap.ui.integration.cards.NumericHeader", {
 
-		constructor: function (mConfiguration, oActionsToolbar) {
+		constructor: function (sId, mConfiguration, oActionsToolbar) {
 
 			mConfiguration = mConfiguration || {};
 
@@ -82,7 +82,7 @@ sap.ui.define([
 
 			mSettings.toolbar = oActionsToolbar;
 
-			FNumericHeader.call(this, mSettings);
+			FNumericHeader.call(this, sId, mSettings);
 		},
 		metadata: {
 			library: "sap.ui.integration",

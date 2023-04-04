@@ -118,7 +118,8 @@ sap.ui.define([
 		if (!oTable) {
 			oTable = new ResponsiveTable({
 				id: this.getId() + "-Table",
-				showSeparators: ListSeparators.None
+				showSeparators: ListSeparators.None,
+				ariaLabelledBy: this.getHeaderTitleId()
 			});
 
 			oTable.addEventDelegate({
