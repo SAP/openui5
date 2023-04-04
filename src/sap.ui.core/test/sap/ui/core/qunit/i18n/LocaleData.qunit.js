@@ -2,12 +2,14 @@
 sap.ui.define([
 	"./helper/_timezones",
 	"sap/ui/core/CalendarType",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
+	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/format/TimezoneUtil",
-	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Configuration"
-], function(timezones, CalendarType, Locale, LocaleData, TimezoneUtil, LoaderExtensions, Configuration) {
+	"sap/base/util/LoaderExtensions"
+], function(timezones, CalendarType, Configuration, Locale, LocaleData, CalendarWeekNumbering,
+		TimezoneUtil, LoaderExtensions) {
 	"use strict";
 
 	QUnit.module("Locale Data Loading", {
@@ -1024,5 +1026,44 @@ sap.ui.define([
 			{scale: "day", sign: 1, pattern: "foo {0}"},
 			{scale: "day", sign: 1, pattern: "bar {0}"}
 		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CustomLocaleData: getFirstDayOfWeek", function(assert) {
+		var oCustomLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt")),
+			oFormatSettings = Configuration.getFormatSettings();
+
+		// code under test - first day of week from CLDR
+		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 0);
+
+		oFormatSettings.setFirstDayOfWeek(6);
+
+		// code under test - first day of week from FormatSettings
+		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 6);
+
+		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
+
+		// code under test - first day of week from CalendarWeekNumbering.ISO_8601
+		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 1);
+
+		// clean up configuration
+		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+		//TODO oFormatSettings.setFirstDayOfWeek(null); - does not work currently
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CustomLocaleData: getMinimalDaysInFirstWeek", function(assert) {
+		var oCustomLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
+
+		// code under test - min days in 1st week from CLDR
+		assert.strictEqual(oCustomLocaleData.getMinimalDaysInFirstWeek(), 1);
+
+		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
+
+		// code under test - min days in 1st week from CalendarWeekNumbering.ISO_8601
+		assert.strictEqual(oCustomLocaleData.getMinimalDaysInFirstWeek(), 4);
+
+		// clean up configuration
+		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 	});
 });

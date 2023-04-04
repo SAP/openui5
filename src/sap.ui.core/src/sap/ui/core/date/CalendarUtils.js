@@ -31,8 +31,11 @@ sap.ui.define([
 		 *   which define the first calendar week</li>
 		 * </ul>
 		 *
-		 * @param {sap.ui.core.date.CalendarWeekNumbering} [sCalendarWeekNumbering=Default]
-		 *   The calendar week numbering; if omitted, <code>Default</code> is used.
+		 * @param {sap.ui.core.date.CalendarWeekNumbering} [sCalendarWeekNumbering]
+		 *   The calendar week numbering; if omitted, the calendar week numbering of the Configuration
+		 *   is used; see {@link sap.ui.core.Configuration#getCalendarWeekNumbering}. If this value is
+		 *   <code>Default</code> the returned calendar week configuration is derived from the given
+		 *   <code>oLocale</code>.
 		 * @param {sap.ui.core.Locale} [oLocale]
 		 *   The locale to use; if not provided, this falls back to the format locale from the
 		 *   Configuration; see {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale}.
@@ -44,13 +47,16 @@ sap.ui.define([
 		 * @since 1.108.0
 		 */
 		getWeekConfigurationValues : function (sCalendarWeekNumbering, oLocale) {
-			var oLocaleData,
-				oWeekConfigurationValues = CalendarWeekNumbering.getWeekConfigurationValues(sCalendarWeekNumbering);
+			var oLocaleData, oWeekConfigurationValues;
 
+			if (!sCalendarWeekNumbering) {
+				return CalendarUtils.getWeekConfigurationValues(Configuration.getCalendarWeekNumbering(), oLocale);
+			}
+
+			oWeekConfigurationValues = CalendarWeekNumbering.getWeekConfigurationValues(sCalendarWeekNumbering);
 			if (oWeekConfigurationValues) {
 				return oWeekConfigurationValues;
 			}
-			sCalendarWeekNumbering = sCalendarWeekNumbering || CalendarWeekNumbering.Default;
 			if (sCalendarWeekNumbering === CalendarWeekNumbering.Default) {
 				oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
 				oLocaleData = LocaleData.getInstance(oLocale);

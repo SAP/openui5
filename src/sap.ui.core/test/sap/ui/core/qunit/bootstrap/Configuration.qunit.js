@@ -3,13 +3,15 @@ sap.ui.define([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Core',
+	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
 	'sap/base/Log',
 	'../routing/HistoryUtils',
 	'sap/ui/base/Interface',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, TimezoneUtil, Locale, Log, HistoryUtils, Interface/*, LocaleData*/) {
+], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Log,
+		HistoryUtils, Interface/*, LocaleData*/) {
 	"use strict";
 
 	var browserUrl = {
@@ -64,7 +66,8 @@ sap.ui.define([
 		assert.ok(oLogSpy.calledTwice, "There should be two errors logged for each constructor call.");
 		assert.strictEqual(oLogSpy.getCall(0).args[0], sExpectedErrorText, "Correct error logged");
 		assert.strictEqual(oLogSpy.getCall(1).args[0], sExpectedErrorText, "Correct error logged");
-
+		assert.strictEqual(oConfiguration1.calendarWeekNumbering, CalendarWeekNumbering.Default,
+			"calendar week number is set to default in c'tor");
 		oLogSpy.restore();
 	});
 
@@ -166,6 +169,25 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getter and setter for option calendarWeekNumbering", function(assert) {
+		var mChanges = {},
+			oConfiguration = new Configuration();
+
+		assert.strictEqual(oConfiguration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
+
+		this.mock(oConfiguration).expects("_collect").withExactArgs().returns(mChanges);
+		this.mock(oConfiguration).expects("_endCollect").withExactArgs();
+
+		assert.strictEqual(oConfiguration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), oConfiguration);
+		assert.strictEqual(mChanges.calendarWeekNumbering, CalendarWeekNumbering.ISO_8601);
+		assert.strictEqual(oConfiguration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601);
+
+		assert.throws(function() {
+			oConfiguration.setCalendarWeekNumbering("invalid");
+		}, new Error("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
+				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
+	});
+
 
 	QUnit.module("localization change", {
 		beforeEach: function(assert) {
@@ -186,6 +208,13 @@ sap.ui.define([
 			Configuration.setCore(this.oCoreMock);
 			this.oConfig = Configuration;
 		}
+	});
+
+	QUnit.test("setCalendarWeekNumbering", function(assert) {
+		this.oConfig.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+		assert.equal(this.eventsReceived, 0, "no localizationChange event if value did not change");
+		this.oConfig.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
+		assert.equal(this.eventsReceived, 1, "one localizationChange event if value changed");
 	});
 
 	QUnit.test("setLanguage(en) - noop", function(assert) {
@@ -319,8 +348,10 @@ sap.ui.define([
 				legacyDateFormat: '1',
 				legacyTimeFormat: '1'
 			},
-			calendarType: 'Islamic'
+			calendarType: 'Islamic',
+			calendarWeekNumbering: CalendarWeekNumbering.ISO_8601
 		});
+		assert.equal(this.oConfig.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601, "calendar week number changed to 'ISO_8601'");
 		assert.equal(this.oConfig.getLanguage(), "he", "language should have changed to 'he'");
 		assert.equal(this.oConfig.getRTL(), true, "RTL should have changed to true");
 		assert.equal(this.oConfig.getFormatSettings().getLegacyDateFormat(), "1", "legacy date format should have changed to '1'");
@@ -329,6 +360,7 @@ sap.ui.define([
 		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 		assert.deepEqual(Object.keys(this.changes[0]).sort(), [
 			'calendarType',
+			'calendarWeekNumbering',
 			'dateFormats-medium',
 			'dateFormats-short',
 			'dayPeriods-format-abbreviated',
@@ -346,14 +378,28 @@ sap.ui.define([
 				legacyDateFormat: null,
 				legacyTimeFormat: null
 			},
-			calendarType: null
+			calendarType: null,
+			calendarWeekNumbering: CalendarWeekNumbering.Default
 		});
+		assert.equal(this.oConfig.getCalendarWeekNumbering(), CalendarWeekNumbering.Default, "calendar week number changed to 'Default'");
 		assert.equal(this.oConfig.getLanguage(), "en", "language should have been reset to 'en'");
 		assert.equal(this.oConfig.getRTL(), false, "RTL should have changed to false");
 		assert.notOk(this.oConfig.getFormatSettings().getLegacyDateFormat(), "legacy date format should have been reset");
 		assert.notOk(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "legacy time format should have been reset");
 		assert.equal(this.oConfig.getCalendarType(), CalendarType.Gregorian, "calendar type should be 'Gregorian' again");
 		assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+	});
+
+	QUnit.test("FormatSettings#getFormatLocale - return custom locale if calendar week numbering is set", function (assert) {
+		assert.equal(this.oConfig.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
+		assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()),
+			"format locale must not contain private extension 'sapufmt' if calendar week numbering is set to 'Default'");
+
+		this.oConfig.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
+
+		//code under test
+		assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()),
+			"format locale must contain private extension 'sapufmt' is something other than 'Default'");
 	});
 
 	QUnit.module("SAP Logon Language");
@@ -666,6 +712,50 @@ sap.ui.define([
 			assert.equal(oSpySetLegacyTimeFormat.callCount, 1, "setLegacyTimeFormat must be called one time");
 			assert.equal(Configuration.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
 		});
+	});
+
+	QUnit.module("CalendarWeekNumbering", {
+		beforeEach: function(assert) {
+			window["sap-ui-config"].language = "en";
+		},
+		afterEach: function() {
+			browserUrl.reset();
+		}
+	});
+
+	QUnit.test("Read calendarWeekNumbering from URL", function(assert) {
+		// setup
+		browserUrl.change('?sap-ui-calendarWeekNumbering=ISO_8601');
+
+		// call method under test
+		Configuration.setCore();
+
+		// verify results
+		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601,
+			'calendarWeekNumbering set via URL');
+	});
+
+	QUnit.test("Read calendarWeekNumbering from URL - empty string leads to default value", function(assert) {
+		// setup
+		browserUrl.change('?sap-ui-calendarWeekNumbering=');
+
+		// call method under test
+		Configuration.setCore();
+
+		// verify results
+		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default,
+			'no value in URL leads to default value');
+	});
+
+	QUnit.test("Read calendarWeekNumbering from URL - invalid value", function(assert) {
+		// setup
+		browserUrl.change('?sap-ui-calendarWeekNumbering=invalid');
+
+		// call method under test
+		assert.throws(function() {
+			Configuration.setCore();
+		}, new Error("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
+				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
 	});
 
 	QUnit.module("Timezone", {

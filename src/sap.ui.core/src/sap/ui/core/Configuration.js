@@ -11,6 +11,7 @@ sap.ui.define([
 	"./format/TimezoneUtil",
 	'sap/ui/thirdparty/URI',
 	"sap/ui/core/_ConfigurationProvider",
+	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
 	"sap/base/util/Version",
@@ -28,6 +29,7 @@ sap.ui.define([
 		TimezoneUtil,
 		URI,
 		_ConfigurationProvider,
+		CalendarWeekNumbering,
 		UriParameters,
 		deepEqual,
 		Version,
@@ -210,6 +212,7 @@ sap.ui.define([
 		"timezone"              : { type : "string",   defaultValue : TimezoneUtil.getLocalTimezone() },
 		"formatLocale"          : { type : "Locale",   defaultValue : null },
 		"calendarType"          : { type : "string",   defaultValue : null },
+		"calendarWeekNumbering" : { type : CalendarWeekNumbering, defaultValue : CalendarWeekNumbering.Default},
 		"trailingCurrencyCode"  : { type : "boolean",  defaultValue : true },
 		"accessibility"         : { type : "boolean",  defaultValue : true },
 		"autoAriaBodyRole"      : { type : "boolean",  defaultValue : false,     noUrl:true }, //whether the framework automatically adds the ARIA role 'application' to the html body
@@ -1074,6 +1077,46 @@ sap.ui.define([
 				this.calendarType = mChanges.calendarType = sCalendarType;
 				this._endCollect();
 			}
+			return this;
+		},
+
+		/**
+		 * Returns the calendar week numbering algorithm used to determine the first day of the week
+		 * and the first calendar week of the year, see {@link sap.ui.core.date.CalendarWeekNumbering}.
+		 *
+		 * @returns {sap.ui.core.date.CalendarWeekNumbering} The calendar week numbering algorithm
+		 *
+		 * @public
+		 * @since 1.113.0
+		 */
+		getCalendarWeekNumbering: function() {
+			return this.getValue("calendarWeekNumbering");
+		},
+
+		/**
+		 * Sets the calendar week numbering algorithm which is used to determine the first day of the week
+		 * and the first calendar week of the year, see {@link sap.ui.core.date.CalendarWeekNumbering}.
+		 *
+		 * @param {sap.ui.core.date.CalendarWeekNumbering} sCalendarWeekNumbering
+		 *   The calendar week numbering algorithm
+		 * @returns {this}
+		 *   <code>this</code> to allow method chaining
+		 * @throws {Error}
+		 *   If <code>sCalendarWeekNumbering</code> is not a valid calendar week numbering algorithm,
+		 *   defined in {@link sap.ui.core.date.CalendarWeekNumbering}
+		 *
+		 * @public
+		 * @since 1.113.0
+		 */
+		setCalendarWeekNumbering: function(sCalendarWeekNumbering) {
+			checkEnum(CalendarWeekNumbering, sCalendarWeekNumbering, "calendarWeekNumbering");
+
+			if (this.calendarWeekNumbering !== sCalendarWeekNumbering) {
+				var mChanges = this._collect();
+				this.calendarWeekNumbering = mChanges.calendarWeekNumbering = sCalendarWeekNumbering;
+				this._endCollect();
+			}
+
 			return this;
 		},
 
@@ -2066,10 +2109,11 @@ sap.ui.define([
 		 * @public
 		 */
 		getFormatLocale : function() {
-			function fallback(that) {
-				var oLocale = that.oConfiguration.getValue("language");
+			function fallback(oFormatSettings) {
+				var oLocale = oFormatSettings.oConfiguration.getValue("language");
 				// if any user settings have been defined, add the private use subtag "sapufmt"
-				if ( !isEmptyObject(that.mSettings) ) {
+				if (!isEmptyObject(oFormatSettings.mSettings)
+						|| oFormatSettings.oConfiguration.getCalendarWeekNumbering() !== CalendarWeekNumbering.Default) {
 					// TODO move to Locale/LocaleData
 					var l = oLocale.toString();
 					if ( l.indexOf("-x-") < 0 ) {
@@ -2438,6 +2482,7 @@ sap.ui.define([
 		 * @param {int} iValue must be an integer value between 0 and 6
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
+		 * @deprecated Since 1.113.0. Use {@link sap.ui.core.Configuration#setCalendarWeekNumbering} instead.
 		 */
 		setFirstDayOfWeek : function(iValue) {
 			check(typeof iValue == "number" && iValue >= 0 && iValue <= 6, "iValue must be an integer value between 0 and 6");

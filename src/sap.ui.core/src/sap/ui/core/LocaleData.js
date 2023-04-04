@@ -3,8 +3,16 @@
  */
 
 //Provides the locale object sap.ui.core.LocaleData
-sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', './Locale', 'sap/base/assert', 'sap/base/util/LoaderExtensions', "sap/ui/core/Configuration"],
-	function(extend, BaseObject, CalendarType, Locale, assert, LoaderExtensions, Configuration) {
+sap.ui.define([
+	"./CalendarType",
+	"./Locale",
+	"sap/base/assert",
+	"sap/base/util/extend",
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/base/Object",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/CalendarWeekNumbering"
+], function(CalendarType, Locale, assert, extend, LoaderExtensions, BaseObject, Configuration, CalendarWeekNumbering) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,
@@ -2505,6 +2513,51 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 			var mCustomData = this._getDeep(this.mCustomData, arguments);
 
 			return extend({}, mData, mCustomData);
+		},
+
+		/**
+		 * Returns the first day of the week defined by the calendar week numbering algorithm
+		 * set in the configuration, see {@link sap.ui.core.Configuration#setCalendarWeekNumbering}.
+		 * If no specific calendar week numbering algorithm is configured the value set by
+		 * {@link sap.ui.core.Configuration.setFirstDayOfWeek} is returned. Otherwise the first day
+		 * of the week is determined by the current locale, see {@link sap.ui.core.LocaleData#getFirstDayOfWeek}.
+		 *
+		 * Days are encoded as integer where Sunday=0, Monday=1 etc.
+		 *
+		 * @returns {int} The first day of week
+		 * @override sap.ui.core.LocalData#getFirstDayOfWeek
+		 * @since 1.113.0
+		 */
+		getFirstDayOfWeek: function() {
+			var sCalendarWeekNumbering = Configuration.getCalendarWeekNumbering();
+
+			if (sCalendarWeekNumbering === CalendarWeekNumbering.Default) {
+				return LocaleData.prototype.getFirstDayOfWeek.call(this);
+			}
+
+			return CalendarWeekNumbering.getWeekConfigurationValues(sCalendarWeekNumbering).firstDayOfWeek;
+		},
+
+		/**
+		 * Returns the required minimal number of days for the first week of a year defined by the
+		 * calendar week numbering algorithm set in the configuration,
+		 * see {@link sap.ui.core.Configuration#setCalendarWeekNumbering}.
+		 * If no specific calendar week numbering algorithm is configured the required minimal number
+		 * of days for the first week of a year is determined by the current locale,
+		 * see {@link sap.ui.core.LocaleData#getMinimalDaysInFirstWeek}.
+		 *
+		 * @returns {int} The required minimal number of days for the first week of a year
+		 * @override sap.ui.core.LocalData#getMinimalDaysInFirstWeek
+		 * @since 1.113.0
+		 */
+		getMinimalDaysInFirstWeek: function() {
+			var sCalendarWeekNumbering = Configuration.getCalendarWeekNumbering();
+
+			if (sCalendarWeekNumbering === CalendarWeekNumbering.Default) {
+				return LocaleData.prototype.getMinimalDaysInFirstWeek.call(this);
+			}
+
+			return CalendarWeekNumbering.getWeekConfigurationValues(sCalendarWeekNumbering).minimalDaysInFirstWeek;
 		}
 	});
 
