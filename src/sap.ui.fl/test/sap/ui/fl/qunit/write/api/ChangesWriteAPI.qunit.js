@@ -336,6 +336,103 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when revert is called with a change wrapped in an array", function(assert) {
+			var oElement = new Element();
+			this.aObjectsToDestroy.push(oElement);
+			var mPropertyBag = {
+				change: [{type: "change"}],
+				element: new Element()
+			};
+			var oAppComponent = {type: "appComponent"};
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector")
+				.withArgs(mPropertyBag.element)
+				.returns(oAppComponent);
+
+			var mRevertSettings = {
+				modifier: JsControlTreeModifier,
+				appComponent: {
+					type: "appComponent"
+				}
+			};
+			sandbox.stub(Reverter, "revertChangeOnControl")
+				.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
+				.resolves(sReturnValue);
+
+			return ChangesWriteAPI.revert(mPropertyBag).then(function (aValues) {
+				assert.strictEqual(aValues[0], sReturnValue, "then the flex persistence was called with correct parameters");
+			});
+		});
+
+		QUnit.test("when revert is called with multiple changes and both are successfully reverted", function(assert) {
+			var sReturnValue2 = "returnValue2";
+			var oElement = new Element();
+			this.aObjectsToDestroy.push(oElement);
+			var mPropertyBag = {
+				change: [{id: "change1", type: "change"}, {id: "change2", type: "change"}],
+				element: new Element()
+			};
+			var oAppComponent = {type: "appComponent"};
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector")
+				.withArgs(mPropertyBag.element)
+				.returns(oAppComponent);
+
+			var mRevertSettings = {
+				modifier: JsControlTreeModifier,
+				appComponent: {
+					type: "appComponent"
+				}
+			};
+			var oRevertChangeOnControlStub = sandbox.stub(Reverter, "revertChangeOnControl")
+				.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
+				.callsFake(function() {
+					assert.ok(oRevertChangeOnControlStub.calledOnce, "then the revert is first called on the second change");
+					return Promise.resolve(sReturnValue);
+				})
+				.withArgs(mPropertyBag.change[1], mPropertyBag.element, mRevertSettings)
+				.resolves(sReturnValue2);
+
+			return ChangesWriteAPI.revert(mPropertyBag).then(function (aValues) {
+				assert.strictEqual(aValues[0], sReturnValue, "then the flex persistence was called with correct parameters for the first change");
+				assert.strictEqual(aValues[1], sReturnValue2, "then the flex persistence was called with correct parameters for the second change");
+			});
+		});
+
+		QUnit.test("when revert is called with multiple changes and the second revert fails", function(assert) {
+			var oElement = new Element();
+			this.aObjectsToDestroy.push(oElement);
+			var mPropertyBag = {
+				change: [{id: "change1", type: "change"}, {id: "change2", type: "change"}],
+				element: new Element()
+			};
+			var oAppComponent = {type: "appComponent"};
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector")
+				.withArgs(mPropertyBag.element)
+				.returns(oAppComponent);
+
+			var mRevertSettings = {
+				modifier: JsControlTreeModifier,
+				appComponent: {
+					type: "appComponent"
+				}
+			};
+			var oRevertChangeOnControlStub = sandbox.stub(Reverter, "revertChangeOnControl")
+				.withArgs(mPropertyBag.change[0], mPropertyBag.element, mRevertSettings)
+				.callsFake(function() {
+					assert.ok(oRevertChangeOnControlStub.calledOnce, "then the revert is first called on the second change");
+					return Promise.resolve(sReturnValue);
+				})
+				.withArgs(mPropertyBag.change[1], mPropertyBag.element, mRevertSettings)
+				.resolves(false);
+
+			return ChangesWriteAPI.revert(mPropertyBag).then(function (aValues) {
+				assert.strictEqual(aValues[0], sReturnValue, "then the flex persistence was called with correct parameters for the first change");
+				assert.strictEqual(aValues[1], false, "then the second revert returns false");
+			});
+		});
+
 		QUnit.test("when getChangeHandler is called", function(assert) {
 			var oGetControlTypeStub = sandbox.stub().returns("myFancyControlType");
 			var mPropertyBag = {

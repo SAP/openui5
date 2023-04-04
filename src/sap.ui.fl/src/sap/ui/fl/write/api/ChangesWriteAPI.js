@@ -125,7 +125,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Change object that should be applied to the passed control
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance to which the change should be applied
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} [mPropertyBag.modifier] - Modifier used to apply the change; if not provided, {@link sap.ui.core.util.reflection.JsControlTreeModifier} is used
-		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
+		 * @param {object} [mPropertyBag.appDescriptor] - App descriptor containing the metadata of the current application
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were applied in asynchronous case, or FakePromise for the synchronous processing scenario
 		 * @private
 		 * @ui5-restricted
@@ -166,17 +166,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Reverting a specific change on the passed control if it has already been applied or is in the process of being applied.
+		 * Reverts a change or an array of changes on the passed control if the changes have already been applied or are in the process of being applied.
+		 * Make sure to provide the changes in the order that they were applied - this method executes the reversal in the reverse order.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Change object that should be reverted from the passed element
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject|sap.ui.fl.apply._internal.flexObjects.FlexObject[]} mPropertyBag.change - Change object that should be reverted from the passed element, or an array of changes
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which the change should be reverted
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise<sap.ui.core.Element|false>} Promise or fake promise resolving to the control on which change was reverted successfully or false when unsuccessful
+		 * @returns {Promise|sap.ui.fl.Utils.FakePromise<sap.ui.core.Element|false>} Promise or fake promise resolving to the control on which a change was reverted successully, or false when unsuccessful, or an array with the return value of the revert call for each given change
 		 * @private
 		 * @ui5-restricted
 		 */
 		revert: function(mPropertyBag) {
 			var oAppComponent;
+			var aResults = [];
 			if (mPropertyBag.element instanceof Element) {
 				oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
 			}
@@ -184,9 +186,27 @@ sap.ui.define([
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			};
+
 			// if the element is not present we just pass an empty object, so that revert will not throw an error
 			// and the status of the change will be updated
-			return Reverter.revertChangeOnControl(mPropertyBag.change, mPropertyBag.element, mRevertSettings);
+			if (!Array.isArray(mPropertyBag.change)) {
+				return Reverter.revertChangeOnControl(mPropertyBag.change, mPropertyBag.element, mRevertSettings);
+			}
+
+			// the given changes are reverted starting from the last one
+			var aChanges = mPropertyBag.change.slice(0).reverse();
+			return aChanges.reduce(function(oPreviousPromise, oChange) {
+				return oPreviousPromise.then(function() {
+					return Reverter.revertChangeOnControl(oChange, mPropertyBag.element, mRevertSettings)
+					.then(function(vResult) {
+						aResults.unshift(vResult);
+					});
+				});
+			}, Promise.resolve())
+			.then(function() {
+				// the results are returned in the same order as they were passed to the method
+				return aResults;
+			});
 		},
 
 		/**
