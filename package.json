@@ -84,7 +84,6 @@
     "cheerio": "1.0.0-rc.9",
     "coffee-script": "^1.9.1",
     "cookie": "^0.4.2",
-    "cross-env": "^5.2.0",
     "decompress": "^4.2.1",
     "es5-ext": "<=0.10.53",
     "es6-set": "<=0.1.5",
