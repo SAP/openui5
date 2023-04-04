@@ -405,6 +405,39 @@ sap.ui.define([
 							Opa5.assert.strictEqual(oControl.getText(), sExpectedTitle);
 						}
 					});
+				},
+				iShouldSeeTheSelectionOfAdaptation: function (sTitle) {
+					return this.waitFor({
+						controlType: "sap.m.Table",
+						bindingPath: {
+							path: "",
+							propertyPath: "/adaptations",
+							modelName: "contextBased"
+						},
+						searchOpenDialogs: true,
+						success: function (vControls) {
+							var oManageAdaptationsTable = vControls[0] || vControls;
+							var sSelectedContextPath = oManageAdaptationsTable.getSelectedContextPaths()[0];
+							var iIndexOfAdaptation = sSelectedContextPath.split("/")[sSelectedContextPath.split("/").length - 1];
+							var sTitleOfSelectedAdaptation = oManageAdaptationsTable.getModel("contextBased").getData().adaptations[iIndexOfAdaptation].title;
+							Opa5.assert.equal(sTitleOfSelectedAdaptation, sTitle, "The selected adaptation should be: " + sTitleOfSelectedAdaptation);
+						}
+					});
+				},
+				iShouldSeeNoSelections: function () {
+					return this.waitFor({
+						controlType: "sap.m.Table",
+						bindingPath: {
+							path: "",
+							propertyPath: "/adaptations",
+							modelName: "contextBased"
+						},
+						searchOpenDialogs: true,
+						success: function (vControls) {
+							var oManageAdaptationsTable = vControls[0] || vControls;
+							Opa5.assert.equal(oManageAdaptationsTable.getSelectedContextPaths().length, 0, "No table selection was made");
+						}
+					});
 				}
 			}
 		}

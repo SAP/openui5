@@ -341,7 +341,9 @@ function(
 	function onCloseDialog() {
 		this._oControlConfigurationModel.setProperty("/isTableItemSelected", false);
 		getSearchField.call(this).setValue("");
-		getAdaptationsTable.call(this).getBinding("items").filter([]);
+		var oTable = getAdaptationsTable.call(this);
+		oTable.getBinding("items").filter([]);
+		oTable.removeSelections();
 		getDefaultApplicationTable.call(this).setVisible(true);
 		this._oManageAdaptationDialog.close();
 	}

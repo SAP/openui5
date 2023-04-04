@@ -122,6 +122,31 @@ sap.ui.define(
 			Then.onTheDemoAppPage.iShouldSeeErrorDialog();
 			When.onTheDemoAppPage.iClickOnCloseDialogButton();
 		});
+
+		opaTest("Should clear the table selection after reopening the dialog", function (Given, When, Then) {
+			Then.onTheDemoAppPage.iShouldSeeManageAdaptationsDialogButton();
+			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeManageContextBasedAdaptationDialogIsOpend();
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveUpButton(false);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(false);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfDragAndDrop(true);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeNoSelections();
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle("Default App");
+			When.onTheManageAdaptationsDialogPage.iSelectAdaptation("DLM Copilot");
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheSelectionOfAdaptation("DLM Copilot");
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveUpButton(true);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(true);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfDragAndDrop(true);
+			When.onTheManageAdaptationsDialogPage.iClickOnCloseButton();
+			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveUpButton(false);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(false);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfDragAndDrop(true);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeNoSelections();
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle("Default App");
+			Then.iTeardownMyApp();
+		});
+
 		/**
 		 * disabled tests because the used features are part of another BLI and still need to be implemented
 
