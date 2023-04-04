@@ -8,6 +8,7 @@ sap.ui.require([
 	new ComponentContainer({
 		name: 'appUnderTestChart',
 		height: "100%",
-		manifest: true
+		manifest: true,
+		async: true
 	}).placeAt('content');
 });

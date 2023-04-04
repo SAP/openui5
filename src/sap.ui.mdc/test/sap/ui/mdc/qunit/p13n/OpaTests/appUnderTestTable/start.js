@@ -10,7 +10,8 @@ sap.ui.require([
 			height: "100%",
 			settings: {
 				id: "FlexTestComponent"
-			}
+			},
+			async: true
 		})
 	}).placeAt('content');
 
