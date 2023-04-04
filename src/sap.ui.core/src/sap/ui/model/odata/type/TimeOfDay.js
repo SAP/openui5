@@ -196,6 +196,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a date object for a given model value.
+	 *
+	 * @param {string|null} sModelValue
+	 *   The model value of this type. Can be retrieved via {@link sap.ui.model.odata.type.TimeOfDay#getModelValue}.
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|null}
+	 *   An instance of <code>Date</code> for which the local getters <code>getHours()</code>,
+	 *   <code>getMinutes()</code>, <code>getSeconds()</code>, and <code>getMilliseconds()</code> can be used to get the
+	 *   corresponding hours, minutes, seconds, and milliseconds of the given model value
+	 *
+	 * @since 1.113.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	TimeOfDay.prototype.getDateValue = function (sModelValue) {
+		return sModelValue ? UI5Date.getInstance("1970-01-01T" + sModelValue) : null;
+	};
+
+	/**
 	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
 	 * methods: <code>format</code> takes a Date and returns a date as a String in the format
 	 * expected by the model, <code>parse</code> converts from the String to a Date.
