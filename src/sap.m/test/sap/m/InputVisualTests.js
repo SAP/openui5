@@ -400,6 +400,16 @@ sap.ui.define([
 			]
 		});
 
+		var oLongSuggInput = new sap.m.Input("inputLongSugg", {
+			placeholder: "Input Long Suggestions - type 'L'",
+			showSuggestion: true,
+			width: "30rem",
+			suggestionItems: [
+				new sap.ui.core.Item({text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry."}),
+				new sap.ui.core.Item({text: "Lorem ipsu"})
+			]
+		});
+
 		var oClearIconInput = new Input("inputClearIcon", {
 			value: "Test",
 			showClearIcon: true
@@ -492,6 +502,8 @@ sap.ui.define([
 						oLongSuggestionsInput,
 						new Label({text: "Input with two columns layout", labelFor: "inputSecondaryValue"}),
 						oSecondaryValueInput,
+						new Label({text: "Input with long suggestions", labelFor: "inputLongSugg"}),
+						oLongSuggInput,
 						new Label({text: "Input with clear icon", labelFor: "inputClearIcon"}),
 						oClearIconInput
 					]

@@ -232,8 +232,24 @@ describe('sap.m.MultiInput', function() {
 				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 				expect(takeScreenshot()).toLookAs("wrapping_first_suggestion_focused");
 
-				// Should close the dropdown
+				// Should close the dropdown and clear the value
 				browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+				browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 			});
 		});
+
+	// Suggestions' max-width should be 40rem
+	it("should limit the SuggestionsPopover max-width to 40rem", function() {
+		var multiInputLongSuggestions = element(by.id("mi-wrapping"));
+
+		multiInputLongSuggestions.click();
+
+		// Should open suggestions
+		browser.actions().sendKeys("l").perform();
+		expect(takeScreenshot(multiInputLongSuggestions)).toLookAs("mi-wrapping");
+
+		// Should close the dropdown and clear the value
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+	});
 });

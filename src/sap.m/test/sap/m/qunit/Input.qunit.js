@@ -2037,7 +2037,7 @@ sap.ui.define([
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(getPopupItemsContent(oPopup).$().length, 1, "Suggestion table is rendered");
 		assert.ok(getPopupItemsContent(oPopup).isA("sap.m.Table"), "Suggestions are tabular)");
-		assert.strictEqual(oPopup.getContentWidth(), "100px", "Suggestion popup has 100px width");
+		assert.strictEqual(oPopup.getDomRef().getBoundingClientRect().width, 640, "Suggestion popup has 640px width since this is the max-width");
 
 		oInput._$input.trigger("focus").val("Product1").trigger("input");
 		this.clock.tick(400);

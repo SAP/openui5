@@ -842,6 +842,13 @@
 					]
 				});
 
+				var oComboBoxLongSuggestions = new ComboBox("combo-long-sugg", {
+					width: "30rem",
+					items: [
+						new Item({text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", key:"key11"}),
+					]
+				});
+
 				var oComboBoxRTL = new ComboBox({
 					items: [
 						new SeparatorItem({text: "Group1"}),
@@ -988,6 +995,9 @@
 						new HTML({ content: "<h3>ComboBox with Accented characters</h3>" }),
 						oSpecialCharsComboBox,
 						new HTML({ content: "<hr>" }),
+
+						new HTML({ content: "<h3>ComboBox with Long Suggestions</h3>" }),
+						oComboBoxLongSuggestions,
 
 						new HTML({ content: "<h3>ComboBox with Grouping</h3>" }),
 						oComboBoxGrouping,

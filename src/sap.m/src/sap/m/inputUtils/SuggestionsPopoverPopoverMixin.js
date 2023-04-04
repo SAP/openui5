@@ -56,8 +56,6 @@ sap.ui.define([
 
 				if (this._sPopoverContentWidth) {
 					oPopover.setContentWidth(this._sPopoverContentWidth);
-				} else {
-					oPopover.setContentWidth((oInput.$().outerWidth()) + "px");
 				}
 
 				// resize suggestion popup to minimum size of the input field

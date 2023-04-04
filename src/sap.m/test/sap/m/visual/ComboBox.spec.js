@@ -126,4 +126,19 @@ describe("sap.m.ComboBox", function() {
 			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 		});
 	});
+
+	// Suggestions' max-width should be 40rem
+	it("should limit the SuggestionsPopover max-width to 40rem", function() {
+		var comboLongSuggestions = element(by.id("combo-long-sugg"));
+		browser.executeScript('document.getElementById("combo-long-sugg").scrollIntoView()').then(function() {
+			comboLongSuggestions.click();
+
+			// Should open suggestions
+			browser.actions().sendKeys("l").perform();
+			expect(takeScreenshot(comboLongSuggestions)).toLookAs("combobox-with-long-suggestions");
+
+			// Should close the dropdown
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		});
+	});
 });
