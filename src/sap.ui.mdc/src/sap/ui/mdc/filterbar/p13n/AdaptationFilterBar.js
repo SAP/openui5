@@ -373,11 +373,13 @@ sap.ui.define([
 			}.bind(this));
 
 			return Promise.all(aFieldPromises).then(function(){
-				this.getP13nData().items.forEach(function(oItem){
+				var oP13nData = this.getP13nData();
+				oP13nData.items.forEach(function(oItem){
 					this.addAggregation("filterItems", this.mFilterFields[oItem.name]);
 				}.bind(this));
 
-				this._oFilterBarLayout.setP13nData(this.getP13nData());
+				this._updateActiveStatus(oP13nData.items);
+				this._oFilterBarLayout.setP13nData(oP13nData);
 				this._bFilterFieldsCreated = true;
 
 				return this;

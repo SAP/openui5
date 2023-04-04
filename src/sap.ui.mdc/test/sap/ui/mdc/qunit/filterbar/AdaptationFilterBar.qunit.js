@@ -404,6 +404,39 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Create filter fields triggers 'active' update of model", function(assert) {
+
+		var done = assert.async();
+		this.prepareTestSetup(false);
+
+		oAdaptationFilterBar.setP13nData({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				}
+			]
+		});
+
+		var oUpdateSpy = sinon.spy(oAdaptationFilterBar, "_updateActiveStatus");
+
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		]).then(function(){
+
+			assert.equal(oUpdateSpy.callCount, 0, "Update does not need to be triggered initially");
+
+			oAdaptationFilterBar.createFilterFields().then(function(){
+				assert.equal(oUpdateSpy.callCount, 1, "Update triggered once initially the fields are created");
+				done();
+			});
+		});
+	});
+
 	QUnit.test("Create filter fields and check their order", function(assert) {
 
 		var done = assert.async();
