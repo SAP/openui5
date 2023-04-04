@@ -58,7 +58,8 @@
 									sender="{searchData>title}"
 									text="{searchData>summary}"
 									showIcon="false"
-									app:path="{searchData>path}"/>
+									app:path="{searchData>path}"
+									app:external="{searchData>external}"/>
 							</List>
 						</VBox>
 					</op:blocks>
@@ -104,7 +105,8 @@
 										sender="{searchData>title}"
 										text="{searchData>summary}"
 										showIcon="false"
-										app:path="{searchData>path}"/>
+										app:path="{searchData>path}"
+										app:external="{searchData>external}"/>
 								</List>
 							</VBox>
 						</op:blocks>
@@ -147,7 +149,8 @@
 										sender="{searchData>title}"
 										text="{searchData>summary}"
 										showIcon="false"
-										app:path="{searchData>path}"/>
+										app:path="{searchData>path}"
+										app:external="{searchData>external}"/>
 								</List>
 							</VBox>
 						</op:blocks>
@@ -191,7 +194,8 @@
 										sender="{searchData>title}"
 										text="{searchData>summary}"
 										showIcon="false"
-										app:path="{searchData>path}"/>
+										app:path="{searchData>path}"
+										app:external="{searchData>external}"/>
 								</List>
 							</VBox>
 						</op:blocks>

@@ -13,7 +13,14 @@
 					}]
 				}">
 			<StandardListItem
-					title="{searchData>title}: {searchData>summary}"
+					title="{
+						parts: [
+							'searchData>title',
+							'searchData>summary'
+
+						],
+						formatter: '.formatSuggestionTitle'
+					}"
 					press="onSearchPickerItemPress"
 					type="Active">
 			</StandardListItem>

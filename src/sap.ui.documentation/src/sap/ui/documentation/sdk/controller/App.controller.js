@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/ui/core/syncStyleClass",
 	"sap/ui/core/Core",
+	"sap/ui/util/openWindow",
 	"sap/ui/documentation/sdk/model/formatter",
 	"sap/m/ResponsivePopover",
 	"sap/ui/documentation/sdk/controller/util/Highlighter",
@@ -52,6 +53,7 @@ sap.ui.define([
 	Version,
 	syncStyleClass,
 	Core,
+	openWindow,
 	globalFormatter,
 	ResponsivePopover,
 	Highlighter,
@@ -679,6 +681,14 @@ sap.ui.define([
 				return sTitle;
 			},
 
+			formatSuggestionTitle: function(sTitle, sSummary) {
+				var sFormatted = sTitle || "";
+				if (sSummary) {
+					sFormatted += ": " + sSummary;
+				}
+				return sFormatted;
+			},
+
 			onSearchResultsSummaryPress: function(oEvent) {
 				var sCategory = oEvent.oSource.data("category");
 				this.navToSearchResults(sCategory);
@@ -687,7 +697,11 @@ sap.ui.define([
 			onSearchPickerItemPress: function(oEvent) {
 				var contextPath = oEvent.oSource.getBindingContextPath(),
 					oDataItem = this.getModel("searchData").getProperty(contextPath);
-				this.getRouter().parsePath(oDataItem.path);
+				if (oDataItem.external) {
+					openWindow(new URL(oDataItem.path, document.baseURI).href);
+				} else {
+					this.getRouter().parsePath(oDataItem.path);
+				}
 				this.oPicker.close();
 			},
 
