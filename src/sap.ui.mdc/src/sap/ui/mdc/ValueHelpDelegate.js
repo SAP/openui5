@@ -67,7 +67,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.ListBinding} oListBinding ListBinding
 	 * @returns {boolean} true if $search is supported
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	ValueHelpDelegate.isSearchSupported = function(oPayload, oContent, oListBinding) {
 		return false;
@@ -106,7 +107,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the list to the model
 	 * @private
 	 * @since 1.110.0
-	 *
+	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	ValueHelpDelegate.updateBindingInfo = function(oPayload, oContent, oBindingInfo) {
@@ -138,11 +139,13 @@ sap.ui.define([
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.model.ListBinding} oListBinding List binding
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the list to the model
+  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent ValueHelp content requesting the binding update
 	 * @private
 	 * @since 1.110.0
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ValueHelpDelegate.updateBinding = function(oPayload, oListBinding, oBindingInfo) {
+	ValueHelpDelegate.updateBinding = function(oPayload, oListBinding, oBindingInfo, oContent) {
 		oListBinding.filter(oBindingInfo.filters, FilterType.Application);
 		if (oListBinding.isSuspended()) {
 			oListBinding.resume();
@@ -176,7 +179,8 @@ sap.ui.define([
 	 * @param {int} iRequestedItems Number of requested items
 	 * @returns {Promise<sap.ui.model.ListBinding>} Promise that is resolved if search is executed
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
 		return Promise.resolve(oListBinding);
@@ -192,7 +196,8 @@ sap.ui.define([
 	 * @param {int} iRequestedItems Number of requested items
 	 * @returns {boolean|Promise<boolean>} <code>Promise</code> that is resolved once <code>ListBinding</code> has been updated
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	ValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding, iRequestedItems) {
 		if (!oListBinding || oListBinding.isSuspended()) {

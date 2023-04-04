@@ -179,10 +179,8 @@ sap.ui.define([
 
 			var oListBindingInfo = this._getListBindingInfo();
 			var iLength = oListBindingInfo && oListBindingInfo.length;
-			var oUpdatedBindingInfo = {path: oListBindingInfo.path, length: iLength};
-
-			oDelegate.updateBindingInfo(oDelegatePayload, this, oUpdatedBindingInfo);
-			oDelegate.updateBinding(oDelegatePayload, oListBinding, oUpdatedBindingInfo);
+			oDelegate.updateBindingInfo(oDelegatePayload, this, oListBindingInfo);
+			oDelegate.updateBinding(oDelegatePayload, oListBinding, oListBindingInfo, this);
 			oFilterApplicationPromise = Promise.resolve(oDelegate.checkListBindingPending(oDelegatePayload, oListBinding, iLength));
 		}
 
