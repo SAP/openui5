@@ -2362,6 +2362,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * Provides information if the card has no data to be displayed in the content.
+	 * <b>Note:</b> Should be used after the <code>stateChanged</code> event is fired.
+	 *
+	 * @private
+	 * @experimental since 1.113
+	 * @returns {boolean} Whether 'No Data' is displayed in the card
+	 */
+	Card.prototype.hasNoData = function () {
+		var oContent = this.getCardContent();
+
+		if (!oContent || !oContent.isA("sap.ui.integration.cards.BaseContent")) {
+			return false;
+		}
+
+		return oContent.hasNoData();
+	};
+
+	/**
+	 * Show 'No Data' in the card's content area.
+	 * Should be used only by component cards, no earlier than the <code>onCardReady</code> lifecycle hook.
+	 *
+	 * @private
+	 * @experimental since 1.113
+	 * @param {object} oSettings 'No Data' settings
+	 * @param {sap.m.IllustratedMessageType} oSettings.type Illustration type
+	 * @param {sap.m.IllustratedMessageSize} [oSettings.size=sap.m.IllustratedMessageSize.Auto] Illustration size
+	 * @param {string} oSettings.title Title
+	 * @param {string} [oSettings.description] Description
+	 */
+	Card.prototype.showNoData = function (oSettings) {
+		var oContent = this.getCardContent();
+
+		if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
+			oContent.showNoDataMessage({
+				type: oSettings.type,
+				size: oSettings.size,
+				title: oSettings.title,
+				description: oSettings.description
+			});
+			this._fireStateChanged();
+		}
+	};
+
+	/**
 	 * Sets if the card should be in a preview only mode or not.
 	 *
 	 * To be used only inside the designtime.

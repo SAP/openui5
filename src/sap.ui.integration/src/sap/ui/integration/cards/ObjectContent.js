@@ -144,7 +144,10 @@ sap.ui.define([
 		if (this._hasData()) {
 			this.destroyAggregation("_noDataMessage");
 		} else {
-			this.showNoDataMessage(IllustratedMessageType.NoData, this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_CHART"));
+			this.showNoDataMessage({
+				type: IllustratedMessageType.NoData,
+				title: this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_CHART")
+			});
 		}
 
 		this._getForm().updateModel();
