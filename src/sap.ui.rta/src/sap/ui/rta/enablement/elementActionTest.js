@@ -64,10 +64,12 @@ sap.ui.define([
 	 * @param {sap.ui.model.Model} [mOptions.model] - Any model to be assigned on the view
 	 * @param {string} [mOptions.placeAt="qunit-fixture"] - Id of tag to place view at runtime
 	 * @param {boolean} [mOptions.jsOnly] - Set to true, if change handler cannot work on xml view
+	 * @param {string} [mOptions.label] - Check the result of "getLabel" function from the control designtime metadata
 	 * @param {object} mOptions.action - Action to operate on <code>mOptions.xmlView</code>
 	 * @param {string} mOptions.action.name - Name of the action - e.g. 'remove', 'move', 'rename'
 	 * @param {string} [mOptions.action.controlId] - Id of the control the action is executed with - may be the parent of the control being 'touched'
 	 * @param {function():sap.ui.core.Control} [mOptions.action.control] - Function returning the control instance on which the change is being applied
+	 * @param {string} [mOptions.action.label] - Check the result of "getLabel" function from the action in the control designtime metadata
 	 * @param {function} mOptions.action.parameter - Function(oView) returning the parameter object of the action to be executed
 	 * @param {function} [mOptions.before] - Function(assert) hook before test execution is started
 	 * @param {function} [mOptions.after] - Function(assert) hook after test execution is finished
@@ -227,6 +229,10 @@ sap.ui.define([
 							var oResponsibleElement = oElementDesignTimeMetadata.getAction("getResponsibleElement", oControl);
 							var oAggregationOverlay;
 
+							if (mOptions.label) {
+								assert.strictEqual(oElementDesignTimeMetadata.getLabel(oControl), mOptions.label, "then the control label is correct");
+							}
+
 							if (oAction.name === "move") {
 								var oElementOverlay = OverlayRegistry.getOverlay(mParameter.movedElements[0].element || mParameter.movedElements[0].id);
 								var oRelevantContainer = oElementOverlay.getRelevantContainer();
@@ -245,6 +251,10 @@ sap.ui.define([
 									oControl = oAction.revealedElement(this.oView);
 									oControlOverlay = OverlayRegistry.getOverlay(oAction.revealedElement(this.oView));
 									oElementDesignTimeMetadata = oControlOverlay.getDesignTimeMetadata();
+									if (oAction.label) {
+										var oRevealAction = oElementDesignTimeMetadata.getAction("reveal");
+										assert.strictEqual(oRevealAction.getLabel(oControl), oAction.label, "then the control label is correct");
+									}
 								} else {
 									oControl = oResponsibleElement;
 									oControlOverlay = OverlayRegistry.getOverlay(oControl);

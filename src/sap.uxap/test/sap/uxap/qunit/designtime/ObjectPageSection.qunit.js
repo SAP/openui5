@@ -484,6 +484,8 @@ sap.ui.define([
 			'</uxap:ObjectPageLayout>' +
 		'</mvc:View>'
 		,
+		// If the Section only has one SubSection, the Section takes the SubSection title
+		label: "SubSectionTitle 1",
 		action: {
 			name: "rename",
 			controlId: "section",
@@ -667,6 +669,51 @@ sap.ui.define([
 			control : function(oView) {
 				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
 			}
+		},
+		afterAction: fnConfirmSectionIsVisible,
+		afterUndo: fnConfirmSectionIsNotVisible,
+		afterRedo: fnConfirmSectionIsVisible
+	});
+
+	elementActionTest("Checking the unstash action for a Section with only one subsection from the corresponding anchor bar button", {
+		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+				'<uxap:ObjectPageLayout id="layout">' +
+					'<uxap:sections>' +
+						'<uxap:ObjectPageSection id="section" visible="false" title="Title 1">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection1" title="SubSection Title 1">' +
+									'<m:Button text="Subsection UI adaptation1" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+						'<uxap:ObjectPageSection id="section2">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection3" title="Subsection3 with button">' +
+									'<m:Button text="Button1" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+						'<uxap:ObjectPageSection id="section3">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection4" title="Subsection4 with button">' +
+									'<m:Button text="Button2" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+					'</uxap:sections>' +
+				'</uxap:ObjectPageLayout>' +
+			'</mvc:View>'
+		,
+		action: {
+			revealedElement: function(oView) {
+				return oView.byId("section");
+			},
+			name: "reveal",
+			control : function(oView) {
+				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+			},
+			label: "SubSection Title 1"
 		},
 		afterAction: fnConfirmSectionIsVisible,
 		afterUndo: fnConfirmSectionIsNotVisible,
