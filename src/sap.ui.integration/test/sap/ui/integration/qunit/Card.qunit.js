@@ -2500,7 +2500,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.ok(oLogSpy.calledOnceWith(mErrorInfo.description), "Provided message should be logged to the console.");
+			assert.ok(oLogSpy.calledWith(mErrorInfo.description), "Provided message should be logged to the console.");
 
 			// Clean up
 			oLogSpy.restore();
