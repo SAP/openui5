@@ -83,7 +83,7 @@
     "cheerio": "1.0.0-rc.12",
     "cookie": "^0.4.2",
     "decompress": "^4.2.1",
-    "eslint": "^7.32.0",
+    "eslint": "^8.41.0",
     "glob": "^7.2.3",
     "grunt": "~1.5.3",
     "grunt-contrib-clean": "^1.0.0",

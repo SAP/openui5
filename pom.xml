@@ -114,9 +114,9 @@
 		<!-- quite or verbose execution -->
 		<sap.ui5.eslint.quite>true</sap.ui5.eslint.quite>
 		<!-- Eslint tools version -->
-		<sap.ui5.eslint.tools.version>0.0.6</sap.ui5.eslint.tools.version>
+		<sap.ui5.eslint.tools.version>0.1.1</sap.ui5.eslint.tools.version>
 		<!-- ESLint version (for all OpenUI5 projects) -->
-		<sap.openui5.eslintnode.version>7.32.0</sap.openui5.eslintnode.version>
+		<sap.openui5.eslintnode.version>8.41.0</sap.openui5.eslintnode.version>
  	</properties>
 
 
