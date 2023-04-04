@@ -32,33 +32,6 @@ sap.ui.define([
 		appParams: {
 			"sap-ui-xx-complexP13n": true
 		},
-
-		arrangements: {
-			iStartMyUIComponentInViewMode: function(oOptions) {
-
-				// In some cases when a test fails in a success function,
-				// the UI component is not properly teardown.
-				// As a side effect, all the following tests in the stack
-				// fails when the UI component is started, as only one UI
-				// component can be started at a time.
-				// Teardown the UI component to ensure it is not started
-				// twice without a teardown, which results in less false
-				// positives and more reliable reporting.
-				if (this.hasUIComponentStarted()) {
-					this.iTeardownMyUIComponent();
-				}
-
-				return this.iStartMyUIComponent(Object.assign({
-					componentConfig: {
-						name: "sap.ui.v4demo",
-						async: true,
-						settings: { id: "listreport" }
-					},
-					hash: "",
-					autoWait: true
-				}, oOptions));
-			}
-		},
 		actions: new Opa5({
 			iToggleTheValueHelpListItem: function (sText, sValueHelpId) {
 				return ValueHelpActions.iToggleTheValueHelpListItem.call(this, sText, sValueHelpId);
@@ -75,7 +48,7 @@ sap.ui.define([
 
 
 	opaTest("twfb - start app and test mdc links", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 		var firstLink = {text: "Pride and Prejudice"};
 		When.onTheMDCLink.iPressTheLink(firstLink);
@@ -97,18 +70,18 @@ sap.ui.define([
 		//Then.iShouldSeeApp("Book: The Yellow Wallpaper"});
 		When.onTheMDCLink.iCloseThePopover();
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 
 
 	opaTest("twfb - start app and test filterfield and valuehelp", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var sFieldID = "listreport---books--ff1";
+		var sFieldID = "container-v4demo---books--ff1";
 		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField(sFieldID, true);
 
-		Then.onTheMDCValueHelp.iShouldSeeTheValueHelpDialog("listreport---books--FH1");
+		Then.onTheMDCValueHelp.iShouldSeeTheValueHelpDialog("container-v4demo---books--FH1");
 		Then.onTheMDCValueHelp.iShouldSeeValueHelpListItems("Austen, Jane");
 
 		When.onTheMDCValueHelp.iNavigateToValueHelpContent({label: "Author ID"});
@@ -136,35 +109,35 @@ sap.ui.define([
 
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
 
-		sFieldID = "listreport---books--ff2";
+		sFieldID = "container-v4demo---books--ff2";
 		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField(sFieldID, true);
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("twfb - start app and test personalization of table", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var sTableID = "listreport---books--booksTable";
+		var sTableID = "container-v4demo---books--booksTable";
 		//???? first parameter is called oControl. Why not oTable or vTableIdentifier.....
 		When.onTheMDCTable.iPersonalizeColumns(sTableID, ["Genre", "Sub Genre"]);
 		When.onTheMDCTable.iResetThePersonalization(sTableID);
 		//Then TODO no assertions available
 
-		When.onTheMDCTable.iPersonalizeFilter(sTableID, [{key : "Language", values: ["DE"], inputControl: "listreport---books--booksTable--filter--language_code"}]);
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [{key : "Language", values: ["DE"], inputControl: "container-v4demo---books--booksTable--filter--language_code"}]);
 
 		When.onTheMDCTable.iPersonalizeSort(sTableID, [{key: "Price", descending: false}]); //ERROR failed because of custom stock slider (when at the end I call teardown....)
 		// When.onTheMDCTable.iResetThePersonalization(sTableID);
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 
 	opaTest("twfb - start app and test chart/personalization", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var sChartID = "listreport---books--bookChart";
+		var sChartID = "container-v4demo---books--bookChart";
 
 		Then.onTheMDCChart.iShouldSeeAChart();// Why does it not get the chartId?
 		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartID, "column"); // key of chart not the name
@@ -208,15 +181,15 @@ sap.ui.define([
 		//    When.onTheMDCChart.iSelectChartTypeInPopover("Pie Chart");
 		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartID, "pie"); // char type key and NOT the ui label!!!!
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 
 
 	opaTest("twfb - start app and test filterbar", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var sFilterBarID = "listreport---books--booksFilterBar";
+		var sFilterBarID = "container-v4demo---books--booksFilterBar";
 		// for the Filterbar the sFilterBarID can be Object instance or id string.
 		When.onTheMDCFilterBar.iPersonalizeFilter(sFilterBarID, {	Books: ["Author ID"] });
 		//    When.onTheMDCChart.iPersonalizeFilter(sFilterBarID, [{key : "language_code", operator: "EQ", values: ["DE"], inputControl: "__component0---books--booksTable--filter--language_code"}]);
@@ -253,17 +226,17 @@ sap.ui.define([
 		});
 		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 
 	opaTest("twfb - Search one book, navigate to factsheet, change the price and save it.", function(Given, When, Then) {
-		var booksComponentID = "listreport---books--";
+		var booksComponentID = "container-v4demo---books--";
 		var sFilterBarID = booksComponentID + "booksFilterBar";
 
 		// I start the Manage Books TwFb example app
 		// Already possible to start the app, but we see the current Books Service content and not a new (fresh) set of data.
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 
 
@@ -276,7 +249,7 @@ sap.ui.define([
 		//Then.onTheMDCFilterBar.iShouldSeeTheFilterFieldsWithLabels(["", "Author ID", "Title", "Stock range", "Published", "Language", "Genre", "Sub Genre"]);
 
 		// Chart (I should see a “Books Chart” Chart with Bars chart)
-		var sChartID = "listreport---books--bookChart";
+		var sChartID = "container-v4demo---books--bookChart";
 		Then.onTheMDCChart.iShouldSeeAChart();
 		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartID, "column");
 
@@ -325,7 +298,7 @@ sap.ui.define([
 
 
 		//I should see an editable field Price with value 22.00 GBP
-		var sFieldId = "listreport---bookdetails--fPrice";
+		var sFieldId = "container-v4demo---bookdetails--fPrice";
 		// Then.onTheMDCField.iShouldSeeTheFieldWithValues(sFieldId, ['22', 'GBP']);
 
 
@@ -347,15 +320,15 @@ sap.ui.define([
 		// When.onTheMDCField.iEnterTextOnTheField(sFieldId, "22.00");
 		// When.util.iPressButton("Save");
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("twfb - Search a book via Created On DateTime filterfield.", function(Given, When, Then) {
-		var booksComponentID = "listreport---books--";
+		var booksComponentID = "container-v4demo---books--";
 		var sFilterBarID = booksComponentID + "booksFilterBar";
 
 		// I start the Manage Books TwFb example app
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 		When.onTheMDCFilterBar.iPersonalizeFilter(sFilterBarID, {	Books: ["Created On"] });
 		When.onTheMDCFilterField.iEnterTextOnTheFilterField({ label: "Created On" }, "Feb 22, 2005, 6:24:25 PM");
@@ -363,16 +336,16 @@ sap.ui.define([
 		//I press the Go button (or press enter in the search field)
 		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	QUnit.module("TwFb - Books/New");
 
 	opaTest("twfb - start app and test field and valuehelp", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode({hash: "/Books/new"});
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html#Books/new");
 
-		var sAuthorsFieldID = "listreport---bookdetails--fAuthor";
-		var sAuthorsValueHelpID = "listreport---bookdetails--FH1";
+		var sAuthorsFieldID = "container-v4demo---bookdetails--fAuthor";
+		var sAuthorsValueHelpID = "container-v4demo---bookdetails--FH1";
 
 		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sAuthorsFieldID, "105 (Kafka, Franz)");
 
@@ -383,7 +356,7 @@ sap.ui.define([
 
 		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sAuthorsFieldID, "101 (Austen, Jane)");
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 
 	});
 });
