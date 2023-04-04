@@ -9,8 +9,7 @@ sap.ui.define([
 
 	return CommonComponent.extend("AppUnderTestTable.Component", {
 		metadata: {
-			manifest: "json",
-			async: true
+			manifest: "json"
 		}
 	});
 });
