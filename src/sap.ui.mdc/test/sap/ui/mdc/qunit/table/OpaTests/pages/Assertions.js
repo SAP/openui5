@@ -225,17 +225,26 @@ sap.ui.define([
 		 * @function
 		 * @name iShouldSeeTheShowHideDetailsButton
 		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {Boolean} sKey The selected key
+		 * @param {Boolean} bValue Button visibility
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iShouldSeeTheShowHideDetailsButton: function(oControl) {
+		iShouldSeeTheShowHideDetailsButton: function(oControl, sKey, bValue) {
 			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-showHideDetails",
 				controlType: "sap.m.SegmentedButton",
+				visible: bValue,
 				success: function(oSegmentedButton) {
-					Opa5.assert.ok(oSegmentedButton, "Show/Hide Details button is visible");
+					if (bValue) {
+						Opa5.assert.ok(oSegmentedButton, "Show/Hide Details button is visible");
+						Opa5.assert.equal(oSegmentedButton.getItems()[0].getTooltip(), 'Show More per Row', "ShowDetails button created");
+						Opa5.assert.equal(oSegmentedButton.getSelectedKey(), sKey);
+					} else {
+						Opa5.assert.ok(true, "The show details button is not visible");
+					}
 				},
 				errorMessage: "No Show/Hide Details button found"
 			});
@@ -917,7 +926,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the P13n dialog can be seen.
+		 * Checks if the p13n dialog is open.
 		 *
 		 * @returns {Promise} OPA waitFor
 		 */
@@ -925,6 +934,7 @@ sap.ui.define([
 			return Util.waitForP13nDialog.call(this, {
 				success: function(oDialog) {
 					Opa5.assert.ok(oDialog.getParent().isA("sap.m.p13n.Popup"), "Dialog's parent is a P13n Popup");
+					Opa5.assert.ok(oDialog.isOpen(), "P13n Dialog is open");
 				}
 			});
 		},
@@ -959,6 +969,7 @@ sap.ui.define([
 
 		/**
 		 * Checks if the focus is on the given control
+		 *
 		 * @param {sap.ui.core.Control|string} vControl control instance or control ID
 		 * @returns {Promsie} OPA waitFor
 		 */
@@ -970,6 +981,42 @@ sap.ui.define([
 				success: function(oControl) {
 					Opa5.assert.ok(oControl.getDomRef().contains(Opa5.getWindow().document.activeElement), "Focus is on expected element");
 				}
+			});
+		},
+
+		/**
+		 * Checks if the variant is selected
+		 *
+		 * @param {String} sVariantName Selected variant name
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldSeeSelectedVariant: function(sVariantName) {
+			return this.waitFor({
+				controlType: "sap.ui.fl.variants.VariantManagement",
+				matchers: {
+					ancestor: {
+						controlType: "sap.ui.mdc.ActionToolbar"
+					}
+				},
+				check: function (aVariantManagements) {
+					return !!aVariantManagements.length;
+				},
+				success: function (aVariantManagements) {
+					Opa5.assert.equal(aVariantManagements.length, 1, "VariantManagement found");
+					this.waitFor({
+						controlType: "sap.m.Title",
+						matchers: [
+							new Ancestor(aVariantManagements[0]), new Properties({
+								text: sVariantName
+							})
+						],
+						success: function (aItems) {
+							Opa5.assert.equal(aItems.length, 1, "Variant '" + sVariantName + "' found");
+						},
+						errorMessage: "Could not find core item with text " + sVariantName
+					});
+				},
+				errorMessage: "Could not find VariantManagement"
 			});
 		}
 	};

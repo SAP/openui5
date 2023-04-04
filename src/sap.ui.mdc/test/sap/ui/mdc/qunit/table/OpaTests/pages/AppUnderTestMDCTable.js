@@ -2,12 +2,14 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Actions",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Assertions",
-	"test-resources/sap/ui/mdc/testutils/opa/table/Actions"
+	"test-resources/sap/ui/mdc/testutils/opa/table/Actions",
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action"
 ], function(
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.Opa5 */ AppUnderTestActions,
 	/** @type sap.ui.test.Opa5 */ AppUnderTestAssertions,
-	/** @type sap.ui.test.Opa5 */ TableActions) {
+	/** @type sap.ui.test.Opa5 */ TableActions,
+	/** @type sap.ui.test.Opa5 */ P13nAction) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -412,6 +414,41 @@ sap.ui.define([
 				 */
 				iRemoveAllFiltersViaInfoFilterBar: function() {
 					return AppUnderTestActions.iRemoveAllFiltersViaInfoFilterBar.apply(this, arguments);
+				},
+
+				iConfirmColumnMenuItemContent: function() {
+					return AppUnderTestActions.iConfirmColumnMenuItemContent.apply(this, arguments);
+				},
+
+				iOpenP13nDialog: function() {
+					return AppUnderTestActions.iOpenP13nDialog.apply(this, arguments);
+				},
+
+				iSelectVariant: function(sVariantName) {
+					var Action = new P13nAction();
+					return Action.iSelectVariant(sVariantName);
+				},
+
+				/** Selects the column in Selection panel from p13n or column menu
+				 *
+				 * @param {Array} aColumnName list of column lanel that needs to be selected.
+				 * @param {Boolean} [bModal] Indicates whether column menu or p13n dialog is used.
+				 * @returns {Promise} OPA waitFor
+				 */
+				iSelectColumns: function(aColumnName, bModal) {
+					var Action = new P13nAction();
+					return aColumnName.forEach(function(sColumnName) {
+						Action.iSelectColumn(sColumnName, null, undefined, bModal);
+					});
+				},
+
+				/** Closes the p13n dialog
+				 *
+				 * @returns {Promise} OPA waitFor
+				 */
+				iPressDialogOk: function() {
+					var Action = new P13nAction();
+					return Action.iPressDialogOk();
 				}
 			},
 			assertions: {
@@ -500,11 +537,13 @@ sap.ui.define([
 				 * @function
 				 * @name iShouldSeeTheShowHideDetailsButton
 				 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+				 * @param {Boolean} sKey The selected key
+		 		 * @param {Boolean} bValue Button visibility
 				 * @returns {Promise} OPA waitFor
 				 * @private
 				 */
-				iShouldSeeTheShowHideDetailsButton: function(oControl) {
-					return AppUnderTestAssertions.iShouldSeeTheShowHideDetailsButton.call(this, oControl);
+				iShouldSeeTheShowHideDetailsButton: function(oControl, sKey, bValue) {
+					return AppUnderTestAssertions.iShouldSeeTheShowHideDetailsButton.call(this, oControl, sKey, bValue);
 				},
 
 				/**
@@ -814,6 +853,16 @@ sap.ui.define([
 				 */
 				iShouldSeeFocusOnControl: function(vControl) {
 					return AppUnderTestAssertions.iShouldSeeFocusOnControl.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if the variant is selected
+				 *
+				 * @param {String} sVariantName Selected variant name
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeSelectedVariant: function(sVariantName) {
+					return AppUnderTestAssertions.iShouldSeeSelectedVariant.apply(this, arguments);
 				}
 			}
 		}

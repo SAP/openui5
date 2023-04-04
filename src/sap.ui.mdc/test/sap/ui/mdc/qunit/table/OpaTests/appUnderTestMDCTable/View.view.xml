@@ -5,55 +5,57 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:variants="sap.ui.fl.variants"
 	controllerName="sap.ui.mdc.tableOpaTests.appUnderTestMDCTable.Controller">
-    <mdc:Table
-        id="mdcTable"
-        header="Products"
-        showRowCount="true"
-        showPasteButton="true"
-        enableExport="true"
-        beforeExport="onBeforeExport"
-        delegate='\{ "name": "sap/ui/mdc/tableOpaTests/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
-        selectionMode="Multi"
-        p13nMode="Column,Sort,Filter,Group"
-        height="100%"
-        enableAutoColumnWidth="true">
-        <mdc:type>
-            <mdc:table.ResponsiveTableType showDetailsButton="true" />
-        </mdc:type>
-        <mdc:variant>
-            <variants:VariantManagement id="mdcTable-vm" for="mdcTable" />
-        </mdc:variant>
-        <mdc:columns>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--CreatedAt" header="Created On" tooltip="Created On" dataProperty="CreatedAt" importance="Low">
-                <Text text="{CreatedAt}" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--ProductID" header="Product ID" tooltip="Product ID" dataProperty="ProductID" importance="High">
-                <ObjectIdentifier title="{ProductID}" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--Category" header="Category" dataProperty="Category" importance="Low">
-                <Text text="{Category}" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--Name" header="Product Name" dataProperty="Name" importance="Low">
-                <Text text="{Name}" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--SupplierName" header="Supplier" dataProperty="SupplierName" importance="Medium">
-                <Text text="{SupplierName}" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--Price" header="Unit Price of the Product" dataProperty="Price" hAlign="Right" importance="High">
-                <u:Currency xmlns:u="sap.ui.unified" value="{Price}" currency="{CurrencyCode}" useSymbol="false" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--WeightMeasure" header="Weight" dataProperty="WeightMeasure" hAlign="End" importance="Low">
-                <ObjectNumber number="{WeightMeasure}" emphasized="false" textAlign="End" unit="{WeightUnit}" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--Width" header="Width" dataProperty="Width" hAlign="End" importance="Low">
-                <ObjectNumber number="{Width}" emphasized="false" textAlign="End" unit="{DimUnit}" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--Depth" header="Depth" dataProperty="Depth" hAlign="End" importance="Low">
-                <ObjectNumber number="{Depth}" emphasized="false" textAlign="End" unit="{DimUnit}" />
-            </mdcTable:Column>
-            <mdcTable:Column id="mdcTable-vm--mdcTable--Height" header="Height" dataProperty="Height" hAlign="End" importance="Low">
-                <ObjectNumber number="{Height}" emphasized="false" textAlign="End" unit="cm" />
-            </mdcTable:Column>
-        </mdc:columns>
-    </mdc:Table>
+    <App id="FlexTestApp">
+        <mdc:Table
+            id="mdcTable"
+            header="Products"
+            showRowCount="true"
+            showPasteButton="true"
+            enableExport="true"
+            beforeExport="onBeforeExport"
+            delegate='\{ "name": "sap/ui/mdc/tableOpaTests/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
+            selectionMode="Multi"
+            p13nMode="Column,Sort,Filter,Group"
+            height="100%"
+            enableAutoColumnWidth="true">
+            <mdc:type>
+                <mdc:table.ResponsiveTableType detailsButtonSetting="Low,None" showDetailsButton="true" />
+            </mdc:type>
+            <mdc:variant>
+                <variants:VariantManagement id="mdcTable-vm" for="mdcTable" />
+            </mdc:variant>
+            <mdc:columns>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--CreatedAt" header="Created On" tooltip="Created On" dataProperty="CreatedAt" importance="Low">
+                    <Text text="{CreatedAt}" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--ProductID" header="Product ID" tooltip="Product ID" dataProperty="ProductID" importance="High">
+                    <ObjectIdentifier title="{ProductID}" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--Category" header="Category" dataProperty="Category" importance="Low">
+                    <Text text="{Category}" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--Name" header="Product Name" dataProperty="Name" importance="Low">
+                    <Text text="{Name}" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--SupplierName" header="Supplier" dataProperty="SupplierName" importance="Medium">
+                    <Text text="{SupplierName}" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--Price" header="Unit Price of the Product" dataProperty="Price" hAlign="Right" importance="High">
+                    <u:Currency xmlns:u="sap.ui.unified" value="{Price}" currency="{CurrencyCode}" useSymbol="false" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--WeightMeasure" header="Weight" dataProperty="WeightMeasure" hAlign="End" importance="Low">
+                    <ObjectNumber number="{WeightMeasure}" emphasized="false" textAlign="End" unit="{WeightUnit}" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--Width" header="Width" dataProperty="Width" hAlign="End" importance="Low">
+                    <ObjectNumber number="{Width}" emphasized="false" textAlign="End" unit="{DimUnit}" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--Depth" header="Depth" dataProperty="Depth" hAlign="End" importance="Low">
+                    <ObjectNumber number="{Depth}" emphasized="false" textAlign="End" unit="{DimUnit}" />
+                </mdcTable:Column>
+                <mdcTable:Column id="mdcTable-vm--mdcTable--Height" header="Height" dataProperty="Height" hAlign="End" importance="Low">
+                    <ObjectNumber number="{Height}" emphasized="false" textAlign="End" unit="cm" />
+                </mdcTable:Column>
+            </mdc:columns>
+        </mdc:Table>
+    </App>
 </mvc:View>

@@ -73,7 +73,7 @@ sap.ui.define([
 	});
 
 	opaTest("The table should have the show/hide details button", function(Given, When, Then) {
-		Then.onTheAppUnderTestMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "hideDetails", true);
 	});
 
 	opaTest("The table should have the paste button", function(Given, When, Then) {
@@ -230,6 +230,82 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
 	});
 
+	opaTest("Select a column from column header menu", function (Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Supplier");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeNumberOfColumnMenuItems(4);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuItems([
+			Util.P13nDialogInfo.Titles.sort,
+			Util.P13nDialogInfo.Titles.filter,
+			Util.P13nDialogInfo.Titles.group,
+			Util.P13nDialogInfo.Titles.columns
+		]);
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.columns);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.columns);
+		When.onTheAppUnderTestMDCTable.iSelectColumns(["Range of Creation Date", "Product", "Name"], false);
+		When.onTheAppUnderTestMDCTable.iConfirmColumnMenuItemContent();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", false);
+
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Supplier");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.columns);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.columns);
+		When.onTheAppUnderTestMDCTable.iSelectColumns(["Name"], false);
+		When.onTheAppUnderTestMDCTable.iConfirmColumnMenuItemContent();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", true);
+
+		When.onTheAppUnderTestMDCTable.iSelectVariant("Standard");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeSelectedVariant("Standard");
+	});
+
+	opaTest("When I select the 'Country' column and press ok, the table should be changed", function (Given, When, Then) {
+
+		When.onTheAppUnderTestMDCTable.iOpenP13nDialog();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeP13nDialog();
+		When.onTheAppUnderTestMDCTable.iSelectColumns(["Range of Creation Date", "Product", "Category"], null, undefined);
+
+		When.onTheAppUnderTestMDCTable.iPressDialogOk();
+
+		When.onTheAppUnderTestMDCTable.iOpenP13nDialog();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeP13nDialog();
+		When.onTheAppUnderTestMDCTable.iSelectColumns(["Category"], null, undefined);
+		When.onTheAppUnderTestMDCTable.iPressDialogOk();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", true);
+
+		When.onTheAppUnderTestMDCTable.iSelectVariant("Standard");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeSelectedVariant("Standard");
+	});
+
+	opaTest("When I remove column and add another column the showDetail button is not visible", function (Given, When, Then) {
+
+		When.onTheAppUnderTestMDCTable.iOpenP13nDialog();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeP13nDialog();
+		When.onTheAppUnderTestMDCTable.iSelectColumns(["Range of Creation Date", "Product", "Category"], null, undefined);
+
+		When.onTheAppUnderTestMDCTable.iPressDialogOk();
+
+		When.onTheAppUnderTestMDCTable.iOpenP13nDialog();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeP13nDialog();
+		When.onTheAppUnderTestMDCTable.iSelectColumns(["Category"], null, undefined);
+		When.onTheAppUnderTestMDCTable.iPressDialogOk();
+
+		When.onTheAppUnderTestMDCTable.iOpenP13nDialog();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeP13nDialog();
+		When.onTheAppUnderTestMDCTable.iSelectColumns(["Category"], null, undefined);
+		When.onTheAppUnderTestMDCTable.iPressDialogOk();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", false);
+
+		When.onTheAppUnderTestMDCTable.iOpenP13nDialog();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeP13nDialog();
+		When.onTheAppUnderTestMDCTable.iSelectColumns(["ChangedAt"], null, undefined);
+		When.onTheAppUnderTestMDCTable.iPressDialogOk();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", true);
+
+		When.onTheAppUnderTestMDCTable.iSelectVariant("Standard");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeSelectedVariant("Standard");
+	});
+
 	/* =========================================================== */
 	/* opaTests when tableType is GridTableType                    */
 	/* =========================================================== */
@@ -344,7 +420,7 @@ sap.ui.define([
 		When.onTheAppUnderTestMDCTable.iCloseTheColumnMenu();
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
 
-		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Product ID");
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableId, "Product");
 		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
 		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "ProductID", label: "Product", sortOrder: coreLibrary.SortOrder.Ascending});
 		When.onTheAppUnderTestMDCTable.iCloseTheColumnMenu();
