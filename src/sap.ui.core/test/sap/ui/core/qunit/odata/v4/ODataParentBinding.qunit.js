@@ -822,6 +822,7 @@ sap.ui.define([
 								},
 								resolve : function () {}
 							},
+							mParameters : {},
 							sPath : "path"
 						}),
 						oBindingMock = this.mock(oBinding),
@@ -933,6 +934,7 @@ sap.ui.define([
 						reportError : function () {},
 						resolve : function () {}
 					},
+					mParameters : {},
 					sPath : "/Set"
 				}),
 				oBindingMock = this.mock(oBinding),
@@ -1071,6 +1073,7 @@ sap.ui.define([
 					resolve : function () {},
 					mUriParameters : {}
 				},
+				mParameters : {},
 				sPath : "navigation"
 			}),
 			oBindingMock = this.mock(oBinding),
@@ -1085,7 +1088,7 @@ sap.ui.define([
 			oPromise;
 
 		if (oFixture.keptAlive) {
-			oContext.bKeepAlive = true;
+			oContext.isEffectivelyKeptAlive = function () { return true; };
 		}
 		oModelMock.expects("resolve")
 			.withExactArgs("childPath", sinon.match.same(oContext))
@@ -1188,6 +1191,7 @@ sap.ui.define([
 					resolve : function () {},
 					mUriParameters : {}
 				},
+				mParameters : {},
 				sPath : "/Set",
 				bSharedRequest : oFixture.shared
 			}),
@@ -1287,6 +1291,7 @@ sap.ui.define([
 					},
 					resolve : function () {}
 				},
+				mParameters : {},
 				sPath : "/Set"
 			}),
 			oBindingMock = this.mock(oBinding),
@@ -1375,6 +1380,7 @@ sap.ui.define([
 						},
 						resolve : function () {}
 					},
+					mParameters : {},
 					sPath : "/Set",
 					bRelative : false
 				}),
@@ -1446,6 +1452,7 @@ sap.ui.define([
 					return SyncPromise.resolve({});
 				},
 				oModel : oModel,
+				mParameters : {},
 				sPath : "/Set",
 				bRelative : false
 			}),
@@ -1503,6 +1510,7 @@ sap.ui.define([
 					},
 					resolve : function () {}
 				},
+				mParameters : {},
 				sPath : "/Set"
 			}),
 			oContext = Context.create(oBinding.oModel, oBinding, "/Set('2')"),
@@ -1625,6 +1633,7 @@ sap.ui.define([
 					return SyncPromise.resolve({});
 				},
 				oModel : oModel,
+				mParameters : {},
 				sPath : "operation(...)"
 			}),
 			oChildQueryOptionsPromise = {},
@@ -1693,6 +1702,7 @@ sap.ui.define([
 					},
 					resolve : function () {}
 				},
+				mParameters : {},
 				sPath : "/Collection(42)"
 			}),
 			sChildPath = "Function(foo=42)",
@@ -1749,6 +1759,7 @@ sap.ui.define([
 					},
 					resolve : function () {}
 				},
+				mParameters : {},
 				sPath : "/Function(foo=42)",
 				bRelative : false
 			}),
@@ -3128,11 +3139,11 @@ sap.ui.define([
 			},
 			oContext = {
 				getIndex : function () { return undefined; },
-				isKeepAlive : function () { return false; }
+				isEffectivelyKeptAlive : function () { return false; }
 			},
 			oContextWithIndex = {
 				getIndex : function () { return 0; },
-				isKeepAlive : function () { return false; }
+				isEffectivelyKeptAlive : function () { return false; }
 			},
 			oChild1 = new ODataParentBinding({
 				oCache : oCache1,
@@ -3378,15 +3389,15 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oContext0 = {
 				getIndex : function () { return 1; },
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext1 = {
 				getIndex : function () { return 1; },
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext2 = {
 				getIndex : function () { return undefined; },
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oChild0 = new ODataParentBinding({
 				oCache : undefined,
@@ -3408,16 +3419,16 @@ sap.ui.define([
 		this.mock(oChild0).expects("hasPendingChangesInDependents").withExactArgs(false, undefined)
 			.returns(false);
 		if (bIgnoreKeptAlive) {
-			this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(false);
-			this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
+			this.mock(oContext0).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+			this.mock(oContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
 			this.mock(oContext1).expects("getIndex").never();
-			this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(false);
+			this.mock(oContext2).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
 			this.mock(oChild1).expects("hasPendingChangesForPath").never();
 			this.mock(oChild2).expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 		} else {
-			this.mock(oContext0).expects("isKeepAlive").never();
-			this.mock(oContext1).expects("isKeepAlive").never();
-			this.mock(oContext2).expects("isKeepAlive").never();
+			this.mock(oContext0).expects("isEffectivelyKeptAlive").never();
+			this.mock(oContext1).expects("isEffectivelyKeptAlive").never();
+			this.mock(oContext2).expects("isEffectivelyKeptAlive").never();
 			this.mock(oChild1).expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 			this.mock(oChild2).expects("hasPendingChangesForPath").never();
 		}

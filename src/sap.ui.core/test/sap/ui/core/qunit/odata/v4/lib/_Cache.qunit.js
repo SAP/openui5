@@ -906,17 +906,20 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bCreated) {
-		var sTitle = "_Cache#removeElement for a kept-alive context, bCreated = " + bCreated;
+[false, true].forEach(function (bJustDropped) {
+	var sTitle = "_Cache#removeElement for a kept-alive context"
+			+ (bJustDropped
+				? " which just dropped out of the collection"
+				: " outside the collection");
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [{
 				"@$ui5._" : {predicate : "('2')"},
-				"@odata.etag" : "etag"
+				"@odata.etag" : "before"
 			}],
 			oElement = {
-				"@$ui5._" : {predicate : "('1')"},
+				"@$ui5._" : {predicate : "('1')", transientPredicate : "n/a"},
 				"@odata.etag" : "etag"
 			},
 			iIndex;
@@ -926,32 +929,79 @@ sap.ui.define([
 			"('2')" : aCacheData[0]
 		};
 		aCacheData.$count = 42;
-		aCacheData.$created = bCreated ? 23 : 0;
-		oCache.iActiveElements = bCreated ? 19 : 0;
+		aCacheData.$created = 0;
+		oCache.iActiveElements = 0;
 		oCache.iLimit = 42;
-		if (bCreated) {
-			oElement["@$ui5._"].transientPredicate = "($uid=id-1-23)";
-			aCacheData.$byPredicate["($uid=id-1-23)"] = oElement;
-		}
-		this.mock(_Cache).expects("getElementIndex").never();
+		this.mock(_Cache).expects("getElementIndex").exactly(bJustDropped ? 1 : 0)
+			.withExactArgs(sinon.match.same(aCacheData), "('1')", 2).returns(-1);
 		this.mock(_Helper).expects("updateExisting").never(); // from addToCount()
 		this.mock(oCache).expects("adjustIndexes").never();
 
 		// code under test
-		iIndex = oCache.removeElement(aCacheData, undefined, "('1')", "");
+		iIndex = oCache.removeElement(aCacheData, bJustDropped ? 2 : undefined, "('1')", "");
 
-		assert.strictEqual(iIndex, undefined);
+		assert.strictEqual(iIndex, bJustDropped ? -1 : undefined);
 		assert.strictEqual(aCacheData.$count, 42);
-		assert.strictEqual(aCacheData.$created, bCreated ? 22 : 0);
-		assert.strictEqual(oCache.iActiveElements, bCreated ? 18 : 0);
+		assert.strictEqual(aCacheData.$created, 0);
+		assert.strictEqual(oCache.iActiveElements, 0);
 		assert.strictEqual(oCache.iLimit, 42);
 		assert.deepEqual(aCacheData, [{
 			"@$ui5._" : {predicate : "('2')"},
-			"@odata.etag" : "etag"
+			"@odata.etag" : "before"
 		}]);
 		assert.deepEqual(aCacheData.$byPredicate, {"('2')" : aCacheData[0]});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#removeElement for a created kept-alive context inside", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
+			aCacheData = [{
+				"@$ui5._" : {predicate : "('2')"},
+				"@odata.etag" : "before"
+			}, {
+				"@$ui5._" : {predicate : "('1')", transientPredicate : "($uid=id-1-23)"},
+				"@odata.etag" : "etag"
+			}, {
+				"@odata.etag" : "after"
+			}],
+			oElement = aCacheData[1],
+			iIndex;
+
+		aCacheData.$byPredicate = {
+			"($uid=id-1-23)" : oElement,
+			"('1')" : oElement,
+			"('2')" : aCacheData[0]
+		};
+		aCacheData.$count = 42;
+		aCacheData.$created = 23;
+		oCache.iActiveElements = 19;
+		oCache.iLimit = 42;
+		this.mock(_Cache).expects("getElementIndex")
+			.withExactArgs(sinon.match.same(aCacheData), "('1')", 2).returns(1);
+		this.mock(_Helper).expects("updateExisting") // from addToCount()
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+				sinon.match.same(aCacheData), {$count : 41})
+			.callThrough();
+		this.mock(oCache).expects("adjustIndexes")
+			.withExactArgs("", sinon.match.same(aCacheData), 1, -1);
+
+		// code under test
+		iIndex = oCache.removeElement(aCacheData, 2, "('1')", "");
+
+		assert.strictEqual(iIndex, 1);
+		assert.strictEqual(aCacheData.$count, 41);
+		assert.strictEqual(aCacheData.$created, 22);
+		assert.strictEqual(oCache.iActiveElements, 18);
+		assert.strictEqual(oCache.iLimit, 42);
+		assert.deepEqual(aCacheData, [{
+			"@$ui5._" : {predicate : "('2')"},
+			"@odata.etag" : "before"
+		}, {
+			"@odata.etag" : "after"
+		}]);
+		assert.deepEqual(aCacheData.$byPredicate, {"('2')" : aCacheData[0]});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#registerChangeListener", function () {

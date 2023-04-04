@@ -2370,6 +2370,8 @@ sap.ui.define([
 		this.mock(this.oModel).expects("resolve").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 			.returns("/bar/Suppliers");
+		this.mock(oOldHeaderContext).expects("setSelected").exactly(oFixture.newContext ? 1 : 0)
+			.withExactArgs(false);
 		this.mock(Context).expects("create").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/bar/Suppliers")
@@ -2677,7 +2679,7 @@ sap.ui.define([
 			oDependentBinding = {
 				getContext : function () {
 					return {
-						isKeepAlive : function () { return false; }
+						isEffectivelyKeptAlive : function () { return false; }
 					};
 				},
 				refreshInternal : function () {}
@@ -2977,13 +2979,13 @@ sap.ui.define([
 
 			function getKeptContext() {
 				return {
-					isKeepAlive : function () { return true; }
+					isEffectivelyKeptAlive : function () { return true; }
 				};
 			}
 
 			function getNonKeptContext() {
 				return {
-					isKeepAlive : function () { return false; }
+					isEffectivelyKeptAlive : function () { return false; }
 				};
 			}
 
@@ -3078,7 +3080,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bFail) {
-	[undefined, 2].forEach(function (iIndex) {
+	[undefined, 2, -1].forEach(function (iIndex) {
 		var sTitle = "refreshKeptElements: fail = " + bFail + ", index = " + iIndex;
 
 	QUnit.test(sTitle, function (assert) {
@@ -3090,7 +3092,7 @@ sap.ui.define([
 			that = this;
 
 		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oNewCache));
-		oBinding.aContexts = [,, "~aContexts[2]~"];
+		oBinding.aContexts = [,, oKeptContext];
 		oBinding.mPreviousContextsByPath = {
 			"/resolved/path('42')" : oKeptContext
 		};
@@ -3106,16 +3108,16 @@ sap.ui.define([
 
 		// code under test
 		return oBinding.refreshKeptElements("myGroup").then(function (vResult) {
-			var iCallCount = iIndex === undefined ? 1 : 0;
+			var iCallCount = iIndex >= 0 ? 0 : 1;
 
 			assert.strictEqual(vResult, "~result~");
 			assert.notOk(bFail);
 
-			that.mock(oBinding).expects("getResolvedPath").exactly(iCallCount).withExactArgs()
-				.returns("/resolved/path");
-			that.mock(oKeptContext).expects("resetKeepAlive").exactly(iCallCount).withExactArgs();
+			that.mock(oBinding).expects("getResolvedPath").exactly(iCallCount)
+				.withExactArgs().returns("/resolved/path");
+			that.mock(oKeptContext).expects("resetKeepAlive").withExactArgs();
 			that.mock(oBinding).expects("removeCreated").exactly(1 - iCallCount)
-				.withExactArgs("~aContexts[2]~");
+				.withExactArgs(sinon.match.same(oKeptContext));
 
 			// code under test
 			oRefreshKeptElementsCall.firstCall.args[1]("('42')", iIndex);
@@ -3765,25 +3767,25 @@ sap.ui.define([
 		var oBinding = this.bindList("relative"),
 			oContext1 = { // no flag
 				destroy : function () {},
-				isKeepAlive : function () {},
+				isEffectivelyKeptAlive : function () {},
 				isTransient : function () {}
 			},
 			oContext2 = { // keepAlive
 				iIndex : 2,
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext3 = { // delete pending
 				oDeletePromise : new SyncPromise(function () {}),
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext4 = { // deleted
 				oDeletePromise : SyncPromise.resolve(),
 				destroy : function () {},
-				isKeepAlive : function () {},
+				isEffectivelyKeptAlive : function () {},
 				isTransient : function () {}
 			},
 			oContext5 = { // transient
-				isKeepAlive : function () {},
+				isEffectivelyKeptAlive : function () {},
 				isTransient : function () {}
 			};
 
@@ -3795,15 +3797,15 @@ sap.ui.define([
 			p5 : oContext5,
 			p6 : "~oContext6~" // not in selection
 		};
-		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
 		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext1).expects("destroy").withExactArgs();
-		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oContext3).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext4).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext2).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oContext3).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oContext4).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
 		this.mock(oContext4).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext4).expects("destroy").withExactArgs();
-		this.mock(oContext5).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext5).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
 		this.mock(oContext5).expects("isTransient").withExactArgs().returns(true);
 
 		// code under test
@@ -3871,8 +3873,8 @@ sap.ui.define([
 		oBinding.iActiveContexts = 3;
 		oBinding.iCreatedContexts = 4;
 		assert.strictEqual(oBinding.getLength(), 14, "length");
-		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oContext2).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
 		this.mock(oBinding).expects("destroyLater").withExactArgs(sinon.match.same(oContext2));
 
 		// code under test
@@ -4601,6 +4603,8 @@ sap.ui.define([
 			oGroupLock1 = {},
 			oLockGroupExpectation,
 			oPromise,
+			oRemoveCreatedExpectation,
+			oSetSelectedExpectation,
 			that = this;
 
 		oBindingMock.expects("getUpdateGroupId").withExactArgs().returns("~update~");
@@ -4670,10 +4674,14 @@ sap.ui.define([
 		// code under test - call fnErrorCallback
 		oCreateInCacheExpectation.args[0][6](oError);
 
-		oBindingMock.expects("removeCreated").withExactArgs(sinon.match.same(oContext0));
+		oSetSelectedExpectation = this.mock(oContext0).expects("setSelected").withExactArgs(false);
+		oRemoveCreatedExpectation = oBindingMock.expects("removeCreated")
+			.withExactArgs(sinon.match.same(oContext0));
 
 		// code under test - call fnCancelCallback to simulate cancellation
 		oPromise = oLockGroupExpectation.args[0][3]();
+
+		assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCreatedExpectation));
 
 		// expect the event to be fired asynchronously
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
@@ -5549,6 +5557,7 @@ sap.ui.define([
 		oContext.created().catch(function (oError) {
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
+		this.mock(oContext).expects("setSelected").withExactArgs(false);
 		this.mock(oBinding).expects("removeCreated").withExactArgs(sinon.match.same(oContext))
 			.callThrough();
 		oBindingMock.expects("deleteFromCache").callsFake(function () {
@@ -6956,10 +6965,15 @@ sap.ui.define([
 	// for the changeListener fails because of different paths (index versus key predicate)
 
 	//*********************************************************************************************
+[true, false].forEach(function (bStillAlive) {
 	[true, false].forEach(function (bOnRemoveCalled) {
 		[true, false].forEach(function (bCreated) {
 			var sTitle = "refreshSingle with allow remove: " + bOnRemoveCalled + ", created: "
-				+ bCreated;
+				+ bCreated + ", still alive: " + bStillAlive;
+
+			if (bStillAlive && !bOnRemoveCalled) {
+				return;
+			}
 
 			QUnit.test(sTitle, function (assert) {
 				var oBinding = this.bindList("/EMPLOYEES"),
@@ -6980,6 +6994,8 @@ sap.ui.define([
 							resolve();
 						});
 					}),
+					oRemoveCreatedExpectation,
+					oResetKeepAliveExpectation,
 					oRootBinding = {
 						assertSameCache : function () {},
 						getGroupId : function () {}
@@ -7006,18 +7022,27 @@ sap.ui.define([
 					// fnOnRemove Test
 					if (bOnRemoveCalled) {
 						oContextMock.expects("getModelIndex").withExactArgs().callThrough();
-						that.mock(oBinding).expects("removeCreated").exactly(bCreated ? 1 : 0)
-							.withExactArgs(sinon.match.same(oContext));
-						oContextMock.expects("destroy").exactly(bCreated ? 0 : 1)
+						oResetKeepAliveExpectation = oContextMock.expects("resetKeepAlive")
+							.exactly(bCreated && !bStillAlive ? 1 : 0).withExactArgs(); //TODO order
+						oRemoveCreatedExpectation = that.mock(oBinding).expects("removeCreated")
+							.exactly(bCreated ? 1 : 0).withExactArgs(sinon.match.same(oContext));
+						oContextMock.expects("destroy").exactly(bCreated || bStillAlive ? 0 : 1)
 							.withExactArgs();
 						that.mock(oBinding).expects("_fireChange")
 							.withExactArgs({reason : ChangeReason.Remove});
-						that.mock(that.oModel).expects("getDependentBindings").never();
+						if (!bStillAlive) {
+							oContextMock.expects("refreshDependentBindings").never();
+						}
 
 						// code under test
-						oExpectation.firstCall.args[6](false);
+						oExpectation.firstCall.args[6](bStillAlive);
 
-						if (!bCreated) {
+						if (bCreated) { // removeCreated adjusted aContexts
+							if (!bStillAlive) {
+								assert.ok(oResetKeepAliveExpectation
+									.calledBefore(oRemoveCreatedExpectation));
+							}
+						} else {
 							assert.strictEqual(oBinding.aContexts.length, 7);
 							assert.notOk(4 in oBinding.aContexts);
 							assert.strictEqual(oBinding.aContexts[0].iIndex, -2);
@@ -7028,8 +7053,9 @@ sap.ui.define([
 							assert.strictEqual(oBinding.aContexts[6].iIndex, 4);
 							assert.strictEqual(oBinding.iCreatedContexts, 2);
 							assert.strictEqual(oBinding.iMaxLength, 5);
-						} // else removeCreated adjusted aContexts
-					} else {
+						}
+					}
+					if (!bOnRemoveCalled || bStillAlive) {
 						that.mock(oGroupLock).expects("getGroupId").returns("resultingGroupId");
 						oContextMock.expects("refreshDependentBindings")
 							.withExactArgs("EMPLOYEES('2')", "resultingGroupId", false, undefined)
@@ -7054,8 +7080,8 @@ sap.ui.define([
 					.returns(oCacheRequestPromise);
 				this.mock(oBinding).expects("fireDataRequested").withExactArgs();
 				this.mock(oBinding).expects("fireDataReceived").withExactArgs({data : {}});
-				oContextMock.expects("checkUpdateInternal").exactly(bOnRemoveCalled ? 0 : 1)
-					.withExactArgs()
+				oContextMock.expects("checkUpdateInternal")
+					.exactly(bOnRemoveCalled && !bStillAlive ? 0 : 1).withExactArgs()
 					.returns(new SyncPromise(function (resolve) {
 						setTimeout(function () {
 							bContextUpdated = true;
@@ -7065,12 +7091,15 @@ sap.ui.define([
 
 				// code under test
 				return oBinding.refreshSingle(oContext, oGroupLock, true).then(function () {
-					assert.strictEqual(bContextUpdated, !bOnRemoveCalled);
-					assert.strictEqual(bDependentsRefreshed, !bOnRemoveCalled);
+					assert.strictEqual(bContextUpdated, !bOnRemoveCalled || bStillAlive);
+					assert.strictEqual(bDependentsRefreshed, !bOnRemoveCalled || bStillAlive);
+					assert.deepEqual(Object.keys(oBinding.mPreviousContextsByPath),
+						bOnRemoveCalled && bStillAlive ? ["/EMPLOYEES('2')"] : []);
 				});
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 [
@@ -7094,7 +7123,7 @@ sap.ui.define([
 				destroy : function () {},
 				getModelIndex : function () { return oFixture.index; },
 				getPath : function () { return "~context~path~"; },
-				isKeepAlive : function () { return true; },
+				isEffectivelyKeptAlive : function () { return true; },
 				refreshDependentBindings : function () {}
 			},
 			oExpectation,
@@ -7328,13 +7357,13 @@ sap.ui.define([
 				oBindingMock = this.mock(oBinding),
 				oDependent0 = {
 					oContext : {
-						isKeepAlive : function () {}
+						isEffectivelyKeptAlive : function () {}
 					},
 					resumeInternal : function () {}
 				},
 				oDependent1 = {
 					oContext : {
-						isKeepAlive : function () {}
+						isEffectivelyKeptAlive : function () {}
 					},
 					resumeInternal : function () {}
 				},
@@ -7355,9 +7384,11 @@ sap.ui.define([
 			oGetDependentBindingsExpectation = oBindingMock.expects("getDependentBindings")
 				.withExactArgs()
 				.returns([oDependent0, oDependent1]);
-			this.mock(oDependent0.oContext).expects("isKeepAlive").withExactArgs().returns(false);
+			this.mock(oDependent0.oContext).expects("isEffectivelyKeptAlive").withExactArgs()
+				.returns(false);
 			this.mock(oDependent0).expects("resumeInternal").withExactArgs(false, true);
-			this.mock(oDependent1.oContext).expects("isKeepAlive").withExactArgs().returns(true);
+			this.mock(oDependent1.oContext).expects("isEffectivelyKeptAlive").withExactArgs()
+				.returns(true);
 			this.mock(oDependent1).expects("resumeInternal").withExactArgs(false, false);
 			if (bInitial) {
 				oFireExpectation = oBindingMock.expects("_fireChange")
@@ -7526,20 +7557,20 @@ sap.ui.define([
 		var oActiveBinding = {
 				oContext : {
 					getPath : function () { return "/FOO('1')/active"; },
-					isKeepAlive : function () { return false; }
+					isEffectivelyKeptAlive : function () { return false; }
 				}
 			},
 			oBinding = this.oModel.bindList("/FOO"),
 			oInactiveBinding = {
 				oContext : {
 					getPath : function () { return "/FOO('1')/inactive"; },
-					isKeepAlive : function () { return false; }
+					isEffectivelyKeptAlive : function () { return false; }
 				}
 			},
 			oKeptBinding = {
 				oContext : {
 					getPath : function () { return "/kept"; },
-					isKeepAlive : function () { return true; }
+					isEffectivelyKeptAlive : function () { return true; }
 				}
 			},
 			aDependentBindings = [oActiveBinding, oInactiveBinding, oKeptBinding];
@@ -8001,31 +8032,23 @@ sap.ui.define([
 				getProperty : function () {}
 			},
 			oCreatedContext2 = { // in
-				getProperty : function () {},
-				isTransient : function () {}
+				getProperty : function () {}
 			},
-			oContext0 = { // in
-				isTransient : function () {}
-			},
-			oContext1 = { // out
-				isTransient : function () {}
-			},
-			oContext2 = { // in
-				isTransient : function () {}
-			},
+			oContext0 = {}, // in
+			oContext1 = {}, // in
 			oPreviousContext0 = { // in
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oPreviousContext1 = { // out
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oPreviousContext2 = { // in
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			aResult;
 
 		oBinding.aContexts = [oCreatedContext0, oCreatedContext1, oCreatedContext2,
-			oContext0, oContext1, oContext2];
+			oContext0, oContext1];
 		oBinding.iCreatedContexts = 3;
 		oBinding.iCurrentBegin = 2;
 		oBinding.iCurrentEnd = 7;
@@ -8034,21 +8057,20 @@ sap.ui.define([
 			bar : oPreviousContext1,
 			baz : oPreviousContext2
 		};
-		this.mock(oBinding).expects("getCurrentContexts").withExactArgs()
-			.returns([oCreatedContext2, oContext0, oContext1, oContext2, undefined]);
 		this.mock(oCreatedContext0).expects("getProperty")
 			.withExactArgs("@$ui5.context.isTransient").returns(false);
 		this.mock(oCreatedContext1).expects("getProperty")
 			.withExactArgs("@$ui5.context.isTransient").returns(true);
 		this.mock(oCreatedContext2).expects("getProperty")
 			.withExactArgs("@$ui5.context.isTransient").returns(false);
-		this.mock(oCreatedContext2).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext0).expects("isTransient").withExactArgs().returns(undefined);
-		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false); // unrealistic
-		this.mock(oContext2).expects("isTransient").withExactArgs().returns(undefined);
-		this.mock(oPreviousContext0).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oPreviousContext1).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oPreviousContext2).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getCurrentContexts").withExactArgs()
+			.returns([oCreatedContext2, oContext0, oContext1, undefined]);
+		this.mock(oPreviousContext0).expects("isEffectivelyKeptAlive").withExactArgs()
+			.returns(true);
+		this.mock(oPreviousContext1).expects("isEffectivelyKeptAlive").withExactArgs()
+			.returns(false);
+		this.mock(oPreviousContext2).expects("isEffectivelyKeptAlive").withExactArgs()
+			.returns(true);
 		this.mock(oBinding).expects("destroyLater").never();
 
 		// code under test
@@ -8058,18 +8080,18 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext2,
 			oContext0,
-			oContext2,
+			oContext1,
 			oPreviousContext0,
 			oPreviousContext2
 		]);
 		assert.strictEqual(aResult[0], oCreatedContext0);
 		assert.strictEqual(aResult[1], oCreatedContext2);
 		assert.strictEqual(aResult[2], oContext0);
-		assert.strictEqual(aResult[3], oContext2);
+		assert.strictEqual(aResult[3], oContext1);
 		assert.strictEqual(aResult[4], oPreviousContext0);
 		assert.strictEqual(aResult[5], oPreviousContext2);
 		assert.deepEqual(oBinding.aContexts,
-			[oCreatedContext0, oCreatedContext1, oCreatedContext2, oContext0, oContext1, oContext2],
+			[oCreatedContext0, oCreatedContext1, oCreatedContext2, oContext0, oContext1],
 			"unchanged");
 	});
 
@@ -8084,11 +8106,9 @@ sap.ui.define([
 			oContext0 = {iIndex : 0}, // to be destroyed
 			oContext1 = {iIndex : 1}, // to be destroyed
 			oContext2 = { // in
-				isTransient : function () {},
 				iIndex : 2
 			},
 			oContext3 = { // in
-				isTransient : function () {},
 				iIndex : 3
 			},
 			oContext4 = {iIndex : 4}, // to be destroyed
@@ -8103,8 +8123,6 @@ sap.ui.define([
 		oBindingMock.expects("getCurrentContexts").withExactArgs().returns([oContext2, oContext3]);
 		this.mock(oCreatedContext0).expects("getProperty")
 			.withExactArgs("@$ui5.context.isTransient").returns(true);
-		this.mock(oContext2).expects("isTransient").withExactArgs().returns(undefined);
-		this.mock(oContext3).expects("isTransient").withExactArgs().returns(undefined);
 		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext0));
 		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext1));
 		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext4));
@@ -8124,12 +8142,10 @@ sap.ui.define([
 		var oBinding = this.bindList("/Set"),
 			oCreatedContext0 = { // out
 				getProperty : function () {},
-				isTransient : function () {},
 				iIndex : -3
 			},
 			oCreatedContext1 = { // out
 				getProperty : function () {},
-				isTransient : function () {},
 				iIndex : -2
 			},
 			oCreatedContext2 = { // out
@@ -8146,10 +8162,8 @@ sap.ui.define([
 			.returns([oCreatedContext0, oCreatedContext1]);
 		this.mock(oCreatedContext0).expects("getProperty")
 			.withExactArgs("@$ui5.context.isTransient").returns(true);
-		this.mock(oCreatedContext0).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oCreatedContext1).expects("getProperty")
 			.withExactArgs("@$ui5.context.isTransient").returns(true);
-		this.mock(oCreatedContext1).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oCreatedContext2).expects("getProperty")
 			.withExactArgs("@$ui5.context.isTransient").returns(true);
 		this.mock(oBinding).expects("destroyLater").never();
@@ -8820,17 +8834,15 @@ sap.ui.define([
 	QUnit.test("resetKeepAlive", function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext1 = {
-				isKeepAlive : function () {}
+				resetKeepAlive : function () {}
 			},
 			oContext2 = {
-				isKeepAlive : function () {},
 				resetKeepAlive : function () {}
 			},
 			oContext3 = {
-				isKeepAlive : function () {}
+				resetKeepAlive : function () {}
 			},
 			oContext4 = {
-				isKeepAlive : function () {},
 				resetKeepAlive : function () {}
 			};
 
@@ -8839,11 +8851,9 @@ sap.ui.define([
 			foo : oContext3,
 			bar : oContext4
 		};
-		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext1).expects("resetKeepAlive").withExactArgs();
 		this.mock(oContext2).expects("resetKeepAlive").withExactArgs();
-		this.mock(oContext3).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext4).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext3).expects("resetKeepAlive").withExactArgs();
 		this.mock(oContext4).expects("resetKeepAlive").withExactArgs();
 
 		// code under test
@@ -9407,9 +9417,9 @@ sap.ui.define([
 			oCache = {
 				getAllElements : function () {}
 			},
-			oKeptContext0 = {isKeepAlive : function () {}},
-			oKeptContext1 = {isKeepAlive : function () {}},
-			oNotKeptContext = {isKeepAlive : function () {}}; // BCP 2270081950:
+			oKeptContext0 = {isEffectivelyKeptAlive : function () {}},
+			oKeptContext1 = {isEffectivelyKeptAlive : function () {}},
+			oNotKeptContext = {isEffectivelyKeptAlive : function () {}}; // BCP 2270081950:
 			// there is a point in time when contexts with keepAlive=false are present in
 			// mPreviousContextsByPath which need be filtered out.
 
@@ -9431,9 +9441,9 @@ sap.ui.define([
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.exactly(bFireChange ? 1 : 0);
 
-		this.mock(oKeptContext0).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oKeptContext1).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oNotKeptContext).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oKeptContext0).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oKeptContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oNotKeptContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
 
 		// code under test
 		aAllCurrentContexts = oBinding.getAllCurrentContexts();
@@ -9908,18 +9918,18 @@ sap.ui.define([
 		var oBinding = this.bindList("/TEAM('1')/TEAM_2_EMPLOYEES"),
 			oContext1 = {
 				fetchCanonicalPath : function () {},
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext2 = {
 				fetchCanonicalPath : function () {},
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext3 = {
 				fetchCanonicalPath : function () {},
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext4 = {
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			};
 
 		oBinding.mPreviousContextsByPath = {
@@ -9928,11 +9938,11 @@ sap.ui.define([
 			"/TEAM('1')/TEAM_2_EMPLOYEES('2')" : oContext2
 		};
 		oBinding.aContexts = [oContext3];
-		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
 		this.mock(oContext1).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve("/EMPLOYEES('1')"));
-		this.mock(oContext4).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext4).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oContext2).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
 		this.mock(oContext2).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve("/EMPLOYEES('2')"));
 		this.mock(oContext3).expects("fetchCanonicalPath").exactly(bMatch ? 0 : 1).withExactArgs()
@@ -10039,21 +10049,21 @@ sap.ui.define([
 		var oBinding = this.bindList("/n/a"), // absolute, but path is irrelevant
 			oContext0 = {
 				getPath : function () {},
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext1 = {
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext2 = {
 				getPath : function () {},
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext3 = {
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			},
 			oContext4 = {
 				getPath : function () {},
-				isKeepAlive : function () {}
+				isEffectivelyKeptAlive : function () {}
 			};
 
 		oBinding.mPreviousContextsByPath = {
@@ -10064,11 +10074,11 @@ sap.ui.define([
 		oBinding.aContexts = [oContext3, oContext4];
 		this.mock(oBinding.getHeaderContext()).expects("getPath").withExactArgs()
 			.returns("/binding/path");
-		this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oContext3).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext4).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext0).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oContext2).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oContext3).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oContext4).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
 		this.mock(oContext0).expects("getPath").withExactArgs().returns("/binding/path('0')");
 		this.mock(oContext2).expects("getPath").withExactArgs().returns("/binding/path('2')");
 		this.mock(oContext4).expects("getPath").withExactArgs().returns("/binding/path('4')");

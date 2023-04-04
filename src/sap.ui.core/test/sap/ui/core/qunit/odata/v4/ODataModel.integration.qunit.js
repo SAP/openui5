@@ -2133,18 +2133,15 @@ sap.ui.define([
 		 *   all expected values for controls have been set
 		 */
 		waitForChanges : function (assert, sTitle, iWaitTimeout) {
-			var oPromise,
-				that = this;
+			var that = this;
 
 			iWaitTimeout = Math.max(iWaitTimeout, iTestTimeout) || 3000;
-			oPromise = new SyncPromise(function (resolve) {
+			return new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
 				setTimeout(function () {
-					if (oPromise.isPending()) {
-						resolve(true);
-					}
+					resolve(true);
 				}, iWaitTimeout);
 				that.checkFinish();
 			}).then(function (bTimeout) {
@@ -2186,8 +2183,6 @@ sap.ui.define([
 					+ (bTimeout ? "Timeout (" + iWaitTimeout + " ms)" : "Done")
 					+ " *".repeat(50));
 			});
-
-			return oPromise;
 		}
 	});
 
@@ -18541,6 +18536,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1831: unresolve dependents
 	//
 	// Selection on contexts which are deleted and restored (JIRA: CPOUI5ODATAV4-1943).
+	// Selection is cleared on successful deletion (JIRA: CPOUI5ODATAV4-2053).
 [
 	{desc : "submit", success : true},
 	{desc : "reset via model", resetViaModel : true},
@@ -18783,7 +18779,7 @@ sap.ui.define([
 				oPromise4.then(function () {
 					assert.ok(oFixture.success);
 					assert.ok(oContext4.isDeleted());
-					assert.ok(oContext4.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+					assert.notOk(oContext4.isSelected(), "JIRA: CPOUI5ODATAV4-2053");
 				}, function (oError) {
 					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
@@ -19190,7 +19186,7 @@ sap.ui.define([
 		}).then(function (aResult) {
 			oPromise = aResult[0].delete(); // delete the RVC
 
-			that.waitForChanges(assert, "deferred delete");
+			return that.waitForChanges(assert, "deferred delete");
 		}).then(function () {
 			that.expectCanceledError(
 				"Failed to delete /Artists(ArtistID='new',IsActiveEntity=true)",
@@ -19226,6 +19222,8 @@ sap.ui.define([
 	// becomes invisible by this, but must not be lost. In the end the binding is reset and
 	// oRowContext must be re-inserted causing another refresh.
 	// JIRA: CPOUI5ODATAV4-1638
+	//
+	// Selection is hidden, but kept while deleted (JIRA: CPOUI5ODATAV4-2053).
 	QUnit.test("CPOUI5ODATAV4-1638: ODLB: deferred delete w/ isKeepAlive fails", function (assert) {
 		var oBinding,
 			oKeptContext1,
@@ -19291,7 +19289,13 @@ sap.ui.define([
 				});
 
 			oRowContext = oBinding.getCurrentContexts()[0];
+			oRowContext.setSelected(true);
 			oRowPromise = oRowContext.delete("doNotSubmit");
+			assert.notOk(oRowContext.isSelected(), "selection hidden while deleted");
+
+			// code under test (JIRA: CPOUI5ODATAV4-2053)
+			assert.notOk(oBinding.getAllCurrentContexts().includes(oRowContext),
+				"hidden, although selected");
 
 			return that.waitForChanges(assert, "delete and fill gap");
 		}).then(function () {
@@ -19392,6 +19396,7 @@ sap.ui.define([
 			oBinding.resetChanges();
 			assert.notOk(oRowContext.hasPendingChanges());
 			assert.notOk(oRowContext.isDeleted());
+			assert.ok(oRowContext.isSelected(), "selection hidden, but kept while deleted");
 
 			return Promise.all([
 				checkCanceled(assert, oRowPromise),
@@ -24318,7 +24323,11 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2030
 	//
 	// The whole tree is expanded to two levels (JIRA: CPOUI5ODATAV4-2095).
-	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
+	// Selection keeps a context implicitly alive (JIRA: CPOUI5ODATAV4-2053).
+[false, true].forEach(function (bKeepAlive) {
+	var sTitle = "Recursive Hierarchy: root is leaf; bKeepAlive=" + bKeepAlive;
+
+	QUnit.test(sTitle, function (assert) {
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
@@ -24605,8 +24614,10 @@ sap.ui.define([
 			// Note: why is there no separate GET? because we have already loaded messages above!
 			// that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=Messages");
 
-			// code under test
-			oRoot.setKeepAlive(true, /*fnOnBeforeDestroy*/null, /*bRequestMessages*/true);
+			if (bKeepAlive) {
+				// code under test
+				oRoot.setKeepAlive(true, /*fnOnBeforeDestroy*/null, /*bRequestMessages*/true);
+			} // else: implicitly keep alive due to selection
 
 			oKeptAliveNode = oRoot;
 
@@ -24614,7 +24625,8 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					batchNo : 7,
-					url : "Artists?$select=ArtistID,IsActiveEntity,Messages,defaultChannel"
+					url : "Artists?$select=ArtistID,IsActiveEntity"
+							+ (bKeepAlive ? ",Messages" : "") + ",defaultChannel"
 						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true"
 				}, {
@@ -24627,7 +24639,7 @@ sap.ui.define([
 							Name : "Friend #01 (updated again)"
 						},
 						IsActiveEntity : true,
-						Messages : [],
+						// Messages : [],
 						defaultChannel : "460"
 					}]
 				})
@@ -24695,7 +24707,8 @@ sap.ui.define([
 				}, "after refresh");
 
 			// refresh via side effect fails
-			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,defaultChannel"
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
+						+ (bKeepAlive ? ",Messages" : "") + ",defaultChannel"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", oError)
 				.expectRequest("Artists/$count", oError)
@@ -24871,8 +24884,10 @@ sap.ui.define([
 					},
 					defaultChannel : "460"
 				}, "after expandTo");
+			assert.ok(oKeptAliveNode.isSelected());
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Scroll down
@@ -41542,6 +41557,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1380 (allow SubmitMode.API)
 	//
 	// Selection on inactive context which is then deleted and destroyed (JIRA: CPOUI5ODATAV4-1943).
+	// Selection is cleared on successful deletion (JIRA: CPOUI5ODATAV4-2053).
 [false, true].forEach(function (bAPI) {
 	QUnit.test("Multiple creation rows, grid table, SubmitMode.API = " + bAPI, function (assert) {
 		var oBinding,
@@ -41692,9 +41708,9 @@ sap.ui.define([
 			oContext2.delete();
 
 			assert.strictEqual(normalizeUID(oContext2.toString()),
-				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;deleted;selected]",
+				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;deleted]",
 				"Context#toString: deleted");
-			assert.ok(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-2053");
 
 			return Promise.all([
 				checkCanceled(assert, oContext2.created()),
@@ -43396,12 +43412,17 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-579
 	// JIRA: CPOUI5ODATAV4-411
 	//
-	// See that the list refresh does not include late properties.
-	// JIRA: CPOUI5ODATAV4-544
+	// See that the list refresh does not include late properties (JIRA: CPOUI5ODATAV4-544).
 	//
 	// In the end, request side effects for an empty list to see that kept-alive entities are still
 	// requested.
-	QUnit.test("CPOUI5ODATAV4-488: Refresh w/ kept-alive context", function (assert) {
+	//
+	// Do likewise for selection which implicitly keeps alive (JIRA: CPOUI5ODATAV4-2053).
+[false, true].forEach(function (bImplicitly) {
+	var sTitle = "CPOUI5ODATAV4-488: Refresh w/" + (bImplicitly ? " implicitly" : "")
+			+ " kept-alive context";
+
+	QUnit.test(sTitle, function (assert) {
 		var oKeptContext,
 			oKeptContext2,
 			oListBinding,
@@ -43416,7 +43437,14 @@ sap.ui.define([
 
 			// 2nd kept-alive context (CPOUI5ODATAV4-579)
 			oKeptContext2 = oTable.getItems()[0].getBindingContext();
-			oKeptContext2.setKeepAlive(true);
+			if (bImplicitly) {
+				oKeptContext.setSelected(true);
+				oKeptContext.setKeepAlive(false);
+				oKeptContext2.setSelected(true);
+			} else {
+				oKeptContext2.setKeepAlive(true);
+			}
+
 			that.expectRequest({
 					batchNo : 4,
 					url : "SalesOrderList"
@@ -43466,8 +43494,14 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "Step 1: Refresh the list (w/ two kept contexts)");
 		}).then(function () {
-			// 3rd kept-alive ontext (CPOUI5ODATAV4-579)
-			oTable.getItems()[1].getBindingContext().setKeepAlive(true, fnOnBeforeDestroy);
+			var oKeptContext3 = oTable.getItems()[1].getBindingContext();
+
+			if (bImplicitly) {
+				oKeptContext3.setSelected(true);
+			} else {
+				// 3rd kept-alive ontext (CPOUI5ODATAV4-579)
+				oKeptContext3.setKeepAlive(true, fnOnBeforeDestroy);
+			}
 
 			that.expectRequest({
 					batchNo : 5,
@@ -43518,7 +43552,11 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "Step 2: Refresh the list (w/ three kept contexts)");
 		}).then(function () {
-			sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
+			if (bImplicitly) {
+				sinon.assert.notCalled(fnOnBeforeDestroy);
+			} else {
+				sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
+			}
 
 			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2' or SalesOrderID eq '4'"
 					+ " or SalesOrderID eq '1'&$select=GrossAmount,SalesOrderID&$top=3", {
@@ -43558,6 +43596,7 @@ sap.ui.define([
 
 			that.oView.byId("objectPage").setBindingContext(null);
 			oKeptContext.setKeepAlive(false);
+			oKeptContext.setSelected(false);
 
 			return Promise.all([
 				// code under test
@@ -43593,6 +43632,7 @@ sap.ui.define([
 			assert.strictEqual(oKeptContext2.getProperty("GrossAmount"), "149.5");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Hidden absolute context binding provides binding context for object page, therein a
@@ -44778,13 +44818,14 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-874
 	// (5) refresh (JIRA: CPOUI5ODATAV4-1382)
 	//
-	// Do likewise with a kept-alive context
-	// JIRA: CPOUI5ODATAV4-926
+	// Do likewise with a kept-alive context (JIRA: CPOUI5ODATAV4-926).
 	//
 	// Same while there are pending changes for the kept-alive context which must not block those
 	// APIs, but survive and can be submitted later on. This includes a creation row which needs to
 	// remain functional without blocking those APIs.
 	// JIRA: CPOUI5ODATAV4-1104
+	//
+	// Selection is cleared on destruction (JIRA: CPOUI5ODATAV4-2053).
 [false, true].forEach(function (bWithPendingChanges) {
 	var sTitle = "Absolute ODLB: sort/filter/changeParameters/resume/refresh & late properties"
 			+ ", with pending changes: " + bWithPendingChanges;
@@ -45037,6 +45078,8 @@ sap.ui.define([
 				that.waitForChanges(assert, "submit (no) pending changes")
 			]);
 		}).then(function () {
+			var oCreatedPromise;
+
 			assert.strictEqual(aContexts[1].getProperty("Note"), sNewNote);
 			assert.strictEqual(oModel.hasPendingChanges("doNotSubmit"), bWithPendingChanges);
 			assert.notOk(oModel.hasPendingChanges("update"));
@@ -45051,9 +45094,16 @@ sap.ui.define([
 				oCreationRowContext.setProperty("Note", "alive & kicking");
 				assert.strictEqual(oCreationRowContext.getProperty("Note"), "alive & kicking");
 
+				oCreatedPromise = oCreationRowContext.created();
+				oCreationRowContext.setSelected(true);
+				// code under test (& clean up)
+				oModel.resetChanges("doNotSubmit");
+				assert.notOk(oCreationRowContext.isSelected(), "already destroyed");
+				assert.strictEqual(oCreationRowContext.created(), undefined, "already destroyed");
+
 				return Promise.all([
-					checkCanceled(assert, oCreationRowContext.created()),
-					oCreationRowContext.delete() // clean up
+					checkCanceled(assert, oCreatedPromise),
+					that.waitForChanges(assert, "clean up")
 				]);
 			}
 		}).then(function () {
@@ -45073,6 +45123,8 @@ sap.ui.define([
 	//
 	// A refresh of the list report must not destroy inactive creation rows in the items table.
 	// JIRA: CPOUI5ODATAV4-1566
+	//
+	// Selection must not make a difference here (JIRA: CPOUI5ODATAV4-2053).
 	QUnit.test("JIRA: CPOUI5ODATAV4-1104 - do not ignore indirect kept-alive", function (assert) {
 		var oInactiveCreationRow,
 			oItemsTableBinding,
@@ -45121,6 +45173,7 @@ sap.ui.define([
 		}).then(function () {
 			oKeptAliveItem = oItemsTableBinding.getCurrentContexts()[0];
 			oKeptAliveItem.setKeepAlive(true);
+			oKeptAliveItem.setSelected(true);
 
 			that.expectChange("itemPosition", ["0001"]);
 
@@ -45150,6 +45203,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			oKeptAliveItem.setKeepAlive(false);
+			oKeptAliveItem.setSelected(false);
 
 			that.expectChange("itemPosition", ["0010"])
 				.expectCanceledError("Failed to update path /SalesOrderList('42')"
@@ -46645,7 +46699,6 @@ sap.ui.define([
 			oContextC,
 			oContextD,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
-			oTable,
 			sTeams = bRelative ? "Departments(Sector='EMEA',ID='UI5')/DEPARTMENT_2_TEAMS" : "TEAMS",
 			sView = bRelative ? '\
 <FlexBox binding="{/Departments(Sector=\'EMEA\',ID=\'UI5\')}" id="objectPage">\
@@ -46676,8 +46729,7 @@ sap.ui.define([
 			.expectChange("name", ["Team #1", "Team #2"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
-			oBinding = oTable.getBinding("rows");
+			oBinding = that.oView.byId("table").getBinding("rows");
 
 			that.expectChange("id", ["TEAM_B", "TEAM_A", "TEAM_01", "TEAM_02"])
 				.expectChange("name", ["New Team B", "New Team A", "Team #1", "Team #2"]);
@@ -46855,6 +46907,546 @@ sap.ui.define([
 			assert.strictEqual(aAllCurrentContexts[3], oContextA, "A");
 		});
 	});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: "browse & collect" - a table shows rows and some of them are selected, then the
+	// table is filtered, hiding some originally selected rows, and more rows are selected. Still,
+	// all selected rows are available any time. (A single selection should be enough. Various APIs
+	// are used as well instead of filtering.)
+	// A form is shown for the selected context to prove that late properties do not become part of
+	// the table's $select. See that pending changes below the selected context can be ignored.
+	// Create a new context, save and select it. Make a selected context visible again. Request a
+	// side effect for all rows. Either delete via model or refresh with removal for a selected
+	// context outside the collection. Refresh a single selected context inside the collection with
+	// removal from the collection, but still implicitly kept alive.
+	// JIRA: CPOUI5ODATAV4-2053
+[
+	"changeParameters", "filter", "refresh", "resume", "sideEffectsRefresh", "sort"
+].forEach(function (sMethod) {
+	QUnit.test("CPOUI5ODATAV4-2053: browse & collect via " + sMethod, function (assert) {
+		var oBinding,
+			oCreatedContext,
+			oContext_01,
+			oContext_03,
+			oExpectedNewObject = {
+				"@$ui5.context.isTransient" : false,
+				MEMBER_COUNT : 0,
+				Team_Id : "NEW"
+			},
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="3">\
+	<Text id="id" text="{Team_Id}"/>\
+	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
+</t:Table>\
+<FlexBox id="form">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id&$skip=0&$top=3", {
+				value : [{
+					MEMBER_COUNT : 9,
+					Team_Id : "TEAM_01"
+				}, {
+					MEMBER_COUNT : 10,
+					Team_Id : "TEAM_02"
+				}, {
+					MEMBER_COUNT : 11,
+					Team_Id : "TEAM_03"
+				}]
+			})
+			.expectChange("id", ["TEAM_01", "TEAM_02", "TEAM_03"])
+			.expectChange("memberCount", ["9", "10", "11"])
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aContexts;
+
+			oBinding = that.oView.byId("table").getBinding("rows");
+
+			aContexts = oBinding.getCurrentContexts();
+			oContext_01 = aContexts[0];
+			oContext_03 = aContexts[2]; // Note: selection should not make a difference here
+			// code under test
+			oContext_01.setSelected(true);
+
+			that.expectRequest("TEAMS('TEAM_01')?$select=Name", {
+					Name : "Team #1"
+				})
+				.expectChange("name", "Team #1");
+
+			// code under test
+			that.oView.byId("form").setBindingContext(oContext_01);
+
+			return that.waitForChanges(assert, "object page with late property");
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {
+						MEMBER_COUNT : 0,
+						Team_Id : "NEW"
+					}
+				}, {
+					MEMBER_COUNT : 0,
+					Team_Id : "NEW"
+				})
+				.expectChange("id", ["NEW", "TEAM_01", "TEAM_02"])
+				.expectChange("memberCount", ["0", "9", "10"]);
+
+			oCreatedContext = oBinding.create({MEMBER_COUNT : 0, Team_Id : "NEW"}, true);
+
+			// code under test
+			oCreatedContext.setSelected(true);
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert, "create")
+			]);
+		}).then(function () {
+			var sInfix = "",
+				oPromise;
+
+			if (sMethod === "refresh" || sMethod === "sideEffectsRefresh") {
+				that.expectRequest("TEAMS?$select=MEMBER_COUNT,Name,Team_Id"
+						+ "&$filter=Team_Id eq 'NEW' or Team_Id eq 'TEAM_01'&$top=2", {
+						value : [{
+							MEMBER_COUNT : 0,
+							Name : "New Team",
+							Team_Id : "NEW"
+						}, {
+							MEMBER_COUNT : 9,
+							Name : "Team #1",
+							Team_Id : "TEAM_01"
+						}]
+					});
+				oExpectedNewObject.Name = "New Team";
+			}
+
+			switch (sMethod) {
+				case "changeParameters":
+					sInfix = "&$search=TDOP";
+
+					// code under test
+					oBinding.changeParameters({$search : "TDOP"});
+					break;
+
+				case "filter":
+					sInfix = "&$filter=MEMBER_COUNT gt 10";
+
+					// code under test
+					oBinding.filter(new Filter("MEMBER_COUNT", FilterOperator.GT, 10));
+					break;
+
+				case "refresh":
+					// code under test
+					oPromise = oBinding.requestRefresh();
+					break;
+
+				case "resume":
+					sInfix = "&$search=TDOP&$orderby=Team_Id desc&$filter=MEMBER_COUNT gt 10";
+
+					// code under test
+					oBinding.suspend();
+					oBinding.changeParameters({$search : "TDOP"});
+					oBinding.filter(new Filter("MEMBER_COUNT", FilterOperator.GT, 10));
+					oBinding.sort(new Sorter("Team_Id", true));
+					oPromise = oBinding.resumeAsync();
+					break;
+
+				case "sideEffectsRefresh":
+					// code under test (JIRA: CPOUI5ODATAV4-1384)
+					oPromise = oBinding.getHeaderContext().requestSideEffects([""]);
+					break;
+
+				case "sort":
+					sInfix = "&$orderby=Team_Id desc";
+
+					// code under test
+					oBinding.sort(new Sorter("Team_Id", true));
+					break;
+
+				// no default
+			}
+
+			that.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id" + sInfix + "&$skip=0&$top=3", {
+					value : [{
+						MEMBER_COUNT : 11,
+						Team_Id : "TEAM_03"
+					}]
+				})
+				.expectChange("id", ["TEAM_03"])
+				.expectChange("memberCount", ["11"]);
+
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert, sMethod)
+			]);
+		}).then(function () {
+			var aAllContexts = oBinding.getAllCurrentContexts();
+
+			assert.strictEqual(aAllContexts.length, 3);
+			assert.strictEqual(aAllContexts[0], oContext_03, "still the same");
+			assert.strictEqual(aAllContexts[1], oContext_01, "implicitly kept alive");
+			assert.strictEqual(aAllContexts[2], oCreatedContext, "implicitly kept alive");
+			assert.ok(oContext_01.isSelected());
+			assert.deepEqual(oContext_01.getObject(), {
+				MEMBER_COUNT : 9,
+				Name : "Team #1",
+				Team_Id : "TEAM_01"
+			});
+			assert.ok(oCreatedContext.isSelected());
+			assert.deepEqual(oCreatedContext.getObject(), oExpectedNewObject);
+
+			that.expectChange("name", "pending");
+			oContext_01.setProperty("Name", "pending", "doNotSubmit");
+			oModel.bindList("TEAM_2_EMPLOYEES", oContext_01, [], [],
+					{$$updateGroupId : "doNotSubmit"})
+				.create();
+
+			assert.notOk(oBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+
+			// code under test
+			oContext_03.setSelected(true);
+
+			// code under test
+			oBinding.suspend();
+			oBinding.changeParameters({$search : undefined});
+			oBinding.filter(new Filter("MEMBER_COUNT", FilterOperator.LT, 10));
+			oBinding.sort([]);
+
+			that.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id&$filter=MEMBER_COUNT lt 10"
+					+ "&$skip=0&$top=3", {
+					value : [{
+						MEMBER_COUNT : 0,
+						Team_Id : "NEW"
+					}, {
+						MEMBER_COUNT : 9,
+						Team_Id : "TEAM_01"
+					}]
+				})
+				.expectChange("id", ["NEW", "TEAM_01"])
+				.expectChange("memberCount", ["0", "9"]);
+
+			return Promise.all([
+				oBinding.resumeAsync(),
+				that.waitForChanges(assert, "some selected nodes become visible again")
+			]);
+		}).then(function () {
+			var aAllContexts = oBinding.getAllCurrentContexts();
+
+			assert.strictEqual(aAllContexts.length, 3);
+			assert.strictEqual(aAllContexts[0], oCreatedContext);
+			assert.strictEqual(aAllContexts[1], oContext_01);
+			assert.strictEqual(aAllContexts[2], oContext_03);
+			assert.ok(oCreatedContext.isSelected());
+			assert.deepEqual(oCreatedContext.getObject(), oExpectedNewObject);
+			assert.ok(oContext_01.isSelected());
+			assert.deepEqual(oContext_01.getObject(), {
+				MEMBER_COUNT : 9,
+				Name : "pending",
+				Team_Id : "TEAM_01"
+			});
+			assert.ok(oContext_03.isSelected());
+			assert.deepEqual(oContext_03.getObject(), {
+				MEMBER_COUNT : 11,
+				Team_Id : "TEAM_03"
+			});
+
+			that.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id"
+					+ "&$filter=Team_Id eq 'NEW' or Team_Id eq 'TEAM_01' or Team_Id eq 'TEAM_03'"
+					+ "&$top=3", {
+					value : [{
+						MEMBER_COUNT : 0,
+						Team_Id : "NEW"
+					}, {
+						MEMBER_COUNT : 9,
+						Team_Id : "TEAM_01"
+					}, {
+						MEMBER_COUNT : 11,
+						Team_Id : "TEAM_03"
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oBinding.getHeaderContext().requestSideEffects(["MEMBER_COUNT"]),
+				that.waitForChanges(assert, "side effect")
+			]);
+		}).then(function () {
+			var aAllContexts = oBinding.getAllCurrentContexts();
+
+			assert.strictEqual(aAllContexts.length, 3);
+			assert.strictEqual(aAllContexts[0], oCreatedContext);
+			assert.strictEqual(aAllContexts[1], oContext_01);
+			assert.strictEqual(aAllContexts[2], oContext_03);
+
+			// Note: method should not make a difference anymore at this point
+			if (sMethod === "refresh") {
+				that.expectRequest("TEAMS?$select=MEMBER_COUNT,Name,Team_Id"
+						+ "&$filter=Team_Id eq 'TEAM_03'", {
+						value : [] // gone for good
+					});
+
+				return Promise.all([
+					oContext_03.requestRefresh("$auto", /*bAllowRemoval*/true), // code under test
+					that.waitForChanges(assert,
+						"refresh w/ removal of selected context outside collection")
+				]);
+			}
+
+			that.expectRequest({
+					headers : {
+						"If-Match" : "*"
+					},
+					method : "DELETE",
+					url : "TEAMS('TEAM_03')"
+				});
+
+			return Promise.all([
+				oModel.delete("/TEAMS('TEAM_03')"), // code under test
+				that.waitForChanges(assert, "delete selected context outside collection")
+			]);
+		}).then(function () {
+			var aAllContexts = oBinding.getAllCurrentContexts();
+
+			assert.strictEqual(aAllContexts.length, 2);
+			assert.strictEqual(aAllContexts[0], oCreatedContext);
+			assert.strictEqual(aAllContexts[1], oContext_01);
+			// Note: oContext_03 has been removed due to deletion
+
+			that.expectRequest("TEAMS?$select=MEMBER_COUNT,Name,Team_Id"
+					+ "&$filter=Team_Id eq 'NEW'", {
+					value : [{
+						MEMBER_COUNT : 99,
+						Name : "New Team",
+						Team_Id : "NEW"
+					}] // still alive
+				})
+				.expectRequest("TEAMS?$filter=(MEMBER_COUNT lt 10) and Team_Id eq 'NEW'"
+					+ "&$count=true&$top=0", {
+					"@odata.count" : "0", // sorry, too many members
+					value : []
+				})
+				.expectChange("id", ["TEAM_01"])
+				.expectChange("memberCount", ["9"]);
+			oExpectedNewObject.MEMBER_COUNT = 99;
+			oExpectedNewObject.Name = "New Team";
+
+			// Note: "created" should not make a difference here, but
+			// "Cannot refresh entity due to pending changes: /TEAMS('TEAM_01')[1;selected]"
+			return Promise.all([
+				oCreatedContext.requestRefresh("$auto", /*bAllowRemoval*/true), // code under test
+				that.waitForChanges(assert,
+					"refresh w/ removal of selected context inside collection")
+			]);
+		}).then(function () {
+			var aAllContexts = oBinding.getAllCurrentContexts();
+
+			assert.strictEqual(aAllContexts.length, 2);
+			assert.strictEqual(aAllContexts[0], oContext_01);
+			assert.strictEqual(aAllContexts[1], oCreatedContext, "implicitly kept alive");
+			assert.ok(oCreatedContext.isSelected());
+			assert.strictEqual(oCreatedContext.isTransient(), false, "created");
+			delete oExpectedNewObject["@$ui5.context.isTransient"]; //TODO bug?!
+			assert.deepEqual(oCreatedContext.getObject(), oExpectedNewObject);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Create a new context, save and select it. Have it drop out of the collection via a
+	// refresh of the single context or the whole binding; see that it is destroyed because it does
+	// not exist on the server anymore. Alternatively, cancel creation and see that the context is
+	// destroyed. An inactive context must be kept intact all the time.
+	// JIRA: CPOUI5ODATAV4-2053
+[undefined, false, true].forEach(function (bSingle) {
+	var sTitle = "CPOUI5ODATAV4-2053: removeCreated, w/ UI on top; bSingle=" + bSingle;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			bCancelCreation = bSingle === undefined,
+			oCreatedContext,
+			oInactiveContext,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			// Note: w/o a UI on top, ODLB#destroyLater behaves differently --> see next test
+			sView = '\
+<t:Table id="table" rows="{parameters : {$filter : \'MEMBER_COUNT gt 10\'}, path : \'/TEAMS\'}"\
+		threshold="0" visibleRowCount="1">\
+	<Text id="id" text="{Team_Id}"/>\
+	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$filter=MEMBER_COUNT gt 10&$select=MEMBER_COUNT,Team_Id"
+				+ "&$skip=0&$top=1", {value : []})
+			.expectChange("id", [])
+			.expectChange("memberCount", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCreatedPromise;
+
+			oBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectChange("id", [bCancelCreation ? "???" : "NEW"])
+				.expectChange("memberCount", [bCancelCreation ? null : "0"]);
+
+			oInactiveContext = oBinding.create({Team_Id : "???"}, true, false, true);
+			oCreatedContext = oBinding.create({MEMBER_COUNT : 0, Team_Id : "NEW"}, true);
+			oCreatedPromise = oCreatedContext.created();
+
+			// code under test
+			oCreatedContext.setSelected(true);
+
+			if (bCancelCreation) { // cancel creation now
+				oCreatedContext.delete();
+				oCreatedPromise = checkCanceled(assert, oCreatedPromise);
+			} else {
+				that.expectRequest({
+						method : "POST",
+						url : "TEAMS",
+						payload : {
+							MEMBER_COUNT : 0,
+							Team_Id : "NEW"
+						}
+					}, {
+						MEMBER_COUNT : 1,
+						Team_Id : "NEW"
+					})
+					.expectChange("memberCount", ["1"]);
+			}
+
+			return Promise.all([
+				oCreatedPromise,
+				that.waitForChanges(assert, "create")
+			]);
+		}).then(function () {
+			if (bCancelCreation) { // creation already canceled
+				assert.notOk(oCreatedContext.isSelected(), "destroyed");
+				assert.strictEqual(oCreatedContext.getModel(), undefined, "destroyed");
+
+				return;
+			}
+
+			that.expectRequest("TEAMS?$filter=Team_Id eq 'NEW'&$select=MEMBER_COUNT,Team_Id", {
+					value : []
+				});
+			if (bSingle) {
+				that.expectRequest("TEAMS?$filter=(MEMBER_COUNT gt 10) and Team_Id eq 'NEW'"
+						+ "&$count=true&$top=0", {
+						"@odata.count" : "0",
+						value : []
+					})
+					.expectChange("id", ["???"])
+					.expectChange("memberCount", [null]);
+			}
+
+			return Promise.all([
+				// code under test
+				bSingle
+				? oCreatedContext.requestRefresh("$auto", /*bAllowRemoval*/true)
+				: oBinding.requestRefresh("$auto"),
+				that.waitForChanges(assert, "removeCreated")
+			]);
+		}).then(function () {
+			// Note: this triggers ODLB#destroyPreviousContextsLater, thus we need to wait below
+			var aAllContexts = oBinding.getAllCurrentContexts();
+
+			assert.strictEqual(aAllContexts.length, 1);
+			assert.strictEqual(aAllContexts.shift(), oInactiveContext, "inactive kept intact");
+			assert.strictEqual(oInactiveContext.isInactive(), true, "created, *inactive*");
+			assert.strictEqual(oInactiveContext.isTransient(), true, "*created*, inactive");
+			assert.deepEqual(oInactiveContext.getObject(), {
+				"@$ui5.context.isInactive" : true,
+				"@$ui5.context.isTransient" : true,
+				Team_Id : "???"
+			});
+
+			return that.waitForChanges(assert, "ODLB#destroyPreviousContextsLater");
+		}).then(function () {
+			assert.notOk(oCreatedContext.isSelected(), "destroyed");
+			assert.strictEqual(oCreatedContext.getModel(), undefined, "destroyed");
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Create a new context, save and select it. Have it drop out of the collection via a
+	// refresh of the single context or the whole binding. See that it is not destroyed.
+	// JIRA: CPOUI5ODATAV4-2053
+[false, true].forEach(function (bSingle) {
+	var sTitle = "CPOUI5ODATAV4-2053: removeCreated, w/o UI on top; bSingle=" + bSingle;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			oCreatedContext,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			oBinding = oModel.bindList("/TEAMS", null, [],
+				[new Filter("MEMBER_COUNT", FilterOperator.GT, 10)]);
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {
+						MEMBER_COUNT : 0,
+						Team_Id : "NEW"
+					}
+				}, {
+					MEMBER_COUNT : 1,
+					Team_Id : "NEW"
+				});
+
+			oCreatedContext = oBinding.create({MEMBER_COUNT : 0, Team_Id : "NEW"}, true);
+
+			// code under test
+			oCreatedContext.setSelected(true);
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert, "create")
+			]);
+		}).then(function () {
+			that.expectRequest("TEAMS?$filter=Team_Id eq 'NEW'", {
+					value : [{MEMBER_COUNT : 2, Team_Id : "NEW"}]
+				});
+			if (bSingle) {
+				that.expectRequest("TEAMS?$filter=(MEMBER_COUNT gt 10) and Team_Id eq 'NEW'"
+						+ "&$count=true&$top=0", {
+						"@odata.count" : "0",
+						value : []
+					});
+			}
+
+			return Promise.all([
+				// code under test
+				bSingle
+				? oCreatedContext.requestRefresh("$auto", /*bAllowRemoval*/true)
+				: oBinding.requestRefresh("$auto"),
+				that.waitForChanges(assert, "removeCreated")
+			]);
+		}).then(function () {
+			var aAllContexts = oBinding.getAllCurrentContexts();
+
+			assert.strictEqual(aAllContexts.length, 1);
+			assert.strictEqual(aAllContexts[0], oCreatedContext, "implicitly kept alive");
+			assert.ok(oCreatedContext.isSelected());
+			assert.strictEqual(oCreatedContext.isTransient(), false, "created");
+			assert.deepEqual(oCreatedContext.getObject(), bSingle ? {
+				//TODO "@$ui5.context.isTransient" : false,
+				MEMBER_COUNT : 2,
+				Team_Id : "NEW"
+			} : {
+				"@$ui5.context.isTransient" : false,
+				MEMBER_COUNT : 2,
+				Team_Id : "NEW"
+			});
+		});
 	});
 });
 
