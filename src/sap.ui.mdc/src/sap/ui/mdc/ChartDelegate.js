@@ -7,19 +7,20 @@ sap.ui.define([
     "use strict";
 
     /**
-     * Base delegate class for sap.ui.mdc.Chart.<br>.
-     * This helper class is used to help create content in the MDC chart and fill relevant metadata.
+     * Base delegate class for {@link sap.ui.mdc.Chart}.<br>
+     * This helper class is used to help create content in the MDC chart and fill relevant metadata.<br>
      * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
      *
-     * @author SAP SE
-     *
-     * @private
+	 * @author SAP SE
+	 * @namespace
+	 * @alias module:sap/ui/mdc/ChartDelegate
+	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
+	 * @experimental
+	 * @since 1.88
+	 * @private
 	 * @ui5-restricted sap.fe
-	 * @experimental As of version 1.88.0
 	 * @MDC_PUBLIC_CANDIDATE
      *
-     * @since 1.88
-     * @alias sap.ui.mdc.ChartDelegate
      */
     var ChartDelegate = Object.assign({}, AggregationBaseDelegate);
 
