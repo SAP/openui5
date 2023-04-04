@@ -147,6 +147,12 @@ sap.ui.define([
 
 		if ("key" in oControlData) {
 			oComboBox.setSelectedKey(oControlData.key);
+
+			oSelectedItem = oComboBox.getItems().find(function (oItem) {
+				return oItem.getKey() === oControlData.key;
+			});
+
+			oComboBox.setValue(oSelectedItem ? oSelectedItem.getText() : "");
 		}
 
 		if ("value" in oControlData && !("key" in oControlData)) {
