@@ -1319,6 +1319,11 @@ sap.ui.define([
 	Card.prototype._cleanupOldManifest = function() {
 		this._aReadyPromises = null;
 
+		if (this._fnOnModelChange) {
+			this.getModel().detachEvent("change", this._fnOnModelChange, this);
+			delete this._fnOnModelChange;
+		}
+
 		this.getModel().setData({});
 		this.getModel("filters").setData({});
 		this.getModel("parameters").setData({});
@@ -1700,11 +1705,7 @@ sap.ui.define([
 			return;
 		}
 
-		oModel.attachEvent("change", function () {
-			if (this.isDestroyed()) {
-				return;
-			}
-
+		this._fnOnModelChange = function () {
 			var oCardContent = this.getCardContent();
 
 			if (oCardContent && oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
@@ -1713,7 +1714,9 @@ sap.ui.define([
 
 			this.fireEvent("_dataPassedToContent");
 			this.onDataRequestComplete();
-		}.bind(this));
+		};
+
+		oModel.attachEvent("change", this._fnOnModelChange, this);
 
 		if (this._oDataProvider) {
 			this._oDataProvider.attachDataRequested(function () {
@@ -2265,9 +2268,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Decides if the card needs a loading placeholder based on card level data provider
+	 * Decides if the card needs a loading placeholder
 	 *
-	 * @returns {boolean} Should card has a loading placeholder based on card level data provider.
+	 * @returns {boolean} Should card have a loading placeholder
 	 */
 	Card.prototype.isLoading = function () {
 		return this.getAggregation("_loadingProvider").getLoading();

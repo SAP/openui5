@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/RequestDataProvider",
-	"sap/ui/integration/library"
+	"sap/ui/integration/library",
+	"sap/ui/integration/cards/BaseListContent"
 ], function (
 	Card,
 	RequestDataProvider,
-	library
+	library,
+	BaseListContent
 ) {
 	"use strict";
 
@@ -129,6 +131,90 @@ sap.ui.define([
 					"json": [{
 						"title": "item 1"
 					}]
+				},
+				"type": "List",
+				"header": {
+					"title": "Available Trainings"
+				},
+				"content": {
+					"item": {
+						"title": "{title}"
+					}
+				}
+			}
+		});
+	});
+
+	QUnit.test("Old default model shouldn't trigger onDataChanged of new content", function (assert) {
+		var done = assert.async();
+		var oData1 = [{
+			"title": "item 1"
+		}];
+		var oData2 = [{
+			"title": "item 2"
+		}];
+
+		this.stub(RequestDataProvider.prototype, "getData")
+			.onFirstCall().callsFake(function () {
+				return new Promise(function (resolve, reject) {
+					setTimeout(function () {
+						resolve(oData1);
+					}, 100);
+				});
+			})
+			.onSecondCall().callsFake(function () {
+				return new Promise(function (resolve, reject) {
+					setTimeout(function () {
+						resolve(oData2);
+					}, 100);
+				});
+			});
+
+		this.oCard.attachEventOnce("_ready", function () {
+			// Assert
+			assert.deepEqual(this.oCard.getModel().getData(), oData1, "The default model should be populated with data");
+
+			// Arrange
+			this.stub(BaseListContent.prototype, "onDataChanged").callsFake(function () {
+				assert.deepEqual(this.getModel().getData(), oData2, "New content should receive onDataChanged event with new data");
+
+				done();
+			});
+
+			// Act 2
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.cleanup.defaultModel2"
+				},
+				"sap.card": {
+					"data": {
+						"request": {
+							"url": "some/url"
+						}
+					},
+					"type": "List",
+					"header": {
+						"title": "Available Trainings"
+					},
+					"content": {
+						"item": {
+							"title": "{title}"
+						}
+					}
+				}
+			});
+		}.bind(this));
+
+		// Act 1
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.cleanup.defaultModel1"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "some/url"
+					}
 				},
 				"type": "List",
 				"header": {
