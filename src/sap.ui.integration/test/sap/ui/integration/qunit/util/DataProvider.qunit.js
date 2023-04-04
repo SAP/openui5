@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/base/Log",
 	"sap/ui/integration/Host",
+	"sap/ui/integration/Extension",
 	"sap/ui/integration/library",
 	"sap/ui/core/Configuration"
 ], function (
@@ -20,6 +21,7 @@ sap.ui.define([
 	Card,
 	Log,
 	Host,
+	Extension,
 	integrationLibrary,
 	Configuration
 ) {
@@ -1208,6 +1210,177 @@ sap.ui.define([
 
 			oXhr.respond(200, {}, "");
 
+			done();
+		});
+
+		oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.module("Override fetch", {
+		beforeEach: function () {
+			this.oDataProviderFactory = new DataProviderFactory();
+
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+
+			this.oServer.respondImmediately = true;
+		},
+		afterEach: function () {
+			this.oDataProviderFactory.destroy();
+			this.oServer.restore();
+		}
+	});
+
+	QUnit.test("Extension can override fetch", function (assert) {
+		var done = assert.async(),
+			sExpectedResource = "/test/url",
+			mExpectedSettings = {
+				url: sExpectedResource,
+				headers: {
+					"test": "test"
+				}
+			},
+			oDataProvider = this.oDataProviderFactory.create({
+				request: mExpectedSettings
+			}),
+			oExtension = new Extension(),
+			oCard = new Card();
+
+		assert.expect(6);
+
+		oDataProvider.setCard(oCard);
+		oExtension._setCard(oCard);
+		oCard.setAggregation("_extension", oExtension);
+
+		oExtension.fetch = function (sResource, mOptions, mRequestSettings) {
+			assert.strictEqual(sResource, sExpectedResource, "The resource is as expected.");
+			assert.strictEqual(mOptions.method, "GET", "The request options method is as expected.");
+			assert.strictEqual(mOptions.headers.get("test"), "test", "The request options headers are as expected.");
+			assert.deepEqual(mRequestSettings, mExpectedSettings, "The request settings are a copy of the expected settings.");
+
+			sResource += "?test=test";
+			mOptions.headers.set("test", "test2");
+
+			return Extension.prototype.fetch.call(this, sResource, mOptions, mRequestSettings);
+		};
+
+		this.oServer.respondWith("GET", "/test/url?test=test", function (oXhr) {
+			assert.ok(true, "Request url is modified");
+
+			var oHeaders = new Headers(oXhr.requestHeaders);
+			assert.strictEqual(oHeaders.get("test"), "test2", "Request headers are modified");
+
+			oXhr.respond(200, {}, "");
+			done();
+		});
+
+		oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Host can override fetch", function (assert) {
+		var done = assert.async(),
+			sExpectedResource = "/test/url",
+			mExpectedSettings = {
+				url: sExpectedResource,
+				headers: {
+					"test": "test"
+				}
+			},
+			oDataProvider = this.oDataProviderFactory.create({
+				request: mExpectedSettings
+			}),
+			oHost = new Host(),
+			oExpectedCard = new Card();
+
+		assert.expect(7);
+
+		oDataProvider.setHost(oHost);
+		oDataProvider.setCard(oExpectedCard);
+
+		oHost.fetch = function (sResource, mOptions, mRequestSettings, oCard) {
+			assert.strictEqual(sResource, sExpectedResource, "The resource is as expected.");
+			assert.strictEqual(mOptions.method, "GET", "The request options method is as expected.");
+			assert.strictEqual(mOptions.headers.get("test"), "test", "The request options headers are as expected.");
+			assert.deepEqual(mRequestSettings, mExpectedSettings, "The request settings are a copy of the expected settings.");
+			assert.strictEqual(oCard, oExpectedCard, "The card is as expected.");
+
+			sResource += "?test=test";
+			mOptions.headers.set("test", "test2");
+
+			return Host.prototype.fetch.call(this, sResource, mOptions, mRequestSettings, oCard);
+		};
+
+		this.oServer.respondWith("GET", "/test/url?test=test", function (oXhr) {
+			assert.ok(true, "Request url is modified");
+
+			var oHeaders = new Headers(oXhr.requestHeaders);
+			assert.strictEqual(oHeaders.get("test"), "test2", "Request headers are modified");
+
+			oXhr.respond(200, {}, "");
+			done();
+		});
+
+		oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Both extension and host can override fetch", function (assert) {
+		var done = assert.async(),
+			oDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/test/url",
+					headers: {
+						"test": "test"
+					}
+				}
+			}),
+			oHost = new Host(),
+			oExtension = new Extension(),
+			oCard = new Card(),
+			fnHostSpy,
+			fnExtensionSpy;
+
+		assert.expect(10);
+
+		oExtension._setCard(oCard);
+		oCard.setAggregation("_extension", oExtension);
+		oCard.setHost(oHost);
+		oDataProvider.setCard(oCard);
+		oDataProvider.setHost(oHost);
+
+		oExtension.fetch = function (sResource, mOptions, mRequestSettings) {
+			assert.strictEqual(mOptions.headers.get("test"), "test", "The initial request headers are as expected.");
+
+			mOptions.headers.set("test-extension", "test-extension");
+
+			return Extension.prototype.fetch.call(this, sResource, mOptions, mRequestSettings);
+		};
+
+		oHost.fetch = function (sResource, mOptions, mRequestSettings) {
+			assert.strictEqual(mOptions.headers.get("test"), "test", "The initial request headers are as expected.");
+			assert.strictEqual(mOptions.headers.get("test-extension"), "test-extension", "The request headers are modified by extension.");
+
+			mOptions.headers.set("test-host", "test-host");
+
+			return Host.prototype.fetch.call(this, sResource, mOptions, mRequestSettings, oCard);
+		};
+
+		fnHostSpy = this.spy(oHost, "fetch");
+		fnExtensionSpy = this.spy(oExtension, "fetch");
+
+		this.oServer.respondWith("GET", "/test/url", function (oXhr) {
+			assert.ok(true, "Request is sent");
+
+			var oHeaders = new Headers(oXhr.requestHeaders);
+			assert.strictEqual(oHeaders.get("test"), "test", "The initial request headers are as expected.");
+			assert.strictEqual(oHeaders.get("test-extension"), "test-extension", "The request headers are modified by extension.");
+			assert.strictEqual(oHeaders.get("test-host"), "test-host", "The request headers are modified by host.");
+
+			assert.ok(fnExtensionSpy.calledOnce, "Extension.fetch was called once.");
+			assert.ok(fnHostSpy.calledOnce, "Host.fetch was called once.");
+			assert.ok(fnExtensionSpy.calledBefore(fnHostSpy), "Extension.fetch was called before Host.fetch.");
+
+			oXhr.respond(200, {}, "");
 			done();
 		});
 
