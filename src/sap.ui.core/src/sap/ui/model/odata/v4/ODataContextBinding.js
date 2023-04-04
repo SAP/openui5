@@ -287,7 +287,7 @@ sap.ui.define([
 								if (bReplaceWithRVC) {
 									that.oCache = null;
 									that.oCachePromise = SyncPromise.resolve(null);
-									oResult = that.oContext.getBinding()
+									oResult = that.oContext.oBinding
 										.doReplaceWith(that.oContext, oResponseEntity,
 											sResponsePredicate);
 									oResult.setNewGeneration();
@@ -698,7 +698,7 @@ sap.ui.define([
 		// the context(s) in that uppermost binding. Note that no data may be available in the
 		// uppermost context binding and hence the deletion would not work there, BCP 1980308439.
 		var oEmptyPathParentContext = this._findEmptyPathParentContext(this.oElementContext),
-			oEmptyPathParentBinding = oEmptyPathParentContext.getBinding(),
+			oEmptyPathParentBinding = oEmptyPathParentContext.oBinding,
 			oDeleteParentContext = oEmptyPathParentBinding.getContext(),
 			oReturnValueContext = oEmptyPathParentBinding.oReturnValueContext,
 			that = this;
@@ -966,10 +966,10 @@ sap.ui.define([
 					+ sResolvedPath);
 			}
 			if (bReplaceWithRVC) {
-				if (!this.oContext.getBinding) {
+				if (!this.oContext.getBinding) { // API serves as a marker only
 					throw new Error("Cannot replace this parent context: " + this.oContext);
 				} // Note: parent context need not have a key predicate!
-				this.oContext.getBinding().checkKeepAlive(this.oContext);
+				this.oContext.oBinding.checkKeepAlive(this.oContext);
 			}
 		} else if (bReplaceWithRVC) {
 			throw new Error("Cannot replace when operation is not relative");
@@ -1033,11 +1033,10 @@ sap.ui.define([
 				? SyncPromise.resolve(this.oCache)
 				: this.oCachePromise,
 			oError,
-			oRootBinding = this.getRootBinding(),
 			that = this;
 
 		// dependent binding will update its value when the suspended binding is resumed
-		if (oRootBinding && oRootBinding.isSuspended()) {
+		if (this.isRootBindingSuspended()) {
 			oError = new Error("Suspended binding provides no value");
 			oError.canceled = "noDebugLog";
 			throw oError;
@@ -1186,7 +1185,7 @@ sap.ui.define([
 			mQueryOptions = this.mQueryOptions;
 
 		if (this.bInheritExpandSelect) {
-			mInheritableQueryOptions = this.oContext.getBinding().getInheritableQueryOptions();
+			mInheritableQueryOptions = this.oContext.oBinding.getInheritableQueryOptions();
 			mQueryOptions = Object.assign({}, mQueryOptions);
 			// keep $select before $expand
 			if ("$select" in mInheritableQueryOptions) {
@@ -1282,7 +1281,7 @@ sap.ui.define([
 		this.bInitial = false;
 		// Here no other code but the event for the ManagedObject is expected. The binding should be
 		// useable for controller code without calling initialize.
-		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
+		if (this.isResolved() && !this.isRootBindingSuspended()) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};

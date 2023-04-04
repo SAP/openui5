@@ -24210,6 +24210,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2030
 	//
 	// The whole tree is expanded to two levels (JIRA: CPOUI5ODATAV4-2095).
+	// Temporary binding of kept-alive context is hidden (JIRA: CPOUI5ODATAV4-2107).
 	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -25648,6 +25649,8 @@ sap.ui.define([
 			oContext = oModel.getKeepAliveContext("/EMPLOYEES('3')", /*bRequestMessages*/true,
 				{$$groupId : "$auto.heroes"});
 
+			assert.strictEqual(oContext.getBinding(), null, "JIRA: CPOUI5ODATAV4-2107");
+
 			that.oView.byId("form").setBindingContext(oContext);
 
 			return Promise.all([
@@ -25700,6 +25703,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "request nodes");
 		}).then(function () {
+			var oKeptContext;
+
 			checkTable("after request nodes", assert, oTable, [
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')",
@@ -25710,6 +25715,7 @@ sap.ui.define([
 				[undefined, 2, "3", "0", "Lambda"]
 			]);
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[2], oContext, "reused");
+			assert.strictEqual(oContext.getBinding(), oListBinding, "JIRA: CPOUI5ODATAV4-2107");
 			assert.strictEqual(oContext.isKeepAlive(), true, "still kept alive");
 			assert.deepEqual(oContext.getObject(), {
 					"@odata.etag" : "etag3",
@@ -25736,7 +25742,9 @@ sap.ui.define([
 				});
 
 			// code under test
-			oModel.getKeepAliveContext("/EMPLOYEES('5')");
+			oKeptContext = oModel.getKeepAliveContext("/EMPLOYEES('5')");
+
+			assert.strictEqual(oKeptContext.getBinding(), oListBinding, "JIRA: CPOUI5ODATAV4-2107");
 
 			return that.waitForChanges(assert, "ODLB#getKeepAliveContext");
 		});
@@ -50804,4 +50812,3 @@ sap.ui.define([
 		});
 	});
 });
-

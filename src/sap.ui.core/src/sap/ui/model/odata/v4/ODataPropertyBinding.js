@@ -473,7 +473,7 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.initialize = function () {
 		if (this.isResolved()) {
-			if (this.getRootBinding().isSuspended()) {
+			if (this.isRootBindingSuspended()) {
 				this.sResumeChangeReason = ChangeReason.Change;
 			} else {
 				this.checkUpdate(true);
