@@ -1227,6 +1227,7 @@ sap.ui.define([
 				}),
 				new ToolbarSpacer(),
 				new Button({
+					type: MLibrary.ButtonType.Transparent,
 					tooltip: oRb.getText("infobar.REMOVEALLFILTERS"),
 					icon: "sap-icon://decline",
 					press: function () {
