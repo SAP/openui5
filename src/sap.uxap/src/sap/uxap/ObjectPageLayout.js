@@ -1373,8 +1373,49 @@ sap.ui.define([
 			horizontal: false,
 			vertical: true
 		});
+
+		this._oScroller.setOnAfterScrollToElement(this._onAfterScrollToElement.bind(this));
 	};
 
+	/**
+	 * Callback for the end of the scroll triggered from <code>scrollToElement</code>
+	 * of <code>sap.ui.core.delegate.ScrollEnablement</code>.
+	 *
+	 * Required for Safari and IE11 (where there is no browser automatic scroll adjustment,
+	 * see <code>overflow-anchor</code> CSS property).
+	 *
+	 * The execution of <code>scrollToElement</code> changes the current scroll position,
+	 * so we check if the new scroll position entails subsequent change of the scroll
+	 * container of our page(namely: snapping of the header, which involves removal
+	 * of the anchorBar from the top of the scroll container and placing it
+	 * in the title area above the scroll container instead).
+	 *
+	 * If such a change (namely, removal of the anchorBar from the top of the scroll container)
+	 * should occur, then the content bellow the removed anchorBar will became offset with X pixels,
+	 * where X is the anchorBar height => the element [provided to <code>scrollToElement </code>]
+	 * will be misplaced as a result.
+	 *
+	 * Therefore here we synchronously call the listener to the "scroll" event to check if
+	 * it entails the above snapping and subsequent misplacement => if it entails it,
+	 * then we adjust back the scroll position to correct the misplacement of the scrolled element.
+	 *
+	 * @private
+	 */
+	ObjectPageLayout.prototype._onAfterScrollToElement = function () {
+		var iScrollTop = this._$opWrapper.scrollTop(),
+			bStickyAnchorBarBefore = this._bStickyAnchorBar;
+
+		// synchronously call the listener for the "scroll" event, to trigger any pending toggling of the header
+		this._onScroll({ target: { scrollTop: iScrollTop}});
+
+		// if the anchorBar was sticked (removed from the topmost part of the scrollable area) =>
+		// all elements bellow it became offset with X pixels, where X is the anchorBar height =>
+		// the element (target of <code>scrollToElement</code>) was offset respectively =>
+		// adjust the scroll position to ensure the element is back visible (outside scroll overflow)
+		if (this._bStickyAnchorBar && !bStickyAnchorBarBefore && this._$opWrapper.scrollTop() === iScrollTop) {
+			this._$opWrapper.scrollTop(iScrollTop - this.iAnchorBarHeight);
+		}
+	};
 	/**
 	 * Sets the section that should be selected.
 	 *
