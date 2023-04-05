@@ -1124,10 +1124,15 @@ sap.ui.define([
 	};
 
 	Month.prototype.onsapselect = function(oEvent){
-
+		var oParent = this.getParent();
 		if (this.bSpaceButtonPressed){
 			return;
 		}
+
+		if (oParent && oParent._isMultiDatesSelectionHeaderAllowed && !oParent._isMultiDatesSelectionHeaderAllowed()) {
+			return;
+		}
+
 		// focused item must be selected
 		var bSelected = this._selectDay(this._getSelectedDateFromEvent(oEvent));
 		if (bSelected) {
@@ -1153,9 +1158,13 @@ sap.ui.define([
 
 	Month.prototype.onsapselectmodifiers = function(oEvent){
 		var oSelectedDate = this._getSelectedDateFromEvent(oEvent),
-			oFirstWeekDate;
+			oFirstWeekDate,
+			oParent = this.getParent();
 
 		if (this._isWeekSelectionAllowed() && oEvent.shiftKey && oEvent.keyCode === KeyCodes.SPACE) {
+			if (oParent && oParent._isMultiDatesSelectionHeaderAllowed && !oParent._isMultiDatesSelectionHeaderAllowed()) {
+				return;
+			}
 			// Handle Shift + Space, when week selection is allowed
 			// We need to get the first week's day, because Shift + Space could be called
 			// from any week's day
@@ -1893,7 +1902,7 @@ sap.ui.define([
 		var oStartDate;
 		var sCalendarType = this._getPrimaryCalendarType();
 
-		if (oParent && oParent.getSelectedDates) {
+		if (oParent && oParent.isA("sap.ui.unified.Calendar")) {
 			// if used in Calendar use the aggregation of this one
 			oAggOwner = oParent;
 		}

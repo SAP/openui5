@@ -77,7 +77,6 @@ sap.ui.define([
 				oType,
 				sLegendItemType;
 
-
 			oRm.openStart("div");
 			oRm.attr("role", "grid");
 			oRm.class("sapMSinglePCBlockersRow");
@@ -115,6 +114,9 @@ sap.ui.define([
 				oRm.class("sapMSinglePCBlockersColumn");
 				oRm.attr("tabindex", -1);
 
+				if (oControl._checkDateSelected(oColumnCalDate) && iColumns > 1) {
+					this.renderSelectedRowBorders(oRm, oControl, i, oColumnCalDate, iColumns, "Blocker");
+				}
 				if (oColumnCalDate.isSame(new CalendarDate())) {
 					oRm.class("sapMSinglePCBlockersColumnToday");
 				}
@@ -140,6 +142,30 @@ sap.ui.define([
 			this.renderBlockers(oRm, oControl);
 			oRm.close("div"); // END .sapMSinglePCColumns
 			oRm.close("div"); // END .sapMSinglePCGridBlockers
+		};
+
+		SinglePlanningCalendarGridRenderer.renderSelectedRowBorders = function (oRm, oControl, i, oColumnCalDate, iColumns, suffix) {
+			var oPrevClumnCalDate = new CalendarDate(oColumnCalDate.toLocalJSDate().getFullYear(), oColumnCalDate.toLocalJSDate().getMonth(), oColumnCalDate.toLocalJSDate().getDate() - 1);
+			var oNextClumnCalDate = new CalendarDate(oColumnCalDate.toLocalJSDate().getFullYear(), oColumnCalDate.toLocalJSDate().getMonth(), oColumnCalDate.toLocalJSDate().getDate() + 1);
+			oRm.class("sapUiCalColumnSelected");
+
+			if (i == 0 && oControl._checkDateSelected(oNextClumnCalDate)) {
+				oRm.class("sapUiCalColumnSelectedStart" + suffix);
+			} else if (i == 0 && !oControl._checkDateSelected(oNextClumnCalDate)) {
+				oRm.class("sapUiCalColumnSingleSelect" + suffix);
+			} else if (i === iColumns - 1 && oControl._checkDateSelected(oPrevClumnCalDate)) {
+				oRm.class("sapUiCalColumnSelectedEnd" + suffix);
+			} else if (i === iColumns - 1 && !oControl._checkDateSelected(oPrevClumnCalDate)) {
+				oRm.class("sapUiCalColumnSingleSelect" + suffix);
+			} else if (oControl._checkDateSelected(oPrevClumnCalDate) && oControl._checkDateSelected(oNextClumnCalDate)){
+				oRm.class("sapUiCalColumnSelectedBetween" + suffix);
+			} else if (oControl._checkDateSelected(oPrevClumnCalDate)) {
+				oRm.class("sapUiCalColumnSelectedEnd" + suffix);
+			} else if (oControl._checkDateSelected(oNextClumnCalDate)) {
+				oRm.class("sapUiCalColumnSelectedStart" + suffix);
+			} else {
+				oRm.class("sapUiCalColumnSingleSelect" + suffix);
+			}
 		};
 
 		SinglePlanningCalendarGridRenderer.renderBlockers = function (oRm, oControl) {
@@ -362,13 +388,17 @@ sap.ui.define([
 
 			for (var i = 0; i < iColumns; i++) {
 				var oColumnCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i),
-				oFormat = oControl._getDateFormatter(),
+					oFormat = oControl._getDateFormatter(),
 					sDate = oFormat.format(oColumnCalDate.toLocalJSDate());
 
 				oRm.openStart("div");
 				oRm.attr("role", "row");
 				oRm.attr("data-sap-day", sDate);
 				oRm.class("sapMSinglePCColumn");
+
+				if (oControl._checkDateSelected(oColumnCalDate) && iColumns > 1) {
+					this.renderSelectedRowBorders(oRm, oControl, i, oColumnCalDate, iColumns, "Column");
+				}
 
 				if (oColumnCalDate.isSame(new CalendarDate())) {
 					oRm.class("sapMSinglePCColumnToday");

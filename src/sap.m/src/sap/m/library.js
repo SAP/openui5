@@ -4683,6 +4683,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Available selection modes for the {@link sap.m.SinglePlanningCalendar}
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.113
+	 */
+	thisLib.SinglePlanningCalendarSelectionMode = {
+		/**
+		 * Single date selection.
+		 * @public
+		 */
+		SingleSelect: "SingleSelect",
+
+		/**
+		 * Мore than one date will be available to selection.
+		 * @public
+		 */
+		MultiSelect: "MultiSelect"
+	};
+
+	/**
 	 * Available sticky modes for the {@link sap.m.SinglePlanningCalendar}
 	 *
 	 * @enum {string}

@@ -4,23 +4,30 @@ sap.ui.define([
 	"sap/m/SinglePlanningCalendarMonthView",
 	"sap/m/SinglePlanningCalendarMonthGrid",
 	"sap/ui/unified/CalendarAppointment",
+	"sap/m/library",
 	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/library',
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/unified/DateRange",
+	"sap/ui/unified/calendar/CalendarDate"
 ], function(
 	SinglePlanningCalendar,
 	SinglePlanningCalendarMonthView,
 	SinglePlanningCalendarMonthGrid,
 	CalendarAppointment,
+	mobileLibrary,
 	DateTypeRange,
 	unifiedLibrary,
 	oCore,
-	UI5Date
+	UI5Date,
+	DateRange,
+	CalendarDate
 ) {
 		"use strict";
 
 		var CalendarDayType = unifiedLibrary.CalendarDayType;
+		var SinglePlanningCalendarSelectionMode = mobileLibrary.SinglePlanningCalendarSelectionMode;
 
 		var o2Aug2018_00_00 = UI5Date.getInstance(2018, 7, 2);
 		var o2Aug2018_18_00 = UI5Date.getInstance(2018, 7, 2, 18, 0, 0);
@@ -365,6 +372,98 @@ sap.ui.define([
 			assert.ok(oCellPressSpy.callCount, 2, "two events are fired");
 			assert.ok(oCellPressSpy.calledWithMatch("appointmentSelect", { appointment: undefined, appointments: [] }), "appointmentSelect is fired + parameters");
 			assert.ok(oCellPressSpy.calledWithMatch("cellPress", { startDate: o2Aug2018_00_00, endDate: o3Aug2018_00_00 }), "cellPress is fired + parameters");
+		});
+
+
+		QUnit.test("selectedDates: select days", function (assert){
+			// arrange
+			var oGrid = new SinglePlanningCalendarMonthGrid({
+				startDate: UI5Date.getInstance(2022,0,1),
+				enableMultiDaySelection: true
+			});
+			oGrid.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oGrid.$().find('.sapMSPCMonthDay')[14].classList.contains("sapMSPCMonthDaySelected"), "cell is selected");
+			assert.strictEqual(oGrid.getSelectedDates().length, 1, "selectedDates is added");
+
+			// act
+			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oGrid.$().find('.sapMSPCMonthDay')[14].classList.contains("sapMSPCMonthDaySelected"), "cell is selected");
+			assert.ok(oGrid.$().find('.sapMSPCMonthDay')[17].classList.contains("sapMSPCMonthDaySelected"), "cell is selected");
+			assert.strictEqual(oGrid.getSelectedDates().length, 2, "selectedDates is added");
+
+			// act
+			oGrid.setDateSelectionMode(SinglePlanningCalendarSelectionMode.SingleSelection);
+			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			sap.ui.getCore().applyChanges();
+
+			//clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("selectedDates: deselect days", function (assert){
+			// arrange
+			var oGrid = new SinglePlanningCalendarMonthGrid({
+				startDate: UI5Date.getInstance(2022,0,1),
+				enableMultiDaySelection: true,
+				selectedDates: [
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)}),
+					new DateRange({startDate: UI5Date.getInstance(2022, 0, 13)})
+				]
+			});
+			oGrid.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 2, "two days were initially added");
+
+			// act
+			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[14].classList.contains("sapMSPCMonthDaySelected"), "cell is deselected");
+			assert.strictEqual(oGrid.getSelectedDates().length, 1, "one day is removed");
+
+			// act
+			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[14].classList.contains("sapMSPCMonthDaySelected"), "cell is deselected");
+			assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[17].classList.contains("sapMSPCMonthDaySelected"), "cell is deselected");
+			assert.strictEqual(oGrid.getSelectedDates().length, 0, "selectedDates is empty");
+
+			//clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("hasSelected", function (assert) {
+			// arrange
+			var oTestSelectedDate = new CalendarDate(2022, 0, 10),
+				oTestNotSelectdDate = new CalendarDate(2022, 0, 11),
+				oGrid = new SinglePlanningCalendarMonthGrid({
+					enableMultiDaySelection: true,
+					selectedDates: [
+						new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)})
+					]
+				});
+
+			// assert
+			assert.ok(oGrid._checkDateSelected(oTestSelectedDate), "this date is selected");
+			assert.notOk(oGrid._checkDateSelected(oTestNotSelectdDate ), "this date is not selected");
+
+			//clean up
+			oGrid.destroy();
 		});
 
 		QUnit.test("appointmentSelect: select a single appointment", function (assert) {
