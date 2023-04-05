@@ -1003,8 +1003,6 @@ sap.ui.define([
 			return item.isA("sap.m.Link");
 		});
 
-		assert.notEqual(this.oQuickView._oPopover.getDomRef().getElementsByTagName("a")[2].href.slice(-1), "#", " href don't have unnecessary #");
-
 		oLink.firePress();
 		Core.applyChanges();
 

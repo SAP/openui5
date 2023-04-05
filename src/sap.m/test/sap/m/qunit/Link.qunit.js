@@ -236,8 +236,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Disabled link should have empty href", function(assert) {
-		/*eslint-disable no-script-url */
-		assert.equal(oLink2.$().attr("href"), "javascript:void(0)", "oLink2 href should be empty");
+		assert.equal(oLink2.$().attr("href"), "#", "oLink2 href should be empty");
 		oLink2.setEnabled(true);
 		Core.applyChanges();
 		assert.equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
@@ -344,8 +343,7 @@ sap.ui.define([
 		oLink.setHref("");
 		Core.applyChanges();
 		assert.notOk(oLinkDomRef.getAttribute("role"), "Links without href shouldn't have a role too");
-		/*eslint-disable no-script-url */
-		assert.strictEqual(oLinkDomRef.getAttribute("href"), "javascript:void(0)", "Links without href should have an empty href attribute");
+		assert.strictEqual(oLinkDomRef.getAttribute("href"), "#", "Links without href should have an empty href attribute");
 
 		// ARIA disabled
 		oLink.setEnabled(false);
@@ -527,8 +525,7 @@ sap.ui.define([
 		oLink.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		/*eslint-disable no-script-url */
-		assert.equal(oLink.$().attr("href"), "javascript:void(0)", "Link href should be empty if an invalid URL is provided");
+		assert.equal(oLink.$().attr("href"), "#", "Link href should be empty if an invalid URL is provided");
 
 		oLink.setHref(sValidUrl);
 		Core.applyChanges();
@@ -538,7 +535,7 @@ sap.ui.define([
 		oLink.setHref(sInvalidUrl);
 		Core.applyChanges();
 
-		assert.equal(oLink.$().attr("href"), "javascript:void(0)", "Link href should be empty if an invalid URL is set");
+		assert.equal(oLink.$().attr("href"), "#", "Link href should be empty if an invalid URL is set");
 
 		oLink.destroy();
 	});
@@ -623,6 +620,28 @@ sap.ui.define([
 
 		oLink.destroy();
 	});
+
+	QUnit.test("Prevent navigation", function(assert) {
+		// Prepare
+		var oLink = new Link({text: "text"}),
+			oFakeEvent = {preventDefault: function() {}},
+			oPressSpy = this.spy(oLink, "firePress");
+
+		oLink.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+
+		// Act
+		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink.getId(), oFakeEvent);
+
+		// Assert
+		assert.notOk(oLink.getDomRef().onclick(), "Navigation is prevented");
+		assert.ok(oPressSpy.calledOnce, "Press event still fired");
+
+		// Clean
+		oLink.destroy();
+	});
+
 
 	QUnit.module("EmptyIndicator", {
 		beforeEach : function() {
