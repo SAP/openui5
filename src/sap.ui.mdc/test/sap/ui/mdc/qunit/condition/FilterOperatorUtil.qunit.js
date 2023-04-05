@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/core/date/UI5Date",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/mdc/enum/OperatorOverwrite"
 ], function(
 	FilterOperatorUtil,
 	Operator,
@@ -40,7 +41,8 @@ sap.ui.define([
 	UniversalDate,
 	UniversalDateUtils,
 	UI5Date,
-	mLibrary
+	mLibrary,
+	OperatorOverwrite
 ) {
 	"use strict";
 
@@ -54,7 +56,7 @@ sap.ui.define([
 
 	QUnit.test("createOperator", function(assert) {
 
-		var _getModelFilter = function(oCondition, sFieldPath, aOperators) {
+		var _getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			return new Filter({ path: sFieldPath, operator: "EQ", value1: new Date().getFullYear() });
 		};
 		var oOperator = new Operator({
@@ -88,7 +90,7 @@ sap.ui.define([
 
 	QUnit.test("createRangeOperator", function(assert) {
 
-		var _getModelFilter = function(oCondition, sFieldPath, aOperators) {
+		var _getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			return new Filter({ path: sFieldPath, operator: "EQ", value1: new Date().getFullYear() });
 		};
 
@@ -2332,6 +2334,36 @@ sap.ui.define([
 		assert.notOk(oOperator, "Operator should NOT exist");
 		oOperator = FilterOperatorUtil.getOperator("MyEqual2");
 		assert.notOk(oOperator, "Operator should NOT exist");
+
+	});
+
+	QUnit.test("testing overwrite", function(assert) {
+
+		var oOperator = FilterOperatorUtil.getOperator("Empty");
+		assert.ok(oOperator, "Operator exist");
+		assert.ok(oOperator.getLongText("String") === "empty", "Operator getLongText returns default text");
+
+		var fCallbackGetLongText = function(sBaseType) {
+			if (sBaseType === "String") {
+				return "foo";
+			} else {
+				return "bar";
+			}
+		};
+		oOperator.overwrite(OperatorOverwrite.getLongText, fCallbackGetLongText);
+		assert.equal(oOperator.getLongText, fCallbackGetLongText, "Overwrite function exist");
+		assert.ok(oOperator.getLongText("String") === "foo", "Operator getLongText returns expected text");
+		assert.ok(oOperator.getLongText("others") === "bar", "Operator getLongText returns expected text");
+
+		oOperator = FilterOperatorUtil.getOperator("TODAY");
+		assert.ok(oOperator, "Operator exist");
+
+		var fCallbackGetModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			return "foo";
+		};
+		oOperator.overwrite(OperatorOverwrite.getModelFilter, fCallbackGetModelFilter);
+		assert.equal(oOperator.getModelFilter, fCallbackGetModelFilter, "Overwrite function exist");
+		assert.equal(oOperator.getModelFilter(), "foo", "Overwrite function returns expected value");
 
 	});
 

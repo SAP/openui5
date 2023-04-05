@@ -8,10 +8,10 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	'sap/m/DatePicker',
 	'sap/m/Slider',
-	'sap/ui/mdc/enum/BaseType'
-], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider, BaseType) {
+	'sap/ui/mdc/enum/BaseType',
+	"sap/ui/mdc/enum/OperatorOverwrite"
+], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider, BaseType, OperatorOverwrite) {
 	"use strict";
-
 
 	var getCustomYearFormat = function (date) {
 		return new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
@@ -302,6 +302,63 @@ sap.ui.define([
 
 	// FilterOperatorUtil.addOperatorForType(BaseType.Date, customDateEmpty);
 	// FilterOperatorUtil.addOperatorForType(BaseType.Date, customDateNotEmpty);
+
+
+	var oTodayOp = FilterOperatorUtil.getOperator("TODAY");
+	var fOrgTodayGetModelFilter = oTodayOp.overwrite(OperatorOverwrite.getModelFilter,
+		function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			var oFilter = fOrgTodayGetModelFilter(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType);
+			return new Filter({path: sFieldPath, operator: "EQ", value1: oFilter.oValue1});
+		}
+	);
+
+	var oEmptyOp = FilterOperatorUtil.getOperator("Empty");
+	FilterOperatorUtil.addOperatorForType(BaseType.Date, oEmptyOp);
+	var fOrgEmptyGetModelFilter = oEmptyOp.overwrite(OperatorOverwrite.getModelFilter,
+		function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			if (sBaseType === "Date") {
+				var isNullable = false;
+				if (oType) {
+					var vResult = oType.parseValue("", "string");
+					try {
+						oType.validateValue(vResult);
+						isNullable = vResult === null;
+					} catch (oError) {
+						isNullable = false;
+					}
+				}
+				if (isNullable) {
+					return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: null });
+				} else {
+					throw "Cannot create a Filter for fieldPath " + sFieldPath + " and operator " + this.name;
+				}
+			} else {
+				//TODO this will not work!!!!!
+				return fOrgEmptyGetModelFilter(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType);
+			}
+
+		}.bind(oEmptyOp)
+	);
+
+	var oYesterdayOp = FilterOperatorUtil.getOperator("YESTERDAY");
+	var fOrgYesterdayGetModelFilter = oYesterdayOp.overwrite(OperatorOverwrite.getModelFilter,
+		function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			var oFilter = fOrgYesterdayGetModelFilter(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType);
+			return new Filter({path: sFieldPath, operator: "EQ", value1: oFilter.oValue1});
+		}
+	);
+
+
+	var oLessOp = FilterOperatorUtil.getOperator("LT");
+	var fOrgLessOpGetLongText = oLessOp.overwrite(OperatorOverwrite.getLongText,
+		function(sBaseType) {
+			if (sBaseType === "Date") {
+				return "My Before";
+			} else {
+				return fOrgLessOpGetLongText(sBaseType);
+			}
+		}
+	);
 
 });
 

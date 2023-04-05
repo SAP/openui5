@@ -986,12 +986,7 @@ sap.ui.define([
 			}
 
 			// try to load the operator longText which is type dependent
-			var sTxtKey = oOperator.textKey || "operators." + oOperator.name + ".longText";
-			var sText = oOperator.getTypeText(sTxtKey, _getBaseType.call(this, oType).toLowerCase());
-			if (sText === sTxtKey) {
-				// when the returned text is the key, a type dependent longText does not exist and we use the default longText for the operator
-				sText = oOperator.longText;
-			}
+			var sText = oOperator.getLongText(_getBaseType.call(this, oType));
 
 			//Update the additionalInfo text for the operator
 			var sAdditionalText = oOperator.additionalInfo;
