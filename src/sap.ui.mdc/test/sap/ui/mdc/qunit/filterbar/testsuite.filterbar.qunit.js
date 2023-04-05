@@ -49,10 +49,10 @@ sap.ui.define([
 					  }
 				}
 			},
-//			"Condenser": {
-//				sinon: false,
-//				group: "FilterBar"
-//			},
+			"Condenser": {
+				sinon: false,
+				group: "FilterBar"
+			},
 			"FilterBar": {
 				group: "FilterBar",
 				module: "./FilterBar.qunit"
