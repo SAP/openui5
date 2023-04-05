@@ -85,8 +85,6 @@
     "coffee-script": "^1.9.1",
     "cookie": "^0.4.2",
     "decompress": "^4.2.1",
-    "es5-ext": "<=0.10.53",
-    "es6-set": "<=0.1.5",
     "eslint": "^7.32.0",
     "extend": "^2.0.0",
     "glob": "^7.2.3",
@@ -105,7 +103,6 @@
     "grunt-text-replace": "^0.4.0",
     "grunt-timer": "^0.5.4",
     "http-proxy": "^1.18.1",
-    "js-yaml": "^3.13.1",
     "json2json": "^0.2.4",
     "karma": "^6.3.3",
     "karma-chrome-launcher": "^3.1.0",
@@ -129,7 +126,8 @@
   "overrides": {
     "grunt-jsdoc": {
       "jsdoc": "^4.0.2"
-    }
+    },
+    "es5-ext": "<=0.10.53"
   },
   "workspaces": [
     "src/!(testsuite-utils)"
