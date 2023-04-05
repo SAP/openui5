@@ -71,6 +71,24 @@
 				}
 			}),
 
+			oButton1 = new sap.m.Button("show-button-2", {
+				text: "Open MessageToast",
+				press: function() {
+					var sKey;
+
+					// message toast
+					sap.m.MessageToast.show(oTextArea0.getValue(), {
+						duration: Number(oInput0.getValue()),
+						width: oInput1.getValue(),
+						my: sKey = oSelect0.getSelectedItem().getKey(),
+						at: sKey,
+						offset: oInput2.getValue(),
+						autoClose: oCheckBox0.getSelected(),
+
+					});
+				}
+			}),
+
 			// select
 			oSelect0 = new sap.m.Select("select-list", {
 				items: [
@@ -189,7 +207,7 @@
 			oPage1 = new sap.m.Page("page1", {
 				title: "Mobile MessageToast control",
 				enableScrolling : true,
-				content : [ oList, oTextArea0, oButton0 ]
+				content : [ oList, oTextArea0, oButton0, oButton1 ]
 			});
 
 			oApp.addPage(oPage1);
