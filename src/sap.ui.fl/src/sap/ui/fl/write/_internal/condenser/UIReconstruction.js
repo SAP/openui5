@@ -69,24 +69,23 @@ sap.ui.define([
 		var mContainers = {};
 		forEveryMapInMap(mUIReconstructions, function(mUIState, sContainerKey, mUIAggregationState, sAggregationName) {
 			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
+			var aSourceElementIds = mUIAggregationState[Utils.INITIAL_UI];
 
-			aTargetElementIds.forEach(function(sTargetElementId) {
-				aCondenserInfos.forEach(function(oCondenserInfo) {
-					if (
-						sTargetElementId === oCondenserInfo.affectedControl
-						&& sAggregationName === oCondenserInfo.targetAggregation
-					) {
-						if (!mContainers[sContainerKey]) {
-							mContainers[sContainerKey] = {};
-						}
-						var mAggregations = mContainers[sContainerKey];
-						if (!mAggregations[sAggregationName]) {
-							mAggregations[sAggregationName] = [];
-						}
-						var aContainerElements = mAggregations[sAggregationName];
-						aContainerElements.push(oCondenserInfo);
+			aCondenserInfos.forEach(function(oCondenserInfo) {
+				var bElementPartOfInitialOrTargetUi = aTargetElementIds.indexOf(oCondenserInfo.affectedControl) > -1
+					|| aSourceElementIds.indexOf(oCondenserInfo.affectedControl) > -1;
+
+				if (sAggregationName === oCondenserInfo.targetAggregation && bElementPartOfInitialOrTargetUi) {
+					if (!mContainers[sContainerKey]) {
+						mContainers[sContainerKey] = {};
 					}
-				});
+					var mAggregations = mContainers[sContainerKey];
+					if (!mAggregations[sAggregationName]) {
+						mAggregations[sAggregationName] = [];
+					}
+					var aContainerElements = mAggregations[sAggregationName];
+					aContainerElements.push(oCondenserInfo);
+				}
 			});
 		});
 		return mContainers;

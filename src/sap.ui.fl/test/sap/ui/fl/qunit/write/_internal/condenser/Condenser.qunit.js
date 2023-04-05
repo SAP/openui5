@@ -914,6 +914,8 @@ sap.ui.define([
 					name: "column2"
 				}, {
 					name: "column3"
+				}, {
+					name: "column4"
 				}
 			]);
 			sandbox.stub(TableDelegate, "updateBindingInfo");
@@ -960,11 +962,17 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "mdcAddMoveRemoveChanges.json", 7, 0, assert);
 		});
 
-		// MDC Table: combination of remove and add => both changes stay (ideally both changes be converted to move change)
+		// MDC Table: combination of remove and add
 		QUnit.test("remove / add columns", function(assert) {
-			return loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 2, 2, assert).then(function(aRemainingChanges) {
-				assert.strictEqual(aRemainingChanges[0].getChangeType(), "removeColumn", "the changes are in the right order");
-				assert.strictEqual(aRemainingChanges[1].getChangeType(), "addColumn", "the changes are in the right order");
+			return loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 4, 4, assert)
+			.then(revertAndApplyNew.bind(this))
+			.then(function() {
+				var oTable = sap.ui.getCore().byId("view--mdcTable");
+				var aColumns = oTable.getColumns();
+				assert.strictEqual(aColumns.length, 3, "Expected number of MDC columns: " + 3);
+				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column3", sValueMsg + "column3");
+				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column2", sValueMsg + "column2");
+				assert.strictEqual(aColumns[2].getId(), "view--mdcTable--column4", sValueMsg + "column4");
 			});
 		});
 
