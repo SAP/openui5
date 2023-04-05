@@ -2080,9 +2080,9 @@ sap.ui.define([
 		});
 
 		if ((this.getStandardVariantKey() === oItem.getKey()) || (this.getDefaultKey() === oItem.getKey())) {
-			oFavoriteIcon.addStyleClass("sapMVarMngmtFavNonInteractiveColor");
+			this._setIconStyleClass(oFavoriteIcon, "sapMVarMngmtFavNonInteractiveColor");
 		} else {
-			oFavoriteIcon.addStyleClass("sapMVarMngmtFavColor");
+			this._setIconStyleClass(oFavoriteIcon, "sapMVarMngmtFavColor");
 		}
 
 		if (this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (this.getStandardVariantKey() === oItem.getKey())) {
@@ -2202,19 +2202,25 @@ sap.ui.define([
 			return;
 		}
 
-		if (oItem.getKey() === this.getStandardVariantKey()) {
+		if (!oItem || (oItem.getKey() === this.getStandardVariantKey())) {
 			return;
 		}
 
 		if (bToInActive && oIcon.hasStyleClass("sapMVarMngmtFavColor")) {
 			oIcon.removeStyleClass("sapMVarMngmtFavColor");
-			oIcon.addStyleClass("sapMVarMngmtFavNonInteractiveColor");
+			this._setIconStyleClass(oIcon, "sapMVarMngmtFavNonInteractiveColor");
 		} else if (oIcon.hasStyleClass("sapMVarMngmtFavNonInteractiveColor")) {
 			oIcon.removeStyleClass("sapMVarMngmtFavNonInteractiveColor");
-			oIcon.addStyleClass("sapMVarMngmtFavColor");
+			this._setIconStyleClass(oIcon, "sapMVarMngmtFavColor");
 		}
 	};
 
+	VariantManagement.prototype._setIconStyleClass = function(oIcon, sStyleClass) {
+		if (oIcon) {
+			oIcon.addStyleClass(sStyleClass);
+			oIcon.setNoTabStop(sStyleClass === "sapMVarMngmtFavNonInteractiveColor");
+		}
+	};
 
 	VariantManagement.prototype._handleManageTitleChange = function(oInput, oItem) {
 		this._checkVariantNameConstraints(oInput, oItem.getKey());
@@ -2274,7 +2280,16 @@ sap.ui.define([
 		});
 
 		if (this._sOriginalDefaultKey !== this.getDefaultKey()) {
+			var sPrevDefaultKey = this.getDefaultKey();
 			this.setDefaultKey(this._sOriginalDefaultKey);
+
+			if (sPrevDefaultKey !== this.getStandardVariantKey()) {
+				var oRow = this._getRowForKey(sPrevDefaultKey);
+				if (oRow) {
+					var oIcon = oRow.getCells()[VariantManagement.COLUMN_FAV_IDX];
+					this._toggleIconActivityState(oIcon, this._getItemByKey(sPrevDefaultKey), false);
+				}
+			}
 		}
 
 		this._clearRenamedItems();
