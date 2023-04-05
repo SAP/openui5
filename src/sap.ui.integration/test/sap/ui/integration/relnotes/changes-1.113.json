@@ -3,6 +3,17 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "a8ce377289ad00f159f8ebe19e90c07ed970ec90",
+        "type": "FIX",
+        "text": " Integration cards: List cards now have correct aria-label",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183768"
+          }
+        ]
+      },
+      {
         "id": "bf4328a32a8e9fc628e1a55787ab127572138e80",
         "type": "FIX",
         "text": " Integration Cards: Fixed card pagination console error",

@@ -3,6 +3,17 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "a8ce377289ad00f159f8ebe19e90c07ed970ec90",
+        "type": "FIX",
+        "text": " Integration cards: List cards now have correct aria-label",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183768"
+          }
+        ]
+      },
+      {
         "id": "6f9a1eef3140c552b2d275acb5b5881a9b8ba659",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Fix growing Table",

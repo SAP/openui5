@@ -3,6 +3,27 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "c2426245125bad2c5bac624837622f67c0953759",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Multi day selection"
+      },
+      {
+        "id": "a01dd3bf2dea39ecfd6c864d01e0fa5587f38d92",
+        "type": "FIX",
+        "text": " Propagate parameter change to default file uploader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370032512"
+          }
+        ]
+      },
+      {
+        "id": "195e386a13df352e7832a6a85b4d60079aee2f6b",
+        "type": "FEATURE",
+        "text": " sap.m.SuggestionsPopover: Limit the max-width of suggestions"
+      },
+      {
         "id": "deea2f0d070a135cc77e2c007dcfbf248617e986",
         "type": "FIX",
         "text": " sap.m.Link: adjust default href attribute",

@@ -3,6 +3,11 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "44066a74ddcdea6eb88f3928b25d7515a1bc1766",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Configuration: provide central calendar week numbering config"
+      },
+      {
         "id": "cb6639651d0a8c199e484aa96a0dbf13ef143361",
         "type": "FIX",
         "text": " core.Locale: Fix cross reference in the JSDoc of getExtension",
@@ -10,6 +15,17 @@
           {
             "type": "BCP",
             "reference": "2370030891"
+          }
+        ]
+      },
+      {
+        "id": "9d5a4539a46b03bcf4a5b10f54a9b5efb73ed0d7",
+        "type": "FIX",
+        "text": " sap.ui.model.SimpleType: validation messages are separated by a single dot",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380043909"
           }
         ]
       },
