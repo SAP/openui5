@@ -45,6 +45,23 @@ sap.ui.define([
 			return false;
 		},
 
+		newLineItem : function () {
+			var oDeliveryDate = UI5Date.getInstance(),
+				oType = this.getView().getModel().getMetaModel()
+					.getUI5Type("/SalesOrderList/SO_2_SOITEM/DeliveryDate");
+
+			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
+
+			return {
+				CurrencyCode : "EUR",
+				DeliveryDate : oType.getModelValue(oDeliveryDate),
+				GrossAmount : "42.0",
+				ProductID : "HT-1000",
+				Quantity : "2.000",
+				QuantityUnit : "EA"
+			};
+		},
+
 		onCancel : function () {
 			this.getView().getModel().resetChanges("UpdateGroup");
 			this.mChangedSalesOrders = {};
@@ -52,21 +69,10 @@ sap.ui.define([
 
 		onCreateLineItem : function () {
 			var oContext,
-				oDeliveryDate = UI5Date.getInstance(),
 				oListBinding = this.byId("SO_2_SOITEM").getBinding("items"),
-				bDeepCreate = oListBinding.getContext().isTransient(),
-				sPath = oListBinding.getHeaderContext().getPath() + "/DeliveryDate",
-				oType = oListBinding.getModel().getMetaModel().getUI5Type(sPath);
+				bDeepCreate = oListBinding.getContext().isTransient();
 
-			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
-			oListBinding.create({
-				CurrencyCode : "EUR",
-				DeliveryDate : oType.getModelValue(oDeliveryDate),
-				GrossAmount : "42.0",
-				ProductID : "HT-1000",
-				Quantity : "2.000",
-				QuantityUnit : "EA"
-			}, false).created().then(function () {
+			oListBinding.create(this.newLineItem(), false).created().then(function () {
 				if (!bDeepCreate) {
 					MessageToast.show("Line item created: " + oContext.getProperty("ItemPosition"));
 				}
@@ -81,7 +87,8 @@ sap.ui.define([
 		onCreateSalesOrder : function () {
 			var oContext = this.byId("SalesOrderList").getBinding("items").create({
 					BuyerID : "0100000000",
-					LifecycleStatus : "N"
+					LifecycleStatus : "N",
+					SO_2_SOITEM : [this.newLineItem()]
 				}, true),
 				that = this;
 

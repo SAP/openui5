@@ -48629,7 +48629,8 @@ sap.ui.define([
 	//
 	// Alternatively delete the created (top-level) order context (CPOUI5ODATAV4-1975)
 	// Initial data: Create 2 + 2 (CPOUI5ODATAV4-2036)
-	[false, true].forEach(function (bDelete) {
+	// Deep create during view construction via controller events (BCP: 2370038939)
+[false, true].forEach(function (bDelete) {
 	var sTitle = "CPOUI5ODATAV4-2034: Deep create, "
 			+ (bDelete ? "delete top-level context" : "reset changes");
 
@@ -48649,17 +48650,24 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {value : []});
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=99", {value : []})
+			.expectChange("order", [""])
+			.expectChange("note", ["AA", "BB"]);
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oCreatedOrderContext = that.oView.byId("orders").getBinding("items").create({
+		return this.createView(assert, sView, oModel, {
+			onInit : function () {
+				this.getView().attachModelContextChange(this.onModelContextChange, this);
+			},
+			onModelContextChange : function () {
+				oCreatedOrderContext = this.byId("orders").getBinding("items").create({
 					SO_2_SOITEM : [{Note : "AA"}, {Note : "BB"}]
-			});
-			that.oView.byId("items").setBindingContext(oCreatedOrderContext);
-
-			return that.waitForChanges(assert, "create order");
+				});
+				this.byId("items").setBindingContext(oCreatedOrderContext);
+			}
 		}).then(function () {
 			var oItemsBinding = that.oView.byId("items").getBinding("items");
+
+			that.expectChange("note", ["DD", "CC", "AA", "BB"]);
 
 			oCreatedItemContext1 = oItemsBinding.getCurrentContexts()[0];
 			oCreatedItemContext3 = oItemsBinding.create({Note : "CC"});

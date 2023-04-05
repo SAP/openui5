@@ -2948,7 +2948,7 @@ sap.ui.define([
 		).then(function (aInitialDataCollection) {
 			var sResolvedPath = that.getResolvedPath();
 
-			aInitialDataCollection.forEach(function (oInitialData, i) {
+			that.aContexts = aInitialDataCollection.map(function (oInitialData, i) {
 				var oContext,
 					sTransientPredicate
 						= _Helper.getPrivateAnnotation(oInitialData, "transientPredicate"),
@@ -2961,8 +2961,11 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oInitialData, "context", oContext);
 				_Helper.setPrivateAnnotation(oInitialData, "firstCreateAtEnd", false);
 				_Helper.deletePrivateAnnotation(oInitialData, "promise");
+
+				return oContext;
 			});
-			// The binding gets these contexts via restoreCreated later
+			that.iCreatedContexts = that.iActiveContexts = that.aContexts.length;
+			that.bFirstCreateAtEnd = false;
 		});
 
 		return true;
@@ -3618,6 +3621,9 @@ sap.ui.define([
 		var that = this;
 
 		this.withCache(function (oCache, sPath) {
+			if (that.aContexts.length) {
+				return; // already added in #prepareDeepCreate
+			}
 			oCache.getCreatedElements(sPath).forEach(function (oElement, i) {
 				that.aContexts[i] = _Helper.getPrivateAnnotation(oElement, "context");
 				that.bFirstCreateAtEnd
