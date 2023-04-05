@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/Core",
+	"sap/ui/core/ResizeHandler",
 	"sap/m/Label",
 	"sap/m/Button",
 	"sap/m/Link",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Control,
 	LabelEnablement,
 	Core,
+	ResizeHandler,
 	Label,
 	Button,
 	Link,
@@ -339,6 +341,7 @@ sap.ui.define([
 			var oForm = new Form({
 				title: "Form",
 				editable: true,
+				width: "300px",
 				layout: new ColumnLayout(),
 				formContainers: [
 					new FormContainer({
@@ -381,7 +384,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oForm = this.oForm;
 
-		setTimeout(function () {
+		ResizeHandler.register(oForm.getDomRef(), function () {
 			var oLabel1DomRef = oForm.getDomRef().querySelector("#lbl1");
 			var oLabel2DomRef = oForm.getDomRef().querySelector("#lbl2");
 
@@ -393,6 +396,9 @@ sap.ui.define([
 			assert.strictEqual(oLabel1DomRef.getAttribute("for"), oField1DomRef.getAttribute("id") + "-inner-inner", "'for' attribute is correct");
 			assert.notOk(oLabel2DomRef.getAttribute("for"), "'for' attribute is not set");
 			done();
-		}, 300);
+		});
+
+		oForm.setWidth("400px");
+		Core.applyChanges();
 	});
 });
