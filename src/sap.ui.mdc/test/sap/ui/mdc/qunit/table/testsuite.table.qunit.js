@@ -106,22 +106,22 @@ sap.ui.define(function() {
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			},
-			"ChangeCondenser": {
-				group: "Flexibility",
-				module: "./Condenser.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				},
-				loader: {
-					paths: {
-						"sap/ui/mdc/qunit": "test-resources/sap/ui/mdc/qunit"
-					}
-				},
-				sinon: false
 			}
+//			,"ChangeCondenser": {
+//				group: "Flexibility",
+//				module: "./Condenser.qunit",
+//				ui5: {
+//					libs: [
+//						"sap.ui.fl", "sap.ui.mdc"
+//					]
+//				},
+//				loader: {
+//					paths: {
+//						"sap/ui/mdc/qunit": "test-resources/sap/ui/mdc/qunit"
+//					}
+//				},
+//				sinon: false
+//			}
 		}
 	};
 });

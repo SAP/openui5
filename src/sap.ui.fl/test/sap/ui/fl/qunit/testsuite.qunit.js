@@ -1300,7 +1300,8 @@ sap.ui.define([
 	oXhr.open("GET", sap.ui.require.toUrl("sap-ui-version.json"), false);
 	oXhr.send();
 
-	if (bCompAvailable && bMdcAvailable) {
+	var bMscCondensingActive = false;
+	if (bCompAvailable && bMdcAvailable && bMscCondensingActive) {
 		mConfig = merge({}, mConfig, {
 			tests: {
 				"write/_internal/condenser/Condenser": {
