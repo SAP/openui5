@@ -1459,9 +1459,13 @@ sap.ui.define([
 	/**
 	 * Recursively updates all dependent bindings after a create.
 	 *
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @param {boolean} bSkipRefresh
+	 *   Whether the application wants to skip the automatic refresh
+	 * @param {string} sGroupId
+	 *   The group ID for missing properties requests
+	 * @returns {sap.ui.base.SyncPromise|undefined}
 	 *   A promise that resolves when the update is finished and rejects with an error if something
-	 *   went wrong.
+	 *   went wrong; or <code>undefined</code> if there is no need to wait
 	 *
 	 * @abstract
 	 * @function

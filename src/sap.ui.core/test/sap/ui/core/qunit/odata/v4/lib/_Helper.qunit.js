@@ -1521,7 +1521,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected: $transient", function (assert) {
+	QUnit.test("updateSelected: $postBodyCollection", function (assert) {
 		var oNewValue = {
 				transient : [{foo : "new"}],
 				upcoming : []
@@ -1531,7 +1531,7 @@ sap.ui.define([
 				upcoming : null
 			};
 
-		oOldValue.transient.$transient = true;
+		oOldValue.transient.$postBodyCollection = true;
 		this.mock(_Helper).expects("fireChange").never();
 
 		// code under test
@@ -5096,5 +5096,97 @@ sap.ui.define([
 		oPromise.catch(function (oError) {
 			assert.strictEqual(oError, "~oError~");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isMissingProperty", function (assert) {
+		var oEntity = {
+				collection : [{
+					simple : true,
+					nested1 : {
+						simple : true,
+						nested3 : null
+					},
+					nested2 : null
+				}, {
+					simple : true,
+					nested1 : null,
+					nested2 : {
+						simple : true
+					}
+				}, {
+					simple : true,
+					nested1 : {
+						simple : true,
+						nested3 : {
+							simple : true
+						}
+					},
+					nested2 : null
+				}],
+				nested : {
+					simple : true
+				},
+				empty : [],
+				nulled : null,
+				simple : true
+			};
+
+		function test(vValue, sPath, bExpected) {
+			assert.strictEqual(_Helper.isMissingProperty(vValue, sPath), bExpected, sPath);
+		}
+
+		test(oEntity, "missing", true);
+		test(oEntity, "simple", false);
+		test(oEntity, "nested", false);
+		test(oEntity, "nested/missing", true);
+		test(oEntity, "nested/simple", false);
+		test(oEntity, "nulled", false);
+		test(oEntity, "missing/missing/missing", true);
+		test(oEntity, "collection", false);
+		test(oEntity, "collection/missing", true);
+		test(oEntity, "collection/simple", false);
+		test(oEntity, "collection/nested1/missing", true);
+		test(oEntity, "collection/nested1/simple", false);
+		test(oEntity, "collection/nested2/missing", true);
+		test(oEntity, "collection/nested2/simple", false);
+		test(oEntity, "collection/nested1/nested3/missing", true);
+		test(oEntity, "collection/nested1/nested3/simple", false);
+		test(oEntity, "empty", false);
+		test(oEntity, "empty/simple", false);
+		test(oEntity.collection, "missing", true);
+		test(oEntity.collection, "simple", false);
+		test(oEntity.collection, "nested1/missing", true);
+		test(oEntity.collection, "nested1/simple", false);
+		test(oEntity.collection, "nested2/missing", true);
+		test(oEntity.collection, "nested2/simple", false);
+		test(oEntity.collection, "nested1/nested3/missing", true);
+		test(oEntity.collection, "nested1/nested3/simple", false);
+
+		assert.throws(function () {
+			_Helper.isMissingProperty(oEntity, "nested/*");
+		}, new Error("Unsupported property path nested/*"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMissingPropertyPaths", function (assert) {
+		var oHelperMock = this.mock(_Helper),
+			mQueryOptions = {
+				$select : ["p1", "p2", "p3"],
+				$expand : {np1 : true, np2 : true, np3 : true}
+			};
+
+		oHelperMock.expects("isMissingProperty").withExactArgs("~value~", "p1").returns(false);
+		oHelperMock.expects("isMissingProperty").withExactArgs("~value~", "p2").returns(true);
+		oHelperMock.expects("isMissingProperty").withExactArgs("~value~", "p3").returns(false);
+		oHelperMock.expects("isMissingProperty").withExactArgs("~value~", "np1").returns(false);
+		oHelperMock.expects("isMissingProperty").withExactArgs("~value~", "np2").returns(true);
+		oHelperMock.expects("isMissingProperty").withExactArgs("~value~", "np3").returns(false);
+
+		// code under test
+		assert.deepEqual(_Helper.getMissingPropertyPaths("~value~", mQueryOptions), ["p2", "np2"]);
+
+		// code under test
+		assert.deepEqual(_Helper.getMissingPropertyPaths("~value~", {}), []);
 	});
 });

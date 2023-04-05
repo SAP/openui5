@@ -48079,6 +48079,7 @@ sap.ui.define([
 	// Forbidden methods (CPOUI5ODATAV4-2035)
 	// The response has fewer nested entities in different order (CPOUI5ODATAV4-2079)
 	// Nested entities via initial data and via #create (CPOUI5ODATAV4-2036)
+	// Optimize the refresh after create w/o bSkipRefresh (CPOUI5ODATAV4-2048)
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-1973: Deep create, nested ODLB w/o cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -48217,31 +48218,9 @@ sap.ui.define([
 						SalesOrderID : "new"
 					}]
 				})
+				// optimized refresh: even w/o bSkipRefresh nothing is requested
 				.expectChange("order", ["new"])
 				.expectChange("note", ["AAA", "CCC", "BBB"]);
-			if (!bSkipRefresh) {
-				that.expectRequest("SalesOrderList('new')?$select=SalesOrderID"
-					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
-					"@odata.etag" : "etag",
-					SalesOrderID : "new",
-					SO_2_SOITEM : [{
-						"@odata.etag" : "etag10",
-						ItemPosition : "0010",
-						Note : "AAA",
-						SalesOrderID : "new"
-					}, {
-						"@odata.etag" : "etag20",
-						ItemPosition : "0020",
-						Note : "CCC",
-						SalesOrderID : "new"
-					}, {
-						"@odata.etag" : "etag30",
-						ItemPosition : "0030",
-						Note : "BBB",
-						SalesOrderID : "new"
-					}]
-				});
-			}
 
 			return Promise.all([
 				oModel.submitBatch("update"),
@@ -48305,8 +48284,14 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2033
 	//
 	// POST first fails, then is repeated (CPOUI5ODATAV4-2034)
-	// Create an addtional item and delete it before submitting (CPOUI5ODATAV4-1975)
+	// Create an additional item and delete it before submitting (CPOUI5ODATAV4-1975)
 	// The response is reordered and contains an additional item (CPOUI5ODATAV4-2079)
+	//
+	// Optimize the refresh after create w/o bSkipRefresh. For this purpose the order has a $expand
+	// to the BusinessPartner plus CurrencyCode in $select which is not delivered by the POST
+	// response, and the item a $expand to the Product. Also check that the
+	// @$ui5.context.isTransient annotation fires all change events.
+	// CPOUI5ODATAV4-2048
 [false, true].forEach(function (bSkipRefresh) {
 	var sTitle = "CPOUI5ODATAV4-2033: Deep create, nested ODLB w/ own cache, bSkipRefresh="
 			+ bSkipRefresh;
@@ -48324,6 +48309,7 @@ sap.ui.define([
 			sView = '\
 <Text id="orderCount" text="{$count}"/>\
 <Table id="orders" items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
+	<Text id="isTransient" text="{= %{@$ui5.context.isTransient}}"/>\
 	<Text id="order" text="{SalesOrderID}"/>\
 </Table>\
 <Text id="itemCount" text="{$count}"/>\
@@ -48332,6 +48318,7 @@ sap.ui.define([
 	<Text id="currency" text="{CurrencyCode}"/>\
 	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$count : true}}">\
 		<Input id="note" value="{Note}"/>\
+		<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -48341,14 +48328,17 @@ sap.ui.define([
 				value : [{SalesOrderID : "1"}]
 			})
 			.expectChange("orderCount")
+			.expectChange("isTransient", [undefined])
 			.expectChange("order", ["1"])
 			.expectChange("itemCount")
 			.expectChange("bp")
 			.expectChange("currency")
-			.expectChange("note", []);
+			.expectChange("note", [])
+			.expectChange("product", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("order", ["", "1"])
+			that.expectChange("isTransient", [true, undefined])
+				.expectChange("order", ["", "1"])
 				.expectChange("bp", null)
 				.expectChange("currency", "EUR") // default value
 				.expectChange("orderCount", "2")
@@ -48367,6 +48357,7 @@ sap.ui.define([
 			return that.waitForChanges(assert, "create order");
 		}).then(function () {
 			that.expectChange("note", ["AA", "noSubmit", "B"])
+				.expectChange("product", [null, null, null])
 				.expectChange("itemCount", "1")
 				.expectChange("itemCount", "2")
 				.expectChange("itemCount", "3");
@@ -48437,7 +48428,6 @@ sap.ui.define([
 					}
 				}, {
 					"@odata.etag" : "etag",
-					CurrencyCode : "USD",
 					SalesOrderID : "new",
 					SO_2_SOITEM : [{
 						"@odata.etag" : "etag10",
@@ -48459,60 +48449,118 @@ sap.ui.define([
 						SalesOrderID : "new"
 					}]
 				})
+				.expectChange("isTransient", [false])
 				.expectChange("order", ["new"])
-				.expectChange("note", ["BBB", "additional", "AAA"]);
-			if (bSkipRefresh) { // late property request
-				that.expectRequest("SalesOrderList('new')?$select=SO_2_BP"
-						+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
-						"@odata.etag" : "etag",
-						SO_2_BP : {BusinessPartnerID : "BP"}
-					});
-			} else { // refresh after POST
-				that.expectRequest("SalesOrderList('new')?$select=SalesOrderID", {
-						"@odata.etag" : "etag",
-						SalesOrderID : "new"
+				.expectChange("note", ["BBB", "additional", "AAA"])
+				// late property request
+				.expectRequest("SalesOrderList('new')?$select=CurrencyCode"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
+					"@odata.etag" : "etag",
+					CurrencyCode : "USD",
+					SO_2_BP : {
+						"@odata.etag" : "etag.bp",
+						BusinessPartnerID : "BP"
+					}
+				});
+			if (bSkipRefresh) { // multiple requests, one for each nested entity!
+				that.expectRequest("SalesOrderList('new')"
+						+ "/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')"
+						+ "?$select=SOITEM_2_PRODUCT"
+						+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)", {
+						"@odata.etag" : "etag10",
+						ItemPosition : "0010",
+						SalesOrderID : "new",
+						SOITEM_2_PRODUCT : {
+							"@odata.etag" : "etag.p1",
+							ProductID : "P1",
+							Name : "Product 1"
+						}
 					})
-					.expectRequest("SalesOrderList('new')/SO_2_SOITEM?$count=true"
-						+ "&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
-						"@odata.count" : "3",
+					.expectRequest("SalesOrderList('new')"
+						+ "/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')"
+						+ "?$select=SOITEM_2_PRODUCT"
+						+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)", {
+						"@odata.etag" : "etag20",
+						ItemPosition : "0020",
+						SalesOrderID : "new",
+						SOITEM_2_PRODUCT : {
+							"@odata.etag" : "etag.p2",
+							ProductID : "P2",
+							Name : "Product 2"
+						}
+					})
+					.expectRequest("SalesOrderList('new')"
+						+ "/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0030')"
+						+ "?$select=SOITEM_2_PRODUCT"
+						+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)", {
+						"@odata.etag" : "etag30",
+						ItemPosition : "0030",
+						SalesOrderID : "new",
+						SOITEM_2_PRODUCT : {
+							"@odata.etag" : "etag.p3",
+							ProductID : "P3",
+							Name : "Product 3"
+						}
+					});
+			} else { // one single optimized request for all nested entities
+				that.expectRequest("SalesOrderList('new')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,SalesOrderID"
+						+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)"
+						+ "&$filter=SalesOrderID eq 'new' and ItemPosition eq '0010'"
+						+ " or SalesOrderID eq 'new' and ItemPosition eq '0020'"
+						+ " or SalesOrderID eq 'new' and ItemPosition eq '0030'&"
+						+ "$top=3", {
 						value : [{
 							"@odata.etag" : "etag10",
 							ItemPosition : "0010",
-							Note : "BBB",
-							SalesOrderID : "new"
+							SalesOrderID : "new",
+							SOITEM_2_PRODUCT : {
+								"@odata.etag" : "etag.p1",
+								ProductID : "P1",
+								Name : "Product 1"
+							}
 						}, {
 							"@odata.etag" : "etag20",
 							ItemPosition : "0020",
-							Note : "additional",
-							SalesOrderID : "new"
+							SalesOrderID : "new",
+							SOITEM_2_PRODUCT : {
+								"@odata.etag" : "etag.p2",
+								ProductID : "P2",
+								Name : "Product 2"
+							}
 						}, {
 							"@odata.etag" : "etag30",
 							ItemPosition : "0030",
-							Note : "AAA",
-							SalesOrderID : "new"
+							SalesOrderID : "new",
+							SOITEM_2_PRODUCT : {
+								"@odata.etag" : "etag.p3",
+								ProductID : "P3",
+								Name : "Product 3"
+							}
 						}]
-					})
-					// late property request
-					.expectRequest("SalesOrderList('new')?$select=CurrencyCode"
-						+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
-						"@odata.etag" : "etag",
-						CurrencyCode : "USD",
-						SO_2_BP : {BusinessPartnerID : "BP"}
 					});
 			}
-			that.expectChange("itemCount", "3")
+			that.expectChange("itemCount", "3") // because there are 3 elements in the POST response
 				.expectChange("bp", "BP")
-				.expectChange("currency", "USD");
+				.expectChange("currency", "USD")
+				.expectChange("product", ["Product 1", "Product 2", "Product 3"]);
 
 			return Promise.all([
 				oModel.submitBatch("update"),
-				oCreatedOrderContext.created(),
+				oCreatedOrderContext.created().then(function () {
+					assert.strictEqual(
+						oCreatedOrderContext.getValue("SO_2_BP/BusinessPartnerID"),
+						undefined,
+						"$expand request still pending");
+				}),
 				oCreatedItemContext2.created(),
 				that.waitForChanges(assert, "submit -> success")
 			]);
 		}).then(function () {
 			var aContexts = oItemsBinding.getAllCurrentContexts();
 
+			assert.strictEqual(oCreatedOrderContext.getValue("@$ui5.context.isTransient"), false);
+			assert.strictEqual(oCreatedOrderContext.getValue("SO_2_BP/BusinessPartnerID"), "BP");
 			assert.deepEqual(aContexts.map(getPath), [
 				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')",
 				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')",
@@ -48522,17 +48570,32 @@ sap.ui.define([
 				"@odata.etag" : "etag10",
 				ItemPosition : "0010",
 				Note : "BBB",
-				SalesOrderID : "new"
+				SalesOrderID : "new",
+				SOITEM_2_PRODUCT : {
+					"@odata.etag" : "etag.p1",
+					ProductID : "P1",
+					Name : "Product 1"
+				}
 			}, {
 				"@odata.etag" : "etag20",
 				ItemPosition : "0020",
 				Note : "additional",
-				SalesOrderID : "new"
+				SalesOrderID : "new",
+				SOITEM_2_PRODUCT : {
+					"@odata.etag" : "etag.p2",
+					ProductID : "P2",
+					Name : "Product 2"
+				}
 			}, {
 				"@odata.etag" : "etag30",
 				ItemPosition : "0030",
 				Note : "AAA",
-				SalesOrderID : "new"
+				SalesOrderID : "new",
+				SOITEM_2_PRODUCT : {
+					"@odata.etag" : "etag.p3",
+					ProductID : "P3",
+					Name : "Product 3"
+				}
 			}]);
 
 			that.expectChange("note", [, "BBBB"])

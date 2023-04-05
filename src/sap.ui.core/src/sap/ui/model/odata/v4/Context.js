@@ -1976,16 +1976,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Recursively updates all dependent bindings after a create. Does not wait, but reports an
-	 * error if something went wrong.
+	 * Recursively updates all dependent bindings of a created context immediately after it has been
+	 * persisted. Reports an error if the update fails.
+	 *
+	 * @param {boolean} bSkipRefresh
+	 *   Whether the application wants to skip the automatic refresh
+	 * @param {string} sGroupId
+	 *   The group ID for missing properties requests
 	 *
 	 * @private
 	 * @see sap.ui.model.odata.v4.ODataListBinding#create
 	 */
-	Context.prototype.updateAfterCreate = function () {
-		SyncPromise.all(this.oModel.getDependentBindings(this).map(function (oDependentBinding) {
-			return oDependentBinding.updateAfterCreate();
-		})).catch(this.oModel.getReporter());
+	Context.prototype.updateAfterCreate = function (bSkipRefresh, sGroupId) {
+		SyncPromise.all(
+			this.oModel.getDependentBindings(this).map(function (oDependentBinding) {
+				return oDependentBinding.updateAfterCreate(bSkipRefresh, sGroupId);
+			})
+		).catch(this.oModel.getReporter());
 	};
 
 	/**
