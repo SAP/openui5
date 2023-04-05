@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/base/util/deepEqual',
 	'./Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/base/strings/escapeRegExp'
+	'sap/base/strings/escapeRegExp',
+	"sap/ui/mdc/enum/OperatorOverwrite"
 ], function(
 		BaseObject,
 		Filter,
@@ -24,7 +25,8 @@ sap.ui.define([
 		deepEqual,
 		Condition,
 		ConditionValidated,
-		escapeRegExp
+		escapeRegExp,
+		OperatorOverwrite
 	) {
 		"use strict";
 
@@ -110,6 +112,8 @@ sap.ui.define([
 					throw new Error("Operator configuration for " + oConfiguration.name + " needs a default filter operator from sap.ui.model.FilterOperator or the function getModelFilter");
 				}
 
+				this._enableOverwrites(oConfiguration);
+
 				// map given properties
 				// TODO: for compatibility reasons just put to this.name... but is a API getName better at the end?
 				this.name = oConfiguration.name;
@@ -169,33 +173,6 @@ sap.ui.define([
 					}
 				}
 
-				if (oConfiguration.format) {
-					this.format = oConfiguration.format;
-				}
-				if (oConfiguration.parse) {
-					this.parse = oConfiguration.parse;
-				}
-				if (oConfiguration.validate) {
-					this.validate = oConfiguration.validate;
-				}
-				if (oConfiguration.getModelFilter) {
-					this.getModelFilter = oConfiguration.getModelFilter;
-				}
-				if (oConfiguration.isEmpty) {
-					this.isEmpty = oConfiguration.isEmpty;
-				}
-				if (oConfiguration.createControl) {
-					this.createControl = oConfiguration.createControl; // TODO move default implementation from DefineConditionPanel to here
-				}
-				if (oConfiguration.getCheckValue) {
-					this.getCheckValue = oConfiguration.getCheckValue;
-				}
-				if (oConfiguration.getValues) {
-					this.getValues = oConfiguration.getValues;
-				}
-				if (oConfiguration.checkValidated) {
-					this.checkValidated = oConfiguration.checkValidated;
-				}
 				if (oConfiguration.additionalInfo !== undefined) {
 					this.additionalInfo = oConfiguration.additionalInfo;
 				}
@@ -211,6 +188,10 @@ sap.ui.define([
 						this.group.text = oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP" + this.group.id);
 					}
 				}
+			},
+			destroy: function () {
+				this._oMethodOverwrites = null;
+				BaseObject.protoype.destroy.apply(this, arguments);
 			}
 		});
 
@@ -267,25 +248,35 @@ sap.ui.define([
 
 		}
 
-		// TODO: better API to get longtext (is it really type dependent?)
 		/**
-		 * Gets the text for an operator name.
+		 * Gets the long text for an operator.
 		 *
-		 * @param {string} sKey Text key
-		 * @param {string} sType Name of type
+ 		 * This function can be overwritten see <code>overwrite("getLongText", ...)</code>
+		 *
+ 		 * @param {sap.ui.mdc.enum.BaseType} sBaseType Basic type
 		 * @returns {string} text
 		 *
 		 * @private
+		 * @since 1.113
 		 * @ui5-restricted sap.ui.mdc.field.DefineConditionPanel
 		 */
-		Operator.prototype.getTypeText = function(sKey, sType) { // for DefineConditionPanel Select items
+		Operator.prototype.getLongText = function(sBaseType) {
+			var sTxtKey = this.textKey || "operators." + this.name + ".longText";
+			var sLongText = _getText(sTxtKey, sBaseType.toLowerCase());
 
-			return _getText(sKey, sType);
+			if (sLongText === sTxtKey) {
+				// when the returned text is the key, a type dependent longText does not exist and we use the default (custom) longText for the operator
+				sLongText = this.longText;
+			}
+
+			return sLongText;
 
 		};
 
 		/**
 		 * Creates a filter object for a condition.
+		 *
+		 * This function can be overwritten see <code>overwrite("getModelFilter", ...)</code>
 		 *
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 		 * @param {string} sFieldPath Path of filter
@@ -347,6 +338,7 @@ sap.ui.define([
 			return oFilter;
 
 		};
+
 
 		/**
 		 * Checks if a condition is empty.
@@ -888,6 +880,41 @@ sap.ui.define([
 
 			oCondition.validated = ConditionValidated.NotValidated;
 
+		};
+
+		Operator.prototype._enableOverwrites = function (oConfiguration) {
+			this._oMethodOverwrites = {};
+			["format", "parse", "validate", "getModelFilter", "isEmpty", "createControl", "getCheckValue", "getValues", "checkValidated", "getLongText"].forEach(function (sMethodName) {
+				Object.defineProperty(this, sMethodName, {
+					get: function( ) {
+						return (this._oMethodOverwrites && this._oMethodOverwrites[sMethodName]) || Object.getPrototypeOf(this)[sMethodName];
+					}
+				});
+				if (oConfiguration && oConfiguration[sMethodName]) {
+					this._oMethodOverwrites[sMethodName] = oConfiguration[sMethodName];
+				}
+			}.bind(this));
+		};
+
+		var aAllowedOverwrites = Object.values(OperatorOverwrite);
+		/**
+		 * Sets an overwrite function for some of the <code>operator</code> functions.
+		 *
+		 * @param {sap.ui.mdc.enum.OperatorOverwrite} sMethodName name of the function which will be overwritten
+		 * @param {function} fnOverwrite new callback function
+		 * @returns {function} the original function
+		 * @private
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
+		 * @since: 1.113.0
+		 */
+		Operator.prototype.overwrite = function (sMethodName, fnOverwrite) {
+			if (aAllowedOverwrites.indexOf(sMethodName) >= 0) {
+				var fnPrevious = this[sMethodName];
+				this._oMethodOverwrites[sMethodName] = fnOverwrite;
+				return fnPrevious.bind(this);
+			}
+			throw "Operator: Illegal overwrite detected. Please see sap.ui.mdc.enum.OperatorOverwrite";
 		};
 
 		return Operator;

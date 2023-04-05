@@ -149,7 +149,8 @@ sap.ui.define([
 		OperatorDynamicDateOption.prototype.getText = function(oControl) {
 
 			var oOperator = this.getOperator();
-			return oOperator.longText;
+			var sBaseType = this.getBaseType();
+			return oOperator.getLongText(sBaseType);
 
 		};
 

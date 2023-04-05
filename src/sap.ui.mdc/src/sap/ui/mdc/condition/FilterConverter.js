@@ -75,7 +75,7 @@ function(
 			 *
 			 * @param {object} oConditions map of {@link sap.ui.mdc.condition.ConditionObject conditions}
 			 * @param {object} oConditionTypes map containing the types of the condition. Will be used to convert the values of a condition.
-			 * @param {function} [fConvert2FilterCallback] callback function
+			 * @param {function} [fConvert2FilterCallback] deprecated (since 1.113) and not called anymore.
 			 * @param {boolean} [bCaseSensitive] If <code>true</code>, the filtering for search strings is case-sensitive
 			 * @returns {sap.ui.model.Filter} Filter object for filtering a {@link sap.ui.model.ListBinding ListBinding}
 			 *
@@ -172,13 +172,6 @@ function(
 							continue;
 						}
 
-						if (fConvert2FilterCallback) {
-							oFilter = fConvert2FilterCallback(oCondition, sFieldPath, oDataType, oFilter);
-							if (!oFilter) {
-								continue;
-							}
-						}
-
 						if (!oOperator.exclude) {
 
 							if (oFilter.sPath === "$search") {
@@ -211,12 +204,6 @@ function(
 							aLocalExcludeFilters.push(oFilter);
 						}
 					}
-
-					// if (fHandleFiltersOfSameFieldPathCallback) {
-					// 	if (!fHandleFiltersOfSameFieldPathCallback(aLocalIncludeFilters, aLocalExcludeFilters, aOverallFilters) {
-					// 		continue;
-					// 	}
-					// }
 
 					// take the single Filter or combine all with OR
 					oFilter = undefined;
@@ -252,13 +239,6 @@ function(
 					}
 
 				}
-
-				// if (fHandleAllFiltersCallback) {
-				// 	var oFilter = fHandleAllFiltersCallback(aOverallFilters);
-				// 	if (oFilter) {
-				// 		return oFilter;
-				// 	}
-				// }
 
 				// AND-combine filters for different properties and apply filters
 				if (aOverallFilters.length === 1) {
