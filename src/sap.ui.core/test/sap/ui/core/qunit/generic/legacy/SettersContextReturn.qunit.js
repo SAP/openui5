@@ -46,6 +46,8 @@ sap.ui.define([
 			elements: {
 				"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover": NOT_A_MODULE, // not a module of its own
 				"sap.m.internal.NumericInput": NOT_A_MODULE, // not a module of its own
+				"sap.m.internal.ObjectMarkerCustomLink": NOT_A_MODULE, // not a module of its own
+				"sap.m.internal.ObjectMarkerCustomText": NOT_A_MODULE, // not a module of its own
 				"sap.m.TablePopin": NOT_A_MODULE,  // not a module of its own,
 				"sap.m.PlanningCalendarHeader": {exclude:["actions"]}, // implementation of 'actions' is broken
 				"sap.m.SinglePlanningCalendar": NO_DESTROY
