@@ -29,6 +29,10 @@ sap.ui.define([
 		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal);
 	}
 
+	MockServer.config({
+		autoRespondAfter: 100
+	});
+
 	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
 		var iCalled = 0;
 		var fnEventHandler = function() {
@@ -46,11 +50,7 @@ sap.ui.define([
 	}
 
 	function attachRowsUpdatedOnce(oControl, fnHandler, that) {
-		var fnEventHandler = function() {
-			Promise.resolve().then(fnHandler.bind(this));
-		};
-
-		oControl.attachEventOnce("rowsUpdated", fnEventHandler, that);
+		oControl.attachEventOnce("rowsUpdated", fnHandler, that);
 	}
 
 	function createTable(mSettings) {
@@ -121,7 +121,7 @@ sap.ui.define([
 		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 	});
 
-	QUnit.skip("Expand and Collapse", function(assert) {
+	QUnit.test("Expand and Collapse", function(assert) {
 		var done = assert.async();
 		this.oTable = createTable.call(this, {
 			rootLevel: 1,
@@ -322,6 +322,10 @@ sap.ui.define([
 		var oBinding;
 
 		var fnHandler1 = function() {
+			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
+		};
+
+		var fnHandler2 = function() {
 			oBinding = this.oTable.getBinding();
 			// test some defaults
 			assert.equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels is 1");
@@ -350,8 +354,9 @@ sap.ui.define([
 			assert.equal(this.oTable.getContextByIndex(1).getProperty("HierarchyNode"), "000002", "First child of Root Node is 000002");
 			assert.equal(this.oTable.getContextByIndex(9).getProperty("HierarchyNode"), "001180", "Last child of Root Node is 001180");
 
-			done();
+			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
 
+			done();
 		};
 
 		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
@@ -399,6 +404,10 @@ sap.ui.define([
 		var done = assert.async();
 		this.oTable = createTable.call(this, {rootLevel: 1, expandFirstLevel: true, visibleRowCount: 15});
 		var oBinding;
+
+		var fnHandler0 = function() {
+			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+		};
 
 		var fnHandler1 = function() {
 
@@ -513,13 +522,17 @@ sap.ui.define([
 			done();
 		};
 
-		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+		attachRowsUpdatedOnce(this.oTable, fnHandler0, this);
 		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 	});
 
 	QUnit.test("SelectAll with scrolling and paging", function(assert) {
 		var done = assert.async();
 		this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel: true});
+
+		var fnHandler0 = function() {
+			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+		};
 
 		var fnHandler1 = function() {
 			this.oTable.selectAll();
@@ -543,7 +556,7 @@ sap.ui.define([
 			this.oTable.setFirstVisibleRow(i);
 		};
 
-		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+		attachRowsUpdatedOnce(this.oTable, fnHandler0, this);
 		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 	});
 
