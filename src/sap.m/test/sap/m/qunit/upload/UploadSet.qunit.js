@@ -808,6 +808,7 @@ sap.ui.define([
 				fileTypes:"txt,doc,png",
 				mediaTypes:"text/plain,application/msword,image/jpeg,image/png",
 				maxFileNameLength: 50,
+				maxFileSize: 5,
 				items: {
 					path: "/items",
 					template: TestUtils.createItemTemplate(),
@@ -861,7 +862,7 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	QUnit.test("Test for invalid file type, media type files upload attempt", function(assert) {
+	QUnit.test("Test for invalid media type, files upload attempt", function(assert) {
 		//arrange
 		var oFileUploader = this.oUploadSet.getDefaultFileUploader();
 		var oFileList = { // Files with webKitrelative path to simulate directory and sub directories
@@ -900,9 +901,124 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("item"), "mismatch item is present");
 
 			var oItem = oEvent.getParameter("item");
-			if (oItem) {
-				assert.equal(oItem.getMetadata().getName(), "sap.m.upload.UploadSetItem", "mismatched UploadSetItem received");
+			assert.equal(oItem.getFileName(), "Sample File 5.pdf", "mismatched UploadSetItem received");
+			done();
+		});
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
 			}
+		});
+	});
+
+	QUnit.test("Test for invalid media type, change Upload mediaTypes value and make upload attempt", function(assert) {
+		//arrange
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader();
+		var oFileList = {
+			0: {
+				name: "Sample File 1.txt",
+				size: 1,
+				type: "type1"
+			},
+			1: {
+				name: "Sample File 2.txt",
+				size: 1,
+				type: "type2"
+			},
+			2: {
+				name: "Sample File 3.txt",
+				size: 1,
+				type: "unknown-type"
+			},
+			length: 5
+		};
+		this.oUploadSet.setMediaTypes(["type1", "type2"]);
+
+		var done = assert.async();
+
+		this.oUploadSet.attachEventOnce("mediaTypeMismatch",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "mismatch item is present");
+
+			var oItem = oEvent.getParameter("item");
+			assert.equal(oItem.getFileName(), "Sample File 3.txt", "mismatched UploadSetItem received");
+			done();
+		});
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
+			}
+		});
+	});
+
+	QUnit.test("Test for invalid file type, files upload attempt", function(assert) {
+		//arrange
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader();
+		var oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			1: {
+				name: "Sample File 2.pdf",
+				size: 1,
+				type: "application/pdf"
+			},
+			length: 2
+		};
+		this.oUploadSet.setMediaTypes([]);
+
+		var done = assert.async();
+
+		this.oUploadSet.attachEventOnce("fileTypeMismatch",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "mismatch item is present");
+
+			var oItem = oEvent.getParameter("item");
+			assert.equal(oItem.getFileName(), "Sample File 2.pdf", "mismatched UploadSetItem received");
+			done();
+		});
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
+			}
+		});
+	});
+
+	QUnit.test("Test for invalid file type, change Upload set fileTypes value and make upload attempt", function(assert) {
+		//arrange
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader();
+		var oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1.xxx",
+				size: 1,
+				type: "text/plain"
+			},
+			1: {
+				name: "Sample File 2.yyy",
+				size: 1,
+				type: "application/pdf"
+			},
+			length: 2
+		};
+		this.oUploadSet.setMediaTypes([]);
+		this.oUploadSet.setFileTypes(["xxx"]);
+
+		var done = assert.async();
+
+		this.oUploadSet.attachEventOnce("fileTypeMismatch",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "mismatch item is present");
+
+			var oItem = oEvent.getParameter("item");
+			assert.equal(oItem.getFileName(), "Sample File 2.yyy", "mismatched UploadSetItem received");
 			done();
 		});
 
@@ -936,7 +1052,7 @@ sap.ui.define([
 			},
 			length: 3
 		};
-
+		assert.equal(this.oUploadSet.getMaxFileNameLength(), 50, "upload set file name maximum length is ok");
 		var done = assert.async();
 
 		this.oUploadSet.attachEventOnce("fileNameLengthExceeded",function(oEvent){
@@ -978,7 +1094,9 @@ sap.ui.define([
 			},
 			length: 3
 		};
+		assert.equal(this.oUploadSet.getMaxFileNameLength(), 50, "upload set file name maximum length is ok");
 		this.oUploadSet.setMaxFileNameLength(20);
+		assert.equal(this.oUploadSet.getMaxFileNameLength(), 20, "upload set file name maximum length changed");
 
 		var done = assert.async();
 
@@ -988,6 +1106,80 @@ sap.ui.define([
 
 			var oItem = oEvent.getParameter("item");
 			assert.equal(oItem.getParameter("fileName"), sLongFileName, "event contain correct invalid file name");
+			done();
+		});
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
+			}
+		});
+	});
+
+	QUnit.test("Test for file maximum size, upload attempt", function(assert) {
+		//arrange
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader(),
+			oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			1: {
+				name: "Sample File 2.txt",
+				size: 6 * 1024 * 1024,
+				type: "text/plain"
+			},
+			length: 2
+		};
+		assert.equal(this.oUploadSet.getMaxFileSize(), 5, "upload set file maximum size is ok");
+		var done = assert.async();
+
+		this.oUploadSet.attachEventOnce("fileSizeExceeded",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "item is present");
+
+			var oItem = oEvent.getParameter("item");
+			assert.equal(oItem.getParameter("fileName"), "Sample File 2.txt", "event contain correct invalid file name");
+			done();
+		});
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
+			}
+		});
+	});
+
+	QUnit.test("Test for file maximum size, change Upload set maxFileSize value and make upload attempt", function(assert) {
+		//arrange
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader(),
+			oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			1: {
+				name: "Sample File 2.txt",
+				size: 4 * 1024 * 1024,
+				type: "text/plain"
+			},
+			length: 2
+		};
+		assert.equal(this.oUploadSet.getMaxFileSize(), 5, "upload set file maximum size is ok");
+		this.oUploadSet.setMaxFileSize(3);
+		assert.equal(this.oUploadSet.getMaxFileSize(), 3, "upload set file maximum size have changed");
+		var done = assert.async();
+
+		this.oUploadSet.attachEventOnce("fileSizeExceeded",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "item is present");
+
+			var oItem = oEvent.getParameter("item");
+			assert.equal(oItem.getParameter("fileName"), "Sample File 2.txt", "event contain correct invalid file name");
 			done();
 		});
 

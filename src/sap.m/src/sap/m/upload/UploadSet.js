@@ -803,6 +803,7 @@ sap.ui.define([
 		});
 		if (!deepEqual(this.getFileTypes(), aTypes)) {
 			this.setProperty("fileTypes", aTypes, true);
+			this.getDefaultFileUploader().setFileType(aTypes);
 			this._checkRestrictions();
 		}
 		return this;
@@ -820,6 +821,7 @@ sap.ui.define([
 	UploadSet.prototype.setMaxFileSize = function (iNewMax) {
 		if (this.getMaxFileSize() !== iNewMax) {
 			this.setProperty("maxFileSize", iNewMax, true);
+			this.getDefaultFileUploader().setMaximumFileSize(iNewMax);
 			this._checkRestrictions();
 		}
 		return this;
@@ -835,6 +837,7 @@ sap.ui.define([
 		});
 		if (!deepEqual(this.getMediaTypes(), aTypes)) {
 			this.setProperty("mediaTypes", aTypes, true);
+			this.getDefaultFileUploader().setMimeType(aTypes);
 			this._checkRestrictions();
 		}
 		return this;
@@ -1174,6 +1177,7 @@ sap.ui.define([
 				fileType: this.getFileTypes(),
 				mimeType: this.getMediaTypes(),
 				maximumFilenameLength: this.getMaxFileNameLength(),
+				maximumFileSize: this.getMaxFileSize(),
 				icon: "",
 				iconFirst: false,
 				multiple: this.getDirectory() ? false : this.getMultiple(),
