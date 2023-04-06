@@ -18,7 +18,6 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
-
 		// TODO: increase the timeout timer from 15 (default) to 45 seconds
 		// to see whether it influences the success rate of the first test on
 		// the build infrastructure.
@@ -27,34 +26,7 @@ sap.ui.define([
 		// You might want to remove this timeout timer after the underlying
 		// service has been optimized or if the timeout timer increase does
 		// not have any effect on the success rate of the tests.
-		timeout: 45,
-
-		arrangements: {
-			iStartMyUIComponentInViewMode: function() {
-
-				// In some cases when a test fails in a success function,
-				// the UI component is not properly teardown.
-				// As a side effect, all the following tests in the stack
-				// fails when the UI component is started, as only one UI
-				// component can be started at a time.
-				// Teardown the UI component to ensure it is not started
-				// twice without a teardown, which results in less false
-				// positives and more reliable reporting.
-				if (this.hasUIComponentStarted()) {
-					this.iTeardownMyUIComponent();
-				}
-
-				return this.iStartMyUIComponent({
-					componentConfig: {
-						name: "sap.ui.v4demo",
-						async: true,
-						settings: { id: "listreport" }
-					},
-					hash: "",
-					autoWait: true
-				});
-			}
-		}
+		timeout: 45
 	});
 
 	var oModuleSettings = {
@@ -68,7 +40,7 @@ sap.ui.define([
 	QUnit.module("ListReport - Books Page Table", oModuleSettings);
 
 	opaTest("Table - Check if Table has correct Toolbar and displays Data", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 		// Toolbar tests
 		Then.onPage.iShouldSeeAP13nButtonForTheTable();
@@ -85,11 +57,11 @@ sap.ui.define([
 			"SubGenre"
 		]);
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Table - check if sorting works correctly on Table via sort dialog", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 		// 1) Sort by 'Title' (ascending)
 		When.waitFor({
@@ -122,11 +94,11 @@ sap.ui.define([
 			}
 		});
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Table - check if sorting works correctly on Table via column header menu", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 		var fnSortByColumnTitle = function(sColumnTitle, sBookKeyAscending, sBookKeyDescending) {
 			//Sort Ascending (first click)
@@ -147,42 +119,42 @@ sap.ui.define([
 		fnSortByColumnTitle("Stock", "The Germany and the Agricola of Tacitus", "The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two,  Project Gutenberg editions (12 volumes)");
 		//fnSortByColumnTitle("Price", "The Coral Island: A Tale of the Pacific Ocean", "The Voyage Out");
 
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 
 	QUnit.module("ListReport - Books Page Filter Bar", oModuleSettings);
 
 	opaTest("I should see the FilterBar control", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 		Then.onTheMDCFilterBar.iShouldSeeTheFilterBar();
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("I should see the filter fields", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
-		var oFilterBar = "listreport---books--booksFilterBar";
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
+		var oFilterBar = "container-v4demo---books--booksFilterBar";
 		var aLabelNames = ["Author ID", "Title", "Stock range"];
 		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest('I should see the "Adapt Filters" button', function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 		Then.onTheMDCFilterBar.iShouldSeeTheAdaptFiltersButton();
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest('I should see the "Book ID ..." filter field', function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var oFilterBar = "listreport---books--booksFilterBar";
+		var oFilterBar = "container-v4demo---books--booksFilterBar";
 
 		When.onTheMDCFilterBar.iPersonalizeFilter(oFilterBar, {
 			Books: [
@@ -195,13 +167,13 @@ sap.ui.define([
 		]);
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest('I should not see the "Stock" filter field', function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var oFilterBar = "listreport---books--booksFilterBar";
+		var oFilterBar = "container-v4demo---books--booksFilterBar";
 
 		When.onTheMDCFilterBar.iPersonalizeFilter(oFilterBar, {
 			Books: [
@@ -213,13 +185,13 @@ sap.ui.define([
 		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 /*
 	//  ------- TEMPORARY DISABLED AS REORDERING IS NOT AVAILABLE YET -----------
 	opaTest('It should reorder the "Stock" filter field', function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton()
 			.and.iPressOnTheAdaptFiltersP13nReorderButton()
@@ -246,7 +218,7 @@ sap.ui.define([
 		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldsWithLabels(aLabelNames);
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 */
 
@@ -254,7 +226,7 @@ sap.ui.define([
 	QUnit.module("ListReport - Books Page Variant", oModuleSettings);
 
 	opaTest("It should save a variant", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 		var oFilterBar = "listreport---books--booksFilterBar";
 
@@ -294,7 +266,7 @@ sap.ui.define([
 		});
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 */
 
@@ -302,7 +274,7 @@ sap.ui.define([
 
 /*
 	opaTest("It should create a condition", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 		var oFilterBar = "listreport---books--booksFilterBar";
 		var sFieldLabelName = "Author",
 			onTheMDCFilterField = "Author Value Help";
@@ -334,23 +306,23 @@ sap.ui.define([
 		Then.onPage.iShouldSeeARowWithData(1, ListReport.books["Herland"]);
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 	*/
 
 	QUnit.module("ValueHelp PageObject", oModuleSettings);
 
 	opaTest("I open and close the ValueHelp for a given Field", function(Given, When, Then) {
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField("listreport---books--ff1");
+		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField("container-v4demo---books--ff1");
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
 
-		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField("listreport---books--ff1");
+		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField("container-v4demo---books--ff1");
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(false);
 
 		// cleanup
-		Then.iTeardownMyUIComponent();
+		Then.iTeardownMyAppFrame();
 	});
 
 });

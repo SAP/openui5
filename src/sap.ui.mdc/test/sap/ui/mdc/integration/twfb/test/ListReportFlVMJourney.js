@@ -8,14 +8,12 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
     "sap/ui/test/actions/Press",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"test-resources/sap/ui/rta/internal/integration/pages/Adaptation",
 	"test-resources/sap/ui/fl/testutils/opa/TestLibrary"
 ], function(
 	Opa5,
 	opaTest,
 	Press,
-	FakeLrepConnectorSessionStorage,
 	Adaptation,
 	TestLibrary
 ) {
@@ -37,31 +35,7 @@ sap.ui.define([
 		},
 
 		arrangements: {
-			iStartMyUIComponentInViewMode: function() {
-
-				// In some cases when a test fails in a success function,
-				// the UI component is not properly teardown.
-				// As a side effect, all the following tests in the stack
-				// fails when the UI component is started, as only one UI
-				// component can be started at a time.
-				// Teardown the UI component to ensure it is not started
-				// twice without a teardown, which results in less false
-				// positives and more reliable reporting.
-				if (this.hasUIComponentStarted()) {
-					this.iTeardownMyUIComponent();
-				}
-
-				return this.iStartMyUIComponent({
-					componentConfig: {
-						name: "sap.ui.v4demo",
-						async: true
-					},
-					hash: "",
-					autoWait: true
-				});
-			},
 			iClearTheSessionLRep: function () {
-				FakeLrepConnectorSessionStorage.forTesting.synchronous.clearAll();
 				window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
 				window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
 				localStorage.clear();
@@ -78,15 +52,14 @@ sap.ui.define([
 		})
 	});
 
-	var sFLVM_ID = "__component0---books--IDVariantManagementOfTable";
+	var sFLVM_ID = "container-v4demo---books--IDVariantManagementOfTable";
 
 
 	QUnit.module("ListReport Fl VM - Books Page Table");
 
 	opaTest("1. start the app in RTA", function(Given, When, Then) {
 		// Arrange
-		FakeLrepConnectorSessionStorage.enableFakeConnector();
-		Given.iStartMyUIComponentInViewMode();
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 		Given.iClearTheSessionLRep();
 
 		// Act
@@ -157,7 +130,7 @@ sap.ui.define([
 	opaTest("1. start the app and check the initial 'My View' content", function(Given, When, Then) {
 		// Arrange
 		Given.iClearTheSessionLRep();
-		//Given.iStartMyUIComponentInViewMode();
+		//Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sFLVM_ID, "KURenameVariant1");
 
