@@ -2117,7 +2117,6 @@ sap.ui.define([
 			});
 			setURLParameterForCondensing("true");
 			var aChanges = addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
-
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oStorageCondenseStub.callCount, 1, "the condense route of the storage is called");
@@ -2127,7 +2126,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Shall call the condense route of the storage in case of dirty change and persisted draft filename", function(assert) {
+		QUnit.test("Shall call the condense route of the storage in case of dirty change and persisted draft filename and add changes to the response", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
@@ -2137,8 +2136,13 @@ sap.ui.define([
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
-
-			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+			this.oStorageCondenseStub.resolves({status: 205});
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function(response) {
+				assert.equal(response.response.length, 2, "two changes are added to the response of the condense route");
+				assert.equal(response.response[0].layer, Layer.CUSTOMER, "response of the first change is in the customer layer");
+				assert.equal(response.response[0].fileName, "Gizorillus", "response of the first change has correct fileName");
+				assert.equal(response.response[1].layer, Layer.CUSTOMER, "response of the sec change is in the customer layer");
+				assert.equal(response.response[1].fileName, "Gizorillus1", "response of the sec change has correct fileName");
 				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
 				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
