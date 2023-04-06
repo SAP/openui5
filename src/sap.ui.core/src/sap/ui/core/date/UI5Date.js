@@ -52,6 +52,9 @@ sap.ui.define([
 	 *
 	 *   Use {@link module:sap/ui/core/date/UI5Date.getInstance} to create new date instances.
 	 *
+	 *   <b>Note:</b> Adjusting the time zone in a running application can lead to unexpected data
+	 *   inconsistencies. For more information, see {@link sap.ui.core.Configuration#setTimezone}.
+	 *
 	 * @hideconstructor
 	 * @public
 	 * @since 1.111.0
@@ -937,6 +940,9 @@ sap.ui.define([
 	 * configured time zone wherever JavaScript Date uses the local browser time zone, for example
 	 * in <code>getDate</code>, <code>toString</code>, or <code>setHours</code>. The supported
 	 * parameters are the same as the ones supported by the JavaScript Date constructor.
+	 *
+	 * <b>Note:</b> Adjusting the time zone in a running application can lead to unexpected data
+	 * inconsistencies. For more information, see {@link sap.ui.core.Configuration#setTimezone}.
 	 *
 	 * @param {int|string|Date|module:sap/ui/core/date/UI5Date|null} [vYearOrValue]
 	 *   Same meaning as in the JavaScript Date constructor

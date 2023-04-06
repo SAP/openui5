@@ -22,9 +22,7 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.type.DateTimeWithTimezone",
 		sDefaultLanguage = Configuration.getLanguage(),
-		// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
-		// timezone configuration.
-		// sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone(),
+		sDefaultTimezone = Configuration.getTimezone(),
 		MyStringType = StringType.extend("MyString", {
 			constructor : function () {
 				StringType.apply(this, arguments);
@@ -42,15 +40,11 @@ sap.ui.define([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			Configuration.setLanguage("en-US");
-			// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
-			// timezone configuration.
-			// sap.ui.getCore().getConfiguration().setTimezone("Europe/London");
+			Configuration.setTimezone("Europe/London");
 		},
 		afterEach : function () {
 			Configuration.setLanguage(sDefaultLanguage);
-			// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
-			// timezone configuration.
-			// sap.ui.getCore().getConfiguration().setTimezone(sDefaultTimezone);
+			Configuration.setTimezone(sDefaultTimezone);
 		}
 	});
 
@@ -610,18 +604,12 @@ sap.ui.define([
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
 	value : "Dec 30, 2021, 8:00:00 AM Europe/Berlin",
 	result : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 7, 0, 0)), "Europe/Berlin"]
-}
-	// TODO Timezone Configuration: Configuration#setTimezone currently does not change the timezone
-	// configuration.
-	// The timezone configuration will always remain to be the browser timezone.
-	// Therefore uncommenting this test as the result would depend on the browser/OS setting until
-	// #setTimezone functionality is restored
-/*, {
+}, {
 	currentTimezone : null,
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
 	value : "Dec 30, 2021, 8:00:00 AM",
-	result : [new Date(Date.UTC(2021, 11, 30, 8, 0, 0)), undefined],
-}*/].forEach(function (oFixture, i) {
+	result : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 8, 0, 0)), undefined]
+}].forEach(function (oFixture, i) {
 	QUnit.test("parseValue: Integrative tests: #" + i, function (assert) {
 		var oType = new DateTimeWithTimezone(oFixture.formatOptions);
 
