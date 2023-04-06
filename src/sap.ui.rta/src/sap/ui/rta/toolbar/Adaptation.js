@@ -297,6 +297,7 @@ sap.ui.define([
 				redo: this.eventHandler.bind(this, "Redo"),
 				openChangeCategorySelectionPopover: this.eventHandler.bind(this, "OpenChangeCategorySelectionPopover"),
 				saveAsAdaptation: onSaveAsAdaptation.bind(this),
+				editAdaptation: onEditAdaptation.bind(this),
 				manageAdaptations: onManageAdaptations.bind(this),
 				formatAdaptationsMenuText: formatAdaptationsMenuText.bind(this),
 				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
@@ -331,6 +332,10 @@ sap.ui.define([
 
 	function onSaveAsAdaptation() {
 		this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer);
+	}
+
+	function onEditAdaptation() {
+		this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer, true /*bIsEditMode*/);
 	}
 
 	function onManageAdaptations() {

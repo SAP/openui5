@@ -129,9 +129,9 @@ sap.ui.define([
 			aContexts.forEach(function(oContext, iIndex) {
 				oContext.rank = iIndex + 1;
 			});
-			oModel.setProperty("/adaptations", aContexts);
+			oModel.updateAdaptations(aContexts);
 		};
-
+		oModel.initializeRanks();
 		return oModel;
 	};
 

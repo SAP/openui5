@@ -154,6 +154,11 @@
 								press=".saveAsAdaptation"
 								icon="sap-icon://copy"/>
 						<MenuItem
+								id="sapUiRta_editAdaptation"
+								text="{i18n>EAC_DIALOG_HEADER}"
+								press=".editAdaptation"
+								icon="sap-icon://edit"/>
+						<MenuItem
 								id="sapUiRta_manageAdaptations"
 								text="{i18n>MANAGE_ADAPTATIONS_DIALOG_HEADER}"
 								press=".manageAdaptations"

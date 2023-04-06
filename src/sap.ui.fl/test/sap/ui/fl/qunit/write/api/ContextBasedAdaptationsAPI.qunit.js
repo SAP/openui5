@@ -155,7 +155,8 @@ sap.ui.define([
 						createdBy: "Test User 1",
 						createdAt: "May 25, 2022",
 						changedBy: "Test User 1",
-						changedAt: "May 27, 2022"
+						changedAt: "May 27, 2022",
+						rank: 1
 					},
 					{
 						id: "id-1591275572835-1",
@@ -167,7 +168,8 @@ sap.ui.define([
 						createdBy: "Test User 2",
 						createdAt: "May 17, 2022",
 						changedBy: "Test User 2",
-						changedAt: "SEPTEMBER 07, 2022"
+						changedAt: "SEPTEMBER 07, 2022",
+						rank: 2
 					}
 				],
 				count: 2,
@@ -181,7 +183,8 @@ sap.ui.define([
 					createdBy: "Test User 1",
 					createdAt: "May 25, 2022",
 					changedBy: "Test User 1",
-					changedAt: "May 27, 2022"
+					changedAt: "May 27, 2022",
+					rank: 1
 				}
 			};
 			this.oExpectedEmptyData = {
@@ -316,7 +319,8 @@ sap.ui.define([
 						createdBy: "Test User 1",
 						createdAt: "May 25, 2022",
 						changedBy: "Test User 1",
-						changedAt: "May 27, 2022"
+						changedAt: "May 27, 2022",
+						rank: 1
 					},
 					{
 						id: "id-1591275572835-1",
@@ -328,7 +332,8 @@ sap.ui.define([
 						createdBy: "Test User 2",
 						createdAt: "May 17, 2022",
 						changedBy: "Test User 2",
-						changedAt: "SEPTEMBER 07, 2022"
+						changedAt: "SEPTEMBER 07, 2022",
+						rank: 2
 					}
 				],
 				count: 2,
@@ -342,7 +347,8 @@ sap.ui.define([
 					createdBy: "Test User 1",
 					createdAt: "May 25, 2022",
 					changedBy: "Test User 1",
-					changedAt: "May 27, 2022"
+					changedAt: "May 27, 2022",
+					rank: 1
 				}
 			};
 			sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: oExpectedFilledData.adaptations});
