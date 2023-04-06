@@ -77,25 +77,6 @@ sap.ui.define([
 			});
 	}
 
-	function checkInvalidAddActions(bSibling, oSourceElementOverlay, oPlugin) {
-		var mParents = AdditionalElementsUtils.getParents(bSibling, oSourceElementOverlay, oPlugin);
-		var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
-		var aAddODataPropertyActions = oDesignTimeMetadata ? oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent) : [];
-		if (aAddODataPropertyActions.length > 0) {
-			Log.error("Outdated addODataProperty action in designtime metadata in "
-				+ oDesignTimeMetadata.getData().designtimeModule
-				+ " or propagated or via instance specific designtime metadata.");
-		}
-		var aAddActions = oDesignTimeMetadata ? oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent) : [];
-		aAddActions.forEach(function(mAddAction) {
-			if (mAddAction["custom"]) {
-				Log.error("Outdated custom add action in designtime metadata in "
-					+ oDesignTimeMetadata.getData().designtimeModule
-					+ " or propagated or via instance specific designtime metadata.");
-			}
-		});
-	}
-
 	function getInvisibleElements (oParentOverlay, sAggregationName, oPlugin) {
 		var oParentElement = oParentOverlay.getElement();
 		if (!oParentElement) {
@@ -335,8 +316,7 @@ sap.ui.define([
 
 		return Promise.all([
 			oRevealActionsPromise,
-			oAddPropertyActionsPromise,
-			checkInvalidAddActions(bSibling, oSourceElementOverlay, oPlugin)
+			oAddPropertyActionsPromise
 		]).then(function(aAllActions) {
 			//join and condense all action data
 			var mAllActions = merge(aAllActions[0], aAllActions[1]);

@@ -232,8 +232,6 @@ sap.ui.define([
 								var oRelevantContainer = oElementOverlay.getRelevantContainer();
 								oControl = oRelevantContainer;
 								oElementDesignTimeMetadata = oElementOverlay.getParentAggregationOverlay().getDesignTimeMetadata();
-							} else if (oAction.name === "addODataProperty") {
-								assert.ok(false, "addODataProperty action is deprecated. Use addViaDelegate action instead.");
 							} else if (Array.isArray(oAction.name)) {
 								var aAddActions = oElementDesignTimeMetadata.getActionDataFromAggregations(oAction.name[0], oControl, undefined, oAction.name[1]);
 								assert.equal(aAddActions.length, 1, "there should be only one aggregation with the possibility to do an add " + oAction.name[1] + " action");
