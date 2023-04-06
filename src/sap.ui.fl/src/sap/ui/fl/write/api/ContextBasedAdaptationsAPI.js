@@ -74,7 +74,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
-	 * @returns {sap.ui.model.json.JSONModel} - Model of adaptations enhanced with additional properties
+	 * @returns {Promise<sap.ui.model.json.JSONModel>} - Model of adaptations enhanced with additional properties
 	 */
 	ContextBasedAdaptationsAPI.initialize = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
@@ -86,13 +86,15 @@ sap.ui.define([
 		var sReference = getFlexReferenceForControl(mPropertyBag.control);
 		mPropertyBag.reference = sReference;
 		var sLayer = mPropertyBag.layer;
+		if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
+			return Promise.resolve(_mInstances[sReference][sLayer]);
+		}
 		return Settings.getInstance()
 			.then(function(oSettings) {
 				var bContextBasedAdaptationsEnabled = oSettings.isContextBasedAdaptationEnabled();
 				var oAdaptationsPromise = bContextBasedAdaptationsEnabled ? ContextBasedAdaptationsAPI.load(mPropertyBag) : Promise.resolve({adaptations: []});
 				return oAdaptationsPromise;
-			})
-			.then(function(oAdaptations) {
+			}).then(function(oAdaptations) {
 				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations);
 			})
 			.then(function(oModel) {
@@ -119,7 +121,7 @@ sap.ui.define([
 			count: 0,
 			displayedAdaptation: {}
 		});
-		oModel.updateAdaptations = function(aAdaptations, sAdaptationId) {
+		oModel.updateAdaptations = function(aAdaptations) {
 			var aContextBasedAdaptations = aAdaptations.filter(function(oAdapation, iIndex) {
 				oAdapation.rank = iIndex + 1; // initialize ranks
 				return oAdapation.type !== Adaptations.Type.Default;
@@ -127,52 +129,44 @@ sap.ui.define([
 			oModel.setProperty("/adaptations", aContextBasedAdaptations);
 			oModel.setProperty("/allAdaptations", aAdaptations);
 			oModel.setProperty("/count", aContextBasedAdaptations.length);
-			var iAdaptationIndex = oModel.getIndexByAdaptationId(sAdaptationId) || 0;
-			if (aContextBasedAdaptations.length > 0) {
-				var oDisplayedAdaptation = oModel.getProperty("/adaptations/" + iAdaptationIndex + "/");
-				oModel.setProperty("/displayedAdaptation", oDisplayedAdaptation);
-			} else {
-				var oDefaultAdaptation = (aAdaptations.length > 0) ? aAdaptations[aAdaptations.length - 1] : {};
-				oModel.setProperty("/displayedAdaptation", oDefaultAdaptation);
-			}
 			oModel.updateBindings(true);
 		};
 		oModel.insertAdaptation = function(oNewAdaptation) {
 			var aAdaptations = oModel.getProperty("/allAdaptations");
 			aAdaptations.splice(oNewAdaptation.priority, 0, oNewAdaptation);
 			delete oNewAdaptation.priority;
-			oModel.updateAdaptations(aAdaptations, oNewAdaptation.id);
+			oModel.updateAdaptations(aAdaptations);
 		};
 		oModel.deleteAdaptation = function() {
 			var iIndex = oModel.getProperty("/displayedAdaptation").rank - 1;
 			var aAdaptations = oModel.getProperty("/adaptations");
 			var iModelCount = oModel.getProperty("/count");
-			var sDisplayedAdaptationId;
-			if (iModelCount === 1) {
-				aAdaptations.splice(iIndex, 1);
-			} else {
-				sDisplayedAdaptationId = aAdaptations[iIndex + ((iIndex === iModelCount - 1) ? -1 : 1)].id;
-				aAdaptations.splice(iIndex, 1);
+			var sToBeDisplayedAdaptationId;
+			if (iModelCount > 1) {
+				sToBeDisplayedAdaptationId = aAdaptations[iIndex + ((iIndex === iModelCount - 1) ? -1 : 1)].id;
 			}
+			aAdaptations.splice(iIndex, 1);
 			var oDefaultAdaptation = oModel.getProperty("/allAdaptations").pop();
 			aAdaptations.push(oDefaultAdaptation);
-			oModel.updateAdaptations(aAdaptations, sDisplayedAdaptationId);
+			oModel.updateAdaptations(aAdaptations);
+			return sToBeDisplayedAdaptationId;
 		};
 		oModel.switchDisplayedAdaptation = function(sAdaptationId) {
 			var iIndex = oModel.getIndexByAdaptationId(sAdaptationId);
-			var oNewDisplayedAdaptation = oModel.getProperty("/adaptations")[iIndex];
+			var oNewDisplayedAdaptation = iIndex ? oModel.getProperty("/allAdaptations")[iIndex] : oModel.getProperty("/allAdaptations")[0];
 			oModel.setProperty("/displayedAdaptation", oNewDisplayedAdaptation);
 			oModel.updateBindings(true);
 		};
 		oModel.getIndexByAdaptationId = function(sAdaptationId) {
-			var aAdaptations = oModel.getProperty("/adaptations");
+			var aAdaptations = oModel.getProperty("/allAdaptations");
 			var iAdaptationIndex = aAdaptations.findIndex(function(oAdaptation) {
 				return oAdaptation.id === sAdaptationId;
 			});
 			return (iAdaptationIndex > -1) ? iAdaptationIndex : undefined;
 		};
 		if (aAdaptations.length > 0) {
-			oModel.updateAdaptations(aAdaptations, aAdaptations[0].id);
+			oModel.updateAdaptations(aAdaptations);
+			oModel.setProperty("/displayedAdaptation", aAdaptations[0]);
 		}
 		return oModel;
 	};

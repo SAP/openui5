@@ -140,16 +140,45 @@ sap.ui.define([
 					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 					var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
 					assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
-					assert.strictEqual(oContextBasedAdaptationMenu.getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly ");
+					var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR_ALL_USERS");
+					assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
 					assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
 					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
 					assert.notOk(this.oToolbar.getControl("switchAdaptations").getVisible(), "then the switch adaptations button is not visible");
 				}.bind(this));
 		});
 
+		QUnit.test("When two context-based adaptation are available and the displayed adaptation is default (context-free) ", function (assert) {
+			this.oAdaptationsModel = new JSONModel({
+				allAdaptations: [{title: "Sales"}, {title: "Manager"}, {title: ""}],
+				adaptations: [{title: "Sales"}, {title: "Manager"}],
+				count: 2,
+				displayedAdaptation: {title: ""}
+			});
+
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+
+			return this.oToolbar._pFragmentLoaded
+				.then(function() {
+					this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
+					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+					var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
+					assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
+					var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR", this.oToolbar.getTextResources().getText("TXT_DEFAULT_APP"));
+					assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
+					assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
+					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
+					var oSwitchAdaptationsButton = this.oToolbar.getControl("switchAdaptations");
+					assert.ok(oSwitchAdaptationsButton.getVisible(), "then the switch adaptations button is visible");
+					assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
+				}.bind(this));
+		});
+
 		QUnit.test("When two context-based adaptation are available", function (assert) {
 			this.oAdaptationsModel = new JSONModel({
-				allAdaptations: [{title: "Sales"}, {title: "Manager"}, {title: "context-free adaptation"}],
+				allAdaptations: [{title: "Sales"}, {title: "Manager"}, {title: ""}],
 				adaptations: [{title: "Sales"}, {title: "Manager"}],
 				count: 2,
 				displayedAdaptation: {title: "Sales"}
@@ -165,7 +194,8 @@ sap.ui.define([
 					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 					var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
 					assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
-					assert.strictEqual(oContextBasedAdaptationMenu.getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly ");
+					var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR", "Sales");
+					assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
 					assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
 					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
 					var oSwitchAdaptationsButton = this.oToolbar.getControl("switchAdaptations");

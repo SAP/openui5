@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	ContextBasedAdaptationsAPI,
 	Version,
 	VersionsAPI,
 	Versions,
@@ -401,6 +403,26 @@ sap.ui.define([
 		beforeEach: function () {
 			stubSettings(sandbox);
 			Versions.clearInstances();
+			var oDefaultAdaptation = {
+				id: "DEFAULT",
+				title: "",
+				type: "DEFAULT"
+			};
+			var aAdaptations = [
+				{
+					title: "Sales",
+					rank: 1,
+					id: "id_1234"
+				},
+				{
+					title: "Manager",
+					rank: 2,
+					id: "id_5678"
+				},
+				oDefaultAdaptation
+			];
+			this.oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oAdaptationsModel);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -448,6 +470,7 @@ sap.ui.define([
 				layer: sLayer,
 				control: new Control(),
 				allContexts: true,
+				adaptationId: "id_5678",
 				reference: sReference,
 				appComponent: this.oAppComponent
 			};
@@ -477,9 +500,11 @@ sap.ui.define([
 					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
 					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
 					assert.equal(oInitializePropertyBag.allContexts, true, "and passing all contexts as true");
+					assert.equal(oInitializePropertyBag.adaptationId, "id_5678", "and passing adaptationId");
 					assert.equal(oInitializePropertyBag.version, sActiveVersion, "and active version is set bei version model");
 					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "and displayed version is active version");
 					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
+					assert.equal(this.oAdaptationsModel.getProperty("/displayedAdaptation/id"), mPropertyBag.adaptationId, "and displayed adaptation is switched");
 				}.bind(this));
 		});
 

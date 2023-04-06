@@ -112,6 +112,7 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.reInitialize] - Flag if the application is reinitialized even if it was loaded before
 		 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
 		 * @param {number} [mPropertyBag.version] - Number of the version in which the state should be initialized
+		 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation for which the state should be initialized
 		 * @param {object} [mPropertyBag.partialFlexData] - Contains current flexstate for this reference, indicator to reload bundles from storage
 		 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted context
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
@@ -138,7 +139,8 @@ sap.ui.define([
 				siteId: Utils.getSiteIdByComponentData(mPropertyBag.componentData),
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				version: mPropertyBag.version,
-				allContexts: mPropertyBag.allContexts
+				allContexts: mPropertyBag.allContexts,
+				adaptationId: mPropertyBag.adaptationId
 			})
 			.then(filterInvalidFileNames.bind())
 			.then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest)))

@@ -179,7 +179,7 @@ sap.ui.define([
 					}
 					var oDefaultAdaptation = this.oAdaptationsModel.getProperty("/allAdaptations").pop();
 					aAdaptations.push(oDefaultAdaptation);
-					this.oAdaptationsModel.updateAdaptations(aAdaptations, sDisplayedAdaptationId);
+					this.oAdaptationsModel.updateAdaptations(aAdaptations);
 				}
 			}.bind(this, oContextBasedAdaptation, sDisplayedAdaptationId, iDisplayedAdaptation))
 			.catch(function(oError) {
@@ -194,7 +194,9 @@ sap.ui.define([
 				control: oRtaInformation.rootControl,
 				layer: oRtaInformation.flexSettings.layer,
 				contextBasedAdaptation: oContextBasedAdaptation
-			}).catch(function(oError) {
+			}).then(function() {
+				this.getToolbar().fireEvent("switchAdaptation", {adaptationId: oContextBasedAdaptation.id});
+			}.bind(this)).catch(function(oError) {
 				Log.error(oError.stack);
 				var sMessage = "MSG_LREP_TRANSFER_ERROR";
 				var oOptions = { titleKey: "SAC_DIALOG_HEADER" };

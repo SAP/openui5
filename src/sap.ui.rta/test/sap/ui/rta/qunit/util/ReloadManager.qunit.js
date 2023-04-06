@@ -247,6 +247,29 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+
+		QUnit.test("with versioning and a draft and all context and adaptationId and with a reload reason", function(assert) {
+			this.oGetReloadReasonsStub.resolves({isDraftAvailable: true, allContexts: true, adaptationId: "id_1234"});
+			return ReloadManager.handleReloadOnStart({versioningEnabled: true}).then(function() {
+				assert.strictEqual(this.oLoadDraftStub.callCount, 1, "the draft was loaded");
+				var oLoadDraftPropertyBag = this.oLoadDraftStub.getCall(0).args[0];
+				assert.strictEqual(oLoadDraftPropertyBag.allContexts, true, "with allContext=true parameter");
+				assert.strictEqual(oLoadDraftPropertyBag.adaptationId, "id_1234", "with adaptationId  parameter");
+				assert.strictEqual(this.oLoadVersionStub.callCount, 0, "the version was not loaded");
+			}.bind(this));
+		});
+
+		QUnit.test("with versioning and all context and adaptationId and with a reload reason", function(assert) {
+			this.oGetReloadReasonsStub.resolves({hasHigherLayerChanges: true, allContexts: true, adaptationId: "id_1234"});
+			return ReloadManager.handleReloadOnStart({versioningEnabled: true}).then(function() {
+				assert.strictEqual(this.oLoadDraftStub.callCount, 0, "the draft was loaded");
+				assert.strictEqual(this.oLoadVersionStub.callCount, 1, "the version was not loaded");
+				var oLoadVersionPropertyBag = this.oLoadVersionStub.getCall(0).args[0];
+				assert.strictEqual(oLoadVersionPropertyBag.allContexts, true, "with allContext=true parameter");
+				assert.strictEqual(oLoadVersionPropertyBag.adaptationId, "id_1234", "with adaptationId  parameter");
+			}.bind(this));
+		});
+
 		[
 			{
 				oReloadInfo: {

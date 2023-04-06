@@ -461,7 +461,8 @@ sap.ui.define([
 					layer: this.getLayer(),
 					selector: this.getRootControlInstance(),
 					versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
-					developerMode: this.getFlexSettings().developerMode
+					developerMode: this.getFlexSettings().developerMode,
+					adaptationId: this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id")
 				});
 			}.bind(this))
 			.then(function(bReloadTriggered) {
@@ -1313,13 +1314,6 @@ sap.ui.define([
 
 	function onSwitchAdaptation(oEvent) {
 		var sAdaptationId = oEvent.getParameter("adaptationId");
-		var sDiplayedAdaptationId = this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id");
-
-		if (sAdaptationId === sDiplayedAdaptationId) {
-			// already in displayed adaptation; needs no switch
-			return;
-		}
-
 		this._sSwitchToAdaptationId = sAdaptationId;
 		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
 			switchAdaptation.bind(this, this._sSwitchToAdaptationId));
@@ -1328,8 +1322,6 @@ sap.ui.define([
 	function switchAdaptation(sAdaptationId) {
 		var sVersion = this._oVersionsModel.getProperty("/displayedVersion");
 		switchVersion.call(this, sVersion, sAdaptationId);
-		this._oContextBasedAdaptationsModel.switchDisplayedAdaptation(sAdaptationId);
-		//TODO: load new contextbased adaptations?
 	}
 
 	function onSwitchVersion(oEvent) {
