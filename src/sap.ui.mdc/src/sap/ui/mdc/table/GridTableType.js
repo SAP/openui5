@@ -188,7 +188,9 @@ sap.ui.define([
 			return null;
 		}
 
-		return new InnerTable(sId, this.getTableSettings());
+		var oInnerTable = new InnerTable(sId, this.getTableSettings());
+		oInnerTable._setHideStandardTooltips(true);
+		return oInnerTable;
 	};
 
 	GridTableType.prototype.getTableSettings = function() {
