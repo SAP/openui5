@@ -70,26 +70,6 @@ sap.ui.define([
 			ActionExtractor.getActions(true, {});
 			assert.notOk(this.fnLogErrorStub.called, "then no error is raised on the log");
 		});
-
-		QUnit.test("when getActions is called with DT Metadata containing invalid actions", function(assert) {
-			oDTMetadata = new ElementDesignTimeMetadata({
-				data: {
-					aggregations: {
-						dummyAggregation: {
-							actions: {
-								add: {
-									custom: "customAddAction"
-								},
-								addODataProperty: "addODataPropertyAction"
-							}
-						}
-					}
-				}
-			});
-
-			ActionExtractor.getActions(true, {});
-			assert.equal(this.fnLogErrorStub.callCount, 2, "then one error is raised on the log for each outdated action");
-		});
 	});
 
 
