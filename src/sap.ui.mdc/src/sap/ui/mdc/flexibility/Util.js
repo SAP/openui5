@@ -127,8 +127,8 @@ sap.ui.define([
 							});
 						}
 					});
-				}
-//				,getCondenserInfo: mSettings.getCondenserInfo
+				},
+				getCondenserInfo: mSettings.getCondenserInfo
 			},
 			"layers": {
 				"USER": true
