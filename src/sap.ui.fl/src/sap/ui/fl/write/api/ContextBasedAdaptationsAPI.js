@@ -46,14 +46,14 @@ sap.ui.define([
 	 * @param {number} oResponse.status - HTTP response code
 	 * @param {number} nExpectedStatus - Expected HTTP response code
 	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {string} mPropertyBag.reference - Reference of the application
+	 * @param {string} mPropertyBag.appId - Reference of the application
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {object} Object with response data
 	 */
 	function handleResponseForVersioning(oResponse, nExpectedStatus, mPropertyBag) {
 		if (oResponse.status === nExpectedStatus) {
 			Versions.onAllChangesSaved({
-				reference: mPropertyBag.reference,
+				reference: mPropertyBag.appId,
 				layer: mPropertyBag.layer,
 				contextBasedAdaptation: true
 			});
@@ -124,6 +124,14 @@ sap.ui.define([
 			delete oNewAdaptation.priority;
 			oModel.updateAdaptations(aAdaptations);
 		};
+		oModel.initializeRanks = function() {
+			var aContexts = oModel.getProperty("/adaptations") || [];
+			aContexts.forEach(function(oContext, iIndex) {
+				oContext.rank = iIndex + 1;
+			});
+			oModel.setProperty("/adaptations", aContexts);
+		};
+
 		return oModel;
 	};
 
@@ -190,17 +198,53 @@ sap.ui.define([
 			return Promise.reject("No contextBasedAdaptation was provided");
 		}
 		mPropertyBag.contextBasedAdaptation.id = FlexUtils.createDefaultFileName();
-		mPropertyBag.reference = getFlexReferenceForControl(mPropertyBag.control);
+		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
 		return Storage.contextBasedAdaptation.create({
 			layer: mPropertyBag.layer,
 			flexObject: mPropertyBag.contextBasedAdaptation,
-			reference: mPropertyBag.reference,
-			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.reference }).getProperty("/displayedVersion")
+			appId: mPropertyBag.appId,
+			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
 		}).then(function (oResponse) {
 			var oModel = this.getAdaptationsModel(mPropertyBag);
 			oModel.insertAdaptation(mPropertyBag.contextBasedAdaptation);
 			return handleResponseForVersioning(oResponse, 201, mPropertyBag);
 		}.bind(this));
+	};
+
+	/**
+	 * Updates existing context-based adaptation and saves it in the backend
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer
+	 * @param {object} mPropertyBag.contextBasedAdaptation - Parameters
+	 * @param {string} mPropertyBag.contextBasedAdaptation.title - Title of the updated adaptation
+	 * @param {object} mPropertyBag.contextBasedAdaptation.contexts - Contexts of the updated adaptation, for example roles for which the adaptation is created
+	 * @param {object} mPropertyBag.contextBasedAdaptation.priority - Priority of the updated adaptation
+	 * @returns {Promise} Promise that resolves with the context-based adaptation
+	 */
+	ContextBasedAdaptationsAPI.update = function(mPropertyBag) {
+		if (!mPropertyBag.layer) {
+			return Promise.reject("No layer was provided");
+		}
+		if (!mPropertyBag.control) {
+			return Promise.reject("No control was provided");
+		}
+		if (!mPropertyBag.contextBasedAdaptation) {
+			return Promise.reject("No contextBasedAdaptation was provided");
+		}
+		if (!mPropertyBag.adaptationId) {
+			return Promise.reject("No adaptationId was provided");
+		}
+		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
+		return Storage.contextBasedAdaptation.update({
+			layer: mPropertyBag.layer,
+			flexObject: mPropertyBag.contextBasedAdaptation,
+			appId: mPropertyBag.appId,
+			adaptationId: mPropertyBag.adaptationId,
+			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
+		}).then(function (oResponse) {
+			return handleResponseForVersioning(oResponse, 200, mPropertyBag);
+		});
 	};
 
 	/**
@@ -222,12 +266,12 @@ sap.ui.define([
 		if (!mPropertyBag.parameters || !mPropertyBag.parameters.priorities) {
 			return Promise.reject("No valid priority list was provided");
 		}
-		mPropertyBag.reference = getFlexReferenceForControl(mPropertyBag.control);
+		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
 		return Storage.contextBasedAdaptation.reorder({
 			layer: mPropertyBag.layer,
 			flexObjects: mPropertyBag.parameters,
-			reference: mPropertyBag.reference,
-			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.reference }).getProperty("/displayedVersion")
+			appId: mPropertyBag.appId,
+			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
 		}).then(function (oResponse) {
 			return handleResponseForVersioning(oResponse, 204, mPropertyBag);
 		});
@@ -247,12 +291,12 @@ sap.ui.define([
 		if (!mPropertyBag.control) {
 			return Promise.reject("No control was provided");
 		}
-		mPropertyBag.reference = getFlexReferenceForControl(mPropertyBag.control);
+		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
 		return Storage.contextBasedAdaptation.load({
 			layer: mPropertyBag.layer,
 			flexObject: mPropertyBag.parameters,
-			reference: mPropertyBag.reference,
-			version: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.reference }).getProperty("/displayedVersion")
+			appId: mPropertyBag.appId,
+			version: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
 		}).then(function (oAdaptations) {
 			if (!oAdaptations) {
 				oAdaptations = { adaptations: [] };

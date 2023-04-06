@@ -33,6 +33,7 @@ sap.ui.define(
 			Then.onTheDemoAppPage.iShouldSeeAddAdaptationDialogButton();
 			When.onTheDemoAppPage.iClickOnOpenAddAdaptationDialogButton();
 			Then.onTheAddAdaptationDialogPage.iShouldSeeAddAdaptationDialog();
+			Then.onTheAddAdaptationDialogPage.iShouldSeeDialogTitle("Save as New Adaptation");
 		});
 
 		QUnit.module("SaveAs Dialog with adaptations data from backend");

@@ -414,6 +414,10 @@ sap.ui.define([
 			return _getWriteConnectors()
 				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.reorder", mPropertyBag));
 		},
+		update: function(mPropertyBag) {
+			return _getWriteConnectors()
+				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.update", mPropertyBag));
+		},
 		load: function(mPropertyBag) {
 			return _getWriteConnectors()
 				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.load", mPropertyBag));

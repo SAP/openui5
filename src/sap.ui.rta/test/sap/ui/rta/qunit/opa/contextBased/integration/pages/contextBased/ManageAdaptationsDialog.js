@@ -91,29 +91,31 @@ sap.ui.define([
 						actions: new Drop(oDropOption)
 					});
 				},
-				iClickOnActionMenuOfAdaptationWithTitle: function(sTitle) {
+				iClickOnActionMenuOfAdaptationWithPriority: function(iPriority) {
 					return this.waitFor({
-						controlType: "sap.m.ColumnListItem",
-						viewId: "sap.ui.rta.contextBased---ManageContexts",
-						searchOpenDialogs: true,
-						descendant: {
-							controlType: "sap.m.StandardListItem",
-							properties: {
-								title: sTitle
-							},
-							searchOpenDialogs: true
+						controlType: "sap.m.MenuButton",
+						i18NText: {
+							propertyName: "text",
+							key: "CLM_HEADER_ADAPTATIONS_ACTIONS"
 						},
-						success: function(aAncestors) {
-							var oAncestor = aAncestors[0];
-							return this.waitFor({
-								controlType: "sap.m.MenuButton",
-								matchers: new Ancestor(oAncestor),
-								success: function() {
-									Opa5.assert.ok(true, "Action button found and visible");
+						searchOpenDialogs: true,
+						ancestor: {
+							controlType: "sap.m.ColumnListItem",
+							bindingPath: {
+								modelName: "contextBased",
+								path: "/adaptations/" + parseInt(iPriority - 1)
+							},
+							ancestor: {
+								controlType: "sap.m.Table",
+								bindingPath: {
+									path: "",
+									propertyPath: "/adaptations",
+									modelName: "contextBased"
 								},
-								actions: new Press()
-							});
-						}
+								searchOpenDialogs: true
+							}
+						},
+						actions: new Press()
 					});
 				},
 				iClickOnEditActionButton: function() {

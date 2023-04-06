@@ -68,6 +68,10 @@ sap.ui.define([
 
 		onBeforeRendering: function() {
 			this.oSelectedContextsModel.refresh(true);
+			if (!this.oSelectedContextsModel.getProperty("/noDataText")) {
+				this.oSelectedContextsModel.setProperty("/noDataText", this.oI18n.getText("NO_SELECTED_ROLES"));
+				this.oSelectedContextsModel.refresh(true);
+			}
 			var oSelectedContexts = this.getOwnerComponent().getSelectedContexts();
 			var bHasContexts = oSelectedContexts.role.length > 0;
 			if (bHasContexts) {

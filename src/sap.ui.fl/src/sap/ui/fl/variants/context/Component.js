@@ -51,6 +51,16 @@ sap.ui.define([
 		},
 
 		/**
+		 * Sets the text for an empty list with the advice to select at least one role
+		 */
+		setEmptyListTextWithAdvice: function() {
+			var oRoleSelectionModel = this.getModel("selectedContexts");
+			oRoleSelectionModel.setProperty("/noDataText",
+				this.getRootControl().getController().oI18n.getText("NO_SELECTED_ROLES_WITH_ADVICE"));
+			oRoleSelectionModel.refresh(true);
+		},
+
+		/**
 		 * Returns context sharing data binding model
 		 *
 		 * @returns {sap.ui.model.Model} Model containing selected contexts
@@ -58,6 +68,7 @@ sap.ui.define([
 		getSelectedContextsModel: function() {
 			return this.getModel("selectedContexts");
 		},
+
 		/**
 		 * Sets selected contexts.
 		 *

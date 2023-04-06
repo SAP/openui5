@@ -5,14 +5,16 @@
 	<Dialog id="selectContextsDialog"
 		resizable="true"
 		draggable="true"
-		title="{i18n>SAC_DIALOG_HEADER}">
+		title="{dialogModel>/title}">
 		<Panel id="saveAdaptation-information-panel">
-			<Toolbar id="toolbar">
-				<Label id="label"
-					text="Information"
-					design="Bold">
-				</Label>
-			</Toolbar>
+			<headerToolbar>
+				<Toolbar id="toolbar">
+					<Label id="label"
+						text="Information"
+						design="Bold">
+					</Label>
+				</Toolbar>
+			</headerToolbar>
 			<form:Form id="saveAdaptation-form"
 				editable="true">
 				<form:layout>
@@ -58,10 +60,10 @@
 								<Select
 									id="saveAdaptation-rank-select"
 									forceSelection="true"
-									selectedKey="{prioritySelectionModel>/selected}"
-									items="{prioritySelectionModel>/priority}"
+									selectedKey="{dialogModel>/selected}"
+									items="{dialogModel>/priority}"
 									change=".onPriorityChange">
-									<core:Item key="{prioritySelectionModel>key}" text="{prioritySelectionModel>title}" />
+									<core:Item key="{dialogModel>key}" text="{dialogModel>title}" />
 								</Select>
 						</form:FormElement>
 					</form:formElements>

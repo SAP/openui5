@@ -99,7 +99,7 @@ sap.ui.define([
 				}
 			});
 			return Promise.resolve({ role: aFilterRoles });
-		});
+		}.bind(this));
 
 		this.loadStub.callsFake(function() {
 			var oAdaptationsModel = new JSONModel();
@@ -116,6 +116,7 @@ sap.ui.define([
 			sinon.assert.match(Object.keys(mPropertyBag.contextBasedAdaptation).includes("title"), true);
 			return Promise.resolve();
 		});
+
 		this.reorderStub.callsFake(function(mPropertyBag) {
 			return Promise.resolve(mPropertyBag);
 		});

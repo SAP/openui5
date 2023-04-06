@@ -46,7 +46,7 @@ sap.ui.define([
 						bindingPath: {
 							path: "/priority/" + iZeroBasedPriority,
 							propertyPath: "key",
-							modelName: "prioritySelectionModel"
+							modelName: "dialogModel"
 						},
 						searchOpenDialogs: true,
 						actions: new Press(),
@@ -78,6 +78,19 @@ sap.ui.define([
 				}
 			},
 			assertions: {
+				iShouldSeeDialogTitle: function (sTitle) {
+					this.waitFor({
+						controlType: "sap.m.Title",
+						properties: {
+							text: sTitle
+						},
+						searchOpenDialogs: true,
+						success: function(vControls) {
+							var oControl = vControls[0] || vControls;
+							Opa5.assert.strictEqual(oControl.getText(), sTitle, "the correct dialog title is displayed: " + sTitle);
+						}
+					});
+				},
 				iShouldSeeContextBasedAdaptationTitle: function(sContextBasedTitle) {
 					return this.waitFor({
 						controlType: "sap.m.Input",
@@ -130,7 +143,7 @@ sap.ui.define([
 				iShouldSeeSaveButtonEnabled: function(bIsEnabled) {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						enabled: false,
+						enabled: bIsEnabled,
 						i18NText: {
 							propertyName: "text",
 							key: "APP_VARIANT_DIALOG_SAVE"
@@ -155,12 +168,25 @@ sap.ui.define([
 						}
 					});
 				},
+				iShouldSeeEditAdaptationDialog: function() {
+					return this.waitFor({
+						controlType: "sap.m.Dialog",
+						i18NText: {
+							propertyName: "title",
+							key: "EAC_DIALOG_HEADER"
+						},
+						searchOpenDialogs: true,
+						success: function() {
+							Opa5.assert.ok(true, "I see edit adaptation dialog");
+						}
+					});
+				},
 				iShouldSeePriorityItems: function(nPriorities) {
 					return this.waitFor({
 						controlType: "sap.ui.core.Item",
 						bindingPath: {
 							propertyPath: "key",
-							modelName: "prioritySelectionModel"
+							modelName: "dialogModel"
 						},
 						searchOpenDialogs: true,
 						success: function(vControls) {

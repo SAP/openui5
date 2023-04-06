@@ -18,7 +18,7 @@
 				showIcon="true"/>
 			<List
 				id="selectedContextsList"
-				noDataText="{i18n>NO_SELECTED_ROLES}"
+				noDataText="{selectedContexts>/noDataText}"
 				mode="Delete"
 				delete=".onDeleteContext"
 				growing="true"

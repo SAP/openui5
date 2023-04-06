@@ -1308,7 +1308,8 @@ sap.ui.define([
 		beforeEach: function () {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
-			this.sReference = "ZDEMOTE_ST";
+			this.sAppId = "ZDEMOTE_ST";
+			this.sAdaptationId = "id_12345678";
 			this.oStubWriteSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			this.oStubInitialUtilsSendRequest = sandbox.stub(InitialUtils, "sendRequest").callsFake(function () {
 				return Promise.resolve({response: {}});
@@ -1323,6 +1324,7 @@ sap.ui.define([
 			var contextBasedAdaptationData = {
 				id: "__fiori0",
 				title: "test title",
+				property: "1",
 				description: "test description",
 				contexts: {
 					role: ["/GRVTY/TEST", "/FLX/TSTRL_01"]
@@ -1332,7 +1334,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				flexObject: contextBasedAdaptationData,
 				layer: this.sLayer,
-				reference: this.sReference,
+				appId: this.sAppId,
 				parentVersion: "4124001231923DHS91231230",
 				url: "/sap/bc/lrep"
 			};
@@ -1340,8 +1342,38 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.create(mPropertyBag).then(function () {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sReference + "/adaptations/?parentVersion=" + mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?parentVersion="
+					+ mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "POST", "the correct http method was passed");
+				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
+			}.bind(this));
+		});
+
+		QUnit.test("Given a mock server, when contextBasedAdaptation.update is triggered", function (assert) {
+			var contextBasedAdaptationData = {
+				title: "another test title",
+				property: "2",
+				description: "another test description",
+				contexts: {
+					role: ["/FLX/TSTRL_01", "/GRVTY/UPDATE_TEST"]
+				}
+			};
+
+			var mPropertyBag = {
+				flexObject: contextBasedAdaptationData,
+				layer: this.sLayer,
+				appId: this.sAppId,
+				adaptationId: this.sAdaptationId,
+				parentVersion: "4124001231923DHS91231230",
+				url: "/sap/bc/lrep"
+			};
+
+			return WriteLrepConnector.contextBasedAdaptation.update(mPropertyBag).then(function () {
+				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
+				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
+				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/" + mPropertyBag.adaptationId + "?parentVersion="
+					+ mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[1], "PUT", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
 			}.bind(this));
 		});
@@ -1349,7 +1381,7 @@ sap.ui.define([
 		QUnit.test("Given a mock server, when contextBasedAdaptation.load is triggered", function (assert) {
 			var mPropertyBag = {
 				layer: this.sLayer,
-				reference: this.sReference,
+				appId: this.sAppId,
 				url: "/sap/bc/lrep",
 				version: "4124001231923DHS91231231"
 			};
@@ -1357,7 +1389,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.load(mPropertyBag).then(function () {
 				assert.equal(this.oStubInitialUtilsSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubInitialUtilsSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sReference + "/adaptations/?version=" + mPropertyBag.version, "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?version=" + mPropertyBag.version, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "GET", "the correct http method was passed");
 			}.bind(this));
 		});
@@ -1368,14 +1400,14 @@ sap.ui.define([
 			var mPropertyBag = {
 				flexObject: oFlexObject,
 				layer: this.sLayer,
-				reference: this.sReference,
+				appId: this.sAppId,
 				url: "/sap/bc/lrep"
 			};
 
 			return WriteLrepConnector.contextBasedAdaptation.reorder(mPropertyBag).then(function () {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sReference + "/adaptations/?sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?sap-language=EN", "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "PUT", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(oFlexObject), "the correct payload was passed");
 			}.bind(this));
