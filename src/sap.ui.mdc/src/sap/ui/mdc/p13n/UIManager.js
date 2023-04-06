@@ -276,7 +276,6 @@ sap.ui.define([
 						}
 					});
 					oContainer.close();
-					oContainer.destroy();
 					oDialogClose.resolve();
 				}.bind(this));
 			}
