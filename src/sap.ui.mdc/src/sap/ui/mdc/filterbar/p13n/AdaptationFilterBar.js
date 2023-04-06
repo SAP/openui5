@@ -319,11 +319,13 @@ sap.ui.define([
 			var mConditions = this._bPersistValues ? this._getAdaptationControlInstance().getFilterConditions() : this._getAdaptationControlInstance()._getXConditions();
 
 			this.setFilterConditions(mConditions);
-			this._setXConditions(mConditions);
+			var pConditions = this._setXConditions(mConditions);
 
 			if (this._bFilterFieldsCreated) {
-				this._oFilterBarLayout.setP13nData(this.getP13nData());
-				return this;
+				return pConditions.then(function(){
+					this._oFilterBarLayout.setP13nData(this.getP13nData());
+					return this;
+				}.bind(this));
 			}
 
 			var oAdaptationControl = this._getAdaptationControlInstance();

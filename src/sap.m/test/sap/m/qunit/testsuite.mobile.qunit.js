@@ -900,6 +900,15 @@ sap.ui.define([
 					}
 				}
 			},
+			"p13n.UIManager": {
+				title: "Test Page for sap.m.p13n.UIManager",
+				module: "test-resources/sap/m/qunit/p13n/UIManager.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
 			"p13n.modules.StateHandlerRegistry": {
 				title: "Test Page for sap.m.p13n.modules.StateHandlerRegistry",
 				module: "test-resources/sap/m/qunit/p13n/StateHandlerRegistry.qunit",

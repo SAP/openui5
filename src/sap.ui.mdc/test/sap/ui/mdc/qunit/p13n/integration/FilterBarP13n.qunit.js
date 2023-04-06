@@ -195,10 +195,12 @@ sap.ui.define([
 			Engine.getInstance()._setModificationHandler(this.oFilterBar, oTestModifier);
 
 			Engine.getInstance().reset(this.oFilterBar, "Item").then(function(){
-				//Model has been reset --> initial state recovered in model
-				assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
-				assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
-				done();
+				setTimeout(function(){
+					//Model has been reset --> initial state recovered in model
+					assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
+					assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
+					done();
+				});
 			});
 
 		}.bind(this));
