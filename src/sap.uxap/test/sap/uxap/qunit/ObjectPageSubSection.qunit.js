@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/Log",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Panel",
 	"sap/m/Text"],
-function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text) {
+function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -979,7 +980,14 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 				]
 			}),
 		oSpy = this.spy(Log, "error"),
+		oSetParentSpy,
 		done = assert.async();
+
+		opl.addEventDelegate({
+			onBeforeRendering: function () {
+				oSetParentSpy = this.spy(Control.prototype, "setParent");
+			}.bind(this)
+		});
 
 		opl.addEventDelegate({
 			onAfterRendering: function() {
@@ -987,6 +995,7 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 				oSubSection.addBlock(new BlockBase());
 				oSubSection._applyLayout(opl);
 				assert.equal(oSpy.callCount, 0, "no error on adding block");
+				assert.ok(oSetParentSpy.calledWith(oSubSection, "blocks"), "Control's setParent is called with ObjectPageSubSection");
 				done();
 				oSubSection.removeAllDependents();
 				opl.destroy();
