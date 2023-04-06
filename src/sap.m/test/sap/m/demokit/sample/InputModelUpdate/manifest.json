@@ -1,0 +1,42 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.InputModelUpdate",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.InputModelUpdate.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"manifest.json"
+				]
+			}
+		},
+		"models": {
+			"": {
+				"type": "sap.ui.model.json.JSONModel"
+			},
+			"musicService": {
+				"type": "sap.ui.model.odata.v4.ODataModel",
+				"settings": {
+					"serviceUrl": "https://odatav4server.internal.cfapps.sap.hana.ondemand.com/music/",
+					"synchronizationMode": "None"
+				}
+			}
+		}
+	}
+}
