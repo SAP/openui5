@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>sap.uxap.ObjectPage</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.uxap"
+		data-sap-ui-rtl="true">
+	</script>
+	<script id="view1" type="sapui5/xmlview">
+	<m:View xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:layout="sap.ui.layout"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		displayBlock="true"
+		height="100%">
+
+		<ObjectPageLayout
+			showTitleInHeaderContent="true"
+			alwaysShowContentHeader="false"
+			showHeaderContent="true"
+			useIconTabBar="true"
+			isChildPage="true">
+			<headerTitle>
+				<ObjectPageDynamicHeaderTitle>
+					<heading>
+						<m:Title text="ObjectPage with scrollbar in RTL"/>
+					</heading>
+					</ObjectPageDynamicHeaderTitle>
+				</headerTitle>
+				<sections>
+					<ObjectPageSection id="goalsSection" title="">
+						<subSections>
+							<ObjectPageSubSection id="goalsSubSection">
+								<blocks>
+									<html:div style="height: 3000px">
+										</html:div>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+				</sections>
+			</ObjectPageLayout>
+		</m:View>
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+<script>
+	(function (jQuery, App, Page) {
+		sap.ui.getCore().attachInit(function() {
+			var myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()});
+			new App().addPage(myView).placeAt("content");
+		});
+	}(jQuery, sap.m.App, sap.m.Page))
+</script>
+<div id="content"></div>
+</body>
+</html>

@@ -3043,7 +3043,9 @@ sap.ui.define([
 		var oWrapperElement = this._$opWrapper.get(0),
 			oTitleElement = this._$titleArea.get(0),
 			iTitleHeight = oTitleElement.getBoundingClientRect().height,
-			iTitleWidth = oTitleElement.getBoundingClientRect().width;
+			iTitleWidth = oTitleElement.getBoundingClientRect().width,
+			iScrollbarWidth = getScrollbarSize().width,
+			sClipPath;
 
 		// the top area of the scroll container is reserved for showing the title element,
 		// (where the title element is positioned absolutely on top of the scroll container),
@@ -3060,9 +3062,16 @@ sap.ui.define([
 		// (2) also make the area underneath the title invisible (using clip-path)
 		// to allow usage of *transparent background* of the title element
 		// (otherwise content from the scroll *overflow* will show underneath the transparent title element)
-		oWrapperElement.style.clipPath = 'polygon(0px ' + iTitleHeight + 'px, '
+		sClipPath = 'polygon(0px ' + iTitleHeight + 'px, '
 			+ Math.floor(iTitleWidth) + 'px ' 	+ iTitleHeight + 'px, '
 			+ Math.floor(iTitleWidth) + 'px 0, 100% 0, 100% 100%, 0 100%)';
+
+		if (this.oCore.getConfiguration().getRTL()) {
+			sClipPath = 'polygon(0px 0px, ' + iScrollbarWidth + 'px 0px, '
+			+ iScrollbarWidth + 'px ' + iTitleHeight + 'px, 100% '
+			+ iTitleHeight + 'px, 100% 100%, 0 100%)';
+		}
+		oWrapperElement.style.clipPath = sClipPath;
 
 		this.getHeaderTitle() && this._shiftHeaderTitle();
 	};
