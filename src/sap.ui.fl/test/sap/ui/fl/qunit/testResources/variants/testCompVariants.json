@@ -1,0 +1,190 @@
+{
+    "appDescriptorChanges": [],
+    "changes": [
+        {
+            "changeType": "rename",
+            "reference": "ZDEMOOVP_RESIZE",
+            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+            "projectId": "ZDEMOOVP_RESIZE",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1676895642371_1131_rename",
+            "content": {
+                "originalControlType": "sap.m.Text"
+            },
+            "texts": {
+                "newText": {
+                    "value": "Recent Contacts kl",
+                    "type": "XTXT"
+                }
+            },
+            "selector": {
+                "id": "ZDEMOOVP_card01Original--ovpHeaderTitle",
+                "idIsLocal": true
+            },
+            "dependentSelector": {},
+            "jsOnly": false,
+            "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
+            "creation": "2023-02-20T12:21:10.2609220Z"
+        }
+    ],
+    "ui2personalization": {},
+    "comp": {
+        "variants": [
+            {
+                "changeType": "page",
+                "reference": "ZDEMOOVP_RESIZE",
+                "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+                "projectId": "ZDEMOOVP_RESIZE",
+                "support": {
+                    "generator": "sap.ui.rta.command",
+                    "sapui5Version": "1.112.0-SNAPSHOT",
+                    "command": "compVariantSaveAs",
+                    "user": "TEST"
+                },
+                "originalLanguage": "EN",
+                "layer": "CUSTOMER",
+                "fileType": "variant",
+                "fileName": "id_1676895665238_1161_page",
+                "content": {
+                    "ovpGlobalFilter": {
+                        "filterbar": [],
+                        "orderedFilterItems": "",
+                        "filterBarVariant": "{}",
+                        "singleInputsTextArrangementData": "{}"
+                    }
+                },
+                "texts": {
+                    "variantName": {
+                        "value": "Standard co",
+                        "type": "XFLD"
+                    }
+                },
+                "favorite": true,
+                "executeOnSelection": false,
+                "standardVariant": false,
+                "contexts": {
+                    "role": [
+                        "/IPRO/MANAGER"
+                    ]
+                },
+                "selector": {
+                    "persistencyKey": "ovpGlobalFilter"
+                },
+                "variantId": "id_1676895665238_1161_page",
+                "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
+                "creation": "2023-02-20T12:21:08.1783330Z"
+            },
+            {
+                "changeType": "page",
+                "reference": "ZDEMOOVP_RESIZE",
+                "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+                "projectId": "ZDEMOOVP_RESIZE",
+                "support": {
+                    "generator": "sap.ui.rta.command",
+                    "sapui5Version": "1.112.0-SNAPSHOT",
+                    "command": "compVariantSaveAs",
+                    "user": "TEST"
+                },
+                "originalLanguage": "EN",
+                "layer": "CUSTOMER",
+                "fileType": "variant",
+                "fileName": "id_1676895725424_1468_page",
+                "content": {
+                    "ovpGlobalFilter": {
+                        "version": "V3",
+                        "filterbar": [],
+                        "filterBarVariant": "{}",
+                        "singleInputsTextArrangementData": "{}"
+                    }
+                },
+                "texts": {
+                    "variantName": {
+                        "value": "Standard co 123",
+                        "type": "XFLD"
+                    }
+                },
+                "favorite": true,
+                "executeOnSelection": false,
+                "standardVariant": false,
+                "contexts": {
+                    "role": []
+                },
+                "selector": {
+                    "persistencyKey": "ovpGlobalFilter"
+                },
+                "variantId": "id_1676895725424_1468_page",
+                "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
+                "creation": "2023-02-20T12:22:07.4507170Z"
+            }
+        ],
+        "changes": [
+            {
+                "changeType": "updateVariant",
+                "reference": "ZDEMOOVP_RESIZE",
+                "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+                "projectId": "ZDEMOOVP_RESIZE",
+                "support": {
+                    "sapui5Version": "1.112.0-SNAPSHOT",
+                    "user": "TEST"
+                },
+                "originalLanguage": "EN",
+                "layer": "CUSTOMER",
+                "fileType": "change",
+                "fileName": "id_1676895718728_1454_updateVariant",
+                "content": {
+                    "executeOnSelection": true
+                },
+                "texts": {},
+                "selector": {
+                    "persistencyKey": "ovpGlobalFilter",
+                    "variantId": "id_1676895665238_1161_page"
+                },
+                "dependentSelector": {},
+                "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
+                "creation": "2023-02-20T12:22:09.2616790Z"
+            }
+        ],
+        "defaultVariants": [
+            {
+                "changeType": "defaultVariant",
+                "reference": "ZDEMOOVP_RESIZE",
+                "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+                "projectId": "ZDEMOOVP_RESIZE",
+                "support": {
+                    "generator": "CompVariantState.defaultVariant",
+                    "sapui5Version": "1.112.0-SNAPSHOT",
+                    "user": "TEST"
+                },
+                "originalLanguage": "EN",
+                "layer": "CUSTOMER",
+                "fileType": "change",
+                "fileName": "id_1676895718729_1455_defaultVariant",
+                "content": {
+                    "defaultVariantName": "id_1676895665238_1161_page"
+                },
+                "texts": {},
+                "selector": {
+                    "persistencyKey": "ovpGlobalFilter"
+                },
+                "dependentSelector": {},
+                "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
+                "creation": "2023-02-20T12:22:09.9220560Z"
+            }
+        ],
+        "standardVariants": []
+    },
+    "variants": [],
+    "variantChanges": [],
+    "variantDependentControlChanges": [],
+    "variantManagementChanges": [],
+    "cacheKey": "zLD98mjYgjmBWEvbKZr7QCOAGAI="
+}

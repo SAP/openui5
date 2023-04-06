@@ -166,4 +166,37 @@ sap.ui.define([
 			assert.deepEqual(oVariant.getContexts(), {foo: "bar"}, "the contexts are properly set");
 		});
 	});
+
+	QUnit.module("Updates and export", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when cloning an existing FLVariant", function(assert) {
+			var oVariant = FlexObjectFactory.createFlVariant({
+				id: "myId",
+				variantName: "myVariantName",
+				variantManagementReference: "myVariantManagementReference",
+				variantReference: "myVariantReference",
+				user: "myUser",
+				contexts: {
+					foo: "bar"
+				},
+				layer: "myLayer",
+				reference: "myReference",
+				generator: "myGenerator"
+			});
+			var oClonedFLVariantContent = oVariant.cloneFileContentWithNewId();
+			var oClonedFLVariant = FlexObjectFactory.createFromFileContent(oClonedFLVariantContent);
+			assert.strictEqual(oVariant.getSupportInformation().user, oClonedFLVariant.getSupportInformation().user, "the user is properly set");
+			assert.strictEqual(oVariant.getSupportInformation().generator, oClonedFLVariant.getSupportInformation().generator, "the generator is properly set");
+			assert.strictEqual(oVariant.getFlexObjectMetadata().reference, oClonedFLVariant.getFlexObjectMetadata().reference, "the reference is properly set");
+			assert.strictEqual(oVariant.getName(), oClonedFLVariant.getName(), "the variant name is properly set");
+			assert.strictEqual(oVariant.getLayer(), oClonedFLVariant.getLayer(), "the layer is properly set");
+			assert.notStrictEqual(oVariant.getId(), oClonedFLVariant.getId(), "the Id is properly set");
+			assert.notStrictEqual(oVariant.getVariantReference(), oClonedFLVariant.getVariantReference(), "the VariantReference is properly set");
+			assert.strictEqual(oVariant.getVariantManagementReference(), oClonedFLVariant.getVariantManagementReference(), "the VariantManagementReference is properly set");
+			assert.deepEqual(oVariant.getContexts(), oClonedFLVariant.getContexts(), "the contexts are properly set");
+		});
+	});
 });

@@ -57,7 +57,7 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("constructor - when originalLanguage is missing", function(assert) {
 			sandbox.stub(Utils, "getCurrentLanguage").returns("EN");
 			var oFlexObject = FlexObjectFactory.createFromFileContent({
@@ -128,7 +128,7 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when setting the content", function(assert) {
 			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
 			this.oFlexObject.setContent({
@@ -258,7 +258,7 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("FlexObject.getState", function(assert) {
 			assert.strictEqual(
 				this.oFlexObject.getState(),
@@ -367,8 +367,8 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when a FlexObject is updated", function (assert) {
+	}, function() {
+		QUnit.test("when a FlexObject is updated", function(assert) {
 			var oInitialSupportInfo = this.oFlexObject.getSupportInformation();
 			var oUpdate = {
 				layer: Layer.VENDOR,
@@ -397,7 +397,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a very deep FlexObject is updated", function (assert) {
+		QUnit.test("when a very deep FlexObject is updated", function(assert) {
 			return LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/DeepFlexObject.json"),
@@ -425,7 +425,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when exporting file content of a FlexObject", function (assert) {
+		QUnit.test("when exporting file content of a FlexObject", function(assert) {
 			// fileName is assigned to the id upon creation
 			var oExpectedFileContent = Object.assign({}, oFileContent);
 			oExpectedFileContent.selector = {};
@@ -436,9 +436,22 @@ sap.ui.define([
 				"then the output should have the same information as the original file content"
 			);
 		});
+
+		QUnit.test("when cloning file content", function(assert) {
+			var oExpectedFileContent = Object.assign({}, oFileContent);
+			oExpectedFileContent.selector = {};
+			oExpectedFileContent.dependentSelector = {};
+			var oCopiedFlexObject = this.oFlexObject.cloneFileContentWithNewId();
+			assert.notStrictEqual(
+				oCopiedFlexObject,
+				oExpectedFileContent,
+				"then the two flex objects are not equal"
+			);
+			assert.notStrictEqual(oCopiedFlexObject.fileName, oFileContent.fileName, "then the cloned flex object has another id as the original flex object");
+		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

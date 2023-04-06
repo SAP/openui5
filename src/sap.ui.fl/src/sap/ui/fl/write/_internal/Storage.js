@@ -421,6 +421,9 @@ sap.ui.define([
 		load: function(mPropertyBag) {
 			return _getWriteConnectors()
 				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.load", mPropertyBag));
+		},
+		writeChange: function(mPropertyBag) {
+			return Storage.write(mPropertyBag);
 		}
 	};
 

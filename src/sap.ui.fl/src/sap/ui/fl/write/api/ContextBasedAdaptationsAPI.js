@@ -4,14 +4,20 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/model/json/JSONModel"
-], function (
+], function(
 	Settings,
+	FlexObjectFactory,
 	ManifestUtils,
+	FlexObjectState,
+	Layer,
 	FlexUtils,
 	Storage,
 	Versions,
@@ -68,7 +74,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {sap.ui.model.json.JSONModel} - Model of adaptations enhanced with additional properties
 	 */
-	ContextBasedAdaptationsAPI.initialize = function (mPropertyBag) {
+	ContextBasedAdaptationsAPI.initialize = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
@@ -175,6 +181,86 @@ sap.ui.define([
 		_mInstances = {};
 	};
 
+	function getNewVariantId(mFileNames, sOldVariantId) {
+		return mFileNames.get(sOldVariantId) || sOldVariantId;
+	}
+	/*
+	 * Copies copy variants
+	 * @param {array} aVariants - Variants to be copied
+	 * @param {array} aCopiedFlexObjects - Contains copied flex objects
+	 * @param {Map} mFileNames - Mapping from old variants id to new variants id for changes
+	 * @param {string} sContextBasedAdaptationId - Context-based adaptation id
+	 */
+	function copyVariants(aVariants, aCopiedFlexObjects, mFileNames, sContextBasedAdaptationId) {
+		aVariants.forEach(function(oChange) {
+			var oCopiedVariant;
+			var sFileName = FlexUtils.createDefaultFileName(oChange.getId().split("_").pop());
+			// copy of CompVariant and FLVariant variants
+			oCopiedVariant = FlexObjectFactory.createFromFileContent(oChange.cloneFileContentWithNewId(sFileName));
+			oCopiedVariant.setAdaptationId(sContextBasedAdaptationId);
+			aCopiedFlexObjects.push(oCopiedVariant);
+			mFileNames.set(oChange.getId(), sFileName);
+		});
+	}
+
+	/**
+	 * Copies changes
+	 * @param {array} aChanges - To be copied changes
+	 * @param {array} aCopiedFlexObjects - Contains copied flex object
+	 * @param {Map} mFileNames - Mapping from variants id to new variants id
+	 * @param {string} sContextBasedAdaptationId - Context-based adaptation id
+	 */
+	function copyChanges(aChanges, aCopiedFlexObjects, mFileNames, sContextBasedAdaptationId) {
+		aChanges.forEach(function(oChange) {
+			var sFileName = FlexUtils.createDefaultFileName(oChange.getId().split("_").pop());
+			var oCopiedChange = FlexObjectFactory.createFromFileContent(oChange.cloneFileContentWithNewId(sFileName));
+			if (oChange.getFileType() === "change") {
+				if (oChange.getSelector().variantId) {
+					// selector of a change links to a CompVariant
+					oCopiedChange.getSelector().variantId = getNewVariantId(mFileNames, oCopiedChange.getSelector().variantId);
+				} else if (oChange.getContent().defaultVariantName) {
+					// change references to a defaultVariant
+					oCopiedChange.getContent().defaultVariantName = getNewVariantId(mFileNames, oCopiedChange.getContent().defaultVariantName);
+				}
+				// references to a FLVariant (variant dependent change)
+				if (oChange.getVariantReference()) {
+					oCopiedChange.setVariantReference(getNewVariantId(mFileNames, oCopiedChange.getVariantReference()));
+				}
+			} else if (oChange.getFileType() === "ctrl_variant_change" && oChange.getSelector().id) {
+				oCopiedChange.getSelector().id = getNewVariantId(mFileNames, oCopiedChange.getSelector().id);
+			} else if (oChange.getFileType() === "ctrl_variant_management_change" && oChange.getContent().defaultVariant) {
+				oCopiedChange.getContent().defaultVariant = getNewVariantId(mFileNames, oCopiedChange.getContent().defaultVariant);
+			}
+			oCopiedChange.setAdaptationId(sContextBasedAdaptationId);
+			aCopiedFlexObjects.push(oCopiedChange);
+		});
+	}
+
+	/**
+	 * Copies existing changes
+	 * @param {array} aFlexObjects - Contains a list of flex object changes and variants
+	 * @param {string} sContextBasedAdaptationId - ID of to be created adaptation id
+	 * @returns {array} Returns a list of copied changes and variant as JSON object
+	 */
+	function copyVariantsAndChanges(aFlexObjects, sContextBasedAdaptationId) {
+		var aCopiedFlexObjects = [];
+		var aVariants = [];
+		var aChanges = [];
+		var mFileNames = new Map();
+		aFlexObjects.forEach(function(oFlexObject) {
+			if (oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.Variant")) {
+				aVariants.push(oFlexObject);
+			} else {
+				aChanges.push(oFlexObject);
+			}
+		});
+		copyVariants(aVariants, aCopiedFlexObjects, mFileNames, sContextBasedAdaptationId);
+		copyChanges(aChanges, aCopiedFlexObjects, mFileNames, sContextBasedAdaptationId);
+		return aCopiedFlexObjects.map(function(oFlexObject) {
+			return oFlexObject.convertToFileContent();
+		});
+	}
+
 	/**
 	 * Create new context-based adaptation and saves it in the backend
 	 * @param {object} mPropertyBag - Object with parameters as properties
@@ -187,7 +273,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.contextBasedAdaptation.priority - ID of the new adaptation
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
 	 */
-	ContextBasedAdaptationsAPI.create = function (mPropertyBag) {
+	ContextBasedAdaptationsAPI.create = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
@@ -199,16 +285,28 @@ sap.ui.define([
 		}
 		mPropertyBag.contextBasedAdaptation.id = FlexUtils.createDefaultFileName();
 		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
+		var sParentVersion = Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion");
+
 		return Storage.contextBasedAdaptation.create({
 			layer: mPropertyBag.layer,
 			flexObject: mPropertyBag.contextBasedAdaptation,
 			appId: mPropertyBag.appId,
-			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
-		}).then(function (oResponse) {
+			parentVersion: sParentVersion
+		}).then(function(oResponse) {
 			var oModel = this.getAdaptationsModel(mPropertyBag);
 			oModel.insertAdaptation(mPropertyBag.contextBasedAdaptation);
-			return handleResponseForVersioning(oResponse, 201, mPropertyBag);
-		}.bind(this));
+			handleResponseForVersioning(oResponse, 201, mPropertyBag);
+			return FlexObjectState.getFlexObjects({ selector: mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true, currentLayer: Layer.CUSTOMER });
+		}.bind(this)).then(function(aFlexObjects) {
+			var aCopiedChanges = copyVariantsAndChanges(aFlexObjects, mPropertyBag.contextBasedAdaptation.id);
+			return Storage.contextBasedAdaptation.writeChange({
+				layer: mPropertyBag.layer,
+				flexObjects: aCopiedChanges,
+				transport: "",
+				isLegacyVariant: false,
+				parentVersion: sParentVersion
+			});
+		});
 	};
 
 	/**
@@ -256,7 +354,7 @@ sap.ui.define([
 	 * @param {string[]} mPropertyBag.parameters.priorities - Priority list
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
 	 */
-	ContextBasedAdaptationsAPI.reorder = function (mPropertyBag) {
+	ContextBasedAdaptationsAPI.reorder = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
@@ -284,7 +382,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {Promise<object>} Promise that resolves with the list of context-based adaptations
 	 */
-	ContextBasedAdaptationsAPI.load = function (mPropertyBag) {
+	ContextBasedAdaptationsAPI.load = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}

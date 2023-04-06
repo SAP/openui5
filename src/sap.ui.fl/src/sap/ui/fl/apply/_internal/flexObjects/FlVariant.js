@@ -88,7 +88,7 @@ sap.ui.define([
 	 * @returns {object} Mapping information
 	 * @static
 	 */
-	FlVariant.getMappingInfo = function () {
+	FlVariant.getMappingInfo = function() {
 		return Object.assign(Variant.getMappingInfo(), {
 			variantReference: "variantReference",
 			variantManagementReference: "variantManagementReference"
@@ -100,8 +100,14 @@ sap.ui.define([
 	 * Can be overridden to avoid access of static mapping within base methods.
 	 * @returns {object} Mapping information
 	 */
-	FlVariant.prototype.getMappingInfo = function () {
+	FlVariant.prototype.getMappingInfo = function() {
 		return FlVariant.getMappingInfo();
+	};
+
+	FlVariant.prototype.cloneFileContentWithNewId = function() {
+		var mFileContent = Variant.prototype.cloneFileContentWithNewId.apply(this, arguments);
+		mFileContent.variantReference = mFileContent.fileName;
+		return mFileContent;
 	};
 
 	return FlVariant;
