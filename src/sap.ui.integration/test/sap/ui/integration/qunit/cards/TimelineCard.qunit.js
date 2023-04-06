@@ -41,6 +41,9 @@ sap.ui.define([
 					},
 					removeActiveLoadingProvider: function () {
 
+					},
+					getId: function () {
+						return "id1";
 					}
 				});
 			this.oTimelineContent.setConfiguration({
