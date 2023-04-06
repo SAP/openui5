@@ -122,9 +122,9 @@ sap.ui.define([
 			only: null,
 			never: null,
 			branchTracking: false,
-			// TODO: Set to "auto", once consumer libraries set it explicitly to blanket and the grace period
-			// for adoption ends
-			instrumenter: "blanket" // blanket, istanbul, auto (default)
+			// "auto" checks for istanbul middleware and loads istanbul instrumentation, otherwise blanket is used.
+			// The other options set explicitly the desired instrumenter.
+			instrumenter: "auto" // blanket, istanbul, auto (default)
 		},
 		ui5: {
 			bindingSyntax: 'complex',
