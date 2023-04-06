@@ -298,6 +298,7 @@ sap.ui.define([
 				openChangeCategorySelectionPopover: this.eventHandler.bind(this, "OpenChangeCategorySelectionPopover"),
 				saveAsAdaptation: onSaveAsAdaptation.bind(this),
 				manageAdaptations: onManageAdaptations.bind(this),
+				formatAdaptationsMenuText: formatAdaptationsMenuText.bind(this),
 				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
 				save: this.eventHandler.bind(this, "Save"),
 				exit: this.eventHandler.bind(this, "Exit"),
@@ -334,6 +335,13 @@ sap.ui.define([
 
 	function onManageAdaptations() {
 		this.getExtension("contextBasedManage", ManageAdaptations).openManageAdaptationDialog();
+	}
+
+	function formatAdaptationsMenuText(iCount, sTitle) {
+		if (iCount > 0) {
+			return this.getTextResources().getText("BTN_ADAPTING_FOR", sTitle);
+		}
+		return this.getTextResources().getText("BTN_ADAPTING_FOR_ALL_USERS");
 	}
 
 	function onOverviewForKeyUserPressed() {

@@ -4,6 +4,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
@@ -18,6 +20,8 @@ sap.ui.define([
 	Button,
 	RtaQunitUtils,
 	Core,
+	ContextBasedAdaptationsAPI,
+	Settings,
 	Version,
 	VersionsAPI,
 	Layer,
@@ -95,6 +99,57 @@ sap.ui.define([
 					assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save", "then without versioning enabled tooltip on save button is correct");
 					this.oVersionsModel.setProperty("/versioningEnabled", true);
 					assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save Draft", "then with versioning enabled tooltip on save button is correct");
+				}.bind(this));
+		});
+	});
+
+	QUnit.module("Given Adaptation Model binding & formatter", {
+		before: function () {
+			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+		},
+		after: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When no context-based adaptation is available", function (assert) {
+			this.oAdaptationsModel = new JSONModel({
+				adaptations: [],
+				count: 0,
+				displayedAdaptation: {}
+			});
+
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+
+			return this.oToolbar._pFragmentLoaded
+				.then(function() {
+					this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
+					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+					assert.ok(this.oToolbar.getControl("contextBasedAdaptationMenu").getEnabled(), "then the context-based adaptation menu is enabled");
+					assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly ");
+				}.bind(this));
+		});
+
+		QUnit.test("When two context-based adaptation are available", function (assert) {
+			this.oAdaptationsModel = new JSONModel({
+				adaptations: [{title: "Sales"}, {title: "Manager"}],
+				count: 2,
+				displayedAdaptation: {title: "Sales"}
+			});
+
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+
+			return this.oToolbar._pFragmentLoaded
+				.then(function() {
+					this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
+					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+					assert.ok(this.oToolbar.getControl("contextBasedAdaptationMenu").getEnabled(), "then the context-based adaptation menu is enabled");
+					assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly ");
 				}.bind(this));
 		});
 	});
@@ -339,6 +394,156 @@ sap.ui.define([
 				versioningEnabled: true
 			});
 			oVersionsModel.setDirtyChanges = function() {};
+			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
+		},
+		afterEach: function() {
+			this.oContainer.destroy();
+			this.oComponent.destroy();
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the toolbar gets initially shown in a wide window (1200px)", function(assert) {
+			document.getElementById("qunit-fixture").style.width = "1200px";
+			return createAndStartRTA.call(this)
+				.then(function() {
+					var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+					var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
+					var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
+					assert.strictEqual(
+						oAdaptationSwitcherButton.getText(),
+						this.oTextResources.getText("BTN_ADAPTATION"),
+						"the adaptation button shows the right text"
+					);
+					assert.strictEqual(
+						oNavigationSwitcherButton.getText(),
+						this.oTextResources.getText("BTN_NAVIGATION"),
+						"the navigation button shows the right text"
+					);
+					assert.strictEqual(
+						oVisualizationSwitcherButton.getText(),
+						this.oTextResources.getText("BTN_VISUALIZATION"),
+						"the visualization button shows the right text"
+					);
+					assert.strictEqual(this.oToolbar.getControl("save").getIcon(), "sap-icon://save", "the save button has save icon");
+					assert.notOk(this.oToolbar.getControl("save").getText(), "the save button has no text");
+					assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
+					assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
+					return RtaQunitUtils.showActionsMenu(this.oToolbar);
+				}.bind(this))
+				.then(function () {
+					assert.strictEqual(this.oToolbar.getControl("restore").getIcon(), "sap-icon://reset", "the reset button has reset icon");
+				}.bind(this));
+		});
+
+		QUnit.test("when the toolbar gets initially shown in a narrow window (600px)", function(assert) {
+			var fnDone = assert.async();
+			document.getElementById("qunit-fixture").style.width = "600px";
+			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
+				.callsFake(function() {
+					oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+					var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+					var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
+					var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
+					assert.strictEqual(
+						oAdaptationSwitcherButton.getText(),
+						"",
+						"the adaptation button has no text"
+					);
+					assert.strictEqual(
+						oNavigationSwitcherButton.getText(),
+						"",
+						"the navigation button has no text"
+					);
+					assert.strictEqual(
+						oVisualizationSwitcherButton.getText(),
+						"",
+						"the visualization button has no text"
+					);
+					assert.strictEqual(
+						oAdaptationSwitcherButton.getIcon(),
+						"sap-icon://wrench",
+						"the adaptation button has the right icon"
+					);
+					assert.strictEqual(
+						oNavigationSwitcherButton.getIcon(),
+						"sap-icon://explorer",
+						"the navigation button has the right icon"
+					);
+					assert.strictEqual(
+						oVisualizationSwitcherButton.getIcon(),
+						"sap-icon://show",
+						"the visualization button has the right icon"
+					);
+					fnDone();
+				}.bind(this));
+			return createAndStartRTA.call(this);
+		});
+
+		QUnit.test("when the toolbar gets initially shown in a wide window (1200px), then reduced to 600px and then expanded to 1600px", function(assert) {
+			var fnDone = assert.async();
+			document.getElementById("qunit-fixture").style.width = "1200px";
+
+			var fnCheckIcon = function() {
+				assert.strictEqual(
+					this.oAdaptationSwitcherButton.getText(),
+					"",
+					"the adaptation button has no text"
+				);
+				assert.strictEqual(
+					this.oAdaptationSwitcherButton.getIcon(),
+					"sap-icon://wrench",
+					"the adaptation button has an icon"
+				);
+			};
+
+			var fnCheckText = function() {
+				assert.strictEqual(
+					this.oAdaptationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_ADAPTATION"),
+					"the adaptation button shows text"
+				);
+			};
+
+			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
+				.callsFake(function() {
+					oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+					fnCheckIcon.call(this);
+					var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function() {
+						oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, arguments);
+						fnCheckText.call(this);
+						fnDone();
+					}.bind(this));
+					document.getElementById("qunit-fixture").style.width = "1200px";
+					window.dispatchEvent(new Event('resize'));
+				}.bind(this));
+
+			return createAndStartRTA.call(this)
+				.then(function() {
+					this.oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+					fnCheckText.call(this);
+					document.getElementById("qunit-fixture").style.width = "600px";
+				}.bind(this));
+		});
+	});
+
+	QUnit.module("Different screen sizes and common buttons with context-based adaptation enabled", {
+		beforeEach: function() {
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
+				this.placeAt("qunit-fixture");
+			});
+			var oVersionsModel = new JSONModel({
+				versioningEnabled: true
+			});
+			oVersionsModel.setDirtyChanges = function() {};
+			var oAdaptationsModel = new JSONModel({
+				adaptations: [],
+				count: 0,
+				displayedAdaptation: {}
+			});
+			sandbox.stub(Settings.prototype, "isContextBasedAdaptationEnabled").resolves(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "initialize").resolves(oAdaptationsModel);
 			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
 		},
 		afterEach: function() {

@@ -143,26 +143,26 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</Button>
-				<toolbar:OverflowToolbarButton
-						id="sapUiRta_manageAdaptations"
-						press=".manageAdaptations"
-						visible="{= (${controls>/contextBasedAdaptation/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
-						type="Transparent"
-						text="{i18n>BTN_MANAGE_APP_CTX}" >
-					<toolbar:layoutData>
-						<OverflowToolbarLayoutData priority="Low" />
-					</toolbar:layoutData>
-				</toolbar:OverflowToolbarButton>
-				<toolbar:OverflowToolbarButton
-						id="sapUiRta_saveAsAdaptation"
-						visible="{= (${controls>/contextBasedAdaptation/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
-						press=".saveAsAdaptation"
-						type="Transparent"
-						text="{i18n>BTN_SAVE_AS}" >
-					<toolbar:layoutData>
-						<OverflowToolbarLayoutData priority="Low" />
-					</toolbar:layoutData>
-				</toolbar:OverflowToolbarButton>
+				<MenuButton
+						id="sapUiRta_contextBasedAdaptationMenu"
+						text="{parts: [{path: 'contextBasedAdaptations>/count'}, {path: 'contextBasedAdaptations>/displayedAdaptation/title'}], formatter: '.formatAdaptationsMenuText'}"
+						visible="{= (${controls>/contextBasedAdaptation/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}">
+					<Menu>
+						<MenuItem
+								id="sapUiRta_saveAsAdaptation"
+								text="{i18n>SAC_DIALOG_HEADER}"
+								press=".saveAsAdaptation"
+								icon="sap-icon://copy"/>
+						<MenuItem
+								id="sapUiRta_manageAdaptations"
+								text="{i18n>MANAGE_ADAPTATIONS_DIALOG_HEADER}"
+								press=".manageAdaptations"
+								icon="sap-icon://action-settings"/>
+					</Menu>
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</MenuButton>
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_save"
 						type="Transparent"
