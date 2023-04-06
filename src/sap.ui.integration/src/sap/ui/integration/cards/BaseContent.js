@@ -508,7 +508,7 @@ sap.ui.define([
 		var oLoadingProvider = this.getAggregation("_loadingProvider"),
 			oCard = this.getCardInstance();
 
-		if (!oLoadingProvider || !oLoadingProvider.getLoading()) {
+		if (!oLoadingProvider.getLoading()) {
 			return;
 		}
 

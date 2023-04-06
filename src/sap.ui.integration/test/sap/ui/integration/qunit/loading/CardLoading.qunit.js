@@ -1579,7 +1579,6 @@ sap.ui.define([
 			}
 		});
 
-
 		QUnit.test("Default Header - Title should not have a loading indicator and all other controls should", function (assert) {
 			isLoadingIndicatorShowingHeader(oManifest_CardCase1, this.oCard, true, false, true, true, assert);
 		});
