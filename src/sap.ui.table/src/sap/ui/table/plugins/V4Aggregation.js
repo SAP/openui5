@@ -358,11 +358,13 @@ sap.ui.define([
 			this._aGroupLevels = [];
 			if (oAggregateInfo.groupLevels) {
 				oAggregateInfo.groupLevels.forEach(function(sGroupLevelName) {
-					var oProperty = this.findPropertyInfo(sGroupLevelName);
-					this._aGroupLevels.push({
-						property: oProperty,
-						textProperty: this.findPropertyInfo(oProperty.text)
-					});
+					var oGroupedPropertyInfo = this.findPropertyInfo(sGroupLevelName);
+					if (oGroupedPropertyInfo) {
+						this._aGroupLevels.push({
+							property: oGroupedPropertyInfo,
+							textProperty: this.findPropertyInfo(oGroupedPropertyInfo.text)
+						});
+					}
 				}.bind(this));
 			}
 
