@@ -156,7 +156,7 @@ sap.ui.define([
 	QUnit.module("checkIfDependencyIsStillValid", {
 		beforeEach: function() {
 			this.oChange = new UIChange({});
-			sandbox.stub(FlUtils, "getChangeFromChangesMap").returns(this.oChange);
+			this.oGetChangesFromMapStub = sandbox.stub(FlUtils, "getChangeFromChangesMap").returns(this.oChange);
 			this.oModifier = {
 				bySelector: function() {}
 			};
@@ -179,6 +179,11 @@ sap.ui.define([
 		QUnit.test("with change neither being applied not already applied", function(assert) {
 			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
 			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), true, "the dependency is still valid");
+		});
+
+		QUnit.test("with change deleted from the changes map (e.g. after condensing)", function(assert) {
+			this.oGetChangesFromMapStub.returns(undefined);
+			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), false, "the dependency is not valid anymore");
 		});
 	});
 

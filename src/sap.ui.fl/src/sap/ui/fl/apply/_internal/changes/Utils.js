@@ -97,6 +97,10 @@ sap.ui.define([
 
 		checkIfDependencyIsStillValid: function(oAppComponent, oModifier, mChangesMap, sChangeId) {
 			var oChange = FlUtils.getChangeFromChangesMap(mChangesMap.mChanges, sChangeId);
+			// Change could be deleted after a save (condensing) so it is no longer a relevant dependency
+			if (!oChange) {
+				return false;
+			}
 			var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
 			var bHasChangeApplyFinishedCustomData = FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier);
 			return isDependencyStillValid(oChange, bHasChangeApplyFinishedCustomData);
