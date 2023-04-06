@@ -907,6 +907,7 @@ if (typeof window.sap.ui !== "object") {
 	 * screen width range: <code>sapUiMedia-3Step-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 *
 	 * @name sap.ui.Device.media.RANGESETS.SAP_3STEPS
+	 * @type string
 	 * @public
 	 */
 	/**
@@ -926,6 +927,7 @@ if (typeof window.sap.ui !== "object") {
 	 * screen width range: <code>sapUiMedia-4Step-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 *
 	 * @name sap.ui.Device.media.RANGESETS.SAP_4STEPS
+	 * @type string
 	 * @public
 	 */
 	/**
@@ -947,6 +949,7 @@ if (typeof window.sap.ui !== "object") {
 	 * screen width range: <code>sapUiMedia-6Step-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 *
 	 * @name sap.ui.Device.media.RANGESETS.SAP_6STEPS
+	 * @type string
 	 * @public
 	 */
 	/**
@@ -974,6 +977,7 @@ if (typeof window.sap.ui !== "object") {
 	 * </ul>
 	 *
 	 * @name sap.ui.Device.media.RANGESETS.SAP_STANDARD
+	 * @type string
 	 * @public
 	 */
 
@@ -994,6 +998,7 @@ if (typeof window.sap.ui !== "object") {
 	 * screen width range: <code>sapUiMedia-StdExt-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 *
 	 * @name sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED
+	 * @type string
 	 * @public
 	 */
 
