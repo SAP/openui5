@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.23020.0-20230307104335+d1c2c3769b35a96c9647c4970676104d5e0a1bbd
-// * data:{"sModified":"2023-03-09T09:38:11Z"}
+// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company. All rights reserved.
+// * Theming Engine 1.23030.0-20230404052500+08ab7f203f968a8915a46326f198b28734934650
+// * data:{"sModified":"2023-04-04T08:11:20Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_horizon_dark/base.less (Version 11.2.1) *******************/
+/******************* FILE /Base/baseLib/sap_horizon_dark/base.less (Version 11.3.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -119,6 +119,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapSelectedColor: @sapHighlightColor;
+@sapHoverColor: lighten(@sapBackgroundColor, 3);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -643,14 +644,17 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapFontHeader6Size: 0.875 * @sapContent_GridSize;
+@sapLink_TextDecoration: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapLink_Hover_Color: darken(@sapPrimary2, 7);
+@sapLink_Hover_TextDecoration: underline;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapLink_Active_Color: @sapLinkColor;
+@sapLink_Active_TextDecoration: underline;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1715,6 +1719,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_BorderCornerRadius: 0.25 * @sapContent_GridSize;
+@sapField_Shadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1731,6 +1736,11 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_Hover_HelpBackground: @sapField_Hover_Background;
+@sapField_Hover_Shadow: @sapContent_Interaction_Shadow;
+@sapField_Hover_InvalidShadow: @sapContent_Negative_Shadow;
+@sapField_Hover_WarningShadow: @sapContent_Critical_Shadow;
+@sapField_Hover_SuccessShadow: @sapContent_Positive_Shadow;
+@sapField_Hover_InformationShadow: @sapContent_Informative_Shadow;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1791,6 +1801,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_InvalidBorderStyle: none;
+@sapField_InvalidShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1811,6 +1822,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_WarningBorderStyle: none;
+@sapField_WarningShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1831,6 +1843,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_SuccessBorderStyle: none;
+@sapField_SuccessShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1851,6 +1864,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_InformationBorderStyle: none;
+@sapField_InformationShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2434,15 +2448,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_1_TextColor: contrast(@sapIndicationColor_1_Background, @sapTextColor, @sapContent_ContrastTextColor, 0.374);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_1_Hover_Background: lighten(@sapIndicationColor_1, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_1_Active_Background: lighten(@sapIndicationColor_1, 10);
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_1_TextColor: contrast(@sapIndicationColor_1_Background, @sapTextColor, @sapContent_ContrastTextColor, 0.374);
+@sapIndicationColor_1_Active_BorderColor: @sapIndicationColor_1b_BorderColor;
+@sapIndicationColor_1_Active_TextColor: @sapIndicationColor_1;
+@sapIndicationColor_1_Selected_Background: @sapIndicationColor_1_Active_Background;
+@sapIndicationColor_1_Selected_BorderColor: @sapIndicationColor_1_Active_BorderColor;
+@sapIndicationColor_1_Selected_TextColor: @sapIndicationColor_1_Active_TextColor;
+@sapIndicationColor_1b: #5e0303;
+@sapIndicationColor_1b_BorderColor: @sapIndicationColor_1b;
+@sapIndicationColor_1b_Hover_Background: lighten(@sapIndicationColor_1b, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2458,15 +2480,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_2_TextColor: contrast(@sapIndicationColor_2_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_2_Hover_Background: lighten(@sapIndicationColor_2, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_2_Active_Background: lighten(@sapIndicationColor_2, 10);
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_2_TextColor: contrast(@sapIndicationColor_2_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_2_Active_BorderColor: @sapIndicationColor_2b_BorderColor;
+@sapIndicationColor_2_Active_TextColor: @sapIndicationColor_2;
+@sapIndicationColor_2_Selected_Background: @sapIndicationColor_2_Active_Background;
+@sapIndicationColor_2_Selected_BorderColor: @sapIndicationColor_2_Active_BorderColor;
+@sapIndicationColor_2_Selected_TextColor: @sapIndicationColor_2_Active_TextColor;
+@sapIndicationColor_2b: #7d0000;
+@sapIndicationColor_2b_BorderColor: @sapIndicationColor_2b;
+@sapIndicationColor_2b_Hover_Background: lighten(@sapIndicationColor_2b, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2482,15 +2512,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_3_TextColor: contrast(@sapIndicationColor_3_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_3_Hover_Background: lighten(@sapIndicationColor_3_Background, 3);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_3_Active_Background: lighten(@sapIndicationColor_3_Background, 6);
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_3_TextColor: contrast(@sapIndicationColor_3_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_3_Active_BorderColor: @sapIndicationColor_3b_BorderColor;
+@sapIndicationColor_3_Active_TextColor: @sapIndicationColor_3;
+@sapIndicationColor_3_Selected_Background: @sapIndicationColor_3_Active_Background;
+@sapIndicationColor_3_Selected_BorderColor: @sapIndicationColor_3_Active_BorderColor;
+@sapIndicationColor_3_Selected_TextColor: @sapIndicationColor_3_Active_TextColor;
+@sapIndicationColor_3b: #662b00;
+@sapIndicationColor_3b_BorderColor: @sapIndicationColor_3b;
+@sapIndicationColor_3b_Hover_Background: lighten(@sapIndicationColor_3b, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2506,15 +2544,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_4_TextColor: contrast(@sapIndicationColor_4_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_4_Hover_Background: lighten(@sapIndicationColor_4, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_4_Active_Background: lighten(@sapIndicationColor_4, 10);
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_4_TextColor: contrast(@sapIndicationColor_4_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_4_Active_BorderColor: @sapIndicationColor_4b_BorderColor;
+@sapIndicationColor_4_Active_TextColor: @sapIndicationColor_4;
+@sapIndicationColor_4_Selected_Background: @sapIndicationColor_4_Active_Background;
+@sapIndicationColor_4_Selected_BorderColor: @sapIndicationColor_4_Active_BorderColor;
+@sapIndicationColor_4_Selected_TextColor: @sapIndicationColor_4_Active_TextColor;
+@sapIndicationColor_4b: #044a18;
+@sapIndicationColor_4b_BorderColor: @sapIndicationColor_4b;
+@sapIndicationColor_4b_Hover_Background: lighten(@sapIndicationColor_4b, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2530,15 +2576,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_5_TextColor: contrast(@sapIndicationColor_5_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_5_Hover_Background: lighten(@sapIndicationColor_5, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_5_Active_Background: lighten(@sapIndicationColor_5, 10);
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_5_TextColor: contrast(@sapIndicationColor_5_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_5_Active_BorderColor: @sapIndicationColor_5b_BorderColor;
+@sapIndicationColor_5_Active_TextColor: @sapIndicationColor_5;
+@sapIndicationColor_5_Selected_Background: @sapIndicationColor_5_Active_Background;
+@sapIndicationColor_5_Selected_BorderColor: @sapIndicationColor_5_Active_BorderColor;
+@sapIndicationColor_5_Selected_TextColor: @sapIndicationColor_5_Active_TextColor;
+@sapIndicationColor_5b: #024594;
+@sapIndicationColor_5b_BorderColor: @sapIndicationColor_5b;
+@sapIndicationColor_5b_Hover_Background: lighten(@sapIndicationColor_5b, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2554,15 +2608,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_6_TextColor: contrast(@sapIndicationColor_6_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_6_Hover_Background: lighten(@sapIndicationColor_6, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_6_Active_Background: lighten(@sapIndicationColor_6, 10);
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_6_TextColor: contrast(@sapIndicationColor_6_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_6_Active_BorderColor: @sapIndicationColor_6b_BorderColor;
+@sapIndicationColor_6_Active_TextColor: @sapIndicationColor_6;
+@sapIndicationColor_6_Selected_Background: @sapIndicationColor_6_Active_Background;
+@sapIndicationColor_6_Selected_BorderColor: @sapIndicationColor_6_Active_BorderColor;
+@sapIndicationColor_6_Selected_TextColor: @sapIndicationColor_6_Active_TextColor;
+@sapIndicationColor_6b: #00454e;
+@sapIndicationColor_6b_BorderColor: @sapIndicationColor_6b;
+@sapIndicationColor_6b_Hover_Background: lighten(@sapIndicationColor_6b, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2578,15 +2640,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_7_TextColor: contrast(@sapIndicationColor_7_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_7_Hover_Background: lighten(@sapIndicationColor_7, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_7_Active_Background: lighten(@sapIndicationColor_7, 10);
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_7_TextColor: contrast(@sapIndicationColor_7_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_7_Active_BorderColor: @sapIndicationColor_7b_BorderColor;
+@sapIndicationColor_7_Active_TextColor: @sapIndicationColor_7;
+@sapIndicationColor_7_Selected_Background: @sapIndicationColor_7_Active_Background;
+@sapIndicationColor_7_Selected_BorderColor: @sapIndicationColor_7_Active_BorderColor;
+@sapIndicationColor_7_Selected_TextColor: @sapIndicationColor_7_Active_TextColor;
+@sapIndicationColor_7b: #2702c2;
+@sapIndicationColor_7b_BorderColor: @sapIndicationColor_7b;
+@sapIndicationColor_7b_Hover_Background: lighten(@sapIndicationColor_7b, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2602,15 +2672,51 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_8_TextColor: contrast(@sapIndicationColor_8_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_8_Hover_Background: lighten(@sapIndicationColor_8, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_8_Active_Background: lighten(@sapIndicationColor_8, 10);
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_8_TextColor: contrast(@sapIndicationColor_8_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_8_Active_BorderColor: @sapIndicationColor_8b_BorderColor;
+@sapIndicationColor_8_Active_TextColor: @sapIndicationColor_8;
+@sapIndicationColor_8_Selected_Background: @sapIndicationColor_8_Active_Background;
+@sapIndicationColor_8_Selected_BorderColor: @sapIndicationColor_8_Active_BorderColor;
+@sapIndicationColor_8_Selected_TextColor: @sapIndicationColor_8_Active_TextColor;
+@sapIndicationColor_8b: #4c005b;
+@sapIndicationColor_8b_BorderColor: @sapIndicationColor_8b;
+@sapIndicationColor_8b_Hover_Background: lighten(@sapIndicationColor_8b, 5);
+@sapIndicationColor_9: #f2f2f2;
+@sapIndicationColor_9_Background: @sapIndicationColor_9;
+@sapIndicationColor_9_BorderColor: @sapIndicationColor_9;
+@sapIndicationColor_9_TextColor: contrast(@sapIndicationColor_9_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_9_Hover_Background: lighten(@sapIndicationColor_9, 5);
+@sapIndicationColor_9_Active_Background: @sapButton_Active_Background;
+@sapIndicationColor_9_Active_BorderColor: @sapIndicationColor_9b_BorderColor;
+@sapIndicationColor_9_Active_TextColor: @sapIndicationColor_9;
+@sapIndicationColor_9_Selected_Background: @sapIndicationColor_9_Active_Background;
+@sapIndicationColor_9_Selected_BorderColor: @sapIndicationColor_9_Active_BorderColor;
+@sapIndicationColor_9_Selected_TextColor: @sapIndicationColor_9_Active_TextColor;
+@sapIndicationColor_9b: #1d232a;
+@sapIndicationColor_9b_BorderColor: lighten(@sapIndicationColor_9b, 16);
+@sapIndicationColor_9b_Hover_Background: lighten(@sapIndicationColor_9b, 5);
+@sapIndicationColor_10: #d8d8d8;
+@sapIndicationColor_10_Background: darken(@sapIndicationColor_10, 18);
+@sapIndicationColor_10_BorderColor: @sapIndicationColor_10_Background;
+@sapIndicationColor_10_TextColor: contrast(@sapIndicationColor_10_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_10_Hover_Background: lighten(@sapIndicationColor_10_Background, 5);
+@sapIndicationColor_10_Active_Background: @sapButton_Active_Background;
+@sapIndicationColor_10_Active_BorderColor: @sapIndicationColor_10b_BorderColor;
+@sapIndicationColor_10_Active_TextColor: @sapIndicationColor_10;
+@sapIndicationColor_10_Selected_Background: @sapIndicationColor_10_Active_Background;
+@sapIndicationColor_10_Selected_BorderColor: @sapIndicationColor_10_Active_BorderColor;
+@sapIndicationColor_10_Selected_TextColor: @sapIndicationColor_10_Active_TextColor;
+@sapIndicationColor_10b: #373737;
+@sapIndicationColor_10b_BorderColor: @sapIndicationColor_10b;
+@sapIndicationColor_10b_Hover_Background: lighten(@sapIndicationColor_10b, 5);
 
 // [Tags "!Protected"]
 // [Protected "!true"]

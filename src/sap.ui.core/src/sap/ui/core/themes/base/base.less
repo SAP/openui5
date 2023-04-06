@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.23020.0-20230307104335+d1c2c3769b35a96c9647c4970676104d5e0a1bbd
-// * data:{"sModified":"2023-03-09T09:38:11Z"}
+// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company. All rights reserved.
+// * Theming Engine 1.23030.0-20230404052500+08ab7f203f968a8915a46326f198b28734934650
+// * data:{"sModified":"2023-04-04T08:11:20Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.2.1) *******************/
+/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.3.0) *******************/
 
 
 // [Label "Brand Color"]
@@ -119,6 +119,14 @@
 // [Category "Interaction"]
 // [Type "color"]
 @sapSelectedColor: @sapDefault_Color;
+
+// [Label "Hover Color"]
+// [Description "The color of hovered elements."]
+// [Tags "Quick", "Base", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Interaction"]
+// [Type "color"]
+@sapHoverColor: @sapDefault_Color;
 
 // [Label "Active Color"]
 // [Description "The color of activated elements."]
@@ -1181,6 +1189,14 @@
 // [Type "fontSizes"]
 @sapFontHeader6Size: @sapDefault_Dimension;
 
+// [Label "Link Text Decoration"]
+// [Description "The text decoration of links."]
+// [Tags "Base", "Content", "Font", "Link", "Protected"]
+// [Protected "true"]
+// [Category "Link"]
+// [Type "textDecoration"]
+@sapLink_TextDecoration: none;
+
 // [Label "Link Hover Color"]
 // [Description "The hover state color of links."]
 // [Tags "Base", "Content", "Color", "Font", "Link", "Protected"]
@@ -1189,6 +1205,14 @@
 // [Type "color"]
 @sapLink_Hover_Color: @sapDefault_Color;
 
+// [Label "Link Hover Text Decoration"]
+// [Description "The hover state text decoration of links."]
+// [Tags "Base", "Content", "Font", "Link", "Protected"]
+// [Protected "true"]
+// [Category "Link"]
+// [Type "textDecoration"]
+@sapLink_Hover_TextDecoration: underline;
+
 // [Label "Link Active Color"]
 // [Description "The active state color of links."]
 // [Tags "Base", "Content", "Color", "Font", "Link", "Protected"]
@@ -1196,6 +1220,14 @@
 // [Category "Link"]
 // [Type "color"]
 @sapLink_Active_Color: @sapDefault_Color;
+
+// [Label "Link Active Text Decoration"]
+// [Description "The active state text decoration of links."]
+// [Tags "Base", "Content", "Font", "Link", "Protected"]
+// [Protected "true"]
+// [Category "Link"]
+// [Type "textDecoration"]
+@sapLink_Active_TextDecoration: underline;
 
 // [Label "Link Visited Color"]
 // [Description "The color for visited links."]
@@ -3773,6 +3805,14 @@
 // [Type "borderRadius"]
 @sapField_BorderCornerRadius: @sapDefault_Dimension;
 
+// [Label "Field Shadow"]
+// [Description "The shadow of an input field."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Standard"]
+// [Type "boxShadow"]
+@sapField_Shadow: @sapDefault_Shadow;
+
 // [Label "Field Hover Background Color"]
 // [Description "The background color of input fields on hover."]
 // [Tags "Base", "Field", "Color", "Protected"]
@@ -3804,6 +3844,47 @@
 // [Category "Input", "Standard"]
 // [Type "color"]
 @sapField_Hover_HelpBackground: @sapDefault_Color;
+
+// [Label "Field Hover Shadow"]
+// [Description "The shadow of an input field on hover."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Standard"]
+// [Type "boxShadow"]
+@sapField_Hover_Shadow: @sapDefault_Shadow;
+
+// [Label "Invalid Field Hover Shadow"]
+// [Description "The shadow of an input field with invalid value on hover."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Invalid"]
+// [Type "boxShadow"]
+@sapField_Hover_InvalidShadow: @sapDefault_Shadow;
+
+// [Label "Warning Field Hover Shadow"]
+// [Description "The shadow of an input field indicating a warning on hover."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Warning"]
+// [Type "boxShadow"]
+@sapField_Hover_WarningShadow: @sapDefault_Shadow;
+
+// [Label "Success Field Hover Shadow"]
+// [Description "The shadow of an input field indicating a successful user action on hover."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Success"]
+// [Type "boxShadow"]
+@sapField_Hover_SuccessShadow: @sapDefault_Shadow;
+
+// [Label "Information Field Hover Shadow"]
+// [Description "The shadow of an input field indicating an information status on hover."]
+// [Tags "Base", "Field", "Protected"]
+// [TranslationKey "sapField_Hv_InformationShadow"]
+// [Protected "true"]
+// [Category "Input", "Information"]
+// [Type "boxShadow"]
+@sapField_Hover_InformationShadow: @sapDefault_Shadow;
 
 // [Label "Field Active Border Color"]
 // [Description "The border color of active input fields."]
@@ -3928,6 +4009,14 @@
 // [Type "border"]
 @sapField_InvalidBorderStyle: @sapDefault_BorderStyle;
 
+// [Label "Invalid Field Shadow"]
+// [Description "The shadow of an input field with invalid value."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Invalid"]
+// [Type "boxShadow"]
+@sapField_InvalidShadow: @sapDefault_Shadow;
+
 // [Label "Warning Field Color"]
 // [Description "The base color of an input field indicating a warning."]
 // [Tags "Base", "Field", "Color", "Protected"]
@@ -3969,6 +4058,14 @@
 // [Type "border"]
 @sapField_WarningBorderStyle: @sapDefault_BorderStyle;
 
+// [Label "Warning Field Shadow"]
+// [Description "The shadow of an input field indicating a warning."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Warning"]
+// [Type "boxShadow"]
+@sapField_WarningShadow: @sapDefault_Shadow;
+
 // [Label "Success Field Color"]
 // [Description "The base color an input field indicating a successful user action."]
 // [Tags "Base", "Field", "Color", "Protected"]
@@ -4009,6 +4106,14 @@
 // [Category "Input", "Success"]
 // [Type "border"]
 @sapField_SuccessBorderStyle: @sapDefault_BorderStyle;
+
+// [Label "Success Field Shadow"]
+// [Description "The shadow of an input field indicating a successful user action."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Success"]
+// [Type "boxShadow"]
+@sapField_SuccessShadow: @sapDefault_Shadow;
 
 // [Label "Information Field Color"]
 // [Description "The base color an input field indicating an information status."]
@@ -4052,6 +4157,14 @@
 // [Category "Input", "Information"]
 // [Type "border"]
 @sapField_InformationBorderStyle: @sapDefault_BorderStyle;
+
+// [Label "Information Field Shadow"]
+// [Description "The shadow of an input field indicating an information status."]
+// [Tags "Base", "Field", "Protected"]
+// [Protected "true"]
+// [Category "Input", "Information"]
+// [Type "boxShadow"]
+@sapField_InformationShadow: @sapDefault_Shadow;
 
 // [Label "Group Title Background Color"]
 // [Description "The background color of the group header area."]
@@ -5258,6 +5371,14 @@
 // [Type "color"]
 @sapIndicationColor_1_BorderColor: @sapDefault_Color;
 
+// [Label "Indication Color 1 Text Color"]
+// [Description "The text and icon color for elements showing indication 1."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_1_TextColor: @sapDefault_Color;
+
 // [Label "Indication Color 1 Hover Background"]
 // [Description "The hover state background color for elements showing indication 1."]
 // [TranslationKey "sapIndication1HvrBg"]
@@ -5276,13 +5397,77 @@
 // [Type "color"]
 @sapIndicationColor_1_Active_Background: @sapDefault_Color;
 
-// [Label "Indication Color 1 Text Color"]
-// [Description "The text and icon color for elements showing indication 1."]
-// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Label "Indication Color 1 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 1."]
+// [TranslationKey "sapIndication1ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
 // [Protected "true"]
 // [Category "Indication"]
 // [Type "color"]
-@sapIndicationColor_1_TextColor: @sapDefault_Color;
+@sapIndicationColor_1_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 1 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 1."]
+// [TranslationKey "sapIndication1ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_1_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 1 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 1."]
+// [TranslationKey "sapIndication1SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_1_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 1 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 1."]
+// [TranslationKey "sapIndication1SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_1_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 1 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 1."]
+// [TranslationKey "sapIndication1SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_1_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 1b"]
+// [Description "The color for elements showing a less prominent shade of indication 1."]
+// [TranslationKey "sapIndication1b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_1b: @sapDefault_Color;
+
+// [Label "Indication Color 1b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 1."]
+// [TranslationKey "sapIndication1bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_1b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 1b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 1."]
+// [TranslationKey "sapIndication1bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_1b_Hover_Background: @sapDefault_Color;
 
 // [Label "Indication Color 2"]
 // [Description "The color for elements showing indication 2."]
@@ -5310,6 +5495,14 @@
 // [Type "color"]
 @sapIndicationColor_2_BorderColor: @sapDefault_Color;
 
+// [Label "Indication Color 2 Text Color"]
+// [Description "The text and icon color for elements showing indication 2."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_2_TextColor: @sapDefault_Color;
+
 // [Label "Indication Color 2 Hover Background"]
 // [Description "The hover state background color for elements showing indication 2."]
 // [TranslationKey "sapIndication2HvrBg"]
@@ -5328,13 +5521,77 @@
 // [Type "color"]
 @sapIndicationColor_2_Active_Background: @sapDefault_Color;
 
-// [Label "Indication Color 2 Text Color"]
-// [Description "The text and icon color for elements showing indication 2."]
-// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Label "Indication Color 2 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 2."]
+// [TranslationKey "sapIndication2ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
 // [Protected "true"]
 // [Category "Indication"]
 // [Type "color"]
-@sapIndicationColor_2_TextColor: @sapDefault_Color;
+@sapIndicationColor_2_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 2 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 2."]
+// [TranslationKey "sapIndication2ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_2_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 2 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 2."]
+// [TranslationKey "sapIndication2SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_2_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 2 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 2."]
+// [TranslationKey "sapIndication2SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_2_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 2 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 2."]
+// [TranslationKey "sapIndication2SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_2_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 2b"]
+// [Description "The color for elements showing a less prominent shade of indication 2."]
+// [TranslationKey "sapIndication2b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_2b: @sapDefault_Color;
+
+// [Label "Indication Color 2b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 2."]
+// [TranslationKey "sapIndication2bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_2b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 2b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 2."]
+// [TranslationKey "sapIndication2bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_2b_Hover_Background: @sapDefault_Color;
 
 // [Label "Indication Color 3"]
 // [Description "The color for elements showing indication 3."]
@@ -5362,6 +5619,14 @@
 // [Type "color"]
 @sapIndicationColor_3_BorderColor: @sapDefault_Color;
 
+// [Label "Indication Color 3 Text Color"]
+// [Description "The text and icon color for elements showing indication 3."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_3_TextColor: @sapDefault_Color;
+
 // [Label "Indication Color 3 Hover Background"]
 // [Description "The hover state background color for elements showing indication 3."]
 // [TranslationKey "sapIndication3HvrBg"]
@@ -5380,13 +5645,77 @@
 // [Type "color"]
 @sapIndicationColor_3_Active_Background: @sapDefault_Color;
 
-// [Label "Indication Color 3 Text Color"]
-// [Description "The text and icon color for elements showing indication 3."]
-// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Label "Indication Color 3 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 3."]
+// [TranslationKey "sapIndication3ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
 // [Protected "true"]
 // [Category "Indication"]
 // [Type "color"]
-@sapIndicationColor_3_TextColor: @sapDefault_Color;
+@sapIndicationColor_3_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 3 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 3."]
+// [TranslationKey "sapIndication3ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_3_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 3 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 3."]
+// [TranslationKey "sapIndication3SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_3_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 3 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 3."]
+// [TranslationKey "sapIndication3SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_3_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 3 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 3."]
+// [TranslationKey "sapIndication3SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_3_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 3b"]
+// [Description "The color for elements showing a less prominent shade of indication 3."]
+// [TranslationKey "sapIndication3b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_3b: @sapDefault_Color;
+
+// [Label "Indication Color 3b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 3."]
+// [TranslationKey "sapIndication3bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_3b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 3b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 3."]
+// [TranslationKey "sapIndication3bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_3b_Hover_Background: @sapDefault_Color;
 
 // [Label "Indication Color 4"]
 // [Description "The color for elements showing indication 4."]
@@ -5414,6 +5743,14 @@
 // [Type "color"]
 @sapIndicationColor_4_BorderColor: @sapDefault_Color;
 
+// [Label "Indication Color 4 Text Color"]
+// [Description "The text and icon color for elements showing indication 4."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_4_TextColor: @sapDefault_Color;
+
 // [Label "Indication Color 4 Hover Background"]
 // [Description "The hover state background color for elements showing indication 4."]
 // [TranslationKey "sapIndication4HvrBg"]
@@ -5432,13 +5769,77 @@
 // [Type "color"]
 @sapIndicationColor_4_Active_Background: @sapDefault_Color;
 
-// [Label "Indication Color 4 Text Color"]
-// [Description "The text and icon color for elements showing indication 4."]
-// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Label "Indication Color 4 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 4."]
+// [TranslationKey "sapIndication4ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
 // [Protected "true"]
 // [Category "Indication"]
 // [Type "color"]
-@sapIndicationColor_4_TextColor: @sapDefault_Color;
+@sapIndicationColor_4_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 4 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 4."]
+// [TranslationKey "sapIndication4ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_4_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 4 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 4."]
+// [TranslationKey "sapIndication4SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_4_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 4 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 4."]
+// [TranslationKey "sapIndication4SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_4_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 4 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 4."]
+// [TranslationKey "sapIndication4SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_4_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 4b"]
+// [Description "The color for elements showing a less prominent shade of indication 4."]
+// [TranslationKey "sapIndication4b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_4b: @sapDefault_Color;
+
+// [Label "Indication Color 4b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 4."]
+// [TranslationKey "sapIndication4bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_4b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 4b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 4."]
+// [TranslationKey "sapIndication4bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_4b_Hover_Background: @sapDefault_Color;
 
 // [Label "Indication Color 5"]
 // [Description "The color for elements showing indication 5."]
@@ -5466,6 +5867,14 @@
 // [Type "color"]
 @sapIndicationColor_5_BorderColor: @sapDefault_Color;
 
+// [Label "Indication Color 5 Text Color"]
+// [Description "The text and icon color for elements showing indication 5."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_5_TextColor: @sapDefault_Color;
+
 // [Label "Indication Color 5 Hover Background"]
 // [Description "The hover state background color for elements showing indication 5."]
 // [TranslationKey "sapIndication5HvrBg"]
@@ -5484,13 +5893,77 @@
 // [Type "color"]
 @sapIndicationColor_5_Active_Background: @sapDefault_Color;
 
-// [Label "Indication Color 5 Text Color"]
-// [Description "The text and icon color for elements showing indication 5."]
-// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Label "Indication Color 5 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 5."]
+// [TranslationKey "sapIndication5ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
 // [Protected "true"]
 // [Category "Indication"]
 // [Type "color"]
-@sapIndicationColor_5_TextColor: @sapDefault_Color;
+@sapIndicationColor_5_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 5 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 5."]
+// [TranslationKey "sapIndication5ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_5_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 5 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 5."]
+// [TranslationKey "sapIndication5SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_5_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 5 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 5."]
+// [TranslationKey "sapIndication5SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_5_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 5 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 5."]
+// [TranslationKey "sapIndication5SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_5_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 5b"]
+// [Description "The color for elements showing a less prominent shade of indication 5."]
+// [TranslationKey "sapIndication5b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_5b: @sapDefault_Color;
+
+// [Label "Indication Color 5b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 5."]
+// [TranslationKey "sapIndication5bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_5b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 5b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 5."]
+// [TranslationKey "sapIndication5bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_5b_Hover_Background: @sapDefault_Color;
 
 // [Label "Indication Color 6"]
 // [Description "The color for elements showing indication 6."]
@@ -5518,6 +5991,14 @@
 // [Type "color"]
 @sapIndicationColor_6_BorderColor: @sapDefault_Color;
 
+// [Label "Indication Color 6 Text Color"]
+// [Description "The text and icon color for elements showing indication 6."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_6_TextColor: @sapDefault_Color;
+
 // [Label "Indication Color 6 Hover Background"]
 // [Description "The hover state background color for elements showing indication 6."]
 // [TranslationKey "sapIndication6HvrBg"]
@@ -5536,13 +6017,77 @@
 // [Type "color"]
 @sapIndicationColor_6_Active_Background: @sapDefault_Color;
 
-// [Label "Indication Color 6 Text Color"]
-// [Description "The text and icon color for elements showing indication 6."]
-// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Label "Indication Color 6 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 6."]
+// [TranslationKey "sapIndication6ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
 // [Protected "true"]
 // [Category "Indication"]
 // [Type "color"]
-@sapIndicationColor_6_TextColor: @sapDefault_Color;
+@sapIndicationColor_6_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 6 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 6."]
+// [TranslationKey "sapIndication6ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_6_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 6 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 6."]
+// [TranslationKey "sapIndication6SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_6_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 6 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 6."]
+// [TranslationKey "sapIndication6SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_6_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 6 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 6."]
+// [TranslationKey "sapIndication6SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_6_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 6b"]
+// [Description "The color for elements showing a less prominent shade of indication 6."]
+// [TranslationKey "sapIndication6b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_6b: @sapDefault_Color;
+
+// [Label "Indication Color 6b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 6."]
+// [TranslationKey "sapIndication6bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_6b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 6b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 6."]
+// [TranslationKey "sapIndication6bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_6b_Hover_Background: @sapDefault_Color;
 
 // [Label "Indication Color 7"]
 // [Description "The color for elements showing indication 7."]
@@ -5570,6 +6115,14 @@
 // [Type "color"]
 @sapIndicationColor_7_BorderColor: @sapDefault_Color;
 
+// [Label "Indication Color 7 Text Color"]
+// [Description "The text and icon color for elements showing indication 7."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_7_TextColor: @sapDefault_Color;
+
 // [Label "Indication Color 7 Hover Background"]
 // [Description "The hover state background color for elements showing indication 7."]
 // [TranslationKey "sapIndication7HvrBg"]
@@ -5588,13 +6141,77 @@
 // [Type "color"]
 @sapIndicationColor_7_Active_Background: @sapDefault_Color;
 
-// [Label "Indication Color 7 Text Color"]
-// [Description "The text and icon color for elements showing indication 7."]
-// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Label "Indication Color 7 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 7."]
+// [TranslationKey "sapIndication7ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
 // [Protected "true"]
 // [Category "Indication"]
 // [Type "color"]
-@sapIndicationColor_7_TextColor: @sapDefault_Color;
+@sapIndicationColor_7_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 7 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 7."]
+// [TranslationKey "sapIndication7ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_7_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 7 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 7."]
+// [TranslationKey "sapIndication7SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_7_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 7 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 7."]
+// [TranslationKey "sapIndication7SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_7_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 7 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 7."]
+// [TranslationKey "sapIndication7SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_7_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 7b"]
+// [Description "The color for elements showing a less prominent shade of indication 7."]
+// [TranslationKey "sapIndication7b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_7b: @sapDefault_Color;
+
+// [Label "Indication Color 7b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 7."]
+// [TranslationKey "sapIndication7bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_7b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 7b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 7."]
+// [TranslationKey "sapIndication7bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_7b_Hover_Background: @sapDefault_Color;
 
 // [Label "Indication Color 8"]
 // [Description "The color for elements showing indication 8."]
@@ -5622,6 +6239,14 @@
 // [Type "color"]
 @sapIndicationColor_8_BorderColor: @sapDefault_Color;
 
+// [Label "Indication Color 8 Text Color"]
+// [Description "The text and icon color for elements showing indication 8."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8_TextColor: @sapDefault_Color;
+
 // [Label "Indication Color 8 Hover Background"]
 // [Description "The hover state background color for elements showing indication 8."]
 // [TranslationKey "sapIndication8HvrBg"]
@@ -5640,13 +6265,325 @@
 // [Type "color"]
 @sapIndicationColor_8_Active_Background: @sapDefault_Color;
 
-// [Label "Indication Color 8 Text Color"]
-// [Description "The text and icon color for elements showing indication 8."]
+// [Label "Indication Color 8 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 8."]
+// [TranslationKey "sapIndication8ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 8 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 8."]
+// [TranslationKey "sapIndication8ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 8 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 8."]
+// [TranslationKey "sapIndication8SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 8 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 8."]
+// [TranslationKey "sapIndication8SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 8 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 8."]
+// [TranslationKey "sapIndication8SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 8b"]
+// [Description "The color for elements showing a less prominent shade of indication 8."]
+// [TranslationKey "sapIndication8b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8b: @sapDefault_Color;
+
+// [Label "Indication Color 8b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 8."]
+// [TranslationKey "sapIndication8bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 8b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 8."]
+// [TranslationKey "sapIndication8bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_8b_Hover_Background: @sapDefault_Color;
+
+// [Label "Indication Color 9"]
+// [Description "The color for elements showing indication 9."]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9: @sapDefault_Color;
+
+// [Label "Indication Color 9 Background"]
+// [Description "The background color for elements showing indication 9."]
+// [TranslationKey "sapIndication9Bg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_Background: @sapDefault_Color;
+
+// [Label "Indication Color 9 Border Color"]
+// [Description "The border color for elements showing indication 9."]
+// [TranslationKey "sapIndication9Brd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 9 Text Color"]
+// [Description "The text and icon color for elements showing indication 9."]
 // [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
 // [Protected "true"]
 // [Category "Indication"]
 // [Type "color"]
-@sapIndicationColor_8_TextColor: @sapDefault_Color;
+@sapIndicationColor_9_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 9 Hover Background"]
+// [Description "The hover state background color for elements showing indication 9."]
+// [TranslationKey "sapIndication9HvrBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_Hover_Background: @sapDefault_Color;
+
+// [Label "Indication Color 9 Active Background"]
+// [Description "The active (down) state background color for elements showing indication 9."]
+// [TranslationKey "sapIndication9ActBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_Active_Background: @sapDefault_Color;
+
+// [Label "Indication Color 9 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 9."]
+// [TranslationKey "sapIndication9ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 9 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 9."]
+// [TranslationKey "sapIndication9ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 9 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 9."]
+// [TranslationKey "sapIndication9SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 9 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 9."]
+// [TranslationKey "sapIndication9SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 9 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 9."]
+// [TranslationKey "sapIndication9SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 9b"]
+// [Description "The color for elements showing a less prominent shade of indication 9."]
+// [TranslationKey "sapIndication9b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9b: @sapDefault_Color;
+
+// [Label "Indication Color 9b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 9."]
+// [TranslationKey "sapIndication9bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 9b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 9."]
+// [TranslationKey "sapIndication9bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_9b_Hover_Background: @sapDefault_Color;
+
+// [Label "Indication Color 10"]
+// [Description "The color for elements showing indication 10."]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10: @sapDefault_Color;
+
+// [Label "Indication Color 10 Background"]
+// [Description "The background color for elements showing indication 10."]
+// [TranslationKey "sapIndication10Bg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_Background: @sapDefault_Color;
+
+// [Label "Indication Color 10 Border Color"]
+// [Description "The border color for elements showing indication 10."]
+// [TranslationKey "sapIndication10Brd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 10 Text Color"]
+// [Description "The text and icon color for elements showing indication 10."]
+// [Tags "Base", "SemanticColor", "Color", "Font", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 10 Hover Background"]
+// [Description "The hover state background color for elements showing indication 10."]
+// [TranslationKey "sapIndication10HvrBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_Hover_Background: @sapDefault_Color;
+
+// [Label "Indication Color 10 Active Background"]
+// [Description "The active (down) state background color for elements showing indication 10."]
+// [TranslationKey "sapIndication10ActBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_Active_Background: @sapDefault_Color;
+
+// [Label "Indication Color 10 Active Border Color"]
+// [Description "The active (down) state border color for elements showing indication 10."]
+// [TranslationKey "sapIndication10ActBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 10 Active Text Color"]
+// [Description "The active (down) state text and icon color for elements showing indication 10."]
+// [TranslationKey "sapIndication10ActTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_Active_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 10 Selected Background"]
+// [Description "The selected (toggled) state background color for elements showing indication 10."]
+// [TranslationKey "sapIndication10SelBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_Selected_Background: @sapDefault_Color;
+
+// [Label "Indication Color 10 Selected Border Color"]
+// [Description "The selected (toggled) state border color for elements showing indication 10."]
+// [TranslationKey "sapIndication10SelBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_Selected_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 10 Selected Text Color"]
+// [Description "The selected (toggled) state text and icon color for elements showing indication 10."]
+// [TranslationKey "sapIndication10SelTxt"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Indication Color 10b"]
+// [Description "The color for elements showing a less prominent shade of indication 10."]
+// [TranslationKey "sapIndication10b"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10b: @sapDefault_Color;
+
+// [Label "Indication Color 10b Border Color"]
+// [Description "The border color for elements showing a less prominent shade of indication 10."]
+// [TranslationKey "sapIndication10bBrd"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10b_BorderColor: @sapDefault_Color;
+
+// [Label "Indication Color 10b Hover Background"]
+// [Description "The hover state background color for elements showing a less prominent shade of indication 10."]
+// [TranslationKey "sapIndication10bHvBg"]
+// [Tags "Base", "SemanticColor", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Indication"]
+// [Type "color"]
+@sapIndicationColor_10b_Hover_Background: @sapDefault_Color;
 
 // [Label "Legend Working Background"]
 // [Description "The background color that represents working."]
@@ -6993,13 +7930,13 @@
 // }
 
 // /**
-// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.23020.0-20230307104335+d1c2c3769b35a96c9647c4970676104d5e0a1bbd
-// * data:{"sModified":"2023-03-09T09:38:11Z"}
+// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company. All rights reserved.
+// * Theming Engine 1.23030.0-20230404052500+08ab7f203f968a8915a46326f198b28734934650
+// * data:{"sModified":"2023-04-04T08:11:20Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.2.1) *******************/
+/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.3.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -7169,6 +8106,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapSelectedColor: @sapHC_HighlightAltBackground;
+@sapHoverColor: @sapHighlightColor;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -7692,14 +8630,17 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapFontHeader6Size: 0.875 * @sapContent_GridSize;
+@sapLink_TextDecoration: underline;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapLink_Hover_Color: @sapLinkColor;
+@sapLink_Hover_TextDecoration: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapLink_Active_Color: @sapLinkColor;
+@sapLink_Active_TextDecoration: underline;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -8764,6 +9705,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_BorderCornerRadius: 0;
+@sapField_Shadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -8780,6 +9722,11 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_Hover_HelpBackground: @sapField_Background;
+@sapField_Hover_Shadow: none;
+@sapField_Hover_InvalidShadow: none;
+@sapField_Hover_WarningShadow: none;
+@sapField_Hover_SuccessShadow: none;
+@sapField_Hover_InformationShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -8840,6 +9787,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_InvalidBorderStyle: dashed;
+@sapField_InvalidShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -8860,6 +9808,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_WarningBorderStyle: dashed;
+@sapField_WarningShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -8880,6 +9829,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_SuccessBorderStyle: solid;
+@sapField_SuccessShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -8900,6 +9850,7 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_InformationBorderStyle: dashed;
+@sapField_InformationShadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -9483,15 +10434,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_1_TextColor: contrast(@sapIndicationColor_1_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_1_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_1_Active_Background: @sapButton_Active_Background;
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_1_TextColor: contrast(@sapIndicationColor_1_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_1_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_1_Active_TextColor: @sapIndicationColor_1_TextColor;
+@sapIndicationColor_1_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_1_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_1_Selected_TextColor: @sapIndicationColor_1_TextColor;
+@sapIndicationColor_1b: @sapIndicationColor_1;
+@sapIndicationColor_1b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_1b_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -9507,15 +10466,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_2_TextColor: contrast(@sapIndicationColor_2_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_2_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_2_Active_Background: @sapButton_Active_Background;
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_2_TextColor: contrast(@sapIndicationColor_2_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_2_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_2_Active_TextColor: @sapIndicationColor_2_TextColor;
+@sapIndicationColor_2_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_2_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_2_Selected_TextColor: @sapIndicationColor_2_TextColor;
+@sapIndicationColor_2b: @sapIndicationColor_2;
+@sapIndicationColor_2b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_2b_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -9531,15 +10498,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_3_TextColor: contrast(@sapIndicationColor_3_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_3_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_3_Active_Background: @sapButton_Active_Background;
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_3_TextColor: contrast(@sapIndicationColor_3_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_3_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_3_Active_TextColor: @sapIndicationColor_3_TextColor;
+@sapIndicationColor_3_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_3_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_3_Selected_TextColor: @sapIndicationColor_3_TextColor;
+@sapIndicationColor_3b: @sapIndicationColor_3;
+@sapIndicationColor_3b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_3b_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -9555,15 +10530,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_4_TextColor: contrast(@sapIndicationColor_4_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_4_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_4_Active_Background: @sapButton_Active_Background;
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_4_TextColor: contrast(@sapIndicationColor_4_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_4_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_4_Active_TextColor: @sapIndicationColor_4_TextColor;
+@sapIndicationColor_4_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_4_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_4_Selected_TextColor: @sapIndicationColor_4_TextColor;
+@sapIndicationColor_4b: @sapIndicationColor_4;
+@sapIndicationColor_4b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_4b_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -9579,15 +10562,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_5_TextColor: contrast(@sapIndicationColor_5_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_5_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_5_Active_Background: @sapButton_Active_Background;
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_5_TextColor: contrast(@sapIndicationColor_5_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_5_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_5_Active_TextColor: @sapIndicationColor_5_TextColor;
+@sapIndicationColor_5_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_5_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_5_Selected_TextColor: @sapIndicationColor_5_TextColor;
+@sapIndicationColor_5b: @sapIndicationColor_5;
+@sapIndicationColor_5b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_5b_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -9603,15 +10594,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_6_TextColor: contrast(@sapIndicationColor_6_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_6_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_6_Active_Background: @sapButton_Active_Background;
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_6_TextColor: contrast(@sapIndicationColor_6_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_6_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_6_Active_TextColor: @sapIndicationColor_6_TextColor;
+@sapIndicationColor_6_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_6_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_6_Selected_TextColor: @sapIndicationColor_6_TextColor;
+@sapIndicationColor_6b: @sapIndicationColor_6;
+@sapIndicationColor_6b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_6b_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -9627,15 +10626,23 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_7_TextColor: contrast(@sapIndicationColor_7_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_7_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_7_Active_Background: @sapButton_Active_Background;
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_7_TextColor: contrast(@sapIndicationColor_7_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_7_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_7_Active_TextColor: @sapIndicationColor_7_TextColor;
+@sapIndicationColor_7_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_7_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_7_Selected_TextColor: @sapIndicationColor_7_TextColor;
+@sapIndicationColor_7b: @sapIndicationColor_7;
+@sapIndicationColor_7b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_7b_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -9651,15 +10658,51 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapIndicationColor_8_TextColor: contrast(@sapIndicationColor_8_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_8_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapIndicationColor_8_Active_Background: @sapButton_Active_Background;
-
-// [Tags "!Protected"]
-// [Protected "!true"]
-@sapIndicationColor_8_TextColor: contrast(@sapIndicationColor_8_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_8_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_8_Active_TextColor: @sapIndicationColor_8_TextColor;
+@sapIndicationColor_8_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_8_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_8_Selected_TextColor: @sapIndicationColor_8_TextColor;
+@sapIndicationColor_8b: @sapIndicationColor_8;
+@sapIndicationColor_8b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_8b_Hover_Background: @sapButton_Hover_Background;
+@sapIndicationColor_9: #fff;
+@sapIndicationColor_9_Background: @sapBackgroundColor;
+@sapIndicationColor_9_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_9_TextColor: contrast(@sapIndicationColor_9_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_9_Hover_Background: @sapButton_Hover_Background;
+@sapIndicationColor_9_Active_Background: @sapButton_Active_Background;
+@sapIndicationColor_9_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_9_Active_TextColor: @sapIndicationColor_9_TextColor;
+@sapIndicationColor_9_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_9_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_9_Selected_TextColor: @sapIndicationColor_9_TextColor;
+@sapIndicationColor_9b: @sapIndicationColor_9;
+@sapIndicationColor_9b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_9b_Hover_Background: @sapButton_Hover_Background;
+@sapIndicationColor_10: #eaecee;
+@sapIndicationColor_10_Background: @sapBackgroundColor;
+@sapIndicationColor_10_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_10_TextColor: contrast(@sapIndicationColor_10_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_10_Hover_Background: @sapButton_Hover_Background;
+@sapIndicationColor_10_Active_Background: @sapButton_Active_Background;
+@sapIndicationColor_10_Active_BorderColor: @sapButton_Active_BorderColor;
+@sapIndicationColor_10_Active_TextColor: @sapIndicationColor_10_TextColor;
+@sapIndicationColor_10_Selected_Background: @sapButton_Selected_Background;
+@sapIndicationColor_10_Selected_BorderColor: @sapButton_Selected_BorderColor;
+@sapIndicationColor_10_Selected_TextColor: @sapIndicationColor_10_TextColor;
+@sapIndicationColor_10b: @sapIndicationColor_10;
+@sapIndicationColor_10b_BorderColor: @sapContent_ForegroundBorderColor;
+@sapIndicationColor_10b_Hover_Background: @sapButton_Hover_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
