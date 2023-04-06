@@ -78,134 +78,134 @@ sap.ui.define([
 			},
 			"content": {
 				"groups": [{
-						"title": "Contact Details",
-						"items": [{
-								"label": "First Name",
-								"value": "{firstName}"
-							},
+					"title": "Contact Details",
+					"items": [{
+						"label": "First Name",
+						"value": "{firstName}"
+					},
+					{
+						"label": "Last Name",
+						"value": "{lastName}"
+					},
+					{
+						"label": "Phone",
+						"value": "{phone}",
+						"actions": [
 							{
-								"label": "Last Name",
-								"value": "{lastName}"
-							},
-							{
-								"label": "Phone",
-								"value": "{phone}",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "tel:{phone}"
-										}
-									}
-								]
-							},
-							{
-								"label": "Email",
-								"value": "{email}",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "mailto:{email}"
-										}
-									}
-								]
-							},
-							{
-								"value": "Error value",
-								"state": "Error",
-								"type": "Status",
-								"showStateIcon": "{showErrorStateIcon}"
-							},
-							{
-								"value": "Warning value",
-								"state": "Warning",
-								"type": "Status",
-								"showStateIcon": "{showWarningStateIcon}"
-							},
-							{
-								"value": "Success value",
-								"state": "Success",
-								"type": "Status",
-								"showStateIcon": "{showInformationStateIcon}",
-								"customStateIcon": "{CustomSuccessStateIcon}"
+								"type": "Navigation",
+								"parameters": {
+									"url": "tel:{phone}"
+								}
 							}
 						]
 					},
 					{
-						"title": "Organizational Details",
-						"items": [{
-							"label": "Direct Manager",
-							"value": "{manager/firstName} {manager/lastName}",
-							"icon": {
-								"src": "{manager/photo}"
-							}
-						}]
-					},
-					{
-						"title": "Company Details",
-						"items": [
+						"label": "Email",
+						"value": "{email}",
+						"actions": [
 							{
-
-								"label": "Company Name",
-								"value": "{company/name}"
-							},
-							{
-								"label": "Address",
-								"value": "{company/address}"
-							},
-							{
-								"label": "Email",
-								"value": "{company/email}",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "mailto:{company/email}?subject={company/emailSubject}"
-										}
-									}
-								]
-							},
-							{
-								"label": "Alt Email",
-								"value": "newmail@example.com",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "mailto:newmail@example.com?subject=Mail Subject"
-										}
-									}
-								]
-							},
-							{
-								"label": "Website",
-								"value": "{company/website}",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "{company/url}"
-										}
-									}
-								]
-							},
-							{
-								"label": "Rating",
-								"type": "RatingIndicator",
-								"maxValue": 7,
-								"value": 4.5,
-								"visualMode": "Full"
-							},
-							{
-								"type": "Image",
-								"src": "/images/grass.jpg",
-								"alt": "Picture of grass",
-								"tooltip": "Green grass",
-								"fullWidth" : true
+								"type": "Navigation",
+								"parameters": {
+									"url": "mailto:{email}"
+								}
 							}
 						]
+					},
+					{
+						"value": "Error value",
+						"state": "Error",
+						"type": "Status",
+						"showStateIcon": "{showErrorStateIcon}"
+					},
+					{
+						"value": "Warning value",
+						"state": "Warning",
+						"type": "Status",
+						"showStateIcon": "{showWarningStateIcon}"
+					},
+					{
+						"value": "Success value",
+						"state": "Success",
+						"type": "Status",
+						"showStateIcon": "{showInformationStateIcon}",
+						"customStateIcon": "{CustomSuccessStateIcon}"
 					}
+					]
+				},
+				{
+					"title": "Organizational Details",
+					"items": [{
+						"label": "Direct Manager",
+						"value": "{manager/firstName} {manager/lastName}",
+						"icon": {
+							"src": "{manager/photo}"
+						}
+					}]
+				},
+				{
+					"title": "Company Details",
+					"items": [
+						{
+
+							"label": "Company Name",
+							"value": "{company/name}"
+						},
+						{
+							"label": "Address",
+							"value": "{company/address}"
+						},
+						{
+							"label": "Email",
+							"value": "{company/email}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{company/email}?subject={company/emailSubject}"
+									}
+								}
+							]
+						},
+						{
+							"label": "Alt Email",
+							"value": "newmail@example.com",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:newmail@example.com?subject=Mail Subject"
+									}
+								}
+							]
+						},
+						{
+							"label": "Website",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/url}"
+									}
+								}
+							]
+						},
+						{
+							"label": "Rating",
+							"type": "RatingIndicator",
+							"maxValue": 7,
+							"value": 4.5,
+							"visualMode": "Full"
+						},
+						{
+							"type": "Image",
+							"src": "/images/grass.jpg",
+							"alt": "Picture of grass",
+							"tooltip": "Green grass",
+							"fullWidth": true
+						}
+					]
+				}
 				]
 			}
 		}
@@ -259,125 +259,125 @@ sap.ui.define([
 			},
 			"content": {
 				"groups": [{
-						"visible": "{visible}",
-						"title": "Contact Details",
-						"items": [{
-								"label": "First Name",
-								"value": "{firstName}"
-							},
+					"visible": "{visible}",
+					"title": "Contact Details",
+					"items": [{
+						"label": "First Name",
+						"value": "{firstName}"
+					},
+					{
+						"label": "Last Name",
+						"value": "{lastName}"
+					},
+					{
+						"label": "Phone",
+						"value": "{phone}",
+						"actions": [
 							{
-								"label": "Last Name",
-								"value": "{lastName}"
-							},
-							{
-								"label": "Phone",
-								"value": "{phone}",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "tel:{phone}"
-										}
-									}
-								]
-							},
-							{
-								"label": "Email",
-								"value": "{email}",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "mailto:{email}"
-										}
-									}
-								]
+								"type": "Navigation",
+								"parameters": {
+									"url": "tel:{phone}"
+								}
 							}
 						]
 					},
 					{
-						"title": "Company Details",
-						"items": [{
-								"visible": false,
-								"label": "Company Name",
-								"value": "{company/name}"
-							},
+						"label": "Email",
+						"value": "{email}",
+						"actions": [
 							{
-								"label": "Address",
-								"value": "{company/address}"
-							},
-							{
-								"label": "Email",
-								"value": "{company/email}",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "mailto:{company/email}?subject={company/emailSubject}"
-										}
-									}
-								]
-							},
-							{
-								"label": "Alt Email",
-								"value": "newmail@mail.com",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "mailto:newmail@mail.com?subject=Mail Subject"
-										}
-									}
-								]
-							},
-							{
-								"label": "Website",
-								"value": "{company/website}",
-								"actions": [
-									{
-										"type": "Navigation",
-										"parameters": {
-											"url": "{company/url}"
-										}
-									}
-								]
-							},
-							{
-								"visible": "{visible}",
-								"type": "NumericData",
-								"mainIndicator": {
-									"number": "35",
-									"unit": "h",
-									"state": "Error",
-									"size": "S"
-								},
-								"sideIndicators": [
-									{
-										"title": "Target",
-										"number": "100",
-										"unit": "K"
-									},
-									{
-										"title": "Deviation",
-										"number": "34.7",
-										"unit": "%"
-									}
-								],
-								"details": "Project Nanga Prabat (Ingo) 0 hours recorded."
-							},
-							{
-								"visible": "{visible}",
-								"label": "Team",
-								"type": "IconGroup",
-								"path": "team",
-								"template": {
-									"icon": {
-										"initials": "{/name}"
-									}
+								"type": "Navigation",
+								"parameters": {
+									"url": "mailto:{email}"
 								}
 							}
 						]
 					}
+					]
+				},
+				{
+					"title": "Company Details",
+					"items": [{
+						"visible": false,
+						"label": "Company Name",
+						"value": "{company/name}"
+					},
+					{
+						"label": "Address",
+						"value": "{company/address}"
+					},
+					{
+						"label": "Email",
+						"value": "{company/email}",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "mailto:{company/email}?subject={company/emailSubject}"
+								}
+							}
+						]
+					},
+					{
+						"label": "Alt Email",
+						"value": "newmail@mail.com",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "mailto:newmail@mail.com?subject=Mail Subject"
+								}
+							}
+						]
+					},
+					{
+						"label": "Website",
+						"value": "{company/website}",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "{company/url}"
+								}
+							}
+						]
+					},
+					{
+						"visible": "{visible}",
+						"type": "NumericData",
+						"mainIndicator": {
+							"number": "35",
+							"unit": "h",
+							"state": "Error",
+							"size": "S"
+						},
+						"sideIndicators": [
+							{
+								"title": "Target",
+								"number": "100",
+								"unit": "K"
+							},
+							{
+								"title": "Deviation",
+								"number": "34.7",
+								"unit": "%"
+							}
+						],
+						"details": "Project Nanga Prabat (Ingo) 0 hours recorded."
+					},
+					{
+						"visible": "{visible}",
+						"label": "Team",
+						"type": "IconGroup",
+						"path": "team",
+						"template": {
+							"icon": {
+								"initials": "{/name}"
+							}
+						}
+					}
+					]
+				}
 				]
 			}
 		}
@@ -674,13 +674,13 @@ sap.ui.define([
 								"rows": 1,
 								"placeholder": "e-mail",
 								"validations": [{
-										"required": true,
-										"message": "Value is required"
-									},
-									{
-										"pattern": "^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}+$",
-										"message": "You should enter a valid e-mail."
-									}
+									"required": true,
+									"message": "Value is required"
+								},
+								{
+									"pattern": "^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}+$",
+									"message": "You should enter a valid e-mail."
+								}
 								]
 							},
 							{
@@ -690,13 +690,13 @@ sap.ui.define([
 								"rows": 1,
 								"placeholder": "path",
 								"validations": [{
-										"required": true,
-										"message": "Value is required"
-									},
-									{
-										"pattern": "^\\w+\\\\[\\w+\\.]+$",
-										"message": "You should enter a valid path."
-									}
+									"required": true,
+									"message": "Value is required"
+								},
+								{
+									"pattern": "^\\w+\\\\[\\w+\\.]+$",
+									"message": "You should enter a valid path."
+								}
 								]
 							},
 							{
@@ -804,6 +804,44 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ObjectCardFormControlsPublicAPI = {
+		"sap.app": {
+			"id": "test.cards.object.card5change"
+		},
+		"sap.card": {
+			"type": "Object",
+			"content": {
+				"groups": [
+					{
+						"items": [
+							{
+								"id": "i1",
+								"type": "TextArea",
+								"validations": [
+									{
+										"required": true
+									}
+								]
+							},
+							{
+								"id": "i2",
+								"type": "Input",
+								"validations": [
+									{
+										"required": true
+									},
+									{
+										"minLength": 10
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
 	QUnit.module("Object Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -877,14 +915,14 @@ sap.ui.define([
 			assert.equal(aGroups[2].getItems()[10].getItems()[0].getText(), oData.company.website, "Should have correct item value.");
 			// Rating Indicator
 			assert.ok(aGroups[2].getItems()[12].isA("sap.m.RatingIndicator"), "RatingIndicator is rendered.");
-			assert.equal(aGroups[2].getItems()[12].getMaxValue(), 7,  "RatingIndicator's maxValue is correctly set.");
-			assert.equal(aGroups[2].getItems()[12].getValue(), 4.5,  "RatingIndicator's value is correctly set.");
-			assert.equal(aGroups[2].getItems()[12].getVisualMode(), "Full",  "RatingIndicator's visualMode is correctly set.");
+			assert.equal(aGroups[2].getItems()[12].getMaxValue(), 7, "RatingIndicator's maxValue is correctly set.");
+			assert.equal(aGroups[2].getItems()[12].getValue(), 4.5, "RatingIndicator's value is correctly set.");
+			assert.equal(aGroups[2].getItems()[12].getVisualMode(), "Full", "RatingIndicator's visualMode is correctly set.");
 			// Image
 			assert.ok(aGroups[2].getItems()[13].isA("sap.m.Image"), "Image is rendered.");
-			assert.equal(aGroups[2].getItems()[13].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/grass.jpg",  "Image's source is correctly set.");
-			assert.equal(aGroups[2].getItems()[13].getAlt(), "Picture of grass",  "Image's alt text is correctly set.");
-			assert.equal(aGroups[2].getItems()[13].getTooltip(), "Green grass",  "Image's tooltip is correctly set.");
+			assert.equal(aGroups[2].getItems()[13].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/grass.jpg", "Image's source is correctly set.");
+			assert.equal(aGroups[2].getItems()[13].getAlt(), "Picture of grass", "Image's alt text is correctly set.");
+			assert.equal(aGroups[2].getItems()[13].getTooltip(), "Green grass", "Image's tooltip is correctly set.");
 
 			done();
 		}.bind(this));
@@ -1044,27 +1082,27 @@ sap.ui.define([
 					},
 					"content": {
 						"groups": [{
-								"title": "Contact Details",
-								"items": [{
-										"label": "First Name",
-										"value": "{firstName}",
-										"actions": [
-											{
-												"type": "Navigation",
-												"parameters": {
-													"url": "example.com"
-												}
-											}
-										],
-										"visible": "{visible}"
-									},
+							"title": "Contact Details",
+							"items": [{
+								"label": "First Name",
+								"value": "{firstName}",
+								"actions": [
 									{
-										"label": "Email",
-										"value": "{email}",
-										"visible": "{visible}"
+										"type": "Navigation",
+										"parameters": {
+											"url": "example.com"
+										}
 									}
-								]
+								],
+								"visible": "{visible}"
+							},
+							{
+								"label": "Email",
+								"value": "{email}",
+								"visible": "{visible}"
 							}
+							]
+						}
 						]
 					}
 				}
@@ -1755,7 +1793,7 @@ sap.ui.define([
 		"{truthyValue}",
 		true,
 		5,
-		{ key: "value"},
+		{ key: "value" },
 		[{}]
 	].forEach(function (hasDataValue) {
 		QUnit.test("Positive cases - 'No data' message when 'hasData' is " + JSON.stringify(hasDataValue), function (assert) {
@@ -1838,7 +1876,7 @@ sap.ui.define([
 				oLabel = oLayout.getContent()[0].getItems()[0],
 				oLink = oLayout.getContent()[0].getItems()[1].getItems()[0];
 
-			assert.ok(oLink.getAriaLabelledBy().length,"Link should be labeled");
+			assert.ok(oLink.getAriaLabelledBy().length, "Link should be labeled");
 			assert.strictEqual(oLink.getAriaLabelledBy()[0], oLabel.getId(), "Link should be labeled by the correct label");
 			done();
 		}.bind(this));
@@ -1919,7 +1957,7 @@ sap.ui.define([
 
 			assert.strictEqual(oPhone.getDomRef().getAttribute("title"), "Make a call", "The tooltip of the phone is correct");
 			assert.strictEqual(oEmail.getDomRef().getAttribute("title"), "Write an e-mail", "The tooltip of the email is correct");
-			assert.strictEqual(oLink.getDomRef().getAttribute("title"),  "Visit website", "The tooltip of the link is correct (binding used)");
+			assert.strictEqual(oLink.getDomRef().getAttribute("title"), "Visit website", "The tooltip of the link is correct (binding used)");
 			done();
 		});
 
@@ -1939,38 +1977,38 @@ sap.ui.define([
 				"content": {
 					"groups": [{
 						"items": [{
-								"label": "Phone",
-								"value": "+1 202 555 5555",
-								"tooltip": "Make a call",
-								"actions": [{
-									"type": "Navigation",
-									"parameters": {
-										"url": "tel: +1 202 555 5555"
-									}
-								}]
-							},
-							{
-								"label": "Email",
-								"value": "my@mymail.com",
-								"tooltip": "Write an e-mail",
-								"actions": [{
-									"type": "Navigation",
-									"parameters": {
-										"url": "mailto: my@mymail.com"
-									}
-								}]
-							},
-							{
-								"label": "Website",
-								"value": "{website}",
-								"tooltip": "{websiteTooltip}",
-								"actions": [{
-									"type": "Navigation",
-									"parameters": {
-										"url": "www.company_a.example.com"
-									}
-								}]
-							}
+							"label": "Phone",
+							"value": "+1 202 555 5555",
+							"tooltip": "Make a call",
+							"actions": [{
+								"type": "Navigation",
+								"parameters": {
+									"url": "tel: +1 202 555 5555"
+								}
+							}]
+						},
+						{
+							"label": "Email",
+							"value": "my@mymail.com",
+							"tooltip": "Write an e-mail",
+							"actions": [{
+								"type": "Navigation",
+								"parameters": {
+									"url": "mailto: my@mymail.com"
+								}
+							}]
+						},
+						{
+							"label": "Website",
+							"value": "{website}",
+							"tooltip": "{websiteTooltip}",
+							"actions": [{
+								"type": "Navigation",
+								"parameters": {
+									"url": "www.company_a.example.com"
+								}
+							}]
+						}
 						]
 					}]
 				}
@@ -2073,7 +2111,7 @@ sap.ui.define([
 			removeActiveLoadingProvider: function () { },
 			getManifestEntry: function () { },
 			getPreviewMode: function () { },
-			getHeight: function () {}
+			getHeight: function () { }
 		});
 
 		oObjectContent.setActions(new CardActions());
@@ -2177,6 +2215,8 @@ sap.ui.define([
 			Core.applyChanges();
 
 			assert.ok(oLogSpy.calledWithExactly(sinon.match("Duplicate form control ID"), "sap.ui.integration.widgets.Card"), "Error for duplicate ID should be logged");
+
+			oLogSpy.restore();
 			done();
 		});
 
@@ -2310,6 +2350,114 @@ sap.ui.define([
 				}
 			}
 		});
+	});
+
+	QUnit.test("Changes from user to form control values are reflected in the 'form' model", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var oContent = oCard.getCardContent(),
+				oInput = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[0],
+				oTextArea = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1],
+				oComboBox = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[2];
+
+			// Assert
+			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), undefined, "No initial value is stored");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), undefined, "No initial value is stored");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i3"), undefined, "No initial value is stored");
+
+			// Act
+			oInput.$("inner").val("a").trigger("input");
+			oTextArea.$("inner").val("a").trigger("input");
+			oComboBox.$("inner").val("a");
+			oComboBox.fireEvent("change");
+
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "a", "Value in model is updated");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "a", "Value in model is updated");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i3").value, "a", "Value in model is updated");
+
+			done();
+		});
+
+		// Setup
+		oCard.setManifest({
+			"sap.app": {
+				"id": "test.cards.object.card5change"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [
+						{
+							"items": [
+								{
+									"id": "i1",
+									"type": "TextArea"
+								},
+								{
+									"id": "i2",
+									"type": "Input"
+								},
+								{
+									"id": "i3",
+									"type": "ComboBox"
+								}
+							]
+						}
+					]
+				}
+			}
+		});
+	});
+
+	QUnit.test("Setting form data using public card API - invalid input", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			// Act
+			oCard.setFormValues([
+				{ "id": "i1", "value": "some text" },
+				{ "id": "i2", "value": "too short" }
+			]);
+
+			// Assert
+			assert.strictEqual(oCard.getModel("messages").getProperty("/hasErrors"), true, "Form has errors");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "some text", "Form model has value");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "too short", "Form model has value");
+
+			done();
+		});
+
+		oCard.setManifest(oManifest_ObjectCardFormControlsPublicAPI);
+	});
+
+	QUnit.test("Setting form data using public card API - valid input", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			// Act
+			oCard.setFormValues([
+				{ "id": "i1", "value": "some text" },
+				{ "id": "i2", "value": "some long text" }
+			]);
+
+			// Assert
+			assert.strictEqual(oCard.getModel("messages").getProperty("/hasErrors"), false, "Form has no errors");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "some text", "Form model has value");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "some long text", "Form model has value");
+
+			done();
+		});
+
+		oCard.setManifest(oManifest_ObjectCardFormControlsPublicAPI);
 	});
 
 	QUnit.module("Form controls with Validation", {
@@ -2566,12 +2714,12 @@ sap.ui.define([
 
 
 
-				assert.strictEqual(oGroupTitle1.$("inner").css("-webkit-line-clamp"), iFirstGroupTitleMaxLines.toString(), "Title is clamped correctly based on titleMaxLines");
-				assert.strictEqual(oGroupTitle2.$("inner").css("-webkit-line-clamp"), undefined, "Title is not clamped when titleMaxLines is set to 1");
-				assert.ok(aGroup1Label1.$().hasClass("sapMLabelWrapped"), "First label is wrapped when labelWrapping is set to true");
-				assert.ok(aGroup1Label2.$().hasClass("sapMLabelWrapped"), "Second label is wrapped when labelWrapping is set to true");
-				assert.notOk(aGroup2Label1.$().hasClass("sapMLabelWrapped"), "First label is not wrapped when labelWrapping is set to false");
-				assert.notOk(aGroup2Label2.$().hasClass("sapMLabelWrapped"), "Second label is not wrapped when labelWrapping is set to false");
+			assert.strictEqual(oGroupTitle1.$("inner").css("-webkit-line-clamp"), iFirstGroupTitleMaxLines.toString(), "Title is clamped correctly based on titleMaxLines");
+			assert.strictEqual(oGroupTitle2.$("inner").css("-webkit-line-clamp"), undefined, "Title is not clamped when titleMaxLines is set to 1");
+			assert.ok(aGroup1Label1.$().hasClass("sapMLabelWrapped"), "First label is wrapped when labelWrapping is set to true");
+			assert.ok(aGroup1Label2.$().hasClass("sapMLabelWrapped"), "Second label is wrapped when labelWrapping is set to true");
+			assert.notOk(aGroup2Label1.$().hasClass("sapMLabelWrapped"), "First label is not wrapped when labelWrapping is set to false");
+			assert.notOk(aGroup2Label2.$().hasClass("sapMLabelWrapped"), "Second label is not wrapped when labelWrapping is set to false");
 			done();
 		});
 
@@ -2589,11 +2737,11 @@ sap.ui.define([
 						"titleMaxLines": 2,
 						"labelWrapping": true,
 						"items": [{
-								"label": "Some very very long label that will be wrapped if labelWrapping is set to true"
-							},
-							{
-								"label": "Another very very long label that will be wrapped if labelWrapping is set to true"
-							}
+							"label": "Some very very long label that will be wrapped if labelWrapping is set to true"
+						},
+						{
+							"label": "Another very very long label that will be wrapped if labelWrapping is set to true"
+						}
 						]
 					},
 					{
@@ -2601,11 +2749,11 @@ sap.ui.define([
 						"titleMaxLines": 1,
 						"labelWrapping": false,
 						"items": [{
-								"label": "Some very very long label that will be wrapped if labelWrapping is set to true"
-							},
-							{
-								"label": "Another very very long label that will be wrapped if labelWrapping is set to true"
-							}
+							"label": "Some very very long label that will be wrapped if labelWrapping is set to true"
+						},
+						{
+							"label": "Another very very long label that will be wrapped if labelWrapping is set to true"
+						}
 						]
 					}]
 				}
@@ -2675,7 +2823,8 @@ sap.ui.define([
 							"type": "TextArea",
 							"rows": 1,
 							"placeholder": "e-mail",
-							"validations": [{
+							"validations": [
+								{
 									"required": true
 								},
 								{
