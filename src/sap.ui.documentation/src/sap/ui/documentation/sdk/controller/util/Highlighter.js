@@ -228,7 +228,7 @@ function() {
 	Highlighter.prototype._createHighlightedNode = function (oTokensToHighlight, sText) {
 		var oRootNode = document.createElement("span"),
 			aAllTokens = [],
-			fnSort = function(a, b) {return a > b;},
+			fnSort = function(a, b) {return parseInt(a) > parseInt(b);},
 			aIndices = Object.keys(oTokensToHighlight).sort(fnSort),
 			iIndex,
 			iStartIndex = 0;
