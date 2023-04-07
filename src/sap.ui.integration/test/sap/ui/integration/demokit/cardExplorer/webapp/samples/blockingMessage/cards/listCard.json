@@ -1,0 +1,47 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "sap.ui.integration.sample.BlockingMessage.listCard",
+		"type": "card",
+		"title": "Sample for Data usage in Cards",
+		"subTitle": "Sample for Data usage in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Products",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+					"method": "GET"
+				},
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			},
+			"maxItems": 5
+		}
+	}
+}

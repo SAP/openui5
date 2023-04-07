@@ -5,6 +5,7 @@ sap.ui.define([
 	"./CardRenderer",
 	"../cards/Footer",
 	"../controls/ActionsToolbar",
+	"../controls/BlockingMessage",
 	"sap/ui/base/Interface",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
@@ -42,6 +43,7 @@ sap.ui.define([
 	CardRenderer,
 	Footer,
 	ActionsToolbar,
+	BlockingMessage,
 	Interface,
 	jQuery,
 	Core,
@@ -110,6 +112,8 @@ sap.ui.define([
 	var CardDesign = library.CardDesign;
 
 	var CardPreviewMode = library.CardPreviewMode;
+
+	var CardBlockingMessageType = library.CardBlockingMessageType;
 
 	var CARD_DESTROYED_ERROR = "Card is destroyed!";
 
@@ -557,6 +561,9 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#hide as hide
 		 * @borrows sap.ui.integration.widgets.Card#getOpener as getOpener
 		 * @borrows sap.ui.integration.widgets.Card#validateControls as validateControls
+		 * @borrows sap.ui.integration.widgets.Card#showBlockingMessage as showBlockingMessage
+		 * @borrows sap.ui.integration.widgets.Card#hideBlockingMessage as hideBlockingMessage
+		 * @borrows sap.ui.integration.widgets.Card#getBlockingMessage as getBlockingMessage
 		 */
 		this._oLimitedInterface = new Interface(this, [
 			"getDomRef",
@@ -585,11 +592,11 @@ sap.ui.define([
 			"showCard",
 			"hide",
 			"getOpener",
-			"validateControls"
+			"validateControls",
+			"showBlockingMessage",
+			"hideBlockingMessage",
+			"getBlockingMessage"
 		]);
-
-		this._oErrorHandler = new ErrorHandler();
-		this._oErrorHandler.setCard(this);
 	};
 
 	/**
@@ -1268,9 +1275,6 @@ sap.ui.define([
 		this._aActiveLoadingProviders = null;
 		this._oContentMessage = null;
 
-		this._oErrorHandler.destroy();
-		this._oErrorHandler = null;
-
 		if (this._oActionsToolbar) {
 			this._oActionsToolbar.destroy();
 			this._oActionsToolbar = null;
@@ -1504,6 +1508,76 @@ sap.ui.define([
 			oContent.showMessage(sMessage, sType);
 		} else {
 			Log.error("'showMessage' cannot be used before the card instance is ready. Consider using the event 'manifestApplied' event.", "sap.ui.integration.widgets.Card");
+		}
+	};
+
+	/**
+	 * Settings for blocking message that ocurred in a {@link sap.ui.integration.widgets.Card}
+	 *
+	 * @typedef {object} sap.ui.integration.BlockingMessageSettings
+	 * @property {sap.ui.integration.CardBlockingMessageType} type Blocking message type
+	 * @property {sap.m.IllustratedMessageType} illustrationType Illustration type
+	 * @property {sap.m.IllustratedMessageSize} [illustrationSize=sap.m.IllustratedMessageSize.Auto] Illustration size
+	 * @property {string} title Title
+	 * @property {string} [description] Description
+	 * @property {Response} [httpResponse] Response object in case of a network error
+	 * @public
+	 * @experimental As of version 1.114
+	 */
+
+	/**
+	 * Show blocking message in the card's content area.
+	 * Should be used after the <code>manifestApplied</code> event or after the <code>cardReady</code> lifecycle hook in Component cards and Extensions.
+	 *
+	 * @public
+	 * @experimental As of version 1.114
+	 * @param {sap.ui.integration.BlockingMessageSettings} oSettings Blocking message settings
+	 */
+	Card.prototype.showBlockingMessage = function (oSettings) {
+		var oContent = this.getCardContent();
+
+		if (oContent) {
+			oContent.showBlockingMessage(oSettings);
+			this._fireStateChanged();
+		}
+	};
+
+	/**
+	 * Get information about the blocking message in the card.
+	 *
+	 * @public
+	 * @experimental As of version 1.114
+	 * @returns {sap.ui.integration.BlockingMessageSettings|null} Information about the message or <code>null</code>, if such isn't shown.
+	 */
+	Card.prototype.getBlockingMessage = function () {
+		var oContent = this.getCardContent();
+
+		if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
+			return oContent.getBlockingMessage();
+		} else if (oContent && oContent.isA("sap.ui.integration.controls.BlockingMessage")) { // case where error ocurred during content creation
+			return {
+				type: oContent.getType(),
+				illustrationType: oContent.getIllustrationType(),
+				illustrationSize: oContent.getIllustrationSize(),
+				title: oContent.getTitle(),
+				description: oContent.getDescription()
+			};
+		}
+
+		return null;
+	};
+
+	/**
+	 * Hide the blocking message that is shown in the card by <code>showBlockingMessage</code> call.
+	 *
+	 * @public
+	 * @experimental As of version 1.114
+	 */
+	Card.prototype.hideBlockingMessage = function () {
+		var oContent = this.getCardContent();
+
+		if (oContent) {
+			oContent.hideBlockingMessage();
 		}
 	};
 
@@ -1935,7 +2009,7 @@ sap.ui.define([
 			});
 		} catch (e) {
 			this._handleError({
-				type: IllustratedMessageType.ErrorScreen,
+				illustrationType: IllustratedMessageType.ErrorScreen,
 				title: this.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
 				description: this.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 				details: e.message
@@ -2022,67 +2096,39 @@ sap.ui.define([
 		}
 	};
 
-	Card.prototype._preserveMinHeightInContent = function (oError) {
-		oError.addEventDelegate({
-			onAfterRendering: function () {
-				if (!this._oCardManifest) {
-					return;
-				}
-
-				var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
-					oContentManifest = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-					ContentClass = this._oContentFactory.getClass(sCardType),
-					sHeight;
-
-				if (!ContentClass) {
-					return;
-				}
-
-				sHeight = ContentClass.getMetadata().getRenderer().getMinHeight(oContentManifest, oError, this);
-
-				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-					oError.$().css({"min-height": sHeight});
-				}
-			}
-		}, this);
-	};
-
-	/**
-	 * Destroys the previous content, unless the content is the error message.
-	 *
-	 * @param {sap.ui.core.Control} oContent content aggregation
-	 * @private
-	 */
-	Card.prototype._destroyPreviousContent = function (oContent) {
-		// only destroy previous content and avoid setting an error message again
-		if (oContent && !oContent.hasStyleClass("sapFCardErrorContent")) {
-			oContent.destroy();
-		}
-	};
-
 	/**
 	 * Handler for error states.
-	 * If the content is not provided in the manifest, the error message will be displayed in the header.
+	 * If the content is not provided in the manifest, or the card is not of type Component, the error message will be displayed in the header.
 	 * If a message is not provided, a default message will be displayed.
 	 *
 	 * @private
 	 */
 	Card.prototype._handleError = function (mErrorInfo) {
-		var sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.description;
+		var sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.description,
+			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+			bIsComponentCard = this._oCardManifest.get(MANIFEST_PATHS.TYPE) === "Component",
+			oContent = this.getCardContent(),
+			mMessageSettings;
 
 		Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
 		this.fireEvent("_error", { message: sLogMessage });
 
-		var oError = this._oErrorHandler.getIllustratedMessage(mErrorInfo),
-			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
-
-		if (oContentSection) {
-			this._destroyPreviousContent(this.getCardContent());
-			this._preserveMinHeightInContent(oError);
-			this.setAggregation("_content", oError);
-			this.fireEvent("_contentReady"); // content won't show up so mark it as ready
+		if (mErrorInfo.requestErrorParams) {
+			mMessageSettings = ErrorHandler.configureDataRequestErrorInfo(mErrorInfo, this);
 		} else {
-			this.getCardHeader().setAggregation("_error", oError);
+			mMessageSettings = ErrorHandler.configureErrorInfo(mErrorInfo, this);
+		}
+
+		if (oContentSection || bIsComponentCard) {
+			if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
+				this.showBlockingMessage(mMessageSettings);
+			} else { // case where error ocurred during content creation
+				this.destroyAggregation("_content");
+				this.setAggregation("_content", BlockingMessage.create(mMessageSettings, this));
+				this.fireEvent("_contentReady"); // content won't show up so mark it as ready
+			}
+		} else {
+			this.getCardHeader().setAggregation("_error", BlockingMessage.create(mMessageSettings, this));
 		}
 	};
 
@@ -2373,16 +2419,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @experimental since 1.113
+	 * @deprecated since 1.114
 	 * @returns {boolean} Whether 'No Data' is displayed in the card
 	 */
 	Card.prototype.hasNoData = function () {
-		var oContent = this.getCardContent();
-
-		if (!oContent || !oContent.isA("sap.ui.integration.cards.BaseContent")) {
-			return false;
-		}
-
-		return oContent.hasNoData();
+		return this.getBlockingMessage() && this.getBlockingMessage().type === CardBlockingMessageType.NoData;
 	};
 
 	/**
@@ -2391,6 +2432,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @experimental since 1.113
+	 * @deprecated since 1.114
 	 * @param {object} oSettings 'No Data' settings
 	 * @param {sap.m.IllustratedMessageType} oSettings.type Illustration type
 	 * @param {sap.m.IllustratedMessageSize} [oSettings.size=sap.m.IllustratedMessageSize.Auto] Illustration size
@@ -2398,17 +2440,13 @@ sap.ui.define([
 	 * @param {string} [oSettings.description] Description
 	 */
 	Card.prototype.showNoData = function (oSettings) {
-		var oContent = this.getCardContent();
-
-		if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
-			oContent.showNoDataMessage({
-				type: oSettings.type,
-				size: oSettings.size,
-				title: oSettings.title,
-				description: oSettings.description
-			});
-			this._fireStateChanged();
-		}
+		this.showBlockingMessage({
+			type: CardBlockingMessageType.NoData,
+			illustrationType: oSettings.type,
+			illustrationSize: oSettings.size,
+			title: oSettings.title,
+			description: oSettings.description
+		});
 	};
 
 	/**

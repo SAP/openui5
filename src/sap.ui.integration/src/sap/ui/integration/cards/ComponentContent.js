@@ -85,11 +85,11 @@ sap.ui.define([
 				this.fireEvent("_updated");
 			}.bind(this),
 			componentFailed: function () {
-				var oCard = oCard = this.getCardInstance();
+				var oCard = this.getCardInstance();
 
 				this.fireEvent("_actionContentReady");
 				this.handleError({
-					type: IllustratedMessageType.ErrorScreen,
+					illustrationType: IllustratedMessageType.ErrorScreen,
 					title: oCard.getTranslatedText("CARD_DATA_LOAD_ERROR"),
 					description: "Card content failed to create component"
 				});

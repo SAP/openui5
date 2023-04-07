@@ -1088,6 +1088,27 @@ sap.ui.define([
 										key: 'Image.png'
 									}
 								]
+							},
+							{
+								title: 'No Data Message',
+								key: 'noDataMessage',
+								files: [
+									{
+										url: '/samples/component/noDataMessage/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/noDataMessage/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/noDataMessage/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									}
+								]
 							}
 						]
 					},
@@ -2720,6 +2741,51 @@ sap.ui.define([
 								url: '/samples/design/Component.js',
 								name: 'Component.js',
 								key: 'Component.js'
+							}
+						]
+					},
+					{
+						key: 'blockingMessage',
+						target: 'exploreSamples',
+						title: 'Blocking Message',
+						useIFrame: true,
+						isApplication: true,
+						experimental: true,
+						files: [
+							{
+								url: '/samples/blockingMessage/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/blockingMessage/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/blockingMessage/Main.view.xml',
+								name: 'Main.view.xml',
+								key: 'Main.view.xml'
+							},
+							{
+								url: '/samples/blockingMessage/Main.controller.js',
+								name: 'Main.controller.js',
+								key: 'Main.controller.js'
+							},
+							{
+								url: '/samples/blockingMessage/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							},
+							{
+								url: '/samples/blockingMessage/cards/listCard.json',
+								name: 'listCard.json',
+								key: 'listCard.json'
+							},
+							{
+								url: '/samples/blockingMessage/cards/listCardEmpty.json',
+								name: 'listCardEmpty.json',
+								key: 'listCardEmpty.json'
 							}
 						]
 					}

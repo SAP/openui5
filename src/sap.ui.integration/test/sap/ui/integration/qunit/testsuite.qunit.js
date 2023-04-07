@@ -235,6 +235,14 @@ sap.ui.define([
 			},
 			"controls/ActionsToolbar": {},
 			"controls/ActionsStrip": {},
+			"controls/BlockingMessage": {
+				coverage: {
+					only: [
+						"sap/ui/integration/controls/BlockingMessage",
+						"sap/ui/integration/util/ErrorHandler"
+					]
+				}
+			},
 			"controls/Paginator": {},
 			"controls/ListContentItem": {},
 			"controls/Microchart": {},
@@ -337,11 +345,6 @@ sap.ui.define([
 			"util/Destinations": {
 				coverage: {
 					only: ["sap/ui/integration/util/Destinations"]
-				}
-			},
-			"util/ErrorHandler": {
-				coverage: {
-					only: ["sap/ui/integration/util/ErrorHandler"]
 				}
 			},
 			"util/CsrfTokenHandler": {

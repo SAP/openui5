@@ -156,10 +156,10 @@ sap.ui.define([
 					&& vizDS._FlatTableD._data.length;
 
 			if (bHasData) {
-				this.destroyAggregation("_noDataMessage");
+				this.hideNoDataMessage();
 			} else {
 				this.showNoDataMessage({
-					type: IllustratedMessageType.NoEntries,
+					illustrationType: IllustratedMessageType.NoEntries,
 					title: this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS")
 				});
 			}

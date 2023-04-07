@@ -151,7 +151,7 @@ sap.ui.define([
 		// is Highcharts library available
 		if (!window.Highcharts) {
 			this.handleError({
-				type: IllustratedMessageType.ErrorScreen,
+				illustrationType: IllustratedMessageType.ErrorScreen,
 				title: oCard.getTranslatedText("CARD_DATA_LOAD_ERROR"),
 				description: oCard.getTranslatedText("CARD_ERROR_HIGHCHARTS_DESCRIPTION")
 			});
