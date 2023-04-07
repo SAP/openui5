@@ -996,6 +996,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 				oSubSection._applyLayout(opl);
 				assert.equal(oSpy.callCount, 0, "no error on adding block");
 				assert.ok(oSetParentSpy.calledWith(oSubSection, "blocks"), "Control's setParent is called with ObjectPageSubSection");
+				assert.strictEqual(oSubSection.getBlocks().length, 2, "ObjectPageSubSection has two controls in 'blocks' aggregation");
 				done();
 				oSubSection.removeAllDependents();
 				opl.destroy();
