@@ -953,33 +953,21 @@ sap.ui.define([
 
 	ObjectPageSubSection.prototype.removeAggregation = function (sAggregationName, vObject) {
 		var bRemoved = false,
-			sTypeOfObject = typeof vObject,
-			aInternalAggregation,
-			oObject;
+			aInternalAggregation;
 
-		if (this.hasProxy(sAggregationName)) {
+		if (this.hasProxy(sAggregationName) && typeof vObject === "object") {
 			aInternalAggregation = this._getAggregation(sAggregationName);
-
-			if (sTypeOfObject === "object" || sTypeOfObject === "string") {
-				oObject = sTypeOfObject === "string" ? Core.byId(vObject) : vObject;
 				aInternalAggregation.forEach(function (oObjectCandidate, iIndex) {
-					if (oObjectCandidate.getId() === oObject.getId()) {
+					if (oObjectCandidate.getId() === vObject.getId()) {
 						aInternalAggregation.splice(iIndex, 1);
-						this._onRemoveBlock(oObject);
+						this._onRemoveBlock(vObject);
 						this._setAggregation(sAggregationName, aInternalAggregation);
 						bRemoved = true;
 					}
 					return !bRemoved;
 				}, this);
-			} else if (sTypeOfObject === "number") {
-				oObject = aInternalAggregation[vObject];
-				aInternalAggregation.splice(vObject, 1);
-				this._onRemoveBlock(oObject);
-				this._setAggregation(sAggregationName, aInternalAggregation);
-				bRemoved = true;
-			}
 
-			return (bRemoved ? oObject : null);
+			return (bRemoved ? vObject : null);
 		}
 
 		return ObjectPageSectionBase.prototype.removeAggregation.apply(this, arguments);
