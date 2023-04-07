@@ -1,11 +1,12 @@
 <mvc:View
+	controllerName="sap.m.sample.SearchField.Page"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	height="100%">
 	<Page showHeader="false" >
 		<subHeader>
 			<Toolbar>
-				<SearchField width="100%" />
+				<SearchField width="100%" search=".onSearch" />
 			</Toolbar>
 		</subHeader>
 		<SearchField width="90%" class="sapUiSmallMargin" />
