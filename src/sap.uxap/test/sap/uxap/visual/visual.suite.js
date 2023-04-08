@@ -5,5 +5,6 @@ module.exports = [
 	"ObjectPageTitleOnLeft.spec.js",
 	"ObjectPageChild.spec.js",
 	"ObjectPageActions.spec.js",
-	"ObjectPageWithDynamicHeader.spec.js"
+	"ObjectPageWithDynamicHeader.spec.js",
+	"ObjectPageRtl.spec.js"
 ];
