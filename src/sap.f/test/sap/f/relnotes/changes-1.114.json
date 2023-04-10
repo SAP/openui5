@@ -1,0 +1,18 @@
+{
+  "1.114.0": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "5ce621d42e16b054a0de05dc9904b11f3bd678a4",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage,sap.uxap.ObjectPageLayout: ClipPath corrected in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370005112"
+          }
+        ]
+      }
+    ]
+  }
+}
