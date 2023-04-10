@@ -16,6 +16,7 @@
 @_sap_m_InputBase_Compact_InnerPadding: 0 0.5rem;
 @_sap_m_InputBase_Compact_Height: 1.625rem;
 @_sap_m_InputBase_FocusOffset: 1px;
+@_sap_m_InputBase_FocusOffset_Busy: @_sap_m_InputBase_FocusOffset + 1px;
 @_sap_m_InputBase_FocusBorderRadius: 0;
 
 
@@ -205,6 +206,14 @@
 		z-index: 2;
 		pointer-events: none;
 	}
+}
+
+.sapMInputBase .sapUiLocalBusyIndicator:focus:after {
+	top: @_sap_m_InputBase_FocusOffset_Busy;
+	left: @_sap_m_InputBase_FocusOffset_Busy;
+	right: @_sap_m_InputBase_FocusOffset_Busy;
+	bottom: @_sap_m_InputBase_FocusOffset_Busy;
+	border-radius: @_sap_m_InputBase_FocusBorderRadius;
 }
 
 .sapMInputBaseInner::-webkit-input-placeholder {
