@@ -1,0 +1,18 @@
+{
+  "1.114.0": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "dd333fd55427636ba360b591890d73093ea79809",
+        "type": "FIX",
+        "text": " DemoKit: Fix failing QUnit for Highlighter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370026149"
+          }
+        ]
+      }
+    ]
+  }
+}

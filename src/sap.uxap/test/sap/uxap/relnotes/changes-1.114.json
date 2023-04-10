@@ -1,0 +1,40 @@
+{
+  "1.114.0": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "4733ca40e6e66abce19df4756774dea4e12ef718",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fix removeAggregation function",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370036912"
+          }
+        ]
+      },
+      {
+        "id": "5ce621d42e16b054a0de05dc9904b11f3bd678a4",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage,sap.uxap.ObjectPageLayout: ClipPath corrected in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370005112"
+          }
+        ]
+      },
+      {
+        "id": "1f3c31e4feb7db2ee9e3d1624520049b9398e138",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Fix setParent function",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380044009"
+          }
+        ]
+      }
+    ]
+  }
+}

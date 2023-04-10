@@ -1,0 +1,40 @@
+{
+  "1.114.0": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "988718179b457dbd73aebb300b2def8f048c84ff",
+        "type": "FIX",
+        "text": " m.VariantManagement: no tab stop for favorites on standard view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380044847"
+          }
+        ]
+      },
+      {
+        "id": "cf67d428a6d7107cf5c979b9be157a38478a6d2e",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Visual adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370029778"
+          }
+        ]
+      },
+      {
+        "id": "52761503a92565cd148208c45bbd152323a777a6",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: align sap.m.IconTabHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280199999"
+          }
+        ]
+      }
+    ]
+  }
+}

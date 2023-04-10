@@ -1,0 +1,23 @@
+{
+  "1.114.0": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "db6394d77f2d45f641e1cfa4f40cd3b97da3504d",
+        "type": "FEATURE",
+        "text": " Opa: Introduce fecthWaiter"
+      },
+      {
+        "id": "41f08aff18a463f223711a1092b6550332d410c4",
+        "type": "FIX",
+        "text": " sap.ui.Device: Add type documentation for RANGESETS enum",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370027105"
+          }
+        ]
+      }
+    ]
+  }
+}
