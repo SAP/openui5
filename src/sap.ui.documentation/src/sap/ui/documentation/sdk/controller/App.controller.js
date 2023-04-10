@@ -161,20 +161,17 @@ sap.ui.define([
 				ThemePicker.init(oController);
 
 				this.MENU_LINKS_MAP = {
-					"legal": "https://www.sap.com/corporate/en/legal/impressum.html",
-					"privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
-					"terms_of_use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
 					"trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
 					"disclaimer": "https://help.sap.com/viewer/disclaimer",
-					"sitemap": "sitemap",
-					"license": "LICENSE.txt"
+					"sitemap": "sitemap"
 				};
+
+				jQuery.extend(this.MENU_LINKS_MAP, BaseController.LEGAL_LINKS);
 
 				this.getOwnerComponent().loadVersionInfo().then(function () {
 					var sProduct;
 					if (this.getModel("versionData").getProperty("/isOpenUI5")) {
-						this.MENU_LINKS_MAP["Terms of Use"] = "TermsOfUse.txt";
 						sProduct = "OPENUI5";
 					} else {
 						sProduct = "SAPUI5";

@@ -87,15 +87,14 @@ pre.sapUiDocumentationAPICode,
 	margin-left: 0;
 }
 
-html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
-	height: 2.5rem;
+.sapMTB.sapUiDocumentationFooter {
+	height: auto;
+	padding: .5rem 1rem 0.25rem 1rem;
 }
 
-.sapUiBlockLayoutSizeM:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent,
-.sapUiBlockLayoutSizeL:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent,
-.sapUiBlockLayoutSizeXL:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent {
-	padding-top: 0.25rem;
-	padding-bottom: 0.25rem;
+.sap-phone .sapMTB.sapUiDocumentationFooter {
+	padding: 1rem;
+	padding-top: 1.25rem;
 }
 
 /* 'index by version' entry item */
@@ -898,6 +897,22 @@ html.sapUiTheme-sap_belize_plus .sapUiDemokit .sapUiDocumentationSplitApp > .sap
 	border-right: 1px solid #4f667a;
 }
 
+.sapUiDemokit .sapUiDocumentationMasterPage .sapUiFixFlex .sapUiFixFlexFlexible .sapUiFixFlexFlexibleContainer {
+	overflow-y: auto;
+	margin-bottom: .5625rem;
+}
+
+.sapUiDemokit .sapUiDocumentationMasterPage .sapUiFixFlex .sapUiFixFlexFlexible:after {
+	content: "";
+	display: block;
+	width: calc(100% - 2rem);
+	height: .0625rem;
+	margin: .3125rem 1rem 0 1rem;
+	background: var(--sapUiDemoKitAccentColor6);
+	position: absolute;
+	bottom: .25rem;
+}
+
 html.sapUiTheme-sap_fiori_3_hcb .sapUiDemokit .sapMSplitContainerMaster,
 html.sapUiTheme-sap_fiori_3_hcw .sapUiDemokit .sapMSplitContainerMaster,
 html.sapUiTheme-sap_belize_hcb .sapUiDemokit .sapMSplitContainerMaster,
@@ -933,10 +948,6 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiT
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesColorPatternC {
 	background-color: #d5e2ef;
-}
-
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
-	background-color: #354a5f;
 }
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesWhiteText {

@@ -2,6 +2,8 @@
 		controllerName="sap.ui.documentation.sdk.controller.ApiMaster"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
 		xmlns:custom="sap.ui.documentation"
 		class="sapContrast sapContrastPlus">
 
@@ -28,20 +30,27 @@
 
 		<content>
 
-			<Tree
-				id="tree"
-				mode="SingleSelectMaster"
-				noDataText="{i18n>API_MASTER_NO_DATA_TEXT}"
-				selectionChange="onNodeSelect"
-				items="{treeData>/}">
-				<custom:DemokitTreeItem
-						title="{treeData>displayName}"
-						target="{treeData>name}"
-                        entityType="{treeData>kind}"
-						section="api"
-						class="sapDemokitTreeItem"
-						deprecated="{treeData>deprecated}"/>
-			</Tree>
+			<l:FixFlex fixFirst="false">
+				<l:flexContent>
+					<Tree
+						id="tree"
+						mode="SingleSelectMaster"
+						noDataText="{i18n>API_MASTER_NO_DATA_TEXT}"
+						selectionChange="onNodeSelect"
+						items="{treeData>/}">
+						<custom:DemokitTreeItem
+								title="{treeData>displayName}"
+								target="{treeData>name}"
+								entityType="{treeData>kind}"
+								section="api"
+								class="sapDemokitTreeItem"
+								deprecated="{treeData>deprecated}"/>
+					</Tree>
+				</l:flexContent>
+				<l:fixContent>
+					<core:Fragment fragmentName="sap.ui.documentation.sdk.view.FooterMaster" type="XML" />
+				</l:fixContent>
+			</l:FixFlex>
 
 		</content>
 

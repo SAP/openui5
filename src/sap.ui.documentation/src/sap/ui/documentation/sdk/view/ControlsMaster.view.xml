@@ -1,6 +1,8 @@
 <mvc:View
 		controllerName="sap.ui.documentation.sdk.controller.ControlsMaster"
 		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
 		xmlns="sap.m"
 		class="sapContrast sapContrastPlus">
 	<Page
@@ -20,36 +22,43 @@
 
 		<!-- Navigation List -->
 		<content>
-			<List id="exploredMasterList"
-				  mode="{viewModel>/listMode}"
-				  selectionChange="onNavToEntity"
-				  noDataText="{i18n>CONTROLS_MASTER_NO_DATA_TEXT}"
-				  items="{path: '/entities',
-				  groupHeaderFactory: '.getGroupHeader',
-				  sorter: [{
-						path: 'category',
-						descending: false,
-						group: true
-					},{
-						path: 'name',
-						descending: false
-					}]}">
-				<infoToolbar>
-					<Toolbar id="vsFilterBar"
-							active="true"
-							visible="false"
-							press="handleListSettings">
-						<Label id="vsFilterLabel" />
-					</Toolbar>
-				</infoToolbar>
-				<items>
-					<StandardListItem
-							title="{name}"
-							counter="{sampleCount}"
-							type="{viewModel>/listItemType}"
-							press="onNavToEntity" />
-				</items>
-			</List>
+			<l:FixFlex fixFirst="false">
+				<l:flexContent>
+					<List id="exploredMasterList"
+							mode="{viewModel>/listMode}"
+							selectionChange="onNavToEntity"
+							noDataText="{i18n>CONTROLS_MASTER_NO_DATA_TEXT}"
+							items="{path: '/entities',
+							groupHeaderFactory: '.getGroupHeader',
+							sorter: [{
+								path: 'category',
+								descending: false,
+								group: true
+							},{
+								path: 'name',
+								descending: false
+							}]}">
+						<infoToolbar>
+							<Toolbar id="vsFilterBar"
+									active="true"
+									visible="false"
+									press="handleListSettings">
+								<Label id="vsFilterLabel" />
+							</Toolbar>
+						</infoToolbar>
+						<items>
+							<StandardListItem
+									title="{name}"
+									counter="{sampleCount}"
+									type="{viewModel>/listItemType}"
+									press="onNavToEntity" />
+						</items>
+					</List>
+				</l:flexContent>
+				<l:fixContent>
+					<core:Fragment fragmentName="sap.ui.documentation.sdk.view.FooterMaster" type="XML" />
+				</l:fixContent>
+			</l:FixFlex>			
 		</content>
 	</Page>
 </mvc:View>

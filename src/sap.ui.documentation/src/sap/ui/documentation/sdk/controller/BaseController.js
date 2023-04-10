@@ -21,11 +21,13 @@ sap.ui.define([
 		// shortcut for sap.m.SplitAppMode
 		var SplitAppMode = mobileLibrary.SplitAppMode;
 
+		var URLHelper = mobileLibrary.URLHelper;
+
 		var _oWebPageTitleUtil = new WebPageTitleUtil();
 
 		var _oPageTitle = [];
 
-		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
+		var BaseController = Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
 
 			// Prerequisites
 			_oCore: sap.ui.getCore(),
@@ -232,6 +234,16 @@ sap.ui.define([
 				this.getView().byId("landingImageHeadline").setVisible(true);
 			},
 			/**
+			 * Handles the click on an item of the Footer Master (the footer placed
+			 * at the bottom of any MasterPage (left side of the SplitApp)).
+			 * @param {object} oEvent the Event object from which we are going to get the correct item key.
+			 */
+			handleFooterMasterItemPress: function(oEvent) {
+				var sTargetText = oEvent.getParameter("item").getKey(),
+				sTarget = BaseController.LEGAL_LINKS[sTargetText];
+				URLHelper.redirect(sTarget, true);
+			},
+			/**
 			 * Checks if a control has API Reference
 			 * @param {string} sControlName
 			 * @return {Promise} A promise that resolves to {boolean}
@@ -259,5 +271,17 @@ sap.ui.define([
 				return;
 			}
 		});
+
+		/**
+		 * STATIC MEMBERS
+		 */
+		BaseController.LEGAL_LINKS = {
+			"legal": "https://www.sap.com/corporate/en/legal/impressum.html",
+			"privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
+			"terms_of_use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
+			"license": "LICENSE.txt"
+		};
+
+		return BaseController;
 	}
 );

@@ -2,6 +2,8 @@
 		controllerName="sap.ui.documentation.sdk.controller.TopicMaster"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:l="sap.ui.layout"
         xmlns:custom="sap.ui.documentation"
 		class="sapContrast sapContrastPlus">
 
@@ -22,20 +24,25 @@
 		</customHeader>
 
 		<content>
-
-			<Tree
-                id="tree"
-                mode="SingleSelectMaster"
-                selectionChange="onNodeSelect"
-                noDataText="{i18n>TOPIC_MASTER_NO_DATA_TEXT}"
-                items="{ path: '/' }">
-                <custom:DemokitTreeItem
-                        title="{text}"
-                        target="{key}"
-                        section="topic"
-                        selected="{isSelected}"/>
-			</Tree>
-
+			<l:FixFlex fixFirst="false">
+				<l:flexContent>
+					<Tree
+						id="tree"
+						mode="SingleSelectMaster"
+						selectionChange="onNodeSelect"
+						noDataText="{i18n>TOPIC_MASTER_NO_DATA_TEXT}"
+						items="{ path: '/' }">
+						<custom:DemokitTreeItem
+								title="{text}"
+								target="{key}"
+								section="topic"
+								selected="{isSelected}"/>
+					</Tree>
+				</l:flexContent>
+				<l:fixContent>
+					<core:Fragment fragmentName="sap.ui.documentation.sdk.view.FooterMaster" type="XML" />
+				</l:fixContent>
+			</l:FixFlex>
 		</content>
 
 	</Page>

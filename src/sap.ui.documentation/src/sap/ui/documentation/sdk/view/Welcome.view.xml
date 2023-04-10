@@ -648,11 +648,7 @@
 			</l:BlockLayout>
 		</Panel>
 
-		<l:BlockLayout>
-			<l:BlockLayoutRow>
-				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
-			</l:BlockLayoutRow>
+		<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 
-		</l:BlockLayout>
 	</Page>
 </mvc:View>

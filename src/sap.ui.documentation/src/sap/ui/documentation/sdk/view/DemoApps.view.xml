@@ -107,13 +107,9 @@
 						</l:BlockLayout>
 					</Panel>
 				</l:VerticalLayout>
-				<l:BlockLayout
-						id="demoAppsFooter"
-						visible="{/bFooterVisible}">
-					<l:BlockLayoutRow>
-						<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
-					</l:BlockLayoutRow>
-				</l:BlockLayout>
+
+				<core:Fragment id="demoAppsFooter" visible="{/bFooterVisible}" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
+
 			</ScrollContainer>
 		</content>
 		<dependents>
