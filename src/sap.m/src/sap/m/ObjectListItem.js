@@ -13,7 +13,8 @@ sap.ui.define([
 	'./ObjectMarker',
 	'./Text',
 	'./ObjectListItemRenderer',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/Configuration',
+	"sap/m/ImageHelper"
 ],
 function(
 	ManagedObjectObserver,
@@ -25,7 +26,8 @@ function(
 	ObjectMarker,
 	Text,
 	ObjectListItemRenderer,
-	Configuration
+	Configuration,
+	ImageHelper
 	) {
 		"use strict";
 
@@ -33,9 +35,6 @@ function(
 
 		// shortcut for sap.m.ObjectMarkerType
 		var ObjectMarkerType = library.ObjectMarkerType;
-
-		// shortcut for sap.m.ImageHelper
-		var ImageHelper = library.ImageHelper;
 
 		// shortcut for sap.ui.core.TextAlign
 		var TextAlign = coreLibrary.TextAlign;

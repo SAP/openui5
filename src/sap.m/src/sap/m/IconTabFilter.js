@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ResponsivePopover",
 	"sap/m/IconTabBarSelectList",
-	"sap/m/BadgeEnabler"
+	"sap/m/BadgeEnabler",
+	"sap/m/ImageHelper"
 ], function (
 	library,
 	AccButton,
@@ -34,7 +35,8 @@ sap.ui.define([
 	Button,
 	ResponsivePopover,
 	IconTabBarSelectList,
-	BadgeEnabler
+	BadgeEnabler,
+	ImageHelper
 ) {
 	"use strict";
 
@@ -49,9 +51,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
-
-	// shortcut for sap.m.ImageHelper
-	var ImageHelper = library.ImageHelper;
 
 	// shortcut for sap.m.IconTabFilterDesign
 	var IconTabFilterDesign = library.IconTabFilterDesign;

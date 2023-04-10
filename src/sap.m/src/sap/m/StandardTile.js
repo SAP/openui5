@@ -9,23 +9,18 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	'./StandardTileRenderer'
+	'./StandardTileRenderer',
+	'sap/m/ImageHelper'
 ],
-	function(Tile, library, IconPool, coreLibrary, Device, StandardTileRenderer) {
+	function(Tile, library, IconPool, coreLibrary, Device, StandardTileRenderer, ImageHelper) {
 	"use strict";
 
-
-
-	// shortcut for sap.m.ImageHelper
-	var ImageHelper = library.ImageHelper;
 
 	// shortcut for sap.m.StandardTileType
 	var StandardTileType = library.StandardTileType;
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
-
-
 
 	/**
 	 * Constructor for a new StandardTile.

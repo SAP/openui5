@@ -12,17 +12,11 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/security/encodeXML",
 	"sap/ui/core/InvisibleText",
-	"sap/m/BusyIndicator"
+	"sap/m/BusyIndicator",
+	"sap/m/ImageHelper"
 ],
-	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes, encodeXML, InvisibleText, BusyIndicator) {
+	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes, encodeXML, InvisibleText, BusyIndicator, ImageHelper) {
 	"use strict";
-
-
-
-	// shortcut for sap.m.ImageHelper
-	var ImageHelper = library.ImageHelper;
-
-
 
 	/**
 	 * Constructor for a new PullToRefresh.

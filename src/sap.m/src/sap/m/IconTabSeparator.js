@@ -4,22 +4,19 @@
 
 // Provides control sap.m.IconTabSeparator.
 sap.ui.define([
-	"./library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
-	"sap/m/IconTabFilter"
+	"sap/m/IconTabFilter",
+	"sap/m/ImageHelper"
 ], function (
-	library,
 	Core,
 	Element,
 	Item,
-	IconTabFilter
+	IconTabFilter,
+	ImageHelper
 ) {
 	"use strict";
-
-	// shortcut for sap.m.ImageHelper
-	var ImageHelper = library.ImageHelper;
 
 	/**
 	 * Constructor for a new IconTabSeparator.
