@@ -382,5 +382,32 @@
         ]
       }
     ]
+  },
+  "1.111.3": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "29d8c588e6b5c2ea8acd30baeb3e00b06cb2159d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Adjust unstable QUnit test in FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370026260"
+          }
+        ]
+      },
+      {
+        "id": "36f09607f8654657b9bbd211234771831806d6fd",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

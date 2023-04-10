@@ -188,5 +188,21 @@
         ]
       }
     ]
+  },
+  "1.111.3": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "2e38c0adb7196d51fc4a289abcbcf13e2aa65f1d",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDateUtils#_getDateFromWeekStartByDayOffset: Fix usage of inconsistent locale",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380029711"
+          }
+        ]
+      }
+    ]
   }
 }
