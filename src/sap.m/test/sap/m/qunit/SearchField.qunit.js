@@ -486,6 +486,33 @@ sap.ui.define([
 		assert.strictEqual(fnFireChangeSpy.callCount, 3, "The change event is fired");
 	});
 
+	QUnit.test("'searchButtonPressed' event parameter", function(assert) {
+
+		var fnFireSearchSpy = this.spy(this.oSearchField, "fireSearch");
+
+		// act
+		QunitUtils.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "a");
+
+		var oTouchStartMockEvent = {
+			target: this.oSearchField.getDomRef("search")
+		};
+		var oTouchEndMockEvent = {
+			target: this.oSearchField.getDomRef("search"),
+			originalEvent: {},
+			id: this.oSearchField.getId() + "-search"
+		};
+
+		// Act
+		// Simulate touch start on the SearchField's search button.
+		this.oSearchField.ontouchstart(oTouchStartMockEvent);
+		// Simulate touch end on the SearchField's search button.
+		this.oSearchField.ontouchend(oTouchEndMockEvent);
+
+		// assertions
+		assert.strictEqual(fnFireSearchSpy.callCount, 1, "The search event is fired");
+		assert.strictEqual(fnFireSearchSpy.args[0][0].searchButtonPressed, true, "searchButtonPressed parameter is set for search event");
+	});
+
 	QUnit.test("'submit' form event", function(assert) {
 		var oEventSpy = sinon.spy(jQuery.Event.prototype, "preventDefault");
 

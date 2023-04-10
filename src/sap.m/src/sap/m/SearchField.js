@@ -214,7 +214,12 @@ sap.ui.define([
 						 * Indicates if the user pressed the clear icon.
 						 * @since 1.34
 						 */
-						clearButtonPressed : {type : "boolean"}
+						clearButtonPressed : {type : "boolean"},
+						/**
+						 * Indicates if the user pressed the search button.
+						 * @since 1.114
+						 */
+						searchButtonPressed : {type : "boolean"}
 					}
 				},
 
@@ -389,7 +394,8 @@ sap.ui.define([
 		this.fireSearch({
 			query: value,
 			refreshButtonPressed: false,
-			clearButtonPressed: !!(oOptions && oOptions.clearButton)
+			clearButtonPressed: !!(oOptions && oOptions.clearButton),
+			searchButtonPressed: false
 		});
 	};
 
@@ -475,11 +481,13 @@ sap.ui.define([
 			if (Device.system.desktop && !this.getShowRefreshButton() && (document.activeElement !== oInputElement)) {
 				oInputElement.focus();
 			}
+			var bRefreshButtonPressed = !!(this.getShowRefreshButton() && !this.hasStyleClass("sapMFocus"));
 			this._fireChangeEvent();
 			this.fireSearch({
 				query: this.getValue(),
-				refreshButtonPressed: !!(this.getShowRefreshButton() && !this.hasStyleClass("sapMFocus")),
-				clearButtonPressed: false
+				refreshButtonPressed: bRefreshButtonPressed,
+				clearButtonPressed: false,
+				searchButtonPressed: !bRefreshButtonPressed
 			});
 		} else {
 			// focus by form area touch outside of the input field
@@ -521,7 +529,8 @@ sap.ui.define([
 		this.fireSearch({
 			query: value,
 			refreshButtonPressed: false,
-			clearButtonPressed: false
+			clearButtonPressed: false,
+			searchButtonPressed: false
 		});
 
 		// If the user has pressed the search button on the soft keyboard - close it,
@@ -647,7 +656,8 @@ sap.ui.define([
 					query: this.getValue(),
 					suggestionItem: suggestionItem,
 					refreshButtonPressed: this.getShowRefreshButton() && event.which === KeyCodes.F5,
-					clearButtonPressed: false
+					clearButtonPressed: false,
+					searchButtonPressed: false
 				});
 				break;
 			case KeyCodes.ESCAPE:
