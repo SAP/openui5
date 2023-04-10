@@ -1221,5 +1221,21 @@
         ]
       }
     ]
+  },
+  "1.102.16": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "7d1b80ae93be4a650ce08c2de58a894ee668535b",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
