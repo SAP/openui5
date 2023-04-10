@@ -199,7 +199,7 @@ sap.ui.define([
 					versionName: oVersionInfo.name,
 					version: [oVersion.getMajor(), oVersion.getMinor(), oVersion.getPatch()].join("."),
 					fullVersion: oVersionInfo.version,
-					openUi5Version: sVersionPrefixPath || sap.ui.version,
+					openUi5Version: sVersionPrefixPath || oVersionInfo.version,
 					isOpenUI5: bOpenUI5,
 					isSnapshotVersion: bSnapshot,
 					isDevVersion: bSnapshot,

@@ -31,7 +31,8 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/getFirstEditableInput",
-	'sap/ui/dom/units/Rem'
+	'sap/ui/dom/units/Rem',
+	"sap/ui/base/Object"
 ], function(
 	jQuery,
 	ManagedObjectObserver,
@@ -60,7 +61,8 @@ sap.ui.define([
 	merge,
 	KeyCodes,
 	getFirstEditableInput,
-	DomUnitsRem
+	DomUnitsRem,
+	BaseObject
 ) {
 	"use strict";
 
@@ -1832,7 +1834,7 @@ sap.ui.define([
 
 		var oSubsection;
 
-		if (oSection instanceof sap.uxap.ObjectPageSubSection) {
+		if (BaseObject.isA(oSection, "sap.uxap.ObjectPageSubSection")) {
 			oSubsection = oSection;
 			oSection = oSection.getParent();
 		} else {

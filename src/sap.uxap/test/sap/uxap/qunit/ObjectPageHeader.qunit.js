@@ -785,8 +785,8 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		// Act: search element within the clone
 		$HeaderClone_identifier = oHeader._findById($HeaderClone, "identifierLine");
 
-		assert.ok(jQuery.contains($HeaderClone.get(0), $HeaderClone_identifier.get(0)), "returned element is part of clone");
-		assert.ok(!jQuery.contains(oHeader.getDomRef(), $HeaderClone_identifier.get(0)), "returned element is not part of the original element");
+		assert.ok($HeaderClone.get(0).contains($HeaderClone_identifier.get(0)), "returned element is part of clone");
+		assert.ok(!oHeader.getDomRef().contains($HeaderClone_identifier.get(0)), 'returned element is not part of the original element');
 	});
 
 	QUnit.test("_findById can find id with special characters", function (assert) {
@@ -806,7 +806,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		// Act: search element within the context
 		$HeaderClone_action = oHeader._findById($HeaderClone, "my.action");
 
-		assert.ok(jQuery.contains($HeaderClone.get(0), $HeaderClone_action.get(0)), "returned element is part of clone");
+		assert.ok($HeaderClone.get(0) !== $HeaderClone_action.get(0) && $HeaderClone.get(0).contains($HeaderClone_action.get(0)), "returned element is part of clone");
 	});
 
 	QUnit.module("Action buttons", {

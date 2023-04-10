@@ -7,10 +7,8 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"./library",
-	"./HierarchicalSelectRenderer",
-	"sap/ui/thirdparty/jqueryui/jquery-ui-position"
-], function(Select, Device, jQuery, library, HierarchicalSelectRenderer /*jqueryUiPosition,*/) {
+	"./HierarchicalSelectRenderer"
+], function(Select, Device, jQuery, HierarchicalSelectRenderer) {
 	"use strict";
 
 	/**
