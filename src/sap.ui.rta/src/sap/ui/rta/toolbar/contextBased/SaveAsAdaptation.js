@@ -176,8 +176,8 @@ sap.ui.define([
 						var aDisplayedAdaptation = aAdaptations.splice(iDisplayedAdaptation, 1);
 						aAdaptations.splice(oContextBasedAdaptation.priority, 0, aDisplayedAdaptation[0]);
 						this.oAdaptationsModel.initializeRanks();
-						this.oAdaptationsModel.updateAdaptations(aAdaptations);
 					}
+					this.oAdaptationsModel.updateAdaptations(aAdaptations);
 				}
 			}.bind(this, oContextBasedAdaptation, iDisplayedAdaptation))
 			.catch(function(oError) {
