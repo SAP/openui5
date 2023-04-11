@@ -237,7 +237,7 @@ sap.ui.define([
 			return sIcon;
 		},
 
-		_generateInvalidUserInput: function () {
+		generateInvalidUserInput: function () {
 			var oButton = this.getView().byId("messagePopoverBtn"),
 				oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
 				oNumericZipInput = this.oView.byId("formContainer").getItems()[5].getContent()[7],
