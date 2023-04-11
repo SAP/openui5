@@ -1485,6 +1485,7 @@ sap.ui.define([
 			oMetaModel = this.oModel.getMetaModel(),
 			aPathsForBinding = [],
 			aPathsForModel = [],
+			oRootBinding,
 			sRootPath,
 			that = this;
 
@@ -1550,7 +1551,8 @@ sap.ui.define([
 			}
 		});
 
-		sRootPath = _Helper.getRootBinding(this).getResolvedPath();
+		oRootBinding = this.oBinding.getRootBinding();
+		sRootPath = oRootBinding.getResolvedPath();
 		aPathsForBinding = aPathsForBinding.reduce(function (aPaths0, sPath) {
 			return aPaths0.concat(oMetaModel.getAllPathReductions(
 				_Helper.buildPath(that.getPath(), sPath), sRootPath));

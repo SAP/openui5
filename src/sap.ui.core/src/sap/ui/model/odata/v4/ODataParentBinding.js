@@ -187,8 +187,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype._findEmptyPathParentContext = function (oContext) {
-		if (this.sPath === "" && this.oContext.getBinding) { // API serves as a marker only
-			return this.oContext.oBinding._findEmptyPathParentContext(this.oContext);
+		if (this.sPath === "" && this.oContext.getBinding) {
+			return this.oContext.getBinding()._findEmptyPathParentContext(this.oContext);
 		}
 		return oContext;
 	};
@@ -528,7 +528,7 @@ sap.ui.define([
 					return oCreatedEntity;
 				});
 			}
-			return that.oContext.oBinding.createInCache(oUpdateGroupLock, vCreatePath,
+			return that.oContext.getBinding().createInCache(oUpdateGroupLock, vCreatePath,
 				sCollectionPath, sTransientPredicate, oInitialData, bAtEndOfCreated,
 				fnErrorCallback, fnSubmitCallback);
 		});
@@ -767,7 +767,7 @@ sap.ui.define([
 		}
 
 		if (bDependsOnOperation && !sResolvedChildPath.includes("/$Parameter/")
-				|| this.isRootBindingSuspended()
+				|| this.getRootBinding().isSuspended()
 				|| _Helper.isDataAggregation(this.mParameters)) {
 			// With data aggregation, no auto-$expand/$select is needed, but the child may still use
 			// the parent's cache
@@ -810,7 +810,7 @@ sap.ui.define([
 			if (sReducedChildMetaPath === undefined) {
 				// the child's data does not fit into this bindings's cache, try the parent
 				that.bHasPathReductionToParent = true;
-				return that.oContext.oBinding.fetchIfChildCanUseCache(that.oContext,
+				return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
 					_Helper.getRelativePath(sResolvedChildPath, that.oContext.getPath()),
 					vChildQueryOptions);
 			}
@@ -861,7 +861,7 @@ sap.ui.define([
 				if (that.oCache) {
 					that.oCache.setLateQueryOptions(that.mLateQueryOptions);
 				} else if (that.oCache === null) {
-					return that.oContext.oBinding.fetchIfChildCanUseCache(that.oContext,
+					return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
 						that.sPath, SyncPromise.resolve(that.mLateQueryOptions))
 						.then(function (sPath) {
 							return sPath && sReducedPath;
@@ -961,7 +961,7 @@ sap.ui.define([
 		var oParentBinding, sParentUpdateGroupId;
 
 		if (!this.isRoot()) {
-			oParentBinding = this.oContext.oBinding;
+			oParentBinding = this.oContext.getBinding();
 			sParentUpdateGroupId = oParentBinding.getUpdateGroupId();
 			if (sParentUpdateGroupId === this.getUpdateGroupId()
 					|| !this.oModel.isApiGroup(sParentUpdateGroupId)) {
@@ -986,7 +986,7 @@ sap.ui.define([
 
 		return this.mCacheQueryOptions
 			|| _Helper.getQueryOptionsForPath(
-				this.oContext.oBinding.getInheritableQueryOptions(), this.sPath);
+				this.oContext.getBinding().getInheritableQueryOptions(), this.sPath);
 	};
 
 	/**
@@ -1118,7 +1118,7 @@ sap.ui.define([
 	ODataParentBinding.prototype.isPatchWithoutSideEffects = function () {
 		return this.mParameters.$$patchWithoutSideEffects
 			|| !this.isRoot() && this.oContext
-				&& this.oContext.oBinding.isPatchWithoutSideEffects();
+				&& this.oContext.getBinding().isPatchWithoutSideEffects();
 	};
 
 	/**
