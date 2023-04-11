@@ -3,6 +3,8 @@
 describe("sap.m.TimePicker", function() {
 	"use strict";
 
+	var iDefaultTimeout = 50000; // timeout for test execution in milliseconds
+
 	it("time picker disabled", function() {
 		element(by.id("TP2-icon")).click();
 		expect(takeScreenshot(element(by.id("TP2-toolbar")))).toLookAs("time_picker_not_opened");
@@ -73,7 +75,7 @@ describe("sap.m.TimePicker", function() {
 
 		// Close popover
 		element(by.id("TP5-Cancel")).click();
-	});
+	}, iDefaultTimeout);
 
 	// 24 hours clock
 	it("keyboard interaction: time picker with display format - 'HH:mm'", function() {
@@ -116,11 +118,11 @@ describe("sap.m.TimePicker", function() {
 		expect(takeScreenshot(oClock)).toLookAs("TP1_minutes_03_15");
 
 		var oMinutesCover = element(by.id("TP1-clocks-clockM-cover"));
-		browser.actions().mouseMove(oMinutesCover, {x: 135, y: 0}).click().perform();
+		browser.actions().mouseMove(oMinutesCover, {x: 135, y: 10}).click().perform();
 		expect(takeScreenshot(oClock)).toLookAs("TP1_minutes_00_15");
 
 		var oSecondsCover = element(by.id("TP1-clocks-clockS-cover"));
-		browser.actions().mouseMove(oSecondsCover, {x: 0, y: 135}).click().perform();
+		browser.actions().mouseMove(oSecondsCover, {x: 10, y: 135}).click().perform();
 		expect(takeScreenshot(oClock)).toLookAs("TP1_seconds_00_45");
 
 		// Close popover
@@ -142,6 +144,33 @@ describe("sap.m.TimePicker", function() {
 		// Close popover
 		element(by.id("TP14-Cancel")).click();
 	});
+
+	it("separators", function() {
+		element(by.id("TP21-icon")).click();
+		var oClock = element(by.id("TP21-RP-popover"));
+		expect(takeScreenshot(oClock)).toLookAs("TP21_no_separator");
+		element(by.id("TP21-Cancel")).click();
+
+		element(by.id("TP22-icon")).click();
+		var oClock = element(by.id("TP22-RP-popover"));
+		expect(takeScreenshot(oClock)).toLookAs("TP22_separator_end");
+		element(by.id("TP22-Cancel")).click();
+
+		element(by.id("TP23-icon")).click();
+		var oClock = element(by.id("TP23-RP-popover"));
+		expect(takeScreenshot(oClock)).toLookAs("TP23_separator_begin_end");
+		element(by.id("TP23-Cancel")).click();
+
+		element(by.id("TP24-icon")).click();
+		var oClock = element(by.id("TP24-RP-popover"));
+		expect(takeScreenshot(oClock)).toLookAs("TP24_no_separator_begin_end");
+		element(by.id("TP24-Cancel")).click();
+
+		element(by.id("TP17-icon")).click();
+		var oClock = element(by.id("TP17-RP-popover"));
+		expect(takeScreenshot(oClock)).toLookAs("TP17_separator_chinese");
+		element(by.id("TP17-Cancel")).click();
+	}, iDefaultTimeout);
 
 	it("TimePicker input press triggers a popover to be opened on mobile", function() {
 		var oToggleMobileButton = element(by.id("toggleMobile"));
@@ -190,5 +219,6 @@ describe("sap.m.TimePicker", function() {
 		oValueHelpIcon.click(); //open the picker
 		expect(takeScreenshot(oPicker)).toLookAs("picker_7_20_12_AM_" + sTimezone);
 	}
+
 });
 
