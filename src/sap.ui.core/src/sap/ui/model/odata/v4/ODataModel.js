@@ -1729,7 +1729,7 @@ sap.ui.define([
 
 			return oBinding.isRelative()
 				&& (oContext === oParent
-					|| oContext && oContext.getBinding && oContext.oBinding === oParent);
+					|| oContext && oContext.getBinding && oContext.getBinding() === oParent);
 		});
 	};
 
@@ -1926,9 +1926,8 @@ sap.ui.define([
 	 * <code>mParameters</code> (except <code>$$groupId</code> which is especially used for the
 	 * context), that binding later runs into an error when trying to read data.
 	 *
-	 * <b>Note</b>: The context returned by this function may change its
-	 * {@link sap.ui.model.odata.v4.Context#getBinding binding} during its lifetime because a
-	 * temporary binding is hidden and <code>null</code> is returned instead.
+	 * <b>Note</b>: The context received by this function may change its
+	 * {@link sap.ui.model.odata.v4.Context#getBinding binding} during its lifetime.
 	 *
 	 * @param {string} sPath
 	 *   A list context path to an entity, see also {@link #requestKeyPredicate}
@@ -1961,8 +1960,7 @@ sap.ui.define([
 	 * @since 1.99.0
 	 */
 	ODataModel.prototype.getKeepAliveContext = function (sPath, bRequestMessages, mParameters) {
-		var oContext,
-			oListBinding,
+		var oListBinding,
 			aListBindings,
 			sListPath;
 
@@ -1999,14 +1997,8 @@ sap.ui.define([
 				this.mKeepAliveBindingsByPath[sListPath] = oListBinding;
 			}
 		}
-		oContext = oListBinding.getKeepAliveContext(sPath, bRequestMessages, mParameters.$$groupId);
-		if (sListPath in this.mKeepAliveBindingsByPath) { // hide temporary binding
-			oContext.getBinding = function () {
-				return null;
-			};
-		}
 
-		return oContext;
+		return oListBinding.getKeepAliveContext(sPath, bRequestMessages, mParameters.$$groupId);
 	};
 
 	/**

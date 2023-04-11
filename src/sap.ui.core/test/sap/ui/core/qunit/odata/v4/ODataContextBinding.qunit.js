@@ -198,7 +198,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	[false, true].forEach(function (bSuspended) {
 		QUnit.test("initialize: resolved, suspended = " + bSuspended, function (assert) {
-			var oBinding = this.bindContext("/resolved");
+			var oBinding = this.bindContext("/resolved"),
+				oRootBinding = {isSuspended : function () {}};
 
 			assert.strictEqual(oBinding.bInitial, true);
 			this.mock(oBinding).expects("isResolved").withExactArgs()
@@ -206,8 +207,8 @@ sap.ui.define([
 					assert.strictEqual(oBinding.bInitial, false);
 					return true;
 				});
-			this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs()
-				.returns(bSuspended);
+			this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
 
 			this.mock(oBinding).expects("_fireChange")
 				.exactly(bSuspended ? 0 : 1)
@@ -408,6 +409,7 @@ sap.ui.define([
 		var oBinding,
 			oBindingPrototypeMock = this.mock(Binding.prototype),
 			oContext = {
+				getBinding : function () {},
 				getPath : function () { return "/contextPath"; }
 			},
 			oModelMock = this.mock(this.oModel);
@@ -1069,9 +1071,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: suspended root binding", function (assert) {
-		var oBinding = this.bindContext("~path~");
+		var oBinding = this.bindContext("~path~"),
+			oRootBinding = {isSuspended : function () {}};
 
-		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 
 		assert.throws(function () {
 			// code under test
@@ -1248,7 +1252,7 @@ sap.ui.define([
 	[false, true].forEach(function (bBaseContext) {
 		QUnit.test("execute: relative, bBaseContext=" + bBaseContext, function (assert) {
 			var oContext = {
-					getBinding : function () {}, // API serves as a marker only
+					getBinding : function () {},
 					getPath : function () { return "/Employees('42')"; },
 					isTransient : function () { return false; }
 				},
@@ -1264,8 +1268,8 @@ sap.ui.define([
 				delete oContext.getBinding;
 				delete oContext.isTransient;
 			} else {
-				oContext.oBinding = oParentBinding;
 				oContext.iIndex = 42;
+				this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
 				this.mock(oParentBinding).expects("checkKeepAlive")
 					.withExactArgs(sinon.match.same(oContext));
 			}
@@ -1292,20 +1296,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("execute: relative, bReplaceWithRVC, checkKeepAlive throws", function (assert) {
-		var oParentBinding = {
-				checkKeepAlive : function () {}
-			},
-			oContext = {
-				getBinding : function () {}, // API serves as a marker only
+		var oContext = {
+				getBinding : function () {},
 				getPath : function () { return "/Employees('42')"; },
-				oBinding : oParentBinding,
 				iIndex : 42
 			},
 			oBinding = this.bindContext("schema.Operation(...)", oContext),
-			oError = new Error("This call intentionally failed");
+			oError = new Error("This call intentionally failed"),
+			oParentBinding = {
+				checkKeepAlive : function () {}
+			};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
 		this.mock(oParentBinding).expects("checkKeepAlive")
 			.withExactArgs(sinon.match.same(oContext)).throws(oError);
 		this.mock(oBinding).expects("_execute").never();
@@ -2978,20 +2982,20 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oContext = {},
 			oExpectation,
+			oParentContext = Context.create(this.oModel, null, "/SalesOrders('42')"),
 			oParent = {
 				_fireChange : function () {},
+				oElementContext : oParentContext,
 				execute : {},
 				getContext : function () {},
 				isRelative : function () { return false; }
 			},
-			oParentContext = Context.create(this.oModel, oParent, "/SalesOrders('42')"),
 			oPromise,
 			fnUndelete = sinon.spy(),
 			that = this;
 
 		oBindingMock.expects("fetchCache"); // so that setContext does not stumble over the mocks
 		oBinding.setContext(oParentContext);
-		oParent.oElementContext = oParentContext;
 
 		oBindingMock.expects("_findEmptyPathParentContext")
 			.withExactArgs(sinon.match.same(oBinding.oElementContext)).returns(oParentContext);
@@ -3007,6 +3011,7 @@ sap.ui.define([
 					throw "~Error~";
 				}
 			})));
+		this.mock(oParentContext).expects("getBinding").withExactArgs().returns(oParent);
 
 		// code under test
 		oPromise = oBinding.delete("~oGroupLock~", "SalesOrders('42')", oContext, "~oETagEntity~",
@@ -3059,7 +3064,7 @@ sap.ui.define([
 				// no #execute
 			},
 			oPromise,
-			oRowContext = Context.create(this.oModel, oParentBinding, "/SalesOrders('42')"),
+			oRowContext = Context.create(this.oModel, null, "/SalesOrders('42')"),
 			fnUndelete = sinon.spy();
 
 		this.mock(oBinding).expects("fetchCache");
@@ -3068,6 +3073,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_findEmptyPathParentContext")
 			.withExactArgs(sinon.match.same(oBinding.oElementContext))
 			.returns(oRowContext);
+		this.mock(oRowContext).expects("getBinding").withExactArgs().returns(oParentBinding);
 		this.mock(oContext).expects("getValue").withExactArgs().returns("~oETagEntity~");
 		oExpectation = this.mock(oParentBinding).expects("delete")
 			.withExactArgs("~oGroupLock~", "SalesOrders('42')", sinon.match.same(oRowContext),

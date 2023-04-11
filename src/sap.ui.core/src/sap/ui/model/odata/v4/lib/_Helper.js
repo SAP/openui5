@@ -1552,28 +1552,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the (internal) root binding of the given context's binding hierarchy. In contrast
-		 * to {@link sap.ui.model.odata.v4.ODataBinding#getRootBinding}, temporary bindings are not
-		 * hidden.
-		 *
-		 * @param {sap.ui.model.odata.v4.Context} oContext - A context instance
-		 * @returns {sap.ui.model.odata.v4.ODataBinding} Its root binding
-		 *
-		 * @public
-		 * @since 1.113.0
-		 */
-		getRootBinding : function (oContext) {
-			var oBinding = oContext.oBinding; // Note: avoid v4.Context#getBinding API
-
-			oContext = oBinding.isRelative() && oBinding.getContext();
-			if (!oContext || !oContext.getBinding) { // API serves as a marker only
-				return oBinding; // not relative to a v4.Context
-			}
-
-			return _Helper.getRootBinding(oContext);
-		},
-
-		/**
 		 * Tells whether <code>sPath</code> has <code>sBasePath</code> as path prefix. It returns
 		 * <code>true</code> iff {@link .getRelativePath} does not return <code>undefined</code>.
 		 *

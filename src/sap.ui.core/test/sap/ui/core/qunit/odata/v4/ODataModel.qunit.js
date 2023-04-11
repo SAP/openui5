@@ -2673,8 +2673,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		// do not use real bindings because they become active asynchronously (esp. ODLB)
-		var oContext = {},
-			oMatch = {
+		var oMatch = {
 				getKeepAliveContext : function () {},
 				isKeepAliveBindingFor : function () {},
 				mParameters : {$$getKeepAliveContext : true},
@@ -2720,21 +2719,16 @@ sap.ui.define([
 		this.mock(oMatch).expects("getKeepAliveContext")
 			.withExactArgs("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
 				bUseGroupId ? "group" : undefined)
-			.returns(oContext);
+			.returns("~oContext~");
 
 		assert.strictEqual(
 			// code under test
 			oModel.getKeepAliveContext("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
 				mParameters),
-			oContext);
+			"~oContext~");
 
 		assert.strictEqual(oModel.mKeepAliveBindingsByPath["/SalesOrders('1')/Items"],
 			bFound ? undefined : oMatch);
-		if (bFound) {
-			assert.deepEqual(oContext, {}, "unchanged");
-		} else {
-			assert.strictEqual(oContext.getBinding(), null);
-		}
 	});
 	});
 });
@@ -2766,8 +2760,7 @@ sap.ui.define([
 [false, true].forEach(function (bUseGroupId) {
 	QUnit.test("getKeepAliveContext: temporary binding, group=" + bUseGroupId, function (assert) {
 		// do not use real bindings because they become active asynchronously (esp. ODLB)
-		var oContext = {},
-			oMatch = {
+		var oMatch = {
 				getKeepAliveContext : function () {}
 			},
 			oNoMatch = { // simulates an ODLB which should not be considered
@@ -2796,16 +2789,15 @@ sap.ui.define([
 		this.mock(oMatch).expects("getKeepAliveContext")
 			.withExactArgs("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
 				bUseGroupId ? "group" : undefined)
-			.returns(oContext);
+			.returns("~oContext~");
 
 		assert.strictEqual(
 			// code under test
 			oModel.getKeepAliveContext("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
 				mParameters),
-			oContext);
+			"~oContext~");
 
 		assert.strictEqual(oModel.mKeepAliveBindingsByPath["/SalesOrders('1')/Items"], oMatch);
-		assert.strictEqual(oContext.getBinding(), null);
 	});
 });
 

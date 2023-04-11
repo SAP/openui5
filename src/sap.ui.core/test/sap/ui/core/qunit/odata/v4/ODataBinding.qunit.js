@@ -2320,20 +2320,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getRootBinding: relative, temporary binding", function (assert) {
-		var oBinding = new ODataBinding({
-				oContext : { // sap.ui.model.odata.v4.Context, @see ODM#getKeepAliveContext
-					getBinding : function () { return null; }
-				},
-				sPath : "SO_2_SCHEDULE",
-				bRelative : true
-			});
-
-		// code under test
-		assert.strictEqual(oBinding.getRootBinding(), null);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
 		var oBinding = new ODataBinding({
 				bRelative : false,
@@ -2359,9 +2345,23 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("checkSuspended: resumed", function () {
+		var oBinding = new ODataBinding(),
+			oRootBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isRoot").never();
+		this.mock(oBinding).expects("getResumeChangeReason").never();
+
+		// code under test
+		oBinding.checkSuspended();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkSuspended: unresolved", function () {
 		var oBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(undefined);
 		this.mock(oBinding).expects("isRoot").never();
 		this.mock(oBinding).expects("getResumeChangeReason").never();
 
@@ -2373,9 +2373,11 @@ sap.ui.define([
 	QUnit.test("checkSuspended: suspended", function (assert) {
 		var oBinding = new ODataBinding({
 				toString : function () { return "/Foo"; }
-			});
+			}),
+			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isRoot").never();
 		this.mock(oBinding).expects("getResumeChangeReason").never();
 
@@ -2389,9 +2391,11 @@ sap.ui.define([
 	QUnit.test("checkSuspended: suspended, but never mind", function () {
 		var oBinding = new ODataBinding({
 				toString : function () { return "/Foo"; }
-			});
+			}),
+			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResumeChangeReason").withExactArgs().returns(undefined);
 
@@ -2403,9 +2407,11 @@ sap.ui.define([
 	QUnit.test("checkSuspended: suspended w/ resume change reason", function (assert) {
 		var oBinding = new ODataBinding({
 				toString : function () { return "/Foo"; }
-			});
+			}),
+			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResumeChangeReason").withExactArgs().returns("bar");
 
@@ -2419,9 +2425,11 @@ sap.ui.define([
 	QUnit.test("checkSuspended: suspended root", function (assert) {
 		var oBinding = new ODataBinding({
 				toString : function () { return "/Foo"; }
-			});
+			}),
+			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 		// Note: quasi-absolute would be realistic example
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getResumeChangeReason").never();
