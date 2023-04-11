@@ -49,7 +49,7 @@
 																		"name": "Section",
 																		"icon": "sap/uxap/designtime/ObjectPageSection.icon.svg",
 																		"visible": true,
-																		"instanceName": "Section Title",
+																		"instanceName": "Subsection Title",
 																		"elements": [
 																			{
 																				"id": "objSection",
