@@ -2008,7 +2008,6 @@ sap.ui.define([
 		this.mPreviousContextsByPath = oBinding.mPreviousContextsByPath;
 		Object.values(this.mPreviousContextsByPath).forEach(function (oContext) {
 			oContext.oBinding = that;
-			delete oContext.getBinding; // revert to prototype
 		});
 		oCache = oBinding.oCache;
 		oCache.setQueryOptions(mQueryOptions);
@@ -2773,7 +2772,7 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#initialize
 	ODataListBinding.prototype.initialize = function () {
 		if (this.isResolved()) {
-			if (this.isRootBindingSuspended()) {
+			if (this.getRootBinding().isSuspended()) {
 				this.sResumeChangeReason = this.sChangeReason === "AddVirtualContext"
 					? ChangeReason.Change
 					: ChangeReason.Refresh;
@@ -3903,8 +3902,8 @@ sap.ui.define([
 					} else if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect) {
 						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
 					}
-					if (oContext.getBinding // API serves as a marker only
-							&& oContext.oBinding.isRootBindingSuspended()) {
+					if (oContext.getBinding
+							&& oContext.getBinding().getRootBinding().isSuspended()) {
 						// when becoming suspended, remain silent until resume
 						this.oContext = oContext;
 						this.setResumeChangeReason(ChangeReason.Context);

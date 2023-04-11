@@ -24210,7 +24210,6 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2030
 	//
 	// The whole tree is expanded to two levels (JIRA: CPOUI5ODATAV4-2095).
-	// Temporary binding of kept-alive context is hidden (JIRA: CPOUI5ODATAV4-2107).
 	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -25649,8 +25648,6 @@ sap.ui.define([
 			oContext = oModel.getKeepAliveContext("/EMPLOYEES('3')", /*bRequestMessages*/true,
 				{$$groupId : "$auto.heroes"});
 
-			assert.strictEqual(oContext.getBinding(), null, "JIRA: CPOUI5ODATAV4-2107");
-
 			that.oView.byId("form").setBindingContext(oContext);
 
 			return Promise.all([
@@ -25703,8 +25700,6 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "request nodes");
 		}).then(function () {
-			var oKeptContext;
-
 			checkTable("after request nodes", assert, oTable, [
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')",
@@ -25715,7 +25710,6 @@ sap.ui.define([
 				[undefined, 2, "3", "0", "Lambda"]
 			]);
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[2], oContext, "reused");
-			assert.strictEqual(oContext.getBinding(), oListBinding, "JIRA: CPOUI5ODATAV4-2107");
 			assert.strictEqual(oContext.isKeepAlive(), true, "still kept alive");
 			assert.deepEqual(oContext.getObject(), {
 					"@odata.etag" : "etag3",
@@ -25742,9 +25736,7 @@ sap.ui.define([
 				});
 
 			// code under test
-			oKeptContext = oModel.getKeepAliveContext("/EMPLOYEES('5')");
-
-			assert.strictEqual(oKeptContext.getBinding(), oListBinding, "JIRA: CPOUI5ODATAV4-2107");
+			oModel.getKeepAliveContext("/EMPLOYEES('5')");
 
 			return that.waitForChanges(assert, "ODLB#getKeepAliveContext");
 		});
@@ -44396,10 +44388,13 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1525
 	//
 	// Consider kept-alive contexts w/o key properties (BCP: 2380040680)
+	// Use the patchSent and patchCompleted event at the binding (BCP: 2370038583)
 	QUnit.test("getKeepAliveContext: suspended", function (assert) {
 		var oContext,
 			oListBinding,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			iPatchSentCount = 0,
+			iPatchCompletedCount = 0,
 			sView = '\
 <Table id="list" items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true},\
 		suspended : true}">\
@@ -44431,6 +44426,12 @@ sap.ui.define([
 			oListBinding = that.oView.byId("list").getBinding("items");
 			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='1',IsActiveEntity=false)");
 			that.oView.byId("objectPage").setBindingContext(oContext);
+			oContext.getBinding().attachPatchSent(function () {
+				iPatchSentCount += 1;
+			});
+			oContext.getBinding().attachPatchCompleted(function () {
+				iPatchCompletedCount += 1;
+			});
 
 			return that.waitForChanges(assert, "getKeepAliveContext");
 		}).then(function () {
@@ -44445,6 +44446,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "change name");
 		}).then(function () {
+			assert.strictEqual(iPatchSentCount, 1);
+			assert.strictEqual(iPatchCompletedCount, 1);
+
 			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,defaultChannel"
 					+ "&$skip=0&$top=100", {
 					value : [{
