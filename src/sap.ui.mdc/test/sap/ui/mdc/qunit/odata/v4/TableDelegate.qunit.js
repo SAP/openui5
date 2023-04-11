@@ -131,7 +131,15 @@ sap.ui.define([
 
 	QUnit.test("GridTable; Grouping and aggregation enabled", function(assert) {
 		return this.initTable({
-			p13nMode: ["Group", "Aggregate"]
+			p13nMode: ["Group", "Aggregate"],
+			groupConditions: {
+				groupLevels: [{
+					name: "Name"
+				}]
+			},
+			aggregateConditions: {
+				SalesAmount: {}
+			}
 		}).then(function(oTable) {
 			var oPlugin = oTable._oTable.getDependents()[0];
 			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
