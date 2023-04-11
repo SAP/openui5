@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/mdc/Control',
 	'sap/base/Log',
 	'sap/base/util/merge',
-	'sap/base/util/deepEqual',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/condition/ConditionModel',
@@ -33,7 +32,6 @@ sap.ui.define([
 		Control,
 		Log,
 		merge,
-		deepEqual,
 		ManagedObjectModel,
 		ManagedObjectObserver,
 		ConditionModel,
@@ -57,12 +55,12 @@ sap.ui.define([
 	 * Constructor for a new FilterBarBase.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The <code>FilterBarBase</code> control is used as a faceless base class for common functionality of any MDC FilterBar derivation.
+	 * @class The <code>FilterBarBase</code> control is the base for filter displaying controls in MDC.
 	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @private
+	 * @protected
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.FilterBarBase
@@ -120,7 +118,7 @@ sap.ui.define([
 				/**
 				 * Displays possible errors during the search in a message box.
 				 * @since 1.74
-				 * @deprecated Since version 1.111 replaced by the new validation handling through {@link sap.ui.mdc.FilterBarDelegate#determineValidationState determineValidationState} and {@link sap.ui.mdc.FilterBarDelegate#visualizeValidationState visualizeValidationState}.
+				 * Since version 1.111 replaced by the new validation handling of {@link sap.ui.mdc.FilterBarDelegate#determineValidationState determineValidationState} and {@link sap.ui.mdc.FilterBarDelegate#visualizeValidationState visualizeValidationState}.
 				 */
 				showMessages: {
 					type: "boolean",
@@ -152,7 +150,8 @@ sap.ui.define([
 				/**
 				 * Specifies the filter metadata.<br>
 				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/ Fiori Elements. Do not use it otherwise.
+				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/ Fiori Elements. Do not use it otherwise.<br>
+				 * <b>Node</b>: Please check {@link sap.ui.mdc.filterbar.PropertyInfo} for more information about the supported inner elements.
 				 *
 				 * @since 1.97
 				 */
@@ -193,6 +192,7 @@ sap.ui.define([
 
 				/**
 				 * Contains the optional basic search field.
+				 * <b>Note:</b> This field has to be bound against the property <code>$search</code>.
 				 */
 				basicSearchField: {
 					type: "sap.ui.mdc.FilterField",
@@ -211,9 +211,9 @@ sap.ui.define([
 			associations: {
 				/**
 				 *  {@link sap.ui.fl.variants.VariantManagement VariantManagement} control for the filter bar.
-				 * <b>Note</b>: this association is only required, for being able to get information from {@link topic:a8e55aa2f8bc4127923b20685a6d1621 SAPUI5 Flexibility}
+				 * <b>Note</b>: This association is only required to get information from {@link topic:a8e55aa2f8bc4127923b20685a6d1621 SAPUI5 Flexibility}
 				 * whenever a variant was applied, with 'apply automatically' set to <code>true</code>.
-				 * <b>Note</b>: this association may only be assigned once.
+				 * <b>Note</b>: This association must only be assigned once.
 				 */
 				variantBackreference: {
 					type: "sap.ui.fl.variants.VariantManagement",
@@ -224,7 +224,7 @@ sap.ui.define([
 
 				/**
 				 * This event is fired when the Go button is pressed or after a condition change, when <code>liveMode</code> is active.
-				 * <b>Note</b>: this event should never be executed programmatically. It is triggered internally by the filter bar after a <code>triggerSearch</code> is executed
+				 * <b>Note</b>: This event should never be executed programmatically. It is triggered internally by the filter bar after a <code>triggerSearch</code> has been executed
 				 */
 				search: {
 					/**
@@ -469,6 +469,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State
+	 * @public
+	 * @since 1.113.0
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.XCondition
+	 * @public
+	 * @since 1.113.0
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.XConditionValue
+	 * @public
+	 * @since 1.113.0
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.XConditionValueRanges
+	 * @public
+	 * @since 1.113.0
+	 */
+
+	/**
 	 * @typedef {object} sap.ui.mdc.State.XConditionValueRanges
 	 * @property {{string, string} | {integer, integer} | {float, float}} Range values for a condition
 	 */
@@ -488,9 +513,9 @@ sap.ui.define([
 	 * @property {string[]} items Describes the filter fields
 	 */
 	/**
-	 * Returns the externalized conditions of the inner condition model.
-	 * This method can only be called, once the <code>initialized</code> has been resolved.
-	 * <b>Note:</b> This API may return attributes related to the <code>p13nMode</code> property configuration.
+	 * Returns the external conditions of the inner condition model.
+	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
+	 * The items are always returned, but the filter conditions are dependent on the <code>Value</code> assignment.
 	 * @protected
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBarBase</code>
 	 */
@@ -503,7 +528,7 @@ sap.ui.define([
 
 		var aFilterItems = this.getFilterItems();
 		var aItems = [];
-		aFilterItems.forEach(function(oFilterField, iIndex){
+		aFilterItems.forEach(function(oFilterField){
 			aItems.push({
 				name: oFilterField.getFieldPath()
 			});
@@ -890,14 +915,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise for the asynchronous validation of filters.
+	 * Returns a <code>Promise</code> for the asynchronous validation of filters.
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 *
 	 * @param {boolean} bSuppressSearch Determines if the <code>search</code> event is triggered after successful validation
-	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
+	 * @returns {Promise} Returns a <code>Promise</code> that resolves after the validation of erroneous fields has been propagated.
 	 *
 	 */
 	FilterBarBase.prototype.validate = function(bSuppressSearch) {
@@ -1058,8 +1082,8 @@ sap.ui.define([
 	  * <b>Note:</b><br>
 	  * This method returns the current inner state of the filter bar.
 	  * @private
+	  * @ui5-restricted sap.fe
 	  * @MDC_PUBLIC_CANDIDATE
-	  * @ui5-restricted sap.fe, sap.ui.mdc
 	  * @returns {sap.ui.mdc.enum.FilterBarValidationStatus} Returns the validation status
 	  */
 	FilterBarBase.prototype.checkFilters = function() {
@@ -1168,8 +1192,8 @@ sap.ui.define([
 	 /**
 	  * Returns the corresponding library text.
 	  * @private
-	  * @param {strings} sKey of the text
-	  * @returns {string} associated text from the message bundle
+	  * @param {string} sKey Key of the text
+	  * @returns {string} relevant text from the message bundle
 	  */
 	 FilterBarBase.prototype.getText = function(sKey) {
 		 return this._oRb.getText(sKey);
@@ -1270,8 +1294,6 @@ sap.ui.define([
 	 * Returns the state of initialization.
 	 * This method does not trigger the retrieval of the metadata.
 	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {Promise} Resolves after the initial filters have been applied
 	 */
 	FilterBarBase.prototype.waitForInitialization = function() {
@@ -1282,9 +1304,9 @@ sap.ui.define([
 	 * Returns the state of initialization.
 	 * This method does not trigger the retrieval of the metadata.
 	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @returns {Promise} Resolves after the initial filters have been applied and the metadata has been obtained
+	 * @returns {Promise} Resolves after the initial filters have been applied
 	 */
 	FilterBarBase.prototype.initialized = function() {
 		return this.waitForInitialization();
@@ -1295,7 +1317,7 @@ sap.ui.define([
 	 * Returns the state of initialization.
 	 * This method triggers the retrieval of the metadata.
 	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {Promise} Resolves after the initial filters have been applied and the metadata has been obtained
 	 */
@@ -1925,17 +1947,15 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @returns {map} Map containing the external conditions.
+	 * @returns {map} Map containing the external conditions
 	 */
 	FilterBarBase.prototype.getConditions = function() {
-		//return this.initialized().then(function() {
-			var mConditions = this._bPersistValues ? this.getCurrentState().filter : this._getXConditions();
-			if (mConditions && mConditions["$search"]) {
-				delete mConditions["$search"];
-			}
+		var mConditions = this._bPersistValues ? this.getCurrentState().filter : this._getXConditions();
+		if (mConditions && mConditions["$search"]) {
+			delete mConditions["$search"];
+		}
 
-			return mConditions;
-		//}.bind(this));
+		return mConditions;
 	};
 
 	/**

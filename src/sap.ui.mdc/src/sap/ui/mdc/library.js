@@ -765,13 +765,13 @@
 	 *
 	 * @enum {string}
 	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.74
-	 * @experimental As of version 1.74
-	 * @ui5-restricted sap.ui.mdc
 	 */
 	thisLib.FilterBarP13nMode = {
 		/**
-		 * FilterItem personalization is enabled.
+		 * Filter item personalization is enabled.
 		 *
 		 * @public
 		 */
@@ -1215,8 +1215,8 @@
 	 * @name sap.ui.mdc.filterbar
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.112.0
 	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @since 1.112.0
 	 */
 
 	/**
@@ -1225,7 +1225,7 @@
 	 * @property {string} path
 	 *   The identifier of the property
 	 * @property {string} [name]
-	 *   The alternative identifier of the property. Either path or name can be used; preference is on path.
+	 *   The alternative identifier of the property. Either path or name can be used, preferably is on path
 	 * @property {string} label
 	 *   The label of the identifier
 	 * @property {string} [tooltip]
@@ -1241,19 +1241,20 @@
 	 * @property {string} [groupLabel]
 	 *   The group name of the group identifier
 	 * @property {boolean} [caseSensitive = false]
-	 *   If <code>true</code> defines that the filter value will be treated as case-sensitive
+	 *   Defines that the filter value is treated as case-sensitive if set to <code>true</code>
 	 * @property {sap.ui.mdc.enum.FieldDisplay} [display]
 	 *   Describes how the value will be presented to the user
 	 * @property {boolean} [hiddenFilter = false]
-	 *   Defines if the filter will be visible on the filter bar
+	 *   Defines if the filter is visible in the filter bar
 	 * @property {boolean} [required = false]
 	 *   Defines if the filter is mandatory
 	 * @property {int} maxConditions
 	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @since 1.112.0
 	 */
 
 	/**

@@ -2,17 +2,25 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.mdc.filterbar.FilterItemLayout.
 sap.ui.define([
 	'sap/ui/core/Element'
 ], function(Element) {
 	"use strict";
 
+	/**
+	 * @class The <code>IFilterContainer</code> is the base container for the visualization of the filter items in the filter bar.
+	 * @private
+	 * @ui5-restricted sap.fe sap.ui.mdc
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @since 1.61.0
+	 * @alias sap.ui.mdc.filterbar.IFilterContainer
+	 */
 	var IFilterContainer = Element.extend("sap.ui.mdc.filterbar.IFilterContainer");
 
 	/**
-	 * Creates the inner layout for the IFilterContainer.
-	 * @protected
+	 * Creates the inner layout for the <code>IFilterContainer</code>.
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.init = function() {
@@ -22,8 +30,9 @@ sap.ui.define([
 
 	/**
 	 * Getter for the inner layout item.
-	 * @returns {sap.ui.core.Control} Control instance of the inner layout item.
-	 * @protected
+	 * @returns {sap.ui.core.Control} Control instance of the inner layout item
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.getInner = function(){
@@ -31,26 +40,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Insert the inner content to the layout item.
-	 * @protected
+	 * Inserts the inner content into the layout item.
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @param {sap.ui.mdc.FilterItem} oControl to be inserted
+	 * @param {int} iIndex Position where the control is added
 	 */
 	IFilterContainer.prototype.insertFilterField = function(oControl, iIndex) {
 		//insert the content to the inner layout this.oLayout
 	};
 
 	/**
-	 * Remove the inner content from the layout item.
-	 * @protected
+	 * Removes the inner content from the layout item.
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @param {sap.ui.mdc.FilterItem} oControl Control that is removed
 	 */
 	IFilterContainer.prototype.removeFilterField = function(oControl) {
 		//remove the content from the inner layout this.oLayout
 	};
 
 	/**
-	 * Insert the inner content to the layout item.
-	 * @returns {Array} Array of all inner controls in the layout item.
-	 * @protected
+	 * Inserts the inner content into the layout item.
+	 * @returns {sap.ui.mdc.FilterItem[]} Array of all inner controls in the layout item
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.getFilterFields = function() {
@@ -58,9 +74,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Overwrite the default 'exit' to cleanup the created layout properly
+	 * Overwrites the default exit to clean up the created layout properly.
 	 *
-	 * @protected
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.exit = function() {

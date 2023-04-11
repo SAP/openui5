@@ -18,8 +18,8 @@ sap.ui.define([
 	 *     A reference to an instance that will act as the parent of this helper
 	 *
 	 * @class
-	 * Filter bar property helpers give a consistent and standardized view on properties and their attributes.
-	 * Validates the given properties, sets defaults, and provides utilities to work with these properties.
+	 * Filter bar property helper provide a consistent and standardized view on properties and their attributes.
+	 * Validates the given properties, sets default values, and provides utilities to work with these properties.
 	 * The utilities can only be used for properties that are known to the helper. Known properties are all those that are passed to the constructor.
 	 *
 	 * @extends sap.ui.mdc.util.PropertyHelper
@@ -27,8 +27,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
 	 * @since 1.95
 	 * @alias sap.ui.mdc.filterbar.PropertyHelper
 	 */
@@ -47,9 +46,9 @@ sap.ui.define([
 
 
 	/**
-	 * Applies defaults and resolves property references.
+	 * Applies default values and resolves property references.
 	 *
-	 * @param {object} oProperty The property to prepare
+	 * @param {object} oProperty The passed property
 	 * @protected
 	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
