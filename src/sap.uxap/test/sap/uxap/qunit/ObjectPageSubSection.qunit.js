@@ -1617,6 +1617,31 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 		}, this);
 	});
 
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer with dynamic header title - has scroll when header bigger than allowed",
+		function (assert) {
+			// Set-up
+			var oPage = this.oObjectPage,
+				oSection = this.oObjectPage.getSections()[0],
+				oSubSection = oSection.getSubSections()[0],
+				oToggleScrollingSpy = this.spy(oPage, "_toggleScrolling"),
+				done = assert.async();
+
+			assert.expect(2);
+
+			this.stub(oPage, "_headerBiggerThanAllowedToBeFixed").returns(true);
+
+			// Act
+			oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle());
+			oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+			oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				// Assert
+				assert.strictEqual(oPage._bAllContentFitsContainer, true, "_bAllContentFitsContainer is 'true'");
+				assert.ok(oToggleScrollingSpy.calledWith(true), "oToggleScrollingSpy called with 'true' - scrolling is allowed");
+				done();
+		}, this);
+	});
+
 	QUnit.test("sapUxAPObjectPageSubSectionFitContainer with tabs - snap without scroll when only one SubSection",
 		function (assert) {
 			// Set-up

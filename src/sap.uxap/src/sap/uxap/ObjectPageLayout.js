@@ -1201,7 +1201,7 @@ sap.ui.define([
 		}
 		// enable scrolling in non-fullscreen-mode only
 		// (to avoid any scrollbar appearing even for an instance while we snap/unsnap header)
-		this._toggleScrolling(!this._bAllContentFitsContainer);
+		this._toggleScrolling(!this._bAllContentFitsContainer || this._headerBiggerThanAllowedToBeFixed());
 
 		this._registerOnContentResize();
 
@@ -2075,7 +2075,7 @@ sap.ui.define([
 
 			// the current tab changed => update the <code>this._bAllContentFitsContainer</code> accordingly
 			this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oToSelect);
-			this._toggleScrolling(!this._bAllContentFitsContainer);
+			this._toggleScrolling(!this._bAllContentFitsContainer || this._headerBiggerThanAllowedToBeFixed());
 
 			bFullscreenModeChanged = this._bAllContentFitsContainer !== bWasFullscreenMode;
 			if (bFullscreenModeChanged && !this._bHeaderExpanded) {
