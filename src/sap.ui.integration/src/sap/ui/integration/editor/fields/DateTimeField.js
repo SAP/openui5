@@ -3,9 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/editor/fields/BaseField",
-	"sap/m/DateTimePicker"
+	"sap/m/DateTimePicker",
+	"sap/ui/core/date/UI5Date"
 ], function (
-	BaseField, DateTimePicker
+	BaseField, DateTimePicker, UI5Date
 ) {
 	"use strict";
 
@@ -31,7 +32,7 @@ sap.ui.define([
 		var oVisualization = oConfig.visualization;
 		var oformatter = oConfig.formatter;
 		if (oConfig.value !== "") {
-			oConfig.value = new Date(oConfig.value);
+			oConfig.value = UI5Date.getInstance(oConfig.value);
 		}
 		if (!oVisualization) {
 			oVisualization = {

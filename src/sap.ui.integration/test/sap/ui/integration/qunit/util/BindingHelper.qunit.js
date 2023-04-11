@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/HBox"
+	"sap/m/HBox",
+	"sap/ui/core/date/UI5Date"
 ],
 function (
 	BindingHelper,
 	ManagedObject,
 	JSONModel,
-	HBox
+	HBox,
+	UI5Date
 ) {
 	"use strict";
 
@@ -110,7 +112,7 @@ function (
 	QUnit.test("Call #createBindingInfos with object containing instances of Date", function (assert) {
 		// Arrange
 		var oData = {
-			value: new Date()
+			value: UI5Date.getInstance()
 		};
 		var vBindingInfo = BindingHelper.createBindingInfos(oData);
 

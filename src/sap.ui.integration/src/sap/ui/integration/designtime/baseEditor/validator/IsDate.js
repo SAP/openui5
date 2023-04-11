@@ -2,9 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/validator/IsValidBinding"
+	"sap/ui/integration/designtime/baseEditor/validator/IsValidBinding",
+	"sap/ui/core/date/UI5Date"
 ], function (
-	IsValidBinding
+	IsValidBinding,
+	UI5Date
 ) {
 	"use strict";
 
@@ -35,10 +37,10 @@ sap.ui.define([
 		 */
 		validate: function (sDateString, oConfig) {
 			var formatterInstance = oConfig.formatterInstance;
-			var oDate = (formatterInstance && formatterInstance.parse(sDateString)) || new Date(sDateString);
+			var oDate = (formatterInstance && formatterInstance.parse(sDateString)) || UI5Date.getInstance(sDateString);
 			return sDateString === undefined
 				|| IsValidBinding.validate(sDateString, { allowPlainStrings: false })
-				|| (oDate && !isNaN(new Date(oDate).getTime()));
+				|| (oDate && !isNaN(UI5Date.getInstance(oDate).getTime()));
 		}
 	};
 });

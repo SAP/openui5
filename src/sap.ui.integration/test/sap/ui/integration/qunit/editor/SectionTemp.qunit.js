@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/util/MockServer",
-	"./jsons/withDesigntime/temp/DataExtensionImpl"
+	"./jsons/withDesigntime/temp/DataExtensionImpl",
+	"sap/ui/core/date/UI5Date"
 ], function (
 	merge,
 	x,
@@ -26,7 +27,8 @@ sap.ui.define([
 	KeyCodes,
 	ResourceBundle,
 	MockServer,
-	DataExtensionImpl
+	DataExtensionImpl,
+	UI5Date
 ) {
 	"use strict";
 
@@ -1048,7 +1050,7 @@ sap.ui.define([
 					//force rendering
 					Core.applyChanges();
 					//check the change event handling of the field
-					oField.getAggregation("_field").setValue(new Date());
+					oField.getAggregation("_field").setValue(UI5Date.getInstance());
 					// oField.getAggregation("_field").fireChange({ valid: true });
 					// assert.equal(oField.getAggregation("_field").getBinding("value").getValue(), oField.getAggregation("_field").getValue(), "Field: Date Field binding raw value '" + oField.getAggregation("_field").getValue() + "' ");
 					oField.getAggregation("_field").fireChange({ valid: false });
@@ -1073,7 +1075,7 @@ sap.ui.define([
 					//force rendering
 					Core.applyChanges();
 					//check the change event handling of the field
-					oField.getAggregation("_field").setValue(new Date());
+					oField.getAggregation("_field").setValue(UI5Date.getInstance());
 					// oField.getAggregation("_field").fireChange({ valid: true });
 					// assert.equal(oField.getAggregation("_field").getBinding("value").getValue(), oField.getAggregation("_field").getValue().toISOString(), "Field: DateTime Field binding raw value '" + oField.getAggregation("_field").getDateValue().toISOString() + "' ");
 					oField.getAggregation("_field").fireChange({ valid: false });

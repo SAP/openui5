@@ -16,6 +16,7 @@ sap.ui.define([
     "sap/ui/commons/layout/MatrixLayoutRow",
     "sap/ui/commons/layout/MatrixLayout",
     "sap/ui/core/HTML",
+	"sap/ui/core/date/UI5Date",
     "sap/ui/events/KeyCodes",
     // jQuery Plugin "rect"
 	"sap/ui/dom/jquery/rect"
@@ -36,6 +37,7 @@ sap.ui.define([
 	MatrixLayoutRow,
 	MatrixLayout,
 	HTML,
+	UI5Date,
 	KeyCodes
 ) {
 	"use strict";
@@ -124,7 +126,7 @@ sap.ui.define([
 			oTP1.open();
 		};
 
-		oTP1.startTime = new Date();
+		oTP1.startTime = UI5Date.getInstance();
 
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
@@ -146,7 +148,7 @@ sap.ui.define([
 			bTest = (oBtnRect.left + oBtnRect.width - oTP1.iArrowWidth <= oArrowRect.left) && (oArrowRect.left + oArrowRect.width >= oTPRect.left);
 			assert.ok(bTest, "Arrow opened between button and ToolPopup");
 
-			oTP1.endTime = new Date();
+			oTP1.endTime = UI5Date.getInstance();
 			var iStart = oTP1.startTime.getTime();
 			var iEnd = oTP1.endTime.getTime();
 			// if just one second passed
@@ -170,7 +172,7 @@ sap.ui.define([
 			oTP1.close();
 		};
 
-		oTP1.startTime = new Date();
+		oTP1.startTime = UI5Date.getInstance();
 
 		var fnClosed = function() {
 			oTP1.detachClosed(fnClosed);
@@ -178,7 +180,7 @@ sap.ui.define([
 			bTest = oTP1.isOpen();
 			assert.ok(!bTest, "ToolPopup was closed over close button in ToolPopup");
 
-			oTP1.endTime = new Date();
+			oTP1.endTime = UI5Date.getInstance();
 			var iStart = oTP1.startTime.getTime();
 			var iEnd = oTP1.endTime.getTime();
 			// if just one second passed

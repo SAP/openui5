@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Log,
 	Core,
-	Card
+	Card,
+	UI5Date
 ) {
 	"use strict";
 
@@ -513,7 +515,7 @@ sap.ui.define([
 			var sSubtitle = this.oCard.getCardHeader()._getSubtitle().getText();
 
 			// Assert
-			assert.ok(sSubtitle.indexOf(new Date().toISOString().slice(0, 10)) > -1, "Card should have a subtitle with the now Date");
+			assert.ok(sSubtitle.indexOf(UI5Date.getInstance().toISOString().slice(0, 10)) > -1, "Card should have a subtitle with the now Date");
 			assert.ok(sSubtitle.indexOf(Core.getConfiguration().getLocale().toString()) > -1, "Card should have a subtitle with the locale");
 			done();
 		}.bind(this));

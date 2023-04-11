@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/util/CacheAndRequestDataProvider",
 	"sap/ui/integration/Host",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/core/date/UI5Date"
 ], function (
 	Core,
 	DataProviderFactory,
 	CacheAndRequestDataProvider,
 	Host,
-	Card
+	Card,
+	UI5Date
 ) {
 	"use strict";
 
@@ -24,7 +26,7 @@ sap.ui.define([
 			200,
 			{
 				"Content-Type": "application/json",
-				"Date": (new Date()).toUTCString()
+				"Date": (UI5Date.getInstance()).toUTCString()
 			},
 			"{}"
 		);

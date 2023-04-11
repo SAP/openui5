@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/BindingHelper"
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/core/date/UI5Date"
 ],
-function (JSONModel, ManagedObject, BindingResolver, BindingHelper) {
+function (JSONModel, ManagedObject, BindingResolver, BindingHelper, UI5Date) {
 	"use strict";
 
 	QUnit.module("BindingResolver resolveValue");
@@ -221,7 +222,7 @@ function (JSONModel, ManagedObject, BindingResolver, BindingHelper) {
 	QUnit.test("Resolving instances of Date", function (assert) {
 		// Arrange
 		var oData = {
-			value: new Date()
+			value: UI5Date.getInstance()
 		};
 
 		// Assert

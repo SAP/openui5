@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/base/i18n/ResourceBundle"
+	"sap/base/i18n/ResourceBundle",
+	"sap/ui/core/date/UI5Date"
 ], function (
 	merge,
 	x,
@@ -22,7 +23,8 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	KeyCodes,
-	ResourceBundle
+	ResourceBundle,
+	UI5Date
 ) {
 	"use strict";
 
@@ -146,7 +148,7 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: oManifest
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -216,7 +218,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -330,7 +332,7 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: oManifest
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -400,7 +402,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -496,7 +498,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -597,7 +599,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -721,7 +723,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -780,7 +782,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1059,7 +1061,7 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: oManifest
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1129,7 +1131,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1225,7 +1227,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1321,7 +1323,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1422,7 +1424,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1546,7 +1548,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1605,7 +1607,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -2002,7 +2004,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
-			var oDate = new Date();
+			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");

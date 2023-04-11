@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/date/UI5Date"
 ],
 function (
 	Card,
@@ -32,7 +33,8 @@ function (
 	DateFormat,
 	UniversalDate,
 	QUnitUtils,
-	KeyCodes
+	KeyCodes,
+	UI5Date
 ) {
 	"use strict";
 
@@ -155,7 +157,7 @@ function (
 
 	QUnit.test("Header and NumericHeader dataTimestamp", function (assert) {
 		// Arrange
-		var oNow = new Date(),
+		var oNow = UI5Date.getInstance(),
 			oNowUniversalDate = new UniversalDate(oNow),
 			oDateFormat = DateFormat.getDateTimeInstance({relative: true}),
 			sTextNow = oDateFormat.format(oNowUniversalDate),

@@ -2,8 +2,9 @@ sap.ui.define([
 	'sap/ui/demo/toolpageapp/controller/BaseController',
 	'sap/m/MessageToast',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/demo/toolpageapp/model/formatter'
-], function (BaseController, MessageToast, JSONModel, formatter) {
+	'sap/ui/demo/toolpageapp/model/formatter',
+	'sap/ui/core/date/UI5Date'
+], function (BaseController, MessageToast, JSONModel, formatter, UI5Date) {
 	"use strict";
 	return BaseController.extend("sap.ui.demo.toolpageapp.controller.settings.MasterSettings", {
 		formatter: formatter,
@@ -11,7 +12,7 @@ sap.ui.define([
 		onInit: function () {
 			var oViewModel = new JSONModel({
 					currentUser: "Administrator",
-					lastLogin: new Date(Date.now() - 86400000)
+					lastLogin: UI5Date.getInstance(Date.now() - 86400000)
 				});
 
 			this.setModel(oViewModel, "view");

@@ -16,8 +16,8 @@ var revalidator = setInterval(function () {
 	currentcache.then(function (cache) {
 		var keys = Object.keys(scheduled);
 		if (keys.length > 0) {
-            var key = keys[0],
-                event = scheduled[key];
+			var key = keys[0],
+				event = scheduled[key];
 			setTimeout(function (cache, event) {
 				networkFetch(event, cache);
 			}.bind(self, cache, event), revalidateTimeout);
@@ -30,23 +30,23 @@ var revalidator = setInterval(function () {
 
 //network response put in cache if given
 function networkFetch(event, cache) {
-    var request = event.request;
+	var request = event.request;
 	return fetch(request).then(function (networkResponse) {
 		if (cache) {
-            cache.put(request, networkResponse.clone());
-            console.log("[CARDS CACHE] " + request.url + " revalidated - broadcast to card");
+			cache.put(request, networkResponse.clone());
+			console.log("[CARDS CACHE] " + request.url + " revalidated - broadcast to card");
 
-            postMessage(event, {
-                type: "ui-integration-card-update",
-                url: request.url
-            });
+			postMessage(event, {
+				type: "ui-integration-card-update",
+				url: request.url
+			});
 		}
 		return networkResponse;
 	});
 }
 
 function postMessage(event, message) {
-    if (!event.clientId) {
+	if (!event.clientId) {
 		return;
 	}
 
@@ -136,14 +136,14 @@ self.addEventListener('fetch', function (event) {
 	var cacheControl = readCacheHeader(event.request)
 
 	if (cacheControl && cacheControl.isCacheEnabled()) {
-        console.log("[CARDS CACHE] looking for cache " + event.request.url);
+		console.log("[CARDS CACHE] looking for cache " + event.request.url);
 		event.respondWith(
 			currentcache.then(function (cache) {
-                //add network update only if not already scheduled for the same request.url
+				//add network update only if not already scheduled for the same request.url
 
 				return cache.match(event.request).then(function (cachedResponse) {
 					if (!cachedResponse) {
-                        console.log("[CARDS CACHE] no cache for " + event.request.url);
+						console.log("[CARDS CACHE] no cache for " + event.request.url);
 						return networkFetch(event, cache);
 					}
 

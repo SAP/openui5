@@ -43,6 +43,7 @@
 					"sap/ui/layout/SplitterLayoutData",
 					"sap/ui/layout/HorizontalLayout",
 					"sap/ui/layout/VerticalLayout",
+					"sap/ui/core/date/UI5Date",
 					"sap/m/App",
 					"sap/m/Page",
 					"sap/m/Button",
@@ -52,7 +53,7 @@
 					"sap/m/VBox",
 					"sap/m/FlexItemData",
 					"sap/ui/core/library"
-				], function (Splitter, SplitterLayoutData, HorizontalLayout, VerticalLayout, App, Page, Button, CheckBox, Input, Text, VBox, FlexItemData, coreLibrary) {
+				], function (Splitter, SplitterLayoutData, HorizontalLayout, VerticalLayout, UI5Date, App, Page, Button, CheckBox, Input, Text, VBox, FlexItemData, coreLibrary) {
 					"use strict";
 
 					var Orientation = coreLibrary.Orientation;
@@ -223,7 +224,7 @@
 
 					oSplitter.attachResize(function (oEvent) {
 						oEventStatus.setText(
-							new Date().toLocaleString() + " - Resize # " + (++iEvents) + " fired by: " + oEvent.getSource().getId()
+							UI5Date.getInstance().toLocaleString() + " - Resize # " + (++iEvents) + " fired by: " + oEvent.getSource().getId()
 						);
 						showLayoutOptions();
 					});

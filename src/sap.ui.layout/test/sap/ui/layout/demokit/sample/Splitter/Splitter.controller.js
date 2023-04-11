@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/m/HBox',
 	'sap/ui/layout/SplitterLayoutData',
-	'sap/ui/core/library'
-], function (Button, CheckBox, Input, Text, Controller, HBox, SplitterLayoutData, coreLibrary) {
+	'sap/ui/core/library',
+	'sap/ui/core/date/UI5Date'
+], function (Button, CheckBox, Input, Text, Controller, HBox, SplitterLayoutData, coreLibrary, UI5Date) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
@@ -28,7 +29,7 @@ sap.ui.define([
 				this.oSplitter = this.byId("mainSplitter");
 				this.oSplitter.attachResize(function (oEvent) {
 					this.byId("eventStatus").setText(
-						new Date().toLocaleString() +
+						UI5Date.getInstance().toLocaleString() +
 						" - Resize # " + (++this.iResizes)
 					);
 					this.showLayoutOptions();
