@@ -642,7 +642,7 @@ sap.ui.define([
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiMdcTable");
-				oRm.style("height", oControl.getHeight());
+				oRm.style("height", oControl.getHeight() || "100%" /*TBD: Only needed for GridTable with Auto row count mode.*/);
 				oRm.style("width", oControl.getWidth());
 				oRm.openEnd();
 				oRm.renderControl(oControl.getAggregation("_content"));

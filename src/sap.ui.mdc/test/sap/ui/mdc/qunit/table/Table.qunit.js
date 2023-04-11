@@ -199,6 +199,20 @@ sap.ui.define([
 		assert.ok(this.oTable.isA("sap.ui.mdc.IxState"));
 	});
 
+	QUnit.test("Rendering", function(assert) {
+		return this.oTable.initialized().then(function() {
+			assert.ok(!!this.oTable.getDomRef(), "Table is rendered.");
+			assert.ok(this.oTable.$().hasClass("sapUiMdcTable"), "Table has class sapUiMdcTable");
+			assert.equal(this.oTable.getDomRef().style.height, "100%", "Table has a default height");
+			assert.ok(!this.oTable.getDomRef().style.width, "Table has a no default width");
+			this.oTable.setWidth("200px");
+			this.oTable.setHeight("300px");
+			Core.applyChanges();
+			assert.equal(this.oTable.getDomRef().style.height, "300px", "Table has a custom height");
+			assert.equal(this.oTable.getDomRef().style.width, "200px", "Table has a custom width");
+		}.bind(this));
+	});
+
 	QUnit.test("Create UI5 Grid Table (default) after initialise", function(assert) {
 		assert.ok(!this.oTable._oTable);
 		assert.ok(!this.oTable._oRowTemplate);
