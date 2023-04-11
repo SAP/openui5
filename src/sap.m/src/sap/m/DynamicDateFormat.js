@@ -27,7 +27,6 @@ sap.ui.define([
 		 * @public
 		 * @hideconstructor
 		 * @alias sap.m.DynamicDateFormat
-		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 */
 		var DynamicDateFormat = function() {
 			// Do not use the constructor
@@ -225,17 +224,21 @@ sap.ui.define([
 			}
 
 			var aFormattedParams = aParams.map(function(param) {
-				if (param instanceof Date) {
+				var oParamValue = param;
+				if (param.getJSDate) {
+					oParamValue = param.getJSDate();
+				}
+				if (oParamValue instanceof Date) {
 					if (sKey === "DATETIMERANGE" || sKey === "FROMDATETIME" || sKey === "TODATETIME" || sKey === "DATETIME") {
-						return this._dateTimeFormatter.format(param);
+						return this._dateTimeFormatter.format(oParamValue);
 					}
-					return this._dateFormatter.format(param);
+					return this._dateFormatter.format(oParamValue);
 				}
 
-				if (typeof (param) === "number") {
-					return this._numberFormatter.format(param);
+				if (typeof (oParamValue) === "number") {
+					return this._numberFormatter.format(oParamValue);
 				} else {
-					return param.toString();
+					return oParamValue.toString();
 				}
 			}, this);
 

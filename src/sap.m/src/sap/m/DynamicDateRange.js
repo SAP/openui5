@@ -4,6 +4,7 @@
 
 // Provides control sap.m.DynamicDateRange.
 sap.ui.define([
+	'sap/base/Log',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
@@ -12,7 +13,6 @@ sap.ui.define([
 	'sap/ui/core/Renderer',
 	'sap/ui/core/message/MessageMixin',
 	'sap/m/DynamicDateFormat',
-	'sap/m/DynamicDateUtil',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Icon',
 	'sap/ui/core/LabelEnablement',
@@ -38,8 +38,9 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Configuration',
 	'sap/ui/unified/calendar/CalendarUtils',
-	"sap/ui/core/CustomData"
+	'sap/ui/core/CustomData'
 ], function(
+		Log,
 		InvisibleText,
 		Element,
 		Control,
@@ -48,7 +49,6 @@ sap.ui.define([
 		Renderer,
 		MessageMixin,
 		DynamicDateFormat,
-		DynamicDateUtil,
 		IconPool,
 		Icon,
 		LabelEnablement,
@@ -87,6 +87,120 @@ sap.ui.define([
 			ListSeparators = library.ListSeparators,
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
+			var oStandardOptionsObjects = {
+				"TODAY": new StandardDynamicDateOption({ key: "TODAY", valueTypes: [] }),
+				"YESTERDAY": new StandardDynamicDateOption({ key: "YESTERDAY", valueTypes: [] }),
+				"TOMORROW": new StandardDynamicDateOption({ key: "TOMORROW", valueTypes: [] }),
+				"FIRSTDAYWEEK": new StandardDynamicDateOption({ key: "FIRSTDAYWEEK", valueTypes: [] }),
+				"LASTDAYWEEK": new StandardDynamicDateOption({ key: "LASTDAYWEEK", valueTypes: [] }),
+				"FIRSTDAYMONTH":new StandardDynamicDateOption({ key: "FIRSTDAYMONTH", valueTypes: [] }),
+				"LASTDAYMONTH":new StandardDynamicDateOption({ key: "LASTDAYMONTH", valueTypes: [] }),
+				"FIRSTDAYQUARTER":new StandardDynamicDateOption({ key: "FIRSTDAYQUARTER", valueTypes: [] }),
+				"LASTDAYQUARTER":new StandardDynamicDateOption({ key: "LASTDAYQUARTER", valueTypes: [] }),
+				"FIRSTDAYYEAR":new StandardDynamicDateOption({ key: "FIRSTDAYYEAR", valueTypes: [] }),
+				"LASTDAYYEAR":new StandardDynamicDateOption({ key: "LASTDAYYEAR", valueTypes: [] }),
+				"THISWEEK": new StandardDynamicDateOption({ key: "THISWEEK", valueTypes: [] }),
+				"THISMONTH": new StandardDynamicDateOption({ key: "THISMONTH", valueTypes: [] }),
+				"THISQUARTER": new StandardDynamicDateOption({ key: "THISQUARTER", valueTypes: [] }),
+				"THISYEAR": new StandardDynamicDateOption({ key: "THISYEAR", valueTypes: [] }),
+				"LASTWEEK": new StandardDynamicDateOption({ key: "LASTWEEK", valueTypes: [] }),
+				"LASTMONTH": new StandardDynamicDateOption({ key: "LASTMONTH", valueTypes: [] }),
+				"LASTQUARTER": new StandardDynamicDateOption({ key: "LASTQUARTER", valueTypes: [] }),
+				"LASTYEAR": new StandardDynamicDateOption({ key: "LASTYEAR", valueTypes: [] }),
+				"NEXTWEEK": new StandardDynamicDateOption({ key: "NEXTWEEK", valueTypes: [] }),
+				"NEXTMONTH": new StandardDynamicDateOption({ key: "NEXTMONTH", valueTypes: [] }),
+				"NEXTQUARTER": new StandardDynamicDateOption({ key: "NEXTQUARTER", valueTypes: [] }),
+				"NEXTYEAR": new StandardDynamicDateOption({ key: "NEXTYEAR", valueTypes: [] }),
+				"LASTMINUTES": new StandardDynamicDateOption({ key: "LASTMINUTES", valueTypes: ["int"] }),
+				"LASTHOURS": new StandardDynamicDateOption({ key: "LASTHOURS", valueTypes: ["int"] }),
+				"LASTDAYS": new StandardDynamicDateOption({ key: "LASTDAYS", valueTypes: ["int"] }),
+				"LASTWEEKS": new StandardDynamicDateOption({ key: "LASTWEEKS", valueTypes: ["int"] }),
+				"LASTMONTHS": new StandardDynamicDateOption({ key: "LASTMONTHS", valueTypes: ["int"] }),
+				"LASTQUARTERS": new StandardDynamicDateOption({ key: "LASTQUARTERS", valueTypes: ["int"] }),
+				"LASTYEARS": new StandardDynamicDateOption({ key: "LASTYEARS", valueTypes: ["int"] }),
+				"NEXTMINUTES": new StandardDynamicDateOption({ key: "NEXTMINUTES", valueTypes: ["int"] }),
+				"NEXTHOURS": new StandardDynamicDateOption({ key: "NEXTHOURS", valueTypes: ["int"] }),
+				"NEXTDAYS": new StandardDynamicDateOption({ key: "NEXTDAYS", valueTypes: ["int"] }),
+				"NEXTWEEKS": new StandardDynamicDateOption({ key: "NEXTWEEKS", valueTypes: ["int"] }),
+				"NEXTMONTHS": new StandardDynamicDateOption({ key: "NEXTMONTHS", valueTypes: ["int"] }),
+				"NEXTQUARTERS": new StandardDynamicDateOption({ key: "NEXTQUARTERS", valueTypes: ["int"] }),
+				"NEXTYEARS": new StandardDynamicDateOption({ key: "NEXTYEARS", valueTypes: ["int"] }),
+				"FROM": new StandardDynamicDateOption({ key: "FROM", valueTypes: ["date"] }),
+				"TO": new StandardDynamicDateOption({ key: "TO", valueTypes: ["date"] }),
+				"FROMDATETIME": new StandardDynamicDateOption({ key: "FROMDATETIME", valueTypes: ["datetime"] }),
+				"TODATETIME": new StandardDynamicDateOption({ key: "TODATETIME", valueTypes: ["datetime"] }),
+				"YEARTODATE": new StandardDynamicDateOption({ key: "YEARTODATE", valueTypes: [] }),
+				"DATETOYEAR": new StandardDynamicDateOption({ key: "DATETOYEAR", valueTypes: [] }),
+				"TODAYFROMTO": new StandardDynamicDateOption({ key: "TODAYFROMTO", valueTypes: ["int", "int"] }),
+				"QUARTER1": new StandardDynamicDateOption({ key: "QUARTER1", valueTypes: [] }),
+				"QUARTER2": new StandardDynamicDateOption({ key: "QUARTER2", valueTypes: [] }),
+				"QUARTER3": new StandardDynamicDateOption({ key: "QUARTER3", valueTypes: [] }),
+				"QUARTER4": new StandardDynamicDateOption({ key: "QUARTER4", valueTypes: [] }),
+				"SPECIFICMONTH": new StandardDynamicDateOption({ key: "SPECIFICMONTH", valueTypes: ["int"] }),
+				"SPECIFICMONTHINYEAR": new StandardDynamicDateOption({ key: "SPECIFICMONTHINYEAR", valueTypes: ["int", "int"] }),
+				"DATERANGE": new StandardDynamicDateOption({ key: "DATERANGE", valueTypes: ["date", "date"] }),
+				"DATE": new StandardDynamicDateOption({ key: "DATE", valueTypes: ["date"] }),
+				"DATETIME": new StandardDynamicDateOption({ key: "DATETIME", valueTypes: ["datetime"] }),
+				"DATETIMERANGE": new StandardDynamicDateOption({ key: "DATETIMERANGE", valueTypes: ["datetime", "datetime"] })
+			};
+
+			var aStandardOptionsKeys = [
+				"DATE",
+				"TODAY",
+				"YESTERDAY",
+				"TOMORROW",
+				"FIRSTDAYWEEK",
+				"LASTDAYWEEK",
+				"FIRSTDAYMONTH",
+				"LASTDAYMONTH",
+				"FIRSTDAYQUARTER",
+				"LASTDAYQUARTER",
+				"FIRSTDAYYEAR",
+				"LASTDAYYEAR",
+				"DATERANGE",
+				"DATETIMERANGE",
+				"FROM",
+				"TO",
+				"FROMDATETIME",
+				"TODATETIME",
+				"YEARTODATE",
+				"DATETOYEAR",
+				"LASTMINUTES",
+				"LASTHOURS",
+				"LASTDAYS",
+				"LASTWEEKS",
+				"LASTMONTHS",
+				"LASTQUARTERS",
+				"LASTYEARS",
+				"NEXTMINUTES",
+				"NEXTHOURS",
+				"NEXTDAYS",
+				"NEXTWEEKS",
+				"NEXTMONTHS",
+				"NEXTQUARTERS",
+				"NEXTYEARS",
+				"TODAYFROMTO",
+				"THISWEEK",
+				"LASTWEEK",
+				"NEXTWEEK",
+				"SPECIFICMONTH",
+				"SPECIFICMONTHINYEAR",
+				"THISMONTH",
+				"LASTMONTH",
+				"NEXTMONTH",
+				"THISQUARTER",
+				"LASTQUARTER",
+				"NEXTQUARTER",
+				"QUARTER1",
+				"QUARTER2",
+				"QUARTER3",
+				"QUARTER4",
+				"THISYEAR",
+				"LASTYEAR",
+				"NEXTYEAR",
+				"DATETIME"
+			];
+
 		/**
 		 * Constructor for a new DynamicDateRange.
 		 *
@@ -111,9 +225,9 @@ sap.ui.define([
 		 *
 		 * The <code>DynamicDateRange</code> control supports a number of standard options:
 		 * see {@link sap.m.StandardDynamicDateRangeKeys}.
-		 * A custom option could be defined by using the <code>sap.m.CustomDynamicDateOption</code> class and
-		 * appending an instance of this class into the <code>sap.m.DynamicDateUtil</code> options.
-		 * In order for a specific option to be used its key should be added into the <code>options</code> property
+		 * A custom option could be defined by extending the <code>sap.m.DynamicDateOption</code> class and
+		 * adding an instance of this class into the <code>sap.m.DynamicDateRange</code> customOptions aggregation.
+		 * In order for a specific option to be used its key should be added into the <code>standardOptions</code> property
 		 * of the control. No options are added by default.
 		 *
 		 * Suggestions are available when the user types in the control input field.
@@ -131,7 +245,6 @@ sap.ui.define([
 		 * @since 1.92.0
 		 * @alias sap.m.DynamicDateRange
 		 * @extends sap.ui.core.Control
-		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 */
 		var DynamicDateRange = Control.extend("sap.m.DynamicDateRange", /** @lends sap.m.DynamicDateRange.prototype */ {
 			metadata: {
@@ -145,6 +258,7 @@ sap.ui.define([
 					 * an unrecognized string - { operator: "PARSEERROR", values: [...]}
 					 *
 					 * @since 1.92
+					 * @private
 					 */
 					value: { type: "object" },
 
@@ -220,15 +334,16 @@ sap.ui.define([
 					 * corresponding formatting and parsing functionality.
 					 *
 					 * @since 1.92
+					 * @private
 					 */
 					formatter: { type: "object" },
 
 					/**
-					 * Array of standard and custom option keys
+					 * Array of standard option keys
 					 *
 					 * @since 1.92
 					 */
-					options: {
+					standardOptions: {
 						type: "string[]", group: "Behavior",
 						defaultValue: [
 							"DATE",
@@ -313,6 +428,11 @@ sap.ui.define([
 
 				},
 				aggregations: {
+					/**
+					 * Custom options for the <code>DynamicDateRange</code>.
+					 *
+					 */
+					customOptions: { type: "sap.m.DynamicDateOption", multiple: true },
 					_input: { type: "sap.m.Input", multiple: false, visibility: "hidden" },
 					_popup: { type: "sap.m.ResponsivePopover", multiple: false, visibility: "hidden" }
 				},
@@ -418,6 +538,34 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Getter for the <code>value</code> of the control.
+		 * @returns {sap.m.DynamicDateRangeValue} A <code>sap.m.DynamicDateRangeValue</code>
+		 */
+		DynamicDateRange.prototype.getValue = function() {
+			return this.getProperty("value");
+		};
+
+		/**
+		 * Getter for the <code>formatter</code> of the control.
+		 * @returns {sap.m.DynamicDateFormat} A <code>sap.m.DynamicDateFormat</code>
+		 */
+		 DynamicDateRange.prototype.getFormatter = function() {
+			return this.getProperty("formatter");
+		};
+
+		/**
+		 * Setter for the <code>formatter</code> of the control.
+		 * @returns {sap.m.DynamicDateFormat} A <code>sap.m.DynamicDateFormat</code>
+		 * @param {sap.m.DynamicDateFormat} oFormatter A <code>sap.m.DynamicDateFormat</code>
+		 * @returns {this} Reference to <code>this</code> for method chaining
+		 */
+		 DynamicDateRange.prototype.setFormatter = function(oFormatter) {
+			this.setProperty("formatter", oFormatter);
+
+			return this;
+		};
+
 		DynamicDateRange.prototype.onBeforeRendering = function() {
 			this._updateInputValue(this.getValue());
 			this._oInput.setEditable(this.getEditable());
@@ -444,7 +592,7 @@ sap.ui.define([
 			oValue = this._substituteValue(oValue);
 
 			this.setProperty("value", oValue);
-			this._oSelectedOption = DynamicDateUtil.getOption(sOptionKey);
+			this._oSelectedOption = this.getOption(sOptionKey);
 
 			// Forward Dynamic Date Range control property values to inner sap.m.Input instance.
 			this._updateInputValue(oValue);
@@ -525,21 +673,21 @@ sap.ui.define([
 		};
 
 		/**
-		 * Appends an option key, identifying an additional option to be used by the control.
+		 * Appends an option key, identifying an additional standard option to be used by the control.
 		 *
 		 * @param {string} sKey option key
 		 * @returns {void}
 		 * @since 1.92
 		 * @public
 		 */
-		DynamicDateRange.prototype.addOption = function(sKey) {
-			var aOptions = this.getOptions();
+		DynamicDateRange.prototype.addStandardOption = function(sKey) {
+			var aOptions = this.getStandardOptions();
 
 			if (aOptions.indexOf(sKey) === -1) {
 				aOptions.push(sKey);
 			}
 
-			this.setOptions(aOptions);
+			this.setStandardOptions(aOptions);
 		};
 
 		DynamicDateRange.prototype.getFocusDomRef = function(){
@@ -582,7 +730,7 @@ sap.ui.define([
 					return false;
 				}
 
-				var sSuggestedValue = DynamicDateUtil.getOption(oSuggestValue.operator)
+				var sSuggestedValue = this.getOption(oSuggestValue.operator)
 					.format(oSuggestValue, this._getFormatter()).toLowerCase();
 				var iIndexOfQuery = sSuggestedValue
 					.indexOf(sQuery.toLowerCase());
@@ -627,20 +775,51 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns an array of <code>sap.m.StandardDynamicDateOption</code> instances used in the control.
+		 * Gets an option object by its key.
+		 *
+		 * @param {string} sKey The option key
+		 * @returns {sap.m.DynamicDateOption} The option
+		 * @public
+		 */
+		 DynamicDateRange.prototype.getOption = function(sKey) {
+			return this._getOptions().find(function(option) {
+				return option.getKey() === sKey;
+			});
+		};
+
+		/**
+		 * Calculates a date range from a provided object in the format of the DynamicDateRange's value.
+		 *
+		 * @param {string} oValue The provided value
+		 * @returns {sap.ui.core.date.UniversalDate[]} An array of two date objects - start and end date
+		 * @public
+		 */
+		DynamicDateRange.prototype.toDates = function(oValue) {
+			var sKey = oValue.operator;
+			return this.getOption(sKey).toDates(oValue);
+		};
+
+		/**
+		 * Returns an array of <code>sap.m.DynamicDateOptions</code> (standard and custom) instances used in the control.
 		 *
 		 * @private
 		 */
 		DynamicDateRange.prototype._getOptions = function() {
-			var aOptionKeys = this.getOptions();
+			var aOptionKeys = this.getStandardOptions();
 			var aOptions = aOptionKeys.map(function(sKey) {
-					return DynamicDateUtil.getOption(sKey);
+					return oStandardOptionsObjects[sKey];
 				}, this);
 
 			// filter out the non-existent options (such option key is not known in the global util)
-			return aOptions.filter(function(o) {
-				return !!o;
-			});
+			var aStandardOptions = aOptions.filter(Boolean);
+
+			var aCustomOptions = this.getAggregation("customOptions");
+
+			if (aCustomOptions) {
+				return aStandardOptions.concat(aCustomOptions);
+			}
+
+			return aStandardOptions;
 		};
 
 		DynamicDateRange.prototype._getValueHelpTypeForFormatter = function() {
@@ -651,7 +830,7 @@ sap.ui.define([
 				aButtons = aPopupContent.getButtons ? aPopupContent.getButtons() : [],
 				aSuggestionItems = this.getAggregation('_input').getAggregation('suggestionItems'),
 				oValue = this.getValue(),
-				aOptionKeys = this.getOptions(),
+				aOptionKeys = this.getStandardOptions(),
 				sActualSelectedOptionKey = "",
 				aLastActualOrder = [],
 				aNextActualOrder = [],
@@ -761,14 +940,14 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicDateRange.prototype._addSuggestionItem = function(oSuggestValue) {
-			var aValueDates = DynamicDateRange.toDates(oSuggestValue, this.getCalendarWeekNumbering());
+			var aValueDates = this.toDates(oSuggestValue, this.getCalendarWeekNumbering());
 			var aResultingDates = [];
 			for (var i = 0; i < aValueDates.length; i++) {
 				aResultingDates[i] = aValueDates[i];
 			}
 
 			var oItem = new ListItem({
-				text: DynamicDateUtil.getOption(oSuggestValue.operator).format(oSuggestValue, this._getFormatter()),
+				text: this.getOption(oSuggestValue.operator).format(oSuggestValue, this._getFormatter()),
 				additionalText: '',
 				customData: [
 					new CustomData({
@@ -842,7 +1021,13 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype._enhanceInputValue = function(sFormattedValue, oVal) {
-			if (DynamicDateUtil.getOption(oVal.operator).enhanceFormattedValue()
+			var oOption = this.getOption(oVal.operator);
+
+			if (!oOption) {
+				return null;
+			}
+
+			if (oOption.enhanceFormattedValue()
 				|| (oVal.operator === "LASTDAYS" && oVal.values[0] <= 1)
 				|| (oVal.operator === "NEXTDAYS" && oVal.values[0] <= 1)) {
 				return sFormattedValue + " (" + this._toDatesString(oVal) + ")";
@@ -868,7 +1053,7 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype._toDatesString = function(oValue) {
-			var aValueDates = DynamicDateRange.toDates(oValue, this.getCalendarWeekNumbering());
+			var aValueDates = this.toDates(oValue, this.getCalendarWeekNumbering());
 			var aDates = [];
 			for (var i = 0; i < aValueDates.length; i++) {
 				aDates[i] = aValueDates[i];
@@ -959,7 +1144,6 @@ sap.ui.define([
 
 			// get the control options' metadata
 			var aOptions = aArray;
-			var aStandardDynamicDateRangeKeysArray = DynamicDateUtil.getStandardKeys();
 
 			// sort by group
 			aOptions.sort(function(a, b) {
@@ -969,7 +1153,7 @@ sap.ui.define([
 					return iGroupDiff;
 				}
 
-				return aStandardDynamicDateRangeKeysArray.indexOf(a.getKey()) - aStandardDynamicDateRangeKeysArray.indexOf(b.getKey());
+				return aStandardOptionsKeys.indexOf(a.getKey()) - aStandardOptionsKeys.indexOf(b.getKey());
 			});
 
 			if (bReduce) {
@@ -1037,7 +1221,7 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._handleOptionPress = function(oEvent) {
 			var sOptionKey = oEvent.getSource().getOptionKey(),
-				oOption = DynamicDateUtil.getOption(sOptionKey);
+				oOption = this.getOption(sOptionKey);
 
 			if (this._oPreviousSelectedOption && this._oPreviousSelectedOption.getKey() !== sOptionKey)	{
 				this._oDatesLabelFormatter = null;
@@ -1099,9 +1283,9 @@ sap.ui.define([
 				sFormattedDates,
 				sSelectedOptionKey;
 
-			var aValueDates = DynamicDateRange.toDates(oOutputValue, this.getCalendarWeekNumbering());
+			var aValueDates = this.toDates(oOutputValue, this.getCalendarWeekNumbering());
 
-			if (!oOutputValue || !oOutputValue.operator || !DynamicDateUtil.getOption(oOutputValue.operator)) {
+			if (!oOutputValue || !oOutputValue.operator || !this.getOption(oOutputValue.operator)) {
 				return;
 			}
 
@@ -1386,7 +1570,7 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._applyValue = function() {
 			this._oOutput = this._oSelectedOption.getValueHelpOutput(this);
-			var aValueDates = DynamicDateRange.toDates(this._oOutput, this.getCalendarWeekNumbering());
+			var aValueDates = this.toDates(this._oOutput, this.getCalendarWeekNumbering());
 			for (var i = 0; i < aValueDates.length; i++) {
 				if (this._oOutput.values[i] instanceof Date) {
 					this._oOutput.values[i] = aValueDates[i];
@@ -1441,15 +1625,53 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype._formatValue = function(oOutput) {
-			return DynamicDateUtil.getOption(oOutput.operator).format(oOutput, this._getFormatter());
+			var oOption = this.getOption(oOutput.operator);
+
+			return oOption ? oOption.format(oOutput, this._getFormatter()) : "";
 		};
 
 		DynamicDateRange.prototype._parseValue = function(sInputValue) {
-			var aResults = DynamicDateUtil.parse(sInputValue, this._getFormatter(), this.getOptions()).filter(function(oResult) {
-				return this.getOptions().indexOf(oResult.operator) !== -1;
+			var aResults = this.parse(sInputValue, this._getFormatter(), this._getOptions()).filter(function(oResult) {
+				return this._getOptions().find(function(option){
+					return option.getKey() === oResult.operator;
+				});
 			}, this);
 
 			return aResults.length ? aResults[0] : null;
+		};
+
+		/**
+		 * Parses a string to an array of objects in the DynamicDateRange's value format.
+		 * Uses the provided formatter.
+		 *
+		 * @param {string} sValue The string to be parsed
+		 * @param {sap.m.DynamicDateFormat} oFormatter A dynamic date formatter
+		 * @param {array} aOptionKeys array of option names
+		 * @returns {object[]} An array of value objects in the DynamicDateRange's value format
+		 * @static
+		 * @public
+		 */
+		 DynamicDateRange.prototype.parse = function(sValue, oFormatter) {
+			if (typeof sValue !== 'string') {
+				Log.error("DynamicDateFormat can only parse a String.");
+				return [];
+			}
+
+			var aResults = [],
+				oResult;
+
+			var aOptions = this._getOptions();
+
+			for (var i = 0; i < aOptions.length; i++) {
+				oResult = aOptions[i] && aOptions[i].parse(sValue.trim(), oFormatter);
+
+				if (oResult) {
+					oResult.operator = aOptions[i].getKey();
+					aResults.push(oResult);
+				}
+			}
+
+			return aResults;
 		};
 
 		/**
@@ -1471,12 +1693,12 @@ sap.ui.define([
 			sKey = oValue.operator;
 			aParams = oValue.values;
 
-			if (sKey === "LASTDAYS" && aParams[0] === 1 && this.getOptions().includes("YESTERDAY")) {
+			if (sKey === "LASTDAYS" && aParams[0] === 1 && this.getStandardOptions().includes("YESTERDAY")) {
 				oNewValue = {
 					operator: "YESTERDAY",
 					values: []
 				};
-			} else if (sKey === "NEXTDAYS" && aParams[0] === 1  && this.getOptions().includes("TOMORROW")) {
+			} else if (sKey === "NEXTDAYS" && aParams[0] === 1  && this.getStandardOptions().includes("TOMORROW")) {
 				oNewValue = {
 					operator: "TOMORROW",
 					values: []
@@ -1516,12 +1738,12 @@ sap.ui.define([
 		DynamicDateRange.prototype._substituteMissingValue = function(oValue) {
 			var oNewValue = oValue;
 
-			if (oValue  && oValue.operator === "YESTERDAY" && !this.getOptions().includes("YESTERDAY") && this.getOptions().includes("LASTDAYS")) {
+			if (oValue  && oValue.operator === "YESTERDAY" && !this.getStandardOptions().includes("YESTERDAY") && this.getStandardOptions().includes("LASTDAYS")) {
 				oNewValue = {
 					operator: "LASTDAYS",
 					values: [1]
 				};
-			} else if (oValue && oValue.operator === "TOMORROW"  && !this.getOptions().includes("TOMORROW") && this.getOptions().includes("NEXTDAYS")) {
+			} else if (oValue && oValue.operator === "TOMORROW"  && !this.getStandardOptions().includes("TOMORROW") && this.getStandardOptions().includes("NEXTDAYS")) {
 				oNewValue = {
 					operator: "NEXTDAYS",
 					values: [1]
@@ -1545,7 +1767,7 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicDateRange.toDates = function(oValue, sCalendarWeekNumbering) {
-			return DynamicDateUtil.toDates(oValue, sCalendarWeekNumbering).map(function (oDate) {
+			return oStandardOptionsObjects[oValue.operator].toDates(oValue, sCalendarWeekNumbering).map(function (oDate) {
 				if (oDate instanceof Date) {
 					return oDate;
 				}
@@ -1684,9 +1906,8 @@ sap.ui.define([
 		DynamicDateRangeListItem.prototype.getNavigationControl = function() {
 			var oNavControl = StandardListItem.prototype.getNavigationControl.apply(this, arguments),
 				sOptionKey = this.getOptionKey(),
-				aValueTypes = DynamicDateUtil.getOption(sOptionKey).getValueTypes(),
 				bDateOption = ["SPECIFICMONTH", "DATE", "DATERANGE", "FROM", "TO"].includes(sOptionKey),
-				bDateTimeOption = aValueTypes && aValueTypes.length && aValueTypes[0] === "datetime",
+				bDateTimeOption = ["DATETIME", "DATETIMERANGE", "FROMDATETIME", "TODATETIME"].includes(sOptionKey),
 				sNavgationIconURI;
 
 			if (bDateOption || bDateTimeOption) {
