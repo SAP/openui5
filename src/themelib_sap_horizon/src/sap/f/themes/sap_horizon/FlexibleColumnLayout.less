@@ -4,24 +4,51 @@
 /* =========================================== */
 
 .sapFFCL {
-    &.sapFFCLBackgroundDesignSolid {
-        background: @sapUiShellBackground;
-    }
-    &.sapFFCLBackgroundDesignTranslucent {
-        background: @sapUiGroupContentBackground;
-    }
+	&.sapFFCLBackgroundDesignSolid {
+		background: @sapUiContentForegroundColor;
+	}
+
+	&.sapFFCLBackgroundDesignTranslucent {
+		background: @sapUiGroupContentBackground;
+	}
+
+	&.sapFFCLBackgroundDesignTransparent {
+		background: transparent;
+	}
+
+	& > .sapFFCLColumnMid.sapFFCLColumnActive {
+		border-left: 0.0625rem solid @sapUiGroupContentBorderColor;
+		border-right: 0.0625rem solid @sapUiGroupContentBorderColor;
+	}
+
+	& > .sapFFCLColumnActive.sapFFCLColumnLastActive {
+		border-right: none;
+		border-left: 0.0625rem solid @sapUiGroupContentBorderColor;
+	}
+
+	& > .sapFFCLColumnActive.sapFFCLColumnFirstActive {
+		border-right: 0.0625rem solid @sapUiGroupContentBorderColor;
+		border-left: none;
+	}
+
+	& > .sapFFCLColumnActive.sapFFCLColumnOnlyActive {
+		border-right: none;
+		border-left: none;
+	}
 }
+
 .sapFFCLNavigationButton,
 .sapUiSizeCompact .sapFFCLNavigationButton {
-    .sapMBtnInner {
+      // Reflection: styles overwritten
+      .sapMBtnInner {
         height: 1.625rem;
-    }
+      }
 
-    &:before {
+      &:before {
         background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, transparent);
-    }
+      }
 
-    &:after {
+      &:after {
         background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, transparent);
-    }
+      }
 }
