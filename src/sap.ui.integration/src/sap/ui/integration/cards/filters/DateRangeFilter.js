@@ -6,23 +6,23 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/library",
 	"sap/m/DynamicDateRange",
-	"sap/m/DynamicDateUtil",
-	"sap/ui/integration/util/BindingResolver"
+	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/core/date/UI5Date"
 ], function (
 	BaseFilter,
 	Log,
 	coreLibrary,
 	DynamicDateRange,
-	DynamicDateUtil,
-	BindingResolver
+	BindingResolver,
+	UI5Date
 ) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
-	var MIN_DATE = new Date(-8640000000000000);
-	var MIN_ODATA_DATE = new Date("1753-01-01");
-	var MAX_DATE = new Date(8640000000000000);
-	var MAX_ODATA_DATE = new Date("9999-12-31");
+	var MIN_DATE = UI5Date.getInstance(-8640000000000000);
+	var MIN_ODATA_DATE = UI5Date.getInstance("1753-01-01");
+	var MAX_DATE = UI5Date.getInstance(8640000000000000);
+	var MAX_ODATA_DATE = UI5Date.getInstance("9999-12-31");
 	var mOptions = {
 		"DATE": "date",
 		"TODAY": "today",
@@ -141,12 +141,12 @@ sap.ui.define([
 				values: oDateRangeValue.values.slice()
 			};
 
-			var aDates = DynamicDateUtil.toDates(oDateRangeValue),
-				dStart = aDates[0].getJSDate ? aDates[0].getJSDate() : aDates[0],
+			var aDates = DynamicDateRange.toDates(oDateRangeValue),
+				dStart = aDates[0],
 				bToOperator = oDateRangeValue.operator === "TO" || oDateRangeValue.operator === "TODATETIME",
 				bFromOperator = oDateRangeValue.operator === "FROM" || oDateRangeValue.operator === "FROMDATETIME",
 				iSecondIndex = bToOperator || bFromOperator ? 0 : 1,
-				dEnd = aDates[iSecondIndex] && aDates[iSecondIndex].getJSDate ? aDates[iSecondIndex].getJSDate() : aDates[iSecondIndex];
+				dEnd = aDates[iSecondIndex];
 
 			oRange = {
 				start: dStart.toISOString(),
@@ -195,30 +195,31 @@ sap.ui.define([
 		var oConfig = Object.assign({}, this.getConfig());
 		var oValue;
 
-		if (oConfig.value) {
-			oConfig.value =  BindingResolver.resolveValue(oConfig.value, this.getCardInstance());
-			var sOption = oConfig.value.option.toUpperCase();
-			var aTypes = DynamicDateUtil.getOption(sOption).getValueTypes();
-			oValue = {
-				operator: sOption,
-				values: oConfig.value.values.map(function (vValue, i) {
-					if (aTypes[i] === "date" || aTypes[i] === "datetime") {
-						return new Date(vValue);
-					}
-					return vValue;
-				})
-			};
-		}
-
 		oConfig.options = oConfig.options || this._getDefaultOptions();
 		oConfig.options = oConfig.options.map(function (sOption) {
 			return sOption.toUpperCase();
 		});
 
 		var oDdr = new DynamicDateRange({
-			value: oValue,
-			options: oConfig.options
+			standardOptions: oConfig.options
 		}).addStyleClass("sapFCardDateRangeField");
+
+		if (oConfig.value) {
+			oConfig.value =  BindingResolver.resolveValue(oConfig.value, this.getCardInstance());
+			var sOption = oConfig.value.option.toUpperCase();
+			var aTypes = oDdr.getOption(sOption).getValueTypes();
+			oValue = {
+				operator: sOption,
+				values: oConfig.value.values.map(function (vValue, i) {
+					if (aTypes[i] === "date" || aTypes[i] === "datetime") {
+						return UI5Date.getInstance(vValue);
+					}
+					return vValue;
+				})
+			};
+		}
+
+		oDdr.setValue(oValue);
 
 		oDdr.attachChange(function (oEvent) {
 			if (oEvent.getParameter("valid")) {
