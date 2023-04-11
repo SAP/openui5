@@ -1165,6 +1165,7 @@ sap.ui.define([
 			var aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
 			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
+			assert.equal(aItems[2].getVisible(), true,  "item 2 is visible");
 
 			// 1st row
 			fChangeApplyAutomatic(this.oVM.oManagementTable, 0);
@@ -1193,8 +1194,8 @@ sap.ui.define([
 
 			aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
-			assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
-
+			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
+			assert.equal(aItems[2].getVisible(), false,  "item 2 is not visible");
 
 			aItems = this.oVM.getItems();
 			assert.ok(aItems, "aggregation items exists");
@@ -1216,10 +1217,10 @@ sap.ui.define([
 					assert.ok(oOrigItem.getTitle() !== oOrigItem.getOriginalTitle(), "expected title. Key=2");
 
 				} else if (oOrigItem.getKey() === "3") {
-					assert.equal(oOrigItem.getTitle(), "Three", "expected title. Key=3");
-					assert.equal(oOrigItem.getTitle(), oOrigItem.getOriginalTitle(), "expected title. Key=3");
+					assert.equal(oOrigItem.getTitle(), "newName2", "expected title. Key=3");
+					assert.ok(oOrigItem.getTitle() !== oOrigItem.getOriginalTitle(), "expected title. Key=3");
 
-					assert.equal(oOrigItem.getVisible(), false, "item is not active. Key=3");
+					assert.ok(oOrigItem.getVisible(), "item is active. Key=3");
 				} else {
 					assert.equal(oOrigItem.getTitle(), "Four", "expected title. Key=4");
 					assert.equal(oOrigItem.getTitle(), oOrigItem.getOriginalTitle(), "expected title. Key=4");
@@ -1251,7 +1252,7 @@ sap.ui.define([
 
 			var aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
-			assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
+			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
 
 		}.bind(this));
 
@@ -1329,7 +1330,7 @@ sap.ui.define([
 					assert.equal(aItems[i].getTitle(), "newName", "expected title. Row=1");
 					assert.equal(aItems[i].getOriginalTitle(), "Two", "expected original title. Row=1");
 				} else if (i === 2) {
-					assert.equal(aItems[i].getTitle(), "Three", "expected title. Row=2");
+					assert.equal(aItems[i].getTitle(), "newName2", "expected title. Row=2");
 					assert.equal(aItems[i].getOriginalTitle(), "Three", "expected original title. Row=2");
 
 					assert.equal(aItems[i].getExecuteOnSelect(), true, "expected execute on select. Row=2");
@@ -1359,6 +1360,7 @@ sap.ui.define([
 			var aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
 			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
+			assert.equal(aItems[2].getVisible(), true,  "item 2 is visible");
 
 			// 1st row
 			fChangeApplyAutomatic(this.oVM.oManagementTable, 0);
@@ -1390,7 +1392,8 @@ sap.ui.define([
 
 			aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
-			assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
+			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
+			assert.equal(aItems[2].getVisible(), false,  "item 2 is not visible");
 
 
 			aItems = this.oVM.getItems();
@@ -1419,7 +1422,7 @@ sap.ui.define([
 
 			var aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
-			assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
+			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
 
 		}.bind(this));
 
