@@ -35,8 +35,6 @@ sap.ui.define([
 	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
 	"use strict";
 
-	var oTable;
-
 	function createSUT(sId, bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {
 		var oData = {
 			items: [
@@ -221,7 +219,7 @@ sap.ui.define([
 			]
 		});
 
-		oTable = new Table({
+		var oTable = new Table({
 			columns: aColumns
 		});
 
@@ -234,13 +232,7 @@ sap.ui.define([
 
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
-	}
-
-	function destroyBiggerTable() {
-		if (oTable) {
-			oTable.destroy();
-			oTable = null;
-		}
+		return oTable;
 	}
 
 	function waitRequestAnimationFrame() {
@@ -1134,7 +1126,7 @@ sap.ui.define([
 			]
 		});
 		var oBundle = Core.getLibraryResourceBundle("sap.m");
-		this.oTable = new Table({
+		var oTable = new Table({
 			mode: "MultiSelect",
 			header: "header",
 			columns: [
@@ -1149,11 +1141,11 @@ sap.ui.define([
 		assert.strictEqual(oListItem.getContentAnnouncement(), "First Name Max " + sRequired + " . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
 		assert.strictEqual(oListItem.getAccessibilityInfo().description, oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max " + sRequired + " . Last Name Mustermann . " + oBundle.getText("LIST_ITEM_NOT_SELECTED"), "Accessibility punctuation test for ColumnListItem");
 
-		this.oTable.getColumns()[0].setOrder(1);
-		this.oTable.getColumns()[1].setOrder(0);
+		oTable.getColumns()[0].setOrder(1);
+		oTable.getColumns()[1].setOrder(0);
 		assert.strictEqual(oListItem.getContentAnnouncement(), "Last Name Mustermann . First Name Max " + sRequired, "Accessibility order is updated");
 
-		this.oTable.destroy();
+		oTable.destroy();
 	});
 
 	QUnit.test("Internal SelectAll checkbox should not be disabled by the EnabledPropagator",function(assert) {
@@ -2114,10 +2106,11 @@ sap.ui.define([
 
 	QUnit.module("autoPopinMode", {
 		beforeEach: function() {
-			createBiggerTable();
+			this.oTable = createBiggerTable();
 		},
 		afterEach: function() {
-			destroyBiggerTable();
+			this.oTable.destroy();
+			this.oTable = null;
 		},
 		groupColumnsInfo: function(aColumns){
 			var aColumnsInPopin = [];
@@ -2194,6 +2187,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set table autoPopinMode", function (assert) {
+		var oTable = this.oTable;
 		assert.strictEqual(oTable.getAutoPopinMode(), false, "Default value for autoPopinMode property is false");
 		oTable.setAutoPopinMode(true);
 		Core.applyChanges();
@@ -2201,6 +2195,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Table's contextualWidth is set to 'Desktop'", function (assert) {
+		var oTable = this.oTable;
 		var aColumns = oTable.getColumns();
 
 		oTable.setContextualWidth("Desktop");
@@ -2229,6 +2224,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Table's contextualWidth is set to 'Tablet'", function (assert) {
+		var oTable = this.oTable;
 		var aColumns = oTable.getColumns();
 
 		oTable.setAutoPopinMode(true);
@@ -2245,6 +2241,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Table's contextualWidth is set to 'Phone'", function (assert) {
+		var oTable = this.oTable;
 		var aColumns = oTable.getColumns();
 
 		oTable.setAutoPopinMode(true);
@@ -2261,6 +2258,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Table's contextualWidth is set to 'Small' and only the first and last column are set to high importance", function (assert) {
+		var oTable = this.oTable;
 		var aColumns = oTable.getColumns();
 
 		// reset property 'importance' on table columns
@@ -2319,9 +2317,11 @@ sap.ui.define([
 		Core.applyChanges();
 		fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
 		assert.strictEqual(fInitAccumulatedWidth, 8.25, "Initial accumulated width is " + fInitAccumulatedWidth + "rem. Since compact theme density is applied");
+		oTable.destroy();
 	});
 
 	QUnit.test("Spy on _configureAutoPopin - autoPopinMode=true", function (assert) {
+		var oTable = this.oTable;
 		var aColumns = oTable.getColumns();
 
 		oTable.setContextualWidth("Desktop");
@@ -2349,6 +2349,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Spy on _configureAutoPopin - autoPopinMode=false", function (assert) {
+		var oTable = this.oTable;
 		var aColumns = oTable.getColumns();
 
 		oTable.setContextualWidth("Desktop");
@@ -2371,6 +2372,7 @@ sap.ui.define([
 
 	QUnit.test("Recalculations with autoPopinMode=true", function(assert) {
 		var clock = sinon.useFakeTimers();
+		var oTable = this.oTable;
 		// if the below function is called, then its an indicator that the recalulation for the autoPopinMode was done
 		var fnGetInitialAccumulatedWidth = sinon.spy(oTable, "_getInitialAccumulatedWidth");
 		var aColumns = oTable.getColumns();
@@ -2438,6 +2440,7 @@ sap.ui.define([
 
 	QUnit.test("Hide columns based on their importance", function(assert) {
 		var clock = sinon.useFakeTimers();
+		var oTable = this.oTable;
 		var aColumns = oTable.getColumns();
 		var fnPopinChangedEvent = sinon.spy(oTable, "_firePopinChangedEvent");
 
@@ -2476,6 +2479,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Added Scope attribute to TH elements", function(assert) {
+		var oTable = this.oTable;
 		var oTableHeader = oTable.getDomRef("tblHeader").children;
 		var iScopeCount = 0;
 		assert.ok(oTableHeader, "Table contains th element");
@@ -2490,6 +2494,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test shouldGrowingSuppressInvalidation", function(assert) {
+		var oTable = this.oTable;
 		oTable.setGrowing(true);
 		Core.applyChanges();
 		assert.notOk(oTable.getAutoPopinMode(), "autoPopinMode=false");

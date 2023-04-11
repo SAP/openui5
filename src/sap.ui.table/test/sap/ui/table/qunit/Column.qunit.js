@@ -338,7 +338,64 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Pre-Check Menu Item Creation", function(assert) {
+	/**
+	 * @deprecated As of version 1.110
+	 */
+	QUnit.test("Pre-Check Menu Item Creation - Group", function(assert) {
+
+		//######################################################################################################
+		// Group menu item
+		//######################################################################################################
+
+		// reset Column Properties
+		this._oColumn.setFilterProperty("");
+		this._oColumn.setShowFilterMenuEntry(true);
+		this._oColumn.setSortProperty("");
+		this._oColumn.setShowSortMenuEntry(true);
+
+		// check column without parent
+		this._oTable.setEnableGrouping(true);
+		this._oColumn.setSortProperty("mySortPropertyName");
+		assert.ok(!this._oColumn.isGroupableByMenu(),
+			"Not groupable by menu:"
+			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
+			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
+			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
+
+		// check column with parent
+		this._oTable.addColumn(this._oColumn);
+
+		this._oTable.setEnableGrouping(true);
+		this._oColumn.setSortProperty("");
+		assert.ok(!this._oColumn.isGroupableByMenu(),
+			"Not groupable by menu:"
+			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
+			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
+			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
+
+		this._oTable.setEnableGrouping(false);
+		assert.ok(!this._oColumn.isGroupableByMenu(),
+			"Not groupable by menu:"
+			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
+			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
+			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
+
+		this._oColumn.setSortProperty("mySortPropertyName");
+		assert.ok(!this._oColumn.isGroupableByMenu(),
+			"Not groupable by menu:"
+			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
+			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
+			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
+
+		this._oTable.setEnableGrouping(true);
+		assert.ok(this._oColumn.isGroupableByMenu(),
+			"Not groupable by menu:"
+			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
+			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
+			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
+	});
+
+	QUnit.test("Pre-Check Menu Item Creation - Sort and Filter", function(assert) {
 
 		//######################################################################################################
 		// Filter menu item
@@ -397,57 +454,6 @@ sap.ui.define([
 			"Not sortable by menu:"
 			+ " sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
 			+ ", showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
-
-		//######################################################################################################
-		// Group menu item
-		//######################################################################################################
-
-		// reset Column Properties
-		this._oColumn.setFilterProperty("");
-		this._oColumn.setShowFilterMenuEntry(true);
-		this._oColumn.setSortProperty("");
-		this._oColumn.setShowSortMenuEntry(true);
-
-		// check column without parent
-		this._oTable.setEnableGrouping(true);
-		this._oColumn.setSortProperty("mySortPropertyName");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-
-		// check column with parent
-		this._oTable.addColumn(this._oColumn);
-
-		this._oTable.setEnableGrouping(true);
-		this._oColumn.setSortProperty("");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-
-		this._oTable.setEnableGrouping(false);
-		assert.ok(!this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-
-		this._oColumn.setSortProperty("mySortPropertyName");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-
-		this._oTable.setEnableGrouping(true);
-		assert.ok(this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
 	});
 
 	QUnit.module("Column Menu", {
@@ -507,6 +513,9 @@ sap.ui.define([
 		assert.ok(oSpyColumnMenuFilterState.calledOnce, "_setFilterState called on ColumnMenu");
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 */
 	QUnit.test("Set Grouping", function(assert) {
 		var done = assert.async();
 		var oTable = this._oTable;

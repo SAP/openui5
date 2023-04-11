@@ -434,6 +434,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 	/**
 	 * Sets the root level.
 	 * @param {int} iRootLevel root level
+	 * @deprecated As of version 1.76
 	 */
 	TreeBindingProxy.prototype.setRootLevel = function(iRootLevel) {
 		var oBinding = this._oControl.getBinding();
@@ -461,6 +462,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 	/**
 	 * Sets recursive collapse.
 	 * @param {boolean} bCollapseRecursive collapseRecursive
+	 * @deprecated As of version 1.76
 	 */
 	TreeBindingProxy.prototype.setCollapseRecursive = function(bCollapseRecursive) {
 		var oBinding = this._oControl.getBinding();

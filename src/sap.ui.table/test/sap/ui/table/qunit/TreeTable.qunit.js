@@ -108,6 +108,9 @@ sap.ui.define([
 		assert.equal(this.table._getTotalRowCount(), 3, "Initial row count is correct");
 	});
 
+	/**
+	 * @deprecated As of version 1.46.3
+	 */
 	QUnit.test("ExpandFirstLevel", function(assert) {
 		var done = assert.async();
 		var that = this;
@@ -1048,6 +1051,41 @@ sap.ui.define([
 		fnIsTreeBindingSpy.restore();
 	});
 
+	/**
+	 * @deprecated As of version 1.76
+	 */
+	QUnit.test("Correct Proxy Calls - rootLevel and collapseRecursive", function(assert) {
+		// Initialise spies
+		var fnSetRootLevelSpy = sinon.spy(this.oProxy, "setRootLevel");
+		var fnSetCollapseRecursiveSpy = sinon.spy(this.oProxy, "setCollapseRecursive");
+
+		// Stub oTable.getBinding
+		var fnGetBinding = sinon.stub(this.oTable, "getBinding");
+		fnGetBinding.returns({
+			getMetadata: function() {
+				return {
+					getName: function() {
+						return undefined;
+					}
+				};
+			}
+		});
+
+		// setRootLevel
+		this.oTable.setRootLevel(0);
+		assert.ok(fnSetRootLevelSpy.called, "proxy#setRootLevel was called");
+
+		// setCollapseRecursive
+		this.oTable.setCollapseRecursive(true);
+		assert.ok(fnSetCollapseRecursiveSpy.called, "proxy#setCollapseRecursive was called");
+
+		// Restore spies and stubs
+		fnSetRootLevelSpy.restore();
+		fnSetCollapseRecursiveSpy.restore();
+
+		fnGetBinding.restore();
+	});
+
 	QUnit.test("Correct Proxy Calls", function(assert) {
 		// Initialise spies
 		var fnGetContextsSpy = sinon.spy(this.oProxy, "getContexts");
@@ -1057,8 +1095,6 @@ sap.ui.define([
 		var fnCollapseAllSpy = sinon.spy(this.oProxy, "collapseAll");
 		var fnIsExpandedSpy = sinon.spy(this.oProxy, "isExpanded");
 		var fnGetContextByIndexSpy = sinon.spy(this.oProxy, "getContextByIndex");
-		var fnSetRootLevelSpy = sinon.spy(this.oProxy, "setRootLevel");
-		var fnSetCollapseRecursiveSpy = sinon.spy(this.oProxy, "setCollapseRecursive");
 
 		// Stub oTable.getBinding
 		var fnGetBinding = sinon.stub(this.oTable, "getBinding");
@@ -1100,14 +1136,6 @@ sap.ui.define([
 		this.oTable.getContextByIndex(0);
 		assert.ok(fnGetContextByIndexSpy.called, "proxy#getContextByIndex was called");
 
-		// setRootLevel
-		this.oTable.setRootLevel(0);
-		assert.ok(fnSetRootLevelSpy.called, "proxy#setRootLevel was called");
-
-		// setCollapseRecursive
-		this.oTable.setCollapseRecursive(true);
-		assert.ok(fnSetCollapseRecursiveSpy.called, "proxy#setCollapseRecursive was called");
-
 		// Restore spies and stubs
 		fnGetContextsSpy.restore();
 		fnExpandSpy.restore();
@@ -1116,8 +1144,6 @@ sap.ui.define([
 		fnCollapseAllSpy.restore();
 		fnIsExpandedSpy.restore();
 		fnGetContextByIndexSpy.restore();
-		fnSetRootLevelSpy.restore();
-		fnSetCollapseRecursiveSpy.restore();
 
 		fnGetBinding.restore();
 	});

@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/RatingIndicator",
 	"sap/m/Image",
+	"sap/m/Title",
 	"sap/m/Toolbar",
 	"sap/m/library",
 	"sap/ui/unified/Menu",
@@ -75,6 +76,7 @@ sap.ui.define([
 	Link,
 	RatingIndicator,
 	Image,
+	Title,
 	Toolbar,
 	MLibrary,
 	Menu,
@@ -144,8 +146,16 @@ sap.ui.define([
 
 	function createTable(oConfig, fnCreateColumns, sModelName) {
 		var sBindingPrefix = (sModelName ? sModelName + ">" : "");
+		var sTitle;
 
+		if (oConfig) {
+			sTitle = oConfig.title;
+			delete oConfig.title;
+		}
 		oTable = new Table(oConfig);
+		if (sTitle) {
+			oTable.addExtension(new Title({text: sTitle}));
+		}
 
 		if (!fnCreateColumns) {
 			fnCreateColumns = function(oTable) {
@@ -234,7 +244,7 @@ sap.ui.define([
 		}
 	}
 
-	function creatSortingTableData() {
+	function createSortingTableData() {
 		var aData = [
 			{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45},
 			{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: jobPosImg, gender: "male", rating: 2, money: 4.64},
@@ -261,16 +271,18 @@ sap.ui.define([
 			createTable({
 				firstVisibleRow: 5,
 				visibleRowCount: 7,
-				title: "TABLEHEADER",
+				extension: [
+					new Toolbar({
+						content: [
+							new Title({text: "TABLEHEADER"}),
+							new Button({
+								text: "Modify Table Properties..."
+							})
+						]
+					})
+				],
 				footer: "Footer",
-				selectionMode: SelectionMode.Single,
-				toolbar: new Toolbar({
-					content: [
-						new Button({
-							text: "Modify Table Properties..."
-						})
-					]
-				})
+				selectionMode: SelectionMode.Single
 			});
 		},
 		afterEach: function() {
@@ -289,9 +301,9 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
-	QUnit.test("Properties", function(assert) {
-		assert.equal(oTable.$().find(".sapUiTableHdr").text(), "TABLEHEADER", "Title of Table is correct!");
-		assert.equal(oTable.getToolbar().$().find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
+	QUnit.test("Properties and Extensions", function(assert) {
+		assert.equal(oTable.$().find(".sapMTitle").text(), "TABLEHEADER", "Title of Table is correct!");
+		assert.equal(oTable.getExtension()[0].$().find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
 		assert.equal(oTable.$().find(".sapUiTableFtr").text(), "Footer", "Title of Table is correct!");
 		assert.equal(oTable.getSelectionMode(), "Single", "Selection mode is Single!");
 		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
@@ -2030,7 +2042,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @deprecated As of 1.56
+	 * @deprecated As of version 1.56
 	 */
 	QUnit.test("Export filtered table with named model", function(assert) {
 		var done = assert.async();
@@ -2063,6 +2075,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.38
+	 */
 	QUnit.module("Toolbar", {
 		beforeEach: function() {
 		},
@@ -2151,7 +2166,7 @@ sap.ui.define([
 
 	QUnit.test("Multi-columns sorting", function(assert) {
 		var done = assert.async();
-		creatSortingTableData();
+		createSortingTableData();
 
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
@@ -2183,7 +2198,7 @@ sap.ui.define([
 
 	QUnit.test("Sort Icon", function(assert) {
 		var done = assert.async();
-		creatSortingTableData();
+		createSortingTableData();
 
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
@@ -2221,7 +2236,7 @@ sap.ui.define([
 
 	QUnit.test("Sort Icon", function(assert) {
 		var done = assert.async();
-		creatSortingTableData();
+		createSortingTableData();
 		var aColumns = oTable.getColumns();
 
 		var fnHandler = function() {
@@ -2256,7 +2271,7 @@ sap.ui.define([
 
 	QUnit.test("remove column", function(assert) {
 		var done = assert.async();
-		creatSortingTableData();
+		createSortingTableData();
 		var oRemovedColumn;
 
 		var fnHandler = function() {
@@ -2285,7 +2300,7 @@ sap.ui.define([
 
 	QUnit.test("remove all columns", function(assert) {
 		var done = assert.async();
-		creatSortingTableData();
+		createSortingTableData();
 
 		var fnHandler = function() {
 
@@ -2312,7 +2327,7 @@ sap.ui.define([
 
 	QUnit.test("destroy columns", function(assert) {
 		var done = assert.async();
-		creatSortingTableData();
+		createSortingTableData();
 
 		var fnHandler = function() {
 
@@ -2339,7 +2354,7 @@ sap.ui.define([
 
 	QUnit.test("change column order", function(assert) {
 		var done = assert.async();
-		creatSortingTableData();
+		createSortingTableData();
 		var oRemovedColumn;
 
 		var fnHandler = function() {
@@ -4297,9 +4312,11 @@ sap.ui.define([
 				selectionMode: SelectionMode.MultiToggle,
 				rowActionCount: 1,
 				rowActionTemplate: new RowAction({items: [new RowActionItem()]}),
-				title: new PasteTestControl({tagName: "div", handleOnPaste: false}),
-				toolbar: new Toolbar({active: true, content: [new PasteTestControl({tagName: "div", handleOnPaste: false})]}),
-				extension: [new PasteTestControl({tagName: "div", handleOnPaste: false})],
+				extension: [
+					new Title({text: "TABLEHEADER"}),
+					new Toolbar({active: true, content: [new PasteTestControl({tagName: "div", handleOnPaste: false})]}),
+					new PasteTestControl({tagName: "div", handleOnPaste: false})
+				],
 				footer: new PasteTestControl({tagName: "div", handleOnPaste: false})
 			}, function(oTable) {
 				["div", "input", "textarea"].forEach(function(sTagName) {
@@ -4387,11 +4404,23 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.72
+	 */
+	QUnit.test("Paste event should not be fired on the title", function(assert) {
+		this.test(assert, "Title control", oTable.getExtension()[0].getDomRef(), false);
+	});
+
+	/**
+	 * @deprecated As of version 1.38
+	 */
+	QUnit.test("Paste event should not be fired on the toolbar", function(assert) {
+		this.test(assert, "Toolbar control", oTable.getExtension()[1].getDomRef(), false);
+		this.test(assert, "Toolbar content control", oTable.getExtension()[1].getContent()[0].getDomRef(), false);
+	});
+
 	QUnit.test("Elements where the paste event should not be fired", function(assert) {
-		this.test(assert, "Title control", oTable.getTitle().getDomRef(), false);
-		this.test(assert, "Toolbar control", oTable.getToolbar().getDomRef(), false);
-		this.test(assert, "Toolbar content control", oTable.getToolbar().getContent()[0].getDomRef(), false);
-		this.test(assert, "Extension control", oTable.getExtension()[0].getDomRef(), false);
+		this.test(assert, "Extension control", oTable.getExtension()[2].getDomRef(), false);
 		this.test(assert, "Footer control", oTable.getFooter().getDomRef(), false);
 	});
 
@@ -4708,6 +4737,9 @@ sap.ui.define([
 		oControlSetBusy.restore();
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 */
 	QUnit.test("test setGroupBy function", function(assert) {
 		oTable.setEnableGrouping(false);
 		assert.ok(!oTable.getEnableGrouping(), "Grouping not enabled");

@@ -1488,6 +1488,9 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
+	/**
+	 * @deprecated As of version 1.38
+	 */
 	QUnit.test("ARIA Attributes of Table Header", function(assert) {
 		var $Elem = oTable.$().find(".sapUiTableHdr");
 		assert.strictEqual($Elem.attr("role"), "heading", "role");
