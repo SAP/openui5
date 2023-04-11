@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
 	"sap/m/library",
-	"sap/m/DynamicDateUtil",
 	"sap/m/DynamicDateFormat",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Date"
@@ -35,12 +34,13 @@ sap.ui.define([
 	OperatorDynamicDateOption,
 	DynamicDateRangeConditionsType,
 	mobileLibrary,
-	DynamicDateUtil,
 	DynamicDateFormat,
 	JSONModel,
 	DateType
 ) {
 	"use strict";
+
+	Field.prototype._checkCreateInternalContent = function() {}; // prevent creating internal control by itself
 
 	var oControlMap = {
 		"Display": {
@@ -54,8 +54,8 @@ sap.ui.define([
 		},
 		"Edit": {
 			getPathsFunction: "getEdit",
-			paths: ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"],
-			instances: [DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, mobileLibrary, DynamicDateUtil, DynamicDateFormat],
+			paths: ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateFormat"],
+			instances: [DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, mobileLibrary, DynamicDateFormat],
 			createFunction: "createEdit",
 			maxConditions: 1,
 			boundProperty: "value",
@@ -103,8 +103,13 @@ sap.ui.define([
 		tooltip: "Tooltip",
 		textAlign: "Initial",
 		textDirection: "Inherit",
-		operators: ["EQ", "TODAY", "BT", "NOTBT"]
+		_operators: ["EQ", "TODAY", "BT", "NOTBT"]
 	});
+	var oStub = sinon.stub(oModel, "getProperty");
+	oStub.withArgs("/").callsFake(function(sPath, oContext) { // fake behaviour of ManagedObjectModel
+		return oContext;
+	});
+	oStub.callThrough();
 
 	QUnit.module("Getters");
 
@@ -137,11 +142,11 @@ sap.ui.define([
 
 	QUnit.test("getControlNames", function(assert) {
 		/* no need to use oOperator here as there is no editOperator*/
-		assert.deepEqual(DateContent.getControlNames(null), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode null");
-		assert.deepEqual(DateContent.getControlNames(undefined), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode undefined");
-		assert.deepEqual(DateContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"], "Correct controls returned for not specified ContentMode");
+		assert.deepEqual(DateContent.getControlNames(null), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode null");
+		assert.deepEqual(DateContent.getControlNames(undefined), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode undefined");
+		assert.deepEqual(DateContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateFormat"], "Correct controls returned for not specified ContentMode");
 
-		assert.deepEqual(DateContent.getControlNames("Edit"), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode 'Edit'");
+		assert.deepEqual(DateContent.getControlNames("Edit"), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode 'Edit'");
 		assert.deepEqual(DateContent.getControlNames("Display"), ["sap/m/Text"], "Correct controls returned for ContentMode 'Display'");
 		assert.deepEqual(DateContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DateContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
@@ -314,32 +319,39 @@ sap.ui.define([
 
 		var oDynamicDateRange = aControls[0];
 		var oFormatter = oDynamicDateRange.getFormatter();
-		var aOptions = oDynamicDateRange.getOptions();
+		var aStandardOptions = oDynamicDateRange.getStandardOptions();
+		var aCustomOptions = oDynamicDateRange.getCustomOptions();
 		var oData = oModel.getData();
-		var aOperators = oData.operators;
+		var aOperators = oData._operators;
 		var aDefaultOperators = this.oField._getOperators();
 
 		assert.deepEqual(oFormatter.oOriginalFormatOptions.date, {style: "long"}, "Formatter set on DynamicDateRange");
-		// check only some specific operators, nor every single one
-		assert.equal(aOptions.length, aOperators.length, "Option for each operator created on DynamicDateRange");
+		// check only some specific operators, not every single one
+		assert.equal(aStandardOptions.length + aCustomOptions.length, aOperators.length, "Option for each operator created on DynamicDateRange");
 
 		// EQ needs to be mapped on DATE
-		assert.ok(aOptions.indexOf("DATE") >= 0, "DATE option created");
+		assert.ok(aStandardOptions.indexOf("DATE") >= 0, "DATE option created");
 		// TODAY ist just taken
-		assert.ok(aOptions.indexOf("TODAY") >= 0, "TODAY option created");
+		assert.ok(aStandardOptions.indexOf("TODAY") >= 0, "TODAY option created");
 		// NOTBT needs to be mapped as custom Option
-		assert.ok(aOptions.indexOf("Date-NOTBT") >= 0, "NOTBT option created for Date");
-		var oOption = DynamicDateUtil.getOption("Date-NOTBT");
+		var oOption;
+		for (var i = 0; i < aCustomOptions.length; i++) {
+			if (aCustomOptions[i].getKey() === "Date-NOTBT") {
+				oOption = aCustomOptions[i];
+			}
+		}
+		assert.ok(oOption, "NOTBT option created for Date");
 		assert.ok(oOption.isA('sap.ui.mdc.condition.OperatorDynamicDateOption'), "OperatorDynmaicDateOption added for NOTBT");
 		assert.equal(oOption.getOperator().name, "NOTBT", "Operator assigned to Option");
 		assert.equal(oOption.getType().getMetadata().getName(), "sap.ui.model.type.Date", "Date type assigned to Option");
 		assert.deepEqual(oOption.getValueTypes(), ["custom", "custom"], "ValueTypes assigned to Option");
 
 		// check for default operators
-		oData.operators = [];
+		oData._operators = aDefaultOperators;
 		oModel.checkUpdate(true);
-		aOptions = oDynamicDateRange.getOptions();
-		assert.equal(aOptions.length, aDefaultOperators.length, "Option for each operator created on DynamicDateRange");
+		aStandardOptions = oDynamicDateRange.getStandardOptions();
+		aCustomOptions = oDynamicDateRange.getCustomOptions();
+		assert.equal(aStandardOptions.length + aCustomOptions.length, aDefaultOperators.length, "Option for each operator created on DynamicDateRange");
 	}
 
 	QUnit.start();

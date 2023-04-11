@@ -128,6 +128,7 @@ sap.ui.define([
 		FieldBase.prototype.init.apply(this, arguments);
 
 		this.setMaxConditions(1);
+		this.setProperty("_operators", ["EQ"], true);
 
 		this._oObserver.observe(this, {
 			properties: ["value", "additionalValue"]
@@ -527,7 +528,7 @@ sap.ui.define([
 
 	Field.prototype._getOperators = function() {
 
-		return ["EQ"];
+		return this.getProperty("_operators", []);
 
 	};
 

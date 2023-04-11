@@ -114,6 +114,8 @@ sap.ui.define([
 
 		FieldBase.prototype.init.apply(this, arguments);
 
+		this.setProperty("_operators", ["EQ"], true);
+
 		this._oObserver.observe(this, {
 			aggregations: ["items"]
 		});
@@ -313,7 +315,7 @@ sap.ui.define([
 
 	Field.prototype._getOperators = function() {
 
-		return ["EQ"];
+		return this.getProperty("_operators", []);
 
 	};
 
