@@ -349,8 +349,8 @@ sap.ui.define([
 				assert.ok(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on small screens");
 				assert.ok(oPanel._getMoveTopButton().getVisible(), "Button is invisible on small screens");
 				done();
-			});
-		});
+			}, 10);
+		}, 10);
 
 	});
 
