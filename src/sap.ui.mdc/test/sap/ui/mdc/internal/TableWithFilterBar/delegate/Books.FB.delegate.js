@@ -44,6 +44,7 @@ sap.ui.define([
 					oPropertyInfo.filterOperators = ["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"];
 				} else if (oPropertyInfo.name === "language_code") {
 					oPropertyInfo.fieldHelp = "FHLanguage";
+					oPropertyInfo.maxConditions = 1;
 					oPropertyInfo.display = FieldDisplay.Description;
 					oPropertyInfo.constraints = {nullable: false, maxLength: 3}; // to test not nullable
 				} else if (oPropertyInfo.name === "stock") {

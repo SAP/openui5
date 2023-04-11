@@ -231,10 +231,10 @@ sap.ui.define([
 					var oConstraints = oProp.typeConfig.typeInstance.getConstraints();
 					var oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
 
-					oFilterField.setDataTypeConstraints(oConstraints);
-					oFilterField.setDataTypeFormatOptions(oFormatOptions);
-
-					if (sPropertyName === "author_ID") {
+					if (sPropertyName === "ID") {
+						oFormatOptions = {groupingEnabled: false};
+					} else if (sPropertyName === "author_ID") {
+						oFormatOptions = {groupingEnabled: false};
 						oFilterField.setFieldHelp(getFullId(oTable, "FH1"));
 						oFilterField.setDisplay(FieldDisplay.Description);
 					} else if (sPropertyName === "title") {
@@ -244,6 +244,8 @@ sap.ui.define([
 						oFilterField.setOperators(["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]);
 					} else if (sPropertyName === "language_code") {
 						oFilterField.setFieldHelp(getFullId(oTable, "FHLanguage"));
+						oFilterField.setMaxConditions(1);
+						oConstraints = {nullable: false, maxLength: 3}; // to test not nullable
 						oFilterField.setDisplay(FieldDisplay.Description);
 					} else if (sPropertyName === "stock") {
 						oFilterField.setMaxConditions(1);
@@ -265,7 +267,14 @@ sap.ui.define([
 						oFilterField.setDisplay(FieldDisplay.Value);
 						oFilterField.setMaxConditions(1);
 						oFilterField.setOperators(["EQ"]);
+					} else if (sPropertyName === "createdAt") {
+						oFilterField.setMaxConditions(1); // to use DynamicDateRange
+						oFilterField.setOperators(["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "LT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR", "NEXTHOURS", "NEXTMINUTES", "LASTHOURS"]);
 					}
+
+					oFilterField.setDataTypeConstraints(oConstraints);
+					oFilterField.setDataTypeFormatOptions(oFormatOptions);
+
 					return oFilterField;
 				});
 			},
