@@ -50,11 +50,25 @@ function(
 ) {
 	"use strict";
 
-	function parseScalarType(sType, sValue, sName, oContext, oRequireModules) {
+	function parseScalarType(sType, sValue, sName, oContext, oRequireModules, aTypePromises) {
+		var bResolveTypesAsync = !!aTypePromises;
+		var oBindingInfo;
+
 		// check for a binding expression (string)
-		var oBindingInfo = BindingInfo.parse(sValue, oContext, /*bUnescape*/true,
+		var oBindingParseResult = BindingInfo.parse(sValue, oContext, /*bUnescape*/true,
 			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
-			oRequireModules);
+			oRequireModules,
+			/* bResolveTypesAsync: Whether we want the type classes to be resolved,
+			        true if async == true, false otherwise */
+			bResolveTypesAsync);
+
+		// asynchronously resolved types result in a Promise we need to unwrap here
+		if (bResolveTypesAsync && oBindingParseResult) {
+			aTypePromises.push(oBindingParseResult.resolved);
+			oBindingInfo = oBindingParseResult.bindingInfo;
+		} else {
+			oBindingInfo = oBindingParseResult;
+		}
 
 		if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 			return oBindingInfo;
@@ -1148,6 +1162,11 @@ function(
 
 				oRequireContext = oRequireModules;
 
+				// [ASYNC only]: In async mode we instruct the BindingParser to resolve the Types asynchronously.
+				//               The function "parseScalarType()" will then collect the Promises from the BindingParser,
+				//               so that we can then wait for them later on here.
+				var aTypePromises = bAsync ? [] : undefined;
+
 				if (!bEnrichFullIds) {
 					for (var i = 0; i < node.attributes.length; i++) {
 						var attr = node.attributes[i],
@@ -1213,8 +1232,8 @@ function(
 							if (sNamespace === CUSTOM_DATA_NAMESPACE) {  // CustomData attribute found
 								var sLocalName = localName(attr);
 								aCustomData.push(new CustomData({
-									key:sLocalName,
-									value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController, oRequireModules)
+									key: sLocalName,
+									value: parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController, oRequireModules, aTypePromises)
 								}));
 							} else if (sNamespace === SUPPORT_INFO_NAMESPACE) {
 								sSupportData = sValue;
@@ -1244,7 +1263,7 @@ function(
 
 						} else if (oInfo && oInfo._iKind === 0 /* PROPERTY */ ) {
 							// other PROPERTY
-							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules); // View._oContainingView.oController is null when [...]
+							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules, aTypePromises); // View._oContainingView.oController is null when [...]
 							// FIXME: ._oContainingView might be the original Fragment for an extension fragment or a fragment in a fragment - so it has no controller bit ITS containingView.
 
 						} else if (oInfo && oInfo._iKind === 1 /* SINGLE_AGGREGATION */ && oInfo.altTypes ) {
@@ -1326,6 +1345,11 @@ function(
 					if (aCustomData.length > 0) {
 						mSettings.customData = aCustomData;
 					}
+				}
+
+				// aTypePromises is only filled when we run in async mode, so we don't need to use SyncPromise here
+				if (Array.isArray(aTypePromises)) {
+					return Promise.all(aTypePromises).then(function() { return oRequireModules; });
 				}
 
 				return oRequireModules;

@@ -658,6 +658,23 @@ sap.ui.define([
 					if (that.refreshDataState) {
 						that.refreshDataState(sName, oDataState);
 					}
+				},
+				fnResolveTypeClass = function(sTypeName) {
+					var sModulePath = sTypeName.replace(/\./g, "/");
+					// 1. require probing
+					var TypeClass = sap.ui.require(sModulePath);
+					if (!TypeClass) {
+						// 2. Global lookup
+						TypeClass = ObjectPath.get(sTypeName);
+						if (typeof TypeClass === "function" && !TypeClass._sapUiLazyLoader) {
+							Log.error("[FUTURE] The type class '" + sTypeName + "' is exported to the global namespace without being set as an export value of a UI5 module. " +
+							"This scenario will not be supported in the future and a separate UI5 module needs to be created which exports this type class.");
+						} else {
+							// 3. requireSync fallback
+							TypeClass = sap.ui.requireSync(sModulePath); // legacy-relevant
+						}
+					}
+					return TypeClass;
 				};
 
 			oBindingInfo.parts.forEach(function(oPart) {
@@ -668,7 +685,7 @@ sap.ui.define([
 				// Create type instance if needed
 				oType = oPart.type;
 				if (typeof oType == "string") {
-					clType = ObjectPath.get(oType);
+					clType = fnResolveTypeClass(oType);
 					if (typeof clType !== "function") {
 						throw new Error("Cannot find type \"" + oType + "\" used in control \"" + that.getId() + "\"!");
 					}
@@ -702,7 +719,7 @@ sap.ui.define([
 				// Create type instance if needed
 				oType = oBindingInfo.type;
 				if (typeof oType == "string") {
-					clType = ObjectPath.get(oType);
+					clType = fnResolveTypeClass(oType);
 					oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 				}
 				oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);

@@ -226,21 +226,50 @@ sap.ui.define([
 					bindContext: false
 				});
 
-				// TODO find another solution for the type parameters?
-				if (typeof FNType === "function") {
-					o.type = new FNType(o.formatOptions, o.constraints);
+				var fnInstantiateType = function(TypeClass) {
+					if (typeof TypeClass === "function") {
+						o.type = new TypeClass(o.formatOptions, o.constraints);
+					} else {
+						o.type = TypeClass;
+					}
+
+					if (!o.type) {
+						Log.error("Failed to resolve type '" + sType + "'. Maybe not loaded or a typo?");
+					}
+
+					// TODO why are formatOptions and constraints also removed for an already instantiated type?
+					// TODO why is a value of type object not validated (instanceof Type)
+					delete o.formatOptions;
+					delete o.constraints;
+				};
+
+				if (oEnv.aTypePromises) {
+					var pType;
+
+					// FNType is either:
+					//    a) a function
+					//       * a lazy-stub
+					//       * a regular constructor function
+					//    b) an object that must implement Type interface (we take this "as-is")
+					//    c) undefined, we try to interpret the original string as a module name then
+					if (typeof FNType === "function" && !FNType._sapUiLazyLoader ||
+						FNType && typeof FNType === "object") {
+						pType = Promise.resolve(fnInstantiateType(FNType));
+					} else {
+						// load type asynchronously
+						pType = new Promise(function(fnResolve, fnReject) {
+							sap.ui.require([sType.replace(/\./g, "/")], fnResolve, fnReject);
+						}).catch(function(oError){
+							// [Compatibility]: We must not throw an error during type creation (except constructor failures!).
+							//                  We catch any require() rejection and log the error.
+							Log.error(oError);
+						}).then(fnInstantiateType);
+					}
+
+					oEnv.aTypePromises.push(pType);
 				} else {
-					o.type = FNType;
+					fnInstantiateType(FNType);
 				}
-
-				if (!o.type) {
-					Log.error("Failed to resolve type '" + sType + "'. Maybe not loaded or a typo?");
-				}
-
-				// TODO why are formatOptions and constraints also removed for an already instantiated type?
-				// TODO why is a value of type object not validated (instanceof Type)
-				delete o.formatOptions;
-				delete o.constraints;
 			}
 		}
 
@@ -380,12 +409,24 @@ sap.ui.define([
 		};
 	}
 
-	BindingParser.simpleParser = function(sString, oContext) {
+	BindingParser.simpleParser = function(sString) {
+		// The simpleParser only needs the first string argument and additionally in the async case the 7th one.
+		// see "BindingParser.complexParser" for the other arguments
+		var bResolveTypesAsync = arguments[7];
 
+		var oBindingInfo;
 		if ( sString.startsWith("{") && sString.endsWith("}") ) {
-			return makeSimpleBindingInfo(sString.slice(1, -1));
+			oBindingInfo = makeSimpleBindingInfo(sString.slice(1, -1));
 		}
 
+		if (bResolveTypesAsync) {
+			return {
+				bindingInfo: oBindingInfo,
+				resolved: Promise.resolve()
+			};
+		}
+
+		return oBindingInfo;
 	};
 
 	BindingParser.simpleParser.escape = function(sValue) {
@@ -406,9 +447,12 @@ sap.ui.define([
 	 *   globally
 	 * @param {object} [mLocals]
 	 *   variables allowed in the expression as map of variable name to its value
+	 * @param {boolean} [bResolveTypesAsync]
+	 *   whether the Type classes should be resolved asynchronously.
+	 *   The parsing result is enriched with an additional Promise capturing all transitive Type loading.
 	 */
 	BindingParser.complexParser = function(sString, oContext, bUnescape,
-			bTolerateFunctionsNotFound, bStaticContext, bPreferContext, mLocals) {
+			bTolerateFunctionsNotFound, bStaticContext, bPreferContext, mLocals, bResolveTypesAsync) {
 		var b2ndLevelMergedNeeded = false, // whether some 2nd level parts again have parts
 			oBindingInfo = {parts:[]},
 			bMergeNeeded = false, // whether some top-level parts again have parts
@@ -418,7 +462,8 @@ sap.ui.define([
 				aFunctionsNotFound: undefined, // lazy creation
 				bPreferContext : bPreferContext,
 				bStaticContext: bStaticContext,
-				bTolerateFunctionsNotFound: bTolerateFunctionsNotFound
+				bTolerateFunctionsNotFound: bTolerateFunctionsNotFound,
+				aTypePromises: bResolveTypesAsync ? [] : undefined
 			},
 			aFragments = [],
 			bUnescaped,
@@ -541,9 +586,25 @@ sap.ui.define([
 			if (oEnv.aFunctionsNotFound) {
 				oBindingInfo.functionsNotFound = oEnv.aFunctionsNotFound;
 			}
+
+			if (bResolveTypesAsync) {
+				// parse result contains additionally a Promise with all asynchronously loaded types
+				return {
+					bindingInfo: oBindingInfo,
+					resolved: Promise.all(oEnv.aTypePromises)
+				};
+			}
+
 			return oBindingInfo;
 		} else if ( bUnescape && bUnescaped ) {
-			return aFragments.join('');
+			var sResult = aFragments.join('');
+			if (bResolveTypesAsync) {
+				return {
+					bindingInfo: sResult,
+					resolved: Promise.resolve()
+				};
+			}
+			return sResult;
 		}
 
 	};
