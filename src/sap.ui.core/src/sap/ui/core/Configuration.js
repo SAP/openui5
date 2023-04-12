@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/base/Log",
 	"sap/base/assert",
+	"sap/base/config",
 	"sap/base/util/deepClone",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject"
@@ -35,6 +36,7 @@ sap.ui.define([
 		Version,
 		Log,
 		assert,
+		BaseConfig,
 		deepClone,
 		extend,
 		isEmptyObject
@@ -1518,11 +1520,20 @@ sap.ui.define([
 		 */
 		getSyncCallBehavior : function() {
 			var syncCallBehavior = 0; // ignore
-			if ( this.getValue('xx-nosync') === 'warn' || /(?:\?|&)sap-ui-xx-nosync=(?:warn)/.exec(window.location.search) ) {
+			var mOptions = {
+				name: "sapUiXxNoSync",
+				type: BaseConfig.Type.String,
+				external: true,
+				freeze: true
+			};
+			var sNoSync = BaseConfig.get(mOptions);
+			if (sNoSync === 'warn') {
 				syncCallBehavior = 1;
-			}
-			if ( this.getValue('xx-nosync') === true || this.getValue('xx-nosync') === 'true' || /(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search) ) {
-				syncCallBehavior = 2;
+			} else {
+				mOptions.type = BaseConfig.Type.Boolean;
+				if (BaseConfig.get(mOptions)) {
+					syncCallBehavior = 2;
+				}
 			}
 			return syncCallBehavior;
 		},

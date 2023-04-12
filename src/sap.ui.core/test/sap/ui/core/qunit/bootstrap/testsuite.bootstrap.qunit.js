@@ -362,14 +362,7 @@ sap.ui.define(function() {
 			},
 			"Configuration": {
 				group: "Configuration",
-				ui5: {
-					theme: "SapSampleTheme2",
-					language: "en",
-					calendarType: "islamic",
-					logLevel: "WARNING",
-					noConflict: "true",
-					libs: "sap.ui.core"
-				},
+				page: "test-resources/sap/ui/core/qunit/bootstrap/Configuration.qunit.html",
 				qunit: {
 					reorder: false
 				}
