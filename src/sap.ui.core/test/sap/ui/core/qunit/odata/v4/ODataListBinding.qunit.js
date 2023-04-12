@@ -1846,6 +1846,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getContexts: locked read group lock and diff", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oReadGroupLock = {
+				isLocked : function () {},
+				toString : function () { return "foo"; }
+			};
+
+		oBinding.oReadGroupLock = oReadGroupLock;
+		oBinding.oDiff = {};
+		this.mock(oBinding).expects("fetchContexts").never();
+		this.mock(oReadGroupLock).expects("isLocked").withExactArgs().returns(true);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.getContexts(0, 10);
+		}, new Error("Unexpected: foo"));
+	});
+
+	//*********************************************************************************************
 [false, /*see strictEqual below*/"true"].forEach(function (bUseExtendedChangeDetection) {
 	[/*destroyed early*/undefined, false, /*destroyed late*/0, true].forEach(function (bSuspend) {
 		var sTitle = "getContexts: AddVirtualContext, suspend:" + bSuspend
@@ -2127,11 +2146,15 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[false, true].forEach(function (bReadGroupLock) {
 	QUnit.test("getContexts: E.C.D, with diff", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
 				Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')")),
 			aContexts = [],
 			aDiff = [],
+			oReadGroupLock = {
+				isLocked : function () {}
+			},
 			aResults;
 
 		oBinding.enableExtendedChangeDetection();
@@ -2139,7 +2162,12 @@ sap.ui.define([
 			aDiff : aDiff,
 			iLength : 10
 		};
-
+		if (bReadGroupLock) {
+			oBinding.oReadGroupLock = oReadGroupLock;
+			this.mock(oReadGroupLock).expects("isLocked").withExactArgs().returns(false);
+			this.oLogMock.expects("error")
+				.withExactArgs("Unexpected", sinon.match.same(oReadGroupLock), sClassName);
+		}
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getDiff").never();
@@ -2154,7 +2182,9 @@ sap.ui.define([
 		assert.strictEqual(aContexts.dataRequested, false);
 		assert.strictEqual(aContexts.diff, aDiff);
 		assert.strictEqual(oBinding.oDiff, undefined);
+		assert.strictEqual(oBinding.oReadGroupLock, undefined);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts: E.C.D, with diff, length mismatch", function (assert) {
@@ -7310,6 +7340,7 @@ sap.ui.define([
 		this.mock(oDependent0).expects("resumeInternal").withExactArgs(true, false);
 		this.mock(oDependent1).expects("resumeInternal").withExactArgs(true, false);
 		this.mock(oBinding).expects("_fireRefresh").never();
+		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
 		// code under test
 		oBinding.resumeInternal(true/*ignored*/);
@@ -7335,6 +7366,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext), false);
 		this.mock(oBinding).expects("_fireRefresh").never();
+		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
 		// code under test
 		oBinding.resumeInternal(true/*ignored*/, true);
@@ -9658,7 +9690,7 @@ sap.ui.define([
 	QUnit.test("restoreCreated", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCache = {
-				getCreatedElements : function () { }
+				getCreatedElements : function () {}
 			},
 			oElement0 = {},
 			oElement1 = {"@$ui5.context.isInactive" : false},
