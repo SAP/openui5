@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/base/assert",
+	"sap/base/config",
 	"sap/ui/performance/Measurement",
 	"sap/base/util/uid",
 	"sap/base/util/isEmptyObject",
@@ -37,6 +38,7 @@ sap.ui.define([
 		KeyCodes,
 		Log,
 		assert,
+		BaseConfig,
 		Measurement,
 		uid,
 		isEmptyObject,
@@ -1418,7 +1420,12 @@ sap.ui.define([
 	UIArea.setCore = function(oCoreInstance) {
 		oCore = oCoreInstance;
 
-		var aUiAreas = Configuration.getValue("areas");
+		var aUiAreas = BaseConfig.get({
+			name: "sapUiAreas",
+			type: BaseConfig.Type.StringArray,
+			defaultValue: null,
+			freeze: true
+		});
 		// create any pre-configured UIAreas
 		if ( aUiAreas ) {
 			for (var i = 0, l = aUiAreas.length; i < l; i++) {
