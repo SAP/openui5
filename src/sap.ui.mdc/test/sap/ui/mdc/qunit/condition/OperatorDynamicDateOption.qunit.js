@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/type/Date",
-	"sap/ui/model/type/DateTime",
+	"sap/ui/model/odata/type/Date",
+	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/type/Integer",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UniversalDateUtils",
@@ -32,7 +32,7 @@ sap.ui.define([
 	ValidateException,
 	FilterOperator,
 	DateType,
-	DateTimeType,
+	DateTimeOffsetType,
 	IntegerType,
 	UniversalDate,
 	UniversalDateUtils,
@@ -63,7 +63,7 @@ sap.ui.define([
 
 	QUnit.module("Date type", {
 		beforeEach: function() {
-			oType = new DateType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
+			oType = new DateType({style: "long", calendarType: "Gregorian"});
 			oOperator = new Operator({
 				name: "Range",
 				// alias: "DATERANGE",
@@ -186,7 +186,7 @@ sap.ui.define([
 
 		var oValue = {
 			operator: "Date-Range",
-			values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]
+			values: ["2021-10-04", "2021-10-05"]
 		};
 		oDynamicDateRange.setValue(oValue);
 
@@ -195,10 +195,10 @@ sap.ui.define([
 		assert.equal(aControls.length, 2, "2 controls created");
 		assert.ok(aControls[0].isA("sap.m.DatePicker"), "First control is DatePicker");
 		assert.ok(aControls[1].isA("sap.m.DatePicker"), "Second control is DatePicker");
-		assert.deepEqual(aControls[0].getDateValue(), new Date(Date.UTC(2021, 9, 4)), "DateValue of first DatePicker");
+		assert.deepEqual(aControls[0].getDateValue(), UI5Date.getInstance(2021, 9, 4), "DateValue of first DatePicker"); // local date used for DatePicker
 		assert.equal(aControls[0].getDisplayFormat(), "long", "displayFormat of first DatePicker");
 		assert.equal(aControls[0].getDisplayFormatType(), "Gregorian", "displayFormatType of first DatePicker");
-		assert.deepEqual(aControls[1].getDateValue(), new Date(Date.UTC(2021, 9, 5)), "DateValue of second DatePicker");
+		assert.deepEqual(aControls[1].getDateValue(), UI5Date.getInstance(2021, 9, 5), "DateValue of second DatePicker");
 		assert.equal(aControls[1].getDisplayFormat(), "long", "displayFormat of second DatePicker");
 		assert.equal(aControls[1].getDisplayFormatType(), "Gregorian", "displayFormatType of second DatePicker");
 
@@ -231,14 +231,14 @@ sap.ui.define([
 
 		var oValue = {
 			operator: "Date-Range",
-			values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]
+			values: ["2021-10-04", "2021-10-05"]
 		};
 
 		var aRange = oOperatorDynamicDateOption.toDates(oValue);
 		assert.ok(Array.isArray(aRange), "Array returned");
 		assert.equal(aRange.length, 2, "Range length");
-		assert.deepEqual(aRange[0], UI5Date.getInstance(Date.UTC(2021, 9, 4)), "First value");
-		assert.deepEqual(aRange[1], UI5Date.getInstance(Date.UTC(2021, 9, 5)), "Second value");
+		assert.deepEqual(aRange[0], UI5Date.getInstance(2021, 9, 4), "First value"); // local dates used
+		assert.deepEqual(aRange[1], UI5Date.getInstance(2021, 9, 5), "Second value");
 
 	});
 
@@ -246,9 +246,9 @@ sap.ui.define([
 
 		var oValue = {
 			operator: "Date-Range",
-			values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]
+			values: ["2021-10-04", "2021-10-05"]
 		};
-		var sCheckResult = oType.formatValue(oValue.values[0], "string") + ":::" + oType.formatValue(oValue.values[1], "string"); // to have language independednt test (need not to check formmting of type here)
+		var sCheckResult = oType.formatValue(oValue.values[0], "string") + ":::" + oType.formatValue(oValue.values[1], "string"); // to have language independent test (need not to check formmting of type here)
 
 		var sResult = oOperatorDynamicDateOption.format(oValue);
 		assert.equal(sResult, sCheckResult, "formatted value");
@@ -259,9 +259,9 @@ sap.ui.define([
 
 		var oValue = {
 			operator: "Date-Range",
-			values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]
+			values: ["2021-10-04", "2021-10-05"]
 		};
-		var sCheckValue = oType.formatValue(oValue.values[0], "string") + ":::" + oType.formatValue(oValue.values[1], "string"); // to have language independednt test (need not to check formmting of type here)
+		var sCheckValue = oType.formatValue(oValue.values[0], "string") + ":::" + oType.formatValue(oValue.values[1], "string"); // to have language independent test (need not to check formmting of type here)
 
 		var oResult = oOperatorDynamicDateOption.parse(sCheckValue);
 		assert.deepEqual(oResult, oValue, "parsed value");
@@ -275,9 +275,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("DateTime type", {
+	QUnit.module("DateTimeOffset type", {
 		beforeEach: function() {
-			oType = new DateTimeType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
+			oType = new DateTimeOffsetType({style: "long", calendarType: "Gregorian", UTC: true}, {V4: true}); // UTC to check conversion
 			oOperator = new Operator({
 				name: "Equal",
 				// alias: "DATERANGE",
@@ -322,7 +322,7 @@ sap.ui.define([
 
 		var oValue = {
 			operator: "DateTime-Equal",
-			values: [new Date(Date.UTC(2022, 0, 18, 11, 17, 30))]
+			values: ["2022-01-18T11:17:30Z"] // as for custom operator value is taken in type representation
 		};
 		oDynamicDateRange.setValue(oValue);
 
@@ -330,7 +330,7 @@ sap.ui.define([
 		assert.ok(Array.isArray(aControls), "Array returned");
 		assert.equal(aControls.length, 1, "1 control created");
 		assert.ok(aControls[0].isA("sap.m.DateTimePicker"), "control is DateTimePicker");
-		assert.deepEqual(aControls[0].getDateValue(), new Date(Date.UTC(2022, 0, 18, 11, 17, 30)), "DateValue of first DateTimePicker");
+		assert.deepEqual(aControls[0].getDateValue(), new Date(2022, 0, 18, 11, 17, 30), "DateValue of first DateTimePicker"); // dateValue is local date
 		assert.equal(aControls[0].getDisplayFormat(), "long", "displayFormat of first DatePicker");
 		assert.equal(aControls[0].getDisplayFormatType(), "Gregorian", "displayFormatType of first DatePicker");
 
@@ -361,20 +361,20 @@ sap.ui.define([
 
 		var oValue = {
 			operator: "DateTime-Equal",
-			values: [new Date(Date.UTC(2022, 0, 18, 11, 17, 30))]
+			values: ["2022-01-18T11:17:30Z"] // as for custom operator value is taken in type representation
 		};
 
 		var aRange = oOperatorDynamicDateOption.toDates(oValue);
 		assert.ok(Array.isArray(aRange), "Array returned");
 		assert.equal(aRange.length, 2, "Range length");
-		assert.deepEqual(aRange[0], UI5Date.getInstance(Date.UTC(2022, 0, 18, 11, 17, 30)), "First value");
-		assert.deepEqual(aRange[1], UI5Date.getInstance(Date.UTC(2022, 0, 18, 11, 17, 30)), "Second value");
+		assert.deepEqual(aRange[0], UI5Date.getInstance(2022, 0, 18, 11, 17, 30), "First value"); // toDates uses local dates
+		assert.deepEqual(aRange[1], UI5Date.getInstance(2022, 0, 18, 11, 17, 30), "Second value");
 
 	});
 
 	QUnit.module("Integer RangeOperator", {
 		beforeEach: function() {
-			oType = new DateType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
+			oType = new DateType({style: "long", calendarType: "Gregorian"});
 			oOperator = new RangeOperator({
 				name: "Range",
 				// alias: "DATERANGE",
@@ -495,7 +495,7 @@ sap.ui.define([
 		assert.ok(Array.isArray(aRange), "Array returned");
 		assert.equal(aRange.length, 2, "Range length");
 		assert.deepEqual(aRange[0], UI5Date.getInstance(new Date().getFullYear(), 0, 1), "First value");
-		assert.deepEqual(aRange[1], UI5Date.getInstance(new Date().getFullYear(), 2, 31, 23, 59, 59, 999), "Second value"); // for some reasons Date-Type keeps time part (not happens for V4-type)
+		assert.deepEqual(aRange[1], UI5Date.getInstance(new Date().getFullYear(), 2, 31), "Second value");
 
 	});
 
@@ -525,7 +525,7 @@ sap.ui.define([
 
 	QUnit.module("Static RangeOperator", {
 		beforeEach: function() {
-			oType = new DateType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
+			oType = new DateType({style: "long", calendarType: "Gregorian"});
 			oOperator = new RangeOperator({
 				name: "MyToday",
 				tokenText: "MyToday",
@@ -601,7 +601,7 @@ sap.ui.define([
 		assert.ok(Array.isArray(aRange), "Array returned");
 		assert.equal(aRange.length, 2, "Range length");
 		assert.deepEqual(aRange[0], UI5Date.getInstance(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()), "First value");
-		assert.deepEqual(aRange[1], UI5Date.getInstance(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), 23, 59, 59, 999), "Second value"); // for some reasons Date-Type keeps time part (not happens for V4-type)
+		assert.deepEqual(aRange[1], UI5Date.getInstance(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()), "Second value");
 
 	});
 
