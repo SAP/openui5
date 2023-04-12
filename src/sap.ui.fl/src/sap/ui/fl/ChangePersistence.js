@@ -700,6 +700,16 @@ sap.ui.define([
 						parentVersion: sParentVersion
 					}).then(function(oResponse) {
 						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache, true);
+						if (oResponse && oResponse.status === 205) {
+							// need information to update VersionModel because condense route has no response
+							oResponse.response = aCondensedChanges.map(function(oChange) {
+								return {
+									layer: oChange.mProperties.layer,
+									fileName: oChange.getId(),
+									reference: oChange.mProperties.flexObjectMetadata.reference
+								};
+							});
+						}
 						return oResponse;
 					}.bind(this));
 				}
