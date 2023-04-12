@@ -1,27 +1,35 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
+	LoaderExtensions,
+	Control,
+	FlexState,
+	InitialStorage,
+	Layer,
+	Settings,
+	Utils,
 	Version,
 	ContextBasedAdaptationsAPI,
+	FlexObjectState,
 	Storage,
 	Versions,
-	Settings,
-	Layer,
-	Utils,
 	ManifestUtils,
-	Control,
 	JSONModel,
 	sinon
 ) {
@@ -32,40 +40,127 @@ sap.ui.define([
 
 	function stubSettings(sandbox) {
 		sandbox.stub(Settings, "getInstance").resolves({
-			isContextBasedAdaptationEnabled: function () {
+			isContextBasedAdaptationEnabled: function() {
 				return true;
 			},
-			isSystemWithTransports: function () {
+			isSystemWithTransports: function() {
 				return false;
 			}
 		});
-		sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
+	}
+
+	function verifyVariantsAndChanges(assert, oVariant, oCopiedVariant, bIsControlVariant, bIsChange) {
+		assert.strictEqual(oVariant.getChangeType(), oCopiedVariant.changeType, "there is the same change type");
+		assert.notStrictEqual(oVariant.getId(), oCopiedVariant.fileName, "there is a different filename");
+		assert.strictEqual(oVariant.getFileType(), oCopiedVariant.fileType, "there is the same file type");
+		assert.strictEqual(oVariant.getLayer(), oCopiedVariant.layer, "there is the same layer");
+		assert.strictEqual(oVariant.getNamespace(), oCopiedVariant.namespace, "there is the same name space");
+		assert.strictEqual(oVariant.getSupportInformation().originalLanguage, oCopiedVariant.originalLanguage, "there is the same original language");
+		assert.strictEqual(oVariant.getFlexObjectMetadata().projectId, oCopiedVariant.projectId, "there is the same project id");
+		assert.strictEqual(oVariant.getFlexObjectMetadata().reference, oCopiedVariant.reference, "there is the same reference");
+		if (oVariant.getDefinition().support.user) {
+			assert.strictEqual(oVariant.getDefinition().support.generator, oCopiedVariant.support.generator, "there is the generator");
+			assert.strictEqual(oVariant.getDefinition().support.sapui5Version, oCopiedVariant.support.sapui5Version, "there is the same sapui5Version");
+		} else {
+			assert.deepEqual(oVariant.getDefinition().support, oCopiedVariant.support, "there is the same support data");
+		}
+		assert.deepEqual(oVariant.getTexts(), oCopiedVariant.texts, "there is the same texts object");
+
+		if (bIsChange) {
+			if (oCopiedVariant.selector.variantId) {
+				assert.strictEqual(oCopiedVariant.selector.persistencyKey, oVariant.getSelector().persistencyKey, "there is the same persistencyKey");
+				assert.notStrictEqual(oCopiedVariant.selector.variantId, oVariant.getSelector().variantId, "there is not the same variantId");
+			}
+			if (oCopiedVariant.content.defaultVariantName) {
+				assert.notStrictEqual(oCopiedVariant.selector.defaultVariantName, oVariant.getContent().defaultVariantName, "there is not the same defaultVariantName");
+			} else {
+				assert.deepEqual(oCopiedVariant.content, oVariant.getContent(), "there is the same content object");
+			}
+			assert.deepEqual(oCopiedVariant.dependentSelector, oVariant.getDependentSelectors(), "there is the same dependentSelector");
+		}
+
+		if (!bIsChange) {
+			assert.strictEqual(oVariant.getExecuteOnSelection(), oCopiedVariant.executeOnSelection, "there is the same executeOnSelection value");
+			assert.strictEqual(oVariant.getFavorite(), oCopiedVariant.favorite, "there is the same favorite value");
+			assert.strictEqual(oVariant.getStandardVariant(), oCopiedVariant.standardVariant, "there is the same standard variant value");
+			assert.notStrictEqual(oVariant.getVariantId(), oCopiedVariant.variantId, "there is the same variant id");
+			assert.deepEqual(oVariant.getContent(), oCopiedVariant.content, "there is the same content");
+			assert.deepEqual(oVariant.getContexts(), oCopiedVariant.contexts, "there is the same contexts");
+			assert.deepEqual(oVariant.getDefinition().selector, oCopiedVariant.selector, "there is the same selector");
+			if (bIsControlVariant) {
+				assert.strictEqual(oVariant.getVariantManagementReference(), oCopiedVariant.variantManagementReference, "there is the correct variant management reference");
+				assert.notStrictEqual(oVariant.getVariantReference(), oCopiedVariant.variantReference, "there is the correct variant reference");
+			}
+		}
+	}
+
+	function findVariantAndVerify(assert, aVariants, aCopiedChanges, bIsControlVariant) {
+		aVariants.forEach(function(oVariant) {
+			// find copied variant by text in list of copied variants
+			var oCopiedVariant = aCopiedChanges.find(function(oCopiedChange) {
+				return oCopiedChange.texts.variantName.value === oVariant.getName();
+			});
+			assert.ok(oCopiedVariant !== undefined, "the correct copied comp variant is found");
+			verifyVariantsAndChanges(assert, oVariant, oCopiedVariant, bIsControlVariant);
+		});
+	}
+
+	function verifyChangesAreCopiedCorrectly(aCopiedChangeDefinitions, assert) {
+		return FlexObjectState.getFlexObjects({ selector: this.mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true })
+			.then(function(aFlexObjects) {
+				assert.strictEqual(aFlexObjects.length, aCopiedChangeDefinitions.length, "we have the length of objects");
+				var bIsAdapationIdAdded = aCopiedChangeDefinitions.every(function(oCopiedChange) {
+					return oCopiedChange.adaptationId;
+				});
+				assert.ok(bIsAdapationIdAdded, "adaptation id is added to every change/variant");
+				var sVariant = "sap.ui.fl.apply._internal.flexObjects.Variant";
+				var sFLVariant = "sap.ui.fl.apply._internal.flexObjects.FlVariant";
+				var sCompVariant = "sap.ui.fl.apply._internal.flexObjects.CompVariant";
+				var aCompVariants = aFlexObjects.filter(function(oFlexObject) { return oFlexObject.isA(sCompVariant); });
+				var aControlVariants = aFlexObjects.filter(function(oFlexObject) { return oFlexObject.isA(sFLVariant); });
+				var aChanges = aFlexObjects.filter(function(oFlexObject) {
+					return !oFlexObject.isA(sVariant);
+				});
+				if (aCompVariants.length > 0) {
+					findVariantAndVerify(assert, aCompVariants, aCopiedChangeDefinitions, false);
+				} else if (aControlVariants.length > 0) {
+					findVariantAndVerify(assert, aCompVariants, aCopiedChangeDefinitions, true);
+				}
+				if (aChanges.length > 0) {
+					aChanges.forEach(function(oChange) {
+						var oCopiedChange = aCopiedChangeDefinitions.find(function(oCopiedChange) {
+							return oCopiedChange.creation === oChange.getCreation();
+						});
+						verifyVariantsAndChanges(assert, oChange, oCopiedChange, false, true);
+					});
+				}
+			});
 	}
 
 	QUnit.module("Given ContextBasedAdaptationsAPI.initialize is called", {
-		before: function () {
+		before: function() {
 			this.oAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {
 						"sap.app": {
 							id: "com.sap.test.app"
 						}
 					};
 				},
-				getId: function () {
+				getId: function() {
 					return "sComponentId";
 				},
-				getComponentData: function () {
+				getComponentData: function() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			this.mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				control: new Control()
@@ -73,29 +168,29 @@ sap.ui.define([
 			stubSettings(sandbox);
 			ContextBasedAdaptationsAPI.clearInstances();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when no control is provided", function (assert) {
+	}, function() {
+		QUnit.test("when no control is provided", function(assert) {
 			delete this.mPropertyBag.control;
-			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No control was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when no layer is provided", function (assert) {
+		QUnit.test("when no layer is provided", function(assert) {
 			delete this.mPropertyBag.layer;
-			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No layer was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when a control and a layer were provided and a draft exists", function (assert) {
+		QUnit.test("when a control and a layer were provided and a draft exists", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return Version.Number.Draft;
 				}
 			});
@@ -107,7 +202,7 @@ sap.ui.define([
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 			var oLoadStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: []});
 
-			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function (oModel) {
+			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function(oModel) {
 				assert.equal(oLoadStub.callCount, 1, "contextBasedAdaptations.load was called once");
 				assert.ok(oModel instanceof JSONModel, "then the result is of type JSONModel");
 				assert.deepEqual(ContextBasedAdaptationsAPI.getAdaptationsModel(this.mPropertyBag), oModel, "then the adaptations model is initialized in session");
@@ -116,11 +211,11 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when a control and a layer were provided and a draft does not exists", function (assert) {
+		QUnit.test("when a control and a layer were provided and a draft does not exists", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return 1;
 				}
 			});
@@ -131,7 +226,7 @@ sap.ui.define([
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 			var oLoadStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: []});
 
-			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function (oModel) {
+			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function(oModel) {
 				assert.equal(oLoadStub.callCount, 1, "contextBasedAdaptations.load was called once");
 				assert.ok(oModel instanceof JSONModel, "then the result is of type JSONModel");
 				assert.deepEqual(ContextBasedAdaptationsAPI.getAdaptationsModel(this.mPropertyBag), oModel, "then the adaptations model is initialized in session");
@@ -142,7 +237,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ContextBasedAdaptationsAPI.createModel is called", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oExpectedFilledData = {
 				adaptations: [
 					{
@@ -193,34 +288,34 @@ sap.ui.define([
 				displayedAdaptation: {}
 			};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when nothing is provided", function (assert) {
+	}, function() {
+		QUnit.test("when nothing is provided", function(assert) {
 			assert.throws(function() {
 				ContextBasedAdaptationsAPI.createModel();
 			}, new Error("Adaptations model can only be initialized with an array of adaptations"), "then adaptation model cannot be initialized and throws error");
 		});
 
-		QUnit.test("when an empty list is provided", function (assert) {
+		QUnit.test("when an empty list is provided", function(assert) {
 			var oModel = ContextBasedAdaptationsAPI.createModel([]);
 			assert.deepEqual(oModel.getData(), this.oExpectedEmptyData, "then the adaptations model is created correctly with empty values");
 		});
 
-		QUnit.test("when a filled list of adaptations is provided", function (assert) {
+		QUnit.test("when a filled list of adaptations is provided", function(assert) {
 			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.adaptations);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 		});
 
-		QUnit.test("when an empty list of adaptations is initialized and later updated with 2 adaptations", function (assert) {
+		QUnit.test("when an empty list of adaptations is initialized and later updated with 2 adaptations", function(assert) {
 			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedEmptyData.adaptations);
 			assert.deepEqual(oModel.getData(), this.oExpectedEmptyData, "then the adaptations model is created correctly with empty values");
 			oModel.updateAdaptations(this.oExpectedFilledData.adaptations);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is updated correctly");
 		});
 
-		QUnit.test("when an empty list of adaptations is initialized and later 1 adaptation is inserted", function (assert) {
+		QUnit.test("when an empty list of adaptations is initialized and later 1 adaptation is inserted", function(assert) {
 			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedEmptyData.adaptations);
 			assert.deepEqual(oModel.getData(), this.oExpectedEmptyData, "then the adaptations model is created correctly with empty values");
 			var oNewAdaptation = {
@@ -237,29 +332,29 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ContextBasedAdaptationsAPI.getAdaptationsModel is called", {
-		before: function () {
+		before: function() {
 			this.oAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {
 						"sap.app": {
 							id: "com.sap.test.app"
 						}
 					};
 				},
-				getId: function () {
+				getId: function() {
 					return "sComponentId";
 				},
-				getComponentData: function () {
+				getComponentData: function() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			this.mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				control: new Control()
@@ -267,11 +362,11 @@ sap.ui.define([
 			stubSettings(sandbox);
 			ContextBasedAdaptationsAPI.clearInstances();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when no control is provided", function (assert) {
+	}, function() {
+		QUnit.test("when no control is provided", function(assert) {
 			assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag), "there is no adaptations model for this reference and layer");
 			delete this.mPropertyBag.control;
 			assert.throws(function() {
@@ -279,7 +374,7 @@ sap.ui.define([
 			}, new Error("No control was provided"), "then the correct error message is returned");
 		});
 
-		QUnit.test("when no layer is provided", function (assert) {
+		QUnit.test("when no layer is provided", function(assert) {
 			assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag), "there is no adaptations model for this reference and layer");
 			delete this.mPropertyBag.layer;
 			assert.throws(function() {
@@ -287,7 +382,7 @@ sap.ui.define([
 			}, new Error("No layer was provided"), "then the correct error message is returned");
 		});
 
-		QUnit.test("when a control and a layer were provided and adaptations model was not initialized", function (assert) {
+		QUnit.test("when a control and a layer were provided and adaptations model was not initialized", function(assert) {
 			assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag), "there is no adaptations model for this reference and layer");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
@@ -297,13 +392,13 @@ sap.ui.define([
 			}, new Error("Adaptations model for reference 'com.sap.test.app' and layer 'CUSTOMER' were not initialized."), "then the correct error message is returned");
 		});
 
-		QUnit.test("when a control and a layer were provided and adaptations model was initialized", function (assert) {
+		QUnit.test("when a control and a layer were provided and adaptations model was initialized", function(assert) {
 			assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag), "there is no adaptations model for this reference and layer");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
@@ -362,82 +457,80 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ContextBasedAdaptationsAPI.create is called", {
-		before: function () {
+		before: function() {
 			this.oAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {
 						"sap.app": {
 							id: "com.sap.test.app"
 						}
 					};
 				},
-				getId: function () {
+				getId: function() {
 					return "sComponentId";
 				},
-				getComponentData: function () {
+				getComponentData: function() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			this.mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				control: new Control(),
 				contextBasedAdaptation: {}
 			};
 			stubSettings(sandbox);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			this.oWriteChangesStub = sandbox.stub(Storage, "write").resolves("Success");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
+			FlexState.clearState();
 		}
-	}, function () {
-		QUnit.test("when no control is provided", function (assert) {
+	}, function() {
+		QUnit.test("when no control is provided", function(assert) {
 			delete this.mPropertyBag.control;
-			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No control was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when no layer is provided", function (assert) {
+		QUnit.test("when no layer is provided", function(assert) {
 			delete this.mPropertyBag.layer;
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
-			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
-			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No layer was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when no contextBasedAdaptation is provided", function (assert) {
+		QUnit.test("when no contextBasedAdaptation is provided", function(assert) {
 			delete this.mPropertyBag.contextBasedAdaptation;
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
-			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
-			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No contextBasedAdaptation was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when a control and a layer were provided and a draft exists", function (assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
-			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+		QUnit.test("when a control and a layer were provided and a draft exists and no changes exist", function(assert) {
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return Version.Number.Draft;
 				}
 			});
@@ -454,9 +547,8 @@ sap.ui.define([
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 			var oPublishStub = sandbox.stub(Storage.contextBasedAdaptation, "create").resolves("Success");
 
-			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).then(function (sResult) {
+			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oPublishStub.getCall(0).args[0];
-				assert.deepEqual(oArgs.flexObject, { id: "someFileName" }, "then the correct flexObject is used");
 				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
 				assert.equal(oArgs.parentVersion, Version.Number.Draft, "then the correct version is used");
 				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
@@ -464,11 +556,9 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a control and a layer were provided and a draft does not exists", function (assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
-			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+		QUnit.test("when a control and a layer were provided and a draft does not exists and no changes exist", function(assert) {
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return 1;
 				}
 			});
@@ -484,9 +574,8 @@ sap.ui.define([
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 			var oPublishStub = sandbox.stub(Storage.contextBasedAdaptation, "create").resolves("Success");
 
-			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).then(function (sResult) {
+			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oPublishStub.getCall(0).args[0];
-				assert.deepEqual(oArgs.flexObject, { id: "someFileName" }, "then the correct flexObject is used");
 				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
 				assert.equal(oArgs.parentVersion, 1, "then the correct version is used");
 				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
@@ -495,30 +584,147 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given ContextBasedAdaptationsAPI.reorder is called", {
-		before: function () {
+	QUnit.module("Given ContextBasedAdaptationsAPI.create is called with copy of changes", {
+		before: function() {
 			this.oAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {
 						"sap.app": {
 							id: "com.sap.test.app"
 						}
 					};
 				},
-				getId: function () {
+				getId: function() {
 					return "sComponentId";
 				},
-				getComponentData: function () {
+				getComponentData: function() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function () {
+		beforeEach: function() {
+			this.mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				control: new Control(),
+				contextBasedAdaptation: {}
+			};
+			stubSettings(sandbox);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: []});
+			this.oWriteChangesStub = sandbox.stub(Storage, "write").resolves("Success");
+			ContextBasedAdaptationsAPI.clearInstances();
+		},
+		afterEach: function() {
+			sandbox.restore();
+			FlexState.clearState();
+		}
+	}, function() {
+		var oCompVariantFlexDataResponse = LoaderExtensions.loadResource({
+			dataType: "json",
+			url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/variants/testCompVariants.json"),
+			async: false
+		});
+		var oFLVariantFlexDataResponse = LoaderExtensions.loadResource({
+			dataType: "json",
+			url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/variants/testFLVariants.json"),
+			async: false
+		});
+		[{
+			testName: "when there are control variant changes and no draft exists",
+			stubResponse: oFLVariantFlexDataResponse,
+			aReturnedVersions: [
+				{ version: "2" },
+				{ version: "1" }
+			],
+			stubVersionModel: 1
+		}, {
+			testName: "when there are comp. variant changes and no draft exists",
+			stubResponse: oCompVariantFlexDataResponse,
+			aReturnedVersions: [
+				{ version: "2" },
+				{ version: "1" }
+			],
+			stubVersionModel: 1
+		}, {
+			testName: "when there are control variant changes and a draft exists",
+			stubResponse: oFLVariantFlexDataResponse,
+			aReturnedVersions: [
+				{ version: Version.Number.Draft },
+				{ version: "2" },
+				{ version: "1" }
+			],
+			stubVersionModel: Version.Number.Draft
+		}, {
+			testName: "when there are comp. variant changes and a draft exists",
+			stubResponse: oCompVariantFlexDataResponse,
+			aReturnedVersions: [
+				{ version: Version.Number.Draft },
+				{ version: "2" },
+				{ version: "1" }
+			],
+			stubVersionModel: Version.Number.Draft
+		}].forEach(function(mSetup) {
+			QUnit.test(mSetup.testName, function(assert) {
+				sandbox.stub(Versions, "getVersionsModel").returns({
+					getProperty: function() {
+						return mSetup.stubVersionModel;
+					}
+				});
+
+				sandbox.stub(Storage.versions, "load").resolves(mSetup.aReturnedVersions);
+				sandbox.stub(InitialStorage, "loadFlexData").resolves(mSetup.stubResponse);
+				var oPublishStub = sandbox.stub(Storage.contextBasedAdaptation, "create").resolves("Success");
+
+				assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag), "there is no adaptations model for this reference and layer");
+				return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function() {
+					return ContextBasedAdaptationsAPI.create(this.mPropertyBag).then(function(sResult) {
+						var oArgs = oPublishStub.getCall(0).args[0];
+						assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+						if (mSetup.stubVersionModel === Version.Number.Draft) {
+							assert.equal(oArgs.parentVersion, Version.Number.Draft, "then the correct version is used");
+						} else {
+							assert.equal(oArgs.parentVersion, 1, "then the correct version is used");
+						}
+						assert.equal(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
+						assert.equal(sResult, "Success", "the context-based adaptation is created");
+						var oWriteArgs = this.oWriteChangesStub.getCall(0).args[0];
+						return verifyChangesAreCopiedCorrectly.call(this, oWriteArgs.flexObjects, assert);
+					}.bind(this));
+				}.bind(this));
+			});
+		});
+	});
+
+	QUnit.module("Given ContextBasedAdaptationsAPI.reorder is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest: function() {
+					return {};
+				},
+				getManifestObject: function() {
+					return {
+						"sap.app": {
+							id: "com.sap.test.app"
+						}
+					};
+				},
+				getId: function() {
+					return "sComponentId";
+				},
+				getComponentData: function() {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
+		beforeEach: function() {
 			this.mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				control: new Control(),
@@ -528,59 +734,59 @@ sap.ui.define([
 			};
 			stubSettings(sandbox);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when no control is provided", function (assert) {
+	}, function() {
+		QUnit.test("when no control is provided", function(assert) {
 			delete this.mPropertyBag.control;
-			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No control was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when no layer is provided", function (assert) {
+		QUnit.test("when no layer is provided", function(assert) {
 			delete this.mPropertyBag.layer;
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
-			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No layer was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when no priorities list is provided", function (assert) {
+		QUnit.test("when no priorities list is provided", function(assert) {
 			delete this.mPropertyBag.parameters;
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
-			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No valid priority list was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when control and layer and prorities list are provided", function (assert) {
+		QUnit.test("when control and layer and prorities list are provided", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
 
 			var oReorderStub = sandbox.stub(Storage.contextBasedAdaptation, "reorder").resolves("Success");
-			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).then(function (sResult) {
+			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oReorderStub.getCall(0).args[0];
 				assert.deepEqual(oArgs.flexObjects, this.mPropertyBag.parameters, "then the correct parameters with priority list is used");
 				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
@@ -592,67 +798,67 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ContextBasedAdaptationsAPI.load is called", {
-		before: function () {
+		before: function() {
 			this.oAppComponent = {
-				getManifest: function () {
+				getManifest: function() {
 					return {};
 				},
-				getManifestObject: function () {
+				getManifestObject: function() {
 					return {
 						"sap.app": {
 							id: "com.sap.test.app"
 						}
 					};
 				},
-				getId: function () {
+				getId: function() {
 					return "sComponentId";
 				},
-				getComponentData: function () {
+				getComponentData: function() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			this.mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				control: new Control()
 			};
 			stubSettings(sandbox);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when no control is provided", function (assert) {
+	}, function() {
+		QUnit.test("when no control is provided", function(assert) {
 			delete this.mPropertyBag.control;
-			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No control was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when no layer is provided", function (assert) {
+		QUnit.test("when no layer is provided", function(assert) {
 			delete this.mPropertyBag.layer;
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
-			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).catch(function (sError) {
+			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).catch(function(sError) {
 				assert.equal(sError, "No layer was provided", "then the correct error message is returned");
 			});
 		});
 
-		QUnit.test("when control and layer is provided and context-based adaptation response is returned", function (assert) {
+		QUnit.test("when control and layer is provided and context-based adaptation response is returned", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
@@ -685,7 +891,7 @@ sap.ui.define([
 				]
 			};
 			var oReorderStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves(aAdaptations);
-			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).then(function (sResult) {
+			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oReorderStub.getCall(0).args[0];
 				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
 				assert.equal(oArgs.version, 1, "then correct version is used");
@@ -695,18 +901,18 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when control and layer is provided and an empty response is returned", function (assert) {
+		QUnit.test("when control and layer is provided and an empty response is returned", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function () {
+				getProperty: function() {
 					return sActiveVersion;
 				}
 			});
 
 			var oReorderStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves();
-			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).then(function (sResult) {
+			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oReorderStub.getCall(0).args[0];
 				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
 				assert.equal(oArgs.version, 1, "then the correct version is used");

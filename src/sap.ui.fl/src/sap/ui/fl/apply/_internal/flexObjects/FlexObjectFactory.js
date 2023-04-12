@@ -59,6 +59,7 @@ sap.ui.define([
 		var sFileName = mProperties.fileName || mProperties.id || Utils.createDefaultFileName(sChangeType);
 		return {
 			id: sFileName,
+			adaptationId: mProperties.adaptationId,
 			layer: mProperties.layer,
 			content: mProperties.content,
 			texts: mProperties.texts,

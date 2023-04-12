@@ -246,6 +246,24 @@ sap.ui.define([
 			var oBaseVariant = FlexObjectFactory.createFromFileContent(this.mFileContent, CompVariant);
 			assert.strictEqual(oBaseVariant.getVariantId(), "variant-id", "then the variant id is set correctly");
 		});
+
+		QUnit.test("when 'cloneFileContentWithNewId' is called", function(assert) {
+			this.mFileContent = {
+				variantId: "variant-id"
+			};
+			var oBaseVariant = FlexObjectFactory.createFromFileContent(this.mFileContent, CompVariant);
+			var oCopiedCompVariantContent = oBaseVariant.cloneFileContentWithNewId();
+			var oCopiedCompVariant = FlexObjectFactory.createFromFileContent(oCopiedCompVariantContent);
+
+			assert.strictEqual(oBaseVariant.getSupportInformation().user, oCopiedCompVariant.getSupportInformation().user, "the user is properly set");
+			assert.strictEqual(oBaseVariant.getSupportInformation().generator, oCopiedCompVariant.getSupportInformation().generator, "the generator is properly set");
+			assert.strictEqual(oBaseVariant.getFlexObjectMetadata().reference, oCopiedCompVariant.getFlexObjectMetadata().reference, "the reference is properly set");
+			assert.strictEqual(oBaseVariant.getName(), oCopiedCompVariant.getName(), "the variant name is properly set");
+			assert.strictEqual(oBaseVariant.getLayer(), oCopiedCompVariant.getLayer(), "the layer is properly set");
+			assert.notStrictEqual(oBaseVariant.getId(), oCopiedCompVariant.getId(), "the Id is properly set");
+			assert.notStrictEqual(oBaseVariant.getVariantId(), oCopiedCompVariant.getVariantId(), "the variantId is properly set");
+			assert.deepEqual(oBaseVariant.getContexts(), oCopiedCompVariant.getContexts(), "the contexts are properly set");
+		});
 	});
 
 	var aScenarios = [{
@@ -581,14 +599,14 @@ sap.ui.define([
 			assert.equal(oVariant.isDeleteEnabled(Layer.VENDOR), false, "then the boolean for deleteEnabled was determined correct");
 		});
 
-		aScenarios.forEach(function (mTestSetup) {
+		aScenarios.forEach(function(mTestSetup) {
 			QUnit.test(mTestSetup.testName, function(assert) {
 				// mocked settings
 				Settings._instance = new Settings(mTestSetup.settings);
 				stubCurrentUser(mTestSetup.currentUser);
 				if (mTestSetup.sapUiLayerUrlParameter) {
 					sandbox.stub(UriParameters, "fromQuery").returns({
-						get: function () {
+						get: function() {
 							return mTestSetup.sapUiLayerUrlParameter;
 						}
 					});
@@ -603,7 +621,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

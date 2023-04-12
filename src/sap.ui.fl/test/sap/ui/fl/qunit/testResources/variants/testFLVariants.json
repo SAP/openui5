@@ -1,0 +1,197 @@
+{
+    "appDescriptorChanges": [],
+    "changes": [],
+    "ui2personalization": {},
+    "comp": {
+        "variants": [],
+        "changes": [],
+        "defaultVariants": [],
+        "standardVariants": []
+    },
+    "variants": [
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676895342319_200_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "Standard xx XX",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {
+                "role": [
+                    "/IPRO/GROUP_MANAGER"
+                ]
+            },
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:16:07.4726980Z",
+            "self": "id_1676895342319_200_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676895355326_232_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "Standard io",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "contexts": {
+                "role": [
+                    "/IPRO/MANAGER"
+                ]
+            },
+            "variantReference": "app--variantManagementContained",
+            "variantManagementReference": "app--variantManagementContained",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:16:07.4755880Z",
+            "self": "id_1676895355326_232_flVariant"
+        }
+    ],
+    "variantChanges": [
+        {
+            "changeType": "setTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "ctrl_variant_change",
+            "fileName": "id_1676895329360_166_setTitle",
+            "content": {
+                "title": "Standard xx"
+            },
+            "texts": {
+                "title": {
+                    "value": "Standard xx",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--variantManagementOrdersTable",
+                "idIsLocal": false
+            },
+            "dependentSelector": {},
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:16:07.4678670Z"
+        }
+    ],
+    "variantDependentControlChanges": [
+        {
+            "changeType": "renameTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1676895412759_252_renameTitle",
+            "content": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {
+                "formText": {
+                    "value": "hllo world",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--MainForm",
+                "idIsLocal": true
+            },
+            "dependentSelector": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "jsOnly": false,
+            "variantReference": "id_1676895342319_200_flVariant",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:17:14.9625510Z"
+        },
+        {
+            "changeType": "rename",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "CUSTOMER",
+            "fileType": "change",
+            "fileName": "id_1676895422719_258_rename",
+            "content": {
+                "originalControlType": "sap.uxap.ObjectPageSubSection"
+            },
+            "texts": {
+                "newText": {
+                    "value": "SubSection 1öäöä",
+                    "type": "XGRP"
+                }
+            },
+            "selector": {
+                "id": "app--ObjectPageSectionForNavigationSubSection1",
+                "idIsLocal": true
+            },
+            "dependentSelector": {},
+            "jsOnly": false,
+            "variantReference": "id_1676895342319_200_flVariant",
+            "versionId": "42010AEECAD31EEDACA30B4EC2363C94",
+            "creation": "2023-02-20T12:17:14.9787470Z"
+        }
+    ],
+    "variantManagementChanges": [],
+    "cacheKey": "\"WEeURqO2TLG0uIHM4X2F0/rd5B8=\""
+}
