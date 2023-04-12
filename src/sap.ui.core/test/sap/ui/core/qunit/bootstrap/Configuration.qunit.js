@@ -264,8 +264,7 @@ sap.ui.define([
 		assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
 	});
 
-	// TODO Timezone Configuration: Unskip when re-enabling Configuration#setTimezone functionality
-	QUnit.skip("setTimezone('America/New_York') - simple", function(assert) {
+	QUnit.test("setTimezone('America/New_York') - simple", function(assert) {
 		var sDifferentTimezone = sLocalTimezone === "Europe/Berlin" ? "America/New_York" : "Europe/Berlin";
 		this.oConfig.setTimezone(sDifferentTimezone);
 		assert.equal(this.oConfig.getTimezone(), sDifferentTimezone, "timezone should be '" + sDifferentTimezone + "'");
@@ -775,9 +774,7 @@ sap.ui.define([
 		Configuration.setCore();
 
 		// verify results
-		// TODO Timezone Configuration: expected test when re-enabling Configuration#setTimezone functionality
-		// assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
-		assert.equal(Configuration.getTimezone(), sLocalTimezone, 'sap-ui-timezone is not supported');
+		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
 	});
 
 	QUnit.test("Read timezone from URL sap-timezone", function(assert) {
