@@ -1,7 +1,13 @@
 /*!
 * ${copyright}
 */
-sap.ui.define(["ui5loader-autoconfig"], function() {
+sap.ui.define([
+	"sap/base/config/MemoryConfigurationProvider",
+	"ui5loader-autoconfig"
+], function(
+	MemoryConfigurationProvider
+	/*autoconfig*/
+) {
 	"use strict";
 
 	/**
@@ -10,9 +16,28 @@ sap.ui.define(["ui5loader-autoconfig"], function() {
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @name module:sap/base/config
+	 * @alias module:sap/base/config
 	 * @namespace
 	 */
 
-	return sap.ui.require("sap/base/config/_Configuration");
+	var _Configuration = sap.ui.require("sap/base/config/_Configuration");
+
+	/**
+	 * Returns a writable base configuration instance
+	 * @returns {sap.base.config} The writable base configuration
+	 */
+	_Configuration.getWritableInstance = function() {
+		var oProvider = new MemoryConfigurationProvider();
+
+		return {
+			set: oProvider.set.bind(oProvider),
+			get: function(mOptions) {
+				mOptions.provider = oProvider;
+				return _Configuration.get(mOptions);
+			},
+			Type: _Configuration.Type
+		};
+	};
+
+	return _Configuration;
 });
