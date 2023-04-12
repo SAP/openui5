@@ -27,7 +27,7 @@ sap.ui.define([
 	var aNumericInputFields = ["frameWidth", "frameHeight"];
 	var aUnitsOfWidthMeasure = [{
 		unit: "%",
-		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT")
+		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_SECTION")
 	}, {
 		unit: "px",
 		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX")
