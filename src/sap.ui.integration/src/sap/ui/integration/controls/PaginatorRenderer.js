@@ -69,7 +69,7 @@ sap.ui.define([
 				}
 
 				oRm.openEnd()
-					.text(i + 1)
+
 					.close("span");
 			}
 		} else {
