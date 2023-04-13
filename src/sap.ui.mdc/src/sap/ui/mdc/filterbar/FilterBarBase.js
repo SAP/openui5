@@ -1239,7 +1239,7 @@ sap.ui.define([
 				 this._fResolvedSearchPromise();
 			 }
 		 } else if (this._fRejectedSearchPromise) {
-			 //this._setFocusOnFirstErroneousField();
+			 this._setFocusOnFirstErroneousField();
 			 this._fRejectedSearchPromise();
 		 }
 
