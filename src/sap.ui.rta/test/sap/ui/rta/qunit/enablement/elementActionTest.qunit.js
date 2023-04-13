@@ -80,7 +80,8 @@ sap.ui.define([
 	var fnConfirmFormContainerIsVisible = function(oUiComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("container").getVisible(), true, "then the form container is visible");
 	};
-	elementActionTest("Checking the remove action for a simple control with always async view and preprocessors", {
+
+	elementActionTest("Checking the remove action for a simple control with always async view, async control retrieval and preprocessors", {
 		xmlView: {
 			viewContent:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.layout.form">' +
@@ -98,7 +99,9 @@ sap.ui.define([
 		},
 		action: {
 			name: "remove",
-			controlId: "container",
+			control: function(oView) {
+				return Promise.resolve(oView.byId("container"));
+			},
 			parameter: function(oView) {
 				return {
 					removedElement: oView.byId("container")
