@@ -145,6 +145,7 @@
 				</Button>
 				<MenuButton
 						id="sapUiRta_contextBasedAdaptationMenu"
+						tooltip="{parts: [{path: 'contextBasedAdaptations>/count'}, {path: 'contextBasedAdaptations>/displayedAdaptation/title'}], formatter: '.formatAdaptationsMenuText'}"
 						text="{parts: [{path: 'contextBasedAdaptations>/count'}, {path: 'contextBasedAdaptations>/displayedAdaptation/title'}], formatter: '.formatAdaptationsMenuText'}"
 						visible="{= (${controls>/contextBasedAdaptation/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}">
 					<Menu>
