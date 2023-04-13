@@ -827,10 +827,17 @@ sap.ui.define([
 			var oRow = oTable.getRows()[iRowIdx] || null;
 			var aColumns = bIdxInColumnAgg ? oTable.getColumns() : oTable._getVisibleColumns();
 			var oColumn = aColumns[iColIdx] || null;
+			var Column;
 			var oCell = null;
 
 			if (oRow && oColumn) {
-				var Column = oColumn.getMetadata().getClass();
+				if (!Column) {
+					var ColumnMetadata = oColumn.getMetadata();
+					while (ColumnMetadata.getName() !== "sap.ui.table.Column") {
+						ColumnMetadata = ColumnMetadata.getParent();
+					}
+					Column = ColumnMetadata.getClass();
+				}
 
 				oCell = oRow.getCells().find(function(oCell) {
 					return oColumn === Column.ofCell(oCell);
