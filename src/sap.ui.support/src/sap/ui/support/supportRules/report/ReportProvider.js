@@ -6,7 +6,7 @@
  * Creates a report from data.
  */
 sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', 'sap/base/security/encodeXML', 'sap/base/util/isEmptyObject', 'sap/base/util/isPlainObject', 'sap/ui/support/supportRules/report/Archiver',
-	'sap/ui/support/supportRules/report/IssueRenderer'], function(jQuery, Log, encodeXML, isEmptyObject, isPlainObject, Archiver, IssueRenderer) {
+	'sap/ui/support/supportRules/report/IssueRenderer', 'sap/ui/core/date/UI5Date'], function(jQuery, Log, encodeXML, isEmptyObject, isPlainObject, Archiver, IssueRenderer, UI5Date) {
 	'use strict';
 
 	// Private fields
@@ -325,7 +325,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', 'sap/base/security/en
 				metadataTitleIssues: 'Issues',
 				metadataTitleAppInfo: 'Application Information',
 				metadataTitleSelectedRules: 'Available and (<span class="checked"></span>) Selected Rules',
-				metadataTimestamp: new Date(),
+				metadataTimestamp: UI5Date.getInstance(),
 				metadataScope: getScope(oData.scope),
 				metadataAnalysisDuration: oData.analysisDuration,
 				metadataAnalysisDurationTitle: oData.analysisDurationTitle

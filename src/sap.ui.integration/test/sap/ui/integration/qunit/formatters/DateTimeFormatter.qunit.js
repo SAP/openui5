@@ -2,19 +2,21 @@
 sap.ui.define([
 	"sap/ui/integration/formatters/DateTimeFormatter",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/date/UniversalDate"
+	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/date/UI5Date"
 ],
 function (
 	DateTimeFormatter,
 	CoreDateFormat,
-	UniversalDate
+	UniversalDate,
+	UI5Date
 ) {
 	"use strict";
 
 	QUnit.module("DateTimeFormatter");
 
 	QUnit.test("Format date should be dd MMM yy", function (assert) {
-		var oDateResult = DateTimeFormatter.dateTime(new Date(1993, 11, 11), {format: "yMMMd"});
+		var oDateResult = DateTimeFormatter.dateTime(UI5Date.getInstance(1993, 11, 11), {format: "yMMMd"});
 		assert.strictEqual(oDateResult, "Dec 11, 1993", "Date is formatted correctly");
 	});
 

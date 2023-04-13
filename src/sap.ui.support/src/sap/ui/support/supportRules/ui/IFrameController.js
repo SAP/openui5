@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
-	"sap/ui/thirdparty/URI"
+	"sap/ui/thirdparty/URI",
+	"sap/ui/core/date/UI5Date"
 ],
-function (Log, ManagedObject, CommunicationBus, channelNames, constants, URI) {
+function (Log, ManagedObject, CommunicationBus, channelNames, constants, URI, UI5Date) {
 	"use strict";
 
 	var oIFrameController = null;
@@ -31,7 +32,7 @@ function (Log, ManagedObject, CommunicationBus, channelNames, constants, URI) {
 	}
 
 	function generateIdentifier() {
-		return '' + +new Date();
+		return '' + +UI5Date.getInstance();
 	}
 
 	function openFrame(sUrl) {

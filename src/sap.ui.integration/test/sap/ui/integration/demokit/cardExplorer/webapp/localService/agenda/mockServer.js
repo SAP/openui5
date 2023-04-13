@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
-	"sap/ui/thirdparty/jquery"
-], function (MockServer, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/UI5Date"
+], function (MockServer, jQuery, UI5Date) {
 	"use strict";
 
 	var oMockServer,
@@ -25,8 +26,8 @@ sap.ui.define([
 
 	function filterData (sStartDate, sEndDate) {
 		return aData.filter(function (oEntry) {
-			var oTime = new Date(oEntry.Time);
-			return oTime >= new Date(sStartDate) && oTime <= new Date(sEndDate);
+			var oTime = UI5Date.getInstance(oEntry.Time);
+			return oTime >= UI5Date.getInstance(sStartDate) && oTime <= UI5Date.getInstance(sEndDate);
 		});
 	}
 

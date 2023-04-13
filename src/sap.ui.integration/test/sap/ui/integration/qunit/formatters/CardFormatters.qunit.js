@@ -1,10 +1,12 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
 ], function (
 	Card,
-	Core
+	Core,
+	UI5Date
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -44,7 +46,7 @@ sap.ui.define([
 					}
 				}
 			},
-			sYear = new Date().getUTCFullYear();
+			sYear = UI5Date.getInstance().getUTCFullYear();
 
 		this.oCard.attachEventOnce("_ready", function () {
 			var sTitle = this.oCard.getCardHeader().getTitle();
@@ -85,7 +87,7 @@ sap.ui.define([
 					}
 				}
 			},
-			sYear = new Date().getUTCFullYear();
+			sYear = UI5Date.getInstance().getUTCFullYear();
 
 		this.oCard.attachEventOnce("_ready", function () {
 			var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
@@ -131,7 +133,7 @@ sap.ui.define([
 					}
 				}
 			},
-			sYear = new Date().getUTCFullYear();
+			sYear = UI5Date.getInstance().getUTCFullYear();
 
 		this.oCard.attachEvent("_ready", function () {
 			var oObjectContent = this.oCard.getAggregation("_content");
@@ -182,7 +184,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			var oCardContent = this.oCard.getAggregation("_content"),
 				oTable = oCardContent.getAggregation("_content"),
-				sYear = new Date().getUTCFullYear(),
+				sYear = UI5Date.getInstance().getUTCFullYear(),
 				aCells = oTable.getItems()[0].getCells();
 
 			Core.applyChanges();

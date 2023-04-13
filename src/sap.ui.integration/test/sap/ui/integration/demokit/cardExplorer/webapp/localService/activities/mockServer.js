@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
-	"sap/ui/thirdparty/jquery"
-], function (MockServer, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/UI5Date"
+], function (MockServer, jQuery, UI5Date) {
 	"use strict";
 
 	var oMockServer,
@@ -20,10 +21,10 @@ sap.ui.define([
 	}
 
 	function prepareData (_aData) {
-		var oToday = new Date();
+		var oToday = UI5Date.getInstance();
 
 		aData = _aData.map(function (oEntry) {
-			var oTime = new Date(oEntry.Time);
+			var oTime = UI5Date.getInstance(oEntry.Time);
 			oTime.setMonth(oToday.getMonth()); // always use the current month
 			oTime.setFullYear(oToday.getFullYear()); // always use the current year
 
@@ -32,7 +33,7 @@ sap.ui.define([
 			var iRandomDayOffset = aOffsets[Math.floor(Math.random() * aOffsets.length)];
 
 			// randomly distribute the entries between yesterday, today and tomorrow
-			oTime.setDate(new Date().getDate() + iRandomDayOffset);
+			oTime.setDate(UI5Date.getInstance().getDate() + iRandomDayOffset);
 			oEntry.Time = oTime	.toISOString();
 
 			return oEntry;
@@ -41,8 +42,8 @@ sap.ui.define([
 
 	function filterData (sStartDate, sEndDate) {
 		return aData.filter(function (oEntry) {
-			var oTime = new Date(oEntry.Time);
-			return oTime >= new Date(sStartDate) && oTime <= new Date(sEndDate);
+			var oTime = UI5Date.getInstance(oEntry.Time);
+			return oTime >= UI5Date.getInstance(sStartDate) && oTime <= UI5Date.getInstance(sEndDate);
 		});
 	}
 

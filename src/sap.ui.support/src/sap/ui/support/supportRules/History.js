@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/RuleSetLoader",
 	"sap/ui/support/supportRules/report/StringHistoryFormatter",
-	"sap/ui/support/supportRules/report/AbapHistoryFormatter"
+	"sap/ui/support/supportRules/report/AbapHistoryFormatter",
+	"sap/ui/core/date/UI5Date"
 ],
-function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHistoryFormatter) {
+function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHistoryFormatter, UI5Date) {
 	"use strict";
 
 	/**
@@ -153,7 +154,7 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 					oSelectedRulePreset = oContext._oSelectedRulePreset;
 
 				_aRuns.push({
-					date: new Date().toUTCString(),
+					date: UI5Date.getInstance().toUTCString(),
 					issues: mIssues,
 					onlyIssues: aIssues,
 					application: oContext._oDataCollector.getAppInfo(),

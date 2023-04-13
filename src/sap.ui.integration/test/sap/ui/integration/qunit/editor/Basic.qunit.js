@@ -12,7 +12,10 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/core/date/UI5Date"
+
+
 ], function (
 	merge,
 	x,
@@ -26,7 +29,8 @@ sap.ui.define([
 	QUnitUtils,
 	KeyCodes,
 	ResourceBundle,
-	EditorQunitUtils
+	EditorQunitUtils,
+	UI5Date
 ) {
 	"use strict";
 
@@ -1445,7 +1449,7 @@ sap.ui.define([
 					//force rendering
 					Core.applyChanges();
 					//check the change event handling of the field
-					oField.getAggregation("_field").setValue(new Date());
+					oField.getAggregation("_field").setValue(UI5Date.getInstance());
 					// oField.getAggregation("_field").fireChange({ valid: true });
 					// assert.equal(oField.getAggregation("_field").getBinding("value").getValue(), oField.getAggregation("_field").getValue(), "Field: Date Field binding raw value '" + oField.getAggregation("_field").getValue() + "' ");
 					oField.getAggregation("_field").fireChange({ valid: false });
@@ -1469,7 +1473,7 @@ sap.ui.define([
 					//force rendering
 					Core.applyChanges();
 					//check the change event handling of the field
-					oField.getAggregation("_field").setValue(new Date());
+					oField.getAggregation("_field").setValue(UI5Date.getInstance());
 					// oField.getAggregation("_field").fireChange({ valid: true });
 					// assert.equal(oField.getAggregation("_field").getBinding("value").getValue(), oField.getAggregation("_field").getValue().toISOString(), "Field: DateTime Field binding raw value '" + oField.getAggregation("_field").getDateValue().toISOString() + "' ");
 					oField.getAggregation("_field").fireChange({ valid: false });

@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/support/supportRules/util/Utils",
 	"sap/m/GroupHeaderListItem",
 	"sap/base/util/deepExtend",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/date/UI5Date"
 ], function (
 	BaseController,
 	SelectionUtils,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Utils,
 	GroupHeaderListItem,
 	deepExtend,
-	coreLibrary
+	coreLibrary,
+	UI5Date
 ) {
 	"use strict";
 
@@ -310,7 +312,7 @@ sap.ui.define([
 
 			// parse the date exported value, so it can be displayed
 			if (oFileData.dateExported) {
-				oFileData.dateExported = new Date(oFileData.dateExported);
+				oFileData.dateExported = UI5Date.getInstance(oFileData.dateExported);
 			}
 
 			this.oModel.setProperty("/currentImportData", oFileData);
@@ -374,7 +376,7 @@ sap.ui.define([
 			"id": (oCurrentPreset.isMySelection || oCurrentPreset.isSystemPreset) ? "" : oCurrentPreset.id,
 			"title": oCurrentPreset.title,
 			"descriptionValue": oCurrentPreset.description, // there is an issue on build if we use ${description}
-			"dateExportedForDisplay": new Date(), // the current date is shown as export date
+			"dateExportedForDisplay": UI5Date.getInstance(), // the current date is shown as export date
 			"isMySelection": oCurrentPreset.isMySelection
 		});
 

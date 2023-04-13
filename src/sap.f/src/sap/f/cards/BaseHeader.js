@@ -246,7 +246,7 @@ sap.ui.define([
 		sFormattedText = oDateFormat.format(oUniversalDate);
 
 		// no less than "1 minute ago" should be shown, "30 seconds ago" should not be shown
-		if (oUniversalDate.getTime() + 59000 > (new Date()).getTime()) {
+		if (oUniversalDate.getTime() + 59000 > Date.now()) {
 			sFormattedText = "now"; //@todo get formatted (translated text) for "now"
 		}
 

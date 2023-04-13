@@ -507,13 +507,13 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/ElementMetadata', '../Plugin', "sap
 
 			return function() {
 
-				var time = (new Date()).getTime();
+				var time = Date.now();
 
 				/*eslint-disable no-debugger */
 				debugger;
 				/*eslint-enable no-debugger */
 
-				if ((new Date().getTime()) - time < 50) {
+				if (Date.now() - time < 50) {
 					that._alertNoDebugger();
 				}
 

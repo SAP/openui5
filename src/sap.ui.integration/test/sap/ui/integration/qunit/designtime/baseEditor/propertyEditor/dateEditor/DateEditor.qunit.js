@@ -5,13 +5,17 @@ sap.ui.define([
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+
+
 ], function (
 	BaseEditor,
 	EditorQunitUtils,
 	DateFormat,
 	sinon,
-	oCore
+	oCore,
+	UI5Date
 ) {
 	"use strict";
 
@@ -66,7 +70,7 @@ sap.ui.define([
 				this.oDateEditorElement.getValue(),
 				DateFormat.getDateInstance({
 					pattern: "yyyy-MM-dd"
-				}).format(new Date(sampleDate)),
+				}).format(UI5Date.getInstance(sampleDate)),
 				"Then the editor has the correct value"
 			);
 		});
@@ -175,7 +179,7 @@ sap.ui.define([
 					oDateEditor.getContent().getValue(),
 					DateFormat.getDateInstance({
 						pattern: "yyyy-MM-dd"
-					}).format(new Date(sampleDate), true),
+					}).format(UI5Date.getInstance(sampleDate), true),
 					"then the date picker value is properly formatted"
 				);
 
@@ -183,7 +187,7 @@ sap.ui.define([
 					oDateEditor.getContent(),
 					DateFormat.getDateInstance({
 						pattern: "yyyy-MM-dd"
-					}).format(new Date("2021-10-19T08:35:20.902Z"), true)
+					}).format(UI5Date.getInstance("2021-10-19T08:35:20.902Z"), true)
 				);
 
 				assert.strictEqual(
@@ -195,7 +199,7 @@ sap.ui.define([
 					oDateEditor.getContent().getValue(),
 					DateFormat.getDateInstance({
 						pattern: "yyyy-MM-dd"
-					}).format(new Date("2021-10-19T08:35:20.902Z"), true),
+					}).format(UI5Date.getInstance("2021-10-19T08:35:20.902Z"), true),
 					"then the date picker value is properly formatted"
 				);
 			});

@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/date/UI5Date"
 ], function (
 	Card,
 	RequestDataProvider,
 	Host,
 	Core,
 	KeyCodes,
-	QUnitUtils
+	QUnitUtils,
+	UI5Date
 ) {
 	"use strict";
 
@@ -245,8 +247,8 @@ sap.ui.define([
 			var oExpectedResult = {
 				"option": "dateRange",
 				"values": [
-					new Date("Oct 4, 2021"),
-					new Date("Oct 5, 2021")
+					UI5Date.getInstance("Oct 4, 2021"),
+					UI5Date.getInstance("Oct 5, 2021")
 				]
 			};
 

@@ -264,7 +264,7 @@ sap.ui.define(['./library',
 		BusyDialog.prototype.open = function () {
 			var aAriaLabelledBy = this.getAriaLabelledBy();
 
-			Log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
+			Log.debug("sap.m.BusyDialog.open called at " + Date.now());
 
 			if (aAriaLabelledBy && aAriaLabelledBy.length) {
 				if (!this._oDialog._$dialog) {

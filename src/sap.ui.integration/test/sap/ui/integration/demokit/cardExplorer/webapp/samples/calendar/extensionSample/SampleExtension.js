@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/integration/Extension",
-	"sap/ui/core/format/DateFormat"
-], function(Extension, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/date/UI5Date"
+], function(Extension, DateFormat, UI5Date) {
 	"use strict";
 
 	var SampleExtension = Extension.extend("card.explorer.calendar.extensionSample.SampleExtension");
@@ -43,8 +44,8 @@ sap.ui.define([
 		var oFormatter = DateFormat.getDateTimeInstance({
 				pattern: "YYYY-MM-ddTHH:mm"
 			}),
-			oStartDate = new Date(oSelectedDate),
-			oEndDate = new Date(oSelectedDate),
+			oStartDate = UI5Date.getInstance(oSelectedDate),
+			oEndDate = UI5Date.getInstance(oSelectedDate),
 			aAppointmentDates = [];
 
 		// format as UTC dates, this is how all the dates are fed in the model
@@ -93,13 +94,13 @@ sap.ui.define([
 		var oFormatter = DateFormat.getDateTimeInstance({
 				pattern: "YYYY-MM-ddTHH:mm"
 			}),
-			oDateInDisplayedMonth = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + 8),
+			oDateInDisplayedMonth = UI5Date.getInstance(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + 8),
 			iRandomDate = Math.floor(Math.random() * (28 - 1) + 1),
 			iSecondRandomDate = Math.floor(Math.random() * (28 - 1) + 1),
 			iRandomTypeNumber = Math.floor(Math.random() * (9 - 1) + 1),
 			iSecondRandomTypeNumber = Math.floor(Math.random() * (20 - 10) + 10),
-			oFirstSpecialDate = new Date(oDateInDisplayedMonth.getFullYear(), oDateInDisplayedMonth.getMonth(), iRandomDate, 12),
-			oSecondSpecialDate = new Date(oDateInDisplayedMonth.getFullYear(), oDateInDisplayedMonth.getMonth(), iSecondRandomDate, 12),
+			oFirstSpecialDate = UI5Date.getInstance(oDateInDisplayedMonth.getFullYear(), oDateInDisplayedMonth.getMonth(), iRandomDate, 12),
+			oSecondSpecialDate = UI5Date.getInstance(oDateInDisplayedMonth.getFullYear(), oDateInDisplayedMonth.getMonth(), iSecondRandomDate, 12),
 			sDummyDate1 = oFormatter.format(oFirstSpecialDate),
 			sDummyDate2 = oFormatter.format(oSecondSpecialDate);
 

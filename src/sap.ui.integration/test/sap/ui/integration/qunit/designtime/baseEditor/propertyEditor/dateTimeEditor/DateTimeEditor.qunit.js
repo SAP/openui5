@@ -5,13 +5,17 @@ sap.ui.define([
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+
+
 ], function (
 	BaseEditor,
 	EditorQunitUtils,
 	DateFormat,
 	sinon,
-	oCore
+	oCore,
+	UI5Date
 ) {
 	"use strict";
 
@@ -66,14 +70,14 @@ sap.ui.define([
 				this.oDateTimeEditorElement.getValue(),
 				DateFormat.getDateTimeInstance({
 					pattern: "YYYY-MM-dd'T'HH:mm:ss.SSSSZ"
-				}).format(new Date(sampleDateTime), true),
+				}).format(UI5Date.getInstance(sampleDateTime), true),
 				"Then the editor has the correct value"
 			);
 		});
 
 		QUnit.test("When a value is edited in the editor", function (assert) {
 			var fnDone = assert.async();
-			var oCurrentDate = new Date();
+			var oCurrentDate = UI5Date.getInstance();
 			oCurrentDate.setMilliseconds(0);
 			var sCurrentDateTimeString = DateFormat.getDateTimeInstance({
 				pattern: "YYYY-MM-dd'T'HH:mm:ss.SSSSZ"

@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/integration/cards/CalendarContent"
+	"sap/ui/integration/cards/CalendarContent",
+	"sap/ui/core/date/UI5Date"
 ],
 	function (
 		Core,
 		DateFormat,
 		Card,
 		CalendarDate,
-		CalendarContent
+		CalendarContent,
+		UI5Date
 	) {
 		"use strict";
 
@@ -769,8 +771,8 @@ sap.ui.define([
 								"type": "Type05"
 							},
 							{
-								"start": oFormatter.format(new Date(2021, 10, 19), true),
-								"end": oFormatter.format(new Date(2021, 10, 22), true),
+								"start": oFormatter.format(UI5Date.getInstance(2021, 10, 19), true),
+								"end": oFormatter.format(UI5Date.getInstance(2021, 10, 22), true),
 								"title": "3 whole days",
 								"text": "sleeping",
 								"icon": "sap-icon://bed",
@@ -1318,19 +1320,19 @@ sap.ui.define([
 
 			this.oCard.attachEvent("_ready", function () {
 				// act
-				this.selectDate(new Date(2021, 10, 19));
+				this.selectDate(UI5Date.getInstance(2021, 10, 19));
 
 				// assert
 				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
 
 				// act
-				this.selectDate(new Date(2021, 10, 20));
+				this.selectDate(UI5Date.getInstance(2021, 10, 20));
 
 				// assert
 				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
 
 				// act
-				this.selectDate(new Date(2021, 10, 21));
+				this.selectDate(UI5Date.getInstance(2021, 10, 21));
 
 				// assert
 				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
@@ -1346,15 +1348,15 @@ sap.ui.define([
 
 			this.oCard.attachEvent("_ready", function () {
 				// act
-				this.selectDate(new Date(2019, 11, 2));
-				var aVisibleItems20191202 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), new Date(2019, 11, 2));
+				this.selectDate(UI5Date.getInstance(2019, 11, 2));
+				var aVisibleItems20191202 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), UI5Date.getInstance(2019, 11, 2));
 
 				// assert
 				assert.strictEqual(aVisibleItems20191202.length, 1, "there is 1 visible appointment");
 
 				// act
-				this.selectDate(new Date(2019, 11, 1));
-				var aVisibleItems20191201 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), new Date(2019, 11, 1));
+				this.selectDate(UI5Date.getInstance(2019, 11, 1));
+				var aVisibleItems20191201 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), UI5Date.getInstance(2019, 11, 1));
 
 				// assert
 				assert.strictEqual(aVisibleItems20191201.length, 0, "there is 0 visible appointment");
@@ -1395,12 +1397,12 @@ sap.ui.define([
 				});
 
 				// Act
-				oCalendar.getSelectedDates()[0].setStartDate(new Date("2019-09-01"));
+				oCalendar.getSelectedDates()[0].setStartDate(UI5Date.getInstance("2019-09-01"));
 				oCalendar.fireSelect({
 					getSource: function () {
 						return this.oCard;
 					}.bind(this),
-					startDate: new Date("2019-09-01")
+					startDate: UI5Date.getInstance("2019-09-01")
 				});
 				Core.applyChanges();
 
@@ -1434,13 +1436,13 @@ sap.ui.define([
 				this.oCard.attachAction(function (oEvent) {
 					if (oEvent.getParameter("type") === "MonthChange") {
 						bMonthChangeFired = true;
-						assert.equal(oEvent.getParameter("parameters").firstDate.getTime(), new Date(2019, 6, 28).getTime(), "parameter firstDate is correct");
+						assert.equal(oEvent.getParameter("parameters").firstDate.getTime(), UI5Date.getInstance(2019, 6, 28).getTime(), "parameter firstDate is correct");
 					}
 				});
 
 				// Act
-				oCalendar._setFocusedDate(CalendarDate.fromLocalJSDate(new Date(2019, 7, 1)));
-				oCalendar.displayDate(new Date(2019, 7, 1));
+				oCalendar._setFocusedDate(CalendarDate.fromLocalJSDate(UI5Date.getInstance(2019, 7, 1)));
+				oCalendar.displayDate(UI5Date.getInstance(2019, 7, 1));
 				Core.applyChanges();
 				oCalendar.fireStartDateChange({
 					getSource: function () {

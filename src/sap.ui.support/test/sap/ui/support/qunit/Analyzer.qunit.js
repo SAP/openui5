@@ -3,8 +3,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/support/supportRules/Analyzer",
-	"sap/ui/support/supportRules/IssueManager"
-], function (Log, Analyzer, IssueManager) {
+	"sap/ui/support/supportRules/IssueManager",
+	"sap/ui/core/date/UI5Date"
+], function (Log, Analyzer, IssueManager, UI5Date) {
 		"use strict";
 
 		QUnit.module("Analyzer", {
@@ -32,8 +33,8 @@ sap.ui.define([
 
 		QUnit.test("Reset state", function (assert) {
 			// Arrange
-			this.oAnalyzer.dStartedAt = new Date();
-			this.oAnalyzer.dFinishedAt = new Date();
+			this.oAnalyzer.dStartedAt = UI5Date.getInstance();
+			this.oAnalyzer.dFinishedAt = UI5Date.getInstance();
 			this.oAnalyzer.iElapsedTime = 35;
 			this.oAnalyzer._iAllowedTimeout = 5000;
 			this.oAnalyzer._iTotalProgress = 200;

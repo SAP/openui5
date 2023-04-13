@@ -5,10 +5,11 @@ sap.ui.define([
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/core/date/Gregorian" // indirect dependency, used by DateFormat for western locales
-], function(Opa5, Press, PropertyStrictEquals, Descendant, EnterText, DateFormat, jQuery, sinon) {
+], function(Opa5, Press, PropertyStrictEquals, Descendant, EnterText, DateFormat, UI5Date, jQuery, sinon) {
 	"use strict";
 
 	var sViewName = "Analysis",
@@ -401,8 +402,8 @@ sap.ui.define([
 					return this.waitFor({
 						id: "presetImport--" + sId,
 						check: function(oText) {
-							var oDate1 = new Date(oText.getText()),
-								oDate2 = new Date(sDate);
+							var oDate1 = UI5Date.getInstance(oText.getText()),
+								oDate2 = UI5Date.getInstance(sDate);
 
 							return oDate1.toString() === oDate2.toString();
 						},

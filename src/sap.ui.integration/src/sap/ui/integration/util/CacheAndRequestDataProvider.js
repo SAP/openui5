@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/base/util/merge"
-], function (RequestDataProvider, Log, Core, merge) {
+	"sap/base/util/merge",
+	"sap/ui/core/date/UI5Date"
+], function (RequestDataProvider, Log, Core, merge, UI5Date) {
 	"use strict";
 	/*global URL*/
 
@@ -121,7 +122,7 @@ sap.ui.define([
 
 			if (sDate && oCardHeader) {
 				this._attachTimestampPress();
-				oCardHeader.setDataTimestamp((new Date(sDate)).toISOString());
+				oCardHeader.setDataTimestamp((UI5Date.getInstance(sDate)).toISOString());
 			}
 		}.bind(this));
 

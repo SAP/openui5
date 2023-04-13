@@ -7,8 +7,8 @@
  * runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
  * The analyzer can be used to update the UI with the current progress of a task while it's running.
  */
-sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/ui/support/supportRules/Constants"],
-	function (Log, IssueManager, Constants) {
+sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/ui/support/supportRules/Constants", "sap/ui/core/date/UI5Date"],
+	function (Log, IssueManager, Constants, UI5Date) {
 		"use strict";
 
 		/**
@@ -70,7 +70,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/u
 			var oIssueManagerFacade,
 				that = this;
 
-			this.dStartedAt = new Date();
+			this.dStartedAt = UI5Date.getInstance();
 			this._iTotalRules = aRules.length;
 			this._bRunning = true;
 
@@ -94,7 +94,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/u
 
 			return Promise.all(this._aRulePromices).then(function () {
 				that.reset();
-				that.dFinishedAt = new Date();
+				that.dFinishedAt = UI5Date.getInstance();
 				that.iElapsedTime = that.dFinishedAt.getTime() - that.dStartedAt.getTime(); // In milliseconds
 			});
 		};
@@ -176,7 +176,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/u
 				return "";
 			}
 
-			var oDate = new Date(null);
+			var oDate = UI5Date.getInstance(null);
 			oDate.setHours(0, 0, 0, 0);
 			oDate.setMilliseconds(this.iElapsedTime);
 			var aBuffer = [
