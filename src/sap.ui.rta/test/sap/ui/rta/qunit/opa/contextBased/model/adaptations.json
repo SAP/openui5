@@ -47,6 +47,17 @@
 			"createdAt": "2022-05-17T13:30:32Z",
 			"changedBy": "Test User 1",
 			"changedAt": "2022-05-28T14:30:32Z"
+		},
+		{
+			"id": "DEFAULT",
+			"contexts": {},
+			"title": "",
+			"description": "",
+			"createdBy": "",
+			"createdAt": "",
+			"changedBy": "",
+			"changedAt": "",
+			"type": "DEFAULT"
 		}
 	]
 }
