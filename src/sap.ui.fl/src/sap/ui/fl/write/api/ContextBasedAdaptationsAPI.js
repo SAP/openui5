@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/api/Adaptations",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel"
 ], function(
 	Settings,
+	Adaptations,
 	FlexObjectFactory,
 	ManifestUtils,
 	FlexObjectState,
@@ -110,34 +112,34 @@ sap.ui.define([
 		if (!Array.isArray(aAdaptations)) {
 			throw Error("Adaptations model can only be initialized with an array of adaptations");
 		}
+
 		var oModel = new JSONModel({
-			adaptations: aAdaptations,
-			count: aAdaptations.length,
-			displayedAdaptation: aAdaptations.length > 0 ? aAdaptations[0] : {}
+			allAdaptations: [],
+			adaptations: [],
+			count: 0,
+			displayedAdaptation: {}
 		});
 		oModel.updateAdaptations = function(aAdaptations) {
-			oModel.setProperty("/adaptations", aAdaptations);
-			oModel.setProperty("/count", aAdaptations.length);
-			if (aAdaptations.length > 0) {
+			var aContextBasedAdaptations = aAdaptations.filter(function(oAdapation, iIndex) {
+				oAdapation.rank = iIndex + 1; // initialize ranks
+				return oAdapation.type !== Adaptations.Type.Default;
+			});
+			oModel.setProperty("/allAdaptations", aAdaptations);
+			oModel.setProperty("/adaptations", aContextBasedAdaptations);
+			oModel.setProperty("/count", aContextBasedAdaptations.length);
+			if (aContextBasedAdaptations.length > 0) {
 				var oDisplayedAdaptation = oModel.getProperty("/adaptations/0/"); //TODO: might be changed in future
 				oModel.setProperty("/displayedAdaptation", oDisplayedAdaptation);
 			}
 			oModel.updateBindings(true);
 		};
 		oModel.insertAdaptation = function(oNewAdaptation) {
-			aAdaptations = oModel.getProperty("/adaptations");
+			aAdaptations = oModel.getProperty("/allAdaptations");
 			aAdaptations.splice(oNewAdaptation.priority, 0, oNewAdaptation);
 			delete oNewAdaptation.priority;
 			oModel.updateAdaptations(aAdaptations);
 		};
-		oModel.initializeRanks = function() {
-			var aContexts = oModel.getProperty("/adaptations") || [];
-			aContexts.forEach(function(oContext, iIndex) {
-				oContext.rank = iIndex + 1;
-			});
-			oModel.updateAdaptations(aContexts);
-		};
-		oModel.initializeRanks();
+		oModel.updateAdaptations(aAdaptations);
 		return oModel;
 	};
 

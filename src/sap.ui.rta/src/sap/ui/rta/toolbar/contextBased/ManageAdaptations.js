@@ -98,7 +98,6 @@ function(
 			this._oControlConfigurationModel = new JSONModel({isTableItemSelected: false});
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");
 			this._oManageAdaptationDialog.setModel(this._oControlConfigurationModel, "controlConfiguration");
-			this.oAdaptationsModel.initializeRanks();
 			getAdaptationsTable.call(this).attachSelectionChange(onSelectionChange.bind(this));
 			return this._oManageAdaptationDialog.open();
 		}.bind(this)
@@ -271,7 +270,8 @@ function(
 		// set the rank property and update the model to refresh the bindings
 		this.oAdaptationsModel.setProperty("rank", iNewRank, oDraggedItemContext);
 		sortByRank(this.oAdaptationsModel);
-		this.oAdaptationsModel.initializeRanks();
+		var oAllUpdatedAdaptations = Object.assign(this.oAdaptationsModel.getProperty("/allAdaptations"), this.oAdaptationsModel.getProperty("/adaptations"));
+		this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
 		enableSaveButton.call(this, true);
 	}
 
