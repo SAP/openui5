@@ -569,15 +569,19 @@
 				);
 			}
 
-			for (var i = aProvider.length - 1; i >= 0; i--) {
-				if (!aProvider[i].external || !bIgnoreExternal) {
-					vValue = aProvider[i].get(sName, mOptions.freeze);
-					if (vValue !== undefined) {
-						break;
+			if (mOptions.provider) {
+				vValue = mOptions.provider.get(sName, mOptions.freeze);
+			}
+			if (vValue === undefined) {
+				for (var i = aProvider.length - 1; i >= 0; i--) {
+					if (!aProvider[i].external || !bIgnoreExternal) {
+						vValue = aProvider[i].get(sName, mOptions.freeze);
+						if (vValue !== undefined) {
+							break;
+						}
 					}
 				}
 			}
-
 			if (vValue !== undefined) {
 				vValue = convertToType(vValue, mOptions.type, mOptions.name);
 			} else if (vMatch && vMatch[1] === "sapUi") {

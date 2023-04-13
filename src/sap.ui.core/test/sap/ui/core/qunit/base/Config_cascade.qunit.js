@@ -323,4 +323,40 @@ sap.ui.define([
 			external: true
 		}), "hubelDubel", "After freeze: BaseConfiguration.get for param 'sapUiParamE' returns correct value 'hubelDubel'");
 	});
+
+	QUnit.test("Configuration write", function(assert) {
+		assert.expect(5);
+
+		var oWriteableInstance1 = BaseConfiguration.getWritableInstance();
+		var oWriteableInstance2 = BaseConfiguration.getWritableInstance();
+
+		oWriteableInstance1.set("myNewParameter", true);
+		oWriteableInstance2.set("myNewParameter", false);
+
+		assert.strictEqual(oWriteableInstance1.get({
+			name: "myNewParameter",
+			type: oWriteableInstance2.Type.Boolean
+		}), true, "WritableInstance1.get for param 'myNewParameter' returns value 'true'");
+		assert.strictEqual(oWriteableInstance2.get({
+			name: "myNewParameter",
+			type: oWriteableInstance2.Type.Boolean,
+			defaultValue: true
+		}), false, "WritableInstance2.get for param 'myNewParameter' returns value 'false'");
+
+		oWriteableInstance1.set("sapUiParamA", "write");
+		assert.strictEqual(oWriteableInstance1.get({
+			name: "sapUiParamA",
+			type: oWriteableInstance2.Type.String,
+			external: true
+		}), "write", "WritableInstance1.get for param 'sapUiParamA' returns value 'write'");
+		assert.strictEqual(oWriteableInstance2.get({
+			name: "sapUiParamA",
+			type: oWriteableInstance2.Type.String,
+			external: true
+		}), "url", "WritableInstance2.get for param 'sapUiParamA' returns value 'url'");
+
+		assert.throws(function () {
+			oWriteableInstance1.set("sap-ui-param1", true);
+		}, new TypeError("Invalid configuration key 'sap-ui-param1'!"), "oWriteableInstance1.set for param 'sap-ui-param1' throws error 'Invalid configuration key 'sap-ui-param1'!'");
+	});
 });
