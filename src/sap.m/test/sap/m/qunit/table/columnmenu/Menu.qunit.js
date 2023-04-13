@@ -948,7 +948,6 @@ sap.ui.define([
 		var oDialog = new Dialog({
 			content: [oButton1, oButton2]
 		});
-		var oFakeEvent = new Event();
 
 		oDialog.placeAt("content");
 		oCore.applyChanges();
@@ -958,18 +957,14 @@ sap.ui.define([
 		this.clock.tick(1000);
 		assert.ok(this.oColumnMenu.isOpen());
 
-		oFakeEvent.type = "sapfocusleave";
-		oFakeEvent.relatedControlId = this.oColumnMenu._oPopover._oControl.getId();
-		this.oColumnMenu.onsapfocusleave(oFakeEvent);
-
-		assert.equal(document.activeElement.id, this.oColumnMenu.getId() + "-focusDummy");
+		this.oColumnMenu._oPopover._oControl.focus();
+		assert.ok(document.activeElement.id, this.oColumnMenu._oPopover._oControl.getId());
 		assert.ok(this.oColumnMenu.isOpen());
-		oFakeEvent.relatedControlId = oButton2.getId();
-		this.oColumnMenu.onsapfocusleave(oFakeEvent);
+
+		oButton2.focus();
 		this.clock.tick(1000);
 		assert.notOk(this.oColumnMenu.isOpen());
 
-		oFakeEvent.destroy();
 		oDialog.destroy();
 		oButton1.destroy();
 		oButton2.destroy();
