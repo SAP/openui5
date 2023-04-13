@@ -466,12 +466,9 @@ html[data-sap-ui-browser^='ff'] .sapMTableRowCustomFocus:focus > :not(.sapMListT
 	.sapMLabel,
 	.sapMObjectNumber,
 	.sapMObjectIdentifier,
-	.sapMObjStatus {
+	.sapMObjStatus > .sapMObjStatusText,
+	.sapMObjStatus > .sapMObjStatusTitle {
 		line-height: 1.4;
-
-		.sapMObjStatusText {
-			line-height: inherit;
-		}
 
 		.sapUiSizeCompact & {
 			vertical-align: middle;
