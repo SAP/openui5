@@ -77,7 +77,7 @@ sap.ui.define([
 
 	/**
 	 * Sets a date.
-	 * @param {object} oRangeMidDate a JavaScript date
+	 * @param {object} oRangeMidDate a date instance
 	 * @return {this} <code>this</code> for method chaining
 	 */
 	YearRangePicker.prototype.setDate = function(oRangeMidDate){

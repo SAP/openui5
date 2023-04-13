@@ -69,7 +69,7 @@ sap.ui.define([
 	var InvisibleMessageMode = corelibrary.InvisibleMessageMode;
 
 	/*
-	 * <code>UniversalDate</code> objects are used inside the <code>CalendarRow</code>, whereas JavaScript dates are used in the API.
+	 * <code>UniversalDate</code> objects are used inside the <code>CalendarRow</code>, whereas UI5Date or JavaScript dates are used in the API.
 	 * So conversion must be done on API functions.
 	 *
 	 * ItemNavigation is not used as the keyboard navigation is somehow different.
@@ -99,7 +99,7 @@ sap.ui.define([
 		properties : {
 
 			/**
-			 * Start date, as JavaScript Date object, of the row. As default, the current date is used.
+			 * Start date, as UI5Date or JavaScript Date object, of the row. As default, the current date is used.
 			 */
 			startDate : {type : "object", group : "Data"},
 
@@ -339,12 +339,12 @@ sap.ui.define([
 			intervalSelect : {
 				parameters : {
 					/**
-					 * Interval start date as JavaScript date object
+					 * Interval start date as UI5Date or JavaScript Date object
 					 */
 					startDate : {type : "object"},
 
 					/**
-					 * Interval end date as JavaScript date object
+					 * Interval end date as UI5Date or JavaScript Date object
 					 */
 					endDate : {type : "object"},
 
@@ -466,7 +466,7 @@ sap.ui.define([
 	/**
 	 * Set the start date of the row.
 	 *
-	 * @param {Date} [oStartDate] Start date, as JavaScript Date object, of the row
+	 * @param {Date|module:sap/ui/core/date/UI5Date} [oStartDate] Start date, as date instance, of the row
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -830,7 +830,7 @@ sap.ui.define([
 	 * Focus the <code>CalendarAppointment</code> in the <code>CalendarRow</code> that is nearest to
 	 * the given date.
 	 *
-	 * @param {Date} oDate Javascript Date object.
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance.
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -1085,7 +1085,7 @@ sap.ui.define([
 	}
 
 	/*
-	 * @param {object} oDate JavaScript date object
+	 * @param {object} oDate date instace
 	 * @returns {UniversalDate} Start date for date object
 	 */
 	function _calculateStartDate(oDate) {

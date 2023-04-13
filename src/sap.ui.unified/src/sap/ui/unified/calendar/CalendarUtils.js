@@ -272,8 +272,8 @@ sap.ui.define([
 		 * Gets the first day of a given month.
 		 * This function works with date values in UTC to produce timezone agnostic results.
 		 *
-		 * @param {Date} oDate JavaScript date
-		 * @returns {Date} JavaScript date corresponding to the first date of the month
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance
+		 * @returns {Date|module:sap/ui/core/date/UI5Date} date instance corresponding to the first date of the month
 		 * @public
 		 */
 		CalendarUtils.getFirstDateOfMonth = function(oDate) {
@@ -313,8 +313,8 @@ sap.ui.define([
 		/**
 		 * Determines if the given dates' months differ, including same months from different years.
 		 *
-		 * @param {Date} oDate1 JavaScript date
-		 * @param {Date} oDate2 JavaScript date
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate1 date instance
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate2 date instance
 		 * @return {boolean} true if the given dates' months differ
 		 * @public
 		 */
@@ -371,7 +371,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Checks if the given object is JavaScript date object and throws error if its not.
+		 * Checks if the given object is UI5Date ot JavaScript Date object and throws error if its not.
 		 * @param {Object} oDate The date to be checked
 		 * @private
 		 */
@@ -379,7 +379,7 @@ sap.ui.define([
 			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
 			// because Date object in the test is different than the Date object in the application (due to the iframe).
 			if (!oDate || Object.prototype.toString.call(oDate) !== "[object Date]" || isNaN(oDate)) {
-				throw new Error("Date must be a JavaScript date object.");
+				throw new Error("Date must be a JavaScript or UI5Date date object.");
 			}
 		};
 
@@ -401,8 +401,8 @@ sap.ui.define([
 		/**
 		 * Compares the given month and the one from the <code>startDate</code>.
 		 *
-		 * @param {Date} oDate1 JavaScript date
-		 * @param {Date} oDate2 JavaScript date
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate1 date instance
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate2 date instance
 		 * @return {boolean} true if the first date's month is chronologically after the second
 		 * @private
 		 */
@@ -413,8 +413,8 @@ sap.ui.define([
 
 		/**
 		 * Evaluates minutes between two dates.
-		 * @param {Date} oFirstDate JavaScript date
-		 * @param {Date} oSecondDate JavaScript date
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oFirstDate date instance
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oSecondDate date instance
 		 * @return {int} iMinutes
 		 * @private
 		 */
@@ -453,8 +453,8 @@ sap.ui.define([
 
 		/**
 		 * Evaluates months between two dates.
-		 * @param {Date} oFirstDate JavaScript date
-		 * @param {Date} oSecondDate JavaScript date
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oFirstDate date instance
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oSecondDate date instance
 		 * @param {boolean} bDontAbsResult if omitted or false, the result will be positive number of months between dates;
 		 * 					if true, the result will be positive or negative depending of the direction of the difference
 		 * @return {int} iMonths
@@ -480,8 +480,8 @@ sap.ui.define([
 
 		/**
 		 * Evaluates hours between two dates.
-		 * @param {Date} oFirstDate JavaScript date
-		 * @param {Date} oSecondDate JavaScript date
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oFirstDate date instance
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oSecondDate date instance
 		 * @return {int} iMinutes
 		 * @private
 		 */
@@ -500,8 +500,8 @@ sap.ui.define([
 		/**
 		 * Evaluates whether a given date time part indicates midniht.
 		 *
-		 * @param {Date} oDate - JavaScript date
-		 * @returns {boolean}
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance
+		 * @returns {boolean} is midnight
 		 */
 		CalendarUtils._isMidnight = function(oDate) {
 			return oDate.getHours() === 0 && oDate.getMinutes() === 0 && oDate.getSeconds() === 0 && oDate.getMilliseconds() === 0;

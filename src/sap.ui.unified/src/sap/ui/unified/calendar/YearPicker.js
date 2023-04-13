@@ -97,7 +97,7 @@ sap.ui.define([
 			columns : {type : "int", group : "Appearance", defaultValue : 4},
 
 			/**
-			 * Date as JavaScript Date object. For this date a <code>YearPicker</code> is rendered. If a Year is selected the
+			 * Date as UI5Date or JavaScript Date object. For this date a <code>YearPicker</code> is rendered. If a Year is selected the
 			 * date is updated with the start date of the selected year (depending on the calendar type).
 			 * @since 1.34.0
 			 */
@@ -209,7 +209,7 @@ sap.ui.define([
 	/**
 	 * Setter for the <code>date</code> property
 	 *
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -472,7 +472,7 @@ sap.ui.define([
 	 * Return the first date of the first rendered year
 	 * <b>Note:</b> If the YearPicker is not rendered no date is returned
 	 *
-	 * @returns {Date} A JavaScript Date
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} A date instance
 	 * @public
 	 * @since 1.38.0
 	 */

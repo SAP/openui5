@@ -83,7 +83,7 @@ sap.ui.define([
 
 	/**
 	 * Selects a given date.
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
 	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.selectDate = function(oDate) {
@@ -95,7 +95,7 @@ sap.ui.define([
 
 	/**
 	 * Sets a given date.
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
 	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.setDate = function(oDate) {
@@ -119,7 +119,7 @@ sap.ui.define([
 
 	/**
 	 * Displays a given date.
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
 	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.displayDate = function(oDate){

@@ -39,7 +39,7 @@ sap.ui.define([
 	"use strict";
 
 	/*
-	 * <code>UniversalDate</code> objects are used inside the <code>TimesRow</code>, whereas JavaScript dates are used in the API.
+	 * <code>UniversalDate</code> objects are used inside the <code>TimesRow</code>, whereas UI5Date or JavaScript dates are used in the API.
 	 * This means that a conversion must be performed for the API functions.
 	 */
 
@@ -57,7 +57,7 @@ sap.ui.define([
 	 * If used inside the CalendarTimeInterval the properties and aggregation are directly taken from the parent
 	 * (to not duplicate and synchronize DateRanges and so on...).
 	 *
-	 * The TimesRow works with JavaScript Date objects.
+	 * The TimesRow works with UI5Date or JavaScript Date objects.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -71,7 +71,7 @@ sap.ui.define([
 		library : "sap.ui.unified",
 		properties : {
 			/**
-			 * A date as JavaScript Date object. The month including this date is rendered and this date is focused initially (if no other focus is set).
+			 * A date as UI5Date or JavaScript Date object. The month including this date is rendered and this date is focused initially (if no other focus is set).
 			 * If the date property is not in the range <code>startDate</code> + <code>items</code> in the rendering phase,
 			 * it is set to the <code>startDate</code>.
 			 * So after setting the <code>startDate</code> the date should be set to be in the visible range.
@@ -79,7 +79,7 @@ sap.ui.define([
 			date : {type : "object", group : "Data"},
 
 			/**
-			 * Start date, as JavaScript Date object, of the row.
+			 * Start date, as UI5Date or JavaScript Date object, of the row.
 			 */
 			startDate : {type : "object", group : "Data"},
 
@@ -174,7 +174,7 @@ sap.ui.define([
 			focus : {
 				parameters : {
 					/**
-					 * date, as JavaScript Date object, of the focused time.
+					 * date, as UI5Date or JavaScript Date object, of the focused time.
 					 */
 					date : {type : "object"},
 					/**
@@ -289,7 +289,7 @@ sap.ui.define([
 	/**
 	 * Setter for the <code>date</code> property.
 	 *
-	 * @param {Date} oDate A JavaScript Date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -317,9 +317,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets start date, as JavaScript Date object, of the row.
+	 * Sets start date, as UI5Date or JavaScript Date object, of the row.
 	 *
-	 * @param {Date} oStartDate A JavaScript Date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oStartDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -365,7 +365,7 @@ sap.ui.define([
 	/**
 	 * Displays the given date without setting the focus.
 	 *
-	 * @param {Date} oDate A JavaScript Date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -906,7 +906,7 @@ sap.ui.define([
 	 * Checks if a date is focusable in the current rendered output.
 	 * This means that if it is not rendered, it is not focusable.
 	 *
-	 * @param {Date} oDate JavaScript Date object for focused date.
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance for focused date.
 	 * @returns {boolean} flag if focusable
 	 * @public
 	 */

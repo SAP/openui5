@@ -125,7 +125,7 @@ sap.ui.define([
 				properties: {
 
 					/**
-					 * Determines the start date of the grid, as a JavaScript date object. It is considered as a local date.
+					 * Determines the start date of the grid, as a UI5Date or JavaScript Date object. It is considered as a local date.
 					 * The time part will be ignored. The current date is used as default.
 					 */
 					startDate: {type: "object", group: "Data"},
@@ -167,7 +167,7 @@ sap.ui.define([
 					 *
 					 * The appointment snaps on every interval
 					 * of 30 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event is fired, containing
-					 * the new start and end JavaScript date objects.
+					 * the new start and end UI5Date or JavaScript Date objects.
 					 *
 					 * @since 1.65
 					 */
@@ -291,12 +291,12 @@ sap.ui.define([
 							appointment : {type : "sap.ui.unified.CalendarAppointment"},
 
 							/**
-							 * Start date of the dropped appointment, as a JavaScript date object.
+							 * Start date of the dropped appointment, as a UI5Date or JavaScript Date object.
 							 */
 							startDate : {type : "object"},
 
 							/**
-							 * Dropped appointment end date as a JavaScript date object.
+							 * Dropped appointment end date as a UI5Date or JavaScript Date object.
 							 */
 							endDate : {type : "object"},
 
@@ -319,12 +319,12 @@ sap.ui.define([
 							appointment: { type: "sap.ui.unified.CalendarAppointment" },
 
 							/**
-							 * Start date of the dropped appointment, as a JavaScript date object.
+							 * Start date of the dropped appointment, as a UI5Date or JavaScript Date object.
 							 */
 							startDate: { type: "object" },
 
 							/**
-							 * Dropped appointment end date as a JavaScript date object.
+							 * Dropped appointment end date as a UI5Date or JavaScript Date object.
 							 */
 							endDate: { type: "object" }
 						}
@@ -337,12 +337,12 @@ sap.ui.define([
 					appointmentCreate: {
 						parameters: {
 							/**
-							 * Start date of the created appointment, as a JavaScript date object.
+							 * Start date of the created appointment, as a UI5Date or JavaScript Date object.
 							 */
 							startDate: {type: "object"},
 
 							/**
-							 * End date of the created appointment, as a JavaScript date object.
+							 * End date of the created appointment, as a UI5Date or JavaScript Date object.
 							 */
 							endDate: {type: "object"}
 						}
@@ -355,11 +355,11 @@ sap.ui.define([
 					cellPress: {
 						parameters: {
 							/**
-							 * The start date as a JavaScript date object of the focused grid cell.
+							 * The start date as a UI5Date or JavaScript Date object of the focused grid cell.
 							 */
 							startDate: {type: "object"},
 							/**
-							 * The end date as a JavaScript date object of the focused grid cell.
+							 * The end date as a UI5Date or JavaScript Date object of the focused grid cell.
 							 */
 							endDate: {type: "object"}
 						}
@@ -1561,7 +1561,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sDay the date string to parse
 		 * @param {int} iHours the hours to be set
-		 * @returns {Date} The parsed JavaScript date object.
+		 * @returns {Date|module:sap/ui/core/date/UI5Date} A date instance.
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._parseDateStringAndHours = function (sDay, iHours) {

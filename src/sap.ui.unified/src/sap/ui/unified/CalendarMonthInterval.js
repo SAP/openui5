@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @class
 	 * Calendar with granularity of months displayed in one line.
 	 *
-	 * <b>Note:</b> JavaScript Date objects are used to set and return the months, mark them as selected or as a special type.
+	 * <b>Note:</b> UI5Date or JavaScript Date objects are used to set and return the months, mark them as selected or as a special type.
 	 * But the date part of the Date object is not used. If a Date object is returned the date will be set to the 1st of the corresponding month.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
@@ -81,7 +81,7 @@ sap.ui.define([
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Start date of the Interval as JavaScript Date object.
+			 * Start date of the Interval as UI5Date or JavaScript Date object.
 			 * The month of this Date will be the first month in the displayed row.
 			 */
 			startDate : {type : "object", group : "Data"},
@@ -112,7 +112,7 @@ sap.ui.define([
 			pickerPopup : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * Minimum date that can be shown and selected in the Calendar. This must be a JavaScript date object.
+			 * Minimum date that can be shown and selected in the Calendar. This must be a UI5Date or JavaScript Date object.
 			 *
 			 * <b>Note:</b> If the <code>minDate</code> is set to be after the <code>maxDate</code>,
 			 * the <code>maxDate</code> is set to the end of the month of the <code>minDate</code>.
@@ -121,7 +121,7 @@ sap.ui.define([
 			minDate : {type : "object", group : "Misc", defaultValue : null},
 
 			/**
-			 * Maximum date that can be shown and selected in the Calendar. This must be a JavaScript date object.
+			 * Maximum date that can be shown and selected in the Calendar. This must be a UI5Date or JavaScript Date object.
 			 *
 			 * <b>Note:</b> If the <code>maxDate</code> is set to be before the <code>minDate</code>,
 			 * the <code>minDate</code> is set to the begin of the month of the <code>maxDate</code>.
@@ -347,7 +347,7 @@ sap.ui.define([
 	/**
 	 * Sets start date for the interval.
 	 *
-	 * @param {Date} oStartDate A JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oStartDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -494,7 +494,7 @@ sap.ui.define([
 	/**
 	 * Sets the focused month of the <code>CalendarMonthInterval</code>.
 	 *
-	 * @param {Date} oDatetime JavaScript date object for focused date. (The month of this date will be focused.)
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDatetime date instance for focused date. (The month of this date will be focused.)
 	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -521,7 +521,7 @@ sap.ui.define([
 	/**
 	 * Displays a month in the <code>CalendarMonthInterval</code> but doesn't set the focus.
 	 *
-	 * @param {Date} oDatetime JavaScript date object for displayed date. (The month of this date will be displayed.)
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDatetime date instance for displayed date. (The month of this date will be displayed.)
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -625,7 +625,7 @@ sap.ui.define([
 	/**
 	 * Sets a minimum date for the calendar.
 	 *
-	 * @param {Date} [oDate] A JavaScript Date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} [oDate] A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -686,7 +686,7 @@ sap.ui.define([
 	/**
 	 * Sets a maximum date for the calendar.
 	 *
-	 * @param {Date} [oDate] A JavaScript Date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} [oDate] A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */

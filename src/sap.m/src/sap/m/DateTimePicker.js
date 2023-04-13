@@ -97,19 +97,50 @@ sap.ui.define([
 	 *
 	 * On app level, there are two options to provide a date for the
 	 * <code>DateTimePicker</code> - as a string to the <code>value</code> property
-	 * or as a JavaScript Date object to the <code>dateValue</code> property (only one
+	 * or as a UI5Date or JavaScript Date object to the <code>dateValue</code> property (only one
 	 * of these properties should be used at a time):
 	 *
 	 * <ul><li>Use the <code>value</code> property if you want to bind the
 	 * <code>DateTimePicker</code> to a model using the
 	 * <code>sap.ui.model.type.DateTime</code></li>
+	 * @example <caption> binding the <code>value</code> property by using types </caption>
+	 * new sap.ui.model.json.JSONModel({date: sap.ui.core.date.UI5Date.getInstance(2022,10,10,12,10,10)});
+	 *
+	 * new sap.m.DateTimePicker({
+	 *     value: {
+	 *         type: "sap.ui.model.type.DateTime",
+	 *         path: "/date"
+	 *     }
+	 * });
+	 *
 	 * <li>Use the <code>value</code> property if the date is provided as a string from
 	 * the backend or inside the app (for example, as ABAP type DATS field)</li>
+	 * @example <caption> binding the <code>value</code> property by using types </caption>
+	 * new sap.ui.model.json.JSONModel({date:"2022-11-10-12-10-10"});
+	 *
+	 * new sap.m.DateTimePicker({
+	 *     value: {
+	 *         type: "sap.ui.model.type.DateTime",
+	 *         path: "/date",
+	 *         formatOptions: {
+	 *             source: {
+	 *                 pattern: "yyyy-MM-dd-HH-mm-ss"
+	 *             }
+	 *          }
+	 *     }
+	 * });
+	 *
+	 * <b>Note:</b> There are multiple binding type choices, such as:
+	 * sap.ui.model.type.Date
+	 * sap.ui.model.odata.type.DateTime
+	 * sap.ui.model.odata.type.DateTimeOffset
+	 * sap.ui.model.odata.type.DateTimeWithTimezone
+	 * See {@link sap.ui.model.type.Date}, {@link sap.ui.model.odata.type.DateTime}, {@link sap.ui.model.odata.type.DateTimeOffset} or {@link sap.ui.model.odata.type.DateTimeWithTimezone}
+	 *
 	 * <li>Use the <code>dateValue</code> property if the date is already provided as a
-	 * JavaScript Date object or you want to work with a JavaScript Date object.
+	 * UI5Date or JavaScript Date object or you want to work with a UI5Date or JavaScript Date object.
 	 * Use <code>dateValue</code> as a helper property to easily obtain the day, month, year,
-	 * hours, minutes and seconds of the chosen date and time. Although possible to bind it,
-	 * the recommendation is not to do it.
+	 * hours, minutes and seconds of the chosen date and time. Although it's possible to bind it, it's not recommended to do so.
 	 * When binding is needed, use <code>value</code> property instead</li></ul>
 	 *
 	 * <h3>Formatting</h3>
@@ -577,9 +608,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set minimum date that can be shown and selected in the <code>DateTimePicker</code>. This must be a JavaScript date object.
+	 * Set minimum date that can be shown and selected in the <code>DateTimePicker</code>. This must be a UI5Date or JavaScript Date object.
 	 *
-	 * @param {Date} oDate A JavaScript Date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -593,9 +624,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set maximum date that can be shown and selected in the <code>DateTimePicker</code>. This must be a JavaScript date object.
+	 * Set maximum date that can be shown and selected in the <code>DateTimePicker</code>. This must be a UI5Date or JavaScript Date object.
 	 *
-	 * @param {Date} oDate A JavaScript Date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -1098,7 +1129,7 @@ sap.ui.define([
 	 * @name sap.m.DateTimePicker#getDateValue
 	 * @function
 	 * @public
-	 * @returns {Date} A JavaScript Date
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} date instance
 	 * @since 1.102
 	 */
 
