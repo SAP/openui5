@@ -512,7 +512,7 @@
 							useFirstMatch="true"
 							items='{path : "/Currencies"}'
 						>
-							<mdcf:ListFieldHelpItem
+							<mdcvc:FixedListItem
 								key="{code}"
 								text="{name}"/>
 						</mdcvc:FixedList>
@@ -530,7 +530,7 @@
 							useAsValueHelp="false"
 							items='{path : "/Currencies"}'
 						>
-							<mdcf:ListFieldHelpItem
+							<mdcvc:FixedListItem
 								key="{code}"
 								text="{name}"/>
 						</mdcvc:FixedList>

@@ -78,7 +78,7 @@ sap.ui.define([
 				 *
 				 */
 				items: {
-					type: "sap.ui.mdc.field.ListFieldHelpItem",
+					type: "sap.ui.mdc.valuehelp.content.FixedListItem",
 					multiple: true,
 					singularName : "item"
 				}

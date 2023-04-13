@@ -262,7 +262,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-4-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-4-H-FL" useFirstMatch="false" items="{path: '/ProductCollection'}" >
-										<mdcField:ListFieldHelpItem text="{Name}" additionalText="{ProductId}" key="{ProductId}" icon="{= '../../../../../../' + ${ProductPicUrl}}"/>
+										<mdcValueHelpContent:FixedListItem text="{Name}" additionalText="{ProductId}" key="{ProductId}" icon="{= '../../../../../../' + ${ProductPicUrl}}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
@@ -279,7 +279,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-Select-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-Select-H-FL" filterList="false" useFirstMatch="true" items="{path: '/ProductCollection'}" >
-										<mdcField:ListFieldHelpItem key="{ProductId}" text="{Name}"/>
+										<mdcValueHelpContent:FixedListItem key="{ProductId}" text="{Name}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
@@ -294,7 +294,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-Group-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-Group-H-FL" useFirstMatch="false" groupable="true" items="{path: '/ProductCollection'}" >
-										<mdcField:ListFieldHelpItem text="{Name}" additionalText="{ProductId}" key="{ProductId}" icon="{= '../../../../../../' + ${ProductPicUrl}}" groupKey="{Category}"/>
+										<mdcValueHelpContent:FixedListItem text="{Name}" additionalText="{ProductId}" key="{ProductId}" icon="{= '../../../../../../' + ${ProductPicUrl}}" groupKey="{Category}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
@@ -682,7 +682,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Currency-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Currency-FL" useFirstMatch="false" items="{/currencies}" >
-										<mdcField:ListFieldHelpItem key="{id}" text="{unit}" additionalText="{text}"/>
+										<mdcValueHelpContent:FixedListItem key="{id}" text="{unit}" additionalText="{text}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
@@ -714,7 +714,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Currency2-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Currency2-FL" useFirstMatch="false" items="{/currencies}" >
-										<mdcField:ListFieldHelpItem key="{id}" text="{unit}" additionalText="{text}"/>
+										<mdcValueHelpContent:FixedListItem key="{id}" text="{unit}" additionalText="{text}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
@@ -751,7 +751,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit-FL" useFirstMatch="false" items="{/weightUnits}" >
-										<mdcField:ListFieldHelpItem key="{id}" text="{unit}" additionalText="{text}"/>
+										<mdcValueHelpContent:FixedListItem key="{id}" text="{unit}" additionalText="{text}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
@@ -783,7 +783,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit1-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit1-FL" useFirstMatch="false" items="{/weightODataUnits}">
-										<mdcField:ListFieldHelpItem key="{id}" text="{unit}" additionalText="{text}"/>
+										<mdcValueHelpContent:FixedListItem key="{id}" text="{unit}" additionalText="{text}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
@@ -913,7 +913,7 @@
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit2-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit2-FL" useFirstMatch="false" items="{/weightODataUnits}">
-										<mdcField:ListFieldHelpItem key="{id}" text="{unit}" additionalText="{text}"/>
+										<mdcValueHelpContent:FixedListItem key="{id}" text="{unit}" additionalText="{text}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
@@ -1619,7 +1619,7 @@
 						<mdc:typeahead>
 							<mdcValueHelp:Popover id="T-F6-H-Pop">
 								<mdcValueHelpContent:FixedList id="T-F6-H-FL" useFirstMatch="false" items="{path: '/StatusCollection'}" >
-									<mdcField:ListFieldHelpItem text="{Name}" key="{StatusId}"/>
+									<mdcValueHelpContent:FixedListItem text="{Name}" key="{StatusId}"/>
 								</mdcValueHelpContent:FixedList>
 							</mdcValueHelp:Popover>
 						</mdc:typeahead>

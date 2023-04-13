@@ -1872,13 +1872,13 @@ function(
 
 				loadModules([
 					"sap/ui/mdc/valuehelp/content/FixedList",
-					"sap/ui/mdc/field/ListFieldHelpItem",
+					"sap/ui/mdc/valuehelp/content/FixedListItem",
 					"sap/ui/mdc/ValueHelp",
 					"sap/ui/mdc/valuehelp/Popover",
 					"sap/ui/core/Control"
 				]).then(function (aLoaded) {
 					var FixedList = aLoaded[0];
-					var ListFieldHelpItem = aLoaded[1];
+					var FixedListItem = aLoaded[1];
 					var ValueHelp = aLoaded[2];
 					var Popover = aLoaded[3];
 					var Control = aLoaded[4];
@@ -1907,7 +1907,7 @@ function(
 								useFirstMatch: true,
 								items: {
 									path: "$items>/",
-									template: new ListFieldHelpItem({
+									template: new FixedListItem({
 										text: "{$items>text}",
 										key: "{$items>key}"
 									}),

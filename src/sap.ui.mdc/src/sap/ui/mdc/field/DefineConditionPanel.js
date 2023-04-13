@@ -18,7 +18,7 @@ sap.ui.define([
 	'sap/ui/mdc/ValueHelp',
 	'sap/ui/mdc/valuehelp/Popover',
 	'sap/ui/mdc/valuehelp/content/FixedList',
-	'sap/ui/mdc/field/ListFieldHelpItem',
+	'sap/ui/mdc/valuehelp/content/FixedListItem',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/resource/ResourceModel',
@@ -50,7 +50,7 @@ sap.ui.define([
 		ValueHelp,
 		Popover,
 		FixedList,
-		ListFieldHelpItem,
+		FixedListItem,
 		ManagedObjectModel,
 		JSONModel,
 		ResourceModel,
@@ -971,9 +971,9 @@ sap.ui.define([
 
 		var oTemplate;
 		if (bHasMultipleGroups) {
-			oTemplate = new ListFieldHelpItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}"});
+			oTemplate = new FixedListItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}"});
 		} else {
-			oTemplate = new ListFieldHelpItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}"});
+			oTemplate = new FixedListItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}"});
 		}
 		oFixedList.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate});
 		oFixedList.setGroupable(bHasMultipleGroups);

@@ -61,7 +61,7 @@
 											<mdc:typeahead>
 												<mdcv:Popover title="Currencies">
 													<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
-														<mdcf:ListFieldHelpItem key="{code}" text="{descr}" additionalText="{code}" />
+														<mdcvc:FixedListItem key="{code}" text="{descr}" additionalText="{code}" />
 													</mdcvc:FixedList>
 												</mdcv:Popover>
 											</mdc:typeahead>
@@ -77,7 +77,7 @@
 											<mdc:typeahead>
 												<mdcv:Popover title="Customer">
 													<mdcvc:FixedList items="{/Customers}" useAsValueHelp="true">
-														<mdcf:ListFieldHelpItem key="{ID}" text="{name}" additionalText="{ID}" />
+														<mdcvc:FixedListItem key="{ID}" text="{name}" additionalText="{ID}" />
 													</mdcvc:FixedList>
 												</mdcv:Popover>
 											</mdc:typeahead>
