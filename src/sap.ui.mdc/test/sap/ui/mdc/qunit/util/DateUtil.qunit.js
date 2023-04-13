@@ -73,12 +73,22 @@ sap.ui.define([
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
+		oType = new DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.dateToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10), oType, BaseType.DateTime);
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V2-DateTime", function(assert) {
 
 		var oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss"});
 		var vResult = DateUtil.dateToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10), oType, BaseType.DateTime);
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
+		oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.dateToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10), oType, BaseType.DateTime);
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
@@ -91,12 +101,22 @@ sap.ui.define([
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.dateToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10), oType, BaseType.DateTime);
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V4-DateTimeOffset", function(assert) {
 
 		var oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss"}, {V4: true});
 		var vResult = DateUtil.dateToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10), oType, BaseType.DateTime);
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true}, {V4: true});
+		vResult = DateUtil.dateToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10), oType, BaseType.DateTime);
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
@@ -142,12 +162,22 @@ sap.ui.define([
 		assert.deepEqual(oDate, UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + oDate.toString());
 		oType.destroy();
 
+		oType = new DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		oDate = DateUtil.typeToDate(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
+		assert.deepEqual(oDate, UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + oDate.toString());
+		oType.destroy();
+
 	});
 
 	QUnit.test("V2-DateTime", function(assert) {
 
 		var oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss"});
 		var oDate = DateUtil.typeToDate(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
+		assert.deepEqual(oDate, UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + oDate.toString());
+		oType.destroy();
+
+		oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		oDate = DateUtil.typeToDate(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
 		assert.deepEqual(oDate, UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + oDate.toString());
 		oType.destroy();
 
@@ -160,12 +190,22 @@ sap.ui.define([
 		assert.deepEqual(oDate, UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + oDate.toString());
 		oType.destroy();
 
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		oDate = DateUtil.typeToDate(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
+		assert.deepEqual(oDate, UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + oDate.toString());
+		oType.destroy();
+
 	});
 
 	QUnit.test("V4-DateTimeOffset", function(assert) {
 
 		var oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss"}, {V4: true});
 		var oDate = DateUtil.typeToDate(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
+		assert.deepEqual(oDate, UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + oDate.toString());
+		oType.destroy();
+
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true}, {V4: true});
+		oDate = DateUtil.typeToDate(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
 		assert.deepEqual(oDate, UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + oDate.toString());
 		oType.destroy();
 
@@ -184,12 +224,22 @@ sap.ui.define([
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
+		oType = new DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.ISOToType(UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), oType, BaseType.DateTime);
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V2-DateTime", function(assert) {
 
 		var oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss"});
 		var vResult = DateUtil.ISOToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10).toISOString(), oType, BaseType.DateTime);
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
+		oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.ISOToType(UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), oType, BaseType.DateTime);
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
@@ -202,12 +252,22 @@ sap.ui.define([
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.ISOToType(UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), oType, BaseType.DateTime);
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V4-DateTimeOffset", function(assert) {
 
 		var oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss"}, {V4: true});
 		var vResult = DateUtil.ISOToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10).toISOString(), oType, BaseType.DateTime);
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true}, {V4: true});
+		vResult = DateUtil.ISOToType(UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), oType, BaseType.DateTime);
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
@@ -226,6 +286,11 @@ sap.ui.define([
 		assert.deepEqual(sISO, UI5Date.getInstance(2019, 1, 16, 10, 10, 10).toISOString(), "Result: " + sISO);
 		oType.destroy();
 
+		oType = new DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		sISO = DateUtil.typeToISO(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
+		assert.deepEqual(sISO, UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), "Result: " + sISO);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V2-DateTime", function(assert) {
@@ -233,6 +298,11 @@ sap.ui.define([
 		var oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss"});
 		var sISO = DateUtil.typeToISO(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
 		assert.deepEqual(sISO, UI5Date.getInstance(2019, 1, 16, 10, 10, 10).toISOString(), "Result: " + sISO);
+		oType.destroy();
+
+		oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		sISO = DateUtil.typeToISO(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
+		assert.deepEqual(sISO, UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), "Result: " + sISO);
 		oType.destroy();
 
 	});
@@ -244,6 +314,11 @@ sap.ui.define([
 		assert.deepEqual(sISO, UI5Date.getInstance(2019, 1, 16, 10, 10, 10).toISOString(), "Result: " + sISO);
 		oType.destroy();
 
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		sISO = DateUtil.typeToISO(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
+		assert.deepEqual(sISO, UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), "Result: " + sISO);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V4-DateTimeOffset", function(assert) {
@@ -251,6 +326,11 @@ sap.ui.define([
 		var oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss"}, {V4: true});
 		var sISO = DateUtil.typeToISO(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
 		assert.deepEqual(sISO, UI5Date.getInstance(2019, 1, 16, 10, 10, 10).toISOString(), "Result: " + sISO);
+		oType.destroy();
+
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true}, {V4: true});
+		sISO = DateUtil.typeToISO(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
+		assert.deepEqual(sISO, UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), "Result: " + sISO);
 		oType.destroy();
 
 	});
@@ -295,12 +375,22 @@ sap.ui.define([
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
+		oType = new DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.stringToType("2019+02+16+10+10+10", oType, "yyyy+MM+dd+hh+mm+ss");
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V2-DateTime", function(assert) {
 
 		var oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss"});
 		var vResult = DateUtil.stringToType("2019+02+16+10+10+10", oType, "yyyy+MM+dd+hh+mm+ss");
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
+		oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.stringToType("2019+02+16+10+10+10", oType, "yyyy+MM+dd+hh+mm+ss");
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
@@ -313,12 +403,22 @@ sap.ui.define([
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		vResult = DateUtil.stringToType("2019+02+16+10+10+10", oType, "yyyy+MM+dd+hh+mm+ss");
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V4-DateTimeOffset", function(assert) {
 
 		var oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss"}, {V4: true});
 		var vResult = DateUtil.stringToType("2019+02+16+10+10+10", oType, "yyyy+MM+dd+hh+mm+ss");
+		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		oType.destroy();
+
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true}, {V4: true});
+		vResult = DateUtil.stringToType("2019+02+16+10+10+10", oType, "yyyy+MM+dd+hh+mm+ss");
 		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
 		oType.destroy();
 
@@ -391,12 +491,22 @@ sap.ui.define([
 		assert.deepEqual(sString, "2019+02+16+10+10+10", "Result: " + sString);
 		oType.destroy();
 
+		oType = new DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		sString = DateUtil.typeToString(oType.parseValue("2019 02 16 10 10 10", "string"), oType, "yyyy+MM+dd+hh+mm+ss");
+		assert.deepEqual(sString, "2019+02+16+10+10+10", "Result: " + sString);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V2-DateTime", function(assert) {
 
 		var oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss"});
 		var sString = DateUtil.typeToString(oType.parseValue("2019 02 16 10 10 10", "string"), oType, "yyyy+MM+dd+hh+mm+ss");
+		assert.deepEqual(sString, "2019+02+16+10+10+10", "Result: " + sString);
+		oType.destroy();
+
+		oType = new V2DateTimeType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		sString = DateUtil.typeToString(oType.parseValue("2019 02 16 10 10 10", "string"), oType, "yyyy+MM+dd+hh+mm+ss");
 		assert.deepEqual(sString, "2019+02+16+10+10+10", "Result: " + sString);
 		oType.destroy();
 
@@ -409,12 +519,22 @@ sap.ui.define([
 		assert.deepEqual(sString, "2019+02+16+10+10+10", "Result: " + sString);
 		oType.destroy();
 
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true});
+		sString = DateUtil.typeToString(oType.parseValue("2019 02 16 10 10 10", "string"), oType, "yyyy+MM+dd+hh+mm+ss");
+		assert.deepEqual(sString, "2019+02+16+10+10+10", "Result: " + sString);
+		oType.destroy();
+
 	});
 
 	QUnit.test("V4-DateTimeOffset", function(assert) {
 
 		var oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss"}, {V4: true});
 		var sString = DateUtil.typeToString(oType.parseValue("2019 02 16 10 10 10", "string"), oType, "yyyy+MM+dd+hh+mm+ss");
+		assert.deepEqual(sString, "2019+02+16+10+10+10", "Result: " + sString);
+		oType.destroy();
+
+		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true}, {V4: true});
+		sString = DateUtil.typeToString(oType.parseValue("2019 02 16 10 10 10", "string"), oType, "yyyy+MM+dd+hh+mm+ss");
 		assert.deepEqual(sString, "2019+02+16+10+10+10", "Result: " + sString);
 		oType.destroy();
 

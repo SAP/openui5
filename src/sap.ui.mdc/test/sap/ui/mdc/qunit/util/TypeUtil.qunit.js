@@ -132,7 +132,7 @@ sap.ui.define([
 
 		oType.destroy();
 		oType = new DateTime({UTC: true});
-		oDate = new Date(2000, 0, 1, 10, 10, 10, 100);
+		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
 		oTypedValue = TypeUtil.internalizeValue("2000-01-01T10:10:10.100Z", oType);
 		assert.equal(oTypedValue.toString(), oDate.toString(), "expected value returned"); // UTC dateTime is used as local one
 
@@ -158,7 +158,7 @@ sap.ui.define([
 
 		oType.destroy();
 		oType = new DateTime({UTC: true});
-		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
+		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100)); // as local date is used as UTC date
 		oStringifiedValue = TypeUtil.externalizeValue(oDate, oType);
 		assert.equal(oStringifiedValue, "2000-01-01T10:10:10.100Z", "stringified value returned");
 

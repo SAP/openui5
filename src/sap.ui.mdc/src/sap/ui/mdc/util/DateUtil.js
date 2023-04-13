@@ -133,9 +133,9 @@ sap.ui.define([
 
 					var oDate = this.typeToDate(vDate, oType, sBaseType);
 
-					// if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the local date to UTC
-					// 	oDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
-					// }
+					if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the local date to UTC
+						oDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+					}
 
 					return oDate.toISOString();
 
@@ -180,6 +180,8 @@ sap.ui.define([
 
 					if (oType.getModelValue) {
 						vDate = oType.getModelValue(oDate);
+					} else if (oType.isA("sap.ui.model.type.DateTime") && oType.getFormatOptions().UTC) { // old DateTime don't support UTC on ModelFormat
+						vDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
 					} else { // older types don't support the new getModelValue
 						var oModelFormat = oType.getModelFormat();
 						var oFormatOptions = oType.getFormatOptions();
@@ -204,9 +206,11 @@ sap.ui.define([
 				typeToDate: function(vDate, oType, sBaseType) {
 					var oDate;
 
-					if (oType.isA("sap.ui.model.odata.type.DateTime") && oType.getConstraints().displayFormat === "Date") { // TODO: need some type-function to convert
-						oDate = UI5Date.getInstance(vDate.getUTCFullYear(), vDate.getUTCMonth(), vDate.getUTCDate());
-					} else {
+					if (oType.getDateValue) {
+						oDate = oType.getDateValue(vDate);
+					} else if (oType.isA("sap.ui.model.type.DateTime") && oType.getFormatOptions().UTC) { // old DateTime don't support UTC on ModelFormat
+						oDate = UI5Date.getInstance(vDate.getUTCFullYear(), vDate.getUTCMonth(), vDate.getUTCDate(), vDate.getUTCHours(), vDate.getUTCMinutes(), vDate.getUTCSeconds(), vDate.getUTCMilliseconds());
+					} else { // older types don't support the new getDateValue
 						var oModelFormat = oType.getModelFormat();
 						var oFormatOptions = oType.getFormatOptions();
 						var bUTC = sBaseType === BaseType.DateTime ? !!oFormatOptions.UTC : false;
