@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./CustomPreviousXWeekend',
-	'./CustomPreviousXWorkWeek'
+	'./CustomPreviousXWorkWeek',
+	'sap/ui/core/date/UI5Date'
 ], function(
 	Controller,
 	DateFormat,
@@ -19,7 +20,8 @@ sap.ui.define([
 	coreLibrary,
 	Device,
 	CustomPreviousXWeekend,
-	CustomPreviousXWorkWeek
+	CustomPreviousXWorkWeek,
+	UI5Date
 ) {
 	"use strict";
 
@@ -27,7 +29,7 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	function getIcrementedDateFromToday(iDays, iMonths, iYears) {
-		var oResultingDate = new Date();
+		var oResultingDate = UI5Date.getInstance();
 
 		oResultingDate.setFullYear(oResultingDate.getFullYear() + iYears);
 		oResultingDate.setMonth(oResultingDate.getMonth() + iMonths);
@@ -137,21 +139,21 @@ sap.ui.define([
 		},
 		{
 			productType: "Orange Juice",
-			orderTime: new Date(2021, 5, 9, 15, 15, 0),
+			orderTime: UI5Date.getInstance(2021, 5, 9, 15, 15, 0),
 			productPrice: 5.00,
 			productQuantity: 1,
 			currency: "EUR"
 		},
 		{
 			productType: "Burger",
-			orderTime: new Date(2021, 5, 8, 10, 15, 0),
+			orderTime: UI5Date.getInstance(2021, 5, 8, 10, 15, 0),
 			productPrice: 12.40,
 			productQuantity: 3,
 			currency: "EUR"
 		},
 		{
 			productType: "Pizza",
-			orderTime: new Date(2021, 5, 8, 10, 15, 0),
+			orderTime: UI5Date.getInstance(2021, 5, 8, 10, 15, 0),
 			productPrice: 5.30,
 			productQuantity: 2,
 			currency: "EUR"
@@ -221,7 +223,7 @@ sap.ui.define([
 		},
 		{
 			productType: "Wine",
-			orderTime: new Date(2021, 5, 8, 10, 15, 0),
+			orderTime: UI5Date.getInstance(2021, 5, 8, 10, 15, 0),
 			productPrice: 5.34,
 			productQuantity: 1,
 			currency: "EUR"

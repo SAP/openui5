@@ -175,7 +175,7 @@ sap.ui.define([
 
 	QUnit.test("Setting value", function(assert) {
 		// arrange
-		var oCustomValue = { operator: "DATE", values: [new Date(2020, 2, 31)]};
+		var oCustomValue = { operator: "DATE", values: [UI5Date.getInstance(2020, 2, 31)]};
 		// act
 		this.ddr.setValue(oCustomValue);
 
@@ -208,7 +208,7 @@ sap.ui.define([
 		// act
 		this.stub(oDDR._oSelectedOption, "getValueHelpOutput").returns({
 			operator: "DATETIMERANGE",
-			values: [new Date(2022, 10, 15), new Date(2022, 10, 10)]
+			values: [UI5Date.getInstance(2022, 10, 15), UI5Date.getInstance(2022, 10, 10)]
 		});
 		this.stub(oDDR, "_closePopup").returns(function() {});
 
@@ -219,7 +219,7 @@ sap.ui.define([
 		// act
 		this.stub(oDDR._oSelectedOption, "getValueHelpOutput").returns({
 			operator: "DATETIMERANGE",
-			values: [new Date(2022, 10, 15), new Date(2022, 10, 10)]
+			values: [UI5Date.getInstance(2022, 10, 15), UI5Date.getInstance(2022, 10, 10)]
 		});
 		this.stub(oDDR, "_getDatesLabel").returns({
 			setText: function() {}
@@ -345,7 +345,7 @@ sap.ui.define([
 		aControls = oOption.createValueHelpUI(this.ddr);
 
 		aControls[0].addSelectedDate(new DateRange({
-			startDate: new Date(2021, 3, 3)
+			startDate: UI5Date.getInstance(2021, 3, 3)
 		}));
 
 		oOutput = oOption.getValueHelpOutput(this.ddr);
@@ -436,7 +436,7 @@ sap.ui.define([
 		});
 
 		oOption.toDates = function(oValue) {
-			return [new Date(123456788), new Date(123456789)];
+			return [UI5Date.getInstance(123456788), UI5Date.getInstance(123456789)];
 		};
 
 		var aDates = oOption.toDates({ operator: "KEY", values: [5] });
@@ -830,7 +830,7 @@ sap.ui.define([
 
 	QUnit.test("DynamicDateRange - Last/Next options", function(assert) {
 		// arrange
-		var oCurrentDate = new Date('2023-01-08T00:13:37'),
+		var oCurrentDate = UI5Date.getInstance('2023-01-08T00:13:37'),
 		oClock = sinon.useFakeTimers(oCurrentDate.getTime());
 
 		oCore.applyChanges();
@@ -886,7 +886,7 @@ sap.ui.define([
 			aResultRange;
 
 		//act
-		aResultRange = DynamicDateRange.toDates({ operator: "DATE", values: [new Date(2021, 8, 23)] });
+		aResultRange = DynamicDateRange.toDates({ operator: "DATE", values: [UI5Date.getInstance(2021, 8, 23)] });
 
 		// assert
 		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
@@ -899,7 +899,7 @@ sap.ui.define([
 			aResultRange;
 
 		//act
-		aResultRange = DynamicDateRange.toDates({ operator: "DATERANGE", values: [new Date(2021, 8, 23), new Date(2021, 8, 24)] });
+		aResultRange = DynamicDateRange.toDates({ operator: "DATERANGE", values: [UI5Date.getInstance(2021, 8, 23), UI5Date.getInstance(2021, 8, 24)] });
 
 		// assert
 		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
@@ -997,7 +997,7 @@ sap.ui.define([
 
 	QUnit.test("DateTime - getValueHelpOutput", function(assert) {
 		var oDateTimeOption = new StandardDynamicDateOption({ key: "DATETIME" }),
-			oDate = new Date(),
+			oDate = UI5Date.getInstance(),
 			aControls,
 			oOutput;
 
@@ -1027,7 +1027,7 @@ sap.ui.define([
 	QUnit.test("toDates - DATETIME", function(assert) {
 		// arrange
 		var oDateFormatter = DateFormat.getDateTimeInstance(),
-			oDate = new Date(2021, 11, 20, 15, 50, 0),
+			oDate = UI5Date.getInstance(2021, 11, 20, 15, 50, 0),
 			oResult;
 
 		//act
@@ -1122,7 +1122,7 @@ sap.ui.define([
 
 	QUnit.test("DateTimeRange - getValueHelpOutput", function(assert) {
 		var oDateTimeOption = this.ddr.getOption("DATETIMERANGE"),
-			oDate = new Date(),
+			oDate = UI5Date.getInstance(),
 			aControls,
 			oOutput;
 
@@ -1148,8 +1148,8 @@ sap.ui.define([
 	QUnit.test("toDates - DATETIMERANGE", function(assert) {
 		// arrange
 		var oDateFormatter = DateFormat.getDateTimeInstance(),
-			oDate = new Date(2021, 11, 20, 15, 50, 0),
-			oDate2 = new Date(2021, 11, 29, 15, 50, 0),
+			oDate = UI5Date.getInstance(2021, 11, 20, 15, 50, 0),
+			oDate2 = UI5Date.getInstance(2021, 11, 29, 15, 50, 0),
 			oResult;
 
 		//act
@@ -1236,7 +1236,7 @@ sap.ui.define([
 	QUnit.test("calendarWeekNumbering affects days of week", function(assert) {
 		var oDRS = new DynamicDateRange({
 				id: 'myDDR',
-				value: {operator: 'DATE', values: [new Date('2023-01-09T18:00:00')]},
+				value: {operator: 'DATE', values: [UI5Date.getInstance('2023-01-09T18:00:00')]},
 				calendarWeekNumbering: "MiddleEastern"
 			});
 

@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -24,7 +25,8 @@ sap.ui.define([
 	deepEqual,
 	jQuery,
 	KeyCodes,
-	oCore
+	oCore,
+	UI5Date
 ) {
 	"use strict";
 
@@ -92,7 +94,7 @@ sap.ui.define([
 	};
 
 
-	var oNow = new Date(),
+	var oNow = UI5Date.getInstance(),
 		oCore = sap.ui.getCore(),
 		sValueFormat = "yyyy-MM-dd",
 		sDateValue1 = "2012-05-29",
@@ -104,7 +106,7 @@ sap.ui.define([
 		});
 
 	oModel.setData({
-		dateVal : new Date(+oNow)
+		dateVal : UI5Date.getInstance(+oNow)
 	});
 	oCore.setModel(oModel);
 
@@ -261,13 +263,13 @@ sap.ui.define([
 		assert.equal(sValue, "2012-05-30", "Value in internal format priovided");
 		assert.ok(bValid, "Value is valid");
 		assert.equal(dti0.getValue(), "2012-05-30", "Value in internal format set");
-		assert.equal(dti0.getDateValue().getTime(), new Date("2012", "04", "30").getTime(), "DateValue set");
+		assert.equal(dti0.getDateValue().getTime(), UI5Date.getInstance("2012", "04", "30").getTime(), "DateValue set");
 
 	});
 
 	QUnit.test("Databinding type of 'value' property vs DateTimeInput type", function (assert) {
 		//Prepare
-		var oMyLocalModel = new JSONModel({dateVal: new Date()});
+		var oMyLocalModel = new JSONModel({dateVal: UI5Date.getInstance()});
 
 		return XMLView.create({
 			definition: sDtiView
@@ -368,7 +370,7 @@ sap.ui.define([
 		//helpers
 
 		function prepare() { //creates view with 3 DateTimeInputs where the type and its binding type are equal
-			var oMyLocalModel = new JSONModel({dateVal: new Date()});
+			var oMyLocalModel = new JSONModel({dateVal: UI5Date.getInstance()});
 
 			return XMLView.create({
 				definition: sDtiView

@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TimePicker",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, TimePicker, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(createAndAppendDiv, TimePicker, oCore, UI5Date) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -14,7 +15,7 @@ sap.ui.define([
 			"TimePickerSemanticHelper strips out the single quotes 'ч' to produce its mask correctly", function (assert) {
 		// Prepare
 		var oSut = new TimePicker({
-			dateValue: new Date(2018, 7, 20, 17, 21),
+			dateValue: UI5Date.getInstance(2018, 7, 20, 17, 21),
 			valueFormat: "dd MMMM yyyy h:mm a" /* value format should be defined as well*/
 		}).placeAt('content');
 

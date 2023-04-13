@@ -355,7 +355,7 @@ sap.ui.define([
 	TimesRow.prototype._getStartDate = function(){
 
 		if (!this._oUTCStartDate) {
-			this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(new Date(), undefined, true);
+			this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(UI5Date.getInstance(), undefined, true);
 			this._oUTCStartDate = this._getIntervalStart(this._oUTCStartDate);
 		}
 
@@ -1241,18 +1241,18 @@ sap.ui.define([
 					oStartDate = oDate;
 					if (!bMove) {
 						// in move mode do not set date. this bring broblems if on backward move the start date would be changed
-						oDateRange.setProperty("startDate", CalendarUtils._createLocalDate(new Date(oStartDate.getTime()), true));
-						oDateRange.setProperty("endDate", CalendarUtils._createLocalDate(new Date(oEndDate.getTime()), true));
+						oDateRange.setProperty("startDate", CalendarUtils._createLocalDate(UI5Date.getInstance(oStartDate.getTime()), true));
+						oDateRange.setProperty("endDate", CalendarUtils._createLocalDate(UI5Date.getInstance(oEndDate.getTime()), true));
 					}
 				} else if (oDate.getTime() >= oStartDate.getTime()) {
 					// single day ranges are allowed
 					oEndDate = oDate;
 					if (!bMove) {
-						oDateRange.setProperty("endDate", CalendarUtils._createLocalDate(new Date(oEndDate.getTime()), true));
+						oDateRange.setProperty("endDate", CalendarUtils._createLocalDate(UI5Date.getInstance(oEndDate.getTime()), true));
 					}
 				}
 			} else {
-				oDateRange.setProperty("startDate", CalendarUtils._createLocalDate(new Date(oDate.getTime()), true));
+				oDateRange.setProperty("startDate", CalendarUtils._createLocalDate(UI5Date.getInstance(oDate.getTime()), true));
 				oDateRange.setProperty("endDate", undefined);
 			}
 		} else {
@@ -1277,7 +1277,7 @@ sap.ui.define([
 					}
 				} else {
 					// not selected -> select
-					oDateRange = new DateRange({startDate: CalendarUtils._createLocalDate(new Date(oDate.getTime()), true)});
+					oDateRange = new DateRange({startDate: CalendarUtils._createLocalDate(UI5Date.getInstance(oDate.getTime()), true)});
 					oAggOwner.addAggregation("selectedDates", oDateRange);
 				}
 			}

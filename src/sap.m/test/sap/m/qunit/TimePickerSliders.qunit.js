@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/TimePickerSlider",
 	"sap/m/TimePickerSliders",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
-], function(QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, oCore, UI5Date) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -159,7 +160,7 @@ sap.ui.define([
 
 	QUnit.test("Call to setValue calls the _setTimeValues", function (assert) {
 		var sValue = "15:16:17",
-			sExpectedDate = new Date(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
+			sExpectedDate = UI5Date.getInstance(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
 			oSetTimeValuesSpy = this.spy(this.oTPS, "_setTimeValues"),
 			oParseValueStub = this.stub(this.oTPS, "_parseValue").returns(sExpectedDate);
 
@@ -187,7 +188,7 @@ sap.ui.define([
 
 	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", function (assert) {
 		var sValue = "24:00:00",
-				sExpectedDate = new Date(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
+				sExpectedDate = UI5Date.getInstance(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
 				oSetTimeValuesSpy = this.spy(this.oTPS, "_setTimeValues"),
 				oParseValueStub = this.stub(this.oTPS, "_parseValue").returns(sExpectedDate);
 
@@ -268,7 +269,7 @@ sap.ui.define([
 			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
-		this.oTPS._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
+		this.oTPS._setTimeValues(UI5Date.getInstance(2017, 7, 8, 11, 12, 13), false);
 
 		assert.ok(oHoursSlider.setSelectedValue.calledWithExactly("11"), "Hours are properly set to 11");
 		assert.ok(oMinutesSlider._updateStepAndValue.calledWithExactly(12, 1), "Minutes are properly set to 12");
@@ -301,7 +302,7 @@ sap.ui.define([
 				oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
-		this.oTPS._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
+		this.oTPS._setTimeValues(UI5Date.getInstance(2017, 7, 8, 11, 12, 13), false);
 
 		assert.ok(oMinutesSlider._setEnabled.calledWithExactly(true), "Minutes slider is enabled");
 		assert.ok(oSecondsSlider._setEnabled.calledWithExactly(true), "Seconds slider is enabled");
@@ -310,7 +311,7 @@ sap.ui.define([
 		oSecondsSliderStub.restore();
 	});
 
-	QUnit.test("_setTimeValues properly set value to sliders when date value is marking the end of the day new Date(2017, 7, 8, 0, 0, 0)", function (assert) {
+	QUnit.test("_setTimeValues properly set value to sliders when date value is marking the end of the day UI5Date.getInstance(2017, 7, 8, 0, 0, 0)", function (assert) {
 		var oHoursSlider = { setSelectedValue: this.spy() },
 			oMinutesSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
 			oSecondsSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
@@ -320,7 +321,7 @@ sap.ui.define([
 			oFormatSliderStub = this.stub(this.oTPS, "_getFormatSlider").returns(null);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
-		this.oTPS._setTimeValues(new Date(2017, 7, 8, 0, 0, 0), true);
+		this.oTPS._setTimeValues(UI5Date.getInstance(2017, 7, 8, 0, 0, 0), true);
 
 		assert.ok(oHoursSlider.setSelectedValue.calledWithExactly("24"), "Hours are properly set to 24");
 		assert.ok(oMinutesSlider.setSelectedValue.calledWithExactly("0"), "Minutes are properly set to 0");
@@ -332,14 +333,14 @@ sap.ui.define([
 		oFormatSliderStub.restore();
 	});
 
-	QUnit.test("_setTimeValues properly disables Minutes and Seconds Slider when value is marking the end of the day new Date(2017, 7, 8, 0, 0, 0)", function (assert) {
+	QUnit.test("_setTimeValues properly disables Minutes and Seconds Slider when value is marking the end of the day UI5Date.getInstance(2017, 7, 8, 0, 0, 0)", function (assert) {
 		var oMinutesSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
 			oSecondsSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
 			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider").returns(oMinutesSlider),
 			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
-		this.oTPS._setTimeValues(new Date(2017, 7, 8, 0, 0, 0), true);
+		this.oTPS._setTimeValues(UI5Date.getInstance(2017, 7, 8, 0, 0, 0), true);
 
 		assert.ok(oMinutesSlider._setEnabled.calledWithExactly(false), "Minutes slider is disabled");
 		assert.ok(oSecondsSlider._setEnabled.calledWithExactly(false), "Seconds slider is disabled");

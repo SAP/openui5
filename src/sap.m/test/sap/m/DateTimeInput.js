@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/Time",
 	"sap/ui/model/type/DateTime",
-	"sap/ui/model/odata/type/DateTimeOffset"
+	"sap/ui/model/odata/type/DateTimeOffset",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	coreLibrary,
 	mLibrary,
@@ -41,11 +42,12 @@ sap.ui.define([
 	DateType,
 	TimeType,
 	DateTimeType,
-	DateTimeOffsetType
+	DateTimeOffsetType,
+	UI5Date
 ) {
 	"use strict";
 
-	var iNow = new Date().getTime(),
+	var iNow = UI5Date.getInstance().getTime(),
 		oModel = new JSONModel(),
 		ValueState = coreLibrary.ValueState,
 		DateTimeInputType = mLibrary.DateTimeInputType,
@@ -58,11 +60,11 @@ sap.ui.define([
 
 	oModel.setData({
 		// same value with different object
-		dateVal1 : new Date(iNow),
-		dateVal2 : new Date(iNow),
-		dateVal3 : new Date(iNow),
-		dateVal4 : new Date(iNow),
-		dateVal5 : new Date(iNow)
+		dateVal1 : UI5Date.getInstance(iNow),
+		dateVal2 : UI5Date.getInstance(iNow),
+		dateVal3 : UI5Date.getInstance(iNow),
+		dateVal4 : UI5Date.getInstance(iNow),
+		dateVal5 : UI5Date.getInstance(iNow)
 	});
 
 	Core.setModel(oModel);
@@ -173,7 +175,7 @@ sap.ui.define([
 				width : "99%",
 				type : DateTimeInputType.DateTime,
 				displayFormat : new DateTimeType({style: "long"}).getOutputPattern(),
-				dateValue : new Date(2012, 4, 29, 19, 14, 0),
+				dateValue : UI5Date.getInstance(2012, 4, 29, 19, 14, 0),
 				valueState : "Warning",
 				change : handleChange
 			}),

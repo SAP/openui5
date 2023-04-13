@@ -826,7 +826,7 @@ sap.ui.define([
 		} else if (this.getDate()) {
 			oMonthDate = this.getDate();
 		} else {
-			oMonthDate = new Date();
+			oMonthDate = UI5Date.getInstance();
 		}
 
 		return this._bAlwaysShowSpecialDates || CalendarUtils._isSameMonthAndYear(oDay, CalendarDate.fromLocalJSDate(oMonthDate));
@@ -911,7 +911,7 @@ sap.ui.define([
 		var oTimeStamp = oDate.toUTCJSDate().getTime();
 		// we only need the timestamp of each special date for comparison
 		// because it is independent of calendar type, we use native UTC Date
-		var oUTCDate = new Date(Date.UTC(0, 0, 1));
+		var oUTCDate = UI5Date.getInstance(Date.UTC(0, 0, 1));
 
 		for ( var i = 0; i < aSpecialDates.length; i++) {
 			// initialize the time part of the start and end time

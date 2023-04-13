@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/m/TimePickerInputs",
 	"sap/m/TimePickerInternals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
-], function(TimePickerInputs, TimePickerInternals, KeyCodes, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(TimePickerInputs, TimePickerInternals, KeyCodes, oCore, UI5Date) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -84,7 +85,7 @@ sap.ui.define([
 
 	QUnit.test("Call to setValue calls the _setTimeValues", function (assert) {
 		var sValue = "15:16:17",
-			sExpectedDate = new Date(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
+			sExpectedDate = UI5Date.getInstance(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
 			oSetTimeValuesSpy = this.spy(this.oTPI, "_setTimeValues");
 
 		this.stub(this.oTPI, "_parseValue").returns(sExpectedDate);
@@ -108,7 +109,7 @@ sap.ui.define([
 
 	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", function (assert) {
 		var sValue = "24:00:00",
-				sExpectedDate = new Date(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
+				sExpectedDate = UI5Date.getInstance(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
 				oSetTimeValuesSpy = this.spy(this.oTPI, "_setTimeValues");
 
 		this.stub(this.oTPI, "_parseValue").returns(sExpectedDate);
@@ -156,7 +157,7 @@ sap.ui.define([
 			oSecondsSetValue = this.spy(oSecondsInput, "setValue");
 
 		this.oTPI.setValueFormat("HH:mm:ss");
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 11, 12, 13), false);
 
 		assert.ok(oHoursSetValue.calledWithExactly("11"), "Hours are properly set to 11");
 		assert.ok(oMinutesSetValue.calledWithExactly("12"), "Minutes are properly set to 12");
@@ -170,13 +171,13 @@ sap.ui.define([
 			oSecondsSetEnabled = this.spy(oSecondsInput, "setEnabled");
 
 		this.oTPI.setValueFormat("HH:mm:ss");
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 11, 12, 13), false);
 
 		assert.ok(oMinutesSetEnabled.calledWithExactly(true), "Minutes Input is enabled");
 		assert.ok(oSecondsSetEnabled.calledWithExactly(true), "Seconds Input is enabled");
 	});
 
-	QUnit.test("_setTimeValues properly set value to Inputs when date value is marking the end of the day new Date(2017, 7, 8, 0, 0, 0)", function (assert) {
+	QUnit.test("_setTimeValues properly set value to Inputs when date value is marking the end of the day UI5Date.getInstance(2017, 7, 8, 0, 0, 0)", function (assert) {
 		var oHoursInput = this.oTPI._getHoursInput(),
 			oMinutesInput = this.oTPI._getMinutesInput(),
 			oSecondsInput = this.oTPI._getSecondsInput(),
@@ -185,21 +186,21 @@ sap.ui.define([
 			oSecondsSetValue = this.spy(oSecondsInput, "setValue");
 
 		this.oTPI.setValueFormat("HH:mm:ss");
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 0, 0, 0), true);
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 0, 0, 0), true);
 
 		assert.ok(oHoursSetValue.calledWithExactly("24"), "Hours are properly set to 24");
 		assert.ok(oMinutesSetValue.calledWithExactly("00"), "Minutes are properly set to 0");
 		assert.ok(oSecondsSetValue.calledWithExactly("00"), "Seconds are properly set to 0");
 	});
 
-	QUnit.test("_setTimeValues properly disables Minutes and Seconds Clock when value is marking the end of the day new Date(2017, 7, 8, 0, 0, 0)", function (assert) {
+	QUnit.test("_setTimeValues properly disables Minutes and Seconds Clock when value is marking the end of the day UI5Date.getInstance(2017, 7, 8, 0, 0, 0)", function (assert) {
 		var oMinutesInput = this.oTPI._getMinutesInput(),
 			oSecondsInput = this.oTPI._getSecondsInput(),
 			oMinutesInputSetEnabled = this.spy(oMinutesInput, "setEnabled"),
 			oSecondsInputSetEnabled = this.spy(oSecondsInput, "setEnabled");
 
 		this.oTPI.setValueFormat("HH:mm:ss");
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 0, 0, 0), true);
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 0, 0, 0), true);
 
 		assert.ok(oMinutesInputSetEnabled.calledWithExactly(false), "Minutes Clock is disabled");
 		assert.ok(oSecondsInputSetEnabled.calledWithExactly(false), "Seconds Clock is disabled");
@@ -535,7 +536,7 @@ sap.ui.define([
 
 			this.oTPI.setValueFormat("HH:mm:ss");
 			this.oTPI.setDisplayFormat("HH:mm:ss");
-			this.oTPI._setTimeValues(new Date(2017, 7, 8, 22, 58, 58));
+			this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 22, 58, 58));
 
 			this.oTPI.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -584,7 +585,7 @@ sap.ui.define([
 			oSecondsInput = this.oTPI._getSecondsInput(),
 			oFinalDate;
 
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 1, 1, 1));
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 1, 1, 1));
 
 		oHoursInput = this.oTPI._getHoursInput();
 		oMinutesInput = this.oTPI._getMinutesInput();
@@ -725,7 +726,7 @@ sap.ui.define([
 
 		this.oTPI.setValueFormat("hh:mm:ss a");
 		this.oTPI.setDisplayFormat("hh:mm:ss a");
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
 		oCore.applyChanges();
 
 		//act
@@ -776,7 +777,7 @@ sap.ui.define([
 
 		this.oTPI.setValueFormat("hh:mm:ss a");
 		this.oTPI.setDisplayFormat("hh:mm:ss a");
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
 		oCore.applyChanges();
 
 		//act
@@ -819,7 +820,7 @@ sap.ui.define([
 
 		this.oTPI.setValueFormat("hh:mm:ss");
 		this.oTPI.setDisplayFormat("hh:mm:ss");
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
 		oCore.applyChanges();
 
 		//act
@@ -862,7 +863,7 @@ sap.ui.define([
 		this.oTPI.setValueFormat("HH:mm:ss");
 		this.oTPI.setDisplayFormat("HH:mm:ss");
 		this.oTPI.setSupport2400(true);
-		this.oTPI._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
+		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
 		oCore.applyChanges();
 
 		oHoursInput = this.oTPI._getHoursInput();

@@ -16,6 +16,7 @@
 		<script>
 
 		var app = new sap.m.App("myApp");
+		var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
 		var page1 = new sap.m.Page("page1", {
 			title:"DateTimePicker with Timezone",
@@ -26,20 +27,20 @@
 						new sap.m.DateTimePicker("DTP1", {
 							displayFormat: "medium",
 							width: "100%",
-							dateValue: new Date(Date.UTC(2000, 10, 20, 8, 10, 10)),
+							dateValue: UI5Date.getInstance(Date.UTC(2000, 10, 20, 8, 10, 10)),
 							showTimezone: true,
 							timezone: "America/Argentina/Buenos_Aires"
 						}),
 						new sap.m.DateTimePicker("DTP2", {
 							displayFormat: "medium",
 							width: "100%",
-							dateValue: new Date(Date.UTC(2000, 10, 20, 8, 10, 10)),
+							dateValue: UI5Date.getInstance(Date.UTC(2000, 10, 20, 8, 10, 10)),
 							timezone: "America/Argentina/Buenos_Aires"
 						}),
 						new sap.m.DateTimePicker("DTP3", {
 							displayFormat: "medium",
 							width: "100%",
-							dateValue: new Date(Date.UTC(2021, 2, 24, 22, 30)),
+							dateValue: UI5Date.getInstance(Date.UTC(2021, 2, 24, 22, 30)),
 							showTimezone: true
 						})
 					]

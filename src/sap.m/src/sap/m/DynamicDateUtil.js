@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"./library",
 	'sap/ui/core/format/TimezoneUtil',
-	'sap/ui/core/Core'
+	'sap/ui/core/Core',
+	'sap/ui/core/date/UI5Date'
 ], function(
-	StandardDynamicDateOption, Log, library, TimezoneUtil, Core) {
+	StandardDynamicDateOption, Log, library, TimezoneUtil, Core, UI5Date) {
 	"use strict";
 
 	var STANDARD_KEYS_ARRAY = [
@@ -261,7 +262,7 @@ sap.ui.define([
 	 * @public
 	 */
 	DynamicDateUtil.removeTimezoneOffset = function(oDate) {
-		var oNewDate = new Date(oDate);
+		var oNewDate = UI5Date.getInstance(oDate);
 		var sTimezone = Core.getConfiguration().getTimezone();
 		var iOffsetInSeconds = TimezoneUtil.calculateOffset(oNewDate, sTimezone) - oNewDate.getTimezoneOffset() * 60;
 

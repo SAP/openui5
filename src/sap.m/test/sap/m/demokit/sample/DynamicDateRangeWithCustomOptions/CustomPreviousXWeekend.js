@@ -4,14 +4,16 @@ sap.ui.define([
 	'sap/m/StepInput',
 	'sap/m/Label',
 	'sap/ui/core/LocaleData',
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	DynamicDateOption,
 	DynamicDateValueHelpUIType,
 	StepInput,
 	Label,
 	LocaleData,
-	oCore
+	oCore,
+	UI5Date
 ) {
 	"use strict";
 
@@ -64,8 +66,8 @@ sap.ui.define([
 			var oLocale = oCore.getConfiguration().getLocale();
 			var oLocaleData = new LocaleData(oLocale);
 			var iValue = oValue.values[0];
-			var oSaturdayDate = new Date();
-			var oSundayDate = new Date();
+			var oSaturdayDate = UI5Date.getInstance();
+			var oSundayDate = UI5Date.getInstance();
 			var iDaysInWeek = 7;
 
 			// Move to the exact week

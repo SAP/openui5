@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Locale',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	'sap/ui/core/date/UI5Date'
 ],
 	function(
 		coreLibrary,
@@ -30,7 +31,8 @@ sap.ui.define([
 		Device,
 		Locale,
 		jQuery,
-		Configuration
+		Configuration,
+		UI5Date
 	) {
 		"use strict";
 
@@ -354,7 +356,7 @@ sap.ui.define([
 				oFormatSlider = this._getFormatSlider(),
 				iHours = null,
 				sAmpm = null,
-				oDateValue = new Date();
+				oDateValue = UI5Date.getInstance();
 
 			if (oHoursSlider) {
 				iHours = parseInt(oHoursSlider.getSelectedValue());
@@ -440,7 +442,7 @@ sap.ui.define([
 				iHours,
 				sAmPm = null;
 
-			oDate = oDate || new Date();
+			oDate = oDate || UI5Date.getInstance();
 
 			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
 			// because Date object in the test is different than the Date object in the application (due to the iframe).
