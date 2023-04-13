@@ -1284,6 +1284,49 @@ sap.ui.define([
 		return this.stop(true, true);
 	}
 
+	function handleDataLoss(sMessageKey, sTitleKey, callbackFn) {
+		if (this.canSave()) {
+			Utils.showMessageBox("warning", sMessageKey, {
+				titleKey: sTitleKey,
+				actions: [MessageBox.Action.YES, MessageBox.Action.NO, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.YES
+			}).then(function(sAction) {
+				if (sAction === MessageBox.Action.YES) {
+					this._serializeToLrep()
+						.then(callbackFn);
+				} else if (sAction === MessageBox.Action.NO) {
+					// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
+					this.getCommandStack().removeAllCommands(true);
+					callbackFn();
+				}
+				return undefined;
+			}.bind(this));
+			return;
+		}
+		callbackFn();
+	}
+
+	function onSwitchAdaptation(oEvent) {
+		var sAdaptationId = oEvent.getParameter("adaptationId");
+		var sDiplayedAdaptationId = this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id");
+
+		if (sAdaptationId === sDiplayedAdaptationId) {
+			// already in displayed adaptation; needs no switch
+			return;
+		}
+
+		this._sSwitchToAdaptationId = sAdaptationId;
+		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
+			switchAdaptation.bind(this, this._sSwitchToAdaptationId));
+	}
+
+	function switchAdaptation(sAdaptationId) {
+		var sVersion = this._oVersionsModel.getProperty("/displayedVersion");
+		switchVersion.call(this, sVersion, sAdaptationId);
+		this._oContextBasedAdaptationsModel.switchDisplayedAdaptation(sAdaptationId);
+		//TODO: load new contextbased adaptations?
+	}
+
 	function onSwitchVersion(oEvent) {
 		var sVersion = oEvent.getParameter("version");
 		var sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
@@ -1293,35 +1336,19 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.canSave()) {
-			this._sSwitchToVersion = sVersion;
-			Utils.showMessageBox("warning", "MSG_SWITCH_VERSION_DIALOG", {
-				titleKey: "TIT_SWITCH_VERSION_DIALOG",
-				actions: [MessageBox.Action.YES, MessageBox.Action.NO, MessageBox.Action.CANCEL],
-				emphasizedAction: MessageBox.Action.YES
-			}).then(function(sAction) {
-				if (sAction === MessageBox.Action.YES) {
-					this._serializeToLrep()
-						.then(switchVersion.bind(this, this._sSwitchToVersion));
-				} else if (sAction === MessageBox.Action.NO) {
-					// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
-					this.getCommandStack().removeAllCommands(true);
-					switchVersion.call(this, this._sSwitchToVersion);
-				}
-				return undefined;
-			}.bind(this));
-			return;
-		}
-		switchVersion.call(this, sVersion);
+		this._sSwitchToVersion = sVersion;
+		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "TIT_SWITCH_VERSION_DIALOG",
+			switchVersion.bind(this, this._sSwitchToVersion));
 	}
 
-	function switchVersion(sVersion) {
+	function switchVersion(sVersion, sAdaptationId) {
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
 		VersionsAPI.loadVersionForApplication({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer(),
-			version: sVersion
+			version: sVersion,
+			adaptationId: sAdaptationId
 		});
 		var oReloadInfo = {
 			versionSwitch: true,
@@ -1405,6 +1432,7 @@ sap.ui.define([
 				oProperties.activate = onActivate.bind(this);
 				oProperties.discardDraft = onDiscardDraft.bind(this);
 				oProperties.switchVersion = onSwitchVersion.bind(this);
+				oProperties.switchAdaptation = onSwitchAdaptation.bind(this);
 				oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
 					? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
 					: function() {};
