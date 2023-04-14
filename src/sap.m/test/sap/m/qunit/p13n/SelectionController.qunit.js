@@ -507,11 +507,9 @@ sap.ui.define([
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "removeFilter", "Returned value is of correct type");
 		assert.equal(aChanges[0].changeSpecificData.content.key, "B", "Returned the expected name");
-		assert.equal(aChanges[0].changeSpecificData.content.index, 1, "Returned the expected index");
 
 		assert.equal(aChanges[1].changeSpecificData.changeType, "removeFilter", "Returned value is of correct type");
 		assert.equal(aChanges[1].changeSpecificData.content.key, "C", "Returned the expected name");
-		assert.equal(aChanges[1].changeSpecificData.content.index, 2, "Returned the expected index");
 
 		assert.equal(aChanges[2].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
 		assert.equal(aChanges[2].changeSpecificData.content.key, "D", "Returned the expected name");
@@ -531,11 +529,9 @@ sap.ui.define([
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "removeFilter", "Returned value is of correct type");
 		assert.equal(aChanges[0].changeSpecificData.content.key, "B", "Returned the expected name");
-		assert.equal(aChanges[0].changeSpecificData.content.index, 1, "Returned the expected index");
 
 		assert.equal(aChanges[1].changeSpecificData.changeType, "removeFilter", "Returned value is of correct type");
 		assert.equal(aChanges[1].changeSpecificData.content.key, "C", "Returned the expected name");
-		assert.equal(aChanges[1].changeSpecificData.content.index, 2, "Returned the expected index");
 		//[{"name":"A","key":"A"},{"name":"D","key":"D"}];
 
 		assert.equal(aChanges[2].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
@@ -680,6 +676,27 @@ sap.ui.define([
         // {"name":"subgenre_code","key":"subgenre_code"},{"name":"author_ID","key":"author_ID"},{"key":"published","name":"published"}, {"key":"modifiedAt","name":"modifiedAt"},  8
         // {"name":"descr","key":"descr"},{"key":"metricsSentences","name":"metricsSentences"},{"key":"ID","name":"ID"}, {"key":"metricsCharacters","name":"metricsCharacters"}, {"key":"classification_code","name":"classification_code"}, 13
         // {"key":"createdAt","name":"createdAt"}, {"key":"currency_code","name":"currency_code"}, {"key":"detailgenre_code","name":"detailgenre_code"}, {"name":"title","key":"title"}];
+
+		//-----------------------------------------------------------------------
+		//adding/deleting with delta attributes
+		data.existingState = [{"name":"A","key":"A", descending:true, position:0},{"name":"B","key":"B",descending:true, position:1}];
+		data.changedState  = [{"name":"B","key":"B", descending:false, sorted:true}];
+		data.deltaAttributes = ["key", "name", "descending"];
+		data.changeOperations = {add: "addSort", remove: "removeSort", move: "moveSort"};
+
+		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		assert.equal(aChanges.length, 3, "Returned value is an array of change objects");
+
+		assert.equal(aChanges[0].changeSpecificData.changeType, "removeSort", "Returned value is of correct type");
+		assert.equal(aChanges[0].changeSpecificData.content.key, "A", "Returned the expected name");
+
+		assert.equal(aChanges[1].changeSpecificData.changeType, "removeSort", "Returned value is of correct type");
+		assert.equal(aChanges[1].changeSpecificData.content.key, "B", "Returned the expected name");
+
+		assert.equal(aChanges[2].changeSpecificData.changeType, "addSort", "Returned value is of correct type");
+		assert.equal(aChanges[2].changeSpecificData.content.key, "B", "Returned the expected name");
+		assert.equal(aChanges[2].changeSpecificData.content.index, 0, "Returned the expected index");
+		assert.equal(aChanges[2].changeSpecificData.content.descending, false, "Returned the descending info");
 
 	});
 
