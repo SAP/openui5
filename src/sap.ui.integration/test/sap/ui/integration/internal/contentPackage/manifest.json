@@ -1,0 +1,54 @@
+{
+	"sap.package": {
+		"id": "my.card.ns.cpkg",
+		"__id": "my.company.card.ns.contentpackage.sample",
+		"packageVersion": {
+			"version": "1.0.0",
+			"upgradeNotification": "all"
+		},
+		"i18n": "i18n/i18n.properties",
+		"icon": "sap-icon://accept",
+		"title": "{{PACKAGE_TITLE}}",
+		"subTitle": "{{PACKAGE_SUBTITLE}}",
+		"shortTitle": "{{PACKAGE_SHORTTITLE}}",
+		"info": "{{PACKAGE_INFO}}",
+		"description": "{{PACKAGE_DESCRIPTION}}",
+		"tags": {
+			"keywords": [
+				"{{PACKAGE_KEYWORD1}}",
+				"{{PACKAGE_KEYWORD2}}"
+			]
+		},
+		"products": "",
+		"vendor": {
+			"id": "",
+			"name": "YourCompany",
+			"url": "www.yourcompany.com"
+		},
+		"categories": "",
+		"scope": "external",
+		"license": {
+			"text": "",
+			"url": ""
+		},
+		"homepage": {
+			"text": "",
+			"url": "https://sap.com"
+		},
+		"support": {
+			"url": "https://support.sap.com"
+		},
+		"contents": [
+			"__BUILD__"
+		],
+		"documentation": {
+			"url": ""
+		},
+		"consumption": [],
+		"dependencies": {
+			"products": [],
+			"services": []
+		},
+		"destinations": []
+	}
+}

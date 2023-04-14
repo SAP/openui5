@@ -80,7 +80,6 @@ sap.ui.define([
 			mParameters = mParameters || {};
 			BaseEditor.prototype.constructor.apply(this, arguments);
 
-			this.setPreventInitialization(true);
 			if (!mParameters["config"]) {
 				this.addConfig(oDefaultCardConfig, true);
 			}
