@@ -779,18 +779,21 @@ sap.ui.define([
 	};
 
 	UploadSetItem.prototype._renderAttributes = function (oRm) {
-		var iLastAttribure = this.getAttributes().length - 1;
-
-		if (this.getAttributes().length > 0) {
-			oRm.write("<div class=\"sapMUCAttrContainer\">");
-			this.getAttributes().forEach(function (oAttribute, iIndex) {
-				oRm.renderControl(oAttribute.addStyleClass("sapMUCAttr"));
-				if (iIndex < iLastAttribure) {
-					oRm.write(UploadSetItem.DYNAMIC_CONTENT_SEPARATOR);
-				}
-			});
-			oRm.write("</div>");
+		if (this.getAttributes().length === 0) {
+			return;
 		}
+		var bFirstVisible = false;
+		oRm.write("<div class=\"sapMUCAttrContainer\">");
+		this.getAttributes().forEach(function (oAttribute, iIndex) {
+			if (bFirstVisible && oAttribute.getVisible()) {
+				oRm.write("<div class=\"sapMUCSeparator\">");
+				oRm.writeEscaped("\u00a0\u00B7\u00a0");
+				oRm.write("</div>");
+			}
+			bFirstVisible = bFirstVisible || oAttribute.getVisible();
+			oRm.renderControl(oAttribute.addStyleClass("sapMUCAttr"));
+		});
+		oRm.write("</div>");
 	};
 
 	UploadSetItem.prototype._renderMarkers = function (oRm) {
@@ -804,18 +807,21 @@ sap.ui.define([
 	};
 
 	UploadSetItem.prototype._renderStatuses = function (oRm) {
-		var iLastStatus = this.getStatuses().length - 1;
-
-		if (this.getStatuses().length > 0) {
-			oRm.write("<div class=\"sapMUCStatusContainer\">");
-			this.getStatuses().forEach(function (oStatus, iIndex) {
-				oRm.renderControl(oStatus);
-				if (iIndex < iLastStatus) {
-					oRm.write(UploadSetItem.DYNAMIC_CONTENT_SEPARATOR);
-				}
-			});
-			oRm.write("</div>");
+		if (this.getStatuses().length === 0) {
+			return;
 		}
+		var bFirstVisible = false;
+		oRm.write("<div class=\"sapMUCStatusContainer\">");
+		this.getStatuses().forEach(function (oStatus, iIndex) {
+			if (bFirstVisible && oStatus.getVisible()) {
+				oRm.write("<div class=\"sapMUCSeparator\">");
+				oRm.writeEscaped("\u00a0\u00B7\u00a0");
+				oRm.write("</div>");
+			}
+			bFirstVisible = bFirstVisible || oStatus.getVisible();
+			oRm.renderControl(oStatus);
+		});
+		oRm.write("</div>");
 	};
 
 	UploadSetItem.prototype._renderStateAndProgress = function (oRm) {
