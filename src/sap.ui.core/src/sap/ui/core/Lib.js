@@ -5,6 +5,7 @@
 //Provides class sap.ui.core.Lib
 sap.ui.define([
 	'sap/base/assert',
+	'sap/base/config',
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
@@ -23,6 +24,7 @@ sap.ui.define([
 	'sap/ui/core/_UrlResolver'
 ], function (
 	assert,
+	BaseConfig,
 	ResourceBundle,
 	Log,
 	deepExtend,
@@ -216,6 +218,43 @@ sap.ui.define([
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns the list of libraries for which the library.css was preloaded.
+	 *
+	 * This configuration setting specifies a list of UI libraries using the same syntax as the "libs" property,
+	 * for which the SAPUI5 core does not include the library.css stylesheet in the head of the page.
+	 * If the list starts with an exclamation mark (!), no stylesheet is loaded at all for the specified libs.
+	 * In this case, it is assumed that the application takes care of loading CSS.
+	 *
+	 * If the first library's name is an asterisk (*), it will be expanded to the list of already
+	 * configured libraries.
+	 *
+	 * @returns {string[]} the list of libraries for which the library.css was preloaded
+	 * @private
+	 */
+	function getPreloadLibCss() {
+		var aPreloadLibCSS = BaseConfig.get({name: "sapUiPreloadLibCss", type: BaseConfig.Type.StringArray, external: true});
+		if ( aPreloadLibCSS.length > 0 ) {
+			// remove leading '!' (legacy) as it does not make any difference
+			if ( aPreloadLibCSS[0].startsWith("!") ) {
+				aPreloadLibCSS[0] = aPreloadLibCSS[0].slice(1);
+			}
+			// "*"  means "add all bootstrap libraries"
+			if ( aPreloadLibCSS[0] === "*" ) {
+				aPreloadLibCSS.shift(); // remove * (inplace)
+
+				// The modules list also contains all configured libs
+				// we prepend them now to the preloaded libs css list
+				Object.keys(mLibraries).forEach(function(sLib) {
+					if (!aPreloadLibCSS.includes(sLib)) {
+						aPreloadLibCSS.unshift(sLib);
+					}
+				});
+			}
+		}
+		return aPreloadLibCSS;
 	}
 
 	/*
@@ -832,12 +871,14 @@ sap.ui.define([
 		 * @private
 		 */
 		_includeTheme: function(sVariant, sQuery) {
-			var sName = this.name;
+			var sName = this.name,
+				bLibCssPreloaded = getPreloadLibCss().indexOf(sName) !== -1;
 
 			aAllLibrariesRequiringCss.push({
 				name: sName,
 				version: this.version,
-				variant: sVariant
+				variant: sVariant,
+				preloadedCss: bLibCssPreloaded
 			});
 
 			_getThemeManager().then(function(ThemeManager) {
@@ -1270,12 +1311,12 @@ sap.ui.define([
 		if (!oLib.noLibraryCSS) {
 			var oLibThemingInfo = {
 				name: oLib.name,
-				version: oLib.version
+				version: oLib.version,
+				preloadedCss: getPreloadLibCss().indexOf(oLib.name) !== -1
 			};
-			// Don't reset ThemeManager in case CSS for current library is already preloaded
-			var bResetThemeManager = Configuration.getValue('preloadLibCss').indexOf(oLib.name) === -1;
 			aAllLibrariesRequiringCss.push(oLibThemingInfo);
-			_getThemeManager(bResetThemeManager).then(function(ThemeManager) {
+			// Don't reset ThemeManager in case CSS for current library is already preloaded
+			_getThemeManager(/* bClear = */ !oLibThemingInfo.preloadedCss).then(function(ThemeManager) {
 				ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
 			});
 		}
@@ -1642,6 +1683,21 @@ sap.ui.define([
 			}
 		}
 		return mParams;
+	};
+
+	/**
+	 * Get VersionedLibCss config option
+	 *
+	 * @returns {boolean} Wether VersionedLibCss is enabled or not
+	 * @private
+	 * @ui-restricted sap.ui.core
+	 */
+	Library.getVersionedLibCss = function() {
+		return BaseConfig.get({
+			name: "sapUiVersionedLibCss",
+			type: BaseConfig.Type.Boolean,
+			external: true
+		});
 	};
 
 	return Library;

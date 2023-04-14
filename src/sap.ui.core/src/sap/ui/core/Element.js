@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/events/F6Navigation",
 	"./RenderManager",
 	"./Configuration",
-	"./EnabledPropagator"
+	"./EnabledPropagator",
+	"./Theming"
 ],
 	function(
 		DataType,
@@ -33,7 +34,8 @@ sap.ui.define([
 		F6Navigation,
 		RenderManager,
 		Configuration,
-		EnabledPropagator
+		EnabledPropagator,
+		Theming
 	) {
 	"use strict";
 
@@ -2018,6 +2020,15 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 */
+
+	Theming.attachApplied(function(oEvent) {
+		// notify all elements/controls via a pseudo browser event
+		var oJQueryEvent = jQuery.Event("ThemeChanged");
+		oJQueryEvent.theme = oEvent.theme;
+		Element.registry.forEach(function(oElement) {
+			oElement._handleEvent(oJQueryEvent);
+		});
+	});
 
 	return Element;
 

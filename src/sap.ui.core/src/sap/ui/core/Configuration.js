@@ -8,9 +8,9 @@ sap.ui.define([
 	'../base/Object',
 	'./Locale',
 	"./format/TimezoneUtil",
-	'sap/ui/thirdparty/URI',
 	"sap/ui/core/_ConfigurationProvider",
 	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Theming",
 	"sap/base/util/Version",
 	"sap/base/Log",
 	"sap/base/assert",
@@ -26,9 +26,9 @@ sap.ui.define([
 		BaseObject,
 		Locale,
 		TimezoneUtil,
-		URI,
 		_ConfigurationProvider,
 		CalendarWeekNumbering,
+		Theming,
 		Version,
 		Log,
 		assert,
@@ -177,37 +177,7 @@ sap.ui.define([
 		}
 	}
 
-	function validateThemeOrigin(sOrigin) {
-		var sAllowedOrigins = getMetaTagValue("sap-allowedThemeOrigins");
-		return !!sAllowedOrigins && sAllowedOrigins.split(",").some(function(sAllowedOrigin) {
-			return sAllowedOrigin === "*" || sOrigin === sAllowedOrigin.trim();
-		});
-	}
-
-	function validateThemeRoot(sThemeRoot) {
-		var oThemeRoot,
-			sPath;
-
-		try {
-			// Remove search query as they are not supported for themeRoots/resourceRoots
-			oThemeRoot = new URI(sThemeRoot).search("");
-
-			// If the URL is absolute, validate the origin
-			var sOrigin = oThemeRoot.origin();
-			if (sOrigin && validateThemeOrigin(sOrigin)) {
-				sPath = oThemeRoot.toString();
-			} else {
-				// For relative URLs or not allowed origins
-				// ensure same origin and resolve relative paths based on href
-				sPath = oThemeRoot.absoluteTo(window.location.href).origin(window.location.origin).normalize().toString();
-			}
-			return sPath + (sPath.endsWith('/') ? '' : '/') + "UI5/";
-		} catch (e) {
-			// malformed URL are also not accepted
-		}
-	}
-
-	var M_ANIMATION_MODE = /** @lends sap.ui.core.Configuration.AnimationMode */{
+	var M_ANIMATION_MODE = {
 		/**
 		 * <code>full</code> represents a mode with unrestricted animation capabilities.
 		 * @public
@@ -366,6 +336,8 @@ sap.ui.define([
 	 * @borrows module:sap/base/i18n/Localization.setRTL as #setRTL
 	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as #getLanguagesDeliveredWithCore
 	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as #getSupportedLanguages
+	 * @borrows module:sap/ui/core/Theming.getTheme as #getTheme
+	 * @borrows module:sap/ui/core/Theming.setTheme as #setTheme
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
@@ -415,16 +387,6 @@ sap.ui.define([
 				var sUrlPrefix = "sap-ui-";
 				oUriParams = new URLSearchParams(window.location.search);
 
-				if (oUriParams.has('sap-theme')) {
-					var sValue = oUriParams.get('sap-theme');
-					if (sValue === "") {
-						// empty URL parameters set the parameter back to its system default
-						config['theme'] = M_SETTINGS['theme'].defaultValue;
-					} else {
-						setValue('theme', sValue, this);
-					}
-				}
-
 				if (oUriParams.has('sap-statistics')) {
 					var sValue = oUriParams.get('sap-statistics');
 					setValue('statistics', sValue, this);
@@ -448,25 +410,6 @@ sap.ui.define([
 					}
 				}
 			}
-
-			// analyze theme parameter
-			var sTheme = config.theme;
-			var sThemeRoot;
-			var iIndex = sTheme.indexOf("@");
-			if (iIndex >= 0) {
-				sThemeRoot = validateThemeRoot(sTheme.slice(iIndex + 1));
-				if ( sThemeRoot ) {
-					config.theme = sTheme.slice(0, iIndex);
-					config.themeRoot = sThemeRoot;
-					config.themeRoots[config.theme] = sThemeRoot;
-				} else {
-					// fallback to non-URL parameter (if not equal to sTheme)
-					config.theme = (oCfg.theme && oCfg.theme !== sTheme) ? oCfg.theme : "base";
-					iIndex = -1; // enable theme mapping below
-				}
-			}
-
-			config.theme = this.normalizeTheme(config.theme, sThemeRoot);
 
 			//parse fiori 2 adaptation parameters
 			var vAdaptations = config['xx-fiori2Adaptation'];
@@ -515,34 +458,6 @@ sap.ui.define([
 					&& !config['xx-skipAutomaticFlLibLoading']
 					&& config.modules.indexOf("sap.ui.fl.library") == -1) {
 				config.modules.push("sap.ui.fl.library");
-			}
-
-			var aCSSLibs = config['preloadLibCss'];
-			if ( aCSSLibs.length > 0 ) {
-				// a leading "!" denotes that the application has loaded the file already
-				if ( aCSSLibs[0].startsWith("!") ) {
-					aCSSLibs[0] = aCSSLibs[0].slice(1); // also affect same array in "config"!
-				}
-				if ( aCSSLibs[0] === "*" ) {
-					// replace with configured libs
-					aCSSLibs.shift(); // remove * (inplace)
-					config.modules.forEach(function(mod) {
-						var m = mod.match(/^(.*)\.library$/);
-						if ( m ) {
-							aCSSLibs.unshift(m[1]);
-						}
-					});
-				}
-			}
-
-			// default legacy boolean to new enum value
-			// TODO: remove when making the configuration non-experimental
-			if ( config["xx-waitForTheme"] === "true" ) {
-				config["xx-waitForTheme"] = "rendering";
-			}
-			if ( config["xx-waitForTheme"] !== "rendering" && config["xx-waitForTheme"] !== "init" ) {
-				// invalid value or false from legacy boolean setting
-				config["xx-waitForTheme"] = undefined;
 			}
 
 			// log  all non default value
@@ -614,23 +529,7 @@ sap.ui.define([
 			return mCompatVersion._default;
 		},
 
-		/**
-		 * Returns the theme name
-		 * @return {string} the theme name
-		 * @public
-		 */
-		getTheme : function () {
-			return this.getValue("theme");
-		},
-
-		/**
-		 * Get themeRoot for configured theme
-		 * @returns {string|object} Returns themeRoot for configured theme
-		 * @private
-		 */
-		getThemeRoot : function () {
-			return this.themeRoot;
-		},
+		getTheme : Theming.getTheme,
 
 		/**
 		 * Returns whether placeholders are active or not
@@ -645,29 +544,9 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Allows setting the theme name
-		 * @param {string} sTheme the theme name
-		 * @return {this} <code>this</code> to allow method chaining
-		 * @private
-		 */
 		setTheme : function (sTheme) {
-			this.theme = sTheme;
+			Theming.setTheme(sTheme);
 			return this;
-		},
-
-		/**
-		 * Normalize the given theme, resolve known aliases
-		 * @param {string} sTheme The theme name
-		 * @param {string} sThemeBaseUrl The theme's base url
-		 * @returns {string} The normalized theme name
-		 * @private
-		 */
-		normalizeTheme : function (sTheme, sThemeBaseUrl) {
-			if ( sTheme && sThemeBaseUrl == null && sTheme.match(/^sap_corbu$/i) ) {
-				return "sap_fiori_3";
-			}
-			return sTheme;
 		},
 
 		/**
