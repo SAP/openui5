@@ -36,6 +36,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/test/integration/opaTests.qunit.html",
 							"webapp/test/unit/model/formatter.js",
 							"webapp/test/unit/unitTests.qunit.html",
+							"webapp/test/unit/unitTests.qunit.js",
 							"ui5.yaml",
 							"package.json"
 						]
