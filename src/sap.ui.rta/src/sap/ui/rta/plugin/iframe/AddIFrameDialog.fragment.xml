@@ -94,6 +94,7 @@
 										class="sapUiRtaAddIFrameDialogHeightUnit"
 										ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightUnitLabel"
 										selectedKey="{/frameHeightUnit/value}"
+										forceSelection="false"
 										items="{/unitsOfHeightMeasure}"
 										showSecondaryValues= "true"
 										columnRatio="1:5"
