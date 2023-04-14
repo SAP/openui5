@@ -357,7 +357,7 @@ sap.ui.define([
 		// evaluate the binding-syntax. Sinon is not able to mock such properties with
 		// accessor functions.
 		var fnOrig = BindingInfo.parse;
-		BindingInfo.parse = function(sString, oContext, bUnescape) {
+		BindingInfo.parse = function (sString, oContext, bUnescape) {
 			assert.strictEqual(sString, sInput);
 			assert.strictEqual(mLocals, oContext);
 			assert.strictEqual(bUnescape, true);
@@ -982,5 +982,26 @@ sap.ui.define([
 		assert.strictEqual(oResult.result.formatter("mail"), 42);
 		assert.strictEqual(oMethodExpectation.thisValues[1], mGlobals.that, "that");
 		assert.notStrictEqual(oMethodExpectation.thisValues[1], mGlobals.My, "not My");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("BCP: 2370033311", function (assert) {
+		// DOT
+		check(assert, "{= parseInt.constructor === undefined }", true);
+
+		// PROPERTY_ACCESS
+		check(assert, "{= parseInt['constructor'] === undefined }", true);
+
+		// BINDING
+		check(assert, "{= ${/mail/toString/constructor} === undefined }", true);
+
+		// FUNCTION_CALL
+		check(assert, "{= ${path:'/mail', formatter:'.myFormatter'}() === undefined }", true, {
+			myFormatter: function () {
+				return function () {
+					return parseInt.constructor;
+				};
+			}
+		});
 	});
 });
