@@ -155,6 +155,11 @@ sap.ui.define([
 		FieldBase.prototype._observeChanges.apply(this, arguments);
 
 		if (oChanges.name === "operators") { // could lead to change of internal control
+			if (oChanges.current.length === 0) {
+				FieldBase.prototype._getOperators.apply(this, []); // set default ones to _operators
+			} else {
+				this.setProperty("_operators", oChanges.current, true);
+			}
 			this._updateInternalContent();
 		}
 
@@ -210,12 +215,6 @@ sap.ui.define([
 				aOperatorNames.push(oOperator.name);
 			}
 		});
-
-		if (aOperatorNames.length === 0) {
-			FieldBase.prototype._getOperators.apply(this, []); // set default ones to _operators
-		} else {
-			this.setProperty("_operators", aOperatorNames, true);
-		}
 
 		this.setProperty("operators", aOperatorNames);
 		return this;
