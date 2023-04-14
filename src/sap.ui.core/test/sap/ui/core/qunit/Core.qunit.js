@@ -17,6 +17,8 @@ sap.ui.define([
 ], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, RenderManager, ThemeManager, createAndAppendDiv) {
 	"use strict";
 
+	var privateLoaderAPI = sap.ui.loader._;
+
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
 		var aMethodNames = fnClass.getMetadata().getAllPublicMethods(),
 			result = true,
@@ -109,14 +111,14 @@ sap.ui.define([
 
 	QUnit.test("loadLibrary", function(assert) {
 		assert.equal(typeof oCore.loadLibrary, "function", "Core has method loadLibrary");
-		assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") === 0, "testlib lib has not been loaded yet");
+		assert.ok(privateLoaderAPI.getModuleState("sap/ui/testlib/library.js") === 0, "testlib lib has not been loaded yet");
 		assert.ok(!ObjectPath.get("sap.ui.testlib"), "testlib namespace doesn't exists");
 		assert.strictEqual(document.querySelectorAll("head > link[id='sap-ui-theme-sap.ui.testlib']").length, 0, "style sheet doesn't exist");
 		return oCore.loadLibrary("sap.ui.testlib", {
 			url: "test-resources/sap/ui/core/qunit/testdata/uilib",
 			async: true
 		}).then(function() {
-			assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") !== 0, "testlib lib has been loaded");
+			assert.ok(privateLoaderAPI.getModuleState("sap/ui/testlib/library.js") !== 0, "testlib lib has been loaded");
 			assert.ok(ObjectPath.get("sap.ui.testlib"), "testlib namespace exists");
 			assert.strictEqual(document.querySelectorAll("head > link[id='sap-ui-theme-sap.ui.testlib']").length, 1, "style sheets have been added");
 
@@ -409,7 +411,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
+		this.stub(privateLoaderAPI, 'getModuleState').returns(true);
 
 		this.stub(LoaderExtensions, 'loadResource').returns({
 			"_version": "1.9.0",
@@ -431,7 +433,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n set to true in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
+		this.stub(privateLoaderAPI, 'getModuleState').returns(true);
 		var fnOrigLoadResource = LoaderExtensions.loadResource;
 		this.stub(LoaderExtensions, 'loadResource').callsFake(function(sURL) {
 			if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
@@ -468,7 +470,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n missing in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
+		this.stub(privateLoaderAPI, 'getModuleState').returns(true);
 		// no i18n property in manifest
 		this.stub(LoaderExtensions, 'loadResource').returns(undefined);
 
@@ -490,7 +492,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with a given i18n string in manifest.json", function(assert) {
-		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
+		this.stub(privateLoaderAPI, 'getModuleState').returns(true);
 
 		var fnOrigLoadResource = LoaderExtensions.loadResource;
 
@@ -553,7 +555,7 @@ sap.ui.define([
 			activeTerminologies: undefined
 		}).callThrough();
 
-		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
+		this.stub(privateLoaderAPI, 'getModuleState').returns(true);
 
 		var fnOrigLoadResource = LoaderExtensions.loadResource;
 
@@ -605,7 +607,7 @@ sap.ui.define([
 	 */
 	QUnit.test("async (config object)", function(assert) {
 
-		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
+		this.stub(privateLoaderAPI, "loadJSResourceAsync").callsFake(function() {
 			sap.ui.define("testlibs/scenario9/lib1/library", function() {
 				oCore.initLibrary({
 					name: 'testlibs.scenario9.lib1',
@@ -621,7 +623,7 @@ sap.ui.define([
 			url: "./some/fancy/path"
 		});
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
-		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario9\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
+		assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario9\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 		assert.equal(sap.ui.require.toUrl('testlibs/scenario9/lib1'), "./some/fancy/path", "path should have been registered");
 
 		return loaded;
@@ -633,7 +635,7 @@ sap.ui.define([
 	 */
 	QUnit.test("async (convenience shortcut)", function(assert) {
 
-		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
+		this.stub(privateLoaderAPI, "loadJSResourceAsync").callsFake(function() {
 			sap.ui.define("testlibs/scenario10/lib1/library", function() {
 				oCore.initLibrary({
 					name: 'testlibs.scenario10.lib1',
@@ -646,7 +648,7 @@ sap.ui.define([
 
 		var loaded = oCore.loadLibrary("testlibs.scenario10.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
-		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario10\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
+		assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario10\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
 		return loaded;
 	});
@@ -657,7 +659,7 @@ sap.ui.define([
 	 */
 	QUnit.test("async (missing preload)", function(assert) {
 
-		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
+		this.stub(privateLoaderAPI, "loadJSResourceAsync").callsFake(function() {
 			return Promise.reject(new Error());
 		});
 		this.stub(sap.ui, "require").callsFake(function(name, callback) {
@@ -672,7 +674,7 @@ sap.ui.define([
 
 		var loaded = oCore.loadLibrary("testlibs.scenario11.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
-		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario11\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
+		assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario11\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
 		return loaded.then(function() {
 			assert.ok(sap.ui.require.calledWith(['testlibs/scenario11/lib1/library']), "should have called sap.ui.require for library.js");
@@ -689,13 +691,13 @@ sap.ui.define([
 	 */
 	QUnit.test("async (missing library)", function(assert) {
 
-		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
+		this.stub(privateLoaderAPI, "loadJSResourceAsync").callsFake(function() {
 			return Promise.reject(new Error());
 		});
 
 		var loaded = oCore.loadLibrary("testlibs.scenario12.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
-		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario12\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
+		assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario12\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
 		return loaded.then(function() {
 			assert.ok(false, "promise for a missing library should not resolve");
@@ -753,7 +755,7 @@ sap.ui.define([
 		LoaderExtensionStub.callThrough();
 
 		return VersionInfo.load().then(function(versioninfo) {
-			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+			this.spy(privateLoaderAPI, 'loadJSResourceAsync');
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui, 'requireSync');
 
@@ -761,38 +763,38 @@ sap.ui.define([
 			assert.ok(vLib8 instanceof Promise, "async call to loadLibraries should return a promise");
 
 			// initial request for lib 8 preload
-			sinon.assert.calledOnce(sap.ui.loader._.loadJSResourceAsync);
-			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib8\/library-preload\.js$/));
+			sinon.assert.calledOnce(privateLoaderAPI.loadJSResourceAsync);
+			sinon.assert.calledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib8\/library-preload\.js$/));
 
 			// loading of other libs should not be triggered yet
-			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib1\/library-preload\.js$/));
-			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib2\/library-preload\.js$/));
-			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib3\/library-preload\.js$/));
-			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib4\/library-preload\.js$/));
-			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib5\/library-preload\.js$/));
-			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib6\/library-preload\.js$/));
-			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib7\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib1\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib2\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib3\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib4\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib5\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib6\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib7\/library-preload\.js$/));
 
 			return vLib8.then(function () {
 				// 1-3
 				assert.isLibLoaded('testlibs.scenario14.lib1');
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib1\/library-preload\.js$/));
+				sinon.assert.calledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib1\/library-preload\.js$/));
 				assert.isLibLoaded('testlibs.scenario14.lib2');
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib2\/library-preload\.js$/));
+				sinon.assert.calledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib2\/library-preload\.js$/));
 				assert.isLibLoaded('testlibs.scenario14.lib3');
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib3\/library-preload\.js$/));
+				sinon.assert.calledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib3\/library-preload\.js$/));
 
 				// lib 4 is already loaded
 				assert.isLibLoaded('testlibs.scenario14.lib4');
-				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib4\/library-preload\.js$/));
+				sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib4\/library-preload\.js$/));
 
 				// 5-7
 				assert.isLibLoaded('testlibs.scenario14.lib5');
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib5\/library-preload\.js$/));
+				sinon.assert.calledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib5\/library-preload\.js$/));
 				assert.isLibLoaded('testlibs.scenario14.lib6');
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib6\/library-preload\.js$/));
+				sinon.assert.calledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib6\/library-preload\.js$/));
 				assert.isLibLoaded('testlibs.scenario14.lib7');
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib7\/library-preload\.js$/));
+				sinon.assert.calledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario14\/lib7\/library-preload\.js$/));
 			});
 		}.bind(this));
 	});

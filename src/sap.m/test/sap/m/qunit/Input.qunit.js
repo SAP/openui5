@@ -2238,7 +2238,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		oInput.setModel(new sap.ui.model.json.JSONModel(aData));
+		oInput.setModel(new JSONModel(aData));
 		oInput.bindAggregation("suggestionRows", {
 			path : "/",
 			template : new ColumnListItem({

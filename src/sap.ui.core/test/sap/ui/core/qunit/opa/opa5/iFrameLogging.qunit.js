@@ -10,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	var UNCAUGHT_ERROR_URL = "test-resources/sap/ui/core/qunit/opa/fixture/uncaughtError.html";
-	var FAILING_OPA_TEST_URL = "test-resources/sap/ui/core/qunit/opa/fixture/failingOpaTest.html";
+	var FAILING_OPA_TEST_URL = "test-resources/sap/ui/core/qunit/opa/fixture/failingOpaTest-qunit1.html";
 
 	QUnit.module("iFrame - errors");
 

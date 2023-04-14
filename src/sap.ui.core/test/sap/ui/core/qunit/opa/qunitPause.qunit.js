@@ -5,7 +5,7 @@ sap.ui.define([
 ], function (Opa5, opaTest) {
 	"use strict";
 
-	var OPA_TEST_URL = "test-resources/sap/ui/core/qunit/opa/fixture/qunitPause.html?sap-ui-qunittimeout=20000";
+	var OPA_TEST_URL = "test-resources/sap/ui/core/qunit/opa/fixture/qunitPause-qunit1.html?sap-ui-qunittimeout=20000";
 	var iTestIndex = 0;
 
 	QUnit.module("QUnitPause - OPA", {

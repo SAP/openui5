@@ -4,20 +4,21 @@
 
 // Provides class sap.ui.core.theming.ThemeManager
 sap.ui.define([
-	'sap/ui/Global',
-	"sap/ui/core/Element",
-	"sap/ui/core/Configuration",
-	"sap/ui/Device",
-	"sap/ui/base/EventProvider",
-	"sap/base/Log",
 	"sap/base/assert",
+	"sap/base/Log",
 	"sap/base/util/each",
-	'sap/base/util/LoaderExtensions',
-	"sap/ui/util/ActivityDetection",
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/Device",
+	"sap/ui/Global",
+	"sap/ui/base/EventProvider",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Element",
 	"sap/ui/dom/includeStylesheet",
+	"sap/ui/util/ActivityDetection",
+	"sap/ui/thirdparty/jquery",
 	"./ThemeHelper"
 ],
-	function(Global, Element, Configuration, Device, EventProvider, Log, assert, each, LoaderExtensions, ActivityDetection, includeStylesheet, ThemeHelper) {
+	function(assert, Log, each, LoaderExtensions, Device, Global, EventProvider, Configuration, Element, includeStylesheet, ActivityDetection, jQuery, ThemeHelper) {
 	"use strict";
 
 

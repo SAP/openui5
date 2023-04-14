@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/test/_OpaUriParameterParser",
 	"sap/ui/test/_LogCollector",
+	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/Opa",
 	"./utils/browser",
 	"./utils/sinon",
 	"sap/ui/Device"
-], function ($, URI, _OpaUriParameterParser, _LogCollector, Opa, browser, sinonUtils, Device) {
+], function ($, URI, _OpaUriParameterParser, _LogCollector, _OpaLogger, Opa, browser, sinonUtils, Device) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -271,7 +272,7 @@ sap.ui.define([
 			success: fnSecondSuccessSpy
 		});
 
-		sap.ui.test.Opa.emptyQueue().done(function () {
+		Opa.emptyQueue().done(function () {
 			fnDone();
 		});
 
@@ -791,7 +792,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should configure the max log level", function (assert) {
-		var fnLogLevelSpy = sinon.spy(sap.ui.test._OpaLogger, "setLevel");
+		var fnLogLevelSpy = sinon.spy(_OpaLogger, "setLevel");
 		var fnOrig = URI.prototype.search;
 		var oStub = sinonUtils.createStub(URI.prototype, "search", function (query) {
 			if ( query === true ) {

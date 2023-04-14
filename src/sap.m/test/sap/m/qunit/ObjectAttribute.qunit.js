@@ -845,7 +845,7 @@ sap.ui.define([
 			}),
 			oAttrCustomLink = new ObjectAttribute({
 				text: "sample text",
-				customContent: new sap.m.Link({text: "sample link"})
+				customContent: new Link({text: "sample link"})
 			});
 
 		oAttrActive.placeAt("qunit-fixture");

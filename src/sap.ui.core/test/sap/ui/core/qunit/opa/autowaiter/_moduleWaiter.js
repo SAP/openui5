@@ -33,6 +33,9 @@ sap.ui.define([
 		assert.ok(oLogCollector.getAndClearLog().match("fixture/pendingModule"));
 	});
 
+	/**
+	 * @deprecated together with sync module loading
+	 */
 	QUnit.test("Should wait for pending sync module - xhrWaiter", function (assert) {
 		sap.ui.requireSync(["fixture/pendingModuleSync"]);
 		assert.ok(!_moduleWaiter.hasPending());

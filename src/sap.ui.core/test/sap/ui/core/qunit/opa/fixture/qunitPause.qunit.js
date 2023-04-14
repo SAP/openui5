@@ -1,19 +1,22 @@
 /*global QUnit */
-sap.ui.define([
+QUnit.config.autostart = false;
+
+sap.ui.require([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/qunitPause",
 	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (opaTest, Opa5, PropertyStrictEquals) {
+], function (opaTest, Opa5, qunitPause, PropertyStrictEquals) {
 	"use strict";
 
 	QUnit.config.hidepassed = false;
 	window._testSequence = [];
 
-	sap.ui.test.qunitPause.onPause(function () {
+	qunitPause.onPause(function () {
 		window._testSequence.push("onPause");
 		setTimeout(function () {
 			window._testSequence.push("emitResume");
-			sap.ui.test.qunitPause.emitResume();
+			qunitPause.emitResume();
 		}, 1000); // to cover edge case: QUnit timeout > OPA timeout && QUnit timeout < OPA timeout + pause delay
 	});
 
@@ -31,10 +34,10 @@ sap.ui.define([
 
 	QUnit.module("QUnitPause - opa timeout", {
 		beforeEach: function () {
-			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.TIMEOUT;
+			qunitPause.pauseRule = qunitPause.PAUSE_RULES.TIMEOUT;
 		},
 		afterEach: function () {
-			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.NONE;
+			qunitPause.pauseRule = qunitPause.PAUSE_RULES.NONE;
 		}
 	});
 
@@ -64,10 +67,10 @@ sap.ui.define([
 
 	QUnit.module("QUnitPause - assert", {
 		beforeEach: function () {
-			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.ASSERT;
+			qunitPause.pauseRule = qunitPause.PAUSE_RULES.ASSERT;
 		},
 		afterEach: function () {
-			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.NONE;
+			qunitPause.pauseRule = qunitPause.PAUSE_RULES.NONE;
 		}
 	});
 
@@ -105,11 +108,11 @@ sap.ui.define([
 
 	QUnit.module("QUnitPause - qunit timeout", {
 		beforeEach: function () {
-			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.TIMEOUT;
+			qunitPause.pauseRule = qunitPause.PAUSE_RULES.TIMEOUT;
 			QUnit.config.testTimeout = 1000;
 		},
 		afterEach: function () {
-			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.NONE;
+			qunitPause.pauseRule = qunitPause.PAUSE_RULES.NONE;
 			QUnit.config.testTimeout = 30000;
 		}
 	});
@@ -137,7 +140,7 @@ sap.ui.define([
 	});
 
 	var callPollForQUnitDone = function (iCount, iLimit) {
-		sap.ui.test.qunitPause.pollForQUnitDone(10000, function (mResult) {
+		qunitPause.pollForQUnitDone(10000, function (mResult) {
 			window._testSequence.push("poll: " + mResult.qunitDone);
 			if (iCount < iLimit - 1) {
 				callPollForQUnitDone(iCount + 1, iLimit);
@@ -147,11 +150,11 @@ sap.ui.define([
 
 	QUnit.module("QUnitPause - poll for QUnit to be done", {
 		beforeEach: function () {
-			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.POLL;
+			qunitPause.pauseRule = qunitPause.PAUSE_RULES.POLL;
 			callPollForQUnitDone(0, 3);
 		},
 		afterEach: function () {
-			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.NONE;
+			qunitPause.pauseRule = qunitPause.PAUSE_RULES.NONE;
 		}
 	});
 

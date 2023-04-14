@@ -10,9 +10,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/thirdparty/jquery"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-		DynamicPage,  Toolbar, Button, opaTest, Opa5, Configuration) {
+		DynamicPage,  Toolbar, Button, opaTest, Opa5, Configuration, jQuery) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();

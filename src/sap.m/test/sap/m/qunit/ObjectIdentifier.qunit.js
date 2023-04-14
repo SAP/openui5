@@ -43,8 +43,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-	var $ = jQuery;
-
 	// shortcut for sap.ui.core.TextDirection
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
@@ -76,10 +74,10 @@ sap.ui.define([
 		//Assert
 		assert.ok(sut.getDomRef(), "ObjectIdentifier should be rendered.");
 
-		var childrenTitle = $("#" + sut.getId() + "-title").children();
-		var childrenText = $("#" + sut.getId() + "-text").children();
-		assert.equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
-		assert.equal($(childrenText[0]).text(), sText, "Text is rendered.");
+		var childrenTitle = jQuery("#" + sut.getId() + "-title").children();
+		var childrenText = jQuery("#" + sut.getId() + "-text").children();
+		assert.equal(jQuery(childrenTitle[0]).text(), sTitle, "Title is rendered.");
+		assert.equal(jQuery(childrenText[0]).text(), sText, "Text is rendered.");
 
 		//Cleanup
 		sut.destroy();

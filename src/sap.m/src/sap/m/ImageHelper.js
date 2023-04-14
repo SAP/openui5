@@ -78,7 +78,7 @@ sap.ui.define([
             } else {
                 //add 'id' to properties. This is required by utility method 'createControlByURI'
                 var mSettings = Object.assign({}, mProperties, { id: sImgId });
-                oImage = IconPool.createControlByURI(mSettings, sap.m.Image);
+                oImage = IconPool.createControlByURI(mSettings, Image);
                 //Set the parent so the image gets re-rendered, when the parent is
                 oImage.setParent(oParent, null, true);
             }

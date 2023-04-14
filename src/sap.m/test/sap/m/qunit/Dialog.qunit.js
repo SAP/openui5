@@ -3556,7 +3556,7 @@ sap.ui.define([
 	QUnit.module("Footer", {
 		beforeEach: function () {
 			this.oDialog = new Dialog({
-				content: new sap.ui.core.HTML({
+				content: new HTML({
 					content: '<div>Lipsum limple text</div>'
 				}),
 				buttons: [

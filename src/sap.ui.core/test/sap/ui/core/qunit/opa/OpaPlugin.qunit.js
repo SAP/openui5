@@ -208,6 +208,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated since 1.56 together with lazy loading as it implies sync loading
+	 */
 	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
 		assert.ok(sap.ui.lazyRequire._isStub("sap.m.ComboBox"), "Combo box is still a stub");
 
@@ -221,6 +224,9 @@ sap.ui.define([
 		sinon.assert.calledWith(this.fnLogSpy, "The control type is currently a lazy stub");
 	});
 
+	/**
+	 * @deprecated since 1.56 together with lazy loading as it implies sync loading
+	 */
 	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
 		assert.ok(sap.ui.lazyRequire._isStub("sap.m.Select"), "Select is still a stub");
 

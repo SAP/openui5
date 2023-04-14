@@ -20,10 +20,28 @@
 		if (!sMessage) {
 			sMessage = "Found '" + vStringOrRegex + "' in '" + sStringValue + "'";
 		}
-		this.push(contains(sStringValue, vStringOrRegex), sStringValue, vStringOrRegex, sMessage);
+		if ( typeof this.pushResult === "function" ) {
+			this.pushResult({
+				result: contains(sStringValue, vStringOrRegex),
+				actual: sStringValue,
+				expected: vStringOrRegex,
+				message: sMessage
+			});
+		} else {
+			this.push(contains(sStringValue, vStringOrRegex), sStringValue, vStringOrRegex, sMessage);
+		}
 	};
 
 	QUnit.assert.doesNotContain = function (sStringValue, vStringOrRegex, sMessage) {
-		this.push(!contains(sStringValue, vStringOrRegex), sStringValue, vStringOrRegex, sMessage);
+		if ( typeof this.pushResult === "function" ) {
+			this.pushResult({
+				result: !contains(sStringValue, vStringOrRegex),
+				actual: sStringValue,
+				expected: vStringOrRegex,
+				message: sMessage
+			});
+		} else {
+			this.push(!contains(sStringValue, vStringOrRegex), sStringValue, vStringOrRegex, sMessage);
+		}
 	};
 })();

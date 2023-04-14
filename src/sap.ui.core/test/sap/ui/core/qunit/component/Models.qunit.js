@@ -42,6 +42,7 @@ sap.ui.define([
 	// might wrongly optimize the access (e.g. within jQuery) to override the fake server which fails those tests.
 	window.XMLHttpRequest = window["XML" + "HttpRequest"];
 
+	var privateLoaderAPI = sap.ui.loader._;
 
 	var Helper = {
 		spyModels: function() {
@@ -1492,7 +1493,7 @@ sap.ui.define([
 			// unload not existing module to prevent different logs
 			// depending on cached 404 response or not
 			// (see "class-not-loaded" model in manifest below)
-			sap.ui.loader._.unloadResources("sap/ui/sample/model/MyModel.js", false, true);
+			privateLoaderAPI.unloadResources("sap/ui/sample/model/MyModel.js", false, true);
 
 			//setup fake server
 			var oManifest = this.oManifest = {
@@ -3798,7 +3799,7 @@ sap.ui.define([
 			if ( TestComponent ) {
 				delete TestComponent.getMetadata()._oManifest;
 			}
-			sap.ui.loader._.unloadResources('sap/ui/test/v2models/ui5urls/Component.js', true, true, true);
+			privateLoaderAPI.unloadResources('sap/ui/test/v2models/ui5urls/Component.js', true, true, true);
 
 			// remove the previous path-configs/resource-roots
 			sap.ui.loader.config({
@@ -3827,12 +3828,12 @@ sap.ui.define([
 			metadataUrlParams: {"sap-language": "EN"},
 			annotationURI: [
 				'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo',
-				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/annotations/2?sap-language=EN&sap-client=foo'),
-				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/another/name/space/annotations/3?sap-language=EN&sap-client=foo'),
-				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/cool/name/space/annotations/4.xml?sap-language=EN&sap-client=foo'),
-				sap.ui.loader._.resolveURL('resources/unkown.name.space/annotations/5.xml?sap-language=EN&sap-client=foo'),
-				sap.ui.loader._.resolveURL('resources/another/unkown/name/space/annotations/6.xml?sap-language=EN&sap-client=foo'),
-				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/resourceRoots/subfolder/annotations/file7.xml?sap-language=EN&sap-client=foo')
+				privateLoaderAPI.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/annotations/2?sap-language=EN&sap-client=foo'),
+				privateLoaderAPI.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/another/name/space/annotations/3?sap-language=EN&sap-client=foo'),
+				privateLoaderAPI.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/cool/name/space/annotations/4.xml?sap-language=EN&sap-client=foo'),
+				privateLoaderAPI.resolveURL('resources/unkown.name.space/annotations/5.xml?sap-language=EN&sap-client=foo'),
+				privateLoaderAPI.resolveURL('resources/another/unkown/name/space/annotations/6.xml?sap-language=EN&sap-client=foo'),
+				privateLoaderAPI.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/resourceRoots/subfolder/annotations/file7.xml?sap-language=EN&sap-client=foo')
 			],
 			useBatch: false,
 			refreshAfterChange: false

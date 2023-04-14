@@ -14,9 +14,10 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/thirdparty/jquery"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-		_navigationContainerWaiter, FlexibleColumnLayout, NavContainer, App, Page, Button, opaTest, Opa5, capitalize, Configuration) {
+		_navigationContainerWaiter, FlexibleColumnLayout, NavContainer, App, Page, Button, opaTest, Opa5, capitalize, Configuration, jQuery) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();

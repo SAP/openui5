@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/MenuListItem",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Control",
 	"sap/ui/core/Core"
 ], function(
 	merge,
@@ -28,6 +29,7 @@ sap.ui.define([
 	Item,
 	MenuListItem,
 	CustomData,
+	Control,
 	oCore
 ) {
 	"use strict";
@@ -393,7 +395,7 @@ sap.ui.define([
 
 	QUnit.test("sap.m.MenuItem change events do not bubble out of the root sap.m.Menu", function(assert) {
 		// Prepare
-		var Container = sap.ui.core.Control.extend("my.Container", {
+		var Container = Control.extend("my.Container", {
 			metadata: {
 				aggregations: {
 					content: "sap.ui.core.Control"

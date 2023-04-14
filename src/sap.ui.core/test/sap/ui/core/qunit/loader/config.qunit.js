@@ -247,6 +247,7 @@
 			requirejsLoadedModule = amdModule;
 
 			startUi5Loader(function useUi5Loader() {
+				var privateLoaderAPI = sap.ui.loader._;
 
 				// make ui5loader act as an AMD loader
 				sap.ui.loader.config({
@@ -255,8 +256,8 @@
 
 				assert.notStrictEqual(window.require, otherRequire, "global require should have changed");
 				assert.notStrictEqual(window.define, otherDefine, "global define should have changed");
-				assert.strictEqual(window.require, sap.ui.loader._.amdRequire, "global require should be the UI5 implementation");
-				assert.strictEqual(window.define, sap.ui.loader._.amdDefine, "global define should be the UI5 implementation");
+				assert.strictEqual(window.require, privateLoaderAPI.amdRequire, "global require should be the UI5 implementation");
+				assert.strictEqual(window.define, privateLoaderAPI.amdDefine, "global define should be the UI5 implementation");
 
 				require(['fixture/basic/ui5Module'], function(ui5LoadedModule) {
 
@@ -292,10 +293,12 @@
 		assert.strictEqual(window.define, otherDefine, "global define should be the 'other' loader's implementation again");
 
 		startUi5Loader(function() {
+			var privateLoaderAPI = sap.ui.loader._;
+
 			assert.notStrictEqual(window.require, otherRequire, "global require should have changed");
 			assert.notStrictEqual(window.define, otherDefine, "global define should have changed");
-			assert.strictEqual(window.require, sap.ui.loader._.amdRequire, "global require should be the UI5 implementation");
-			assert.strictEqual(window.define, sap.ui.loader._.amdDefine, "global define should be the UI5 implementation");
+			assert.strictEqual(window.require, privateLoaderAPI.amdRequire, "global require should be the UI5 implementation");
+			assert.strictEqual(window.define, privateLoaderAPI.amdDefine, "global define should be the UI5 implementation");
 
 			// hide UI5 implementation again
 			sap.ui.loader.config({

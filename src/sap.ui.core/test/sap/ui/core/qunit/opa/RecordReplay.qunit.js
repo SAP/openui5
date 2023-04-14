@@ -1,6 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/test/RecordReplay',
+	'sap/ui/test/autowaiter/_autoWaiter',
+	'sap/ui/test/autowaiter/_autoWaiterAsync',
 	'sap/ui/core/ListItem',
 	'sap/m/Button',
 	'sap/m/Input',
@@ -11,7 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/m/App',
 	'sap/ui/core/mvc/XMLView'
-], function (RecordReplay, ListItem, Button, Input, MultiInput, OverflowToolbar, Popover, SearchField, $, App, XMLView) {
+], function (RecordReplay, _autoWaiter, _autoWaiterAsync, ListItem, Button, Input, MultiInput, OverflowToolbar, Popover, SearchField, $, App, XMLView) {
 	"use strict";
 
 	QUnit.module("RecordReplay - control selector", {
@@ -348,9 +350,9 @@ sap.ui.define([
 	QUnit.module("RecordReplay - AutoWait", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
-			this.fnWaitAsyncSpy = sinon.spy(sap.ui.test.autowaiter._autoWaiterAsync, "waitAsync");
-			this.fnConfigSpy = sinon.spy(sap.ui.test.autowaiter._autoWaiterAsync, "extendConfig");
-			this.fnHasToWaitStub = sinon.stub(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
+			this.fnWaitAsyncSpy = sinon.spy(_autoWaiterAsync, "waitAsync");
+			this.fnConfigSpy = sinon.spy(_autoWaiterAsync, "extendConfig");
+			this.fnHasToWaitStub = sinon.stub(_autoWaiter, "hasToWait");
 		},
 		afterEach: function () {
 			this.clock.restore();
@@ -366,7 +368,7 @@ sap.ui.define([
 		this.fnHasToWaitStub.returns(false);
 		RecordReplay.waitForUI5({timeout: 10000, interval: 100}).then(function () {
 			assert.ok(this.fnHasToWaitStub.called, "Should call autoWaiter");
-			assert.ok(!sap.ui.test.autowaiter._autoWaiter.hasToWait(), "Should wait for processing to end");
+			assert.ok(!_autoWaiter.hasToWait(), "Should wait for processing to end");
 			assert.ok(this.fnConfigSpy.calledOnce, "Should configure polling parameters");
 			assert.ok(this.fnWaitAsyncSpy.calledOnce, "Should poll for autoWaiter conditions to be met");
 		}.bind(this)).catch(function (error) {
@@ -385,7 +387,7 @@ sap.ui.define([
 			assert.ok(false, "Should not reach here");
 		}).catch(function (oError) {
 			assert.ok(this.fnHasToWaitStub.called, "Should call autoWaiter");
-			assert.ok(sap.ui.test.autowaiter._autoWaiter.hasToWait(), "Should have pending processing");
+			assert.ok(_autoWaiter.hasToWait(), "Should have pending processing");
 			assert.ok(oError.toString().match(/Polling stopped.*there is still pending asynchronous work/), "Should receive polling error message");
 		}.bind(this)).finally(function () {
 			fnDone();

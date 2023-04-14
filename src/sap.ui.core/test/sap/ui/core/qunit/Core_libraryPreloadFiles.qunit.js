@@ -6,6 +6,8 @@ sap.ui.define([
 ], function(ObjectPath, jQuery, Configuration) {
 	"use strict";
 
+	var privateLoaderAPI = sap.ui.loader._;
+
 	// custom assertion
 	QUnit.assert.isLibLoaded = function(libName) {
 		var isLoaded = ObjectPath.get(libName) && sap.ui.getCore().getLoadedLibraries()[libName];
@@ -50,14 +52,14 @@ sap.ui.define([
 		// sync or async both activate the preload
 		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 
-		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+		this.spy(privateLoaderAPI, 'loadJSResourceAsync');
 		this.spy(XMLHttpRequest.prototype, 'open');
 		this.spy(sap.ui.require, 'load');
 		// TODO this.spy(Log, 'error');
 		// @evo-todo: ui5loader and Core.js use different loggers.
 		// This does not only make this test unnecessarily complex but also leads to redundant log entries. Should be cleaned up
 		// Main question: log early (place where an error is detected first) or log late (where the most significant context can be given)
-		this.spy(sap.ui.loader._.logger, 'error');
+		this.spy(privateLoaderAPI.logger, 'error');
 
 		var vResult = sap.ui.getCore().loadLibraries([
 			'testlibs.scenario7.lib1', // both, not configured
@@ -86,16 +88,16 @@ sap.ui.define([
 				assert.isLibLoaded('testlibs.scenario7.' + lib);
 
 				if ( expected === 'none' ) {
-					assert.ok(sap.ui.loader._.loadJSResourceAsync.neverCalledWith(matcherLibPreloadJS), "library-preload.js should not have been requested for '" + lib + "'");
+					assert.ok(privateLoaderAPI.loadJSResourceAsync.neverCalledWith(matcherLibPreloadJS), "library-preload.js should not have been requested for '" + lib + "'");
 					assert.ok(XMLHttpRequest.prototype.open.neverCalledWith("GET", matcherLibPreloadJSON), "library-preload.json should not have been requested for '" + lib + "'");
 					assert.ok(sap.ui.require.load.calledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should have been loaded for '" + lib + "'");
 				} else if ( expected === 'js' ) {
-					assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(matcherLibPreloadJS), "library-preload.js should have been loaded for '" + lib + "'");
+					assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(matcherLibPreloadJS), "library-preload.js should have been loaded for '" + lib + "'");
 					assert.ok(XMLHttpRequest.prototype.open.neverCalledWith("GET", matcherLibPreloadJSON), "library-preload.json should not have been requested for '" + lib + "'");
 					assert.ok(sap.ui.require.load.neverCalledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should not have been requested for '" + lib + "'");
 				} else if ( expected === 'jserror' ) {
-					assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(matcherLibPreloadJS), "library-preload.js should have been requested for '" + lib + "'");
-					assert.ok(sap.ui.loader._.logger.error.calledWith(matcher("-preload\\.js").and(sinon.match(/failed to load/))), "error should have been logged for failing request");
+					assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(matcherLibPreloadJS), "library-preload.js should have been requested for '" + lib + "'");
+					assert.ok(privateLoaderAPI.logger.error.calledWith(matcher("-preload\\.js").and(sinon.match(/failed to load/))), "error should have been logged for failing request");
 					assert.ok(XMLHttpRequest.prototype.open.neverCalledWith("GET", matcherLibPreloadJSON), "library-preload.json should not have been loaded for '" + lib + "'");
 					assert.ok(sap.ui.require.load.calledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should have been loaded for '" + lib + "'");
 				} else {

@@ -40,7 +40,6 @@ sap.ui.define([
 	createAndAppendDiv("list");
 	createAndAppendDiv("destroy-list");
 
-	var $ = jQuery;
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
 	var pressed;
@@ -109,7 +108,7 @@ sap.ui.define([
 
 	QUnit.test("MarkersOrder", function(assert) {
 
-		var markers = $("#" + listItemId + " .sapUiIcon");
+		var markers = jQuery("#" + listItemId + " .sapUiIcon");
 		assert.equal(markers.eq(0).attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite marker should be rendered first");
 		assert.equal(markers.eq(1).attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag marker should be rendered second");
 	});
@@ -135,7 +134,7 @@ sap.ui.define([
 
 	QUnit.test("ObjectAttributeRowsRendered", function(assert) {
 
-		var $allRows = $("#worst_case .sapMObjectAttributeDiv");
+		var $allRows = jQuery("#worst_case .sapMObjectAttributeDiv");
 		assert.ok($allRows.length === 5, "There should be five object attribute rows rendered");
 
 	});
@@ -261,18 +260,18 @@ sap.ui.define([
 	list.addItem(showTextDir);
 
 	QUnit.test("TitleNumberIntroTextDirection RTL rendering", function(assert) {
-		assert.equal($('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
-		assert.equal($('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
-		assert.equal($('#showTextDir-ObjectNumber').attr("dir"), "ltr", "ObjectNumber has attribute dir=ltr");
+		assert.equal(jQuery('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
+		assert.equal(jQuery('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
+		assert.equal(jQuery('#showTextDir-ObjectNumber').attr("dir"), "ltr", "ObjectNumber has attribute dir=ltr");
 
 		showTextDir.setIntroTextDirection(TextDirection.RTL);
 		showTextDir.setTitleTextDirection(TextDirection.Inherit);
 		showTextDir.setNumberTextDirection(TextDirection.Inherit);
 		oCore.applyChanges();
 
-		assert.equal($('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
-		assert.equal($('#showTextDir-titleText').attr("dir"), "auto", "title has no dir attribute");
-		assert.equal($('#showTextDir-ObjectNumber').attr("dir"), undefined, "ObjectNumber has no dir attribute");
+		assert.equal(jQuery('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
+		assert.equal(jQuery('#showTextDir-titleText').attr("dir"), "auto", "title has no dir attribute");
+		assert.equal(jQuery('#showTextDir-ObjectNumber').attr("dir"), undefined, "ObjectNumber has no dir attribute");
 	});
 
 	QUnit.test("Number properties create a private sap.m.ObjectNumber control", function (assert) {
@@ -320,7 +319,7 @@ sap.ui.define([
 		list.addItem(markersOlI);
 		oCore.applyChanges();
 
-		var $allRows = $("#markersOlI .sapMObjStatusMarker");
+		var $allRows = jQuery("#markersOlI .sapMObjStatusMarker");
 		assert.ok($allRows.length === 0, "There are no markers");
 
 		markersOlI.insertMarker(marker, 0);
@@ -350,7 +349,7 @@ sap.ui.define([
 		markersOlI.removeAllMarkers();
 		oCore.applyChanges();
 
-		var $allRows = $("#markersOlI .sapMObjStatusMarker");
+		var $allRows = jQuery("#markersOlI .sapMObjStatusMarker");
 		assert.ok($allRows.length === 0, "There are no markers");
 
 		markersOlI.destroy();
@@ -775,7 +774,7 @@ sap.ui.define([
 		markerOli.setMarkFavorite(false);
 		markerOli.setMarkFlagged(true);
 		setTimeout(function() {
-			assert.equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+			assert.equal(jQuery("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 			assert.ok(document.getElementById(markerId + "-flag"), "Flag marker should be rendered.");
 			done();
 		}, 100);
@@ -787,7 +786,7 @@ sap.ui.define([
 		markerOli.setMarkFavorite(false);
 		markerOli.setMarkFlagged(false);
 		setTimeout(function() {
-			assert.equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+			assert.equal(jQuery("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 			done();
 		}, 100);
 	});
@@ -798,7 +797,7 @@ sap.ui.define([
 		markerOli.setMarkFavorite(true);
 		markerOli.setMarkFlagged(false);
 		setTimeout(function() {
-			assert.equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+			assert.equal(jQuery("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 			assert.ok(document.getElementById(markerId + "-favorite"), "Favorite marker should be rendered.");
 			done();
 		}, 100);
@@ -810,7 +809,7 @@ sap.ui.define([
 		markerOli.setMarkFavorite(false);
 		markerOli.setMarkFlagged(false);
 		setTimeout(function() {
-			assert.equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+			assert.equal(jQuery("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 			done();
 		}, 100);
 	});

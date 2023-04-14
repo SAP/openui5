@@ -2,6 +2,8 @@
 (function() {
 	"use strict";
 
+	var privateLoaderAPI = sap.ui.loader._;
+
 	QUnit.config.autostart = false;
 	if ( QUnit.urlParams["rtf"] || QUnit.urlParams["repeat-to-failure"]) {
 		QUnit.done(function(results) {
@@ -19,7 +21,7 @@
 		tooltip: "Whether this test should auto-repeat until it fails"
 	});
 
-	sap.ui.loader._.logger = {
+	privateLoaderAPI.logger = {
 		/*eslint-disable no-console */
 		debug: function() {
 			console.log.apply(console, arguments);
@@ -104,10 +106,10 @@
 
 		var origOnError = window.onerror;
 		window.onerror = this.stub().returns(true);
-		this.stub(sap.ui.loader._.logger, "warning");
+		this.stub(privateLoaderAPI.logger, "warning");
 
 		function restoreAndDone() {
-			sap.ui.loader._.logger.warning.restore();
+			privateLoaderAPI.logger.warning.restore();
 			window.onerror = origOnError;
 			done();
 		}
@@ -133,7 +135,7 @@
 			assert.deepEqual(mod, expected, "export should be the expected one");
 			assert.strictEqual(window.onerror.callCount, 0, "no error was thrown");
 			assert.ok(
-				sap.ui.loader._.logger.warning.calledWith(
+				privateLoaderAPI.logger.warning.calledWith(
 					sinon.match(/fixture\/unmanaged-defines\/module02/)
 					.and(sinon.match(/defined more than once/))
 					.and(sinon.match(/will be ignored/))),

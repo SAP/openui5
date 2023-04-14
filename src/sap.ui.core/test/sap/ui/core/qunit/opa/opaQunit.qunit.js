@@ -20,25 +20,27 @@ sap.ui.define([
 	QUnit.module("OPA Qunit - Reporter");
 
 	opaTest("Should timeout with correct messages in usage reporter", function (oOpa) {
-		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/opaReportTest.html");
-		oOpa.waitFor({
-			success: suppressFailedAssertions
-		});
-		oOpa.waitFor({
-			check: function () {
-				// wait for the tests to finish
-				return Opa5.getJQuery()("#qunit-tests").children(".fail").length === 2;
-			},
-			success: function () {
-				var iFrameReportSpy = Opa5.getWindow().oUsageReportSpy;
-				var opaTimeoutMessage = iFrameReportSpy.args[0][0].assertions[1].message;
-				var qunitTimeoutMessage = iFrameReportSpy.args[1][0].assertions[1].message;
-				// use Opa5.assert - the global one will no longer be defined after the QUnit timeout and will cause error when ran 2 times in the OPA test suite
-				Opa5.assert.ok(opaTimeoutMessage.match(/Opa timeout after 1 seconds/), "Should include OPA timeout message");
-				Opa5.assert.ok(qunitTimeoutMessage.match(/QUnit timeout after 2 seconds/), "Should include QUnit timeout message");
-			}
-		});
-		oOpa.iTeardownMyApp();
+		for (var iQUnitVersion = 1; iQUnitVersion <= 2; iQUnitVersion++) {
+			oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/opaReportTest-qunit" + iQUnitVersion + ".html");
+			oOpa.waitFor({
+				success: suppressFailedAssertions
+			});
+			oOpa.waitFor({
+				check: function () {
+					// wait for the tests to finish
+					return Opa5.getJQuery()("#qunit-tests").children(".fail").length === 2;
+				},
+				success: function () {
+					var iFrameReportSpy = Opa5.getWindow().oUsageReportSpy;
+					var opaTimeoutMessage = iFrameReportSpy.args[0][0].assertions[1].message;
+					var qunitTimeoutMessage = iFrameReportSpy.args[1][0].assertions[1].message;
+					// use Opa5.assert - the global one will no longer be defined after the QUnit timeout and will cause error when ran 2 times in the OPA test suite
+					Opa5.assert.ok(opaTimeoutMessage.match(/Opa timeout after 1 seconds/), "Should include OPA timeout message");
+					Opa5.assert.ok(qunitTimeoutMessage.match(/QUnit timeout after 2 seconds/), "Should include QUnit timeout message");
+				}
+			});
+			oOpa.iTeardownMyApp();
+		}
 	});
 
 	// tests below rely on order of execution of opaQUnitTest.html tests!
@@ -47,7 +49,7 @@ sap.ui.define([
 
 	opaTest("Should skip tests with opaSkip", function (oOpa) {
 		for (var iQUnitVersion = 1; iQUnitVersion <= 2; iQUnitVersion++) {
-			oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/opaQUnitTest.html?sap-ui-qunitversion=" + iQUnitVersion);
+			oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/opaQUnitTest-qunit" + iQUnitVersion + ".html");
 			oOpa.waitFor({
 				success: suppressFailedAssertions
 			});
@@ -66,7 +68,8 @@ sap.ui.define([
 	});
 
 	opaTest("Should properly evaluate state of todo tests with opaTodo", function (oOpa) {
-		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/opaQUnitTest.html?sap-ui-qunitversion=2");
+		// Note: "todo" tests are only supported in QUnit 2 and higher
+		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/opaQUnitTest-qunit2.html");
 		oOpa.waitFor({
 			success: suppressFailedAssertions
 		});
@@ -79,7 +82,7 @@ sap.ui.define([
 				var oFailedAssertion = oTestResults.eq(1);
 				Opa5.assert.ok(oFailedAssertion.hasClass("pass todo"), "TODO(1) should pass");
 				Opa5.assert.strictEqual(oFailedAssertion.find(".counts .failed").text(), "1", "TODO(1) should have a failed assertion");
-				Opa5.assert.strictEqual(oFailedAssertion.find(".counts .passed").text(), "0", "TODO(1) should have a failed assertion");
+				Opa5.assert.strictEqual(oFailedAssertion.find(".counts .passed").text(), "0", "TODO(1) should have no passed assertions");
 
 				var oOPATimeout = oTestResults.eq(2);
 				Opa5.assert.ok(oOPATimeout.hasClass("pass todo"), "TODO(2) should pass");

@@ -8,12 +8,13 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
+	'sap/m/Image',
 	'sap/m/ShellRenderer',
 	"sap/ui/util/Mobile",
 	"sap/base/Log",
 	"sap/ui/core/theming/Parameters"
 ],
-	function(library, Core, Control, coreLibrary, ShellRenderer, Mobile, Log, ThemeParameters) {
+	function(library, Core, Control, coreLibrary, Image, ShellRenderer, Mobile, Log, ThemeParameters) {
 		"use strict";
 
 
@@ -263,7 +264,7 @@ sap.ui.define([
 
 		Shell.prototype._getImage = function() {
 			if (!this.oImg) {
-				this.oImg = new sap.m.Image(this.getId() + "-logo", {
+				this.oImg = new Image(this.getId() + "-logo", {
 					decorative: false,
 					alt: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SHELL_ARIA_LOGO")
 				});

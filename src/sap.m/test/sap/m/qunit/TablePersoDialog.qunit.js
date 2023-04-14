@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TablePersoDialog",
 	"sap/m/Table",
@@ -14,10 +13,10 @@ sap.ui.define([
 	"sap/m/TablePersoController",
 	"sap/m/Page",
 	"sap/m/App",
+	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	TablePersoDialog,
 	Table,
@@ -31,6 +30,7 @@ sap.ui.define([
 	TablePersoController,
 	Page,
 	App,
+	Device,
 	jQuery,
 	oCore
 ) {
@@ -474,13 +474,13 @@ sap.ui.define([
 				oButtonDown.firePress();
 				oCore.applyChanges();
 			}
-			assert.equal(spyScrollTo.callCount, sap.ui.Device.browser.firefox ? 3 : 2, "scrollToIndex should be called once when moving down");
+			assert.equal(spyScrollTo.callCount, Device.browser.firefox ? 3 : 2, "scrollToIndex should be called once when moving down");
 			//Now press up to check if the scrolls up as the item is at the top
 			for (var i = 0; i < 1; i++) {
 				oButtonUp.firePress();
 				oCore.applyChanges();
 			}
-			assert.equal(spyScrollTo.callCount, sap.ui.Device.browser.firefox ? 4 : 3, "scrollToIndex should be called once when moving up");
+			assert.equal(spyScrollTo.callCount, Device.browser.firefox ? 4 : 3, "scrollToIndex should be called once when moving up");
 			oTPC3.destroy();
 			oTable3.destroy();
 			fnDone();

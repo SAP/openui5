@@ -2,6 +2,8 @@
 sap.ui.define(function() {
 	"use strict";
 
+	var privateLoaderAPI = sap.ui.loader._;
+
 	// ========================================================================================
 	// Non-JS Resources (_getModuleContent)
 	// ========================================================================================
@@ -18,14 +20,14 @@ sap.ui.define(function() {
 
 	QUnit.test("Simple access to a resource", function(assert) {
 		assert.strictEqual(
-			sap.ui.loader._.getModuleContent('fixture/resource-preload/Main.view.xml'),
+			privateLoaderAPI.getModuleContent('fixture/resource-preload/Main.view.xml'),
 			this.EXPECTED_VIEW_CONTENT,
 			"reading a preloaded non-JS resource should return the expected text result");
 	});
 
 	QUnit.test("Access via a denormalized name", function(assert) {
 		assert.strictEqual(
-			sap.ui.loader._.getModuleContent('fixture/resource-preload/dummy/../Main.view.xml'),
+			privateLoaderAPI.getModuleContent('fixture/resource-preload/dummy/../Main.view.xml'),
 			this.EXPECTED_VIEW_CONTENT,
 			"reading a preloaded non-JS resource by a denormalized name should return the expected text result");
 	});
@@ -39,18 +41,18 @@ sap.ui.define(function() {
 			}
 		});
 		assert.strictEqual(
-			sap.ui.loader._.getModuleContent('resource-preload-alias/Main.view.xml'),
+			privateLoaderAPI.getModuleContent('resource-preload-alias/Main.view.xml'),
 			this.EXPECTED_VIEW_CONTENT,
 			"reading a preloaded non-JS resource by a prefixed-mapped module ID should return the expected text result");
 		assert.strictEqual(
-			sap.ui.loader._.getModuleContent('resource-preload-alias-Main.view.xml'),
+			privateLoaderAPI.getModuleContent('resource-preload-alias-Main.view.xml'),
 			this.EXPECTED_VIEW_CONTENT,
 			"reading a preloaded non-JS resource by a name-mapped module ID should return the expected text result");
 	});
 
 	QUnit.test("Access empty resource via url", function(assert) {
 		assert.strictEqual(
-			sap.ui.loader._.getModuleContent(undefined, sap.ui.require.toUrl('fixture/resource-preload/i18n.properties')),
+			privateLoaderAPI.getModuleContent(undefined, sap.ui.require.toUrl('fixture/resource-preload/i18n.properties')),
 			"",
 			"reading a preloaded empty resource via url should return the expected text result");
 	});
@@ -76,7 +78,7 @@ sap.ui.define(function() {
 		var sUrl = sap.ui.require.toUrl(sResource);
 
 		// act
-		var sGuess = sap.ui.loader._.guessResourceName(sUrl, true);
+		var sGuess = privateLoaderAPI.guessResourceName(sUrl, true);
 
 		// assert
 		assert.strictEqual(sGuess, sResource, "guess should return the expected name");
@@ -87,7 +89,7 @@ sap.ui.define(function() {
 		var sUrl = sap.ui.require.toUrl(sResource);
 
 		// act
-		var sGuess = sap.ui.loader._.guessResourceName(sUrl, false);
+		var sGuess = privateLoaderAPI.guessResourceName(sUrl, false);
 
 		// assert
 		assert.strictEqual(sGuess, sResource, "guess should return the expected name");
@@ -98,7 +100,7 @@ sap.ui.define(function() {
 		var sUrl = sap.ui.require.toUrl(sResource);
 
 		// act
-		var sGuess = sap.ui.loader._.guessResourceName(sUrl, true);
+		var sGuess = privateLoaderAPI.guessResourceName(sUrl, true);
 
 		// assert
 		assert.strictEqual(sGuess, undefined, "guess should return undefined");
@@ -109,7 +111,7 @@ sap.ui.define(function() {
 		var sUrl = sap.ui.require.toUrl(sResource);
 
 		// act
-		var sGuess = sap.ui.loader._.guessResourceName(sUrl, false);
+		var sGuess = privateLoaderAPI.guessResourceName(sUrl, false);
 
 		// assert
 		assert.strictEqual(sGuess, sResource, "guess should return the expected name");
@@ -125,7 +127,7 @@ sap.ui.define(function() {
 		var sUrl = "./foo/Main.view.xml";
 
 		// act
-		var sGuess = sap.ui.loader._.guessResourceName(sUrl, false);
+		var sGuess = privateLoaderAPI.guessResourceName(sUrl, false);
 
 		// assert
 		assert.ok(sGuess === "fixture/alternative1/foo/Main.view.xml" || sGuess === "fixture/alternative2/Main.view.xml",

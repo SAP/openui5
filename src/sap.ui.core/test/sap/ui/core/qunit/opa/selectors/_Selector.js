@@ -4,12 +4,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Button",
-	"sap/m/Dialog",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/NumericContent",
-	"sap/m/GenericTile",
-	"sap/m/TileContent"
-], function (_Selector, View, XMLView, Button, Dialog, JSONModel, NumericContent, GenericTile, TileContent) {
+	"sap/m/Dialog"
+], function (_Selector, View, XMLView, Button, Dialog) {
 	"use strict";
 
 	var singleStub = sinon.stub();
@@ -140,39 +136,50 @@ sap.ui.define([
 		this.oDialog.destroy();
 	});
 
+	// simulate the way generic tiles are rendered inside a JS view in certain apps
+	// (to avoid legacy APIs, a typed view is used instead of a JS view)
+	sap.ui.define("tileWrapperView", [
+		"sap/m/GenericTile",
+		"sap/m/NumericContent",
+		"sap/m/TileContent",
+		"sap/ui/core/mvc/View"
+	], function(GenericTile, NumericContent, TileContent, View) {
+		var i = -1;
+		return View.extend("tileWRapperView", {
+			createContent: function () {
+				i += 1;
+				return new GenericTile({
+					id: "tile-" + i,
+					header: "Tile " + i,
+					tileContent: [new TileContent({
+						footer: "Footer notes " + i,
+						content: new NumericContent({
+							value: 123 + i
+						})
+					})]
+				});
+			},
+			getControllerName: function() {
+				return ""; // no controller
+			}
+		});
+	});
+
 	QUnit.module("_Selector - views", {
 		beforeEach: function (assert) {
-			sap.ui.controller("myController", {});
-			// create 3 new numeric tiles.
-			// simulate the way generic tiles are rendered inside a JS view in certain apps
-			var i = -1;
-			sap.ui.jsview("tileWrapperView", {
-				createContent: function () {
-					i += 1;
-					return new GenericTile({
-						id: "tile-" + i,
-						header: "Tile " + i,
-						tileContent: [new TileContent({
-							footer: "Footer notes " + i,
-							content: new NumericContent({
-								value: 123 + i
-							})
-						})]
-					});
-				}
-			});
-
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
 			var done = assert.async();
+
+			// create 3 new numeric tiles.
 			XMLView.create({
 				id: "myView",
 				definition:
 					'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 					'  <App id="myApp"><Page id="page1">' +
-					'    <mvc:JSView viewName="tileWrapperView"/>' +
-					'    <mvc:JSView viewName="tileWrapperView"/>' +
-					'    <mvc:JSView viewName="tileWrapperView"/>' +
+					'    <mvc:View viewName="module:tileWrapperView"/>' +
+					'    <mvc:View viewName="module:tileWrapperView"/>' +
+					'    <mvc:View viewName="module:tileWrapperView"/>' +
 					'  </Page></App>' +
 					'</mvc:View>'
 			}).then(function(oView) {

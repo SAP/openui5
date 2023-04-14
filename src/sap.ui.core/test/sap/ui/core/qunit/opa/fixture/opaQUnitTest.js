@@ -1,18 +1,20 @@
-/*global QUnit, jQuery, opaSkip, opaTodo */
-(function() {
+/*global QUnit, opaSkip, opaTodo */
+QUnit.config.autostart = false;
+
+// Use module APIs to load sinon. Loading it via script tag would result in double execution
+// as some OPA modules also refer to it via module dependency.
+// Load sinon in a first step so that the sinon-qunit bridge finds it. Could be ensured with
+// a shim as well. But that shim would depend on the QUnit version, which would be cumbersome.
+sap.ui.require([
+	"sap/ui/thirdparty/sinon"
+], function() {
 	"use strict";
 
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-	QUnit.config.autostart = false;
-
 	sap.ui.require([
-		'sap/ui/test/opaQunit',
-		'sap/ui/test/Opa5',
-		'sap/ui/test/Opa'
+		"sap/ui/test/opaQunit",
+		"sap/ui/test/Opa5",
+		"sap/ui/test/Opa",
+		"sap/ui/thirdparty/sinon-qunit"
 	], function (opaTest, Opa5, Opa) {
 
 		function setQUnitTimeout() {
@@ -78,4 +80,4 @@
 
 	});
 
-}());
+});

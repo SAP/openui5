@@ -1,6 +1,9 @@
 /*global QUnit, sinon */
 (function() {
 	"use strict";
+
+	var privateLoaderAPI = sap.ui.loader._;
+
 	QUnit.config.autostart = false;
 	QUnit.config.seed = Math.random();
 	if ( QUnit.urlParams["rtf"] || QUnit.urlParams["repeat-to-failure"]) {
@@ -19,7 +22,7 @@
 		tooltip: "Whether this test should auto-repeat until it fails"
 	});
 
-	sap.ui.loader._.logger = {
+	privateLoaderAPI.logger = {
 		/*eslint-disable no-console */
 		debug: function() {
 			console.log.apply(console, arguments);
@@ -112,13 +115,13 @@
 
 		var sErrorLog = "Module names that start with a slash should not be used, as they are reserved for future use.";
 
-		var fnOriginalLog = sap.ui.loader._.logger.error;
-		sap.ui.loader._.logger.error = function (sMsg) {
+		var fnOriginalLog = privateLoaderAPI.logger.error;
+		privateLoaderAPI.logger.error = function (sMsg) {
 			assert.equal(sMsg, sErrorLog, "Correct Error logged for leading Slash");
 		};
 
 		sap.ui.require(["/sap/ui/base/Exception"], function (Icon) {
-			sap.ui.loader._.logger.error = fnOriginalLog;
+			privateLoaderAPI.logger.error = fnOriginalLog;
 			done();
 		});
 	});
@@ -606,7 +609,7 @@
 				id: "fixture/multiple-modules-per-file/one-named-one-unnamed-define"
 			};
 			assert.deepEqual(mod, expected2, "the required module should have the expected export");
-			assert.ok(sap.ui.loader._.getModuleState(expected1.id + ".js") > 0, "second module should be known to the loader");
+			assert.ok(privateLoaderAPI.getModuleState(expected1.id + ".js") > 0, "second module should be known to the loader");
 			done();
 		}, function() {
 			assert.notOk(true, "errback should not be called");
@@ -624,8 +627,8 @@
 				id: "fixture/multiple-modules-per-file/named-module-03"
 			};
 			assert.deepEqual(mod, expected1, "the required module should have the same export as the first named module (alias)");
-			assert.ok(sap.ui.loader._.getModuleState(expected1.id + ".js") > 0, "first named module should be known to the loader");
-			assert.ok(sap.ui.loader._.getModuleState(expected2.id + ".js") > 0, "second named module should be known to the loader");
+			assert.ok(privateLoaderAPI.getModuleState(expected1.id + ".js") > 0, "first named module should be known to the loader");
+			assert.ok(privateLoaderAPI.getModuleState(expected2.id + ".js") > 0, "second named module should be known to the loader");
 			done();
 		}, function() {
 			assert.notOk(true, "errback should not be called");
@@ -643,7 +646,7 @@
 				id: "fixture/multiple-modules-per-file/two-named-defines"
 			};
 			assert.deepEqual(mod, expected2, "the required module should have the expected export");
-			assert.ok(sap.ui.loader._.getModuleState(expected1.id + ".js") > 0, "second module should be known to the loader");
+			assert.ok(privateLoaderAPI.getModuleState(expected1.id + ".js") > 0, "second module should be known to the loader");
 			done();
 		}, function() {
 			assert.notOk(true, "errback should not be called");
@@ -792,7 +795,7 @@
 	 */
 	QUnit.skip("Repeated Module Definition (named)", function(assert) {
 
-		var logger = sap.ui.loader._.logger;
+		var logger = privateLoaderAPI.logger;
 		this.stub(logger, "error");
 
 		var done = assert.async();
@@ -848,7 +851,7 @@
 	 */
 	QUnit.skip("Repeated Module Definition (unnamed)", function(assert) {
 
-		var logger = sap.ui.loader._.logger;
+		var logger = privateLoaderAPI.logger;
 		this.stub(logger, "error");
 
 		var done = assert.async();
@@ -940,11 +943,11 @@
 
 	QUnit.test("successful call", function(assert) {
 		var that = this;
-		var p = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/bundle1.js");
+		var p = privateLoaderAPI.loadJSResourceAsync("fixture/forced-async-loading/bundle1.js");
 		return p.then(function() {
 			assert.ok(true, "promise should succeed");
 			assert.equal(this.oAppendChildStub.callCount, 1 , "should have been called once");
-			assert.ok(sap.ui.loader._.getModuleState('fixture/forced-async-loading/bundle1.js'), "resource should have been loaded");
+			assert.ok(privateLoaderAPI.getModuleState('fixture/forced-async-loading/bundle1.js'), "resource should have been loaded");
 			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/bundle1\.js$/), 1, "script tag for lib should exist");
 		}.bind(this), function() {
 			assert.ok(false, "promise should not fail");
@@ -954,7 +957,7 @@
 
 	QUnit.test("failing call", function(assert) {
 		var that = this;
-		var p = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/non-existing.js");
+		var p = privateLoaderAPI.loadJSResourceAsync("fixture/forced-async-loading/non-existing.js");
 		return p.then(function() {
 			assert.ok(false, "promise must not succeed");
 			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
@@ -967,7 +970,7 @@
 
 	QUnit.test("failing call (ignore errors)", function(assert) {
 		var that = this;
-		var p = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/non-existing-ignored.js", true);
+		var p = privateLoaderAPI.loadJSResourceAsync("fixture/forced-async-loading/non-existing-ignored.js", true);
 		return p.then(function() {
 			assert.ok(true, "promise should succeed");
 			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
@@ -996,19 +999,19 @@
 						oElement.src = "non-existing-file";
 
 						//check the module state
-						var bIsResourceLoaded = !!sap.ui.loader._.getModuleState("fixture/forced-async-loading/bundle-first-failing.js");
+						var bIsResourceLoaded = !!privateLoaderAPI.getModuleState("fixture/forced-async-loading/bundle-first-failing.js");
 						assert.ok(bIsResourceLoaded, "Module should be in loading state");
 					}
 				}
 			}
 		};
 
-		var p = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/bundle-first-failing.js");
+		var p = privateLoaderAPI.loadJSResourceAsync("fixture/forced-async-loading/bundle-first-failing.js");
 		return p.then(function() {
 			assert.ok(true, "promise should succeed");
 			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
 			assert.notOk(bFirstFailure, "there should be one failed try to load the module");
-			assert.ok(sap.ui.loader._.getModuleState('fixture/forced-async-loading/bundle-first-failing.js'), "resource should have been loaded");
+			assert.ok(privateLoaderAPI.getModuleState('fixture/forced-async-loading/bundle-first-failing.js'), "resource should have been loaded");
 			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/bundle-first-failing\.js$/), 1, "script tag for bundle should exist");
 		}.bind(this), function() {
 			assert.ok(false, "promise must not fail");
@@ -1018,17 +1021,17 @@
 
 	QUnit.test("multiple calls (succeeding)", function(assert) {
 		var that = this;
-		var p1 = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/bundle2.js");
-		var p2 = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/bundle2.js");
+		var p1 = privateLoaderAPI.loadJSResourceAsync("fixture/forced-async-loading/bundle2.js");
+		var p2 = privateLoaderAPI.loadJSResourceAsync("fixture/forced-async-loading/bundle2.js");
 		p1 = p1.then(function() {
 			assert.ok(true, "promise should succeed");
-			assert.ok(sap.ui.loader._.getModuleState('fixture/forced-async-loading/bundle2.js'), "resource should have been loaded");
+			assert.ok(privateLoaderAPI.getModuleState('fixture/forced-async-loading/bundle2.js'), "resource should have been loaded");
 		}, function() {
 			assert.ok(false, "promise should not fail");
 		});
 		p2 = p2.then(function() {
 			assert.ok(true, "promise should succeed");
-			assert.ok(sap.ui.loader._.getModuleState('fixture/forced-async-loading/bundle2.js'), "resource should have been loaded");
+			assert.ok(privateLoaderAPI.getModuleState('fixture/forced-async-loading/bundle2.js'), "resource should have been loaded");
 		}, function() {
 			assert.ok(false, "promise should not fail");
 		});
@@ -1040,8 +1043,8 @@
 
 	QUnit.test("multiple calls (failing)", function(assert) {
 		var that = this;
-		var p1 = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/non-existing-multiple.js");
-		var p2 = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/non-existing-multiple.js", true);
+		var p1 = privateLoaderAPI.loadJSResourceAsync("fixture/forced-async-loading/non-existing-multiple.js");
+		var p2 = privateLoaderAPI.loadJSResourceAsync("fixture/forced-async-loading/non-existing-multiple.js", true);
 		p1 = p1.then(function() {
 			assert.ok(false, "promise must not succeed");
 		}, function() {

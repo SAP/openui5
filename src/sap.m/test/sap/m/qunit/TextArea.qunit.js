@@ -26,8 +26,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-	var $ = jQuery;
-
 	createAndAppendDiv("content");
 
 
@@ -40,10 +38,10 @@ sap.ui.define([
 		core.applyChanges();
 
 		// check rendered
-		var $container = $("div.sapMTextArea");
+		var $container = jQuery("div.sapMTextArea");
 		assert.strictEqual($container.length, 1, "Textarea container is rendered");
 
-		var $textarea = $("textarea.sapMTextAreaInner");
+		var $textarea = jQuery("textarea.sapMTextAreaInner");
 		assert.strictEqual($textarea.length, 1, "Textarea is rendered");
 		assert.strictEqual($textarea.hasClass("sapMTextAreaWithCounter"), false, "Textarea doesn't have a counter");
 
@@ -79,10 +77,10 @@ sap.ui.define([
 		core.applyChanges();
 
 		// check input base classes are assigned
-		var $container = $("div.sapMInputBase");
+		var $container = jQuery("div.sapMInputBase");
 		assert.strictEqual($container.length, 1, "Container has InputBase class");
 
-		var $textarea = $("textarea.sapMInputBaseInner");
+		var $textarea = jQuery("textarea.sapMInputBaseInner");
 		assert.strictEqual($textarea.length, 1, "TextArea has InputBase class");
 
 		// check assigned
@@ -111,7 +109,7 @@ sap.ui.define([
 			},
 			testprops = function (props) {
 				var $outer = sut.$();
-				var $textarea = $("textarea");
+				var $textarea = jQuery("textarea");
 
 				assert.equal($textarea.attr("rows"), props.rows, "TextArea has correct max rows : " + props.rows);
 				assert.equal($textarea.attr("cols"), props.cols, "TextArea has correct max cols : " + props.cols);
@@ -188,13 +186,13 @@ sap.ui.define([
 			sut = new TextArea({
 				value : longText
 			}),
-			tsEvent = $.Event("touchstart", {
+			tsEvent = jQuery.Event("touchstart", {
 				touches : [{
 					pageX: 0,
 					pageY : 0
 				}]
 			}),
-			tmEvent = $.Event("touchmove", {
+			tmEvent = jQuery.Event("touchmove", {
 				touches : [{
 					pageX : 0,
 					pageY : 0
@@ -208,7 +206,7 @@ sap.ui.define([
 
 		sut.placeAt("qunit-fixture");
 		core.applyChanges();
-		var $textarea = $("textarea");
+		var $textarea = jQuery("textarea");
 
 		// check touchstart
 		sut._onTouchStart(tsEvent);
@@ -226,7 +224,7 @@ sap.ui.define([
 		$textarea[0].scrollTop = 0;
 
 		// horizontal scrolling : move finger left (scroll right)
-		tmEvent = $.Event("touchmove", {
+		tmEvent = jQuery.Event("touchmove", {
 			touches : [{
 				pageX : -1,
 				pageY : 0
@@ -748,7 +746,7 @@ sap.ui.define([
 		oTextArea.placeAt("content");
 		core.applyChanges();
 
-		var $textarea = $("textarea");
+		var $textarea = jQuery("textarea");
 
 		//Act
 		$textarea.val(sInitValue).trigger("input");
