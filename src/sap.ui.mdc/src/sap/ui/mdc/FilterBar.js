@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The <code>FilterBar</code> control is used to display filter attrtibutes in a user-friendly manner to populate values for a query.
 	 * The filters are arranged in a logical row that is divided depending on the space available and the width of the filters.
-	 * The Go button triggers the search event, and the Advanced Filters button shows the filter dialog.<br>
+	 * The Go button triggers the search event, and the Adapt Filters button shows the filter dialog.<br>
 	 * The <code>FilterBar</code> control creates and handles the filters based on the provided metadata information.
 	 * The metadata information is provided via the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation. This implementation has to be provided by the application.
 	 * @extends sap.ui.mdc.filterbar.FilterBarBase

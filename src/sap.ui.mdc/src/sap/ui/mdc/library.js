@@ -1308,5 +1308,147 @@
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State
+	 * @public
+	 * @since 1.113.0
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.XCondition
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.113.0
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.XConditionValue
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.113.0
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.XConditionValueRanges
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.113.0
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.Items
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.114.0
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.Sorters
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.114.0
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.GroupLevels
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.114.0
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 */
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.State.Aggregations
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.114.0
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.mdc.State.XConditionValueRanges
+	 * @property {{string, string} | {int, int} | {float, float}} Range values for a condition
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	/**
+	 * @typedef {object} sap.ui.mdc.State.XConditionValue
+	 * @property {string} operator of the condition
+	 * @property {string[] | int[] | float[] | boolean[] | sap.ui.mdc.State.XConditionValueRanges[]} values of the condition
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	/**
+	 * For each filter field name of a condition, this describes the values.
+	 *
+	 * @typedef {object} sap.ui.mdc.State.XCondition
+	 * @property {sap.ui.mdc.State.XConditionValue[]} values of the condition
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	/**
+	 * @typedef {object} sap.ui.mdc.State.Items
+	 * @property {string} name of the item
+	 * @property {int} [position] of the item in the aggregation
+	 * @property {boolean} [visible = true] State of the item
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	/**
+	 * @typedef {object} sap.ui.mdc.State.Sorters
+	 * @property {string} name of the sorted item
+	 * @property {boolean} descending Sort order for this item
+	 * @property {boolean} [sorted = true] Defines if the item has to be sorted
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	/**
+	 * @typedef {object} sap.ui.mdc.State.GroupLevels
+	 * @property {string} name of the grouped item
+	 * @property {boolean} [grouped = true] Defines if the item has to be grouped
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	/**
+	 * For each name, this describes if it is aggregated.
+	 *
+	 * @typedef {object} sap.ui.mdc.State.Aggregations
+	 * @property {boolean} [aggregated = true] Defines if the item has to be aggregated
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	/**
+	 * @typedef {object} sap.ui.mdc.State
+	 * @property {sap.ui.mdc.State.XCondition} [filter] Describes the filter conditions
+	 * @property {sap.ui.mdc.State.Items[]} [items] Describes the filter fields
+	 * @property {sap.ui.mdc.State.Sorters[]} [sorters] Describes the sorter fields
+	 * @property {sap.ui.mdc.State.GroupLevels[]} [groupLevels] Describes the grouped fields
+	 * @property {sap.ui.mdc.State.Aggregations} [aggregations] Describes the aggregated fields
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+
 	return thisLib;
 });

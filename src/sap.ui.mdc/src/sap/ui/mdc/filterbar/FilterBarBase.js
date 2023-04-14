@@ -469,50 +469,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @namespace
-	 * @name sap.ui.mdc.State
-	 * @public
-	 * @since 1.113.0
-	 */
-	/**
-	 * @namespace
-	 * @name sap.ui.mdc.State.XCondition
-	 * @public
-	 * @since 1.113.0
-	 */
-	/**
-	 * @namespace
-	 * @name sap.ui.mdc.State.XConditionValue
-	 * @public
-	 * @since 1.113.0
-	 */
-	/**
-	 * @namespace
-	 * @name sap.ui.mdc.State.XConditionValueRanges
-	 * @public
-	 * @since 1.113.0
-	 */
-
-	/**
-	 * @typedef {object} sap.ui.mdc.State.XConditionValueRanges
-	 * @property {{string, string} | {integer, integer} | {float, float}} Range values for a condition
-	 */
-	/**
-	 * @typedef {object} sap.ui.mdc.State.XConditionValue
-	 * @property {string} Operator of the condition
-	 * @property {string[] | integer[] | float[] | boolean[] | sap.ui.mdc.State.XConditionValueRanges[]} Values of the condition
-	 */
-	/**
-	 * @typedef {object} sap.ui.mdc.State.XCondition
-	 * @property {string} Name of the condition
-	 * @property {sap.ui.mdc.State.XConditionValue[]} Values of the condition
-	 */
-	/**
-	 * @typedef {object} sap.ui.mdc.State
-	 * @property {sap.ui.mdc.State.XCondition[]} filter Describes the filter conditions
-	 * @property {string[]} items Describes the filter fields
-	 */
-	/**
 	 * Returns the external conditions of the inner condition model.
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
 	 * The items are always returned, but the filter conditions are dependent on the <code>Value</code> assignment.
