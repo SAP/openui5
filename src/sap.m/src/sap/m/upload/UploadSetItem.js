@@ -813,19 +813,20 @@ sap.ui.define([
 	};
 
 	UploadSetItem.prototype._renderAttributes = function (oRm) {
-		var iLastAttribure = this.getAttributes().length - 1;
-
-		if (this.getAttributes().length > 0) {
-			oRm.openStart("div").class("sapMUCAttrContainer").openEnd();
-			this.getAttributes().forEach(function (oAttribute, iIndex) {
-				oRm.renderControl(oAttribute.addStyleClass("sapMUCAttr"));
-				if (iIndex < iLastAttribure && oAttribute.getVisible()) {
-					oRm.openStart("div").class("sapMUCSeparator").openEnd();
-					oRm.text("\u00a0\u00B7\u00a0").close("div");
-				}
-			});
-			oRm.close("div");
+		if (this.getAttributes().length === 0) {
+			return;
 		}
+		var bFirstVisible = false;
+		oRm.openStart("div").class("sapMUCAttrContainer").openEnd();
+		this.getAttributes().forEach(function (oAttribute, iIndex) {
+			if (bFirstVisible && oAttribute.getVisible()) {
+				oRm.openStart("div").class("sapMUCSeparator").openEnd();
+				oRm.text("\u00a0\u00B7\u00a0").close("div");
+			}
+			bFirstVisible = bFirstVisible || oAttribute.getVisible();
+			oRm.renderControl(oAttribute.addStyleClass("sapMUCAttr"));
+		});
+		oRm.close("div");
 	};
 
 	UploadSetItem.prototype._renderMarkers = function (oRm) {
@@ -839,19 +840,20 @@ sap.ui.define([
 	};
 
 	UploadSetItem.prototype._renderStatuses = function (oRm) {
-		var iLastStatus = this.getStatuses().length - 1;
-
-		if (this.getStatuses().length > 0) {
-			oRm.openStart("div").class("sapMUCStatusContainer").openEnd();
-			this.getStatuses().forEach(function (oStatus, iIndex) {
-				oRm.renderControl(oStatus);
-				if (iIndex < iLastStatus) {
-					oRm.openStart("div").class("sapMUCSeparator").openEnd();
-					oRm.text("\u00a0\u00B7\u00a0").close("div");
-				}
-			});
-			oRm.close("div");
+		if (this.getStatuses().length === 0) {
+			return;
 		}
+		var bFirstVisible = false;
+		oRm.openStart("div").class("sapMUCStatusContainer").openEnd();
+		this.getStatuses().forEach(function (oStatus, iIndex) {
+			if (bFirstVisible && oStatus.getVisible()) {
+				oRm.openStart("div").class("sapMUCSeparator").openEnd();
+				oRm.text("\u00a0\u00B7\u00a0").close("div");
+			}
+			bFirstVisible = bFirstVisible || oStatus.getVisible();
+			oRm.renderControl(oStatus);
+		});
+		oRm.close("div");
 	};
 
 	UploadSetItem.prototype._renderStateAndProgress = function (oRm) {

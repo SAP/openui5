@@ -1,7 +1,9 @@
 sap.ui.define([
 	"sap/m/upload/UploadSetItem",
-	"sap/m/ObjectMarker"
-], function (UploadSetItem, ObjectMarker) {
+	"sap/m/ObjectMarker",
+	"sap/m/ObjectStatus",
+	"sap/m/ObjectAttribute"
+], function (UploadSetItem, ObjectMarker, ObjectStatus, ObjectAttribute) {
 	"use strict";
 
 	var UploadSetTestUtils = {};
@@ -21,6 +23,16 @@ sap.ui.define([
 				path: "markers",
 				template: UploadSetTestUtils.createMarkerTemplate(),
 				templateShareable: false
+			},
+			statuses: {
+				path: "statuses",
+				template: UploadSetTestUtils.createStatusTemplate(),
+				templateShareable: false
+			},
+			attributes: {
+				path: "attributes",
+				template: UploadSetTestUtils.createAttributeTemplate(),
+				templateShareable: false
 			}
 		});
 	};
@@ -29,6 +41,22 @@ sap.ui.define([
 		return new ObjectMarker({
 			type: "{type}",
 			visibility: "{visibility}"
+		});
+	};
+
+	UploadSetTestUtils.createStatusTemplate = function () {
+		return new ObjectStatus({
+			title: "{title}",
+			text: "{text}",
+			visible: "{visible}"
+		});
+	};
+
+	UploadSetTestUtils.createAttributeTemplate = function () {
+		return new ObjectAttribute({
+			title: "{title}",
+			text: "{text}",
+			visible: "{visible}"
 		});
 	};
 

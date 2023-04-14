@@ -15,9 +15,10 @@ sap.ui.define([
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
 	"sap/ui/core/IconPool",
 	"sap/m/upload/Uploader",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	"sap/ui/core/Core"
 ], function (jQuery, KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, oCore) {
 	"use strict";
 
 	function getData() {
@@ -399,4 +400,133 @@ sap.ui.define([
 		oUploader.destroy();
 	});
 
+	QUnit.module("UploadSetItem test attributes and statuses rendering", {
+		afterEach: function () {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	function createUploadSetForProperties(data) {
+		this.oUploadSet = new UploadSet("uploadSet", {
+			items: {
+				path: "/items",
+				template: TestUtils.createItemTemplate(),
+				templateShareable: false
+			}
+		}).setModel(new JSONModel(data));
+		this.oUploadSet.placeAt("qunit-fixture");
+		oCore.applyChanges();
+	}
+
+	function getDataForRendering(oParams) {
+		return {
+			items: [
+				{
+					fileName: "File01.txt",
+					statuses: oParams && oParams.statuses ? oParams.statuses : undefined,
+					attributes: oParams && oParams.attributes ? oParams.attributes : undefined
+				}
+			]
+		};
+	}
+
+	function getElement(visible) {
+		return {title: "T01", text: "text01", visible: visible};
+	}
+
+	function getStatusesDomRefs(assert) {
+		return getDomRefs.call(this, assert, "getStatuses");
+	}
+
+	function getAttributesDomRefs(assert) {
+		return getDomRefs.call(this, assert, "getAttributes");
+	}
+
+	function getDomRefs(assert, functionName) {
+		assert.ok(this.oUploadSet.getItems().length, "Items are not empty");
+		var oItem = this.oUploadSet.getItems()[0];
+
+		var aEntries = oItem[functionName]();
+		assert.ok(aEntries.length, "Item property is not empty");
+
+		var oContainer;
+		for (var index in aEntries) {
+			if (aEntries[index].getDomRef()) {
+				oContainer = aEntries[index].getDomRef().parentNode;
+				break;
+			}
+		}
+		assert.ok(oContainer, "Container is present");
+		return oContainer.childNodes;
+	}
+
+	function assertClasses(assert, aChildren, aClasses) {
+		assert.equal(aChildren.length, aClasses.length, "Container have correct child count");
+		for (var i = 0; i < aChildren.length; i++) {
+			assert.ok(aChildren[i].classList.contains(aClasses[i]), "(" + (i + 1) + ") entry object is correct one");
+		}
+	}
+
+	[
+		{
+			message: "Upload set item statuses, delimiter is only rendered between items",
+			statuses: [getElement(true), getElement(true), getElement(true)],
+			expected: ["sapMObjStatus", "sapMUCSeparator", "sapMObjStatus", "sapMUCSeparator", "sapMObjStatus"]
+		},
+		{
+			message: "Upload set item statuses, delimiter is only rendered between items, first element is not visible",
+			statuses: [getElement(false), getElement(true), getElement(true)],
+			expected: ["sapUiHiddenPlaceholder", "sapMObjStatus", "sapMUCSeparator", "sapMObjStatus"]
+		},
+		{
+			message: "Upload set item statuses, delimiter is only rendered between items, last element is not visible",
+			statuses: [getElement(true), getElement(true), getElement(false)],
+			expected: ["sapMObjStatus", "sapMUCSeparator", "sapMObjStatus", "sapUiHiddenPlaceholder"]
+		},
+		{
+			message: "Upload set item statuses, delimiter is only rendered between items, middle element is not visible",
+			statuses: [getElement(true), getElement(false), getElement(true)],
+			expected: ["sapMObjStatus", "sapUiHiddenPlaceholder", "sapMUCSeparator", "sapMObjStatus"]
+		}
+	].forEach(function(data) {
+		QUnit.test(data.message, function (assert) {
+			// Arrange
+			createUploadSetForProperties.call(this, getDataForRendering({statuses: data.statuses}));
+
+			// Assert
+			assertClasses(assert, getStatusesDomRefs.call(this, assert), data.expected);
+		});
+	});
+
+	[
+		{
+			message: "Upload set item attributes, delimiter is only rendered between items",
+			attributes: [getElement(true), getElement(true), getElement(true)],
+			expected: ["sapMUCAttr", "sapMUCSeparator", "sapMUCAttr", "sapMUCSeparator", "sapMUCAttr"]
+		},
+		{
+			message: "Upload set item attributes, delimiter is only rendered between items, first element is not visible",
+			attributes: [getElement(false), getElement(true), getElement(true)],
+			expected: ["sapUiHiddenPlaceholder", "sapMUCAttr", "sapMUCSeparator", "sapMUCAttr"]
+		},
+		{
+			message: "Upload set item attributes, delimiter is only rendered between items, last element is not visible",
+			attributes: [getElement(true), getElement(true), getElement(false)],
+			expected: ["sapMUCAttr", "sapMUCSeparator", "sapMUCAttr", "sapUiHiddenPlaceholder"]
+		},
+		{
+			message: "Upload set item attributes, delimiter is only rendered between items, middle element is not visible",
+			attributes: [getElement(true), getElement(false), getElement(true)],
+			expected: ["sapMUCAttr", "sapUiHiddenPlaceholder", "sapMUCSeparator", "sapMUCAttr"]
+		}
+	].forEach(function(data) {
+		QUnit.test(data.message, function (assert) {
+			// Arrange
+			createUploadSetForProperties.call(this, getDataForRendering({attributes: data.attributes}));
+
+			// Assert
+			assertClasses(assert, getAttributesDomRefs.call(this, assert), data.expected);
+		});
+	});
 });
