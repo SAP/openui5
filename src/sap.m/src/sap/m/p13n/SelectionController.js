@@ -341,14 +341,13 @@ sap.ui.define([
 		   nIdx = this._indexOfByKeyName(aTarget, sKey);
 		   if (nIdx === -1) {
 			   oItem = merge({}, aSource[i]);
-			   oItem.index = i;
 			   mDeleteInserts.deletes.push(oItem);
-		   } else if ((nIdx === i) && aDeltaAttributes.length){
-			   if (this._verifyDeltaAttributes(aSource[i], aTarget[i], aDeltaAttributes)) {
+		   } else if (aDeltaAttributes.length){
+			   if (this._verifyDeltaAttributes(aSource[i], aTarget[nIdx], aDeltaAttributes)) {
 				   mDeleteInserts.deletes.push(aSource[i]);
 
-				   oItem = merge({}, aTarget[i]);
-			       oItem.index = i;
+				   oItem = merge({}, aTarget[nIdx]);
+				   oItem.index = nIdx;
 				   mDeleteInserts.inserts.push(oItem);
 			   }
 		   }
@@ -394,7 +393,7 @@ sap.ui.define([
         var oChangeContent = {};
 
         // Index
-        if (oProperty.index >= 0) {
+        if (oProperty.hasOwnProperty("index") && oProperty.index >= 0) {
             oChangeContent.index = oProperty.index;
         }
 
@@ -408,16 +407,18 @@ sap.ui.define([
     };
 
     SelectionController.prototype._createAddRemoveChange = function(oControl, sOperation, oContent){
+		var oChangeContent = oContent;
+
+		if (sOperation === this.getChangeOperations()["add"]) {
+			oChangeContent.value = true;
+			oChangeContent.targetAggregation = this.getTargetAggregation();
+		}
+
         var oAddRemoveChange = {
             selectorElement: oControl,
             changeSpecificData: {
                 changeType: sOperation,
-                content: {
-                    key: oContent.key,
-                    targetAggregation: this.getTargetAggregation(),
-                    index: oContent.index,
-                    value: sOperation === this.getChangeOperations()["add"]
-                }
+                content:  oChangeContent
             }
         };
         return oAddRemoveChange;
