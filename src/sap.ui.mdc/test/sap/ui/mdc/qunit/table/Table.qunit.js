@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBar",
 	"sap/m/Text",
 	"sap/m/Button",
+	'sap/m/MessageBox',
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
@@ -42,6 +43,7 @@ sap.ui.define([
 	"sap/m/plugins/DataStateIndicator",
 	"sap/m/plugins/ColumnResizer",
 	"sap/ui/core/message/Message",
+	'sap/ui/core/Element',
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/mdc/table/RowActionItem",
@@ -70,6 +72,7 @@ sap.ui.define([
 	FilterBar,
 	Text,
 	Button,
+	MessageBox,
 	ODataListBinding,
 	Sorter,
 	Filter,
@@ -96,6 +99,7 @@ sap.ui.define([
 	DataStateIndicator,
 	ColumnResizer,
 	Message,
+	Element,
 	ODataModel,
 	ThemeParameters,
 	RowActionItem,
@@ -3061,6 +3065,26 @@ sap.ui.define([
 			fnCapabilities.restore();
 			sap.ui.require.restore();
 		});
+	});
+
+	QUnit.test("test _getExportHandler when sap.ui.export is missing", function(assert) {
+		var oTable = this.oTable;
+		assert.expect(2);
+
+		sinon.stub(oTable, "_loadExportLibrary").returns(Promise.reject());
+		sinon.stub(MessageBox, "error");
+
+		return oTable.initialized().then(function() {
+			var oExportHandler = oTable._getExportHandler();
+
+			return oExportHandler.catch(function() {
+				assert.ok(MessageBox.error.calledOnce, "MessageBox was called");
+				assert.ok(MessageBox.error.calledWith(Core.getLibraryResourceBundle("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY")), "Called with proper error message");
+
+				oTable._loadExportLibrary().restore();
+				MessageBox.error.restore();
+			});
+		}).catch(function() {});
 	});
 
 	QUnit.test("test _createExportColumnConfiguration", function(assert) {
