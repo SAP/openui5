@@ -684,6 +684,48 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user)", function(assert) {
+			stubToolbarButtonsVisibility(true, true);
+			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").returns(true);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "getUShellService")
+			.callThrough()
+			.withArgs("AppLifeCycle")
+			.resolves({
+				getCurrentApplication: function() {
+					return {
+						homePage: false
+					};
+				}
+			});
+
+			return this.oRta.start().then(function() {
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), true, "then the 'Context Based Adaptation' Menu Button is enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), true, "then the 'Context Based Adaptation' Menu Button is visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user) but the current app is an overview page", function(assert) {
+			stubToolbarButtonsVisibility(true, true);
+			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").returns(true);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}, "sap.ovp": {}});
+			sandbox.stub(FlexUtils, "getUShellService")
+			.callThrough()
+			.withArgs("AppLifeCycle")
+			.resolves({
+				getCurrentApplication: function() {
+					return {
+						homePage: false
+					};
+				}
+			});
+
+			return this.oRta.start().then(function() {
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), false, "then the 'Context Based Adaptation' Menu Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), false, "then the 'Context Based Adaptation' Menu Button is not visible");
+			}.bind(this));
+		});
+
 		QUnit.test("when RTA is started without any buttons on the actions menu", function(assert) {
 			sandbox.stub(VersionsAPI, "initialize").callsFake(function() {
 				return VersionsAPI.initialize.wrappedMethod.apply(this, arguments)
