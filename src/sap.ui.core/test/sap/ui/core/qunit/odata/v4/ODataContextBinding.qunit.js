@@ -1694,6 +1694,7 @@ sap.ui.define([
 					unlock : function () {}
 				},
 				oGroupLockMock = this.mock(oGroupLock),
+				oHelperMock = this.mock(_Helper),
 				oRootBinding = {
 					getRootBinding : function () { return oRootBinding; },
 					isSuspended : function () { return false; }
@@ -1747,6 +1748,9 @@ sap.ui.define([
 				.withExactArgs("~oOperationMetadata~").returns(true);
 			oBindingMock.expects("hasReturnValueContext").withExactArgs().returns(true);
 			oParentContextMock.expects("getValue").returns(oParentEntity);
+			oHelperMock.expects("getReturnValueContextPath")
+				.withExactArgs(sParentContextPath + "/name.space.Operation(...)", "('77')")
+				.returns("/TEAMS('77')");
 			oContextMock.expects("createNewContext")
 				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 					"/TEAMS('77')")
@@ -1776,6 +1780,9 @@ sap.ui.define([
 					.withExactArgs("~oOperationMetadata~").returns(true);
 				oBindingMock.expects("hasReturnValueContext").withExactArgs().returns(true);
 				oParentContextMock.expects("getValue").returns(oParentEntity);
+				oHelperMock.expects("getReturnValueContextPath")
+					.withExactArgs(sParentContextPath + "/name.space.Operation(...)", "('77')")
+					.returns("/TEAMS('77')");
 				oContextMock.expects("createNewContext")
 					.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
 						"/TEAMS('77')")
@@ -1947,14 +1954,14 @@ sap.ui.define([
 					{$$groupId : "groupId"}),
 				oGroupLock = {getGroupId : function () {}},
 				oParentEntity = {},
+				sPredicate = "('" + oFixture.sId + "')",
 				oResponseEntity = {};
 
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 				.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
 				.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
 			_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
-			_Helper.setPrivateAnnotation(oResponseEntity, "predicate",
-					"('" + oFixture.sId + "')");
+			_Helper.setPrivateAnnotation(oResponseEntity, "predicate", sPredicate);
 			oBinding.oCache = { // "mock" createCacheAndRequest
 				setResourcePath : function () {}
 			};
@@ -1974,13 +1981,16 @@ sap.ui.define([
 			this.mock(oParentContext).expects("patch")
 				.exactly(oFixture.bRead && oFixture.sId === "42" ? 1 : 0)
 				.withExactArgs(sinon.match.same(oResponseEntity));
+			this.mock(_Helper).expects("getReturnValueContextPath")
+				.withExactArgs("/TEAMS('42')/name.space.Operation(...)", sPredicate)
+				.returns("/TEAMS" + sPredicate);
 
 			// code under test
 			return oBinding._execute(oGroupLock, "~mParameters~", "~bIgnoreETag~")
 			.then(function (oReturnValueContext) {
 				// expect the return value context in any case, even when synchronized
 				assert.strictEqual(oReturnValueContext.getPath(),
-						"/TEAMS('" + oFixture.sId + "')");
+						"/TEAMS" + sPredicate);
 			});
 		});
 	});
@@ -2452,6 +2462,9 @@ sap.ui.define([
 		assert.deepEqual(oBinding.oOperation.mRefreshParameters, {/*mParameters*/});
 
 		this.mock(oBinding).expects("hasReturnValueContext").withExactArgs().returns(true);
+		this.mock(_Helper).expects("getReturnValueContextPath")
+			.withExactArgs("Entity('1')/ToTwin(...)", "('2')")
+			.returns("Entity('2')");
 
 		// code under test
 		assert.strictEqual(oExpectation.args[0][5](oResponseEntity), "Entity('2')");
@@ -2589,6 +2602,9 @@ sap.ui.define([
 					oHelperMock.expects("getPrivateAnnotation")
 						.withExactArgs(sinon.match.same(oResponseEntity), "predicate")
 						.returns("('42')");
+					oHelperMock.expects("getReturnValueContextPath")
+						.withExactArgs("Entity('1')/navigation/bound.Action(...)", "('42')")
+						.returns("Entity('42')");
 
 					// code under test ("getOriginalResourcePath")
 					assert.strictEqual(fnGetOriginalResourcePath(oResponseEntity),
