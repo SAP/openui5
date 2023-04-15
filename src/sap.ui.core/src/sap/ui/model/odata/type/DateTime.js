@@ -122,7 +122,7 @@ sap.ui.define([
 	 *   If the constraints of this type instance are violated
 	 *
 	 * @public
-	 * @see {@link sap.ui.core.Configuration.getTimezone}
+	 * @see {@link sap.ui.core.Configuration#getTimezone}
 	 * @since 1.111.0
 	 */
 	DateTime.prototype.getModelValue = function (oDate) {
