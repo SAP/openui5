@@ -1095,8 +1095,6 @@ sap.ui.define([
 	 *   <code>minimalDaysInFirstWeek</code>
 	 * @param {sap.ui.core.Locale} oLocale the locale used for the week calculation
 	 * @returns {boolean} if the split week should be applied
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function isSplitWeek(vCalendarWeekNumbering, oLocale) {
 		var oLocaleData = LocaleData.getInstance(oLocale);
@@ -1117,8 +1115,6 @@ sap.ui.define([
 	 *   <li>vCalendarWeekNumbering is an object and the fields <code>firstDayOfWeek</code> or <code>minimalDaysInFirstWeek</code>) are missing or have a non-numeric value</li>
 	 *   <li>vCalendarWeekNumbering is a string and has an invalid week numbering value</li>
 	 * </ul>
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function checkWeekConfig(vCalendarWeekNumbering) {
 		if (typeof vCalendarWeekNumbering === "object") {
@@ -1138,10 +1134,8 @@ sap.ui.define([
 	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>
 	 * @param {sap.ui.core.Locale} [oLocale] locale to be used
 	 * @returns {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} calendar week calculation configuration
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
-	 function resolveCalendarWeekConfiguration (vCalendarWeekNumbering, oLocale) {
+	function resolveCalendarWeekConfiguration (vCalendarWeekNumbering, oLocale) {
 		// be backward compatible
 		if (typeof vCalendarWeekNumbering === "object"
 				&& typeof vCalendarWeekNumbering.firstDayOfWeek === "number"
@@ -1163,8 +1157,6 @@ sap.ui.define([
 	 *   the default is derived from <code>oLocale</code> but this parameter has precedence over oLocale if both are provided.
 	 *   e.g. <code>{firstDayOfWeek: 1, minimalDaysInFirstWeek: 4}</code>
 	 * @returns {Date} first day of the first week in the given year, e.g. <code>Mon Jan 04 2016 01:00:00 GMT+0100</code>
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function getFirstDayOfFirstWeek(clDate, iYear, oLocale, vCalendarWeekNumbering) {
 		oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
@@ -1198,9 +1190,6 @@ sap.ui.define([
 	 * @param {Date} oFromDate The beginning date of the time interval
 	 * @param {Date} oToDate The end date of the time interval
 	 * @returns {int} A rounded number which represents the amount of weeks in the given timer interval
-	 *
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function calculateWeeks(oFromDate, oToDate) {
 		return Math.floor((oToDate.valueOf() - oFromDate.valueOf()) / iMillisecondsInWeek);
@@ -1287,9 +1276,6 @@ sap.ui.define([
 	 *   The calender type from which the the locale era data is taken from and the era array is
 	 *   generated
 	 * @returns {array} An array of all available era in the given calender
-	 *
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function getEras(sCalendarType) {
 		var oLocale = Configuration.getFormatSettings().getFormatLocale(),
@@ -1326,9 +1312,6 @@ sap.ui.define([
 	 * @returns {object}
 	 *   An object containing the year, month, day of month and date timestamp values of the given
 	 *   date string
-	 *
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function parseDateString(sDateString) {
 		var aParts = sDateString.split("-"),
