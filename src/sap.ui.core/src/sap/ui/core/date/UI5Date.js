@@ -948,11 +948,11 @@ sap.ui.define([
 	 *   Same meaning as in the JavaScript Date constructor
 	 * @param {int|string} [vMonthIndex]
 	 *   Same meaning as in the JavaScript Date constructor
-	 * @param {int|string} [vDay=1] Same meaning as in the Date constructor
-	 * @param {int|string} [vHours=0] Same meaning as in the Date constructor
-	 * @param {int|string} [vMinutes=0] Same meaning as in the Date constructor
-	 * @param {int|string} [vSeconds=0] Same meaning as in the Date constructor
-	 * @param {int|string} [vMilliseconds=0] Same meaning as in the Date constructor
+	 * @param {int|string} [vDay=1] Same meaning as in the JavaScript Date constructor
+	 * @param {int|string} [vHours=0] Same meaning as in the JavaScript Date constructor
+	 * @param {int|string} [vMinutes=0] Same meaning as in the JavaScript Date constructor
+	 * @param {int|string} [vSeconds=0] Same meaning as in the JavaScript Date constructor
+	 * @param {int|string} [vMilliseconds=0] Same meaning as in the JavaScript Date constructor
 	 * @returns {Date|module:sap/ui/core/date/UI5Date}
 	 *   The date instance that considers the configured time zone in all local getters and setters.
 	 *
