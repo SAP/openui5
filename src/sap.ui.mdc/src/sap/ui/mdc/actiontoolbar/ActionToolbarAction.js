@@ -16,7 +16,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The action for an {@link sap.ui.mdc.ActionToolbar ActionToolbar}) control
+	 * @class The action for an {@link sap.ui.mdc.ActionToolbar ActionToolbar} control
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
