@@ -279,7 +279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 * @returns {any} the binding value
 	 */
 	function BINDING(i, aParts) {
-		return aParts[i];
+		return clean(aParts[i]);
 	}
 
 	/**
@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 */
 	function DOT(fnLeft, sIdentifier, aParts) {
 		var oParent = fnLeft(aParts),
-			vChild = oParent[sIdentifier];
+			vChild = clean(oParent[sIdentifier]);
 		return typeof vChild === "function" ? vChild.bind(oParent) : vChild;
 	}
 
@@ -332,7 +332,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			aResult[i] = fnArgument(aParts); // evaluate argument
 		});
 		// evaluate function expression and call it
-		return fnLeft(aParts).apply(null, aResult);
+		return clean(fnLeft(aParts).apply(null, aResult));
 	}
 
 	/**
@@ -375,7 +375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 * @return {any} - the array element or object property
 	 */
 	function PROPERTY_ACCESS(fnLeft, fnName, aParts) {
-		return fnLeft(aParts)[fnName(aParts)];
+		return clean(fnLeft(aParts)[fnName(aParts)]);
 	}
 
 	/**
@@ -414,6 +414,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			nud: unexpected
 		};
 		return mSymbols[sId];
+	}
+
+	/**
+	 * Cleans the given <code>vValue</code>.
+	 *
+	 * @param {any} vValue - the value to be cleaned
+	 * @returns {any} the cleaned value
+	 */
+	function clean(vValue) {
+		return vValue === Function ? undefined : vValue;
 	}
 
 	/**

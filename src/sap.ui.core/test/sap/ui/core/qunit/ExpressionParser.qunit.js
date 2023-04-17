@@ -602,4 +602,24 @@ sap.ui.require([
 		assert.strictEqual(oEndSpy.callCount, 1, "parse end measurement - end not reached");
 	});
 
+	//*********************************************************************************************
+	QUnit.test("BCP: 2370033311", function (assert) {
+		// DOT
+		check(assert, "{= parseInt.constructor === undefined }", true);
+
+		// PROPERTY_ACCESS
+		check(assert, "{= parseInt['constructor'] === undefined }", true);
+
+		// BINDING
+		check(assert, "{= ${/mail/toString/constructor} === undefined }", true);
+
+		// FUNCTION_CALL
+		check(assert, "{= ${path:'/mail', formatter:'.myFormatter'}() === undefined }", true, {
+			myFormatter: function () {
+				return function () {
+					return parseInt.constructor;
+				};
+			}
+		});
+	});
 });
