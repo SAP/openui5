@@ -1324,22 +1324,6 @@
 	 */
 	/**
 	 * @namespace
-	 * @name sap.ui.mdc.State.XConditionValue
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.113.0
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 */
-	/**
-	 * @namespace
-	 * @name sap.ui.mdc.State.XConditionValueRanges
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.113.0
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 */
-	/**
-	 * @namespace
 	 * @name sap.ui.mdc.State.Items
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
@@ -1370,35 +1354,20 @@
 	 * @experimental As of version 1.114.0
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
-
 	/**
-	 * @typedef {object} sap.ui.mdc.State.XConditionValueRanges
-	 * @property {{string, string} | {int, int} | {float, float}} Range values for a condition
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 */
-	/**
-	 * @typedef {object} sap.ui.mdc.State.XConditionValue
-	 * @property {string} operator of the condition
-	 * @property {string[] | int[] | float[] | boolean[] | sap.ui.mdc.State.XConditionValueRanges[]} values of the condition
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 */
-	/**
-	 * For each filter field name of a condition, this describes the values.
+	 * Defines the values for each filter field path of a condition.
 	 *
 	 * @typedef {object} sap.ui.mdc.State.XCondition
-	 * @property {sap.ui.mdc.State.XConditionValue[]} values of the condition
+	 * @property {string} operator of the condition
+	 * @property {Array} values of the condition
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	/**
+	 * Defines the <code>items</code> to be added to the controls default aggregation.
+	 *
 	 * @typedef {object} sap.ui.mdc.State.Items
 	 * @property {string} name of the item
 	 * @property {int} [position] of the item in the aggregation
@@ -1409,6 +1378,8 @@
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	/**
+	 * Defines the <code>sorters</code> to be added to the controls sorting state.
+	 *
 	 * @typedef {object} sap.ui.mdc.State.Sorters
 	 * @property {string} name of the sorted item
 	 * @property {boolean} descending Sort order for this item
@@ -1419,6 +1390,8 @@
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	/**
+	 * Defines the <code>groupes</code> to be added to the controls grouping state.
+	 *
 	 * @typedef {object} sap.ui.mdc.State.GroupLevels
 	 * @property {string} name of the grouped item
 	 * @property {boolean} [grouped = true] Defines if the item has to be grouped
@@ -1428,7 +1401,9 @@
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	/**
-	 * For each name, this describes if it is aggregated.
+	 * Defines the <code>aggregations</code> to be added to the controls agreggation state.
+	 *
+	 * Defines whether there is an aggregation for each item.
 	 *
 	 * @typedef {object} sap.ui.mdc.State.Aggregations
 	 * @property {boolean} [aggregated = true] Defines if the item has to be aggregated
@@ -1438,6 +1413,10 @@
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	/**
+	 * The <code>State</code> object describes the interface to apply and retrieve the current adaptation state from mdc controls.
+	 * The {@link sap.mdc.p13n.StateUtil StateUtil} class can be used to programatically apply changes considered for
+	 * the controls personalization to be part of its persistence.
+	 *
 	 * @typedef {object} sap.ui.mdc.State
 	 * @property {sap.ui.mdc.State.XCondition} [filter] Describes the filter conditions
 	 * @property {sap.ui.mdc.State.Items[]} [items] Describes the filter fields
