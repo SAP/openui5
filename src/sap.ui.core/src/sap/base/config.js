@@ -30,7 +30,16 @@ sap.ui.define([
 		var oProvider = new MemoryConfigurationProvider();
 
 		return {
-			set: oProvider.set.bind(oProvider),
+			set: function(sName, vValue) {
+				var rValidKey = /^[a-z][A-Za-z0-9]*$/;
+				if (rValidKey.test(sName)) {
+					oProvider.set(sName, vValue);
+				} else {
+					throw new TypeError(
+						"Invalid configuration key '" + sName + "'!"
+					);
+				}
+			},
 			get: function(mOptions) {
 				mOptions.provider = oProvider;
 				return _Configuration.get(mOptions);
