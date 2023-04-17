@@ -2519,7 +2519,7 @@ sap.ui.define([
 		 * Returns the first day of the week defined by the calendar week numbering algorithm
 		 * set in the configuration, see {@link sap.ui.core.Configuration#setCalendarWeekNumbering}.
 		 * If no specific calendar week numbering algorithm is configured the value set by
-		 * {@link sap.ui.core.Configuration.setFirstDayOfWeek} is returned. Otherwise the first day
+		 * {@link sap.ui.core.Configuration#setFirstDayOfWeek} is returned. Otherwise the first day
 		 * of the week is determined by the current locale, see {@link sap.ui.core.LocaleData#getFirstDayOfWeek}.
 		 *
 		 * Days are encoded as integer where Sunday=0, Monday=1 etc.
