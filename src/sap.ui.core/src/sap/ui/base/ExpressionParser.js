@@ -323,7 +323,7 @@ sap.ui.define([
 	 * @returns {any} the binding value
 	 */
 	function BINDING(i, aParts) {
-		return aParts[i];
+		return clean(aParts[i]);
 	}
 
 	/**
@@ -365,7 +365,7 @@ sap.ui.define([
 		if (oReference) {
 			oReference.base = oParent;
 		}
-		return vChild;
+		return clean(vChild);
 	}
 
 	/**
@@ -379,10 +379,10 @@ sap.ui.define([
 		var oReference = {};
 
 		// evaluate function expression and call it
-		return fnLeft(aParts, oReference).apply(oReference.base,
+		return clean(fnLeft(aParts, oReference).apply(oReference.base,
 			aArguments.map(function (fnArgument) {
 				return fnArgument(aParts); // evaluate argument
-			}));
+			})));
 	}
 
 	/**
@@ -434,7 +434,7 @@ sap.ui.define([
 		if (oReference) {
 			oReference.base = oParent;
 		}
-		return vChild;
+		return clean(vChild);
 	}
 
 	/**
@@ -474,6 +474,16 @@ sap.ui.define([
 			nud: unexpected
 		};
 		return mSymbols[sId];
+	}
+
+	/**
+	 * Cleans the given <code>vValue</code>.
+	 *
+	 * @param {any} vValue - the value to be cleaned
+	 * @returns {any} the cleaned value
+	 */
+	function clean(vValue) {
+		return vValue === Function ? undefined : vValue;
 	}
 
 	/**
