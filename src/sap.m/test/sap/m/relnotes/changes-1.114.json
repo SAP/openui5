@@ -3,6 +3,33 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "fada80f08e8f436969c67e9eea6504aace3614b7",
+        "type": "FIX",
+        "text": " p13n.SelectionController: correct delta attributes consideration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370012780"
+          }
+        ]
+      },
+      {
+        "id": "62439506e19da2e2da8392dcc1667ed835d024ca",
+        "type": "FIX",
+        "text": " sap.m.Table: Line-height is now overriden for ExpandableText",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370027458"
+          }
+        ]
+      },
+      {
+        "id": "6750269f14b78883e671cc1cce46ccedf1435a94",
+        "type": "FEATURE",
+        "text": " sap.m.SearchField: “searchButtonPressed” parameter added"
+      },
+      {
         "id": "988718179b457dbd73aebb300b2def8f048c84ff",
         "type": "FIX",
         "text": " m.VariantManagement: no tab stop for favorites on standard view",
@@ -21,6 +48,22 @@
           {
             "type": "BCP",
             "reference": "2370029778"
+          }
+        ]
+      },
+      {
+        "id": "cd9a7f3320157922c50eab7cf3ae86e78a661f4f",
+        "type": "FIX",
+        "text": " sap.m.ImageHelper: Additional module"
+      },
+      {
+        "id": "e6bf02e16b5419b4d9510ae433d6f01235e3387e",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Focus of busy input corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370014514"
           }
         ]
       },

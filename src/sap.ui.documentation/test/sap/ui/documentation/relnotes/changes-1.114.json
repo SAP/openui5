@@ -12,6 +12,11 @@
             "reference": "2370026149"
           }
         ]
+      },
+      {
+        "id": "8a268c4ca5c3df02973c8f45661668ec8ab4b3a2",
+        "type": "FIX",
+        "text": " UI5 Legacy free"
       }
     ]
   }
