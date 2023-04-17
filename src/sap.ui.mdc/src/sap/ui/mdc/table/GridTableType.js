@@ -5,11 +5,13 @@
 sap.ui.define([
 	"./TableTypeBase",
 	"../library",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/m/table/Util"
 ], function(
 	TableTypeBase,
 	library,
-	coreLibrary
+	coreLibrary,
+	MTableUtil
 ) {
 	"use strict";
 
@@ -443,7 +445,7 @@ sap.ui.define([
 
 		return new Promise(function(resolve) {
 			if (iIndex === -1) {
-				iIndex = oTable._getRowCount(false);
+				iIndex = MTableUtil.isEmpty(oTable.getRowBinding()) ? 0 : oTable.getRowBinding().getLength();
 			}
 
 			if (oGridTable._setFirstVisibleRowIndex(iIndex)) {

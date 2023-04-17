@@ -17,8 +17,9 @@ sap.ui.define([
 	"sap/ui/model/odata/type/SByte",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/Time",
-	"sap/ui/model/odata/type/TimeOfDay"
-], function(Core, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay) {
+	"sap/ui/model/odata/type/TimeOfDay",
+	"sap/ui/core/InvisibleMessage"
+], function(Core, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -243,6 +244,70 @@ sap.ui.define([
 				done();
 			});
 		});
+	});
+
+	QUnit.test("announceTableUpdate", function(assert) {
+		var oRb = Core.getLibraryResourceBundle("sap.m"),
+			sText = "Testing Text",
+			fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
+
+		// rowCount - undefined
+		Util.announceTableUpdate(sText);
+		assert.ok(fnInvisibleMessageAnnounce.calledWith(oRb.getText("table.ANNOUNCEMENT_TABLE_UPDATED", [sText])), "Row count was not announced");
+
+		// rowCount > 1
+		var iRowCount = 10;
+		Util.announceTableUpdate(sText, iRowCount);
+		assert.ok(fnInvisibleMessageAnnounce.calledWith(oRb.getText("table.ANNOUNCEMENT_TABLE_UPDATED_MULT", [sText, iRowCount])), "Multiple updated rows were announced");
+
+		// rowCount == 1
+		iRowCount = 1;
+		Util.announceTableUpdate(sText, iRowCount);
+		assert.ok(fnInvisibleMessageAnnounce.calledWith(oRb.getText("table.ANNOUNCEMENT_TABLE_UPDATED_SING", [sText, iRowCount])), "Row update was announced");
+
+		// rowCount == 0
+		iRowCount = 0;
+		Util.announceTableUpdate(sText, iRowCount);
+		assert.ok(fnInvisibleMessageAnnounce.calledWith(oRb.getText("table.ANNOUNCEMENT_TABLE_UPDATED_NOITEMS", [sText])), "No updated items was announced");
+
+		fnInvisibleMessageAnnounce.restore();
+	});
+
+	QUnit.test("isEmpty", function(assert) {
+		var iLength = 0,
+			sType = "",
+			bIsFinal = true;
+		var oRowBinding = {
+			getLength: function() { return iLength; },
+			isA: function(sClass) { return sType == sClass; },
+			isLengthFinal: function() { return bIsFinal; }
+		};
+
+		assert.ok(Util.isEmpty(oRowBinding), "Row binding is empty");
+
+		// bConsiderTotal - false, not AnalyticalBinding
+		iLength = 10;
+		assert.notOk(Util.isEmpty(oRowBinding), "Row binding is not empty");
+
+		// bConsiderTotal - false, AnalyticalBinding. Provides no grand total and has totaled measures.
+		sType = "sap.ui.model.analytics.AnalyticalBinding";
+		oRowBinding.providesGrandTotal = function() {
+			return false;
+		};
+		oRowBinding.hasTotaledMeasures = function() { return false; };
+
+		assert.notOk(Util.isEmpty(oRowBinding), "Row binding is not empty");
+
+		// bConsiderTotal - false, AnalyticalBinding. Only grand total is available.
+		iLength = 1;
+		oRowBinding.providesGrandTotal = function() {
+			return true;
+		};
+		oRowBinding.hasTotaledMeasures = function() {
+			return true;
+		};
+
+		assert.ok(Util.isEmpty(oRowBinding), "Row binding is empty");
 	});
 
 });

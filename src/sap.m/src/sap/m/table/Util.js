@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/IllustratedMessage",
-	"sap/m/Button"
-], function(MLibrary, Core, ThemeParameters, IllustratedMessage, Button) {
+	"sap/m/Button",
+	"sap/ui/core/InvisibleMessage"
+], function(MLibrary, Core, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
 	"use strict";
 	/*global Intl*/
 
@@ -406,6 +407,59 @@ sap.ui.define([
 		if (oSelectAllNotificationPopover && oSelectAllNotificationPopover.isOpen()) {
 			oSelectAllNotificationPopover.close();
 		}
+	};
+
+	/**
+	 * Provides an additional announcement for the screen reader to inform the user that the table
+	 * has been updated.
+	 *
+	 * @param {string} sText The header text to be announced
+	 * @param {int|undefined} iRowCount The row count. If not provided, the row count will not be announced
+	 * @private
+	 * @ui5-restricted sap.fe, sap.ui.mdc, sap.ui.comp
+	 * @since 1.114
+	 */
+	Util.announceTableUpdate = function(sText, iRowCount) {
+		var oInvisibleMessage = InvisibleMessage.getInstance();
+
+		if (oInvisibleMessage) {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
+			if (iRowCount == undefined) {
+				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED", [sText]));
+			} else if (iRowCount > 1) {
+				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_MULT", [sText, iRowCount]));
+			} else if (iRowCount === 1) {
+				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_SING", [sText, iRowCount]));
+			} else {
+				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_NOITEMS", [sText]));
+			}
+		}
+	};
+
+	/**
+	 * Checks whether the table is empty.
+	 *
+	 * @param {sap.ui.model.Binding} oRowBinding The row binding
+	 * @returns {boolean} Whether the table is empty or not
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.comp
+	 * @since 1.114
+	 */
+	Util.isEmpty = function(oRowBinding) {
+		if (!oRowBinding) {
+			return true;
+		}
+
+		var iRowCount = oRowBinding.getLength();
+		if (iRowCount === 1 && oRowBinding.isA('sap.ui.model.analytics.AnalyticalBinding')) {
+			var bHasGrandTotal = oRowBinding ? oRowBinding.providesGrandTotal() && oRowBinding.hasTotaledMeasures() : false;
+
+			if (bHasGrandTotal) {
+				iRowCount = 0;
+			}
+		}
+		return iRowCount <= 0;
 	};
 
 	return Util;

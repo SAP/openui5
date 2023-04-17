@@ -52,7 +52,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String", // load used data types as in legacyFree UI5 they are not loaded automatically
 	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/Boolean",
-	"sap/ui/performance/trace/FESRHelper"
+	"sap/ui/performance/trace/FESRHelper",
+	"sap/m/table/Util"
 ], function(
 	TableQUnitUtils,
 	QUtils,
@@ -104,7 +105,8 @@ sap.ui.define([
 	StringType,
 	ByteType,
 	BooleanType,
-	FESRHelper
+	FESRHelper,
+	MTableUtil
 ) {
 	"use strict";
 
@@ -1000,8 +1002,15 @@ sap.ui.define([
 				getLength: function() {
 					return iCurrentLength;
 				},
+				getCount: function() {
+					return iCurrentLength;
+				},
 				isLengthFinal: function() {
 					return bIsLengthFinal;
+				},
+				isA: function() {
+					// Is not a TreeBinding
+					return false;
 				}
 			};
 			this.oTable._oTable.getBinding.returns(oRowBinding);
@@ -1010,10 +1019,6 @@ sap.ui.define([
 
 			fDataReceived();
 			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
-
-			bIsLengthFinal = false;
-			fDataReceived();
-			assert.equal(this.oTable._oTitle.getText(), "Test");
 		}.bind(this));
 	});
 
@@ -1067,22 +1072,6 @@ sap.ui.define([
 			fDataReceived(new UI5Event("dataReceived", oRowBinding));
 			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
 			assert.ok(fCustomDataReceived.calledTwice);
-
-			// Check Binding without a getCount function
-			oRowBinding.getLength.returns(10);
-			oRowBinding.isLengthFinal.returns(true);
-			oRowBinding.getCount = undefined;
-
-			oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
-
-			fDataReceived(new UI5Event("dataReceived", oRowBinding));
-			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
-			assert.equal(fCustomDataReceived.callCount, 3);
-
-			oRowBinding.isLengthFinal.returns(false);
-			fDataReceived(new UI5Event("dataReceived", oRowBinding));
-			assert.equal(this.oTable._oTitle.getText(), "Test");
-			assert.equal(fCustomDataReceived.callCount, 4);
 
 			this.oTable.getControlDelegate().updateBindingInfo = fnOriginalUpdateBindingInfo;
 		}.bind(this));
@@ -1585,9 +1574,14 @@ sap.ui.define([
 		var done = assert.async();
 		this.oTable.setShowRowCount(false);
 
-		this.oTable._getRowCount = function() {
-			return 5;
+		var iCount = 5;
+		var oRowBinding = {
+			getCount: function() {
+				return iCount;
+			}
 		};
+		var fnGetRowBindingStub = sinon.stub(this.oTable, "getRowBinding");
+		fnGetRowBindingStub.returns(oRowBinding);
 
 		this.oTable.initialized().then(function() {
 			var oTitle = this.oTable._oTitle;
@@ -1600,12 +1594,11 @@ sap.ui.define([
 			assert.equal(this.oTable.getHeader(), sHeaderText, "Header Property has not changed");
 			assert.equal(oTitle.getText(), sHeaderText + " (5)", "Header has to contain row count");
 
-			this.oTable._getRowCount = function() {
-				return 0;
-			};
+			iCount = 0;
 			this.oTable._updateHeaderText();
 			assert.equal(oTitle.getText(), sHeaderText, "Header text does not contain row count when it is 0");
 
+			fnGetRowBindingStub.restore();
 			done();
 		}.bind(this));
 	});
@@ -4088,15 +4081,15 @@ sap.ui.define([
 		return TableQUnitUtils.waitForBinding(this.oTable).then(function() {
 			assert.notOk(this.oTable._oExportButton.getEnabled(), "Export button is disabled since there are no rows");
 			var oUpdateExportButtonSpy = sinon.spy(this.oTable, "_updateExportButton"),
-				fGetRowCountStub = sinon.stub(this.oTable, "_getRowCount");
-			fGetRowCountStub.returns(1);
+				fGetLengthStub = sinon.stub(this.oTable.getRowBinding(), "getLength");
+			fGetLengthStub.returns(1);
 
 			// simulate binding change
 			this.oTable.getRowBinding().fireEvent("change");
 			assert.ok(oUpdateExportButtonSpy.calledOnce);
 			assert.ok(this.oTable._oExportButton.getEnabled(), "Export button enabled, since binding change added a row to the table");
 
-			fGetRowCountStub.restore();
+			fGetLengthStub.restore();
 		}.bind(this));
 	});
 
@@ -5473,7 +5466,7 @@ sap.ui.define([
 			})
 		});
 		var oFilter = new FilterBar();
-		var fnAnnounceTableUpdate = sinon.spy(this.oTable, "_announceTableUpdate");
+		var fnAnnounceTableUpdate = sinon.spy(MTableUtil, "announceTableUpdate");
 
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
@@ -5489,18 +5482,19 @@ sap.ui.define([
 			assert.equal(this.oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
 
 			this.oTable.getRowBinding().fireDataReceived(); // invoke event handler manually since we have a JSONModel
-			assert.ok(fnAnnounceTableUpdate.calledOnce, "_announceTableUpdate is called once.");
+			assert.ok(fnAnnounceTableUpdate.calledOnce, "MTableUtil.announceTableUpdate is called once.");
 
 			this.oTable.getRowBinding().fireDataReceived();
-			assert.ok(fnAnnounceTableUpdate.calledOnce, "_announceTableUpdate is not called if the dataReceived is not caused by a filterbar search.");
+			assert.ok(fnAnnounceTableUpdate.calledOnce, "MTableUtil.announceTableUpdate is not called if the dataReceived is not caused by a filterbar search.");
 
 			oFilter.fireSearch();
 			assert.ok(true, "Search is triggered.");
 			assert.equal(this.oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
 			this.oTable.getRowBinding()._fireChange();
 			// in some cases OData V4 doesn't trigger a data request, but the binding context changes and the item count has to be announced
-			assert.ok(fnAnnounceTableUpdate.calledTwice, "_announceTableUpdate is called on binding change even if no data request is sent.");
+			assert.ok(fnAnnounceTableUpdate.calledTwice, "MTableUtil.announceTableUpdate is called on binding change even if no data request is sent.");
 			TableQUnitUtils.restorePropertyInfos(this.oTable);
+			fnAnnounceTableUpdate.restore();
 		}.bind(this));
 	});
 
@@ -5534,7 +5528,7 @@ sap.ui.define([
 		});
 		var oFilter = new FilterBar();
 		var fnOnDataReceived = sinon.spy(this.oTable, "_onDataReceived");
-		var fnAnnounceTableUpdate = sinon.spy(this.oTable, "_announceTableUpdate");
+		var fnAnnounceTableUpdate = sinon.spy(MTableUtil, "announceTableUpdate");
 
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
@@ -5548,8 +5542,9 @@ sap.ui.define([
 			this.oTable.getRowBinding().fireDataReceived(); // invoke event handler manually since we have a JSONModel
 			assert.ok(fnOnDataReceived.called, "Event dataReceived is fired.");
 			assert.equal(this.oTable._bAnnounceTableUpdate, undefined, "Table internal flag _bAnnounceTableUpdate is undefined");
-			assert.notOk(fnAnnounceTableUpdate.called, "Function _announceTableUpdate is never called.");
+			assert.notOk(fnAnnounceTableUpdate.called, "Function announceTableUpdate is never called.");
 			TableQUnitUtils.restorePropertyInfos(this.oTable);
+			fnAnnounceTableUpdate.restore();
 		}.bind(this));
 	});
 
