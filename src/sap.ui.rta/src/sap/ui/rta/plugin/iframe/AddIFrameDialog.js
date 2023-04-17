@@ -91,7 +91,7 @@ sap.ui.define([
 				id: "sapUiRtaAddIFrameDialog_HeightInput"
 			},
 			frameHeightUnit: {
-				value: "%"
+				value: "vh"
 			},
 			frameUrl: {
 				value: "",

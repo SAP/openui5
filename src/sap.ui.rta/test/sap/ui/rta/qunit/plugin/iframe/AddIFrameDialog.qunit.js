@@ -395,8 +395,15 @@ sap.ui.define([
 				}, this);
 				clickOnSave();
 			}, this);
-			return this.oAddIFrameDialog.open(mTestURLBuilderData).then(function (mSettings) {
+			return this.oAddIFrameDialog.open({
+				frameUrl: "test_url"
+			}).then(function (mSettings) {
 				assert.strictEqual(isEmptyObject(mSettings), false, "Non empty settings returned");
+				assert.strictEqual(
+					mSettings.frameHeightUnit,
+					"vh",
+					"then vh is selected as the default frame height unit"
+				);
 			});
 		});
 
@@ -438,6 +445,33 @@ sap.ui.define([
 				return this.oAddIFrameDialog.open(mData.input);
 			}, this);
 		});
+
+		QUnit.test("When existing settings contain % values for the section height", function (assert) {
+			this.oAddIFrameDialog.attachOpened(function () {
+				var oHeightValueArea = oCore.byId("sapUiRtaAddIFrameDialog_HeightInput");
+				oHeightValueArea.setValue("50");
+				QUnitUtils.triggerEvent("input", oHeightValueArea.getFocusDomRef());
+				oCore.applyChanges();
+				clickOnSave();
+			}, this);
+			return this.oAddIFrameDialog.open({
+				asContainer: true,
+				frameWidth: "16px",
+				frameHeight: "100%",
+				frameUrl: "some_url"
+			}).then(function(oSettings) {
+				assert.strictEqual(
+					oSettings.frameHeight,
+					50,
+					"then the frame height value is modified"
+				);
+				assert.strictEqual(
+					oSettings.frameHeightUnit,
+					"%",
+					"then the frame height unit isn't touched if it wasn't modified"
+				);
+			});
+		}, this);
 	});
 
 	QUnit.done(function () {
