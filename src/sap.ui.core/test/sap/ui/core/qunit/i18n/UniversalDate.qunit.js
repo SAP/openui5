@@ -406,11 +406,19 @@ sap.ui.define([
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
+			oWeekObject = oFixture.oInputDate.getUTCWeek(oFormatLocaleObject, CalendarWeekNumbering.WesternTraditional);
+			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
+			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
+
 			oWeekObject = oFixture.oInputDate.getWeek();
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
 			oWeekObject = oFixture.oInputDate.getWeek(oFormatLocaleObject, CalendarWeekNumbering.Default);
+			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
+			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
+
+			oWeekObject = oFixture.oInputDate.getWeek(oFormatLocaleObject, CalendarWeekNumbering.WesternTraditional);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 		});
@@ -503,11 +511,11 @@ sap.ui.define([
 
 		// CalendarWeekNumbering.WesternTraditional
 		aFixtures.forEach(function(oFixture) {
-			oWeekObject = oFixture.oInputDate.getUTCWeek(undefined, CalendarWeekNumbering.WesternTraditional);
+			oWeekObject = oFixture.oInputDate.getUTCWeek(new Locale("en"), CalendarWeekNumbering.WesternTraditional);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 
-			oWeekObject = oFixture.oInputDate.getWeek(undefined, CalendarWeekNumbering.WesternTraditional);
+			oWeekObject = oFixture.oInputDate.getWeek(new Locale("en"), CalendarWeekNumbering.WesternTraditional);
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
 			assert.equal(oWeekObject.week, oFixture.iExpectedWeek, "Calendar 'week' index should be " + oFixture.iExpectedWeek + ".");
 		});
@@ -632,108 +640,65 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("getWeek/getUTCWeek with invalid weekData", function (assert) {
+[{
+	vCalendarWeekNumbering: "invalidEnumValue",
+	sExpectedError: "Illegal format option calendarWeekNumbering: 'invalidEnumValue'"
+}, {
+	vCalendarWeekNumbering: {},
+	sExpectedError: "Week config requires firstDayOfWeek and minimalDaysInFirstWeek to be set"
+}, {
+	vCalendarWeekNumbering: {firstDayOfWeek: 0},
+	sExpectedError: "Week config requires firstDayOfWeek and minimalDaysInFirstWeek to be set"
+}, {
+	vCalendarWeekNumbering: {minimalDaysInFirstWeek: 1},
+	sExpectedError: "Week config requires firstDayOfWeek and minimalDaysInFirstWeek to be set"
+}].forEach(function (oFixture, i) {
+	QUnit.test("invalid calendar week numbering #" + i, function (assert) {
 		this.dateSpy.restore();
 		var oUniversalDateInstance = new UniversalDate();
 
-		var aFixtures = [
-			{
-				sMethodName: "getWeek",
-				oParam1: {firstDayOfWeek: 0}
-			},
-			{
-				sMethodName: "getWeek",
-				oParam1: {minimalDaysInFirstWeek: 1}
-			},
-			{
-				sMethodName: "getWeek",
-				oParam1: {}
-			},
-			{
-				sMethodName: "getUTCWeek",
-				oParam1: {firstDayOfWeek: 0}
-			},
-			{
-				sMethodName: "getUTCWeek",
-				oParam1: {minimalDaysInFirstWeek: 1}
-			},
-			{
-				sMethodName: "getUTCWeek",
-				oParam1: {}
-			},
-			{
-				sMethodName: "setWeek",
-				oParam2: {firstDayOfWeek: 0}
-			},
-			{
-				sMethodName: "setWeek",
-				oParam2: {minimalDaysInFirstWeek: 1}
-			},
-			{
-				sMethodName: "setWeek",
-				oParam2: {}
-			},
-			{
-				sMethodName: "setUTCWeek",
-				oParam2: {firstDayOfWeek: 0}
-			},
-			{
-				sMethodName: "setUTCWeek",
-				oParam2: {minimalDaysInFirstWeek: 1}
-			},
-			{
-				sMethodName: "setUTCWeek",
-				oParam2: {}
-			}
-		];
-
-		aFixtures.forEach(function (oFixture) {
-			assert.throws(function() {
-					oUniversalDateInstance[oFixture.sMethodName](undefined, oFixture.oParam1, oFixture.oParam2);
-				}, new TypeError("Week config requires firstDayOfWeek and minimalDaysInFirstWeek to be set"),
-				"error is thrown for " + oFixture.sMethodName);
-		});
-
-		aFixtures.forEach(function (oFixture) {
-			assert.throws(function() {
-					oUniversalDateInstance[oFixture.sMethodName](undefined, oFixture.oParam1 ? "invalidEnumValue" : undefined, oFixture.oParam2 ? "invalidEnumValue" : undefined);
-				}, new TypeError("Illegal format option calendarWeekNumbering: 'invalidEnumValue'"),
-				"error is thrown for " + oFixture.sMethodName);
-		});
-	});
-
-	QUnit.test("getWeekByDate/getFirstDateOfWeek with invalid weekData", function (assert) {
-		this.dateSpy.restore();
-
-		var aFixtures = [{firstDayOfWeek: 0}, {minimalDaysInFirstWeek: 1}, {}];
-
-		aFixtures.forEach(function (oFixture) {
-			assert.throws(function() {
-					UniversalDate.getWeekByDate(undefined, undefined, undefined, undefined, undefined, oFixture);
-				}, new TypeError("Week config requires firstDayOfWeek and minimalDaysInFirstWeek to be set"),
-				"error is thrown for getWeekByDate");
-		});
-
-		aFixtures.forEach(function (oFixture) {
-			assert.throws(function() {
-					UniversalDate.getFirstDateOfWeek(undefined, undefined, undefined, undefined, oFixture);
-				}, new TypeError("Week config requires firstDayOfWeek and minimalDaysInFirstWeek to be set"),
-				"error is thrown for getFirstDateOfWeek");
-		});
-
 		assert.throws(function() {
-				UniversalDate.getWeekByDate(undefined, undefined, undefined, undefined, undefined, "invalidEnumValue");
-			}, new TypeError("Illegal format option calendarWeekNumbering: 'invalidEnumValue'"),
-			"error is thrown for getWeekByDate");
-
+			oUniversalDateInstance.getWeek(undefined, oFixture.vCalendarWeekNumbering);
+		}, new TypeError(oFixture.sExpectedError));
 		assert.throws(function() {
-				UniversalDate.getFirstDateOfWeek(undefined, undefined, undefined, undefined, "invalidEnumValue");
-			}, new TypeError("Illegal format option calendarWeekNumbering: 'invalidEnumValue'"),
-			"error is thrown for getFirstDateOfWeek");
+			oUniversalDateInstance.getUTCWeek(undefined, oFixture.vCalendarWeekNumbering);
+		}, new TypeError(oFixture.sExpectedError));
+		assert.throws(function() {
+			oUniversalDateInstance.setWeek({}, undefined, oFixture.vCalendarWeekNumbering);
+		}, new TypeError(oFixture.sExpectedError));
+		assert.throws(function() {
+			oUniversalDateInstance.setUTCWeek({}, undefined, oFixture.vCalendarWeekNumbering);
+		}, new TypeError(oFixture.sExpectedError));
+		assert.throws(function() {
+			UniversalDate.getFirstDateOfWeek(undefined, undefined, undefined, undefined,
+				oFixture.vCalendarWeekNumbering);
+		}, new TypeError(oFixture.sExpectedError));
+		assert.throws(function() {
+			UniversalDate.getWeekByDate(undefined, undefined, undefined, undefined, undefined,
+				oFixture.vCalendarWeekNumbering);
+		}, new TypeError(oFixture.sExpectedError));
 	});
+});
 
 	QUnit.test("getWeekByDate/getFirstDateOfWeek", function (assert) {
+		var oConfigurationMock = this.mock(Configuration);
+
 		this.dateSpy.restore();
+
+
+
+		// de (ISO 8601 from Configuration)
+		oConfigurationMock.expects("getCalendarWeekNumbering").withExactArgs().returns(CalendarWeekNumbering.ISO_8601);
+		assert.deepEqual(UniversalDate.getWeekByDate("Gregorian", 2021, 11, 27, new Locale("de")), {
+			"week": 51,
+			"year": 2021
+		});
+		oConfigurationMock.expects("getCalendarWeekNumbering").withExactArgs().returns(CalendarWeekNumbering.ISO_8601);
+		assert.deepEqual(UniversalDate.getFirstDateOfWeek("Gregorian", 2021, 51, new Locale("de")), {
+			"day": 27,
+			"month": 11,
+			"year": 2021
+		});
 
 		// ISO 8601 > en
 		assert.deepEqual(UniversalDate.getWeekByDate("Gregorian", 2021, 11, 27, new Locale("en"), CalendarWeekNumbering.ISO_8601), {
@@ -741,17 +706,6 @@ sap.ui.define([
 			"year": 2021
 		});
 		assert.deepEqual(UniversalDate.getFirstDateOfWeek("Gregorian", 2021, 51, new Locale("en"), CalendarWeekNumbering.ISO_8601), {
-			"day": 27,
-			"month": 11,
-			"year": 2021
-		});
-
-		// de (ISO 8601)
-		assert.deepEqual(UniversalDate.getWeekByDate("Gregorian", 2021, 11, 27, new Locale("de")), {
-			"week": 51,
-			"year": 2021
-		});
-		assert.deepEqual(UniversalDate.getFirstDateOfWeek("Gregorian", 2021, 51, new Locale("de")), {
 			"day": 27,
 			"month": 11,
 			"year": 2021
