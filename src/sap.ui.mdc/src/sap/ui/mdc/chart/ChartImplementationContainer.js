@@ -13,23 +13,24 @@ function (Control, Renderer, Core, jQuery
     "use strict";
 
     /**
-     * Constructor for a new ChartContainer.
+     * Constructor for a new ChartImplementationContainer.
      *
      * @param {string} [sId] ID for the new control, generated automatically if no id is given
      * @param {object} [mSettings] Initial settings for the new control
-     * @class The Chart control creates a chart based on metadata and the configuration specified.
+     * @class The ChartImplementationContainer creates a container for the <code>content</code> (chart) and and <code>noDataContent</code>. Based on the <code>showNoDataStruct</code> the <code>content</code> or <code>noDataContent</code> will be shown.
      * @extends sap.ui.core.Control
      * @author SAP SE
      * @version ${version}
      * @constructor
      * @experimental As of version 1.105
+     *
      * @private
      * @ui5-restricted sap.fe
      * @MDC_PUBLIC_CANDIDATE
      * @since 1.105
      * @alias sap.ui.mdc.chart.ChartImplementationContainer
      */
-    var ChartContainer = Control.extend("sap.ui.mdc.chart.ChartImplementationContainer", /** @lends sap.ui.mdc.chart.ChartImplementationContainer.prototype */ {
+    var ChartImplementationContainer = Control.extend("sap.ui.mdc.chart.ChartImplementationContainer", /** @lends sap.ui.mdc.chart.ChartImplementationContainer.prototype */ {
         metadata: {
             library: "sap.ui.mdc",
             interfaces: [
@@ -47,7 +48,7 @@ function (Control, Renderer, Core, jQuery
             },
             aggregations: {
                 /**
-                 * Chart to be visualized.
+                 * Content/Chart to be visualized.
                  * @private
                  */
                 content: {
@@ -56,9 +57,9 @@ function (Control, Renderer, Core, jQuery
                 },
 
                 /**
-                 * Cotrol to show when there is no data available inside the chart.
-                 * This can be used if the standard behavior of the used chart control needs to be overriden.
-                 * To show this noDataContent, set <link>sap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct</link>
+                 * Control to show when there is no data available inside the chart.<br>
+                 * This can be used if the standard behavior of the used chart control needs to be overriden.<br>
+                 * To show this <code>noDataContent</code>, set {@link ap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct}
                  * @private
                  */
                 noDataContent : {
@@ -86,13 +87,13 @@ function (Control, Renderer, Core, jQuery
     });
 
     /**
-     * Initialises the ChartContainer.
+     * Initialises the ChartImplementationContainer.
      *
      * @experimental
      * @private
      * @ui5-restricted sap.ui.mdc
      */
-     ChartContainer.prototype.init = function () {
+     ChartImplementationContainer.prototype.init = function () {
         this._updateVisibilities();
     };
 
@@ -106,7 +107,7 @@ function (Control, Renderer, Core, jQuery
      * @private
      * @ui5-restricted sap.ui.mdc
     */
-    ChartContainer.prototype.setShowNoDataStruct = function (bValue) {
+    ChartImplementationContainer.prototype.setShowNoDataStruct = function (bValue) {
         this.setProperty("showNoDataStruct", bValue);
 
         this._updateVisibilities();
@@ -122,36 +123,36 @@ function (Control, Renderer, Core, jQuery
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartContainer.prototype.setContent = function(oContent) {
+    ChartImplementationContainer.prototype.setContent = function(oContent) {
         this.setAggregation("content", oContent);
         this._updateVisibilities();
         return this;
     };
 
     /**
-     * Sets a new control for <link>sap.ui.mdc.chart.ChartImplementationContainer#noDataContent/link>.
-     * @param {sap.ui.core.Control} oContent the content to show when <link>sap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct</link> is set to <code>true</code>
+     * Sets a new control for {@link sap.ui.mdc.chart.ChartImplementationContainer#noDataContent noDataContent}.
+     * @param {sap.ui.core.Control} oContent the content to show when {@link sap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct} is set to <code>true</code>
      * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartContainer.prototype.setNoDataContent = function(oContent) {
+    ChartImplementationContainer.prototype.setNoDataContent = function(oContent) {
         this.setAggregation("noDataContent", oContent);
         this._updateVisibilities();
         return this;
     };
 
     /**
-     * Updates the association to a control which is used instead of <link>sap.ui.mdc.chart.ChartImplementationContainer#noDataContent/link>.
-     * This can be used when the noDataContent should still be an aggregation of another control (e.g. the <link>sap.ui.mdc.Chart</link>).
-     * @param {*} oContent he content to show when <link>sap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct</link> is set to <code>true</code>
+     * Updates the association to a control which is used instead of {@link sap.ui.mdc.chart.ChartImplementationContainer#noDataContent noDataContent}.
+     * This can be used when the noDataContent should still be an aggregation of another control (e.g. the {@link sap.ui.mdc.Chart Chart}).
+     * @param {sap.ui.core.Control} oContent the content to show when {@link sap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct} is set to <code>true</code>
      * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartContainer.prototype.setChartNoDataContent = function(oContent) {
+    ChartImplementationContainer.prototype.setChartNoDataContent = function(oContent) {
         this.setAssociation("chartNoDataContent", oContent);
         this._updateVisibilities();
         return this;
@@ -165,7 +166,7 @@ function (Control, Renderer, Core, jQuery
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartContainer.prototype.showOverlay = function(bShow) {
+    ChartImplementationContainer.prototype.showOverlay = function(bShow) {
         var $this = this.$(), $overlay = $this.find(".sapUiMdcChartOverlay");
         if (bShow && $overlay.length === 0) {
             $overlay = jQuery("<div>").addClass("sapUiOverlay sapUiMdcChartOverlay").css("z-index", "1");
@@ -175,11 +176,11 @@ function (Control, Renderer, Core, jQuery
         }
     };
 
-    ChartContainer.prototype._getChartNoDataForRenderer = function() {
+    ChartImplementationContainer.prototype._getChartNoDataForRenderer = function() {
         return Core.byId(this.getChartNoDataContent());
     };
 
-    ChartContainer.prototype._updateVisibilities = function() {
+    ChartImplementationContainer.prototype._updateVisibilities = function() {
         var bVisible = this.getShowNoDataStruct();
 
         if (this.getContent()) {
@@ -199,5 +200,5 @@ function (Control, Renderer, Core, jQuery
 
     };
 
-    return ChartContainer;
+    return ChartImplementationContainer;
 });

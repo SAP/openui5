@@ -247,12 +247,12 @@ sap.ui.define([
      * Notifies the inner chart to zoom in.
      * <b>Note:</b> iValue does not affect the zoom for the sap.chart.Chart.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @param {int} iValue Value to zoom in
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.zoomIn = function (oMDCChart, iValue) {
+    ChartDelegate.zoomIn = function (oMDCChart) {
         var oInnerChart = this._getChart(oMDCChart);
 
         if (oInnerChart) {
@@ -264,12 +264,12 @@ sap.ui.define([
      * Notifies the inner chart to zoom out.
      * <b>Note:</b> iValue does not affect the zoom in case of the sap.chart.Chart.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @param {int} iValue Value to zoom in
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.zoomOut = function (oMDCChart, iValue) {
+    ChartDelegate.zoomOut = function (oMDCChart) {
         var oInnerChart = this._getChart(oMDCChart);
 
         if (oInnerChart) {
@@ -706,17 +706,6 @@ sap.ui.define([
             }.bind(this));
         }.bind(this));
     };
-
-    // /**
-    //  * Creates initial content for the chart while metadata has not been retrieved yet.
-    //  * @param {sap.ui.mdc.chart} oMDCChart MDC chart
-    //  * @experimental
-    //  * @private
-    //  * @ui5-restricted sap.fe, sap.ui.mdc
-    //  */
-    // ChartDelegate.createInitialChartContent = function(oMDCChart) {
-    //     //Not relevant for sap.chart.Chart
-    // };
 
     /**
      * Triggers invalidation on ChartImplContainer when external noData changed.
@@ -1472,20 +1461,6 @@ sap.ui.define([
      */
     ChartDelegate._getAggregatedMeasureNameForProperty = function(oPoperty){
         return oPoperty.aggregationMethod + oPoperty.name;
-    };
-
-    /**
-     * Checks the binding of the chart and rebinds it if required.
-     *
-     * @param {sap.ui.mdc.Chart} oMDCChart MDC chart instance
-     * @param {object} oBindingInfo BindingInfo of the chart
-     * @deprecated as of 1.98; use rebind instead
-     * @experimental
-     * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
-     */
-    ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
-        this.rebind(oMDCChart, oBindingInfo);
     };
 
     /**

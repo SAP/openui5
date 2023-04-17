@@ -252,7 +252,9 @@ sap.ui.define([
                     /**
                      * Specifies the chart metadata.<br>
                      * <b>Note</b>: This property must not be bound.<br>
-                     * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/sap.fe. Do not use it otherwise.
+                     * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/sap.fe. Do not use it otherwise.<br>
+                     *
+                     * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.chart.PropertyInfo PropertyInfo}.
                      *
                      * @since 1.99
                      */
@@ -365,7 +367,7 @@ sap.ui.define([
                 },
                 events: {
                     /**
-                     * This event is fired when a SelectionDetailsAction is pressed.
+                     * This event is fired when a <code>SelectionDetailsAction</code> is pressed.
                      */
                     selectionDetailsActionPressed: {
                         parameters: {
@@ -415,7 +417,6 @@ sap.ui.define([
         Chart.prototype.init = function () {
             this._oManagedObjectModel = new ManagedObjectModel(this);
             this.setModel(this._oManagedObjectModel, "$mdcChart");
-            this._bNewP13n = true;//TODO: remove with migration
             Control.prototype.init.apply(this, arguments);
 
             this._setupPropertyInfoStore("propertyInfo");
@@ -424,41 +425,41 @@ sap.ui.define([
 
         /**
          * Defines which personalization options are available in the chart.
-         * Valid options are: "Item", "Sort", "Type".
-         * @param {array} aMode String array containing the p13n options that are available
+         *
+         * @param {sap.ui.mdc.ChartP13nMode[]} aModes array containing the <code>ChartP13nModes</code> that are available
          * @returns {sap.ui.mdc.Chart} Reference to <code>this</code> for method chaining
          *
          * @experimental
          * @private
          * @ui5-restricted sap.fe
          */
-        Chart.prototype.setP13nMode = function(aMode) {
+        Chart.prototype.setP13nMode = function(aModes) {
             var aSortedKeys = null;
-            if (aMode && aMode.length >= 1){
+            if (aModes && aModes.length >= 1){
                 aSortedKeys = [];
-                var mKeys = aMode.reduce(function(mMap, sKey, iIndex){
+                var mKeys = aModes.reduce(function(mMap, sKey, iIndex){
                     mMap[sKey] = true;
                     return mMap;
                 }, {});
 
                 //as the p13nMode has no strict order we need to ensure the order of tabs here
                 if (mKeys.Item) {
-                    aSortedKeys.push("Item");
+                    aSortedKeys.push(sap.ui.mdc.ChartP13nMode.Item);
                 }
                 if (mKeys.Sort) {
-                    aSortedKeys.push("Sort");
+                    aSortedKeys.push(sap.ui.mdc.ChartP13nMode.Sort);
                 }
                 if (mKeys.Filter) {
-                    aSortedKeys.push("Filter");
+                    aSortedKeys.push(sap.ui.mdc.ChartP13nMode.Filter);
                 }
                 if (mKeys.Type) {
                     this._typeBtnActive = true;
-                    aSortedKeys.push("Type");
+                    aSortedKeys.push(sap.ui.mdc.ChartP13nMode.Type);
                 } else {
                     this._typeBtnActive = false;
                 }
             } else {
-                aSortedKeys = aMode;
+                aSortedKeys = aModes;
             }
 
             this.setProperty("p13nMode", aSortedKeys, true);
@@ -800,7 +801,7 @@ sap.ui.define([
         };
 
         /**
-         * Rebinds the inner chart instance by calling oDelegate.rebindChart
+         * Rebinds the inner chart instance by calling oDelegate.rebind
          */
         Chart.prototype._rebind = function () {
 
@@ -902,34 +903,24 @@ sap.ui.define([
 
         /**
          * Zooms in the inner chart.
-         * @param {int} iValue how much steps should be zoomed in
          *
          * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc, sap.fe
          */
-        Chart.prototype.zoomIn = function (iValue) {
-            if (!iValue) {
-                iValue = 10;
-            }
-
-            this.getControlDelegate().zoomIn(this, iValue);
+        Chart.prototype.zoomIn = function () {
+            this.getControlDelegate().zoomIn(this);
         };
 
         /**
          * Zooms out the inner chart.
-         * @param {int} iValue how much steps should be zoomed out
          *
          * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc, sap.fe
          */
-        Chart.prototype.zoomOut = function (iValue) {
-            if (iValue) {
-                iValue = 10;
-            }
-
-            this.getControlDelegate().zoomOut(this, iValue);
+        Chart.prototype.zoomOut = function () {
+            this.getControlDelegate().zoomOut(this);
         };
 
         /**
@@ -1172,7 +1163,7 @@ sap.ui.define([
             } catch (err) {
                 //This fails when the delegate instance is not yet available.
                 //It is not a problem as the delegate will use getNoData() on init of the chart, thus using the correct noData struct.
-                //This error merely happens as the setter is calle don init of the MDC CHart from framework side.
+                //This error primerely happens as the setter is called on init of the Chart from framework side.
             }
 
             return this;
@@ -1312,7 +1303,7 @@ sap.ui.define([
         };
 
         /**
-         * Callback for when filters changed
+         * Callback for when filters changed<br>
          * Activates the overlay on the MDC chart
          *
          * @param oEvent filter changed event
@@ -1362,6 +1353,7 @@ sap.ui.define([
 
         /**
          * Adds/Removes the overlay shown above the inner chart.
+         *
          * @param {boolean} bShow true to show overlay, false to hide
          *
          * @experimental
@@ -1379,8 +1371,9 @@ sap.ui.define([
 		};
 
         /**
-         * Adds an action to the <code>actions</code> aggregation of the chart.
+         * Adds an action to the <code>actions</code> aggregation of the chart.<br>
          * If the given control is not of type {@link sap.ui.mdc.actiontoolbar.ActionToolbarAction}, a container is created for the control before passing it on to the {@link sap.ui.mdc.ActionToolbar}.
+         *
          * @param {sap.ui.core.Control} oControl to add to the aggregation
          * @return {sap.ui.mdc.Chart} Reference to <code>this</code> for method chaining.
          *
