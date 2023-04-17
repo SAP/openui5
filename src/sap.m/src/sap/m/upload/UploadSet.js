@@ -866,12 +866,14 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.setUploadButtonInvisible = function (bUploadButtonInvisible) {
-		if (this.getUploadButtonInvisible() === bUploadButtonInvisible) {
-			return this;
+		if (bUploadButtonInvisible !== this.getUploadButtonInvisible()) {
+			var bVisible = !bUploadButtonInvisible;
+			this.getDefaultFileUploader().setVisible(bVisible);
+			if (this._oUploadButton) {
+				this._oUploadButton.setVisible(bVisible);
+			}
+			this.setProperty("uploadButtonInvisible", bUploadButtonInvisible, true);
 		}
-		this.setProperty("uploadButtonInvisible", bUploadButtonInvisible, true);
-		this.getDefaultFileUploader().setVisible(!bUploadButtonInvisible);
-
 		return this;
 	};
 
@@ -945,7 +947,7 @@ sap.ui.define([
 			this._oUploadButton = new Button({
 				id: this.getId() + "-uploadButton",
 				type: MobileLibrary.ButtonType.Standard,
-				visible: this.getUploadEnabled(),
+				visible: this.getUploadEnabled() && !this.getUploadButtonInvisible(),
 				text: this._oRb.getText("UPLOADCOLLECTION_UPLOAD"),
 				ariaDescribedBy: this.getAggregation("_illustratedMessage").getId(),
 				press: function () {
