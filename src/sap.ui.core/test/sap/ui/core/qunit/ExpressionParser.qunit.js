@@ -963,4 +963,25 @@ sap.ui.define([
 		assert.strictEqual(oMethodExpectation.thisValues[1], mGlobals.that, "that");
 		assert.notStrictEqual(oMethodExpectation.thisValues[1], mGlobals.My, "not My");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("BCP: 2370033311", function (assert) {
+		// DOT
+		check(assert, "{= parseInt.constructor === undefined }", true);
+
+		// PROPERTY_ACCESS
+		check(assert, "{= parseInt['constructor'] === undefined }", true);
+
+		// BINDING
+		check(assert, "{= ${/mail/toString/constructor} === undefined }", true);
+
+		// FUNCTION_CALL
+		check(assert, "{= ${path:'/mail', formatter:'.myFormatter'}() === undefined }", true, {
+			myFormatter: function () {
+				return function () {
+					return parseInt.constructor;
+				};
+			}
+		});
+	});
 });
