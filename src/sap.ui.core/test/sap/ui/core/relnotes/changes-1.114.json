@@ -3,6 +3,16 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "d4400cef959cb84f2e49e92daa39c69ff33021cb",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Configuration: Enable timezone settings"
+      },
+      {
+        "id": "9e3a250e02700c0cf3b3350fa6f85385f511c1d5",
+        "type": "FIX",
+        "text": " core/Rendering: Fix async step detection"
+      },
+      {
         "id": "db6394d77f2d45f641e1cfa4f40cd3b97da3504d",
         "type": "FEATURE",
         "text": " Opa: Introduce fecthWaiter"

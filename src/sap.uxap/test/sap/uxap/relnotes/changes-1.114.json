@@ -34,6 +34,16 @@
             "reference": "2380044009"
           }
         ]
+      },
+      {
+        "id": "8a268c4ca5c3df02973c8f45661668ec8ab4b3a2",
+        "type": "FIX",
+        "text": " UI5 Legacy free"
+      },
+      {
+        "id": "32cbdcb1087bafb7db3bf9638bb5342cfb7de152",
+        "type": "FIX",
+        "text": " Remove unused test code"
       }
     ]
   }
