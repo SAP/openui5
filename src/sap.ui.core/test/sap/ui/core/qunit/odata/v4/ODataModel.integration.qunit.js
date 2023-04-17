@@ -20821,8 +20821,12 @@ sap.ui.define([
 	//
 	// Test ODLB#getCount
 	// JIRA: CPOUI5ODATAV4-958
+	//
+	// Observe dataRequested and dataReceived events (BCP: 2370044114)
 	QUnit.test("Data Aggregation: expand, paging and collapse on sap.m.Table", function (assert) {
 		var oListBinding,
+			iDataReceivedCount = 0,
+			iDataRequestedCount = 0,
 			oModel = this.createAggregationModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{path : \'/BusinessPartners\',\
@@ -20902,6 +20906,12 @@ sap.ui.define([
 
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("items");
+			oListBinding.attachDataRequested(function () {
+				iDataRequestedCount += 1;
+			});
+			oListBinding.attachDataReceived(function () {
+				iDataReceivedCount += 1;
+			});
 
 			// code under test -- will log an error because $count was not requested and is
 			// therefore not available
@@ -20912,6 +20922,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand 'Z'");
 		}).then(function () {
+			assert.strictEqual(iDataRequestedCount, 1);
+			assert.strictEqual(iDataReceivedCount, 1);
+
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
 					+ "/orderby(AccountResponsible)&$skip=3&$top=1", {
@@ -20934,6 +20947,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(iDataRequestedCount, 2);
+			assert.strictEqual(iDataReceivedCount, 2);
 			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
 				"/BusinessPartners(Region='Z')",
 				"/BusinessPartners(Region='Z',AccountResponsible='a')",
@@ -20974,6 +20989,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "collapse 'Z'");
 		}).then(function () {
+			assert.strictEqual(iDataRequestedCount, 3);
+			assert.strictEqual(iDataReceivedCount, 3);
 			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
 				"/BusinessPartners(Region='Z')",
 				"/BusinessPartners(Region='Y')",
@@ -20998,6 +21015,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand 'Z'");
 		}).then(function () {
+			assert.strictEqual(iDataRequestedCount, 3);
+			assert.strictEqual(iDataReceivedCount, 3);
 			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
 				"/BusinessPartners(Region='Z')",
 				"/BusinessPartners(Region='Z',AccountResponsible='a')",
