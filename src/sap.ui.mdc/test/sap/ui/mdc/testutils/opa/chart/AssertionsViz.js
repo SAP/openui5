@@ -92,8 +92,8 @@ sap.ui.define([
 					value: sId + "--innerChart"
 				}),
 				check: function() {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnControl = frameJQuery.sap.getObject("sap.chart.Chart");
+					var frameJQuery = Opa5.getJQuery();
+					var fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
 					aDomElements = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnControl);
 					return aDomElements[0].getVisibleDimensions().length === aOrderedDimensionNames.length;
 				},
@@ -116,8 +116,8 @@ sap.ui.define([
 					value: sId + "--innerChart"
 				}),
 				check: function() {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnControl = frameJQuery.sap.getObject("sap.chart.Chart");
+					var frameJQuery = Opa5.getJQuery();
+					var fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
 					aDomElements = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnControl);
 					return aDomElements[0].getVisibleMeasures().length === aOrderedMeasureNames.length;
 				},

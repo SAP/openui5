@@ -365,7 +365,7 @@ sap.ui.define([
 					return this.waitFor({
 						autoWait: false,
 						check: function () {
-							return Opa5.getWindow().jQuery("#sap-ui-invisible-ruleDetailsPage").length > 0;
+							return Opa5.getJQuery()("#sap-ui-invisible-ruleDetailsPage").length > 0;
 						},
 						success: function () {
 							Opa5.assert.ok(true, "Rule details page should be hidden.");

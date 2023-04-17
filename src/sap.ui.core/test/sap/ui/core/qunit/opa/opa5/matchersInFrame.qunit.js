@@ -51,9 +51,11 @@ sap.ui.define([
 
 		this.oOpa5.waitFor({
 			success: function () {
-				setTimeout(function () {
-					new (Opa5.getWindow().sap.m.Button)().placeAt("body");
-				}, 1000);
+				Opa5.getWindow().sap.ui.require(["sap/m/Button"], function(Button) {
+					setTimeout(function() {
+						new Button().placeAt("body");
+					}, 1000);
+				});
 			}
 		});
 
@@ -71,7 +73,9 @@ sap.ui.define([
 	opaTest("Should get an array of controls that is an instance of array of the executing document", function () {
 		this.oOpa5.waitFor({
 			success: function () {
-				new (Opa5.getWindow().sap.m.Button)().placeAt("body");
+				Opa5.getWindow().sap.ui.require(["sap/m/Button"], function(Button) {
+					new Button().placeAt("body");
+				});
 			}
 		});
 

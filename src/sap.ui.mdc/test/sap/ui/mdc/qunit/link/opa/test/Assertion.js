@@ -23,8 +23,8 @@ sap.ui.define([
 			var aDomDialogs;
 			return this.waitFor({
 				check: function() {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnDialog = frameJQuery.sap.getObject('sap.m.Dialog');
+					var frameJQuery = Opa5.getJQuery();
+					var fnDialog = Opa5.getPlugin().getControlConstructor('sap.m.Dialog');
 					aDomDialogs = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnDialog);
 					return !aDomDialogs.length;
 				},
@@ -39,8 +39,8 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: sColumnType,
 				check: function() {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnDialog = frameJQuery.sap.getObject(sColumnType);
+					var frameJQuery = Opa5.getJQuery();
+					var fnDialog = Opa5.getPlugin().getControlConstructor(sColumnType);
 					aDomColumns = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnDialog);
 					return aDomColumns.length === aOrderedColumnNames.length;
 				},
@@ -236,11 +236,11 @@ sap.ui.define([
 			var aDomOverlay;
 			return this.waitFor({
 				check: function() {
-					var frameJQuery = Opa5.getWindow().jQuery;
+					var frameJQuery = Opa5.getJQuery();
 					if (!frameJQuery) {
 						return false;
 					}
-					var fnOverlay = frameJQuery.sap.getObject('sap.ui.dt.ElementOverlay');
+					var fnOverlay = Opa5.getPlugin().getControlConstructor('sap.ui.dt.ElementOverlay');
 					aDomOverlay = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnOverlay);
 					return !aDomOverlay.length;
 				},

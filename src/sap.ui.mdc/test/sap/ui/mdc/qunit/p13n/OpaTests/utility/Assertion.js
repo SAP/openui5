@@ -68,8 +68,8 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.chart.Chart",
 				check: function () {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnControl = frameJQuery.sap.getObject("sap.chart.Chart");
+					var frameJQuery = Opa5.getJQuery();
+					var fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
 					aDomElements = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnControl);
 					return aDomElements[0].getVisibleDimensions().length === aOrderedDimensionNames.length;
 				},
@@ -89,8 +89,8 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.chart.Chart",
 				check: function () {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnControl = frameJQuery.sap.getObject("sap.chart.Chart");
+					var frameJQuery = Opa5.getJQuery();
+					var fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
 					aDomElements = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnControl);
 					return aDomElements[0].getVisibleMeasures().length === aOrderedMeasureNames.length;
 				},
@@ -110,8 +110,8 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.chart.Chart",
 				check: function () {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnControl = frameJQuery.sap.getObject("sap.chart.Chart");
+					var frameJQuery = Opa5.getJQuery();
+					var fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
 					aDomElements = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnControl);
 					return aDomElements[0].getChartType() === sChartTypeKey;
 				},
@@ -580,8 +580,8 @@ sap.ui.define([
 			var aDomDialogs;
 			return this.waitFor({
 				check: function () {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnDialog = frameJQuery.sap.getObject('sap.m.ResponsivePopover');
+					var frameJQuery = Opa5.getJQuery();
+					var fnDialog = Opa5.getPlugin().getControlConstructor('sap.m.ResponsivePopover');
 					aDomDialogs = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnDialog);
 					return !aDomDialogs.length;
 				},
