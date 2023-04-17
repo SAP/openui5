@@ -8387,11 +8387,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkKeepAlive", function (assert) {
+	QUnit.test("checkKeepAlive: header context", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES");
-
-		// code under test
-		oBinding.checkKeepAlive({/*oContext*/});
 
 		assert.throws(function () {
 			// code under test
@@ -8406,7 +8403,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding.checkKeepAlive({/*oContext*/});
+			oBinding.checkKeepAlive();
 		}, new Error("Unsupported $$aggregation at " + oBinding));
 	});
 
@@ -8419,7 +8416,7 @@ sap.ui.define([
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
 
 		// code under test (look, Ma - no error!)
-		oBinding.checkKeepAlive({/*oContext*/});
+		oBinding.checkKeepAlive();
 	});
 
 	//*********************************************************************************************
@@ -8429,7 +8426,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding.checkKeepAlive({/*oContext*/});
+			oBinding.checkKeepAlive();
 		}, new Error("Unsupported $$sharedRequest at " + oBinding));
 	});
 
@@ -8443,7 +8440,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding.checkKeepAlive({/*oContext*/});
+			oBinding.checkKeepAlive();
 		}, new Error("Unsupported $$sharedRequest at " + oBinding));
 	});
 
@@ -8456,14 +8453,58 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding.checkKeepAlive({/*oContext*/});
+			oBinding.checkKeepAlive();
 		}, new Error("Missing $$ownRequest at " + oBinding));
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oParentContext, undefined, undefined,
 			{$$ownRequest : true});
 
 		// code under test
-		oBinding.checkKeepAlive({/*oContext*/});
+		oBinding.checkKeepAlive();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkKeepAlive: pending changes", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext = {
+				hasPendingChanges : function () {},
+				getIndex : function () {},
+				isDeleted : function () {},
+				isKeepAlive : function () {},
+				toString : function () { return "foo"; }
+			},
+			oContextMock = this.mock(oContext);
+
+		oContextMock.expects("getIndex").withExactArgs().returns(undefined);
+		oContextMock.expects("isKeepAlive").withExactArgs().returns(true);
+		oContextMock.expects("isDeleted").withExactArgs().returns(false);
+		oContextMock.expects("hasPendingChanges").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkKeepAlive(oContext, false);
+		}, new Error("Not allowed due to pending changes: foo"));
+
+		oContextMock.expects("getIndex").withExactArgs().returns(undefined);
+		oContextMock.expects("isKeepAlive").withExactArgs().returns(true);
+		oContextMock.expects("isDeleted").withExactArgs().returns(true);
+
+		// code under test
+		oBinding.checkKeepAlive(oContext, false);
+
+		oContextMock.expects("getIndex").withExactArgs().returns(undefined);
+		oContextMock.expects("isKeepAlive").withExactArgs().returns(false);
+
+		// code under test
+		oBinding.checkKeepAlive(oContext, false);
+
+		oContextMock.expects("getIndex").withExactArgs().returns(42);
+
+		// code under test
+		oBinding.checkKeepAlive(oContext, false);
+
+		// code under test
+		oBinding.checkKeepAlive(oContext, true);
 	});
 
 	//*********************************************************************************************

@@ -41835,6 +41835,8 @@ sap.ui.define([
 	//    the late properties are requested again.
 	// 9. BCP: 2170211215 Check that #setAggregation is throwing an error (aContexts)
 	// JIRA: CPOUI5ODATAV4-340
+	//
+	// See that setKeepAlive(false) is not possible with pending changes (BCP: 2380044672)
 	QUnit.test("CPOUI5ODATAV4-340: Context#setKeepAlive", function (assert) {
 		var oKeptContext,
 			oModel = this.createSalesOrdersModel({
@@ -41897,6 +41899,10 @@ sap.ui.define([
 			return that.waitForChanges(assert, "(4)");
 		}).then(function () {
 			assert.ok(oTableBinding.hasPendingChanges());
+
+			assert.throws(function () {
+				oKeptContext.setKeepAlive(false); // BCP: 2380044672
+			}, new Error("Not allowed due to pending changes: " + oKeptContext));
 
 			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 					value : [{"@odata.etag" : "etag1", SalesOrderID : "1"}]

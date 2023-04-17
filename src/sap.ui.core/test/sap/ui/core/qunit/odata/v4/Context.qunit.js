@@ -3825,10 +3825,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("resetKeepAlive", function (assert) {
-		var oBinding = {
-				checkKeepAlive : function () {}
-			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
 
 		oContext.bKeepAlive = "bTrueOrFalse";
 		oContext.fnOnBeforeDestroy = "fnOnBeforeDestroy";
@@ -3847,6 +3844,7 @@ sap.ui.define([
 				checkKeepAlive : function () {},
 				fetchIfChildCanUseCache : function () {}
 			},
+			oBindingMock = this.mock(oBinding),
 			oError = new Error(),
 			oMetaModel = {
 				fetchObject : function () {
@@ -3867,8 +3865,8 @@ sap.ui.define([
 
 		this.mock(oContext).expects("isTransient").exactly(4).withExactArgs().returns(false);
 		this.mock(_Helper).expects("getPredicateIndex").exactly(4).withExactArgs("/path");
-		this.mock(oBinding).expects("checkKeepAlive").exactly(4)
-			.withExactArgs(sinon.match.same(oContext));
+		oBindingMock.expects("checkKeepAlive")
+			.withExactArgs(sinon.match.same(oContext), "bTrueOrFalse");
 
 		// code under test
 		oContext.setKeepAlive("bTrueOrFalse");
@@ -3876,17 +3874,19 @@ sap.ui.define([
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 
 		oContext.fnOnBeforeDestroy = "foo";
+		oBindingMock.expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext), false);
 
 		// code under test
 		oContext.setKeepAlive(false, "fnOnBeforeDestroy", true);
 		assert.strictEqual(oContext.isKeepAlive(), false);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 
+		oBindingMock.expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext), true);
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
 			.resolves("path/to/messages");
-		this.mock(oBinding).expects("fetchIfChildCanUseCache")
+		oBindingMock.expects("fetchIfChildCanUseCache")
 			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
 			.resolves("/reduced/path");
 		this.mock(oContext).expects("fetchValue").withExactArgs("/reduced/path")
@@ -3896,6 +3896,7 @@ sap.ui.define([
 		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
 		assert.strictEqual(oContext.isKeepAlive(), true);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, "fnOnBeforeDestroy");
+		oBindingMock.expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext), false);
 
 		oContext.oDeletePromise = "~deletePromise~";
 
@@ -3917,7 +3918,7 @@ sap.ui.define([
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive")
-			.withExactArgs(sinon.match.same(oContext)).throws(oError);
+			.withExactArgs(sinon.match.same(oContext), true).throws(oError);
 
 		assert.throws(function () {
 			// code under test
@@ -3968,7 +3969,8 @@ sap.ui.define([
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/path");
-		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
+		this.mock(oBinding).expects("checkKeepAlive")
+			.withExactArgs(sinon.match.same(oContext), true);
 		this.mock(_Helper).expects("getMetaPath").never();
 
 		assert.throws(function () {
@@ -4003,7 +4005,8 @@ sap.ui.define([
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/path");
-		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
+		this.mock(oBinding).expects("checkKeepAlive")
+			.withExactArgs(sinon.match.same(oContext), true);
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
@@ -4038,7 +4041,8 @@ sap.ui.define([
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/path");
-		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
+		this.mock(oBinding).expects("checkKeepAlive")
+			.withExactArgs(sinon.match.same(oContext), true);
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")

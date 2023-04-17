@@ -969,7 +969,7 @@ sap.ui.define([
 				if (!this.oContext.getBinding) {
 					throw new Error("Cannot replace this parent context: " + this.oContext);
 				} // Note: parent context need not have a key predicate!
-				this.oContext.getBinding().checkKeepAlive(this.oContext);
+				this.oContext.getBinding().checkKeepAlive(this.oContext, true);
 			}
 		} else if (bReplaceWithRVC) {
 			throw new Error("Cannot replace when operation is not relative");

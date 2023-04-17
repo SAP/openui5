@@ -616,7 +616,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#checkKeepAlive
 	 */
-	ODataListBinding.prototype.checkKeepAlive = function (oContext) {
+	ODataListBinding.prototype.checkKeepAlive = function (oContext, bKeepAlive) {
 		if (this.isRelative() && !this.mParameters.$$ownRequest) {
 			throw new Error("Missing $$ownRequest at " + this);
 		}
@@ -628,6 +628,12 @@ sap.ui.define([
 		}
 		if (this.bSharedRequest) {
 			throw new Error("Unsupported $$sharedRequest at " + this);
+		}
+		// fail when really resetting keep-alive on a non-deleted context which is not in the
+		// collection and there are pending changes
+		if (!bKeepAlive && oContext && oContext.getIndex() === undefined && oContext.isKeepAlive()
+				&& !oContext.isDeleted() && oContext.hasPendingChanges()) {
+			throw new Error("Not allowed due to pending changes: " + oContext);
 		}
 	};
 
