@@ -803,12 +803,14 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.setUploadButtonInvisible = function (bUploadButtonInvisible) {
-		if (this.getUploadButtonInvisible() === bUploadButtonInvisible) {
-			return this;
+		if (bUploadButtonInvisible !== this.getUploadButtonInvisible()) {
+			var bVisible = !bUploadButtonInvisible;
+			this.getDefaultFileUploader().setVisible(bVisible);
+			if (this._oUploadButton) {
+				this._oUploadButton.setVisible(bVisible);
+			}
+			this.setProperty("uploadButtonInvisible", bUploadButtonInvisible, true);
 		}
-		this.setProperty("uploadButtonInvisible", bUploadButtonInvisible, true);
-		this.getDefaultFileUploader().setVisible(!bUploadButtonInvisible);
-
 		return this;
 	};
 
