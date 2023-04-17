@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @class A date implementation considering the configured time zone
 	 *
 	 *   A subclass of JavaScript <code>Date</code> that considers the configured time zone, see
-	 *   {@link sap.ui.core.Configuration.getTimezone}. All JavaScript <code>Date</code> functions
+	 *   {@link sap.ui.core.Configuration#getTimezone}. All JavaScript <code>Date</code> functions
 	 *   that use the local browser time zone, like <code>getDate</code>,
 	 *   <code>setDate</code>, and <code>toString</code>, are overwritten and use the
 	 *   configured time zone to compute the values.
@@ -957,7 +957,7 @@ sap.ui.define([
 	 *   The date instance that considers the configured time zone in all local getters and setters.
 	 *
 	 * @public
-	 * @see sap.ui.core.Configuration.getTimezone
+	 * @see sap.ui.core.Configuration#getTimezone
 	 */
 	UI5Date.getInstance = function () {
 		var sTimezone = Configuration.getTimezone();
