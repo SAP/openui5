@@ -128,7 +128,7 @@ sap.ui.define([
 				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000005'&$select=GrossAmount,SalesOrderID" : {
 					message : {
 						value : [{
-							GrossAmount : "8860.55",
+							GrossAmount : "12404.77",
 							SalesOrderID : "0500000005"
 						}]
 					}

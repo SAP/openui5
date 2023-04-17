@@ -9694,6 +9694,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("restoreCreated: nothing to do", function () {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCache = {}; // no getCreatedElements
+
+		oBinding.aContexts = [{}]; // non-empty
+		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func)
+			.callsArgWith(0, oCache, "path/in/cache").returns(SyncPromise.resolve());
+		this.mock(this.oModel).expects("getReporter").withExactArgs();
+
+		// code under test
+		oBinding.restoreCreated();
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bMatch) {
 	QUnit.test("findContextForCanonicalPath: aContexts, match=" + bMatch, function (assert) {
 		var oBinding = this.bindList("/TEAM('1')/TEAM_2_EMPLOYEES"),
@@ -9922,6 +9936,14 @@ sap.ui.define([
 			},
 			aCollection = ["~a~", "~b~"],
 			oContextMock = this.mock(Context),
+			aCreatedContexts = [{
+				nr : 0,
+				created : function () { return aCreatedPromises[0]; }
+			}, {
+				nr : 1,
+				created : function () { return aCreatedPromises[1]; }
+			}],
+			aCreatedPromises = [SyncPromise.reject(), SyncPromise.reject()],
 			oExpectation,
 			oHelperMock = this.mock(_Helper),
 			mQueryOptions = bHasQueryOptions ? {$select : "~select~"} : undefined,
@@ -9933,11 +9955,6 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(aCollection));
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
 		aCollection.forEach(function (oEntity, i) {
-			var oCreatedPromise = SyncPromise.reject(),
-				oCreatedContext = {
-					created : function () { return oCreatedPromise; }
-				};
-
 			oHelperMock.expects("getPrivateAnnotation")
 				.withExactArgs(oEntity, "transientPredicate").returns("~predicate~" + i);
 			oHelperMock.expects("getPrivateAnnotation")
@@ -9945,9 +9962,9 @@ sap.ui.define([
 			oContextMock.expects("create")
 				.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
 					"/resolved/path~predicate~" + i, i - 2, "~promise~" + i, false, true)
-				.returns(oCreatedContext);
+				.returns(aCreatedContexts[i]);
 			oHelperMock.expects("setPrivateAnnotation")
-				.withExactArgs(oEntity, "context", sinon.match.same(oCreatedContext));
+				.withExactArgs(oEntity, "context", sinon.match.same(aCreatedContexts[i]));
 			oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(oEntity, "firstCreateAtEnd", false);
 			oHelperMock.expects("deletePrivateAnnotation").withExactArgs(oEntity, "promise");
@@ -9958,6 +9975,10 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.mCacheQueryOptions, mQueryOptions);
 		assert.strictEqual(oBinding.bDeepCreate, true);
+		assert.deepEqual(oBinding.aContexts, aCreatedContexts);
+		assert.strictEqual(oBinding.iCreatedContexts, 2);
+		assert.strictEqual(oBinding.iActiveContexts, 2);
+		assert.strictEqual(oBinding.bFirstCreateAtEnd, false);
 
 		this.mock(oCache).expects("addTransientCollection")
 			.withExactArgs("path/in/cache", bHasQueryOptions ? "~select~" : undefined)
