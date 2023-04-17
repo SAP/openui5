@@ -98,6 +98,41 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 					baseUrl: sBaseUrl
 				});
 				oBASCardEditor.setJson(oManifest);
+				oBASCardEditor.setDestinations([
+					'BAS_TEST',
+					'BAS',
+					'WZCP_Dest',
+					'Northwind_V4',
+					'ZZZ1',
+					'ZZZ',
+					'JAM',
+					'WorkZone_Repository_wz_service',
+					'WorkZone_Repository_portallkg_service_contentpackage',
+					'JAMA',
+					'BAM2',
+					'BAM',
+					'WZCPSSTest',
+					'WorkZone_Dest_TestPortal_client_credentials',
+					'ES5',
+					'Mobile_Transaction_Bridge',
+					'Northwind_CLONING',
+					'wz_mobilecard',
+					'Northwind',
+					'WorkZone_PortalNormal',
+					'testmdk',
+					'BusinessSystem00',
+					'SuccessFactors_BA_API_Test_SalesDemo',
+					'WorkZone_Repository_portallkg_service',
+					'WorkZone_Repository_portal_service',
+					'WorkZone_Dest_TestPortal',
+					'WorkZone_Dest',
+					'WorkZone_Repository',
+					'nexus',
+					'githubwdf',
+					'WZContentRepository',
+					'AH1',
+					'bas-tamir-test1'
+				]);
 				oBASCardEditor.placeAt("BASeditor");
 			});
 		});
