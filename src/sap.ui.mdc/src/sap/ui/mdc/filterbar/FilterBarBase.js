@@ -192,7 +192,7 @@ sap.ui.define([
 
 				/**
 				 * Contains the optional basic search field.
-				 * <b>Note:</b> This field has to be bound against the property <code>$search</code>.
+				 * <b>Note:</b> This field has to be bound against the <code>$search</code> property.
 				 */
 				basicSearchField: {
 					type: "sap.ui.mdc.FilterField",
