@@ -13,14 +13,7 @@ sap.ui.define([], function() {
     };
 
     MemoryConfigurationProvider.prototype.set = function(sName, vValue) {
-        var rValidKey = /^[a-z][A-Za-z0-9]*$/;
-        if (rValidKey.test(sName)) {
-            this.oConfig[sName] = vValue;
-        } else {
-            throw new TypeError(
-                "Invalid configuration key '" + sName + "'!"
-            );
-        }
+        this.oConfig[sName] = vValue;
     };
 
     return MemoryConfigurationProvider;
