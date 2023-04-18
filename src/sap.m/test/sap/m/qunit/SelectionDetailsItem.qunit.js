@@ -167,27 +167,27 @@ sap.ui.define([
 	QUnit.test("Internal SelectionDetailsListItem has correct type property for enabled navigation", function(assert) {
 		//Arrange
 		this.oItem.setEnableNav(true);
-		var oSetPropertySpy = sinon.spy(this.oListItem, "setProperty");
+		var oSetPropertySpy = sinon.spy(this.oListItem, "setType");
 		this.oListItem.invalidate();
 
 		//Act
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(oSetPropertySpy.withArgs("type", ListType.Navigation, true).callCount, 1, "ListItem's type property has been correctly updated.");
+		assert.equal(oSetPropertySpy.withArgs(ListType.Navigation).callCount, 1, "ListItem's type property has been correctly updated.");
 	});
 
 	QUnit.test("Internal SelectionDetailsListItem has correct type property for disabled navigation", function(assert) {
 		//Arrange
 		this.oItem.setEnableNav(false);
-		var oSetPropertySpy = sinon.spy(this.oListItem, "setProperty");
+		var oSetPropertySpy = sinon.spy(this.oListItem, "setType");
 		this.oListItem.invalidate();
 
 		//Act
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(oSetPropertySpy.withArgs("type", ListType.Inactive, true).callCount, 1, "ListItem's type property has been correctly updated.");
+		assert.equal(oSetPropertySpy.withArgs(ListType.Inactive).callCount, 1, "ListItem's type property has been correctly updated.");
 	});
 
 	QUnit.module("Item interaction", {

@@ -421,11 +421,11 @@ sap.ui.define([
 				Log.warning("No width provided", this);
 			}
 			if (Device.system.desktop) {
-				this._oArrowPrev.setProperty("icon", sIconPrev, true);
-				this._oArrowNext.setProperty("icon", sIconNext, true);
+				this._oArrowPrev.setIcon(sIconPrev);
+				this._oArrowNext.setIcon(sIconNext);
 			} else if (Device.system.phone || Device.system.tablet) {
-				this._oArrowPrev.setProperty("src", sIconPrev, true);
-				this._oArrowNext.setProperty("src", sIconNext, true);
+				this._oArrowPrev.setSrc(sIconPrev);
+				this._oArrowNext.setSrc(sIconNext);
 			}
 
 			// before rendering starts, content items need to be updated - see _callSuperMethod

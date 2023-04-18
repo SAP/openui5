@@ -39,7 +39,7 @@ sap.ui.define([
 		} else {
 			sType = library.ListType.Inactive;
 		}
-		this.setProperty("type", sType, true);
+		this.setType(sType);
 	};
 
 	/**

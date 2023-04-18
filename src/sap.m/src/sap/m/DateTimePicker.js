@@ -330,7 +330,7 @@ sap.ui.define([
 				});
 				oSwitcher.attachSelect(this._handleSelect, this);
 
-				this.setAggregation("_switcher", oSwitcher, true);
+				this.setAggregation("_switcher", oSwitcher);
 			}
 
 			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone") || this.getForcePhoneView()) {

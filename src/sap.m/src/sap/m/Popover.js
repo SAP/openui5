@@ -714,8 +714,8 @@ sap.ui.define([
 			}
 
 			// title alignment
-			if (oHeader && oHeader.getTitleAlignment) {
-				oHeader.setProperty("titleAlignment", this.getTitleAlignment(), true);
+			if (oHeader && oHeader.setTitleAlignment) {
+				oHeader.setTitleAlignment(this.getTitleAlignment());
 			}
 
 		};

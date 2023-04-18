@@ -505,11 +505,11 @@ function(
 		}
 
 		if (withColon) {
-			this._oLinkControl.setProperty("text", this.getSender() + FeedListItem._oRb.getText("COLON"), true);
+			this._oLinkControl.setText(this.getSender() + FeedListItem._oRb.getText("COLON"));
 		} else {
-			this._oLinkControl.setProperty("text", this.getSender(), true);
+			this._oLinkControl.setText(this.getSender());
 		}
-		this._oLinkControl.setProperty("enabled", this.getSenderActive(), true);
+		this._oLinkControl.setEnabled(this.getSenderActive());
 
 		return this._oLinkControl;
 	};

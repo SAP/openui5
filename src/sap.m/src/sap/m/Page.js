@@ -330,7 +330,7 @@ function(
 
 			// title alignment
 			if (oHeader && oHeader.setTitleAlignment) {
-				oHeader.setProperty("titleAlignment", this.getTitleAlignment(), true);
+				oHeader.setTitleAlignment(this.getTitleAlignment());
 			}
 		};
 

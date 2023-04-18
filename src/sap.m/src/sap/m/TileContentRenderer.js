@@ -140,7 +140,7 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
 				oRm.close("div");
 			}
 			if (oContent.isA("sap.m.Text") && bIsActionMode && (oControl.getFrameType() === FrameType.TwoByOne || oControl.getFrameType() === FrameType.Auto)) {
-				oContent.setProperty("maxLines", iMaxLines,true);
+				oContent.setMaxLines(iMaxLines);
 			}
 			oRm.openStart("div", oControl.getId() + "-content");
 			oRm.class("sapMTileCntContent");
