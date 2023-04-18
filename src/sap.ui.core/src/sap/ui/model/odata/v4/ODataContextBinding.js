@@ -97,25 +97,6 @@ sap.ui.define([
 				constructor : constructor
 			});
 
-	/**
-	 * Returns the path for the return value context. Supports bound operations on an entity or a
-	 * collection.
-	 *
-	 * @param {string} sPath
-	 *   The bindings's path; either a resolved model path or a resource path; for example:
-	 *   "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)" or
-	 *   "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)" or
-	 *   "Artists/special.cases.Create(...)" or "/Artists/special.cases.Create(...)"
-	 * @param {string} sResponsePredicate The key predicate of the response entity
-	 * @returns {string} The path for the return value context.
-	 */
-	function getReturnValueContextPath(sPath, sResponsePredicate) {
-		var sBoundParameterPath = sPath.slice(0, sPath.lastIndexOf("/")),
-			i = sBoundParameterPath.indexOf("(");
-
-		return (i < 0 ? sBoundParameterPath : sPath.slice(0, i)) + sResponsePredicate;
-	}
-
 	//*********************************************************************************************
 	// ODataContextBinding
 	//*********************************************************************************************
@@ -267,7 +248,7 @@ sap.ui.define([
 					mParameters, fnGetEntity, bIgnoreETag, fnOnStrictHandlingFailed);
 			}).then(function (oResponseEntity) {
 				return fireChangeAndRefreshDependentBindings().then(function () {
-					var sContextPredicate, oOldValue, sResponsePredicate, oResult;
+					var sContextPredicate, oOldValue, sResponsePredicate, sNewPath, oResult;
 
 					if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 						oOldValue = that.oContext.getValue();
@@ -295,9 +276,10 @@ sap.ui.define([
 									return oResult;
 								}
 
+								sNewPath = _Helper.getReturnValueContextPath(sResolvedPath,
+									sResponsePredicate);
 								that.oReturnValueContext = Context.createNewContext(that.oModel,
-									that,
-									getReturnValueContextPath(sResolvedPath, sResponsePredicate));
+									that, sNewPath);
 								// set the resource path for late property requests
 								that.oCache.setResourcePath(
 									that.oReturnValueContext.getPath().slice(1));
@@ -592,7 +574,7 @@ sap.ui.define([
 		function getOriginalResourcePath(oResponseEntity) {
 			if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 				if (that.hasReturnValueContext()) {
-					return getReturnValueContextPath(sOriginalResourcePath,
+					return _Helper.getReturnValueContextPath(sOriginalResourcePath,
 						_Helper.getPrivateAnnotation(oResponseEntity, "predicate"));
 				}
 				if (_Helper.getPrivateAnnotation(vEntity, "predicate")
