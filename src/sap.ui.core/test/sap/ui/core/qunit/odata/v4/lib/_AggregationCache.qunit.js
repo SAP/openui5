@@ -2254,7 +2254,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupNode), "cache",
 				sinon.match.same(oGroupLevelCache));
 		this.mock(oGroupLevelCache).expects("read")
-			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock))
+			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock),
+				"~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oExpandResult)));
 		this.mock(_AggregationHelper).expects("getCollapsedObject")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oCollapsed);
@@ -2289,7 +2290,9 @@ sap.ui.define([
 		}
 
 		// code under test
-		oPromise = oCache.expand(oGroupLock, vGroupNodeOrPath).then(function (iResult) {
+		oPromise = oCache.expand(
+			oGroupLock, vGroupNodeOrPath, "~fnDataRequested~"
+		).then(function (iResult) {
 			var iExpectedCount = bSubtotalsAtBottom ? 8 : 7;
 
 			assert.strictEqual(iResult, iExpectedCount);
@@ -2387,7 +2390,8 @@ sap.ui.define([
 		this.mock(oCache).expects("createGroupLevelCache")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
 		this.mock(oGroupLevelCache).expects("read")
-			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock))
+			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock),
+				"~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oExpandResult)));
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
@@ -2402,7 +2406,9 @@ sap.ui.define([
 			.withExactArgs(1, 6, sinon.match.same(oGroupLevelCache)).returns("~placeholder~2");
 
 		// code under test
-		oPromise = oCache.expand(oGroupLock, "~path~").then(function (iResult) {
+		oPromise = oCache.expand(
+			oGroupLock, "~path~", "~fnDataRequested~"
+		).then(function (iResult) {
 			assert.strictEqual(iResult, 7);
 
 			assert.strictEqual(oCache.aElements.length, 3 + 7, ".length");
@@ -2586,13 +2592,16 @@ sap.ui.define([
 		this.mock(oCache).expects("createGroupLevelCache")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
 		this.mock(oGroupLevelCache).expects("read")
-			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock))
+			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock),
+				"~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oExpandResult)));
 		this.mock(oCache).expects("addElements").never();
 		this.mock(_AggregationHelper).expects("createPlaceholder").never();
 
 		// code under test
-		oPromise = oCache.expand(oGroupLock, "~path~").then(function (iResult) {
+		oPromise = oCache.expand(
+			oGroupLock, "~path~", "~fnDataRequested~"
+		).then(function (iResult) {
 			assert.strictEqual(iResult, 0);
 			if (bSelf) {
 				assert.notOk(_Helper.hasPrivateAnnotation(oGroupNode, "spliced"));
@@ -2642,7 +2651,7 @@ sap.ui.define([
 		this.mock(oCache).expects("createGroupLevelCache")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
 		this.mock(oGroupLevelCache).expects("read")
-			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~")
+			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
 				that.mock(_AggregationHelper).expects("getCollapsedObject")
 					.withExactArgs(sinon.match.same(oGroupNode)).returns(oCollapsed);
@@ -2654,7 +2663,7 @@ sap.ui.define([
 			})));
 
 		// code under test
-		return oCache.expand("~oGroupLock~", "~path~").then(function () {
+		return oCache.expand("~oGroupLock~", "~path~", "~fnDataRequested~").then(function () {
 			assert.ok(false);
 		}, function (oResult) {
 			assert.strictEqual(oResult, oError);
@@ -2684,11 +2693,11 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("getCollapsedObject")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns({});
 		this.mock(oGroupLevelCache).expects("read")
-			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~")
+			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~", "~fnDataRequested~")
 			.resolves({value : {$count : 42}}); // simplified ;-)
 
 		// code under test
-		return oCache.expand("~oGroupLock~", oGroupNode).then(function () {
+		return oCache.expand("~oGroupLock~", oGroupNode, "~fnDataRequested~").then(function () {
 			assert.ok(false);
 		}, function (oError) {
 			assert.strictEqual(oError.message, "Unexpected structural change: groupLevelCount");

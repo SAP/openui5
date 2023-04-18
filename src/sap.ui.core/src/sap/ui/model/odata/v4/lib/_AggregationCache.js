@@ -355,13 +355,16 @@ sap.ui.define([
 	 * @param {object|string} vGroupNodeOrPath
 	 *   The group node or its path relative to the cache; a group node instance (instead of a path)
 	 *   MUST only be given in case of "expanding" continued
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise<number>}
 	 *   A promise that is resolved with the number of nodes at the next level
 	 *
 	 * @public
 	 * @see #collapse
 	 */
-	_AggregationCache.prototype.expand = function (oGroupLock, vGroupNodeOrPath) {
+	_AggregationCache.prototype.expand = function (oGroupLock, vGroupNodeOrPath, fnDataRequested) {
 		var oCache,
 			iCount,
 			aElements = this.aElements,
@@ -415,7 +418,9 @@ sap.ui.define([
 		}
 
 		// prefetch from the group level cache
-		return oCache.read(0, this.iReadLength, 0, oGroupLock).then(function (oResult) {
+		return oCache.read(
+			0, this.iReadLength, 0, oGroupLock, fnDataRequested
+		).then(function (oResult) {
 			var iIndex = that.aElements.indexOf(oGroupNode) + 1,
 				iLevel = oGroupNode["@$ui5.node.level"],
 				oSubtotals = _AggregationHelper.getCollapsedObject(oGroupNode),
