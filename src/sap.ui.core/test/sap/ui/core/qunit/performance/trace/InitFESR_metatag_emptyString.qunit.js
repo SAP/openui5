@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/performance/trace/initTraces"], function (initTraces) {
+sap.ui.define([], function () {
 	"use strict";
 
 	QUnit.module("FESR");
@@ -7,8 +7,8 @@ sap.ui.define(["sap/ui/performance/trace/initTraces"], function (initTraces) {
 	QUnit.test("meta tag", function(assert) {
 		var FESR = sap.ui.require("sap/ui/performance/trace/FESR");
 		assert.ok(FESR, "FESR module has been loaded");
-		assert.ok(FESR.getActive(), "FESR is active");
-		assert.strictEqual(FESR.getBeaconURL(), "example.url",  "Beacon URL has not been set");
+		assert.notOk(FESR.getActive(), "FESR is not active");
+		assert.strictEqual(FESR.getBeaconURL(), undefined,  "Beacon URL has not been set");
 	});
 
 });
