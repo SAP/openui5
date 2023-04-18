@@ -762,7 +762,7 @@ sap.ui.define([
 			};
 
 			this.oAddRunTimeChangeSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
-			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves(new Utils.FakePromise());
+			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves(Promise.resolve());
 		},
 		afterEach: function() {
 			this.oControl.destroy();

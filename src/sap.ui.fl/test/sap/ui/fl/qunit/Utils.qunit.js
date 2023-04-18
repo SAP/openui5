@@ -476,7 +476,7 @@ sap.ui.define([
 			};
 
 			//Resolved promises
-			this.fnPromise1 = sandbox.stub().returns(new Utils.FakePromise());
+			this.fnPromise1 = sandbox.stub().returns((Utils.FakePromise ? new Utils.FakePromise() : Promise.resolve()));
 			this.fnPromise2 = sandbox.stub().returns(fnResolve());
 			this.fnPromise3 = sandbox.stub().returns(fnResolve());
 
@@ -487,10 +487,10 @@ sap.ui.define([
 			this.fnPromise5 = function() {throw new Error("promise can't be executed");};
 
 			this.aPromisesWithoutReject = [this.fnPromise1, this.fnPromise2, this.fnPromise3];
-			this.aPromisesWithReject = [this.fnPromise1, this.fnPromise4];
-			this.aPromisesWithObj = [{}, this.fnPromise1];
+			this.aPromisesWithReject = [this.fnPromise2, this.fnPromise4];
+			this.aPromisesWithObj = [{}, this.fnPromise2];
 			this.aPromisesResolveAfterReject = [this.fnPromise4, this.fnPromise1];
-			this.aPromisesWithFailedExecution = [this.fnPromise1, this.fnPromise5];
+			this.aPromisesWithFailedExecution = [this.fnPromise2, this.fnPromise5];
 
 			this.fnExecPromiseQueueSpy = sandbox.spy(Utils, "execPromiseQueueSequentially");
 			sandbox.spyLog = sandbox.spy(Log, "error");
@@ -500,6 +500,9 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
+		/**
+		 * @deprecated As of version 1.114
+		 */
 		QUnit.test("when called with a empty array and async 'false' as parameters", function(assert) {
 			var vResult = Utils.execPromiseQueueSequentially([], false, false);
 			assert.ok(vResult instanceof Utils.FakePromise, "then synchronous FakePromise is retured");
@@ -511,12 +514,18 @@ sap.ui.define([
 			return vResult;
 		});
 
+		/**
+		 * @deprecated As of version 1.114
+		 */
 		QUnit.test("when called with 'async and sync' promises array as parameter", function(assert) {
 			var vResult = Utils.execPromiseQueueSequentially([this.fnPromise2, this.fnPromise1]);
 			assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
 			return vResult;
 		});
 
+		/**
+		 * @deprecated As of version 1.114
+		 */
 		QUnit.test("when called with 'sync and async' promises array as parameter", function(assert) {
 			var vResult = Utils.execPromiseQueueSequentially([this.fnPromise1, this.fnPromise2]);
 			assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
@@ -536,7 +545,7 @@ sap.ui.define([
 		QUnit.test("when called with an array containing resolved, rejected and rejected without return promises", function(assert) {
 			return Utils.execPromiseQueueSequentially(this.aPromisesWithReject).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
-				sinon.assert.callOrder(this.fnPromise1, this.fnPromise4);
+				sinon.assert.callOrder(this.fnPromise2, this.fnPromise4);
 				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
 			}.bind(this));
 		});
@@ -544,7 +553,7 @@ sap.ui.define([
 		QUnit.test("when called with an array containing an object and a promise", function(assert) {
 			return Utils.execPromiseQueueSequentially(this.aPromisesWithObj).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
-				sinon.assert.callOrder(this.fnPromise1);
+				sinon.assert.callOrder(this.fnPromise2);
 				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once, as one element (object) was not a function");
 			}.bind(this));
 		});
@@ -560,15 +569,16 @@ sap.ui.define([
 		QUnit.test("when called with an array containing a resolved promise and a failing promise execution", function(assert) {
 			return Utils.execPromiseQueueSequentially(this.aPromisesWithFailedExecution).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
-				sinon.assert.callOrder(this.fnPromise1);
+				sinon.assert.callOrder(this.fnPromise2);
 				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once, as the promise execution throwed an error");
 			}.bind(this));
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.114
+	 */
 	QUnit.module("Given a Utils.FakePromise", {
-		beforeEach: function() {},
-		afterEach: function() {}
 	}, function() {
 		QUnit.test("when chaining 'then' and 'catch' functions", function(assert) {
 			new Utils.FakePromise(1)
