@@ -273,7 +273,7 @@ function(
 					sanitizedDeclarations.push(property + ': ' + tokens.join(' '));
 				}
 			});
-			return sanitizedDeclarations.length > 0 ? sanitizedDeclarations.join(' ; ') : null;
+			return sanitizedDeclarations.length > 0 ? sanitizedDeclarations.join('; ') + ";" : null;
 		}
 
 		/**
