@@ -508,7 +508,9 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
+					},
+					"xx-suppressDeactivationOfControllerCode": true,
+					"xx-designMode": true
 				}
 			},
 			/**
@@ -522,7 +524,9 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
+					},
+					"xx-suppressDeactivationOfControllerCode": true,
+					"xx-designMode": true
 				}
 			},
 			"write/api/AppVariantWriteAPI": {
@@ -736,7 +740,9 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
+					},
+					"xx-suppressDeactivationOfControllerCode": true,
+					"xx-designMode": true
 				}
 			},
 			/**
@@ -750,7 +756,9 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
+					},
+					"xx-suppressDeactivationOfControllerCode": true,
+					"xx-designMode": true
 				}
 			},
 			"write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory": {

@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Component,
 	ComponentContainer,
@@ -19,8 +18,7 @@ sap.ui.define([
 	ExtensionPointApplyProcessor,
 	Loader,
 	ManifestUtils,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 
@@ -42,7 +40,6 @@ sap.ui.define([
 		oSpyWriteProcessorExtensionPoint = sandbox.spy(ExtensionPointWriteProcessor, "applyExtensionPoint");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
 		sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: []}});
-		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 		return Component.create({
 			name: "sap.ui.fl.qunit.extensionPoint.testApp",
 			id: "sap.ui.fl.qunit.extensionPoint.testApp.async",
