@@ -41046,6 +41046,49 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Interleaving suspend/resume sequences and E.C.D. The first one causes a refresh,
+	// the second one does not change anything. This caused a deadlock because a locking _GroupLock
+	// remained.
+	// BCP: 2380034885
+	QUnit.test("BCP: 2380034885", function (assert) {
+		var oBinding,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			fnResolve,
+			sView = '\
+<Table id="table" growing="true" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=20",
+				{value : [{SalesOrderID : "1"}]})
+			.expectChange("id", ["1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$filter=SalesOrderID ne '1'&$skip=0&$top=20",
+					new Promise(function (resolve) {
+						fnResolve = resolve.bind(null, {value : []});
+					})
+				);
+
+			oBinding = that.oView.byId("table").getBinding("items");
+			oBinding.suspend();
+			oBinding.filter(new Filter("SalesOrderID", FilterOperator.NE, "1"));
+			oBinding.resume();
+
+			return that.waitForChanges(assert, "suspend/filter/resume");
+		}).then(function () {
+			oBinding.suspend();
+			oBinding.resume();
+
+			fnResolve();
+
+			return that.waitForChanges(assert, "suspend/resume");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: A value list model is used multiple times, but the request is shared.
 	// JIRA: CPOUI5ODATAV4-344
 [false, true].forEach(function (bAutoExpandSelect) {

@@ -2193,6 +2193,11 @@ sap.ui.define([
 			});
 			// in case of asynchronous processing ensure to fire a change event
 			bFireChange = true;
+		} else if (oGroupLock) { // unexpected oReadGroupLock and oDiff
+			if (oGroupLock.isLocked()) {
+				throw new Error("Unexpected: " + oGroupLock);
+			}
+			Log.error("Unexpected", oGroupLock, sClassName);
 		}
 		if (!bKeepCurrent) {
 			this.iCurrentBegin = iStart;
@@ -3686,6 +3691,8 @@ sap.ui.define([
 			});
 		} else if (sResumeChangeReason) {
 			this._fireRefresh({reason : sResumeChangeReason});
+		} else {
+			this.removeReadGroupLock();
 		}
 		// Update after the refresh event, otherwise $count is fetched before the request
 		this.oHeaderContext.checkUpdate();
