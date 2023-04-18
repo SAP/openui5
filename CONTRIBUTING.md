@@ -178,20 +178,22 @@ If this list sounds lengthy and hard to achieve - well, that's what WE have to c
 ### How to contribute - the Process
 
 1.  Make sure the change would be welcome (e.g. a bugfix or a useful feature); best do so by proposing it in a GitHub issue
-2.  Create a branch forking the openui5 repository and do your change
-3.  Commit and push your changes on that branch
+2.  Create a branch forking the openui5 repository
+3.  Get familiar with the [development setup](docs/developing.md)
+4.  Do your changes
+5.  Commit and push your changes on that branch
     -   When you have several commits, squash them into one (see [this explanation](http://davidwalsh.name/squash-commits-git)) - this also needs to be done when additional changes are required after the code review
 
-4.  In the commit message follow the [commit message guidelines](docs/guidelines.md#git-guidelines)
-5.  If your change fixes an issue reported at GitHub, add the following line to the commit message:
+6.  In the commit message follow the [commit message guidelines](docs/guidelines.md#git-guidelines)
+7.  If your change fixes an issue reported at GitHub, add the following line to the commit message:
     - ```Fixes https://github.com/SAP/openui5/issues/(issueNumber)```
     - Do NOT add a colon after "Fixes" - this prevents automatic closing.
 	- When your pull request number is known (e.g. because you enhance a pull request after a code review), you can also add the line ```Closes https://github.com/SAP/openui5/pull/(pullRequestNumber)```
-6.  Create a Pull Request to github.com/SAP/openui5
-7.  Follow the link posted by the CLA assistant to your pull request and accept the Developer Certificate of Origin, as described in detail above.
-8.  Wait for our code review and approval, possibly enhancing your change on request
+8.  Create a Pull Request to github.com/SAP/openui5
+9.  Follow the link posted by the CLA assistant to your pull request and accept the Developer Certificate of Origin, as described in detail above.
+10. Wait for our code review and approval, possibly enhancing your change on request
     -   Note that the UI5 developers also have their regular duties, so depending on the required effort for reviewing, testing and clarification this may take a while
 
-9.  Once the change has been approved we will inform you in a comment
-10.  Your pull request cannot be merged directly into the branch (internal SAP processes), but will be merged internally and immediately appear in the public repository as well. Pull requests for non-code branches (like "gh-pages" for the website) can be directly merged.
-11.  We will close the pull request, feel free to delete the now obsolete branch
+11. Once the change has been approved we will inform you in a comment
+12. Your pull request cannot be merged directly into the branch (internal SAP processes), but will be merged internally and immediately appear in the public repository as well. Pull requests for non-code branches (like "gh-pages" for the website) can be directly merged.
+13. We will close the pull request, feel free to delete the now obsolete branch
