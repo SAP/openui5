@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/util/changeVisualization/ChangeCategories",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DesignTimeStatus",
@@ -27,6 +28,7 @@ sap.ui.define([
 	Core,
 	XMLView,
 	CommandFactory,
+	ChangeCategories,
 	ChangeVisualization,
 	DesignTime,
 	DesignTimeStatus,
@@ -371,7 +373,7 @@ sap.ui.define([
 			return oChangeVisualization._updateChangeRegistry()
 
 			.then(function() {
-				return oChangeVisualization._selectChangeCategory("all");
+				return oChangeVisualization._selectChangeCategory(ChangeCategories.ALL);
 			})
 
 			.then(function() {

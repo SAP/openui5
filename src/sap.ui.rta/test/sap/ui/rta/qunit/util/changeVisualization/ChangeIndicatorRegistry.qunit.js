@@ -81,7 +81,7 @@ sap.ui.define([
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 3, "then the changes are added to the registry");
 				assert.strictEqual(this.oRegistry.getRegisteredChange("fooChange").changeCategory, "fooCategory", "then the command categories are properly classified");
 				assert.deepEqual(this.oRegistry.getRegisteredChange("fooChange").changeStates, ChangeStates.getDraftAndDirtyStates(), "then the change state is properly classified (Dirty & Draft)");
-				assert.deepEqual(this.oRegistry.getRegisteredChange("barChange").changeStates, [ChangeStates.ACTIVATED], "then the change state is properly classified (Activated)");
+				assert.deepEqual(this.oRegistry.getRegisteredChange("barChange").changeStates, [ChangeStates.ALL], "then the change state is properly classified (All)");
 				assert.deepEqual(this.oRegistry.getRegisteredChange("draftChange").changeStates, [ChangeStates.DRAFT], "then the change state is properly classified (Draft)");
 			}.bind(this));
 		});

@@ -209,7 +209,7 @@ sap.ui.define([
 			} else if (aDraftChangesList && aDraftChangesList.includes(oChange.getId())) {
 				aChangeStates = [ChangeStates.DRAFT];
 			} else {
-				aChangeStates = [ChangeStates.ACTIVATED];
+				aChangeStates = [ChangeStates.ALL];
 			}
 
 			this._oRegisteredChanges[oChange.getId()] = {

@@ -9,7 +9,7 @@ sap.ui.define([
 
 	var ChangeStates = {};
 
-	ChangeStates.ACTIVATED = "activated";
+	ChangeStates.ALL = "all";
 	ChangeStates.DRAFT = "draft";
 	ChangeStates.DIRTY = "dirty";
 
