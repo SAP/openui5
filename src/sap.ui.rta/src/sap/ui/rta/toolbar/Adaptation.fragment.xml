@@ -160,6 +160,12 @@
 								press=".editAdaptation"
 								icon="sap-icon://edit"/>
 						<MenuItem
+								id="sapUiRta_deleteAdaptation"
+								text="{i18n>DAC_DIALOG_HEADER}"
+								press=".deleteAdaptation"
+								visible="{= (${contextBasedAdaptations>/count} > 0)}"
+								icon="sap-icon://delete"/>
+						<MenuItem
 								id="sapUiRta_manageAdaptations"
 								text="{i18n>MANAGE_ADAPTATIONS_DIALOG_HEADER}"
 								press=".manageAdaptations"

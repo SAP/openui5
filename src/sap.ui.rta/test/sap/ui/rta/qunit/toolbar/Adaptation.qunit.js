@@ -15,6 +15,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/Utils",
+	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
@@ -31,6 +33,8 @@ sap.ui.define([
 	Adaptation,
 	BaseToolbar,
 	RuntimeAuthoring,
+	Utils,
+	MessageBox,
 	sinon
 ) {
 	"use strict";
@@ -108,8 +112,14 @@ sap.ui.define([
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 		},
+		beforeEach: function() {
+			//			this.clock = sandbox.useFakeTimers();
+		},
 		after: function() {
 			this.oToolbar.destroy();
+		},
+		afterEach: function() {
+			//			this.clock.restore();
 			sandbox.restore();
 		}
 	}, function() {
@@ -152,6 +162,61 @@ sap.ui.define([
 					assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly ");
 				}.bind(this));
 		});
+		/*
+		QUnit.test("When two context-based adaptation are available delete these", function (assert) {
+			var fnDone = assert.async();
+			var aAdaptations = [
+				{
+					title: "Sales",
+					rank: 1,
+					id: "id_1234"
+				},
+				{
+					title: "Manager",
+					rank: 2,
+					id: "id_5678"
+				}
+			];
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
+
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+			//			sandbox.stub(this.oToolbar, "placeToContainer").callsFake(function() {
+			//				this.placeAt("qunit-fixture");
+			//			});
+
+			sandbox.stub(ContextBasedAdaptationsAPI, "createModel").withArgs(oAdaptationsModel);
+			sandbox.stub(ContextBasedAdaptationsAPI, "remove").returns(Promise.resolve({status: 204}));
+			sandbox.stub(Settings.prototype, "isContextBasedAdaptationEnabled").returns(true);
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
+			this.oControlsModel.setProperty("/modeSwitcher", "adaptation");
+			this.oControlsModel.setProperty("/contextBasedAdaptation/visible", true);
+			return this.oToolbar._pFragmentLoaded
+				.then(this.oToolbar.show())
+				.then(function() {
+					var oMenuButton = this.oToolbar.getControl("contextBasedAdaptationMenu");
+					oMenuButton.onAfterRendering = function() {
+						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 1, "only one adaptation is left in the model");
+						assert.strictEqual(oDeleteButton.getEnabled(), true, "then the context-based adaptation delete menu button is still enabled");
+						assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
+						fnDone();
+					};
+					this.oToolbar.setModel(oAdaptationsModel, "contextBasedAdaptations");
+					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+					var oDeleteButton = this.oToolbar.getControl("deleteAdaptation");
+					var oEditButton = this.oToolbar.getControl("editAdaptation");
+					assert.ok(this.oToolbar.getControl("contextBasedAdaptationMenu").getEnabled(), "then the context-based adaptation menu is enabled");
+					assert.ok(oDeleteButton.getEnabled(), "then the context-based adaptation delete menu button is enabled");
+					assert.ok(oEditButton.getEnabled(), "then the context-based edit menu button is enabled");
+					oDeleteButton.firePress();
+					//	this.clock.tick(100);
+					//	assert.strictEqual(oAdaptationsModel.getProperty("/count"), 1, "only one adaptation is left in the model");
+					//	assert.strictEqual(oDeleteButton.getEnabled(), true, "then the context-based adaptation delete menu button is still enabled");
+					//	assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
+				}.bind(this));
+		});
+		*/
 	});
 
 	QUnit.module("Setting AppVariant properties", {
@@ -182,6 +247,7 @@ sap.ui.define([
 
 			var oGetOverviewStub;
 			var oSaveAsStub;
+			this.oToolbar.animation = false;
 			return this.oToolbar.show()
 				.then(function() {
 					oGetOverviewStub = sandbox.stub(AppVariantFeature, "onGetOverview");
@@ -542,7 +608,7 @@ sap.ui.define([
 				count: 0,
 				displayedAdaptation: {}
 			});
-			sandbox.stub(Settings.prototype, "isContextBasedAdaptationEnabled").resolves(true);
+			sandbox.stub(Settings.prototype, "isContextBasedAdaptationEnabled").returns(true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "initialize").resolves(oAdaptationsModel);
 			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
 		},

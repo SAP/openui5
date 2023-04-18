@@ -145,7 +145,8 @@ sap.ui.define(
 			Then.iTeardownMyApp();
 		});
 
-		/* opaTest("Should edit app context title", function(Give, When, Then) {
+		/*
+		opaTest("Should edit app context title", function(Give, When, Then) {
 			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
 			When.onTheManageAdaptationsDialogPage.iSelectAdaptation(testData.editAdaptation.title);
 			When.onTheManageAdaptationsDialogPage.iClickOnActionMenuOfAdaptationWithPriority(0);
@@ -162,9 +163,20 @@ sap.ui.define(
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle(testData.editAdaptation.changedTitle);
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle(testData.editAdaptation.changedTitle);
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(true);
-		}); */
+		});
 
-		/**
+		opaTest("Should delete app context out of five app contexts", function(Give, When, Then) {
+			When.onTheDemoAppPage.iClickOnOpenManageAdaptationsDialogButton();
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(3);
+			When.onTheManageAdaptationsDialogPage.iSelectAdaptation("DLM Copilot");
+			When.onTheManageAdaptationsDialogPage.iClickOnActionMenuOfAdaptationWithPriority(2);
+			When.onTheManageAdaptationsDialogPage.iClickOnDeleteActionButton();
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(3);
+			//testContextBasedAdaptationOrder(Then, ["England Admin", "German Admin", "Spain Admin", testData.editAdaptation.title]);
+		});
+		*/
+
+		/*
 		 * disabled tests because the used features are part of another BLI and still need to be implemented
 
 		opaTest("Should save new user role specific app context from existing app context", function(Give, When, Then) {

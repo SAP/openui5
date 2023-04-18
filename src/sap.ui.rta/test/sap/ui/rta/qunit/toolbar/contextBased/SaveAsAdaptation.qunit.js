@@ -166,7 +166,7 @@ sap.ui.define([
 					{ key: "1", title: "Insert after 'German Admin' (Priority '2')" },
 					{ key: "2", title: "Insert after 'DLM Copilot' (Priority '3')" }
 				];
-				this.oModel.updateAdaptations(this.oContextBasedAdaptatations.adaptations);
+				this.oModel.updateAdaptations(this.oContextBasedAdaptatations.adaptations, 0);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oSaveAsAdaptation.openAddAdaptationDialog().then(function (oDialog) {
 					this.oDialog = oDialog;
@@ -341,7 +341,7 @@ sap.ui.define([
 					{ key: "2", title: "Insert after 'Key User's Favorite' (Priority '3')" }
 				];
 				var sLayer = "CUSTOMER";
-				this.oModel.updateAdaptations(this.oContextBasedAdaptatations.adaptations);
+				this.oModel.updateAdaptations(this.oContextBasedAdaptatations.adaptations, 0);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oSaveAsAdaptation.openAddAdaptationDialog(sLayer, true).then(function (oDialog) {
 					this.oDialog = oDialog;

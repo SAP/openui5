@@ -161,13 +161,14 @@ sap.ui.define([
 		var oRtaInformation = this.getToolbar().getRtaInformation();
 		if (this._bIsEditMode) {
 			var iDisplayedAdaptation = this._mEditProperties.priority;
+			var sDisplayedAdaptationId = this._mEditProperties.adaptationId;
 			ContextBasedAdaptationsAPI.update({
 				control: oRtaInformation.rootControl,
 				layer: oRtaInformation.flexSettings.layer,
 				contextBasedAdaptation: oContextBasedAdaptation,
 				adaptationId: this._mEditProperties.adaptationId
 			})
-			.then(function(oContextBasedAdaptation, iDisplayedAdaptation, oResponse) {
+			.then(function(oContextBasedAdaptation, sDisplayedAdaptationId, iDisplayedAdaptation, oResponse) {
 				if (oResponse.status === 200) {
 					var aAdaptations = this.oAdaptationsModel.getProperty("/adaptations");
 					aAdaptations[iDisplayedAdaptation].title = oContextBasedAdaptation.title;
@@ -175,11 +176,12 @@ sap.ui.define([
 					if (iDisplayedAdaptation !== oContextBasedAdaptation.priority) {
 						var aDisplayedAdaptation = aAdaptations.splice(iDisplayedAdaptation, 1);
 						aAdaptations.splice(oContextBasedAdaptation.priority, 0, aDisplayedAdaptation[0]);
-						this.oAdaptationsModel.initializeRanks();
 					}
-					this.oAdaptationsModel.updateAdaptations(aAdaptations);
+					var oDefaultAdaptation = this.oAdaptationsModel.getProperty("/allAdaptations").pop();
+					aAdaptations.push(oDefaultAdaptation);
+					this.oAdaptationsModel.updateAdaptations(aAdaptations, sDisplayedAdaptationId);
 				}
-			}.bind(this, oContextBasedAdaptation, iDisplayedAdaptation))
+			}.bind(this, oContextBasedAdaptation, sDisplayedAdaptationId, iDisplayedAdaptation))
 			.catch(function(oError) {
 				Log.error(oError.stack);
 				var sMessage = "MSG_LREP_TRANSFER_ERROR";
