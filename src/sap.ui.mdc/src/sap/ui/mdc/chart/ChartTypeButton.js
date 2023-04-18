@@ -193,7 +193,6 @@ sap.ui.define([
 								sap.ui.require([
 									"sap/ui/mdc/flexibility/Chart.flexibility"
 								], function(ChartFlex) {
-									//var aChanges = [];
 
 									oMDCChart.getEngine().createChanges({
 										control: oMDCChart,
@@ -203,13 +202,10 @@ sap.ui.define([
 												chartType: oObj.key
 											}
 										}
+									}).then(function(vResult) {
+										oMDCChart.getControlDelegate().requestToolbarUpdate(oMDCChart);
 									});
-									/*
-									aChanges.push(ChartFlex["setChartType"].changeHandler.createChange({
-										control: oMDCChart,
-										chartType: oObj.key
-									}));
-									FlexUtil.handleChanges(aChanges);*/
+
 								});
 							}
 						}
