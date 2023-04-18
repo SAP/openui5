@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/deepClone",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	deepClone,
 	LoaderExtensions,
 	Control,
 	FlexState,
@@ -442,7 +444,7 @@ sap.ui.define([
 			};
 
 			var oAdaptation1 = this.oExpectedFilledData.adaptations[0];
-			var oAdaptation2 = this.oExpectedFilledData.adaptations[1];
+			var oAdaptation2 = deepClone(this.oExpectedFilledData.adaptations[1]);
 			// rank is expected to increase as a new adaptation is inserted in between
 			oAdaptation2.rank = 3;
 			var oExpectedFilledData = {
@@ -459,7 +461,7 @@ sap.ui.define([
 		QUnit.test("when a list of adaptations is initialized and later the first adaptation is deleted", function(assert) {
 			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
-			var oAdaptation = this.oExpectedFilledData.adaptations[1];
+			var oAdaptation = deepClone(this.oExpectedFilledData.adaptations[1]);
 			// rank is expected to decrease as the leading adaptation is deleted
 			oAdaptation.rank = 1;
 			var oExpectedFilledData = {
@@ -546,6 +548,35 @@ sap.ui.define([
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			oModel.switchDisplayedAdaptation("DEFAULT");
 			assert.deepEqual(oModel.getProperty("/displayedAdaptation"), this.oDefaultAdaptation, "then the adaptations model is updated correctly");
+		});
+
+		QUnit.test("when a list of adaptations is initialized and later the displayed adaptation is updated", function(assert) {
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+			var oAdaptation1 = deepClone(this.oExpectedFilledData.adaptations[0]);
+			oAdaptation1.rank = 2;
+			var oUpdatedAdaptation = deepClone(this.oExpectedFilledData.adaptations[1]);
+			oUpdatedAdaptation.title = "DLM Main Pilot";
+			oUpdatedAdaptation.contexts = {
+				role: ["MAIN_PILOT"]
+			};
+			oUpdatedAdaptation.rank = 1;
+			var oExpectedFilledData = {
+				allAdaptations: [oUpdatedAdaptation, oAdaptation1, this.oDefaultAdaptation],
+				adaptations: [oUpdatedAdaptation, oAdaptation1],
+				count: 2,
+				displayedAdaptation: oUpdatedAdaptation
+			};
+			var oContextBasedAdaptation = {
+				title: "DLM Main Pilot",
+				contexts: {
+					role: ["MAIN_PILOT"]
+				},
+				priority: 0
+			};
+			oModel.switchDisplayedAdaptation("id-1591275572835-1");
+			oModel.updateAdaptationContent(oContextBasedAdaptation, "id-1591275572835-1");
+			assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is updated correctly");
 		});
 
 		QUnit.test("when a list of adaptations is initialized and getIndexByAdaptationId is called", function(assert) {
