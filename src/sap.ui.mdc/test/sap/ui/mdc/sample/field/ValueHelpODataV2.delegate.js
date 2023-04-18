@@ -9,13 +9,14 @@ sap.ui.define([
     "use strict";
 
     var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-    ValueHelpDelegate.getTypeMap = function (oPayload) {
+    ValueHelpDelegate.getTypeMap = function (oValueHelp) {
         return ODataTypeMap;
     };
 
 
-	ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
+	ValueHelpDelegate.executeFilter = function(oValueHelp, oListBinding, iRequestedItems) {
 		if (oListBinding.isA("sap.ui.model.odata.v2.ODataListBinding")) {
 			oListBinding.getContexts(0, iRequestedItems); // trigger request. not all entries needed, we only need to know if there is one, none or more
 			return new Promise(function (fResolve) {
@@ -27,7 +28,7 @@ sap.ui.define([
 		return MDCValueHelpDelegate.executeFilter.apply(this, arguments);
 	};
 
-	ValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding, iRequestedItems) {
+	ValueHelpDelegate.checkListBindingPending = function(oValueHelp, oListBinding, iRequestedItems) {
 
 		if (!oListBinding || oListBinding.isSuspended() || !oListBinding.bPendingRequest) {
 			return false;

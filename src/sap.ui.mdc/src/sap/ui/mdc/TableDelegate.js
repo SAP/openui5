@@ -144,8 +144,8 @@ sap.ui.define([
 		return oResourceBundle.getText(sResourceKey, aValues);
 	};
 
-	TableDelegate.validateState = function(oControl, oState, sKey) {
-		if (sKey == "Filter" && oControl._oMessageFilter) {
+	TableDelegate.validateState = function(oTable, oState, sKey) {
+		if (sKey == "Filter" && oTable._oMessageFilter) {
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			return {
 				validation: coreLibrary.MessageType.Information,
@@ -179,7 +179,7 @@ sap.ui.define([
 	 * 			return oFilterFieldPromise;
 	 * 		}
 	 * }
-	 * @returns {{addItem: (function(string, sap.ui.mdc.Table): Promise<sap.ui.mdc.FilterField>)}} Object for the tables filter personalization
+	 * @returns {{addItem: (function(sap.ui.mdc.Table, string): Promise<sap.ui.mdc.FilterField>)}} Object for the tables filter personalization
 	 * @protected
 	 */
 	TableDelegate.getFilterDelegate = function() {
@@ -187,12 +187,12 @@ sap.ui.define([
 			/**
 			 * Creates an instance of a <code>sap.ui.mdc.FilterField</code>.
 			 *
-			 * @param {string} sPropertyName The property name
 			 * @param {sap.ui.mdc.Table} oTable Instance of the table
+			 * @param {string} sPropertyName The property name
 			 * @returns {Promise<sap.ui.mdc.FilterField>} A promise that resolves with an instance of <code>sap.ui.mdc.FilterField</code>.
 			 * @see sap.ui.mdc.AggregationBaseDelegate#addItem
 			 */
-			addItem: function(sPropertyName, oTable) {
+			addItem: function(oTable, sPropertyName) {
 				return Promise.resolve(null);
 			},
 
@@ -200,12 +200,12 @@ sap.ui.define([
 			 * This method is called during the appliance of the add condition change.
 			 * The intention is to update the propertyInfo property.
 			 *
-			 * @param {string} sPropertyName The name of a property
 			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+			 * @param {string} sPropertyName The name of a property
 			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
 			 * @returns {Promise} Promise that is resolved once the propertyInfo property has been updated
 			 */
-			addCondition: function(sPropertyName, oControl, mPropertyBag) {
+			addCondition: function(oControl, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
 			},
 
@@ -213,12 +213,12 @@ sap.ui.define([
 			 * This method is called during the appliance of the remove condition change.
 			 * The intention is to update the propertyInfo property.
 			 *
-			 * @param {string} sPropertyName The name of a property
 			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+			 * @param {string} sPropertyName The name of a property
 			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
 			 * @returns {Promise} Promise that is resolved once the propertyInfo property has been updated
 			 */
-			removeCondition: function(sPropertyName, oControl, mPropertyBag) {
+			removeCondition: function(oControl, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
 			}
 		};

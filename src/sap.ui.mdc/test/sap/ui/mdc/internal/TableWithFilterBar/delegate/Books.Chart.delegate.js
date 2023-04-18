@@ -14,27 +14,28 @@ sap.ui.define([
     "use strict";
 
     var SampleChartDelegate = Object.assign({}, ChartDelegate);
+	SampleChartDelegate.apiVersion = 2;//CLEANUP_DELEGATE
     //Store the fetched properties during pre-processing in here
     var aCachedProps;
 
-    SampleChartDelegate.addItem = function(sPropertyKeyName, oMDCChart, mPropertyBag, sRole){
+    SampleChartDelegate.addItem = function(oMDCChart, sPropertyKey, mPropertyBag, sRole){
         //Pre-Processing -> Cache the needed propertyInfos
         if (mPropertyBag.modifier.targets === "xmlTree") {
-			return this.checkPropertyInfo(sPropertyKeyName, oMDCChart, mPropertyBag).then(function(){
+			return this.checkPropertyInfo(sPropertyKey, oMDCChart, mPropertyBag).then(function(){
 
 					return this.fetchProperties(oMDCChart, mPropertyBag).then(function(aFetchedProps){
 						if (aFetchedProps) {
-							var oMDCItem = this.getMDCItemPrePos(sPropertyKeyName, oMDCChart, sRole, aFetchedProps, mPropertyBag);
+							var oMDCItem = this.getMDCItemPrePos(sPropertyKey, oMDCChart, sRole, aFetchedProps, mPropertyBag);
 							return oMDCItem;
 						}
 
-						return ChartDelegate.addItem.call(this, sPropertyKeyName, oMDCChart, mPropertyBag, sRole);
+						return ChartDelegate.addItem.call(this, oMDCChart, sPropertyKey, mPropertyBag, sRole);
 					}.bind(this));
 			}.bind(this));
 
 		}
 
-        return ChartDelegate.addItem.call(this, sPropertyKeyName, oMDCChart, mPropertyBag, sRole);
+        return ChartDelegate.addItem.call(this, oMDCChart, sPropertyKey, mPropertyBag, sRole);
     };
 
     var fnGetFetchedPropertiesObject = function() {
@@ -222,8 +223,9 @@ sap.ui.define([
 
     SampleChartDelegate.getFilterDelegate = function() {
 		return {
-			addItem: function(sPropertyName, oTable) {
-				return BooksFBDelegate.addItem(sPropertyName, oTable)
+			apiVersion: 2,//CLEANUP_DELEGATE
+			addItem: function(oTable, sPropertyName) {
+				return BooksFBDelegate.addItem(oTable, sPropertyName)
 				.then(function(oFilterField) {
 
 					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);

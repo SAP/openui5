@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/condenser/Classification"
-], function(Engine, Log, Util, FLChangeHandlerBase, CondenserClassification) {
+	"sap/m/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/condenser/Classification", "sap/ui/mdc/util/mapVersions"
+], function(Engine, Log, Util, FLChangeHandlerBase, CondenserClassification, mapVersions) {
 	"use strict";
 
 	var ItemBaseFlex = {
@@ -18,9 +18,10 @@ sap.ui.define([
 		 * @param {string} sPropertyKeyName The property name which should be added
 		 * @param {object} oControl The control defined as <code>selectorElement</code> in the change
 		 * @param {object} mPropertyBag Instance of property bag from Flex change API
+		 * @returns {Promise<sap.ui.core.Control>} Promise resolving with the created item to be added
 		 */
-		beforeAddItem: function(Delegate, sPropertyKeyName, oControl, mPropertyBag) {
-			return Delegate.addItem.call(Delegate, sPropertyKeyName, oControl, mPropertyBag);
+		beforeAddItem: function(Delegate, sPropertyKey, oControl, mPropertyBag) {
+			return Delegate.addItem(oControl, sPropertyKey, mPropertyBag);
 		},
 
 		/**
@@ -31,9 +32,10 @@ sap.ui.define([
 		 * @param {object} oItem The item which should be removed
 		 * @param {object} oControl The control defined as <code>selectorElement</code> in the change
 		 * @param {object} mPropertyBag Instance of property bag from Flex change API
+		 * @returns {Promise<sap.ui.core.Control>}  Promise resolving with the created item to be removed
 		 */
 		afterRemoveItem: function(Delegate, oItem, oControl, mPropertyBag) {
-			return Delegate.removeItem.call(Delegate, oItem, oControl, mPropertyBag);
+			return Delegate.removeItem(oControl, oItem, mPropertyBag);
 		},
 
 		/**
@@ -118,6 +120,10 @@ sap.ui.define([
 				sap.ui.require([
 					sDelegatePath
 				], fResolveLoad, fRejectLoad);
+			})
+			.then(function(Delegate){
+				mapVersions(Delegate);
+				return Delegate;
 			});
 		},
 

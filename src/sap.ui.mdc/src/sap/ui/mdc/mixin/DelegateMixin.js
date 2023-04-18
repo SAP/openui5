@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDelegate"], function (loadModules, Log, BaseDelegate) {
+sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDelegate", "sap/ui/mdc/util/mapVersions"], function (loadModules, Log, BaseDelegate, mapVersions) {
 	"use strict";
 
 	var _validateDelegateConfig = function (oConfig) {
@@ -19,6 +19,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 				this._oDelegate = oResult[0];
 				this.fnResolveDelegate(this._oDelegate);
 				this.bDelegateInitialized = true;
+				mapVersions(this._oDelegate);
 			}
 		}
 		this.bDelegateLoading = false;
@@ -181,7 +182,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 			if (!this._oDelegate) {
 				throw new Error("A delegate instance providing a TypeMap is not (yet) available.");
 			}
-			this._oTypeMap = this._oDelegate.getTypeMap(this._oPayload);
+			this._oTypeMap = this._oDelegate.getTypeMap(this);
 		}
 
 		return this._oTypeMap;
@@ -202,7 +203,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 				throw new Error("A delegate instance is not (yet) available. You must call initControlDelegate before calling getControlDelegate.");
 			}
 		}
-
+		mapVersions(this._oDelegate);
 		return this._oDelegate;
 	};
 

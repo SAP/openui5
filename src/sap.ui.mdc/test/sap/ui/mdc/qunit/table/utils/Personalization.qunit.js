@@ -23,7 +23,7 @@ sap.ui.define([
 	"use strict";
 
 	var fnAddItem = TableDelegate.addItem;
-	TableDelegate.addItem = function(sProperty, oTable) {
+	TableDelegate.addItem = function(oTable, sProperty) {
 		oTable._oAddItemDeferred = new Deferred();
 
 		return fnAddItem.apply(this, arguments).then(function(oColumn) {

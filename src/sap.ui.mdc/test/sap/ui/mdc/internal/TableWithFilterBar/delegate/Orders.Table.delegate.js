@@ -18,6 +18,7 @@ sap.ui.define([
 ], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, EditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text) {
 	"use strict";
 	var OrdersTableDelegate = Object.assign({}, ODataTableDelegate);
+	OrdersTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	var getFullId = function(oControl, sVHId) {
 		var oView = oControl.getParent();
@@ -109,7 +110,7 @@ sap.ui.define([
 
 	};
 
-	OrdersTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
+	OrdersTableDelegate.addItem = function (oTable, sPropertyName, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
 

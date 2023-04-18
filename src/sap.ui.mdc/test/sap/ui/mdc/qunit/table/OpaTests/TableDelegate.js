@@ -41,7 +41,7 @@ sap.ui.define([
 		});
 	};
 
-	CustomTableDelegate.addItem = function(sPropertyName, oTable, mPropertyBag) {
+	CustomTableDelegate.addItem = function(oTable, sPropertyName, mPropertyBag) {
 		var oPropertyHelper = oTable.getPropertyHelper();
 		if (oPropertyHelper.getProperty(sPropertyName).isComplex()) {
 			return this._createComplexColumn(sPropertyName, oTable);

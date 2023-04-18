@@ -4,6 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	var oCustomDelegate = Object.assign({}, TableDelegate);
+	oCustomDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	oCustomDelegate.fetchProperties = function(oTable) {
 		return TableDelegate.fetchProperties(oTable).then(function(aProperties) {
@@ -30,7 +31,7 @@ sap.ui.define([
 		});
 	};
 
-	oCustomDelegate.addItem = function(sPropertyInfoName, oTable, mPropertyBag) {
+	oCustomDelegate.addItem = function(oTable, sPropertyInfoName, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var sId = mPropertyBag.id + "--" + sPropertyInfoName;
 

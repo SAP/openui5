@@ -39,9 +39,10 @@ sap.ui.define([
 
 	var SelectionMode = library.SelectionMode;
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
-
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
+		var oPayload = oValueHelp.getPayload();
 		var sFilterFields = oPayload.filter;
 		var oValueHelp = oContainer && oContainer.getParent();
 		var bMultiSelect = oValueHelp.getMaxConditions() === -1;

@@ -515,9 +515,8 @@ sap.ui.define([
 	Link.prototype._useDelegateAdditionalContent = function() {
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
-				var oPayload = Object.assign({}, this.getPayload());
 				return new Promise(function(resolve) {
-					this.getControlDelegate().fetchAdditionalContent(oPayload, this).then(function(aAdditionalContent) {
+					this.getControlDelegate().fetchAdditionalContent(this, this).then(function(aAdditionalContent) {
 						this._setAdditionalContent(aAdditionalContent === null ? [] : aAdditionalContent);
 						resolve();
 					}.bind(this));
@@ -545,8 +544,7 @@ sap.ui.define([
 	Link.prototype.retrieveLinkType = function() {
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
-				var oPayload = Object.assign({}, this.getPayload());
-				return this._bIsBeingDestroyed ? Promise.resolve() : this.getControlDelegate().fetchLinkType(oPayload, this);
+				return this._bIsBeingDestroyed ? Promise.resolve() : this.getControlDelegate().fetchLinkType(this);
 			}.bind(this));
 		}
 		SapBaseLog.error("mdc.Link retrieveLinkType: control delegate is not set - could not load LinkType from delegate.");
@@ -561,10 +559,9 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.prototype.retrieveLinkItems = function() {
-		var oPayload = Object.assign({}, this.getPayload());
 		var oBindingContext = this._getControlBindingContext();
 		return this._retrieveUnmodifiedLinkItems().then(function(aUnmodifiedLinkItems) {
-			return this.getControlDelegate().modifyLinkItems(oPayload, oBindingContext, aUnmodifiedLinkItems).then(function(aLinkItems) {
+			return this.getControlDelegate().modifyLinkItems(this, oBindingContext, aUnmodifiedLinkItems).then(function(aLinkItems) {
 				return aLinkItems;
 			});
 		}.bind(this));
@@ -594,11 +591,10 @@ sap.ui.define([
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
 				// Assign new Object so payload.id won't get set for the whole Link class
-				var oPayload = Object.assign({}, this.getPayload());
 				var oBindingContext = this._getControlBindingContext();
 				var oInfoLog = this._getInfoLog();
 				return new Promise(function(resolve) {
-					this.getControlDelegate().fetchLinkItems(oPayload, oBindingContext, oInfoLog).then(function(aLinkItems) {
+					this.getControlDelegate().fetchLinkItems(this, oBindingContext, oInfoLog).then(function(aLinkItems) {
 						this._setLinkItems(aLinkItems === null ? [] : aLinkItems);
 						this._bLinkItemsFetched = aLinkItems !== null;
 						resolve();
@@ -633,8 +629,7 @@ sap.ui.define([
 	 */
 	Link.prototype._beforeNavigationCallback = function(oEvent) {
 		if (this.awaitControlDelegate()) {
-			var oPayload = Object.assign({}, this.getPayload());
-			return this.getControlDelegate().beforeNavigationCallback(oPayload, oEvent);
+			return this.getControlDelegate().beforeNavigationCallback(this, oEvent);
 		}
 		SapBaseLog.error("mdc.Link _beforeNavigationCallback: control delegate is not set - could not load beforeNavigationCallback from delegate.");
 		return Promise.resolve();

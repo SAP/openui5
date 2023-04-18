@@ -226,14 +226,16 @@ sap.ui.define([
 			//Mock 'getFilterDelegate'
 			AggregationBaseDelegate.getFilterDelegate = function() {
 				return {
-					addItem: function(sProperty, oControl) {
+					addItem: function(oControl, sProperty) {
 						return Promise.resolve(new FilterField({conditions: "{$filters>/conditions/" + sProperty + '}'}));
-					}
+					},
+					apiVersion: 2
 				};
 			};
+			AggregationBaseDelegate.apiVersion = 2;
 
 			//Provide simple 'addItem' hook for testing on 'AggregationBaseDelegate'
-			this.addItem = function(sKey, oControl){
+			this.addItem = function(oControl, sKey){
 				return Promise.resolve(new FilterField({
 					conditions: "{$filters>/conditions/" + sKey + "}",
 					propertyKey: sKey
@@ -470,7 +472,7 @@ sap.ui.define([
 		//introduce custom filter delegate 'addItem' to mock a delay in FF creation
 		AggregationBaseDelegate.getFilterDelegate = function() {
 			return {
-				addItem: function(sProperty, oControl) {
+				addItem: function(oControl, sProperty) {
 					if (sProperty == "key1") {
 
 						//mock a delay in FF creation
@@ -487,7 +489,8 @@ sap.ui.define([
 						label: "key2",
 						conditions: "{$filters>/conditions/key2}"
 					}));
-				}
+				},
+				apiVersion: 2
 			};
 		};
 
@@ -803,7 +806,7 @@ sap.ui.define([
 			return this.oParent.initialized().then(function() {
 				this.oParent.setModel(oMyModel, "$custom");
 
-				sinon.stub(FBTestDelegate, "addItem").callsFake(function(sKey, oControl){
+				sinon.stub(FBTestDelegate, "addItem").callsFake(function(oControl, sKey){
 					return Promise.resolve(new FilterField({
 						conditions: "{$filters>/conditions/" + sKey + "}",
 						propertyKey: sKey

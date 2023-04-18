@@ -175,13 +175,13 @@ sap.ui.define([
 
 		if (!oFilterApplicationPromise) {
 			var oDelegate = this.getValueHelpDelegate();
-			var oDelegatePayload = this.getValueHelpDelegatePayload();
+			var oValueHelp = this.getValueHelpInstance();
 
 			var oListBindingInfo = this.getListBindingInfo();
 			var iLength = oListBindingInfo && oListBindingInfo.length;
-			oDelegate.updateBindingInfo(oDelegatePayload, this, oListBindingInfo);
-			oDelegate.updateBinding(oDelegatePayload, oListBinding, oListBindingInfo, this);
-			oFilterApplicationPromise = Promise.resolve(oDelegate.checkListBindingPending(oDelegatePayload, oListBinding, iLength));
+			oDelegate.updateBindingInfo(oValueHelp, this, oListBindingInfo);
+			oDelegate.updateBinding(oValueHelp, oListBinding, oListBindingInfo, this);
+			oFilterApplicationPromise = Promise.resolve(oDelegate.checkListBindingPending(oValueHelp, oListBinding, iLength));
 		}
 
 		this._addPromise("applyFilters", oFilterApplicationPromise); // cancels and replaces existing ones
@@ -399,8 +399,8 @@ sap.ui.define([
 
 		var oPromise1 = _checkListBindingPending.call(this);
 		var oDelegate = this.getValueHelpDelegate();
-		var oDelegatePayload = this.getValueHelpDelegatePayload();
-		var oPromise2 = oDelegate && oDelegate.getFilterConditions(oDelegatePayload, this, oConfig);
+		var oValueHelp = this.getValueHelpInstance();
+		var oPromise2 = oDelegate && oDelegate.getFilterConditions(oValueHelp, this, oConfig);
 
 		return Promise.all([oPromise1, oPromise2]).then(function(aResult) {
 			var bPending = aResult[0];
@@ -484,11 +484,11 @@ sap.ui.define([
 	function _checkListBindingPending() {
 		return this._retrievePromise("listBinding").then(function (oListBinding) {
 			var oDelegate = this.getValueHelpDelegate();
-			var oDelegatePayload = this.getValueHelpDelegatePayload();
+			var oValueHelp = this.getValueHelpInstance();
 			var oListBindingInfo = this.getListBindingInfo();
 			var iLength = oListBindingInfo && oListBindingInfo.length;
 			if (oListBinding && oDelegate){
-				return oDelegate.checkListBindingPending(oDelegatePayload, oListBinding, iLength);
+				return oDelegate.checkListBindingPending(oValueHelp, oListBinding, iLength);
 			} else {
 				return true;
 			}
@@ -524,7 +524,7 @@ sap.ui.define([
 		var sPath = oListBinding && oListBinding.getPath();
 
 		var oDelegate = this.getValueHelpDelegate();
-		var oDelegatePayload = this.getValueHelpDelegatePayload();
+		var oValueHelp = this.getValueHelpInstance();
 
 		var sPromiseKey = "loadItemForValue:" + JSON.stringify([sPath, sKeyPath, oConfig.parsedValue || oConfig.value, oConfig.context, oConfig.bindingContext && oConfig.bindingContext.getPath(), oConditions]);
 
@@ -532,7 +532,7 @@ sap.ui.define([
 			var oFilter = _createItemFilters.call(this, oConfig, oConditions);
 			var oFilterListBinding = oListBinding.getModel().bindList(sPath, oListBinding.getContext(), undefined, oFilter);
 			oFilterListBinding.initialize();
-			return oDelegate.executeFilter(oDelegatePayload, oFilterListBinding, 2).then(function (oBinding) {
+			return oDelegate.executeFilter(oValueHelp, oFilterListBinding, 2).then(function (oBinding) {
 				var aContexts = oBinding.getContexts();
 
 				setTimeout(function() { // as Binding might process other steps after event was fired - destroy it lazy

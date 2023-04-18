@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var FilterBarBooksAuthorsVHSampleDelegate = Object.assign({}, FilterBarDelegate);
+	FilterBarBooksAuthorsVHSampleDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	FilterBarBooksAuthorsVHSampleDelegate._getProperty = function(aProperties, sName) {
 		var oNamedProperty = null;

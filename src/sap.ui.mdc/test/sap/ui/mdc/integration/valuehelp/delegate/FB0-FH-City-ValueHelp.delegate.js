@@ -42,10 +42,9 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
-
-		var oValueHelp = oContainer && oContainer.getParent();
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
 
 		var oParams = UriParameters.fromQuery(location.search);
 		var oParamSuspended = oParams.get("suspended");
@@ -171,7 +170,7 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
-	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
 		var oCountry = Core.byId("FB0-FF6");

@@ -17,10 +17,10 @@ sap.ui.define([
 	"use strict";
 
 	var FieldInOutValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
+	FieldInOutValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-
-	FieldInOutValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
-
+	FieldInOutValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
+		var oPayload = oValueHelp.getPayload();
 		var aInParameters = oPayload.inParameters || [];
 		var oConditions = BaseValueHelpDelegate.getFilterConditions(arguments);
 
@@ -66,8 +66,8 @@ sap.ui.define([
 	};
 
 
-	FieldInOutValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason) {
-
+	FieldInOutValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason) {
+		var oPayload = oValueHelp.getPayload();
 		var aOutParameters = oPayload.outParameters || [];
 		var oField = oValueHelp.getControl();
 

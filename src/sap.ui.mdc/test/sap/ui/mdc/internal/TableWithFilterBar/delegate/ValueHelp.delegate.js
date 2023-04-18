@@ -17,6 +17,7 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ValueHelpDelegate.adjustSearch = function(oPayload, bTypeahead, sSearch) {
 
@@ -31,8 +32,8 @@ sap.ui.define([
 
 	};
 
-	ValueHelpDelegate.createConditionPayload = function (oPayload, oContent, aValues, vContext) {
-
+	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, vContext) {
+		var oPayload = oValueHelp.getPayload();
 		var _addContext = function(oContext, aProperties, oStore) {
 			if (!Array.isArray(aProperties)) {
 				aProperties = [aProperties];
@@ -68,8 +69,7 @@ sap.ui.define([
 		return oConditionPayload;
 	};
 
-	ValueHelpDelegate.modifySelectionBehaviour = function (oPayload, oContent, oChange) {
-
+	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
 		var aConditions = oChange.conditions;
 		var aOldConditions = oContent.getConditions();
 

@@ -28,8 +28,9 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	ValueHelpDelegate.adjustSearch = function(oPayload, bTypeahead, sSearch) {
+	ValueHelpDelegate.adjustSearch = function(oValueHelp, bTypeahead, sSearch) {
 
 		if (bTypeahead && sSearch) {
 			return '"' + sSearch + '"'; // TODO: escape " in string
@@ -57,7 +58,7 @@ sap.ui.define([
 		}) : true;
 	};
 
-	ValueHelpDelegate.isFilterableListItemSelected = function (oPayload, oContent, oItem, aConditions) {
+	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
 		var sModelName = oContent.getListBindingInfo().model;
 		var bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
 		var bSelectionConsidersPayload = oContent.getModel("settings").getProperty("/selectionConsidersPayload");
@@ -66,7 +67,7 @@ sap.ui.define([
 		var oContext = oItem && oItem.getBindingContext(sModelName);
 		for (var i = 0; i < aConditions.length; i++) {
 			var oCondition = aConditions[i];
-			if (ODataV4ValueHelpDelegate.isFilterableListItemSelected(oPayload, oContent, oItem, [oCondition])) { // TODO: check for specific EQ operator
+			if (ODataV4ValueHelpDelegate.isFilterableListItemSelected(oValueHelp, oContent, oItem, [oCondition])) { // TODO: check for specific EQ operator
 				var oCurrentListPayload = oCondition.payload && oCondition.payload[oContent.getId()];
 				if (bSelectionConsidersList) {
 					var aPayloadKeys = oCondition.payload && Object.keys(oCondition.payload);
@@ -93,7 +94,7 @@ sap.ui.define([
 			}
 	}
 
-	ValueHelpDelegate.createConditionPayload = function (oPayload, oContent, aValues, vContext) {
+	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, vContext) {
 		var sIdentifier = oContent.getId();
 		var oConditionPayload = {};
 		oConditionPayload[sIdentifier] = [];
@@ -144,7 +145,7 @@ sap.ui.define([
 
 	// TODO: Handle Select All / Ranges!
 	// TODO: Share selections between Typeahead and Dialog when similar?
-	ValueHelpDelegate.modifySelectionBehaviour = function (oPayload, oContent, oChange) {
+	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
 
 		var sCreationStrategy = oContent.getModel("settings").getProperty("/conditionCreationStrategy");
 		var bIsModifyingStrategy = ["Merge", "Replace"].indexOf(sCreationStrategy) >= 0;
@@ -214,7 +215,7 @@ sap.ui.define([
 
 	};
 
-	ValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason, oConfig) {
+	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
 		var oControl = oValueHelp.getControl();
 
 			if (sReason !== "ControlChange") {
@@ -258,7 +259,7 @@ sap.ui.define([
 			}
 	};
 
-	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
 		var bIsTypeahead = oContent.isTypeahead();
@@ -305,7 +306,7 @@ sap.ui.define([
 	};
 
 	// optional
-	ValueHelpDelegate.getCount = function (oPayload, oContent, aConditions, sGroup) {
+	ValueHelpDelegate.getCount = function (oValueHelp, oContent, aConditions, sGroup) {
 		var bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
 
 		var aRelevantContentPayloadKeys = [oContent.getId()];
@@ -348,15 +349,15 @@ sap.ui.define([
 		return ODataV4ValueHelpDelegate.checkListBindingPending(oDelegatePayload, oListBinding, iRequestedItems);
 	};
 
-	ODataV4ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
+	ODataV4ValueHelpDelegate.executeFilter = function(oValueHelp, oListBinding, iRequestedItems) {
 		oListBinding.getContexts(0, iRequestedItems); // trigger request. not all entries needed, we only need to know if there is one, none or more
-		return this.checkListBindingPending(oPayload, oListBinding, iRequestedItems).then(function () {
+		return this.checkListBindingPending(oValueHelp, oListBinding, iRequestedItems).then(function () {
 			return oListBinding;
 		});
 	};
 
-	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
-		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
+	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
+		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oValueHelp, oContent, oConfig);
 
 		var oConfigPayload = oConfig && oConfig.context && oConfig.context.payload;	// As oConfig is present we are called in a getItemForValue context and would also like to search by payload, if available
 		if (oConfigPayload) {

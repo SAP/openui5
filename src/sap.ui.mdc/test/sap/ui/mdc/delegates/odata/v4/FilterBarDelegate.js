@@ -25,6 +25,7 @@ sap.ui.define([
 	"use strict";
 
 	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+	ODataFilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ODataFilterBarDelegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;
@@ -248,7 +249,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	ODataFilterBarDelegate.addItem = function(sPropertyName, oFilterBar, mPropertyBag) {
+	ODataFilterBarDelegate.addItem = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return Promise.resolve(this._createFilter(sPropertyName, oFilterBar, mPropertyBag));
 	};
 
@@ -332,12 +333,12 @@ sap.ui.define([
 	 * This methods is called during the appliance of the add condition change.
 	 * This intention is to update the propertyInfo property.
 	 *
-	 * @param {string} sPropertyName The name of a property.
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar - the instance of filter bar
+	 * @param {string} sPropertyName The name of a property.
 	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
 	 * @returns {Promise} Promise that resolves once the properyInfo property was updated
 	 */
-	ODataFilterBarDelegate.addCondition = function(sPropertyName, oFilterBar, mPropertyBag) {
+	ODataFilterBarDelegate.addCondition = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return ODataFilterBarDelegate._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag);
 	};
 
@@ -345,12 +346,12 @@ sap.ui.define([
 	 * This methods is called during the appliance of the remove condition change.
 	 * This intention is to update the propertyInfo property.
 	 *
-	 * @param {string} sPropertyName The name of a property.
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar - the instance of filter bar
+	 * @param {string} sPropertyName The name of a property.
 	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
 	 * @returns {Promise} Promise that resolves once the properyInfo property was updated
 	 */
-	ODataFilterBarDelegate.removeCondition = function(sPropertyName, oFilterBar, mPropertyBag) {
+	ODataFilterBarDelegate.removeCondition = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return ODataFilterBarDelegate._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag);
 	};
 
@@ -359,12 +360,12 @@ sap.ui.define([
 	 * Can be used to trigger any necessary follow-up steps on removal of filter items. The returned boolean value inside the Promise can be used to
 	 * prevent default follow-up behaviour of Flex.
 	 *
-	 * @param {sap.ui.mdc.FilterField} oFilterField The mdc.FilterField that was removed
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar - the instance of filter bar
+	 * @param {sap.ui.mdc.FilterField} oFilterField The mdc.FilterField that was removed
 	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
 	 * @returns {Promise} Promise that resolves with true/false to allow/prevent default behavour of the change
 	 */
-	ODataFilterBarDelegate.removeItem =  function(oFilterField, oFilterBar, mPropertyBag) {
+	ODataFilterBarDelegate.removeItem =  function(oFilterBar, oFilterField, mPropertyBag) {
 		// return true within the Promise for default behaviour
 		return Promise.resolve(true);
 	};

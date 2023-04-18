@@ -113,7 +113,7 @@ sap.ui.define([
 				}]
 			};
 			var aProperties = [
-				{name: "myProperty", path: "myProperty", typeConfig: oControl.getTypeMap().getTypeConfig("String", null, null)}
+				{name: "myProperty", path: "myProperty", typeConfig: oControl.getTypeMap(oControl).getTypeConfig("String", null, null)}
 			];
 
 			var oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
@@ -146,7 +146,7 @@ sap.ui.define([
 				}]
 			};
 			var aProperties = [
-				{name: "keyMyProperty", path: "path/to/property", typeConfig: oControl.getTypeMap().getTypeConfig("String", null, null)}
+				{name: "keyMyProperty", path: "path/to/property", typeConfig: oControl.getTypeMap(oControl).getTypeConfig("String", null, null)}
 			];
 
 			var oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);

@@ -365,8 +365,7 @@ sap.ui.define([
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
 		oMTable.onBeforeShow(true); // to trigger filtering
-
-		assert.ok(ValueHelpDelegate.getFilterConditions.calledWith({x: "X"}, oMTable), "ValueHelpDelegate.getFilterConditions called");
+		assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable), "ValueHelpDelegate.getFilterConditions called");
 
 		var fnDone = assert.async();
 		oInPromise.then(function() {
@@ -403,7 +402,7 @@ sap.ui.define([
 		oMTable.setFilterFields("$search");
 		oMTable.setFilterValue("X");
 		assert.ok(ValueHelpDelegateV4.updateBinding.called, "ValueHelpDelegateV4.updateBinding called");
-		assert.ok(ValueHelpDelegateV4.updateBinding.calledWith({x: "X"}, oListBinding), "ValueHelpDelegateV4.updateBinding called parameters");
+		assert.ok(ValueHelpDelegateV4.updateBinding.calledWith(undefined/*no parent provided*/, oListBinding), "ValueHelpDelegateV4.updateBinding called parameters");
 		assert.ok(oListBinding.changeParameters.calledWith({$search: "X"}), "ListBinding.changeParameters called with search string");
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 
@@ -504,7 +503,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith({x: "X"}, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
 				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
@@ -560,7 +559,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith({x: "X"}, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
 				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
@@ -698,7 +697,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith({x: "X"}, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}}}, "Item returned");
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);

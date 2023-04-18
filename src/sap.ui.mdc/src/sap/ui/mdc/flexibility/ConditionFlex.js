@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/flexibility/Util',
-	"sap/ui/fl/changeHandler/condenser/Classification"
-], function(merge, Log, FilterOperatorUtil, Util, Classification) {
+	"sap/ui/fl/changeHandler/condenser/Classification",
+	"sap/ui/mdc/util/mapVersions"
+], function(merge, Log, FilterOperatorUtil, Util, Classification, mapVersions) {
 	"use strict";
 
 	/**
@@ -33,6 +34,10 @@ sap.ui.define([
 			sap.ui.require([
 				sDelegatePath
 			], fResolveLoad, fRejectLoad);
+		})
+		.then(function(Delegate){
+			mapVersions(Delegate);
+			return Delegate;
 		});
 	};
 
@@ -83,9 +88,9 @@ sap.ui.define([
 						return fnGetDelegate(oDelegate.name);
 					})
 					.then(function(Delegate){
-						var fnDelegateAddCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().addCondition : Delegate.addCondition);
+						var fnDelegateAddCondition = Delegate && (Delegate.getFilterDelegate ? mapVersions(Delegate.getFilterDelegate()).addCondition : Delegate.addCondition);
 						if (fnDelegateAddCondition) {
-							return fnDelegateAddCondition(oChangeContent.name, oControl, mPropertyBag)
+							return fnDelegateAddCondition(oControl, oChangeContent.name, mPropertyBag)
 							.catch(function(oEx) {
 								Log.error("Error during Delegate.addCondition call: " + oEx);
 							});
@@ -148,9 +153,9 @@ sap.ui.define([
 							return fnGetDelegate(oDelegate.name);
 						})
 						.then(function(Delegate){
-							var fnDelegateRemoveCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().removeCondition : Delegate.removeCondition);
+							var fnDelegateRemoveCondition = Delegate && (Delegate.getFilterDelegate ? mapVersions(Delegate.getFilterDelegate()).removeCondition : Delegate.removeCondition);
 							if (fnDelegateRemoveCondition) {
-								return fnDelegateRemoveCondition(oChangeContent.name, oControl, mPropertyBag)
+								return fnDelegateRemoveCondition(oControl, oChangeContent.name, mPropertyBag)
 								.catch(function(oEx) {
 									Log.error("Error during Delegate.removeCondition call: " + oEx);
 								});

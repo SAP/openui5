@@ -14,7 +14,7 @@ sap.ui.define([
 ], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, EditMode, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
-
+	BooksTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 	var getFullId = function(oControl, sVHId) {
 		var oView = oControl.getParent();
 		while (!oView.isA("sap.ui.core.mvc.View")) {
@@ -59,8 +59,9 @@ sap.ui.define([
 
 	BooksTableDelegate.getFilterDelegate = function() {
 		return {
-			addItem: function(sPropertyName, oTable) {
-				return BooksFBDelegate.addItem(sPropertyName, oTable)
+			apiVersion: 2,//CLEANUP_DELEGATE
+			addItem: function(oTable, sPropertyName) {
+				return BooksFBDelegate.addItem(oTable, sPropertyName)
 				.then(function(oFilterField) {
 
 					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
@@ -187,7 +188,7 @@ sap.ui.define([
 		return new Field(oCtrlProperties);
 	};
 
-	BooksTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
+	BooksTableDelegate.addItem = function (oTable, sPropertyName, mPropertyBag) {
 
 //		if (sPropertyName === "createdAt") {
 //			return null;

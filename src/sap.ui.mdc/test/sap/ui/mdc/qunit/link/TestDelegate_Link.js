@@ -7,8 +7,10 @@ sap.ui.define([
 	"use strict";
 
 	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	SampleLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	SampleLinkDelegate.modifyLinkItems = function(oPayload, oBindingContext, aLinkItems) {
+	SampleLinkDelegate.modifyLinkItems = function(oLink, oBindingContext, aLinkItems) {
+		var oPayload = oLink.getPayload();
 		if (oPayload.modfiedLinkItemTexts) {
 			aLinkItems.forEach(function(oLinkItem) {
 				oLinkItem.setText(oPayload.modfiedLinkItemTexts[oLinkItem.getText()]);
@@ -19,21 +21,24 @@ sap.ui.define([
 		return Promise.resolve(aLinkItems);
 	};
 
-	SampleLinkDelegate.fetchLinkItems = function(oPayload) {
+	SampleLinkDelegate.fetchLinkItems = function(oLink) {
+		var oPayload = oLink.getPayload();
 		if (oPayload.items) {
 			return Promise.resolve(oPayload.items);
 		}
 		return Promise.resolve([]);
 	};
 
-	SampleLinkDelegate.beforeNavigationCallback = function (oPayload, oEvent) {
+	SampleLinkDelegate.beforeNavigationCallback = function (oLink, oEvent) {
+		var oPayload = oLink.getPayload();
 		if (oPayload.beforeNavigationCallback) {
 			return oPayload.beforeNavigationCallback();
 		}
 		return Promise.resolve(true);
 	};
 
-	SampleLinkDelegate.fetchLinkType = function(oPayload, oLink) {
+	SampleLinkDelegate.fetchLinkType = function(oLink) {
+		var oPayload = oLink.getPayload();
 		if (oPayload.fetchLinkType) {
 			return oPayload.fetchLinkType(oPayload, oLink);
 		}
@@ -46,7 +51,8 @@ sap.ui.define([
 		});
 	};
 
-	SampleLinkDelegate.fetchAdditionalContent = function(oPayload, oLink) {
+	SampleLinkDelegate.fetchAdditionalContent = function(oLink) {
+		var oPayload = oLink.getPayload();
 		if (oPayload.additionalContent) {
 			return Promise.resolve(oPayload.additionalContent);
 		}

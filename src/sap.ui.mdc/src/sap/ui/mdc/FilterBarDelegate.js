@@ -41,8 +41,8 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 * has already been created, it must to either return the existing instance or create a new instance.
 	 *
 	 */
-	FilterBarDelegate.addItem = function(sPropertyName, oControl, mPropertyBag) {
-		return AggregationBaseDelegate.addItem(sPropertyName, oControl, mPropertyBag);
+	FilterBarDelegate.addItem = function(oControl, sPropertyName, mPropertyBag) {
+		return AggregationBaseDelegate.addItem(oControl, sPropertyName, mPropertyBag);
 	};
 
 	/**
@@ -62,9 +62,9 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 *
 	 * @returns {Promise<boolean>} <code>Promise</code> that resolved with <code>true</code>, <code>false</code> to allow/prevent default behavior of the change
 	 */
-	FilterBarDelegate.removeItem = function(oItem, oControl, mPropertyBag) {
+	FilterBarDelegate.removeItem = function(oControl, oItem, mPropertyBag) {
 		// return true within the Promise for default behavior
-		return AggregationBaseDelegate.removeItem(oItem, oControl, mPropertyBag);
+		return AggregationBaseDelegate.removeItem(oControl, oItem, mPropertyBag);
 	};
 
 	/**
@@ -79,7 +79,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
 	 * @returns {Promise} <code>Promise</code> that is resolved once the propertyInfo property has been updated
 	 */
-	FilterBarDelegate.addCondition = function(sPropertyName, oControl, mPropertyBag) {
+	FilterBarDelegate.addCondition = function(oControl, sPropertyName, mPropertyBag) {
 		return Promise.resolve();
     };
 
@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
 	 * @returns {Promise} <code>Promise</code> that is resolved once the propertyInfo property has been updated
 	 */
-	FilterBarDelegate.removeCondition = function(sPropertyName, oControl, mPropertyBag) {
+	FilterBarDelegate.removeCondition = function(oControl, sPropertyName, mPropertyBag) {
 		return Promise.resolve();
     };
 

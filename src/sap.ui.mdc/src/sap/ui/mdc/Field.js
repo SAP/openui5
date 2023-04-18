@@ -355,8 +355,7 @@ sap.ui.define([
 			var sOldAdditionalValue = oCurrentCondition && oCurrentCondition.values[1] ? oCurrentCondition.values[1] : null; // to compare with default value
 			if (!oCurrentCondition || oCurrentCondition.operator !== "EQ" || !_compareValues.call(this, vOldValue, vValue) || sOldAdditionalValue !== vAdditionalValue) {
 				var oDelegate = this.getControlDelegate();
-				var oDelegatePayload = this.getPayload();
-				var oNextCondition = oDelegate.createCondition(oDelegatePayload, this, [vValue, vAdditionalValue], oCurrentCondition);
+				var oNextCondition = oDelegate.createCondition(this, this, [vValue, vAdditionalValue], oCurrentCondition);
 				if (!Condition.compareConditions(oCurrentCondition, oNextCondition)) { // We do a full comparison here as FilterOperatorUtils.compareConditions may ignore text changes
 					this.setConditions(oNextCondition ? [oNextCondition] : []);
 				}

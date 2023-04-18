@@ -61,14 +61,13 @@ sap.ui.define([
             }
         });
 
-        var oPayload = oLink.getPayload() ? oLink.getPayload() : {};
         var oBindingContext = oLink._getControlBindingContext();
         var oInfoLog = oLink._getInfoLog();
 
         var fnCheckFetchLinkItems = function(oDelegate) {
             var oSpyFetchLinkItems = sinon.spy(oDelegate, "fetchLinkItems");
             oLink._retrieveUnmodifiedLinkItems().then(function() {
-                assert.ok(oSpyFetchLinkItems.alwaysCalledWith(oPayload, oBindingContext, oInfoLog), "fetchLinkItems called with correct parameters");
+                assert.ok(oSpyFetchLinkItems.alwaysCalledWith(oLink, oBindingContext, oInfoLog), "fetchLinkItems called with correct parameters");
                 done();
             });
         };
@@ -77,7 +76,7 @@ sap.ui.define([
             var oSpyFetchLinkType = sinon.spy(oDelegate, "fetchLinkType");
 
             oLink.retrieveLinkType().then(function() {
-                assert.ok(oSpyFetchLinkType.alwaysCalledWith(oPayload, oLink), "fetchLinkType called with correct parameters");
+                assert.ok(oSpyFetchLinkType.alwaysCalledWith(oLink), "fetchLinkType called with correct parameters");
                 done();
             });
         };
@@ -86,7 +85,7 @@ sap.ui.define([
             var oSpyFetchAdditionalContent = sinon.spy(oDelegate, "fetchAdditionalContent");
 
             oLink.retrieveAdditionalContent().then(function() {
-                assert.ok(oSpyFetchAdditionalContent.alwaysCalledWith(oPayload, oLink), "fetchAdditionalContent called with correct parameters");
+                assert.ok(oSpyFetchAdditionalContent.alwaysCalledWith(oLink), "fetchAdditionalContent called with correct parameters");
                 done();
             });
         };
@@ -95,7 +94,7 @@ sap.ui.define([
             var oSpyModifyLinkItems = sinon.spy(oDelegate, "modifyLinkItems");
             oLink._retrieveUnmodifiedLinkItems().then(function(aUnmodifiedLinkItems) {
                 oLink.retrieveLinkItems().then(function() {
-                    assert.ok(oSpyModifyLinkItems.alwaysCalledWith(oPayload, oBindingContext, aUnmodifiedLinkItems), "modifyLinkitems called with correct parameters");
+                    assert.ok(oSpyModifyLinkItems.alwaysCalledWith(oLink, oBindingContext, aUnmodifiedLinkItems), "modifyLinkitems called with correct parameters");
                     done();
                 });
             });
@@ -109,7 +108,7 @@ sap.ui.define([
                     target: undefined
                 };
                 oLink._beforeNavigationCallback(oEvent);
-                assert.ok(oSpyBeforeNavigationCallback.alwaysCalledWith(oPayload, oEvent), "beforeNavigationCallback called with correct parameters");
+                assert.ok(oSpyBeforeNavigationCallback.alwaysCalledWith(oLink, oEvent), "beforeNavigationCallback called with correct parameters");
                 done();
             });
         };

@@ -12,8 +12,9 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
 
 		var aCurrentContent = oContainer && oContainer.getContent();
 		var oCurrentContent = aCurrentContent && aCurrentContent[0];

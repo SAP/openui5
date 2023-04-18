@@ -210,7 +210,6 @@ sap.ui.define([
 				oNewType = _getUnitTypeInstance(TypeMap, oType, oClonedFormatOptions, oClonedConstraints, false, true);
 				TypeMap.initializeInternalType(oNewType, oContentFactory.getFieldTypeInitialization());
 				oContentFactory.setUnitType(oNewType);
-
 				oContentFactory.updateConditionType();
 			}
 		}

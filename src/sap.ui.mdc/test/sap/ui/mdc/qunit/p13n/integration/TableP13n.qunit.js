@@ -48,7 +48,8 @@ sap.ui.define([
 
 			sinon.stub(TableDelegate,"getFilterDelegate").callsFake(function() {
 				return {
-					addItem: function(sPropName, oControl){
+					apiVersion: 2,//CLEANUP_DELEGATE
+					addItem: function(oControl, sPropName){
 						return Promise.resolve(new FilterField({
 							conditions: "{$filters>/conditions/" + sPropName + "}",
 							propertyKey: sPropName

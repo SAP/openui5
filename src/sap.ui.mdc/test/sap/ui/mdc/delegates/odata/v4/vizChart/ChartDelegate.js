@@ -20,6 +20,7 @@ sap.ui.define([
 	"use strict";
 
     var ChartDelegate = Object.assign({}, VizChartDelegate);
+    ChartDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
     ChartDelegate.getFilterDelegate = function() {
         return FilterBarDelegate;
@@ -162,6 +163,12 @@ sap.ui.define([
         }
 
         return aProperties;
+    };
+
+    ChartDelegate.addItem = function (oMDCChart, sPropertyName, mPropertyBag, sRole) {
+        if (oMDCChart.getModel) {
+            return Promise.resolve(this._createMDCChartItem(sPropertyName, oMDCChart, sRole));
+        }
     };
 
 	return ChartDelegate;

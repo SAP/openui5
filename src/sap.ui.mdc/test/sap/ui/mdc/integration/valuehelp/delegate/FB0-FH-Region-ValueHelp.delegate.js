@@ -44,10 +44,9 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
-
-		var oValueHelp = oContainer && oContainer.getParent();
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
 
 		var oParams = UriParameters.fromQuery(window.location.search);
 		var oParamSuspended = oParams.get("suspended");
@@ -184,7 +183,7 @@ sap.ui.define([
 	} */
 
 
-	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 
 		// Tooling experiments BEG
 		/* var sConditionModelCountry = _resolveConditionModelValue('$filters', '/conditions/country_code', oContent);
@@ -207,7 +206,7 @@ sap.ui.define([
 	};
 
 	// Exemplatory implementation of a condition payload
-	ValueHelpDelegate.createConditionPayload = function (oPayload, oContent, aValues, vContext) {
+	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, vContext) {
 		var sIdentifier = oContent.getId();
 		var oConditionPayload = {};
 		oConditionPayload[sIdentifier] = {};
@@ -229,7 +228,7 @@ sap.ui.define([
 	};
 
 	// Exemplatory implementation of outparameter update
-	ValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason, oConfig) {
+	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
 		// find all conditions carrying country information
 		var aAllConditionCountries = oValueHelp.getConditions().reduce(function (aResult, oCondition) {
 			if (oCondition.payload) {

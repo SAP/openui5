@@ -286,7 +286,7 @@ sap.ui.define([
 
 		oCore.applyChanges();
 
-		assert.ok(oDelegate.getTypeMap.calledWith(oPayload), "getTypeMap called");
+		assert.ok(oDelegate.getTypeMap.calledWith(oField), "getTypeMap called");
 		assert.ok(oTypeUtil.getDataTypeInstance.calledWith("sap.ui.model.type.String"), "getDataTypeClass called");
 		assert.ok(oTypeUtil.getBaseType.calledWith("sap.ui.model.type.String"), "getBaseType called");
 

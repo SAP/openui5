@@ -30,10 +30,11 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
 //	var counter = 0;
 
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
 		var oValueHelp = oContainer && oContainer.getParent();
 
 		var oParams = UriParameters.fromQuery(location.search);

@@ -501,7 +501,7 @@ sap.ui.define([
 				assert.ok(oFilterBar.getControlDelegate());
 				sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty, oProperty2, oProperty3]));
 
-				var oPromise = oFilterBar.getControlDelegate().addItem(oProperty2.name, oFilterBar);
+				var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name);
 
 				oPromise.then(function (oFilterField) {
 
@@ -647,7 +647,7 @@ sap.ui.define([
 		oFilterBar._waitForMetadata().then(function () {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 			assert.ok(oFilterBar.getControlDelegate());
-			var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
+			var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
 
 			oPromise.then(function (oFilterField) {
 
@@ -706,7 +706,7 @@ sap.ui.define([
 		oFilterBar._waitForMetadata().then(function () {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 			assert.ok(oFilterBar.getControlDelegate());
-			var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
+			var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
 
 			oPromise.then(function (oFilterField) {
 
@@ -765,7 +765,7 @@ sap.ui.define([
 
 			assert.ok(oFilterBar.getControlDelegate());
 
-			var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
+			var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
 
 			oPromise.then(function (oFilterField) {
 
@@ -891,7 +891,7 @@ sap.ui.define([
 		oFilterBar._waitForMetadata().then(function () {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 			assert.ok(oFilterBar.getControlDelegate());
-			var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
+			var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
 
 			oPromise.then(function (oFilterField) {
 				oFilterBar.getEngine().createChanges({
@@ -964,8 +964,8 @@ sap.ui.define([
 			assert.ok(oFilterBar.getControlDelegate());
 			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2]));
 
-			aPromise.push(oFilterBar.getControlDelegate().addItem(oProperty1.name, oFilterBar));
-			aPromise.push(oFilterBar.getControlDelegate().addItem(oProperty2.name, oFilterBar));
+			aPromise.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty1.name));
+			aPromise.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name));
 
 			Promise.all(aPromise).then(function (aFilterFields) {
 
@@ -1210,8 +1210,8 @@ sap.ui.define([
 			assert.ok(oFilterBar.getControlDelegate());
 			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2]));
 
-			aPromises.push(oFilterBar.getControlDelegate().addItem(oProperty1.name, oFilterBar));
-			aPromises.push(oFilterBar.getControlDelegate().addItem(oProperty2.name, oFilterBar));
+			aPromises.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty1.name));
+			aPromises.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name));
 
 			Promise.all(aPromises).then(function (aFilterFields) {
 
@@ -1362,7 +1362,7 @@ sap.ui.define([
 			assert.ok(oFilterBar.getControlDelegate());
 			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty]));
 
-			var oPromise = oFilterBar.getControlDelegate().addItem(oProperty.name, oFilterBar);
+			var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty.name);
 
 			oPromise.then(function (oFilterField) {
 				assert.ok(oFilterField.getDisplay(), oProperty.display);

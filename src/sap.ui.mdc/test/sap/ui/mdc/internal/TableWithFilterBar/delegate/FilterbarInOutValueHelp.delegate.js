@@ -19,10 +19,10 @@ sap.ui.define([
 	"use strict";
 
 	var FilterbarInOutValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
+	FilterbarInOutValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-
-	FilterbarInOutValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
-
+	FilterbarInOutValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
+		var oPayload = oValueHelp.getPayload();
 		var aInParameters = oPayload.inParameters || [];
 		var oConditions = BaseValueHelpDelegate.getFilterConditions(arguments);
 
@@ -50,8 +50,8 @@ sap.ui.define([
 		return oConditions;
 	};
 
-	FilterbarInOutValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason) {
-
+	FilterbarInOutValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
+		var oPayload = oValueHelp.getPayload();
 		var aOutParameters = oPayload.outParameters || [];
 
 		//handle only ControlChange reason

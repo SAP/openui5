@@ -292,8 +292,8 @@ sap.ui.define([
 	function _getBaseTypeForValueType(oValueType) {
 
 		var oDelegate = this.oFormatOptions.delegate;
-		var oPayload = this.oFormatOptions.payload;
-		var sBaseType = oDelegate ? oDelegate.getTypeMap(oPayload).getBaseType(oValueType.name, oValueType.formatOptions, oValueType.constraints) : BaseType.Date;
+		var oField = this.oFormatOptions.control;
+		var sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(oValueType.name, oValueType.formatOptions, oValueType.constraints) : BaseType.Date;
 
 		return sBaseType;
 

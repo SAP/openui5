@@ -50,8 +50,9 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer, sContentId) {
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer, sContentId) {
 		var oValueHelp = oContainer && oContainer.getParent();
 
 		var oParams = UriParameters.fromQuery(location.search);
@@ -188,7 +189,7 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
-	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
 		var oFilterBar = oContent.getFilterBar();
@@ -213,7 +214,7 @@ sap.ui.define([
 	};
 
 	// Exemplatory implementation of a condition merge strategy (shared condition between multiple collectiveSearch lists)
-	ValueHelpDelegate.modifySelectionBehaviour = function (oPayload, oContent, oChange) {
+	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
 
 		var oChangeCondition = oChange.conditions[0];
 		var oCurrentConditions = oContent.getConditions();
@@ -268,7 +269,7 @@ sap.ui.define([
 	};
 
 	// Exemplatory implementation of a condition payload
-	ValueHelpDelegate.createConditionPayload = function (oPayload, oContent, aValues, vContext) {
+	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, vContext) {
 		var sIdentifier = oContent.getId();
 		var oConditionPayload = {};
 		oConditionPayload[sIdentifier] = {};
@@ -294,7 +295,7 @@ sap.ui.define([
 	};
 
 	// Exemplatory implementation of outparameter update
-	ValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason, oConfig) {
+	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
 		// find all conditions carrying country information
 		var aAllConditionCountries = oValueHelp.getConditions().reduce(function (aResult, oCondition) {
 			if (oCondition.payload) {

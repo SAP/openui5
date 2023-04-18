@@ -512,8 +512,8 @@ sap.ui.define([
 			var oFormatOptions = oOriginalType.getFormatOptions();
 			var oConstraints = oOriginalType.getConstraints();
 			var oDelegate = this.oFormatOptions.delegate;
-			var oPayload = this.oFormatOptions.payload;
-			var sBaseType = oDelegate && oDelegate.getTypeMap(oPayload).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
+			var oField = this.oFormatOptions.control;
+			var sBaseType = oDelegate && oDelegate.getTypeMap(oField).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
 			if ((sBaseType === BaseType.Unit || sBaseType === BaseType.DateTime) &&
 					!oCondition.values[0][1] && oType._aCurrentValue) {
 				// TODO: if no unit provided use last one
@@ -966,8 +966,8 @@ sap.ui.define([
 		var oFormatOptions = oType.getFormatOptions();
 		var oConstraints = oType.getConstraints();
 		var oDelegate = this.oFormatOptions.delegate;
-		var oPayload = this.oFormatOptions.payload;
-		var sBaseType = oDelegate ? oDelegate.getTypeMap(oPayload).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String;
+		var oField = this.oFormatOptions.control;
+		var sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String;
 
 		if (sBaseType === BaseType.Unit) {
 			sBaseType = BaseType.Numeric;
@@ -981,10 +981,9 @@ sap.ui.define([
 
 		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
-		var oPayload = this.oFormatOptions.payload;
 
 		if (oDelegate) {
-			return oDelegate.isInputValidationEnabled(oPayload, oValueHelp);
+			return oDelegate.isInputValidationEnabled(this.oFormatOptions.control, oValueHelp);
 		} else {
 			return !!oValueHelp;
 		}
@@ -995,10 +994,9 @@ sap.ui.define([
 
 		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
-		var oPayload = this.oFormatOptions.payload;
 
 		if (oDelegate) {
-			return oDelegate.isInvalidInputAllowed(oPayload, oValueHelp);
+			return oDelegate.isInvalidInputAllowed(this, oValueHelp);
 		} else if (oValueHelp) {
 			return !oValueHelp.getValidateInput();
 		} else {
@@ -1011,7 +1009,6 @@ sap.ui.define([
 
 		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
-		var oPayload = this.oFormatOptions.payload;
 		var oControl = this.oFormatOptions.control;
 		var oConfig = {
 				value: vValue,
@@ -1025,7 +1022,7 @@ sap.ui.define([
 		};
 
 		if (oDelegate) {
-			return oDelegate.getItemForValue(oPayload, oValueHelp, oConfig);
+			return oDelegate.getItemForValue(oControl, oValueHelp, oConfig);
 		} else if (oValueHelp) {
 			return oValueHelp.getItemForValue(oConfig);
 		}
@@ -1036,10 +1033,9 @@ sap.ui.define([
 
 		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
-		var oPayload = this.oFormatOptions.payload;
 		var oControl = this.oFormatOptions.control;
 		if (oDelegate) {
-			return oDelegate.getDescription(oPayload, oValueHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
+			return oDelegate.getDescription(oControl, oValueHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
 		} else if (oValueHelp) {
 			var oConfig = {
 				value: vKey,

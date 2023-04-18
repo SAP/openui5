@@ -232,9 +232,9 @@ sap.ui.define([
 		var oDelegate = this.getValueHelpDelegate();
 
 		if (oDelegate) {
-			var oDelegatePayload = this.getValueHelpDelegatePayload();
+			var oValueHelp = this.getValueHelpInstance();
 			oConditionPayload = {};
-			oConditionPayload = oDelegate.createConditionPayload(oDelegatePayload, this, aValues, vContext);
+			oConditionPayload = oDelegate.createConditionPayload(oValueHelp, this, aValues, vContext);
 		}
 		return oConditionPayload;
 	};
@@ -247,7 +247,7 @@ sap.ui.define([
 	 */
 	FilterableListContent.prototype._isItemSelected = function (oItem, aConditions) {
 		var oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
-		return oDelegate ? oDelegate.isFilterableListItemSelected(this.getValueHelpDelegatePayload(), this, oItem, aConditions) : false;
+		return oDelegate ? oDelegate.isFilterableListItemSelected(this.getValueHelpInstance(), this, oItem, aConditions) : false;
 	};
 
 	/**
@@ -407,8 +407,8 @@ sap.ui.define([
 	 */
 	FilterableListContent.prototype._getTypesForConditions = function (oConditions) {
 		var oDelegate = this.getValueHelpDelegate();
-		var oDelegatePayload = this.getValueHelpDelegatePayload();
-		return oDelegate ? oDelegate.getTypesForConditions(oDelegatePayload, this, oConditions) : {};
+		var oValueHelp = this.getValueHelpInstance();
+		return oDelegate ? oDelegate.getTypesForConditions(oValueHelp, this, oConditions) : {};
 	};
 
 	/**
@@ -462,7 +462,7 @@ sap.ui.define([
 		if (sFilterFields === "$search") {
 			var oListBinding = this.getListBinding();
 			var oDelegate = this.getValueHelpDelegate();
-			var oDelegatePayload = this.getValueHelpDelegatePayload();
+			var oDelegatePayload = this.getValueHelpInstance();
 			bSearchSupported = oDelegate && oDelegate.isSearchSupported(oDelegatePayload, this, oListBinding);
 		}
 
@@ -513,7 +513,7 @@ sap.ui.define([
 	FilterableListContent.prototype.onBeforeShow = function(bInitial) {
 		if (bInitial) {
 			var oDelegate = this.getValueHelpDelegate();
-			return Promise.resolve(oDelegate && oDelegate.getFilterConditions(this.getValueHelpDelegatePayload(), this)).then(function (oConditions) {
+			return Promise.resolve(oDelegate && oDelegate.getFilterConditions(this.getValueHelpInstance(), this)).then(function (oConditions) {
 				this._oInitialFilterConditions = oConditions;
 
 				var oFilterBar = this._getPriorityFilterBar();
@@ -542,8 +542,8 @@ sap.ui.define([
 	 */
 	FilterableListContent.prototype._fireSelect = function (oChange) {
 		var oDelegate = this.getValueHelpDelegate();
-		var oDelegatePayload = this.getValueHelpDelegatePayload();
-		var oModifiedSelectionChange = oDelegate && oDelegate.modifySelectionBehaviour ? oDelegate.modifySelectionBehaviour(oDelegatePayload, this, oChange) : oChange;
+		var oValueHelp = this.getValueHelpInstance();
+		var oModifiedSelectionChange = oDelegate && oDelegate.modifySelectionBehaviour ? oDelegate.modifySelectionBehaviour(oValueHelp, this, oChange) : oChange;
 		if (oModifiedSelectionChange) {
 			this.fireSelect(oModifiedSelectionChange);
 		}
@@ -568,7 +568,7 @@ sap.ui.define([
 
 	FilterableListContent.prototype.getCount = function (aConditions, sGroup) {
 		var oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
-		var oDelegatePayload = oDelegate && this.getValueHelpDelegatePayload();
+		var oDelegatePayload = oDelegate && this.getValueHelpInstance();
 		return oDelegate && oDelegate.getCount ? oDelegate.getCount(oDelegatePayload, this, aConditions, sGroup) : ListContent.prototype.getCount.apply(this, arguments);
 	};
 

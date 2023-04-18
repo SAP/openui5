@@ -9,24 +9,8 @@ sap.ui.define([
 
 	var oChartItemFlex = Object.assign({}, ItemBaseFlex);
 
-	/* Disabled until clarified with flex
-	var fnQueueChange = function(oControl, fTask) {
-		var fCleanupPromiseQueue = function(pOriginalPromise) {
-			if (oControl._pQueue === pOriginalPromise){
-				delete oControl._pQueue;
-			}
-		};
-
-		oControl._pQueue = oControl._pQueue instanceof Promise ? oControl._pQueue.then(fTask) : fTask();
-		oControl._pQueue.then(fCleanupPromiseQueue.bind(null, oControl._pQueue));
-
-		return oControl._pQueue;
-	};*/
-
-	oChartItemFlex.beforeAddItem = function(Delegate, sPropertyKeyName, oControl, mPropertyBag, oChangeContent) {
-
-		return Delegate.addItem.call(Delegate, sPropertyKeyName, oControl, mPropertyBag, oChangeContent.role);
-
+	oChartItemFlex.beforeAddItem = function(Delegate, sPropertyKey, oControl, mPropertyBag, oChangeContent) {
+		return Delegate.addItem.call(Delegate, oControl, sPropertyKey, mPropertyBag, oChangeContent.role);
 	};
 
 	oChartItemFlex.findItem = function(oModifier, aItems, sName) {
@@ -48,26 +32,6 @@ sap.ui.define([
 				});
 		}, Promise.resolve());
 	};
-
-	/* Disabled until clarified with flex
-	oChartItemFlex.createChangeHandler = function(fApply, fComplete, fRevert) {
-		return {
-			"changeHandler": {
-				applyChange: function(oChange, oControl, mPropertyBag) {
-					return fnQueueChange(oControl, function(){return fApply(oChange, oControl, mPropertyBag);});
-				},
-				completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
-					fComplete(oChange, mChangeSpecificInfo, mPropertyBag);
-				},
-				revertChange: function(oChange, oControl, mPropertyBag) {
-					return fnQueueChange(fRevert(oChange, oControl, mPropertyBag, true));
-				}
-			},
-			"layers": {
-				"USER": true
-			}
-		};
-	};*/
 
 	oChartItemFlex.addItem = oChartItemFlex.createAddChangeHandler();
 	oChartItemFlex.removeItem = oChartItemFlex.createRemoveChangeHandler();

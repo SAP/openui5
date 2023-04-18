@@ -81,7 +81,7 @@ sap.ui.define([
 	 * 			return oFilterFieldPromise;
 	 * 		}
 	 * }
-	 * @returns {{addItem: (function(string, sap.ui.mdc.Table): Promise<sap.ui.mdc.FilterField>)}} Object for the chart filter personalization
+	 * @returns {{addItem: (function(sap.ui.mdc.Chart, string): Promise<sap.ui.mdc.FilterField>)}} Object for the chart filter personalization
 	 * @protected
 	 */
 	ChartDelegate.getFilterDelegate = function () {
@@ -90,12 +90,12 @@ sap.ui.define([
 			/**
 			 * Creates an instance of a <code>sap.ui.mdc.FilterField</code>.
 			 *
-			 * @param {string} sPropertyName The property name
 			 * @param {sap.ui.mdc.Control} oControl Instance of the control
+			 * @param {string} sPropertyName The property name
 			 * @returns {Promise<sap.ui.mdc.FilterField>} <code>Promise</code> that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
 			 * @see sap.ui.mdc.AggregationBaseDelegate#addItem
 			 */
-			addItem: function (sPropertyName, oControl) {
+			addItem: function (oControl, sPropertyName) {
 				return Promise.resolve();
 			},
 
@@ -103,8 +103,8 @@ sap.ui.define([
              * This method is called when an <code>AddCondition</code> change is applied by the personalization.
              * It can be used to perform tasks, such as caching information or modifying the control.
              *
-             * @param {string} sPropertyName Name of a property
              * @param {sap.ui.mdc.Control} oControl Instance of the control
+             * @param {string} sPropertyName Name of a property
              * @param {Object} mPropertyBag Instance of property bag from the SAPUI5 flexibility API
              * @returns {Promise} <code>Promise</code> that resolves once the properyInfo property has been updated
              *
@@ -112,7 +112,7 @@ sap.ui.define([
              * @private
              * @ui5-restricted sap.fe, sap.ui.mdc
              */
-			addCondition: function (sPropertyName, oControl, mPropertyBag) {
+			addCondition: function (oControl, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
 			},
 
@@ -120,8 +120,8 @@ sap.ui.define([
              * This method is called when a <code>RemoveCondition</code> change is applied by the personalization.
              * It can be used to perform tasks, such as caching information or modifying the control.
              *
-             * @param {string} sPropertyName Name of a property
              * @param {sap.ui.mdc.Control} oControl Instance of the control
+             * @param {string} sPropertyName Name of a property
              * @param {Object} mPropertyBag Instance of property bag from the SAPUI5 flexibility API
              * @returns {Promise} <code>Promise</code> that resolves once the properyInfo property has been updated
              *
@@ -129,7 +129,7 @@ sap.ui.define([
              * @private
              * @ui5-restricted sap.fe, sap.ui.mdc
              */
-			removeCondition: function (sPropertyName, oControl, mPropertyBag) {
+			removeCondition: function (oControl, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
 			}
 		};
@@ -139,31 +139,33 @@ sap.ui.define([
 	 * Creates a new chart item for a given property name and updates the inner chart.<br>
 	 * <b>Note:</b> This does <b>not</b> add the chart item to the <code>Items</code> aggregation of the chart.
 	 * Called and used by <code>p13n</code>.
+	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart to add the property to
 	 * @param {string} sPropertyName The name of the property added
-	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart to add the property to
 	 * @param {object} mPropertyBag The property bag containing useful information about the change
 	 * @param {string} [sRole] New role for given item
-	 * @returns {Promise} <code>Promise</code> that resolves with new chart <code>Item</code> as parameter
+	 * @returns {Promise<sap.ui.mdc.chart.Item>} <code>Promise</code> that resolves with new chart <code>Item</code> as parameter
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ChartDelegate.addItem = function (sPropertyName, oMDCChart, mPropertyBag, sRole) {
+	ChartDelegate.addItem = function (oMDCChart, sPropertyName, mPropertyBag, sRole) {
+		return Promise.resolve(null);
 	};
 
 	/**
 	 * Removes an existing chart item for a given property name and updates the inner chart.
 	 * Called and used by <code>p13n</code>.
-	 * @param {string} oProperty Name of the property removed
-	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart from which property is removed
+	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart from which property is removed
+	 * @param {sap.ui.mdc.chart.Item} oItem The <code>item</code> that is removed from the chart
+	 * @param {object} mPropertyBag The property bag containing useful information about the change
 	 * @returns {Promise<boolean>} <code>Promise</code> containing information whether the item was deleted
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ChartDelegate.removeItem = function (oProperty, oMDCChart) {
+	ChartDelegate.removeItem = function (oMDCChart, oItem, mPropertyBag) {
 		return Promise.resolve(true);
 	};
 
@@ -266,13 +268,14 @@ sap.ui.define([
 	/**
 	 * Returns the instance of the inner chart.
 	 *
-	 * @returns {sap.core.Control} Instance of the inner chart
+	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+	 * @returns {sap.ui.core.Control} Instance of the inner chart
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ChartDelegate.getInnerChart = function () {
+	ChartDelegate.getInnerChart = function (oMDCChart) {
 	};
 
 	/**
@@ -292,6 +295,7 @@ sap.ui.define([
 	/**
 	 * Returns the current chart type.
 	 *
+	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
 	 * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Information about the current chart type
 	 * @throws {Error} Error thrown if inner chart is not initialized yet
 	 *
@@ -299,7 +303,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ChartDelegate.getChartTypeInfo = function () {
+	ChartDelegate.getChartTypeInfo = function (oMDCChart) {
 	};
 
 	/**

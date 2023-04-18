@@ -9,8 +9,10 @@ sap.ui.define([
 	"use strict";
 
 	var SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
+	FlpLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	SampleLinkDelegate.fetchLinkItems = function(oPayload, oBindingContext, oInfoLog) {
+	SampleLinkDelegate.fetchLinkItems = function(oLink, oBindingContext, oInfoLog) {
+		var oPayload = oLink.getPayload();
 		var aItemsToReturn = [
 			new LinkItem({
 				key: "item00",

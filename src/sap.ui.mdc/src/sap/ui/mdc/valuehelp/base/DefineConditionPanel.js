@@ -1107,8 +1107,8 @@ sap.ui.define([
 		var oFormatOptions = oType.getFormatOptions();
 		var oConstraints = oType.getConstraints();
 		var oDelegate = this.getConfig().delegate;
-		var oPayload = this.getConfig().payload;
-		var sBaseType = oDelegate ? oDelegate.getTypeMap(oPayload).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String; // if not configured use string
+		var oField = this.getConfig().control;
+		var sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String; // if not configured use string
 
 		if (sBaseType === BaseType.Unit) {
 			sBaseType = BaseType.Numeric;

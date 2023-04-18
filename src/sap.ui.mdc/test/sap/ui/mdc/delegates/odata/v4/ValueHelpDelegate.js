@@ -33,16 +33,21 @@ sap.ui.define([
 	 * @alias module:delegates/odata/v4/ValueHelpDelegate
 	 */
 	var ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
+	ODataV4ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	ODataV4ValueHelpDelegate.getTypeMap = function (oPayload) {
+	ODataV4ValueHelpDelegate.getTypeMap = function (oValueHelp) {
 		return ODataV4TypeMap;
 	};
 
-	ODataV4ValueHelpDelegate.isSearchSupported = function(oPayload, oContent, oListBinding) {
+	ODataV4ValueHelpDelegate.isSearchSupported = function(oValueHelp, oContent, oListBinding) {
 		return !!oListBinding.changeParameters;
 	};
 
-	ODataV4ValueHelpDelegate.updateBindingInfo = function(oPayload, oContent, oBindingInfo) {
+	ODataV4ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
+		var oPayload;
+		if (oValueHelp) {
+			oPayload = oValueHelp.getPayload();
+		}
 		ValueHelpDelegate.updateBindingInfo(oPayload, oContent, oBindingInfo);
 
 		if (oContent.getFilterFields() === "$search"){
@@ -55,7 +60,7 @@ sap.ui.define([
 		}
 	};
 
-	ODataV4ValueHelpDelegate.updateBinding = function(oPayload, oListBinding, oBindingInfo) {
+	ODataV4ValueHelpDelegate.updateBinding = function(oValueHelp, oListBinding, oBindingInfo) {
 		var oRootBinding = oListBinding.getRootBinding() || oListBinding;
 		if (!oRootBinding.isSuspended()) {
 			oRootBinding.suspend();
@@ -68,14 +73,18 @@ sap.ui.define([
 		}
 	};
 
-	ODataV4ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
+	ODataV4ValueHelpDelegate.executeFilter = function(oValueHelp, oListBinding, iRequestedItems) {
+		var oPayload;
+		if (oValueHelp) {
+			oPayload = oValueHelp.getPayload();
+		}
 		oListBinding.getContexts(0, iRequestedItems);
 		return Promise.resolve(this.checkListBindingPending(oPayload, oListBinding, iRequestedItems)).then(function () {
 			return oListBinding;
 		});
 	};
 
-	ODataV4ValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding, iRequestedItems) {
+	ODataV4ValueHelpDelegate.checkListBindingPending = function(oValueHelp, oListBinding, iRequestedItems) {
 		if (!oListBinding || oListBinding.isSuspended()) {
 			return false;
 		}

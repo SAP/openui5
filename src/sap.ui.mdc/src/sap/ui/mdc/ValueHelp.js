@@ -464,7 +464,7 @@ sap.ui.define([
 		if (!oPromise || (oPromise && bIsOpen) || (oPromise && oPromise.aggregation !== oContainer.sParentAggregationName)) { // Create promises or stack running promises if VH is open or if the previous promise was meant for another container
 			var fnFetchContent = function () {
 				return this._getControlDelegatePromise().then(function (oDelegateModule) {
-					return oDelegateModule.retrieveContent(this.getPayload(), oContainer, sContentId);
+					return oDelegateModule.retrieveContent(this, oContainer, sContentId);
 				}.bind(this));
 			}.bind(this);
 
@@ -917,7 +917,7 @@ sap.ui.define([
 	function _onConditionPropagation(sReason, oConfig) {
 		var oDelegate = this.bDelegateInitialized && this.getControlDelegate();
 		if (oDelegate) {
-			oDelegate.onConditionPropagation(this._oPayload, this, sReason, oConfig || this.getProperty("_config"));
+			oDelegate.onConditionPropagation(this, sReason, oConfig || this.getProperty("_config"));
 		}
 	}
 

@@ -767,15 +767,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("RequestDelegateContent event", function(assert) {
-
+		ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		oContainer.fireRequestDelegateContent({container: oContainer});
 
 		var fnDone = assert.async();
 		setTimeout(function() { // Delegate is called async
-			assert.ok(ValueHelpDelegate.retrieveContent.calledWith({x: "X"}, oContainer), "ValueHelpDelegate.retrieveContent called for typeahead");
+			assert.ok(ValueHelpDelegate.retrieveContent.calledWith(oValueHelp, oContainer), "ValueHelpDelegate.retrieveContent called for typeahead");
 
 			ValueHelpDelegate.retrieveContent.restore();
+			delete ValueHelpDelegate.apiVersion;
 			fnDone();
 		}, 0);
 

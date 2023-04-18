@@ -2,8 +2,20 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/library", "sap/ui/mdc/p13n/subcontroller/FilterController", "sap/ui/mdc/p13n/subcontroller/AdaptFiltersController", "sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/base/util/merge", "sap/ui/core/Core", "sap/ui/mdc/enum/PersistenceMode"
-], function(coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode) {
+	"sap/ui/core/library",
+	"sap/ui/mdc/p13n/subcontroller/FilterController",
+	"sap/ui/mdc/p13n/subcontroller/AdaptFiltersController",
+	"sap/ui/mdc/filterbar/p13n/GroupContainer",
+	"sap/ui/mdc/filterbar/p13n/FilterColumnLayout",
+	"sap/ui/mdc/filterbar/p13n/FilterGroupLayout",
+	"sap/ui/mdc/filterbar/p13n/TableContainer",
+	"sap/ui/mdc/filterbar/FilterBarBase",
+	"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
+	"sap/base/util/merge",
+	"sap/ui/core/Core",
+	"sap/ui/mdc/enum/PersistenceMode",
+	"sap/ui/mdc/util/mapVersions"
+], function(coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode, mapVersions) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -333,6 +345,7 @@ sap.ui.define([
 			var oAdaptationControl = this._getAdaptationControlInstance();
 			var oDelegate = oAdaptationControl.getControlDelegate();
 			var oFilterDelegate = this._checkAdvancedParent(oAdaptationControl) ? oDelegate : oDelegate.getFilterDelegate();
+			mapVersions(oFilterDelegate);
 
 			//used to store the originals
 			this._mOriginalsForClone = {};
@@ -416,7 +429,7 @@ sap.ui.define([
 			oFilterFieldPromise = Promise.resolve(mExistingFilterItems[oItem.name]);
 		} else  {
 
-			oFilterFieldPromise = oFilterDelegate.addItem(oItem.name, this._getAdaptationControlInstance());
+			oFilterFieldPromise = oFilterDelegate.addItem(this._getAdaptationControlInstance(), oItem.name);
 
 			oFilterFieldPromise = oFilterFieldPromise.then(function(oFilterField){
 
@@ -441,7 +454,7 @@ sap.ui.define([
 			var oDelegate = this._getAdaptationControlInstance().getControlDelegate();
 
 			if (aExistingItems.indexOf(sKey) < 0) {//Originals that have not been selected --> use continue similar to 'ItemBaseFlex'
-				var oRemovePromise = oDelegate.removeItem.call(oDelegate, sKey, this._getAdaptationControlInstance()).then(function(bContinue){
+				var oRemovePromise = oDelegate.removeItem.call(oDelegate, this._getAdaptationControlInstance(), sKey).then(function(bContinue){
 					if (bContinue && this._mOriginalsForClone[sKey]) {
 						// destroy the item
 						this._mOriginalsForClone[sKey].destroy();

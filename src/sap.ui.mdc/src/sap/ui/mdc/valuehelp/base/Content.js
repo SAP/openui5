@@ -376,11 +376,11 @@ sap.ui.define([
 	Content.prototype.handleFilterValueUpdate = function(oChanges) {
 		if (this.isContainerOpen() && this.isTypeahead()) {
 			var oDelegate = this.getValueHelpDelegate();
-			var oDelegatePayload = this.getValueHelpDelegatePayload();
+			var oValueHelp = this.getValueHelpInstance();
 
 			// Everytime the filterValue changes, we consult the delegate again to decide if the typeahead should still be shown or hidden via a cancel event
 			// Please also see the default implementation of sap.ui.mdc.ValueHelpDelegate.showTypeahead
-			Promise.resolve(!!oDelegate && oDelegate.showTypeahead(oDelegatePayload, this)).then(function (bShowTypeahead) {
+			Promise.resolve(!!oDelegate && oDelegate.showTypeahead(oValueHelp, this)).then(function (bShowTypeahead) {
 				if (!bShowTypeahead) {
 					this.fireCancel();
 				}
@@ -530,13 +530,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the delegate payload of the value help
-	 * @returns {object} payload
+	 * Determines the <code>ValueHelp</code> instance
+	 * @returns {sap.ui.mdc.ValueHelp} The <code>ValueHelp</code> instance
 	 * @protected
 	 */
-	Content.prototype.getValueHelpDelegatePayload = function () {
+	Content.prototype.getValueHelpInstance = function () {
 		var oContainer = this.getParent();
-		return oContainer && oContainer.getValueHelpDelegatePayload();
+		return oContainer && oContainer.getValueHelp && oContainer.getValueHelp();
 	};
 
 	/**

@@ -242,14 +242,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getValueHelpDelegatePayload", function(assert) {
-
-		var oPayload = oContent.getValueHelpDelegatePayload();
-		assert.deepEqual(oPayload, {x: "X"}, "Payload returned");
-
-	});
-
-	QUnit.test("awaitValueHelpDelegate", function(assert) {
+	QUnit.test("_awaitValueHelpDelegate", function(assert) {
 
 		var oPromise = oContent.awaitValueHelpDelegate();
 		assert.ok(oPromise instanceof Promise, "Promise returned");

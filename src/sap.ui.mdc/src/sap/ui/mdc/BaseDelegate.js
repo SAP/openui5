@@ -34,14 +34,18 @@ sap.ui.define(['sap/ui/mdc/enum/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/bas
 	* Applications should implement {@link sap.ui.mdc.BaseDelegate.getTypeMap getTypeMap} instead to provide type mappings.
 	* Please also see the following extensible presets: {@link sap.ui.mdc.DefaultTypeMap}, {@link sap.ui.mdc.odata.TypeMap}, {@link sap.ui.mdc.odata.v4.TypeMap}
 	*
-	* @param {object} oPayload Delegate payload object
+	* @param {sap.ui.mdc.Control} oControl Delegate payload object
 	* @return {sap.ui.mdc.util.TypeUtil|sap.ui.mdc.util.TypeMap} configured TypeUtil/TypeMap
 	* @since 1.79.0
 	* @deprecated (since 1.115.0) - please see {@link #getTypeMap}
 	*
 	*/
-	BaseDelegate.getTypeUtil = function (oPayload) {
-		return this.getTypeMap(oPayload);
+	BaseDelegate.getTypeUtil = function (oControl) {
+		if (this.getTypeMap && this.getTypeMap.__mapped) {
+			return this.getTypeMap.getOriginalMethod().call(this, oControl);
+		} else {
+			return this.getTypeMap(oControl);
+		}
 	};
 
 
@@ -49,15 +53,17 @@ sap.ui.define(['sap/ui/mdc/enum/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/bas
 	/**
 	 * Returns the typeutil configuration for this delegate.
 	 *
-	 * @param {object} oPayload Delegate payload object
+	 * @param {sap.ui.mdc.Control} oControl Delegate payload object
 	 * @return {sap.ui.mdc.util.TypeMap} typeMap configuration for this delegate
 	 * Note: The returned array will also serve as a key in the weakmap-based typeutil cache of BaseDelegate
 	 * @since 1.114.0
 	 */
-	BaseDelegate.getTypeMap = function (oPayload) {
+	BaseDelegate.getTypeMap = function (oControl) {
 		// Support existing custom TypeUtils until all stakeholders switched to TypeMaps
-		var bHasTypeUtil = this.getTypeUtil && this.getTypeUtil !== BaseDelegate.getTypeUtil;
-		return bHasTypeUtil ? this.getTypeUtil(oPayload) : DefaultTypeMap;
+		var fnInstanceGetter = (this.getTypeUtil && this.getTypeUtil.__mapped) ? this.getTypeUtil.getOriginalMethod() : this.getTypeUtil;
+		var fnBaseGetter = (BaseDelegate.getTypeUtil && BaseDelegate.getTypeUtil.__mapped) ? BaseDelegate.getTypeUtil.getOriginalMethod() : BaseDelegate.getTypeUtil;
+		var bHasTypeUtil = fnInstanceGetter && fnInstanceGetter !== fnBaseGetter;
+		return bHasTypeUtil ? fnInstanceGetter.call(this, oControl) : DefaultTypeMap;
 	};
 
 	return BaseDelegate;

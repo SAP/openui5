@@ -25,7 +25,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.AggregationBaseDelegate
 	 */
-	var AggregationBaseDelegate = Object.assign(BaseDelegate, {
+	var AggregationBaseDelegate = Object.assign({}, BaseDelegate, {
 
 		/**
 	 	 * Retrieves the relevant metadata for a given payload and returns the property info array.
@@ -44,8 +44,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 * Consequently the parameter <code>mPropertyBag</code> is only passed during preprocessing. In runtime scenarios (such as opening a personalization dialog), this
 		 * method might be called without the parameter <code>mPropertyBag</code>.
 		 *
-		 * @param {string} sPropertyName The name of the property info object/JSON
 		 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
+		 * @param {string} sPropertyName The name of the property info object/JSON
 		 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility change API
 		 *
 		 * @returns {Promise} Promise that resolves with an instance of the implementing {@link sap.ui.mdc.Control Control} default aggregation.
@@ -55,7 +55,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 *
 		 * @public
 		 */
-		addItem: function (sPropertyName, oControl, mPropertyBag) {
+		addItem: function (oControl, sPropertyName, mPropertyBag) {
 			return Promise.resolve();
 		},
 
@@ -67,14 +67,14 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 * Consequently the parameter <code>mPropertyBag</code> is only passed during preprocessing. In runtime scenarios (such as opening a personalization dialog), this
 		 * method might be called without the parameter <code>mPropertyBag</code>.
 		 *
-		 * @param {sap.ui.core.Control} oItem The control instance that was removed
 		 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
+		 * @param {sap.ui.core.Control} oItem The control instance that was removed
 		 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility
 		 *
 		 * @returns {Promise} Promise that resolves with <code>true</code>, <code>false</code> to allow/prevent default behavior of the change
 		 * @public
 		 */
-		removeItem: function(oItem, oControl, mPropertyBag) {
+		removeItem: function(oControl, oItem, mPropertyBag) {
 			return Promise.resolve(true);
 		},
 

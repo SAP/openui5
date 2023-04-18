@@ -24,13 +24,13 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enum/LinkType'], function(
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
+	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.model.Context|null|undefined} oBindingContext Binding context of the <code>Link</code> control
 	 * @param {sap.ui.mdc.link.Log} oInfoLog InfoLog of the <code>Link</code> control
 	 * @returns {Promise<null|sap.ui.mdc.link.LinkItem[]>} Once resolved, <code>null</code> or an array of {@link sap.ui.mdc.link.LinkItem} is returned
 	 * If <code>null</code> is returned, the link won't cache <code>LinkItem</code>.
 	 */
-	LinkDelegate.fetchLinkItems = function(oPayload, oBindingContext, oInfoLog) {
+	LinkDelegate.fetchLinkItems = function(oLink, oBindingContext, oInfoLog) {
 		return Promise.resolve(null);
 	};
 
@@ -39,13 +39,12 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enum/LinkType'], function(
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @param {Object} oPayload Payload of the <code>Link</code> given by the application
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @returns {Promise<sap.ui.mdc.link.LinkTypeWrapper>} Once resolved, an object containing an initial {@link sap.ui.mdc.link.LinkType} and an optional <code>Promise</code> are returned.
 	 * The optional <code>Promise</code> also returns a {@link sap.ui.mdc.link.LinkType} object.
 	 * Once the optional <code>Promise</code> has been resolved, the returned {@link sap.ui.mdc.link.LinkType} overwrites the <code>initialType</code>.
 	 */
-	LinkDelegate.fetchLinkType = function(oPayload, oLink) {
+	LinkDelegate.fetchLinkType = function(oLink) {
 		return Promise.resolve({
 			initialType: {
 				type: LinkType.Popover,
@@ -60,11 +59,10 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enum/LinkType'], function(
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code> control
 	 * @returns {Promise<sap.ui.core.Control[]>} Once resolved, an array of {@link sap.ui.core.Control} is returned
 	 */
-	LinkDelegate.fetchAdditionalContent = function(oPayload, oLink) {
+	LinkDelegate.fetchAdditionalContent = function(oLink) {
 		return Promise.resolve([]);
 	};
 
@@ -74,12 +72,12 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enum/LinkType'], function(
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
+	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.model.Context|null|undefined} oBindingContext Binding context of the <code>Link</code> control
 	 * @param {sap.ui.mdc.link.LinkItem} aLinkItems The {@link sap.ui.mdc.link.LinkItem} instances of the link that can be modified
 	 * @returns {Promise<sap.ui.mdc.link.LinkItem[]>} Once resolved, an array of link items is returned
 	 */
-	 LinkDelegate.modifyLinkItems = function(oPayload, oBindingContext, aLinkItems) {
+	 LinkDelegate.modifyLinkItems = function(oLink, oBindingContext, aLinkItems) {
 		return Promise.resolve(aLinkItems);
 	};
 
@@ -88,11 +86,11 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enum/LinkType'], function(
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
+	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.base.Event} oEvent The <code>pressLink</code> event that is fired by the <code>Link</code> control
 	 * @returns {Promise<boolean>} Once resolved, it returns a Boolean value that determines whether the navigation takes place
 	 */
-	 LinkDelegate.beforeNavigationCallback = function(oPayload, oEvent) {
+	 LinkDelegate.beforeNavigationCallback = function(oLink, oEvent) {
 		return Promise.resolve(true);
 	};
 

@@ -54,7 +54,7 @@ sap.ui.define([
 
 	oCore.loadLibrary("sap.ui.fl");
 
-	function createFilterItem(sPropertyName, oFilterBar, mPropertyBag) {
+	function createFilterItem(oFilterBar, sPropertyName, mPropertyBag) {
 		return new Promise(function(resolve, reject){
 			resolve(new FilterField({
 				conditions: "{$filters>/conditions/" + sPropertyName + "}",
@@ -99,7 +99,7 @@ sap.ui.define([
 
 			FilterBarDelegate.fetchProperties = fetchProperties;
 			FilterBarDelegate.addItem = createFilterItem;
-
+			FilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 			return createAppEnvironment(sFilterBarView, "FilterBar").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
@@ -114,6 +114,7 @@ sap.ui.define([
 			this.oFilterBar.setFilterConditions({});
 		},
 		after: function(){
+			delete FilterBarDelegate.apiVersion;//CLEANUP_DELEGATTE
 			this.oUiComponentContainer = null;
 			this.oView = null;
 			this.oFilterBar.destroy();
@@ -745,13 +746,14 @@ sap.ui.define([
 
 	QUnit.module("API tests for Table", {
 		before: function(){
-			TableDelegate.fetchProperties = fetchProperties;
-			TableDelegate.addItem = function(sPropertyName) {
-				return Promise.resolve(new Column({propertyKey: sPropertyName}));
-			};
 			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
 
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
+				TableDelegate.fetchProperties = fetchProperties;
+				TableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+				TableDelegate.addItem = function(oControl, sPropertyName) {
+					return Promise.resolve(new Column({propertyKey: sPropertyName}));
+				};
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 			}.bind(this));
@@ -1026,14 +1028,14 @@ sap.ui.define([
 
 	QUnit.module("API tests for Table with V4 Analytics", {
 		before: function(){
-			TableDelegate.fetchProperties = fetchProperties;
-			TableDelegate.addItem = function(sPropertyName) {
-				return Promise.resolve(new Column({propertyKey: sPropertyName}));
-			};
 			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate" ' +
 				'delegate="{name: \'sap/ui/mdc/odata/v4/TableDelegate\', payload: {}}"></mdc:Table></mvc:View>';
 
 			return createAppEnvironment(sTableView, "V4AnalyticsTable").then(function(mCreatedApp){
+				TableDelegate.fetchProperties = fetchProperties;
+				TableDelegate.addItem = function(oControl, sPropertyName) {
+					return Promise.resolve(new Column({propertyKey: sPropertyName}));
+				};
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 			}.bind(this));
@@ -1443,16 +1445,16 @@ sap.ui.define([
 			};
 		},
 		before: function(){
-			TableDelegate.fetchProperties = fetchProperties;
+			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group"></mdc:Table></mvc:View>';
 			TableDelegate.getSupportedP13nModes = function() {
 				return ["Column","Sort","Filter","Group"];
 			};
-			TableDelegate.addItem = function(sPropertyName) {
-				return Promise.resolve(new Column({propertyKey: sPropertyName}));
-			};
-			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group"></mdc:Table></mvc:View>';
-
 			return createAppEnvironment(sTableView, "StateDiff").then(function(mCreatedApp){
+				TableDelegate.fetchProperties = fetchProperties;
+
+				TableDelegate.addItem = function(oControl, sPropertyName) {
+					return Promise.resolve(new Column({propertyKey: sPropertyName}));
+				};
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 			}.bind(this));

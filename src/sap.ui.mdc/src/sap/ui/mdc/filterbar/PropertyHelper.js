@@ -57,7 +57,7 @@ sap.ui.define([
 
 			var oParent = this.getParent();
 			if (oParent && oParent._oDelegate) {
-				var oTypeUtil = oParent._oDelegate.getTypeMap();
+				var oTypeUtil = oParent._oDelegate.getTypeMap(oParent);
 				try {
 					oProperty.typeConfig = oTypeUtil.getTypeConfig(oProperty.dataType, oProperty.formatOptions, oProperty.constraints);
 				} catch (ex) {

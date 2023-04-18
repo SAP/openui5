@@ -712,7 +712,7 @@ function(
         var oCreateSpy = sinon.spy(ChartDelegate, "_createMDCChartItem");
         sandbox.stub(ChartDelegate, "_getPropertyInfosByName").returns(Promise.resolve(undefined));
 
-        ChartDelegate.addItem("ABC", this.oMDCChart).then(function(){
+        ChartDelegate.addItem(this.oMDCChart, "ABC").then(function(){
             assert.ok(oCreateSpy.called, "Create was called");
             done();
         });

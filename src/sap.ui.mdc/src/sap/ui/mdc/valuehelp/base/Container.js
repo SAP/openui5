@@ -619,6 +619,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines the value help instane
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {sap.ui.mdc.ValueHelp} <code>ValueHelp</code> instance
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
+	 */
+	Container.prototype.getValueHelp = function () {
+		var oValueHelp = this.getParent();
+		return oValueHelp;
+	};
+
+	/**
 	 * Determines the delegate of the value help
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside

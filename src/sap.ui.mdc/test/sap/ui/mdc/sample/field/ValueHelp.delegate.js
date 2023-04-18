@@ -18,9 +18,10 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
+	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function(oPayload, oContainer, sContentId) {
-
+	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
+		var oPayload = oValueHelp.getPayload();
 		var oContent = sContentId ? sap.ui.getCore().byId(sContentId) : oContainer.getContent()[0];
 		sContentId = oContent && oContent.getId();
 
@@ -57,8 +58,8 @@ sap.ui.define([
 
 	};
 
-	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
-
+	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
+		var oPayload = oValueHelp.getPayload();
 		var oConditions = {};
 		var oControl = (oConfig && oConfig.control) || (oContent && oContent.getControl());
 
@@ -113,8 +114,8 @@ sap.ui.define([
 
 	};
 
-	ValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason, oConfig) {
-
+	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
+		var oPayload = oValueHelp.getPayload();
 		var oControl = oValueHelp.getControl();
 
 		if (oControl && sReason === "ControlChange" && oPayload.out) {
@@ -178,8 +179,8 @@ sap.ui.define([
 
 	};
 
-	ValueHelpDelegate.createConditionPayload = function (oPayload, oContent, aValues, oContext) {
-
+	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, oContext) {
+		var oPayload = oValueHelp.getPayload();
 		if (oPayload.in || oPayload.out) {
 			var oConditionPayload = {};
 			var i = 0;
@@ -209,8 +210,8 @@ sap.ui.define([
 		return undefined;
 	};
 
-	ValueHelpDelegate.isFilterableListItemSelected = function (oPayload, oContent, oItem, aConditions) {
-
+	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
+		var oPayload = oValueHelp.getPayload();
 		if (oPayload.in) {
 			var sModelName = oContent.getListBindingInfo().model;
 			var oContext = oItem && oItem.getBindingContext(sModelName);

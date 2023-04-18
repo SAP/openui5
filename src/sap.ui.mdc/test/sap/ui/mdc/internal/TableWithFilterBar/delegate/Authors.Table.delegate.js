@@ -9,6 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
+	AuthorsFBDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	var getFullId = function(oControl, sVHId) {
 		var oView = oControl.getParent();
@@ -107,7 +108,7 @@ sap.ui.define([
 		return new Field(oCtrlProperties);
 	};
 
-	AuthorsTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
+	AuthorsTableDelegate.addItem = function (oTable, sPropertyName, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
 

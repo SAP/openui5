@@ -269,8 +269,9 @@ sap.ui.define([
 		var oContent = this._getContent();
 		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(function () {// onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
 			var oDelegate = this.getValueHelpDelegate();
-			var oPayload = this.getValueHelpDelegatePayload();
-			return Promise.resolve(bTypeahead ? oDelegate.showTypeahead(oPayload, oContent) : true).then(function (bShowTypeahead) {
+			var oValueHelp = this.getValueHelp();
+
+			return Promise.resolve(bTypeahead ? oDelegate.showTypeahead(oValueHelp, oContent) : true).then(function (bShowTypeahead) {
 				return bShowTypeahead ? Promise.resolve(bShowTypeahead) : Promise.reject(bShowTypeahead);
 			});
 		}.bind(this)).then(function () {

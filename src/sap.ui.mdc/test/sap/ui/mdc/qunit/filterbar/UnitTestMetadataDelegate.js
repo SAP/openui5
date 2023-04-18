@@ -4,6 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	var UnitTestFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+	UnitTestFilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	UnitTestFilterBarDelegate.fetchProperties = function (oFilterBar) {
 		return Promise.resolve([{name: "key1"}, {name: "key2"}]);
@@ -67,7 +68,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	UnitTestFilterBarDelegate.addItem = function(sPropertyName, oFilterBar, mPropertyBag) {
+	UnitTestFilterBarDelegate.addItem = function(oFilterBar, sPropertyName, mPropertyBag) {
 		return Promise.resolve(this._createFilter(sPropertyName, oFilterBar, mPropertyBag));
 	};
 

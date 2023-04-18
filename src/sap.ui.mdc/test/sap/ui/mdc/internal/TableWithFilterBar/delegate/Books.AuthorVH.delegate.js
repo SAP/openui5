@@ -15,9 +15,9 @@ sap.ui.define([
 	var SelectionMode = library.SelectionMode;
 	var GrowingMode = library.GrowingMode;
 	var Delegate = Object.assign({}, ODataValueHelpDelegate);
+	Delegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	Delegate.retrieveContent = function (oPayload, oContainer, sContentId) {
-		var oValueHelp = oContainer && oContainer.getParent();
+	Delegate.retrieveContent = function (oValueHelp, oContainer, sContentId) {
 		var aCurrentContent = oContainer && oContainer.getContent();
 		var oCurrentContent = aCurrentContent && aCurrentContent.find(function(oContent){ return oContent.getId() === sContentId; });
 		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
@@ -138,7 +138,7 @@ sap.ui.define([
 		// return Promise.resolve();
 	};
 
-	Delegate.determineSearchSupported = function(oPayload, oValueHelp) {
+	Delegate.determineSearchSupported = function(oValueHelp) {
 		oValueHelp.setFilterFields("$search");
 		return Promise.resolve();
 	};

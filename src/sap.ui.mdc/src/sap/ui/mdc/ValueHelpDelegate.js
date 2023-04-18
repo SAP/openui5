@@ -46,7 +46,7 @@ sap.ui.define([
 	 * Once they are assigned and the data is set, the returned <code>Promise</code> needs to be resolved.
 	 * Only then does the value help continue opening or reading data.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
 	 * @param {string} sContentId id of the content shown after this call to retrieveContent
 	 *
@@ -55,14 +55,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer, sContentId) {
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer, sContentId) {
 		return Promise.resolve();
 	};
 
 	/**
 	 * Checks if a <code>ListBinding</code> supports $Search.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent Content element
 	 * @param {sap.ui.model.ListBinding} oListBinding ListBinding
 	 * @returns {boolean} true if $search is supported
@@ -70,7 +70,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ValueHelpDelegate.isSearchSupported = function(oPayload, oContent, oListBinding) {
+	ValueHelpDelegate.isSearchSupported = function(oValueHelp, oContent, oListBinding) {
 		return false;
 	};
 
@@ -78,7 +78,7 @@ sap.ui.define([
 	 * Controls if a typeahead should be opened or closed
 	 *
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent ValueHelp content requesting conditions configuration
  	 * @returns {Promise|Boolean} Boolean or Promise resolving to a boolean indicating the desired behavior
 	 * @private
@@ -86,7 +86,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ValueHelpDelegate.showTypeahead = function (oPayload, oContent) {
+	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
 		if (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue
 			return false;
 		} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show
@@ -102,7 +102,7 @@ sap.ui.define([
 	 *
 
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent ValueHelp content requesting conditions configuration
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the list to the model
 	 * @private
@@ -110,7 +110,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ValueHelpDelegate.updateBindingInfo = function(oPayload, oContent, oBindingInfo) {
+	ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
 		oBindingInfo.parameters = {};
 		oBindingInfo.filters = [];
 
@@ -136,7 +136,7 @@ sap.ui.define([
 	/**
 	 * Executes a filter in a <code>ListBinding</code> and resumes it, if suspended.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.model.ListBinding} oListBinding List binding
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the list to the model
   	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent ValueHelp content requesting the binding update
@@ -145,7 +145,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ValueHelpDelegate.updateBinding = function(oPayload, oListBinding, oBindingInfo, oContent) {
+	ValueHelpDelegate.updateBinding = function(oValueHelp, oListBinding, oBindingInfo, oContent) {
 		oListBinding.filter(oBindingInfo.filters, FilterType.Application);
 		if (oListBinding.isSuspended()) {
 			oListBinding.resume();
@@ -157,7 +157,7 @@ sap.ui.define([
 	 *
 	 * If <code>$search</code> is used, depending on which back-end service is used, the search string might need to be escaped.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {boolean} bTypeahead <code>true</code> if the search is called for a type-ahead
 	 * @param {string} sSearch Search string
 	 * @returns {string} Search string to use
@@ -167,14 +167,14 @@ sap.ui.define([
  	 * @deprecated (since 1.110.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.updateBinding}
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	 ValueHelpDelegate.adjustSearch = function(oPayload, bTypeahead, sSearch) {
+	 ValueHelpDelegate.adjustSearch = function(oValueHelp, bTypeahead, sSearch) {
 		return sSearch;
 	};
 
 	/**
 	 * Executes a filter in a <code>ListBinding</code>.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.model.ListBinding} oListBinding List binding
 	 * @param {int} iRequestedItems Number of requested items
 	 * @returns {Promise<sap.ui.model.ListBinding>} Promise that is resolved if search is executed
@@ -182,7 +182,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
+	ValueHelpDelegate.executeFilter = function(oValueHelp, oListBinding, iRequestedItems) {
 		return Promise.resolve(oListBinding);
 	};
 
@@ -191,7 +191,7 @@ sap.ui.define([
 	 * As long as the context has not been set for <code>ListBinding</code>,
 	 * <code>ValueHelp</code> needs to wait.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.model.ListBinding} oListBinding <code>ListBinding</code> to check
 	 * @param {int} iRequestedItems Number of requested items
 	 * @returns {boolean|Promise<boolean>} <code>Promise</code> that is resolved once <code>ListBinding</code> has been updated
@@ -199,7 +199,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	ValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding, iRequestedItems) {
+	ValueHelpDelegate.checkListBindingPending = function(oValueHelp, oListBinding, iRequestedItems) {
 		if (!oListBinding || oListBinding.isSuspended()) {
 			return false;
 		}
@@ -214,8 +214,7 @@ sap.ui.define([
 	 * Callback invoked everytime a {@link sap.ui.mdc.ValueHelp ValueHelp} fires a select event or the value of the corresponding field changes
 	 * This callback may be used to update external fields.
 	 *
-	 * @param {object} oPayload Payload for delegate
-  	 * @param {sap.ui.mdc.ValueHelp} oValueHelp <code>ValueHelp</code> control instance receiving the <code>controlChange</code>
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.enum.PropagationReason} sReason Reason why the method was invoked
  	 * @param {object} oConfig current configuration provided by the calling control
 	 * @private
@@ -223,7 +222,7 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason, oConfig) {
+	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
 
 	};
 
@@ -236,7 +235,7 @@ sap.ui.define([
 	 * <b>Note:</b> Be aware that setting the condition for the search field or type-ahead could
 	 * lead to unwanted side effects.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent ValueHelp content requesting conditions configuration
 	 * @param {sap.ui.core.Control} oControl Instance of the calling control
 	 * @returns {Promise<object>|object} Returns a map of conditions suitable for a sap.ui.mdc.FilterBar control
@@ -246,7 +245,7 @@ sap.ui.define([
 	 * @since 1.101.0
 	 * @deprecated (since 1.106.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.getFilterConditions}
 	 */
-	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
+	ValueHelpDelegate.getInitialFilterConditions = function (oValueHelp, oContent, oControl) {
 
 		var oConditions = {};
 		return oConditions;
@@ -257,7 +256,7 @@ sap.ui.define([
 	 * Provides the possibility to customize selections in 'Select from list' scenarios.
 	 * By default, only condition keys are considered. This may be extended with payload dependent filters.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {sap.ui.core.Element} oItem Entry of a given list
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
@@ -267,7 +266,7 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.isFilterableListItemSelected = function (oPayload, oContent, oItem, aConditions) {
+	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
 		var sModelName = oContent.getListBindingInfo().model;
 		var oContext = oItem && oItem.getBindingContext(sModelName);
 		var oItemData = oContent.getItemFromContext(oContext);
@@ -286,7 +285,7 @@ sap.ui.define([
 	 * Provides the possibility to customize selection events in 'Select from list' scenarios.
 	 * This enables an application to reuse conditions in collective search scenarios, instead of always creating new ones.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {object} oChange Selection event configuration
 	 * @param {sap.ui.mdc.enum.SelectType} oChange.type Type of the selection change (add, remove)
@@ -299,7 +298,7 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.modifySelectionBehaviour = function (oPayload, oContent, oChange) {
+	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
 		return oChange;
 	};
 
@@ -307,7 +306,7 @@ sap.ui.define([
 	 * Provides the possibility to convey custom data in conditions.
 	 * This enables an application to enhance conditions with data relevant for combined key or outparameter scenarios.
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {any[]} aValues key, description pair for the condition which is to be created.
 	 * @param {sap.ui.model.Context} [oContext] optional additional context
@@ -317,14 +316,14 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.createConditionPayload = function (oPayload, oContent, aValues, oContext) {
+	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, oContext) {
 		return undefined;
 	};
 
 	/**
 	 * Provides type information for listcontent filtering
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {object} oConditions set of conditions to create filters for
 	 * @returns {object} Returns a type map for property paths
@@ -333,7 +332,7 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.getTypesForConditions = function (oPayload, oContent, oConditions) {	// TODO: MDC.Table add UI.Table support
+	ValueHelpDelegate.getTypesForConditions = function (oValueHelp, oContent, oConditions) {	// TODO: MDC.Table add UI.Table support
 		var oConditionTypes = {};
 		var oListBindingInfo = oContent && oContent.getListBindingInfo();
 
@@ -355,7 +354,7 @@ sap.ui.define([
 	 * 	1. Initial set of conditions applied everytime a value help content is shown for the first time since opening it's container.
 	 * 	2. Detailed set of conditions in getItemForValue scenarios allowing to find a specific ValueHelpItem (indicated by oConfig availability)
 	 *
-	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
  	 * @param {object} [oConfig] Configuration
 	 * @param {any} oConfig.value Value as entered by user
@@ -374,9 +373,9 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.106.0
 	 */
-	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		if (this.getInitialFilterConditions) {
-			return this.getInitialFilterConditions(oPayload, oContent, (oConfig && oConfig.control) || (oContent && oContent.getControl()));
+			return this.getInitialFilterConditions(oValueHelp, oContent, (oConfig && oConfig.control) || (oContent && oContent.getControl()));
 		}
 		return {};
 	};
