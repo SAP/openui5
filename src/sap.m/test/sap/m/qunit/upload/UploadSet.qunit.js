@@ -802,6 +802,23 @@ sap.ui.define([
 		assert.ok(this.oUploadSet._oUploadButton && !this.oUploadSet._oUploadButton.getEnabled(), "Upload button on illustrated message section is disabled when uploadenabled is set to false");
 	});
 
+	QUnit.test("Test to validate visibility status of upload button on illustrated message section", function(assert) {
+
+		//arrange
+		this.oUploadSet.removeAllItems();
+		oCore.applyChanges();
+
+		//assert initial case
+		assert.ok(this.oUploadSet._oUploadButton && this.oUploadSet._oUploadButton.getVisible(), "By default uploadButtonInvisible is set to false and Upload button is visible");
+
+		//act
+		this.oUploadSet.setUploadButtonInvisible(true);
+		oCore.applyChanges();
+
+		//assert
+		assert.ok(this.oUploadSet._oUploadButton && !this.oUploadSet._oUploadButton.getVisible(), "Upload button on illustrated message section is hidden when uploadButtonInvisible is set to true");
+	});
+
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
