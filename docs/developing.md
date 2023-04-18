@@ -96,7 +96,7 @@ Testing UI5
 ### Running the static code checks (ESLint)
 
 All UI5 code must conform to a certain ruleset which is checked with ESLint (http://eslint.org/).  
-To run an ESLint check, navigate to the root directory of the repository and execute:
+To run an ESLint check (not showing warnings), navigate to the root directory of the repository and execute:
 ```
 grunt lint
 ```

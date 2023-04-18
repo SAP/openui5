@@ -1,4 +1,6 @@
+src/*/dist
 src/*/target
+src/*/node_modules
 src/*/test
 
 # library specific excludes - need to be consistent with the library-local .eslintignore files

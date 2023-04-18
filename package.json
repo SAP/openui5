@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "grunt serve",
-    "test": "grunt lint"
+    "test": "npm run lint",
+    "lint": "eslint ./src --quiet"
   },
   "keywords": [
     "openui5",
