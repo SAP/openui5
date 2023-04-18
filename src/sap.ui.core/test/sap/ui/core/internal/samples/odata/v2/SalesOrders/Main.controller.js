@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/base/security/encodeURL",
 	"sap/base/util/isEmptyObject",
 	"sap/m/DynamicDateRange",
+	"sap/m/library",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
-	"sap/m/StandardDynamicDateRangeKeys",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
@@ -18,11 +18,12 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/ODataUtils"
-], function (Log, encodeURL, isEmptyObject, DynamicDateRange, MessageBox, MessageToast, StandardDynamicDateRangeKeys,
+], function (Log, encodeURL, isEmptyObject, DynamicDateRange, mobileLibrary, MessageBox, MessageToast,
 		coreLibrary, Core, Element, Message, Controller, Filter, FilterOperator, Sorter, ODataUtils) {
 	"use strict";
 	var sClassname = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main.controller",
-		MessageType = coreLibrary.MessageType;
+		MessageType = coreLibrary.MessageType,
+		StandardDynamicDateRangeKeys = mobileLibrary.StandardDynamicDateRangeKeys;
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Main", {
 		/**

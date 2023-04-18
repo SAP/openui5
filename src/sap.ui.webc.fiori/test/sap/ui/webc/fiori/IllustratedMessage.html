@@ -24,7 +24,7 @@
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/fiori/IllustratedMessage",
-                "sap/ui/webc/fiori/IllustrationMessageType",
+                "sap/ui/webc/fiori/library",
                 "sap/ui/webc/fiori/Page",
                 "sap/ui/webc/main/List",
                 "sap/ui/webc/main/StandardListItem",
@@ -36,8 +36,9 @@
                 "sap/m/VBox",
                 "sap/m/HBox",
                 "utils/layoutUtil"
-            ], function( IllustratedMessage, IllustrationMessageType, Page, List, StandardListItem, Select, Option, Title, Label, Button, VBox, HBox, layoutUtil ) {
+            ], function( IllustratedMessage, webcFioriLibrary, Page, List, StandardListItem, Select, Option, Title, Label, Button, VBox, HBox, layoutUtil ) {
 
+            var IllustrationMessageType = webcFioriLibrary.IllustrationMessageType;
             var aRows = [],
                 addLayoutOptions = layoutUtil.addLayoutOptions,
                 Row = layoutUtil.Row,

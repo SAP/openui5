@@ -33,8 +33,9 @@
 				"sap/m/FormattedText",
 				"sap/m/Link",
 				"sap/m/Text",
-				"sap/ui/core/TextDirection"
-			], function (JSONModel, Item, SeparatorItem, ListItem, HTML, HorizontalLayout, ComboBox, Label, FormattedText, Link, Text, TextDirection){
+				"sap/ui/core/library"
+			], function (JSONModel, Item, SeparatorItem, ListItem, HTML, HorizontalLayout, ComboBox, Label, FormattedText, Link, Text, coreLibrary){
+				var TextDirection = coreLibrary.TextDirection;
 				var oModel = new JSONModel();
 				var mData = {
 					"items": [
