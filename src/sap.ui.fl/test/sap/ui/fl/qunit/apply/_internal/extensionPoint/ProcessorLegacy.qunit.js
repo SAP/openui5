@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Component,
 	ComponentContainer,
@@ -20,8 +19,7 @@ sap.ui.define([
 	Loader,
 	ChangePersistenceFactory,
 	AddXMLAtExtensionPoint,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 
@@ -44,7 +42,6 @@ sap.ui.define([
 		oSpyApplyExtensionPoint = sandbox.spy(ExtensionPointProcessor, "applyExtensionPoint");
 		oSpyAddXMLAtExtensionPointApply = sandbox.spy(AddXMLAtExtensionPoint, "applyChange");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
-		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 
 		if (bSync) {
 			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testAppLegacy")}});
