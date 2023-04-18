@@ -4,10 +4,9 @@
 sap.ui.define([
     "sap/ui/core/Element",
     "sap/base/Log"
-], function(Element, Log) {
+], function (Element, Log) {
     "use strict";
 
-    // Provides the Item class.
     /**
      * Constructor for a new Item.
      *
@@ -42,19 +41,22 @@ sap.ui.define([
                     label: {
                         type: "string"
                     },
-                    //TODO: Create a proper type map for groupable and aggregateable
+                    /**
+                     * Specifies the type of the item for the chart (groupable and aggregateable).
+                     * This is specific for the used chart library.
+                     */
                     type: {
-                        type:"string",
-                        defaultValue:""
+                        type: "string",
+                        defaultValue: ""
                     },
                     /**
-                     * Specifies the role of the item for the chart.
+                     * Specifies the role of the item for the chart (category, axis1...).
                      * This is specific for the used chart library.
-                     *  <b>NOTE: </b> This property must not be changed after initialization.
+                     * <b>NOTE:</b> This property must not be changed after initialization.
                      */
                     role: {
-						type: "string"
-					}
+                        type: "string"
+                    }
                 }
 
             }

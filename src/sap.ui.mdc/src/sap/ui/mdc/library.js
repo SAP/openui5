@@ -914,7 +914,8 @@
 	};
 
 	/**
-	 * Defines the types of chart actions in the toolbar.
+	 * Defines the types of chart actions in the toolbar.<br>
+	 * Can be used to remove some of the default ToolbarAction (see {@link sap.ui.mdc.Chart#ignoreToolbarActions} for more information)
 	 *
 	 * @enum {string}
 	 * @private

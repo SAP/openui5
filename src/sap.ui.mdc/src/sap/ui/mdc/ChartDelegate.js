@@ -32,31 +32,31 @@ sap.ui.define([
     /**
      * Notifies the inner chart to zoom in.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @param {int} iValue Value to zoom in
 
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      * @MDC_PUBLIC_CANDIDATE
      */
-    ChartDelegate.zoomIn = function (oMDCChart, iValue) {
+    ChartDelegate.zoomIn = function (oMDCChart) {
     };
 
     /**
      * Notifies the inner chart to zoom out.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @param {int} iValue value to zoom in
 
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
      */
-    ChartDelegate.zoomOut = function (oMDCChart, iValue) {
+    ChartDelegate.zoomOut = function (oMDCChart) {
     };
 
 
     /**
+     * Char <code>ZoomState</code> type.
+     *
      * @typedef {object} ZoomState
      * @property {boolean} enabled <code>true</code> if zooming is enabled
      * @property {number} currentZoomLevel Current zoom level of the chart in percent (between 0 and 1)
@@ -177,7 +177,7 @@ sap.ui.define([
      */
 
     /**
-     ** Returns the event handler for <code>SelectionDetails</code> as an object:
+     * Returns the event handler for <code>SelectionDetails</code> as an object:
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {sap.ui.mdc.SelectionDetails} Event handler for SelectionDetails
@@ -205,26 +205,9 @@ sap.ui.define([
     ChartDelegate.setLegendVisible = function (oMDCChart, bVisible) {
     };
 
-    // /**
-    //  * Creates a sorter for a given property.
-    //  * @param {sap.ui.mdc.chart.Item} oMDCItem MDC item for which a sorter is created
-    //  * @param {object} oSortProperty The sorting information
-    //  * @returns {sap.ui.model.Sorter} Sorter for given item
-    //  *
-    //  * @experimental
-    //  * @private
-    //  * @ui5-restricted sap.ui.mdc
-    //  * @MDC_PUBLIC_CANDIDATE
-    //  */
-    // ChartDelegate.getSorterForItem = function (oMDCItem, oSortProperty) {
-    //     //TODO: Check wether we really need this method.
-    //     //TODO: Right now it is needed since the name of a property does not include the aggregation method -> leads to an error when calling back-end
-    //     //TODO: In old chart, aggregation method was included in name since every method had their own Item
-    // };
-
     /**
      * Inserts an MDC chart Item (in case of sap.chart.Chart a Measure/Dimension) on the inner chart.
-     * This function is called by MDC chart on a change of the <code>Items</code> aggregation.
+     * This function is called by MDC chart on a change of the <code>Items</code> aggregation.<br>
      * <b>Note:</b> Do not call this yourself, as it would not be synced with the MDC chart, but instead insert the Item into the MDC chart.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart MDC chart to insert the item into
@@ -241,7 +224,7 @@ sap.ui.define([
 
     /**
      * Removes an Item (in case of sap.chart.Chart a Measure/Dimension) from the inner chart.
-     * This function is called by MDC chart on a change of the <code>Items</code> aggregation.
+     * This function is called by MDC chart on a change of the <code>Items</code> aggregation.<br>
      * <b>Note:</b> Do not call this yourself, as it would not be synced with the MDC chart, but instead remove the item from the MDC chart.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart  MDC chart to remove the item from
@@ -296,9 +279,11 @@ sap.ui.define([
     };
 
     /**
-     * @typedef {object} sap.ui.mdc.ChartTypeObject
+     * Char <code>ChartTypeObject</code> type.
+	 *
+     * @typedef {object} sap.ui.mdc.chart.ChartTypeObject
      * @property {string} key Unique key of the chart type
-     * @property {string} icon URI for the icon for the current chart type
+     * @property {sap.ui.core.URI} icon URI for the icon for the current chart type
      * @property {string} text Name of the current chart type
      * @property {boolean} selected Whether the chart type is the one currently used
      *
@@ -310,7 +295,7 @@ sap.ui.define([
     /**
      * Returns the current chart type.
      *
-     * @returns {sap.ui.mdc.ChartTypeObject[]} Information about the current chart type
+     * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Information about the current chart type
      * @throws Exception if inner chart is not initialized yet
      *
      * @experimental
@@ -325,7 +310,7 @@ sap.ui.define([
      * Gets the available chart types for the current state of the inner chart.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @returns {sap.ui.mdc.ChartTypeObject[]} Array containing the currently available chart types
+     * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Array containing the currently available chart types
      *
      * @experimental
      * @private
@@ -337,9 +322,11 @@ sap.ui.define([
 
 
     /**
-     * @typedef {object} sap.ui.mdc.ChartTypeLayoutConfig
+     * Char <code>ChartTypeLayoutConfig</code> type.
+     *
+     * @typedef {object} sap.ui.mdc.chart.ChartTypeLayoutConfig
      * @property {string} key identifier for the chart type
-     * @property {string[]} allowedLayoutOptions array containing allowed layout options as string
+     * @property {sap.ui.mdc.ChartItemRoleType[]} allowedLayoutOptions array containing allowed layout options as string
      *
      * @private
      * @ui5-restricted sap.ui.mdc, Fiori Elements
@@ -350,7 +337,7 @@ sap.ui.define([
      * This function is used by P13n to determine which chart type supports which layout options.
      * There might be chart types that do not support certain layout options (for example, "Axis3").
      *
-     * @returns {sap.ui.mdc.ChartTypeLayoutConfig[]} chart type layout config
+     * @returns {sap.ui.mdc.chart.ChartTypeLayoutConfig[]} chart type layout config
      *
      * @experimental
      * @private
@@ -461,26 +448,12 @@ sap.ui.define([
     ChartDelegate.createInnerChartContent = function (oMDCChart, fnCallbackDataLoaded) {
     };
 
-    /**
-     * Checks the binding of the chart and rebinds it if required.
-     *
-     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @param {object} oBindingInfo BindingInfo of the chart
-     *
-     * @deprecated as of 1.98;: use rebind instead
-     *
-     * @experimental
-     * @private
-     * @ui5-restricted sap.ui.mdc
-     */
-    ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
-    };
 
     /**
      * Checks the binding of the chart and rebinds it if required.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @param {object} oBindingInfo BindingInfo of the chart
+     * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo BindingInfo of the chart
      *
      * @experimental
      * @private
@@ -508,7 +481,7 @@ sap.ui.define([
      * Updates the binding info with the relevant filters.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart to the MDC chart
-     * @param {Object} oBindingInfo Binding info of the chart
+     * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo Binding info of the chart
      *
      * @experimental
      * @private
