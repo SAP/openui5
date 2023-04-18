@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
-	"sap/ui/mdc/field/FieldBaseDelegate",
+	"delegates/odata/v4/FieldBaseDelegate",
 	"sap/ui/mdc/condition/Condition",
 	'sap/ui/mdc/condition/ConditionValidateException',
 	"sap/ui/mdc/condition/FilterOperatorUtil",
@@ -78,7 +78,7 @@ sap.ui.define([
 
 	var fnInitDate = function() {
 		oType = new DateType({style: "long", calendarType: "Gregorian"});
-		oDynamicDateRangeConditionsType = new DynamicDateRangeConditionsType({valueType: oType, maxConditions: 1});
+		oDynamicDateRangeConditionsType = new DynamicDateRangeConditionsType({valueType: oType, maxConditions: 1, delegate: FieldBaseDelegate, payload: {}});
 	};
 
 	var fnInitDateTime = function() {
@@ -267,7 +267,7 @@ sap.ui.define([
 
 	QUnit.test("custom Date operator", function(assert) {
 
-		var oCondition = _createCondition("MYDATE2", [new Date(2023, 1, 9)]);
+		var oCondition = _createCondition("MYDATE2", ["2023-02-09"]);
 		var oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "DATE", values: [UI5Date.getInstance(2023, 1, 9)]}, "Result of formatting: " + oCondition.operator);
 
@@ -415,7 +415,7 @@ sap.ui.define([
 	QUnit.test("custom Date operator", function(assert) {
 
 		var oCondition = _createCondition("MYDATE2", ["2021-10-04"]);
-		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATE", values: ["2021-10-04"]});
+		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATE", values: [UI5Date.getInstance(2021, 9, 4)]}); // DynamicDateRange uses local date
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 	});
