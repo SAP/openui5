@@ -246,7 +246,7 @@ describe('sap.m.MultiInput', function() {
 
 		// Should open suggestions
 		browser.actions().sendKeys("l").perform();
-		expect(takeScreenshot(multiInputLongSuggestions)).toLookAs("mi-wrapping");
+		expect(takeScreenshot()).toLookAs("mi-wrapping");
 
 		// Should close the dropdown and clear the value
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
