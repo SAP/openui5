@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeStates",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/dt/qunit/TestUtil"
 ], function(
 	RtaQunitUtils,
 	merge,
@@ -41,7 +42,8 @@ sap.ui.define([
 	ChangeStates,
 	ChangeVisualization,
 	RuntimeAuthoring,
-	sinon
+	sinon,
+	TestUtil
 ) {
 	"use strict";
 
@@ -1036,6 +1038,45 @@ sap.ui.define([
 				this.oChangeVisualization.exit();
 				assert.ok(true, "then no error is thrown");
 			}.bind(this));
+		});
+
+		QUnit.test("when the visualization is started and there is a change on a control inside a template", function(assert) {
+			var fnDone = assert.async();
+			var oHorizontalLayout = TestUtil.createListWithBoundItems();
+			var sBoundListId = "boundlist";
+
+			var oMockChange = createMockChange("testRename", "rename", "boundlist");
+			oMockChange.setDependentSelectors({
+				originalSelector: {
+					id: "boundListItem-btn"
+				}
+			});
+
+			prepareChanges([oMockChange]);
+
+			this.oRta._oDesignTime.attachEventOnce("synced", function() {
+				startVisualization(this.oRta).then(function() {
+					var oChangeIndicator = collectIndicatorReferences()[0];
+					var oBoundListOverlay = OverlayRegistry.getOverlay(oHorizontalLayout.getContent()[0]);
+					assert.strictEqual(
+						oChangeIndicator.getOverlayId(),
+						oBoundListOverlay.getId(),
+						"then the indicator is added to the overlay of the control hosting the template (the bound list)"
+					);
+					assert.strictEqual(
+						oChangeIndicator.getSelectorId(),
+						sBoundListId,
+						"then the indicator is registered with the bound list selector"
+					);
+					oHorizontalLayout.destroy();
+					oCore.applyChanges();
+					fnDone();
+				});
+			}.bind(this));
+
+			var oPage = oCore.byId("Comp1---idMain1--mainPage");
+			oPage.insertAggregation("content", oHorizontalLayout, 0);
+			oCore.applyChanges();
 		});
 	});
 

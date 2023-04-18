@@ -240,12 +240,17 @@ sap.ui.define([
 		return getInfoFromChangeHandler(oAppComponent, oChange)
 			.then(function(oInfoFromChangeHandler) {
 				var mVisualizationInfo = oInfoFromChangeHandler || {};
-				var aAffectedElementIds = getSelectorIds(mVisualizationInfo.affectedControls || oChange.getSelector && [oChange.getSelector()] || []);
+				var aChangeSelectors = oChange.getSelector && oChange.getSelector() && [oChange.getSelector()];
+				var aAffectedElementSelectors = mVisualizationInfo.affectedControls || aChangeSelectors || [];
+				// If there is an original selector (e.g. control is inside a template),
+				// the indicator should be displayed on the host control (change selector)
+				var oChangeOriginalSelector = oChange.getOriginalSelector && oChange.getOriginalSelector();
+				var aDisplayElementSelectors = oChangeOriginalSelector ? aChangeSelectors : aAffectedElementSelectors;
 
 				return {
-					affectedElementIds: aAffectedElementIds,
+					affectedElementIds: getSelectorIds(aAffectedElementSelectors),
 					dependentElementIds: getSelectorIds(mVisualizationInfo.dependentControls) || [],
-					displayElementIds: getSelectorIds(mVisualizationInfo.displayControls) || aAffectedElementIds,
+					displayElementIds: getSelectorIds(mVisualizationInfo.displayControls || getSelectorIds(aDisplayElementSelectors)),
 					updateRequired: mVisualizationInfo.updateRequired,
 					descriptionPayload: mVisualizationInfo.descriptionPayload || {}
 				};
@@ -253,7 +258,11 @@ sap.ui.define([
 	}
 
 	function getInfoFromChangeHandler(oAppComponent, oChange) {
-		var oControl = oChange.getSelector && JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+		var oSelector = oChange.getOriginalSelector && oChange.getOriginalSelector();
+		if (!oSelector) {
+			oSelector = oChange.getSelector && oChange.getSelector();
+		}
+		var oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 		if (oControl) {
 			return ChangesWriteAPI.getChangeHandler({
 				changeType: oChange.getChangeType(),
