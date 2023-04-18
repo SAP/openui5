@@ -3,6 +3,28 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "b052b6540dd02bae8848f4bae13c21ed1a8071c9",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370044390"
+          }
+        ]
+      },
+      {
+        "id": "ff30afbd291703e860f9211e846ab05ded5b4576",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "c2426245125bad2c5bac624837622f67c0953759",
         "type": "FEATURE",
         "text": " sap.m.SinglePlanningCalendar: Multi day selection"

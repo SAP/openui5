@@ -3,6 +3,17 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "8d7220d6d830f34012b8210b0b245b21f763c94a",
+        "type": "FIX",
+        "text": " Integration Cards: Fixed failing test in TimeLine Card",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370036310"
+          }
+        ]
+      },
+      {
         "id": "a8ce377289ad00f159f8ebe19e90c07ed970ec90",
         "type": "FIX",
         "text": " Integration cards: List cards now have correct aria-label",
