@@ -22,7 +22,7 @@
             sap.ui.require([
                 "sap/ui/webc/main/Tree",
                 "sap/ui/webc/main/TreeItem",
-                "sap/ui/webc/main/ListMode",
+                "sap/ui/webc/main/library",
                 "sap/ui/webc/main/Label",
                 "sap/ui/webc/main/Select",
                 "sap/ui/webc/main/Option",
@@ -31,12 +31,12 @@
                 "sap/ui/webc/main/Button",
                 "sap/ui/webc/main/Link",
                 "sap/ui/webc/main/Icon",
-                "sap/ui/core/ValueState",
+                "sap/ui/core/library",
                 "sap/m/HBox",
                 "utils/layoutUtil"
             ], function( Tree,
             TreeItem,
-            ListMode,
+            webcMainLibrary,
             Label,
             Select,
             Option,
@@ -45,9 +45,12 @@
             Button,
             Link,
             Icon,
-            ValueState,
+            coreLibrary,
             HBox,
             layoutUtil ) {
+
+            var ListMode = webcMainLibrary.ListMode,
+                ValueState = coreLibrary.ValueState;
 
             var aRows = [],
                 addLayoutOptions = layoutUtil.addLayoutOptions,

@@ -20,7 +20,7 @@
 					"sap/m/ComboBox",
 					"sap/m/Page",
 					"sap/m/App",
-					"sap/ui/core/TitleLevel",
+					"sap/ui/core/library",
 					"sap/m/Title",
 					"sap/ui/core/HTML",
 					"sap/m/VBox"
@@ -34,11 +34,13 @@
 					ComboBox,
 					Page,
 					App,
-					TitleLevel,
+					coreLibrary,
 					Title,
 					HTML,
 					VBox
 				) {
+					var TitleLevel = coreLibrary.TitleLevel;
+
 					var oContent = new VBox("content"),
 						iIdCounter = 0,
 						oData = {

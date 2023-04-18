@@ -43,12 +43,11 @@
 					"sap/m/Table",
 					"sap/m/Text",
 					"sap/m/Token",
-					"sap/ui/core/TextDirection"
-				], function (JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MessageToast, MultiInput, Page, StandardListItem, Table, Text, Token, TextDirection){
-
-					jQuery.sap.require("sap.ui.table.Table");
-					jQuery.sap.require("sap.ui.table.Row");
-					jQuery.sap.require("sap.ui.table.Column");
+					"sap/ui/core/library",
+					"sap/ui/table/Table",
+					"sap/ui/table/Column",
+				], function (JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MessageToast, MultiInput, Page, StandardListItem, Table, Text, Token, coreLibrary, GridTable, GridTableColumn){
+					var TextDirection = coreLibrary.TextDirection;
 
  					//*******************************
 					var oEventList = new List();
@@ -830,13 +829,13 @@
 						new Token({text: "Token 3", key: "0003"}),
 					]);
 
-					var oCondensedTable = new sap.ui.table.Table("condensed-table", {
+					var oCondensedTable = new GridTable("condensed-table", {
 						visibleRowCount: 2,
 						visibleRowCountMode: "Fixed",
 						rows: "{/modelData}"
 					}).addStyleClass("sapUiMediumMarginBottom");
 
-					oCondensedTable.addColumn(new sap.ui.table.Column({
+					oCondensedTable.addColumn(new GridTableColumn({
 						label: "Table with MultiInput (Condensed Mode)",
 						template: [
 							oCondensedMultiInput

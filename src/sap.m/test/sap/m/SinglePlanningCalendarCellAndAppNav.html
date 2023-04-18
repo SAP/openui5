@@ -48,15 +48,18 @@
 					'sap/m/MessageToast',
 					'sap/m/MessageView',
 					'sap/m/MessageItem',
-					'sap/ui/core/MessageType',
-					'sap/m/PlacementType',
+					'sap/ui/core/library',
+					'sap/m/library',
 					'sap/m/App',
 					'sap/m/Page'
 				],
 				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView,
 							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, SinglePlanningCalendarMonthView,
 							PlanningCalendarLegend, Dialog, Button, ToggleButton, Item, UI5Date, CalendarAppointment,
-							CalendarLegendItem, MessageToast, MessageView, MessageItem, MessageType, PlacementType, App, Page) {
+							CalendarLegendItem, MessageToast, MessageView, MessageItem, coreLibrary, mobileLibrary, App, Page) {
+					var MessageType = coreLibrary.MessageType;
+					var PlacementType = mobileLibrary.PlacementType;
+
 					var aAppointments = [
 						{
 							title: "1 hour app. 0 without type and color",

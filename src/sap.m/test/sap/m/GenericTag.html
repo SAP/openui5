@@ -19,16 +19,18 @@
 			sap.ui.require([
 				"sap/m/MessageToast",
 				"sap/m/GenericTag",
-				"sap/m/GenericTagDesign",
-				"sap/m/GenericTagValueState",
+				"sap/m/library",
 				"sap/m/ObjectNumber",
 				"sap/m/Page",
 				"sap/ui/layout/VerticalLayout",
 				"sap/m/HBox",
 				"sap/ui/core/HTML",
 				"sap/m/App"
-			], function (MessageToast, GenericTag, GenericTagDesign, GenericTagValueState,
+			], function (MessageToast, GenericTag, mobileLibrary,
 						ObjectNumber, Page, VerticalLayout, HBox, HTML, App) {
+				var GenericTagDesign = mobileLibrary.GenericTagDesign;
+				var GenericTagValueState = mobileLibrary.GenericTagValueState;
+
 				var onPress = function (evt) {
 					MessageToast.show(evt.getSource().getId() + " Pressed");
 				};

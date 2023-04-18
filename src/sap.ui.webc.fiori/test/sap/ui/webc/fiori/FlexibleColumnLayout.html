@@ -21,7 +21,7 @@
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/fiori/FlexibleColumnLayout",
-                "sap/ui/webc/fiori/FCLLayout",
+                "sap/ui/webc/fiori/library",
                 "sap/ui/webc/fiori/Page",
                 "sap/ui/webc/main/List",
                 "sap/ui/webc/main/StandardListItem",
@@ -33,8 +33,9 @@
                 "sap/m/VBox",
                 "sap/m/HBox",
                 "utils/layoutUtil"
-            ], function( FlexibleColumnLayout, FCLLayout, Page, List, StandardListItem, Select, Option, Title, Label, CheckBox, VBox, HBox, layoutUtil ) {
+            ], function( FlexibleColumnLayout, webcFioriLibrary, Page, List, StandardListItem, Select, Option, Title, Label, CheckBox, VBox, HBox, layoutUtil ) {
 
+            var FCLLayout = webcFioriLibrary.FCLLayout;
             var aRows = [],
                 addLayoutOptions = layoutUtil.addLayoutOptions,
                 Row = layoutUtil.Row,
