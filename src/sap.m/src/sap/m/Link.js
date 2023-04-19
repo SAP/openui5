@@ -235,14 +235,6 @@ function(
 	 */
 	Link.prototype.onBeforeRendering = function() {};
 
-	Link.prototype.onAfterRendering = function() {
-		var oAnchorRef = this.getDomRef();
-		// TODO: Adjust sap.m.internal.ObjectMarkerCustomLink rendering part of the sap.m.ObjectMarker implementation
-		if (oAnchorRef && oAnchorRef.getAttribute("href") == "#") {
-			oAnchorRef.onclick = function() { return false; };
-		}
-	};
-
 	/**
 	 * Handle the key down event for SPACE
 	 * SHIFT or ESCAPE on pressed SPACE cancels the action
@@ -313,7 +305,7 @@ function(
 			// mark the event for components that needs to know if the event was handled by the link
 			oEvent.setMarked();
 
-			if (!this.firePress({ctrlKey: !!oEvent.ctrlKey, metaKey: !!oEvent.metaKey})) { // fire event and check return value whether default action should be prevented
+			if (!this.firePress({ctrlKey: !!oEvent.ctrlKey, metaKey: !!oEvent.metaKey}) || this.getDomRef().getAttribute("href") == "#") { // fire event and check return value whether default action should be prevented
 				oEvent.preventDefault();
 			}
 		} else { // disabled
@@ -328,12 +320,7 @@ function(
 	 * @private
 	 */
 	Link.prototype.onsapenter = Link.prototype._handlePress;
-
-	if (Device.support.touch) {
-		Link.prototype.ontap = Link.prototype._handlePress;
-	} else {
-		Link.prototype.onclick = Link.prototype._handlePress;
-	}
+	Link.prototype.onclick = Link.prototype._handlePress;
 
 	/**
 	 * Handles the touch event on mobile devices.
