@@ -6,7 +6,7 @@
 		showHeader="false"
 		placement="Bottom"
 		id="popover">
-		<SegmentedButton selectedKey="satellite" width="420px" selectionChange=".onVersioningCategoryChange">
+		<SegmentedButton selectedKey="{visualizationModel>/changeState}" width="420px" selectionChange=".onVersioningCategoryChange">
 			<items>
 				<SegmentedButtonItem
 					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_ALL}"

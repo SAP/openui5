@@ -104,9 +104,10 @@ sap.ui.define([
 			}), "i18n");
 
 			this._oChangeVisualizationModel = new JSONModel({
-				active: this.getIsActive()
+				active: this.getIsActive(),
+				changeState: ChangeStates.ALL
 			});
-			this._oChangeVisualizationModel.setDefaultBindingMode("OneWay");
+			this._oChangeVisualizationModel.setDefaultBindingMode("TwoWay");
 			this._sSelectedChangeCategory = ChangeCategories.ALL;
 			this._bSetModeChanged = false;
 
@@ -174,7 +175,11 @@ sap.ui.define([
 	ChangeVisualization.prototype._determineChangeVisibility = function(aRegisteredIndependentChanges, aAllRelevantChanges, sVisualizedChangeState) {
 		function filterRelevantChanges(aChanges) {
 			return aChanges.filter(function(oChange) {
-				if (!sVisualizedChangeState || sVisualizedChangeState === "all" || oChange.changeStates.includes(sVisualizedChangeState)) {
+				if (
+					!sVisualizedChangeState ||
+					sVisualizedChangeState === ChangeStates.ALL ||
+					oChange.changeStates.includes(sVisualizedChangeState)
+				) {
 					return true;
 				}
 				return false;
@@ -557,7 +562,7 @@ sap.ui.define([
 				)
 				&& (
 					!oRootData.changeState
-					|| oRootData.changeState === "all"
+					|| oRootData.changeState === ChangeStates.ALL
 					|| oChangeVizInfo.changeStates.includes(oRootData.changeState)
 				)
 			);

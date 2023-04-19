@@ -15,7 +15,9 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/rta/util/changeVisualization/ChangeCategories",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",
+	"sap/ui/rta/util/changeVisualization/ChangeStates",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4"
@@ -34,7 +36,9 @@ sap.ui.define([
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	QUnitUtils,
+	ChangeCategories,
 	ChangeIndicatorRegistry,
+	ChangeStates,
 	ChangeVisualization,
 	RuntimeAuthoring,
 	sinon
@@ -977,7 +981,7 @@ sap.ui.define([
 					}
 				}
 			);
-			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 			var oDependentOverlayDomRef;
 			return startVisualization(this.oRta).then(function() {
 				oCore.applyChanges();
@@ -1058,7 +1062,7 @@ sap.ui.define([
 			return startRta.call(this)
 			.then(startVisualization.bind(this, this.oRta))
 			.then(function() {
-				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 				oCore.applyChanges();
 				var aIndicators = collectIndicatorReferences();
 				var iYPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].height / 2);
@@ -1100,7 +1104,7 @@ sap.ui.define([
 			return startRta.call(this)
 			.then(startVisualization.bind(this, this.oRta))
 			.then(function() {
-				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 				oChangeIndicator = collectIndicatorReferences()[0];
 				iInitialTabindex = oChangeIndicator.getDomRef().getAttribute("tabindex");
 				var oOpenPopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
@@ -1196,10 +1200,19 @@ sap.ui.define([
 			var oMenuModelUpdateSpy = sandbox.spy(ChangeVisualization.prototype, "_updateVisualizationModelMenuData");
 			this.oChangeVisualization.updateAfterSave(this.oToolbar);
 			return startVisualization(this.oRta).then(function() {
-				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 				assert.ok(oResetSpy.called, "then changeIndicatorRegistry gets reset");
 				assert.ok(oSelectStateChangeSpy.called, "then selected changeState gets reset");
 				assert.ok(oMenuModelUpdateSpy.called, "then the menu model gets updated");
+				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+				return oOpenPopoverPromise;
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(
+					this.oChangeVisualization.getAggregation("popover").getContent()[0].getSelectedKey(),
+					ChangeStates.ALL,
+					"then the 'ALL' option is selected for the change state");
 			}.bind(this));
 		});
 	});
@@ -1244,7 +1257,7 @@ sap.ui.define([
 				};
 			}.bind(this));
 			return startVisualization(this.oRta).then(function() {
-				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 				oCore.applyChanges();
 				assert.ok(oResetSpy.called, "then changeIndicatorRegistry gets reset");
 			}.bind(this));
@@ -1272,7 +1285,7 @@ sap.ui.define([
 					return startVisualization(this.oRta);
 				}.bind(this))
 				.then(function() {
-					this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+					this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 					oCore.applyChanges();
 				}.bind(this));
 		},
@@ -1293,7 +1306,7 @@ sap.ui.define([
 			this.oRta.setMode("adaptation");
 			oCore.applyChanges();
 			return startVisualization(this.oRta).then(function() {
-				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 				oCore.applyChanges();
 				assert.strictEqual(collectIndicatorReferences().length, 1, "then indicators are created again");
 				this.oChangeVisualization.destroy();
