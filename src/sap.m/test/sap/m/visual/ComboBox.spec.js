@@ -135,7 +135,7 @@ describe("sap.m.ComboBox", function() {
 
 			// Should open suggestions
 			browser.actions().sendKeys("l").perform();
-			expect(takeScreenshot(comboLongSuggestions)).toLookAs("combobox-with-long-suggestions");
+			expect(takeScreenshot()).toLookAs("combobox-with-long-suggestions");
 
 			// Should close the dropdown
 			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
