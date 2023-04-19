@@ -645,6 +645,7 @@ sap.ui.define([
 
 	function _beforeEachExtensionPoint (sXmlView, oController) {
 		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+		sandbox.stub(oCore.getConfiguration(), "getSuppressDeactivationOfControllerCode").returns(true);
 		sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 		this.oComponent = _createComponent();
 		return _createAsyncView("myView", sXmlView, this.oComponent, oController)
