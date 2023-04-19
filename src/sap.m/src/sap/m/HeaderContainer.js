@@ -342,6 +342,12 @@ sap.ui.define([
 						this._oItemNavigation.setTabIndex0();
 						this._oItemNavigation.setCycling(false);
 
+						//Respecting Global Shortcuts like alt+right/left, cmd+right/left which is used for browser navigation with keyboard
+	                    this._oItemNavigation.setDisabledModifiers({
+	                        sapnext: ["alt", "meta"],
+	                        sapprevious: ["alt", "meta"]
+                        });
+
 						this._handleMobileScrolling();
 					}
 					if (this._isMobileView()) {
