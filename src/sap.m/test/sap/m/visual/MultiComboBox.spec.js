@@ -275,7 +275,7 @@ describe('sap.m.MultiComboBox', function() {
 
 		// Should open suggestions
 		browser.actions().sendKeys("l").perform();
-		expect(takeScreenshot(mMultiComboLongSuggestions)).toLookAs("multi-combobox-with-long-suggestions");
+		expect(takeScreenshot()).toLookAs("multi-combobox-with-long-suggestions");
 
 		// Should close suggestions
 		oMultiComboBoxArrow.click();
