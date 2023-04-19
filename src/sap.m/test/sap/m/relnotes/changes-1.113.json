@@ -3,6 +3,17 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "f40cf9f5f1ed2d4446da62a01f9322396baca028",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370044390"
+          }
+        ]
+      },
+      {
         "id": "b052b6540dd02bae8848f4bae13c21ed1a8071c9",
         "type": "FIX",
         "text": " sap.m.FormattedText: Formatting issue fixed",
