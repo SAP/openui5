@@ -63,15 +63,15 @@ sap.ui.define([
 					controlType: "sap.m.Page",
 					matchers: new Descendant(oButton), //instance
 					success: function (aPages) {
-						Opa5.assert.ok(oButton instanceof Opa5.getWindow().sap.m.Button, "Descendant is found in iframe");
+						Opa5.assert.ok(oButton instanceof Opa5.getPlugin().getControlConstructor("sap.m.Button"), "Descendant is found in iframe");
 						Opa5.assert.ok(aPages,length, 1);
-						Opa5.assert.ok(aPages[0] instanceof Opa5.getWindow().sap.m.Page);
+						Opa5.assert.ok(aPages[0] instanceof Opa5.getPlugin().getControlConstructor("sap.m.Page"));
 						this.waitFor({
 							controlType: "sap.m.Page",
 							matchers: new Descendant(oButton.getId()), // ID declaration
 							success: function (aPages) {
 								Opa5.assert.ok(aPages,length, 1);
-								Opa5.assert.ok(aPages[0] instanceof Opa5.getWindow().sap.m.Page, "Descendant is found in iframe");
+								Opa5.assert.ok(aPages[0] instanceof Opa5.getPlugin().getControlConstructor("sap.m.Page"), "Descendant is found in iframe");
 								Opa5.assert.ok(aPages[0].getId().match("page1"));
 							}
 						});

@@ -75,7 +75,7 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Select all' checkbox"
 						});
 					} else {
-						var $checkBox = Opa5.getWindow().jQuery("#" + sTableId + "-innerTable-selall");
+						var $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
 
 						return this.waitFor({
 							check: function() {
@@ -118,7 +118,7 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Deselect all' icon"
 						});
 					} else {
-						var $checkBox = Opa5.getWindow().jQuery("#" + sTableId + "-innerTable-selall");
+						var $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
 
 						return this.waitFor({
 							check: function() {
@@ -352,11 +352,11 @@ sap.ui.define([
 					if (oTable._isOfType(TableType.ResponsiveTable)) {
 						if (bSelectAll) {
 							Opa5.assert.equal(oInnerTable.getItems().filter(function(oItem) {
-								return oItem.getSelected() && Opa5.getWindow().jQuery('#' + oItem.getId()).hasClass('sapMLIBSelected');
+								return oItem.getSelected() && Opa5.getJQuery()('#' + oItem.getId()).hasClass('sapMLIBSelected');
 							}).length, oInnerTable.getItems().length, "All visible rows are selected");
 						} else {
 							Opa5.assert.equal(oInnerTable.getItems().filter(function(oItem) {
-								return !oItem.getSelected() && !Opa5.getWindow().jQuery('#' + oItem.getId()).hasClass('sapMLIBSelected');
+								return !oItem.getSelected() && !Opa5.getJQuery()('#' + oItem.getId()).hasClass('sapMLIBSelected');
 							}).length, oInnerTable.getItems().length, "All visible rows are de-selected");
 						}
 					} else {
@@ -394,13 +394,13 @@ sap.ui.define([
 						var oItem;
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
 							oItem = oInnerTable.getItems()[iIndex];
-							Opa5.assert.ok(oItem.getSelected() && Opa5.getWindow().jQuery('#' + oItem.getId()).hasClass('sapMLIBSelected'), "Row at index " + iIndex + " is selected");
+							Opa5.assert.ok(oItem.getSelected() && Opa5.getJQuery()('#' + oItem.getId()).hasClass('sapMLIBSelected'), "Row at index " + iIndex + " is selected");
 						}
 					} else {
 						var oRow;
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
 							oRow = oInnerTable.getRows()[iIndex];
-							Opa5.assert.ok(Opa5.getWindow().jQuery('#' + oRow.getId()).hasClass('sapUiTableRowSel'), "Row at index " + iIndex + " is selected");
+							Opa5.assert.ok(Opa5.getJQuery()('#' + oRow.getId()).hasClass('sapUiTableRowSel'), "Row at index " + iIndex + " is selected");
 						}
 					}
 				},

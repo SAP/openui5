@@ -287,7 +287,7 @@ sap.ui.define([
 			viewName: "myView",
 			id: "page1",
 			success: function (oPage) {
-				oButton = new (Opa5.getWindow().sap.m.Button)({
+				oButton = new (Opa5.getPlugin().getControlConstructor("sap.m.Button"))({
 					id: "newButton",
 					text: "{i18n>buttonText}"
 				});

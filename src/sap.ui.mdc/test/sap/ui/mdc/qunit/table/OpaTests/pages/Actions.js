@@ -76,7 +76,7 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Select all' checkbox"
 						});
 					} else {
-						var $checkBox = Opa5.getWindow().jQuery("#" + sTableId + "-innerTable-selall");
+						var $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
 
 						return this.waitFor({
 							check: function() {
@@ -117,7 +117,7 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Deselect all' icon"
 						});
 					} else {
-						var $checkBox = Opa5.getWindow().jQuery("#" + sTableId + "-innerTable-selall");
+						var $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
 
 						return this.waitFor({
 							check: function() {
@@ -163,7 +163,7 @@ sap.ui.define([
 						}
 					} else {
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
-							Opa5.getWindow().jQuery("#" + sTableId + "-innerTable-rowsel" + iIndex).trigger('click');
+							Opa5.getJQuery()("#" + sTableId + "-innerTable-rowsel" + iIndex).trigger('click');
 						}
 					}
 				},

@@ -192,7 +192,7 @@ sap.ui.define([
 					id: "testing-done",
 					success: function() {
 
-						var oFrame$ = Opa5.getWindow().jQuery;
+						var oFrame$ = Opa5.getJQuery();
 
 						var sTestResult = oFrame$("#qunit-testresult").text();
 						var rRegex = /\d+ assertions of (\d+) passed, (\d+) failed\./i;
@@ -227,7 +227,7 @@ sap.ui.define([
 					id: "testing-done",
 					success: function() {
 
-						var oFrame$ = Opa5.getWindow().jQuery;
+						var oFrame$ = Opa5.getJQuery();
 
 						var sTestResult = oFrame$("#qunit-testresult").text();
 						var rRegex = /\d+ assertions of (\d+) passed, (\d+) failed\./i;
@@ -259,7 +259,7 @@ sap.ui.define([
 					id: "testing-done",
 					success: function() {
 
-						var oFrame$ = Opa5.getWindow().jQuery;
+						var oFrame$ = Opa5.getJQuery();
 
 						var sTestResult = oFrame$("#qunit-testresult").text();
 						var rRegex = /\d+ assertions of (\d+) passed, (\d+) failed\./i;
