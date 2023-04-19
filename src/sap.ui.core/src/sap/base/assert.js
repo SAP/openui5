@@ -17,7 +17,7 @@ sap.ui.define([], function() {
 	 * @since 1.58
 	 * @alias module:sap/base/assert
 	 * @param {boolean} bResult Result of the checked assertion
-	 * @param {string|function} vMessage Message that will be logged when the result is <code>false</code>.
+	 * @param {string|function():any} vMessage Message that will be logged when the result is <code>false</code>.
 	 * In case this is a function, the return value of the function will be displayed. This can be used to execute
 	 * complex code only if the assertion fails.
 	 * @public
