@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Icon',
 	'sap/ui/core/LabelEnablement',
+	"sap/ui/core/date/UniversalDate",
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/base/ManagedObjectObserver',
@@ -52,6 +53,7 @@ sap.ui.define([
 		IconPool,
 		Icon,
 		LabelEnablement,
+		UniversalDate,
 		DateFormat,
 		TimezoneUtil,
 		ManagedObjectObserver,
@@ -1572,8 +1574,8 @@ sap.ui.define([
 			this._oOutput = this._oSelectedOption.getValueHelpOutput(this);
 			var aValueDates = this.toDates(this._oOutput, this.getCalendarWeekNumbering());
 			for (var i = 0; i < aValueDates.length; i++) {
-				if (this._oOutput.values[i] instanceof Date) {
-					this._oOutput.values[i] = aValueDates[i];
+				if (this._oOutput.values[i] instanceof Date && aValueDates[i] instanceof UniversalDate) {
+					this._oOutput.values[i] = aValueDates[i].getJSDate();
 				}
 			}
 
