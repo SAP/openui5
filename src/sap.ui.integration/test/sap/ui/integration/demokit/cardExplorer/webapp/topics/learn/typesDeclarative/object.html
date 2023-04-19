@@ -178,6 +178,7 @@
 								<li>"ComboBox" (experimental since 1.104) - see <a href="#comboBoxProperties">Additional Properties for ObjectGroupItem of type ComboBox</a></li>
 								<li>"TextArea" (experimental since 1.104) - see <a href="#textAreaProperties">Additional Properties for ObjectGroupItem of type TextArea</a></li>
 								<li>"Input" (experimental since 1.112) - see <a href="#inputProperties">Additional Properties for ObjectGroupItem of type Input</a></li>
+								<li>"Duration" (experimental since 1.114) - see <a href="#durationProperties">Additional Properties for ObjectGroupItem of type Duration</a></li>
 								<li>"RatingIndicator" (experimental since 1.111) - see <a href="#ratingIndicatorProperties">Additional Properties for ObjectGroupItem of type RatingIndicator</a></li>
 								<li>"Image" (experimental since 1.112) - see <a href="#imageProperties">Additional Properties for ObjectGroupItem of type Image</a></li>
 							</ul>
@@ -803,7 +804,7 @@
 				</table>
 			</div>
 
-			<div id="textAreaProperties" class="boldBlock">Additional Properties for ObjectGroupItem of type Input (experimental since 1.112)</div>
+			<div id="inputProperties" class="boldBlock">Additional Properties for ObjectGroupItem of type Input (experimental since 1.112)</div>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -845,6 +846,54 @@
 						<td>Defines the user input validations.</td>
 						<td>1.52</td>
 						<td>1.112</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="durationProperties" class="boldBlock">Additional Properties for ObjectGroupItem of type Duration (experimental since 1.114)</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>id</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Defines the ID of the form duration input. Will be used in the submitted payload.</td>
+						<td>1.54</td>
+						<td>1.114</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the initial value for the duration input.
+							The available values are hours and minutes, formatted like HH:mm.
+							For example "10:30" - 10 hours and 30 minutes.</td>
+						<td>1.54</td>
+						<td>1.114</td>
+					</tr>
+					<tr>
+						<td>placeholder</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines a short hint intended to aid the user with data entry when there is no value set.</td>
+						<td>1.54</td>
+						<td>1.114</td>
+					</tr>
+					<tr>
+						<td>validations</td>
+						<td><a href="#validationsProperties">ObjectGroupItemValidation[]</a></td>
+						<td>No</td>
+						<td>Defines the user duration-input validations.</td>
+						<td>1.54</td>
+						<td>1.114</td>
 					</tr>
 				</table>
 			</div>

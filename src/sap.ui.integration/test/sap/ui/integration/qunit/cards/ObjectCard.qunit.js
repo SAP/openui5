@@ -515,6 +515,7 @@ sap.ui.define([
 					"initialSelection": "reason1",
 					"initialComment": "Free text comment",
 					"initialValue": "Initial value",
+					"durationValue": "11:12",
 					"reasons": [
 						{
 							"id": "reason1",
@@ -567,6 +568,12 @@ sap.ui.define([
 								"type": "Input",
 								"value": "{/initialValue}",
 								"placeholder": "Enter user value"
+							},
+							{
+								"id": "durationValue",
+								"label": "Duration",
+								"type": "Duration",
+								"value": "{/durationValue}"
 							}
 						]
 					}
@@ -2146,7 +2153,8 @@ sap.ui.define([
 				aItems = oLayout.getItems(),
 				oComboBox = aItems[1],
 				oTextArea = aItems[3],
-				oInput = aItems[5];
+				oInput = aItems[5],
+				oTimePicker = aItems[7];
 
 			// Assert Combo Box
 			assert.ok(oComboBox.isA("sap.m.ComboBox"), "ComboBox is created.");
@@ -2168,6 +2176,11 @@ sap.ui.define([
 			assert.strictEqual(oInput.getValue(), "Initial value", "Input has correct value.");
 			assert.strictEqual(oInput.getLabels()[0].getText(), "User Value:", "Input is referenced to the correct label.");
 
+			// Assert Duration
+			assert.ok(oTimePicker.isA("sap.m.TimePicker"), "oTimePicker is created.");
+			assert.strictEqual(oTimePicker.getValue(), "11:12", "Duration has correct value.");
+			assert.strictEqual(oTimePicker.getLabels()[0].getText(), "Duration:", "Duration is referenced to the correct label.");
+
 			done();
 		});
 
@@ -2187,7 +2200,8 @@ sap.ui.define([
 						"value": "Reason 1"
 					},
 					"comment": "Free text comment",
-					"userValue": "Initial value"
+					"userValue": "Initial value",
+					"durationValue": "11:12"
 				};
 
 			assert.deepEqual(mParameters.data, mExpectedData, "Data is properly passed to action handler.");

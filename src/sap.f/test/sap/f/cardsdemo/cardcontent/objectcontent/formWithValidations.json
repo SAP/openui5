@@ -55,7 +55,8 @@
 				],
 				"selectedKey": "",
 				"msg": "dddd",
-				"inputValue": "Some Value"
+				"inputValue": "Some Value",
+				"durationValue": "11:22"
 			}
 		},
 		"header": {
@@ -162,6 +163,18 @@
 							"validations": [
 								{
 									"restrictToPredefinedOptions": true
+								}
+							]
+						},
+						{
+							"id": "duration1",
+							"label": "Duration",
+							"type": "Duration",
+							"placeholder": "Enter duration",
+							"value": "{/durationValue}",
+							"validations": [
+								{
+									"required": true
 								}
 							]
 						},
