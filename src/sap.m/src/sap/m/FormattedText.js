@@ -228,30 +228,15 @@ function(
 		};
 
 		/**
-		 * Applies sanitization policy to an URL.
-		 * @param {string} sUrl
-		 * @returns {string|undefined} the validated URL or <code>undefined</code> if URL not allowed
-		 * @private
-		 */
-		function uriRewriter(sUrl) {
-			// by default, we use the URLListValidator to check the URLs
-			if (URLListValidator.validate(sUrl)) {
-				return sUrl;
-			}
-		}
-
-		/**
 		 * Sanitizes the value of an HTMLElement's style attribute.
 		 * @param {string} a semicolon-separated list of css rules
 		 * @returns {string} the sanitized value
 		 * @private
 		 */
 		function sanitizeCSSStyles(value) {
-			var fnParseCssDeclarations = window['parseCssDeclarations'],
-				fnSanitizeCssProperty = window['sanitizeCssProperty'],
-				oCssSchema = window['cssSchema'];
+			var fnParseCssDeclarations = window['parseCssDeclarations'];
 
-			if (!fnParseCssDeclarations || !fnSanitizeCssProperty || !oCssSchema) {
+			if (!fnParseCssDeclarations) {
 				return null;
 			}
 			var sanitizedDeclarations = [];
@@ -263,13 +248,7 @@ function(
 					if (normProp == "position") {
 						return;
 					}
-					var schema = oCssSchema[normProp];
-					if (!schema) {
-						return;
-					}
-					fnSanitizeCssProperty(
-						normProp, schema, tokens,
-						uriRewriter);
+
 					sanitizedDeclarations.push(property + ': ' + tokens.join(' '));
 				}
 			});

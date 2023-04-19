@@ -82,6 +82,9 @@ sap.ui.define([
 		setText('<span style="word-wrap: break-word; color:red;">' + sFT + '</span>');
 		$span = oFT.$().find("span");
 		assert.strictEqual($span[0].getAttribute("style"), "word-wrap: break-word; color: red;", "styles are properly semicolon separated");
+		setText('<span style="padding-inline-start: 15px; margin-block-start: 0px">' + sFT + '</span>');
+		$span = oFT.$().find("span");
+		assert.strictEqual($span[0].getAttribute("style"), "padding-inline-start: 15px; margin-block-start: 0px;", "styles are properly semicolon separated");
 		setText('<a style="color:red;position:absolute;">"' + sFT + '</a>');
 		assert.strictEqual($a[0].style.position, "", "inline style for position is removed");
 		setText('<a style="position:fixed;">"' + sFT + '</a>');
