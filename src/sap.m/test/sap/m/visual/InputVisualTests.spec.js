@@ -242,7 +242,7 @@ describe("sap.m.InputVisualTests", function() {
 
 			// Should open the suggestions
 			browser.actions().sendKeys("l").perform();
-			expect(takeScreenshot(inputLongSuggestions)).toLookAs("input-with-long-suggestions");
+			expect(takeScreenshot()).toLookAs("input-with-long-suggestions");
 
 			// Should close the dropdown
 			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
