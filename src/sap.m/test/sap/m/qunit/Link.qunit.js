@@ -74,14 +74,14 @@ sap.ui.define([
 
 	QUnit.test("Press event", function(assert) {
 		assert.expect(12); // verifies the event handler was executed
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
+		qutils.triggerEvent("click", oLink1.getId());
 		bLinkPressExpectCtrlKey = true;
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId(), {ctrlKey: true});
+		qutils.triggerEvent("click", oLink1.getId(), {ctrlKey: true});
 		bLinkPressExpectCtrlKey = false;
 		bLinkPressExpectMetaKey = true;
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId(), {metaKey: true});
+		qutils.triggerEvent("click", oLink1.getId(), {metaKey: true});
 		bLinkPressExpectCtrlKey = true;
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId(), {metaKey: true, ctrlKey: true});
+		qutils.triggerEvent("click", oLink1.getId(), {metaKey: true, ctrlKey: true});
 		bLinkPressExpectMetaKey = false;
 		bLinkPressExpectCtrlKey = false;
 	});
@@ -586,18 +586,31 @@ sap.ui.define([
 		// Prepare
 		var oLink = new Link({text: "text"}),
 			oFakeEvent = {preventDefault: function() {}},
-			oPressSpy = this.spy(oLink, "firePress");
+			oPressSpy = this.spy(oLink, "firePress"),
+			oPreventDefaultSpy = this.spy(oFakeEvent, "preventDefault");
 
 		oLink.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-
 		// Act
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink.getId(), oFakeEvent);
+		qutils.triggerEvent("click", oLink.getId(), oFakeEvent);
 
 		// Assert
-		assert.notOk(oLink.getDomRef().onclick(), "Navigation is prevented");
 		assert.ok(oPressSpy.calledOnce, "Press event still fired");
+		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented");
+
+		// Clean
+		oPreventDefaultSpy.resetHistory();
+
+		// Act
+		oLink.setHref("www.sample.domain.com");
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerEvent("click", oLink.getId(), oFakeEvent);
+
+		// Assert
+		assert.ok(oPreventDefaultSpy.notCalled, "Navigation would not be prevented");
 
 		// Clean
 		oLink.destroy();
