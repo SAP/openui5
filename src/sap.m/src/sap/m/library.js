@@ -3437,7 +3437,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @enum {string}
-	 * @experimental Since 1.92. These keys are experimental. The API might be changed in future.
 	 */
 	thisLib.StandardDynamicDateRangeKeys = {
 
