@@ -862,6 +862,9 @@ sap.ui.define([
 			assert.ok(oListItem2.$().find(".sapUiIntLCIAttrRow:nth-of-type(6) .sapMObjStatusShowIcon").length, "Status icon is shown");
 			assert.notOk(oListItem3.$().find(".sapUiIntLCIAttrRow:nth-of-type(4) .sapMObjStatusShowIcon").length, "Status icon is not shown");
 
+			QUnitUtils.triggerEvent("focusin", oListItem1.getDomRef());
+			assert.notOk(oListItem1.getDomRef().getAttribute("aria-labelledby"), "aria-labelledby is not set when focused");
+
 			done();
 		}.bind(this));
 
