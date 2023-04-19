@@ -1621,7 +1621,7 @@ sap.ui.define([
 				extension: oExtension,
 				csrfTokensConfig: this._oCardManifest.get(MANIFEST_PATHS.CSRF_TOKENS),
 				card: this
-			}).attachEvent("liveDataFallback", this._onLiveDataFallback, this);
+			});
 
 			this._registerCustomModels();
 
@@ -1639,6 +1639,8 @@ sap.ui.define([
 	 */
 	Card.prototype._applyManifestSettings = function () {
 		this._setParametersModelData();
+
+		this._checkMockPreviewMode();
 
 		this._applyServiceManifestSettings();
 		this._applyFilterBarManifestSettings();
@@ -2804,16 +2806,44 @@ sap.ui.define([
 		return new Card(oSettings);
 	};
 
-	Card.prototype._onLiveDataFallback = function () {
-		Log.error("'mockData' configuration is missing, but the card 'previewMode' is 'MockData'. Real data will be loaded.", this);
-
-		this.attachEventOnce("manifestApplied", function () {
-			this.showMessage(this._oIntegrationRb.getText("CARD_MISSING_PREVIEW_CONFIGURATION"), MessageType.Information);
-		}.bind(this));
-	};
-
+	/**
+	 * Checks if the card data provider is of JSON type.
+	 * @private
+	 * @returns {boolean} True if data provider is JSON.
+	 */
 	Card.prototype._isDataProviderJson = function () {
 		return this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"];
+	};
+
+	/**
+	 * Checks if mock data is configured when preview mode is set to MockData.
+	 * @private
+	 */
+	Card.prototype._checkMockPreviewMode = function () {
+		if (this.getPreviewMode() !== CardPreviewMode.MockData) {
+			return;
+		}
+
+		var aDataSections = this._oCardManifest.findDataSections(),
+			bHasMissingMockData;
+
+		bHasMissingMockData = aDataSections.some(function (oDataSettings) {
+			if (!DataProviderFactory.isProvidingConfiguration(oDataSettings)) {
+				// data section with only a "path" property
+				return false;
+			}
+
+			return !(oDataSettings.mockData && DataProviderFactory.isProvidingConfiguration(oDataSettings.mockData));
+		});
+
+		if (bHasMissingMockData) {
+			Log.warning("'mockData' configuration is missing, but the card 'previewMode' is 'MockData'. Abstract mode will be used instead.", this);
+			this.setProperty("previewMode", CardPreviewMode.Abstract);
+
+			this.attachEventOnce("manifestApplied", function () {
+				this.showMessage(this._oIntegrationRb.getText("CARD_MISSING_PREVIEW_CONFIGURATION"), MessageType.Information);
+			}.bind(this));
+		}
 	};
 
 	return Card;

@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/base/EventProvider",
+	"sap/base/Log",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/RequestDataProvider",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/integration/util/CsrfTokenHandler"
 ], function (
 	EventProvider,
+	Log,
 	library,
 	ServiceDataProvider,
 	RequestDataProvider,
@@ -119,7 +121,7 @@ sap.ui.define([
 	DataProviderFactory.prototype.create = function (oDataConfiguration, oServiceManager, bIsFilter, bConfigurationAlreadyResolved) {
 		var oCard = this._oCard;
 
-		if (!this._isProvidingConfiguration(oDataConfiguration) || oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract) {
+		if (!DataProviderFactory.isProvidingConfiguration(oDataConfiguration) || oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract) {
 			return null;
 		}
 
@@ -232,26 +234,25 @@ sap.ui.define([
 	};
 
 	DataProviderFactory.prototype._applyMockDataConfiguration = function (oDataConfiguration) {
-		if (oDataConfiguration.mockData && this._isProvidingConfiguration(oDataConfiguration.mockData)) {
-			var oNewDataConfiguration = Object.assign({}, oDataConfiguration);
-			delete oNewDataConfiguration.request;
-			delete oNewDataConfiguration.service;
-			delete oNewDataConfiguration.json;
-			delete oNewDataConfiguration.extension;
-
-			return Object.assign(oNewDataConfiguration, oDataConfiguration.mockData);
+		if (!oDataConfiguration.mockData || !DataProviderFactory.isProvidingConfiguration(oDataConfiguration.mockData)) {
+			Log.error("There is no mock data configured.", "sap.ui.integration.widgets.Card");
+			return null;
 		}
 
-		this.fireEvent("liveDataFallback");
+		var oNewDataConfiguration = Object.assign({}, oDataConfiguration);
+		delete oNewDataConfiguration.request;
+		delete oNewDataConfiguration.service;
+		delete oNewDataConfiguration.json;
+		delete oNewDataConfiguration.extension;
 
-		return oDataConfiguration;
+		return Object.assign(oNewDataConfiguration, oDataConfiguration.mockData);
 	};
 
 	/**
 	 * @param {object} oDataCfg Data configuration
 	 * @returns {boolean} Whether the configuration provides data
 	 */
-	DataProviderFactory.prototype._isProvidingConfiguration = function (oDataCfg) {
+	DataProviderFactory.isProvidingConfiguration = function (oDataCfg) {
 		return oDataCfg && (oDataCfg.request || oDataCfg.service || oDataCfg.json || oDataCfg.extension);
 	};
 
