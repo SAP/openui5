@@ -47,7 +47,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Event",
 	"sap/base/util/Deferred",
-	"sap/ui/base/ManagedObjectObserver"
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/model/odata/type/String", // load used data types as in legacyFree UI5 they are not loaded automatically
+	"sap/ui/model/odata/type/Byte",
+	"sap/ui/model/odata/type/Boolean"
 ], function(
 	TableQUnitUtils,
 	QUtils,
@@ -94,7 +97,10 @@ sap.ui.define([
 	jQuery,
 	Event,
 	Deferred,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	StringType,
+	ByteType,
+	BooleanType
 ) {
 	"use strict";
 
