@@ -6,14 +6,12 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/Log",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/initial/_internal/changeHandlers/ChangeRegistryItem",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/requireAsync"
 ], function(
 	each,
 	Log,
 	Layer,
-	ChangeRegistryItem,
 	Settings,
 	requireAsync
 ) {
@@ -36,6 +34,24 @@ sap.ui.define([
 	var mActiveForAllItems = {};
 	var mPredefinedChangeHandlers = {};
 
+	function checkPreconditions(oChangeHandlerEntry) {
+		if (!oChangeHandlerEntry.changeHandler) {
+			Log.error("sap.ui.fl.registry.ChangeRegistryStorage: changeHandler required");
+			return false;
+		}
+		return true;
+	}
+
+	function resolveChangeHandlerIfNecessary(oChangeHandlerEntry) {
+		if (typeof oChangeHandlerEntry.changeHandler === "string") {
+			return requireAsync(oChangeHandlerEntry.changeHandler.replace(/\./g, "/")).then(function(oChangeHandlerImpl) {
+				oChangeHandlerEntry.changeHandler = oChangeHandlerImpl;
+				return oChangeHandlerEntry.changeHandler;
+			});
+		}
+		return oChangeHandlerEntry.changeHandler;
+	}
+
 	function replaceDefault(sChangeType, vChangeHandler) {
 		var oResult = {};
 		if (!vChangeHandler || !vChangeHandler.changeHandler) {
@@ -55,12 +71,12 @@ sap.ui.define([
 	function createDeveloperChangeRegistryItems(mDeveloperModeHandlers) {
 		mActiveForAllItems = {};
 		each(mDeveloperModeHandlers, function(sChangeType, oChangeHandler) {
-			var oChangeRegistryItem = new ChangeRegistryItem({
+			var oChangeRegistryItem = {
 				controlType: "defaultActiveForAll",
 				changeHandler: oChangeHandler,
 				layers: Settings.getDeveloperModeLayerPermissions(),
 				changeType: sChangeType
-			});
+			};
 			mActiveForAllItems[sChangeType] = oChangeRegistryItem;
 		});
 	}
@@ -78,21 +94,23 @@ sap.ui.define([
 			});
 		}
 
-		var mParam = {
+		var oChangeHandlerEntry = {
 			controlType: sControlType,
 			changeHandler: oChangeHandler.changeHandler,
 			layers: mLayerPermissions,
 			changeType: sChangeType
 		};
 
-		return new ChangeRegistryItem(mParam);
+		return checkPreconditions(oChangeHandlerEntry) ? oChangeHandlerEntry : undefined;
 	}
 
 	function createAndAddChangeRegistryItem(sControlType, sChangeType, oChangeHandler) {
 		var oRegistryItem = createChangeRegistryItem(sControlType, sChangeType, oChangeHandler);
 
-		mRegisteredItems[sControlType] = mRegisteredItems[sControlType] || {};
-		mRegisteredItems[sControlType][sChangeType] = oRegistryItem;
+		if (oRegistryItem) {
+			mRegisteredItems[sControlType] = mRegisteredItems[sControlType] || {};
+			mRegisteredItems[sControlType][sChangeType] = oRegistryItem;
+		}
 	}
 
 	function registerChangeHandlersForControl(sControlType, mChangeHandlers) {
@@ -128,7 +146,7 @@ sap.ui.define([
 		// all USER layer changes are also enabled in the PUBLIC layer
 		sLayer = sLayer === Layer.PUBLIC ? Layer.USER : sLayer;
 
-		if (!oRegistryItem.getLayers()[sLayer]) {
+		if (!oRegistryItem.layers[sLayer]) {
 			throw Error("Change type " + sChangeType + " not enabled for layer " + sLayer);
 		}
 
@@ -163,9 +181,19 @@ sap.ui.define([
 	 * @return {Promise.<object>} Change handler object wrapped in a promise
 	 */
 	ChangeHandlerStorage.getChangeHandler = function(sChangeType, sControlType, oControl, oModifier, sLayer) {
-		return getInstanceSpecificChangeRegistryItem(sChangeType, sControlType, oControl, oModifier).then(function(vInstanceSpecificRegistryItem) {
+		return getInstanceSpecificChangeRegistryItem(sChangeType, sControlType, oControl, oModifier)
+		.then(function(vInstanceSpecificRegistryItem) {
 			var oChangeRegistryItem = vInstanceSpecificRegistryItem || getRegistryItemOrThrowError(sControlType, sChangeType, sLayer);
-			return oChangeRegistryItem.getChangeHandler();
+			return resolveChangeHandlerIfNecessary(oChangeRegistryItem);
+		}).then(function(oChangeHandler) {
+			if (
+				typeof oChangeHandler.completeChangeContent !== "function"
+				|| typeof oChangeHandler.applyChange !== "function"
+				|| typeof oChangeHandler.revertChange !== "function"
+			) {
+				throw new Error("The ChangeHandler is either not available or does not have all required functions");
+			}
+			return oChangeHandler;
 		});
 	};
 

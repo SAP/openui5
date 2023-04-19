@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
+	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4",
@@ -12,6 +13,7 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	Control,
+	MoveControls,
 	ChangeHandlerStorage,
 	Layer,
 	sinon,
@@ -253,6 +255,22 @@ sap.ui.define([
 				oControl.destroy();
 			});
 		});
+
+		QUnit.test("getChangeHandler with explicit registered changeHandler path", function(assert) {
+			var sExplicitRegisteredChangeHandlerPath = "sap.ui.fl.changeHandler.MoveControls";
+			var mChangeHandlers = {
+				myFancyControl: {
+					moveControls: sExplicitRegisteredChangeHandlerPath
+				}
+			};
+			return ChangeHandlerStorage.registerChangeHandlersForLibrary(mChangeHandlers)
+				.then(function() {
+					return ChangeHandlerStorage.getChangeHandler("moveControls", "myFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				})
+				.then(function (oReturnedChangeHandler) {
+					assert.equal(oReturnedChangeHandler, MoveControls, "then correct loaded changehandler is returned");
+				});
+		});
 	});
 
 	QUnit.module("ChangeHandlerStorage handles the PUBLIC layer the same way as USER", {
@@ -316,6 +334,67 @@ sap.ui.define([
 				.then(function (oChangeHandler) {
 					assert.equal(oChangeHandler, this.oValidChangeHandler1, "the USER layer still determines the PUBLIC layer change handler");
 				}.bind(this));
+		});
+	});
+
+	QUnit.module("registerChangeHandlersForLibrary / getChangeHandler with incomplete information", {
+		beforeEach: function() {
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("getChangeHandler: CHandler not providing all functions", function(assert) {
+			var oCHandler1 = {
+				revertChange: sandbox.stub(),
+				completeChangeContent: sandbox.stub()
+			};
+			var oCHandler2 = {
+				applyChange: sandbox.stub(),
+				completeChangeContent: sandbox.stub()
+			};
+			var oCHandler3 = {
+				applyChange: sandbox.stub(),
+				revertChange: sandbox.stub()
+			};
+			var mChangeHandlers = {
+				myFancyControl: {
+					missingApply: oCHandler1,
+					missingRevert: oCHandler2,
+					missingComplete: oCHandler3
+				}
+			};
+
+			return ChangeHandlerStorage.registerChangeHandlersForLibrary(mChangeHandlers)
+				.then(function() {
+					return ChangeHandlerStorage.getChangeHandler("missingApply", "myFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				})
+				.catch(function(oError) {
+					assert.strictEqual(oError.message, "The ChangeHandler is either not available or does not have all required functions", "the correct error is thrown");
+
+					return ChangeHandlerStorage.getChangeHandler("missingRevert", "myFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				})
+				.catch(function(oError) {
+					assert.strictEqual(oError.message, "The ChangeHandler is either not available or does not have all required functions", "the correct error is thrown");
+
+					return ChangeHandlerStorage.getChangeHandler("missingComplete", "myFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				})
+				.catch(function(oError) {
+					assert.strictEqual(oError.message, "The ChangeHandler is either not available or does not have all required functions", "the correct error is thrown");
+				});
+		});
+
+		QUnit.test("registerChangeHandlersForLibrary: not enough information", function(assert) {
+			var mChangeHandlers = {
+				myFancyControl: {
+					missing: false
+				}
+			};
+
+			var oLogStub = sandbox.stub(Log, "error");
+			return ChangeHandlerStorage.registerChangeHandlersForLibrary(mChangeHandlers).then(function() {
+				assert.strictEqual(oLogStub.callCount, 1, "one error was logged");
+			});
 		});
 	});
 
