@@ -21,7 +21,7 @@ sap.ui.define([
 	var PersistenceProvider = CoreControl.extend("sap.m.p13n.PersistenceProvider", /** @lends sap.ui.mdc.p13n.PersistenceProvider.prototype */ {
 		metadata: {
 			library: "sap.m",
-			designtime: "sap/ui/mdc/designtime/p13n/PersistenceProvider.designtime",
+			designtime: "sap/m/designtime/PersistenceProvider.designtime",
 			properties:  {
 				/**
 				 * Provides the mode setting for the <code>PersistenceProvider</code>.
