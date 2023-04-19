@@ -732,5 +732,73 @@
         ]
       }
     ]
+  },
+  "1.108.9": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "8e97da3f9cfd0e177bd0f481c9d1e6ad419f8c2d",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370044390"
+          }
+        ]
+      },
+      {
+        "id": "0e029e92b5916d077f9a84cbe002876f5f297f3c",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370044390"
+          }
+        ]
+      },
+      {
+        "id": "ae8702834fe7657987258ef284c4df7606f8f416",
+        "type": "FIX",
+        "text": " sap.m.Input: Item selection on arrow up/down when autocomplete is off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370014144"
+          }
+        ]
+      },
+      {
+        "id": "fe9da6c6e32fddda14ebabc73d962454aa34416f",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust default href attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006841702022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001393612023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          }
+        ]
+      },
+      {
+        "id": "936a60cc095cc8244071accd8338341ff0e382ab",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

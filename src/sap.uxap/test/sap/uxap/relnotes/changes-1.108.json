@@ -72,5 +72,32 @@
         ]
       }
     ]
+  },
+  "1.108.9": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "90b608f3fa4acce703eca2827622751a0e86aef4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Allow scrolling on small screens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380014439"
+          }
+        ]
+      },
+      {
+        "id": "ec7809805b8c2b0882239a7460c9358ca289bf55",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent focus issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370006078"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -120,5 +120,25 @@
         ]
       }
     ]
+  },
+  "1.108.9": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "00b8b3481f5f6c051634cb0efe24ac2cfc9c677a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Additional text is removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270139625"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370005369"
+          }
+        ]
+      }
+    ]
   }
 }
