@@ -6361,9 +6361,10 @@ sap.ui.define([
 	/**
 	 * Resets pending changes and aborts corresponding requests.
 	 *
-	 * By default, only changes triggered through {@link #createEntry} or {@link #setProperty} are
-	 * taken into account. If <code>bAll</code> is set, also deferred requests triggered through
-	 * {@link #create}, {@link #update} or {@link #remove} are taken into account.
+	 * By default, only changes triggered through {@link #createEntry} or {@link #setProperty}, and
+	 * tree hierarchy changes are taken into account. If <code>bAll</code> is set, also deferred
+	 * requests triggered through {@link #create}, {@link #update} or {@link #remove} are taken
+	 * into account.
 	 *
 	 * With a given <code>aPath</code> only specified entities are reset. Note that tree hierarchy
 	 * changes are only affected if a given path is equal to the tree binding's resolved binding
@@ -6386,7 +6387,10 @@ sap.ui.define([
 	 *   since 1.95.0
 	 * @returns {Promise}
 	 *   Resolves when all regarded changes have been reset.
+	 *
 	 * @public
+	 * @see #getPendingChanges
+	 * @see #hasPendingChanges
 	 */
 	ODataModel.prototype.resetChanges = function (aPath, bAll, bDeleteCreatedEntities) {
 		var aRemoveKeys,
@@ -6763,8 +6767,11 @@ sap.ui.define([
 	 * {@link #create}, {@link #update}, and {@link #remove} are taken into account.
 	 *
 	 * @param {boolean}[bAll=false] If set to true, deferred requests are also taken into account.
-	 * @return {boolean} <code>true</code> if there are pending changes, <code>false</code> otherwise.
+	 * @returns {boolean} <code>true</code> if there are pending changes, <code>false</code> otherwise.
+	 *
 	 * @public
+	 * @see #getPendingChanges
+	 * @see #resetChanges
 	 */
 	ODataModel.prototype.hasPendingChanges = function(bAll) {
 		var bChangedEntities,
@@ -6792,15 +6799,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the changed properties of all changed entities in a map which are still pending. The
-	 * key is the string name of the entity, and the value is an object which contains the changed
-	 * properties. The tree hierarchy changes for removed nodes are represented via an empty object.
+	 * Returns the pending changes in this model.
 	 *
-	 * In contrast to the two related functions {@link #hasPendingChanges} and {@link #resetChanges}, only
-	 * client data changes are supported.
+	 * Only changes triggered through {@link #createEntry} or {@link #setProperty}, and tree hierarchy changes are
+	 * taken into account. Changes are returned as a map from the changed entity's key to an object containing the
+	 * changed properties. A node removed from a tree hierarchy has the empty object as value in this map; all other
+	 * pending entity deletions are not contained in the map.
 	 *
-	 * @return {Object<string,object>} the pending changes in a map
+	 * @returns {Object<string,object>} The map of pending changes
+	 *
 	 * @public
+	 * @see #hasPendingChanges
+	 * @see #resetChanges
 	 */
 	ODataModel.prototype.getPendingChanges = function() {
 		var sChangedEntityKey,
