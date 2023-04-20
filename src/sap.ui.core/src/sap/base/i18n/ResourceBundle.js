@@ -282,6 +282,7 @@ sap.ui.define([
 		this.sLocale = normalize(sLocale) || defaultLocale(sFallbackLocale === undefined ? sDefaultFallbackLocale : sFallbackLocale);
 		this.oUrlInfo = splitUrl(sUrl);
 		this.bIncludeInfo = bIncludeInfo;
+		this.bAsync = bAsync;
 		// list of custom bundles
 		this.aCustomBundles = [];
 		// declare list of property files that are loaded,
@@ -513,6 +514,29 @@ sap.ui.define([
 	 */
 	ResourceBundle.prototype.hasText = function(sKey) {
 		return this.aPropertyFiles.length > 0 && typeof this.aPropertyFiles[0].getProperty(sKey) === "string";
+	};
+
+	/**
+	 * Creates and returns a new instance with the exact same parameters this instance has been created with.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.model.resource.ResourceModel
+	 * @returns {module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>}
+	 *     A new resource bundle or a Promise on that bundle (in asynchronous case)
+	 */
+	ResourceBundle.prototype._recreate = function() {
+		if (!this._mCreateFactoryParams) {
+			// This can only happen when calling the method for instances created by ResourceBundle.create via getEnhanceWithResourceBundles or getTerminologyResourceBundles.
+			// But those instances are only internally assigned to the actual ResourceBundle instance. Therefore it is not required for the model use case to recreate a bundle.
+			var error = new Error("ResourceBundle instance can't be recreated as it has not been created by the ResourceBundle.create factory.");
+			if (this.bAsync) {
+				return Promise.reject(error);
+			} else {
+				throw error;
+			}
+		} else {
+			return ResourceBundle.create(this._mCreateFactoryParams);
+		}
 	};
 
 	/*
@@ -907,6 +931,8 @@ sap.ui.define([
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	ResourceBundle.create = function(mParams) {
+		var mOriginalCreateParams = merge({}, mParams);
+
 		mParams = merge({url: "", includeInfo: false}, mParams);
 
 		// bundleUrl and bundleName parameters get converted into the url parameter if the url parameter is not present
@@ -919,6 +945,16 @@ sap.ui.define([
 
 		// Note: ResourceBundle constructor returns a Promise in async mode!
 		var vResourceBundle = new ResourceBundle(mParams.url, mParams.locale, mParams.includeInfo, !!mParams.async, mParams.supportedLocales, mParams.fallbackLocale);
+
+		// Pass the exact create factory parameters to allow the bundle to create a new instance via ResourceBundle#_recreate
+		if (vResourceBundle instanceof Promise) {
+			vResourceBundle = vResourceBundle.then(function(oResourceBundle) {
+				oResourceBundle._mCreateFactoryParams = mOriginalCreateParams;
+				return oResourceBundle;
+			});
+		} else {
+			vResourceBundle._mCreateFactoryParams = mOriginalCreateParams;
+		}
 
 		// aCustomBundles is a flat list of all "enhancements"
 		var aCustomBundles = [];
