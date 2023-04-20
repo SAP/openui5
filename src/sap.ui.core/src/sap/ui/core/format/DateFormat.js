@@ -3434,6 +3434,53 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Returns a language-dependent placeholder text according to this instance's format options, for example
+	 * "e.g. 12/31/2023".
+	 *
+	 * @returns {string} The language-dependent placeholder text
+	 *
+	 * @private
+	 * @ui5-restricted sap.m
+	 */
+	DateFormat.prototype.getPlaceholderText = function() {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
+
+		return oResourceBundle.getText("date.placeholder", [this.format.apply(this, this.getSampleValue())]);
+	};
+
+	/**
+	 * Returns a sample date value.
+	 *
+	 * @returns {array}
+	 *   A sample date value as an array of parameter values as expected by {@link #format}
+	 *
+	 * @private
+	 */
+	DateFormat.prototype.getSampleValue = function() {
+		var oDate,
+			iFullYear = UI5Date.getInstance().getFullYear(),
+			bUTC = this.oFormatOptions.UTC;
+
+		function getDate(iYear, iMonth, iDay, iHours, iMinutes, iSeconds, iMilliseconds) {
+			return bUTC
+				? UI5Date.getInstance(Date.UTC(iYear, iMonth, iDay, iHours, iMinutes, iSeconds, iMilliseconds))
+				: UI5Date.getInstance(iYear, iMonth, iDay, iHours, iMinutes, iSeconds, iMilliseconds);
+		}
+
+		oDate = getDate(iFullYear, 11, 31, 23, 59, 58, 123);
+
+		if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
+			return [oDate, Configuration.getTimezone()];
+		}
+
+		if (this.oFormatOptions.interval) {
+			return [[getDate(iFullYear, 11, 22, 9, 12, 34, 567), oDate]];
+		}
+
+		return [oDate];
+	};
+
 	return DateFormat;
 
 }, /* bExport= */ true);
