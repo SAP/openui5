@@ -79,7 +79,7 @@ function(
 		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
 		 *
 		 * @private
-		 * @ui5-restricted sap.ui.fl
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getAppIdFromManifest: getAppIdFromManifest,
 
