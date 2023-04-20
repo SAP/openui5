@@ -441,6 +441,13 @@
 		}
 	});
 
+	var oButtonBarLinkRole = new sap.m.Button("myButtonBarLinkRole", {
+		type: sap.m.ButtonType.Default,
+		text: "Link role",
+		enabled: true,
+		accessibleRole: "Link"
+	});
+
 	/* ---------------------------------------- */
 
 	var oButtonSample = new sap.m.Button("myButtonSample", {
@@ -767,6 +774,7 @@
 				.addContent(oButtonBarResetText)
 				.addContent(new sap.ui.core.HTML("myHtmlBarToggleTextDirection", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonBarToggleTextDirection)
+				.addContent(oButtonBarLinkRole)
 				.addContent(new sap.ui.core.HTML("myEmptyLine2", {content: "<br><br>"}))
 				.addContent(new sap.ui.core.HTML("myDividerLine1", {content: "<br><hr style='border:solid #000000; border-width: 5px 0 0;'>"}))
 				.addContent(oButtonSample)

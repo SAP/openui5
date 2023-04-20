@@ -43,6 +43,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonAccessibilityType
 	var ButtonAccessibilityType = mobileLibrary.ButtonAccessibilityType;
 
+	// shortcut for sap.m.ButtonAccessibleRole
+	var ButtonAccessibleRole = mobileLibrary.ButtonAccessibleRole;
+
 	function createDivWithTopMargin(sName) {
 		var div = createAndAppendDiv(sName);
 		div.style.marginTop = "10px";
@@ -532,7 +535,18 @@ sap.ui.define([
 		oButton.setIcon("sap-icon://search");
 		oInfo = oButton.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "Search", "Description");
+		oButton.setAccessibleRole(ButtonAccessibleRole.Link);
+		oInfo = oButton.getAccessibilityInfo();
+		assert.strictEqual(oInfo.role, "link", "role");
 		oButton.destroy();
+	});
+
+	QUnit.test("getAccessibilityInfo", function(assert) {
+		var oButton = new Button("btnLink", {
+			accessibleRole: ButtonAccessibleRole.Link
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+		assert.strictEqual(oButton.getDomRef().getAttribute("role"), "link", "role is correct");
 	});
 
 	// BCP: 0020751294 0000677825 2019
