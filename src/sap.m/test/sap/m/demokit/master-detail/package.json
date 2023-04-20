@@ -1,5 +1,5 @@
 {
-  "name": "MasterDetail",
+  "name": "master-detail",
   "private": true,
   "version": "1.0.0",
   "author": "SAP SE",
@@ -17,7 +17,7 @@
     "@openui5/themelib_sap_fiori_3": "^1"
   },
   "devDependencies": {
-    "@ui5/cli": "^2.14.4",
+    "@ui5/cli": "^3",
     "eslint": "^4.19.1"
   }
 }

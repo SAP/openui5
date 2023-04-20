@@ -1,5 +1,5 @@
-specVersion: '0.1'
+specVersion: '3.0'
 metadata:
-  name: QuickstartTutorial
+  name: quickstart-tutorial
 type: application
 
