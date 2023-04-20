@@ -70,6 +70,7 @@ sap.ui.define([
 				activate: {},
 				discardDraft: {},
 				switchVersion: {},
+				switchAdaptation: {},
 				openChangeCategorySelectionPopover: {}
 			}
 		}
@@ -306,6 +307,7 @@ sap.ui.define([
 				editAdaptation: onEditAdaptation.bind(this),
 				deleteAdaptation: onDeleteAdaptation.bind(this),
 				manageAdaptations: onManageAdaptations.bind(this),
+				switchAdaptation: onSwitchAdaptations.bind(this),
 				formatAdaptationsMenuText: formatAdaptationsMenuText.bind(this),
 				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
 				save: this.eventHandler.bind(this, "Save"),
@@ -371,6 +373,10 @@ sap.ui.define([
 
 	function onManageAdaptations() {
 		this.getExtension("contextBasedManage", ManageAdaptations).openManageAdaptationDialog();
+	}
+
+	function onSwitchAdaptations(sAdaptationId) {
+		this.fireEvent("switchAdaptation", {adaptationId: sAdaptationId});
 	}
 
 	function formatAdaptationsMenuText(iCount, sTitle) {

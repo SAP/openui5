@@ -138,8 +138,12 @@ sap.ui.define([
 				.then(function() {
 					this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
 					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-					assert.ok(this.oToolbar.getControl("contextBasedAdaptationMenu").getEnabled(), "then the context-based adaptation menu is enabled");
-					assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly ");
+					var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
+					assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
+					assert.strictEqual(oContextBasedAdaptationMenu.getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly ");
+					assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
+					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
+					assert.notOk(this.oToolbar.getControl("switchAdaptations").getVisible(), "then the switch adaptations button is not visible");
 				}.bind(this));
 		});
 
@@ -158,8 +162,14 @@ sap.ui.define([
 				.then(function() {
 					this.oToolbar.setModel(this.oAdaptationsModel, "contextBasedAdaptations");
 					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-					assert.ok(this.oToolbar.getControl("contextBasedAdaptationMenu").getEnabled(), "then the context-based adaptation menu is enabled");
-					assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly ");
+					var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
+					assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
+					assert.strictEqual(oContextBasedAdaptationMenu.getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly ");
+					assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
+					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
+					var oSwitchAdaptationsButton = this.oToolbar.getControl("switchAdaptations");
+					assert.ok(oSwitchAdaptationsButton.getVisible(), "then the switch adaptations button is visible");
+					assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 2, "number of adaptations to be switched is correct");
 				}.bind(this));
 		});
 		/*

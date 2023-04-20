@@ -156,6 +156,7 @@
 								icon="sap-icon://copy"/>
 						<MenuItem
 								id="sapUiRta_editAdaptation"
+								visible="{= (${contextBasedAdaptations>/count} > 0)}"
 								text="{i18n>EAC_DIALOG_HEADER}"
 								press=".editAdaptation"
 								icon="sap-icon://edit"/>
@@ -170,6 +171,21 @@
 								text="{i18n>MANAGE_ADAPTATIONS_DIALOG_HEADER}"
 								press=".manageAdaptations"
 								icon="sap-icon://action-settings"/>
+						<MenuItem
+								id="sapUiRta_switchAdaptations"
+								visible="{= (${contextBasedAdaptations>/count} > 0)}"
+								text="{i18n>BTN_SWITCH_ADAPTATIONS}"
+								icon="sap-icon://switch-views"
+								items="{contextBasedAdaptations>/adaptations}">
+							<items>
+								<MenuItem
+									id="sapUiRta_switchAdaptations_items"
+									enabled="{= (${contextBasedAdaptations>id} !== ${contextBasedAdaptations>/displayedAdaptation/id}) }"
+									icon="{= (${contextBasedAdaptations>id} === ${contextBasedAdaptations>/displayedAdaptation/id} ? 'sap-icon://accept' : 'blank')}"
+									text="{contextBasedAdaptations>title}"
+									press=".switchAdaptation(${contextBasedAdaptations>id})"/>
+							</items>
+						</MenuItem>
 					</Menu>
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
