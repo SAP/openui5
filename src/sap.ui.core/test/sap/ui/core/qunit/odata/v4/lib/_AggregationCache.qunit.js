@@ -1908,7 +1908,7 @@ sap.ui.define([
 				getUnlockedCopy : function () {},
 				unlock : function () {}
 			},
-			aReadResult = [{}, {}, {}];
+			aReadResult = [{}, {}]; // "short read", e.g. due to server-driven paging
 
 		oCache.aElements = [
 			{},
@@ -1936,7 +1936,7 @@ sap.ui.define([
 			assert.strictEqual(oResult.value.length, 4);
 			assert.strictEqual(oResult.value[0], aReadResult[0]);
 			assert.strictEqual(oResult.value[1], aReadResult[1]);
-			assert.strictEqual(oResult.value[2], aReadResult[2]);
+			assert.strictEqual(oResult.value[2], undefined, "placeholder is hidden");
 			assert.strictEqual(oResult.value[3], oElement);
 			assert.strictEqual(oResult.value.$count, 8);
 		});
