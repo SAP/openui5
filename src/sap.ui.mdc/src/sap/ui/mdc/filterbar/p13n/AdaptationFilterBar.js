@@ -77,7 +77,7 @@ sap.ui.define([
 
 	/**
 	 * This method will be called whenever the <code>AdaptationFilterBar</code> will be instantiated in a Dialog using the
-	 * <code>sap.m.p13n.UIManager</code>. This flag determines whether the control should be destroyed or kept alive once the p13n
+	 * {@link sap.m.p13n.UIManager}. This flag determines whether the control should be destroyed or kept alive once the p13n
 	 * dialog closes.
 	 *
 	 * @private
@@ -264,7 +264,7 @@ sap.ui.define([
 
 	/**
 	 *
-	 * Please note that the provided model should be created with sap.ui.mdc.p13n.P13nBuilder
+	 * Please note that the provided model should be created with {@link sap.ui.mdc.p13n.P13nBuilder}
 	 *
 	 * @param {object[]} aP13nData Necessary data to display and create <code>FilterColumnLayout</code> instances.
 	 *
@@ -466,6 +466,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Control} oControl the mdc control instance
 	 * @param {boolean} bSuppressInvalidate suppress invalidation
+	 * @return {sap.ui.mdc.filterbar.p13n.AdaptationFilterBar} this
 	 */
 	AdaptationFilterBar.prototype.setAdaptationControl = function(oControl, bSuppressInvalidate) {
 
