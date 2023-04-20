@@ -426,11 +426,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the given context may be kept alive.
+	 * Checks whether the given context (or any context of this binding) may be kept alive.
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   A context of this binding
-	 * @throws {Error} If <code>oContext.setKeepAlive()</code> is not allowed
+	 * @param {boolean} [bKeepAlive]
+	 *   Whether to keep the given context alive
+	 * @throws {Error}
+	 *   If <code>oContext.setKeepAlive(bKeepAlive)</code> is not allowed for the given (or any)
+	 *   context
 	 *
 	 * @abstract
 	 * @function

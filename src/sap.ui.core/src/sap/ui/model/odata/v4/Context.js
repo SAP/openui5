@@ -1769,6 +1769,8 @@ sap.ui.define([
 	 *     <li> it is the header context,
 	 *     <li> it is transient,
 	 *     <li> it is deleted and <code>bKeepAlive</code> is <code>true</code>,
+	 *     <li> it is not part of the list binding's collection, has
+	 *       {@link #hasPendingChanges pending changes}, and shall not be kept alive anymore,
 	 *     <li> it does not point to an entity,
 	 *     <li> a key property of the entity has not been requested,
 	 *     <li> the list binding is relative and does not use the <code>$$ownRequest</code>
@@ -1792,7 +1794,7 @@ sap.ui.define([
 			throw new Error("Unsupported context " + this);
 		}
 		_Helper.getPredicateIndex(this.sPath);
-		this.oBinding.checkKeepAlive(this);
+		this.oBinding.checkKeepAlive(this, bKeepAlive);
 
 		if (bKeepAlive && bRequestMessages) {
 			if (!this.oModel.bAutoExpandSelect) {

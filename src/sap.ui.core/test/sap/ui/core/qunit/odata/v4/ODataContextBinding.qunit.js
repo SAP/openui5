@@ -1271,7 +1271,7 @@ sap.ui.define([
 				oContext.iIndex = 42;
 				this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
 				this.mock(oParentBinding).expects("checkKeepAlive")
-					.withExactArgs(sinon.match.same(oContext));
+					.withExactArgs(sinon.match.same(oContext), true);
 			}
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
@@ -1311,7 +1311,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
 		this.mock(oParentBinding).expects("checkKeepAlive")
-			.withExactArgs(sinon.match.same(oContext)).throws(oError);
+			.withExactArgs(sinon.match.same(oContext), true).throws(oError);
 		this.mock(oBinding).expects("_execute").never();
 
 		assert.throws(function () {
