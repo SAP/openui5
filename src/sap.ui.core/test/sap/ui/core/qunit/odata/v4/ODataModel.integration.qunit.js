@@ -1900,21 +1900,24 @@ sap.ui.define([
 				if (!("@odata.count" in vResponse)) {
 					throw new Error('Missing "@odata.count" in response for ' + vRequest.method
 						+ " " + vRequest.url);
-				} else if (typeof vResponse["@odata.count"] !== "string") {
+				}
+				if (typeof vResponse["@odata.count"] !== "string") {
 					throw new Error('Unexpected "@odata.count" : ' + vResponse["@odata.count"]
 						+ " in response for " + vRequest.method + " " + vRequest.url);
 				}
-				aMatches = rTop.exec(vRequest.url);
-				if (aMatches) {
-					iCount = parseInt(vResponse["@odata.count"]);
-					iLength = vResponse.value.length;
-					iTop = parseInt(aMatches[1]);
-					aMatches = rSkip.exec(vRequest.url);
+				if (!("@odata.nextLink" in vResponse)) {
+					aMatches = rTop.exec(vRequest.url);
 					if (aMatches) {
-						iSkip = parseInt(aMatches[1]);
-					}
-					if (iLength !== iTop && iSkip + iLength !== iCount) {
-						throw new Error("Unexpected short read?");
+						iCount = parseInt(vResponse["@odata.count"]);
+						iLength = vResponse.value.length;
+						iTop = parseInt(aMatches[1]);
+						aMatches = rSkip.exec(vRequest.url);
+						if (aMatches) {
+							iSkip = parseInt(aMatches[1]);
+						}
+						if (iLength !== iTop && iSkip + iLength !== iCount) {
+							throw new Error("Unexpected short read?");
+						}
 					}
 				}
 			}
@@ -26991,6 +26994,105 @@ sap.ui.define([
 				[undefined, 2, "2", "0", "Kappa #1"],
 				[undefined, 2, "3", "0", "Lambda #1"]
 			], 4);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: "Select all" in a table runs into server-driven paging. No contexts must be
+	// created for placeholders.
+	// BCP: 2370039138
+	QUnit.test("Recursive Hierarchy: @odata.nextLink", function (assert) {
+		var oListBinding,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+		parameters : {\
+			$$aggregation : {\
+				hierarchyQualifier : \'OrgChart\'\
+			}\
+		}}" threshold="0" visibleRowCount="2">\
+	<Text text="{ID}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)&$select=DrillState,ID&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "6",
+				value : [{
+					DrillState : "leaf",
+					ID : "0"
+				}, {
+					DrillState : "leaf",
+					ID : "1"
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table");
+
+			oListBinding = oTable.getBinding("rows");
+
+			checkTable("initial page", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')"
+			], [
+				["0"],
+				["1"]
+			], 6);
+
+			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)&$select=DrillState,ID&$skip=2&$top=4", {
+					"@odata.nextLink" : "n/a",
+					value : [{
+						DrillState : "leaf",
+						ID : "2"
+					}, {
+						DrillState : "leaf",
+						ID : "3"
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oListBinding.requestContexts(0, 6),
+				that.waitForChanges(assert, "select all")
+			]);
+		}).then(function (aResults) {
+			assert.deepEqual(aResults[0].map(getPath), [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')"
+			]);
+
+			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)&$select=DrillState,ID&$skip=4&$top=2", {
+					value : [{
+						DrillState : "leaf",
+						ID : "4"
+					}, {
+						DrillState : "leaf",
+						ID : "5"
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oListBinding.requestContexts(0, 6),
+				that.waitForChanges(assert, "select all")
+			]);
+		}).then(function (aResults) {
+			assert.deepEqual(aResults[0].map(getPath), [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('4')",
+				"/EMPLOYEES('5')"
+			]);
 		});
 	});
 

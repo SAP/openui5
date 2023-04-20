@@ -771,7 +771,12 @@ sap.ui.define([
 		}
 
 		return SyncPromise.all(aReadPromises).then(function () {
-			var aElements = that.aElements.slice(iIndex, iIndex + iLength);
+			var aElements = that.aElements.slice(iIndex, iIndex + iLength)
+					.map(function (oElement) {
+						return _Helper.hasPrivateAnnotation(oElement, "placeholder")
+							? undefined
+							: oElement;
+					});
 
 			aElements.$count = that.aElements.$count;
 
