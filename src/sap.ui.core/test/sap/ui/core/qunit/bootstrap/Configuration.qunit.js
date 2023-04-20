@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
-sap.ui.define([
+QUnit.config.autostart = false;
+
+sap.ui.require([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Core',
@@ -7,7 +9,7 @@ sap.ui.define([
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
 	'sap/base/Log',
-	'../routing/HistoryUtils',
+	'sap/routing/HistoryUtils',
 	'sap/ui/base/Interface',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
 ], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Log,
@@ -1457,4 +1459,6 @@ sap.ui.define([
 
 		delete window["sap-ui-config"].securitytokenhandlers;
 	});
+
+	QUnit.start();
 });
