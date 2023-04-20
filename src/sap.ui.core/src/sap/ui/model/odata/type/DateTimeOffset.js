@@ -164,6 +164,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the ISO string for the given model value.
+	 *
+	 * @param {string|Date|module:sap/ui/core/date/UI5Date|null} vModelValue
+	 *   The model value, as returned by {@link #getModelValue}
+	 * @returns {string|null}
+	 *   A timestamp according to ISO 8601, or <code>null</code> if the given model value is falsy
+	 *
+	 * @since 1.114.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	DateTimeOffset.prototype.getISOStringFromModelValue = function (vModelValue) {
+		if (!vModelValue) {
+			return null;
+		}
+
+		return this.bV4 ? vModelValue : vModelValue.toISOString();
+	};
+
+	/**
 	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
 	 * methods: <code>format</code> and <code>parse</code>.
 	 *
@@ -212,6 +232,27 @@ sap.ui.define([
 		this.validateValue(oResult);
 
 		return oResult;
+	};
+
+	/**
+	 * Returns the model value for the given ISO string.
+	 *
+	 * @param {string|null} sISOString
+	 *   A string according to ISO 8601, as returned by {@link #getISOStringFromModelValue}
+	 * @returns {string|Date|module:sap/ui/core/date/UI5Date|null}
+	 *   The model representation for the given ISO string for this type,
+	 *   or <code>null</code> if the given ISO string is falsy
+	 *
+	 * @since 1.114.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	DateTimeOffset.prototype.getModelValueFromISOString = function (sISOString) {
+		if (!sISOString) {
+			return null;
+		}
+
+		return this.bV4 ? sISOString : UI5Date.getInstance(sISOString);
 	};
 
 	/**
