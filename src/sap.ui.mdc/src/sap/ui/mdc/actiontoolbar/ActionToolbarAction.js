@@ -24,7 +24,8 @@ sap.ui.define([
 	 * @private
 	 * @since 1.58
 	 * @experimental As of version 1.58
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @alias sap.ui.mdc.actiontoolbar.ActionToolbarAction
 	 */
 	var ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {

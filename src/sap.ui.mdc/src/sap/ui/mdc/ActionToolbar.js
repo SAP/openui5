@@ -34,7 +34,8 @@ sap.ui.define([
 	 * @private
 	 * @since 1.58
 	 * @experimental As of version 1.58
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @alias sap.ui.mdc.ActionToolbar
 	 */
 
@@ -326,8 +327,8 @@ sap.ui.define([
 	};
 
 	/*
-		* Overwrite generated functions to use internal array to look for aggregation
-		*/
+	* Overwrite generated functions to use internal array to look for aggregation
+	*/
 	ActionToolbar.prototype.indexOfContent = function(oObject) {
 		return this.getContent().indexOf(oObject);
 	};
