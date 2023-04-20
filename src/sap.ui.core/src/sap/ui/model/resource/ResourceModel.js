@@ -21,10 +21,8 @@ sap.ui.define([
 	function (BindingMode, Model, ResourcePropertyBinding, ResourceBundle, Log) {
 	"use strict";
 
-	/**
-	 * matches leading dots or slashes
-	 */
-	var rLeadingDotsOrSlashes = /^(?:\/|\.)*/;
+	var sClassname = "sap.ui.model.resource.ResourceModel",
+		rLeadingDotsOrSlashes = /^(?:\/|\.)*/; // matches leading dots or slashes
 
 	/**
 	 * Constructor for a new ResourceModel.
@@ -310,7 +308,7 @@ sap.ui.define([
 				'Leading slashes or dots in resource bundle names are ignored, since such names are'
 				+ ' invalid UI5 module names. Please check whether the resource bundle "'
 				+ sBundleName + '" is actually needed by your application.',
-				"sap.base.i18n.ResourceBundle");
+				sClassname);
 			sBundleName = sBundleName.replace(rLeadingDotsOrSlashes, "");
 		}
 		return sBundleName;
@@ -378,10 +376,6 @@ sap.ui.define([
 		var oConfiguration = sap.ui.getCore().getConfiguration(),
 			sLocale = oData.bundleLocale,
 			mParams;
-
-		if (!sLocale) {
-			sLocale = oConfiguration.getLanguage();
-		}
 
 		// sanitize bundleName for backward compatibility
 		oData.bundleName = ResourceModel._sanitizeBundleName(oData.bundleName);
@@ -543,7 +537,42 @@ sap.ui.define([
 	 * @see sap.ui.base.ManagedObject#_handleLocalizationChange
 	 */
 	ResourceModel.prototype._handleLocalizationChange = function () {
-		_load(this);
+		var that = this;
+
+		function updateBundle(oNewResourceBundle) {
+			that._oResourceBundle = oNewResourceBundle;
+			that._reenhance();
+			delete that._oPromise;
+			that.checkUpdate(true);
+		}
+		function logError(oError) {
+			Log.error("Failed to reload bundles after localization change", oError, sClassname);
+		}
+
+		var oResourceBundle = this.getResourceBundle();
+
+		if (oResourceBundle instanceof Promise) {
+			oResourceBundle.then(function (oBundle) {
+				var oEventParam = {
+					url: ResourceBundle._getUrl(that.oData.bundleUrl,
+							// sanitize bundleName for backward compatibility
+							ResourceModel._sanitizeBundleName(that.oData.bundleName)),
+						async: true
+					};
+
+				that.fireRequestSent(oEventParam);
+				that._oPromise = oBundle._recreate();
+				that._oPromise.then(updateBundle).catch(logError).finally(function () {
+					that.fireRequestCompleted(oEventParam);
+				});
+			});
+		} else {
+			try {
+				updateBundle(oResourceBundle._recreate());
+			} catch (oError) {
+				logError(oError);
+			}
+		}
 	};
 
 	/**
