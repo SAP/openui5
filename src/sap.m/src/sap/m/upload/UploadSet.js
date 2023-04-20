@@ -947,7 +947,8 @@ sap.ui.define([
 			this._oUploadButton = new Button({
 				id: this.getId() + "-uploadButton",
 				type: MobileLibrary.ButtonType.Standard,
-				visible: this.getUploadEnabled() && !this.getUploadButtonInvisible(),
+				enabled: this.getUploadEnabled(),
+				visible: !this.getUploadButtonInvisible(),
 				text: this._oRb.getText("UPLOADCOLLECTION_UPLOAD"),
 				ariaDescribedBy: this.getAggregation("_illustratedMessage").getId(),
 				press: function () {

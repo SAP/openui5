@@ -822,6 +822,28 @@ sap.ui.define([
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
+				uploadEnabled: false,
+				uploadButtonInvisible: false
+			}).setModel(new JSONModel(getData()));
+			this.oUploadSet.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("Test to validate visibility status of upload button on illustrated message section when upload disabled", function(assert) {
+		var button = this.oUploadSet.getUploadButtonForIllustratedMessage();
+
+		assert.equal(button.getEnabled(), false, "Upload button on illustrated message section is disabled when uploadEnabled is set to false");
+		assert.equal(button.getVisible(), true, "Upload button on illustrated message section is visible when uploadButtonInvisible is set to false");
+	});
+
+	QUnit.module("UploadSet general functionality", {
+		beforeEach: function () {
+			this.oUploadSet = new UploadSet("uploadSet", {
 				fileTypes:"txt,doc,png",
 				mediaTypes:"text/plain,application/msword,image/jpeg,image/png",
 				maxFileNameLength: 50,
