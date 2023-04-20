@@ -59,13 +59,13 @@ sap.ui.define([
          * @param {string} [sId] ID for the new control, generated automatically if no id is given
          * @param {object} [mSettings] Initial settings for the new control
          *
-         * @class The Chart control creates a chart based on metadata and the configuration specified.
+         * @class The Chart control creates a chart based on metadata and the configuration specified.<br>
+         * <b>Note:</b> The inner chart needs to be assigned via delegate. The Chart does not work without!
          * @extends sap.ui.mdc.Control
          * @author SAP SE
          * @version ${version}
          * @constructor
          *
-         * @experimental As of version 1.88
          * @private
          * @ui5-restricted sap.fe
          * @MDC_PUBLIC_CANDIDATE
@@ -146,6 +146,7 @@ sap.ui.define([
 
                     /**
                      * Enables the legend of the chart.
+                     * <b>Note:</b> The setter calls <code>setLegendVisible</code> on the delegate.
                      *
                      * @since 1.88
                      */
@@ -200,7 +201,7 @@ sap.ui.define([
 
                     /**
                      * Defines the filter conditions.
-                     *
+				     * <b>Note</b>: This property must not be bound.<br>
                      * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
                      *
                      * @since 1.99
@@ -211,7 +212,7 @@ sap.ui.define([
                     },
 
                     /**
-                     * Controls the visibility of the chart tooltip. If set to <code>true</code>, a call of the delegate.setChartTooltipVisibility will be triggered and can be used to make the Char tooltip visible.
+                     * Controls the visibility of the chart tooltip. If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> will be triggered and can be used to make the Char tooltip visible.
                      *
                      * @since 1.88
                      */
@@ -254,12 +255,12 @@ sap.ui.define([
                      * <b>Note</b>: This property must not be bound.<br>
                      * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/sap.fe. Do not use it otherwise.<br>
                      *
-                     * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.chart.PropertyInfo PropertyInfo}.
+       				 * <b>Node</b>: Please check {@link sap.ui.mdc.chart.PropertyInfo PropertyInfo} for more information about the supported inner elements.
                      *
                      * @since 1.99
                      */
                     propertyInfo: {
-                        type: "object",
+                        type: "object", //TODO this should be an object[], but when I change this the TwFb does not start
                         defaultValue: []
                     },
 
@@ -340,13 +341,12 @@ sap.ui.define([
                         multiple: false
                     },
                     /**
-                     * Defines the custom visualization if there is no data available.
-                     * <b>Note:</b> If both a <code>noDataText</code> property and a <code>noData</code> aggregation are provided, the <code>noData</code> aggregation takes priority.
+                     * Defines the custom visualization if there is no data available.<br>
+                     * This control will be displayed on top of the chart when no data is visible inside the chart.<br>
+                     * <b>Note:</b> If both a <code>noDataText</code> property and a <code>noData</code> aggregation are provided, the <code>noData</code> aggregation takes priority.<br>
                      * If the <code>noData</code> aggregation is undefined or set to null, the <code>noDataText</code> property is used instead.
+                     *
                      * @since 1.107
-                     * @experimental
-                    * @private
-                    * @ui5-restricted sap.ui.mdc, sap-fe
                      */
                     noData: {
                         type: "sap.ui.core.Control",
@@ -407,12 +407,60 @@ sap.ui.define([
 
         FilterIntegrationMixin.call(Chart.prototype);
 
+	/**
+	 * An object literal describing a data property in the context of a {@link sap.ui.mdc.Chart}.
+	 *
+	 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Chart#getPropertyInfo propertyInfo} property, the following
+	 * attributes need to be specified:
+	 * <ul>
+	 *   <li><code>label</code></li>
+	 *   <li><code>propertyPath</code></li>
+	 * </ul>
+	 *
+	 * @typedef {object} sap.ui.mdc.chart.PropertyInfo
+	 * @property {string} propertyPath
+	 *   The path to the property in the back end
+	 * @property {string} [name]
+	 *   The identifier of the property
+	 * @property {string} label
+	 *   The label of the identifier
+	 * @property {string} [tooltip]
+	 *   The tooltip of the identifier
+	 * @property {string} datatype
+	 *   The name of the type of the property
+	 * @property {object} [constraints]
+	 *   Defines constraints for the data type of the property
+	 * @property {object} [formatOptions]
+	 *   Defines formatting options for the data type of the property
+	 * @property {boolean} [required = false]
+	 *   Defines if the filter is mandatory
+	 * @property {int} maxConditions
+	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
+	 * @property {boolean} groupable
+	 * 	Defines whether the property is groupable and is selectable as a dimension in the chart
+	 * @property {boolean} aggregatable
+	 *  Defines whether the property is aggregatable and is selectable as a measure in the chart
+	 * @property {string} aggregationMethod
+	 * 	The aggregation method used if the property is aggregatable
+	 * @property {string} role
+	 * 	Defines the role that the property visualizes inside the chart
+	 * @property {object} [datapoint]
+	 * 	Implementation-specific object containing information about the data point
+	 * @property {object} [criticality]
+	 *  Implementation-specific object containing information about the criticality
+	 * @property {string} [textProperty]
+	 * 	The text property used for the dimension
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+
+
         /**
          * Initialises the MDC Chart
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.init = function () {
             this._oManagedObjectModel = new ManagedObjectModel(this);
@@ -423,16 +471,6 @@ sap.ui.define([
             this._setPropertyHelperClass(PropertyHelper);
         };
 
-        /**
-         * Defines which personalization options are available in the chart.
-         *
-         * @param {sap.ui.mdc.ChartP13nMode[]} aModes array containing the <code>ChartP13nModes</code> that are available
-         * @returns {sap.ui.mdc.Chart} Reference to <code>this</code> for method chaining
-         *
-         * @experimental
-         * @private
-         * @ui5-restricted sap.fe
-         */
         Chart.prototype.setP13nMode = function(aModes) {
             var aSortedKeys = null;
             if (aModes && aModes.length >= 1){
@@ -509,13 +547,14 @@ sap.ui.define([
         };
 
         /**
-         * Getter for <code>filterConditions</code> set in the personalization settings.
-         * @returns {array} Filters set in the chart
+         * Getter for <code>Conditions</code> set in the personalization settings.
+         * @returns {object} Filters set in the chart
          *
-         * @experimental
          * @private
          * @ui5-restricted sap.fe
+         * @MDC_PUBLIC_CANDIDATE
          */
+        // Part of sap.ui.mdc.IFilterSource
         Chart.prototype.getConditions = function() {
             //may only return conditions if the inner FilterBar has already been initialized
             return this.getInbuiltFilter() ? this.getInbuiltFilter().getConditions() : [];
@@ -532,9 +571,7 @@ sap.ui.define([
          *
          * @param {*} mSettings settings to apply
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.applySettings = function (mSettings, oScope) {
             this._setPropertyHelperClass(PropertyHelper);
@@ -737,9 +774,7 @@ sap.ui.define([
          * Gets whether filtering is enabled in the personalization dialog.
          * @returns {boolean} <code>true</code> if filtering enabled, <code>false</code> if otherwise
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.fe
          */
         Chart.prototype.isFilteringEnabled = function () {
             return this.getP13nMode().indexOf("Filter") > -1;
@@ -750,7 +785,6 @@ sap.ui.define([
          * <b>Note:</b> This is only used for  personalization, do not use it otherwise.
          * @returns {Promise} <code>Promise</code> that resolves with the adaptation panel control
          *
-         * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc
          */
@@ -881,7 +915,6 @@ sap.ui.define([
          * The inner chart is not bound yet. Use <code>innerChartBound</code> for it.
          * @returns {Promise} <code>Promise</code> that resolves once MDC chart is initialized. Contains reference to MDC chart
          *
-         * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc, sap.fe
          */
@@ -893,7 +926,6 @@ sap.ui.define([
          * Can be used to check whether the inner chart is initialized and bound.
          * @returns {Promise} Promise that resolves once MDC chart is bound
          *
-         * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc, sap.fe
          */
@@ -904,9 +936,8 @@ sap.ui.define([
         /**
          * Zooms in the inner chart.
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.ui.mdc, sap.fe
+         * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.zoomIn = function () {
             this.getControlDelegate().zoomIn(this);
@@ -915,9 +946,8 @@ sap.ui.define([
         /**
          * Zooms out the inner chart.
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.ui.mdc, sap.fe
+         * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.zoomOut = function () {
             this.getControlDelegate().zoomOut(this);
@@ -928,13 +958,12 @@ sap.ui.define([
          * {
          *   "enabled":true,
          *   "currentZoomLevel":0.16
-         *   }
+         * }
          *
          * @returns {Object} current Zoom Information
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.ui.mdc, sap.fe
+         * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.getZoomState = function () {
             return this.getControlDelegate().getZoomState(this);
@@ -944,9 +973,9 @@ sap.ui.define([
          * Retrieves the selection handler of the inner chart.
          * @returns {object} Selection handler of the inner chart
          *
-         * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc, sap.fe
+         * @MDC_PUBLIC_CANDIDATE
          */
         Chart.prototype.getSelectionHandler = function () {
             return this.getControlDelegate().getInnerChartSelectionHandler(this);
@@ -955,11 +984,12 @@ sap.ui.define([
         /**
          * Retrieves the chart type layout configuration.
          * <b>Note:</b> This is only used inside personalization.
+         *
          * @returns {object} Layout configuration
          *
-         * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc
+         * @MDC_PUBLIC_CANDIDATE
          */
         Chart.prototype.getChartTypeLayoutConfig = function() {
             return this.getControlDelegate().getChartTypeLayoutConfig();
@@ -968,26 +998,17 @@ sap.ui.define([
         /**
          * Retrieves the allowed chart roles for the chart types.
          * <b>Note:</b> This is only used inside the personalization.
+         *
          * @returns {object} Allowed roles
          *
-         * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc
          */
+        //TODO is this function used?
         Chart.prototype.getAllowedRolesForKinds = function() {
             return this.getControlDelegate().getAllowedRolesForKinds();
         };
 
-        /**
-         * Sets the visibility of the legend.
-         * Calls <code>setLegendVisible</code> on the delegate.
-         * @param {boolean} bVisible <code>true</code> to show legend, <code>false</code> to hide
-         * @returns {sap.ui.mdc.Chart} Reference to <code>this</code> for method chaining
-         *
-         * @experimental
-         * @private
-         * @ui5-restricted sap.fe, sap.ui.mdc
-         */
         Chart.prototype.setLegendVisible = function (bVisible) {
             this.setProperty("legendVisible", bVisible);
 
@@ -1002,11 +1023,6 @@ sap.ui.define([
             return this;
         };
 
-        /**
-         * Sets the ShowChartTooltip Property
-         * @param {boolean} bValue true for visible; false for invisible
-         * @returns {sap.ui.mdc.Chart} the MDC chart
-         */
         Chart.prototype.setShowChartTooltip = function (bValue) {
             this.setProperty("showChartTooltip", bValue);
 
@@ -1027,13 +1043,12 @@ sap.ui.define([
         };
 
         /**
-         * shows the drill-down popover for selection a dimension to drill down to.
+         * Shows the drill-down popover for selection a dimension to drill down to.
+         *
          * @param {sap.m.Button} oDrillBtn reference to the drill down button for loacation of the popover
          * @returns {Promise} show dril stack promise
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype._showDrillDown = function (oDrillBtn) {
             if (!this.oDrillPopover) {
@@ -1087,9 +1102,8 @@ sap.ui.define([
          *
          * @returns {object} object containing information about the chart type
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.fe
+         * @ui5-restricted sap.ui.mdc, sap.fe
          *
          */
         Chart.prototype.getChartTypeInfo = function () {
@@ -1119,9 +1133,7 @@ sap.ui.define([
          *
          * @returns {array} Array containing the available chart types
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.fe
          */
         Chart.prototype.getAvailableChartTypes = function () {
             return this.getControlDelegate().getAvailableChartTypes(this);
@@ -1131,7 +1143,7 @@ sap.ui.define([
         /**
          * Sets the MDC chart to a specific chart type
          * @param {string} sChartType the name of the new chart type
-         * @returns {sap.ui.mdc.chart} reference to <code>this</code> for method chaining
+         * @returns {sap.ui.mdc.Chart} reference to <code>this</code> in order to allow method chaining
          */
         Chart.prototype.setChartType = function (sChartType) {
             this.setProperty("chartType", sChartType);
@@ -1145,16 +1157,6 @@ sap.ui.define([
             return this;
         };
 
-        /**
-         * Sets a new noData control for the chart.
-         * This control will be displayed on top of the chart when no data is visible inside the chart.
-         * @param {sap.ui.core.Control} oControl control to show
-         * @returns {sap.ui.mdc.Chart} reference to <code>this</code> for method chaining
-         *
-         * @experimental
-         * @private
-         * @ui5-restricted sap.fe
-         */
         Chart.prototype.setNoData = function(oControl) {
             this.setAggregation("noData", oControl);
 
@@ -1181,9 +1183,7 @@ sap.ui.define([
          * Gets the managed object model.
          * @returns {sap.ui.model.base.ManagedObjectModel} the managed object model
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.getManagedObjectModel = function () {
             return this._oManagedObjectModel;
@@ -1217,13 +1217,12 @@ sap.ui.define([
         };
 
         /**
-         * Fetches the current state of the chart (as a JSON)
+         * Fetches the current state of the chart (as a JSON)<br>
          * Needed for P13n to fetch current state
          *
-         * @experimental
-         * @private
          * @returns {Object} Current state of the chart
-         * @ui5-restricted sap.ui.mdc
+         *
+         * @private
          */
         Chart.prototype.getCurrentState = function () {
             var oState = {};
@@ -1308,9 +1307,7 @@ sap.ui.define([
          *
          * @param oEvent filter changed event
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.fe, sap.ui.mdc
          */
 		Chart.prototype._onFiltersChanged = function(oEvent) {
 			if (this._bInnerChartReady && this.getControlDelegate() && this.getControlDelegate().getInnerChartBound(this) && oEvent.getParameter("conditionsBased")) {
@@ -1356,9 +1353,7 @@ sap.ui.define([
          *
          * @param {boolean} bShow true to show overlay, false to hide
          *
-         * @experimental
          * @private
-         * @ui5-restricted sap.fe, sap.ui.mdc
          */
 		Chart.prototype._renderOverlay = function(bShow) {
 			try {
@@ -1370,17 +1365,6 @@ sap.ui.define([
             }
 		};
 
-        /**
-         * Adds an action to the <code>actions</code> aggregation of the chart.<br>
-         * If the given control is not of type {@link sap.ui.mdc.actiontoolbar.ActionToolbarAction}, a container is created for the control before passing it on to the {@link sap.ui.mdc.ActionToolbar}.
-         *
-         * @param {sap.ui.core.Control} oControl to add to the aggregation
-         * @return {sap.ui.mdc.Chart} Reference to <code>this</code> for method chaining.
-         *
-         * @experimental
-         * @private
-         * @ui5-restricted sap.ui.mdc, sap.fe
-         */
         Chart.prototype.addAction = function(oControl) {
             if (oControl.getMetadata().getName() !== "sap.ui.mdc.actiontoolbar.ActionToolbarAction") {
                 oControl = new ActionToolbarAction(oControl.getId() + "-action", {
@@ -1391,11 +1375,6 @@ sap.ui.define([
             return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
         };
 
-        /**
-         * Specifies the header level for the title of the chart.
-         * @param {sap.ui.core.TitleLevel} sHeaderLevel Header level
-         * @returns {sap.ui.mdc.Chart} Reference to <code>this</code> in order to allow method chaining
-         */
         Chart.prototype.setHeaderLevel = function(sHeaderLevel) {
             if (this.getAggregation("_toolbar")) {
                 this.getAggregation("_toolbar")._setHeaderLevel(sHeaderLevel);

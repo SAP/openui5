@@ -38,7 +38,7 @@ function (Control, Renderer, Core, jQuery
             properties: {
                 /**
                  * Toggles the visibility of the noDataContent & content
-                 * @private
+                 *
                  */
                 showNoDataStruct: {
                     type: "boolean",
@@ -49,7 +49,7 @@ function (Control, Renderer, Core, jQuery
             aggregations: {
                 /**
                  * Content/Chart to be visualized.
-                 * @private
+                 *
                  */
                 content: {
                     type: "sap.ui.core.Control",
@@ -60,7 +60,7 @@ function (Control, Renderer, Core, jQuery
                  * Control to show when there is no data available inside the chart.<br>
                  * This can be used if the standard behavior of the used chart control needs to be overriden.<br>
                  * To show this <code>noDataContent</code>, set {@link ap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct}
-                 * @private
+                 *
                  */
                 noDataContent : {
                     type: "sap.ui.core.Control",
@@ -72,7 +72,6 @@ function (Control, Renderer, Core, jQuery
                  * Association to noData content set in the MDC Chart.
                  * If set, this will be used instead of the <code>noDataContent</code> aggregation.
                  *
-                 * @private
                  */
                 chartNoDataContent: {
                     type: "sap.ui.core.Control",
@@ -119,6 +118,7 @@ function (Control, Renderer, Core, jQuery
      * Sets a new control to be displayed inside the container.
      * @param {sap.ui.core.Control} oContent new content to display
      * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -133,6 +133,7 @@ function (Control, Renderer, Core, jQuery
      * Sets a new control for {@link sap.ui.mdc.chart.ChartImplementationContainer#noDataContent noDataContent}.
      * @param {sap.ui.core.Control} oContent the content to show when {@link sap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct} is set to <code>true</code>
      * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -147,6 +148,7 @@ function (Control, Renderer, Core, jQuery
      * Updates the association to a control which is used instead of {@link sap.ui.mdc.chart.ChartImplementationContainer#noDataContent noDataContent}.
      * This can be used when the noDataContent should still be an aggregation of another control (e.g. the {@link sap.ui.mdc.Chart Chart}).
      * @param {sap.ui.core.Control} oContent the content to show when {@link sap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct} is set to <code>true</code>
+     *
      * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
      * @experimental
      * @private

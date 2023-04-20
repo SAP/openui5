@@ -140,10 +140,10 @@ sap.ui.define([
      * Creates a new MDC chart item for a given property name and updates the inner chart.
      * <b>Note:</b> This does <b>not</b> add the MDC chart item to the <code>Items</code> aggregation of the MDC chart.
      * Called and used by <code>p13n</code>.
-     * @param {string} sPropertyName the name of the property added
+     * @param {string} sPropertyName The name of the property added
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart to add the property to
-     * @param {object} mPropertyBag the property bag containing useful information about the change
-     * @param {string} sRole new role for given item (if available)
+     * @param {object} mPropertyBag The property bag containing useful information about the change
+     * @param {string} [sRole] New role for given item
      * @returns {Promise} Promise that resolves with new MDC chart Item as parameter
      *
      * @experimental
@@ -296,7 +296,7 @@ sap.ui.define([
      * Returns the current chart type.
      *
      * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Information about the current chart type
-     * @throws Exception if inner chart is not initialized yet
+     * @throws {Error} if inner chart is not initialized yet
      *
      * @experimental
      * @private
@@ -466,7 +466,7 @@ sap.ui.define([
     /**
      * Returns the information whether the inner chart is currently bound.
      *
-     * @param {sap.ui.mdc.Chart} oMDCChart to the MDC chart
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {boolean} <code>true</code> if inner chart is bound; <code>false</code> if not
      *
      * @experimental
@@ -480,7 +480,7 @@ sap.ui.define([
     /**
      * Updates the binding info with the relevant filters.
      *
-     * @param {sap.ui.mdc.Chart} oMDCChart to the MDC chart
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo Binding info of the chart
      *
      * @experimental
