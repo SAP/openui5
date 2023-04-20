@@ -562,7 +562,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets conditions to the property <code>conditions</code>.
+	 * Sets a new value for property {@link #getConditions conditions}.
 	 *
 	 * Do not use the <code>conditions</code> property,
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
@@ -579,7 +579,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Gets conditions of the property <code>conditions</code>.
+	 * Gets current value of property {@link #getConditions conditions}.
 	 *
 	 * Do not use the <code>conditions</code> property,
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
@@ -595,7 +595,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Binds property <code>conditions</code> to model data.
+	 * Binds property {@link #getConditions conditions} to model data.
 	 *
 	 * See {@link sap.ui.base.ManagedObject#bindProperty ManagedObject.bindProperty} for a detailed description of the possible properties of oBindingInfo
 	 *
@@ -614,7 +614,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Unbinds property <code>conditions</code> from model data.
+	 * Unbinds property {@link #getConditions conditions} from model data.
 	 *
 	 * Do not use the <code>conditions</code> property,
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
@@ -630,7 +630,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Sets a new value for property <code>dataType</code>.
+	 * Sets a new value for property {@link #getDataType dataType}.
 	 *
 	 * The type of data handled by the field. The type is used to parse, format, and validate the value.
 	 *
@@ -649,7 +649,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Gets a new value for property <code>dataType</code>.
+	 * Gets current value of property {@link #getDataType dataType}.
 	 *
 	 * The type of data handled by the field. The type is used to parse, format, and validate the value.
 	 *
@@ -668,7 +668,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Sets a new value for property <code>dataTypeConstraints</code>.
+	 * Sets a new value for property {@link #getDataTypeConstraints dataTypeConstraints}.
 	 *
 	 * The constraints of the type specified in <code>dataType</code>.
 	 *
@@ -687,7 +687,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Gets a new value for property <code>dataTypeConstraints</code>.
+	 * Gets current value of property {@link #getDataTypeConstraints dataTypeConstraints}.
 	 *
 	 * The constraints of the type specified in <code>dataType</code>.
 	 *
@@ -706,7 +706,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Sets a new value for property <code>dataTypeFormatOptions</code>.
+	 * Sets a new value for property {@link #getDataTypeFormatOptions dataTypeFormatOptions}.
 	 *
 	 * The format options of the type specified in <code>dataType</code>.
 	 *
@@ -725,7 +725,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Gets a new value for property <code>dataTypeFormatOptions</code>.
+	 * Gets current value of property {@link #getDataTypeFormatOptions dataTypeFormatOptions}.
 	 *
 	 * The format options of the type specified in <code>dataType</code>.
 	 *

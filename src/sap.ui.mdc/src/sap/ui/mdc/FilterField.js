@@ -96,6 +96,8 @@ sap.ui.define([
 
 						/**
 						 * Conditions of the field. This includes all conditions, not only the changed ones.
+						 *
+						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
 						 * @since 1.61.0
 						 */
 						conditions: { type: "object[]" },

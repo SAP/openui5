@@ -93,7 +93,7 @@ sap.ui.define([
 	 * It must not be used stand-alone.
 	 *
 	 * @extends sap.ui.mdc.Control
-	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.m.IOverflowToolbarContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -102,6 +102,11 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.FieldBase
 	 * @since 1.58.0
 	 * @abstract
+	 *
+	 * @borrows sap.ui.core.Control#getAccessibilityInfo as #getAccessibilityInfo
+	 * @borrows sap.ui.core.Element.prototype#enhanceAccessibilityState as #enhanceAccessibilityState
+	 * @borrows sap.ui.core.ISemanticFormContent#getFormFormattedValue as #getFormFormattedValue
+	 * @borrows sap.ui.core.ISemanticFormContent#getFormValueProperty as #getFormValueProperty
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -380,6 +385,10 @@ sap.ui.define([
 				/**
 				 * Optional content that can be rendered.
 				 *
+				 * Per default, depending on <code>editMode</code>, <code>multipleLines</code> and used data type a content control is rendered. For simple string types a {@link sap.m.Text Text}
+				 * control is rendered in display mode and a {@link sap.m.Input Input} control in edit mode. If a control is assigned in the <code>content</code> aggregation this will be
+				 * rendered instead.
+				 *
 				 * <b>Note:</b> Bind the value-holding property of the control to <code>'$field>/conditions'</code>
 				 * using {@link sap.ui.mdc.field.ConditionsType ConditionsType} as type.
 				 *
@@ -397,6 +406,9 @@ sap.ui.define([
 
 				/**
 				 * Optional content to be rendered if the <code>editMode</code> property is not set to <code>Display</code>.
+				 *
+				 * Per default, depending on <code>multipleLines</code> and used data type a content control is rendered in edit mode. For simple string types a {@link sap.m.Input Input}
+				 * control is rendered in edit mode. If a control is assigned in the <code>contentEdit</code> aggregation this will be rendered instead.
 				 *
 				 * <b>Note:</b> If a control is assigned to the <code>content</code> aggregation, this one is ignored.
 				 *
@@ -419,6 +431,9 @@ sap.ui.define([
 
 				/**
 				 * Optional content to be rendered  if the <code>editMode</code> property is set to <code>Display</code>.
+				 *
+				 * Per default, depending on <code>multipleLines</code> and used data type a content control is rendered in display mode. For simple string types a {@link sap.m.Text Text}
+				 * control is rendered in display mode. If a control is assigned in the <code>contentEdit</code> aggregation this will be rendered instead.
 				 *
 				 * <b>Note:</b> If a control is assigned to the <code>content</code> aggregation, this one is ignored.
 				 *
@@ -450,6 +465,7 @@ sap.ui.define([
 
 				/**
 				 * Optional <code>FieldInfo</code> used for detail information. This is only active in display mode.
+				 * Especially {@link sap.ui.mdc.Link} can be used to activate link features.
 				 *
 				 * <b>Note:</b> If a special data type is defined or a content control is set, this is ignored.
 				 */
@@ -1438,7 +1454,7 @@ sap.ui.define([
 
 	};
 
-	/**
+	/*
 	 * @returns {object} Current accessibility state of the control.
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
@@ -3035,9 +3051,9 @@ sap.ui.define([
 
 	// TODO: better API?
 	/**
-	 * Provides some internals of the field to be used in the value help.
+	 * Provides some internals of the field to be used in {@link sap.ui.mdc.field.ConditionsType ConditionsType} for format and parse the conditions.
 	 *
-	 * @returns {object} formatOptions of the field
+	 * @returns {object} formatOptions of the field (see {@link sap.ui.mdc.field.ConditionsType ConditionsType})
 	 * @private
 	 */
 	FieldBase.prototype._getFormatOptions = function() {
@@ -3117,6 +3133,12 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Provides some internals of the unit part of the field to be used in {@link sap.ui.mdc.field.ConditionsType ConditionsType} for format and parse the conditions.
+	 *
+	 * @returns {object} formatOptions of the field (see {@link sap.ui.mdc.field.ConditionsType ConditionsType})
+	 * @private
+	 */
 	FieldBase.prototype._getUnitFormatOptions = function() {
 
 		if (!this._asyncParsingCall) { //as variable to have the same function after each update of formatOptions. Otherwise it would be a change on FormatOption in ValueHelpPanel every time
