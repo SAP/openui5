@@ -53,6 +53,8 @@ sap.ui.define([
 	// shortcut for sap.ui.integration.CardBlockingMessageType
 	var CardBlockingMessageType = library.CardBlockingMessageType;
 
+	var CardPreviewMode = library.CardPreviewMode;
+
 	/**
 	 * Constructor for a new <code>BaseContent</code>.
 	 *
@@ -121,7 +123,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the internally used LoadingProvider.
+				 * Defines the internally used LoadingPlaceholder.
 				 */
 				_loadingPlaceholder: {
 					type: "sap.ui.core.Element",
@@ -181,11 +183,22 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.onBeforeRendering = function () {
-		var oConfiguration = this.getConfiguration();
+		var oConfiguration = this.getConfiguration(),
+			oCard = this.getCardInstance(),
+			oLoadingPlaceholder = this.getAggregation("_loadingPlaceholder");
 
-		if (!this.getAggregation("_loadingPlaceholder") && oConfiguration) {
-			this.setAggregation("_loadingPlaceholder", this.createLoadingPlaceholder(oConfiguration));
-		}
+			if (!oLoadingPlaceholder && oConfiguration) {
+				this.setAggregation("_loadingPlaceholder", this.createLoadingPlaceholder(oConfiguration));
+				oLoadingPlaceholder = this.getAggregation("_loadingPlaceholder");
+			}
+
+			if (oLoadingPlaceholder && oCard) {
+				oLoadingPlaceholder.setRenderTooltip(oCard.getPreviewMode() !== CardPreviewMode.Abstract);
+
+				if (typeof this._getTable === "function") {
+					oLoadingPlaceholder.setHasContent((this._getTable().getColumns().length > 0));
+				}
+			}
 	};
 
 	/**

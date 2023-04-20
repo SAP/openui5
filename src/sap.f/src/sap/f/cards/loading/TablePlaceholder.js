@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/ui/core/Core"
-], function (Control, Core) {
+	"sap/f/cards/loading/PlaceholderBase",
+	"./TablePlaceholderRenderer"
+], function (PlaceholderBase, TablePlaceholderRenderer) {
 	"use strict";
 
 	/**
@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @since 1.104
 	 * @alias sap.f.cards.loading.TablePlaceholder
 	 */
-	var TablePlaceholder = Control.extend("sap.f.cards.loading.TablePlaceholder", {
+	var TablePlaceholder = PlaceholderBase.extend("sap.f.cards.loading.TablePlaceholder", {
 		metadata: {
 			library: "sap.f",
 			properties: {
@@ -47,60 +47,7 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: {
-			apiVersion: 2,
-			render: function (oRm, oControl) {
-				var iMinItems = oControl.getMinItems(),
-					iColumns = oControl.getColumns(),
-					bHasActualContent = oControl.getParent()._getTable().getColumns().length,
-					// set title for screen reader
-					oResBundle = Core.getLibraryResourceBundle("sap.ui.core"),
-					sTitle = oResBundle.getText("BUSY_TEXT");
-
-				if (!bHasActualContent) {
-					return;
-				}
-
-				oRm.openStart("div", oControl)
-					.class("sapFCardContentPlaceholder")
-					.class("sapFCardContentTablePlaceholder")
-					.attr("tabindex", "0")
-					.attr("title", sTitle);
-
-				oRm.accessibilityState(oControl, {
-					role: "progressbar",
-					valuemin: "0",
-					valuemax: "100"
-				});
-
-				oRm.openEnd();
-
-				for (var i = 0; i < iMinItems + 1; i++) { // number of rows + header
-					oRm.openStart("div")
-						.class("sapFCardTablePlaceholderItem")
-						.style("height", oControl.getItemHeight())
-						.openEnd();
-
-					oRm.openStart("div")
-						.class("sapFCardTablePlaceholderRows")
-						.openEnd();
-
-						if (iColumns > 1) {
-							for (var j = 0; j < iColumns; j++) {
-								oRm.openStart("div")
-								.class("sapFCardTablePlaceholderColumns")
-								.class("sapFCardLoadingShimmer")
-								.openEnd();
-								oRm.close("div");
-							}
-						}
-
-					oRm.close("div");
-					oRm.close("div");
-				}
-				oRm.close("div");
-			}
-		}
+		renderer: TablePlaceholderRenderer
 	});
 
 	return TablePlaceholder;

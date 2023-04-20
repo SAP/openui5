@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/f/cards/loading/PlaceholderBase",
+	"./ObjectPlaceholderRenderer",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/units/Rem"
 ], function (
-	Control,
-	Core,
+	PlaceholderBase,
+	ObjectPlaceholderRenderer,
 	ResizeHandler,
 	Rem
 ) {
@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @since 1.104
 	 * @alias sap.f.cards.loading.ObjectPlaceholder
 	 */
-	var ObjectPlaceholder = Control.extend("sap.f.cards.loading.ObjectPlaceholder", {
+	var ObjectPlaceholder = PlaceholderBase.extend("sap.f.cards.loading.ObjectPlaceholder", {
 		metadata: {
 			library: "sap.f",
 			properties: {
@@ -52,56 +52,7 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: {
-			apiVersion: 2,
-			render: function (oRm, oObjectPlaceholder) {
-				var oResBundle = Core.getLibraryResourceBundle("sap.ui.core"),
-					sTitle = oResBundle.getText("BUSY_TEXT");
-
-				oRm.openStart("div", oObjectPlaceholder)
-					.class("sapFCardContentPlaceholder")
-					.class("sapFCardContentObjectPlaceholder")
-					.attr("tabindex", "0")
-					.attr("title", sTitle);
-
-				oRm.accessibilityState(oObjectPlaceholder, {
-					role: "progressbar",
-					valuemin: "0",
-					valuemax: "100"
-				});
-				oRm.openEnd();
-
-				for (var i = 0; i < oObjectPlaceholder._iColsCnt; i++) {
-					this.renderColumn(oRm, oObjectPlaceholder._iRowsCnt);
-				}
-
-				oRm.close("div");
-			},
-			renderColumn: function (oRm, iRowsCnt) {
-				oRm.openStart("div")
-					.class("sapFCardObjectPlaceholderColumn")
-					.openEnd();
-
-				for (var i = 0; i < iRowsCnt; i++) {
-					this.renderRow(oRm, "First", false);
-					this.renderRow(oRm, "Second", i === iRowsCnt);
-				}
-
-				oRm.close("div");
-			},
-			renderRow: function (oRm, sRow, bLastInColumn) {
-				oRm.openStart("div")
-					.class("sapFCardLoadingShimmer")
-					.class("sapFCardObjectPlaceholderGroup" + sRow + "Row");
-
-				if (bLastInColumn) {
-					oRm.class("sapFCardObjectPlaceholderGroupLastRow");
-				}
-
-				oRm.openEnd()
-					.close("div");
-			}
-		}
+		renderer: ObjectPlaceholderRenderer
 	});
 
 	ObjectPlaceholder.prototype.init = function () {
