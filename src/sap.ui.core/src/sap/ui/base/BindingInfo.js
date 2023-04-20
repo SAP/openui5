@@ -180,7 +180,7 @@ sap.ui.define([
 		get: function () {
 			if (!this.oParser) {
 				// Note: "simple" binding syntax is deprecated since 1.24
-				this.oParser = Configuration.getValue("bindingSyntax") === "simple" ? BindingParser.simpleParser : BindingParser.complexParser;
+				this.oParser = Configuration.getBindingSyntax() === "simple" ? BindingParser.simpleParser : BindingParser.complexParser;
 				if ( Configuration.getDesignMode() == true ) {
 					BindingParser._keepBindingStrings = true;
 				}
