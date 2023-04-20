@@ -1,11 +1,10 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/Properties",
 	"sap/base/util/merge",
 	"sap/ui/core/Configuration"
-], function(Log, ResourceBundle, Properties, merge, Configuration) {
+], function(ResourceBundle, Properties, merge, Configuration) {
 	"use strict";
 
 	QUnit.module("sap/base/i18n/ResourceBundle", {
@@ -24,19 +23,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("create", function(assert) {
-		var done = assert.async();
-
 		var oEmptyProps = createFakeProperties({number: "47"});
 
 		this.stub(Properties, "create").returns(Promise.resolve(oEmptyProps));
 
-		ResourceBundle.create({url: 'my.properties', async: true}).then(function(oResourceBundle) {
+		return ResourceBundle.create({url: 'my.properties', async: true}).then(function(oResourceBundle) {
+			assert.ok(oResourceBundle instanceof ResourceBundle);
 			assert.deepEqual(oResourceBundle.aPropertyFiles[0], oEmptyProps, "properties are correctly loaded");
-			done();
 		});
-
 	});
-
 
 	function createFakeProperties(obj, oCallStub) {
 		return {
@@ -85,6 +80,88 @@ sap.ui.define([
 			return oResourceBundle1;
 		});
 	}
+
+	QUnit.test("_recreate (async instance)", function(assert) {
+		return ResourceBundle.create({
+			"async": true,
+			"bundleUrl": "i18n/i18n.properties"
+		}).then(function(oResourceBundle1) {
+			return oResourceBundle1._recreate().then(function(oResourceBundle2) {
+				assert.ok(oResourceBundle2 instanceof ResourceBundle, "recreate should resolve with ResourceBundle");
+				assert.notEqual(oResourceBundle1, oResourceBundle2, "recreate should not resolve with same instance");
+				assert.deepEqual(oResourceBundle1, oResourceBundle2, "recreate should resolve with equal ResourceBundle as new instance");
+			});
+		});
+	});
+
+	QUnit.test("_recreate (async instance, with enhanceWith)", function(assert) {
+		return ResourceBundle.create({
+			"async": true,
+			"includeInfo": false,
+			"locale": "en-US",
+			"enhanceWith": [
+				{
+					"bundleUrl": "enhance/i18n/i18n.properties",
+					"supportedLocales": [""],
+					"fallbackLocale": "",
+					"bundleUrlRelativeTo": "manifest"
+				}
+			],
+			"bundleUrl": "i18n/i18n.properties"
+		}).then(function(oResourceBundle1) {
+			return oResourceBundle1._recreate().then(function(oResourceBundle2) {
+				assert.ok(oResourceBundle2 instanceof ResourceBundle, "recreate should resolve with ResourceBundle");
+				assert.notEqual(oResourceBundle1, oResourceBundle2, "recreate should not resolve with same instance");
+				assert.deepEqual(oResourceBundle1, oResourceBundle2, "recreate should resolve with equal ResourceBundle as new instance");
+			});
+		});
+	});
+
+	QUnit.test("_recreate (sync instance)", function(assert) {
+		var oResourceBundle1 = ResourceBundle.create({
+			"bundleUrl": "i18n/i18n.properties"
+		});
+		var oResourceBundle2 = oResourceBundle1._recreate();
+		assert.ok(oResourceBundle2 instanceof ResourceBundle, "recreate should resolve with ResourceBundle");
+		assert.notEqual(oResourceBundle1, oResourceBundle2, "recreate should not resolve with same instance");
+		assert.deepEqual(oResourceBundle1, oResourceBundle2, "recreate should resolve with equal ResourceBundle as new instance");
+	});
+
+	QUnit.test("_recreate (sync instance, with enhanceWith)", function(assert) {
+		var oResourceBundle1 = ResourceBundle.create({
+			"includeInfo": true,
+			"enhanceWith": [
+				{
+					"bundleUrl": "enhance/i18n/i18n.properties",
+					"supportedLocales": [""],
+					"fallbackLocale": "",
+					"bundleUrlRelativeTo": "manifest"
+				}
+			],
+			"bundleUrl": "i18n/i18n.properties"
+		});
+		var oResourceBundle2 = oResourceBundle1._recreate();
+		assert.ok(oResourceBundle2 instanceof ResourceBundle, "recreate should resolve with ResourceBundle");
+		assert.notEqual(oResourceBundle1, oResourceBundle2, "recreate should not resolve with same instance");
+		assert.deepEqual(oResourceBundle1, oResourceBundle2, "recreate should resolve with equal ResourceBundle as new instance");
+	});
+
+	QUnit.test("_recreate (async, rejects with error when not created via factory)", function(assert) {
+		return new ResourceBundle("i18n/i18n.properties", undefined, undefined, true /* async */).then(function(oResourceBundle) {
+			return oResourceBundle._recreate();
+		}).then(function() {
+			assert.ok(false, "_recreate should not resolve");
+		}, function(err) {
+			assert.equal(err.message, "ResourceBundle instance can't be recreated as it has not been created by the ResourceBundle.create factory.");
+		});
+	});
+
+	QUnit.test("_recreate (sync, throws error when not created via factory)", function(assert) {
+		var oResourceBundle = new ResourceBundle("i18n/i18n.properties");
+		assert.throws(function() {
+			oResourceBundle._recreate();
+		}, "ResourceBundle instance can't be recreated as it has not been created by the ResourceBundle.create factory.");
+	});
 
 	QUnit.test("multiple resource bundles using _enhance", function(assert) {
 		return createResourceBundleWithCustomBundles(this).then(function(oResourceBundle) {
