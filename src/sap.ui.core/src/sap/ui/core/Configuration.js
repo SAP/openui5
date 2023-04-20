@@ -177,7 +177,7 @@ sap.ui.define([
 		}
 	}
 
-	var M_ANIMATION_MODE = {
+	var M_ANIMATION_MODE = /** @lends sap.ui.core.Configuration.AnimationMode */{
 		/**
 		 * <code>full</code> represents a mode with unrestricted animation capabilities.
 		 * @public
