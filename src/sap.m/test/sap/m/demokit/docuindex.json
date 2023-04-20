@@ -2451,17 +2451,17 @@
 		},
 		{
 			"id": "sap.m.sample.DynamicDateRange",
-			"name": "Dynamic Date Range (Experimental)",
+			"name": "Dynamic Date Range",
 			"description": "The dynamic date range is a control that offers a choice of absolute and relative dates, using different offset from the current date. The list of values offered must be defined by the application."
 		},
 		{
 			"id": "sap.m.sample.DynamicDateRangeWithCustomOptions",
-			"name": "Dynamic Date Range with Custom Options (Experimental)",
+			"name": "Dynamic Date Range with Custom Options",
 			"description": "This example shows the Dynamic Date Range control with custom options for interval or date selection."
 		},
 		{
 			"id": "sap.m.sample.DynamicDateRangeAndCalendarWeekNumbering",
-			"name": "Dynamic Date Range with calendarWeekNumbering (Experimental)",
+			"name": "Dynamic Date Range with calendarWeekNumbering",
 			"description": "This example shows the Dynamic Date Range control with Middle Eastern calendar week numbering."
 		},
 		{
