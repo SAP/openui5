@@ -713,10 +713,10 @@ sap.ui.define([
 	 * method then adds a transient entity to the parent's navigation property, which is sent with
 	 * the payload of the parent entity. Such a nested context also has a
 	 * {@link sap.ui.model.odata.v4.Context#created created} promise, which resolves when the deep
-	 * create resolves. <b>Beware:</b> After a succesful creation of the main entity the context
-	 * returned for a nested entity is no longer valid. New contexts are created for the nested
-	 * collection because it is not possible to reliably assign the response entities to those of
-	 * the request, especially if the count differs.
+	 * create resolves; it cannot be inactive. <b>Beware:</b> After a succesful creation of the main
+	 * entity the context returned for a nested entity is no longer valid. New contexts are created
+	 * for the nested collection because it is not possible to reliably assign the response entities
+	 * to those of the request, especially if the count differs.
 	 *
 	 * Deep create requires the <code>autoExpandSelect<code> parameter at the
 	 * {@link sap.ui.model.odata.v4.ODataModel#constructor model}. The refresh after a deep create
@@ -764,7 +764,9 @@ sap.ui.define([
 	 *       length,
 	 *     <li> <code>bInactive</code> is <code>true</code>, the list binding is relative and does
 	 *       not use the <code>$$ownRequest</code> parameter
-	 *       (see {@link sap.ui.model.odata.v4.ODataModel#bindList})
+	 *       (see {@link sap.ui.model.odata.v4.ODataModel#bindList}),
+	 *     <li> <code>bInactive</code> is <code>true</code> and the list binding has a transient
+	 *       parent context (takes part in a deep create).
 	 *   </ul>
 	 * @public
 	 * @since 1.43.0
@@ -798,6 +800,9 @@ sap.ui.define([
 			throw new Error("Cannot create at the start after creation at end");
 		}
 		if (bInactive) {
+			if (this.isTransient()) {
+				throw new Error("Must not create an inactive context in a deep create: " + this);
+			}
 			if (this.isRelative() && !this.mParameters.$$ownRequest) {
 				throw new Error("Missing $$ownRequest at " + this);
 			}
