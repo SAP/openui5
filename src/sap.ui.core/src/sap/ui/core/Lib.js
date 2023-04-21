@@ -294,6 +294,17 @@ sap.ui.define([
 		},
 
 		/**
+		 * Override the function to avoid creating facade for this instance to expose the settings properties that are
+		 * given through {@link #enhanceSettings}.
+		 *
+		 * @return {this} The Lib instance itself
+		 * @override
+		 */
+		getInterface: function() {
+			return this;
+		},
+
+		/**
 		 * Indicates whether the {@link sap.ui.core.Lib#enhanceSettings} is called
 		 *
 		 * @returns {boolean} Whether a library's setting is enhanced with additional metadata
