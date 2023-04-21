@@ -86,13 +86,13 @@ sap.ui.define([
 				 */
 				noDataDescription: {type: "string", defaultValue: null},
 				/**
-				 * Defines custom text for the 'No data' text label.
+				 * Defines custom text for the drag and drop text label.
 				 */
-				 dragDropText: {type: "string", defaultValue: null},
-				 /**
-				  * Defines custom text for the 'No data' description label.
-				  */
-				 dragDropDescription: {type: "string", defaultValue: null},
+				dragDropText: {type: "string", defaultValue: null},
+				/**
+				 * Defines custom text for the drag and drop description label.
+				 */
+				dragDropDescription: {type: "string", defaultValue: null},
 				/**
 				 * Defines whether the upload process should be triggered as soon as the file is added.<br>
 				 * If set to <code>false</code>, no upload is triggered when a file is added.
