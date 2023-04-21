@@ -1440,7 +1440,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getAppCacheBuster : function() {
-			return this.getValue("appCacheBuster");
+			return BaseConfig.get({name: "sapUiAppCacheBuster", type: BaseConfig.Type.StringArray, external: true, freeze: true});
 		},
 
 		/**
@@ -1450,7 +1450,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getAppCacheBusterMode : function() {
-			return this.getValue("xx-appCacheBusterMode");
+			return BaseConfig.get({name: "sapUiXxAppCacheBusterMode", type: BaseConfig.Type.String, defaultValue: "sync", external: true, freeze: true});
 		},
 
 		/**
@@ -1462,7 +1462,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		getAppCacheBusterHooks : function() {
-			return this.getValue("xx-appCacheBusterHooks");
+			return BaseConfig.get({name: "sapUiXxAppCacheBusterHooks", type: BaseConfig.Type.Object, defaultValue: undefined, freeze: true});
 		},
 
 		/**
