@@ -170,13 +170,13 @@ sap.ui.define([
 	MenuTextFieldItem.prototype.hover = function(bHovered, oMenu){
 		this.$().toggleClass("sapUiMnuItmHov", bHovered);
 
-		if (bHovered && oMenu.checkEnabled(this)) {
+		if (bHovered) {
 			oMenu.closeSubmenu(false, true);
 		}
 	};
 
 	MenuTextFieldItem.prototype.focus = function(oMenu){
-		if (this.getEnabled() && this.getVisible()) {
+		if (this.getVisible()) {
 			this.$("tf").get(0).focus();
 		} else {
 			oMenu.focus();
@@ -238,7 +238,7 @@ sap.ui.define([
 
 	MenuTextFieldItem.prototype.onclick = function(oEvent){
 		this.getParent().closeSubmenu(false, true);
-		if (!Device.system.desktop && this.getParent().checkEnabled(this)) {
+		if (!Device.system.desktop) {
 			this.focus();
 		}
 		oEvent.stopPropagation();

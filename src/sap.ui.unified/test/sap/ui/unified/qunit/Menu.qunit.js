@@ -282,8 +282,8 @@ sap.ui.define([
 		assert.equal(oRootMenu.getItems()[0].getEnabled(), false, "Custom 'enabled':");
 		assert.equal(oRootMenu.getItems()[1].getEnabled(), false, "Custom 'enabled':");
 		openRootMenu(false, assert);
-		checkHoveredItem("item5", undefined, assert); /* disabled items I3 and I4 skipped */
-		checkFocusedItem("item5", assert);
+		checkHoveredItem("item3", undefined, assert);
+		checkFocusedItem("item3", assert);
 		qutils.triggerEvent("tap", "button5", {});
 		closeAllMenusAndCheck(assert);
 
@@ -300,8 +300,8 @@ sap.ui.define([
 		checkHoveredItem("item4", undefined, assert);
 		checkFocusedItem("item4", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
-		checkHoveredItem("item7", undefined, assert); /* disabled item I5 skipped */
-		checkFocusedItem("item7", assert);
+		checkHoveredItem("item5", undefined, assert);
+		checkFocusedItem("item5", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		checkHoveredItem("item7", undefined, assert);
 		checkFocusedItem("item7", assert);
@@ -324,8 +324,8 @@ sap.ui.define([
 		checkFocusedItem("item4", assert);
 
 		qutils.triggerKeydown("menu2", "ARROW_DOWN", true);
-		checkHoveredItem("item7", undefined, assert);
-		checkFocusedItem("item7", assert);
+		checkHoveredItem("item5", undefined, assert);
+		checkFocusedItem("item5", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN", true);
 		checkHoveredItem("item7", undefined, assert);
 		checkFocusedItem("item7", assert);
@@ -348,8 +348,8 @@ sap.ui.define([
 		checkFocusedItem("item4", assert);
 
 		qutils.triggerKeydown("menu2", "ARROW_DOWN", false, false, true);
-		checkHoveredItem("item7", undefined, assert);
-		checkFocusedItem("item7", assert);
+		checkHoveredItem("item5", undefined, assert);
+		checkFocusedItem("item5", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN", false, false, true);
 		checkHoveredItem("item7", undefined, assert);
 		checkFocusedItem("item7", assert);
@@ -371,8 +371,9 @@ sap.ui.define([
 		checkHoveredItem("item4", undefined, assert); /* no change */
 		checkFocusedItem("item4", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
-		checkHoveredItem("item7", undefined, assert);
-		checkFocusedItem("item7", assert);
+		checkHoveredItem("item5", undefined, assert);
+		checkFocusedItem("item5", assert);
+		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_RIGHT");
 		checkHoveredItem("item8", oSubMenu, assert);
 		checkFocusedItem("item8", assert);
@@ -412,14 +413,14 @@ sap.ui.define([
 		checkHoveredItem("item30", oLongMenu, assert);
 		checkFocusedItem("item30", assert);
 		qutils.triggerKeydown("menu14", "PAGE_DOWN");
-		checkHoveredItem("item36", oLongMenu, assert); /* disabled item i35 skipped */
-		checkFocusedItem("item36", assert);
+		checkHoveredItem("item35", oLongMenu, assert);
+		checkFocusedItem("item35", assert);
 		qutils.triggerKeydown("menu14", "PAGE_UP");
-		checkHoveredItem("item31", oLongMenu, assert);
-		checkFocusedItem("item31", assert);
+		checkHoveredItem("item30", oLongMenu, assert);
+		checkFocusedItem("item30", assert);
 		qutils.triggerKeydown("menu14", "PAGE_UP");
-		checkHoveredItem("item26", oLongMenu, assert);
-		checkFocusedItem("item26", assert);
+		checkHoveredItem("item25", oLongMenu, assert);
+		checkFocusedItem("item25", assert);
 		qutils.triggerKeydown("menu14", "PAGE_UP");
 		checkHoveredItem("item20", oLongMenu, assert); /* disabled item I21 skipped */
 		checkFocusedItem("item20", assert);
@@ -436,14 +437,14 @@ sap.ui.define([
 		checkHoveredItem("item25", oLongMenu, assert);
 		checkFocusedItem("item25", assert);
 		qutils.triggerKeydown("menu14", "PAGE_DOWN");
-		checkHoveredItem("item36", oLongMenu, assert); /* disabled item I35 skipped */
-		checkFocusedItem("item36", assert);
+		checkHoveredItem("item35", oLongMenu, assert);
+		checkFocusedItem("item35", assert);
 		qutils.triggerKeydown("menu14", "PAGE_UP");
-		checkHoveredItem("item26", oLongMenu, assert);
-		checkFocusedItem("item26", assert);
+		checkHoveredItem("item25", oLongMenu, assert);
+		checkFocusedItem("item25", assert);
 		qutils.triggerKeydown("menu14", "PAGE_UP");
-		checkHoveredItem("item16", oLongMenu, assert);
-		checkFocusedItem("item16", assert);
+		checkHoveredItem("item15", oLongMenu, assert);
+		checkFocusedItem("item15", assert);
 		qutils.triggerKeydown("menu14", "PAGE_UP");
 		checkHoveredItem("item15", oLongMenu, assert);
 		checkFocusedItem("item15", assert);
@@ -517,17 +518,17 @@ sap.ui.define([
 		assert.equal(oLongMenu.getItems()[99].getEnabled(), false, "Custom 'enabled':");
 
 		openMenu(oLongMenu, false, assert);
-		checkHoveredItem("item21", oLongMenu, assert); /* the first enabled item from the list is hovered */
-		checkFocusedItem("item21", assert);
+		checkHoveredItem("item15", oLongMenu, assert); /* the first enabled item from the list is hovered */
+		checkFocusedItem("item15", assert);
 
 
 		qutils.triggerKeydown("menu14", "END");
-		checkHoveredItem("item112", oLongMenu, assert); /* the last enabled item from the list is hovered */
-		checkFocusedItem("item112", assert);
+		checkHoveredItem("item114", oLongMenu, assert); /* the last enabled item from the list is hovered */
+		checkFocusedItem("item114", assert);
 
 		qutils.triggerKeydown("menu14", "HOME");
-		checkHoveredItem("item21", oLongMenu, assert); /* the first enabled item from the list is hovered */
-		checkFocusedItem("item21", assert);
+		checkHoveredItem("item15", oLongMenu, assert); /* the first enabled item from the list is hovered */
+		checkFocusedItem("item15", assert);
 
 		qutils.triggerEvent("tap", "button5", {});
 		closeAllMenusAndCheck(assert);
@@ -545,26 +546,26 @@ sap.ui.define([
 		assert.equal(oRootMenu.getItems()[3].getEnabled(), false, "Custom 'enabled':");
 
 		openRootMenu(false, assert);
-		checkHoveredItem("item5", undefined, assert);
-		checkFocusedItem("item5", assert);
+		checkHoveredItem("item3", undefined, assert);
+		checkFocusedItem("item3", assert);
 		qutils.triggerKeydown("menu14", "PAGE_DOWN");
-		checkHoveredItem("item5", undefined, assert); /* no change */
-		checkFocusedItem("item5", assert);
+		checkHoveredItem("item3", undefined, assert); /* no change */
+		checkFocusedItem("item3", assert);
 		qutils.triggerKeydown("menu14", "PAGE_UP");
-		checkHoveredItem("item5", undefined, assert); /* no change */
-		checkFocusedItem("item5", assert);
+		checkHoveredItem("item3", undefined, assert); /* no change */
+		checkFocusedItem("item3", assert);
 		qutils.triggerKeydown("menu14", "PAGE_RIGHT");
-		checkHoveredItem("item5", undefined, assert); /* no change */
-		checkFocusedItem("item5", assert);
+		checkHoveredItem("item3", undefined, assert); /* no change */
+		checkFocusedItem("item3", assert);
 		qutils.triggerKeydown("menu14", "PAGE_LEFT");
-		checkHoveredItem("item5", undefined, assert); /* no change */
-		checkFocusedItem("item5", assert);
+		checkHoveredItem("item3", undefined, assert); /* no change */
+		checkFocusedItem("item3", assert);
 		qutils.triggerKeydown("menu14", "HOME");
-		checkHoveredItem("item5", undefined, assert); /* no change */
-		checkFocusedItem("item5", assert);
+		checkHoveredItem("item3", undefined, assert); /* no change */
+		checkFocusedItem("item3", assert);
 		qutils.triggerKeydown("menu14", "END");
-		checkHoveredItem("item5", undefined, assert); /* no change */
-		checkFocusedItem("item5", assert);
+		checkHoveredItem("item3", undefined, assert); /* no change */
+		checkFocusedItem("item3", assert);
 
 		qutils.triggerEvent("tap", "button5", {});
 		closeAllMenusAndCheck(assert);
@@ -576,13 +577,13 @@ sap.ui.define([
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_RIGHT");
 		qutils.triggerKeydown("menu3", "ARROW_DOWN");
-		checkHoveredItem("item9", oSubMenu, assert);
-		checkFocusedItem("item9", assert);
+		qutils.triggerKeydown("menu5", "ARROW_DOWN");
+		checkFocusedItem("item5", assert);
 		qutils.triggerKeydown("menu3", "ARROW_LEFT");
 		assert.ok(oRootMenu.bOpen, "Rootmenu not closed after Arrow Left");
 		assert.ok(!oSubMenu.bOpen, "Submenu closed after Arrow Left");
-		checkHoveredItem("item7", undefined, assert);
-		checkFocusedItem("item7", assert);
+		checkHoveredItem("item5", undefined, assert);
+		checkFocusedItem("item5", assert);
 		closeAllMenusAndCheck(assert);
 	});
 
@@ -603,8 +604,8 @@ sap.ui.define([
 		assert.ok(oRootMenu.bOpen, "Rootmenu not closed after Escape");
 		assert.ok(!oSubMenu.bOpen, "Submenu closed after Escape");
 		assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
-		checkHoveredItem("item7", undefined, assert);
-		checkFocusedItem("item7", assert);
+		checkHoveredItem("item5", undefined, assert);
+		checkFocusedItem("item5", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		checkHoveredItem("item7", undefined, assert);
 		checkFocusedItem("item7", assert);
@@ -625,6 +626,7 @@ sap.ui.define([
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_UP");
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
+		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_RIGHT");
 		triggerSpace("menu3");
 		checkMenusClosed("after Space", assert);
@@ -642,16 +644,16 @@ sap.ui.define([
 		assert.equal(lastSelectedItemId, null, "Event not triggered on disabled menu:");
 
 		qutils.triggerKeydown("menu2", "END");
-		checkHoveredItem(undefined, undefined, assert);
+		checkHoveredItem("item7", undefined, assert);
 
 		qutils.triggerKeydown("menu2", "HOME");
-		checkHoveredItem(undefined, undefined, assert);
+		checkHoveredItem("item3", undefined, assert);
 
 		qutils.triggerKeydown("menu2", "PAGE-UP");
-		checkHoveredItem(undefined, undefined, assert);
+		checkHoveredItem("item3", undefined, assert);
 
 		qutils.triggerKeydown("menu2", "PAGE-DOWN");
-		checkHoveredItem(undefined, undefined, assert);
+		checkHoveredItem("item7", undefined, assert);
 
 		qutils.triggerEvent("tap", "button2", {});
 		assert.equal(oRootMenu.getEnabled(), true, "Custom 'enabled':");
@@ -807,7 +809,7 @@ sap.ui.define([
 			qutils.triggerEvent("mousemove", "item5", {});
 			checkHoveredItem("item5", undefined, assert);
 		}
-		checkFocusedItem("menu2", assert);
+		checkFocusedItem("item5", assert);
 		qutils.triggerEvent("click", "item5", {});
 		assert.equal(lastSelectedItemId, null, "No Event triggered on disabled item:");
 		assert.ok(oRootMenu.bOpen, "Rootmenu still open");
@@ -828,7 +830,7 @@ sap.ui.define([
 				qutils.triggerEvent("mousemove", "item10", {});
 				setTimeout(function(){
 					checkHoveredItem("item10", oSubMenu, assert);
-					checkFocusedItem("menu3", assert);
+					checkFocusedItem("item10", assert);
 					qutils.triggerEvent("click", "item10", {});
 					assert.equal(lastSelectedItemId, null, "Event not triggered on disabled item:");
 					assert.ok(oRootMenu.bOpen, "Rootmenu still open");
@@ -897,6 +899,7 @@ sap.ui.define([
 		openRootMenu(false, assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
+		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_RIGHT");
 		checkHoveredItem("item8", oSubMenu, assert);
 		checkFocusedItem("item8", assert);
@@ -910,6 +913,7 @@ sap.ui.define([
 		checkMenusClosed("after focus leave to outer html", assert);
 
 		openRootMenu(false, assert);
+		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_RIGHT");
@@ -930,6 +934,7 @@ sap.ui.define([
 
 	QUnit.test("MouseDown", function(assert) {
 		openRootMenu(false, assert);
+		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
 		qutils.triggerKeydown("menu2", "ARROW_RIGHT");
@@ -1105,9 +1110,9 @@ sap.ui.define([
 		var sTfId = "item12-tf";
 		oSpecialMenu.setEnabled(false);
 		openMenu(oSpecialMenu, undefined, assert);
-		checkHoveredItem(null, oSpecialMenu, assert);
+		checkHoveredItem("item11", oSpecialMenu, assert);
 		qutils.triggerKeydown("menu5", "ARROW_DOWN");
-		checkHoveredItem(null, oSpecialMenu, assert);
+		checkHoveredItem("item12", oSpecialMenu, assert);
 		assert.ok(document.activeElement.id != sTfId, "Focus not on textfield");
 
 		qutils.triggerKeydown(sTfId, "ESCAPE");
@@ -1181,8 +1186,8 @@ sap.ui.define([
 			$menuTextFieldItemInput = oMenuTextFieldItem.$("tf");
 
 		// assert
-		assert.ok($menuItem.attr("disabled"), "Disabled MenuItem has a disabled attribute");
-		assert.notOk($menuItem.attr("aria-disabled"), "Disabled MenuItem doesn't have aria-disabled");
+		assert.notOk($menuItem.attr("disabled"), "Disabled MenuItem has a disabled attribute");
+		assert.ok($menuItem.attr("aria-disabled"), "Disabled MenuItem doesn't have aria-disabled");
 
 		assert.ok($menuTextFieldItem.attr("disabled"), "Disabled MenuItemTextField has a disabled attribute");
 		assert.notOk($menuTextFieldItem.attr("aria-disabled"), "Disabled MenuItemTextField doesn't have aria-disabled");
@@ -1328,7 +1333,7 @@ sap.ui.define([
 		var oItem = oMenu.getNextSelectableItem(0);
 		assert.ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
 		oItem = oMenu.getNextSelectableItem(1);
-		assert.ok(oItem === oItem2, "Previous selectable item of item 2 is item 1");
+		assert.ok(oItem === oItem3, "Previous selectable item of item 2 is item 1");
 		oMenu.destroy();
 	});
 
