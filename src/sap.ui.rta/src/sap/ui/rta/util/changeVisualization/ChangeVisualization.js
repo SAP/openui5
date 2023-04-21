@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
@@ -28,6 +29,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Control,
 	OverlayRegistry,
+	OverlayUtil,
 	ElementUtil,
 	PersistenceWriteAPI,
 	Layer,
@@ -51,7 +53,7 @@ sap.ui.define([
 		}
 	}
 
-	function _isOverlayVisible(oOverlay) {
+	function _isOverlayInvisible(oOverlay) {
 		return !oOverlay || !oOverlay.getDomRef() || !oOverlay.isVisible();
 	}
 
@@ -209,7 +211,7 @@ sap.ui.define([
 
 			if (!aAllRelevantChangeIds.includes(oChange.change.getId())) {
 				aHiddenChanges.push(oChange);
-			} else if (_isOverlayVisible(oOverlay)) {
+			} else if (_isOverlayInvisible(oOverlay)) {
 				aHiddenChanges.push(oChange);
 			} else {
 				aVisualizedChanges.push(oChange);
@@ -501,7 +503,7 @@ sap.ui.define([
 			var oOverlay = OverlayRegistry.getOverlay(sSelectorId);
 			if (!oOverlay) {
 				// When the selector has no Overlay, check if there is a relevant container Overlay
-				// e.g. when a SmartForm group is removed
+				// e.g. change on a SmartForm group (Selector: parent Form; Relevant Container: SmartForm)
 				aChangesOnIndicator.some(function(oChange) {
 					var oElementOverlay = OverlayRegistry.getOverlay(oChange.affectedElementId);
 					var oRelevantContainer = oElementOverlay && oElementOverlay.getRelevantContainer();
@@ -512,7 +514,7 @@ sap.ui.define([
 					return false;
 				});
 			}
-			if (_isOverlayVisible(oOverlay)) {
+			if (_isOverlayInvisible(oOverlay)) {
 				// Change is not visible
 				return undefined;
 			}

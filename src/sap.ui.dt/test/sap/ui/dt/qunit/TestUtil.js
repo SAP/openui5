@@ -25,7 +25,7 @@ sap.ui.define([
 		createListWithBoundItems: function(sIdPrefix) {
 			//	horizontalLayout
 			// 		boundList
-			//			(bounded template) customListItem (model with 2 entries)
+			//			(bound template) customListItem (model with 2 entries)
 			//		unboundList
 			//			customListItem-1
 			//			customListItem-2
