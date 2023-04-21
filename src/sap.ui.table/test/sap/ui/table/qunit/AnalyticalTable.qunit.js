@@ -262,6 +262,9 @@ sap.ui.define([
 		assert.equal(this.oTable.getSelectionBehavior(), library.SelectionBehavior.RowOnly, "SelectionBehavior.RowOnly");
 	});
 
+	/**
+	 * @deprecated As of version 1.21.2
+	 */
 	QUnit.test("Dirty", function(assert) {
 		assert.equal(this.oTable.getDirty(), false, "Default dirty");
 		assert.equal(this.oTable.getShowOverlay(), false, "Default showOverlay");
@@ -314,7 +317,10 @@ sap.ui.define([
 		performTestAfterTableIsUpdated.call(this, doTest);
 	});
 
-	QUnit.test("CollapseRecursive", function(assert) {
+	/**
+	 * deprecated As of version 1.76
+	 */
+	QUnit.test("CollapseRecursive property", function(assert) {
 		assert.expect(7);
 		var done = assert.async();
 
@@ -652,7 +658,10 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("TreeAutoExpandMode", function(assert) {
+	/**
+	 * @deprecated As of version 1.44
+	 */
+	QUnit.test("TreeAutoExpandMode property", function(assert) {
 		var done = assert.async();
 		var oExpandMode = TreeAutoExpandMode;
 
@@ -673,10 +682,6 @@ sap.ui.define([
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Default");
 
-		oBindingInfo = {parameters: {autoExpandMode: "Sequential"}};
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Sequential, "Property AutoExpandMode - From BindingInfo");
-
 		oBindingInfo = {};
 		this.oTable.setAutoExpandMode(oExpandMode.Sequential);
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
@@ -693,15 +698,14 @@ sap.ui.define([
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Wrong");
 	});
 
-	QUnit.test("SumOnTop", function(assert) {
+	/**
+	 * @deprecated As of version 1.44
+	 */
+	QUnit.test("SumOnTop property", function(assert) {
 		this.oTable = new AnalyticalTable();
 		var oBindingInfo = {};
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.sumOnTop, false, "Property SumOnTop - Default");
-
-		oBindingInfo = {parameters: {sumOnTop: true}};
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.sumOnTop, true, "Property SumOnTop - From BindingInfo");
 
 		oBindingInfo = {};
 		this.oTable.setSumOnTop(true);
@@ -709,21 +713,14 @@ sap.ui.define([
 		assert.equal(oBindingInfo.parameters.sumOnTop, true, "Property SumOnTop - Custom");
 	});
 
-	QUnit.test("NumberOfExpandedLevels", function(assert) {
+	/**
+	 * @deprecated As of version 1.44
+	 */
+	QUnit.test("NumberOfExpandedLevels property", function(assert) {
 		this.oTable = new AnalyticalTable();
 		var oBindingInfo = {};
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels - Default");
-
-		this.oTable._aGroupedColumns = new Array(5);
-		oBindingInfo = {parameters: {numberOfExpandedLevels: 5}};
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 5, "Property NumberOfExpandedLevels - From BindingInfo");
-
-		this.oTable._aGroupedColumns = [];
-		oBindingInfo = {parameters: {numberOfExpandedLevels: 5}};
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels (no grouped columns) - From BindingInfo");
 
 		this.oTable._aGroupedColumns = new Array(4);
 		oBindingInfo = {};
@@ -1565,6 +1562,38 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	/**
+	 * @deprecated As of version 1.76
+	 */
+	QUnit.test("Correct Proxy Calls - collapseRecursive property", function(assert) {
+		// Initialise spies
+		var fnSetCollapseRecursiveSpy = sinon.spy(this.oProxy, "setCollapseRecursive");
+
+		// Stub oTable.getBinding
+		var fnGetBinding = sinon.stub(this.oTable, "getBinding");
+		fnGetBinding.returns({
+			getMetadata: function() {
+				return {
+					getName: function() {
+						return undefined;
+					}
+				};
+			},
+			getNodes: function() {
+				return [];
+			}
+		});
+
+		// setCollapseRecursive
+		this.oTable.setCollapseRecursive(true);
+		assert.ok(fnSetCollapseRecursiveSpy.called, "proxy#setCollapseRecursive was called");
+
+		// Restore spies and stubs
+		fnSetCollapseRecursiveSpy.restore();
+
+		fnGetBinding.restore();
+	});
+
 	QUnit.test("Correct Proxy Calls", function(assert) {
 		// Initialise spies
 		var fnGetContextsSpy = sinon.spy(this.oProxy, "getContexts");
@@ -1575,7 +1604,6 @@ sap.ui.define([
 		var fnIsExpandedSpy = sinon.spy(this.oProxy, "isExpanded");
 		var fnGetContextByIndexSpy = sinon.spy(this.oProxy, "getContextByIndex");
 		var fnGetNodeByIndexSpy = sinon.spy(this.oProxy, "getNodeByIndex");
-		var fnSetCollapseRecursiveSpy = sinon.spy(this.oProxy, "setCollapseRecursive");
 
 		// Stub oTable.getBinding
 		var fnGetBinding = sinon.stub(this.oTable, "getBinding");
@@ -1624,10 +1652,6 @@ sap.ui.define([
 		this.oTable.isExpanded(0);
 		assert.ok(fnIsExpandedSpy.called, "proxy#isExpanded was called");
 
-		// setCollapseRecursive
-		this.oTable.setCollapseRecursive(true);
-		assert.ok(fnSetCollapseRecursiveSpy.called, "proxy#setCollapseRecursive was called");
-
 		// Restore spies and stubs
 		fnGetContextsSpy.restore();
 		fnExpandSpy.restore();
@@ -1637,7 +1661,6 @@ sap.ui.define([
 		fnIsExpandedSpy.restore();
 		fnGetContextByIndexSpy.restore();
 		fnGetNodeByIndexSpy.restore();
-		fnSetCollapseRecursiveSpy.restore();
 
 		fnGetBinding.restore();
 	});

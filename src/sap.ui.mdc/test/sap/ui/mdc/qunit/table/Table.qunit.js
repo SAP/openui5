@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
+	"sap/ui/mdc/table/ResponsiveColumnSettings",
 	"sap/ui/mdc/table/utils/Personalization",
 	"sap/ui/mdc/FilterBar",
 	"sap/m/Text",
@@ -61,6 +62,7 @@ sap.ui.define([
 	Column,
 	GridTableType,
 	ResponsiveTableType,
+	ResponsiveColumnSettings,
 	PersonalizationUtils,
 	FilterBar,
 	Text,
@@ -475,22 +477,30 @@ sap.ui.define([
 		this.oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		this.oTable.addColumn(new Column({
-			header: "Test",
-			importance: "High",
-			template: new Text({
-				text: "Test"
-			}),
-			required: true
-		}));
-
-		this.oTable.addColumn(new Column({
-			header: "Test3",
-			importance: "Low",
-			template: new Text({
-				text: "Test3"
+		this.oTable.addColumn(
+			new Column({
+				header: "Test",
+				template: new Text({
+					text: "Test"
+				}),
+				required: true,
+				extendedSettings: new ResponsiveColumnSettings({
+					importance: "High"
+				})
 			})
-		}));
+		);
+
+		this.oTable.addColumn(
+			new Column({
+				header: "Test3",
+				template: new Text({
+					text: "Test3"
+				}),
+				extendedSettings: new ResponsiveColumnSettings({
+					importance: "Low"
+				})
+			})
+		);
 
 		this.oTable.insertColumn(new Column({
 			header: "Test2",
@@ -4950,49 +4960,61 @@ sap.ui.define([
 					new Column({
 						header: "Column A",
 						hAlign: "Begin",
-						importance: "High",
 						template: new Text({
 							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "High"
 						})
 					}),
 					new Column({
 						header: "Column B",
 						hAlign: "Begin",
-						importance: "High",
 						template: new Text({
 							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "High"
 						})
 					}),
 					new Column({
 						header: "Column C",
 						hAlign: "Begin",
-						importance: "Medium",
 						template: new Text({
 							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "Medium"
 						})
 					}),
 					new Column({
 						header: "Column D",
 						hAlign: "Begin",
-						importance: "Low",
 						template: new Text({
 							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "Low"
 						})
 					}),
 					new Column({
 						header: "Column E",
 						hAlign: "Begin",
-						importance: "Low",
 						template: new Text({
 							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "Low"
 						})
 					}),
 					new Column({
 						header: "Column F",
 						hAlign: "Begin",
-						importance: "High",
 						template: new Text({
 							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "High"
 						})
 					})
 				]
@@ -5015,17 +5037,17 @@ sap.ui.define([
 
 			assert.ok(this.oType._oShowDetailsButton, "button is created");
 			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
-			assert.strictEqual(this.oType._oShowDetailsButton.getButtons()[0].getIcon(), "sap-icon://detail-more", "correct icon is set on the button");
-			assert.strictEqual(this.oType._oShowDetailsButton.getButtons()[0].getTooltip(), oRb.getText("table.SHOWDETAILS_TEXT"), "Correct tooltip");
-			assert.strictEqual(this.oType._oShowDetailsButton.getButtons()[1].getIcon(), "sap-icon://detail-less", "correct icon is set on the button");
-			assert.strictEqual(this.oType._oShowDetailsButton.getButtons()[1].getTooltip(), oRb.getText("table.HIDEDETAILS_TEXT"), "Correct tooltip");
+			assert.strictEqual(this.oType._oShowDetailsButton.getItems()[0].getIcon(), "sap-icon://detail-more", "correct icon is set on the button");
+			assert.strictEqual(this.oType._oShowDetailsButton.getItems()[0].getTooltip(), oRb.getText("table.SHOWDETAILS_TEXT"), "Correct tooltip");
+			assert.strictEqual(this.oType._oShowDetailsButton.getItems()[1].getIcon(), "sap-icon://detail-less", "correct icon is set on the button");
+			assert.strictEqual(this.oType._oShowDetailsButton.getItems()[1].getTooltip(), oRb.getText("table.HIDEDETAILS_TEXT"), "Correct tooltip");
 
 			this.oTable._oTable.setContextualWidth("600px");
 			Core.applyChanges();
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 			assert.strictEqual(this.oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "hideDetails button selected");
 
-			this.oType._oShowDetailsButton.getButtons()[0].firePress();
+			this.oType._oShowDetailsButton.getItems()[0].firePress();
 			assert.strictEqual(this.oType._oShowDetailsButton.getSelectedKey(), "showDetails", "showDetails button selected");
 
 			this.oTable._oTable.setContextualWidth("4444px");
@@ -5123,9 +5145,9 @@ sap.ui.define([
 		this.oType.setDetailsButtonSetting(["Medium", "High"]);
 
 		return this.oTable.initialized().then(function() {
-			this.oType._oShowDetailsButton.getButtons()[0].firePress();
+			this.oType._oShowDetailsButton.getItems()[0].firePress();
 			clock.tick(1);
-			this.oType._oShowDetailsButton.getButtons()[1].firePress();
+			this.oType._oShowDetailsButton.getItems()[1].firePress();
 			clock.tick(1);
 
 			var aImportance = this.oTable._oTable.getHiddenInPopin();
@@ -5545,9 +5567,11 @@ sap.ui.define([
 							text: "Column A"
 						}),
 						hAlign: "Begin",
-						importance: "High",
 						template: new Text({
 							text: "Column A"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "High"
 						})
 					})
 				],

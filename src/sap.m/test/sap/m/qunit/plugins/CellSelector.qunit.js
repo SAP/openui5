@@ -11,10 +11,11 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Text",
+	"sap/m/Title",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, GridColumn, JSONModel, Text, jQuery, ODataModel, MockServer) {
+], function (Core, qutils, KeyCodes, CellSelector, GridTable, GridColumn, JSONModel, Text, Title, jQuery, ODataModel, MockServer) {
 	"use strict";
 
 	function getData() {
@@ -37,7 +38,7 @@ sap.ui.define([
 
 	function createGridTable() {
 		var oTable = new GridTable({
-			title: "CellSelection Test Table",
+			extension: [new Title({text: "CellSelection Test Table"})],
 			columns: [
 				new GridColumn({label: new Text({text: "Name"}), template: new Text({text: "{name}", wrapping: false})}),
 				new GridColumn({label: new Text({text: "Last Name"}), template: new Text({text: "{lastname}"})}),

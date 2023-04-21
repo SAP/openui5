@@ -263,6 +263,9 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	/**
+	 * @deprecated As of version 1.76
+	 */
 	QUnit.test("#setRootLevel", function(assert) {
 		var fnThrows = function() {
 			this.oProxy.setRootLevel(0);
@@ -270,6 +273,9 @@ sap.ui.define([
 		assert.throws(fnThrows, /Setting the root level is not supported with your current binding./, "Setting root level is not supported in V4");
 	});
 
+	/**
+	 * @deprecated As of version 1.76
+	 */
 	QUnit.test("#setCollapseRecursive", function(assert) {
 		var fnThrows = function() {
 			this.oProxy.setCollapseRecursive(false);
@@ -497,6 +503,9 @@ sap.ui.define([
 		assert.ok(bCalled, "Binding's collapseToLevel was called");
 	});
 
+	/**
+	 * @deprecated As of version 1.76
+	 */
 	QUnit.test("#setRootLevel", function(assert) {
 		var iRootLevel = -1;
 		this.fnGetBinding.returns({
@@ -515,6 +524,9 @@ sap.ui.define([
 		assert.equal(iRootLevel, 5, "Root level is set to 5");
 	});
 
+	/**
+	 * @deprecated As of version 1.76
+	 */
 	QUnit.test("#setCollapseRecursive", function(assert) {
 		var bCollapseRecursive = false;
 		this.fnGetBinding.returns({

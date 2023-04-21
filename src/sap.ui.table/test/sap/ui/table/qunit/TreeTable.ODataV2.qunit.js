@@ -91,7 +91,7 @@ sap.ui.define([
 
 	QUnit.test("Initial Test", function(assert) {
 		var done = assert.async();
-		this.oTable = createTable.call(this, {rootLevel: 1});
+		this.oTable = createTable.call(this);
 
 		var fnHandler1 = function() {
 			var oBinding = this.oTable.getBinding();
@@ -100,7 +100,6 @@ sap.ui.define([
 			assert.notOk(oBinding.mParameters.numberOfExpandedLevels, "Number of expanded levels is not in parameters when not set explicitly");
 			assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
 			assert.notOk(oBinding.mParameters.collapseRecursive, "Collapse recursive is not existing when it is not set explicitly");
-			assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
 			assert.ok(!this.oTable.getUseGroupMode(), "useGroupMode is false");
 
 			var aRows = this.oTable.getRows();
@@ -118,15 +117,15 @@ sap.ui.define([
 		};
 
 		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		this.oTable.bindRows({
+			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+			parameters: {rootLevel: 1}
+		});
 	});
 
 	QUnit.test("Expand and Collapse", function(assert) {
 		var done = assert.async();
-		this.oTable = createTable.call(this, {
-			rootLevel: 1,
-			threshold: 10
-		});
+		this.oTable = createTable.call(this, {threshold: 10});
 		var oBinding;
 
 		// test expand root
@@ -312,12 +311,15 @@ sap.ui.define([
 		};
 
 		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		this.oTable.bindRows({
+			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+			parameters: {rootLevel: 1}
+		});
 	});
 
-	QUnit.test("Expand First Level", function(assert) {
+	QUnit.test("Number Of Expanded Levels", function(assert) {
 		var done = assert.async();
-		this.oTable = createTable.call(this, {rootLevel: 1, expandFirstLevel: true, visibleRowCount: 15});
+		this.oTable = createTable.call(this, {visibleRowCount: 15});
 
 		var oBinding;
 
@@ -330,7 +332,6 @@ sap.ui.define([
 			// test some defaults
 			assert.equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels is 1");
 			assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
-			assert.ok(this.oTable.getExpandFirstLevel(), "Expand first Level is true");
 
 			var aRows = this.oTable.getRows();
 			assert.equal(aRows.length, 15, "15 Rows present");
@@ -360,12 +361,15 @@ sap.ui.define([
 		};
 
 		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		this.oTable.bindRows({
+			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+			parameters: {rootLevel: 1, numberOfExpandedLevels: 1}
+		});
 	});
 
 	QUnit.test("Root Level 2", function(assert) {
 		var done = assert.async();
-		this.oTable = createTable.call(this, {rootLevel: 2});
+		this.oTable = createTable.call(this);
 		var oBinding;
 
 		var fnHandler1 = function() {
@@ -397,12 +401,15 @@ sap.ui.define([
 
 		};
 		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		this.oTable.bindRows({
+			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+			parameters: {rootLevel: 2}
+		});
 	});
 
 	QUnit.test("Selection", function(assert) {
 		var done = assert.async();
-		this.oTable = createTable.call(this, {rootLevel: 1, expandFirstLevel: true, visibleRowCount: 15});
+		this.oTable = createTable.call(this, {visibleRowCount: 15});
 		var oBinding;
 
 		var fnHandler0 = function() {
@@ -523,12 +530,15 @@ sap.ui.define([
 		};
 
 		attachRowsUpdatedOnce(this.oTable, fnHandler0, this);
-		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		this.oTable.bindRows({
+			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+			parameters: {rootLevel: 1, numberOfExpandedLevels: 1}
+		});
 	});
 
 	QUnit.test("SelectAll with scrolling and paging", function(assert) {
 		var done = assert.async();
-		this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel: true});
+		this.oTable = createTable.call(this);
 
 		var fnHandler0 = function() {
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
@@ -557,9 +567,15 @@ sap.ui.define([
 		};
 
 		attachRowsUpdatedOnce(this.oTable, fnHandler0, this);
-		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		this.oTable.bindRows({
+			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+			parameters: {rootLevel: 2, numberOfExpandedLevels: 1}
+		});
 	});
 
+	/**
+	 * @deprecated As of version 1.76
+	 */
 	QUnit.test("Change rootLevel", function(assert) {
 		var done = assert.async();
 		this.oTable = createTable.call(this, {rootLevel: 2});
@@ -583,6 +599,9 @@ sap.ui.define([
 		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 	});
 
+	/**
+	 * @deprecated As of version 1.76
+	 */
 	QUnit.test("Relative Binding", function(assert) {
 		var done = assert.async();
 		this.oTable = createTable.call(this, {rootLevel: 2});

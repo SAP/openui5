@@ -372,7 +372,7 @@ sap.ui.define([
 			/**
 			 * Control or text of title section of the Table (if not set it will be hidden)
 			 *
-			 * @deprecated As of 1.72. Use, for example, a <code>sap.m.Title</code> control in the <code>extension</code> aggregation instead.
+			 * @deprecated As of version 1.72. Use, for example, a <code>sap.m.Title</code> control in the <code>extension</code> aggregation instead.
 			 */
 			title: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false, deprecated: true},
 
@@ -385,7 +385,7 @@ sap.ui.define([
 			 * Toolbar of the Table
 			 * If not set, no toolbar area will be rendered.
 			 * Note: The CSS class sapMTBHeader-CTX is applied on the given toolbar.
-			 * @deprecated Since version 1.38. This aggregation is deprecated, use the <code>extension</code> aggregation instead.
+			 * @deprecated As of version 1.38. This aggregation is deprecated, use the <code>extension</code> aggregation instead.
 			 */
 			toolbar: {type: "sap.ui.core.Toolbar", multiple: false, deprecated: true},
 
@@ -752,7 +752,7 @@ sap.ui.define([
 			/**
 			 * fired when the user clicks a cell of the table.
 			 * @since 1.21.0
-			 * @deprecated As of 1.54, replaced by <code>beforeOpenContextMenu</code>.
+			 * @deprecated As of version 1.54, replaced by <code>beforeOpenContextMenu</code>.
 			 */
 			cellContextmenu: {
 				allowPreventDefault: true,
@@ -3851,7 +3851,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] settings for the new Export, see {@link sap.ui.core.util.Export} <code>constructor</code>
 	 * @returns {sap.ui.core.util.Export} Export object
 	 * @experimental Experimental because the property for the column/cell definitions (sortProperty) could change in future.
-	 * @deprecated As of 1.56, replaced by the <code>sap.ui.export</code> library.
+	 * @deprecated As of version 1.56, replaced by the <code>sap.ui.export</code> library.
 	 * @public
 	 */
 	Table.prototype.exportData = function(mSettings) {
