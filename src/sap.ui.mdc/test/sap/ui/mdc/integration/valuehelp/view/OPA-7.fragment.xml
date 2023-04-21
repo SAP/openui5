@@ -28,7 +28,7 @@
 			<mdc:ValueHelp
 				id="FH1"
 				validateInput="false"
-				delegate='\{"name": "sap/ui/v4demo/delegate/opensonfocus/ValueHelp.delegate", "payload": \{\}\}'>
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Popover1" opensOnFocus="true">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
@@ -61,7 +61,7 @@
 			<mdc:ValueHelp
 				id="FH2"
 				validateInput="false"
-				delegate='\{"name": "sap/ui/v4demo/delegate/opensonfocus/ValueHelp.delegate", "payload": \{\}\}'>
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Popover2" opensOnFocus="true">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">

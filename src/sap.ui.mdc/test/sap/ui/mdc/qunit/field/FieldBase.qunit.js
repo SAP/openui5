@@ -3076,26 +3076,26 @@ sap.ui.define([
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 
 		sinon.stub(oFieldHelp, "shouldOpenOnFocus").returns(true);
-		sinon.spy(oFieldHelp, "open");
+		sinon.spy(oFieldHelp, "toggleOpen");
 
 		oField.focus();
 
 		return new Promise(function (resolve, reject) {
 			setTimeout(function () {
 				assert.ok(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
-				assert.ok(oFieldHelp.open.calledOnce, "open called once");
+				assert.ok(oFieldHelp.toggleOpen.calledOnce, "open called once");
 
 				//do the same test with opensOnFocus(false) and the open should not be called
 				oField.getFocusDomRef().blur();
 				oFieldHelp.shouldOpenOnFocus.resetHistory();
 				oFieldHelp.shouldOpenOnFocus.returns(false);
-				oFieldHelp.open.resetHistory();
+				oFieldHelp.toggleOpen.resetHistory();
 
 				oField.focus();
 
 				setTimeout(function () {
 					assert.ok(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
-					assert.notOk(oFieldHelp.open.calledOnce, "open not called");
+					assert.notOk(oFieldHelp.toggleOpen.calledOnce, "open not called");
 
 					oFieldHelp.close();
 
@@ -3110,26 +3110,27 @@ sap.ui.define([
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 
 		sinon.stub(oFieldHelp, "shouldOpenOnClick").returns(true);
-		sinon.spy(oFieldHelp, "open");
+		sinon.spy(oFieldHelp, "toggleOpen");
 
 		oField.focus();
 		var oInnerField = oField.getAggregation("_content")[0];
 		qutils.triggerEvent("tap", oInnerField.getId());
 
 		assert.ok(oFieldHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
-		assert.ok(oFieldHelp.open.calledOnce, "open called once");
+		assert.ok(oFieldHelp.toggleOpen.calledOnce, "open called once");
+		assert.ok(oFieldHelp.toggleOpen.calledWith(true), "open called for typeahed");
 
 
 		//do the same test with openByClick(false) and the open should not be called
 		oFieldHelp.shouldOpenOnClick.resetHistory();
 		oFieldHelp.shouldOpenOnClick.returns(false);
-		oFieldHelp.open.resetHistory();
+		oFieldHelp.toggleOpen.resetHistory();
 
 		oField.focus();
 		qutils.triggerEvent("tap", oInnerField.getId());
 
 		assert.ok(oFieldHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
-		assert.notOk(oFieldHelp.open.calledOnce, "open not called");
+		assert.notOk(oFieldHelp.toggleOpen.calledOnce, "open not called");
 
 		oFieldHelp.close();
 	});

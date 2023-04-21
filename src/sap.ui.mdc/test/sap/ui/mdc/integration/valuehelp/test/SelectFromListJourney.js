@@ -47,32 +47,23 @@ sap.ui.define([
 
 	opaTest("Popover.opensOnClick", function (Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-6");
-		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"});
 
-		// We do not blur after entering text, so the filterValue is kept
-		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "aust", {keepFocus: true, clearTextFirst: true, pressEnterKey: false});
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"});
+		When.onTheOPAPage.iPressOnTheFilterField({label: "TestField"});
 		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
-			["101", "Austen, Jane"],
-			["373", "Craig, Austin"]
+			"101", "Austen, Jane",
+			"102", "Gilman, Charlotte Perkins",
+			"103", "Carroll, Lewis",
+			"104", "Shelley, Mary Wollstonecraft",
+			"105", "Kafka, Franz",
+			"106", "Twain, Mark",
+			"107", "Wilde, Oscar",
+			"109", "Douglass, Frederick",
+			"110", "Ibsen, Henrik",
+			"111", "Melville, Herman"
 		]);
 
 		When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField"}, KeyCodes.ESCAPE);
-		Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
-
-		When.onTheOPAPage.iPressOnTheFilterField({label: "TestField"});
-		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
-			["101", "Austen, Jane"],
-			["373", "Craig, Austin"]
-		]);
-
-		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "aus", {keepFocus: true, clearTextFirst: true, pressEnterKey: false});
-		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
-			["101", "Austen, Jane"],
-			["328", "Clausewitz, Carl von"],
-			["373", "Craig, Austin"]
-		]);
-
-		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "", {keepFocus: true, clearTextFirst: true, pressEnterKey: false});
 		Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
 
 		Then.iTeardownMyAppFrame();
