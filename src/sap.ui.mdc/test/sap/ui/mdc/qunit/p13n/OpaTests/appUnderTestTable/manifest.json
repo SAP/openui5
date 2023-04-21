@@ -6,7 +6,15 @@
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
-		"dataSources": {}
+		"dataSources": {
+			"default": {
+				"uri": "/tenant(MDCTableP13nOpaTestApplication)/music/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
 	},
 	"sap.ui": {
 		"technology": "UI5"
@@ -35,6 +43,17 @@
 			},
 			"components": {}
 		},
-		"models": {}
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"operationMode": "Server",
+					"updateGroupId": "booksGroup"
+				},
+				"type": "sap.ui.model.odata.v4.ODataModel"
+			}
+		}
 	}
 }

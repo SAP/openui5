@@ -90,9 +90,7 @@ sap.ui.define([
 						}
 				};
 
-				return mPropertyBag && !oControl.getId ? this.fetchProperties(oObj) : oControl.finalizePropertyHelper().then(function(oHeler){
-					return oHeler.getProperties();
-				});
+				return mPropertyBag ? this.fetchProperties(oObj) : Promise.resolve(oControl.getPropertyHelper().getProperties());
 			}.bind(this));
 	};
 
