@@ -18,7 +18,7 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
-		// TODO: increase the timeout timer from 15 (default) to 45 seconds
+		// TODO: increase the timeout timer from 15 (default) to 50 seconds
 		// to see whether it influences the success rate of the first test on
 		// the build infrastructure.
 		// As currently, the underlying service takes some time for the
@@ -26,7 +26,8 @@ sap.ui.define([
 		// You might want to remove this timeout timer after the underlying
 		// service has been optimized or if the timeout timer increase does
 		// not have any effect on the success rate of the tests.
-		timeout: 45
+		timeout: 50,
+		autoWait: true
 	});
 
 	var oModuleSettings = {
