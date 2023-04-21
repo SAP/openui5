@@ -140,6 +140,7 @@ sap.ui.define([
 							},
 							editable: oConfig.editable,
 							visible: oConfig.visible,
+							maxLength: oConfig.maxLength,
 							placeholder: oConfig.placeholder
 						}
 					};
@@ -235,6 +236,7 @@ sap.ui.define([
 						},
 						editable: oConfig.editable,
 						visible: oConfig.visible,
+						maxLength: oConfig.maxLength,
 						placeholder: oConfig.placeholder,
 						valueHelpIconSrc: "sap-icon://translate",
 						showValueHelp: true,
@@ -268,6 +270,7 @@ sap.ui.define([
 						},
 						editable: oConfig.editable,
 						visible: oConfig.visible,
+						maxLength: oConfig.maxLength,
 						placeholder: oConfig.placeholder
 					}
 				};
