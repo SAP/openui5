@@ -47,12 +47,6 @@ sap.ui.define([
 					}
 				}
 			},
-			"initial/_internal/changeHandlers/ChangeRegistryItem": {
-				group: "Initial Internal",
-				coverage: {
-					only: ["sap/ui/fl/initial/_internal/changeHandlers/ChangeRegistryItem"]
-				}
-			},
 			"initial/_internal/connectors/StaticFileConnector": {
 				group: "Initial Internal",
 				coverage: {
