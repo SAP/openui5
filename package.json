@@ -117,7 +117,7 @@
     "pacote": "^15.1.1",
     "pretty-ms": "^7.0.1",
     "rimraf": "^4.3.1",
-    "selenium-webdriver": "^3.6.0",
+    "selenium-webdriver": "^4.9.0",
     "semver": "^4.3.0",
     "set-cookie-parser": "^2.5.1",
     "wsrun": "^5.2.0"
