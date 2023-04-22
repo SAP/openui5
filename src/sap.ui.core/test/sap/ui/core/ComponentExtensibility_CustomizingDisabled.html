@@ -25,7 +25,8 @@
 		});
 		oCompCont.placeAt("content");
 
-		if (sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
+		var BaseConfig = sap.ui.require("sap/base/config");
+		if (BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean})) {
 			alert("Customizing is now disabled.");
 		}
 

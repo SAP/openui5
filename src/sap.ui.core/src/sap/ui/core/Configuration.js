@@ -479,21 +479,6 @@ sap.ui.define([
 				}
 			}
 
-			// map of SAP parameters (allows general access)
-			config.sapparams = config.sapparams || {};
-
-			// set the SAP logon language to the SAP params
-			config.sapparams['sap-language'] = this.getSAPLogonLanguage();
-
-			// read the SAP parameters from URL or META tag
-			['sap-client', 'sap-server', 'sap-system'].forEach(function(sName) {
-				if (!config.ignoreUrlParams && oUriParams.get(sName)) {
-					config.sapparams[sName] = oUriParams.get(sName);
-				} else {
-					config.sapparams[sName] = getMetaTagValue(sName);
-				}
-			});
-
 			// calculate RTL mode
 			this.derivedRTL = Locale._impliesRTL(config.language);
 
@@ -880,7 +865,6 @@ sap.ui.define([
 			if ( oLocale.toString() != this.getLanguageTag() || sSAPLogonLanguage !== this.sapLogonLanguage ) {
 				this.language = oLocale;
 				this.sapLogonLanguage = sSAPLogonLanguage || undefined;
-				this.sapparams['sap-language'] = this.getSAPLogonLanguage();
 				mChanges = this._collect();
 				mChanges.language = this.getLanguageTag();
 				this.derivedRTL = Locale._impliesRTL(oLocale);
@@ -939,18 +923,6 @@ sap.ui.define([
 		 */
 		getLocale : function () {
 			return this.getValue("language");
-		},
-
-		/**
-		 * Returns an SAP parameter by it's name (e.g. sap-client, sap-system, sap-server).
-		 *
-		 * @experimental
-		 * @since 1.45.0
-		 * @param {string} sName The parameter name
-		 * @return {string} The SAP parameter value
-		 */
-		getSAPParam : function (sName) {
-			return this.sapparams && this.sapparams[sName];
 		},
 
 		/**
@@ -1321,7 +1293,7 @@ sap.ui.define([
 			// ui5loader-autoconfig calculates detailed information also for the partial debug
 			// mode and writes it to window["sap-ui-debug"].
 			// Only a value of true must be reflected by this getter
-			return window["sap-ui-debug"] === true || this.getValue("debug");
+			return window["sap-ui-debug"] === true || BaseConfig.get({name: "sapUiDebug", type: BaseConfig.Type.Boolean, external: true});
 		},
 
 		/**
@@ -1476,17 +1448,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Flag, whether the customizing is disabled or not.
-		 *
-		 * @returns {boolean} true if customizing is disabled
-		 * @private
-		 * @ui5-restricted
-		 */
-		getDisableCustomizing : function() {
-			return this.getValue("xx-disableCustomizing");
-		},
-
-		/**
 		 * Flag, representing the status of the view cache.
 		 * @see {sap.ui.xmlview}
 		 *
@@ -1507,12 +1468,12 @@ sap.ui.define([
 		 * @since 1.16.3
 		 */
 		getPreload : function() {
-			// determine preload mode (e.g. resolve default or auto)
-			var sPreloadMode = this.getValue("preload");
 			// if debug sources are requested, then the preload feature must be deactivated
-			if ( this.getDebug() === true ) {
-				sPreloadMode = "";
+			if (this.getDebug() === true) {
+				return "";
 			}
+			// determine preload mode (e.g. resolve default or auto)
+			var sPreloadMode = BaseConfig.get({name: "sapUiPreload", type: BaseConfig.Type.String, defaultValue: "auto", external: true});
 			// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
 			// depending on whether the ui5loader is configured async
 			if ( sPreloadMode === "auto" ) {
@@ -1560,7 +1521,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getDepCache : function() {
-			return this.getValue("xx-depCache");
+			return BaseConfig.get({name: "sapUiXxDepCache", type: BaseConfig.Type.Boolean, external: true});
 		},
 
 		/**
@@ -1571,7 +1532,7 @@ sap.ui.define([
 		 * @since 1.33.0
 		 */
 		getManifestFirst : function() {
-			return this.getValue("manifestFirst");
+			return BaseConfig.get({name: "sapUiManifestFirst", type: BaseConfig.Type.Boolean, external: true});
 		},
 
 		/**
@@ -1628,7 +1589,7 @@ sap.ui.define([
 		 * @experimental Since 1.16.3, might change completely.
 		 */
 		getComponentPreload : function() {
-			return this.getValue("xx-componentPreload") || this.getPreload();
+			return BaseConfig.get({name: "sapUiXxComponentPreload", type: BaseConfig.Type.String, external: true}) || this.getPreload();
 		},
 
 		/**
@@ -1811,7 +1772,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getActiveTerminologies : function() {
-			return this.getValue("activeTerminologies");
+			return BaseConfig.get({name: "sapUiActiveTerminologies", type: BaseConfig.Type.StringArray, defaultValue: undefined, external: true});
 		},
 
 		/**

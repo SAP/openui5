@@ -1,12 +1,12 @@
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/config",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/deepExtend",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Component",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Manifest",
-	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
@@ -17,13 +17,13 @@ sap.ui.define([
 	"sap/ui/test/v2models/parent/CustomModel"
 ], function(
 	Log,
+	BaseConfig,
 	ResourceBundle,
 	deepExtend,
 	UriParameters,
 	Component,
 	Configuration,
 	Manifest,
-	UIComponent,
 	UIComponentMetadata,
 	JSONModel,
 	ODataModelV1,
@@ -84,11 +84,11 @@ sap.ui.define([
 
 			var sSAPLanguage = Configuration.getSAPLogonLanguage();
 
-			this.oConfigurationStub = sinon.stub(Configuration, 'getSAPParam');
-			this.oConfigurationStub.withArgs('sap-language').returns(mMockParams && mMockParams.sapLanguage || sSAPLanguage);
-			this.oConfigurationStub.withArgs('sap-client').returns(mMockParams && mMockParams.sapClient || 'foo');
-			this.oConfigurationStub.withArgs('sap-server').returns(mMockParams && mMockParams.sapServer || 'bar');
-			this.oConfigurationStub.withArgs('sap-system').returns(mMockParams && mMockParams.sapSystem);
+			this.oConfigurationStub = sinon.stub(BaseConfig, 'get');
+			this.oConfigurationStub.withArgs({name: 'sapLanguage', type: BaseConfig.Type.String, external: true}).returns(mMockParams && mMockParams.sapLanguage || sSAPLanguage);
+			this.oConfigurationStub.withArgs({name: 'sapClient', type: BaseConfig.Type.String, external: true}).returns(mMockParams && mMockParams.sapClient || 'foo');
+			this.oConfigurationStub.withArgs({name: 'sapServer', type: BaseConfig.Type.String, external: true}).returns(mMockParams && mMockParams.sapServer || 'bar');
+			this.oConfigurationStub.withArgs({name: 'sapSystem', type: BaseConfig.Type.String, external: true}).returns(mMockParams && mMockParams.sapSystem);
 		},
 		restoreGetUriParameters: function() {
 			if (this.oGetUriParametersStub && this.oGetUriParametersStub.restore) {
