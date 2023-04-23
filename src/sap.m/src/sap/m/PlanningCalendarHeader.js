@@ -423,7 +423,7 @@ function(
 	PlanningCalendarHeader.prototype.onBeforeRendering = function () {
 		var bVisible = !!this.getActions().length || !!this.getTitle() || this._getOrCreateViewSwitch().getItems().length > 1;
 		var sSecondaryCalendarType = this.getProperty("_secondaryCalendarType");
-		this._getActionsToolbar().setProperty("visible", bVisible, true);
+		this._getActionsToolbar().setVisible(bVisible);
 
 		this.setPrimaryCalendarTypeToPickers(this.getProperty("_primaryCalendarType"));
 		if (sSecondaryCalendarType){

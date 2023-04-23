@@ -610,7 +610,7 @@ sap.ui.define([
 		}
 		var iTiles = this.getTileContent().length;
 		for (var i = 0; i < iTiles; i++) {
-			this.getTileContent()[i].setProperty("disabled", this.getState() === LoadState.Disabled, true);
+			this.getTileContent()[i].setDisabled(this.getState() === LoadState.Disabled);
 		}
 
 		this._initScopeContent("sapMGT");
@@ -641,7 +641,7 @@ sap.ui.define([
 		}
 
 		if (this.getFrameType() === FrameType.Auto) {
-			this.setProperty("frameType", FrameType.OneByOne, true);
+			this.setFrameType(FrameType.OneByOne);
 		}
 		//sets the maxlines for the appshortcut and systeminfo in different tile sizes
 		if (this.getMode() !== GenericTileMode.LineMode && (this.getAppShortcut() || this.getSystemInfo())) {
@@ -768,8 +768,8 @@ sap.ui.define([
 			iLines = sFrameType === FrameType.OneByOne || sFrameType === FrameType.TwoByHalf ? 1 : 2;
 
 		//Default maxLines
-		this._oAppShortcut.setProperty("maxLines", iLines, true);
-		this._oSystemInfo.setProperty("maxLines", iLines, true);
+		this._oAppShortcut.setMaxLines(iLines);
+		this._oSystemInfo.setMaxLines(iLines);
 
 		if (this.getFrameType() === FrameType.TwoByHalf) {
 			var bAppShortcutMore = this.getAppShortcut().length > 11,
@@ -777,9 +777,9 @@ sap.ui.define([
 
 			// Line break to happen after 11 characters, App Shortcut to have more priority in display
 			if ((bAppShortcutMore && bSystemInfoMore) || bAppShortcutMore) {
-				this._oAppShortcut.setProperty("maxLines", 2, true);
+				this._oAppShortcut.setMaxLines(2);
 			} else if (bSystemInfoMore) {
-				this._oSystemInfo.setProperty("maxLines", 2, true);
+				this._oSystemInfo.setMaxLines(2);
 			}
 		}
 	};
@@ -1370,17 +1370,17 @@ sap.ui.define([
 			} else if (frameType === FrameType.TwoByHalf) {
 				iHeaderLines = (bSubheader) ? 1 : 2;
 			}
-			this._oTitle.setProperty("maxLines", iHeaderLines, true);
-			this._oSubTitle.setProperty("maxLines", iSubHeaderLines, true);
+			this._oTitle.setMaxLines(iHeaderLines);
+			this._oSubTitle.setMaxLines(iSubHeaderLines);
 		} else if (frameType === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode) {
-			this._oTitle.setProperty("maxLines", 2, true);
+			this._oTitle.setMaxLines(2);
 		} else if (frameType === FrameType.OneByHalf || frameType === FrameType.TwoByHalf) {
-			this._oTitle.setProperty("maxLines", 2, true);
+			this._oTitle.setMaxLines(2);
 		} else {
 			if (bSubheader) {
-				this._oTitle.setProperty("maxLines", 4, true);
+				this._oTitle.setMaxLines(4);
 			} else {
-				this._oTitle.setProperty("maxLines", 5, true);
+				this._oTitle.setMaxLines(5);
 			}
 		}
 		this._changeTileContentContentVisibility(false);
@@ -1408,28 +1408,28 @@ sap.ui.define([
 					if (aTileCnt !== null) {
 						if ((frameType === FrameType.OneByHalf && aTileCnt.getMetadata().getName() === "sap.m.ImageContent")) {
 							bIsImageContent = true;
-							this._oTitle.setProperty("maxLines", 2, true);
+							this._oTitle.setMaxLines(2);
 							break;
 						} else {
-							this._oTitle.setProperty("maxLines", 1, true);
+							this._oTitle.setMaxLines(1);
 							break;
 						}
 					}
-					this._oTitle.setProperty("maxLines", 2, true);
+					this._oTitle.setMaxLines(2);
 				}
 			} else {
-				this._oTitle.setProperty("maxLines", 2, true);
+				this._oTitle.setMaxLines(2);
 			}
 		} else if (frameType === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode) {
 			if (bSubheader) {
-				this._oTitle.setProperty("maxLines", 1, true);
+				this._oTitle.setMaxLines(1);
 			} else {
-				this._oTitle.setProperty("maxLines", 2, true);
+				this._oTitle.setMaxLines(2);
 			}
 		} else if (bSubheader) {
-			this._oTitle.setProperty("maxLines", 2, true);
+			this._oTitle.setMaxLines(2);
 		} else {
-			this._oTitle.setProperty("maxLines", 3, true);
+			this._oTitle.setMaxLines(3);
 		}
 
 		this._changeTileContentContentVisibility(true, frameType, bIsImageContent);
@@ -1676,8 +1676,8 @@ sap.ui.define([
 	GenericTile.prototype._generateFailedText = function () {
 		var sCustomFailedMsg = this.getFailedText();
 		var sFailedMsg = sCustomFailedMsg ? sCustomFailedMsg : this._sFailedToLoad;
-		this._oFailedText.setProperty("text", sFailedMsg, true);
-		this._oFailedText.setAggregation("tooltip", sFailedMsg, true);
+		this._oFailedText.setText(sFailedMsg);
+		this._oFailedText.setTooltip(sFailedMsg);
 	};
 
 	/**
