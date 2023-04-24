@@ -238,6 +238,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the ISO string for the given model value.
+	 *
+	 * @param {object|null} oModelValue
+	 *   The model value, as returned by {@link #getModelValue}
+	 * @param {int} oModelValue.ms
+	 *   The time in milliseconds, ranging from 0 (1970-01-01T00:00:00.000Z) to 86399999 (1970-01-01T23:59:59.999Z)
+	 * @returns {string|null}
+	 *   The time as string in the extended format without the 'T' e.g. "23:58:59.123" according to ISO 8601,
+	 *   or <code>null</code> if the given model value is falsy
+	 *
+	 * @since 1.114.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	Time.prototype.getISOStringFromModelValue = function (oModelValue) {
+		if (!oModelValue) {
+			return null;
+		}
+
+		return UI5Date.getInstance(oModelValue.ms).toISOString().slice(11, -1);
+	};
+
+	/**
 	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
 	 * methods: <code>format</code> takes a Date and returns an object as described in
 	 * {@link sap.ui.model.odata.type.Time}, <code>parse</code> converts from the object to a Date.
@@ -284,6 +307,27 @@ sap.ui.define([
 		this.validateValue(oResult);
 
 		return oResult;
+	};
+
+	/**
+	 * Returns the model value for the given ISO string.
+	 *
+	 * @param {string|null} sISOString
+	 *   A string according to ISO 8601, as returned by {@link #getISOStringFromModelValue}
+	 * @returns {{__edmType: string, ms: int}|null}
+	 *   The model representation for the given ISO string for this type, or <code>null</code> if
+	 *   the given ISO string is falsy
+	 *
+	 * @since 1.114.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	Time.prototype.getModelValueFromISOString = function (sISOString) {
+		if (!sISOString) {
+			return null;
+		}
+
+		return toModel(UI5Date.getInstance("1970-01-01T" + sISOString + "Z"));
 	};
 
 	/**

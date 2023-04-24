@@ -430,4 +430,41 @@ sap.ui.define([
 		assert.ok(oResult instanceof DateFormat);
 		assert.strictEqual(oType.oFormat, oResult);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getISOStringFromModelValue", function (assert) {
+		var oDate = {toISOString: function () {}},
+			oModelValue = {__edmType: "Edm.Time", ms: "~iMilliseconds"};
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs("~iMilliseconds").returns(oDate);
+		this.mock(oDate).expects("toISOString").withExactArgs().returns("~sDatePartT~sTimePartZ");
+
+		// code under test
+		assert.strictEqual(new Time().getISOStringFromModelValue(oModelValue), "~sTimePart");
+	});
+
+	//*********************************************************************************************
+["getISOStringFromModelValue", "getModelValueFromISOString"].forEach(function (sMethod) {
+	QUnit.test(sMethod + ": falsy values", function (assert) {
+		var oType = new Time();
+
+		// code under test
+		assert.strictEqual(oType[sMethod](null), null);
+		assert.strictEqual(oType[sMethod](undefined), null);
+		if (sMethod === "getModelValueFromISOString") {
+			assert.strictEqual(oType[sMethod](""), null);
+		}
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString: integrative test", function (assert) {
+		var sISOString = "08:07:06.000",
+			oModelValue = createTime(8, 7, 6, 0),
+			oType = new Time();
+
+		// code under test
+		assert.strictEqual(oType.getISOStringFromModelValue(oModelValue), sISOString);
+		assert.deepEqual(oType.getModelValueFromISOString(sISOString), oModelValue);
+	});
 });
