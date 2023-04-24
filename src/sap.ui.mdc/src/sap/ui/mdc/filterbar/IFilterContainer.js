@@ -63,7 +63,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Inserts the inner content into the layout item.
+	 * Returns the inner controls of the layout item.
 	 * @returns {sap.ui.mdc.FilterItem[]} Array of all inner controls in the layout item
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
