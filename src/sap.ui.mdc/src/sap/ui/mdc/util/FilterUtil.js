@@ -15,6 +15,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 	 * @namespace
 	 * @private
 	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.util.FilterUtil
 	 */
@@ -28,6 +29,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * @returns {object}  PropertyInfo object for a given name, or <code>null</code>
 				 * @private
 				 * @ui5-restricted sap.ui.mdc, sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				getPropertyByKey : function(aPropertiesMetadata, sKey) {
 					var oPropertyInfo = null;
@@ -113,6 +115,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * @returns {object} Object with filters
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
+				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				getFilterInfo: function(vTypeProvider, mConditions, aPropertiesMetadata, aIgnoreProperties) {
 

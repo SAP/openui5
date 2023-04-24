@@ -73,12 +73,6 @@ sap.ui.define([
 		return oLayoutData ? oLayoutData : this.getAction() && this.getAction().getLayoutData();
 	};
 
-	/**
-	 * Sets the behavior of the <code>ActionToolbarAction</code> inside an <code>OverflowToolbar</code> configuration.
-	 *
-	 * @protected
-	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
-	 */
 	ActionToolbarAction.prototype.getOverflowToolbarConfig = function() {
 		// use the Action OverflowToolbarConfig if exist
 		var oConfig = this.getAction() && this.getAction().getOverflowToolbarConfig ? this.getAction().getOverflowToolbarConfig() : { canOverflow: true };

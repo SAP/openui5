@@ -26,7 +26,6 @@ sap.ui.define([
      * @experimental As of version 1.111
      * @private
      * @ui5-restricted sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
      * @since 1.111.0
      * @alias sap.ui.mdc.util.InfoBar
      */
