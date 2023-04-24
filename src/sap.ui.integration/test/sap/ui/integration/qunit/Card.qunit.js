@@ -4619,6 +4619,92 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Fallback to Abstract preview when mock data configuration is missing", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEventOnce("_ready", function () {
+				oCard.addEventDelegate({
+					onAfterRendering: function () {
+						// Assert
+						assert.strictEqual(oCard.getPreviewMode(), library.CardPreviewMode.Abstract, "Fallback to Abstract preview.");
+						assert.ok(oCard.getDomRef().classList.contains("sapFCardPreview"), library.CardPreviewMode.Abstract, "Abstract preview class is there.");
+
+						done();
+					}
+				});
+			});
+
+			// Act
+			oCard.setPreviewMode(library.CardPreviewMode.MockData);
+			oCard.setManifest({
+				"sap.app": {
+					"type": "card",
+					"id": "test.dataProvider.card2"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "List Card"
+					},
+					"content": {
+						"data": {
+							"request": {
+								"url": "./relativeData.json"
+							}
+						},
+						"item": {
+							"title": {
+								"value": "{Name}"
+							}
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("Don't fallback to Abstract preview when data configuration is with 'path' only", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEventOnce("_ready", function () {
+				oCard.addEventDelegate({
+					onAfterRendering: function () {
+						// Assert
+						assert.strictEqual(oCard.getPreviewMode(), library.CardPreviewMode.MockData, "Didn't fallback to Abstract preview.");
+						assert.notOk(oCard.getDomRef().classList.contains("sapFCardPreview"), library.CardPreviewMode.Abstract, "Abstract preview class is not there.");
+
+						done();
+					}
+				});
+			});
+
+			// Act
+			oCard.setPreviewMode(library.CardPreviewMode.MockData);
+			oCard.setManifest({
+				"sap.app": {
+					"type": "card",
+					"id": "test.dataProvider.card2"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "List Card"
+					},
+					"content": {
+						"data": {
+							"path": "/"
+						},
+						"item": {
+							"title": {
+								"value": "{Name}"
+							}
+						}
+					}
+				}
+			});
+		});
+
 		QUnit.module("hasNoData", {
 			beforeEach: function () {
 				this.oCard = new Card();

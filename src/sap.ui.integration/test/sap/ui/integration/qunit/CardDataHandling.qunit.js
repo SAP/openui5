@@ -1513,12 +1513,12 @@ function (
 		this.oCard.setManifest(oManifest);
 	});
 
-	QUnit.test("If 'mockData' sections are missing, data should fallback to the original data configurations", function (assert) {
+	QUnit.test("If 'mockData' sections are missing, data should not be fetched", function (assert) {
 		var done = assert.async();
 		var getDataSpy = this.spy(DataProvider.prototype, "getData");
 
 		this.oCard.attachEvent("_ready", function () {
-			assert.strictEqual(getDataSpy.callCount, 4, "Data requests should be made from the original configurations when 'mockData' sections are missing");
+			assert.strictEqual(getDataSpy.callCount, 0, "Data requests are not made");
 
 			done();
 		});
