@@ -6,7 +6,6 @@
   "description": "UI5 Demo App - Shopping cart",
   "scripts": {
     "start": "ui5 serve",
-    "lint": "eslint webapp",
     "build": "ui5 build --all --clean-dest"
   },
   "dependencies": {
@@ -18,7 +17,6 @@
     "@openui5/sap.ui.documentation": "^1"
   },
   "devDependencies": {
-    "@ui5/cli": "^3",
-    "eslint": "^4.19.1"
+    "@ui5/cli": "^3"
   }
 }

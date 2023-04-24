@@ -5,8 +5,7 @@
   "description": "UI5 Demo App - Basic Template",
   "private": true,
   "scripts": {
-    "start": "ui5 serve",
-    "lint": "eslint webapp"
+    "start": "ui5 serve"
   },
   "dependencies": {
     "@openui5/sap.m": "^1",
@@ -15,7 +14,6 @@
     "@openui5/themelib_sap_fiori_3": "^1"
   },
   "devDependencies": {
-    "@ui5/cli": "^3",
-    "eslint": "^4.19.1"
+    "@ui5/cli": "^3"
   }
 }

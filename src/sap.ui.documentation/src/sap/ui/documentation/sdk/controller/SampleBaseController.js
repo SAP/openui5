@@ -194,9 +194,34 @@ sap.ui.define([
 				});
 		},
 
+		/**
+		 * Formats the name in NPM style string:
+		 *
+		 * A package.json file must contain "name" and "version" fields.
+		 * The "name" field contains your package's name, and must be lowercase and one word,
+		 * and may contain hyphens and underscores.
+		 *
+		 * @param {string} name The name to format
+		 * @returns {string} Formatted name
+		 */
+		_formatNameToNpmSpec: function (name) {
+			var result;
+			var testValidChars = /[^\w_\-\.]+/gi; // Only "words", "-", "_" and "."
+
+			name = name
+				.replace(testValidChars, "") // Cleanup invalid characters
+				.replaceAll(".", "-"); // Replace the dots with dashes
+
+			result = name.split(/(?=[A-Z])/); // Split on Capital letters
+
+			return result
+				.map(function (chunk) { return chunk.toLowerCase(); })
+				.join("-");
+		},
+
 		_formatPackageJson: function (sPackageFile, sManifestFile, oData) {
 			var sFormattedPackageFile = sPackageFile.replace(/{{TITLE}}/g, oData.title)
-				.replace(/{{SAMPLE_ID}}/g, oData.id),
+				.replace(/{{SAMPLE_ID}}/g, this._formatNameToNpmSpec(oData.id)),
 				oPackageFile = JSON.parse(sFormattedPackageFile),
 				oPackageDependencies = oPackageFile.dependencies,
 				oManifestFile,
@@ -224,7 +249,7 @@ sap.ui.define([
 		},
 
 		_formatYamlFile: function(sFile, oData) {
-			return sFile.replace(/{{SAMPLE_ID}}/g, oData.id);
+			return sFile.replace(/{{SAMPLE_ID}}/g, this._formatNameToNpmSpec(oData.id));
 		},
 
 		_formatManifestJsFile: function (sRawManifestFileJs) {
