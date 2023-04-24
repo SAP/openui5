@@ -1441,5 +1441,66 @@
         ]
       }
     ]
+  },
+  "1.96.19": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "eb8f467f01e5b28964b64c377e61598b637931fe",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "1c8498c178b5b4887e4731e47abfdae9e83e0b64",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now opens when enter pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154885"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170321416"
+          }
+        ]
+      },
+      {
+        "id": "751963845df08cc2c2d56f0c10a4609bf6825962",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust default href attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006841702022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001393612023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          }
+        ]
+      },
+      {
+        "id": "6439f1f08c32684f10869a939757b7bd9136fe2a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Select All checkbox does not appear at wrong place on Tablet/Phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380023440"
+          }
+        ]
+      }
+    ]
   }
 }

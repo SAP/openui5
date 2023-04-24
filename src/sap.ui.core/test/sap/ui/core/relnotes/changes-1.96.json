@@ -699,5 +699,21 @@
         ]
       }
     ]
+  },
+  "1.96.19": {
+    "date": "April 2023",
+    "notes": [
+      {
+        "id": "f6a4a884ab4717a74596b959117440586fa3cbd2",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_hasChangedEntity: node may be unset",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001959552023"
+          }
+        ]
+      }
+    ]
   }
 }
