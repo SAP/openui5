@@ -459,24 +459,6 @@ html[data-sap-ui-browser^='ff'] .sapMTableRowCustomFocus:focus > :not(.sapMListT
 	font-size: @sapUiListTableTextSize;
 }
 
-/* overwrite text control styles */
-.sapMListTblCell {
-	.sapMLnk,
-	.sapMText,
-	.sapMExText,
-	.sapMLabel,
-	.sapMObjectNumber,
-	.sapMObjectIdentifier,
-	.sapMObjStatus > .sapMObjStatusText,
-	.sapMObjStatus > .sapMObjStatusTitle {
-		line-height: 1.4;
-
-		.sapUiSizeCompact & {
-			vertical-align: middle;
-		}
-	}
-}
-
 /* special class name to add margin to multiline contents */
 /* deprecated - kept for compatibility reasons, but apps should use sapUiTinyMarginTopBottom instead */
 .sapUiSizeCompact .sapMTableContentMargin {
