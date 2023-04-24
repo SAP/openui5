@@ -4,17 +4,20 @@
 		xmlns:form="sap.ui.layout.form"
 		xmlns:util="sap.ui.fl.util"
 		xmlns:layout="sap.ui.layout">
-	<Dialog id="sapUiRtaAddIFrameDialog"
-			title="{/text/dialogTitle}"
-			verticalScrolling="true"
-			resizable="false"
-			class="sapUiRtaAddIFrameDialog"
-			draggable="true"
-			validationSuccess="onValidationSuccess"
-			validationError="onValidationError"
-			parseError="onValidationError"
-			contentWidth="50rem"
-			contentHeight="44rem">
+	<Dialog
+		id="sapUiRtaAddIFrameDialog"
+		title="{/text/dialogTitle}"
+		verticalScrolling="true"
+		resizable="false"
+		class="sapUiRtaAddIFrameDialog"
+		draggable="true"
+		validationSuccess="onValidationSuccess"
+		validationError="onValidationError"
+		parseError="onValidationError"
+		contentWidth="50rem"
+		contentHeight="44rem"
+		core:require="{ FloatType: 'sap/ui/model/type/Float' }"
+	>
 		<content>
 
 			<layout:VerticalLayout
@@ -61,7 +64,7 @@
 										text="{/text/widthLabel}">
 									</Label>
 									<Input id="sapUiRtaAddIFrameDialog_WidthInput" class="sapUiRtaAddIFrameDialogWidthInput"
-										value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
+										value="{path: '/frameWidth/value', type: 'FloatType', constraints: {minimum: 1}}"
 										valueState="{/frameWidth/valueState}"/>
 									<Select
 										id="sapUiRtaAddIFrameDialog_WidthUnit"
@@ -87,7 +90,7 @@
 									<Label id="sapUiRtaAddIFrameDialog_HeightLabel" class="sapUiRtaAddIFrameDialogHeightLabel" labelFor="sapUiRtaAddIFrameDialog_HeightInput"
 										text="{/text/heightLabel}"/>
 									<Input id="sapUiRtaAddIFrameDialog_HeightInput" class="sapUiRtaAddIFrameDialogHeightInput"
-										value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
+										value="{path: '/frameHeight/value', type: 'FloatType', constraints: {minimum: 1}}"
 										valueState="{/frameHeight/valueState}"/>
 									<Select
 										id="sapUiRtaAddIFrameDialog_HeightUnit"
