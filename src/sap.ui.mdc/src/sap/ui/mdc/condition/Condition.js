@@ -54,8 +54,8 @@ sap.ui.define([
 				 * @property {any[]} values Array of values of the condition. Depending on the <code>operator</code>, this contains one or more entries. The entries are sored in internal format regarding the used data type.
 				 * @property {object} [inParameters] In parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
 				 * @property {object} [outParameters] Out parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
-				 * @property {boolean} [isEmpty] If set, the condition is empty (used as dummy condition in {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel})
-				 * @property {sap.ui.mdc.enum.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the value help) and not shown in the {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel} control
+				 * @property {boolean} [isEmpty] If set, the condition is empty (used as dummy condition in {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel})
+				 * @property {sap.ui.mdc.enum.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the value help) and not shown in the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel} control
 				 * @property {object} [payload] Payload of the condition. Set by application. Data needs to be stringified. (as stored and loaded in variants)
 				 * @private
 				 * @ui5-restricted sap.fe
@@ -122,7 +122,7 @@ sap.ui.define([
 				/**
 				 * Compares two conditions in detail
 				 *
-				 * Opposed to <code>FilterOperatorUtil.compareConditions</code> this comparison checks the whole condition object for equality except the {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel} specific <code>isEmpty</code> flag.
+				 * Opposed to <code>FilterOperatorUtil.compareConditions</code> this comparison checks the whole condition object for equality except the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel} specific <code>isEmpty</code> flag.
 				 *
 				 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCondition1 Condition to check
 				 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCondition2 Condition to check

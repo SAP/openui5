@@ -94,14 +94,14 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @alias sap.ui.mdc.field.DefineConditionPanel
+	 * @alias sap.ui.mdc.valuehelp.base.DefineConditionPanel
 	 * @since 1.58.0
 	 * @abstract
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.content.Conditions
 	 */
-	var DefineConditionPanel = Control.extend("sap.ui.mdc.field.DefineConditionPanel", {
+	var DefineConditionPanel = Control.extend("sap.ui.mdc.valuehelp.base.DefineConditionPanel", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {

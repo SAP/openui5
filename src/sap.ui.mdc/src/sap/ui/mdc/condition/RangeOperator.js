@@ -117,7 +117,7 @@ function(
 	 * @return {string} static text
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.DefineConditionPanel
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.DefineConditionPanel
 	 */
 	RangeOperator.prototype.getStaticText = function(oType) {
 		var aRange = this._getRange(null, oType);

@@ -198,7 +198,7 @@ sap.ui.define([
                 return oWaiters.forValueHelp({
                     success: function (oValueHelp) {
                         return this.waitFor(Object.assign({}, {
-                            controlType: "sap.ui.mdc.field.DefineConditionPanel",
+                            controlType: "sap.ui.mdc.valuehelp.base.DefineConditionPanel",
                             matchers: new Ancestor(oValueHelp)
                         }, oConfig));
                     }

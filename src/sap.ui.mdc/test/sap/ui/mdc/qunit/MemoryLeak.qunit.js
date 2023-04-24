@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/field/FieldBaseDelegate", // make sure delegate is loaded
-	"sap/ui/mdc/field/DefineConditionPanel",
+	"sap/ui/mdc/valuehelp/base/DefineConditionPanel",
 	"sap/ui/mdc/field/FieldInput", // make sure inner control is loaded
 	"sap/ui/mdc/field/FieldMultiInput", // make sure inner control is loaded
 	"sap/ui/mdc/ValueHelp",

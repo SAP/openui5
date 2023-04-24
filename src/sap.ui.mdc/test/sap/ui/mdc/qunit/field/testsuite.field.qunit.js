@@ -46,13 +46,6 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 			"DynamicDateRangeConditionsType": {
 				module: "./DynamicDateRangeConditionsType.qunit"
 			},
-			"DefineConditionPanel": {
-				module: "./DefineConditionPanel.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				},
-				sinon: true
-			},
 			"Field": {
 				module: "./Field.qunit",
 				sinon: true
