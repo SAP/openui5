@@ -51,7 +51,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/model/odata/type/String", // load used data types as in legacyFree UI5 they are not loaded automatically
 	"sap/ui/model/odata/type/Byte",
-	"sap/ui/model/odata/type/Boolean"
+	"sap/ui/model/odata/type/Boolean",
+	"sap/ui/performance/trace/FESRHelper"
 ], function(
 	TableQUnitUtils,
 	QUtils,
@@ -102,7 +103,8 @@ sap.ui.define([
 	ManagedObjectObserver,
 	StringType,
 	ByteType,
-	BooleanType
+	BooleanType,
+	FESRHelper
 ) {
 	"use strict";
 
@@ -2673,6 +2675,7 @@ sap.ui.define([
 
 		return this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oPasteButton, "Paste button created");
+			assert.equal(FESRHelper.getSemanticStepname(this.oTable._oPasteButton, "press"), "mdc:tbl:paste", "Correct FESR StepName");
 
 			Core.applyChanges();
 			assert.ok(this.oTable._oPasteButton.getDomRef(), "Paste button is visible");
@@ -2745,6 +2748,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Export button handling on initialization when export is enabled", function(assert) {
+		var done = assert.async();
+
 		var oTable = this.oTable;
 
 		oTable.setEnableExport(true);
@@ -2755,6 +2760,22 @@ sap.ui.define([
 			assert.ok(oTable._oExportButton.isA("sap.m.MenuButton"), "Is a sap.m.MenuButton");
 			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Is child of the toolbar");
 			assert.ok(oTable._oExportButton.getVisible(), "Is visible");
+
+			assert.equal(FESRHelper.getSemanticStepname(oTable._oExportButton, "press"), "OI:QE", "Correct FESR StepName");
+
+			function checkExportMenu() {
+				var oMenu = oTable._oExportButton.getMenu();
+				if (oMenu) {
+					assert.equal(oMenu.getItems().length, 2, "Export MenuButton has 2 actions");
+					assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[0], "press"), "OI:QE", "Correct FESR StepName - Menu Item 1");
+					assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[1], "press"), "OI:EXP:SETTINGS", "Correct FESR StepName - Menu Item 2");
+					done();
+				} else {
+					setTimeout(checkExportMenu, 200);
+				}
+			}
+
+			checkExportMenu();
 		});
 	});
 
@@ -4762,6 +4783,7 @@ sap.ui.define([
 			assert.equal(oTable._oP13nButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
 			assert.ok(oTable._oToolbar.indexOfEnd(oTable._oP13nButton) >= 0, sTitlePrefix + " - Table settings button is contained in the toolbar");
 			assert.equal(oTable._oP13nButton.getVisible(), aModes.length > 0 && !oTable._bHideP13nButton, sTitlePrefix + " - Table settings button is visible");
+			assert.equal(FESRHelper.getSemanticStepname(oTable._oP13nButton, "press"), "mdc:tbl:p13n", "Correct FESR StepName");
 		},
 		assertAPI: function(assert, oMDCTable) {
 			var oTable = oMDCTable || this.oTable;
@@ -5853,11 +5875,13 @@ sap.ui.define([
 			Core.applyChanges();
 
 			assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+			FESRHelper.setSemanticStepname(this.oTable._oExpandAllButton, "press", "mdc:tbl:expandAll");
 			assert.ok(this.oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
 			assert.ok(this.oTable._oExpandAllButton.getEnabled(), "Expand All Button is enabled");
 			assert.ok(this.oTable._oExpandAllButton.getDomRef(), "Expand All button DOM ref exists");
 
 			assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+			FESRHelper.setSemanticStepname(this.oTable._oCollapseAllButton, "press", "mdc:tbl:collapseAll");
 			assert.ok(this.oTable._oCollapseAllButton.getVisible(), "Collapse All Button is visible");
 			assert.ok(this.oTable._oCollapseAllButton.getEnabled(), "Collapse All Button is enabled");
 			assert.ok(this.oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");

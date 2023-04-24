@@ -45,7 +45,8 @@ sap.ui.define([
 	"sap/ui/mdc/table/menu/ItemContainer",
 	"sap/ui/mdc/enum/ProcessingStrategy",
 	"sap/ui/core/theming/Parameters",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/performance/trace/FESRHelper"
 ], function(
 	Control,
 	ActionToolbar,
@@ -89,7 +90,8 @@ sap.ui.define([
 	ItemContainer,
 	ProcessingStrategy,
 	ThemeParameters,
-	Log
+	Log,
+	FESRHelper
 ) {
 	"use strict";
 
@@ -2156,6 +2158,9 @@ sap.ui.define([
 				_items: [this._oItemContainer]
 			});
 			this.addDependent(this._oColumnHeaderMenu);
+
+			FESRHelper.setSemanticStepname(this._oColumnHeaderMenu, "beforeOpen", "mdc:tbl:p13n:col");
+
 			this._oColumnHeaderMenu.attachBeforeOpen(this._createColumnMenuContent, this);
 		}
 	};
