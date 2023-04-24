@@ -2141,7 +2141,7 @@ sap.ui.define([
 		waitForChanges : function (assert, sTitle, iWaitTimeout) {
 			var that = this;
 
-			iWaitTimeout = Math.max(iWaitTimeout, iTestTimeout) || 3000;
+			iWaitTimeout = Math.max(iWaitTimeout || 3000, iTestTimeout);
 			return new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				// After three seconds everything should have run through
@@ -43280,11 +43280,23 @@ sap.ui.define([
 	// inner list binding as long the new entity is not persisted. Once the entity is persisted, the
 	// data for the inner list binding is fetched.
 	// BCP: 2070459149
-	QUnit.test("BCP: 2070459149: transient context + nested ODLB w/ own cache", function (assert) {
+	//
+	// Also test w/o autoExpandSelect and see that no context can be created in the inner list
+	// JIRA: CPOUI5ODATAV4-1973
+[false, true].forEach(function (bAutoExpandSelect) {
+	var sTitle = "BCP: 2070459149: transient context + nested ODLB w/ own cache, autoExpandSelect="
+			+ bAutoExpandSelect;
+
+	QUnit.test(sTitle, function (assert) {
 		var oContext,
-			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel(
+				{autoExpandSelect : bAutoExpandSelect, updateGroupId : "update"}),
+			sParameters = bAutoExpandSelect
+				? ""
+				: ", parameters : {$select : 'Team_Id',"
+					+ " $expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}}",
 			sView = '\
-<FlexBox binding="{/TEAMS(\'1\')}">\
+<FlexBox binding="{path : \'/TEAMS(\\\'1\\\')\'' + sParameters + '}">\
 	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
 		<Text id="name" text="{Name}"/>\
 		<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$$ownRequest : true}, \
@@ -43305,11 +43317,19 @@ sap.ui.define([
 			.expectChange("category", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oEmployeesList = that.oView.byId("employees");
+
 			that.expectChange("name", ["John Doe"]);
 
 			// code under test
-			oContext = that.oView.byId("employees").getBinding("items")
-				.create({Name : "John Doe"}, true);
+			oContext = oEmployeesList.getBinding("items").create({Name : "John Doe"}, true);
+
+			if (!bAutoExpandSelect) {
+				assert.throws(function () {
+					// code under test
+					oEmployeesList.getItems()[0].getCells()[1].getBinding("items").create();
+				}, new Error("Deep create is only supported with autoExpandSelect"));
+			}
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -43318,8 +43338,8 @@ sap.ui.define([
 					url : "TEAMS('1')/TEAM_2_EMPLOYEES",
 					payload : {Name : "John Doe"}
 				}, {ID : "2", Name : "John Doe"})
-				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_EQUIPMENTS"
-					+ "?$select=Category,ID&$skip=0&$top=100", {
+				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_EQUIPMENTS?"
+					+ (bAutoExpandSelect ? "$select=Category,ID&" : "") + "$skip=0&$top=100", {
 					value : [{Category : "Electronics", ID : "1"}]
 				})
 				.expectChange("category", ["Electronics"]);
@@ -43331,6 +43351,7 @@ sap.ui.define([
 			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Context binding with nested list binding having a nested context binding with own
@@ -49552,10 +49573,7 @@ sap.ui.define([
 				}, {
 					SalesOrderID : "new1",
 					SO_2_SOITEM : []
-				})
-				// TODO unnecessary request -> CPOUI5ODATAV4-2036
-				.expectRequest("SalesOrderList('new1')/SO_2_SOITEM"
-					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {value : []});
+				});
 
 			oCreatedItemContext = that.oView.byId("items").getBinding("items")
 				.create({Note : "doNotSubmit"});
@@ -49569,6 +49587,244 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Deep create, nested list in nested list
+	// (1) Create a team with two employees and two equipment items each (in initial data) and bind
+	//     the employees list to the created team context
+	// (2) Create a third equipment item at the first employee
+	// (3) Create a third employee w/o equipment
+	// (4) Create an equipment item at the third employee
+	// (5) Delete the second employee
+	// (6) Submit; the number of equipment items changes for each employee
+	// JIRA: CPOUI5ODATAV4-1976
+[false, true].forEach(function (bOwnRequest) {
+	["Table", "t:Table"].forEach(function (sTable) {
+		var sTitle = "CPOUI5ODATAV4-1976: Deep create, nested list in nested list, $$ownRequest="
+				+ bOwnRequest + ", " + sTable;
+
+	QUnit.test(sTitle, function (assert) {
+		var oEmployeesBinding,
+			oEmployeesTable,
+			sItems = sTable === "t:Table" ? "rows" : "items",
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sOwnRequest = bOwnRequest ? ", $$ownRequest : true" : "",
+			oTeamContext,
+			sView = '\
+<Text id="employeeCount" text="{$count}"/>\
+<' + sTable + ' id="employees" ' + sItems + '="{path : \'TEAM_2_EMPLOYEES\',\
+ 			parameters : {$$ownRequest : true, $count : true}}">\
+	<Text id="employeeName" text="{Name}"/>\
+	<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', \
+			parameters : {$count : true' + sOwnRequest + '}, templateShareable : false}">\
+		<CustomListItem>\
+			<Text id="equipmentName" text="{Name}"/>\
+		</CustomListItem>\
+	</List>\
+</' + sTable + ">",
+			that = this;
+
+		// returns a list of all equipment bindings
+		function getEquipmentsBindings(iExpectedCount) {
+			var aBindings = oEmployeesTable.getAggregation(sItems).map(function (oItem) {
+					return oItem.getCells()[1].getBinding("items");
+				}).filter(function (oBinding) {
+					// in the t:Table excess rows have an unresolved binding
+					return oBinding.isResolved();
+				});
+
+			assert.strictEqual(aBindings.length, iExpectedCount);
+			return aBindings;
+		}
+
+		this.expectChange("employeeCount")
+			.expectChange("employeeName", [])
+			.expectChange("equipmentName", []); // cannot take the employee into account
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oEmployeesTable = that.oView.byId("employees");
+			oEmployeesBinding = oEmployeesTable.getBinding(sItems);
+
+			// code under test
+			oTeamContext = oModel.bindList("/TEAMS").create({
+				TEAM_2_EMPLOYEES : [{
+					Name : "Jonathan Smith",
+					EMPLOYEE_2_EQUIPMENTS : [ // J1 comes later :-)
+						{Name : "J2"},
+						{Name : "J3"}
+					]
+				}, {
+					Name : "Frederic Fall",
+					EMPLOYEE_2_EQUIPMENTS : [
+						{Name : "F1"},
+						{Name : "F2"}
+					]
+				}]
+			});
+
+			that.expectChange("employeeCount", "2")
+				.expectChange("employeeName", ["Jonathan Smith", "Frederic Fall"])
+				.expectChange("equipmentName", ["F1", "F2"])
+				.expectChange("equipmentName", ["J2", "J3"]);
+
+			oEmployeesTable.setBindingContext(oTeamContext);
+			that.oView.byId("employeeCount")
+				.setBindingContext(oEmployeesBinding.getHeaderContext());
+
+			return that.waitForChanges(assert, "(1) deep create & bind");
+		}).then(function () {
+			var aEquipmentsBindings = getEquipmentsBindings(2);
+
+			that.expectChange("equipmentName", ["J1", "J2", "J3"]);
+
+			// code under test
+			aEquipmentsBindings[0].create({Name : "J1"});
+
+			assert.deepEqual(aEquipmentsBindings[0].getCurrentContexts().map(getObject), [
+				{"@$ui5.context.isTransient" : true, Name : "J1"},
+				{"@$ui5.context.isTransient" : true, Name : "J2"},
+				{"@$ui5.context.isTransient" : true, Name : "J3"}
+			]);
+			assert.deepEqual(aEquipmentsBindings[1].getCurrentContexts().map(getObject), [
+				{"@$ui5.context.isTransient" : true, Name : "F1"},
+				{"@$ui5.context.isTransient" : true, Name : "F2"}
+			]);
+
+			return that.waitForChanges(assert, "(2) add equipment");
+		}).then(function () {
+			that.expectChange("employeeCount", "3")
+				.expectChange("employeeName", ["Peter Burke", "Jonathan Smith", "Frederic Fall"])
+				.expectChange("equipmentName", ["J1", "J2", "J3"]) // moved to another row
+				.expectChange("equipmentName", ["F1", "F2"]); // moved to another row
+
+			// code under test
+			oEmployeesBinding.create({Name : "Peter Burke"});
+
+			return that.waitForChanges(assert, "(3) create employee");
+		}).then(function () {
+			that.expectChange("equipmentName", ["P1"]);
+
+			// code under test
+			getEquipmentsBindings(3)[0].create({Name : "P1"});
+
+			return that.waitForChanges(assert, "(4) create equipment");
+		}).then(function () {
+			var oEmployeeContext = oEmployeesBinding.getCurrentContexts()[1],
+				oEquipmentsBinding = getEquipmentsBindings(3)[1],
+				aEquipmentsContexts = oEquipmentsBinding.getCurrentContexts();
+
+			that.expectChange("employeeCount", "2")
+				.expectChange("employeeName", [, "Frederic Fall"])
+				.expectChange("equipmentName", ["F1", "F2"]); // moved to another row
+
+			assert.strictEqual(aEquipmentsContexts.length, 3);
+			return Promise.all([
+				checkCanceled(assert, oEmployeeContext.created()),
+				aEquipmentsContexts.map(function (oContext) {
+					return checkCanceled(assert, oContext.created());
+				}),
+				// code under test
+				oEmployeeContext.delete(),
+				that.waitForChanges(assert, "(5) delete 2nd employee")
+			].flat());
+		}).then(function () {
+			var aEmployeesContexts = oEmployeesBinding.getCurrentContexts(),
+				aEquipmentsBindings = getEquipmentsBindings(2),
+				aEquipmentsContexts0 = aEquipmentsBindings[0].getCurrentContexts(),
+				aEquipmentsContexts1 = aEquipmentsBindings[1].getCurrentContexts();
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {
+						TEAM_2_EMPLOYEES : [{
+							Name : "Peter Burke",
+							EMPLOYEE_2_EQUIPMENTS : [
+								{Name : "P1"}
+							]
+						}, {
+							Name : "Frederic Fall",
+							EMPLOYEE_2_EQUIPMENTS : [
+								{Name : "F1"},
+								{Name : "F2"}
+							]
+						}]
+					}
+				}, {
+					"@odata.etag" : "etag.T1",
+					Team_Id : "T1",
+					TEAM_2_EMPLOYEES : [{
+						"@odata.etag" : "etag.E1",
+						ID : "E1",
+						Name : "Peter Burke",
+						EMPLOYEE_2_EQUIPMENTS : [{
+							"@odata.etag" : "etag.P1",
+							Category : "C",
+							ID : 1,
+							Name : "P1"
+						}, {
+							"@odata.etag" : "etag.P2",
+							Category : "C",
+							ID : 2,
+							Name : "P2"
+						}]
+					}, {
+						"@odata.etag" : "etag.E2",
+						ID : "E2",
+						Name : "Frederic Fall",
+						EMPLOYEE_2_EQUIPMENTS : [{
+							"@odata.etag" : "etag.F1",
+							Category : "C",
+							ID : 3,
+							Name : "F1"
+						}]
+					}]
+				})
+				.expectChange("equipmentName", ["P1", "P2"])
+				.expectChange("equipmentName", ["F1"]);
+
+			assert.strictEqual(aEmployeesContexts.length, 2);
+			assert.strictEqual(aEquipmentsContexts0.length, 1);
+			assert.strictEqual(aEquipmentsContexts1.length, 2);
+			return Promise.all([
+				oTeamContext.created(),
+				aEmployeesContexts.map(function (oContext) {
+					return oContext.created();
+				}),
+				aEquipmentsContexts0.map(function (oContext) {
+					return oContext.created();
+				}),
+				aEquipmentsContexts1.map(function (oContext) {
+					return oContext.created();
+				}),
+				// code under test
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, "(6) submit")
+			].flat());
+		}).then(function () {
+			var aEquipmentsBindings = getEquipmentsBindings(2);
+
+			assert.deepEqual(aEquipmentsBindings[0].getAllCurrentContexts().map(getObject), [{
+				"@odata.etag" : "etag.P1",
+				Category : "C",
+				ID : 1,
+				Name : "P1"
+			}, {
+				"@odata.etag" : "etag.P2",
+				Category : "C",
+				ID : 2,
+				Name : "P2"
+			}]);
+			assert.deepEqual(aEquipmentsBindings[1].getAllCurrentContexts().map(getObject), [{
+				"@odata.etag" : "etag.F1",
+				Category : "C",
+				ID : 3,
+				Name : "F1"
+			}]);
+		});
+	});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario:

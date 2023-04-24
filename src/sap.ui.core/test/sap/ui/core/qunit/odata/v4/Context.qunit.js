@@ -3542,7 +3542,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bCallback) {
-	QUnit.test("adjustPredicates: callback=" + bCallback, function (assert) {
+	QUnit.test("adjustPredicate: callback=" + bCallback, function (assert) {
 		var oBinding = {},
 			oBinding1 = {
 				adjustPredicate : function () {}

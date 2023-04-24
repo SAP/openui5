@@ -735,6 +735,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(aElements), 1, "($uid=1)", "SO_2_SOITEM");
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "reject").returns(fnReject);
+		oHelperMock.expects("cancelNestedCreates")
+			.withExactArgs(sinon.match.same(oElement), "(nested)", "updateGroup");
 
 		// code under test
 		oPromise = oCache._delete(oGroupLock, undefined, "SO_2_SOITEM/-1", null, fnCallback);
@@ -5630,27 +5632,34 @@ sap.ui.define([
 
 		return new Promise(function (resolve) {
 			var oCache = new _Cache(that.oRequestor, "SalesOrders('1')"),
+				oCacheMock = that.mock(oCache),
 				aElements,
+				oHelperMock = that.mock(_Helper),
 				oParent = {},
-				oPostBody = {};
+				oPostBody = {},
+				oRoot = {};
 
-			oCache.fetchValue = function () {};
-			that.mock(oCache).expects("fetchValue")
-				.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
-				.returns(SyncPromise.resolve(oParent));
-			that.mock(oCache).expects("checkSharedRequest").withExactArgs();
-			that.mock(_Helper).expects("getPrivateAnnotation")
+			oCacheMock.expects("getValue").withExactArgs("path($uid=42)/to").returns(oParent);
+			oCacheMock.expects("getValue").withExactArgs("path($uid=42)").returns(oRoot);
+			oHelperMock.expects("getPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oParent), "postBody")
 				.returns(oPostBody);
-			that.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~mTypeForMetaPath~");
-			that.mock(_Helper).expects("getMetaPath").withExactArgs("path/to/collection")
+			oHelperMock.expects("getPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oRoot), "select")
+				.returns(undefined);
+			oCacheMock.expects("checkSharedRequest").withExactArgs();
+			oHelperMock.expects("getMetaPath").withExactArgs("to/collection").returns("meta/path");
+			oHelperMock.expects("setPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oRoot), "select", {"meta/path" : "~aSelect~"});
+			oCacheMock.expects("fetchTypes").withExactArgs().resolves("~mTypeForMetaPath~");
+			oHelperMock.expects("getMetaPath").withExactArgs("path($uid=42)/to/collection")
 				.returns("meta/path");
 			that.mock(that.oRequestor).expects("fetchType")
 				.withExactArgs("~mTypeForMetaPath~", "/SalesOrders/meta/path")
 				.callsFake(resolve);
 
 			// code under test
-			aElements = oCache.addTransientCollection("path/to/collection", "~aSelect~");
+			aElements = oCache.addTransientCollection("path($uid=42)/to/collection", "~aSelect~");
 
 			assert.deepEqual(aElements, []);
 			assert.strictEqual(oParent.collection, aElements);
@@ -5658,7 +5667,6 @@ sap.ui.define([
 			assert.strictEqual(aElements.$created, 0);
 			assert.deepEqual(aElements.$byPredicate, {});
 			assert.strictEqual(typeof aElements.$postBodyCollection, "function");
-			assert.strictEqual(aElements.$select, "~aSelect~");
 
 			// code under test
 			aElements.$postBodyCollection();
@@ -5674,6 +5682,7 @@ sap.ui.define([
 
 		return new Promise(function (resolve) {
 			var oCache = new _Cache(that.oRequestor, "SalesOrders('1')"),
+				oCacheMock = that.mock(oCache),
 				aElements,
 				oHelperMock = that.mock(_Helper),
 				oPostBody = {
@@ -5685,13 +5694,18 @@ sap.ui.define([
 						transient : "updateGroup"
 					},
 					collection : [{}, {}]
+				},
+				oRoot = {
+					"@$ui5._" : {
+						select : {other : "$select"}
+					}
 				};
 
 			oCache.fetchValue = function () {};
-			that.mock(oCache).expects("fetchValue")
-				.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
-				.returns(SyncPromise.resolve(oParent));
+			oCacheMock.expects("getValue").withExactArgs("path($uid=42)/to").returns(oParent);
+			oCacheMock.expects("getValue").withExactArgs("path($uid=42)").returns(oRoot);
 			that.mock(oCache).expects("checkSharedRequest").withExactArgs();
+			oHelperMock.expects("getMetaPath").withExactArgs("to/collection").returns("meta/path");
 			oHelperMock.expects("uid").withExactArgs().returns("~uid0~");
 			oHelperMock.expects("addPromise")
 				.withExactArgs(sinon.match.same(oParent.collection[0])).returns("~promise0~");
@@ -5699,14 +5713,14 @@ sap.ui.define([
 			oHelperMock.expects("addPromise")
 				.withExactArgs(sinon.match.same(oParent.collection[1])).returns("~promise1~");
 			that.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~mTypeForMetaPath~");
-			oHelperMock.expects("getMetaPath").withExactArgs("path/to/collection")
+			oHelperMock.expects("getMetaPath").withExactArgs("path($uid=42)/to/collection")
 				.returns("meta/path");
 			that.mock(that.oRequestor).expects("fetchType")
 				.withExactArgs("~mTypeForMetaPath~", "/SalesOrders/meta/path")
 				.callsFake(resolve);
 
 			// code under test
-			aElements = oCache.addTransientCollection("path/to/collection", "~aSelect~");
+			aElements = oCache.addTransientCollection("path($uid=42)/to/collection", "~aSelect~");
 
 			assert.strictEqual(aElements, oParent.collection);
 			assert.strictEqual(aElements.$count, 2);
@@ -5733,7 +5747,11 @@ sap.ui.define([
 				"($uid=~uid1~)" : aElements[1]
 			});
 			assert.strictEqual(aElements.$postBodyCollection, oPostBody.collection);
-			assert.strictEqual(aElements.$select, "~aSelect~");
+			assert.deepEqual(oRoot, {
+				"@$ui5._" : {
+					select : {other : "$select", "meta/path" : "~aSelect~"}
+				}
+			});
 		});
 	});
 
@@ -5757,88 +5775,124 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{count : 1, select : undefined},
-	{count : 3, select : "~select~"}
-].forEach(function (oFixture) {
-	QUnit.test("Cache#updateNestedCreates: " + JSON.stringify(oFixture), function (assert) {
-		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
-			oEntity = {
-				added : null,
-				deepCreateCollection :
-					["~child0~", "~child1~", "~child2~"].slice(0, oFixture.count),
-				property : 42,
-				otherCollection : []
-			},
-			oCreatedEntity = {
-				added : "foo",
-				deepCreateCollection : ["~created0~", "~created1~"],
-				property : 42
-			},
-			oHelperMock = this.mock(_Helper),
-			mQueryOptions = {$select : "~select~"},
-			aResolve = [sinon.spy(), sinon.spy(), sinon.spy()],
-			i;
-
-		oEntity.deepCreateCollection.$byPredicate = {foo : "bar"};
-		oEntity.deepCreateCollection.$count = oEntity.deepCreateCollection.$created = 2;
-		oEntity.deepCreateCollection.$postBodyCollection = "~postBodyCollection~";
-		oEntity.deepCreateCollection.$select = oFixture.select;
-		oEntity.otherCollection.$postBodyCollection = "~postBodyCollection~";
-
-		oHelperMock.expects("getQueryOptionsForPath").exactly(oFixture.select ? 0 : 1)
-			.withExactArgs(sinon.match.same(oCache.mQueryOptions),
-				"path/to/entity/deepCreateCollection")
-			.returns(mQueryOptions);
-		oEntity.deepCreateCollection.forEach(function (oChildEntity, i) {
-			oHelperMock.expects("getPrivateAnnotation").withExactArgs(oChildEntity, "resolve")
-				.returns(aResolve[i]);
-		});
-		oHelperMock.expects("updateExisting") // setCount
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners),
-				"path/to/entity/deepCreateCollection",
-				sinon.match.same(oEntity.deepCreateCollection), {$count : 2});
-		oCreatedEntity.deepCreateCollection.forEach(function (oCreatedChildEntity, i) {
-			oHelperMock.expects("getPrivateAnnotation")
-				.withExactArgs(oCreatedChildEntity, "predicate").returns("~predicate~" + i);
-			oHelperMock.expects("updateSelected")
-				.withExactArgs({}, "path/to/entity/deepCreateCollection~predicate~" + i,
-					{}, oCreatedChildEntity, "~select~", undefined, true)
-				.callsFake(function () {
-					arguments[2].origin = arguments[3];
-				});
-		});
+	QUnit.test("Cache#updateNestedCreates: no deep create", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')");
 
 		assert.strictEqual(
-			// code under test
-			oCache.updateNestedCreates("path/to/entity", oEntity, oCreatedEntity),
-			true);
-
-		assert.deepEqual(oEntity.deepCreateCollection, [
-			{origin : "~created0~"},
-			{origin : "~created1~"}
-		]);
-		assert.deepEqual(oEntity.deepCreateCollection.$byPredicate, {
-			"~predicate~0" : {origin : "~created0~"},
-			"~predicate~1" : {origin : "~created1~"}
-		});
-		assert.strictEqual(oEntity.deepCreateCollection.$created, 0);
-		assert.notOk("$postBodyCollection" in oEntity.deepCreateCollection);
-		assert.notOk("$select" in oEntity.deepCreateCollection);
-		assert.notOk("$postBodyCollection" in oEntity.otherCollection);
-		for (i = 0; i < oFixture.count; i += 1) {
-			sinon.assert.calledOnceWithExactly(aResolve[i]);
-		}
-		for (i = oFixture.count; i < aResolve.length; i += 1) {
-			assert.notOk(aResolve[i].called, i);
-		}
+			// code under test - not even a nested ODLB
+			oCache.updateNestedCreates("path/to/entity"),
+			false);
 
 		assert.strictEqual(
-			// code under test
-			oCache.updateNestedCreates("path/to/entity", {}, {}),
+			// code under test - no nested create in foo
+			oCache.updateNestedCreates("path/to/entity", {/*oCacheEnttiy*/}, {/*oCreatedEnttiy*/},
+				{foo : "~$select~"}),
 			false);
 	});
-});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#updateNestedCreates", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
+			oCacheMock = this.mock(oCache),
+			oCacheEntity = {
+				nested1 : ["n/a"],
+				nested2 : ["n/a"],
+				nested3 : ["n/a"]
+			},
+			oCreatedEntity = {
+				nested1 : ["~created11~", "~created12~"],
+				nested2 : ["~created21~"]
+			},
+			oHelperMock = this.mock(_Helper),
+			mSelectForMetaPath = {
+				nested1 : "~$select1~",
+				"nested1/foo" : "~$select1foo~",
+				"nested1/bar" : "~$select1bar~",
+				nested2 : undefined,
+				"nested2/foo" : "~$select2foo~",
+				nested3 : "~$select3~"
+			};
+
+		oCacheMock.expects("updateNestedCreates")
+			.withExactArgs("path/to/entity", sinon.match.same(oCacheEntity),
+				sinon.match.same(oCreatedEntity), sinon.match.same(mSelectForMetaPath))
+			.callThrough(); // initial call
+		oCacheEntity.nested1.$postBodyCollection = "~postBodyCollection1~";
+		// nested1
+		oHelperMock.expects("updateExisting") // setCount
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity/nested1",
+				sinon.match(function (aEntities) { return aEntities === oCacheEntity.nested1; }),
+				{$count : 2})
+			.callsFake(function () {
+				assert.strictEqual(oCacheEntity.nested1.$count, undefined);
+				assert.ok("$count" in oCacheEntity.nested1);
+			});
+		// created11
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs("~created11~", "predicate").returns("~predicate11~");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs({}, "path/to/entity/nested1~predicate11~", {}, "~created11~",
+				"~$select1~", undefined, true)
+			.callsFake(function () {
+				arguments[2].origin = "~created11~";
+			});
+		oCacheMock.expects("updateNestedCreates")
+			.withExactArgs("path/to/entity/nested1~predicate11~", {origin : "~created11~"},
+				"~created11~", {foo : "~$select1foo~", bar : "~$select1bar~"});
+		// created12
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs("~created12~", "predicate").returns("~predicate12~");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs({}, "path/to/entity/nested1~predicate12~", {}, "~created12~",
+				"~$select1~", undefined, true)
+			.callsFake(function () {
+				arguments[2].origin = "~created12~";
+			});
+		oCacheMock.expects("updateNestedCreates")
+			.withExactArgs("path/to/entity/nested1~predicate12~", {origin : "~created12~"},
+				"~created12~", {foo : "~$select1foo~", bar : "~$select1bar~"});
+		// nested2
+		oHelperMock.expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "path/to/entity/nested2")
+			.returns({$select : "~$select2~"});
+		oHelperMock.expects("updateExisting") // setCount
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity/nested2",
+				sinon.match(function (aEntities) { return aEntities === oCacheEntity.nested2; }),
+				{$count : 1});
+		// created21
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs("~created21~", "predicate").returns("~predicate21~");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs({}, "path/to/entity/nested2~predicate21~", {}, "~created21~",
+				"~$select2~", undefined, true)
+			.callsFake(function () {
+				arguments[2].origin = "~created21~";
+			});
+		oCacheMock.expects("updateNestedCreates")
+			.withExactArgs("path/to/entity/nested2~predicate21~", {origin : "~created21~"},
+				"~created21~", {foo : "~$select2foo~"});
+
+		assert.strictEqual(
+			// code under test
+			oCache.updateNestedCreates("path/to/entity", oCacheEntity, oCreatedEntity,
+				mSelectForMetaPath),
+			true);
+
+		assert.deepEqual(oCacheEntity, {
+			nested1 : [{origin : "~created11~"}, {origin : "~created12~"}],
+			nested2 : [{origin : "~created21~"}]
+		});
+		assert.strictEqual(oCacheEntity.nested1.$created, 0);
+		assert.deepEqual(oCacheEntity.nested1.$byPredicate, {
+			"~predicate11~" : {origin : "~created11~"},
+			"~predicate12~" : {origin : "~created12~"}
+		});
+		assert.strictEqual(oCacheEntity.nested2.$created, 0);
+		assert.deepEqual(oCacheEntity.nested2.$byPredicate, {
+			"~predicate21~" : {origin : "~created21~"}
+		});
+		assert.notOk("$postBodyCollection" in oCacheEntity.nested1);
+	});
 
 	//*********************************************************************************************
 	[
@@ -8369,7 +8423,11 @@ sap.ui.define([
 					Name : "John Doe",
 					"@$ui5.foo" : "bar"
 				},
-				oEntityDataCleaned = {ID : "", Name : "John Doe"},
+				oEntityDataCleaned = {
+					"@$ui5._" : {select : "~$select~"},
+					ID : "",
+					Name : "John Doe"
+				},
 				sPathInCache = "('0')/TEAM_2_EMPLOYEES",
 				oPostBody = {},
 				sPostPath = "TEAMS('0')/TEAM_2_EMPLOYEES",
@@ -8452,10 +8510,16 @@ sap.ui.define([
 					}
 					oEntityDataCleaned.ID = oPostResult.ID;
 				});
+			oHelperMock.expects("resolveNestedCreates")
+				.withExactArgs(sinon.match.same(oEntityDataCleaned));
+			oHelperMock.expects("getPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oEntityDataCleaned), "select")
+				.returns("~$select~");
 			oCacheMock.expects("updateNestedCreates")
 				.withExactArgs(sPathInCache
 						+ (bMissingPredicate ? sTransientPredicate : sPredicate),
-					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult))
+					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult),
+					"~$select~")
 				.returns("~bDeepCreate~");
 			oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oEntityDataCleaned), "deepCreate", "~bDeepCreate~")
@@ -8943,9 +9007,11 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult), undefined,
 				undefined, true);
+		oHelperMock.expects("resolveNestedCreates")
+			.withExactArgs(sinon.match.same(oCache.aElements[0]));
 		oCacheMock.expects("updateNestedCreates")
 			.withExactArgs(sTransientPredicate, sinon.match.same(oCache.aElements[0]),
-				sinon.match.same(oPostResult));
+				sinon.match.same(oPostResult), undefined);
 		// The lock must be unlocked although no request is created
 		this.mock(oUpdateGroupLock0).expects("unlock").withExactArgs();
 		this.mock(oUpdateGroupLock0).expects("getGroupId").withExactArgs().returns("updateGroup");
@@ -9360,7 +9426,7 @@ sap.ui.define([
 		this.mock(oCache).expects("updateNestedCreates")
 			.withExactArgs(sTransientPredicate,
 				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]),
-				sinon.match.same(oResponseData));
+				sinon.match.same(oResponseData), undefined);
 		this.mock(oUpdateGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
