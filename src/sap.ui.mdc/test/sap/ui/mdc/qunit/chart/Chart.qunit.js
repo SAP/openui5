@@ -692,10 +692,6 @@ function(
         }.bind(this));
     });
 
-    QUnit.test("_showDrillDown", function(assert){
-        assert.ok(true);
-    });
-
     QUnit.test("getManagedObjectModel", function(assert){
         assert.equal(this.oMDCChart.getManagedObjectModel(), this.oMDCChart._oManagedObjectModel, "ManagedObjectModel of chart was returned");
     });

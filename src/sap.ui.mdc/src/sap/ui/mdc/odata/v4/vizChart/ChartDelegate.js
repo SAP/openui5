@@ -1086,7 +1086,7 @@ sap.ui.define([
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {object} Information about the current chart type
-     * @throws Exception if inner chart is not yet ready
+     * @throws {Error} if inner chart is not yet ready
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc

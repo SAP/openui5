@@ -1269,47 +1269,6 @@
 	 */
 
 	/**
-	 *
-	 * @typedef {object} sap.ui.mdc.chart.PropertyInfo
-	 * @property {string} propertyPath
-	 *   The path to the property in the back end
-	 * @property {string} [name]
-	 *   The identifier of the property
-	 * @property {string} label
-	 *   The label of the identifier
-	 * @property {string} [tooltip]
-	 *   The tooltip of the identifier
-	 * @property {string} datatype
-	 *   The name of the type of the property
-	 * @property {object} [constraints]
-	 *   Defines constraints for the data type of the property
-	 * @property {object} [formatOptions]
-	 *   Defines formatting options for the data type of the property
-	 * @property {boolean} [required = false]
-	 *   Defines if the filter is mandatory
-	 * @property {int} maxConditions
-	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
-	 * @property {boolean} groupable
-	 * 	Defines whether the property is groupable and is selectable as a dimension in the chart
-	 * @property {boolean} aggregatable
-	 *  Defines whether the property is aggregatable and is selectable as a measure in the chart
-	 * @property {string} aggregationMethod
-	 * 	The aggregation method used if the property is aggregatable
-	 * @property {string} role
-	 * 	Defines the role that the property visualizes inside the chart
-	 * @property {object} [datapoint]
-	 * 	Implementation-specific object containing information about the data point
-	 * @property {object} [criticality]
-	 *  Implementation-specific object containing information about the criticality
-	 * @property {string} [textProperty]
-	 * 	The text property used for the dimension
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 */
-
-	/**
 	 * @namespace
 	 * @name sap.ui.mdc.State
 	 * @public

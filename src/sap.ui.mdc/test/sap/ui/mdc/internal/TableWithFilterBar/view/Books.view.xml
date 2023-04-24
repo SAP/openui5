@@ -711,80 +711,90 @@
 			</f2:header>
 			<f2:content>
 				<VBox id="idContainer" height="100%">
-					<mdc:Chart id="bookChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type,Filter" delegate='\{
-										"name": "sap/ui/v4demo/delegate/Books.Chart.delegate",
-										"payload": \{
-											"collectionName": "Books"
-										\}
-									\}' chartType="column" header="Books Chart" height="400px" width="100%" propertyInfo='[\{
-                    "name": "language_code",
-                    "propertyPath": "language_code",
-                    "label": "Language",
-                    "sortable": true,
-                    "filterable": true,
-                    "groupable": true,
-                    "aggregatable": false,
-                    "maxConditions": -1,
-                    "role": "category",
-                    "criticality": null,
-                    "textProperty": null,
-                    "availableRoles": [
-                        \{
-                            "key": "category",
-                            "text": "Category"
-                        \},
-                        \{
-                            "key": "category2",
-                            "text": "Category 2"
-                        \},
-                        \{
-                            "key": "series",
-                            "text": "Series"
-                        \}
-                    ],
-                    "kind": "Groupable",
-                    "visible": true,
-                    "type": "Edm.String",
-					"dataType": "String",
-                    "group": "",
-                    "groupLabel": "",
-                    "caseSensitive": true
-            \},
-            \{
-                "name": "averagemetricsWords",
-                "propertyPath": "metricsWords",
-                "label": "Words (average)",
-                "sortable": true,
-                "filterable": true,
-                "groupable": false,
-                "aggregatable": true,
-                "aggregationMethod": "average",
-                "maxConditions": -1,
-                "role": "axis1",
-                "datapoint": null,
-                "availableRoles": [
-                    \{
-                        "key": "axis1",
-                        "text": "Axis 1"
-                    \},
-                    \{
-                        "key": "axis2",
-                        "text": "Axis 2"
-                    \},
-                    \{
-                        "key": "axis3",
-                        "text": "Axis 3"
-                    \}
-                ],
-                "kind": "Aggregatable",
-                "visible": true,
-                "type": "Edm.String",
-				"dataType": "String",
-                "group": "",
-                "groupLabel": "",
-                "caseSensitive": true
-            \}
-            ]'>
+					<mdc:Chart
+						id="bookChart"
+						filter="booksFilterBar"
+						autoBindOnInit="true"
+						noDataText="This is a test noData text"
+						p13nMode="Item,Sort,Type,Filter"
+						delegate='\{
+							"name": "sap/ui/v4demo/delegate/Books.Chart.delegate",
+							"payload": \{
+								"collectionName": "Books"
+							\}
+						\}'
+						chartType="column"
+						header="Books Chart"
+						height="400px"
+						width="100%"
+						propertyInfo='[
+						\{
+                    		"name": "language_code",
+                    		"propertyPath": "language_code",
+                    		"label": "Language",
+                    		"sortable": true,
+                    		"filterable": true,
+                    		"groupable": true,
+                    		"aggregatable": false,
+                    		"maxConditions": -1,
+                    		"role": "category",
+                    		"criticality": null,
+                    		"textProperty": null,
+                    		"availableRoles": [
+								\{
+									"key": "category",
+									"text": "Category"
+								\},
+								\{
+									"key": "category2",
+									"text": "Category 2"
+								\},
+								\{
+									"key": "series",
+									"text": "Series"
+								\}],
+                    		"kind": "Groupable",
+                    		"visible": true,
+                    		"type": "Edm.String",
+							"dataType": "String",
+                    		"group": "",
+                    		"groupLabel": "",
+                    		"caseSensitive": true
+            			\},
+            			\{
+                			"name": "averagemetricsWords",
+                			"propertyPath": "metricsWords",
+                			"label": "Words (average)",
+                			"sortable": true,
+							"filterable": true,
+							"groupable": false,
+							"aggregatable": true,
+							"aggregationMethod": "average",
+							"maxConditions": -1,
+							"role": "axis1",
+							"datapoint": null,
+							"availableRoles": [
+								\{
+									"key": "axis1",
+									"text": "Axis 1"
+								\},
+								\{
+									"key": "axis2",
+									"text": "Axis 2"
+								\},
+								\{
+									"key": "axis3",
+									"text": "Axis 3"
+								\}],
+							"kind": "Aggregatable",
+							"visible": true,
+							"type": "Edm.String",
+							"dataType": "String",
+							"group": "",
+							"groupLabel": "",
+							"caseSensitive": true
+						\}]'
+						>
 						<mdc:selectionDetailsActions>
 							<mdcc:SelectionDetailsActions>
 								<mdcc:detailsItemActions>

@@ -8,12 +8,11 @@ sap.ui.define([
     "use strict";
 
     /**
-     * Constructor for a new Item.
+     * Constructor for a new <code>Item</code>.
      *
      * @param {string} [sId] ID for the new control, generated automatically if no ID is given
      * @param {object} [mSettings] initial settings for the new control
-     * @class The <code>Item</code> control for the field/property metadata used within MDC controls. An instance can be created to override the default/metadata.
-     *        behavior.
+     * @class The <code>Item</code> control for the chart/property metadata used within MDC Chart. An instance can be created to override the default/metadata behavior.
      * @extends sap.ui.core.Element
      * @author SAP SE
      * @private
