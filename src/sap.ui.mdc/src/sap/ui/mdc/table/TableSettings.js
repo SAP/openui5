@@ -9,9 +9,9 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/OverflowToolbarMenuButton", "sap/ui/core/library", 	"sap/ui/Device", "sap/ui/core/ShortcutHintsMixin", "sap/ui/core/theming/Parameters"
+	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/OverflowToolbarMenuButton", "sap/ui/core/library", 	"sap/ui/Device", "sap/ui/core/ShortcutHintsMixin", "sap/ui/core/theming/Parameters", "sap/ui/performance/trace/FESRHelper"
 
-], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters) {
+], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -42,6 +42,7 @@ sap.ui.define([
 				ariaHasPopup: HasPopup.Dialog
 			});
 
+			FESRHelper.setSemanticStepname(oBtn, "press", "mdc:tbl:p13n");
 
 			ShortcutHintsMixin.addConfig(oBtn, {
 					addAccessibilityLabel: true,
@@ -54,6 +55,8 @@ sap.ui.define([
 		},
 		createPasteButton: function (sIdPrefix) {
 			var oPasteButton = this._createButton(sIdPrefix + "-paste");
+
+			FESRHelper.setSemanticStepname(oPasteButton, "press", "mdc:tbl:paste");
 
 			sap.ui.require(["sap/m/plugins/PasteProvider"], function(PasteProvider) {
 				oPasteButton.addDependent(new PasteProvider({
@@ -78,6 +81,8 @@ sap.ui.define([
 				defaultAction: mEventInfo.default
 			});
 
+			FESRHelper.setSemanticStepname(oMenuButton, "press", "OI:QE");
+
 			// sap.m.Menu requires modules from the unified Lib - load it properly with preload
 			sap.ui.getCore().loadLibrary("sap.ui.unified", {async: true}).then(function() {
 				sap.ui.require(["sap/m/Menu", "sap/m/MenuItem"], function(Menu, MenuItem) {
@@ -94,6 +99,9 @@ sap.ui.define([
 						]
 					});
 					oMenuButton.setMenu(oMenu);
+
+					FESRHelper.setSemanticStepname(oMenu.getItems()[0], "press", "OI:QE");
+					FESRHelper.setSemanticStepname(oMenu.getItems()[1], "press", "OI:EXP:SETTINGS");
 				});
 			});
 
@@ -120,6 +128,8 @@ sap.ui.define([
 				press: aEventInfo,
 				tooltip: sText
 			});
+
+			FESRHelper.setSemanticStepname(oButton, "press", "mdc:tbl:" + (bIsExpand ? "expandAll" : "collapseAll"));
 
 			return oButton;
 		},

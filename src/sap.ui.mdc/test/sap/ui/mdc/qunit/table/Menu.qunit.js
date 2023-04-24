@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/utils/Personalization",
 	"sap/m/Text",
-	"sap/m/plugins/ColumnResizer"
+	"sap/m/plugins/ColumnResizer",
+	"sap/ui/performance/trace/FESRHelper"
 ], function(
 	TableQUnitUtils,
 	Core,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Column,
 	PersonalizationUtils,
 	Text,
-	ColumnResizer
+	ColumnResizer,
+	FESRHelper
 ) {
 	"use strict";
 
@@ -76,6 +78,7 @@ sap.ui.define([
 
 		assert.ok(oTable._oColumnHeaderMenu, "The ColumnMenu is initialized");
 		assert.ok(oTable._oColumnHeaderMenu.isA("sap.m.table.columnmenu.Menu"), "The ColumnMenu is instance of the correct class");
+		assert.equal(FESRHelper.getSemanticStepname(oTable._oColumnHeaderMenu, "beforeOpen"), "mdc:tbl:p13n:col", "Correct FESR StepName");
 		assert.ok(oTable._oQuickActionContainer, "The QuickActionContainer is initialized");
 		assert.ok(oTable._oQuickActionContainer.isA("sap.m.table.columnmenu.QuickActionContainer"),
 			"The QuickActionContainer is instance of the correct class");
