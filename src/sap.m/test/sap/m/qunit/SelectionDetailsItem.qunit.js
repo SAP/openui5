@@ -153,6 +153,10 @@ sap.ui.define([
 		assert.equal($ListItem.find(".sapMSDItemLineBold").length, 1, "The correct number of bold values has been rendered.");
 		assert.equal($ListItem.find(".sapMSDItemLineUnit").length, 1, "The correct number of units has been rendered.");
 	});
+	QUnit.test("White Space checking", function(assert) {
+		var $ListItem = this.oListItem.$();
+		assert.equal($ListItem.css("white-space"), "normal", "The white-space property is set correctly to resolve truncation of label");
+	});
 
 	QUnit.test("Action rendering", function(assert) {
 		//Arrange
