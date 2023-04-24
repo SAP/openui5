@@ -19,7 +19,7 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				"xx-waitForTheme": true		// Whether the start of the test should be delayed until the theme is applied
 			},
 			coverage: {
-				only: "[sap/ui/mdc]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+				only: "[sap/ui/mdc]",		// Which files to show in the coverage report, if null, no files are excluded from coverage
 				branchCoverage: true		// Whether to enable standard branch coverage
 			},
 			loader: {
@@ -66,6 +66,13 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				sinon: {
 					qunitBridge: true
 				}
+			},
+			"DefineConditionPanel": {
+				module: "./DefineConditionPanel.qunit",
+				coverage: {
+					only: "[sap/ui/mdc/valuehelp]"
+				},
+				sinon: true
 			},
 			"ListContent": {
 				module: "./ListContent.qunit",

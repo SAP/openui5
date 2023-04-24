@@ -140,7 +140,7 @@ sap.ui.define([
 				assert.ok(oContent.getHorizontal(), "ScrollContainer horizontal");
 				assert.equal(oContent.getContent().length, 1, "ScrollContainer content length");
 				var oDefineConditionPanel = oContent.getContent()[0];
-				assert.ok(oDefineConditionPanel.isA("sap.ui.mdc.field.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
+				assert.ok(oDefineConditionPanel.isA("sap.ui.mdc.valuehelp.base.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
 				assert.equal(oDefineConditionPanel.getLabel(), "Test", "title");
 				assert.deepEqual(oDefineConditionPanel.getConditions(), oConditions.getConditions(), "Conditions on DefineConditionPanel");
 				assert.ok(oDefineConditionPanel.getInputOK(), "inputOK on DefineConditionPanel");
@@ -214,7 +214,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oContent.then(function(oContent) {
 				assert.ok(oContent, "Content returned");
-				assert.ok(oContent.isA("sap.ui.mdc.field.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
+				assert.ok(oContent.isA("sap.ui.mdc.valuehelp.base.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
 				assert.equal(oContent.getLabel(), "Test", "title");
 				assert.deepEqual(oContent.getConditions(), oConditions.getConditions(), "Conditions on DefineConditionPanel");
 				assert.ok(oContent.getInputOK(), "inputOK on DefineConditionPanel");

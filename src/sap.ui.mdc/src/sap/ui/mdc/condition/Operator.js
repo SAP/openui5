@@ -81,7 +81,7 @@ sap.ui.define([
 		 * @param {function} [oConfiguration.validate] Function to validate condition
 		 * @param {function} [oConfiguration.getModelFilter] Function create filter for a condition
 		 * @param {function} [oConfiguration.isEmpty] Function to check if condition is empty
-		 * @param {function} [oConfiguration.createControl] Function to create a control to be used in {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel}
+		 * @param {function} [oConfiguration.createControl] Function to create a control to be used in {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel}
 		 * @param {function} [oConfiguration.getCheckValue] Function to get the value for condition compare
 		 * @param {function} [oConfiguration.getValues] Function to get the real values without operator symbol
 		 * @param {function} [oConfiguration.checkValidated] Function to check if a condition is validated (sets the <code>validated</code> property)
@@ -258,7 +258,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @since 1.113
-		 * @ui5-restricted sap.ui.mdc.field.DefineConditionPanel
+		 * @ui5-restricted sap.ui.mdc.valuehelp.base.DefineConditionPanel
 		 */
 		Operator.prototype.getLongText = function(sBaseType) {
 			var sTxtKey = this.textKey || "operators." + this.name + ".longText";
@@ -607,7 +607,7 @@ sap.ui.define([
 		 * @param {sap.ui.model.Type} oType original data type
 		 * @returns {sap.ui.model.SimpleType} data type
 		 * @private
-		 * @ui5-restricted sap.ui.mdc.field.DefineConditionPanel
+		 * @ui5-restricted sap.ui.mdc.valuehelp.base.DefineConditionPanel
 		 */
 		Operator.prototype._createLocalType = function(vType, oType) {
 

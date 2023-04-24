@@ -58,7 +58,7 @@
 			"sap.ui.mdc.field.FieldBase",
 			"sap.ui.mdc.field.FieldInput",
 			"sap.ui.mdc.field.FieldMultiInput",
-			"sap.ui.mdc.field.DefineConditionPanel",
+			"sap.ui.mdc.valuehelp.base.DefineConditionPanel",
 			"sap.ui.mdc.Field",
 			"sap.ui.mdc.FilterField",
 			"sap.ui.mdc.MultiValueField",

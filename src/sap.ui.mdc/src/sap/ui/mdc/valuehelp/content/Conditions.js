@@ -101,7 +101,7 @@ sap.ui.define([
 	Conditions.prototype.getContent = function () {
 		return this._retrievePromise("content", function () {
 			var aModules = [
-				"sap/ui/mdc/field/DefineConditionPanel",
+				"sap/ui/mdc/valuehelp/base/DefineConditionPanel",
 				"sap/ui/model/base/ManagedObjectModel" // TODO use on ValueHelp level? But then how to bind local properties?
 //				"sap/ui/mdc/condition/FilterOperatorUtil"
 			];
