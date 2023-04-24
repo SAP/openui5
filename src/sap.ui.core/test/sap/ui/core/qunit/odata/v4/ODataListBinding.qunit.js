@@ -4789,7 +4789,7 @@ sap.ui.define([
 				oBinding = this.bindList("/EMPLOYEES");
 			}
 			oBindingMock = this.mock(oBinding);
-			oBindingMock.expects("isTransient").twice().withExactArgs()
+			oBindingMock.expects("isTransient").exactly(oFixture.bInactive ? 4 : 2).withExactArgs()
 				.returns(oFixture.bTransient);
 			expect();
 			oBinding.attachEvent("change", function (oEvent) {
@@ -5041,14 +5041,29 @@ sap.ui.define([
 				getPath : function () { return "/TEAMS('1')"; }
 			});
 
+		this.mock(oBinding).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("$auto");
 
-		// code under test
 		assert.throws(function () {
+			// code under test
 			oBinding.create({}, false, false, true);
 		}, new Error("Missing $$ownRequest at " + oBinding));
 
 		assert.strictEqual(oBinding.bFirstCreateAtEnd, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create: inactive row in transient binding", function (assert) {
+		var oBinding = this.bindList("TEAM_2_EMPLOYEES", {
+				getPath : function () { return "/TEAMS('1')"; }
+			});
+
+		this.mock(oBinding).expects("isTransient").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.create({}, false, false, /*bInactive*/true);
+		}, new Error("Must not create an inactive context in a deep create: " + oBinding));
 	});
 
 	//*********************************************************************************************
