@@ -43,7 +43,6 @@ sap.ui.define([], function() {
 			oSegButton = oControl.getAggregation("_buttonAmPm"),
 			aSeparators = oControl._getTimeSeparators(oControl._getDisplayFormatPattern()),
 			sSeparator,
-			iSepearatorsIndex,
 			iIndex;
 
 		if (aButtons) {
@@ -56,14 +55,12 @@ sap.ui.define([], function() {
 			oRm.attr("dir", "ltr");
 			oRm.openEnd();
 
-			// render buttons
-			for (iIndex = 0; iIndex < aButtons.length; iIndex++) {
-				oRm.renderControl(aButtons[iIndex]);
-				if (iIndex < aButtons.length - 1) {
-					iSepearatorsIndex = aSeparators.length - (aButtons.length - 1)  + iIndex;
-					sSeparator = aSeparators[iSepearatorsIndex];
-					if (!sSeparator) {
-						sSeparator = " ";
+			// render buttons and separators
+			for (iIndex = 0; iIndex < aSeparators.length; iIndex++) {
+				if (iIndex > 0 || aSeparators[iIndex] !== "") {
+					sSeparator = aSeparators[iIndex];
+					if (sSeparator === undefined) {
+						sSeparator = "";
 					}
 					oRm.openStart("span");
 					oRm.attr("aria-hidden", "true");
@@ -71,6 +68,7 @@ sap.ui.define([], function() {
 					oRm.text(sSeparator);
 					oRm.close("span");
 				}
+				aButtons[iIndex] && oRm.renderControl(aButtons[iIndex]);
 			}
 
 			oRm.renderControl(oControl._getCurrentTimeButton());

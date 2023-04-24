@@ -37,12 +37,12 @@ sap.ui.define([], function() {
 			oRm.attr("aria-roledescription", oControl._getAriaRoleDescription());
 			oRm.openEnd();
 
-			for (iIndex = 0; iIndex < aControls.length; iIndex++) {
-				oRm.renderControl(aControls[iIndex]);
-				if (iIndex < aControls.length - 1) {
-					sSeparator = aSeparators.shift();
-					if (!sSeparator) {
-						sSeparator = " ";
+			// render buttons and separators
+			for (iIndex = 0; iIndex < aSeparators.length; iIndex++) {
+				if (iIndex > 0 || aSeparators[iIndex] !== "") {
+					sSeparator = aSeparators[iIndex];
+					if (sSeparator === undefined) {
+						sSeparator = "";
 					}
 					oRm.openStart("span");
 					oRm.attr("aria-hidden", "true");
@@ -50,6 +50,7 @@ sap.ui.define([], function() {
 					oRm.text(sSeparator);
 					oRm.close("span");
 				}
+				aControls[iIndex] && oRm.renderControl(aControls[iIndex]);
 			}
 
 			oRm.renderControl(oControl._getCurrentTimeButton());
