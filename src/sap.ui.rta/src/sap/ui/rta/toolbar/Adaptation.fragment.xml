@@ -176,13 +176,13 @@
 								visible="{= (${contextBasedAdaptations>/count} > 0)}"
 								text="{i18n>BTN_SWITCH_ADAPTATIONS}"
 								icon="sap-icon://switch-views"
-								items="{contextBasedAdaptations>/adaptations}">
+								items="{contextBasedAdaptations>/allAdaptations}">
 							<items>
 								<MenuItem
 									id="sapUiRta_switchAdaptations_items"
 									enabled="{= (${contextBasedAdaptations>id} !== ${contextBasedAdaptations>/displayedAdaptation/id}) }"
 									icon="{= (${contextBasedAdaptations>id} === ${contextBasedAdaptations>/displayedAdaptation/id} ? 'sap-icon://accept' : 'blank')}"
-									text="{contextBasedAdaptations>title}"
+									text="{= (${contextBasedAdaptations>title} ? ${contextBasedAdaptations>title} : ${i18n>TXT_DEFAULT_APP})}"
 									press=".switchAdaptation(${contextBasedAdaptations>id})"/>
 							</items>
 						</MenuItem>

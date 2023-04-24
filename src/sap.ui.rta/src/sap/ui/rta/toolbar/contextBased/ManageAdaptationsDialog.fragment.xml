@@ -122,12 +122,6 @@
 					popinDisplay="Inline"
 					hAlign="Left">
 				</Column>
-				<Column width="7rem"
-					minScreenWidth="tablet"
-					demandPopin="true"
-					popinDisplay="Inline"
-					hAlign="Left">
-				</Column>
 			</columns>
 			<items>
 				<ColumnListItem highlight="Information">
@@ -142,8 +136,6 @@
 							</HBox>
 						</CustomListItem>
 						<Text text="" />
-						<MenuButton text="{i18n>CLM_HEADER_ADAPTATIONS_ACTIONS}">
-						</MenuButton>
 					</cells>
 				</ColumnListItem>
 			</items>

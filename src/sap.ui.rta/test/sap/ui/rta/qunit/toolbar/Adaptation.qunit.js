@@ -149,6 +149,7 @@ sap.ui.define([
 
 		QUnit.test("When two context-based adaptation are available", function (assert) {
 			this.oAdaptationsModel = new JSONModel({
+				allAdaptations: [{title: "Sales"}, {title: "Manager"}, {title: "context-free adaptation"}],
 				adaptations: [{title: "Sales"}, {title: "Manager"}],
 				count: 2,
 				displayedAdaptation: {title: "Sales"}
@@ -169,7 +170,7 @@ sap.ui.define([
 					assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");
 					var oSwitchAdaptationsButton = this.oToolbar.getControl("switchAdaptations");
 					assert.ok(oSwitchAdaptationsButton.getVisible(), "then the switch adaptations button is visible");
-					assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 2, "number of adaptations to be switched is correct");
+					assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
 				}.bind(this));
 		});
 		/*
