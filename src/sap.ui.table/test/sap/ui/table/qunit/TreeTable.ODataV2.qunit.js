@@ -893,20 +893,24 @@ sap.ui.define([
 		var that = this;
 
 		this.oTable.getBinding().filter(new Filter({path: "GLAccountName", operator: "EQ", value1: "DoesNotExist"}), "Application");
-		this.oTable.rerender();
+		this.oTable.invalidate();
+		Core.applyChanges();
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Filter");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.rerender();
+			that.oTable.invalidate();
+			Core.applyChanges();
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
 			that.assertNoDataVisibilityChangeCount(assert, 0);
 			that.oTable.getBinding().filter(undefined, "Application");
-			that.oTable.rerender();
+			that.oTable.invalidate();
+			Core.applyChanges();
 		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Remove Filter");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.rerender();
+			that.oTable.invalidate();
+			Core.applyChanges();
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
 			that.assertNoDataVisibilityChangeCount(assert, 0);
@@ -934,21 +938,25 @@ sap.ui.define([
 		var that = this;
 
 		this.oTable.unbindRows();
-		this.oTable.rerender();
+		this.oTable.invalidate();
+		Core.applyChanges();
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.rerender();
+			that.oTable.invalidate();
+			Core.applyChanges();
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
 			that.assertNoDataVisibilityChangeCount(assert, 0);
 			oBindingInfo.parameters.rootLevel = 1;
 			that.oTable.bindRows(oBindingInfo);
-			that.oTable.rerender();
+			that.oTable.invalidate();
+			Core.applyChanges();
 		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.rerender();
+			that.oTable.invalidate();
+			Core.applyChanges();
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
 			that.assertNoDataVisibilityChangeCount(assert, 0);

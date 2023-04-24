@@ -572,7 +572,7 @@ sap.ui.define([
 
 				// rerendering of the table is required if _vOrigFixedLayout == "Strict", since the focusable DOM must be removed
 				if (this._vOrigFixedLayout == "Strict") {
-					oTable.rerender();
+					oTable.invalidate();
 				}
 
 				delete this._vOrigFixedLayout;

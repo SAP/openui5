@@ -640,7 +640,7 @@ sap.ui.define([
 
 					if (oGroupColumnInfo) {
 						var oColumn = oGroupColumnInfo.column;
-						oColumn.sort(false); //update Analytical Info triggered by aftersort in column
+						oColumn._sort(false); //update Analytical Info triggered by aftersort in column
 					}
 				},
 				icon: "sap-icon://up"
@@ -656,7 +656,7 @@ sap.ui.define([
 
 					if (oGroupColumnInfo) {
 						var oColumn = oGroupColumnInfo.column;
-						oColumn.sort(true); //update Analytical Info triggered by aftersort in column
+						oColumn._sort(true); //update Analytical Info triggered by aftersort in column
 					}
 				},
 				icon: "sap-icon://down"

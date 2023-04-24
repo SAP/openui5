@@ -865,6 +865,10 @@ sap.ui.define([
 	 * @deprecated Since version 1.5.1. Please use the function "sap.ui.Table.prototype.sort".
 	 */
 	Column.prototype.sort = function(bDescending, bAdd) {
+		return this._sort(bDescending, bAdd);
+	};
+
+	Column.prototype._sort = function(bDescending, bAdd) {
 		var oTable = this.getParent();
 		if (oTable) {
 			// add current column to list of sorted columns

@@ -356,7 +356,7 @@ sap.ui.define([
 		assert.equal(tableResizeSpy.callCount, 1, "Table resize not called, since column is invisible");
 
 		sut.setVisible(true);
-		sut.rerender();
+		Core.applyChanges();
 		assert.ok(sut.getDomRef(), "Visible column is rendered");
 
 		parent.destroy();

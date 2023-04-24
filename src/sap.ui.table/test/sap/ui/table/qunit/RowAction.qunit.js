@@ -506,7 +506,8 @@ sap.ui.define([
 
 		oTable.addDependent(oRow);
 		this.stub(this.oRowAction, "getRow").returns(oRow);
-		this.oRowAction.rerender();
+		this.oRowAction.invalidate();
+		oCore.applyChanges();
 
 		for (var i = 0; i < aIcons.length; i++) {
 			assert.equal(aIcons[i].getAriaLabelledBy().length, 1, "Number of Labels correct for item " + i);
@@ -528,7 +529,8 @@ sap.ui.define([
 		assert.equal(aIcons[1].getDomRef().getAttribute("aria-haspopup"), "menu", "aria-haspopup on icon 1");
 
 		this.stub(this.oRowAction, "_getSize").returns(1);
-		this.oRowAction.rerender();
+		this.oRowAction.invalidate();
+		oCore.applyChanges();
 		assert.equal(aIcons[0].getDomRef().getAttribute("aria-haspopup"), "menu", "aria-haspopup on icon 0");
 	});
 });

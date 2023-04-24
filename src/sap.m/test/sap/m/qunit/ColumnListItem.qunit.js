@@ -481,7 +481,8 @@ sap.ui.define([
 		sut.getCells()[0].focus();
 		assert.equal(document.activeElement, sut.getCells()[0].getFocusDomRef(), "focus is set to the input");
 
-		sut.rerender();
+		sut.invalidate();
+		Core.applyChanges();
 		assert.equal(document.activeElement, sut.getCells()[0].getFocusDomRef(), "focus is not change and still on the input");
 
 		table.destroy();

@@ -962,7 +962,8 @@ sap.ui.define([
 
 		// check tree mode
 		sinon.stub(TableUtils.Grouping, "isInTreeMode").returns(false);
-		oTable.rerender();
+		oTable.invalidate();
+		oCore.applyChanges();
 		assert.equal(oTable.$().find("sapUiTableRowAlternate").length, 0, "No alternating rows for tree mode");
 		TableUtils.Grouping.isInTreeMode.restore();
 	});
@@ -2215,7 +2216,8 @@ sap.ui.define([
 
 				oTable.detachRowsUpdated(fnHandler);
 
-				oTable.rerender();
+				oTable.invalidate();
+				oCore.applyChanges();
 				cell = aSortedColumns[0].$();
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is still shown after rendering");
 				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "Sort icon is ascending");
