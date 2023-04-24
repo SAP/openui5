@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/ui/mdc/util/loadModules",
 	"sap/base/Log"
-], function (BaseObject, loadModules, Log) {
+], function (BaseObject, Log) {
 	"use strict";
 
 	var ERROR_INSTANCING = "UIManager: This class is a singleton and should not be used without an AdaptationProvider. Please use 'Engine.getInstance().uimanager' instead";
@@ -46,6 +45,12 @@ sap.ui.define([
 		}
 	});
 
+	var loadModules = function(aModules) {
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(aModules, resolve, reject);
+		});
+	};
+
 	/**
 	 *
 	 * @param {sap.ui.core.Control} oControl The control instance to be personalized
@@ -73,7 +78,7 @@ sap.ui.define([
 
 			return this.create(oControl, vPanelKeys, mSettings)
 			.then(function(aInitializedPanels){
-				return loadModules(["sap/m/p13n/Popup"]).then(function(aModules){
+				return loadModules(["sap/m/p13n/Popup"]).then(function(Popup){
 
 					//if there is no title provided and only one panel created, use it's title as the Popup title
 					var sTitle;
@@ -84,7 +89,6 @@ sap.ui.define([
 					}
 
 					//Enrich Popup with AdaptationProvider functionality --> add controller logic (reset and appliance)
-					var Popup = aModules[0];
 					var oP13nContainer = new Popup({
 						mode: mSettings.mode,
 						warningText: mSettings.warningText || oResourceBundle.getText("p13n.RESET_WARNING_TEXT"),

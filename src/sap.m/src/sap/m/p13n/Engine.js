@@ -291,7 +291,7 @@ sap.ui.define([
 	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 *
 	 * @example {
-	 *		<RegisteredSortControllerKey>: [{
+	 *		RegisteredSortControllerKey: [{
 	 *			key: "key1" //Adds key1 to the existing sorting
 	 *		},
 	 *		{
@@ -301,7 +301,7 @@ sap.ui.define([
 	 *			key: "key3",
 	 *			position: 2 //Reorders current sorter position in the array
 	 *		}],
-	 *		<RegisteredSelectionControllerKey>: [{
+	 *		RegisteredSelectionControllerKey: [{
 	 *			key: "key1" //Adds key1 to the existing selection status
 	 *		},
 	 *		{
@@ -311,7 +311,7 @@ sap.ui.define([
 	 *			key: "key3",
 	 *			position: 2 //Reorders current item position in the array
 	 *		}],
-	 *		<RegisteredGroupControllerKey>: [{
+	 *		RegisteredGroupControllerKey: [{
 	 *			key: "key1" //Adds key1 to the existing grouping status
 	 *		},
 	 *		{
