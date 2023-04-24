@@ -88,6 +88,7 @@ sap.ui.define([
 			"sap.m.BadgeAnimationType",
 			"sap.m.BarDesign",
 			"sap.m.BreadcrumbsSeparatorStyle",
+			"sap.m.ButtonAccessibleRole",
 			"sap.m.ButtonType",
 			"sap.m.CarouselArrowsPlacement",
 			"sap.m.DateTimeInputType",
@@ -1709,6 +1710,28 @@ sap.ui.define([
 		 * @public
 		 */
 		Button: "Button"
+	};
+
+	/**
+	 * Enumeration for possible Button accessibility roles.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.114.0
+	 */
+	 thisLib.ButtonAccessibleRole = {
+
+		/**
+		 * Default mode.
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Button will receive <code>role="Link"</code> attibute.
+		 * @public
+		 */
+		Link: "Link"
 	};
 
 	/**

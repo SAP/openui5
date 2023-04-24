@@ -20,6 +20,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonAccessibilityType
 	var ButtonAccessibilityType = library.ButtonAccessibilityType;
 
+	// shortcut for sap.m.LinkAccessibleRole
+	var ButtonAccessibleRole = library.ButtonAccessibleRole;
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -320,7 +323,8 @@ sap.ui.define([
 	ButtonRenderer.generateAccProps = function (oButton) {
 		var sText = oButton._getText(),
 			sHasPopupType = oButton.getAriaHasPopup(),
-			mAccProps;
+			mAccProps,
+			sAccessibleRole = oButton.getAccessibleRole();
 
 		if (sText) {
 			mAccProps = ButtonRenderer.generateTextButtonAccProps(oButton);
@@ -331,6 +335,10 @@ sap.ui.define([
 		// prevent rendering of aria-disabled attribute to avoid having
 		// both aria-disabled and disabled at the same time
 		mAccProps["disabled"] = null;
+
+		if (sAccessibleRole === ButtonAccessibleRole.Link) {
+			mAccProps["role"] = "link";
+		}
 
 		mAccProps["haspopup"] = (sHasPopupType === AriaHasPopup.None) ? null : sHasPopupType.toLowerCase();
 
