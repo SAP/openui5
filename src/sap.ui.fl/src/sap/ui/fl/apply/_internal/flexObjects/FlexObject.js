@@ -385,6 +385,7 @@ sap.ui.define([
 	 * calling this function with e.g. Variants
 	 * Should be removed after all consumers are adjusted.
 	 * @returns {object} file content as JSON object
+	 * @deprecated As of version 1.100
 	 */
 	FlexObject.prototype.getDefinition = function() {
 		return this.convertToFileContent();
