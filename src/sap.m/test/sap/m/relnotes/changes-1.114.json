@@ -3,6 +3,92 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "6525fed3d98391146d4c52630429f24f5c2c8fdd",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370036896"
+          }
+        ]
+      },
+      {
+        "id": "7a50c1959b0d61b556389ce12447e37f71bf336e",
+        "type": "FIX",
+        "text": " sap.m.upload: Show disabled upload button in IllustratedMessage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039798"
+          }
+        ]
+      },
+      {
+        "id": "35c412ea739a19d9c01f65d8a60e70a18afeef64",
+        "type": "FIX",
+        "text": " We've now corrected the documentation for dragDropText and dragDropDescription properties",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370048351"
+          }
+        ]
+      },
+      {
+        "id": "d77eb016fe1f0eea5dc374ae5855fcaf049ea562",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: value now holds UI5Date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370043073"
+          }
+        ]
+      },
+      {
+        "id": "3ff0f43df8559ef0ab8228ba4c8c2b93bca3467f",
+        "type": "FEATURE",
+        "text": " sap.m.InputBase: New horizon style parameters used"
+      },
+      {
+        "id": "0428b493a5eff57c16d4e5662189e0726ec4f087",
+        "type": "FIX",
+        "text": " sap.m.Input: Visual test enhancement"
+      },
+      {
+        "id": "5eea3398ed2277755a30f07f38089c0ec97c98d5",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Visual test enhancement"
+      },
+      {
+        "id": "ba320b69e77c2a7e19126737d5b2013261d1b87b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Visual test enhanced"
+      },
+      {
+        "id": "213d37f47f947865d414f78335e3000f3a286848",
+        "type": "FIX",
+        "text": " sap.m.upload: Remove redundant upload button in IllustratedMessage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039798"
+          }
+        ]
+      },
+      {
+        "id": "5714bbe529cf9bfcfe51128cfca7f9aa0d9973b4",
+        "type": "FIX",
+        "text": " For redundant delimiter then status or attribute visibility set to false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370038716"
+          }
+        ]
+      },
+      {
         "id": "fada80f08e8f436969c67e9eea6504aace3614b7",
         "type": "FIX",
         "text": " p13n.SelectionController: correct delta attributes consideration",

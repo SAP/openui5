@@ -3,6 +3,39 @@
     "date": "April 2023",
     "notes": [
       {
+        "id": "6b727655b72472e615c72c719172655b72d7e985",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._AggregationCache#read: tolerate server-driven paging",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039138"
+          }
+        ]
+      },
+      {
+        "id": "b5590532952e4c3582426bcdcabac94a47a75d75",
+        "type": "FIX",
+        "text": " theming.Parameters: Stabilize qunnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370044251"
+          }
+        ]
+      },
+      {
+        "id": "821f0fce2741eae1e5880b9e8e9a3aa29415dc9a",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDate: Consider CalendarWeekNumbering of Configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370033686"
+          }
+        ]
+      },
+      {
         "id": "d4400cef959cb84f2e49e92daa39c69ff33021cb",
         "type": "FEATURE",
         "text": " sap.ui.core.Configuration: Enable timezone settings"
