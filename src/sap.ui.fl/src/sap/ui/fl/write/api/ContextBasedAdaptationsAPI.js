@@ -298,6 +298,17 @@ sap.ui.define([
 	}
 
 	/**
+	 * Get the parent version
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.appId - Reference app ID
+	 * @param {string} mPropertyBag.layer - Layer
+	  * @returns {string} Returns the currently displayed version id
+	 */
+	function getParentVersion(mPropertyBag) {
+		return Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/persistedVersion");
+	}
+
+	/**
 	 * Create new context-based adaptation and saves it in the backend
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
@@ -320,13 +331,12 @@ sap.ui.define([
 		}
 		mPropertyBag.contextBasedAdaptation.id = FlexUtils.createDefaultFileName();
 		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
-		var sParentVersion = Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion");
 
 		return Storage.contextBasedAdaptation.create({
 			layer: mPropertyBag.layer,
 			flexObject: mPropertyBag.contextBasedAdaptation,
 			appId: mPropertyBag.appId,
-			parentVersion: sParentVersion
+			parentVersion: getParentVersion(mPropertyBag)
 		}).then(function(oResponse) {
 			var oModel = this.getAdaptationsModel(mPropertyBag);
 			oModel.insertAdaptation(mPropertyBag.contextBasedAdaptation);
@@ -339,7 +349,7 @@ sap.ui.define([
 				flexObjects: aCopiedChanges,
 				transport: "",
 				isLegacyVariant: false,
-				parentVersion: sParentVersion
+				parentVersion: getParentVersion(mPropertyBag)
 			});
 		});
 	};
@@ -374,7 +384,7 @@ sap.ui.define([
 			flexObject: mPropertyBag.contextBasedAdaptation,
 			appId: mPropertyBag.appId,
 			adaptationId: mPropertyBag.adaptationId,
-			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
+			parentVersion: getParentVersion(mPropertyBag)
 		}).then(function(oResponse) {
 			return handleResponseForVersioning(oResponse, 200, mPropertyBag);
 		});
@@ -404,7 +414,7 @@ sap.ui.define([
 			layer: mPropertyBag.layer,
 			flexObjects: mPropertyBag.parameters,
 			appId: mPropertyBag.appId,
-			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
+			parentVersion: getParentVersion(mPropertyBag)
 		}).then(function(oResponse) {
 			return handleResponseForVersioning(oResponse, 204, mPropertyBag);
 		});
@@ -429,7 +439,7 @@ sap.ui.define([
 			layer: mPropertyBag.layer,
 			flexObject: mPropertyBag.parameters,
 			appId: mPropertyBag.appId,
-			version: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
+			version: getParentVersion(mPropertyBag)
 		}).then(function(oAdaptations) {
 			if (!oAdaptations) {
 				oAdaptations = { adaptations: [] };
@@ -461,7 +471,7 @@ sap.ui.define([
 			layer: mPropertyBag.layer,
 			appId: mPropertyBag.appId,
 			adaptationId: mPropertyBag.adaptationId,
-			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.appId }).getProperty("/displayedVersion")
+			parentVersion: getParentVersion(mPropertyBag)
 		}).then(function(oResponse) {
 			return handleResponseForVersioning(oResponse, 204, mPropertyBag);
 		});
