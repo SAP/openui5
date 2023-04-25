@@ -751,7 +751,7 @@ sap.ui.define([
 
 		// assert
 		assert.ok(!oTP.getLocaleId(), "there is no localeId specified");
-		assert.strictEqual(oLocale, oSystemLocale, "'_getLocale' returns system configuration, if the user haven't specified localeId");
+		assert.strictEqual(oLocale.toString(), oSystemLocale.toString(), "'_getLocale' returns system configuration, if the user haven't specified localeId");
 
 		//cleanup
 		oTP.destroy();

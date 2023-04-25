@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/RouterHashChanger",
-	"sap/ui/base/EventProvider",
 	"sap/ui/thirdparty/hasher"
-], function (Log, HashChanger, RouterHashChanger, EventProvider, hasher) {
+], function (Log, HashChanger, RouterHashChanger, hasher) {
 	"use strict";
 
 
@@ -89,16 +88,12 @@ sap.ui.define([
 
 	QUnit.module("RouterHashChanger API", {
 		beforeEach: function() {
-			// overwrite the returnObject function of the eventPool in EventProvider
-			// to make the trace of event parameter easier
-			this.oReturnObjectStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 			this.oRHC = new RouterHashChanger({
 				parent: HashChanger.getInstance()
 			});
 		},
 		afterEach: function() {
 			this.oRHC.destroy();
-			this.oReturnObjectStub.restore();
 		}
 	});
 
@@ -304,9 +299,6 @@ sap.ui.define([
 	QUnit.module("RouterHashChanger SubHashChanger", {
 		beforeEach: function(assert) {
 			hasher.setHash("");
-			// overwrite the returnObject function of the eventPool in EventProvider
-			// to make the trace of event parameter easier
-			this.oReturnObjectStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 
 			this.oRHC = HashChanger.getInstance().createRouterHashChanger();
 			this.oChildRHC1 = this.oRHC.createSubHashChanger("foo");
@@ -355,7 +347,6 @@ sap.ui.define([
 			this.oChildRHC1.destroy();
 			this.oChildRHC2.destroy();
 			this.oRHC.destroy();
-			this.oReturnObjectStub.restore();
 		}
 	});
 

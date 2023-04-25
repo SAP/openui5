@@ -3716,7 +3716,7 @@ function (
 				oFactory.getSubSection(5, [oFactory.getBlocks()], null)
 			]));
 
-			this.oObjectPage.attachEventOnce("subSectionVisibilityChange", function() {
+			this.oObjectPage.attachEventOnce("subSectionVisibilityChange", function(oEvent) {
 				// Assert
 				var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
 				assert.strictEqual(Object.keys(oVisibleSubSections).length, 5,

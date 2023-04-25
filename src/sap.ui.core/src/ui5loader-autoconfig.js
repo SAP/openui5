@@ -588,7 +588,7 @@
 				mOptions.name = vMatch[1] + "Xx" + vMatch[2];
 				return get(mOptions);
 			}
-			if (Array.isArray(vValue) || typeof vValue === "object") {
+			if (typeof mOptions.type !== 'function' && (Array.isArray(vValue) || typeof vValue === "object")) {
 				vValue = deepClone(vValue);
 			}
 			return vValue !== undefined ? vValue : vDefaultValue;
@@ -597,7 +597,10 @@
 		var Configuration = {
 			get: get,
 			registerProvider: registerProvider,
-			Type: TypeEnum
+			Type: TypeEnum,
+			_: {
+				checkEnum: checkEnum
+			}
 		};
 
 		ui5loader._.defineModuleSync("sap/base/config/_Configuration.js", Configuration);

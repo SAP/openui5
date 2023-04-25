@@ -62,6 +62,24 @@ sap.ui.define(function() {
 					only : "sap/base/i18n/ResourceBundle"
 				}
 			},
+			"Formatting": {
+				page: "test-resources/sap/ui/core/qunit/base/i18n/Formatting.qunit.html?sap-ui-legacy-date-format=2&sap-ui-legacy-number-format=X&sap-ui-legacy-time-format=3",
+				ui5: {
+					language: undefined
+				},
+				coverage : {
+					only : "sap/base/i18n/Formatting"
+				}
+			},
+			"Localization": {
+				module: "./../base/i18n/Localization.qunit",
+				ui5: {
+					language: undefined
+				},
+				coverage : {
+					only : "sap/base/i18n/Localization"
+				}
+			},
 			"UI5Date": {
 				coverage : {
 					only : "sap/ui/core/date/UI5Date"
