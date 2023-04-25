@@ -696,6 +696,35 @@ function(
 	};
 
 	/**
+	 * Removes the selected dates of the grid.
+	 * @returns {object} An array of the removed DateRange objects
+	 * @public
+	 */
+	SinglePlanningCalendar.prototype.removeAllSelectedDates = function () {
+		return this._getCurrentGrid().removeAllSelectedDates();
+	};
+
+	/**
+	 * Gets the selected dates of the grid.
+	 * @returns {object} An array of DateRange objects
+	 * @public
+	 */
+	SinglePlanningCalendar.prototype.getSelectedDates = function () {
+		return this._getCurrentGrid().getAggregation("selectedDates");
+	};
+
+	/**
+	 * Adds a selected date to the grid.
+	 * @param {object} oSelectedDate A DateRange object
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
+	SinglePlanningCalendar.prototype.addSelectedDate = function (oSelectedDate) {
+		this._getCurrentGrid().addAggregation("selectedDates", oSelectedDate);
+		return this;
+	};
+
+	/**
 	 * Makes sure that the column headers are offset in such a way, that they are positioned right
 	 * after the navigation toolbar.
 	 *

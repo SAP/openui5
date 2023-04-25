@@ -390,7 +390,7 @@ sap.ui.define([
 			this._fireSelectionEvent(oEvent);
 		};
 
-		SinglePlanningCalendarMonthGrid.prototype._rangeSelection = function(oStartDate, oEndDate) {
+		SinglePlanningCalendarMonthGrid.prototype._rangeSelection = function(oStartDate) {
 			var oCurrentDate = UI5Date.getInstance(CalendarDate.fromLocalJSDate(oStartDate));
 			var iDay;
 			var oTarget;
@@ -419,7 +419,7 @@ sap.ui.define([
 			}
 		};
 
-		SinglePlanningCalendarMonthGrid.prototype.removeAllSelectedDates = function(oEvent) {
+		SinglePlanningCalendarMonthGrid.prototype.removeAllSelectedDates = function() {
 			this.removeAllAggregation("selectedDates");
 		};
 
