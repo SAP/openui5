@@ -224,4 +224,14 @@ sap.ui.define([
 		assert.strictEqual(oDateValue.getMonth(), 0);
 		assert.strictEqual(oDateValue.getDate(), 2);
 	});
+
+	//*****************************************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateType();
+
+		this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
 });
