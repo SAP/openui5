@@ -73,9 +73,13 @@ sap.ui.define([
 			// Workaround: get the version of the framework by using the core library's version.
 			VersionInfo.load({ library: "sap.ui.core"}).then(function (oCoreLibInfo) {
 
-				//must work with valid version of UI5
+				//must work with valid version of UI5 - <digit>.<digit><digit> case
 				oRule.minversion = oCoreLibInfo.version.match(/\d\.\d\d/)[0];
 				assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit>");
+
+				//must work with valid version of UI5 - <digit>.<digit><digit><digit> case
+				oRule.minversion = oCoreLibInfo.version.match(/\d\.\d\d\d/)[0];
+				assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit><digit>");
 
 				oRule = null;
 

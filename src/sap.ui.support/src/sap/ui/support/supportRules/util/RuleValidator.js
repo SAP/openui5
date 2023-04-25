@@ -27,6 +27,7 @@ sap.ui.define([],
 	* - "-"
 	* - "*"
 	* - "<digit>.<digit><digit>"
+	* - "<digit>.<digit><digit><digit>"
 	*
 	* @private
 	* @param {string} sVersion Version number in string format - could be - * or numeric.
@@ -38,8 +39,7 @@ sap.ui.define([],
 			return false;
 		}
 
-		//Match 0 or 1 of the following symbols - "*" or "-" or the following pattern of digits - "<digit>.<digit><digit>"
-		var versionRegEx = /^\*$|^\-$|^\d\.\d\d$/;
+		var versionRegEx = /^\*$|^\-$|^\d\.\d{2,3}$/;
 
 		if (sVersion.match(versionRegEx)) {
 			return true;
