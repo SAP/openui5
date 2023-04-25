@@ -65,10 +65,12 @@ sap.ui.define([
 	 */
 	CardRenderer.renderContainerAttributes = function (oRm, oCard) {
 		var sHeight = oCard.getHeight(),
+			oHeader = oCard.getCardHeader(),
+			oContent = oCard.getCardContent(),
+			bHasHeader = !!(oHeader && oHeader.getVisible()),
+			bHasContent = !!oContent,
+			bCardHeaderBottom = bHasHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom,
 			sTooltip = oCard.getTooltip_AsString();
-
-		var bHasHeader = !!(oCard.getCardHeader() && oCard.getCardHeader().getVisible()),
-			bCardHeaderBottom = bHasHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom;
 
 		oRm.class("sapFCard")
 			.style("width", oCard.getWidth());
@@ -77,8 +79,13 @@ sap.ui.define([
 			oRm.class("sapFCardNoHeader");
 		}
 
-		if (!oCard.getCardContent()) {
+		if (!bHasContent) {
 			oRm.class("sapFCardNoContent");
+		}
+
+		if ((bHasHeader && oHeader.isInteractive && oHeader.isInteractive()) ||
+			(bHasContent && oContent.isInteractive && oContent.isInteractive())) {
+			oRm.class("sapFCardSectionInteractive");
 		}
 
 		if (bCardHeaderBottom) {

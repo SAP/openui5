@@ -1124,7 +1124,7 @@ sap.ui.define([
 				this.oCard.attachAction(function (oEvent) {
 					oEvent.preventDefault();
 					// Assert
-					assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+					assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
 					assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
 
 					// Cleanup
@@ -1154,8 +1154,8 @@ sap.ui.define([
 					oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
-				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header is clickable");
+				assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+				assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header is clickable");
 				//Act
 				oCardLContent.firePress();
 				oCardHeader.firePress();
@@ -1184,8 +1184,8 @@ sap.ui.define([
 				var oCardContent = this.oCard.getCardContent(),
 					oCardHeader = this.oCard.getCardHeader();
 				// Assert
-				assert.notOk(oCardContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
-				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.notOk(oCardContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
 				assert.ok(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself also shouldn't be interactive");
 				//Act
 				oCardContent.firePress();
@@ -1209,7 +1209,7 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				var oCardContent = this.oCard.getCardContent();
 				// Assert
-				assert.notOk(oCardContent.$().hasClass("sapFCardClickable"), "Content area shouldn't have class 'sapFCardClickable'");
+				assert.notOk(oCardContent.$().hasClass("sapFCardSectionClickable"), "Content area shouldn't have class 'sapFCardSectionClickable'");
 				assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
 
 				done();

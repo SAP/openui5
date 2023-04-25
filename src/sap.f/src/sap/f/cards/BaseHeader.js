@@ -133,13 +133,13 @@ sap.ui.define([
 	};
 
 	BaseHeader.prototype.ontap = function (oEvent) {
-		if (this._isInteractive() && !this._isInsideToolbar(oEvent.target)) {
+		if (this.isInteractive() && !this._isInsideToolbar(oEvent.target)) {
 			this.firePress();
 		}
 	};
 
 	BaseHeader.prototype.onsapselect = function (oEvent) {
-		if (this._isInteractive() && !this._isInsideToolbar(oEvent.target)) {
+		if (this.isInteractive() && !this._isInsideToolbar(oEvent.target)) {
 			this.firePress();
 		}
 	};
@@ -339,7 +339,7 @@ sap.ui.define([
 		return oParent.isA("sap.f.GridContainer");
 	};
 
-	BaseHeader.prototype._isInteractive = function() {
+	BaseHeader.prototype.isInteractive = function() {
 		return this.hasListeners("press");
 	};
 
