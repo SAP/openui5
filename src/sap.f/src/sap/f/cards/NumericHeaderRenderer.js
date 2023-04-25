@@ -32,10 +32,6 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardClickable");
 		}
 
-		if (oError) {
-			oRm.class("sapFCardHeaderError");
-		}
-
 		oRm.openEnd();
 
 		oRm.openStart("div")

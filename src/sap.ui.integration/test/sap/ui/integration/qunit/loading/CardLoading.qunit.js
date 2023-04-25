@@ -1689,11 +1689,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("List - error should be visible when request can not be resolved", function (assert) {
-			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel_Error, this.oCard, "Error content is visible", true, ".sapFCardErrorContent", assert);
+			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel_Error, this.oCard, "Error content is visible", true, ".sapUiIntBlockingMsg", assert);
 		});
 
 		QUnit.test("Calendar - error should be visible when request can not be resolved", function (assert) {
-			isLoadingIndicatorShowingContentDataReady(oManifest_Calendar_CardLevel_Error, this.oCard, "Error content is visible", true, ".sapFCardErrorContent", assert);
+			isLoadingIndicatorShowingContentDataReady(oManifest_Calendar_CardLevel_Error, this.oCard, "Error content is visible", true, ".sapUiIntBlockingMsg", assert);
 		});
 
 		QUnit.module("Placeholders lifecycle", {

@@ -203,7 +203,7 @@ sap.ui.define([
 			clock.tick(20000);
 
 			// Assert
-			assert.ok(this.oCard.getCardContent().hasStyleClass("sapFCardErrorContent"), "Error message should be shown after timeout");
+			assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown after timeout");
 
 			// Clean up
 			WebPageContent.prototype._onFrameLoaded.restore();
@@ -226,7 +226,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.ok(this.oCard.getCardContent().hasStyleClass("sapFCardErrorContent"), "Error message should be shown");
+			assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown");
 
 			done();
 		}.bind(this));
@@ -246,7 +246,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.ok(this.oCard.getCardContent().hasStyleClass("sapFCardErrorContent"), "Error message should be shown");
+			assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown");
 
 			done();
 		}.bind(this));

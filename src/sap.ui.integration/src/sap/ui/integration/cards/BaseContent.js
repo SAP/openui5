@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/library",
+	"sap/ui/integration/controls/BlockingMessage",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/util/LoadingProvider",
@@ -31,6 +32,7 @@ sap.ui.define([
 	Control,
 	InvisibleMessage,
 	coreLibrary,
+	BlockingMessage,
 	ObservableModel,
 	ManagedObjectObserver,
 	LoadingProvider,
@@ -44,8 +46,10 @@ sap.ui.define([
 	// shortcut for sap.ui.core.InvisibleMessageMode
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
-	// shortcut for sap.ui.integration.widgets.CardDesign
+	// shortcut for sap.ui.integration.CardDesign
 	var CardDesign = library.CardDesign;
+	// shortcut for sap.ui.integration.CardBlockingMessageType
+	var CardBlockingMessageType = library.CardBlockingMessageType;
 
 	/**
 	 * Constructor for a new <code>BaseContent</code>.
@@ -129,8 +133,8 @@ sap.ui.define([
 					visibility: "hidden"
 				},
 
-				_noDataMessage: {
-					type: "sap.ui.core.Control",
+				_blockingMessage: {
+					type: "sap.ui.integration.controls.BlockingMessage",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -289,6 +293,12 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	BaseContent.prototype._forceCompleteAwaitedEvents = function () {
+		this._oAwaitedEvents.forEach(function (sEvent) {
+			this.fireEvent(sEvent);
+		}.bind(this));
+	};
+
 	/**
 	 * Parses the configuration. As binding infos are modified when used once,
 	 * new object is returned every time.
@@ -349,29 +359,58 @@ sap.ui.define([
 		}
 	};
 
+	BaseContent.prototype.showBlockingMessage = function (mSettings) {
+		this.destroyAggregation("_blockingMessage");
+		this.setAggregation("_blockingMessage", BlockingMessage.create(mSettings, this.getCardInstance()));
+		this._forceCompleteAwaitedEvents();
+	};
+
+	BaseContent.prototype.hideBlockingMessage = function () {
+		this.destroyAggregation("_blockingMessage");
+	};
+
+	BaseContent.prototype.getBlockingMessage = function () {
+		var oBlockingMessage = this.getAggregation("_blockingMessage");
+
+		if (oBlockingMessage) {
+			return {
+				type: oBlockingMessage.getType(),
+				illustrationType: oBlockingMessage.getIllustrationType(),
+				illustrationSize: oBlockingMessage.getIllustrationSize(),
+				title: oBlockingMessage.getTitle(),
+				description: oBlockingMessage.getDescription(),
+				httpResponse: oBlockingMessage.getHttpResponse()
+			};
+		}
+
+		return null;
+	};
+
 	/**
+	 * Show 'No Data' blocking message in the content. If there is configuration in the manifest, it will be applied.
 	 * @protected
 	 * @param {object} oSettings 'No Data' settings
-	 * @param {sap.m.IllustratedMessageType} oSettings.type Illustration type
+	 * @param {sap.m.IllustratedMessageType} oSettings.illustrationType Illustration type
 	 * @param {sap.m.IllustratedMessageSize} [oSettings.illustrationSize=sap.m.IllustratedMessageSize.Auto] Illustration size
 	 * @param {string} oSettings.title Title
 	 * @param {string} [oSettings.description] Description
 	 */
 	BaseContent.prototype.showNoDataMessage = function (oSettings) {
-		this.destroyAggregation("_noDataMessage");
 		var oNoDataConfiguration = this.getNoDataConfiguration() || {};
 
-		var oIllustrationSettings = {
-			type: IllustratedMessageType[oNoDataConfiguration.type] || oSettings.type,
-			size: IllustratedMessageSize[oNoDataConfiguration.size] || oSettings.size,
+		var oMessageSettings = {
+			type: CardBlockingMessageType.NoData,
+			illustrationType: IllustratedMessageType[oNoDataConfiguration.type] || oSettings.illustrationType,
+			illustrationSize: IllustratedMessageSize[oNoDataConfiguration.size] || oSettings.illustrationSize,
 			title: oNoDataConfiguration.title || oSettings.title,
 			description: oNoDataConfiguration.description || oSettings.description
 		};
 
-		var oIllustratedMessage = this.getCardInstance()._oErrorHandler.getIllustratedMessage(oIllustrationSettings, true);
-		oIllustratedMessage.addStyleClass("sapFCardContentNoDataMsg");
+		this.showBlockingMessage(oMessageSettings);
+	};
 
-		this.setAggregation("_noDataMessage", oIllustratedMessage);
+	BaseContent.prototype.hideNoDataMessage = function () {
+		this.hideBlockingMessage();
 	};
 
 	/**
@@ -517,15 +556,6 @@ sap.ui.define([
 		if (oCard) {
 			oCard.removeActiveLoadingProvider(oLoadingProvider);
 		}
-	};
-
-	/**
-	 * @private
-	 * @ui5-restricted
-	 * @returns {boolean} Whether the content has no data
-	 */
-	BaseContent.prototype.hasNoData = function () {
-		return !!this.getAggregation("_noDataMessage");
 	};
 
 	/**

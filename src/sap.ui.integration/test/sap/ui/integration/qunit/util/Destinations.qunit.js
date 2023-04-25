@@ -208,7 +208,7 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 
 				// Assert
-				assert.notOk(this.oCard.getCardContent().getInnerList, "The data request is unsuccessful.");
+				assert.notOk(this.oCard.getCardContent().getInnerList().getItems().length, "The data request is unsuccessful.");
 
 				assert.notOk(this.oCard.getCardHeader().getTitle(), "async destination is not resolved successfully");
 

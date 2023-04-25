@@ -63,6 +63,7 @@ sap.ui.define([
 		var AvatarColor = mLibrary.AvatarColor;
 		var MessageType = coreLibrary.MessageType;
 		var CardDataMode = library.CardDataMode;
+		var CardBlockingMessageType = library.CardBlockingMessageType;
 
 		var oManifest_Header = {
 			"sap.app": {
@@ -2515,7 +2516,7 @@ sap.ui.define([
 				var oHeaderDomRef = this.oCard.getCardHeader().getDomRef();
 
 				// Assert
-				assert.ok(oHeaderDomRef.querySelector(".sapFCardErrorContent"), "error element is rendered in the header");
+				assert.ok(oHeaderDomRef.querySelector(".sapUiIntBlockingMsg"), "error element is rendered in the header");
 				done();
 			}.bind(this));
 
@@ -2555,20 +2556,27 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
-				var initialCardHeight = this.oCard.getCardContent().getDomRef().offsetHeight + "px";
+				Core.applyChanges();
+				var initialContentWrapperHeight = this.oCard.getDomRef("contentSection").offsetHeight;
+				var initialContentHeight = this.oCard.getCardContent().getDomRef().offsetHeight;
+				var EPS = 2;
 
-				var oErrorConfiguration = {
-					"noData": {
-						"type": "NoEntries",
-						"title": "No new products",
-						"description": "Please review later",
-						"size": "Auto"
-					}
-				};
-				var oFlexBox = this.oCard._oErrorHandler.getIllustratedMessage({}, oErrorConfiguration);
+				// Act
+				this.oCard._handleError({
+					title: "No new products",
+					description: "Please review later",
+					size: "Auto"
+				});
+				Core.applyChanges();
+
+				var oErrorMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+				var currentContentWrapperHeight = this.oCard.getDomRef("contentSection").offsetHeight;
+				var currentContentHeight = this.oCard.getCardContent().getDomRef().offsetHeight;
 
 				// Assert
-				assert.strictEqual(initialCardHeight, oFlexBox.getHeight(), "Height of the card content is not changed (Illustrated message is with the same height as the card before the error)");
+				assert.strictEqual(initialContentHeight + "px", oErrorMessage.getHeight(), "Height of the card error message is set correctly");
+				assert.ok(initialContentWrapperHeight - currentContentWrapperHeight <= EPS, "Height of the card content wrapper is not changed");
+				assert.ok(initialContentHeight - currentContentHeight <= EPS, "Height of the card content is not changed (Card error message is with the same height as the card before the error)");
 
 				// Clean up
 				done();
@@ -2597,13 +2605,13 @@ sap.ui.define([
 
 			this.oCard.attachEventOnce("_ready", function () {
 					Core.applyChanges();
-					var oIllustratedMessage = this.oCard.getCardContent().getAggregation("_noDataMessage").getItems()[0];
+					var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
 
 					// Assert
-					assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "The message type set by developer is correct");
-					assert.strictEqual(oIllustratedMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The message size set by developer is correct");
-					assert.strictEqual(oIllustratedMessage.getTitle(), "No new products", "The message title set by developer is correct");
-					assert.strictEqual(oIllustratedMessage.getDescription(), "Please review later", "The message description set by developer is correct");
+					assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "The message type set by developer is correct");
+					assert.strictEqual(oMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The message size set by developer is correct");
+					assert.strictEqual(oMessage.getTitle(), "No new products", "The message title set by developer is correct");
+					assert.strictEqual(oMessage.getDescription(), "Please review later", "The message description set by developer is correct");
 
 					// Clean up
 					done();
@@ -2644,11 +2652,11 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oIllustratedMessage = this.oCard.getCardContent().getAggregation("_noDataMessage").getItems()[0];
+				var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
 
 				// Assert
-				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Default message type is used for list");
-				assert.strictEqual(oIllustratedMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
+				assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Default message type is used for list");
+				assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
 
 				// Clean up
 				done();
@@ -2679,11 +2687,11 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oIllustratedMessage = this.oCard.getCardContent().getAggregation("_noDataMessage").getItems()[0];
+				var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
 
 				// Assert
-				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Illustrated message type should be no data for Table Card");
-				assert.strictEqual(oIllustratedMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
+				assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Illustrated message type should be no data for Table Card");
+				assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
 
 				// Clean up
 				done();
@@ -2719,11 +2727,11 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oIllustratedMessage = this.oCard.getCardContent().getAggregation("_noDataMessage").getItems()[0];
+				var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
 
 				// Assert
-				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for Object Card");
-				assert.strictEqual(oIllustratedMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_CHART"), "Correct message is displayed");
+				assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for Object Card");
+				assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_CHART"), "Correct message is displayed");
 
 				// Clean up
 				done();
@@ -3097,8 +3105,8 @@ sap.ui.define([
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
 
-				var oContent = this.oCard.getCardContent();
-				assert.notOk(oContent.isA("sap.ui.integration.cards.BaseContent"), "Error is displayed.");
+				var oError = this.oCard.getCardContent().getAggregation("_blockingMessage");
+				assert.ok(oError.isA("sap.ui.integration.controls.BlockingMessage"), "Error is displayed.");
 
 				this.oCard.refreshData();
 
@@ -4705,7 +4713,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.module("hasNoData", {
+		QUnit.module("Blocking Message", {
 			beforeEach: function () {
 				this.oCard = new Card();
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -4716,15 +4724,16 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("hasNoData when the card is not ready", function (assert) {
-			assert.strictEqual(this.oCard.hasNoData(), false, "'false' should be returned when the card is not ready");
+		QUnit.test("getBlockingMessage() when the card is not ready", function (assert) {
+			assert.strictEqual(this.oCard.getBlockingMessage(), null, "'null' should be returned when the card is not ready");
 		});
 
-		QUnit.test("hasNoData on 'stateChanged' event", function (assert) {
+		QUnit.test("getBlockingMessage() on 'stateChanged' event", function (assert) {
 			var done = assert.async();
 
 			this.oCard.attachStateChanged(function () {
-				assert.strictEqual(this.oCard.hasNoData(), true, "'true' should be returned");
+				assert.ok(this.oCard.getBlockingMessage(), "Blocking message should be returned");
+				assert.strictEqual(this.oCard.getBlockingMessage().type, CardBlockingMessageType.NoData, "Correct blocking message should be returned");
 
 				done();
 			}, this);
@@ -4748,11 +4757,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("hasNoData when there is data", function (assert) {
+		QUnit.test("getBlockingMessage() when there is data", function (assert) {
 			var done = assert.async();
 
 			this.oCard.attachStateChanged(function () {
-				assert.strictEqual(this.oCard.hasNoData(), false, "'false' should be returned");
+				assert.strictEqual(this.oCard.getBlockingMessage(), null, "'null' should be returned");
 
 				done();
 			}, this);
@@ -4760,11 +4769,11 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_ListCard);
 		});
 
-		QUnit.test("hasNoData on content that doesn't support 'No Data'", function (assert) {
+		QUnit.test("getBlockingMessage() on content that doesn't support 'No Data'", function (assert) {
 			var done = assert.async();
 
 			this.oCard.attachStateChanged(function () {
-				assert.strictEqual(this.oCard.hasNoData(), false, "'false' should be returned");
+				assert.strictEqual(this.oCard.getBlockingMessage(), null, "'null' should be returned");
 
 				done();
 			}, this);
@@ -4788,7 +4797,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("hasNoData after showNoData", function (assert) {
+		QUnit.test("getBlockingMessage() after showBlockingMessage()", function (assert) {
 			var done = assert.async();
 			var stateChangedCount = 0;
 
@@ -4796,17 +4805,45 @@ sap.ui.define([
 				stateChangedCount++;
 
 				if (stateChangedCount === 1) {
-					assert.strictEqual(this.oCard.hasNoData(), false, "'false' should be returned");
+					assert.strictEqual(this.oCard.getBlockingMessage(), null, "'null' should be returned");
 
 					// Act
-					this.oCard.showNoData({});
+					this.oCard.showBlockingMessage({
+						type: CardBlockingMessageType.NoData
+					});
 				} else if (stateChangedCount === 2) {
-					assert.strictEqual(this.oCard.hasNoData(), true, "'true' should be returned");
+					assert.ok(this.oCard.getBlockingMessage(), "Blocking message should be returned");
 					done();
 				}
 			}, this);
 
 			this.oCard.setManifest(oManifest_ListCard);
+		});
+
+		QUnit.test("getBlockingMessage() when content couldn't be created", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachStateChanged(function () {
+				var oBlockingMessage = this.oCard.getBlockingMessage();
+
+				assert.ok(oBlockingMessage, "Blocking message should be returned");
+				assert.strictEqual(oBlockingMessage.type, CardBlockingMessageType.Error, "Correct blocking message type should be set.");
+
+				done();
+			}, this);
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.invalid.content"
+				},
+				"sap.card": {
+					"type": "invalidListType",
+					"header": {
+						"title": "Invalid card"
+					},
+					"content": {}
+				}
+			});
 		});
 
 	}

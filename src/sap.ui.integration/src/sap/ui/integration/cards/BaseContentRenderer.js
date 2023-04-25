@@ -39,7 +39,7 @@ sap.ui.define([
 			bLoading = oCardContent.isLoading(),
 			bIsAbstractPreviewMode =  oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract,
 			oMessageContainer = oCardContent.getAggregation("_messageContainer"),
-			oNoDataMessage = oCardContent.getAggregation("_noDataMessage");
+			oBlockingMessage = oCardContent.getAggregation("_blockingMessage");
 
 		sClass += sType;
 
@@ -70,8 +70,8 @@ sap.ui.define([
 			oRm.renderControl(oMessageContainer);
 		}
 
-		if (oNoDataMessage) {
-			oRm.renderControl(oNoDataMessage);
+		if (oBlockingMessage) {
+			oRm.renderControl(oBlockingMessage);
 		} else {
 			this.renderContent(oRm, oCardContent);
 		}

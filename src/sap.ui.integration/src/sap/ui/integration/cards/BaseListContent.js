@@ -76,10 +76,10 @@ sap.ui.define([
 
 	BaseListContent.prototype.onDataChanged = function () {
 		if (this.hasData()) {
-			this.destroyAggregation("_noDataMessage");
+			this.hideNoDataMessage();
 		} else {
 			this.showNoDataMessage({
-				type: IllustratedMessageType.NoEntries,
+				illustrationType: IllustratedMessageType.NoEntries,
 				title: this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS")
 			});
 		}

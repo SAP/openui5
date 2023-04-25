@@ -100,8 +100,10 @@ sap.ui.define([
 	WebPageContent.prototype.onAfterRendering = function () {
 		BaseContent.prototype.onAfterRendering.apply(this, arguments);
 
-		this.getDomRef("frame").addEventListener("load", this._onFrameLoadedBound);
-		this._checkSrc();
+		if (this.getDomRef("frame")) {
+			this.getDomRef("frame").addEventListener("load", this._onFrameLoadedBound);
+			this._checkSrc();
+		}
 	};
 
 	/**
@@ -148,7 +150,7 @@ sap.ui.define([
 
 		if (sCurrSrc === "") {
 			this.handleError({
-				type: IllustratedMessageType.ErrorScreen,
+				illustrationType: IllustratedMessageType.ErrorScreen,
 				title: oCard.getTranslatedText("CARD_WEB_PAGE_EMPTY_URL_ERROR"),
 				description: oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION")
 			});
@@ -157,7 +159,7 @@ sap.ui.define([
 
 		if (!sCurrSrc.startsWith("https://")) {
 			this.handleError({
-				type: IllustratedMessageType.ErrorScreen,
+				illustrationType: IllustratedMessageType.ErrorScreen,
 				title: oCard.getTranslatedText("CARD_WEB_PAGE_HTTPS_URL_ERROR"),
 				description: oCard.getTranslatedText("CARD_ERROR_REQUEST_ACCESS_DENIED_DESCRIPTION")
 			});
@@ -181,7 +183,7 @@ sap.ui.define([
 				oCard = this.getCardInstance();
 
 			this.handleError({
-				type: IllustratedMessageType.ReloadScreen,
+				illustrationType: IllustratedMessageType.ReloadScreen,
 				title: oCard.getTranslatedText("CARD_WEB_PAGE_TIMEOUT_ERROR", [iSeconds]),
 				details: "Failed to load '" + this.getSrc() + "' after " + iSeconds + " seconds."
 			});

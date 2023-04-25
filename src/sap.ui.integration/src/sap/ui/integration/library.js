@@ -40,14 +40,16 @@ sap.ui.define([
 			"sap.ui.integration.CardActionType",
 			"sap.ui.integration.CardDataMode",
 			"sap.ui.integration.CardMenuAction",
-			"sap.ui.integration.CardDesign"
+			"sap.ui.integration.CardDesign",
+			"sap.ui.integration.CardBlockingMessageType"
 		],
 		controls: [
 			"sap.ui.integration.widgets.Card",
 			"sap.ui.integration.cards.filters.FilterBar",
 			"sap.ui.integration.cards.Header",
 			"sap.ui.integration.cards.NumericHeader",
-			"sap.ui.integration.controls.ListContentItem"
+			"sap.ui.integration.controls.ListContentItem",
+			"sap.ui.integration.controls.BlockingMessage"
 		],
 		elements: [
 			"sap.ui.integration.ActionDefinition",
@@ -176,6 +178,33 @@ sap.ui.define([
 		ActionsStrip: "ActionsStrip",
 		ContentItemDetail: "ContentItemDetail",
 		Header: "Header"
+	};
+
+	/**
+	 * Card blocking message types.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @experimental since 1.114
+	 */
+	thisLib.CardBlockingMessageType = {
+		/**
+		 * An error ocurred in the card.
+		 * @public
+		 */
+		Error: "Error",
+
+		/**
+		 * There is no data to be displayed.
+		 * @public
+		 */
+		NoData: "NoData",
+
+		/**
+		 * Information message.
+		 * @public
+		 */
+		Information: "Information"
 	};
 
 	/**

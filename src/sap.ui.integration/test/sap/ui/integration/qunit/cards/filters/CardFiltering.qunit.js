@@ -108,7 +108,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			setTimeout(function () {
-				assert.ok(this.oCard.getCardContent().getAggregation("_noDataMessage").getDomRef(), "an empty list is displayed");
+				assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage").getDomRef(), "an empty list is displayed");
 
 				// Act
 				this.oCard.getModel("filters").setProperty("/shipper/value", "3");
@@ -136,7 +136,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			setTimeout(function () {
-				assert.ok(this.oCard.getCardContent().getAggregation("_noDataMessage").getDomRef(), "an empty list is displayed");
+				assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage").getDomRef(), "an empty list is displayed");
 
 				// Act
 				this.oCard.getModel("filters").setProperty("/shipper/value", "3");
