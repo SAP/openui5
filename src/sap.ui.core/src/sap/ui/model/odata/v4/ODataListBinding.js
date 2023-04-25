@@ -3657,8 +3657,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
 	ODataListBinding.prototype.resumeInternal = function (_bCheckUpdate, bParentHasChanges) {
-		var aBindings = this.getDependentBindings(),
-			sResumeAction = this.sResumeAction,
+		var sResumeAction = this.sResumeAction,
 			sResumeChangeReason = this.sResumeChangeReason,
 			bRefresh = bParentHasChanges || sResumeAction || sResumeChangeReason,
 			that = this;
@@ -3686,7 +3685,7 @@ sap.ui.define([
 				that.refreshKeptElements(that.getGroupId());
 			}
 		}
-		aBindings.forEach(function (oDependentBinding) {
+		this.getDependentBindings().forEach(function (oDependentBinding) {
 			// do not call checkUpdate in dependent property bindings if the cache of this
 			// binding is reset and the binding has not yet fired a change event
 			oDependentBinding.resumeInternal(!bRefresh,

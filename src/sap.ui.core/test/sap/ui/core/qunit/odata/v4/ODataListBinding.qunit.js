@@ -7298,9 +7298,9 @@ sap.ui.define([
 			oBinding.resumeInternal(true/*ignored*/);
 
 			assert.strictEqual(oBinding.sResumeChangeReason, undefined);
-			assert.ok(oResetExpectation.calledAfter(oGetDependentBindingsExpectation));
 			assert.ok(oFetchCacheExpectation.calledAfter(oResetExpectation));
-			assert.ok(oFireExpectation.calledAfter(oFetchCacheExpectation));
+			assert.ok(oGetDependentBindingsExpectation.calledAfter(oFetchCacheExpectation));
+			assert.ok(oFireExpectation.calledAfter(oGetDependentBindingsExpectation));
 			assert.ok(oHeaderContextCheckUpdateExpectation.calledAfter(oFireExpectation));
 		});
 	});
@@ -7412,8 +7412,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$$sharedRequest : true});
 
 		oBinding.sResumeAction = "resetCache";
-		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-			.returns(["do", "not", "use"]);
+		this.mock(oBinding).expects("getDependentBindings").never();
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding.oCache).expects("reset").withExactArgs([]);
 		this.mock(oBinding).expects("onChange").never();
@@ -7431,8 +7430,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$$sharedRequest : true});
 
 		oBinding.sResumeAction = "onChange";
-		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-			.returns(["do", "not", "use"]);
+		this.mock(oBinding).expects("getDependentBindings").never();
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding.oCache).expects("reset").never();
 		this.mock(oBinding).expects("onChange").withExactArgs();

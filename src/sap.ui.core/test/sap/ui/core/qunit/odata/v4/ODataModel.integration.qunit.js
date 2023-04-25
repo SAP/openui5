@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
@@ -34,7 +35,7 @@ sap.ui.define([
 ], function (Log, uid, UriParameters, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
 		Device, EventProvider, SyncPromise, Configuration, Controller, View, ChangeReason, Filter,
 		FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
-		ODataModel, ValueListType, _Helper, TestUtils, XMLHelper) {
+		ODataModel, ODataPropertyBinding, ValueListType, _Helper, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -7264,12 +7265,12 @@ sap.ui.define([
 					["ContextBinding: /SalesOrderList('0500000001')", "dataRequested"],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "dataRequested"],
 					["ContextBinding: /SalesOrderList('0500000001')", "dataReceived", {data : {}}],
-					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
-						{reason : "refresh"}],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "change",
 						{reason : "change"}],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "dataReceived",
 						{data : {}}],
+					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
+						{reason : "refresh"}],
 					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM|$count", "change",
 						{reason : "change"}],
 					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM/2[2]|ItemPosition",
@@ -7293,6 +7294,59 @@ sap.ui.define([
 			oBinding.resume();
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table shows a number of cells and is then filtered inside a suspend/resume
+	// bracket. See that no ODPrB#resumeInternal takes place *before* the $batch is sent (and not
+	// even afterwards).
+	// BCP: 2270183841
+	QUnit.test("BCP: 2270183841 - improve performance of ODLB#resume", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			fnSpy = sinon.spy(ODataPropertyBinding.prototype, "resumeInternal"),
+			sView = '\
+<t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
+	<Text id="id" text="{ID}"/>\
+	<Text id="name" text="{Name}"/>\
+	<Text id="age" text="{AGE}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=3", {
+				value : [{
+					AGE : 70,
+					ID : "0",
+					Name : "Frederic Fall"
+				}, {
+					AGE : 60,
+					ID : "1",
+					Name : "Jonathan Smith"
+				}, {
+					AGE : 50,
+					ID : "2",
+					Name : "Peter Burke"
+				}]
+			})
+			.expectChange("id", ["0", "1", "2"])
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
+			.expectChange("age", ["70", "60", "50"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$filter=AGE lt 42&$skip=0&$top=3", {
+					value : []
+				});
+
+			oBinding.suspend();
+			oBinding.filter(new Filter("AGE", FilterOperator.LT, 42));
+			// code under test
+			oBinding.resume();
+
+			return that.waitForChanges(assert, "resume");
+		}).then(function () {
+			assert.strictEqual(fnSpy.callCount, 0, "no #resumeInternal at all :-)");
 		});
 	});
 
