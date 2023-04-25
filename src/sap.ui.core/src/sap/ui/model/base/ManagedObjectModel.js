@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	'../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason', "sap/base/util/uid", "sap/base/Log", "sap/base/util/isPlainObject", "sap/base/util/deepClone"
-], function (JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason, uid, Log, isPlainObject, deepClone) {
+	'../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason', "sap/base/util/uid", "sap/base/Log", "sap/base/util/isPlainObject", "sap/base/util/deepClone", "sap/base/util/deepEqual"
+], function (JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason, uid, Log, isPlainObject, deepClone, deepEqual) {
 	"use strict";
 
 	var CUSTOMDATAKEY = "@custom",
@@ -421,7 +421,7 @@ sap.ui.define([
 			if (oObject instanceof ManagedObject) {
 				var oProperty = oObject.getMetadata().getManagedProperty(sProperty);
 				if (oProperty) {
-					if (oProperty.get(oObject) !== oValue) {
+					if (!deepEqual(oProperty.get(oObject), oValue)) {
 						oProperty.set(oObject, oValue);
 						//update only property and sub properties
 						var fnFilter = function (oBinding) {
@@ -982,7 +982,15 @@ sap.ui.define([
 			});
 		}
 
-		this.checkUpdate();
+		var fnFilter;
+		if (oChange.object === this._oObject) { // if root object, only bindings starting with the changed property/aggregation are from interest
+			fnFilter = function (oBinding) { // update only bindings that might be affected
+				var sPath = this.resolve(oBinding.sPath, oBinding.oContext);
+				return sPath ? sPath.startsWith("/" + oChange.name) : true;
+			}.bind(this);
+		}
+
+		this.checkUpdate(false, false, fnFilter);
 	};
 
 	/**

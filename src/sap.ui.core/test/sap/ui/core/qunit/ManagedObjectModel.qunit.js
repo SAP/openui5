@@ -534,9 +534,14 @@ sap.ui.define([
 		oControl.setModel(oModel);
 		assert.equal(oModel.getProperty("/stringValue/@bound"), true, "stringValue property is bound");
 
+		this.spy(oPropertyBinding, "checkUpdate");
+		var oPropertyBinding2 = oModel.bindProperty("/intValue");
+		this.spy(oPropertyBinding2, "checkUpdate");
 		sExpectedValue = "value";
 		oControl.setValue("value");
 		assert.equal(oControl.getStringValue(), "value", "stringValue property is updated");
+		assert.ok(oPropertyBinding.checkUpdate.called, "checkUpdate on value-binding called");
+		assert.notOk(oPropertyBinding2.checkUpdate.called, "checkUpdate on intValue-binding not called");
 
 		sExpectedValue = "fromStringValue";
 		oControl.setStringValue("fromStringValue"); // causes binding change
@@ -1044,6 +1049,7 @@ sap.ui.define([
 
 		this.obj.setModel(oModel);
 		this.obj.bindProperty("objectArray", "/data");
+		this.spy(this.oManagedObjectModel, "checkUpdate");
 
 		var iChange = 0;
 		var fnHandleChange = function (oEvent) {
@@ -1072,6 +1078,11 @@ sap.ui.define([
 		});
 		oInput.setModel(this.oManagedObjectModel, "$obj");
 
+		// if array is updated with same content no update should be triggered on bindings
+		aData = aData.slice(0);
+		this.oManagedObjectModel.setProperty("/objectArray", aData);
+		assert.notOk(this.oManagedObjectModel.checkUpdate.called, "ManagedObjectModel checkUpdate not called");
+
 		assert.deepEqual(this.obj.getObjectArray(), aData, "The data is in the original element");
 		assert.equal(oText1.getText(), "EQ: 1, 2", "Text bound to model");
 		assert.equal(oText2.getText(), "EQ: 1, 2", "Text bound to ManagedObjectModel");
@@ -1083,6 +1094,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			var aNewData = [{operator: "EQ", values: ["3", 2]}];
+			assert.ok(this.oManagedObjectModel.checkUpdate.called, "ManagedObjectModel checkUpdate called");
 			assert.deepEqual(this.obj.getObjectArray(), aNewData, "The new data is in the original element");
 			assert.deepEqual(oModel.getProperty("/data"), aNewData, "The new data is also in the model");
 			assert.equal(oText1.getText(), "EQ: 3, 2", "Text bound to model");
