@@ -304,7 +304,7 @@ function (
 
 		var $header = oCard.getHeader().$();
 		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
-		assert.notOk($header.hasClass("sapFCardClickable"), "sapFCardClickable class is not set");
+		assert.notOk($header.hasClass("sapFCardSectionClickable"), "sapFCardSectionClickable class is not set");
 
 		oCard.getHeader().attachPress(function () { });
 		oCard.invalidate();
@@ -313,7 +313,7 @@ function (
 
 		$header = oCard.getHeader().$();
 		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
-		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
+		assert.ok($header.hasClass("sapFCardSectionClickable"), "sapFCardSectionClickable class is set");
 
 		oCard.destroy();
 	});
@@ -329,7 +329,7 @@ function (
 
 		var $header = oCard.getHeader().$();
 		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
-		assert.notOk($header.hasClass("sapFCardClickable"), "sapFCardClickable class is not set");
+		assert.notOk($header.hasClass("sapFCardSectionClickable"), "sapFCardSectionClickable class is not set");
 
 		oCard.getHeader().attachPress(function () { });
 		oCard.invalidate();
@@ -338,7 +338,7 @@ function (
 
 		$header = oCard.getHeader().$();
 		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
-		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
+		assert.ok($header.hasClass("sapFCardSectionClickable"), "sapFCardSectionClickable class is set");
 
 		oCard.destroy();
 	});

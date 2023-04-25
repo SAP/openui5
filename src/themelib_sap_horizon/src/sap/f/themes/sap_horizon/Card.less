@@ -10,8 +10,8 @@
 @_sap_f_Card_HeaderFocusBorderRadius: inherit;
 @_sap_f_Card_BorderRadius: 1rem;
 @_sap_f_Card_TitleFontSize: @sapMFontHeader6Size;
-@_sap_f_Card_HoverBoxShadow: @sapContent_Shadow2;
-@_sap_f_Card_Badge_Background: @sapHighlightColor;
+@_sap_f_Card_HoverBoxShadow: @sapUiContentShadow2;
+@_sap_f_Card_Badge_Background: @sapUiHighlight;
 
 .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard,
 .sapFCard {
@@ -34,19 +34,13 @@
 	}
 }
 
-.sapFCard:not(.sapFCardPreview):not(.sapFCardTransparent):hover {
-	box-shadow: @_sap_f_Card_HoverBoxShadow;
-
-	.sapFCardHeader:hover {
-		background: @sapUiTileHoverBackground;
+.sapFCard.sapFCardSectionInteractive:not(.sapFCardPreview):not(.sapFCardTransparent) {
+	&:hover {
+		box-shadow: @_sap_f_Card_HoverBoxShadow;
 	}
-}
 
-.sapFCard:not(.sapFCardPreview):not(.sapFCardTransparent):active {
-	box-shadow: @_sap_f_Card_BoxShadow;
-
-	.sapFCardHeader:active {
-		background: @sapUiTileActiveBackground;
+	&:active {
+		box-shadow: @_sap_f_Card_BoxShadow;
 	}
 }
 

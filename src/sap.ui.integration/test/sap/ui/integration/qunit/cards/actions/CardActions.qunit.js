@@ -1074,7 +1074,7 @@ sap.ui.define([
 					oEvent.preventDefault();
 
 					// Assert
-					assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+					assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
 					assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
 
 					// Cleanup
@@ -1105,8 +1105,8 @@ sap.ui.define([
 					oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
-				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header is clickable");
+				assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+				assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header is clickable");
 
 				//Act
 				oCardLContent.firePress();
@@ -1201,7 +1201,7 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardHeader = this.oCard.getCardHeader();
 
-				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header has a clickable style is added");
+				assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has a clickable style is added");
 
 				this.oCard.attachAction(function () {
 					// Assert
@@ -1234,7 +1234,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				var oCardHeader = this.oCard.getCardHeader();
-				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header has a clickable style is added");
+				assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has a clickable style is added");
 				//Act
 				oCardHeader.firePress();
 				Core.applyChanges();
@@ -1289,7 +1289,7 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardHeader = this.oCard.getCardHeader();
 				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
 
 				//Act
 				qutils.triggerEvent("tap", oCardHeader);
@@ -1335,7 +1335,7 @@ sap.ui.define([
 				var oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
 
 				// Act
 				qutils.triggerEvent("tap", oCardHeader);
@@ -1386,7 +1386,7 @@ sap.ui.define([
 				var oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header has not a clickable style is added");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has not a clickable style is added");
 				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachAction should not be called");
 
 				//Clean up
@@ -1443,7 +1443,7 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardHeader = this.oCard.getCardHeader();
 				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
 
 				//Act
 				qutils.triggerEvent("tap", oCardHeader);
@@ -1490,7 +1490,7 @@ sap.ui.define([
 				var oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
 
 				// Act
 				qutils.triggerEvent("tap", oCardHeader);
@@ -1809,7 +1809,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				// Assert
-				assert.ok(oObjContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oObjContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
 				assert.ok(oActionSpy.callCount === 1, "Link is clicked and action event is not fired");
 
 				// Cleanup
@@ -1857,7 +1857,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				// Assert
-				assert.ok(oContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
 				assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
 
 				// Cleanup

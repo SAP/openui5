@@ -640,5 +640,14 @@ sap.ui.define([
 		return oMessageContainer;
 	};
 
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {boolean} Whether the card has attached actions that are defined at content level
+	 */
+	BaseContent.prototype.isInteractive = function () {
+		return this.hasListeners("press");
+	};
+
 	return BaseContent;
 });

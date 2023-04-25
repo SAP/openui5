@@ -138,16 +138,13 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._isInteractive()) {
+		if (this.isInteractive()) {
 			this.firePress();
 		}
 	};
 
-	/**
-	 * Fires the <code>sap.f.cards.NumericHeader</code> press event.
-	 */
 	BaseHeader.prototype.onsapselect = function () {
-		if (this._isInteractive()) {
+		if (this.isInteractive()) {
 			this.firePress();
 		}
 	};
@@ -354,7 +351,7 @@ sap.ui.define([
 		return oParent.isA("sap.f.GridContainer");
 	};
 
-	BaseHeader.prototype._isInteractive = function() {
+	BaseHeader.prototype.isInteractive = function() {
 		return this.hasListeners("press");
 	};
 
