@@ -652,7 +652,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp && !this._iFocusTimer && oFieldHelp.shouldOpenOnFocus() && !oFieldHelp.isOpen()) {
 			this._iFocusTimer = setTimeout(function () {
-				oFieldHelp.open(true);
+				_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
 				this._redirectFocus(oEvent, oFieldHelp);
 				this._iFocusTimer = null;
 			}.bind(this),300);
@@ -874,7 +874,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp) {
 			if (oFieldHelp.shouldOpenOnClick() && !oFieldHelp.isOpen()) {
-				oFieldHelp.open(true);
+				_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
 			}
 			this._redirectFocus(oEvent, oFieldHelp);
 		}
@@ -2565,7 +2565,7 @@ sap.ui.define([
 
 	}
 
-	function _handleValueHelpRequest(oEvent) {
+	function _handleValueHelpRequest(oEvent, bOpenAsTypeahed) { // if triggered by valueHelpRequest event alway open as dialog, if called from Tap or Focus as typeahead
 
 		var oFieldHelp = _getFieldHelp.call(this);
 
@@ -2576,10 +2576,10 @@ sap.ui.define([
 			oFieldHelp.setFilterValue(this._sFilterValue); // use types value for filtering, even if reopening FieldHelp
 			var aConditions = this.getConditions();
 			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
-			oFieldHelp.toggleOpen(false);
+			oFieldHelp.toggleOpen(!!bOpenAsTypeahed);
 			if (!oFieldHelp.isFocusInHelp()) {
 				// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
-				var oContent = oEvent.getSource();
+				var oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other brwowser event getSource is not available
 				if (oContent.bValueHelpRequested) {
 					oContent.bValueHelpRequested = false; // TODO: need API
 				}
