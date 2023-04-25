@@ -420,7 +420,7 @@ sap.ui.define([
 				this._handleItemEditCancelation(oEvent, oItem);
 				break;
 			case KeyCodes.DELETE:
-				if (!oItem.$("fileNameEdit").hasClass("sapMInputFocused")) {
+				if (!oItem.$("fileNameEdit").hasClass("sapMInputFocused") && oItem.getEnabledRemove() && oItem.getVisibleRemove()) {
 					this._handleItemDelete(oEvent, oItem);
 				}
 				break;
