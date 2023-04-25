@@ -740,35 +740,6 @@ sap.ui.define([
 		assert.ok(oActiveTitlePressStub.called, "Event should be forwarded");
 	});
 
-	/**
-	 * @deprecated Since version 1.46, public API of successor is tested in MessageItem.qumit.js
-	 */
-	QUnit.module("MessageItem Public API", {
-		beforeEach: function(assert) {
-			var done = assert.async();
-			// load MessageItem dynamically to decouple the remainder of the test from it
-			sap.ui.require(["sap/m/MessageItem"], function(MessageItem) {
-				this.oMessageItem = new MessageItem();
-				done();
-			}.bind(this));
-		}, afterEach: function() {
-			this.oMessageItem.destroy();
-		}
-	});
-
-	QUnit.test("setType() should set the correct type to the item", function(assert) {
-		this.oMessageItem.setType(MessageType.Error);
-		assert.strictEqual(this.oMessageItem.getType(), "Error", "Error type should be set");
-		this.oMessageItem.setType(MessageType.Warning);
-		assert.strictEqual(this.oMessageItem.getType(), "Warning", "Warning type should be set");
-		this.oMessageItem.setType(MessageType.Success);
-		assert.strictEqual(this.oMessageItem.getType(), "Success", "Success type should be set");
-		this.oMessageItem.setType(MessageType.Information);
-		assert.strictEqual(this.oMessageItem.getType(), "Information", "Information type should be set");
-		this.oMessageItem.setType(MessageType.None);
-		assert.strictEqual(this.oMessageItem.getType(), "Information", "Information type should be set, None is not supported");
-	});
-
 	QUnit.module("HTML representation", {
 		beforeEach: function () {
 			this.oMessagePopover = new MessagePopover();
