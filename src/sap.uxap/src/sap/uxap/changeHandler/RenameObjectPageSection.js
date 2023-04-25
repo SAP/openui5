@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/BaseRename"
 ], function (
 	Log,
+	JsControlTreeModifier,
 	BaseRename
 ) {
 	"use strict";
@@ -104,6 +106,43 @@ sap.ui.define([
 			});
 	};
 
+	/**
+	 * Retrieves the information required for the change visualization.
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Object with change data
+	 * @param {sap.ui.core.UIComponent} oAppComponent Component in which the change is applied
+	 * @returns {object} Object with a description payload containing the information required for the change visualization
+	 * @public
+	 */
+	RenameObjectPageSection.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		var oNewLabel = (
+			oChange.getTexts()
+			&& oChange.getTexts()[mRenameSettings.changePropertyName]
+		);
+		var oSelector = oChange.getSelector();
+		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		var oAnchorBar = oElement.getParent().getAggregation("_anchorBar");
+		var aAffectedControls = [oElement.getId()];
+		var aDisplayControls = [oElement.getId()];
+		oAnchorBar.getAggregation("content").forEach(function(oAnchorBarItem) {
+			oAnchorBarItem.getAggregation("customData").some(function(oCustomData) {
+				if (
+					oCustomData.getKey() === "sectionId" &&
+					oElement.getId() === oCustomData.getProperty("value")
+				) {
+					aDisplayControls.push(oAnchorBarItem.getId());
+				}
+			});
+		});
+		return {
+			descriptionPayload: {
+				originalLabel: oChange.getRevertData(),
+				newLabel: oNewLabel && oNewLabel.value
+			},
+			affectedControls: aAffectedControls,
+			displayControls: aDisplayControls
+		};
+	};
 
 	return RenameObjectPageSection;
 },

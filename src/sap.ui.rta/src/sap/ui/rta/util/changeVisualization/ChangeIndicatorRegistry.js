@@ -111,6 +111,7 @@ sap.ui.define([
 	 */
 	ChangeIndicatorRegistry.prototype.getSelectorsWithRegisteredChanges = function () {
 		var oChangeIndicators = {};
+		var sPreviousAffectedElementId;
 
 		function addSelector (sSelectorId, sAffectedElementId, oChangeIndicatorData, bDependent) {
 			if (oChangeIndicators[sSelectorId] === undefined) {
@@ -120,11 +121,13 @@ sap.ui.define([
 				{
 					id: oChangeIndicatorData.change.getId(),
 					dependent: bDependent,
-					affectedElementId: sAffectedElementId,
+					affectedElementId: sAffectedElementId || sPreviousAffectedElementId,
+					displayElementsKey: oChangeIndicatorData.visualizationInfo.displayElementIds.toString(),
 					descriptionPayload: oChangeIndicatorData.visualizationInfo.descriptionPayload || {}
 				},
 				_omit(oChangeIndicatorData, ["visualizationInfo"])
 			));
+			sPreviousAffectedElementId = sAffectedElementId || sPreviousAffectedElementId;
 		}
 
 		values(this._oRegisteredChanges)
@@ -133,11 +136,6 @@ sap.ui.define([
 				.forEach(function (sId, iIndex) {
 					addSelector(sId, oChangeIndicatorData.visualizationInfo.affectedElementIds[iIndex], oChangeIndicatorData, false);
 				});
-
-				oChangeIndicatorData.visualizationInfo.dependentElementIds
-					.forEach(function (sId) {
-						addSelector(sId, sId, oChangeIndicatorData, true);
-					});
 			});
 
 		return oChangeIndicators;

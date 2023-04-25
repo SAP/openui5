@@ -28,7 +28,7 @@ sap.ui.define([
 	Button,
 	HBox,
 	VBox,
-	oCore,
+	Core,
 	DesignTime,
 	DesignTimeMetadata,
 	OverlayRegistry,
@@ -48,7 +48,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 	var oComp;
 	var oCompCont;
 	QUnit.config.fixture = null;
@@ -78,7 +78,7 @@ sap.ui.define([
 			]
 		});
 		this.oContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		this.oDesignTime = new DesignTime({
 			rootElements: [this.oContainer]
@@ -194,7 +194,7 @@ sap.ui.define([
 	function collectIndicatorReferences() {
 		// Get all visible change indicator elements on the screen
 		return Array.from(document.getElementsByClassName("sapUiRtaChangeIndicator")).map(function(oDomRef) {
-			return oCore.byId(oDomRef.id);
+			return Core.byId(oDomRef.id);
 		});
 	}
 
@@ -265,7 +265,7 @@ sap.ui.define([
 		QUnit.test("Without changes - Check if Menu is bound correctly to the model", function(assert) {
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
 					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 					return oOpenPopoverPromise;
@@ -292,7 +292,7 @@ sap.ui.define([
 		QUnit.test("Without changes - Check if Filter Menu for Draft when Versioning is available", function(assert) {
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					this.oChangeVisualization._updateVisualizationModel({
 						versioningAvailable: true
 					});
@@ -339,7 +339,7 @@ sap.ui.define([
 			};
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
 					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 					return oOpenPopoverPromise;
@@ -373,7 +373,7 @@ sap.ui.define([
 			this.oCheckModelAll.count = 3;
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					this.oChangeVisualization._updateVisualizationModel({
 						versioningAvailable: true
 					});
@@ -407,7 +407,7 @@ sap.ui.define([
 			OverlayRegistry.getOverlay("Comp1---idMain1--lb2").destroy();
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
 					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 					return oOpenPopoverPromise;
@@ -439,7 +439,7 @@ sap.ui.define([
 			this.oCheckModelAll.tooltip = oRtaResourceBundle.getText("TOOLTIP_CHANGEVISUALIZATION_OVERVIEW_ADDITIONAL_CHANGES");
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
 					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 					return oOpenPopoverPromise;
@@ -461,7 +461,7 @@ sap.ui.define([
 			this.oCheckModelAll.count = 3;
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
 					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 					return oOpenPopoverPromise;
@@ -477,14 +477,14 @@ sap.ui.define([
 					OverlayRegistry.getOverlay("Comp1---idMain1--rb2").destroy();
 					this.oChangeVisualization.getAggregation("popover").close();
 					this.oRta.setMode("navigation");
-					oCore.applyChanges();
+					Core.applyChanges();
 					return startVisualization(this.oRta);
 				}.bind(this))
 				.then(function() {
 					this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [2]);
 					this.oCheckModelAll.count = 2;
 					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-					oCore.applyChanges();
+					Core.applyChanges();
 					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is visible");
 					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
@@ -497,7 +497,7 @@ sap.ui.define([
 
 		QUnit.test("Menu & Model are in correct order", function(assert) {
 			return startVisualization(this.oRta).then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
@@ -515,13 +515,13 @@ sap.ui.define([
 
 		QUnit.test("Menu Button Text will change on category selection", function(assert) {
 			return startVisualization(this.oRta).then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				var sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
 				assert.strictEqual(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_ALL"));
 				return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("move"));
 			}.bind(this))
 			.then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				var sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
 				assert.equal(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_MOVE"));
 			}.bind(this));
@@ -674,7 +674,7 @@ sap.ui.define([
 			prepareChanges(this.aMockChanges);
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					var aIndicators = collectIndicatorReferences();
 					assert.strictEqual(
 						aIndicators.length,
@@ -694,7 +694,7 @@ sap.ui.define([
 			prepareChanges(this.aMockChanges);
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					assert.strictEqual(
 						collectIndicatorReferences().filter(function(oIndicator) {
 							return oIndicator.getVisible();
@@ -705,7 +705,7 @@ sap.ui.define([
 
 					// Deactivate
 					this.oChangeVisualization.setIsActive(false);
-					oCore.applyChanges();
+					Core.applyChanges();
 					assert.strictEqual(
 						collectIndicatorReferences().filter(function(oIndicator) {
 							return oIndicator.getVisible();
@@ -717,7 +717,7 @@ sap.ui.define([
 					// Activate again and select a different category
 					this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("add"));
 					this.oChangeVisualization.setIsActive(true);
-					oCore.applyChanges();
+					Core.applyChanges();
 					assert.strictEqual(
 						collectIndicatorReferences().filter(function(oIndicator) {
 							return oIndicator.getVisible();
@@ -746,7 +746,7 @@ sap.ui.define([
 					// Simulate a change of the overlay id, e.g. because a change handler recreated the element
 					// during undo/redo
 					this.oRta.setMode("adaptation");
-					var oElement = oCore.byId(sElementId);
+					var oElement = Core.byId(sElementId);
 					var oParent = oElement.getParent();
 					var sParentAggregationName = oElement.sParentAggregationName;
 					oElement.destroy();
@@ -786,7 +786,7 @@ sap.ui.define([
 			var sElementId = "Comp1---idMain1--Dates";
 			var oRelevantContainer = OverlayRegistry.getOverlay(sElementId).getRelevantContainer();
 			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-			var oParent = oCore.byId(sElementId).getParent();
+			var oParent = Core.byId(sElementId).getParent();
 
 			// The selector for the change is the parent element
 			prepareChanges(
@@ -824,7 +824,7 @@ sap.ui.define([
 			var oOverlay;
 			prepareChanges(this.aMockChanges);
 			return startVisualization(this.oRta).then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				assert.strictEqual(
 					collectIndicatorReferences().filter(function(oIndicator) {
 						return oIndicator.getVisible();
@@ -835,7 +835,7 @@ sap.ui.define([
 
 				this.oRta.setMode("adaptation");
 				this.aMockChanges.push(createMockChange("testMove", "move", "Comp1---idMain1--lb2"));
-				oCore.applyChanges();
+				Core.applyChanges();
 				return startVisualization(this.oRta);
 			}.bind(this)).then(function() {
 				assert.strictEqual(
@@ -850,13 +850,13 @@ sap.ui.define([
 				oChangeIndicator = collectIndicatorReferences().filter(function(oIndicator) {
 					return oIndicator.mProperties.selectorId === "Comp1---idMain1--lb2";
 				})[0];
-				oOverlay = oCore.byId(oChangeIndicator.getOverlayId()).getDomRef();
+				oOverlay = Core.byId(oChangeIndicator.getOverlayId()).getDomRef();
 				var oCreatePopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
 				QUnitUtils.triggerEvent("click", oOverlay);
 				return oCreatePopoverPromise;
 			})
 			.then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				var oPopover = oChangeIndicator.getAggregation("_popover");
 				assert.ok(oPopover.isOpen(), "after the first click the popover is opened");
 				var oClosePopoverPromise = waitForEvent(oPopover, "afterClose");
@@ -864,7 +864,7 @@ sap.ui.define([
 				return oClosePopoverPromise;
 			})
 			.then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				var oPopover = oChangeIndicator.getAggregation("_popover");
 				assert.notOk(oPopover.isOpen(), "after the second click the popover is closed");
 				var oOpenPopoverPromise = waitForEvent(oPopover, "afterOpen");
@@ -872,7 +872,7 @@ sap.ui.define([
 				return oOpenPopoverPromise;
 			})
 			.then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				var oPopover = oChangeIndicator.getAggregation("_popover");
 				assert.ok(oPopover.isOpen(), "after the third click the popover is opened again");
 			});
@@ -931,7 +931,7 @@ sap.ui.define([
 			prepareChanges(aMockChanges);
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					assert.strictEqual(
 						this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories[0].count,
 						2,
@@ -953,7 +953,7 @@ sap.ui.define([
 			prepareChanges(aMockChanges);
 			return startVisualization(this.oRta)
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					assert.strictEqual(
 						this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories[0].count,
 						2,
@@ -977,7 +977,7 @@ sap.ui.define([
 				{
 					getChangeVisualizationInfo: function(oChange) {
 						return {
-							dependentControls: [oCore.byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
+							dependentControls: [Core.byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
 							affectedControls: [oChange.getSelector()] // Test if vis can handle IDs
 						};
 					}
@@ -986,7 +986,7 @@ sap.ui.define([
 			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 			var oDependentOverlayDomRef;
 			return startVisualization(this.oRta).then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				var oSelectChangePromise = waitForMethodCall(this.oChangeVisualization, "_selectChange");
 				var oChangeIndicator = collectIndicatorReferences()[0];
 				oChangeIndicator.fireSelectChange({
@@ -994,7 +994,7 @@ sap.ui.define([
 				});
 				return oSelectChangePromise;
 			}.bind(this)).then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 
 				oDependentOverlayDomRef = OverlayRegistry.getOverlay("Comp1---idMain1--rb2").getDomRef();
 				assert.ok(
@@ -1010,7 +1010,7 @@ sap.ui.define([
 				);
 				return waitForMethodCall(oDependentOverlayDomRef.classList, "remove");
 			}).then(function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				assert.notOk(
 					oDependentOverlayDomRef.className.split(" ").includes("sapUiRtaChangeIndicatorDependent"),
 					"then the appropriate style class is removed"
@@ -1069,14 +1069,14 @@ sap.ui.define([
 						"then the indicator is registered with the bound list selector"
 					);
 					oHorizontalLayout.destroy();
-					oCore.applyChanges();
+					Core.applyChanges();
 					fnDone();
 				});
 			}.bind(this));
 
-			var oPage = oCore.byId("Comp1---idMain1--mainPage");
+			var oPage = Core.byId("Comp1---idMain1--mainPage");
 			oPage.insertAggregation("content", oHorizontalLayout, 0);
-			oCore.applyChanges();
+			Core.applyChanges();
 		});
 	});
 
@@ -1104,7 +1104,7 @@ sap.ui.define([
 			.then(startVisualization.bind(this, this.oRta))
 			.then(function() {
 				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
-				oCore.applyChanges();
+				Core.applyChanges();
 				var aIndicators = collectIndicatorReferences();
 				var iYPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].height / 2);
 				var iXPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].x);
@@ -1166,7 +1166,7 @@ sap.ui.define([
 
 				function onPopoverOpened() {
 					// Trigger rerendering which will remove tab indices
-					oCore.applyChanges();
+					Core.applyChanges();
 					oPopover.close();
 				}
 
@@ -1205,6 +1205,107 @@ sap.ui.define([
 				document.getElementById("Comp1---idMain1--mainPage-cont").scroll({top: 800});
 			}.bind(this));
 		});
+
+		QUnit.test("when a change indicator is hovered/focused", function(assert) {
+			var oChangeIndicator;
+			prepareChanges([
+				createMockChange("testRename", "rename", "Comp1---idMain1--Label1")
+			]);
+			return startRta.call(this)
+			.then(startVisualization.bind(this, this.oRta))
+			.then(function() {
+				oChangeIndicator = collectIndicatorReferences()[0];
+				var oChangeIndicatorElement = oChangeIndicator.getDomRef();
+				var oOverlay = Core.byId(oChangeIndicator.getOverlayId());
+
+				function checkOnClass() {
+					assert.ok(
+						oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+						"then the overlay has the correct style class"
+					);
+				}
+
+				function checkOffClass() {
+					assert.notOk(
+						oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+						"then the style class was removed"
+					);
+				}
+
+				oChangeIndicatorElement.addEventListener("mouseover", checkOnClass.bind(this));
+				oChangeIndicatorElement.dispatchEvent(new MouseEvent("mouseover"));
+				oChangeIndicatorElement.addEventListener("mouseout", checkOffClass.bind(this));
+				oChangeIndicatorElement.dispatchEvent(new MouseEvent("mouseout"));
+
+				oChangeIndicatorElement.addEventListener("focusin", checkOnClass.bind(this));
+				oChangeIndicatorElement.dispatchEvent(new Event("focusin"));
+				oChangeIndicatorElement.addEventListener("focusout", checkOffClass.bind(this));
+				oChangeIndicatorElement.dispatchEvent(new Event("focusout"));
+			}.bind(this));
+		});
+
+		QUnit.test("when a change indicator with a related indicator (two display controls for the same change) is hovered/focused", function(assert) {
+			var aDisplayControls = ["Comp1---idMain1--rb1", "Comp1---idMain1--bar"];
+			var oChangeHandler = {
+				getChangeVisualizationInfo: function() {
+					return {
+						displayControls: aDisplayControls,
+						affectedControls: ["Comp1---idMain1--rb1"]
+					};
+				}
+			};
+			prepareChanges([
+				createMockChange("testRename", "rename", "Comp1---idMain1--rb1")
+			], undefined, oChangeHandler);
+			return startRta.call(this)
+			.then(startVisualization.bind(this, this.oRta))
+			.then(function() {
+				var aChangeIndicators = collectIndicatorReferences();
+				var oHoveredIndicator = aChangeIndicators[0];
+				var oRelatedIndicator = aChangeIndicators[1];
+				var oHoveredIndicatorElement = oHoveredIndicator.getDomRef();
+				var oHoveredOverlay = Core.byId(oHoveredIndicator.getOverlayId());
+				var oRelatedIndicatorOverlay = Core.byId(oRelatedIndicator.getOverlayId());
+
+				function checkOnClasses() {
+					assert.ok(
+						oHoveredOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+						"then the overlay has the correct style class"
+					);
+					assert.ok(
+						oRelatedIndicatorOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+						"then the related overlay has the correct style class"
+					);
+				}
+
+				function checkOffClasses() {
+					assert.notOk(
+						oHoveredOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+						"then the style class was removed"
+					);
+					assert.notOk(
+						oRelatedIndicatorOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+						"then the style class was removed from the related overlay"
+					);
+				}
+
+				oHoveredIndicatorElement.addEventListener("mouseover", checkOnClasses.bind(this));
+				oHoveredIndicatorElement.dispatchEvent(new MouseEvent("mouseover"));
+
+				oHoveredIndicatorElement.addEventListener("mouseout", checkOffClasses.bind(this));
+				oHoveredIndicatorElement.dispatchEvent(new MouseEvent("mouseout"));
+
+				oHoveredIndicatorElement.addEventListener("focusin", checkOnClasses.bind(this));
+				oHoveredIndicatorElement.dispatchEvent(new Event("focusin"));
+
+				oHoveredIndicatorElement.addEventListener("focusout", checkOffClasses.bind(this));
+				oHoveredIndicatorElement.dispatchEvent(new Event("focusout"));
+
+				// When the detail popover opens, all connected overlays must be highlighted
+				oHoveredIndicator.fireDetailPopoverOpened();
+				checkOnClasses();
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("On Save", {
@@ -1225,7 +1326,7 @@ sap.ui.define([
 					return startVisualization(this.oRta);
 				}.bind(this))
 				.then(function() {
-					oCore.applyChanges();
+					Core.applyChanges();
 					this.oRta.setMode("navigation");
 				}.bind(this));
 		},
@@ -1299,7 +1400,7 @@ sap.ui.define([
 			}.bind(this));
 			return startVisualization(this.oRta).then(function() {
 				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
-				oCore.applyChanges();
+				Core.applyChanges();
 				assert.ok(oResetSpy.called, "then changeIndicatorRegistry gets reset");
 			}.bind(this));
 		});
@@ -1327,7 +1428,7 @@ sap.ui.define([
 				}.bind(this))
 				.then(function() {
 					this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
-					oCore.applyChanges();
+					Core.applyChanges();
 				}.bind(this));
 		},
 		afterEach: function() {
@@ -1345,10 +1446,10 @@ sap.ui.define([
 
 		QUnit.test("when the change visualization is created a second time", function(assert) {
 			this.oRta.setMode("adaptation");
-			oCore.applyChanges();
+			Core.applyChanges();
 			return startVisualization(this.oRta).then(function() {
 				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
-				oCore.applyChanges();
+				Core.applyChanges();
 				assert.strictEqual(collectIndicatorReferences().length, 1, "then indicators are created again");
 				this.oChangeVisualization.destroy();
 			}.bind(this));

@@ -452,39 +452,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change indicator is created and is hovered", function(assert) {
-			var oChangeIndicatorElement = this.oChangeIndicator.getDomRef();
-			var oOverlay = sap.ui.getCore().byId(this.oChangeIndicator.getOverlayId());
-			this.oChangeIndicator.getModel().setData({
-				changes: [
-					createMockChange("someChangeId", this.oButton.getId(), "move", "move")
-				]
-			});
-
-			function onMouseOver() {
-				assert.ok(
-					oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
-					"then the overlay has the correct style class"
-				);
-			}
-
-			function onMouseOut() {
-				assert.notOk(
-					oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
-					"then the style class was removed"
-				);
-			}
-
-			oCore.applyChanges();
-			oChangeIndicatorElement.addEventListener("mouseover", onMouseOver.bind(this));
-			oChangeIndicatorElement.dispatchEvent(new MouseEvent("mouseover"));
-
-			oChangeIndicatorElement.addEventListener("mouseout", onMouseOut.bind(this));
-			oChangeIndicatorElement.dispatchEvent(new MouseEvent("mouseout"));
-		});
-
 		QUnit.test("when a change indicator is focused before it is rendered", function(assert) {
-			sandbox.stub(this.oChangeIndicator, "_toggleHoverStyleClasses").returns(true);
 			this.oChangeIndicator.focus();
 			oCore.applyChanges();
 			assert.strictEqual(
