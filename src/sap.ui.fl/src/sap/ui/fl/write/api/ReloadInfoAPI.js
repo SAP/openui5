@@ -156,6 +156,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving to an object with the reload reasons
 		 */
 		getReloadReasonsForStart: function(oReloadInfo) {
+			//TODO: add reload reason for context-based adaptations
 			return Promise.all([
 				areHigherLayerChangesAvailable.call(this, oReloadInfo),
 				isDraftAvailable(oReloadInfo),

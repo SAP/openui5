@@ -108,7 +108,8 @@ sap.ui.define([
 				reference: "reference",
 				componentData: {},
 				version: Version.Number.Draft,
-				allContexts: true
+				allContexts: true,
+				adaptationId: "id_1234"
 			};
 
 			var oExpectedProperties = {
@@ -119,7 +120,8 @@ sap.ui.define([
 				preview: undefined,
 				appDescriptor: this.oRawManifest,
 				version: Version.Number.Draft,
-				allContexts: true
+				allContexts: true,
+				adaptationId: "id_1234"
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
@@ -150,7 +152,8 @@ sap.ui.define([
 				appDescriptor: this.oRawManifest,
 				componentName: "baseName",
 				version: undefined,
-				allContexts: undefined
+				allContexts: undefined,
+				adaptationId: undefined
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {

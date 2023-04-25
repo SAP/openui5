@@ -166,6 +166,24 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when loading flex data with version and filled adaptationId parameter", function (assert) {
+			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
+			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", adaptationId: "id_1234", version: "0"}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=0&adaptationId=id_1234&sap-language=EN", "and the URL was correct");
+				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when loading flex data with version and undefined adaptationId parameter", function (assert) {
+			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
+			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", adaptationId: undefined, version: "0"}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=0&sap-language=EN", "and the URL was correct");
+				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
+			}.bind(this));
+		});
+
 		QUnit.test("when loading flex data with content type 'application/manifest+json'", function (assert) {
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}), undefined, undefined, "application/manifest+json");
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();

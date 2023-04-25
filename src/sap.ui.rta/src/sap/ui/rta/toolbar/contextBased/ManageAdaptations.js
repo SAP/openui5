@@ -93,7 +93,7 @@ function(
 			return ContextBasedAdaptationsAPI.load({control: this._oRtaInformation.rootControl, layer: this._oRtaInformation.flexSettings.layer});
 		}.bind(this)).then(function(oAdaptations) {
 			this.oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel({control: this._oRtaInformation.rootControl, layer: this._oRtaInformation.flexSettings.layer});
-			this.oAdaptationsModel.updateAdaptations(oAdaptations.adaptations, this.oAdaptationsModel.getProperty("/displayedAdaptation").id);
+			this.oAdaptationsModel.updateAdaptations(oAdaptations.adaptations);
 			this.oReferenceAdaptationsData = JSON.parse(JSON.stringify(oAdaptations));
 			this._oControlConfigurationModel = new JSONModel({isTableItemSelected: false});
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");

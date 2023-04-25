@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI"
 ], function(
 	FlexState,
 	Versions,
 	Utils,
 	Version,
-	ManifestUtils
+	ManifestUtils,
+	ContextBasedAdaptationsAPI
 ) {
 	"use strict";
 
@@ -128,6 +130,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @param {string} [mPropertyBag.adaptationId] - Adaptation to be loaded
 	 *
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
@@ -145,6 +148,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} [mPropertyBag.version] - Version to be loaded
 	 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted contexts
+	 * @param {string} [mPropertyBag.adaptationId] - Adaptation to be loaded
 	 *
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
@@ -164,13 +168,19 @@ sap.ui.define([
 			oModel.setProperty("/persistedVersion", mPropertyBag.version);
 		}
 
+		var oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel(mPropertyBag);
+		if (oAdaptationsModel) {
+			oAdaptationsModel.switchDisplayedAdaptation(mPropertyBag.adaptationId);
+		}
+
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 		var sReference = getFlexReferenceForControl(oAppComponent);
 		return FlexState.clearAndInitialize({
 			componentId: oAppComponent.getId(),
 			reference: sReference,
 			version: mPropertyBag.version,
-			allContexts: mPropertyBag.allContexts
+			allContexts: mPropertyBag.allContexts,
+			adaptationId: mPropertyBag.adaptationId
 		});
 	};
 

@@ -131,13 +131,15 @@ sap.ui.define([
 				VersionsAPI.loadDraftForApplication({
 					control: oReloadInfo.selector,
 					layer: oReloadInfo.layer,
-					allContexts: oReloadInfo.allContexts
+					allContexts: oReloadInfo.allContexts,
+					adaptationId: oReloadInfo.adaptationId
 				});
 			} else {
 				VersionsAPI.loadVersionForApplication({
 					control: oReloadInfo.selector,
 					layer: oReloadInfo.layer,
-					allContexts: oReloadInfo.allContexts
+					allContexts: oReloadInfo.allContexts,
+					adaptationId: oReloadInfo.adaptationId
 				});
 			}
 		}
@@ -278,6 +280,7 @@ sap.ui.define([
 			URLParsingService: mUShellServices.URLParsing
 		});
 		return ReloadInfoAPI.getReloadReasonsForStart(mProperties).then(function(oReloadInfo) {
+			//TODO: add reload trigger for context-based adaptations
 			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.isDraftAvailable || oReloadInfo.allContexts) {
 				return triggerReloadOnStart(oReloadInfo, mProperties.versioningEnabled, mProperties.developerMode);
 			}

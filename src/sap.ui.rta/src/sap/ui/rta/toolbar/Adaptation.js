@@ -359,8 +359,9 @@ sap.ui.define([
 					layer: oRtaInformation.flexSettings.layer,
 					adaptationId: oAdaptationsModel.getProperty("/displayedAdaptation").id
 				}).then(function() {
-					oAdaptationsModel.deleteAdaptation();
-				}).catch(function(oError) {
+					var sAdaptationId = oAdaptationsModel.deleteAdaptation();
+					this.fireEvent("switchAdaptation", {adaptationId: sAdaptationId});
+				}.bind(this)).catch(function(oError) {
 					Log.error(oError.stack);
 					var sMessage = "MSG_LREP_TRANSFER_ERROR";
 					var oOptions = { titleKey: "DAC_DIALOG_HEADER" };
@@ -368,7 +369,7 @@ sap.ui.define([
 					Utils.showMessageBox("error", sMessage, oOptions);
 				});
 			}
-		});
+		}.bind(this));
 	}
 
 	function onManageAdaptations() {
@@ -381,6 +382,9 @@ sap.ui.define([
 
 	function formatAdaptationsMenuText(iCount, sTitle) {
 		if (iCount > 0) {
+			if (sTitle === "") {
+				sTitle = this.getTextResources().getText("TXT_DEFAULT_APP");
+			}
 			return this.getTextResources().getText("BTN_ADAPTING_FOR", sTitle);
 		}
 		return this.getTextResources().getText("BTN_ADAPTING_FOR_ALL_USERS");

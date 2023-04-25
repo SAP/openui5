@@ -3,6 +3,7 @@
 sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/m/MessageBox",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/Version",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
+	FlexState,
 	ContextBasedAdaptationsAPI,
 	Settings,
 	Version,
@@ -64,6 +66,11 @@ sap.ui.define([
 	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP, save is disabled", {
 		beforeEach: function() {
 			ContextBasedAdaptationsAPI.clearInstances();
+			var oDefaultAdaptation = {
+				id: "DEFAULT",
+				title: "",
+				type: "DEFAULT"
+			};
 			var aAdaptations = [
 				{
 					title: "Sales",
@@ -74,7 +81,8 @@ sap.ui.define([
 					title: "Manager",
 					rank: 2,
 					id: "id_5678"
-				}
+				},
+				oDefaultAdaptation
 			];
 			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
 
@@ -86,9 +94,10 @@ sap.ui.define([
 			});
 			sandbox.stub(this.oRta, "canSave").returns(false);
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oLoadVersionSpy = sandbox.spy(VersionsAPI, "loadVersionForApplication");
 			this.oLoadAdaptationsStub = sandbox.stub(ContextBasedAdaptationsAPI, "load");
-			this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
+			this.oFlexStateStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
+			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(oAdaptationsModel);
 			return this.oRta.start().then(function() {
 				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
 			}.bind(this));
@@ -98,15 +107,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the displayed adaptation and the selected adaptation are the same", function(assert) {
-			this.oRta.getToolbar().fireSwitchAdaptation({
-				adaptationId: "id_1234"
-			});
-			assert.equal(this.oEnableRestartStub.callCount, 0, "then no restart is enabled");
-			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_1234",
-				"then the displayed adaptation is the same");
-		});
-
 		QUnit.test("when save is disabled", function(assert) {
 			var oReloadStub = sandbox.stub(ReloadManager, "triggerReload").resolves();
 			this.oRta._oVersionsModel.setProperty("/displayedVersion", 1);
@@ -116,15 +116,15 @@ sap.ui.define([
 			});
 
 			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-			assert.equal(this.oLoadVersionStub.callCount, 1, "a reload for versions is triggered");
-			var oLoadVersionArguments = this.oLoadVersionStub.getCall(0).args[0];
+			assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
+			assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
+			var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
 			assert.equal(oLoadVersionArguments.control, oComp, "with the control");
 			assert.equal(oLoadVersionArguments.version, "1", ", the version number");
 			assert.equal(oLoadVersionArguments.adaptationId, "id_5678", ", the adaptation id number");
 			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
 			assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
-			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_5678",
-				"then the displayed adaptation has changed");
+			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_5678", "then the displayed adaptation has changed");
 		});
 	});
 

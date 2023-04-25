@@ -195,6 +195,7 @@ sap.ui.define([
 		return Settings.getInstance()
 			.then(function (oSettings) {
 				var bVersionsEnabled = oSettings.isVersioningEnabled(sLayer);
+				//TODO: similar to ContextBasedAdaptationsAPI this could also be moved outside
 				if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
 					return _mInstances[sReference][sLayer];
 				}
