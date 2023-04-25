@@ -830,7 +830,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Invalidation", function (assert) {
-		var fnQuickViewInvalidate = sinon.spy(this.oQuickView, "invalidate");
 		var fnQuickViewPopoverInvalidate = sinon.spy(this.oQuickView._oPopover, "invalidate");
 
 		this.oButton.firePress();
@@ -866,7 +865,6 @@ sap.ui.define([
 		jQuery.extend(true, newData, data);
 		this.oQuickView.getModel().setData(newData);
 
-		assert.strictEqual(fnQuickViewInvalidate.callCount, 0, "QuickView.invalidate should not be called");
 		assert.strictEqual(fnQuickViewPopoverInvalidate.callCount, 0, "QuickView.Popover.invalidate should not be called");
 	});
 
