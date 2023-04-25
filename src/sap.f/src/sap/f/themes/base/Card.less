@@ -12,9 +12,9 @@
 @_sap_f_Card_HeaderFocusBorderTopOffset: 1px;
 @_sap_f_Card_HeaderFocusBorderLeftOffset: 1px;
 @_sap_f_Card_HeaderFocusBorderRightOffset: 1px;
-@_sap_f_Card_Badge_Background: @sapBrandColor;
-@_sap_f_Card_Badge_Color: @sapContent_ContrastTextColor;
-@_sap_f_Card_Badge_Border: 0.0625rem solid @sapButton_Lite_BorderColor;
+@_sap_f_Card_Badge_Background: @sapUiBrand;
+@_sap_f_Card_Badge_Color: @sapUiContentContrastTextColor;
+@_sap_f_Card_Badge_Border: 0.0625rem solid @sapUiButtonLiteBorderColor;
 @_sap_f_Card_TitleFontSize: @sapMFontHeader5Size;
 
 .sapFCard {
@@ -399,7 +399,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	flex-grow: 1;
 }
 
-.sapFCard {
+.sapFCard.sapFCardSectionInteractive {
 	&[data-sap-ui-draggable=true] {
 		.sapMText {
 			cursor: grab;
@@ -407,17 +407,17 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	}
 
 	&:not(.sapFCardTransparent) {
-		.sapFCardClickable:hover {
+		.sapFCardSectionClickable:hover {
 			background: @sapUiTileHoverBackground;
 		}
 
-		.sapFCardClickable:active {
+		.sapFCardSectionClickable:active {
 			background: @sapUiTileActiveBackground;
 		}
 	}
 
-	.sapFCardClickable,
-	.sapFCardClickable svg {
+	.sapFCardSectionClickable,
+	.sapFCardSectionClickable svg {
 		cursor: pointer !important;
 
 		.sapMText {

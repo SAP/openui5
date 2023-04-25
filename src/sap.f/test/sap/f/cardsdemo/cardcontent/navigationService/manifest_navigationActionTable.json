@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "cardsdemo.navigatioService.card6",
+		"id": "cardsdemo.navigationService.card6",
 		"type": "card"
 	},
 	"sap.card": {
