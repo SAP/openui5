@@ -58,11 +58,11 @@ sap.ui.define([
 		assert.strictEqual(oVariant.getSupportInformation().originalLanguage, oCopiedVariant.originalLanguage, "there is the same original language");
 		assert.strictEqual(oVariant.getFlexObjectMetadata().projectId, oCopiedVariant.projectId, "there is the same project id");
 		assert.strictEqual(oVariant.getFlexObjectMetadata().reference, oCopiedVariant.reference, "there is the same reference");
-		if (oVariant.getDefinition().support.user) {
-			assert.strictEqual(oVariant.getDefinition().support.generator, oCopiedVariant.support.generator, "there is the generator");
-			assert.strictEqual(oVariant.getDefinition().support.sapui5Version, oCopiedVariant.support.sapui5Version, "there is the same sapui5Version");
+		if (oVariant.getSupportInformation().user) {
+			assert.strictEqual(oVariant.getSupportInformation().generator, oCopiedVariant.support.generator, "there is the generator");
+			assert.strictEqual(oVariant.getSupportInformation().sapui5Version, oCopiedVariant.support.sapui5Version, "there is the same sapui5Version");
 		} else {
-			assert.deepEqual(oVariant.getDefinition().support, oCopiedVariant.support, "there is the same support data");
+			assert.deepEqual(oVariant.getSupportInformation(), oCopiedVariant.support, "there is the same support data");
 		}
 		assert.deepEqual(oVariant.getTexts(), oCopiedVariant.texts, "there is the same texts object");
 
@@ -86,7 +86,7 @@ sap.ui.define([
 			assert.notStrictEqual(oVariant.getVariantId(), oCopiedVariant.variantId, "there is the same variant id");
 			assert.deepEqual(oVariant.getContent(), oCopiedVariant.content, "there is the same content");
 			assert.deepEqual(oVariant.getContexts(), oCopiedVariant.contexts, "there is the same contexts");
-			assert.deepEqual(oVariant.getDefinition().selector, oCopiedVariant.selector, "there is the same selector");
+			assert.deepEqual(oVariant.getPersistencyKey(), oCopiedVariant.selector.persistencyKey, "there is the same selector");
 			if (bIsControlVariant) {
 				assert.strictEqual(oVariant.getVariantManagementReference(), oCopiedVariant.variantManagementReference, "there is the correct variant management reference");
 				assert.notStrictEqual(oVariant.getVariantReference(), oCopiedVariant.variantReference, "there is the correct variant reference");
