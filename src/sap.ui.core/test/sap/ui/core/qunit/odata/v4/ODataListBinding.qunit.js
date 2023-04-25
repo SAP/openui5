@@ -7139,14 +7139,15 @@ sap.ui.define([
 		this.mock(oBinding).expects("fireDataReceived").never();
 
 		this.mock(oContext).expects("getPath").withExactArgs().returns("/EMPLOYEES('2')");
-		this.mock(oContext).expects("getModelIndex").withExactArgs().returns(42);
+		// use 0 as an edge case here!
+		this.mock(oContext).expects("getModelIndex").withExactArgs().returns(0);
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns("~keep~alive~");
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs().returns("/EMPLOYEES");
 		this.mock(_Helper).expects("getRelativePath")
 			.withExactArgs("/EMPLOYEES('2')", "/EMPLOYEES")
 			.returns("~key~predicate~");
 		this.mock(oCache).expects("refreshSingle")
-			.withExactArgs(sinon.match.same(oGroupLock), "", 42, "~key~predicate~", "~keep~alive~",
+			.withExactArgs(sinon.match.same(oGroupLock), "", 0, "~key~predicate~", "~keep~alive~",
 				undefined, sinon.match.func)
 			.returns(SyncPromise.resolve({/*refreshed entity*/}));
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
@@ -7214,6 +7215,36 @@ sap.ui.define([
 					assert.strictEqual(oError0, oError);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingle: negative model index", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext = {
+				getModelIndex : function () { return -1; },
+				getPath : function () { return "/EMPLOYEES('1')"; },
+				isKeepAlive : function () { return "n/a"; },
+				toString : function () { return "Foo"; }
+			};
+
+		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func)
+			.callsFake(function (fnProcessor) {
+				return new SyncPromise(function () {
+					fnProcessor(/*oCache*/null, /*sPath*/"n/a", /*oBinding*/null);
+				});
+			});
+		this.mock(oBinding).expects("fireDataRequested").never();
+		this.mock(oBinding).expects("fireDataReceived").never();
+		this.mock(this.oModel).expects("reportError").never();
+
+		// code under test
+		return oBinding.refreshSingle(oContext, "n/a", true)
+			.then(function () {
+				assert.ok(false);
+			}, function (oError0) {
+				assert.strictEqual(oError0.message,
+					"Cannot refresh. Hint: Side-effects refresh in parallel? Foo");
+			});
 	});
 
 	//*********************************************************************************************
@@ -10022,6 +10053,7 @@ sap.ui.define([
 			},
 			aCollection = ["~a~", "~b~"],
 			oContextMock = this.mock(Context),
+			aCreatedPromises = [SyncPromise.reject(), SyncPromise.reject()],
 			aCreatedContexts = [{
 				nr : 0,
 				created : function () { return aCreatedPromises[0]; }
@@ -10029,7 +10061,6 @@ sap.ui.define([
 				nr : 1,
 				created : function () { return aCreatedPromises[1]; }
 			}],
-			aCreatedPromises = [SyncPromise.reject(), SyncPromise.reject()],
 			oExpectation,
 			oHelperMock = this.mock(_Helper),
 			mQueryOptions = bHasQueryOptions ? {$select : "~select~"} : undefined,

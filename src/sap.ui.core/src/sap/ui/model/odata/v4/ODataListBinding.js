@@ -772,7 +772,11 @@ sap.ui.define([
 	 *       not use the <code>$$ownRequest</code> parameter
 	 *       (see {@link sap.ui.model.odata.v4.ODataModel#bindList}),
 	 *     <li> <code>bInactive</code> is <code>true</code> and the list binding has a transient
-	 *       parent context (takes part in a deep create).
+	 *       parent context (takes part in a deep create),
+	 *     <li> an automatic refresh of the created entity cannot be performed and
+	 *       <code>bSkipRefresh</code> is missing. This could be caused by a side-effects refresh
+	 *       happening in parallel to creation (error thrown since 1.114.0; previously failed
+	 *       without an adequate error message).
 	 *   </ul>
 	 * @public
 	 * @since 1.43.0
@@ -3172,6 +3176,7 @@ sap.ui.define([
 			var bDataRequested = false,
 				bDestroyed = false,
 				bKeepAlive = oContext.isKeepAlive(),
+				iModelIndex = oContext.getModelIndex(),
 				sPredicate = _Helper.getRelativePath(sContextPath, that.oHeaderContext.getPath()),
 				aPromises = [];
 
@@ -3230,12 +3235,16 @@ sap.ui.define([
 				}
 			}
 
+			if (iModelIndex < 0) {
+				throw new Error("Cannot refresh. Hint: Side-effects refresh in parallel? "
+					+ oContext);
+			}
 			aPromises.push(
 				(bAllowRemoval
-					? oCache.refreshSingleWithRemove(oGroupLock, sPath, oContext.getModelIndex(),
-						sPredicate, bKeepAlive, fireDataRequested, onRemove)
-					: oCache.refreshSingle(oGroupLock, sPath, oContext.getModelIndex(), sPredicate,
-						bKeepAlive, bWithMessages, fireDataRequested))
+					? oCache.refreshSingleWithRemove(oGroupLock, sPath, iModelIndex, sPredicate,
+						bKeepAlive, fireDataRequested, onRemove)
+					: oCache.refreshSingle(oGroupLock, sPath, iModelIndex, sPredicate, bKeepAlive,
+						bWithMessages, fireDataRequested))
 				.then(function () {
 					var aUpdatePromises = [];
 

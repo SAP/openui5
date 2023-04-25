@@ -46837,6 +46837,8 @@ sap.ui.define([
 	// Prefetch compensates for exclusive filter, so that no extra GET is needed to replace the
 	// deleted one inside the table's visible area.
 	// JIRA: CPOUI5ODATAV4-1521
+	//
+	// A hint is sometimes given to use bSkipRefresh (BCP: 2370022413).
 	QUnit.test("CPOUI5ODATAV4-1384: side-effects refresh at top", function (assert) {
 		var oBinding,
 			oContextA,
@@ -46878,7 +46880,8 @@ sap.ui.define([
 			oContextA.setProperty("Name", "New Team A"); // activate
 			oContextB = oBinding.create({Team_Id : "TEAM_B"}, true, false, /*bInactive*/true);
 			oContextB.setProperty("Name", "New Team B"); // activate
-			oContextC = oBinding.create({Name : "New Team C", Team_Id : "TEAM_C"}, true);
+			// code under test (BCP: 2370022413)
+			oContextC = oBinding.create({Name : "New Team C", Team_Id : "TEAM_C"});
 
 			return that.waitForChanges(assert, "3x transient");
 		}).then(function () {
@@ -46916,7 +46919,7 @@ sap.ui.define([
 					url : "TEAMS",
 					payload : {Name : "New Team C", Team_Id : "TEAM_C"}
 				}, {Name : "n/c", Team_Id : "TEAM_C"})
-				.expectChange("name", "New 'C' Team", -1)
+				// .expectChange("name", "New 'C' Team", -1) // would happen w/ bSkipRefresh
 				.expectRequest({
 					batchNo : 2,
 					url : "TEAMS?$select=Name,Team_Id&$skip=0&$top=5"
@@ -46952,7 +46955,13 @@ sap.ui.define([
 				that.oModel.submitBatch("update"),
 				oContextA.created(),
 				oContextB.created(),
-				oContextC.created(),
+				oContextC.created().catch(function (oError) {
+					assert.strictEqual(oError.message,
+						"Cannot refresh. Hint: Side-effects refresh in parallel? "
+						+ "/TEAMS('TEAM_C')[-3;transient]");
+					assert.strictEqual(oContextC.toString(),
+						"/TEAMS('TEAM_C')[-3;createdPersisted]", "Note: error was created earlier");
+				}),
 				that.waitForChanges(assert, "1st side-effects refresh")
 			]);
 		}).then(function () {
