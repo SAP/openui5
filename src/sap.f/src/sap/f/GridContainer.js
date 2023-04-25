@@ -648,7 +648,7 @@ sap.ui.define([
 	/**
 	 * Inserts an item into the aggregation named <code>items</code>.
 	 *
-	 * @param {sap.ui.core.Item} oItem The item to be inserted; if empty, nothing is inserted.
+	 * @param {sap.ui.core.Control} oItem The item to be inserted; if empty, nothing is inserted.
 	 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
 	 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
 	 *             greater than the current size of the aggregation, the item is inserted at the last position.
@@ -684,7 +684,7 @@ sap.ui.define([
 	/**
 	 * Removes an item from the aggregation named <code>items</code>.
 	 *
-	 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or ID.
+	 * @param {int | string | sap.ui.core.Control} vItem The item to remove or its index or ID.
 	 * @returns {sap.ui.core.Control|null} The removed item or <code>null</code>.
 	 * @public
 	 */
