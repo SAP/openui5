@@ -21,6 +21,24 @@ sap.ui.define([
 
 	var VARIANT_MODEL_NAME = "$FlexVariants";
 
+	// The API methods can be called before the model is set on the component
+	function waitForVariantModel(oAppComponent) {
+		var oVariantModel = oAppComponent.getModel(VARIANT_MODEL_NAME);
+		if (oVariantModel) {
+			return Promise.resolve(oVariantModel);
+		}
+		return new Promise(function(resolve) {
+			function onModelContextChange() {
+				oVariantModel = oAppComponent.getModel(VARIANT_MODEL_NAME);
+				if (oVariantModel) {
+					oAppComponent.detachModelContextChange(onModelContextChange);
+					resolve(oVariantModel);
+				}
+			}
+			oAppComponent.attachModelContextChange(onModelContextChange);
+		});
+	}
+
 	/**
 	 * Provides an API for applications to work with control variants. See also {@link sap.ui.fl.variants.VariantManagement}.
 	 *
@@ -161,13 +179,14 @@ sap.ui.define([
 		attachVariantApplied: function(mPropertyBag) {
 			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var oVariantModel = oAppComponent.getModel(VARIANT_MODEL_NAME);
 
-			oVariantModel.attachVariantApplied({
-				vmControlId: mPropertyBag.vmControlId,
-				control: oControl,
-				callback: mPropertyBag.callback,
-				callAfterInitialVariant: mPropertyBag.callAfterInitialVariant
+			waitForVariantModel(oAppComponent).then(function(oVariantModel) {
+				oVariantModel.attachVariantApplied({
+					vmControlId: mPropertyBag.vmControlId,
+					control: oControl,
+					callback: mPropertyBag.callback,
+					callAfterInitialVariant: mPropertyBag.callAfterInitialVariant
+				});
 			});
 		},
 
@@ -183,8 +202,9 @@ sap.ui.define([
 		detachVariantApplied: function(mPropertyBag) {
 			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var oVariantModel = oAppComponent.getModel(VARIANT_MODEL_NAME);
-			oVariantModel.detachVariantApplied(mPropertyBag.vmControlId, oControl.getId());
+			waitForVariantModel(oAppComponent).then(function(oVariantModel) {
+				oVariantModel.detachVariantApplied(mPropertyBag.vmControlId, oControl.getId());
+			});
 		}
 	};
 
