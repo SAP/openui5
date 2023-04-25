@@ -32,7 +32,7 @@ sap.ui.define([], function() {
 			 */
 			"util/jquery.sap.trace": {
 				title: "jQuery.sap.trace",
-				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.trace"
+				page: "test-resources/sap/ui/core/qunit/util/jquery.sap.trace.qunit.html"
 			},
 			AppCacheBuster: {
 				/**
