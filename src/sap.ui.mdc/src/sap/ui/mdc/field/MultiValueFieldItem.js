@@ -20,7 +20,6 @@ sap.ui.define([
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @constructor
-	 * @abstract
 	 * @private
 	 * @since 1.93.0
 	 * @experimental As of version 1.93

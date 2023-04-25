@@ -49,7 +49,8 @@ sap.ui.define([
 	/**
 	 * Enables applications to control condition updates based on <code>value</code> / <code>additionalvalue</code> property changes.
 	 *
-	 * <b>Note:</b> Use with care! Custom implementations of this method may lead to intransparency as a field's condition may then differ from the state of the <code>value</code> / <code>additionalvalue</code> properties. Please also avoid expensive operations!
+	 * <b>Note:</b> Use with care! Custom implementations of this method may lead to intransparency as a field's condition may then differ from the state of the <code>value</code> / <code>additionalvalue</code> properties.
+	 * Please also avoid expensive operations, as this can delay the rendering of the output!
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.core.Control} [oControl] Instance of the calling control
@@ -164,8 +165,6 @@ sap.ui.define([
 	 *
 	 * If this needs to be determined asynchronously, a <code>Promise</code> is returned.
 	 *
-	 * If the item cannot be determined, a corresponding <code>ParseException<code> is thrown.
-	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
 	 * @param {object} [oConfig] Configuration
@@ -199,8 +198,6 @@ sap.ui.define([
 	 * If this needs to be determined asynchronously, a <code>Promise</code> is returned.
 	 *
 	 * As the key might change (uppercase), an object with key and description can be returned.
-	 *
-	 * If the description cannot be determined, a corresponding <code>FormatException<code> is thrown.
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
