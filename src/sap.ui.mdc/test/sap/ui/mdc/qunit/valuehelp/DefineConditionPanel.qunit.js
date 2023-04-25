@@ -684,7 +684,7 @@ sap.ui.define([
 			assert.equal(oField.getText(), "Test", "Value of FIeld");
 
 			var oOperatorField = aContent[0];
-			var oVH = oCore.byId(oOperatorField.getFieldHelp());
+			var oVH = oCore.byId(oOperatorField.getValueHelp());
 			var oPopover = oVH.getTypeahead();
 			var oFL = oPopover.getContent()[0];
 			var aItems = oFL.getItems();
@@ -713,7 +713,7 @@ sap.ui.define([
 			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oOperatorField = aContent[0]; // operator
-			var oVH = oCore.byId(oOperatorField.getFieldHelp());
+			var oVH = oCore.byId(oOperatorField.getValueHelp());
 			var oPopover = oVH.getTypeahead();
 			var oFL = oPopover.getContent()[0];
 			var aItems = oFL.getItems();
@@ -1312,14 +1312,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("usage of FieldHelp on value fields", {
+	QUnit.module("usage of ValueHelp on value fields", {
 		beforeEach: function() {
 			_init();
 			},
 		afterEach: _teardown
 	});
 
-	QUnit.test("value field has fieldHelp for EQ and NE operators", function(assert) {
+	QUnit.test("value field has valueHelp for EQ and NE operators", function(assert) {
 
 		oModel.setData({
 			conditions: {
@@ -1331,9 +1331,9 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(oDefineConditionPanel.getFieldHelp(), null, "default fieldHelp is not defined");
-		oDefineConditionPanel.setFieldHelp("MyTestValueHelp");
-		assert.equal(oDefineConditionPanel.getFieldHelp(), "MyTestValueHelp", "fieldHelp is set");
+		assert.equal(oDefineConditionPanel.getValueHelp(), null, "default valueHelp is not defined");
+		oDefineConditionPanel.setValueHelp("MyTestValueHelp");
+		assert.equal(oDefineConditionPanel.getValueHelp(), "MyTestValueHelp", "valueHelp is set");
 
 		var fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
@@ -1351,10 +1351,10 @@ sap.ui.define([
 							var oField1 = oCore.byId("DCP1--0-values0");
 							var oField2 = oCore.byId("DCP1--1-values0");
 							var oField3 = oCore.byId("DCP1--2-values0");
-							assert.equal(oField1.getFieldHelp(), "MyTestValueHelp", "fieldHelp on field is set");
-							assert.equal(oField2.getFieldHelp(), "MyTestValueHelp", "fieldHelp on field is set");
-							assert.equal(oField3.getFieldHelp(), "MyTestValueHelp", "fieldHelp on field is set");
-							// assert.equal(oField3.getFieldHelp(), null, "fieldHelp on field is NOT set");
+							assert.equal(oField1.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");
+							assert.equal(oField2.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");
+							assert.equal(oField3.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");
+							// assert.equal(oField3.getValueHelp(), null, "valueHelp on field is NOT set");
 
 							fnDone();
 						}, 0);

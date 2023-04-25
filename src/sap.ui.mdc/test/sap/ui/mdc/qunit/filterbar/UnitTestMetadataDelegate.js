@@ -43,7 +43,7 @@ sap.ui.define([
 
 		sVHId  = oProperty.fieldHelp;
 		if (sVHId) {
-			oFilterField.setFieldHelp(IdentifierUtil.getView(oFilterBar).createId(sVHId));
+			oFilterField.setValueHelp(IdentifierUtil.getView(oFilterBar).createId(sVHId));
 		}
 
 		var oModel = oFilterBar._getConditionModel();

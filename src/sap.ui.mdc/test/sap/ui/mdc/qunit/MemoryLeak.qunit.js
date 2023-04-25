@@ -145,7 +145,7 @@ sap.ui.define([
 		});
 		var oField = new FilterField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
-			fieldHelp: "VH1",
+			valueHelp: "VH1",
 			dependents: [oValueHelp, oItemTemplate]
 		});
 		// configure the Field und ValueHelp faking somme calls what would be triggered by opening (as Test canno be async here)
@@ -188,7 +188,7 @@ sap.ui.define([
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			conditions: [Condition.createItemCondition("I1"),
 						 Condition.createCondition("BT", ["A", "Z"])],
-			fieldHelp: "VH1",
+			valueHelp: "VH1",
 			dependents: [oValueHelp, oItemTemplate]
 		});
 		// configure the Field und ValueHelp faking somme calls what would be triggered by opening (as Test canno be async here)

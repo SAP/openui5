@@ -205,15 +205,15 @@ sap.ui.define([
 
 		handleIconPress: function(oEvent) {
 			var oButton = oEvent.oSource;
-			var oFieldHelp = oButton.getParent().getParent();
+			var oValueHelp = oButton.getParent().getParent();
 			var vKey = oButton.getIcon().substr(11);
-			oFieldHelp.fireSelectEvent([Condition.createCondition("EQ", [vKey])]);
+			oValueHelp.fireSelectEvent([Condition.createCondition("EQ", [vKey])]);
 		},
 
 		handleBeforeOpen: function(oEvent) {
-			var oFieldHelp = oEvent.oSource;
-			var aConditions = oFieldHelp.getConditions();
-			var aButtons = oFieldHelp.getContent().getItems();
+			var oValueHelp = oEvent.oSource;
+			var aConditions = oValueHelp.getConditions();
+			var aButtons = oValueHelp.getContent().getItems();
 			var vKey;
 
 			if (aConditions.length === 1) {

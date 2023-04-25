@@ -25,7 +25,7 @@
 			conditions="{cm>/conditions/title}"
 			display="ValueDescription"
 			maxConditions="-1"
-			fieldHelp="VH1"
+			valueHelp="VH1"
 			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH1"
@@ -92,7 +92,7 @@
 			dataTypeFormatOptions='\{"style": "long"\}'
 			dataTypeConstraints='\{"V4": true\}'
 			maxConditions="-1"
-			fieldHelp="VH2"
+			valueHelp="VH2"
 			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH2"
@@ -114,7 +114,7 @@
 			dataTypeFormatOptions=""
 			dataTypeConstraints=""
 			maxConditions="-1"
-			fieldHelp="VH3"
+			valueHelp="VH3"
 			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH3"
@@ -137,7 +137,7 @@
 			dataTypeFormatOptions='\{"style": "long"\}'
 			dataTypeConstraints='\{"V4": true\}'
 			maxConditions="1"
-			fieldHelp="VH4"
+			valueHelp="VH4"
 			operators="EQ,BT,TODAY,YESTERDAY,TOMORROW,TODAYFROMTO,LASTDAYS,NEXTDAYS"
 			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 			<mdc:dependents>

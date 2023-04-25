@@ -1106,7 +1106,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FB0-FH1"
+				valueHelp="FB0-FH1"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1115,7 +1115,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FB0-FH1-1-multicombo"
+				valueHelp="FB0-FH1-1-multicombo"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1124,7 +1124,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FB0-FH1-2"
+				valueHelp="FB0-FH1-2"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1133,7 +1133,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FB0-FH1-10"
+				valueHelp="FB0-FH1-10"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1142,7 +1142,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FB0-FH1-11"
+				valueHelp="FB0-FH1-11"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1151,7 +1151,7 @@
 				conditions="{$filters>/conditions/name}"
 				dataType="sap.ui.model.odata.type.String"
 				required="false"
-				fieldHelp="FB0-FH2"
+				valueHelp="FB0-FH2"
 				display="Value"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1159,7 +1159,7 @@
 				label="FixedList"
 				conditions="{$filters>/conditions/currency_code}"
 				dataType="sap.ui.model.odata.type.String"
-				required="false" fieldHelp="FB0-FH3"
+				required="false" valueHelp="FB0-FH3"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1167,7 +1167,7 @@
 				label="FixedList only typeahead"
 				conditions="{$filters>/conditions/currency_code}"
 				dataType="sap.ui.model.odata.type.String"
-				required="false" fieldHelp="FB0-FH4"
+				required="false" valueHelp="FB0-FH4"
 				display="ValueDescription"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1177,7 +1177,7 @@
 				dataType="sap.ui.model.odata.type.Boolean"
 				dataTypeConstraints='\{"nullable": false\}'
 				required="false"
-				fieldHelp="FB0-FH5"
+				valueHelp="FB0-FH5"
 				display="Value"
 				maxConditions="1" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1185,7 +1185,7 @@
 				label="Country of origin"
 				conditions="{$filters>/conditions/countryOfOrigin_code}"
 				dataType="sap.ui.model.odata.type.String"
-				fieldHelp="FB0-FH-Country"
+				valueHelp="FB0-FH-Country"
 				display="ValueDescription"
 				maxConditions="{settings>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1193,7 +1193,7 @@
 				label="Region of origin"
 				conditions="{$filters>/conditions/regionOfOrigin_code}"
 				dataType="sap.ui.model.odata.type.String"
-				fieldHelp="FB0-FH-Region"
+				valueHelp="FB0-FH-Region"
 				display="ValueDescription"
 				maxConditions="{settings>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1201,7 +1201,7 @@
 				label="City of origin"
 				conditions="{$filters>/conditions/cityOfOrigin_code}"
 				dataType="sap.ui.model.odata.type.String"
-				fieldHelp="FB0-FH-City"
+				valueHelp="FB0-FH-City"
 				display="ValueDescription"
 				maxConditions="{settings>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1210,7 +1210,7 @@
 				conditions="{$filters>/conditions/ID}"
 				dataType="sap.ui.model.odata.type.Int32"
 				dataTypeFormatOptions='\{"groupingEnabled": false\}'
-				fieldHelp="FH-Books1"
+				valueHelp="FH-Books1"
 				display="Description"
 				maxConditions="{settings>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1219,7 +1219,7 @@
 				conditions="{$filters>/conditions/ID}"
 				dataType="sap.ui.model.odata.type.Int32"
 				dataTypeFormatOptions='\{"groupingEnabled": false\}'
-				fieldHelp="FH-Books2"
+				valueHelp="FH-Books2"
 				display="Description"
 				maxConditions="{settings>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -1228,7 +1228,7 @@
 				conditions="{$filters>/conditions/ID}"
 				dataType="sap.ui.model.odata.type.Int32"
 				dataTypeFormatOptions='\{"groupingEnabled": false\}'
-				fieldHelp="FH-Books3"
+				valueHelp="FH-Books3"
 				display="Description"
 				maxConditions="{settings>/maxConditions}"/>
 		</mdc:filterItems>

@@ -92,7 +92,7 @@ sap.ui.define([
 						/**
 						 * The new value of the <code>Field</code>.
 						 *
-						 * If a <code>FieldHelp</code> is assigned to the <code>Field</code>, the <code>value</code> is used as key for the <code>FieldHelp</code> items.
+						 * If a <code>ValueHelp</code> is assigned to the <code>Field</code>, the <code>value</code> is used as key for the <code>ValueHelp</code> items.
 						 */
 						value: { type: "string" },
 
@@ -192,7 +192,7 @@ sap.ui.define([
 				// BindingContextChanged -> if parsing error trigger update to remove valueState and wrong input
 				this._oBindingContext = oBindingContext;
 				this._getContentFactory().updateConditionType();
-				if (this._isInvalidInput() || this.getFieldHelp()) { // In FieldHelp case InParameters might need an update
+				if (this._isInvalidInput() || this.getValueHelp() || this.getFieldHelp()) { // In ValueHelp case InParameters might need an update
 					if (this._oManagedObjectModel) {
 						this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates
 					}

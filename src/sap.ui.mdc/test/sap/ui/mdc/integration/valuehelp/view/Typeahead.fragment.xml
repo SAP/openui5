@@ -64,7 +64,7 @@
 		<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' 
 		id="fAuthor" 
 		value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" 
-		fieldHelp="FH1" 
+		valueHelp="FH1" 
 		display="ValueDescription" 
 		editMode="Editable"  
 		multipleLines="false"/>

@@ -110,7 +110,7 @@ sap.ui.define([
 					var sTargetFieldId = oOutParameter.targetFieldId;
 					var oTargetField = Core.byId(sTargetFieldId);
 					if (oTargetField && (bAlways || !oTargetField.getValue())) {
-						var sOutValueHelpId = oTargetField && oTargetField.getFieldHelp();
+						var sOutValueHelpId = oTargetField && oTargetField.getValueHelp();
 						var oOutValueHelp = sOutValueHelpId && Core.byId(sOutValueHelpId);
 
 						if (oOutValueHelp) {

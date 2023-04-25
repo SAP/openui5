@@ -1,4 +1,4 @@
-// Use this test page to test the API and features of the FieldHelp.
+// Use this test page to test the API and features of the ValueHelp.
 // The interaction with the Field is tested on the field test page.
 
 /* global QUnit, sinon */

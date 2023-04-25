@@ -62,7 +62,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting, parsing and validating)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
 	 * @param {sap.ui.mdc.enum.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
-	 * @param {string} [oFormatOptions.fieldHelpID] ID of the field help to determine the key and description
+	 * @param {string} [oFormatOptions.valueHelpID] ID of the value help to determine the key and description
 	 * @param {boolean} [oFormatOptions.hideOperator] If set, only the value of the condition is shown, but no operator. (Use it only if just one operator is supported.)
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] <code>BindingContext</code> of field. Used to get a key or description from the value help using in/out parameters. (In a table, the value help might be connected to a different row)
@@ -338,7 +338,7 @@ sap.ui.define([
 		var bIsUnit = _isUnit(oType);
 		var sDefaultOperator;
 
-		if (vValue === null || vValue === undefined || (vValue === "" && !bInputValidationEnabled)) { // check if "" is a key in FieldHelp
+		if (vValue === null || vValue === undefined || (vValue === "" && !bInputValidationEnabled)) { // check if "" is a key in ValueHelp
 			if (!_isCompositeType.call(this, oType)) {
 				return null; // TODO: for all types???
 			}
@@ -364,7 +364,7 @@ sap.ui.define([
 						oOperator = _getDefaultOperator.call(this, aOperators, oType);
 
 						if (bInputValidationEnabled && !_isCompositeType.call(this, oType)) {
-							// try first to use EQ and find it in FieldHelp. If not found try later with default operator
+							// try first to use EQ and find it in ValueHelp. If not found try later with default operator
 							var oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
 							if (aOperators.indexOf(oEQOperator.name) >= 0) { // as EQ is returned if not in List
 								bCheckForDefault = !!oOperator && oOperator.name !== oEQOperator.name; // only if default operator exists and is different
@@ -396,7 +396,7 @@ sap.ui.define([
 					var iCallCount = this._oCalls.last;
 
 					if ((!bCompositeType || bIsUnit) && oOperator.validateInput && bInputValidationEnabled) {
-						// use FieldHelp to determine condition (for unit part also if composite type used)
+						// use ValueHelp to determine condition (for unit part also if composite type used)
 						oCondition = _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, true);
 						if (oCondition instanceof Promise) {
 							return _fnReturnPromise.call(this, oCondition);
@@ -567,7 +567,7 @@ sap.ui.define([
 				// no empty key -> no condition
 				return null;
 			} else {
-				// FieldHelp might not fire an exception if nothing found -> but handle this as error
+				// ValueHelp might not fire an exception if nothing found -> but handle this as error
 				return fnError.call(this, new ParseException(this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vValue])));// use original value in message
 			}
 		};
@@ -633,7 +633,7 @@ sap.ui.define([
 		var oCondition;
 
 		if (oOperator && aOperators.indexOf(oOperator.name) >= 0) {
-			oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true); // use Value as displayFormat if nothing found in FieldHelp
+			oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true); // use Value as displayFormat if nothing found in ValueHelp
 			oCondition.validated = ConditionValidated.NotValidated;
 		}
 
@@ -824,13 +824,13 @@ sap.ui.define([
 
 	}
 
-	function _getFieldHelp() {
+	function _getValueHelp() {
 
-		var sID = this.oFormatOptions.fieldHelpID;
+		var sID = this.oFormatOptions.valueHelpID;
 		if (sID) {
-			var oFieldHelp = sap.ui.getCore().byId(sID);
-			if (oFieldHelp && oFieldHelp.isValidationSupported()) {
-				return oFieldHelp;
+			var oValueHelp = sap.ui.getCore().byId(sID);
+			if (oValueHelp && oValueHelp.isValidationSupported()) {
+				return oValueHelp;
 			}
 		}
 
@@ -948,28 +948,28 @@ sap.ui.define([
 
 	function _isInputValidationEnabled() {
 
-		var oFieldHelp = _getFieldHelp.call(this);
+		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 
 		if (oDelegate) {
-			return oDelegate.isInputValidationEnabled(oPayload, oFieldHelp);
+			return oDelegate.isInputValidationEnabled(oPayload, oValueHelp);
 		} else {
-			return !!oFieldHelp;
+			return !!oValueHelp;
 		}
 
 	}
 
 	function _isInvalidInputAllowed() {
 
-		var oFieldHelp = _getFieldHelp.call(this);
+		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 
 		if (oDelegate) {
-			return oDelegate.isInvalidInputAllowed(oPayload, oFieldHelp);
-		} else if (oFieldHelp) {
-			return !oFieldHelp.getValidateInput();
+			return oDelegate.isInvalidInputAllowed(oPayload, oValueHelp);
+		} else if (oValueHelp) {
+			return !oValueHelp.getValidateInput();
 		} else {
 			return true;
 		}
@@ -978,7 +978,7 @@ sap.ui.define([
 
 	function _getItemForValue(vValue, vParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription) {
 
-		var oFieldHelp = _getFieldHelp.call(this);
+		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 		var oControl = this.oFormatOptions.control;
@@ -996,22 +996,22 @@ sap.ui.define([
 		};
 
 		if (oDelegate) {
-			return oDelegate.getItemForValue(oPayload, oFieldHelp, oConfig);
-		} else if (oFieldHelp) {
-			return oFieldHelp.getItemForValue(oConfig);
+			return oDelegate.getItemForValue(oPayload, oValueHelp, oConfig);
+		} else if (oValueHelp) {
+			return oValueHelp.getItemForValue(oConfig);
 		}
 
 	}
 
 	function _getDescription(vKey, oCondition, oType, oBindingContext) {
 
-		var oFieldHelp = _getFieldHelp.call(this);
+		var oValueHelp = _getValueHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 		var oControl = this.oFormatOptions.control;
 		if (oDelegate) {
-			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
-		} else if (oFieldHelp) {
+			return oDelegate.getDescription(oPayload, oValueHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
+		} else if (oValueHelp) {
 			var oConfig = {
 				value: vKey,
 				parsedValue: vKey,
@@ -1024,7 +1024,7 @@ sap.ui.define([
 				exception: FormatException,
 				control: oControl
 			};
-			return oFieldHelp.getItemForValue(oConfig);
+			return oValueHelp.getItemForValue(oConfig);
 		}
 
 	}

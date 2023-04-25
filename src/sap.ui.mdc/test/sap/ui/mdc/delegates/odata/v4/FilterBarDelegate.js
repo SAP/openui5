@@ -198,7 +198,7 @@ sap.ui.define([
 					} else {
 						sFieldHelp = sViewId + "--" + oProperty.fieldHelp;
 					}
-					oModifier.setAssociation(oFilterField, "fieldHelp", sFieldHelp);
+					oModifier.setAssociation(oFilterField, "valueHelp", sFieldHelp);
 				}
 
 				if (oProperty.filterOperators) {

@@ -682,7 +682,7 @@ sap.ui.define([
 					var oException = new oConfig.exception("not Unique");
 					oException._bNotUnique = true;
 					return Promise.reject(oException);
-				} else if (oConfig.value === "Sync" || oConfig.value === "SyncCall") { // TODO: remove after FieldHelp removed completely
+				} else if (oConfig.value === "Sync" || oConfig.value === "SyncCall") { // TODO: remove after ValueHelp removed completely
 					return {key: "Sync", description: "SyncCall", inParameters: {in1: "ISync"}, outParameters: {out1: "OSync"}};
 				} else if (oConfig.parsedValue === "") {
 					return Promise.resolve({key: "", description: "Empty"});
@@ -698,12 +698,12 @@ sap.ui.define([
 			oConditionType = new ConditionType({
 				valueType: oValueType,
 				display: FieldDisplay.Description,
-				fieldHelpID: "VH1",
+				valueHelpID: "VH1",
 				operators: ["EQ"],
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
-				bindingContext: "BC", // just dummy to test forwarding to fieldHelp
-				control: "Control" // just dummy to test forwarding to fieldHelp
+				bindingContext: "BC", // just dummy to test forwarding to valueHelp
+				control: "Control" // just dummy to test forwarding to valueHelp
 			});
 		},
 		afterEach: function() {
@@ -1840,7 +1840,7 @@ sap.ui.define([
 				return Promise.resolve({key: "EUR", description: "Euro"});
 			}
 		});
-		oUnitConditionType.oFormatOptions.fieldHelpID = "VH1"; // fake setting directly
+		oUnitConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
 		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		var oCondition = Condition.createCondition("EQ", [[123.45, "EUR"]], undefined, undefined, ConditionValidated.Validated);
 
@@ -2095,7 +2095,7 @@ sap.ui.define([
 				return Promise.reject(new oConfig.exception("Cannot parse value " + oConfig.parsedValue));
 			}
 		});
-		oUnitConditionType.oFormatOptions.fieldHelpID = "VH1"; // fake setting directly
+		oUnitConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
 		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		oUnitType._aCurrentValue = [1, "USD"]; // fake existing value
 		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
@@ -2341,11 +2341,11 @@ sap.ui.define([
 
 			oConditionType = new ConditionType({
 				display: FieldDisplay.Description,
-				fieldHelpID: "VH1",
+				valueHelpID: "VH1",
 				operators: ["EQ", "GT"],
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
-				bindingContext: "BC" // just dummy to test forwarding to fieldHelp
+				bindingContext: "BC" // just dummy to test forwarding to valueHelp
 			});
 		},
 		afterEach: function() {

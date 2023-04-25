@@ -72,15 +72,15 @@ sap.ui.define([
 						oFormatOptions = {groupingEnabled: false};
 					} else if (sPropertyName === "author_ID") {
 						oFormatOptions = {groupingEnabled: false};
-						oFilterField.setFieldHelp(getFullId(oTable, "FH1"));
+						oFilterField.setValueHelp(getFullId(oTable, "FH1"));
 						oFilterField.setDisplay(FieldDisplay.Description);
 					} else if (sPropertyName === "title") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FH4"));
+						oFilterField.setValueHelp(getFullId(oTable, "FH4"));
 					} else if (sPropertyName === "published") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FHPublished"));
+						oFilterField.setValueHelp(getFullId(oTable, "FHPublished"));
 						oFilterField.setOperators(["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]);
 					} else if (sPropertyName === "language_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FHLanguage"));
+						oFilterField.setValueHelp(getFullId(oTable, "FHLanguage"));
 						oFilterField.setMaxConditions(1);
 						oConstraints = {nullable: false, maxLength: 3}; // to test not nullable
 						oFilterField.setDisplay(FieldDisplay.Description);
@@ -88,19 +88,19 @@ sap.ui.define([
 						oFilterField.setMaxConditions(1);
 						oFilterField.setOperators(["BT"]);
 					} else if (sPropertyName === "classification_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FHClassification"));
+						oFilterField.setValueHelp(getFullId(oTable, "FHClassification"));
 						oFilterField.setDisplay(FieldDisplay.Description);
 					} else if (sPropertyName === "genre_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FHGenre"));
+						oFilterField.setValueHelp(getFullId(oTable, "FHGenre"));
 						oFilterField.setDisplay(FieldDisplay.Description);
 					} else if (sPropertyName === "subgenre_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FHSubGenre"));
+						oFilterField.setValueHelp(getFullId(oTable, "FHSubGenre"));
 						oFilterField.setDisplay(FieldDisplay.Description);
 					} else if (sPropertyName === "detailgenre_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FHDetailGenre"));
+						oFilterField.setValueHelp(getFullId(oTable, "FHDetailGenre"));
 						oFilterField.setDisplay(FieldDisplay.Description);
 					} else if (sPropertyName === "currency_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FH-Currency"));
+						oFilterField.setValueHelp(getFullId(oTable, "FH-Currency"));
 						oFilterField.setDisplay(FieldDisplay.Value);
 						oFilterField.setMaxConditions(1);
 						oFilterField.setOperators(["EQ"]);

@@ -79,7 +79,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
-	 * @class Element for the <code>FieldHelp</code> association in the {@link sap.ui.mdc.field.FieldBase FieldBase} controls.
+	 * @class Element for the <code>ValueHelp</code> association in the {@link sap.ui.mdc.field.FieldBase FieldBase} controls.
 	 * @extends sap.ui.mdc.Element
 	 * @version ${version}
 	 * @constructor
@@ -326,7 +326,7 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
 	 * belongs to, not by the application.
 	 *
-	 * @param {sap.ui.core.Control} oControl Control to which the <code>FieldHelp</code> element is connected to
+	 * @param {sap.ui.core.Control} oControl Control to which the <code>ValueHelp</code> element is connected to
 	 * @param {object} [oConfig] Configuration object that holds required data of the connected control
 	 * @param {int} [oConfig.maxConditions=-1] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Type} [oConfig.dataType] Type of the key (required for condition panel)
@@ -387,7 +387,7 @@ sap.ui.define([
 	/**
 	 * Returns the aria attributes the field needs from the value help
 	 *
-	 * @param {int} iMaxConditions maximal conditions allowed (as FieldHelp might not be connected to a field)
+	 * @param {int} iMaxConditions maximal conditions allowed (as ValueHelp might not be connected to a field)
 	 * @returns {object} object with the aria-attibutes
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -826,7 +826,7 @@ sap.ui.define([
 		}
 
 		_onConditionPropagation.call(this, PropagationReason.ControlChange);
-		// as BindingContext of Field might change (happens if fast typed and FieldHelp not opened) update if needed
+		// as BindingContext of Field might change (happens if fast typed and ValueHelp not opened) update if needed
 		_updateBindingContext.call(this);
 	};
 

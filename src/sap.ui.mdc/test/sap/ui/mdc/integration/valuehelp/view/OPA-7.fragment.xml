@@ -105,7 +105,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FH1"
+				valueHelp="FH1"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -114,7 +114,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FH2"
+				valueHelp="FH2"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 		</mdc:filterItems>

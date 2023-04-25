@@ -154,7 +154,7 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-						<mdcvc:Conditions label="My Define Conditions Panel" fieldHelp="FH4_DEFCOND"></mdcvc:Conditions>
+						<mdcvc:Conditions label="My Define Conditions Panel" valueHelp="FH4_DEFCOND"></mdcvc:Conditions>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -195,7 +195,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FB0-FH1-10"
+				valueHelp="FB0-FH1-10"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 		</mdc:filterItems>

@@ -19,7 +19,7 @@
 				<Title text="Fields with custom content"/>
 				<ToolbarSpacer/>
 				<Label text="EditMode" labelFor="F-EditMode"/>
-				<mdc:Field id="F-EditMode" value="{view>/editMode}" display="Value" fieldHelp="VH-EditMode">
+				<mdc:Field id="F-EditMode" value="{view>/editMode}" display="Value" valueHelp="VH-EditMode">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-EditMode">
 							<mdc:typeahead>
@@ -87,7 +87,7 @@
 		</mdc:Field>
 
 		<Label text="Field with custom control and ValueHelp"/>
-		<mdc:Field id="F4" value="{path:'title', type:'sap.ui.model.odata.type.String'}" editMode="{view>/editMode}" fieldHelp="VH-Title" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' change="handleChange">
+		<mdc:Field id="F4" value="{path:'title', type:'sap.ui.model.odata.type.String'}" editMode="{view>/editMode}" valueHelp="VH-Title" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' change="handleChange">
 			<custom:CustomInput id="F4-CI" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
 		</mdc:Field>
 	</form:SimpleForm>

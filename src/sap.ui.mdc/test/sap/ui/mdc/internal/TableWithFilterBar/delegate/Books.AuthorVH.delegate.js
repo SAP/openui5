@@ -138,8 +138,8 @@ sap.ui.define([
 		// return Promise.resolve();
 	};
 
-	Delegate.determineSearchSupported = function(oPayload, oFieldHelp) {
-		oFieldHelp.setFilterFields("$search");
+	Delegate.determineSearchSupported = function(oPayload, oValueHelp) {
+		oValueHelp.setFilterFields("$search");
 		return Promise.resolve();
 	};
 

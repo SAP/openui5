@@ -60,9 +60,9 @@ sap.ui.define([
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
 
 					if (sPropertyName === "OrderNo") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FH1"));
+						oFilterField.setValueHelp(getFullId(oTable, "FH1"));
 					} else if (sPropertyName === "currency_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FH-Currency"));
+						oFilterField.setValueHelp(getFullId(oTable, "FH-Currency"));
 						oFilterField.setDisplay(FieldDisplay.Value);
 						oFilterField.setMaxConditions(1);
 						oFilterField.setOperators(["EQ"]);

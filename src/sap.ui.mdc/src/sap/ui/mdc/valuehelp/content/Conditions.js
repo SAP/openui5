@@ -71,8 +71,24 @@ sap.ui.define([
 					 The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp>/code> with a <code>TypeAhead</code> and a single-selection <code>MTable</code> can be used.
 
 					 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code> types, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
+					 * @deprecated as of 1.114.0, replaced by {@link #setValueHelp valueHelp} association
 					 */
 					fieldHelp: {
+						type: "sap.ui.mdc.ValueHelp",
+						multiple: false
+					},
+
+					/**
+					 * Optional <code>ValueHelp</code>.
+					 *
+					 * This is an association that allows the usage of one <code>ValueHelp</code> instance for the value fields for the <code>Conditions</code>.
+					 *
+					 * <b>Note:</b> The value fields on the conditions UI are created by the used <code>DefineConditionPanel</code>. They cannot be accessed from outside.
+					 The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp>/code> with a <code>TypeAhead</code> and a single-selection <code>MTable</code> can be used.
+					 *
+					 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code> types, no <code>ValueHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
+					 */
+					 valueHelp: {
 						type: "sap.ui.mdc.ValueHelp",
 						multiple: false
 					}
@@ -123,7 +139,7 @@ sap.ui.define([
 							inputOK: "{$valueHelp>/_valid}",
 							formatOptions: {path: "$help>/config", formatter: _convertConfig}, // TODO: change DefineConditionPanel to use Config
 							conditionProcessed: _handleConditionProcessed.bind(this),
-							fieldHelp: this.getFieldHelp() //TODO FieldHelp can only be set once and not modified?
+							valueHelp: this.getValueHelp() || this.getFieldHelp() //TODO ValueHelp can only be set once and not modified?
 						}
 					).setModel(this._oManagedObjectModel, "$help");
 

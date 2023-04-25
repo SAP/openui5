@@ -32,7 +32,7 @@
 								tooltip="{/#Product/ProductId/@sap:label}"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="VH1">
+								valueHelp="VH1">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>
@@ -126,7 +126,7 @@
 								editMode="Display"
 								display="ValueDescription"
 								placeholder="Placeholder"
-								fieldHelp="VH1"
+								valueHelp="VH1"
 								liveChange="handleLiveChange"
 								submit="handleSubmit">
 							</mdcField:FieldBase>
@@ -139,7 +139,7 @@
 								placeholder="{/#Product/Description/@sap:label}"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="VH-Conditions">
+								valueHelp="VH-Conditions">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -161,7 +161,7 @@
 								placeholder="{/#Product/Name/@sap:label}"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="VH2">
+								valueHelp="VH2">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>
@@ -338,7 +338,7 @@
 								maxConditions="-1"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="CFH1">
+								valueHelp="CFH1">
 								<mdcField:contentDisplay>
 									<m:SegmentedButton items="{path: '$field>/conditions'}">
 										<m:items>
@@ -395,7 +395,7 @@
 								placeholder="{/#Product/Quantity/@sap:label}"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="VH3">
+								valueHelp="VH3">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH3" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:dialog>
@@ -426,7 +426,7 @@
 								display="DescriptionValue"
 								placeholder="{/#Product/Status/@sap:label}"
 								liveChange="handleLiveChange"
-								fieldHelp="VH-Status"
+								valueHelp="VH-Status"
 								submit="handleSubmit">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH-Status"
@@ -456,7 +456,7 @@
 								placeholder="Placeholder"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="VH-Status">
+								valueHelp="VH-Status">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -518,7 +518,7 @@
 								placeholder="{/#Product/WeightMeasure/@sap:label}"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="VH-WeightUnit">
+								valueHelp="VH-WeightUnit">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH-WeightUnit" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>
@@ -577,7 +577,7 @@
 								placeholder="{/#Product/CountryId/@sap:label}"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="VH-Country">
+								valueHelp="VH-Country">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH-Country" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:dialog>
@@ -654,7 +654,7 @@
 								placeholder="{/#Product/MatrId/@sap:label}"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
-								fieldHelp="VH-MatrId">
+								valueHelp="VH-MatrId">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH-MatrId" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>

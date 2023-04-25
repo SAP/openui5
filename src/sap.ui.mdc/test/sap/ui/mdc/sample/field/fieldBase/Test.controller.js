@@ -364,8 +364,8 @@ sap.ui.define([
 		},
 
 		handleStatusOpen: function(oEvent) {
-			var oFieldHelp = oEvent.oSource;
-			var oWrapper = oFieldHelp.getContent();
+			var oValueHelp = oEvent.oSource;
+			var oWrapper = oValueHelp.getContent();
 			setTimeout(function() { // test async table assignment
 				var oTable = oWrapper.getTable();
 				if (!oTable) {
@@ -445,9 +445,9 @@ sap.ui.define([
 					oField.setConditions([aConditions[0]]); // clear conditions as FixedList only allows one
 				}
 				oField.setMaxConditions(1);
-				oField.setFieldHelp(oView.byId("LFH-MatrId"));
+				oField.setValueHelp(oView.byId("LFH-MatrId"));
 			} else {
-				oField.setFieldHelp(oView.byId("VH-MatrId-FL"));
+				oField.setValueHelp(oView.byId("VH-MatrId-FL"));
 				oField.setMaxConditions(-1);
 			}
 		}

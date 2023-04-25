@@ -171,7 +171,7 @@
 				</mdc:basicSearchField>
 
 				<mdc:filterItems>
-					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff2" fieldHelp="FH1" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints='\{"maxLength": 10, "isDigitSequence": true\}'/>
+					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff2" valueHelp="FH1" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints='\{"maxLength": 10, "isDigitSequence": true\}'/>
 					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff3" label="Order Time" conditions="{$filters>/conditions/orderTime}" dataType="Edm.TimeOfDay" />
 					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff4" label="Order w. one Item for Book (Any)" conditions="{$filters>/conditions/Items*/book_ID}" dataType="Edm.Int32" />
 					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff5" label="Order w. all Items for Book (All)" conditions="{$filters>/conditions/Items+/book_ID}" dataType="Edm.Int32" />

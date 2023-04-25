@@ -278,7 +278,7 @@ sap.ui.define([
 		}
 	}
 
-	// returns ListFieldHelp item for inner list item
+	// returns FixedList item for inner list item
 	function _getOriginalItem(oItem) {
 
 		var sPath = oItem.getBindingContextPath();

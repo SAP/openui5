@@ -117,7 +117,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FH1"
+				valueHelp="FH1"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
 		</mdc:filterItems>
