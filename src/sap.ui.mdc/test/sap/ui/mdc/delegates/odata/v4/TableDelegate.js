@@ -184,7 +184,7 @@ sap.ui.define([
 				var oDataObject = oEntityType[sKey];
 
 				if (oDataObject && oDataObject.$kind === "Property") {
-					if (oDataObject.$isCollection) {
+					if (oDataObject.$isCollection || !oDataObject.$Type.startsWith('Edm')) {
 						Log.warning("Complex property with type " + oDataObject.$Type + " has been ignored");
 						continue;
 					}

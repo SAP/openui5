@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Application under test</title>
+    <meta charset="utf-8">
+
+    <script
+            id='sap-ui-bootstrap'
+            src='../../../../../../../../resources/sap-ui-core.js'
+            data-sap-ui-theme='sap_fiori_3'
+            data-sap-ui-libs='sap.m, sap.ui.mdc'
+            data-sap-ui-preload="off"
+            data-sap-ui-async="true"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+            data-sap-ui-resourceroots='{
+                "appMDCTreeTableV4": "./",
+				"sap.ui.mdc.tableOpaTests": "../../../../../../../../test-resources/sap/ui/mdc/qunit/table/OpaTests",
+				"sap.ui.mdc.testutils": "../../../../../../../../test-resources/sap/ui/mdc/testutils",
+				"delegates": "../../../../../../../../test-resources/sap/ui/mdc/delegates",
+                "sap.ui.core.sample": "../../../../../../../../test-resources/sap/ui/core/demokit/sample"
+			}'>
+    </script>
+</head>
+
+<body class="sapUiBody">
+    <div data-sap-ui-component data-name="appMDCTreeTableV4" data-id="container" data-settings='{"id" : "appMDCTreeTableV4"}'></div>
+</body>
+
+</html>
