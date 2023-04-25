@@ -178,6 +178,28 @@ sap.ui.define([
 		oDeleteSpy.restore();
 	});
 
+	QUnit.test("Keyboard action [DELETE] is handled properly, if remove button is disabled", function(assert) {
+		var oItem = this.oUploadSet.getItems()[0],
+			oTarget = {id: oItem.getListItem().getId()},
+			oDeleteSpy = this.spy(UploadSet.prototype, "_handleItemDelete");
+		oItem.setEnabledRemove(false);
+		assert.notOk(oItem.getEnabledRemove(), "Remove button is disabled");
+
+		this.oUploadSet.onkeydown({ target: oTarget, keyCode: KeyCodes.DELETE });
+		assert.ok(oDeleteSpy.notCalled, "Upload set item handler for removing a file isn't called.");
+	});
+
+	QUnit.test("Keyboard action [DELETE] is handled properly, if remove button is not visible", function(assert) {
+		var oItem = this.oUploadSet.getItems()[0],
+			oTarget = {id: oItem.getListItem().getId()},
+			oDeleteSpy = this.spy(UploadSet.prototype, "_handleItemDelete");
+		oItem.setVisibleRemove(false);
+		assert.notOk(oItem.getVisibleRemove(), "Remove button is not visible");
+
+		this.oUploadSet.onkeydown({ target: oTarget, keyCode: KeyCodes.DELETE });
+		assert.ok(oDeleteSpy.notCalled, "Upload set item handler for removing a file isn't called.");
+	});
+
 	/* ============== */
 	/* Inner Controls */
 	/* ============== */
