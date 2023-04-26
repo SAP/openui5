@@ -9,9 +9,9 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/OverflowToolbarMenuButton", "sap/ui/core/library", 	"sap/ui/Device", "sap/ui/core/ShortcutHintsMixin", "sap/ui/core/theming/Parameters", "sap/ui/performance/trace/FESRHelper"
+	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/OverflowToolbarMenuButton", "sap/m/Menu", "sap/m/MenuItem", "sap/ui/core/library", "sap/ui/Device", "sap/ui/core/ShortcutHintsMixin", "sap/ui/core/theming/Parameters", "sap/ui/performance/trace/FESRHelper"
 
-], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper) {
+], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, Menu, MenuItem, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -81,29 +81,23 @@ sap.ui.define([
 				defaultAction: mEventInfo.default
 			});
 
-			FESRHelper.setSemanticStepname(oMenuButton, "press", "OI:QE");
-
-			// sap.m.Menu requires modules from the unified Lib - load it properly with preload
-			sap.ui.getCore().loadLibrary("sap.ui.unified", {async: true}).then(function() {
-				sap.ui.require(["sap/m/Menu", "sap/m/MenuItem"], function(Menu, MenuItem) {
-					var oMenu = new Menu({
-						items: [
-							new MenuItem({
-								text: oRb.getText("table.QUICK_EXPORT"),
-								press: mEventInfo.default
-							}),
-							new MenuItem({
-								text: oRb.getText("table.EXPORT_WITH_SETTINGS"),
-								press: mEventInfo.exportAs
-							})
-						]
-					});
-					oMenuButton.setMenu(oMenu);
-
-					FESRHelper.setSemanticStepname(oMenu.getItems()[0], "press", "OI:QE");
-					FESRHelper.setSemanticStepname(oMenu.getItems()[1], "press", "OI:EXP:SETTINGS");
-				});
+			var oMenu = new Menu({
+				items: [
+					new MenuItem({
+						text: oRb.getText("table.QUICK_EXPORT"),
+						press: mEventInfo.default
+					}),
+					new MenuItem({
+						text: oRb.getText("table.EXPORT_WITH_SETTINGS"),
+						press: mEventInfo.exportAs
+					})
+				]
 			});
+			oMenuButton.setMenu(oMenu);
+
+			FESRHelper.setSemanticStepname(oMenuButton, "defaultAction", "OI:QE");
+			FESRHelper.setSemanticStepname(oMenu.getItems()[0], "press", "OI:QE");
+			FESRHelper.setSemanticStepname(oMenu.getItems()[1], "press", "OI:EXP:SETTINGS");
 
 			ShortcutHintsMixin.addConfig(oMenuButton._getButtonControl(), {
 					addAccessibilityLabel: true,

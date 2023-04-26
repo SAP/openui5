@@ -2748,8 +2748,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Export button handling on initialization when export is enabled", function(assert) {
-		var done = assert.async();
-
 		var oTable = this.oTable;
 
 		oTable.setEnableExport(true);
@@ -2761,21 +2759,11 @@ sap.ui.define([
 			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Is child of the toolbar");
 			assert.ok(oTable._oExportButton.getVisible(), "Is visible");
 
-			assert.equal(FESRHelper.getSemanticStepname(oTable._oExportButton, "press"), "OI:QE", "Correct FESR StepName");
-
-			function checkExportMenu() {
-				var oMenu = oTable._oExportButton.getMenu();
-				if (oMenu) {
-					assert.equal(oMenu.getItems().length, 2, "Export MenuButton has 2 actions");
-					assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[0], "press"), "OI:QE", "Correct FESR StepName - Menu Item 1");
-					assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[1], "press"), "OI:EXP:SETTINGS", "Correct FESR StepName - Menu Item 2");
-					done();
-				} else {
-					setTimeout(checkExportMenu, 200);
-				}
-			}
-
-			checkExportMenu();
+			assert.equal(FESRHelper.getSemanticStepname(oTable._oExportButton, "defaultAction"), "OI:QE", "Correct FESR StepName");
+			var oMenu = oTable._oExportButton.getMenu();
+			assert.equal(oMenu.getItems().length, 2, "Export MenuButton has 2 actions");
+			assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[0], "press"), "OI:QE", "Correct FESR StepName - Menu Item 1");
+			assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[1], "press"), "OI:EXP:SETTINGS", "Correct FESR StepName - Menu Item 2");
 		});
 	});
 
