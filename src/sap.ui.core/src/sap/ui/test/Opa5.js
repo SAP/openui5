@@ -78,7 +78,7 @@ sap.ui.define([
 		 * @author SAP SE
 		 * @since 1.22
 		 */
-		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5", $.extend({}, Opa.prototype, {
+		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5", extend({}, Opa.prototype, {
 			constructor: function () {
 				Opa.apply(this, arguments);
 			}
@@ -92,7 +92,7 @@ sap.ui.define([
 			var oOptions = {};
 			var aOptions = ["source", "timeout", "autoWait", "width", "height"];
 			// allow separate arguments for backwards compatibility
-			if (arguments.length === 1 && $.isPlainObject(arguments[0])) {
+			if (arguments.length === 1 && isPlainObject(arguments[0])) {
 				oOptions = arguments[0];
 			} else {
 				var aValues = arguments;
@@ -106,7 +106,7 @@ sap.ui.define([
 				oOptions.source = oOptions.source.toString();
 			}
 			var uri = new URI(oOptions.source ? oOptions.source : '');
-			uri.search($.extend(
+			uri.search(extend(
 				uri.search(true), Opa.config.appParams));
 
 			// kick starting the frame
@@ -167,7 +167,7 @@ sap.ui.define([
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
 			oParamsWaitForOptions.success = function () {
 				var uri = new URI();
-				uri.search($.extend(
+				uri.search(extend(
 					uri.search(true), Opa.config.appParams));
 				window.history.replaceState({}, "", uri.toString());
 			};
@@ -758,7 +758,7 @@ sap.ui.define([
 				// only take the allowed properties from the config
 				oOptionsPassedToOpa;
 
-			options = $.extend({},
+			options = extend({},
 				oFilteredConfig,
 				options);
 			options.actions = vActions;
@@ -788,7 +788,7 @@ sap.ui.define([
 
 				// Create a new options object for the plugin to keep the original one as is
 				var oPlugin = Opa5.getPlugin();
-				var oPluginOptions = $.extend({}, options, {
+				var oPluginOptions = extend({}, options, {
 					// ensure Interactable matcher is applied if autoWait is true or actions are specified
 					interactable: bApplyAutoWait || options.interactable
 				});
@@ -854,8 +854,8 @@ sap.ui.define([
 				// So waitFors added by an action will block the current execution of success
 				var oWaitForObject = createWaitForObjectWithoutDefaults();
 				// preserve the autoWait value
-				if ($.isPlainObject(options.autoWait)) {
-					oWaitForObject.autoWait = $.extend({}, options.autoWait);
+				if (isPlainObject(options.autoWait)) {
+					oWaitForObject.autoWait = extend({}, options.autoWait);
 				} else {
 					oWaitForObject.autoWait = options.autoWait;
 				}
@@ -1290,7 +1290,7 @@ sap.ui.define([
 			// include styles
 			var sIFrameStyleLocation = sap.ui.require.toUrl("sap/ui/test/OpaCss") + ".css";
 			includeStylesheet(sIFrameStyleLocation);
-			var oFrameLaunchOptions = $.extend({}, oOptions, {
+			var oFrameLaunchOptions = extend({}, oOptions, {
 				frameId: sFrameId,
 				opaLogLevel: Opa.config.logLevel,
 				disableHistoryOverride: Opa.config.disableHistoryOverride

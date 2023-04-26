@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/deepExtend",
 	"sap/ui/base/Object"
-], function ($, BaseObject) {
+], function (deepExtend, BaseObject) {
 	"use strict";
 
 	 /**
@@ -29,7 +29,7 @@ sap.ui.define([
 			if (!mData || !mData.controlSelector) {
 				reject(new Error("Control selector is required!"));
 			}
-			var sSnippet = this._generate($.extend(true, {}, mData));
+			var sSnippet = this._generate(deepExtend({}, mData));
 			resolve(sSnippet);
 		}.bind(this));
 	};

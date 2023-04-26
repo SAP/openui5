@@ -3,14 +3,14 @@
  */
 
 sap.ui.define([
-    "sap/ui/thirdparty/jquery",
+    "sap/base/util/extend",
     "sap/ui/base/ManagedObject",
     "sap/ui/test/_OpaLogger",
     'sap/ui/test/_ControlFinder',
     'sap/ui/core/Element',
     'sap/ui/core/mvc/View',
     'sap/ui/base/ManagedObjectMetadata'
-], function ($, ManagedObject, _OpaLogger, _ControlFinder, UI5Element, View, ManagedObjectMetadata) {
+], function (extend, ManagedObject, _OpaLogger, _ControlFinder, UI5Element, View, ManagedObjectMetadata) {
     "use strict";
 
     /**
@@ -51,15 +51,15 @@ sap.ui.define([
                         if (Array.isArray(vItem)) {
                             // selector has multiple parts (e.g.: composite binding)
                             return vItem.map(function (mItemPart) {
-                                return $.extend({}, this._createSelectorBase(oControl, mItemPart), mItemPart);
+                                return extend({}, this._createSelectorBase(oControl, mItemPart), mItemPart);
                             }.bind(this));
                         } else {
-                            return $.extend({}, this._createSelectorBase(oControl, vItem), vItem);
+                            return extend({}, this._createSelectorBase(oControl, vItem), vItem);
                         }
                     }.bind(this));
                 } else {
                     // result is a single selector
-                    return $.extend(this._createSelectorBase(oControl, vResult), vResult);
+                    return extend(this._createSelectorBase(oControl, vResult), vResult);
                 }
             }
         },
@@ -93,7 +93,7 @@ sap.ui.define([
                 };
                 var oView = this._getControlView(oControl);
                 if (oView) {
-                    $.extend(mBasic, this._getViewIdOrName(oView));
+                    extend(mBasic, this._getViewIdOrName(oView));
                 }
                 return mBasic;
             }

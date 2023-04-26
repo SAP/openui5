@@ -4,11 +4,11 @@
 
  // private
 sap.ui.define([
+    "sap/base/util/deepExtend",
     'sap/ui/base/ManagedObject',
     "sap/ui/test/_OpaLogger",
-    'sap/ui/test/_ControlFinder',
-    'sap/ui/thirdparty/jquery'
-], function (ManagedObject, _OpaLogger, _ControlFinder, $) {
+    'sap/ui/test/_ControlFinder'
+], function (deepExtend, ManagedObject, _OpaLogger, _ControlFinder) {
 	"use strict";
 
     /**
@@ -43,7 +43,7 @@ sap.ui.define([
         _validate: function (mSelector) {
             if (mSelector) {
                 // use a deep copy because _findControls will manipulate the selector object (by changing controlType and adding sOrignalControlType)
-                var aLocatedControls = _ControlFinder._findControls($.extend(true, {}, mSelector));
+                var aLocatedControls = _ControlFinder._findControls(deepExtend({}, mSelector));
 
                 if (this.oValidationRoot && aLocatedControls.length > 1) {
                     // the control should be unique among siblings

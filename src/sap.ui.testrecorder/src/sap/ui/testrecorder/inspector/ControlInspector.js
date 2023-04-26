@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/extend",
 	"sap/ui/testrecorder/CommunicationBus",
 	"sap/ui/testrecorder/CommunicationChannels",
 	"sap/ui/testrecorder/mutationObservers/AppMutationObserver",
@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/testrecorder/codeSnippets/RawSnippetUtil",
 	"sap/ui/testrecorder/codeSnippets/CodeSnippetProvider",
 	"sap/ui/testrecorder/ui/models/SharedModel"
-], function (BaseObject, $, CommunicationBus, CommunicationChannels, AppMutationObserver, ElementMutationObserver, Highlighter, _ControlFinder, ControlAPI, ControlInspectorRepo, constants,
+], function (BaseObject, extend, CommunicationBus, CommunicationChannels, AppMutationObserver, ElementMutationObserver, Highlighter, _ControlFinder, ControlAPI, ControlInspectorRepo, constants,
 	DialectRegistry, Dialects, ControlSelectorGenerator, POMethodUtil, RawSnippetUtil, CodeSnippetProvider, SharedModel) {
 	"use strict";
 
@@ -124,7 +124,7 @@ sap.ui.define([
 			if (DialectRegistry.getActiveDialect() === Dialects.RAW) {
 				return RawSnippetUtil.getJSON(aSnippets, mSelectorSettings);
 			} else {
-				return POMethodUtil.getPOMethod(aSnippets, $.extend({
+				return POMethodUtil.getPOMethod(aSnippets, extend({
 					action: mData.action,
 					assertion: mData.assertion
 				}, mSelectorSettings), DialectRegistry.getActiveDialect() === Dialects.WDI5);

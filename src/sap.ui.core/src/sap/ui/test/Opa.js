@@ -4,6 +4,8 @@
 
 /*global Math */
 sap.ui.define([
+	"sap/base/util/deepExtend",
+	"sap/base/util/extend",
 	'sap/ui/Device',
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/test/_LogCollector',
@@ -12,7 +14,7 @@ sap.ui.define([
 	'sap/ui/test/_UsageReport',
 	'sap/ui/test/_OpaUriParameterParser',
 	'sap/ui/test/_ValidationParameters'
-], function(Device, $, _LogCollector, _OpaLogger, _ParameterValidator, _UsageReport, _OpaUriParameterParser, _ValidationParameters) {
+], function(deepExtend, extend, Device, $, _LogCollector, _OpaLogger, _ParameterValidator, _UsageReport, _OpaUriParameterParser, _ValidationParameters) {
 	"use strict";
 
 	///////////////////////////////
@@ -208,7 +210,7 @@ sap.ui.define([
 	 */
 	var Opa = function(extensionObject) {
 		this.and = this;
-		$.extend(this, extensionObject);
+		extend(this, extensionObject);
 	};
 
 	/**
@@ -373,7 +375,7 @@ sap.ui.define([
 		// URI params overwrite other config params
 		// if any action, assertion or arrangement is already defined in OPA, it will be overwritten
 		// deep extend is necessary so plain object configs like appParams are properly merged
-		Opa.config = $.extend(true, Opa.config, oOptions, Opa._uriParams);
+		Opa.config = deepExtend(Opa.config, oOptions, Opa._uriParams);
 		_OpaLogger.setLevel(Opa.config.logLevel);
 	};
 
@@ -416,7 +418,7 @@ sap.ui.define([
 	 * @since 1.25
 	 */
 	Opa.resetConfig = function () {
-		Opa.config = $.extend({
+		Opa.config = extend({
 			arrangements : new Opa(),
 			actions : new Opa(),
 			assertions : new Opa(),
@@ -565,7 +567,7 @@ sap.ui.define([
 			var deferred = $.Deferred(),
 				oFilteredConfig = Opa._createFilteredConfig(Opa._aConfigValuesForWaitFor);
 
-			options = $.extend({},
+			options = extend({},
 				oFilteredConfig,
 				options);
 
@@ -576,7 +578,7 @@ sap.ui.define([
 
 			// create a new deferred for each new queue element and decorate a copy of this which will be returned in the end
 			// this way a promise result handler can be attached to any waitFor statement at any time
-			var _this = $.extend({}, this);
+			var _this = extend({}, this);
 			deferred.promise(_this);
 
 			queue.push({

@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/util/extend",
 	"sap/ui/test/actions/EnterText",
 	"sap/m/Input",
 	"sap/m/SearchField",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/strings/capitalize"
 ], function (
+	extend,
 	EnterText,
 	Input,
 	SearchField,
@@ -94,7 +96,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var sTextToEnter = testInfo.textToEnter || "foo";
 			var sTextBeforeAction = testInfo.textInControl || "A";
-			var oControl = new testInfo.Control($.extend({
+			var oControl = new testInfo.Control(extend({
 				value: sTextBeforeAction
 			}, testInfo.props));
 			this.oControl = oControl; // should be destroyed at end of test
