@@ -76,6 +76,12 @@ sap.ui.define([],
 				"text": "Accessibility Guide",
 				"href": "test-resources/sap/m/demokit/accessibilityGuide/webapp/index.html",
 				"hideOnPhone": true
+			},
+			{
+				"id": "ui5TestRecorder",
+				"text": "UI5 Test Recorder",
+				"href": "topic/2535ef9272064cb6bd6b44e5402d531d",
+				"hideOnPhone": true
 			}
 		];
 
