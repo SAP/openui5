@@ -54,28 +54,24 @@ function(
 		sandbox.stub(RtaUtils, "getFiori2Renderer").returns({
 			getRootControl: function() {
 				return {
-					getOUnifiedShell: function() {
+					getShellHeader: function() {
 						return {
-							getHeader: function() {
+							getLogo: function() {
+								return "logo";
+							},
+							addStyleClass: function(sText) {
+								this.sAdd = sText;
+							}.bind(this),
+							removeStyleClass: function(sText) {
+								this.sRemove = sText;
+							}.bind(this),
+							getShowLogo: function() {
+								return true;
+							},
+							$: function() {
 								return {
-									getLogo: function() {
-										return "logo";
-									},
-									addStyleClass: function(sText) {
-										this.sAdd = sText;
-									}.bind(this),
-									removeStyleClass: function(sText) {
-										this.sRemove = sText;
-									}.bind(this),
-									getShowLogo: function() {
-										return true;
-									},
-									$: function() {
-										return {
-											find: function() {
-												return jQuery(this.oImage.getDomRef());
-											}.bind(this)
-										};
+									find: function() {
+										return jQuery(this.oImage.getDomRef());
 									}.bind(this)
 								};
 							}.bind(this)

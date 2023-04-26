@@ -405,7 +405,7 @@ function(
 		var oRenderer = Utils.getFiori2Renderer();
 		return oRenderer
 			&& oRenderer.getRootControl
-			&& oRenderer.getRootControl().getOUnifiedShell().getHeader();
+			&& oRenderer.getRootControl().getShellHeader();
 	};
 
 	/**
