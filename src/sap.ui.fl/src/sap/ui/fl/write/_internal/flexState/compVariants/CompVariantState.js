@@ -162,7 +162,10 @@ sap.ui.define([
 		}).then(function () {
 			// update CompVariantsMap
 			removeFromCompVariantsMap(oFlexObject, mCompVariantsMapByPersistencyKey);
-		}).then(function () {
+		}).then(Versions.updateModelFromBackend.bind(this, {
+			reference: oFileContent.reference,
+			layer: oFileContent.layer
+		})).then(function() {
 			// update StorageResponse
 			removeFromArrayById(
 				getSubSection(oStoredResponse.changes.comp, oFlexObject),
