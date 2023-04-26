@@ -93,7 +93,7 @@
 			<DatePicker dateValue="{path: 'v2>Date', type: 'sap.ui.model.odata.type.Date'}" visible="{ui>/v2}" id="I55"
 				tooltip="If using the V4 type sap.ui.model.odata.type.Date for a V2 service, it is only possible to display the value"/>
 			<Label text="DateTime, bound property dateValue" visible="{ui>/v2}" labelFor="I57"/>
-			<DateTimePicker dateValue="{v2>DateTime}" visible="{ui>/v2}" id="I57"/>
+			<DateTimePicker dateValue="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime'}" visible="{ui>/v2}" id="I57"/>
 
 			<Label text="DateTimeOffset" labelFor="I14"/>
 			<Input placeholder="{:= ${ui>/patterns/dateTimeMedium}}" value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}" id="I14"/>
@@ -116,7 +116,7 @@
 				<layoutData><layout:GridData span="XL12 L12 M12 S12"/></layoutData>
 			</DateTimePicker>
 			<Label text="DateTimeOffset, bound property dateValue" labelFor="I56"/>
-			<DateTimePicker dateValue="{DateTimeOffset}" id="I56"/>
+			<DateTimePicker dateValue="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}" id="I56"/>
 
 			<Label text="Time" visible="{ui>/v2}" labelFor="I18"/>
 			<Input placeholder="{:= ${ui>/patterns/timeMedium}}" value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time'}" visible="{ui>/v2}" id="I18"/>
