@@ -240,6 +240,30 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
+	QUnit.test("tabIndex is correct after initially selected button is selected again (programmatically) - BCP 2380027793", function(assert) {
+		var oRBGroup = new RadioButtonGroup("RBG1", {
+			selectedIndex: 0,
+			buttons: [
+				new RadioButton({ text: "First"}),
+				new RadioButton({ text: "Second"})
+			]
+		});
+
+		oRBGroup.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(oRBGroup.getButtons()[0].getDomRef().tabIndex, 0, "tabindex='0' for the initially selected radio button");
+
+		// select again the same radio button
+		oRBGroup.setSelectedIndex(0);
+		Core.applyChanges();
+
+		assert.strictEqual(oRBGroup.getButtons()[0].getDomRef().tabIndex, 0, "tabindex='0' after initially selected radio button is selected again");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
 	/*	--------------------------------------- 	*/
 	/*	        tests textDirection	            	*/
 	/*	--------------------------------------- 	*/
