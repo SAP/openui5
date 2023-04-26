@@ -4883,8 +4883,7 @@ sap.ui.define([
 			oBinding.filter(
 				new Filter("EQUIPMENT_2_PRODUCT/SupplierIdentifier", FilterOperator.EQ, 2));
 
-			assert.strictEqual(oBinding.getHeaderContext().isSelected(), false,
-				"JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oBinding.getHeaderContext().isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 
 			assert.throws(function () {
 				oBinding.getDownloadUrl();
@@ -6739,8 +6738,7 @@ sap.ui.define([
 				$select : "SalesOrderID"
 			});
 
-			assert.strictEqual(oTableBinding.getHeaderContext().isSelected(), false,
-				"JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oTableBinding.getHeaderContext().isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 
 			return that.waitForChanges(assert);
 		});
@@ -6984,8 +6982,8 @@ sap.ui.define([
 			return Promise.all([
 				oTable.setBindingContext(oRowContext),
 				resolveLater(function () {
-					assert.strictEqual(oTable.getBinding("items").getHeaderContext().isSelected(),
-						false, "JIRA: CPOUI5ODATAV4-1943");
+					assert.notOk(oTable.getBinding("items").getHeaderContext().isSelected(),
+						"JIRA: CPOUI5ODATAV4-1943");
 
 					resolveLater(fnResolve); // must not respond before requestSideEffects
 					return oRowContext.requestSideEffects(["SO_2_SOITEM"]);
@@ -18631,7 +18629,7 @@ sap.ui.define([
 			}, new Error("Must not select a deleted entity: /SalesOrderList('2');deleted"));
 			// code under test (JIRA: CPOUI5ODATAV4-1943)
 			oContext2.setSelected(false);
-			assert.strictEqual(oContext2.isSelected(), false, "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 
 			assert.ok(oBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges());
@@ -18751,13 +18749,13 @@ sap.ui.define([
 				oPromise4.then(function () {
 					assert.ok(oFixture.success);
 					assert.ok(oContext4.isDeleted());
-					assert.strictEqual(oContext4.isSelected(), true, "JIRA: CPOUI5ODATAV4-1943");
+					assert.ok(oContext4.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 				}, function (oError) {
 					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
 					assert.notOk(oContext4.hasPendingChanges());
 					assert.notOk(oContext4.isDeleted());
-					assert.strictEqual(oContext4.isSelected(), true, "JIRA: CPOUI5ODATAV4-1943");
+					assert.ok(oContext4.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 					assert.strictEqual(oContext4.getProperty("SalesOrderID"), "4");
 				}),
 				oModel.submitBatch("update"),
@@ -24391,18 +24389,18 @@ sap.ui.define([
 				}, "technical properties have been removed");
 
 			// code under test
-			assert.strictEqual(oRoot.isSelected(), false, "JIRA: CPOUI5ODATAV4-1943");
-			assert.strictEqual(oHeaderContext.isSelected(), false);
+			assert.notOk(oRoot.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oHeaderContext.isSelected());
 
 			// code under test
 			oRoot.setSelected(true);
-			assert.strictEqual(oRoot.isSelected(), true);
+			assert.ok(oRoot.isSelected());
 			assert.strictEqual(oRoot.toString(),
 				"/Artists(ArtistID='0',IsActiveEntity=true)[0;selected]");
 
 			// code under test
 			oHeaderContext.setSelected(true);
-			assert.strictEqual(oHeaderContext.isSelected(), true);
+			assert.ok(oHeaderContext.isSelected());
 
 			that.expectChange("count", "1");
 
@@ -41662,7 +41660,7 @@ sap.ui.define([
 			assert.strictEqual(normalizeUID(oContext2.toString()),
 				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;deleted;selected]",
 				"Context#toString: deleted");
-			assert.strictEqual(oContext2.isSelected(), true, "JIRA: CPOUI5ODATAV4-1943");
+			assert.ok(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 
 			return Promise.all([
 				checkCanceled(assert, oContext2.created()),
@@ -41675,7 +41673,7 @@ sap.ui.define([
 			assert.strictEqual(normalizeUID(oContext2.toString()),
 				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;destroyed]",
 				"Context#toString: destroyed");
-			assert.strictEqual(oContext2.isSelected(), false, "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 
 			that.expectChange("count", "3")
 				.expectChange("note", [,, "Note 3"])
