@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
@@ -20,6 +21,7 @@ sap.ui.define([
 	ManifestUtils,
 	FlexObjectState,
 	Layer,
+	LayerUtils,
 	FlexUtils,
 	Storage,
 	Versions,
@@ -337,7 +339,10 @@ sap.ui.define([
 			handleResponseForVersioning(oResponse, 201, mPropertyBag);
 			return FlexObjectState.getFlexObjects({ selector: mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true, currentLayer: Layer.CUSTOMER });
 		}.bind(this)).then(function(aFlexObjects) {
-			var aCopiedChanges = copyVariantsAndChanges(aFlexObjects, mPropertyBag.contextBasedAdaptation.id);
+			//currently getFlexObjects contains also VENDOR layer ctrl variant changes which need to be removed before copy
+			//TODO refactor when FlexObjectState.getFlexObjects will be refactored
+			var aCustomerFlexObjects = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aFlexObjects, Layer.CUSTOMER);
+			var aCopiedChanges = copyVariantsAndChanges(aCustomerFlexObjects, mPropertyBag.contextBasedAdaptation.id);
 			return Storage.contextBasedAdaptation.writeChange({
 				layer: mPropertyBag.layer,
 				flexObjects: aCopiedChanges,

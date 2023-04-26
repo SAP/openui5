@@ -19,6 +19,34 @@
                 "user": "TEST"
             },
             "originalLanguage": "EN",
+            "layer": "VENDOR",
+            "fileType": "ctrl_variant",
+            "fileName": "id_1676895342319_007_flVariant",
+            "content": {},
+            "texts": {
+                "variantName": {
+                    "value": "Standard VENDOR",
+                    "type": "XFLD"
+                }
+            },
+            "favorite": true,
+            "executeOnSelection": false,
+            "standardVariant": false,
+            "variantReference": "app--variantManagementOrdersTable",
+            "variantManagementReference": "app--variantManagementOrdersTable",
+            "creation": "2022-02-20T12:16:07.4726980Z",
+            "self": "id_1676895342319_007_flVariant"
+        },
+        {
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/variants/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
             "layer": "CUSTOMER",
             "fileType": "ctrl_variant",
             "fileName": "id_1676895342319_200_flVariant",
@@ -113,6 +141,48 @@
         }
     ],
     "variantDependentControlChanges": [
+        {
+            "changeType": "renameTitle",
+            "reference": "sap.ui.rta.test.variantManagement",
+            "namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+            "projectId": "sap.ui.rta.test.variantManagement",
+            "packageName": "",
+            "support": {
+                "generator": "sap.ui.rta.command",
+                "sapui5Version": "1.112.0-SNAPSHOT",
+                "command": "rename",
+                "user": "TEST"
+            },
+            "originalLanguage": "EN",
+            "layer": "VENDOR",
+            "fileType": "change",
+            "fileName": "id_1676895412759_007_renameTitle",
+            "content": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "texts": {
+                "formText": {
+                    "value": "hllo world",
+                    "type": "XFLD"
+                }
+            },
+            "selector": {
+                "id": "app--MainForm",
+                "idIsLocal": true
+            },
+            "dependentSelector": {
+                "elementSelector": {
+                    "id": "app--EntityType02.Title2",
+                    "idIsLocal": true
+                }
+            },
+            "jsOnly": false,
+            "variantReference": "id_1676895342319_007_flVariant",
+            "creation": "2022-02-20T12:17:14.9625510Z"
+        },
         {
             "changeType": "renameTitle",
             "reference": "sap.ui.rta.test.variantManagement",
