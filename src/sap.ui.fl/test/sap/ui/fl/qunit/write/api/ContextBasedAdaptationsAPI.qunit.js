@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/Version",
@@ -22,6 +23,7 @@ sap.ui.define([
 	FlexState,
 	InitialStorage,
 	Layer,
+	LayerUtils,
 	Settings,
 	Utils,
 	Version,
@@ -54,6 +56,7 @@ sap.ui.define([
 		assert.notStrictEqual(oVariant.getId(), oCopiedVariant.fileName, "there is a different filename");
 		assert.strictEqual(oVariant.getFileType(), oCopiedVariant.fileType, "there is the same file type");
 		assert.strictEqual(oVariant.getLayer(), oCopiedVariant.layer, "there is the same layer");
+		assert.strictEqual(oCopiedVariant.layer, Layer.CUSTOMER, "we have the layer as CUSTOMER");
 		assert.strictEqual(oVariant.getNamespace(), oCopiedVariant.namespace, "there is the same name space");
 		assert.strictEqual(oVariant.getSupportInformation().originalLanguage, oCopiedVariant.originalLanguage, "there is the same original language");
 		assert.strictEqual(oVariant.getFlexObjectMetadata().projectId, oCopiedVariant.projectId, "there is the same project id");
@@ -108,17 +111,18 @@ sap.ui.define([
 	function verifyChangesAreCopiedCorrectly(aCopiedChangeDefinitions, assert) {
 		return FlexObjectState.getFlexObjects({ selector: this.mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true })
 			.then(function(aFlexObjects) {
-				assert.strictEqual(aFlexObjects.length, aCopiedChangeDefinitions.length, "we have the length of objects");
-				var bIsAdapationIdAdded = aCopiedChangeDefinitions.every(function(oCopiedChange) {
+				var aCustomerFlexObjects = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aFlexObjects, Layer.CUSTOMER);
+				assert.strictEqual(aCustomerFlexObjects.length, aCopiedChangeDefinitions.length, "we have the length of objects");
+				var bIsAdaptationIdAdded = aCopiedChangeDefinitions.every(function(oCopiedChange) {
 					return oCopiedChange.adaptationId;
 				});
-				assert.ok(bIsAdapationIdAdded, "adaptation id is added to every change/variant");
+				assert.ok(bIsAdaptationIdAdded, "adaptation id is added to every change/variant");
 				var sVariant = "sap.ui.fl.apply._internal.flexObjects.Variant";
 				var sFLVariant = "sap.ui.fl.apply._internal.flexObjects.FlVariant";
 				var sCompVariant = "sap.ui.fl.apply._internal.flexObjects.CompVariant";
-				var aCompVariants = aFlexObjects.filter(function(oFlexObject) { return oFlexObject.isA(sCompVariant); });
-				var aControlVariants = aFlexObjects.filter(function(oFlexObject) { return oFlexObject.isA(sFLVariant); });
-				var aChanges = aFlexObjects.filter(function(oFlexObject) {
+				var aCompVariants = aCustomerFlexObjects.filter(function(oFlexObject) { return oFlexObject.isA(sCompVariant); });
+				var aControlVariants = aCustomerFlexObjects.filter(function(oFlexObject) { return oFlexObject.isA(sFLVariant); });
+				var aChanges = aCustomerFlexObjects.filter(function(oFlexObject) {
 					return !oFlexObject.isA(sVariant);
 				});
 				if (aCompVariants.length > 0) {
