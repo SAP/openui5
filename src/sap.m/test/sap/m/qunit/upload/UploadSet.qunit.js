@@ -1399,6 +1399,42 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Drag and then move away outside the browser, illustrated image get properly displayed", function(assert) {
+		this.oUploadSet.removeAllItems(); // illustrated message only renders when there are no items in the list.
+		var oTargetDomRef = this.oUploadSet.getList().getDomRef();
+		oTargetDomRef.focus();
+		var oDropInfo = this.oUploadSet.getList().getDragDropConfig()[1];
+		oDropInfo.attachDragEnter(function() {
+			assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.UploadCollection, "The Drop file here illustrated message is rendered");
+		}.bind(this));
+
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragleave"));
+
+		assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.NoData, "The Drop file here illustrated message got reset");
+	});
+
+	QUnit.test("Drag away outside the browser then drag is not initiated, illustrated image is updated", function(assert) {
+		this.oUploadSet.removeAllItems(); // illustrated message only renders when there are no items in the list.
+		var spyGetIllustratedMessage = this.spy(this.oUploadSet, "_getIllustratedMessage");
+		var oTargetDomRef = this.oUploadSet.getList().getDomRef();
+		oTargetDomRef.focus();
+
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragleave"));
+
+		assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message is correct");
+		assert.equal(spyGetIllustratedMessage.callCount, 2, "Update illustrated message was called");
+	});
+
+	QUnit.test("Drag away outside the browser, illustrated image is not updated, then there is drag session with drag control", function(assert) {
+		this.oUploadSet.removeAllItems(); // illustrated message only renders when there are no items in the list.
+		var spyGetIllustratedMessage = this.spy(this.oUploadSet, "_getIllustratedMessage");
+		this.oUploadSet.ondragleave({dragSession: {getDropControl: function() {return true;}}, relatedTarget: true});
+
+		assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message is correct");
+		assert.equal(spyGetIllustratedMessage.callCount, 1, "Only initial call was mad");
+	});
+
 	QUnit.test("Test for method setMultiple", function(assert) {
 		assert.equal(this.oUploadSet.getMultiple(), false, "Initial multiple value (false) is set correctly");
 		this.oUploadSet.setMultiple(true);
