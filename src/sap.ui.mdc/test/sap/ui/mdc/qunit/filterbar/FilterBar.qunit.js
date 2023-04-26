@@ -1219,7 +1219,7 @@ sap.ui.define([
 				var aOp1 = aFilterFields[0].getOperators();
 				assert.ok(aOp1);
 				assert.deepEqual(oProperty1.filterOperators, aOp1);
-				assert.deepEqual(oProperty1.filterOperators, aFilterFields[0]._getOperators());
+				assert.deepEqual(oProperty1.filterOperators, aFilterFields[0].getSupportedOperators());
 
 				assert.ok(aFilterFields[1]);
 				//				var aOp2 = aFilterFields[1].getOperators();

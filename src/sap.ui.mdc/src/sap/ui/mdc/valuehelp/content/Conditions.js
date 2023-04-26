@@ -285,7 +285,7 @@ sap.ui.define([
 	function _handleConditionProcessed(oEvent) {
 		var aNextConditions = this.getConditions();
 
-		if (this._getMaxConditions() === 1) {	// TODO: Better treatment of conditions? DefineConditionPanel currently hijacks conditions
+		if (this.getMaxConditions() === 1) {	// TODO: Better treatment of conditions? DefineConditionPanel currently hijacks conditions
 			aNextConditions = aNextConditions.filter(function(oCondition){
 				return oCondition.validated === "NotValidated";
 			});

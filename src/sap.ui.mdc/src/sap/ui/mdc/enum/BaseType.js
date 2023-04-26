@@ -10,7 +10,8 @@ sap.ui.define(function() {
 	/**
 	 * Enumeration of the possible basic data types
 	 *
-	 * In <code>Field</code> and <code>FilterField</code> different data types can be used. This data types might
+	 * In {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
+	 * and {@link sap.ui.mdc.FilterField FilterField} different data types can be used. This data types might
 	 * be model dependent. To handle them model independent internally basic types are used.
 	 *
 	 * @enum {string}

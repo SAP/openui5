@@ -93,14 +93,14 @@ sap.ui.define([
 
 	};
 
-	Popover.prototype._getUIAreaForContent = function() {
+	Popover.prototype.getUIAreaForContent = function() {
 		// if List or Table needs to be rerendered because of a change the corresponding UIArea is the static-UIArea used in the Popover.
 		var oPopover = this.getAggregation("_container");
 		if (oPopover) {
 			return oPopover.getUIArea();
 		}
 
-		return Container.prototype._getUIAreaForContent.apply(this, arguments);
+		return Container.prototype.getUIAreaForContent.apply(this, arguments);
 
 	};
 
@@ -109,7 +109,7 @@ sap.ui.define([
 		return oContent && oContent[0];
 	};
 
-	Popover.prototype._getContainer = function () {
+	Popover.prototype.getContainerControl = function () {
 		var oPopover = this.getAggregation("_container");
 		var fUpdateValueHelpHeader = function(oControl, oValueStateHeader) {
 			if (oControl && oControl.getValueState && oControl.getValueState() !== ValueState.None) {
@@ -145,8 +145,8 @@ sap.ui.define([
 					showArrow: false,
 					title: this.getTitle(),
 					titleAlignment: MLibrary.TitleAlignment.Center,
-					afterOpen: this._handleOpened.bind(this),
-					afterClose: this._handleClosed.bind(this),
+					afterOpen: this.handleOpened.bind(this),
+					afterClose: this.handleClosed.bind(this),
 					customHeader: oValueStateHeader
 				}).addStyleClass("sapMdcValueHelpPopover").addStyleClass("sapMComboBoxBasePicker").addStyleClass("sapMComboBoxBasePicker-CTX"); // to have a ComboBox popup
 
@@ -158,9 +158,9 @@ sap.ui.define([
 					return false;
 				};
 
-				oPopover.addStyleClass(this._isSingleSelect() ? "sapMdcValueHelpSingleSelect" : "sapMdcValueHelpMultiSelect");
+				oPopover.addStyleClass(this.isSingleSelect() ? "sapMdcValueHelpSingleSelect" : "sapMdcValueHelpMultiSelect");
 
-				oPopover.addDelegate({onsapshow: this._handleRequestSwitchToDialog.bind(this)});
+				oPopover.addDelegate({onsapshow: this.handleRequestSwitchToDialog.bind(this)});
 
 				oPopover._getAllContent = function() {
 					var oParent = this.getParent();
@@ -174,7 +174,7 @@ sap.ui.define([
 				}.bind(this);
 
 				var oContent = this._getContent();
-				var oContainerConfig = this._getContainerConfig(oContent);
+				var oContainerConfig = this.getContainerConfig(oContent);
 
 				if (oContainerConfig) {
 					oPopover.setShowArrow(!!oContainerConfig.showArrow);
@@ -199,7 +199,7 @@ sap.ui.define([
 	var _setContainerHeight = function () {
 		var oContainer = this.getAggregation("_container");
 		var oContent = this._getContent();
-		var oContainerConfig = oContent && this._getContainerConfig(oContent);
+		var oContainerConfig = oContent && this.getContainerConfig(oContent);
 		if (oContainer && oContainerConfig && oContainerConfig.getContentHeight) {
 			var iHeight = oContainerConfig.getContentHeight();
 			var iContainerHeight = oContainer.$().find(".sapMPopoverCont").height();
@@ -213,24 +213,24 @@ sap.ui.define([
 		return true;
 	};
 
-	Popover.prototype._observeChanges = function (oChanges) {
+	Popover.prototype.observeChanges = function (oChanges) {
 		if (oChanges.name === "content") {
 			var oContent = oChanges.child;
 			if (oChanges.mutation === "remove") {
 				oContent.detachEvent("contentUpdated", _setContainerHeight, this);
-				oContent.detachNavigated(this._handleNavigated, this);
+				oContent.detachNavigated(this.handleNavigated, this);
 			} else {
 				oContent.attachEvent("contentUpdated", _setContainerHeight, this); // TODO: put event in content interface ot check existance?
 			}
 		}
-		Container.prototype._observeChanges.apply(this, arguments);
+		Container.prototype.observeChanges.apply(this, arguments);
 	};
 
-	Popover.prototype._placeContent = function (oPopover) {
+	Popover.prototype.placeContent = function (oPopover) {
 
 		var oContent = this._getContent();
 		var oContentPromise = oContent && oContent.getContent();
-		var oContainerConfig = this._getContainerConfig(oContent);
+		var oContainerConfig = this.getContainerConfig(oContent);
 		var oFooterContentPromise = oContainerConfig && oContainerConfig.getFooter && oContainerConfig.getFooter();
 
 		return Promise.all([oContentPromise, oFooterContentPromise]).then(function (aContents) {
@@ -259,12 +259,12 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Popover.prototype._open = function (oPopover, bTypeahead) {
+	Popover.prototype.openContainer = function (oPopover, bTypeahead) {
 		if (oPopover.isOpen()) {
 			return;
 		}
 
-		Container.prototype._open.apply(this, arguments);
+		Container.prototype.openContainer.apply(this, arguments);
 
 		var oContent = this._getContent();
 		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(function () {// onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
@@ -294,9 +294,9 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Popover.prototype._close = function () {
+	Popover.prototype.closeContainer = function () {
 
-		Container.prototype._close.apply(this, arguments);
+		Container.prototype.closeContainer.apply(this, arguments);
 		var oPopover = this.getAggregation("_container");
 		if (oPopover) {
 			oPopover.close();
@@ -304,10 +304,10 @@ sap.ui.define([
 
 	};
 
-	Popover.prototype._handleOpened = function () {
+	Popover.prototype.handleOpened = function () {
 		_setContainerHeight.call(this);
 
-		Container.prototype._handleOpened.apply(this, arguments);
+		Container.prototype.handleOpened.apply(this, arguments);
 
 		var oContent = this._getContent();
 
@@ -318,11 +318,11 @@ sap.ui.define([
 
 	};
 
-	Popover.prototype._handleConfirmed = function (oEvent) {
-		this.fireConfirm({close: oEvent.getParameter("close") || this._isSingleSelect()});
+	Popover.prototype.handleConfirmed = function (oEvent) {
+		this.fireConfirm({close: oEvent.getParameter("close") || this.isSingleSelect()});
 	};
 
-	Popover.prototype._handleClosed = function (oEvent) {
+	Popover.prototype.handleClosed = function (oEvent) {
 
 		var oContent = this._getContent();
 
@@ -336,7 +336,7 @@ sap.ui.define([
 			oPopover._oPreviousFocus = null; // TODO - find real solution
 		}
 
-		Container.prototype._handleClosed.apply(this, arguments);
+		Container.prototype.handleClosed.apply(this, arguments);
 	};
 
 	Popover.prototype.removeFocus = function() {
@@ -346,7 +346,7 @@ sap.ui.define([
 		}
 	};
 
-	Popover.prototype._navigate = function (iStep) {
+	Popover.prototype.navigateInContent = function (iStep) {
 		var oContent = this._getContent();
 		if (oContent) {
 			oContent.navigate(iStep);
@@ -417,7 +417,7 @@ sap.ui.define([
 	Popover.prototype.shouldOpenOnNavigate = function() {
 
 		var oContent = this._getContent();
-		this._bindContent(oContent); // Content might need config data to determine it's behaviour
+		this.bindContentToContainer(oContent); // Content might need config data to determine it's behaviour
 		return !!oContent && oContent.shouldOpenOnNavigate();
 		// TODO: do we need to unbind here? Re-binding on every navigation would reset selected condition on content what is not wanted
 		// How to know when navigation ends?

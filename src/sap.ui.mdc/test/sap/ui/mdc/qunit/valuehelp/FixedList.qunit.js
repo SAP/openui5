@@ -748,9 +748,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", function(assert) {
 
-		assert.ok(oFixedList._isSingleSelect(), "only singe selection");
+		assert.ok(oFixedList.isSingleSelect(), "only singe selection");
 
 	});
 

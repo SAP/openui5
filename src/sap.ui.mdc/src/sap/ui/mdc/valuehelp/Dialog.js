@@ -120,7 +120,7 @@ sap.ui.define([
 
 	Dialog.prototype._handleContentSelectionChange = function (sNextId) {
 		this.fireRequestDelegateContent({container: this.getId(), contentId: sNextId});
-		return this._getRetrieveDelegateContentPromise().then(function () {
+		return this.getRetrieveDelegateContentPromise().then(function () {
 			var sCurrentContentKey = this.getProperty("_selectedContentKey");
 			var aContents = this.getContent();
 			var oCurrentContent = sCurrentContentKey && aContents && aContents.find(function (oContent) {
@@ -131,7 +131,7 @@ sap.ui.define([
 					oCurrentContent.setCollectiveSearchSelect(undefined); // remove collective search from Filterbar
 				}
 				oCurrentContent.onHide();
-				this._unbindContent(oCurrentContent);
+				this.unbindContentFromContainer(oCurrentContent);
 			}
 			return this._renderSelectedContent(sNextId);
 		}.bind(this));
@@ -160,19 +160,19 @@ sap.ui.define([
 
 	};
 
-	Dialog.prototype._getUIAreaForContent = function() {
+	Dialog.prototype.getUIAreaForContent = function() {
 		var oDialog = this.getAggregation("_container");
 		if (oDialog) {
 			return oDialog.getUIArea();
 		}
-		return Container.prototype._getUIAreaForContent.apply(this, arguments);
+		return Container.prototype.getUIAreaForContent.apply(this, arguments);
 	};
 
-	Dialog.prototype._handleConfirmed = function (oEvent) {
+	Dialog.prototype.handleConfirmed = function (oEvent) {
 		this.fireConfirm({close: true});
 	};
 
-	Dialog.prototype._handleClosed = function (oEvent) {
+	Dialog.prototype.handleClosed = function (oEvent) {
 
 		var oContent = this.getSelectedContent();
 
@@ -187,10 +187,10 @@ sap.ui.define([
 		// Reset selection to initial key for retrieveContent calls before it is opened again.
 		this.setProperty("_selectedContentKey", this._sInitialContentKey);
 
-		Container.prototype._handleClosed.apply(this, arguments);
+		Container.prototype.handleClosed.apply(this, arguments);
 	};
 
-	Dialog.prototype._getContainer = function () {
+	Dialog.prototype.getContainerControl = function () {
 		if (!this.getModel("$i18n")) {
 			// if ResourceModel not provided from outside create own one
 			this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
@@ -222,7 +222,7 @@ sap.ui.define([
 						text: this._oResourceBundle.getText("valuehelp.OK"),
 						enabled: "{$valueHelp>/_valid}",
 						type: ButtonType.Emphasized,
-						press: this._handleConfirmed.bind(this),
+						press: this.handleConfirmed.bind(this),
 						visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/_quickSelectEnabled'], formatter: function(iMaxConditions, bQuickSelectEnabled) {
 							return iMaxConditions !== 1 || !bQuickSelectEnabled;
 						}}
@@ -230,7 +230,7 @@ sap.ui.define([
 
 					this.oButtonCancel = new Button(this.getId() + "-cancel", {
 						text: this._oResourceBundle.getText("valuehelp.CANCEL"),
-						press: this._handleCanceled.bind(this)
+						press: this.handleCanceled.bind(this)
 					});
 
 					this._oManagedObjectModel = new ManagedObjectModel(this);
@@ -256,8 +256,8 @@ sap.ui.define([
 						stretch: Device.system.phone,
 						resizable: true,
 						draggable: true,
-						afterOpen: this._handleOpened.bind(this),
-						afterClose: this._handleClosed.bind(this),
+						afterOpen: this.handleOpened.bind(this),
+						afterClose: this.handleClosed.bind(this),
 						buttons: [this.oButtonOK, this.oButtonCancel]
 					});
 
@@ -283,7 +283,7 @@ sap.ui.define([
 		return oDialog;
 	};
 
-	Dialog.prototype._placeContent = function (oDialog) {
+	Dialog.prototype.placeContent = function (oDialog) {
 
 		var oContentArea = oDialog.getContent()[0];
 		var aSelectableContents = this.getProperty("_selectableContents");
@@ -324,17 +324,17 @@ sap.ui.define([
 		});
 	};
 
-	Dialog.prototype._handleSelect = function (oEvent) {
-		Container.prototype._handleSelect.apply(this, arguments);
+	Dialog.prototype.handleSelect = function (oEvent) {
+		Container.prototype.handleSelect.apply(this, arguments);
 
-		if (this.getProperty("_quickSelectEnabled") && this._isSingleSelect()) {
+		if (this.getProperty("_quickSelectEnabled") && this.isSingleSelect()) {
 			if (oEvent.getParameter("type") === "Add") {
 				this.fireConfirm({close: true});
 			}
 		}
 	};
 
-	Dialog.prototype._observeChanges = function (oChanges) {
+	Dialog.prototype.observeChanges = function (oChanges) {
 		if (oChanges.name === "content") {
 			var aContent = this.getContent();
 			this.setProperty("_quickSelectEnabled", aContent && aContent.every(function (oContent) {
@@ -362,7 +362,7 @@ sap.ui.define([
 			}
 		}
 
-		Container.prototype._observeChanges.apply(this, arguments);
+		Container.prototype.observeChanges.apply(this, arguments);
 	};
 
 	Dialog.prototype._updateInitialContentKey = function () {
@@ -714,7 +714,7 @@ sap.ui.define([
 
 	}
 
-	Dialog.prototype._open = function (oDialog) {
+	Dialog.prototype.openContainer = function (oDialog) {
 
 		this._mAlreadyShownContents = {};
 
@@ -776,7 +776,7 @@ sap.ui.define([
 		var bInitial = !this._mAlreadyShownContents[sNextContentId];
 
 		return Promise.all(aNecessaryPromises).then(function () {
-			this._bindContent(oNextContent);
+			this.bindContentToContainer(oNextContent);
 		}.bind(this)).then(function () {
 			return Promise.resolve(oNextContent.onBeforeShow(bInitial));
 		}).then(function () {
@@ -807,7 +807,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Dialog.prototype._close = function () {
+	Dialog.prototype.closeContainer = function () {
 		var oContainer = this.getAggregation("_container");
 		if (oContainer) {
 			oContainer.close();

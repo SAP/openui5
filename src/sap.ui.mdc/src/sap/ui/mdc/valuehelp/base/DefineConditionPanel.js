@@ -295,7 +295,7 @@ sap.ui.define([
 			for (var i = 0; i < aGridContent.length && iRow <= iIndex; i++) {
 				var oField = aGridContent[i];
 				if (iRow === iIndex && oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
-					if (oField._isInvalidInput()) { // TODO: better was to find out parsing error
+					if (oField.isInvalidInput()) { // TODO: better was to find out parsing error
 						oField.setValue(null); // to remove invalid value from parsing
 					}
 				}
@@ -599,7 +599,7 @@ sap.ui.define([
 			for (var i = 0; i < aGridContent.length; i++) {
 				var oField = aGridContent[i];
 				if (oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
-					if (oField._isInvalidInput()) { // TODO: better was to find out parsing error
+					if (oField.isInvalidInput()) { // TODO: better was to find out parsing error
 						oField.setValue(); // to remove invalid value from parsing
 					}
 				}
@@ -716,14 +716,14 @@ sap.ui.define([
 			// find fields and initialize error state
 			oValue0Field = oGrid.getContent()[iIndex + 2];
 			if (oValue0Field && oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
-				if (oValue0Field instanceof Field && !oValue0Field._isInvalidInput()) { // TODO: better was to find out parsing error // TODO: handle custom controls
+				if (oValue0Field instanceof Field && !oValue0Field.isInvalidInput()) { // TODO: better was to find out parsing error // TODO: handle custom controls
 					// if Field is in parsing error state, don't remove error
 					oValue0Field.setValueState(ValueState.None);
 					oValue0Field.setValueStateText();
 				}
 				oValue1Field = oGrid.getContent()[iIndex + 3]; // second field only exists if first field exist
 				if (oValue1Field && oValue1Field.hasOwnProperty("_iValueIndex") && oValue1Field._iValueIndex === 1) {
-					if (oValue1Field instanceof Field && !oValue1Field._isInvalidInput()) { // TODO: better was to find out parsing error // TODO: handle custom controls
+					if (oValue1Field instanceof Field && !oValue1Field.isInvalidInput()) { // TODO: better was to find out parsing error // TODO: handle custom controls
 						// if Field is in parsing error state, don't remove error
 						oValue1Field.setValueState(ValueState.None);
 						oValue1Field.setValueStateText();
@@ -1610,7 +1610,7 @@ sap.ui.define([
 				}
 			}
 
-			if (oField.getMetadata().getAllProperties().valueState && !oField._isInvalidInput() && (!oField2 || !oField2._isInvalidInput())) { // TODO: better was to find out parsing error
+			if (oField.getMetadata().getAllProperties().valueState && !oField.isInvalidInput() && (!oField2 || !oField2.isInvalidInput())) { // TODO: better was to find out parsing error
 				// if Field is in parsing error state, user entry is not transfered to condition, so validating makes no sense.
 				var oType = oField.getBinding("value").getType(); // use nullable data type from Field - don't create new type for each check
 				try {

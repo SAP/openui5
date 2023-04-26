@@ -10,6 +10,8 @@ sap.ui.define(function() {
 	 *
 	 * For the {@link sap.ui.mdc.Field Field} control it defines how the <code>value</code> and <code>additionalValue</code> properties are formatted.
 	 *
+	 * For the {@link sap.ui.mdc.MultiValueField MultiValueField} control it defines how the <code>key</code> and <code>description</code> properties of the items are formatted.
+	 *
 	 * For the {@link sap.ui.mdc.FilterField FilterField} control it defines how key and description of equal conditions are formatted.
 	 *
 	 * @enum {string}

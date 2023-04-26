@@ -86,25 +86,25 @@ sap.ui.define([
 				},
 				handleItemPress: function (oEvent) {
 					var oItem = oEvent.getParameter("listItem");
-					if (!this.isTypeahead() || !this._isSingleSelect()) {
+					if (!this.isTypeahead() || !this.isSingleSelect()) {
 						oItem.setSelected(!oItem.getSelected());
 					}
 
 					var oItemContext = this._getListItemBindingContext(oItem);
-					var oValues = this._getItemFromContext(oItemContext);
-					var oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
+					var oValues = this.getItemFromContext(oItemContext);
+					var oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 
 					_fireSelect.call(this, [oCondition], oItem.getSelected());
 
 				},
 				handleSelectionChange: function (oEvent) {
-					if (!this.isTypeahead() || !this._isSingleSelect()) { // single-suggestion handled in this._handleItemPress
+					if (!this.isTypeahead() || !this.isSingleSelect()) { // single-suggestion handled in this._handleItemPress
 						var oParams = oEvent.getParameters();
 						var aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
 						var aConditions = aListItems.map(function (oItem) {
 							var oItemContext = this._getListItemBindingContext(oItem);
-							var oValues = this._getItemFromContext(oItemContext);
-							return oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
+							var oValues = this.getItemFromContext(oItemContext);
+							return oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 						}.bind(this));
 						_fireSelect.call(this, aConditions, oParams.selected);
 					}
@@ -115,7 +115,7 @@ sap.ui.define([
 						// make headers sticky
 						oInnerTable.setSticky([Sticky.ColumnHeaders]);
 					}
-					if (this._isSingleSelect()) {
+					if (this.isSingleSelect()) {
 						oInnerTable.setMode(ListMode.SingleSelectLeft);
 					} else {
 						oInnerTable.setMode(ListMode.MultiSelect);
@@ -159,7 +159,7 @@ sap.ui.define([
 					var iContextIndex = MDCTableHelperConfig["Table"].getContexts().indexOf(oContext);
 					var bInSelectedIndices = _getUITableSelectionHandler().getSelectedIndices().indexOf(iContextIndex) >= 0;
 					if (bSelected && !bInSelectedIndices) {
-						return this._isSingleSelect() ? _getUITableSelectionHandler().setSelectedIndex(iContextIndex) : _getUITableSelectionHandler().addSelectionInterval(iContextIndex,iContextIndex);
+						return this.isSingleSelect() ? _getUITableSelectionHandler().setSelectedIndex(iContextIndex) : _getUITableSelectionHandler().addSelectionInterval(iContextIndex,iContextIndex);
 					} else if (!bSelected && bInSelectedIndices) {
 						return _getUITableSelectionHandler().removeSelectionInterval(iContextIndex,iContextIndex);
 					}
@@ -190,13 +190,13 @@ sap.ui.define([
 						if (bIsInSelectedConditions !== bIsRowSelected) {
 							var aBucket = aSelectedRows.indexOf(oRow) !== -1 ? aAddConditions : aRemoveConditions;
 							var oRowBindingContext = this._getListItemBindingContext(oRow);
-							var oValues = this._getItemFromContext(oRowBindingContext);
-							var oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
+							var oValues = this.getItemFromContext(oRowBindingContext);
+							var oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 							aBucket.push(oCondition);
 						}
 					}.bind(this));
 
-					var bSingle = this._isSingleSelect();
+					var bSingle = this.isSingleSelect();
 
 					if (aAddConditions.length) {
 						_fireSelect.call(this, aAddConditions, true);
@@ -219,7 +219,7 @@ sap.ui.define([
 					}
 
 					var sMDCTableSelectionMode = oTable.getSelectionMode();
-					var sSelectionMode = this._isSingleSelect() ? UITableSelectionMode.Single : UITableSelectionMode.MultiToggle;
+					var sSelectionMode = this.isSingleSelect() ? UITableSelectionMode.Single : UITableSelectionMode.MultiToggle;
 					if (sMDCTableSelectionMode !== MDCSelectionMode.SingleMaster) {
 						// only for multi we can set selectionBehavior to Row
 						oInnerTable.setSelectionBehavior(UITableSelectionBehavior.Row);
@@ -350,7 +350,7 @@ sap.ui.define([
 		}
 	};
 
-	MDCTable.prototype._handleConditionsUpdate = function() {
+	MDCTable.prototype.handleConditionsUpdate = function() {
 		_updateSelectionThrottled.call(this);
 	};
 	MDCTable.prototype._handleUpdateFinished = function (oEvent) {
@@ -406,7 +406,7 @@ sap.ui.define([
 		}
 	};
 
-	MDCTable.prototype._observeChanges = function (oChanges) {
+	MDCTable.prototype.observeChanges = function (oChanges) {
 
 		if (["_defaultFilterBar", "filterBar"].indexOf(oChanges.name) !== -1) {
 			_updateTableFilter.call(this);
@@ -466,7 +466,7 @@ sap.ui.define([
 			}
 		}
 
-		FilterableListContent.prototype._observeChanges.apply(this, arguments);
+		FilterableListContent.prototype.observeChanges.apply(this, arguments);
 	};
 
 	MDCTable.prototype._getTable = function () {
@@ -556,7 +556,7 @@ sap.ui.define([
 		return oTable && oTable.getRowBinding();
 	};
 
-	MDCTable.prototype._getListBindingInfo = function () {
+	MDCTable.prototype.getListBindingInfo = function () {
 		return this._oTableHelper && this._oTableHelper.getListBindingInfo();
 	};
 
@@ -584,7 +584,7 @@ sap.ui.define([
 		if (this._oTable) {
 			_adjustTable.call(this);
 			// check if selection mode is fine
-			var sSelectionMode = FilterableListContent.prototype._isSingleSelect.apply(this) ? MDCSelectionMode.SingleMaster : MDCSelectionMode.Multi;
+			var sSelectionMode = FilterableListContent.prototype.isSingleSelect.apply(this) ? MDCSelectionMode.SingleMaster : MDCSelectionMode.Multi;
 			if (this._oTable.getSelectionMode() === MDCSelectionMode.None) { // only set automatically if not provided from outside (and do it only once)
 				this._oTable.setSelectionMode(sSelectionMode);
 			}
@@ -626,7 +626,7 @@ sap.ui.define([
 		_adjustTable.call(this);
 	};
 
-	MDCTable.prototype._isSingleSelect = function() {
+	MDCTable.prototype.isSingleSelect = function() {
 
 		// use selection mode of table if set
 		if (this._oTable) {
@@ -636,7 +636,7 @@ sap.ui.define([
 				return true;
 			}
 		} else {
-			return FilterableListContent.prototype._isSingleSelect.apply(this, arguments);
+			return FilterableListContent.prototype.isSingleSelect.apply(this, arguments);
 		}
 
 	};

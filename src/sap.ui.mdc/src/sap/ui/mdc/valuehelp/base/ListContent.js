@@ -83,13 +83,13 @@ sap.ui.define([
 
 	};
 
-	ListContent.prototype._observeChanges = function(oChanges) {
+	ListContent.prototype.observeChanges = function(oChanges) {
 
 		if (oChanges.name === "caseSensitive") {
-			this._handleFilterValueUpdate(oChanges);
+			this.handleFilterValueUpdate(oChanges);
 		}
 
-		Content.prototype._observeChanges.apply(this, arguments);
+		Content.prototype.observeChanges.apply(this, arguments);
 
 	};
 
@@ -105,6 +105,11 @@ sap.ui.define([
 		return iCount;
 	};
 
+	/**
+	 * Gets the <code>ListBinding</code> of the content
+	 * @returns {sap.ui.model.ListBinding} ListBinding
+	 * @protected
+	 */
 	ListContent.prototype.getListBinding = function () {
 		throw new Error("ListContent: Every listcontent must implement this method.");
 	};

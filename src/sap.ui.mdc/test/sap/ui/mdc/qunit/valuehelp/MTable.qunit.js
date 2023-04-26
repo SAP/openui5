@@ -1062,7 +1062,7 @@ sap.ui.define([
 		bIsOpen = true; // test for open navigation (for closed is tested later)
 		var oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer._getUIAreaForContent = function() {
+		oContainer.getUIAreaForContent = function() {
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
@@ -1106,7 +1106,7 @@ sap.ui.define([
 
 		oScrollContainer.getContent.restore();
 		oScrollContainer.destroy();
-		delete oContainer._getUIAreaForContent;
+		delete oContainer.getUIAreaForContent;
 		oContainer.getScrollDelegate.restore();
 
 	});
@@ -1115,7 +1115,7 @@ sap.ui.define([
 
 		var oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer._getUIAreaForContent = function() {
+		oContainer.getUIAreaForContent = function() {
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
@@ -1180,7 +1180,7 @@ sap.ui.define([
 
 		oScrollContainer.getContent.restore();
 		oScrollContainer.destroy();
-		delete oContainer._getUIAreaForContent;
+		delete oContainer.getUIAreaForContent;
 		oContainer.getScrollDelegate.restore();
 
 	});
@@ -1272,7 +1272,7 @@ sap.ui.define([
 
 		var oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer._getUIAreaForContent = function() {
+		oContainer.getUIAreaForContent = function() {
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
@@ -1349,7 +1349,7 @@ sap.ui.define([
 
 			oScrollContainer.getContent.restore();
 			oScrollContainer.destroy();
-			delete oContainer._getUIAreaForContent;
+			delete oContainer.getUIAreaForContent;
 			oContainer.getScrollDelegate.restore();
 			fnDone();
 		}, 0);
@@ -1426,9 +1426,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", function(assert) {
 
-		assert.ok(oMTable._isSingleSelect(), "singe-selection taken from Table");
+		assert.ok(oMTable.isSingleSelect(), "singe-selection taken from Table");
 
 	});
 
@@ -1648,9 +1648,9 @@ sap.ui.define([
 
 	}); */
 
-	QUnit.test("_isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", function(assert) {
 
-		assert.notOk(oMTable._isSingleSelect(), "multi-selection taken from Table");
+		assert.notOk(oMTable.isSingleSelect(), "multi-selection taken from Table");
 
 	});
 

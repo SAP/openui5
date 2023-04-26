@@ -263,8 +263,8 @@ sap.ui.define([
 		assert.ok(oMdcTableWrapper.isQuickSelectSupported(), "quick select supported");
 	});
 
-	QUnit.test("_isSingleSelect", function(assert) {
-		assert.notOk(oMdcTableWrapper._isSingleSelect(), "multi-selection taken from Table");
+	QUnit.test("isSingleSelect", function(assert) {
+		assert.notOk(oMdcTableWrapper.isSingleSelect(), "multi-selection taken from Table");
 	});
 
 	QUnit.module("GridTableType", {

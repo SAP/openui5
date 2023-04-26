@@ -128,22 +128,22 @@ sap.ui.define([
 
 		assert.equal(oDialog.getMaxConditions(), undefined, "getMaxConditions");
 		assert.ok(oDialog.isMultiSelect(), "isMultiSelect");
-		assert.notOk(oDialog._isSingleSelect(), "_isSingleSelect");
+		assert.notOk(oDialog.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oDialog.getUseAsValueHelp(), "getUseAsValueHelp");
 		assert.notOk(oDialog.shouldOpenOnClick(), "shouldOpenOnClick");
 		assert.notOk(oDialog.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 		assert.ok(oDialog.isFocusInHelp(), "isFocusInHelp");
 		assert.equal(oDialog.getValueHelpIcon(), "sap-icon://value-help", "getValueHelpIcon");
 		sinon.stub(oDialog, "getUIArea").returns("X"); // to test result
-		assert.equal(oDialog._getUIAreaForContent(), "X", "_getUIAreaForContent returns own UiArea");
+		assert.equal(oDialog.getUIAreaForContent(), "X", "getUIAreaForContent returns own UiArea");
 		oDialog.getUIArea.restore();
 
 	});
 
-	QUnit.test("_getContainer", function(assert) {
+	QUnit.test("getContainerControl", function(assert) {
 
 		oDialog.setTitle("Test");
-		var oContainer = oDialog._getContainer();
+		var oContainer = oDialog.getContainerControl();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
 		if (oContainer) {
@@ -173,7 +173,7 @@ sap.ui.define([
 				assert.ok(aDialogContent[0].isA("sap.m.VBox"), "VBox is inside Dialog");
 
 				// call again
-				oContainer = oDialog._getContainer();
+				oContainer = oDialog.getContainerControl();
 				assert.ok(oContainer.isA("sap.m.Dialog"), "sap.m.Dialog directly returned on second call");
 				fnDone();
 			}).catch(function(oError) {
@@ -184,12 +184,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_placeContent", function(assert) {
+	QUnit.test("placeContent", function(assert) {
 
 		oDialog.setTitle("Test");
 
-		var oContainer = oDialog._getContainer().then(function (oCont) {
-			return oDialog._placeContent(oCont);
+		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+			return oDialog.placeContent(oCont);
 		});
 
 		return oContainer.then(function (oContainer) {
@@ -201,7 +201,7 @@ sap.ui.define([
 			var oFirstContent = new Content("Content1", {title: "Content title", shortTitle: "ShortTitle", tokenizerTitle: "TokenizerTitle", displayContent: new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false})});
 			oDialog.addContent(oFirstContent);
 
-			return oDialog._placeContent(oContainer).then(function () {
+			return oDialog.placeContent(oContainer).then(function () {
 				// Singular content
 				var oDialogTab = aDialogContent[0].getItems()[0];
 				assert.ok(oDialogTab.isA("sap.ui.mdc.valuehelp.base.DialogTab"), "DialogTab is first VBox item");
@@ -209,7 +209,7 @@ sap.ui.define([
 				var oSecondContent = new Content("Content2", {title: "Content title", shortTitle: "ShortTitle", tokenizerTitle: "TokenizerTitle", displayContent: new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false})});
 				oDialog.addContent(oSecondContent);
 
-				return oDialog._placeContent(oContainer).then(function () {
+				return oDialog.placeContent(oContainer).then(function () {
 					// Multiple contents
 					var oIconTabBar = aDialogContent[0].getItems()[0];
 					assert.ok(oIconTabBar.isA("sap.m.IconTabBar"), "IconTabBar is first VBox item");
@@ -269,12 +269,12 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("_getContainer with single content for multi-select", function(assert) {
+	QUnit.test("getContainerControl with single content for multi-select", function(assert) {
 
 		oDialog.setTitle("Test");
 		sinon.spy(oContent,"getFormattedTitle");
-		var oContainer = oDialog._getContainer().then(function (oCont) {
-			return oDialog._placeContent(oCont);
+		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
@@ -336,7 +336,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getContainer with multiple content for multi-select", function(assert) {
+	QUnit.test("getContainerControl with multiple content for multi-select", function(assert) {
 
 		var oContentField2 = new Icon("I3", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		var oContent2 = new Content("Content2", {title: "Content title2", shortTitle: "ShortTitle2", tokenizerTitle: "TokenizerTitle2"});
@@ -348,8 +348,8 @@ sap.ui.define([
 		sinon.spy(oContent,"getFormattedTitle");
 		sinon.spy(oContent2,"getFormattedTitle");
 		oDialog.addContent(oContent2);
-		var oContainer = oDialog._getContainer().then(function (oCont) {
-			return oDialog._placeContent(oCont);
+		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
@@ -442,7 +442,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getContainer with content for single-select", function(assert) {
+	QUnit.test("getContainerControl with content for single-select", function(assert) {
 
 		oDialog.removeAllContent(); // remove and add again to update quickSelect
 		oValueHelpConfig.maxConditions = 1;
@@ -450,8 +450,8 @@ sap.ui.define([
 		oDialog.addContent(oContent);
 		oDialog.setTitle("Test");
 		sinon.spy(oContent,"getFormattedTitle");
-		var oContainer = oDialog._getContainer().then(function (oCont) {
-			return oDialog._placeContent(oCont);
+		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
@@ -510,7 +510,7 @@ sap.ui.define([
 					assert.ok(oContent.onShow.calledOnce, "Content onShow called");
 					assert.equal(oDialog.getDomRef(), oContainer.getDomRef(), "DomRef of sap.m.Dialog returned");
 					sinon.stub(oContainer, "getUIArea").returns("X"); // to test result
-					assert.equal(oDialog._getUIAreaForContent(), "X", "_getUIAreaForContent returns UiArea of sap.m.Dialog");
+					assert.equal(oDialog.getUIAreaForContent(), "X", "getUIAreaForContent returns UiArea of sap.m.Dialog");
 					oContainer.getUIArea.restore();
 					assert.equal(oContainer.getTitle(), "ShortTitle: Test", "sap.m.Dilaog title");
 					var aDialogContent = oContainer.getContent();
@@ -773,8 +773,8 @@ sap.ui.define([
 			sType = oEvent.getParameter("type");
 		});
 
-		var oContainer = oDialog._getContainer().then(function (oCont) {
-			return oDialog._placeContent(oCont);
+		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
@@ -820,8 +820,8 @@ sap.ui.define([
 			sType = oEvent.getParameter("type");
 		});
 
-		var oContainer = oDialog._getContainer().then(function (oCont) {
-			return oDialog._placeContent(oCont);
+		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {

@@ -88,7 +88,7 @@ sap.ui.define([
 
 		assert.equal(oContainer.getMaxConditions(), undefined, "getMaxConditions");
 		assert.notOk(oContainer.isMultiSelect(), "isMultiSelect");
-		assert.notOk(oContainer._isSingleSelect(), "_isSingleSelect");
+		assert.notOk(oContainer.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oContainer.getUseAsValueHelp(), "getUseAsValueHelp");
 		assert.notOk(oContainer.shouldOpenOnClick(), "shouldOpenOnClick");
 		assert.notOk(oContainer.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
@@ -128,10 +128,10 @@ sap.ui.define([
 
 		var oContent = new Content("Content1");
 		sinon.spy(oContent, "onConnectionChange");
-		sinon.spy(oContainer, "_unbindContent");
+		sinon.spy(oContainer, "unbindContentFromContainer");
 		oContainer.addContent(oContent);
 		oContainer.onConnectionChange();
-		assert.ok(oContainer._unbindContent.calledWith(oContent), "_unbindContent called for Content");
+		assert.ok(oContainer.unbindContentFromContainer.calledWith(oContent), "unbindContentFromContainer called for Content");
 		assert.ok(oContent.onConnectionChange.calledOnce, "onConnectionChange called on Content");
 
 	});
@@ -158,16 +158,16 @@ sap.ui.define([
 
 		assert.equal(oContainer.getMaxConditions(), 1, "getMaxConditions");
 		assert.notOk(oContainer.isMultiSelect(), "isMultiSelect"); // as needs to be defined by Popover or Dialog
-		assert.ok(oContainer._isSingleSelect(), "_isSingleSelect");
+		assert.ok(oContainer.isSingleSelect(), "isSingleSelect");
 
 	});
 
 	QUnit.test("open", function(assert) {
 
-		sinon.stub(oContainer, "_open").callsFake(function(oContainer) {
-			this._handleOpened();
+		sinon.stub(oContainer, "openContainer").callsFake(function(oContainer) {
+			this.handleOpened();
 		});
-		sinon.stub(oContainer, "_getContainer").returns(oField);
+		sinon.stub(oContainer, "getContainerControl").returns(oField);
 
 		var iOpened = 0;
 		oContainer.attachEvent("opened", function(oEvent) {
@@ -183,7 +183,7 @@ sap.ui.define([
 
 			var fnDone = assert.async();
 			oPromise.then(function() {
-				assert.ok(oContainer._open.calledWith(oField), "_open called");
+				assert.ok(oContainer.openContainer.calledWith(oField), "openContainer called");
 				assert.equal(iOpened, 1, "Opened event fired once");
 
 				fnDone();
@@ -197,8 +197,8 @@ sap.ui.define([
 
 	QUnit.test("close", function(assert) {
 
-		sinon.stub(oContainer, "_close").callsFake(function(oContainer) {
-			this._handleClosed();
+		sinon.stub(oContainer, "closeContainer").callsFake(function(oContainer) {
+			this.handleClosed();
 		});
 
 		var iClosed = 0;
@@ -207,19 +207,19 @@ sap.ui.define([
 		});
 
 		oContainer.close();
-		assert.notOk(oContainer._close.called, "_close not called if not open");
+		assert.notOk(oContainer.closeContainer.called, "closeContainer not called if not open");
 
-		sinon.stub(oContainer, "_open").callsFake(function(oContainer) {
-			this._handleOpened();
+		sinon.stub(oContainer, "openContainer").callsFake(function(oContainer) {
+			this.handleOpened();
 		});
-		sinon.stub(oContainer, "_getContainer").returns(oField);
+		sinon.stub(oContainer, "getContainerControl").returns(oField);
 
 		var oPromise = oContainer.open(Promise.resolve());
 		if (oPromise) {
 			var fnDone = assert.async();
 			oPromise.then(function() {
 				oContainer.close();
-				assert.ok(oContainer._close.called, "_close called if not open");
+				assert.ok(oContainer.closeContainer.called, "closeContainer called if not open");
 				assert.equal(iClosed, 1, "Closed event fired");
 				fnDone();
 			}).catch(function(oError) {
@@ -232,8 +232,8 @@ sap.ui.define([
 
 	QUnit.test("close while opening", function(assert) {
 
-		sinon.stub(oContainer, "_close").callsFake(function(oContainer) {
-			this._handleClosed();
+		sinon.stub(oContainer, "closeContainer").callsFake(function(oContainer) {
+			this.handleClosed();
 		});
 
 //		var iClosed = 0;
@@ -245,10 +245,10 @@ sap.ui.define([
 //			iOpened++;
 //		});
 
-		sinon.stub(oContainer, "_open").callsFake(function(oContainer) {
-			this._handleOpened();
+		sinon.stub(oContainer, "openContainer").callsFake(function(oContainer) {
+			this.handleOpened();
 		});
-		sinon.stub(oContainer, "_getContainer").returns(oField);
+		sinon.stub(oContainer, "getContainerControl").returns(oField);
 		sinon.spy(oContainer, "_cancelPromise"); // TODO: better way to test
 
 		var oPromise = oContainer.open(Promise.resolve());
@@ -258,7 +258,7 @@ sap.ui.define([
 
 //			var fnDone = assert.async();
 //			oPromise.then(function() {
-//				assert.ok(oContainer._close.called, "_close called if not open");
+//				assert.ok(oContainer.closeContainer.called, "closeContainer called if not open");
 //				assert.equal(iClosed, 1, "Closed event fired");
 //				fnDone();
 //			}).catch(function(oError) {
@@ -274,10 +274,10 @@ sap.ui.define([
 		assert.notOk(oContainer.isOpen(), "Container not open");
 		assert.notOk(oContainer.isOpening(), "Container not opening");
 
-		sinon.stub(oContainer, "_open").callsFake(function(oContainer) {
-			this._handleOpened();
+		sinon.stub(oContainer, "openContainer").callsFake(function(oContainer) {
+			this.handleOpened();
 		});
-		sinon.stub(oContainer, "_getContainer").returns(oField);
+		sinon.stub(oContainer, "getContainerControl").returns(oField);
 
 		var oPromise = oContainer.open(Promise.resolve());
 		assert.notOk(oContainer.isOpen(), "Container not open while opening");
@@ -301,7 +301,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
-		oContainer._open(); // just fake opening as only bound if open
+		oContainer.openContainer(); // just fake opening as only bound if open
 
 		assert.equal(oContent.getFilterValue(), "X", "filterValue from ValueHelp");
 		assert.deepEqual(oContent.getConfig(), oValueHelpConfig, "_config from ValueHelp");
@@ -325,7 +325,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
-		oContainer._open(); // just fake opening as only bound if open
+		oContainer.openContainer(); // just fake opening as only bound if open
 		oContent.fireConfirm();
 		assert.equal(iConfirm, 1, "Confirm event fired");
 
@@ -341,7 +341,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
-		oContainer._open(); // just fake opening as only bound if open
+		oContainer.openContainer(); // just fake opening as only bound if open
 		oContent.fireCancel();
 		assert.equal(iCancel, 1, "Cancel event fired");
 
@@ -359,7 +359,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
-		oContainer._open(); // just fake opening as only bound if open
+		oContainer.openContainer(); // just fake opening as only bound if open
 		oContent.fireRequestSwitchToDialog();
 		assert.equal(iRequestSwitchToDialog, 1, "RequestSwitchToDialog event fired");
 		assert.equal(oEventContainer, oContainer, "RequestSwitchToDialog event container");
@@ -380,7 +380,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
-		oContainer._open(); // just fake opening as only bound if open
+		oContainer.openContainer(); // just fake opening as only bound if open
 		oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
 		assert.equal(iSelect, 1, "select event fired");
 		assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
@@ -404,7 +404,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
-		oContainer._open(); // just fake opening as only bound if open
+		oContainer.openContainer(); // just fake opening as only bound if open
 		oContent.fireNavigated({condition: Condition.createItemCondition("X", "Text"), leaveFocus: true, itemId:"X"});
 		assert.equal(iNavigated, 1, "navigated event fired");
 		assert.deepEqual(oCondition, Condition.createItemCondition("X", "Text"), "navigated event condition");
@@ -415,8 +415,8 @@ sap.ui.define([
 
 	QUnit.test("navigate", function(assert) {
 
-		sinon.stub(oContainer, "_getContainer").returns(oField);
-		sinon.spy(oContainer, "_navigate");
+		sinon.stub(oContainer, "getContainerControl").returns(oField);
+		sinon.spy(oContainer, "navigateInContent");
 
 		var oPromise = oContainer.navigate(1);
 		assert.ok(oPromise instanceof Promise, "navigate returns promise");
@@ -424,8 +424,8 @@ sap.ui.define([
 		if (oPromise) {
 			var fnDone = assert.async();
 			oPromise.then(function() {
-				assert.ok(oContainer._navigate.calledOnce, "_navigate called");
-				assert.ok(oContainer._navigate.calledWith(1), "_navigate called with 1");
+				assert.ok(oContainer.navigateInContent.calledOnce, "navigateInContent called");
+				assert.ok(oContainer.navigateInContent.calledWith(1), "navigateInContent called with 1");
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called");
@@ -521,7 +521,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getContainerConfig", function(assert) {
+	QUnit.test("getContainerConfig", function(assert) {
 
 		var oParentConfig = {
 			showHeader: true
@@ -544,12 +544,12 @@ sap.ui.define([
 		var oParentContainer = new ParentContainer();
 		var oChildContainer = new ChildContainer();
 
-		assert.equal(oParentContainer._getContainerConfig(oContent), oParentConfig, "Configuration found");
-		assert.equal(oChildContainer._getContainerConfig(oContent), oParentConfig, "Configuration for inherited type found");
+		assert.equal(oParentContainer.getContainerConfig(oContent), oParentConfig, "Configuration found");
+		assert.equal(oChildContainer.getContainerConfig(oContent), oParentConfig, "Configuration for inherited type found");
 
 		oContainerConfig["sap.ui.mdc.qunit.valuehelp.ChildContainer"] = oChildConfig;
 
-		assert.equal(oChildContainer._getContainerConfig(oContent), oChildConfig, "Specific configuration found and prefered");
+		assert.equal(oChildContainer.getContainerConfig(oContent), oChildConfig, "Specific configuration found and prefered");
 
 		oContent.getContainerConfig.restore();
 		oContent.destroy();

@@ -87,7 +87,7 @@ sap.ui.define([
 
 		var sModelName = "MyModel";
 
-		sinon.stub(oContent, "_getListBindingInfo").callsFake(function () {
+		sinon.stub(oContent, "getListBindingInfo").callsFake(function () {
 			return {
 				model: sModelName
 			};
@@ -99,7 +99,7 @@ sap.ui.define([
 		oContent._getListItemBindingContext(oItem);
 
 		assert.ok(oItem.getBindingContext.called, "getBindingContext was called");
-		assert.ok(oContent._getListBindingInfo.called, "_getListBindingInfo was called");
+		assert.ok(oContent.getListBindingInfo.called, "getListBindingInfo was called");
 		assert.equal(oItem.getBindingContext.lastCall.args[0], sModelName, "modelname was considered");
 
 	});

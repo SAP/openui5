@@ -35,7 +35,7 @@ sap.ui.define([
 			return waitForFilterField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				success: function(oFilterField) {
 					//	Check for mutliple fields (e.g. UOM to check both fields for values)
-					var oContent = oFilterField._getContent()[0];
+					var oContent = oFilterField.getCurrentContent()[0];
 					var sControlType = oContent.getMetadata().getName();
 					var aValues = vValues && [].concat(vValues);
 					var bIsDatePicker = aDatePickerControls.includes(sControlType);

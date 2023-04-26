@@ -149,13 +149,13 @@ sap.ui.define([
 
 	};
 
-	Bool.prototype._observeChanges = function(oChanges) {
+	Bool.prototype.observeChanges = function(oChanges) {
 
 		if (oChanges.type === "property" && oChanges.name === "config") {
 			_updateModel.call(this, oChanges.current);
 		}
 
-		FixedList.prototype._observeChanges.apply(this, arguments);
+		FixedList.prototype.observeChanges.apply(this, arguments);
 	};
 
 	function _updateModel(oConfig) {

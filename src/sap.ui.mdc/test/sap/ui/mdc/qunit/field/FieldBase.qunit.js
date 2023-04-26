@@ -884,24 +884,24 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getOperators", function(assert) {
+	QUnit.test("getSupportedOperators", function(assert) {
 
 		sinon.spy(FilterOperatorUtil, "getOperatorsForType");
 
-		var aOperators = oField._getOperators();
+		var aOperators = oField.getSupportedOperators();
 		assert.ok(aOperators.length > 0, "Operators returned");
 		assert.ok(FilterOperatorUtil.getOperatorsForType.calledWith(BaseType.String), "Default operators for string used");
 
 		FilterOperatorUtil.getOperatorsForType.reset();
 		oField.setDataType("sap.ui.model.type.Integer");
-		aOperators = oField._getOperators();
+		aOperators = oField.getSupportedOperators();
 		assert.ok(aOperators.length > 0, "Operators returned");
 		assert.ok(FilterOperatorUtil.getOperatorsForType.calledWith(BaseType.Numeric), "Default operators for number used");
 
 		FilterOperatorUtil.getOperatorsForType.reset();
 		oField.setMaxConditions(1);
 		oField.bindProperty("conditions", {path: "cm>/conditions/$search"});
-		aOperators = oField._getOperators();
+		aOperators = oField.getSupportedOperators();
 		assert.ok(aOperators.length === 1, "Operators returned");
 		assert.equal(aOperators[0], "Contains", "Contains used for SearchField");
 		assert.notOk(FilterOperatorUtil.getOperatorsForType.called, "No default operators of type used");
@@ -910,7 +910,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getFormatOptions", function(assert) {
+	QUnit.test("getFormatOptions", function(assert) {
 
 		var oContext = new Context(); // just dummy context
 		oField.setBindingContext(oContext);
@@ -919,13 +919,13 @@ sap.ui.define([
 		oField.setEditMode(EditMode.Display);
 		oField.placeAt("content");
 		oCore.applyChanges();
-		var oFormatOptions = oField._getFormatOptions();
+		var oFormatOptions = oField.getFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
 		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.String"), "valueType");
 		assert.notOk(oFormatOptions.originalDateType, "no originalDateType");
 		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
 		assert.equal(oFormatOptions.valueHelpID, "X", "valueHelpID");
-		assert.deepEqual(oFormatOptions.operators, oField._getOperators(), "operators");
+		assert.deepEqual(oFormatOptions.operators, oField.getSupportedOperators(), "operators");
 		assert.equal(oFormatOptions.hideOperator, false, "hideOperator");
 		assert.equal(oFormatOptions.maxConditions, -1, "maxConditions");
 		assert.equal(oFormatOptions.bindingContext, oContext, "bindingContext");
@@ -941,13 +941,13 @@ sap.ui.define([
 		oField.setEditMode(EditMode.Editable);
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
-		oFormatOptions = oField._getFormatOptions();
+		oFormatOptions = oField.getFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
 		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
 		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
 		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
 		assert.notOk(oFormatOptions.valueHelpID, "valueHelpID");
-		assert.deepEqual(oFormatOptions.operators, oField._getOperators(), "operators");
+		assert.deepEqual(oFormatOptions.operators, oField.getSupportedOperators(), "operators");
 		assert.equal(oFormatOptions.hideOperator, false, "hideOperator");
 		assert.equal(oFormatOptions.maxConditions, 1, "maxConditions");
 		assert.equal(oFormatOptions.bindingContext, oContext, "bindingContext");
@@ -960,7 +960,7 @@ sap.ui.define([
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 		assert.equal(oFormatOptions.control, oField, "control");
 
-		oFormatOptions = oField._getUnitFormatOptions();
+		oFormatOptions = oField.getUnitFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
 		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
 		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
@@ -1021,7 +1021,7 @@ sap.ui.define([
 		oField.setDataType("sap.ui.model.type.Date");
 		oField.setDataTypeFormatOptions({pattern: "dd/MM/yyyy"});
 		oField.setMaxConditions(1);
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		var oCondition = Condition.createCondition("EQ", [new Date(2020, 11, 18)]);
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // update model syncronous
@@ -1072,7 +1072,7 @@ sap.ui.define([
 				maxConditions: 1,
 				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}} // to test V4 delegate
 			});
-			sinon.stub(oFieldEditSingle, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+			sinon.stub(oFieldEditSingle, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 			oFieldDisplay = new FieldBase("F3", { editMode: EditMode.Display, conditions: "{cm>/conditions/Name}" });
 			oFieldSearch = new FieldBase("F4", { maxConditions: 1, conditions: "{cm>/conditions/$search}" });
 			oFieldEditMulti.placeAt("content");
@@ -1231,7 +1231,7 @@ sap.ui.define([
 			dataTypeConstraints: {displayFormat: "Date"},
 			dataTypeFormatOptions: {pattern: "dd/MM/yyyy"}
 		});
-		sinon.stub(oFieldEditSingle2, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oFieldEditSingle2, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oFieldEditSingle2.placeAt("content");
 
 		// DateRangeSelection
@@ -1245,7 +1245,7 @@ sap.ui.define([
 			dataTypeConstraints: {displayFormat: "Date"},
 			dataTypeFormatOptions: {pattern: "dd/MM/yyyy"}
 		});
-		sinon.stub(oFieldEditSingle3, "_getOperators").callsFake(function() {return ["BT"];});
+		sinon.stub(oFieldEditSingle3, "getSupportedOperators").callsFake(function() {return ["BT"];});
 		oFieldEditSingle3.placeAt("content");
 
 		// DynamicDateRange
@@ -1267,7 +1267,7 @@ sap.ui.define([
 			dataType: "sap.ui.model.type.Date",
 			dataTypeFormatOptions: {style: "long"}
 		});
-		sinon.stub(oFieldEditMulti2, "_getOperators").callsFake(fnOnlyEQ); // fake only equals allowed
+		sinon.stub(oFieldEditMulti2, "getSupportedOperators").callsFake(fnOnlyEQ); // fake only equals allowed
 		oFieldEditMulti2.placeAt("content");
 
 		oCore.applyChanges();
@@ -1539,7 +1539,7 @@ sap.ui.define([
 		oFieldEditSingle.setDataType("sap.ui.model.type.Currency");
 		oFieldEditMulti.setDataType("sap.ui.model.type.Currency");
 		oFieldDisplay.setMaxConditions(1);
-		sinon.stub(oFieldDisplay, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oFieldDisplay, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oFieldDisplay.setDataType("sap.ui.model.type.Currency");
 		oCore.applyChanges();
 
@@ -1584,7 +1584,7 @@ sap.ui.define([
 
 	QUnit.test("invalid dataType", function(assert) {
 
-		var oSpy = sinon.spy(oFieldEditSingle._getContentFactory(), "checkDataTypeChanged");
+		var oSpy = sinon.spy(oFieldEditSingle.getContentFactory(), "checkDataTypeChanged");
 
 		oFieldEditSingle.setDataType("Invalid");
 		oCore.applyChanges();
@@ -1855,7 +1855,7 @@ sap.ui.define([
 				conditions: "{cm>/conditions/Name}"
 			});
 			//			oField.attachChange(_myChangeHandler);
-			oField._fireChange = _myFireChange;
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 			oField.attachLiveChange(_myLiveChangeHandler);
 			oField.attachPress(_myPressHandler);
@@ -2108,7 +2108,7 @@ sap.ui.define([
 			dataTypeConstraints: {maximum: 10},
 			dataType: "sap.ui.model.type.Integer"
 		}).placeAt("content");
-		oField._fireChange = _myFireChange;
+		oField.fireChangeEvent = _myFireChange;
 		oField.attachEvent("change", _myChangeHandler);
 		oField.attachParseError(_myParseErrorHandler);
 		oField.attachValidationError(_myValidationErrorHandler);
@@ -2142,7 +2142,7 @@ sap.ui.define([
 
 	QUnit.test("empty input on multi value with not nullable type", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake only equals allowed
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake only equals allowed
 		oField.setDataTypeConstraints({nullable: false});
 		oField.setDataType("sap.ui.model.odata.type.String");
 		oCore.applyChanges();
@@ -2173,7 +2173,7 @@ sap.ui.define([
 
 	QUnit.test("with single value", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 
@@ -2240,7 +2240,7 @@ sap.ui.define([
 	QUnit.test("with single value and dataType sap.ui.model.type.Currency", function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 
@@ -2338,7 +2338,7 @@ sap.ui.define([
 	QUnit.test("wrong input on single value", function(assert) {
 
 		oField.setDataTypeConstraints({maximum: 10});
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setDataType("sap.ui.model.type.Integer");
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
@@ -2391,7 +2391,7 @@ sap.ui.define([
 
 	QUnit.test("empty input on single value with not nullable type", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake only equals allowed
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake only equals allowed
 		oField.setDataTypeConstraints({nullable: false});
 		oField.setDataType("sap.ui.model.odata.type.String");
 		oField.setMaxConditions(1);
@@ -2625,7 +2625,7 @@ sap.ui.define([
 		beforeEach: function() {
 			oField = new FieldBase("F1", { conditions: "{cm>/conditions/Name}" });
 			//			oField.attachChange(_myChangeHandler);
-			oField._fireChange = _myFireChange;
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
@@ -2647,7 +2647,7 @@ sap.ui.define([
 	QUnit.test("with internal content", function(assert) {
 
 		var oClone = oField.clone("myClone");
-		oClone._fireChange = _myFireChange;
+		oClone.fireChangeEvent = _myFireChange;
 		oClone.placeAt("content");
 		oCore.applyChanges();
 
@@ -2696,7 +2696,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var oClone = oField.clone("myClone");
-		oClone._fireChange = _myFireChange;
+		oClone.fireChangeEvent = _myFireChange;
 		oClone.placeAt("content");
 		oCore.applyChanges();
 
@@ -2740,7 +2740,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var oClone = oField.clone("myClone");
-		oClone._fireChange = _myFireChange;
+		oClone.fireChangeEvent = _myFireChange;
 		oClone.placeAt("content");
 		oCore.applyChanges();
 
@@ -2785,7 +2785,7 @@ sap.ui.define([
 				//				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler
 			});
-			oField._fireChange = _myFireChange;
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
@@ -2890,7 +2890,7 @@ sap.ui.define([
 	QUnit.test("with single value field", function(assert) {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		sinon.spy(oFieldHelp, "toggleOpen");
@@ -3283,7 +3283,7 @@ sap.ui.define([
 				liveChange: _myLiveChangeHandler,
 				submit: _mySubmitHandler
 			});
-			oField._fireChange = _myFireChange;
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
@@ -3332,7 +3332,7 @@ sap.ui.define([
 			checkDescription: false,
 			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
 			control: oField,
-			dataType: oField._getContentFactory().retrieveDataType(),
+			dataType: oField.getContentFactory().retrieveDataType(),
 			exception: FormatException,
 			bindingContext: undefined
 		};
@@ -3395,7 +3395,7 @@ sap.ui.define([
 		oField.setValueState("Error"); // as valueState is set async
 		oField.setValueStateText("Error");
 		oContent.setValue("I"); // to test clearing of content
-		assert.ok(oField._isInvalidInput(), "parse error"); // just to be sure that set before test
+		assert.ok(oField.isInvalidInput(), "parse error"); // just to be sure that set before test
 		oFieldHelp.fireSelect({ conditions: aConditions, add: false, close: true }); // check choosing old conditions after wrong input
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
@@ -3408,7 +3408,7 @@ sap.ui.define([
 		assert.equal(oContent.getDOMValue(), "", "value not longer shown in inner control");
 		assert.equal(oField.getValueState(), "None", "No ValueState");
 		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
-		assert.notOk(oField._isInvalidInput(), "no parse error");
+		assert.notOk(oField.isInvalidInput(), "no parse error");
 
 		// simulate select event with close to see if field is updated
 		oFieldHelp.getItemForValue.resetHistory();
@@ -3418,7 +3418,7 @@ sap.ui.define([
 		oField.setValueState("Error"); // as valueState is set async
 		oField.setValueStateText("Error");
 		oContent.setValue("J"); // to test clearing of content
-		assert.ok(oField._isInvalidInput(), "parse error"); // just to be sure that set before test
+		assert.ok(oField.isInvalidInput(), "parse error"); // just to be sure that set before test
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: true });
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
@@ -3435,7 +3435,7 @@ sap.ui.define([
 		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
 		assert.equal(oField.getValueState(), "None", "No ValueState"); // after updating conditions valueStae should be cleared
 		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
-		assert.notOk(oField._isInvalidInput(), "no parse error");
+		assert.notOk(oField.isInvalidInput(), "no parse error");
 		oField._oContentFactory._oConditionsType.parseValue.restore();
 
 		oIcon.destroy();
@@ -3444,7 +3444,7 @@ sap.ui.define([
 
 	QUnit.test("select on single field", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
@@ -3490,7 +3490,7 @@ sap.ui.define([
 				checkDescription: false,
 				context: {inParameters: undefined, outParameters: undefined, payload: undefined},
 				control: oField,
-				dataType: oField._getContentFactory().retrieveDataType(),
+				dataType: oField.getContentFactory().retrieveDataType(),
 				exception: FormatException,
 				bindingContext: undefined
 			};
@@ -3715,7 +3715,7 @@ sap.ui.define([
 
 	QUnit.test("navigation single Field in open FieldHelp", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
@@ -3768,7 +3768,7 @@ sap.ui.define([
 
 	QUnit.test("navigation single Field in closed FieldHelp", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
@@ -3923,11 +3923,9 @@ sap.ui.define([
 			checkKey: true,
 			checkDescription: true,
 			control: oField,
-			dataType: oField._getContentFactory().retrieveDataType(),
+			dataType: oField.getContentFactory().retrieveDataType(),
 			exception: ParseException,
-			bindingContext: undefined,
-			inParameters: undefined,
-			outParameters: undefined
+			bindingContext: undefined
 		};
 		assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		var aConditions = oFieldHelp.getConditions();
@@ -3958,11 +3956,9 @@ sap.ui.define([
 			checkKey: true,
 			checkDescription: true,
 			control: oField,
-			dataType: oField._getContentFactory().retrieveDataType(),
+			dataType: oField.getContentFactory().retrieveDataType(),
 			exception: ParseException,
-			bindingContext: undefined,
-			inParameters: undefined,
-			outParameters: undefined
+			bindingContext: undefined
 		};
 		assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		setTimeout(function() { // to wait for update of valueState via Model
@@ -4009,7 +4005,7 @@ sap.ui.define([
 
 	QUnit.test("invalid input on singleValue Field", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
@@ -4028,11 +4024,9 @@ sap.ui.define([
 			checkKey: true,
 			checkDescription: true,
 			control: oField,
-			dataType: oField._getContentFactory().retrieveDataType(),
+			dataType: oField.getContentFactory().retrieveDataType(),
 			exception: ParseException,
-			bindingContext: undefined,
-			inParameters: undefined,
-			outParameters: undefined
+			bindingContext: undefined
 		};
 		assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
@@ -4092,7 +4086,7 @@ sap.ui.define([
 			//			change: _myChangeHandler,
 			liveChange: _myLiveChangeHandler
 		});
-		oField2._fireChange = _myFireChange;
+		oField2.fireChangeEvent = _myFireChange;
 		oField2.attachEvent("change", _myChangeHandler);
 		oField2.placeAt("content");
 		oCore.applyChanges();
@@ -4189,7 +4183,7 @@ sap.ui.define([
 	QUnit.test("async parsing single value", function(assert) {
 
 		bAsync = true;
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 
@@ -4225,7 +4219,7 @@ sap.ui.define([
 	QUnit.test("async parsing single value and same result", function(assert) {
 
 		bAsync = true;
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 
@@ -4424,7 +4418,7 @@ sap.ui.define([
 
 	QUnit.test("invalid input with async parsing on singleValue Field", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
@@ -4650,7 +4644,7 @@ sap.ui.define([
 
 	QUnit.test("aria attributes on single Field", function(assert) {
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
@@ -4728,7 +4722,7 @@ sap.ui.define([
 		oField.setValueHelp(); // to retrigger check for icon
 		oField.setValueHelp(oFieldHelp);
 
-		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var aContent = oField.getAggregation("_content");
@@ -4810,8 +4804,8 @@ sap.ui.define([
 				valueHelp: oFieldHelp,
 				liveChange: _myLiveChangeHandler
 			});
-			sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
-			oField._fireChange = _myFireChange;
+			sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
@@ -5114,7 +5108,7 @@ sap.ui.define([
 				valueHelp: oFieldHelp,
 				liveChange: _myLiveChangeHandler
 			});
-			oField._fireChange = _myFireChange;
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
@@ -5292,8 +5286,8 @@ sap.ui.define([
 				liveChange: _myLiveChangeHandler
 			});
 			// TODO: FilterField case
-			sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
-			oField._fireChange = _myFireChange;
+			sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 
 			oField.placeAt("content");
@@ -5378,7 +5372,7 @@ sap.ui.define([
 				//				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler
 			});
-			oField._fireChange = _myFireChange;
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 
 			oCM = new ConditionModel();
@@ -5440,7 +5434,7 @@ sap.ui.define([
 				//				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler
 			});
-			oField._fireChange = _myFireChange;
+			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 
 			oCM = new ConditionModel();

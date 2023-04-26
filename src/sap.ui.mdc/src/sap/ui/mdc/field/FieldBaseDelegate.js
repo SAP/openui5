@@ -171,13 +171,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
-	 * @param {object} [oConfig] Configuration
-	 * @param {any} oConfig.value Value as entered by user
-	 * @param {any} oConfig.parsedValue Value parsed by data type to fit the data type of the key
-	 * @param {sap.ui.model.Context} oConfig.bindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
-	 * @param {boolean} oConfig.checkKey If set, it should be checked if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
-	 * @param {boolean} oConfig.checkDescription If set, it should be checked if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
-	 * @param {sap.ui.core.Control} oConfig.control Instance if the calling control
+	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} [oConfig] Configuration
 	 * @returns {sap.ui.mdc.valuehelp.ValueHelpItem|Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Object containing description, key, and payload. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
 	 * @since: 1.78.0

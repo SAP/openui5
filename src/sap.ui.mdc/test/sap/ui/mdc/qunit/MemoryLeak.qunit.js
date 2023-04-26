@@ -151,7 +151,7 @@ sap.ui.define([
 		// configure the Field und ValueHelp faking somme calls what would be triggered by opening (as Test canno be async here)
 		oField.onfocusin(); // to connect ValueHelp
 		oMTable.getContent(); // to create internal controls
-		oPopover._getContainer(); // to create internal controls
+		oPopover.getContainerControl(); // to create internal controls
 		oValueHelp.open(true);
 		return oField;
 	});
@@ -194,7 +194,7 @@ sap.ui.define([
 		// configure the Field und ValueHelp faking somme calls what would be triggered by opening (as Test canno be async here)
 		oField.onfocusin(); // to connect ValueHelp
 		oMTable.getContent(); // to create internal controls
-		oDialog._getContainer(); // to create internal controls
+		oDialog.getContainerControl(); // to create internal controls
 		oValueHelp.open(true);
 		return oField;
 	});

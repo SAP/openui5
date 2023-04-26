@@ -683,7 +683,7 @@
 
 
 	/**
-	 * Item object type.
+	 * Item object type. This represents an abstract item from the {@link sap.ui.mdc.ValueHelp ValueHelp}.
 	 *
 	 * If an item is requested using a description or key, an object with the following
 	 * properties is returned.

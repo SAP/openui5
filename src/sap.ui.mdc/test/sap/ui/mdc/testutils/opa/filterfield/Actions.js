@@ -38,7 +38,7 @@ sap.ui.define([
 			return waitForFilterField.call(this,  Utils.enhanceWaitFor(vIdentifier, {
 				success:function(oFilterField) {
 					oFilterField.focus();
-					new TriggerEvent({event: "keydown", payload: {which: keyCode, keyCode: keyCode}}).executeOn(oFilterField._getContent()[0]); // doesnt work with focusdomref
+					new TriggerEvent({event: "keydown", payload: {which: keyCode, keyCode: keyCode}}).executeOn(oFilterField.getCurrentContent()[0]); // doesnt work with focusdomref
 					Opa5.assert.ok(oFilterField, "Key '" + keyCode + "' pressed on FilterField '" + oFilterField.getId() + "'");
 				}
 			}));
@@ -46,7 +46,7 @@ sap.ui.define([
 		iPressOnTheFilterField: function(vIdentifier) {
 			return waitForFilterField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				success:function(oField) {
-					var oTarget = oField._getContent()[0];
+					var oTarget = oField.getCurrentContent()[0];
 					new TriggerEvent({event: "focusin"}).executeOn(oTarget); // doesnt work with focusdomref
 					new TriggerEvent({event: "tap"}).executeOn(oTarget); // doesnt work with focusdomref
 					Opa5.assert.ok(oField, "tap event on Field '" + oField.getId() + "' triggered.");

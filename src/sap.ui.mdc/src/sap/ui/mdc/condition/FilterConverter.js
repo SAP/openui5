@@ -55,7 +55,7 @@ function(
 							// try to find missing type from FilterField
 							var oFilterField = oFilterBar._getFilterField(sFieldPath); // TODO: use official API
 							if (oFilterField) {
-								var oFormatOptions = oFilterField._getFormatOptions();
+								var oFormatOptions = oFilterField.getFormatOptions();
 								if (oFormatOptions.originalDateType) {
 									oDataType = oFormatOptions.originalDateType;
 								} else {

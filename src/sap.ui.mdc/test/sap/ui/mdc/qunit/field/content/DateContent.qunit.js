@@ -40,7 +40,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	Field.prototype._checkCreateInternalContent = function() {}; // prevent creating internal control by itself
+	Field.prototype.checkCreateInternalContent = function() {}; // prevent creating internal control by itself
 
 	var oControlMap = {
 		"Display": {
@@ -323,7 +323,7 @@ sap.ui.define([
 		var aCustomOptions = oDynamicDateRange.getCustomOptions();
 		var oData = oModel.getData();
 		var aOperators = oData._operators;
-		var aDefaultOperators = this.oField._getOperators();
+		var aDefaultOperators = this.oField.getSupportedOperators();
 
 		assert.deepEqual(oFormatter.oOriginalFormatOptions.date, {style: "long"}, "Formatter set on DynamicDateRange");
 		// check only some specific operators, not every single one

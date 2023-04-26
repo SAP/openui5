@@ -268,9 +268,9 @@ sap.ui.define([
 	 * @since 1.101.0
 	 */
 	ValueHelpDelegate.isFilterableListItemSelected = function (oPayload, oContent, oItem, aConditions) {
-		var sModelName = oContent._getListBindingInfo().model;
+		var sModelName = oContent.getListBindingInfo().model;
 		var oContext = oItem && oItem.getBindingContext(sModelName);
-		var oItemData = oContent._getItemFromContext(oContext);
+		var oItemData = oContent.getItemFromContext(oContext);
 
 		for (var i = 0; i < aConditions.length; i++) {
 			var oCondition = aConditions[i];
@@ -335,7 +335,7 @@ sap.ui.define([
 	 */
 	ValueHelpDelegate.getTypesForConditions = function (oPayload, oContent, oConditions) {	// TODO: MDC.Table add UI.Table support
 		var oConditionTypes = {};
-		var oListBindingInfo = oContent && oContent._getListBindingInfo();
+		var oListBindingInfo = oContent && oContent.getListBindingInfo();
 
 		if (oListBindingInfo && oListBindingInfo.template) {
 			oListBindingInfo.template.mAggregations.cells.forEach(function (oCell) {
@@ -361,8 +361,8 @@ sap.ui.define([
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
 	 * @param {object} [oConfig.context] Contextual information provided by condition payload or inParameters/outParameters. This is only filled if the description needs to be determined for an existing condition.
-	 * @param {object} [oConfig.context.inParameter] In parameters of the current condition
-	 * @param {object} [oConfig.context.ouParameter] Out parameters of the current condition
+	 * @param {object} [oConfig.context.inParameter] In parameters of the current condition (InParameter are not used any longer, but it might be filled in older conditiotions stored in variants.)
+	 * @param {object} [oConfig.context.ouParameter] Out parameters of the current condition (OutParameter are not used any longer, but it might be filled in older conditiotions stored in variants.)
 	 * @param {object} [oConfig.context.payload] Payload of the current condition
 	 * @param {sap.ui.core.Control} oConfig.control Instance of the calling control
 	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.

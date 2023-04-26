@@ -26,6 +26,7 @@ sap.ui.define([
 	/**
 	 * Object-based definition of the date content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
 	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enum.ContentMode}.
+	 * @namespace
 	 * @author SAP SE
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
@@ -33,7 +34,6 @@ sap.ui.define([
 	 * @since 1.87
 	 * @alias sap.ui.mdc.field.content.DateContent
 	 * @extends sap.ui.mdc.field.content.DefaultContent
-	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var DateContent = Object.assign({}, DefaultContent, {
 		getEditMultiLine: function() {
@@ -240,7 +240,7 @@ sap.ui.define([
 
 		_getDateRangeStandardOptions: function(aOperators, oContentFactory) {
 			if (!aOperators || aOperators.length === 0) {
-				aOperators = oContentFactory.getField()._getOperators(); // to use default operators if none given
+				aOperators = oContentFactory.getField().getSupportedOperators(); // to use default operators if none given
 			}
 			var aOptions = [];
 			var sBaseType = oContentFactory.getField().getBaseType();

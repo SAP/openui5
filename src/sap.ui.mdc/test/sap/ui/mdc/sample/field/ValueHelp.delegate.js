@@ -212,9 +212,9 @@ sap.ui.define([
 	ValueHelpDelegate.isFilterableListItemSelected = function (oPayload, oContent, oItem, aConditions) {
 
 		if (oPayload.in) {
-			var sModelName = oContent._getListBindingInfo().model;
+			var sModelName = oContent.getListBindingInfo().model;
 			var oContext = oItem && oItem.getBindingContext(sModelName);
-			var oItemData = oContent._getItemFromContext(oContext);
+			var oItemData = oContent.getItemFromContext(oContext);
 			var oInConditions = this.getFilterConditions(oPayload, oContent, {control: oContent && oContent.getControl()}); // to use if no payload is provided
 			aConditions = merge([], aConditions);
 			_mapInOutToPayload(aConditions, oPayload);

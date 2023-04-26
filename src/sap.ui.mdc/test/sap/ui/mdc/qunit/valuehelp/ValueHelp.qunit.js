@@ -260,7 +260,7 @@ sap.ui.define([
 		setTimeout(function() { // Delegate is called async
 			assert.ok(oContainer.open.called, "Container open called for typeahead opening");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for typeahead opening");
-			oContainer._handleOpened();
+			oContainer.handleOpened();
 			assert.ok(oValueHelp.fireOpened.called, "ValueHelp opened event fired for typeahead opening");
 			assert.equal(oValueHelp.fireOpened.lastCall.args[0].container, oContainer, "ValueHelp opened event carries correct container");
 
@@ -299,7 +299,7 @@ sap.ui.define([
 	QUnit.test("close handling", function(assert) {
 
 		sinon.spy(oValueHelp, "close");
-		oContainer._handleClosed(); // TODO: change to event?
+		oContainer.handleClosed(); // TODO: change to event?
 		assert.equal(iClosed, 1, "Close event fired");
 
 	});
@@ -840,7 +840,7 @@ sap.ui.define([
 		setTimeout(function() { // Delegate is called async
 			assert.ok(oContainer.open.called, "Container open called for dialog opening");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for opening");
-			oContainer._handleOpened();
+			oContainer.handleOpened();
 			assert.ok(oValueHelp.fireOpened.called, "ValueHelp opened event fired for typeahead opening");
 			assert.equal(oValueHelp.fireOpened.lastCall.args[0].container, oContainer, "ValueHelp opened event carries correct container");
 
@@ -879,7 +879,7 @@ sap.ui.define([
 	QUnit.test("close handling", function(assert) {
 
 		sinon.spy(oValueHelp, "close");
-		oContainer._handleClosed(); // TODO: change to event?
+		oContainer.handleClosed(); // TODO: change to event?
 		assert.equal(iClosed, 1, "Close event fired");
 
 	});

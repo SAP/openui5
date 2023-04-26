@@ -107,7 +107,7 @@ sap.ui.define([
 
 		assert.equal(oPopover.getMaxConditions(), undefined, "getMaxConditions");
 		assert.notOk(oPopover.isMultiSelect(), "isMultiSelect");
-		assert.notOk(oPopover._isSingleSelect(), "_isSingleSelect");
+		assert.notOk(oPopover.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oPopover.getUseAsValueHelp(), "getUseAsValueHelp");
 		assert.notOk(oPopover.shouldOpenOnClick(), "shouldOpenOnClick");
 		assert.notOk(oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus");
@@ -117,11 +117,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getContainer", function(assert) {
+	QUnit.test("getContainerControl", function(assert) {
 
 		oPopover.setTitle("Test");
 
-		var oContainer = oPopover._getContainer();
+		var oContainer = oPopover.getContainerControl();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
 		if (oContainer) {
@@ -138,7 +138,7 @@ sap.ui.define([
 				assert.equal(oContainer.getTitleAlignment(), mLibrary.TitleAlignment.Center, "titleAlignment");
 
 				// call again
-				oContainer = oPopover._getContainer();
+				oContainer = oPopover.getContainerControl();
 				assert.ok(oContainer.isA("sap.m.Popover"), "sap.m.Popover directly returned on second call");
 				fnDone();
 			}).catch(function(oError) {
@@ -183,7 +183,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("_getContainer with content configuration", function(assert) {
+	QUnit.test("getContainerControl with content configuration", function(assert) {
 
 		oContent.getContainerConfig = function () {
 			return {
@@ -195,7 +195,7 @@ sap.ui.define([
 			};
 		};
 		oPopover.setTitle("Test");
-		var oContainer = oPopover._getContainer();
+		var oContainer = oPopover.getContainerControl();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
 		if (oContainer) {
@@ -255,7 +255,7 @@ sap.ui.define([
 					assert.equal(oContainer.getInitialFocus(), oField.getId(), "initialFocus");
 					assert.notOk(oContainer.getFooter(), "no footer");
 					assert.equal(oPopover.getDomRef(), oContainer.getDomRef(), "DomRef of sap.m.Popover returned");
-					assert.equal(oPopover._getUIAreaForContent(), oContainer.getUIArea(), "_getUIAreaForContent returns UiArea of sap.m.Popover");
+					assert.equal(oPopover.getUIAreaForContent(), oContainer.getUIArea(), "getUIAreaForContent returns UiArea of sap.m.Popover");
 
 					oPopover.close();
 					setTimeout(function() { // wait until closed
@@ -543,7 +543,7 @@ sap.ui.define([
 
 	QUnit.test("confirmed event", function(assert) {
 
-		sinon.stub(oPopover, "_isSingleSelect").returns(true);
+		sinon.stub(oPopover, "isSingleSelect").returns(true);
 		var iConfirm = 0;
 		var bClose = false;
 		oPopover.attachEvent("confirm", function(oEvent) {

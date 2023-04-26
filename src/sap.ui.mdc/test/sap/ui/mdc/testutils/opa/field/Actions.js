@@ -37,7 +37,7 @@ sap.ui.define([
 			return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				success:function(oField) {
 					oField.focus();
-					new TriggerEvent({event: "keydown", payload: {which: keyCode, keyCode: keyCode}}).executeOn(oField._getContent()[0]); // doesnt work with focusdomref
+					new TriggerEvent({event: "keydown", payload: {which: keyCode, keyCode: keyCode}}).executeOn(oField.getCurrentContent()[0]); // doesnt work with focusdomref
 					Opa5.assert.ok(oField, "Key '" + keyCode + "' pressed on FilterField '" + oField.getId() + "'");
 				}
 			}));

@@ -121,7 +121,7 @@ sap.ui.define([
 		if (this._oTable) {
 			var aItems = this._oTable.getItems();
 			var aConditions = this.getConditions();
-			var bHideSelection = this._isSingleSelect() && !FilterableListContent.prototype._isSingleSelect.apply(this); // if table is in single selection but Fild allows multiple values, don't select items
+			var bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
 
 			aItems.forEach(function(oItem) {
 				var bSelected = bHideSelection ? false : this._isItemSelected(oItem, aConditions);
@@ -148,7 +148,7 @@ sap.ui.define([
 		}.bind(this);
 
 		var oListBinding = this.getListBinding();
-		var bValueHelpDelegateInitialized = this._isValueHelpDelegateInitialized();
+		var bValueHelpDelegateInitialized = this.isValueHelpDelegateInitialized();
 
 		/*
 		// Should we try to run all binding updates in sequence to prevent cache invalidation errors on the binding?
@@ -166,7 +166,7 @@ sap.ui.define([
 
 
 		if ((!oListBinding || !bValueHelpDelegateInitialized)/* && (this.isContainerOpening() || this.isTypeahead())*/) {
-			oFilterApplicationPromise = Promise.all([this._retrievePromise("listBinding"), this._awaitValueHelpDelegate()]).then(applyAfterPromise);
+			oFilterApplicationPromise = Promise.all([this._retrievePromise("listBinding"), this.awaitValueHelpDelegate()]).then(applyAfterPromise);
 		}
 
 		if (!bValueHelpDelegateInitialized || (!this.isTypeahead() && !this.isContainerOpen() && oListBinding.isSuspended())) {
@@ -174,10 +174,10 @@ sap.ui.define([
 		}
 
 		if (!oFilterApplicationPromise) {
-			var oDelegate = this._getValueHelpDelegate();
-			var oDelegatePayload = this._getValueHelpDelegatePayload();
+			var oDelegate = this.getValueHelpDelegate();
+			var oDelegatePayload = this.getValueHelpDelegatePayload();
 
-			var oListBindingInfo = this._getListBindingInfo();
+			var oListBindingInfo = this.getListBindingInfo();
 			var iLength = oListBindingInfo && oListBindingInfo.length;
 			oDelegate.updateBindingInfo(oDelegatePayload, this, oListBindingInfo);
 			oDelegate.updateBinding(oDelegatePayload, oListBinding, oListBindingInfo, this);
@@ -201,13 +201,13 @@ sap.ui.define([
 
 	MTable.prototype._handleSelectionChange = function (oEvent) {
 		var bIsTypeahead = this.isTypeahead();
-		if (!bIsTypeahead || !this._isSingleSelect()) {
+		if (!bIsTypeahead || !this.isSingleSelect()) {
 			var oParams = oEvent.getParameters();
 			var aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
 			var aConditions = aListItems.map(function (oItem) {
 				var oItemContext = this._getListItemBindingContext(oItem);
-				var oValues = this._getItemFromContext(oItemContext);
-				return oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
+				var oValues = this.getItemFromContext(oItemContext);
+				return oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 			}.bind(this));
 			this._fireSelect({type: oParams.selected ? SelectType.Add : SelectType.Remove, conditions: aConditions});
 			if (bIsTypeahead) {
@@ -219,14 +219,14 @@ sap.ui.define([
 	MTable.prototype._handleItemPress = function (oEvent) {
 		var oItem = oEvent.getParameter("listItem");
 		var oItemContext = this._getListItemBindingContext(oItem);
-		var oValues = this._getItemFromContext(oItemContext);
+		var oValues = this.getItemFromContext(oItemContext);
 		var oTable = this._getTable();
 		var bSingleSelectMaster = oTable.getMode() === ListMode.SingleSelectMaster; // Only in this mode the item will already have the desired selection state.
 		var bSelected = bSingleSelectMaster ? oItem.getSelected() : !oItem.getSelected();
 		oItem.setSelected(bSelected);
 		var sSelectType = bSelected ? SelectType.Add : SelectType.Remove;
 
-		var oCondition = this._createCondition(oValues.key, oValues.description, oValues.payload);
+		var oCondition = this.createCondition(oValues.key, oValues.description, oValues.payload);
 		this._fireSelect({type: sSelectType, conditions: [oCondition]});
 		if (this.isTypeahead()) {
 			this.fireConfirm({close: true});
@@ -238,7 +238,7 @@ sap.ui.define([
 
 		if (this._bScrollToSelectedItem) {
 			var oTable = this._getTable();
-			if (oTable && this.isTypeahead() && this._isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
+			if (oTable && this.isTypeahead() && this.isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
 				var oSelectedItem = this._iNavigateIndex >= 0 ? oTable.getItems()[this._iNavigateIndex] : oTable.getSelectedItem();
 				if (oSelectedItem) {
 					this._handleScrolling(oSelectedItem);
@@ -262,7 +262,7 @@ sap.ui.define([
 			}
 			// check if selection mode is fine
 			var sSelectionMode = this.isTypeahead() ? ListMode.SingleSelectMaster : ListMode.SingleSelectLeft;
-			if (!FilterableListContent.prototype._isSingleSelect.apply(this) && oTable.getMode() !== sSelectionMode) { // if in multi-select mode only single-selection on table is allowed this is also OK
+			if (!FilterableListContent.prototype.isSingleSelect.apply(this) && oTable.getMode() !== sSelectionMode) { // if in multi-select mode only single-selection on table is allowed this is also OK
 				sSelectionMode = ListMode.MultiSelect;
 			}
 			if (oTable.getMode() === ListMode.None) { // only set automatically if not provided from outside (and do it only once)
@@ -275,7 +275,7 @@ sap.ui.define([
 
 		FilterableListContent.prototype.onShow.apply(this, arguments);
 
-		if (oTable && this.isTypeahead() && this._isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
+		if (oTable && this.isTypeahead() && this.isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
 			var oSelectedItem = this._iNavigateIndex >= 0 ? oTable.getItems()[this._iNavigateIndex] : oTable.getSelectedItem();
 			if (oSelectedItem) {
 				this._handleScrolling(oSelectedItem);
@@ -299,7 +299,7 @@ sap.ui.define([
 		this._bScrollToSelectedItem = false;
 	};
 
-	MTable.prototype._handleConditionsUpdate = function(oChanges) {
+	MTable.prototype.handleConditionsUpdate = function(oChanges) {
 		_updateSelection.call(this);
 	};
 
@@ -398,8 +398,8 @@ sap.ui.define([
 		oConfig.caseSensitive = oConfig.caseSensitive || this.getCaseSensitive();
 
 		var oPromise1 = _checkListBindingPending.call(this);
-		var oDelegate = this._getValueHelpDelegate();
-		var oDelegatePayload = this._getValueHelpDelegatePayload();
+		var oDelegate = this.getValueHelpDelegate();
+		var oDelegatePayload = this.getValueHelpDelegatePayload();
 		var oPromise2 = oDelegate && oDelegate.getFilterConditions(oDelegatePayload, this, oConfig);
 
 		return Promise.all([oPromise1, oPromise2]).then(function(aResult) {
@@ -440,7 +440,7 @@ sap.ui.define([
 		var aFilteredItems = FilterProcessor.apply(aItems, oFilter, _getFilterValue);
 		if (aFilteredItems.length === 1) {
 			var oBindingContext = this._getListItemBindingContext(aFilteredItems[0]);
-			var oValue = this._getItemFromContext(oBindingContext, {inParameters: aInParameters, outParameters: aOutParameters});
+			var oValue = this.getItemFromContext(oBindingContext, {inParameters: aInParameters, outParameters: aOutParameters});
 			return {key: oValue.key, description: oValue.description, payload: oValue.payload};
 		} else if (aFilteredItems.length > 1) {
 			if (!oConfig.caseSensitive) {
@@ -483,9 +483,9 @@ sap.ui.define([
 
 	function _checkListBindingPending() {
 		return this._retrievePromise("listBinding").then(function (oListBinding) {
-			var oDelegate = this._getValueHelpDelegate();
-			var oDelegatePayload = this._getValueHelpDelegatePayload();
-			var oListBindingInfo = this._getListBindingInfo();
+			var oDelegate = this.getValueHelpDelegate();
+			var oDelegatePayload = this.getValueHelpDelegatePayload();
+			var oListBindingInfo = this.getListBindingInfo();
 			var iLength = oListBindingInfo && oListBindingInfo.length;
 			if (oListBinding && oDelegate){
 				return oDelegate.checkListBindingPending(oDelegatePayload, oListBinding, iLength);
@@ -500,7 +500,7 @@ sap.ui.define([
 		return oTable && oTable.getBinding("items");
 	};
 
-	MTable.prototype._getListBindingInfo = function () {
+	MTable.prototype.getListBindingInfo = function () {
 		var oTable = this._getTable();
 		return oTable && oTable.getBindingInfo("items");
 	};
@@ -523,8 +523,8 @@ sap.ui.define([
 		var oListBinding = oTable && oTable.getBinding("items"); //this.getListBinding();
 		var sPath = oListBinding && oListBinding.getPath();
 
-		var oDelegate = this._getValueHelpDelegate();
-		var oDelegatePayload = this._getValueHelpDelegatePayload();
+		var oDelegate = this.getValueHelpDelegate();
+		var oDelegatePayload = this.getValueHelpDelegatePayload();
 
 		var sPromiseKey = "loadItemForValue:" + JSON.stringify([sPath, sKeyPath, oConfig.parsedValue || oConfig.value, oConfig.context, oConfig.bindingContext && oConfig.bindingContext.getPath(), oConditions]);
 
@@ -540,7 +540,7 @@ sap.ui.define([
 				}, 0);
 
 				if (aContexts.length && (aContexts.length < 2 || bUseFirstMatch)) {
-					return this._getItemFromContext(aContexts[0], {keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: undefined});
+					return this.getItemFromContext(aContexts[0], {keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: undefined});
 				} else if (oConfig.checkKey && oConfig.parsedValue === "" && aContexts.length === 0) {
 					// nothing found for empty key -> this is not an error
 					return null;
@@ -614,7 +614,7 @@ sap.ui.define([
 			iSelectedIndex = 0;
 		}
 
-		if (this._getMaxConditions() !== 1) {
+		if (this.getMaxConditions() !== 1) {
 			// in case of multiToken field the focus can be set to the table and the navigation will be handled by the focused table control.
 			if (this.getParent().isOpen() && oTable.getMode() === ListMode.MultiSelect) {
 				//TODO cursorUp and the new iSelectedIndex will not be handled correct when we give the focus to the table.
@@ -677,8 +677,8 @@ sap.ui.define([
 					this.fireNavigated({condition: undefined, itemId: oItem.getId(), leaveFocus: false});
 				} else {
 					var oItemContext = this._getListItemBindingContext(oItem);
-					var oValues = this._getItemFromContext(oItemContext);
-					oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
+					var oValues = this.getItemFromContext(oItemContext);
+					oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 					this.setProperty("conditions", [oCondition], true);
 					this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
 				}
@@ -767,7 +767,7 @@ sap.ui.define([
 				getFooter: function () {
 					return this._retrievePromise("footer", function () {
 						return this._retrievePromise("listBinding").then(function (oListBinding) {
-							var oBindingInfo = this._getListBindingInfo();
+							var oBindingInfo = this.getListBindingInfo();
 							var bDialogExist = this.getParent().hasDialog();
 
 							if (bDialogExist && oBindingInfo && oBindingInfo.length) {
@@ -810,7 +810,7 @@ sap.ui.define([
 		_adjustTable.call(this);
 	};
 
-	MTable.prototype._observeChanges = function (oChanges) {
+	MTable.prototype.observeChanges = function (oChanges) {
 
 		if (oChanges.name === "config") {
 			_adjustTable.call(this);
@@ -854,7 +854,7 @@ sap.ui.define([
 			}
 		}
 
-		FilterableListContent.prototype._observeChanges.apply(this, arguments);
+		FilterableListContent.prototype.observeChanges.apply(this, arguments);
 	};
 
 	MTable.prototype._handleTableEvent = function (oEvent) {
@@ -886,7 +886,7 @@ sap.ui.define([
 		return true;
 	};
 
-	MTable.prototype._isSingleSelect = function() {
+	MTable.prototype.isSingleSelect = function() {
 
 		// use selection mode of table if set
 		var oTable = this._getTable();
@@ -897,7 +897,7 @@ sap.ui.define([
 				return true;
 			}
 		} else {
-			return FilterableListContent.prototype._isSingleSelect.apply(this, arguments);
+			return FilterableListContent.prototype.isSingleSelect.apply(this, arguments);
 		}
 
 	};

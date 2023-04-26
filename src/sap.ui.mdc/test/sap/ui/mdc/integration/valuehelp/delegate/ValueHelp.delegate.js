@@ -58,7 +58,7 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.isFilterableListItemSelected = function (oPayload, oContent, oItem, aConditions) {
-		var sModelName = oContent._getListBindingInfo().model;
+		var sModelName = oContent.getListBindingInfo().model;
 		var bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
 		var bSelectionConsidersPayload = oContent.getModel("settings").getProperty("/selectionConsidersPayload");
 

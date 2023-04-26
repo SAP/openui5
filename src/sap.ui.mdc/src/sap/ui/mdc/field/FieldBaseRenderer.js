@@ -24,7 +24,7 @@ sap.ui.define([
 	});
 
 	FieldBaseRenderer.render = function(oRm, oField) {
-		var aContent = oField._getContent();
+		var aContent = oField.getCurrentContent();
 		var sWidth = oField.getWidth();
 		var aConditions = oField.getConditions();
 		var sEditMode = oField.getEditMode();

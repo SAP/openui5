@@ -649,7 +649,7 @@ sap.ui.define([
 			// just fake change with additional value
 			var aConditions = [Condition.createItemCondition("key", "text")];
 			oField.setConditions(aConditions);
-			oField._fireChange(aConditions, true, undefined, Promise.resolve(oField._getResultForPromise(aConditions)));
+			oField.fireChangeEvent(aConditions, true, undefined, Promise.resolve(oField.getResultForChangePromise(aConditions)));
 			assert.equal(iCount, 2, "change event fired again");
 			assert.equal(sValue, "key", "change event value");
 			assert.equal(oField.getValue(), "key", "Field value");
@@ -1446,8 +1446,8 @@ sap.ui.define([
 		oField.setConditions([Condition.createItemCondition([2, "EUR"])]); // fake user Input with parsing
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
 
-		var oPromise = Promise.resolve(oField._getResultForPromise(oField.getConditions()));
-		oField._fireChange(oField.getConditions(), true, undefined, oPromise); // fake change event
+		var oPromise = Promise.resolve(oField.getResultForChangePromise(oField.getConditions()));
+		oField.fireChangeEvent(oField.getConditions(), true, undefined, oPromise); // fake change event
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated with change event");
 		assert.deepEqual(oField.getValue(), [2, "EUR"], "Field value");
 
@@ -1456,8 +1456,8 @@ sap.ui.define([
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
 
 		var fnDone = assert.async();
-		oPromise = Promise.resolve(oField._getResultForPromise(oField.getConditions()));
-		oField._fireChange(undefined, undefined, undefined, oPromise); // fake change event with promise
+		oPromise = Promise.resolve(oField.getResultForChangePromise(oField.getConditions()));
+		oField.fireChangeEvent(undefined, undefined, undefined, oPromise); // fake change event with promise
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated directly");
 		oPromise.then(function(vResult) {
 			assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated after promise of change event resolved");

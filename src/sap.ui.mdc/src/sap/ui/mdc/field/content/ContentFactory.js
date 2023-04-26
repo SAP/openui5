@@ -21,15 +21,24 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * @namespace
+	 * @name sap.ui.mdc.field.content
+	 * @since 1.87.0
+	 * @private
+	 * @experimental As of version 1.87
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 */
+
+	/**
 	 * Object-based factory that handles the content creation process of the {@link sap.ui.mdc.field.FieldBase}.
+	 * @namespace
 	 * @author SAP SE
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @experimental As of version 1.87
 	 * @since 1.87
 	 * @alias sap.ui.mdc.field.content.ContentFactory
 	 * @extends sap.ui.base.Object
-	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var ContentFactory = BaseObject.extend("sap.ui.mdc.field.content.ContentFactory", {
 		metadata: {
@@ -94,6 +103,8 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.enum.ContentMode} sContentMode A given content mode
 	 * @param {string} sId ID of the {@link sap.ui.mdc.field.FieldBase}
 	 * @returns {Promise<sap.ui.core.Control[]>} Array containing the created controls
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ContentFactory.prototype.createContent = function(oContentType, sContentMode, sId) {
 		var aControlNames = oContentType.getControlNames(sContentMode, this._sOperator);
@@ -153,6 +164,8 @@ sap.ui.define([
 	 * @param {boolean} bMultipleLines Determines if the content type has a multiple line input
 	 * @param {string[]} aOperators Names of the operators if the <code>EditOperator</code> content mode is used
 	 * @returns {sap.ui.mdc.enum.ContentMode} sContentMode A given content mode
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ContentFactory.prototype.getContentMode = function(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators) {
 		var sContentMode = ContentMode.Edit;
@@ -183,6 +196,8 @@ sap.ui.define([
 	 * @param {int} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
 	 * @param {boolean} bIsTriggerable Checks if the {@link sap.ui.mdc.field.FieldBase} is triggerable or not - needed for link content type
 	 * @returns {sap.ui.mdc.field.content.DefaultContent} oContentType Content type object
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ContentFactory.prototype.getContentType = function(sBaseType, iMaxConditions, bIsTriggerable) {
 		var oField = this.getField();
@@ -296,7 +311,7 @@ sap.ui.define([
 	}
 
 	ContentFactory.prototype.getConditionType = function(bSkipConditionTypeGeneration) {
-		return _getCondType.call(this, "_oConditionType", ConditionType, this.getField()._getFormatOptions.bind(this.getField()), bSkipConditionTypeGeneration);
+		return _getCondType.call(this, "_oConditionType", ConditionType, this.getField().getFormatOptions.bind(this.getField()), bSkipConditionTypeGeneration);
 	};
 
 	ContentFactory.prototype.setConditionType = function(oConditionType) {
@@ -305,7 +320,7 @@ sap.ui.define([
 
 	ContentFactory.prototype.getConditionsType = function (bSkipConditionsTypeGeneration, CustomConditionsType) {
 		var UsedConditionType = CustomConditionsType || ConditionsType; // CustomConditionsType used for DynamicDateRange
-		return _getCondType.call(this, "_oConditionsType", UsedConditionType, this.getField()._getFormatOptions.bind(this.getField()), bSkipConditionsTypeGeneration);
+		return _getCondType.call(this, "_oConditionsType", UsedConditionType, this.getField().getFormatOptions.bind(this.getField()), bSkipConditionsTypeGeneration);
 	};
 
 	ContentFactory.prototype.setConditionsType = function(oConditionsType) {
@@ -313,7 +328,7 @@ sap.ui.define([
 	};
 
 	ContentFactory.prototype.getUnitConditionsType = function(bSkipConditionsTypeGeneration) {
-		return _getCondType.call(this, "_oUnitConditionsType", ConditionsType, this.getField()._getUnitFormatOptions.bind(this.getField()), bSkipConditionsTypeGeneration);
+		return _getCondType.call(this, "_oUnitConditionsType", ConditionsType, this.getField().getUnitFormatOptions.bind(this.getField()), bSkipConditionsTypeGeneration);
 	};
 
 	ContentFactory.prototype.getContentConditionTypes = function() {
@@ -522,7 +537,7 @@ sap.ui.define([
 		var oConditionType = this._oConditionType;
 		var oConditionsType = this._oConditionsType;
 		if (oConditionType || oConditionsType) {
-			var oFormatOptions = this.getField()._getFormatOptions();
+			var oFormatOptions = this.getField().getFormatOptions();
 			if (oConditionType) {
 				oConditionType.setFormatOptions(oFormatOptions);
 			}
@@ -530,7 +545,7 @@ sap.ui.define([
 				oConditionsType.setFormatOptions(oFormatOptions);
 			}
 			if (this._oUnitConditionsType) {
-				oFormatOptions = this.getField()._getUnitFormatOptions();
+				oFormatOptions = this.getField().getUnitFormatOptions();
 				this._oUnitConditionsType.setFormatOptions(oFormatOptions);
 			}
 		}

@@ -191,7 +191,7 @@ sap.ui.define([
 
 	function _setConditions(vKey, sValue) {
 
-		var oCondition = this._createCondition(vKey, sValue);
+		var oCondition = this.createCondition(vKey, sValue);
 		this.setProperty("conditions", [oCondition], true);
 
 		return oCondition;
@@ -355,13 +355,13 @@ sap.ui.define([
 		return true;
 	};
 
-	FixedList.prototype._handleConditionsUpdate = function(oChanges) {
+	FixedList.prototype.handleConditionsUpdate = function(oChanges) {
 		_updateSelection.call(this);
 	};
 
-	FixedList.prototype._handleFilterValueUpdate = function(oChanges) {
+	FixedList.prototype.handleFilterValueUpdate = function(oChanges) {
 		_updateFilter.call(this);
-		ListContent.prototype._handleFilterValueUpdate.apply(this, arguments);
+		ListContent.prototype.handleFilterValueUpdate.apply(this, arguments);
 	};
 
 	FixedList.prototype.removeFocus = function() {
@@ -551,7 +551,7 @@ sap.ui.define([
 
 	};
 
-	FixedList.prototype._isSingleSelect = function (oEvent) {
+	FixedList.prototype.isSingleSelect = function (oEvent) {
 
 		return true;
 
@@ -559,7 +559,7 @@ sap.ui.define([
 
 	FixedList.prototype.shouldOpenOnNavigate = function() {
 
-		return !ListContent.prototype._isSingleSelect.apply(this);
+		return !ListContent.prototype.isSingleSelect.apply(this);
 
 	};
 

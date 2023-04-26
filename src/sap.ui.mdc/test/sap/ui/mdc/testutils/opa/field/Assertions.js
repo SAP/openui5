@@ -35,7 +35,7 @@ sap.ui.define([
 			return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				success: function (oField) {
 					if (sValue) {
-						var oContent = oField._getContent()[0];
+						var oContent = oField.getCurrentContent()[0];
 						var sControlType = oContent.getMetadata().getName();
 						var bIsDatePicker = aDatePickerControls.includes(sControlType);
 

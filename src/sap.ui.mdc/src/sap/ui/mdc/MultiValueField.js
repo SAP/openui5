@@ -27,8 +27,15 @@ sap.ui.define([
 	 * A <code>MultiValueField</code> control can be used to bind its items to data of a certain data type. Based on the data type settings, a default
 	 * control is rendered by the <code>MultiValueField</code> control.
 	 *
+	 * <ul>
+	 * <li>In display mode normally a {@link sap.m.Tokenizer Tokenizer} control is rendered.</li>
+	 * <li>If <code>multipleLines</code> is set a {@link sap.m.ExpandableText ExpandableText} control is rendered.</li>
+	 * <li>In edit mode normally a {@link sap.m.MultiInput MultiInput} control is rendered.</li>
+	 * <li>If <code>multipleLines</code> is set a {@link sap.m.TextArea TextArea} control is rendered.</li>
+	 * </ul>
+	 *
 	 * @extends sap.ui.mdc.field.FieldBase
-	 * @implements sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.m.IOverflowToolbarContent
 	 *
 	 * @constructor
 	 * @alias sap.ui.mdc.MultiValueField
@@ -157,9 +164,9 @@ sap.ui.define([
 
 	}
 
-	Field.prototype._handleModelContextChange = function(oEvent) {
+	Field.prototype.handleModelContextChange = function(oEvent) {
 
-		FieldBase.prototype._handleModelContextChange.apply(this, arguments);
+		FieldBase.prototype.handleModelContextChange.apply(this, arguments);
 
 		if (!this._oDataType) {
 			var oBindingInfo = this.getBinding("items");
@@ -171,9 +178,9 @@ sap.ui.define([
 	};
 
 
-	Field.prototype._initDataType = function() {
+	Field.prototype.initDataType = function() {
 
-		FieldBase.prototype._initDataType.apply(this, arguments);
+		FieldBase.prototype.initDataType.apply(this, arguments);
 
 		var oBindingInfo = this.getBindingInfo("items");
 		if (oBindingInfo) {
@@ -203,9 +210,9 @@ sap.ui.define([
 
 	};
 
-	Field.prototype._observeChanges = function(oChanges) {
+	Field.prototype.observeChanges = function(oChanges) {
 
-		FieldBase.prototype._observeChanges.apply(this, arguments);
+		FieldBase.prototype.observeChanges.apply(this, arguments);
 
 		if (oChanges.name === "items") {
 			_itemsChanged.call(this, oChanges.child, oChanges.mutation);
@@ -301,30 +308,30 @@ sap.ui.define([
 
 	}
 
-	Field.prototype._fireChange = function(aConditions, bValid, vWrongValue, oPromise) {
+	Field.prototype.fireChangeEvent = function(aConditions, bValid, vWrongValue, oPromise) {
 
 		this.fireChange({ items: this.getItems(), valid: bValid, promise: oPromise });
 
 	};
 
-	Field.prototype._getResultForPromise = function(aConditions) {
+	Field.prototype.getResultForChangePromise = function(aConditions) {
 
 		return this.getItems();
 
 	};
 
-	Field.prototype._getOperators = function() {
+	Field.prototype.getSupportedOperators = function() {
 
 		return this.getProperty("_operators", []);
 
 	};
 
-	Field.prototype._checkCreateInternalContent = function() {
+	Field.prototype.checkCreateInternalContent = function() {
 
 		if (!this.bIsDestroyed && this._oContentFactory.getDataType() && !this._isPropertyInitial("editMode")) {
 			// If DataType is provided via Binding and EditMode is set the internal control can be created
 			// TODO: no control needed if just template for cloning
-			FieldBase.prototype._checkCreateInternalContent.apply(this, arguments);
+			FieldBase.prototype.checkCreateInternalContent.apply(this, arguments);
 		}
 
 	};

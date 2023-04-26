@@ -195,7 +195,7 @@ sap.ui.define([
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		assert.ok(oFilterField._isInvalidInput(), "ParseError fired");
+		assert.ok(oFilterField.isInvalidInput(), "ParseError fired");
 		assert.equal(iCount, 1, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
 		assert.equal(sValue, "XXXX", "Value of change event");
@@ -238,7 +238,7 @@ sap.ui.define([
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		assert.ok(oFilterField._isInvalidInput(), "ParseError fired");
+		assert.ok(oFilterField.isInvalidInput(), "ParseError fired");
 		assert.equal(iCount, 1, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
 		assert.equal(sValue, "XXXX", "Value of change event");
@@ -278,17 +278,17 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_getOperators", function(assert) {
+	QUnit.test("getSupportedOperators", function(assert) {
 
 		sinon.spy(FilterOperatorUtil, "getOperatorsForType");
 
-		var aOperators = oFilterField._getOperators();
+		var aOperators = oFilterField.getSupportedOperators();
 		assert.ok(aOperators.length > 0, "Operators returned");
 		assert.ok(FilterOperatorUtil.getOperatorsForType.calledWith(BaseType.String), "Default operators for string used");
 
 		FilterOperatorUtil.getOperatorsForType.resetHistory();
 		oFilterField.setOperators(["EQ"]);
-		aOperators = oFilterField._getOperators();
+		aOperators = oFilterField.getSupportedOperators();
 		assert.equal(aOperators.length, 1, "one Operator returned");
 		assert.equal(aOperators[0], "EQ", "right Operator returned");
 		assert.notOk(FilterOperatorUtil.getOperatorsForType.called, "Default operators not used");

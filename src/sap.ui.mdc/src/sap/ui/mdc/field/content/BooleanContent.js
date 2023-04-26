@@ -9,6 +9,7 @@ sap.ui.define([
 	/**
 	 * Object-based definition of the Boolean content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
 	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enum.ContentMode}.
+	 * @namespace
 	 * @author SAP SE
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
@@ -16,7 +17,6 @@ sap.ui.define([
 	 * @since 1.87
 	 * @alias sap.ui.mdc.field.content.BooleanContent
 	 * @extends sap.ui.mdc.field.content.DefaultContent
-	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var BooleanContent = Object.assign({}, DefaultContent, {
 		getDisplayMultiValue: function() {

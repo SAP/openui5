@@ -986,8 +986,6 @@ sap.ui.define([
 				value: vValue,
 				parsedValue: vParsedValue,
 				dataType: oType,
-				inParameters: undefined, // TODO: needed?
-				outParameters: undefined, // TODO: needed?
 				bindingContext: oBindingContext,
 				checkKey: bCheckKey,
 				checkDescription: bCheckDescription,

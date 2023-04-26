@@ -965,8 +965,6 @@ sap.ui.define([
 				dataType: oValueType,
 				checkKey: true,
 				checkDescription: true,
-				inParameters: undefined,
-				outParameters: undefined,
 				bindingContext: "BC",
 				control: "Control",
 				exception: ParseException

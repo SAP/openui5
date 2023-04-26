@@ -99,90 +99,90 @@ sap.ui.define([
 			var fnFireChange = function(aConditions, bValid, vWrongValue, oPromise) { this.fireEvent("change", { conditions: aConditions, valid: bValid, promise: oPromise }); };
 			var fnGetOperators = function() { return ["EQ"]; };
 			var oBaseField = oView.byId("FB1");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField._getOperators = fnGetOperators; // fake Field
+			oBaseField.getSupportedOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB2");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField._getOperators = fnGetOperators; // fake Field
+			oBaseField.getSupportedOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB3");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB4");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB5");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB6");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB7");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField._getOperators = fnGetOperators; // fake Field
+			oBaseField.fireChangeEvent = fnFireChange;
+			oBaseField.getSupportedOperators = fnGetOperators; // fake Field
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB8");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField._getOperators = fnGetOperators; // fake Field
+			oBaseField.fireChangeEvent = fnFireChange;
+			oBaseField.getSupportedOperators = fnGetOperators; // fake Field
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB9");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB9a");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB9b");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB9c");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB10");
 			var oCM2 = new ConditionModel(); // dummy for Link
 			oView.setModel(oCM2, "cm2");
 			oCM2.addCondition("Link", Condition.createCondition("EQ", ["My Link"]));
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB11");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB12");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB13");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB14");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB15");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB16");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB16b");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB17");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB18");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField._getOperators = fnGetOperators; // fake Field
+			oBaseField.getSupportedOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB19");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB20");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB21");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB-Country");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 
 			// add custom operators
@@ -226,9 +226,9 @@ sap.ui.define([
 			FilterOperatorUtil.addOperator(oMyOperator);
 
 			oBaseField = oView.byId("FB-MatrId");
-			oBaseField._fireChange = fnFireChange;
+			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField._getOperators = function() {return ["GT", "LT", "myEQ", "myNE"];};
+			oBaseField.getSupportedOperators = function() {return ["GT", "LT", "myEQ", "myNE"];};
 
 		},
 

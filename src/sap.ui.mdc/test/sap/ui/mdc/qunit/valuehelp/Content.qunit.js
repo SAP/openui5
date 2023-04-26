@@ -83,29 +83,29 @@ sap.ui.define([
 	QUnit.test("condition update", function(assert) {
 
 		sinon.spy(oContent, "invalidate");
-		sinon.spy(oContent, "_handleConditionsUpdate");
+		sinon.spy(oContent, "handleConditionsUpdate");
 		var aConditions = [Condition.createItemCondition("X", "Text")];
 		oContent.setConditions(aConditions);
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
-		assert.ok(oContent._handleConditionsUpdate.calledOnce, "_handleConditionsUpdate called");
+		assert.ok(oContent.handleConditionsUpdate.calledOnce, "handleConditionsUpdate called");
 
 	});
 
 	QUnit.test("filterValue update", function(assert) {
 
 		sinon.spy(oContent, "invalidate");
-		sinon.spy(oContent, "_handleFilterValueUpdate");
+		sinon.spy(oContent, "handleFilterValueUpdate");
 		oContent.setFilterValue("X");
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
-		assert.ok(oContent._handleFilterValueUpdate.calledOnce, "_handleFilterValueUpdate called");
+		assert.ok(oContent.handleFilterValueUpdate.calledOnce, "handleFilterValueUpdate called");
 
 	});
 
 	QUnit.test("onShow", function(assert) {
 
-		sinon.spy(oContent, "_handleConditionsUpdate");
+		sinon.spy(oContent, "handleConditionsUpdate");
 		oContent.onShow();
-		assert.ok(oContent._handleConditionsUpdate.calledOnce, "_handleConditionsUpdate called");
+		assert.ok(oContent.handleConditionsUpdate.calledOnce, "handleConditionsUpdate called");
 		assert.ok(oContent._bVisible, "_bVisible set");
 
 	});
@@ -142,7 +142,7 @@ sap.ui.define([
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
 	});
 
-	QUnit.test("_createCondition", function(assert) {
+	QUnit.test("createCondition", function(assert) {
 
 		var oOperator = new Operator({
 			name: "MyTest",
@@ -156,7 +156,7 @@ sap.ui.define([
 
 		oContent.setConfig({operators: ["GT", "LT", oOperator.name]});
 
-		var oCondition = oContent._createCondition("1", "Text1", {myPayload: true});
+		var oCondition = oContent.createCondition("1", "Text1", {myPayload: true});
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
 			assert.equal(oCondition && oCondition.operator, "MyTest", "Condition Operator");
@@ -168,7 +168,7 @@ sap.ui.define([
 
 		oContent.setConfig({operators: []}); // use all
 
-		oCondition = oContent._createCondition("1", "Text1");
+		oCondition = oContent.createCondition("1", "Text1");
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
 			assert.equal(oCondition && oCondition.operator, "EQ", "Condition Operator");
@@ -188,10 +188,10 @@ sap.ui.define([
 		assert.ok(oContainer.getUIArea.calledOnce, "getUIArea of Container called");
 		oContainer.getUIArea.reset();
 
-		oContainer._getUIAreaForContent = function () {
+		oContainer.getUIAreaForContent = function () {
 			return "X"; // just test call
 		};
-		assert.equal(oContent.getUIArea(), "X", "UIArea from _getUIAreaForContent od Container returned");
+		assert.equal(oContent.getUIArea(), "X", "UIArea from getUIAreaForContent od Container returned");
 		assert.ok(oContainer.getUIArea.notCalled, "getUIArea of Container not called");
 
 	});
@@ -235,30 +235,30 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getValueHelpDelegate", function(assert) {
+	QUnit.test("getValueHelpDelegate", function(assert) {
 
-		var oDelegate = oContent._getValueHelpDelegate();
+		var oDelegate = oContent.getValueHelpDelegate();
 		assert.equal(oDelegate, ValueHelpDelegate, "Delegate returned");
 
 	});
 
-	QUnit.test("_getValueHelpDelegatePayload", function(assert) {
+	QUnit.test("getValueHelpDelegatePayload", function(assert) {
 
-		var oPayload = oContent._getValueHelpDelegatePayload();
+		var oPayload = oContent.getValueHelpDelegatePayload();
 		assert.deepEqual(oPayload, {x: "X"}, "Payload returned");
 
 	});
 
-	QUnit.test("_awaitValueHelpDelegate", function(assert) {
+	QUnit.test("awaitValueHelpDelegate", function(assert) {
 
-		var oPromise = oContent._awaitValueHelpDelegate();
+		var oPromise = oContent.awaitValueHelpDelegate();
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 	});
 
-	QUnit.test("_isValueHelpDelegateInitialized", function(assert) {
+	QUnit.test("isValueHelpDelegateInitialized", function(assert) {
 
-		var bDelegateInitialized = oContent._isValueHelpDelegateInitialized();
+		var bDelegateInitialized = oContent.isValueHelpDelegateInitialized();
 		assert.ok(bDelegateInitialized, "Delegate initialized");
 
 	});
@@ -282,11 +282,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", function(assert) {
 		oContent.setConfig({maxConditions: -1});
-		assert.equal(oContent._isSingleSelect(), false, "multi-select correctly determined from maxConditions");
+		assert.equal(oContent.isSingleSelect(), false, "multi-select correctly determined from maxConditions");
 		oContent.setConfig({maxConditions: 1});
-		assert.equal(oContent._isSingleSelect(), true, "single-select correctly determined from maxConditions");
+		assert.equal(oContent.isSingleSelect(), true, "single-select correctly determined from maxConditions");
 	});
 
 	QUnit.test("shouldOpenOnClick", function(assert) {
@@ -325,11 +325,11 @@ sap.ui.define([
 		assert.notOk(oContent.isMultiSelect(), "correctly determined from maxConditions");
 	});
 
-	QUnit.test("_getMaxConditions", function(assert) {
+	QUnit.test("getMaxConditions", function(assert) {
 		oContent.setConfig({maxConditions: -1});
-		assert.equal(oContent._getMaxConditions(), -1, "maxConditions taken from config");
+		assert.equal(oContent.getMaxConditions(), -1, "maxConditions taken from config");
 		oContent.setConfig({maxConditions: 1});
-		assert.equal(oContent._getMaxConditions(), 1, "maxConditions updated from config");
+		assert.equal(oContent.getMaxConditions(), 1, "maxConditions updated from config");
 	});
 
 	QUnit.test("getRequiresTokenizer", function(assert) {

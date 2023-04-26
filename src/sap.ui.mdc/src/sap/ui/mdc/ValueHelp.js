@@ -77,6 +77,10 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>ValueHelp</code>.
 	 *
+	 * The <code>ValueHelp</code> element can be assigned to {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
+	 * and {@link sap.ui.mdc.FilterField FilterField} controls using <code>valueHelp</code> association. One <code>ValueHelp</code> element instance can be
+	 * assigned to multiple fields (like in different table rows). It should be placed in the control tree on the container holding the fields.
+	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
 	 * @class Element for the <code>ValueHelp</code> association in the {@link sap.ui.mdc.field.FieldBase FieldBase} controls.
@@ -127,6 +131,7 @@ sap.ui.define([
 
 				/**
 				 * The value by which the help is filtered.
+				 * Here the field provides the typed value to allow the value help to filter for it.
 				 *
 				 * <b>Note:</b> This only takes effect if the <code>ValueHelp</code> elements content supports filtering.
 				 *
@@ -383,12 +388,26 @@ sap.ui.define([
 
 	};
 
-	//TODO: define aria attribute object
+	/**
+	 * Aria attributes determined by value help to be set on connected control
+	 *
+	 * @static
+	 * @constant
+	 * @typedef {object} sap.ui.mdc.valuehelp.base.AriaAttributes
+	 * @property {string} contentId ID of the current content control the calling control should point to (for example the table inside the popover)
+	 * @property {string} ariaHasPopup the value to be set in <code>aria-haspopup</code> attribute (for example "listbox")
+	 * @property {string} role value of the <code>role</code> attribute (for example "combobox")
+	 * @property {string} roleDescription value of the <code>aria-roledescription</code> attribute
+	 * @property {boolean} valueHelpEnabled value of the <code>valueHelpEnabled</code> attribute
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
 	/**
 	 * Returns the aria attributes the field needs from the value help
 	 *
 	 * @param {int} iMaxConditions maximal conditions allowed (as ValueHelp might not be connected to a field)
-	 * @returns {object} object with the aria-attibutes
+	 * @returns {sap.ui.mdc.valuehelp.base.AriaAttributes} object with the aria-attibutes
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
@@ -751,6 +770,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Configuration object type to determine a <code>ValueHelpItem</code> for a given value.
+	 *
+	 * @static
+	 * @constant
+	 * @typedef {object} sap.ui.mdc.valuehelp.base.ItemForValueConfiguration
+	 * @property {any} value Value as entered by user
+	 * @property {any} [parsedValue] Value parsed by type to fit the data type of the key
+	 * @property {object} [context] Contextual information provided by condition payload or inParameters/outParameters. This is only filled if the description needs to be determined for an existing condition.
+	 * @property {object} [context.inParameter] In parameters of the current condition (InParameter are not used any longer, but it might be filled in older conditiotions stored in variants.)
+	 * @property {object} [context.ouParameter] Out parameters of the current condition (OutParameter are not used any longer, but it might be filled in older conditiotions stored in variants.)
+	 * @property {object} [context.payload] Payload of the current condition
+	 * @property {sap.ui.model.Context} [bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
+	 * @property {boolean} checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
+	 * @property {boolean} checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
+	 * @property {boolean} [caseSensitive] If set, the check is done case sensitive
+	 * @property {sap.ui.core.Control} control Instance of the calling control
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+
+	/**
 	 * Determines the item (key and description) for a given value.
 	 *
 	 * The value help checks if there is an item with a key or description that fits this value.
@@ -758,18 +799,7 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the control the <code>ValuedHelp</code> element
 	 * belongs to, not by the application.
 	 *
-	 * @param {object} oConfig Configuration
-	 * @param {any} oConfig.value Value as entered by user
-	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
-	 * @param {object} [oConfig.context] Contextual information provided by condition payload or inParameters/outParameters. This is only filled if the description needs to be determined for an existing condition.
-	 * @param {object} [oConfig.context.inParameter] In parameters of the current condition
-	 * @param {object} [oConfig.context.ouParameter] Out parameters of the current condition
-	 * @param {object} [oConfig.context.payload] Payload of the current condition
-	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
-	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
-	 * @param {boolean} oConfig.checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
-	 * @param {boolean} [oConfig.caseSensitive] If set, the check is done case sensitive
-	 * @param {sap.ui.core.Control} oConfig.control Instance of the calling control
+	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
 	 * @returns {Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Promise returning object containing description, key and payload.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
