@@ -94,7 +94,7 @@ function(
 		}.bind(this)).then(function(oAdaptations) {
 			this.oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel({control: this._oRtaInformation.rootControl, layer: this._oRtaInformation.flexSettings.layer});
 			this.oAdaptationsModel.updateAdaptations(oAdaptations.adaptations);
-			this.oReferenceAdaptationsData = JSON.parse(JSON.stringify(oAdaptations));
+			this.oReferenceAdaptationsData = JSON.parse(JSON.stringify(this.oAdaptationsModel.getProperty("/adaptations")));
 			this._oControlConfigurationModel = new JSONModel({isTableItemSelected: false});
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");
 			this._oManageAdaptationDialog.setModel(this._oControlConfigurationModel, "controlConfiguration");
@@ -232,7 +232,7 @@ function(
 		sortByRank(this.oAdaptationsModel);
 		// after move select the sibling
 		oTable.getItems()[iSiblingItemIndex].setSelected(true).focus();
-		enableSaveButton.call(this, true);
+		enableSaveButton.call(this, didAdaptationsPriorityChange.call(this));
 	}
 
 	function onDropSelectedAdaptation(oEvent) {
@@ -272,13 +272,13 @@ function(
 		sortByRank(this.oAdaptationsModel);
 		var oAllUpdatedAdaptations = Object.assign(this.oAdaptationsModel.getProperty("/allAdaptations"), this.oAdaptationsModel.getProperty("/adaptations"));
 		this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
-		enableSaveButton.call(this, true);
+		enableSaveButton.call(this, didAdaptationsPriorityChange.call(this));
 	}
 
 	function didAdaptationsPriorityChange() {
 		return !_isEqual(
 			this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdapation) { return oAdapation.id; }),
-			this.oReferenceAdaptationsData.adaptations.map(function(oAdapation) { return oAdapation.id; })
+			this.oReferenceAdaptationsData.map(function(oAdapation) { return oAdapation.id; })
 		);
 	}
 
@@ -317,18 +317,18 @@ function(
 	}
 
 	function onSaveReorderedAdaptations() {
-		if (didAdaptationsPriorityChange.call(this)) {
-			var oRtaInformation = this.getToolbar().getRtaInformation();
-			var aAdaptationPriorities = this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) { return oAdaptation.id; });
-			ContextBasedAdaptationsAPI.reorder({control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer, parameters: {priorities: aAdaptationPriorities}})
-			.catch(function(oError) {
-				Log.error(oError.stack);
-				var sMessage = "MSG_LREP_TRANSFER_ERROR";
-				var oOptions = { titleKey: "BTN_MANAGE_APP_CTX" };
-				oOptions.details = oError.userMessage;
-				Utils.showMessageBox("error", sMessage, oOptions);
-			});
-		}
+		var oRtaInformation = this.getToolbar().getRtaInformation();
+		var aAdaptationPriorities = this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) { return oAdaptation.id; });
+		ContextBasedAdaptationsAPI.reorder({control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer, parameters: {priorities: aAdaptationPriorities}})
+		.catch(function(oError) {
+			Log.error(oError.stack);
+			var sMessage = "MSG_LREP_TRANSFER_ERROR";
+			var oOptions = { titleKey: "BTN_MANAGE_APP_CTX" };
+			oOptions.details = oError.userMessage;
+			Utils.showMessageBox("error", sMessage, oOptions);
+		});
+		var oAllUpdatedAdaptations = Object.assign(this.oAdaptationsModel.getProperty("/allAdaptations"), this.oAdaptationsModel.getProperty("/adaptations"));
+		this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
 		onCloseDialog.call(this);
 	}
 

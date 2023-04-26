@@ -87,7 +87,7 @@ sap.ui.define(
 			When.onTheManageAdaptationsDialogPage.iMoveAdaptationViaUpButton();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeAdaptationAtPosition(0, "German Admin");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeAdaptationAtPosition(1, "DLM Copilot");
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeSaveButtonEnabled(true);
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeSaveButtonEnabled(false);
 		});
 
 		opaTest("Should reorder row via drag and drop from last position to third position", function(Give, When, Then) {
