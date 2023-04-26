@@ -25,8 +25,6 @@ sap.ui.define([], function () {
 		oRm.openStart("svg", oIllustration);
 		oRm.class("sapMIllustration");
 		oRm.accessibilityState(oIllustration);
-		oRm.attr('role', "presentation");
-		oRm.attr('aria-hidden', "true");
 		oRm.openEnd();
 
 			oRm.openStart("use");
