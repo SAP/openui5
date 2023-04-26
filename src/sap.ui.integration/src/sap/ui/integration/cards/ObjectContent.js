@@ -32,6 +32,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/Form",
+	"sap/ui/integration/util/DateRangeHelper",
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
 	"sap/f/cards/NumericIndicators",
@@ -72,6 +73,7 @@ sap.ui.define([
 	BindingResolver,
 	Utils,
 	Form,
+	DateRangeHelper,
 	AvatarGroup,
 	AvatarGroupItem,
 	NumericIndicators,
@@ -480,13 +482,16 @@ sap.ui.define([
 				oControl = this._createRatingIndicatorItem(oItem, vVisible);
 				break;
 			case "Image":
-				oControl = this._createImage(oItem, vVisible);
+				oControl = this._createImageItem(oItem, vVisible);
 				break;
 			case "Input":
 				oControl = this._createInputItem(oItem, vVisible, oLabel, sPath);
 				break;
 			case "Duration":
 				oControl = this._createDurationItem(oItem, vVisible, oLabel, sPath);
+				break;
+			case "DateRange":
+				oControl = this._createDateRangeItem(oItem, vVisible, oLabel, sPath);
 				break;
 
 			// deprecated types
@@ -859,7 +864,7 @@ sap.ui.define([
 		return oControl;
 	};
 
-	ObjectContent.prototype._createImage = function (oItem, vVisible) {
+	ObjectContent.prototype._createImageItem = function (oItem, vVisible) {
 		var vSrc = BindingHelper.formattedProperty(oItem.src, function (sValue) {
 			return this._oIconFormatter.formatSrc(sValue);
 		}.bind(this));
@@ -874,6 +879,31 @@ sap.ui.define([
 		if (oItem.fullWidth) {
 			oControl.addStyleClass("sapFCardObjectImageFullWidth");
 		}
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createDateRangeItem = function (oItem, vVisible, oLabel, sPath) {
+		var oSettings = {
+			options: ["date"],
+			value: oItem.value
+		};
+		var oForm = this._getForm();
+		var oControl = DateRangeHelper.createInput(oSettings, this.getCardInstance(), true);
+
+		if (BindingHelper.isBindingInfo(vVisible)) {
+			oControl.bindProperty("visible", BindingHelper.reuse(vVisible));
+		} else {
+			oControl.setVisible(vVisible);
+		}
+
+		oControl.setRequired(oForm.getRequiredValidationValue(oItem));
+
+		if (oLabel) {
+			oLabel.setLabelFor(oControl);
+		}
+
+		oForm.addControl("change", oControl, oItem, sPath);
 
 		return oControl;
 	};

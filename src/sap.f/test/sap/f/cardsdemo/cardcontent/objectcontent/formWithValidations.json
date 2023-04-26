@@ -215,6 +215,17 @@
 									"message": "Enter a valid email"
 								}
 							]
+						},
+						{
+							"id": "dateRange",
+							"label": "Date Range",
+							"type": "DateRange",
+							"required": true,
+							"validations": [
+								{
+									"required": true
+								}
+							]
 						}
 					]
 				}

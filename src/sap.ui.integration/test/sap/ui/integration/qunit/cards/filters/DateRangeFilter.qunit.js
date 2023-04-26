@@ -153,6 +153,33 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oModelValue.range.start, aLocalDates[0].toISOString(), "Range start should be in ISO format");
 		assert.strictEqual(oModelValue.range.end, aLocalDates[1].toISOString(), "Range end should be in ISO format");
+
+		assert.strictEqual(oModelValue.range.startLocalDate, "1997-05-01", "Range start local date should be correct and in short ISO 8601 date format");
+		assert.strictEqual(oModelValue.range.endLocalDate, "1997-05-01", "Range end local date should be correct and in short ISO date format");
+	});
+
+	QUnit.test("Dates in the value are in ISO format", function (assert) {
+		// Arrange
+		var oDateStart = UI5Date.getInstance("1997-05-01T00:00:00.000Z"),
+			oDateEnd = UI5Date.getInstance("2000-01-01T00:00:00.000Z"),
+			aLocalDates = DynamicDateRange.toDates({
+				operator: "DATERANGE",
+				values: [oDateStart, oDateEnd]
+			});
+		this.oDRF.setConfig({
+			value: {
+				option: "dateRange",
+				values: ["1997-05-01T00:00:00.000Z", "2000-01-01T00:00:00.000Z"]
+			}
+		});
+		var oModelValue = this.oDRF.getValueForModel();
+
+		// Assert
+		assert.strictEqual(oModelValue.range.start, aLocalDates[0].toISOString(), "Range start should be in ISO format");
+		assert.strictEqual(oModelValue.range.end, aLocalDates[1].toISOString(), "Range end should be in ISO format");
+
+		assert.strictEqual(oModelValue.range.startLocalDate, "1997-05-01", "Range start local date should be correct and in short ISO 8601 date format");
+		assert.strictEqual(oModelValue.range.endLocalDate, "2000-01-01", "Range end local date should be correct and in short ISO date format");
 	});
 
 	QUnit.test("Lower boundary of 'to' filter", function (assert) {
@@ -168,6 +195,9 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oModelValue.range.start, UI5Date.getInstance(-8640000000000000).toISOString(), "Lower boundary should be correct");
 		assert.strictEqual(oModelValue.rangeOData.start, UI5Date.getInstance("1753-01-01").toISOString(), "Lower boundary of rangeOData should be correct");
+
+		assert.strictEqual(oModelValue.range.startLocalDate, "-271821-04-20", "Lower boundary in short ISO 8601 date format should be correct");
+		assert.strictEqual(oModelValue.rangeOData.startLocalDate, "1753-01-01", "Lower boundary of rangeOData in short ISO 8601 date format should be correct");
 	});
 
 	QUnit.test("Upper boundary of 'from' filter", function (assert) {
@@ -183,6 +213,9 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oModelValue.range.end, UI5Date.getInstance(8640000000000000).toISOString(), "Upper boundary should be correct");
 		assert.strictEqual(oModelValue.rangeOData.end, UI5Date.getInstance("9999-12-31").toISOString(), "Upper boundary of rangeOData should be correct");
+
+		assert.strictEqual(oModelValue.range.endLocalDate, "275760-09-13", "Upper boundary in short ISO 8601 date format should be correct");
+		assert.strictEqual(oModelValue.rangeOData.endLocalDate, "9999-12-31", "Upper boundary of rangeOData in short ISO 8601 date format should be correct");
 	});
 
 	QUnit.test("Value is updated when new value is entered", function (assert) {

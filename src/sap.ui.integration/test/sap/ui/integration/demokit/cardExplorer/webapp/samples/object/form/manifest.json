@@ -35,7 +35,10 @@
 						"status": "approved",
 						"reason": "{form>/reason/key}",
 						"reasonText": "{form>/reason/value}",
-						"comment": "{form>/comment}"
+						"comment": "{form>/comment}",
+						"name": "{form>/name}",
+						"duration": "{form>/duration}",
+						"date": "{form>/date/range/startLocalDate}"
 					}
 				}
 			}
@@ -109,6 +112,22 @@
 							"rows": 4,
 							"placeholder": "More information",
 							"showColon": false
+						},
+						{
+							"id": "name",
+							"label": "Name",
+							"type": "Input",
+							"placeholder": "Name"
+						},
+						{
+							"id": "duration",
+							"label": "Duration",
+							"type": "Duration"
+						},
+						{
+							"id": "date",
+							"label": "Date",
+							"type": "DateRange"
 						}
 					]
 				}

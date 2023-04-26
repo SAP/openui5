@@ -116,6 +116,12 @@ sap.ui.define([], function () {
 				return (b && !v.value && !v.key) || (b && !!v.key);
 			},
 			restrictToPredefinedOptionsTxt: "EDITOR_ONLY_LISTED_VALUES_ALLOWED"
+		},
+		dateRange: {
+			required: function (v, b) {
+				return !b || !!v.value;
+			},
+			requiredTxt: "EDITOR_VAL_FIELDREQ"
 		}
 	};
 

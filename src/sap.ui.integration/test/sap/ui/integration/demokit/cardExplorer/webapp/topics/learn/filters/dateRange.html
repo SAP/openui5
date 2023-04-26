@@ -341,19 +341,35 @@
 				</tr>
 				<tr>
 					<td>{filters>/keyOfTheFilter/range/start}</td>
-					<td>The start date of the range in ISO 8601 format.</td>
+					<td>The start date of the range in ISO 8601 format in UTC time zone.</td>
 				</tr>
 				<tr>
 					<td>{filters>/keyOfTheFilter/range/end}</td>
-					<td>The end date of the range in ISO 8601 format.</td>
+					<td>The end date of the range in ISO 8601 format in UTC time zone.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/range/startLocalDate}</td>
+					<td>The start date of the range in short ISO 8601 date format in the local time zone. Use this property if you want to select a single date without reference to the time of the day.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/range/endLocalDate}</td>
+					<td>The end date of the range in short ISO 8601 date format in the local time zone.</td>
 				</tr>
 				<tr>
 					<td>{filters>/keyOfTheFilter/rangeOData/start}</td>
-					<td>The start date of the range in ISO 8601 format. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+					<td>The start date of the range in ISO 8601 format in UTC time zone. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
 				</tr>
 				<tr>
 					<td>{filters>/keyOfTheFilter/rangeOData/end}</td>
-					<td>The end date of the range in ISO 8601 format.  It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+					<td>The end date of the range in ISO 8601 format in UTC time zone. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/range/startLocalDate}</td>
+					<td>The start date of the range in short ISO 8601 date format in the local time zone. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/range/endLocalDate}</td>
+					<td>The end date of the range in short ISO 8601 date format in the local time zone. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
 				</tr>
 			</table>
 

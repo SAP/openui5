@@ -5,79 +5,16 @@ sap.ui.define([
 	"./BaseFilter",
 	"sap/base/Log",
 	"sap/ui/core/library",
-	"sap/m/DynamicDateRange",
-	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/integration/util/DateRangeHelper"
 ], function (
 	BaseFilter,
 	Log,
 	coreLibrary,
-	DynamicDateRange,
-	BindingResolver,
-	UI5Date
+	DateRangeHelper
 ) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
-	var MIN_DATE = UI5Date.getInstance(-8640000000000000);
-	var MIN_ODATA_DATE = UI5Date.getInstance("1753-01-01");
-	var MAX_DATE = UI5Date.getInstance(8640000000000000);
-	var MAX_ODATA_DATE = UI5Date.getInstance("9999-12-31");
-	var mOptions = {
-		"DATE": "date",
-		"TODAY": "today",
-		"YESTERDAY": "yesterday",
-		"TOMORROW": "tomorrow",
-
-		"DATERANGE": "dateRange",
-		"DATETIMERANGE": "dateTimeRange",
-		"FROM": "from",
-		"TO": "to",
-		"FROMDATETIME": "fromDateTime",
-		"TODATETIME": "toDateTime",
-		"YEARTODATE": "yearToDate",
-		"LASTDAYS": "lastDays",
-		"LASTWEEKS": "lastWeeks",
-		"LASTMONTHS": "lastMonths",
-		"LASTQUARTERS": "lastQuarters",
-		"LASTYEARS": "lastYears",
-		"NEXTDAYS": "nextDays",
-		"NEXTWEEKS": "nextWeeks",
-		"NEXTMONTHS": "nextMonths",
-		"NEXTQUARTERS": "nextQuarters",
-		"NEXTYEARS": "nextYears",
-		"TODAYFROMTO": "todayFromTo",
-
-		"THISWEEK": "thisWeek",
-		"LASTWEEK": "lastWeek",
-		"NEXTWEEK": "nextWeek",
-
-		"SPECIFICMONTH": "specificMonth",
-		"THISMONTH": "thisMonth",
-		"LASTMONTH": "lastMonth",
-		"NEXTMONTH": "nextMonth",
-
-		"THISQUARTER": "thisQuarter",
-		"LASTQUARTER": "lastQuarter",
-		"NEXTQUARTER": "nextQuarter",
-		"QUARTER1": "quarter1",
-		"QUARTER2": "quarter2",
-		"QUARTER3": "quarter3",
-		"QUARTER4": "quarter4",
-
-		"THISYEAR": "thisYear",
-		"LASTYEAR": "lastYear",
-		"NEXTYEAR": "nextYear",
-		"DATETIME": "dateTime"
-	};
-
-	/**
-	 * @param {string} sOption sap.m.StandardDynamicDateRangeKeys option in upper case
-	 * @returns {string} Option in camel case
-	 */
-	function optionToCamelCase(sOption) {
-		return mOptions[sOption];
-	}
 
 	/**
 	 * Constructor for a new <code>DateRangeFilter</code>.
@@ -130,49 +67,7 @@ sap.ui.define([
 	 * @override
 	 */
 	DateRangeFilter.prototype.getValueForModel = function () {
-		var oDateRangeValue = this._getDdr().getValue();
-		var oValue;
-		var oRange;
-		var oRangeOData;
-
-		if (oDateRangeValue) {
-			oValue = {
-				option: optionToCamelCase(oDateRangeValue.operator),
-				values: oDateRangeValue.values.slice()
-			};
-
-			var aDates = DynamicDateRange.toDates(oDateRangeValue),
-				dStart = aDates[0],
-				bToOperator = oDateRangeValue.operator === "TO" || oDateRangeValue.operator === "TODATETIME",
-				bFromOperator = oDateRangeValue.operator === "FROM" || oDateRangeValue.operator === "FROMDATETIME",
-				iSecondIndex = bToOperator || bFromOperator ? 0 : 1,
-				dEnd = aDates[iSecondIndex];
-
-			oRange = {
-				start: dStart.toISOString(),
-				end: dEnd.toISOString()
-			};
-			oRangeOData = {
-				start: dStart.toISOString(),
-				end: dEnd.toISOString()
-			};
-
-			if (bToOperator) {
-				oRange.start = MIN_DATE.toISOString();
-				oRangeOData.start = MIN_ODATA_DATE.toISOString();
-			}
-
-			if (bFromOperator) {
-				oRange.end = MAX_DATE.toISOString();
-				oRangeOData.end = MAX_ODATA_DATE.toISOString();
-			}
-		}
-
-		return {
-			value: oValue,
-			range: oRange,
-			rangeOData: oRangeOData
-		};
+		return DateRangeHelper.getValueForModel(this._getDdr());
 	};
 
 	DateRangeFilter.prototype._getDdr = function () {
@@ -193,34 +88,12 @@ sap.ui.define([
 	 */
 	DateRangeFilter.prototype._createDdr = function () {
 		var oConfig = Object.assign({}, this.getConfig());
-		var oValue;
 
 		oConfig.options = oConfig.options || this._getDefaultOptions();
-		oConfig.options = oConfig.options.map(function (sOption) {
-			return sOption.toUpperCase();
-		});
 
-		var oDdr = new DynamicDateRange({
-			standardOptions: oConfig.options
-		}).addStyleClass("sapFCardDateRangeField");
+		var oDdr = DateRangeHelper.createInput(oConfig, this.getCardInstance(), false);
 
-		if (oConfig.value) {
-			oConfig.value =  BindingResolver.resolveValue(oConfig.value, this.getCardInstance());
-			var sOption = oConfig.value.option.toUpperCase();
-			var aTypes = oDdr.getOption(sOption).getValueTypes();
-			oValue = {
-				operator: sOption,
-				values: oConfig.value.values.map(function (vValue, i) {
-					if (aTypes[i] === "date" || aTypes[i] === "datetime") {
-						return UI5Date.getInstance(vValue);
-					}
-					return vValue;
-				})
-			};
-		}
-
-		oDdr.setValue(oValue);
-
+		oDdr.addStyleClass("sapFCardDateRangeField");
 		oDdr.attachChange(function (oEvent) {
 			if (oEvent.getParameter("valid")) {
 				oDdr.setValueState(ValueState.None);
@@ -250,10 +123,6 @@ sap.ui.define([
 			"lastWeeks",
 			"nextWeeks"
 		];
-	};
-
-	DateRangeFilter.prototype.getOptions = function () {
-		return mOptions;
 	};
 
 	return DateRangeFilter;

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/util/DateRangeHelper",
 	"sap/ui/qunit/utils/MemoryLeakCheck"
 ], function (
 	Log,
@@ -21,6 +22,7 @@ sap.ui.define([
 	Core,
 	CardActions,
 	RequestDataProvider,
+	DateRangeHelper,
 	MemoryLeakCheck
 ) {
 	"use strict";
@@ -526,15 +528,15 @@ sap.ui.define([
 							"id": "reason2",
 							"title": "Reason 2"
 						}
-					]
+					],
+					"dateRangeValue": {
+						"option": "date",
+						"optionValues": ["2000-01-01T00:00:00.000Z"]
+					}
 				}
 			},
 			"header": {
-				"icon": {
-					"src": "sap-icon://product"
-				},
-				"title": "PR255 - MacBook Purchase",
-				"subTitle": "Procurement Purchase Requisition"
+				"title": "PR255 - MacBook Purchase"
 			},
 			"content": {
 				"groups": [
@@ -575,6 +577,15 @@ sap.ui.define([
 								"label": "Duration",
 								"type": "Duration",
 								"value": "{/durationValue}"
+							},
+							{
+								"id": "dateRangeValue",
+								"label": "Date Range",
+								"type": "DateRange",
+								"value": {
+									"option": "{/dateRangeValue/option}",
+									"values": "{/dateRangeValue/optionValues}"
+								}
 							}
 						]
 					}
@@ -716,6 +727,16 @@ sap.ui.define([
 									{
 										"required": true,
 										"message": "Value is required"
+									}
+								]
+							},
+							{
+								"id": "dateRangeValue",
+								"label": "Date Range",
+								"type": "DateRange",
+								"validations": [
+									{
+										"required": true
 									}
 								]
 							}
@@ -2242,7 +2263,8 @@ sap.ui.define([
 				oComboBox = aItems[1],
 				oTextArea = aItems[3],
 				oInput = aItems[5],
-				oTimePicker = aItems[7];
+				oTimePicker = aItems[7],
+				oDateRange = aItems[9];
 
 			// Assert Combo Box
 			assert.ok(oComboBox.isA("sap.m.ComboBox"), "ComboBox is created.");
@@ -2269,11 +2291,15 @@ sap.ui.define([
 			assert.strictEqual(oTimePicker.getValue(), "11:12", "Duration has correct value.");
 			assert.strictEqual(oTimePicker.getLabels()[0].getText(), "Duration", "Duration is referenced to the correct label.");
 
+			// Assert DateRange
+			assert.ok(oDateRange.isA("sap.m.DatePicker"), "DateRange is created.");
+			assert.strictEqual(oDateRange.getValue(), "2000-01-01T00:00:00.000Z", "DateRange has correct value.");
+			assert.strictEqual(oDateRange.getLabels()[0].getText(), "Date Range", "DateRange is referenced to the correct label.");
+
 			done();
 		});
 
 		oCard.setManifest(oManifest_ObjectCardFormControls);
-		Core.applyChanges();
 	});
 
 	QUnit.test("Form control values are properly passed on submit action", function (assert) {
@@ -2289,7 +2315,8 @@ sap.ui.define([
 					},
 					"comment": "Free text comment",
 					"userValue": "Initial value",
-					"durationValue": "11:12"
+					"durationValue": "11:12",
+					"dateRangeValue": DateRangeHelper.getValueForModel(oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[9])
 				};
 
 			assert.deepEqual(mParameters.data, mExpectedData, "Data is properly passed to action handler.");
@@ -2305,7 +2332,6 @@ sap.ui.define([
 		});
 
 		oCard.setManifest(oManifest_ObjectCardFormControls);
-		Core.applyChanges();
 	});
 
 	QUnit.test("Check for duplicate ID in form controls", function (assert) {
@@ -2464,18 +2490,22 @@ sap.ui.define([
 			var oContent = oCard.getCardContent(),
 				oInput = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[0],
 				oTextArea = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1],
-				oComboBox = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[2];
+				oComboBox = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[2],
+				oDateRange = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[3];
 
 			// Assert
 			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), undefined, "No initial value is stored");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), undefined, "No initial value is stored");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i3"), undefined, "No initial value is stored");
+			assert.strictEqual(oCard.getModel("form").getProperty("/i4"), undefined, "No initial value is stored");
 
 			// Act
 			oInput.$("inner").val("a").trigger("input");
 			oTextArea.$("inner").val("a").trigger("input");
 			oComboBox.$("inner").val("a");
 			oComboBox.fireEvent("change");
+			oDateRange.$().find("input").val("Oct 7, 2021");
+			oDateRange.onChange();
 
 			Core.applyChanges();
 
@@ -2483,6 +2513,7 @@ sap.ui.define([
 			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "a", "Value in model is updated");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "a", "Value in model is updated");
 			assert.strictEqual(oCard.getModel("form").getProperty("/i3").value, "a", "Value in model is updated");
+			assert.deepEqual(oCard.getModel("form").getProperty("/i4"), DateRangeHelper.getValueForModel(oDateRange), "Value in model is updated");
 
 			done();
 		});
@@ -2509,6 +2540,10 @@ sap.ui.define([
 								{
 									"id": "i3",
 									"type": "ComboBox"
+								},
+								{
+									"id": "i4",
+									"type": "DateRange"
 								}
 							]
 						}
@@ -2590,8 +2625,8 @@ sap.ui.define([
 				oTextArea = aItems[5],
 				oTextArea2 = aItems[7],
 				oTextArea3 = aItems[9],
-				oInput = aItems[11];
-
+				oInput = aItems[11],
+				oDateRange = aItems[13];
 
 			assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control has no error");
 
@@ -2623,6 +2658,11 @@ sap.ui.define([
 						"bindingPath": "/inputId",
 						"message": "Value is required",
 						"type": "Error"
+					},
+					{
+						"bindingPath": "/dateRangeValue",
+						"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
+						"type": "Error"
 					}
 				]
 			}, "messages model is correct");
@@ -2642,6 +2682,9 @@ sap.ui.define([
 
 			assert.strictEqual(oInput.getValueState(), ValueState.Error, "Control has an error");
 			assert.strictEqual(oInput.getValueStateText(), "Value is required", "Error text is correct");
+
+			assert.strictEqual(oDateRange.getValueState(), ValueState.Error, "Control has an error");
+			assert.strictEqual(oDateRange.getValueStateText(), oResourceBundle.getText("EDITOR_VAL_FIELDREQ"), "Error text is correct");
 
 			assert.deepEqual(oCard.getModel("messages").getData(), {
 				"hasErrors": true,
@@ -2671,6 +2714,11 @@ sap.ui.define([
 						"bindingPath": "/inputId",
 						"message": "Value is required",
 						"type": "Error"
+					},
+					{
+						"bindingPath": "/dateRangeValue",
+						"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
+						"type": "Error"
 					}
 				]
 			}, "messages model is correct");
@@ -2680,7 +2728,7 @@ sap.ui.define([
 			oTextArea.setValue("Text");
 			oTextArea2.setValue("Text");
 			oTextArea3.setValue("Text");
-
+			oDateRange.setValue("invalid date");
 
 			Core.applyChanges();
 			oCard.validateControls();
@@ -2693,6 +2741,8 @@ sap.ui.define([
 			assert.strictEqual(oTextArea2.getValueState(), ValueState.Error, "TextArea has an error");
 			assert.strictEqual(oTextArea2.getValueStateText(), "You should enter a valid e-mail.", "Text is correct");
 			assert.strictEqual(oTextArea3.getValueStateText(), "You should enter a valid path.", "Text is correct");
+			assert.strictEqual(oDateRange.getValueState(), ValueState.Error, "Control has an error");
+			assert.strictEqual(oDateRange.getValueStateText(), Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR"), "Text is correct");
 
 			assert.deepEqual(oCard.getModel("messages").getData(),
 				{
@@ -2723,6 +2773,11 @@ sap.ui.define([
 							"bindingPath": "/inputId",
 							"message": "Value is required",
 							"type": "Error"
+						},
+						{
+							"bindingPath": "/dateRangeValue",
+							"message": Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR"),
+							"type": "Error"
 						}
 					]
 				}, "messages model is correct");
@@ -2732,6 +2787,7 @@ sap.ui.define([
 			oTextArea2.setValue("my@mymail.com");
 			oTextArea3.setValue("Folder\\file.pdf");
 			oInput.setValue("Some Value");
+			oDateRange.setValue("May 2, 2023");
 
 			Core.applyChanges();
 			oCard.validateControls();
@@ -2741,6 +2797,7 @@ sap.ui.define([
 			assert.strictEqual(oTextArea2.getValueState(), ValueState.None, "Control doesn't have an error");
 			assert.strictEqual(oTextArea3.getValueState(), ValueState.None, "Control doesn't have an error and backslashes are escaped correctly");
 			assert.strictEqual(oInput.getValueState(), ValueState.None, "Control doesn't have an error");
+			assert.strictEqual(oDateRange.getValueState(), ValueState.None, "Control doesn't have an error");
 
 			assert.deepEqual(oCard.getModel("messages").getData(), {
 				"hasErrors": false,
@@ -2752,7 +2809,6 @@ sap.ui.define([
 		});
 
 		oCard.setManifest(oManifest_ObjectCardFormControlsWithValidation);
-		Core.applyChanges();
 	});
 
 	QUnit.test("Controls validation when no data and no binding", function (assert) {
@@ -2779,7 +2835,6 @@ sap.ui.define([
 		});
 
 		oCard.setManifest(oManifest_ObjectCardFormControlsWithValidationNoDataNoBinding);
-		Core.applyChanges();
 	});
 
 	QUnit.module("titleMaxLine and labelWrapping", {

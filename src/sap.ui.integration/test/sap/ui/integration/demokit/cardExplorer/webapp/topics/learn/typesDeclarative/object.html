@@ -181,6 +181,7 @@
 								<li>"Duration" (experimental since 1.114) - see <a href="#durationProperties">Additional Properties for ObjectGroupItem of type Duration</a></li>
 								<li>"RatingIndicator" (experimental since 1.111) - see <a href="#ratingIndicatorProperties">Additional Properties for ObjectGroupItem of type RatingIndicator</a></li>
 								<li>"Image" (experimental since 1.112) - see <a href="#imageProperties">Additional Properties for ObjectGroupItem of type Image</a></li>
+								<li>"DateRange" (experimental since 1.115) - see <a href="#dateRangeProperties">Additional Properties for ObjectGroupItem of type DateRange</a></li>
 							</ul>
 						</td>
 						<td>1.15.0</td>
@@ -907,6 +908,213 @@
 				</table>
 			</div>
 
+			<div id="ratingIndicatorProperties" class="boldBlock">Additional Properties for ObjectGroupItem of type RatingIndicator (experimental since 1.111)</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>maxValue</td>
+						<td>number</td>
+						<td>5</td>
+						<td>No</td>
+						<td>The number of displayed rating symbols.</td>
+						<td>1.51</td>
+						<td>1.111</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>number</td>
+						<td>0</td>
+						<td>No</td>
+						<td>The indicated value of the rating.</td>
+						<td>1.51</td>
+						<td>1.111</td>
+					</tr>
+					<tr>
+						<td>visualMode</td>
+						<td><a data-demokit-href="#/api/sap.m.RatingIndicatorVisualMode" target="_blank">sap.m.RatingIndicatorVisualMode</a></td>
+						<td>"Half"</td>
+						<td>No</td>
+						<td>Defines how float values are visualized: Full (values are rounded to the nearest integer value (e.g. 1.7 -> 2)) or  Half (values are rounded to the nearest half-increment value (e.g. 1.7 -> 1.5))</td>
+						<td>1.51</td>
+						<td>1.111</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="imageProperties" class="boldBlock">Additional Properties for ObjectGroupItem of type Image (experimental since 1.112)</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>src</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Image source URL.</td>
+						<td>1.52</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>аlt</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Provides alternative text that is used in case the image is not available, or cannot be displayed.</td>
+						<td>1.52</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>fullWidth</td>
+						<td>boolean</td>
+						<td>false</td>
+						<td>No</td>
+						<td>Defines if the image will take the full width of the group, including the paddings. If set to false there will be a padding. For best result use together with "alignment": "Stretched" for the group.</td>
+						<td>1.52</td>
+						<td>1.112</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="dateRangeProperties" class="boldBlock">Additional Properties for ObjectGroupItem of type DateRange (experimental since 1.115)</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>id</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Defines the ID of the form date range input. Will be used in the submitted payload.</td>
+						<td>1.55</td>
+						<td>1.115</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td><a href="#dateRangeValueProperties">DateRangeValue</a></td>
+						<td>No</td>
+						<td>Defines the initial value for the date range input.</td>
+						<td>1.55</td>
+						<td>1.115</td>
+					</tr>
+					<tr>
+						<td>validations</td>
+						<td><a href="#validationsProperties">ObjectGroupItemValidation[]</a></td>
+						<td>No</td>
+						<td>Defines the user input validations.</td>
+						<td>1.55</td>
+						<td>1.115</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="dateRangeValueProperties" class="boldBlock">DateRangeValue Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>option</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The date range option. For now only "date" option is available.
+						<td>1.55</td>
+						<td>1.115</td>
+					</tr>
+					<tr>
+						<td>values</td>
+						<td>array</td>
+						<td></td>
+						<td>Yes</td>
+						<td>
+							Values to initialize the option. For the "date" option an array with a single element should be provided.
+							It can be every valid JavaScript Date format like timestamp or date string.
+						</td>
+						<td>1.55</td>
+						<td>1.155</td>
+					</tr>
+				</table>
+			</div>
+
+			<p>The following values are available in the "form" model for item of type "DateRange":</p>
+			<table>
+				<tr>
+					<th>Path</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/value/option}</td>
+					<td>The current option.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/value/values}</td>
+					<td>The current option values.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/range/start}</td>
+					<td>The start date of the range in ISO 8601 format in UTC time zone.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/range/end}</td>
+					<td>The end date of the range in ISO 8601 format in UTC time zone.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/range/startLocalDate}</td>
+					<td>The start date of the range in short ISO 8601 date format in the local time zone. Use this property if you want to select a single date without reference to the time of the day.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/range/endLocalDate}</td>
+					<td>The end date of the range in short ISO 8601 date format in the local time zone.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/rangeOData/start}</td>
+					<td>The start date of the range in ISO 8601 format in UTC time zone. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/rangeOData/end}</td>
+					<td>The end date of the range in ISO 8601 format in UTC time zone. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/range/startLocalDate}</td>
+					<td>The start date of the range in short ISO 8601 date format in the local time zone. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+				</tr>
+				<tr>
+					<td>{form>/idOfTheItem/range/endLocalDate}</td>
+					<td>The end date of the range in short ISO 8601 date format in the local time zone. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+				</tr>
+			</table>
+
 			<div id="validationsProperties" class="boldBlock">ObjectGroupItemValidation Properties</div>
 			<div class="tableWrapper">
 				<table>
@@ -1004,91 +1212,6 @@
 					</tr>
 				</table>
 			</div>
-
-			<div id="ratingIndicatorProperties" class="boldBlock">RatingIndicator Properties</div>
-			<div class="tableWrapper">
-				<table>
-					<tr>
-						<th>Property</th>
-						<th>Type</th>
-						<th>Default Value</th>
-						<th>Required</th>
-						<th>Description</th>
-						<th>Schema Version</th>
-						<th>Since</th>
-					</tr>
-					<tr>
-						<td>maxValue</td>
-						<td>number</td>
-						<td>5</td>
-						<td>No</td>
-						<td>The number of displayed rating symbols.</td>
-						<td>1.51</td>
-						<td>1.111</td>
-					</tr>
-					<tr>
-						<td>value</td>
-						<td>number</td>
-						<td>0</td>
-						<td>No</td>
-						<td>The indicated value of the rating.</td>
-						<td>1.51</td>
-						<td>1.111</td>
-					</tr>
-					<tr>
-						<td>visualMode</td>
-						<td><a data-demokit-href="#/api/sap.m.RatingIndicatorVisualMode" target="_blank">sap.m.RatingIndicatorVisualMode</a></td>
-						<td>"Half"</td>
-						<td>No</td>
-						<td>Defines how float values are visualized: Full (values are rounded to the nearest integer value (e.g. 1.7 -> 2)) or  Half (values are rounded to the nearest half value (e.g. 1.7 -> 1.5))</td>
-						<td>1.51</td>
-						<td>1.111</td>
-					</tr>
-				</table>
-			</div>
-
-			<div id="imageProperties" class="boldBlock">Image Properties</div>
-			<div class="tableWrapper">
-				<table>
-					<tr>
-						<th>Property</th>
-						<th>Type</th>
-						<th>Default Value</th>
-						<th>Required</th>
-						<th>Description</th>
-						<th>Schema Version</th>
-						<th>Since</th>
-					</tr>
-					<tr>
-						<td>src</td>
-						<td>string</td>
-						<td></td>
-						<td>Yes</td>
-						<td>Image source URL.</td>
-						<td>1.52</td>
-						<td>1.112</td>
-					</tr>
-					<tr>
-						<td>аlt</td>
-						<td>string</td>
-						<td></td>
-						<td>Yes</td>
-						<td>The alternative text that is displayed in case the image is not available, or cannot be displayed.</td>
-						<td>1.52</td>
-						<td>1.112</td>
-					</tr>
-					<tr>
-						<td>fullWidth</td>
-						<td>boolean</td>
-						<td>false</td>
-						<td>No</td>
-						<td>Defines if the image will take the full width of the group, including the paddings. If set to false there will be padding. For best result use together with "alignment": "Stretched" for the group.</td>
-						<td>1.52</td>
-						<td>1.112</td>
-					</tr>
-				</table>
-			</div>
-
 
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:

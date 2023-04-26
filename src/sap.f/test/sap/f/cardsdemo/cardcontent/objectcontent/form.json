@@ -35,7 +35,8 @@
 					"parameters": {
 						"status": "approved",
 						"reason": "{form>/reason}",
-						"comment": "{form>/comment}"
+						"comment": "{form>/comment}",
+						"dateRange": "{form>/dateRange/range/start}"
 					}
 				}
 			}
@@ -112,6 +113,15 @@
 							"type": "TextArea",
 							"rows": 4,
 							"placeholder": "Comment"
+						},
+						{
+							"id": "dateRange",
+							"label": "Date Range",
+							"type": "DateRange",
+							"value": {
+								"option": "date",
+								"values": ["2005-10-20"]
+							}
 						}
 					]
 				}
