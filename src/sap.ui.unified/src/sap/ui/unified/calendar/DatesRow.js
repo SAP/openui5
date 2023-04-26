@@ -11,8 +11,9 @@ sap.ui.define([
 	"./DatesRowRenderer",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/Locale'
-], function(CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery, DateFormat, Locale) {
+	'sap/ui/core/Locale',
+	'sap/ui/core/date/UI5Date'
+], function(CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery, DateFormat, Locale, UI5Date) {
 	"use strict";
 
 	/*
@@ -138,7 +139,7 @@ sap.ui.define([
 	DatesRow.prototype._getStartDate = function(){
 
 		if (!this._oStartDate) {
-			this._oStartDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType());
+			this._oStartDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this.getPrimaryCalendarType());
 		}
 
 		return this._oStartDate;

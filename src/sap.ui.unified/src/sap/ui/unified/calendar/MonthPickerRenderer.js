@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/format/DateFormat', 'sap/ui/core/InvisibleText'],
-	function(CalendarDate, DateFormat, InvisibleText) {
+sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/format/DateFormat', 'sap/ui/core/InvisibleText', 'sap/ui/core/date/UI5Date'],
+	function(CalendarDate, DateFormat, InvisibleText, UI5Date) {
 	"use strict";
 
 
@@ -36,8 +36,8 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/format/DateF
 			sCalendarType = oMP.getPrimaryCalendarType(),
 			sSecondaryType = oMP._getSecondaryCalendarType(),
 			oPrimaryYearFormat = DateFormat.getDateInstance({format: "y", calendarType: oMP.getPrimaryCalendarType()}),
-			iYear = oMP._iYear ? oMP._iYear : new Date().getFullYear(),
-			sPrimaryCalTypeFormattedYear = oPrimaryYearFormat.format(new Date(Date.UTC(iYear, 0, 1)), true),
+			iYear = oMP._iYear ? oMP._iYear : UI5Date.getInstance().getFullYear(),
+			sPrimaryCalTypeFormattedYear = oPrimaryYearFormat.format(UI5Date.getInstance(Date.UTC(iYear, 0, 1)), true),
 			i,
 			bApplySelection,
 			bApplySelectionBetween;
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/format/DateF
 
 		for (i = 0; i < iMonths; i++) {
 			var iCurrentMonth = i + iStartMonth,
-				oCurrentDate = CalendarDate.fromLocalJSDate(new Date(), oMP.getPrimaryCalendarType());
+				oCurrentDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), oMP.getPrimaryCalendarType());
 
 			oCurrentDate.setMonth(iCurrentMonth, 1);
 			oMP._iYear && oCurrentDate.setYear(oMP._iYear);

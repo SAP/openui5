@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/TimePickerInternals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(TimePickerClocks, TimePickerInternals, KeyCodes, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(TimePickerClocks, TimePickerInternals, KeyCodes, jQuery, oCore, UI5Date) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -85,7 +86,7 @@ sap.ui.define([
 
 	QUnit.test("Call to setValue calls the _setTimeValues", function (assert) {
 		var sValue = "15:16:17",
-			sExpectedDate = new Date(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
+			sExpectedDate = UI5Date.getInstance(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
 			oSetTimeValuesSpy = this.spy(this.oTPC, "_setTimeValues");
 
 		this.stub(this.oTPC, "_parseValue").returns(sExpectedDate);
@@ -109,7 +110,7 @@ sap.ui.define([
 
 	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", function (assert) {
 		var sValue = "24:00:00",
-			sExpectedDate = new Date(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
+			sExpectedDate = UI5Date.getInstance(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
 			oSetTimeValuesSpy = this.spy(this.oTPC, "_setTimeValues");
 
 		this.stub(this.oTPC, "_parseValue").returns(sExpectedDate);
@@ -144,7 +145,7 @@ sap.ui.define([
 		this.stub(this.oTPC, "_getSecondsClock").returns(oSecondsClock);
 
 		this.oTPC.setValueFormat("HH:mm:ss");
-		this.oTPC._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
+		this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 11, 12, 13), false);
 
 		assert.ok(oHoursClock.setSelectedValue.calledWithExactly(11), "Hours are properly set to 11");
 		assert.ok(oMinutesClock.setSelectedValue.calledWithExactly(12), "Minutes are properly set to 12");
@@ -159,13 +160,13 @@ sap.ui.define([
 		this.stub(this.oTPC, "_getSecondsClock").returns(oSecondsClock);
 
 		this.oTPC.setValueFormat("HH:mm:ss");
-		this.oTPC._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
+		this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 11, 12, 13), false);
 
 		assert.ok(oMinutesClock.setEnabled.calledWithExactly(true), "Minutes Clock is enabled");
 		assert.ok(oSecondsClock.setEnabled.calledWithExactly(true), "Seconds Clock is enabled");
 	});
 
-	QUnit.test("_setTimeValues properly set value to Clocks when date value is marking the end of the day new Date(2017, 7, 8, 0, 0, 0)", function (assert) {
+	QUnit.test("_setTimeValues properly set value to Clocks when date value is marking the end of the day UI5Date.getInstance(2017, 7, 8, 0, 0, 0)", function (assert) {
 		var oHoursClock = this.oTPC._getHoursClock(),
 			oMinutesClock = this.oTPC._getMinutesClock(),
 			oSecondsClock = this.oTPC._getSecondsClock(),
@@ -174,21 +175,21 @@ sap.ui.define([
 			oSecondsClockSetSelectedValue = this.spy(oSecondsClock, "setSelectedValue");
 
 		this.oTPC.setValueFormat("HH:mm:ss");
-		this.oTPC._setTimeValues(new Date(2017, 7, 8, 0, 0, 0), true);
+		this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 0, 0, 0), true);
 
 		assert.ok(oHoursClockSetSelectedValue.calledWithExactly(24), "Hours are properly set to 24");
 		assert.ok(oMinutesClockSetSelectedValue.calledWithExactly(0), "Minutes are properly set to 0");
 		assert.ok(oSecondsClockSetSelectedValue.calledWithExactly(0), "Seconds are properly set to 0");
 	});
 
-	QUnit.test("_setTimeValues properly disables Minutes and Seconds Clock when value is marking the end of the day new Date(2017, 7, 8, 0, 0, 0)", function (assert) {
+	QUnit.test("_setTimeValues properly disables Minutes and Seconds Clock when value is marking the end of the day UI5Date.getInstance(2017, 7, 8, 0, 0, 0)", function (assert) {
 		var oMinutesClock = this.oTPC._getMinutesClock(),
 			oSecondsClock = this.oTPC._getSecondsClock(),
 			oMinutesClockSetEnabled = this.spy(oMinutesClock, "setEnabled"),
 			oSecondsClockSetEnabled = this.spy(oSecondsClock, "setEnabled");
 
 		this.oTPC.setValueFormat("HH:mm:ss");
-		this.oTPC._setTimeValues(new Date(2017, 7, 8, 0, 0, 0), true);
+		this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 0, 0, 0), true);
 
 		assert.ok(oMinutesClockSetEnabled.calledWithExactly(false), "Minutes Clock is disabled");
 		assert.ok(oSecondsClockSetEnabled.calledWithExactly(false), "Seconds Clock is disabled");
@@ -506,7 +507,7 @@ sap.ui.define([
 
 			this.oTPC.setValueFormat("HH:mm:ss");
 			this.oTPC.setDisplayFormat("HH:mm:ss");
-			this.oTPC._setTimeValues(new Date(2017, 7, 8, 22, 58, 58));
+			this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 22, 58, 58));
 
 			this.oTPC.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -764,7 +765,7 @@ sap.ui.define([
 
 		this.oTPC.setValueFormat("hh:mm:ss a");
 		this.oTPC.setDisplayFormat("hh:mm:ss a");
-		this.oTPC._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
+		this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
 		oCore.applyChanges();
 
 		//act
@@ -824,7 +825,7 @@ sap.ui.define([
 
 		this.oTPC.setValueFormat("hh:mm:ss a");
 		this.oTPC.setDisplayFormat("hh:mm:ss a");
-		this.oTPC._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
+		this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
 		oCore.applyChanges();
 
 		//act
@@ -886,7 +887,7 @@ sap.ui.define([
 		this.oTPC.setValueFormat("HH:mm:ss");
 		this.oTPC.setDisplayFormat("HH:mm:ss");
 		this.oTPC.setSupport2400(true);
-		this.oTPC._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
+		this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
 		oCore.applyChanges();
 
 		oHoursClock = this.oTPC._getHoursClock();
@@ -946,7 +947,7 @@ sap.ui.define([
 
 		this.oTPC.setValueFormat("hh:mm:ss");
 		this.oTPC.setDisplayFormat("hh:mm:ss");
-		this.oTPC._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
+		this.oTPC._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
 		oCore.applyChanges();
 
 		//act

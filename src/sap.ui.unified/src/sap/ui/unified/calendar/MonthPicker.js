@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Control,
 	Device,
@@ -30,7 +31,8 @@ sap.ui.define([
 	DateRange,
 	CalendarUtils,
 	CalendarDate,
-	Configuration
+	Configuration,
+	UI5Date
 ) {
 	"use strict";
 
@@ -241,7 +243,7 @@ sap.ui.define([
 		return this.getAggregation("selectedDates");
 	};
 
-    MonthPicker.prototype._getPrimaryCalendarType = function(){
+	MonthPicker.prototype._getPrimaryCalendarType = function(){
 		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
 	};
 
@@ -254,7 +256,7 @@ sap.ui.define([
 		} else if (!this._aMPSelectedDates || !this._aMPSelectedDates.length) {
 			this._aMPSelectedDates = [new DateRange()];
 
-			oCurrentDate = CalendarDate.fromLocalJSDate(new Date(), this._getPrimaryCalendarType());
+			oCurrentDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this._getPrimaryCalendarType());
 			oCurrentDate.setMonth(this.getMonth(), 1);
 			this._iYear && oCurrentDate.setYear(this._iYear);
 
@@ -421,7 +423,7 @@ sap.ui.define([
 		}
 
 		if (oTarget.classList.contains("sapUiCalItem")) {
-			oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this._getPrimaryCalendarType());
+			oFocusedDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this._getPrimaryCalendarType());
 			oFocusedDate.setMonth(this._extractMonth(oTarget), 1);
 			this._iYear && oFocusedDate.setYear(this._iYear);
 			if (this._isSelectionInProgress()) {
@@ -596,7 +598,7 @@ sap.ui.define([
 	 * @returns {String} if there is secondary calendar type set and if it is different from the primary one
 	 */
 	MonthPicker.prototype._getSecondaryCalendarType = function(){
-        var sSecondaryCalendarType = this.getSecondaryCalendarType();
+		var sSecondaryCalendarType = this.getSecondaryCalendarType();
 
 		if (sSecondaryCalendarType === this._getPrimaryCalendarType()) {
 			return undefined;
@@ -612,7 +614,7 @@ sap.ui.define([
 	 */
 	MonthPicker.prototype._getDisplayedSecondaryDates = function(iCurrentMonth){
 		var sSecondaryCalendarType = this.getSecondaryCalendarType(),
-			oDate = new CalendarDate(this._oDate ? this._oDate : CalendarDate.fromLocalJSDate(new Date()), this._getPrimaryCalendarType()),
+			oDate = new CalendarDate(this._oDate ? this._oDate : CalendarDate.fromLocalJSDate(UI5Date.getInstance()), this._getPrimaryCalendarType()),
 			oFirstDate,
 			oLastDate;
 
@@ -682,7 +684,7 @@ sap.ui.define([
 				oStartDate.setDate(1);
 			}
 
-			oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this._getPrimaryCalendarType());
+			oFocusedDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this._getPrimaryCalendarType());
 			oFocusedDate.setMonth(this._extractMonth(oTarget), 1);
 			this._iYear && oFocusedDate.setYear(this._iYear);
 
@@ -713,7 +715,7 @@ sap.ui.define([
 
 	MonthPicker.prototype._markInterval = function(oStartDate, oEndDate) {
 		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
-			oCurrentDate = CalendarDate.fromLocalJSDate(new Date(), this._getPrimaryCalendarType()),
+			oCurrentDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this._getPrimaryCalendarType()),
 			i;
 
 		//swap if necessary
@@ -773,7 +775,7 @@ sap.ui.define([
 			iColumns = this.getColumns(),
 			oSelectedDates = this._getSelectedDates()[0],
 			oStartDate,
-			oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this._getPrimaryCalendarType()),
+			oFocusedDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this._getPrimaryCalendarType()),
 			bOneRowMonths = iColumns === 0 && iMonths < MONTHS_IN_YEAR;
 
 		this._iYear && oFocusedDate.setYear(this._iYear);
@@ -907,7 +909,7 @@ sap.ui.define([
 
 		!bDontSetMonth && this.setProperty("month", iMonth);
 
-		oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this._getPrimaryCalendarType());
+		oFocusedDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this._getPrimaryCalendarType());
 		oFocusedDate.setMonth(iMonth, 1);
 		this._iYear && oFocusedDate.setYear(this._iYear);
 
@@ -1014,7 +1016,7 @@ sap.ui.define([
 			oFocusedDate = CalendarDate.fromLocalJSDate(oSelectedDates.getEndDate(), this._getPrimaryCalendarType());
 			oFocusedDate.setDate(1);
 		} else {
-			oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this._getPrimaryCalendarType());
+			oFocusedDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), this._getPrimaryCalendarType());
 			this._iYear && oFocusedDate.setYear(this._iYear);
 			oFocusedDate.setMonth(iMonth, 1);
 		}

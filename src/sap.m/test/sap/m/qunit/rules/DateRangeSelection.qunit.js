@@ -6,15 +6,16 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Date",
-	"test-resources/sap/ui/support/TestHelper"
-], function(DateRangeSelection, Page, Panel, JSONModel, TypeDate, testRule) {
+	"test-resources/sap/ui/support/TestHelper",
+	"sap/ui/core/date/UI5Date"
+], function(DateRangeSelection, Page, Panel, JSONModel, TypeDate, testRule, UI5Date) {
 	"use strict";
 
 	QUnit.module("DateRangeSelection rules", {
 		beforeEach: function() {
 			this.model = new JSONModel({
-				date1: new Date(),
-				date2: new Date()
+				date1: UI5Date.getInstance(),
+				date2: UI5Date.getInstance()
 			});
 			this.page = new Page({
 				content: [

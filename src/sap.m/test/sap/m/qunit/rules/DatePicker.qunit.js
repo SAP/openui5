@@ -8,15 +8,16 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/DateTime",
-	"test-resources/sap/ui/support/TestHelper"
-], function(DatePicker, Page, Panel, JSONModel, TypeDate, ODataTypeDate, ODataTypeDateTime, testRule) {
+	"test-resources/sap/ui/support/TestHelper",
+	"sap/ui/core/date/UI5Date"
+], function(DatePicker, Page, Panel, JSONModel, TypeDate, ODataTypeDate, ODataTypeDateTime, testRule, UI5Date) {
 	"use strict";
 
 	QUnit.module("DatePicker rules", {
 		beforeEach: function() {
 			this.model = new JSONModel({
-				date1: new Date(),
-				date2: new Date()
+				date1: UI5Date.getInstance(),
+				date2: UI5Date.getInstance()
 			});
 			this.page = new Page({
 				content: [
@@ -61,7 +62,7 @@ sap.ui.define([
 						id: "DatePickerTestsContext4",
 						content: [
 							new DatePicker({
-								dateValue: new Date(2018, 9, 23, 14, 24)
+								dateValue: UI5Date.getInstance(2018, 9, 23, 14, 24)
 							})
 						]
 					})

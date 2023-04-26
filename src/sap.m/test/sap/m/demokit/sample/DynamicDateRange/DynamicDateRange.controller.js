@@ -7,7 +7,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/m/DynamicDateRange',
 	'sap/ui/core/library',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	'sap/ui/core/date/UI5Date'
 ], function(
 	Controller,
 	Filter,
@@ -17,7 +18,8 @@ sap.ui.define([
 	DateFormat,
 	DynamicDateRange,
 	coreLibrary,
-	Device
+	Device,
+	UI5Date
 ) {
 	"use strict";
 
@@ -26,7 +28,7 @@ sap.ui.define([
 
 
 	function getIcrementedDateFromToday(iDays, iMonths, iYears) {
-		var oResultingDate = new Date();
+		var oResultingDate = UI5Date.getInstance();
 
 		oResultingDate.setFullYear(oResultingDate.getFullYear() + iYears);
 		oResultingDate.setMonth(oResultingDate.getMonth() + iMonths);
@@ -122,13 +124,13 @@ sap.ui.define([
 		},
 		{
 			TransactionType: "ATM withdrawal",
-			PerfomDateTime: new Date(2021, 5, 9, 15, 15, 0),
+			PerfomDateTime: UI5Date.getInstance(2021, 5, 9, 15, 15, 0),
 			Amount: 50.00,
 			CurrencyCode: "EUR"
 		},
 		{
 			TransactionType: "payment on POS terminal",
-			PerfomDateTime: new Date(2021, 5, 8, 10, 15, 0),
+			PerfomDateTime: UI5Date.getInstance(2021, 5, 8, 10, 15, 0),
 			Amount: 22.34,
 			CurrencyCode: "EUR"
 		}

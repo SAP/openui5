@@ -7,8 +7,8 @@
 
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-	        id="sap-ui-bootstrap"
-	        data-sap-ui-libs="sap.m, sap.ui.layout">
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 	</script>
 
 </head>
@@ -16,6 +16,7 @@
 <script>
 	jQuery.sap.require("sap.ui.core.HTML");
 	jQuery.sap.require("sap.ui.core.IconPool");
+	var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
 	var oApp = new sap.m.App("myApp"),
 		oPage = new sap.m.Page();
@@ -146,7 +147,7 @@
 
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({
-		timeValue: new Date()
+		timeValue: UI5Date.getInstance()
 	});
 	sap.ui.getCore().setModel(oModel);
 

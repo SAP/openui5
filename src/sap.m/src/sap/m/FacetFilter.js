@@ -37,6 +37,7 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/CheckBox",
 	"sap/m/Page",
+	'sap/ui/core/date/UI5Date',
 	// jQuery Plugin "scrollRightRTL"
 	"sap/ui/dom/jquery/scrollRightRTL",
 	// jQuery Plugin "scrollLeftRTL"
@@ -77,7 +78,8 @@ sap.ui.define([
 		List,
 		StandardListItem,
 		CheckBox,
-		Page
+		Page,
+        UI5Date
 	) {
 	"use strict";
 
@@ -2414,7 +2416,7 @@ sap.ui.define([
 			this.startScrollX = this.getDomRef("head").scrollLeft;
 			this.startTouchX = evt.touches[0].pageX;
 			this._bTouchNotMoved = true;
-			this._lastMoveTime = new Date().getTime();
+			this._lastMoveTime = UI5Date.getInstance().getTime();
 		}.bind(this);
 
 		var fnTouchMove = function(evt) {
@@ -2434,8 +2436,8 @@ sap.ui.define([
 			this._bTouchNotMoved = false;
 
 			// inertia scrolling: prepare continuation even after touchend by calculating the current velocity
-			var dt = new Date().getTime() - this._lastMoveTime;
-			this._lastMoveTime = new Date().getTime();
+			var dt = UI5Date.getInstance().getTime() - this._lastMoveTime;
+			this._lastMoveTime = UI5Date.getInstance().getTime();
 			if (dt > 0) {
 				this._velocity = (newScrollLeft - oldScrollLeft) / dt;
 			}

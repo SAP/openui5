@@ -161,15 +161,15 @@ sap.ui.define([
 							case "minimum":
 								if (iTimestamp < iConstraintValue) {
 									aViolatedConstraints.push("minimum");
-									aMessages.push(oMBundle.getText(sErrorGenericTextKey, [new Date(iTimestamp).toDateString()]));
-									aMessages.push(oBundle.getText("Date.Minimum", [new Date(iConstraintValue).toDateString()]));
+									aMessages.push(oMBundle.getText(sErrorGenericTextKey, [UI5Date.getInstance(iTimestamp).toDateString()]));
+									aMessages.push(oBundle.getText("Date.Minimum", [UI5Date.getInstance(iConstraintValue).toDateString()]));
 								}
 								break;
 							case "maximum":
 								if (iTimestamp > iConstraintValue) {
 									aViolatedConstraints.push("maximum");
-									aMessages.push(oMBundle.getText(sErrorGenericTextKey, [new Date(iTimestamp).toDateString()]));
-									aMessages.push(oBundle.getText("Date.Maximum", [new Date(iConstraintValue).toDateString()]));
+									aMessages.push(oMBundle.getText(sErrorGenericTextKey, [UI5Date.getInstance(iTimestamp).toDateString()]));
+									aMessages.push(oBundle.getText("Date.Maximum", [UI5Date.getInstance(iConstraintValue).toDateString()]));
 								}
 								break;
 						}

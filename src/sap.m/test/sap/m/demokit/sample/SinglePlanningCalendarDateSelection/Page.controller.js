@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/m/library",
 	"sap/m/MessageToast",
-	"sap/ui/unified/DateRange"
+	"sap/ui/unified/DateRange",
+	"sap/ui/core/date/UI5Date"
 ],
-function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, mobileLibrary, MessageToast, DateRange) {
+function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, mobileLibrary, MessageToast, DateRange, UI5Date) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -22,69 +23,69 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 
 			var oModel = new JSONModel();
 			oModel.setData({
-					startDate: new Date("2018", "6", "9"),
+					startDate: UI5Date.getInstance("2018", "6", "9"),
 					appointments: [
 						{
 							title: "Discussion of the plan",
 							type: CalendarDayType.Type01,
-							startDate: new Date(),
-							endDate: new Date()
+							startDate: UI5Date.getInstance(),
+							endDate: UI5Date.getInstance()
 						},
 						{
 						title: "Meet John Miller",
 						type: CalendarDayType.Type05,
-						startDate: new Date("2018", "6", "8", "5", "0"),
-						endDate: new Date("2018", "6", "8", "6", "0")
+						startDate: UI5Date.getInstance("2018", "6", "8", "5", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "8", "6", "0")
 					}, {
 						title: "Lunch",
 						text: "canteen",
 						type: CalendarDayType.Type05,
-						startDate: new Date("2018", "6", "8", "7", "0"),
-						endDate: new Date("2018", "6", "8", "8", "0")
+						startDate: UI5Date.getInstance("2018", "6", "8", "7", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "8", "8", "0")
 					}, {
 						title: "New Product",
 						text: "room 105",
 						type: CalendarDayType.Type01,
 						icon: "sap-icon://meeting-room",
-						startDate: new Date("2018", "6", "8", "8", "0"),
-						endDate: new Date("2018", "6", "8", "9", "0")
+						startDate: UI5Date.getInstance("2018", "6", "8", "8", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "8", "9", "0")
 					}, {
 						title: "Discussion with clients for the new release dates",
 						text: "Online meeting",
 						type: CalendarDayType.Type08,
-						startDate: new Date("2018", "6", "9", "9", "0"),
-						endDate: new Date("2018", "6", "9", "10", "0")
+						startDate: UI5Date.getInstance("2018", "6", "9", "9", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "9", "10", "0")
 					},  {
 						title:"Meeting with the manager",
 						type: CalendarDayType.Type03,
-						startDate: new Date("2018", "6", "6", "9", "0"),
-						endDate: new Date("2018", "6", "6", "10", "0")
+						startDate: UI5Date.getInstance("2018", "6", "6", "9", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "6", "10", "0")
 					}, {
 						title:"Daily standup meeting",
 						type: CalendarDayType.Type01,
-						startDate: new Date("2018", "6", "7", "10", "0"),
-						endDate: new Date("2018", "6", "7", "10", "30")
+						startDate: UI5Date.getInstance("2018", "6", "7", "10", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "7", "10", "30")
 					}, {
 						title:"Private meeting",
 						type: CalendarDayType.Type03,
-						startDate: new Date("2018", "6", "6", "11", "30"),
-						endDate: new Date("2018", "6", "6", "12", "0")
+						startDate: UI5Date.getInstance("2018", "6", "6", "11", "30"),
+						endDate: UI5Date.getInstance("2018", "6", "6", "12", "0")
 					}, {
 						title:"Lunch",
 						type: CalendarDayType.Type05,
-						startDate: new Date("2018", "6", "6", "12", "0"),
-						endDate: new Date("2018", "6", "6", "13", "0")
+						startDate: UI5Date.getInstance("2018", "6", "6", "12", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "6", "13", "0")
 					}, {
 						title:"Discussion of the plan",
 						type: CalendarDayType.Type01,
-						startDate: new Date("2018", "6", "16", "11", "0"),
-						endDate: new Date("2018", "6", "16", "12", "0")
+						startDate: UI5Date.getInstance("2018", "6", "16", "11", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "16", "12", "0")
 					}, {
 						title:"Lunch",
 						text: "canteen",
 						type: CalendarDayType.Type05,
-						startDate: new Date("2018", "6", "16", "12", "0"),
-						endDate: new Date("2018", "6", "16", "13", "0")
+						startDate: UI5Date.getInstance("2018", "6", "16", "12", "0"),
+						endDate: UI5Date.getInstance("2018", "6", "16", "13", "0")
 					}
 				]
 			});
