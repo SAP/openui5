@@ -427,6 +427,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The ID of the group from which the locks shall be canceled; if not given all groups are
 	 *   processed
+	 *
+	 * @private
 	 */
 	_Requestor.prototype.cancelGroupLocks = function (sGroupId) {
 		this.aLockedGroupLocks.forEach(function (oGroupLock) {
@@ -834,6 +836,8 @@ sap.ui.define([
 	 *   complex type)
 	 * @returns {sap.ui.base.SyncPromise<object>}
 	 *   A promise resolving with the type
+	 *
+	 * @public
 	 */
 	 _Requestor.prototype.fetchType = function (mTypeForMetaPath, sMetaPath) {
 		var that = this;
@@ -1899,6 +1903,8 @@ sap.ui.define([
 	/**
 	 * Checks whether a first batch from an earlier app start was recorded and sends it immediately
 	 * out as optimistic batch in order to have its response at the earliest point in time.
+	 *
+	 * @public
 	 */
 	_Requestor.prototype.sendOptimisticBatch = function () {
 		var sKey = window.location.href,
