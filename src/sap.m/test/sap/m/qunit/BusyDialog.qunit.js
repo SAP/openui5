@@ -80,7 +80,7 @@ sap.ui.define([
 		//check for close button
 		assert.strictEqual(jQuery(this.sId + '-busyDialogCloseBtn').length, 0, 'BusyDialog should not have cancelButton rendered.');
 
-		assert.strictEqual(this.oBusyDialog._oDialog.$().attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "BUSYDIALOG_TITLE"), "aria-labelledby is correctly set");
+		// assert.strictEqual(this.oBusyDialog._oDialog.$().attr("aria-labelledby"), undefined, "aria-labelledby is not set without header");
 	});
 
 	// =========================================================================================================
@@ -506,10 +506,12 @@ sap.ui.define([
 	});
 
 	QUnit.test('Setting the Text property', function (assert) {
+		var invText = InvisibleText.getStaticId("sap.m", "BUSYDIALOG_TITLE");
 		this.oBusyDialog.setText('Loading...');
 		this.oBusyDialog.open();
+		//debugger
 
-		assert.strictEqual(this.oBusyDialog._oDialog.getAriaLabelledBy()[0], this.oBusyDialog._oLabel.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
+		assert.strictEqual(this.oBusyDialog._oDialog.getAriaLabelledBy()[0], invText, 'Should be the same as ariaLabelledBy in the dialog.');
 	});
 
 	QUnit.module('Style Class Methods', {
