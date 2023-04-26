@@ -156,7 +156,7 @@
 								icon="sap-icon://copy"/>
 						<MenuItem
 								id="sapUiRta_editAdaptation"
-								visible="{= (${contextBasedAdaptations>/count} > 0)}"
+								visible="{= (${contextBasedAdaptations>/count} > 0 &amp;&amp; ${contextBasedAdaptations>/displayedAdaptation/title} !== '')}"
 								text="{i18n>EAC_DIALOG_HEADER}"
 								press=".editAdaptation"
 								icon="sap-icon://edit"/>
@@ -164,7 +164,7 @@
 								id="sapUiRta_deleteAdaptation"
 								text="{i18n>DAC_DIALOG_HEADER}"
 								press=".deleteAdaptation"
-								visible="{= (${contextBasedAdaptations>/count} > 0)}"
+								visible="{= (${contextBasedAdaptations>/count} > 0 &amp;&amp; ${contextBasedAdaptations>/displayedAdaptation/title} !== '')}"
 								icon="sap-icon://delete"/>
 						<MenuItem
 								id="sapUiRta_manageAdaptations"
