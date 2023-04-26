@@ -947,7 +947,7 @@ sap.ui.define([
 		var oDragSession = oEvent.getParameter("dragSession");
 		var oDraggedControl = oDragSession.getDragControl();
 		this._oDragIndicator = true;
-        this._getIllustratedMessage();
+    this._getIllustratedMessage();
 		if (oDraggedControl) {
 			oEvent.preventDefault();
 		}
@@ -2012,11 +2012,11 @@ sap.ui.define([
 	// Using UploadSet's dragleave abstract method with custom implementation to capture UploadSet dragleave event
 	UploadSet.prototype.ondragleave = function (oEvent) {
 		var oDragSession = oEvent.dragSession;
-		// condition to reset the illustrated message to deafult message from drag & drop message on leaving the drop area.
+		// condition to reset the illustrated message to default message from drag & drop message on leaving the drop area.
 		// getDropControl returns the valid drop target underneath the drop control, if no dropcontrol available UploadSet control to reset the illustrated message
-		if (!oDragSession || !oDragSession.getDropControl()) {
+		if (!oDragSession || !oDragSession.getDropControl() || (oDragSession && !oEvent.relatedTarget)) {
 			this._oDragIndicator = false;
-            this._getIllustratedMessage();
+      this._getIllustratedMessage();
 		}
 	};
 
