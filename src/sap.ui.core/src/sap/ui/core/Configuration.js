@@ -1349,7 +1349,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getNoDuplicateIds : function () {
-			return this.getValue("noDuplicateIds");
+			return BaseConfig.get({ name: "sapUiNoDuplicateIds", type: BaseConfig.Type.Boolean, defaultValue: true, external: true });
 		},
 
 		/**
