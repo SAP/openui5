@@ -1,11 +1,13 @@
 
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/Fragment',
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Fragment",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/p13n/StateUtil"
-], function(Controller, Fragment, UriParameters, oCore, StateUtil) {
+	"sap/ui/mdc/p13n/StateUtil",
+	"test-resources/sap/ui/mdc/qunit/util/V4ServerHelper",
+	"sap/ui/model/odata/v4/ODataModel"
+], function(Controller, Fragment, UriParameters, oCore, StateUtil, V4ServerHelper, ODataModel) {
 	"use strict";
 	return Controller.extend("view.Main", {
 
@@ -22,7 +24,18 @@ sap.ui.define([
 				Responsive: "AppUnderTestTable.view.ResponsiveTable"
 			};
 
-			this.setFragment(mViews[sSubView]);
+			V4ServerHelper.requestServerURLForTenant("MDCTableP13nOpaTestApplication", true).then(function(tenantBaseUrl) {
+
+				var oModel = new ODataModel({
+					serviceUrl: tenantBaseUrl + "music/",
+					groupId: "$direct",
+					autoExpandSelect: true,
+					operationMode: "Server"
+				 });
+
+				 this.getView().setModel(oModel);
+				 this.setFragment(mViews[sSubView]);
+			 }.bind(this));
 		},
 
 		setFragment: function (sFragment) {
