@@ -13757,7 +13757,7 @@ sap.ui.define([
 	// BCP: 2180177518
 	QUnit.test("BCP: 2180177518", function (assert) {
 		var oInput,
-			oModel = this.createTeaBusiModel({updateGroupId : "noSubmit"}),
+			oModel = this.createTeaBusiModel({updateGroupId : "doNotSubmit"}),
 			oTransientContext,
 			sView = '<Input id="budgetCurrency" value="{BudgetCurrency}"/>',
 			that = this;
@@ -44821,7 +44821,7 @@ sap.ui.define([
 				// "creation row"
 				oCreationRowContext
 					= oModel.bindList("SO_2_SOITEM", aContexts[1], [], [],
-						{$$updateGroupId : "never"})
+						{$$updateGroupId : "doNotSubmit"})
 					.create();
 			} else { // Note: this does not count as a pending change!
 				sNewNote = "no patch";
@@ -45006,7 +45006,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			assert.strictEqual(aContexts[1].getProperty("Note"), sNewNote);
-			assert.strictEqual(oModel.hasPendingChanges("never"), bWithPendingChanges);
+			assert.strictEqual(oModel.hasPendingChanges("doNotSubmit"), bWithPendingChanges);
 			assert.notOk(oModel.hasPendingChanges("update"));
 			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges,
 				"creation row");
@@ -45025,7 +45025,7 @@ sap.ui.define([
 				]);
 			}
 		}).then(function () {
-			assert.notOk(oModel.hasPendingChanges("never"));
+			assert.notOk(oModel.hasPendingChanges("doNotSubmit"));
 		});
 	});
 });
@@ -45092,7 +45092,7 @@ sap.ui.define([
 
 			that.expectChange("itemPosition", ["0001"]);
 
-			oSetPropertyPromise = oKeptAliveItem.setProperty("ItemPosition", "0001", "noSubmit");
+			oSetPropertyPromise = oKeptAliveItem.setProperty("ItemPosition", "0001", "doNotSubmit");
 
 			assert.strictEqual(oKeptAliveItem.hasPendingChanges(), true);
 			assert.strictEqual(oItemsTableBinding.hasPendingChanges(), true);
@@ -45123,10 +45123,10 @@ sap.ui.define([
 				.expectCanceledError("Failed to update path /SalesOrderList('42')"
 					+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')/ItemPosition",
 					"Request canceled: PATCH SalesOrderList('42')"
-					+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010'); group: noSubmit");
+					+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010'); group: doNotSubmit");
 
 			// cleanup
-			oModel.resetChanges("noSubmit");
+			oModel.resetChanges("doNotSubmit");
 
 			return Promise.all([
 				checkCanceled(assert, oSetPropertyPromise),
@@ -48064,7 +48064,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2039
 	QUnit.test("Nested create & inactive contexts", function (assert) {
 		var oModel = this.createSalesOrdersModel(
-				{autoExpandSelect : true, updateGroupId : "noSubmit"}),
+				{autoExpandSelect : true, updateGroupId : "doNotSubmit"}),
 			oOrdersTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -48584,7 +48584,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "create order");
 		}).then(function () {
-			that.expectChange("note", ["AA", "noSubmit", "B"])
+			that.expectChange("note", ["AA", "doNotSubmit", "B"])
 				.expectChange("product", [null, null, null])
 				.expectChange("itemCount", "1")
 				.expectChange("itemCount", "2")
@@ -48593,7 +48593,7 @@ sap.ui.define([
 			// code under test
 			oCreatedItemContext1 = oItemsBinding.create({Note : "B"});
 			// this one is deleted again before submitting (intentionally in between)
-			oCreatedItemContext3 = oItemsBinding.create({Note : "noSubmit"});
+			oCreatedItemContext3 = oItemsBinding.create({Note : "doNotSubmit"});
 			oCreatedItemContext2 = oItemsBinding.create({Note : "AA"});
 
 			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
@@ -48954,7 +48954,7 @@ sap.ui.define([
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {value : []});
 
 			oCreatedItemContext = that.oView.byId("items").getBinding("items")
-				.create({Note : "noSubmit"});
+				.create({Note : "doNotSubmit"});
 			oCreatedItemContext.delete();
 
 			return Promise.all([
@@ -50367,12 +50367,12 @@ sap.ui.define([
 				oResetPromise;
 
 			// code under test (1)
-			oPatchPromise = oContext.setProperty("Note", "n/a", "noSubmit");
+			oPatchPromise = oContext.setProperty("Note", "n/a", "doNotSubmit");
 
 			assert.ok(oContext.hasPendingChanges());
 
 			that.expectCanceledError("Failed to update path /SalesOrderList('01')/Note",
-				"Request canceled: PATCH SalesOrderList('01'); group: noSubmit");
+				"Request canceled: PATCH SalesOrderList('01'); group: doNotSubmit");
 
 			// code under test (2)
 			oResetPromise = oModel.bindContext("", oContext).resetChanges();
@@ -50400,7 +50400,7 @@ sap.ui.define([
 				oResetPromise.then(function () {
 					assert.notOk(oContext.hasPendingChanges());
 				}),
-				oModel.submitBatch("noSubmit"), // expect no PATCH
+				oModel.submitBatch("doNotSubmit"), // expect no PATCH
 				that.waitForChanges(assert)
 			]);
 		});
