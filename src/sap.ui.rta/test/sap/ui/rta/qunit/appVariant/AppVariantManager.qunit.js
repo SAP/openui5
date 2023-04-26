@@ -145,11 +145,6 @@ sap.ui.define([
 
 			oServer = sinon.fakeServer.create();
 
-			sandbox.stub(AppVariantUtils, "getInboundInfo").returns(Promise.resolve({
-				currentRunningInbound: "customer.savedAsAppVariant",
-				addNewInboundRequired: true
-			}));
-
 			var oParsedHashStub = {
 				semanticObject: "testSemanticObject",
 				action: "testAction"
@@ -171,19 +166,35 @@ sap.ui.define([
 			oServer.restore();
 		}
 	}, function() {
-		QUnit.test("When createAllInlineChanges() method is called", function (assert) {
+		var assertChanges = function(assert, oAppVariantManager, oAppVariantData, oAppComponent, bAddNewInboundRequired) {
+			sandbox.stub(AppVariantUtils, "getInboundInfo").returns(Promise.resolve({
+				currentRunningInbound: "customer.savedAsAppVariant",
+				addNewInboundRequired: bAddNewInboundRequired
+			}));
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			return this.oAppVariantManager.createAllInlineChanges(this.oAppVariantData, this.oAppComponent)
+			return oAppVariantManager.createAllInlineChanges(oAppVariantData, oAppComponent)
 				.then(function(aAllInlineChanges) {
 					assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
 					aAllInlineChanges.forEach(function(oInlineChange) {
 						var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
 						assert.equal(includes(DescriptorChangeTypes.getChangeTypes(), sChangeType), true, "then inline change " + sChangeType + " got successfully created");
 					});
+					assert.equal(aAllInlineChanges.some(function(oInlineChange) {
+						var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
+						return sChangeType === "appdescr_app_removeAllInboundsExceptOne";
+					}), true, "inline changes include appdescr_app_removeAllInboundsExceptOne change");
 				});
+		};
+
+		QUnit.test("When createAllInlineChanges() method is called with new inbound", function(assert) {
+			return assertChanges(assert, this.oAppVariantManager, this.oAppVariantData, this.oAppComponent, false);
+		});
+
+		QUnit.test("When createAllInlineChanges() method is called with existing inbound", function(assert) {
+			return assertChanges(assert, this.oAppVariantManager, this.oAppVariantData, this.oAppComponent, true);
 		});
 
 		QUnit.test("When notifyKeyUserWhenPublishingIsReady() method is called during app creation", function (assert) {
