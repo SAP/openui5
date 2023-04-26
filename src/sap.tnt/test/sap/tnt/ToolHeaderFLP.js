@@ -105,6 +105,12 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUshellShellTabBar");
 
+	toolHeader.addEventDelegate({
+		onAfterRendering: function () {
+			this.removeStyleClass("sapContrast");
+		}.bind(toolHeader)
+	});
+
 	var app = new App("myApp", {initialPage:"tabBarPage"});
 	app.placeAt("body");
 

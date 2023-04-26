@@ -5,12 +5,12 @@
 
 @_sap_tnt_ToolHeader_AvatarColor: @sapUiContentContrastTextColor;
 
-.sapTntToolHeader.sapMTB {
+.sapTntToolHeader:not(.sapUshellShellToolHeader).sapMTB {
 	background-color: darken(@sapUiPageHeaderBackground, 8);
 	border: 1px solid darken(@sapUiPageHeaderBorderColor, 8);
 }
 
-.sapTntToolHeader .sapMITH,
+.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMITH,
 .sapTntToolHeaderPopover.sapMOTAPopover.sapMPopover {
 	background-color: darken(@sapUiPageHeaderBackground, 8);
 }
@@ -29,7 +29,7 @@
 	}
 }
 
-.sapTntToolHeader .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive::after {
+.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive::after {
 	color: @sapUiButtonEmphasizedTextColor;
 }
 
@@ -59,12 +59,12 @@ html.sap-desktop .sapTntToolHeader .sapMBtn:focus > .sapMBtnEmphasized.sapMFocus
 	}
 }
 
-.sapTntToolHeader .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled)  .sapMBtnInner.sapMBtnActive {
+.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled)  .sapMBtnInner.sapMBtnActive {
 	background: @sapButton_Active_Background;
 }
 
 
-.sapTntToolHeader .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnEmphasized::after {
+.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnEmphasized::after {
 	color: @sapContent_IconColor;
 }
 
@@ -72,11 +72,11 @@ html.sap-desktop .sapTntToolHeader .sapMBtn:focus > .sapMBtnEmphasized.sapMFocus
 	color: @sapContent_IconColor;
 }
 
-.sapTntToolHeader .sapMITH.sapMITBTextOnly .sapMITHEndOverflow {
+.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMITH.sapMITBTextOnly .sapMITHEndOverflow {
 	margin-top: 0;
 }
 
-.sapTntToolHeader {
+.sapTntToolHeader:not(.sapUshellShellToolHeader) {
 	.sapMITH {
 		.sapMITHStartOverflow,
 		.sapMITHEndOverflow {
@@ -114,4 +114,19 @@ html.sap-desktop .sapTntToolHeader .sapMBtn:focus > .sapMBtnEmphasized.sapMFocus
 	.sapUiIcon.sapFAvatarTypeIcon  {
 		color: @_sap_tnt_ToolHeader_AvatarColor;
 	}
+}
+
+/* ------------------------------------------------ */
+/* Shell overrides                        */
+/* ------------------------------------------------ */
+
+.sapTntToolHeader.sapUshellShellToolHeader {
+	.sapMITH {
+		border-bottom: none;
+		box-shadow: none;
+	}
+
+	height: 3.125rem;
+	box-sizing: border-box;
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBackground;
 }
