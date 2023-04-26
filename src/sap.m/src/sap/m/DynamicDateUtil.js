@@ -78,8 +78,7 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @alias sap.m.DynamicDateUtil
-	 * @public
-	 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 * @protected
 	 */
 	var DynamicDateUtil = {
 		_options: {
