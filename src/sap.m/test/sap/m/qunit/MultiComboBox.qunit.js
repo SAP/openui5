@@ -6384,6 +6384,60 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Pressing the OK button should tokenize the value if matching a suggestion", function(assert) {
+		//arrange
+		this.stub(Device, "system").value({
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new Item({
+					text: "Item 1",
+					key: "1"
+				}),
+				new Item({
+					text: "Item 2",
+					key: "2"
+				}),
+				new Item({
+					text: "Item 3",
+					key: "3"
+				})
+			]
+		}),
+		oSuggestionPopover,
+		aTokens;
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		//act
+		oMultiComboBox.open();
+		this.clock.tick();
+
+		qutils.triggerCharacterInput(oMultiComboBox.getPickerTextField().getFocusDomRef(), "I");
+		qutils.triggerEvent("input", oMultiComboBox.getPickerTextField().getFocusDomRef());
+
+		//arrange
+		oSuggestionPopover = oMultiComboBox._getSuggestionsPopover();
+
+		//act
+		oSuggestionPopover._oPopover.getBeginButton().firePress();
+		Core.applyChanges();
+
+		//arrange
+		aTokens = oMultiComboBox.getAggregation("tokenizer").getTokens();
+
+		//assert
+		assert.strictEqual(aTokens.length, 1 , "The dialog is closed and the value is tokenized");
+		assert.strictEqual(aTokens[0].getText(), "Item 1" , "The correct item is selected");
+
+		//clean up
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("_filterSelectedItems()", function(assert) {
 		this.stub(Device, "system").value({
 			desktop: false,
