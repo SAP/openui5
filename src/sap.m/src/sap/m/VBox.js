@@ -38,6 +38,15 @@ sap.ui.define(['./FlexBox', './library', "./VBoxRenderer"],
 		metadata : {
 
 			library : "sap.m",
+			properties: {
+				/**
+				 * Determines the direction of the layout of child elements.
+				 *
+				 * @see http://www.w3.org/TR/css-flexbox-1/#flex-direction-property
+				 * @override
+				 */
+				direction : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : FlexDirection.Column}
+			},
 			designtime: "sap/m/designtime/VBox.designtime"
 		},
 
