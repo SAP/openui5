@@ -473,6 +473,17 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/ChangesController"]
 				}
 			},
+			"apply/_internal/preprocessors/ComponentLifecycleHooks": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/preprocessors/ComponentLifecycleHooks"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/qunit": "test-resources/sap/ui/rta/qunit/"
+					}
+				}
+			},
 			"apply/_internal/preprocessors/EventHistory": {
 				group: "Apply Internal",
 				coverage: {

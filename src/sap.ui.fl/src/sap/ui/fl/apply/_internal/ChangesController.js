@@ -4,11 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/Utils"
 ], function(
 	OldFlexControllerFactory,
-	ManifestUtils,
 	FlexUtils
 ) {
 	"use strict";
