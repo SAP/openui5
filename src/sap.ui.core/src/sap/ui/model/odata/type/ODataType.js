@@ -25,7 +25,7 @@
  * </pre>
  *
  * All types support formatting from the representation used in ODataModel ("model format") to
- * various representations used by UI elements ("target type") and vice versa. Additionally they
+ * various representations used by UI elements ("target type") and vice versa. Additionally, they
  * support validating a given value against the type's constraints.
  *
  * The following target types may be supported:
@@ -63,14 +63,14 @@
  * accepted and leads to a (locale-dependent) <code>ParseException</code>.
  *
  * This ensures that the user cannot clear an input field bound to an attribute with non-nullable
- * type. However it does not ensure that the user really entered something if the field was empty
+ * type. However, it does not ensure that the user really entered something if the field was empty
  * before.
  *
  * <b><code>Date</code> vs. <code>DateTime</code></b>:
  *
- * The type {@link sap.ui.model.odata.type.Date} is only valid for an OData V4 service. If you use
- * the type for an OData V2 service, displaying is possible but you get an error message from server
- * if you try to save changes.
+ * The type {@link sap.ui.model.odata.type.Date} is only valid for an OData V4 service. Displaying
+ * data is possible if you use the type for an OData V2 service, but you will receive an error
+ * message from the server once you try to save any changes.
  *
  * For an OData V2 service use {@link sap.ui.model.odata.type.DateTime} with the constraint
  * <code>displayFormat: "Date"</code> to display only a date.
