@@ -1,17 +1,19 @@
-/*!
- * ${copyright}
- */
 
 sap.ui.define([
-	"sap/ui/mdc/ValueHelpDelegate",
-	"sap/ui/model/FilterType"
+    "sap/ui/mdc/ValueHelpDelegate",
+    'sap/ui/mdc/odata/TypeMap'
 ], function(
-	MDCValueHelpDelegate,
-	FilterType
+    MDCValueHelpDelegate,
+    ODataTypeMap
 ) {
-	"use strict";
+    "use strict";
 
-	var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
+    var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
+
+    ValueHelpDelegate.getTypeMap = function (oPayload) {
+        return ODataTypeMap;
+    };
+
 
 	ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
 		if (oListBinding.isA("sap.ui.model.odata.v2.ODataListBinding")) {

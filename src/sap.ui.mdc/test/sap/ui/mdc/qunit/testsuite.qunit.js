@@ -212,7 +212,14 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./mixin/DelegateMixin.qunit",
 				sinon: true
 			},
-
+			"TypeUtilFactory": {
+				group: "Util",
+				module: "./util/TypeUtilFactory.qunit",
+				coverage: {
+					only: "[sap/ui/mdc/util]"
+				},
+				sinon: true
+			},
 			"TypeUtil": {
 				group: "Util",
 				module: "./util/TypeUtil.qunit",
@@ -277,6 +284,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 			},
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/mdc/qunit/testsuite.generic.qunit.html"
+			},
+			"TypeMap Testsuite": {
+				group: "util",
+				page: "test-resources/sap/ui/mdc/qunit/typemap/testsuite.typemap.qunit.html"
 			}
 		}
 	};
@@ -330,6 +341,8 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					group: "p13n",
 					page: "test-resources/sap/ui/mdc/qunit/p13n/testsuite.p13n.qunit.html"
 				}
+
+
 			}
 		});
 	}

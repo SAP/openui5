@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-    "../../ChartDelegate"
+    "../../ChartDelegate",
+	'sap/ui/mdc/odata/v4/TypeMap'
 ], function (
-    ChartDelegate
+    ChartDelegate,
+    ODataV4TypeMap
 ) {
     "use strict";
     /**
@@ -22,6 +24,9 @@ sap.ui.define([
      */
     var Delegate = Object.assign({}, ChartDelegate);
 
+    Delegate.getTypeMap = function (oPayload) {
+		return ODataV4TypeMap;
+	};
 
     return Delegate;
 });

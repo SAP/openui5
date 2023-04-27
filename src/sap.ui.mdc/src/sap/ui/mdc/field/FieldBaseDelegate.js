@@ -7,9 +7,9 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeUtil'/* TODO: FieldBase & Field currently expect odata types in default delegate! */, 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enum/ConditionValidated'
+	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeMap', 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enum/ConditionValidated'
 ], function(
-	BaseDelegate, TypeUtil, FormatException, Condition, ConditionValidated
+	BaseDelegate, ODataTypeMap, FormatException, Condition, ConditionValidated
 ) {
 	"use strict";
 
@@ -28,6 +28,10 @@ sap.ui.define([
 	 * @alias module:sap/ui/mdc/field/FieldBaseDelegate
 	 */
 	var FieldBaseDelegate = Object.assign({}, BaseDelegate);
+
+	FieldBaseDelegate.getTypeMap = function () {
+		return ODataTypeMap;
+	};
 
 	/**
 	 * Provides the possibility to convey custom data in conditions.
@@ -249,10 +253,6 @@ sap.ui.define([
 
 		return {name: "sap/ui/mdc/ValueHelpDelegate", payload: {}};
 
-	};
-
-	FieldBaseDelegate.getTypeUtil = function (oPayload) {
-		return TypeUtil;
 	};
 
 	return FieldBaseDelegate;

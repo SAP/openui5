@@ -13,17 +13,22 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBarDelegate",
 	'sap/base/util/ObjectPath',
 	'sap/base/util/merge',
-	'delegates/odata/v4/TypeUtil',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Filter",
 	'sap/ui/mdc/util/IdentifierUtil',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
-	'sap/base/Log'
-	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, TypeUtil, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log) {
+	'sap/base/Log',
+	'sap/ui/mdc/odata/v4/TypeMap'
+
+	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap) {
 	"use strict";
 
 	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+
+	ODataFilterBarDelegate.getTypeMap = function (oPayload) {
+		return ODataV4TypeMap;
+	};
 
 	// TO DO
 	var mDefaultTypeForEdmType = {
@@ -479,7 +484,7 @@ sap.ui.define([
 		//and PropertyInfo, the usage of a complex 'name' (e.g. containing '/') might be reconsidered.
 		oProperty.name = sNavigationPropertyName ? sNavigationPropertyName + "/" + sKey : sKey;
 
-		oProperty.typeConfig = TypeUtil.getTypeConfig(oObj.$Type, oProperty.formatOptions, oProperty.constraints);
+		oProperty.typeConfig = ODataFilterBarDelegate.getTypeUtil().getTypeConfig(oObj.$Type, oProperty.formatOptions, oProperty.constraints);
 
 		return oProperty;
 	};
@@ -742,10 +747,6 @@ sap.ui.define([
 
 	ODataFilterBarDelegate.cleanup = function (oFilterBar) {
 		InstanceCache.delete(oFilterBar.getId());
-	};
-
-	ODataFilterBarDelegate.getTypeUtil = function (oPayload) {
-		return TypeUtil;
 	};
 
 	return ODataFilterBarDelegate;

@@ -7,25 +7,26 @@ sap.ui.define([
 	"sap/ui/mdc/odata/v4/TableDelegate",
 	"delegates/odata/v4/FilterBarDelegate",
 	"delegates/odata/v4/ODataMetaModelUtil",
-	"delegates/odata/v4/TypeUtil",
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/unified/Currency",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core",
-	"sap/base/Log"
+	"sap/base/Log",
+	'sap/ui/mdc/odata/v4/TypeMap'
+
 ], function(
 	TableDelegateUtils,
 	TableDelegate,
 	FilterBarDelegate,
 	ODataMetaModelUtil,
-	TypeUtil,
 	DelegateUtil,
 	FilterUtil,
 	Currency,
 	Filter,
 	Core,
-	Log
+	Log,
+	ODataV4TypeMap
 ) {
 	"use strict";
 
@@ -211,7 +212,7 @@ sap.ui.define([
 
 					var oType;
 					try {
-						oType = TypeUtil.getTypeConfig(oDataObject.$Type, null, mConstraints);
+						oType = TestTableDelegate.getTypeUtil().getTypeConfig(oDataObject.$Type, null, mConstraints);
 					} catch (error) {
 						Log.error(error);
 					}
@@ -288,10 +289,6 @@ sap.ui.define([
 
 	TestTableDelegate.getFilterDelegate = function() {
 		return FilterBarDelegate;
-	};
-
-	TestTableDelegate.getTypeUtil = function(oPayload) {
-		return TypeUtil;
 	};
 
 	return TestTableDelegate;

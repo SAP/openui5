@@ -9,9 +9,10 @@ sap.ui.define([
 	"delegates/odata/v4/util/DelegateUtil",
 	"delegates/odata/v4/FilterBarDelegate",
 	"delegates/odata/v4/ODataMetaModelUtil",
-	"delegates/odata/v4/TypeUtil",
 	"sap/ui/model/Filter",
-	"sap/base/Log"
+	"sap/base/Log",
+	'sap/ui/mdc/odata/v4/TypeMap'
+
 ], function(
 	TableDelegate,
 	Core,
@@ -19,9 +20,9 @@ sap.ui.define([
 	DelegateUtil,
 	FilterBarDelegate,
 	ODataMetaModelUtil,
-	TypeUtil,
 	Filter,
-	Log
+	Log,
+	ODataV4TypeMap
 ) {
 	"use strict";
 
@@ -29,6 +30,10 @@ sap.ui.define([
 	 * Test delegate for OData V4.
 	 */
 	var ODataTableDelegate = Object.assign({}, TableDelegate);
+
+	ODataTableDelegate.getTypeMap = function (oPayload) {
+		return ODataV4TypeMap;
+	};
 
 	ODataTableDelegate.fetchProperties = function(oTable) {
 		var oModel = this._getModel(oTable);
@@ -172,10 +177,6 @@ sap.ui.define([
 
 	ODataTableDelegate.getFilterDelegate = function() {
 		return FilterBarDelegate;
-	};
-
-	ODataTableDelegate.getTypeUtil = function (oPayload) {
-		return TypeUtil;
 	};
 
 	ODataTableDelegate._getModel = function(oTable) {

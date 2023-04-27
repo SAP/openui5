@@ -273,20 +273,24 @@ sap.ui.define([
 	QUnit.test("call of delegate functions", function(assert) {
 		var oPayload = {x: 1};
 		var oDelegate = sap.ui.require("sap/ui/mdc/field/FieldBaseDelegate");
+
+		var oTypeUtil = oDelegate.getTypeUtil(oPayload); // pre-initialize typed typeutil
 		sinon.spy(oDelegate, "getTypeUtil");
-		sinon.spy(oDelegate.getTypeUtil(oPayload), "getDataTypeClass");
-		sinon.spy(oDelegate.getTypeUtil(oPayload), "getBaseType");
+		sinon.spy(oTypeUtil, "getDataTypeInstance");
+		sinon.spy(oTypeUtil, "getBaseType");
 
 		oField = new FieldBase("F1", {
 			delegate: {name: "sap/ui/mdc/field/FieldBaseDelegate", payload: oPayload}
 		}).placeAt("content");
+
+
 		oCore.applyChanges();
 
 		assert.ok(oDelegate.getTypeUtil.calledWith(oPayload), "getTypeUtil called");
-		assert.ok(oDelegate.getTypeUtil(oPayload).getDataTypeClass.calledWith("sap.ui.model.type.String"), "getDataTypeClass called");
-		assert.ok(oDelegate.getTypeUtil(oPayload).getBaseType.calledWith("sap.ui.model.type.String"), "getBaseType called");
+		assert.ok(oTypeUtil.getDataTypeInstance.calledWith("sap.ui.model.type.String"), "getDataTypeClass called");
+		assert.ok(oTypeUtil.getBaseType.calledWith("sap.ui.model.type.String"), "getBaseType called");
 
-		oDelegate.getTypeUtil(oPayload).getDataTypeClass.restore();
+		oTypeUtil.getDataTypeInstance.restore();
 		oDelegate.getTypeUtil(oPayload).getBaseType.restore();
 
 	});

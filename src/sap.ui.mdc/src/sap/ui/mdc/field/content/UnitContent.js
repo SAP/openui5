@@ -186,19 +186,25 @@ sap.ui.define([
 			var TypeUtil = oField.getTypeUtil();
 			var oType = oContentFactory.retrieveDataType();
 			var oFormatOptions = oType.getFormatOptions();
+			var oConstraints = oType.getConstraints();
 			var bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
 			var bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
+			var sTypeName = oType.getMetadata().getName();
+
 
 			// if measure and number needs to be shown -> create new type
 			if (bShowMeasure && bShowNumber) {
+				var oClonedFormatOptions = merge({},oFormatOptions);
+				var oClonedConstraints = isEmptyObject(oConstraints) ? undefined : merge({}, oConstraints);
+
 				// Type for number
-				var oNewType = TypeUtil.getUnitTypeInstance(oType, true, false);
+				var oNewType = TypeUtil.getDataTypeInstance(sTypeName, oClonedFormatOptions, oClonedConstraints, {showNumber: true, showMeasure: false});
 				oContentFactory.setUnitOriginalType(oContentFactory.getDataType());
 				oContentFactory.setDataType(oNewType);
 				oField.getControlDelegate().initializeInternalUnitType(oField.getPayload(), oContentFactory.getDataType(), oContentFactory.getFieldTypeInitialization());
 
 				// type for unit
-				oNewType = TypeUtil.getUnitTypeInstance(oType, false, true);
+				oNewType = TypeUtil.getDataTypeInstance(sTypeName, oClonedFormatOptions, oClonedConstraints, {showNumber: false, showMeasure: true});
 				oContentFactory.setUnitType(oNewType);
 				oField.getControlDelegate().initializeInternalUnitType(oField.getPayload(), oContentFactory.getUnitType(), oContentFactory.getFieldTypeInitialization());
 
