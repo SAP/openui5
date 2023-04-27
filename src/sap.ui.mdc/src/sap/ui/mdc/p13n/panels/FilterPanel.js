@@ -52,7 +52,8 @@ sap.ui.define([
 				 * current set of active factory controls.
 				 *
 				 * <b>Note:</b>: The Panel will not handle the lifecylce of the provided factory control instance, in case the row is going to be
-				 * removed, the according consumer needs to decide about destroying or keeping the control instance.
+				 * removed, the according consumer needs to decide about destroying or keeping the control instance. In addition, the <code>getIdForLabel</code>
+				 * method can be used to return a focusable children control to provide the <code>labelFor</code> reference.
 				 */
 				itemFactory: {
 					type: "function"
@@ -158,6 +159,10 @@ sap.ui.define([
 		return oFieldBox;
 	};
 
+	FilterPanel.prototype._setLabelForOnBox = function(oFilterItem, oFieldBox) {
+		oFieldBox.getItems()[0].setLabelFor(oFilterItem);
+	};
+
 	FilterPanel.prototype._selectKey = function(oComboBox) {
 		var oQueryRowGrid, sKey;
 		if (oComboBox) {
@@ -181,7 +186,8 @@ sap.ui.define([
 				oQueryRowGrid.insertContent(oFieldBox,0);
 
 				var oFilterItem = this._createFactoryControl({name: sKey}); //Create the actual filterable control and insert it in the grid
-				//oFieldBox.getItems()[0].setLabelFor(oFilterItem.getItems()[0]);
+				this._setLabelForOnBox(oFilterItem, oFieldBox);
+
 				oQueryRowGrid.insertContent(oFilterItem, 1);
 
 			}
