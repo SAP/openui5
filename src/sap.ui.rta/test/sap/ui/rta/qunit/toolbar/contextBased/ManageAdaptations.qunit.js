@@ -56,6 +56,12 @@ sap.ui.define([
 		return oToolbar;
 	}
 
+	function getRanks(oAdaptationsModel) {
+		return oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) {
+			return oAdaptation.rank;
+		});
+	}
+
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
 		beforeEach: function() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
@@ -148,7 +154,7 @@ sap.ui.define([
 				assert.deepEqual(this.oDialog.getModel("contextBased").getProperty("/adaptations"), this.oContextBasedAdaptations.adaptations, "correct context-based adaptations are shown");
 			});
 
-			QUnit.test("and the priority of the context-based adaptations is changed using the up and down button", function(assert) {
+			QUnit.test("and the priority of the context-based adaptations is first moved down then up again using the up and down button", function(assert) {
 				var oMoveUpButton = getControl(this.oToolbar, "moveUpButton");
 				var oMoveDownButton = getControl(this.oToolbar, "moveDownButton");
 				var oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
@@ -173,37 +179,65 @@ sap.ui.define([
 				sNewFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
 					.mAggregations.items[0].getProperty("text");
 				assert.strictEqual(sFirstAdaptationText, sNewFirstAdaptationText, "origianl priority is visible");
+				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
+			});
+
+			QUnit.test("and the priority of the context-based adaptations is moved down and then save button is clicked", function(assert) {
+				var oReloadStub = sandbox.stub(ContextBasedAdaptationsAPI, "reorder").resolves();
+				var oMoveUpButton = getControl(this.oToolbar, "moveUpButton");
+				var oMoveDownButton = getControl(this.oToolbar, "moveDownButton");
+				var oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
+				var oSaveAsButtonEnabled = getControl(this.oToolbar, "manageAdaptations-saveButton");
+				var oFirstTableItem = oAdaptationsTable.getItems()[0];
+				var sFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
+					.mAggregations.items[0].getProperty("text");
+				oAdaptationsTable.getItems()[0].focus();
+				oAdaptationsTable.setSelectedItem(oAdaptationsTable.getItems()[0], true, true);
+
+				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
+				assert.ok(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
+				assert.ok(oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
+
+				oMoveDownButton.firePress();
+				var sNewFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
+					.mAggregations.items[0].getProperty("text");
+				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
+				assert.ok(oSaveAsButtonEnabled.getEnabled(), "Save Button is enabled");
+
+				assert.strictEqual(oReloadStub.callCount, 0, "reload stub is not called");
+				oSaveAsButtonEnabled.firePress();
+				assert.strictEqual(oReloadStub.callCount, 1, "reload stub is called");
+				assert.deepEqual(getRanks(this.oManageAdaptations.oAdaptationsModel), [1, 2], "ranks are updated correctly");
 			});
 
 			QUnit.test("and the priority of the context-based adaptations is changed using drag and drop", function(assert) {
-				return this.oManageAdaptations.openManageAdaptationDialog().then(function() {
-					var oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
-					var oSaveAsButtonEnabled = getControl(this.oToolbar, "manageAdaptations-saveButton");
-					assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
+				var oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
+				var oSaveAsButtonEnabled = getControl(this.oToolbar, "manageAdaptations-saveButton");
+				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
 
-					var oFirstTableItem = oAdaptationsTable.getItems()[0];
-					var sFirstAdaptationText = getAdaptationTitle(oFirstTableItem);
-					oAdaptationsTable.getItems()[0].focus();
-					oAdaptationsTable.setSelectedItem(oAdaptationsTable.getItems()[0], true, true);
-					var oFakeEvent = {
-						getParameter: function(sProperty) {
-							if (sProperty === "droppedControl") {
-								return oAdaptationsTable.getItems()[1];
-							} else if (sProperty === "draggedControl") {
-								return oFirstTableItem;
-							} else if (sProperty === "dropPosition") {
-								return "After";
-							}
-							return "";
-						},
-						getBindingContext: function() {
-							return oFirstTableItem.getBindingContext("contextBased");
+				var oFirstTableItem = oAdaptationsTable.getItems()[0];
+				var sFirstAdaptationText = getAdaptationTitle(oFirstTableItem);
+				oAdaptationsTable.getItems()[0].focus();
+				oAdaptationsTable.setSelectedItem(oAdaptationsTable.getItems()[0], true, true);
+				var oFakeEvent = {
+					getParameter: function(sProperty) {
+						if (sProperty === "droppedControl") {
+							return oAdaptationsTable.getItems()[1];
+						} else if (sProperty === "draggedControl") {
+							return oFirstTableItem;
+						} else if (sProperty === "dropPosition") {
+							return "After";
 						}
-					};
-					oAdaptationsTable.getDragDropConfig()[0].mEventRegistry.drop[0].fFunction(oFakeEvent);
-					var sNewFirstAdaptationText = getAdaptationTitle(oFirstTableItem);
-					assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
-				}.bind(this));
+						return "";
+					},
+					getBindingContext: function() {
+						return oFirstTableItem.getBindingContext("contextBased");
+					}
+				};
+				oAdaptationsTable.getDragDropConfig()[0].mEventRegistry.drop[0].fFunction(oFakeEvent);
+				var sNewFirstAdaptationText = getAdaptationTitle(oFirstTableItem);
+				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
+				assert.ok(oSaveAsButtonEnabled.getEnabled(), "Save Button is enabled");
 			});
 		});
 
