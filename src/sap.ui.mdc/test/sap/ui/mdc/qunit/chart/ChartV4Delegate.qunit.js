@@ -630,7 +630,7 @@ function(
         assert.ok(ChartDelegate._getState(this.oMDCChart).toolbarUpdateRequested, "Request successfully set");
     });
 
-    QUnit.test("_getBindingInfo", function(assert) {
+    QUnit.test("getBindingInfo", function(assert) {
         var oDelegate = {
             payload: {
                 collectionName: "TestCollection"
@@ -638,7 +638,7 @@ function(
         };
         sandbox.stub(this.oMDCChart, "getDelegate").returns(oDelegate);
 
-        assert.equal(ChartDelegate._getBindingInfo(this.oMDCChart).path, "/TestCollection", "Correct path returned");
+        assert.equal(ChartDelegate.getBindingInfo(this.oMDCChart).path, "/TestCollection", "Correct path returned");
     });
 
     /**Not implemented yet**/

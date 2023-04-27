@@ -858,10 +858,16 @@ sap.ui.define([
                 return;
             }
 
-            var oBindingInfo = this.getControlDelegate()._getBindingInfo(this);
-
-            this.getControlDelegate().updateBindingInfo(this, oBindingInfo); //Applies filters
-            this.getControlDelegate().rebind(this, oBindingInfo);
+            var oChartDelegate = this.getControlDelegate();
+            var oBindingInfo;
+            if (oChartDelegate._getBindingInfo) {
+                oBindingInfo = oChartDelegate._getBindingInfo(this);
+                Log.warning("mdc Chart", "calling the private delegate._getBindingInfo. Please make the function public!");
+            } else {
+                oBindingInfo = oChartDelegate.getBindingInfo(this);
+            }
+            oChartDelegate.updateBindingInfo(this, oBindingInfo); //Applies filters
+            oChartDelegate.rebind(this, oBindingInfo);
         };
 
         /**

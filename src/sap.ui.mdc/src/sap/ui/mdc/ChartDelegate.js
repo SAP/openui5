@@ -477,6 +477,20 @@ sap.ui.define([
     ChartDelegate.getInnerChartBound = function (oMDCChart) {
     };
 
+
+    /**
+     * Returns the binding info for given chart.
+     *
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} BindingInfo object
+     *
+     * @private
+     * @ui5-restricted sap.fe, sap.ui.mdc
+ 	 * @MDC_PUBLIC_CANDIDATE
+     */
+    ChartDelegate.getBindingInfo = function (oMDCChart) {
+    };
+
     /**
      * Updates the binding info with the relevant filters.
      *

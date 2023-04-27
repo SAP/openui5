@@ -1119,14 +1119,80 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	var myChartDelegatefetchProperties = function (oMDCChart) {
+
+        var aMetadata = [
+            {
+                name: "CategoryName",
+                type: "string",
+                required: true,
+                label: "Category",
+                groupable: true,
+                kind: "Groupable"
+            },
+            {
+                name: "SalesNumber",
+                propertyPath: "SalesNumber",
+                type: "Edm.Int32",
+                required: true,
+                aggregatable: true,
+                label: "Sales Number",
+                kind: "Aggregatable"
+            }, {
+                name: "agSalesAmount",
+                propertyPath: "SalesAmount",
+                type: "string",
+                required: true,
+                label: "Sales Amount",
+                kind: "Aggregatable",
+                aggregatable: true,
+                defaultAggregation: "sum",
+                supportedAggregations: ["sum", "min", "max", "average"]
+            }, {
+                name: "Name",
+                propertyPath: "Name",
+                type: "string",
+                required: true,
+                label: "Name",
+                groupable: true,
+                kind: "Groupable"
+            }, {
+                name: "Industry",
+                type: "string",
+                required: true,
+                label: "Industry",
+                groupable: true,
+                kind: "Groupable"
+            }, {
+                name: "Country",
+                type: "string",
+                required: true,
+                label: "Country",
+                groupable: true,
+                kind: "Groupable"
+            }, {
+                name: "SomePropertyName",
+                type: "string",
+                required: true,
+                label: "SomeProperty",
+                groupable: true,
+                kind: "Groupable"
+            }
+        ];
+
+        return Promise.resolve(aMetadata);
+    };
+
 	QUnit.module("API tests for Chart", {
 		before: function(){
+			sinon.stub(ChartDelegate, "fetchProperties").callsFake(myChartDelegatefetchProperties);
+
 			var sChartView = '<mvc:View' +
 				'\t\t  xmlns:mvc="sap.ui.core.mvc"\n' +
 				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
 				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
 				'\t\t  >\n' +
-				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\',\'Type\']}" delegate="{\'name\': \'test-resources/sap/ui/mdc/delegates/ChartDelegateStateUtil\',\'payload\': {}}" >\n' +
+				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\',\'Type\']}" delegate="{\'name\': \'sap/ui/mdc/odata/v4/vizChart/ChartDelegate\',\'payload\': {}}" >\n' +
 				'\t\t\t\t\t\t<mdc:items><chart:Item id="item0" name="Name" label="Name" role="category"></chart:Item>\n' +
 				'\t\t\t\t\t\t<chart:Item id="item1" name="agSalesAmount" label="Depth" role="axis1"></chart:Item>\n' +
 				'\t\t\t\t\t\t<chart:Item id="item2" name="SalesNumber" label="Width" role="axis2"></chart:Item></mdc:items>\n' +
@@ -1148,6 +1214,8 @@ sap.ui.define([
 			this.oUiComponentContainer = null;
 			this.oChart.destroy();
 			this.oView = null;
+
+			ChartDelegate.fetchProperties.restore();
 		}
 	});
 
