@@ -197,6 +197,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns displayed adaptation id given layer and control.
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer
+	 * @returns {string} - Displayed adaptation id
+	 */
+	ContextBasedAdaptationsAPI.getDisplayedAdaptationId = function(mPropertyBag) {
+		return this.getAdaptationsModel(mPropertyBag).getProperty("/displayedAdaptation/id");
+	};
+
+	/**
 	 * Checks if adaptations model for a given reference and layer exists.
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested

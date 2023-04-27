@@ -549,6 +549,10 @@ sap.ui.define([
 				}
 			});
 
+			if (mPropertyBag.changeSpecificData && mPropertyBag.changeSpecificData.adaptationId !== undefined) {
+				oChange.setAdaptationId(mPropertyBag.changeSpecificData.adaptationId);
+			}
+
 			if (mPropertyBag.name) {
 				oChange.setText("variantName", mPropertyBag.name, "XFLD", true);
 			}

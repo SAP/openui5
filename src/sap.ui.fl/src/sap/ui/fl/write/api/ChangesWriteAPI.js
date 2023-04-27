@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/core/Core"
 ], function(
@@ -32,6 +33,7 @@ sap.ui.define([
 	ChangesController,
 	DescriptorChangeFactory,
 	ChangeHandlerStorage,
+	ContextBasedAdaptationsAPI,
 	AppVariantInlineChangeFactory,
 	Core
 ) {
@@ -62,10 +64,11 @@ sap.ui.define([
 		 */
 		create: function(mPropertyBag) {
 			var oFlexController;
+			var sReference;
 			// descriptor change
 			if (includes(DescriptorChangeTypes.getChangeTypes(), mPropertyBag.changeSpecificData.changeType)) {
 				oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-				var sReference = oFlexController.getComponentName();
+				sReference = oFlexController.getComponentName();
 				var sLayer;
 				if (mPropertyBag.changeSpecificData.layer) {
 					// Smart business must pass the layer as a part of ChangeSpecificData
@@ -98,12 +101,23 @@ sap.ui.define([
 			if (mPropertyBag.changeSpecificData.changeType === "codeExt") {
 				return FlexObjectFactory.createControllerExtensionChange(mPropertyBag.changeSpecificData);
 			}
-
+			var oAppComponent;
 			// flex change
 			if (mPropertyBag.selector.name && mPropertyBag.selector.view) {
 				oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector.view);
+				oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector.view);
 			} else {
 				oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+				oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+			}
+
+			var mContextBasedAdaptationBag = {
+				layer: mPropertyBag.changeSpecificData.layer,
+				control: oAppComponent,
+				reference: oFlexController.getComponentName()
+			};
+			if (ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag)) {
+				mPropertyBag.changeSpecificData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
 			}
 
 			// if a component instance is passed only a base change is created
