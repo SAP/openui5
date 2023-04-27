@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
@@ -32,7 +33,7 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
+], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration, Core,
 		coreLibrary, UI5Date, Message, Controller, View, BindingMode, Filter, FilterOperator,
 		FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
 		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
@@ -575,9 +576,8 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
-			if (sap.ui.getCore().getUIDirty()
-					|| sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
-						< this.aMessages.length) {
+			if (Core.getUIDirty()
+					|| Core.getMessageManager().getMessageModel().getObject("/").length	< this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);
 
 				return;
@@ -595,7 +595,7 @@ sap.ui.define([
 		 * @param {object} assert The QUnit assert object
 		 */
 		checkMessages : function (assert) {
-			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
+			var aCurrentMessages = Core.getMessageManager().getMessageModel()
 					.getObject("/").sort(compareMessages),
 				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
 
@@ -1085,7 +1085,7 @@ sap.ui.define([
 					that.oView.setModel(mNamedModels[sModelName], sModelName);
 				}
 				// enable parse error messages in the message manager
-				sap.ui.getCore().getMessageManager().registerObject(that.oView, true);
+				Core.getMessageManager().registerObject(that.oView, true);
 				// Place the view in the page so that it is actually rendered. In some situations,
 				// esp. for the table.Table this is essential.
 				that.oView.placeAt("qunit-fixture");
@@ -2370,7 +2370,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </Table>';
 
-		this.mock(sap.ui.getCore().getLibraryResourceBundle()).expects("getText")
+		this.mock(Core.getLibraryResourceBundle()).expects("getText")
 			.atLeast(1)
 			.callsFake(function (sKey) {
 				return sKey;
@@ -2487,7 +2487,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </Table>';
 
-		this.mock(sap.ui.getCore().getLibraryResourceBundle()).expects("getText")
+		this.mock(Core.getLibraryResourceBundle()).expects("getText")
 			.atLeast(1)
 			.callsFake(function (sKey, aArgs) {
 				return sKey;
@@ -4723,7 +4723,7 @@ usePreliminaryContext : false}}">\
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oMessage = sap.ui.getCore().getMessageManager().getMessageModel().getObject("/")[0];
+			oMessage = Core.getMessageManager().getMessageModel().getObject("/")[0];
 			oObjectPage = that.oView.byId("objectPage");
 
 			assert.deepEqual(oMessage.getControlIds(), []);
@@ -10105,7 +10105,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("note", "Error", "Some message");
 
-			sap.ui.getCore().getMessageManager().addMessages(new Message({
+			Core.getMessageManager().addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/Note",
@@ -10143,7 +10143,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("note", "Error", "Some message");
 
-			sap.ui.getCore().getMessageManager().addMessages(new Message({
+			Core.getMessageManager().addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/Note",
@@ -11191,7 +11191,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("quantity", "Error", "Some message");
 
-			sap.ui.getCore().getMessageManager().addMessages(new Message({
+			Core.getMessageManager().addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/RequestedQuantity",
