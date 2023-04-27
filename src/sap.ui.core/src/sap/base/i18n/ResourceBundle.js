@@ -390,6 +390,11 @@ sap.ui.define([
 	 */
 	ResourceBundle.prototype._formatValue = function(sValue, sKey, aArgs){
 		if (typeof sValue === "string") {
+
+			if (aArgs !== undefined && !Array.isArray(aArgs)){
+				Log.error("sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array");
+			}
+
 			if (aArgs) {
 				sValue = formatMessage(sValue, aArgs);
 			}
