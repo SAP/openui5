@@ -420,6 +420,24 @@ function (
 		Core.applyChanges();
 	});
 
+	QUnit.test("updates the title positioning in first onAfterRendering", function (assert) {
+		//setup
+		var oPage = this.oObjectPage,
+			oSpy = this.spy(oPage, "_adjustTitlePositioning"),
+			done = assert.async();
+
+		oPage.addEventDelegate({
+			onAfterRendering: function() {
+				assert.equal(oSpy.callCount, 1, "update is called");
+				done();
+				oPage.removeEventDelegate(this);
+			}
+		});
+
+		oPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+	});
+
 	QUnit.test("sets scrollPaddingTop", function (assert) {
 		//setup
 		var oPage = this.oObjectPage,
