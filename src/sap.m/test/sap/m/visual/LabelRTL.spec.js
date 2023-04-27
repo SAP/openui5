@@ -109,4 +109,13 @@ describe("sap.m.LabelRTL", function() {
 		element(by.id('cozySwitch')).click();
 	});
 
+	it("should visualize truncation + colon", function(){
+		var oVL4 = element(by.id("oVL4"));
+		browser.executeScript("document.getElementById('oVL4').scrollIntoView()").then(function() {
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_compact');
+			element(by.id('cozySwitch')).click();
+			expect(takeScreenshot(oVL4)).toLookAs('truncation_colon_cozy');
+			element(by.id('cozySwitch')).click();
+		});
+	});
 });

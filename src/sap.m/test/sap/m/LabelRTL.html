@@ -260,6 +260,18 @@
 				]
 			});
 
+			var oVL4 = new sap.ui.layout.VerticalLayout({
+				id: "oVL4",
+				content: [
+					new sap.m.Label({text: "truncation + colon", design: "Bold"}),
+					new sap.m.Label({text: "Lorem ipsum dolor sit amet", showColon: true, width: "100px"}),
+					new sap.m.Label({text: "Lorem ipsum dolor sit amet", showColon: true, width: "140px"}),
+					new sap.m.Label({text: "truncation + colon + asterisk", design: "Bold"}),
+					new sap.m.Label({text: "Lorem ipsum dolor sit amet", showColon: true, required: true, width: "100px"}),
+					new sap.m.Label({text: "Lorem ipsum dolor sit amet", showColon: true, required: true, width: "140px"})
+				]
+			});
+
 			var sf = new sap.ui.layout.form.SimpleForm("simpleForm", {
 				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 				editable: true,
@@ -330,6 +342,7 @@
 							oVL,
 							oVL2,
 							oVL3,
+							oVL4,
 							sf, sf2
 						]
 					})

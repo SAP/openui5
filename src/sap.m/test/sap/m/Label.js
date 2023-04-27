@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Input",
 	"sap/m/Label",
+	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Select",
 	"sap/m/Switch",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Item",
+	"sap/ui/core/Core",
 	"sap/ui/layout/library",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/form/SimpleForm",
@@ -19,6 +21,7 @@ sap.ui.define([
 	App,
 	Input,
 	Label,
+	Button,
 	Page,
 	Select,
 	Switch,
@@ -26,6 +29,7 @@ sap.ui.define([
 	Toolbar,
 	Configuration,
 	Item,
+	Core,
 	layoutLibrary,
 	VerticalLayout,
 	SimpleForm,
@@ -301,6 +305,24 @@ sap.ui.define([
 		]
 	});
 
+	var oVL4 = new VerticalLayout({
+		id: "oVL4",
+		width: "100%",
+		content: [
+			new Label({text: "truncation + colon", design: "Bold"}),
+			new Label({text: "{i18n>longLabel}", showColon: true, width: "100px"}),
+			new Label({text: "{i18n>longLabel}", showColon: true, width: "140px"}),
+			new Label({text: "truncation + colon (resizing)", design: "Bold"}),
+			new Label({id: "labelToResize", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi velit orci, sollicitudin nec cursus quis, pellentesque id neque", showColon: true}),
+			new Button({id: "resizeBtn", text: "resize upper label to 260px", press: function () {
+				Core.byId("labelToResize").setWidth("260px");
+			}}),
+			new Label({text: "truncation + colon + asterisk", design: "Bold"}),
+			new Label({text: "{i18n>longLabel}", showColon: true, required: true, width: "100px"}),
+			new Label({text: "{i18n>longLabel}", showColon: true, required: true, width: "140px"})
+		]
+	});
+
 	var sf = new SimpleForm("simpleForm", {
 		layout: SimpleFormLayout.ResponsiveGridLayout,
 		editable: true,
@@ -415,6 +437,7 @@ sap.ui.define([
 					oVL,
 					oVL2,
 					oVL3,
+					oVL4,
 					sf, sf2
 				]
 			})

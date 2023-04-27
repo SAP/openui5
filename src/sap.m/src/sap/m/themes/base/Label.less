@@ -3,8 +3,10 @@
 /* Base theme                   */
 /* ============================ */
 
-@_sap_m_Label_AsteriskWidth: 6px;
-@_sap_m_Label_ColonWidth: 4px;
+@_sap_m_Label_AsteriskOffsetWidth: 0.5rem;
+@_sap_m_Label_ColonOffsetWidth: 0.25rem;
+@_sap_m_Label_ColonOffsetWidth_lang_FR: 0.5rem;
+@_sap_m_Label_ColonOffsetWidth_lang_ZH: 0.875rem;
 
 .sapMLabel {
 	color: @sapUiContentLabelColor;
@@ -16,6 +18,7 @@
 	cursor: text;
 	overflow: hidden;
 	box-sizing: border-box;
+	--_sap_m_Label_ReservedSpace: 0%;
 }
 
 .sapMLabel .sapMLabelTextWrapper {
@@ -26,29 +29,42 @@
 .sapMLabel:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
 	display: inline-block;
 	vertical-align: top;
-	max-width: 100%;
+	max-width: calc(~"100% - var(--_sap_m_Label_ReservedSpace)");
 }
 
-.sapMLabel.sapMLabelRequired:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
-	max-width: calc(~"100% - 0.125rem - @{_sap_m_Label_AsteriskWidth}");
-}
+.sapMLabel:not(.sapMLabelWrapped):not(.sapMLabelMaxWidth) {
+	&.sapMLabelRequired {
+		--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth;
+	}
 
-.sapMLabel.sapMLabelRequired.sapMLabelShowColon:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
-	max-width: calc(~"100% - 0.125rem - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
-	&:lang(fr) {
-		max-width: calc(~"100% - 0.125rem - 1.125em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
+	&.sapMLabelShowColon {
+		--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth;
+
+		&:lang(fr) {
+			--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth_lang_FR;
+		}
+
+		&:lang(zh-TW),
+		&:lang(zh-CN),
+		&:lang(zh-Hans),
+		&:lang(zh-Hant) {
+			--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth_lang_ZH;
+		}
 	}
-	&:lang(zh-TW) {
-		max-width: calc(~"100% - 0.125rem - 1.59em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
-	}
-	&:lang(zh-CN) {
-		max-width: calc(~"100% - 0.125rem - 1.59em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
-	}
-	&:lang(zh-Hans) {
-		max-width: calc(~"100% - 0.125rem - 1.59em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
-	}
-	&:lang(zh-Hant) {
-		max-width: calc(~"100% - 0.125rem - 1.59em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
+
+	&.sapMLabelRequired.sapMLabelShowColon {
+		--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth;
+
+		&:lang(fr) {
+			--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth_lang_FR;
+		}
+
+		&:lang(zh-TW),
+		&:lang(zh-CN),
+		&:lang(zh-Hans),
+		&:lang(zh-Hant) {
+			--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth_lang_ZH;
+		}
 	}
 }
 
@@ -61,7 +77,7 @@
 	max-width: 100%;
 }
 
-.sapMLIBActionable .sapMLabel{
+.sapMLIBActionable .sapMLabel {
 	cursor: pointer;
 }
 
