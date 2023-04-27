@@ -1,5 +1,5 @@
 {
-  "name": "WalkthroughTutorial",
+  "name": "walkthrough-tutorial",
   "private": true,
   "version": "1.0.0",
   "author": "SAP SE",
@@ -9,6 +9,6 @@
     "build": "ui5 build"
   },
   "devDependencies": {
-    "@ui5/cli": "^2.0.0"
+    "@ui5/cli": "^3"
   }
 }

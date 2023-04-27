@@ -1,5 +1,5 @@
 {
-  "name": "ShoppingCart",
+  "name": "shopping-cart",
   "private": true,
   "version": "1.0.0",
   "author": "SAP SE",
@@ -18,7 +18,7 @@
     "@openui5/sap.ui.documentation": "^1"
   },
   "devDependencies": {
-    "@ui5/cli": "^2.14.4",
+    "@ui5/cli": "^3",
     "eslint": "^4.19.1"
   }
 }

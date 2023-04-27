@@ -1,4 +1,4 @@
-specVersion: '0.1'
+specVersion: '3.0'
 metadata:
-  name: ODataV4Tutorial
+  name: odata-v4-tutorial
 type: application

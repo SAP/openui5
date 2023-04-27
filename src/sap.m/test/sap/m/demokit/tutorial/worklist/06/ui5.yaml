@@ -1,4 +1,4 @@
-specVersion: '2.6'
+specVersion: '3.0'
 metadata:
-  name: WorklistTutorial
+  name: worklist-tutorial
 type: application
