@@ -422,7 +422,8 @@ sap.ui.define([
 				oDefaultAdaptation
 			];
 			this.oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
-			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oAdaptationsModel);
+			this.oGetAdaptationsModelStub = sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oAdaptationsModel);
+			this.oAdaptationClearInstancesSpy = sandbox.spy(ContextBasedAdaptationsAPI, "clearInstances");
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -460,6 +461,53 @@ sap.ui.define([
 				new Error("The application ID could not be determined"),
 				"then an Error is thrown"
 			);
+		});
+
+		QUnit.test("when a control, a layer, a context but no adaptationId parameter were provided and the request returns a list", function (assert) {
+			var sComponentId = "sComponentId";
+			var sLayer = Layer.CUSTOMER;
+			var sReference = "com.sap.app";
+			var mPropertyBag = {
+				layer: sLayer,
+				control: new Control(),
+				allContexts: true,
+				reference: sReference,
+				appComponent: this.oAppComponent
+			};
+			var sActiveVersion = "1";
+			var aReturnedBackendVersions = [
+				{
+					activatedBy: "qunit",
+					activatedAt: "a while ago",
+					version: sActiveVersion
+				}
+			];
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
+			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
+
+			return Versions.initialize(mPropertyBag)
+				.then(function (oVersionsModel) {
+					this.oVersionsModel = oVersionsModel;
+					sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
+					assert.equal(mPropertyBag.version, undefined, "version is not set yet");
+				}.bind(this))
+				.then(VersionsAPI.loadVersionForApplication.bind(undefined, mPropertyBag))
+				.then(function () {
+					assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
+					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
+					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
+					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
+					assert.equal(oInitializePropertyBag.allContexts, true, "and passing all contexts as true");
+					assert.equal(oInitializePropertyBag.adaptationId, undefined, "no adaptationId is provided");
+					assert.equal(oInitializePropertyBag.version, sActiveVersion, "and active version is set bei version model");
+					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "and displayed version is active version");
+					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
+					assert.equal(this.oAdaptationClearInstancesSpy.callCount, 1, "a clearing of the context based adaptations is triggered");
+					assert.equal(this.oGetAdaptationsModelStub.callCount, 0, "a swichting of the adaptation is not triggered");
+					assert.equal(this.oAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_1234", "a swichting of the adaptation was not triggered");
+				}.bind(this));
 		});
 
 		QUnit.test("when a control, a layer and context parameter were provided and the request returns a list", function (assert) {
@@ -504,6 +552,8 @@ sap.ui.define([
 					assert.equal(oInitializePropertyBag.version, sActiveVersion, "and active version is set bei version model");
 					assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "and displayed version is active version");
 					assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
+					assert.equal(this.oAdaptationClearInstancesSpy.callCount, 0, "a clearing of the context based adaptations is not triggered");
+					assert.equal(this.oGetAdaptationsModelStub.callCount, 1, "a swichting of the adaptation is triggered");
 					assert.equal(this.oAdaptationsModel.getProperty("/displayedAdaptation/id"), mPropertyBag.adaptationId, "and displayed adaptation is switched");
 				}.bind(this));
 		});
