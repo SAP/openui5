@@ -91,6 +91,10 @@ sap.ui.define([
 			oVariantData.executeOnSelection = oVariantInput.executeOnSelection;
 		}
 
+		if (oVariantInput.adaptationId !== undefined) {
+			oVariantData.adaptationId = oVariantInput.adaptationId;
+		}
+
 		return FlexObjectFactory.createCompVariant(oVariantData);
 	}
 

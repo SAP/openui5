@@ -713,6 +713,7 @@ sap.ui.define([
 				var oModel = ContextBasedAdaptationsAPI.getAdaptationsModel(this.mPropertyBag);
 				assert.ok(oModel instanceof JSONModel, "then the result is of type JSONModel");
 				assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is returned with initialized values");
+				assert.strictEqual(ContextBasedAdaptationsAPI.getDisplayedAdaptationId(this.mPropertyBag), oExpectedFilledData.displayedAdaptation.id, "displayed adaptation id is correct");
 			}.bind(this));
 		});
 	});
