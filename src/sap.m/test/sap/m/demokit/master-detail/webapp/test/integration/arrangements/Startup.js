@@ -31,7 +31,8 @@ sap.ui.define([
 					manifest: true
 				},
 				hash: oOptions.hash,
-				autoWait: oOptions.autoWait
+				autoWait: oOptions.autoWait,
+				timeout: 60
 			});
 		},
 		_clearSharedData: function () {
