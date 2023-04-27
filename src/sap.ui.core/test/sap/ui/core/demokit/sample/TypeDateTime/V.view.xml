@@ -22,7 +22,7 @@
 				path: '/dtValue',
 				type: 'sap.ui.model.type.DateTime'}" />
 			<Label text="DateTime in Input" />
-			<Input placeholder="{/dtPattern}" value="{
+			<Input id="dtInput" placeholder="{/dtPattern}" value="{
 				path: '/dtValue',
 				type: 'sap.ui.model.type.DateTime'}" />
 		</form:content>

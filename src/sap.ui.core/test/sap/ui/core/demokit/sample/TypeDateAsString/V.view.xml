@@ -18,7 +18,12 @@
 		title="Date Input" >
 		<form:content>
 			<Label text="Date" />
-			<Input placeholder="yyyy/MM/dd" value="{/date}" />
+			<DatePicker value="{
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					source: {pattern: 'yyyy-MM-dd'}
+				}}" />
 		</form:content>
 	</form:SimpleForm>
 
@@ -42,7 +47,7 @@
 				formatOptions: {
 					style: 'short',
 					source: {
-						pattern: 'yyyy/MM/dd'
+						pattern: 'yyyy-MM-dd'
 					}
 				}
 			}" />
@@ -54,7 +59,7 @@
 				formatOptions: {
 					style: 'medium',
 					source: {
-						pattern: 'yyyy/MM/dd'
+						pattern: 'yyyy-MM-dd'
 					}
 				}
 			}" />
@@ -66,7 +71,7 @@
 				formatOptions: {
 					style: 'long',
 					source: {
-						pattern: 'yyyy/MM/dd'
+						pattern: 'yyyy-MM-dd'
 					}
 				}
 			}" />
@@ -78,7 +83,7 @@
 				formatOptions: {
 					style: 'full',
 					source: {
-						pattern: 'yyyy/MM/dd'
+						pattern: 'yyyy-MM-dd'
 					}
 				}
 			}" />
