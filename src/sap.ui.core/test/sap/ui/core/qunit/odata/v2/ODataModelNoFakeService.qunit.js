@@ -2743,7 +2743,7 @@ sap.ui.define([
 		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "~sGroupId", "POST");
 
 		assert.deepEqual(oResult, {
-				created : true,
+				functionMetadata : "~functionMetadata",
 				functionTarget : "~functionTarget"
 			});
 		assert.strictEqual(oResult, oRequest);
@@ -4014,6 +4014,7 @@ sap.ui.define([
 	contentID2KeyAndDeepPath : {
 		"~contentID" : {
 			deepPath : "~deepPath('~key')",
+			functionImport : false,
 			key : "Foo('~key')"
 		}
 	},
@@ -4023,11 +4024,13 @@ sap.ui.define([
 		deepPath : "~deepPath('~contentID')",
 		requestUri : "~serviceUri/Foo?bar"
 	},
-	resultingDeepPath : "~deepPath('~key')"
+	resultingDeepPath : "~deepPath('~key')",
+	resultingUri : "~serviceUri/Foo('~key')?bar"
 }, {
 	contentID2KeyAndDeepPath : {
 		"~contentID" : {
 			deepPath : "~/FunctionName",
+			functionImport : true,
 			key : "Foo('~key')"
 		}
 	},
@@ -4037,7 +4040,8 @@ sap.ui.define([
 		functionMetadata : "~functionMetadata",
 		requestUri : "~FunctionName?bar"
 	},
-	resultingDeepPath : "~/FunctionName"
+	resultingDeepPath : "/$~contentID",
+	resultingUri : "~serviceUri/$~contentID?bar"
 }].forEach(function (oFixture, i) {
 	QUnit.test("_submitBatchRequest: with content-IDs, #" + i, function (assert) {
 		var oBatchRequest = {},
@@ -4120,7 +4124,7 @@ sap.ui.define([
 		// code under test
 		fnHandleSuccess(oData, oBatchResponse);
 
-		assert.strictEqual(oRequest1.request.requestUri, "~serviceUri/Foo('~key')?bar");
+		assert.strictEqual(oRequest1.request.requestUri, oFixture.resultingUri);
 		assert.strictEqual(oRequest1.request.deepPath, oFixture.resultingDeepPath);
 	});
 });
@@ -4662,6 +4666,7 @@ sap.ui.define([
 							method : "~method",
 							success : "~success"
 						},
+						deepPath: "/~sFunctionName",
 						uri : sinon.match(function (sUri) {
 							return sUri.startsWith("/service/url/~sFunctionName")
 								&& sUri.match(rTemporaryKey);
@@ -4952,10 +4957,11 @@ sap.ui.define([
 	[
 		// successful POST and successful GET
 		function (assert, fnSuccess, fnError, oCallbacksMock) {
+			var oObjectMock = this.mock(Object);
 			// code under test
 			fnSuccess("~oDataPOST", "~oResponsePOST");
 
-			this.mock(Object).expects("assign")
+			oObjectMock.expects("assign")
 				.withExactArgs({}, "~oDataPOST", "~oDataGET")
 				.exactly(bWithCallbacks ? 1 : 0)
 				.returns("~mergedData");
@@ -4965,6 +4971,8 @@ sap.ui.define([
 
 			// code under test
 			fnSuccess("~oDataGET", "~oResponseGET");
+
+			oObjectMock.restore();
 		},
 		// successful POST and failed GET
 		function (assert, fnSuccess, fnError, oCallbacksMock) {
@@ -5008,7 +5016,7 @@ sap.ui.define([
 	var sTitle = "callFunction: with expand; with callback handlers: " + bWithCallbacks + ", #" + i;
 
 	QUnit.test(sTitle, function (assert) {
-		var fnError, fnProcessRequest, oResult, oResultingRequest, fnSuccess, sUid,
+		var fnError, fnProcessRequest, oResult, oResultingRequest, fnSuccess, sUid, oCachedData,
 			oCallbacks = {
 				error : function () {},
 				success : function () {}
@@ -5071,6 +5079,7 @@ sap.ui.define([
 			.returns(oFunctionMetadata);
 		oModelMock.expects("_addEntity") // don't care about parameters
 			.callsFake(function (oData) {
+				oCachedData = oData;
 				sUid = rTemporaryKey.exec(oData.__metadata.uri)[1];
 				fnError = oData.__metadata.created.error;
 				fnSuccess = oData.__metadata.created.success;
@@ -5140,7 +5149,12 @@ sap.ui.define([
 		assert.strictEqual(oResultingRequest.contentID, sUid);
 		assert.strictEqual(oResultingRequest.expandRequest, oExpandRequest);
 		assert.strictEqual(oResultingRequest.expandRequest.contentID, sUid);
+		assert.strictEqual(oCachedData.__metadata.created.expandRequest, oExpandRequest);
+		assert.strictEqual(oCachedData.__metadata.created.contentID, sUid);
 
+		// code under test
+		fnCallbackHandling.call(this, assert, fnSuccess, fnError, oCallbacksMock);
+		// repeat it again to simulate a function call retrigger through a parameter value change
 		fnCallbackHandling.call(this, assert, fnSuccess, fnError, oCallbacksMock);
 
 		return oResult.contextCreated();
@@ -7056,7 +7070,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("setProperty: deferred request", function (assert) {
 		var oRequestQueuedPromise,
-			oEntry = {__metadata: {foo: "bar"}},
+			oEntry = {__metadata: {deepPath: "/any/deep/path", foo: "bar"}},
 			oMetadataLoadedPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities: {},
@@ -7132,6 +7146,96 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setProperty: deferred request - function import", function (assert) {
+		var oRequestQueuedPromise,
+			oMetadataLoadedPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities: {},
+				mDeferredGroups: {"~groupId": "~groupId"},
+				mDeferredRequests: "~mDeferredRequests",
+				oMetadata: {
+					_getEntityTypeByPath: function () {},
+					loaded: function () {}
+				},
+				mRequests: "~mRequests",
+				checkUpdate: function () {},
+				getEntityByPath: function () {},
+				_getObject: function () {},
+				_getRefreshAfterChange: function () {},
+				_processChange: function () {},
+				_processRequestQueueAsync: function () {},
+				_pushToRequestQueue: function () {},
+				resolve: function () {},
+				resolveDeep: function () {},
+				_resolveGroup: function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oOriginalEntry = {
+				__metadata: {
+					created: {
+						functionImport: true
+					},
+					deepPath: "/functionName",
+					foo: "bar"
+				}
+			};
+
+		oModelMock.expects("resolve").withExactArgs("~sPath", "~oContext")
+			.returns("/resolve_functionName('$id123')/~propertyPath");
+		oModelMock.expects("resolveDeep").withExactArgs("~sPath", "~oContext")
+			.returns("/deep_functionName('$id123')/~propertyPath");
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/resolve_functionName('$id123')/~propertyPath", null, /*by ref oEntityInfo*/{})
+			.callsFake(function (sResolvedPath, oContext, oEntityInfo) { // fill reference parameter
+				oEntityInfo.key = "~key";
+				oEntityInfo.propertyPath = "~propertyPath";
+
+				return oOriginalEntry;
+			});
+		oModelMock.expects("_getObject").withExactArgs("/~key", null, true).returns(oOriginalEntry);
+		oModelMock.expects("_getObject").withExactArgs("~sPath", "~oContext", true).returns("~oOriginalValue");
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("~key").returns(/*oEntityType*/);
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataLoadedPromise);
+		oModelMock.expects("_resolveGroup")
+			.withExactArgs("~key")
+			.returns({changeSetId: "~changeSetId", groupId: "~groupId"});
+		oModelMock.expects("_getObject").withExactArgs("/~key").returns("~oData");
+		oModelMock.expects("_processChange")
+			.withExactArgs("~key", "~oData", "~groupId")
+			.returns(/*oRequest*/{});
+		oModelMock.expects("_getRefreshAfterChange")
+			.withExactArgs(undefined, "~groupId")
+			.returns("~bRefreshAfterChange");
+		oModelMock.expects("checkUpdate").withExactArgs(false, "~bAsyncUpdate", {"~key": true});
+		oRequestQueuedPromise = oMetadataLoadedPromise.then(function () {
+			oModelMock.expects("_pushToRequestQueue")
+				.withExactArgs("~mDeferredRequests", "~groupId", "~changeSetId", {key: "~key"}, /*success*/ undefined,
+					/*error*/ undefined, /*oRequestHandle*/sinon.match.object, "~bRefreshAfterChange");
+			oModelMock.expects("_processRequestQueueAsync").withExactArgs("~mRequests");
+		});
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", "~oContext", "~bAsyncUpdate"),
+			true);
+
+		assert.deepEqual(oModel.mChangedEntities["~key"],
+			{
+				__metadata: {
+					created: {
+						functionImport: true
+					},
+					// deep path is not overwritten as original value is needed to repeat the request
+					deepPath: "/functionName",
+					foo: "bar"
+				},
+				"~propertyPath": "~oValue"
+			});
+
+		return oRequestQueuedPromise;
+	});
+
+	//*********************************************************************************************
 [{
 	createdContextFound : false,
 	entryMetadata : {},
@@ -7182,7 +7286,7 @@ sap.ui.define([
 			oCreatedContext = new Context(oModel, "~sContextPath"),
 			oModelMock = this.mock(oModel),
 			oOriginalEntry = {
-				__metadata : {}
+				__metadata : oFixture.entryMetadata
 			},
 			oOriginalValue = {};
 

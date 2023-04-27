@@ -106,7 +106,7 @@ sap.ui.define([
 				},
 				expand : "ToProduct,ToHeader",
 				method : "POST",
-				success : MessageToast.show.bind(null, "Successfully cloned item " + sItem),
+				success : MessageToast.show.bind(MessageToast, "Successfully cloned item " + sItem),
 				urlParameters : {
 					ItemPosition : encodeURL(sSalesOrderItemPosition),
 					SalesOrderID : encodeURL(sSalesOrderID)
