@@ -106,12 +106,30 @@ sap.ui.define([
 		"Icon", "Should have default placeholder icon");
 	});
 	QUnit.test("Post Button Icon", function (assert) {
+		//Feed input button true
 		this.oFeedInput.setEnabled(true);
 		oCore.applyChanges();
+		var padding = getComputedStyle(this.oFeedInput.getDomRef().querySelector(".sapMBtnIcon")).padding;
 		assert.strictEqual(this.oFeedInput._getPostButton().getIcon(), "sap-icon://paper-plane", "Button icon is paper plane");
+		assert.equal(padding,"0px","Padding is correct");
+		//Feed input button false
 		this.oFeedInput.setEnabled(false);
 		oCore.applyChanges();
+		var padding = getComputedStyle(this.oFeedInput.getDomRef().querySelector(".sapMBtnIcon")).padding;
 		assert.strictEqual(this.oFeedInput._getPostButton().getIcon(), "sap-icon://paper-plane", "Button icon is paper plane");
+		assert.equal(padding,"0px","Padding is correct");
+		//compact theme
+		this.oFeedInput.addStyleClass("sapUiSizeCompact");
+		oCore.applyChanges();
+		var padding = getComputedStyle(this.oFeedInput.getDomRef().querySelector(".sapMBtnIcon")).padding;
+		assert.strictEqual(this.oFeedInput._getPostButton().getIcon(), "sap-icon://paper-plane", "Button icon is paper plane in compact theme");
+		assert.equal(padding,"4px 10px","Padding is correct");
+		//condensed theme
+		this.oFeedInput.addStyleClass("sapUiSizeCondensed");
+		oCore.applyChanges();
+		var padding = getComputedStyle(this.oFeedInput.getDomRef().querySelector(".sapMBtnIcon")).padding;
+		assert.strictEqual(this.oFeedInput._getPostButton().getIcon(), "sap-icon://paper-plane", "Button icon is paper plane in condensed theme");
+		assert.equal(padding,"4px 10px","Padding is correct");
 	});
 	QUnit.test("MaxLength", function (assert) {
 		this.oFeedInput.setMaxLength(1001);
