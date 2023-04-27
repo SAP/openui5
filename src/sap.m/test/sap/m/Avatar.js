@@ -46,6 +46,7 @@ sap.ui.define([
 					}),
 					new Avatar("imageXLSquareCover", {
 						ariaLabelledBy: 'avatar_label',
+						tooltip: "Image with cover fit type",
 						src: "images/Screw_avatar_01.jpg",
 						displaySize: "XL",
 						displayShape: "Square",
@@ -54,6 +55,7 @@ sap.ui.define([
 					}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 					new Avatar("imageXLSquareContain", {
 						ariaLabelledBy: 'avatar_label',
+						tooltip: "Image with contain fit type",
 						src: "images/Lamp_avatar_01.jpg",
 						displaySize: "XL",
 						displayShape: "Square",
@@ -62,6 +64,7 @@ sap.ui.define([
 					}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 					new Avatar("initialsCustomAvatar", {
 						ariaLabelledBy: 'avatar_label',
+						tooltip: "Custom size and font size",
 						initials: "BP",
 						displaySize: "Custom",
 						customDisplaySize: "10rem",
@@ -71,6 +74,7 @@ sap.ui.define([
 					}),
 					new Avatar({
 						ariaLabelledBy: 'avatar_label',
+						tooltip: "Custom size and font size",
 						initials: "LB",
 						displaySize: "M",
 
