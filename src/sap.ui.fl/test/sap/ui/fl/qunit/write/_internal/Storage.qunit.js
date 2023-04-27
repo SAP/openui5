@@ -419,9 +419,10 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("then it calls condense of the connector (persisted and dirty changes)", function(assert) {
+		QUnit.test("then it calls condense of the connector (persisted and dirty changes) and update the response", function(assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "delete", "select"]);
 			aAllChanges[0].setState(States.LifecycleState.PERSISTED);
+			var oCreatedChange = aAllChanges[2].convertToFileContent();
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
@@ -429,7 +430,7 @@ sap.ui.define([
 					change: ["c0"]
 				},
 				create: {
-					change: [{c2: aAllChanges[2].convertToFileContent()}]
+					change: [{c2: oCreatedChange}]
 				}
 			};
 			var mPropertyBag = {
@@ -441,9 +442,11 @@ sap.ui.define([
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl}
 			]);
-			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({status: 205});
 
-			return Storage.condense(mPropertyBag).then(function () {
+			return Storage.condense(mPropertyBag).then(function (oResult) {
+				assert.equal(oResult.response.length, 1, "one change is save in the backend");
+				assert.deepEqual(oResult.response[0], oCreatedChange, "content of the change is correct");
 				assert.strictEqual(oWriteStub.callCount, 1, "the write was triggered once");
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
 				assert.strictEqual(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
