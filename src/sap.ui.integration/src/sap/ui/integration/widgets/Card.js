@@ -309,7 +309,7 @@ sap.ui.define([
 				 * Preview mode of the <code>Card</code>.
 				 * Helpful in scenarios when the end user is choosing or configuring a card.
 				 * <ul>
-				 * <li>When set to "MockData", the card data is loaded, using a data request, as configured in the "data/mockData" in the manifest. If such configuration is missing, then the real data is loaded.</li>
+				 * <li>When set to "MockData", the card data is loaded, using a data request, as configured in the "data/mockData" in the manifest. If such configuration is missing, then the Abstract mode will be used instead.</li>
 				 * <li>When set to "Abstract", the card shows abstract placeholder without loading data.</li>
 				 * <li>When set to "Off", the card displays real data.</li>
 				 * </ul>
