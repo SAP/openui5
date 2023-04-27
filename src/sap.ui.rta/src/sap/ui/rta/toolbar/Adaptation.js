@@ -6,6 +6,7 @@ sap.ui.define([
 	"./AdaptationRenderer",
 	"sap/base/Log",
 	"sap/m/MessageBox",
+	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -21,6 +22,7 @@ sap.ui.define([
 	AdaptationRenderer,
 	Log,
 	MessageBox,
+	BusyIndicator,
 	Fragment,
 	Popup,
 	ContextBasedAdaptationsAPI,
@@ -354,14 +356,17 @@ sap.ui.define([
 			titleKey: "DAC_DIALOG_HEADER"
 		}).then(function(sAction) {
 			if (sAction === MessageBox.Action.OK) {
+				BusyIndicator.show();
 				ContextBasedAdaptationsAPI.remove({
 					control: oRtaInformation.rootControl,
 					layer: oRtaInformation.flexSettings.layer,
 					adaptationId: oAdaptationsModel.getProperty("/displayedAdaptation").id
 				}).then(function() {
 					var sAdaptationId = oAdaptationsModel.deleteAdaptation();
+					BusyIndicator.hide();
 					this.fireEvent("switchAdaptation", {adaptationId: sAdaptationId});
 				}.bind(this)).catch(function(oError) {
+					BusyIndicator.hide();
 					Log.error(oError.stack);
 					var sMessage = "MSG_LREP_TRANSFER_ERROR";
 					var oOptions = { titleKey: "DAC_DIALOG_HEADER" };

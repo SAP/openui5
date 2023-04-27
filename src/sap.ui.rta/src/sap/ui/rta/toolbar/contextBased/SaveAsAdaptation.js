@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"sap/base/strings/formatMessage",
+	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
 	"sap/ui/fl/Layer",
@@ -18,6 +19,7 @@ sap.ui.define([
 	ManagedObject,
 	Log,
 	formatMessage,
+	BusyIndicator,
 	Fragment,
 	coreLibrary,
 	Layer,
@@ -190,13 +192,16 @@ sap.ui.define([
 				Utils.showMessageBox("error", sMessage, oOptions);
 			});
 		} else {
+			BusyIndicator.show();
 			ContextBasedAdaptationsAPI.create({
 				control: oRtaInformation.rootControl,
 				layer: oRtaInformation.flexSettings.layer,
 				contextBasedAdaptation: oContextBasedAdaptation
 			}).then(function() {
+				BusyIndicator.hide();
 				this.getToolbar().fireEvent("switchAdaptation", {adaptationId: oContextBasedAdaptation.id});
 			}.bind(this)).catch(function(oError) {
+				BusyIndicator.hide();
 				Log.error(oError.stack);
 				var sMessage = "MSG_LREP_TRANSFER_ERROR";
 				var oOptions = { titleKey: "SAC_DIALOG_HEADER" };
