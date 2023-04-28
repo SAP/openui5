@@ -1313,6 +1313,10 @@ sap.ui.define([
 	}
 
 	function onSwitchAdaptation(oEvent) {
+		if (oEvent.getParameter("trigger") === "SaveAs") {
+			// remove all changes from command stack when triggered from saveAs dialog as they are already saved in a new adaptation
+			this.getCommandStack().removeAllCommands(true);
+		}
 		var sAdaptationId = oEvent.getParameter("adaptationId");
 		this._sSwitchToAdaptationId = sAdaptationId;
 		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
