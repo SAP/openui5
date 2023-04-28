@@ -748,66 +748,6 @@ sap.ui.define([
 					});
 				}
 			});
-		},
-		iSelectColumnFromColumnMenu: function (sColumnName, sPopoverTitle, aP13nItems, bModal, bFilter) {
-			return this.waitFor({
-				controlType: "sap.m.table.columnmenu.Menu",
-				success: function(oColumnMenu) {
-					this.waitFor({
-						controlType: "sap.m.ColumnListItem",
-						matchers: [{
-							ancestor: oColumnMenu
-						}],
-						success: function(aColumnListItems) {
-							var oColumnListItem = aColumnListItems[aColumnListItems.length - 1];
-							var oCheckBox = oColumnListItem.getMultiSelectControl();
-							new Press().executeOn(oCheckBox);
-							//optional array update
-							if (aP13nItems){
-								var iIndex = oColumnListItem.getParent().getItems().indexOf(oColumnListItem);
-								aP13nItems[iIndex].selected = oCheckBox.getSelected();
-							}
-						},
-						errorMessage: "ColumnListItem is not visible"
-					});
-				}
-			});
-		},
-		iConfirmColumnMenuItemContent: function() {
-			return this.waitFor({
-				controlType: "sap.m.table.columnmenu.Menu",
-				success: function(oColumnMenu) {
-					this.waitFor({
-						controlType: "sap.m.Button",
-						matchers: [{
-							ancestor: oColumnMenu,
-							properties: {
-								text: TestUtil.getTextFromResourceBundle("sap.m", "table.COLUMNMENU_CONFIRM")
-							}
-						}],
-						actions: new Press(),
-						errorMessage: "Colum menu item content could not be confirmed"
-					});
-				}
-			});
-		},
-		iPressOnColumnMenuItem: function(sLabel) {
-			return this.waitFor({
-				controlType: "sap.m.table.columnmenu.Menu",
-				success: function(oColumnMenu) {
-					this.waitFor({
-						controlType: "sap.m.StandardListItem",
-						matchers: [{
-							ancestor: oColumnMenu,
-							properties: {
-								title: sLabel
-							}
-						}],
-						actions: new Press(),
-						errorMessage: "Column menu item '" + sLabel + "' not found"
-					});
-				}
-			});
 		}
 	});
 

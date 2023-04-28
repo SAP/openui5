@@ -702,45 +702,6 @@ sap.ui.define([
 					Opa5.assert.deepEqual(oFilterConfig && oFilterConfig.values, aValues, "correct filter configuration found in view");
 				}
 			});
-		},
-		iShouldSeeShowDetailsButtonWithShowDetailsKey: function () {
-			return this.waitFor({
-				controlType: "sap.m.SegmentedButton",
-				matchers: {
-					ancestor: {
-						controlType: "sap.ui.mdc.ActionToolbar"
-					}
-				},
-				success: function (oShowDetailButton) {
-					Opa5.assert.equal(oShowDetailButton[0].getItems()[0].getTooltip(), 'Show More per Row', "ShowDetails button created");
-					Opa5.assert.ok(oShowDetailButton[0].getVisible(), "ShowDetails button visible");
-					Opa5.assert.equal(oShowDetailButton[0].getSelectedKey(), "showDetails");
-				},
-				errorMessage: "Could not find Show Details Button"
-			});
-		},
-		iShouldNotSeeShowDetailsButton: function () {
-			return this.waitFor({
-				controlType: "sap.m.SegmentedButton",
-				matchers: {
-					ancestor: {
-						controlType: "sap.ui.mdc.ActionToolbar"
-					}
-				},
-				visible: false,
-				success: function () {
-					Opa5.assert.ok(true, "The show details button is not visible");
-				}
-			});
-		},
-		iShouldSeeOneColumnMenu: function() {
-			return this.waitFor({
-				controlType: "sap.m.table.columnmenu.Menu",
-				success: function(aColumnMenu) {
-					Opa5.getContext().columnMenu = aColumnMenu[0];
-					Opa5.assert.equal(aColumnMenu.length, 1, "One column menu is open");
-				}
-			});
 		}
 	});
 	return Assertion;

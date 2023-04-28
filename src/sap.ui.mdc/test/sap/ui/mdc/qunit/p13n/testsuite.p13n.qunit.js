@@ -199,16 +199,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"ResponsiveTableJouney": {
-				group: "Table UI Test",
-				autostart: false,
-				module: "./OpaTests/P13nOpa.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				}
-			},
 			"PersonalizationTable": {
 				group: "Table UI Test",
 				autostart: false,

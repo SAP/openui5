@@ -20,8 +20,7 @@ sap.ui.define([
 				Implicit: "AppUnderTestTable.view.Implicit",
 				Transient: "AppUnderTestTable.view.Transient",
 				AutoImplicit: "AppUnderTestTable.view.AutoImplicit",
-				State: "AppUnderTestTable.view.State",
-				Responsive: "AppUnderTestTable.view.ResponsiveTable"
+				State: "AppUnderTestTable.view.State"
 			};
 
 			V4ServerHelper.requestServerURLForTenant("MDCTableP13nOpaTestApplication", true).then(function(tenantBaseUrl) {

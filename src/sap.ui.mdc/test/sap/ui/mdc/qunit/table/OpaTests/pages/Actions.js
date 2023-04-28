@@ -803,6 +803,46 @@ sap.ui.define([
 				},
 				errorMessage: "No visible filter bar was found"
 			});
+		},
+
+		/**
+		 * Press the confirm button on column menu.
+		 *
+		 * @returns {Promise} OPA waitFor
+		 */
+		iConfirmColumnMenuItemContent: function() {
+			return this.waitFor({
+				controlType: "sap.m.table.columnmenu.Menu",
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								text: Util.getTextFromResourceBundle("sap.m", "table.COLUMNMENU_CONFIRM")
+							}
+						}],
+						actions: new Press(),
+						errorMessage: "Colum menu item content could not be confirmed"
+					});
+				}
+			});
+		},
+
+		/**
+		 * Opens the P13nDialog.
+		 *
+		 * @returns {Promise} OPA waitFor
+		 */
+		iOpenP13nDialog: function () {
+			return this.waitFor({
+				controlType: "sap.m.Button",
+				matchers: new PropertyStrictEquals({
+					name: "icon",
+					value: Util.P13nDialogInfo.Settings.Icon
+				}),
+				actions: new Press()
+			});
 		}
 	};
 });
