@@ -77,6 +77,9 @@ sap.ui.define([
 					? mParameters.target.slice()
 					: [mParameters.target];
 			}
+			/**
+			 * @deprecated As of version 1.79.0
+			 */
 			Object.defineProperty(this, "target", {
 				get : this.getTarget,
 				set : this.setTarget,
@@ -98,6 +101,9 @@ sap.ui.define([
 			} else {
 				this.aFullTargets = [mParameters.fullTarget || ""];
 			}
+			/**
+			 * @deprecated As of version 1.79.0
+			 */
 			Object.defineProperty(this, "fullTarget", {
 				get : function () { return this.aFullTargets[0]; },
 				set : function (sFullTarget) { this.aFullTargets[0] = sFullTarget; },
