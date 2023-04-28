@@ -4,35 +4,22 @@
 
 // Provides class sap.ui.core.format.DateFormat
 sap.ui.define([
-	'sap/ui/core/CalendarType',
-	'sap/ui/core/Locale',
-	'sap/ui/core/LocaleData',
-	'sap/ui/core/date/UI5Date',
-	'sap/ui/core/date/UniversalDate',
-	'sap/ui/core/date/CalendarUtils',
-	'sap/ui/core/date/CalendarWeekNumbering',
-	'sap/ui/core/format/TimezoneUtil',
-	"sap/base/util/deepEqual",
-	"sap/base/strings/formatMessage",
 	"sap/base/Log",
+	"sap/base/strings/formatMessage",
+	"sap/base/util/deepEqual",
 	"sap/base/util/extend",
-	"sap/ui/core/Configuration"
-],
-	function(
-		CalendarType,
-		Locale,
-		LocaleData,
-		UI5Date,
-		UniversalDate,
-		CalendarUtils,
-		CalendarWeekNumbering,
-		TimezoneUtil,
-		deepEqual,
-		formatMessage,
-		Log,
-		extend,
-		Configuration
-	) {
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Core",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/date/CalendarUtils",
+	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/format/TimezoneUtil"
+], function(Log, formatMessage, deepEqual, extend, CalendarType, Configuration, Core, Locale,
+		LocaleData, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate, TimezoneUtil) {
 	"use strict";
 
 	/**
@@ -3444,7 +3431,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.m
 	 */
 	DateFormat.prototype.getPlaceholderText = function() {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oResourceBundle = Core.getLibraryResourceBundle();
 
 		return oResourceBundle.getText("date.placeholder", [this.format.apply(this, this.getSampleValue())]);
 	};
