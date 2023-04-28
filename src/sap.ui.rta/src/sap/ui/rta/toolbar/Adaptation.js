@@ -9,8 +9,11 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
+	"sap/ui/core/Core",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/Version",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
@@ -25,8 +28,11 @@ sap.ui.define([
 	BusyIndicator,
 	Fragment,
 	Popup,
+	Core,
 	ContextBasedAdaptationsAPI,
 	Version,
+	JSONModel,
+	ResourceModel,
 	AppVariantFeature,
 	Base,
 	ManageAdaptations,
@@ -317,7 +323,8 @@ sap.ui.define([
 				exit: this.eventHandler.bind(this, "Exit"),
 				formatVersionButtonText: this.formatVersionButtonText.bind(this),
 				showVersionHistory: this.showVersionHistory.bind(this),
-				showActionsMenu: this.showActionsMenu.bind(this)
+				showActionsMenu: this.showActionsMenu.bind(this),
+				showFeedbackForm: this.showFeedbackForm.bind(this)
 			}
 		});
 	};
@@ -401,6 +408,45 @@ sap.ui.define([
 			oInstersectionObserver.disconnect();
 		});
 		return Base.prototype.hide.apply(this, arguments);
+	};
+
+	Adaptation.prototype.showFeedbackForm = function() {
+		// Get Connector Type
+		var sConnector = Core.getConfiguration().getFlexibilityServices()[0].connector;
+
+		// Set URL
+		var sURLPart1 = "https://sapinsights.eu.qualtrics.com/jfe/form/";
+		var sURLPart2 = "SV_4MANxRymEIl9K06";
+		var sURL = sURLPart1 + sURLPart2;
+		var oUrlParams = new URLSearchParams();
+		oUrlParams.set("version", sap.ui.version);
+		oUrlParams.set("feature", (sConnector === "KeyUserConnector" ? "BTP" : "ABAP"));
+
+		var oFeedbackDialogModel = new JSONModel({
+			url: sURL + "?" + oUrlParams.toString()
+		});
+
+		return Fragment.load({
+			name: "sap.ui.rta.toolbar.FeedbackDialog",
+			controller: this
+		}).then(function (oFeedbackDialog) {
+			this._oFeedbackDialog = oFeedbackDialog;
+			this._oFeedbackDialog.addStyleClass(Utils.getRtaStyleClassName());
+			this._oFeedbackDialog.setModel(oFeedbackDialogModel, "feedbackModel");
+			this._oFeedbackDialog.setModel(this.getModel("i18n"), "i18n");
+			this._oFeedbackDialog.attachEventOnce("afterClose", function() {
+				this._oFeedbackDialog.destroy();
+			}.bind(this));
+			this._oFeedbackDialog.open();
+		}.bind(this)).catch(function (oError) {
+			Log.error("Error loading fragment sap.ui.rta.toolbar.FeedbackDialog: ", oError);
+		});
+	};
+
+	Adaptation.prototype.closeFeedbackForm = function() {
+		if (this._oFeedbackDialog) {
+			this._oFeedbackDialog.close();
+		}
 	};
 
 	return Adaptation;

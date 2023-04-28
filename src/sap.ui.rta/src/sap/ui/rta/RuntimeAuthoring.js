@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Core",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
@@ -61,6 +62,7 @@ sap.ui.define([
 	jQuery,
 	ManagedObject,
 	BusyIndicator,
+	Core,
 	DesignTime,
 	DOMUtil,
 	ElementUtil,
@@ -1504,6 +1506,7 @@ sap.ui.define([
 					// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
 					var bVisualizationButtonVisible;
 					bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode") || oUriParameters.get("fiori-tools-rta-mode") === "false";
+					var bFeedbackButtonVisible = Core.getConfiguration().getFlexibilityServices()[0].connector !== "LocalStorageConnector";
 					this.bPersistedDataTranslatable = false;
 
 					this._oToolbarControlsModel = new JSONModel({
@@ -1551,6 +1554,9 @@ sap.ui.define([
 						visualizationButton: {
 							visible: bVisualizationButtonVisible,
 							enabled: bVisualizationButtonVisible
+						},
+						feedbackButton: {
+							visible: bFeedbackButtonVisible
 						}
 					});
 

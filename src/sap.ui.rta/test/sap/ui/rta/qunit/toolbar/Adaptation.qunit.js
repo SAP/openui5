@@ -42,6 +42,27 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+	function createAndStartRTA(oAdaptationsModel) {
+		this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
+		var oButton = new Button("testButton");
+		this.oContainer = new VerticalLayout({
+			id: this.oComponent.createId("myVerticalLayout"),
+			content: [oButton],
+			width: "100%"
+		});
+		this.oContainer.placeAt("qunit-fixture");
+		this.oRta = new RuntimeAuthoring({
+			rootControl: this.oContainer,
+			flexSettings: {
+				developerMode: false
+			}
+		});
+		return this.oRta.start()
+			.then(function() {
+				this.oToolbar = this.oRta.getToolbar();
+				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
+			}.bind(this));
+	}
 
 	QUnit.module("Given Versions Model binding & formatter", {
 		before: function () {
@@ -446,6 +467,7 @@ sap.ui.define([
 					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is visible");
 					assert.ok(this.oToolbar.getControl("activate").getVisible(), "activate is visible");
 					assert.ok(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is visible");
+					assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
 
 					return RtaQunitUtils.showActionsMenu(this.oToolbar);
 				}.bind(this))
@@ -469,6 +491,7 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
 					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
 					assert.notOk(this.oToolbar.getControl("actionsMenu").getVisible(), "actionsMenu is not visible");
+					assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
 				}.bind(this));
 		});
 
@@ -485,6 +508,7 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
 					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
 					assert.notOk(this.oToolbar.getControl("actionsMenu").getVisible(), "actionsMenu is not visible");
+					assert.ok(this.oToolbar.getControl("feedback").getVisible(), "feedback is visible");
 				}.bind(this));
 		});
 
@@ -507,27 +531,80 @@ sap.ui.define([
 		});
 	});
 
-	function createAndStartRTA(oAdaptationsModel) {
-		this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
-		var oButton = new Button("testButton");
-		this.oContainer = new VerticalLayout({
-			id: this.oComponent.createId("myVerticalLayout"),
-			content: [oButton],
-			width: "100%"
-		});
-		this.oContainer.placeAt("qunit-fixture");
-		this.oRta = new RuntimeAuthoring({
-			rootControl: this.oContainer,
-			flexSettings: {
-				developerMode: false
-			}
-		});
-		return this.oRta.start()
-			.then(function() {
-				this.oToolbar = this.oRta.getToolbar();
-				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
+	QUnit.module("Feedback Button", {
+		afterEach: function() {
+			this.oToolbar.closeFeedbackForm();
+			this.oRta.destroy();
+			this.oComponent.destroy();
+			this.oContainer.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when being on a system with LocalStorageConnector", function(assert) {
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LocalStorageConnector"}
+			]);
+			return createAndStartRTA.call(this).then(function() {
+				assert.notOk(
+					this.oToolbar.getControl("feedback").getVisible(),
+					"then the feedback button is not enabled"
+				);
 			}.bind(this));
-	}
+		});
+
+		QUnit.test("when being on a system with KeyUserConnector", function(assert) {
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+			return createAndStartRTA.call(this)
+			.then(function() {
+				assert.ok(
+					this.oToolbar.getControl("feedback").getVisible(),
+					"then the feedback button is enabled"
+				);
+				return this.oToolbar.showFeedbackForm();
+			}.bind(this))
+			.then(function() {
+				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue()[0]);
+				assert.ok(
+					oIframeURL.pathname.endsWith("SV_4MANxRymEIl9K06"),
+					"then the proper form id is passed"
+				);
+				assert.strictEqual(
+					oIframeURL.searchParams.get("version"),
+					sap.ui.version,
+					"then the proper version is passed"
+				);
+				assert.strictEqual(
+					oIframeURL.searchParams.get("feature"),
+					"BTP",
+					"then the proper platform is passed"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("when being on a system with LrepConnector", function(assert) {
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
+				{ connector: "LrepConnector", url: "someUrl" }
+			]);
+			return createAndStartRTA.call(this)
+			.then(function() {
+				assert.ok(
+					this.oToolbar.getControl("feedback").getVisible(),
+					"then the feedback button is enabled"
+				);
+				return this.oToolbar.showFeedbackForm();
+			}.bind(this))
+			.then(function() {
+				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue()[0]);
+				assert.strictEqual(
+					oIframeURL.searchParams.get("feature"),
+					"ABAP",
+					"then the proper platform is passed"
+				);
+			}.bind(this));
+		});
+	});
 
 	QUnit.module("Different screen sizes and common buttons", {
 		beforeEach: function() {
