@@ -1190,4 +1190,72 @@ sap.ui.define([
 		assert.deepEqual(oBinding.aApplicationFilters, oFixture.resultFilter);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getFilterInfo", function (assert) {
+		var oGroupedApplicationFilter = {
+				getAST : function () {}
+			},
+			oBinding = {
+				aApplicationFilters : [oGroupedApplicationFilter]
+			};
+
+		this.mock(oGroupedApplicationFilter).expects("getAST")
+			.withExactArgs("~bIncludeOrigin")
+			.returns("~AST");
+
+		// code under test
+		assert.strictEqual(ODataTreeBinding.prototype.getFilterInfo.call(oBinding, "~bIncludeOrigin"), "~AST");
+
+		oBinding.aApplicationFilters = [];
+
+		// code under test
+		assert.strictEqual(ODataTreeBinding.prototype.getFilterInfo.call(oBinding), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterInfo: integrative test", function (assert) {
+		var oApplicationFilter = new Filter("propertyPath", "GE", "foo"),
+			oBinding,
+			oContext = {},
+			oModel = {
+				checkFilterOperation : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("checkFilterOperation").withExactArgs([oApplicationFilter]);
+
+		oBinding = new ODataTreeBinding(oModel, "path", oContext, oApplicationFilter);
+
+		// code under test
+		assert.deepEqual(oBinding.getFilterInfo(), {
+			left: {path: "propertyPath", type: "Reference"},
+			op: ">=",
+			right: {type: "Literal", value: "foo"},
+			type: "Binary"
+		});
+		assert.deepEqual(oBinding.aApplicationFilters, [oApplicationFilter]);
+
+		oApplicationFilter = new Filter("propertyPath", "LE", "bar");
+		oModelMock.expects("checkFilterOperation").withExactArgs(oApplicationFilter);
+
+		oBinding.filter(oApplicationFilter, FilterType.Application);
+
+		// code under test
+		assert.deepEqual(oBinding.getFilterInfo(), {
+			left: {path: "propertyPath", type: "Reference"},
+			op: "<=",
+			right: {type: "Literal", value: "bar"},
+			type: "Binary"
+		});
+		assert.deepEqual(oBinding.aApplicationFilters, [oApplicationFilter]);
+
+		oModelMock.expects("checkFilterOperation").withExactArgs(undefined);
+
+		oBinding.filter(undefined, FilterType.Application);
+
+		// code under test
+		assert.deepEqual(oBinding.getFilterInfo(), null);
+		assert.deepEqual(oBinding.aApplicationFilters, []);
+	});
 });

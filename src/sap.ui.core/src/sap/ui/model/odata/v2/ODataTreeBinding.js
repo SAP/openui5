@@ -2519,6 +2519,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the filter information as an AST.
+	 *
+	 * @param {boolean} bIncludeOrigin
+	 *   Whether to include information about the filter objects from which the tree has been created
+	 * @returns {object|null} The AST of the filter tree or null if no filter is set
+	 * @private
+	 * @override
+	 * @ui5-restricted sap.ui.table, sap.ui.export
+	 */
+	ODataTreeBinding.prototype.getFilterInfo = function (bIncludeOrigin) {
+		return this.aApplicationFilters[0]
+			? this.aApplicationFilters[0].getAST(bIncludeOrigin)
+			: null;
+	};
+
+	/**
 	* Abort all pending requests
 	*
 	* @private
