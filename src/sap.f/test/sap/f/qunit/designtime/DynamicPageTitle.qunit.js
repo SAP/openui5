@@ -346,6 +346,69 @@ function (
 			afterRedo : fnConfirmActionsContentElement1IsOn3rdPosition
 		});
 
+		// Check if the move action is working properly
+		var fnConfirmActionsContentElement2IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("btn2").getId(),                   // Id of element at first position in original view
+								oViewAfterAction.byId("title").getActions()[2].getId(),   // Id of third element in group after change has been applied
+								"then the control has been moved to the right position");
+		};
+		// Check if the move action is working properly
+		var fnConfirmActionsContentElement2IsOn2ndPosition = function(oAppComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("btn2").getId(),                   // Id of element at first position in original view
+								oViewAfterAction.byId("title").getActions()[1].getId(),   // Id of third element in group after change has been applied
+								"then the control has been moved to the right position");
+		};
+		// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+		elementActionTest("Checking the rename + move actions for a simple control in DynamicPageTitle's actions aggregation", {
+			xmlView :
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f">' +
+					'<DynamicPageTitle id="title">' +
+						'<actions>' +
+							'<m:Button id="btn1" text="Action 1" />' +
+							'<m:Button id="btn2" text="Action 2" />' +
+							'<m:Button id="btn3" text="Action 3" />' +
+						'</actions>' +
+					'</DynamicPageTitle>' +
+				'</mvc:View>'
+			,
+			action : {
+				name : "move",
+				controlId : "title",
+				parameter : function(oView){
+					return {
+						movedElements : [{
+							element : oView.byId("btn2"),
+							sourceIndex : 1,
+							targetIndex : 2
+						}],
+						source : {
+							aggregation: "actions",
+							parent: oView.byId("title")
+						},
+						target : {
+							aggregation: "actions",
+							parent: oView.byId("title")
+						}
+					};
+				}
+			},
+			previousActions: [ // OPTIONAL
+				{
+					name : "rename",
+					controlId : "btn2",
+					parameter: function (oView) {
+						return {
+							newValue: 'New Name',
+							renamedElement: oView.byId("btn2")
+						};
+					}
+				}
+			],
+			afterAction : fnConfirmActionsContentElement2IsOn3rdPosition,
+			afterUndo : fnConfirmActionsContentElement2IsOn2ndPosition,
+			afterRedo : fnConfirmActionsContentElement2IsOn3rdPosition
+		});
+
 		// --------- COMBINING THE CONTROL'S ACTIONS ---------
 		// Check if the combine action is working properly
 		var fnConfirmActionElementsAreCombined = function (oUiComponent,oViewAfterAction, assert) {
