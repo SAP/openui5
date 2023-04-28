@@ -159,6 +159,17 @@ sap.ui.define([
 			oModel.setProperty("/displayedAdaptation", oNewDisplayedAdaptation);
 			oModel.updateBindings(true);
 		};
+		oModel.updateAdaptationContent = function(oContextBasedAdaptation) {
+			var aAdaptations = oModel.getProperty("/allAdaptations");
+			var iIndex = oModel.getProperty("/displayedAdaptation").rank - 1;
+			aAdaptations[iIndex].title = oContextBasedAdaptation.title;
+			aAdaptations[iIndex].contexts = oContextBasedAdaptation.contexts;
+			if (iIndex !== oContextBasedAdaptation.priority) {
+				var aDisplayedAdaptation = aAdaptations.splice(iIndex, 1);
+				aAdaptations.splice(oContextBasedAdaptation.priority, 0, aDisplayedAdaptation[0]);
+			}
+			oModel.updateAdaptations(aAdaptations);
+		};
 		oModel.getIndexByAdaptationId = function(sAdaptationId) {
 			var aAdaptations = oModel.getProperty("/allAdaptations");
 			var iAdaptationIndex = aAdaptations.findIndex(function(oAdaptation) {

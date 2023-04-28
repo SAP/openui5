@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/Utils",
 	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4"
@@ -33,6 +34,7 @@ sap.ui.define([
 	Adaptation,
 	BaseToolbar,
 	RuntimeAuthoring,
+	ReloadManager,
 	Utils,
 	MessageBox,
 	sinon
@@ -108,18 +110,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Adaptation Model binding & formatter", {
-		before: function () {
-			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
-			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
-		},
 		beforeEach: function() {
-			//			this.clock = sandbox.useFakeTimers();
-		},
-		after: function() {
-			this.oToolbar.destroy();
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
+				this.placeAt("qunit-fixture");
+			});
+			var oAdaptationsModel = new JSONModel({
+				adaptations: [],
+				count: 0,
+				displayedAdaptation: {}
+			});
+			this.oControlsModel = RtaQunitUtils.createToolbarControlsModel();
+			sandbox.stub(ContextBasedAdaptationsAPI, "initialize").resolves(oAdaptationsModel);
 		},
 		afterEach: function() {
-			//			this.clock.restore();
+			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -207,9 +212,19 @@ sap.ui.define([
 					assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
 				}.bind(this));
 		});
-		/*
-		QUnit.test("When two context-based adaptation are available delete these", function (assert) {
-			var fnDone = assert.async();
+
+		QUnit.test("When two context-based adaptation are available and delete these", function (assert) {
+			var oDefaultAdaptation = {
+				id: "DEFAULT",
+				contexts: {},
+				title: "",
+				description: "",
+				createdBy: "",
+				createdAt: "",
+				changedBy: "",
+				changedAt: "",
+				type: "DEFAULT"
+			};
 			var aAdaptations = [
 				{
 					title: "Sales",
@@ -220,48 +235,53 @@ sap.ui.define([
 					title: "Manager",
 					rank: 2,
 					id: "id_5678"
-				}
+				},
+				oDefaultAdaptation
 			];
 			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
 
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
 			});
-			//			sandbox.stub(this.oToolbar, "placeToContainer").callsFake(function() {
-			//				this.placeAt("qunit-fixture");
-			//			});
 
 			sandbox.stub(ContextBasedAdaptationsAPI, "createModel").withArgs(oAdaptationsModel);
 			sandbox.stub(ContextBasedAdaptationsAPI, "remove").returns(Promise.resolve({status: 204}));
 			sandbox.stub(Settings.prototype, "isContextBasedAdaptationEnabled").returns(true);
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
-			this.oControlsModel.setProperty("/modeSwitcher", "adaptation");
-			this.oControlsModel.setProperty("/contextBasedAdaptation/visible", true);
-			return this.oToolbar._pFragmentLoaded
-				.then(this.oToolbar.show())
+			sandbox.stub(ReloadManager, "triggerReload");
+
+			return createAndStartRTA.call(this)
 				.then(function() {
 					var oMenuButton = this.oToolbar.getControl("contextBasedAdaptationMenu");
-					oMenuButton.onAfterRendering = function() {
-						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 1, "only one adaptation is left in the model");
-						assert.strictEqual(oDeleteButton.getEnabled(), true, "then the context-based adaptation delete menu button is still enabled");
-						assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
-						fnDone();
-					};
 					this.oToolbar.setModel(oAdaptationsModel, "contextBasedAdaptations");
 					this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 					var oDeleteButton = this.oToolbar.getControl("deleteAdaptation");
 					var oEditButton = this.oToolbar.getControl("editAdaptation");
 					assert.ok(this.oToolbar.getControl("contextBasedAdaptationMenu").getEnabled(), "then the context-based adaptation menu is enabled");
-					assert.ok(oDeleteButton.getEnabled(), "then the context-based adaptation delete menu button is enabled");
-					assert.ok(oEditButton.getEnabled(), "then the context-based edit menu button is enabled");
+					assert.strictEqual(oDeleteButton.getEnabled(), true, "then the context-based adaptation delete menu button is enabled");
+					assert.strictEqual(oDeleteButton.getVisible(), true, "then the context-based adaptation delete menu button is enabled");
+					assert.strictEqual(oEditButton.getEnabled(), true, "then the context-based edit menu button is enabled");
+					assert.strictEqual(oEditButton.getVisible(), true, "then the context-based edit menu button is enabled");
+					assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Sales'", "then the menu text is rendered correctly");
+					oMenuButton.onAfterRendering = function() {
+						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 1, "only one adaptation is left in the model");
+						assert.strictEqual(oDeleteButton.getVisible(), true, "then the context-based adaptation delete menu button is enabled");
+						assert.strictEqual(oEditButton.getVisible(), true, "then the context-based edit menu button is enabled");
+						assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
+					}.bind(this);
 					oDeleteButton.firePress();
-					//	this.clock.tick(100);
-					//	assert.strictEqual(oAdaptationsModel.getProperty("/count"), 1, "only one adaptation is left in the model");
-					//	assert.strictEqual(oDeleteButton.getEnabled(), true, "then the context-based adaptation delete menu button is still enabled");
-					//	assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
+					oMenuButton.onAfterRendering = function() {
+						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 0, "only one adaptation is left in the model");
+						assert.strictEqual(oDeleteButton.getVisible(), false, "then the context-based adaptation delete menu button is enabled");
+						assert.strictEqual(oEditButton.getVisible(), false, "then the context-based edit menu button is enabled");
+						assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly");
+						this.oContainer.destroy();
+						this.oComponent.destroy();
+						this.oRta.destroy();
+					}.bind(this);
+					oDeleteButton.firePress();
 				}.bind(this));
 		});
-		*/
 	});
 
 	QUnit.module("Setting AppVariant properties", {
