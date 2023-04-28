@@ -409,7 +409,8 @@ sap.ui.define([
 		 */
 		MessageToast.show = function(sMessage, mOptions) {
 			var oOpener = Core.byId(Core.getCurrentFocusedControlId()) || sap.ui.core.Element.closestTo(document.activeElement);
-			var oUI5Area = oOpener && oOpener.getUIArea() || sap.ui.core.UIArea.registry.all()['body'] || sap.ui.core.UIArea.registry.all()['content'];
+			var oUI5Area = oOpener && oOpener.getUIArea && oOpener.getUIArea() || sap.ui.core.UIArea.registry.all()['body'] || sap.ui.core.UIArea.registry.all()['content'];
+			var oOpenerUI5Area = oOpener && oOpener.getUIArea  && oOpener.getUIArea();
 			var oAccSpan;
 			var that = MessageToast,
 				mSettings = jQuery.extend({}, MessageToast._mSettings, { message: sMessage }),
@@ -425,8 +426,8 @@ sap.ui.define([
 
 			// Find the uppper-most parent to attach the keyboard shortcut as we need to be
 			// able to open the message no matter where the focus is currently
-			if (!this._oRootNode || (this._oRootNode && oOpener && oOpener.getUIArea && oOpener.getUIArea().getRootNode() !== this._oRootNode)) {
-				this._oRootNode = !!oUI5Area && oUI5Area.getRootNode();
+			if (!this._oRootNode || (this._oRootNode && oOpenerUI5Area && oOpenerUI5Area.getRootNode() !== this._oRootNode)) {
+				this._oRootNode = oUI5Area ? oUI5Area.getRootNode() : null;
 			}
 
 			mOptions = normalizeOptions(mOptions);
@@ -479,13 +480,14 @@ sap.ui.define([
 			oAccSpan = document.createElement("span");
 			oAccSpan.setAttribute("tabIndex", 0);
 			oAccSpan.setAttribute("class", "sapMMessageToastHiddenFocusable");
-			oAccSpan.addEventListener("keydown", handleKbdClose.bind(this));
 
 			oPopup.getContent().prepend(oAccSpan);
 
 			if (this._oRootNode) {
 				this._oRootNode.removeEventListener("keydown", that._fnKeyDown.bind(that));
 				this._oRootNode.addEventListener("keydown", that._fnKeyDown.bind(that));
+
+				oAccSpan.addEventListener("keydown", handleKbdClose.bind(this));
 			}
 
 			// opens the popup's content at the position specified via #setPosition
