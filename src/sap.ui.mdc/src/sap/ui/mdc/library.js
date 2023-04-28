@@ -921,8 +921,8 @@
 	 * @enum {string}
 	 * @private
 	 * @since 1.64
-	 * @experimental As of version 1.64
 	 * @ui5-restricted sap.ui.mdc
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	thisLib.ChartToolbarActionType = {
 		/**
@@ -957,8 +957,8 @@
 	 * @enum {string}
 	 * @private
 	 * @since 1.75
-	 * @experimental As of version 1.75
 	 * @ui5-restricted sap.ui.mdc
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	thisLib.ChartP13nMode = {
 		/**

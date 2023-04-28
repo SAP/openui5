@@ -309,6 +309,14 @@ sap.ui.define([
                             aggregation: "actions"
                         }
                     },
+                    /**
+                     * The aggregation to feed details actions for datapoint selection in the mdc chart
+                     * See {@link sap.ui.mdc.chart.SelectionDetailsActions SelectionDetailsActions} for more information.
+                     */
+                    selectionDetailsActions: {
+                        type: "sap.ui.mdc.chart.SelectionDetailsActions",
+                        multiple: false
+                    },
                     _toolbar: {
                         type: "sap.ui.mdc.chart.ChartToolbar",
                         multiple: false,
@@ -323,10 +331,6 @@ sap.ui.define([
                         type: "sap.ui.core.Control",
                         multiple: false,
                         visibility: "hidden"
-                    },
-                    selectionDetailsActions: {
-                        type: "sap.ui.mdc.chart.SelectionDetailsActions",
-                        multiple: false
                     },
                     _infoToolbar: {
                         type: "sap.ui.mdc.util.InfoBar",
