@@ -202,6 +202,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	DateTimeBase.prototype.getFormat = function () {
+		return getFormatter(this);
+	};
+
+	/**
 	 * Returns the matching locale-dependent error message for the type based on the constraints.
 	 *
 	 * @returns {string}

@@ -460,6 +460,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateTimeBase();
+
+		this.mock(DateFormat.prototype).expects("getPlaceholderText").withExactArgs().callsFake(function () {
+			assert.strictEqual(this, oType.oFormat);
+			return "~placeholder";
+		});
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
+
+	//*********************************************************************************************
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.DateTime");
 
