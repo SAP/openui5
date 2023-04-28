@@ -11,16 +11,20 @@ window.addEventListener("load", function () {
 		sRes = sTargetRoot + "/resources/",
 		aNodes = [],
 		iLoadedCnt = 0,
-		oEl = document.createElement("div");
+		oEl = document.createElement("div"),
+		isLandingPage = document.location.pathname === "/test-resources/sap/ui/integration/demokit/cardExplorer/index.html";
 
 	aNodes.push('<script src="' + sWebApp + 'scripts/codesample.js"></script>');
-	aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/topic.css">');
 	aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/codesample.css">');
-	aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/core/themes/sap_horizon/library.css">');
 	aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css">');
 	aNodes.push('<script src="' + sRes + 'sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js"></script>');
-	aNodes.push('<script src="' + sWebApp + 'scripts/topic.js"></script>');
-	aNodes.push('<script src="' + sWebApp + 'scripts/generateNavMenu.js"></script>');
+
+	if (!isLandingPage) {
+		aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/core/themes/sap_horizon/library.css">');
+		aNodes.push('<script src="' + sWebApp + 'scripts/topic.js"></script>');
+		aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/topic.css">');
+		aNodes.push('<script src="' + sWebApp + 'scripts/generateNavMenu.js"></script>');
+	}
 
 	function afterLoad() {
 		iLoadedCnt++;
