@@ -2965,6 +2965,7 @@ sap.ui.define([
 	QUnit.test("Select All on Binding Change", function(assert) {
 		var done = assert.async();
 		var oModel;
+
 		oTable.attachEventOnce("rowSelectionChange", function() {
 			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 
@@ -4529,28 +4530,6 @@ sap.ui.define([
 		assert.ok(oTable.getDomRef().hasAttribute("unselectable", "off"), "_enableTextSelection is on");
 	});
 
-	QUnit.test("test _toggleSelectAll function", function(assert) {
-		oTable.clearSelection();
-		oTable.setSelectionMode(SelectionMode.None);
-		oTable._toggleSelectAll();
-		assert.deepEqual(oTable.getSelectedIndices(), [], "Selection was not changed if SelectionMode is None");
-
-		oTable.setSelectionMode(SelectionMode.Single);
-		oTable._toggleSelectAll();
-		assert.deepEqual(oTable.getSelectedIndices(), [], "Selection was not changed if SelectionMode is Single");
-
-		oTable.setSelectedIndex(1);
-		oTable._toggleSelectAll();
-		assert.deepEqual(oTable.getSelectedIndices(), [1], "Selection was not changed if SelectionMode is Single");
-
-		oTable.setSelectionMode(SelectionMode.MultiToggle);
-		oTable._toggleSelectAll();
-		assert.ok(TableUtils.areAllRowsSelected(oTable), "All rows selected if not all rows were selected and SelectionMode is MultiToggle");
-
-		oTable._toggleSelectAll();
-		assert.ok(!TableUtils.areAllRowsSelected(oTable), "All rows deselected if all rows were selected and SelectionMode is MultiToggle");
-	});
-
 	QUnit.test("Check for tooltip", function(assert) {
 		oTable.setTooltip("Table Tooltip");
 		assert.strictEqual(oTable.getTooltip(), "Table Tooltip", "Table tooltip set correctly");
@@ -5396,10 +5375,17 @@ sap.ui.define([
 		oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		aMethodNames.forEach(function(sMethodName) {
-			var oSpy = sinon.spy(oSelectionPlugin, sMethodName);
+			var oSpy;
+
+			if (sMethodName in oSelectionPlugin) {
+				oSpy = sinon.spy(oSelectionPlugin, sMethodName);
+			}
 
 			assert.throws(this.oTable[sMethodName], "Table#" + sMethodName + " throws an error if a selection plugin is applied");
-			assert.ok(oSpy.notCalled, "Table#" + sMethodName + " does not call SelectionPlugin#" + sMethodName);
+
+			if (oSpy) {
+				assert.ok(oSpy.notCalled, "Table#" + sMethodName + " does not call SelectionPlugin#" + sMethodName);
+			}
 		}.bind(this));
 	});
 

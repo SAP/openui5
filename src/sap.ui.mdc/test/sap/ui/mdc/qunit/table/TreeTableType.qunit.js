@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/mdc/Table",
@@ -52,13 +52,6 @@ sap.ui.define([
 			assert.ok(oTable._oTable.isA("sap.ui.table.TreeTable"), "Is a sap.ui.table.TreeTable");
 			assert.equal(oTreeTable.getId(), oTable.getId() + "-innerTable", "ID");
 			assert.strictEqual(oTreeTable._oProxy._bEnableV4, true, "'_bEnableV4' flag on the TreeBinding proxy");
-			sinon.stub(oTable.getControlDelegate(), "getSupportedFeatures").returns({ selection: false });
-			oTable.setType("TreeTable");
-			return oTable.initialized();
-		}).then(function() {
-			oTreeTable = oTable._oTable;
-			assert.ok(oTreeTable.getPlugins().length === 0, "Delegate does not support selection: Inner table has no selection plugin");
-			assert.equal(oTreeTable.getSelectionMode(), "None", "Delegate does not support selection: Inner table 'selectionMode'");
 		}).finally(function() {
 			oTable.destroy();
 		});

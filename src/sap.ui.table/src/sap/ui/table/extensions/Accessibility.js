@@ -677,7 +677,7 @@ sap.ui.define([
 				case AccExtension.ELEMENTTYPES.ROWHEADER:
 					mAttributes["role"] = "gridcell";
 					mAttributes["aria-colindex"] = 1;
-					if (TableUtils.hasRowHeader(oTable) && oTable._getSelectionPlugin()._getSelectionMode() === SelectionMode.None) {
+					if (TableUtils.hasRowHeader(oTable) && oTable.getSelectionMode() === SelectionMode.None) {
 						mAttributes["aria-labelledby"] = [sTableId + "-rowselecthdr"];
 					}
 					break;
@@ -1269,7 +1269,7 @@ sap.ui.define([
 		if (!oRow.isEmpty() && !oRow.isGroupHeader() && !oRow.isSummary()) {
 			var mTooltipTexts = this.getAriaTextsForSelectionMode(true);
 			var oTable = this.getTable();
-			var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
+			var bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
 
 			if ($Ref.row) {
 				$Ref.row.add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
@@ -1407,7 +1407,7 @@ sap.ui.define([
 			}
 		};
 
-		var iSelectedIndicesCount = oTable._getSelectionPlugin().getSelectedCount();
+		var iSelectedCount = oTable._getSelectionPlugin().getSelectedCount();
 
 		if (sSelectionMode === SelectionMode.Single) {
 			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
@@ -1422,7 +1422,7 @@ sap.ui.define([
 			// text for de-select is the same like for single selection
 			mTooltipTexts.keyboard.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
 
-			if (bConsiderSelectionState === true && iSelectedIndicesCount === 0) {
+			if (bConsiderSelectionState === true && iSelectedCount === 0) {
 				// if there is no row selected yet, the selection is like in single selection case
 				mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
 			}

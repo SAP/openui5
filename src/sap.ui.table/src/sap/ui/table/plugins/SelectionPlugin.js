@@ -3,17 +3,13 @@
  */
 sap.ui.define([
 	"sap/ui/core/Element",
-	"./PluginBase",
-	"../library"
+	"./PluginBase"
 ], function(
 	Element,
-	PluginBase,
-	library
+	PluginBase
 ) {
 
 	"use strict";
-
-	var SelectionMode = library.SelectionMode;
 
 	/**
 	 * Constructs an instance of sap.ui.table.plugins.SelectionPlugin
@@ -38,10 +34,9 @@ sap.ui.define([
 		library: "sap.ui.table",
 		properties: {
 			/**
-			 * Defines whether single or multiple items can be selected.
-			 * @private
+			 * Indicates whether this plugin is enabled.
 			 */
-			selectionMode: {type: "sap.ui.table.SelectionMode", defaultValue: SelectionMode.MultiToggle, visibility: "hidden"}
+			enabled: {type: "boolean", defaultValue: true} // TODO: Should be in PluginBase, which is still private for the time being
 		},
 		events: {
 			/**
@@ -61,14 +56,24 @@ sap.ui.define([
 		}
 	}
 
-	/**
-	 * Sets up the initial values.
-	 */
-	SelectionPlugin.prototype.init = function() {
-		PluginBase.prototype.init.apply(this, arguments);
-		this._bSuspended = false;
+	SelectionPlugin.prototype.setEnabled = function(bEnabled) {
+		this.setProperty("enabled", bEnabled, true);
+
+		if (this.getEnabled()) {
+			this.activate();
+		} else {
+			this.deactivate();
+		}
+
+		return this;
 	};
 
+	/**
+	 * TODO: Historically grown and hard to understand possible combinations of settings. Refactor!
+	 *
+	 * @returns {{headerSelector: {type: string, bla: blub}}}
+	 * @private
+	 */
 	SelectionPlugin.prototype.getRenderConfig = function() {
 		return {
 			headerSelector: {
@@ -78,178 +83,60 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds the given selection interval to the selection.
+	 * This hook is called when the header selector is pressed.
+	 * TODO: Also provide the event object?
 	 *
-	 * @param {int} iIndexFrom Index from which the selection starts
-	 * @param {int} iIndexTo Index up to which to select
 	 * @private
-	 * @abstract
 	 */
-	SelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+	SelectionPlugin.prototype.onHeaderSelectorPress = function() {};
+
+	/**
+	 * This hook is called when a keyboard shortcut relevant for selection is pressed.
+	 * TODO: Document parameter to that possible values are clear
+	 * TODO: Also provide the event object?
+	 *
+	 * @param {string} sType Type of the keyboard shortcut.
+	 * @private
+	 */
+	SelectionPlugin.prototype.onKeyboardShortcut = function(sType) {};
+
+	/**
+	 * Changes the selection state of a row.
+	 *
+	 * @param {sap.ui.table.Row} oRow Instance of the row
+	 * @param {boolean} bSelected The new selection state
+	 * @param {object} [mConfig]
+	 * @param {boolean} [mConfig.range=false]
+	 *     Whether to change the selection of the range from the last changed row to this one. The table's preferred selection status of the range is
+	 *     indicated with the <code>bSelected</code> parameter, but the plugin may decide otherwise.
+	 * @abstract
+	 * @private
+	 */
+	SelectionPlugin.prototype.setSelected = function(oRow, bSelected, mConfig) {
+		throw new Error(this + " does not implement #setSelected");
 	};
 
 	/**
-	 * Removes the complete selection.
+	 * Checks whether a row is selected.
 	 *
-	 * @private
+	 * @param {sap.ui.table.Row} oRow Instance of the row
+	 * @returns {boolean} Whether the row is selected
 	 * @abstract
- 	 */
-	SelectionPlugin.prototype.clearSelection = function() {
+	 * @private
+	 */
+	SelectionPlugin.prototype.isSelected = function(oRow) {
+		throw new Error(this + " does not implement #isSelected");
 	};
 
 	/**
-	 * Retrieves the lead selection index.
+	 * Returns the number of selected rows.
 	 *
-	 * @returns {int}
-	 * @private
+	 * @returns {int} The number of selected rows
 	 * @abstract
-	 */
-	SelectionPlugin.prototype.getSelectedIndex = function() {
-		return -1;
-	};
-
-	/**
-	 * Zero-based indices of selected items, wrapped in an array. An empty array means nothing has been selected.
-	 *
-	 * @returns {int[]} An array containing all selected indices
 	 * @private
-	 * @abstract
-	 */
-	SelectionPlugin.prototype.getSelectedIndices = function() {
-		return [];
-    };
-
-	/**
-	 * Returns the number of items that can be selected.
-	 *
-	 * @returns {int} Number of items that can be selected
-	 * @private
-	 * @abstract
-	 */
-	SelectionPlugin.prototype.getSelectableCount = function() {
-		return 0;
-	};
-
-	/**
-	 * Returns the number of selected items.
-	 *
-	 * @returns {int} Number of selected items
-	 * @private
-	 * @abstract
 	 */
 	SelectionPlugin.prototype.getSelectedCount = function() {
-		return 0;
-	};
-
-	/**
-	 * Checks whether an index is selectable.
-	 *
-	 * @param {int} iIndex The index to be checked
-	 * @returns {boolean} <code>true</code> if the index is selectable, <code>false</code> otherwise
-	 * @private
-	 * @abstract
-	 */
-	SelectionPlugin.prototype.isIndexSelectable = function(iIndex) {
-		return false;
-	};
-
-	/**
-	 * Returns the information whether the given index is selected.
-	 *
-	 * @param {int} iIndex The index for which the selection state is retrieved.
-	 * @returns {boolean} <code>true</code> if the index is selected, <code>false</code> otherwise
-	 * @private
-	 * @abstract
-	 */
-	SelectionPlugin.prototype.isIndexSelected = function(iIndex) {
-		return false;
-	};
-
-	/**
-	 * Removes the given selection interval from the selection. In case of a single selection, only <code>iIndexTo</code> is removed from the selection.
-	 *
-	 * @param {int} iIndexFrom Index from which the deselection starts
-	 * @param {int} iIndexTo Index up to which to deselect
-	 * @private
-	 * @abstract
-	 */
-	SelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
-	};
-
-	/**
-	 * Selects all indices.
-	 *
-	 * @private
-	 * @abstract
-	 */
-	SelectionPlugin.prototype.selectAll = function() {
-	};
-
-	/**
-	 * Sets the selected index.
-	 *
-	 * @param {int} iIndex The index which is selected (if existing)
-	 * @private
-	 * @abstract
-	 */
-	SelectionPlugin.prototype.setSelectedIndex = function(iIndex) {
-	};
-
-	/**
-	 * Sets the given selection interval as a selection. In case of a single selection, only <code>iIndexTo</code> is selected.
-	 *
-	 * @param {int} iIndexFrom Index from which the selection starts
-	 * @param {int} iIndexTo Index up to which to select
-	 * @private
-	 * @abstract
-	 */
-	SelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
-	};
-
-	SelectionPlugin.prototype.fireSelectionChange = function(mArguments) {
-		if (!this._isSuspended()) {
-			this.fireEvent("selectionChange", mArguments);
-		}
-	};
-
-	SelectionPlugin.prototype._setSelectionMode = function(sSelectionMode) {
-		this.setProperty("selectionMode", sSelectionMode);
-	};
-
-	SelectionPlugin.prototype._getSelectionMode = function() {
-		return this.getProperty("selectionMode");
-	};
-
-	/**
-	 * Suspends the selectionChange event
-	 *
-	 * When _bSuspended is true, the selectionChange event is not being fired.
-	 *
-	 * @private
-	 */
-	SelectionPlugin.prototype._suspend = function() {
-		this._bSuspended = true;
-	};
-
-	/**
-	 * Resumes the selectionChange event
-	 *
-	 * When _bSuspended is false, the selectionChange event is being fired
-	 *
-	 * @private
-	 */
-	SelectionPlugin.prototype._resume = function() {
-		this._bSuspended = false;
-	};
-
-	/**
-	 * Checks if the selectionChange event is suspended.
-	 *
-	 * @return {boolean}
-	 * @private
-	 */
-	SelectionPlugin.prototype._isSuspended = function() {
-		return this._bSuspended;
+		throw new Error(this + " does not implement #getSelectedCount");
 	};
 
 	return SelectionPlugin;

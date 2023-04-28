@@ -5,11 +5,13 @@
 sap.ui.define([
 	"../library",
 	"sap/ui/core/Element",
-	"sap/ui/core/dnd/DragDropInfo"
+	"sap/ui/core/dnd/DragDropInfo",
+	"sap/ui/model/base/ManagedObjectModel"
 ], function(
 	library,
 	Element,
-	DragDropInfo
+	DragDropInfo,
+	ManagedObjectModel
 ) {
 	"use strict";
 
@@ -37,6 +39,40 @@ sap.ui.define([
 			properties: {}
 		}
 	});
+
+	TableTypeBase.prototype.init = function() {
+		Element.prototype.init.apply(this, arguments);
+		this._oManagedObjectModel = new ManagedObjectModel(this);
+	};
+
+	TableTypeBase.prototype.exit = function() {
+		this._disconnectFromTable();
+		this._oManagedObjectModel.destroy();
+		delete this._oManagedObjectModel;
+		Element.prototype.exit.apply(this, arguments);
+	};
+
+	TableTypeBase.prototype.setParent = function() {
+		this._disconnectFromTable();
+		Element.prototype.setParent.apply(this, arguments);
+		this._connectToTable();
+	};
+
+	TableTypeBase.prototype._connectToTable = function() {
+		var oTable = this.getTable();
+
+		if (oTable) {
+			oTable.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table#type");
+		}
+	};
+
+	TableTypeBase.prototype._disconnectFromTable = function() {
+		var oTable = this.getTable();
+
+		if (oTable) {
+			oTable.setModel(null, "$sap.ui.mdc.Table#type");
+		}
+	};
 
 	TableTypeBase.prototype.getSupportedP13nModes = function() {
 		return Object.keys(P13nMode);
@@ -163,15 +199,12 @@ sap.ui.define([
 	TableTypeBase.prototype.bindRows = function(oBindingInfo) {};
 	TableTypeBase.prototype.isTableBound = function() {};
 	TableTypeBase.prototype.createRowTemplate = function(sId) {};
-	TableTypeBase.prototype.updateSelectionSettings = function() {};
 	TableTypeBase.prototype.insertFilterInfoBar = function(oFilterInfoBar, sAriaLabelId) {};
 	TableTypeBase.prototype.enableColumnResize = function() {};
 	TableTypeBase.prototype.disableColumnResize = function() {};
 	TableTypeBase.prototype.createColumnResizeMenuItem = function() {};
 	TableTypeBase.prototype.updateRowActions = function() {};
 	TableTypeBase.prototype.updateSortIndicator = function(oColumn, sSortOrder) {};
-	TableTypeBase.prototype.getSelectedContexts = function() {};
-	TableTypeBase.prototype.clearSelection = function() {};
 
 	return TableTypeBase;
 });

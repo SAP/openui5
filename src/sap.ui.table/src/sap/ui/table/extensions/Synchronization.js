@@ -22,7 +22,7 @@ sap.ui.define([
 			var oRow = oTable.getRows()[iIndex];
 
 			if (oRow && bSelected != null) {
-				TableUtils.toggleRowSelection(oTable, oRow.getIndex(), bSelected);
+				TableUtils.toggleRowSelection(oTable, oRow, bSelected);
 			}
 		},
 

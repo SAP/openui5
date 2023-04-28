@@ -96,42 +96,16 @@ sap.ui.define([
 		 * Changes the selection based on the given click event on the given row selector, data cell or row action cell.
 		 */
 		_handleClickSelection: function(oEvent, $Cell, oTable) {
-			TableUtils.toggleRowSelection(oTable, $Cell, null, function(iRowIndex) {
+			TableUtils.toggleRowSelection(oTable, $Cell, null, function(oRow) {
 				var oSelectionPlugin = oTable._getSelectionPlugin();
-				var oSelMode = oTable.getSelectionMode();
 
-				// Single selection
-				if (oSelMode === SelectionMode.Single) {
-					if (!oSelectionPlugin.isIndexSelected(iRowIndex)) {
-						oSelectionPlugin.setSelectedIndex(iRowIndex);
-					} else {
-						oSelectionPlugin.clearSelection();
-					}
-
-				// Multi selection (range)
-				} else if (oEvent.shiftKey) {
-					// If no row is selected, getSelectedIndex returns -1. Then we simply select the clicked row.
-					var iSelectedIndex = oSelectionPlugin.getSelectedIndex();
-					if (iSelectedIndex >= 0) {
-						oSelectionPlugin.addSelectionInterval(iSelectedIndex, iRowIndex);
-					} else if (oSelectionPlugin.getSelectedCount() === 0) {
-						oSelectionPlugin.setSelectedIndex(iRowIndex);
-					}
-
-				// Multi selection (toggle)
-				} else if (!oTable._legacyMultiSelection) {
-					if (!oSelectionPlugin.isIndexSelected(iRowIndex)) {
-						oSelectionPlugin.addSelectionInterval(iRowIndex, iRowIndex);
-					} else {
-						oSelectionPlugin.removeSelectionInterval(iRowIndex, iRowIndex);
-					}
-
-				// Multi selection (legacy)
+				if (oEvent.shiftKey) { // Range
+					oSelectionPlugin.setSelected(oRow, true, {range: true});
+				} else if (oTable._legacyMultiSelection) {
+					oTable._legacyMultiSelection(oRow.getIndex(), oEvent);
 				} else {
-					oTable._legacyMultiSelection(iRowIndex, oEvent);
+					oSelectionPlugin.setSelected(oRow, !oSelectionPlugin.isSelected(oRow));
 				}
-
-				return true;
 			});
 		}
 	};

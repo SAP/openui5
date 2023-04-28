@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerMultiSelectionPlugin, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
+	var InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
 	var RowCountMode = library.RowCountMode;
 	var SortOrder = coreLibrary.SortOrder;
 
@@ -96,7 +96,6 @@ sap.ui.define([
 
 	GridTableType.prototype.updateTableByProperty = function(sProperty, vValue) {
 		var oGridTable = this.getInnerTable();
-		var oMultiSelectionPlugin = this._getMultiSelectionPlugin();
 
 		if (!oGridTable) {
 			return;
@@ -123,14 +122,6 @@ sap.ui.define([
 			this._updateTableRowCount();
 		} else if (sProperty === "rowCount") {
 			this._updateTableRowCount();
-		} else if (sProperty === "selectionLimit") {
-			if (oMultiSelectionPlugin) {
-				oMultiSelectionPlugin.setLimit(vValue).setEnableNotification(vValue > 0);
-			}
-		} else if (sProperty === "showHeaderSelector") {
-			if (oMultiSelectionPlugin) {
-				oMultiSelectionPlugin.setShowHeaderSelector(vValue);
-			}
 		} else if (sProperty === "fixedColumnCount") {
 			oGridTable.setFixedColumnCount(vValue);
 		}
@@ -162,14 +153,12 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				sap.ui.require([
 					"sap/ui/table/Table", "sap/ui/table/Column", "sap/ui/table/RowAction", "sap/ui/table/RowActionItem",
-					"sap/ui/table/plugins/MultiSelectionPlugin",
 					"sap/ui/table/rowmodes/FixedRowMode", "sap/ui/table/rowmodes/AutoRowMode", "sap/ui/table/RowSettings"
-				], function(GridTable, GridColumn, RowAction, RowActionItem, MultiSelectionPlugin, FixedRowMode, AutoRowMode, RowSettings) {
+				], function(GridTable, GridColumn, RowAction, RowActionItem, FixedRowMode, AutoRowMode, RowSettings) {
 					InnerTable = GridTable;
 					InnerColumn = GridColumn;
 					InnerRowAction = RowAction;
 					InnerRowActionItem = RowActionItem;
-					InnerMultiSelectionPlugin = MultiSelectionPlugin;
 					InnerFixedRowMode = FixedRowMode;
 					InnerAutoRowMode = AutoRowMode;
 					InnerRowSettings = RowSettings;
@@ -195,6 +184,9 @@ sap.ui.define([
 
 	GridTableType.prototype.getTableSettings = function() {
 		var oTable = this.getTable();
+		var mSelectionBehaviorMap = {
+			SingleMaster: "RowOnly"
+		};
 
 		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), {
 			enableBusyIndicator: true,
@@ -204,9 +196,14 @@ sap.ui.define([
 			noData: oTable._getNoDataText(),
 			extension: [oTable._oToolbar],
 			ariaLabelledBy: [oTable._oTitle],
-			plugins: [this._createSelectionPlugin()],
 			rowSettingsTemplate: this.getRowSettingsConfig(),
-			selectionBehavior: this._getSelectionBehavior()
+			selectionMode: "None",
+			selectionBehavior: {
+				path: "$sap.ui.mdc.Table>/selectionMode",
+				formatter: function(sSelectionMode) {
+					return mSelectionBehaviorMap[sSelectionMode]; // Default is "RowSelector"
+				}
+			}
 		});
 	};
 
@@ -216,29 +213,8 @@ sap.ui.define([
 		});
 	};
 
-	GridTableType.prototype._onSelectionChange = function(oEvent) {
-		this.callHook("SelectionChange", this.getTable(), {
-			bindingContext: oEvent.getParameter("rowContext"),
-			selected: oEvent.getSource().isIndexSelected(oEvent.getParameter("rowIndex")),
-			selectAll: oEvent.getParameter("selectAll")
-		});
-	};
-
 	GridTableType.createColumn = function(sId, mSettings) {
 		return new InnerColumn(sId, mSettings);
-	};
-
-	GridTableType.prototype._createSelectionPlugin = function() {
-		return new InnerMultiSelectionPlugin({
-			selectionMode: this._getSelectionMode(),
-			selectionChange: [this._onSelectionChange, this]
-		});
-	};
-
-	GridTableType.prototype._getMultiSelectionPlugin = function() {
-		var oGridTable = this.getInnerTable();
-		var oPlugin = oGridTable ? oGridTable.getPlugins()[0] : undefined;
-		return oPlugin && oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin") ? oPlugin : null;
 	};
 
 	GridTableType.prototype.enableColumnResize = function() {
@@ -284,45 +260,6 @@ sap.ui.define([
 			column: oColumn,
 			width: sWidth
 		});
-	};
-
-	GridTableType.prototype._getSelectionMode = function() {
-		var oTable = this.getTable();
-		var sSelectionMode = oTable ? oTable.getSelectionMode() : undefined;
-		var mSelectionModeMap = {
-			Single: "Single",
-			SingleMaster: "Single",
-			Multi: "MultiToggle",
-			None: "None",
-			undefined: "None"
-		};
-
-		return mSelectionModeMap[sSelectionMode];
-	};
-
-	GridTableType.prototype._getSelectionBehavior = function() {
-		var oTable = this.getTable();
-		var mSelectionBehaviorMap = {
-			SingleMaster: "RowOnly"
-		};
-
-		return mSelectionBehaviorMap[oTable ? oTable.getSelectionMode() : undefined];
-	};
-
-	GridTableType.prototype.updateSelectionSettings = function() {
-		var oTable = this.getTable();
-		var oGridTable = this.getInnerTable();
-		var oMultiSelectionPlugin = this._getMultiSelectionPlugin();
-
-		if (!oTable || !oGridTable) {
-			return;
-		}
-
-		oGridTable.setSelectionBehavior(this._getSelectionBehavior());
-
-		if (oMultiSelectionPlugin) {
-			oMultiSelectionPlugin.setSelectionMode(this._getSelectionMode());
-		}
 	};
 
 	GridTableType.prototype.updateRowSettings = function() {
@@ -491,27 +428,6 @@ sap.ui.define([
 
 		oGridColumn.setSorted(sSortOrder !== SortOrder.None);
 		oGridColumn.setSortOrder(sSortOrder === SortOrder.None ? undefined : sSortOrder);
-	};
-
-	GridTableType.prototype.getSelectedContexts = function() {
-		var oGridTable = this.getInnerTable();
-		var oMultiSelectionPlugin = this._getMultiSelectionPlugin();
-
-		if (!oMultiSelectionPlugin) {
-			return [];
-		}
-
-		return oMultiSelectionPlugin.getSelectedIndices().map(function(iIndex) {
-			return oGridTable.getContextByIndex(iIndex);
-		}, this);
-	};
-
-	GridTableType.prototype.clearSelection = function() {
-		var oMultiSelectionPlugin = this._getMultiSelectionPlugin();
-
-		if (oMultiSelectionPlugin) {
-			oMultiSelectionPlugin.clearSelection();
-		}
 	};
 
 	return GridTableType;

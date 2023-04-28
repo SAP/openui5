@@ -359,14 +359,11 @@ sap.ui.define([
 								return !oItem.getSelected() && !Opa5.getJQuery()('#' + oItem.getId()).hasClass('sapMLIBSelected');
 							}).length, oInnerTable.getItems().length, "All visible rows are de-selected");
 						}
+					} else if (bSelectAll) {
+						Opa5.assert.equal(oTable.getSelectedContexts().length, oTable.getRowBinding().getAllCurrentContexts().length,
+							"All visible rows are selected");
 					} else {
-						var oSelectionPlugin = oInnerTable.getPlugins()[0];
-
-						if (bSelectAll) {
-							Opa5.assert.equal(oSelectionPlugin.getSelectedIndices().length, oInnerTable.getBinding("rows").aContexts.length, "All visible rows are selected");
-						} else {
-							Opa5.assert.equal(oSelectionPlugin.getSelectedIndices().length, 0, "All visible rows are de-selected");
-						}
+						Opa5.assert.equal(oTable.getSelectedContexts().length, 0, "All visible rows are de-selected");
 					}
 				},
 				errorMessage: "No table found"

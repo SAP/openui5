@@ -149,6 +149,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
 		oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
+		oTable.setProperty("selectionMode", SelectionMode.None);
 
 		if (this._oNotificationPopover) {
 			this._oNotificationPopover.close();
@@ -160,27 +161,36 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Returns an object containing the selection type of the header selector and a default icon.
-	 *
-	 * @return {{headerSelector: {type: string, icon: string}}}
-	 */
+	MultiSelectionPlugin.prototype.setSelected = function(oRow, bSelected, mConfig) {
+		if (mConfig && mConfig.range) {
+			var iLastSelectedIndex = this.getSelectedIndex();
+
+			if (iLastSelectedIndex >= 0) {
+				this.addSelectionInterval(iLastSelectedIndex, oRow.getIndex());
+			}
+		} else if (bSelected) {
+			this.addSelectionInterval(oRow.getIndex(), oRow.getIndex());
+		} else {
+			this.removeSelectionInterval(oRow.getIndex(), oRow.getIndex());
+		}
+	};
+
+	MultiSelectionPlugin.prototype.isSelected = function(oRow) {
+		return this.isIndexSelected(oRow.getIndex());
+	};
+
 	MultiSelectionPlugin.prototype.getRenderConfig = function() {
 		return {
 			headerSelector: {
 				type: this._bLimitDisabled ? "toggle" : "clear",
 				icon: this.oDeselectAllIcon,
 				visible: this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector(),
-				enabled: this._bLimitDisabled || this.getSelectedCount() > 0
+				enabled: this._bLimitDisabled || this.getSelectedCount() > 0,
+				selected: this.getSelectableCount() > 0 && this.getSelectableCount() === this.getSelectedCount()
 			}
 		};
 	};
 
-	/**
-	 * This hook is called when the header selector is pressed.
-	 *
-	 * @private
-	 */
 	MultiSelectionPlugin.prototype.onHeaderSelectorPress = function() {
 		var mRenderConfig = this.getRenderConfig();
 
@@ -195,12 +205,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * This hook is called when a keyboard shortcut relevant for selection is pressed.
-	 *
-	 * @param {string} sType Type of the keyboard shortcut.
-	 * @private
-	 */
 	MultiSelectionPlugin.prototype.onKeyboardShortcut = function(sType) {
 		if (sType === "toggle") {
 			if (this._bLimitDisabled) {
@@ -225,17 +229,17 @@ sap.ui.define([
 	}
 
 	MultiSelectionPlugin.prototype.setSelectionMode = function(sSelectionMode) {
-		var sOldSelectionMode = this.getSelectionMode();
 		var oTable = this.getParent();
 
 		if (oTable) {
 			oTable.setProperty("selectionMode", sSelectionMode, true);
 		}
 
-		this.setProperty("selectionMode", sSelectionMode);
-		if (this.getSelectionMode() !== sOldSelectionMode) {
-			this.clearSelection();
+		if (this.oInnerSelectionPlugin) {
+			this.oInnerSelectionPlugin.setSelectionMode(sSelectionMode);
 		}
+
+		this.setProperty("selectionMode", sSelectionMode);
 
 		return this;
 	};

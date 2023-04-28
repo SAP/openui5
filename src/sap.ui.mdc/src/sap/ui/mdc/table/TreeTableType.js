@@ -38,21 +38,18 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-		return Promise.all([
-			GridTableType.prototype.loadModules.apply(this, arguments),
-			this.loadUiTableLibrary().then(function() {
-				return new Promise(function(resolve, reject) {
-					sap.ui.require([
-						"sap/ui/table/TreeTable"
-					], function(TreeTable) {
-						InnerTable = TreeTable;
-						resolve();
-					}, function() {
-						reject("Failed to load some modules");
-					});
+		return GridTableType.prototype.loadModules.apply(this, arguments).then(function() {
+			return new Promise(function(resolve, reject) {
+				sap.ui.require([
+					"sap/ui/table/TreeTable"
+				], function(TreeTable) {
+					InnerTable = TreeTable;
+					resolve();
+				}, function() {
+					reject("Failed to load some modules");
 				});
-			})
-		]);
+			});
+		});
 	};
 
 	TreeTableType.prototype.createTable = function(sId) {
@@ -67,20 +64,6 @@ sap.ui.define([
 		oTreeTable._oProxy._bEnableV4 = true;
 
 		return oTreeTable;
-	};
-
-	TreeTableType.prototype.getTableSettings = function() {
-		var oTable = this.getTable();
-		var bSelectionSupported = oTable ? oTable.bDelegateInitialized && oTable.getControlDelegate().getSupportedFeatures(oTable)["selection"] : false;
-		var mTableSettings = GridTableType.prototype.getTableSettings.apply(this, arguments);
-
-		if (!bSelectionSupported) {
-			mTableSettings.plugins[0].destroy();
-			delete mTableSettings.plugins;
-			mTableSettings.selectionMode = "None";
-		}
-
-		return mTableSettings;
 	};
 
 	return TreeTableType;

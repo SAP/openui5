@@ -171,16 +171,15 @@ sap.ui.define([
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer.
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {sap.ui.table.Row} oRow Instance of the row.
-		 * @param {int} iRowIndex The index of the row.
 		 * @see sap.ui.table.TableRenderer.writeRowSelectorContent
 		 * @public
 		 */
-		writeAccRowSelectorText: function(oRm, oTable, oRow, iRowIndex) {
+		writeAccRowSelectorText: function(oRm, oTable, oRow) {
 			if (!oTable._getAccExtension().getAccMode()) {
 				return;
 			}
 
-			var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(iRowIndex);
+			var bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
 			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
 			var sText = mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 

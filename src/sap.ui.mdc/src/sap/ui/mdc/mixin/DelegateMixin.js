@@ -34,6 +34,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * <ul>
 	 * <li><code>awaitControlDelegate</code> - Provides access to the delegate initialization <code>Promise</code>.</li>
 	 * <li><code>getControlDelegate</code> - Returns the delegate instance, if available.</li>
+	 * <li><code>isControlDelegateInitialized</code> - Checks whether the control delegate is available.</li>
 	 * <li><code>getPayload</code> - Returns the payload object set for the delegate property.</li>
 	 * <li><code>getTypeUtil</code> - Returns the <code>typeUtil</code> made available by the delegate module</li>
 	 * <li><code>initControlDelegate</code> - Loads and initializes the delegate module related to the enhanced control.</li>

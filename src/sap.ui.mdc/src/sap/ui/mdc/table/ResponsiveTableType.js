@@ -174,13 +174,10 @@ sap.ui.define([
 			growing: true,
 			sticky: ["ColumnHeaders", "HeaderToolbar", "InfoToolbar"],
 			itemPress: [this._onItemPress, this],
-			selectionChange: [this._onSelectionChange, this],
 			growingThreshold: this.getThreshold(),
 			noData: oTable._getNoDataText(),
 			headerToolbar: oTable._oToolbar,
-			ariaLabelledBy: [oTable._oTitle],
-			mode: this._getSelectionMode(),
-			multiSelectMode: this._getMultiSelectMode()
+			ariaLabelledBy: [oTable._oTitle]
 		});
 	};
 
@@ -191,59 +188,12 @@ sap.ui.define([
 		this._onRowActionPress(oEvent);
 	};
 
-	ResponsiveTableType.prototype._onSelectionChange = function(oEvent) {
-		var oTable = this.getTable();
-		var bSelectAll = oEvent.getParameter("selectAll");
-
-		this.callHook("SelectionChange", oTable, {
-			bindingContext: oEvent.getParameter("listItem").getBindingContext(),
-			selected: oEvent.getParameter("selected"),
-			selectAll: bSelectAll
-		});
-	};
-
 	ResponsiveTableType.createColumn = function(sId, mSettings) {
 		return new InnerColumn(sId, mSettings);
 	};
 
 	ResponsiveTableType.prototype.createRowTemplate = function(sId) {
 		return new InnerRow(sId, this.getRowSettingsConfig());
-	};
-
-	ResponsiveTableType.prototype._getSelectionMode = function() {
-		var oTable = this.getTable();
-		var sSelectionMode = oTable ? oTable.getSelectionMode() : undefined;
-		var mSelectionModeMap = {
-			Single: "SingleSelectLeft",
-			SingleMaster: "SingleSelectMaster",
-			Multi: "MultiSelect",
-			None: "None",
-			undefined: "None"
-		};
-
-		return mSelectionModeMap[sSelectionMode];
-	};
-
-	ResponsiveTableType.prototype._getMultiSelectMode = function() {
-		var oTable = this.getTable();
-		var sMultiSelectMode = oTable ? oTable.getMultiSelectMode() : undefined;
-		var mMultiSelectModeMap = {
-			Default: "SelectAll",
-			ClearAll: "ClearAll"
-		};
-		return mMultiSelectModeMap[sMultiSelectMode];
-	};
-
-	ResponsiveTableType.prototype.updateSelectionSettings = function() {
-		var oTable = this.getTable();
-		var oResponsiveTable = this.getInnerTable();
-
-		if (!oTable || !oResponsiveTable) {
-			return;
-		}
-
-		oResponsiveTable.setMode(this._getSelectionMode());
-		oResponsiveTable.setMultiSelectMode(this._getMultiSelectMode());
 	};
 
 	ResponsiveTableType.prototype.updateRowSettings = function() {
@@ -576,24 +526,6 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype.updateSortIndicator = function(oColumn, sSortOrder) {
 		oColumn.getInnerColumn().setSortIndicator(sSortOrder);
-	};
-
-	ResponsiveTableType.prototype.getSelectedContexts = function() {
-		var oResponsiveTable = this.getInnerTable();
-
-		if (!oResponsiveTable) {
-			return [];
-		}
-
-		return oResponsiveTable.getSelectedContexts();
-	};
-
-	ResponsiveTableType.prototype.clearSelection = function() {
-		var oResponsiveTable = this.getInnerTable();
-
-		if (oResponsiveTable) {
-			oResponsiveTable.removeSelections(true);
-		}
 	};
 
 	/**

@@ -68,14 +68,91 @@ sap.ui.define([
 		return V4AnalyticsPropertyHelper;
 	};
 
-	Delegate.preInit = function(oTable) {
-		if (!TableMap.has(oTable)) {
-			TableMap.set(oTable, {});
-		}
-
-		return configureInnerTable(oTable).then(function() {
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.initializeContent = function(oTable) {
+		return TableDelegate.initializeContent.apply(this, arguments).then(function() {
+			if (!TableMap.has(oTable)) {
+				TableMap.set(oTable, {});
+			}
+			return configureInnerTable(oTable);
+		}).then(function() {
 			setAggregation(oTable);
 		});
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.initializeSelection = function(oTable) {
+		if (oTable._bV4LegacySelectionEnabled) {
+			return TableDelegate.initializeSelection.apply(this, arguments);
+		}
+
+		if (oTable._isOfType(TableType.Table, true)) {
+			return initializeGridTableSelection(oTable);
+		} else {
+			return TableDelegate.initializeSelection.apply(this, arguments);
+		}
+	};
+
+	function initializeGridTableSelection(oTable) {
+		var mSelectionModeMap = {
+			Single: "Single",
+			SingleMaster: "Single",
+			Multi: "MultiToggle"
+		};
+
+		return loadModules("sap/ui/table/plugins/ODataV4Selection").then(function(aModules) {
+			var ODataV4SelectionPlugin = aModules[0];
+
+			oTable._oTable.addPlugin(new ODataV4SelectionPlugin({
+				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
+				enableNotification: true,
+				hideHeaderSelector: "{= !${$sap.ui.mdc.Table#type>/showHeaderSelector} }",
+				selectionMode: {
+					path: "$sap.ui.mdc.Table>/selectionMode",
+					formatter: function(sSelectionMode) {
+						return mSelectionModeMap[sSelectionMode];
+					}
+				},
+				enabled: {
+					path: "$sap.ui.mdc.Table>/selectionMode",
+					formatter: function(sSelectionMode) {
+						return sSelectionMode in mSelectionModeMap;
+					}
+				},
+				selectionChange: function(oEvent) {
+					oTable._onSelectionChange({
+						selectAll: oEvent.getParameter("selectAll")
+					});
+				}
+			}));
+		});
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.getSelectedContexts = function(oTable) {
+		if (!oTable._oTable) {
+			return [];
+		}
+
+		if (oTable._bV4LegacySelectionEnabled) {
+			return TableDelegate.getSelectedContexts.apply(this, arguments);
+		}
+
+		if (oTable._isOfType(TableType.Table, true)) {
+			var oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
+				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
+			});
+
+			return oODataV4SelectionPlugin ? oODataV4SelectionPlugin.getSelectedContexts() : [];
+		}
+
+		return TableDelegate.getSelectedContexts.apply(this, arguments);
 	};
 
 	Delegate.validateState = function(oTable, oState, sKey) {
@@ -205,18 +282,17 @@ sap.ui.define([
 		// When changes are made in the binding with multiple API calls, the binding fires a change event with the consolidated reason "change".
 		// The information that there is a sort or filter change is lost, hence the GridTable does not clear the selection. The changes could
 		// affect the indices and make the current selection invalid. Therefore, the delegate has to clear the selection here.
-        if (oTable._isOfType(TableType.Table)) {
-            oTable.clearSelection();
-        }
+		if (oTable._bV4LegacySelectionEnabled && oTable._isOfType(TableType.Table)) {
+			oTable.clearSelection();
+		}
 	};
 
 	/**
-	 * @override
 	 * @inheritDoc
 	 */
-	Delegate.rebind = function (oTable, oBindingInfo) {
+	Delegate.rebind = function(oTable, oBindingInfo) {
 		setAggregation(oTable, oBindingInfo);
-		TableDelegate.rebind(oTable, oBindingInfo);
+		TableDelegate.rebind.apply(this, arguments);
 	};
 
 	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
@@ -256,7 +332,7 @@ sap.ui.define([
 					aItems[iIndex].destroy();
 				}
 
-				if (aItems.length == 0 ) {
+				if (aItems.length == 0) {
 					oPopover.destroy();
 				}
 			});
@@ -265,8 +341,11 @@ sap.ui.define([
 		return aItems;
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Delegate.getSupportedP13nModes = function(oTable) {
-		var aSupportedModes = TableDelegate.getSupportedP13nModes(oTable);
+		var aSupportedModes = TableDelegate.getSupportedP13nModes.apply(this, arguments);
 
 		if (oTable._isOfType(TableType.Table)) {
 			if (!aSupportedModes.includes(P13nMode.Group)) {
@@ -280,6 +359,9 @@ sap.ui.define([
 		return aSupportedModes;
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Delegate.getGroupSorter = function(oTable, sPropertyName) {
 		var oPropertyHelper = oTable.getPropertyHelper();
 		var oVisibleProperty = oTable._getVisibleProperties().find(function(oProperty) {
@@ -297,35 +379,44 @@ sap.ui.define([
 		return TableDelegate.getGroupSorter.apply(this, arguments);
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Delegate.getSupportedFeatures = function(oTable) {
-		var oSupportedFeatures = TableDelegate.getSupportedFeatures(oTable),
-			bIsTreeTable = oTable._isOfType(TableType.TreeTable);
+		var oSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
+		var bIsTreeTable = oTable._isOfType(TableType.TreeTable);
 
 		return Object.assign(oSupportedFeatures, {
-			"expandAll": bIsTreeTable,
-			"collapseAll": bIsTreeTable
+			expandAll: bIsTreeTable,
+			collapseAll: bIsTreeTable
 		});
 	};
 
-	Delegate.expandAll = function (oTable) {
-		if (!oTable._isOfType(TableType.TreeTable)) {
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.expandAll = function(oTable) {
+		if (!this.getSupportedFeatures(oTable).expandAll) {
 			return;
 		}
 
 		var oRowBinding = oTable.getRowBinding();
 		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 999 }));
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), {expandTo: 999}));
 		}
 	};
 
-	Delegate.collapseAll = function (oTable) {
-		if (!oTable._isOfType(TableType.TreeTable)) {
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.collapseAll = function(oTable) {
+		if (!this.getSupportedFeatures(oTable).collapseAll) {
 			return;
 		}
 
 		var oRowBinding = oTable.getRowBinding();
 		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 1 }));
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), {expandTo: 1}));
 		}
 	};
 
@@ -406,7 +497,7 @@ sap.ui.define([
 				id: oTable.getId() + "-messageBox",
 				title: sTitle,
 				actions: [sActionText, oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_CANCEL")],
-				onClose: function (oAction) {
+				onClose: function(oAction) {
 					if (oAction === sActionText) {
 						forceAnalytics(sName, oTable, sPath);
 					}
@@ -452,13 +543,13 @@ sap.ui.define([
 			return;
 		}
 
-		var aGroupLevels = oTable._getGroupedProperties().map(function (mGroupLevel) {
+		var aGroupLevels = oTable._getGroupedProperties().map(function(mGroupLevel) {
 			return mGroupLevel.name;
 		});
 		var aAggregates = Object.keys(oTable._getAggregatedProperties());
 		var sSearch = oBindingInfo ? oBindingInfo.parameters["$search"] : undefined;
 
-		if (sSearch ) {
+		if (sSearch) {
 			delete oBindingInfo.parameters["$search"];
 		}
 
@@ -595,7 +686,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function mergeValidation(oBaseState, oValidationState) {
-		var oSeverity = { Error: 1, Warning: 2, Information: 3, None: 4};
+		var oSeverity = {Error: 1, Warning: 2, Information: 3, None: 4};
 
 		if (!oValidationState || oSeverity[oValidationState.validation] - oSeverity[oBaseState.validation] > 0) {
 			return oBaseState;

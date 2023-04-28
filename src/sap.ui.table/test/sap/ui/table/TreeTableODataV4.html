@@ -33,9 +33,10 @@
 
 <script>
 	sap.ui.require([
+		"sap/ui/table/plugins/ODataV4Selection",
 		"sap/ui/model/odata/v4/ODataModel",
 		"sap/ui/core/Core"
-	], function(ODataModel, Core) {
+	], function(ODataV4Selection, ODataModel, Core) {
 		var oTable = new sap.ui.table.TreeTable({
 			columns: [
 				new sap.ui.table.Column({
@@ -89,6 +90,9 @@
 					]
 				})
 			],
+            plugins: new ODataV4Selection({
+                enableNotification: true
+            }),
 			visibleRowCountMode: "Auto"
 		});
 		oTable._oProxy._bEnableV4 = true;

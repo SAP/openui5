@@ -25,6 +25,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Column",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
+	"sap/ui/table/plugins/ODataV4Selection",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/RowSettings",
@@ -62,6 +63,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	JSONModel,
 	Column,
 	MultiSelectionPlugin,
+	ODataV4Selection,
 	RowAction,
 	RowActionItem,
 	RowSettings,
@@ -589,6 +591,13 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								});
 								oTable.addPlugin(oPlugin);
 								oCore.byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
+							}
+						},
+						ODATAV4SELECTION: {
+							text: "ODataV4Selection",
+							action: function(oTable) {
+								oTable.destroyPlugins();
+								oTable.addPlugin(new ODataV4Selection());
 							}
 						}
 					}
