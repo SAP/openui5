@@ -1275,7 +1275,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarGrid.prototype.removeAllSelectedDates = function(oEvent) {
-			this.removeAllAggregation("selectedDates", true);
+			this.removeAllAggregation("selectedDates");
 		};
 
 		/**

@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/unified/DateRange"
 ], function(
 	qutils,
 	jQuery,
@@ -44,7 +45,8 @@ sap.ui.define([
 	Log,
 	oCore,
 	createAndAppendDiv,
-	UI5Date
+	UI5Date,
+	DateRange
 ) {
 	"use strict";
 	createAndAppendDiv("bigUiArea").style.width = "1024px";
@@ -568,6 +570,75 @@ sap.ui.define([
 		assert.strictEqual(aHeaderDays[0].textContent, "Sun", "Saturday is the first weekday for WesternTraditional");
 		assert.strictEqual(oSPC.getViewByKey(sViewKey).getCalendarWeekNumbering(), sInitialWeekNumbering, sViewKey + "has proper calendarWeekNumbering after changing the SinglePlanningCalendar property");
 
+		oSPC.destroy();
+	});
+
+	QUnit.module("Multi dates selection");
+
+	QUnit.test("Multi dates selection - add/remove/get selectedDates", function(assert) {
+		var sViewKey = "WeekView";
+		var oSPC = new SinglePlanningCalendar({
+				startDate: UI5Date.getInstance(2015, 0, 1, 8),
+				views: [
+					new SinglePlanningCalendarWeekView("WeekView", {
+						key: "WeekView",
+						title: "Week View"
+					}),
+					new SinglePlanningCalendarMonthView("MonthView", {
+						key: "MonthView",
+						title: "Month View"
+					})
+				],
+				selectedDates: [
+					new DateRange({startDate: UI5Date.getInstance(2015, 0, 1, 8)}),
+					new DateRange({startDate: UI5Date.getInstance(2015, 0, 2, 8)}),
+					new DateRange({startDate: UI5Date.getInstance(2015, 0, 3, 8)})
+				]
+			});
+
+		// Prepare
+		oSPC.placeAt("qunit-fixture");
+
+		// Act
+		oSPC.setSelectedView(sViewKey);
+		Core.applyChanges();
+
+		//assert
+		assert.strictEqual(oSPC.getSelectedDates().length, 3, "the selected dates are correctly added");
+		assert.strictEqual(oSPC.getAggregation("_grid").getSelectedDates().length, 3, "the selected dates are correctly added in the selected view");
+
+		// Act
+		sViewKey = "MonthView";
+		oSPC.setSelectedView(sViewKey);
+		Core.applyChanges();
+
+		//assert
+		assert.strictEqual(oSPC.getAggregation("_mvgrid").getSelectedDates().length, 3, "the selected dates are correctly added in the selected view");
+
+		// Act
+		oSPC.addSelectedDate(new DateRange({startDate: UI5Date.getInstance(2015, 0, 4, 8)}));
+
+		//assert
+		assert.strictEqual(oSPC.getSelectedDates().length, 4, "the selected dates are correctly added");
+		assert.strictEqual(oSPC.getAggregation("_mvgrid").getSelectedDates().length, 4, "the selected dates are correctly added in the selected view");
+
+		// Act
+		sViewKey = "WeekView";
+		oSPC.setSelectedView(sViewKey);
+		Core.applyChanges();
+
+		//assert
+		assert.strictEqual(oSPC.getAggregation("_grid").getSelectedDates().length, 4, "the selected dates are correctly added in the selected view");
+
+		// Act
+		oSPC.removeAllSelectedDates();
+		Core.applyChanges();
+
+		//assert
+		assert.strictEqual(oSPC.getSelectedDates().length, 0, "the selected dates are correctly removed");
+		assert.strictEqual(oSPC.getAggregation("_grid").getSelectedDates().length, 0, "the selected dates are correctly removed in the selected view");
+
+		//clean up
 		oSPC.destroy();
 	});
 
