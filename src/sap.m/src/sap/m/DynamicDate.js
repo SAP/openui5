@@ -52,7 +52,6 @@ sap.ui.define([
 		 * @param {int} [oConstraints.maximum] Greatest resulting date allowed for this type. Must be provided as a timestamps.
 		 * @since 1.92
 		 * @alias sap.m.DynamicDate
-		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 */
 		var DynamicDate = SimpleType.extend("sap.m.DynamicDate", /** @lends sap.m.DynamicDate.prototype  */ {
 
