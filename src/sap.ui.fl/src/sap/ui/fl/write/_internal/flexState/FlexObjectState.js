@@ -99,8 +99,13 @@ sap.ui.define([
 		// 1. Get current variant references
 		var oComponent = Utils.getAppComponentForControl(oControl);
 		var oModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-		var sFlexReference = oModel && oModel.sFlexReference;
-		var aVariantManagementReferences = VariantManagementState.getVariantManagementReferences(sFlexReference);
+		var aVariantManagementReferences;
+		if (oModel) {
+			var sFlexReference = oModel && oModel.sFlexReference;
+			aVariantManagementReferences = VariantManagementState.getVariantManagementReferences(sFlexReference);
+		} else {
+			aVariantManagementReferences = [];
+		}
 
 		if (aVariantManagementReferences.length === 0) {
 			return aChanges;
