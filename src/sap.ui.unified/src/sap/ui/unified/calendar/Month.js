@@ -61,7 +61,7 @@ sap.ui.define([
 	var CalendarDayType = library.CalendarDayType;
 
 	/*
-	 * Inside the Month CalendarDate objects are used. But in the API JS dates are used.
+	 * Inside the Month CalendarDate objects are used. But in the API UI5Date or JavaScript Dates are used.
 	 * So conversion must be done on API functions.
 	 */
 
@@ -89,7 +89,7 @@ sap.ui.define([
 		library : "sap.ui.unified",
 		properties : {
 			/**
-			 * A date as JavaScript Date object.
+			 * A date as UI5Date or JavaScript Date object.
 			 * The month including this date is rendered and this date is focused initially (if no other focus is set).
 			 */
 			date : {type : "object", group : "Data"},
@@ -469,7 +469,7 @@ sap.ui.define([
 	/**
 	 * Sets a date for the month.
 	 *
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -501,7 +501,7 @@ sap.ui.define([
 	/**
 	 * Displays the month of a given date without setting the focus.
 	 *
-	 * @param {Date} oDate JavaScript date object for focused date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance for focused date
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -1373,7 +1373,7 @@ sap.ui.define([
 	 * Checks if a date is focusable in the current rendered output.
 	 * So if not rendered or in other month it is not focusable.
 	 *
-	 * @param {Date} oDate JavaScript date object for focused date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance for focused date
 	 * @returns {boolean} flag if focusable
 	 * @public
 	 */
@@ -1687,6 +1687,7 @@ sap.ui.define([
 	 * Determines if indication for unfinished interval selection should be displayed.
 	 * @returns {boolean}
 	 * @private
+     * @return {boolean} Such unfinished selection is allowed
 	 */
 	Month.prototype._isMarkingUnfinishedRangeAllowed = function () {
 		// Method should return 'true' only when 'intervalSelection' is set to 'true', the user has selected

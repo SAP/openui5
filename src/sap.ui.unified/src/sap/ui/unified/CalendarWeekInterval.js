@@ -117,7 +117,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 		/**
 		 *
-		 * @param {Date} oDateTime a JavaScript Date (datetime). As CalendarWeekInterval works with dates (no time info),
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDateTime a date instance (datetime). As CalendarWeekInterval works with dates (no time info),
 		 * the time part of the oDateTime is not considered during comparison.
 		 * @return {boolean} true if the given parameter matches the range between startDate (inclusive) and a date
 		 * that is CalendarWeekInterval.getDays() later(exclusive)

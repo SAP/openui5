@@ -412,7 +412,7 @@ sap.ui.define([
 	/**
 	 * Set start date for the interval.
 	 *
-	 * @param {Date} oStartDate A JavaScript Date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oStartDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -469,7 +469,7 @@ sap.ui.define([
 	 * Returns the start date of the interval.
 	 *
 	 * Start date of the Interval
-	 * @returns {Date} JavaScript date object for property <code>startDate</code>
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} date instance for property <code>startDate</code>
 	 * @public
 	 */
 	CalendarDateInterval.prototype.getStartDate = function(){
@@ -627,7 +627,7 @@ sap.ui.define([
 
 	/**
 	* Focuses given date.
-	* @param {Date} oDate a JavaScript date
+	* @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
 	* @returns {this} Reference to <code>this</code> for method chaining
 	*/
 	CalendarDateInterval.prototype.focusDate = function(oDate){
@@ -1118,7 +1118,7 @@ sap.ui.define([
 	/**
 	 * Sets given start date as date in local.
 	 *
-	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Date that should be taken to create the local JavaScript date.
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Date that should be taken to create the local UI5Date or JavaScript Date.
 	 * E.g. if the date is Dec 21th 1981, the local date (CEST) would be Dec 21th, 1981 00:00:00 GMT +02:00
 	 * @param {boolean} bSetFocusDate if true, sets this date as focused date
 	 * @param {boolean} bNoEvent describes whether the startDateChange event was previously thrown

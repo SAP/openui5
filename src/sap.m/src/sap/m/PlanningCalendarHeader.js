@@ -117,7 +117,7 @@ function(
 				title: { type: "string", group: "Appearance", defaultValue: "" },
 
 				/**
-				 * Determines the start date used in the calendar picker, as a JavaScript date object. It is considered as a local date.
+				 * Determines the start date used in the calendar picker, as a UI5Date or JavaScript Date object. It is considered as a local date.
 				 * The time part will be ignored. The current date is used as default.
 				 */
 				startDate: { type : "object", group : "Data" },

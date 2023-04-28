@@ -104,7 +104,7 @@ sap.ui.define([
 	/**
 	 * Sets start date of the row.
 	 *
-	 * @param {Date} oStartDate A JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oStartDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -152,7 +152,7 @@ sap.ui.define([
 	 * beginning with <code>startDate</code> and <code>days</code> days
 	 * So set this properties before setting the date.
 	 *
-	 * @param {Date} oDate JavaScript date object for start date.
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance for start date.
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -176,7 +176,7 @@ sap.ui.define([
 	 * beginning with <code>startDate</code> and <code>days</code> days
 	 * So set this properties before setting the date.
 	 *
-	 * @param {Date} oDate JavaScript date object for focused date.
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance for focused date.
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */

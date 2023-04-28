@@ -60,7 +60,7 @@ sap.ui.define([
 	"use strict";
 
 	/*
-	 * Inside the Calendar CalendarDate objects are used. But in the API JS dates are used.
+	 * Inside the Calendar CalendarDate, UI5Date or JavaScript Date objects are used. But in the API only UI5Date or JavaScript Date object are used.
 	 * So conversion must be done on API functions.
 	 */
 
@@ -154,7 +154,7 @@ sap.ui.define([
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Minimum date that can be shown and selected in the Calendar. This must be a JavaScript date object.
+			 * Minimum date that can be shown and selected in the Calendar. This must be a UI5Date or JavaScript Date object.
 			 *
 			 * <b>Note:</b> if the date is inside of a month the complete month is displayed,
 			 * but dates outside the valid range can not be selected.
@@ -166,7 +166,7 @@ sap.ui.define([
 			minDate : {type : "object", group : "Misc", defaultValue : null},
 
 			/**
-			 * Maximum date that can be shown and selected in the Calendar. This must be a JavaScript date object.
+			 * Maximum date that can be shown and selected in the Calendar. This must be a UI5Date or JavaScript Date object.
 			 *
 			 * <b>Note:</b> if the date is inside of a month the complete month is displayed,
 			 * but dates outside the valid range can not be selected.
@@ -210,7 +210,7 @@ sap.ui.define([
 			calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
 
 			/**
-			 * Holds a reference to a JavaScript Date Object to define the initially navigated date in the calendar.
+			 * Holds a reference to a UI5Date or JavaScript Date object to define the initially navigated date in the calendar.
 			 *
 			 * @since 1.111
 			 */
@@ -734,7 +734,7 @@ sap.ui.define([
 	/**
 	 * Displays and sets the focused date of the calendar.
 	 *
-	 * @param {Date} oDate A JavaScript date object for focused date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance for focused date
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -750,7 +750,7 @@ sap.ui.define([
 	/**
 	 * Displays a date in the calendar but doesn't set the focus.
 	 *
-	 * @param {Date} oDate JavaScript date object for focused date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance for focused date
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @since 1.28.0
 	 * @public
@@ -768,7 +768,7 @@ sap.ui.define([
 	 *
 	 * There might be some days of the previous month shown, but they can not be focused.
 	 *
-	 * @returns {Date} JavaScript date object for start date
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} date instance for start date
 	 * @since 1.34.1
 	 * @public
 	 */
@@ -954,7 +954,7 @@ sap.ui.define([
 
 	/**
 	 * Sets a minimum date for the calendar.
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -1008,7 +1008,7 @@ sap.ui.define([
 
 	/**
 	 * Sets a maximum date for the calendar.
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -1432,7 +1432,7 @@ sap.ui.define([
 	 * @returns {void}
 	 * @private
 	 */
-	Calendar.prototype._handlePrevious = function(oEvent){
+	Calendar.prototype._handlePrevious = function(){
 
 		var oFocusedDate = this._getFocusedDate(),
 			iMonths = _getMonths.call(this),
@@ -1492,7 +1492,7 @@ sap.ui.define([
 	 * @returns {void}
 	 * @private
 	 */
-	Calendar.prototype._handleNext = function(oEvent){
+	Calendar.prototype._handleNext = function(){
 
 		var oFocusedDate = this._getFocusedDate(),
 			iMonths = _getMonths.call(this),
@@ -1826,6 +1826,7 @@ sap.ui.define([
 	 * Shows an embedded Month Picker.
 	 * This function assumes there is a "monthPicker" & "yearPicker" aggregation.
 	 * So callers must take care.
+	 * @param {boolean} bSkipFocus determines whether to skip focusing
 	 * @returns {void}
 	 * @private
 	 */
@@ -1968,6 +1969,7 @@ sap.ui.define([
 	/**
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate A date to be used for the header buttons
 	 * @private
+	 * @return {object} text for the month and the year button to the header
 	 */
 	Calendar.prototype._setHeaderText = function(oDate){
 
@@ -2262,6 +2264,7 @@ sap.ui.define([
 	 * Sets columns to display
 	 * @param iColumns Number of columns to display
 	 * @private
+	 * @return {this} Reference to <code>this</code> for method chaining
 	 */
 	Calendar.prototype._setColumns = function (iColumns) {
 		this._iColumns = iColumns;
@@ -2691,7 +2694,6 @@ sap.ui.define([
 			if (!this._bLongMonth) {
 				// update short month name (long name used by default)
 				aMonths = this.getAggregation("month");
-				oDate;
 
 				if (aMonths.length > 1) {
 					oDate = CalendarDate.fromLocalJSDate(aMonths[0].getDate(), this._getPrimaryCalendarType());

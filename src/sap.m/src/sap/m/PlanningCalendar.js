@@ -207,7 +207,7 @@ sap.ui.define([
 			properties : {
 
 				/**
-				 * Determines the start date of the row, as a JavaScript date object. The current date is used as default.
+				 * Determines the start date of the row, as a UI5Date or JavaScript Date object. The current date is used as default.
 				 */
 				startDate : {type : "object", group : "Data"},
 
@@ -307,7 +307,7 @@ sap.ui.define([
 
 				/**
 				 * Defines the minimum date that can be displayed and selected in the <code>PlanningCalendar</code>.
-				 * This must be a JavaScript date object.
+				 * This must be a UI5Date or JavaScript Date object.
 				 *
 				 * <b>Note:</b> If the <code>minDate</code> is set to be after the current <code>maxDate</code>,
 				 * the <code>maxDate</code> is set to the last date of the month in which the <code>minDate</code> belongs.
@@ -317,7 +317,7 @@ sap.ui.define([
 
 				/**
 				 * Defines the maximum date that can be displayed and selected in the <code>PlanningCalendar</code>.
-				 * This must be a JavaScript date object.
+				 * This must be a UI5Date or JavaScript Date object.
 				 *
 				 * <b>Note:</b> If the <code>maxDate</code> is set to be before the current <code>minDate</code>,
 				 * the <code>minDate</code> is set to the first date of the month in which the <code>maxDate</code> belongs.
@@ -515,12 +515,12 @@ sap.ui.define([
 				intervalSelect : {
 					parameters : {
 						/**
-						 * Start date of the selected interval, as a JavaScript date object.
+						 * Start date of the selected interval, as a UI5Date or JavaScript Date object.
 						 */
 						startDate : {type : "object"},
 
 						/**
-						 * Interval end date as a JavaScript date object.
+						 * Interval end date as a UI5Date or JavaScript Date object.
 						 * @since 1.38.0
 						 */
 						endDate : {type : "object"},
@@ -1184,7 +1184,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for the end point in time of the shown interval
-	 * @returns {Date} JavaScript date object with the end date
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} date instance with the end date
 	 * @since 1.87
 	 * @public
 	 */
@@ -1564,8 +1564,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set minimum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
-	 * @param {Date} oDate A JavaScript Date
+	 * Set minimum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a UI5Date or JavaScript Date object.
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
@@ -1629,8 +1629,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set maximum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
-	 * @param {Date} oDate A JavaScript Date
+	 * Set maximum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a UI5Date or JavaScript Date object.
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */

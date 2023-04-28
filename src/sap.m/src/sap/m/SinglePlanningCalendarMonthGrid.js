@@ -108,7 +108,7 @@ sap.ui.define([
 				properties: {
 
 					/**
-					 * Determines the start date of the grid, as a JavaScript date object. It is considered as a local date.
+					 * Determines the start date of the grid, as a UI5Date or JavaScript Date object. It is considered as a local date.
 					 * The time part will be ignored. The current date is used as default.
 					 */
 					startDate: { type: "object", group: "Data" },
@@ -184,11 +184,11 @@ sap.ui.define([
 					cellPress: {
 						parameters: {
 							/**
-							 * The start date as a JavaScript date object of the focused grid cell.
+							 * The start date as a UI5Date or JavaScript Date object of the focused grid cell.
 							 */
 							startDate: { type: "object" },
 							/**
-							 * The end date as a JavaScript date object of the focused grid cell.
+							 * The end date as a UI5Date or JavaScript Date object of the focused grid cell.
 							 */
 							endDate: { type: "object" }
 						}
@@ -201,7 +201,7 @@ sap.ui.define([
 					moreLinkPress: {
 						parameters: {
 							/**
-							 * The date as a JavaScript date object of the cell with the
+							 * The date as a UI5Date or JavaScript Date object of the cell with the
 							 * pressed more link.
 							 */
 							date: { type: "object" }
@@ -218,12 +218,12 @@ sap.ui.define([
 							appointment: { type: "sap.ui.unified.CalendarAppointment" },
 
 							/**
-							 * Start date of the dropped appointment as a JavaScript date object.
+							 * Start date of the dropped appointment as a UI5Date or JavaScript Date object.
 							 */
 							startDate: { type: "object" },
 
 							/**
-							 * End date of the dropped appointment as a JavaScript date object.
+							 * End date of the dropped appointment as a UI5Date or JavaScript Date object.
 							 */
 							endDate: { type: "object" },
 

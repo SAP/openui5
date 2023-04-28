@@ -285,7 +285,7 @@ sap.ui.define([
 
 		/**
 		 * Called by PlanningCalendar to check if the given datetime matches the visible dates.
-		 * @param {Date} oDateTime The JavaScript date to be checked
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDateTime The date instance to be checked
 		 * @return {boolean} Whether the given datetime is one of the visible dates
 		 * @private
 		 */
