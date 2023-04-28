@@ -212,8 +212,24 @@ sap.ui.define([
 					assert.strictEqual(oSwitchAdaptationsButton.getItems().length, 3, "number of adaptations to be switched is correct");
 				}.bind(this));
 		});
+	});
 
-		QUnit.test("When two context-based adaptation are available and delete these", function (assert) {
+	QUnit.module("Given RTA and context-based adaptation is enabled and filled", {
+		beforeEach: function() {
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
+				this.placeAt("qunit-fixture");
+			});
+			this.oControlsModel = RtaQunitUtils.createToolbarControlsModel();
+		},
+		afterEach: function() {
+			this.oContainer.destroy();
+			this.oComponent.destroy();
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When two context-based adaptation are available and then both adaptations are deleted one after the other", function (assert) {
 			var oDefaultAdaptation = {
 				id: "DEFAULT",
 				contexts: {},
@@ -244,13 +260,12 @@ sap.ui.define([
 				textResources: this.oTextResources
 			});
 
-			sandbox.stub(ContextBasedAdaptationsAPI, "createModel").withArgs(oAdaptationsModel);
 			sandbox.stub(ContextBasedAdaptationsAPI, "remove").returns(Promise.resolve({status: 204}));
-			sandbox.stub(Settings.prototype, "isContextBasedAdaptationEnabled").returns(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(oAdaptationsModel);
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
 			sandbox.stub(ReloadManager, "triggerReload");
 
-			return createAndStartRTA.call(this)
+			return createAndStartRTA.call(this, oAdaptationsModel)
 				.then(function() {
 					var oMenuButton = this.oToolbar.getControl("contextBasedAdaptationMenu");
 					this.oToolbar.setModel(oAdaptationsModel, "contextBasedAdaptations");
@@ -268,16 +283,14 @@ sap.ui.define([
 						assert.strictEqual(oDeleteButton.getVisible(), true, "then the context-based adaptation delete menu button is enabled");
 						assert.strictEqual(oEditButton.getVisible(), true, "then the context-based edit menu button is enabled");
 						assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'Manager'", "then the menu text is rendered correctly");
-					}.bind(this);
-					oDeleteButton.firePress();
-					oMenuButton.onAfterRendering = function() {
-						assert.strictEqual(oAdaptationsModel.getProperty("/count"), 0, "only one adaptation is left in the model");
-						assert.strictEqual(oDeleteButton.getVisible(), false, "then the context-based adaptation delete menu button is enabled");
-						assert.strictEqual(oEditButton.getVisible(), false, "then the context-based edit menu button is enabled");
-						assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly");
-						this.oContainer.destroy();
-						this.oComponent.destroy();
-						this.oRta.destroy();
+
+						oDeleteButton.firePress();
+						oMenuButton.onAfterRendering = function() {
+							assert.strictEqual(oAdaptationsModel.getProperty("/count"), 0, "only one adaptation is left in the model");
+							assert.strictEqual(oDeleteButton.getVisible(), false, "then the context-based adaptation delete menu button is enabled");
+							assert.strictEqual(oEditButton.getVisible(), false, "then the context-based edit menu button is enabled");
+							assert.strictEqual(this.oToolbar.getControl("contextBasedAdaptationMenu").getText(), "Adapting for 'All Users'", "then the menu text is rendered correctly");
+						}.bind(this);
 					}.bind(this);
 					oDeleteButton.firePress();
 				}.bind(this));
@@ -494,7 +507,7 @@ sap.ui.define([
 		});
 	});
 
-	function createAndStartRTA() {
+	function createAndStartRTA(oAdaptationsModel) {
 		this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 		var oButton = new Button("testButton");
 		this.oContainer = new VerticalLayout({
@@ -512,6 +525,7 @@ sap.ui.define([
 		return this.oRta.start()
 			.then(function() {
 				this.oToolbar = this.oRta.getToolbar();
+				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
 			}.bind(this));
 	}
 

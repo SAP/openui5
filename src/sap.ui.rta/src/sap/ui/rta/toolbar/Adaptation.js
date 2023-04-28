@@ -73,6 +73,7 @@ sap.ui.define([
 				discardDraft: {},
 				switchVersion: {},
 				switchAdaptation: {},
+				deleteAdaptation: {},
 				openChangeCategorySelectionPopover: {}
 			}
 		}
@@ -350,31 +351,7 @@ sap.ui.define([
 	}
 
 	function onDeleteAdaptation() {
-		var oAdaptationsModel = this.getModel("contextBasedAdaptations");
-		var oRtaInformation = this.getRtaInformation();
-		Utils.showMessageBox("confirm", "DAC_DIALOG_DESCRIPTION", {
-			titleKey: "DAC_DIALOG_HEADER"
-		}).then(function(sAction) {
-			if (sAction === MessageBox.Action.OK) {
-				BusyIndicator.show();
-				ContextBasedAdaptationsAPI.remove({
-					control: oRtaInformation.rootControl,
-					layer: oRtaInformation.flexSettings.layer,
-					adaptationId: oAdaptationsModel.getProperty("/displayedAdaptation").id
-				}).then(function() {
-					var sAdaptationId = oAdaptationsModel.deleteAdaptation();
-					BusyIndicator.hide();
-					this.fireEvent("switchAdaptation", {adaptationId: sAdaptationId});
-				}.bind(this)).catch(function(oError) {
-					BusyIndicator.hide();
-					Log.error(oError.stack);
-					var sMessage = "MSG_LREP_TRANSFER_ERROR";
-					var oOptions = { titleKey: "DAC_DIALOG_HEADER" };
-					oOptions.details = oError.userMessage;
-					Utils.showMessageBox("error", sMessage, oOptions);
-				});
-			}
-		}.bind(this));
+		this.fireEvent("deleteAdaptation");
 	}
 
 	function onManageAdaptations() {
