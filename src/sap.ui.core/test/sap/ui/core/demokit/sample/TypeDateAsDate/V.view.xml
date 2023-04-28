@@ -18,7 +18,9 @@
 		title="Date Input" >
 		<form:content>
 			<Label text="Date" />
-			<DatePicker dateValue="{/date}"/>
+			<DatePicker value="{
+				path: '/date',
+				type: 'sap.ui.model.type.Date'}" />
 		</form:content>
 	</form:SimpleForm>
 

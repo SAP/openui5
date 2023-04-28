@@ -1,11 +1,15 @@
-sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/model/json/JSONModel"],
-	function (Controller, JSONModel) {
+sap.ui.define([
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel"
+], function (UI5Date, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.TypeDateAsString.C", {
 
 		_data : {
-			"date" : "2014/12/30"
+			// current date in "yyyy-MM-dd" format
+			date: UI5Date.getInstance().toISOString().slice(0, 10)
 		},
 
 		onInit : function (evt) {
