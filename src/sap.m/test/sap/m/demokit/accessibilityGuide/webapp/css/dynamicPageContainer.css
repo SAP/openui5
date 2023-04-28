@@ -1,0 +1,5 @@
+html,
+body,
+div[data-id="container"] {
+	height: 100%;
+}
