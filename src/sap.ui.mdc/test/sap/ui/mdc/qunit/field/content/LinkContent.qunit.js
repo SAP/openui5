@@ -3,44 +3,154 @@ sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
 	"sap/ui/mdc/field/content/LinkContent",
 	"sap/ui/mdc/Field",
+	"sap/m/library",
 	"sap/m/Link",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/m/TextArea",
 	"sap/m/Token"
-], function(QUnit, LinkContent, Field, Link, FieldInput, FieldMultiInput, TextArea, Token) {
+], function(QUnit, LinkContent, Field, mLibrary, Link, FieldInput, FieldMultiInput, TextArea, Token) {
 	"use strict";
+
+	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	var oControlMap = {
 		"Display": {
 			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Link"],
 			instances: [Link],
-			createFunction: "createDisplay"
+			createFunction: "createDisplay",
+			bindings: [
+				{
+					text: "$field>/conditions",
+					textAlign: "$field>/textAlign",
+					textDirection: "$field>/textDirection",
+					wrapping: "$field>/multipleLines",
+					tooltip: "$field>/tooltip"
+				},
+				{}
+			],
+			properties: [
+				{
+					emptyIndicatorMode: EmptyIndicatorMode.Auto
+				},
+				{}
+			]
 		},
 		"DisplayMultiLine": {
 			getPathsFunction: "getDisplayMultiLine",
 			paths: ["sap/m/Link"],
 			instances: [Link],
-			createFunction: "createDisplayMultiLine"
+			createFunction: "createDisplayMultiLine",
+			bindings: [
+				{
+					text: "$field>/conditions",
+					textAlign: "$field>/textAlign",
+					textDirection: "$field>/textDirection",
+					wrapping: "$field>/multipleLines",
+					tooltip: "$field>/tooltip"
+				},
+				{}
+			],
+			properties: [
+				{
+					emptyIndicatorMode: EmptyIndicatorMode.Auto
+				},
+				{}
+			]
 		},
 		"Edit": {
 			getPathsFunction: "getEdit",
 			paths: ["sap/ui/mdc/field/FieldInput"],
 			instances: [FieldInput],
-			createFunction: "createEdit"
+			createFunction: "createEdit",
+			bindings: [
+				{
+					value: "$field>/conditions",
+					placeholder: "$field>/placeholder",
+					textAlign: "$field>/textAlign",
+					textDirection: "$field>/textDirection",
+					required: "$field>/required",
+					editable: "$field>/editMode",
+					enabled: "$field>/editMode",
+					valueState: "$field>/valueState",
+					valueStateText: "$field>/valueStateText",
+					showValueHelp: "$field>/_fieldHelpEnabled",
+					ariaAttributes: "$field>/_ariaAttributes",
+					tooltip: "$field>/tooltip"
+				},
+				{}
+			],
+			properties: [
+				{
+					width: "100%",
+					autocomplete: false,
+					showSuggestion: false
+				},
+				{}
+			]
 		},
 		"EditMultiValue": {
 			getPathsFunction: "getEditMultiValue",
 			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
 			instances: [FieldMultiInput, Token],
-			createFunction: "createEditMultiValue"
+			createFunction: "createEditMultiValue",
+			bindings: [
+				{
+					value: "$field>/conditions",
+					placeholder: "$field>/placeholder",
+					textAlign: "$field>/textAlign",
+					textDirection: "$field>/textDirection",
+					required: "$field>/required",
+					editable: "$field>/editMode",
+					enabled: "$field>/editMode",
+					valueState: "$field>/valueState",
+					valueStateText: "$field>/valueStateText",
+					showValueHelp: "$field>/_fieldHelpEnabled",
+					ariaAttributes: "$field>/_ariaAttributes",
+					tooltip: "$field>/tooltip",
+					tokens: "$field>/conditions"
+				},
+				{
+					text: "$field>"
+				}
+			],
+			properties: [
+				{
+					width: "100%",
+					autocomplete: false,
+					showSuggestion: false
+				},
+				{}
+			]
 		},
 		"EditMultiLine": {
 			getPathsFunction: "getEditMultiLine",
 			paths: ["sap/m/TextArea"],
 			instances: [TextArea],
-			createFunction: "createEditMultiLine"
+			createFunction: "createEditMultiLine",
+			bindings: [
+				{
+					value: "$field>/conditions",
+					placeholder: "$field>/placeholder",
+					textAlign: "$field>/textAlign",
+					textDirection: "$field>/textDirection",
+					required: "$field>/required",
+					editable: "$field>/editMode",
+					enabled: "$field>/editMode",
+					valueState: "$field>/valueState",
+					valueStateText: "$field>/valueStateText",
+					tooltip: "$field>/tooltip"
+				},
+				{}
+			],
+			properties: [
+				{
+					width: "100%",
+					rows: 4
+				},
+				{}
+			]
 		}
 	};
 
@@ -157,6 +267,16 @@ sap.ui.define([
 					var aControls = LinkContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
 					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
+
+					for (var sName in oValue.bindings[0]) {
+						var oBindingInfo = aControls[0].getBindingInfo(sName);
+						var sPath = oBindingInfo && oBindingInfo.parts ? oBindingInfo.parts[0].path : oBindingInfo.path;
+						var sModel = oBindingInfo && oBindingInfo.parts ? oBindingInfo.parts[0].model : oBindingInfo.model;
+						assert.equal(sModel + ">" + sPath, oValue.bindings[0][sName], "Binding path for " + sName);
+					}
+					for (var sProperty in oValue.properties[0]) {
+						assert.equal(aControls[0].getProperty(sProperty), oValue.properties[0][sProperty], "Value for " + sProperty);
+					}
 					done();
 				});
 			});
