@@ -255,6 +255,10 @@ sap.ui.define([
 		assert.ok(this.oColumnResizer._bPositionsInvalid, "Handle positions are invalidated");
 		assert.ok(this.oColumnResizer._oHandle.style[this.sBeginDirection], "Handle positions are not changed after leaving the table");
 
+		this.oTable.setWidth("500px");
+		this.clock.tick(1);
+		assert.ok(this.oColumnResizer._bPositionsInvalid, "Handle positions are invalidated on table resize");
+
 		QUtils.triggerEvent("mouseleave", this.oColumnResizer._oHandle);
 		assert.notOk(this.oColumnResizer._oHandle.style[this.sBeginDirection], "Handle is not visible after mouse leave");
 	});
