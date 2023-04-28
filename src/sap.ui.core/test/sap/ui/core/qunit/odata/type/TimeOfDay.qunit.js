@@ -516,4 +516,30 @@ sap.ui.define([
 		assert.ok(oResult instanceof DateFormat);
 		assert.strictEqual(oType.oFormat, oResult);
 	});
+
+	//*********************************************************************************************
+[
+	"09:15:30.000Z",
+	"15:15:45.12345Z",
+	"23:00:00.123-01:00",
+	"12:30:45.12345+01:00"
+].forEach(function (sISOString, i) {
+	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString: integrative test " + i, function (assert) {
+		var oType = new TimeOfDay({}, {precision: 3});
+
+		assert.strictEqual(oType.getISOStringFromModelValue(sISOString), sISOString);
+		assert.strictEqual(oType.getModelValueFromISOString(sISOString), sISOString);
+	});
+});
+
+	//*********************************************************************************************
+["getISOStringFromModelValue", "getModelValueFromISOString"].forEach(function (sMethod) {
+	QUnit.test(sMethod + ": falsy values", function (assert) {
+		var oType = new TimeOfDay();
+
+		assert.strictEqual(oType[sMethod](null), null);
+		assert.strictEqual(oType[sMethod](undefined), null);
+		assert.strictEqual(oType[sMethod](""), null);
+	});
+});
 });

@@ -194,6 +194,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the ISO string for the given model value.
+	 *
+	 * @param {string|null} sModelValue
+	 *   The model value, as returned by {@link #getModelValue}
+	 * @returns {string|null}
+	 *   A date string according to ISO 8601, or <code>null</code> if the given model value is falsy
+	 *
+	 * @since 1.114.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	EdmDate.prototype.getISOStringFromModelValue = function (sModelValue) {
+		return sModelValue ? sModelValue : null;
+	};
+
+	/**
 	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
 	 * methods: <code>format</code> takes a Date and returns a date as a String in the format
 	 * expected by the model, <code>parse</code> converts from the String to a Date.
@@ -240,6 +256,23 @@ sap.ui.define([
 		this.validateValue(vResult);
 
 		return vResult;
+	};
+
+	/**
+	 * Returns the model value for the given ISO string.
+	 *
+	 * @param {string|null} sISOString
+	 *   A string according to ISO 8601, as returned by {@link #getISOStringFromModelValue}
+	 * @returns {string|null}
+	 *   The model representation for the given ISO string for this type,
+	 *   or <code>null</code> if the given ISO string is falsy
+	 *
+	 * @since 1.114.0
+	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template, sap.ui.comp, sap.ui.generic
+	 */
+	EdmDate.prototype.getModelValueFromISOString = function (sISOString) {
+		return sISOString ? sISOString : null;
 	};
 
 	/**

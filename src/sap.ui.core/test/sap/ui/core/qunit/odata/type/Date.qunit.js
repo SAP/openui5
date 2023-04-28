@@ -446,4 +446,23 @@ sap.ui.define([
 		assert.ok(oResult instanceof DateFormat);
 		assert.strictEqual(oType.oFormat, oResult);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString", function (assert) {
+		var oType = new DateType();
+
+		assert.strictEqual(oType.getISOStringFromModelValue("~Date"), "~Date");
+		assert.strictEqual(oType.getModelValueFromISOString("~Date"), "~Date");
+	});
+
+	//*********************************************************************************************
+["getISOStringFromModelValue", "getModelValueFromISOString"].forEach(function (sMethod) {
+	QUnit.test(sMethod + ": falsy values", function (assert) {
+		var oType = new DateType();
+
+		assert.strictEqual(oType[sMethod](null), null);
+		assert.strictEqual(oType[sMethod](undefined), null);
+		assert.strictEqual(oType[sMethod](""), null);
+	});
+});
 });
