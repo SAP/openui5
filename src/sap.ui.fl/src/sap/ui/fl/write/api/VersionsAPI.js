@@ -168,9 +168,13 @@ sap.ui.define([
 			oModel.setProperty("/persistedVersion", mPropertyBag.version);
 		}
 
-		var oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel(mPropertyBag);
-		if (oAdaptationsModel) {
-			oAdaptationsModel.switchDisplayedAdaptation(mPropertyBag.adaptationId);
+		if (!mPropertyBag.adaptationId) {
+			ContextBasedAdaptationsAPI.clearInstances();
+		} else {
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel(mPropertyBag);
+			if (oAdaptationsModel) {
+				oAdaptationsModel.switchDisplayedAdaptation(mPropertyBag.adaptationId);
+			}
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
