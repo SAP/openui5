@@ -15,24 +15,6 @@ sap.ui.define([
 	var sDateOrTimeRequired = "For type 'object', at least one of the format options 'showDate' or"
 			+ " 'showTime' must be enabled";
 
-	/*
-	 * Returns the formatter. Creates it lazily.
-	 *
-	 * @param {sap.ui.model.odata.type.DateTimeWithTimezone} oType
-	 *   The type instance
-	 * @returns {sap.ui.core.format.DateFormat}
-	 *   The formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = _Helper.extend({strictParsing : true}, oType.oFormatOptions);
-			oType.oFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
 	/**
 	 * Constructor for a <code>DateTimeWithTimezone</code> composite type.
 	 *
@@ -171,11 +153,28 @@ sap.ui.define([
 
 				return oTimestamp;
 			case "string":
-				return getFormatter(this).format(oTimestamp, sTimezone);
+				return this.getFormat().format(oTimestamp, sTimezone);
 			default:
 				throw new FormatException("Don't know how to format " + this.getName() + " to "
 					+ sTargetType);
 		}
+	};
+
+	/**
+	 * Returns a format converting between the internal and external representation of a value for this type.
+	 *
+	 * @returns {sap.ui.core.format.DateFormat.DateTimeWithTimezone}
+	 *   A format converting between the internal and external representation
+	 *
+	 * @private
+	 */
+	DateTimeWithTimezone.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = _Helper.extend({strictParsing : true}, this.oFormatOptions);
+			this.oFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -231,7 +230,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.m
 	 */
 	DateTimeWithTimezone.prototype.getPlaceholderText = function () {
-		return getFormatter(this).getPlaceholderText();
+		return this.getFormat().getPlaceholderText();
 	};
 
 	/**
@@ -303,7 +302,7 @@ sap.ui.define([
 				}
 
 				try {
-					aDateWithTimezone = getFormatter(this).parse(vValue, aCurrentValues[1]);
+					aDateWithTimezone = this.getFormat().parse(vValue, aCurrentValues[1]);
 				} catch (oError) { // wrap technical error to show the error at the control
 					throw new ParseException(oError.message);
 				}

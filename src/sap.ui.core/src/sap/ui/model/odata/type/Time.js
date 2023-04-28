@@ -40,24 +40,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Time} oType
-	 *   the <code>Time</code> instance
-	 * @returns {sap.ui.core.format.DateFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = extend({strictParsing : true}, oType.oFormatOptions);
-			oFormatOptions.UTC = true;
-			oType.oFormat = DateFormat.getTimeInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
-	/**
 	 * Verifies that the given object is really a <code>Time</code> object in the model format.
 	 * @param {any} o
 	 *   the object to test
@@ -204,7 +186,7 @@ sap.ui.define([
 			case "any":
 				return oValue;
 			case "string":
-				return getFormatter(this).format(toDate(oValue));
+				return this.getFormat().format(toDate(oValue));
 			default:
 				throw new FormatException("Don't know how to format " + this.getName() + " to "
 					+ sTargetType);
@@ -246,7 +228,13 @@ sap.ui.define([
 	 * @override
 	 */
 	Time.prototype.getFormat = function () {
-		return getFormatter(this);
+		if (!this.oFormat) {
+			var oFormatOptions = extend({strictParsing : true}, this.oFormatOptions);
+			oFormatOptions.UTC = true;
+			this.oFormat = DateFormat.getTimeInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -334,7 +322,7 @@ sap.ui.define([
 			throw new ParseException("Don't know how to parse " + this.getName() + " from "
 				+ sSourceType);
 		}
-		oDate = getFormatter(this).parse(sValue);
+		oDate = this.getFormat().parse(sValue);
 		if (!oDate) {
 			throw new ParseException(getErrorMessage(this));
 		}

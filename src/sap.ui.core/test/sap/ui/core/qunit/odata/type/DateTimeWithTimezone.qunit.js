@@ -756,4 +756,17 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new DateTimeWithTimezone();
+
+		assert.strictEqual(oType.oFormat, null);
+
+		// code under test
+		var oResult = oType.getFormat();
+
+		assert.ok(oResult instanceof DateFormat);
+		assert.strictEqual(oType.oFormat, oResult);
+	});
 });
