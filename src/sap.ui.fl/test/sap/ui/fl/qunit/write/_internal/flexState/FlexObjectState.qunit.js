@@ -102,6 +102,7 @@ sap.ui.define([
 			this.appComponent.destroy();
 			ChangePersistenceFactory._instanceCache = {};
 			FlexState.clearState(sReference);
+			FlexState.resetFakedStandardVariants(sReference, this.appComponent.getId());
 			sandbox.restore();
 		}
 	}, function() {
@@ -113,6 +114,34 @@ sap.ui.define([
 			.then(function(aFlexObjects) {
 				assert.equal(aFlexObjects.length, 0, "an empty array is returned");
 			});
+		});
+
+		//TODO some tests in this test-suite do not have sufficient cleanup, which results in an error in this test when moved further down
+		QUnit.test("when flex objects are requested and no variant management model exists", function(assert) {
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+			var oVariant = FlexObjectFactory.createFromFileContent({
+				fileType: "ctrl_variant",
+				selector: {},
+				changeType: "FlVariant",
+				layer: Layer.USER,
+				variantReference: "otherVariantReference"
+			});
+			var oChangeOnVariant1 = FlexObjectFactory.createFromFileContent({
+				selector: {},
+				changeType: "renameField",
+				layer: Layer.USER,
+				variantReference: "variant1"
+			});
+			sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oVariant, oChangeOnVariant1]);
+
+			return FlexObjectState.getFlexObjects({
+				selector: this.appComponent,
+				invalidateCache: true,
+				onlyCurrentVariants: true
+			})
+				.then(function(aFlexObjects) {
+					assert.deepEqual(aFlexObjects, [oVariant, oChangeOnVariant1], "then all flex objects are returned correctly");
+				});
 		});
 
 		QUnit.test("Get - Given flex objects are present in the CompVariantState", function(assert) {
