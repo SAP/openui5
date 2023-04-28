@@ -1290,6 +1290,48 @@ sap.ui.define([
 		return this.stop(true, true);
 	}
 
+	function onDeleteAdaptation() {
+		if (this.canSave()) {
+			showDeleteAdaptationMessageBox.call(this, "DAC_DATA_LOSS_DIALOG_DESCRIPTION", "DAC_DIALOG_HEADER", true /*bDirtyChanges*/);
+		} else {
+			showDeleteAdaptationMessageBox.call(this, "DAC_DIALOG_DESCRIPTION", "DAC_DIALOG_HEADER");
+		}
+	}
+
+	function showDeleteAdaptationMessageBox(sMessageKey, sTitleKey, bDirtyChanges) {
+		Utils.showMessageBox("confirm", sMessageKey, {
+			titleKey: sTitleKey
+		}).then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
+				BusyIndicator.show();
+				if (bDirtyChanges) {
+					// a reload is triggered later and will destroy RTA & the command stack
+					this.getCommandStack().removeAllCommands(true);
+				}
+				deleteAdaptation.call(this);
+			}
+		}.bind(this));
+	}
+
+	function deleteAdaptation() {
+		ContextBasedAdaptationsAPI.remove({
+			control: this.getRootControlInstance(),
+			layer: this.getLayer(),
+			adaptationId: this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id")
+		}).then(function() {
+			BusyIndicator.hide();
+			var sAdaptationId = this._oContextBasedAdaptationsModel.deleteAdaptation();
+			switchAdaptation.call(this, sAdaptationId);
+		}.bind(this)).catch(function(oError) {
+			BusyIndicator.hide();
+			Log.error(oError.stack);
+			var sMessage = "MSG_LREP_TRANSFER_ERROR";
+			var oOptions = { titleKey: "DAC_DIALOG_HEADER" };
+			oOptions.details = oError.userMessage;
+			Utils.showMessageBox("error", sMessage, oOptions);
+		});
+	}
+
 	function handleDataLoss(sMessageKey, sTitleKey, callbackFn) {
 		if (this.canSave()) {
 			Utils.showMessageBox("warning", sMessageKey, {
@@ -1434,6 +1476,7 @@ sap.ui.define([
 				oProperties.discardDraft = onDiscardDraft.bind(this);
 				oProperties.switchVersion = onSwitchVersion.bind(this);
 				oProperties.switchAdaptation = onSwitchAdaptation.bind(this);
+				oProperties.deleteAdaptation = onDeleteAdaptation.bind(this);
 				oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
 					? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
 					: function() {};

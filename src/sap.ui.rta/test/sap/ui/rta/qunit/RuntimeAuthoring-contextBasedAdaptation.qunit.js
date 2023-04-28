@@ -234,6 +234,137 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given that RuntimeAuthoring gets a delete adaptation event from the toolbar in the FLP", {
+		beforeEach: function() {
+			ContextBasedAdaptationsAPI.clearInstances();
+			givenAnFLP(sandbox.stub(), {});
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp
+			});
+
+			ContextBasedAdaptationsAPI.clearInstances();
+			var oDefaultAdaptation = {
+				id: "DEFAULT",
+				title: "",
+				type: "DEFAULT"
+			};
+			this.aAdaptations = [
+				{
+					title: "Sales",
+					rank: 1,
+					id: "id_1234"
+				},
+				{
+					title: "Manager",
+					rank: 2,
+					id: "id_5678"
+				},
+				oDefaultAdaptation
+			];
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(this.aAdaptations);
+
+			this.oRemoveAllCommandsSpy = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");
+			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oRemoveStub = sandbox.stub(ContextBasedAdaptationsAPI, "remove").resolves();
+			this.nVersionParameter = 1;
+			this.sAdaptationId = "id_5678";
+			return this.oRta.start().then(function() {
+				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when save is enabled and dirty changes should be deleted with adaptation", function(assert) {
+			var fnDone = assert.async();
+			sandbox.stub(this.oRta, "canSave").returns(true);
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", this.nVersionParameter);
+
+			this.oLoadVersionStub.callsFake(function(mPropertyBag) {
+				assert.equal(mPropertyBag.version, this.nVersionParameter, "the version parameter was passed correct");
+				assert.equal(mPropertyBag.adaptationId, this.sAdaptationId, "the adaptationId parameter was passed correctly");
+				assert.equal(this.oRemoveStub.callCount, 1, "delete adaptation request was send");
+				assert.equal(this.oRemoveAllCommandsSpy.callCount, 1, "the command stack was cleared");
+				var oExptectedAdaptations = [
+					{
+						title: "Manager",
+						rank: 1,
+						id: "id_5678"
+					}
+				];
+				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), oExptectedAdaptations, "only 1 adaptation left");
+				fnDone();
+			}.bind(this));
+
+			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/allAdaptations"), this.aAdaptations, "no adaptation was deleted yet");
+			this.oRta.getToolbar().fireDeleteAdaptation();
+		});
+
+		QUnit.test("when save is enabled and delete is canceled", function(assert) {
+			var fnDone = assert.async();
+			sandbox.stub(this.oRta, "canSave").returns(true);
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", this.nVersionParameter);
+			this.oRta._oContextBasedAdaptationsModel.setProperty("/displayedAdaptation", {id: this.sAdaptationId});
+
+			this.oRta.getToolbar().fireDeleteAdaptation();
+
+			setTimeout(function() {
+				assert.equal(this.oRemoveStub.callCount, 0, "delete adaptation request was send");
+				assert.equal(this.oRemoveAllCommandsSpy.callCount, 0, "the command stack was not cleared");
+				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/allAdaptations"), this.aAdaptations, "no adaptation was deleted");
+				fnDone();
+			}.bind(this));
+		});
+
+		QUnit.test("when save is disabled and adaptation should be deleted", function(assert) {
+			var fnDone = assert.async();
+			sandbox.stub(this.oRta, "canSave").returns(false);
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", this.nVersionParameter);
+
+			this.oLoadVersionStub.callsFake(function(mPropertyBag) {
+				assert.equal(mPropertyBag.version, this.nVersionParameter, "the version parameter was passed correct");
+				assert.equal(mPropertyBag.adaptationId, this.sAdaptationId, "the adaptationId parameter was passed correctly");
+				assert.equal(this.oRemoveStub.callCount, 1, "delete adaptation request was send");
+				assert.equal(this.oRemoveAllCommandsSpy.callCount, 0, "the command stack was not cleared");
+				var oExptectedAdaptations = [
+					{
+						title: "Manager",
+						rank: 1,
+						id: "id_5678"
+					}
+				];
+				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), oExptectedAdaptations, "only 1 adaptation left");
+				fnDone();
+			}.bind(this));
+
+			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/allAdaptations"), this.aAdaptations, "no adaptation was deleted yet");
+			this.oRta.getToolbar().fireDeleteAdaptation();
+		});
+
+		QUnit.test("when save is disabled and delete is canceled", function(assert) {
+			var fnDone = assert.async();
+			sandbox.stub(this.oRta, "canSave").returns(false);
+			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", this.nVersionParameter);
+			this.oRta._oContextBasedAdaptationsModel.setProperty("/displayedAdaptation", {id: this.sAdaptationId});
+
+			this.oRta.getToolbar().fireDeleteAdaptation();
+
+			setTimeout(function() {
+				assert.equal(this.oRemoveStub.callCount, 0, "delete adaptation request was send");
+				assert.equal(this.oRemoveAllCommandsSpy.callCount, 0, "the command stack not cleared");
+				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/allAdaptations"), this.aAdaptations, "no adaptation was deleted");
+				fnDone();
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function() {
 		oComp.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";
