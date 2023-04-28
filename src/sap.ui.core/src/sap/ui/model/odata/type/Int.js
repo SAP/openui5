@@ -15,23 +15,6 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Int} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = extend({groupingEnabled : true}, oType.oFormatOptions);
-			oType.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
-	/**
 	 * Fetches a text from the message bundle and formats it using the parameters.
 	 *
 	 * @param {string} sKey
@@ -139,7 +122,7 @@ sap.ui.define([
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
 			case "string":
-				return getFormatter(this).format(iValue);
+				return this.getFormat().format(iValue);
 			case "int":
 				return Math.floor(iValue);
 			case "float":
@@ -149,6 +132,18 @@ sap.ui.define([
 				throw new FormatException("Don't know how to format "
 					+ this.getName() + " to " + sTargetType);
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Int.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = extend({groupingEnabled : true}, this.oFormatOptions);
+			this.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -177,7 +172,7 @@ sap.ui.define([
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				iResult = getFormatter(this).parse(vValue);
+				iResult = this.getFormat().parse(vValue);
 				if (isNaN(iResult)) {
 					throw new ParseException(getText("EnterInt"));
 				}

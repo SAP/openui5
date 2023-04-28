@@ -308,4 +308,17 @@ sap.ui.define([
 		});
 		assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new Single();
+
+		assert.strictEqual(oType.oFormat, null);
+
+		// code under test
+		var oResult = oType.getFormat();
+
+		assert.ok(oResult instanceof NumberFormat);
+		assert.strictEqual(oType.oFormat, oResult);
+	});
 });
