@@ -188,7 +188,7 @@ sap.ui.define([
 				contextBasedAdaptation: oContextBasedAdaptation
 			}).then(function() {
 				BusyIndicator.hide();
-				this.getToolbar().fireEvent("switchAdaptation", {adaptationId: oContextBasedAdaptation.id});
+				this.getToolbar().fireEvent("switchAdaptation", {adaptationId: oContextBasedAdaptation.id, trigger: "SaveAs"});
 			}.bind(this)).catch(function(oError) {
 				BusyIndicator.hide();
 				Log.error(oError.stack);

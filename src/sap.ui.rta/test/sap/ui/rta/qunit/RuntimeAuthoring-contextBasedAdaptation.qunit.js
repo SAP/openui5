@@ -3,6 +3,7 @@
 sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/m/MessageBox",
+	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/registry/Settings",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Utils",
+	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
@@ -17,6 +19,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
+	Control,
 	FlexState,
 	ContextBasedAdaptationsAPI,
 	Settings,
@@ -24,6 +27,7 @@ sap.ui.define([
 	VersionsAPI,
 	Versions,
 	FlexUtils,
+	Stack,
 	ReloadManager,
 	RuntimeAuthoring,
 	Utils,
@@ -63,7 +67,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP, save is disabled", {
+	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP", {
 		beforeEach: function() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			var oDefaultAdaptation = {
@@ -126,6 +130,29 @@ sap.ui.define([
 			assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
 			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_5678", "then the displayed adaptation has changed");
 		});
+
+		QUnit.test("when save is enabled but all changes from stack have been removed", function(assert) {
+			var oRemoveAllCommandsStub = sandbox.stub(Stack.prototype, "removeAllCommands");
+			var oReloadStub = sandbox.stub(ReloadManager, "triggerReload").resolves();
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", 1);
+
+			this.oRta.getToolbar().fireSwitchAdaptation({
+				adaptationId: "id_5678",
+				trigger: "SaveAs"
+			});
+
+			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
+			assert.equal(oRemoveAllCommandsStub.callCount, 1, "then all commands are removed from stack");
+			assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
+			assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
+			var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
+			assert.equal(oLoadVersionArguments.control, oComp, "with the control");
+			assert.equal(oLoadVersionArguments.version, "1", ", the version number");
+			assert.equal(oLoadVersionArguments.adaptationId, "id_5678", ", the adaptation id number");
+			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+			assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
+			assert.equal(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "id_5678", "then the displayed adaptation has changed");
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP, save is enabled and a dialog fires an event", {
@@ -149,10 +176,12 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when changes should be saved to prevent data loss", function(assert) {
 			var fnDone = assert.async();
+			var oRemoveAllCommandsStub = sandbox.stub(Stack.prototype, "removeAllCommands");
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.YES);
 			this.oRta._oVersionsModel.setProperty("/displayedVersion", this.nVersionParameter);
 
 			this.oLoadVersionStub.callsFake(function(mPropertyBag) {
+				assert.equal(oRemoveAllCommandsStub.callCount, 0, "then no commands are removed from stack");
 				assert.equal(mPropertyBag.version, this.nVersionParameter, "the version parameter was passed correctly");
 				assert.equal(mPropertyBag.adaptationId, this.sAdaptationId, "the adaptationId parameter was passed correctly");
 				assert.equal(this.oSerializeStub.callCount, 1, "the changes were saved");
@@ -171,10 +200,12 @@ sap.ui.define([
 
 		QUnit.test("when changes should not be saved", function(assert) {
 			var fnDone = assert.async();
+			var oRemoveAllCommandsStub = sandbox.stub(Stack.prototype, "removeAllCommands");
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.NO);
 			this.oRta._oVersionsModel.setProperty("/displayedVersion", this.nVersionParameter);
 
 			this.oLoadVersionStub.callsFake(function(mPropertyBag) {
+				assert.equal(oRemoveAllCommandsStub.callCount, 1, "then all commands are removed from stack");
 				assert.equal(mPropertyBag.version, this.nVersionParameter, "the version parameter was passed correct");
 				assert.equal(mPropertyBag.adaptationId, this.sAdaptationId, "the adaptationId parameter was passed correctly");
 				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
@@ -188,12 +219,14 @@ sap.ui.define([
 
 		QUnit.test("when cancel was called", function(assert) {
 			var fnDone = assert.async();
+			var oRemoveAllCommandsStub = sandbox.stub(Stack.prototype, "removeAllCommands");
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 
 			this.oRta.getToolbar().fireSwitchAdaptation({
 				adaptationId: this.sAdaptationId
 			});
 			setTimeout(function() {
+				assert.equal(oRemoveAllCommandsStub.callCount, 0, "then no commands are removed from stack");
 				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
 				assert.equal(this.oLoadVersionStub.callCount, 0, "the version switch was not triggered");
 				fnDone();
