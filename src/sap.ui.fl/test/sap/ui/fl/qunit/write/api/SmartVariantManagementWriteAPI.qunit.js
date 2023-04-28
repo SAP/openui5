@@ -1248,7 +1248,16 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("revert", {}, function() {
+	QUnit.module("revert", {
+		beforeEach: function() {
+			if (oControl) {
+				oControl.destroy();
+			}
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
 		QUnit.test("Given a variant was removed", function(assert) {
 			var sReference = "an.app";
 			var sPersistencyKey = "persistency.key";
