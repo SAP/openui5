@@ -36,7 +36,9 @@
 						"status": "approved",
 						"reason": "{form>/reason/key}",
 						"reasonText": "{form>/reason/value}",
-						"comment": "{form>/comment}"
+						"comment": "{form>/comment}",
+						"e-mail": "{form>/e-mail}",
+						"duration": "{form>/duration}"
 					}
 				}
 			}
@@ -126,6 +128,16 @@
 									"maxLength": 200,
 									"message": "Your comment should be between 10 and 200 characters.",
 									"type": "Warning"
+								}
+							]
+						},
+						{
+							"id": "duration",
+							"label": "Duration",
+							"type": "Duration",
+							"validations": [
+								{
+									"required": true
 								}
 							]
 						},

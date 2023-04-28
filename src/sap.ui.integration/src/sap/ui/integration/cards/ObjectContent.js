@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/m/TextArea",
 	"sap/m/Input",
+	"sap/m/TimePicker",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
@@ -58,6 +59,7 @@ sap.ui.define([
 	ComboBox,
 	TextArea,
 	Input,
+	TimePicker,
 	Log,
 	isEmptyObject,
 	isPlainObject,
@@ -474,6 +476,9 @@ sap.ui.define([
 			case "Input":
 				oControl = this._createInputItem(oItem, vVisible, oLabel, sPath);
 				break;
+			case "Duration":
+				oControl = this._createDurationItem(oItem, vVisible, oLabel, sPath);
+				break;
 
 			// deprecated types
 			case "link":
@@ -806,6 +811,27 @@ sap.ui.define([
 		}
 
 		oForm.addControl("liveChange", oControl, oItem, sPath);
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createDurationItem = function (oItem, vVisible, oLabel, sPath) {
+		var oForm = this._getForm(),
+			oControl = new TimePicker({
+				valueFormat: "HH:mm",
+				displayFormat: "HH:mm",
+				support2400: true,
+				required: oForm.getRequiredValidationValue(oItem),
+				value: oItem.value,
+				visible: BindingHelper.reuse(vVisible),
+				placeholder: oItem.placeholder
+			});
+
+		if (oLabel) {
+			oLabel.setLabelFor(oControl);
+		}
+
+		oForm.addControl("change", oControl, oItem, sPath);
 
 		return oControl;
 	};
