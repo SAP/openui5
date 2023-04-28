@@ -1293,7 +1293,7 @@ sap.ui.define([
                 oState.dataLoadedCallback = fnCallbackDataLoaded;
 
                 this._setState(oMDCChart, oState);
-                var oBindingInfo = this._getBindingInfo(oMDCChart);
+                var oBindingInfo = this.getBindingInfo(oMDCChart);
                 this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
                 this._performInitialBind(oMDCChart, oBindingInfo);
 
@@ -1518,7 +1518,7 @@ sap.ui.define([
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate._getBindingInfo = function (oMDCChart) {
+    ChartDelegate.getBindingInfo = function (oMDCChart) {
 
         if (this._getBindingInfoFromState(oMDCChart)) {
             return this._getBindingInfoFromState(oMDCChart);

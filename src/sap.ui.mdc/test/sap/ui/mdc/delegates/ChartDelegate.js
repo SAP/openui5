@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-    "sap/ui/mdc/AggregationBaseDelegate",
+    "sap/ui/mdc/ChartDelegate",
     "sap/ui/mdc/chart/PropertyHelper"
 ], function (
     V4ChartDelegate,
@@ -166,7 +166,7 @@ sap.ui.define([
         //Nothing to test
     };
 
-    ChartDelegate._getBindingInfo = function (oMDCChart) {
+    ChartDelegate.getBindingInfo = function (oMDCChart) {
         var oMetadataInfo = oMDCChart.getDelegate().payload;
         var sEntitySetPath = "/" + oMetadataInfo.collectionName;
         var oBindingInfo = {
@@ -180,17 +180,6 @@ sap.ui.define([
             }*/
         };
         return oBindingInfo;
-    };
-
-    /**
-     * Updates the binding info with the relevant path and model from the metadata.
-     *
-     * @param {sap.ui.mdc.Chart} oMDCChart The MDC chart instance
-     * @param {object} oMetadataInfo The metadataInfo set on the chart
-     * @param {object} oBindingInfo The bindingInfo of the chart
-     */
-    ChartDelegate.updateBindingInfo = function (oMDCChart, oMetadataInfo, oBindingInfo) {
-        //Nothing to do here
     };
 
     /**
