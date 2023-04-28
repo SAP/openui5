@@ -18,7 +18,7 @@
 		<core:Title text="Field"></core:Title>
 
 		<Label text="List" />
-		<mdc:Field id="F1" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="VH1" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+		<mdc:Field id="F1" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" valueHelp="VH1" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH1"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
@@ -34,7 +34,7 @@
 		</mdc:Field>
 
 		<Label text="List with additionalText (select-like)" />
-		<mdc:Field id="F2" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="VH2" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+		<mdc:Field id="F2" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" valueHelp="VH2" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH2"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
@@ -50,7 +50,7 @@
 		</mdc:Field>
 
 		<Label text="Combobox (Suggest)" />
-		<mdc:Field id="F3" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="VH3" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+		<mdc:Field id="F3" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" valueHelp="VH3" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH3"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
@@ -93,7 +93,7 @@
 		</mdc:Field>
 
 		<Label text="ValueHelp using mTable in dialog" />
-		<mdc:Field id="F4" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="VH4" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+		<mdc:Field id="F4" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" valueHelp="VH4" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH4"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
@@ -139,7 +139,7 @@
 										<vhfb:filterItems>
 											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType="Edm.Int32"  conditions="{$filters>/conditions/ID}"/>
 											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions="{$filters>/conditions/name}"/>
-											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Date of Birth" dataType="Edm.Date" maxConditions="-1" conditions="{$filters>/conditions/dateOfBirth}" fieldHelp="VH2-2">
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Date of Birth" dataType="Edm.Date" maxConditions="-1" conditions="{$filters>/conditions/dateOfBirth}" valueHelp="VH2-2">
 												<mdc:dependents>
 													<mdc:ValueHelp id="VH2-2" delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 														<mdc:dialog>
@@ -189,7 +189,7 @@
 		</mdc:Field>
 
 		<Label text="ValueHelp using mdcTable in dialog" />
-		<mdc:Field id="F5" fieldHelp="VH5" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+		<mdc:Field id="F5" valueHelp="VH5" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH5"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>

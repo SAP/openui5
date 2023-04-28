@@ -353,7 +353,7 @@ sap.ui.define([
 	/**
 	 * This method should provide a map of conditions for the following situations:
 	 * 	1. Initial set of conditions applied everytime a value help content is shown for the first time since opening it's container.
-	 * 	2. Detailed set of conditions in getItemForValue scenarios allowing to find a specific FieldHelpItem (indicated by oConfig availability)
+	 * 	2. Detailed set of conditions in getItemForValue scenarios allowing to find a specific ValueHelpItem (indicated by oConfig availability)
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance

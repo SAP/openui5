@@ -172,8 +172,24 @@ sap.ui.define([
 				 * <b>Note:</b> The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp</code> with a <code>TypeAhead</code> and single-selection <code>MTable</code> can be used.
 
 				 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code>, no <code>FieldHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
+				 * @deprecated as of 1.114.0, replaced by {@link #setValueHelp valueHelp} association
+				 *
 				 */
 				fieldHelp: {
+					type: "sap.ui.mdc.ValueHelp",
+					multiple: false
+				},
+
+				/**
+				 * Optional <code>ValueHelp</code>.
+				 *
+				 * This is an association that allows the usage of one <code>ValueHelp</code> instance for the value fields for the <code>DefineConditionPanel</code>.
+				 *
+				 * <b>Note:</b> The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp</code> with a <code>TypeAhead</code> and single-selection <code>MTable</code> can be used.
+				 *
+				 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code>, no <code>ValueHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
+				 */
+				valueHelp: {
 					type: "sap.ui.mdc.ValueHelp",
 					multiple: false
 				}
@@ -517,7 +533,7 @@ sap.ui.define([
 			if (aSeparatedText && aSeparatedText.length > 1) {
 				setTimeout(function() {
 					var oFormatOptions = merge({}, this.getFormatOptions());
-					delete oFormatOptions.fieldHelpID;
+					delete oFormatOptions.valueHelpID;
 					oFormatOptions.maxConditions = 1;
 					oFormatOptions.display = FieldDisplay.Value;
 					//oFormatOptions.valueType = this._getFieldType.call(this, oOperator.name, 0); //TODO using the _getFieldType for better support of types
@@ -672,8 +688,8 @@ sap.ui.define([
 
 	function _operatorSupportsValueHelp(sKey) {
 		return true;
-		// var aFieldHelpSupportedOperators = ["EQ", "NE"]; // only for this operators we use the FieldHelp on the value fields
-		// return aFieldHelpSupportedOperators.length === 0 || aFieldHelpSupportedOperators.indexOf(sKey) >= 0;
+		// var aValueHelpSupportedOperators = ["EQ", "NE"]; // only for this operators we use the ValueHelp on the value fields
+		// return aValueHelpSupportedOperators.length === 0 || aValueHelpSupportedOperators.indexOf(sKey) >= 0;
 	}
 
 	function _operatorChanged(oField, sKey, sOldKey) {
@@ -714,14 +730,14 @@ sap.ui.define([
 			}
 
 			if (_operatorSupportsValueHelp(sKey)) {
-				// enable the fieldHelp for the used value fields
-				var sFiedHelp = this.getFieldHelp();
-				oValue0Field && oValue0Field.setFieldHelp && oValue0Field.setFieldHelp(sFiedHelp);
-				oValue1Field && oValue1Field.setFieldHelp && oValue1Field.setFieldHelp(sFiedHelp);
+				// enable the ValueHelp for the used value fields
+				var sValueHelp = this.getValueHelp() || this.getFieldHelp();
+				oValue0Field && oValue0Field.setValueHelp && oValue0Field.setValueHelp(sValueHelp);
+				oValue1Field && oValue1Field.setValueHelp && oValue1Field.setValueHelp(sValueHelp);
 			} else {
-				// remove the fieldHelp for the used value fields
-				oValue0Field && oValue0Field.setFieldHelp && oValue0Field.setFieldHelp();
-				oValue1Field && oValue1Field.setFieldHelp && oValue1Field.setFieldHelp();
+				// remove the ValueHelp for the used value fields
+				oValue0Field && oValue0Field.setValueHelp && oValue0Field.setValueHelp();
+				oValue1Field && oValue1Field.setValueHelp && oValue1Field.setValueHelp();
 			}
 
 			if (oOperator.createControl || oOperatorOld.createControl) {
@@ -794,7 +810,7 @@ sap.ui.define([
 				editMode: {parts: [{path: "$condition>operator"}, {path: "$condition>invalid"}], formatter: _getEditModeFromOperator},
 				multipleLines: false,
 				width: "100%",
-				fieldHelp: _operatorSupportsValueHelp(oCondition.operator) ? this.getFieldHelp() : null
+				valueHelp: _operatorSupportsValueHelp(oCondition.operator) ? this.getValueHelp() || this.getFieldHelp() : null
 				//display: should always be FieldDisplay.Value
 			});
 		}
@@ -1283,7 +1299,7 @@ sap.ui.define([
 			display: FieldDisplay.Description,
 			editMode: EditMode.Editable,
 			multipleLines: false,
-			fieldHelp: this.getId() + "--rowSelect-help",
+			valueHelp: this.getId() + "--rowSelect-help",
 			change: this.onSelectChange.bind(this),
 			ariaLabelledBy: this.getId() + "--ivtOperator"
 		})

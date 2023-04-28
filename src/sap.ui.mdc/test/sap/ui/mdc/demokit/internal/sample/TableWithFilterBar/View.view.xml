@@ -183,7 +183,7 @@
 			conditions="{$filters>/conditions/author_ID}"
 			dataType="Edm.Int32"
 			required="false"
-			fieldHelp="VH1"
+			valueHelp="VH1"
 			display="DescriptionValue"
 			width="100%"/>
 
@@ -192,7 +192,7 @@
 			id="ff2"
 			label="Title"
 			conditions="{$filters>/conditions/title}"
-			fieldHelp="VH2"
+			valueHelp="VH2"
 			width="100%"/>
 
 	</mdc:filterItems>

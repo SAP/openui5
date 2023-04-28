@@ -1590,14 +1590,14 @@ function(
 						},
 						createControl: function(oType, sPath, iIndex, sId)  {
 							var Field = sap.ui.require("sap/ui/mdc/Field");
-							var sValueHelp = _getMonthFieldHelp.call(this);
+							var sValueHelp = _getMonthValueHelp.call(this);
 							if (Field && sValueHelp) {
 
 								var oField = new Field(sId, {
 									value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
 									display: 'Description',
 									width: "100%",
-									fieldHelp: sValueHelp
+									valueHelp: sValueHelp
 								});
 
 								return oField;
@@ -1684,7 +1684,7 @@ function(
 							}
 
 							if (iIndex == 0) {
-								var sValueHelp = _getMonthFieldHelp.call(this);
+								var sValueHelp = _getMonthValueHelp.call(this);
 
 								if (sValueHelp) {
 
@@ -1692,7 +1692,7 @@ function(
 										value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
 										display: 'Description',
 										width: "100%",
-										fieldHelp: sValueHelp
+										valueHelp: sValueHelp
 									});
 								} else {
 									Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
@@ -2735,14 +2735,14 @@ function(
 		}
 
 
-		var bCreatingMonthFieldHelp = false;
+		var bCreatingMonthValueHelp = false;
 
-		function _getMonthFieldHelp() {
+		function _getMonthValueHelp() {
 
 			var sId = "LFHForSpecificMonth";
 
-			if (!bCreatingMonthFieldHelp) {
-				bCreatingMonthFieldHelp = true;
+			if (!bCreatingMonthValueHelp) {
+				bCreatingMonthValueHelp = true;
 
 				loadModules([
 					"sap/ui/mdc/valuehelp/content/FixedList",
@@ -2773,7 +2773,7 @@ function(
 						return this._aMonthsItems;
 					}.bind(this);
 
-					var oMonthFieldHelp = new ValueHelp({
+					var oMonthValueHelp = new ValueHelp({
 						id: sId,
 						typeahead: new Popover({
 							content: [new FixedList({
@@ -2796,11 +2796,11 @@ function(
 						var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
 						// only a facade of the static UIArea is returned that contains only the public methods
 						var oStaticUIArea = sap.ui.getCore().getUIArea(oStaticAreaRef);
-						var oControl = new Control(sId + "-parent", {dependents: [oMonthFieldHelp]});
+						var oControl = new Control(sId + "-parent", {dependents: [oMonthValueHelp]});
 						oStaticUIArea.addContent(oControl, true); // do not invalidate UIArea
 					} catch (e) {
 						Log.error(e);
-						throw new Error("MonthFieldHelp cannot be assigned because static UIArea cannot be determined.");
+						throw new Error("MonthValueHelp cannot be assigned because static UIArea cannot be determined.");
 					}
 
 				}.bind(this));

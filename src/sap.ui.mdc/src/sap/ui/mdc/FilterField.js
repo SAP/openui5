@@ -353,13 +353,13 @@ sap.ui.define([
 			// MultipleLines is also not used for FilterFields in the moment.
 			// MaxConditions should also be set on applySettings
 
-			var sId = this.getFieldHelp();
-			var oFieldHelp = sap.ui.getCore().byId(sId);
+			var sId = this.getValueHelp() || this.getFieldHelp();
+			var oValueHelp = sap.ui.getCore().byId(sId);
 			var oBindingInfo = this.getBindingInfo("conditions");
 			var oBinding = this.getBinding("conditions");
-			if (this.getDisplay() !== FieldDisplay.Value && sId && (!oFieldHelp || (oBindingInfo && !oBinding))) {
-				// FieldHelp might need ConditionModel to determine value of InParameters to get the description.
-				// So if FieldHelp not exists right now or binding to ConditionModel not already created, wait.
+			if (this.getDisplay() !== FieldDisplay.Value && sId && (!oValueHelp || (oBindingInfo && !oBinding))) {
+				// ValueHelp might need ConditionModel to determine value of InParameters to get the description.
+				// So if ValueHelp not exists right now or binding to ConditionModel not already created, wait.
 				return;
 			}
 

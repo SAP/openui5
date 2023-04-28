@@ -686,7 +686,7 @@ sap.ui.define([
 			valueType: oConfig.dataType,
 			operators: oConfig.operators,
 			display: oConfig.display,
-			fieldHelpID: oParent && oParent.getId(), // needed to get description for Token (if not provided)
+			valueHelpID: oParent && oParent.getId(), // needed to get description for Token (if not provided)
 			control: oControl,
 			delegate: oControl && oControl.getControlDelegate && oControl.getControlDelegate(),
 			delegateName: oControl && oControl.getDelegate && oControl.getDelegate() && oControl.getDelegate().name,

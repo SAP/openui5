@@ -58,24 +58,24 @@ sap.ui.define([
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
 
 					if (sPropertyName === "name") {
-						oFilterField.setFieldHelp(getFullId(oTable, "fhName"));
+						oFilterField.setValueHelp(getFullId(oTable, "fhName"));
 					} else if (sPropertyName === "dateOfBirth") {
-						oFilterField.setFieldHelp(getFullId(oTable, "fhAdob"));
+						oFilterField.setValueHelp(getFullId(oTable, "fhAdob"));
 					} else if (sPropertyName === "dateOfDeath") {
 						oFilterField.setMaxConditions(1);
 					} else if (sPropertyName === "countryOfOrigin_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "IOFFVHCountry"));
+						oFilterField.setValueHelp(getFullId(oTable, "IOFFVHCountry"));
 						oFilterField.setDisplay(FieldDisplay.ValueDescription);
 					} else if (sPropertyName === "regionOfOrigin_code") {
-						oFilterField.setFieldHelp(getFullId(oTable, "IOFFVHRegion"));
+						oFilterField.setValueHelp(getFullId(oTable, "IOFFVHRegion"));
 						oFilterField.setDisplay(FieldDisplay.ValueDescription);
 					} else if (sPropertyName === "cityOfOrigin_city") {
-						oFilterField.setFieldHelp(getFullId(oTable, "IOFFVHCity"));
+						oFilterField.setValueHelp(getFullId(oTable, "IOFFVHCity"));
 						oFilterField.setDisplay(FieldDisplay.ValueDescription);
 					}
 
-					if (oFilterField.getMaxConditions() === -1 && !oFilterField.getFieldHelp()) {
-						oFilterField.setFieldHelp(getFullId(oTable, "FVH_Generic_Multi"));
+					if (oFilterField.getMaxConditions() === -1 && !oFilterField.getValueHelp()) {
+						oFilterField.setValueHelp(getFullId(oTable, "FVH_Generic_Multi"));
 					}
 					return oFilterField;
 				});

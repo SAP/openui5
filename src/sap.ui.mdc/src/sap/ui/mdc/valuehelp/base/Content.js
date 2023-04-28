@@ -545,7 +545,7 @@ sap.ui.define([
 	 * implementing the <code>sap.ui.mdc.valuehelp.Popover</code> container.
 	 * On dialogs the <code>Dialog</code> container defines the attributes, as it could have multiple contents.
 	 *
-	 * @param {int} iMaxConditions maximal conditions allowed (as FieldHelp might not be connected to a field)
+	 * @param {int} iMaxConditions maximal conditions allowed (as ValueHelp might not be connected to a field)
 	 * @returns {object} object with the aria-attibutes
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container

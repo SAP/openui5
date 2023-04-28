@@ -28,7 +28,7 @@
 						label="{/#Product/ProductId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH1">
+						valueHelp="VH1">
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
@@ -107,7 +107,7 @@
 						label="{/#Product/ProductId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH1">
+						valueHelp="VH1">
 					</mdc:FilterField>
 
 					<m:Label text="multi value field (Name)"/>
@@ -119,7 +119,7 @@
 						label="{/#Product/Name/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH1">
+						valueHelp="VH1">
 					</mdc:FilterField>
 
 					<m:Label text="multi value field in display mode (Name)"/>
@@ -209,7 +209,7 @@
 						label="{/#Product/Date/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-Conditions">
+						valueHelp="VH-Conditions">
 					</mdc:FilterField>
 
 					<m:Label text="single value field (Date) using DynamicDateRange"/>
@@ -254,7 +254,7 @@
 						label="{/#Product/Date/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-Conditions">
+						valueHelp="VH-Conditions">
 					</mdc:FilterField>
 
 					<m:Label text="single value field (Status)"/>
@@ -266,7 +266,7 @@
 						label="{/#Product/Status/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-Status">
+						valueHelp="VH-Status">
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Status" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
@@ -289,7 +289,7 @@
 						label="{/#Product/Status/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-Status2">
+						valueHelp="VH-Status2">
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Status2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
@@ -325,7 +325,7 @@
 						label="{/#Product/Quantity/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-Conditions">
+						valueHelp="VH-Conditions">
 					</mdc:FilterField>
 
 					<m:Label text="multi value field in display mode (Quantity)"/>
@@ -366,7 +366,7 @@
 						label="{/#Product/WeightMeasure/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-WeightUnit">
+						valueHelp="VH-WeightUnit">
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-WeightUnit" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
@@ -403,7 +403,7 @@
 						label="{/#Product/MatrId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-Material">
+						valueHelp="VH-Material">
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Material" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
@@ -476,7 +476,7 @@
 						label="{/#Product/CountryId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-Country">
+						valueHelp="VH-Country">
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Country" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
@@ -548,7 +548,7 @@
 						label="{/#Product/RegionId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-Region">
+						valueHelp="VH-Region">
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Region"
 								delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "countryId", "source": "conditions/CountryId"\}], "out": [\{"path": "countryId", "target": "conditions/CountryId"\}]\}\}'>
@@ -603,7 +603,7 @@
 														width="100%"
 														conditions="{$filters>/conditions/countryId}"
 														operators="EQ,NE,EUROPE"
-														fieldHelp="VH-Country"/>
+														valueHelp="VH-Country"/>
 												</vhfb:FilterBar>
 											</mdcValueHelpContent:filterBar>
 											<m:Table id="VH-Region-Dialog-Table" items="{path: '/RegionCollection', suspended: true}">
@@ -644,7 +644,7 @@
 						label="{/#Product/CityId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
-						fieldHelp="VH-City">
+						valueHelp="VH-City">
 					</mdc:FilterField>
 
 					<m:Label text="Info (not bound to ConditionModel)"/>
@@ -730,7 +730,7 @@
 												width="100%"
 												conditions="{$filters>/conditions/countryId}"
 												operators="EQ,NE,EUROPE"
-												fieldHelp="VH-Country"/>
+												valueHelp="VH-Country"/>
 											<mdc:FilterField
 												id="VH-City-FF-regionId"
 												label= "{/#City/regionId/@sap:label}"
@@ -740,7 +740,7 @@
 												dataTypeConstraints='\{"maxLength": 2, "search": "^[0-9]+$"\}'
 												width="100%"
 												conditions="{$filters>/conditions/regionId}"
-												fieldHelp="VH-Region2">
+												valueHelp="VH-Region2">
 											</mdc:FilterField>
 											<mdc:FilterField
 												id="VH-City-FF-info"

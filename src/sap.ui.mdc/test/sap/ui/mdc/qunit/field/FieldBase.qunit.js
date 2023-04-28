@@ -914,7 +914,7 @@ sap.ui.define([
 
 		var oContext = new Context(); // just dummy context
 		oField.setBindingContext(oContext);
-		oField.setFieldHelp("X"); // just need ID
+		oField.setValueHelp("X"); // just need ID
 		oField.setDataType("sap.ui.model.type.String");
 		oField.setEditMode(EditMode.Display);
 		oField.placeAt("content");
@@ -924,7 +924,7 @@ sap.ui.define([
 		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.String"), "valueType");
 		assert.notOk(oFormatOptions.originalDateType, "no originalDateType");
 		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
-		assert.equal(oFormatOptions.fieldHelpID, "X", "fieldHelpID");
+		assert.equal(oFormatOptions.valueHelpID, "X", "valueHelpID");
 		assert.deepEqual(oFormatOptions.operators, oField._getOperators(), "operators");
 		assert.equal(oFormatOptions.hideOperator, false, "hideOperator");
 		assert.equal(oFormatOptions.maxConditions, -1, "maxConditions");
@@ -946,7 +946,7 @@ sap.ui.define([
 		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
 		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
 		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
-		assert.notOk(oFormatOptions.fieldHelpID, "fieldHelpID");
+		assert.notOk(oFormatOptions.valueHelpID, "valueHelpID");
 		assert.deepEqual(oFormatOptions.operators, oField._getOperators(), "operators");
 		assert.equal(oFormatOptions.hideOperator, false, "hideOperator");
 		assert.equal(oFormatOptions.maxConditions, 1, "maxConditions");
@@ -965,7 +965,7 @@ sap.ui.define([
 		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
 		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
 		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
-		assert.equal(oFormatOptions.fieldHelpID, "X", "fieldHelpID");
+		assert.equal(oFormatOptions.valueHelpID, "X", "valueHelpID");
 		assert.deepEqual(oFormatOptions.operators, ["EQ"], "operators");
 		assert.equal(oFormatOptions.hideOperator, true, "hideOperator");
 		assert.equal(oFormatOptions.maxConditions, 1, "maxConditions");
@@ -2781,7 +2781,7 @@ sap.ui.define([
 
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
-				fieldHelp: oFieldHelp,
+				valueHelp: oFieldHelp,
 				//				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler
 			});
@@ -2819,7 +2819,7 @@ sap.ui.define([
 		var oDummyIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		sinon.spy(oFieldHelp, "onControlChange");
 		sinon.spy(oFieldHelp, "attachEvent");
 		oCore.applyChanges();
@@ -2892,7 +2892,7 @@ sap.ui.define([
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		sinon.spy(oFieldHelp, "toggleOpen");
 		oCore.applyChanges();
 
@@ -2959,7 +2959,7 @@ sap.ui.define([
 
 	QUnit.test("remove value help", function(assert) {
 
-		oField.setFieldHelp();
+		oField.setValueHelp();
 		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
@@ -2975,7 +2975,7 @@ sap.ui.define([
 		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
 		sinon.stub(oVHContent, "isFocusInHelp").returns(true);
 		var oVHPopover = new Popover("P1", {content: oVHContent});
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setDialog(oVHPopover);
 
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3033,7 +3033,7 @@ sap.ui.define([
 		var oVHContent = new Content("C1");
 		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
 		var oVHPopover = new Popover("P1", {content: oVHContent});
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setTypeahead(oVHPopover);
 		sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
 		sinon.spy(oFieldHelp, "skipOpening");
@@ -3077,7 +3077,7 @@ sap.ui.define([
 
 	QUnit.test("shouldOpenOnFocus - FieldHelp should open on focus", function (assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		sinon.stub(oFieldHelp, "shouldOpenOnFocus").returns(true);
 		sinon.spy(oFieldHelp, "toggleOpen");
@@ -3111,7 +3111,7 @@ sap.ui.define([
 
 	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", function (assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		sinon.stub(oFieldHelp, "shouldOpenOnClick").returns(true);
 		sinon.spy(oFieldHelp, "toggleOpen");
@@ -3145,7 +3145,7 @@ sap.ui.define([
 		var oVHContent = new Content("C1");
 		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
 		var oVHPopover = new Popover("P1", {content: oVHContent});
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setTypeahead(oVHPopover);
 		var fnResolve;
 		var oPromise = new Promise(function(fResolve, fReject) {
@@ -3197,7 +3197,7 @@ sap.ui.define([
 		var oVHContent = new Content("C1");
 		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
 		var oVHPopover = new Popover("P1", {content: oVHContent});
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setDialog(oVHPopover);
 
 		oField.focus(); // as FieldHelp is connected with focus

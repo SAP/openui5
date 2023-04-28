@@ -51,7 +51,7 @@
 								<mdc:Field id="fNetAmount" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'netAmount', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
 
 								<Label text="Book"></Label>
-								<mdc:Field id="fBookId" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'book_ID', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH4" display="Description" multipleLines="false">
+								<mdc:Field id="fBookId" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'book_ID', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" valueHelp="FH4" display="Description" multipleLines="false">
 									<mdc:dependents>
 										<mdc:ValueHelp id="FH4" delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 											<mdc:typeahead>
@@ -104,7 +104,7 @@
 									</mdc:dependents>
 								</mdc:Field>
 								<Label text="Parent ID"></Label>
-								<mdc:Field id="fParentID" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'parent_ID', type: 'sap.ui.model.odata.type.Guid'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false" fieldHelp="FH5">
+								<mdc:Field id="fParentID" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'parent_ID', type: 'sap.ui.model.odata.type.Guid'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false" valueHelp="FH5">
 									<mdc:dependents>
 										<mdc:ValueHelp id="FH5" delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 											<mdc:typeahead>

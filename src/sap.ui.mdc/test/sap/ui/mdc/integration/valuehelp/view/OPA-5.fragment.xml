@@ -259,7 +259,7 @@
 				id="FB0-SO"
 				label="Sales Organization"
 				conditions="{$filters>/conditions/salesOrganization}"
-				fieldHelp="FB0-FH-SO"
+				valueHelp="FB0-FH-SO"
 				maxConditions="{settings>/maxConditions}"
 				display="DescriptionValue"
 				/>
@@ -267,7 +267,7 @@
 				id="FB0-DC"
 				label="Distribution Channel"
 				conditions="{$filters>/conditions/distributionChannel}"
-				fieldHelp="FB0-FH-DC"
+				valueHelp="FB0-FH-DC"
 				maxConditions="{settings>/maxConditions}"
 				display="DescriptionValue"
 				/>
@@ -275,7 +275,7 @@
 				id="FB0-D"
 				label="Division"
 				conditions="{$filters>/conditions/division}"
-				fieldHelp="FB0-FH-D"
+				valueHelp="FB0-FH-D"
 				maxConditions="{settings>/maxConditions}"
 				display="DescriptionValue"
 				/>

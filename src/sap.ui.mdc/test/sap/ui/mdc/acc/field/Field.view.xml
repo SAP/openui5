@@ -33,7 +33,7 @@
 
 				<c:Title text="Parameters" level="H3"/>
 				<m:Label text="{/#Product/Status/@sap:label}"/>
-				<mdc:Field id="F-Status" value="{path: 'Status', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2}}" display="DescriptionValue" fieldHelp="VH-Status">
+				<mdc:Field id="F-Status" value="{path: 'Status', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2}}" display="DescriptionValue" valueHelp="VH-Status">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Status">
 							<mdc:typeahead>
@@ -52,7 +52,7 @@
 					id="F-Material"
 					value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"
 					display="ValueDescription"
-					fieldHelp="VH-Material">
+					valueHelp="VH-Material">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Material"
 							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"out": [\{"path": "defaultUnit", "target": "MatrUnit", "mode": "WhenEmpty"\}]\}\}'>
@@ -129,7 +129,7 @@
 					value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.type.Unit'}"
 					placeholder="{/#Product/MatrQuantity/@sap:label}"
 					display="Value"
-					fieldHelp="VH-Quantity">
+					valueHelp="VH-Quantity">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Quantity"
 							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "MatrId", "source": "MatrId"}], "out": [\{"path": "MatrId", "target": "MatrId"\}]\}\}'>

@@ -26,7 +26,7 @@
 					placeholder="{/#Product/ProductId/@sap:label}"
 					change="handleChange"
 					liveChange="handleLiveChange"
-					fieldHelp="VH1">
+					valueHelp="VH1">
 					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
@@ -103,7 +103,7 @@
 					editMode="Display"
 					placeholder="Placeholder"
 					showEmptyIndicator="true"
-					fieldHelp="VH1">
+					valueHelp="VH1">
 					<mdcField:MultiValueFieldItem key="{view>ProductId}" description="{view>Name}" />
 				</mdc:MultiValueField>
 
@@ -126,7 +126,7 @@
 					placeholder="{/#Product/ProductId/@sap:label}"
 					change="handleChange"
 					liveChange="handleLiveChange"
-					fieldHelp="VH2">
+					valueHelp="VH2">
 					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>

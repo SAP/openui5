@@ -58,7 +58,7 @@ sap.ui.define([
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
 
 					if (sPropertyName === "book_ID") {
-						oFilterField.setFieldHelp(getFullId(oTable, "FH-Books"));
+						oFilterField.setValueHelp(getFullId(oTable, "FH-Books"));
 					}
 					return oFilterField;
 				});

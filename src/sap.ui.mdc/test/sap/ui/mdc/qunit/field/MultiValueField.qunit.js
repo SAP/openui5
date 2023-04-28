@@ -295,19 +295,19 @@ sap.ui.define([
 				oModel.setProperty("/items", aItems);
 				oModel.checkUpdate(true, false);
 			});
-			var oFieldHelp = new ValueHelp("F1-H");
+			var oValueHelp = new ValueHelp("F1-H");
 			oField = new MultiValueField("F1", {
 				editMode: EditMode.Editable,
 				display: FieldDisplay.Description,
 				items: {path: "/items", template: oItemTemplate},
-				fieldHelp: oFieldHelp,
-				dependents: [oFieldHelp],
+				valueHelp: oValueHelp,
+				dependents: [oValueHelp],
 				change: _myChangeHandler//,
 //				liveChange: _myLiveChangeHandler,
 //				parseError: _myParseErrorHandler
 			}).setModel(oModel).placeAt("content");
 			oCore.applyChanges();
-			oField.focus(); // as FieldHelp is connected with focus
+			oField.focus(); // as ValueHelp is connected with focus
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -318,13 +318,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("update via FieldHelp", function(assert) {
+	QUnit.test("update via ValueHelp", function(assert) {
 
 		var fnDone = assert.async();
 		setTimeout(function() { // async set of condition
-			var oFieldHelp = oCore.byId(oField.getFieldHelp());
+			var oValueHelp = oCore.byId(oField.getValueHelp());
 			var oCondition = Condition.createItemCondition(4, "Text 4");
-			oFieldHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
+			oValueHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
 
 			setTimeout(function() { // async model update
 				assert.ok(MultiValueFieldDelegate.updateItems.calledOnce, "MultiValueFieldDelegate.updateItems called once");

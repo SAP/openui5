@@ -39,7 +39,7 @@
 				conditions="{$filters>/conditions/author_ID}"
 				dataType="Edm.Int32"
 				required="false"
-				fieldHelp="FH1"
+				valueHelp="FH1"
 				display="DescriptionValue"
 				width="100%"/>
 
@@ -48,7 +48,7 @@
 				id="ff2"
 				label="Title"
 				conditions="{$filters>/conditions/title}"
-				fieldHelp="FH2"
+				valueHelp="FH2"
 				width="100%"/>
 
 		</mdc:filterItems>

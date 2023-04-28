@@ -54,7 +54,7 @@
 								<mdc:Field id="fOrderNo" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
 
 								<Label text="Total"></Label>
-								<mdc:Field id="fTotal" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{parts: [{path: 'total', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false" fieldHelp="FVH-Currency">
+								<mdc:Field id="fTotal" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{parts: [{path: 'total', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false" valueHelp="FVH-Currency">
 									<mdc:dependents>
 										<mdc:ValueHelp id="FVH-Currency"
 											delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
@@ -70,7 +70,7 @@
 								</mdc:Field>
 
 								<Label text="Customer"></Label>
-								<mdc:Field id="fCustomer" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'customer_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" display="Description" multipleLines="false" fieldHelp="FVH-Customer">
+								<mdc:Field id="fCustomer" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'customer_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" display="Description" multipleLines="false" valueHelp="FVH-Customer">
 									<mdc:dependents>
 										<mdc:ValueHelp id="FVH-Customer"
 											delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>

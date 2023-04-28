@@ -77,7 +77,7 @@
 			dataType="sap.ui.model.odata.type.String"
 			maxConditions="1"
 			operators="EQ"
-			fieldHelp="VH-Title"
+			valueHelp="VH-Title"
 		 	delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 			change="handleChange">
 			<custom:CustomInput id="F2-CI" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
@@ -101,7 +101,7 @@
 			conditions="{cm>/conditions/descr}"
 			dataType="sap.ui.model.odata.type.String"
 			maxConditions="-1"
-			fieldHelp="VH-Conditions"
+			valueHelp="VH-Conditions"
 		 	delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 			change="handleChange">
 			<custom:CustomMultiInput id="F4-CMI" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" tokens="{path: '$field>/conditions'}">

@@ -174,7 +174,7 @@ sap.ui.define([
 	 * @param {object} [oConfig] Configuration
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} oConfig.parsedValue Value parsed by data type to fit the data type of the key
-	 * @param {sap.ui.model.Context} oConfig.bindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
+	 * @param {sap.ui.model.Context} oConfig.bindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
 	 * @param {boolean} oConfig.checkKey If set, it should be checked if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} oConfig.checkDescription If set, it should be checked if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @param {sap.ui.core.Control} oConfig.control Instance if the calling control
@@ -208,7 +208,7 @@ sap.ui.define([
 	 * @param {any} vKey Key
 	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.) (Only filled in conditions of old variants.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.) (Only filled in conditions of old variants.)
-	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
+	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, if bound to one - NOT LONGER USED
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one - NOT LONGER USED
 	 * @param {object} oConditionPayload Additional context information for this key

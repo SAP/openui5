@@ -331,7 +331,7 @@
 													<vhfb:filterItems>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" />
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" fieldHelp="FHClassification"/>
+														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" valueHelp="FHClassification"/>
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
@@ -415,8 +415,8 @@
 													<vhfb:filterItems>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" />
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" fieldHelp="FHClassification"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" fieldHelp="FHGenre"/>
+														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" valueHelp="FHClassification"/>
+														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" valueHelp="FHGenre"/>
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
@@ -509,9 +509,9 @@
 													<vhfb:filterItems>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" />
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" fieldHelp="FHClassification"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" fieldHelp="FHGenre"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Sub Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/subgenre_code}" display="Description" fieldHelp="FHSubGenre"/>
+														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" valueHelp="FHClassification"/>
+														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" valueHelp="FHGenre"/>
+														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Sub Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/subgenre_code}" display="Description" valueHelp="FHSubGenre"/>
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
@@ -566,18 +566,18 @@
 								id="ff1" label="Author"
 								conditions="{$filters>/conditions/author_ID}"
 								dataType="Edm.Int32"
-								required="false" fieldHelp="FH1" display="DescriptionValue"/>
+								required="false" valueHelp="FH1" display="DescriptionValue"/>
 
 							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff2" label="Title"
 								conditions="{$filters>/conditions/title}"
-								fieldHelp="FH4"/>
+								valueHelp="FH4"/>
 
 							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff4" label="Published"
 								dataType="Edm.Date" dataTypeConstraints='\{"V4": true\}'
 								conditions="{$filters>/conditions/published}"
-								maxConditions="-1" fieldHelp="FHPublished"
+								maxConditions="-1" valueHelp="FHPublished"
 								operators="EQ,GT,LT,BT,MEDIEVAL,RENAISSANCE,MODERN,LASTYEAR" />
 
 							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -585,20 +585,20 @@
 								dataType="Edm.String"
 								dataTypeConstraints= "{nullable: false}"
 								conditions="{$filters>/conditions/language_code}"
-								maxConditions="-1" fieldHelp="FHLanguage"/>
+								maxConditions="-1" valueHelp="FHLanguage"/>
 
 							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff7" label="Genre"
 								conditions="{$filters>/conditions/genre_code}"
 								dataType="Edm.String"
-								required="false" fieldHelp="FHGenre"
+								required="false" valueHelp="FHGenre"
 								display="Description"/>
 
 							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff8" label="Sub Genre"
 								conditions="{$filters>/conditions/subgenre_code}"
 								dataType="Edm.String"
-								required="false" fieldHelp="FHSubGenre"
+								required="false" valueHelp="FHSubGenre"
 								display="Description"/>
 						</mdc:filterItems>
 						</mdc:FilterBar>
