@@ -653,6 +653,70 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[new DateTime(), new DateTime({}, {displayFormat : "Date"})].forEach(function (oType, i) {
+	QUnit.test("getISOStringFromModelValue: falsy values " + i, function (assert) {
+		assert.strictEqual(oType.getISOStringFromModelValue(null), null);
+		assert.strictEqual(oType.getISOStringFromModelValue(undefined), null);
+	});
+});
+
+	//*********************************************************************************************
+[new DateTime(), new DateTime({}, {displayFormat : "Date"})].forEach(function (oType, i) {
+	QUnit.test("getModelValueFromISOString " + i, function (assert) {
+		this.mock(UI5Date).expects("getInstance").withExactArgs("~sISOString").returns("~oDate");
+
+		assert.strictEqual(oType.getModelValueFromISOString("~sISOString"), "~oDate");
+	});
+});
+
+	//*********************************************************************************************
+[new DateTime(), new DateTime({}, {displayFormat : "Date"})].forEach(function (oType, i) {
+	QUnit.test("getModelValueFromISOString: falsy values " + i, function (assert) {
+		assert.strictEqual(oType.getModelValueFromISOString(null), null);
+		assert.strictEqual(oType.getModelValueFromISOString(undefined), null);
+		assert.strictEqual(oType.getModelValueFromISOString(""), null);
+	});
+});
+
+	//*********************************************************************************************
+[{
+		sDateString: "2023-07-31T09:15:30Z",
+		sISOString: "2023-07-31T09:15:30.000Z",
+		sExpectedISOString: "2023-07-31T09:15:30.000Z"
+}, {
+		sDateString: "0099-09-25T12:30:45.123Z",
+		sISOString: "0099-09-25T12:30:45.123Z",
+		sExpectedISOString: "0099-09-25T12:30:45.123Z"
+}, {
+		sDateString: "0009-06-30T00:00:00.123Z",
+		sISOString: "0009-06-29T23:00:00.123-01:00",
+		sExpectedISOString: "0009-06-30T00:00:00.123Z"
+}, {
+		sDateString: "2022-06-30T09:15:45.1Z",
+		sISOString: "2022-06-30T10:15:45.1+01:00",
+		sExpectedISOString: "2022-06-30T09:15:45.100Z"
+}].forEach(function (oFixture, i) {
+	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString: integrative test (timestamps) " + i,
+		function (assert) {
+			var oDate = UI5Date.getInstance(oFixture.sDateString),
+				oType = new DateTime();
+
+			assert.strictEqual(oType.getISOStringFromModelValue(oDate), oFixture.sExpectedISOString);
+			assert.deepEqual(oType.getModelValueFromISOString(oFixture.sISOString), oDate);
+		}
+	);
+});
+
+	//*********************************************************************************************
+	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString: integrative (Date)", function (assert) {
+		var oDate = UI5Date.getInstance("2023-04-20"),
+			oType = new DateTime({}, {displayFormat : "Date"});
+
+		assert.strictEqual(oType.getISOStringFromModelValue(oDate), "2023-04-20");
+		assert.deepEqual(oType.getModelValueFromISOString("2023-04-20"), oDate);
+	});
+
+	//*********************************************************************************************
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.DateTimeOffset");
 
@@ -1018,6 +1082,75 @@ sap.ui.define([
 
 		trimLocalOffset();
 		assert.strictEqual(sModelValue, oFixture.expectedModelValue);
+	});
+});
+
+	//*********************************************************************************************
+[new DateTimeOffset(), new DateTimeOffset().setV4()].forEach(function (oType, i) {
+	QUnit.test("getISOStringFromModelValue: falsy values " + i, function (assert) {
+		assert.strictEqual(oType.getISOStringFromModelValue(null), null);
+		assert.strictEqual(oType.getISOStringFromModelValue(undefined), null);
+		if (oType.bV4) {
+			assert.strictEqual(oType.getISOStringFromModelValue(""), null);
+		}
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValueFromISOString for V2", function (assert) {
+		this.mock(UI5Date).expects("getInstance").withExactArgs("~sISOString").returns("~oDate");
+
+		assert.deepEqual(new DateTimeOffset().getModelValueFromISOString("~sISOString"), "~oDate");
+	});
+
+	//*********************************************************************************************
+[{
+		sDateString: "2023-07-31T09:15:30Z",
+		sISOString: "2023-07-31T09:15:30.000Z",
+		sExpectedISOString: "2023-07-31T09:15:30.000Z"
+}, {
+		sDateString: "0099-09-25T12:30:45.123Z",
+		sISOString: "0099-09-25T12:30:45.123Z",
+		sExpectedISOString: "0099-09-25T12:30:45.123Z"
+}, {
+		sDateString: "0009-06-30T00:00:00.123Z",
+		sISOString: "0009-06-29T23:00:00.123-01:00",
+		sExpectedISOString: "0009-06-30T00:00:00.123Z"
+}, {
+		sDateString: "2022-06-30T09:15:45.1Z",
+		sISOString: "2022-06-30T10:15:45.1+01:00",
+		sExpectedISOString: "2022-06-30T09:15:45.100Z"
+}].forEach(function (oFixture, i) {
+	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString: integrative test V2 #" + i, function (assert) {
+		var oDate = UI5Date.getInstance(oFixture.sDateString),
+			oType = new DateTimeOffset();
+
+		assert.strictEqual(oType.getISOStringFromModelValue(oDate), oFixture.sExpectedISOString);
+		assert.deepEqual(oType.getModelValueFromISOString(oFixture.sISOString), oDate);
+	});
+});
+
+	//*********************************************************************************************
+[
+	"2023-07-31T09:15:30.000Z",
+	"2022-06-30T15:15:45.12345Z",
+	"0009-06-29T23:00:00.123-01:00",
+	"0099-09-25T12:30:45.12345+01:00"
+].forEach(function (sISOString, i) {
+	QUnit.test("getISOStringFromModelValue/getModelValueFromISOString: integrative test V4 #" + i, function (assert) {
+		var oType = new DateTimeOffset().setV4();
+
+		assert.strictEqual(oType.getISOStringFromModelValue(sISOString), sISOString);
+		assert.strictEqual(oType.getModelValueFromISOString(sISOString), sISOString);
+	});
+});
+
+	//*********************************************************************************************
+[new DateTimeOffset(), new DateTimeOffset().setV4()].forEach(function (oType, i) {
+	QUnit.test("getModelValueFromISOString: falsy values " + i, function (assert) {
+		assert.strictEqual(oType.getModelValueFromISOString(null), null);
+		assert.strictEqual(oType.getModelValueFromISOString(undefined), null);
+		assert.strictEqual(oType.getModelValueFromISOString(""), null);
 	});
 });
 });
