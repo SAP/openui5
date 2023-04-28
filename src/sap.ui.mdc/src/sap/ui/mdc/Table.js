@@ -528,7 +528,20 @@ sap.ui.define([
 				 * fitting {@link sap.m.IllustratedMessage.IllustratedMessageType illustration}.
 				 * @since 1.106
 				 */
-				noData: { type: "sap.ui.core.Control", multiple: false, altTypes: ["string"] }
+				noData: { type: "sap.ui.core.Control", multiple: false, altTypes: ["string"] },
+
+				/**
+				 * Defines an aggregation for the <code>CopyProvider</code> plugin that provides copy to clipboard capabilities for the selected rows of the table and creates a Copy button for the toolbar of the table.
+				 * To disable the copy function of the table, including the Copy button in the toolbar, the <code>enabled</code> property of the <code>CopyProvider</code> must be set to <code>false</code>.
+				 * To hide the Copy button from the toolbar, the <code>visible</code> property of the <code>CopyProvider</code> must be set to <code>false</code>.
+				 *
+				 * <b>Note:</b> The {@link sap.m.plugins.CopyProvider#extractData extractData} property of the <code>CopyProvider</code> must not be managed by the application.
+				 * @since 1.114
+				 */
+				copyProvider: {
+					type: "sap.m.plugins.CopyProvider",
+					multiple: false
+				}
 			},
 			associations: {
 				/**
@@ -766,6 +779,26 @@ sap.ui.define([
 
 	Table.prototype.getCopyProviderPluginOwner = function() {
 		return this._oTable || this._oFullInitialize.promise;
+	};
+
+	Table.prototype.setCopyProvider = function(oCopyProvider) {
+		this.setAggregation("copyProvider", oCopyProvider, true);
+		if (oCopyProvider && this._oToolbar && !Core.byId(this.getId() + "-copy")) {
+			this._oToolbar.insertEnd(this._getCopyButton(), 0);
+		}
+		return this;
+	};
+
+	/**
+	 * Returns the clipboard settings for a column.
+	 *
+	 * @param {sap.ui.mdc.Column} oColumn The column for which to get the clipboard settings
+	 * @returns {sap.m.plugins.CopyProvider.ColumnClipboardSettings} Clipboard setting object for the provided column.
+	 * @private
+	 * @ui5-restricted sap.m.plugins.CopyProvider
+	 */
+	Table.prototype.getColumnClipboardSettings = function(oColumn) {
+		return this.getPropertyHelper().getColumnClipboardSettings(oColumn);
 	};
 
 	Table.prototype.setDataStateIndicator = function(oDataStateIndicator) {
@@ -1613,6 +1646,7 @@ sap.ui.define([
 					this._oTitle
 				],
 				end: [
+					this._getCopyButton(),
 					this._getPasteButton(),
 					this._getP13nButton()
 				]
@@ -1822,6 +1856,13 @@ sap.ui.define([
 			// Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
 			var bAggregateP13nOnly = aP13nMode.length === 1 && aP13nMode[0] === "Aggregate";
 			this._oP13nButton.setVisible(aP13nMode.length > 0 && !bAggregateP13nOnly && !this._bHideP13nButton);
+		}
+	};
+
+	Table.prototype._getCopyButton = function() {
+		var oCopyProvider = this.getCopyProvider();
+		if (oCopyProvider) {
+			return oCopyProvider.getCopyButton({id: this.getId() + "-copy"});
 		}
 	};
 

@@ -57,6 +57,10 @@ sap.ui.define([
 	 *   Name of the text property that is related to this property in a 1:1 relation.
 	 * @property {object} [exportSettings]
 	 *   Object that contains information about the export settings, see {@link sap.ui.export.Spreadsheet}.
+	 * @property {object} [clipboardSettings]
+	 *   Object that contains information about the clipboard settings. Setting this value to <code>null</code> disables the copy function.
+	 * @property {string} [clipboardSettings.template]
+	 *   Defines the formatting template that supports indexed placeholders of <code>propertyInfos</code> within curly brackets, for example, "{0} ({1})".
 	 * @property {Object} [visualSettings]
 	 *   This object contains all relevant properties for visual adjustments.
 	 * @property {Object} [visualSettings.widthCalculation]
@@ -142,6 +146,20 @@ sap.ui.define([
 				},
 				exportSettings: {
 					type: "object",
+					"default": {
+						value: {},
+						ignoreIfNull: true
+					},
+					forComplexProperty: {
+						allowed: true
+					}
+				},
+				clipboardSettings: {
+					type: {
+						template: {
+							type: "string"
+						}
+					},
 					"default": {
 						value: {},
 						ignoreIfNull: true
@@ -265,6 +283,36 @@ sap.ui.define([
 		return this.getProperties().filter(function(oProperty) {
 			return oProperty.groupable;
 		});
+	};
+
+	/**
+	 * Gets the clipboard settings for a column.
+	 *
+	 * @param {sap.ui.mdc.table.Column} oColumn The column for which to get the clipboard settings
+	 * @returns {sap.m.plugins.CopyProvider.ColumnClipboardSettings|null} Clipboard setting object for the provided column.
+	 * @private
+	 */
+	PropertyHelper.prototype.getColumnClipboardSettings = function(oColumn) {
+		var oProperty = this.getProperty(oColumn.getDataProperty());
+		if (!oProperty || oProperty.clipboardSettings === null) {
+			return null;
+		}
+
+		var aProperties = oProperty.getSimpleProperties().map(function(oSimpleProperty) {
+			return oSimpleProperty.path;
+		});
+		var aTypes = oProperty.getSimpleProperties().map(function(oSimpleProperty) {
+			return oSimpleProperty.typeConfig && oSimpleProperty.typeConfig.typeInstance;
+		});
+		var sTemplate = oProperty.clipboardSettings.template || Array.from(Array(aProperties.length).keys(), function(iIndex) {
+			return "{" + iIndex + "}";
+		}).join(" ");
+
+		return {
+			properties: aProperties,
+			template: sTemplate,
+			types: aTypes
+		};
 	};
 
 	/**

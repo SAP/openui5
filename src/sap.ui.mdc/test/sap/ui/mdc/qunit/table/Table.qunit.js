@@ -35,6 +35,7 @@ sap.ui.define([
 	"sap/ui/mdc/odata/TypeUtil",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+	"sap/m/plugins/CopyProvider",
 	"sap/m/plugins/PasteProvider",
 	"../util/createAppEnvironment",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -87,6 +88,7 @@ sap.ui.define([
 	TypeUtil,
 	TestModificationHandler,
 	ActionToolbarAction,
+	CopyProvider,
 	PasteProvider,
 	createAppEnvironment,
 	ControlPersonalizationWriteAPI,
@@ -2664,6 +2666,25 @@ sap.ui.define([
 			this.oTable.setBusyIndicatorDelay(200);
 			assert.strictEqual(this.oTable.getBusyIndicatorDelay(), 200, "sap.ui.mdc.Table - Custom Busy Indicator Delay");
 			assert.strictEqual(this.oTable._oTable.getBusyIndicatorDelay(), 200, "Inner table - Custom Busy Indicator Delay");
+		}.bind(this));
+	});
+
+	QUnit.test("copyProvider", function(assert) {
+		var oCopyProvider = new CopyProvider();
+		this.oTable.setCopyProvider(oCopyProvider);
+
+		return this.oTable._fullyInitialized().then(function() {
+			assert.equal(this.oTable.getCopyProviderPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for CopyProvider");
+
+			var oColumn = new Column();
+			var fnGetColumnClipboardSettingsSpy = sinon.spy(this.oTable.getPropertyHelper(), "getColumnClipboardSettings");
+			this.oTable.getColumnClipboardSettings(oColumn);
+			assert.ok(fnGetColumnClipboardSettingsSpy.calledWith(oColumn), "Table#getColumnClipboardSettings uses PropertyHelper#getColumnClipboardSettings");
+			fnGetColumnClipboardSettingsSpy.restore();
+
+			var oCopyButton = Core.byId(this.oTable.getId() + "-copy");
+			assert.ok(oCopyButton, "Copy button is created");
+			assert.equal(this.oTable._oToolbar.indexOfEnd(oCopyButton), 0, "Copy button is added to the toolbar, as a first element of the end aggreagtion");
 		}.bind(this));
 	});
 

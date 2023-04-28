@@ -3,7 +3,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["./PluginBase", "sap/ui/core/Core"], function(PluginBase, Core) {
+sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/strings/formatMessage", "sap/m/OverflowToolbarButton"], function(PluginBase, Log, Core, formatTemplate, OverflowToolbarButton) {
 	"use strict";
 
 	/**
@@ -77,7 +77,14 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core"], function(PluginBase, Core) {
 			 * This callback function gets called with the binding context or the row instance if there is no binding.
 			 * Return <code>true</code> to exclude the context, <code>false</code> otherwise.
 			 */
-			excludeContext: { type: "function", invalidate: false }
+			excludeContext: { type: "function", invalidate: false },
+
+			/**
+			 * Defines the visibility of the Copy button created with the {@link #getCopyButton} API.
+			 *
+			 * @since 1.114
+			 */
+			visible: { type: "boolean", defaultValue: true, invalidate: false }
 		},
 		events: {
 			/**
@@ -121,24 +128,87 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core"], function(PluginBase, Core) {
 		return navigator.clipboard.writeText(sClipboardText);
 	}
 
+	CopyProvider.prototype._shouldManageExtractData = function() {
+		var oControl = this.getControl();
+		var oParent = this.getParent();
+		return (oControl !== oParent && oParent.indexOfDependent(this) == -1);
+	};
+
 	CopyProvider.prototype.isApplicable = function() {
 		if (!navigator.clipboard) {
 			throw new Error(this + " requires a secure context in order to access the clipboard API.");
+		}
+		if (this._shouldManageExtractData()){
+			if (this.getExtractData()) {
+				throw new Error("extractData property must not be defined for " + this);
+			}
+			if (!this.getParent().getColumnClipboardSettings) {
+				throw new Error("getColumnClipboardSettings method must be defined for " + this.getParent());
+			}
 		} else if (!this.getExtractData()) {
 			throw new Error("extractData property must be defined for " + this);
-		} else {
-			return true;
 		}
+		return true;
 	};
 
 	CopyProvider.prototype.onActivate = function(oControl) {
 		this._oDelegate = { onkeydown: this.onkeydown };
 		oControl.addEventDelegate(this._oDelegate, this);
+
+		this._oCopyButton && this._oCopyButton.setEnabled(true);
+		this._shouldManageExtractData() && this.setExtractData(this._extractData.bind(this));
 	};
 
 	CopyProvider.prototype.onDeactivate = function(oControl) {
 		oControl.removeEventDelegate(this._oDelegate, this);
 		this._oDelegate = null;
+
+		this._oCopyButton && this._oCopyButton.setEnabled(false);
+		this._shouldManageExtractData() && this.setExtractData();
+	};
+
+	CopyProvider.prototype.setVisible = function(bVisible) {
+		this.setProperty("visible", bVisible, true);
+		this._oCopyButton && this._oCopyButton.setVisible(this.getVisible());
+		return this;
+	};
+
+	CopyProvider.prototype.setParent = function() {
+		PluginBase.prototype.setParent.apply(this, arguments);
+		if (!this.getParent() && this._oCopyButton) {
+			this._oCopyButton.destroy(true);
+			this._oCopyButton = null;
+		}
+	};
+
+	/**
+	 * Creates and returns a Copy button that can be used to trigger a copy action, for example, from the table toolbar.
+	 *
+	 * @param {object} [mSettings] The settings of the button control
+	 * @returns {sap.m.OverflowToolbarButton} The button instance
+	 * @since 1.114
+	 * @public
+	 */
+	CopyProvider.prototype.getCopyButton = function(mSettings) {
+		if (!this._oCopyButton) {
+			this._oCopyButton = new OverflowToolbarButton(Object.assign({
+				icon: "sap-icon://copy",
+				visible: this.getVisible(),
+				tooltip: Core.getLibraryResourceBundle("sap.m").getText("COPYPROVIDER_COPY"),
+				press: this.copySelectionData.bind(this, true)
+			}, mSettings));
+		}
+		return this._oCopyButton;
+	};
+
+	CopyProvider.prototype.exit = function() {
+		if (this._oCopyButton) {
+			this._oCopyButton.destroy(true);
+			this._oCopyButton = null;
+		}
+		if (this._mColumnClipboardSettings) {
+			this._mColumnClipboardSettings = null;
+		}
 	};
 
 	/**
@@ -246,6 +316,41 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core"], function(PluginBase, Core) {
 		this.copySelectionData(true);
 	};
 
+	CopyProvider.prototype._extractData = function(oRowContext, oColumn) {
+		if (!this._mColumnClipboardSettings) {
+			this._mColumnClipboardSettings = new WeakMap();
+		}
+
+		var mColumnClipboardSettings = this._mColumnClipboardSettings.get(oColumn);
+		if (mColumnClipboardSettings === undefined) {
+			mColumnClipboardSettings = this.getParent().getColumnClipboardSettings(oColumn);
+			this._mColumnClipboardSettings.set(oColumn, mColumnClipboardSettings);
+		}
+		if (!mColumnClipboardSettings) {
+			return;
+		}
+
+		var aPropertyValues = mColumnClipboardSettings.properties.map(function(sProperty, iIndex) {
+			var vPropertyValue = oRowContext.getProperty(sProperty);
+			var oType = mColumnClipboardSettings.types[iIndex];
+			if (oType) {
+				try {
+					vPropertyValue = oType.formatValue(vPropertyValue, "string");
+				} catch (oError) {
+					Log.error(this + ': Formatting error during copy "' + oError.message + '"');
+				}
+			}
+			return isCellValueCopyable(vPropertyValue) ? vPropertyValue : "";
+		});
+
+		var fnUnitFormatter = mColumnClipboardSettings.unitFormatter;
+		if (fnUnitFormatter) {
+			aPropertyValues[0] = fnUnitFormatter(aPropertyValues[0], aPropertyValues[1]);
+		}
+
+		var sExtractValue = formatTemplate(mColumnClipboardSettings.template, aPropertyValues).trim();
+		return sExtractValue;
+	};
 
 	/**
 	 * Plugin-specific control configurations.
@@ -294,6 +399,18 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core"], function(PluginBase, Core) {
 			}
 		}
 	}, CopyProvider);
+
+	/**
+	 * Clipboard settings of a column to be used by the CopyProvider to extract the data.
+	 *
+	 * @typedef sap.m.plugins.CopyProvider.ColumnClipboardSettings
+	 * @type {object}
+	 * @property {string[]} properties Binding properties
+	 * @property {sap.ui.model.Type[]} types Model type instances of properties
+	 * @property {string} template Placeholders of properties
+	 * @property {function} [unitFormatter] Unit formatter function
+	 * @private
+	 */
 
 	return CopyProvider;
 
