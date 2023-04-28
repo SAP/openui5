@@ -288,7 +288,9 @@ sap.ui.define([
 		assert.equal(oLabel.getText(), "Petro", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
-
+	/**
+	 * @deprecated As of version 1.88.0
+	 */
 	QUnit.test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		oLabel.setBindingContext(undefined);
@@ -865,7 +867,9 @@ sap.ui.define([
 		oModel.setJSON(sJSON,false);
 		assert.equal(oModel.getData().name, "John", "get Data test");
 	});
-
+	/**
+	 * @deprecated As of version 1.88.0
+	 */
 	QUnit.test("test JSON compatible syntax", function(assert) {
 		var oModel = new JSONModel(aTestData);
 		oModel.setLegacySyntax(true);
