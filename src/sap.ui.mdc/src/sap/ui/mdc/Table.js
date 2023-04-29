@@ -1869,7 +1869,7 @@ sap.ui.define([
 			this._oToolbar.addEnd(this._oExportButton);
 		}
 
-		this._oExportButton.setEnabled(this._getRowCount(false) > 0);
+		this._oExportButton.setEnabled(!MTableUtil.isEmpty(this.getRowBinding()));
 		this._oExportButton.setVisible(this._isExportEnabled());
 	};
 
@@ -1947,7 +1947,7 @@ sap.ui.define([
 			this._oToolbar.insertEnd(this._oCollapseAllButton, 0);
 		}
 
-		this._oCollapseAllButton.setEnabled(this._getRowCount(false) > 0);
+		this._oCollapseAllButton.setEnabled(!MTableUtil.isEmpty(this.getRowBinding()));
 		this._oCollapseAllButton.setVisible(this._isCollapseAllEnabled());
 	};
 
@@ -1980,7 +1980,7 @@ sap.ui.define([
 			this._oToolbar.insertEnd(this._oExpandAllButton, 0);
 		}
 
-		this._oExpandAllButton.setEnabled(this._getRowCount(false) > 0);
+		this._oExpandAllButton.setEnabled(!MTableUtil.isEmpty(this.getRowBinding()));
 		this._oExpandAllButton.setVisible(this._isExpandAllEnabled());
 	};
 
@@ -2518,7 +2518,7 @@ sap.ui.define([
 		this._updateCollapseAllButton();
 		this._updateExportButton();
 
-		/* skip calling of _updateHeaderText till data is received otherwise _announceTableUpdate
+		/* skip calling of _updateHeaderText till data is received otherwise MTableUtil.announceTableUpdate
 		will be called to early and the user gets an incorrect announcement via screen reader of the actual table state*/
 		if (this._bIgnoreChange) {
 			return;
@@ -2545,7 +2545,7 @@ sap.ui.define([
 		if (this._oTitle && this.getHeader()) {
 			sHeader = this.getHeader();
 			if (this.getShowRowCount()) {
-				iRowCount = this._getRowCount(true);
+				iRowCount = this.getRowBinding() ? this.getRowBinding().getCount() : 0;
 				if (iRowCount > 0) {
 					var sValue = this._oNumberFormatInstance.format(iRowCount);
 					sHeader += " (" + sValue + ")";
@@ -2557,34 +2557,8 @@ sap.ui.define([
 
 		if (!this._bIgnoreChange && this._bAnnounceTableUpdate) {
 			this._bAnnounceTableUpdate = false;
-			this._announceTableUpdate(iRowCount);
-		}
-	};
-
-	/**
-	 * Provides an additional announcement for the screen reader to inform the user that the table
-	 * has been updated.
-	 *
-	 * @param {int} iRowCount Number of total rows
-	 * @private
-	 */
-	Table.prototype._announceTableUpdate = function(iRowCount) {
-		var oInvisibleMessage = InvisibleMessage.getInstance();
-
-		if (oInvisibleMessage) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			var sText = this.getHeader();
-
-			// iRowCount will be undefined if table property showRowCount is set to false
-			if (iRowCount === undefined && this._getRowCount(false) > 0) {
-				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED", [sText]));
-			} else if (iRowCount > 1) {
-				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_MULT", [sText, iRowCount]));
-			} else if (iRowCount === 1) {
-				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_SING", [sText, iRowCount]));
-			} else {
-				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_NOITEMS", [sText]));
-			}
+			// iRowCount is undefined, if this.getShowRowCount() returns false
+			MTableUtil.announceTableUpdate(this.getHeader(), iRowCount);
 		}
 	};
 
@@ -2608,38 +2582,6 @@ sap.ui.define([
 
 			this._getType().updateSortIndicator(oColumn, sSortOrder);
 		}, this);
-	};
-
-	/**
-	 * Gets the row count of the table.
-	 *
-	 * @private
-	 * @returns {int} the row count
-	 */
-	Table.prototype._getRowCount = function(bConsiderTotal) {
-		var oRowBinding = this.getRowBinding();
-
-		if (!oRowBinding) {
-			return bConsiderTotal ? undefined : 0;
-		}
-
-		var iRowCount;
-		if (!bConsiderTotal) {
-			iRowCount = oRowBinding.getLength();
-		} else if (typeof oRowBinding.getCount === 'function') {
-				iRowCount = oRowBinding.getCount();
-			} else if (oRowBinding.isLengthFinal()) {
-				// This branch is only fallback and for TreeBindings (TreeBindings should be excluded when MDCTable will support TreeBinding,
-				// see corresponding function in SmartTable for reference)
-				// ListBindings should in general get a getCount function in nearer future (5341464)
-				iRowCount = oRowBinding.getLength();
-			}
-
-		if (iRowCount < 0 || iRowCount === "0") {
-			iRowCount = 0;
-		}
-
-		return iRowCount;
 	};
 
 	/**
