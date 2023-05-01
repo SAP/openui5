@@ -1,7 +1,67 @@
 {
   "1.114.0": {
-    "date": "April 2023",
+    "date": "May 2023",
     "notes": [
+      {
+        "id": "29719f55dfeefc7b9c73a729b911006884d482ef",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Check for openers without UI5Area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370055953"
+          }
+        ]
+      },
+      {
+        "id": "5d46b4b3217ce6d2d405217cf4212a167dc42a7d",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: now returns selected dates correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370052416"
+          }
+        ]
+      },
+      {
+        "id": "776c6cdd00a2b5ddc690d4226b030d0d540864a1",
+        "type": "FIX",
+        "text": " Accessibility Guide: Flickering in sample prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370051153"
+          }
+        ]
+      },
+      {
+        "id": "c272c6a63fa62e26bf8df5c878ed502081f81792",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: tabIndex is correct after initially selected button is selected again (programmatically)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380027793"
+          }
+        ]
+      },
+      {
+        "id": "14abce610f3003120c50fd504ed56bdba5c65b3c",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: now displays proper separators at proper place",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270147417"
+          }
+        ]
+      },
+      {
+        "id": "159ce0af7c340313d0ca94fa99011f753d7f936b",
+        "type": "FEATURE",
+        "text": " sap.m.Button: implement new accessibleRole property"
+      },
       {
         "id": "6525fed3d98391146d4c52630429f24f5c2c8fdd",
         "type": "FIX",
@@ -52,6 +112,11 @@
         "text": " sap.m.InputBase: New horizon style parameters used"
       },
       {
+        "id": "4ac8b7500a74f271b6a7e2ce4814eb9cecb0b604",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Visual test enhancement"
+      },
+      {
         "id": "0428b493a5eff57c16d4e5662189e0726ec4f087",
         "type": "FIX",
         "text": " sap.m.Input: Visual test enhancement"
@@ -60,6 +125,17 @@
         "id": "5eea3398ed2277755a30f07f38089c0ec97c98d5",
         "type": "FIX",
         "text": " sap.m.MultiComboBox: Visual test enhancement"
+      },
+      {
+        "id": "4519393fa6f03abe0471f3ece7cca462fa3fda8f",
+        "type": "FIX",
+        "text": " sap.m.Button: Uses correct active text parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
       },
       {
         "id": "ba320b69e77c2a7e19126737d5b2013261d1b87b",

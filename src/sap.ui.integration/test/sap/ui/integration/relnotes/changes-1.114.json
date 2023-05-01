@@ -1,7 +1,17 @@
 {
   "1.114.0": {
-    "date": "April 2023",
+    "date": "May 2023",
     "notes": [
+      {
+        "id": "a0e17fbbf1e075f67a3b482f9543e9b8ccec3900",
+        "type": "FEATURE",
+        "text": " Integration cards: Add \"duration\" picker in Object Card"
+      },
+      {
+        "id": "4f26e358bbd47b95def9776a1da519e0319d4231",
+        "type": "FEATURE",
+        "text": " Integration Cards: Add experimental methods for blocking messages"
+      },
       {
         "id": "ca58b8c0d5780366fe42d25a7615b22dbccd90d2",
         "type": "FIX",

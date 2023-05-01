@@ -1,7 +1,18 @@
 {
   "1.114.0": {
-    "date": "April 2023",
+    "date": "May 2023",
     "notes": [
+      {
+        "id": "01e47d7d1f0b7bfba20df7d6e1de10d88f993624",
+        "type": "FIX",
+        "text": " ConditionType: leave empty unit as it is, only update only undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370042717"
+          }
+        ]
+      },
       {
         "id": "46c00c1ad8b05ad074de737cb29707ecd1a247ae",
         "type": "FIX",

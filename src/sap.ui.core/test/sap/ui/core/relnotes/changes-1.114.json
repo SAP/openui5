@@ -1,7 +1,40 @@
 {
   "1.114.0": {
-    "date": "April 2023",
+    "date": "May 2023",
     "notes": [
+      {
+        "id": "fcb34abcc578b9f905aeec3df560d91c2815a71b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#create: improve error message for missing bSkipRefresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370022413"
+          }
+        ]
+      },
+      {
+        "id": "c2912072fb30b293cb5da6917202475942530ca8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#resumeInternal: improve performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183841"
+          }
+        ]
+      },
+      {
+        "id": "e71ae04ca8a91642b0ff27db65559f416f5fdef5",
+        "type": "FIX",
+        "text": " core/Configuration: JSDoc for Enum 'AnimationMode'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370048748"
+          }
+        ]
+      },
       {
         "id": "6b727655b72472e615c72c719172655b72d7e985",
         "type": "FIX",
