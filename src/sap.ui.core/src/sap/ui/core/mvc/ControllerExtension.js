@@ -131,7 +131,7 @@ sap.ui.define([
 		 * <b>Note:</b> This static method is automatically propagated to subclasses of
 		 * <code>ControllerExtension</code>.
 		 *
-		 * @param {object} oExtension The custom extension definition
+		 * @param {Object<string, function>} oExtension The custom extension definition
 		 * @return {function} A controller extension class
 		 * @public
 		 */

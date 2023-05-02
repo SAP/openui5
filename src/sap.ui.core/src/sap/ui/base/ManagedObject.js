@@ -1008,7 +1008,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.ManagedObject|object} vData
 	 *   The data to create the object from
-	 * @param {object} [oKeyInfo]
+	 * @param {sap.ui.base.ManagedObject.MetadataOptions.Aggregation} [oKeyInfo]
 	 *   Info object for the aggregation to which the created object will be added;
 	 *   serves as a fallback for determining the type of the object to be created
 	 * @param {object} [oScope]
@@ -1626,7 +1626,7 @@ sap.ui.define([
 	 * If no origin info is available, <code>null</code> will be returned.
 	 *
 	 * @param {string} sPropertyName Name of the property
-	 * @returns {object|null} An object describing the origin of this property's value or <code>null</code>
+	 * @returns {{source: string, locale: string}}|null} An object describing the origin of this property's value or <code>null</code>
 	 * @public
 	 */
 	ManagedObject.prototype.getOriginInfo = function(sPropertyName) {
@@ -1720,8 +1720,8 @@ sap.ui.define([
 	 * Use the concrete method get<i>XYZ</i> for association 'XYZ' instead.
 	 *
 	 * @param {string} sAssociationName the name of the association
-	 * @param {object} oDefaultForCreation
-	 *            the object that is used in case the current aggregation is empty (only null or empty array allowed)
+	 * @param {null|Array} oDefaultForCreation
+	 *            the value that is used in case the current aggregation is empty (only null or empty array is allowed)
 	 * @returns {string | string[] | null} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
 	 * @protected
 	 */
@@ -2032,7 +2032,7 @@ sap.ui.define([
 	 *
 	 * @param {string}
 	 *            sAggregationName name of an 0..1 aggregation
-	 * @param {object}
+	 * @param {sap.ui.base.ManagedObject}
 	 *            oObject the managed object that is set as aggregated object
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
@@ -3060,8 +3060,9 @@ sap.ui.define([
 	 *
 	 * @param {string} sName Name of the property or aggregation
 	 *
-	 * @returns {object} A binding info object, containing at least a <code>path</code> or <code>parts</code> property
-	 *                   and, depending on the binding type, additional properties
+	 * @returns {sap.ui.base.ManagedObject.PropertyBindingInfo|sap.ui.base.ManagedObject.AggregationBindingInfo}
+	 *  A binding info object, containing at least a <code>path</code> or <code>parts</code> property and, depending on
+	 *  the binding type, additional properties
 	 *
 	 * @protected
 	 */
@@ -3303,7 +3304,7 @@ sap.ui.define([
 	 *   parameters depend on the model implementation, they should be documented with the
 	 *   <code>bindProperty</code> method of the corresponding model class or with the model specific
 	 *   subclass of <code>sap.ui.model.PropertyBinding</code>
-	 * @property {object} [events=null]
+	 * @property {Object<string,function>} [events=null]
 	 *   Map of event handler functions keyed by the name of the binding events that they should be attached to
 	 * @property {Array<string|sap.ui.base.ManagedObject.PropertyBindingInfo>} [parts]
 	 *   Array of binding info objects for the parts of a composite binding; the structure of
@@ -3563,7 +3564,7 @@ sap.ui.define([
 	 *   will be destroyed, and when this  <code>ManagedObject</code> is cloned, the template will be cloned
 	 *   as well; the third option (<code>undefined</code>) only exists for compatibility reasons, its behavior
 	 *   is not fully reliable and it may leak the template
-	 * @property {function} [factory]
+	 * @property {function(string, sap.ui.model.Context):sap.ui.base.ManagedObject} [factory]
 	 *   A factory function that will be called to create an object for each item in the aggregation;
 	 *   this is an alternative to providing a template object and can be used when the objects should differ
 	 *   depending on the binding context; the factory function will be called with two parameters: an ID that
@@ -3579,7 +3580,7 @@ sap.ui.define([
 	 *   The initial sort order (optional)
 	 * @property {sap.ui.model.Filter|sap.ui.model.Filter[]} [filters]
 	 *   The predefined filters for this aggregation (optional)
-	 * @property {string|function} [key]
+	 * @property {string|function(sap.ui.model.Context):string} [key]
 	 *   Name of the key property or a function getting the context as only parameter to calculate a key
 	 *   for entries. This can be used to improve update behaviour in models, where a key is not already
 	 *   available.
@@ -3588,7 +3589,7 @@ sap.ui.define([
 	 *   parameters depend on the model implementation, they should be documented with the
 	 *   <code>bindList</code> method of the corresponding model class or with the model specific
 	 *   subclass of <code>sap.ui.model.ListBinding</code>
-	 * @property {function} [groupHeaderFactory]
+	 * @property {function({key: string}):sap.ui.base.ManagedObject} [groupHeaderFactory]
 	 *   A factory function to generate custom group visualization (optional). It should return a
 	 *   control suitable to visualize a group header (e.g. a <code>sap.m.GroupHeaderListItem</code>
 	 *   for a <code>sap.m.List</code>).

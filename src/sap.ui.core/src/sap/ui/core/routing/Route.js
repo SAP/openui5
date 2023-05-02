@@ -17,17 +17,15 @@ sap.ui.define([
 	"use strict";
 
 		/**
-		 * Instantiates a route
+		 * Configuration object for a route
 		 *
-		 * @class
-		 * @param {sap.ui.core.routing.Router} oRouter
-		 *   Router instance to which the route will be added
-		 * @param {object} oConfig
-		 *   Configuration object for the route
-		 * @param {string} oConfig.name
+		 * @typedef {object} sap.ui.core.routing.$RouteSettings
+		 * @public
+		 *
+		 * @property {string} name
 		 *   Name of the route, it will be used to retrieve the route from the router, it needs to be unique
 		 *   per router instance
-		 * @param {string} [oConfig.pattern]
+		 * @property {string} [pattern]
 		 *   URL pattern where it needs to match again. A pattern may consist of the following:
 		 * <ul>
 		 * <li>
@@ -45,45 +43,55 @@ sap.ui.define([
 		 * <li>
 		 * rest as string parameters: "pattern" : ":all*:" - this pattern will define an optional variable that will pass the whole hash as string to the routing events. It may be used to define a catchall route, e. g. the following hashes would match: foo, product/5/3, product/5/detail/3/foo. You can also combine it with the other variables but make sure a variable with a * is the last one.</br>
 		 * </ul>
-		 * @param {boolean} [oConfig.greedy=false] Since 1.27. By default only the first route matching the hash, will fire events. If greedy is turned on
+		 * @property {boolean} [greedy=false] Since 1.27. By default only the first route matching the hash, will fire events. If greedy is turned on
 		 *   for a route, its events will be fired even if another route has already matched.
-		 * @param {string} [oConfig.parent] Since 1.32. This property contains the information about the route which nests this route in the form:
+		 * @property {string} [parent] Since 1.32. This property contains the information about the route which nests this route in the form:
 		 *   "[componentName:]routeName". The nesting routes pattern will be prefixed to this routes pattern and hence
 		 *   the nesting route also matches if this one matches.
-		 * @param {string|string[]} [oConfig.target]
+		 * @property {string|string[]} [target]
 		 *   One or multiple name of targets {@link sap.ui.core.routing.Targets}. As soon as the route matches, the
 		 *   target(s) will be displayed. All the deprecated parameters are ignored, if a target is used.
-		 * @param {string} [oConfig.view]
+		 * @property {string} [view]
 		 *   <b>Deprecated since 1.28, use <code>target.viewName</code> instead.</b></br> The name of a view that will be created, the first time this
 		 *   route will be matched. To place the view into a Control use the targetAggregation and targetControl.
 		 *   Views will only be created once per Router
-		 * @param {string} [oConfig.viewType]
+		 * @property {string} [viewType]
 		 *   <b>Deprecated since 1.28, use <code>target.viewType</code> instead.</b></br> The type of the view that is going to be created. eg: "XML", "JS"
-		 * @param {string} [oConfig.viewPath]
+		 * @property {string} [viewPath]
 		 *   <b>Deprecated since 1.28, use <code>target.viewPath</code> instead.</b></br> A prefix that will be prepended in front of the view eg: view is
 		 *   set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView"
-		 * @param {string} [oConfig.targetParent]
-		 *   <b>Deprecated since 1.28, use <code>config.rootView</code> (only available in the router config) instead.</b></br> The id of the parent of the
-		 *   targetControl - This should be the id view your targetControl is located in. By default, this will be
+		 * @property {string} [targetParent]
+		 *   <b>Deprecated since 1.28, use <code>config.rootView</code> (only available in the router config) instead.</b></br> The ID of the parent of the
+		 *   targetControl - This should be the ID of the view where your targetControl is located in. By default, this will be
 		 *   the view created by a component, or if the Route is a subroute the view of the parent route is taken.
 		 *   You only need to specify this, if you are not using a router created by a component on your top level routes
-		 * @param {string} [oConfig.targetControl]
+		 * @property {string} [targetControl]
 		 *   <b>Deprecated since 1.28, use <code>target.controlId</code> instead.</b></br> Views will be put into a container Control, this might be an
 		 *   {@link sap.ui.ux3.Shell} control or an {@link sap.m.NavContainer} if working with mobile, or any other container.
-		 *   The id of this control has to be put in here
-		 * @param {string} [oConfig.targetAggregation]
+		 *   The ID of this control has to be put in here
+		 * @property {string} [targetAggregation]
 		 *   <b>Deprecated since 1.28, use <code>target.controlAggregation</code> instead.</b></br> The name of an aggregation of the targetControl,
 		 *   that contains views. Eg: an {@link sap.m.NavContainer} has an aggregation "pages", another Example is the
 		 *   {@link sap.ui.ux3.Shell} it has "content".
-		 * @param {boolean} [oConfig.clearTarget=false]
+		 * @property {boolean} [clearTarget=false]
 		 *   <b>Deprecated since 1.28, use <code>target.clearControlAggregation</code> instead.</b></br> Defines a boolean that
 		 *   can be passed to specify if the aggregation should be cleared before adding the View to it. When using an
 		 *   {@link sap.ui.ux3.Shell} this should be true. For an {@link sap.m.NavContainer} it should be false
-		 * @param {object} [oConfig.subroutes]
+		 * @property {object} [subroutes]
 		 *   <b>Deprecated since 1.28, use <code>targets.parent</code> instead.</b> one or multiple route configs taking all of these parameters again.
 		 *   If a subroute is hit, it will fire the routeMatched event for all its parents. The routePatternMatched event
 		 *   will only be fired for the subroute not the parents. The routing will also display all the targets of the
 		 *   subroutes and its parents.
+		 */
+
+		/**
+		 * Instantiates a route
+		 *
+		 * @class
+		 * @param {sap.ui.core.routing.Router} oRouter
+		 *   Router instance to which the route will be added
+		 * @param {sap.ui.core.routing.$RouteSettings} oConfig
+		 *   Configuration object for the route
 		 * @param {sap.ui.core.routing.Route} [oParent]
 		 *   The parent route - if a parent route is given, the routeMatched event of this route will also trigger the
 		 *   route matched of the parent and it will also create the view of the parent(if provided).

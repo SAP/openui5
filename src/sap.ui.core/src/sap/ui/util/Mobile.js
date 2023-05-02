@@ -232,7 +232,14 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 	 * icons with glare effect, so the "precomposed" property can be set to "true". Some Android devices may also
 	 * use the favicon for bookmarks instead of the home icons.</li>
 	 *
-	 * @param {object} oIcons
+	 * @param {object} oIcons Icon settings
+	 * @param {string} [oIcons.phone] a 120x120 pixel version for iPhones with low pixel density
+	 * @param {string} [oIcons.tablet] a 152x152 pixel version for iPads with low pixel density
+	 * @param {string} [oIcons."phone@2"] a 180x180 pixel version for iPhones with high pixel density
+	 * @param {string} [oIcons."tablet@2"] a 167x167 pixel version for iPads with high pixel density
+	 * @param {boolean} [oIcons.precomposed=false] whether the home icons already have some glare effect (otherwise iOS will add it)
+	 * @param {string} [oIcons.favicon] the ICO file to be used inside the browser and for desktop shortcuts
+	 *
 	 * @function
 	 * @static
 	 * @public

@@ -74,6 +74,92 @@
 				]
 			},
 			{
+				"name": "sap.ui.core.ComponentContainer",
+				"ui5-metadata": {
+					"properties": [
+						/**
+						 * The following 4 empty objects are needed in order to correctly overwrite the 'type'
+						 * property of the 5th element within this array. This is due to the fact that arrays
+						 * are merged by merging the elements that appear at the same index and not handled as
+						 * a map.
+						 */
+						{},
+						{},
+						{},
+						{},
+						{
+							"name": "settings",
+							"type": "sap.ui.core.$ComponentSettings"
+						}
+					]
+				},
+				"methods": [
+					{
+						"name": "getSettings",
+						"returnValue": {
+							"type": "sap.ui.core.$ComponentSettings"
+						}
+					},
+					{
+						"name": "setSettings",
+						"parameters": [
+							{
+								"name": "oSettings",
+								"type": "sap.ui.core.$ComponentSettings"
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "sap.ui.core.Component",
+				"methods": [
+					{
+						"name": "create",
+						"static": true,
+						"parameters": [
+							{
+								"name": "mOptions",
+								"parameterProperties": {
+									"settings": {
+										"name": "settings",
+										"type": "sap.ui.core.$ComponentSettings"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "createComponent",
+						"parameters": [
+							{
+								"name": "vUsage",
+								"parameterProperties": {
+									"settings": {
+										"name": "settings",
+										"type": "sap.ui.core.$ComponentSettings"
+									}
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "sap.ui.base.ManagedObject",
+				"methods": [
+					{
+						"name": "applySettings",
+						"parameters": [
+							{
+								"name": "mSettings",
+								"type": "sap.ui.base.$ManagedObjectSettings"
+							}
+						]
+					}
+				]
+			},
+			{
 				"name": "sap.ui.base.Object",
 				"methods": [
 					{

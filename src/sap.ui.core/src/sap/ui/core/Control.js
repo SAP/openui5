@@ -617,7 +617,7 @@ sap.ui.define([
 	 *
 	 * It is retrieved using the RenderManager as done during rendering.
 	 *
-	 * @return {object} a Renderer suitable for this Control instance.
+	 * @return {sap.ui.core.ControlRenderer} a Renderer suitable for this Control instance.
 	 * @protected
 	 */
 	Control.prototype.getRenderer = function () {

@@ -62,7 +62,7 @@ sap.ui.define([
 	/**
 	 * Binds all events for listening with the given callback function.
 	 *
-	 * @param {function} fnCallback Callback function
+	 * @param {function(Event)} fnCallback Callback function
 	 * @static
 	 * @public
 	 */
@@ -75,7 +75,7 @@ sap.ui.define([
 	/**
 	 * Unbinds all events for listening with the given callback function.
 	 *
-	 * @param {function} fnCallback Callback function
+	 * @param {function(Event)} fnCallback Callback function
 	 * @static
 	 * @public
 	 */

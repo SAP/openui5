@@ -822,7 +822,7 @@ sap.ui.define([
 	 * @see sap.ui.core.mvc.View.Preprocessor.process
 	 *
 	 * @param {boolean} bSync Describes the view execution, true if sync
-	 * @returns {object} Info object for the view
+	 * @returns {{name: string, componentId: string, id: string, caller: string, sync: boolean}} Info object for the view
 	 *
 	 * @protected
 	 */
@@ -928,7 +928,7 @@ sap.ui.define([
 	 * @static
 	 * @param {string} sType
 	 * 		the type of content to be processed
-	 * @param {string|function} vPreprocessor
+	 * @param {string|function(Object, sap.ui.core.mvc.View.Preprocessor.ViewInfo, object)} vPreprocessor
 	 * 		module path of the preprocessor implementation or a preprocessor function
 	 * @param {string} sViewType
 	 * 		type of the calling view, e.g. <code>XML</code>
@@ -1298,7 +1298,7 @@ sap.ui.define([
 	 * @since 1.30
 	 * @public
 	 * @deprecated since 1.66: Use {@link sap.ui.core.mvc.View.create View.create} instead
-	 * @return {Promise} resolves with the complete view instance, rejects with any thrown error
+	 * @return {Promise<sap.ui.core.mvc.View>} resolves with the complete view instance, rejects with any thrown error
 	 */
 	View.prototype.loaded = function() {
 		if (this.oAsyncState && this.oAsyncState.promise) {
@@ -1343,6 +1343,18 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Information about the view that is processed by the preprocessor
+	 *
+	 * @typedef {object} sap.ui.core.mvc.View.Preprocessor.ViewInfo
+	 * @property {string} id the ID of the view
+	 * @property {string} name the name of the view
+	 * @property {string} componentId the ID of the owning Component of the view
+	 * @property {string} caller
+	 * 		identifies the caller of this preprocessor; basis for log or exception messages
+	 * @public
+	 */
+
+	/**
 	 * Processing method that must be implemented by a Preprocessor.
 	 *
 	 * @name sap.ui.core.mvc.View.Preprocessor.process
@@ -1350,18 +1362,13 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 * @abstract
-	 * @param {object} vSource the source to be processed
-	 * @param {object} oViewInfo identification information about the calling instance
-	 * @param {string} oViewInfo.id the id
-	 * @param {string} oViewInfo.name the name
-	 * @param {string} oViewInfo.componentId the id of the owning Component
-	 * @param {string} oViewInfo.caller
-	 * 		identifies the caller of this preprocessor; basis for log or exception messages
+	 * @param {Object} vSource the source to be processed
+	 * @param {sap.ui.core.mvc.View.Preprocessor.ViewInfo}
+	 * 		oViewInfo identification information about the calling instance
 	 * @param {object} [mSettings]
 	 * 		settings object containing the settings provided with the preprocessor
-	 * @return {object|Promise}
-	 * 		the processed resource or a promise which resolves with the processed resource or an error according to the
-	 * 		declared preprocessor sync capability
+	 * @return {Object|Promise<Object>}
+	 * 		the processed resource or a promise which resolves with the processed resource
 	 */
 
 	/**
@@ -1383,7 +1390,7 @@ sap.ui.define([
 	 * @param {string} oViewInfo.id ID
 	 * @param {string} oViewInfo.name Name
 	 * @param {string} oViewInfo.componentId ID of the owning Component
-	 * @return {string|Promise} String or Promise resolving with a string
+	 * @return {string|Promise<string>} String or Promise resolving with a string
 	 */
 
 	/**

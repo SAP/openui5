@@ -93,9 +93,9 @@ sap.ui.define(["sap/base/assert"],
 	 * @param {string} [vUrl.id] id that should be used for the link tag
 	 * @param {object} [vUrl.attributes] map of attributes that should be used for the script tag
 	 * @param {string|object} [vId] id that should be used for the link tag or map of attributes
-	 * @param {function} [fnLoadCallback] callback function to get notified once the stylesheet has been loaded
-	 * @param {function} [fnErrorCallback] callback function to get notified once the stylesheet loading failed.
-	 * @return {void|Promise} When using the configuration object a <code>Promise</code> will be returned. The
+	 * @param {function(Event)} [fnLoadCallback] callback function to get notified once the stylesheet has been loaded
+	 * @param {function(Event)} [fnErrorCallback] callback function to get notified once the stylesheet loading failed.
+	 * @return {void|Promise<Event>} When using the configuration object a <code>Promise</code> will be returned. The
 	 *         documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
 	 *         handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>
 	 *         applies to the <code>reject</code> handler of the <code>Promise</code>.

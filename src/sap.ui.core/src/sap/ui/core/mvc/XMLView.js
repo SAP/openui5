@@ -768,7 +768,7 @@ sap.ui.define([
 	 * @static
 	 * @param {string|sap.ui.core.mvc.XMLView.PreprocessorType} sType
 	 *      the type of content to be processed
-	 * @param {string|function} vPreprocessor
+	 * @param {string|function(Object, sap.ui.core.mvc.View.Preprocessor.ViewInfo, object)} vPreprocessor
 	 *      module path of the preprocessor implementation or a preprocessor function
 	 * @param {string} [sViewType="XML"]
 	 *      Since 1.89, added for signature compatibility with {@link sap.ui.core.mvc.View#registerPreprocessor

@@ -1802,7 +1802,7 @@ sap.ui.define([
 		/**
 		 * Returns the security token handlers of an OData V4 model.
 		 *
-		 * @returns {function[]} the security token handlers (an empty array if there are none)
+		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
 		 * @public
 		 * @since 1.95.0
 		 * @see #setSecurityTokenHandlers
@@ -1826,7 +1826,7 @@ sap.ui.define([
 		 * Sets the security token handlers for an OData V4 model. See chapter
 		 * {@link topic:9613f1f2d88747cab21896f7216afdac/section_STH Security Token Handling}.
 		 *
-		 * @param {function[]} aSecurityTokenHandlers - The security token handlers
+		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
 		 * @public
 		 * @since 1.95.0
 		 * @see #getSecurityTokenHandlers
@@ -2388,7 +2388,7 @@ sap.ui.define([
 		 * }
 		 * </code>
 		 * @public
-		 * @returns {object} the mapping between custom currencies and its digits
+		 * @returns {Object<string,object>} the mapping between custom currencies and its digits
 		 */
 		getCustomCurrencies : function() {
 			return this.mSettings["currency"];
@@ -2425,7 +2425,7 @@ sap.ui.define([
 		 * Custom currencies must not only consist of digits but contain at least one non-digit character, e.g. "a",
 		 * so that the measure part can be distinguished from the number part.
 		 * @public
-		 * @param {object} mCurrencies currency map which is set
+		 * @param {Object<string,object>} mCurrencies currency map which is set
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 */
 		setCustomCurrencies : function(mCurrencies) {
@@ -2449,7 +2449,7 @@ sap.ui.define([
 		 * </code>
 		 *
 		 * @public
-		 * @param {object} mCurrencies adds to the currency map
+		 * @param {Object<string,object>} mCurrencies adds to the currency map
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @see sap.ui.core.Configuration.FormatSettings#setCustomCurrencies
 		 */
@@ -2613,12 +2613,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * The object that contains the information for date calendar customizing
+		 *
+		 * @typedef {object} sap.ui.core.Configuration.LegacyDateCalendarCustomizing
+		 * @public
+		 *
+		 * @property {"A"|"B"} dateFormat The IO of the date format. It has value "A" or "B".
+		 * @property {string} islamicMonthStart The Islamic date in format "yyyyMMdd".
+		 * @property {string} gregDate The corresponding Gregorian date in format "yyyyMMdd".
+		 */
+
+		/**
 		 * Allows to specify the customizing data for Islamic calendar support
 		 *
-		 * @param {object[]} aMappings contains the customizing data for the support of Islamic calendar.
-		 * @param {string} aMappings[].dateFormat The date format
-		 * @param {string} aMappings[].islamicMonthStart The Islamic date
-		 * @param {string} aMappings[].gregDate The corresponding Gregorian date
+		 * @param {Array<sap.ui.core.Configuration.LegacyDateCalendarCustomizing>} aMappings contains the customizing
+		 *  data for the support of Islamic calendar.
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
@@ -2634,7 +2643,8 @@ sap.ui.define([
 		/**
 		 * Returns the currently set customizing data for Islamic calendar support
 		 *
-		 * @return {object[]} Returns an array contains the customizing data. Each element in the array has properties: dateFormat, islamicMonthStart, gregDate. For details, please see {@link #setLegacyDateCalendarCustomizing}
+		 * @return {Array<sap.ui.core.Configuration.LegacyDateCalendarCustomizing>} Returns an array contains the
+		 *  customizing data. For details, please see {@link #setLegacyDateCalendarCustomizing}
 		 * @public
 		 */
 		getLegacyDateCalendarCustomizing : function() {

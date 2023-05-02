@@ -523,6 +523,14 @@ sap.ui.define([
 		};
 
 		/**
+		 *
+		 * Theming Parameter Value
+		 *
+		 * @typedef {(string|Object<string,string>|undefined)} sap.ui.core.theming.Parameters.Value
+		 * @public
+		 */
+
+		/**
 		 * <p>
 		 * Returns the current value for one or more theming parameters, depending on the given arguments.
 		 * The synchronous usage of this API has been deprecated and only the asynchronous usage should still be used
@@ -597,11 +605,11 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element} [vName.scopeElement]
 		 *                           Element / control instance to take into account when looking for a parameter value.
 		 *                           This can make a difference when a parameter value is overridden in a theme scope set via a CSS class.
-		 * @param {function} [vName.callback] If given, the callback is only executed in case there are still parameters pending and one or more of the requested parameters is missing.
+		 * @param {function(sap.ui.core.theming.Parameters.Value)} [vName.callback] If given, the callback is only executed in case there are still parameters pending and one or more of the requested parameters is missing.
 		 * @param {sap.ui.core.Element} [oElement]
 		 *                           Element / control instance to take into account when looking for a parameter value.
 		 *                           This can make a difference when a parameter value is overridden in a theme scope set via a CSS class.
-		 * @returns {string | object | undefined} the CSS parameter value(s) or <code>undefined</code> if the parameters could not be retrieved.
+		 * @returns {sap.ui.core.theming.Parameters.Value} the CSS parameter value(s) or <code>undefined</code> if the parameters could not be retrieved.
 		 *
 		 * @public
 		 */

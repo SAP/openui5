@@ -42,6 +42,8 @@ function(
 	 *
 	 * @param {string} sClassName fully qualified name of the described class
 	 * @param {object} oClassInfo static info to construct the metadata from
+	 * @param {sap.ui.base.ManagedObject.MetadataOptions} [oClassInfo.metadata]
+	 *  The metadata object describing the class
 	 *
 	 * @class
 	 * @classdesc
@@ -941,7 +943,7 @@ function(
 	 *
 	 * Typically used to enrich UIElement classes in an aspect oriented manner.
 	 * @param {string} sName name of the property to add
-	 * @param {object} oInfo metadata for the property
+	 * @param {sap.ui.base.ManagedObject.MetadataOptions.Property} oInfo metadata for the property
 	 * @private
 	 * @restricted sap.ui.core
 	 * @see sap.ui.core.EnabledPropagator
@@ -983,7 +985,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the property
-	 * @returns {Object|undefined} An info object describing the property or <code>undefined</code>
+	 * @returns {sap.ui.base.ManagedObject.MetadataOptions.Property|undefined} An info object describing the property or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1003,7 +1005,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of property info objects keyed by the property names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Property>} Map of property info objects keyed by the property names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getProperties = function() {
@@ -1020,7 +1022,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of property info objects keyed by the property names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Property>} Map of property info objects keyed by the property names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllProperties = function() {
@@ -1037,7 +1039,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of property info objects keyed by property names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Property>} Map of property info objects keyed by property names
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateProperties = function() {
@@ -1056,7 +1058,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the property to be retrieved or empty
-	 * @returns {object|undefined} property info object or <code>undefined</code>
+	 * @returns {sap.ui.base.ManagedObject.MetadataOptions.Property|undefined} property info object or <code>undefined</code>
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getManagedProperty = function(sName) {
@@ -1085,7 +1087,7 @@ function(
 	 * If the class itself does not define a default property, then the
 	 * info object for the default property of the parent class is returned.
 	 *
-	 * @return {Object} An info object for the default property
+	 * @return {sap.ui.base.ManagedObject.MetadataOptions.Property|undefined} An info object for the default property
 	 */
 	ManagedObjectMetadata.prototype.getDefaultProperty = function() {
 		return this.getProperty(this.getDefaultPropertyName());
@@ -1119,7 +1121,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} [sName] name of the aggregation or empty
-	 * @returns {Object|undefined} An info object describing the aggregation or <code>undefined</code>
+	 * @returns {sap.ui.base.ManagedObject.MetadataOptions.Aggregation|undefined} An info object describing the aggregation or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1141,7 +1143,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of aggregation info objects keyed by aggregation names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Aggregation>} Map of aggregation info objects keyed by aggregation names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAggregations = function() {
@@ -1160,7 +1162,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of aggregation info objects keyed by aggregation names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Aggregation>} Map of aggregation info objects keyed by aggregation names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllAggregations = function() {
@@ -1178,7 +1180,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of aggregation info objects keyed by aggregation names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Aggregation>} Map of aggregation info objects keyed by aggregation names
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateAggregations = function() {
@@ -1197,7 +1199,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sAggregationName name of the aggregation to be retrieved or empty
-	 * @returns {object|undefined} aggregation info object or <code>undefined</code>
+	 * @returns {sap.ui.base.ManagedObject.MetadataOptions.Aggregation|undefined} aggregation info object or <code>undefined</code>
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getManagedAggregation = function(sAggregationName) {
@@ -1228,7 +1230,7 @@ function(
 	 * If the class itself does not define a default aggregation, then the
 	 * info object for the default aggregation of the parent class is returned.
 	 *
-	 * @return {Object} An info object for the default aggregation
+	 * @return {sap.ui.base.ManagedObject.MetadataOptions.Aggregation} An info object for the default aggregation
 	 * @public
 	 * @since 1.73
 	 */
@@ -1381,7 +1383,7 @@ function(
 	 * If the class itself does not define a default property, then the
 	 * info object for the default property of the parent class is returned.
 	 *
-	 * @return {Object} An info object for the default property
+	 * @return {sap.ui.base.ManagedObject.MetadataOptions.Property} An info object for the default property
 	 */
 	ManagedObjectMetadata.prototype.getDefaultProperty = function() {
 		return this.getProperty(this.getDefaultPropertyName());
@@ -1401,7 +1403,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the property like setting
-	 * @returns {Object|undefined} An info object describing the property or aggregation or <code>undefined</code>
+	 * @returns {sap.ui.base.ManagedObject.MetadataOptions.Property|sap.ui.base.ManagedObject.MetadataOptions.Aggregation|undefined} An info object describing the property or aggregation or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1441,7 +1443,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the association
-	 * @returns {Object|undefined} An info object describing the association or <code>undefined</code>
+	 * @returns {sap.ui.base.ManagedObject.MetadataOptions.Association|undefined} An info object describing the association or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1462,7 +1464,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of association info objects keyed by association names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Association>} Map of association info objects keyed by association names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAssociations = function() {
@@ -1480,7 +1482,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of association info objects keyed by association names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Association>} Map of association info objects keyed by association names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllAssociations = function() {
@@ -1498,7 +1500,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of association info objects keyed by association names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Association>} Map of association info objects keyed by association names
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateAssociations = function() {
@@ -1514,7 +1516,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the association to be retrieved
-	 * @returns {object|undefined} association info object or <code>undefined</code>
+	 * @returns {sap.ui.base.ManagedObject.MetadataOptions.Association|undefined} association info object or <code>undefined</code>
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getManagedAssociation = function(sName) {
@@ -1549,7 +1551,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the event
-	 * @returns {Object|undefined} An info object describing the event or <code>undefined</code>
+	 * @returns {sap.ui.base.ManagedObject.MetadataOptions.Event|undefined} An info object describing the event or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1569,7 +1571,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of event info objects keyed by event names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Event>} Map of event info objects keyed by event names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getEvents = function() {
@@ -1586,7 +1588,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {Object<string,Object>} Map of event info objects keyed by event names
+	 * @return {Object<string,sap.ui.base.ManagedObject.MetadataOptions.Event>} Map of event info objects keyed by event names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllEvents = function() {
