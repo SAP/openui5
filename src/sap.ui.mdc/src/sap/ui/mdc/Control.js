@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.61
 	 * @experimental As of version 1.61
-	 * @ui5-restricted sap.fe
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var Control = CoreControl.extend("sap.ui.mdc.Control", /** @lends sap.ui.mdc.Control.prototype */ {

@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.74
 	 * @experimental As of version 1.74
-	 * @ui5-restricted sap.fe
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var Element = CoreElement.extend("sap.ui.mdc.Element", /** @lends sap.ui.mdc.Element.prototype */ {
