@@ -1837,5 +1837,66 @@
         ]
       }
     ]
+  },
+  "1.84.35": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "879f24668793e2fefd673e10cde34a40e7173326",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370036896"
+          }
+        ]
+      },
+      {
+        "id": "ad614fda2bc1edab11425cb7cfd1164b624ec95f",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "6169f09506a869e1a350e8f6a4e5276622678d84",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now opens when enter pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154885"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170321416"
+          }
+        ]
+      },
+      {
+        "id": "36577cadfd1fe0b37b2e083bd1699e12d03c92d0",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust default href attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006841702022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001393612023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          }
+        ]
+      }
+    ]
   }
 }
