@@ -23,28 +23,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Double} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions, oTypeFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = {groupingEnabled : true};
-			oTypeFormatOptions = oType.oFormatOptions || {};
-			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
-				oFormatOptions.preserveDecimals = true;
-			}
-			Object.assign(oFormatOptions, oType.oFormatOptions);
-			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
-	/**
 	 * Returns the type's nullable constraint.
 	 *
 	 * @param {sap.ui.model.odata.type.Double} oType
@@ -161,18 +139,35 @@ sap.ui.define([
 				return Math.floor(fValue);
 			case "string":
 				if (fValue && (Math.abs(fValue) >= 1e15 || Math.abs(fValue) < 1e-4)) {
-					oFormatOptions = getFormatter(this).oFormatOptions;
+					oFormatOptions = this.getFormat().oFormatOptions;
 					return fValue.toExponential()
 						.replace("e", "\u00a0E") // non-breaking space
 						.replace(".", oFormatOptions.decimalSeparator)
 						.replace("+", oFormatOptions.plusSign)
 						.replace("-", oFormatOptions.minusSign);
 				}
-				return getFormatter(this).format(fValue);
+				return this.getFormat().format(fValue);
 			default:
 				throw new FormatException("Don't know how to format " + this.getName() + " to "
 					+ sTargetType);
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Double.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = {groupingEnabled : true},
+				oTypeFormatOptions = this.oFormatOptions || {};
+			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
+				oFormatOptions.preserveDecimals = true;
+			}
+			Object.assign(oFormatOptions, this.oFormatOptions);
+			this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -204,7 +199,7 @@ sap.ui.define([
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				fResult = getFormatter(this).parse(vValue);
+				fResult = this.getFormat().parse(vValue);
 				if (isNaN(fResult)) {
 					throw new ParseException(getErrorMessage());
 				}

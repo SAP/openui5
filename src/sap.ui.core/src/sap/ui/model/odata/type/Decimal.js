@@ -18,36 +18,6 @@ sap.ui.define([
 		rTrailingZeroes = /(?:(\.[0-9]*[1-9]+)0+|\.0*)$/;
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Decimal} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions, iScale, oTypeFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = {
-				groupingEnabled : true,
-				maxIntegerDigits : Infinity
-			};
-			iScale = getScale(oType);
-			if (iScale !== Infinity) {
-				oFormatOptions.minFractionDigits = oFormatOptions.maxFractionDigits = iScale;
-			}
-			oTypeFormatOptions = oType.oFormatOptions || {};
-			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
-				oFormatOptions.preserveDecimals = true;
-			}
-			Object.assign(oFormatOptions, oType.oFormatOptions);
-			oFormatOptions.parseAsString = true;
-			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
-	/**
 	 * Returns the type's scale constraint.
 	 *
 	 * @param {sap.ui.model.odata.type.Decimal} oType
@@ -279,11 +249,36 @@ sap.ui.define([
 			case "int":
 				return Math.floor(parseFloat(sValue));
 			case "string":
-				return getFormatter(this).format(removeTrailingZeroes(String(sValue)));
+				return this.getFormat().format(removeTrailingZeroes(String(sValue)));
 			default:
 				throw new FormatException("Don't know how to format " + this.getName() + " to "
 					+ sTargetType);
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Decimal.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = {
+					groupingEnabled : true,
+					maxIntegerDigits : Infinity
+				},
+				iScale = getScale(this);
+			if (iScale !== Infinity) {
+				oFormatOptions.minFractionDigits = oFormatOptions.maxFractionDigits = iScale;
+			}
+			var oTypeFormatOptions = this.oFormatOptions || {};
+			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
+				oFormatOptions.preserveDecimals = true;
+			}
+			Object.assign(oFormatOptions, this.oFormatOptions);
+			oFormatOptions.parseAsString = true;
+			this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -313,7 +308,7 @@ sap.ui.define([
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				sResult = getFormatter(this).parse(vValue);
+				sResult = this.getFormat().parse(vValue);
 				if (!sResult) {
 					throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()
 						.getText("EnterNumber"));

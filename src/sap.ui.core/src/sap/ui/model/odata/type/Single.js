@@ -23,28 +23,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Single} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions, oTypeFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = {groupingEnabled : true};
-			oTypeFormatOptions = oType.oFormatOptions || {};
-			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
-				oFormatOptions.preserveDecimals = true;
-			}
-			Object.assign(oFormatOptions, oType.oFormatOptions);
-			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
-	/**
 	 * Returns the type's nullable constraint.
 	 *
 	 * @param {sap.ui.model.odata.type.Single} oType
@@ -158,11 +136,28 @@ sap.ui.define([
 				return Math.floor(fValue);
 			case "string":
 				// toPrecision to avoid rounding errors and parseFloat to avoid trailing zeroes
-				return getFormatter(this).format(parseFloat(fValue.toPrecision(7)));
+				return this.getFormat().format(parseFloat(fValue.toPrecision(7)));
 			default:
 				throw new FormatException("Don't know how to format " + this.getName() + " to "
 					+ sTargetType);
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Single.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = {groupingEnabled : true},
+				oTypeFormatOptions = this.oFormatOptions || {};
+			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
+				oFormatOptions.preserveDecimals = true;
+			}
+			Object.assign(oFormatOptions, this.oFormatOptions);
+			this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -194,7 +189,7 @@ sap.ui.define([
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				fResult = getFormatter(this).parse(vValue);
+				fResult = this.getFormat().parse(vValue);
 				if (isNaN(fResult)) {
 					throw new ParseException(getErrorMessage());
 				}

@@ -56,24 +56,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Int64} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = extend({groupingEnabled : true}, oType.oFormatOptions);
-			oFormatOptions.parseAsString = true;
-			oType.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
-	/**
 	 * Fetches a text from the message bundle and formats it using the parameters.
 	 *
 	 * @param {string} sKey
@@ -192,11 +174,24 @@ sap.ui.define([
 				}
 				return parseInt(sValue);
 			case "string":
-				return getFormatter(this).format(sValue);
+				return this.getFormat().format(sValue);
 			default:
 				throw new FormatException("Don't know how to format " + this.getName() + " to "
 					+ sTargetType);
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Int64.prototype.getFormat = function () {
+		if (!this.oFormat) {
+			var oFormatOptions = extend({groupingEnabled : true}, this.oFormatOptions);
+			oFormatOptions.parseAsString = true;
+			this.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -245,7 +240,7 @@ sap.ui.define([
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				sResult = getFormatter(this).parse(vValue);
+				sResult = this.getFormat().parse(vValue);
 				if (!sResult) {
 					throw new ParseException(getText("EnterInt"));
 				}

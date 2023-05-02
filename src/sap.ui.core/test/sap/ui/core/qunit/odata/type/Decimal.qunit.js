@@ -545,4 +545,17 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(oSpy, oFixture.expect);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new Decimal();
+
+		assert.strictEqual(oType.oFormat, null);
+
+		// code under test
+		var oResult = oType.getFormat();
+
+		assert.ok(oResult instanceof NumberFormat);
+		assert.strictEqual(oType.oFormat, oResult);
+	});
 });

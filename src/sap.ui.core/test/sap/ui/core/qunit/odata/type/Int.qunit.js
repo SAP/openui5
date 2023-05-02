@@ -282,6 +282,19 @@ sap.ui.define([
 			});
 			assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
 		});
+
+		//*********************************************************************************************
+		QUnit.test("getFormat", function (assert) {
+			var oType = new TypeClass();
+
+			assert.strictEqual(oType.oFormat, null);
+
+			// code under test
+			var oResult = oType.getFormat();
+
+			assert.ok(oResult instanceof NumberFormat);
+			assert.strictEqual(oType.oFormat, oResult);
+		});
 	}
 
 	anyInt(Int16, "sap.ui.model.odata.type.Int16", -32768, 32767);
