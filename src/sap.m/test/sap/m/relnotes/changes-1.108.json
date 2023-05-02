@@ -800,5 +800,43 @@
         ]
       }
     ]
+  },
+  "1.108.10": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "095611d39713c7da179f23d1dca5f1872c872e28",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370036896"
+          }
+        ]
+      },
+      {
+        "id": "9aab1fc33aaf4d208df0ebfc874b2da4ce7ca61a",
+        "type": "FIX",
+        "text": " sap.m.upload: Remove redundant upload button in IllustratedMessage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039798"
+          }
+        ]
+      },
+      {
+        "id": "c4168f21b57b9eccdd17283e95789722010de9ce",
+        "type": "FIX",
+        "text": " sap.m.upload: Show disabled upload button in IllustratedMessage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039798"
+          }
+        ]
+      }
+    ]
   }
 }
