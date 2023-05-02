@@ -344,6 +344,30 @@ function (
 		oSpy.restore();
 	});
 
+	QUnit.test("Call #prependRelativePaths with 'array' of binding infos", function (assert) {
+		// arrange
+		var oSpy = sinon.spy(BindingHelper, "prependRelativePaths");
+		var aValues = [
+			{
+				path: "1"
+			},
+			{
+				path: "2"
+			}
+		];
+
+		// act
+		var aResult = BindingHelper.prependRelativePaths(aValues, "/items");
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 3, "All values of the given array should be processed.");
+		assert.strictEqual(aResult[0].path, "/items/1", "First binding info path is correctly prepended.");
+		assert.strictEqual(aResult[1].path, "/items/2", "Second binding info path is correctly prepended.");
+
+		// clean up
+		oSpy.restore();
+	});
+
 	QUnit.module("Static method #propagateModels");
 
 	QUnit.test("Copying models", function (assert) {

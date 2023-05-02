@@ -202,11 +202,17 @@ sap.ui.define([
 
 	/**
 	 * Adds prefix to a binding info and its parts (if such exist).
-	 * @param {*} vBindingInfo Binding info object or text/boolean/etc if there is no binding syntax.
+	 * @param {*} vBindingInfo Binding info object, array of binding infos, or text/boolean/etc if there is no binding syntax.
 	 * @param {*} sPath The path to add as prefix to all relative paths.
-	 * @returns {*} If binding info is given, a copy of it will be returned with new paths, else the value is not modified.
+	 * @returns {*} If binding info or array of binding infos is given, a copy of it will be returned with new paths, else the value is not modified.
 	 */
 	BindingHelper.prependRelativePaths = function(vBindingInfo, sPath) {
+		if (Array.isArray(vBindingInfo)) {
+			return vBindingInfo.map(function (vItem) {
+				return BindingHelper.prependRelativePaths(vItem, sPath);
+			});
+		}
+
 		if (typeof vBindingInfo !== "object") {
 			return vBindingInfo;
 		}
