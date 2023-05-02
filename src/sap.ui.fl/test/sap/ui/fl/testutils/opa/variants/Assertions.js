@@ -74,11 +74,13 @@ sap.ui.define([
 							var oTable = aTables[0];
 							var aIsVariantTitle = [];
 							oTable.getItems().forEach(function(oItem) {
-								var oCell = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
-								if (oCell.isA("sap.m.ObjectIdentifier")) {
-									aIsVariantTitle.push(oCell.getTitle());
-								} else {
-									aIsVariantTitle.push(oCell.getValue());
+								if (oItem.getVisible()) {
+									var oCell = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
+									if (oCell.isA("sap.m.ObjectIdentifier")) {
+										aIsVariantTitle.push(oCell.getTitle());
+									} else {
+										aIsVariantTitle.push(oCell.getValue());
+									}
 								}
 							});
 							Opa5.assert.deepEqual(aVariantNames, aIsVariantTitle, "expected [" + aVariantNames + "] views found");
@@ -101,8 +103,10 @@ sap.ui.define([
 							var oTable = aTables[0];
 							var aIsVariantFavorites = [];
 							oTable.getItems().forEach(function(oItem) {
-								var oCell = oItem.getCells()[VariantManagement.COLUMN_FAV_IDX];
-								aIsVariantFavorites.push(oCell.getSrc() === "sap-icon://favorite");
+								if (oItem.getVisible()) {
+									var oCell = oItem.getCells()[VariantManagement.COLUMN_FAV_IDX];
+									aIsVariantFavorites.push(oCell.getSrc() === "sap-icon://favorite");
+								}
 							});
 							Opa5.assert.deepEqual(aVariantFavorites, aIsVariantFavorites, "expected [" + aVariantFavorites + "] favorite states found");
 						},
@@ -124,8 +128,10 @@ sap.ui.define([
 							var oTable = aTables[0];
 							var aIsVariantApplyAutos = [];
 							oTable.getItems().forEach(function(oItem) {
-								var oCell = oItem.getCells()[4]; //EXEC
-								aIsVariantApplyAutos.push(oCell.getSelected());
+								if (oItem.getVisible()) {
+									var oCell = oItem.getCells()[4]; //EXEC
+									aIsVariantApplyAutos.push(oCell.getSelected());
+								}
 							});
 
 							Opa5.assert.deepEqual(aVariantApplayAutos, aIsVariantApplyAutos, "expected [" + aVariantApplayAutos + "] apply automatically states found");
@@ -148,8 +154,10 @@ sap.ui.define([
 							var oTable = aTables[0];
 							var aIsVariantSharing = [];
 							oTable.getItems().forEach(function(oItem) {
-								var oCell = oItem.getCells()[2]; //SHARING
-								aIsVariantSharing.push(oCell.getText());
+								if (oItem.getVisible()) {
+									var oCell = oItem.getCells()[2]; //SHARING
+									aIsVariantSharing.push(oCell.getText());
+								}
 							});
 
 							Opa5.assert.deepEqual(aVariantSharing, aIsVariantSharing, "expected [" + aVariantSharing + "] sharing information found");

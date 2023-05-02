@@ -793,16 +793,29 @@ sap.ui.define([
 
 			this._oVM._openManagementDialog();
 
+			var sItemKey = "1";
+			var oListItem = this._oVM._getRowForKey(sItemKey);
+			assert.ok(oListItem, "manage table item exists");
+			assert.ok(oListItem.getVisible(), "manage table item is visible");
+
 			assert.ok(oItemDel.getVisible());
 			this._oVM._handleManageDeletePressed(oItemDel);
-			assert.ok(!oItemDel.getVisible());
+			assert.ok(oItemDel.getVisible());
+
+			oListItem = this._oVM._getRowForKey(sItemKey);
+			assert.ok(oListItem, "manage table item exists");
+			assert.ok(!oListItem.getVisible(), "manage table item is not visible");
+
 
 			var aRows = this._oVM.oManagementTable.getItems();
 			assert.ok(aRows);
-			assert.equal(aRows.length, 4);
+			assert.equal(aRows.length, 5);
 
 			this._oVM._handleManageCancelPressed();
 			assert.ok(oItemDel.getVisible());
+			oListItem = this._oVM._getRowForKey(sItemKey);
+			assert.ok(oListItem, "manage table item exists");
+			assert.ok(oListItem.getVisible(), "manage table item is visible");
 
 
 			this._oVM._openManagementDialog();
