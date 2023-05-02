@@ -363,6 +363,10 @@ sap.ui.define([
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 
+	if (!thisLib.plugins) {
+		thisLib.plugins = {};
+	}
+
 	/**
 	 * Mode of a selection plugin
 	 *
