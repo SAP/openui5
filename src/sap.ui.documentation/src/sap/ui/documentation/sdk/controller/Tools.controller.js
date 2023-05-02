@@ -58,8 +58,8 @@ sap.ui.define([
 			this.setModel(new JSONModel({
 				inspectorHomeLink: "topic/b24e72443eb34d0fb7bf6940f2d697eb",
 				supportAssistantHomeLink: oData.supportAssistant.href,
-				iconExplorerHomeLink: "topic/21ea0ea94614480d9a910b2e93431291"
-				// etc
+				iconExplorerHomeLink: "topic/21ea0ea94614480d9a910b2e93431291",
+				ui5TestRecorderHomeLink: oData.ui5TestRecorder.href
 			}), "newWindowLinks");
 		},
 
