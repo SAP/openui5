@@ -4,13 +4,19 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/Text",
-	"sap/m/VBox"
-], 	function(Controller, MessageToast, Label, Input, Text, VBox) {
+	"sap/m/VBox",
+	"sap/ui/model/json/JSONModel"
+], 	function(Controller, MessageToast, Label, Input, Text, VBox, JSONModel) {
 
 	"use strict";
 
 	var PageController = Controller.extend("sap.f.sample.SidePanel.Page", {
-
+		onInit: function () {
+			var sPosition = this.byId('mySidePanel').getSidePanelPosition();
+			var oModel = new JSONModel();
+			oModel.setData({ sidePanelPosition: sPosition });
+			this.getView().setModel(oModel, "settings");
+		},
 		onToggle: function(e) {
 			var oPreventExpand = this.byId("preventExpand"),
 				oPreventCollapse = this.byId("preventCollapse"),
@@ -44,6 +50,9 @@ sap.ui.define([
 					]
 				}));
 			}
+		},
+		onChangePosition: function (e) {
+			this.byId('mySidePanel').setSidePanelPosition(e.getParameter("selectedItem").getKey());
 		}
 
 	});

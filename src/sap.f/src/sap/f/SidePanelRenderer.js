@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/Device",
-	"sap/ui/core/IconPool"
-], function (Device, IconPool) {
+	"sap/ui/core/IconPool",
+	"./library"
+], function (Device, IconPool, library) {
 		"use strict";
 
 		var SidePanelRenderer = {
@@ -13,10 +14,16 @@ sap.ui.define([
 		};
 
 		SidePanelRenderer.render = function(oRm, oControl) {
+
 			var bActionBarExpanded = oControl.getActionBarExpanded();
+			var sPosition = oControl.getSidePanelPosition();
+
 
 			oRm.openStart("div", oControl);
 			oRm.class("sapFSP");
+			if (!Device.system.phone && library.SidePanelPosition.Left === sPosition ) {
+				oRm.class("sapFSPLeft");
+			}
 			oControl._isSingleItem() && oRm.class("sapFSPSingleItem");
 			bActionBarExpanded && oControl.getItems().length !== 1 && oRm.class("sapFSPActionBarExpanded");
 			oControl._getSideContentExpanded() && oRm.class("sapFSPSideContentExpanded");
