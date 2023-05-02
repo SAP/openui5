@@ -239,10 +239,8 @@ sap.ui.define([
 	 */
 	FlexObjectState.saveFlexObjects = function(mPropertyBag) {
 		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-		return Promise.all([
-			saveCompEntities(mPropertyBag),
-			saveChangePersistenceEntities(mPropertyBag, oAppComponent)
-		])
+		return saveCompEntities(mPropertyBag)
+		.then(saveChangePersistenceEntities.bind(this, mPropertyBag, oAppComponent))
 		.then(function() {
 			if (mPropertyBag.layer) {
 				//TODO: sync the layer parameter name with new persistence and remove this line
