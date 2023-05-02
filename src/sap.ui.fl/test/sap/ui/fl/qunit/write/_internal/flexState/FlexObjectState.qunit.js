@@ -562,7 +562,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(ManifestUtils, "getAppIdFromManifest").returns("id");
 			ManifestUtils.getFlexReferenceForControl.returns("name");
-			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll");
+			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll").resolves();
 			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
 			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
@@ -602,7 +602,7 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getAppIdFromManifest").returns("id");
 			sandbox.stub(Utils, "isVariantByStartupParameter").returns("true");
 			ManifestUtils.getFlexReferenceForControl.returns("name");
-			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll");
+			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll").resolves();
 			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
 			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
