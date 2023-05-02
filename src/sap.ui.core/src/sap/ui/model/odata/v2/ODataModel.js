@@ -3634,6 +3634,8 @@ sap.ui.define([
 			var sContentID, sEntityKey, i;
 
 			for (i = 0; i < oRequest.parts.length; i++) {
+				var sOriginalDeepPath, sOriginalUri;
+
 				if (bAborted || oRequest.parts[i].request._aborted) {
 					that._processAborted(oRequest.parts[i].request, oResponse);
 				} else if (oResponse.message) {
@@ -3646,6 +3648,7 @@ sap.ui.define([
 
 							mContentID2KeyAndDeepPath[sContentID] = {
 								key : sEntityKey,
+								functionImport : !!oRequest.request.functionMetadata,
 								deepPath : oRequest.request.deepPath.replace(
 									"('" + sContentID + "')",
 										sEntityKey.slice(sEntityKey.indexOf("(")))
@@ -3653,7 +3656,10 @@ sap.ui.define([
 						} else {
 							// creation request must have been successful -> map entry exists
 							sEntityKey = mContentID2KeyAndDeepPath[sContentID].key;
-
+							if (mContentID2KeyAndDeepPath[sContentID].functionImport) {
+								sOriginalDeepPath = oRequest.request.deepPath;
+								sOriginalUri = oRequest.request.requestUri;
+							}
 							oRequest.request.requestUri =
 								oRequest.request.requestUri.replace("$" + sContentID, sEntityKey);
 							oRequest.request.deepPath =
@@ -3664,6 +3670,12 @@ sap.ui.define([
 					that._processSuccess(oRequest.parts[i].request, oResponse,
 						oRequest.parts[i].fnSuccess, mGetEntities, mChangeEntities, mEntityTypes,
 						/*bBatch*/false, /*aRequests*/undefined, mContentID2KeyAndDeepPath);
+
+					if (sOriginalUri) {
+						// restore original values for potential retry of function import
+						oRequest.request.deepPath = sOriginalDeepPath;
+						oRequest.request.requestUri = sOriginalUri;
+					}
 				}
 			}
 		}
@@ -4680,7 +4692,6 @@ sap.ui.define([
 			undefined, true, oContext.hasSubContexts());
 
 		if (oCreated) {
-			oRequest.created = true;
 			// for createEntry requests we need to flag request again
 			if (oExpandRequest) {
 				oRequest.expandRequest = oExpandRequest;
@@ -4690,7 +4701,9 @@ sap.ui.define([
 			if (bFunctionImport) {
 				oRequest.functionTarget = this.oMetadata._getCanonicalPathOfFunctionImport(
 					oCreated.functionMetadata, oCreated.urlParameters);
+				oRequest.functionMetadata = oCreated.functionMetadata;
 			} else {
+				oRequest.created = true;
 				this._addSubEntitiesToPayload(oContext, oPayload);
 			}
 		}
@@ -5328,6 +5341,18 @@ sap.ui.define([
 	 * entities. Otherwise they are ignored, and the <code>response</code> can be processed in the
 	 * <code>success</code> callback.
 	 *
+	 * The <code>contextCreated</code> property of the returned object is a function that returns a
+	 * Promise which resolves with an <code>sap.ui.model.odata.v2.Context</code>. This context can
+	 * be used to modify the function import parameter values and to bind the function call's result.
+	 * Changes of a parameter value via that context after the function import has been processed
+	 * lead to another function call with the modified parameters. Changed function import
+	 * parameters are considered as pending changes, see {@link #hasPendingChanges} or
+	 * {@link #getPendingChanges}, and can be reset via {@link #resetChanges}. If the function
+	 * import returns an entity or a collection of entities, the <code>$result</code> property
+	 * relative to that context can be used to bind the result to a control, see
+	 * {@link topic:6c47b2b39db9404582994070ec3d57a2#loio6cb8d585ed594ee4b447b5b560f292a4 Binding of
+	 * Function Import Parameters}.
+	 *
 	 * @param {string} sFunctionName
 	 *   The name of the function import starting with a slash, for example <code>/Activate</code>.
 	 * @param {object} [mParameters]
@@ -5467,6 +5492,12 @@ sap.ui.define([
 				bFunctionFailed = false,
 				fnSuccessFromParameters = fnSuccess;
 
+			function resetFunctionCallData() { // cleanup to allow retriggering function calls
+				oFunctionResult = undefined;
+				oFunctionResponse = undefined;
+				bFunctionFailed = false;
+			}
+
 			oFunctionMetadata = that.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
 			if (!oFunctionMetadata) {
 				Log.error("Function '" + sFunctionName + "' not found in the metadata", that,
@@ -5519,6 +5550,7 @@ sap.ui.define([
 						oData = Object.assign({}, oFunctionResult, oData);
 						fnSuccessFromParameters(oData, oFunctionResponse);
 					}
+					resetFunctionCallData();
 				};
 				fnError = function (oError) {
 					if (oFunctionResult) {
@@ -5533,6 +5565,7 @@ sap.ui.define([
 						if (fnSuccessFromParameters) {
 							fnSuccessFromParameters(oFunctionResult, oFunctionResponse);
 						}
+						resetFunctionCallData();
 						return;
 					}
 					if (!bFunctionFailed) {
@@ -5547,7 +5580,7 @@ sap.ui.define([
 						// expandAfterFunctionCallFailed=true that it can be passed to requestFailed
 						// and requestCompleted event handlers
 						oError.expandAfterFunctionCallFailed = true;
-						//bFunctionFailed = false; // not needed as function calls are not retried
+						resetFunctionCallData();
 					}
 				};
 			}
@@ -5563,7 +5596,8 @@ sap.ui.define([
 					key : sFunctionName.substring(1),
 					method : sMethod,
 					success : fnSuccess
-				}
+				},
+				deepPath : sFunctionName
 			};
 
 			sKey = that._addEntity(oData);
@@ -5589,8 +5623,8 @@ sap.ui.define([
 				oExpandRequest.contentID = sUID;
 				oRequest.expandRequest = oExpandRequest;
 				oRequest.contentID = sUID;
-				// expandRequest and contentID do not need to be added to
-				// oData.__metadata.created as function calls are not retried
+				oData.__metadata.created.expandRequest = oExpandRequest;
+				oData.__metadata.created.contentID = oExpandRequest.contentID;
 			}
 
 			mRequests = that.mRequests;
@@ -6535,12 +6569,14 @@ sap.ui.define([
 		oOriginalEntry = this._getObject('/' + sKey, null, true);
 		oOriginalValue = this._getObject(sPath, oContext, true);
 
+		bFunction = oOriginalEntry.__metadata.created && oOriginalEntry.__metadata.created.functionImport;
+
 		//clone property
 		if (!this.mChangedEntities[sKey]) {
 			oEntityMetadata = oEntry.__metadata;
 			oEntry = {};
 			oEntry.__metadata = Object.assign({}, oEntityMetadata);
-			if (oEntityInfo.propertyPath.length > 0){
+			if (!bFunction && oEntityInfo.propertyPath.length > 0) {
 				var iIndex = sDeepPath.lastIndexOf(oEntityInfo.propertyPath);
 				oEntry.__metadata.deepPath = sDeepPath.substring(0, iIndex - 1);
 			}
@@ -6557,8 +6593,6 @@ sap.ui.define([
 			}
 			oChangeObject = oChangeObject[aParts[i]];
 		}
-
-		bFunction = oOriginalEntry.__metadata.created && oOriginalEntry.__metadata.created.functionImport;
 
 		// Update property value on change object
 		oChangeObject[sPropertyPath] = _Helper.isPlainObject(oValue)
@@ -6595,7 +6629,7 @@ sap.ui.define([
 		}
 
 		oRequestQueueingPromise = this.oMetadata.loaded();
-		if (oEntry.__metadata.created && !oEntry.__metadata.created.functionImport) {
+		if (oEntry.__metadata.created && !bFunction) {
 			oContextToActivate = this.oCreatedContextsCache.findCreatedContext(sResolvedPath);
 			if (oContextToActivate && oContextToActivate.isInactive()) {
 				oContextToActivate.startActivation();

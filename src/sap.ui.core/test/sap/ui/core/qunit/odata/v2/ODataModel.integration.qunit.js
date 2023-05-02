@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/m/Input",
 	"sap/ui/Device",
@@ -33,8 +34,8 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration, Core,
-		coreLibrary, UI5Date, Message, Controller, View, BindingMode, Filter, FilterOperator,
+], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
+		Core, coreLibrary, UI5Date, Message, Controller, View, BindingMode, Filter, FilterOperator,
 		FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
 		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
@@ -1011,6 +1012,9 @@ sap.ui.define([
 					if ("requestNo" in oExpectedRequest) {
 						oActualRequest.requestNo = that.iRequestNo;
 					}
+					if (!("data" in oExpectedRequest) && oActualRequest.data === undefined) {
+						delete oActualRequest.data;
+					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 					oResponse.headers = mResponseHeaders || {};
 					if (oExpectedRequest.headers["Content-ID"]) {
@@ -1656,6 +1660,18 @@ sap.ui.define([
 				};
 				this.oTemplateObserver.observe(aTables[0], oConfiguration);
 			}
+		},
+
+		/**
+		 * Removes all persistent and technical message from the message model.
+		 */
+		removePersistentAndTechnicalMessages : function () {
+			var oMessageManager = Core.getMessageManager(),
+				aMessages = oMessageManager.getMessageModel().getObject("/").filter(function (oMessage) {
+					return oMessage.getPersistent() || oMessage.getTechnical();
+				});
+
+			oMessageManager.removeMessages(aMessages);
 		},
 
 		/**
@@ -7324,6 +7340,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// cause pending changes after the execution of the function import.
 	// BCP: 2070289685, 2070333970
 	// JIRA: CPOUI5MODELS-230
+	// Scenario 2: Function call is retriggered with each change of a parameter value
+	// JIRA: CPOUI5MODELS-1233
 [
 	{method : "GET", functionName : "SalesOrder_Confirm_GET"},
 	{method : "POST", functionName : "SalesOrder_Confirm"}
@@ -7334,6 +7352,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test(sTitle, function (assert) {
 		var oModel = createSalesOrdersModelSpecialFunctionImports({
 				defaultBindingMode : "TwoWay",
+				// avoid reloading ToSalesOrders table with the second attempt
+				refreshAfterChange : false,
 				tokenHandling : false
 			}),
 			sView = '\
@@ -7366,30 +7386,24 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
-		return Promise.all([
-			oModel.callFunction("/" + oFixture.functionName, {
-				groupId : "changes",
-				method : oFixture.method,
-				refreshAfterChange : false,
-				urlParameters : {
-					SalesOrderID : "1"
-				}
-			}).contextCreated(),
-			this.createView(assert, sView, oModel)
-		]).then(function (aResults) {
-			var oRequest = {
+		return this.createView(assert, sView, oModel).then(function () {
+			return oModel.callFunction("/" + oFixture.functionName, {
+					groupId : "changes",
+					method : oFixture.method,
+					refreshAfterChange : false,
+					urlParameters : {
+						SalesOrderID : "1"
+					}
+				}).contextCreated();
+		}).then(function (oFunctionContext) {
+			var oWebAddressError = that.createResponseMessage("WebAddress");
+
+			that.expectRequest({
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : oFixture.method,
 					requestUri : oFixture.functionName + "?SalesOrderID='42'"
-				},
-				oWebAddressError = that.createResponseMessage("WebAddress");
-
-			if (oFixture.method === "POST") {
-				oRequest.data = undefined;
-			}
-
-			that.expectRequest(oRequest, {
+				}, {
 					__metadata : {uri : "SalesOrderSet('42')"},
 					SalesOrderID : "42"
 				}, {
@@ -7399,7 +7413,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectMessage(oWebAddressError, "/SalesOrderSet('42')/",
 					"/BusinessPartnerSet('100')/ToSalesOrders('42')/");
 
-			that.oView.byId("form").setBindingContext(aResults[0]);
+			that.oView.byId("form").setBindingContext(oFunctionContext);
 			that.oView.byId("soIDParameter").setValue("42");
 
 			// code under test
@@ -7408,6 +7422,29 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(oModel.hasPendingChanges(true), false);
+
+			var oWebAddressError = that.createResponseMessage("WebAddress");
+
+			that.expectRequest({
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : oFixture.method,
+					requestUri : oFixture.functionName + "?SalesOrderID='13'"
+				}, {
+					__metadata : {uri : "SalesOrderSet('13')"},
+					SalesOrderID : "13"
+				}, {
+					location : "/SalesOrderSrv/SalesOrderSet('13')",
+					"sap-message" : getMessageHeader(oWebAddressError)
+				})
+				 // object has not been read so deep path is equal to the path
+				.expectMessage(oWebAddressError, "/SalesOrderSet('13')/");
+
+			// code under test - successful funtion import calls are repeated if parameter value changes
+			that.oView.byId("soIDParameter").setValue("13");
+			oModel.submitChanges({groupId : "changes"});
+
+			return that.waitForChanges(assert);
 		});
 	});
 });
@@ -7418,11 +7455,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// change and the messages get the correct target/fullTarget. Navigation properties are expanded
 	// in the same $batch.
 	// JIRA: CPOUI5MODELS-221
-	// Scenario 2: setProperty on an entity represented by a context created via #callFunction must
-	// not lead to a duplicate request when #submitChanges is called again.
-	// BCP: 2370022357
+	// Scenario 2: Parameter changes are considered as pending changes. When changing a parameter
+	// again, another request is triggered together with another GET request for the expand.
+	// JIRA: CPOUI5MODELS-1233
 	QUnit.test("Messages: function import with expand and lazy parameters", function (assert) {
-		var oModel = createSalesOrdersModelSpecialFunctionImports({
+		var oEventHandler = {
+				error : function () {},
+				success : function () {}
+			},
+			oEventHandlerMock = this.mock(oEventHandler),
+			oModel = createSalesOrdersModelSpecialFunctionImports({
 				defaultBindingMode : "TwoWay",
 				tokenHandling : false
 			}),
@@ -7434,42 +7476,28 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
-		return Promise.all([
-			oModel.callFunction("/SalesOrder_Confirm", {
-				expand : "ToLineItems",
-				groupId : "changes",
-				method : "POST",
-				refreshAfterChange : false,
-				urlParameters : {
-					SalesOrderID : "1"
-				}
-			}).contextCreated(),
-			this.createView(assert, sView, oModel)
-		]).then(function (aResults) {
-			var oWebAddressError = that.createResponseMessage("WebAddress");
+		oEventHandlerMock.expects("error").never();
+		oEventHandlerMock.expects("success").never();
 
-			that.expectRequest({
-					batchNo : 1,
-					data : undefined,
-					encodeRequestUri : false,
-					headers : {
-						"Content-ID" : "~key~",
-						"sap-message-scope" : "BusinessObject",
-						"sap-messages" : "transientOnly"
-					},
+		return this.createView(assert, sView, oModel).then(function () {
+			return oModel.callFunction("/SalesOrder_Confirm", {
+					error : oEventHandler.error,
+					expand : "ToLineItems",
+					groupId : "changes",
 					method : "POST",
-					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
-				}, {
+					refreshAfterChange : false,
+					success : oEventHandler.success,
+					urlParameters : {
+						SalesOrderID : "1"
+					}
+				}).contextCreated();
+		}).then(function (oFunctionContext) {
+			var oWebAddressError = that.createResponseMessage("WebAddress"),
+				oSalesOrder42 = {
 					__metadata : {uri : "SalesOrderSet('42')"},
 					SalesOrderID : "42"
-				}, {
-					location : "/SalesOrderSrv/SalesOrderSet('42')"
-				})
-				.expectRequest({
-					batchNo : 1,
-					headers : {"sap-message-scope" : "BusinessObject"},
-					requestUri : "$~key~?$expand=ToLineItems&$select=ToLineItems"
-				}, {
+				},
+				oToLineItems = {
 					__metadata : {uri : "SalesOrderSet('42')"},
 					ToLineItems : {
 						results : [{
@@ -7481,20 +7509,230 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 							SalesOrderID : "42"
 						}]
 					}
-				}, {
+				};
+
+			assert.notOk(oModel.hasPendingChanges(), "no parameter change -> no pending change");
+
+			that.expectRequest({
+					batchNo : 1,
+					encodeRequestUri : false,
+					headers : {
+						"Content-ID" : "~key~",
+						"sap-message-scope" : "BusinessObject",
+						"sap-messages" : "transientOnly"
+					},
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
+				}, oSalesOrder42, {
+					location : "/SalesOrderSrv/SalesOrderSet('42')"
+				})
+				.expectRequest({
+					batchNo : 1,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					requestUri : "$~key~?$expand=ToLineItems&$select=ToLineItems"
+				}, oToLineItems, {
 					"sap-message" : getMessageHeader(oWebAddressError)
 				})
 				.expectMessage(oWebAddressError, "/SalesOrderSet('42')/");
 
-			that.oView.byId("form").setBindingContext(aResults[0]);
+			that.oView.byId("form").setBindingContext(oFunctionContext);
 			that.oView.byId("soIDParameter").setValue("42");
+
+			// parameter value changes lead to pending changes
+			assert.ok(oModel.hasPendingChanges());
+
+			oEventHandlerMock.expects("success")
+				.withExactArgs(merge({}, oSalesOrder42, oToLineItems), sinon.match.object);
 
 			// code under test
 			oModel.submitChanges({groupId : "changes"});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// code under test: Scenario 2
+			// code under test: no request as there are no parameter changes
+			oModel.submitChanges({groupId : "changes"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oWebAddressError = that.createResponseMessage("WebAddress"),
+				oSalesOrder13 = {
+					__metadata : {uri : "SalesOrderSet('13')"},
+					SalesOrderID : "13"
+				},
+				oToLineItems = {
+					__metadata : {uri : "SalesOrderSet('13')"},
+					ToLineItems : {
+						results : [{
+							__metadata : {
+								uri : "SalesOrderLineItemSet(SalesOrderID='13',ItemPosition='20')"
+							},
+							ItemPosition : "20",
+							Note : "ItemNote",
+							SalesOrderID : "13"
+						}]
+					}
+				};
+
+			that.expectRequest({
+					batchNo : 2,
+					encodeRequestUri : false,
+					headers : {
+						"Content-ID" : "~key~",
+						"sap-message-scope" : "BusinessObject",
+						"sap-messages" : "transientOnly"
+					},
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='13'"
+				}, oSalesOrder13, {
+					location : "/SalesOrderSrv/SalesOrderSet('13')"
+				})
+				.expectRequest({
+					batchNo : 2,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					requestUri : "$~key~?$expand=ToLineItems&$select=ToLineItems"
+				}, oToLineItems, {
+					"sap-message" : getMessageHeader(oWebAddressError)
+				})
+				.expectMessage(oWebAddressError, "/SalesOrderSet('13')/");
+
+			that.oView.byId("soIDParameter").setValue("13");
+
+			oEventHandlerMock.expects("success")
+				.withExactArgs(merge({}, oSalesOrder13, oToLineItems), sinon.match.object);
+
+			// code under test - changing a parameter value repeats the request
+			oModel.submitChanges({groupId : "changes"});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Parameters of a function import are changed after calling ODataModel#callFunction
+	// before submitting the changes (#submitChanges). If the request fails, the function call is
+	// repeated with the next call of submitChanges even without changing the parameters again.
+	// JIRA: CPOUI5MODELS-1233
+	QUnit.test("callFunction: lazy parameter changes; failed request is repeated", function (assert) {
+		var oEventHandler = {
+				error : function () {},
+				success : function () {}
+			},
+			oEventHandlerMock = this.mock(oEventHandler),
+			oModel = createSalesOrdersModelSpecialFunctionImports({
+				defaultBindingMode : "TwoWay",
+				tokenHandling : false
+			}),
+			sView = '\
+<FlexBox id="form">\
+	<Input id="soIDParameter" value="{SalesOrderID}" />\
+</FlexBox>',
+			that = this;
+
+		oEventHandlerMock.expects("error").never();
+		oEventHandlerMock.expects("success").never();
+
+		return this.createView(assert, sView, oModel).then(function () {
+			return oModel.callFunction("/SalesOrder_Confirm", {
+				error : oEventHandler.error,
+				expand : "ToLineItems",
+				groupId : "changes",
+				method : "POST",
+				refreshAfterChange : false,
+				success : oEventHandler.success,
+				urlParameters : {
+					SalesOrderID : "1"
+				}
+			}).contextCreated();
+		}).then(function (oFunctionContext) {
+			var oErrorResponse = createErrorResponse({message : "POST failed", statusCode : 400});
+			that.expectRequest({
+					encodeRequestUri : false,
+					headers : {
+						"Content-ID" : "~key~",
+						"sap-messages" : "transientOnly"
+					},
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='foo'"
+				}, oErrorResponse)
+				.expectRequest("$~key~?$expand=ToLineItems&$select=ToLineItems",
+					createErrorResponse({message : "GET failed", statusCode : 424}))
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('foo')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderSet('foo')",
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Request failed with status code 400: POST SalesOrder_Confirm?SalesOrderID='foo'",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+			that.oLogMock.expects("error")
+				.withExactArgs(sinon.match(new RegExp("Request failed with status code 424: "
+						+ "GET \\$id-\\d*-\\d*\\?\\$expand=ToLineItems&\\$select=ToLineItems")),
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+			that.oView.byId("form").setBindingContext(oFunctionContext);
+			that.oView.byId("soIDParameter").setValue("foo");
+
+			// other properties are not of interest
+			oEventHandlerMock.expects("error").withExactArgs(sinon.match({
+				message : "HTTP request failed",
+				responseText : oErrorResponse.body,
+				statusCode : 400,
+				statusText : "FAILED"
+			}));
+
+			// code under test
+			oModel.submitChanges({groupId : "changes"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oErrorResponse = createErrorResponse({message : "POST failed", statusCode : 400});
+
+			that.expectRequest({
+					encodeRequestUri : false,
+					headers : {
+						"Content-ID" : "~key~",
+						"sap-messages" : "transientOnly"
+					},
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='foo'"
+				}, oErrorResponse)
+				.expectRequest("$~key~?$expand=ToLineItems&$select=ToLineItems",
+					createErrorResponse({message : "GET failed", statusCode : 424}))
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('foo')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderSet('foo')",
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Request failed with status code 400: POST SalesOrder_Confirm?SalesOrderID='foo'",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+			that.oLogMock.expects("error")
+				.withExactArgs(sinon.match(new RegExp("Request failed with status code 424: "
+						+ "GET \\$id-\\d*-\\d*\\?\\$expand=ToLineItems&\\$select=ToLineItems")),
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+			oEventHandlerMock.expects("error").withExactArgs(sinon.match({
+				message : "HTTP request failed",
+				responseText : oErrorResponse.body,
+				statusCode : 400,
+				statusText : "FAILED"
+			}));
+
+			that.removePersistentAndTechnicalMessages();
+
+			// code under test
 			oModel.submitChanges({groupId : "changes"});
 
 			return that.waitForChanges(assert);
