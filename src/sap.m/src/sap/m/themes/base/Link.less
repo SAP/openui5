@@ -5,7 +5,7 @@
 
 .sapMLnk {
 	color: @sapUiLink;
-	text-decoration: none;
+	text-decoration: @sapUiLinkTextDecoration;
 	display: inline-block;
 	white-space: nowrap;
 	overflow: hidden;
@@ -16,15 +16,23 @@
 	cursor: pointer;
 }
 
-.sapMLnk:active:not(.sapMLnkDsbl),
-.sapMLnk:focus:not(.sapMLnkDsbl) {
-	color: @sapUiLinkActiveColor;
-}
 .sapMLnk:visited {
 	color: @sapUiLinkVisitedColor;
 }
-.sapMLnk:hover:not(.sapMLnkDsbl) {
+
+.sapMLnk:active:not(.sapMLnkDsbl):not(.sapMLnkSubtle),
+.sapMLnk:focus:not(.sapMLnkDsbl):not(.sapMLnkSubtle) {
+	color: @sapUiLinkActiveColor;
+}
+
+html.sap-desktop .sapMLnk:hover:not(:focus):not(.sapMLnkDsbl):not(.sapMLnkSubtle) {
 	color: @sapUiLinkHoverColor;
+	text-decoration: @sapUiLinkHoverTextDecoration;
+}
+
+.sapMLnk:active:not(.sapMLnkDsbl):not(.sapMLnkSubtle),
+html.sap-desktop .sapMLnk:active:hover:not(.sapMLnkDsbl):not(.sapMLnkSubtle) {
+	text-decoration: @sapUiLinkActiveTextDecoration;
 }
 
 .sapUiInverted-CTX .sapUiLnk {
@@ -68,22 +76,17 @@
 
 /* Global focus offset */
 html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
+}
+
+html.sap-desktop .sapMLnk:focus:not(:active):not(.sapMLnkDsbl) {
 	text-decoration: underline;
 }
 
 /* Link focus offset and visualization in sap.ui.table.* tables */
 html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
 	outline-offset: -2px;
-}
-
-/* Hover Decoration only for desktop clients*/
-html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
-	text-decoration: underline;
-}
-
-html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline: 1px dotted @sapUiContentFocusColor;
 }
 
 .sapUiForm .sapMLnk {
@@ -96,7 +99,7 @@ html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	margin-bottom: 0.75rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
 }
 
-.sapUiFormToolbar .sapMTB .sapMLnk{
+.sapUiFormToolbar .sapMTB .sapMLnk {
 	line-height: normal;
 	margin-top: auto;
 	margin-bottom: auto;
