@@ -1275,9 +1275,16 @@ sap.ui.define([
 			},
 
 			shortSurveyRedirect: function () {
-				var sQueryParams = "?product=SAPUI5%2FOpenUI5&product_filter=UI5&cluster=BTP&page=" + encodeURIComponent(document.location.href),
-					sProdURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_2gcfdw3EYYOIz5A" + sQueryParams,
-					sDevURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_d3UPNymSgUHAb9Y" + sQueryParams,
+				var sQueryParams = "?Release_version=" + this._getUI5Version()
+					+ "&Source=" + this._getUI5Distribution()
+					+ "&Type=" + this._getUI5VersionType()
+					+ "&product=SAPUI5%2FOpenUI5"
+					+ "&product_filter=UI5"
+					+ "&cluster=BTP"
+					+ "&page=" + encodeURIComponent(document.location.href);
+
+				var sProdURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_byI4QeS7Ic2Psyi" + sQueryParams,
+					sDevURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_3Epqk1MLAUQVrwy" + sQueryParams,
 					bProd = !this.getModel("versionData").getProperty("/isDevEnv");
 
 				// This survey could be displayed in a Qualtrics intercept
@@ -1741,6 +1748,29 @@ sap.ui.define([
 					sUI5Distribution = "OpenUI5";
 				}
 				return sUI5Distribution;
+			},
+
+			_getUI5VersionType: function() {
+				var oVersionModel = this.getModel("versionData"),
+					bIsInternal = oVersionModel.getProperty("/isInternal"),
+					bIsSnapshotVersion = oVersionModel.getProperty("/isSnapshotVersion"),
+					sVersionType;
+
+				switch (true) {
+					case bIsSnapshotVersion && bIsInternal:
+						sVersionType = "InternalSnapshot";
+						break;
+					case bIsInternal:
+						sVersionType = "Internal";
+						break;
+					case bIsSnapshotVersion:
+						sVersionType = "Snapshot";
+						break;
+					default:
+						sVersionType = "Release";
+				}
+
+				return sVersionType;
 			},
 
 			_getCurrentPageRelativeURL: function () {
