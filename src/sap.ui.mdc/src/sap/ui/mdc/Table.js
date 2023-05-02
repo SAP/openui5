@@ -2736,5 +2736,21 @@ sap.ui.define([
 		}
 	};
 
+	// Used temporarily in sap.ui.mdc.valuehelp.content.MDCTable
+	Table.prototype._enableV4LegacySelection = function() {
+		this._bV4LegacySelectionEnabled = true;
+
+		if (this._oTable) {
+			var oV4SelectionPlugin = this._oTable.getPlugins().find(function(oPlugin) {
+				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
+			});
+
+			if (oV4SelectionPlugin) {
+				oV4SelectionPlugin.destroy();
+				this.getControlDelegate().initializeSelection(this);
+			}
+		}
+	};
+
 	return Table;
 });
