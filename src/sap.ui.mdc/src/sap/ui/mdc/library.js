@@ -49,8 +49,7 @@
 			"sap.ui.mdc.valuehelp.ITypeaheadContent",
 			"sap.ui.mdc.valuehelp.IDialogContent",
 			"sap.ui.mdc.valuehelp.ITypeaheadContainer",
-			"sap.ui.mdc.valuehelp.IDialogContainer",
-			"sap.ui.mdc.ITypeUtil"
+			"sap.ui.mdc.valuehelp.IDialogContainer"
 
 		],
 		controls: [
@@ -1388,72 +1387,6 @@
 	 * @private
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 */
-
-	/**
-	 *
-	 * Interface for MDC TypeUtils
-	 *
-	 * @since 1.114.0
-	 * @name sap.ui.mdc.ITypeUtil
-	 * @interface
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 * @experimental As of version 1.114.0
-	 *
-	 * @name sap.ui.mdc.ITypeUtil.getBaseType
-	 * @method
-	 * @param {string} sType Given type string or sap.ui.model.SimpleType
-	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
-	 * @param {object} oConstraints Used <code>Constraints</code>
-	 * @returns {sap.ui.mdc.enum.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
-	 *
-	 * @name sap.ui.mdc.ITypeUtil.getBaseTypeForType
-	 * @method
-	 * @param {sap.ui.model.SimpleType} oType Given type string or sap.ui.model.SimpleType
-	 * @returns {string} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
-	 *
-	 * @name sap.ui.mdc.ITypeUtil.getDataTypeClassName
-	 * @method
-	 * @param {string} sType Given model specific type
-	 * @returns {string} Data type name
-	 *
-	 * @name sap.ui.mdc.ITypeUtil.getDataTypeClass
-	 * @method
-	 * @param {string} sDataType Class path as string where each name is separated by '.'
-	 * @returns {sap.ui.model.SimpleType} creates returns a dataType class
-	 *
-	 * @name sap.ui.mdc.ITypeUtil.getDataTypeInstance
-	 * @method
-	 * @param {string} sDataType Class path as string where each name is separated by '.'
-	 * @param {object} [oFormatOptions] formatoptions for the dataType
-	 * @param {object} [oConstraints] constraints for the dataType
-	 * @param {object} [oOptions] Additional options for overrides
-	 * @returns {sap.ui.model.SimpleType} creates returns an instance of the resolved dataType
-	 *
-	 * @name sap.ui.mdc.ITypeUtil.getTypeConfig
-	 * @method
-	 * @param {string|sap.ui.model.SimpleType} vType Given dataType as string or type
-	 * @param {object} [oFormatOptions] formatoptions for the given dataType
-	 * @param {object} [oConstraints] constraints for the given dataType
-	 * @returns {sap.ui.mdc.TypeConfig} output returns typeConfig object
-	 *
-	 * @name sap.ui.mdc.ITypeUtil.internalizeValue
-	 * @method
-	 * @param {string} vValue externalized value
-	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
-	 * @param {object} [oFormatOptions] formatoptions for the dataType
-	 * @param {object} [oConstraints] constraints for the dataType
-	 * @returns {object} converted value
-	 *
-	 * @name sap.ui.mdc.ITypeUtil.externalizeValue
-	 * @method
-	 * @param {object} vValue typed value
-	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
-	 * @param {object} [oFormatOptions] formatoptions for the dataType
-	 * @param {object} [oConstraints] constraints for the dataType
-	 * @returns {string} converted value
-	 *
 	 */
 
 	return thisLib;

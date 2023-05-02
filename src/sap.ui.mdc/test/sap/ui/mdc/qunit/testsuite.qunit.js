@@ -212,14 +212,6 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./mixin/DelegateMixin.qunit",
 				sinon: true
 			},
-			"TypeUtilFactory": {
-				group: "Util",
-				module: "./util/TypeUtilFactory.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/util]"
-				},
-				sinon: true
-			},
 			"TypeUtil": {
 				group: "Util",
 				module: "./util/TypeUtil.qunit",

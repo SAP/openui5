@@ -161,7 +161,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * Returns the <code>typeUtil</code> made available by a delegate module.
 	 *
 	 * @protected
-	 * @returns {sap.ui.mdc.ITypeUtil} <code>TypeUtil</code> object
+	 * @returns {sap.ui.mdc.util.TypeUtil|sap.ui.mdc.util.TypeMap} <code>TypeUtil</code> object
 	 * @throws Throws an error if the delegate module is not available
 	 */
 	DelegateMixin.getTypeUtil = function () {

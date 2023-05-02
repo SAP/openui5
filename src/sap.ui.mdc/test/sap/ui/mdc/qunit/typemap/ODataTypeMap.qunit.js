@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/mdc/odata/TypeMap",
-	"sap/ui/mdc/util/TypeUtilFactory",
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/type/DateTimeOffset",
@@ -19,7 +18,6 @@ sap.ui.define([
 ],
 function(
 	ODataTypeMap,
-	TypeUtilFactory,
 	BaseType,
 	ODataDateTime,
 	ODataDateTimeOffset,
@@ -43,9 +41,7 @@ function(
 		assert.equal(sBaseType, BaseType.Date, "Date baseType is returned");
 	});
 
-	QUnit.module("Legacy tests - sap.ui.mdc.odata.ODataTypeUtil");
-
-	var ODataTypeUtil = TypeUtilFactory.getUtil(ODataTypeMap);
+	QUnit.module("Legacy tests - sap.ui.mdc.odata.ODataTypeMap");
 
 	QUnit.test("getBaseTypeForType", function(assert) {
 
@@ -60,14 +56,14 @@ function(
 		aTypeList.forEach(function (aEntry) {
 			var oType = aEntry[0];
 			var oExpected = aEntry[1];
-			assert.equal(ODataTypeUtil.getBaseTypeForType(oType), oExpected, "expected baseType returned for type " + oType.getName() + ": " + oExpected);
+			assert.equal(ODataTypeMap.getBaseTypeForType(oType), oExpected, "expected baseType returned for type " + oType.getName() + ": " + oExpected);
 		});
 
 		var aNumerics = [ODataByte, ODataSByte, ODataDecimal, ODataInt16, ODataInt32, ODataInt64, ODataSingle, ODataDouble];
 
 		aNumerics.forEach(function (NumericType) {
 			var oType = new NumericType();
-			assert.equal(ODataTypeUtil.getBaseTypeForType(oType), BaseType.Numeric, "expected baseType returned for type " + oType.getName() + ": " + BaseType.Numeric);
+			assert.equal(ODataTypeMap.getBaseTypeForType(oType), BaseType.Numeric, "expected baseType returned for type " + oType.getName() + ": " + BaseType.Numeric);
 		});
 	});
 
@@ -93,11 +89,11 @@ function(
 
 		Object.keys(mEdmTypes).forEach(function (sKey) {
 			var oExpected = mEdmTypes[sKey];
-			assert.equal(ODataTypeUtil.getDataTypeClassName(sKey), oExpected, "expected odata type returned for edm type " + sKey + ": " + oExpected);
+			assert.equal(ODataTypeMap.getDataTypeClassName(sKey), oExpected, "expected odata type returned for edm type " + sKey + ": " + oExpected);
 		});
 
 		assert.throws(function() {
-			ODataTypeUtil.getDataTypeClass("invalid classname");
+			ODataTypeMap.getDataTypeClass("invalid classname");
 		}, function(oError) {
 			return oError instanceof Error && oError.message.indexOf("DataType '" + "invalid classname" + "' cannot be determined") >= 0;
 		}, "invalid types lead to error");
@@ -106,38 +102,38 @@ function(
 
 	QUnit.test("getTypeConfig with constraints", function (assert) {
 
-		var oTypeConfig = ODataTypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, undefined);
+		var oTypeConfig = ODataTypeMap.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, undefined);
 		assert.equal(oTypeConfig.baseType, BaseType.DateTime , "expected basetype returned");
 
-		oTypeConfig = ODataTypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, {displayFormat: "Date"});
+		oTypeConfig = ODataTypeMap.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, {displayFormat: "Date"});
 		assert.equal(oTypeConfig.baseType, BaseType.Date , "expected basetype returned");
 	});
 
 	QUnit.test("internalizeValue", function (assert) {
-		var oTypedValue = ODataTypeUtil.internalizeValue(50, new ODataInt64()); //
+		var oTypedValue = ODataTypeMap.internalizeValue(50, new ODataInt64()); //
 		assert.equal(oTypedValue, '50', "expected value returned");
 
-		oTypedValue = ODataTypeUtil.internalizeValue('50', new ODataInt64());
+		oTypedValue = ODataTypeMap.internalizeValue('50', new ODataInt64());
 		assert.equal(oTypedValue, '50', "expected value returned");
 
-		oTypedValue = ODataTypeUtil.internalizeValue(50, new ODataDecimal()); //
+		oTypedValue = ODataTypeMap.internalizeValue(50, new ODataDecimal()); //
 		assert.equal(oTypedValue, '50', "expected value returned");
 
-		oTypedValue = ODataTypeUtil.internalizeValue('50', new ODataDecimal());
+		oTypedValue = ODataTypeMap.internalizeValue('50', new ODataDecimal());
 		assert.equal(oTypedValue, '50', "expected value returned");
 	});
 
 	QUnit.test("externalizeValue", function (assert) {
-		var oStringifiedValue = ODataTypeUtil.externalizeValue(50, new ODataInt64());
+		var oStringifiedValue = ODataTypeMap.externalizeValue(50, new ODataInt64());
 		assert.equal(oStringifiedValue, "50", "stringified value returned");
 
-		oStringifiedValue = ODataTypeUtil.externalizeValue('50', new ODataInt64());
+		oStringifiedValue = ODataTypeMap.externalizeValue('50', new ODataInt64());
 		assert.equal(oStringifiedValue, "50", "stringified value returned");
 
-		oStringifiedValue = ODataTypeUtil.externalizeValue(50, new ODataDecimal()); //
+		oStringifiedValue = ODataTypeMap.externalizeValue(50, new ODataDecimal()); //
 		assert.equal(oStringifiedValue, '50', "expected value returned");
 
-		oStringifiedValue = ODataTypeUtil.externalizeValue('50', new ODataDecimal());
+		oStringifiedValue = ODataTypeMap.externalizeValue('50', new ODataDecimal());
 		assert.equal(oStringifiedValue, '50', "expected value returned");
 	});
 });

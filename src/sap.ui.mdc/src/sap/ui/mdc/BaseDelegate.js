@@ -5,7 +5,7 @@
  */
 
 // sap.ui.mdc.BaseDelegate
-sap.ui.define(['sap/ui/mdc/util/TypeUtilFactory', 'sap/ui/mdc/enum/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/base/Log"], function (TypeUtilFactory, BaseType, DefaultTypeMap, Log) {
+sap.ui.define(['sap/ui/mdc/enum/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/base/Log"], function (BaseType, DefaultTypeMap, Log) {
 	"use strict";
 
 	/**
@@ -34,14 +34,13 @@ sap.ui.define(['sap/ui/mdc/util/TypeUtilFactory', 'sap/ui/mdc/enum/BaseType', 's
 	* Applications should implement {@link sap.ui.mdc.BaseDelegate.getTypeMap getTypeMap} instead to provide type mappings.
 	* Please also see the following extensible presets: {@link sap.ui.mdc.DefaultTypeMap}, {@link sap.ui.mdc.odata.TypeMap}, {@link sap.ui.mdc.odata.v4.TypeMap}
 	*
-	* @final
 	* @param {object} oPayload Delegate payload object
-	* @return {sap.ui.mdc.ITypeUtil} configured TypeUtil
+	* @return {sap.ui.mdc.util.TypeUtil|sap.ui.mdc.util.TypeMap} configured TypeUtil/TypeMap
 	* @since 1.79.0
 	*
 	*/
 	BaseDelegate.getTypeUtil = function (oPayload) {
-		return TypeUtilFactory.getUtil(this.getTypeMap(oPayload));
+		return this.getTypeMap(oPayload);
 	};
 
 
