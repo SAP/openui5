@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleMessage",
 	"./SidePanelItem",
 	"./SidePanelRenderer",
+	"./library",
 	"sap/ui/core/library",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/thirdparty/jquery",
@@ -41,6 +42,7 @@ sap.ui.define([
 	InvisibleMessage,
 	SidePanelItem,
 	SidePanelRenderer,
+	library,
 	coreLibrary,
 	F6Navigation,
 	jQuery,
@@ -50,7 +52,8 @@ sap.ui.define([
 
 	// Resource Bundle
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.f"),
-		InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+		InvisibleMessageMode = coreLibrary.InvisibleMessageMode,
+		SidePanelPosition = library.SidePanelPosition;
 
 	// Resize positions
 	var SIDE_PANEL_POSITION_MIN_WIDTH = 0,	// Minimum width
@@ -216,7 +219,12 @@ sap.ui.define([
 				 * Determines whether the side content is visible or hidden.
 				 * @private
 				 */
-				sideContentExpanded: { type: "boolean", group: "Appearance", defaultValue: false, visibility: "hidden" }
+				sideContentExpanded: { type: "boolean", group: "Appearance", defaultValue: false, visibility: "hidden" },
+
+				/**
+				 * Defines where to place the side panel position.
+				 */
+				sidePanelPosition: {type: "sap.f.SidePanelPosition", group: "Appearance", defaultValue: SidePanelPosition.Right}
 			},
 			aggregations: {
 				/**
@@ -406,7 +414,13 @@ sap.ui.define([
 		var oExpandCollapseButton = this.getAggregation("_arrowButton"),
 			bActionBarExpanded = this.getActionBarExpanded(),
 			sTooltip = bActionBarExpanded ? oResourceBundle.getText("SIDEPANEL_COLLAPSE_BUTTON_TEXT") : oResourceBundle.getText("SIDEPANEL_EXPAND_BUTTON_TEXT"),
-			sNextArrow = bActionBarExpanded ? "right" : "left";
+			sNextArrow;
+
+		if (SidePanelPosition.Right === this.getSidePanelPosition()) {
+			sNextArrow = bActionBarExpanded  ? "right" : "left";
+		} else {
+			sNextArrow = bActionBarExpanded  ? "left" : "right";
+		}
 
 		oExpandCollapseButton.setIcon("sap-icon://navigation-" + sNextArrow + "-arrow");
 		oExpandCollapseButton.setTooltip(sTooltip);

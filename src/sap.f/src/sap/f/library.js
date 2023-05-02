@@ -591,6 +591,28 @@ sap.ui.define(["sap/ui/base/DataType",
 	};
 
 	/**
+	 * Enumeration for different SidePanel position.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.104
+	 */
+	 thisLib.SidePanelPosition = {
+		/**
+		 * The position is left.
+		 *
+		 * @public
+		 */
+		Left: "Left",
+		/**
+		 * The position is right.
+		 *
+		 * @public
+		 */
+		Right: "Right"
+	};
+
+	/**
 	 * Available <code>Illustration</code> types for the {@link sap.f.IllustratedMessage} control.
 	 *
 	 * This is an alias for {@link sap.m.IllustratedMessageType} and only kept for compatibility reasons.

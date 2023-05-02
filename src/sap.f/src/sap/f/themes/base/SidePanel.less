@@ -478,6 +478,37 @@
 	}
 }
 
+.sapFSP.sapFSPLeft {
+	flex-direction: row-reverse;
+	.sapFSPSide {
+		margin: 0.5rem 1rem 0.5rem 0;
+		.sapFSPSideInner {
+			border-radius: 0 @sapUiTileBorderCornerRadius @sapUiTileBorderCornerRadius 0;
+			flex-direction: row;
+		}
+		.sapFSPExpandCollapse {
+			right: auto;
+			left: 1rem;
+		}
+		.sapFSPActionBarList {
+			.sapFSPItem {
+				flex-direction: row-reverse;
+				&.sapFSPSelected {
+					&::before {
+						right: 0;
+						left: auto;
+					}
+				}
+			}
+		}
+	}
+}
+
+.sapFSP.sapFSPLeft:not(.sapFSPSingleItem) .sapFSPSideContent {
+	border-right: none;
+	border-left: 0.0625rem solid @sapUiGroupContentBorderColor;
+}
+
 /***** Phone *****/
 
 html.sap-phone {
