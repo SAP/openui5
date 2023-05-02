@@ -219,7 +219,14 @@ sap.ui.define([
 						 * Indicates if the user pressed the search button.
 						 * @since 1.114
 						 */
-						searchButtonPressed : {type : "boolean"}
+						searchButtonPressed : {type : "boolean"},
+
+						/**
+						 * Indicates that ESC key triggered the event.
+						 * <b>Note:</b> This parameter will not be sent unless the ESC key is pressed.
+						 * @since 1.115
+						 */
+						escPressed : {type : "boolean"}
 					}
 				},
 
@@ -382,6 +389,7 @@ sap.ui.define([
 
 		// in case of escape, revert to the original value, otherwise clear with ""
 		var value = oOptions && oOptions.value || "";
+		var bClearButtonPressed = !!(oOptions && oOptions.clearButton);
 
 		if (!this.getInputElement() || this.getValue() === value) {
 			return;
@@ -391,12 +399,19 @@ sap.ui.define([
 		updateSuggestions(this);
 		this.fireLiveChange({newValue: value});
 		this._fireChangeEvent();
-		this.fireSearch({
+
+		var mParams = {
 			query: value,
 			refreshButtonPressed: false,
-			clearButtonPressed: !!(oOptions && oOptions.clearButton),
+			clearButtonPressed: bClearButtonPressed,
 			searchButtonPressed: false
-		});
+		};
+
+		if (!bClearButtonPressed) {
+			mParams.escPressed = true;
+		}
+
+		this.fireSearch(mParams);
 	};
 
 	/**
