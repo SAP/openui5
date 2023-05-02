@@ -26,29 +26,6 @@ sap.ui.define([
 	}
 
 	/*
-	 * Returns the formatter. Creates it lazily.
-	 *
-	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
-	 *   The type instance
-	 * @returns {sap.ui.core.format.DateFormat}
-	 *   The formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = extend({strictParsing : true}, oType.oFormatOptions);
-			if (isDateOnly(oType)) {
-				oFormatOptions.UTC = true;
-				oType.oFormat = DateFormat.getDateInstance(oFormatOptions);
-			} else {
-				oType.oFormat = DateFormat.getDateTimeInstance(oFormatOptions);
-			}
-		}
-		return oType.oFormat;
-	}
-
-	/*
 	 * Sets the constraints.
 	 *
 	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
@@ -194,7 +171,7 @@ sap.ui.define([
 				if (!(oValue instanceof Date)) {
 					throw new FormatException("Illegal " + this.getName() + " value: " + oValue);
 				}
-				return getFormatter(this).format(oValue);
+				return this.getFormat().format(oValue);
 			default:
 				throw new FormatException("Don't know how to format " + this.getName() + " to "
 					+ sTargetType);
@@ -205,7 +182,17 @@ sap.ui.define([
 	 * @override
 	 */
 	DateTimeBase.prototype.getFormat = function () {
-		return getFormatter(this);
+		if (!this.oFormat) {
+			var oFormatOptions = extend({strictParsing : true}, this.oFormatOptions);
+			if (isDateOnly(this)) {
+				oFormatOptions.UTC = true;
+				this.oFormat = DateFormat.getDateInstance(oFormatOptions);
+			} else {
+				this.oFormat = DateFormat.getDateTimeInstance(oFormatOptions);
+			}
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -258,7 +245,7 @@ sap.ui.define([
 			case "object":
 				return vValue;
 			case "string":
-				oResult = getFormatter(this).parse(vValue);
+				oResult = this.getFormat().parse(vValue);
 				if (!oResult) {
 					throw new ParseException(this._getErrorMessage());
 				}

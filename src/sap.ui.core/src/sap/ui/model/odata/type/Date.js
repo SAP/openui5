@@ -20,24 +20,6 @@ sap.ui.define([
 		oModelFormatter;
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Date} oType
-	 *   the type instance
-	 * @returns {sap.ui.core.format.DateFormat}
-	 *   the formatter
-	 */
-	function getFormatter(oType) {
-		var oFormatOptions;
-
-		if (!oType.oFormat) {
-			oFormatOptions = extend({strictParsing : true}, oType.oFormatOptions);
-			oFormatOptions.UTC = true;
-			oType.oFormat = DateFormat.getDateInstance(oFormatOptions);
-		}
-		return oType.oFormat;
-	}
-
-	/**
 	 * Returns a formatter that formats the date into yyyy-MM-dd. Creates it lazily.
 	 *
 	 * @returns {sap.ui.core.format.DateFormat}
@@ -158,7 +140,7 @@ sap.ui.define([
 					: getModelFormatter().parse(vValue, false);
 			case "string":
 				oDate = vValue instanceof Date ? vValue : getModelFormatter().parse(vValue);
-				return oDate ? getFormatter(this).format(oDate) : vValue;
+				return oDate ? this.getFormat().format(oDate) : vValue;
 			default:
 				throw new FormatException("Don't know how to format " + this.getName() + " to "
 					+ sTargetType);
@@ -202,7 +184,13 @@ sap.ui.define([
 	 * @override
 	 */
 	EdmDate.prototype.getFormat = function () {
-		return getFormatter(this);
+		if (!this.oFormat) {
+			var oFormatOptions = extend({strictParsing : true}, this.oFormatOptions);
+			oFormatOptions.UTC = true;
+			this.oFormat = DateFormat.getDateInstance(oFormatOptions);
+		}
+
+		return this.oFormat;
 	};
 
 	/**
@@ -292,7 +280,7 @@ sap.ui.define([
 			case "object":
 				return getModelFormatter().format(vValue, false);
 			case "string":
-				oResult = getFormatter(this).parse(vValue);
+				oResult = this.getFormat().parse(vValue);
 				if (!oResult) {
 					throw new ParseException(this._getErrorMessage());
 				}

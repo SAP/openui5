@@ -473,6 +473,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new DateTimeBase();
+
+		assert.strictEqual(oType.oFormat, null);
+
+		// code under test
+		var oResult = oType.getFormat();
+
+		assert.ok(oResult instanceof DateFormat);
+		assert.strictEqual(oType.oFormat, oResult);
+	});
+
+	//*********************************************************************************************
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.DateTime");
 

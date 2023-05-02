@@ -496,11 +496,24 @@ sap.ui.define([
 		var oType = new TimeOfDay();
 
 		this.mock(DateFormat.prototype).expects("getPlaceholderText").withExactArgs().callsFake(function () {
-			assert.strictEqual(this, oType.oUiFormat);
+			assert.strictEqual(this, oType.oFormat);
 			return "~placeholder";
 		});
 
 		// code under test
 		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormat", function (assert) {
+		var oType = new TimeOfDay();
+
+		assert.strictEqual(oType.oFormat, undefined);
+
+		// code under test
+		var oResult = oType.getFormat();
+
+		assert.ok(oResult instanceof DateFormat);
+		assert.strictEqual(oType.oFormat, oResult);
 	});
 });
