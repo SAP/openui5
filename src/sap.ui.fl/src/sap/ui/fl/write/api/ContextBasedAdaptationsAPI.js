@@ -208,14 +208,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns displayed adaptation id given layer and control.
+	 * Returns displayed adaptation id given layer and control for setting the adaptationId in changes etc.
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
-	 * @returns {string} - Displayed adaptation id
+	 * @returns {string} - Displayed adaptation id, undefined for DEFAULT adaptation
 	 */
 	ContextBasedAdaptationsAPI.getDisplayedAdaptationId = function(mPropertyBag) {
-		return this.getAdaptationsModel(mPropertyBag).getProperty("/displayedAdaptation/id");
+		var adaptationId = this.getAdaptationsModel(mPropertyBag).getProperty("/displayedAdaptation/id");
+		return adaptationId !== Adaptations.Type.Default ? adaptationId : undefined;
 	};
 
 	/**

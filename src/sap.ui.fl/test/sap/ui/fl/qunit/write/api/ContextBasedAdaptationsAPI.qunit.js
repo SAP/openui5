@@ -745,6 +745,8 @@ sap.ui.define([
 				assert.ok(oModel instanceof JSONModel, "then the result is of type JSONModel");
 				assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is returned with initialized values");
 				assert.strictEqual(ContextBasedAdaptationsAPI.getDisplayedAdaptationId(this.mPropertyBag), oExpectedFilledData.displayedAdaptation.id, "displayed adaptation id is correct");
+				oModel.switchDisplayedAdaptation("DEFAULT");
+				assert.strictEqual(ContextBasedAdaptationsAPI.getDisplayedAdaptationId(this.mPropertyBag), undefined, "displayed default adaptation id is undefined");
 			}.bind(this));
 		});
 	});
