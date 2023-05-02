@@ -2,9 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/field/content/DefaultContent"
-], function(DefaultContent) {
+	"sap/ui/mdc/field/content/DefaultContent",
+	"sap/m/library"
+], function(DefaultContent, mLibrary) {
 	"use strict";
+
+	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	/**
 	 * Object-based definition of the link content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
@@ -34,14 +37,15 @@ sap.ui.define([
 		createDisplay: function(oContentFactory, aControlClasses, sId) {
 			var Link = aControlClasses[0];
 			var oConditionsType = oContentFactory.getConditionsType();
-			// do no set width to open the FieldInfo ast the end of the Link
+			// do no set width to open the FieldInfo at the end of the Link
 			var oLink = new Link(sId, {
 				text: { path: "$field>/conditions", type: oConditionsType },
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
 				tooltip: "{$field>/tooltip}",
 				press: oContentFactory.getHandleContentPress(),
-				wrapping: "{$field>/multipleLines}"
+				wrapping: "{$field>/multipleLines}",
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
 			var oFieldInfo = oContentFactory.getField().getFieldInfo();
 			if (oFieldInfo) {
