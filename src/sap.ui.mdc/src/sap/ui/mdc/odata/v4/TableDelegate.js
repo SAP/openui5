@@ -107,6 +107,10 @@ sap.ui.define([
 		return loadModules("sap/ui/table/plugins/ODataV4Selection").then(function(aModules) {
 			var ODataV4SelectionPlugin = aModules[0];
 
+			if (oTable._bV4LegacySelectionEnabled) {
+				return TableDelegate.initializeSelection.call(this, oTable);
+			}
+
 			oTable._oTable.addPlugin(new ODataV4SelectionPlugin({
 				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
 				enableNotification: true,

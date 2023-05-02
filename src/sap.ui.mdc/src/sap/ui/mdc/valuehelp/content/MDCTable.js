@@ -421,7 +421,7 @@ sap.ui.define([
 				this._addPromise("listBinding");
 			} else {
 				this._oTable = oTable;
-				oTable._bV4LegacySelectionEnabled = true;
+				oTable._enableV4LegacySelection();
 
 				if (this._oTable.getAutoBindOnInit()) {
 					Log.warning("Usage of autobound tables may lead to unnecessary requests.");
