@@ -1223,6 +1223,19 @@ function(
 	};
 
 	/**
+	 * Handles dialog's OK button press.
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._handleOkPress = function () {
+		ComboBoxBase.prototype._handleOkPress.apply(this, arguments);
+
+		if (this.getValue()) {
+			this._selectItemByKey();
+		}
+	};
+
+	/**
 	 * Handles the picker input change.
 	 *
 	 * @param {jQuery.Event} oEvent The event object
@@ -2080,10 +2093,16 @@ function(
 	 *
 	 * @private
 	 */
-	MultiComboBox.prototype._handleInputFocusOut = function () {
-		var oInput = this.isPickerDialog() ? this.getPickerTextField() : this,
-		sUpdateValue = this._sOldInput || this._sOldValue || "";
-		oInput.updateDomValue(sUpdateValue);
+	MultiComboBox.prototype._handleInputFocusOut = function (oEvent) {
+		var bIsPickerDialog = this.isPickerDialog(),
+		oInput = bIsPickerDialog ? this.getPickerTextField() : this,
+		sUpdateValue = this._sOldInput || this._sOldValue || "",
+		bOkButtonPressed = bIsPickerDialog && oEvent.relatedTarget && oEvent.relatedTarget.id.indexOf("-popup-closeButton") > -1;
+
+		if (!bOkButtonPressed) {
+			oInput.updateDomValue(sUpdateValue);
+		}
+
 		this._bIsPasteEvent = null;
 	};
 
