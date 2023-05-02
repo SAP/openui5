@@ -1211,8 +1211,8 @@ sap.ui.define([
      * Used by breadcrumbs of MDC charts.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart MDC chart to get the items from
-     * @returns {array} Array of MDC items that are drillable
-     * @experimental
+	 * @returns {sap.ui.mdc.chart.Item[]} Array of MDC items that are drillable
+     *
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      *

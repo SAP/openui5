@@ -6,7 +6,6 @@ sap.ui.define([
 ], function (Element) {
 	"use strict";
 
-	// The aggregation to feed details actions for datapoint selection in the mdc chart
 	/**
 	 * Constructor for a new SelectionDetailsActions.
 	 *
@@ -19,7 +18,6 @@ sap.ui.define([
 	 *
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental
 	 * @since 1.88
 	 * @alias sap.ui.mdc.chart.SelectionDetailsActions
 	 */

@@ -32,7 +32,6 @@ sap.ui.define([
          * @author SAP SE
          * @version ${version}
          * @constructor
-         * @experimental As of version 1.88
          * @private
          * @ui5-restricted sap.fe
          * @MDC_PUBLIC_CANDIDATE
@@ -65,7 +64,6 @@ sap.ui.define([
         /**
          * Initialises the MDC Chart Selection Details
          *
-         * @experimental
          * @private
          * @ui5-restricted sap.ui.mdc
          */

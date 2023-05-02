@@ -18,7 +18,6 @@ sap.ui.define([
      * @private
      * @ui5-restricted sap.fe
      * @MDC_PUBLIC_CANDIDATE
-     * @experimental
      * @since 1.88
      * @alias sap.ui.mdc.chart.Item
      */
