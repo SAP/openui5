@@ -1,0 +1,41 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:m="sap.m">
+	<m:Panel id="panel">
+		<!-- valid type with options -->
+		<m:Input id="inputField" value="{
+			path:'/value', type:'sap.ui.model.type.Integer',
+			formatOptions: {
+				groupingEnabled: true,
+				groupingSeparator: '.',
+				groupingSize: 3
+			}
+		}" />
+
+		<!-- unknown type -->
+		<m:Input id="inputField_invalidType" value="{path:'/value', type:'sap.ui.non.existing.Type'}" />
+
+		<!-- custom data-->
+		<m:customData>
+			<core:CustomData key="myColor" value="{path:'/customDataValue', type:'sap.ui.model.type.String'}" />
+		</m:customData>
+
+		<!-- composite binding-->
+		<m:Label id="label" text="{
+				path:'/amount',
+				type:'sap.ui.model.type.Float',
+				formatOptions: {
+					groupingSeparator: ',',
+					decimalSeparator:'.',
+					preserveDecimals: false,
+					decimals: 1
+				}
+			} EUR on {
+				path:'/date',
+				type:'sap.ui.model.type.Date',
+				formatOptions: {
+					source: { pattern: 'timestamp'},
+					pattern: 'yyyy-MM-dd',
+					UTC: true
+				}
+			}" />
+	</m:Panel>
+</mvc:View>
