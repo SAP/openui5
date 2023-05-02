@@ -487,6 +487,7 @@ sap.ui.define([
 					assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, ", the active version was determined correct");
 					assert.equal(oResponse.getProperty("/persistedVersion"), sActiveVersion, "and the persisted version was determined correct");
 					assert.equal(oResponse.getProperty("/publishVersionEnabled"), true, "after activate a new version can be published");
+					assert.equal(oResponse.getProperty("/draftFilenames").length, 0, "and draft file name is empty");
 				});
 		});
 
@@ -545,6 +546,7 @@ sap.ui.define([
 					assert.equal(oResponse.getProperty("/displayedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
 					assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, "and the active version was determined correct");
 					assert.equal(oResponse.getProperty("/publishVersionEnabled"), true, "after activate a new version can be published");
+					assert.equal(oResponse.getProperty("/draftFilenames").length, 0, "and draft file name is empty");
 				});
 		});
 
@@ -635,6 +637,7 @@ sap.ui.define([
 					assert.equal(oData.draftAvailable, true, "as well as draftAvailable true");
 					assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 					assert.equal(oData.displayedVersion, Version.Number.Draft, "as well as the displayedVersion is set to 'Draft'");
+					assert.equal(oData.draftFilenames.length, 0, "and draft file name is empty");
 				})
 				.then(function () {
 					return assert.throws(Versions.activate(mPropertyBag), "the save is rejected");
