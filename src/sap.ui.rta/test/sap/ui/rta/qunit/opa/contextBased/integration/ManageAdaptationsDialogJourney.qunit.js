@@ -59,8 +59,8 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeManageContextBasedAdaptationDialogIsOpend();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeSaveButtonEnabled(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeAllExpectedColumnHeaders(5);
-			testLanguageDependentDateFormat(Then, "May 25, 2022", 0, "createdBy");
-			testLanguageDependentDateFormat(Then, "Sep 7, 2022", 1, "changedAt");
+			testLanguageDependentDateFormat(Then, "May 25, 2022, 9:30 AM", 0, "createdBy");
+			testLanguageDependentDateFormat(Then, "Sep 7, 2022, 12:30 PM", 1, "changedAt");
 		});
 
 		QUnit.module("Manage Adaptations Dialog");
