@@ -3530,5 +3530,78 @@
         ]
       }
     ]
+  },
+  "1.71.56": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "2016ffe4dcf587d0ea07ef853fba993c6cd626b7",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370036896"
+          }
+        ]
+      },
+      {
+        "id": "52cbcf1d63da21fceb6ec9747c1f7e2afa08b2b0",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "cbbfce08d23cb7764a23555796e9bc07f4f089b8",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust default href attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006841702022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001393612023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          }
+        ]
+      },
+      {
+        "id": "d5510a14a82191a112d16e448cc28e8560c5c9f8",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust type announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001393612023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006450822022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180399466"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270100219"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280073378"
+          }
+        ]
+      }
+    ]
   }
 }

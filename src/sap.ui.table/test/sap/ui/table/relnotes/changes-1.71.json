@@ -46,5 +46,21 @@
         ]
       }
     ]
+  },
+  "1.71.56": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "a5b5b6dca146b52f1283f20cd24e465bf1b20cd0",
+        "type": "FIX",
+        "text": " Table: Avoid error on row click in a table with custom column subclasses",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370030662"
+          }
+        ]
+      }
+    ]
   }
 }
