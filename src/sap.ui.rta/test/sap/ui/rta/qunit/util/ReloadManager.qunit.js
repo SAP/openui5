@@ -163,6 +163,32 @@ sap.ui.define([
 				},
 				testName: "with only allContexts",
 				expectedMessageKey: "MSG_RELOAD_WITHOUT_ALL_CONTEXT"
+			},
+			{
+				oReloadInfo: {
+					hasHigherLayerChanges: false,
+					layer: Layer.CUSTOMER,
+					isDraftAvailable: false,
+					allContexts: false,
+					initialDraftGotActivated: false,
+					changesNeedReload: false,
+					switchEndUserAdaptation: true
+				},
+				testName: "with only switchEndUserAdaptation",
+				expectedMessageKey: "MSG_RELOAD_OTHER_CONTEXT_BASED_ADAPTATION"
+			},
+			{
+				oReloadInfo: {
+					hasHigherLayerChanges: true,
+					layer: Layer.CUSTOMER,
+					isDraftAvailable: false,
+					allContexts: false,
+					initialDraftGotActivated: false,
+					changesNeedReload: false,
+					switchEndUserAdaptation: true
+				},
+				testName: "with hasHigherLayerChanges in Customer layer and switchEndUserAdaptation",
+				expectedMessageKey: "MSG_RELOAD_WITH_PERSONALIZATION_AND_CONTEXT_BASED_ADAPTATION"
 			}
 		].forEach(function(oTestInfo) {
 			QUnit.test(oTestInfo.testName, function(assert) {

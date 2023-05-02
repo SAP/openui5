@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
@@ -30,6 +31,7 @@ sap.ui.define([
 	Utils,
 	Version,
 	ContextBasedAdaptationsAPI,
+	FlexInfoSession,
 	FlexObjectState,
 	Storage,
 	Versions,
@@ -395,6 +397,13 @@ sap.ui.define([
 
 		QUnit.test("when a filled list of adaptations is provided", function(assert) {
 			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
+		});
+
+		QUnit.test("when a filled list of adaptations is provided with FlexInfoSession", function(assert) {
+			sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "id-1591275572835-1" });
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			this.oExpectedFilledData.displayedAdaptation = this.oExpectedFilledData.adaptations[1];
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 		});
 
