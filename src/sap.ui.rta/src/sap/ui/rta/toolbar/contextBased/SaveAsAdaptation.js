@@ -79,7 +79,7 @@ sap.ui.define([
 				this._oAddAdaptationDialog.attachBeforeClose(clearComponent.bind(this));
 				oDialog.addStyleClass(Utils.getRtaStyleClassName());
 				this.getToolbar().addDependent(this._oAddAdaptationDialog);
-				this.oDialogModel = new JSONModel({ title: this.oTextResources.getText("SAC_DIALOG_HEADER") });
+				this.oDialogModel = new JSONModel();
 				this._oAddAdaptationDialog.setModel(this.oDialogModel, "dialogModel");
 			}.bind(this));
 		} else {
@@ -94,6 +94,9 @@ sap.ui.define([
 			this.oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel({ control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer });
 			if (bIsEditMode) {
 				enableEditMode.call(this);
+			} else {
+				this.oDialogModel.setProperty("/title", this.oTextResources.getText("SAC_DIALOG_HEADER"));
+				this.oDialogModel.refresh(true);
 			}
 			return openDialog.call(this);
 		}.bind(this));
