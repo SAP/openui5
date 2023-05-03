@@ -619,8 +619,14 @@ sap.ui.define([
 			var oGrid = this.getAggregation("_content").getContent()[1];
 			var oCtrl = oGrid.getContent()[0]; // 0=Operator Field, 2=first Value Field which might not exist
 			return oCtrl;
-		}
+		},
 
+		// TODO: remove this function and replace by getValueHelp onde FieldHelp association is completetly removed.
+		_getValueHelp: function() {
+
+			return this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()); // as getFieldHelp not exist in legacy-free UI5
+
+		}
 	});
 
 	function _observeChanges(oChanges) {
@@ -731,7 +737,7 @@ sap.ui.define([
 
 			if (_operatorSupportsValueHelp(sKey)) {
 				// enable the ValueHelp for the used value fields
-				var sValueHelp = this.getValueHelp() || this.getFieldHelp();
+				var sValueHelp = this._getValueHelp();
 				oValue0Field && oValue0Field.setValueHelp && oValue0Field.setValueHelp(sValueHelp);
 				oValue1Field && oValue1Field.setValueHelp && oValue1Field.setValueHelp(sValueHelp);
 			} else {
@@ -810,7 +816,7 @@ sap.ui.define([
 				editMode: {parts: [{path: "$condition>operator"}, {path: "$condition>invalid"}], formatter: _getEditModeFromOperator},
 				multipleLines: false,
 				width: "100%",
-				valueHelp: _operatorSupportsValueHelp(oCondition.operator) ? this.getValueHelp() || this.getFieldHelp() : null
+				valueHelp: _operatorSupportsValueHelp(oCondition.operator) ? this._getValueHelp() : null
 				//display: should always be FieldDisplay.Value
 			});
 		}

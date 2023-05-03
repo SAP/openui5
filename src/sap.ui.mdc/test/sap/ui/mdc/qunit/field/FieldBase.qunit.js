@@ -1467,7 +1467,7 @@ sap.ui.define([
 					assert.equal(oContent.getText(), "Yes", "Text set on Text control");
 
 					// setting FieldHelp needs to remove default help
-					oFieldEditSingle.setFieldHelp("X");
+					oFieldEditSingle.setValueHelp("X");
 					assert.notOk(oFieldEditSingle._sDefaultFieldHelp, "No Default Field help set");
 
 					if (oFieldHelp) {
@@ -3276,7 +3276,7 @@ sap.ui.define([
 				valueState: "{cm>/fieldPath/Name/valueState}",
 				valueStateText: "{cm>/fieldPath/Name/valueStateText}",
 				display: FieldDisplay.Description,
-				fieldHelp: oFieldHelp,
+				valueHelp: oFieldHelp,
 				dataType: "sap.ui.model.type.String",
 				dataTypeConstraints: {search: '^$|^[A-Za-z0-5]+$'}, // to test validation error
 				//				change: _myChangeHandler,
@@ -3322,7 +3322,7 @@ sap.ui.define([
 
 		var oIcon = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content"); // just dummy handler to make Icon focusable
 		oField.setMaxConditions(2);
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setValidateInput(false); // to show keys if not found in help
 		var oConfig = {
 			parsedValue: "I2",
@@ -3447,7 +3447,7 @@ sap.ui.define([
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		// only key, no description and async formatting
@@ -3502,7 +3502,7 @@ sap.ui.define([
 
 	QUnit.test("keyboard support on closed FieldHelp", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(false);
 
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3557,7 +3557,7 @@ sap.ui.define([
 
 	QUnit.test("keyboard support on closed FieldHelp with active navigation", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(true);
 
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3604,7 +3604,7 @@ sap.ui.define([
 
 	QUnit.test("keyboard support on open FieldHelp", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var oVHContent = new Content("C1");
 		var oVHPopover = new Popover("P1", {content: oVHContent});
 		oFieldHelp.setTypeahead(oVHPopover);
@@ -3656,7 +3656,7 @@ sap.ui.define([
 
 	QUnit.test("navigation in open FieldHelp", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		sinon.stub(oFieldHelp, "isOpen").returns(true);
 		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(true);
 
@@ -3718,7 +3718,7 @@ sap.ui.define([
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		sinon.stub(oFieldHelp, "isOpen").returns(true);
 		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(true);
 		oCore.applyChanges();
@@ -3771,7 +3771,7 @@ sap.ui.define([
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var oVHContent = new Content("C1");
 		var oVHPopover = new Popover("P1", {content: oVHContent});
 		oFieldHelp.setTypeahead(oVHPopover);
@@ -3805,7 +3805,7 @@ sap.ui.define([
 	QUnit.test("filtering", function(assert) {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var oVHContent = new Content("C1");
 		var oVHPopover = new Popover("P1", {content: oVHContent});
 		oFieldHelp.setTypeahead(oVHPopover);
@@ -3871,7 +3871,7 @@ sap.ui.define([
 	QUnit.test("filtering and switching to value help", function(assert) {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var oVHContent = new Content("C1");
 		var oVHPopover = new Popover("P1", {content: oVHContent});
 		oFieldHelp.setTypeahead(oVHPopover);
@@ -3907,7 +3907,7 @@ sap.ui.define([
 
 	QUnit.test("change while open", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -3943,7 +3943,7 @@ sap.ui.define([
 
 	QUnit.test("invalid input", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setValidateInput(true);
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
@@ -4012,7 +4012,7 @@ sap.ui.define([
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setValidateInput(true);
 
 		var fnDone = assert.async();
@@ -4078,7 +4078,7 @@ sap.ui.define([
 
 	QUnit.test("one FieldHelp on 2 Fields", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		var oCM2 = new ConditionModel();
 		var oCondition = Condition.createCondition("EQ", ["I3"]);
@@ -4088,7 +4088,7 @@ sap.ui.define([
 		var oField2 = new FieldBase("F2", {
 			conditions: "{cm2>/conditions/Name}",
 			display: FieldDisplay.Description,
-			fieldHelp: oFieldHelp,
+			valueHelp: oFieldHelp,
 			//			change: _myChangeHandler,
 			liveChange: _myLiveChangeHandler
 		});
@@ -4142,7 +4142,7 @@ sap.ui.define([
 	QUnit.test("async parsing", function(assert) {
 
 		bAsync = true;
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -4193,7 +4193,7 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -4229,7 +4229,7 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var fnDone = assert.async();
 		oField.setConditions([Condition.createItemCondition("I3", "Item3")]);
 		oField.focus(); // as FieldHelp is connected with focus
@@ -4262,7 +4262,7 @@ sap.ui.define([
 	QUnit.test("invalid input with async parsing", function(assert) {
 
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setValidateInput(true);
 
 		var fnGetItemsForValue = function(oConfig) {
@@ -4427,7 +4427,7 @@ sap.ui.define([
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setValidateInput(true);
 		var fnGetItemsForValue = function(oConfig) {
 			vGetItemsForValue = oConfig.value;
@@ -4579,7 +4579,7 @@ sap.ui.define([
 
 	QUnit.test("aria attributes on multi Field", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		var oVHIcon = oContent && oContent.getAggregation("_endIcon", [])[1];
@@ -4636,7 +4636,7 @@ sap.ui.define([
 
 		oFieldHelp.close();
 
-		oField.setFieldHelp();
+		oField.setValueHelp();
 		oCore.applyChanges();
 		assert.notOk($FocusDomRef.attr("role"), "no Help: no Role set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), sText, "no Help: Role Description set to MultiInput default");
@@ -4653,7 +4653,7 @@ sap.ui.define([
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		var oVHIcon = oContent && oContent.getAggregation("_endIcon", [])[0];
@@ -4703,7 +4703,7 @@ sap.ui.define([
 
 		oFieldHelp.close();
 
-		oField.setFieldHelp();
+		oField.setValueHelp();
 		oCore.applyChanges();
 		assert.notOk($FocusDomRef.attr("role"), "no Help: no Role set");
 		assert.notOk($FocusDomRef.attr("aria-haspopup"), "no Help: aria-haspopup not set");
@@ -4716,7 +4716,7 @@ sap.ui.define([
 
 	QUnit.test("aria attributes on single Field with only typeahed", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.getIcon.returns(null); // no icon
 		oFieldHelp.getAriaAttributes.returns({ // fake attributes. Real attributes tested in ValueHelp unit tests
 			contentId: "Test",
@@ -4725,8 +4725,8 @@ sap.ui.define([
 			ariaHasPopup: "listbox",
 			valueHelpEnabled: false
 		});
-		oField.setFieldHelp(); // to retrigger check for icon
-		oField.setFieldHelp(oFieldHelp);
+		oField.setValueHelp(); // to retrigger check for icon
+		oField.setValueHelp(oFieldHelp);
 
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
@@ -4752,7 +4752,7 @@ sap.ui.define([
 
 	QUnit.test("external control", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var oVHContent = new Content("C1");
 		var oVHPopover = new Popover("P1", {content: oVHContent});
 		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(true); // simulate ComboBox case
@@ -4807,7 +4807,7 @@ sap.ui.define([
 				dataType: "sap.ui.model.type.Currency",
 				maxConditions: 1,
 				conditions: "{cm>/conditions/Price}",
-				fieldHelp: oFieldHelp,
+				valueHelp: oFieldHelp,
 				liveChange: _myLiveChangeHandler
 			});
 			sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
@@ -4850,7 +4850,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		sinon.spy(oFieldHelp, "connect");
 
 		var aContent = oField.getAggregation("_content");
@@ -4919,7 +4919,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		var aContent = oField.getAggregation("_content");
 		var oContent2 = aContent && aContent.length > 1 && aContent[1];
@@ -5053,7 +5053,7 @@ sap.ui.define([
 	QUnit.test("navigate to currency", function(assert) {
 
 		iLiveCount = 0; // TODO: as in IE sometimes a change event on the Input control is fired.
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		var aContent = oField.getAggregation("_content");
 		var oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -5069,7 +5069,7 @@ sap.ui.define([
 
 	QUnit.test("filtering for currency", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var oVHContent = new Content("C1");
 		var oVHPopover = new Popover("P1", {content: oVHContent});
 		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(true); // simulate ComboBox case
@@ -5111,7 +5111,7 @@ sap.ui.define([
 			oField = new FieldBase("F1", {
 				dataType: "sap.ui.model.type.Currency",
 				conditions: "{cm>/conditions/Price}",
-				fieldHelp: oFieldHelp,
+				valueHelp: oFieldHelp,
 				liveChange: _myLiveChangeHandler
 			});
 			oField._fireChange = _myFireChange;
@@ -5148,7 +5148,7 @@ sap.ui.define([
 	QUnit.test("Select currency", function(assert) {
 
 		var fnDone = assert.async();
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		var aContent = oField.getAggregation("_content");
 		var oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -5206,7 +5206,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		iLiveCount = 0; // TODO: as in IE sometimes a change event on the Input control is fired.
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		var aContent = oField.getAggregation("_content");
 		var oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -5288,7 +5288,7 @@ sap.ui.define([
 				dataType: "sap.ui.model.odata.type.String",
 				display: FieldDisplay.Description,
 				maxConditions: 1,
-				fieldHelp: oFieldHelp,
+				valueHelp: oFieldHelp,
 				liveChange: _myLiveChangeHandler
 			});
 			// TODO: FilterField case
@@ -5330,7 +5330,7 @@ sap.ui.define([
 
 	QUnit.test("FieldHelp select", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		oField.focus(); // as FieldHelp is connected with focus
 
 		var oCondition = Condition.createCondition("EQ", ["", "Empty"]);
@@ -5346,7 +5346,7 @@ sap.ui.define([
 
 	QUnit.test("FieldHelp navigate", function(assert) {
 
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oField.focus(); // as FieldHelp is connected with focus
