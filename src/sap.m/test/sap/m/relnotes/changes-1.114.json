@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "398d2f1806b1728f1c5ab2ce0493d757ccd16069",
+        "type": "FIX",
+        "text": " sap.m.Tree: init of ListBase wasn't called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003007982023"
+          }
+        ]
+      },
+      {
         "id": "29719f55dfeefc7b9c73a729b911006884d482ef",
         "type": "FIX",
         "text": " sap.m.MessageToast: Check for openers without UI5Area",

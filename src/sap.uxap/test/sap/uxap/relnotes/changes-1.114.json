@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "d21a45fb98bfb8cdc725810bb8ef1a5ee65f0ecd",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Flickering prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370028396"
+          }
+        ]
+      },
+      {
         "id": "4733ca40e6e66abce19df4756774dea4e12ef718",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Fix removeAggregation function",

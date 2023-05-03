@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "9698fac5c2a8bbff74034c4300e95333f862953f",
+        "type": "FIX",
+        "text": " Integration Cards: Fixed error with missing ids in Card Explorer landing page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370051405"
+          }
+        ]
+      },
+      {
         "id": "a0e17fbbf1e075f67a3b482f9543e9b8ccec3900",
         "type": "FEATURE",
         "text": " Integration cards: Add \"duration\" picker in Object Card"

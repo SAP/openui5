@@ -3,6 +3,11 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "65ef8cfb96157bdea53c738b5239d372588921b4",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: added possibility for left side positioning"
+      },
+      {
         "id": "a0e17fbbf1e075f67a3b482f9543e9b8ccec3900",
         "type": "FEATURE",
         "text": " Integration cards: Add \"duration\" picker in Object Card"

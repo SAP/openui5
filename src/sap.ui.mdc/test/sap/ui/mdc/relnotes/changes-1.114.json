@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "53c4217179c4df550d61e548f6ea744cc145d445",
+        "type": "FIX",
+        "text": " Field: show emptyIndicator on Link content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370048588"
+          }
+        ]
+      },
+      {
         "id": "01e47d7d1f0b7bfba20df7d6e1de10d88f993624",
         "type": "FIX",
         "text": " ConditionType: leave empty unit as it is, only update only undefined",

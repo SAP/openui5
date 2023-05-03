@@ -3,6 +3,11 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "44cc67524300719d0f6c3d75250186098128874c",
+        "type": "FEATURE",
+        "text": " XMLTemplateProcessor: Load simple and composite types asynchronously"
+      },
+      {
         "id": "fcb34abcc578b9f905aeec3df560d91c2815a71b",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.ODataListBinding#create: improve error message for missing bSkipRefresh",
