@@ -48,7 +48,8 @@
         "1.35.0",
         "1.36.0",
         "1.37.0",
-        "1.38.0"
+        "1.38.0",
+        "1.39.0"
       ]
     },
     "designtime": {
@@ -887,6 +888,10 @@
                   "$ref": "#/definitions/simpleBinding"
                 }
               ]
+            },
+            "title": {
+              "description": "Title of the data point. This is just a placeholder to store the title, title will not be rendered on the screen. This is needed to prevent the loss of columnn names while transforming table card to list card.",
+              "type": "string"
             }
         }
     },
