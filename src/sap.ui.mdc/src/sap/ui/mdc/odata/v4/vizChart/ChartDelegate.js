@@ -20,8 +20,7 @@ sap.ui.define([
     "sap/ui/mdc/FilterBarDelegate",
     "sap/ui/model/Filter",
     "sap/ui/mdc/chart/PropertyHelper",
-    "sap/ui/thirdparty/jquery",
-    "sap/m/IllustratedMessage"
+    "sap/ui/thirdparty/jquery"
 ], function (
     V4ChartDelegate,
     Core,
@@ -40,30 +39,29 @@ sap.ui.define([
     FilterBarDelegate,
     Filter,
     PropertyHelper,
-    jQuery,
-    IllustratedMessage
+    jQuery
 ) {
     "use strict";
     /**
-     * Delegate class for sap.ui.mdc.Chart and ODataV4.
-     * Enables additional analytical capabilities.
-     * <b>Note:</b> The class is experimental and the API/behavior is not finalized.
+	 * @class Base Delegate for {@link sap.ui.mdc.Chart Chart}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Chart Chart}.<br>
+	 * This class provides method calls, which are called by the <code>Chart</code> at specific operations and allows to overwrite an internal behaviour.
+	 *
+	 * @author SAP SE
+	 * @namespace
+	 * @alias module:sap/ui/mdc/odata/v4/vizChart/ChartDelegate
+	 * @extends module:sap/ui/mdc/odata/v4/ChartDelegate
+	 * @since 1.88
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
      *
-     * @author SAP SE
-     * @private
-     * @since 1.88
-     * @alias sap.ui.mdc.odata.v4.vizChart.ChartDelegate
      */
     var ChartDelegate = Object.assign({}, V4ChartDelegate);
 
     var mStateMap = new window.WeakMap();
-    //var ChartLibrary;
     var Chart;
     var Dimension;
-    //var HierarchyDimension;
-    //var TimeDimension;
     var Measure;
-    //var VizPopover;
     var VizTooltip;
 
     //API to access state
@@ -271,7 +269,6 @@ sap.ui.define([
         }
     };
 
-
     /**
      * Gets the current zooming information for the inner chart.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
@@ -287,6 +284,7 @@ sap.ui.define([
         }
 
     };
+
     /**
      * Returns the event handler for SelectionDetails as an object:
      *
@@ -461,6 +459,7 @@ sap.ui.define([
      * @param {sap.ui.mdc.Chart} oMDCChart MDC chart to insert the item into
      * @param {sap.ui.mdc.chart.Item} oMDCChartItem MDC chart item to insert into the inner chart
      * @param {int} iIndex Index to insert into
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -505,6 +504,7 @@ sap.ui.define([
      * This function is called by MDC chart on a change of the <code>Items</code> aggregation.
      * @param {sap.ui.mdc.Chart} oMDCChart MDC chart to remove the item from
      * @param {sap.ui.mdc.chart.Item} oMDCChartItem Item to remove from the inner chart
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -545,7 +545,6 @@ sap.ui.define([
         this._updateSemanticalPattern(oMDCChart);
     };
 
-
     /**
      * Creates a new MDC chart item for a given property name and updates the inner chart.
      * <b>Note:</b> This does <b>not</b> add the MDC chart item to the <code>Items</code> aggregation of the MDC chart.
@@ -555,6 +554,7 @@ sap.ui.define([
      * @param {object} mPropertyBag Property bag containing useful information about the change
      * @param {strring} sRole New role for given item (if available)
      * @returns {Promise} Promise that resolves with new MDC chart item as parameter
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -574,6 +574,7 @@ sap.ui.define([
      * If something is missing, this method updates the item accordingly. This is the last check before the inner chart is rendered.
      * @param {sap.ui.mdc.Chart} oMDCChart MDC chart to check the items on
      * @returns {Promise} Resolves once check is complete
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -613,6 +614,7 @@ sap.ui.define([
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @param {string} sRole Role of the new item (if available)
      * @returns {sap.ui.mdc.chart.Item} Created MDC Item
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -636,6 +638,7 @@ sap.ui.define([
      * @param {string} idPrefix Prefix for the id of the item
      * @param {string} sRole Role of the new item (if available)
      * @returns {sap.ui.mdc.chart.Item} Created MDC Item
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -665,13 +668,11 @@ sap.ui.define([
     };
 
     /**
-     * Chart relevant API (WIP)
-     */
-    /**
      * Loads required libraries and creates the inner chart.
      * For the vizChart, only an outer structure is created, the chart has not yet been initialized.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {Promise} Resolved when inner chart is ready
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -717,6 +718,7 @@ sap.ui.define([
      * For vizFrame, coloring dimensions/measures are set up here too.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {Promise} Resolved once chart content has been created
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -843,6 +845,7 @@ sap.ui.define([
      * Returns the instance of the inner chart for a given MDC chart.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {sap.ui.Control} Inner chart instance
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -855,6 +858,7 @@ sap.ui.define([
      * Prepares the internal vizFrame coloring for given MDC chart Item.
      * @param {sa.ui.mdc.chart.Item} oItem item to prepare coloring for
      * @returns {Promise} resolved, once coloring is rpepared
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1081,6 +1085,7 @@ sap.ui.define([
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {object} Information about the current chart type
      * @throws {Error} if inner chart is not yet ready
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1144,6 +1149,7 @@ sap.ui.define([
      * The returned objects need at least a label and a name property.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {array} Array containing the drill stack
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1173,6 +1179,7 @@ sap.ui.define([
      * This is used to determine possible drill-down dimensions in the drill-down popover of the MDC chart.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {Promise} <code>Promise</code> containing an array of dimensions that are sorted
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1229,6 +1236,7 @@ sap.ui.define([
      * This function is called by MDC chart when the <code>chartType</code> property is updated.
      * @param {sap.ui.mdc.Chart} oMDCChart MDC chart to set the chart type for
      * @param {string} sChartType New chart type
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1242,6 +1250,7 @@ sap.ui.define([
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @param {function} fnCallbackDataLoaded Callback for when data is loaded in the inner chart
      * @returns {Promise} Resolved once inner chart has been created
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1311,6 +1320,7 @@ sap.ui.define([
      * Otherwise the chart will go into an error loop. <br><b>Note:</b> You must not override this setting.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @param {object} oBindingInfo Binding info object
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1331,6 +1341,7 @@ sap.ui.define([
     /**
      * Requests a toolbar update once the inner chart is ready.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1350,6 +1361,7 @@ sap.ui.define([
      * Creates and adds a dimension for the inner chart for a given MDC chart item.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @param {sap.ui.mdc.chart.Item} oMDCChartItem MDC chart item to be added to the inner chart
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1369,6 +1381,7 @@ sap.ui.define([
      * Creates and adds a measure for the inner chart for given MDC chart item.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @param {sap.ui.mdc.chart.Item} oMDCChartItem MDC chart item to be added to the inner chart
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1389,9 +1402,7 @@ sap.ui.define([
     };
 
     /**
-     *
      * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.innerDimensionFactory = function (oMDCChart, oMDCChartItem, oPropertyInfo) {
         var oDimension = new Dimension({
@@ -1420,9 +1431,7 @@ sap.ui.define([
     };
 
     /**
-     *
      * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.innerMeasureFactory = function(oMDCChart, oMDCChartItem, oPropertyInfo) {
         var aggregationMethod = oPropertyInfo.aggregationMethod;
@@ -1449,6 +1458,7 @@ sap.ui.define([
      * Gets the aggreagted name for given propertyInfo.
      * @param {object} oPoperty PropertyInfo object
      * @returns {string} Name for inner chart
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1462,6 +1472,7 @@ sap.ui.define([
      *
      * @param {sap.ui.mdc.Chart} oMDCChart MDC chart instance
      * @param {object} oBindingInfo BindingInfo of the chart
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1514,6 +1525,7 @@ sap.ui.define([
      * If no binding info exists yet, a new one will be created.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {object} BindingInfo object
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1536,6 +1548,7 @@ sap.ui.define([
      * Returns whether the inner chart is currently bound.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {boolean} <code>true</code> if inner chart is bound; <code>false</code> if not
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1556,6 +1569,7 @@ sap.ui.define([
      *
      * @param {Object} oMDCChart MDC chart instance
      * @param {Object} oBindingInfo BindingInfo of the chart
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1709,7 +1723,8 @@ sap.ui.define([
     /**
      * Sets tooltips to visible/invisible on inner chart.
      * @param {sap.ui.mdc.Chart} oMDCChart MDC chart
-     * @param {boolean}  bFlag <code>true</code> for visible, <code>false</code> for invisible
+     * @param {boolean} bFlag <code>true</code> for visible, <code>false</code> for invisible
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1743,10 +1758,9 @@ sap.ui.define([
     ChartDelegate._loadChart = function () {
 
         return new Promise(function (resolve) {
-            var aNotLoadedModulePaths = ['sap/chart/library', 'sap/chart/Chart', 'sap/chart/data/Dimension', 'sap/chart/data/Measure', 'sap/viz/ui5/controls/VizTooltip'];
+            var aNotLoadedModulePaths = ['sap/chart/Chart', 'sap/chart/data/Dimension', 'sap/chart/data/Measure', 'sap/viz/ui5/controls/VizTooltip'];
 
-            function onModulesLoadedSuccess(fnChartLibrary, fnChart, fnDimension, fnMeasure, fnVizTooltip) {
-                //ChartLibrary = fnChartLibrary;
+            function onModulesLoadedSuccess(fnChart, fnDimension, fnMeasure, fnVizTooltip) {
                 Chart = fnChart;
                 Dimension = fnDimension;
                 Measure = fnMeasure;
@@ -1777,6 +1791,7 @@ sap.ui.define([
      * @param {string} sKey Key of the dimension
      * @param {string} SDesc Description provided by the metadata
      * @returns {string} Label which should be shown on the chart axis
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
@@ -1789,6 +1804,7 @@ sap.ui.define([
      * Defines a <code>noDataText</code> text for the inner chart.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to chart
      * @param {string} sText Text that shows if no data is displayed in the chart
+     *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
