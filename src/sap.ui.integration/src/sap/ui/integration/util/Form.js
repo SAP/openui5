@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepExtend",
 	"./Validators",
-	"./BindingResolver"
-], function (ManagedObject, coreLibrary, Log, deepExtend, Validators, BindingResolver) {
+	"./BindingResolver",
+	"./BindingHelper"
+], function (ManagedObject, coreLibrary, Log, deepExtend, Validators, BindingResolver, BindingHelper) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -187,7 +188,7 @@ sap.ui.define([
 		this._prepareValidationForControl(oControl, oItem, sPath);
 		oControl.attachEvent(sEventType, this._validateAndUpdate, this);
 
-		if (oItem.value && !BindingResolver.isBindingInfo(oItem.value)) {
+		if (oItem.value && !BindingHelper.isBindingInfo(oItem.value)) {
 			this._updateModel(oControl);
 		}
 

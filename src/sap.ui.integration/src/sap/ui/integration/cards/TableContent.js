@@ -354,7 +354,7 @@ sap.ui.define([
 
 		if (oColumn.identifier) {
 			if (typeof oColumn.identifier == "object") {
-				if (!BindingResolver.isBindingInfo(oColumn.identifier)) {
+				if (!BindingHelper.isBindingInfo(oColumn.identifier)) {
 					Log.warning("Usage of object type for column property 'identifier' is deprecated.", null, "sap.ui.integration.widgets.Card");
 				}
 

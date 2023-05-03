@@ -7,16 +7,14 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/integration/controls/ActionsStrip",
 	"sap/ui/integration/controls/Paginator",
-	"sap/ui/integration/util/BindingHelper",
-	"sap/ui/integration/util/BindingResolver"
+	"sap/ui/integration/util/BindingHelper"
 ], function (
 	Control,
 	Core,
 	merge,
 	ActionsStrip,
 	Paginator,
-	BindingHelper,
-	BindingResolver
+	BindingHelper
 ) {
 	"use strict";
 
@@ -112,7 +110,7 @@ sap.ui.define([
 		// to do: if more precise check is needed search recursively
 		return (oConfiguration.actionsStrip || []).some(function (oButtonConfig) {
 			for (var sKey in oButtonConfig) {
-				if (BindingResolver.isBindingInfo(oButtonConfig[sKey])) {
+				if (BindingHelper.isBindingInfo(oButtonConfig[sKey])) {
 					return true;
 				}
 			}

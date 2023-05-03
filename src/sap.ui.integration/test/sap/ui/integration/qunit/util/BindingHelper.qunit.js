@@ -331,7 +331,8 @@ function (
 			parts: [
 				{ path: "path1" },
 				{ path: "path2" }
-			]
+			],
+			formatter: function () {}
 		};
 
 		// act
@@ -363,6 +364,46 @@ function (
 		assert.strictEqual(oSpy.callCount, 3, "All values of the given array should be processed.");
 		assert.strictEqual(aResult[0].path, "/items/1", "First binding info path is correctly prepended.");
 		assert.strictEqual(aResult[1].path, "/items/2", "Second binding info path is correctly prepended.");
+
+		// clean up
+		oSpy.restore();
+	});
+
+	QUnit.test("prependRelativePaths should process objects and arrays in depth", function (assert) {
+		// arrange
+		var oSpy = sinon.spy(BindingHelper, "prependRelativePaths");
+		var oValue = {
+			a: {
+				path: "path1"
+			},
+			b: {
+				b1: {
+					path: "path2"
+				}
+			},
+			c: [
+				{
+					path: "path3"
+				},
+				{
+					c1: [
+						{
+							path: "path4"
+						}
+					]
+				}
+			]
+		};
+
+		// act
+		var oResult = BindingHelper.prependRelativePaths(oValue, "/items");
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 9, "All values should be processed.");
+		assert.strictEqual(oResult.a.path, "/items/path1", "First binding info path is correctly prepended.");
+		assert.strictEqual(oResult.b.b1.path, "/items/path2", "Second binding info path is correctly prepended.");
+		assert.strictEqual(oResult.c[0].path, "/items/path3", "Third binding info path is correctly prepended.");
+		assert.strictEqual(oResult.c[1].c1[0].path, "/items/path4", "Fourth binding info path is correctly prepended.");
 
 		// clean up
 		oSpy.restore();
@@ -443,6 +484,51 @@ function (
 		assert.strictEqual(oTarget.getModel(), oModel, "Default model is copied.");
 		assert.strictEqual(oTarget.getModel("i18n"), oModelI18n, "I18n model is copied.");
 		assert.strictEqual(oTarget.getModel("parameters"), oModelParameters, "Parameters model is copied.");
+	});
+
+	QUnit.module("Is binding info");
+
+	QUnit.test("Correct binding infos", function (assert) {
+		// Arrange
+		var aSamples = [
+			{
+				path: "something/something"
+			},
+			{
+				parts: [
+					"something/something",
+					"something/something"
+				],
+				formatter: function () {}
+			},
+			{
+				parts: [
+					"something/something",
+					"something/something"
+				],
+				binding: {}
+			}
+		];
+
+		aSamples.forEach(function (oSample) {
+			// Assert
+			assert.strictEqual(BindingHelper.isBindingInfo(oSample), true, "Object is binding info.");
+		});
+	});
+
+	QUnit.test("Not binding infos", function (assert) {
+		// Arrange
+		var aSamples = [
+			{},
+			{
+				test: "test"
+			}
+		];
+
+		aSamples.forEach(function (oSample) {
+			// Assert
+			assert.strictEqual(BindingHelper.isBindingInfo(oSample), false, "Object is not a binding info.");
+		});
 	});
 
 });
