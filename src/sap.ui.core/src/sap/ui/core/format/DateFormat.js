@@ -2322,7 +2322,7 @@ sap.ui.define([
 	 * browser's local timezone to convert the given date.
 	 *
 	 * When using instances from getDateTimeWithTimezoneInstance, please see the corresponding documentation:
-	 * {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance#format}.
+	 * {@link sap.ui.core.format.DateFormat.DateTimeWithTimezone#format}.
 	 *
 	 * @example <caption>DateTime (assuming timezone "Europe/Berlin")</caption>
 	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
@@ -2819,7 +2819,7 @@ sap.ui.define([
 	 * browser's local timezone to convert the given date.
 	 *
 	 * When using instances from getDateTimeWithTimezoneInstance, please see the corresponding documentation:
-	 * {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance#parse}.
+	 * {@link sap.ui.core.format.DateFormat.DateTimeWithTimezone#parse}.
 	 *
 	 * @example <caption>DateTime (assuming timezone "Europe/Berlin")</caption>
 	 * var oDate = UI5Date.getInstance("2021-12-24T13:37:00Z");
