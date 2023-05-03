@@ -25,7 +25,7 @@
 					<mdc:typeahead>
 						<mdcv:Popover>
 							<mdcvc:FixedList items="{/Authors}" useAsValueHelp="true">
-								<mdcValueHelpContent:FixedListItem key="{ID}" text="{name}"/>
+								<mdcvc:FixedListItem key="{ID}" text="{name}"/>
 							</mdcvc:FixedList>
 						</mdcv:Popover>
 					</mdc:typeahead>
@@ -41,7 +41,7 @@
 					<mdc:typeahead>
 						<mdcv:Popover id="VH2-Pop">
 							<mdcvc:FixedList id="VH2-FL" items="{/Authors}" useAsValueHelp="true" filterList="false" useFirstMatch="true">
-								<mdcValueHelpContent:FixedListItem key="{ID}" text="{name}" additionalText="{ID}"/>
+								<mdcvc:FixedListItem key="{ID}" text="{name}" additionalText="{ID}"/>
 							</mdcvc:FixedList>
 						</mdcv:Popover>
 					</mdc:typeahead>
