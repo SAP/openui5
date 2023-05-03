@@ -70,29 +70,6 @@ module.exports = function(grunt, config) {
 			]);
 		},
 
-		// Visualtest task
-		'visualtest' : function(mode) {
-
-			if (!mode || (mode !== 'src' && mode !== 'target')) {
-				mode = 'src';
-			}
-
-			// listen to the connect server startup
-			grunt.event.on('connect.*.listening', function(hostname, port) {
-				// 0.0.0.0 does not work in windows
-				if (hostname === '0.0.0.0') {
-					hostname = 'localhost';
-				}
-
-				// set baseUrl (using hostname / port from connect task)
-				grunt.config(['selenium_visualtest', 'options', 'baseUrl'], 'http://' + hostname + ':' + port);
-
-				// run visualtest task
-				grunt.task.run(['selenium_visualtest:run']);
-			});
-			grunt.task.run(['openui5_connect:' + mode]);
-		},
-
 		// Build task
 		'build': function() {
 
