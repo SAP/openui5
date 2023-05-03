@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/table/Util",
 	"sap/m/table/columnmenu/Menu",
+	'sap/m/MessageBox',
 	"sap/ui/core/Core",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Item",
@@ -67,6 +68,7 @@ sap.ui.define([
 	MLibrary,
 	MTableUtil,
 	ColumnMenu,
+	MessageBox,
 	Core,
 	NumberFormat,
 	Item,
@@ -333,6 +335,7 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the table data export is enabled.
+				 * To use the export functionality, the {@link sap.ui.export} library is required.
 				 *
 				 * @since 1.75
 				 */
@@ -2065,7 +2068,14 @@ sap.ui.define([
 					that._oExportHandler.attachBeforeExport(that._onBeforeExport, that);
 					fnResolve(that._oExportHandler);
 				});
-			}).catch(fnReject);
+			}).catch(function(error) {
+				// If sap.ui.export is not loaded, show an error message and return without exporting
+				if (!sap.ui.getCore().getLoadedLibraries().hasOwnProperty("sap.ui.export")) {
+					MessageBox.error(Core.getLibraryResourceBundle("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
+				}
+
+				fnReject(error);
+			});
 		});
 	};
 
