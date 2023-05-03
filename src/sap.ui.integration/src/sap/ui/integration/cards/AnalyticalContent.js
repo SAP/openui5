@@ -4,6 +4,7 @@
 sap.ui.define([
 	"./AnalyticalContentRenderer",
 	"./BaseContent",
+	"sap/f/cards/loading/AnalyticalPlaceholder",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingResolver",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function (
 	AnalyticalContentRenderer,
 	BaseContent,
+	AnalyticalPlaceholder,
 	IllustratedMessageType,
 	library,
 	BindingResolver,
@@ -108,6 +110,16 @@ sap.ui.define([
 		if (this._oPopover) {
 			this._oPopover.destroy();
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	AnalyticalContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
+		return new AnalyticalPlaceholder({
+			chartType: oConfiguration.chartType,
+			minHeight: AnalyticalContentRenderer.getMinHeight(oConfiguration)
+		});
 	};
 
 	/**

@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/f/AvatarGroupItem",
 	"sap/f/cards/NumericIndicators",
 	"sap/f/cards/NumericSideIndicator",
+	"sap/f/cards/loading/ObjectPlaceholder",
 	"sap/f/library",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
@@ -75,6 +76,7 @@ sap.ui.define([
 	AvatarGroupItem,
 	NumericIndicators,
 	NumericSideIndicator,
+	ObjectPlaceholder,
 	fLibrary,
 	OverflowToolbar,
 	OverflowToolbarButton,
@@ -135,6 +137,13 @@ sap.ui.define([
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = "";
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	ObjectContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
+		return new ObjectPlaceholder();
 	};
 
 	/**

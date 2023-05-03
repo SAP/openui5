@@ -4,12 +4,14 @@
 sap.ui.define([
 	"./BaseListContent",
 	"./TimelineContentRenderer",
+	"sap/f/cards/loading/TimelinePlaceholder",
 	"sap/ui/integration/library",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper"
 ], function (
 	BaseListContent,
 	TimelineContentRenderer,
+	TimelinePlaceholder,
 	library,
 	Core,
 	BindingHelper
@@ -61,6 +63,20 @@ sap.ui.define([
 			this._oTimeLineItemTemplate.destroy();
 			this._oTimeLineItemTemplate = null;
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	TimelineContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
+		var oCard = this.getCardInstance(),
+			iContentMinItems = oCard.getContentMinItems(oConfiguration);
+
+		return new TimelinePlaceholder({
+			minItems: iContentMinItems !== null ? iContentMinItems : 2,
+			item: oConfiguration.item,
+			itemHeight: TimelineContentRenderer.getItemMinHeight(oConfiguration, this) + "rem"
+		});
 	};
 
 	/**

@@ -33,7 +33,7 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 		return (iMinItems * iItemHeight) + "rem";
 	};
 
-	TimelineContentRenderer.getItemMinHeight = function (oConfiguration, oControl) {
+	TimelineContentRenderer.getItemMinHeight = function (oConfiguration, oContent) {
 		if (!oConfiguration || !oConfiguration.item) {
 			return 0;
 		}

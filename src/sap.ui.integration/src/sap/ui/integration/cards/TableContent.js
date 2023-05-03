@@ -6,6 +6,7 @@ sap.ui.define([
 	"./BaseListContent",
 	"./TableContentRenderer",
 	"sap/ui/integration/library",
+	"sap/f/cards/loading/TablePlaceholder",
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
@@ -24,6 +25,7 @@ sap.ui.define([
 	BaseListContent,
 	TableContentRenderer,
 	library,
+	TablePlaceholder,
 	ResponsiveTable,
 	Column,
 	ColumnListItem,
@@ -107,6 +109,21 @@ sap.ui.define([
 			this._oItemTemplate = null;
 		}
 	};
+
+	/**
+	 * @override
+	 */
+	TableContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
+		var oCard = this.getCardInstance(),
+			iContentMinItems = oCard.getContentMinItems(oConfiguration);
+
+		return new TablePlaceholder({
+			minItems: iContentMinItems !== null ? iContentMinItems : 2,
+			itemHeight: TableContentRenderer.getItemMinHeight(oConfiguration, this) + "rem",
+			columns: oConfiguration.row ? oConfiguration.row.columns.length || 2 : 2
+		});
+	};
+
 
 	TableContent.prototype._getTable = function () {
 		if (this._bIsBeingDestroyed) {

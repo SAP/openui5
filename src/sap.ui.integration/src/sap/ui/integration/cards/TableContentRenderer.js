@@ -35,12 +35,12 @@ sap.ui.define(["./BaseContentRenderer", "../library"], function (BaseContentRend
 		return (iMinItems * iRowHeight + iTableHeaderHeight) + "rem";
 	};
 
-	TableContentRenderer.getItemMinHeight = function (oConfiguration, oControl) {
+	TableContentRenderer.getItemMinHeight = function (oConfiguration, oContent) {
 		if (!oConfiguration || !oConfiguration.row) {
 			return 0;
 		}
 
-		var bIsCompact = this.isCompact(oControl);
+		var bIsCompact = this.isCompact(oContent);
 
 		return bIsCompact ? 2 : 2.75;
 	};

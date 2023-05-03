@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"./BaseContentRenderer",
+	"sap/f/cards/loading/GenericPlaceholder",
 	"sap/m/MessageStrip",
 	"sap/m/VBox",
 	"sap/m/library",
@@ -23,6 +24,7 @@ sap.ui.define([
 	"sap/ui/integration/library"
 ], function (
 	BaseContentRenderer,
+	GenericPlaceholder,
 	MessageStrip,
 	VBox,
 	mLibrary,
@@ -179,12 +181,10 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.onBeforeRendering = function () {
-		var oCard = this.getCardInstance();
+		var oConfiguration = this.getConfiguration();
 
-		if (!this.getAggregation("_loadingPlaceholder") && oCard && this.getConfiguration()) {
-			var oLoadingPlaceholder = this.getAggregation("_loadingProvider")
-				.createContentPlaceholder(this.getConfiguration(), oCard.getManifestEntry("/sap.card/type"), oCard);
-			this.setAggregation("_loadingPlaceholder", oLoadingPlaceholder);
+		if (!this.getAggregation("_loadingPlaceholder") && oConfiguration) {
+			this.setAggregation("_loadingPlaceholder", this.createLoadingPlaceholder(oConfiguration));
 		}
 	};
 
@@ -227,6 +227,15 @@ sap.ui.define([
 		}
 
 		this._sContentBindingPath = null;
+	};
+
+	/**
+	 * @private
+	 * @param {object} oConfiguration the content configuration
+	 * @returns {sap.f.cards.loading.BasePlaceholder} placeholder instance
+	 */
+	BaseContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
+		return new GenericPlaceholder();
 	};
 
 	/**

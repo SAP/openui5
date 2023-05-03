@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/util/openWindow",
 	"sap/m/library",
 	"sap/m/List",
+	"sap/f/cards/loading/ListPlaceholder",
 	"sap/ui/integration/controls/ObjectStatus",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingHelper",
@@ -22,6 +23,7 @@ sap.ui.define([
 	openWindow,
 	mLibrary,
 	List,
+	ListPlaceholder,
 	ObjectStatus,
 	library,
 	BindingHelper,
@@ -115,6 +117,20 @@ sap.ui.define([
 			this._oMicrochartsResizeHelper.destroy();
 			this._oMicrochartsResizeHelper = null;
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	ListContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
+		var oCard = this.getCardInstance(),
+			iContentMinItems = oCard.getContentMinItems(oConfiguration);
+
+		return new ListPlaceholder({
+			minItems: iContentMinItems !== null ? iContentMinItems : 2,
+			item: oConfiguration.item,
+			itemHeight: ListContentRenderer.getItemMinHeight(oConfiguration, this) + "rem"
+		});
 	};
 
 	/**

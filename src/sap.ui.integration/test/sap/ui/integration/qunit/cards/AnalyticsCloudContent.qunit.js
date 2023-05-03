@@ -195,4 +195,27 @@ sap.ui.define([
 
 		}.bind(this), 300);
 	});
+
+	QUnit.test("Card type: 'AnalyticsCloud' has 'Generic' placeholder", function (assert) {
+		var done = assert.async(),
+			oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/"
+			});
+
+		oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var oContent = oCard.getCardContent(),
+				oPlaceholder = oContent.getAggregation("_loadingPlaceholder");
+
+			assert.strictEqual(oPlaceholder.isA("sap.f.cards.loading.GenericPlaceholder"), true, "Placeholder has correct type");
+
+			oCard.destroy();
+			done();
+		});
+
+		oCard.setManifest(oExample1);
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
 });
