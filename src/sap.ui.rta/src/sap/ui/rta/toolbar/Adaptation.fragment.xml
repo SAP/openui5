@@ -191,6 +191,17 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</MenuButton>
+				<Button
+						id="sapUiRta_feedback"
+						icon="sap-icon://feedback"
+						press=".showFeedbackForm"
+						visible="{controls>/feedbackButton/visible}"
+						type="Transparent"
+						tooltip="{i18n>BTN_FEEDBACK}" >
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_save"
 						type="Transparent"
