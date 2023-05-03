@@ -103,7 +103,7 @@ sap.ui.define([
 
 	function updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion) {
 		return Storage.update({
-			flexObject: oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition(),
+			flexObject: oFlexObject.convertToFileContent(),
 			layer: oFlexObject.getLayer(),
 			transport: oFlexObject.getRequest(),
 			parentVersion: sParentVersion
@@ -124,7 +124,7 @@ sap.ui.define([
 		}).then(function () {
 			// update StorageResponse
 			var aObjectArray = getSubSection(oStoredResponse.changes.comp, oFlexObject);
-			var oFileContent = oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition();
+			var oFileContent = oFlexObject.convertToFileContent();
 			updateArrayByName(aObjectArray, oFileContent);
 			return oFileContent;
 		});
@@ -153,7 +153,7 @@ sap.ui.define([
 	}
 
 	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion) {
-		var oFileContent = oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition();
+		var oFileContent = oFlexObject.convertToFileContent();
 		return Storage.remove({
 			flexObject: oFileContent,
 			layer: oFlexObject.getLayer(),
@@ -803,7 +803,7 @@ sap.ui.define([
 			}
 			// TODO: remove this line as soon as layering and a condensing is in place
 			return Storage.write({
-				flexObjects: [oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition()],
+				flexObjects: [oFlexObject.convertToFileContent()],
 				layer: oFlexObject.getLayer(),
 				transport: oFlexObject.getRequest(),
 				isLegacyVariant: oFlexObject.isVariant && oFlexObject.isVariant(),
@@ -824,7 +824,7 @@ sap.ui.define([
 				}
 			}).then(function () {
 				// update StorageResponse
-				var oFileContent = oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition();
+				var oFileContent = oFlexObject.convertToFileContent();
 				getSubSection(oStoredResponse.changes.comp, oFlexObject).push(oFileContent);
 				return oFileContent;
 			});
@@ -858,9 +858,7 @@ sap.ui.define([
 					if (index === 0) {
 						var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {
 							layer: oFlexObject.getLayer(),
-							reference: oFlexObject.getFlexObjectMetadata ?
-								oFlexObject.getFlexObjectMetadata().reference :
-								oFlexObject.getDefinition().reference
+							reference: oFlexObject.getFlexObjectMetadata().reference
 						});
 						// TODO: use condensing route to reduce backend requests
 						// need to save first entry to generate draft version in backend
