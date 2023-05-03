@@ -48,7 +48,7 @@ sap.ui.define([
 		/*********************** Public handlers **************************/
 
 		// By UX Design, if the focus is moved out of the _oPurchaseInput, while
-		// there is no input value, the "Enter ID" MessagePage should be shown.
+		// there is no input value, the "Enter ID" IllustratedMessage should be shown.
 		handleInputChange: function () {
 			var bInputEmpty = this._oPurchaseInput.getValue() === "";
 
