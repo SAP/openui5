@@ -52,6 +52,10 @@ sap.ui.define(function() {
 				group: "Controls",
 				module: "./{name}.qunit"
 			},
+			"TableTypeBase": {
+				group: "Table types",
+				module: "./{name}.qunit"
+			},
 			"GridTableType": {
 				group: "Table types",
 				module: "./{name}.qunit"

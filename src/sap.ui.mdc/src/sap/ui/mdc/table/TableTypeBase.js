@@ -69,7 +69,7 @@ sap.ui.define([
 	TableTypeBase.prototype._disconnectFromTable = function() {
 		var oTable = this.getTable();
 
-		if (oTable) {
+		if (oTable && !oTable.isDestroyStarted()) {
 			oTable.setModel(null, "$sap.ui.mdc.Table#type");
 		}
 	};
