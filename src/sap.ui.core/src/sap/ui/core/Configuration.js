@@ -699,7 +699,12 @@ sap.ui.define([
 		 * @returns {boolean} Whether placeholders are active or not
 		 */
 		getPlaceholder : function() {
-			return this.getValue("xx-placeholder");
+			return BaseConfig.get({
+				name: "sapUiXxPlaceholder",
+				type: BaseConfig.Type.Boolean,
+				external: true,
+				defaultValue: true
+			});
 		},
 
 		/**
