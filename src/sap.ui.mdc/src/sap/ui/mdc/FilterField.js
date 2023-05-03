@@ -353,7 +353,7 @@ sap.ui.define([
 			// MultipleLines is also not used for FilterFields in the moment.
 			// MaxConditions should also be set on applySettings
 
-			var sId = this.getValueHelp() || this.getFieldHelp();
+			var sId = this._getValueHelp();
 			var oValueHelp = sap.ui.getCore().byId(sId);
 			var oBindingInfo = this.getBindingInfo("conditions");
 			var oBinding = this.getBinding("conditions");

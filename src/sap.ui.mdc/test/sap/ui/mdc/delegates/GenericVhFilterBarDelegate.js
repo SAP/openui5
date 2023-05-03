@@ -76,7 +76,7 @@ sap.ui.define([
 			hiddenFilter: false,
 			visible: oFF.getVisible(),
 			maxConditions : oFF.getMaxConditions(),
-			fieldHelp: oFF.getValueHelp() || oFF.getFieldHelp()
+			fieldHelp: oFF._getValueHelp()
 		});
 	}
 

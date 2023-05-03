@@ -139,7 +139,7 @@ sap.ui.define([
 							inputOK: "{$valueHelp>/_valid}",
 							formatOptions: {path: "$help>/config", formatter: _convertConfig}, // TODO: change DefineConditionPanel to use Config
 							conditionProcessed: _handleConditionProcessed.bind(this),
-							valueHelp: this.getValueHelp() || this.getFieldHelp() //TODO ValueHelp can only be set once and not modified?
+							valueHelp: this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()) //TODO ValueHelp can only be set once and not modified?
 						}
 					).setModel(this._oManagedObjectModel, "$help");
 

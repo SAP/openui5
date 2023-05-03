@@ -1820,7 +1820,7 @@ sap.ui.define([
 		var oContentDisplay = this.getContentDisplay();
 
 		this._getContentFactory()._setUsedConditionType(oContent, oContentEdit, oContentDisplay, sEditMode); // if external content use it's conditionType
-		_checkFieldHelpExist.call(this, this.getValueHelp() || this.getFieldHelp()); // as FieldHelp might be created after ID is assigned to Field
+		_checkFieldHelpExist.call(this, this._getValueHelp()); // as ValueHelp might be created after ID is assigned to Field
 		_setAriaAttributes.call(this, false);
 
 
@@ -2133,7 +2133,7 @@ sap.ui.define([
 	function _useDefaultFieldHelp(oContentType, aOperators, sEditMode, iMaxConditions) {
 
 		var oUseDefaultFieldHelp = oContentType.getUseDefaultFieldHelp();
-		if (oUseDefaultFieldHelp && !this.getValueHelp() && !this.getFieldHelp() && sEditMode !== EditMode.Display) {
+		if (oUseDefaultFieldHelp && !this._getValueHelp() && sEditMode !== EditMode.Display) {
 			if ((iMaxConditions === 1 && oUseDefaultFieldHelp.single) || (iMaxConditions !== 1 && oUseDefaultFieldHelp.multi)) {
 				if (aOperators.length === 1) {
 					var bIsSingleValue = _isOnlyOneSingleValue.call(this, aOperators); // if operator not exists unse no field help
@@ -2554,9 +2554,16 @@ sap.ui.define([
 
 	}
 
+	// TODO: remove this function and replace by getValueHelp onde FieldHelp association is completetly removed.
+	FieldBase.prototype._getValueHelp = function() {
+
+		return this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()); // as getFieldHelp not exist in legacy-free UI5
+
+	};
+
 	function _getFieldHelp() {
 
-		var sId = this.getValueHelp() || this.getFieldHelp();
+		var sId = this._getValueHelp();
 		var oFieldHelp;
 
 		if (!sId && this._sDefaultFieldHelp) {
@@ -3087,7 +3094,7 @@ sap.ui.define([
 			additionalType: this._getContentFactory().getUnitType(), // only set if unit or timezone
 			compositeTypes: this._getContentFactory().getCompositeTypes(), // only set if CompositeType used
 			display: this._getContentFactory().isMeasure() ? FieldDisplay.Value : this.getDisplay(),
-			valueHelpID: this._getContentFactory().isMeasure() ? undefined : this.getValueHelp() || this.getFieldHelp() || this._sDefaultFieldHelp,
+			valueHelpID: this._getContentFactory().isMeasure() ? undefined : this._getValueHelp() || this._sDefaultFieldHelp,
 			operators: this._getOperators(),
 			hideOperator: this._getContentFactory().getHideOperator(),
 			maxConditions: this.getMaxConditions(),
@@ -3170,7 +3177,7 @@ sap.ui.define([
 			additionalType: this._getContentFactory().retrieveDataType(), // use type of measure for currentValue
 			compositeTypes: this._getContentFactory().getCompositeTypes(),
 			display: this.getDisplay(),
-			valueHelpID: this.getValueHelp() || this.getFieldHelp() || this._sDefaultFieldHelp,
+			valueHelpID: this._getValueHelp() || this._sDefaultFieldHelp,
 			operators: ["EQ"],
 			hideOperator: true, // TODO: no operator for units
 			maxConditions: 1, // TODO: only one unit allowed

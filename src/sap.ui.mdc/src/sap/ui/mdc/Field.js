@@ -192,7 +192,7 @@ sap.ui.define([
 				// BindingContextChanged -> if parsing error trigger update to remove valueState and wrong input
 				this._oBindingContext = oBindingContext;
 				this._getContentFactory().updateConditionType();
-				if (this._isInvalidInput() || this.getValueHelp() || this.getFieldHelp()) { // In ValueHelp case InParameters might need an update
+				if (this._isInvalidInput() || this._getValueHelp()) { // In ValueHelp case InParameters might need an update
 					if (this._oManagedObjectModel) {
 						this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates
 					}
