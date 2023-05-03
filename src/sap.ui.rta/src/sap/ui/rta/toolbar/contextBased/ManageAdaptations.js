@@ -125,10 +125,12 @@ function(
 		var oOptions = {
 			year: "numeric",
 			month: "short",
-			day: "numeric"
+			day: "numeric",
+			hour: "numeric",
+			minute: "numeric"
 		};
 		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		return sModifiedBy + "\n" + oUi5Date.toLocaleDateString(sLanguage, oOptions);
+		return sModifiedBy + "\n" + oUi5Date.toLocaleTimeString(sLanguage, oOptions);
 	}
 
 	function onSelectionChange(oEvent) {
