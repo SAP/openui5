@@ -2,9 +2,6 @@
 module.exports = function(grunt, config) {
 
 	var clean = {
-		'surefire-reports': {
-			src: [ 'target/surefire-reports' ]
-		},
 		'tmp': {
 			src: [ 'tmp' ]
 		}
