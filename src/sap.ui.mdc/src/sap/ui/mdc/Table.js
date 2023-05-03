@@ -2740,7 +2740,7 @@ sap.ui.define([
 	Table.prototype._enableV4LegacySelection = function() {
 		this._bV4LegacySelectionEnabled = true;
 
-		if (this._oTable) {
+		if (this._oTable && this._isOfType("Table", true)) {
 			var oV4SelectionPlugin = this._oTable.getPlugins().find(function(oPlugin) {
 				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
 			});
