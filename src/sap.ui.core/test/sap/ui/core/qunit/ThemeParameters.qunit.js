@@ -11,7 +11,11 @@ sap.ui.define([
 ], function(Parameters, Control, Element, Icon, Library, includeStylesheet, Bar, URI) {
 	"use strict";
 
-	QUnit.module("Parmeters.get");
+	QUnit.module("Parmeters.get", {
+		beforeEach: function () {
+			window.performance.clearResourceTimings();
+		}
+	});
 
 	var sPath = new URI(sap.ui.require.toUrl("testdata/core"), document.baseURI).toString();
 
@@ -78,7 +82,11 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Parmeters.get (sync)");
+	QUnit.module("Parmeters.get (sync)", {
+		beforeEach: function () {
+			window.performance.clearResourceTimings();
+		}
+	});
 
 	QUnit.test("Read single parameters", function(assert) {
 		/* HCB theme was chosen because:
@@ -396,7 +404,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Parmeters.get (async)");
+	QUnit.module("Parmeters.get (async)", {
+		beforeEach: function () {
+			window.performance.clearResourceTimings();
+		}
+	});
 
 	QUnit.test("Dynamically Loaded Library", function (assert) {
 		var done = assert.async();
