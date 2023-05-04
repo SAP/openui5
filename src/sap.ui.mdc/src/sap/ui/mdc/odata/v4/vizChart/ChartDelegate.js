@@ -1293,7 +1293,13 @@ sap.ui.define([
                 oState.dataLoadedCallback = fnCallbackDataLoaded;
 
                 this._setState(oMDCChart, oState);
-                var oBindingInfo = this.getBindingInfo(oMDCChart);
+                var oBindingInfo;
+                if (this._getBindingInfo) {
+                    oBindingInfo = this._getBindingInfo(this);
+                    Log.warning("mdc ChartDelegate", "calling the private delegate._getBindingInfo. Please make the function public!");
+                } else {
+                    oBindingInfo = this.getBindingInfo(oMDCChart);
+                }
                 this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
                 this._performInitialBind(oMDCChart, oBindingInfo);
 
