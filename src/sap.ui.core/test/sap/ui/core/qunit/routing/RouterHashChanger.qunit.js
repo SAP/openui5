@@ -150,6 +150,7 @@ sap.ui.define([
 		return this.oRHC.setHash("newHash", new Promise(function(resolve, reject) {
 			Promise.resolve().then(function() {
 				var sHash = oNestedRHC.getHash();
+				assert.equal(typeof sHash, "string", "The invalid hash should still have type 'string'");
 				assert.strictEqual(sHash, RouterHashChanger.InvalidHash, "The nested RouterHashChanger should return InvalidHash marker during its parent is still in collect mode");
 
 				oNestedRHC.setHash("nestedHash");
