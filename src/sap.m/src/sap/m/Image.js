@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeCSS",
+	"sap/ui/Device",
 	"sap/ui/core/library"
 ],
-	function(library, Control, DataType, URLListValidator, ImageRenderer, KeyCodes, jQuery, encodeCSS, coreLibrary) {
+	function(library, Control, DataType, URLListValidator, ImageRenderer, KeyCodes, jQuery, encodeCSS, Device, coreLibrary) {
 	"use strict";
 
 
@@ -503,6 +504,9 @@ sap.ui.define([
 		if (oDomImageRef && oDomImageRef.complete && !this._defaultEventTriggered) {
 			// need to use the naturalWidth property instead of jDomNode.width(),
 			// the later one returns positive value even in case of broken image
+			if (Device.browser.firefox && this.getSrc().indexOf(".svg") > -1) {
+				return;
+			}
 			if (oDomImageRef.naturalWidth > 0) {
 				this.onload({/* empty event object*/});
 			} else {
