@@ -19787,4 +19787,60 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: On creation of an inactive entity, the createActivate event handler fails due to an Error in its
+	// coding. This error is reported on the console and not stifled.
+	// JIRA: CPOUI5MODELS-1196
+	QUnit.test("Error in createActivate event handler is reported", function (assert) {
+		var oTable,
+			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+	<Input id="company" value="{CompanyName}"/>\
+	<Input id="mail" value="{EmailAddress}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {
+				results : [{
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					CompanyName : "SAP",
+					EmailAddress : "Mail0"
+				}]
+			})
+			.expectValue("id", ["42", ""])
+			.expectValue("company", ["SAP", ""])
+			.expectValue("mail", ["Mail0", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			that.expectValue("mail", "Mail1", 1);
+
+			// code under test
+			oTable.getBinding("rows").attachEvent("createActivate", function (/*oEvent*/) {
+				throw {
+					message : "event handler failure",
+					stack : "~stack"
+				};
+			});
+
+			oTable.getBinding("rows").create({EmailAddress : "Mail1"}, /*bAtEnd*/true, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "ACME", 1);
+			that.oLogMock.expects("error")
+				.withExactArgs("The following problem occurred: event handler failure", "~stack",
+					"sap.ui.model.odata.v2.ODataListBinding");
+
+			// code under test: set value leads to call of createActivate event handler
+			oTable.getRows()[1].getCells()[1].setValue("ACME");
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

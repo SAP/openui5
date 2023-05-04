@@ -4778,11 +4778,14 @@ sap.ui.define([
 	 * Error handling for requests.
 	 *
 	 * @param {object} oError The error object
-	 * @param {object} oRequest The request object
+	 * @param {object} [oRequest]
+	 *   The request object
+	 *   Note: This parameter is mandatory iff the given error object represents a response to a failed request.
+	 * @param {string} [sReportingClassName] The name of the reporting class
 	 * @returns {map} A map of error information
 	 * @private
 	 */
-	ODataModel.prototype._handleError = function(oError, oRequest) {
+	ODataModel.prototype._handleError = function(oError, oRequest, sReportingClassName) {
 		var sToken,
 			mParameters = {message : oError.message};
 
@@ -4806,11 +4809,30 @@ sap.ui.define([
 			mParameters.headers = oError.response.headers;
 			mParameters.responseText = oError.response.body;
 		} else if (!oError.$reported) {
-			Log.error("The following problem occurred: " + oError.message, undefined, sClassName);
+			Log.error("The following problem occurred: " + oError.message, oError.stack,
+				sReportingClassName || sClassName);
 		}
 		oError.$reported = true;
 
 		return mParameters;
+	};
+
+	/**
+	 * Returns a function to be used as a SyncPromise catch handler in order to report not yet reported errors.
+	 *
+	 * @param {string} sReportingClassName
+	 *   The name of the reporting class
+	 * @returns {function(Error)}
+	 *   A catch handler function expecting an <code>Error</code> instance
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getReporter = function (sReportingClassName) {
+		var that = this;
+
+		return function (oError) {
+			that._handleError(oError, undefined, sReportingClassName);
+		};
 	};
 
 	/**

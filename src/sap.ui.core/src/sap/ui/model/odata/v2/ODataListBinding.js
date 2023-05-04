@@ -28,7 +28,8 @@ sap.ui.define([
 		CountMode, ODataFilter, ODataUtils,  OperationMode) {
 	"use strict";
 
-	var aCreateParametersAllowlist = ["changeSetId", "error", "expand", "groupId", "inactive",
+	var sClassName = "sap.ui.model.odata.v2.ODataListBinding",
+		aCreateParametersAllowlist = ["changeSetId", "error", "expand", "groupId", "inactive",
 			"success"];
 
 	/**
@@ -1956,8 +1957,7 @@ sap.ui.define([
 				context : this.oContext,
 				properties : oInitialData
 			},
-			bCreationAreaAtEnd = this.isFirstCreateAtEnd(),
-			that = this;
+			bCreationAreaAtEnd = this.isFirstCreateAtEnd();
 
 		bAtEnd = !!bAtEnd;
 		if (bCreationAreaAtEnd === undefined) {
@@ -1992,7 +1992,9 @@ sap.ui.define([
 		oCreatedContextsCache.addContext(oCreatedContext, sResolvedPath,
 			this.sCreatedEntitiesKey, bAtEnd);
 		if (mCreateParameters.inactive) {
-			oCreatedContext.fetchActivationStarted().then(that.fireCreateActivate.bind(that, oCreatedContext));
+			oCreatedContext.fetchActivationStarted()
+				.then(this.fireCreateActivate.bind(this, oCreatedContext))
+				.catch(this.oModel.getReporter(sClassName));
 		}
 		this._fireChange({reason : ChangeReason.Add});
 
@@ -2238,7 +2240,9 @@ sap.ui.define([
 
 		this._getCreatedContexts().forEach(function (oContext) {
 			if (oContext.isInactive()) {
-				oContext.fetchActivationStarted().then(that.fireCreateActivate.bind(that, oContext));
+				oContext.fetchActivationStarted()
+					.then(that.fireCreateActivate.bind(that, oContext))
+					.catch(that.oModel.getReporter(sClassName));
 			}
 		});
 	};
@@ -2258,7 +2262,9 @@ sap.ui.define([
 			this._fireChange({reason : ChangeReason.Change});
 		} else {
 			oContext.cancelActivation();
-			oContext.fetchActivationStarted().then(this.fireCreateActivate.bind(this, oContext));
+			oContext.fetchActivationStarted()
+				.then(this.fireCreateActivate.bind(this, oContext))
+				.catch(this.oModel.getReporter(sClassName));
 		}
 	};
 

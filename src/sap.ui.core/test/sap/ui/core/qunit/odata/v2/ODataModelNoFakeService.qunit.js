@@ -4461,6 +4461,33 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[{
+	reportingClassName : undefined,
+	expectedClassName : sClassName
+}, {
+	reportingClassName : "foo.bar.Baz",
+	expectedClassName : "foo.bar.Baz"
+}].forEach(function (oFixture) {
+	QUnit.test("_handleError: sReportingClassName = " + oFixture.reportingClassName, function (assert) {
+		var oError = {
+				$reported : false,
+				message : "~message",
+				stack : "~stack"
+			},
+			oModel = {
+				_parseResponse : function () {}
+			};
+
+		this.mock(oModel).expects("_parseResponse").never();
+		this.oLogMock.expects("error")
+			.withExactArgs("The following problem occurred: ~message", "~stack", oFixture.expectedClassName);
+
+		// code under test
+		ODataModel.prototype._handleError.call(oModel, oError, undefined /*oRequest*/, oFixture.reportingClassName);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("_updateChangedEntity: skip __metadata", function (assert) {
 		var mChangedEntities = {
 				"~key" : {
@@ -8496,4 +8523,20 @@ sap.ui.define([
 			oFixture.cacheKey);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getReporter", function (assert) {
+		var fnCatchHandler,
+			oModel = {
+				_handleError : function () {}
+			};
+
+		// code under test
+		fnCatchHandler = ODataModel.prototype.getReporter.call(oModel, "~reporter");
+
+		this.mock(oModel).expects("_handleError").withExactArgs("~oError", undefined, "~reporter");
+
+		// code under test
+		fnCatchHandler("~oError");
+	});
 });

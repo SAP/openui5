@@ -21,6 +21,8 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
+	var sClassName = "sap.ui.model.odata.v2.ODataListBinding";
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v2.ODataListBinding (ODataListBindingNoFakeService)", {
 		beforeEach : function () {
@@ -2203,13 +2205,15 @@ sap.ui.define([
 }].forEach(function (oFixture, i) {
 	QUnit.test("create: calls ODataModel#createEntry with parameters, #" + i, function (assert) {
 		var oStartActivationPromise = {
+				"catch" : function () {},
 				then : function () {}
 			},
 			bInactive = oFixture.parameters && oFixture.parameters.inactive,
 			oModel = {
 				oMetadata : {isLoaded : function () {}},
 				_getCreatedContextsCache : function () {},
-				createEntry : function () {}
+				createEntry : function () {},
+				getReporter : function () {}
 			},
 			oBinding = {
 				oContext : "~oContext",
@@ -2271,8 +2275,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCreatedContext), "~resolvedPath",
 				"~sCreatedEntitiesKey", true);
 		this.mock(oCreatedContext).expects("fetchActivationStarted")
-			.withExactArgs()
 			.exactly(bInactive ? 1 : 0)
+			.withExactArgs()
 			.returns(oStartActivationPromise);
 		this.mock(oBinding.fireCreateActivate).expects("bind")
 			.exactly(bInactive ? 1 : 0)
@@ -2280,7 +2284,13 @@ sap.ui.define([
 			.returns("~fireCreateActivate");
 		this.mock(oStartActivationPromise).expects("then")
 			.exactly(bInactive ? 1 : 0)
-			.withExactArgs("~fireCreateActivate");
+			.withExactArgs("~fireCreateActivate")
+			.returns(oStartActivationPromise);
+		this.mock(oModel).expects("getReporter")
+			.exactly(bInactive ? 1 : 0)
+			.withExactArgs(sClassName)
+			.returns("~fnReporter");
+		this.mock(oStartActivationPromise).expects("catch").exactly(bInactive ? 1 : 0).withExactArgs("~fnReporter");
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Add});
 
 		// code under test
@@ -3541,9 +3551,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_reassignCreateActivate", function (assert) {
 		var oStartActivationPromise = {
+				"catch" : function () {},
 				then : function () {}
 			},
 			oBinding = {
+				oModel : {
+					getReporter : function () {}
+				},
 				_getCreatedContexts : function () {},
 				fireCreateActivate : {
 					bind : function () {}
@@ -3564,7 +3578,11 @@ sap.ui.define([
 		this.mock(oBinding.fireCreateActivate).expects("bind")
 			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext1))
 			.returns("~fireCreateActivate");
-		this.mock(oStartActivationPromise).expects("then").withExactArgs("~fireCreateActivate");
+		this.mock(oStartActivationPromise).expects("then")
+			.withExactArgs("~fireCreateActivate")
+			.returns(oStartActivationPromise);
+		this.mock(oBinding.oModel).expects("getReporter").withExactArgs(sClassName).returns("~fnReporter");
+		this.mock(oStartActivationPromise).expects("catch").withExactArgs("~fnReporter");
 
 		// code under test
 		ODataListBinding.prototype._reassignCreateActivate.call(oBinding);
@@ -3626,6 +3644,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fireCreateActivate - event cancelled", function (assert) {
 		var oBinding = {
+				oModel : {
+					getReporter : function () {}
+				},
 				fireCreateActivate : {
 					bind : function () {}
 				},
@@ -3636,6 +3657,7 @@ sap.ui.define([
 				fetchActivationStarted : function () {}
 			},
 			oStartActivationPromise = {
+				"catch" : function () {},
 				then : function () {}
 			};
 
@@ -3647,7 +3669,11 @@ sap.ui.define([
 		this.mock(oBinding.fireCreateActivate).expects("bind")
 			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 			.returns("~fnResolve");
-		this.mock(oStartActivationPromise).expects("then").withExactArgs("~fnResolve");
+		this.mock(oStartActivationPromise).expects("then")
+			.withExactArgs("~fnResolve")
+			.returns(oStartActivationPromise);
+		this.mock(oBinding.oModel).expects("getReporter").withExactArgs(sClassName).returns("~fnReporter");
+		this.mock(oStartActivationPromise).expects("catch").withExactArgs("~fnReporter");
 
 		// code under test
 		ODataListBinding.prototype.fireCreateActivate.call(oBinding, oContext);
