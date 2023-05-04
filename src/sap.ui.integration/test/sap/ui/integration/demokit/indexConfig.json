@@ -1,0 +1,28 @@
+{
+	"resources": [
+		{
+			"directory": "cardExplorer/webapp/topics/",
+			"urlPrefix": "test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/",
+			"titlePrefix": "Card Explorer",
+			"filters": [
+				"overview/**/*.html",
+				"learn/**/*.html",
+				"integrate/**/*.html",
+				"designtime/**/*.html",
+				"-designtime/advanced/customField.html",
+				"-designtime/advanced/separate.html"
+			],
+			"category": "topics"
+		},
+		{
+			"directory": "cardExplorer/webapp/topics/explore/",
+			"urlPrefix": "test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/exploreOverview/",
+			"titlePrefix": "Card Explorer",
+			"filters": [
+				"typesDeclarative.html",
+				"typesOther.html"
+			],
+			"category": "entity"
+		}
+	]
+}

@@ -129,14 +129,26 @@ sap.ui.define([
 						oView.byId("samplesList").getItems()
 					),
 					iLen = aItems.length,
-					oItem;
+					oItem,
+					oLink,
+					sHref,
+					sTarget = "_self",
+					bExternal;
 
 				while (iLen--) {
 					oItem = aItems[iLen];
 					// Access control lazy loading method if available
 					if (oItem._getLinkSender) {
 						// Set link href to allow open in new window functionality
-						oItem._getLinkSender().setHref(oItem.getCustomData()[0].getValue());
+						oLink = oItem._getLinkSender();
+						sHref = oItem.getCustomData()[0].getValue();
+						bExternal = oItem.getCustomData()[1].getValue();
+						if (bExternal) {
+							sHref = new URL(sHref, document.baseURI).href;
+							sTarget = "_blank";
+						}
+						oLink.setHref(sHref);
+						oLink.setTarget(sTarget);
 					}
 				}
 			},

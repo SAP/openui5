@@ -561,7 +561,6 @@
 					oObject,
 					sDeprecatedMarker;
 				if (oDoc.category === DOC_CATEGORY.documentation) {
-					sNavURL = sNavURL.substring(0, sNavURL.lastIndexOf(".html"));
 					bShouldAddToSearchResults = true;
 					sCategory = "Documentation";
 					oObject = {
@@ -570,7 +569,8 @@
 						summary: sSummary || "",
 						score: oDoc.score,
 						modified: sModified,
-						category: sCategory
+						category: sCategory,
+						external: oDoc.external
 					};
 					aDataDoc.push(oObject);
 					iDocLength++;
@@ -587,7 +587,8 @@
 						summary: sSummary || "",
 						score: oDoc.score,
 						modified: sModified,
-						category: sCategory
+						category: sCategory,
+						external: oDoc.external
 					};
 					aDataExplored.push(oObject);
 					iExploredLength++;
