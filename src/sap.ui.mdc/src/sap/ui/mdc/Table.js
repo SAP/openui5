@@ -1457,6 +1457,11 @@ sap.ui.define([
 
 			this._updateAdaptation();
 
+			var oDelegate = this.getControlDelegate();
+			if (oDelegate.preInit) { // not used in the table, but is overridden in FE
+				oDelegate.preInit(this);
+			}
+
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
 			if (!this._bTableExists && oType.constructor === this._getType().constructor) {
 				this._createContent();

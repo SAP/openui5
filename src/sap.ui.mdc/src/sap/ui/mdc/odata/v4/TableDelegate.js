@@ -68,6 +68,10 @@ sap.ui.define([
 		return V4AnalyticsPropertyHelper;
 	};
 
+	Delegate.preInit = function() { // not used in the table, but is overridden in FE
+		return Promise.resolve();
+	};
+
 	/**
 	 * @inheritDoc
 	 */
