@@ -49,7 +49,7 @@ sap.ui.define([
                     },
                     /**
                      * Specifies the role of the item for the chart (category, axis1...).
-                     * This is specific for the used chart library.
+                     * This is specific for the used chart library.<br>
                      * <b>NOTE:</b> This property must not be changed after initialization.
                      */
                     role: {

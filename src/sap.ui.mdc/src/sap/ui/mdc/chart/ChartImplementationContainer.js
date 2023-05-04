@@ -68,7 +68,7 @@ sap.ui.define([
 				},
 				associations: {
 					/**
-					 * Association to noData content set in the MDC Chart.
+					 * Association to noData content set in the MDC Chart.<br>
 					 * If set, this will be used instead of the <code>noDataContent</code> aggregation.
 					 *
 					 */

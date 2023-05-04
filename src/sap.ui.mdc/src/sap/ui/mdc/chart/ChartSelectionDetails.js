@@ -3,22 +3,16 @@
  */
 
 sap.ui.define([
-        "sap/ui/core/Core",
-        "sap/ui/mdc/library",
         "sap/m/SelectionDetails",
         "sap/m/SelectionDetailsItem",
         "sap/m/SelectionDetailsItemLine",
-        "sap/m/SelectionDetailsRenderer",
-        "./SelectionDetailsActions"
+        "sap/m/SelectionDetailsRenderer"
     ],
     function (
-        Core,
-        Control,
         SelectionDetails,
         SelectionDetailsItem,
         SelectionDetailsItemLine,
-        SelectionDetailsRenderer,
-        SelectionDetailsActions
+        SelectionDetailsRenderer
     ) {
         "use strict";
 
