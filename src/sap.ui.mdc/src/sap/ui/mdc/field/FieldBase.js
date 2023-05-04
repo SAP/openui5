@@ -583,7 +583,9 @@ sap.ui.define([
 		onsappageup: _handleKeybordEvent,
 		onsappagedown: _handleKeybordEvent,
 
-		onsapbackspace: _handleKeybordEvent
+		onsapbackspace: _handleKeybordEvent,
+		onchange: _handleContentOnchange,
+		onsapfocusleave: _handleContentOnsapfocusleave
 	};
 
 	var oContentEventDelegateAfter = {
@@ -1888,9 +1890,6 @@ sap.ui.define([
 					_modifyKeyboardHandler.call(this, oControl, oContentType.getUseDefaultEnterHandler());
 					_modifyFieldGroupHandler.call(this, oControl, false);
 					_setModelOnContent.call(this, oControl);
-					if (this._bConnected && ((iIndex === 0 && !this._getContentFactory().isMeasure()) || (iIndex === 1 && this._getContentFactory().isMeasure()))) {
-						_setFocusHandlingForFieldHelp.call(this, oControl);
-					}
 					this.addAggregation("_content", oControl);
 				}
 
@@ -2995,8 +2994,6 @@ sap.ui.define([
 				var aConditions = this.getConditions();
 				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 
-				var oContent = this.getControlForSuggestion();
-				_setFocusHandlingForFieldHelp.call(this, oContent);
 				if (oFieldHelp._bIsDefaultHelp) {
 					// use label as default title for FilterField
 					mDefaultHelps[oFieldHelp._sDefaultHelpType].updateTitle(oFieldHelp, this.getLabel());
@@ -3006,30 +3003,33 @@ sap.ui.define([
 
 	}
 
-	function _setFocusHandlingForFieldHelp(oContent) {
+	function _handleContentOnsapfocusleave(oEvent) {
 
-		if (oContent && !oContent.orgOnsapfocusleave && oContent.onsapfocusleave) {
-			//TODO: find better solution
-			oContent.orgOnsapfocusleave = oContent.onsapfocusleave;
-			oContent.onsapfocusleave = function(oEvent) {
-				var oFieldHelp = _getFieldHelp.call(this.getParent());
+		var oFieldHelp = _getFieldHelp.call(this);
+		var oContent = this.getControlForSuggestion();
+		var oSourceControl = oEvent.srcControl;
 
-				if (oFieldHelp) {
-					var oFocusedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
-					if (oFocusedControl) {
-						if (containsOrEquals(oFieldHelp.getDomRef(), oFocusedControl.getFocusDomRef())) {
-							oEvent.stopPropagation(); // to prevent focusleave on Field itself
-							if (this.bValueHelpRequested) {
-								this.bValueHelpRequested = false; // to enable change-event after closing value help
-							}
-							return; // do not execute Inputs logic to prevent to run in Inputs own suggest-popup logic
-						} else {
-							oFieldHelp.skipOpening();
-						}
+		if (oFieldHelp && oContent === oSourceControl) { // in unit case only handle content with assigned value help
+			var oFocusedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
+			if (oFocusedControl) {
+				if (containsOrEquals(oFieldHelp.getDomRef(), oFocusedControl.getFocusDomRef())) {
+					oEvent.stopPropagation(); // to prevent focusleave on Field itself
+					oEvent.stopImmediatePropagation(true); // to prevent focusleave on content
+					if (oContent.bValueHelpRequested) {
+						oContent.bValueHelpRequested = false; // to enable change-event after closing value help
 					}
+				} else {
+					oFieldHelp.skipOpening();
 				}
-				this.orgOnsapfocusleave(oEvent);
-			};
+			}
+		}
+
+	}
+
+	function _handleContentOnchange(oEvent) {
+
+		if (_getFieldHelp.call(this)) { // there is a similar logic in sap.m.Input to not execute change if ValueHelp or suggestion is used
+			oEvent.stopImmediatePropagation(true);
 		}
 
 	}
