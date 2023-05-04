@@ -3,12 +3,16 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/variants/context/Component",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings"
 ], function(
+	ManifestUtils,
 	ContextSharingComponent,
+	ContextBasedAdaptationsAPI,
 	ComponentContainer,
 	Layer,
 	Settings
@@ -35,6 +39,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} [mPropertyBag.layer] - Layer
+		 * @param {sap.ui.core.Control} [mPropertyBag.variantManagementControl] - Comp or control variant management control
 		 * @returns {Promise<sap.ui.core.ComponentContainer>} Promise resolving with the ComponentContainer or nothing depending on the availability of the feature in the used back end
 		 * @private
 		 * @ui5-restricted sap.ui.comp, sap.ui.fl
@@ -43,8 +48,9 @@ sap.ui.define([
 			if (mPropertyBag.layer !== Layer.CUSTOMER) {
 				return Promise.resolve();
 			}
+			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.variantManagementControl);
 			return Settings.getInstance().then(function(oSettings) {
-				return oSettings.isContextSharingEnabled();
+				return oSettings.isContextSharingEnabled() && !ContextBasedAdaptationsAPI.hasAdaptationsModel({reference: sReference, layer: Layer.CUSTOMER});
 			}).then(function(bIsEnabled) {
 				if (bIsEnabled) {
 					if (!oComponentContainer || oComponentContainer.bIsDestroyed) {

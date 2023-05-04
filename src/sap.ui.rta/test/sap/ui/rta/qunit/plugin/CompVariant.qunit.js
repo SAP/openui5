@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
+	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
@@ -28,6 +29,7 @@ sap.ui.define([
 	OverlayRegistry,
 	KeyCodes,
 	SmartVariantManagementApplyAPI,
+	ContextSharingAPI,
 	SmartVariantManagementWriteAPI,
 	Settings,
 	Layer,
@@ -430,10 +432,13 @@ sap.ui.define([
 			var sNewDefaultVarId = "newDefaultVar";
 			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns(sPreviousDefaultVarId);
 			var oNewVariantProperties = {foo: "bar"};
+			var oCreateComponentSpy = sandbox.spy(ContextSharingAPI, "createComponent");
 			sandbox.stub(this.oVariantManagementControl, "openManageViewsDialogForKeyUser").callsFake(function(mPropertyBag, fnCallback) {
 				assert.strictEqual(mPropertyBag.rtaStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
 				assert.notEqual(mPropertyBag.contextSharingComponentContainer, undefined, "the component container is set");
 				assert.strictEqual(mPropertyBag.layer, Layer.CUSTOMER, "the layer is passed");
+				var oArgs = oCreateComponentSpy.getCall(0).args[0];
+				assert.ok(oArgs.variantManagementControl, "then the correct control is used");
 				fnCallback(Object.assign({}, oNewVariantProperties, {"default": sNewDefaultVarId}));
 			});
 
@@ -631,6 +636,7 @@ sap.ui.define([
 		QUnit.test("when the current variant is read only and the content gets changed and the save as is canceled", function(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(this.oVariant, "isEditEnabled").returns(false);
+			var oCreateComponentSpy = sandbox.spy(ContextSharingAPI, "createComponent");
 			this.oDTHandlerStub.resolves([
 				{
 					changeSpecificData: {
@@ -644,6 +650,8 @@ sap.ui.define([
 			]);
 			sandbox.stub(this.oVariantManagementControl, "openSaveAsDialogForKeyUser").callsFake(function(sStyleClass, fnCallback) {
 				fnCallback();
+				var oArgs = oCreateComponentSpy.getCall(0).args[0];
+				assert.ok(oArgs.variantManagementControl, "then the correct control is used");
 			});
 			sandbox.stub(MessageBox, "warning").callsFake(function(sMessage, oParameters) {
 				oParameters.onClose(oParameters.emphasizedAction);
