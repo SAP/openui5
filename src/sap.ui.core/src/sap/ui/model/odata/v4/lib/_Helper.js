@@ -44,6 +44,8 @@ sap.ui.define([
 		 *   The path
 		 * @param {object} [oItem]
 		 *   The item; if it is <code>undefined</code>, nothing happens
+		 *
+		 * @public
 		 */
 		addByPath : function (mMap, sPath, oItem) {
 			if (oItem) {
@@ -65,6 +67,8 @@ sap.ui.define([
 		 * @param {string[]} aAncestors - List of ancestor paths (unmodified)
 		 * @param {object} mChildren - Hash set of child paths, maps string to <code>true</code>;
 		 *   is modified
+		 *
+		 * @private
 		 */
 		addChildrenWithAncestor : function (aChildren, aAncestors, mChildren) {
 			if (aAncestors.length) {
@@ -94,6 +98,8 @@ sap.ui.define([
 		 *
 		 * @param {object} oElement - The cache element
 		 * @returns {sap.ui.base.SyncPromise} The promise
+		 *
+		 * @public
 		 */
 		addDeepCreatePromise : function (oElement) {
 			return new SyncPromise(function (fnResolve, fnReject) {
@@ -107,6 +113,8 @@ sap.ui.define([
 		 *
 		 * @param {object} mQueryOptions The query options
 		 * @param {string[]} aSelectPaths The paths to add to $select
+		 *
+		 * @public
 		 */
 		addToSelect : function (mQueryOptions, aSelectPaths) {
 			mQueryOptions.$select = mQueryOptions.$select || [];
@@ -130,6 +138,8 @@ sap.ui.define([
 		 *   The parameter context path
 		 * @param {string} [sContextPath]
 		 *   The context path for a bound operation
+		 *
+		 * @public
 		 */
 		adjustTargets : function (oMessage, oOperationMetadata, sParameterContextPath,
 				sContextPath) {
@@ -164,6 +174,8 @@ sap.ui.define([
 		 *   The parameter context path
 		 * @param {string} [sContextPath]
 		 *   The context path for a bound operation
+		 *
+		 * @public
 		 */
 		adjustTargetsInError : function (oError, oOperationMetadata, sParameterContextPath,
 				sContextPath) {
@@ -189,6 +201,8 @@ sap.ui.define([
 		 * @param {object} mAggregatedQueryOptions The aggregated query options
 		 * @param {object} mQueryOptions The query options to merge into the aggregated query
 		 *   options
+		 *
+		 * @public
 		 */
 		aggregateExpandSelect : function (mAggregatedQueryOptions, mQueryOptions) {
 			if (mQueryOptions.$select) {
@@ -226,6 +240,8 @@ sap.ui.define([
 		 * buildPath("/base", "('predicate')") --> "/base('predicate')"
 		 *
 		 * @returns {string} a composite path built from all arguments
+		 *
+		 * @public
 		 */
 		buildPath : function () {
 			var sPath = "",
@@ -262,6 +278,8 @@ sap.ui.define([
 		 *   buildQuery({foo : ["bar", "baz"]}) results in the query string "?foo=bar&foo=baz"
 		 * @returns {string}
 		 *   The query string; it is empty if there are no parameters; it starts with "?" otherwise
+		 *
+		 * @public
 		 */
 		buildQuery : function (mParameters) {
 			var aKeys, aQuery;
@@ -297,7 +315,9 @@ sap.ui.define([
 		 *
 		 * @param {string[]} [aSelect] - The list of selected paths
 		 * @returns {object|boolean} - An object marking the selected properties or
-		 *    <code>true</code> if all properties are selected ("*")
+		 *   <code>true</code> if all properties are selected ("*")
+		 *
+		 * @private
 		 */
 		buildSelect : function (aSelect) {
 			var oSelect = {};
@@ -340,7 +360,7 @@ sap.ui.define([
 		 * @throws {Error}
 		 *   For invalid group IDs
 		 *
-		 * @private
+		 * @public
 		 */
 		checkGroupId : function (sGroupId, bApplicationGroup, sErrorMessage) {
 			if (!bApplicationGroup && sGroupId === undefined
@@ -361,6 +381,8 @@ sap.ui.define([
 		 *   <code>JSON.stringify</code>
 		 * @param {boolean} [bAsString] - Whether to return the result of JSON.stringify
 		 * @returns {any} A clone or its string representation
+		 *
+		 * @public
 		 */
 		clone : function clone(vValue, fnReplacer, bAsString) {
 			var sStringified;
@@ -382,6 +404,8 @@ sap.ui.define([
 		 *
 		 * @param {object} mQueryOptions - The query options
 		 * @returns {string[]} The paths
+		 *
+		 * @public
 		 */
 		convertExpandSelectToPaths : function (mQueryOptions) {
 			var aPaths = [];
@@ -419,6 +443,8 @@ sap.ui.define([
 		 * @throws {Error}
 		 *   If the annotation to be copied is already present at the target, no matter if the value
 		 *   is the same or not
+		 *
+		 * @public
 		 */
 		copyPrivateAnnotation : function (oSource, sAnnotation, oTarget) {
 			if (_Helper.hasPrivateAnnotation(oSource, sAnnotation)) {
@@ -474,6 +500,8 @@ sap.ui.define([
 		 * @see <a href=
 		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Representing_Errors_in"
 		 * >"19 Error Response"</a>
+		 *
+		 * @public
 		 */
 		createError : function (jqXHR, sMessage, sRequestUrl, sResourcePath) {
 			var sBody = jqXHR.responseText,
@@ -544,6 +572,8 @@ sap.ui.define([
 		 * @returns {function}
 		 *   A "get*" method returning the "fetch*" method's result or
 		 *   <code>undefined</code> in case the promise is not (yet) fulfilled
+		 *
+		 * @public
 		 */
 		createGetMethod : function (sFetch, bThrow) {
 			return function () {
@@ -574,6 +604,8 @@ sap.ui.define([
 		 * @throws {Error}
 		 *   If a property along the way exists, but has an <code>undefined</code> or
 		 *   <code>null</code> value
+		 *
+		 * @public
 		 */
 		createMissing : function (oObject, aSegments) {
 			aSegments.reduce(function (oCurrent, sSegment, i) {
@@ -592,6 +624,8 @@ sap.ui.define([
 		 * @returns {function}
 		 *   A "request*" method returning the "fetch*" method's result wrapped via
 		 *   <code>Promise.resolve()</code>
+		 *
+		 * @public
 		 */
 		createRequestMethod : function (sFetch) {
 			return function () {
@@ -611,6 +645,8 @@ sap.ui.define([
 		 *    the given message itself or if supplied, the "@$ui5.originalMessage" property.
 		 *    If one of these is an <code>Error</code> instance, then <code>{}</code> is returned.
 		 *    The clone is created lazily.
+		 *
+		 * @public
 		 */
 		createTechnicalDetails : function (oMessage) {
 			var oClonedMessage,
@@ -665,6 +701,8 @@ sap.ui.define([
 		 * @returns {Error[]}
 		 *   One error for each request given, suitable for
 		 *   {@link sap.ui.model.odata.v4.ODataModel#reportError}
+		 *
+		 * @public
 		 */
 		decomposeError : function (oError, aRequests, sServiceUrl) {
 			var aDetailContentIDs = oError.error.details
@@ -731,6 +769,8 @@ sap.ui.define([
 		 * @param {string} sAnnotation
 		 *   The unqualified name of a private client-side instance annotation (hidden inside
 		 *   namespace "@$ui5._")
+		 *
+		 * @public
 		 */
 		deletePrivateAnnotation : function (oObject, sAnnotation) {
 			var oPrivateNamespace = oObject["@$ui5._"];
@@ -745,6 +785,8 @@ sap.ui.define([
 		 *
 		 * @param {object} oObject - The object to start at
 		 * @param {string} sPath - Some relative path
+		 *
+		 * @public
 		 */
 		deleteProperty : function (oObject, sPath) {
 			var aSegments;
@@ -766,6 +808,7 @@ sap.ui.define([
 		 * @param {object} oEntity
 		 *   The entity
 		 *
+		 * @public
 		 */
 		deleteUpdating : function (sPropertyPath, oEntity) {
 			var oData = oEntity;
@@ -794,6 +837,8 @@ sap.ui.define([
 		 * @returns {any}
 		 *   The result matching to the given path, or <code>undefined</code> if the path leads
 		 *   into void
+		 *
+		 * @public
 		 */
 		drillDown : function (oObject, vSegments) {
 			if (typeof vSegments === "string") {
@@ -813,6 +858,8 @@ sap.ui.define([
 		 *   If true, "=" is encoded, too
 		 * @returns {string}
 		 *   The encoded query part
+		 *
+		 * @public
 		 */
 		encode : function (sPart, bEncodeEquals) {
 			var sEncoded = encodeURI(sPart)
@@ -835,6 +882,8 @@ sap.ui.define([
 		 *   The sValue
 		 * @returns {string}
 		 *   The encoded key-value pair in the form "key=value"
+		 *
+		 * @public
 		 */
 		encodePair : function (sKey, sValue) {
 			return _Helper.encode(sKey, true) + "=" + _Helper.encode(sValue, false);
@@ -859,7 +908,7 @@ sap.ui.define([
 		 *   An array of raw message objects suitable for
 		 *   {@link sap.ui.model.odata.v4.ODataModel#createUI5Message}
 		 *
-		 * @private
+		 * @public
 		 */
 		extractMessages : function (oError) {
 			var aMessages = [];
@@ -934,6 +983,8 @@ sap.ui.define([
 		 *   The original query options, will be modified
 		 * @returns {object}
 		 *   The extracted query options
+		 *
+		 * @public
 		 */
 		extractMergeableQueryOptions : function (mQueryOptions) {
 			var mExtractedQueryOptions = {};
@@ -957,6 +1008,8 @@ sap.ui.define([
 		 * @param {string} sMetaPath The meta path
 		 * @returns {sap.ui.base.SyncPromise<object>} A promise resolving with the property reached
 		 *   by the meta path or <code>undefined</code> otherwise.
+		 *
+		 * @public
 		 */
 		fetchPropertyAndType : function (fnFetchMetadata, sMetaPath) {
 			return fnFetchMetadata(sMetaPath).then(function (oProperty) {
@@ -983,6 +1036,8 @@ sap.ui.define([
 		 *   A list of absolute paths
 		 * @returns {string[]}
 		 *   The filtered list
+		 *
+		 * @public
 		 */
 		filterPaths : function (aMetaPaths, aPathsToFilter) {
 			return aPathsToFilter.filter(function (sPathToFilter) {
@@ -1001,6 +1056,8 @@ sap.ui.define([
 		 * @param {string} sPropertyPath The path
 		 * @param {any} vValue The value to report to the listeners
 		 * @param {boolean} bForceUpdate Whether a listener should force an update
+		 *
+		 * @public
 		 */
 		fireChange : function (mChangeListeners, sPropertyPath, vValue, bForceUpdate) {
 			var aListeners = mChangeListeners[sPropertyPath],
@@ -1023,6 +1080,8 @@ sap.ui.define([
 		 * @param {object} oValue The value
 		 * @param {boolean} bRemoved If true the value is assumed to have been removed and the
 		 *   change event reports undefined as the new value
+		 *
+		 * @public
 		 */
 		fireChanges : function (mChangeListeners, sPath, oValue, bRemoved) {
 			Object.keys(oValue).forEach(function (sProperty) {
@@ -1052,6 +1111,8 @@ sap.ui.define([
 		 *   "5.1.1.6.1 Primitive Literals"
 		 * @throws {Error}
 		 *   If the value is undefined or the type is not supported
+		 *
+		 * @public
 		 */
 		formatLiteral : function (vValue, sType) {
 			if (vValue === undefined) {
@@ -1102,6 +1163,8 @@ sap.ui.define([
 		 * @returns {string[]|undefined}
 		 *   The value of the additionalTargets annotation, or <code>undefined</code> in case there
 		 *   is not exactly one such annotation (ignoring the alias)
+		 *
+		 * @private
 		 */
 		getAdditionalTargets : function (oMessage) {
 			return _Helper.getAnnotation(oMessage, ".additionalTargets");
@@ -1137,6 +1200,8 @@ sap.ui.define([
 		 *   The context path for a bound operation
 		 * @returns {string|undefined} The adjusted target, or <code>undefined</code> if the target
 		 *   is unknown
+		 *
+		 * @private
 		 */
 		getAdjustedTarget : function (sTarget, oOperationMetadata, sParameterContextPath,
 					sContextPath) {
@@ -1176,6 +1241,8 @@ sap.ui.define([
 		 * @returns {any}
 		 *   The value of the annotation, or <code>undefined</code> in case there is not exactly one
 		 *   such annotation (ignoring the alias)
+		 *
+		 * @public
 		 */
 		getAnnotation : function (oMessage, sName) {
 			var sAnnotationKey = _Helper.getAnnotationKey(oMessage, sName);
@@ -1198,6 +1265,8 @@ sap.ui.define([
 		 * @returns {string|undefined}
 		 *   The key of the annotation, or <code>undefined</code> in case there is not exactly one
 		 *   such annotation (ignoring the alias)
+		 *
+		 * @public
 		 */
 		getAnnotationKey : function (oObject, sName, sProperty) {
 			var sAnnotationKey,
@@ -1227,6 +1296,8 @@ sap.ui.define([
 		 * @returns {string|undefined}
 		 *   The value of the ContentID annotation, or <code>undefined</code> in case there is not
 		 *   exactly one such annotation (ignoring the alias)
+		 *
+		 * @private
 		 */
 		getContentID : function (oMessage) {
 			return _Helper.getAnnotation(oMessage, ".ContentID");
@@ -1251,6 +1322,8 @@ sap.ui.define([
 		 *   property is undefined
 		 * @throws {Error}
 		 *   In case the entity type has no key properties according to metadata
+		 *
+		 * @public
 		 */
 		getKeyFilter : function (oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties) {
 			var aFilters = [],
@@ -1290,6 +1363,8 @@ sap.ui.define([
 		 *   "('42')", or <code>undefined</code>, if at least one key property is undefined
 		 * @throws {Error}
 		 *   In case the entity type has no key properties according to metadata
+		 *
+		 * @public
 		 */
 		getKeyPredicate : function (oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties,
 				bKeepSingleProperty) {
@@ -1337,6 +1412,8 @@ sap.ui.define([
 		 *   - undefined, if at least one key property is undefined.
 		 * @throws {Error}
 		 *   In case the entity type has no key properties according to metadata
+		 *
+		 * @private
 		 */
 		getKeyProperties : function (oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties,
 				bReturnAlias) {
@@ -1389,6 +1466,8 @@ sap.ui.define([
 		 *   A data path within the OData data model
 		 * @returns {string}
 		 *   The corresponding metadata path within the OData metadata model
+		 *
+		 * @public
 		 */
 		getMetaPath : function (sPath) {
 			if (sPath[0] === "/") {
@@ -1411,6 +1490,8 @@ sap.ui.define([
 		 * @returns {string[]}
 		 *   A list of paths relative to vEntityOrCollection for which the property value is missing
 		 * @throws {Error} If there is a path containing "*"
+		 *
+		 * @public
 		 */
 		getMissingPropertyPaths : function (vEntityOrCollection, mQueryOptions) {
 			return (mQueryOptions.$select || []).concat(Object.keys(mQueryOptions.$expand || {}))
@@ -1425,6 +1506,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.odata.v4.Context[]} aContexts - A list of contexts
 		 * @returns {string[]|null} The corresponding list of predicates
+		 *
+		 * @public
 		 */
 		getPredicates : function (aContexts) {
 			var bMissingPredicate,
@@ -1449,7 +1532,7 @@ sap.ui.define([
 		 * @returns {number} The index of the key predicate
 		 * @throws {Error} If no path is given or the last segment contains no key predicate
 		 *
-		 * @private
+		 * @public
 		 */
 		getPredicateIndex : function (sPath) {
 			var iPredicateIndex = sPath
@@ -1475,6 +1558,8 @@ sap.ui.define([
 		 * @returns {any}
 		 *   The annotation's value or <code>undefined</code> if no such annotation exists (e.g.
 		 *   because the private namespace object does not exist)
+		 *
+		 * @public
 		 */
 		getPrivateAnnotation : function (oObject, sAnnotation) {
 			var oPrivateNamespace = oObject["@$ui5._"];
@@ -1493,6 +1578,8 @@ sap.ui.define([
 		 * @returns {object}
 		 *   The corresponding query options (live reference, no clone!); may be empty, but not
 		 *   falsy
+		 *
+		 * @public
 		 */
 		getQueryOptionsForPath : function (mQueryOptions, sPath) {
 			sPath = _Helper.getMetaPath(sPath);
@@ -1531,6 +1618,7 @@ sap.ui.define([
 		 *   <code>undefined</code> if there is no such suffix, or <code>sPath</code> if
 		 *   <code>sBasePath</code> is empty.
 		 *
+		 * @public
 		 * @see .hasPathPrefix
 		 */
 		getRelativePath : function (sPath, sBasePath) {
@@ -1561,6 +1649,8 @@ sap.ui.define([
 		 *   "/Artists/special.cases.Create(...)", the leading "/" can be omitted.
 		 * @param {string} sResponsePredicate The key predicate of the response entity
 		 * @returns {string} The path for the return value context.
+		 *
+		 * @public
 		 */
 		getReturnValueContextPath : function (sPath, sResponsePredicate) {
 			var sBoundParameterPath = sPath.slice(0, sPath.lastIndexOf("/")),
@@ -1577,6 +1667,7 @@ sap.ui.define([
 		 * @param {string} sBasePath The base path
 		 * @returns {boolean} true if sBasePath path is a prefix of sPath
 		 *
+		 * @public
 		 * @see .getRelativePath
 		 */
 		hasPathPrefix : function (sPath, sBasePath) {
@@ -1594,6 +1685,8 @@ sap.ui.define([
 		 *   namespace "@$ui5._")
 		 * @returns {boolean}
 		 *   Whether such an annotation exists
+		 *
+		 * @public
 		 */
 		hasPrivateAnnotation : function (oObject, sAnnotation) {
 			var oPrivateNamespace = oObject["@$ui5._"];
@@ -1613,6 +1706,8 @@ sap.ui.define([
 		 * @param {any} vOld The old value
 		 * @param {any} vNew The new value
 		 * @param {boolean} [bAllowUndefined] Allows undefined values
+		 *
+		 * @public
 		 */
 		informAll : function (mChangeListeners, sPath, vOld, vNew, bAllowUndefined) {
 			if (vNew === vOld) {
@@ -1662,6 +1757,8 @@ sap.ui.define([
 		 * @throws {Error}
 		 *   If a property along the way exists, but has an <code>undefined</code> or
 		 *   <code>null</code> value
+		 *
+		 * @public
 		 */
 		inheritPathValue : function (aSegments, oSource, oTarget) {
 			aSegments.forEach(function (sSegment, i) {
@@ -1713,6 +1810,8 @@ sap.ui.define([
 		 * @throws {Error}
 		 *   If a path string is empty or the intersection requires a "$expand" of a
 		 *   collection-valued navigation property
+		 *
+		 * @public
 		 */
 		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
 				sRootMetaPath, sPrefix, bWithMessages) {
@@ -1831,6 +1930,8 @@ sap.ui.define([
 		 *
 		 * @param {object} [mParameters] - Map of binding parameters
 		 * @returns {boolean} Whether it's about data aggregation
+		 *
+		 * @public
 		 */
 		isDataAggregation : function (mParameters) {
 			return mParameters
@@ -1847,6 +1948,8 @@ sap.ui.define([
 		 * @param {string} sPath - The property path
 		 * @returns {boolean} Whether the property is missing
 		 * @throws {Error} If there is a path containing "*"
+		 *
+		 * @private
 		 */
 		isMissingProperty : function (vEntityOrCollection, sPath) {
 			var aSegments = sPath.split("/");
@@ -1879,6 +1982,8 @@ sap.ui.define([
 		 * @param {number} iNumber The value
 		 * @returns {boolean}
 		 *   True if the value is a safe integer
+		 *
+		 * @public
 		 */
 		isSafeInteger : function (iNumber) {
 			if (typeof iNumber !== "number" || !isFinite(iNumber)) {
@@ -1911,6 +2016,8 @@ sap.ui.define([
 		 * @param {string} sPropertyPath The path to the structural property as meta path
 		 * @param {object} [mQueryOptions] The query options to be analyzed
 		 * @returns {boolean} Whether the property for the given path was already selected
+		 *
+		 * @public
 		 */
 		isSelected : function (sPropertyPath, mQueryOptions) {
 			var sPath, sRelativePath;
@@ -1943,6 +2050,8 @@ sap.ui.define([
 		 *   The base URL
 		 * @returns {string}
 		 *   The absolute URL
+		 *
+		 * @public
 		 */
 		makeAbsolute : function (sUrl, sBase) {
 			return new URI(sUrl).absoluteTo(sBase).toString()
@@ -1969,6 +2078,8 @@ sap.ui.define([
 		 *   aggregating the data. Both can be <code>undefined</code>.
 		 * @returns {object}
 		 *   The merged map of query options
+		 *
+		 * @public
 		 */
 		mergeQueryOptions : function (mQueryOptions, sOrderby, aFilters) {
 			var mResult;
@@ -1997,6 +2108,8 @@ sap.ui.define([
 		 *   The qualified name or annotation target
 		 * @returns {string}
 		 *   The namespace
+		 *
+		 * @public
 		 */
 		namespace : function (sName) {
 			var iIndex;
@@ -2023,6 +2136,8 @@ sap.ui.define([
 		 * @returns {any} The model value
 		 * @throws {Error} If the type is invalid or unsupported; the function only validates when a
 		 *   conversion is required
+		 *
+		 * @public
 		 */
 		parseLiteral : function (sLiteral, sType, sPath) {
 			function checkNaN(nValue) {
@@ -2076,6 +2191,7 @@ sap.ui.define([
 		 * @returns {any}
 		 *   A public clone or its string representation
 		 *
+		 * @public
 		 * @see sap.ui.model.odata.v4.lib._Helper.clone
 		 */
 		publicClone : function (vValue, bRemoveClientAnnotations, bAsString) {
@@ -2096,6 +2212,8 @@ sap.ui.define([
 		 *   The path
 		 * @param {object} oItem
 		 *   The item
+		 *
+		 * @public
 		 */
 		removeByPath : function (mMap, sPath, oItem) {
 			var aItems = mMap[sPath],
@@ -2122,6 +2240,8 @@ sap.ui.define([
 		 * @param {object} mChangeListeners - A map of change listeners by path
 		 * @param {string} sPath - The path to the entity; used to notify change listeners
 		 * @param {object} oEntity - The entity to be restored.
+		 *
+		 * @public
 		 */
 		resetInactiveEntity : function (mChangeListeners, sPath, oEntity) {
 			var oInitialData = _Helper.getPrivateAnnotation(oEntity, "initialData"),
@@ -2157,6 +2277,8 @@ sap.ui.define([
 		 *   no ETag or if "If-Match" does not contain an object
 		 * @returns {object}
 		 *   The map of request-specific headers with the resolved If-Match header.
+		 *
+		 * @public
 		 */
 		resolveIfMatchHeader : function (mHeaders, bIgnoreETag) {
 			var vIfMatchValue = mHeaders && mHeaders["If-Match"];
@@ -2184,6 +2306,7 @@ sap.ui.define([
 		 * @returns {object}
 		 *   The new element with the restored properties
 		 *
+		 * @public
 		 */
 		restoreUpdatingProperties : function (oOld, oNew) {
 			var oTempNew = oNew || {};
@@ -2215,6 +2338,8 @@ sap.ui.define([
 		 *   The query options
 		 * @param {object} oType
 		 *   The entity type's metadata "JSON"
+		 *
+		 * @public
 		 */
 		selectKeyProperties : function (mQueryOptions, oType) {
 			if (oType && oType.$Key) {
@@ -2234,6 +2359,8 @@ sap.ui.define([
 		 * @param {object} oObject - Any object
 		 * @param {string} sAnnotation - The annotation's name
 		 * @param {any} [vValue] - The annotation's new value
+		 *
+		 * @public
 		 */
 		setAnnotation : function (oObject, sAnnotation, vValue) {
 			if (vValue !== undefined) {
@@ -2250,6 +2377,8 @@ sap.ui.define([
 		 * @param {string} sUrl - A URL w/o a fragment part
 		 * @param {string} [sLanguage] - An optional value for "sap-language"
 		 * @returns {string} The resulting (or unchanged) URL as described above
+		 *
+		 * @public
 		 */
 		setLanguage : function (sUrl, sLanguage) {
 			if (sLanguage && !sUrl.includes("?sap-language=") && !sUrl.includes("&sap-language=")) {
@@ -2271,6 +2400,8 @@ sap.ui.define([
 		 *   namespace "@$ui5._")
 		 * @param {any} vValue
 		 *   The annotation's new value; <code>undefined</code> is a valid value
+		 *
+		 * @public
 		 */
 		setPrivateAnnotation : function (oObject, sAnnotation, vValue) {
 			var oPrivateNamespace = oObject["@$ui5._"];
@@ -2292,6 +2423,8 @@ sap.ui.define([
 		 *   A list of paths
 		 * @returns {string[]}
 		 *   The list of remainders for all paths which start with the given prefix
+		 *
+		 * @public
 		 */
 		stripPathPrefix : function (sPrefix, aPaths) {
 			var sPathPrefix = sPrefix + "/";
@@ -2316,6 +2449,8 @@ sap.ui.define([
 		 *   The element to be converted into an array.
 		 * @returns {Array}
 		 *   The array for the given element.
+		 *
+		 * @public
 		 */
 		toArray : function (vElement) {
 			if (vElement === undefined || vElement === null) {
@@ -2351,6 +2486,8 @@ sap.ui.define([
 		 * @param {object} oSource The source object
 		 * @returns {object} The target object
 		 * @throws {Error} If a key predicate check fails
+		 *
+		 * @public
 		 */
 		updateAll : function (mChangeListeners, sPath, oTarget, oSource) {
 			Object.keys(oSource).forEach(function (sProperty) {
@@ -2399,6 +2536,8 @@ sap.ui.define([
 		 * @param {string} sPath The path of the old object in mChangeListeners
 		 * @param {object} oOldObject The old object
 		 * @param {object} [oNewObject] The new object
+		 *
+		 * @public
 		 */
 		updateExisting : function (mChangeListeners, sPath, oOldObject, oNewObject) {
 			if (!oNewObject) {
@@ -2468,6 +2607,8 @@ sap.ui.define([
 		 *
 		 * @param {object} oTarget - The target
 		 * @param {object} oSource - The source
+		 *
+		 * @public
 		 */
 		updateNonExisting : function (oTarget, oSource) {
 			Object.keys(oSource).forEach(function (sKey) {
@@ -2519,6 +2660,8 @@ sap.ui.define([
 		 *   for equality instead of just being copied from source to target
 		 * @param {boolean} [bOkIfMissing]
 		 *   Whether this should not check for selected properties missing in the response
+		 *
+		 * @public
 		 */
 		updateSelected : function (mChangeListeners, sBasePath, oOldValue, oNewValue, aSelect,
 			fnCheckKeyPredicate, bOkIfMissing) {
@@ -2648,6 +2791,8 @@ sap.ui.define([
 		 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 		 * @param {string} sPredicate
 		 *   The key predicate
+		 *
+		 * @public
 		 */
 		updateTransientPaths : function (mMap, sTransientPredicate, sPredicate) {
 			var sPath;
@@ -2686,6 +2831,8 @@ sap.ui.define([
 		 * @returns {object|undefined} The query options for the child binding or
 		 *   <code>undefined</code> in case the query options cannot be created, e.g. because $apply
 		 *   cannot be wrapped into $expand
+		 *
+		 * @public
 		 */
 		wrapChildQueryOptions : function (sBaseMetaPath, sChildMetaPath, mChildQueryOptions,
 				fnFetchMetadata) {
