@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<title>sap.m.Carousel Test</title>
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-compatVersion="1.20">
+		</script>
+
+		<script id="myXml" type="text/xmldata">
+		<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:microchart="sap.suite.ui.microchart" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout" controllerName="myController" displayBlock="true">
+				<App>
+					<Page title="Hello" id="page">
+						<Button text="rerender" press="doSomething" />
+						<PDFViewer source="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" />
+					</Page>
+				</App>
+			</mvc:View>
+		</script>
+
+		<script>
+			var myPDF = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+			data = {
+				previewItems: [
+					{id: 8, objectType: "1", src: myPDF},
+					{id: 9, objectType: "X", src: myPDF},
+					{id: 18, objectType: "1", src: myPDF},
+					{objectType: "1", src: myPDF},
+					{objectType: "1", src: myPDF},
+					{id: 1, objectType: "1", src: myPDF},
+					{id: 5, objectType: "1", src: myPDF},
+					{id: 10, objectType: "1", src: myPDF},
+					{objectType: "1", src: myPDF},
+					{objectType: "1", src: myPDF},
+					{id: 2, objectType: "X", src: myPDF},
+					{id: 6, objectType: "1", src: myPDF},
+					{id: 11, objectType: "1", src: myPDF},
+					{id: 17, objectType: "1", src: myPDF},
+					{objectType: "1", src: myPDF},
+					{id: 3, objectType: "1", src: myPDF},
+					{id: 15, objectType: "1", src: myPDF},
+					{id: 12, objectType: "1", src: myPDF},
+					{id: 16, objectType: "1", src: myPDF},
+					{objectType: "1", src: myPDF},
+					{id: 4, objectType: "1", src: myPDF},
+					{id: 7, objectType: "X", src: myPDF},
+					{id: 13, objectType: "1", src: myPDF},
+					{id: 14, objectType: "1", src: myPDF},
+					{objectType: "1", src: myPDF}
+				]
+			}
+			sap.ui.controller("myController", {
+				onInit: function () {
+					this.x = 1;
+
+				},
+				doSomething: function () {
+
+
+
+					this.getView().byId("page").addContent(this.createDialog(null));
+
+				},
+
+				createDialog: function (aSorters) {
+					var activePage;
+					if (this.dialog) {
+						this.dialog.destroy();
+						this.dialog = undefined;
+					}
+					var that = this;
+					carousel = new sap.m.Carousel({
+						showPageIndicator: true,
+						busyIndicatoryDelay: 0,
+						pageChanged: this.onCarouselPageChanged,
+						pages: {
+							path: "/previewItems",
+							factory: function (id, context) {
+								var previewObject = context.getProperty("");
+								var page = that.createPage(previewObject);
+								page.setBindingContext(context);
+								if (previewObject.id === context.getModel().getProperty('/initialPreviewId')) {
+									activePage = page;
+									carousel.setActivePage(activePage);
+									carousel.firePageChanged({
+										newActivePageId: activePage.getId()
+									});
+								}
+								return page;
+							},
+							filters: [new sap.ui.model.Filter("objectType", sap.ui.model.FilterOperator.NE, "X")],
+							sorter: aSorters
+						}
+					})
+					that.dialog = new sap.m.Dialog({
+						horizontalScrolling: false, verticalScrolling: false,
+						contentHeight: '100%', contentWidth: '100%', stretch: true, stretchOnPhone: true,
+						customHeader: new sap.m.Bar({contentMiddle: [new sap.m.Title({text: "title}"})]}),
+						content: [carousel],
+						buttons: new sap.m.Button({
+							text: "Close", press: function () {
+								if (that.dialog)
+									that.dialog.close();
+							}
+						})//getOperationButtons()
+					});
+					this.getView().addDependent(that.dialog);
+					that.dialog.open();
+					var model = new sap.ui.model.json.JSONModel();
+					model.setData(data);
+					model.setProperty("/initialPreviewId", 1);
+					this.getView().setModel(model);
+
+
+				},
+				onCarouselPageChanged: function (evt) {
+					//alert(evt.getParameter("newActivePageId"));
+				},
+				createPage: function (obj) {
+					return new sap.m.PDFViewer({source: obj.src})
+				}
+
+			});
+			sap.ui.xmlview({viewContent: jQuery('#myXml').html()}).placeAt("content");
+		</script>
+		</head>
+
+	<body id="content" class="sapUiBody">
+	</body>
+</html>

@@ -75,7 +75,6 @@
         <raw-module name="sap/ui/thirdparty/jszip.js" />
         <raw-module name="sap/ui/thirdparty/klay.js" />
         <raw-module name="sap/ui/thirdparty/less.js" />
-        <raw-module name="sap/ui/thirdparty/mobify-carousel.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
@@ -238,11 +237,6 @@
             <license url="https://github.com/cubiq/SwipeView/blob/master/license.txt" type="MIT" />
             <copyright>2012 Matteo Spinelli</copyright>
             <pattern>sap/ui/thirdparty/swipe-view.js</pattern>
-        </lib>
-        <lib name="mobify" displayName="Mobify.js" npmName="n/a" version="1.1" hash="6cf018dcb734b22f96f3485d6ad2ac13" homepage="http://www.mobify.com/mobifyjs/" id="73554900106100005548">
-            <license url="http://www.mobify.com/mobifyjs/license/" type="MIT" file="../thirdparty/licenses/mobify-MIT-LICENSE.txt" />
-            <copyright>Mobify R&amp;D Inc.</copyright>
-            <pattern>sap/ui/thirdparty/mobify-carousel.js</pattern>
         </lib>
         <lib name="zynga" displayName="Zynga Scroller" npmName="n/a" version="1.2.1-0-g5d43806" hash="ed56a75783e6f24f8eefc6e625bc496f" homepage="http://zynga.github.com/scroller/" id="73554900106100001940">
             <license url="https://github.com/pbakaus/scroller/blob/master/LICENSE.txt" type="MIT" />
