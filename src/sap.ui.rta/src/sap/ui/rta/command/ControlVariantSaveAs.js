@@ -64,6 +64,8 @@ sap.ui.define([
 		this.oModel = this.getModel();
 		this.setSourceDefaultVariant(this.oModel.getData()[this.sVariantManagementReference].defaultVariant);
 		this.sLayer = mFlexSettings.layer;
+		var mComponentPropertyBag = mFlexSettings;
+		mComponentPropertyBag.variantManagementControl = this.oVariantManagementControl;
 
 		function storeEventParameters(oEvent, oArgs) {
 			var mParameters = oEvent.getParameters();
@@ -82,7 +84,7 @@ sap.ui.define([
 			this.oVariantManagementControl.attachSave({resolve: resolve}, storeEventParameters, this);
 			this.oVariantManagementControl.attachCancel({resolve: resolve}, handleCancel, this);
 			this.oVariantManagementControl.openSaveAsDialogForKeyUser(rtaUtils.getRtaStyleClassName(),
-				ContextSharingAPI.createComponent(mFlexSettings));
+				ContextSharingAPI.createComponent(mComponentPropertyBag));
 		}.bind(this))
 			.then(function(bState) {
 				return bState;

@@ -55,7 +55,6 @@ sap.ui.define([
 				sandbox.spy(this.oVariantManagement, "detachCancel");
 				sandbox.spy(this.oVariantManagement, "detachSave");
 				sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
-				sandbox.stub(ContextSharingAPI, "createComponent").returns("myContextSharing");
 				sandbox.stub(Utils, "getRtaStyleClassName").returns("myRtaStyleClass");
 				this.oOpenDialogStub = sandbox.stub(this.oVariantManagement, "openSaveAsDialogForKeyUser");
 				// non-personalization mode
@@ -72,9 +71,13 @@ sap.ui.define([
 			var oSaveAsCommand;
 			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oSourceVariantReference = "mySourceReference";
+			var oCreateComponentStub = sandbox.stub(ContextSharingAPI, "createComponent").returns("myContextSharing");
 			this.oOpenDialogStub.callsFake(function(sStyleClass, oContextSharing) {
 				assert.strictEqual(sStyleClass, "myRtaStyleClass", "the style class was passed");
 				assert.strictEqual(oContextSharing, "myContextSharing", "the context sharing component was passed");
+				var oArgs = oCreateComponentStub.getCall(0).args[0];
+				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.ok(oArgs.variantManagementControl, "then the correct control is used");
 				this.oVariantManagement.fireSave({
 					name: "newName",
 					overwrite: false,

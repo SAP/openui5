@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Layer",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
@@ -44,6 +45,7 @@ sap.ui.define([
 	KeyCodes,
 	VariantManagement,
 	ChangesWriteAPI,
+	ContextSharingAPI,
 	ControlVariantApplyAPI,
 	Layer,
 	FlexTestAPI,
@@ -387,6 +389,7 @@ sap.ui.define([
 			var aChanges = ["change1", "change2"];
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			sandbox.stub(this.oModel, "manageVariants").resolves(aChanges);
+			var oCreateComponentSpy = sandbox.spy(ContextSharingAPI, "createComponent");
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
@@ -396,6 +399,8 @@ sap.ui.define([
 				done();
 			});
 			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
+			var oArgs = oCreateComponentSpy.getCall(0).args[0];
+			assert.ok(oArgs.variantManagementControl, "then the correct control is used");
 		});
 
 		QUnit.test("when configureVariants is called without changes", function(assert) {
@@ -449,6 +454,7 @@ sap.ui.define([
 		QUnit.test("when createSaveAsCommand is called and the key user presses the cancel button", function(assert) {
 			var done = assert.async();
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			var oCreateComponentSpy = sandbox.spy(ContextSharingAPI, "createComponent");
 			this.oVariantManagementControl._createSaveAsDialog();
 
 			this.oVariantManagementControl._getEmbeddedVM().oSaveAsDialog.attachEventOnce("afterOpen", function() {
@@ -462,6 +468,8 @@ sap.ui.define([
 				var oCommand = oEvent.getParameter("command");
 				assert.equal(oOpenSaveAsDialogSpy.callCount, 1, "then openSaveAsDialog has been called once");
 				assert.notOk(oCommand, "then a saveAs Variant event is received, but no command is created");
+				var oArgs = oCreateComponentSpy.getCall(0).args[0];
+				assert.ok(oArgs.variantManagementControl, "then the correct control is used");
 				done();
 			});
 			this.oControlVariantPlugin.createSaveAsCommand([this.oVariantManagementOverlay]);
