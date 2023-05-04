@@ -409,5 +409,43 @@
         ]
       }
     ]
+  },
+  "1.111.4": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "0824c474ced3877c56424736ee2fdeb2365edacb",
+        "type": "FIX",
+        "text": " Propagate parameter change to default file uploader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370053471"
+          }
+        ]
+      },
+      {
+        "id": "ed7e1c3ca733ab173b73890425182bd9f9c2fcf0",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370044390"
+          }
+        ]
+      },
+      {
+        "id": "e8eb3c20c212db829eed9bee6e0ddcf573e8fb1b",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370044390"
+          }
+        ]
+      }
+    ]
   }
 }

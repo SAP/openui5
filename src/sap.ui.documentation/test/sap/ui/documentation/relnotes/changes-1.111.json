@@ -13,5 +13,21 @@
         "text": " Demo Kit: Version dialog visibility fixed"
       }
     ]
+  },
+  "1.111.4": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "38e777caedbd259d0798b5461b8db8bca5432f32",
+        "type": "FIX",
+        "text": " DemoKit: Fix failing QUnit for Highlighter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370026149"
+          }
+        ]
+      }
+    ]
   }
 }

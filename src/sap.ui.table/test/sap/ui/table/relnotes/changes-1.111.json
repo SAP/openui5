@@ -36,5 +36,21 @@
         ]
       }
     ]
+  },
+  "1.111.4": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "d9257c2a04b34ea26e70fc95c9fd1707903be180",
+        "type": "FIX",
+        "text": " MDCTable: Initialization without property infos in odata.v4.TableDelegate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370029491"
+          }
+        ]
+      }
+    ]
   }
 }
