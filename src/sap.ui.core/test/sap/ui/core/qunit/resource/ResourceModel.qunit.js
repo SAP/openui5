@@ -2,11 +2,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/Device",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/testlib/TestButton"
-], function(Log, ResourceBundle, Device, Configuration, BindingMode, ResourceModel, TestButton) {
+], function(Log, ResourceBundle, Device, SyncPromise, Configuration, BindingMode, ResourceModel,
+		TestButton) {
 	/*global sinon, QUnit*/
 	/*eslint no-new: 0 */
 	"use strict";
@@ -1557,172 +1559,105 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_handleLocalizationChange: succesful reload; sync case", function (assert) {
-		var oNewResourceBundle = {},
-			oResourceBundle = {
-				_recreate: function () {}
+[true, false].forEach(function (bAsync) {
+	[true, false].forEach(function (bRecreateAsync) {
+	QUnit.test("_handleLocalizationChange: bAsync=" + bAsync + ", bRecreateAsync=" + bRecreateAsync, function (assert) {
+		var oCallbacks = {
+				fnErrorHandler: function () {},
+				fnFinallyHandler: function () {},
+				fnThenGetResourceBundle: function () {},
+				fnThenRecreateBundle: function () {}
 			},
 			oResourceModel = {
-				_reenhance: function () {},
-				checkUpdate: function () {},
 				getResourceBundle: function () {}
 			};
 
 		this.mock(oResourceModel).expects("getResourceBundle")
 			.withExactArgs()
-			.returns(oResourceBundle);
-		this.mock(oResourceBundle).expects("_recreate")
-			.withExactArgs()
-			.returns(oNewResourceBundle);
+			.returns("~resourceBundleOrPromise");
+		var oCatchHandlerExpectation = this.mock(oCallbacks).expects("fnErrorHandler")
+				.withExactArgs(sinon.match.func);
+		var oGetResourceBundleSuccessHandlerExpectation = this.mock(oCallbacks).expects("fnThenGetResourceBundle")
+			.withExactArgs(sinon.match.func)
+			.returns({
+				"catch": oCallbacks.fnErrorHandler
+			});
+		var oSyncPromiseMock = this.mock(SyncPromise);
+		oSyncPromiseMock.expects("resolve").atLeast(0).callThrough(); // framework might use SyncPromise too
+		oSyncPromiseMock.expects("resolve").withExactArgs("~resourceBundleOrPromise")
+			.returns({
+				then: oCallbacks.fnThenGetResourceBundle
+			});
+
+		// code under test
+		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
+
+		var oError = new Error("~error");
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to reload bundles after localization change", sinon.match.same(oError),
+				sClassname);
+
+		// code under test - call error handler
+		oCatchHandlerExpectation.args[0][0](oError);
+
+		oResourceModel.bAsync = bAsync;
+		oResourceModel.oData = {bundleName: "~bundleName", bundleUrl: "~bundleUrl"};
+		this.mock(ResourceModel).expects("_sanitizeBundleName")
+			.withExactArgs("~bundleName")
+			.exactly(bAsync ? 1 : 0)
+			.returns("~sanitizedBundleName");
+		this.mock(ResourceBundle).expects("_getUrl")
+			.withExactArgs("~bundleUrl", "~sanitizedBundleName")
+			.exactly(bAsync ? 1 : 0)
+			.returns("~url");
+		var oEventParameters = {async: true, url: "~url"};
+		oResourceModel.fireRequestSent = function () {};
+		this.mock(oResourceModel).expects("fireRequestSent").withExactArgs(oEventParameters)
+			.exactly(bAsync ? 1 : 0);
+		var oResourceBundle = {
+				_recreate: function () {}
+			};
+		var vRecreateResult = bRecreateAsync ? Promise.resolve("~recreateResult") : "~recreateResult";
+		this.mock(oResourceBundle).expects("_recreate").withExactArgs().returns(vRecreateResult);
+		var oFinallyHandlerExpectation = this.mock(oCallbacks).expects("fnFinallyHandler")
+				.withExactArgs(sinon.match.func)
+				.returns("~waitForFinally");
+		var oRecreateSuccessHandlerExpextation = this.mock(oCallbacks).expects("fnThenRecreateBundle")
+			.withExactArgs(sinon.match.func)
+			.returns({
+				"finally": oCallbacks.fnFinallyHandler
+			});
+		oSyncPromiseMock.expects("resolve").withExactArgs(vRecreateResult)
+			.returns({
+				then: oCallbacks.fnThenRecreateBundle
+			});
+
+		// code under test - call success handler after resource bundle is fetched
+		assert.strictEqual(oGetResourceBundleSuccessHandlerExpectation.args[0][0](oResourceBundle),
+			"~waitForFinally");
+
+		assert.strictEqual(oResourceModel._oPromise, bRecreateAsync ? vRecreateResult : undefined);
+
+		oResourceModel._reenhance = function () {};
 		this.mock(oResourceModel).expects("_reenhance").withExactArgs();
+		oResourceModel.checkUpdate = function () {};
 		this.mock(oResourceModel).expects("checkUpdate").withExactArgs(true);
 
-		// code under test
-		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
+		// code under test - recreation successful
+		oRecreateSuccessHandlerExpextation.args[0][0]("~newBundle");
 
-		assert.strictEqual(oResourceModel._oResourceBundle, oNewResourceBundle);
+		assert.notOk(oResourceModel.hasOwnProperty("_oPromise"));
+		assert.strictEqual(oResourceModel._oResourceBundle, "~newBundle");
+
+		oResourceModel.fireRequestCompleted = function () {};
+		this.mock(oResourceModel).expects("fireRequestCompleted").withExactArgs(oEventParameters)
+			.exactly(bAsync ? 1 : 0);
+
+		// code under test - finally handler
+		oFinallyHandlerExpectation.args[0][0]();
 	});
-
-	//*********************************************************************************************
-	QUnit.test("_handleLocalizationChange: succesful reload; async case", function (assert) {
-		var oEventParameters = {async: true, url: "~url"},
-			oNewResourceBundle = {},
-			oNewResourcBundlePromise = Promise.resolve(oNewResourceBundle),
-			oResourceBundle = {
-				_recreate: function () {}
-			},
-			oResourcBundlePromise = Promise.resolve(oResourceBundle),
-			oResourceModel = {
-				oData: {bundleName: "~bundleName", bundleUrl: "~bundleUrl"},
-				_reenhance: function () {},
-				checkUpdate: function () {},
-				fireRequestCompleted: function () {},
-				fireRequestSent: function () {},
-				getResourceBundle: function () {}
-			},
-			that = this;
-
-		this.mock(oResourceModel).expects("getResourceBundle")
-			.withExactArgs()
-			.returns(oResourcBundlePromise);
-		oResourcBundlePromise.then(function () {
-			that.mock(ResourceModel).expects("_sanitizeBundleName")
-				.withExactArgs("~bundleName")
-				.returns("~sanitizedBundleName");
-			that.mock(ResourceBundle).expects("_getUrl")
-				.withExactArgs("~bundleUrl", "~sanitizedBundleName")
-				.returns("~url");
-			that.mock(oResourceModel).expects("fireRequestSent").withExactArgs(oEventParameters);
-		});
-
-		// code under test
-		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
-
-		// called async
-		this.mock(oResourceBundle).expects("_recreate")
-			.withExactArgs()
-			.returns(oNewResourcBundlePromise);
-		oNewResourcBundlePromise.then(function () {
-			// this then handler is executed before the then handler in productive code;
-			// recreation promise is used to delay getResourceBundle resolution
-			assert.strictEqual(oResourceModel._oPromise, oNewResourcBundlePromise);
-		});
-
-		return oResourcBundlePromise.then(function () {
-			that.mock(oResourceModel).expects("_reenhance").withExactArgs()
-				.callsFake(function () {
-					assert.strictEqual(oResourceModel._oPromise, oNewResourcBundlePromise);
-				});
-			that.mock(oResourceModel).expects("checkUpdate").withExactArgs(true)
-				.callsFake(function () {
-					assert.strictEqual(oResourceModel._oPromise, undefined);
-				});
-			that.mock(oResourceModel).expects("fireRequestCompleted").withExactArgs(oEventParameters);
-
-			return oNewResourcBundlePromise.then(function () {
-				assert.strictEqual(oResourceModel._oResourceBundle, oNewResourceBundle);
-			});
-		});
 	});
-
-	//*********************************************************************************************
-	QUnit.test("_handleLocalizationChange: failed reload; sync case", function (assert) {
-		var oError = new Error(),
-			oResourceBundle = {
-				_recreate: function () {}
-			},
-			oResourceModel = {
-				_oResourceBundle: "~oldBundle",
-				getResourceBundle: function () {}
-			};
-
-		this.mock(oResourceModel).expects("getResourceBundle")
-			.withExactArgs()
-			.returns(oResourceBundle);
-		this.mock(oResourceBundle).expects("_recreate").throws(oError);
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to reload bundles after localization change",
-				sinon.match.same(oError), sClassname);
-
-		// code under test
-		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
-
-		assert.strictEqual(oResourceModel._oResourceBundle, "~oldBundle");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_handleLocalizationChange: failed reload; async case", function (assert) {
-		var oPromise,
-			oResourceBundle = {
-				_recreate: function () {}
-			},
-			oResourcBundlePromise = Promise.resolve(oResourceBundle),
-			oResourceModel = {
-				_oResourceBundle: "~oldBundle",
-				oData: {bundleName: "~bundleName", bundleUrl: "~bundleUrl"},
-				fireRequestCompleted: function () {},
-				fireRequestSent: function () {},
-				getResourceBundle: function () {}
-			},
-			that = this;
-
-		this.mock(oResourceModel).expects("getResourceBundle")
-			.withExactArgs()
-			.returns(oResourcBundlePromise);
-
-		oPromise = oResourcBundlePromise.then(function () {
-			var oError = new Error(),
-				oEventParameters = {async: true, url: "~url"},
-				oRejectedResourcBundlePromise = Promise.reject(oError);
-
-			oRejectedResourcBundlePromise.catch(function () {
-				that.oLogMock.expects("error")
-					.withExactArgs("Failed to reload bundles after localization change",
-						sinon.match.same(oError), sClassname);
-				that.mock(oResourceModel).expects("fireRequestCompleted").withExactArgs(oEventParameters);
-			});
-
-			that.mock(ResourceModel).expects("_sanitizeBundleName")
-				.withExactArgs("~bundleName")
-				.returns("~sanitizedBundleName");
-			that.mock(ResourceBundle).expects("_getUrl")
-				.withExactArgs("~bundleUrl", "~sanitizedBundleName")
-				.returns("~url");
-			that.mock(oResourceModel).expects("fireRequestSent").withExactArgs(oEventParameters);
-			that.mock(oResourceBundle).expects("_recreate")
-				.withExactArgs()
-				.returns(oRejectedResourcBundlePromise);
-
-			return oRejectedResourcBundlePromise.catch(function () {
-				assert.strictEqual(oResourceModel._oResourceBundle, "~oldBundle");
-			});
-		});
-
-		// code under test
-		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
-
-		return oPromise;
-	});
+});
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Exotic scenarios", {
 		beforeEach: function () {
