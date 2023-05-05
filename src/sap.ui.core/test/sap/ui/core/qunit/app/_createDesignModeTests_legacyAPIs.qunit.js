@@ -1,15 +1,30 @@
-/*global QUnit */
+/*global QUnit sinon*/
 sap.ui.define([
+	"sap/base/config",
 	"sap/ui/core/Configuration"
-], function (Configuration) {
+], function (BaseConfiguration, Configuration) {
 	"use strict";
 
 	return function _createDesignModeTests(ViewClass) {
+		var oBaseConfigStub, createBaseConfigStub = function (bDesignMode, bSuppressDeactivationOfControllerCode) {
+			oBaseConfigStub = sinon.stub(BaseConfiguration, "get");
+			oBaseConfigStub.callsFake(function(mParameters) {
+				switch (mParameters.name) {
+					case "sapUiXxDesignMode":
+						return bDesignMode;
+					case "sapUiXxSuppressDeactivationOfControllerCode":
+						return bSuppressDeactivationOfControllerCode;
+					default:
+						return oBaseConfigStub.wrappedMethod.call(this, mParameters);
+				}
+			});
+		};
 		QUnit.module("DesignMode, Controller Deactivation", {
 			beforeEach: function() {
-				window["sap-ui-config"]["xx-designmode"] = true;
-				window["sap-ui-config"]["xx-suppressdeactivationofcontrollercode"] = false;
-				Configuration.setCore();
+				createBaseConfigStub(true, false);
+			},
+			afterEach: function() {
+				oBaseConfigStub.restore();
 			}
 		});
 
@@ -41,8 +56,10 @@ sap.ui.define([
 
 		QUnit.module("DesignMode, Suppressed Deactivation of Controller Code", {
 			beforeEach: function() {
-				window["sap-ui-config"]["xx-suppressdeactivationofcontrollercode"] = true;
-				Configuration.setCore();
+				createBaseConfigStub(true, true);
+			},
+			afterEach: function() {
+				oBaseConfigStub.restore();
 			}
 		});
 

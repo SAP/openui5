@@ -1384,7 +1384,12 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.core.Core, sap.watt, com.sap.webide, sap.ui.fl, sap.ui.rta, sap.ui.comp, SAP Business Application Studio
 		 */
 		getDesignMode : function() {
-			return this.getValue("xx-designMode");
+			return BaseConfig.get({
+				name: "sapUiXxDesignMode",
+				type: BaseConfig.Type.Boolean,
+				external: true,
+				freeze: true
+			});
 		},
 
 		/**
@@ -1396,7 +1401,12 @@ sap.ui.define([
 		 * @ui5-restricted sap.watt, com.sap.webide
 		 */
 		getSuppressDeactivationOfControllerCode : function() {
-			return this.getValue("xx-suppressDeactivationOfControllerCode");
+			return BaseConfig.get({
+				name: "sapUiXxSuppressDeactivationOfControllerCode",
+				type: BaseConfig.Type.Boolean,
+				external: true,
+				freeze: true
+			});
 		},
 
 		/**
@@ -1842,6 +1852,15 @@ sap.ui.define([
 					"Not a function: " + fnSecurityTokenHandler);
 			});
 			this.securityTokenHandlers = aSecurityTokenHandlers.slice();
+		},
+
+		getBindingSyntax: function() {
+			return BaseConfig.get({
+				name: "sapUiBindingSyntax",
+				type: BaseConfig.Type.String,
+				defaultValue: (this.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex",
+				freeze: true
+			});
 		},
 
 		/**
