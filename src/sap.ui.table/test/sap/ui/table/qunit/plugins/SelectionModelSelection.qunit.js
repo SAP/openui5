@@ -25,6 +25,31 @@ sap.ui.define([
 		assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4, 5, 6], "Selection");
 	});
 
+	QUnit.test("#setSelected", function(assert) {
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+
+		oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
+		assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0], "Select a row");
+
+		oSelectionPlugin.setSelected(this.oTable.getRows()[2], true, {range: true});
+		assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2], "Select a range");
+
+		oSelectionPlugin.setSelected(this.oTable.getRows()[1], false);
+		assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 2], "Deselect a row");
+
+		oSelectionPlugin.clearSelection();
+		this.oTable.getModel().setData();
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 100);
+			});
+		}.bind(this)).then(function() {
+			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [], "Select a row that is not selectable");
+		});
+	});
+
 	QUnit.module("Automatic deselection", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
