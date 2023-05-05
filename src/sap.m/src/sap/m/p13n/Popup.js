@@ -321,14 +321,14 @@ sap.ui.define([
 				this._onClose(oContainer, "Escape");
 			}.bind(this),
 			buttons: [
-				new Button(this.getId() + "-confirmBtn", {
+				new Button(this.getId() + this._getIdPrefix() + "-confirmBtn", {
 					text:  mDialogSettings.confirm && mDialogSettings.confirm.text ?  mDialogSettings.confirm.text : oResourceBundle.getText("p13n.POPUP_OK"),
 					type: "Emphasized",
 					press: function() {
 						this._onClose(oContainer, "Ok");
 					}.bind(this)
 
-				}), new Button(this.getId() + "-cancelBtn", {
+				}), new Button(this.getId() + this._getIdPrefix() + "-cancelBtn", {
 					text: oResourceBundle.getText("p13n.POPUP_CANCEL"),
 					press: function () {
 						this._onClose(oContainer, "Cancel");
@@ -344,6 +344,10 @@ sap.ui.define([
 		});
 
 		return oContainer;
+	};
+
+	Popup.prototype._getIdPrefix = function() {
+		return "";
 	};
 
 	Popup.prototype._createTitle = function() {
