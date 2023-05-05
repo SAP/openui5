@@ -31,6 +31,19 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 * Object to label gropus on value help dialog.
+	 *
+	 * @static
+	 * @constant
+	 * @typedef {object} sap.ui.mdc.valuehelp.content.GroupLabel
+	 * @property {string} label Label with counter. The placeholder for counter needs to defined wihl <code>{0}</code>
+	 * @property {string} nnLabel Label without counter
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+
 	// translation utils
 	var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	sap.ui.getCore().attachLocalizationChanged(function() {
@@ -83,8 +96,19 @@ sap.ui.define([
 				},
 				/**
 				 * Configuration for groups (collective search).
+				 *
+				 * The object needs to contain an entry for every possible group. The labels of every group need to have a structure of {@link sap.ui.mdc.valuehelp.content.GroupLabel}.
+				 * If no configuration is provided a standard text "search and select" is used.
+				 *
+				 * <b>Sample:</b>
+				 * <pre>
+				 * {
+				 * group1: {label: "Label 1", nnLabel: "Label 1 ({0})"},
+				 * group2: {label: "Label 2", nnLabel: "Label 2 ({0})"}
+				 * }
+				 * </pre>
 				 */
-				groupConfig: { // TODO: explain in JS-Doc
+				groupConfig: {
 					type: "object",
 					defaultValue: {}
 				}

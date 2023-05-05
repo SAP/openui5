@@ -85,6 +85,11 @@ sap.ui.define([
 					defaultValue: ""
 				},
 
+				/**
+				 * If set, all contents with the same group are arranged together on one tab.
+				 *
+				 * The label of the groups can be defined on the container via {@link sap.ui.mdc.valuehelp.Dialog#setGroupConfig setGroupConfig}.
+				 */
 				group: {
 					type: "string",
 					defaultValue: ""
