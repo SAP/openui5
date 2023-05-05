@@ -248,50 +248,8 @@ sap.ui.define([
 					mParameters, fnGetEntity, bIgnoreETag, fnOnStrictHandlingFailed);
 			}).then(function (oResponseEntity) {
 				return fireChangeAndRefreshDependentBindings().then(function () {
-					var sContextPredicate, oOldValue, sResponsePredicate, sNewPath, oResult;
-
-					if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
-						oOldValue = that.oContext.getValue();
-						// Note: sContextPredicate missing e.g. when collection-bound
-						sContextPredicate = oOldValue
-							&& _Helper.getPrivateAnnotation(oOldValue, "predicate");
-						sResponsePredicate = _Helper.getPrivateAnnotation(
-							oResponseEntity, "predicate");
-
-						if (sResponsePredicate) {
-							if (sContextPredicate === sResponsePredicate) {
-								// this is sync, because the entity to be patched is available in
-								// the context (we already read its predicate)
-								that.oContext.patch(oResponseEntity);
-							}
-							if (that.hasReturnValueContext()) {
-								if (bReplaceWithRVC) {
-									that.oCache = null;
-									that.oCachePromise = SyncPromise.resolve(null);
-									oResult = that.oContext.getBinding()
-										.doReplaceWith(that.oContext, oResponseEntity,
-											sResponsePredicate);
-									oResult.setNewGeneration();
-
-									return oResult;
-								}
-
-								sNewPath = _Helper.getReturnValueContextPath(sResolvedPath,
-									sResponsePredicate);
-								that.oReturnValueContext = Context.createNewContext(that.oModel,
-									that, sNewPath);
-								// set the resource path for late property requests
-								that.oCache.setResourcePath(
-									that.oReturnValueContext.getPath().slice(1));
-
-								return that.oReturnValueContext;
-							}
-						}
-					}
-
-					if (bReplaceWithRVC) {
-						throw new Error("Cannot replace w/o return value context");
-					}
+					return that.handleOperationResult(sResolvedPath, oOperationMetadata,
+						oResponseEntity, bReplaceWithRVC);
 				});
 			}, function (oError) {
 				// Note: operation metadata is only needed to handle server messages, it is
@@ -1222,6 +1180,69 @@ sap.ui.define([
 			});
 		}
 		return sResolvedPath;
+	};
+
+	/**
+	 * Handles the result of an executed operation and creates a return value context if possible.
+	 *
+	 * @param {string} sResolvedPath
+	 *   The resolved path
+	 * @param {object} oOperationMetadata
+	 *   The operation's metadata
+	 * @param {object} oResponseEntity
+	 *   The result of the executed operation
+	 * @param {boolean} [bReplaceWithRVC]
+	 *   Whether this operation binding's parent context, which must belong to a list binding, is
+	 *   replaced with the operation's return value context and that new list context is returned
+	 *   instead.
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The return value context or <code>undefined</code> if it is not possible to create one
+	 * @throws {Error}
+	 *   If <code>bReplaceWithRVC</code> is given, but no return value context can be created
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.handleOperationResult = function (sResolvedPath,
+			oOperationMetadata, oResponseEntity, bReplaceWithRVC) {
+		var sContextPredicate, oOldValue, sResponsePredicate, sNewPath, oResult;
+
+		if (this.isReturnValueLikeBindingParameter(oOperationMetadata)) {
+			oOldValue = this.oContext.getValue();
+			// Note: sContextPredicate missing e.g. when collection-bound
+			sContextPredicate = oOldValue && _Helper.getPrivateAnnotation(oOldValue, "predicate");
+			sResponsePredicate = _Helper.getPrivateAnnotation(oResponseEntity, "predicate");
+
+			if (sResponsePredicate) {
+				if (sContextPredicate === sResponsePredicate) {
+					// this is sync, because the entity to be patched is available in
+					// the context (we already read its predicate)
+					this.oContext.patch(oResponseEntity);
+				}
+				if (this.hasReturnValueContext()) {
+					if (bReplaceWithRVC) {
+						this.oCache = null;
+						this.oCachePromise = SyncPromise.resolve(null);
+						oResult = this.oContext.getBinding()
+							.doReplaceWith(this.oContext, oResponseEntity, sResponsePredicate);
+						oResult.setNewGeneration();
+
+						return oResult;
+					}
+
+					sNewPath = _Helper.getReturnValueContextPath(sResolvedPath, sResponsePredicate);
+					this.oReturnValueContext = Context.createNewContext(this.oModel,
+						this, sNewPath);
+					// set the resource path for late property requests
+					this.oCache.setResourcePath(sNewPath.slice(1));
+
+					return this.oReturnValueContext;
+				}
+			}
+		}
+
+		if (bReplaceWithRVC) {
+			throw new Error("Cannot replace w/o return value context");
+		}
 	};
 
 	/**
