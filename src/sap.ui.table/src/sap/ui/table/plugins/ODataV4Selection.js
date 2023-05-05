@@ -168,6 +168,10 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.getRenderConfig = function() {
+		if (!this.isActive()) {
+			return SelectionPlugin.prototype.getRenderConfig.apply(this, arguments);
+		}
+
 		return {
 			headerSelector: {
 				type: this._isLimitDisabled() ? "toggle" : "clear",

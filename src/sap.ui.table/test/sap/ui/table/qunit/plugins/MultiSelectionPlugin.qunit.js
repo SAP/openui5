@@ -3,17 +3,28 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
-	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Table",
-	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, MultiSelectionPlugin, MockServer, Table, ODataModel, tableLibrary, qutils, oCore) {
+], function(
+	TableQUnitUtils,
+	MultiSelectionPlugin,
+	Table,
+	TableUtils,
+	library,
+	ODataModel,
+	qutils,
+	MockServer,
+	oCore
+) {
 	"use strict";
 
 	var sServiceURI = "/service/";
-	var SelectionMode = tableLibrary.SelectionMode;
+	var SelectionMode = library.SelectionMode;
 
 	function startMockServer() {
 		MockServer.config({
@@ -32,10 +43,39 @@ sap.ui.define([
 
 	QUnit.module("Basics", {
 		beforeEach: function() {
-			this.oTable = new Table();
+			this.oTable = TableQUnitUtils.createTable({
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
+			});
 		},
 		afterEach: function() {
 			this.oTable.destroy();
+		},
+		assertRenderConfig: function(assert, mActualConfig, mExpectedConfig, sTitle) {
+			var oActualIcon;
+			var sExpectedIconUri;
+
+			if (mActualConfig.headerSelector) {
+				oActualIcon = mActualConfig.headerSelector.icon ? mActualConfig.headerSelector.icon : undefined;
+				delete mActualConfig.headerSelector.icon;
+			}
+
+			if (mExpectedConfig.headerSelector) {
+				sExpectedIconUri = mExpectedConfig.headerSelector.icon != null ? "sap-icon://" + mExpectedConfig.headerSelector.icon : undefined;
+				delete mExpectedConfig.headerSelector.icon;
+			}
+
+			assert.deepEqual(mActualConfig, mExpectedConfig, sTitle);
+
+			if (sExpectedIconUri == null && oActualIcon) {
+				assert.ok(false, sTitle + "; Should not contain an icon");
+			} else if (sExpectedIconUri != null && !oActualIcon) {
+				assert.ok(false, sTitle + "; Should contain an icon");
+			} else if (sExpectedIconUri == null && !oActualIcon) {
+				assert.ok(true, sTitle + "; Does not contain an icon");
+			} else {
+				assert.equal(oActualIcon.getSrc(), sExpectedIconUri, sTitle + "; Contains the correct icon");
+			}
 		}
 	});
 
@@ -71,6 +111,122 @@ sap.ui.define([
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The reference to the internal default selection plugin was cleared");
 		assert.ok(oDeselectAllIconDestroySpy.calledOnce, "The delete icon was destroyed");
 		assert.strictEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The reference to the delete icon was cleared");
+	});
+
+	QUnit.test("#getRenderConfig", function(assert) {
+		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		var that = this;
+
+		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+			headerSelector: {
+				type: "none"
+			}
+		}, "Not assigned to a table");
+
+		this.oTable.addPlugin(oMultiSelectionPlugin);
+
+		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+			headerSelector: {
+				type: "clear",
+				icon: TableUtils.ThemeParameters.clearSelectionIcon,
+				visible: true,
+				enabled: false,
+				selected: false
+			}
+		}, "MultiToggle");
+
+		oMultiSelectionPlugin.setSelectionMode(SelectionMode.Single);
+		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+			headerSelector: {
+				type: "clear",
+				icon: TableUtils.ThemeParameters.clearSelectionIcon,
+				visible: false,
+				enabled: false,
+				selected: false
+			}
+		}, "Single");
+
+		oMultiSelectionPlugin.setSelectionMode(SelectionMode.MultiToggle);
+		oMultiSelectionPlugin.setShowHeaderSelector(false);
+		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+			headerSelector: {
+				type: "clear",
+				icon: TableUtils.ThemeParameters.clearSelectionIcon,
+				visible: false,
+				enabled: false,
+				selected: false
+			}
+		}, "MultiToggle; Header selector hidden");
+
+		oMultiSelectionPlugin.setShowHeaderSelector(true);
+		oMultiSelectionPlugin.setLimit(0);
+		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+			headerSelector: {
+				type: "toggle",
+				icon: TableUtils.ThemeParameters.clearSelectionIcon,
+				visible: true,
+				enabled: true,
+				selected: false
+			}
+		}, "MultiToggle; Limit disabled");
+
+		return oMultiSelectionPlugin.selectAll().then(function() {
+			that.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+				headerSelector: {
+					type: "toggle",
+					icon: TableUtils.ThemeParameters.clearSelectionIcon,
+					visible: true,
+					enabled: true,
+					selected: true
+				}
+			}, "MultiToggle; Limit disabled; All rows selected");
+
+			oMultiSelectionPlugin.setLimit(1);
+			return oMultiSelectionPlugin.setSelectionInterval(1, 1);
+		}).then(function() {
+			that.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+				headerSelector: {
+					type: "clear",
+					icon: TableUtils.ThemeParameters.clearSelectionIcon,
+					visible: true,
+					enabled: true,
+					selected: false
+				}
+			}, "MultiToggle; One row selected");
+
+			oMultiSelectionPlugin.setSelectionMode(SelectionMode.Single);
+			return oMultiSelectionPlugin.setSelectionInterval(1, 1);
+		}).then(function() {
+			that.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+				headerSelector: {
+					type: "clear",
+					icon: TableUtils.ThemeParameters.clearSelectionIcon,
+					visible: false,
+					enabled: true,
+					selected: false
+				}
+			}, "Single; One row selected");
+
+			oMultiSelectionPlugin.setSelectionMode(SelectionMode.MultiToggle);
+			oMultiSelectionPlugin.setEnabled(false);
+			that.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+				headerSelector: {
+					type: "none"
+				}
+			}, "MultiToggle; Plugin disabled");
+
+			oMultiSelectionPlugin.setEnabled(true);
+			oMultiSelectionPlugin.setSelectionMode(SelectionMode.None);
+			that.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
+				headerSelector: {
+					type: "clear",
+					icon: TableUtils.ThemeParameters.clearSelectionIcon,
+					visible: false,
+					enabled: false,
+					selected: false
+				}
+			}, "None");
+		});
 	});
 
 	QUnit.module("Deselect All button", {
@@ -979,7 +1135,7 @@ sap.ui.define([
 		var $Cell;
 		var that = this;
 
-		this.oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Fixed);
+		this.oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Fixed);
 		this.oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
 		oCore.applyChanges();
@@ -1022,7 +1178,7 @@ sap.ui.define([
 		var $Cell;
 		var that = this;
 
-		this.oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Fixed);
+		this.oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Fixed);
 		this.oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
 		oCore.applyChanges();
