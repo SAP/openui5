@@ -1237,7 +1237,7 @@ sap.ui.define([
 		}
 		// enable scrolling in non-fullscreen-mode only
 		// (to avoid any scrollbar appearing even for an instance while we snap/unsnap header)
-		this._toggleScrolling(!this._bAllContentFitsContainer || this._headerBiggerThanAllowedToBeFixed());
+		this._toggleScrolling(!this._bAllContentFitsContainer || !this._getFirstVisibleSubSection()._hasRestrictedHeight());
 
 		this._registerOnContentResize();
 
@@ -2143,8 +2143,6 @@ sap.ui.define([
 
 			// the current tab changed => update the <code>this._bAllContentFitsContainer</code> accordingly
 			this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oToSelect);
-			this._toggleScrolling(!this._bAllContentFitsContainer || this._headerBiggerThanAllowedToBeFixed());
-
 			bFullscreenModeChanged = this._bAllContentFitsContainer !== bWasFullscreenMode;
 			if (bFullscreenModeChanged && !this._bHeaderExpanded) {
 				// call the snapping function again with the *latest* parameter value
@@ -2686,12 +2684,12 @@ sap.ui.define([
 		// => wrong section may have been selected in <code>_updateSelectionOnScroll</code>
 		// => update the selection using the newly updated DOM positions and the current scrollTop
 		this._updateSelectionOnScroll(this._$opWrapper.scrollTop());
+		this._toggleScrolling(!this._bAllContentFitsContainer || !this._getFirstVisibleSubSection()._hasRestrictedHeight());
 
 		return true; // return success flag
 	};
 
-	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection,
-		oSectionBase) {
+	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection, oSectionBase) {
 
 		var iSectionsContainerHeight,
 			oContainerDimentions,
@@ -2724,8 +2722,8 @@ sap.ui.define([
 			oContainerDimentions = this._$sectionsContainer[0].getBoundingClientRect();
 			oSubSectionDimentons = oSectionBase.getDomRef().getBoundingClientRect();
 			iOffsetTop = oSubSectionDimentons.top - oContainerDimentions.top;
-			iOffsetBottom = oContainerDimentions.bottom - oSubSectionDimentons.bottom;
-			iRemainingSectionContentHeight = iOffsetTop + iOffsetBottom + this.iFooterHeight;
+			iOffsetBottom = this.iFooterHeight + this._iREMSize /* footer-height + space between footer and content */;
+			iRemainingSectionContentHeight = iOffsetTop + iOffsetBottom;
 			iSectionsContainerHeight -= iRemainingSectionContentHeight;
 		}
 
@@ -2929,7 +2927,10 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._getFirstVisibleSubSection = function (oSection) {
 		if (!oSection) {
-			return;
+			oSection = this.getUseIconTabBar() ? this._oCurrentTabSection : this._oFirstVisibleSection;
+			if (!oSection) {
+				return;
+			}
 		}
 		var oFirstSubSection;
 		this._aSectionBases.every(function (oSectionBase) {
