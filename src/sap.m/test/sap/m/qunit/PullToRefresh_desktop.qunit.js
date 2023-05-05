@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/PullToRefresh",
 	"sap/m/Page",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -20,7 +21,8 @@ sap.ui.define([
 	PullToRefresh,
 	Page,
 	Device,
-	oCore
+	oCore,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -151,6 +153,35 @@ sap.ui.define([
 			assert.strictEqual(oPullToRefresh.$().attr("aria-controls"), sExpectedAriaControls, "Has aria-controls");
 			assert.strictEqual(oPullToRefresh.$().attr("aria-keyshortcuts"), sExpectedAriaKeyshortcuts, "Has aria-keyshortcuts");
 			assert.strictEqual(oPullToRefresh.$().attr("aria-describedby"), sAriaDescribedBy, "Has aria-describedby");
+
+			// Clean
+			oPullToRefresh.destroy();
+		});
+
+		QUnit.module("Keypress functions");
+
+		QUnit.test("Holding Space Key doesn't trigger an animation", function(assert) {
+			// Arrange
+			var oPullToRefresh = new PullToRefresh({id: "p2r-new"}),
+			oEventMock = {
+				srcControl: oPullToRefresh,
+				preventDefault: function () {}
+			};
+
+			oPullToRefresh.placeAt("content");
+			oCore.applyChanges();
+
+			// Act
+			oPullToRefresh.onsapspace(oEventMock);
+
+			//Assert
+			assert.ok(oPullToRefresh._iState === 1, "Animation is triggered after space key pressed on PullToRefresh control");
+
+			// Act
+			qutils.triggerKeydown("p2r-new", KeyCodes.SHIFT, true);
+
+			//Assert
+			assert.ok(oPullToRefresh._iState === 0, "Animation is stopped after space key is pressed simultaneously with shift key");
 
 			// Clean
 			oPullToRefresh.destroy();
