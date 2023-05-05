@@ -123,7 +123,7 @@ sap.ui.define([
 	ODataV4Selection.prototype.setSelected = function(oRow, bSelected, mConfig) {
 		var oContext = oRow.getRowBindingContext();
 
-		if (!oContext) {
+		if (!oContext || !isContextSelectable(oContext)) {
 			return;
 		}
 
@@ -151,11 +151,14 @@ sap.ui.define([
 
 		var iIndexFrom = oPlugin._oRangeSelectionStartContext.getIndex();
 		var oContext = oRow.getRowBindingContext();
-		var iIndexTo = oContext ? oContext.getIndex() : undefined;
+		var iIndexTo = oContext ? oContext.getIndex() : -1;
 
-		if (iIndexFrom >= 0 && iIndexTo >= 0) {
-			selectRange(oPlugin, iIndexFrom, iIndexTo);
+		// The start index is already selected in case of range selection, so the range needs to start from the next index.
+		if (iIndexFrom !== iIndexTo) {
+			iIndexFrom += iIndexTo > iIndexFrom ? 1 : -1;
 		}
+
+		select(oPlugin, iIndexFrom, iIndexTo);
 	}
 
 	ODataV4Selection.prototype.isSelected = function(oRow) {
@@ -178,22 +181,48 @@ sap.ui.define([
 				icon: this.oDeselectAllIcon,
 				visible: this.getSelectionMode() === SelectionMode.MultiToggle && !this.getHideHeaderSelector(),
 				enabled: this._isLimitDisabled() || this.getSelectedCount() > 0,
-				selected: this._getSelectableCount() > 0 && this._getSelectableCount() === this.getSelectedCount()
+				selected: areAllRowsSelected(this)
 			}
 		};
 	};
 
 	/**
-	 * If not all indices are selected, all indices are selected, otherwise the selection is removed.
+	 * Selects all rows if not all are already selected, otherwise the selection is cleared.
 	 *
-	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The plugin to toggle the selection on.
+	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The selection plugin.
 	 */
 	function toggleSelectAll(oPlugin) {
-		if (oPlugin._getSelectableCount() > oPlugin.getSelectedCount()) {
-			selectAll(oPlugin);
-		} else {
+		if (areAllRowsSelected(oPlugin)) {
 			oPlugin.clearSelection();
+		} else if (oPlugin._isLimitDisabled()) {
+			var oBinding = oPlugin.getTableBinding();
+			select(oPlugin, 0, oBinding ? oBinding.getLength() - 1 : -1);
 		}
+	}
+
+	/**
+	 * Checks if all rows are selected.
+	 *
+	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The selection plugin.
+	 * @returns {boolean} Whether all rows are selected.
+	 */
+	function areAllRowsSelected(oPlugin) {
+		var oBinding = oPlugin.getTableBinding();
+
+		// isLengthFinal is checked in case the count is not requested. Even though it is documented that the count is required if the limit is
+		// disabled (SelectAll enabled), it could still happen.
+		if (!oBinding || !oBinding.isLengthFinal()) {
+			return false;
+		}
+
+		var iNumberOfSelectableContexts = oBinding.getAllCurrentContexts().filter(function(oContext) {
+			return isContextSelectable(oContext);
+		}).length;
+		var iNumberOfSelectedContexts = oPlugin.getSelectedContexts().filter(function(oContext) {
+			return isContextSelectable(oContext);
+		}).length;
+
+		return iNumberOfSelectableContexts > 0 && iNumberOfSelectableContexts === iNumberOfSelectedContexts;
 	}
 
 	ODataV4Selection.prototype.onHeaderSelectorPress = function() {
@@ -204,7 +233,7 @@ sap.ui.define([
 		}
 
 		if (mRenderConfig.headerSelector.type === "toggle") {
-			toggleSelectAll(this, this.getTable());
+			toggleSelectAll(this);
 		} else if (mRenderConfig.headerSelector.type === "clear") {
 			this.clearSelection();
 		}
@@ -304,30 +333,26 @@ sap.ui.define([
 		});
 	}
 
-	function selectAll(oPlugin) {
-		if (oPlugin._isLimitDisabled() && oPlugin._getSelectableCount() > 0) {
-			select(oPlugin, 0, oPlugin._getHighestSelectableIndex());
-		}
-	}
-
-	function selectRange(oPlugin, iIndexFrom, iIndexTo) {
-		// The start index is already selected in case of range selection, so the range needs to start from the next index.
-		if (iIndexFrom !== iIndexTo) {
-			iIndexFrom += iIndexTo > iIndexFrom ? 1 : -1;
-		}
-
-		select(oPlugin, iIndexFrom, iIndexTo);
-	}
-
 	function select(oPlugin, iIndexFrom, iIndexTo) {
+		if (iIndexFrom < 0 || iIndexTo < 0) {
+			return;
+		}
+
 		loadLimitedContexts(oPlugin, iIndexFrom, iIndexTo).then(function(mSelectionInfo) {
 			mSelectionInfo.contexts.forEach(function(oContext) {
-				oContext.setSelected(true);
+				if (isContextSelectable(oContext)) {
+					oContext.setSelected(true);
+				}
 			});
 			return oPlugin._scrollTableToIndex(mSelectionInfo.indexTo, mSelectionInfo.indexFrom > mSelectionInfo.indexTo);
 		}).then(function() {
 			oPlugin.fireSelectionChange(); // TODO: Only fire if the selection state of a context was really changed!
 		});
+	}
+
+	function isContextSelectable(oContext) {
+		var bIsTree = "hierarchyQualifier" in (oContext.getBinding().getAggregation() || {});
+		return (bIsTree || oContext.getProperty("@$ui5.node.isExpanded") === undefined) && !oContext.getProperty("@$ui5.node.isTotal");
 	}
 
 	ODataV4Selection.prototype.clearSelection = function() {
@@ -351,15 +376,6 @@ sap.ui.define([
 		return oBinding ? oBinding.getAllCurrentContexts().filter(function(oContext) {
 			return oContext.isSelected();
 		}) : [];
-	};
-
-	ODataV4Selection.prototype._getSelectableCount = function() {
-		var oBinding = this.getTableBinding();
-		return oBinding ? oBinding.getLength() : 0;
-	};
-
-	ODataV4Selection.prototype._getHighestSelectableIndex = function() {
-		return this._getSelectableCount() - 1;
 	};
 
 	/**

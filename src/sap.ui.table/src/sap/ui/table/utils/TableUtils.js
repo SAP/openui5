@@ -384,23 +384,10 @@ sap.ui.define([
 		 * @param {jQuery | HTMLElement | int | sap.ui.table.Row} vRowIndicator
 		 *     The data cell in the row, the index of the row in the aggregation, or the row instance on which to toggle the selection state.
 		 * @param {boolean} [bSelect] If defined, then instead of toggling the desired state is set.
-		 * @param {Function} [fnDoSelect] If defined, then instead of the default selection code, this custom callback is used.
+		 * @param {function(sap.ui.table.Row)} [fnDoSelect] If defined, then instead of the default selection code, this custom callback is used.
 		 */
 		toggleRowSelection: function(oTable, vRowIndicator, bSelect, fnDoSelect) {
 			var oRow;
-
-			function setSelectionState(oRow) {
-				oTable._iSourceRowIndex = oRow.getIndex(); // To indicate that the selection was changed by user interaction. TODO: Move to plugin and legacy multi selection
-
-				if (fnDoSelect) {
-					fnDoSelect(oRow, bSelect);
-				} else {
-					var oSelectionPlugin = oTable._getSelectionPlugin();
-					oSelectionPlugin.setSelected(oRow, typeof bSelect === "boolean" ? bSelect : !oSelectionPlugin.isSelected(oRow));
-				}
-
-				delete oTable._iSourceRowIndex;
-			}
 
 			if (TableUtils.isA(vRowIndicator, "sap.ui.table.Row")) {
 				oRow = vRowIndicator;
@@ -419,9 +406,20 @@ sap.ui.define([
 				}
 			}
 
-			if (oRow) {
-				setSelectionState(oRow);
+			if (!oRow || oRow.isEmpty()) {
+				return;
 			}
+
+			oTable._iSourceRowIndex = oRow.getIndex(); // To indicate that the selection was changed by user interaction. TODO: Move to plugin and legacy multi selection
+
+			if (fnDoSelect) {
+				fnDoSelect(oRow);
+			} else {
+				var oSelectionPlugin = oTable._getSelectionPlugin();
+				oSelectionPlugin.setSelected(oRow, typeof bSelect === "boolean" ? bSelect : !oSelectionPlugin.isSelected(oRow));
+			}
+
+			delete oTable._iSourceRowIndex;
 		},
 
 		/**
