@@ -1295,7 +1295,7 @@ sap.ui.define([
                 this._setState(oMDCChart, oState);
                 var oBindingInfo;
                 if (this._getBindingInfo) {
-                    oBindingInfo = this._getBindingInfo(this);
+                    oBindingInfo = this._getBindingInfo(oMDCChart);
                     Log.warning("mdc ChartDelegate", "calling the private delegate._getBindingInfo. Please make the function public!");
                 } else {
                     oBindingInfo = this.getBindingInfo(oMDCChart);
