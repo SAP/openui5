@@ -8,6 +8,7 @@ sap.ui.define([
 		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/util/BindingHelper",
 		"sap/ui/integration/util/BindingResolver",
+		"sap/f/cards/loading/CalendarPlaceholder",
 		"sap/f/CalendarAppointmentInCard",
 		"sap/f/CalendarInCard",
 		"sap/f/PlanningCalendarInCardLegend",
@@ -33,6 +34,7 @@ sap.ui.define([
 		BaseContent,
 		BindingHelper,
 		BindingResolver,
+		CalendarPlaceholder,
 		CalendarAppointmentInCard,
 		CalendarInCard,
 		PlanningCalendarInCardLegend,
@@ -221,6 +223,21 @@ sap.ui.define([
 
 		CalendarContent.prototype.resizeHandler = function (oEvent) {
 			oEvent.control.toggleStyleClass("sapMPCInCardTwoColumns", oEvent.target.getBoundingClientRect().width > 576);
+		};
+
+		/**
+		 * @override
+		 */
+		CalendarContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
+			var oCard = this.getCardInstance(),
+				iContentMinItems = oCard.getContentMinItems(oConfiguration);
+
+			return new CalendarPlaceholder({
+				minItems: iContentMinItems !== null ? iContentMinItems : 2,
+				maxLegendItems: oConfiguration.maxLegendItems ? parseInt(oConfiguration.maxLegendItems) : 2,
+				item: oConfiguration.item ? oConfiguration.item.template : {},
+				legendItem: oConfiguration.legendItem ? oConfiguration.legendItem.template : {}
+			});
 		};
 
 		/**

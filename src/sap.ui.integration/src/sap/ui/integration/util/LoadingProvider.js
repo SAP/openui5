@@ -2,31 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../cards/ListContentRenderer",
-	"sap/ui/core/Element",
-	"sap/f/cards/loading/GenericPlaceholder",
-	"sap/f/cards/loading/ListPlaceholder",
-	"sap/f/cards/loading/CalendarPlaceholder",
-	"sap/f/cards/loading/ObjectPlaceholder",
-	"sap/f/cards/loading/TablePlaceholder",
-	"sap/f/cards/loading/TimelinePlaceholder",
-	"sap/f/cards/loading/AnalyticalPlaceholder",
-	"../cards/TableContentRenderer",
-	"../cards/TimelineContentRenderer",
-	"../cards/AnalyticalContentRenderer"
+	"sap/ui/core/Element"
 ], function (
-	ListContentRenderer,
-	Element,
-	GenericPlaceholder,
-	ListPlaceholder,
-	CalendarPlaceholder,
-	ObjectPlaceholder,
-	TablePlaceholder,
-	TimelinePlaceholder,
-	AnalyticalPlaceholder,
-	TableContentRenderer,
-	TimelineContentRenderer,
-	AnalyticalContentRenderer
+	Element
 ) {
 	"use strict";
 
@@ -66,69 +44,6 @@ sap.ui.define([
 		}
 
 		return this.setProperty("loading", bLoading);
-	};
-
-	LoadingProvider.prototype.createContentPlaceholder = function (oConfiguration, sType, oCard) {
-		var iContentMinItems;
-		var oContentPlaceholder;
-
-		switch (sType) {
-			case "List":
-				iContentMinItems = oCard.getContentMinItems(oConfiguration);
-
-				oContentPlaceholder = new ListPlaceholder({
-					minItems: iContentMinItems !== null ? iContentMinItems : 2,
-					item: oConfiguration.item,
-					itemHeight: ListContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
-				});
-				break;
-
-			case "Calendar":
-				iContentMinItems = oCard.getContentMinItems(oConfiguration);
-
-				oContentPlaceholder = new CalendarPlaceholder({
-					minItems: iContentMinItems !== null ? iContentMinItems : 2,
-					maxLegendItems: oConfiguration.maxLegendItems ? parseInt(oConfiguration.maxLegendItems) : 2,
-					item: oConfiguration.item ? oConfiguration.item.template : {},
-					legendItem: oConfiguration.legendItem ? oConfiguration.legendItem.template : {}
-				});
-				break;
-			case "Object":
-				oContentPlaceholder = new ObjectPlaceholder();
-				break;
-
-			case "Table":
-				iContentMinItems = oCard.getContentMinItems(oConfiguration);
-
-				oContentPlaceholder = new TablePlaceholder({
-					minItems: iContentMinItems !== null ? iContentMinItems : 2,
-					itemHeight: TableContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem",
-					columns: oConfiguration.row ? oConfiguration.row.columns.length || 2 : 2
-				});
-				break;
-
-			case "Timeline":
-				iContentMinItems = oCard.getContentMinItems(oConfiguration);
-
-				oContentPlaceholder = new TimelinePlaceholder({
-					minItems: iContentMinItems !== null ? iContentMinItems : 2,
-					item: oConfiguration.item,
-					itemHeight: TimelineContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
-				});
-				break;
-
-			case "Analytical":
-				oContentPlaceholder = new AnalyticalPlaceholder({
-					chartType: oConfiguration.chartType,
-					minHeight: AnalyticalContentRenderer.getMinHeight(oConfiguration)
-				});
-				break;
-
-			default:
-				oContentPlaceholder = new GenericPlaceholder();
-		}
-
-		return oContentPlaceholder;
 	};
 
 	/**

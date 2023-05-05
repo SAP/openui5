@@ -1757,7 +1757,10 @@ sap.ui.define([
 			removeActiveLoadingProvider: function () { },
 			getManifestEntry: function () { },
 			getPreviewMode: function () { },
-			getHeight: function () { }
+			getHeight: function () { },
+			getContentMinItems: function () {
+				return null;
+			}
 		});
 
 		oListContent.setActions(new CardActions());
