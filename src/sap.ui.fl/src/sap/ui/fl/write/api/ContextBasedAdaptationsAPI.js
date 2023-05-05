@@ -232,6 +232,19 @@ sap.ui.define([
 		return _mInstances[sReference] && _mInstances[sReference][sLayer];
 	};
 
+	/**
+	 * Checks if an adaptation for a given reference and layer exists.
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.layer - Layer
+	 * @returns {boolean} checks if at least one adaptation exists for this reference and layer
+	 */
+	ContextBasedAdaptationsAPI.adaptationExists = function(mPropertyBag) {
+		var sReference = mPropertyBag.reference;
+		var sLayer = mPropertyBag.layer;
+		return this.hasAdaptationsModel({reference: sReference, layer: sLayer}) && _mInstances[sReference][sLayer].getProperty("/count") > 0;
+	};
+
 	ContextBasedAdaptationsAPI.clearInstances = function() {
 		_mInstances = {};
 	};

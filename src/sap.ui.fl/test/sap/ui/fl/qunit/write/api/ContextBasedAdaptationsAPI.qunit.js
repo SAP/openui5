@@ -647,6 +647,56 @@ sap.ui.define([
 			}, new Error("Adaptations model for reference 'com.sap.test.app' and layer 'CUSTOMER' were not initialized."), "then the correct error message is returned");
 		});
 
+		QUnit.test("when a control and a layer were provided and empty adaptations model was initialized", function(assert) {
+			assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag), "there is no adaptations model for this reference and layer");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			var sActiveVersion = 1;
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function() {
+					return sActiveVersion;
+				}
+			});
+			var oExpectedFilledData = {
+				allAdaptations: [
+					{
+						id: "DEFAULT",
+						contexts: {},
+						title: "",
+						description: "",
+						createdBy: "",
+						createdAt: "",
+						changedBy: "",
+						changedAt: "",
+						type: "DEFAULT"
+					}
+				],
+				adaptations: [],
+				count: 0,
+				displayedAdaptation: {
+					changedAt: "",
+					changedBy: "",
+					contexts: {},
+					createdAt: "",
+					createdBy: "",
+					description: "",
+					id: "DEFAULT",
+					rank: 1,
+					title: "",
+					type: "DEFAULT"
+				}
+			};
+			sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: oExpectedFilledData.allAdaptations});
+			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function() {
+				assert.ok(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag), "there is an adaptations model for this reference and layer");
+				var oModel = ContextBasedAdaptationsAPI.getAdaptationsModel(this.mPropertyBag);
+				assert.ok(oModel instanceof JSONModel, "then the result is of type JSONModel");
+				assert.deepEqual(oModel.getData(), oExpectedFilledData, "then the adaptations model is returned with initialized values");
+				assert.strictEqual(ContextBasedAdaptationsAPI.getDisplayedAdaptationId(this.mPropertyBag), undefined, "displayed default adaptation id is undefined");
+				assert.notOk(ContextBasedAdaptationsAPI.adaptationExists(this.mPropertyBag), "at least one adaptation exists");
+			}.bind(this));
+		});
+
 		QUnit.test("when a control and a layer were provided and adaptations model was initialized", function(assert) {
 			assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag), "there is no adaptations model for this reference and layer");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -747,6 +797,7 @@ sap.ui.define([
 				assert.strictEqual(ContextBasedAdaptationsAPI.getDisplayedAdaptationId(this.mPropertyBag), oExpectedFilledData.displayedAdaptation.id, "displayed adaptation id is correct");
 				oModel.switchDisplayedAdaptation("DEFAULT");
 				assert.strictEqual(ContextBasedAdaptationsAPI.getDisplayedAdaptationId(this.mPropertyBag), undefined, "displayed default adaptation id is undefined");
+				assert.ok(ContextBasedAdaptationsAPI.adaptationExists(this.mPropertyBag), "at least one adaptation exists");
 			}.bind(this));
 		});
 	});
