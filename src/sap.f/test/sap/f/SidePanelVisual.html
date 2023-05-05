@@ -25,13 +25,15 @@
 					"sap/m/Text",
 					"sap/m/Button",
 					"sap/f/SidePanel",
-					"sap/f/SidePanelItem"
+					"sap/f/SidePanelItem",
+					"sap/f/library"
 				], function (
 					Core,
 					Text,
 					Button,
 					SidePanel,
-					SidePanelItem
+					SidePanelItem,
+					library
 				) {
 					var oSidePanel1 = new SidePanel("SidePanel1", {
 						mainContent: [
@@ -123,6 +125,16 @@
 							})
 						]
 					}).placeAt("sp2");
+
+					var oPositionButton = new Button("PositionButton", {
+						text: "Toggle SidePanel Position",
+						press: function() {
+							var sPos1 = oSidePanel1.getSidePanelPosition() === library.SidePanelPosition.Right ? library.SidePanelPosition.Left : library.SidePanelPosition.Right;
+							var sPos2 = oSidePanel2.getSidePanelPosition() === library.SidePanelPosition.Right ? library.SidePanelPosition.Left : library.SidePanelPosition.Right;
+							oSidePanel1.setSidePanelPosition(sPos1);
+							oSidePanel2.setSidePanelPosition(sPos2);
+						}
+					}).placeAt("spp");
 				});
 			});
 		</script>
@@ -130,5 +142,6 @@
 	<body id="body" class="sapUiBody">
 		<div id="sp1" class="spDiv"></div>
 		<div id="sp2" class="spDiv"></div>
+		<div id="spp"></div>
 	</body>
 </html>
