@@ -811,6 +811,119 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given ContextBasedAdaptationsAPI is initialized with adaptations and refreshAdaptationModel is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest: function() {
+					return {};
+				},
+				getManifestObject: function() {
+					return {
+						"sap.app": {
+							id: "com.sap.test.app"
+						}
+					};
+				},
+				getId: function() {
+					return "sComponentId";
+				},
+				getComponentData: function() {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
+		beforeEach: function() {
+			this.mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				control: new Control()
+			};
+			stubSettings(sandbox);
+			ContextBasedAdaptationsAPI.clearInstances();
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.test.app");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			var sActiveVersion = 1;
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function() {
+					return sActiveVersion;
+				}
+			});
+			var aAdaptations = [
+				{
+					id: "id-1591275572834-1",
+					contexts: {
+						role: ["SALES"]
+					},
+					title: "German Admin",
+					description: "ACH Admin for Germany",
+					createdBy: "Test User 1",
+					createdAt: "May 25, 2022",
+					changedBy: "Test User 1",
+					changedAt: "May 27, 2022"
+				},
+				{
+					id: "id-1591275572835-1",
+					contexts: {
+						role: ["MARKETING_MANAGER"]
+					},
+					title: "DLM Copilot",
+					description: "DLM copilot contexts for Europe",
+					createdBy: "Test User 2",
+					createdAt: "May 17, 2022",
+					changedBy: "Test User 2",
+					changedAt: "SEPTEMBER 07, 2022"
+				},
+				{
+					id: "id-1591275572836-1",
+					contexts: {
+						role: ["HR_MANAGER"]
+					},
+					title: "Only for HR",
+					description: "HR restricted",
+					createdBy: "Test User 3",
+					createdAt: "May 17, 2022",
+					changedBy: "Test User 3",
+					changedAt: "SEPTEMBER 07, 2022"
+				},
+				{
+					id: "DEFAULT",
+					contexts: {},
+					title: "",
+					description: "",
+					createdBy: "",
+					createdAt: "",
+					changedBy: "",
+					changedAt: "",
+					type: "DEFAULT"
+				}
+			];
+			sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: aAdaptations});
+			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function(oModel) {
+				this.oModel = oModel;
+			}.bind(this));
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the displayed adaptation is still available", function(assert) {
+			this.oModel.switchDisplayedAdaptation("id-1591275572836-1");
+			return ContextBasedAdaptationsAPI.refreshAdaptationModel(this.mPropertyBag).then(function(sDisplayedAdaptationId) {
+				assert.strictEqual(sDisplayedAdaptationId, "id-1591275572836-1",
+					"then the displayed adaptation is the same as before the refresh has been called");
+			});
+		});
+
+		QUnit.test("when the displayed adaptation is not available anymore", function(assert) {
+			this.oModel.getProperty("/allAdaptations").splice(0, 1); // simulate first adaptation is not available anymore
+			return ContextBasedAdaptationsAPI.refreshAdaptationModel(this.mPropertyBag).then(function(sDisplayedAdaptationId) {
+				assert.strictEqual(sDisplayedAdaptationId, "id-1591275572835-1",
+					"then the displayed adaptation is the one with highest prio");
+			});
+		});
+	});
+
 	QUnit.module("Given ContextBasedAdaptationsAPI.create is called", {
 		before: function() {
 			this.oAppComponent = {
@@ -904,10 +1017,10 @@ sap.ui.define([
 
 			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oPublishStub.getCall(0).args[0];
-				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
-				assert.equal(oArgs.parentVersion, Version.Number.Draft, "then the correct version is used");
-				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
-				assert.equal(sResult, "Success", "the context-based adaptation is created");
+				assert.strictEqual(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.strictEqual(oArgs.parentVersion, Version.Number.Draft, "then the correct version is used");
+				assert.strictEqual(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
+				assert.strictEqual(sResult, "Success", "the context-based adaptation is created");
 			});
 		});
 
@@ -931,10 +1044,10 @@ sap.ui.define([
 
 			return ContextBasedAdaptationsAPI.create(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oPublishStub.getCall(0).args[0];
-				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
-				assert.equal(oArgs.parentVersion, 1, "then the correct version is used");
-				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
-				assert.equal(sResult, "Success", "the context-based adaptation is created");
+				assert.strictEqual(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.strictEqual(oArgs.parentVersion, 1, "then the correct version is used");
+				assert.strictEqual(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
+				assert.strictEqual(sResult, "Success", "the context-based adaptation is created");
 			});
 		});
 	});
@@ -1040,14 +1153,14 @@ sap.ui.define([
 				return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function() {
 					return ContextBasedAdaptationsAPI.create(this.mPropertyBag).then(function(sResult) {
 						var oArgs = oPublishStub.getCall(0).args[0];
-						assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+						assert.strictEqual(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
 						if (mSetup.stubVersionModel === Version.Number.Draft) {
-							assert.equal(oArgs.parentVersion, Version.Number.Draft, "then the correct version is used");
+							assert.strictEqual(oArgs.parentVersion, Version.Number.Draft, "then the correct version is used");
 						} else {
-							assert.equal(oArgs.parentVersion, 1, "then the correct version is used");
+							assert.strictEqual(oArgs.parentVersion, 1, "then the correct version is used");
 						}
-						assert.equal(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
-						assert.equal(sResult, "Success", "the context-based adaptation is created");
+						assert.strictEqual(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
+						assert.strictEqual(sResult, "Success", "the context-based adaptation is created");
 						var oWriteArgs = this.oWriteChangesStub.getCall(0).args[0];
 						return verifyChangesAreCopiedCorrectly.call(this, oWriteArgs.flexObjects, assert);
 					}.bind(this));
@@ -1144,10 +1257,10 @@ sap.ui.define([
 			return ContextBasedAdaptationsAPI.reorder(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oReorderStub.getCall(0).args[0];
 				assert.deepEqual(oArgs.flexObjects, this.mPropertyBag.parameters, "then the correct parameters with priority list is used");
-				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
-				assert.equal(oArgs.parentVersion, 1, "then the correct version is used");
-				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
-				assert.equal(sResult, "Success", "then the reorder was succesfull");
+				assert.strictEqual(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.strictEqual(oArgs.parentVersion, 1, "then the correct version is used");
+				assert.strictEqual(oArgs.appId, "com.sap.test.app", "then the correct reference is used");
+				assert.strictEqual(sResult, "Success", "then the reorder was succesfull");
 			}.bind(this));
 		});
 	});
@@ -1248,10 +1361,10 @@ sap.ui.define([
 			var oReorderStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves(aAdaptations);
 			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oReorderStub.getCall(0).args[0];
-				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
-				assert.equal(oArgs.version, 1, "then correct version is used");
-				assert.equal(oArgs.appId, "com.sap.test.app", "the correct reference is used");
-				assert.equal(sResult.adaptations.length, 2, "the correct data length is returned");
+				assert.strictEqual(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.strictEqual(oArgs.version, 1, "then correct version is used");
+				assert.strictEqual(oArgs.appId, "com.sap.test.app", "the correct reference is used");
+				assert.strictEqual(sResult.adaptations.length, 2, "the correct data length is returned");
 				assert.deepEqual(sResult, aAdaptations, "then the correct data is returned");
 			});
 		});
@@ -1269,10 +1382,10 @@ sap.ui.define([
 			var oReorderStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves();
 			return ContextBasedAdaptationsAPI.load(this.mPropertyBag).then(function(sResult) {
 				var oArgs = oReorderStub.getCall(0).args[0];
-				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
-				assert.equal(oArgs.version, 1, "then the correct version is used");
-				assert.equal(oArgs.appId, "com.sap.test.app", "then correct reference is used");
-				assert.equal(sResult.adaptations.length, 0, "then the correct data length is returned");
+				assert.strictEqual(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.strictEqual(oArgs.version, 1, "then the correct version is used");
+				assert.strictEqual(oArgs.appId, "com.sap.test.app", "then correct reference is used");
+				assert.strictEqual(sResult.adaptations.length, 0, "then the correct data length is returned");
 				assert.deepEqual(sResult, {adaptations: []}, "then the correct data is returned");
 			});
 		});
@@ -1380,11 +1493,11 @@ sap.ui.define([
 			return ContextBasedAdaptationsAPI.update(this.mPropertyBag).then(function (sResult) {
 				var oArgs = oUpdateStub.getCall(0).args[0];
 				assert.deepEqual(oArgs.flexObjects, this.mPropertyBag.parameters, "then the correct parameters with priority list is used");
-				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
-				assert.equal(oArgs.parentVersion, 1, "then the correct version is used");
-				assert.equal(oArgs.adaptationId, "id_12345", "then the correct adaptation is used");
-				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct appId is used");
-				assert.equal(sResult, "Success", "then the update was succesfull");
+				assert.strictEqual(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.strictEqual(oArgs.parentVersion, 1, "then the correct version is used");
+				assert.strictEqual(oArgs.adaptationId, "id_12345", "then the correct adaptation is used");
+				assert.strictEqual(oArgs.appId, "com.sap.test.app", "then the correct appId is used");
+				assert.strictEqual(sResult, "Success", "then the update was succesfull");
 			}.bind(this));
 		});
 	});
@@ -1476,11 +1589,11 @@ sap.ui.define([
 			return ContextBasedAdaptationsAPI.remove(this.mPropertyBag).then(function (sResult) {
 				var oArgs = oRemoveStub.getCall(0).args[0];
 				assert.deepEqual(oArgs.flexObjects, this.mPropertyBag.parameters, "then the correct parameters with priority list is used");
-				assert.equal(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
-				assert.equal(oArgs.parentVersion, 1, "then the correct version is used");
-				assert.equal(oArgs.adaptationId, "id_12345", "then the correct adaptation is used");
-				assert.equal(oArgs.appId, "com.sap.test.app", "then the correct appId is used");
-				assert.equal(sResult, "Success", "then the remove was succesfull");
+				assert.strictEqual(oArgs.layer, Layer.CUSTOMER, "then the correct layer is used");
+				assert.strictEqual(oArgs.parentVersion, 1, "then the correct version is used");
+				assert.strictEqual(oArgs.adaptationId, "id_12345", "then the correct adaptation is used");
+				assert.strictEqual(oArgs.appId, "com.sap.test.app", "then the correct appId is used");
+				assert.strictEqual(sResult, "Success", "then the remove was succesfull");
 			}.bind(this));
 		});
 	});

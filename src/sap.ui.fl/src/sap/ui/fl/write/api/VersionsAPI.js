@@ -46,6 +46,26 @@ sap.ui.define([
 		});
 	}
 
+	function incorporateAdaptationIdInSwitch(mPropertyBag) {
+		var sReference = getFlexReferenceForControl(mPropertyBag.control);
+		var bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel({
+			layer: mPropertyBag.layer,
+			reference: sReference
+		});
+
+		// version switch
+		if (!mPropertyBag.adaptationId && bHasAdaptationsModel) {
+			return ContextBasedAdaptationsAPI.refreshAdaptationModel(mPropertyBag);
+		// adaptation switch
+		} else if (mPropertyBag.adaptationId && bHasAdaptationsModel) {
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel(mPropertyBag);
+			oAdaptationsModel.switchDisplayedAdaptation(mPropertyBag.adaptationId);
+			return Promise.resolve(mPropertyBag.adaptationId);
+		}
+		// adaptations disabled
+		return Promise.resolve();
+	}
+
 	/**
 	 * Provides an API for tools like {@link sap.ui.rta} to activate, discard and retrieve versions.
 	 *
@@ -168,23 +188,17 @@ sap.ui.define([
 			oModel.setProperty("/persistedVersion", mPropertyBag.version);
 		}
 
-		if (!mPropertyBag.adaptationId) {
-			ContextBasedAdaptationsAPI.clearInstances();
-		} else {
-			var oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel(mPropertyBag);
-			if (oAdaptationsModel) {
-				oAdaptationsModel.switchDisplayedAdaptation(mPropertyBag.adaptationId);
-			}
-		}
-
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
-		var sReference = getFlexReferenceForControl(oAppComponent);
-		return FlexState.clearAndInitialize({
-			componentId: oAppComponent.getId(),
-			reference: sReference,
-			version: mPropertyBag.version,
-			allContexts: mPropertyBag.allContexts,
-			adaptationId: mPropertyBag.adaptationId
+		return incorporateAdaptationIdInSwitch(mPropertyBag)
+		.then(function(sDisplayedAdaptationId) {
+			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
+			var sReference = getFlexReferenceForControl(oAppComponent);
+			return FlexState.clearAndInitialize({
+				componentId: oAppComponent.getId(),
+				reference: sReference,
+				version: mPropertyBag.version,
+				allContexts: mPropertyBag.allContexts,
+				adaptationId: sDisplayedAdaptationId
+			});
 		});
 	};
 
@@ -253,8 +267,26 @@ sap.ui.define([
 			nonNormalizedReference: sReference,
 			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer
-		}).then(function(oDiscardInfo) {
+		})
+		.then(function(oDiscardInfo) {
 			if (oDiscardInfo.backendChangesDiscarded) {
+				var bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel({
+					layer: mPropertyBag.layer,
+					reference: sReference
+				});
+				if (bHasAdaptationsModel) {
+					return ContextBasedAdaptationsAPI.refreshAdaptationModel(mPropertyBag)
+					.then(function(sDisplayedAdaptationId) {
+						//invalidate flexState to trigger getFlexData for the current active version after discard
+						return FlexState.clearAndInitialize({
+							componentId: oAppComponent.getId(),
+							reference: sReference,
+							adaptationId: sDisplayedAdaptationId
+						}).then(function () {
+							return oDiscardInfo;
+						});
+					});
+				}
 				//invalidate flexState to trigger getFlexData for the current active version after discard
 				return FlexState.clearAndInitialize({
 					componentId: oAppComponent.getId(),

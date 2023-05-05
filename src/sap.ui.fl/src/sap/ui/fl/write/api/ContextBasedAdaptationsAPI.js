@@ -255,6 +255,30 @@ sap.ui.define([
 		_mInstances = {};
 	};
 
+	/**
+	 * Discards the model, initializes it again and sets the displayed adaptation.
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer
+	 * @returns {string} Displayed adaptation id of the refreshed model
+	 */
+	ContextBasedAdaptationsAPI.refreshAdaptationModel = function(mPropertyBag) {
+		var sDisplayedAdaptationId = this.getDisplayedAdaptationId(mPropertyBag);
+		this.clearInstances();
+		return this.initialize(mPropertyBag)
+		.then(function(oModel) {
+			oModel.getProperty("/allAdaptations").some(function(oAdaptation) {
+				if (oAdaptation.id === sDisplayedAdaptationId) {
+					oModel.setProperty("/displayedAdaptation", oAdaptation);
+					oModel.updateBindings(true);
+					return true;
+				}
+				return false;
+			});
+			return oModel.getProperty("/displayedAdaptation/id");
+		});
+	};
+
 	function getNewVariantId(mFileNames, sOldVariantId) {
 		return mFileNames.get(sOldVariantId) || sOldVariantId;
 	}
