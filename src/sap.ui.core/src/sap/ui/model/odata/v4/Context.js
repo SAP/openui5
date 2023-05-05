@@ -2057,8 +2057,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a for an OData V4 model which belongs to a new generation. A unique number for
-		 * that generation is generated and can be retrieved via {@link #getGeneration}.
+		 * Creates a context for an OData V4 model which belongs to a new generation. A unique
+		 * number for that generation is generated and can be retrieved via {@link #getGeneration}.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 		 *   The model
