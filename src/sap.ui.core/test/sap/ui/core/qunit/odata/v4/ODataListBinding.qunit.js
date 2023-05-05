@@ -41,8 +41,7 @@ sap.ui.define([
 					isSuspended : function () { return false; }
 				};
 			},
-			getUpdateGroupId : function () { return "update"; },
-			isRelative : function () { return false; }
+			getUpdateGroupId : function () { return "update"; }
 		},
 		rTransientPredicate = /^\(\$uid=.+\)$/;
 
@@ -2436,52 +2435,6 @@ sap.ui.define([
 		oBinding.setContext(oContext);
 
 		assert.strictEqual(oBinding.oContext, oContext);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("setContext: inactive parent", function (assert) {
-		var oBinding = this.bindList("Suppliers"),
-			oContext = {
-				isInactive : function () {},
-				toString : function () { return "/Context[-1,inactive]"; }
-			};
-
-		this.mock(oContext).expects("isInactive").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.setContext(oContext);
-		}, new Error("Invalid context, must not be dependent on " + oContext));
-		assert.strictEqual(oBinding.oContext, undefined, "context not changed");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("setContext: indirect inactive parent", function (assert) {
-		var oBinding = this.bindList("Suppliers"),
-			oInactiveContext = {
-				isInactive : function () {},
-				toString : function () { return "/Context[-1,inactive]"; }
-			},
-			oNestedBinding = {
-				getContext : function () {},
-				isRelative : function () {}
-			},
-			oNestedContext = {
-				getBinding : function () {},
-				isInactive : function () {}
-			};
-
-		this.mock(oNestedContext).expects("isInactive").withExactArgs().returns(false);
-		this.mock(oNestedContext).expects("getBinding").withExactArgs().returns(oNestedBinding);
-		this.mock(oNestedBinding).expects("isRelative").withExactArgs().returns(true);
-		this.mock(oNestedBinding).expects("getContext").withExactArgs().returns(oInactiveContext);
-		this.mock(oInactiveContext).expects("isInactive").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.setContext(oNestedContext);
-		}, new Error("Invalid context, must not be dependent on " + oInactiveContext));
-		assert.strictEqual(oBinding.oContext, undefined, "context not changed");
 	});
 
 	//*********************************************************************************************

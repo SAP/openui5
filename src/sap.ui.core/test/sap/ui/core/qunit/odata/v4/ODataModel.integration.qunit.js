@@ -6994,40 +6994,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Try to set an inactive context as binding context of a page with a nested table.
-	// See that the ODLB rejects the inactive parent context. Two variants: with an without an
-	// intermediated ODCB.
-	// JIRA: CPOUI5ODATAV4-2037
-[false, true].forEach(function (bIntermediate) {
-	var sTitle = "CPOUI5ODATAV4-2037: inactive context, bIntermediate=" + bIntermediate;
-
-	QUnit.test(sTitle, function (assert) {
-		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
-			sView = '\
-<FlexBox id="detail" ' + (bIntermediate ? 'binding="{}"' : "") + '>\
-	<Table id="items" items="{SO_2_SOITEM}">\
-		<Text id="position" text="{ItemPosition}"/>\
-	</Table>\
-</FlexBox>',
-			that = this;
-
-		return this.createView(assert, sView, oModel).then(function () {
-			var oContext;
-
-			oContext = oModel.bindList("/SalesOrderList")
-				.create({}, false, false, /*bInactive*/true);
-
-			assert.throws(function () {
-				// code under test
-				that.oView.byId("detail").setBindingContext(oContext);
-			}, new Error("Invalid context, must not be dependent on " + oContext));
-
-			return that.waitForChanges(assert);
-		});
-	});
-});
-
-	//*********************************************************************************************
 	// Scenario: Delete an entity in a growing table via refresh and let the table grow at the same
 	// time.
 	// JIRA: CPOUI5UISERVICESV3-1795
