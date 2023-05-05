@@ -180,6 +180,10 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.getRenderConfig = function() {
+		if (!this.isActive()) {
+			return SelectionPlugin.prototype.getRenderConfig.apply(this, arguments);
+		}
+
 		return {
 			headerSelector: {
 				type: this._bLimitDisabled ? "toggle" : "clear",
