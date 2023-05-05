@@ -3,9 +3,18 @@
  */
 
 sap.ui.define([
+	'sap/ui/mdc/enum/BaseType',
+	'sap/ui/model/SimpleType',
+	'sap/base/util/ObjectPath',
+	'sap/ui/mdc/util/DateUtil',
+	'sap/base/util/merge'
 ], function(
+	BaseType, SimpleType, ObjectPath, DateUtil, merge
 ) {
 	"use strict";
+
+	var sDatePattern = "yyyy-MM-dd";
+	var sTimePattern = "HH:mm:ss";
 
 	var _cache = new WeakMap(); // We do not want to share Maps with derived TypeMaps
 
@@ -68,6 +77,7 @@ sap.ui.define([
 	 *
 	 * As default <code>string</code> is returned.
 	 *
+	 * @final
 	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
 	 * @param {sap.ui.mdc.enum.BaseType|function} vBaseType BaseType fitting the given sType or method returning a BaseType based on type configuration
 	 * @param {function} [fnOptions] Optional customizing method for formatoptions and constraints. See <code>sap.ui.mdc.DefaultTypeMap</code> for examples.
@@ -82,6 +92,7 @@ sap.ui.define([
 	/**
 	 * Allows alternative identifiers for Types, such as "Boolean" for "sap.ui.model.type.Boolean"
 	 *
+	 * @final
 	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
 	 * @param {string} sAlias Alternative identifier for sType
 	 * @private
@@ -98,24 +109,20 @@ sap.ui.define([
 	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
 	 * @returns {sap.ui.mdc.enum.BaseType|function} BaseType configured for the sap.ui.model.SimpleType or function to resolve BaseType based on configuration
 	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	TypeMap.getBaseType = function (sType) {
+	TypeMap._getBaseType = function (sType) {
 		var aResult = this._get(sType);
 		return aResult && aResult[1][0];
 	};
 
 	/**
-	 * Returns the option customizing method configured for a sap.ui.model.SimpleType
+	 * Returns the optional customizing method configured for a sap.ui.model.SimpleType
 	 *
 	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
 	 * @returns {function} Method for model-specific type configuration. See <code>sap.ui.mdc.DefaultTypeMap</code> for examples.
 	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	TypeMap.getOptions = function (sType) {
+	TypeMap._getOptions = function (sType) {
 		var aResult = this._get(sType);
 		return aResult && aResult[1][1];
 	};
@@ -126,10 +133,8 @@ sap.ui.define([
 	 * @param {string} sAlias Identifier for a configured Type Alias
 	 * @returns {string} Objectpath string for sap.ui.model.SimpleType
 	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	TypeMap.getClass = function (sAlias) {
+	TypeMap._getClass = function (sAlias) {
 		var aResult = this._get(sAlias);
 		return aResult && aResult[0];
 	};
@@ -137,6 +142,7 @@ sap.ui.define([
 	 /**
 	 * Exports the TypeMap's current data
 	 *
+	 * @final
 	 * @returns {Array} Array created from this TypeMap's internal map
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -149,6 +155,7 @@ sap.ui.define([
 	/**
 	 * Imports a TypeMap's data into another TypeMap
 	 *
+	 * @final
 	 * @param {sap.ui.mdc.util.TypeMap} oTypeMap TypeMap to import
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -163,12 +170,202 @@ sap.ui.define([
 	/**
 	 * Prevents further manipulation of a TypeMap's data
 	 *
+	 * @final
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	TypeMap.freeze = function () {
 		this._getMap()._bFrozen = true;
+	};
+
+
+
+	// <!-- TypeUtil functionality -->
+
+	/**
+	 * @final
+	 * @param {string} sType Given type string or sap.ui.model.SimpleType
+	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
+	 * @param {object} oConstraints Used <code>Constraints</code>
+	 * @returns {sap.ui.mdc.enum.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	TypeMap.getBaseType = function(sType, oFormatOptions, oConstraints) {
+		var vBaseType = this._getBaseType(sType);
+		return vBaseType && (typeof vBaseType === "function" ? vBaseType(oFormatOptions, oConstraints) : vBaseType) || BaseType.String;
+	};
+
+	/**
+	 * @final
+	 * @param {sap.ui.model.SimpleType} oType Given type string or sap.ui.model.SimpleType
+	 * @returns {string} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	TypeMap.getBaseTypeForType = function(oType) {
+		return this.getBaseType(oType.getMetadata && oType.getMetadata().getName(), oType.getFormatOptions(), oType.getConstraints());
+	};
+
+	/**
+	 * @final
+	 * @param {string} sType Given model specific type
+	 * @returns {string} Data type name
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	TypeMap.getDataTypeClassName = function(sType) {
+		return this._getClass(sType) || sType;
+	};
+
+	/**
+	 * @final
+	 * @param {string} sDataType Class path as string where each name is separated by '.'
+	 * @returns {sap.ui.model.SimpleType} creates returns a dataType class
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	TypeMap.getDataTypeClass = function(sDataType) {
+		var TypeClass = ObjectPath.get(this.getDataTypeClassName(sDataType) || "");
+		if (!TypeClass) {
+			throw new Error("DataType '" + sDataType + "' cannot be determined");
+		}
+		return TypeClass;
+	};
+
+	/**
+	 * @final
+	 * @param {string} sDataType Class path as string where each name is separated by '.'
+	 * @param {object} [oFormatOptions] formatoptions for the dataType
+	 * @param {object} [oConstraints] constraints for the dataType
+	 * @param {object} [oOptions] Additional options for overrides
+	 * @returns {sap.ui.model.SimpleType} creates returns an instance of the resolved dataType
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	TypeMap.getDataTypeInstance = function(sDataType, oFormatOptions, oConstraints, oOptions) {
+		var TypeClass = this.getDataTypeClass(sDataType);
+		var fnOptions = this._getOptions(TypeClass.getMetadata().getName());
+		var aOverrides = fnOptions && fnOptions(merge({}, oFormatOptions), merge({}, oConstraints), oOptions);
+		oFormatOptions = aOverrides && aOverrides[0] || oFormatOptions;
+		oConstraints = aOverrides && aOverrides[1] || oConstraints;
+		return new TypeClass(oFormatOptions, oConstraints);
+	};
+
+	/**
+	 * @final
+	 * @param {string|sap.ui.model.SimpleType} vType Given dataType as string or type
+	 * @param {object} [oFormatOptions] formatoptions for the given dataType
+	 * @param {object} [oConstraints] constraints for the given dataType
+	 * @returns {sap.ui.mdc.TypeConfig} output returns typeConfig object
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	TypeMap.getTypeConfig = function(vType, oFormatOptions, oConstraints) {
+		var oType = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
+		return {
+			className: oType.getMetadata().getName(),
+			typeInstance: oType,
+			baseType: this.getBaseTypeForType(oType)
+		};
+	};
+
+	/**
+	 * @final
+	 * @param {object} vValue typed value
+	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
+	 * @param {object} [oFormatOptions] formatoptions for the dataType
+	 * @param {object} [oConstraints] constraints for the dataType
+	 * @returns {string} converted value
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	TypeMap.externalizeValue = function(vValue, vType, oFormatOptions, oConstraints) {
+		var oTypeInstance = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
+		var sBaseType = this.getBaseTypeForType(oTypeInstance);
+		switch (sBaseType) {
+			case BaseType.DateTime:
+				return DateUtil.typeToISO(vValue, oTypeInstance, sBaseType);
+
+			case BaseType.Date:
+				return DateUtil.typeToString(vValue, oTypeInstance, sDatePattern);
+
+			case BaseType.Time:
+				return DateUtil.typeToString(vValue, oTypeInstance, sTimePattern);
+
+			case BaseType.Boolean:
+				return vValue;
+
+			case BaseType.Numeric:
+				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
+					// INT64 and Decimal parsed always to string, if for some reason a number comes in -> convert to string, but don't use type at this might have locale dependent formatting
+					return vValue.toString();
+				}
+				return vValue;
+
+			default:
+				// just use type to convert
+				return oTypeInstance.formatValue(vValue, "string");
+		}
+	};
+
+	/**
+	 * @final
+	 * @param {string} vValue externalized value
+	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
+	 * @param {object} [oFormatOptions] formatoptions for the dataType
+	 * @param {object} [oConstraints] constraints for the dataType
+	 * @returns {object} converted value
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	TypeMap.internalizeValue = function(vValue, vType, oFormatOptions, oConstraints) {
+		var oTypeInstance = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
+		var sBaseType = this.getBaseTypeForType(oTypeInstance);
+		switch (sBaseType) {
+			case BaseType.DateTime:
+				// eslint-disable-next-line new-cap
+				return DateUtil.ISOToType(vValue, oTypeInstance, sBaseType);
+
+			case BaseType.Date:
+				if (vValue.indexOf("T") >= 0) { // old variant with DateTime for DateValues
+					vValue = vValue.substr(0, vValue.indexOf("T")); // just take the date part
+				}
+				return DateUtil.stringToType(vValue, oTypeInstance, sDatePattern);
+
+			case BaseType.Time:
+				return DateUtil.stringToType(vValue, oTypeInstance, sTimePattern);
+
+			case BaseType.Boolean:
+				return vValue;
+
+			case BaseType.Numeric:
+				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
+					// INT64 and Decimal parsed always to string, if for some reason a number comes in -> convert to string, but don't use type at this might have locale dependent formatting
+					return vValue.toString();
+				}
+				return vValue;
+
+			default:
+				// just use type to convert
+				return oTypeInstance.parseValue(vValue, "string");
+		}
+	};
+
+	TypeMap._normalizeType = function (vType, oFormatOptions, oConstraints) {
+		if (vType instanceof SimpleType) { // simpletype
+			return vType;
+		}
+		return this.getDataTypeInstance(vType, oFormatOptions, oConstraints); // string
 	};
 
 	return TypeMap;

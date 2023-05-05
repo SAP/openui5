@@ -66,26 +66,26 @@ function(
 		assert.equal(aResult[1], aAliasResult[1], "_get returns expected value");
 	});
 
-	QUnit.test("getBaseType", function(assert) {
+	QUnit.test("_getBaseType", function(assert) {
 		sinon.spy(TestTypeMap, "_get");
-		assert.equal(TestTypeMap.getBaseType("this.is.my.TypeClass"), _mMap.get("this.is.my.TypeClass")[0], "expected baseType returned");
-		assert.equal(TestTypeMap.getBaseType("MyTypeClass"), _mMap.get("this.is.my.TypeClass")[0], "expected baseType returned");
+		assert.equal(TestTypeMap._getBaseType("this.is.my.TypeClass"), _mMap.get("this.is.my.TypeClass")[0], "expected baseType returned");
+		assert.equal(TestTypeMap._getBaseType("MyTypeClass"), _mMap.get("this.is.my.TypeClass")[0], "expected baseType returned");
 		assert.ok(TestTypeMap._get.calledThrice, "method relies on _get");
 		TestTypeMap._get.restore();
 	});
 
-	QUnit.test("getOptions", function(assert) {
+	QUnit.test("_getOptions", function(assert) {
 		sinon.spy(TestTypeMap, "_get");
-		assert.equal(TestTypeMap.getOptions("this.is.my.TypeClass"), _mMap.get("this.is.my.TypeClass")[1], "expected getOptions returned");
-		assert.equal(TestTypeMap.getOptions("MyTypeClass"), _mMap.get("this.is.my.TypeClass")[1], "expected getOptions returned");
+		assert.equal(TestTypeMap._getOptions("this.is.my.TypeClass"), _mMap.get("this.is.my.TypeClass")[1], "expected getOptions returned");
+		assert.equal(TestTypeMap._getOptions("MyTypeClass"), _mMap.get("this.is.my.TypeClass")[1], "expected getOptions returned");
 		assert.ok(TestTypeMap._get.calledThrice, "method relies on _get");
 		TestTypeMap._get.restore();
 	});
 
-	QUnit.test("getClass", function(assert) {
+	QUnit.test("_getClass", function(assert) {
 		sinon.spy(TestTypeMap, "_get");
-		assert.equal(TestTypeMap.getClass("this.is.my.TypeClass"), "this.is.my.TypeClass", "expected identifier returned");
-		assert.equal(TestTypeMap.getClass("MyTypeClass"), "this.is.my.TypeClass", "expected identifier returned");
+		assert.equal(TestTypeMap._getClass("this.is.my.TypeClass"), "this.is.my.TypeClass", "expected identifier returned");
+		assert.equal(TestTypeMap._getClass("MyTypeClass"), "this.is.my.TypeClass", "expected identifier returned");
 		assert.ok(TestTypeMap._get.calledThrice, "method relies on _get");
 		TestTypeMap._get.restore();
 	});
