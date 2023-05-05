@@ -151,7 +151,7 @@ sap.ui.define([
 		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, ["EQ"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
 
 		/* ContentMode EditForHelp */
-		this.oField.setFieldHelp("X"); // just ID needed
+		this.oField.setValueHelp("X"); // just ID needed
 		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Editable, 1, false, []), ContentMode.EditForHelp, "ContentMode 'EditForHelp' returned.");
 	});
 
