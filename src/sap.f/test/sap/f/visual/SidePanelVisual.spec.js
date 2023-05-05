@@ -4,88 +4,128 @@ describe("sap.f.SidePanelVisual", function() {
 	"use strict";
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.f.SidePanel';
-	var iDefaultTimeout = 30000; // timeout for test execution in milliseconds
+	var iDefaultTimeout = 50000; // timeout for test execution in milliseconds
 
-	// SidePanel with many action items
+	// do tests for Right (default) position of the SidePanels
+	_doTests();
 
-	it("SidePanel (many action items and overflow menu) - initial", function() {
-		var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide"));
+	// do tests for Left position of the SidePanels
+	_doTests(true);
 
-		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_initial");
+	/**
+	 * Calls all tests and makes all snapshots.
+	 *
+	 * In order to avoid code and test duplication, the tests are placed in a separate function that is called twice:
+	 * - First call is without parameter, and makes snapshots of all tests for Right position of the SidePanels
+	 * - Second call is with parameter, and makes snapshots of all tests for Left position of the SidePanels
+	 *
+	 * @param {boolean} bLeftPosition whether to toggle Side Panels positions to Left
+	 */
+	function _doTests(bLeftPosition) {
+		var sPicAddon = bLeftPosition ? "-l" : "";
+		var sTestAddon = bLeftPosition ? " (Left position)" : " (Right position)";
 
-	}, iDefaultTimeout);
+		// change position to Left if necessary
+		bLeftPosition && _togglePosition();
 
-	it("SidePanel (many action items and overflow menu) - expand and collapse action bar", function() {
-		var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
-			oExpandCollapse1 = element(by.id("SidePanel1-expandCollapseButton"));
+		// Tests begin here
 
-		oExpandCollapse1.click();
-		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_actionbar_expanded");
+		// SidePanel with many action items
 
-		oExpandCollapse1.click();
-		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_actionbar_collapsed");
+		it("SidePanel (many action items and overflow menu) - initial" + sTestAddon, function() {
+			var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide"));
 
-	}, iDefaultTimeout);
+			expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_initial" + sPicAddon);
 
-	it("SidePanel (many action items and overflow menu) - select/deselect action item", function() {
-		var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
-			oItem1 = element(by.css("#SidePanel1 .sapFSPItem"));
+		}, iDefaultTimeout);
 
-		oItem1.click();
-		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_select_actionitem");
+		it("SidePanel (many action items and overflow menu) - expand and collapse action bar" + sTestAddon, function() {
+			var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
+				oExpandCollapse1 = element(by.id("SidePanel1-expandCollapseButton"));
 
-		oItem1.click();
-		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_deselect_actionitem");
+			oExpandCollapse1.click();
+			expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_actionbar_expanded" + sPicAddon);
 
-	}, iDefaultTimeout);
+			oExpandCollapse1.click();
+			expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_actionbar_collapsed" + sPicAddon);
 
-	it("SidePanel (many action items and overflow menu) - select/deselect overflow action item", function() {
-		var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
-			oItem1 = element(by.css("#SidePanel1 .sapFSPOverflowItem")),
-			oMenu1;
+		}, iDefaultTimeout);
 
-		oItem1.click();
-		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_select_overflowitem");
+		it("SidePanel (many action items and overflow menu) - select/deselect action item" + sTestAddon, function() {
+			var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
+				oItem1 = element(by.css("#SidePanel1 .sapFSPItem"));
 
-		oMenu1 = element(by.css(".sapMMenu"));
-		expect(takeScreenshot(oMenu1)).toLookAs("sidepanel_many_overflowmenu");
+			oItem1.click();
+			expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_select_actionitem" + sPicAddon);
 
-		oItem1.click();
-		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_deselect_overflowitem");
+			oItem1.click();
+			expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_deselect_actionitem" + sPicAddon);
 
-	}, iDefaultTimeout);
+		}, iDefaultTimeout);
 
-	it("SidePanel - try to select disabled action item", function() {
-		var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
-			oDiabledItem = element(by.css("#SidePanel1 .sapFSPItem.sapFSPDisabled"));
+		it("SidePanel (many action items and overflow menu) - select/deselect overflow action item" + sTestAddon, function() {
+			var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
+				oItem1 = element(by.css("#SidePanel1 .sapFSPOverflowItem")),
+				oMenu1;
 
-		oDiabledItem.click();
-		expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_disabled_item_not_selected");
+			oItem1.click();
+			expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_select_overflowitem" + sPicAddon);
 
-	}, iDefaultTimeout);
+			oMenu1 = element(by.css(".sapMMenu"));
+			expect(takeScreenshot(oMenu1)).toLookAs("sidepanel_many_overflowmenu" + sPicAddon);
 
-	// SidePanel with single action item
+			oItem1.click();
+			expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_many_deselect_overflowitem" + sPicAddon);
 
-	it("SidePanel (single action item) - initial", function() {
-		var oSidePanel2 = element(by.css("#SidePanel2 .sapFSPSide"));
+		}, iDefaultTimeout);
 
-		expect(takeScreenshot(oSidePanel2)).toLookAs("sidepanel_single_initial");
+		it("SidePanel - try to select disabled action item" + sTestAddon, function() {
+			var oSidePanel1 = element(by.css("#SidePanel1 .sapFSPSide")),
+				oDiabledItem = element(by.css("#SidePanel1 .sapFSPItem.sapFSPDisabled"));
 
-	}, iDefaultTimeout);
+			oDiabledItem.click();
+			expect(takeScreenshot(oSidePanel1)).toLookAs("sidepanel_disabled_item_not_selected" + sPicAddon);
 
-	it("SidePanel (single action item) - expand and collapse action bar", function() {
-		var oSidePanel2 = element(by.css("#SidePanel2 .sapFSPSide")),
-			oExpandCollapse2 = element(by.id("SidePanel2-expandCollapseButton")),
-			oClose2;
+		}, iDefaultTimeout);
 
-		oExpandCollapse2.click();
-		expect(takeScreenshot(oSidePanel2)).toLookAs("sidepanel_single_actionbar_expanded");
+		// SidePanel with single action item
 
-		oClose2 = element(by.id("SidePanel2-closeButton"));
-		oClose2.click();
-		expect(takeScreenshot(oSidePanel2)).toLookAs("sidepanel_single_actionbar_collapsed");
+		it("SidePanel (single action item) - initial" + sTestAddon, function() {
+			var oSidePanel2 = element(by.css("#SidePanel2 .sapFSPSide"));
 
-	}, iDefaultTimeout);
+			expect(takeScreenshot(oSidePanel2)).toLookAs("sidepanel_single_initial" + sPicAddon);
 
+		}, iDefaultTimeout);
+
+		it("SidePanel (single action item) - expand and collapse action bar" + sTestAddon, function() {
+			var oSidePanel2 = element(by.css("#SidePanel2 .sapFSPSide")),
+				oExpandCollapse2 = element(by.id("SidePanel2-expandCollapseButton")),
+				oClose2;
+
+			oExpandCollapse2.click();
+			expect(takeScreenshot(oSidePanel2)).toLookAs("sidepanel_single_actionbar_expanded" + sPicAddon);
+
+			oClose2 = element(by.id("SidePanel2-closeButton"));
+			oClose2.click();
+			expect(takeScreenshot(oSidePanel2)).toLookAs("sidepanel_single_actionbar_collapsed" + sPicAddon);
+
+		}, iDefaultTimeout);
+
+		// Tests end here
+
+		// toggle position back to Right if necessary
+		bLeftPosition && _togglePosition();
+
+		/**
+		 * Toggles Side Panels positions
+		 */
+		function _togglePosition() {
+			// This is a dummy test that just toggles Side Panels positions
+			it("(dummy) Toggle SidePanel positions", function() {
+				var oPositionButton = element(by.css("#PositionButton"));
+				oPositionButton.click();
+			}, iDefaultTimeout);
+		}
+	}
 
 });

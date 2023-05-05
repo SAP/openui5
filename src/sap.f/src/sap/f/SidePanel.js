@@ -1066,15 +1066,15 @@ sap.ui.define([
 		var sIcon,
 			oContentHeaderCloseIcon = this.getAggregation("_closeButton");
 
-		if (!oContentHeaderCloseIcon) {
-			if (this._isSingleItem()) {
-				sIcon = Device.system.phone
-					? "sap-icon://navigation-down-arrow"
-					: "sap-icon://navigation-right-arrow";
-			} else {
-				sIcon = "sap-icon://decline";
-			}
+		if (this._isSingleItem()) {
+			sIcon = Device.system.phone
+				? "sap-icon://navigation-down-arrow"
+				: "sap-icon://navigation-" + this.getSidePanelPosition().toLowerCase() + "-arrow";
+		} else {
+			sIcon = "sap-icon://decline";
+		}
 
+		if (!oContentHeaderCloseIcon) {
 			oContentHeaderCloseIcon = new Button(this.getId() + "-closeButton", {
 				type: "Transparent",
 				tooltip: oResourceBundle.getText("SIDEPANEL_CLOSE_BUTTON_TEXT"),
@@ -1097,6 +1097,8 @@ sap.ui.define([
 			});
 
 			this.setAggregation("_closeButton", oContentHeaderCloseIcon);
+		} else {
+			oContentHeaderCloseIcon.setIcon(sIcon);
 		}
 
 		return oContentHeaderCloseIcon;
