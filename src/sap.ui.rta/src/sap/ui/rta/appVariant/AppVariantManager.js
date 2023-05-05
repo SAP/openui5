@@ -116,15 +116,16 @@ sap.ui.define([
 						});
 
 					aAllInlineChangeOperations.push(oInlineChangePromise);
-
-					// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
-					oPropertyChange = AppVariantUtils.prepareRemoveAllInboundsExceptOneChange(sCurrentRunningInboundId);
-					aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", vSelector));
 				} else {
 					// create a inline change using a change type 'appdescr_app_changeInbound'
 					oPropertyChange = AppVariantUtils.prepareChangeInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData);
 					aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
 				}
+
+				// remove all other inbounds except appVariant inbound
+				// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
+				oPropertyChange = AppVariantUtils.prepareRemoveAllInboundsExceptOneChange(sCurrentRunningInboundId);
+				aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", vSelector));
 
 				return Promise.all(aAllInlineChangeOperations);
 			});
