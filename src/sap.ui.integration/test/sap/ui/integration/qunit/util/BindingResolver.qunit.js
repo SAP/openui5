@@ -301,48 +301,4 @@ function (JSONModel, ManagedObject, BindingResolver, BindingHelper, UI5Date) {
 		assert.strictEqual(vResolved, "value1 value2", "Text is resolved correctly based on 2 models.");
 	});
 
-	QUnit.module("Is binding info");
-
-	QUnit.test("Correct binding infos", function (assert) {
-		// Arrange
-		var aSamples = [
-			{
-				path: "something/something"
-			},
-			{
-				parts: [
-					"something/something",
-					"something/something"
-				],
-				formatter: function () {}
-			},
-			{
-				parts: [
-					"something/something",
-					"something/something"
-				],
-				binding: {}
-			}
-		];
-
-		aSamples.forEach(function (oSample) {
-			// Assert
-			assert.strictEqual(BindingResolver.isBindingInfo(oSample), true, "Object is binding info.");
-		});
-	});
-
-	QUnit.test("Not binding infos", function (assert) {
-		// Arrange
-		var aSamples = [
-			{},
-			{
-				test: "test"
-			}
-		];
-
-		aSamples.forEach(function (oSample) {
-			// Assert
-			assert.strictEqual(BindingResolver.isBindingInfo(oSample), false, "Object is not a binding info.");
-		});
-	});
 });

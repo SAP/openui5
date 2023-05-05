@@ -554,7 +554,7 @@ sap.ui.define([
 		 * @param {Object} sTime The date template of the configuration object.
 		 */
 		CalendarContent.prototype._addDate = function (sTime) {
-			if (BindingResolver.isBindingInfo(sTime)) {
+			if (BindingHelper.isBindingInfo(sTime)) {
 				if (!sTime) {
 					return;
 				}
@@ -579,7 +579,7 @@ sap.ui.define([
 		 * @param {Object} mMaxItems The mMaxItems template of the configuration object.
 		 */
 		CalendarContent.prototype._addMaxItems = function (mMaxItems) {
-			if (BindingResolver.isBindingInfo(mMaxItems)) {
+			if (BindingHelper.isBindingInfo(mMaxItems)) {
 				mMaxItems && this.bindProperty("visibleAppointmentsCount", mMaxItems);
 			} else {
 				this.setVisibleAppointmentsCount(mMaxItems);
@@ -593,7 +593,7 @@ sap.ui.define([
 		 * @param {Object} mMaxLegendItems The maxLegendItems template of the configuration object.
 		 */
 		CalendarContent.prototype._addMaxLegendItems = function (mMaxLegendItems) {
-			if (BindingResolver.isBindingInfo(mMaxLegendItems)) {
+			if (BindingHelper.isBindingInfo(mMaxLegendItems)) {
 				mMaxLegendItems && this._oLegend.bindProperty("visibleLegendItemsCount", mMaxLegendItems);
 			} else {
 				this._oLegend.setVisibleLegendItemsCount(mMaxLegendItems);
@@ -607,7 +607,7 @@ sap.ui.define([
 		 * @param {Object} mNoItemsText The noItemsText template of the configuration object.
 		 */
 		CalendarContent.prototype._addNoItemsText = function (mNoItemsText) {
-			if (BindingResolver.isBindingInfo(mNoItemsText)) {
+			if (BindingHelper.isBindingInfo(mNoItemsText)) {
 				mNoItemsText && this.bindProperty("noAppointmentsText", mNoItemsText);
 			} else {
 				this.setNoAppointmentsText(mNoItemsText);

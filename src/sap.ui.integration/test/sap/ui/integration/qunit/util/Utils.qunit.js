@@ -2,10 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/integration/util/Utils",
-	"sap/ui/integration/util/BindingResolver"
+	"sap/ui/integration/util/BindingHelper"
 ], function (
 	Utils,
-	BindingResolver
+	BindingHelper
 ) {
 	"use strict";
 
@@ -202,7 +202,7 @@ sap.ui.define([
 
 		var oResult = Utils.getStatusTextBindingInfo(oCorrectFormatterFromManifest);
 
-		assert.strictEqual(BindingResolver.isBindingInfo(oResult), true, "binding info was generated");
+		assert.strictEqual(BindingHelper.isBindingInfo(oResult), true, "binding info was generated");
 	});
 
 	QUnit.test("returns undefined for incorrectly defined formatter", function (assert) {
@@ -210,6 +210,6 @@ sap.ui.define([
 
 		var oResult = Utils.getStatusTextBindingInfo(oIncorrectFormatterFromManifest);
 
-		assert.strictEqual(BindingResolver.isBindingInfo(oResult), false, "binding info was not generated");
+		assert.strictEqual(BindingHelper.isBindingInfo(oResult), false, "binding info was not generated");
 	});
 });
