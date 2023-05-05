@@ -236,9 +236,7 @@ sap.ui.require([
 		// sap.ui.model.resource.* - tests are contained in testsuite.databinding.qunit.js
 		// ***************************************************************************************
 		"sap/ui/core/qunit/resource/ResourceBinding.qunit",
-		//TODO: get test running in 1RingModels.qunit; it uses "originInfo" configuration that
-		// cannot be changed at runtime
-		// "sap/ui/core/qunit/resource/ResourceModel.qunit",
+		"sap/ui/core/qunit/resource/ResourceModel.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.type.* - tests are contained in testsuite.types.qunit.js

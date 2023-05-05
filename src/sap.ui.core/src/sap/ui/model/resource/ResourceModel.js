@@ -12,14 +12,14 @@
 
 // Provides the resource bundle based model implementation
 sap.ui.define([
-	'sap/base/Log',
-	'sap/base/i18n/ResourceBundle',
-	'sap/ui/core/Configuration',
-	'sap/ui/model/BindingMode',
-	'sap/ui/model/Model',
-	'./ResourcePropertyBinding'
-],
-	function (Log, ResourceBundle, Configuration, BindingMode, Model, ResourcePropertyBinding) {
+	"sap/base/Log",
+	"sap/base/i18n/ResourceBundle",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/Model",
+	"./ResourcePropertyBinding"
+], function (Log, ResourceBundle, SyncPromise, Configuration, BindingMode, Model, ResourcePropertyBinding) {
 	"use strict";
 
 	var sClassname = "sap.ui.model.resource.ResourceModel",
@@ -540,40 +540,35 @@ sap.ui.define([
 	ResourceModel.prototype._handleLocalizationChange = function () {
 		var that = this;
 
-		function updateBundle(oNewResourceBundle) {
-			that._oResourceBundle = oNewResourceBundle;
-			that._reenhance();
-			delete that._oPromise;
-			that.checkUpdate(true);
-		}
-		function logError(oError) {
-			Log.error("Failed to reload bundles after localization change", oError, sClassname);
-		}
+		SyncPromise.resolve(this.getResourceBundle()).then(function (oBundle) {
+			var oEventParameters;
 
-		var oResourceBundle = this.getResourceBundle();
-
-		if (oResourceBundle instanceof Promise) {
-			oResourceBundle.then(function (oBundle) {
-				var oEventParam = {
-					url: ResourceBundle._getUrl(that.oData.bundleUrl,
+			if (that.bAsync) {
+				oEventParameters = {
+						url: ResourceBundle._getUrl(that.oData.bundleUrl,
 							// sanitize bundleName for backward compatibility
 							ResourceModel._sanitizeBundleName(that.oData.bundleName)),
 						async: true
 					};
-
-				that.fireRequestSent(oEventParam);
-				that._oPromise = oBundle._recreate();
-				that._oPromise.then(updateBundle).catch(logError).finally(function () {
-					that.fireRequestCompleted(oEventParam);
-				});
-			});
-		} else {
-			try {
-				updateBundle(oResourceBundle._recreate());
-			} catch (oError) {
-				logError(oError);
+				that.fireRequestSent(oEventParameters);
 			}
-		}
+			var oRecreateResult = oBundle._recreate();
+			if (oRecreateResult instanceof Promise) {
+				that._oPromise = oRecreateResult;
+			}
+			return SyncPromise.resolve(oRecreateResult).then(function (oNewResourceBundle) {
+				that._oResourceBundle = oNewResourceBundle;
+				that._reenhance();
+				delete that._oPromise;
+				that.checkUpdate(true);
+			}).finally(function () {
+				if (that.bAsync) {
+					that.fireRequestCompleted(oEventParameters);
+				}
+			});
+		}).catch(function (oError) {
+			Log.error("Failed to reload bundles after localization change", oError, sClassname);
+		});
 	};
 
 	/**

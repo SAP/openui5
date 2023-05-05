@@ -190,10 +190,6 @@ sap.ui.define(function() {
 						testdata: 'test-resources/sap/ui/core/qunit/testdata',
 						'sap/ui/testlib': 'test-resources/sap/ui/core/qunit/testdata/uilib'
 					}
-				},
-				ui5: {
-					language: "en",
-					originInfo: true
 				}
 			},
 			StaticBinding: {

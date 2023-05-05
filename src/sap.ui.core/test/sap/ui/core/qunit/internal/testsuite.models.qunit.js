@@ -349,26 +349,6 @@ sap.ui.define(function() {
 			},
 
 			// *************************************************************************
-			// ResourceModel test
-			// *************************************************************************
-			// contained in testsuite.databinding.qunit.js
-			ResourceModel : {
-				// not in 1RingModels.qunit because "originInfo" cannot be changed at runtime
-				title : "sap.ui.model.resource.ResourceModel",
-				loader : {
-					paths : {
-						testdata : "test-resources/sap/ui/core/qunit/testdata",
-						"sap/ui/testlib" : "test-resources/sap/ui/core/qunit/testdata/uilib"
-					}
-				},
-				module : ["test-resources/sap/ui/core/qunit/resource/ResourceModel.qunit"],
-				ui5 : {
-					language : "en",
-					originInfo : true
-				}
-			},
-
-			// *************************************************************************
 			// Test for model support assistant rules
 			// *************************************************************************
 			// contained in testsuite.rule.qunit.js
