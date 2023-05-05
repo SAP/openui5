@@ -39,37 +39,6 @@ module.exports = function(grunt, config) {
 			grunt.task.run(aTasks);
 		},
 
-		// QUnit test task
-		'test': function(mode) {
-
-			if (!mode || (mode !== 'src' && mode !== 'target')) {
-				mode = 'src';
-			}
-
-			grunt.option('port', 0); // use random port
-
-			// listen to the connect server startup
-			grunt.event.on('connect.*.listening', function(hostname, port) {
-
-				// 0.0.0.0 does not work in windows
-				if (hostname === '0.0.0.0') {
-					hostname = 'localhost';
-				}
-
-				// set baseUrl (using hostname / port from connect task)
-				grunt.config(['selenium_qunit', 'options', 'baseUrl'], 'http://' + hostname + ':' + port);
-
-				// run selenium task
-				grunt.task.run(['selenium_qunit:run']);
-			});
-
-			// cleanup and start connect server
-			grunt.task.run([
-				'clean:surefire-reports',
-				'openui5_connect:' + mode
-			]);
-		},
-
 		// Build task
 		'build': function() {
 
@@ -353,8 +322,7 @@ module.exports = function(grunt, config) {
 			'lint',
 			'clean',
 			'build',
-			'mochaTest',
-			'test'
+			'mochaTest'
 		]
 
 	};

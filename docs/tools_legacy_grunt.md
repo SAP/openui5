@@ -76,21 +76,6 @@ grunt build [--libs=<library-1>,<library-n>] [--production] [--minify-css] [--in
 #  grunt build --libs=sap.ui.core,sap.m   # only build sap.ui.core and sap.m in non-production mode (non-minified css, with test-resources)
 ```
 
-## test
-
-Argument   | Description                                                                      | Default
----------- | -------------------------------------------------------------------------------- | -------------
-browsers   | Browser name(s) to test on (comma-separated) `chrome`, `firefox`, `ie`, `safari` | `chrome`
-
-Runs QUnit tests with Selenium WebDriver on a local server.
-
-```
-grunt test --browsers=<browsers>
-
-# example
-#  grunt test --browsers="safari,firefox"   # run tests of all libraries on safari and firefox
-```
-
 ## docs
 
 Argument               | Description                                                                       | Default
