@@ -53,7 +53,6 @@ sap.ui.define([
 	 * @since 1.88
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
      *
      */
     var ChartDelegate = Object.assign({}, V4ChartDelegate);
