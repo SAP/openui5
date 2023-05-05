@@ -46,7 +46,7 @@ sap.ui.define([
 		for (var sChangeId in oChangePersistence._mChangesEntries) {
 			var oChange = oChangePersistence._mChangesEntries[sChangeId];
 			oExport.mChangesEntries[sChangeId] = {
-				mDefinition: oChange.getDefinition(),
+				mDefinition: oChange.convertToFileContent(),
 				aControlsDependencies: [],
 				aDependencies: []
 			};
