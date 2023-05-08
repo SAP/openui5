@@ -1524,6 +1524,7 @@ sap.ui.define([
 				this.sChangeReason = ChangeReason.Sort;
 				this._fireRefresh({reason : this.sChangeReason});
 			}
+			/** @deprecated As of version 1.11.0 */
 			this._fireSort({sorter: aSorters});
 			bSuccess = true;
 		}
@@ -1744,6 +1745,7 @@ sap.ui.define([
 				this.sChangeReason = ChangeReason.Filter;
 				this._fireRefresh({reason: this.sChangeReason});
 			}
+			/** @deprecated As of version 1.11.0 */
 			if (sFilterType === FilterType.Application) {
 				this._fireFilter({filters: this.aApplicationFilters});
 			} else {
