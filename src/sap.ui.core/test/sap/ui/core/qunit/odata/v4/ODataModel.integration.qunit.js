@@ -51497,6 +51497,114 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A draft version is shown in an object page and is discarded. It needs to be deleted
+	// on the server, but in the background, with the draft still being shown on the UI. Only after
+	// the deletion is successful, UI switches to the active version and the draft is deleted also
+	// on the client (as a cleanup). Property bindings on the object page must not become unresolved
+	// in between, because default values would be used by controls then, for example for "visible".
+	//
+	// BCP: 109953 / 2023 (002075129500001099532023)
+	QUnit.test("BCP: 109953 / 2023 - delete context on server only", function (assert) {
+		var oActiveContext,
+			oDraftContext,
+			sMessage1 = "It sure feels fine to see one's name in print",
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Text id="artistID" text="{ArtistID}"/>\
+<Text id="isActiveEntity" text="{IsActiveEntity}"/>\
+<Input id="name" value="{Name}"/>',
+			that = this;
+
+		this.expectChange("artistID")
+			.expectChange("isActiveEntity")
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oDraftContext = oModel.getKeepAliveContext(
+				"/Artists(ArtistID='42',IsActiveEntity=false)", /*bRequestMessages*/true);
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
+					"@odata.etag" : "ETag",
+					ArtistID : "42",
+					IsActiveEntity : false,
+					Messages : [{
+						message : sMessage1,
+						numericSeverity : 1,
+						target : "Name"
+					}],
+					Name : "Ms. Eliot"
+				})
+				.expectChange("artistID", "42")
+				.expectChange("isActiveEntity", "No")
+				.expectChange("name", "Ms. Eliot")
+				.expectMessages([{
+					message : sMessage1,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Success"
+				}]);
+
+			that.oView.setBindingContext(oDraftContext);
+
+			return that.waitForChanges(assert, "show draft");
+		}).then(function () {
+			return that.checkValueState(assert, that.oView.byId("name"), "Success", sMessage1);
+		}).then(function () {
+			var oSiblingEntity = that.oModel.bindContext("SiblingEntity(...)",
+					oDraftContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+					+ "/SiblingEntity?$select=ArtistID,IsActiveEntity,Messages,Name", {
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Messages : [],
+					Name : "Missy Eliot"
+				});
+
+			return Promise.all([
+				// code under test
+				oSiblingEntity.execute("$auto", /*bIgnoreETag*/false,
+					/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert, "SiblingEntity")
+			]);
+		}).then(function (aResults) {
+			oActiveContext = aResults[0];
+
+			that.expectRequest({
+					headers : {"If-Match" : "ETag"},
+					method : "DELETE",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)"
+				});
+
+			return Promise.all([
+				// code under test
+				oModel.delete(oDraftContext),
+				that.waitForChanges(assert, "delete")
+			]);
+		}).then(function () { // Note: no changes to UI so far!
+			return that.checkValueState(assert, that.oView.byId("name"), "Success", sMessage1);
+		}).then(function () {
+			that.expectChange("isActiveEntity", "Yes")
+				.expectChange("name", "Missy Eliot");
+
+			that.oView.setBindingContext(oActiveContext);
+
+			return that.waitForChanges(assert, "show active");
+		}).then(function () {
+			return that.checkValueState(assert, that.oView.byId("name"), "None", "");
+		}).then(function () {
+			that.expectMessages([]);
+
+			return Promise.all([
+				// code under test
+				oDraftContext.delete(null),
+				that.waitForChanges(assert, "cleanup")
+			]);
+		});
+	});
+
 	//*********************************************************************************************
 	// Scenario: Dependent ContextBinding below a dependent ListBinding, below of an absolute
 	// ListBinding, all w/ own cache. Set a row context of the absolute ListBinding as parent

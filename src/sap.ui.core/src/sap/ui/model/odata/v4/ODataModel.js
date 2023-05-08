@@ -1482,8 +1482,11 @@ sap.ui.define([
 	 *   <li> the key-value pairs are encoded via encodeURIComponent.
 	 * </ul>
 	 *
-	 * @param {string} sCanonicalPath
-	 *   The canonical path of the entity to delete, starting with a '/'
+	 * @param {string|sap.ui.model.odata.v4.Context} vCanonicalPath
+	 *   The canonical path of the entity to delete, starting with a '/'; since 1.115.0, a context
+	 *   instance can be given to determine both the path and ETag used for deletion on the server,
+	 *   but no bindings are affected and {@link sap.ui.model.odata.v4.Context#delete} should be
+	 *   used with a <code>null</code> group ID to clean up on the client side later
 	 * @param {string} [sGroupId]
 	 *   The group ID that is used for the DELETE request; if not specified, the model's
 	 *   {@link #getUpdateGroupId update group ID} is used; the resulting group ID must not have
@@ -1506,11 +1509,22 @@ sap.ui.define([
 	 * @public
 	 * @since 1.103.0
 	 */
-	ODataModel.prototype.delete = function (sCanonicalPath, sGroupId, bRejectIfNotFound) {
-		var that = this;
+	ODataModel.prototype.delete = function (vCanonicalPath, sGroupId, bRejectIfNotFound) {
+		var bInAllBindings,
+			oPromise,
+			that = this;
 
-		if (sCanonicalPath[0] !== "/") {
-			throw new Error("Invalid path: " + sCanonicalPath);
+		if (typeof vCanonicalPath === "string") {
+			if (vCanonicalPath[0] !== "/") {
+				throw new Error("Invalid path: " + vCanonicalPath);
+			}
+			bInAllBindings = true;
+			oPromise = Promise.resolve([vCanonicalPath, "*"]);
+		} else {
+			oPromise = Promise.all([
+				vCanonicalPath.fetchCanonicalPath(),
+				vCanonicalPath.fetchValue("@odata.etag", /*oListener*/null, /*bCached*/true)
+			]);
 		}
 		_Helper.checkGroupId(sGroupId);
 		sGroupId = sGroupId || this.getUpdateGroupId();
@@ -1518,17 +1532,22 @@ sap.ui.define([
 			throw new Error("Illegal update group ID: " + sGroupId);
 		}
 
-		return this.oRequestor.request("DELETE",
-			sCanonicalPath.slice(1) + _Helper.buildQuery(this.mUriParameters),
-			this.lockGroup(sGroupId, this, true, true),
-			{"If-Match" : "*"}
-		).catch(function (oError) {
-			if (oError.status !== 404 && oError.status !== 412 || bRejectIfNotFound) {
-				throw oError;
-			} // else: map 404/412 to 200
-		}).then(function () {
-			that.aAllBindings.forEach(function (oBinding) {
-				oBinding.onDelete(sCanonicalPath);
+		return oPromise.then(function (aResults) {
+			return that.oRequestor.request("DELETE",
+					aResults[0].slice(1) + _Helper.buildQuery(that.mUriParameters),
+					that.lockGroup(sGroupId, that, true, true),
+					{"If-Match" : aResults[1]}
+			).catch(function (oError) {
+				if (bRejectIfNotFound
+						|| !(oError.status === 404 || bInAllBindings && oError.status === 412)) {
+					throw oError;
+				} // else: map 404/412 to 204
+			}).then(function () {
+				if (bInAllBindings) {
+					that.aAllBindings.forEach(function (oBinding) {
+						oBinding.onDelete(vCanonicalPath);
+					});
+				}
 			});
 		});
 	};
