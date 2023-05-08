@@ -680,14 +680,14 @@ sap.ui.define([
 				assert.ok(oRequest.deepPath.startsWith("/ContactSet"), "Deep path is set initially.");
 				assert.equal(oMessageModel.oData.length, 1, "Message created.");
 				assert.equal(oMessageModel.oData[0].technical, true, "Technical message created.");
-				assert.ok(oMessageModel.oData[0].fullTarget.startsWith("/ContactSet"), "Deep Path is set.");
+				assert.ok(oMessageModel.oData[0].aFullTargets[0].startsWith("/ContactSet"), "Deep Path is set.");
 
 				var fnRequestCompleted2 = function () {
 					that.oModel.detachBatchRequestCompleted(fnRequestCompleted2);
 					oRequest = getLastRequest(that);
 
 					assert.ok(oRequest.deepPath.startsWith("/ContactSet"), "Deep path is still set.");
-					assert.ok(oMessageModel.oData[0].fullTarget.startsWith("/ContactSet"), "Deep Path is set.");
+					assert.ok(oMessageModel.oData[0].aFullTargets[0].startsWith("/ContactSet"), "Deep Path is set.");
 					that.oRequestStub.restore();
 					done();
 				};
@@ -860,8 +860,8 @@ sap.ui.define([
 					that.oModel.read("/BusinessPartnerSet('0100000000')", {
 						success: function(){
 							var oMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData()[0];
-							assert.equal(oMsg.target, "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", "Message target is correctly set.");
-							assert.equal(oMsg.fullTarget, "/BusinessPartnerSet('0100000000')/ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')", "Message full target is correctly set.");
+							assert.equal(oMsg.aTargets[0], "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", "Message target is correctly set.");
+							assert.equal(oMsg.aFullTargets[0], "/BusinessPartnerSet('0100000000')/ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')", "Message full target is correctly set.");
 							done();
 						}
 					});
@@ -884,8 +884,8 @@ sap.ui.define([
 					that.oModel.read("/BusinessPartnerSet('0100000000')", {
 						success: function(){
 							var oMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData()[0];
-							assert.equal(oMsg.target, "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/CurrencyCode", "Message target is correctly set.");
-							assert.equal(oMsg.fullTarget, "/BusinessPartnerSet('0100000000')/ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/CurrencyCode", "Message full target is correctly set.");
+							assert.equal(oMsg.aTargets[0], "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/CurrencyCode", "Message target is correctly set.");
+							assert.equal(oMsg.aFullTargets[0], "/BusinessPartnerSet('0100000000')/ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/CurrencyCode", "Message full target is correctly set.");
 							done();
 						}
 					});
