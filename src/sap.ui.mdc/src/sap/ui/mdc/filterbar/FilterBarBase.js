@@ -472,7 +472,9 @@ sap.ui.define([
 	 * Returns the external conditions of the inner condition model.
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
 	 * The items are always returned, but the filter conditions are dependent on the <code>Value</code> assignment.
-	 * @protected
+	 * @private
+	 * @ui5-restricted sap.fe, sap.ui.mdc
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBarBase</code>
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
@@ -502,7 +504,8 @@ sap.ui.define([
 	 *
 	 * @returns {Array} array of labels of filters with value assignment
 	 * @private
-	 * @ui5-restricted sap.fe
+	 * @ui5-restricted sap.fe, sap.ui.mdc
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	FilterBarBase.prototype.getAssignedFilterNames = function() {
 		var sName, aFilterNames = null, oModel = this._getConditionModel();
@@ -614,7 +617,8 @@ sap.ui.define([
 	 * <i>3 filters active (1 hidden)</i>
 	 *
 	 * @private
-	 * @ui5-restricted sap.fe
+	 * @ui5-restricted sap.fe, sap.ui.mdc
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {map} A map containing the text information
 	 * @returns {map.filtersText} A string that is displayed if the filter bar is collapsed
 	 * @returns {map.filtersTextExpanded} A string that is displayed if the filter bar is expanded
@@ -626,7 +630,7 @@ sap.ui.define([
 	/**
 	 * Triggers updates for the assigned filters such as the text & count of active filters.
 	 * Orchestrates the central events of the FilterBarBase in addition.
-	 *
+	 * @private
 	 * @param {object} mReportSettings Settings to control specific events
 	 * @param {object} mReportSettings.triggerFilterUpdate Determines if a filtersChange event should be fired
 	 * @param {object} mReportSettings.triggerSearch Determines if a search event should be fired
@@ -704,7 +708,6 @@ sap.ui.define([
 		}
 
 	};
-
 
 
 	FilterBarBase.prototype._toExternal = function(oProperty, oCondition) {
@@ -855,7 +858,8 @@ sap.ui.define([
 	/**
 	 * Triggers the search.
 	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @ui5-restricted sap.fe, sap.ui.mdc
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
@@ -1312,32 +1316,6 @@ sap.ui.define([
 		return mConditions;
 	};
 
-	// Normalization is currently only done for IsDigitSequence Types
-	var _fnNormalizeCondition = function (oProperty) {
-		var oTypeInstance = oProperty.typeConfig.typeInstance;
-		var oConstraints = oTypeInstance.getConstraints();
-		return oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.String" && oConstraints && oConstraints.isDigitSequence && oConstraints.maxLength ? function (oCondition) {
-			return this._toExternal(oProperty, oCondition, this.getTypeUtil());
-		}.bind(this) : undefined;
-	};
-
-	FilterBarBase.prototype._isPathKnownAsync = function(sFieldPath, oXCondition) {
-		var sName, sKey, aPromises = [];
-
-		aPromises.push(this._getPropertyByNameAsync(sFieldPath));
-		for (sKey in oXCondition["inParameters"]) {
-			sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
-			aPromises.push(this._getPropertyByNameAsync(sName));
-		}
-
-		for (sKey in oXCondition["outParameters"]) {
-			sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
-			aPromises.push(this._getPropertyByNameAsync(sName));
-		}
-
-		return Promise.all(aPromises);
-	};
-
 	FilterBarBase.prototype._isPathKnown = function(sFieldPath, oXCondition) {
 		var sKey, sName;
 
@@ -1361,55 +1339,6 @@ sap.ui.define([
 		return true;
 	};
 
-	FilterBarBase.prototype._removeCondition = function(sFieldPath, oXCondition, oCM) {
-		var oProperty = this._getPropertyByName(sFieldPath);
-		if (oProperty) {
-			var oCondition = this._toInternal(oProperty, oXCondition);
-			if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) >= 0) {
-				oCM.removeCondition(sFieldPath, oCondition);
-			}
-		}
-	};
-
-	FilterBarBase.prototype.removeCondition = function(sFieldPath, oXCondition) {
-		return this.waitForInitialization().then(function() {
-			var oCM = this._getConditionModel();
-			if (oCM) {
-				this._isPathKnownAsync(sFieldPath, oXCondition).then(function() {
-					this._removeCondition(sFieldPath, oXCondition, oCM);
-				}.bind(this));
-			}
-		}.bind(this));
-	};
-
-	FilterBarBase.prototype._addCondition = function(sFieldPath, oXCondition, oCM) {
-		var oProperty = this._getPropertyByName(sFieldPath);
-		if (oProperty) {
-			var oCondition = this._toInternal(oProperty, oXCondition);
-			if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) < 0) {
-				var mCondition = {};
-				mCondition[sFieldPath] = [oCondition];
-				FilterController.checkConditionOperatorSanity(mCondition); //check if the single condition's operator is valid
-				var aConditions = mCondition[sFieldPath];
-				if (aConditions && aConditions.length > 0){
-					this._cleanUpFilterFieldInErrorStateByName(sFieldPath);
-					oCM.addCondition(sFieldPath, oCondition);
-				}
-			}
-		}
-	};
-
-	FilterBarBase.prototype.addCondition = function(sFieldPath, oXCondition) {
-		return this.waitForInitialization().then(function() {
-			var oCM = this._getConditionModel();
-			if (oCM) {
-				this._isPathKnownAsync(sFieldPath, oXCondition).then(function() {
-					this._addCondition(sFieldPath, oXCondition, oCM);
-				}.bind(this));
-			}
-		}.bind(this));
-
-	};
 
 	/**
 	 * Called whenever modification occured through personalization change appliance
@@ -1424,7 +1353,6 @@ sap.ui.define([
 			// --> no filter changes have been done
 			return Promise.resolve();
 		}
-
 
 		var fResolveApplyingChanges;
 
@@ -1857,7 +1785,7 @@ sap.ui.define([
 
 			// ensure that the initial filters are applied --> only trigger search & validate when no filterbar changes exists.
 			// Filterbar specific changes will be handled via _onModifications.
-			if (this._bInitialFiltersApplied && (aAffectedControllers.indexOf("Filter") === -1)) {
+			if (this._bInitialFiltersApplied && ((aAffectedControllers.indexOf("Filter") === -1))) {
 				this._reportModelChange({
 					triggerFilterUpdate: false,
 					triggerSearch: this._bExecuteOnSelect
@@ -1901,8 +1829,6 @@ sap.ui.define([
 	 * Returns the external conditions.
 	 *
 	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {map} Map containing the external conditions
 	 */
 	FilterBarBase.prototype.getConditions = function() {

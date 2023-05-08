@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @public
+	 * @private
 	 * @since 1.95
 	 * @alias sap.ui.mdc.filterbar.PropertyHelper
 	 */

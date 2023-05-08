@@ -14,6 +14,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 *
 	 * @author SAP SE
 	 * @private
+	 * @experimental
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.61.0

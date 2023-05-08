@@ -10,6 +10,7 @@ sap.ui.define([
 	/**
 	 * @class The <code>IFilterContainer</code> is the base container for the visualization of the filter items in the filter bar.
 	 * @private
+	 * @experimental
 	 * @ui5-restricted sap.fe sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.61.0

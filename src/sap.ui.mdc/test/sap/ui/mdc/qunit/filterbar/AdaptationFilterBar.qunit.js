@@ -200,11 +200,18 @@ sap.ui.define([
 			this.aMockProperties = [
 				{
 					name: "key1",
+					path: "key1",
 					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
 				},
 				{
 					name: "key2",
+					path: "key2",
 					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTimeOffset")
+				},
+				{
+					name: "key3",
+					path: "key3",
+					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
 				}
 			];
 
@@ -220,7 +227,7 @@ sap.ui.define([
 			AggregationBaseDelegate.getFilterDelegate = function() {
 				return {
 					addItem: function(sProperty, oControl) {
-						return Promise.resolve(new FilterField());
+						return Promise.resolve(new FilterField({conditions: "{$filters>/conditions/" + sProperty + '}'}));
 					}
 				};
 			};
@@ -308,12 +315,15 @@ sap.ui.define([
 			//3) Add a condition
 			oAdaptationFilterBar.setLiveMode(false);
 
-			return oAdaptationFilterBar.addCondition("key1", {
+			oAdaptationFilterBar.setFilterConditions({"key1": [{
 				operator:"EQ",
 				values: [
 					"Externalized Test"
 				]
-			});
+			}]});
+
+			return oAdaptationFilterBar._setXConditions(oAdaptationFilterBar.getFilterConditions());
+
 		})
 		.then(function(){
 
@@ -348,12 +358,14 @@ sap.ui.define([
 			//3) Add a condition
 			oAdaptationFilterBar.setLiveMode(false);
 
-			return oAdaptationFilterBar.addCondition("key2", {
+			oAdaptationFilterBar.setFilterConditions({"key2": [{
 				operator:"EQ",
 				values: [
 					"Dec 31, 2020, 11:59:58 PM"
 				]
-			});
+			}]});
+
+			return oAdaptationFilterBar._setXConditions(oAdaptationFilterBar.getFilterConditions());
 		})
 		.then(function(){
 
@@ -464,13 +476,15 @@ sap.ui.define([
 						return new Promise(function(resolve){
 							setTimeout(function(){
 								resolve(new FilterField({
-									label: "key1"
+									label: "key1",
+									conditions: "{$filters>/conditions/key1}"
 								}));
 							}, 500);
 						});
 					}
 					return Promise.resolve(new FilterField({
-						label: "key2"
+						label: "key2",
+						conditions: "{$filters>/conditions/key2}"
 					}));
 				}
 			};

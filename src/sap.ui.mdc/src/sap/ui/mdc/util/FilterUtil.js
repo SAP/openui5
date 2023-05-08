@@ -14,6 +14,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 	 *
 	 * @namespace
 	 * @private
+	 * @experimental
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.80.0
