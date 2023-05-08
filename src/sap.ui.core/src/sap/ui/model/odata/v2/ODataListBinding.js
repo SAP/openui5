@@ -521,7 +521,7 @@ sap.ui.define([
 			sResolvedPath = this.getResolvedPath(); // resolved path with the new context
 			this.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
 			if (!this._checkPathType()) {
-				Log.error("List Binding is not bound against a list for " + sResolvedPath);
+				Log.error("List Binding is not bound against a list for " + sResolvedPath, undefined, sClassName);
 			}
 			// ensure that data state is updated with each change of the context
 			this.checkDataState();
@@ -1027,7 +1027,8 @@ sap.ui.define([
 			that.bLengthRequested = true;
 			that.oCountHandle = null;
 
-			// in the OpertionMode.Auto, we check if the count is LE than the given threshold and set the client operation flag accordingly
+			// in the OperationMode.Auto, we check if the count is LE than the given threshold and
+			// set the client operation flag accordingly
 			if (that.sOperationMode == OperationMode.Auto) {
 				if (that.iLength <= that.mParameters.threshold) {
 					that.bThresholdRejected = false;
@@ -1045,7 +1046,7 @@ sap.ui.define([
 			if (oError.response){
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
 			}
-			Log.warning(sErrorMsg);
+			Log.warning(sErrorMsg, undefined, sClassName);
 		}
 
 		// Use context and check for relative binding
@@ -1250,7 +1251,8 @@ sap.ui.define([
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial
 				&& !this._hasTransientParentWithoutSubContexts()) {
 			if (!this._checkPathType()) {
-				Log.error("List Binding is not bound against a list for " + this.getResolvedPath());
+				Log.error("List Binding is not bound against a list for " + this.getResolvedPath(), undefined,
+					sClassName);
 			}
 			this.bInitial = false;
 			this._initSortersFilters();
@@ -1554,7 +1556,8 @@ sap.ui.define([
 			fnCompare;
 
 		if (!oEntityType) {
-			Log.warning("Cannot determine sort/filter comparators, as entitytype of the collection is unknown!");
+			Log.warning("Cannot determine sort/filter comparators, as entity type of the collection is unknown!",
+				undefined, sClassName);
 			return;
 		}
 		aEntries.forEach(function(oEntry) {
