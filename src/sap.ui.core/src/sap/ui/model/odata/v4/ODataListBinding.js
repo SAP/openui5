@@ -749,9 +749,7 @@ sap.ui.define([
 	 *   contexts within this list.
 	 * @param {boolean} [bInactive]
 	 *   Create an inactive context. Such a context will only be sent to the server after the first
-	 *   property update. From then on it behaves like any other created context. An inactive
-	 *   context must not be used as {@link sap.ui.base.ManagedObject#setBindingContext binding
-	 *   context} of a view containing an {@link sap.ui.model.odata.v4.ODataListBinding}.
+	 *   property update. From then on it behaves like any other created context.
 	 *   Supported since 1.97.0
 	 *   <br>
 	 *   Since 1.98.0, when the first property updates happens, the context is no longer
@@ -3903,39 +3901,14 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, or if the binding would become dependent on an
-	 *   inactive context.
+	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 */
 	// @override sap.ui.model.Binding#setContext
 	ODataListBinding.prototype.setContext = function (oContext) {
-		var oInactiveContext = findInactiveContext(oContext),
-			sResolvedPath;
+		var sResolvedPath;
 
-		/*
-		 * Returns the context or the nearest of its parents if any of them is inactive.
-		 *
-		 * @param {sap.ui.model.odata.Context} [oContext] - The context
-		 * @returns {sap.ui.model.odata.v4.Context|undefined}
-		 *   The inactive context or <code>undefined</code> if there is none
-		 */
-		function findInactiveContext(oContext) {
-			var oBinding;
-
-			if (!(oContext && oContext.isInactive)) {
-				return undefined;
-			}
-			if (oContext.isInactive()) {
-				return oContext;
-			}
-			oBinding = oContext.getBinding();
-			return oBinding.isRelative() ? findInactiveContext(oBinding.getContext()) : undefined;
-		}
-
-		if (oInactiveContext) {
-			throw new Error("Invalid context, must not be dependent on " + oInactiveContext);
-		}
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.checkSuspended(true);
