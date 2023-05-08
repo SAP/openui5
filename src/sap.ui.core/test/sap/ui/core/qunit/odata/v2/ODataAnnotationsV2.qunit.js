@@ -692,7 +692,7 @@ sap.ui.define([
 		// Instantiate without options argument - use defaults
 		var oAnnotationsFromMetadata = new ODataAnnotations(oModel.oMetadata);
 
-		assert.equal(oAnnotationsFromMetadata.getAnnotationsData(), oAnnotationsFromMetadata.getData(), "Check deprecated API");
+		assert.deepEqual(oAnnotationsFromMetadata.getData(), {});
 
 		var oAnnotations = new ODataAnnotations(oModel.oMetadata, { skipMetadata: true });
 
@@ -748,7 +748,9 @@ sap.ui.define([
 	};
 
 	QUnit.test("Loading and accessing annotations", fnTestMisc1);
-
+	/**
+	 * @deprecated As of version 1.37.0
+	 */
 	QUnit.test("ODataAnnotations#getAnnotationsData is alias of ODataAnnotations#getData", function (assert) {
 		assert.strictEqual(ODataAnnotations.prototype.getData, ODataAnnotations.prototype.getAnnotationsData);
 	});
