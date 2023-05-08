@@ -196,6 +196,29 @@
 						]
 					}
 				]
+			},
+			{
+				"name": "sap.ui.base.Event",
+				"methods": [
+					{
+						"name": "getParameter",
+						"typeParameters": [
+							{
+								"name": "ParamName",
+								"type": "keyof ParamsType"
+							}
+						],
+						"returnValue": {
+							"type": "ParamsType[ParamName]"
+						},
+						"parameters": [
+							{
+								"name": "sName",
+								"type": "ParamName"
+							}
+						]
+					}
+				]
 			}
 		]
 	}

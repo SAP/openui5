@@ -16,7 +16,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	 *
 	 * @param {string} sId The ID of the event
 	 * @param {sap.ui.base.EventProvider} oSource Source of the event
-	 * @param {object} oParameters Parameters for this event
+	 * @param {ParamsType} oParameters Parameters for this event
 	 *
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
@@ -24,6 +24,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	 * @version ${version}
 	 * @alias sap.ui.base.Event
 	 * @public
+	 * @template {Object<string,any>} [ParamsType=object]
 	 */
 	var Event = BaseObject.extend("sap.ui.base.Event", /** @lends sap.ui.base.Event.prototype */ {
 		constructor : function(sId, oSource, oParameters) {
@@ -47,7 +48,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	 *
 	 * @param {string} sId ID of the event
 	 * @param {sap.ui.base.EventProvider} oSource Source of the event
-	 * @param {object} [oParameters] The event parameters
+	 * @param {ParamsType} [oParameters] The event parameters
 	 *
 	 * @protected
 	 *
@@ -105,7 +106,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	/**
 	 * Returns an object with all parameter values of the event.
 	 *
-	 * @returns {Object<string, any>} All parameters of the event
+	 * @returns {ParamsType} All parameters of the event
 	 * @public
 	 */
 	Event.prototype.getParameters = function() {
@@ -117,9 +118,10 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	/**
 	 * Returns the value of the parameter with the given name.
 	 *
-	 * @param {string} sName Name of the parameter to return
-	 * @return {any} Value of the named parameter
+	 * @param {ParamName} sName Name of the parameter to return
+	 * @return {ParamsType} Value of the named parameter
 	 * @public
+	 * @template {ParamsType} [ParamName=never]
 	 */
 	Event.prototype.getParameter = function(sName) {
 
