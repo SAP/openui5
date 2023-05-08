@@ -5827,7 +5827,6 @@ sap.ui.define([
 				bMetaModelLoaded : bMetaModelLoaded,
 				_isMetadataPath : function () {},
 				getMetaModel : function () {},
-				isLegacySyntax : function () {},
 				isMetaModelPath : function () {},
 				resolve : function () {}
 			};
@@ -5843,8 +5842,13 @@ sap.ui.define([
 				? SyncPromise.resolve(Promise.resolve("~mCodeList"))
 				: SyncPromise.reject("~error");
 		}
-
-		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		/**
+		 * @deprecated As of version 1.88.0
+		 */
+		(function () {
+			oModel.isLegacySyntax = function () {};
+			this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		}.bind(this)());
 		this.mock(oModel).expects("resolve").withExactArgs("~path", undefined, undefined)
 			.returns("~resolvedPath");
 		this.mock(oModel).expects("_isMetadataPath").withExactArgs("~resolvedPath").returns(true);
@@ -5870,11 +5874,16 @@ sap.ui.define([
 		var oModel = {
 				oMetadata : {isLoaded : function () {}},
 				_isMetadataPath : function () {},
-				isLegacySyntax : function () {},
 				resolve : function () {}
 			};
 
-		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		/**
+		 * @deprecated As of version 1.88.0
+		 */
+		(function () {
+			oModel.isLegacySyntax = function () {};
+			this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		}.bind(this)());
 		this.mock(oModel).expects("resolve").withExactArgs("~path", undefined, undefined)
 			.returns("~resolvedPath");
 		this.mock(oModel).expects("_isMetadataPath").withExactArgs("~resolvedPath").returns(true);
@@ -5898,11 +5907,16 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oModel = {
-				isLegacySyntax : function () {},
 				resolve : function () {}
 			};
 
-		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		/**
+		 * @deprecated As of version 1.88.0
+		 */
+		(function () {
+			oModel.isLegacySyntax = function () {};
+			this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		}.bind(this)());
 		this.mock(oModel).expects("resolve")
 			.withExactArgs("~path", undefined, undefined)
 			.returns(undefined);
@@ -5916,13 +5930,18 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_getObject: call _getInstanceAnnotationValue", function (assert) {
 		var oModel = {
-				isLegacySyntax : function () {},
 				resolve : function () {},
 				_getInstanceAnnotationValue : function () {}
 			},
 			sPath = "@$ui5.~annotation";
 
-		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		/**
+		 * @deprecated As of version 1.88.0
+		 */
+		(function () {
+			oModel.isLegacySyntax = function () {};
+			this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		}.bind(this)());
 		this.mock(oModel).expects("resolve")
 			.withExactArgs(sPath, "~oContext", undefined)
 			.returns("~resolvedPath");
@@ -5944,11 +5963,16 @@ sap.ui.define([
 				mChangedEntities : {},
 				_getEntity : function () {},
 				_isMetadataPath : function () {},
-				isLegacySyntax : function () {},
 				resolve : function () {}
 			};
 
-		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		/**
+		 * @deprecated As of version 1.88.0
+		 */
+		(function () {
+			oModel.isLegacySyntax = function () {};
+			this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		}.bind(this)());
 		this.mock(oModel).expects("resolve")
 			.withExactArgs(sPath, "~oContext", undefined)
 			.returns("/~resolvedPath");
@@ -5966,11 +5990,16 @@ sap.ui.define([
 		var oError = new Error("~Error"),
 			oModel = {
 				_getInstanceAnnotationValue : function () {},
-				isLegacySyntax : function () {},
 				resolve : function () {}
 			};
 
-		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		/**
+		 * @deprecated As of version 1.88.0
+		 */
+		(function () {
+			oModel.isLegacySyntax = function () {};
+			this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		}.bind(this)());
 		this.mock(oModel).expects("resolve")
 			.withExactArgs("@$ui5.~annotation", "~oContext", undefined)
 			.returns("/~resolvedPath");
