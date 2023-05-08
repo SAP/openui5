@@ -50,7 +50,7 @@ sap.ui.define([
 			}
 			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.variantManagementControl);
 			return Settings.getInstance().then(function(oSettings) {
-				return oSettings.isContextSharingEnabled() && !ContextBasedAdaptationsAPI.hasAdaptationsModel({reference: sReference, layer: Layer.CUSTOMER});
+				return oSettings.isContextSharingEnabled() && !ContextBasedAdaptationsAPI.adaptationExists({reference: sReference, layer: Layer.CUSTOMER});
 			}).then(function(bIsEnabled) {
 				if (bIsEnabled) {
 					if (!oComponentContainer || oComponentContainer.bIsDestroyed) {

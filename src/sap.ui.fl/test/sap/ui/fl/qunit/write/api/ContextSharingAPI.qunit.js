@@ -63,12 +63,12 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("with connector and layer that support context sharing but adaptation model exists", function(assert) {
+		QUnit.test("with connector and layer that support context sharing but an adaptation exists", function(assert) {
 			var oSettings = {
 				isContextSharingEnabled: true
 			};
 			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
-			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "adaptationExists").returns(true);
 
 			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER, reference: "id"}).then(function(oCompContainer) {
 				this.oCompCont = oCompContainer;
@@ -76,12 +76,12 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("with connector and layer that support context sharing and adaptation model does not exist", function(assert) {
+		QUnit.test("with connector and layer that support context sharing and no adaptation exists", function(assert) {
 			var oSettings = {
 				isContextSharingEnabled: true
 			};
 			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
-			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(false);
+			sandbox.stub(ContextBasedAdaptationsAPI, "adaptationExists").returns(false);
 
 			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER, reference: "id"})
 				.then(renderComponentContainer.bind(this))
