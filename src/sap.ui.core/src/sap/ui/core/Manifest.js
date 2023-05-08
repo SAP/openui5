@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
+	'sap/base/config',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Lib',
 	'./_UrlResolver'
@@ -31,6 +32,7 @@ sap.ui.define([
 		merge,
 		isPlainObject,
 		LoaderExtensions,
+		BaseConfig,
 		Configuration,
 		Library,
 		_UrlResolver
@@ -785,14 +787,18 @@ sap.ui.define([
 		// If the language or the client is already provided it won't be overridden
 		// as this is expected to be only done by intension.
 		var oManifestUrl = new URI(sManifestUrl);
-		["sap-language", "sap-client"].forEach(function(sName) {
-			if (!oManifestUrl.hasQuery(sName)) {
-				var sValue = Configuration.getSAPParam(sName);
-				if (sValue) {
-					oManifestUrl.addQuery(sName, sValue);
-				}
+		if (!oManifestUrl.hasQuery("sap-language")) {
+			var sValue = Configuration.getSAPLogonLanguage();
+			if (sValue) {
+				oManifestUrl.addQuery("sap-language", sValue);
 			}
-		});
+		}
+		if (!oManifestUrl.hasQuery("sap-client")) {
+			var sValue = BaseConfig.get({name: "sapClient", type:BaseConfig.Type.String});
+			if (sValue) {
+				oManifestUrl.addQuery("sap-client", sValue);
+			}
+		}
 		sManifestUrl = oManifestUrl.toString();
 
 		Log.info("Loading manifest via URL: " + sManifestUrl);

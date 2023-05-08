@@ -9,10 +9,11 @@ sap.ui.require([
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
 	'sap/base/Log',
+	'sap/base/config',
 	'sap/routing/HistoryUtils',
 	'sap/ui/base/Interface',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Log,
+], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Locale, Log, BaseConfig,
 		HistoryUtils, Interface/*, LocaleData*/) {
 	"use strict";
 
@@ -809,42 +810,6 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Read SAP parameters from URL", function(assert) {
-
-		// setup
-		browserUrl.change('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=en');
-
-		// call method under test
-		Configuration.setCore();
-
-		// verify results
-		assert.equal(Configuration.getSAPParam('sap-client'), 'foo', 'SAP parameter sap-client=foo');
-		assert.equal(Configuration.getSAPParam('sap-server'), 'bar', 'SAP parameter sap-server=bar');
-		assert.equal(Configuration.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-system=abc');
-		assert.equal(Configuration.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=en');
-
-
-	});
-
-	QUnit.test("Read SAP parameters from URL (ignoreUrlParams)", function(assert) {
-
-		// setup
-		browserUrl.change('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=de');
-		window["sap-ui-config"].ignoreurlparams = true;
-
-		// call method under test
-		Configuration.setCore();
-
-		// verify results
-		assert.equal(Configuration.getSAPParam('sap-client'), undefined, 'SAP parameter sap-client=foo');
-		assert.equal(Configuration.getSAPParam('sap-server'), undefined, 'SAP parameter sap-server=bar');
-		assert.equal(Configuration.getSAPParam('sap-system'), undefined, 'SAP parameter sap-system=abc');
-		assert.equal(Configuration.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=en');
-
-		delete window["sap-ui-config"].ignoreurlparams;
-
-	});
-
 	QUnit.test("Set SAPLogonLanguage and SAP parameter is updated", function(assert) {
 
 		// setup
@@ -854,42 +819,10 @@ sap.ui.require([
 		Configuration.setCore();
 
 		// verify results
-		assert.equal(Configuration.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=EN');
+		assert.equal(Configuration.getSAPLogonLanguage(), 'EN', 'SAP parameter sap-language=EN');
 		Configuration.setLanguage("es");
-		assert.equal(Configuration.getSAPParam('sap-language'), 'ES', 'SAP parameter sap-language=ES');
+		assert.equal(Configuration.getSAPLogonLanguage(), 'ES', 'SAP parameter sap-language=ES');
 
-
-	});
-
-	QUnit.test("Read SAP parameters from <meta> tag", function(assert) {
-
-		// setup
-		var metaTagClient = document.createElement("meta");
-		metaTagClient.setAttribute("name", "sap-client");
-		metaTagClient.setAttribute("content", "foo");
-		document.head.appendChild(metaTagClient);
-
-		var metaTagServer = document.createElement("meta");
-		metaTagServer.setAttribute("name", "sap-server");
-		metaTagServer.setAttribute("content", "bar");
-		document.head.appendChild(metaTagServer);
-
-		var metaTagSystem = document.createElement("meta");
-		metaTagSystem.setAttribute("name", "sap-system");
-		metaTagSystem.setAttribute("content", "abc");
-		document.head.appendChild(metaTagSystem);
-
-		// call method under test
-		Configuration.setCore();
-
-		// verify results
-		assert.equal(Configuration.getSAPParam('sap-client'), 'foo', 'SAP parameter sap-client=foo');
-		assert.equal(Configuration.getSAPParam('sap-server'), 'bar', 'SAP parameter sap-system=bar');
-		assert.equal(Configuration.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-client=abc');
-
-		document.head.removeChild(metaTagClient);
-		document.head.removeChild(metaTagServer);
-		document.head.removeChild(metaTagSystem);
 
 	});
 

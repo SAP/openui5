@@ -7,6 +7,7 @@ sap.ui.define([
 	'./Manifest',
 	'./ComponentMetadata',
 	'./Element',
+	'sap/base/config',
 	'sap/base/util/extend',
 	'sap/base/util/deepExtend',
 	'sap/base/util/merge',
@@ -22,6 +23,7 @@ sap.ui.define([
 	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
+	'sap/base/strings/camelize',
 	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
 	'sap/ui/core/mvc/ViewType',
@@ -30,6 +32,7 @@ sap.ui.define([
 	Manifest,
 	ComponentMetadata,
 	Element,
+	BaseConfig,
 	extend,
 	deepExtend,
 	merge,
@@ -45,6 +48,7 @@ sap.ui.define([
 	UriParameters,
 	isPlainObject,
 	LoaderExtensions,
+	camelize,
 	_UrlResolver,
 	VersionInfo,
 	ViewType,
@@ -60,6 +64,9 @@ sap.ui.define([
 		waitFor: "waitFor"
 	};
 
+	function getConfigParam(sName) {
+		return {name: sName, type: BaseConfig.Type.String, external: true};
+	}
 	/**
 	 * Utility function which adds SAP-specific parameters to a URI instance
 	 *
@@ -69,7 +76,7 @@ sap.ui.define([
 	function addSapParams(oUri) {
 		['sap-client', 'sap-server'].forEach(function(sName) {
 			if (!oUri.hasSearch(sName)) {
-				var sValue = Configuration.getSAPParam(sName);
+				var sValue = BaseConfig.get(getConfigParam(camelize(sName)));
 				if (sValue) {
 					oUri.addSearch(sName, sValue);
 				}
@@ -439,7 +446,7 @@ sap.ui.define([
 	function getCustomizingComponent(vObject) {
 		var oComponent, sComponentId;
 
-		if (!Configuration.getDisableCustomizing()) {
+		if (!BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean})) {
 			if (typeof vObject === "string") {
 				sComponentId = vObject;
 			} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
@@ -1456,7 +1463,6 @@ sap.ui.define([
 	};
 
 	Component._applyCacheToken = function(oUri, oLogInfo, mMetadataUrlParams) {
-		var oConfig = Configuration;
 		var sSource = mMetadataUrlParams ? "Model" : "DataSource";
 		var sManifestPath = mMetadataUrlParams ? "[\"sap.ui5\"][\"models\"]" : "[\"sap.app\"][\"dataSources\"]";
 		var sLanguage = mMetadataUrlParams && mMetadataUrlParams["sap-language"] || oUri.search(true)["sap-language"];
@@ -1478,10 +1484,11 @@ sap.ui.define([
 			return;
 		}
 
-		// 3. "sap-client" must equal to the value of "sap.ui.getCore().getConfiguration().getSAPParam("sap-client")"
-		if (sClient !== oConfig.getSAPParam("sap-client")) {
+		// 3. "sap-client" must equal to the value of Configuration "sap-client"
+		var sClientFromConfig = BaseConfig.get(getConfigParam("sapClient"));
+		if (sClient !== sClientFromConfig) {
 			Log.warning("Component Manifest: Ignoring provided \"sap-context-token=" + oLogInfo.cacheToken + "\" for " + sSource + " \"" + oLogInfo.dataSource + "\" (" + oUri.toString() + "). " +
-				"URI parameter \"sap-client=" + sClient + "\" must be identical with configuration \"sap-client=" + oConfig.getSAPParam("sap-client") + "\"",
+				"URI parameter \"sap-client=" + sClient + "\" must be identical with configuration \"sap-client=" + sClientFromConfig + "\"",
 				sManifestPath + "[\"" + oLogInfo.dataSource + "\"]", oLogInfo.componentName);
 			return;
 		}
@@ -1762,13 +1769,14 @@ sap.ui.define([
 								var oAnnotationUri = new URI(oAnnotation.uri);
 
 								if (bIsV2Model || bIsV4Model) {
-									/* eslint-disable no-loop-func */
-									["sap-language", "sap-client"].forEach(function(sName) {
-										if (!oAnnotationUri.hasQuery(sName) && oConfig.getSAPParam(sName)) {
-											oAnnotationUri.setQuery(sName, oConfig.getSAPParam(sName));
-										}
-									});
-									/* eslint-enable no-loop-func */
+									var sValueFromConfig = Configuration.getSAPLogonLanguage();
+									if (!oAnnotationUri.hasQuery("sap-language") && sValueFromConfig) {
+										oAnnotationUri.setQuery("sap-language", sValueFromConfig);
+									}
+									sValueFromConfig = BaseConfig.get(getConfigParam("sapClient"));
+									if (!oAnnotationUri.hasQuery("sap-client") && sValueFromConfig) {
+										oAnnotationUri.setQuery("sap-client", sValueFromConfig);
+									}
 
 									var sCacheTokenForAnnotation = mCacheTokens.dataSources && mCacheTokens.dataSources[oAnnotation.uri];
 									if (sCacheTokenForAnnotation) {
@@ -1844,7 +1852,7 @@ sap.ui.define([
 						mMetadataUrlParams = oModelConfig.settings && oModelConfig.settings.metadataUrlParams;
 						var bNeedsLanguage = (!mMetadataUrlParams || typeof mMetadataUrlParams['sap-language'] === 'undefined')
 							&& !oUri.hasQuery('sap-language')
-							&& oConfig.getSAPParam('sap-language');
+							&& oConfig.getSAPLogonLanguage();
 
 						if (bNeedsLanguage || sCacheToken) {
 							// Lazy initialize settings and metadataUrlParams objects
@@ -1853,7 +1861,7 @@ sap.ui.define([
 
 							// Add sap-language only to $metadata URL params
 							if (bNeedsLanguage) {
-								mMetadataUrlParams['sap-language'] = oConfig.getSAPParam('sap-language');
+								mMetadataUrlParams['sap-language'] = oConfig.getSAPLogonLanguage();
 							}
 						}
 
@@ -1894,7 +1902,7 @@ sap.ui.define([
 			sSystemParameter = oComponentData && oComponentData.startupParameters && oComponentData.startupParameters["sap-system"];
 			// Check the URL as "fallback", the system parameter of the componentData.startup has precedence over a URL parameter
 			if (!sSystemParameter) {
-				sSystemParameter = oConfig.getSAPParam("sap-system");
+				sSystemParameter = BaseConfig.get(getConfigParam("sapSystem"));
 			}
 
 			// lazy load the ODataUtils if systemParameter is given
