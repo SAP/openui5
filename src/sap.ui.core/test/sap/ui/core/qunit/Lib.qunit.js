@@ -215,6 +215,32 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.test("Static private method '_registerElement'", function(assert) {
+		var sLibName = "test.lib.qunit";
+		var oElementMetadata = {
+			getName: function() {
+				return sLibName + ".DummyElement";
+			},
+			getLibraryName: function() {
+				return sLibName;
+			},
+			isA: function() {
+				return true;
+			},
+			getStereotype: function() {
+				return "control";
+			}
+		};
+
+		assert.equal(Object.keys(Library.all()).includes(sLibName), false, "The library " + sLibName + " isn't listed in Library.all()");
+		assert.equal(Object.keys(Library._all(true)).includes(sLibName), false, "The library " + sLibName + " isn't listed in Library._all(true) (without considering settings enhancement)");
+
+		Library._registerElement(oElementMetadata);
+
+		assert.equal(Object.keys(Library.all()).includes(sLibName), false, "The library " + sLibName + " is still not listed in Library.all()");
+		assert.equal(Object.keys(Library._all(true)).includes(sLibName), true, "The library " + sLibName + " is now listed in Library._all(true) (without considering settings enhancement)");
+	});
+
 	QUnit.module("Library.js included in custom bundle");
 
 	/**
@@ -282,6 +308,68 @@ sap.ui.require([
 			assert.equal(oLib3.getResourceBundle().getText("someText"), "I am a lib3 text", "Text from the resource bundle should be correct");
 			assert.equal(oLib4.getResourceBundle().getText("someText"), "I am a lib4 text", "Text from the resource bundle should be correct");
 			assert.equal(oResourceBundleCreateSpy.callCount, 0, "getResourceBundle calls shouldn't trigger additional ResourceBundle.create calls");
+		});
+	});
+
+	QUnit.module("Register Element");
+
+	QUnit.test("Register element at an existing library", function(assert) {
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(["sap/ui/core/Control"], function(Control){
+				Control.extend("sap.ui.core.TestControlInLibUnitTest", {
+					metadata: {
+						properties: {
+							width: {
+								type: "sap.ui.core.CSSSize",
+								group: "Dimension",
+								defaultValue: null
+							},
+							height: {
+								type: "sap.ui.core.CSSSize",
+								group: "Dimension",
+								defaultValue: null
+							}
+						}
+					},
+					renderer: function(oRm, oControl) {
+					}
+				});
+
+				assert.ok(Library.get("sap.ui.core").controls.includes("sap.ui.core.TestControlInLibUnitTest"), "The new control is registered in the library");
+				resolve();
+			}, reject);
+		});
+	});
+
+	QUnit.test("Create element under non-existing namespace should trigger the creation of the library implicitly", function(assert) {
+		assert.notOk(Object.keys(Library.all()).includes("dummy.library"), "The library doesn't exist");
+
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(["sap/ui/core/Control"], function(Control){
+				Control.extend("dummy.library.TestControlInLibUnitTest", {
+					metadata: {
+						properties: {
+							width: {
+								type: "sap.ui.core.CSSSize",
+								group: "Dimension",
+								defaultValue: null
+							},
+							height: {
+								type: "sap.ui.core.CSSSize",
+								group: "Dimension",
+								defaultValue: null
+							}
+						}
+					},
+					renderer: function(oRm, oControl) {
+					}
+				});
+
+				assert.notOk(Object.keys(Library.all()).includes("dummy.library"), "The library is created implicitly. But it's not listed in Library.all()");
+				assert.ok(Object.keys(Library._all(true)).includes("dummy.library"), "The library is created implicitly. And it's listed in Library._all(true) where the settings enhancement status isn't considered");
+				assert.ok(Library.get("dummy.library").controls.includes("dummy.library.TestControlInLibUnitTest"), "The new control is registered in the library");
+				resolve();
+			}, reject);
 		});
 	});
 });
