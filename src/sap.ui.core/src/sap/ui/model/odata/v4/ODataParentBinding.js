@@ -783,7 +783,7 @@ sap.ui.define([
 		// become pending again
 		bCacheImmutable = this.oCachePromise.isRejected()
 			|| iIndex !== undefined && iIndex !== Context.VIRTUAL
-			|| oContext.isKeepAlive() // kept-alive contexts have no index when not in aContexts
+			|| oContext.isEffectivelyKeptAlive() // no index when not in aContexts
 			|| this.oCache === null
 			|| this.oCache && this.oCache.hasSentRequest();
 		aPromises = [
@@ -1075,7 +1075,7 @@ sap.ui.define([
 				bIgnoreKeptAlive = bIgnoreKeptAlive0; // new copy for this dependent only
 
 			if (bIgnoreKeptAlive) {
-				if (oDependent.oContext.isKeepAlive()) {
+				if (oDependent.oContext.isEffectivelyKeptAlive()) {
 					return false; // changes can be safely ignored here
 				}
 				if (oDependent.oContext.getIndex() !== undefined) {

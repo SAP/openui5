@@ -212,9 +212,9 @@ sap.ui.define([
 	 * immediately, even if {@link sap.ui.model.odata.v4.SubmitMode.API} is used, and the request is
 	 * only sent later when {@link sap.ui.model.odata.v4.ODataModel#submitBatch} is called. As soon
 	 * as the context is deleted on the client, {@link #isDeleted} returns <code>true</code> and the
-	 * context must not be used anymore (except for status APIs like {@link #isDeleted},
-	 * {@link #isKeepAlive}, {@link #hasPendingChanges}, {@link #resetChanges}), especially not as a
-	 * binding context.
+	 * context must not be used anymore, especially not as a binding context. Exceptions hold for
+	 * status APIs like {@link #isDeleted}, {@link #isKeepAlive}, {@link #hasPendingChanges},
+	 * {@link #resetChanges}, or {@link #isSelected} (returns <code>false</code> since 1.114.0).
 	 *
 	 * Since 1.105 such a pending deletion is a pending change. It causes
 	 * <code>hasPendingChanges</code> to return <code>true</code> for the context, the binding
@@ -545,7 +545,7 @@ sap.ui.define([
 						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent,
-						that.isKeepAlive.bind(that), that.isInactive()
+						that.isEffectivelyKeptAlive.bind(that), that.isInactive()
 					).then(function () {
 						firePatchCompleted(true);
 					}, function (oError) {
@@ -1008,6 +1008,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether this context is effectively kept alive, either explicitly or implicitly.
+	 *
+	 * @returns {boolean} <code>true</code> if this context is effectively kept alive
+	 *
+	 * @private
+	 * @see #resetKeepAlive
+	 * @see #setSelected
+	 */
+	Context.prototype.isEffectivelyKeptAlive = function () {
+		var mParameters = this.oBinding.mParameters;
+
+		return this.bKeepAlive
+			|| !mParameters.$$sharedRequest
+			&& this.isSelected() && this !== this.oBinding.getHeaderContext()
+			&& !(this.oBinding.isRelative() && !mParameters.$$ownRequest)
+			&& !_Helper.isDataAggregation(mParameters);
+	};
+
+	/**
 	 * Tells whether the group node that this context points to is expanded.
 	 *
 	 * @returns {boolean|undefined}
@@ -1068,7 +1087,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Tells whether this context is currently selected.
+	 * Tells whether this context is currently selected, but not {@link #delete deleted} on the
+	 * client.
 	 *
 	 * @returns {boolean} Whether this context is currently selected
 	 *
@@ -1077,7 +1097,7 @@ sap.ui.define([
 	 * @see #setSelected
 	 */
 	Context.prototype.isSelected = function () {
-		return this.bSelected;
+		return this.bSelected && !this.oDeletePromise;
 	};
 
 	/**
@@ -1714,12 +1734,14 @@ sap.ui.define([
 
 	/**
 	 * Sets the <code>bKeepAlive</code> flag of this content to <code>false</code> without
-	 * touching the callback function <code>fnOnBeforeDestroy</code>.
+	 * touching the callback function <code>fnOnBeforeDestroy</code>. Also clears the selection.
 	 *
 	 * @private
+	 * @see #isEffectivelyKeptAlive
 	 */
 	Context.prototype.resetKeepAlive = function () {
 		this.bKeepAlive = false;
+		this.bSelected = false;
 	};
 
 	/**
@@ -1907,7 +1929,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether this context is currently selected.
+	 * Determines whether this context is currently selected. If the preconditions of
+	 * {@link #setKeepAlive} hold, a best effort is made to implicitly keep a selected context alive
+	 * in order to preserve the selection state. While a context is currently
+	 * {@link #delete deleted} on the client, it does not appear as {@link #isSelected selected}.
+	 *
+	 * <b>Note:</b> It is unsafe to keep a reference to a context instance which is not
+	 * {@link #isKeepAlive kept alive}.
 	 *
 	 * @param {boolean} bSelected - Whether this context is currently selected
 	 * @throws {Error}
@@ -1919,7 +1947,7 @@ sap.ui.define([
 	 * @see #isSelected
 	 */
 	Context.prototype.setSelected = function (bSelected) {
-		if (!this.oBinding.getHeaderContext) {
+		if (this.oBinding && !this.oBinding.getHeaderContext) {
 			throw new Error("Unsupported context: " + this);
 		}
 		if (bSelected && this.isDeleted()) {
@@ -1969,11 +1997,13 @@ sap.ui.define([
 
 					// no default
 				}
-			}
-			if (this.bSelected) {
-				sSuffix += ";selected";
+				if (this.isSelected()) {
+					sSuffix += ";selected";
+				}
 			}
 			sSuffix = "[" + this.iIndex + sSuffix + "]";
+		} else if (this.isSelected()) {
+			sSuffix += ";selected";
 		}
 
 		return this.sPath + sSuffix;

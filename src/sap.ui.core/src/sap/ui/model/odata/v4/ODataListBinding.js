@@ -122,7 +122,8 @@ sap.ui.define([
 			? "AddVirtualContext"
 			: undefined;
 		// BEWARE: #doReplaceWith can insert a context w/ negative index, but w/o #created promise
-		// into aContexts' area of "created contexts"!
+		// into aContexts' area of "created contexts"! And via "keep alive" or selection, we may
+		// end up w/ #created promise outside that area!
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
 		// Whether the binding is a nested binding within a deep create; it is true while using the
 		// parent cache so that it can contribute to the POST request (see #prepareDeepCreate)
@@ -835,6 +836,7 @@ sap.ui.define([
 				return;
 			}
 
+			oContext.setSelected(false);
 			that.removeCreated(oContext);
 			return Promise.resolve().then(function () {
 				// Fire the change asynchronously so that Cache#delete is finished and #getContexts
@@ -966,7 +968,7 @@ sap.ui.define([
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				oContext = this.mPreviousContextsByPath[sContextPath];
-				if (oContext && (!oContext.created() || oContext.isKeepAlive())) {
+				if (oContext && (!oContext.created() || oContext.isEffectivelyKeptAlive())) {
 					// reuse the previous context, unless it is created (and persisted), but not
 					// kept alive
 					delete this.mPreviousContextsByPath[sContextPath];
@@ -1175,7 +1177,7 @@ sap.ui.define([
 				var oContext = mPreviousContextsByPath[sPath];
 
 				if (oContext) {
-					if (aPathsToDelete && (oContext.isKeepAlive()
+					if (aPathsToDelete && (oContext.isEffectivelyKeptAlive()
 							|| oContext.oDeletePromise && oContext.oDeletePromise.isPending())) {
 						oContext.iIndex = undefined;
 					} else {
@@ -1762,7 +1764,7 @@ sap.ui.define([
 	ODataListBinding.prototype.findContextForCanonicalPath = function (sCanonicalPath) {
 		var aKeptAliveContexts = Object.values(this.mPreviousContextsByPath)
 				.filter(function (oCandidate) {
-					return oCandidate.isKeepAlive();
+					return oCandidate.isEffectivelyKeptAlive();
 				});
 
 		function check(aContexts) {
@@ -1977,7 +1979,7 @@ sap.ui.define([
 		return this.aContexts.filter(function (oContext) {
 			return oContext;
 		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
-			return oContext.isKeepAlive();
+			return oContext.isEffectivelyKeptAlive();
 		}));
 	};
 
@@ -2348,7 +2350,7 @@ sap.ui.define([
 		var that = this;
 
 		return this.oModel.getDependentBindings(this).filter(function (oDependentBinding) {
-			return oDependentBinding.oContext.isKeepAlive()
+			return oDependentBinding.oContext.isEffectivelyKeptAlive()
 				|| !(oDependentBinding.oContext.getPath() in that.mPreviousContextsByPath);
 		});
 	};
@@ -2631,7 +2633,7 @@ sap.ui.define([
 
 		return Object.values(this.mPreviousContextsByPath).concat(this.aContexts)
 			.filter(function (oContext) {
-				return oContext.isKeepAlive();
+				return oContext.isEffectivelyKeptAlive();
 			}).map(function (oContext) {
 				return _Helper.getRelativePath(oContext.getPath(), sBindingPath);
 			});
@@ -2868,7 +2870,8 @@ sap.ui.define([
 	 * @see #getCurrentContexts
 	 */
 	ODataListBinding.prototype.keepOnlyVisibleContexts = function () {
-		var aContexts = this.aContexts.slice(0, this.iCreatedContexts).filter(function (oContext) {
+		var aCreatedContexts = this.aContexts.slice(0, this.iCreatedContexts),
+			aContexts = aCreatedContexts.filter(function (oContext) {
 				// cannot request side effects for transient contexts
 				// Note: do not use #isTransient because #created() may not be resolved yet,
 				// although already persisted (timing issue, see caller)
@@ -2876,7 +2879,9 @@ sap.ui.define([
 			}).concat(
 				this.getCurrentContexts().filter(function (oContext) {
 					// avoid duplicates for created contexts
-					return oContext && oContext.isTransient() === undefined;
+					// Note: avoid #created or #isTransient because there may be created contexts
+					// outside aContexts' area of "created contexts" (via "keep alive" or selection)
+					return oContext && !aCreatedContexts.includes(oContext);
 				})
 			),
 			that = this;
@@ -2885,7 +2890,7 @@ sap.ui.define([
 		Object.keys(this.mPreviousContextsByPath).forEach(function (sPath) {
 			var oContext = that.mPreviousContextsByPath[sPath];
 
-			if (oContext.isKeepAlive()) {
+			if (oContext.isEffectivelyKeptAlive()) {
 				aContexts.push(oContext);
 			}
 		});
@@ -2896,11 +2901,9 @@ sap.ui.define([
 				delete that.aContexts[that.iCreatedContexts + i];
 				that.destroyLater(oContext0);
 			});
-		if (this.iCurrentEnd >= this.iCreatedContexts) {
+		if (this.aContexts.length > this.iCurrentEnd && this.iCurrentEnd >= this.iCreatedContexts) {
 			this.aContexts.slice(this.iCurrentEnd).forEach(that.destroyLater.bind(that));
-			if (this.aContexts.length > this.iCurrentEnd) {
-				this.aContexts.length = this.iCurrentEnd;
-			}
+			this.aContexts.length = this.iCurrentEnd;
 		}
 
 		return aContexts;
@@ -3005,7 +3008,8 @@ sap.ui.define([
 		function refreshAll(aBindings) {
 			return aBindings.map(function (oBinding) {
 				if (oBinding.bIsBeingDestroyed
-						|| oBinding.getContext().isKeepAlive() && oBinding.hasPendingChanges()) {
+						|| oBinding.getContext().isEffectivelyKeptAlive()
+						&& oBinding.hasPendingChanges()) {
 					return;
 				}
 				// Call refreshInternal with bCheckUpdate = false because property bindings
@@ -3117,11 +3121,13 @@ sap.ui.define([
 		return this.oCachePromise.then(function (oCache) {
 			return oCache.refreshKeptElements(that.lockGroup(sGroupId),
 				function onRemove(sPredicate, iIndex) {
-					if (iIndex === undefined) {
-						that.mPreviousContextsByPath[that.getResolvedPath() + sPredicate]
-							.resetKeepAlive();
-					} else { // Note: implies oContext.created()
-						that.removeCreated(that.aContexts[iIndex]);
+					var oContext = iIndex >= 0
+						? that.aContexts[iIndex]
+						: that.mPreviousContextsByPath[that.getResolvedPath() + sPredicate];
+
+					oContext.resetKeepAlive();
+					if (iIndex >= 0) { // Note: implies oContext.created()
+						that.removeCreated(oContext);
 					}
 				});
 		}).catch(function (oError) {
@@ -3177,7 +3183,6 @@ sap.ui.define([
 		return this.withCache(function (oCache, sPath, oBinding) {
 			var bDataRequested = false,
 				bDestroyed = false,
-				bKeepAlive = oContext.isKeepAlive(),
 				iModelIndex = oContext.getModelIndex(),
 				sPredicate = _Helper.getRelativePath(sContextPath, that.oHeaderContext.getPath()),
 				aPromises = [];
@@ -3209,8 +3214,13 @@ sap.ui.define([
 					i;
 
 				if (oContext.iIndex < 0) {
+					if (bStillAlive) {
+						that.mPreviousContextsByPath[sContextPath] = oContext;
+					} else {
+						oContext.resetKeepAlive();
+						bDestroyed = true;
+					}
 					that.removeCreated(oContext);
-					bDestroyed = true;
 				} else {
 					if (iIndex === undefined) { // -> bStillAlive === false
 						delete that.mPreviousContextsByPath[sContextPath];
@@ -3244,9 +3254,9 @@ sap.ui.define([
 			aPromises.push(
 				(bAllowRemoval
 					? oCache.refreshSingleWithRemove(oGroupLock, sPath, iModelIndex, sPredicate,
-						bKeepAlive, fireDataRequested, onRemove)
-					: oCache.refreshSingle(oGroupLock, sPath, iModelIndex, sPredicate, bKeepAlive,
-						bWithMessages, fireDataRequested))
+						oContext.isEffectivelyKeptAlive(), fireDataRequested, onRemove)
+					: oCache.refreshSingle(oGroupLock, sPath, iModelIndex, sPredicate,
+						oContext.isKeepAlive(), bWithMessages, fireDataRequested))
 				.then(function () {
 					var aUpdatePromises = [];
 
@@ -3297,7 +3307,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.removeCreated = function (oContext) {
-		var iIndex = oContext.getModelIndex(),
+		var iIndex = oContext.getModelIndex(), // Note: MUST not be undefined, or we fail utterly!
 			i;
 
 		this.iCreatedContexts -= 1;
@@ -3311,7 +3321,7 @@ sap.ui.define([
 			this.bFirstCreateAtEnd = undefined;
 		}
 		this.aContexts.splice(iIndex, 1);
-		if (!oContext.isKeepAlive()) {
+		if (!oContext.isEffectivelyKeptAlive()) {
 			this.destroyLater(oContext);
 		}
 		// The path of all contexts in aContexts after the removed one is untouched, still points to
@@ -3624,18 +3634,12 @@ sap.ui.define([
 	ODataListBinding.prototype.resetKeepAlive = function () {
 		var mPreviousContextsByPath = this.mPreviousContextsByPath;
 
-		// resets the keep-alive flag for the given context
-		function reset(oContext) {
-			// do not call it always, it throws an exception on a relative binding w/o $$ownRequest
-			if (oContext.isKeepAlive()) {
-				oContext.resetKeepAlive();
-			}
-		}
-
 		Object.keys(mPreviousContextsByPath).forEach(function (sPath) {
-			reset(mPreviousContextsByPath[sPath]);
+			mPreviousContextsByPath[sPath].resetKeepAlive();
 		});
-		this.aContexts.forEach(reset);
+		this.aContexts.forEach(function (oContext) {
+			oContext.resetKeepAlive();
+		});
 	};
 
 	/**
@@ -3700,7 +3704,7 @@ sap.ui.define([
 			// do not call checkUpdate in dependent property bindings if the cache of this
 			// binding is reset and the binding has not yet fired a change event
 			oDependentBinding.resumeInternal(!bRefresh,
-				!!sResumeChangeReason && !oDependentBinding.oContext.isKeepAlive());
+				!!sResumeChangeReason && !oDependentBinding.oContext.isEffectivelyKeptAlive());
 		});
 		if (this.sChangeReason === "AddVirtualContext") {
 			// In a refresh event the table would ignore the result -> no virtual context -> no
@@ -3949,6 +3953,7 @@ sap.ui.define([
 						// Do not destroy the context immediately to avoid timing issues with
 						// dependent bindings, keep it in mPreviousContextsByPath to destroy it
 						// later
+						this.oHeaderContext.setSelected(false);
 						this.mPreviousContextsByPath[this.oHeaderContext.getPath()]
 							= this.oHeaderContext;
 						this.oHeaderContext = null;

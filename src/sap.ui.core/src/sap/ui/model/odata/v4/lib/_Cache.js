@@ -1711,22 +1711,22 @@ sap.ui.define([
 		if (iIndex !== undefined) {
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(aElements, sPredicate, iIndex);
-			aElements.splice(iIndex, 1);
-			addToCount(this.mChangeListeners, sPath, aElements, -1);
 		}
 		if (!bDeleted) {
 			delete aElements.$byPredicate[sPredicate];
 		}
-		if (sTransientPredicate) {
-			aElements.$created -= 1;
-			if (!sPath) {
-				this.iActiveElements -= 1;
+		if (iIndex >= 0) {
+			aElements.splice(iIndex, 1);
+			addToCount(this.mChangeListeners, sPath, aElements, -1);
+			if (sTransientPredicate) {
+				aElements.$created -= 1;
+				if (!sPath) {
+					this.iActiveElements -= 1;
+				}
+				if (!bDeleted) {
+					delete aElements.$byPredicate[sTransientPredicate];
+				}
 			}
-			if (!bDeleted) {
-				delete aElements.$byPredicate[sTransientPredicate];
-			}
-		}
-		if (iIndex !== undefined) {
 			this.adjustIndexes(sPath, aElements, iIndex, -1);
 			if (!sPath && !sTransientPredicate) {
 				this.iLimit -= 1; // this doesn't change Infinity
@@ -3354,6 +3354,7 @@ sap.ui.define([
 					} else {
 						oElement = that.aElements.$byPredicate[sPredicate];
 						if (_Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
+							// Note: iIndex unknown, use -1 instead
 							iIndex = that.removeElement(that.aElements, -1, sPredicate, "");
 						} else {
 							delete that.aElements.$byPredicate[sPredicate];
