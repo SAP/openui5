@@ -380,7 +380,12 @@ sap.ui.define([
 		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode defaults to MultiToggle, if Multi is set");
 		oTable.setSelectionMode(SelectionMode.None);
 		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.None, "SelectionMode set to None");
+	});
 
+	/**
+	 * @deprecated As of version 1.115
+	 */
+	QUnit.test("SelectionMode-legacyMultiSelection", function(assert) {
 		oTable._enableLegacyMultiSelection();
 		oTable.setSelectionMode(SelectionMode.Multi);
 		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle,
@@ -5403,6 +5408,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	/**
+	 * @deprecated As of version 1.115
+	 */
 	QUnit.test("Legacy multi selection", function(assert) {
 		this.oTable.addPlugin(this.oTestPlugin);
 		assert.throws(this.oTable._enableLegacyMultiSelection, "Table#_enableLegacyMultiSelection throws an error if a selection plugin is applied");

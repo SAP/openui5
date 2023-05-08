@@ -187,8 +187,10 @@ sap.ui.define([
 
 			/**
 			 * Flag whether the controls of the Table are editable or not (currently this only controls the background color in certain themes!)
+			 *
+			 * @deprecated As of version 1.115
 			 */
-			editable: {type: "boolean", group: "Behavior", defaultValue: true},
+			editable: {type: "boolean", group: "Behavior", defaultValue: true, deprecated: true},
 
 			/**
 			 * This property has been deprecated and must not be used anymore, since <code>Scrollbar</code> is the only supported option.
@@ -4431,6 +4433,7 @@ sap.ui.define([
 	 * @throws {Error} If a selection plugin is applied
 	 * @private
 	 * @ui5-restricted sap.watt.hanaplugins.editor.plugin.hdbcalculationview
+	 * @deprecated As of version 1.115
 	 */
 	Table.prototype._enableLegacyMultiSelection = function() {
 		if (this._hasSelectionPlugin()) {

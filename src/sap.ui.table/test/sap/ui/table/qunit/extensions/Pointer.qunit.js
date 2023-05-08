@@ -835,6 +835,17 @@ sap.ui.define([
 
 		qutils.triggerMouseEvent(getCell(1, 0), "click");
 		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on data cell in second row -> Second row selected");
+	});
+
+	/**
+	 * @deprecated As of version 1.115
+	 */
+	QUnit.test("Single Selection - legacyMultiSelection", function(assert) {
+		oTable.clearSelection();
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
+		initRowActions(oTable, 2, 2);
+		oCore.applyChanges();
 
 		oTable._enableLegacyMultiSelection();
 		qutils.triggerEvent("click", getCell(0, 0), {metaKey: true, ctrlKey: true});
@@ -862,6 +873,16 @@ sap.ui.define([
 		qutils.triggerMouseEvent(getCell(0, 0), "click"); // Deselect row with index 3
 		qutils.triggerEvent("click", getCell(2, 0), {shiftKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 4, 5], "Range selection with Shift + Click did not deselect");
+	});
+
+	/**
+	 * @deprecated As of version 1.115
+	 */
+	QUnit.test("MultiToggle Selection - Range - legacyMultiSelection", function(assert) {
+		oTable.clearSelection();
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
+		initRowActions(oTable, 2, 2);
+		oCore.applyChanges();
 
 		oTable._enableLegacyMultiSelection();
 		oTable.setFirstVisibleRow(0);
@@ -891,6 +912,9 @@ sap.ui.define([
 		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on selected row with index 0");
 	});
 
+	/**
+	 * @deprecated As of version 1.115
+	 */
 	QUnit.test("Legacy Multi Selection", function(assert) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
