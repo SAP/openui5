@@ -67,7 +67,7 @@
 						"returnValue": {
 							"type": {
 								"kind": "NativeTSTypeExpression",
-								"type":"[Date|import('sap/ui/core/date/UI5Date').default|undefined, string|undefined]|null"
+								"type": "[Date|import('sap/ui/core/date/UI5Date').default|undefined, string|undefined]|null"
 							}
 						}
 					}
@@ -205,11 +205,17 @@
 						"typeParameters": [
 							{
 								"name": "ParamName",
-								"type": "keyof ParamsType"
+								"type": {
+									"kind": "NativeTSTypeExpression",
+									"type": "keyof ParamsType"
+								}
 							}
 						],
 						"returnValue": {
-							"type": "ParamsType[ParamName]"
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "ParamsType[ParamName]"
+							}
 						},
 						"parameters": [
 							{
