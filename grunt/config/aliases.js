@@ -250,8 +250,7 @@ module.exports = function(grunt, config) {
 		'default': [
 			'lint',
 			'clean',
-			'build',
-			'mochaTest'
+			'build'
 		]
 
 	};

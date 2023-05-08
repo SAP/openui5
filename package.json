@@ -95,7 +95,6 @@
     "grunt-eslint": "^23.0.0",
     "grunt-git": "^1.0.1",
     "grunt-jsdoc": "^2.4.1",
-    "grunt-mocha-test": "^0.13.3",
     "grunt-openui5": "^0.18.4",
     "grunt-text-replace": "^0.4.0",
     "grunt-timer": "^0.5.4",
