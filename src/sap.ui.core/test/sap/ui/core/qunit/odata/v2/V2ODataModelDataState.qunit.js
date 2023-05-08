@@ -477,7 +477,7 @@ sap.ui.define([
 		var pOthers;
 
 		oModel.setUseBatch(false);
-		oModel.setDeferredBatchGroups([]);
+		oModel.setDeferredGroups([]);
 		oFloatBinding.setType(new Float(), "string");
 		oModel.addBinding(oNameBinding);
 		oModel.addBinding(oFloatBinding);
