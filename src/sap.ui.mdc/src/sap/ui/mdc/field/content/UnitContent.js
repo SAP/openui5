@@ -11,6 +11,11 @@ sap.ui.define([
 ], function(DefaultContent, Filter, isEmptyObject, merge, ObjectPath, EditMode) {
 	"use strict";
 
+
+	var _getUnitTypeInstance = function (oTypeUtil, oType, oFormatOptions, oConstraints, bShowNumber, bShowMeasure) {
+		return oTypeUtil.getUnitTypeInstance ? oTypeUtil.getUnitTypeInstance(oType, bShowNumber, bShowMeasure) : oTypeUtil.getDataTypeInstance(oType.getMetadata().getName(), oFormatOptions, oConstraints, {showNumber: bShowNumber, showMeasure: bShowMeasure});
+	};
+
 	/**
 	 * Object-based definition of the unit content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
 	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enum.ContentMode}.
@@ -189,8 +194,6 @@ sap.ui.define([
 			var oConstraints = oType.getConstraints();
 			var bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
 			var bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
-			var sTypeName = oType.getMetadata().getName();
-
 
 			// if measure and number needs to be shown -> create new type
 			if (bShowMeasure && bShowNumber) {
@@ -198,13 +201,13 @@ sap.ui.define([
 				var oClonedConstraints = isEmptyObject(oConstraints) ? undefined : merge({}, oConstraints);
 
 				// Type for number
-				var oNewType = TypeUtil.getDataTypeInstance(sTypeName, oClonedFormatOptions, oClonedConstraints, {showNumber: true, showMeasure: false});
+				var oNewType = _getUnitTypeInstance(TypeUtil, oType, oClonedFormatOptions, oClonedConstraints, true, false);
 				oContentFactory.setUnitOriginalType(oContentFactory.getDataType());
 				oContentFactory.setDataType(oNewType);
 				oField.getControlDelegate().initializeInternalUnitType(oField.getPayload(), oContentFactory.getDataType(), oContentFactory.getFieldTypeInitialization());
 
 				// type for unit
-				oNewType = TypeUtil.getDataTypeInstance(sTypeName, oClonedFormatOptions, oClonedConstraints, {showNumber: false, showMeasure: true});
+				oNewType = _getUnitTypeInstance(TypeUtil, oType, oClonedFormatOptions, oClonedConstraints, false, true);
 				oContentFactory.setUnitType(oNewType);
 				oField.getControlDelegate().initializeInternalUnitType(oField.getPayload(), oContentFactory.getUnitType(), oContentFactory.getFieldTypeInitialization());
 
