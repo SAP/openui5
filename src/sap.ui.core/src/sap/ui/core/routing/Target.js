@@ -527,6 +527,10 @@ sap.ui.define([
 							delete oOptions.viewId;
 						}
 					}
+				} else  if (!oOptions._async && oOptions.type) {
+					// sync target still only works with the legacy option
+					// and an error is logged here when sync routing uses the new options
+					Log.error("Sync Target '" + oOptions._name + "' uses the new options which are only supported by async Target.");
 				}
 
 				this._oOptions = oOptions;
