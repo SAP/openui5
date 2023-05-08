@@ -10,7 +10,8 @@
 	},
 	"rules": {
 		"strict": ["error", "never"],
+		"no-console": "off",
 		"no-loop-func": "warn",
-		"no-console": "off"
+		"no-var": "error"
 	}
 }
