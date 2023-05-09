@@ -161,19 +161,19 @@ sap.ui.define([
 
 	var checkMessages = function(aMessages, assert){
 		aMessages.forEach(function (oMsg) {
-			if (oMsg.target === "/SalesOrderSet('0500000000')") {
-				assert.equal(oMsg.fullTarget, "/SalesOrderSet('0500000000')");
-			} else if (oMsg.target === "/SalesOrderSet('0500000000')/ToLineItems") {
-				assert.equal(oMsg.fullTarget, "/SalesOrderSet('0500000000')/ToLineItems");
+			if (oMsg.aTargets[0] === "/SalesOrderSet('0500000000')") {
+				assert.equal(oMsg.aFullTargets[0], "/SalesOrderSet('0500000000')");
+			} else if (oMsg.aTargets[0] === "/SalesOrderSet('0500000000')/ToLineItems") {
+				assert.equal(oMsg.aFullTargets[0], "/SalesOrderSet('0500000000')/ToLineItems");
 				assert.equal(oMsg.message, "I'm just a container!");
-			} else if (oMsg.target === "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')") {
-				assert.equal(oMsg.fullTarget, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')");
-			} else if (oMsg.target === "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')") {
-				assert.equal(oMsg.fullTarget, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000040')");
-			} else if (oMsg.target === "/ProductSet('HT-1000')") {
-				assert.equal(oMsg.fullTarget, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct");
+			} else if (oMsg.aTargets[0] === "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')") {
+				assert.equal(oMsg.aFullTargets[0], "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')");
+			} else if (oMsg.aTargets[0] === "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')") {
+				assert.equal(oMsg.aFullTargets[0], "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000040')");
+			} else if (oMsg.aTargets[0] === "/ProductSet('HT-1000')") {
+				assert.equal(oMsg.aFullTargets[0], "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct");
 			} else {
-				assert.ok(false, "Unexpected message target: " + oMsg.target);
+				assert.ok(false, "Unexpected message target: " + oMsg.aTargets[0]);
 			}
 		});
 	};
@@ -219,10 +219,10 @@ sap.ui.define([
 			var fnRequestCompleted = function () {
 				var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().oData;
 				assert.equal(aMessages.length, 3, "Correct message count.");
-				assert.equal(aMessages[1].target, "/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
-				assert.equal(aMessages[1].fullTarget, "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
-				assert.equal(aMessages[2].target, "/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP");
-				assert.equal(aMessages[2].fullTarget, "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP");
+				assert.equal(aMessages[1].aTargets[0], "/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
+				assert.equal(aMessages[1].aFullTargets[0], "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
+				assert.equal(aMessages[2].aTargets[0], "/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP");
+				assert.equal(aMessages[2].aFullTargets[0], "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP");
 				done();
 				that.oModelCanonical.detachBatchRequestCompleted(fnRequestCompleted);
 			};
@@ -240,10 +240,10 @@ sap.ui.define([
 			var fnRequestCompleted = function () {
 				var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().oData;
 				assert.equal(aMessages.length, 3, "Correct message count.");
-				assert.equal(aMessages[1].target, "/ProductSet('HT-1030')/ID");
-				assert.equal(aMessages[1].fullTarget, "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
-				assert.equal(aMessages[2].target, "/ProductSet('HT-1030')/Adress/ZIP");
-				assert.equal(aMessages[2].fullTarget, "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP");
+				assert.equal(aMessages[1].aTargets[0], "/ProductSet('HT-1030')/ID");
+				assert.equal(aMessages[1].aFullTargets[0], "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID");
+				assert.equal(aMessages[2].aTargets[0], "/ProductSet('HT-1030')/Adress/ZIP");
+				assert.equal(aMessages[2].aFullTargets[0], "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP");
 				done();
 				that.oModelCanonical.detachBatchRequestCompleted(fnRequestCompleted);
 			};
@@ -294,7 +294,7 @@ sap.ui.define([
 			oModel.createEntry("/ContactSet", oCreateEntryProduct);
 			oModel.submitChanges({success: function(){
 				assert.equal(oMessageModel.oData.length, 1, "One message with UID has been created.");
-				assert.equal(oMessageModel.oData[0].target.indexOf("/ContactSet('id"), 0, "Message contains UID.");
+				assert.equal(oMessageModel.oData[0].aTargets[0].indexOf("/ContactSet('id"), 0, "Message contains UID.");
 				oModel.submitChanges({
 					success: function(){
 						assert.equal(oMessageModel.oData.length, 0, "Message with UID has been deleted.");
@@ -314,8 +314,8 @@ sap.ui.define([
 
 			oModel.read("/ProductSet('HT-1000')/ToSupplier", {
 				success: function(){
-					assert.equal(oMessageModel.oData[0].target, "/BusinessPartnerSet('0100000000')/City", "Target was set correctly.");
-					assert.equal(oMessageModel.oData[0].fullTarget, "/BusinessPartnerSet('0100000000')/City", "The canonical target is used as fall-back when an absolute path is used in the message target.");
+					assert.equal(oMessageModel.oData[0].aTargets[0], "/BusinessPartnerSet('0100000000')/City", "Target was set correctly.");
+					assert.equal(oMessageModel.oData[0].aFullTargets[0], "/BusinessPartnerSet('0100000000')/City", "The canonical target is used as fall-back when an absolute path is used in the message target.");
 					done();
 			}});
 		});

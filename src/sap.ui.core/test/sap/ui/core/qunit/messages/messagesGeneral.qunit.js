@@ -653,7 +653,7 @@ sap.ui.define([
 
 			sap.ui.getCore().getMessageManager().removeMessages(oMessage);
 			oMessage.setMessageProcessor(new ControlMessageProcessor());
-			oMessage.setTarget("inputField01/test");
+			oMessage.setTargets(["inputField01/test"]);
 			sap.ui.getCore().getMessageManager().addMessages(oMessage);
 
 			setTimeout(function() {

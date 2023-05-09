@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/m/Button',
-	'sap/m/DateTimeInput',
+	'sap/m/DateTimePicker',
 	'sap/m/Input',
 	'sap/m/Label',
 	'sap/m/RadioButton',
@@ -24,7 +24,7 @@ sap.ui.define([
 	'sap/ui/model/type/String'
 ], function(
 	Button,
-	DateTimeInput,
+	DateTimePicker,
 	Input,
 	Label,
 	RadioButton,
@@ -105,7 +105,7 @@ sap.ui.define([
 						new FormElement({
 							label: "Date of birth",
 							fields: [
-								new DateTimeInput({value: {path:"birthdate", type: oDate}})
+								new DateTimePicker({value: {path:"birthdate", type: oDate}})
 							]
 						}),
 						new FormElement({

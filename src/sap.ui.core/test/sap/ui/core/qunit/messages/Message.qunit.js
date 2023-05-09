@@ -32,100 +32,104 @@ sap.ui.define([
 	});
 
 [
-	{vTarget : "foo", aTargets : ["foo"], target : "foo"},
-	{vTarget : ["foo", "bar"], aTargets : ["foo", "bar"], target : "foo"},
-	{vTarget : undefined, aTargets : [], target : undefined},
-	{vTarget : "", aTargets : [""], target : ""}
+	{vTarget : "foo", aTargets : ["foo"]},
+	{vTarget : ["foo", "bar"], aTargets : ["foo", "bar"]},
+	{vTarget : undefined, aTargets : []},
+	{vTarget : "", aTargets : [""]}
 ].forEach(function (oFixture, i) {
 	QUnit.test("Create message with all properties and target access, " + i, function(assert) {
 
 		// Arrange
 		var mParameters = {
-			id: "Test id",
-			message: "Test message",
-			description: "Test description",
-			type: MessageType.Error,
-			date: Date.now(),
-			additionalText: "test",
-			code: 123,
-			target: oFixture.vTarget,
-			persistent: true,
-			technical: true,
-			technicalDetails: {foo: 'bar'},
-			descriptionUrl: "url",
-			references: {
-				"test": 123
-			},
-			processor: new MessageProcessor(),
-			validation: true,
-			controlIds: [],
-			fullTarget: ""
-		};
+				id: "~id",
+				message: "~message",
+				description: "~description",
+				type: MessageType.Error,
+				date: "~date",
+				additionalText: "~additionalText",
+				code: "~code",
+				target: oFixture.vTarget,
+				persistent: "~persistent",
+				technical: "~technical",
+				technicalDetails: "~technicalDetails",
+				descriptionUrl: "~descriptionUrl",
+				references: "~references",
+				processor: "~processor",
+				validation: "~validation",
+				fullTarget: "~fullTarget"
+			};
 
 		// Act
 		var oMessage = new Message(mParameters);
 
 		// Assert
-		var oMessageValues = {};
-		for (var p in oMessage){
-			if (typeof oMessage[p] !== 'function'){
-				oMessageValues[p] = oMessage[p];
-			}
-		}
-		assert.ok(oMessage, "Object successfully created.");
-		assert.ok(oMessage instanceof Message, "Object has expected Data Type.");
-		mParameters.aTargets = oFixture.aTargets;
-		mParameters.target = oFixture.target;
-		mParameters.aFullTargets = [""];
-		assert.deepEqual(oMessageValues, mParameters, "Properties set correctly.");
+		assert.strictEqual(oMessage.id, "~id");
+		assert.strictEqual(oMessage.message, "~message");
+		assert.strictEqual(oMessage.description, "~description");
+		assert.strictEqual(oMessage.descriptionUrl, "~descriptionUrl");
+		assert.strictEqual(oMessage.additionalText, "~additionalText");
+		assert.strictEqual(oMessage.type, MessageType.Error);
+		assert.strictEqual(oMessage.code, "~code");
+		assert.deepEqual(oMessage.aTargets, oFixture.aTargets);
+		assert.strictEqual(oMessage.processor, "~processor");
+		assert.strictEqual(oMessage.persistent, "~persistent");
+		assert.strictEqual(oMessage.technical, "~technical");
+		assert.strictEqual(oMessage.technicalDetails, "~technicalDetails");
+		assert.strictEqual(oMessage.references, "~references");
+		assert.strictEqual(oMessage.validation, true);
+		assert.strictEqual(oMessage.date, "~date");
+		assert.deepEqual(oMessage.controlIds, []);
+		assert.deepEqual(oMessage.aFullTargets, ["~fullTarget"]);
+
 		if (Array.isArray(oFixture.vTarget)) {
-			assert.notStrictEqual(oMessageValues.aTargets, oFixture.vTarget,
-				"store copy of targets");
+			assert.notStrictEqual(oMessage.aTargets, oFixture.vTarget, "store copy of targets");
 		}
-		assert.strictEqual(oMessage.getTarget(), oFixture.target);
+		/**
+		 * @deprecated As of version 1.79.0
+		 */
+		(function () {
+			assert.strictEqual(oMessage.target, oFixture.aTargets[0]);
+			assert.strictEqual(oMessage.fullTarget, "~fullTarget");
+		}());
 	});
 });
 
-[{
-	vFullTarget : undefined,
-	aExpectedFullTargets : [""],
-	sExpectedFullTarget : ""
-}, {
-	vFullTarget : [],
-	aExpectedFullTargets : [""],
-	sExpectedFullTarget : ""
-}, {
-	vFullTarget : "foo",
-	aExpectedFullTargets : ["foo"],
-	sExpectedFullTarget : "foo"
-}, {
-	vFullTarget : ["foo", "bar"],
-	aExpectedFullTargets : ["foo", "bar"],
-	sExpectedFullTarget : "foo"
-}].forEach(function (oFixture, i) {
+[
+	{vFullTarget : undefined, aExpectedFullTargets : [""]},
+	{vFullTarget : [], aExpectedFullTargets : [""]},
+	{vFullTarget : "foo",aExpectedFullTargets : ["foo"]},
+	{vFullTarget : ["foo", "bar"], aExpectedFullTargets : ["foo", "bar"]}
+].forEach(function (oFixture, i) {
 	QUnit.test("Create message with full target, " + i, function(assert) {
 		var oMessage = new Message({fullTarget: oFixture.vFullTarget});
 
-		assert.strictEqual(oMessage.fullTarget, oFixture.sExpectedFullTarget);
 		assert.deepEqual(oMessage.aFullTargets, oFixture.aExpectedFullTargets);
 		if (Array.isArray(oFixture.vFullTarget)) {
 			assert.notStrictEqual(oMessage.aFullTargets, oFixture.vFullTarget,
 				"store copy of full targets");
 		}
+		/**
+		 * @deprecated As of version 1.79.0
+		 */
+		(function () {
+			assert.strictEqual(oMessage.fullTarget, oFixture.aExpectedFullTargets[0]);
 
-		// code under test
-		oMessage.fullTarget = "baz";
+			// code under test
+			oMessage.fullTarget = "baz";
 
-		oFixture.aExpectedFullTargets[0] = "baz";
-		assert.deepEqual(oMessage.aFullTargets, oFixture.aExpectedFullTargets);
+			oFixture.aExpectedFullTargets[0] = "baz";
+			assert.deepEqual(oMessage.aFullTargets, oFixture.aExpectedFullTargets);
 
-		// code under test
-		oMessage.aFullTargets[0] = "baz2";
+			// code under test
+			oMessage.aFullTargets[0] = "baz2";
 
-		assert.strictEqual(oMessage.fullTarget, "baz2");
+			assert.strictEqual(oMessage.fullTarget, "baz2");
+		}());
 	});
 });
-
+	/**
+	 * @deprecated As of version 1.79.0
+	 */
 ["foo", ["foo", "bar"], undefined, ""].forEach(function (vTarget, i) {
 	QUnit.test("set target, " + i, function (assert) {
 		var oMessage = new Message({target : vTarget});
@@ -155,7 +159,9 @@ sap.ui.define([
 		checkOtherTargets();
 	});
 });
-
+	/**
+	 * @deprecated As of version 1.79.0
+	 */
 	QUnit.test("target property is not configurable", function (assert) {
 		var oMessage = new Message({target : ["foo", "bar"]});
 
@@ -169,7 +175,9 @@ sap.ui.define([
 			Object.defineProperty(oMessage, "target", {get : function () {return null;}});
 		});
 	});
-
+	/**
+	 * @deprecated As of version 1.79.0
+	 */
 	QUnit.test("fullTarget property is not configurable", function (assert) {
 		var oMessage = new Message({fullTarget : ["foo", "bar"]});
 

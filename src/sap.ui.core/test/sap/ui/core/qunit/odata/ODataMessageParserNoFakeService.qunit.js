@@ -1428,17 +1428,22 @@ sap.ui.define([
 		assert.strictEqual(oMessage.code, oExpectedMessage.code);
 		assert.strictEqual(oMessage.description, oExpectedMessage.description);
 		assert.strictEqual(oMessage.descriptionUrl, oExpectedMessage.descriptionUrl);
-		assert.strictEqual(oMessage.fullTarget, "~fullTargetFrom_createTarget0");
 		assert.deepEqual(oMessage.aFullTargets, aDeepPaths);
 		assert.strictEqual(oMessage.message, oExpectedMessage.message);
 		assert.strictEqual(oMessage.persistent, oExpectedMessage.persistent);
 		assert.strictEqual(oMessage.processor, "~_processor");
-		assert.strictEqual(oMessage.target, "~targetFrom_createTarget0");
 		assert.deepEqual(oMessage.aTargets, aTargets);
 		assert.strictEqual(oMessage.technical, bIsTechnical);
 		assert.deepEqual(oMessage.technicalDetails,
 			{headers : "~headers", statusCode : "~statusCode"});
 		assert.strictEqual(oMessage.type, oExpectedMessage.type);
+		/**
+		 * @deprecated As of version 1.79.0
+		*/
+		(function () {
+			assert.strictEqual(oMessage.fullTarget, "~fullTargetFrom_createTarget0");
+			assert.strictEqual(oMessage.target, "~targetFrom_createTarget0");
+		}());
 	});
 });
 
