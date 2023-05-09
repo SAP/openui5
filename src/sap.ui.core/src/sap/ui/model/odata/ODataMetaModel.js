@@ -27,6 +27,66 @@ sap.ui.define([
 		JSONListBinding, JSONModel, JSONPropertyBinding, JSONTreeBinding, Measurement) {
 	"use strict";
 
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.Extension
+	 *
+	 * An extension object generated from OData annotations.
+	 *
+	 * @property {string} name
+	 *   The name of the extension
+	 * @property {string} namespace
+	 *   The namespace of the extension
+	 * @property {string} value
+	 *   The value of the extension
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.Annotatable
+	 *
+	 * An OData metadata element which can be annotated. For annotations from SAP or OData vocabularies, it may contain
+	 * properties like <code>com.sap.vocabularies.Common.v1.Label</code> with the annotation value as an object.
+	 * For annotations from the "http://www.sap.com/Protocols/SAPData" namespace, it may contain properties like
+	 * <code>sap:label</code> with the annotation value as a string. For details on annotation representation, see
+	 * {@link sap.ui.model.odata.ODataMetaModel ODataMetaModel} resp.
+	 * {@link topic:6c47b2b39db9404582994070ec3d57a2%23loio341823349ed04df1813197f2a0d71db2 OData V2 Model - Meta Model
+	 * for OData V2}.
+	 *
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.Extension>} [extensions]
+	 *   The array of extension elements, see {@link sap.ui.model.odata.ODataMetaModel.Extension Extension}
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.AssociationEnd
+	 *
+	 * An object representing one end of an OData association.
+	 *
+	 * @property {string} type
+	 *   The qualified name of the entity type at the end of the association
+	 * @property {string} multiplicity
+	 *   The multiplicity of the association end; one of "0", "0..1" or "*"
+	 * @property {string} role
+	 *   The name of the association role
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.AssociationSetEnd
+	 *
+	 * An object representing one end of an OData association set.
+	 *
+	 * @property {string} entitySet
+	 *   The entity set's name at the end of the association
+	 * @property {string} role
+	 *   The name of the association role
+	 *
+	 * @public
+	 */
+
 	var // maps the metadata URL with query parameters concatenated with the code list collection
 		// path (e.g. /foo/bar/$metadata#SAP__Currencies) to a SyncPromise resolving with the code
 		// list customizing as needed by the OData type
@@ -787,7 +847,7 @@ sap.ui.define([
 	 *   an entity type as returned by {@link #getODataEntityType getODataEntityType}
 	 * @param {string} sName
 	 *   the name of a navigation property within this entity type
-	 * @returns {object|null}
+	 * @returns {sap.ui.model.odata.ODataMetaModel.AssociationEnd|null}
 	 *   the OData association end or <code>null</code> if no such association end is found
 	 * @public
 	 */
@@ -813,7 +873,7 @@ sap.ui.define([
 	 *   an entity type as returned by {@link #getODataEntityType getODataEntityType}
 	 * @param {string} sName
 	 *   the name of a navigation property within this entity type
-	 * @returns {object|null}
+	 * @returns {sap.ui.model.odata.ODataMetaModel.AssociationSetEnd|null}
 	 *   the OData association set end or <code>null</code> if no such association set end is found
 	 * @public
 	 */
