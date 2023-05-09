@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Int32",
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/type/Single",
-	"sap/ui/model/odata/type/Double"
+	"sap/ui/model/odata/type/Double",
+	"sap/ui/model/odata/type/Currency"
 ],
 function(
 	ODataTypeMap,
@@ -30,7 +31,8 @@ function(
 	ODataInt32,
 	ODataInt64,
 	ODataSingle,
-	ODataDouble
+	ODataDouble,
+	ODataCurrency
 ) {
     "use strict";
 
@@ -135,5 +137,33 @@ function(
 
 		oStringifiedValue = ODataTypeMap.externalizeValue('50', new ODataDecimal());
 		assert.equal(oStringifiedValue, '50', "expected value returned");
+	});
+
+	var ODataCurrencyCodeList = {
+		"EUR" : {Text : "Euro", UnitSpecificScale : 2},
+		"USD" : {Text : "US-Dollar", UnitSpecificScale : 2},
+		"JPY" : {Text : "Japan Yen", UnitSpecificScale : 0},
+		"SEK" : {Text : "Swedish krona", UnitSpecificScale : 5}
+	};
+
+	QUnit.module("Type initialization");
+
+	QUnit.test("initializeTypeFromValue", function(assert) {
+		var oType = new ODataSingle();
+		assert.deepEqual(ODataTypeMap.initializeTypeFromValue(oType, 0), {}, "empty object returned");
+		oType.destroy();
+
+		oType = new ODataCurrency();
+		assert.deepEqual(ODataTypeMap.initializeTypeFromValue(oType, [undefined, undefined, undefined]), null, "null returned if unit-map udefined"); // intial before values are read by binding
+		assert.deepEqual(ODataTypeMap.initializeTypeFromValue(oType, [1, "USD", ODataCurrencyCodeList]), {mCustomUnits: ODataCurrencyCodeList}, "Unit-Map returned");
+		assert.ok(oType.mCustomUnits, "CustomUnits set in Type");
+		oType.destroy();
+	});
+
+	QUnit.test("initializeInternalType", function(assert) {
+		var oType = new ODataCurrency();
+		assert.deepEqual(ODataTypeMap.initializeInternalType(oType, {mCustomUnits: ODataCurrencyCodeList}), undefined, "nothing returned");
+		assert.ok(oType.mCustomUnits, "CustomUnits set in Type");
+		oType.destroy();
 	});
 });

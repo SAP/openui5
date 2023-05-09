@@ -37,42 +37,5 @@ sap.ui.define([
 		return ODataV4TypeMap;
 	};
 
-	ODataFieldBaseDelegate.initializeTypeFromBinding = function(oPayload, oType, vValue) {
-
-		// V4 Unit and Currency types have a map with valid units and create an internal customizing for it.
-		// The Field needs to keep this customizing logic when creating the internal type.
-		// (As external RAW binding is used there is no formatting on parsing.)
-
-		var oResult = {};
-		if (oType && (oType.isA("sap.ui.model.odata.type.Unit") || oType.isA("sap.ui.model.odata.type.Currency"))
-				&& Array.isArray(vValue) && vValue.length > 2 && vValue[2] !== undefined) {
-			// format once to set internal customizing. Allow null as valid values for custom units
-			oType.formatValue(vValue, "string");
-			oResult.bTypeInitialized = true;
-			oResult.mCustomUnits = vValue[2]; // TODO: find a better way to provide custom units to internal type
-		}
-
-		return oResult;
-
-	};
-
-	ODataFieldBaseDelegate.initializeInternalUnitType = function(oPayload, oType, oTypeInitialization) {
-
-		if (oTypeInitialization && oTypeInitialization.mCustomUnits !== undefined) {
-			// if already initialized initialize new type too.
-			oType.formatValue([null, null, oTypeInitialization.mCustomUnits], "string");
-		}
-
-	};
-
-	ODataFieldBaseDelegate.enhanceValueForUnit = function(oPayload, aValues, oTypeInitialization) {
-
-		if (oTypeInitialization && oTypeInitialization.bTypeInitialized && aValues.length === 2) {
-			aValues.push(oTypeInitialization.mCustomUnits);
-			return aValues;
-		}
-
-	};
-
 	return ODataFieldBaseDelegate;
 });

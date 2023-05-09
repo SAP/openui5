@@ -368,5 +368,37 @@ sap.ui.define([
 		return this.getDataTypeInstance(vType, oFormatOptions, oConstraints); // string
 	};
 
+	/**
+	 * If the <code>Field</code> control is used, the used data type comes from the binding.
+	 * Some data types (like Currency or Unit) might need some initialization.
+	 * To initialize the internal ("cloned") Type later on, the result of this function
+	 * is provided to <code>initializeInternalType</code>.
+	 *
+	 * @param {sap.ui.model.SimpleType} oType Type from binding
+	 * @param {any} vValue Given value
+	 * @returns {null|object} Information needed to initialize internal type
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.115.0
+	 */
+	TypeMap.initializeTypeFromValue = function(oType, vValue) {
+
+		return {}; // to mark initialization as finished as not needed for normal types
+
+	};
+
+	/**
+	 * This function initializes the internal ("cloned") Type.
+	 *
+	 * @param {sap.ui.model.SimpleType} oType original Type (e.g. from Binding)
+	 * @param {object} oTypeInitialization Information needed to initialize internal type (created in <code>initializeTypeFromValue</code>)
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.115.0
+	 */
+	TypeMap.initializeInternalType = function(oType, oTypeInitialization) {
+
+	};
+
 	return TypeMap;
 });

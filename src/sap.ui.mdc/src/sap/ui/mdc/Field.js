@@ -426,7 +426,7 @@ sap.ui.define([
 
 	function _initializeType(vValue) {
 
-		if (!this._bTypeInitialized) {
+		if (!this._oTypeInitialization) {
 			if (!this.bDelegateInitialized) {
 				// wait until delegate is loaded
 				this.awaitControlDelegate().then(function() {
@@ -439,12 +439,13 @@ sap.ui.define([
 
 			var oBinding = this.getBinding("value");
 			var oDataType = oBinding ? oBinding.getType() : this.getContentFactory().getDataType(); // use type from binding, not internal (might be a different one)
-			this._oTypeInitialization = this.getControlDelegate().initializeTypeFromBinding(this.getPayload(), oDataType, vValue);
-			this._bTypeInitialized = this._oTypeInitialization.bTypeInitialized;
-			if (this._bTypeInitialized && this.getContentFactory().getUnitOriginalType()) {
-				// internal type already created, initialize it too
-				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this.getContentFactory().getDataType(), this._oTypeInitialization);
-				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this.getContentFactory().getUnitType(), this._oTypeInitialization);
+
+			if (oDataType) {
+				this._oTypeInitialization = this.getTypeMap().initializeTypeFromValue(oDataType, vValue);
+				if (this._oTypeInitialization && this.getContentFactory().getUnitOriginalType()) {
+					this.getTypeMap().initializeInternalType(this.getContentFactory().getDataType(), this._oTypeInitialization);
+					this.getTypeMap().initializeInternalType(this.getContentFactory().getUnitType(), this._oTypeInitialization);
+				}
 			}
 		}
 

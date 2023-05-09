@@ -77,7 +77,45 @@ sap.ui.define([
 	ODataTypeMap.setAlias("Edm.Time", "sap.ui.model.odata.type.Time");
 	ODataTypeMap.setAlias("Edm.TimeOfDay", "sap.ui.model.odata.type.TimeOfDay");
 
+	/*
+	 * For sap.ui.model.odata.type.Currency and sap.ui.model.odata.type.Unit the
+	 * CompositeBinding has 3 parts, Number, Currency/Unit and unit map.
+	 * On the first call of formatValue the unit map is analyzed and stored inside the
+	 * Type. Later, on parsing it is used. Without initializing the unit map parsing is
+	 * not working.
+	 *
+	 * In the sap.ui.mdc.Field the Type is created via Binding. So when the value of the Field
+	 * gets the unit map for the first time we need to initialize the type via formatValue.
+	 * (As no condition is created if there is no number or unit formatValue might not be called before
+	 * first user input.)
+	 *
+	 * We return the given unit map in the TypeInitialization object to allow to initialize the "cloned"
+	 * Unit/Currency-Type (internally used by the two Input controls for number and unit) with the unit map.
+	 */
+	ODataTypeMap.initializeTypeFromValue = function(oType, vValue) {
 
+		if (oType && this.getBaseType(oType.getMetadata().getName()) === BaseType.Unit && Array.isArray(vValue) && vValue.length > 2) {
+			if (vValue[2] !== undefined) {
+				var oTypeInitialization = {mCustomUnits: vValue[2]};
+				this.initializeInternalType(oType, oTypeInitialization);
+				return oTypeInitialization;
+			}
+		} else {
+			return {}; // to mark initialization as finished as not needed for normal types
+		}
+
+		return null; // not all needed information are given right now.
+
+	};
+
+	ODataTypeMap.initializeInternalType = function(oType, oTypeInitialization) {
+
+		if (oTypeInitialization && oTypeInitialization.mCustomUnits !== undefined) {
+			// if already initialized initialize new type too.
+			oType.formatValue([null, null, oTypeInitialization.mCustomUnits], "string");
+		}
+
+	};
 
 	ODataTypeMap.freeze();
 

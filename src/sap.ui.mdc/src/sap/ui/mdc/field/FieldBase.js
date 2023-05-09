@@ -2755,7 +2755,7 @@ sap.ui.define([
 				}
 			} else {
 				var oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators());
-				var aValue = this.getControlDelegate().enhanceValueForUnit(this.getPayload(), [null, aNewConditions[0].values[0]], this._oTypeInitialization); // Delegate must be initialized right now
+				var aValue = [null, aNewConditions[0].values[0]];
 				oCondition = Condition.createCondition(oOperator.name, [aValue], aNewConditions[0].inParameters, aNewConditions[0].outParameters, ConditionValidated.NotValidated, aNewConditions[0].payload);
 				aConditions.push(oCondition);
 				var oConditionType = this.getContentFactory().getConditionType(true);
@@ -2906,7 +2906,7 @@ sap.ui.define([
 					this._oNavigateCondition.values.splice(1);
 				}
 			} else {
-				this._oNavigateCondition.values = [this.getControlDelegate().enhanceValueForUnit(this.getPayload(), [null, vKey], this._oTypeInitialization)]; // Delegate must be initialized right now
+				this._oNavigateCondition.values = [[null, vKey]];
 			}
 		}
 

@@ -73,56 +73,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * If the <code>Field</code> control is used, the used data type might come from the binding.
-	 * In V4-unit or currency case it might need to be formatted once.
-	 * To initialize the internal type later on, the currencies must be returned.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.model.SimpleType} oType Type from binding
-	 * @param {any} vValue Given value
-	 * @returns {object} Information needed to initialize internal type (needs to set bTypeInitialized to true if initialized)
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 */
-	FieldBaseDelegate.initializeTypeFromBinding = function(oPayload, oType, vValue) {
-
-		return {};
-
-	};
-
-	/**
-	 * This function initializes the unit type.
-	 * If the <code>Field</code> control is used, the used data type might come from the binding.
-	 * If the type is a V4 unit or currency, it might need to be formatted once.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.model.SimpleType} oType Type from binding
-	 * @param {object} oTypeInitialization Information needed to initialize internal type
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 */
-	FieldBaseDelegate.initializeInternalUnitType = function(oPayload, oType, oTypeInitialization) {
-
-	};
-
-	/**
-	 * This function enhances the value with unit or currency information if needed by the data type.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @param {any[]} aValues Values
-	 * @param {object} oTypeInitialization Information needed to initialize internal type
-	 * @returns {any[]} Values
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @since: 1.93.0
-	 */
-	FieldBaseDelegate.enhanceValueForUnit = function(oPayload, aValues, oTypeInitialization) {
-
-		return aValues;
-
-	};
-
-	/**
 	 * Defines if the input of the <code>Field</code> or <code>FilterField</code> control is
 	 * checked to determine the key and description.
 	 *

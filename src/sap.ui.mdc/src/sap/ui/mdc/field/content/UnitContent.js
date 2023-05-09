@@ -188,7 +188,7 @@ sap.ui.define([
 		},
 		_adjustDataTypeForUnit: function(oContentFactory) {
 			var oField = oContentFactory.getField();
-			var TypeUtil = oField.getTypeMap();
+			var TypeMap = oField.getTypeMap();
 			var oType = oContentFactory.retrieveDataType();
 			var oFormatOptions = oType.getFormatOptions();
 			var oConstraints = oType.getConstraints();
@@ -201,15 +201,15 @@ sap.ui.define([
 				var oClonedConstraints = isEmptyObject(oConstraints) ? undefined : merge({}, oConstraints);
 
 				// Type for number
-				var oNewType = _getUnitTypeInstance(TypeUtil, oType, oClonedFormatOptions, oClonedConstraints, true, false);
+				var oNewType = _getUnitTypeInstance(TypeMap, oType, oClonedFormatOptions, oClonedConstraints, true, false);
 				oContentFactory.setUnitOriginalType(oContentFactory.getDataType());
+				TypeMap.initializeInternalType(oNewType, oContentFactory.getFieldTypeInitialization());
 				oContentFactory.setDataType(oNewType);
-				oField.getControlDelegate().initializeInternalUnitType(oField.getPayload(), oContentFactory.getDataType(), oContentFactory.getFieldTypeInitialization());
 
 				// type for unit
-				oNewType = _getUnitTypeInstance(TypeUtil, oType, oClonedFormatOptions, oClonedConstraints, false, true);
+				oNewType = _getUnitTypeInstance(TypeMap, oType, oClonedFormatOptions, oClonedConstraints, false, true);
+				TypeMap.initializeInternalType(oNewType, oContentFactory.getFieldTypeInitialization());
 				oContentFactory.setUnitType(oNewType);
-				oField.getControlDelegate().initializeInternalUnitType(oField.getPayload(), oContentFactory.getUnitType(), oContentFactory.getFieldTypeInitialization());
 
 				oContentFactory.updateConditionType();
 			}
