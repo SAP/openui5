@@ -23,9 +23,9 @@ sap.ui.define([
 		return oControl._pQueue;
 	};*/
 
-	oChartItemFlex.beforeAddItem = function(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent) {
+	oChartItemFlex.beforeAddItem = function(Delegate, sPropertyKeyName, oControl, mPropertyBag, oChangeContent) {
 
-		return Delegate.addItem.call(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent.role);
+		return Delegate.addItem.call(Delegate, sPropertyKeyName, oControl, mPropertyBag, oChangeContent.role);
 
 	};
 

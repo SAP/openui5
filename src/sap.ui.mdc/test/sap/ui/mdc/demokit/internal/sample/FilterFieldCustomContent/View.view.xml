@@ -61,6 +61,7 @@
 		<Label text="integer single-value FilterField with Slider as Content"/>
 		<mdc:FilterField id="F1"
 			conditions="{cm>/conditions/metricsWords}"
+			propertyKey="metricsWords"
 			dataType="sap.ui.model.odata.type.Int32"
 			dataTypeFormatOptions='\{"emptyString": 0\}'
 			dataTypeConstraints='\{"nullable": false\}'
@@ -74,6 +75,7 @@
 		<Label text="single value FilterField with custom control and ValueHelp"/>
 		<mdc:FilterField id="F2"
 			conditions="{cm>/conditions/title}"
+			propertyKey="title"
 			dataType="sap.ui.model.odata.type.String"
 			maxConditions="1"
 			operators="EQ"
@@ -86,6 +88,7 @@
 		<Label text="integer multi-value FilterField with custom control and own handling for updates and eventing"/>
 		<mdc:FilterField id="F3"
 			conditions="{cm>/conditions/number}"
+			propertyKey="number"
 			dataType="sap.ui.model.odata.type.Int32"
 			dataTypeFormatOptions='\{"emptyString": 0\}'
 			dataTypeConstraints='\{"nullable": false\}'
@@ -99,6 +102,7 @@
 		<Label text="multi value FilterField with custom control and ValueHelp"/>
 		<mdc:FilterField id="F4"
 			conditions="{cm>/conditions/descr}"
+			propertyKey="descr"
 			dataType="sap.ui.model.odata.type.String"
 			maxConditions="-1"
 			valueHelp="VH-Conditions"

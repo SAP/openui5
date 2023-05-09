@@ -36,7 +36,7 @@ sap.ui.define([
 				columns: [
 					new Column({
 						header: "test",
-						dataProperty: "test",
+						propertyKey: "test",
 						template: new Text()
 					})
 				],
@@ -133,7 +133,7 @@ sap.ui.define([
 				columns: [
 					new Column({
 						header: "test",
-						dataProperty: "test",
+						propertyKey: "test",
 						template: new Text()
 					})
 				],
@@ -282,7 +282,7 @@ sap.ui.define([
 				columns: [
 					new Column({
 						header: "test",
-						dataProperty: "test",
+						propertyKey: "test",
 						template: new Text()
 					})
 				],

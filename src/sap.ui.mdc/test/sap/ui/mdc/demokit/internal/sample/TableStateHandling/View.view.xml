@@ -38,19 +38,19 @@
 			<OverflowToolbarButton icon="sap-icon://activate" tooltip="Apply table state config" press="applyTableStateConfig"/>
 		</mdc:actions>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On"dataProperty="CreatedAt" importance="Low">
+			<mdcTable:Column id="create" header="Created On"propertyKey="CreatedAt" importance="Low">
 				<Text text="{CreatedAt}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" dataProperty="ProductID" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" propertyKey="ProductID" importance="High">
 				<ObjectIdentifier title="{ProductID}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" dataProperty="Category" importance="Low">
+			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" propertyKey="Category" importance="Low">
 				<Text text="{Category}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" dataProperty="Name" importance="Low">
+			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" propertyKey="Name" importance="Low">
 				<Text text="{Name}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" dataProperty="SupplierName" importance="Medium">
+			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName" importance="Medium">
 				<Text text="{SupplierName}"/>
 			</mdcTable:Column>
 		</mdc:columns>

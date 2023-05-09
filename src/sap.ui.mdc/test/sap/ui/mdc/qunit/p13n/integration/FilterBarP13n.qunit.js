@@ -46,11 +46,13 @@ sap.ui.define([
 				filterItems: [
 					new FilterField("item1",{
 						label:"item1",
-						conditions: "{$filters>/conditions/item1}"
+						conditions: "{$filters>/conditions/item1}",
+						propertyKey: "item1"
 					}),
 					new FilterField("item2",{
 						label:"item2",
-						conditions: "{$filters>/conditions/item2}"
+						conditions: "{$filters>/conditions/item2}",
+						propertyKey: "item2"
 					})
 				]
 			});
@@ -58,7 +60,8 @@ sap.ui.define([
 
 			sinon.stub(FilterBarDelegate, "addItem").callsFake(function(sKey, oFilterBar) {
 				return Promise.resolve(new FilterField({
-					conditions: "{$filters>/conditions/" + sKey + "}"
+					conditions: "{$filters>/conditions/" + sKey + "}",
+					propertyKey: sKey
 				}));
 			});
 

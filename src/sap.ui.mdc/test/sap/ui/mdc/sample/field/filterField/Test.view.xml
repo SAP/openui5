@@ -22,6 +22,7 @@
 					<m:Label text="single value field (ProductId)"/>
 					<mdc:FilterField id="FF1"
 						conditions="{cm>/conditions/ProductId}"
+						propertyKey="ProductId"
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/ProductId/@sap:label}"
@@ -97,9 +98,10 @@
 						</mdc:dependents>
 					</mdc:FilterField>
 
-					<m:Label text="single value field in display mode  (ProductId)"/>
+					<m:Label text="single value field in display mode (ProductId)"/>
 					<mdc:FilterField id="FF2"
 						conditions="{cm>/conditions/ProductId}"
+						propertyKey="ProductId"
 						display="Description"
 						maxConditions="1"
 						editMode="Display"
@@ -114,6 +116,7 @@
 					<mdc:FilterField
 						id="FF3"
 						conditions="{cm>/conditions/Name}"
+						propertyKey="Name"
 						maxConditions="10"
 						placeholder="{/#Product/Name/@sap:label}"
 						label="{/#Product/Name/@sap:label}"
@@ -125,6 +128,7 @@
 					<m:Label text="multi value field in display mode (Name)"/>
 					<mdc:FilterField id="FF4"
 						conditions="{cm>/conditions/Name}"
+						propertyKey="Name"
 						maxConditions="10"
 						editMode="Display"
 						placeholder="{/#Product/Name/@sap:label}"
@@ -136,6 +140,7 @@
 					<m:Label text="multi value field (Description)"/>
 					<mdc:FilterField id="FF5"
 						conditions="{cm>/conditions/Description}"
+						propertyKey="Description"
 						dataType="sap.ui.model.odata.type.String"
 						dataTypeConstraints='\{"nullable": false\}'
 						delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
@@ -149,6 +154,7 @@
 					<m:Label text="multi value field in display mode (Description)"/>
 					<mdc:FilterField id="FF6"
 						conditions="{cm>/conditions/Description}"
+						propertyKey="Description"
 						maxConditions="3"
 						editMode="Display"
 						placeholder="{/#Product/Description/@sap:label}"
@@ -160,6 +166,7 @@
 					<m:Label text="single value field (DateTime) only equals"/>
 					<mdc:FilterField id="FF7"
 						conditions="{cm>/conditions/DateTime}"
+						propertyKey="DateTime"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "long"\}'
 						display="Value"
@@ -174,6 +181,7 @@
 					<m:Label text="single value field (DateTime) with DynamicDateRange"/>
 					<mdc:FilterField id="FF7d"
 						conditions="{cm>/conditions/DateTime}"
+						propertyKey="DateTime"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "short"\}'
 						display="Value"
@@ -187,6 +195,7 @@
 					<m:Label text="single value field in display mode (DateTime)"/>
 					<mdc:FilterField id="FF8"
 						conditions="{cm>/conditions/DateTime}"
+						propertyKey="DateTime"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "medium"\}'
 						maxConditions="1"
@@ -200,6 +209,7 @@
 					<m:Label text="single value field (Date) all operators"/>
 					<mdc:FilterField id="FF7a"
 						conditions="{cm>/conditions/Date}"
+						propertyKey="Date"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "long"\}'
 						dataTypeConstraints='\{"displayFormat": "Date"\}'
@@ -215,6 +225,7 @@
 					<m:Label text="single value field (Date) using DynamicDateRange"/>
 					<mdc:FilterField id="FF7a-DDR"
 						conditions="{cm>/conditions/Date}"
+						propertyKey="Date"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "long"\}'
 						dataTypeConstraints='\{"displayFormat": "Date"\}'
@@ -229,6 +240,7 @@
 					<m:Label text="single value field (Date) only between"/>
 					<mdc:FilterField id="FF7b"
 						conditions="{cm>/conditions/Date}"
+						propertyKey="Date"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "short"\}'
 						dataTypeConstraints='\{"displayFormat": "Date"\}'
@@ -244,6 +256,7 @@
 					<m:Label text="multi value field (Date) only equal"/>
 					<mdc:FilterField id="FF7c"
 						conditions="{cm>/conditions/Date}"
+						propertyKey="Date"
 						dataType="sap.ui.model.odata.type.DateTime"
 						dataTypeFormatOptions='\{"style": "short"\}'
 						dataTypeConstraints='\{"displayFormat": "Date"\}'
@@ -260,6 +273,7 @@
 					<m:Label text="single value field (Status)"/>
 					<mdc:FilterField id="FF9"
 						conditions="{cm>/conditions/Status}"
+						propertyKey="Status"
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/Status/@sap:label}"
@@ -283,6 +297,7 @@
 					<m:Label text="Select-like single value field (Status)"/>
 					<mdc:FilterField id="FF17"
 						conditions="{cm>/conditions/Status}"
+						propertyKey="Status"
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/Status/@sap:label}"
@@ -306,6 +321,7 @@
 					<m:Label text="single value field in display mode  (Status)"/>
 					<mdc:FilterField id="FF10"
 						conditions="{cm>/conditions/Status}"
+						propertyKey="Status"
 						maxConditions="1"
 						editMode="Display"
 						placeholder="{/#Product/Status/@sap:label}"
@@ -317,6 +333,7 @@
 					<m:Label text="multi (2) value field (Quantity)"/>
 					<mdc:FilterField id="FF11"
 						conditions="{cm>/conditions/Quantity}"
+						propertyKey="Quantity"
 						dataType="Edm.Int32"
 						dataTypeConstraints='\{"nullable": false\}'
 						display="Value"
@@ -331,6 +348,7 @@
 					<m:Label text="multi value field in display mode (Quantity)"/>
 					<mdc:FilterField id="FF12"
 						conditions="{cm>/conditions/Quantity}"
+						propertyKey="Quantity"
 						dataType="Edm.Int32"
 						maxConditions="2"
 						editMode="Display"
@@ -343,6 +361,7 @@
 					<m:Label text="Custom field"/>
 					<mdc:FilterField id="FF13"
 						conditions="{cm>/conditions/Status}"
+						propertyKey="Status"
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/Status/@sap:label}"
@@ -358,6 +377,7 @@
 					<m:Label text="A UoM field"/>
 					<mdc:FilterField id="FF15"
 						conditions="{cm>/conditions/WeightMeasure,WeightUnit}"
+						propertyKey="WeightMeasure,WeightUnit"
 						dataType="sap.ui.model.type.Unit"
 						dataTypeConstraints='\{"minimum": 0\}'
 						display="Description"
@@ -383,6 +403,7 @@
 					<m:Label text="A UoM field in display mode"/>
 					<mdc:FilterField id="FF16"
 						conditions="{cm>/conditions/WeightMeasure,WeightUnit}"
+						propertyKey="WeightMeasure,WeightUnit"
 						dataType="sap.ui.model.type.Unit"
 						display="Value"
 						editMode="Display"
@@ -395,6 +416,7 @@
 					<m:Label text="Material (empty key)"/>
 					<mdc:FilterField id="FF_Material"
 						conditions="{cm>/conditions/MatrId}"
+						propertyKey="MatrId"
 						dataType="sap.ui.model.type.String"
 						dataTypeConstraints='\{"maxLength": 10, "search": "^(|[0-9])+$", "nullable": false\}'
 						dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
@@ -464,11 +486,26 @@
 						</mdc:dependents>
 					</mdc:FilterField>
 
+					<m:Label text="Search"/>
+					<mdc:FilterField id="FF-Search"
+						conditions="{cm>/conditions/$search}"
+						propertyKey="$search"
+						maxConditions="1"
+						dataType="sap.ui.model.type.String"
+						display="Value"
+						editMode="Editable"
+						placeholder="My Search"
+						label="My Search"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
 					<c:Title text="In/Out Example"/>
 					<m:Label text="{/#Product/CountryId/@sap:label}"/>
 					<mdc:FilterField
 						id="IOFFCountry"
 						conditions="{cm>/conditions/CountryId}"
+						propertyKey="CountryId"
 						operators="EQ,NE,EUROPE"
 						dataType="sap.ui.model.type.String"
 						dataTypeConstraints='\{"maxLength": 3\}'
@@ -542,6 +579,7 @@
 					<mdc:FilterField
 						id="IOFFRegion"
 						conditions="{cm>/conditions/RegionId}"
+						propertyKey="RegionId"
 						dataType="sap.ui.model.type.String"
 						dataTypeConstraints='\{"maxLength": 2, "search": "^[0-9]+$"\}'
 						display="ValueDescription"
@@ -602,6 +640,7 @@
 														dataTypeConstraints='\{"maxLength": 3\}'
 														width="100%"
 														conditions="{$filters>/conditions/countryId}"
+														propertyKey="countryId"
 														operators="EQ,NE,EUROPE"
 														valueHelp="VH-Country"/>
 												</vhfb:FilterBar>
@@ -638,6 +677,7 @@
 					<mdc:FilterField
 						id="IOFFCity"
 						conditions="{cm>/conditions/CityId}"
+						propertyKey="CityId"
 						dataType="sap.ui.model.odata.type.String"
 						dataTypeConstraints='\{"maxLength": 2, "isDigitSequence": true, "nullable": false\}'
 						display="ValueDescription"
@@ -729,6 +769,7 @@
 												dataTypeConstraints='\{"maxLength": 3\}'
 												width="100%"
 												conditions="{$filters>/conditions/countryId}"
+												propertyKey="countryId"
 												operators="EQ,NE,EUROPE"
 												valueHelp="VH-Country"/>
 											<mdc:FilterField
@@ -740,6 +781,7 @@
 												dataTypeConstraints='\{"maxLength": 2, "search": "^[0-9]+$"\}'
 												width="100%"
 												conditions="{$filters>/conditions/regionId}"
+												propertyKey="regionId"
 												valueHelp="VH-Region2">
 											</mdc:FilterField>
 											<mdc:FilterField
@@ -751,7 +793,8 @@
 												dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
 												dataTypeConstraints='\{"maxLength": 100, "nullable": false\}'
 												width="100%"
-												conditions="{$filters>/conditions/info}"/>
+												conditions="{$filters>/conditions/info}"
+												propertyKey="info"/>
 											<vhfb:dependents>
 												<mdc:ValueHelp id="VH-Region2"
 													delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "countryId", "source": "conditions/countryId"\}], "out": [\{"path": "countryId", "target": "conditions/countryId"\}]\}\}'>

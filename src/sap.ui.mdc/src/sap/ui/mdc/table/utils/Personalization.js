@@ -198,7 +198,7 @@ sap.ui.define([
 			control: oTable,
 			key: "ColumnWidth",
 			state: [{
-				name: mSettings.column.getDataProperty(),
+				name: mSettings.column.getPropertyKey(),
 				width: mSettings.width
 			}],
 			applyAbsolute: false
@@ -224,7 +224,7 @@ sap.ui.define([
 			control: oTable,
 			key: "Column",
 			state: [{
-				name: mSettings.column.getDataProperty(),
+				name: mSettings.column.getPropertyKey(),
 				position: mSettings.index
 			}]
 		});

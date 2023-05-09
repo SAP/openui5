@@ -299,69 +299,69 @@ sap.ui.define([
 
 			this.oColumnPropA = new Column({
 				id: "propAColumn",
-				dataProperty: "propA"
+				propertyKey: "propA"
 			});
 
 			this.oColumnPropB = new Column({
 				id: "propBColumn",
 				header: "Property B",
-				dataProperty: "propB",
+				propertyKey: "propB",
 				hAlign: "End"
 			});
 
 			this.oColumnPropC = new Column({
 				id: "propCColumn",
-				dataProperty: "propC"
+				propertyKey: "propC"
 			});
 
 			this.oColumnComplexPropA = new Column({
 				id: "columnComplexPropA",
 				header: "Complex Property A",
-				dataProperty: "complexPropA"
+				propertyKey: "complexPropA"
 			});
 
 			this.oColumnComplexPropB = new Column({
 				id: "columnComplexPropB",
-				dataProperty: "complexPropB"
+				propertyKey: "complexPropB"
 			});
 
 			this.oColumnPrice = new Column({
 				id: "priceColumn",
 				header: "Price",
-				dataProperty: "price",
+				propertyKey: "price",
 				hAlign: "End"
 			});
 
 			this.oInvalidColumn = new Column({
 				id: "invalidColumn",
 				header: "Invalid",
-				dataProperty: "invalidProperty"
+				propertyKey: "invalidProperty"
 			});
 
 			this.oNoDataColumn1 = new Column({
 				id: "noDataColumn1",
 				header: "NoDataColumn1",
 				hAlign: "Begin",
-				dataProperty: "noDataColumn1"
+				propertyKey: "noDataColumn1"
 			});
 
 			this.oNoDataColumn2 = new Column({
 				id: "noDataColumn2",
 				header: "NoDataColumn2",
 				hAlign: "Begin",
-				dataProperty: "noDataColumn2"
+				propertyKey: "noDataColumn2"
 			});
 
 			this.oColumnComplexPropC = new Column({
 				id: "columnComplexPropC",
 				header: "Complex Property C",
-				dataProperty: "complexPropC"
+				propertyKey: "complexPropC"
 			});
 
 			this.oColumnComplexPropD = new Column({
 				id: "columnComplexPropD",
 				header: "Complex Property D",
-				dataProperty: "complexPropD"
+				propertyKey: "complexPropD"
 			});
 		},
 		afterEach: function() {

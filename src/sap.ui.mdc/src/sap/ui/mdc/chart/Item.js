@@ -28,9 +28,18 @@ sap.ui.define([
                 library: "sap.ui.mdc",
                 properties: {
                     /**
+                     * @deprecated Since 1.115. Please use <code>propertyKey</code> instead.
                      * The unique identifier of the chart item that reflects the name of the data property in the resulting data set.
                      */
                     name: {
+                        type: "string"
+                    },
+                    /**
+                     * The unique identifier of the chart item that reflects the name of the data property in the resulting data set.
+                     *
+                     * @since 1.115
+                     */
+                    propertyKey: {
                         type: "string"
                     },
                     /**
@@ -59,6 +68,12 @@ sap.ui.define([
 
             }
         });
+
+    //Temporary fallback for compatibility until the dataProperty can be removed
+    Item.prototype.getPropertyKey = function() {
+		var sPropertyKey = this.getProperty("propertyKey");
+		return sPropertyKey || this.getName();
+	};
 
     return Item;
 

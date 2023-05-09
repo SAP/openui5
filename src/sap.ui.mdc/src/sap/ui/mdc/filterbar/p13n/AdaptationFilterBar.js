@@ -135,17 +135,15 @@ sap.ui.define([
 	// path in the model. Once the key reference between FilterFields, Columns and property info object has been aligned,
 	// the below fallback logic will become obsolete.
 	AdaptationFilterBar.prototype._getPropertyByName = function(sName) {
-		var oPropertyHelper = this.getPropertyHelper();
-		if (oPropertyHelper) {
-			var oProperty = oPropertyHelper.getProperties().find(function(oProp){
-				return oProp.path === sName;
-			});
 
-			if (!oProperty) {
-				oProperty = oPropertyHelper.getPropertyMap()[sName] || null;
-			}
-			return oProperty;
+		var oProperty = FilterBarBase.prototype._getPropertyByName.apply(this, arguments);
+		var oPropertyHelper = this.getPropertyHelper();
+		if (!oProperty || (oProperty.filterable === false)) {
+			oProperty = oPropertyHelper.getProperties().find(function(oProp){
+				return oProp.path === sName && oProp.filterable;
+			});
 		}
+		return oProperty;
 	};
 
 	AdaptationFilterBar.prototype._waitForAdaptControlAndPropertyHelper = function(){
@@ -285,7 +283,7 @@ sap.ui.define([
 		oP13nData.forEach(function(oP13nItem){
 			var oFilterField = this.mFilterFields && this.mFilterFields[oP13nItem.name];
 			if (oFilterField) {
-				var sKey = oFilterField.getFieldPath();
+				var sKey = oFilterField.getPropertyKey();
 				if (mConditions[sKey] && mConditions[sKey].length > 0) {
 					oP13nItem.active = true;
 				}
@@ -358,7 +356,7 @@ sap.ui.define([
 					if (this._checkAdvancedParent(oAdaptationControl)) {
 						if (oFilterField._bTemporaryOriginal) {
 							delete oFilterFieldPromise._bTemporaryOriginal;
-							this._mOriginalsForClone[oFilterField.getFieldPath()] = oFilterField;
+							this._mOriginalsForClone[oFilterField.getPropertyKey()] = oFilterField;
 						}
 						oFieldForDialog = oFilterField.clone();
 
@@ -410,7 +408,7 @@ sap.ui.define([
 		var aExistingItems = this._checkAdvancedParent(oAdaptationControl) ? oAdaptationControl.getFilterItems() : [];
 
 		var mExistingFilterItems = aExistingItems.reduce(function(mMap, oField){
-			mMap[oField.getFieldPath()] = oField;
+			mMap[oField.getPropertyKey()] = oField;
 			return mMap;
 		},{});
 
@@ -492,7 +490,7 @@ sap.ui.define([
 				if (oEvt.getParameter("reason") === "Remove") {
 					var oItem = oEvt.getParameter("item");
 					var mConditions = {};
-					mConditions[this.mFilterFields[oItem.name].getFieldPath()] = [];
+					mConditions[this.mFilterFields[oItem.name].getPropertyKey()] = [];
 
 					return this.getEngine().createChanges({
 						control: this,

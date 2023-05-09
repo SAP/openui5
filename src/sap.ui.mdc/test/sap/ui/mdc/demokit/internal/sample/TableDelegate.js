@@ -63,7 +63,7 @@ sap.ui.define([
 				var oColumnInfo = {
 					header: oPropertyInfo.label,
 					tooltip: oPropertyInfo.label,
-					dataProperty: sPropertyName,
+					propertyKey: sPropertyName,
 					template: oTemplate
 				};
 				return new Column(oTable.getId() + "--" + sPropertyName, oColumnInfo);

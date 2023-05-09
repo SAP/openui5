@@ -23,15 +23,19 @@
 			<mdc:filterItems>
 				<mdc:FilterField
 					conditions="{$filters>/conditions/name}"
+					propertyKey="name"
 					label="Name"/>
 					<mdc:FilterField
 					conditions="{$filters>/conditions/foundingYear}"
+					propertyKey="foundingYear"					
 					label="Founding Year"/>
 					<mdc:FilterField
 					conditions="{$filters>/conditions/artistUUID}"
+					propertyKey="artistUUID"						
 					label="artistUUID"/>
 					<mdc:FilterField
 					conditions="{$filters>/conditions/breakupYear}"
+					propertyKey="breakupYear"						
 					label="Breakout Year"/>
 			</mdc:filterItems>
 		</mdc:FilterBar>
@@ -43,16 +47,16 @@
 					type="Table"
 					p13nMode="Column,Sort,Filter,Group">
 			<mdc:columns>
-				<Column id="IDTableName_01" header="Name" dataProperty="name">
+				<Column id="IDTableName_01" header="Name" propertyKey="name">
 					<m:Text text="{name}"/>
 				</Column>
-				<Column id="IDTableYear" header="Founding Year" dataProperty="foundingYear">
+				<Column id="IDTableYear" header="Founding Year" propertyKey="foundingYear">
 					<m:Text text="{foundingYear}"/>
 				</Column>
-				<Column id="IDTablemodified" header="Changed By" dataProperty="modifiedBy">
+				<Column id="IDTablemodified" header="Changed By" propertyKey="modifiedBy">
 					<m:Text text="{modifiedBy}"/>
 				</Column>
-				<Column id="IDTableCreated" header="Created On" dataProperty="createdAt">
+				<Column id="IDTableCreated" header="Created On" propertyKey="createdAt">
 					<m:Text text="{createdAt}"/>
 				</Column>
 			</mdc:columns>

@@ -52,7 +52,7 @@ sap.ui.define([
 			}).then(function(oCreatedTemplate){
 				oTemplate = oCreatedTemplate;
 				return oModifier.createControl("sap.ui.mdc.table.Column", mPropertyBag.appComponent, mPropertyBag.view, sId, {
-					dataProperty: sPropertyInfoName,
+					propertyKey: sPropertyInfoName,
 					width: "150px",
 					header: sLabel
 				});

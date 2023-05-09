@@ -79,7 +79,8 @@ sap.ui.define([
 
 					return new FilterField({
 						label: oProperty.label,
-						conditions: "{$filters>/conditions/" + oProperty.name + "}"
+						conditions: "{$filters>/conditions/" + oProperty.name + "}",
+						propertyKey: oProperty.name
 					});
 				});
 			}.bind(this)

@@ -61,7 +61,7 @@ sap.ui.define([
         if (!oTable.isA) {
             getIdAndHeader(sPropertyName, sViewId);
 			return oModifier.createControl("sap.ui.mdc.table.Column", oAppComponent, oView, sId, {
-                dataProperty: sPropertyName,
+                propertyKey: sPropertyName,
                 header: sHeader
             }, true)
             .then(function(oCreatedColumn) {
@@ -74,7 +74,7 @@ sap.ui.define([
         getIdAndHeader(sPropertyName, sViewId);
 		return Promise.resolve(
             new Column(sId, {
-                dataProperty: sPropertyName,
+                propertyKey: sPropertyName,
                 header: sHeader
             }));
 	};

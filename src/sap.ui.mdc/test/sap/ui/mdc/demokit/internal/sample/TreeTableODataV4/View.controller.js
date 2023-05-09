@@ -162,7 +162,7 @@ sap.ui.define([
 		createColumnWithUnitTemplate: function(oTable, oProperty, oUnitProperty) {
 			var oColumn = new Column({
 				id: "id" + oProperty.name,
-				dataProperty: oProperty.name,
+				propertyKey: oProperty.name,
 				header: oProperty.label,
 				hAlign: "End",
 				template: new Text({
@@ -185,7 +185,7 @@ sap.ui.define([
 		createSimpleColumn: function(oTable, oProperty) {
 			var oColumn = new Column({
 				id: "id" + oProperty.name,
-				dataProperty: oProperty.name,
+				propertyKey: oProperty.name,
 				header: oProperty.label,
 				template: new Text({
 					text: {
@@ -217,7 +217,7 @@ sap.ui.define([
 
 			var oColumn = new Column({
 				header: oProperty.label,
-				dataProperty: oProperty.name,
+				propertyKey: oProperty.name,
 				template: oHBox
 			});
 

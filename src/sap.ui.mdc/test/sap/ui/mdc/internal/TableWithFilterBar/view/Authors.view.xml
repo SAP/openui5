@@ -178,7 +178,7 @@
 								<mdcvc:MTable id="regions" keyPath="code" descriptionPath="text" filterFields="$search">
 									<mdcvc:filterBar>
 										<vhfb:FilterBar id="regionsVHFilterbar" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFCountry" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/country_code}" valueHelp="IOFFVHCountry">
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFCountry" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/country_code}" propertyKey="country_code" valueHelp="IOFFVHCountry">
 											</mdc:FilterField>
 										</vhfb:FilterBar>
 									</mdcvc:filterBar>
@@ -294,8 +294,8 @@
 							<mdcvc:MTable id="cities" keyPath="city" descriptionPath="text" filterFields="$search">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar id="citiesVHFilterbar" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFCountry2" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" valueHelp="IOFFVHCountry"/>
-										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/region_code}" valueHelp="IOFFVHRegionFH"/>
+										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFCountry2" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/country_code}" propertyKey="country_code" operators="EQ,NE" valueHelp="IOFFVHCountry"/>
+										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/region_code}" propertyKey="region_code" valueHelp="IOFFVHRegionFH"/>
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
@@ -334,16 +334,17 @@
 					dataType="Edm.String"
 					placeholder="Search Authors"
 					conditions="{$filters>/conditions/$search}"
+					propertyKey="$search"
 					maxConditions="1"/>
 				</mdc:basicSearchField>
 
 				<mdc:filterItems>
-					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff2" label="Name" conditions="{$filters>/conditions/name}" valueHelp="fhName" dataType="sap.ui.model.odata.type.String" defaultOperator="StartsWith" />
-					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff3" label="Date of birth" operators="RENAISSANCE,MEDIEVAL,MODERN,CUSTOMRANGE,NOTINRANGE,CustomDateEmpty,CustomDateNotEmpty" conditions="{$filters>/conditions/dateOfBirth}" valueHelp="fhAdob" dataType="sap.ui.model.odata.type.Date" />
-					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff1" label="Date of death" conditions="{$filters>/conditions/dateOfDeath}" maxConditions="1" dataType="sap.ui.model.odata.type.Date" />
-					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff4" label="Country of origin" conditions="{$filters>/conditions/countryOfOrigin_code}" valueHelp="IOFFVHCountry" display="ValueDescription" dataType="sap.ui.model.odata.type.String" dataTypeConstraints='\{"maxLength": 3\}'/>
-					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff5" label="Region of origin" conditions="{$filters>/conditions/regionOfOrigin_code}" valueHelp="IOFFVHRegion" display="ValueDescription" dataType="sap.ui.model.odata.type.String" dataTypeConstraints='\{"maxLength": 3\}'/>
-					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff6" label="City of origin" conditions="{$filters>/conditions/cityOfOrigin_city}" valueHelp="IOFFVHCity" display="ValueDescription" dataType="sap.ui.model.odata.type.String" dataTypeConstraints='\{"maxLength": 3\}'/>
+					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff2" label="Name" conditions="{$filters>/conditions/name}" propertyKey="name" valueHelp="fhName" dataType="sap.ui.model.odata.type.String" defaultOperator="StartsWith" />
+					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff3" label="Date of birth" operators="RENAISSANCE,MEDIEVAL,MODERN,CUSTOMRANGE,NOTINRANGE,CustomDateEmpty,CustomDateNotEmpty" conditions="{$filters>/conditions/dateOfBirth}" propertyKey="dateOfBirth" valueHelp="fhAdob" dataType="sap.ui.model.odata.type.Date" />
+					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff1" label="Date of death" conditions="{$filters>/conditions/dateOfDeath}" propertyKey="dateOfDeath" maxConditions="1" dataType="sap.ui.model.odata.type.Date" />
+					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff4" label="Country of origin" conditions="{$filters>/conditions/countryOfOrigin_code}" propertyKey="countryOfOrigin_code" valueHelp="IOFFVHCountry" display="ValueDescription" dataType="sap.ui.model.odata.type.String" dataTypeConstraints='\{"maxLength": 3\}'/>
+					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff5" label="Region of origin" conditions="{$filters>/conditions/regionOfOrigin_code}" propertyKey="regionOfOrigin_code" valueHelp="IOFFVHRegion" display="ValueDescription" dataType="sap.ui.model.odata.type.String" dataTypeConstraints='\{"maxLength": 3\}'/>
+					<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="ff6" label="City of origin" conditions="{$filters>/conditions/cityOfOrigin_city}" propertyKey="cityOfOrigin_city" valueHelp="IOFFVHCity" display="ValueDescription" dataType="sap.ui.model.odata.type.String" dataTypeConstraints='\{"maxLength": 3\}'/>
 				</mdc:filterItems>
 
 			</mdc:FilterBar>
@@ -378,22 +379,22 @@
 						</mdcat:ActionToolbarAction>
 					</mdc:actions>
 					<mdc:columns>
-						<mdc:table.Column id="cName" header="Name" dataProperty="name">
+						<mdc:table.Column id="cName" header="Name" propertyKey="name">
 							<mdc:Field id="F_name" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'name', type: 'sap.ui.model.odata.type.String', contraints: {maxLength: 111}}" editMode="Display" multipleLines="true" width="100%"/>
 						</mdc:table.Column>
-						<mdc:table.Column id="cDoB" header="Date of birth" dataProperty="dateOfBirth">
+						<mdc:table.Column id="cDoB" header="Date of birth" propertyKey="dateOfBirth">
 							<mdc:Field id="F_dateOfBirth" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'dateOfBirth', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" multipleLines="false" width="100%"/>
 						</mdc:table.Column>
-						<mdc:table.Column id="cDoD" header="Date of death" dataProperty="dateOfDeath">
+						<mdc:table.Column id="cDoD" header="Date of death" propertyKey="dateOfDeath">
 							<mdc:Field id="F_dateOfDeath" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'dateOfDeath', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" multipleLines="false" width="100%"/>
 						</mdc:table.Column>
-						<mdc:table.Column id="cCoO" header="Country of origin" dataProperty="countryOfOrigin_code">
+						<mdc:table.Column id="cCoO" header="Country of origin" propertyKey="countryOfOrigin_code">
 							<mdc:Field id="F_countryOfOrigin_code" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'countryOfOrigin_code', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{countryOfOrigin/descr}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cRoO" header="Region of origin" dataProperty="regionOfOrigin_code">
+						<mdc:table.Column id="cRoO" header="Region of origin" propertyKey="regionOfOrigin_code">
 							<mdc:Field id="F_regionOfOrigin_code" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'regionOfOrigin_code', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{regionOfOrigin/text}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cCioO" header="City of origin" dataProperty="cityOfOrigin_city">
+						<mdc:table.Column id="cCioO" header="City of origin" propertyKey="cityOfOrigin_city">
 							<mdc:Field id="F_cityOfOrigin_city" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'cityOfOrigin_city', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{cityOfOrigin/text}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
 

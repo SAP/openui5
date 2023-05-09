@@ -336,6 +336,12 @@ sap.ui.define([
 
 	};
 
+	Field.prototype.isSearchField = function() {
+
+		return false; // MultiValueField cannot be a searchField (as this only supports single-value)
+
+	};
+
 	/**
 	 * Sets conditions to the property <code>conditions</code>.
 	 *

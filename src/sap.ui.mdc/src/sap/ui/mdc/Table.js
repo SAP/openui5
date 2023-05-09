@@ -1115,7 +1115,7 @@ sap.ui.define([
 
 		var aStableKeys = [];
 		if (this.getColumns().length > 0 && this._isOfType(TableType.TreeTable)) {
-			aStableKeys.push(this.getColumns()[0].getDataProperty());
+			aStableKeys.push(this.getColumns()[0].getPropertyKey());
 		}
 
 		var mRegistryOptions = {
@@ -1651,13 +1651,13 @@ sap.ui.define([
 	};
 
 	Table.prototype._getVisibleProperties = function() {
-		var aProperties = [], sDataProperty;
+		var aProperties = [], sPropertyKey;
 
 		this.getColumns().forEach(function(oMDCColumn, iIndex) {
-			sDataProperty = oMDCColumn && oMDCColumn.getDataProperty();
-			if (sDataProperty) {
+			sPropertyKey = oMDCColumn && oMDCColumn.getPropertyKey();
+			if (sPropertyKey) {
 				aProperties.push({
-					name: sDataProperty
+					name: sPropertyKey
 				});
 			}
 		});
@@ -2593,7 +2593,7 @@ sap.ui.define([
 		var oPropertyHelper = this.getPropertyHelper();
 
 		aColumns.forEach(function(oColumn) {
-			var oProperty = oPropertyHelper.getProperty(oColumn.getDataProperty());
+			var oProperty = oPropertyHelper.getProperty(oColumn.getPropertyKey());
 			var aSortableProperties = oProperty ? oProperty.getSortableProperties().map(function(oProperty) {
 				return oProperty.name;
 			}) : [];

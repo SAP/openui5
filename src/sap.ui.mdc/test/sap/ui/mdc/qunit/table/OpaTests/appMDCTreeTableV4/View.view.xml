@@ -27,16 +27,16 @@
             <variants:VariantManagement id="mdcTable-vm" for="mdcTable"/>
         </mdc:variant>
         <mdc:columns autoResizeColumn="true">
-            <mdcTable:Column header="ID" id="ID" dataProperty="ID">
+            <mdcTable:Column header="ID" id="ID" propertyKey="ID">
                 <Text text="{ID}"/>
             </mdcTable:Column>
-            <mdcTable:Column header="Name" id="Name" dataProperty="Name">
+            <mdcTable:Column header="Name" id="Name" propertyKey="Name">
                 <Text text="{Name}"/>
             </mdcTable:Column>
-            <mdcTable:Column header="Age" id="AGE" dataProperty="AGE">
+            <mdcTable:Column header="Age" id="AGE" propertyKey="AGE">
                 <Text text="{AGE}"/>
             </mdcTable:Column>
-            <mdcTable:Column header="Manager's ID" id="MANAGER_ID" dataProperty="MANAGER_ID">
+            <mdcTable:Column header="Manager's ID" id="MANAGER_ID" propertyKey="MANAGER_ID">
                  <Text text="{MANAGER_ID}"/>
             </mdcTable:Column>
         </mdc:columns>

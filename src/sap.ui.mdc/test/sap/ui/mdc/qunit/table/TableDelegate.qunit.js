@@ -79,7 +79,7 @@ sap.ui.define([
 				},
 				columns: [
 					new Column({
-						dataProperty: "Name",
+						propertyKey: "Name",
 						header: new Text({
 							text: "Column A"
 						}),
@@ -313,7 +313,7 @@ sap.ui.define([
 				p13nMode: ["Sort"],
 				columns: [
 					new Column({
-						dataProperty: "Name",
+						propertyKey: "Name",
 						header: new Text({
 							text: "Column A"
 						}),

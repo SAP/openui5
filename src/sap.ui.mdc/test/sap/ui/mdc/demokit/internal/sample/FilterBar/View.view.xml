@@ -50,7 +50,7 @@
 						<mdcvc:filterBar>
 							<vhfb:FilterBar id="VH2-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": "Books"\}\}' >
 								<vhfb:filterItems>
-									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions="{$filters>/conditions/title}" />
+									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions="{$filters>/conditions/title}" propertyKey="title"/>
 								</vhfb:filterItems>
 							</vhfb:FilterBar>
 						</mdcvc:filterBar>
@@ -59,19 +59,19 @@
 							selectionMode="Multi"
 							delegate='\{"name": "sap/ui/mdc/sample/FilterBar/GridTable.delegate", "payload": \{"collectionName": "Books"\}\}' threshold="50">
 							<mdc:columns>
-								<mdc:table.Column id="VH2-Dia-Table-ColId" header="ID" dataProperty="ID">
+								<mdc:table.Column id="VH2-Dia-Table-ColId" header="ID" propertyKey="ID">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH2-Dia-Table-ColIitle" header="Title" dataProperty="title">
+								<mdc:table.Column id="VH2-Dia-Table-ColIitle" header="Title" propertyKey="title">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{title}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH2-Dia-Table-ColDescr" header="Description" dataProperty="descr">
+								<mdc:table.Column id="VH2-Dia-Table-ColDescr" header="Description" propertyKey="descr">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{descr}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH2-Dia-Table-ColPub" header="Published" dataProperty="published">
+								<mdc:table.Column id="VH2-Dia-Table-ColPub" header="Published" propertyKey="published">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{published}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH2-Dia-Table-ColGenre" header="Genre Code" dataProperty="genre_code">
+								<mdc:table.Column id="VH2-Dia-Table-ColGenre" header="Genre Code" propertyKey="genre_code">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{genre_code}" additionalValue="{genre/label}" editMode="Display" display="Description"/>
 								</mdc:table.Column>
 							</mdc:columns>
@@ -131,13 +131,14 @@
 										delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 										dataType= "Edm.String"
 										conditions= "{$filters>/conditions/$search}"
+										propertyKey="$search"
 										width="50%"
 										maxConditions="1"
 										placeholder="Search" />
 								</vhfb:basicSearchField>
 								<vhfb:filterItems>
-									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions= "{$filters>/conditions/name}" />
+									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" propertyKey="ID"/>
+									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions= "{$filters>/conditions/name}" propertyKey="name"/>
 								</vhfb:filterItems>
 							</vhfb:FilterBar>
 						</mdcvc:filterBar>
@@ -146,13 +147,13 @@
 							selectionMode="Multi"
 							delegate='\{"name": "sap/ui/mdc/sample/FilterBar/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}' threshold="50">
 							<mdc:columns>
-								<mdc:table.Column id="VH1-Dia-Table-ColId" header="ID" dataProperty="ID">
+								<mdc:table.Column id="VH1-Dia-Table-ColId" header="ID" propertyKey="ID">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH1-Dia-Table-ColName" header="Name" dataProperty="name">
+								<mdc:table.Column id="VH1-Dia-Table-ColName" header="Name" propertyKey="name">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{name}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="VH1-Dia-Table-ColDateOfBirth" header="Date of Birth" dataProperty="dateOfBirth">
+								<mdc:table.Column id="VH1-Dia-Table-ColDateOfBirth" header="Date of Birth" propertyKey="dateOfBirth">
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{dateOfBirth}" editMode="Display"/>
 								</mdc:table.Column>
 							</mdc:columns>
@@ -172,6 +173,7 @@
 		dataType="Edm.String"
 		placeholder= "Search"
 		conditions="{$filters>/conditions/$search}"
+		propertyKey="$search"
 		maxConditions="1"
 		width="100%"/>
 	</mdc:basicSearchField>
@@ -182,6 +184,7 @@
 			id="ff1"
 			label="Author ID"
 			conditions="{$filters>/conditions/author_ID}"
+			propertyKey="author_ID"
 			dataType="Edm.Int32"
 			required="false"
 			valueHelp="VH1"
@@ -193,6 +196,7 @@
 			id="ff2"
 			label="Title"
 			conditions="{$filters>/conditions/title}"
+			propertyKey="title"
 			valueHelp="VH2"
 			width="100%"/>
 

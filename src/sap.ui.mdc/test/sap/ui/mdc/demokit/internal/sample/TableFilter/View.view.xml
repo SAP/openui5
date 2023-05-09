@@ -34,34 +34,34 @@
 			<mdcTable:GridTableType rowCountMode="Fixed" rowCount="20"/>
 		</mdc:type>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On" dataProperty="CreatedAt">
+			<mdcTable:Column id="create" header="Created On" propertyKey="CreatedAt">
 				<Text text="{CreatedAt}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" dataProperty="ProductID">
+			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" propertyKey="ProductID">
 				<Text text="{Name} ({ProductID})"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" dataProperty="Category">
+			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" propertyKey="Category">
 				<Text text="{Category}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" dataProperty="Name">
+			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" propertyKey="Name">
 				<Text text="{Name}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" dataProperty="SupplierName">
+			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName">
 				<Text text="{SupplierName}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Price" header="Unit Price" dataProperty="Price" hAlign="Right">
+			<mdcTable:Column id="onlyTableView--mdcTable--Price" header="Unit Price" propertyKey="Price" hAlign="Right">
 				<u:Currency xmlns:u="sap.ui.unified" value="{Price}" currency="{CurrencyCode}" useSymbol="false"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--WeightMeasure" header="Weight" dataProperty="WeightMeasure" hAlign="End">
+			<mdcTable:Column id="onlyTableView--mdcTable--WeightMeasure" header="Weight" propertyKey="WeightMeasure" hAlign="End">
 				<ObjectNumber number="{WeightMeasure}" emphasized="false" textAlign="End" unit="{WeightUnit}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Width" header="Width" dataProperty="Width" hAlign="End">
+			<mdcTable:Column id="onlyTableView--mdcTable--Width" header="Width" propertyKey="Width" hAlign="End">
 				<ObjectNumber number="{Width}" emphasized="false" textAlign="End" unit="{DimUnit}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Depth" header="Depth" dataProperty="Depth" hAlign="End">
+			<mdcTable:Column id="onlyTableView--mdcTable--Depth" header="Depth" propertyKey="Depth" hAlign="End">
 				<ObjectNumber number="{Depth}" emphasized="false" textAlign="End" unit="{DimUnit}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Height" header="Height" dataProperty="Height" hAlign="End">
+			<mdcTable:Column id="onlyTableView--mdcTable--Height" header="Height" propertyKey="Height" hAlign="End">
 				<ObjectNumber number="{Height}" emphasized="false" textAlign="End" unit="cm"/>
 			</mdcTable:Column>
 		</mdc:columns>

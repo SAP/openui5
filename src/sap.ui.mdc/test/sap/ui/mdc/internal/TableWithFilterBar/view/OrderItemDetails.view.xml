@@ -89,7 +89,7 @@
 															threshold="50"
 															enableAutoColumnWidth="true">
 															<mdc:columns>
-																<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
+																<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" propertyKey="title">
 																	<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'title', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
 																</mdc:table.Column>
 															</mdc:columns>

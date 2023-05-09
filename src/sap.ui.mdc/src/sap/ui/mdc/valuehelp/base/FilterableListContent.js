@@ -288,6 +288,7 @@ sap.ui.define([
 						var FilterField = aModules[0];
 						this._oSearchField = new FilterField(this.getId() + "-search", {
 							conditions: "{$filters>/conditions/" + sFilterFields + "}",
+							propertyKey: sFilterFields,
 							placeholder:"{$i18n>filterbar.SEARCH}",
 							label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
 							maxConditions: 1,

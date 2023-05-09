@@ -124,7 +124,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * Creates the filter statements based on the externalize conditions.<br>
 				 *
 				 * @param {sap.ui.mdc.Control|sap.ui.mdc.util.TypeMap} vTypeProvider the MDC control instance or <code>TypeMap</code>
-				 * @param {map} mConditions - map with externalized conditions
+				 * @param {map} mConditionsPerKey - map with externalized conditions
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {array} aIgnoreProperties - an array of property names which should be not considered for filtering
 				 * @returns {object} Object with filters
@@ -132,9 +132,26 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * @ui5-restricted sap.ui.mdc
 				 * @MDC_PUBLIC_CANDIDATE
 				 */
-				getFilterInfo: function(vTypeProvider, mConditions, aPropertiesMetadata, aIgnoreProperties) {
+				getFilterInfo: function(vTypeProvider, mConditionsPerKey, aPropertiesMetadata, aIgnoreProperties) {
 
 					var oFilterInfo = {};
+					var mConditionsPerPath = {};
+
+					/* In case a Table is used for example, the condition key is not necessarily a valid property path in the model
+					* the later creation of filters in the FilterConverter is expecting the map to hold the valid paths to properties in the
+					* used model, therefore we need to ensure to properly map the keys to its path to create service understandable filters
+					*/
+					if (aPropertiesMetadata && aPropertiesMetadata.length > 0) {
+						Object.keys(mConditionsPerKey).forEach(function(sConditionKey){
+							var oAffectedProperty = aPropertiesMetadata.find(function(oProperty){
+								return oProperty.name === sConditionKey;
+							});
+							var sConditionPath = oAffectedProperty && oAffectedProperty.path ? oAffectedProperty.path : sConditionKey;
+							mConditionsPerPath[sConditionPath] = mConditionsPerKey[sConditionKey];
+						});
+					} else {
+						mConditionsPerPath = mConditionsPerKey;
+					}
 
 					aIgnoreProperties = aIgnoreProperties ? aIgnoreProperties : [];
 
@@ -142,7 +159,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 					var mFilterTypes = {};
 
 					if (aPropertiesMetadata && aPropertiesMetadata.length > 0) {
-						for (sFieldPath in mConditions) {
+						for (sFieldPath in mConditionsPerPath) {
 							if (aIgnoreProperties.indexOf(sFieldPath) < 0) {
 
 								var oProperty = FilterUtil.getPropertyByKey(aPropertiesMetadata, sFieldPath);
@@ -152,8 +169,8 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 									mInternalFilterConditions[sFieldPath] = [];
 
 									//convert from externalized to model-specific value representation
-									for (i = 0; i < mConditions[sFieldPath].length; i++) {
-										oConditionInternal = merge({}, mConditions[sFieldPath][i]);
+									for (i = 0; i < mConditionsPerPath[sFieldPath].length; i++) {
+										oConditionInternal = merge({}, mConditionsPerPath[sFieldPath][i]);
 										mInternalFilterConditions[sFieldPath].push(ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, _getTypeMap(vTypeProvider)));
 									}
 

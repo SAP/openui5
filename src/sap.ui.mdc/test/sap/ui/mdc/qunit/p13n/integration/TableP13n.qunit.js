@@ -35,11 +35,11 @@ sap.ui.define([
 				columns: [
 					new Column("col1",{
 						header:"col1",
-						dataProperty: "col1"
+						propertyKey: "col1"
 					}),
 					new Column("col2",{
 						header:"col2",
-						dataProperty: "col2"
+						propertyKey: "col2"
 					})
 				]
 			});
@@ -50,7 +50,8 @@ sap.ui.define([
 				return {
 					addItem: function(sPropName, oControl){
 						return Promise.resolve(new FilterField({
-							conditions: "{$filters>/conditions/" + sPropName + "}"
+							conditions: "{$filters>/conditions/" + sPropName + "}",
+							propertyKey: sPropName
 						}));
 					}
 				};

@@ -977,6 +977,7 @@ sap.ui.define([
 	 * @returns {string} fieldPath of the field
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.filterbar.FilterBarBase
+	 * @deprecated as of 1.115.0, replaced by {@link #setPropertyKey propertyKey} property
 	 */
 	FieldBase.prototype.getFieldPath = function() {
 
@@ -3403,9 +3404,8 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.getSupportedOperators = function() {
 
-		var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
 		var aOperators;
-		if (regexp.test(this.getFieldPath()) && this.getMaxConditions() === 1) {
+		if (this.isSearchField()) {
 			// for SearchField use Contains operator
 			aOperators =  ["Contains"];
 		} else {
@@ -3421,6 +3421,23 @@ sap.ui.define([
 
 		this.setProperty("_operators", aOperators, true);
 		return aOperators;
+
+	};
+
+	/**
+	 * Checks if the field is configured to be a <code>SearchField</code>
+	 *
+	 * Needs to be overwritten by {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
+	 * and {@link sap.ui.mdc.FilterField FilterField}
+	 * @returns {boolean} True if confogures as search field
+	 * @protected
+	 * @since 1.115.0
+	 */
+	FieldBase.prototype.isSearchField = function() {
+
+		var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
+		var sFieldPath = this.getFieldPath();
+		return regexp.test(sFieldPath) && this.getMaxConditions() === 1;
 
 	};
 

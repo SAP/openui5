@@ -61,19 +61,19 @@
 			<IllustratedMessage />
 		</mdc:noData>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On" tooltip="Creation Date/Time" dataProperty="CreatedAt" importance="High">
+			<mdcTable:Column id="create" header="Created On" tooltip="Creation Date/Time" propertyKey="CreatedAt" importance="High">
 				<Text text="{CreatedAt}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" tooltip="Product Identifier" dataProperty="ProductID" importance="High" required="true">
+			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" tooltip="Product Identifier" propertyKey="ProductID" importance="High" required="true">
 				<ObjectIdentifier title="{ProductID}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" dataProperty="Category" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" propertyKey="Category" importance="High">
 				<Text text="{Category}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" dataProperty="Name" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" propertyKey="Name" importance="High">
 				<Text text="{Name}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" dataProperty="SupplierName" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName" importance="High">
 				<Text text="{SupplierName}"/>
 			</mdcTable:Column>
 

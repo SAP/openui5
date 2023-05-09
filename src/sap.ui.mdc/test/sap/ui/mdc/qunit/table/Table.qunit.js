@@ -718,13 +718,13 @@ sap.ui.define([
 					template: new Text({
 						text: "{cell1}"
 					}),
-					dataProperty: "column1"
+					propertyKey: "column1"
 				}), new Column({
 					header: "Column2",
 					template: new Text({
 						text: "{cell2}"
 					}),
-					dataProperty: "column2"
+					propertyKey: "column2"
 				})
 			],
 			models: new JSONModel({
@@ -774,7 +774,7 @@ sap.ui.define([
 				template: new Text({
 					text: "{cell3}"
 				}),
-				dataProperty: "column3"
+				propertyKey: "column3"
 			}), 1);
 
 			assert.ok(fnIsASpy.calledWith("sap.m.GroupHeaderListItem"), 10, "insertAggregation('cells') skipped for sap.m.GroupHeaderListItem");
@@ -1187,12 +1187,12 @@ sap.ui.define([
 	QUnit.test("sort indicator is set correctly at the inner grid table columns", function(assert) {
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "name"
+			propertyKey: "name"
 		}));
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "age"
+			propertyKey: "age"
 		}));
 
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [
@@ -1228,12 +1228,12 @@ sap.ui.define([
 	QUnit.test("_getSorters should consider the 'path'", function(assert) {
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "name"
+			propertyKey: "name"
 		}));
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "age"
+			propertyKey: "age"
 		}));
 
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [
@@ -1267,12 +1267,12 @@ sap.ui.define([
 		this.oTable.setType("ResponsiveTable");
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "name"
+			propertyKey: "name"
 		}));
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "age"
+			propertyKey: "age"
 		}));
 
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [
@@ -1315,11 +1315,11 @@ sap.ui.define([
 		this.oTable.setP13nMode(["Sort"]);
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "name"
+			propertyKey: "name"
 		}));
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "age"
+			propertyKey: "age"
 		}));
 
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
@@ -1612,14 +1612,14 @@ sap.ui.define([
 	var fnRearrangeTest = function(iColumnIndexFrom, iColumnIndexTo) {
 		return new Promise(function(resolve) {
 			this.oTable.addColumn(new Column({
-				dataProperty: "col0",
+				propertyKey: "col0",
 				header: "col0",
 				template: new Text({
 					text: "{col0}"
 				})
 			}));
 			this.oTable.addColumn(new Column({
-				dataProperty: "col1",
+				propertyKey: "col1",
 				header: "col1",
 				template: new Text({
 					text: "{col1}"
@@ -1643,11 +1643,11 @@ sap.ui.define([
 					sinon.stub(this.oTable, "getCurrentState").returns({
 						items: [
 							{
-								"name": aColumns[0].getDataProperty(),
+								"name": aColumns[0].getPropertyKey(),
 								"id": aColumns[0].getId(),
 								"label": aColumns[0].getHeader()
 							}, {
-								"name": aColumns[1].getDataProperty(),
+								"name": aColumns[1].getPropertyKey(),
 								"id": aColumns[1].getId(),
 								"label": aColumns[1].getHeader()
 							}
@@ -3109,7 +3109,7 @@ sap.ui.define([
 			id: "firstNameColumn",
 			header: "First name",
 			width: "10rem",
-			dataProperty: "firstName",
+			propertyKey: "firstName",
 			template: new Text({
 				text: "{firstName}"
 			})
@@ -3119,7 +3119,7 @@ sap.ui.define([
 			id: "lastNameColumn",
 			header: "Last name",
 			width: "10rem",
-			dataProperty: "lastName",
+			propertyKey: "lastName",
 			template: new Text({
 				text: "{lastName}"
 			})
@@ -3129,7 +3129,7 @@ sap.ui.define([
 			id: "fullName",
 			header: "Full name",
 			width: "15rem",
-			dataProperty: "fullName",
+			propertyKey: "fullName",
 			template: new Text({
 				text: "{lastName}, {firstName}"
 			})
@@ -3139,7 +3139,7 @@ sap.ui.define([
 			id: "fullNameExportSettings",
 			header: "Full name 2",
 			width: "15rem",
-			dataProperty: "fullName2",
+			propertyKey: "fullName2",
 			template: new Text({
 				text: "{lastName}, {firstName}"
 			})
@@ -3150,7 +3150,7 @@ sap.ui.define([
 			header: "Age",
 			hAlign: "Right",
 			width: "8rem",
-			dataProperty: "age",
+			propertyKey: "age",
 			template: new Text({
 				text: "{age}"
 			})
@@ -3161,7 +3161,7 @@ sap.ui.define([
 			header: "Date of Birth",
 			hAlign: "Right",
 			width: "12rem",
-			dataProperty: "dob",
+			propertyKey: "dob",
 			template: new Text({
 				text: "{dob}"
 			})
@@ -3172,7 +3172,7 @@ sap.ui.define([
 			header: "Salary",
 			hAlign: "Right",
 			width: "12rem",
-			dataProperty: "salary",
+			propertyKey: "salary",
 			template: new Text({
 				text: "{salary}"
 			})
@@ -3182,7 +3182,7 @@ sap.ui.define([
 			id: "noDataColumn1",
 			header: "NoDataColumn1",
 			hAlign: "Begin",
-			dataProperty: "noDataColumn1",
+			propertyKey: "noDataColumn1",
 			template: new Button({
 				text: "<"
 			})
@@ -3192,7 +3192,7 @@ sap.ui.define([
 			id: "noDataColumn2",
 			header: "NoDataColumn2",
 			hAlign: "Begin",
-			dataProperty: "noDataColumn2",
+			propertyKey: "noDataColumn2",
 			template: new Button({
 				text: ">"
 			})
@@ -3202,7 +3202,7 @@ sap.ui.define([
 			id: "ignoreColumn",
 			header: "IgnoreColumn",
 			hAlign: "Begin",
-			dataProperty: "ignoreColumn",
+			propertyKey: "ignoreColumn",
 			template: new Text({
 				text: "This text will not appear in the export"
 			})
@@ -3721,79 +3721,79 @@ sap.ui.define([
 			id: "firstName",
 			width: "10rem",
 			header: "First name",
-			dataProperty: "firstName"
+			propertyKey: "firstName"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "lastName",
 			header: "Last name",
-			dataProperty: "lastName"
+			propertyKey: "lastName"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "fullName",
 			header: "Full name",
-			dataProperty: "fullName"
+			propertyKey: "fullName"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "numberValue",
 			header: "Number value",
-			dataProperty: "numberValue"
+			propertyKey: "numberValue"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "booleanValue",
 			header: "Boolean value",
-			dataProperty: "booleanValue"
+			propertyKey: "booleanValue"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "columnGap1",
 			header: "Test gap",
-			dataProperty: "columnGap1"
+			propertyKey: "columnGap1"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "columnGap2",
 			header: "Test gap",
-			dataProperty: "columnGap2"
+			propertyKey: "columnGap2"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "noWidthCalculation",
 			header: "No Width Calculation",
-			dataProperty: "noWidthCalculation"
+			propertyKey: "noWidthCalculation"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "complexNoWidthCalculation",
 			header: "Complex No Width Calculation",
-			dataProperty: "complexNoWidthCalculation"
+			propertyKey: "complexNoWidthCalculation"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "stringValue_nomaxlength",
 			header: "stringValue_nomaxlength",
-			dataProperty: "stringValue_nomaxlength"
+			propertyKey: "stringValue_nomaxlength"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "stringValue_bigmaxlength",
 			header: "stringValue_bigmaxlength",
-			dataProperty: "stringValue_bigmaxlength"
+			propertyKey: "stringValue_bigmaxlength"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "stringValue_nolabeltruncate",
 			header: "stringValue_nolabeltruncate",
-			dataProperty: "stringValue_nolabeltruncate"
+			propertyKey: "stringValue_nolabeltruncate"
 		}));
 
 		this.oTable.addColumn(new Column({
 			id: "column_required",
 			header: "a",
-			dataProperty: "a",
+			propertyKey: "a",
 			required: true
 		}));
 
@@ -3943,7 +3943,7 @@ sap.ui.define([
 				"Table inner column fullName calculated width is 10rem");
 
 			// 4th column width is 2rem, the default minWidth, due Edm.Byte has a limit of 3 chars ~ 1.459rem
-			var sPropertyName = aColumns[3].getDataProperty();
+			var sPropertyName = aColumns[3].getPropertyKey();
 			var oProperty = oPropertyHelper.getProperty(sPropertyName);
 
 			var sWidth = oPropertyHelper._calcColumnWidth(oProperty, aColumns[3]);
@@ -3955,7 +3955,7 @@ sap.ui.define([
 				"Column booleanValue width calculated correctly");
 
 			// by side of the gap, columnGap1 and columnGap2 are identical
-			sPropertyName = aColumns[5].getDataProperty();
+			sPropertyName = aColumns[5].getPropertyKey();
 			oProperty = oPropertyHelper.getProperty(sPropertyName);
 			assert.equal(getInnerColumnWidth(aColumns[5]),
 				parseFloat(getInnerColumnWidth(aColumns[6])) + oProperty.visualSettings.widthCalculation.gap + "rem",
@@ -3998,11 +3998,11 @@ sap.ui.define([
 			oTable.setEnableAutoColumnWidth(true);
 			oTable.addColumn(new Column({
 				header: "First name",
-				dataProperty: "firstName"
+				propertyKey: "firstName"
 			}));
 			oTable.addColumn(new Column({
 				header: "Last name",
-				dataProperty: "lastName"
+				propertyKey: "lastName"
 			}));
 			return oTable;
 		}
@@ -4112,7 +4112,7 @@ sap.ui.define([
 			},
 			columns: [
 				new Column({
-					dataProperty: "name",
+					propertyKey: "name",
 					template: new Text({
 						text: "{name}"
 					})
@@ -4349,12 +4349,12 @@ sap.ui.define([
 					columns: [
 						new Column({
 							template: new Text(),
-							dataProperty: "name",
+							propertyKey: "name",
 							header: "NameLabelColumnHeader"
 						}),
 						new Column({
 							template: new Text(),
-							dataProperty: "age",
+							propertyKey: "age",
 							header: "AgeLabelColumnHeader"
 						})
 					],
@@ -4526,7 +4526,7 @@ sap.ui.define([
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),
-			dataProperty: "name"
+			propertyKey: "name"
 		}));
 		this.oTable.setP13nMode(["Filter"]);
 
@@ -4939,7 +4939,7 @@ sap.ui.define([
 		}, "Activate 'Column'");
 
 		this.oTable.addColumn(new Column({
-			dataProperty: "test"
+			propertyKey: "test"
 		}));
 		assert.deepEqual(this.oTable.getCurrentState(), {
 			items: [{name: "test"}]
@@ -5292,9 +5292,9 @@ sap.ui.define([
 				'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
 				'<Table enableColumnResize="' + mSettings.enableColumnResize + '" id="table" delegate=\'\{name: "sap/ui/mdc/odata/v4/TableDelegate"\}\'>' +
 				'<columns>' +
-				'<mdcTable:Column id="myTable--column0" header="column 0" dataProperty="Name" />' +
-				'<mdcTable:Column id="myTable--column1" header="column 1" dataProperty="Country" />' +
-				'<mdcTable:Column id="myTable--column2" header="column 2" dataProperty="name_country" />' +
+				'<mdcTable:Column id="myTable--column0" header="column 0" propertyKey="Name" />' +
+				'<mdcTable:Column id="myTable--column1" header="column 1" propertyKey="Country" />' +
+				'<mdcTable:Column id="myTable--column2" header="column 2" propertyKey="name_country" />' +
 				'</columns>' +
 				'<customData>' +
 				'<core:CustomData key="xConfig"'
@@ -5391,13 +5391,13 @@ sap.ui.define([
 			assert.strictEqual(this.oTable._oTable.getColumns()[2].getWidth(), "199px", "Initial column");
 
 			this.oTable.addColumn(new Column({
-				dataProperty: "Name_2",
+				propertyKey: "Name_2",
 				header: "Name_2"
 			}));
 			assert.strictEqual(this.oTable._oTable.getColumns()[3].getWidth(), "159px", "Added column");
 
 			this.oTable.insertColumn(new Column({
-				dataProperty: "Name_3",
+				propertyKey: "Name_3",
 				header: "Name_3"
 			}), 0);
 			assert.strictEqual(this.oTable._oTable.getColumns()[0].getWidth(), "149px", "Inserted column");
@@ -5494,7 +5494,7 @@ sap.ui.define([
 			p13nMode: ["Filter"],
 			columns: [
 				new Column({
-					dataProperty: "name",
+					propertyKey: "name",
 					template: new Text({
 						text: "{name}"
 					})
@@ -5555,7 +5555,7 @@ sap.ui.define([
 			p13nMode: ["Filter"],
 			columns: [
 				new Column({
-					dataProperty: "name",
+					propertyKey: "name",
 					template: new Text({
 						text: "{name}"
 					})
@@ -5768,12 +5768,12 @@ sap.ui.define([
 					new Column({
 						id: "lastnamecol",
 						template: new Text(),
-						dataProperty: "lastname"
+						propertyKey: "lastname"
 					}),
 					new Column({
 						id: "agecol",
 						template: new Text(),
-						dataProperty: "age"
+						propertyKey: "age"
 					})
 				],
 				propertyInfo: this.aInitialProperties
@@ -5833,7 +5833,7 @@ sap.ui.define([
 		return this.createTable({enableAutoColumnWidth: true}).then(function(oTable) {
 			oTable.addColumn(new Column({
 				template: new Text(),
-				dataProperty: "firstname"
+				propertyKey: "firstname"
 			}));
 			return new Promise(function(resolve) {
 				new ManagedObjectObserver(function() {
@@ -5869,12 +5869,12 @@ sap.ui.define([
 					new Column({
 						id: "lastnamecol",
 						template: new Text(),
-						dataProperty: "lastname"
+						propertyKey: "lastname"
 					}),
 					new Column({
 						id: "agecol",
 						template: new Text(),
-						dataProperty: "age"
+						propertyKey: "age"
 					})
 				]
 			}, mSettings));

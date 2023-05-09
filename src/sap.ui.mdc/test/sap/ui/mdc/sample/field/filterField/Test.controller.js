@@ -218,7 +218,7 @@ sap.ui.define([
 			for (var i = 0; i < aFormContent.length; i++) {
 				var oField = aFormContent[i];
 				if (oField.isA("sap.ui.mdc.field.FieldBase")) {
-					oDataTypes[oField.getFieldPath()] = { type: oField._oContentFactory.getDataType(), baseType: oField.getBaseType() };
+					oDataTypes[oField.getPropertyKey()] = { type: oField.getContentFactory().getDataType(), baseType: oField.getBaseType() };
 				}
 			}
 

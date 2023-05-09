@@ -20,7 +20,7 @@ sap.ui.define([
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
-	'sap/ui/model/odata/v4/ODataPropertyBinding'
+	'sap/ui/model/odata/v4/OPropertyKeyBinding'
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -39,7 +39,7 @@ sap.ui.define([
 	ConditionValidated,
 	StateUtil,
 	deepEqual,
-	ODataPropertyBinding
+	OPropertyKeyBinding
 ) {
 	"use strict";
 
@@ -174,7 +174,7 @@ sap.ui.define([
 
 	/* function _resolveODataModelValue (sPath, oContent) {
 		var oModel = oContent.getModel();
-		var oPropertyBinding = new ODataPropertyBinding(oModel, sPath, "");
+		var oPropertyBinding = new OPropertyKeyBinding(oModel, sPath, "");
 		return oPropertyBinding.requestValue();
 	}
 

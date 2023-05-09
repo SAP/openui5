@@ -242,13 +242,13 @@
 									delegate='\{"name": "sap/ui/mdc/sample/FieldValueHelp/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 									threshold="50">
 									<mdc:columns>
-										<mdc:table.Column id="VH5-Dia-ColId" header="ID" dataProperty="ID">
+										<mdc:table.Column id="VH5-Dia-ColId" header="ID" propertyKey="ID">
 											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 										</mdc:table.Column>
-										<mdc:table.Column id="VH5-Dia-ColName" header="Name" dataProperty="name">
+										<mdc:table.Column id="VH5-Dia-ColName" header="Name" propertyKey="name">
 											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{name}" editMode="Display"/>
 										</mdc:table.Column>
-										<mdc:table.Column id="VH5-Dia-ColDateofBirth" header="Date of Birth" dataProperty="dateOfBirth">
+										<mdc:table.Column id="VH5-Dia-ColDateofBirth" header="Date of Birth" propertyKey="dateOfBirth">
 											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{dateOfBirth}" editMode="Display"/>
 										</mdc:table.Column>
 									</mdc:columns>

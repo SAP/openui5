@@ -40,7 +40,7 @@ sap.ui.define([
 	QUnit.module("Getters", {
 		before: function() {
 			this.oField = new FieldBase({});
-			this.oContentFactory = this.oField._oContentFactory;
+			this.oContentFactory = this.oField.getContentFactory();
 		},
 		after: function() {
 			delete this.oField;
@@ -198,6 +198,7 @@ sap.ui.define([
 			this.oField.getFieldPath = function() {
 				return "*Name,Description*";
 			};
+			this.oField.setMaxConditions(1);
 			assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, false), SearchContent, "SearchContent returned.");
 			assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, true), SearchContent, "SearchContent returned.");
 

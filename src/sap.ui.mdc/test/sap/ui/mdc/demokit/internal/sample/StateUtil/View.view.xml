@@ -105,13 +105,13 @@
 			selectionMode="Multi"
 			height="100%">
 			<mdc:columns>
-				<mdcTable:Column id="_ID" header="ID" dataProperty="ID">
+				<mdcTable:Column id="_ID" header="ID" propertyKey="ID">
 					<Text text="{ID}"/>
 				</mdcTable:Column>
-				<mdcTable:Column id="_title" header="Title" dataProperty="title">
+				<mdcTable:Column id="_title" header="Title" propertyKey="title">
 					<Text text="{title}"/>
 				</mdcTable:Column>
-				<mdcTable:Column id="_author" header="Author" dataProperty="author_ID">
+				<mdcTable:Column id="_author" header="Author" propertyKey="author_ID">
 					<Text text="{author_ID}"/>
 				</mdcTable:Column>
 			</mdc:columns>

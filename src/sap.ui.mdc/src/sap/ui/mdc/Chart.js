@@ -1270,7 +1270,7 @@ sap.ui.define([
             var aProperties = [];
             this.getItems().forEach(function (oItem) {
                 aProperties.push({
-                    name: oItem.getName(),
+                    name: oItem.getPropertyKey(),
                     role: oItem.getRole()
                 });
 

@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/model/type/String", // make sure types are loaded
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Date",
-	"sap/ui/model/ParseException"
+	"sap/ui/model/ParseException",
+	"sap/m/SearchField"
 ], function (
 		jQuery,
 		qutils,
@@ -39,7 +40,8 @@ sap.ui.define([
 		StringType,
 		IntegerType,
 		DateType,
-		ParseException
+		ParseException,
+		SearchField
 	) {
 	"use strict";
 
@@ -366,7 +368,7 @@ sap.ui.define([
 	QUnit.test("value updates in searchfield scenario", function(assert) { // BCP: 2280085536
 		oFilterField.destroy();
 		oFilterField = new FilterField("FF1", {
-			conditions: "{$filters>/conditions/$search}",
+			propertyKey: "$search",
 			maxConditions: 1,
 			delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
 		});
@@ -379,6 +381,7 @@ sap.ui.define([
 
 		var aContent = oFilterField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
+		assert.equal(oContent.getMetadata().getName(), "sap.m.SearchField", "sap.m.SearchField is used");
 
 		oContent.fireChange({
 			id: 'F1-inner-inner',
@@ -400,7 +403,7 @@ sap.ui.define([
 	QUnit.test("search event handling", function(assert) {
 		oFilterField.destroy();
 		oFilterField = new FilterField("FF1", {
-			conditions: "{$filters>/conditions/$search}",
+			propertyKey: "$search",
 			maxConditions: 1,
 			delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
 		});
@@ -412,7 +415,7 @@ sap.ui.define([
 
 		var aContent = oFilterField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
-
+		assert.equal(oContent.getMetadata().getName(), "sap.m.SearchField", "sap.m.SearchField is used");
 
 		oContent.fireSearch();
 		assert.equal(oFilterField._oContentFactory.getHandleEnter.callCount, 1, "HandleEnter called once");
@@ -428,6 +431,21 @@ sap.ui.define([
 
 		oContent.fireSearch({ clearButtonPressed: false });
 		assert.equal(oFilterField._oContentFactory.getHandleEnter.callCount, 3, "HandleEnter called");
+
+		// check update on PropertyKey change
+		oFilterField.setPropertyKey();
+		oCore.applyChanges();
+
+		aContent = oFilterField.getAggregation("_content");
+		oContent = aContent && aContent.length > 0 && aContent[0];
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
+
+		oFilterField.setPropertyKey("*key,description*");
+		oCore.applyChanges();
+
+		aContent = oFilterField.getAggregation("_content");
+		oContent = aContent && aContent.length > 0 && aContent[0];
+		assert.equal(oContent.getMetadata().getName(), "sap.m.SearchField", "sap.m.SearchField is used");
 
 		oFilterField._oContentFactory.getHandleEnter.restore();
 	});

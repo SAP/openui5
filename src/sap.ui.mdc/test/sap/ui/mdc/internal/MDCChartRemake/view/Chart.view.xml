@@ -89,16 +89,16 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FH4-Dia-Table--id" header="ID" dataProperty="ID">
+													<mdc:table.Column id="FH4-Dia-Table--id" header="ID" propertyKey="ID">
 														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4-Dia-Table--title" header="Title" dataProperty="title">
+													<mdc:table.Column id="FH4-Dia-Table--title" header="Title" propertyKey="title">
 														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4-Dia-Table--descr" header="Description" dataProperty="descr">
+													<mdc:table.Column id="FH4-Dia-Table--descr" header="Description" propertyKey="descr">
 														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4-Dia-Table--pub" header="Published" dataProperty="published">
+													<mdc:table.Column id="FH4-Dia-Table--pub" header="Published" propertyKey="published">
 														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'published', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
 												</mdc:columns>
@@ -163,13 +163,13 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FH1-Dia-Table--id" header="ID" dataProperty="ID">
+													<mdc:table.Column id="FH1-Dia-Table--id" header="ID" propertyKey="ID">
 														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH1-Dia-Table--name" header="Name" dataProperty="name">
+													<mdc:table.Column id="FH1-Dia-Table--name" header="Name" propertyKey="name">
 														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'name', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH1-Dia-Table--dateOfBirth" header="Date of Birth" dataProperty="dateOfBirth">
+													<mdc:table.Column id="FH1-Dia-Table--dateOfBirth" header="Date of Birth" propertyKey="dateOfBirth">
 														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'dateOfBirth', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
 												</mdc:columns>
@@ -235,13 +235,13 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FHLanguage-Dia-Table--code" header="Code" dataProperty="code">
+													<mdc:table.Column id="FHLanguage-Dia-Table--code" header="Code" propertyKey="code">
 														<Text text="{code}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHLanguage-Dia-Table--name" header="Name" dataProperty="name">
+													<mdc:table.Column id="FHLanguage-Dia-Table--name" header="Name" propertyKey="name">
 														<Text text="{name}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHLanguage-Dia-Table--nativeName" header="navitve Name" dataProperty="nativeName">
+													<mdc:table.Column id="FHLanguage-Dia-Table--nativeName" header="navitve Name" propertyKey="nativeName">
 														<Text text="{nativeName}"/>
 													</mdc:table.Column>
 												</mdc:columns>
@@ -345,13 +345,13 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FHGenre-Dia-Table--code" header="Code" dataProperty="code">
+													<mdc:table.Column id="FHGenre-Dia-Table--code" header="Code" propertyKey="code">
 														<Text text="{code}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHGenre-Dia-Table--title" header="Title" dataProperty="title">
+													<mdc:table.Column id="FHGenre-Dia-Table--title" header="Title" propertyKey="title">
 														<Text text="{title}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHGenre-Dia-Table--classification" header="Classification" dataProperty="classification/title">
+													<mdc:table.Column id="FHGenre-Dia-Table--classification" header="Classification" propertyKey="classification/title">
 														<Text text="{classification/title}"/>
 													</mdc:table.Column>
 												</mdc:columns>
@@ -430,16 +430,16 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FHSubGenre-Dia-Table--code" header="Code" dataProperty="code">
+													<mdc:table.Column id="FHSubGenre-Dia-Table--code" header="Code" propertyKey="code">
 														<Text text="{code}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHSubGenre-Dia-Table--title" header="Title" dataProperty="title">
+													<mdc:table.Column id="FHSubGenre-Dia-Table--title" header="Title" propertyKey="title">
 														<Text text="{title}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHSubGenre-Dia-Table--genre" header="Genre" dataProperty="genre/title">
+													<mdc:table.Column id="FHSubGenre-Dia-Table--genre" header="Genre" propertyKey="genre/title">
 														<Text text="{genre/title}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHSubGenre-Dia-Table--classification" header="Classification" dataProperty="classification/title">
+													<mdc:table.Column id="FHSubGenre-Dia-Table--classification" header="Classification" propertyKey="classification/title">
 														<Text text="{classification/title}"/>
 													</mdc:table.Column>
 												</mdc:columns>
@@ -525,19 +525,19 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FHDetailGenre-Dia-Table--code" header="Code" dataProperty="code">
+													<mdc:table.Column id="FHDetailGenre-Dia-Table--code" header="Code" propertyKey="code">
 														<Text text="{code}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHDetailGenre-Dia-Table--title" header="Title" dataProperty="title">
+													<mdc:table.Column id="FHDetailGenre-Dia-Table--title" header="Title" propertyKey="title">
 														<Text text="{title}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHDetailGenre-Dia-Table--classification" header="Classification" dataProperty="classification/title">
+													<mdc:table.Column id="FHDetailGenre-Dia-Table--classification" header="Classification" propertyKey="classification/title">
 														<Text text="{classification/title}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHDetailGenre-Dia-Table--genre" header="Genre" dataProperty="genre/title">
+													<mdc:table.Column id="FHDetailGenre-Dia-Table--genre" header="Genre" propertyKey="genre/title">
 														<Text text="{genre/title}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHDetailGenre-Dia-Table--subgenre" header="Sub Genre" dataProperty="subgenre/title">
+													<mdc:table.Column id="FHDetailGenre-Dia-Table--subgenre" header="Sub Genre" propertyKey="subgenre/title">
 														<Text text="{subgenre/title}"/>
 													</mdc:table.Column>
 												</mdc:columns>

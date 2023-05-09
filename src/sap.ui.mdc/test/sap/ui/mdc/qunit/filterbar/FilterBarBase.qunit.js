@@ -624,6 +624,7 @@ sap.ui.define([
 		var oFilterField1 = new FilterField("key1", {
 			label: "key1",
 			conditions: "{$filters>/conditions/key1}",
+			propertyKey: "key1",
 			dataType: "sap.ui.model.type.String",
 			required: true
 		});
@@ -632,6 +633,7 @@ sap.ui.define([
 		var oFilterField2 = new FilterField("key2", {
 			label: "key2",
 			conditions: "{$filters>/conditions/key2}",
+			propertyKey: "key2",
 			dataType: "sap.ui.model.type.String",
 			required: true
 		});

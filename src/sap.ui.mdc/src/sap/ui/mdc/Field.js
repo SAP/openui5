@@ -574,6 +574,12 @@ sap.ui.define([
 		return oConfig;
 	};
 
+	Field.prototype.isSearchField = function() {
+
+		return false; // Field cannot be a searchField (not supported for the moment)
+
+	};
+
 	/**
 	 * Sets a new value for property {@link #getConditions conditions}.
 	 *

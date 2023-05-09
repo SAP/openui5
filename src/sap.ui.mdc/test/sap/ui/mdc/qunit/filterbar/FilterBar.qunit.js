@@ -427,7 +427,7 @@ sap.ui.define([
 
 
 	QUnit.test("check _getFilterField", function (assert) {
-		var oFilterField = new FilterField({ conditions: "{cm>/conditions/filter}" });
+		var oFilterField = new FilterField({ conditions: "{cm>/conditions/filter}", propertyKey: "filter" });
 
 		oFilterBar.addFilterItem(oFilterField);
 
