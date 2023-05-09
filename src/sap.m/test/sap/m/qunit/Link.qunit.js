@@ -544,4 +544,27 @@ sap.ui.define([
 		// Clean
 		oLink.destroy();
 	});
+
+	QUnit.test("The press event is prevented even if the link's DOM is moved into the static area", function(assert) {
+		// Prepare
+		var oLink = new Link({text: "text"}),
+			oFakeEvent = {
+				preventDefault: function() {},
+				setMarked: function() {},
+				target: {
+					classList: {
+						contains: function() { return true; }
+					},
+					getAttribute: function() { return "#"; }
+				}
+			},
+			oPreventDefaultSpy = this.spy(oFakeEvent, "preventDefault");
+
+		// Act
+		oLink.onclick(oFakeEvent);
+
+		// Assert
+		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented");
+	});
+
 });
