@@ -484,6 +484,15 @@ sap.ui.define([
 		this.oSearchField.onsapfocusleave();
 
 		assert.strictEqual(fnFireChangeSpy.callCount, 3, "The change event is fired");
+
+		this.oSearchField.setValue("new");
+		QunitUtils.triggerKeydown(this.oSearchField.getDomRef("I"), KeyCodes.ESCAPE);
+
+		assert.strictEqual(fnFireSearchSpy.callCount, 2, "The search event is fired");
+		assert.ok(fnFireSearchSpy.args[1][0].escPressed, "'escPressed' parameter is set");
+
+		fnFireChangeSpy.restore();
+		fnFireSearchSpy.restore();
 	});
 
 	QUnit.test("'searchButtonPressed' event parameter", function(assert) {
