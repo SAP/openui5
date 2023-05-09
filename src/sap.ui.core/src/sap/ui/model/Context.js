@@ -181,9 +181,10 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	 *
 	 * @return {boolean} Whether this context has changed
 	 * @private
+	 * @ui5-restricted sap.ui.base.ManagedObject
 	 */
-	 Context.prototype.hasChanged = function() {
-		return this.isUpdated() || this.isRefreshForced();
+	Context.prototype.hasChanged = function() {
+		return false;
 	};
 
 	/**
