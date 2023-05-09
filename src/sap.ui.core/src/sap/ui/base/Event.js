@@ -118,10 +118,9 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	/**
 	 * Returns the value of the parameter with the given name.
 	 *
-	 * @param {ParamName} sName Name of the parameter to return
-	 * @return {ParamsType} Value of the named parameter
+	 * @param {string} sName Name of the parameter to return
+	 * @return {any} Value of the named parameter
 	 * @public
-	 * @template {ParamsType} [ParamName=never]
 	 */
 	Event.prototype.getParameter = function(sName) {
 
