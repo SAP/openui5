@@ -1787,11 +1787,15 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype._fireFileSizeExceed = function (oItem) {
-		this.fireFileSizeExceeded({item: oItem});
+		var oSendItem = new UploadSetItem();
+		oSendItem.setFileName(oItem.getParameter('fileName'));
+		this.fireFileSizeExceeded({item: oSendItem});
 	};
 
 	UploadSet.prototype._fireFilenameLengthExceed = function (oItem) {
-		this.fireFileNameLengthExceeded({item: oItem});
+		var oSendItem = new UploadSetItem();
+		oSendItem.setFileName(oItem.getParameter('fileName'));
+		this.fireFileNameLengthExceeded({item: oSendItem});
 	};
 
 	/**
