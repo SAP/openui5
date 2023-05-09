@@ -153,13 +153,6 @@ sap.ui.define([
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
 			assert.strictEqual(aQuickFilterContent[0].getValue(), "initial filter value", "Quick filter value");
 
-			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
-			var aQuickGroupItems = oQuickGroup.getItems();
-			assert.equal(aQuickGroupItems.length, 1, "Quick group item count");
-			assert.strictEqual(aQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
-			assert.strictEqual(aQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
-			assert.strictEqual(aQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
-
 			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
 			var aQuickFreezeContent = oQuickFreeze.getContent();
 			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
@@ -186,13 +179,6 @@ sap.ui.define([
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
 			assert.strictEqual(aQuickFilterContent[0].getValue(), "", "Quick filter value");
 
-			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
-			var aQuickGroupItems = oQuickGroup.getItems();
-			assert.equal(aQuickGroupItems.length, 1, "Quick group item count");
-			assert.strictEqual(aQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
-			assert.strictEqual(aQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
-			assert.strictEqual(aQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
-
 			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
 			var aQuickFreezeContent = oQuickFreeze.getContent();
 			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
@@ -216,10 +202,42 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 */
+	QUnit.test("Menu entries - QuickGroup", function(assert) {
+		var that = this;
+		var oColumn, oMenu;
+
+		return this.openColumnMenu(0).then(function() {
+			oColumn = that.oTable.getColumns()[0];
+			oMenu = oColumn.getHeaderMenuInstance();
+
+			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
+			var aQuickGroupItems = oQuickGroup.getItems();
+			assert.equal(aQuickGroupItems.length, 1, "Quick group item count");
+			assert.strictEqual(aQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
+			assert.strictEqual(aQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
+			assert.strictEqual(aQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
+
+			return that.openColumnMenu(1);
+		}).then(function() {
+			oColumn = that.oTable.getColumns()[1];
+			oMenu = oColumn.getHeaderMenuInstance();
+
+			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
+			var aQuickGroupItems = oQuickGroup.getItems();
+			assert.equal(aQuickGroupItems.length, 1, "Quick group item count");
+			assert.strictEqual(aQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
+			assert.strictEqual(aQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
+			assert.strictEqual(aQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
+		});
+	});
+
 	QUnit.test("Quick Sort", function(assert) {
 		var that = this;
 		var oTable = this.oTable;
-		var oColumnSortSpy = this.spy(this.oColumn1, "sort");
+		var oColumnSortSpy = this.spy(this.oColumn1, "_sort");
 		var oMenu, oQuickAction;
 
 		return this.openColumnMenu(0).then(function() {
@@ -305,6 +323,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 */
 	QUnit.test("Quick Group", function(assert) {
 		var that = this;
 		var oTable = this.oTable;

@@ -657,7 +657,8 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		assert.strictEqual($Elem.parent().attr("aria-level"), "1", "aria-level");
 		assert.strictEqual($Elem.parent().attr("aria-expanded"), "false", "aria-expanded");
-		oTable.rerender();
+		oTable.invalidate();
+		oCore.applyChanges();
 		$Elem = oTable.$("rows-row0-col0");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = oTable.$("rows-row1-col0");
@@ -1027,7 +1028,8 @@ sap.ui.define([
 		$Elem = oTable.$("rowsel1");
 		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
-		oTable.rerender();
+		oTable.invalidate();
+		oCore.applyChanges();
 
 		$Elem = oTable.$("rowsel0");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
@@ -1661,7 +1663,7 @@ sap.ui.define([
 		sinon.stub(oTable, "_getTotalRowCount").returns(1);
 		oTable.setVisibleRowCount(1);
 		oTable._bVariableRowHeightEnabled = true;
-		oTable.rerender();
+		oCore.applyChanges();
 
 		getCell(0, 0, true);
 		assert.equal(oAriaCount.textContent.trim(), "", "Data cell in row 1 column 1: ariacount");
@@ -1755,7 +1757,8 @@ sap.ui.define([
 		var $Elem = jQuery(document.getElementById(sTableId + "-overlay"));
 		assert.strictEqual($Elem.attr("aria-labelledby"),
 			oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby");
-		oTable.rerender();
+		oTable.invalidate();
+		oCore.applyChanges();
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
 		$OverlayCoveredElements.each(function() {
 			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
@@ -1789,7 +1792,8 @@ sap.ui.define([
 			$NoDataCoveredElements.each(function() {
 				assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 			});
-			oTable.rerender();
+			oTable.invalidate();
+			oCore.applyChanges();
 			$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
 			$NoDataCoveredElements.each(function() {
 				assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");

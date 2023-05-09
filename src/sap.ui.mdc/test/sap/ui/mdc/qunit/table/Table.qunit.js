@@ -4061,7 +4061,7 @@ sap.ui.define([
 		QUnit.config.testTimeout = 50000; //BCP: 2270148312
 		var done = assert.async();
 		//Default theme must not be first
-		var aThemes = ["sap_bluecrystal", "sap_belize", "sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3"];
+		var aThemes = ["sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3", "sap_belize"];
 		var fnGetExpectedTheme = function (sTheme) {
 			switch (sTheme) {
 				case "sap_horizon":

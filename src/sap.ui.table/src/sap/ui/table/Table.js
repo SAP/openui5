@@ -3108,7 +3108,7 @@ sap.ui.define([
 		}
 
 		if (this.getColumns().indexOf(oColumn) >= 0) {
-			oColumn.sort(oSortOrder === SortOrder.Descending, bAdd);
+			oColumn._sort(oSortOrder === SortOrder.Descending, bAdd);
 		}
 	};
 

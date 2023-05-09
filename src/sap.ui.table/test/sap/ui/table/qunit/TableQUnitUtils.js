@@ -1727,7 +1727,8 @@ sap.ui.define([
 		oRow.isExpanded = function() { return true; };
 		oRow.isContentHidden = function() { return true; };
 
-		oTableInstance.rerender();
+		oTableInstance.invalidate();
+		oCore.applyChanges();
 		return new Promise(function(resolve) {
 			oTableInstance.attachEventOnce("rowsUpdated", function() {
 				resolve(getRowDomRefs(oTableInstance, iRow));
@@ -1745,7 +1746,8 @@ sap.ui.define([
 		oRow.getType = function() { return oRow.Type.Summary; };
 		oRow.getLevel = function() { return 1; };
 
-		oTableInstance.rerender();
+		oTableInstance.invalidate();
+		oCore.applyChanges();
 		return new Promise(function(resolve) {
 			oTableInstance.attachEventOnce("rowsUpdated", function() {
 				resolve(getRowDomRefs(oTableInstance, iRow));

@@ -513,7 +513,8 @@ sap.ui.define([
 		oInitItemNavigationSpy.resetHistory();
 		oInvalidateItemNavigationSpy = sinon.spy(oKeyboardExtension, "invalidateItemNavigation");
 		oOnFocusInSpy.resetHistory();
-		oTable.rerender();
+		oTable.invalidate();
+		oCore.applyChanges();
 
 		assert.ok(oInitItemNavigationSpy.notCalled,
 			"Re-rendered when focus was on an element outside the table: The item navigation was not reinitialized");

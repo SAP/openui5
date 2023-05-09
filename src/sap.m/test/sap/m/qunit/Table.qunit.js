@@ -35,7 +35,7 @@ sap.ui.define([
 	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
 	"use strict";
 
-	function createSUT(sId, bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {
+	function createSUT(bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {
 		var oData = {
 			items: [
 				{ name: "Michelle", color: "orange", number: 3.14 },
@@ -45,7 +45,7 @@ sap.ui.define([
 			cols: ["Name", "Color", "Number"]
 		};
 		// sap.m.Table is the system under test
-		var sut = new Table(sId);
+		var sut = new Table();
 
 		if (bCreateColumns) {
 
@@ -61,9 +61,9 @@ sap.ui.define([
 		if (bCreateHeader) {
 			sut.setHeaderToolbar(new Toolbar({
 				content: [
-							new Title("titleId", {text: "Random Data"}),
+							new Title({text: "Random Data"}),
 							new ToolbarSpacer({}),
-							new Button("idPersonalizationButton", {
+							new Button({
 								icon: "sap-icon://person-placeholder"
 							})
 						]
@@ -245,7 +245,7 @@ sap.ui.define([
 
 	QUnit.test("Basic Properties", function(assert) {
 		var done = assert.async();
-		var sut = createSUT('idBasicPropertiesTable', false, true);
+		var sut = createSUT(false, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -258,12 +258,14 @@ sap.ui.define([
 		sut.setShowOverlay(true);
 		Core.applyChanges();
 		var $BL = sut.$("blockedLayer");
+		var sAriaLabelledBy = sut.getHeaderToolbar().getContent()[0].getId() + " " + InvisibleText.getStaticId("sap.m", "TABLE_INVALID");
 		assert.ok($BL.hasClass("sapUiBlockLayer"), "Table overlay is rendered as showOverlay=true");
 		assert.ok($BL.hasClass("sapUiBlockLayerOnly"), "Table overlay is rendered as showOverlay=true");
 		assert.equal($BL.attr("role"), "region", "Table overlay role is correct");
-		assert.equal($BL.attr("aria-labelledby"), "titleId " + InvisibleText.getStaticId("sap.m", "TABLE_INVALID"), "aria-labelledby valid for overlay");
+		assert.equal($BL.attr("aria-labelledby"), sAriaLabelledBy, "aria-labelledby valid for overlay");
 
-		sut.rerender();
+		sut.invalidate();
+		Core.applyChanges();
 		assert.notOk(sut.getDomRef("blockedLayer").getAttribute("aria-labelledby"), "There is no aria-labelledby for overlay after rerendering. It is not yet adapted");
 
 		setTimeout(function() {
@@ -271,7 +273,7 @@ sap.ui.define([
 			assert.ok($BL.hasClass("sapUiBlockLayer"), "Table overlay is rerendered as showOverlay=true");
 			assert.ok($BL.hasClass("sapUiBlockLayerOnly"), "Table overlay is rerendered as showOverlay=true");
 			assert.equal($BL.attr("role"), "region", "Table overlay role is correct after rerendering");
-			assert.equal($BL.attr("aria-labelledby"), "titleId " + InvisibleText.getStaticId("sap.m", "TABLE_INVALID"), "aria-labelledby valid for overlay after rerendering");
+			assert.equal($BL.attr("aria-labelledby"), sAriaLabelledBy, "aria-labelledby valid for overlay after rerendering");
 
 			sut.setShowOverlay(false);
 			Core.applyChanges();
@@ -291,7 +293,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Column Display", function(assert) {
-		var sut = createSUT('idColumnDisplayTable', true),
+		var sut = createSUT(true),
 			labelFilter = 'th>.sapMColumnHeader>.sapMLabel',
 			aLabels;
 		sut.placeAt("qunit-fixture");
@@ -335,7 +337,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Header Toolbar Display", function(assert) {
-		var sut = createSUT('idHeaderToolbarDisplayTable', true, true);
+		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -349,7 +351,7 @@ sap.ui.define([
 
 
 	QUnit.test("Empty Table", function(assert) {
-		var sut = createSUT('idEmptyTable', true, true);
+		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -377,7 +379,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Colspan and col count", function(assert) {
-		var sut = createSUT('idEmptyTable2', true, true);
+		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 		assert.strictEqual(sut.getColCount(), 6, "highlight, 3 visible columns, navigation & navigated columns");
@@ -409,7 +411,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("colspan should update for popins when column visibility changes", function(assert) {
-		var sut = createSUT("popinColspan", true, true);
+		var sut = createSUT(true, true);
 		var oColumn = sut.getColumns()[1];
 		var clock = sinon.useFakeTimers();
 		oColumn.setDemandPopin(true);
@@ -439,7 +441,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Fixed Layout", function(assert) {
-		var sut = createSUT('FixedLayoutTestTable');
+		var sut = createSUT();
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -487,7 +489,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("TablePopin hover test", function(assert) {
-		var sut = createSUT("popinHoverTest", true, false, "SingleSelectMaster");
+		var sut = createSUT(true, false, "SingleSelectMaster");
 		var oColumn = sut.getColumns()[1];
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("48000px");
@@ -513,7 +515,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Popin column header must be rendered in a hidden DIV element", function(assert) {
-		var sut = createSUT("popinHoverTest", true, false, "SingleSelectMaster");
+		var sut = createSUT(true, false, "SingleSelectMaster");
 		var oColumn = sut.getColumns()[1];
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("48000px");
@@ -532,7 +534,7 @@ sap.ui.define([
 	QUnit.module("Modes");
 
 	QUnit.test("MultiSelect", function(assert) {
-		var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
+		var sut = createSUT(true, true, "MultiSelect");
 		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -564,7 +566,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("MultiSelect - selectAll checkbox enabled behavior", function(assert) {
-		var sut = createSUT('idMultiSelectTable2', true, true, "MultiSelect"),
+		var sut = createSUT(true, true, "MultiSelect"),
 			clock = sinon.useFakeTimers();
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -588,7 +590,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Range Selection - rangeSelection object should be cleared if the shift key is released on the table header row or footer row", function(assert) {
-		var sut = createSUT('idRangeSelection', true, false, "MultiSelect");
+		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
 		var fnFireSelectionChangeEvent = this.spy(sut, "_fireSelectionChangeEvent");
 		Core.applyChanges();
@@ -712,7 +714,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus style class on tr element", function(assert) {
-		var sut = createSUT("focusStyleClassTest", true, true);
+		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -726,7 +728,7 @@ sap.ui.define([
 	QUnit.module("TypeColumn");
 
 	QUnit.test("TypeColumn visibility should updated correctly", function(assert) {
-		var oTable = createSUT('idTypeTable', true);
+		var oTable = createSUT(true);
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -762,7 +764,8 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because first item with type detail is visible again");
 
-		oTable.rerender();
+		oTable.invalidate();
+		Core.applyChanges();
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible rerender did not change the visibility of the type column");
 
 		oTable.destroy();
@@ -771,7 +774,7 @@ sap.ui.define([
 	QUnit.module("Navigated indicator");
 
 	QUnit.test("check DOM for Navigated column and cells", function(assert) {
-		var oTable = createSUT('idTableNavigated', true),
+		var oTable = createSUT(true),
 			oFirstItem = oTable.getItems()[0],
 			oSecondItem = oTable.getItems()[1];
 		oTable.placeAt("qunit-fixture");
@@ -801,7 +804,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("check DOM for Naivgated indicator with popins", function(assert) {
-		var oTable = createSUT('idTableNavigatedPopin', true),
+		var oTable = createSUT(true),
 			oFirstItem = oTable.getItems()[0];
 		oTable.placeAt("qunit-fixture");
 		oFirstItem.setNavigated(true);
@@ -822,7 +825,7 @@ sap.ui.define([
 	QUnit.module("Event");
 
 	QUnit.test("SelectAll in selectionChange event", function(assert) {
-		var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
+		var sut = createSUT(true, true, "MultiSelect");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -841,7 +844,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test focus event", function(assert) {
-		var sut = createSUT("idTableFocusEvent", true, true);
+		var sut = createSUT(true, true);
 		var fnFocusSpy = sinon.spy(sut, "focus");
 		var oFocusInfo = {
 			targetInfo: new Message({
@@ -877,7 +880,7 @@ sap.ui.define([
 	QUnit.module("Functionality");
 
 	QUnit.test("Test for removeAllItems", function(assert) {
-		var sut = createSUT("idTableRemoveAllItems", true, true);
+		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -891,7 +894,7 @@ sap.ui.define([
 	QUnit.test("Test for multiSelectMode", function(assert) {
 		this.clock = sinon.useFakeTimers();
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
-		var sut = createSUT("idTblMultiSelectMode", true, false, "MultiSelect");
+		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -981,7 +984,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for multiSelectMode - space key should trigger deselectAll when trigger on the table header", function(assert) {
-		var sut = createSUT("idMultiSelectDelectAllKeyboard", true, true, "MultiSelect");
+		var sut = createSUT(true, true, "MultiSelect");
 		sut.setMultiSelectMode("ClearAll");
 		sut.getItems()[1].setSelected(true);
 		sut.placeAt("qunit-fixture");
@@ -997,7 +1000,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for destroyItems", function(assert) {
-		var sut = createSUT("idTableDestroyItems", true, true);
+		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -1038,7 +1041,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for onItemSelectedChange", function(assert) {
-		var sut = createSUT("idTableSelectedChange", true, false, "MultiSelect");
+		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 		var fnOnItemSelectedChange = sinon.spy(sut, "onItemSelectedChange");
@@ -1051,7 +1054,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for accessibility content", function(assert) {
-		var sut = createSUT("idTableAcc", true, false);
+		var sut = createSUT(true, false);
 		sut.bActiveHeaders = true;
 		var oColumn = sut.getColumns()[0];
 		var oBinding = sut.getBinding("items");
@@ -1099,7 +1102,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_setHeaderAnnouncement with visible columns but hidden in popin", function(assert) {
-		var sut = createSUT("idTableHeaderAcc", true, true);
+		var sut = createSUT(true, true);
 		var oColumn = sut.getColumns()[0];
 		oColumn.setDemandPopin(true);
 		oColumn.setImportance("Low");
@@ -1149,7 +1152,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Internal SelectAll checkbox should not be disabled by the EnabledPropagator",function(assert) {
-		var sut = createSUT("idTableSelectAll", true, false, "MultiSelect"),
+		var sut = createSUT(true, false, "MultiSelect"),
 			oVerticalLayout = new VerticalLayout({
 				enabled: false,
 				content: [sut]
@@ -1162,7 +1165,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA Roles, Attributes, ...", function(assert) {
-		var sut = createSUT("idTableAcc", true, false, "MultiSelect");
+		var sut = createSUT(true, false, "MultiSelect");
 		sut.addAriaLabelledBy("idTitle");
 		sut.getItems()[0].setType("Navigation");
 		sut.getItems()[0].setHighlight("Error");
@@ -1207,7 +1210,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for isHeaderRowEvent and isFooterRowEvent using saptabnext", function(assert) {
-		var sut = createSUT("idHeaderFooterEvents", true);
+		var sut = createSUT(true);
 		var oColumn = sut.getColumns()[0];
 		var fnIsHeaderRowEvent = sinon.spy(sut, "isHeaderRowEvent");
 		var fnIsFooterRowEvent = sinon.spy(sut, "isFooterRowEvent");
@@ -1229,7 +1232,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for onsaptabprevious", function(assert) {
-		var sut = createSUT("idTableKeyboardNavigation", true, false, "MultiSelect");
+		var sut = createSUT(true, false, "MultiSelect");
 		sut.setGrowing(true);
 		sut.setGrowingThreshold(5);
 		sut.placeAt("qunit-fixture");
@@ -1330,7 +1333,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test onsapspace on SelectAll checkbox", function(assert) {
-		var sut = createSUT("idTblSelectAllEvents", true, false, "MultiSelect");
+		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -1347,7 +1350,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Alternate row colors", function(assert) {
-		var sut = createSUT("idAlternateRowColors", true);
+		var sut = createSUT(true);
 		sut.setAlternateRowColors(true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -1382,7 +1385,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Popin Layout Grid", function(assert) {
-		var sut = createSUT("idPopinLayoutGrid", true);
+		var sut = createSUT(true);
 		var oColumn = sut.getColumns()[2];
 		sut.setPopinLayout(library.PopinLayout.GridSmall);
 		oColumn.setDemandPopin(true);
@@ -1410,7 +1413,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sticky Column Headers property check", function(assert) {
-		var sut = createSUT("idStickyColHdr", true);
+		var sut = createSUT(true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -1426,7 +1429,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sticky class based on element visibility", function(assert) {
-		var sut = createSUT("idStickyVisibility");
+		var sut = createSUT();
 		sut.placeAt("qunit-fixture");
 		sut.setSticky(["ColumnHeaders"]);
 		Core.applyChanges();
@@ -1475,7 +1478,7 @@ sap.ui.define([
 		this.stub(Device.system, "desktop", false);
 		this.clock = sinon.useFakeTimers();
 
-		var sut = createSUT("idSut", true);
+		var sut = createSUT(true);
 		var oScrollContainer = new ScrollContainer({
 			vertical: true,
 			content: sut
@@ -1527,7 +1530,7 @@ sap.ui.define([
 		this.stub(Device.system, "desktop", false);
 		this.clock = sinon.useFakeTimers();
 
-		var sut = createSUT("idStickyInfoToolbar", true);
+		var sut = createSUT(true);
 
 		var oInfoToolbar = new Toolbar({
 			active: true,
@@ -1592,7 +1595,7 @@ sap.ui.define([
 		this.stub(Device.system, "desktop", false);
 		this.clock = sinon.useFakeTimers();
 
-		var sut = createSUT("idStickyHdrToolbar", true);
+		var sut = createSUT(true);
 
 		var oHeaderToolbar = new Toolbar({
 			content: [
@@ -1672,7 +1675,7 @@ sap.ui.define([
 		this.stub(Device.system, "desktop", false);
 		this.clock = sinon.useFakeTimers();
 
-		var sut = createSUT("idStickyToolbars", true);
+		var sut = createSUT(true);
 
 		var oHeaderToolbar = new Toolbar({
 			content: [
@@ -1801,7 +1804,7 @@ sap.ui.define([
 		assert.equal(oColumn2.getDomRef().firstChild.style.justifyContent, "center", "Center text alignment style class applied");
 
 		var fnGetRTLStub = sinon.stub(Core.getConfiguration(), "getRTL").returns(true);
-		oTable.rerender();
+		oTable.invalidate();
 		Core.applyChanges();
 
 		// column alignment in RTL mode
@@ -1942,7 +1945,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focusable headers", function(assert) {
-		var sut = createSUT("idFocusableHeaders", true);
+		var sut = createSUT(true);
 		sut.bFocusableHeaders = true;
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -1955,7 +1958,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for ContextualWidth", function(assert) {
-		var sut = createSUT("idPopinLayoutGrid", true);
+		var sut = createSUT(true);
 		sut.setPopinLayout(library.PopinLayout.GridSmall);
 
 		var oColumn = sut.getColumns()[2];
@@ -2508,7 +2511,7 @@ sap.ui.define([
 
 	QUnit.module("Dummy column", {
 		beforeEach: function() {
-			this.sut = createSUT("idDummyColTest", true, false, "MultiSelect");
+			this.sut = createSUT(true, false, "MultiSelect");
 			this.sut.setFixedLayout("Strict");
 			this.sut.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -2868,7 +2871,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
 			this.iPopinChangedEventCounter = 0;
-			this.sut = createSUT("idPopinChangedTest", true, true);
+			this.sut = createSUT(true, true);
 			this.sut.attachPopinChanged(function() {
 				this.iPopinChangedEventCounter++;
 			}, this);
@@ -2963,7 +2966,7 @@ sap.ui.define([
 	QUnit.module("No data aggregation");
 
 	QUnit.test("No Data Illustrated Message", function(assert) {
-		var sut = createSUT("tblNoDataIM", true, false, "None", true);
+		var sut = createSUT(true, false, "None", true);
 		var oData = {
 			items: [],
 			cols: ["Name", "Color", "Number"]
@@ -2985,7 +2988,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("No Column Illustrated Message", function(assert) {
-		var sut = createSUT("tblNoDataIMNC", false, false, "None", true);
+		var sut = createSUT(false, false, "None", true);
 		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -3017,7 +3020,7 @@ sap.ui.define([
 
 	QUnit.test("No Data String", function(assert) {
 		var sNoData = "Example No Data Text";
-		var sut = createSUT("tblNoDataIMNC", true, false, "None", false);
+		var sut = createSUT(true, false, "None", false);
 		var oData = {
 			items: [],
 			cols: ["Name", "Color", "Number"]
@@ -3050,7 +3053,7 @@ sap.ui.define([
 	QUnit.test("No Columns String", function (assert) {
 		var done = assert.async(2);
 
-		var sut = createSUT("tblNoDataIMNC", false, false, "None", false);
+		var sut = createSUT(false, false, "None", false);
 		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -3079,7 +3082,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("No Data Control", function(assert) {
-		var sut = createSUT("tblNoDataIMNC", true, false, "None", false);
+		var sut = createSUT(true, false, "None", false);
 		var oData = {
 			items: [],
 			cols: ["Name", "Color", "Number"]

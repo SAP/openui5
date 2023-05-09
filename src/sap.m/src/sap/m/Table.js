@@ -773,7 +773,7 @@ sap.ui.define([
 			var clean = this._getMediaContainerWidth() || window.innerWidth;
 			this._mutex = true;
 			this._bFirePopinChanged = true;
-			this.rerender();
+			this.invalidate();
 
 			// do not re-render if resize event comes so frequently
 			setTimeout(function() {
@@ -781,7 +781,7 @@ sap.ui.define([
 				if (this._dirty != clean) {
 					this._dirty = 0;
 					this._bFirePopinChanged = true;
-					this.rerender();
+					this.invalidate();
 				}
 				this._mutex = false;
 			}.bind(this), 200);
