@@ -678,11 +678,7 @@ sap.ui.define([
 		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (Device.support.touch) {
-			sLinkText.tap();
-		} else {
-			sLinkText.trigger("click");
-		}
+		sLinkText.trigger("click");
 
 		sap.ui.getCore().applyChanges();
 		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
@@ -773,11 +769,7 @@ sap.ui.define([
 		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (Device.support.touch) {
-			sLinkText.tap();
-		} else {
-			sLinkText.trigger("click");
-		}
+		sLinkText.trigger("click");
 
 		sap.ui.getCore().applyChanges();
 		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
@@ -801,11 +793,7 @@ sap.ui.define([
 		var oMessageBox = sap.ui.getCore().byId("messagedialogdetails");
 		assert.ok(oMessageBox, "Dialog should be created");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (Device.support.touch) {
-			sLinkText.tap();
-		} else {
-			sLinkText.trigger("click");
-		}
+		sLinkText.trigger("click");
 
 		sap.ui.getCore().applyChanges();
 		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
@@ -832,11 +820,7 @@ sap.ui.define([
 		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (Device.support.touch) {
-			sLinkText.tap();
-		} else {
-			sLinkText.trigger("click");
-		}
+		sLinkText.trigger("click");
 
 		sap.ui.getCore().applyChanges();
 		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");

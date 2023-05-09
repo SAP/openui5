@@ -301,11 +301,15 @@ function(
 	 * @private
 	 */
 	Link.prototype._handlePress = function(oEvent) {
+		var oTarget = oEvent.target,
+			bEmptyHref;
+
 		if (this.getEnabled()) {
 			// mark the event for components that needs to know if the event was handled by the link
 			oEvent.setMarked();
 
-			if (!this.firePress({ctrlKey: !!oEvent.ctrlKey, metaKey: !!oEvent.metaKey}) || this.getDomRef().getAttribute("href") == "#") { // fire event and check return value whether default action should be prevented
+			bEmptyHref = oTarget.classList.contains("sapMLnk") && oTarget.getAttribute("href") == "#";
+			if (!this.firePress({ctrlKey: !!oEvent.ctrlKey, metaKey: !!oEvent.metaKey}) || bEmptyHref) { // fire event and check return value whether default action should be prevented
 				oEvent.preventDefault();
 			}
 		} else { // disabled
