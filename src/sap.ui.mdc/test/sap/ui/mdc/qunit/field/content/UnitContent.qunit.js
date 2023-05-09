@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/m/Token",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/model/odata/type/Unit"
-], function(QUnit, UnitContent, Field, FieldBaseDelegate, Text, FieldInput, FieldMultiInput, Token, InvisibleText, UnitType) {
+	"sap/ui/model/odata/type/Unit",
+	"sap/ui/mdc/odata/v4/TypeMap",
+	"sap/ui/mdc/util/TypeUtilFactory"
+], function(QUnit, UnitContent, Field, FieldBaseDelegate, Text, FieldInput, FieldMultiInput, Token, InvisibleText, UnitType, ODataV4TypeMap, TypeUtilFactory) {
 	"use strict";
 
 	var sInvisibleTextIdNumber = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
@@ -214,6 +216,79 @@ sap.ui.define([
 				"createEditMultiLine throws an error.");
 			done();
 		});
+	});
+
+	QUnit.module("Deprecations", {
+		beforeEach: function() {
+		},
+		afterEach: function() {
+			delete this.oField;
+			while (this.aControls.length > 0) {
+				var oControl = this.aControls.pop();
+				if (oControl) {
+					oControl.destroy();
+				}
+			}
+		}
+	});
+
+	QUnit.test("Prefers deprecated getUnitTypeInstance, if available", function(assert) {
+
+		var oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
+		var oGetUnitTypeInstanceStub;
+		var oTypeUtilStub = sinon.stub(FieldBaseDelegate, "getTypeUtil").callsFake(function () {
+			var oResult  = Object.assign({}, oTypeUtilStub.wrappedMethod.call(this), {getUnitTypeInstance: function () {
+				return false;
+			}});
+			oGetUnitTypeInstanceStub = sinon.stub(oResult, "getUnitTypeInstance");
+			return oResult;
+		});
+
+		this.oField = new Field({
+			dataType: "sap.ui.model.odata.type.Unit",
+			delegate: {name: "delegates/odata/v4/FieldBaseDelegate"}
+		});
+		this.aControls = [];
+
+		return this.oField.awaitControlDelegate().then(function() {
+			UnitContent.createEdit(this.oField._oContentFactory, [FieldInput, InvisibleText]);
+			assert.ok(oAdjustDataTypeForUnitSpy.calledOnce, "_adjustDataTypeForUnit is called.");
+			assert.ok(oGetUnitTypeInstanceStub.calledTwice, "getUnitTypeInstance is called twice.");
+			var oType = this.oField._oContentFactory.retrieveDataType();
+			assert.deepEqual(oGetUnitTypeInstanceStub.args[0], [oType, true, false], "getUnitTypeInstance is called with expected args.");
+			assert.deepEqual(oGetUnitTypeInstanceStub.args[1], [oType, false, true], "getUnitTypeInstance is called with expected args.");
+
+			oGetUnitTypeInstanceStub.restore();
+			oTypeUtilStub.restore();
+			oAdjustDataTypeForUnitSpy.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Calls getDataTypeInstance with additional options, if getUnitTypeInstance is unavailable", function(assert) {
+
+		var oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
+		var oODataV4TypeUtil = TypeUtilFactory.getUtil(ODataV4TypeMap);
+		var oGetDataTypeInstanceSpy = sinon.spy(oODataV4TypeUtil, "getDataTypeInstance");
+
+		this.oField = new Field({
+			dataType: "sap.ui.model.odata.type.Unit",
+			delegate: {name: "delegates/odata/v4/FieldBaseDelegate"}
+		});
+		this.aControls = [];
+
+		return this.oField.awaitControlDelegate().then(function() {
+			var oType = this.oField._oContentFactory.retrieveDataType();
+			var sType = oType.getMetadata().getName();
+			var oFormatOptions = oType.getFormatOptions();
+
+			UnitContent.createEdit(this.oField._oContentFactory, [FieldInput, InvisibleText], "t1");
+			assert.ok(oAdjustDataTypeForUnitSpy.calledOnce, "_adjustDataTypeForUnit is called.");
+			assert.ok(oGetDataTypeInstanceSpy.calledThrice, "oGetDataTypeInstanceSpy is called thrice.");
+			assert.deepEqual(oGetDataTypeInstanceSpy.args[1], [sType, oFormatOptions, undefined, {showNumber: true, showMeasure: false}], "getDataTypeInstance is called with expected args.");
+			assert.deepEqual(oGetDataTypeInstanceSpy.args[2], [sType, oFormatOptions, undefined, {showNumber: false, showMeasure: true}], "getDataTypeInstance is called with expected args.");
+			oAdjustDataTypeForUnitSpy.restore();
+			oGetDataTypeInstanceSpy.restore();
+		}.bind(this));
 	});
 
 	QUnit.start();
