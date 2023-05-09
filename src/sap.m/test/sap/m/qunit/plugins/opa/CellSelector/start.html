@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Application under test</title>
+    <meta charset="utf-8">
+
+    <script
+            id='sap-ui-bootstrap'
+            src='../../../../../../../resources/sap-ui-core.js'
+            data-sap-ui-libs="sap.m,sap.ui.table"
+			data-sap-ui-theme="sap_fiori_3"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-async="true"
+			data-sap-ui-language="en"
+			data-sap-ui-compatVersion="edge"
+            data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+            data-sap-ui-resourceroots='{
+                "sap.m.test.plugins.CellSelectorOPA": "./",
+				"sap.ui.demo.mock": "../../../../mockdata"
+			}'>
+    </script>
+</head>
+
+<body class="sapUiBody">
+	<div data-sap-ui-component data-name="sap.m.test.plugins.CellSelectorOPA" data-id="container" data-settings='{"id" : "CellSelectorOPA"}'></div>
+</body>
+
+</html>
