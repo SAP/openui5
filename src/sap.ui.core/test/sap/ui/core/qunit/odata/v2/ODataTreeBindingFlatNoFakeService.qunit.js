@@ -213,8 +213,9 @@ sap.ui.define([
 		// code under test - parameters are not relevant for this test
 		assert.strictEqual(ODataTreeBindingFlat.prototype.createEntry.call(oBinding), undefined);
 	});
-
-	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.104.0
+	 */
 	QUnit.test("submitChanges: unresolved binding", function (assert) {
 		var oBinding = {
 				getPath : function () {},
@@ -229,8 +230,9 @@ sap.ui.define([
 		// code under test
 		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
 	});
-
-	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.104.0
+	 */
 	QUnit.test("submitChanges: call ODataModel#submitChanges", function (assert) {
 		var oBinding = {
 				_bSubmitChangesCalled : false,
@@ -252,8 +254,9 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding._bSubmitChangesCalled, true);
 	});
-
-	//*********************************************************************************************
+	/**
+	 * @deprecated As of version 1.104.0
+	 */
 	QUnit.test("submitChanges: call ODataModel#submitChanges (w/ mParameters)", function (assert) {
 		var oBinding = {
 				_bSubmitChangesCalled : false,
@@ -277,7 +280,6 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding._bSubmitChangesCalled, true);
 	});
-
 
 	//*********************************************************************************************
 	QUnit.test("_submitChanges: binding is unresolved", function (assert) {
