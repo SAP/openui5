@@ -175,15 +175,15 @@ sap.ui.define([
 		var oControlToBeChanged = oCore.byId("idMain1--dependencyScenarioControl.vbox");
 
 		// wait for the initial changes to be applied
-		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
+		return FlexRuntimeInfoAPI.waitForChanges({
+			selectors: [oControlToBeChanged, oControlToBeChanged.getParent()].concat(oControlToBeChanged.getItems())
+		})
 		.then(function() {
 			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
-			oVMControl.fireSave({
-				def: false,
-				overwrite: false,
-				name: "newVariant"
+			return oVMControl.getModel(ControlVariantApplyAPI.getVariantModelName())._handleSave(oVMControl, {
+				name: "newVariant",
+				layer: Layer.CUSTOMER
 			});
-			return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged});
 		})
 		.then(function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
