@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
@@ -14,7 +13,6 @@ sap.ui.define([
 	Settings,
 	ChangePersistenceFactory,
 	Storage,
-	Utils,
 	Version,
 	JSONModel,
 	BindingMode
@@ -294,7 +292,6 @@ sap.ui.define([
 	 * @param {array} [mPropertyBag.draftFilenames] - Array with filesnames which was saved as draft
 	 */
 	Versions.onAllChangesSaved = function (mPropertyBag) {
-		mPropertyBag.reference = Utils.normalizeReference(mPropertyBag.reference);
 		var oModel = Versions.getVersionsModel(mPropertyBag);
 		var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
 		var bDirtyChanges = oModel.getProperty("/dirtyChanges");
@@ -403,7 +400,7 @@ sap.ui.define([
 	 */
 	Versions.publish = function(mPropertyBag) {
 		var oModel = Versions.getVersionsModel({
-			reference: Utils.normalizeReference(mPropertyBag.reference),
+			reference: mPropertyBag.reference,
 			layer: mPropertyBag.layer
 		});
 		return Storage.versions.publish(mPropertyBag)

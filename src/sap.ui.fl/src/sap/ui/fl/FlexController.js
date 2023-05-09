@@ -470,7 +470,7 @@ sap.ui.define([
 		var aDraftFilenames;
 		if (bDraft) {
 			var oVersionModel = Versions.getVersionsModel({
-				reference: Utils.normalizeReference(this._sComponentName),
+				reference: this._sComponentName,
 				layer: Layer.CUSTOMER // only the customer layer has draft active
 			});
 			sParentVersion = oVersionModel.getProperty("/persistedVersion");

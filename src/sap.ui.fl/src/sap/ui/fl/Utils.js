@@ -701,15 +701,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Normalize reference, delete .Component at the end of the incoming string.
-		 * @param {string} sReference - Flex reference
-		 * @returns {string} Returns reference without .Component
-		 */
-		normalizeReference: function(sReference) {
-			return sReference.replace(/(.Component)$/g, "");
-		},
-
-		/**
 		 * Standalone: Adds the given search parameter to the URL or removes it.
 		 *
 		 * @param  {string} sParameters - The URL parameters to be modified
