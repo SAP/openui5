@@ -19,9 +19,8 @@ describe("sap.m.Select", function() {
 
 	it("should load test page",function(){
 		browser.executeScript(function () {
-			return sap.ui.Device.system.phone;
-		}).then(function (response) {
-			bPhone = response;
+			var oDevice = sap.ui.require("sap/ui/Device");
+			bPhone = oDevice.system.phone;
 		});
 
 		expect(takeScreenshot(element(by.id("select_regular")))).toLookAs("initial");

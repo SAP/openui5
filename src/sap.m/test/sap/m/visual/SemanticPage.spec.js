@@ -15,8 +15,9 @@ describe("sap.m.SemanticPage", function() {
 	_showMenu = function() {
 			browser.executeScript(function() {
 
-				var bPhone = sap.ui.Device.system.phone,
-				bTablet = sap.ui.Device.system.tablet,
+				var oDevice = sap.ui.require("sap/ui/Device"),
+					bPhone = oDevice.system.phone,
+					bTablet = oDevice.system.tablet,
 
 				_showPhoneMenu = function() {
 					sap.ui.getCore().byId("myApp").toMaster("menuPage"); //nav to menu-page

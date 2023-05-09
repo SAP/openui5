@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(HorizontalLayout, Button) {
 	"use strict";
 
-	sap.ui.jsfragment("fixture.OpaPlugin", {
+	return {
 		createContent: function () {
 			var oLayout = new HorizontalLayout();
 
@@ -16,6 +16,5 @@ sap.ui.define([
 
 			return oLayout;
 		}
-	});
-
+	};
 });
