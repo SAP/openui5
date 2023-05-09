@@ -87,19 +87,6 @@ function copyChangeForSelector(sSelectorIndex, aSourceChanges, iChangeAmount, iL
 	return aNewChanges;
 }
 
-function copyControlChangesForVariants(sSelectorIndex, oInitialVariantSection, iChangeAmount, iLastChangeIndexIdentifier) {
-	if (!oInitialVariantSection) {
-		return {};
-	}
-	var oFinalVariantSection = lodash.cloneDeep(oInitialVariantSection);
-	Object.keys(oFinalVariantSection).forEach(function(sVariantManagement) {
-		oFinalVariantSection[sVariantManagement].variants.forEach(function(oVariant) {
-			oVariant.controlChanges = copyChangeForSelector(sSelectorIndex, oVariant.controlChanges, iChangeAmount, iLastChangeIndexIdentifier);
-		});
-	});
-	return oFinalVariantSection;
-}
-
 fs.readFile(path.resolve(__dirname, sInitialChangeFileName), 'utf8', function (err, data) {
 	if (err) {
 		throw err;
@@ -110,9 +97,14 @@ fs.readFile(path.resolve(__dirname, sInitialChangeFileName), 'utf8', function (e
 	aChangeAmounts.forEach(function (iChangeAmount, iIndex) {
 		iChangeAmount = parseInt(iChangeAmount);
 		var sSelectorIndex = iIndex === 0 ? "" : iIndex;
-		var aCopiedChanges = copyChangeForSelector(sSelectorIndex, oInput.changes, iChangeAmount, iLastChangeIndexIdentifier);
-		oInput.changes = oInput.changes.concat(aCopiedChanges);
-		oInput.variantSection = copyControlChangesForVariants(sSelectorIndex, oInput.variantSection, iChangeAmount, iLastChangeIndexIdentifier);
+		if (oInput.changes) {
+			var aCopiedChanges = copyChangeForSelector(sSelectorIndex, oInput.changes, iChangeAmount, iLastChangeIndexIdentifier);
+			oInput.changes = oInput.changes.concat(aCopiedChanges);
+		}
+		if (oInput.variantDependentControlChanges) {
+			var aCopiedVariantDependentControlChanges = copyChangeForSelector(sSelectorIndex, oInput.variantDependentControlChanges || [], iChangeAmount, iLastChangeIndexIdentifier);
+			oInput.variantDependentControlChanges = oInput.variantDependentControlChanges.concat(aCopiedVariantDependentControlChanges);
+		}
 		iLastChangeIndexIdentifier += iChangeAmount;
 	});
 
