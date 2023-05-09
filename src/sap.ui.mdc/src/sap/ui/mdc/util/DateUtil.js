@@ -131,13 +131,17 @@ sap.ui.define([
 				 */
 				typeToISO: function(vDate, oType, sBaseType) {
 
-					let oDate = this.typeToDate(vDate, oType, sBaseType);
+					if (oType.getISOStringFromModelValue) {
+						return oType.getISOStringFromModelValue(vDate);
+					} else { // old types cannot convert to ISO by itself
+						let oDate = this.typeToDate(vDate, oType, sBaseType);
 
-					if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the local date to UTC
-						oDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+						if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the local date to UTC
+							oDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+						}
+
+						return oDate.toISOString();
 					}
-
-					return oDate.toISOString();
 
 				},
 
@@ -154,13 +158,17 @@ sap.ui.define([
 				 */
 				ISOToType: function(sISODate, oType, sBaseType) {
 
-					let oDate = UI5Date.getInstance(sISODate); // can also interpret string with pattern "yyyy-MM-ddTHH:mm:ssZ"
+					if (oType.getModelValueFromISOString) {
+						return oType.getModelValueFromISOString(sISODate);
+					} else { // old types cannot convert to ISO by itself
+						let oDate = UI5Date.getInstance(sISODate); // can also interpret string with pattern "yyyy-MM-ddTHH:mm:ssZ"
 
-					if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the UTC to local date
-						oDate = UI5Date.getInstance(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
+						if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the UTC to local date
+							oDate = UI5Date.getInstance(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
+						}
+
+						return this.dateToType(oDate, oType, sBaseType);
 					}
-
-					return this.dateToType(oDate, oType, sBaseType);
 
 				},
 

@@ -263,7 +263,7 @@ sap.ui.define([
 
 		let oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss"}, {V4: true});
 		let vResult = DateUtil.ISOToType(UI5Date.getInstance(2019, 1, 16, 10, 10, 10).toISOString(), oType, BaseType.DateTime);
-		assert.deepEqual(vResult, oType.parseValue("2019 02 16 10 10 10", "string"), "Result: " + vResult);
+		assert.equal(oType.formatValue(vResult, "string"), "2019 02 16 10 10 10", "Result is valid V4 DateTimeOffset"); // as type could parse to different ISO format, test result of formatting
 		oType.destroy();
 
 		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true}, {V4: true});
@@ -325,12 +325,12 @@ sap.ui.define([
 
 		let oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss"}, {V4: true});
 		let sISO = DateUtil.typeToISO(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
-		assert.deepEqual(sISO, UI5Date.getInstance(2019, 1, 16, 10, 10, 10).toISOString(), "Result: " + sISO);
+		assert.deepEqual(UI5Date.getInstance(sISO), UI5Date.getInstance(2019, 1, 16, 10, 10, 10), "Result: " + sISO); // as type could parse to different ISO format, test result of date creation
 		oType.destroy();
 
 		oType = new DateTimeOffsetType({pattern: "yyyy MM dd hh mm ss", UTC: true}, {V4: true});
 		sISO = DateUtil.typeToISO(oType.parseValue("2019 02 16 10 10 10", "string"), oType, BaseType.DateTime);
-		assert.deepEqual(sISO, UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)).toISOString(), "Result: " + sISO);
+		assert.deepEqual(UI5Date.getInstance(sISO), UI5Date.getInstance(Date.UTC(2019, 1, 16, 10, 10, 10)), "Result: " + sISO); // as type could parse to different ISO format, test result of date creation
 		oType.destroy();
 
 	});
