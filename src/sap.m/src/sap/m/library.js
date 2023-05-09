@@ -87,6 +87,7 @@ sap.ui.define([
 			"sap.m.BadgeState",
 			"sap.m.BadgeAnimationType",
 			"sap.m.BarDesign",
+			"sap.m.BorderDesign",
 			"sap.m.BreadcrumbsSeparatorStyle",
 			"sap.m.ButtonAccessibleRole",
 			"sap.m.ButtonType",
@@ -791,6 +792,27 @@ sap.ui.define([
 		 */
 		Footer : "Footer"
 
+	};
+
+	/**
+	 * Available Border Design.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	thisLib.BorderDesign = {
+
+		/**
+		 * A solid border color dependent on the theme.
+		 * @public
+		 */
+		Solid : "Solid",
+
+		/**
+		 * Specifies no border.
+		 * @public
+		 */
+		None : "None"
 	};
 
 	/**

@@ -43,6 +43,9 @@ sap.ui.define([
 	// shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = mobileLibrary.BackgroundDesign;
 
+	// shortcut for sap.m.BorderDesign
+	var BorderDesign = mobileLibrary.BorderDesign;
+
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
@@ -307,6 +310,33 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.oCarousel.$().hasClass("sapMCrslBackground-Transparent"), "Correct class for Transparent Background should be set");
+	});
+
+	QUnit.test("#setPageIndicatorBackgroundDesign() to 'Translucent'", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorBackgroundDesign(BackgroundDesign.Translucent);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oCarousel.$().find(".sapMCrslControlsNoArrows").hasClass("sapMCrslControlsBackground-Translucent"), "Correct class for Translucent Background should be set");
+	});
+
+	QUnit.test("#setPageIndicatorBackgroundDesign() to 'Transparent'", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorBackgroundDesign(BackgroundDesign.Transparent);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oCarousel.$().find(".sapMCrslControlsNoArrows").hasClass("sapMCrslControlsBackground-Transparent"), "Correct class for Transparent Background should be set");
+	});
+
+	QUnit.test("#setPageIndicatorBorderDesign() to 'None'", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorBorderDesign(BorderDesign.None);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oCarousel.$().find(".sapMCrslControlsNoArrows").hasClass("sapMCrslControlsBorder-None"), "Correct class for Border should be set");
 	});
 
 	QUnit.test("#_createScrollContainer() adds 'sapMCrsPage' class to each Page", function (assert) {

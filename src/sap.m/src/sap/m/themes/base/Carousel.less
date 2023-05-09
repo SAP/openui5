@@ -530,15 +530,23 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 
 /* extra bits */
 
-.sapMCrslControls.sapMCrslControlsTop,
-.sapMCrslControlsNoArrows.sapMCrslControlsTop {
+.sapMCrslControlsBackground-Solid {
 	background: @sapUiPageFooterBackground;
+}
+
+.sapMCrslControlsBackground-Translucent {
+	background: @_sap_m_Carousel_BackgroundColorTranslucent;
+}
+
+.sapMCrslControlsBackground-Transparent {
+	background: @_sap_m_Carousel_BackgroundColorTransparent;
+}
+
+.sapMCrslControlsBorder-Solid.sapMCrslControlsTop {
 	border-bottom: 1px solid @sapUiPageFooterBorderColor;
 }
 
-.sapMCrslControls.sapMCrslControlsBottom,
-.sapMCrslControlsNoArrows.sapMCrslControlsBottom {
-	background: @sapUiPageFooterBackground;
+.sapMCrslControlsBorder-Solid.sapMCrslControlsBottom {
 	border-top: 1px solid @sapUiPageFooterBorderColor;
 }
 

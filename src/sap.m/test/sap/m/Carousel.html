@@ -518,19 +518,18 @@
 		});
 
 		// Radio button group backgroundDesign
-
 		var oRBGroupBackgroundDesign =  new sap.m.RadioButtonGroup("RBBackgroundDesign");
 		oRBGroupBackgroundDesign.setColumns(3);
 
 		var oButtonSolid = new sap.m.RadioButton("RB-Solid");
 		oButtonSolid.setText("Solid");
-		oButtonSolid.setTooltip("Sets the carousel's background to Solid (Default)")
+		oButtonSolid.setTooltip("Sets the carousel's background to Solid")
 		oRBGroupBackgroundDesign.addButton(oButtonSolid);
 
 		var oButtonTranslucent = new sap.m.RadioButton("RB-Translucent");
 		oButtonTranslucent.setText("Translucent");
 		oButtonTranslucent.setSelected(true);
-		oButtonTranslucent.setTooltip("Sets the carousel's background to Translucent")
+		oButtonTranslucent.setTooltip("Sets the carousel's background to Translucent (Default)")
 		oRBGroupBackgroundDesign.addButton(oButtonTranslucent);
 
 		var oButtonTransparent = new sap.m.RadioButton("RB-Transparent");
@@ -551,8 +550,7 @@
 			} else if (sSelectedValue === "Transparent") {
 				carousel.setBackgroundDesign(sap.m.BackgroundDesign.Transparent);
 			}
-		})
-
+		});
 
 		// Radio button group showPageIndicator
 
@@ -576,6 +574,67 @@
 				carousel.setShowPageIndicator(true);
 			} else if (sSelectedValue === "No") {
 				carousel.setShowPageIndicator(false);
+			}
+		});
+
+		// Radio button group pageIndicatorBackgroundDesign
+		var oRBGroupPageIndicatorBackgroundDesign = new sap.m.RadioButtonGroup();
+		oRBGroupPageIndicatorBackgroundDesign.setColumns(3);
+
+		var oPIBButtonSolid = new sap.m.RadioButton("RB-PI-Solid");
+		oPIBButtonSolid.setText("Solid");
+		oPIBButtonSolid.setTooltip("Sets the page indicator background to Solid (Default)")
+		oRBGroupPageIndicatorBackgroundDesign.addButton(oPIBButtonSolid);
+
+		var oPIBButtonTranslucent = new sap.m.RadioButton("RB-PI-Translucent");
+		oPIBButtonTranslucent.setText("Translucent");
+		oPIBButtonTranslucent.setTooltip("Sets the page indicator background to Translucent")
+		oRBGroupPageIndicatorBackgroundDesign.addButton(oPIBButtonTranslucent);
+
+		var oPIBButtonTransparent = new sap.m.RadioButton("RB-PI-Transparent");
+		oPIBButtonTransparent.setText("Transparent");
+		oPIBButtonTransparent.setTooltip("Sets the page indicator background to Transparent")
+		oRBGroupPageIndicatorBackgroundDesign.addButton(oPIBButtonTransparent);
+
+		var oRBGroupPageIndicatorBackgroundDesignLabel = new sap.m.Label({
+			text: "Page Indicator Background Design",
+			labelFor: oRBGroupPageIndicatorBackgroundDesign
+		});
+		oRBGroupPageIndicatorBackgroundDesign.attachSelect(function () {
+			var sSelectedValue = oRBGroupPageIndicatorBackgroundDesign.getSelectedButton().getText();
+			if (sSelectedValue === "Solid") {
+				carousel.setPageIndicatorBackgroundDesign(sap.m.BackgroundDesign.Solid);
+			} else if (sSelectedValue === "Translucent") {
+				carousel.setPageIndicatorBackgroundDesign(sap.m.BackgroundDesign.Translucent);
+			} else if (sSelectedValue === "Transparent") {
+				carousel.setPageIndicatorBackgroundDesign(sap.m.BackgroundDesign.Transparent);
+			}
+		});
+
+		// Radio button group pageIndicatorBorderDesign
+		var oRBGroupPageIndicatorBorderDesign = new sap.m.RadioButtonGroup();
+		oRBGroupPageIndicatorBorderDesign.setColumns(2);
+
+		var oPIBorderButtonSolid = new sap.m.RadioButton("RB-PI-B-Solid");
+		oPIBorderButtonSolid.setText("Solid");
+		oPIBorderButtonSolid.setTooltip("Sets the page indicator border to Solid (Default)")
+		oRBGroupPageIndicatorBorderDesign.addButton(oPIBorderButtonSolid);
+
+		var oPIBorderButtonNone = new sap.m.RadioButton("RB-PI-B-None");
+		oPIBorderButtonNone.setText("None");
+		oPIBorderButtonNone.setTooltip("Sets the page indicator border to None")
+		oRBGroupPageIndicatorBorderDesign.addButton(oPIBorderButtonNone);
+
+		var oRBGroupPageIndicatorBorderDesignLabel = new sap.m.Label({
+			text: "Page Indicator Border Design",
+			labelFor: oRBGroupPageIndicatorBorderDesign
+		});
+		oRBGroupPageIndicatorBorderDesign.attachSelect(function () {
+			var sSelectedValue = oRBGroupPageIndicatorBorderDesign.getSelectedButton().getText();
+			if (sSelectedValue === "Solid") {
+				carousel.setPageIndicatorBorderDesign(sap.m.BorderDesign.Solid);
+			} else if (sSelectedValue === "None") {
+				carousel.setPageIndicatorBorderDesign(sap.m.BorderDesign.None);
 			}
 		});
 
@@ -704,6 +763,10 @@
 						new sap.m.RadioButton({ text: "false", select: function () { carousel.setLoop(false); } }),
 					]
 				}),
+				oRBGroupPageIndicatorBackgroundDesignLabel,
+				oRBGroupPageIndicatorBackgroundDesign,
+				oRBGroupPageIndicatorBorderDesignLabel,
+				oRBGroupPageIndicatorBorderDesign,
 				oNumberOfImagesInputLabel,
 				oNumberOfImagesInput,
 				oNumberOfIPagesToBeShownLabel,
