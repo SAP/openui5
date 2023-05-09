@@ -151,7 +151,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Header.prototype._isInteractive = function () {
+	Header.prototype.isInteractive = function () {
 		return this.getInteractive();
 	};
 
