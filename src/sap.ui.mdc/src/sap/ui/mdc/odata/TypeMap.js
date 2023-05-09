@@ -49,12 +49,15 @@ sap.ui.define([
 	ODataTypeMap.set("sap.ui.model.odata.type.Int64", BaseType.Numeric);
 	ODataTypeMap.set("sap.ui.model.odata.type.SByte", BaseType.Numeric);
 	ODataTypeMap.set("sap.ui.model.odata.type.Single", BaseType.Numeric);
+	ODataTypeMap.set("sap.ui.model.odata.type.Stream", BaseType.String);
 	ODataTypeMap.set("sap.ui.model.odata.type.String", BaseType.String);
 	ODataTypeMap.set("sap.ui.model.odata.type.Time", BaseType.Time);
 	ODataTypeMap.set("sap.ui.model.odata.type.TimeOfDay", BaseType.Time);
 	ODataTypeMap.set("sap.ui.model.odata.type.Unit", DefaultTypeMap.getUnitBaseType, DefaultTypeMap.getUnitOptions);
 
+
 	// Alias configuration
+	ODataTypeMap.setAlias("Edm.Binary", "sap.ui.model.odata.type.Stream");
 	ODataTypeMap.setAlias("Edm.Boolean", "sap.ui.model.odata.type.Boolean");
 	ODataTypeMap.setAlias("Edm.Byte", "sap.ui.model.odata.type.Byte");
 	ODataTypeMap.setAlias("Edm.Date", "sap.ui.model.odata.type.Date");
@@ -69,9 +72,12 @@ sap.ui.define([
 	ODataTypeMap.setAlias("Edm.Int64", "sap.ui.model.odata.type.Int64");
 	ODataTypeMap.setAlias("Edm.SByte", "sap.ui.model.odata.type.SByte");
 	ODataTypeMap.setAlias("Edm.Single", "sap.ui.model.odata.type.Single");
+	ODataTypeMap.setAlias("Edm.Stream", "sap.ui.model.odata.type.Stream");
 	ODataTypeMap.setAlias("Edm.String", "sap.ui.model.odata.type.String");
 	ODataTypeMap.setAlias("Edm.Time", "sap.ui.model.odata.type.Time");
 	ODataTypeMap.setAlias("Edm.TimeOfDay", "sap.ui.model.odata.type.TimeOfDay");
+
+
 
 	ODataTypeMap.freeze();
 

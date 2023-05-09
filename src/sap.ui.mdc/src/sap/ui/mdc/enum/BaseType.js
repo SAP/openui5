@@ -16,7 +16,9 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
+	 * @experimental As of version 1.74.0
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.74.0
 	 * @alias sap.ui.mdc.enum.BaseType
 	 */
@@ -24,7 +26,8 @@ sap.ui.define(function() {
 		/**
 		 * Data type represents a string
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		String: "String",
 
@@ -32,35 +35,40 @@ sap.ui.define(function() {
 		 * Data type represents a number.
 		 * (This can be integer, float or any other numeric type.)
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Numeric: "Numeric",
 
 		/**
 		 * Data type represents a boolean
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Boolean: "Boolean",
 
 		/**
 		 * Data type represents a date
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Date: "Date",
 
 		/**
 		 * Data type represents a time
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Time: "Time",
 
 		/**
 		 * Data type represents a date with time
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		DateTime: "DateTime",
 
@@ -68,7 +76,8 @@ sap.ui.define(function() {
 		 * Data type represents a unit.
 		 * This means a composite type with a number and a unit part is used.
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Unit: "Unit"
 	};
