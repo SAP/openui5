@@ -446,7 +446,7 @@ sap.ui.define([
 	function getCustomizingComponent(vObject) {
 		var oComponent, sComponentId;
 
-		if (!BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean})) {
+		if (!Configuration.getDisableCustomizing()) {
 			if (typeof vObject === "string") {
 				sComponentId = vObject;
 			} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {

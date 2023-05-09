@@ -1448,6 +1448,17 @@ sap.ui.define([
 		},
 
 		/**
+		 * Flag, whether the customizing is disabled or not.
+		 *
+		 * @returns {boolean} true if customizing is disabled
+		 * @private
+		 * @ui5-restricted
+		 */
+		getDisableCustomizing : function() {
+			return BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean});
+		},
+
+		/**
 		 * Flag, representing the status of the view cache.
 		 * @see {sap.ui.xmlview}
 		 *
