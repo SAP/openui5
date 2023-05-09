@@ -46,6 +46,7 @@ sap.ui.define([
 		sDefaultTimezone = Configuration.getTimezone(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
+		sODataListBindingClassName = "sap.ui.model.odata.v2.ODataListBinding",
 		sODataMessageParserClassName = "sap.ui.model.odata.ODataMessageParser",
 		sODataModelClassName = "sap.ui.model.odata.v2.ODataModel",
 		// determine the row in which the entity is expected from the context path
@@ -6782,7 +6783,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.oLogMock.expects("error").withExactArgs(sinon.match(function (sError) {
 				return sError.startsWith("List Binding is not bound against a list for "
 						+ "/allUserAssignments");
-			}));
+				}), undefined, sODataListBindingClassName);
 
 			// code under test
 			oTable.setBindingContext(oContext);

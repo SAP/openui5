@@ -237,6 +237,55 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[{
+	error : {message : "~message"},
+	text : "~message"
+}, {
+	error : {
+		message : "~message",
+		response : {statusCode : 401, statusText : "~statusText", body : "~body"}
+	},
+	text : "~message, 401, ~statusText, ~body"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_getLength: calls error handle, " + i, function (assert) {
+		var oModel = {read : function () {}},
+			oBinding = {
+				sCountMode : CountMode.Request,
+				oModel : oModel,
+				sOperationMode : OperationMode.Default,
+				sPath : "/~Path",
+				mRequestHandles : {"/~Path" : "~RequestHandle"},
+				_addFilterQueryOption : function () {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("_addFilterQueryOption").withExactArgs([], true);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/~Path");
+
+		var oReadCall = this.mock(oModel).expects("read").withExactArgs("/~Path/$count", {
+				canonicalRequest : undefined,
+				context : undefined,
+				error : sinon.match.func,
+				groupId : undefined,
+				success : sinon.match.func,
+				urlParameters : [],
+				withCredentials : undefined
+			});
+
+		// code under test
+		ODataListBinding.prototype._getLength.call(oBinding);
+
+		this.oLogMock.expects("warning").withExactArgs("Request for $count failed: " + oFixture.text,
+			undefined, sClassName);
+
+		// code under test
+		oReadCall.args[0][1].error(oFixture.error);
+
+		assert.deepEqual(oBinding.mRequestHandles, {});
+	});
+});
+
+	//*********************************************************************************************
 [
 	{parameters : undefined, expected : false},
 	{parameters : {}, expected : false},
@@ -761,7 +810,7 @@ sap.ui.define([
 			.exactly(bBoundToList ? 0 : 1)
 			.returns(sResolvedPath);
 		this.oLogMock.expects("error")
-			.withExactArgs("List Binding is not bound against a list for ~resolvedPath")
+			.withExactArgs("List Binding is not bound against a list for ~resolvedPath", undefined, sClassName)
 			.exactly(bBoundToList ? 0 : 1);
 		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
 		this.mock(oBinding).expects("_fireChange")
@@ -956,7 +1005,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("setContext: set updated context while there are transient entities",
+[true, false].forEach(function (bCheckPathType) {
+	QUnit.test("setContext: set updated context while there are transient entities, bCheckPathType=" + bCheckPathType,
 			function (assert) {
 		var oRefreshExpectation, oRemoveExpectation,
 			oContext = {
@@ -997,7 +1047,10 @@ sap.ui.define([
 		this.mock(oModel).expects("resolveDeep")
 			.withExactArgs("~sPath", sinon.match.same(oContext))
 			.returns("~resolvedDeepPath");
-		oBindingMock.expects("_checkPathType").withExactArgs().returns(true);
+		oBindingMock.expects("_checkPathType").withExactArgs().returns(bCheckPathType);
+		this.oLogMock.expects("error")
+			.exactly(bCheckPathType ? 0 : 1)
+			.withExactArgs("List Binding is not bound against a list for ~resolvedPath", undefined, sClassName);
 		oBindingMock.expects("checkDataState").withExactArgs();
 		oBindingMock.expects("_hasTransientParentWithoutSubContexts")
 			.withExactArgs()
@@ -1013,6 +1066,7 @@ sap.ui.define([
 
 		assert.ok(oRefreshExpectation.calledImmediatelyAfter(oRemoveExpectation));
 	});
+});
 
 	//*********************************************************************************************
 [true, false].forEach(function (bIsResolved) {
@@ -3677,5 +3731,17 @@ sap.ui.define([
 
 		// code under test
 		ODataListBinding.prototype.fireCreateActivate.call(oBinding, oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addComparators: log warning if entity type is unknown", function (assert) {
+		var oBinding = {oEntityType : undefined};
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot determine sort/filter comparators, as entity type of the collection is unknown!",
+				undefined, sClassName);
+
+		// code under test
+		ODataListBinding.prototype.addComparators.call(oBinding, [/*unused*/], false /*bSort unused*/);
 	});
 });
