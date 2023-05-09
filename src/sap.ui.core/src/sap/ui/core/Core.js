@@ -1297,6 +1297,7 @@ sap.ui.define([
 	 * is not recommended.
 	 *
 	 * @return {sap.ui.core.RenderManager} New instance of the RenderManager
+	 * @deprecated Since 1.119
 	 * @public
 	 */
 	Core.prototype.createRenderManager = function() {
