@@ -1884,6 +1884,10 @@ sap.ui.define([
 				vRequest = {
 					url : vRequest
 				};
+				if (vRequest.url.startsWith("DELETE ")) {
+					vRequest.method = "DELETE";
+					vRequest.url = vRequest.url.slice(7);
+				}
 			}
 			// ensure that these properties are defined (required for deepEqual)
 			vRequest.headers = vRequest.headers || {};
@@ -4407,7 +4411,7 @@ sap.ui.define([
 			var oBinding = that.oView.byId("table").getBinding("items");
 
 			that.expectChange("id", ["2"])
-				.expectRequest({method : "DELETE", url : "SalesOrderList('1')"})
+				.expectRequest("DELETE SalesOrderList('1')")
 				.expectRequest("SalesOrderList?$select=SalesOrderID"
 					+ "&$filter=not (SalesOrderID eq '1')&$skip=0&$top=100", {
 					value : [{SalesOrderID : "2"}]
@@ -5149,10 +5153,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oRootTable = that.oView.byId("rootTable");
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('1')"
-				})
+			that.expectRequest("DELETE SalesOrderList('1')")
 				.expectRequest("SalesOrderList?$select=SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=0&$top=100", {
 					value : [{
@@ -6661,10 +6662,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('0500000002')"
-				})
+			that.expectRequest("DELETE SalesOrderList('0500000002')")
 				.expectChange("count", "1")
 				.expectChange("id", ["0500000001"]);
 
@@ -6879,10 +6877,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oDeletePromise;
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('0500000002')"
-				})
+			that.expectRequest("DELETE SalesOrderList('0500000002')")
 				.expectRequest("SalesOrderList('0500000003')?$select=SalesOrderID", {
 					SalesOrderID : "0500000003"
 				})
@@ -7066,14 +7061,10 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var aItems = that.oView.byId("table").getItems();
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0020')"
-				})
-				.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')"
-				})
+			that.expectRequest(
+					"DELETE SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0020')")
+				.expectRequest(
+					"DELETE SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')")
 				.expectChange("position", [, "0040"]);
 
 			// code under test
@@ -8591,10 +8582,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('45')"
-				})
+			that.expectRequest("DELETE SalesOrderList('45')")
 				.expectChange("count", "3")
 				.expectChange("id", ["44", "43", "42"])
 				.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
@@ -8688,10 +8676,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('44')"
-				})
+			that.expectRequest("DELETE SalesOrderList('44')")
 				.expectChange("count", "3")
 				.expectChange("id", [, "43", "42"])
 				.expectChange("note", [, "New 1", "First SalesOrder"]);
@@ -8915,10 +8900,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('44')"
-				});
+			that.expectRequest("DELETE SalesOrderList('44')");
 
 			return Promise.all([
 				oTable.getItems()[1].getBindingContext().delete("$auto"),
@@ -9153,10 +9135,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oTable.getRows()[1].getBindingContext(), oCreatedContext1);
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('44')"
-				})
+			that.expectRequest("DELETE SalesOrderList('44')")
 				.expectChange("id", [, "43"])
 				.expectChange("note", [, "New 1"]);
 
@@ -9287,10 +9266,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('44')"
-				});
+			that.expectRequest("DELETE SalesOrderList('44')");
 			// no change event: getContexts with E.C.D. returns a diff containing one delete only
 
 			oCreatedContext1.delete("$auto");
@@ -9401,10 +9377,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('45')"
-				})
+			that.expectRequest("DELETE SalesOrderList('45')")
 				// next row "scrolls into view"
 				.expectChange("id", [, "44"])
 				.expectChange("note", [, "New 1"]);
@@ -10237,10 +10210,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('44')"
-				})
+			that.expectRequest("DELETE SalesOrderList('44')")
 				.expectChange("id", [, "43"])
 				.expectChange("note", [, "New 1"]);
 
@@ -10858,10 +10828,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('44')"
-				})
+			that.expectRequest("DELETE SalesOrderList('44')")
 				.expectChange("id", [,, ""])
 				.expectChange("note", [,, "New 3"]);
 
@@ -13810,10 +13777,7 @@ sap.ui.define([
 			var oContext = that.oView.byId("form").getBindingContext(),
 				oPromise;
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "TEAMS('42')"
-				})
+			that.expectRequest("DELETE TEAMS('42')")
 				.expectChange("text", null);
 
 			// Note: "the resulting group ID must be '$auto' or '$direct'"
@@ -18641,10 +18605,7 @@ sap.ui.define([
 			return that.waitForChanges(assert, "deferred delete");
 		}).then(function () {
 			that.expectChange("count", "17")
-				.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('3')"
-				}, createErrorInsideBatch())
+				.expectRequest("DELETE SalesOrderList('3')", createErrorInsideBatch())
 				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
 					+ "&$filter=not (SalesOrderID eq '2' or SalesOrderID eq '3'"
 						+ " or SalesOrderID eq '4')"
@@ -18671,7 +18632,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 18);
 
 			that.expectChange("count", "17")
-				.expectRequest({method : "DELETE", url : "SalesOrderList('3')"})
+				.expectRequest("DELETE SalesOrderList('3')")
 				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
 					+ "&$filter=not (SalesOrderID eq '2' or SalesOrderID eq '3'"
 						+ " or SalesOrderID eq '4')"
@@ -18694,8 +18655,8 @@ sap.ui.define([
 						url : "SalesOrderList('2')",
 						payload : {Note : "Note 2 (changed)"}
 					})
-					.expectRequest({method : "DELETE", url : "SalesOrderList('2')"})
-					.expectRequest({method : "DELETE", url : "SalesOrderList('4')"});
+					.expectRequest("DELETE SalesOrderList('2')")
+					.expectRequest("DELETE SalesOrderList('4')");
 			} else {
 				that.expectCanceledError("Failed to delete /SalesOrderList('4')",
 					"Request canceled: DELETE SalesOrderList('4'); group: update");
@@ -18868,9 +18829,9 @@ sap.ui.define([
 							type : "Error"
 						}]);
 				}
-				that.expectRequest({method : "DELETE", url : sEntityPath1},
+				that.expectRequest("DELETE " + sEntityPath1,
 						oFixture.failure ? createErrorInsideBatch() : undefined)
-					.expectRequest({method : "DELETE", url : sEntityPath2});
+					.expectRequest("DELETE " + sEntityPath2);
 			}
 			if (!oFixture.success) {
 				that.expectChange("pos", [, "20", "30", "40"]);
@@ -19059,7 +19020,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectChange("id", ["1"])
-				.expectRequest({method : "DELETE", url : "SalesOrderList('new2')"});
+				.expectRequest("DELETE SalesOrderList('new2')");
 
 			oPromise = oContext1.delete();
 
@@ -19074,7 +19035,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "create w/ a pending delete");
 		}).then(function () {
-			that.expectRequest({method : "DELETE", url : "SalesOrderList('new1')"})
+			that.expectRequest("DELETE SalesOrderList('new1')")
 				.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
@@ -19836,10 +19797,7 @@ sap.ui.define([
 				assert.notOk(oPageContext.isDeleted());
 				assert.notOk(oRowContext.isDeleted());
 			} else {
-				that.expectRequest({
-						method : "DELETE",
-						url : "SalesOrderList('1')"
-					});
+				that.expectRequest("DELETE SalesOrderList('1')");
 			}
 
 			return Promise.all([
@@ -20012,7 +19970,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("table").getItems()[1].getBindingContext();
 
-			that.expectRequest({method : "DELETE", url : "SalesOrderList('2')"},
+			that.expectRequest("DELETE SalesOrderList('2')",
 					new Promise(function (_resolve, reject) { fnRejectDelete = reject; }))
 				.expectRequest("SalesOrderList?$select=SalesOrderID"
 					+ "&$filter=not (SalesOrderID eq '2')&$skip=1&$top=1",
@@ -29354,10 +29312,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "Artists(ArtistID='42',IsActiveEntity=false)"
-				})
+			that.expectRequest("DELETE Artists(ArtistID='42',IsActiveEntity=false)")
 				.expectChange("id", null)
 				.expectChange("isActive", null)
 				.expectChange("name", null);
@@ -29754,14 +29709,14 @@ sap.ui.define([
 				var oSiblingEntity;
 
 				that.expectMessages([{
-					message : sMessage1,
-					target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
-					type : "Success"
-				}, {
-					message : sMessage2,
-					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
-					type : "Success"
-				}]);
+						message : sMessage1,
+						target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
+						type : "Success"
+					}, {
+						message : sMessage2,
+						target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+						type : "Success"
+					}]);
 
 				if (bWithActive) {
 					that.expectChange("isActiveEntity", ["Yes"]);
@@ -29776,18 +29731,18 @@ sap.ui.define([
 					oInactiveArtistContext, {$$inheritExpandSelect : true});
 
 				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
-					+ "/SiblingEntity?$select=ArtistID,IsActiveEntity,Messages,Name", {
-					"@odata.etag" : "activETag*",
-					ArtistID : "42",
-					IsActiveEntity : true,
-					Messages : [{
-						message : sMessage1,
-						numericSeverity : 1,
-						target : "Name"
-					}],
-					Name : "Missy Eliot"
-				})
-				.expectChange("isActiveEntity", ["Yes"]);
+						+ "/SiblingEntity?$select=ArtistID,IsActiveEntity,Messages,Name", {
+						"@odata.etag" : "activETag*",
+						ArtistID : "42",
+						IsActiveEntity : true,
+						Messages : [{
+							message : sMessage1,
+							numericSeverity : 1,
+							target : "Name"
+						}],
+						Name : "Missy Eliot"
+					})
+					.expectChange("isActiveEntity", ["Yes"]);
 
 				return Promise.all([
 					// code under test
@@ -30893,7 +30848,7 @@ sap.ui.define([
 					sContext);
 			that.expectChange("name", ["Frederic Fall"])
 				.expectChange("status", ["Available"])
-				.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"}, oError)
+				.expectRequest("DELETE EMPLOYEES('1')", oError)
 				.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 				.expectChange("status", ["Occupied", "Available"])
 				.expectMessages([oReadMessage, oDeleteMessage]);
@@ -30914,10 +30869,7 @@ sap.ui.define([
 
 			that.expectChange("name", ["Frederic Fall"])
 				.expectChange("status", ["Available"])
-				.expectRequest({
-					method : "DELETE",
-					url : "EMPLOYEES('1')"
-				})
+				.expectRequest("DELETE EMPLOYEES('1')")
 				.expectMessages([]);
 
 			return Promise.all([
@@ -30966,10 +30918,7 @@ sap.ui.define([
 		}).then(function () {
 			var oContext = that.oView.byId("form").getBindingContext();
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "EMPLOYEES('2')"
-				})
+			that.expectRequest("DELETE EMPLOYEES('2')")
 				.expectChange("text", null)
 				.expectMessages([]);
 
@@ -31036,10 +30985,7 @@ sap.ui.define([
 		}).then(function () {
 			var oContext = oTable.getItems()[0].getBindingContext();
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "EMPLOYEES('1')"
-				})
+			that.expectRequest("DELETE EMPLOYEES('1')")
 				.expectChange("name", ["Frederic Fall"])
 				.expectMessages([]);
 
@@ -31089,10 +31035,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "EMPLOYEES('1')"
-				})
+			that.expectRequest("DELETE EMPLOYEES('1')")
 				.expectChange("name", [, "Frederic Fall"]);
 
 			return Promise.all([
@@ -31146,10 +31089,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "TEAMS('TEAM_01')"
-				})
+			that.expectRequest("DELETE TEAMS('TEAM_01')")
 				.expectChange("Team_Id", null);
 
 			return Promise.all([
@@ -31242,10 +31182,7 @@ sap.ui.define([
 		}).then(function () {
 			var oContext = that.oView.byId("form").getBindingContext();
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "EMPLOYEES('1')"
-				})
+			that.expectRequest("DELETE EMPLOYEES('1')")
 				.expectChange("text", null)
 				.expectMessages([]);
 
@@ -37806,10 +37743,7 @@ sap.ui.define([
 			if (aContexts[0].isTransient()) {
 				assertIndices(assert, aContexts, [-2, -1, 0]);
 
-				that.expectRequest({
-						method : "DELETE",
-						url : "SalesOrderList('0500000001')"
-					});
+				that.expectRequest("DELETE SalesOrderList('0500000001')");
 
 				return Promise.all([
 					// code under test (BCP: 2170049510)
@@ -41989,10 +41923,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oBinding.getCount(), 4, "count of elements");
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "BusinessPartnerList('new1')"
-				})
+			that.expectRequest("DELETE BusinessPartnerList('new1')")
 				.expectChange("count", "3")
 				.expectChange("id", [, "4711"]);
 
@@ -42546,10 +42477,7 @@ sap.ui.define([
 				return;
 			}
 
-			that.expectRequest({
-				method : "DELETE",
-				url : "SalesOrderList('1')"
-			});
+			that.expectRequest("DELETE SalesOrderList('1')");
 
 			return Promise.all([
 				oDeletePromise,
@@ -43098,7 +43026,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Refresh a table with a kept-alive context, but no late properties.
-	QUnit.test("BCP: 476620/2022 (002075129500004766202022)", function (assert) {
+	QUnit.test("BCP: 476620 / 2022 (002075129500004766202022)", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
@@ -44321,10 +44249,7 @@ sap.ui.define([
 					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel",
 					type : "Information"
 				}])
-				.expectRequest({
-					method : "DELETE",
-					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
-				});
+				.expectRequest("DELETE Artists(ArtistID='A1',IsActiveEntity=false)");
 			if (bListResolved) {
 				that.expectChange("listChannel", ["Channel 1"]);
 			}
@@ -45423,10 +45348,7 @@ sap.ui.define([
 		}).then(function (aContexts0) {
 			aContexts = aContexts0;
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "TEAMS('Team_01')"
-				}, new Promise(function (resolve) {
+			that.expectRequest("DELETE TEAMS('Team_01')", new Promise(function (resolve) {
 					fnResolveDelete0 = resolve;
 				}));
 
@@ -45435,10 +45357,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "TEAMS('Team_02')"
-				}, new Promise(function (resolve) {
+			that.expectRequest("DELETE TEAMS('Team_02')", new Promise(function (resolve) {
 					fnResolveDelete1 = resolve;
 				}));
 
@@ -48853,10 +48772,7 @@ sap.ui.define([
 				.withExactArgs("Failed to delete /SalesOrderList('42')",
 					sinon.match("Request intentionally failed"), sContext);
 
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('42')"
-				}, createErrorInsideBatch())
+			that.expectRequest("DELETE SalesOrderList('42')", createErrorInsideBatch())
 				.expectMessages([{
 					code : "CODE",
 					message : "Request intentionally failed",
@@ -48880,10 +48796,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest({
-					method : "DELETE",
-					url : "SalesOrderList('42')"
-				})
+			that.expectRequest("DELETE SalesOrderList('42')")
 				.expectChange("salesOrderId", []);
 
 			return Promise.all([
@@ -50513,10 +50426,7 @@ sap.ui.define([
 			oActiveContext = aResults[0];
 
 			if (bDelete) {
-				that.expectRequest({
-					method : "DELETE",
-					url : "Artists(ArtistID='23',IsActiveEntity=true)"
-				});
+				that.expectRequest("DELETE Artists(ArtistID='23',IsActiveEntity=true)");
 
 				return Promise.all([
 					// code under test
