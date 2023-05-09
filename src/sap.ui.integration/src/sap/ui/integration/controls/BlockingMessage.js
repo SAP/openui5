@@ -145,7 +145,7 @@ sap.ui.define([
 	BlockingMessage.create = function (mSettings, oCard) {
 		var sIllustratedMessageType = mSettings.illustrationType,
 			sIllustratedMessageSize = mSettings.illustrationSize || IllustratedMessageSize.Auto,
-			sBoxHeight = "",
+			sBoxHeight = "100%",
 			sTitle = mSettings.title,
 			sDescription =  mSettings.description,
 			sDetails = mSettings.details;
