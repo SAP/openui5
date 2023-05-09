@@ -421,6 +421,22 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a clone of the given value, according to the rules of
+		 * <code>JSON.stringify</code>, with all "$..." properties removed.
+		 *
+		 * @param {any} vValue - Any value, including <code>undefined</code>
+		 * @returns {any} A clone
+		 *
+		 * @public
+		 * @see .clone
+		 */
+		cloneNo$ : function cloneNo$(vValue) {
+			return _Helper.clone(vValue, function (sKey, vValue) {
+				return sKey[0] === "$" ? undefined : vValue;
+			});
+		},
+
+		/**
 		 * Converts $select and $expand of the given query options into corresponding paths. Expects
 		 * $select to be always an array and $expand to be always an object (as delivered by
 		 * ODataModel#buildQueryOptions). Other query options are ignored.

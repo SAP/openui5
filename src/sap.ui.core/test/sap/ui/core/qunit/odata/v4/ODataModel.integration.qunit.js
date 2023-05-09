@@ -17562,8 +17562,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: call setAggregation on a suspended ODLB
 	//
-	// Ensure that auto-$expand/$select does not add $select
-	// JIRA: CPOUI5ODATAV4-270
+	// Ensure that auto-$expand/$select does not add $select (JIRA: CPOUI5ODATAV4-270).
+	// Ensure that #changeParameters w/ unchanged $$aggregation is ignored (BCP: 2370045709).
 	QUnit.test("suspend/resume: call setAggregation on a suspended ODLB", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -17578,6 +17578,8 @@ sap.ui.define([
 			var oBinding = that.oView.byId("table").getBinding("items");
 
 			oBinding.setAggregation({groupLevels : ["BusinessPartnerRole"]});
+			// code under test (BCP: 2370045709)
+			oBinding.changeParameters({$$aggregation : {groupLevels : ["BusinessPartnerRole"]}});
 
 			// code under test
 			assert.deepEqual(oBinding.getAggregation(), {
@@ -20348,17 +20350,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Binding-specific parameter $$aggregation is used
-	// JIRA: CPOUI5UISERVICESV3-1195
-	//
-	// Check download URL.
-	// JIRA: CPOUI5ODATAV4-609
-	//
-	// Request leaf count.
-	// JIRA: CPOUI5ODATAV4-164
-	//
-	// Test ODLB#getCount
-	// JIRA: CPOUI5ODATAV4-958
+	// Scenario: Binding-specific parameter $$aggregation is used (JIRA: CPOUI5UISERVICESV3-1195).
+	// Check download URL (JIRA: CPOUI5ODATAV4-609).
+	// Request leaf count(JIRA: CPOUI5ODATAV4-164).
+	// Test ODLB#getCount (JIRA: CPOUI5ODATAV4-958).
+	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709).
 	//TODO support $filter : \'GrossAmount gt 0\',\
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var oListBinding,
@@ -20497,6 +20493,26 @@ sap.ui.define([
 				},
 				groupLevels : ["LifecycleStatus"]
 			}, "JIRA: CPOUI5ODATAV4-1825");
+
+			// no additional request for same aggregation data
+			// code under test (BCP: 2370045709)
+			oListBinding.setAggregation({
+				group : {
+					CurrencyCode : {}
+					// LifecycleStatus : {}
+				},
+				groupLevels : ["LifecycleStatus"]
+			});
+			// code under test (BCP: 2370045709)
+			oListBinding.changeParameters({
+				$$aggregation : {
+					group : {
+						CurrencyCode : {}
+						// LifecycleStatus : {}
+					},
+					groupLevels : ["LifecycleStatus"]
+				}
+			});
 		});
 	});
 
@@ -24017,7 +24033,7 @@ sap.ui.define([
 			assert.throws(function () {
 				// code under test
 				oListBinding.changeParameters({
-					$$aggregation : {}
+					$$aggregation : {groupLevels : ["n/a"]}
 				});
 			}, new Error("Unsupported parameter: $$aggregation"));
 
@@ -24248,6 +24264,7 @@ sap.ui.define([
 	//
 	// The whole tree is expanded to two levels (JIRA: CPOUI5ODATAV4-2095).
 	// Selection keeps a context implicitly alive (JIRA: CPOUI5ODATAV4-2053).
+	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709).
 [false, true].forEach(function (bKeepAlive) {
 	var sTitle = "Recursive Hierarchy: root is leaf; bKeepAlive=" + bKeepAlive;
 
@@ -24809,6 +24826,20 @@ sap.ui.define([
 					defaultChannel : "460"
 				}, "after expandTo");
 			assert.ok(oKeptAliveNode.isSelected());
+
+			// no additional request for same aggregation data
+			// code under test (BCP: 2370045709)
+			oListBinding.setAggregation({
+				expandTo : 2,
+				hierarchyQualifier : "OrgChart"
+			});
+			// code under test (BCP: 2370045709)
+			oListBinding.changeParameters({
+				$$aggregation : {
+					expandTo : 2,
+					hierarchyQualifier : "OrgChart"
+				}
+			});
 		});
 	});
 });

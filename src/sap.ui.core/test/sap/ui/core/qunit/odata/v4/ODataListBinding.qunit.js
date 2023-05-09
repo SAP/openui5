@@ -144,8 +144,8 @@ sap.ui.define([
 		var oBinding = this.bindList("EMPLOYEES"),
 			oMixin = {},
 			aOverriddenFunctions = ["adjustPredicate", "destroy", "getDependentBindings",
-				"getGeneration", "hasPendingChangesForPath", "prepareDeepCreate",
-				"updateAfterCreate"];
+				"getGeneration", "hasPendingChangesForPath", "isUnchangedParameter",
+				"prepareDeepCreate", "updateAfterCreate"];
 
 		asODataParentBinding(oMixin);
 
@@ -869,7 +869,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: $$aggregation not deepEqual, " + bSuspended, function (assert) {
+	QUnit.test("applyParameters: $$aggregation not unchanged, " + bSuspended, function (assert) {
 		var oAggregation = {
 				// aggregate : {GrossAmount : {subtotals : true}},
 				// groupLevels : ["LifecycleStatus"]
@@ -893,9 +893,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
-		this.mock(_Helper).expects("deepEqual")
-			.withExactArgs(sinon.match.same(oAggregation),
-				sinon.match.same(oBinding.mParameters.$$aggregation))
+		this.mock(oBinding).expects("isUnchangedParameter")
+			.withExactArgs("$$aggregation", sinon.match.same(oBinding.mParameters.$$aggregation))
 			.returns(false);
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
@@ -992,9 +991,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oFixture.oNewAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
-		this.mock(_Helper).expects("deepEqual").exactly(oFixture.iDeepEqualCallCount)
-			.withExactArgs(sinon.match.same(oFixture.oNewAggregation),
-				sinon.match.same(oFixture.oOldAggregation))
+		this.mock(oBinding).expects("isUnchangedParameter").exactly(oFixture.iDeepEqualCallCount)
+			.withExactArgs("$$aggregation", sinon.match.same(oFixture.oOldAggregation))
 			.returns(true);
 		this.mock(oBinding).expects("isRootBindingSuspended").never();
 		this.mock(oBinding).expects("setResumeChangeReason").never();
@@ -8965,6 +8963,51 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.getGeneration(), 34);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isUnchangedParameter", function (assert) {
+		var oAggregation = {aggregate : {"n/a" : {}}},
+			oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+				$$aggregation : oAggregation,
+				$$groupId : "n_a",
+				$filter : "n/a",
+				custom : "n/a"
+			}),
+			oHelperMock = this.mock(_Helper),
+			oParentBindingPrototypeMock = this.mock(asODataParentBinding.prototype);
+
+		oParentBindingPrototypeMock.expects("isUnchangedParameter").on(oBinding)
+			.withExactArgs("$$groupId", "foo").returns("~result0~");
+
+		// code under test
+		assert.strictEqual(oBinding.isUnchangedParameter("$$groupId", "foo"), "~result0~");
+
+		oParentBindingPrototypeMock.expects("isUnchangedParameter").on(oBinding)
+			.withExactArgs("$filter", "bar").returns("~result1~");
+
+		// code under test
+		assert.strictEqual(oBinding.isUnchangedParameter("$filter", "bar"), "~result1~");
+
+		oParentBindingPrototypeMock.expects("isUnchangedParameter").on(oBinding)
+			.withExactArgs("custom", "baz").returns("~result2~");
+
+		// code under test
+		assert.strictEqual(oBinding.isUnchangedParameter("custom", "baz"), "~result2~");
+
+		oHelperMock.expects("clone").withExactArgs("~vOtherValue~").returns("~otherClone~");
+		this.mock(_AggregationHelper).expects("buildApply").withExactArgs("~otherClone~");
+		oHelperMock.expects("cloneNo$")
+			// BEWARE: this is a clone of oAggregation after c'tor ran!
+			.withExactArgs(sinon.match.same(oBinding.mParameters.$$aggregation))
+			.returns("~myCloneNo$~");
+		oHelperMock.expects("cloneNo$").withExactArgs("~otherClone~").returns("~otherCloneNo$~");
+		oHelperMock.expects("deepEqual").withExactArgs("~myCloneNo$~", "~otherCloneNo$~")
+			.returns("~result3~");
+
+		// code under test
+		assert.strictEqual(oBinding.isUnchangedParameter("$$aggregation", "~vOtherValue~"),
+			"~result3~");
 	});
 
 	//*********************************************************************************************
