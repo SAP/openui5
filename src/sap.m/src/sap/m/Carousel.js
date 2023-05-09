@@ -327,6 +327,11 @@ sap.ui.define([
 
 		this._aAllActivePages = null;
 		this._aAllActivePagesIndexes = null;
+
+		if (this._bThemeChangedAttached) {
+			Core.detachThemeChanged(this._handleThemeChanged, this);
+			this._bThemeChangedAttached = false;
+		}
 	};
 
 	Carousel.prototype.onBeforeRendering = function() {
@@ -419,8 +424,9 @@ sap.ui.define([
 
 		if (Core.isThemeApplied()) {
 			this._initialize();
-		} else {
-			Core.attachThemeChanged(this._initialize, this);
+		} else if (!this._bThemeChangedAttached) {
+			this._bThemeChangedAttached = true;
+			Core.attachThemeChanged(this._handleThemeChanged, this);
 		}
 
 		this._sResizeListenerId = ResizeHandler.register($innerDiv, this._resize.bind(this));
@@ -428,6 +434,17 @@ sap.ui.define([
 
 	Carousel.prototype.getFocusDomRef = function () {
 		return this.getDomRef(this.getActivePage() + "-slide") || this.getDomRef("noData");
+	};
+
+	/**
+	 * Fired when the theme is changed.
+	 *
+	 * @private
+	 */
+	Carousel.prototype._handleThemeChanged = function () {
+		this._initialize();
+		Core.detachThemeChanged(this._handleThemeChanged, this);
+		this._bThemeChangedAttached = false;
 	};
 
 	/**
