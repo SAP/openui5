@@ -209,6 +209,11 @@ sap.ui.define([
 	 * @param {object} [extensionObject] An object containing properties and functions. The newly created Opa will be extended by these properties and functions using jQuery.extend.
 	 */
 	var Opa = function(extensionObject) {
+		/**
+		 * "and" property for chaining actions and assertions
+		 * @type {this}
+		 * @public
+		 */
 		this.and = this;
 		extend(this, extensionObject);
 	};
@@ -250,13 +255,6 @@ sap.ui.define([
 	 * @property {string} [errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 	 * Currently the only adapter for Opa is QUnit.
 	 * This message is displayed there if Opa has reached its timeout but QUnit has not yet reached it.
-	 * @public
-	 */
-
-	/**
-	 * @typedef {sap.ui.test.Opa} sap.ui.test.Opa.Chain
-	 * @description Used as return value of the {@link sap.ui.test.Opa#waitFor} to assist chaining
-	 * @property {sap.ui.test.Opa} and A reference to the same <code>sap.ui.test.Opa</code> instance that can be used for chaining statements
 	 * @public
 	 */
 
@@ -558,7 +556,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {sap.ui.test.Opa.WaitForOptions} options configuration options
-		 * @returns {sap.ui.test.Opa.Chain} an object extending a jQuery promise.
+		 * @returns {this} an object extending a jQuery promise.
 		 * The object is essentially a jQuery promise with an additional "and" method that can be used for chaining waitFor statements.
 		 * The promise is resolved when the waitFor completes successfully.
 		 * The promise is rejected with the options object, if an error occurs. In this case, options.errorMessage will contain a detailed error message containing the stack trace and Opa logs.
