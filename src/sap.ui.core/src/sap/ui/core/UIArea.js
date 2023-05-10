@@ -23,7 +23,6 @@ sap.ui.define([
 	'sap/ui/events/jquery/EventExtension',
 	"sap/ui/events/ControlEvents",
 	"sap/ui/events/F6Navigation",
-	"sap/ui/dom/_ready",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -46,13 +45,9 @@ sap.ui.define([
 		EventExtension,
 		ControlEvents,
 		F6Navigation,
-		_ready,
 		jQuery
 	) {
 	"use strict";
-
-	// Id of the static UIArea
-	var STATIC_UIAREA_ID = "sap-ui-static";
 
 	var oRenderLog = Rendering.getLogger();
 
@@ -60,16 +55,6 @@ sap.ui.define([
 	var oRenderManager = new RenderManager();
 
 	var oCore;
-
-	/**
-	 * Whether the DOM is ready (document.ready)
-	 * @private
-	 */
-	var bDomReady = false;
-
-	_ready().then(function() {
-		bDomReady = true;
-	});
 
 	EventExtension.apply();
 
@@ -1303,30 +1288,29 @@ sap.ui.define([
 	 * Creates a new {@link sap.ui.core.UIArea UIArea}.
 	 * Must only be used by sap.ui.core.Core or sap.ui.core.Control.
 	 *
-	 * @param {Element|string} oDomRef a DOM Element or ID string of the UIArea
+	 * @param {Element|string} vDomRef a DOM Element or ID string of the UIArea
 	 * @return {sap.ui.core.UIArea} a new UIArea
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-	UIArea.create = function(oDomRef) {
-		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
+	UIArea.create = function(vDomRef) {
+		assert(typeof vDomRef === "string" || typeof vDomRef === "object", "vDomRef must be a string or object");
 
-		if (!oDomRef) {
-			throw new Error("oDomRef must not be null");
+		if (!vDomRef) {
+			throw new Error("vDomRef must not be null");
 		}
 
-		// oDomRef might be (and actually IS in most cases!) a string (the ID of a DOM element)
-		if (typeof (oDomRef) === "string") {
-			var id = oDomRef;
+		var oDomRef;
+		// vDomRef might be (and actually IS in most cases!) a string (the ID of a DOM element)
+		if (typeof (vDomRef) === "string") {
+			var id = vDomRef;
 
-			if (id == STATIC_UIAREA_ID) {
-				oDomRef = UIArea.getStaticAreaRef();
-			} else {
-				oDomRef = document.getElementById(oDomRef);
-				if (!oDomRef) {
-					throw new Error("DOM element with ID '" + id + "' not found in page, but application tries to insert content.");
+			oDomRef = document.getElementById(id);
+			if (!oDomRef) {
+				throw new Error("DOM element with ID '" + id + "' not found in page, but application tries to insert content.");
 				}
-			}
+		} else {
+			oDomRef = vDomRef;
 		}
 
 		// if the domref does not have an ID or empty ID => generate one
@@ -1353,63 +1337,6 @@ sap.ui.define([
 			oUIArea._setRootNode(oDomRef);
 		}
 		return oUIArea;
-	};
-
-	/**
-	 * Returns the static, hidden area DOM element belonging to this core instance.
-	 *
-	 * It can be used e.g. for hiding elements like Popups, Shadow, Blocklayer etc.
-	 *
-	 * If it is not yet available, a DIV is created and appended to the body.
-	 *
-	 * @returns {Element} the static, hidden area DOM element belonging to this core instance.
-	 * @throws {Error} an Error if the document is not yet ready
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 */
-	UIArea.getStaticAreaRef = function() {
-		if (!bDomReady) {
-			throw new Error("DOM is not ready yet. Static UIArea cannot be created.");
-		}
-
-		var oStaticArea = document.getElementById(STATIC_UIAREA_ID),  oFirstFocusElement;
-
-		if (!oStaticArea) {
-
-			oStaticArea = document.createElement("div");
-			oFirstFocusElement = document.createElement("span");
-
-			oStaticArea.setAttribute("id", STATIC_UIAREA_ID);
-
-			Object.assign(oStaticArea.style, {
-				"height": "0",
-				"width": "0",
-				"overflow": "hidden",
-				"float":  Configuration.getRTL() ? "right" : "left"
-			});
-
-			oFirstFocusElement.setAttribute("id", STATIC_UIAREA_ID + "-firstfe");
-			oFirstFocusElement.setAttribute("tabindex", -1);
-			oFirstFocusElement.style.fontSize = 0;
-
-			oStaticArea.appendChild(oFirstFocusElement);
-
-			document.body.insertBefore(oStaticArea, document.body.firstChild);
-
-			UIArea.create(oStaticArea).bInitial = false;
-		}
-		return oStaticArea;
-	};
-
-	/**
-	 * Checks whether the given DOM element is the root of the static area.
-	 *
-	 * @param {Element} oDomRef DOM element to check
-	 * @returns {boolean} Whether the given DOM element is the root of the static area
-	 * @private
-	 */
-	UIArea.isStaticAreaRef = function(oDomRef) {
-		return !!(oDomRef && (oDomRef.id === STATIC_UIAREA_ID));
 	};
 
 	/**

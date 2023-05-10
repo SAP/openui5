@@ -19,6 +19,7 @@ sap.ui.define([
 	'./RenderManager',
 	'./UIArea',
 	'./message/MessageManager',
+	'./StaticArea',
 	"sap/base/Log",
 	"sap/ui/performance/Measurement",
 	"sap/ui/security/FrameOptions",
@@ -47,6 +48,7 @@ sap.ui.define([
 		RenderManager,
 		UIArea,
 		MessageManager,
+		StaticArea,
 		Log,
 		Measurement,
 		FrameOptions,
@@ -1733,6 +1735,9 @@ sap.ui.define([
 	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead!
 	 */
 	Core.prototype.createUIArea = function(oDomRef) {
+		if (typeof oDomRef === "string" && oDomRef === StaticArea.STATIC_UIAREA_ID) {
+			return StaticArea.getUIArea();
+		}
 		return UIArea.create(oDomRef);
 	};
 
@@ -2221,7 +2226,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.getStaticAreaRef = function() {
-		return UIArea.getStaticAreaRef();
+		return StaticArea.getDomRef();
 	};
 
 	/**
@@ -2232,7 +2237,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Core.prototype.isStaticAreaRef = function(oDomRef) {
-		return UIArea.isStaticAreaRef(oDomRef);
+		return StaticArea.getDomRef() === oDomRef;
 	};
 
 	/**

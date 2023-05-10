@@ -8,6 +8,7 @@ sap.ui.define([
 	'./Core',
 	'./Element',
 	'./UIArea',
+	'./StaticArea',
 	'./RenderManager',
 	'./BusyIndicatorUtils',
 	'./BlockLayerUtils',
@@ -20,6 +21,7 @@ sap.ui.define([
 		Core,
 		Element,
 		UIArea,
+		StaticArea,
 		RenderManager,
 		BusyIndicatorUtils,
 		BlockLayerUtils,
@@ -658,17 +660,13 @@ sap.ui.define([
 				oContainer = Element.registry.get(oRef);
 			}
 			// if no container control is found use the corresponding UIArea
-			var bIsUIArea = false;
 			if (!(oContainer instanceof Element)) {
-				oContainer = UIArea.create(oRef);
-				bIsUIArea = true;
-			}
-
-			if (!oContainer) {
-				return this;
-			}
-
-			if (!bIsUIArea) {
+				if (oRef.id === StaticArea.STATIC_UIAREA_ID) {
+					oContainer = StaticArea.getUIArea();
+				} else {
+					oContainer = UIArea.create(oRef);
+				}
+			} else {
 				var oContentAggInfo = oContainer.getMetadata().getAggregation("content");
 				var bContainerSupportsPlaceAt = true;
 
