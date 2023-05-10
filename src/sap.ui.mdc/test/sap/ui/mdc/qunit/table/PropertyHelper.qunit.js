@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/mdc/table/PropertyHelper",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/util/TypeUtil",
-	"sap/base/Log"
-], function(PropertyHelper, Column, TypeUtil, Log) {
+	"sap/base/Log",
+	"sap/ui/model/type/String" // in LegacyFree-UI5 used data types needs to be loaded.
+], function(PropertyHelper, Column, TypeUtil, Log, StringType) {
 	"use strict";
 
 	QUnit.module("Validation", {
