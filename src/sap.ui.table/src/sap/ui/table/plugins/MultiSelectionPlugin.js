@@ -162,6 +162,10 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.setSelected = function(oRow, bSelected, mConfig) {
+		if (!this.isIndexSelectable(oRow.getIndex())) {
+			return;
+		}
+
 		if (mConfig && mConfig.range) {
 			var iLastSelectedIndex = this.getSelectedIndex();
 
