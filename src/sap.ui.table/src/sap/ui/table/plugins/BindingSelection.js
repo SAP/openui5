@@ -146,8 +146,9 @@ sap.ui.define([
 			if (this.getSelectionMode() === SelectionMode.Single) {
 				iIndexFrom = iIndexTo;
 				this.setSelectionInterval(iIndexFrom, iIndexTo);
+			} else {
+				oBinding.addSelectionInterval(iIndexFrom, iIndexTo);
 			}
-			oBinding.addSelectionInterval(iIndexFrom, iIndexTo);
 		}
 	};
 
