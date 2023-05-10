@@ -90,7 +90,8 @@ sap.ui.define([
 	};
 
 	function pressLink (oLink) {
-		qutils.triggerEvent(Device.support.touch ? "tap" : "click", oLink);
+		var oLinkDomRef = oLink.getDomRef ? oLink.getDomRef() : oLink;
+		qutils.triggerEvent("click", oLinkDomRef);
 	}
 
 	QUnit.module("");
