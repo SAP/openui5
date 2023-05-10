@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
@@ -56,6 +57,7 @@ sap.ui.define([
 	Settings,
 	VariantManagement,
 	VariantModel,
+	ContextBasedAdaptationsAPI,
 	FlexControllerFactory,
 	LayerUtils,
 	Layer,
@@ -1908,11 +1910,13 @@ sap.ui.define([
 
 	QUnit.module("_duplicateVariant", {
 		beforeEach: function() {
+			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(VariantManagementState, "fillVariantModel").returns({});
 			this.oModel = new VariantModel({}, {flexController: {_oChangePersistence: {getComponentName: function() {}}}, appComponent: {getId: function() {}}});
 
 			var oChange0 = FlexObjectFactory.createFromFileContent({
 				fileName: "change0",
+				adaptationId: "id_12345",
 				selector: {id: "abc123"},
 				variantReference: "variant0",
 				layer: Layer.CUSTOMER,
@@ -1931,6 +1935,7 @@ sap.ui.define([
 				instance: createVariant({
 					fileName: "variant0",
 					title: "foo",
+					adaptationId: "id_12345",
 					variantManagementReference: "variantMgmtId1",
 					variantReference: "variantReference",
 					contexts: {
@@ -1955,6 +1960,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
+			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
 			var mPropertyBag = {
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
@@ -1971,6 +1978,7 @@ sap.ui.define([
 			assert.strictEqual(oDuplicateVariant.instance.getName(), "variant A Copy", "the name is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getId(), "newVariant", "the id is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.CUSTOMER, "the layer is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getAdaptationId(), "id_12345", "the adaptationId is correct");
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variantReference", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 2, "both changes were copied");
@@ -1981,6 +1989,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from USER layer referencing a CUSTOMER layer variant", function(assert) {
+			var oFlexObjectFactorySpy = sandbox.spy(FlexObjectFactory, "createFromFileContent");
 			var mPropertyBag = {
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
@@ -1994,6 +2003,7 @@ sap.ui.define([
 			};
 
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+			assert.notOk(oFlexObjectFactorySpy.getCall(0).args[0].adaptationId, "the properties for the change don't contain adaptationId");
 			assert.strictEqual(oDuplicateVariant.instance.getName(), "variant A Copy", "the name is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getId(), "newVariant", "the id is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.USER, "the layer is correct");
