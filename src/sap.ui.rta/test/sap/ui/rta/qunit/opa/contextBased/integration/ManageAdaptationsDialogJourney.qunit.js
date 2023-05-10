@@ -3,6 +3,7 @@ sap.ui.define(
 	[
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
+		"sap/ui/core/Core",
 		"./pages/contextBased/ManageAdaptationsDialog",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
 		"./pages/contextVisibility/ContextsDialog",
@@ -10,8 +11,10 @@ sap.ui.define(
 		"./pages/AppPage",
 		"sap/ui/core/date/UI5Date"
 	],
-	function(opaTest, Opa5) {
+	function(opaTest, Opa5, oCore) {
 		"use strict";
+
+		var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 		var arrangements = new Opa5({
 			iStartMyApp: function() {
@@ -129,7 +132,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfDragAndDrop(true);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeNoSelections();
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle("Default App");
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle(oRtaResourceBundle.getText("TXT_DEFAULT_APP"));
 			When.onTheManageAdaptationsDialogPage.iSelectAdaptation("DLM Copilot");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheSelectionOfAdaptation("DLM Copilot");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveUpButton(true);
@@ -141,7 +144,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfDragAndDrop(true);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeNoSelections();
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle("Default App");
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle(oRtaResourceBundle.getText("TXT_DEFAULT_APP"));
 			Then.iTeardownMyApp();
 		});
 
