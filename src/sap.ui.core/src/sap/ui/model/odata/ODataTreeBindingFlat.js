@@ -94,6 +94,7 @@ sap.ui.define([
 		this._aPendingRequests = [];
 		this._aPendingChildrenRequests = [];
 		this._aPendingSubtreeRequests = [];
+		// TODO: No longer required in legacy-free UI5
 		// Whether ODataTreeBindingFlat#submitChanges has been called
 		this._bSubmitChangesCalled = false;
 	};
