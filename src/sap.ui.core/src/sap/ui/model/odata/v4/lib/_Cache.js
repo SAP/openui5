@@ -395,8 +395,7 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oElement, "transient",
 				_Helper.getPrivateAnnotation(oParent, "transient"));
 			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
-			_Helper.setPrivateAnnotation(oElement, "promise",
-				_Helper.addDeepCreatePromise(oElement));
+			_Helper.setPrivateAnnotation(oElement, "promise", _Helper.addPromise(oElement));
 			aElements.$byPredicate[sTransientPredicate] = oElement;
 		});
 		// add the collection type to mTypeForMetaPath
@@ -475,31 +474,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Cancels all nested creates within the given element.
-	 *
-	 * @param {object} oElement - The entity data in the cache
-	 * @param {string} sPostPath - The request path of the POST request
-	 * @param {string} sGroupId - The group ID of the POST request
-	 *
-	 * @private
-	 */
-	_Cache.prototype.cancelNestedCreates = function (oElement, sPostPath, sGroupId) {
-		Object.keys(oElement).forEach(function (sKey) {
-			var oError,
-				vProperty = oElement[sKey];
-
-			if (vProperty && vProperty.$postBodyCollection) {
-				oError = new Error("Deep create of " + sKey + " canceled with POST " + sPostPath
-					+ "; group: " + sGroupId);
-				oError.canceled = true;
-				vProperty.forEach(function (oChildElement) {
-					_Helper.getPrivateAnnotation(oChildElement, "reject")(oError);
-				});
-			}
-		});
-	};
-
-	/**
 	 * Throws an error if the cache shares requests.
 	 *
 	 * @throws {Error} If the cache has bSharedRequest
@@ -575,7 +549,7 @@ sap.ui.define([
 				return true;
 			}
 
-			that.cancelNestedCreates(oEntityData, oPostPathPromise.getResult(),
+			_Helper.cancelNestedCreates(oEntityData, oPostPathPromise.getResult(),
 				oGroupLock.getGroupId());
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 			aCollection.splice(iIndex, 1);
@@ -729,7 +703,7 @@ sap.ui.define([
 				aCollection.$postBodyCollection.unshift(oPostBody);
 			}
 			oGroupLock.unlock();
-			return _Helper.addDeepCreatePromise(oEntityData);
+			return _Helper.addPromise(oEntityData);
 		}
 
 		return oPostPathPromise.then(function (sPostPath) {

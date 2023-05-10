@@ -5700,10 +5700,10 @@ sap.ui.define([
 				.returns(SyncPromise.resolve(oParent));
 			that.mock(oCache).expects("checkSharedRequest").withExactArgs();
 			oHelperMock.expects("uid").withExactArgs().returns("~uid0~");
-			oHelperMock.expects("addDeepCreatePromise")
+			oHelperMock.expects("addPromise")
 				.withExactArgs(sinon.match.same(oParent.collection[0])).returns("~promise0~");
 			oHelperMock.expects("uid").withExactArgs().returns("~uid1~");
-			oHelperMock.expects("addDeepCreatePromise")
+			oHelperMock.expects("addPromise")
 				.withExactArgs(sinon.match.same(oParent.collection[1])).returns("~promise1~");
 			that.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~mTypeForMetaPath~");
 			oHelperMock.expects("getMetaPath").withExactArgs("path/to/collection")
@@ -5846,35 +5846,6 @@ sap.ui.define([
 			false);
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("Cache#cancelNestedCreates", function () {
-		var oCache = new _Cache(this.oRequestor, "SalesOrders('1')"),
-			oCreatedElement0 = {},
-			oCreatedElement1 = {},
-			oElement = {
-				SO_2_SOITEM : [oCreatedElement0, oCreatedElement1],
-				nulled : null,
-				otherCollection : [{}]
-			},
-			fnReject0 = sinon.spy(),
-			fnReject1 = sinon.spy();
-
-		_Helper.setPrivateAnnotation(oCreatedElement0, "reject", fnReject0);
-		_Helper.setPrivateAnnotation(oCreatedElement1, "reject", fnReject1);
-		oElement.SO_2_SOITEM.$postBodyCollection = "~postBodyCollection~";
-
-		// code under test
-		oCache.cancelNestedCreates(oElement, "post/path", "update");
-
-		[fnReject0, fnReject1].forEach(function (fnReject) {
-			sinon.assert.calledOnceWithExactly(fnReject, sinon.match(function (oParameter) {
-				return oParameter instanceof Error && oParameter.canceled
-					&& oParameter.message === "Deep create of SO_2_SOITEM canceled with POST"
-						+ " post/path; group: update";
-			}));
-		});
-	});
 
 	//*********************************************************************************************
 	[
@@ -8239,7 +8210,7 @@ sap.ui.define([
 
 				oCache.aElements[0]["@$ui5.context.isInactive"] = bInactive;
 
-				that.mock(oCache).expects("cancelNestedCreates")
+				that.mock(_Helper).expects("cancelNestedCreates")
 					.exactly(bResetAndKeep && bInactive ? 0 : 1)
 					.withExactArgs(sinon.match.same(oCache.aElements[0]), "Employees",
 						"$inactive.$auto");
@@ -8715,7 +8686,7 @@ sap.ui.define([
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oEntityDataCleaned), "transient", "updateGroup");
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
-		oHelperMock.expects("addDeepCreatePromise")
+		oHelperMock.expects("addPromise")
 			.withExactArgs(sinon.match.same(oEntityDataCleaned))
 			.returns("~oDeepCreatePromise~");
 

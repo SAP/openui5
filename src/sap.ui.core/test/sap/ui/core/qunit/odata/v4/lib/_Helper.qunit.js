@@ -5046,19 +5046,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addDeepCreatePromise", function (assert) {
+	QUnit.test("addPromise", function (assert) {
 		var oElement = {},
 			oPromise;
 
 		// code under test
-		oPromise = _Helper.addDeepCreatePromise(oElement);
+		oPromise = _Helper.addPromise(oElement);
 
 		assert.strictEqual(oPromise.isPending(), true);
 		_Helper.getPrivateAnnotation(oElement, "resolve")("foo");
 		assert.strictEqual(oPromise.getResult(), "foo");
 
 		// code under test
-		oPromise = _Helper.addDeepCreatePromise(oElement);
+		oPromise = _Helper.addPromise(oElement);
 
 		assert.strictEqual(oPromise.isPending(), true);
 		_Helper.getPrivateAnnotation(oElement, "reject")("~oError~");
@@ -5158,5 +5158,33 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(_Helper.getMissingPropertyPaths("~value~", {}), []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("cancelNestedCreates", function () {
+		var oCreatedElement0 = {},
+			oCreatedElement1 = {},
+			oElement = {
+				SO_2_SOITEM : [oCreatedElement0, oCreatedElement1],
+				nulled : null,
+				otherCollection : [{}]
+			},
+			fnReject0 = sinon.spy(),
+			fnReject1 = sinon.spy();
+
+		_Helper.setPrivateAnnotation(oCreatedElement0, "reject", fnReject0);
+		_Helper.setPrivateAnnotation(oCreatedElement1, "reject", fnReject1);
+		oElement.SO_2_SOITEM.$postBodyCollection = "~postBodyCollection~";
+
+		// code under test
+		_Helper.cancelNestedCreates(oElement, "post/path", "update");
+
+		[fnReject0, fnReject1].forEach(function (fnReject) {
+			sinon.assert.calledOnceWithExactly(fnReject, sinon.match(function (oParameter) {
+				return oParameter instanceof Error && oParameter.canceled
+					&& oParameter.message === "Deep create of SO_2_SOITEM canceled with POST"
+						+ " post/path; group: update";
+			}));
+		});
 	});
 });

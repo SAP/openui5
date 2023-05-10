@@ -101,7 +101,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		addDeepCreatePromise : function (oElement) {
+		addPromise : function (oElement) {
 			return new SyncPromise(function (fnResolve, fnReject) {
 				_Helper.setPrivateAnnotation(oElement, "resolve", fnResolve);
 				_Helper.setPrivateAnnotation(oElement, "reject", fnReject);
@@ -344,6 +344,31 @@ sap.ui.define([
 			});
 
 			return oSelect;
+		},
+
+		/**
+		 * Cancels all nested creates within the given element.
+		 *
+		 * @param {object} oElement - The entity data in the cache
+		 * @param {string} sPostPath - The request path of the POST request
+		 * @param {string} sGroupId - The group ID of the POST request
+		 *
+		 * @public
+		 */
+		cancelNestedCreates : function (oElement, sPostPath, sGroupId) {
+			Object.keys(oElement).forEach(function (sKey) {
+				var oError,
+					vProperty = oElement[sKey];
+
+				if (vProperty && vProperty.$postBodyCollection) {
+					oError = new Error("Deep create of " + sKey + " canceled with POST " + sPostPath
+						+ "; group: " + sGroupId);
+					oError.canceled = true;
+					vProperty.forEach(function (oChildElement) {
+						_Helper.getPrivateAnnotation(oChildElement, "reject")(oError);
+					});
+				}
+			});
 		},
 
 		/**
