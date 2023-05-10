@@ -7,7 +7,9 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils"
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/m/MessageBox",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	Version,
@@ -15,7 +17,9 @@ sap.ui.define([
 	KeyUserConnector,
 	InitialConnector,
 	InitialUtils,
-	WriteUtils
+	WriteUtils,
+	MessageBox,
+	Core
 ) {
 	"use strict";
 
@@ -605,6 +609,48 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v2/versions/draft/com.sap.test.app", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "DELETE", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+	});
+
+	QUnit.module("KeyUserConnector.versions.publish", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when calling publish successfully", function(assert) {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: "com.sap.test.app",
+				version: "3",
+				url: "/flexKeyuser"
+			};
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/versions/publish/com.sap.test.app?version=3";
+			var mExpectedPropertyBag = Object.assign({
+				initialConnector: InitialConnector,
+				tokenUrl: KeyUserConnector.ROUTES.TOKEN
+			}, mPropertyBag);
+
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
+			return KeyUserConnector.versions.publish(mPropertyBag).then(function(sMessage) {
+				assert.equal(sMessage, oResourceBundle.getText("MSG_CF_PUBLISH_SUCCESS"), "the correct message was returned");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("when calling publish unsuccessfully", function(assert) {
+			sandbox.stub(MessageBox, "show");
+			sandbox.stub(WriteUtils, "sendRequest").rejects();
+			return KeyUserConnector.versions.publish({
+				layer: "CUSTOMER",
+				reference: "sampleComponent",
+				version: "3",
+				url: "/flexKeyuser"
+			}).then(function(sResponse) {
+				assert.equal(sResponse, "Error", "then Promise.resolve() with error message is returned");
 			});
 		});
 	});
