@@ -2360,18 +2360,35 @@ sap.ui.define([
 
 	PlanningCalendar.prototype.setShowRowHeaders = function(bShowRowHeaders){
 
+		if (this.getShowRowHeaders() === bShowRowHeaders) {
+			return this;
+		}
+
 		// set header column to invisible as each row is a ColumnListItem with two columns
 		// removing the column would need to change every row
 
 		this.setProperty("showRowHeaders", bShowRowHeaders, true);
 
-		var oTable = this.getAggregation("table");
+		var oTable = this.getAggregation("table"),
+			oRowHeader, oRowTimeline;
+
 		oTable.getColumns()[0].setVisible(bShowRowHeaders);
 		this._toggleAppointmentsColumnPopinState(bShowRowHeaders);
 
 		this.$().toggleClass("sapMPlanCalNoHead", !bShowRowHeaders);
 		positionSelectAllCheckBox.call(this);
 		this._setSelectionMode.call(this);
+
+		oTable.getItems().forEach(function(oListItem) {
+			oRowHeader = oListItem.getCells()[0];
+			oRowTimeline = oListItem.getCells()[1];
+
+			if (bShowRowHeaders) {
+				oRowTimeline.addAriaLabelledBy(oRowHeader.getId());
+			} else {
+				oRowTimeline.removeAriaLabelledBy(oRowHeader.getId());
+			}
+		});
 
 		return this;
 
@@ -3767,9 +3784,12 @@ sap.ui.define([
 
 		oRowTimeline = new PlanningCalendarRowTimeline(oRow.getId() + "-CalRow", {
 			checkResize: false,
-			updateCurrentTime: false,
-			ariaLabelledBy: oRowHeader.getId()
+			updateCurrentTime: false
 		});
+
+		if (this.getShowRowHeaders()) {
+			oRowTimeline.addAriaLabelledBy(oRowHeader.getId());
+		}
 
 		oRowTimeline._getRelativeInfo = this._getRelativeInfo.bind(this);
 

@@ -1633,6 +1633,35 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("Row header referencing", function(assert) {
+		// Prepare
+		var oPC = new PlanningCalendar({
+				showRowHeaders: false,
+				rows: [new PlanningCalendarRow()]
+			}),
+			oRowHeader, oRowTimeLine, oTableCells;
+
+		oPC.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oTableCells = oPC.getAggregation("table").getItems()[0].getCells();
+		oRowHeader = oTableCells[0];
+		oRowTimeLine = oTableCells[1];
+
+		// Assert
+		assert.ok(oRowTimeLine.getAriaLabelledBy().length == 0, "There is no reference to the row header");
+
+		// Act
+		oPC.setShowRowHeaders(true);
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oRowTimeLine.getAriaLabelledBy()[0] == oRowHeader.getId(), "There is a reference to the row header");
+
+		// Clean
+		oPC.destroy();
+	});
+
 	QUnit.module("views", {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar();
