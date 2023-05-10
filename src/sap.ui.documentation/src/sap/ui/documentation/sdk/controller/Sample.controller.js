@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/m/library",
 	"sap/base/Log",
+	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
@@ -34,6 +35,7 @@ sap.ui.define([
 	HTML,
 	mobileLibrary,
 	Log,
+	Core,
 	Fragment,
 	ResourcesUtil,
 	sampleForwardingConfig,
@@ -76,7 +78,7 @@ sap.ui.define([
 
 				this.getView().setModel(this.oModel);
 
-				this.bus = sap.ui.getCore().getEventBus();
+				this.bus = Core.getEventBus();
 				this.setDefaultSampleTheme();
 				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 
@@ -279,16 +281,16 @@ sap.ui.define([
 
 			applySampleSettings: function(eMessage) {
 				if (eMessage.data.type === "SETTINGS") {
-					var oThemeSelect = sap.ui.getCore().byId("sample--ThemeSelect");
+					var oThemeSelect = Core.byId("sample--ThemeSelect");
 
 					// Theme select
 					oThemeSelect.setSelectedKey(eMessage.data.data.theme);
 
 					// RTL
-					sap.ui.getCore().byId("sample--RTLSwitch").setState(eMessage.data.data.RTL);
+					Core.byId("sample--RTLSwitch").setState(eMessage.data.data.RTL);
 
 					// Density mode select
-					sap.ui.getCore().byId("sample--DensityModeSwitch").setSelectedKey(this._presetDensity(eMessage.data.data.density, true));
+					Core.byId("sample--DensityModeSwitch").setSelectedKey(this._presetDensity(eMessage.data.data.density, true));
 
 				}
 			},
@@ -323,9 +325,9 @@ sap.ui.define([
 			},
 
 			handleSaveAppSettings: function () {
-				var	sDensityMode = sap.ui.getCore().byId("sample--DensityModeSwitch").getSelectedKey(),
-					sTheme = sap.ui.getCore().byId("sample--ThemeSelect").getSelectedKey(),
-					bRTL = sap.ui.getCore().byId("sample--RTLSwitch").getState();
+				var	sDensityMode = Core.byId("sample--DensityModeSwitch").getSelectedKey(),
+					sTheme = Core.byId("sample--ThemeSelect").getSelectedKey(),
+					bRTL = Core.byId("sample--RTLSwitch").getState();
 
 				this._oSettingsDialog.close();
 

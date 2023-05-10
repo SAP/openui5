@@ -6,14 +6,14 @@
  * Initialization Code and shared classes of library sap.ui.documentation.
  */
 sap.ui.define([
-    "sap/ui/thirdparty/jquery",
-    'sap/ui/core/util/LibraryInfo',
-    "sap/base/Log",
-    "sap/ui/documentation/sdk/util/Resources",
-    'sap/ui/core/library',
-    'sap/m/library'
-], // library dependency
-	function(jQuery, LibraryInfo, Log, ResourcesUtil) {
+	"sap/base/Log",
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/util/LibraryInfo',
+	"sap/ui/documentation/sdk/util/Resources",
+	'sap/ui/core/library',
+	'sap/m/library'
+], function(Log, Core, jQuery, LibraryInfo, ResourcesUtil) {
 
 	'use strict';
 
@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @since 1.48
 	 * @public
 	 */
-	var thisLibrary = sap.ui.getCore().initLibrary({
+	var thisLibrary = Core.initLibrary({
 		name : 'sap.ui.documentation',
 		version: '${version}',
 		dependencies : ['sap.ui.core','sap.m'],
