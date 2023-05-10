@@ -266,6 +266,10 @@ sap.ui.define([
 				group: "Plugins",
 				module: "./plugins/SelectionModelSelection.ODataV2.qunit"
 			},
+			"BindingSelection (TreeBinding)": {
+				group: "Plugins",
+				module: "./plugins/BindingSelection.TreeBinding.qunit"
+			},
 			"MultiSelectionPlugin": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",
