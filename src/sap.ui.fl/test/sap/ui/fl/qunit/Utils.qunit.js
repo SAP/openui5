@@ -415,35 +415,33 @@ sap.ui.define([
 			this.oComponent.destroy();
 		}
 	}, function() {
-		[
-			{name: "isApplicationComponent", type: "application"},
-			{name: "isEmbeddedComponent", type: "component"}
-		].forEach(function(oFunction) {
-			QUnit.test("when Utils." + oFunction.name + " is called and there is no manifest", function(assert) {
-				assert.notOk(Utils[oFunction.name](), "then false is returned");
+		["isApplicationComponent", "isEmbeddedComponent"]
+		.forEach(function(sFunctionName) {
+			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest", function(assert) {
+				assert.notOk(Utils[sFunctionName](), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + oFunction.name + " is called and the manifest has no getEntry method", function(assert) {
-				assert.notOk(Utils[oFunction.name]({}), "then false is returned");
+			QUnit.test("when Utils." + sFunctionName + " is called and the manifest has no getEntry method", function(assert) {
+				assert.notOk(Utils[sFunctionName]({}), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + oFunction.name + " is called and there is no manifest['sap.app']", function(assert) {
+			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest['sap.app']", function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.returns({});
 
-				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
+				assert.notOk(Utils[sFunctionName](this.oComponent), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + oFunction.name + " is called and there is no manifest['sap.app'].type", function(assert) {
+			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest['sap.app'].type", function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.callThrough()
 				.withArgs("sap.app")
 				.returns({});
 
-				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
+				assert.notOk(Utils[sFunctionName](this.oComponent), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + oFunction.name + " is called and manifest type is not '" + oFunction.type + "'", function(assert) {
+			QUnit.test("when Utils." + sFunctionName + " is called and manifest type is incorrect", function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.callThrough()
 				.withArgs("sap.app")
@@ -451,19 +449,56 @@ sap.ui.define([
 					type: "random"
 				});
 
-				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
+				assert.notOk(Utils[sFunctionName](this.oComponent), "then false is returned");
+			});
+		});
+
+		QUnit.test("when Utils.isApplicationComponent is called and manifest type is 'application'", function(assert) {
+			sandbox.stub(this.oManifest, "getEntry")
+			.callThrough()
+			.withArgs("sap.app")
+			.returns({
+				type: "application"
 			});
 
-			QUnit.test("when Utils." + oFunction.name + " is called and manifest type is '" + oFunction.type + "'", function(assert) {
-				sandbox.stub(this.oManifest, "getEntry")
-				.callThrough()
-				.withArgs("sap.app")
-				.returns({
-					type: oFunction.type
-				});
+			assert.ok(Utils.isApplicationComponent(this.oComponent), "then true is returned");
+		});
 
-				assert.ok(Utils[oFunction.name](this.oComponent), "then true is returned");
+		QUnit.test("when Utils.isEmbeddedComponent is called and manifest type is 'component'", function(assert) {
+			var oParentComponent = new (UIComponent.extend("component", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							type: "application"
+						}
+					}
+				}
+			}))();
+
+			sandbox.stub(Utils, "getAppComponentForControl")
+			.callThrough()
+			.withArgs(this.oComponent)
+			.returns(oParentComponent);
+
+			sandbox.stub(this.oManifest, "getEntry")
+			.callThrough()
+			.withArgs("sap.app")
+			.returns({
+				type: "component"
 			});
+
+			assert.ok(Utils.isEmbeddedComponent(this.oComponent), "then true is returned");
+		});
+
+		QUnit.test("when the embedded component is not the child of an app component", function(assert) {
+			sandbox.stub(this.oManifest, "getEntry")
+			.callThrough()
+			.withArgs("sap.app")
+			.returns({
+				type: "component"
+			});
+
+			assert.notOk(Utils.isEmbeddedComponent(this.oComponent), "then false is returned");
 		});
 	});
 

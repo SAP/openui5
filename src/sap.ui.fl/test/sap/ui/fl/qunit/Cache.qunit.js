@@ -1,15 +1,21 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/Log"
 ], function(
+	UIComponent,
 	Cache,
 	FlexState,
 	StorageUtils,
+	ControlVariantApplyAPI,
+	Utils,
 	sinon,
 	Log
 ) {
@@ -443,6 +449,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getCacheKey is called and cache entry and current variant ids are available", function(assert) {
+			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 			var sControlVariantId1 = "id_1541412437845_176_Copy";
 			var sControlVariantId2 = "id_1541412437845_186_Copy";
 			var sCacheKeyResult = "<NoTag-" + sControlVariantId1 + "-" + sControlVariantId2 + ">";
@@ -472,6 +479,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getCacheKey is called and cache entry, etag, and current variant management-id are available", function(assert) {
+			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 			// etag is returned from backend with double quotes and possibly also with W/ value at the begining
 			// returned cacheKey shouldn't contain this chars 'W/"abc123"' --> 'abc123'
 			var sEtag = 'W/"abc123"';
@@ -503,6 +511,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getCacheKey is called and cache entry and standard + custom variant ids are available", function(assert) {
+			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
 			var sControlVariantId1 = "myStandardVariant";
 			var sControlVariantId2 = "myCustomVariant";
 			var sCacheKeyResult = "<NoTag-" + sControlVariantId2 + ">";
@@ -526,8 +535,71 @@ sap.ui.define([
 
 			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
 			.then(function(sCacheKey) {
-				assert.ok(sCacheKey, "then cachekey is returned");
+				assert.ok(sCacheKey, "then cachekey is returned for embedded components");
 				assert.strictEqual(sCacheKey, sCacheKeyResult, "then the standard variants are filtered from the cache key");
+			});
+		});
+
+		QUnit.test("when getCacheKey is called and the VariantModel is not yet available", function(assert) {
+			sandbox.stub(Utils, "isApplicationComponent").returns(true);
+			var sControlVariantId = "someControlVariantId";
+			var oAppComponent = new UIComponent("appComponent");
+			// Stub the model getter to delay setting the VariantModel until after it was requested for the first time
+			// simulating that it is initialized after the Cache tries to access it
+			var oGetVariantModelPromise = new Promise(function(resolve) {
+				sandbox.stub(oAppComponent, "getModel")
+				.onFirstCall()
+				.callsFake(function() {
+					resolve();
+					return undefined;
+				})
+				.callThrough();
+			});
+
+			var oEntry = _createEntryMap({something: "1"});
+			this.oGetStorageResponseStub.resolves(oEntry);
+
+			var oGetCacheKeyPromise = Cache.getCacheKey({ name: sComponentName }, oAppComponent);
+			return oGetVariantModelPromise
+			.then(function() {
+				oAppComponent.setModel(
+					{
+						getCurrentControlVariantIds: function() {
+							return [sControlVariantId];
+						},
+						getVariantManagementControlIds: function() {
+							return [];
+						}
+					},
+					ControlVariantApplyAPI.getVariantModelName()
+				);
+				return oGetCacheKeyPromise;
+			})
+			.then(function(sCacheKey) {
+				assert.strictEqual(
+					sCacheKey,
+					"<NoTag-" + sControlVariantId + ">",
+					"then the control variant ids are appended to the cache key"
+				);
+			});
+		});
+
+		QUnit.test("when getCacheKey is called and the component is neither an application nor embedded component", function(assert) {
+			sandbox.stub(Utils, "isApplicationComponent").returns(false);
+			sandbox.stub(Utils, "isEmbeddedComponent").returns(false);
+			var oVariantModelSpy = sandbox.spy(ControlVariantApplyAPI, "getVariantModel");
+
+			var mComponentMock = {
+				name: sComponentName
+			};
+			var oEntry = _createEntryMap({something: "1"});
+			this.oGetStorageResponseStub.resolves(oEntry);
+
+			return Cache.getCacheKey(mComponentMock)
+			.then(function(sCacheKey) {
+				// Component will not receive a variant model, cache must not wait for it
+				assert.ok(oVariantModelSpy.notCalled, "then the variant model is not retrieved");
+				assert.equal(sCacheKey, Cache.NOTAG, "then cachekey is returned without variant ids");
 			});
 		});
 	});
