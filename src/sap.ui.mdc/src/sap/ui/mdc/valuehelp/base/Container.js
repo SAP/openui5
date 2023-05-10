@@ -49,6 +49,10 @@ sap.ui.define([
 				},
 				/**
 				 * This property may be used by FilterableListContents to share basic search state in collective search scenarios
+				 *
+				 * @ui5-restricted
+				 * @private
+				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				localFilterValue: {
 					type: "string"
