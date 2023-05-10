@@ -2849,7 +2849,6 @@ sap.ui.define([
 				iLength : 42,
 				oModel : oModel,
 				_fireRefresh : function () {},
-				_fireSort : function () {},
 				_removePersistedCreatedContexts : function () {},
 				abortPendingRequest : function () {},
 				addComparators : function () {},
@@ -2868,8 +2867,11 @@ sap.ui.define([
 			.returns(["~persistedContext"]);
 		this.mock(oBinding).expects("abortPendingRequest").withExactArgs(false);
 		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Sort});
-		this.mock(oBinding).expects("_fireSort").withExactArgs({sorter : []});
-
+		/** @deprecated As of version 1.11.0 */
+		(function () {
+			oBinding._fireSort = function () {};
+			this.mock(oBinding).expects("_fireSort").withExactArgs({sorter : []});
+		}.bind(this)());
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.sort.call(oBinding), oBinding);
@@ -2888,7 +2890,6 @@ sap.ui.define([
 				bInitial : false,
 				_moveCreatedPersistedToAllKeys : function () {},
 				_fireChange : function () {},
-				_fireSort : function () {},
 				addComparators : function () {},
 				applyFilter : function () {},
 				applySort : function () {},
@@ -2904,13 +2905,16 @@ sap.ui.define([
 		this.mock(oBinding).expects("applyFilter").withExactArgs().exactly(oFixture.filterCalls);
 		this.mock(oBinding).expects("applySort").withExactArgs();
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Sort});
-		this.mock(oBinding).expects("_fireSort")
-			.withExactArgs({sorter : sinon.match.same(oFixture.sorters)});
+		/** @deprecated As of version 1.11.0 */
+		(function () {
+			oBinding._fireSort = function () {};
+			this.mock(oBinding).expects("_fireSort")
+				.withExactArgs({sorter : sinon.match.same(oFixture.sorters)});
+		}.bind(this)());
 
 		// code under test
 		assert.strictEqual(
-			ODataListBinding.prototype.sort.call(oBinding, oFixture.sorters),
-			oBinding);
+			ODataListBinding.prototype.sort.call(oBinding, oFixture.sorters), oBinding);
 	});
 });
 
@@ -2922,7 +2926,6 @@ sap.ui.define([
 				aApplicationFilters : aApplicationFilters,
 				bInitial : false,
 				oModel : {checkFilterOperation : function () {}},
-				_fireFilter : function () {},
 				_fireRefresh : function () {},
 				_removePersistedCreatedContexts : function () {},
 				addComparators : function () {},
@@ -2950,7 +2953,11 @@ sap.ui.define([
 		oResetDataExpectation = oBindingMock.expects("resetData").withExactArgs();
 		oBindingMock.expects("abortPendingRequest").withExactArgs(true);
 		oBindingMock.expects("_fireRefresh").withExactArgs({reason : ChangeReason.Filter});
-		oBindingMock.expects("_fireFilter").withExactArgs({filters : sinon.match.same(aFilters)});
+		/** @deprecated As of version 1.11.0 */
+		(function () {
+			oBinding._fireFilter = function () {};
+			this.mock(oBinding).expects("_fireFilter").withExactArgs({filters : sinon.match.same(aFilters)});
+		}.bind(this)());
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.filter.call(oBinding, aFilters), oBinding);
@@ -2968,7 +2975,6 @@ sap.ui.define([
 				oModel : {checkFilterOperation : function () {}},
 				_moveCreatedPersistedToAllKeys : function () {},
 				_fireChange : function () {},
-				_fireFilter : function () {},
 				addComparators : function () {},
 				applyFilter : function () {},
 				applySort : function () {},
@@ -2987,7 +2993,11 @@ sap.ui.define([
 		this.mock(oBinding).expects("applyFilter").withExactArgs();
 		this.mock(oBinding).expects("applySort").withExactArgs();
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Filter});
-		this.mock(oBinding).expects("_fireFilter").withExactArgs({filters : []});
+		/** @deprecated As of version 1.11.0 */
+		(function () {
+			oBinding._fireFilter = function () {};
+			this.mock(oBinding).expects("_fireFilter").withExactArgs({filters : []});
+		}.bind(this)());
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.filter.call(oBinding), oBinding);
