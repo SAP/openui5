@@ -3,14 +3,17 @@ sap.ui.define(
 	[
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
+		"sap/ui/core/Core",
 		"./pages/contextBased/ManageAdaptationsDialog",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
 		"./pages/contextVisibility/ContextsDialog",
 		"./pages/contextVisibility/ContextSharingVisibilityFragment",
 		"./pages/AppPage"
 	],
-	function (opaTest, Opa5) {
+	function (opaTest, Opa5, oCore) {
 		"use strict";
+
+		var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 		var arrangements = new Opa5({
 			iStartMyApp: function () {
@@ -140,7 +143,7 @@ sap.ui.define(
 
 		// Test default context table
 		opaTest("Should search for 'dEFaUlT ApP' and clears the search field", function (Given, When, Then) {
-			When.onTheManageAdaptationsDialogPage.iSearchFor("dEFaUlT ApP");
+			When.onTheManageAdaptationsDialogPage.iSearchFor(oRtaResourceBundle.getText("TXT_DEFAULT_APP").toUpperCase());
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(0);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 			When.onTheManageAdaptationsDialogPage.iClearTheSearchField();
@@ -198,7 +201,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveUpButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfDragAndDrop(true);
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle("Default App");
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle(oRtaResourceBundle.getText("TXT_DEFAULT_APP"));
 			When.onTheManageAdaptationsDialogPage.iSearchFor("Sales");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveUpButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(false);
@@ -208,7 +211,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeManageContextBasedAdaptationDialogIsOpend();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeEmptySearchField();
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(4);
-			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle("Default App");
+			Then.onTheManageAdaptationsDialogPage.iShouldSeeDefaultApplicationTitle(oRtaResourceBundle.getText("TXT_DEFAULT_APP"));
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveUpButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfMoveDownButton(false);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheEnablementOfDragAndDrop(true);

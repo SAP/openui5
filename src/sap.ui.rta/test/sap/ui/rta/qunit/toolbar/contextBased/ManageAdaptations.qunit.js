@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
-	Core,
+	oCore,
 	Control,
 	Fragment,
 	Layer,
@@ -28,6 +28,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	function getControl(oToolbar, sControlID) {
 		return oToolbar.getControl("manageAdaptationDialog--" + sControlID);
@@ -40,7 +41,7 @@ sap.ui.define([
 	function initializeToolbar() {
 		var oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 		var oToolbar = new Adaptation({
-			textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
+			textResources: oRtaResourceBundle,
 			rtaInformation: {
 				flexSettings: {
 					layer: Layer.CUSTOMER
@@ -52,7 +53,7 @@ sap.ui.define([
 
 		oToolbar.animation = false;
 		oToolbar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		oCore.applyChanges();
 		return oToolbar;
 	}
 
@@ -319,7 +320,7 @@ sap.ui.define([
 			},
 			{
 				testName: "and the search field of the context-based adaptations is filtering for default context table 'DeFaUlT ApP'",
-				input: "DeFaUlT ApP",
+				input: oRtaResourceBundle.getText("TXT_DEFAULT_APP").toUpperCase(),
 				expectation: {
 					amountOfAdaptations: {
 						beforeSearch: 4,
