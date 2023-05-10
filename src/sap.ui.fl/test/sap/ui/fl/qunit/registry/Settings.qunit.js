@@ -218,6 +218,18 @@ sap.ui.define([
 			assert.ok(this.cut.isSystemWithTransports(), "then it returns true");
 		});
 
+		QUnit.test("when isPublishAvailable is called without information info being maintained in the settings", function(assert) {
+			assert.notOk(this.cut.isPublishAvailable(), "then it returns false");
+		});
+
+		QUnit.test("when isPublishAvailable is called with info being maintained in the settings", function(assert) {
+			var oSettings = {
+				isPublishAvailable: true
+			};
+			this.cut = new Settings(oSettings);
+			assert.ok(this.cut.isPublishAvailable(), "then it returns true");
+		});
+
 		QUnit.test("isVersioningEnabled returns a 'true' flag if it is maintained in the settings for the passed layer", function(assert) {
 			var sLayer = Layer.CUSTOMER;
 			var oSettings = {

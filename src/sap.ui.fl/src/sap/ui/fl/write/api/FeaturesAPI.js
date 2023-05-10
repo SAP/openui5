@@ -30,13 +30,13 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Promise resolving with a flag if publishing is available
 		 *
 		 * @private
-	 	 * @ui5-restricted
+		 * @ui5-restricted
 		 */
 		isPublishAvailable: function () {
 			return Settings.getInstance().then(function (oSettings) {
 				return (
-					!oSettings.isProductiveSystem()
-					&& oSettings.isSystemWithTransports()
+					oSettings.isPublishAvailable() ||
+					(!oSettings.isProductiveSystem() && oSettings.isSystemWithTransports())
 				);
 			});
 		},
@@ -53,7 +53,7 @@ sap.ui.define([
 		 * When it is not a standalone app.
 		 * When the backend supports this feature.
 		 * @private
-	 	 * @ui5-restricted
+		 * @ui5-restricted
 		 */
 		isSaveAsAvailable: function (sLayer) {
 			return Promise.all([
@@ -83,7 +83,7 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Promise resolving with a flag if the context-based adaptaion is available
 		 *
 		 * @private
-	 	 * @ui5-restricted
+		 * @ui5-restricted
 		 */
 		isContextBasedAdaptationAvailable: function(sLayer) {
 			return Settings.getInstance().then(function (oSettings) {

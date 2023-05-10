@@ -360,6 +360,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether publishing of versions is available for the current backend or not.
+	 *
+	 * @returns {boolean} <code>true</code> if publishing of versions is available
+	 */
+	Settings.prototype.isPublishAvailable = function() {
+		// Currently, only Keyuser service with Content Agent integrated will return this settings value
+		return !!this._oSettings.isPublishAvailable;
+	};
+
+	/**
 	 * Checks whether the current system is defined as a productive system and transport mechanism of changes is also available or not.
 	 *
 	 * @returns {boolean} <code>true</code> if transport of changes is available
