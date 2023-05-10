@@ -291,7 +291,17 @@ sap.ui.define([
 		// The information that there is a sort or filter change is lost, hence the GridTable does not clear the selection. The changes could
 		// affect the indices and make the current selection invalid. Therefore, the delegate has to clear the selection here.
 		if (oTable._bV4LegacySelectionEnabled && oTable._isOfType(TableType.Table)) {
+			var oInnerPlugin = oTable._oTable && oTable._oTable.getPlugins()[0] ? oTable._oTable.getPlugins()[0].oInnerSelectionPlugin : null;
+
+			if (oInnerPlugin) {
+				oInnerPlugin._bInternalTrigger = true;
+			}
+
 			oTable.clearSelection();
+
+			if (oInnerPlugin) {
+				delete oInnerPlugin._bInternalTrigger;
+			}
 		}
 	};
 
