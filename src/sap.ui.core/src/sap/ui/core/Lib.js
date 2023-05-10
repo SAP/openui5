@@ -1111,10 +1111,25 @@ sap.ui.define([
 	 * @public
 	 */
 	Library.all = function() {
+		// return only libraries that are initialized (settings enhanced)
+		return Library._all(false /* bIgnoreSettingsEnhanced */);
+	};
+
+	/**
+	 * Returns a map that contains the libraries that are already initialized (by calling {@link #.init}). Each library
+	 * instance is saved in the map under its name as key.
+	 *
+	 * @param {boolean} [bIgnoreSettingsEnhanced=false] All libraries are returned when it's set to true. Otherwise only
+	 *  the libraries with their settings enhanced are returned.
+	 * @returns {object} A map of libraries. Each library is saved in the map under its name as key.
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	Library._all = function(bIgnoreSettingsEnhanced) {
 		var mInitLibraries = {};
 
 		Object.keys(mLibraries).forEach(function(sKey) {
-			if (mLibraries[sKey].isSettingsEnhanced()) {
+			if (bIgnoreSettingsEnhanced || mLibraries[sKey].isSettingsEnhanced()) {
 				mInitLibraries[sKey] = mLibraries[sKey];
 			}
 		});
