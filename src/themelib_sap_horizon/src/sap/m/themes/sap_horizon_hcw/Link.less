@@ -3,10 +3,6 @@
 /* Horizon High Contrast White theme  */
 /* ================================== */
 
-.sapMLnk {
-	text-decoration: underline;
-}
-
 .sapMLnkDsbl {
 	opacity: @sapUiContentDisabledOpacity;
 	outline: none;
@@ -27,16 +23,8 @@
 	text-decoration: underline;
 }
 
-.sapMLnkSubtle:focus {
-	color: @sapUiContentFocusColor;
-}
-
 .sapMLnk:not(.sapMLnkDsbl) {
 	text-shadow: @sapUiContentTextShadow;
-}
-
-html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
-	text-decoration: none;
 }
 
 /* align Link in Form with Label */
@@ -51,4 +39,9 @@ html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
 
 html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMLnk:hover:not(:active):not(.sapMLnkDsbl).sapMLnkSubtle,
+html.sap-desktop .sapMLnk:focus:hover:not(:active):not(.sapMLnkDsbl) {
+	text-decoration: none;
 }

@@ -3,24 +3,14 @@
 /* High Contrast Black theme   */
 /* =========================== */
 
-.sapMLnk {
-	text-decoration: underline;
-}
-
 .sapMLnkDsbl, .sapMLnkDsbl:visited {
 	outline: none;
 	cursor: default;
 	color: @sapUiContentDisabledTextColor;
-	text-decoration: underline;
 }
 
 html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
-	text-decoration: none;
 	outline: 0.125rem dotted @sapUiContentFocusColor;
-}
-
-html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
-	text-decoration: none;
 }
 
 .sapMLnk:hover.sapMLnkDsbl, .sapMLnk:focus.sapMLnkDsbl {
