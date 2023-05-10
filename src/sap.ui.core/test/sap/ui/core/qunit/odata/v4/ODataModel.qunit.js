@@ -3168,17 +3168,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, "group"].forEach(function (sGroupId) {
-	QUnit.test("delete: groupId=" + sGroupId, function (assert) {
+[
+	{iStatus : 204, bSuccess : true},
+	{iStatus : 404, bSuccess : true},
+	{iStatus : 412, bSuccess : true},
+	{iStatus : 500, bSuccess : false},
+	{bRejectIfNotFound : true, iStatus : 404, bSuccess : false},
+	{bRejectIfNotFound : true, iStatus : 412, bSuccess : false}
+].forEach(function (oFixture) {
+	[undefined, "group"].forEach(function (sGroupId) {
+		[false, true].forEach(function (bServerOnly) {
+			var sTitle = "delete: " + JSON.stringify(oFixture) + "; groupId=" + sGroupId
+					+ "; server only: " + bServerOnly;
+
+	QUnit.test(sTitle, function (assert) {
 		var aAllBindings = [{
 				onDelete : function () {}
 			}, {
 				onDelete : function () {}
 			}],
+			sCanonicalPath = "/Entity('key')",
+			oContext,
+			oError = new Error(),
+			bInAllBindings = oFixture.bSuccess && !bServerOnly,
 			oModel = this.createModel("?sap-client=123"),
-			oPromise;
+			oPromise,
+			// w/o If-Match:*, 412 must not be ignored!
+			bSuccess = oFixture.bSuccess && !(bServerOnly && oFixture.iStatus === 412);
 
+		oError.status = oFixture.iStatus;
 		oModel.aAllBindings = aAllBindings;
+		if (bServerOnly) {
+			oContext = Context.create(oModel, /*oBinding*/null, sCanonicalPath);
+			this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
+				.returns(SyncPromise.resolve(Promise.resolve(sCanonicalPath)));
+			this.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag", null, true)
+				.returns(SyncPromise.resolve(Promise.resolve("ETag")));
+		}
 		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oModel).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns("group");
@@ -3190,55 +3216,30 @@ sap.ui.define([
 			.withExactArgs("group", sinon.match.same(oModel), true, true)
 			.returns("~groupLock~");
 		this.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("DELETE", "Entity('key')?~", "~groupLock~", {"If-Match" : "*"})
-			.resolves();
-		this.mock(aAllBindings[0]).expects("onDelete").withExactArgs("/Entity('key')");
-		this.mock(aAllBindings[1]).expects("onDelete").withExactArgs("/Entity('key')");
+			.withExactArgs("DELETE", "Entity('key')?~", "~groupLock~",
+				{"If-Match" : bServerOnly ? "ETag" : "*"})
+			.returns(oFixture.iStatus === 204
+				? Promise.resolve()
+				: Promise.reject(oError));
+		this.mock(aAllBindings[0]).expects("onDelete").exactly(bInAllBindings ? 1 : 0)
+			.withExactArgs(sCanonicalPath);
+		this.mock(aAllBindings[1]).expects("onDelete").exactly(bInAllBindings ? 1 : 0)
+			.withExactArgs(sCanonicalPath);
 
 		// code under test
-		oPromise = oModel.delete("/Entity('key')", sGroupId);
+		oPromise = oModel.delete(bServerOnly ? oContext : sCanonicalPath, sGroupId,
+			oFixture.bRejectIfNotFound);
 
 		assert.ok(oPromise instanceof Promise);
 
-		return oPromise;
-	});
-});
-
-	//*********************************************************************************************
-[
-	{iStatus : 404, bSuccess : true},
-	{iStatus : 412, bSuccess : true},
-	{iStatus : 500, bSuccess : false},
-	{bRejectIfNotFound : true, iStatus : 404, bSuccess : false},
-	{bRejectIfNotFound : true, iStatus : 412, bSuccess : false}
-].forEach(function (oFixture) {
-	QUnit.test("delete: failed request " + JSON.stringify(oFixture), function (assert) {
-		var aAllBindings = [{
-				onDelete : function () {}
-			}],
-			oError = new Error(),
-			oModel = this.createModel();
-
-		oError.status = oFixture.iStatus;
-		oModel.aAllBindings = aAllBindings;
-		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", sinon.match.same(oModel), true, true)
-			.returns("~groupLock~");
-		this.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("DELETE", "Entity('key')", "~groupLock~", {"If-Match" : "*"})
-			.rejects(oError);
-		this.mock(aAllBindings[0]).expects("onDelete").exactly(oFixture.bSuccess ? 1 : 0)
-			.withExactArgs("/Entity('key')");
-
-		// code under test
-		return oModel.delete("/Entity('key')", "group", oFixture.bRejectIfNotFound)
-			.then(function () {
-				assert.ok(oFixture.bSuccess);
+		return oPromise.then(function () {
+				assert.ok(bSuccess);
 			}, function (oResult) {
-				assert.notOk(oFixture.bSuccess);
+				assert.notOk(bSuccess);
 				assert.strictEqual(oResult, oError);
 			});
+	});
+		});
 	});
 });
 
