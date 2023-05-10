@@ -4,7 +4,7 @@
 
 //private
 sap.ui.define([
-    "sap/ui/thirdparty/jquery",
+    "sap/base/util/extend",
     "sap/ui/test/selectors/_BindingPath",
     "sap/ui/test/selectors/_DropdownItem",
     "sap/ui/test/selectors/_GlobalID",
@@ -14,7 +14,7 @@ sap.ui.define([
     "sap/ui/test/selectors/_Selector",
     "sap/ui/test/selectors/_TableRowItem",
     "sap/ui/test/selectors/_ViewID"
-], function ($) {
+], function (extend) {
     "use strict";
 
     function getSelectorInstances() {
@@ -24,7 +24,7 @@ sap.ui.define([
             var sOwnName = Selector.getMetadata()._sClassName.split(".").pop();
             var sOwnNameLowCapital = sOwnName.charAt(1).toLowerCase() + sOwnName.substring(2);
             mNewSelector[sOwnNameLowCapital] = new Selector();
-            return $.extend(mResult, mNewSelector);
+            return extend(mResult, mNewSelector);
         }, {});
     }
 

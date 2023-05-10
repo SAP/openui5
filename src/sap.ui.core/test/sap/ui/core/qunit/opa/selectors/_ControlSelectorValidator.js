@@ -1,13 +1,13 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/base/util/extend",
 	"sap/ui/test/selectors/_ControlSelectorValidator",
 	"sap/ui/test/_ControlFinder",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/Text"
-], function (_ControlSelectorValidator, _ControlFinder, $, JSONModel, List, StandardListItem, Text) {
+], function (extend, _ControlSelectorValidator, _ControlFinder, JSONModel, List, StandardListItem, Text) {
 	"use strict";
 
 	QUnit.module("_ControlSelectorValidator", {
@@ -93,7 +93,7 @@ sap.ui.define([
 		var bValidFirstRow = oRowSelectorValidator._validate(mFirstRowSelector);
 		assert.ok(bValidFirstRow, "Should match unique validation ancestor");
 
-		var oRow = _ControlFinder._findControls($.extend({}, mFirstRowSelector))[0];
+		var oRow = _ControlFinder._findControls(extend({}, mFirstRowSelector))[0];
 		var oRowItemSelectorValidator = new _ControlSelectorValidator(oRow);
 		var bValidRowItem = oRowItemSelectorValidator._validate(mRowItemSelector);
 		assert.ok(bValidRowItem, "Should match child with unique selector relative to validation root");

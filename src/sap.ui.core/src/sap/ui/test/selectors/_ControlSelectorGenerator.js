@@ -3,12 +3,13 @@
  */
 /* eslint-disable no-loop-func */
  sap.ui.define([
+    "sap/base/util/extend",
+    "sap/base/util/isEmptyObject",
     'sap/ui/base/ManagedObject',
     "sap/ui/test/_OpaLogger",
-    'sap/ui/thirdparty/jquery',
     "sap/ui/test/selectors/_ControlSelectorValidator",
     'sap/ui/test/selectors/_selectors'
-], function (ManagedObject, _OpaLogger, $, _ControlSelectorValidator, selectors) {
+], function (extend, isEmptyObject, ManagedObject, _OpaLogger, _ControlSelectorValidator, selectors) {
     "use strict";
 
     /**
@@ -91,7 +92,7 @@
                 return _ControlSelectorGenerator._executeGenerator(oGenerator, oOptions);
             })).then(function (aSelectors) {
                 aSelectors = aSelectors.filter(function (vSelector) {
-                    return vSelector && !$.isEmptyObject(vSelector) && (!Array.isArray(vSelector) || vSelector.length);
+                    return vSelector && !isEmptyObject(vSelector) && (!Array.isArray(vSelector) || vSelector.length);
                 });
                 if (aSelectors.length) {
                     _oLogger.debug("The matching " + (oOptions.multiple ? "non-unique" : "unique") + " selectors are: " + JSON.stringify(aSelectors));
@@ -225,7 +226,7 @@
             .then(function (mUniqueAncestor) {
                 return _ControlSelectorGenerator._generateUniqueSelectorInSubtree(oOptions.control, mUniqueAncestor.ancestor)
                     .then(function (mRelativeSelector) {
-                        return $.extend({}, mRelativeSelector, {
+                        return extend({}, mRelativeSelector, {
                             ancestor: mUniqueAncestor.selector
                         });
                     }).then(_ControlSelectorGenerator._filterUniqueHierarchical(oOptions));
@@ -250,7 +251,7 @@
         }).then(function (mMultiSelector) {
             return _ControlSelectorGenerator._generateUniqueDescendantSelector(oOptions.control)
                 .then(function (mUniqueDescendantSelector) {
-                    return $.extend({}, mMultiSelector, {
+                    return extend({}, mMultiSelector, {
                         descendant: mUniqueDescendantSelector
                     });
                 }).then(_ControlSelectorGenerator._filterUniqueHierarchical(oOptions));
@@ -477,7 +478,7 @@
             shallow: true
         }).then(function (mUniqueSiblingSelector) {
             // then, combine the sibling's selector with the non-unique selector for the target
-            var mSelector = $.extend({}, oOptions.targetMultiSelector, {
+            var mSelector = extend({}, oOptions.targetMultiSelector, {
                 sibling: [
                     mUniqueSiblingSelector, {
                         level: oOptions.level.number
@@ -488,7 +489,7 @@
             return _ControlSelectorGenerator._filterUniqueHierarchical(oOptions.options)(mSelector);
         }).catch(function () {
             // if combination is not unique, search through the other children of the same ancestor
-            return _ControlSelectorGenerator._generateSelectorWithUniqueSiblingAtLevel($.extend(oOptions, {
+            return _ControlSelectorGenerator._generateSelectorWithUniqueSiblingAtLevel(extend(oOptions, {
                 index: oOptions.index + 1
             }));
         });
