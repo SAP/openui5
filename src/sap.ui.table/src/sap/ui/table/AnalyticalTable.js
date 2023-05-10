@@ -40,7 +40,6 @@ sap.ui.define([
 	"use strict";
 
 	var GroupEventType = library.GroupEventType;
-	var SortOrder = library.SortOrder;
 	var TreeAutoExpandMode = library.TreeAutoExpandMode;
 	var _private = TableUtils.createWeakMapFacade();
 
@@ -344,15 +343,6 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._applyAnalyticalBindingInfo = function(oBindingInfo) {
-		// extract the sorters from the columns (TODO: reconsider this!)
-		var aColumns = this.getColumns();
-		for (var i = 0, l = aColumns.length; i < l; i++) {
-			if (aColumns[i].getSorted()) {
-				oBindingInfo.sorter = oBindingInfo.sorter || [];
-				oBindingInfo.sorter.push(new Sorter(aColumns[i].getSortProperty() || aColumns[i].getLeadingProperty(), aColumns[i].getSortOrder() === SortOrder.Descending));
-			}
-		}
-
 		// Make sure all necessary parameters are given.
 		// The ODataModelAdapter (via bindList) needs these properties to determine if an AnalyticalBinding should be instantiated.
 		// This is the default for the AnalyticalTable.
