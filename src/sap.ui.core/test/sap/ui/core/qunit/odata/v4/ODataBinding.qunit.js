@@ -1344,9 +1344,10 @@ sap.ui.define([
 				iIndex : Context.VIRTUAL
 			};
 
+		oBinding.sReducedPath = "~sReducedPath~";
 		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache")
 			.withExactArgs(sinon.match.same(oContext), undefined)
-			.returns(SyncPromise.resolve({}));
+			.returns(SyncPromise.resolve({})); // no mQueryOptions or sReducedPath
 		this.mock(oBinding).expects("prepareDeepCreate")
 			.withExactArgs(sinon.match.same(oContext), undefined).returns(false);
 		this.mock(oBinding).expects("fetchResourcePath").never();
@@ -1357,6 +1358,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oCache, null);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
+		assert.strictEqual(oBinding.sReducedPath, "~sReducedPath~", "unchanged");
 	});
 
 	//*********************************************************************************************
