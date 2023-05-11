@@ -982,7 +982,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
 	 */
 	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
 		// "super" call (like @borrows ...)
@@ -990,7 +991,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override sap.ui.model.odata.v4.lib._CollectionCache#reset
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#reset
 	 */
 	_AggregationCache.prototype.reset = function (aKeptElementPredicates, sGroupId, mQueryOptions,
 			oAggregation, bIsGrouped) {
@@ -1032,7 +1034,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override sap.ui.model.odata.v4.lib._CollectionCache#restore
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#restore
 	 */
 	_AggregationCache.prototype.restore = function (bReally) {
 		if (bReally) {
