@@ -1,10 +1,11 @@
-/*global QUnit, foo, sinon */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/test/Opa",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/PageObjectFactory",
 	"sap/base/Log",
 	"./utils/view"
-], function (Opa, Opa5, Log, viewUtils) {
+], function (Opa, Opa5, PageObjectFactory, Log, viewUtils) {
 	"use strict";
 
 	// preset some globals to avoid issues with QUnit's 'noglobals' option
@@ -65,7 +66,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should be able to pass different namespaces and base classes to a page object", function(assert) {
-		var fnOtherBase = Opa5.extend("sap.ui.test.opa.otherBase");
+		var fnOtherBase = Opa5.extend("sap.ui.test.opa.otherBase"),
+			oSpy = this.spy(PageObjectFactory, "_createPageObject");
 
 		var oPages = Opa5.createPageObjects({
 			onMyFirstPage : {
@@ -88,8 +90,10 @@ sap.ui.define([
 		assert.ok(oPages.onMyFirstPage.actions instanceof fnOtherBase, "onMyFirstPage has other base class");
 		assert.ok(oPages.onMySecondPage.assertions instanceof Opa5, "onMySecondPage has default base class");
 
-		assert.ok(oPages.onMyFirstPage.actions instanceof sap.ui.test.opa.pageObject.onMyFirstPage.actions, "onMyFirstPage has default namespace");
-		assert.ok(oPages.onMySecondPage.assertions instanceof foo.bar.onMySecondPage.assertions, "onMySecondPage has given namespace");
+		assert.strictEqual(oSpy.args[0][0].namespace, "sap.ui.test.opa.pageObject", "onMyFirstPage has default namespace");
+		assert.strictEqual(oSpy.args[1][0].namespace, "foo.bar", "onMySecondPage has given namespace");
+
+		oSpy.restore();
 	});
 
 	QUnit.test("Should create an object with missing actions or assertions", function(assert) {
