@@ -687,8 +687,10 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp && !this._iFocusTimer && oFieldHelp.shouldOpenOnFocus() && !oFieldHelp.isOpen()) {
 			this._iFocusTimer = setTimeout(function () {
-				_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
-				this._redirectFocus(oEvent, oFieldHelp);
+				if (!this.bIsDestroyed && !oFieldHelp.isOpen()) {
+					_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
+					this._redirectFocus(oEvent, oFieldHelp);
+				}
 				this._iFocusTimer = null;
 			}.bind(this),300);
 		}
