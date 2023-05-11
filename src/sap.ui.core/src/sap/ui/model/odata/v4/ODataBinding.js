@@ -527,7 +527,9 @@ sap.ui.define([
 		this.oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var mQueryOptions = aResult[0].mQueryOptions;
 
-			that.sReducedPath = aResult[0].sReducedPath;
+			if (aResult[0].sReducedPath) {
+				that.sReducedPath = aResult[0].sReducedPath;
+			}
 
 			// If there are mQueryOptions, the binding must create a cache. Do not create a cache
 			// for a virtual context or if below a transient context
