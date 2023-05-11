@@ -118,13 +118,13 @@ sap.ui.define([
 					byValue: true
 				},
 
-				// TODO: better way to pass MaxConditions, Operators, ...
 				/**
-				 * The <code>formatOptions</code> for the {@link sap.ui.mdc.field.ConditionType ConditionType} used to format tokens.
+				 * Internal configuration
 				 *
-				 * @since 1.62.0
+				 * <b>Note:</b> This property must not be set from outside, it used to forward the configuration of the <code>ValueHelp</code>
+				 * @since 1.115.0
 				 */
-				formatOptions: {
+				config: {
 					type: "object",
 					defaultValue: {}
 				},
@@ -226,7 +226,7 @@ sap.ui.define([
 			this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 
 			this._oObserver.observe(this, {
-				properties: ["conditions", "formatOptions"]
+				properties: ["conditions", "config"]
 			});
 
 			_createInnerControls.call(this);
@@ -319,8 +319,8 @@ sap.ui.define([
 
 		addCondition: function(oEvent) {
 			var aConditions = this.getConditions();
-			var oFormatOptions = this.getFormatOptions();
-			var iMaxConditions = oFormatOptions.maxConditions;
+			var oConfig = this.getConfig();
+			var iMaxConditions = oConfig.maxConditions;
 
 			if (iMaxConditions === -1 || aConditions.length < iMaxConditions) {
 				// create a new dummy condition for a new condition on the UI - must be removed later if not used or filled correct
@@ -515,8 +515,8 @@ sap.ui.define([
 		onPaste: function(oEvent) {
 			var sOriginalText;
 			var oSource = oEvent.srcControl;
-			var oFormatOptions = this.getFormatOptions();
-			var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+			var oConfig = this.getConfig();
+			var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
 			var sConditionPath = oSource.getBindingContext("$condition").getPath(); // Path to condition of the active control
 			var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition - to remove before adding new ones
 
@@ -532,10 +532,11 @@ sap.ui.define([
 
 			if (aSeparatedText && aSeparatedText.length > 1) {
 				setTimeout(function() {
-					var oFormatOptions = merge({}, this.getFormatOptions());
-					delete oFormatOptions.valueHelpID;
+					var oFormatOptions = merge({}, this.getConfig());
 					oFormatOptions.maxConditions = 1;
 					oFormatOptions.display = FieldDisplay.Value;
+					oFormatOptions.valueType = oConfig.dataType;
+					delete oFormatOptions.dataType;
 					//oFormatOptions.valueType = this._getFieldType.call(this, oOperator.name, 0); //TODO using the _getFieldType for better support of types
 					var oConditionType = new ConditionType(oFormatOptions);
 
@@ -636,7 +637,7 @@ sap.ui.define([
 			_operatorChanged.call(this, oChanges.object, oChanges.current, oChanges.old);
 		}
 
-		if (oChanges.name === "formatOptions") {
+		if (oChanges.name === "config") {
 			// type or maxConditions might changed -> resume ListBinding
 			var aConditions = this.getConditions();
 			var oOperators = oChanges.current && oChanges.current.operators;
@@ -648,7 +649,7 @@ sap.ui.define([
 				_updateOperatorModel.call(this);
 			}
 
-			var oType = oChanges.current && oChanges.current.valueType;
+			var oType = oChanges.current && oChanges.current.dataType;
 			var oTypeOld = oChanges.old && oChanges.old.valueType;
 			var sType = oType && oType.getMetadata().getName();
 			var sTypeOld = oTypeOld && oTypeOld.getMetadata().getName();
@@ -834,7 +835,7 @@ sap.ui.define([
 			oControl.attachChange(this.onChange.bind(this));
 		}
 		oControl.onpaste = this.onPaste.bind(this);
-		oControl.setLayoutData(new GridData({span: {parts: [{path: "$condition>"}, {path: "$this>/formatOptions"}], formatter: _getSpanForValue.bind(this)}}));
+		oControl.setLayoutData(new GridData({span: {parts: [{path: "$condition>"}, {path: "$this>/config"}], formatter: _getSpanForValue.bind(this)}}));
 		oControl.setBindingContext(oValueBindingContext, "$this");
 		oControl.setBindingContext(oBindingContext, "$condition");
 		// add fieldGroup to validate Condition only after both Fields are entered.
@@ -917,7 +918,7 @@ sap.ui.define([
 	function _getDefaultOperator() {
 		var aOperators = _getOperators.call(this);
 		var oOperator;
-		var sOperatorName = this.getFormatOptions().defaultOperatorName;
+		var sOperatorName = this.getConfig().defaultOperatorName;
 		if (sOperatorName) {
 			oOperator = FilterOperatorUtil.getOperator(sOperatorName);
 		} else {
@@ -947,8 +948,8 @@ sap.ui.define([
 
 	function _getOperators() {
 
-		var oFormatOptions = this.getFormatOptions();
-		var aOperators = oFormatOptions && oFormatOptions.operators;
+		var oConfig = this.getConfig();
+		var aOperators = oConfig && oConfig.operators;
 
 		if (!aOperators || aOperators.length === 0) {
 			// TODO: better default
@@ -1035,8 +1036,8 @@ sap.ui.define([
 
 	function _getType() {
 
-		var oFormatOptions = this.getFormatOptions();
-		var oType = oFormatOptions && oFormatOptions.valueType;
+		var oConfig = this.getConfig();
+		var oType = oConfig && oConfig.dataType;
 		if (!oType) {
 			oType = _getDefaultType.call(this);
 		}
@@ -1059,8 +1060,8 @@ sap.ui.define([
 		var sType = oType.getMetadata().getName();
 		var oFormatOptions = oType.getFormatOptions();
 		var oConstraints = oType.getConstraints();
-		var oDelegate = this.getFormatOptions().delegate;
-		var oPayload = this.getFormatOptions().payload;
+		var oDelegate = this.getConfig().delegate;
+		var oPayload = this.getConfig().payload;
 		var sBaseType = oDelegate ? oDelegate.getTypeUtil(oPayload).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String; // if not configured use string
 
 		if (sBaseType === BaseType.Unit) {
@@ -1073,9 +1074,9 @@ sap.ui.define([
 
 	function _getDelegate() {
 
-		var oFormatOptions = this.getFormatOptions();
-		var sName = oFormatOptions.delegateName || "sap/ui/mdc/field/FieldBaseDelegate";
-		var oPayload = oFormatOptions.payload;
+		var oConfig = this.getConfig();
+		var sName = oConfig.delegateName || "sap/ui/mdc/field/FieldBaseDelegate";
+		var oPayload = oConfig.payload;
 
 		return {name: sName, payload: oPayload};
 
@@ -1155,10 +1156,10 @@ sap.ui.define([
 				span: "XL2 L3 M3 S3",
 				indent: "XL9 L8 M8 S7",
 				linebreak: true,
-				visibleS: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getAddButtonVisible.bind(this)},
-				visibleM: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getAddButtonVisible.bind(this)},
-				visibleL: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getAddButtonVisible.bind(this)},
-				visibleXL: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getAddButtonVisible.bind(this)}}),
+				visibleS: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getAddButtonVisible.bind(this)},
+				visibleM: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getAddButtonVisible.bind(this)},
+				visibleL: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getAddButtonVisible.bind(this)},
+				visibleXL: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getAddButtonVisible.bind(this)}}),
 			ariaDescribedBy: this._oInvisibleAddOperatorButtonText
 		});
 
@@ -1170,17 +1171,17 @@ sap.ui.define([
 
 	}
 
-	function _getAddButtonVisible(aConditions, oFormatOptions) {
+	function _getAddButtonVisible(aConditions, oConfig) {
 
-		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+		var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
 
 		return iMaxConditions === -1 || aConditions.length < iMaxConditions;
 
 	}
 
-	function _getRemoveButtonVisible(aConditions, oFormatOptions) {
+	function _getRemoveButtonVisible(aConditions, oConfig) {
 
-		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+		var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
 
 		// only on case of maxCondition==1 the Remove icons should be invisible
 		return iMaxConditions !== 1;
@@ -1309,7 +1310,7 @@ sap.ui.define([
 			change: this.onSelectChange.bind(this),
 			ariaLabelledBy: this.getId() + "--ivtOperator"
 		})
-		.setLayoutData(new GridData({span: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getSpanForOperator.bind(this)}, linebreak: true}))
+		.setLayoutData(new GridData({span: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getSpanForOperator.bind(this)}, linebreak: true}))
 		.setBindingContext(oBindingContext, "$this");
 		if (oBindingContext) {
 			// validate only complete condition
@@ -1332,7 +1333,7 @@ sap.ui.define([
 		})
 		.setLayoutData(new GridData({span: "XL1 L1 M1 S2",
 			indent: {path: "$this>operator", formatter: _getIndentForOperator},
-			visibleS: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getRemoveButtonVisible.bind(this)},
+			visibleS: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getRemoveButtonVisible.bind(this)},
 			visibleM: false,
 			visibleL: false,
 			visibleXL: false
@@ -1365,9 +1366,9 @@ sap.ui.define([
 		.setLayoutData(new GridData({span: "XL1 L1 M1 S1",
 			indent: {path: "$this>operator", formatter: _getIndentForOperator},
 			visibleS: false,
-			visibleM: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getRemoveButtonVisible.bind(this)},
-			visibleL: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getRemoveButtonVisible.bind(this)},
-			visibleXL: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getRemoveButtonVisible.bind(this)}
+			visibleM: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getRemoveButtonVisible.bind(this)},
+			visibleL: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getRemoveButtonVisible.bind(this)},
+			visibleXL: {parts: [{path: "$this>/conditions"}, {path: "$this>/config"}], formatter: _getRemoveButtonVisible.bind(this)}
 		}))
 		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
 
@@ -1409,8 +1410,8 @@ sap.ui.define([
 
 	}
 
-	function _getSpanForOperator(aConditions, oFormatOptions) {
-		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+	function _getSpanForOperator(aConditions, oConfig) {
+		var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
 		var sSpan = "XL3 L3 M3 ";
 
 		if (iMaxConditions === 1) {
@@ -1421,8 +1422,8 @@ sap.ui.define([
 		return sSpan;
 	}
 
-	function _getSpanForValue(oCondition, oFormatOptions) {
-		var iMaxConditions = oFormatOptions.hasOwnProperty("maxConditions") ? oFormatOptions.maxConditions : -1;
+	function _getSpanForValue(oCondition, oConfig) {
+		var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
 
 		var oOperator = oCondition && FilterOperatorUtil.getOperator(oCondition.operator);
 		var sSpan = "";

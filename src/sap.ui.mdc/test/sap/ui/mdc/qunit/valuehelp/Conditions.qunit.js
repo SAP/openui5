@@ -144,9 +144,9 @@ sap.ui.define([
 				assert.equal(oDefineConditionPanel.getLabel(), "Test", "title");
 				assert.deepEqual(oDefineConditionPanel.getConditions(), oConditions.getConditions(), "Conditions on DefineConditionPanel");
 				assert.ok(oDefineConditionPanel.getInputOK(), "inputOK on DefineConditionPanel");
-				var oFormatOptions = oDefineConditionPanel.getFormatOptions();
-				var oTestFormatOptions = {
-					valueType: oType,
+				var oConfig = oDefineConditionPanel.getConfig();
+				var oTestConfig = {
+					dataType: oType,
 					maxConditions: -1,
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
@@ -155,7 +155,7 @@ sap.ui.define([
 					defaultOperatorName: "EQ",
 					display: FieldDisplay.Description
 				};
-				assert.deepEqual(oFormatOptions, oTestFormatOptions, "FormatOptions on DefineConditionPanel");
+				assert.deepEqual(oConfig, oTestConfig, "Config on DefineConditionPanel");
 
 				var aNewConditions = [
 					Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
@@ -218,9 +218,9 @@ sap.ui.define([
 				assert.equal(oContent.getLabel(), "Test", "title");
 				assert.deepEqual(oContent.getConditions(), oConditions.getConditions(), "Conditions on DefineConditionPanel");
 				assert.ok(oContent.getInputOK(), "inputOK on DefineConditionPanel");
-				var oFormatOptions = oContent.getFormatOptions();
-				var oTestFormatOptions = {
-					valueType: oType,
+				var oConfig = oContent.getConfig();
+				var oTestConfig = {
+					dataType: oType,
 					maxConditions: -1,
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
@@ -229,7 +229,7 @@ sap.ui.define([
 					defaultOperatorName: "EQ",
 					display: FieldDisplay.Description
 				};
-				assert.deepEqual(oFormatOptions, oTestFormatOptions, "FormatOptions on DefineConditionPanel");
+				assert.deepEqual(oConfig, oTestConfig, "Config on DefineConditionPanel");
 
 				fnDone();
 			}).catch(function(oError) {

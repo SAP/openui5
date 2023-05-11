@@ -137,7 +137,7 @@ sap.ui.define([
 							label: "{$help>/label}",
 							conditions: "{$help>/conditions}",
 							inputOK: "{$valueHelp>/_valid}",
-							formatOptions: {path: "$help>/config", formatter: _convertConfig}, // TODO: change DefineConditionPanel to use Config
+							config: {path: "$help>/config"}, // TODO: change DefineConditionPanel to use Config
 							conditionProcessed: _handleConditionProcessed.bind(this),
 							valueHelp: this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()) //TODO ValueHelp can only be set once and not modified?
 						}
@@ -297,25 +297,6 @@ sap.ui.define([
 //		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 
 		this.fireSelect({type: SelectType.Set, conditions: aNextConditions});
-
-	}
-
-	function _convertConfig(oConfig) {
-
-		// return formatOptions used by DefineConditionPanel
-		var oFormatOptions = {};
-		if (oConfig) {
-			oFormatOptions.valueType = oConfig.dataType;
-			oFormatOptions.maxConditions = oConfig.maxConditions;
-			oFormatOptions.delegate = oConfig.delegate;
-			oFormatOptions.delegateName = oConfig.delegateName;
-			oFormatOptions.payload = oConfig.payload;
-			oFormatOptions.operators = oConfig.operators;
-			oFormatOptions.display = oConfig.display;
-			oFormatOptions.defaultOperatorName = oConfig.defaultOperatorName;
-		}
-
-		return oFormatOptions;
 
 	}
 

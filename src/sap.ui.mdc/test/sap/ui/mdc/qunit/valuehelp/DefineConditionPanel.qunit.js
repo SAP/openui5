@@ -63,7 +63,7 @@ sap.ui.define([
 	var oDefineConditionPanel;
 	var oModel;
 	var oDataType;
-	var oFormatOptions;
+	var oConfig;
 
 	var _init = function(bNoRender, oType) {
 		if (!oType) {
@@ -75,8 +75,8 @@ sap.ui.define([
 			// var oNUMCType = new StringType({}, {maxLength: 5, isDigitSequence: true, nullable: false});
 		}
 
-		oFormatOptions = {
-				valueType: oDataType,
+		oConfig = {
+				dataType: oDataType,
 				maxConditions: -1,
 				delegate: FieldBaseDelegate,
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
@@ -87,7 +87,7 @@ sap.ui.define([
 
 		oDefineConditionPanel = new DefineConditionPanel("DCP1", {
 			conditions: '{cm>/conditions/Name}',
-			formatOptions: oFormatOptions
+			config: oConfig
 		}).placeAt("content");
 
 		if (!bNoRender) {
@@ -99,7 +99,7 @@ sap.ui.define([
 		oDefineConditionPanel.destroy();
 		oDataType.destroy();
 		oDataType = undefined;
-		oFormatOptions = undefined;
+		oConfig = undefined;
 		if (oModel) {
 			oModel.destroy();
 			oModel = undefined;
@@ -140,15 +140,15 @@ sap.ui.define([
 
 	QUnit.test("dummy condition with different operator", function(assert) {
 
-		oFormatOptions = {
-				valueType: oDataType,
+		oConfig = {
+				dataType: oDataType,
 				maxConditions: -1,
 				operators: ["BT"],
 				delegate: FieldBaseDelegate,
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
 
-		oDefineConditionPanel.setFormatOptions(oFormatOptions);
+		oDefineConditionPanel.setConfig(oConfig);
 		oModel.removeAllConditions("Name");
 		oDefineConditionPanel.invalidate(); // to invalidate operator texts
 		oCore.applyChanges();
@@ -169,9 +169,9 @@ sap.ui.define([
 
 	QUnit.test("bind filled condition Model", function(assert) {
 
-		var oFormatOptions = merge({}, oDefineConditionPanel.getFormatOptions());
-		oFormatOptions.maxConditions = 4;
-		oDefineConditionPanel.setFormatOptions(oFormatOptions); // to test visibility of add button
+		var oConfig = merge({}, oDefineConditionPanel.getConfig());
+		oConfig.maxConditions = 4;
+		oDefineConditionPanel.setConfig(oConfig); // to test visibility of add button
 
 		sinon.spy(oDefineConditionPanel, "updateDefineConditions");
 		// update twice to test only one call of dummy row
@@ -256,10 +256,10 @@ sap.ui.define([
 		});
 		FilterOperatorUtil.addOperator(oOperator);
 
-		var oFormatOptions = merge({}, oDefineConditionPanel.getFormatOptions());
-		oFormatOptions.maxConditions = 4;
-		oFormatOptions.operators = ["MyInclude", "BT", "MyExclude"];
-		oDefineConditionPanel.setFormatOptions(oFormatOptions); // to test visibility of add button
+		var oConfig = merge({}, oDefineConditionPanel.getConfig());
+		oConfig.maxConditions = 4;
+		oConfig.operators = ["MyInclude", "BT", "MyExclude"];
+		oDefineConditionPanel.setConfig(oConfig); // to test visibility of add button
 
 		oModel.setData({
 			conditions: {
@@ -662,15 +662,15 @@ sap.ui.define([
 					   ]
 			}
 		});
-		oFormatOptions = {
-				valueType: oDataType,
+		oConfig = {
+				dataType: oDataType,
 				maxConditions: -1,
 				operators: ["MyOperator"],
 				delegate: FieldBaseDelegate,
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
 
-		oDefineConditionPanel.setFormatOptions(oFormatOptions);
+		oDefineConditionPanel.setConfig(oConfig);
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
@@ -796,15 +796,15 @@ sap.ui.define([
 					   ]
 			}
 		});
-		oFormatOptions = {
-				valueType: oDataType,
+		oConfig = {
+				dataType: oDataType,
 				maxConditions: -1,
 				operators: FilterOperatorUtil.getOperatorsForType(sBaseType),
 				delegate: FieldBaseDelegate,
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
 
-		oDefineConditionPanel.setFormatOptions(oFormatOptions);
+		oDefineConditionPanel.setConfig(oConfig);
 		oCore.applyChanges();
 
 	};
@@ -1177,14 +1177,14 @@ sap.ui.define([
 					   ]
 			}
 		});
-		oFormatOptions = {
-				valueType: undefined,
+		oConfig = {
+				dataType: undefined,
 				maxConditions: -1,
 				delegate: FieldBaseDelegate,
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
 
-		oDefineConditionPanel.setFormatOptions(oFormatOptions);
+		oDefineConditionPanel.setConfig(oConfig);
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
@@ -1215,9 +1215,9 @@ sap.ui.define([
 
 	QUnit.test("paste multiple values", function(assert) {
 
-		var oFormatOptions = merge({}, oDefineConditionPanel.getFormatOptions());
-		oFormatOptions.maxConditions = 3;
-		oDefineConditionPanel.setFormatOptions(oFormatOptions); // to test with maxConditions
+		var oConfig = merge({}, oDefineConditionPanel.getConfig());
+		oConfig.maxConditions = 3;
+		oDefineConditionPanel.setConfig(oConfig); // to test with maxConditions
 
 		var fnDone = assert.async();
 		setTimeout(function () { // as model update is async
@@ -1266,9 +1266,9 @@ sap.ui.define([
 
 	QUnit.test("paste multiple values with operators and invalid values", function(assert) {
 
-		var oFormatOptions = merge({}, oDefineConditionPanel.getFormatOptions());
-		oFormatOptions.maxConditions = -1;
-		oDefineConditionPanel.setFormatOptions(oFormatOptions); // to test with maxConditions
+		var oConfig = merge({}, oDefineConditionPanel.getConfig());
+		oConfig.maxConditions = -1;
+		oDefineConditionPanel.setConfig(oConfig); // to test with maxConditions
 
 		var fnDone = assert.async();
 		setTimeout(function () { // as model update is async
