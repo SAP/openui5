@@ -50,7 +50,7 @@
 			<w:Card
 				id="webPageCard"
 				width="400px"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webpageMinHeight/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webPageMinHeight/manifest.json"
 				class="sapUiTinyMargin">
 			</w:Card>
 		</Panel>
