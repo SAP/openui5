@@ -4529,7 +4529,7 @@ sap.ui.define([
 		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
 			iMinutesStep = 30 * 60 * 1000,  // 30 min
 			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
-			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex,
+			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex + 1,
 			oRowStartDateTimeUTC = UI5Date.getInstance(oRowStartUTC.setUTCMinutes(0, 0, 0)),
 			oAppStartUTC = UI5Date.getInstance(oRowStartDateTimeUTC.getTime() + iStartAddon * iMinutesStep),
 			oAppEndUTC = UI5Date.getInstance(oRowStartDateTimeUTC.getTime() + iEndAddon * iMinutesStep);
@@ -4543,7 +4543,7 @@ sap.ui.define([
 	PlanningCalendar.prototype._calcCreateNewAppDays = function(oRowStartDate, iStartIndex, iEndIndex) {
 		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
 			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
-			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex,
+			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex + 1,
 			oAppStartUTC = UI5Date.getInstance(oRowStartUTC.getTime()),
 			oAppEndUTC = UI5Date.getInstance(oRowStartUTC.getTime());
 
@@ -4556,7 +4556,7 @@ sap.ui.define([
 	PlanningCalendar.prototype._calcCreateNewAppMonths = function(oRowStartDate, iStartIndex, iEndIndex) {
 		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
 			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
-			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex,
+			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex + 1,
 			oAppStartUTC = UI5Date.getInstance(oRowStartUTC.getTime()),
 			oAppEndUTC = UI5Date.getInstance(oRowStartUTC.getTime());
 
@@ -4620,7 +4620,7 @@ sap.ui.define([
 						if (iStartXPosition <= oDropRects.left) {
 							oDragSession.setIndicatorConfig({ left: iStartXPosition, width: Math.max((oDropRects.left + oDropRects.width - iStartXPosition), oDropRects.width) });
 						} else {
-							oDragSession.setIndicatorConfig({ left: oDropRects.left, width: iStartXPosition - oDropRects.left });
+							oDragSession.setIndicatorConfig({ left: oDropRects.left, width: Math.max((iStartXPosition - oDropRects.left + oDropRects.width), oDropRects.width) });
 						}
 					} else {
 						oDragSession.setData("text", oDropRects.left + "|" + oTimeline.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()));
