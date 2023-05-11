@@ -1,11 +1,6 @@
 // task aliases
 
 var semver = require('semver');
-var path = require('path');
-var cldr = require('../../lib/cldr-openui5/lib/index.js');
-
-// CLDR version to be downloaded and generated
-var CLDR_VERSION = "41.0.0";
 
 module.exports = function(grunt, config) {
 
@@ -249,72 +244,6 @@ module.exports = function(grunt, config) {
 			}
 
 			grunt.task.run(aTasks);
-		},
-
-		// CLDR modules are not added to package.json/devDependencies to avoid bloating of the node_modules folder
-		'cldr': [
-		    'cldr-download',
-		    'cldr-generate'
-		],
-		'cldr-download': function() {
-			var aPakets = [
-					'cldr-core',
-					'cldr-numbers-modern',
-					'cldr-dates-modern',
-					'cldr-misc-modern',
-					'cldr-units-modern',
-					'cldr-localenames-modern',
-					'cldr-cal-islamic-modern',
-					'cldr-cal-japanese-modern',
-					'cldr-cal-persian-modern',
-					'cldr-cal-buddhist-modern'
-				],
-				baseFolder = path.join(__dirname, "../../"),
-				downloadFolder = path.join(baseFolder, "tmp/cldr"),
-				pacote = require('pacote'),
-				done = this.async();
-
-			Promise.all(aPakets.map(function(sName) {
-				return pacote.extract(sName + "@" + CLDR_VERSION, path.join(downloadFolder, sName));
-
-			})).then(function() {
-				grunt.log.ok("DONE", "Files downloaded and extracted to", downloadFolder);
-				done();
-			}, function(err) {
-				grunt.log.error(err);
-				done(false);
-			});
-		},
-		'cldr-generate': function() {
-			var done = this.async();
-
-			var baseFolder = path.join(__dirname, "../../");
-
-			var outputFolder = grunt.option("output"),
-				sourceFolder = path.join(baseFolder, "tmp/cldr"),
-				prettyPrint = grunt.option("prettyPrint");
-
-			if (typeof prettyPrint !== "boolean") {
-				prettyPrint = true;
-			}
-
-			if (!outputFolder) {
-				outputFolder = path.join(baseFolder, "src/sap.ui.core/src/sap/ui/core/cldr");
-			}
-
-			if (outputFolder) {
-				cldr({
-					source: sourceFolder,
-					output: outputFolder,
-					prettyPrint: prettyPrint,
-					version: CLDR_VERSION
-				}).on("generated", function() {
-					grunt.log.ok("DONE", "Files saved to", outputFolder);
-				}).on("error", function(err) {
-					grunt.log.error(err);
-					done(false);
-				}).start();
-			}
 		},
 
 		// Default task (called when just running "grunt")

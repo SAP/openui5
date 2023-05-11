@@ -1,10 +1,16 @@
 {
+	"root": true,
 	"env": {
 		"node": true,
-		"browser": false
+		"browser": false,
+		"es2022": true
+	},
+	"parserOptions": {
+		"sourceType": "module"
 	},
 	"rules": {
 		"strict": ["error", "never"],
-		"no-loop-func": "warn"
+		"no-loop-func": "warn",
+		"no-console": "off"
 	}
 }
