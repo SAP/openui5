@@ -102,7 +102,7 @@
 							background="Light">
 							<l:BlockLayoutRow content="{
 								path: '',
-								factory: '.createDemoAppCell'
+								factory: '.createDemoAppCellFactory'
 							}"/>
 						</l:BlockLayout>
 					</Panel>

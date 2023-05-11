@@ -16,9 +16,10 @@ sap.ui.define([
 		"sap/ui/model/FilterOperator",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/model/resource/ResourceModel",
-		"sap/ui/thirdparty/jquery"
+		"sap/ui/thirdparty/jquery",
+		"sap/ui/core/Fragment"
 	], function(Log, MessageBox, MessageToast, Device, VersionInfo, BaseController, ResourceDownloadUtil,
-			 formatter, libraryData, Filter, FilterOperator, JSONModel, ResourceModel, jQuery) {
+			 formatter, libraryData, Filter, FilterOperator, JSONModel, ResourceModel, jQuery, Fragment) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.DemoApps", {
@@ -37,9 +38,16 @@ sap.ui.define([
 
 
 				// load demo app metadata from docuindex of all available libraries
-				libraryData.fillJSONModel(oModel);
-				this.setModel(oModel);
-				this.getView().setModel(oMessageBundle, "i18n");
+				libraryData.fillJSONModel(oModel)
+					.then(function () {
+						return this.loadDemoAppsCellFragments(oModel);
+					}.bind(this))
+					.then(function (oFragments) {
+						this._cellFragments = oFragments;
+						this.setModel(oModel);
+					}.bind(this));
+
+					this.getView().setModel(oMessageBundle, "i18n");
 
 				this.setModel(new JSONModel({
 					demoAppsHomeLink: "topic/a3ab54ecf7ac493b91904beb2095d208"
@@ -281,38 +289,149 @@ sap.ui.define([
 			/* lifecycle methods                                           */
 			/* =========================================================== */
 
+			loadDemoAppsCellFragments: function(oModel) {
+				var aResult = {},
+					createDemoAppCell = this.createDemoAppCell.bind(this),
+					demoApps = oModel.getProperty("/demoAppsByCategory");
+
+				function handleCategory(category) {
+					return Promise.all(category.rows.map(handleRow));
+				}
+
+				function handleRow(row) {
+					return Promise.all(row.map(function (cell) {
+						return createDemoAppCell(cell).then(function (oCell) {
+							aResult[cell.id] = oCell;
+						});
+					}));
+				}
+
+				return new Promise(function (resolve, reject) {
+					Promise.all(demoApps.map(handleCategory))
+						.then(function () {
+							resolve(aResult);
+						})
+						.catch(function (error) {
+							reject(error);
+						});
+				});
+			},
+
 			/**
 			 * Factory function for creating the demo app cells
 			 *
-			 * @param {string} sId the id for the current cell
+			 * @param {string} _ the id of the cell in the dom
 			 * @param {sap.ui.model.Context} oBindingContext the context for the current cell
 			 * @return {sap.ui.layout.BlockLayoutCell} either a teaser cell or a demo app cell based on the metadata in the model
 			 * @public
 			 */
-			createDemoAppCell: function (sId, oBindingContext) {
-				var oBlockLayoutCell;
-				if (oBindingContext.getObject().teaser) { // teaser cell (loads fragment from demo app)
-					try {
-						sap.ui.loader.config({paths:{"test-resources":"test-resources"}});
-						var sRelativePath = sap.ui.require.toUrl(oBindingContext.getObject().teaser);
-						var oTeaser = sap.ui.xmlfragment(sId, sRelativePath);
-						oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutTeaserCell", this);
-						oBlockLayoutCell.getContent()[0].addContent(oTeaser);
-						sap.ui.loader.config({paths:{"test-resources":null}});
-						//sets the teaser to aria-hidden => gets ignored by screen reader
-						oTeaser.addEventDelegate({"onAfterRendering": function() {
-							this.getParent().getDomRef().childNodes[1].setAttribute("aria-hidden", "true");
-							}.bind(oTeaser)});
-					} catch (oException) {
-						Log.warning("Teaser for demo app \"" + oBindingContext.getObject().name + "\" could not be loaded: " + oException);
-						oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutCell", this);
-					}
-				} else { // normal cell
-					oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutCell", this);
-				}
-				oBlockLayoutCell.setBindingContext(oBindingContext);
+			createDemoAppCellFactory: function (_, oBindingContext) {
+				var id = oBindingContext.getObject().id;
+				return this._cellFragments[id];
+			},
 
+			/**
+			 * Handler for the demo app cell creation
+			 *
+			 * @param {sap.ui.model.Context} oBindingContext the context for the current cell
+			 * @param {sap.ui.core.Control[]} aFragments the fragments for the current cell [teaser, default cell]
+			 * @return {sap.ui.layout.BlockLayoutCell} the demo app cell
+			 * @private
+			 **/
+			onDemoAppCellCreated: function (oBindingContext, aFragments) {
+				var oTeaser = aFragments[0],
+				oBlockLayoutCell = aFragments[1];
+
+				oBlockLayoutCell.getContent()[0].addContent(oTeaser);
+				sap.ui.loader.config({paths:{"test-resources":null}});
+				//sets the teaser to aria-hidden => gets ignored by screen reader
+				oTeaser.addEventDelegate({"onAfterRendering": function() {
+					this.getParent().getDomRef().childNodes[1].setAttribute("aria-hidden", "true");
+				}.bind(oTeaser)});
+
+				oBlockLayoutCell.setBindingContext(oBindingContext);
 				return oBlockLayoutCell;
+			},
+
+			/**
+			 * Handler for the demo app cell creation error
+			 * Creates and returns a normal demo app cell instead as promise
+			 *
+			 * @param {sap.ui.model.Context} oBindingContext the context for the current cell
+			 * @param {Error} oException the exception that occurred during the cell creation
+			 * @return {Promise<sap.ui.layout.BlockLayoutCell>} the demo app cell as promise
+			 * @private
+			 **/
+			onDemoAppCellFailed: function (oBindingContext, oException) {
+				Log.warning("Teaser for demo app \"" + oBindingContext.name + "\" could not be loaded: " + oException);
+				return this.createNormalDemoAppCell(oBindingContext);
+			},
+
+			/**
+			 * Creates a normal demo app cell
+			 * @param {sap.ui.model.Context} oBindingContext the context for the current cell
+			 * @return {Promise<sap.ui.layout.BlockLayoutCell>} the demo app cell as promise
+			 * @private
+			 **/
+			createNormalDemoAppCell: function (oBindingContext) {
+				return new Promise(function (resolve) {
+					Fragment.load({
+						id: oBindingContext.id,
+						name: "sap.ui.documentation.sdk.view.BlockLayoutCell",
+						controller: this
+					}).then(function (oBlockLayoutCell) {
+						oBlockLayoutCell.setBindingContext(oBindingContext);
+						resolve(oBlockLayoutCell);
+					});
+				}.bind(this));
+			},
+
+			/**
+			 * Creates a demo app cell with a teaser
+			 *
+			 * @param {sap.ui.model.Context} oBindingContext the context for the current cell
+			 * @return {Promise<sap.ui.layout.BlockLayoutCell>} the demo app cell as promise
+			 * @private
+			 **/
+			createDemoAppCellFromTeaser: function (oBindingContext) {
+				sap.ui.loader.config({paths:{"test-resources":"test-resources"}});
+				var sRelativePath = sap.ui.require.toUrl(oBindingContext.teaser),
+					oPromiseTeaser = Fragment.load({
+						id: oBindingContext.id,
+						name: sRelativePath,
+						controller: this
+					}),
+					oPromiseCell = Fragment.load({
+						id: oBindingContext.id,
+						name: "sap.ui.documentation.sdk.view.BlockLayoutTeaserCell",
+						controller: this
+					}),
+					onCreated = this.onDemoAppCellCreated.bind(this, oBindingContext),
+					onFailed = this.onDemoAppCellFailed.bind(this, oBindingContext);
+
+				return Promise.all([oPromiseTeaser, oPromiseCell])
+					.then(function (aFragments) {
+						return onCreated(aFragments);
+					})
+					.catch(function (oException) {
+						return onFailed(oException);
+					});
+			},
+
+			/**
+			 * Creates a demo app cell or a normal considering the teaser information
+			 * @param {sap.ui.model.Context} oBindingContext the context for the current cell
+			 * @return {Promise<sap.ui.layout.BlockLayoutCell>} the demo app cell as promise
+			 * @private
+			 **/
+			createDemoAppCell: function (oBindingContext) {
+				if (oBindingContext.teaser) {
+					// teaser cell (loads fragment from demo app)
+					return this.createDemoAppCellFromTeaser(oBindingContext);
+				} else {
+					// normal cell
+					return this.createNormalDemoAppCell(oBindingContext);
+				}
 			},
 
 			/* =========================================================== */

@@ -913,18 +913,35 @@ sap.ui.define([
 				this._setSelectedLanguage(sLanguage);
 			},
 
+			getAboutDialog: function () {
+				return new Promise(function (resolve, reject) {
+					if (!this._oAboutDialog) {
+						Fragment.load({
+							id: "aboutDialogFragment",
+							name: "sap.ui.documentation.sdk.view.AboutDialog",
+							controller: this
+						}).then(function (oDialog) {
+							this._oAboutDialog = oDialog;
+							this._oView.addDependent(this._oAboutDialog);
+							resolve(this._oAboutDialog);
+						}.bind(this));
+					} else {
+						resolve(this._oAboutDialog);
+					}
+				}.bind(this));
+			},
+
 			aboutDialogOpen: function () {
-				if (!this._oAboutDialog) {
-					this._oAboutDialog = new sap.ui.xmlfragment("aboutDialogFragment", "sap.ui.documentation.sdk.view.AboutDialog", this);
-					this._oView.addDependent(this._oAboutDialog);
-				} else {
-					this._oAboutDialog.getContent()[0].backToTop(); // reset the nav container to the first page
-				}
-				this._oAboutDialog.open();
+				this.getAboutDialog().then(function (oDialog) {
+					oDialog.getContent()[0].backToTop(); // reset the nav container to the first page
+					oDialog.open();
+				});
 			},
 
 			aboutDialogClose: function (oEvent) {
-				this._oAboutDialog.close();
+				this.getAboutDialog().then(function (oDialog) {
+					oDialog.close();
+				});
 			},
 
 			onAboutVersionDetails: function (oEvent) {
@@ -995,44 +1012,80 @@ sap.ui.define([
 				oNavCon.to(oDetailPage);
 			},
 
+			_getReleaseDialog: function () {
+				return new Promise(function (resolve) {
+					if (!this._oReleaseDialog) {
+						Fragment.load({
+							id: "releaseDialogFragment",
+							name: "sap.ui.documentation.sdk.view.ReleaseDialog",
+							controller: this
+						}).then(function (oDialog) {
+							this._oReleaseDialog = oDialog;
+							this._oView.addDependent(this._oReleaseDialog);
+							resolve(this._oReleaseDialog);
+						}
+						.bind(this));
+					} else {
+						resolve(this._oReleaseDialog);
+					}
+				}.bind(this));
+			},
+
+			_getNotesView: function () {
+				var oNotesModel;
+				return new Promise(function (resolve) {
+					if (!this._oNotesView) {
+						oNotesModel = new JSONModel();
+						Fragment.load({
+							id: "notesView",
+							name: "sap.ui.documentation.sdk.view.ReleaseNotesView",
+							controller: this
+						}).then(function (oView) {
+							this._oNotesView = oView;
+							this._oNotesView.setModel(oNotesModel);
+							resolve(this._oNotesView);
+						}.bind(this));
+					} else {
+						resolve(this._oNotesView);
+					}
+				}.bind(this));
+			},
+
 			onReleaseDialogOpen: function (oEvent) {
 				var oLibInfo = library._getLibraryInfoSingleton(),
 					sVersion = oEvent.getSource().data("version"),
 					sLibrary = oEvent.getSource().data("library"),
-					oNotesModel = new JSONModel(),
-					oDialogModel = new JSONModel(),
-					that = this;
+					oDialogModel = new JSONModel();
 
-				if (!this._oReleaseDialog) {
-					this._oReleaseDialog = new sap.ui.xmlfragment("releaseDialogFragment", "sap.ui.documentation.sdk.view.ReleaseDialog", this);
-					this._oView.addDependent(this._oReleaseDialog);
-				}
+				Promise.all([this._getReleaseDialog(), this._getNotesView()]).then(function (aResult) {
+					var oReleaseDialog = aResult[0],
+						oNotesView = aResult[1],
+						oNotesViewData = {};
 
-				if (!this._oNotesView) {
-					this._oNotesView = sap.ui.view({id:"notesView", viewName:"sap.ui.documentation.sdk.view.ReleaseNotesView", type:"Template"});
-					this._oNotesView.setModel(oNotesModel);
-				}
+					oLibInfo._getReleaseNotes(sLibrary, sVersion, function(oRelNotes, sVersion) {
+						var oDialogData = {};
 
-				oLibInfo._getReleaseNotes(sLibrary, sVersion, function(oRelNotes, sVersion) {
-					var oDialogData = {};
+						if (oRelNotes && oRelNotes[sVersion] && oRelNotes[sVersion].notes && oRelNotes[sVersion].notes.length > 0) {
+							oNotesViewData = oRelNotes[sVersion];
+						} else {
+							oDialogData.noData = true;
+						}
+						oNotesView.getModel().setData(oNotesViewData);
+						oDialogData.library = sLibrary;
+						oDialogModel.setData(oDialogData);
+					});
 
-					if (oRelNotes && oRelNotes[sVersion] && oRelNotes[sVersion].notes && oRelNotes[sVersion].notes.length > 0) {
-						that._oNotesView.getModel().setData(oRelNotes);
-						that._oNotesView.bindObject("/" + sVersion);
-					} else {
-						oDialogData.noData = true;
-					}
-					oDialogData.library = sLibrary;
-					oDialogModel.setData(oDialogData);
+					oReleaseDialog.setModel(oDialogModel);
+					oReleaseDialog.addContent(oNotesView);
+					oReleaseDialog.open();
 				});
 
-				this._oReleaseDialog.setModel(oDialogModel);
-				this._oReleaseDialog.addContent(this._oNotesView);
-				this._oReleaseDialog.open();
 			},
 
 			onReleaseDialogClose: function (oEvent) {
-				this._oReleaseDialog.close();
+				this._getReleaseDialog().then(function (oDialog) {
+					oDialog.close();
+				});
 			},
 
 			onAboutNavBack: function (oEvent) {
@@ -1041,11 +1094,15 @@ sap.ui.define([
 			},
 
 			onChangeVersionButtonPress: function () {
-				this.getVersionSwitchDialog().open();
+				this.getVersionSwitchDialog().then(function (oDialog) {
+					oDialog.open();
+				});
 			},
 
 			onCloseVersionDialog: function () {
-				this.getVersionSwitchDialog().close();
+				this.getVersionSwitchDialog().then(function (oDialog) {
+					oDialog.close();
+				});
 			},
 
 			onChangeVersionDialogSearch: function (oEvent) {
@@ -1099,11 +1156,21 @@ sap.ui.define([
 			},
 
 			getVersionSwitchDialog: function () {
-				if (!this._oChangeVersionDialog) {
-					this._createVersionDialog();
-				}
+				return new Promise(function (resolve) {
+					if (!this._oChangeVersionDialog) {
+						Fragment.load({
+							name: "sap.ui.documentation.sdk.view.ChangeVersionDialog",
+							controller: this
+						}).then(function (oDialog) {
+							this._oChangeVersionDialog = oDialog;
+							this._oView.addDependent(this._oChangeVersionDialog);
+							resolve(this._oChangeVersionDialog);
+						});
+					} else {
+						resolve(this._oChangeVersionDialog);
+					}
+				});
 
-				return this._oChangeVersionDialog;
 			},
 
 			/**
@@ -1131,11 +1198,6 @@ sap.ui.define([
 				oViewModel.setProperty("/bShowVersionSwitchInMenu", bPhoneSize && !!this._aNeoAppVersions.length);
 			},
 
-			_createVersionDialog: function () {
-				this._oChangeVersionDialog = new sap.ui.xmlfragment("sap.ui.documentation.sdk.view.ChangeVersionDialog", this);
-				this._oChangeVersionDialog.setModel(this._buildVersionDialogModel());
-				this._oView.addDependent(this._oChangeVersionDialog);
-			},
 
 			_buildVersionDialogModel: function() {
 				var oChangeVersionDialogModel = new JSONModel();
@@ -1148,84 +1210,104 @@ sap.ui.define([
 				return oChangeVersionDialogModel;
 			},
 
+			getFeedbackDialog: function () {
+				return new Promise(function (resolve) {
+					if (!this._oFeedbackDialog) {
+						Fragment.load({
+							id: "feedbackDialogFragment",
+							name: "sap.ui.documentation.sdk.view.FeedbackDialog",
+							controller: this
+						})
+						.then(this.extendFeedbackDialog.bind(this))
+						.then(function (oDialog) {
+							this._oFeedbackDialog = oDialog;
+							this._oView.addDependent(this._oFeedbackDialog);
+							resolve(this._oFeedbackDialog);
+						}.bind(this));
+					} else {
+						resolve(this._oFeedbackDialog);
+					}
+				}.bind(this));
+			},
+
+			extendFeedbackDialog: function (oFeedbackDialog) {
+				var that = this,
+					oResourceBundle = this.getModel("i18n").getResourceBundle();
+
+				oFeedbackDialog.textInput = Fragment.byId("feedbackDialogFragment", "feedbackInput");
+				oFeedbackDialog.contextCheckBox = Fragment.byId("feedbackDialogFragment", "pageContext");
+				oFeedbackDialog.contextData = Fragment.byId("feedbackDialogFragment", "contextData");
+				oFeedbackDialog.ratingStatus = Fragment.byId("feedbackDialogFragment", "ratingStatus");
+				oFeedbackDialog.ratingStatus.value = 0;
+				oFeedbackDialog.sendButton = Fragment.byId("feedbackDialogFragment", "sendButton");
+				oFeedbackDialog.ratingBar = [
+					{
+						button : Fragment.byId("feedbackDialogFragment", "excellent"),
+						status : "Excellent",
+						displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_EXCELLENT")
+					},
+					{
+						button : Fragment.byId("feedbackDialogFragment", "good"),
+						status : "Good",
+						displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_GOOD")
+					},
+					{
+						button : Fragment.byId("feedbackDialogFragment", "average"),
+						status : "Average",
+						displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_AVERAGE")
+					},
+					{
+						button : Fragment.byId("feedbackDialogFragment", "poor"),
+						status : "Poor",
+						displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_POOR")
+					},
+					{
+						button : Fragment.byId("feedbackDialogFragment", "veryPoor"),
+						status : "Very Poor",
+						displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_VERY_POOR")
+					}
+				];
+				oFeedbackDialog.reset = function () {
+					this.sendButton.setEnabled(false);
+					this.textInput.setValue("");
+					this.contextCheckBox.setSelected(true);
+					this.ratingStatus.setText("");
+					this.ratingStatus.setState("None");
+					this.ratingStatus.value = 0;
+					this.contextData.setVisible(false);
+					this.ratingBar.forEach(function(oRatingBarElement){
+						if (oRatingBarElement.button.getPressed()) {
+							oRatingBarElement.button.setPressed(false);
+						}
+					});
+				};
+				oFeedbackDialog.updateContextData = function() {
+					var sVersion = that._getUI5Version(),
+						sUI5Distribution = that._getUI5Distribution();
+
+					if (this.contextCheckBox.getSelected()) {
+						this.contextData.setValue("Location: " + that._getCurrentPageRelativeURL() + "\n" + sUI5Distribution + " Version: " + sVersion);
+					} else {
+						this.contextData.setValue(sUI5Distribution + " Version: " + sVersion);
+					}
+				};
+
+				oFeedbackDialog.updateContextData();
+
+				return oFeedbackDialog;
+			},
+
 			/**
 			 * Opens a dialog to give feedback on the demo kit
 			 */
 			feedbackDialogOpen: function () {
-				var that = this;
-				var oResourceBundle;
-
-				if (!this._oFeedbackDialog) {
-					oResourceBundle = this.getModel("i18n").getResourceBundle();
-
-					this._oFeedbackDialog = new sap.ui.xmlfragment("feedbackDialogFragment", "sap.ui.documentation.sdk.view.FeedbackDialog", this);
-					this._oView.addDependent(this._oFeedbackDialog);
-
-					this._oFeedbackDialog.textInput = Fragment.byId("feedbackDialogFragment", "feedbackInput");
-					this._oFeedbackDialog.contextCheckBox = Fragment.byId("feedbackDialogFragment", "pageContext");
-					this._oFeedbackDialog.contextData = Fragment.byId("feedbackDialogFragment", "contextData");
-					this._oFeedbackDialog.ratingStatus = Fragment.byId("feedbackDialogFragment", "ratingStatus");
-					this._oFeedbackDialog.ratingStatus.value = 0;
-					this._oFeedbackDialog.sendButton = Fragment.byId("feedbackDialogFragment", "sendButton");
-					this._oFeedbackDialog.ratingBar = [
-						{
-							button : Fragment.byId("feedbackDialogFragment", "excellent"),
-							status : "Excellent",
-							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_EXCELLENT")
-						},
-						{
-							button : Fragment.byId("feedbackDialogFragment", "good"),
-							status : "Good",
-							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_GOOD")
-						},
-						{
-							button : Fragment.byId("feedbackDialogFragment", "average"),
-							status : "Average",
-							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_AVERAGE")
-						},
-						{
-							button : Fragment.byId("feedbackDialogFragment", "poor"),
-							status : "Poor",
-							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_POOR")
-						},
-						{
-							button : Fragment.byId("feedbackDialogFragment", "veryPoor"),
-							status : "Very Poor",
-							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_VERY_POOR")
-						}
-					];
-					this._oFeedbackDialog.reset = function () {
-						this.sendButton.setEnabled(false);
-						this.textInput.setValue("");
-						this.contextCheckBox.setSelected(true);
-						this.ratingStatus.setText("");
-						this.ratingStatus.setState("None");
-						this.ratingStatus.value = 0;
-						this.contextData.setVisible(false);
-						this.ratingBar.forEach(function(oRatingBarElement){
-							if (oRatingBarElement.button.getPressed()) {
-								oRatingBarElement.button.setPressed(false);
-							}
-						});
-					};
-					this._oFeedbackDialog.updateContextData = function() {
-						var sVersion = that._getUI5Version(),
-							sUI5Distribution = that._getUI5Distribution();
-
-						if (this.contextCheckBox.getSelected()) {
-							this.contextData.setValue("Location: " + that._getCurrentPageRelativeURL() + "\n" + sUI5Distribution + " Version: " + sVersion);
-						} else {
-							this.contextData.setValue(sUI5Distribution + " Version: " + sVersion);
-						}
-					};
-
-					this._oFeedbackDialog.updateContextData();
-				}
-				this._oFeedbackDialog.updateContextData();
-				if (!this._oFeedbackDialog.isOpen()) {
-					syncStyleClass("sapUiSizeCompact", this.getView(), this._oFeedbackDialog);
-					this._oFeedbackDialog.open();
-				}
+				this.getFeedbackDialog().then(function (oFeedbackDialog) {
+					oFeedbackDialog.updateContextData();
+					if (!oFeedbackDialog.isOpen()) {
+						syncStyleClass("sapUiSizeCompact", this.getView(), oFeedbackDialog);
+						oFeedbackDialog.open();
+					}
+				}.bind(this));
 			},
 
 			/**
@@ -1347,11 +1429,17 @@ sap.ui.define([
 			/**
 			 * Event handler for the send feedback button
 			 */
-			onFeedbackDialogSend: function() {
-				var oVersionInfo = Version(sap.ui.version),
-				data = {
-						"text": this._oFeedbackDialog.textInput.getValue(),
-						"rating": this._oFeedbackDialog.ratingStatus.value,
+			onFeedbackDialogSendPress: function () {
+				this.getFeedbackDialog().then(this.onFeedbackDialogSend.bind(this));
+			},
+
+			onFeedbackDialogSend: function(oFeedbackDialog) {
+				var sVersion = this._getFullVersion(),
+					oVersionInfo = Version(sVersion),
+					oResourceBundle = this.getModel("i18n").getResourceBundle(),
+					data = {
+						"text": oFeedbackDialog.textInput.getValue(),
+						"rating": oFeedbackDialog.ratingStatus.value,
 						"major": oVersionInfo.getMajor(),
 						"minor": oVersionInfo.getMinor(),
 						"patch": oVersionInfo.getPatch(),
@@ -1359,13 +1447,12 @@ sap.ui.define([
 						"snapshot": oVersionInfo.getSuffix().indexOf("SNAPSHOT") > -1,
 						"url": this._getCurrentURL(),
 						"page": this._getCurrentPageRelativeURL(),
-						"pageContext": this._oFeedbackDialog.contextCheckBox.getSelected()
-					},
-					oResourceBundle = this.getModel("i18n").getResourceBundle();
+						"pageContext": oFeedbackDialog.contextCheckBox.getSelected()
+					};
 
 				// send feedback
-				this._oFeedbackDialog.setBusyIndicatorDelay(0);
-				this._oFeedbackDialog.setBusy(true);
+				oFeedbackDialog.setBusyIndicatorDelay(0);
+				oFeedbackDialog.setBusy(true);
 
 				jQuery.ajax({
 					url: FEEDBACK_URL,
@@ -1378,10 +1465,10 @@ sap.ui.define([
 						MessageBox.success(oResourceBundle.getText("FEEDBACK_DIALOG_TEXT_SUCCESS"), {
 							title: oResourceBundle.getText("FEEDBACK_DIALOG_TITLE_SUCCESS")
 						});
-						this._oFeedbackDialog.reset();
-						this._oFeedbackDialog.close();
-						this._oFeedbackDialog.setBusy(false);
-					}.bind(this)
+						oFeedbackDialog.reset();
+						oFeedbackDialog.close();
+						oFeedbackDialog.setBusy(false);
+					}
 				).
 				fail(
 					function (oRequest, sStatus, sError) {
@@ -1389,32 +1476,37 @@ sap.ui.define([
 						MessageBox.error(oResourceBundle.getText("FEEDBACK_DIALOG_TEXT_ERROR") + sErrorDetails, {
 							title: oResourceBundle.getText("FEEDBACK_DIALOG_TITLE_ERROR")
 						});
-						this._oFeedbackDialog.setBusy(false);
-					}.bind(this)
+						oFeedbackDialog.setBusy(false);
+					}
 				);
-
 			},
 
 			/**
 			 * Event handler for the cancel feedback button
 			 */
 			onFeedbackDialogCancel: function () {
-				this._oFeedbackDialog.reset();
-				this._oFeedbackDialog.close();
+				this.getFeedbackDialog().then(function(oFeedbackDialog) {
+					oFeedbackDialog.reset();
+					oFeedbackDialog.close();
+				});
 			},
 
 			/**
 			 * Event handler for the toggle context link
 			 */
 			onShowHideContextData: function () {
-				this._oFeedbackDialog.contextData.setVisible(!this._oFeedbackDialog.contextData.getVisible());
+				this.getFeedbackDialog().then(function(oFeedbackDialog) {
+					oFeedbackDialog.contextData.setVisible(!oFeedbackDialog.contextData.getVisible());
+				});
 			},
 
 			/**
 			 * Event handler for the context selection checkbox
 			 */
 			onContextSelect: function() {
-				this._oFeedbackDialog.updateContextData();
+				this.getFeedbackDialog().then(function(oFeedbackDialog) {
+					oFeedbackDialog.updateContextData();
+				});
 			},
 
 			/**
@@ -1422,44 +1514,45 @@ sap.ui.define([
 			 * @param {sap.ui.base.Event} oEvent
 			 */
 			onPressRatingButton: function(oEvent) {
-				var that = this;
 				var oPressedButton = oEvent.getSource();
 
-				that._oFeedbackDialog.ratingBar.forEach(function(oRatingBarElement) {
-					if (oPressedButton !== oRatingBarElement.button) {
-						oRatingBarElement.button.setPressed(false);
-					} else {
-						if (!oRatingBarElement.button.getPressed()) {
-							setRatingStatus("None", "", 0);
+				this.getFeedbackDialog().then(function(oFeedbackDialog) {
+					oFeedbackDialog.ratingBar.forEach(function(oRatingBarElement) {
+						if (oPressedButton !== oRatingBarElement.button) {
+							oRatingBarElement.button.setPressed(false);
 						} else {
-							switch (oRatingBarElement.status) {
-								case "Excellent":
-									setRatingStatus("Success", oRatingBarElement.displayStatus, 5);
-									break;
-								case "Good":
-									setRatingStatus("Success", oRatingBarElement.displayStatus, 4);
-									break;
-								case "Average":
-									setRatingStatus("None", oRatingBarElement.displayStatus, 3);
-									break;
-								case "Poor":
-									setRatingStatus("Warning", oRatingBarElement.displayStatus, 2);
-									break;
-								case "Very Poor":
-									setRatingStatus("Error", oRatingBarElement.displayStatus, 1);
+							if (!oRatingBarElement.button.getPressed()) {
+								setRatingStatus(oFeedbackDialog, "None", "", 0);
+							} else {
+								switch (oRatingBarElement.status) {
+									case "Excellent":
+										setRatingStatus(oFeedbackDialog, "Success", oRatingBarElement.displayStatus, 5);
+										break;
+									case "Good":
+										setRatingStatus(oFeedbackDialog, "Success", oRatingBarElement.displayStatus, 4);
+										break;
+									case "Average":
+										setRatingStatus(oFeedbackDialog, "None", oRatingBarElement.displayStatus, 3);
+										break;
+									case "Poor":
+										setRatingStatus(oFeedbackDialog, "Warning", oRatingBarElement.displayStatus, 2);
+										break;
+									case "Very Poor":
+										setRatingStatus(oFeedbackDialog, "Error", oRatingBarElement.displayStatus, 1);
+								}
 							}
 						}
-					}
+					});
 				});
 
-				function setRatingStatus(sState, sText, iValue) {
-					that._oFeedbackDialog.ratingStatus.setState(sState);
-					that._oFeedbackDialog.ratingStatus.setText(sText);
-					that._oFeedbackDialog.ratingStatus.value = iValue;
+				function setRatingStatus(oFeedbackDialog, sState, sText, iValue) {
+					oFeedbackDialog.ratingStatus.setState(sState);
+					oFeedbackDialog.ratingStatus.setText(sText);
+					oFeedbackDialog.ratingStatus.value = iValue;
 					if (iValue) {
-						that._oFeedbackDialog.sendButton.setEnabled(true);
+						oFeedbackDialog.sendButton.setEnabled(true);
 					} else {
-						that._oFeedbackDialog.sendButton.setEnabled(false);
+						oFeedbackDialog.sendButton.setEnabled(false);
 					}
 				}
 			},
@@ -1730,6 +1823,10 @@ sap.ui.define([
 						Log.warning("No neo-app.json or versionoverview.json was detected");
 					}
 				);
+			},
+
+			_getFullVersion: function () {
+				return this.getModel("versionData").getProperty("/fullVersion");
 			},
 
 			_getUI5Version: function () {
