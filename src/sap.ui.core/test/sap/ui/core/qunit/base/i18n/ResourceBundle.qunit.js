@@ -1096,6 +1096,48 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getText - with placeholder", function(assert) {
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({sayHello: "Hello {0}"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: "", async: true, supportedLocales: [""], fallbackLocale: ""}).then(function(oResourceBundle) {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
+
+			// placeholder values are given as an array
+			assert.equal(oResourceBundle.getText("sayHello", ["Peter", "Marcus"]), "Hello Peter");
+			assert.equal(oResourceBundle.getText("sayHello", ["Peter"]), "Hello Peter");
+
+			// "falsy" placeholder values
+			assert.equal(oResourceBundle.getText("sayHello", []), "Hello undefined");
+			assert.equal(oResourceBundle.getText("sayHello", [""]), "Hello ");
+
+			// array of placeholder values is not given (no formatting)
+			assert.equal(oResourceBundle.getText("sayHello"), "Hello {0}");
+			assert.equal(oResourceBundle.getText("sayHello", undefined), "Hello {0}");
+		});
+	});
+
+	/**
+	 * Note: this test describes an unsupported usage of getText(...) where placeholder values
+	 * are given as positonal parameters, not as an array.
+	 *
+	 * Future versions of UI5 will forbid this usage!
+	 */
+	QUnit.test("getText - with placeholder values as positional parameters (not supported)", function(assert) {
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({sayHello: "Hello {0}"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: "", async: true, supportedLocales: [""], fallbackLocale: ""}).then(function(oResourceBundle) {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
+
+			// non-falsy, non-array value for 2nd parameter of #getText
+			assert.equal(oResourceBundle.getText("sayHello", "Peter"), "Hello Peter");
+
+			// non-nullish but "falsy" value for 2nd parameter of #getText
+			assert.equal(oResourceBundle.getText("sayHello", ""), "Hello {0}");
+		});
+	});
+
 	var oTerminologies = {
 		activeTerminologies: [
 			"oil",
