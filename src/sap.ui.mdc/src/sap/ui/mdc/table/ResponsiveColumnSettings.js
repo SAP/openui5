@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @constructor
 	 * @experimental
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @alias sap.ui.mdc.table.ResponsiveColumnSettings
 	 * @since 1.110
 	 */
