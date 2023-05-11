@@ -764,7 +764,7 @@ sap.ui.define([
 			oBinding.removeContext(oDeleteNode.context);
 
 			oBinding.attachChange(handler3);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler3() {
@@ -810,7 +810,7 @@ sap.ui.define([
 			oBinding.removeContext(oNode.context);
 
 			oBinding.attachChange(handler2);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler2() {
@@ -1031,7 +1031,7 @@ sap.ui.define([
 			});
 			oBinding.addContexts(oParent.context, [oContext]);
 			oBinding.attachChange(handler2);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler2() {
@@ -1089,7 +1089,7 @@ sap.ui.define([
 			oBinding.addContexts(oParent.context, [oContext]);
 
 			oBinding.attachChange(handler3);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler3() {
@@ -1157,7 +1157,7 @@ sap.ui.define([
 			oBinding.addContexts(oContext1, [oContext2]);
 
 			oBinding.attachChange(handler3);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler3() {
@@ -1231,7 +1231,7 @@ sap.ui.define([
 			iOldLength = oBinding.getLength();
 
 			oBinding.attachChange(handler2);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler2() {
@@ -1314,7 +1314,7 @@ sap.ui.define([
 			iOldLength = oBinding.getLength();
 
 			oBinding.attachChange(handler2);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler2() {
@@ -1364,7 +1364,7 @@ sap.ui.define([
 			oBinding.addContexts(oParent.context, [oContext1]);
 
 			oBinding.attachChange(handler2);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler2() {
@@ -1413,7 +1413,7 @@ sap.ui.define([
 			oBinding.addContexts(oParent.context, [oContext1]);
 
 			oBinding.attachChange(handler2);
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		function handler2() {
