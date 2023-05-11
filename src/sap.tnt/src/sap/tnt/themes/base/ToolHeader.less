@@ -2,7 +2,10 @@
 /* CSS for control sap.tnt/ToolHeader  */
 /* Base theme                          */
 /* =================================== */
+
 @_sap_tnt_ToolHeader_Height: 3rem;
+@_sap_tnt_ToolHeader_BorderRadius: 0;
+@_sap_tnt_ToolHeader_BoxShadow: none;
 @_sap_tnt_ToolHeader_AvatarBackground: lighten(saturate(spin(@sapUiAccent6, 348), 36), 28);
 @_sap_tnt_ToolHeader_AvatarColor: @sapUiBaseText;
 @_sap_tnt_ToolHeader_BorderColor: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
@@ -19,6 +22,8 @@
 
 .sapTntToolHeader.sapMTB {
 	height: @_sap_tnt_ToolHeader_Height;
+	border-radius: @_sap_tnt_ToolHeader_BorderRadius;
+	box-shadow: @_sap_tnt_ToolHeader_BoxShadow;
 }
 
 // ==========================================================================

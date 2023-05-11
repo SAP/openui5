@@ -3,593 +3,774 @@
 <head>
 	<title>ToolHeader - sap.tnt</title>
 	<script src="shared-config.js"></script>
-	<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout,sap.tnt">
+	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.m, sap.ui.layout,sap.tnt">
 	</script>
 	<script>
-		var oToggleBtnCompact = new sap.m.ToggleButton("toggleCompact", {
-			text: "Compact Mode",
-			pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
-			press: function () {
-				jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
-				jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
-			}
-		});
+		sap.ui.define([
+		"sap/ui/Device",
+		"sap/ui/core/Core",
+		], function (
+			Device,
+			Core
+		) {
+			"use strict";
+			var oToggleBtnCompact = new sap.m.ToggleButton("toggleCompact", {
+				text: "Change Compact / Cozy (default) Mode",
+				pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
+				press: function () {
+					jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+					jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+				}
+			});
 
-		var toolHeader = new sap.tnt.ToolHeader("shellLike", {
-			content: [
-				new sap.m.Button({
-					icon: 'sap-icon://menu2',
-					type: sap.m.ButtonType.Transparent,
-					press: function() {
-					},
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
-					})
-				}),
-				new sap.m.ToolbarSpacer({
-					width: '20px'
-				}),
-				new sap.m.Image ({
-					src: "./images/SAP_Logo.png"
-				}),
-				new sap.m.Text ({
-					text: "Tool Header Text"
-				}),
-				new sap.m.Title ({
-					text: "Tool Header Title"
-				}),
-				new sap.tnt.ToolHeaderUtilitySeparator({
-				}),
-				new sap.m.Image({
-					src: "./images/CoPilot.svg",
-					press: function() {
-						sap.m.MessageToast.show("Image pressed!");
-					},
-				}),
-				new sap.m.ToolbarSpacer({
-					layoutData : new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow,
-						minWidth: "20px"
-					})
-				}),
-				new sap.m.Avatar({
-					src: "images/Woman_avatar_01.png",
-					initials: "UI",
-					displaySize: "XS"
-				}),
-				new sap.m.Avatar({
-					src: "images/Woman_avatar_02.png",
-					initials: "UI",
-					displaySize: "XS",
-					press: function () {
-						sap.m.MessageToast.show("Avatar pressed!");
-					}
-				}),
-				new sap.m.Avatar({
-					initials: "UI",
-					displaySize: "XS"
-				}),
-				new sap.m.Avatar({
-					displaySize: "XS",
-					press: function () {
-						sap.m.MessageToast.show("Avatar pressed!");
-					}
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Transparent,
-					text: "User Name",
-					press: function() {
-
-					},
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Transparent,
-					enabled: false,
-					icon: "sap-icon://log",
-					press: function() {
-
-					},
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
-					})
-				})
-			]
-		});
-
-		var toolHeaderIcons = new sap.tnt.ToolHeader("toolHeaderIcons", {
-			content: [
-				new sap.m.Label ({
-					text: "Default:"
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell"
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					color: sap.ui.core.IconColor.Default
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					backgroundColor: sap.ui.core.IconColor.Default
-				}),
-				new sap.m.Label ({
-					text: "Contrast:"
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					color: sap.ui.core.IconColor.Contrast
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					backgroundColor: sap.ui.core.IconColor.Contrast
-				}),
-				new sap.m.Label ({
-					text: "Positive:"
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					color: sap.ui.core.IconColor.Positive
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					backgroundColor: sap.ui.core.IconColor.Positive
-				}),
-				new sap.m.Label ({
-					text: "Critical:"
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					color: sap.ui.core.IconColor.Critical
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					backgroundColor: sap.ui.core.IconColor.Critical
-				}),
-				new sap.m.Label ({
-					text: "Negative:"
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					color: sap.ui.core.IconColor.Negative
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					backgroundColor: sap.ui.core.IconColor.Negative
-				}),
-				new sap.m.Label ({
-					text: "Neutral:"
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					color: sap.ui.core.IconColor.Neutral
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					backgroundColor: sap.ui.core.IconColor.Neutral
-				}),
-				new sap.m.Label ({
-					text: "Interaction:"
-				}),
-				new sap.ui.core.Icon ({
-					src: "sap-icon://bell",
-					press: function (){
-						sap.m.MessageToast.show("Icon is pressed, but no interaction states visualized!");
-					}
-				}),
-			]
-		}).addStyleClass("sapUiLargeMarginTop");;
-
-		var toolHeaderButtons = new sap.tnt.ToolHeader("toolHeaderButtons", {
-			content: [
-				new sap.m.Button({
-					type: sap.m.ButtonType.Transparent,
-					text: "File",
-					press: function() {
-					},
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Transparent,
-					text: "Edit",
-					press: function() {
-					},
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Transparent,
-					text: "Edit",
-					enabled: false,
-					press: function() {
-					},
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Transparent,
-					text: "Add Item",
-					icon: sap.ui.core.IconPool.getIconURI("add")
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Transparent,
-					enabled: false,
-					text: "Add Item",
-					icon: sap.ui.core.IconPool.getIconURI("add")
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Transparent,
-					text: "Navigate",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Transparent,
-					text: "Navigate",
-					buttonMode: "Split",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Transparent,
-					enabled: false,
-					text: "Navigate",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Transparent,
-					icon:'sap-icon://customer',
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Emphasized,
-					text: "Mega Menu"
-				})
-				// // not proper way to create "Mega menu"
-				// new sap.m.Button({
-				// 	type: sap.m.ButtonType.Emphasized,
-				// 	text: "Mega Menu",
-				// 	iconFirst:false,
-				// 	icon: "sap-icon://megamenu",
-				// 	layoutData: new sap.m.OverflowToolbarLayoutData({
-				// 		priority: sap.m.OverflowToolbarPriority.Low
-				// 	})
-				// })
-			]
-		}).addStyleClass("sapUiLargeMarginTop");
-
-		var toolHeaderButtons2 = new sap.tnt.ToolHeader("toolHeaderButtons2", {
-			content: [
-				new sap.m.Button({
-					type: sap.m.ButtonType.Default,
-					text: "Default",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Back,
-					text: "Back",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Up,
-					text: "Up",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Default,
-					text: "Default",
-					enabled: false,
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Back,
-					text: "Back",
-					enabled: false,
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Up,
-					text: "Up",
-					enabled: false,
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Default,
-					icon: sap.ui.core.IconPool.getIconURI("customer")
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Back,
-					icon: sap.ui.core.IconPool.getIconURI("customer")
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Up,
-					icon: sap.ui.core.IconPool.getIconURI("customer")
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Default,
-					enabled: false,
-					icon: sap.ui.core.IconPool.getIconURI("customer")
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Back,
-					enabled: false,
-					icon: sap.ui.core.IconPool.getIconURI("customer")
-				}),
-				new sap.m.Button({
-					type: sap.m.ButtonType.Up,
-					enabled: false,
-					icon: sap.ui.core.IconPool.getIconURI("customer")
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Default,
-					text: "Navigate",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Default,
-					text: "Navigate",
-					buttonMode: "Split",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Default,
-					enabled: false,
-					text: "Navigate",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new sap.m.MenuButton({
-					type: sap.m.ButtonType.Default,
-					icon:'sap-icon://customer',
-				})
-			]
-		}).addStyleClass("sapUiLargeMarginTop");
-
-		var toolHeaderSelectSearch = new sap.tnt.ToolHeader("toolHeaderSelectSearch", {
-			content: [
-			new sap.m.Select({
-					icon: "sap-icon://settings",
-					type: "IconOnly",
-					autoAdjustWidth: true,
-					items: [
-						new sap.ui.core.Item({
-							text: "option 1",
-							key: "o1"
-						}),
-						new sap.ui.core.Item({
-							text: "option 2",
-							key: "o2"
+			// There are specific controls with specific order, that should be included in the ToolHeader
+			// in the time when theme Horizon is the default theme of UI5.
+			// This is checked by UXC-016 Shell requirement, which is valid for the ToolHeader as well:
+			// "Products must provide a shell bar that follows a defined structure and responsive behavior."
+			var toolHeaderHorizon = new sap.tnt.ToolHeader("horizonToolHeader", {
+				content: [
+					new sap.m.Button({
+						icon: 'sap-icon://menu2',
+						tooltip: 'Menu',
+						type: sap.m.ButtonType.Transparent,
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
 						})
-					]
-				}),
-				new sap.m.Select({
-					items: [
-						new sap.ui.core.Item({
-							text: "option 1",
-							key: "o1"
-						}),
-						new sap.ui.core.Item({
-							text: "option 2",
-							key: "o2"
-						})
-					],
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
-					})
-				}),
-				new sap.m.Select({
-					enabled: false,
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
 					}),
-					items: [
-						new sap.ui.core.Item({
-							text: "option 1",
-							key: "o1"
-						}),
-						new sap.ui.core.Item({
-							text: "option 2",
-							key: "o2"
+					new sap.m.Image({
+						src: "./images/SAP_Logo.png",
+						tooltip: "SAP logo",
+						press: function () {},
+						decorative: false,
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
 						})
-					],
-				}),
-				new sap.m.SearchField({
-					width: "200px",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					}),
+					new sap.m.Title({
+						id: "productName",
+						text: "Product name",
+						wrapping: false,
+						// layoutData: new sap.m.OverflowToolbarLayoutData({
+						// 	priority: sap.m.OverflowToolbarPriority.Disappear
+						// })
+					}),
+					new sap.m.Text({
+						id: "secondTitle",
+						text: "Second title",
+						wrapping: false,
+						// layoutData: new sap.m.OverflowToolbarLayoutData({
+						// 	priority: sap.m.OverflowToolbarPriority.Disappear
+						// })
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.SearchField({
+						id: "searchField",
+						width: "16rem",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low,
+							group: 1
+						})
+					}),
+					new sap.m.ToolbarSpacer({
+						id: "spacer",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low,
+							group: 1
+						})
+					}),
+					new sap.m.Button({
+						id: "searchButton",
+						tooltip: "Search",
+						type: sap.m.ButtonType.Transparent,
+						icon: "sap-icon://search",
+						visible: false
+					}),	
+					new sap.m.OverflowToolbarButton({
+						tooltip: "Action 1",
+						text: "Action 1",
+						type: sap.m.ButtonType.Transparent,
+						icon: "sap-icon://source-code",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							group: 2
+						})
+					}),
+					new sap.m.OverflowToolbarButton({
+						tooltip: "Action 2",
+						text: "Action 2",
+						type: sap.m.ButtonType.Transparent,
+						icon: "sap-icon://card",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							group: 2
+						})
+					}),
+					new sap.m.ToolbarSeparator({
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							group: 2
+						})
+					}),
+					new sap.m.OverflowToolbarButton({
+						text: "Settings",
+						type: sap.m.ButtonType.Transparent,
+						icon: "sap-icon://action-settings"
+					}),
+					new sap.m.Button({
+						tooltip: "Notifications",
+						type: sap.m.ButtonType.Transparent,
+						icon: "sap-icon://bell",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.tnt.ToolHeaderUtilitySeparator(),
+					new sap.m.ToolbarSpacer({
+						width: "1.125rem"
+					}),
+					new sap.m.Avatar({
+						tooltip: "Profile",
+						src: "images/Woman_avatar_01.png",
+						initials: "UI",
+						displaySize: "XS",
+						press: function () {},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
 					})
-				}),
-				new sap.m.SearchField({
-					width: "200px",
-					value: "Some",
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+				]
+			});
+
+			// This is the content and structure of the ToolHeader, which was required with Fiori 3 theme
+			var toolHeader = new sap.tnt.ToolHeader("shellLike", {
+				content: [
+					new sap.m.Button({
+						icon: 'sap-icon://menu2',
+						type: sap.m.ButtonType.Transparent,
+						press: function () {},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.ToolbarSpacer({
+						width: '20px'
+					}),
+					new sap.m.Image({
+						src: "./images/SAP_Logo.png"
+					}),
+					new sap.m.Text({
+						text: "Tool Header Text"
+					}),
+					new sap.m.Title({
+						text: "Tool Header Title"
+					}),
+					new sap.tnt.ToolHeaderUtilitySeparator({}),
+					new sap.m.Image({
+						src: "./images/CoPilot.svg",
+						press: function () {
+							sap.m.MessageToast.show("Image pressed!");
+						},
+					}),
+					new sap.m.ToolbarSpacer({
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+							minWidth: "20px"
+						})
+					}),
+					new sap.m.Avatar({
+						src: "images/Woman_avatar_01.png",
+						initials: "UI",
+						displaySize: "XS"
+					}),
+					new sap.m.Avatar({
+						src: "images/Woman_avatar_02.png",
+						initials: "UI",
+						displaySize: "XS",
+						press: function () {
+							sap.m.MessageToast.show("Avatar pressed!");
+						}
+					}),
+					new sap.m.Avatar({
+						initials: "UI",
+						displaySize: "XS"
+					}),
+					new sap.m.Avatar({
+						displaySize: "XS",
+						press: function () {
+							sap.m.MessageToast.show("Avatar pressed!");
+						}
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "User Name",
+						press: function () {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						enabled: false,
+						icon: "sap-icon://log",
+						press: function () {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
 					})
-				}),
-				new sap.m.SearchField({
-					width: "200px",
-					enabled: false,
-					layoutData: new sap.m.OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
-					}
-				)})
-			]
-		}).addStyleClass("sapUiLargeMarginTop");
+				]
+			}).addStyleClass("sapUiLargeMarginTop");
 
-		var toolHeaderITB = new sap.tnt.ToolHeader("toolHeaderITB", {
-			content: [
-				new sap.m.IconTabHeader({
-					backgroundDesign: "Transparent",
-					items: [
-						new sap.m.IconTabFilter ({text: "Filter 1"}),
-						new sap.m.IconTabFilter ({text: "Filter 2"}),
-						new sap.m.IconTabFilter ({text: "Filter 3"})
-					]
-				}),
-				new sap.m.IconTabHeader({
-					backgroundDesign: "Solid",
-					items: [
-						new sap.m.IconTabFilter ({text: "Filter 1"}),
-						new sap.m.IconTabFilter ({text: "Filter 2"}),
-						new sap.m.IconTabFilter ({text: "Filter 3"})
-					]
-				}),
-				new sap.m.IconTabHeader({
-					backgroundDesign: "Translucent",
-					items: [
-						new sap.m.IconTabFilter ({text: "Filter 1"}),
-						new sap.m.IconTabFilter ({text: "Filter 2"}),
-						new sap.m.IconTabFilter ({text: "Filter 3"})
-					]
-				}),
-				new sap.m.IconTabHeader({
-					backgroundDesign: "Transparent",
-					mode: "Inline",
-					items: [
-						new sap.m.IconTabFilter ({text: "Filter 1", count: "123"}),
-						new sap.m.IconTabFilter ({text: "Filter 2", enabled: false}),
-						new sap.m.IconTabFilter ({text: "Filter 3", count: "45"})
-					]
-				})
-			]
-		}).addStyleClass("sapUiLargeMarginTop");
+			var toolHeaderIcons = new sap.tnt.ToolHeader("toolHeaderIcons", {
+				content: [
+					new sap.m.Label({
+						text: "Default:"
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell"
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						color: sap.ui.core.IconColor.Default
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						backgroundColor: sap.ui.core.IconColor.Default
+					}),
+					new sap.m.Label({
+						text: "Contrast:"
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						color: sap.ui.core.IconColor.Contrast
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						backgroundColor: sap.ui.core.IconColor.Contrast
+					}),
+					new sap.m.Label({
+						text: "Positive:"
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						color: sap.ui.core.IconColor.Positive
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						backgroundColor: sap.ui.core.IconColor.Positive
+					}),
+					new sap.m.Label({
+						text: "Critical:"
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						color: sap.ui.core.IconColor.Critical
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						backgroundColor: sap.ui.core.IconColor.Critical
+					}),
+					new sap.m.Label({
+						text: "Negative:"
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						color: sap.ui.core.IconColor.Negative
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						backgroundColor: sap.ui.core.IconColor.Negative
+					}),
+					new sap.m.Label({
+						text: "Neutral:"
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						color: sap.ui.core.IconColor.Neutral
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						backgroundColor: sap.ui.core.IconColor.Neutral
+					}),
+					new sap.m.Label({
+						text: "Interaction:"
+					}),
+					new sap.ui.core.Icon({
+						src: "sap-icon://bell",
+						press: function () {
+							sap.m.MessageToast.show("Icon is pressed, but no interaction states visualized!");
+						}
+					}),
+				]
+			}).addStyleClass("sapUiLargeMarginTop");;
 
-		var toolHeaderObjStatus = new sap.tnt.ToolHeader("toolHeaderObjStatus", {
-			content: [
+			var toolHeaderButtons = new sap.tnt.ToolHeader("toolHeaderButtons", {
+				content: [
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "File",
+						press: function () {},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function () {},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						enabled: false,
+						press: function () {},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Add Item",
+						icon: sap.ui.core.IconPool.getIconURI("add")
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						enabled: false,
+						text: "Add Item",
+						icon: sap.ui.core.IconPool.getIconURI("add")
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Transparent,
+						text: "Navigate",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Transparent,
+						text: "Navigate",
+						buttonMode: "Split",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Transparent,
+						enabled: false,
+						text: "Navigate",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Transparent,
+						icon: 'sap-icon://customer',
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Emphasized,
+						text: "Mega Menu"
+					})
+					// // not proper way to create "Mega menu"
+					// new sap.m.Button({
+					// 	type: sap.m.ButtonType.Emphasized,
+					// 	text: "Mega Menu",
+					// 	iconFirst:false,
+					// 	icon: "sap-icon://megamenu",
+					// 	layoutData: new sap.m.OverflowToolbarLayoutData({
+					// 		priority: sap.m.OverflowToolbarPriority.Low
+					// 	})
+					// })
+				]
+			}).addStyleClass("sapUiLargeMarginTop");
+
+			var toolHeaderButtons2 = new sap.tnt.ToolHeader("toolHeaderButtons2", {
+				content: [
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						text: "Default",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Back,
+						text: "Back",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Up,
+						text: "Up",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						text: "Default",
+						enabled: false,
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Back,
+						text: "Back",
+						enabled: false,
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Up,
+						text: "Up",
+						enabled: false,
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						icon: sap.ui.core.IconPool.getIconURI("customer")
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Back,
+						icon: sap.ui.core.IconPool.getIconURI("customer")
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Up,
+						icon: sap.ui.core.IconPool.getIconURI("customer")
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						enabled: false,
+						icon: sap.ui.core.IconPool.getIconURI("customer")
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Back,
+						enabled: false,
+						icon: sap.ui.core.IconPool.getIconURI("customer")
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Up,
+						enabled: false,
+						icon: sap.ui.core.IconPool.getIconURI("customer")
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Default,
+						text: "Navigate",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Default,
+						text: "Navigate",
+						buttonMode: "Split",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Default,
+						enabled: false,
+						text: "Navigate",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.MenuButton({
+						type: sap.m.ButtonType.Default,
+						icon: 'sap-icon://customer',
+					})
+				]
+			}).addStyleClass("sapUiLargeMarginTop");
+
+			var toolHeaderSelectSearch = new sap.tnt.ToolHeader("toolHeaderSelectSearch", {
+				content: [
+					new sap.m.Select({
+						icon: "sap-icon://settings",
+						type: "IconOnly",
+						autoAdjustWidth: true,
+						items: [
+							new sap.ui.core.Item({
+								text: "option 1",
+								key: "o1"
+							}),
+							new sap.ui.core.Item({
+								text: "option 2",
+								key: "o2"
+							})
+						]
+					}),
+					new sap.m.Select({
+						items: [
+							new sap.ui.core.Item({
+								text: "option 1",
+								key: "o1"
+							}),
+							new sap.ui.core.Item({
+								text: "option 2",
+								key: "o2"
+							})
+						],
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.Select({
+						enabled: false,
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						}),
+						items: [
+							new sap.ui.core.Item({
+								text: "option 1",
+								key: "o1"
+							}),
+							new sap.ui.core.Item({
+								text: "option 2",
+								key: "o2"
+							})
+						],
+					}),
+					new sap.m.SearchField({
+						width: "200px",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.SearchField({
+						width: "200px",
+						value: "Some",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.SearchField({
+						width: "200px",
+						enabled: false,
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					})
+				]
+			}).addStyleClass("sapUiLargeMarginTop");
+
+			var toolHeaderITB = new sap.tnt.ToolHeader("toolHeaderITB", {
+				content: [
+					new sap.m.IconTabHeader({
+						backgroundDesign: "Transparent",
+						items: [
+							new sap.m.IconTabFilter({text: "Filter 1"}),
+							new sap.m.IconTabFilter({text: "Filter 2"}),
+							new sap.m.IconTabFilter({text: "Filter 3"})
+						]
+					}),
+					new sap.m.IconTabHeader({
+						backgroundDesign: "Solid",
+						items: [
+							new sap.m.IconTabFilter({text: "Filter 1"}),
+							new sap.m.IconTabFilter({text: "Filter 2"}),
+							new sap.m.IconTabFilter({text: "Filter 3"})
+						]
+					}),
+					new sap.m.IconTabHeader({
+						backgroundDesign: "Translucent",
+						items: [
+							new sap.m.IconTabFilter({text: "Filter 1"}),
+							new sap.m.IconTabFilter({text: "Filter 2"}),
+							new sap.m.IconTabFilter({text: "Filter 3"})
+						]
+					}),
+					new sap.m.IconTabHeader({
+						backgroundDesign: "Transparent",
+						mode: "Inline",
+						items: [
+							new sap.m.IconTabFilter({
+								text: "Filter 1",
+								count: "123"
+							}),
+							new sap.m.IconTabFilter({
+								text: "Filter 2",
+								enabled: false
+							}),
+							new sap.m.IconTabFilter({
+								text: "Filter 3",
+								count: "45"
+							})
+						]
+					})
+				]
+			}).addStyleClass("sapUiLargeMarginTop");
+
+			var toolHeaderObjStatus = new sap.tnt.ToolHeader("toolHeaderObjStatus", {
+				content: [
 					new sap.m.ObjectStatus({
-						title:'Error Status Title',
-						text:'Error Status Text',
-						icon:'sap-icon://status-negative',
-						state:sap.ui.core.ValueState.Error
+						title: 'Error Status Title',
+						text: 'Error Status Text',
+						icon: 'sap-icon://status-negative',
+						state: sap.ui.core.ValueState.Error
 					}),
 					new sap.m.ObjectStatus({
-						text:'Warning Status Text',
-						icon:'sap-icon://status-critical',
-						state:sap.ui.core.ValueState.Warning,
+						text: 'Warning Status Text',
+						icon: 'sap-icon://status-critical',
+						state: sap.ui.core.ValueState.Warning,
 						active: true
 					}),
 					new sap.m.ObjectStatus({
-						text:'Information Status Text',
-						icon:'sap-icon://hint',
-						state:sap.ui.core.ValueState.Information
+						text: 'Information Status Text',
+						icon: 'sap-icon://hint',
+						state: sap.ui.core.ValueState.Information
 					}),
 					new sap.m.ObjectStatus({
-						title:'Success Status Title',
-						text:'Success Status Text',
-						icon:'sap-icon://status-positive',
-						state:sap.ui.core.ValueState.Success
+						title: 'Success Status Title',
+						text: 'Success Status Text',
+						icon: 'sap-icon://status-positive',
+						state: sap.ui.core.ValueState.Success
 					}),
 					new sap.m.ObjectStatus({
-						title:'None Status Title',
-						text:'None Status Text',
-						icon:'sap-icon://status-inactive',
-						state:sap.ui.core.ValueState.None
+						title: 'None Status Title',
+						text: 'None Status Text',
+						icon: 'sap-icon://status-inactive',
+						state: sap.ui.core.ValueState.None
 					}),
 					new sap.m.ObjectStatus({
-						text:'Only text followed with only icon',
-						state:sap.ui.core.ValueState.Information
+						text: 'Only text followed with only icon',
+						state: sap.ui.core.ValueState.Information
 					}),
 					new sap.m.ObjectStatus({
-						icon:'sap-icon://hint',
-						state:sap.ui.core.ValueState.Information
+						icon: 'sap-icon://hint',
+						state: sap.ui.core.ValueState.Information
 					}),
 
-			]
-		}).addStyleClass("sapUiLargeMarginTop");
+				]
+			}).addStyleClass("sapUiLargeMarginTop");
 
-		var toolHeaderObjStatusInverted = new sap.tnt.ToolHeader("toolHeaderObjStatusInverted", {
-			content: [
-				new sap.m.ObjectStatus({
-					title:'Error Status Title',
-					text:'Error Status Text',
-					icon:'sap-icon://status-negative',
-					state:sap.ui.core.ValueState.Error,
-					inverted: true
-				}),
-				new sap.m.ObjectStatus({
-					text:'Warning Status Text',
-					icon:'sap-icon://status-critical',
-					state:sap.ui.core.ValueState.Warning,
-					active: true,
-					inverted: true
-				}),
-				new sap.m.ObjectStatus({
-					text:'Information Status Text',
-					icon:'sap-icon://hint',
-					state:sap.ui.core.ValueState.Information,
-					inverted: true
-				}),
-				new sap.m.ObjectStatus({
-					title:'Success Status Title',
-					text:'Success Status Text',
-					icon:'sap-icon://status-positive',
-					state:sap.ui.core.ValueState.Success,
-					inverted: true
-				}),
-				new sap.m.ObjectStatus({
-					title:'None Status Title',
-					text:'None Status Text',
-					icon:'sap-icon://status-inactive',
-					state:sap.ui.core.ValueState.None,
-					inverted: true
-				}),
-				new sap.m.ObjectStatus({
-					text:'Only text followed with only icon',
-					state:sap.ui.core.ValueState.Information,
-					inverted: true
-				}),
-				new sap.m.ObjectStatus({
-					icon:'sap-icon://hint',
-					state:sap.ui.core.ValueState.Information,
-					inverted: true
-				}),
-			]
-		}).addStyleClass("sapUiLargeMarginTop");
-	
-		var app = new sap.m.App("myApp", {initialPage:"tabBarPage"});
-		app.placeAt("body");
-		var initialPage = new sap.m.Page("tabBarPage", {
-			showHeader: false,
-			content: [
-			oToggleBtnCompact,
-			toolHeader,
-			toolHeaderIcons,
-			toolHeaderButtons,
-			toolHeaderButtons2,
-			toolHeaderSelectSearch,
-			toolHeaderITB,
-			toolHeaderObjStatus,
-			toolHeaderObjStatusInverted
-			]});
-		app.addPage(initialPage);
+			var toolHeaderObjStatusInverted = new sap.tnt.ToolHeader("toolHeaderObjStatusInverted", {
+				content: [
+					new sap.m.ObjectStatus({
+						title: 'Error Status Title',
+						text: 'Error Status Text',
+						icon: 'sap-icon://status-negative',
+						state: sap.ui.core.ValueState.Error,
+						inverted: true
+					}),
+					new sap.m.ObjectStatus({
+						text: 'Warning Status Text',
+						icon: 'sap-icon://status-critical',
+						state: sap.ui.core.ValueState.Warning,
+						active: true,
+						inverted: true
+					}),
+					new sap.m.ObjectStatus({
+						text: 'Information Status Text',
+						icon: 'sap-icon://hint',
+						state: sap.ui.core.ValueState.Information,
+						inverted: true
+					}),
+					new sap.m.ObjectStatus({
+						title: 'Success Status Title',
+						text: 'Success Status Text',
+						icon: 'sap-icon://status-positive',
+						state: sap.ui.core.ValueState.Success,
+						inverted: true
+					}),
+					new sap.m.ObjectStatus({
+						title: 'None Status Title',
+						text: 'None Status Text',
+						icon: 'sap-icon://status-inactive',
+						state: sap.ui.core.ValueState.None,
+						inverted: true
+					}),
+					new sap.m.ObjectStatus({
+						text: 'Only text followed with only icon',
+						state: sap.ui.core.ValueState.Information,
+						inverted: true
+					}),
+					new sap.m.ObjectStatus({
+						icon: 'sap-icon://hint',
+						state: sap.ui.core.ValueState.Information,
+						inverted: true
+					}),
+				]
+			}).addStyleClass("sapUiLargeMarginTop");
+
+			var app = new sap.m.App("myApp", {initialPage: "tabBarPage"});
+			app.placeAt("body");
+			var initialPage = new sap.m.Page("tabBarPage", {
+				showHeader: false,
+				content: [
+					oToggleBtnCompact,
+					toolHeaderHorizon,
+					toolHeader,
+					toolHeaderIcons,
+					toolHeaderButtons,
+					toolHeaderButtons2,
+					toolHeaderSelectSearch,
+					toolHeaderITB,
+					toolHeaderObjStatus,
+					toolHeaderObjStatusInverted
+				]
+			});
+			app.addPage(initialPage);
+
+			this._handleMediaChange = function () {
+				var rangeName = Device.media.getCurrentRange("StdExt").name;
+
+				switch (rangeName) {
+					// Shell Desktop
+					case "LargeDesktop":
+						Core.byId("productName").setVisible(true);
+						Core.byId("secondTitle").setVisible(true);
+						Core.byId("searchField").setVisible(true);
+						Core.byId("spacer").setVisible(true);
+						Core.byId("searchButton").setVisible(false);
+						MessageToast.show("Screen width is corresponding to Large Desktop");
+						break;
+
+					// Tablet - Landscape
+					case "Desktop":
+						Core.byId("productName").setVisible(true);
+						Core.byId("secondTitle").setVisible(false);
+						Core.byId("searchField").setVisible(true);
+						Core.byId("spacer").setVisible(true);
+						Core.byId("searchButton").setVisible(false);
+						MessageToast.show("Screen width is corresponding to Desktop");
+						break;
+
+					// Tablet - Portrait
+					case "Tablet":
+						Core.byId("productName").setVisible(true);
+						Core.byId("secondTitle").setVisible(true);
+						Core.byId("searchButton").setVisible(true);
+						Core.byId("searchField").setVisible(false);
+						Core.byId("spacer").setVisible(false);
+						MessageToast.show("Screen width is corresponding to Tablet");
+						break;
+
+					case "Phone":
+						Core.byId("searchButton").setVisible(true);
+						Core.byId("searchField").setVisible(false);
+						Core.byId("spacer").setVisible(false);
+						Core.byId("productName").setVisible(false);
+						Core.byId("secondTitle").setVisible(false);
+						MessageToast.show("Screen width is corresponding to Phone");
+						break;
+
+					default:
+						break;
+				}
+			};
+
+			sap.ui.Device.media.attachHandler(this._handleMediaChange, this);
+			this._handleMediaChange();
+		});
 	</script>
 
 </head>
