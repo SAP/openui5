@@ -3081,6 +3081,9 @@ sap.ui.define([
 
 		sinon.stub(oFieldHelp, "shouldOpenOnFocus").returns(true);
 		sinon.spy(oFieldHelp, "toggleOpen");
+		sinon.stub(oFieldHelp, "isOpen").callsFake(function() {
+			return this.toggleOpen.called;
+		});
 
 		oField.focus();
 
@@ -3099,11 +3102,27 @@ sap.ui.define([
 
 				setTimeout(function () {
 					assert.ok(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
-					assert.notOk(oFieldHelp.toggleOpen.calledOnce, "open not called");
+					assert.notOk(oFieldHelp.toggleOpen.called, "open not called");
 
-					oFieldHelp.close();
+					// Typehaead schold not open if Dialog was opened
+					oField.getFocusDomRef().blur();
+					oFieldHelp.shouldOpenOnFocus.resetHistory();
+					oFieldHelp.shouldOpenOnFocus.returns(true);
+					oFieldHelp.toggleOpen.resetHistory();
+					var aContent = oField.getAggregation("_content");
+					var oContent = aContent && aContent.length > 0 && aContent[0];
 
-					resolve();
+					oField.focus();
+					oContent.fireValueHelpRequest(); // simulate value help request to open value help
+
+					setTimeout(function () {
+						assert.ok(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+						assert.ok(oFieldHelp.toggleOpen.calledOnce, "open called once");
+
+						oFieldHelp.close();
+
+						resolve();
+					},350);
 				},350);
 			},350);
 		});
@@ -3134,7 +3153,7 @@ sap.ui.define([
 		qutils.triggerEvent("tap", oInnerField.getId());
 
 		assert.ok(oFieldHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
-		assert.notOk(oFieldHelp.toggleOpen.calledOnce, "open not called");
+		assert.notOk(oFieldHelp.toggleOpen.called, "open not called");
 
 		oFieldHelp.close();
 	});
