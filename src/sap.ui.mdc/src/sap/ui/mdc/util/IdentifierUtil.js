@@ -13,7 +13,6 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 	 *
 	 * @namespace
 	 * @private
-	 * @experimental This module is only for internal/experimental use!
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.util.IdentifierUtil
 	 */
