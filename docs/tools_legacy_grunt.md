@@ -98,28 +98,3 @@ grunt serve
 
 open http://localhost:8080/testsuite/documentation.html#/api
 ```
-
-## cldr
-
-Install required npm modules and regenerate CLDR files contained in sap.ui.core.cldr.
-
-## cldr-download
-
-Install the required npm modules for UI5 CLDR generation.
-
-## cldr-generate
-
-Argument | Description | Default
----------- | --------------------------------------------------------------------------------------------- | -------------
-output | The folder path where the generated JSON files are stored. | none
-prettyPrint | Whether the output JSON files are pretty printed | true
-
-Generate UI5 locale JSON files using the CLDR npm mpdules.
-
-```
-grunt cldr-generate [--output=<output-folder-path>] [--no-prettyPrint]
-
-# example
-#  grunt cldr-generate --output=cldr  # generate the UI5 locale JSON files which are saved in folder "cldr" and pretty printed
-#  grunt cldr-generate  # generate the UI5 locale JSON files which replace the UI5 locale JSON files directly
-```
