@@ -2382,6 +2382,23 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("cloneNo$", function (assert) {
+		var oCloneExpectation = this.mock(_Helper).expects("clone")
+				.withExactArgs("~value~", sinon.match.func)
+				.returns("~clone~"),
+			fnReplacer;
+
+		// code under test
+		assert.strictEqual(_Helper.cloneNo$("~value~"), "~clone~");
+
+		fnReplacer = oCloneExpectation.getCall(0).args[1];
+
+		// code under test
+		assert.strictEqual(fnReplacer("$foo", 42), undefined);
+		assert.strictEqual(fnReplacer("f$oo", 42), 42);
+	});
+
+	//*********************************************************************************************
 	[{
 		mHeaders : {},
 		mResolvedHeader : {}

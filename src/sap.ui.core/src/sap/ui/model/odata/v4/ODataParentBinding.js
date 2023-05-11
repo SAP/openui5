@@ -399,7 +399,7 @@ sap.ui.define([
 
 		for (sKey in mParameters) {
 			if (sKey.startsWith("$$")) {
-				if (mParameters[sKey] === mBindingParameters[sKey]) {
+				if (this.isUnchangedParameter(sKey, mParameters[sKey])) {
 					continue; // ignore unchanged binding-specific parameters
 				}
 				throw new Error("Unsupported parameter: " + sKey);
@@ -1111,6 +1111,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#isMeta
+	 */
+	ODataParentBinding.prototype.isMeta = function () {
+		return false;
+	};
+
+	/**
 	 * Tells whether implicit loading of side effects via PATCH requests is switched off for this
 	 * binding.
 	 *
@@ -1126,14 +1134,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#isMeta
-	 */
-	ODataParentBinding.prototype.isMeta = function () {
-		return false;
-	};
-
-	/**
 	 * Whether the dataRequested and dataReceived events related to the refresh must not be bubbled
 	 * up to the model.
 	 *
@@ -1144,6 +1144,18 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.isRefreshWithoutBubbling = function () {
 		return this.oRefreshPromise && this.oRefreshPromise.$preventBubbling;
+	};
+
+	/**
+	 * Tells whether the current value of the binding-specific parameter with the given name is
+	 * "unchanged" when compared to the given other value.
+	 *
+	 * @param {string} sName - The parameter's name
+	 * @param {any} vOtherValue - The parameter's other value
+	 * @returns {boolean} Whether the parameter is "unchanged"
+	 */
+	ODataParentBinding.prototype.isUnchangedParameter = function (sName, vOtherValue) {
+		return this.mParameters[sName] === vOtherValue;
 	};
 
 	/**
@@ -1539,6 +1551,7 @@ sap.ui.define([
 		"doDeregisterChangeListener",
 		"getGeneration",
 		"hasPendingChangesForPath",
+		"isUnchangedParameter",
 		"updateAfterCreate"
 	].forEach(function (sMethod) { // method (still) not final, allow for "super" calls
 		asODataParentBinding.prototype[sMethod] = ODataParentBinding.prototype[sMethod];

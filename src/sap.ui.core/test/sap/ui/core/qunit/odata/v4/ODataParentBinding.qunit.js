@@ -257,6 +257,7 @@ sap.ui.define([
 				});
 
 			this.mock(oBinding).expects("checkTransient").withExactArgs();
+			this.mock(oBinding).expects("isUnchangedParameter").never();
 			this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 			this.mock(oBinding).expects("applyParameters").withExactArgs(
 				oFixture.mExpectedParameters, oFixture.sChangeReason || ChangeReason.Change);
@@ -274,6 +275,7 @@ sap.ui.define([
 				sPath : "/EMPLOYEES"
 			});
 
+		this.mock(oBinding).expects("isUnchangedParameter").never();
 		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		// code under test
@@ -291,6 +293,8 @@ sap.ui.define([
 				sPath : "/EMPLOYEES"
 			});
 
+		this.mock(oBinding).expects("isUnchangedParameter").withExactArgs("$$groupId", "newGroupId")
+			.returns(false);
 		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		//code under test
@@ -310,10 +314,15 @@ sap.ui.define([
 				mParameters : {$$ownRequest : true},
 				sPath : "/ProductList",
 				applyParameters : function () {}
-			});
+			}),
+			oBindingMock = this.mock(oBinding);
 
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
-		this.mock(oBinding).expects("applyParameters")
+		oBindingMock.expects("isUnchangedParameter").withExactArgs("$$ownRequest", true)
+			.returns(true);
+		oBindingMock.expects("isUnchangedParameter").withExactArgs("$$sharedRequest", undefined)
+			.returns(true);
+		oBindingMock.expects("hasPendingChanges").withExactArgs(true).returns(false);
+		oBindingMock.expects("applyParameters")
 			.withExactArgs({$$ownRequest : true, $count : true}, ChangeReason.Change);
 
 		// code under test
@@ -332,6 +341,7 @@ sap.ui.define([
 				sPath : "/EMPLOYEES"
 			});
 
+		this.mock(oBinding).expects("isUnchangedParameter").never();
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(true);
 
 		assert.throws(function () {
@@ -348,6 +358,7 @@ sap.ui.define([
 				sPath : "/EMPLOYEES"
 			});
 
+		this.mock(oBinding).expects("isUnchangedParameter").never();
 		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		// code under test
@@ -362,6 +373,7 @@ sap.ui.define([
 				sPath : "/EMPLOYEES"
 			});
 
+		this.mock(oBinding).expects("isUnchangedParameter").never();
 		// refreshing the binding is unnecessary, if the binding parameters are unchanged
 		this.mock(oBinding).expects("hasPendingChanges").never();
 
@@ -381,6 +393,7 @@ sap.ui.define([
 					sPath : "/EMPLOYEES"
 				});
 
+		this.mock(oBinding).expects("isUnchangedParameter").never();
 		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		// code under test
@@ -406,6 +419,7 @@ sap.ui.define([
 				}
 			};
 
+		this.mock(oBinding).expects("isUnchangedParameter").never();
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 		this.mock(oBinding).expects("applyParameters")
 			.withExactArgs({$expand : {SO_2_SOITEM : {$orderby : "ItemPosition"}}},
@@ -450,6 +464,7 @@ sap.ui.define([
 				}),
 				sParametersAsJSON = JSON.stringify(oBinding.mParameters);
 
+			this.mock(oBinding).expects("isUnchangedParameter").never();
 			this.mock(oBinding).expects("hasPendingChanges").never();
 			this.mock(oBinding).expects("applyParameters").never();
 
@@ -478,10 +493,15 @@ sap.ui.define([
 				},
 				sPath : "/ProductList",
 				applyParameters : function () {}
-			});
+			}),
+			oBindingMock = this.mock(oBinding);
 
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
-		this.mock(oBinding).expects("applyParameters")
+		oBindingMock.expects("isUnchangedParameter").withExactArgs("$$ownRequest", true)
+			.returns(true);
+		oBindingMock.expects("isUnchangedParameter").withExactArgs("$$sharedRequest", undefined)
+			.returns(true);
+		oBindingMock.expects("hasPendingChanges").withExactArgs(true).returns(false);
+		oBindingMock.expects("applyParameters")
 			.withExactArgs({
 				$$ownRequest : true,
 				$count : true,
@@ -497,6 +517,18 @@ sap.ui.define([
 			$expand : "oldExpand",
 			$select : "oldSelect"
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isUnchangedParameter", function (assert) {
+		var oBinding = new ODataParentBinding({
+				mParameters : {
+					$$ownRequest : true
+				}
+			});
+
+		assert.strictEqual(oBinding.isUnchangedParameter("$$ownRequest", true), true);
+		assert.strictEqual(oBinding.isUnchangedParameter("$$ownRequest", 42), false);
 	});
 
 	//*********************************************************************************************
@@ -3896,6 +3928,7 @@ sap.ui.define([
 			"doDeregisterChangeListener",
 			"getGeneration",
 			"hasPendingChangesForPath",
+			"isUnchangedParameter",
 			"updateAfterCreate"
 		].forEach(function (sMethod) {
 			assert.strictEqual(asODataParentBinding.prototype[sMethod], oBinding[sMethod]);

@@ -355,7 +355,7 @@ sap.ui.define([
 		if (sChangeReason === "") { // called from #setAggregation
 			if (this.mQueryOptions.$apply === sOldApply
 				&& (!this.mParameters.$$aggregation || !oOldAggregation
-					|| _Helper.deepEqual(this.mParameters.$$aggregation, oOldAggregation))) {
+					|| this.isUnchangedParameter("$$aggregation", oOldAggregation))) {
 				return; // unchanged $apply derived from $$aggregation
 			}
 			// unless called from updateAnalyticalInfo, use ChangeReason.Filter so that the table
@@ -2857,6 +2857,24 @@ sap.ui.define([
 	ODataListBinding.prototype.isLengthFinal = function () {
 		// some controls use .bLengthFinal on list binding instead of calling isLengthFinal
 		return this.bLengthFinal;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#isUnchangedParameter
+	 */
+	ODataListBinding.prototype.isUnchangedParameter = function (sName, vOtherValue) {
+		if (sName === "$$aggregation") {
+			vOtherValue = _Helper.clone(vOtherValue); // avoid modification due to normalization
+			_AggregationHelper.buildApply(vOtherValue);
+
+			return _Helper.deepEqual(
+				_Helper.cloneNo$(this.mParameters.$$aggregation),
+				_Helper.cloneNo$(vOtherValue)
+			);
+		}
+
+		return asODataParentBinding.prototype.isUnchangedParameter.apply(this, arguments);
 	};
 
 	/**
