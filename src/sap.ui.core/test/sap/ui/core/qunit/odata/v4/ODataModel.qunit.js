@@ -745,7 +745,7 @@ sap.ui.define([
 		oModelMock.expects("isAutoGroup").withExactArgs("groupId").returns(true);
 		this.mock(oModel.oRequestor).expects("relocateAll")
 			.withExactArgs("$parked.groupId", "groupId");
-		this.mock(oModel.oRequestor).expects("addChangeSet").never();
+		this.mock(oModel.oRequestor).expects("addChangeSet").withExactArgs("groupId");
 		oModelMock.expects("_submitBatch").never(); // not yet
 		oModelMock.expects("addPrerenderingTask").callsFake(function (fnCallback) {
 			setTimeout(function () {
