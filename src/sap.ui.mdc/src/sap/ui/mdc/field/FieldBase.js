@@ -606,7 +606,6 @@ sap.ui.define([
 			bool: {
 				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Popover", "sap/ui/mdc/valuehelp/content/Bool"],
 				id: "BoolDefaultHelp",
-				getDelegate: "getDefaultValueHelpDelegate",
 				contentProperties: {},
 				dialog: false,
 				control: undefined,
@@ -617,7 +616,6 @@ sap.ui.define([
 			defineConditions: {
 				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/Conditions"],
 				id: "Field-DefineConditions-Help",
-				getDelegate: "getDefaultValueHelpDelegate",
 				contentProperties: {},
 				dialog: true,
 				control: undefined,
@@ -2130,9 +2128,8 @@ sap.ui.define([
 					var ValueHelp = aModules[0];
 					var Container = aModules[1];
 					var Content = aModules[2];
-					var oDelegate = this.bDelegateInitialized && this.getControlDelegate()[mDefaultHelps[sType].getDelegate]();
 					oValueHelp = new ValueHelp(mDefaultHelps[sType].id, {
-						delegate: oDelegate
+						delegate: {name: "sap/ui/mdc/ValueHelpDelegate", payload: {isDefaultHelp: true}} // use base-delegate as TypeUtil of delegate is not used in current ValueHelp implementation as we transfer the Type of the Field into the ValueHelp (oConfig)
 					});
 					var oContainer = new Container(mDefaultHelps[sType].id + "-container", {
 						content: [new Content(mDefaultHelps[sType].id + "-content", mDefaultHelps[sType].contentProperties)]

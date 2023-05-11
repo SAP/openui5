@@ -329,7 +329,7 @@ sap.ui.define([
 		assert.ok(oDialog && oDialog instanceof Dialog, "Dialog used");
 		var aDialogContent = oDialog && oDialog.getContent()[0];
 		assert.ok(aDialogContent && aDialogContent instanceof Conditions, "ConditionPanel used");
-		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/ValueHelpDelegate", payload: {}}, "base delegate used on ValueHelp");
+		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/ValueHelpDelegate", payload: {isDefaultHelp: true}}, "base delegate used on ValueHelp");
 
 		var oSuggestControl = oField.getControlForSuggestion();
 		assert.equal(oSuggestControl, oContent, "inner control is used for suggestion");
@@ -401,22 +401,6 @@ sap.ui.define([
 		}, 0);
 
 		oStub.restore();
-
-	});
-
-	QUnit.test("V4 delegate on default field help", function(assert) {
-
-		oField.destroy();
-		oField = new FieldBase("F1", {
-			conditions: "{cm>/conditions/Name}",
-			delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}}
-		}).placeAt("content");
-		oCore.applyChanges();
-
-		assert.equal(oField._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
-		var oFieldHelp = oCore.byId(oField._sDefaultFieldHelp);
-		assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
-		assert.deepEqual(oFieldHelp.getDelegate(), {name: "delegates/odata/v4/ValueHelpDelegate", payload: {}}, "V4 delegate used on ValueHelp");
 
 	});
 
@@ -1457,7 +1441,7 @@ sap.ui.define([
 					var aPopoverContent = oPopover && oPopover.getContent()[0];
 					assert.ok(aPopoverContent && aPopoverContent instanceof Bool, "Bool content used");
 					assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
-					assert.deepEqual(oFieldHelp.getDelegate(), {name: "delegates/odata/v4/ValueHelpDelegate", payload: {}}, "base delegate used on FieldHelp");
+					assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/ValueHelpDelegate", payload: {isDefaultHelp: true}}, "base delegate used on FieldHelp");
 					oFieldEditSingle.focus();
 					assert.equal(oPopover.getTitle(), "", "no title on typeahead");
 
