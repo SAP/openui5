@@ -100,7 +100,6 @@ sap.ui.define([
 	 *
 	 * @example
 	 *  {
-	 * 		modification: new FlexModificationHandler(),
 	 * 		helper: new Helper([
 	 * 			{key: "idA", label: "Field A", path: "path/propA"},
 	 * 			{key: "idB", label: "Field B", path: "path/propB"}
@@ -923,6 +922,20 @@ sap.ui.define([
 				});
 				return mUiSettings;
 			});
+	};
+
+	/**
+	 * This method can be used to determine if a control is registered in the Engine.
+	 *
+	 * @private
+	 * @ui5-restricted sap.m
+	 *
+	 * @param {string|sap.ui.core.Control} vControl The control ID or instance
+	 * @returns {boolean} true if modification settings were already determined
+	 */
+	Engine.prototype.isRegistered = function (vControl) {
+		var oRegistryEntry = this._getRegistryEntry(vControl);
+		return !!oRegistryEntry;
 	};
 
 	/**

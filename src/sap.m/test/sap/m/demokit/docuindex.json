@@ -1395,7 +1395,6 @@
 			"sap.m.sample.TableLayout",
 			"sap.m.sample.TableMergeCells",
 			"sap.m.sample.TableMultiSelectMode",
-			"sap.m.sample.TablePerso",
 			"sap.m.sample.TableScrollToIndex",
 			"sap.m.sample.TableVerticalAlignment",
 			"sap.m.sample.TableViewSettingsDialog",
@@ -1408,7 +1407,8 @@
 			"sap.m.sample.TableContextualWidthStatic",
 			"sap.m.sample.TableNavigated",
 			"sap.m.sample.TableAutoPopin",
-			"sap.m.sample.TableStrictLayout"
+			"sap.m.sample.TableStrictLayout",
+			"sap.m.sample.p13n.Engine"
 		  ]
 		},
 		{

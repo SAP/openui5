@@ -21,6 +21,8 @@ sap.ui.define([
 	/**
 	 * Constructor for a new TablePersoController.
 	 *
+	 * @deprecated since 1.115. Please use the {@link sap.m.p13n.Engine Engine} for personalization instead.
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
@@ -43,6 +45,7 @@ sap.ui.define([
 		},
 
 		metadata: {
+			deprecated: true,
 			properties: {
 
 				/**

@@ -67,12 +67,14 @@ sap.ui.define([
 		],
 		extensions: {
 			flChangeHandlers: {
-				"sap.ui.table.Table": {
-					"moveElements": "default"
-				},
-				"sap.ui.table.AnalyticalTable": {
-					"moveElements": "default"
-				}
+				// Note: MoveElements change handling is deprecated
+				//
+				// "sap.ui.table.Table": {
+				// 	"moveElements": "default"
+				// },
+				// "sap.ui.table.AnalyticalTable": {
+				// 	"moveElements": "default"
+				// }
 			},
 			//Configuration used for rule loading of Support Assistant
 			"sap.ui.support": {
