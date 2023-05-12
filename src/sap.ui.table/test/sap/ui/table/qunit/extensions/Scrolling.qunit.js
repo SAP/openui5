@@ -87,13 +87,13 @@ sap.ui.define([
 		assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0, "Table content does not fit: Horizontal scrollbar is visible");
 
 		oTable.getColumns()[0].setWidth("10px");
-		oTable.rerender();
+		oCore.applyChanges();
 		assert.ok(oHSb.offsetWidth === 0 && oHSb.offsetHeight === 0, "Table content does fit: Horizontal scrollbar is not visible");
 
 		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 		oTable.setVisibleRowCount(6);
 		oTable.getColumns()[0].setWidth("495px");
-		oTable.rerender();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oModel.oData.push({});
@@ -118,13 +118,14 @@ sap.ui.define([
 		var oHSbComputedStyle = window.getComputedStyle(oHSb);
 		var oHSbContentComputedStyle = window.getComputedStyle(oHSbContent);
 
-		oTable.rerender();
+		oTable.invalidate();
+		oCore.applyChanges();
 		assert.strictEqual(oHSbComputedStyle.marginLeft, "48px", "Left margin");
 		assert.strictEqual(oHSbComputedStyle.marginRight, "17px", "Right margin");
 		assert.strictEqual(oHSbContentComputedStyle.width, "800px", "Scroll range");
 
 		oTable.getColumns()[0].setWidth("10px");
-		oTable.rerender();
+		oCore.applyChanges();
 		assert.strictEqual(oHSb.style.marginLeft, "", "Scrollbar hidden: Left margin");
 		assert.strictEqual(oHSb.style.marginRight, "", "Scrollbar hidden: Right margin");
 		assert.strictEqual(oHSbContent.style.width, "", "Scrollbar hidden: Scroll range");
@@ -134,7 +135,7 @@ sap.ui.define([
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(2);
 		oTable.setRowActionTemplate(new RowAction({items: [new RowActionItem({type: tableLibrary.RowActionType.Navigation})]}));
-		oTable.rerender();
+		oCore.applyChanges();
 		assert.strictEqual(oHSbComputedStyle.marginLeft, "88px", "Fixed columns and row actions: Left margin");
 		assert.strictEqual(oHSbComputedStyle.marginRight, "107px", "Fixed columns and row actions: Right margin");
 		assert.strictEqual(oHSbContentComputedStyle.width, "500px", "Fixed columns and row actions: Scroll range");
@@ -163,7 +164,8 @@ sap.ui.define([
 				path: "/",
 				model: "other"
 			});
-			oTable.rerender();
+			oTable.invalidate();
+			oCore.applyChanges();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			oVSb = oScrollExtension.getVerticalScrollbar();
 
@@ -183,12 +185,12 @@ sap.ui.define([
 		var oVSbComputedStyle = window.getComputedStyle(oVSb);
 
 		this.oTable.setColumnHeaderHeight(78);
-		this.oTable.rerender();
+		oCore.applyChanges();
 		assert.strictEqual(oVSbComputedStyle.top, "0px", "Top position");
 
 		this.oTable.setVisibleRowCount(2);
 		this.oTable.setFixedRowCount(1);
-		this.oTable.rerender();
+		oCore.applyChanges();
 		assert.strictEqual(oVSbComputedStyle.top, TableUtils.BaseSize.sapUiSizeCozy + "px", "Fixed rows: Top position");
 	});
 
@@ -2320,7 +2322,8 @@ sap.ui.define([
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
 			}).then(oTable.qunit.whenNextRowsUpdated).then(TableQUnitUtils.$wait(0)).then(function() {
-				oTable.rerender();
+				oTable.invalidate();
+				oCore.applyChanges();
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			}).then(oTable.qunit.$scrollVSbTo(98)).then(function() {
@@ -2351,7 +2354,8 @@ sap.ui.define([
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
 			}).then(TableQUnitUtils.$wait(0)).then(function() {
-				oTable.rerender();
+				oTable.invalidate();
+				oCore.applyChanges();
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			}).then(oTable.qunit.$scrollVSbTo(98)).then(function() {

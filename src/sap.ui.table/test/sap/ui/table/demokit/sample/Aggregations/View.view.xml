@@ -44,7 +44,7 @@
 							<m:FacetFilterList
 								title="{type}"
 								key="{key}"
-								multiSelect="true"
+								mode="MultiSelect"
 								listClose="handleListClose"
 								items="{values}" >
 								<m:items>

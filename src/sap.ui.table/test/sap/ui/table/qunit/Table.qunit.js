@@ -3937,6 +3937,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.test("Expand", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
@@ -3962,6 +3965,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.test("Collapse", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
@@ -4184,6 +4190,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.115
+	 */
 	QUnit.test("Personalization", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
@@ -4465,6 +4474,9 @@ sap.ui.define([
 
 	QUnit.module("Legacy Modules", {});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.test("TreeAutoExpandMode", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/table/TreeAutoExpandMode", "sap/ui/table/library"], function(oClass, oLib) {

@@ -614,7 +614,8 @@ sap.ui.define([
 		var aColumns = oTable.getColumns();
 
 		this.oDDI.bIgnoreMetadataCheck = true;
-		oTable.rerender();
+		oTable.invalidate();
+		oCore.applyChanges();
 
 		// move non-fixed columns
 		triggerDragEvent("dragstart", aColumns[1]);
@@ -646,8 +647,8 @@ sap.ui.define([
 		oTreeTable.addDragDropConfig(this.oDDI);
 		this.oDDI.bIgnoreMetadataCheck = true;
 
+		oTreeTable.invalidate();
 		oCore.applyChanges();
-		oTreeTable.rerender();
 
 		for (var i = 0; i < aColumns.length; i++) {
 			var oColumnRef = aColumns[i].getDomRef();
@@ -684,8 +685,8 @@ sap.ui.define([
 
 		this.oDDI.bIgnoreMetadataCheck = true;
 
+		oTable.invalidate();
 		oCore.applyChanges();
-		oTable.rerender();
 
 		for (var i = 0; i < aColumns.length; i++) {
 			var oColumnRef = aColumns[i].getDomRef();
