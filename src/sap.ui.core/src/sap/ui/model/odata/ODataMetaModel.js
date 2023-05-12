@@ -340,6 +340,45 @@ sap.ui.define([
 	 */
 
 	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.ComplexType
+	 *
+	 * An object representing an OData complex type.
+	 *
+	 * @property {string} $path
+	 *   The path to the complex type
+	 * @property {string} name
+	 *   The complex type's name
+	 * @property {string} namespace
+	 *   The complex type's namespace
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.Property>} property
+	 *   The complex type's properties
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.PropertyRef
+	 *
+	 * An object representing an OData property reference.
+	 *
+	 * @property {string} name
+	 *   The property name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.EntityKey
+	 *
+	 * An object representing an OData entity type's key.
+	 *
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.PropertyRef>} propertyRef
+	 *   The references to the properties defining the entity type's key
+	 *
+	 * @public
+	 */
+
+	/**
 	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.NavigationProperty
 	 *
 	 * An OData navigation property of an entity type.
@@ -352,6 +391,72 @@ sap.ui.define([
 	 *   The qualified name of the navigation property's association
 	 * @property {string} toRole
 	 *   The name of the other end of the relationship; refers to a role defined in the association
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.EntityType
+	 *
+	 * An object representing an OData entity type.
+	 *
+	 * @property {string} $path
+	 *   The path to the entity type
+	 * @property {sap.ui.model.odata.ODataMetaModel.EntityKey} key
+	 *   The entity type's key
+	 * @property {string} name
+	 *   The entity type's name
+	 * @property {string} namespace
+	 *   The entity type's namespace
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.NavigationProperty>} [navigationProperty]
+	 *   The entity type's navigation properties
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.Property>} [property]
+	 *   The entity type's properties
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable}
+	 *   sap.ui.model.odata.ODataMetaModel.FunctionImportParameter
+	 *
+	 * An object representing an OData function import parameter.
+	 *
+	 * @property {string} name
+	 *   The function import parameter's name
+	 * @property {string} type
+	 *   The function import parameter's type; the value is identical to the corresponding XML attribute value in the
+	 *   service metadata document.
+	 * @property {"false"|"true"} [fixedLength]
+	 *   The fixedLength constraint if supported by the function import parameter's type
+	 * @property {string} [maxLength]
+	 *   The maxLength constraint if supported by the function import parameter's type
+	 * @property {"In"|"InOut"|"Out"} [mode]
+	 *   The function import parameter's mode
+	 * @property {string} [precision]
+	 *   The precision constraint if supported by the function import parameter's type
+	 * @property {string} [scale]
+	 *   The scale constraint if supported by the function import parameter's type
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.FunctionImport
+	 *
+	 * An object representing an OData function import.
+	 *
+	 * @property {string} [entitySet]
+	 *   The entity set of the function import's return value
+	 * @property {"GET"|"POST"} [httpMethod]
+	 *   The http method to execute the function import
+	 * @property {string} name
+	 *   The function import's name
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.FunctionImportParameter>} [parameter]
+	 *   The function import parameters
+	 * @property {string} [returnType]
+	 *   The qualified name of the function import's return type; the value is identical to the corresponding
+	 *   XML attribute value in the service metadata document.
 	 *
 	 * @public
 	 */
@@ -1173,7 +1278,7 @@ sap.ui.define([
 	 *   a qualified name, e.g. "ACME.Address"
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the complex type is returned as a path or as an object
-	 * @returns {object|string|undefined|null}
+	 * @returns {sap.ui.model.odata.ODataMetaModel.ComplexType|string|undefined|null}
 	 *   (the path to) the complex type with the given qualified name; <code>undefined</code> (for
 	 *   a path) or <code>null</code> (for an object) if no such type is found
 	 * @public
@@ -1244,7 +1349,7 @@ sap.ui.define([
 	 *   a qualified name, e.g. "ACME.Product"
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the entity type is returned as a path or as an object
-	 * @returns {object|string|undefined|null}
+	 * @returns {sap.ui.model.odata.ODataMetaModel.EntityType|string|undefined|null}
 	 *   (the path to) the entity type with the given qualified name; <code>undefined</code> (for a
 	 *   path) or <code>null</code> (for an object) if no such type is found
 	 * @public
@@ -1261,7 +1366,7 @@ sap.ui.define([
 	 *   a simple or qualified name, e.g. "Save" or "MyService.Entities/Save"
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the function import is returned as a path or as an object
-	 * @returns {object|string|undefined|null}
+	 * @returns {sap.ui.model.odata.ODataMetaModel.FunctionImport|string|undefined|null}
 	 *   (the path to) the function import with the given simple name; <code>undefined</code> (for
 	 *   a path) or <code>null</code> (for an object) if no such function import is found
 	 * @public
@@ -1323,7 +1428,7 @@ sap.ui.define([
 	 * </li>
 	 * </ul>
 	 *
-	 * @param {object} oType
+	 * @param {sap.ui.model.odata.ODataMetaModel.ComplexType|sap.ui.model.odata.ODataMetaModel.EntityType} oType
 	 *   a complex type as returned by {@link #getODataComplexType getODataComplexType}, or
 	 *   an entity type as returned by {@link #getODataEntityType getODataEntityType}
 	 * @param {string|string[]} vName
