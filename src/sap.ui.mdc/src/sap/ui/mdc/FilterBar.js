@@ -23,7 +23,6 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @experimental
-	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.FilterBar
@@ -261,7 +260,6 @@ sap.ui.define([
 	 * Returns the external conditions of the inner condition model.
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
 	 * @private
-	 * @ui5-restricted sap.fe, sap.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBar</code>
 	 */
@@ -277,7 +275,6 @@ sap.ui.define([
 	/**
 	 * Sets the focus on the first filter in error state.
 	 * @private
-	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {sap.ui.mdc.FilterField | null} Returns the first filter field in error state
 	 */

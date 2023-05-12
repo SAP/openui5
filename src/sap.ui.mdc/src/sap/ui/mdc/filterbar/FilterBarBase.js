@@ -473,7 +473,6 @@ sap.ui.define([
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
 	 * The items are always returned, but the filter conditions are dependent on the <code>Value</code> assignment.
 	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBarBase</code>
 	 */
@@ -504,7 +503,6 @@ sap.ui.define([
 	 *
 	 * @returns {Array} array of labels of filters with value assignment
 	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	FilterBarBase.prototype.getAssignedFilterNames = function() {
@@ -617,7 +615,6 @@ sap.ui.define([
 	 * <i>3 filters active (1 hidden)</i>
 	 *
 	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {map} A map containing the text information
 	 * @returns {map.filtersText} A string that is displayed if the filter bar is collapsed
@@ -858,7 +855,6 @@ sap.ui.define([
 	/**
 	 * Triggers the search.
 	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 */
@@ -1042,7 +1038,6 @@ sap.ui.define([
 	  * <b>Note:</b><br>
 	  * This method returns the current inner state of the filter bar.
 	  * @private
-	  * @ui5-restricted sap.fe
 	  * @MDC_PUBLIC_CANDIDATE
 	  * @returns {sap.ui.mdc.enum.FilterBarValidationStatus} Returns the validation status
 	  */
@@ -1230,7 +1225,6 @@ sap.ui.define([
 	 * Assigns conditions to the inner condition model.
 	 * <br><b>Note:</b>This method is only called for filling the in parameters for value help scenarios.
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
 	 * @param {map} mConditions A map containing the conditions
 	 */
 	FilterBarBase.prototype.setInternalConditions = function(mConditions) {
@@ -1243,7 +1237,6 @@ sap.ui.define([
 	/**
 	 * Returns the conditions of the inner condition model.
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
 	 * @returns {map} A map containing the conditions
 	 */
 	FilterBarBase.prototype.getInternalConditions = function() {
@@ -1264,7 +1257,6 @@ sap.ui.define([
 	 * Returns the state of initialization.
 	 * This method does not trigger the retrieval of the metadata.
 	 * @private
-	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {Promise} Resolves after the initial filters have been applied
 	 */
@@ -1277,7 +1269,6 @@ sap.ui.define([
 	 * Returns the state of initialization.
 	 * This method triggers the retrieval of the metadata.
 	 * @private
-	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {Promise} Resolves after the initial filters have been applied and the metadata has been obtained
 	 */
@@ -1844,7 +1835,6 @@ sap.ui.define([
 	 * Returns the value of the basic search condition.
 	 *
 	 * @private
-	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {string} Value of search condition or empty
 	 */
