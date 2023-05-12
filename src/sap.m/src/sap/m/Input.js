@@ -1519,7 +1519,7 @@ function(
 
 		this.bValueHelpRequested = false;
 
-		if (!this._getProposedItemText() && this.isMobileDevice()) {
+		if (!this._getProposedItemText() || this.isMobileDevice()) {
 			return;
 		}
 
