@@ -331,7 +331,12 @@ sap.ui.define([
 			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
 				"After rendering: The inner vertical scroll position was synced once");
 			oSyncInterface.innerVerticalScrollPosition.reset();
-		}).then(oTable.qunit.$scrollVSbTo(23)).then(oTable.qunit.whenViewportScrolled).then(function() {
+
+			return Promise.all([
+				oTable.qunit.scrollVSbTo(23),
+				oTable.qunit.whenViewportScrolled()
+			]);
+		}).then(function() {
 			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(23),
 				"After scrolling: The inner vertical scroll position was correctly synced");
 			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
