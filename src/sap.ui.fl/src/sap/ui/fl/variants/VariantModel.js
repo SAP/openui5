@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/model/json/JSONModel"
 ], function(
 	_omit,
@@ -49,6 +50,7 @@ sap.ui.define([
 	LayerUtils,
 	Utils,
 	Settings,
+	ContextBasedAdaptationsAPI,
 	JSONModel
 ) {
 	"use strict";
@@ -668,6 +670,7 @@ sap.ui.define([
 			variantName: mPropertyBag.title,
 			contexts: mPropertyBag.contexts,
 			layer: mPropertyBag.layer,
+			adaptationId: mPropertyBag.adaptationId,
 			reference: oSourceVariant.getFlexObjectMetadata().reference,
 			generator: mPropertyBag.generator,
 			variantManagementReference: mPropertyBag.variantManagementReference
@@ -706,6 +709,17 @@ sap.ui.define([
 		mPropertyBag.currentVariantComparison = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.instance.getLayer(), mPropertyBag.layer);
 		if (mPropertyBag.currentVariantComparison === 1) {
 			mPropertyBag.sourceVariantSource = this.getVariant(oSourceVariant.instance.getVariantReference());
+		}
+		var mContextBasedAdaptationBag = {
+			layer: mPropertyBag.layer,
+			control: this.oAppComponent,
+			reference: this.sFlexReference
+		};
+		var bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag);
+		if (bHasAdaptationsModel) {
+			mPropertyBag.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+		} else {
+			_omit(mPropertyBag, "adaptationId");
 		}
 		var oDuplicateVariant = {
 			instance: createNewVariant(oSourceVariant.instance, mPropertyBag),
