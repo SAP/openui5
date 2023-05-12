@@ -140,7 +140,7 @@ sap.ui.define([
 				if (!instance) { //not a card instance, but a string
 					//could be a card dom element id
 					var element = document.getElementById(vCardIdOrSettings);
-					if (element && element.tagName && element.tagName === "ui-integration-card") {
+					if (element && element.tagName && element.tagName.toUpperCase() === "ui-integration-card".toUpperCase()) {
 						instance = element._getControl();
 					}
 				}
