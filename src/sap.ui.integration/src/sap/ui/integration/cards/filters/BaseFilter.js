@@ -239,6 +239,7 @@ sap.ui.define([
 			oModel = oCard.getModel(oDataConfig.name);
 		} else if (this._oDataProvider) {
 			oModel = new ObservableModel();
+			oModel.setSizeLimit(oCard.getModelSizeLimit());
 			this.setModel(oModel);
 		}
 

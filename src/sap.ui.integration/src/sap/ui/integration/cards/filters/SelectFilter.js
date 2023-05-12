@@ -164,11 +164,13 @@ sap.ui.define([
 	 */
 	SelectFilter.prototype._createSelect = function () {
 		var oSelect = new Select(),
+			oCard = this.getCardInstance(),
 			sItemTemplateKey,
 			sItemTemplateTitle,
 			sItemsPath = "/",
 			oConfig = this.getConfig(),
-			oLabel = this.createLabel(oConfig);
+			oLabel = this.createLabel(oConfig),
+			oModel;
 
 		oSelect.attachChange(function (oEvent) {
 			this._syncValue();
@@ -186,7 +188,11 @@ sap.ui.define([
 		if (oConfig && oConfig.items) {
 			sItemTemplateKey = "{key}";
 			sItemTemplateTitle = "{title}";
-			this.setModel(new JSONModel(oConfig.items));
+
+			oModel = new JSONModel(oConfig.items);
+			oModel.setSizeLimit(oCard.getModelSizeLimit());
+
+			this.setModel(oModel);
 		}
 
 		this._oItemTemplate = new ListItem({ key: sItemTemplateKey, text: sItemTemplateTitle });
@@ -196,7 +202,7 @@ sap.ui.define([
 			template: this._oItemTemplate
 		});
 
-		oSelect.setSelectedKey(BindingResolver.resolveValue(oConfig.value, this.getCardInstance()));
+		oSelect.setSelectedKey(BindingResolver.resolveValue(oConfig.value, oCard));
 
 		if (oLabel) {
 			oSelect.addAriaLabelledBy(oLabel);
