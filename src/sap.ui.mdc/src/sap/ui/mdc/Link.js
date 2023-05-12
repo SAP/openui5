@@ -78,9 +78,10 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A <code>Link</code> control can be used to handle navigation scenarios with one or more targets through direct navigation or by opening a <code>Panel</code>.<br>
-	 * It can also be used to display additional content, such as <code>ContactDetails</code> on the <code>Panel</code>.
-	 * <b>Note:</b> Navigation targets are determined by the implementation of a {@link module:sap/ui/mdc/LinkDelegate LinkDelegate}.
+	 * A <code>Link</code> element can be used inside a <code>fieldInfo</code> aggregation of {@link sap.ui.mdc.Field} to enable
+	 * navigation scenarios with one or more targets through direct navigation or by opening a <code>Panel</code>.<br>
+	 * It can also be used to display additional content, such as <code>ContactDetails</code> on the <code>Panel</code>.<br>
+	 * <b>Note:</b> The navigation targets and the behavior of the control are determined by the implementation of a {@link module:sap/ui/mdc/LinkDelegate LinkDelegate}.
 	 *
 	 * @extends sap.ui.mdc.field.FieldInfoBase
 	 *
@@ -154,13 +155,24 @@ sap.ui.define([
 	};
 
 	Link.prototype.exit = function() {
-		this._aLinkItems = undefined;
 		this._bLinkItemsFetched = undefined;
 		this._oLinkType = undefined;
 		this._oUseDelegateItemsPromise = undefined;
-
-		this._aAdditionalContent = undefined;
 		this._oUseDelegateAdditionalContentPromise = undefined;
+
+		if (this._aLinkItems) {
+			this._aLinkItems.forEach(function(oLinkItem) {
+				oLinkItem.destroy();
+			});
+			this._aLinkItems = undefined;
+		}
+
+		if (this._aAdditionalContent) {
+			this._aAdditionalContent.forEach(function(oLinkItem) {
+				oLinkItem.destroy();
+			});
+			this._aAdditionalContent = undefined;
+		}
 
 		FieldInfoBase.prototype.exit.apply(this, arguments);
 	};
