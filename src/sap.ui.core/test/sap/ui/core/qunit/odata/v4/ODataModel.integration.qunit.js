@@ -1321,7 +1321,9 @@ sap.ui.define([
 					if (Array.isArray(oRequest)) {
 						return processRequests(oRequest, i + 1);
 					}
-					oRequest.$ContentID = i + "." + (iChangeSetNo - 1);
+					if (iChangeSetNo > 0) {
+						oRequest.$ContentID = i + "." + (iChangeSetNo - 1);
+					}
 					return checkRequest(oRequest.method, oRequest.url, oRequest.headers,
 						oRequest.body, undefined, sGroupId, that.iBatchNo, iChangeSetNo || i + 1,
 						oRequest.$ContentID
@@ -33673,23 +33675,50 @@ sap.ui.define([
 		return oRoomIdBinding.getContext().delete();
 	}, function () { // ODataModel#submitBatch restarts all PATCHes
 		this.expectRequest({
-				method : "PATCH",
-				url : "EMPLOYEES('3')",
-				headers : {"If-Match" : "ETag3"},
-				payload : {
-					ROOM_ID : "31" // <-- retry
-				}
-			}, {/* don't care */})
-			.expectRequest({
-				method : "PATCH",
-				url : "EMPLOYEES('4')",
+				$ContentID : "0.0",
+				batchNo : 2,
+				changeSetNo : 1,
+				groupId : "$auto",
 				headers : {"If-Match" : "ETag4"},
+				method : "PATCH",
 				payload : {
 					ROOM_ID : "41" // <-- retry
-				}
+				},
+				url : "EMPLOYEES('4')"
+			}, {/* don't care */})
+			.expectRequest({
+				$ContentID : "1.0",
+				batchNo : 2,
+				changeSetNo : 1,
+				groupId : "$auto",
+				headers : {"If-Match" : "ETag3"},
+				method : "PATCH",
+				payload : {
+					ROOM_ID : "31" // <-- retry
+				},
+				url : "EMPLOYEES('3')"
+			}, {/* don't care */})
+			.expectRequest({
+				$ContentID : undefined,
+				batchNo : 2,
+				changeSetNo : 2, // new changeset via submitBatch("$auto")
+				groupId : "$auto",
+				method : "POST",
+				payload : {
+					Budget : "1234.1234",
+					TeamID : "TEAM_01"
+				},
+				url : "ChangeTeamBudgetByID"
 			}, {/* don't care */});
 
-		return this.oModel.submitBatch("$auto").then(function () {
+		return Promise.all([
+			this.oModel.submitBatch("$auto"),
+			// code under test (JIRA: CPOUI5ODATAV4-2134)
+			this.oModel.bindContext("/ChangeTeamBudgetByID(...)")
+				.setParameter("Budget", "1234.1234")
+				.setParameter("TeamID", "TEAM_01")
+				.execute("$auto")
+		]).then(function () {
 			return /*bAll*/true;
 		});
 	}, function (assert, oForm0Binding, oForm1Binding) {
@@ -41602,24 +41631,41 @@ sap.ui.define([
 				that.waitForChanges(assert, "(2)")
 			]);
 		}).then(function () {
+			var sGroupId = bAPI ? "update" : "$auto";
+
 			assert.strictEqual(oContext1.hasPendingChanges(), true);
 			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), true);
 
 			that.expectRequest({
+					$ContentID : undefined,
+					batchNo : 3,
+					changeSetNo : 1,
+					groupId : sGroupId,
 					method : "POST",
-					url : "SalesOrderList('42')/SO_2_SOITEM",
-					payload : {Note : "Note 1"}
+					payload : {Note : "Note 1"},
+					url : "SalesOrderList('42')/SO_2_SOITEM"
 				}, {
 					SalesOrderID : "42",
 					ItemPosition : "0020",
 					Note : "Note 1"
 				})
+				.expectRequest({
+					$ContentID : undefined,
+					batchNo : 3,
+					changeSetNo : 2, // new changeset via submitBatch("$auto")
+					groupId : sGroupId,
+					method : "POST",
+					payload : {},
+					url : "RegenerateEPMData"
+				}, {/* don't care */})
 				.expectChange("position", [, "0020"]);
 
 			return Promise.all([
 				// code under test
-				oModel.submitBatch(bAPI ? "update" : "$auto"),
+				oModel.submitBatch(sGroupId),
+				// code under test (JIRA: CPOUI5ODATAV4-2134)
+				oModel.bindContext("/RegenerateEPMData(...)").execute(sGroupId),
 				oContext1.created(),
 				that.waitForChanges(assert, "(3)")
 			]);
