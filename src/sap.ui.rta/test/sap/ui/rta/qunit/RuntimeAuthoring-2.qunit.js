@@ -686,7 +686,7 @@ sap.ui.define([
 
 		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user)", function(assert) {
 			stubToolbarButtonsVisibility(true, true);
-			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").returns(true);
+			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
 			sandbox.stub(FlexUtils, "getUShellService")
 			.callThrough()
@@ -707,7 +707,7 @@ sap.ui.define([
 
 		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user) but the current app is an overview page", function(assert) {
 			stubToolbarButtonsVisibility(true, true);
-			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").returns(true);
+			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}, "sap.ovp": {}});
 			sandbox.stub(FlexUtils, "getUShellService")
 			.callThrough()

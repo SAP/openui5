@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/model/json/JSONModel"
@@ -23,6 +24,7 @@ sap.ui.define([
 	Layer,
 	LayerUtils,
 	FlexUtils,
+	FlexInfoSession,
 	Storage,
 	Versions,
 	JSONModel
@@ -96,8 +98,9 @@ sap.ui.define([
 				var bContextBasedAdaptationsEnabled = oSettings.isContextBasedAdaptationEnabled();
 				var oAdaptationsPromise = bContextBasedAdaptationsEnabled ? ContextBasedAdaptationsAPI.load(mPropertyBag) : Promise.resolve({adaptations: []});
 				return oAdaptationsPromise;
-			}).then(function(oAdaptations) {
-				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations);
+			})
+			.then(function(oAdaptations) {
+				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, mPropertyBag.control);
 			})
 			.then(function(oModel) {
 				_mInstances[sReference] = _mInstances[sReference] || {};
@@ -110,9 +113,10 @@ sap.ui.define([
 	/**
 	 * Initializes and creates an new adaptation Model
 	 * @param {string[]} aAdaptations - List of adaptations from backend
+	 * @param {sap.ui.core.Control} oControl - Control for which the model is created
 	 * @returns {sap.ui.model.json.JSONModel} - Model of adaptations enhanced with additional properties
 	 */
-	ContextBasedAdaptationsAPI.createModel = function(aAdaptations) {
+	ContextBasedAdaptationsAPI.createModel = function(aAdaptations, oControl) {
 		if (!Array.isArray(aAdaptations)) {
 			throw Error("Adaptations model can only be initialized with an array of adaptations");
 		}
@@ -179,7 +183,9 @@ sap.ui.define([
 		};
 		if (aAdaptations.length > 0) {
 			oModel.updateAdaptations(aAdaptations);
-			oModel.setProperty("/displayedAdaptation", aAdaptations[0]);
+			var oFlexInfoSession = FlexInfoSession.get(oControl) || {};
+			var oDisplayedAdaptation = oFlexInfoSession.adaptationId ? aAdaptations[oModel.getIndexByAdaptationId(oFlexInfoSession.adaptationId)] : aAdaptations[0];
+			oModel.setProperty("/displayedAdaptation", oDisplayedAdaptation);
 		}
 		return oModel;
 	};

@@ -183,6 +183,15 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Given info.adaptationId and info.isEndUserAdaptation is filled", function (assert) {
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(merge(StorageUtils.getEmptyFlexDataResponse(), {info: {adaptationId: "id_1234", isEndUserAdaptation: true}}));
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null, info: {adaptationId: "id_1234", isEndUserAdaptation: true}}));
+			});
+		});
+
 		QUnit.test("Given the first connector provide an empty variant section and the second provides variant data in separate properties", function (assert) {
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
