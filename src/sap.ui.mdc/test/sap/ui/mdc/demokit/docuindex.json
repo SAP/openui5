@@ -142,6 +142,10 @@
 				"id": "sap.ui.mdc.sample.StateUtil",
 				"name": "7.1 StateUtil overview",
 				"description": "example demonstrating StateUtil functionality"
+			}, {
+				"id": "sap.ui.mdc.sample.TableFilterBarJson",
+				"name": "8.1 Table with FilterBar and JSON model",
+				"description": "Table and Filterbar example with JSON model"
 			}
 		]
 	}
