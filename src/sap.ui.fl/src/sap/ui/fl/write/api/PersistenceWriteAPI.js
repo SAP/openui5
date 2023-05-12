@@ -135,8 +135,9 @@ sap.ui.define([
 	PersistenceWriteAPI.save = function(mPropertyBag) {
 		return FlexObjectState.saveFlexObjects(mPropertyBag).then(function(oFlexObject) {
 			if (oFlexObject && oFlexObject.length !== 0) {
-				PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResult) {
+				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResult) {
 					FlexInfoSession.set(oResult, mPropertyBag.selector);
+					return oFlexObject;
 				});
 			}
 			return oFlexObject;

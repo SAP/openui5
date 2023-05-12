@@ -551,7 +551,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when stopping rta with saving changes and versioning is disabled", function(assert) {
+		QUnit.test("when saving changes and versioning and cba is disabled", function(assert) {
 			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
 			return this.oRta._serializeToLrep()
@@ -559,11 +559,15 @@ sap.ui.define([
 				assert.equal(oSaveStub.callCount, 1, "save was triggered");
 				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
 				assert.equal(aSavePropertyBag.draft, false, "the draft flag is set to false");
+				assert.notOk(aSavePropertyBag.version, "the version is not passed");
+				assert.notOk(aSavePropertyBag.adaptationId, "the adaptationId is not passed");
 			});
 		});
 
-		QUnit.test("when stopping rta with saving changes and versioning is enabled and condenseAnyLayer true", function(assert) {
+		QUnit.test("when saving changes and versioning and cba is enabled and condenseAnyLayer true", function(assert) {
 			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+			this.oRta._oContextBasedAdaptationsModel.setProperty("/contextBasedAdaptationsEnabled", true);
+			this.oRta._oContextBasedAdaptationsModel.setProperty("/displayedAdaptation", {id: "ad123"});
 			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
 			return this.oRta._serializeToLrep(true)
@@ -572,6 +576,38 @@ sap.ui.define([
 				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
 				assert.strictEqual(aSavePropertyBag.draft, true, "the draft flag is set to true");
 				assert.strictEqual(aSavePropertyBag.condenseAnyLayer, true, "the condense flag is set to true");
+				assert.equal(aSavePropertyBag.version, "0", "the draft version is passed");
+				assert.equal(aSavePropertyBag.adaptationId, "ad123", "the adaptationId is passed");
+			});
+		});
+
+		QUnit.test("when stopping rta with saving changes and versioning and cba is disabled", function(assert) {
+			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+
+			return this.oRta._serializeToLrep(false, true)
+			.then(function() {
+				assert.equal(oSaveStub.callCount, 1, "save was triggered");
+				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
+				assert.equal(aSavePropertyBag.draft, false, "the draft flag is set to false");
+				assert.notOk(aSavePropertyBag.version, "the version is not passed");
+				assert.notOk(aSavePropertyBag.adaptationId, "the adaptationId is not passed");
+			});
+		});
+
+		QUnit.test("when stopping rta with saving changes and versioning and cba is enabled and condenseAnyLayer true", function(assert) {
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+			this.oRta._oContextBasedAdaptationsModel.setProperty("/contextBasedAdaptationsEnabled", true);
+			this.oRta._oContextBasedAdaptationsModel.setProperty("/displayedAdaptation", {id: "ad123"});
+			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+
+			return this.oRta._serializeToLrep(true, true)
+			.then(function() {
+				assert.equal(oSaveStub.callCount, 1, "save was triggered");
+				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
+				assert.strictEqual(aSavePropertyBag.draft, true, "the draft flag is set to true");
+				assert.strictEqual(aSavePropertyBag.condenseAnyLayer, true, "the condense flag is set to true");
+				assert.notOk(aSavePropertyBag.version, "the version is not passed because we switch to active version");
+				assert.notOk(aSavePropertyBag.adaptationId, "the adaptationId is not passed");
 			});
 		});
 

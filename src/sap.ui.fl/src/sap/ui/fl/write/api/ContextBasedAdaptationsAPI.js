@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/Adaptations",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
@@ -16,8 +16,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/model/json/JSONModel"
 ], function(
-	Settings,
 	Adaptations,
+	FeaturesAPI,
 	FlexObjectFactory,
 	ManifestUtils,
 	FlexObjectState,
@@ -93,14 +93,15 @@ sap.ui.define([
 		if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
 			return Promise.resolve(_mInstances[sReference][sLayer]);
 		}
-		return Settings.getInstance()
-			.then(function(oSettings) {
-				var bContextBasedAdaptationsEnabled = oSettings.isContextBasedAdaptationEnabled();
+		var bContextBasedAdaptationsEnabled;
+		return FeaturesAPI.isContextBasedAdaptationAvailable(sLayer)
+			.then(function(bContextBasedAdaptationsEnabledResponse) {
+				bContextBasedAdaptationsEnabled = bContextBasedAdaptationsEnabledResponse;
 				var oAdaptationsPromise = bContextBasedAdaptationsEnabled ? ContextBasedAdaptationsAPI.load(mPropertyBag) : Promise.resolve({adaptations: []});
 				return oAdaptationsPromise;
 			})
 			.then(function(oAdaptations) {
-				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, mPropertyBag.control);
+				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, mPropertyBag.control, bContextBasedAdaptationsEnabled);
 			})
 			.then(function(oModel) {
 				_mInstances[sReference] = _mInstances[sReference] || {};
@@ -114,9 +115,10 @@ sap.ui.define([
 	 * Initializes and creates an new adaptation Model
 	 * @param {string[]} aAdaptations - List of adaptations from backend
 	 * @param {sap.ui.core.Control} oControl - Control for which the model is created
+	 * @param {boolean} bContextBasedAdaptationsEnabled - Whether the feature is enabled
 	 * @returns {sap.ui.model.json.JSONModel} - Model of adaptations enhanced with additional properties
 	 */
-	ContextBasedAdaptationsAPI.createModel = function(aAdaptations, oControl) {
+	ContextBasedAdaptationsAPI.createModel = function(aAdaptations, oControl, bContextBasedAdaptationsEnabled) {
 		if (!Array.isArray(aAdaptations)) {
 			throw Error("Adaptations model can only be initialized with an array of adaptations");
 		}
@@ -125,7 +127,8 @@ sap.ui.define([
 			allAdaptations: [],
 			adaptations: [],
 			count: 0,
-			displayedAdaptation: {}
+			displayedAdaptation: {},
+			contextBasedAdaptationsEnabled: bContextBasedAdaptationsEnabled
 		});
 		oModel.updateAdaptations = function(aAdaptations) {
 			var aContextBasedAdaptations = aAdaptations.filter(function(oAdapation, iIndex) {

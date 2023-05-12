@@ -1209,6 +1209,10 @@ sap.ui.define([
 			// Save changes on the current layer and discard dirty changes on other layers
 			mPropertyBag.saveAsDraft = this.getLayer() === Layer.CUSTOMER;
 		}
+		if (this._oContextBasedAdaptationsModel.getProperty("/contextBasedAdaptationsEnabled")) {
+			// If an adaptation is being processed, saving without exiting must retrieve the updated state of the adaptation
+			mPropertyBag.adaptationId = bIsExit ? undefined : this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id");
+		}
 
 		return this._oSerializer.saveCommands(mPropertyBag)
 			.then(function() {
