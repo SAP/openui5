@@ -212,7 +212,7 @@ sap.ui.define([
 				done();
 			}, {suppressRequest: true});
 
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		oBinding.attachEventOnce("change", handler1);
@@ -281,7 +281,7 @@ sap.ui.define([
 				done();
 			}, {suppressRequest: true});
 
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		oBinding.attachEventOnce("change", handler1);
@@ -326,7 +326,7 @@ sap.ui.define([
 				done();
 			}, {suppressRequest: true});
 
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		oBinding.attachEventOnce("change", handler1);
@@ -378,7 +378,7 @@ sap.ui.define([
 				done();
 			}, {suppressRequest: true});
 
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		oBinding.attachEventOnce("change", handler1);
@@ -429,7 +429,7 @@ sap.ui.define([
 				done();
 			}, {suppressRequest: true});
 
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		oBinding.attachEventOnce("change", handler1);
@@ -490,7 +490,7 @@ sap.ui.define([
 				done();
 			}, {suppressRequest: true});
 
-			oBinding.submitChanges();
+			oModel.submitChanges();
 		}
 
 		oBinding.attachEventOnce("change", handler1);
