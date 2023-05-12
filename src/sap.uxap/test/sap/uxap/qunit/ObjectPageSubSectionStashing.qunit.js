@@ -79,13 +79,16 @@ function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 			oSection4 = this.objectPageSampleView.byId("subsection4"),
 			fnDone = assert.async();
 
-		assert.expect(3);
+		assert.expect(6);
 
 		oOpl.attachEventOnce("onAfterRenderingDOMReady", function () {
 			// Assert
 			assert.strictEqual(oSection1._aStashedControls.length, 0, "First SubSection is unstashed");
+			assert.ok(!oSection1.$().hasClass("sapUxAPObjectPageSubSectionStashed"), "sapUxAPObjectPageSubSectionStashed class is not added to first SubSection");
 			assert.strictEqual(oSection2._aStashedControls.length, 0, "Second SubSection is unstashed");
+			assert.ok(!oSection2.$().hasClass("sapUxAPObjectPageSubSectionStashed"), "sapUxAPObjectPageSubSectionStashed class is not added to second SubSection");
 			assert.strictEqual(oSection4._aStashedControls.length, 1, "Forth SubSection is not unstashed after optimization");
+			assert.ok(oSection4.$().hasClass("sapUxAPObjectPageSubSectionStashed"), "sapUxAPObjectPageSubSectionStashed class is added to forth SubSection");
 
 			// Clean up
 			fnDone();
