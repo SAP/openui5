@@ -1722,13 +1722,13 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
-			var bDefaultKey = (sKey === this.getMetadata().getProperty("selectedKey").defaultValue),
+			var bShouldResetSelection = this.shouldResetSelection(sKey),
 				// the correct solution for tackling the coupling of selectedKey and value should be by using debounce
 				// however this makes the API async, which alters the existing behaviour of the control
 				// that's why the solution is implemented with skipModelUpdate property
 				bSkipModelUpdate = this.isBound("selectedKey") && this.isBound("value") && this.getBindingInfo("selectedKey").skipModelUpdate;
 
-			if (bDefaultKey) {
+			if (bShouldResetSelection) {
 				this.setSelection(null);
 
 				// if the setSelectedKey in called from ManagedObject's updateProperty
@@ -1756,6 +1756,17 @@ sap.ui.define([
 
 			this._sValue = this.getValue();
 			return this._setPropertyProtected("selectedKey", sKey);
+		};
+
+		/**
+		 * Determines if the Control's selection should get reset.
+		 * @param {string} sKey New value for property <code>selectedKey</code>.
+		 * @returns {boolean} If the Control's has to be reset
+		 * @private,
+		 * @ui5-restricted sap.ui.comp.smartfield.ComboBox
+		 */
+		ComboBox.prototype.shouldResetSelection = function(sKey) {
+			return (sKey === this.getMetadata().getProperty("selectedKey").defaultValue);
 		};
 
 		/**
