@@ -298,11 +298,6 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 
 /******************************************************* FONTS *******************************************************/
 
-/* Replaces the search icon with a filter icon */
-.sapUiDocumentationFilterField .sapMSFS:after {
-	content: "\e076";
-}
-
 /* sap.m.List does not always take up 100% height (the containing page's background is modified instead) */
 .sapUiTheme-sap_belize .sapUiDocumentationMasterPage {
 	background: #3b4c5b;

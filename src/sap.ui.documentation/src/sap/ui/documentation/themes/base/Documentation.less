@@ -62,6 +62,10 @@ html.sap-tablet:not(.sap-desktop) {
     overflow-x: auto;
 }
 
+#d4h5-main-container {
+	padding-bottom: 2rem;
+}
+
 #d4h5-main-container,
 .faqContent {
     font-size: 0.875em;
@@ -82,7 +86,7 @@ html.sap-tablet:not(.sap-desktop) {
         font-family: "SAP-icons";
     }
 
-    li,
+    li:not(:last-child),
     li p,
     li div.p,
     li ol,
@@ -676,6 +680,10 @@ html.sap-tablet:not(.sap-desktop) {
         list-style-type: none;
         padding: 0;
     }
+
+	.relatedLinks ul.fig {
+		margin-bottom: 0;
+	}
 
     .contentInSection {
         h2 {

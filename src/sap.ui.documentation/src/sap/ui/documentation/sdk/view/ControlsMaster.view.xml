@@ -16,7 +16,7 @@
 		<customHeader>
 			<Toolbar width="100%">
 				<SearchField id="searchField" placeholder="{i18n>CONTROLS_MASTER_FILTER_PLACERHOLDER}" liveChange="handleListFilter" class="sapUiDocumentationFilterField" />
-				<Button id="listFilterSettings" icon="sap-icon://drop-down-list" press="handleListSettings" tooltip="{i18n>CONTROLS_MASTER_FILTER_BTN_TOOLTIP}"/>
+				<Button id="listFilterSettings" icon="sap-icon://filter" press="handleListSettings" tooltip="{i18n>CONTROLS_MASTER_FILTER_BTN_TOOLTIP}"/>
 			</Toolbar>
 		</customHeader>
 
@@ -58,7 +58,7 @@
 				<l:fixContent>
 					<core:Fragment fragmentName="sap.ui.documentation.sdk.view.FooterMaster" type="XML" />
 				</l:fixContent>
-			</l:FixFlex>			
+			</l:FixFlex>
 		</content>
 	</Page>
 </mvc:View>
