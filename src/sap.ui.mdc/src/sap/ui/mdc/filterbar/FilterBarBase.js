@@ -474,6 +474,7 @@ sap.ui.define([
 	 * The items are always returned, but the filter conditions are dependent on the <code>Value</code> assignment.
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBarBase</code>
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
@@ -504,6 +505,7 @@ sap.ui.define([
 	 * @returns {Array} array of labels of filters with value assignment
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	FilterBarBase.prototype.getAssignedFilterNames = function() {
 		var sName, aFilterNames = null, oModel = this._getConditionModel();
@@ -616,6 +618,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @returns {map} A map containing the text information
 	 * @returns {map.filtersText} A string that is displayed if the filter bar is collapsed
 	 * @returns {map.filtersTextExpanded} A string that is displayed if the filter bar is expanded
@@ -856,6 +859,7 @@ sap.ui.define([
 	 * Triggers the search.
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
@@ -876,6 +880,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @param {boolean} bSuppressSearch Determines if the <code>search</code> event is triggered after successful validation
 	 * @returns {Promise} Returns a <code>Promise</code> that resolves after the validation of erroneous fields has been propagated.
 	 *
@@ -1039,6 +1044,7 @@ sap.ui.define([
 	  * This method returns the current inner state of the filter bar.
 	  * @private
 	  * @MDC_PUBLIC_CANDIDATE
+	  * @ui5-restricted sap.ui.mdc, sap.fe
 	  * @returns {sap.ui.mdc.enum.FilterBarValidationStatus} Returns the validation status
 	  */
 	FilterBarBase.prototype.checkFilters = function() {
@@ -1258,6 +1264,7 @@ sap.ui.define([
 	 * This method does not trigger the retrieval of the metadata.
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @returns {Promise} Resolves after the initial filters have been applied
 	 */
 	FilterBarBase.prototype.initialized = function() {
@@ -1270,6 +1277,7 @@ sap.ui.define([
 	 * This method triggers the retrieval of the metadata.
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @returns {Promise} Resolves after the initial filters have been applied and the metadata has been obtained
 	 */
 	FilterBarBase.prototype.initializedWithMetadata = function() {
@@ -1836,6 +1844,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @returns {string} Value of search condition or empty
 	 */
 	FilterBarBase.prototype.getSearch = function() {
