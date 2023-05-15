@@ -176,9 +176,15 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._onAfterTableRender = function(){
 
-		if (this._oFocusInfo && this._oFocusInfo.tableItem){
-			//Focus table item directly
-			this._oFocusInfo.tableItem.focus();
+		if (this._oFocusInfo){
+
+			if (this._oFocusInfo.oMoveButton){
+				//Focus move button directly
+				this._oFocusInfo.oMoveButton.focus();
+			}
+
+			//Reset focus info
+			this._oFocusInfo = null;
 		}
 
 		//Restore invalid selections
@@ -189,8 +195,6 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		//Reset focus info
-		this._oFocusInfo = null;
 	};
 
 	ChartItemPanel.prototype._bindListItems = function(mBindingInfo) {
@@ -242,19 +246,24 @@ sap.ui.define([
 				oFactoryFunction = this._createListItem;
 			}
 
-			this._oListControl.bindItems(Object.assign({
-				path: this.P13N_MODEL + ">/items",
-				key: "name", //TODO: Bind with combined key (name + kind)?
-				filters: [new Filter({
-					filters: [
-						new Filter("visible", FilterOperator.EQ, true),
-						new Filter("template", FilterOperator.EQ, true)
-					],
-					and: false
-				  })],
-				  factory: oFactoryFunction.bind(this),
-				sorter : oSorter
-			}, mBindingInfo));
+			this._oListControl.bindItems(
+				Object.assign(
+					{
+						path: this.P13N_MODEL + ">/items",
+						key: "name", //TODO: Bind with combined key (name + kind)?
+						filters: [new Filter({
+							filters: [
+								new Filter("visible", FilterOperator.EQ, true),
+								new Filter("template", FilterOperator.EQ, true)
+							],
+							and: false
+						})],
+						factory: oFactoryFunction.bind(this),
+						sorter : oSorter
+					},
+					mBindingInfo
+				)
+			);
 	};
 
 	ChartItemPanel.prototype._getTemplateComboBox = function(sKind){
@@ -321,7 +330,7 @@ sap.ui.define([
 		});
 	};
 
-	ChartItemPanel.prototype._getNameComboBox = function(sKind, sName) {
+	ChartItemPanel.prototype._getNameComboBox = function(sId, sKind, sName) {
 		var oCollator = new window.Intl.Collator();
 		var fnSorter = function(a,b) {
 			return oCollator.compare(a,b);
@@ -337,7 +346,7 @@ sap.ui.define([
 			and: false
 		});
 
-		return new ComboBox({
+		return new ComboBox(sId + "-combo", {
 			width: "100%",
 			items: {
 				path: this.P13N_MODEL + ">/items",
@@ -373,7 +382,7 @@ sap.ui.define([
 				oObject.getObject().tempName = oObject.getObject().name;
 			}
 
-			oNameComboBox = this._getNameComboBox(oObject.getObject().kind, oObject.getObject().name);
+			oNameComboBox = this._getNameComboBox(sId, oObject.getObject().kind, oObject.getObject().name);
 			aCells.push(oNameComboBox);
 			aCells.push(this._getRoleSelect());
 			sRemoveBtnId = this.getId() + oObject.getObject().kind + "-RemoveBtn-" + oObject.getObject().name;
@@ -434,7 +443,7 @@ sap.ui.define([
 
 			var oVBox = new VBox({
 				items: [
-					this._getNameComboBox(oObject.getObject().kind, oObject.getObject().name),
+					this._getNameComboBox(sId, oObject.getObject().kind, oObject.getObject().name),
 					this._getRoleSelect()
 				]
 			});
@@ -559,7 +568,7 @@ sap.ui.define([
 			oPrevItem.tempName = oPrevItem.name;
 
 			oNewItem.role = oPrevItem.role;
-			this._moveItemsByIndex(this._getItemIndex(oNewItem), this._getItemIndex(oPrevItem));
+			this._moveItemsByIndex(this._getItemIndex(oNewItem), this._getItemIndex(oPrevItem), true);
 
 			this._refreshP13nModel();
 
@@ -942,9 +951,9 @@ sap.ui.define([
 		this._getMoveDownButton().setEnabled(bDownEnabled);
 		this._getMoveBottomButton().setEnabled(bDownEnabled);
 
-		if (bFocus) {
+		if (bFocus && (!bDownEnabled || !bUpEnabled)) {
 			//Table re-renders after reorder; this is used in onAfterRendering
-			this._oFocusInfo = {tableItem : oTableItem};
+			this._oFocusInfo = { oMoveButton : !bDownEnabled ? this._getMoveUpButton() : this._getMoveDownButton()};
 		}
 	};
 
