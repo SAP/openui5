@@ -215,6 +215,21 @@ sap.ui.define([
 			}
 		};
 
+		var oTooltipBindingInfo = {
+			parts: [
+				{path: "$this>/tooltip"},
+				{path: "$this>/header"},
+				{path: "$this>/headerVisible"},
+				{path: "$sap.ui.mdc.Table>/useColumnLabelsAsTooltips"}
+			],
+			formatter: function(sTooltip, sHeader, bHeaderVisible, bUseColumnLabelsAsTooltips) {
+				if (sTooltip || !bUseColumnLabelsAsTooltips) {
+					return sTooltip;
+				}
+				return bHeaderVisible ? sHeader : "";
+			}
+		};
+
 		this._readP13nValues(); // XConfig might not have been available on init - depends on the order settings are applied in Table#applySettings.
 
 		if (oTable._isOfType(TableType.ResponsiveTable)) {
@@ -222,7 +237,7 @@ sap.ui.define([
 				width: oWidthBindingInfo,
 				autoPopinWidth: "{$this>/minWidth}",
 				hAlign: "{$this>/hAlign}",
-				header: this._getColumnHeaderLabel(),
+				header: this._getColumnHeaderLabel(oTooltipBindingInfo),
 				importance: {
 					parts: [
 						{path: "$this>/importance"},
@@ -238,7 +253,6 @@ sap.ui.define([
 					}
 				},
 				popinDisplay: "{= ${$this>/headerVisible} ? 'Inline' : 'WithoutHeader' }",
-				tooltip: "{$this>/tooltip}",
 				mergeDuplicates: {
 					parts: [
 						{path: "$this>/extendedSettings/mergeFunction"},
@@ -273,7 +287,7 @@ sap.ui.define([
 				label: this._getColumnHeaderLabel(),
 				resizable: "{$columnSettings>/resizable}",
 				autoResizable: "{$columnSettings>/resizable}",
-				tooltip: "{$this>/tooltip}",
+				tooltip: oTooltipBindingInfo,
 				template: this.getTemplateClone()
 			});
 			oColumn.setCreationTemplate(this.getCreationTemplateClone());
@@ -318,10 +332,12 @@ sap.ui.define([
 	 * Creates and returns the column header control.
 	 * If <code>headerVisible=false</code> then <code>width=0px</code> is applied to the <code>sap.m.Label</code> control for accessibility purposes.
 	 *
+	 * @param {object} oTooltipBindingInfo The binding info to be usd for the tooltip of the created column header control.
+	 *
 	 * @returns {object} The column header control
 	 * @private
 	 */
-	Column.prototype._getColumnHeaderLabel = function() {
+	Column.prototype._getColumnHeaderLabel = function(oTooltipBindingInfo) {
 		var oTable = this.getTable();
 
 		if (oTable && (!this._oColumnHeaderLabel || this._oColumnHeaderLabel.isDestroyed())) {
@@ -331,7 +347,7 @@ sap.ui.define([
 					width: "{= ${$this>/headerVisible} ? null : '0px' }",
 					text: "{$this>/header}",
 					textAlign: "{$this>/hAlign}",
-					tooltip: oTable._isOfType(TableType.ResponsiveTable) ? "{$this>/tooltip}" : "",
+					tooltip: oTooltipBindingInfo ? oTooltipBindingInfo : "",
 					wrapping: {
 						parts: [
 							{path: "$this>/headerVisible"},
