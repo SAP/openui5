@@ -28,16 +28,18 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.Extension
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.AbstractProperty
 	 *
-	 * An extension object generated from OData annotations.
+	 * The abstraction of an OData property.
 	 *
 	 * @property {string} name
-	 *   The name of the extension
-	 * @property {string} namespace
-	 *   The namespace of the extension
-	 * @property {string} value
-	 *   The value of the extension
+	 *   The name of the property
+	 * @property {string} [default]
+	 *   The default value of the property
+	 * @property {"false"|"true"} [nullable]
+	 *   Whether this property can be <code>null</code>
+	 * @property {"false"|"true"} [readOnly]
+	 *   Whether this property is read-only
 	 *
 	 * @public
 	 */
@@ -60,14 +62,264 @@ sap.ui.define([
 	 */
 
 	/**
+	 * @typedef {object} sap.ui.model.odata.ODataMetaModel.Extension
+	 *
+	 * An extension object generated from OData annotations.
+	 *
+	 * @property {string} name
+	 *   The name of the extension
+	 * @property {string} namespace
+	 *   The namespace of the extension
+	 * @property {string} value
+	 *   The value of the extension
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.BinaryProperty
+	 *
+	 * A property of type <code>Edm.Binary</code>, see
+	 * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem" target="_blank">
+	 * <code>Edm.Binary</code></a>.
+	 *
+	 * @property {"Edm.Binary"} type
+	 *   The type name
+	 * @property {string} [maxLength]
+	 *   The maximum size of the binary data
+	 * @property {"false"|"true"} [fixedLength]
+	 *   Whether the length can vary
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.BooleanProperty
+	 *
+	 * A property of type <code>Edm.Boolean</code>, see the corresponding UI5 type
+	 * {@link sap.ui.model.odata.type.Boolean}.
+	 *
+	 * @property {"Edm.Boolean"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.ByteProperty
+	 *
+	 * A property of type <code>Edm.Byte</code>, see the corresponding UI5 type {@link sap.ui.model.odata.type.Byte}.
+	 *
+	 * @property {"Edm.Byte"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.DateTimeProperty
+	 *
+	 * A property of type <code>Edm.DateTime</code>, see the corresponding UI5 type
+	 * {@link sap.ui.model.odata.type.DateTime}.
+	 *
+	 * @property {"Edm.DateTime"} type
+	 *   The type name
+	 * @property {string} [precision]
+	 *   The maximum number of fractional seconds
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.DateTimeOffsetProperty
+	 *
+	 * A property of type <code>Edm.DateTimeOffset</code>, see the corresponding UI5 type
+	 * {@link sap.ui.model.odata.type.DateTimeOffset}.
+	 *
+	 * @property {"Edm.DateTimeOffset"} type
+	 *   The type name
+	 * @property {string} [precision]
+	 *   The maximum number of fractional seconds
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.DecimalProperty
+	 *
+	 * A property of type <code>Edm.Decimal</code>, see the corresponding UI5 type
+	 * {@link sap.ui.model.odata.type.Decimal}.
+	 *
+	 * @property {"Edm.Decimal"} type
+	 *   The type name
+	 * @property {string} [precision]
+	 *   The maximum number of decimal digits
+	 * @property {string} [scale]
+	 *   The maximum number of decimal digits to the right of the decimal point
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.DoubleProperty
+	 *
+	 * A property of type <code>Edm.Double</code>, see the corresponding UI5 type
+	 * {@link sap.ui.model.odata.type.Double}.
+	 *
+	 * @property {"Edm.Double"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.GuidProperty
+	 *
+	 * A property of type <code>Edm.Guid</code>, see the corresponding UI5 type {@link sap.ui.model.odata.type.Guid}.
+	 *
+	 * @property {"Edm.Guid"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.Int16Property
+	 *
+	 * A property of type <code>Edm.Int16</code>, see the corresponding UI5 type {@link sap.ui.model.odata.type.Int16}.
+	 *
+	 * @property {"Edm.Int16"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.Int32Property
+	 *
+	 * A property of type <code>Edm.Int32</code>, see the corresponding UI5 type {@link sap.ui.model.odata.type.Int32}.
+	 *
+	 * @property {"Edm.Int32"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.Int64Property
+	 *
+	 * A property of type <code>Edm.Int64</code>, see the corresponding UI5 type {@link sap.ui.model.odata.type.Int64}.
+	 *
+	 * @property {"Edm.Int64"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.SByteProperty
+	 *
+	 * A property of type <code>Edm.SByte</code>, see the corresponding UI5 type {@link sap.ui.model.odata.type.SByte}.
+	 *
+	 * @property {"Edm.SByte"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.SingleProperty
+	 *
+	 * A property of type <code>Edm.Single</code>, see the corresponding UI5 type
+	 * {@link sap.ui.model.odata.type.Single}.
+	 *
+	 * @property {"Edm.Single"} type
+	 *   The type name
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.StreamProperty
+	 *
+	 * A property of type <code>Edm.Stream</code>, see the corresponding UI5 type
+	 * {@link sap.ui.model.odata.type.Stream}.
+	 *
+	 * @property {"Edm.Stream"} type
+	 *   The type name
+	 * @property {"false"|"true"} [fixedLength]
+	 *   Whether the stream requires a fixed length
+	 * @property {string} [maxLength]
+	 *   The maximal length of the stream
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.StringProperty
+	 *
+	 * A property of type <code>Edm.String</code>, see the corresponding UI5 type
+	 * {@link sap.ui.model.odata.type.String}.
+	 *
+	 * @property {"Edm.String"} type
+	 *   The type name
+	 * @property {"false"|"true"} [fixedLength]
+	 *   Whether the string requires a fixed length
+	 * @property {string} [maxLength]
+	 *   The maximal length of the string
+	 * @property {"false"|"true"} [unicode]
+	 *   Whether Unicode characters are used instead of ASCII characters
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.AbstractProperty} sap.ui.model.odata.ODataMetaModel.TimeProperty
+	 *
+	 * A property of type <code>Edm.Time</code>, see the corresponding UI5 type {@link sap.ui.model.odata.type.Time}.
+	 *
+	 * @property {"Edm.Time"} type
+	 *   The type name
+	 * @property {string} [precision]
+	 *   The maximum number of fractional seconds
+	 *
+	 * @public
+	 */
+
+	/**
+	 * The alias type for an OData property of an entity type; the alias comprises all supported OData EDM types.
+	 *
+	 * @typedef {
+	 *   sap.ui.model.odata.ODataMetaModel.BinaryProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.BooleanProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.ByteProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.DateTimeProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.DateTimeOffsetProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.DecimalProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.DoubleProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.GuidProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.Int16Property |
+	 *   sap.ui.model.odata.ODataMetaModel.Int32Property |
+	 *   sap.ui.model.odata.ODataMetaModel.Int64Property |
+	 *   sap.ui.model.odata.ODataMetaModel.SByteProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.SingleProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.StreamProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.StringProperty |
+	 *   sap.ui.model.odata.ODataMetaModel.TimeProperty
+	 * } sap.ui.model.odata.ODataMetaModel.Property
+	 *
+	 * @public
+	 */
+
+	/**
 	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.AssociationEnd
 	 *
 	 * An object representing one end of an OData association.
 	 *
 	 * @property {string} type
 	 *   The qualified name of the entity type at the end of the association
-	 * @property {string} multiplicity
-	 *   The multiplicity of the association end; one of "0", "0..1" or "*"
+	 * @property {"0" | "0..1" | "*"} multiplicity
+	 *   The multiplicity of the association end
 	 * @property {string} role
 	 *   The name of the association role
 	 *
@@ -1063,7 +1315,7 @@ sap.ui.define([
 	 *   <b>BEWARE</b> that this array is modified by removing each part which is understood!
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the property is returned as a path or as an object
-	 * @returns {object|string|undefined|null}
+	 * @returns {sap.ui.model.odata.ODataMetaModel.Property|string|undefined|null}
 	 *   (the path to) the last OData property found; <code>undefined</code> (for a path) or
 	 *   <code>null</code> (for an object) if no property was found at all
 	 * @public
