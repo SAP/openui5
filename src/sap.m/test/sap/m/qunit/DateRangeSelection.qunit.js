@@ -1079,8 +1079,8 @@ sap.ui.define([
 				this.sut.getModel().oData.OrderDate,
 				this.sut.getModel().oData.ShippedDate
 			]),
-			expectedDatePattern = this.getDefaultLocaleData().getDatePattern("medium"),
-			expectedPlaceholder = expectedDatePattern + " - " + expectedDatePattern;
+
+			expectedPlaceholder = this.getDefaultFormat().getPlaceholderText();
 
 		//act
 		this.sut.bindValue({

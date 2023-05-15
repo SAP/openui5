@@ -263,18 +263,23 @@ sap.ui.define([
 
 	DateTimeField.prototype._getPlaceholder = function() {
 
-		var sPlaceholder = this.getPlaceholder();
+		var sPlaceholder = this.getPlaceholder(),
+			oBinding = this.getBinding("value"),
+			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
+			bDisplayFormat;
 
 		if (!sPlaceholder) {
-			sPlaceholder = this._getDisplayFormatPattern();
-
-			if (!sPlaceholder) {
-				sPlaceholder = this._getDefaultDisplayStyle();
+			if (oBindingType instanceof SimpleDateType) {
+				return oBindingType.getPlaceholderText();
 			}
 
-			if (this._checkStyle(sPlaceholder)) {
-				sPlaceholder = this._getLocaleBasedPattern(sPlaceholder);
+			if (oBindingType instanceof ODataType && oBindingType.oFormat) {
+				return oBindingType.oFormat.getPlaceholderText();
 			}
+
+			bDisplayFormat = !!this._getDisplayFormatPattern();
+
+			sPlaceholder = this._getFormatter(bDisplayFormat).getPlaceholderText();
 		}
 
 		return sPlaceholder;
