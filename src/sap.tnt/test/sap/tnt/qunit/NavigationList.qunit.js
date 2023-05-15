@@ -416,6 +416,25 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test('Focus', function (assert) {
+		var oFirstItem = this.navigationList.getItems()[0];
+		oFirstItem.getDomRef().getElementsByClassName("sapTntNavLIItem ")[0].focus();
+		this.clock.tick(500);
+		assert.strictEqual(document.activeElement.title, "Root 1", "The first item is focused");
+
+		var oDialog = new sap.m.Dialog();
+		oFirstItem.attachSelect(function(){oDialog.open();});
+		oFirstItem.fireSelect();
+		Core.applyChanges();
+		this.clock.tick(500);
+		assert.ok(document.activeElement.classList.contains("sapMDialog"), "The dialog is focused");
+
+		oDialog.close();
+		Core.applyChanges();
+		this.clock.tick(500);
+		assert.strictEqual(document.activeElement.title, "Root 1", "The first item is focused again");
+	});
+
 	QUnit.test('ARIA attributes', function (assert) {
 
 		var sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")

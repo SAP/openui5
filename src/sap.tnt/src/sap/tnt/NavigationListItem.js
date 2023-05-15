@@ -212,6 +212,22 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 		};
 
 		/**
+		 * Returns the DOM Element that should get the focus.
+		 *
+		 * @return {Element} Returns the DOM Element that should get the focus
+		 * @protected
+		 */
+		NavigationListItem.prototype.getFocusDomRef = function () {
+			var oFocusRef = this.getDomRef("focusable");
+
+			if (oFocusRef) {
+				return oFocusRef;
+			}
+
+			return this.getDomRef();
+		};
+
+		/**
 		 * Returns if the parent NavigationList control is expanded.
 		 * @private
 		 */
@@ -523,7 +539,11 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 					roledescription: this._resourceBundleTNTLib.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM")
 				};
 
-			rm.openStart("div");
+			if (isListExpanded) {
+				rm.openStart("div", this.getId() + "-focusable");
+			} else {
+				rm.openStart("div");
+			}
 
 			rm.class("sapTntNavLIItem");
 			rm.class("sapTntNavLIGroup");
