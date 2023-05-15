@@ -2165,6 +2165,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a lock for the given group ID. Even an automatic {@link #submitBatch} has to wait
+	 * until all such locks are unlocked. The goal of such a lock is to wait with automatic PATCH
+	 * requests triggered by user input until an event handler is called and executes an action.
+	 *
+	 * @param {string} sGroupId
+	 *   A group ID
+	 * @returns {object}
+	 *   The group lock (with methods <code>isLocked</code> and <code>unlock</code>)
+	 * @throws {Error}
+	 *   If the given group does not have {@link sap.ui.model.odata.v4.SubmitMode.Auto}
+	 *
+	 * @private
+	 * @since 1.115.0
+	 * @ui5-restricted sap.fe
+	 */
+	ODataModel.prototype.lock = function (sGroupId) {
+		var oGroupLock;
+
+		if (!this.isAutoGroup(sGroupId)) {
+			throw new Error("Group ID does not use automatic batch requests: " + sGroupId);
+		}
+
+		oGroupLock = this.lockGroup(sGroupId, this, true);
+
+		return {
+			isLocked : function () {
+				return oGroupLock.isLocked();
+			},
+			unlock : function () {
+				oGroupLock.unlock();
+			}
+		};
+	};
+
+	/**
 	 * Creates a lock for a group. {@link sap.ui.model.odata.v4._Requestor#submitBatch} has to wait
 	 * until all locks for <code>sGroupId</code> are unlocked. Delegates to
 	 * {@link sap.ui.model.odata.v4.lib._Requestor#lockGroup}.
