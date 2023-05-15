@@ -104,10 +104,11 @@
 						},
 						{
 							"id": "comment",
-							"label": "Comment",
+							"label": "Have anything to add?",
 							"type": "TextArea",
 							"rows": 4,
-							"placeholder": "Comment"
+							"placeholder": "Comment",
+							"showColon": false
 						}
 					]
 				}
