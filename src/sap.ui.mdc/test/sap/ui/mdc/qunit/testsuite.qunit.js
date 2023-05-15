@@ -95,6 +95,15 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				module: "./actiontoolbar/ActionToolbar.qunit"
 			},
+			"ActionToolbarAction": {
+				group: "ActionToolbar",
+				coverage: {
+					only: "[sap/ui/mdc]",
+					never: "[sap/ui/mdc/qunit]",
+					branchTracking: true
+				},
+				module: "./actiontoolbar/ActionToolbarAction.qunit"
+			},
 			"Field Testsuite" : {
 				title: "Field Testsuite",
 				group: "Testsuite",

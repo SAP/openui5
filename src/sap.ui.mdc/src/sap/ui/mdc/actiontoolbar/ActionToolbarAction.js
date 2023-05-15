@@ -61,33 +61,47 @@ sap.ui.define([
         renderer: ActionToolbarActionRenderer
     });
 
-    /**
-	 * Sets the behavior of the <code>ActionToolbarAction</code> inside an <code>OverflowToolbar</code> configuration.
-	 *
-	 * @public
-	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
-	 */
-    ActionToolbarAction.prototype.getOverflowToolbarConfig = function() {
-        var oConfig = {
-			canOverflow: true
-		};
-        oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow.bind(this);
-        oConfig.onAfterExitOverflow = this._onAfterExitOverflow.bind(this);
+	ActionToolbarAction.prototype.getDomRef = function() {
+		// return the DomRef of the inner Action, otherwise the Overflow calculation does not work
+		return this.getAction() && this.getAction().getDomRef();
+	};
 
+	ActionToolbarAction.prototype.getLayoutData = function() {
+		var oLayoutData = Control.prototype.getLayoutData.apply(this);
+		// return the LayoutData of the inner Action if there is no LayoutData set
+		return oLayoutData ? oLayoutData : this.getAction() && this.getAction().getLayoutData();
+	};
+
+    ActionToolbarAction.prototype.getOverflowToolbarConfig = function() {
+        // use the Action OverflowToolbarConfig if exist
+		var oConfig = this.getAction() && this.getAction().getOverflowToolbarConfig ? this.getAction().getOverflowToolbarConfig() : { canOverflow: true };
+		oConfig.onBeforeEnterOverflow = this._getOnBeforeEnterOverflow(oConfig);
+		oConfig.onAfterExitOverflow = this._getOnAfterExitOverflow(oConfig);
 		return oConfig;
     };
 
-    ActionToolbarAction.prototype._onBeforeEnterOverflow = function() {
-        if (this.getParent()) {
-            this.getParent()._updateSeparators();
-        }
-    };
-
-    ActionToolbarAction.prototype._onAfterExitOverflow = function() {
-        if (this.getParent()) {
-            this.getParent()._updateSeparators();
-        }
-    };
+    ActionToolbarAction.prototype._getOnBeforeEnterOverflow = function(oConfig) {
+		var fnOnBeforeEnterOverflow = oConfig.onBeforeEnterOverflow;
+		return function(oControl) {
+			if (fnOnBeforeEnterOverflow) {
+				fnOnBeforeEnterOverflow(oControl.getAction());
+			}
+			if (oControl.getParent() && oControl.getParent()._updateSeparators) {
+				oControl.getParent()._updateSeparators();
+			}
+		};
+	};
+	ActionToolbarAction.prototype._getOnAfterExitOverflow = function(oConfig) {
+		var fnOnAfterExitOverflow = oConfig.onAfterExitOverflow;
+		return function(oControl) {
+			if (fnOnAfterExitOverflow) {
+				fnOnAfterExitOverflow(oControl.getAction());
+			}
+			if (oControl.getParent() && oControl.getParent()._updateSeparators) {
+				oControl.getParent()._updateSeparators();
+			}
+		};
+	};
 
     /**
      *
