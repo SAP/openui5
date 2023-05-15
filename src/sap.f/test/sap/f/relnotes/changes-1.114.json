@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "91cb263e5a3a7264837cdbddb1edc5486ddcc451",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: fixed collapse icon of SidePanel + visual tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370061236"
+          }
+        ]
+      },
+      {
         "id": "65ef8cfb96157bdea53c738b5239d372588921b4",
         "type": "FEATURE",
         "text": " sap.f.SidePanel: added possibility for left side positioning"

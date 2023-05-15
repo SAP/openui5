@@ -3,6 +3,48 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "7e6c45fc509eff006bb70e924eef6cb2ef3d3e5a",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust click handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003578212023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003756512023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003754472023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003632232023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003796592023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370061824"
+          }
+        ]
+      },
+      {
+        "id": "501d8c3ed95342f21db23ed767447117c286d1cb",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "398d2f1806b1728f1c5ab2ce0493d757ccd16069",
         "type": "FIX",
         "text": " sap.m.Tree: init of ListBase wasn't called",

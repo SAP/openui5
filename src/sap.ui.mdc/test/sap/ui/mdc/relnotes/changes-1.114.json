@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "b19f4e03c345a020c1836f8e23b2fe3345dc3f8d",
+        "type": "FIX",
+        "text": " Field: value help dialog cannot be closed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370065650"
+          }
+        ]
+      },
+      {
         "id": "53c4217179c4df550d61e548f6ea744cc145d445",
         "type": "FIX",
         "text": " Field: show emptyIndicator on Link content",
