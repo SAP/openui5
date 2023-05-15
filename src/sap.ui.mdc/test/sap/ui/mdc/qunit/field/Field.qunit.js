@@ -36,7 +36,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"./FieldBaseDelegateODataDefaultTypes"
 ], function(
 	jQuery,
 	qutils,
@@ -71,7 +72,8 @@ sap.ui.define([
 	StringOdataType,
 	JSONModel,
 	KeyCodes,
-	oCore
+	oCore,
+	FieldBaseDelegateODataDefaultTypes
 ) {
 	"use strict";
 
@@ -257,6 +259,7 @@ sap.ui.define([
 
 	QUnit.module("properties", {
 		beforeEach: function() {
+			FieldBaseDelegateODataDefaultTypes.enable();
 			oFieldEdit = new Field("F1", { editMode: FieldEditMode.Editable });
 			oFieldDisplay = new Field("F2", { editMode: FieldEditMode.Display });
 			oFieldEdit.placeAt("content");
@@ -264,6 +267,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function() {
+			FieldBaseDelegateODataDefaultTypes.disable();
 			oFieldEdit.destroy();
 			oFieldDisplay.destroy();
 			oFieldEdit = undefined;
@@ -611,6 +615,7 @@ sap.ui.define([
 
 	QUnit.module("Eventing", {
 		beforeEach: function() {
+			FieldBaseDelegateODataDefaultTypes.enable();
 			oField = new Field("F1", {
 				dataType: "Edm.String"
 			});
@@ -622,6 +627,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function() {
+			FieldBaseDelegateODataDefaultTypes.disable();
 			oField.destroy();
 			oField = undefined;
 			_cleanupEvents();
@@ -896,6 +902,7 @@ sap.ui.define([
 
 	QUnit.module("Binding", {
 		beforeEach: function() {
+			FieldBaseDelegateODataDefaultTypes.enable();
 			oModel = new JSONModel({
 				value: 10,
 				date: new Date(Date.UTC(2018, 11, 20)),
@@ -964,6 +971,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function() {
+			FieldBaseDelegateODataDefaultTypes.disable();
 			oField.destroy();
 			oField = undefined;
 			oField2.destroy();
@@ -1556,6 +1564,7 @@ sap.ui.define([
 
 	QUnit.module("DateTime with timezone", {
 		beforeEach: function() {
+			FieldBaseDelegateODataDefaultTypes.enable();
 			oModel = new JSONModel({
 				dateTime: "2022-02-25T07:06:30+01:00",
 				timezone: "Europe/Berlin"
@@ -1583,6 +1592,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function() {
+			FieldBaseDelegateODataDefaultTypes.disable();
 			oField.destroy();
 			oField = undefined;
 			oField2.destroy();

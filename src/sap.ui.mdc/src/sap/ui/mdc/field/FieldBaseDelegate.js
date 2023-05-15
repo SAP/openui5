@@ -7,9 +7,9 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeMap', 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enums/ConditionValidated'
+	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/DefaultTypeMap', 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enums/ConditionValidated'
 ], function(
-	BaseDelegate, ODataTypeMap, FormatException, Condition, ConditionValidated
+	BaseDelegate, DefaultTypeMap, FormatException, Condition, ConditionValidated
 ) {
 	"use strict";
 
@@ -27,7 +27,7 @@ sap.ui.define([
 	var FieldBaseDelegate = Object.assign({}, BaseDelegate);
 
 	FieldBaseDelegate.getTypeMap = function () {
-		return ODataTypeMap;
+		return DefaultTypeMap;
 	};
 
 	/**
