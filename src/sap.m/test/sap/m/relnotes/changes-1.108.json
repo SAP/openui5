@@ -885,5 +885,21 @@
         ]
       }
     ]
+  },
+  "1.108.12": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "9f985b8bcbd47b507bfe86b803308a5bad6ddbfc",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370069233"
+          }
+        ]
+      }
+    ]
   }
 }
