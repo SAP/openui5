@@ -8,10 +8,38 @@
 	"parserOptions": {
 		"sourceType": "module"
 	},
+	"extends": ["eslint:recommended"],
 	"rules": {
-		"strict": ["error", "never"],
+		"indent": [
+			"error",
+			"tab",
+			{"SwitchCase": 1}
+		],
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"max-len": [
+			"warn",
+			{"code": 120, "ignoreUrls": true, "ignoreRegExpLiterals": true}
+		],
 		"no-console": "off",
 		"no-loop-func": "warn",
-		"no-var": "error"
+		"no-prototype-builtins": "off",
+		"no-unused-vars": "warn",
+		"no-var": "error",
+		"quotes": [
+			"error",
+			"double",
+			{"allowTemplateLiterals": true}
+		],
+		"semi": [
+			"error",
+			"always"
+		],
+		"strict": [
+			"error",
+			"never"
+		]
 	}
 }
