@@ -10,7 +10,10 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/base/util/restricted/_pick",
-	"sap/ui/fl/write/_internal/FlexInfoSession"
+	"sap/ui/fl/write/_internal/FlexInfoSession",
+	"sap/ui/core/BusyIndicator",
+	"sap/base/Log",
+	"sap/m/MessageBox"
 ], function (
 	merge,
 	Layer,
@@ -19,7 +22,10 @@ sap.ui.define([
 	InitialUtils,
 	WriteUtils,
 	_pick,
-	FlexInfoSession
+	FlexInfoSession,
+	BusyIndicator,
+	Log,
+	MessageBox
 ) {
 	"use strict";
 
@@ -46,7 +52,8 @@ sap.ui.define([
 			VERSIONS: {
 				GET: PREFIX + InitialConnector.API_VERSION + "/versions/",
 				ACTIVATE: PREFIX + InitialConnector.API_VERSION + "/versions/activate/",
-				DISCARD: PREFIX + InitialConnector.API_VERSION + "/versions/draft/"
+				DISCARD: PREFIX + InitialConnector.API_VERSION + "/versions/draft/",
+				PUBLISH: PREFIX + InitialConnector.API_VERSION + "/versions/publish/"
 			},
 			TRANSLATION: {
 				UPLOAD: PREFIX + InitialConnector.API_VERSION + "/translation/texts",
@@ -149,6 +156,29 @@ sap.ui.define([
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
 			return WriteUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
+		},
+		publish: function (mPropertyBag) {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			var fnHandleAllErrors = function (oError) {
+				BusyIndicator.hide();
+				var sMessage = oResourceBundle.getText("MSG_CF_PUBLISH_ERROR", oError ? [oError.message || oError] : undefined);
+				var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
+				Log.error("publish version error" + oError);
+				MessageBox.show(sMessage, {
+					icon: MessageBox.Icon.ERROR,
+					title: sTitle,
+					styleClass: mPropertyBag.styleClass
+				});
+				return "Error";
+			};
+
+			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			var mParameters = {version: mPropertyBag.version};
+			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.PUBLISH, mPropertyBag, mParameters);
+			return WriteUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function () {
+				BusyIndicator.hide();
+				return oResourceBundle.getText("MSG_CF_PUBLISH_SUCCESS");
+			})['catch'](fnHandleAllErrors);
 		}
 	};
 
