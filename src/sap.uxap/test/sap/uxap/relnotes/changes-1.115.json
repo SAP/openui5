@@ -1,0 +1,18 @@
+{
+  "1.115.0": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "56ca797f26e5ac15f1138b80bc88e85ef1397d04",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: fix empty SubSections height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003865102023"
+          }
+        ]
+      }
+    ]
+  }
+}

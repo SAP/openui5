@@ -1,0 +1,97 @@
+{
+  "1.115.0": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "b8834c98401a8b51d8968f8728007a40559498a5",
+        "type": "FIX",
+        "text": " sap.m.PullToRefresh: Space key hold fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370060186"
+          }
+        ]
+      },
+      {
+        "id": "af3460a6e3691996cf73fe1dcf5a79a310395399",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed layout on DOT breakpoint",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370027076"
+          }
+        ]
+      },
+      {
+        "id": "86bee7aaf31d37a62db47cfdf8b1376d92e24992",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      },
+      {
+        "id": "a293887a4f810b0549020486cda0a944f2087df8",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust click handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003578212023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003756512023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003754472023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003632232023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003796592023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370061824"
+          }
+        ]
+      },
+      {
+        "id": "7bc4c7f6490d1d4f7fc9b1c0b30eb0e6ba375734",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Implement Horizon theme changes"
+      },
+      {
+        "id": "d0686059594077b62449b049373d0a0f3fe9bdd0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove redundant labelled by reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154897"
+          }
+        ]
+      },
+      {
+        "id": "b09dcb11a549318f779ef4367c493891e4cc2e7f",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Background now covers content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380028903"
+          }
+        ]
+      },
+      {
+        "id": "d4c32e2610b2489c9db1eeec2903c37f93238fa0",
+        "type": "FIX",
+        "text": " sap.m.Image: SVG bug on Firefox fixed"
+      }
+    ]
+  }
+}
