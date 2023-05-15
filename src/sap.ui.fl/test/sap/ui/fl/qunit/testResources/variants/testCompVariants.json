@@ -124,6 +124,48 @@
                 "variantId": "id_1676895725424_1468_page",
                 "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
                 "creation": "2023-02-20T12:22:07.4507170Z"
+            },
+            {
+                "changeType": "page",
+                "reference": "ZDEMOOVP_RESIZE",
+                "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+                "projectId": "ZDEMOOVP_RESIZE",
+                "support": {
+                    "generator": "sap.ui.rta.command",
+                    "sapui5Version": "1.112.0-SNAPSHOT",
+                    "command": "compVariantSaveAs",
+                    "user": "TEST"
+                },
+                "originalLanguage": "EN",
+                "layer": "VENDOR",
+                "fileType": "variant",
+                "fileName": "id_1676895725424_1469_page",
+                "content": {
+                    "ovpSubFilter": {
+                        "version": "V3",
+                        "filterbar": [],
+                        "filterBarVariant": "{}",
+                        "singleInputsTextArrangementData": "{}"
+                    }
+                },
+                "texts": {
+                    "variantName": {
+                        "value": "Standard VENDOR",
+                        "type": "XFLD"
+                    }
+                },
+                "favorite": true,
+                "executeOnSelection": false,
+                "standardVariant": false,
+                "contexts": {
+                    "role": []
+                },
+                "selector": {
+                    "persistencyKey": "ovpSubFilter"
+                },
+                "variantId": "id_1676895725424_1469_page",
+                "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
+                "creation": "2023-02-21T12:22:07.4507170Z"
             }
         ],
         "changes": [
@@ -178,6 +220,31 @@
                 "dependentSelector": {},
                 "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
                 "creation": "2023-02-20T12:22:09.9220560Z"
+            },
+            {
+                "changeType": "defaultVariant",
+                "reference": "ZDEMOOVP_RESIZE",
+                "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+                "projectId": "ZDEMOOVP_RESIZE",
+                "support": {
+                    "generator": "CompVariantState.defaultVariant",
+                    "sapui5Version": "1.112.0-SNAPSHOT",
+                    "user": "TEST"
+                },
+                "originalLanguage": "EN",
+                "layer": "CUSTOMER",
+                "fileType": "change",
+                "fileName": "id_1676895718729_1456_defaultVariant",
+                "content": {
+                    "defaultVariantName": "id_1676895725424_1469_page"
+                },
+                "texts": {},
+                "selector": {
+                    "persistencyKey": "ovpSubFilter"
+                },
+                "dependentSelector": {},
+                "versionId": "42010AEECAD31EEDACA321B307FBFD3E",
+                "creation": "2023-02-22T12:22:09.9220560Z"
             }
         ],
         "standardVariants": []
