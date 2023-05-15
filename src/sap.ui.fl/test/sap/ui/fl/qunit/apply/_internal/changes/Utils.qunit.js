@@ -135,7 +135,7 @@ sap.ui.define([
 			var oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves("changeHandler");
 			var mPropertyBag = {
 				modifier: {
-					getLibraryName: function() {return "library";}
+					getLibraryName: function() {return Promise.resolve("library");}
 				}
 			};
 			var mControl = {
