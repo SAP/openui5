@@ -76,16 +76,17 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolving with the change handler or an empty object
 		 */
 		getChangeHandler: function(oChange, mControl, mPropertyBag) {
-			var sLibraryName = mPropertyBag.modifier.getLibraryName(mControl.control);
+			var oLibraryNamePromise = mPropertyBag.modifier.getLibraryName(mControl.control);
 			// the ChangeHandlerRegistration includes all the predefined ChangeHandlers.
 			// With this as a standard import the ChangeHandlers would not be able to access API classes due to circular dependencies.
 			// TODO should be removed as soon as the ChangePersistence / FlexController are gone
-			return FlUtils.requireAsync("sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration")
-
-			.then(function(ChangeHandlerRegistration) {
-				return ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName);
+			return Promise.all([
+				FlUtils.requireAsync("sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration"),
+				oLibraryNamePromise
+			])
+			.then(function(aPromiseValues) {
+				return aPromiseValues[0].waitForChangeHandlerRegistration(aPromiseValues[1]);
 			})
-
 			.then(function() {
 				var sChangeType = oChange.getChangeType();
 				var sLayer = oChange.getLayer();
