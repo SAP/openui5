@@ -7,7 +7,7 @@
 	<script src="../sharedTest.js" localstoragekey="card-designtime-"></script>
 	<script src="../../../../../../resources/sap-ui-integration.js"
 		id="sap-ui-bootstrap"
-		data-sap-ui-theme="sap_fiori_3"
+		data-sap-ui-theme="sap_horizon"
 		data-sap-ui-oninit="init"
 		data-sap-ui-resourceroots='{"testjs":"../","sap.ui.integration.cardEditor.test":"../"}'>
 	</script>
@@ -22,9 +22,20 @@
 		</select>
 		<label>Theme:</label>
 		<select onchange="switchTheme(this)">
-			<option value="sap_fiori_3">sap_fiori_3</option>
-			<option value="sap_fiori_3_dark">sap_fiori_3_dark</option>
-			<option value="sap_hcb">sap_hcb</option>
+			<option value="sap_horizon">Morning Horizon (Light)</option>
+			<option value="sap_horizon_dark">Evening Horizon (Dark)</option>
+			<option value="sap_horizon_hcb">Horizon High Contrast Black</option>
+			<option value="sap_horizon_hcw">Horizon High Contrast White</option>
+			<option value="sap_fiori_3">Quartz Light</option>
+			<option value="sap_fiori_3_dark">Quartz Dark</option>
+			<option value="sap_fiori_3_hcb">Quartz High Contrast Black</option>
+			<option value="sap_fiori_3_hcw">Quartz High Contrast White</option>
+			<option value="sap_belize">Belize</option>
+			<option value="sap_belize_plus">Belize Deep</option>
+			<option value="sap_belize_hcb">Belize High Contrast Black</option>
+			<option value="sap_belize_hcw">Belize High Contrast White</option>
+			<option value="sap_bluecrystal">SAP BlueCrystal</option>
+			<option value="sap_hcb">SAP HCB</option>
 		</select>
 	</div>
 	<div id="editor" style="width: 80%;">
