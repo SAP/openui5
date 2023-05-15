@@ -339,6 +339,23 @@ sap.ui.define([
 	 * @public
 	 */
 
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.NavigationProperty
+	 *
+	 * An OData navigation property of an entity type.
+	 *
+	 * @property {string} name
+	 *   The name of the navigation property
+	 * @property {string} fromRole
+	 *   The name of the starting point for the navigation; refers to a role defined in the association
+	 * @property {string} relationship
+	 *   The qualified name of the navigation property's association
+	 * @property {string} toRole
+	 *   The name of the other end of the relationship; refers to a role defined in the association
+	 *
+	 * @public
+	 */
+
 	var // maps the metadata URL with query parameters concatenated with the code list collection
 		// path (e.g. /foo/bar/$metadata#SAP__Currencies) to a SyncPromise resolving with the code
 		// list customizing as needed by the OData type
