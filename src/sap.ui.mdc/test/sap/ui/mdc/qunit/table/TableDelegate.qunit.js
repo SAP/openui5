@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/mdc/enum/TableMultiSelectMode",
 	"sap/ui/mdc/enum/TableSelectionMode",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enum/TableType",
+	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	TableQUnitUtils,
 	TableDelegate,
@@ -38,7 +39,8 @@ sap.ui.define([
 	deepEqual,
 	TableMultiSelectMode,
 	TableSelectionMode,
-	TableType
+	TableType,
+	FilterUtil
 ) {
 	"use strict";
 
@@ -289,18 +291,21 @@ sap.ui.define([
 				name: "Name",
 				path: "Name_Path",
 				label: "Name_Label",
-				sortable: true
+				sortable: true,
+				dataType: "String"
 			}, {
 				name: "FirstName",
 				path: "FirstName_Path",
 				label: "FirstName_Label",
-				sortable: true
+				sortable: true,
+				dataType: "String"
 			}, {
 				name: "ID",
 				path: "ID_Path",
 				label: "ID_Label",
 				sortable: true,
-				text: "FirstName"
+				text: "FirstName",
+				dataType: "String"
 			}]);
 		},
 		beforeEach: function(assert) {
@@ -356,29 +361,46 @@ sap.ui.define([
 
 	QUnit.test("updateBindingInfo", function(assert) {
 		var oTable = this.oTable;
+		oTable.setP13nMode(["Sort", "Filter"]);
+		var oFilterConditions = {
+			Name: [
+				{
+					isEmpty: null,
+					operator: "EQ",
+					validated: "NotValidated",
+					values: ["test"]
+				}
+			]
+		};
 
+		var oStub = sinon.stub(oTable, "getConditions").returns(oFilterConditions);
+		var aExpectedFilter = [];
 		return TableQUnitUtils.waitForBindingInfo(oTable).then(function() {
 			oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
 			oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 			oTable.rebind();
+			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
 			var aSorter = [new Sorter("Name_Path", true)];
+			aExpectedFilter = [FilterUtil.getFilterInfo(oTable.getControlDelegate().getTypeUtil(), oTable.getConditions(), oTable.getPropertyHelper().getProperties()).filters];
 			var oBindingInfo = {};
 
 			assert.deepEqual(oTable._oTable.getBindingInfo("rows").sorter, aSorter, "Correct sorter assigned");
 			TableDelegate.updateBindingInfo(oTable, oBindingInfo);
-			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aSorter, filters: [], path: "/foo"});
+			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aSorter, filters: aExpectedFilter, path: "/foo"});
 
 			oTable.setType("ResponsiveTable");
-			return TableQUnitUtils.waitForBindingInfo(oTable);
+			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
 			var oSorter = oTable._oTable.getBindingInfo("items").sorter[0];
 
 			assert.ok(oTable._oTable.getBindingInfo("items").sorter.length, 1, "One sorter assigned");
 			assert.ok(oSorter.sPath === "Name_Path" && oSorter.bDescending === true && oSorter.vGroup != null, "Sorter properties");
 
+			oTable.setFilterConditions(oFilterConditions);
 			oTable.setGroupConditions({groupLevels: [{name: "FirstName"}]});
 			oTable.rebind();
+			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
 			var aSorters = oTable._oTable.getBindingInfo("items").sorter;
 
@@ -394,13 +416,15 @@ sap.ui.define([
 
 			oTable.setGroupConditions();
 			oTable.rebind();
+			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
 			var aSorter = [new Sorter("Name_Path", true)];
 			var oBindingInfo = {};
 
 			assert.deepEqual(oTable._oTable.getBindingInfo("items").sorter, aSorter, "Correct sorter assigned");
 			TableDelegate.updateBindingInfo(oTable, oBindingInfo);
-			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aSorter, filters: [], path: "/foo"});
+			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aSorter, filters: aExpectedFilter, path: "/foo"});
+			oStub.restore();
 		});
 	});
 

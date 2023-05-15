@@ -566,8 +566,10 @@ sap.ui.define([
 			},
 			associations: {
 				/**
-				 * Control or object which enables the table to do filtering, such as {@link sap.ui.mdc.FilterBar}. Also see
+				 * Control or object that enables the table to do filtering, such as {@link sap.ui.mdc.FilterBar}. See also
 				 * {@link sap.ui.mdc.IFilter}.
+				 *
+				 * Automatic filter generation only works in combination with a <code>sap.ui.mdc.FilterBar</code>.
 				 */
 				filter: {
 					type: "sap.ui.mdc.IFilter",

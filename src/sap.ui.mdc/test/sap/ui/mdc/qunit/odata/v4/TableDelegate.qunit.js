@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/mdc/enum/TableMultiSelectMode",
 	"sap/ui/mdc/enum/TableSelectionMode",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enum/TableType",
+	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	TableQUnitUtils,
 	createAppEnvironment,
@@ -42,7 +43,8 @@ sap.ui.define([
 	TestUtils,
 	TableMultiSelectMode,
 	TableSelectionMode,
-	TableType
+	TableType,
+	FilterUtil
 ) {
 	"use strict";
 
@@ -1404,7 +1406,7 @@ sap.ui.define([
 		return oTable._fullyInitialized().then(function() {
 			fnOriginalUpdateBindingInfo = oTable.getControlDelegate().updateBindingInfo;
 			oTable.getControlDelegate().updateBindingInfo = function(oTable, oBindingInfo) {
-				fnOriginalUpdateBindingInfo(oTable, oBindingInfo);
+				fnOriginalUpdateBindingInfo.apply(this, arguments);
 				oBindingInfo.parameters["$search"] = "Name";
 			};
 			return TableQUnitUtils.waitForBindingInfo(oTable);
@@ -1449,14 +1451,16 @@ sap.ui.define([
 				label: "Name",
 				sortable: true,
 				groupable: true,
-				filterable: true
+				filterable: true,
+				dataType: "String"
 			},{
 				name: "Country",
 				label: "Country",
 				path: "Country",
 				sortable: true,
 				groupable: true,
-				filterable: true
+				filterable: true,
+				dataType: "String"
 			}]);
 		},
 		beforeEach: function() {
@@ -1469,6 +1473,7 @@ sap.ui.define([
 			}).addColumn(new Column({
 				header: "Name",
 				propertyKey: "Name",
+				dataType: "String",
 				template: new Text({text: "Name"})
 			})).setModel(new ODataModel({
 				serviceUrl: "serviceUrl/",
@@ -1509,11 +1514,11 @@ sap.ui.define([
 		this.oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 		this.oTable.setAggregateConditions({Name: {}});
 		this.oTable._rebind();
-
+		var aTableProperties = this.oTable.getPropertyHelper().getProperties();
 		assert.equal(this.oSortSpy.callCount, 1, "Binding#sort called once");
 		sinon.assert.calledWithExactly(this.oSortSpy, [new Sorter("Name", true)]);
 		assert.equal(this.oFilterSpy.callCount, 1, "Binding#filter called once");
-		sinon.assert.calledWithExactly(this.oFilterSpy, [], "Application");
+		sinon.assert.calledWithExactly(this.oFilterSpy, [FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeUtil(), this.oTable.getConditions(), aTableProperties).filters], "Application");
 		assert.equal(this.oChangeParametersSpy.callCount, 1, "Binding#changeParameters called once");
 		sinon.assert.calledWithExactly(this.oChangeParametersSpy, {});
 		assert.equal(this.oSetAggregationSpy.callCount, 1, "Binding#setAggregation called once");

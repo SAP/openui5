@@ -1048,7 +1048,7 @@ sap.ui.define([
 		return this.oTable.initialized().then(function() {
 			fnOriginalUpdateBindingInfo = this.oTable.getControlDelegate().updateBindingInfo;
 			this.oTable.getControlDelegate().updateBindingInfo = function(oTable, oBindingInfo) {
-				fnOriginalUpdateBindingInfo(oTable, oBindingInfo);
+				fnOriginalUpdateBindingInfo.apply(this, arguments);
 				oBindingInfo.events = {
 					dataReceived: fCustomDataReceived
 				};
