@@ -394,14 +394,14 @@ sap.ui.define([
 		// Act
 		this.oTimePicker.setDisplayFormat("HH:mm");
 		// Assert
-		assert.equal(this.oTimePicker._getPlaceholder(), "HH:mm", "The placeholder is 'HH:mm'");
+		assert.equal(this.oTimePicker._getPlaceholder(), "For example 23:59", "The placeholder is correct");
 	});
 
 	QUnit.test("Set displayFormat to 'short'", function (assert) {
 		// Act
 		this.oTimePicker.setDisplayFormat("short");
 		// Assert
-		assert.equal(this.oTimePicker._getPlaceholder(), "h:mm a", "The placeholder is 'h:mm a'");
+		assert.equal(this.oTimePicker._getPlaceholder(), "For example 11:59 PM", "The placeholder is correct");
 	});
 
 	QUnit.module("Display format", {

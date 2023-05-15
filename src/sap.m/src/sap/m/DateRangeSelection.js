@@ -267,7 +267,8 @@ sap.ui.define([
 			oBinding,
 			oBindingType,
 			oLocale,
-			oLocaleData;
+			oLocaleData,
+			oFormatOptions;
 
 		if (!sPlaceholder) {
 			oBinding = this.getBinding("value");
@@ -280,7 +281,8 @@ sap.ui.define([
 				if (oBindingType.oFormatOptions && oBindingType.oFormatOptions.format) {
 					sPlaceholder = oLocaleData.getCustomDateTimePattern(oBindingType.oFormatOptions.format);
 				} else {
-					sPlaceholder = oLocaleData.getDatePattern("medium");
+					oFormatOptions = Object.assign({ interval: true, singleIntervalValue: true }, oBindingType.oFormatOptions);
+					return this._getDateFormatPlaceholderText(oFormatOptions);
 				}
 			} else {
 				sPlaceholder = this.getDisplayFormat();
@@ -290,7 +292,8 @@ sap.ui.define([
 				}
 
 				if (this._checkStyle(sPlaceholder)) {
-					sPlaceholder = oLocaleData.getDatePattern(sPlaceholder);
+					oFormatOptions = Object.assign({ interval: true, singleIntervalValue: true, intervalDelimiter: _getDelimiter.call(this) }, _getFormatter.call(this).oFormatOptions);
+					return  this._getDateFormatPlaceholderText(oFormatOptions);
 				}
 			}
 
@@ -301,6 +304,10 @@ sap.ui.define([
 		}
 
 		return sPlaceholder;
+	};
+
+	DateRangeSelection.prototype._getDateFormatPlaceholderText = function (oFormatOptions) {
+		return  DateFormat.getDateInstance(oFormatOptions).getPlaceholderText();
 	};
 
 	// Overwrite DatePicker's setValue to support two date range processing
