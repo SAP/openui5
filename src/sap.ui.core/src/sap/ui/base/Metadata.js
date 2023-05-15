@@ -24,6 +24,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sClassName Fully qualified name of the described class
 	 * @param {object} oClassInfo Info to construct the class and its metadata from
+	 * @param {sap.ui.base.Object.MetadataOptions} [oClassInfo.metadata]
+	 *  The metadata object describing the class
 	 *
 	 * @class Metadata for a class.
 	 * @author Frank Weigel
@@ -170,7 +172,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the (constructor of the) described class
-	 * @return {function} class described by this metadata
+	 * @return {function(new:sap.ui.base.Object)} class described by this metadata
 	 * @public
 	 */
 	Metadata.prototype.getClass = function() {

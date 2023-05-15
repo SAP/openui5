@@ -1837,7 +1837,7 @@ sap.ui.define([
 
 	/**
 	 * Opens the control by given opener ref.
-	 * @param {jQuery.Event | object} oEvent
+	 * @param {jQuery.Event | {left: float, top: float, offsetX: float, offsetY: float}} oEvent
 	 *   An <code>oncontextmenu</code> event object or an object with properties left, top, offsetX, offsetY
 	 * @param {sap.ui.core.Element|HTMLElement} oOpenerRef
 	 *   The element which will get the focus back again after the menu was closed
@@ -1951,7 +1951,7 @@ sap.ui.define([
 	 *
 	 * This is an optional method. If not defined, the <code>value</code> property or the <code>text</code> property is used to determine the value.
 	 *
-	 * @returns {string|Promise} Formatted value or a <code>Promise</code> returning the formatted value if resolved
+	 * @returns {string|Promise<string>} Formatted value or a <code>Promise</code> returning the formatted value if resolved
 	 * @since 1.86.0
 	 * @public
 	 * @experimental As of version 1.86

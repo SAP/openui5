@@ -129,7 +129,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/service/Service', "sap/base/as
 	 * @param {object} oServiceContext.scopeObject Object that is in scope (e.g. component instance)
 	 * @param {string} oServiceContext.scopeType Type of object that is in scope (e.g. component, ...)
 	 * @param {string} oServiceContext.settings The service settings
-	 * @return {Promise} Promise which resolves with the new Service instance.
+	 * @return {Promise<sap.ui.core.service.Service>} Promise which resolves with the new Service instance.
 	 * @protected
 	 */
 	ServiceFactory.prototype.createInstance = function(oServiceContext) {

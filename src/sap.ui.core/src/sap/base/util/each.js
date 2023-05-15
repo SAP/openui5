@@ -3,6 +3,12 @@
  */
 sap.ui.define([], function() {
 	"use strict";
+	/**
+	 * The key that is passed to the callback as the first parameter
+	 *
+	 * @typedef {(int|string)} module:sap/base/util/each.Key
+	 * @public
+	 */
 
 	/**
 	 * Iterates over elements of the given object or array.
@@ -39,7 +45,7 @@ sap.ui.define([], function() {
 	 * @function
 	 * @since 1.58
 	 * @param {object|any[]} oObject object or array to enumerate the properties of
-	 * @param {function} fnCallback function to call for each property name
+	 * @param {function(this:any, module:sap/base/util/each.Key, any):boolean} fnCallback function to call for each property name
 	 * @alias module:sap/base/util/each
 	 * @return {object|any[]} the given <code>oObject</code>
 	 * @public

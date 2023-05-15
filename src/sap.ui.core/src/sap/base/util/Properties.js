@@ -241,15 +241,15 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * @param {object} [mParams] Parameters used to initialize the property list
 	 * @param {string} [mParams.url] The URL to the .properties file which should be loaded
 	 * @param {boolean} [mParams.async=false] Whether the .properties file should be loaded asynchronously or not
-	 * @param {object} [mParams.headers] A map of additional header key/value pairs to send along with
+	 * @param {Object<string,any>} [mParams.headers] A map of additional header key/value pairs to send along with
 	 *    the request (see <code>headers</code> option of <code>jQuery.ajax</code>)
-	 * @param {object} [mParams.returnNullIfMissing=false] Whether <code>null</code> should be returned
+	 * @param {boolean} [mParams.returnNullIfMissing=false] Whether <code>null</code> should be returned
 	 *    for a missing properties file; by default an empty collection is returned
-	 * @return {module:sap/base/util/Properties|null|Promise} A new property collection (synchronous case)
-	 *    or <code>null</code> if the file could not be loaded and <code>returnNullIfMissing</code>
-	 *    was set; in case of asynchronous loading, always a Promise is returned, which resolves with
-	 *    the property collection or with <code>null</code> if the file could not be loaded and
-	 *    <code>returnNullIfMissing</code> was set to true
+	 * @return {module:sap/base/util/Properties|null|Promise<module:sap/base/util/Properties|null>} A new
+	 *    property collection (synchronous case) or <code>null</code> if the file could not be loaded and
+	 *    <code>returnNullIfMissing</code> was set; in case of asynchronous loading, always a Promise is
+	 *    returned, which resolves with the property collection or with <code>null</code> if the file could not
+	 *    be loaded and <code>returnNullIfMissing</code> was set to true
 	 * @throws {Error} When the file has syntax issues (e.g. incomplete unicode escapes);
 	 *    in async mode, the error is not thrown but the returned Promise will be rejected
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
