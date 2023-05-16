@@ -399,8 +399,8 @@ sap.ui.define([
 	 * Hook method for {@link #fetchQueryOptionsForOwnCache} to determine the query options for this
 	 * binding.
 	 *
-	 * @param {sap.ui.model.Context} oContext
-	 *   The context instance to be used
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used for a relative binding
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the binding's query options
 	 *
