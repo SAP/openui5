@@ -171,7 +171,7 @@ sap.ui.define([
 		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
-
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata promise and refresh", function(assert) {
 		var done = assert.async();
 		oModel = initModel();
@@ -204,7 +204,7 @@ sap.ui.define([
 		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
-
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata promise ok then refresh failed", function(assert) {
 		var done = assert.async();
 		oModel = initModel();
@@ -234,7 +234,7 @@ sap.ui.define([
 		};
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
-
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata promise ok then refresh failed then refresh ok", function(assert) {
 		var done = assert.async();
 		oModel = initModel();

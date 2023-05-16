@@ -205,7 +205,7 @@ sap.ui.define([
 			assert.ok(false, "Promise rejected");
 		});
 	});
-
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata promise and refresh", function(assert) {
 		var done = assert.async();
 
@@ -234,7 +234,7 @@ sap.ui.define([
 			assert.ok(false, "oNewP2 Promise rejected");
 		});
 	});
-
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata promise rejected refresh", function(assert) {
 		var done = assert.async();
 
@@ -260,7 +260,7 @@ sap.ui.define([
 		});
 
 	});
-
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata promise rejected refresh and resolve", function(assert) {
 		var done = assert.async();
 		cleanSharedData();
@@ -328,7 +328,7 @@ sap.ui.define([
 	});
 });
 
-	//*********************************************************************************************
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata promise ok then refresh failed", function(assert) {
 		var done = assert.async();
 
@@ -354,7 +354,7 @@ sap.ui.define([
 			done();
 		});
 	});
-
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata promise ok then refresh failed then refresh ok", function(assert) {
 		var done = assert.async();
 
@@ -391,7 +391,7 @@ sap.ui.define([
 		});
 
 	});
-
+	/** @deprecated As of version 1.42.0 */
 	QUnit.test("test metadata isMetadataLoadingFailed", function(assert) {
 		var done = assert.async();
 
