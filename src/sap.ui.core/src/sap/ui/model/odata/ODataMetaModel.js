@@ -379,6 +379,19 @@ sap.ui.define([
 	 */
 
 	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.EntitySet
+	 *
+	 * An object representing an OData entity set.
+	 *
+	 * @property {string} entityType
+	 *   The qualified name of the entity set's entity type
+	 * @property {string} name
+	 *   The name of the entity set
+	 *
+	 * @public
+	 */
+
+	/**
 	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.NavigationProperty
 	 *
 	 * An OData navigation property of an entity type.
@@ -1332,7 +1345,7 @@ sap.ui.define([
 	 *   a simple name, e.g. "ProductSet"
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the entity set is returned as a path or as an object
-	 * @returns {object|string|undefined|null}
+	 * @returns {sap.ui.model.odata.ODataMetaModel.EntitySet|string|undefined|null}
 	 *   (the path to) the entity set with the given simple name; <code>undefined</code> (for a
 	 *   path) or <code>null</code> (for an object) if no such set is found
 	 * @public
