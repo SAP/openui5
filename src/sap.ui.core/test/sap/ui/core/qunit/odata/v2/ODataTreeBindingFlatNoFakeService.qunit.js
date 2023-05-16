@@ -746,14 +746,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_generateDeleteRequest: for added node", function (assert) {
 		var oBinding = {
-				oModel : {deleteCreatedEntry : function () {}}
+				oModel : {_discardEntityChanges : function () {}}
 			},
 			oNode = {
-				context : "~oContext",
+				context : {getPath : function () {}},
 				nodeState : {added : true}
 			};
 
-		this.mock(oBinding.oModel).expects("deleteCreatedEntry").withExactArgs("~oContext");
+		this.mock(oNode.context).expects("getPath").withExactArgs().returns("/~key");
+		this.mock(oBinding.oModel).expects("_discardEntityChanges").withExactArgs("~key", /*bDeleteEntity*/true);
 
 		// code under test
 		assert.strictEqual(

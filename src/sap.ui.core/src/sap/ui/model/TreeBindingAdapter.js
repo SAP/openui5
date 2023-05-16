@@ -740,11 +740,7 @@ sap.ui.define([
 		 *
 		 * @returns {number} The calculated request length
 		 *
-		 * @protected
-		 * @deprecated
-		 *   since version 1.52. This method is marked as 'protected' which was meant to
-		 *   be overwritten by its subclasses. It may be renamed or deleted and should only be
-		 *   called from this class or its subclasses.
+		 * @private
 		 */
 		TreeBindingAdapter.prototype._calculateRequestLength = function(iMaxGroupSize, oSection) {
 			var iRequestedLength;

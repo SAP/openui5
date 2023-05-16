@@ -3556,7 +3556,7 @@ sap.ui.define([
 		var oContext = oNode.context;
 
 		if (oNode.nodeState.added) {
-			this.oModel.deleteCreatedEntry(oContext);
+			this.oModel._discardEntityChanges(oContext.getPath().slice(1), true);
 
 			return undefined;
 		} else {
