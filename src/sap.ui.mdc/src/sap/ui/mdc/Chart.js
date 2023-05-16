@@ -59,8 +59,8 @@ sap.ui.define([
          * @param {string} [sId] ID for the new control, generated automatically if no id is given
          * @param {object} [mSettings] Initial settings for the new control
          *
-         * @class The Chart control creates a chart based on metadata and the configuration specified.<br>
-         * <b>Note:</b> The inner chart needs to be assigned via delegate. The Chart does not work without!
+         * @class The <code>Chart</code> control creates a chart based on metadata and the configuration specified.<br>
+         * <b>Note:</b> The inner chart needs to be assigned <code>ChartDelegate</code>.
          * @extends sap.ui.mdc.Control
          * @author SAP SE
          * @version ${version}
@@ -116,7 +116,7 @@ sap.ui.define([
                     },
 
                     /**
-                     * Specifies header text that is shown in chart
+                     * Specifies header text that is shown in the chart.
                      */
                     header: {
                         type: "string",
@@ -130,7 +130,7 @@ sap.ui.define([
                      */
                     noDataText: {
                         type: "string",
-                        defaultValue: "No data" //TODO WHy do we have a not translated default value?
+                        defaultValue: "No data"
                     },
 
                     /**
@@ -146,7 +146,7 @@ sap.ui.define([
 
                     /**
                      * Enables the legend of the chart.
-                     * <b>Note:</b> The setter calls <code>setLegendVisible</code> on the delegate.
+                     * <b>Note:</b> The setter calls <code>setLegendVisible</code> of the delegate class.
                      *
                      * @since 1.88
                      */
@@ -157,7 +157,7 @@ sap.ui.define([
                     },
 
                     /**
-                     * Specifies which actions should not be available in the chart's toolbar.
+                     * Specifies which actions must not be available in the chart's toolbar.
                      *
                      * @since 1.88
                      */
@@ -168,7 +168,7 @@ sap.ui.define([
 
                     //TODO: Do we really need this? Should be avoided.
                     /**
-                     * The minimal width
+                     * Defines the minimum width.
                      */
                     minWidth: {
                         type: "sap.ui.core.CSSSize",
@@ -179,7 +179,7 @@ sap.ui.define([
 
                     //TODO: Do we really need this? Should be avoided.
                     /**
-                     * The minimal height
+                     * Defines the minimum height.
                      */
                     minHeight: {
                         type: "sap.ui.core.CSSSize",
@@ -189,9 +189,9 @@ sap.ui.define([
                     },
 
                     /**
-                     * Defines the sort conditions.
+                     * Defines the sort conditions.<br>
                      *
-                     * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+                     * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it for anything else.
                      *
                      * @since 1.88
                      */
@@ -200,9 +200,9 @@ sap.ui.define([
                     },
 
                     /**
-                     * Defines the filter conditions.
-				     * <b>Note</b>: This property must not be bound.<br>
-                     * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+                     * Defines the filter conditions.<br>
+				     * <b>Note:</b> This property must not be bound.<br>
+                     * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it for anything else.
                      *
                      * @since 1.99
                      */
@@ -212,7 +212,7 @@ sap.ui.define([
                     },
 
                     /**
-                     * Controls the visibility of the chart tooltip. If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> will be triggered and can be used to make the Char tooltip visible.
+                     * Controls the visibility of the chart tooltip. If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> will be triggered and can be used to make the <code>Chart</code> tooltip visible.
                      *
                      * @since 1.88
                      */
@@ -223,7 +223,7 @@ sap.ui.define([
                     },
 
                     /**
-                     * If set to <code>true</code>, the chart is automatically bound after initialization.
+                     * If set to <code>true</code>, the chart is automatically bound after initialization.<br>
                      * If set to <code>false</code>, the chart is bound after the first call to <code>rebind</code>.
                      */
                     autoBindOnInit: {
@@ -252,10 +252,10 @@ sap.ui.define([
 
                     /**
                      * Specifies the chart metadata.<br>
-                     * <b>Note</b>: This property must not be bound.<br>
-                     * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/sap.fe. Do not use it otherwise.<br>
+                     * <b>Note:</b> This property must not be bound.<br>
+                     * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.<br>
                      *
-       				 * <b>Node</b>: Please check {@link sap.ui.mdc.chart.PropertyInfo PropertyInfo} for more information about the supported inner elements.
+                     * <b>Note</b>: For more information about the supported inner elements, see {@link sap.ui.mdc.chart.PropertyInfo PropertyInfo}.
                      *
                      * @since 1.99
                      */
@@ -265,7 +265,7 @@ sap.ui.define([
                     },
 
                     /**
-                    * Semantic level of the header.
+                    * Semantic level of the header.<br>
                     * For more information, see {@link sap.m.Title#setLevel}.
                     *
                     * @since 1.104
@@ -298,8 +298,8 @@ sap.ui.define([
                         multiple: true
                     },
                     /**
-                     * This aggregation describes actions that are added to the chart toolbar.
-                     * See {@link sap.ui.mdc.actiontoolbar.ActionToolbarAction} for more information.
+                     * This aggregation describes actions that are added to the chart toolbar.<br>
+                     * For more information, see {@link sap.ui.mdc.actiontoolbar.ActionToolbarAction}.
                      */
                     actions: {
                         type: "sap.ui.core.Control",
@@ -310,8 +310,8 @@ sap.ui.define([
                         }
                     },
                     /**
-                     * The aggregation to feed details actions for datapoint selection in the mdc chart
-                     * See {@link sap.ui.mdc.chart.SelectionDetailsActions SelectionDetailsActions} for more information.
+                     * Feeds details actions for data point selection in the mdc chart.<br>
+                     * For more information, see {@link sap.ui.mdc.chart.SelectionDetailsActions SelectionDetailsActions}.
                      */
                     selectionDetailsActions: {
                         type: "sap.ui.mdc.chart.SelectionDetailsActions",
@@ -386,7 +386,7 @@ sap.ui.define([
                             /**
                              * If the action is pressed on one of the {@link sap.m.SelectionDetailsItem items}, the parameter contains the
                              * {@link sap.ui.model.Context context} of the pressed {@link sap.m.SelectionDetailsItem item}. If a custom action or action
-                             * group of the SelectionDetails popover is pressed, this parameter contains all {@link sap.ui.model.Context contexts} of the
+                             * group of the <code>SelectionDetails</code> popover is pressed, this parameter contains all {@link sap.ui.model.Context contexts} of the
                              * {@link sap.m.SelectionDetailsItem items}.
                              */
                             itemContexts: {

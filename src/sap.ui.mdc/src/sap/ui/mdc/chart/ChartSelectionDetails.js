@@ -19,9 +19,9 @@ sap.ui.define([
         /**
          * Constructor for a new ChartSelectionDetails.
          *
-         * @param {string} [sId] id for the new control, generated automatically if no id is given
-         * @param {object} [mSettings] initial settings for the new control
-         * @class The ChartSelectionDetails control creates a sap.m.SelectionDetails popover based on metadata and the configuration specified.
+         * @param {string} [sId] ID for the new control, generated automatically if no id is given
+         * @param {object} [mSettings] Initial settings for the new control
+         * @class The <code>ChartSelectionDetails</code> control creates a <code>sap.m.SelectionDetails</code> popover based on metadata and the configuration specified.
          * @extends sap.m.SelectionDetails
          * @author SAP SE
          * @version ${version}

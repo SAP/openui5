@@ -14,7 +14,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
-	 * @class The SelectionDetailsActions are used to provide additional functionality to the Details popover.
+	 * @class The <code>SelectionDetailsActions</code> is used to provide additional functionality to the Details popover.
 	 *
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -27,8 +27,8 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			aggregations: {
 				/**
-				 * Action <code>item</code> shown in the Items area of the details.
-				 */
+                 * Action <code>item</code> shown in the Items area of the details popover.
+                 */
 				detailsItemActions: {
 					type: "sap.ui.core.Item",
 					multiple: true

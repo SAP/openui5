@@ -915,7 +915,7 @@
 
 	/**
 	 * Defines the types of chart actions in the toolbar.<br>
-	 * Can be used to remove some of the default ToolbarAction (see {@link sap.ui.mdc.Chart#ignoreToolbarActions} for more information)
+	 * Can be used to remove some of the default <code>ToolbarAction</code>. For more information, see @link sap.ui.mdc.Chart#ignoreToolbarActions}.
 	 *
 	 * @enum {string}
 	 * @private
@@ -925,13 +925,13 @@
 	 */
 	thisLib.ChartToolbarActionType = {
 		/**
-		 * Zoom in and zoom out action.
+		 * Zoom-in and zoom-out action.
 		 *
 		 * @public
 		 */
 		ZoomInOut: "ZoomInOut",
 		/**
-		 * Drill down and up action.
+		 * Drill-down and drill-up action.
 		 *
 		 * @public
 		 */

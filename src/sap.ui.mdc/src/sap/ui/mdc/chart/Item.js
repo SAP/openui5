@@ -40,7 +40,7 @@ sap.ui.define([
                         type: "string"
                     },
                     /**
-                     * Specifies the type of the item for the chart (groupable and aggregateable).
+                     * Specifies the type of the item for the chart (groupable and aggregatable).
                      * This is specific for the used chart library.
                      */
                     type: {
@@ -50,7 +50,7 @@ sap.ui.define([
                     /**
                      * Specifies the role of the item for the chart (category, axis1...).
                      * This is specific for the used chart library.<br>
-                     * <b>NOTE:</b> This property must not be changed after initialization.
+                     * <b>Note:</b> This property must not be changed after initialization.
                      */
                     role: {
                         type: "string"
