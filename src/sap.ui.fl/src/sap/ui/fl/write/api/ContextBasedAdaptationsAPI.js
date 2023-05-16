@@ -60,15 +60,23 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {string} mPropertyBag.appId - Reference of the application
 	 * @param {string} mPropertyBag.layer - Layer
+	 * @param {boolean} [bDelete=false] - Indicator whether the response was from a delete
 	 * @returns {object} Object with response data
 	 */
-	function handleResponseForVersioning(oResponse, nExpectedStatus, mPropertyBag) {
+	function handleResponseForVersioning(oResponse, nExpectedStatus, mPropertyBag, bDelete) {
 		if (oResponse.status === nExpectedStatus) {
-			Versions.onAllChangesSaved({
-				reference: mPropertyBag.appId,
-				layer: mPropertyBag.layer,
-				contextBasedAdaptation: true
-			});
+			if (bDelete) {
+				Versions.updateModelFromBackend({
+					reference: mPropertyBag.appId,
+					layer: mPropertyBag.layer
+				});
+			} else {
+				Versions.onAllChangesSaved({
+					reference: mPropertyBag.appId,
+					layer: mPropertyBag.layer,
+					contextBasedAdaptation: true
+				});
+			}
 		}
 		return oResponse;
 	}
@@ -540,7 +548,7 @@ sap.ui.define([
 			adaptationId: mPropertyBag.adaptationId,
 			parentVersion: getParentVersion(mPropertyBag)
 		}).then(function(oResponse) {
-			return handleResponseForVersioning(oResponse, 204, mPropertyBag);
+			return handleResponseForVersioning(oResponse, 204, mPropertyBag, true);
 		});
 	};
 

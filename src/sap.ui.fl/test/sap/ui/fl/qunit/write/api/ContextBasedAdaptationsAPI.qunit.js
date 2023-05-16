@@ -1659,7 +1659,8 @@ sap.ui.define([
 				}
 			});
 
-			var oRemoveStub = sandbox.stub(Storage.contextBasedAdaptation, "remove").resolves("Success");
+			var oVersionsUpdateModelBackend = sandbox.stub(Versions, "updateModelFromBackend");
+			var oRemoveStub = sandbox.stub(Storage.contextBasedAdaptation, "remove").resolves({status: 204});
 			return ContextBasedAdaptationsAPI.remove(this.mPropertyBag).then(function (sResult) {
 				var oArgs = oRemoveStub.getCall(0).args[0];
 				assert.deepEqual(oArgs.flexObjects, this.mPropertyBag.parameters, "then the correct parameters with priority list is used");
@@ -1667,7 +1668,10 @@ sap.ui.define([
 				assert.strictEqual(oArgs.parentVersion, 1, "then the correct version is used");
 				assert.strictEqual(oArgs.adaptationId, "id_12345", "then the correct adaptation is used");
 				assert.strictEqual(oArgs.appId, "com.sap.test.app", "then the correct appId is used");
-				assert.strictEqual(sResult, "Success", "then the remove was succesfull");
+				assert.strictEqual(sResult.status, 204, "then the remove was succesfull");
+				var oVersionsArgs = oVersionsUpdateModelBackend.getCall(0).args[0];
+				assert.deepEqual(oVersionsArgs.reference, "com.sap.test.app", "then the versions updateModelFromBackend is called with reference");
+				assert.deepEqual(oVersionsArgs.layer, Layer.CUSTOMER, "then the versions updateModelFromBackend is called with layer");
 			}.bind(this));
 		});
 	});
