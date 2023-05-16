@@ -49,7 +49,7 @@ sap.ui.define([
 			version: "2",
 			type: Version.Type.Inactive,
 			isPublished: false,
-			activatedAt: "2022-05-10 15:00:00.000"
+			activatedAt: "2022-05-10 16:00:00.000"
 		}];
 		var oVersionsModel = new JSONModel({
 			versioningEnabled: true,
@@ -156,6 +156,12 @@ sap.ui.define([
 				assert.strictEqual(oVersionList.getItems()[0].getHighlightText(), oTextResources.getText("TIT_DRAFT"), "the draft highlight text is shown");
 				assert.strictEqual(oVersionList.getItems()[1].getHighlightText(), oTextResources.getText("LBL_ACTIVE"), "the active version highlight text is shown");
 				assert.strictEqual(oVersionList.getItems()[2].getHighlightText(), oTextResources.getText("LBL_INACTIVE"), "the inactive version highlight text is shown");
+				var oDate1 = new Date(oVersionList.getItems()[1].getTimestamp());
+				var oDate2 = new Date(oVersionList.getItems()[2].getTimestamp());
+				assert.equal(oDate1.getUTCHours(), "15", "the timestamp is the same UTC hours");
+				assert.notEqual(oDate1.getHours(), oDate1.getUTCHours(), "the display timestamp is different than the UTC");
+				assert.equal(oDate2.getUTCHours(), "16", "the timestamp is the same UTC hours");
+				assert.notEqual(oDate2.getHours(), oDate2.getUTCHours(), "the display timestamp is different than the UTC");
 
 				assert.strictEqual(oOriginalAppList.getItems()[0].getHighlight(), MessageType.None, "the correct highlighting is shown");
 				assert.strictEqual(oOriginalAppList.getItems()[0].getHighlightText(), oTextResources.getText("LBL_INACTIVE"), "the inactive version highlight text is shown");

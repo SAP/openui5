@@ -122,7 +122,7 @@ sap.ui.define([
 
 		return DateFormat.getInstance({
 			format: "yMMMdjm"
-		}).format(new Date(sTimeStamp));
+		}).format(new Date(sTimeStamp + "Z"));
 	}
 
 	function getGroupHeaderFactory(oGroup) {
