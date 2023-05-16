@@ -275,7 +275,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Selector} mProperties.selector - Root control
 	 * @param {boolean} mProperties.versioningEnabled - Whether versioning is enabled
 	 * @param {boolean} mProperties.developerMode - Whether the developer mode is set
-	 * @param {string} mProperties.adaptationId - Context-based adaptation id of currently displayed adaptation
+	 * @param {string} mProperties.adaptationId - Context-based adaptation ID of the currently displayed adaptation
 	 *
 	 * @return {Promise<boolean>} Resolving to <code>false</code> means that reload is not necessary
 	 */

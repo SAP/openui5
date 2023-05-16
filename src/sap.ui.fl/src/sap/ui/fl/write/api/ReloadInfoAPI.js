@@ -158,7 +158,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 		 * @param {sap.ui.core.Control} oReloadInfo.selector - Root control instance
 		 * @param {boolean} [oReloadInfo.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
-		 * @param {string} [oReloadInfo.adaptationId] - Context-based adaptation id of currently displayed adaptation
+		 * @param {string} [oReloadInfo.adaptationId] - Context-based adaptation ID of the currently displayed adaptation
 		 * @param {object} oReloadInfo.parsedHash - Parsed URL hash
 		 *
 		 * @returns {Promise<object>} Promise resolving to an object with the reload reasons
