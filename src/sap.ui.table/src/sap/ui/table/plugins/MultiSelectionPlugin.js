@@ -350,6 +350,7 @@ sap.ui.define([
 			if (oPlugin.isLimitReached()) {
 				if (bReverse) {
 					iIndexTo = iIndexFrom - iLimit + 1;
+					iGetContextsStartIndex = iIndexTo - 1;
 				} else {
 					iIndexTo = iIndexFrom + iLimit - 1;
 				}
