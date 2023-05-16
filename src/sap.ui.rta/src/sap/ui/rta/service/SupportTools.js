@@ -120,6 +120,11 @@ sap.ui.define([
 			.then(console.log); // eslint-disable-line no-console
 	}
 
+	function printDesignTimeMetadata(oRta, mPayload) {
+		var oOverlay = Core.byId(mPayload.overlayId);
+		console.log(oOverlay.getDesignTimeMetadata().getData()); // eslint-disable-line no-console
+	}
+
 	// List of supported handlers
 	var mHandlers = {
 		getOverlayInfo: {
@@ -129,6 +134,10 @@ sap.ui.define([
 		},
 		printChangeHandler: {
 			handler: printChangeHandler,
+			id: "ui5FlexibilitySupport.submodules.overlayInfo"
+		},
+		printDesignTimeMetadata: {
+			handler: printDesignTimeMetadata,
 			id: "ui5FlexibilitySupport.submodules.overlayInfo"
 		}
 	};
@@ -141,6 +150,7 @@ sap.ui.define([
 	 *  - type: specifies, what action should be taken. Possible values:
 	 *   - getOverlayInfo (request information about an overlay)
 	 *   - printChangeHandler (a specified change handler object is to be printed to the console)
+	 *   - printDesignTimeMetadata (the calculated designtime metadata of the overlay is to be printed to the console)
 	 * - content: type-specific information, e.g. for getOverlayInfo, an 'overlayId' is provided
 	 *
 	 * @method sap.ui.rta.service.SupportTools.onMessageReceived
