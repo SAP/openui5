@@ -309,8 +309,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether or not the menu has items
+	 * Checks whether the menu has items
 	 * @returns {boolean} True if the menu has or could have items.
+	 * @deprecated As of Version 1.117
 	 */
 	AnalyticalColumn.prototype._menuHasItems = function() {
 		var fnMenuHasItems = function() {

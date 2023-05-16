@@ -81,10 +81,8 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		if (oScrollExtension.isVerticalScrollbarRequired() && !oScrollExtension.isVerticalScrollbarExternal()) {
 			rm.class("sapUiTableVScr"); // show vertical scrollbar
 		}
-		/*
-		* @UI5_V2_DEPRECATION_CHECK
-		* editable is a deprecated property of sap.ui.table.Table.
-		* Once the deprecated code is removed the following 3 lines of code will become obsolete.
+		/**
+		* @deprecated As of Version 1.115
 		*/
 		if (oTable.getEditable && oTable.getEditable()) {
 			rm.class("sapUiTableEdt"); // editable (background color)
@@ -554,7 +552,15 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		rm.class("sapUiTableCell");
 		rm.class("sapUiTableHeaderCell");
 		rm.class("sapUiTableHeaderDataCell");
-		if (oTable.getEnableColumnReordering() || oTable.hasListeners("columnSelect") || oColumn._menuHasItems()) {
+
+		var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
+		if (oTable.getEnableColumnReordering() || oTable.hasListeners("columnSelect") || oColumnHeaderMenu && oColumnHeaderMenu.getAriaHasPopupType() !== "None") {
+			rm.class("sapUiTableHeaderCellActive");
+		}
+		/**
+		 * @deprecated As of Version 1.117
+		 */
+		if (!oTable.getEnableColumnReordering() && !oTable.hasListeners("columnSelect") && !oColumnHeaderMenu && oColumn._menuHasItems()) {
 			rm.class("sapUiTableHeaderCellActive");
 		}
 		if (bIsFirstColumn) {

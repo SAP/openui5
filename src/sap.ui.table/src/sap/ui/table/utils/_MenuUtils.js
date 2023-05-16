@@ -87,29 +87,9 @@ sap.ui.define([
 
 			if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.COLUMNHEADER)) {
 				var oColumn = oTable.getColumns()[iColumnIndex];
-				var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
 
-				if (oColumnHeaderMenu) {
-					oColumn._openHeaderMenu(oCell);
-					return true;
-				} else {
-					var bCellHasMenuButton = oCell.querySelector(".sapUiTableColDropDown") !== null;
-
-					if (!Device.system.desktop && !bCellHasMenuButton) {
-						return MenuUtils._applyColumnHeaderCellMenu(oTable, oCell);
-					}
-
-					MenuUtils._removeColumnHeaderCellMenu(oTable);
-					bExecuteDefault = oTable.fireColumnSelect({
-						column: oColumn
-					});
-
-					if (bExecuteDefault) {
-						return MenuUtils._openColumnContextMenu(oTable, oCell);
-					} else {
-						return true; // We do not know whether the event handler opens a context menu or not, so we just assume it is done.
-					}
-				}
+				oColumn._openHeaderMenu(oCell);
+				return true;
 
 			} else if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
 				var oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, iRowIndex, iColumnIndex, iColumnIndex >= 0);
@@ -155,50 +135,6 @@ sap.ui.define([
 			}
 
 			return false;
-		},
-
-		/**
-		 * Opens the context menu of a column.
-		 * If context menus of other columns are open, they will be closed.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {HTMLElement} oCell The column header cell to which the menu should be attached.
-		 * @returns {boolean} Whether a context menu was opened.
-		 * @private
-		 * @see sap.ui.table.Column#_openMenu
-		 */
-		_openColumnContextMenu: function(oTable, oCell) {
-			var oCellInfo = MenuUtils.TableUtils.getCellInfo(oCell);
-			var aColumns = oTable.getColumns();
-			var oColumn = aColumns[oCellInfo.columnIndex];
-
-			// Close all menus.
-			for (var i = 0; i < aColumns.length; i++) {
-				// If column menus of other columns are open, close them.
-				if (aColumns[i] !== oColumn) {
-					MenuUtils._closeColumnContextMenu(oTable, i);
-				}
-			}
-			MenuUtils._closeContentCellContextMenu(oTable);
-
-			var sColspan = oCell.getAttribute("colspan");
-			if (sColspan && sColspan !== "1") {
-				return false; // headers with span do not have connection to a column, do not open the context menu
-			}
-
-			return oColumn._openMenu(oCell);
-		},
-
-		/**
-		 * Closes the context menu of a column.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The index of the column to close the context menu on.
-		 * @private
-		 * @see sap.ui.table.Column#_closeMenu
-		 */
-		_closeColumnContextMenu: function(oTable, iColumnIndex) {
-			oTable.getColumns()[iColumnIndex]._closeMenu();
 		},
 
 		/**
@@ -250,11 +186,6 @@ sap.ui.define([
 			}
 
 			var oContextMenu = oTable.getContextMenu();
-			var aColumns = oTable.getColumns();
-
-			for (var i = 0; i < aColumns.length; i++) {
-				MenuUtils._closeColumnContextMenu(oTable, i);
-			}
 			MenuUtils._closeDefaultContentCellContextMenu(oTable);
 
 			if (oEvent) {
@@ -322,9 +253,6 @@ sap.ui.define([
 				return false;
 			}
 
-			for (var i = 0; i < aColumns.length; i++) {
-				MenuUtils._closeColumnContextMenu(oTable, i);
-			}
 			MenuUtils._closeCustomContentCellContextMenu(oTable);
 
 			if (oEvent) {
@@ -400,82 +328,6 @@ sap.ui.define([
 			// Destroy the items of the table.
 			if (oCellFilterMenuItem) {
 				oCellFilterMenuItem.destroy();
-			}
-		},
-
-		/**
-		 * Applies a cell menu on a column header cell.
-		 * Hides the column header cell and inserts an element containing two buttons in its place. One button to open the column context menu and
-		 * one to resize the column. These are useful on touch devices.
-		 *
-		 * <b>Note: Multi Headers are currently not fully supported.</b>
-		 * In case of a multi column header the menu will be applied in the first row of the column header. If this column header cell is a span,
-		 * then the index of the first column of this span must be provided.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {HTMLElement} oCell The column header cell to which the menu should be applied.
-		 * @returns {boolean} Whether the cell menu was applied.
-		 * @private
-		 */
-		_applyColumnHeaderCellMenu: function(oTable, oCell) {
-			var oCellInfo = MenuUtils.TableUtils.getCellInfo(oCell);
-			var oColumn = oTable.getColumns()[oCellInfo.columnIndex];
-			var sColspan = oCell.getAttribute("colspan");
-			var oCellInner = oCell.querySelector(".sapUiTableCellInner");
-			var bCellMenuAlreadyExists = oCell.querySelector(".sapUiTableCellTouchMenu") !== null;
-
-			if (sColspan && sColspan !== "1" // headers with span do not have connection to a column, do not open the context menu
-				|| bCellMenuAlreadyExists
-				|| (!oColumn.getResizable() && !oColumn._menuHasItems())) {
-				return false;
-			}
-
-			var oColumnTouchMenu = document.createElement("div");
-
-			MenuUtils._removeColumnHeaderCellMenu(oTable); // First remove any existing column header cell menu of another column.
-			oCellInner.style.display = "none";
-
-			if (oColumn._menuHasItems()) {
-				var oColumnContextMenuButton;
-				oColumnContextMenuButton = document.createElement("div");
-				oColumnContextMenuButton.classList.add("sapUiTableColDropDown");
-				oColumnContextMenuButton.textContent = "";
-				oColumnTouchMenu.appendChild(oColumnContextMenuButton);
-			}
-
-			if (oColumn.getResizable()) {
-				var oColumnResizerButton;
-				oColumnResizerButton = document.createElement("div");
-				oColumnResizerButton.classList.add("sapUiTableColResizer");
-				oColumnResizerButton.textContent = "";
-				oColumnTouchMenu.appendChild(oColumnResizerButton);
-			}
-
-			oColumnTouchMenu.classList.add("sapUiTableCellTouchMenu");
-			oCell.appendChild(oColumnTouchMenu);
-
-			var onFocusOut = function() {
-				MenuUtils._removeColumnHeaderCellMenu(oTable);
-				oCell.removeEventListener("focusout", onFocusOut);
-			};
-
-			oCell.addEventListener("focusout", onFocusOut);
-
-			return true;
-		},
-
-		/**
-		 * Removes a cell menu from a column header cell.
-		 * Removes the cell menu from the dom and unhides the column header cell.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @private
-		 */
-		_removeColumnHeaderCellMenu: function(oTable) {
-			var $ColumnCellMenu = oTable && oTable.$().find(".sapUiTableCHT .sapUiTableCellTouchMenu");
-			if ($ColumnCellMenu.length) {
-				$ColumnCellMenu.parent().find(".sapUiTableCellInner").show();
-				$ColumnCellMenu.remove();
 			}
 		},
 

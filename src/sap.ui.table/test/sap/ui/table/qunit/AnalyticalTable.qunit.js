@@ -215,6 +215,9 @@ sap.ui.define([
 
 			visibleRowCount: 20,
 			enableColumnReordering: true,
+			/**
+			 * @deprecated As of Version 1.117
+			 */
 			showColumnVisibilityMenu: true,
 			enableColumnFreeze: true,
 			enableCellFilter: true,

@@ -30,6 +30,9 @@ sap.ui.define([
 		};
 
 		// Table settings
+		/**
+		 * @deprecated As of Version 1.117
+		 */
 		mTableSettings.showColumnVisibilityMenu = true;
 		mTableSettings.columns = jQuery.map(oData.cols, function(colname) {
 			var oAggregations = {
@@ -190,6 +193,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Column visibility (autoSave)", function(assert) {
 		assert.expect(16);
 		var done = assert.async();
@@ -253,49 +259,56 @@ sap.ui.define([
 		var oNumberColumn = oCore.byId("Number");
 		var oColorColumn = oCore.byId("Color");
 		var oNameColumn = oCore.byId("Name");
-		var oNameMenu = oNameColumn.getMenu();
-		var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
 		assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
-		// set "Number" column to invisible
-		oNameMenu.open();
-		var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
-		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
+		oNameColumn.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oNameMenu = oNameColumn.getMenu();
+				var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
+				var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
+				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
+				qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
-		// delay execution to wait for visibility change
-		setTimeout(function() {
+				// delay execution to wait for visibility change
+				setTimeout(function() {
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
-			// refreshing the data should lead to the same visiblility states
-			oController.refresh();
+					// refreshing the data should lead to the same visiblility states
+					oController.refresh();
 
-			assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
+					assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
-			// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
-			oController.getPersoService().delPersData();
-			oController.refresh();
+					// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
+					oController.getPersoService().delPersData();
+					oController.refresh();
 
-			assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
+					assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
-			done();
-		}, 0);
+					done();
+				}, 0);
+			});
+		});
+
+		oNameColumn._openHeaderMenu();
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Column visibility (no autoSave)", function(assert) {
 		assert.expect(19);
 		var done = assert.async();
@@ -360,55 +373,60 @@ sap.ui.define([
 		var oNumberColumn = oCore.byId("Number");
 		var oColorColumn = oCore.byId("Color");
 		var oNameColumn = oCore.byId("Name");
-		var oNameMenu = oNameColumn.getMenu();
-		var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
 		assert.equal(oNumberColumn.getVisible(), true, "Number column should be invisible.");
 
-		// set "Number" column to invisible
-		oNameMenu.open();
-		var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
-		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
+		oNameColumn.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oNameMenu = oNameColumn.getMenu();
+				var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
 
-		// delay execution to wait for visibility change
-		setTimeout(function() {
+				var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
+				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
+				qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
+				// delay execution to wait for visibility change
+				setTimeout(function() {
 
-			// refreshing the data should bring back the old state as nothing has been saved
-			oController.refresh();
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), false, "Number column should be invisible.");
 
-			assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
+					// refreshing the data should bring back the old state as nothing has been saved
+					oController.refresh();
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
+					assert.equal(getPersDataCalls, 2, "getPersData of service should be called 2 times.");
 
-			// modifications via API should also work when manually triggering save
-			oColorColumn.setVisible(true);
-			oController.savePersonalizations();
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), true, "Color column should be visible again.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
+					// modifications via API should also work when manually triggering save
+					oColorColumn.setVisible(true);
+					oController.savePersonalizations();
 
-			// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
-			oController.getPersoService().delPersData();
-			oController.refresh();
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), true, "Color column should be visible again.");
+					assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
 
-			assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
+					// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
+					oController.getPersoService().delPersData();
+					oController.refresh();
 
-			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
+					assert.equal(getPersDataCalls, 3, "getPersData of service should be called 3 times.");
 
-			done();
-		}, 0);
+					assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
+					assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
+					assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
+
+					done();
+				}, 0);
+			});
+		});
+
+		oNameColumn._openHeaderMenu();
 	});
 
 	QUnit.test("Manual table changes via API", function(assert) {

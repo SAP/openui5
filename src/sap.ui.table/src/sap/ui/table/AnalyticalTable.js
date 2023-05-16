@@ -132,6 +132,7 @@ sap.ui.define([
 			/**
 			 * Functions which is used to sort the column visibility menu entries e.g.: function(ColumnA, ColumnB) { return 0 = equals, <0 lower, >0
 			 * greater }; Other values than functions will be ignored.
+			 * @deprecated As of Version 1.117
 			 */
 			columnVisibilityMenuSorter: {type: "any", group: "Appearance", defaultValue: null},
 
@@ -194,6 +195,9 @@ sap.ui.define([
 		this.addStyleClass("sapUiAnalyticalTable");
 
 		// defaulting properties
+		/**
+		 * @deprecated As of Version 1.117
+		 */
 		this.setShowColumnVisibilityMenu(true);
 		this.setEnableColumnFreeze(true);
 		this.setEnableCellFilter(true);
@@ -299,11 +303,15 @@ sap.ui.define([
 		return oModel;
 	};
 
+	/**
+	 * @deprecated As of Version 1.117
+	 * sap.ui.table.ColumnMenu is deprecated.
+	 */
 	AnalyticalTable.prototype.updateRows = function(sReason) {
 		Table.prototype.updateRows.apply(this, arguments);
 
 		if (sReason !== "sort") {
-			this._invalidateColumnMenus(); // TODO: Is this needed?
+			this._invalidateColumnMenus();
 		}
 	};
 
@@ -323,6 +331,10 @@ sap.ui.define([
 	 */
 	AnalyticalTable.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
+			/**
+			 * @deprecated As of Version 1.117
+			 * sap.ui.table.ColumnMenu is deprecated.
+			 */
 			this._invalidateColumnMenus(); // Metadata might change.
 			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
 

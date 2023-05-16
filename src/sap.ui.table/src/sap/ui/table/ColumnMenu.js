@@ -42,6 +42,8 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.ColumnMenu
+	 *
+	 * @deprecated As of version 1.117, use the {@link sap.m.table.columnmenu.Menu} instead.
 	 */
 	var ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ {
 		metadata: {
@@ -61,8 +63,6 @@ sap.ui.define([
 		this.addStyleClass("sapUiTableColumnMenu");
 		this._bInvalidated = true;
 		this._iPopupClosedTimeoutId = null;
-		this._oColumn = null;
-		this._oTable = null;
 	};
 
 	/**
@@ -74,8 +74,7 @@ sap.ui.define([
 			Menu.prototype.exit.apply(this, arguments);
 		}
 		window.clearTimeout(this._iPopupClosedTimeoutId);
-		ColumnMenu._destroyColumnVisibilityMenuItem(this._oTable);
-		this._oColumn = this._oTable = null;
+		ColumnMenu._destroyColumnVisibilityMenuItem(this._getTable());
 	};
 
 	/**
@@ -101,21 +100,17 @@ sap.ui.define([
 	 */
 	ColumnMenu.prototype.setParent = function(oParent) {
 		this._invalidate();
-		this._updateReferences(oParent);
 		return Menu.prototype.setParent.apply(this, arguments);
 	};
 
-	ColumnMenu.prototype._updateReferences = function(oParent) {
-		this._oColumn = oParent;
-		if (this._oColumn) {
-			assert(TableUtils.isA(this._oColumn, "sap.ui.table.Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
+	ColumnMenu.prototype._getColumn = function() {
+		var oParent = this.getParent();
+		return TableUtils.isA(oParent, "sap.ui.table.Column") ? oParent : null;
+	};
 
-			this._oTable = this._oColumn.getParent();
-			if (this._oTable) {
-				assert(TableUtils.isA(this._oTable, "sap.ui.table.Table"),
-					"ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
-			}
-		}
+	ColumnMenu.prototype._getTable = function() {
+		var oColumn = this._getColumn();
+		return oColumn ? oColumn._getTable() : null;
 	};
 
 	ColumnMenu._destroyColumnVisibilityMenuItem = function(oTable) {
@@ -127,10 +122,11 @@ sap.ui.define([
 	};
 
 	ColumnMenu.prototype._removeColumnVisibilityFromAggregation = function() {
-		if (!this._oTable || !this._oTable._oColumnVisibilityMenuItem) {
+		var oTable = this._getTable();
+		if (!oTable || oTable._oColumnVisibilityMenuItem) {
 			return;
 		}
-		this.removeAggregation("items", this._oTable._oColumnVisibilityMenuItem, true);
+		this.removeAggregation("items", oTable._oColumnVisibilityMenuItem, true);
 	};
 
 	/**
@@ -149,14 +145,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype.open = function() {
-		if (this._bInvalidated) {
-			this._bInvalidated = false;
-			this._addMenuItems();
-		} else if (this._oColumn) {
+		if (!this._bInvalidated && this._getColumn()) {
 			this._addColumnVisibilityMenuItem();
 		}
 
-		TableUtils.Hook.call(this._oTable, TableUtils.Hook.Keys.Table.OpenMenu, TableUtils.getCellInfo(arguments[4]), this);
+		if (this._bInvalidated) {
+			this._bInvalidated = false;
+			this._addMenuItems();
+		}
+
+		TableUtils.Hook.call(this._getTable(), TableUtils.Hook.Keys.Table.OpenMenu, TableUtils.getCellInfo(arguments[4]), this);
 
 		if (this.getItems().length > 0) {
 			this._lastFocusedDomRef = arguments[4];
@@ -169,8 +167,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addMenuItems = function() {
-		// when you add or remove menu items here, remember to update the Column.prototype._menuHasItems function
-		if (this._oColumn) {
+		if (this._getColumn()) {
 			// items can only be created if the menus parent is a column
 			// since column properties must be evaluated in order to create the items.
 			this._addSortMenuItem(false);
@@ -188,7 +185,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addSortMenuItem = function(bDesc) {
-		var oColumn = this._oColumn;
+		var oColumn = this._getColumn();
 
 		if (oColumn.isSortableByMenu()) {
 			var sDir = bDesc ? "desc" : "asc";
@@ -210,7 +207,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addFilterMenuItem = function() {
-		var oColumn = this._oColumn;
+		var oColumn = this._getColumn();
 
 		if (oColumn.isFilterableByMenu()) {
 			var oTable = oColumn.getParent();
@@ -246,10 +243,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addGroupMenuItem = function() {
-		var oColumn = this._oColumn;
+		var oColumn = this._getColumn();
 
 		if (oColumn.isGroupableByMenu()) {
-			var oTable = this._oTable;
+			var oTable = this._getTable();
 
 			this.addItem(this._createMenuItem(
 				"group",
@@ -278,8 +275,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addFreezeMenuItem = function() {
-		var oColumn = this._oColumn;
-		var oTable = this._oTable;
+		var oColumn = this._getColumn();
+		var oTable = this._getTable();
 		var bColumnFreezeEnabled = oTable && oTable.getEnableColumnFreeze();
 
 		if (bColumnFreezeEnabled) {
@@ -314,7 +311,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addColumnVisibilityMenuItem = function() {
-		var oTable = this._oTable;
+		var oTable = this._getTable();
 
 		if (oTable && oTable.getShowColumnVisibilityMenu()) {
 			if (!oTable._oColumnVisibilityMenuItem || oTable._oColumnVisibilityMenuItem.bIsDestroyed) {
@@ -336,7 +333,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._createColumnVisibilityMenuItem = function(oColumn) {
-		var oTable = this._oTable;
+		var oTable = this._getTable();
 		var sText = TableUtils.Column.getHeaderText(oColumn);
 
 		return new MenuItem({
@@ -345,8 +342,7 @@ sap.ui.define([
 			ariaLabelledBy: [oTable.getId() + (oColumn.getVisible() ? "-ariahidecolmenu" : "-ariashowcolmenu")],
 			select: jQuery.proxy(function(oEvent) {
 				var bVisible = !oColumn.getVisible();
-				if (bVisible || TableUtils.getVisibleColumnCount(this._oTable) > 1) {
-					var oTable = oColumn.getParent();
+				if (bVisible || TableUtils.getVisibleColumnCount(oTable) > 1) {
 					var bExecuteDefault = true;
 					if (TableUtils.isA(oTable, "sap.ui.table.Table")) {
 						bExecuteDefault = oTable.fireColumnVisibility({
@@ -464,7 +460,7 @@ sap.ui.define([
 	}
 
 	ColumnMenu.prototype._updateColumnVisibilityMenuItem = function() {
-		var oTable = this._oTable;
+		var oTable = this._getTable();
 		if (!oTable || !oTable._oColumnVisibilityMenuItem) {
 			return;
 		}

@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
 	"sap/ui/core/Core",
-	'sap/ui/Device',
 	"sap/ui/core/dnd/DragDropInfo"
 ], function(
 	TableQUnitUtils,
@@ -38,7 +37,6 @@ sap.ui.define([
 	Item,
 	Button,
 	oCore,
-	Device,
 	DragDropInfo
 ) {
 	"use strict";
@@ -456,6 +454,9 @@ sap.ui.define([
 			+ ", showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.module("Column Menu", {
 		beforeEach: function() {
 			var oModel = new JSONModel();
@@ -491,26 +492,38 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Filter on Column with ColumnMenu and UnifiedMenu", function(assert) {
-		var oColumnMenu = this._oColumnWithColumnMenu.getMenu();
-		var oSpyColumnMenu = this.spy(oColumnMenu, "_setFilterValue");
-		this._oColumnWithColumnMenu.filter("filterValue");
-		this._oColumnWithColumnMenu._openMenu();
+		var that = this, done = assert.async();
 
-		var oFilterField = oCore.byId(oColumnMenu.getId() + "-filter");
-		assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
-		assert.ok(oSpyColumnMenu.called, "_setFilterValue called on ColumnMenu");
+		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oColumnMenu = that._oColumnWithColumnMenu.getMenu();
+				var oSpyColumnMenu = that.spy(oColumnMenu, "_setFilterValue");
+				that._oColumnWithColumnMenu.filter("filterValue");
+				that._oColumnWithColumnMenu._openHeaderMenu();
 
-		var oUnifiedMenu = this._oColumnWithUnifiedMenu.getMenu();
-		// implement a dummy function to allow usage of sinon.spy
-		oUnifiedMenu._setFilterValue = function() {};
-		var oSpyUnifiedMenu = this.spy(oUnifiedMenu, "_setFilterValue");
+				var oFilterField = oCore.byId(oColumnMenu.getId() + "-filter");
+				assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
+				assert.ok(oSpyColumnMenu.called, "_setFilterValue called on ColumnMenu");
 
-		// if filter is called on a column, the filter state of the other columns must be updated as well
-		var oSpyColumnMenuFilterState = this.spy(oColumnMenu, "_setFilterState");
-		this._oColumnWithUnifiedMenu.filter("filterValue");
-		assert.ok(!oSpyUnifiedMenu.called, "_setFilterValue not called on UnifiedMenu");
-		assert.ok(oSpyColumnMenuFilterState.calledOnce, "_setFilterState called on ColumnMenu");
+				var oUnifiedMenu = that._oColumnWithUnifiedMenu.getMenu();
+				// implement a dummy function to allow usage of sinon.spy
+				oUnifiedMenu._setFilterValue = function() {};
+				var oSpyUnifiedMenu = that.spy(oUnifiedMenu, "_setFilterValue");
+
+				// if filter is called on a column, the filter state of the other columns must be updated as well
+				var oSpyColumnMenuFilterState = that.spy(oColumnMenu, "_setFilterState");
+				that._oColumnWithUnifiedMenu.filter("filterValue");
+				assert.ok(!oSpyUnifiedMenu.called, "_setFilterValue not called on UnifiedMenu");
+				assert.ok(oSpyColumnMenuFilterState.calledOnce, "_setFilterState called on ColumnMenu");
+				done();
+			});
+		});
+
+		this._oColumnWithColumnMenu._openHeaderMenu();
 	});
 
 	/**
@@ -526,52 +539,66 @@ sap.ui.define([
 		oTable.setEnableGrouping(true);
 		oColumn.setSortProperty("myProp");
 
-		oColumn._openMenu();
-
-		var oGroupMenuItem = oColumn.getMenu().getItems()[3];
-		assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
-		oGroupMenuItem.fireSelect();
-		assert.ok(oSetGroupSpy.calledOnce, "setGroupBy is called");
-		assert.ok(oSetGroupSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
-		assert.equal(document.activeElement, oTable.getDomRef("rowsel0"), "Focus moves to the row selector cell");
-
-		oTable.attachEventOnce("rowsUpdated", function() {
-			setTimeout(function() {
-				oColumn._openMenu();
+		oColumn.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oGroupMenuItem = oColumn.getMenu().getItems()[3];
 				assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
 				oGroupMenuItem.fireSelect();
-				assert.ok(oSetGroupSpy.calledTwice, "setGroupBy is called");
+				assert.ok(oSetGroupSpy.calledOnce, "setGroupBy is called");
 				assert.ok(oSetGroupSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
-				assert.equal(document.activeElement, oTable.getDomRef("noDataCnt"), "Focus moves to the NoData element");
+				assert.equal(document.activeElement, oTable.getDomRef("rowsel0"), "Focus moves to the row selector cell");
 
-				done();
-			}, 0);
+				oTable.attachEventOnce("rowsUpdated", function() {
+					setTimeout(function() {
+						oColumn._openHeaderMenu();
+						assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
+						oGroupMenuItem.fireSelect();
+						assert.ok(oSetGroupSpy.calledTwice, "setGroupBy is called");
+						assert.ok(oSetGroupSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
+						assert.equal(document.activeElement, oTable.getDomRef("noDataCnt"), "Focus moves to the NoData element");
+
+						done();
+					}, 0);
+				});
+				oTable.getModel().setData([]);
+			});
 		});
-		oTable.getModel().setData([]);
+
+		oColumn._openHeaderMenu();
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.test("Localization and Invalidation", function(assert) {
-		var oColumnMenu = this._oColumnWithColumnMenu.getMenu();
-		this._oColumnWithColumnMenu._openMenu();
+		var done = assert.async(), that = this;
 
-		assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
-		this._oTable._invalidateColumnMenus();
-		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-		this._oColumnWithColumnMenu._openMenu();
-		assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
+		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oColumnMenu = that._oColumnWithColumnMenu.getMenu();
+				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
+				that._oTable._invalidateColumnMenus();
+				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+				that._oColumnWithColumnMenu._openHeaderMenu();
+				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
 
-		this._oColumnWithColumnMenu.setFilterProperty("myFilterPropertyName");
-		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-		this._oColumnWithColumnMenu._openMenu();
-		this._oColumnWithColumnMenu.setShowFilterMenuEntry(false);
-		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+				that._oColumnWithColumnMenu.setFilterProperty("myFilterPropertyName");
+				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+				that._oColumnWithColumnMenu._openHeaderMenu();
+				that._oColumnWithColumnMenu.setShowFilterMenuEntry(false);
+				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
 
-		this._oColumnWithColumnMenu._openMenu();
-		this._oColumnWithColumnMenu.setSortProperty("mySortPropertyName");
-		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-		this._oColumnWithColumnMenu._openMenu();
-		this._oColumnWithColumnMenu.setShowSortMenuEntry(false);
-		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+				that._oColumnWithColumnMenu._openHeaderMenu();
+				that._oColumnWithColumnMenu.setSortProperty("mySortPropertyName");
+				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+				that._oColumnWithColumnMenu._openHeaderMenu();
+				that._oColumnWithColumnMenu.setShowSortMenuEntry(false);
+				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+				done();
+			});
+		});
+
+		this._oColumnWithColumnMenu._openHeaderMenu();
 	});
 
 	QUnit.module("Changes that affect rows", {
@@ -1129,6 +1156,9 @@ sap.ui.define([
 		oUnlinkSpy.restore();
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.module("Column Visibility Submenu", {
 		beforeEach: function() {
 			var oModel = new JSONModel();
@@ -1162,75 +1192,100 @@ sap.ui.define([
 	});
 
 	QUnit.test("Visibility Submenu number of items", function(assert) {
-		this._oColumn1._openMenu();
-		var oColumnMenuBefore = this._oColumn1.getMenu();
-		var oVisibilitySubmenu = oColumnMenuBefore.getItems()[0].getSubmenu();
-		assert.strictEqual(oVisibilitySubmenu.getItems().length, 2, "The visibility submenu has 2 items");
+		var that = this, done = assert.async();
 
-		this._oTable.removeColumn(this._oColumn2);
-		this._oColumn1._openMenu();
-		var oColumnMenuAfter = this._oColumn1.getMenu();
-		oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
-		assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
-		assert.strictEqual(oVisibilitySubmenu.getItems().length, 1, "The visibility submenu has 1 items");
+		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oColumnMenuBefore = that._oColumn1.getMenu();
+				var oVisibilitySubmenu = oColumnMenuBefore.getItems()[0].getSubmenu();
+				assert.strictEqual(oVisibilitySubmenu.getItems().length, 2, "The visibility submenu has 2 items");
 
-		oColumnMenuBefore = oColumnMenuAfter;
-		this._oTable.removeAllColumns();
-		this._oTable.addColumn(this._oColumn1);
-		this._oTable.addColumn(this._oColumn2);
-		this._oColumn3 = new Column({
-			template: new TableQUnitUtils.TestControl({text: "col3value"}),
-			label: new TableQUnitUtils.TestControl({text: "col3header"})
+				that._oTable.removeColumn(that._oColumn2);
+				that._oColumn1._openHeaderMenu();
+				var oColumnMenuAfter = that._oColumn1.getMenu();
+				oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
+				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
+				assert.strictEqual(oVisibilitySubmenu.getItems().length, 1, "The visibility submenu has 1 items");
+
+				oColumnMenuBefore = oColumnMenuAfter;
+				that._oTable.removeAllColumns();
+				that._oTable.addColumn(that._oColumn1);
+				that._oTable.addColumn(that._oColumn2);
+				that._oColumn3 = new Column({
+					template: new TableQUnitUtils.TestControl({text: "col3value"}),
+					label: new TableQUnitUtils.TestControl({text: "col3header"})
+				});
+				that._oTable.addColumn(that._oColumn3);
+				that._oColumn1._openHeaderMenu();
+				oColumnMenuAfter = that._oColumn1.getMenu();
+				oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
+				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
+				assert.strictEqual(oVisibilitySubmenu.getItems().length, 3, "The visibility submenu has 3 items");
+
+				var spy = that.spy(that._oColumn3, "exit");
+				that._oColumn3.destroy();
+				assert.ok(spy.calledOnce, "The exit function was called");
+				done();
+			});
 		});
-		this._oTable.addColumn(this._oColumn3);
-		this._oColumn1._openMenu();
-		oColumnMenuAfter = this._oColumn1.getMenu();
-		oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
-		assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
-		assert.strictEqual(oVisibilitySubmenu.getItems().length, 3, "The visibility submenu has 3 items");
 
-		var spy = this.spy(this._oColumn3, "exit");
-		this._oColumn3.destroy();
-		assert.ok(spy.calledOnce, "The exit function was called");
+		this._oColumn1._openHeaderMenu();
 	});
 
 	QUnit.test("Set Visibility", function(assert) {
-		this._oColumn1._openMenu();
-		var oColumnMenuBefore = this._oColumn1.getMenu();
-		var oVisibilitySubmenuBefore = oColumnMenuBefore.getItems()[0].getSubmenu();
-		assert.strictEqual(oVisibilitySubmenuBefore.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-		assert.strictEqual(oVisibilitySubmenuBefore.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+		var that = this, done = assert.async();
 
-		this._oColumn2.focus();
-		this._oColumn2._openMenu();
-		oVisibilitySubmenuBefore.getItems()[1].fireSelect();
-		assert.equal(document.activeElement, this._oColumn1.getDomRef(), "Focus moves to the other column header");
-		this._oColumn1._openMenu();
-		var oColumnMenuAfter = this._oColumn1.getMenu();
-		var oVisibilitySubmenuAfter = oColumnMenuAfter.getItems()[0].getSubmenu();
-		assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
-		assert.strictEqual(oVisibilitySubmenuBefore, oVisibilitySubmenuAfter, "The column visibility submenu is not being recreated");
+		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oColumnMenuBefore = that._oColumn1.getMenu();
+				var oVisibilitySubmenuBefore = oColumnMenuBefore.getItems()[0].getSubmenu();
+				assert.strictEqual(oVisibilitySubmenuBefore.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+				assert.strictEqual(oVisibilitySubmenuBefore.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 
-		assert.strictEqual(oVisibilitySubmenuAfter.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-		assert.strictEqual(oVisibilitySubmenuAfter.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
+				that._oColumn2.focus();
+				that._oColumn2._openHeaderMenu();
+				oVisibilitySubmenuBefore.getItems()[1].fireSelect();
+				assert.equal(document.activeElement, that._oColumn1.getDomRef(), "Focus moves to the other column header");
+				that._oColumn1._openHeaderMenu();
+				var oColumnMenuAfter = that._oColumn1.getMenu();
+				var oVisibilitySubmenuAfter = oColumnMenuAfter.getItems()[0].getSubmenu();
+				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
+				assert.strictEqual(oVisibilitySubmenuBefore, oVisibilitySubmenuAfter, "The column visibility submenu is not being recreated");
+
+				assert.strictEqual(oVisibilitySubmenuAfter.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+				assert.strictEqual(oVisibilitySubmenuAfter.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
+				done();
+			});
+		});
+
+		this._oColumn1._openHeaderMenu();
 	});
 
 	QUnit.test("Reorder Columns", function(assert) {
-		this._oColumn1._openMenu();
-		var oColumnMenu = this._oColumn1.getMenu();
-		var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
-		assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col1header", "The columns are initially in the correct order");
-		assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col2header", "The columns are initially in the correct order");
-		this._oTable.removeColumn(this._oColumn1);
-		this._oTable.insertColumn(this._oColumn1, 1);
-		this._oColumn1._openMenu();
-		var oColumnMenu = this._oColumn1.getMenu();
-		var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
-		assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col2header", "The columns are in the correct order after reordering");
-		assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col1header", "The columns are in the correct order after reordering");
+		var that = this, done = assert.async();
+
+		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oColumnMenu = that._oColumn1.getMenu();
+				var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
+				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col1header", "The columns are initially in the correct order");
+				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col2header", "The columns are initially in the correct order");
+				that._oTable.removeColumn(that._oColumn1);
+				that._oTable.insertColumn(that._oColumn1, 1);
+				that._oColumn1._openHeaderMenu();
+				var oColumnMenu = that._oColumn1.getMenu();
+				var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
+				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col2header", "The columns are in the correct order after reordering");
+				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col1header", "The columns are in the correct order after reordering");
+				done();
+			});
+		});
+
+		this._oColumn1._openHeaderMenu();
 	});
 
 	QUnit.test("Multiple tables", function(assert) {
+		var done = assert.async(), that = this;
 		var oModel = new JSONModel();
 		oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
 		this._oTable2 = new Table();
@@ -1261,26 +1316,33 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		this._oColumn2.setVisible(false);
-		this._oColumn1._openMenu();
-		var oColumnMenuTable1 = this._oColumn1.getMenu();
-		var oVisibilitySubmenuTable1 = oColumnMenuTable1.getItems()[0].getSubmenu();
-		assert.strictEqual(oVisibilitySubmenuTable1.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-		assert.strictEqual(oVisibilitySubmenuTable1.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
 
-		this._oColumn21._openMenu();
-		var oColumnMenuTable2 = this._oColumn21.getMenu();
-		var oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
-		assert.strictEqual(oVisibilitySubmenuTable2.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-		assert.strictEqual(oVisibilitySubmenuTable2.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked. Changing the column visibility in the first table hasn't affected the column visibility in the second table");
+		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
+			TableQUnitUtils.wait(0).then(function() {
+				var oColumnMenuTable1 = that._oColumn1.getMenu();
+				var oVisibilitySubmenuTable1 = oColumnMenuTable1.getItems()[0].getSubmenu();
+				assert.strictEqual(oVisibilitySubmenuTable1.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+				assert.strictEqual(oVisibilitySubmenuTable1.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
 
-		assert.notEqual(oVisibilitySubmenuTable1, oVisibilitySubmenuTable2, "The visibility submenu instances for both tables are not the same instance");
-		assert.equal(oVisibilitySubmenuTable1.getItems().length, 2, "The visibility submenu of the first table has 2 items");
-		assert.equal(oVisibilitySubmenuTable2.getItems().length, 3, "The visibility submenu of the second table has 3 items");
+				that._oColumn21._openHeaderMenu();
+				var oColumnMenuTable2 = that._oColumn21.getMenu();
+				var oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
+				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked. Changing the column visibility in the first table hasn't affected the column visibility in the second table");
 
-		this._oColumn21.destroy();
-		this._oColumn22.destroy();
-		this._oColumn23.destroy();
-		this._oTable2.destroy();
+				assert.notEqual(oVisibilitySubmenuTable1, oVisibilitySubmenuTable2, "The visibility submenu instances for both tables are not the same instance");
+				assert.equal(oVisibilitySubmenuTable1.getItems().length, 2, "The visibility submenu of the first table has 2 items");
+				assert.equal(oVisibilitySubmenuTable2.getItems().length, 3, "The visibility submenu of the second table has 3 items");
+
+				that._oColumn21.destroy();
+				that._oColumn22.destroy();
+				that._oColumn23.destroy();
+				that._oTable2.destroy();
+				done();
+			});
+		});
+
+		this._oColumn1._openHeaderMenu();
 	});
 
 	QUnit.module("ColumnHeaderMenu Association", {

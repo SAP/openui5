@@ -119,6 +119,31 @@ sap.ui.define([
 		return oClonedValue;
 	}
 
+	function isReady(oEditor) {
+		return new Promise(function(resolve) {
+			oEditor.attachReady(function() {
+				resolve();
+			});
+		});
+	}
+
+	function openColumnMenu(oColumn) {
+		return new Promise(function(resolve) {
+			oColumn.attachEventOnce("columnMenuOpen", function() {
+				resolve();
+			});
+			oColumn._openHeaderMenu();
+		});
+	}
+
+	function tableUpdated(oField) {
+		return new Promise(function(resolve) {
+			oField.attachEventOnce("tableUpdated", function() {
+				resolve();
+			});
+		});
+	}
+
 	QUnit.module("Basic", {
 		before: function () {
 			this.oMockServer = new MockServer();
@@ -132,14 +157,17 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
+
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
 		},
 		after: function () {
 			this.oMockServer.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
 		},
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
 			this.oEditor = new Editor();
 			var oContent = document.getElementById("content");
 			if (!oContent) {
@@ -155,508 +183,573 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
 			var oContent = document.getElementById("content");
 			if (oContent) {
 				oContent.innerHTML = "";
 				document.body.style.zIndex = "unset";
 			}
 		}
-	}, function () {
-		QUnit.test("basic", function (assert) {
-			this.oEditor.setJson({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForObjectListFields
-			});
-			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					var oLabel = this.oEditor.getAggregation("_formContent")[1];
-					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oToolbar = oTable.getToolbar();
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
-						var oURLColumn = oTable.getColumns()[4];
-						var oIntColumn = oTable.getColumns()[6];
-						var oMenu = oURLColumn.getMenu();
-						// open the column filter menu, input filter value, close the menu.
-						oMenu.open();
-						oMenu.getItems()[0].setValue("https");
-						oMenu.getItems()[0].fireSelect();
-						oMenu.close();
-						wait().then(function () {
-							assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
-							oMenu = oIntColumn.getMenu();
-							// open the column filter menu, input filter value, close the menu.
-							oMenu.open();
-							oMenu.getItems()[0].setValue("4");
-							oMenu.getItems()[0].fireSelect();
-							oMenu.close();
-							wait().then(function () {
-								assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount after filtering column Integer with '4'");
-								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
-								// open the column filter menu, input filter value, close the menu.
-								oMenu.open();
-								oMenu.getItems()[0].setValue(">4");
-								oMenu.getItems()[0].fireSelect();
-								oMenu.close();
-								wait().then(function () {
-									assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering column Integer with '>4'");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+	});
 
-									// clear all the filters
-									oClearFilterButton.firePress();
-									wait().then(function () {
-										assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
-										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
-										resolve();
-									});
-								});
-							});
-						});
-					});
-				}.bind(this));
-			}.bind(this));
+	QUnit.test("basic", function (assert) {
+		var oTable, oMenu, oField, oURLColumn, oIntColumn, oClearFilterButton;
+		var oEditor = this.oEditor;
+		oEditor.setJson({
+			baseUrl: sBaseUrl,
+			host: "contexthost",
+			manifest: oManifestForObjectListFields
 		});
+		return isReady(oEditor).then(function() {
+			var oLabel = oEditor.getAggregation("_formContent")[1];
+			oField = oEditor.getAggregation("_formContent")[2];
+			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
+			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
+			oTable = oField.getAggregation("_field");
+			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+			var oToolbar = oTable.getToolbar();
+			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+			var oEditButton = oToolbar.getContent()[2];
+			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+			oClearFilterButton = oToolbar.getContent()[4];
+			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
+			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
+			return tableUpdated(oField);
+		}).then(function() {
+			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
+			oURLColumn = oTable.getColumns()[4];
+			oIntColumn = oTable.getColumns()[6];
+			return openColumnMenu(oURLColumn);
+		}).then(function() {
+			oMenu = oURLColumn.getMenu();
+			oMenu.getItems()[0].setValue("https");
+			oMenu.getItems()[0].fireSelect();
+			oMenu.close();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+			// open the column filter menu, input filter value, close the menu.
+			return openColumnMenu(oIntColumn);
+		}).then(function() {
+			oMenu = oIntColumn.getMenu();
+			oMenu.getItems()[0].setValue("4");
+			oMenu.getItems()[0].fireSelect();
+			oMenu.close();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount after filtering column Integer with '4'");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+			// open the column filter menu, input filter value, close the menu.
+			return openColumnMenu(oIntColumn);
+		}).then(function() {
+			oMenu.getItems()[0].setValue(">4");
+			oMenu.getItems()[0].fireSelect();
+			oMenu.close();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering column Integer with '>4'");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 
-		QUnit.test("select", function (assert) {
-			this.oEditor.setJson({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForObjectListFields
-			});
-			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					var oLabel = this.oEditor.getAggregation("_formContent")[1];
-					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oToolbar = oTable.getToolbar();
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
-						var oColumns = oTable.getColumns();
-						assert.equal(oColumns.length, 8, "Table: column number is 8");
-						var oSelectionColumn = oColumns[0];
-						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
-						assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
-						assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
-						assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-						var oURLColumn = oColumns[4];
-						var oMenu = oURLColumn.getMenu();
-						// open the column filter menu, input filter value, close the menu.
-						oMenu.open();
-						oMenu.getItems()[0].setValue("https");
-						oMenu.getItems()[0].fireSelect();
-						oMenu.close();
-						wait().then(function () {
-							assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
-							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-
-							// scroll to the bottom
-							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-							wait().then(function () {
-								var oRow5 = oTable.getRows()[3];
-								assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Table: row 5 value");
-								var oSelectionCell5 = oRow5.getCells()[0];
-								assert.ok(!oSelectionCell5.getSelected(), "Row 5: not selected");
-								oSelectionCell5.setSelected(true);
-								oSelectionCell5.fireSelect({ selected: true });
-								wait().then(function () {
-									assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 5 value");
-									assert.ok(oSelectionCell5.getSelected(), "Row 5: selected");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
-										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
-										oValueNew,
-										Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})
-									]), "Field 1: Value after selecting row5");
-									assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-
-									var oRow6 = oTable.getRows()[4];
-									assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})), "Table: row 6 value");
-									var oSelectionCell6 = oRow6.getCells()[0];
-									assert.ok(!oSelectionCell6.getSelected(), "Row 6: not selected");
-									oSelectionCell6.setSelected(true);
-									oSelectionCell6.fireSelect({ selected: true });
-									wait().then(function () {
-										assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 6 value");
-										assert.ok(oSelectionCell6.getSelected(), "Row 6: selected");
-										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
-											Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
-											oValueNew,
-											Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
-										]), "Field 1: Value after selecting row6");
-										assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
-
-										// clear all the filters
-										oClearFilterButton.firePress();
-										wait().then(function () {
-											assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
-											assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-											assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
-												Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
-											])), "Field 1: Value after selecting row6");
-											resolve();
-										});
-									});
-								});
-							});
-						});
-					});
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("selectAll", function (assert) {
-			this.oEditor.setJson({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForObjectListFields
-			});
-			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					var oLabel = this.oEditor.getAggregation("_formContent")[1];
-					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oToolbar = oTable.getToolbar();
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
-						var oColumns = oTable.getColumns();
-						assert.equal(oColumns.length, 8, "Table: column number is 8");
-						var oSelectionColumn = oColumns[0];
-						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
-						assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
-						assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
-						assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-						var oURLColumn = oColumns[4];
-						var oMenu = oURLColumn.getMenu();
-						// open the column filter menu, input filter value, close the menu.
-						oMenu.open();
-						oMenu.getItems()[0].setValue("https");
-						oMenu.getItems()[0].fireSelect();
-						oMenu.close();
-						wait().then(function () {
-							assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
-							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-
-							// scroll to the bottom
-							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-							wait().then(function () {
-								var oRow5 = oTable.getRows()[3];
-								assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Table: row 5 value");
-								var oSelectionCell5 = oRow5.getCells()[0];
-								assert.ok(!oSelectionCell5.getSelected(), "Row 5: not selected");
-								var oRow6 = oTable.getRows()[4];
-								assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})), "Table: row 6 value");
-								var oSelectionCell6 = oRow6.getCells()[0];
-								assert.ok(!oSelectionCell6.getSelected(), "Row 6: not selected");
-								// select all
-								oSelectOrUnSelectAllButton.setSelected(true);
-								oSelectOrUnSelectAllButton.fireSelect({ selected: true });
-								wait().then(function () {
-									assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 5 value");
-									assert.ok(oSelectionCell5.getSelected(), "Row 5: selected");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 6 value");
-									assert.ok(oSelectionCell6.getSelected(), "Row 6: selected");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
-										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
-										oValueNew,
-										Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
-									]), "Field 1: Value after selecting all");
-
-									// clear all the filters
-									oClearFilterButton.firePress();
-									wait().then(function () {
-										assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
-										assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
-											Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
-										])), "Field 1: Value after selecting row6");
-										resolve();
-									});
-								});
-							});
-						});
-					});
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("deselect", function (assert) {
-			this.oEditor.setJson({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForObjectListFields
-			});
-			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					var oLabel = this.oEditor.getAggregation("_formContent")[1];
-					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oToolbar = oTable.getToolbar();
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
-						var oColumns = oTable.getColumns();
-						assert.equal(oColumns.length, 8, "Table: column number is 8");
-						var oSelectionColumn = oColumns[0];
-						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
-						assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
-						assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
-						assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-						var oURLColumn = oColumns[4];
-						var oMenu = oURLColumn.getMenu();
-						// open the column filter menu, input filter value, close the menu.
-						oMenu.open();
-						oMenu.getItems()[0].setValue("http://");
-						oMenu.getItems()[0].fireSelect();
-						oMenu.close();
-						wait().then(function () {
-							assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering column URL with 'http://'");
-							assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
-							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-
-							var oRow1 = oTable.getRows()[0];
-							assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 1 value");
-							var oSelectionCell1 = oRow1.getCells()[0];
-							assert.ok(oSelectionCell1.getSelected(), "Row1: selected");
-							var oRow2 = oTable.getRows()[1];
-							assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 2 value");
-							var oSelectionCell2 = oRow2.getCells()[0];
-							assert.ok(oSelectionCell2.getSelected(), "Row2: selected");
-							var oRow3 = oTable.getRows()[2];
-							assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), oValue2), "Table: row 2 value");
-							var oSelectionCell3 = oRow3.getCells()[0];
-							assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
-							oSelectionCell1.setSelected(false);
-							oSelectionCell1.fireSelect({ selected: false });
-							wait().then(function () {
-								assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 1 value after deselecting");
-								assert.ok(!oSelectionCell1.getSelected(), "Row1: not selected");
-								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
-									Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
-									Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
-									Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
-									Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
-									oValueNew
-								]), "Field 1: Value after deselecting row1");
-								assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-
-								oSelectionCell2.setSelected(false);
-								oSelectionCell2.fireSelect({ selected: false });
-								wait().then(function () {
-									assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 2 value after deselecting");
-									assert.ok(!oSelectionCell2.getSelected(), "Row2: not selected");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
-										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
-										oValueNew
-									]), "Field 1: Value after deselecting row2");
-									assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-
-									// clear all the filters
-									oClearFilterButton.firePress();
-									wait().then(function () {
-										assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
-										assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
-											Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
-											oValueNew
-										]), "Field 1: Value");
-										resolve();
-									});
-								});
-							});
-						});
-					});
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("deselectAll", function (assert) {
-			this.oEditor.setJson({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForObjectListFields
-			});
-			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					var oLabel = this.oEditor.getAggregation("_formContent")[1];
-					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oToolbar = oTable.getToolbar();
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
-						var oColumns = oTable.getColumns();
-						assert.equal(oColumns.length, 8, "Table: column number is 8");
-						var oSelectionColumn = oColumns[0];
-						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
-						assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
-						assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
-						assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-						var oURLColumn = oColumns[4];
-						var oMenu = oURLColumn.getMenu();
-						// open the column filter menu, input filter value, close the menu.
-						oMenu.open();
-						oMenu.getItems()[0].setValue("http://");
-						oMenu.getItems()[0].fireSelect();
-						oMenu.close();
-						wait().then(function () {
-							assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering column URL with 'http://'");
-							assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
-							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-
-							var oRow1 = oTable.getRows()[0];
-							assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 1 value");
-							var oSelectionCell1 = oRow1.getCells()[0];
-							assert.ok(oSelectionCell1.getSelected(), "Row1: selected");
-							var oRow2 = oTable.getRows()[1];
-							assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 2 value");
-							var oSelectionCell2 = oRow2.getCells()[0];
-							assert.ok(oSelectionCell2.getSelected(), "Row2: selected");
-							var oRow3 = oTable.getRows()[2];
-							assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), oValue2), "Table: row 2 value");
-							var oSelectionCell3 = oRow3.getCells()[0];
-							assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
-							oSelectionCell3.setSelected(true);
-							oSelectionCell3.fireSelect({ selected: true });
-							wait().then(function () {
-								assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 3 value after selecting");
-								assert.ok(oSelectionCell3.getSelected(), "Row1: not selected");
-								assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
-								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
-									oValue2
-								])), "Field 1: Value after selectingAll");
-								assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
-
-								oSelectOrUnSelectAllButton.setSelected(false);
-								oSelectOrUnSelectAllButton.fireSelect({ selected: false });
-								wait().then(function () {
-									assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 1 value after deselectAll");
-									assert.ok(!oSelectionCell1.getSelected(), "Row1: not selected");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 2 value after deselectAll");
-									assert.ok(!oSelectionCell2.getSelected(), "Row2: not selected");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 3 value after deselectAll");
-									assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
-										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
-										oValueNew
-									]), "Field 1: Value after deselectAll");
-									assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-
-									// clear all the filters
-									oClearFilterButton.firePress();
-									wait().then(function () {
-										assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
-										assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
-											Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
-											oValueNew
-										]), "Field 1: Value");
-										resolve();
-									});
-								});
-							});
-						});
-					});
-				}.bind(this));
-			}.bind(this));
+			// clear all the filters
+			oClearFilterButton.firePress();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+			return Promise.resolve();
 		});
 	});
 
-	QUnit.done(function () {
-		document.getElementById("qunit-fixture").style.display = "none";
+	QUnit.test("select", function (assert) {
+		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oSelectOrUnSelectAllButton, oRow5, oRow6, oSelectionCell5, oSelectionCell6;
+		var oEditor = this.oEditor;
+		oEditor.setJson({
+			baseUrl: sBaseUrl,
+			host: "contexthost",
+			manifest: oManifestForObjectListFields
+		});
+		return isReady(oEditor).then(function() {
+			var oLabel = oEditor.getAggregation("_formContent")[1];
+			oField = oEditor.getAggregation("_formContent")[2];
+			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
+			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
+			oTable = oField.getAggregation("_field");
+			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+			var oToolbar = oTable.getToolbar();
+			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+			var oEditButton = oToolbar.getContent()[2];
+			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+			oClearFilterButton = oToolbar.getContent()[4];
+			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
+			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
+			return tableUpdated(oField);
+		}).then(function() {
+			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
+			var oColumns = oTable.getColumns();
+			assert.equal(oColumns.length, 8, "Table: column number is 8");
+			var oSelectionColumn = oColumns[0];
+			oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
+			assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
+			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+			oURLColumn = oColumns[4];
+			return openColumnMenu(oURLColumn);
+		}).then(function() {
+			oMenu = oURLColumn.getMenu();
+			oMenu.getItems()[0].setValue("https");
+			oMenu.getItems()[0].fireSelect();
+			oMenu.close();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+
+			// scroll to the bottom
+			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
+			return wait();
+		}).then(function () {
+			oRow5 = oTable.getRows()[3];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Table: row 5 value");
+			oSelectionCell5 = oRow5.getCells()[0];
+			assert.ok(!oSelectionCell5.getSelected(), "Row 5: not selected");
+			oSelectionCell5.setSelected(true);
+			oSelectionCell5.fireSelect({selected: true});
+			return wait();
+		}).then(function () {
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 5 value");
+			assert.ok(oSelectionCell5.getSelected(), "Row 5: selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
+				Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
+				oValueNew,
+				Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})
+			]), "Field 1: Value after selecting row5");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+
+			oRow6 = oTable.getRows()[4];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})), "Table: row 6 value");
+			oSelectionCell6 = oRow6.getCells()[0];
+			assert.ok(!oSelectionCell6.getSelected(), "Row 6: not selected");
+			oSelectionCell6.setSelected(true);
+			oSelectionCell6.fireSelect({selected: true});
+			return wait();
+		}).then(function () {
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 6 value");
+			assert.ok(oSelectionCell6.getSelected(), "Row 6: selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
+				Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
+				oValueNew,
+				Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
+			]), "Field 1: Value after selecting row6");
+			assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
+
+			// clear all the filters
+			oClearFilterButton.firePress();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
+				Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
+			])), "Field 1: Value after selecting row6");
+			return Promise.resolve();
+		});
+	});
+
+	QUnit.test("selectAll", function (assert) {
+		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oSelectOrUnSelectAllButton, oRow5, oRow6, oSelectionCell5, oSelectionCell6;
+		var oEditor = this.oEditor;
+		oEditor.setJson({
+			baseUrl: sBaseUrl,
+			host: "contexthost",
+			manifest: oManifestForObjectListFields
+		});
+		return isReady(oEditor).then(function() {
+			var oLabel = oEditor.getAggregation("_formContent")[1];
+			oField = oEditor.getAggregation("_formContent")[2];
+			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
+			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
+			oTable = oField.getAggregation("_field");
+			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+			var oToolbar = oTable.getToolbar();
+			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+			var oEditButton = oToolbar.getContent()[2];
+			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+			oClearFilterButton = oToolbar.getContent()[4];
+			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
+			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
+			return tableUpdated(oField);
+		}).then(function() {
+			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
+			var oColumns = oTable.getColumns();
+			assert.equal(oColumns.length, 8, "Table: column number is 8");
+			var oSelectionColumn = oColumns[0];
+			oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
+			assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
+			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+			oURLColumn = oColumns[4];
+			return openColumnMenu(oURLColumn);
+		}).then(function() {
+			oMenu = oURLColumn.getMenu();
+			oMenu.getItems()[0].setValue("https");
+			oMenu.getItems()[0].fireSelect();
+			oMenu.close();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+
+			// scroll to the bottom
+			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
+			return wait();
+		}).then(function () {
+			oRow5 = oTable.getRows()[3];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Table: row 5 value");
+			oSelectionCell5 = oRow5.getCells()[0];
+			assert.ok(!oSelectionCell5.getSelected(), "Row 5: not selected");
+			oRow6 = oTable.getRows()[4];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})), "Table: row 6 value");
+			oSelectionCell6 = oRow6.getCells()[0];
+			assert.ok(!oSelectionCell6.getSelected(), "Row 6: not selected");
+			// select all
+			oSelectOrUnSelectAllButton.setSelected(true);
+			oSelectOrUnSelectAllButton.fireSelect({selected: true});
+			return wait();
+		}).then(function () {
+			assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 5 value");
+			assert.ok(oSelectionCell5.getSelected(), "Row 5: selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 6 value");
+			assert.ok(oSelectionCell6.getSelected(), "Row 6: selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
+				Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
+				oValueNew,
+				Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
+			]), "Field 1: Value after selecting all");
+
+			// clear all the filters
+			oClearFilterButton.firePress();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
+				Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
+			])), "Field 1: Value after selecting row6");
+			return Promise.resolve();
+		});
+	});
+
+	QUnit.test("deselect", function (assert) {
+		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oSelectOrUnSelectAllButton, oRow1, oRow2, oRow3, oSelectionCell1, oSelectionCell2, oSelectionCell3;
+		var oEditor = this.oEditor;
+		oEditor.setJson({
+			baseUrl: sBaseUrl,
+			host: "contexthost",
+			manifest: oManifestForObjectListFields
+		});
+		return isReady(oEditor).then(function() {
+			var oLabel = oEditor.getAggregation("_formContent")[1];
+			oField = oEditor.getAggregation("_formContent")[2];
+			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
+			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
+			oTable = oField.getAggregation("_field");
+			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+			var oToolbar = oTable.getToolbar();
+			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+			var oEditButton = oToolbar.getContent()[2];
+			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+			oClearFilterButton = oToolbar.getContent()[4];
+			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
+			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
+			return tableUpdated(oField);
+		}).then(function() {
+			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
+			var oColumns = oTable.getColumns();
+			assert.equal(oColumns.length, 8, "Table: column number is 8");
+			var oSelectionColumn = oColumns[0];
+			oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
+			assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
+			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+			oURLColumn = oColumns[4];
+			return openColumnMenu(oURLColumn);
+		}).then(function() {
+			oMenu = oURLColumn.getMenu();
+			oMenu.getItems()[0].setValue("http://");
+			oMenu.getItems()[0].fireSelect();
+			oMenu.close();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering column URL with 'http://'");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+
+			oRow1 = oTable.getRows()[0];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 1 value");
+			oSelectionCell1 = oRow1.getCells()[0];
+			assert.ok(oSelectionCell1.getSelected(), "Row1: selected");
+			oRow2 = oTable.getRows()[1];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 2 value");
+			oSelectionCell2 = oRow2.getCells()[0];
+			assert.ok(oSelectionCell2.getSelected(), "Row2: selected");
+			oRow3 = oTable.getRows()[2];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), oValue2), "Table: row 2 value");
+			oSelectionCell3 = oRow3.getCells()[0];
+			assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
+			oSelectionCell1.setSelected(false);
+			oSelectionCell1.fireSelect({selected: false});
+			return wait();
+		}).then(function () {
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": false
+				}
+			})), "Table: row 1 value after deselecting");
+			assert.ok(!oSelectionCell1.getSelected(), "Row1: not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
+				Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
+				oValueNew
+			]), "Field 1: Value after deselecting row1");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+
+			oSelectionCell2.setSelected(false);
+			oSelectionCell2.fireSelect({selected: false});
+			return wait();
+		}).then(function () {
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": false
+				}
+			})), "Table: row 2 value after deselecting");
+			assert.ok(!oSelectionCell2.getSelected(), "Row2: not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
+				Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
+				oValueNew
+			]), "Field 1: Value after deselecting row2");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+
+			// clear all the filters
+			oClearFilterButton.firePress();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
+				Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
+				oValueNew
+			]), "Field 1: Value");
+			return Promise.resolve();
+		});
+	});
+
+	QUnit.test("deselectAll", function (assert) {
+		var oTable, oMenu, oField, oURLColumn, oClearFilterButton, oSelectOrUnSelectAllButton, oRow1, oRow2, oRow3, oSelectionCell1, oSelectionCell2, oSelectionCell3;
+		var oEditor = this.oEditor;
+		oEditor.setJson({
+			baseUrl: sBaseUrl,
+			host: "contexthost",
+			manifest: oManifestForObjectListFields
+		});
+		return isReady(oEditor).then(function() {
+			var oLabel = oEditor.getAggregation("_formContent")[1];
+			oField = oEditor.getAggregation("_formContent")[2];
+			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
+			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
+			oTable = oField.getAggregation("_field");
+			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+			var oToolbar = oTable.getToolbar();
+			assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+			var oEditButton = oToolbar.getContent()[2];
+			assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+			oClearFilterButton = oToolbar.getContent()[4];
+			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
+			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
+			return tableUpdated(oField);
+		}).then(function() {
+			assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+			assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
+			var oColumns = oTable.getColumns();
+			assert.equal(oColumns.length, 8, "Table: column number is 8");
+			var oSelectionColumn = oColumns[0];
+			oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
+			assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
+			assert.ok(oSelectOrUnSelectAllButton.getEnabled(), "Table: Select or Unselect All button in Selection column enabled");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+			oURLColumn = oColumns[4];
+			return openColumnMenu(oURLColumn);
+		}).then(function() {
+			oMenu = oURLColumn.getMenu();
+			oMenu.getItems()[0].setValue("http://");
+			oMenu.getItems()[0].fireSelect();
+			oMenu.close();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering column URL with 'http://'");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+
+			oRow1 = oTable.getRows()[0];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 1 value");
+			oSelectionCell1 = oRow1.getCells()[0];
+			assert.ok(oSelectionCell1.getSelected(), "Row1: selected");
+			oRow2 = oTable.getRows()[1];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 2 value");
+			oSelectionCell2 = oRow2.getCells()[0];
+			assert.ok(oSelectionCell2.getSelected(), "Row2: selected");
+			oRow3 = oTable.getRows()[2];
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), oValue2), "Table: row 2 value");
+			oSelectionCell3 = oRow3.getCells()[0];
+			assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
+			oSelectionCell3.setSelected(true);
+			oSelectionCell3.fireSelect({selected: true});
+			return wait();
+		}).then(function () {
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": true
+				}
+			})), "Table: row 3 value after selecting");
+			assert.ok(oSelectionCell3.getSelected(), "Row1: not selected");
+			assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
+				oValue2
+			])), "Field 1: Value after selectingAll");
+			assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
+
+			oSelectOrUnSelectAllButton.setSelected(false);
+			oSelectOrUnSelectAllButton.fireSelect({selected: false});
+			return wait();
+		}).then(function () {
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": false
+				}
+			})), "Table: row 1 value after deselectAll");
+			assert.ok(!oSelectionCell1.getSelected(), "Row1: not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": false
+				}
+			})), "Table: row 2 value after deselectAll");
+			assert.ok(!oSelectionCell2.getSelected(), "Row2: not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {
+				"_dt": {
+					"_editable": false,
+					"_selected": false
+				}
+			})), "Table: row 3 value after deselectAll");
+			assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
+				Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
+				oValueNew
+			]), "Field 1: Value after deselectAll");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+
+			// clear all the filters
+			oClearFilterButton.firePress();
+			return wait();
+		}).then(function () {
+			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
+			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
+			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
+				Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+				Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
+				oValueNew
+			]), "Field 1: Value");
+			return Promise.resolve();
+		});
 	});
 });

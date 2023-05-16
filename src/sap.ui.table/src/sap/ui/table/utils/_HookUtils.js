@@ -164,6 +164,14 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 			},
 			TotalRowCountChanged: {
 				arguments: []
+			},
+			/**
+			* @deprecated As of Version 1.117
+			*/
+			InvalidateColumnMenus: {
+				arguments: [
+					{type: "class:sap.ui.table.Table"}
+				]
 			}
 		},
 		Row: {
@@ -191,6 +199,15 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 					{type: "class:sap.ui.table.Column"}
 				],
 				returnValue: "boolean"
+			},
+			/**
+			* @deprecated As of Version 1.117
+			*/
+			SetFilterState: {
+				arguments: [
+					{type: "class:sap.ui.table.Column"},
+					{type: "string"}
+				]
 			}
 		},
 		// Can be used to send any signal.

@@ -94,6 +94,13 @@ sap.ui.define([
 					libs: ["sap.m"]
 				}
 			},
+			/**
+			 * @deprecated As of Version 1.117
+			 */
+			"LegacyColumnMenuAdapter": {
+				group: "Menus",
+				module: "./menus/{name}.qunit"
+			},
 			"Row": {
 			},
 			"RowAction": {
