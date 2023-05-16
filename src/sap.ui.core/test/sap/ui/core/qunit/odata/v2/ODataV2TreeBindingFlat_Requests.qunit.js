@@ -565,7 +565,7 @@ sap.ui.define([
 			});
 
 			// check the application's success handler call
-			oBinding.submitChanges({
+			oModel.submitChanges({
 				success: function (oBatchResponse) {
 					assert.ok("Application success handler called for submitted change-request");
 					assert.equal(oBatchResponse.__batchResponses[0].__changeResponses[0].statusCode, "201", "Status-Code 201: Successful CREATE/POST request.");
@@ -639,7 +639,7 @@ sap.ui.define([
 			});
 
 			// check the application's success handler call
-			oBinding.submitChanges({
+			oModel.submitChanges({
 				success: function (oBatchResponse) {
 					assert.ok("Application success handler called for submitted change-request");
 					assert.equal(oBatchResponse.__batchResponses[0].response.statusCode, "404", "Error returned by the MockServer");

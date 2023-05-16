@@ -1598,7 +1598,7 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(6);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.submitChanges({
+			oModel.submitChanges({
 				success : function () {
 					oBinding.attachEventOnce("change", handler3);
 				}
@@ -1643,7 +1643,7 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(13);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.submitChanges({
+			oModel.submitChanges({
 				success : function () {
 					oBinding.attachEventOnce("change", handler2);
 				}
@@ -1709,7 +1709,7 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(1);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.submitChanges({
+			oModel.submitChanges({
 				success : function () {
 					oBinding.attachEventOnce("change", handler6);
 				}
