@@ -90,6 +90,7 @@ sap.ui.define([
 		 */
 		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs: function () {
 			var oAlreadyLoadedLibraries = Core.getLoadedLibraries();
+			Core.attachLibraryChanged(handleLibraryRegistrationAfterFlexLibraryIsLoaded);
 			var aPromises = [];
 
 			Object.values(oAlreadyLoadedLibraries).forEach(function(oLibrary) {
@@ -97,8 +98,6 @@ sap.ui.define([
 					aPromises.push(registerFlexChangeHandlers(oLibrary.extensions.flChangeHandlers));
 				}
 			});
-
-			Core.attachLibraryChanged(handleLibraryRegistrationAfterFlexLibraryIsLoaded);
 
 			return Promise.all(aPromises);
 		},
