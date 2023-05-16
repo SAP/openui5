@@ -93,7 +93,8 @@ sap.ui.define([
 		DESTINATIONS: "/sap.card/configuration/destinations",
 		CSRF_TOKENS: "/sap.card/configuration/csrfTokens",
 		FILTERS: "/sap.card/configuration/filters",
-		NO_DATA_MESSAGES: "/sap.card/configuration/messages/noData"
+		NO_DATA_MESSAGES: "/sap.card/configuration/messages/noData",
+		MODEL_SIZE_LIMIT: "/sap.card/configuration/modelSizeLimit"
 	};
 
 	/**
@@ -120,6 +121,8 @@ sap.ui.define([
 	var MODULE_PREFIX = "module:";
 
 	var MessageType = coreLibrary.MessageType;
+
+	var DEFAULT_MODEL_SIZE_LIMIT = 1000;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -515,7 +518,7 @@ sap.ui.define([
 
 		this._oIntegrationRb = Core.getLibraryResourceBundle("sap.ui.integration");
 
-		this._iModelSizeLimit = 1000;
+		this._iModelSizeLimit = DEFAULT_MODEL_SIZE_LIMIT;
 		this._initModels();
 
 		this._oContentFactory = new ContentFactory(this);
@@ -1724,6 +1727,8 @@ sap.ui.define([
 
 		this._checkMockPreviewMode();
 
+		this._applyModelSizeLimit();
+
 		this._applyServiceManifestSettings();
 		this._applyFilterBarManifestSettings();
 		this._applyDataManifestSettings();
@@ -1844,6 +1849,15 @@ sap.ui.define([
 		if (!this._oServiceManager) {
 			this._oServiceManager = new ServiceManager(oServiceFactoryReferences, this);
 		}
+	};
+
+	/**
+	 *
+	 * @private
+	 */
+	Card.prototype._applyModelSizeLimit = function () {
+		var iModelSizeLimit = this._oCardManifest.get(MANIFEST_PATHS.MODEL_SIZE_LIMIT);
+		this._iModelSizeLimit = iModelSizeLimit !== undefined ? iModelSizeLimit : DEFAULT_MODEL_SIZE_LIMIT;
 	};
 
 	/**

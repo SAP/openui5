@@ -318,6 +318,11 @@
 					"pattern": "requests",
 					"name": "requests",
 					"target": "requests"
+				},
+				{
+					"pattern": "modelSizeLimit",
+					"name": "modelSizeLimit",
+					"target": "modelSizeLimit"
 				}
 			],
 			"targets": {
@@ -558,6 +563,11 @@
 				"requests": {
 					"id": "requests",
 					"name": "Requests",
+					"level": 1
+				},
+				"modelSizeLimit": {
+					"id": "modelSizeLimit",
+					"name": "ModelSizeLimit",
 					"level": 1
 				}
 			}

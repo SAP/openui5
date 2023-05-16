@@ -1602,6 +1602,23 @@ sap.ui.define([
 										key: 'mockData.json'
 									}
 								]
+							},
+							{
+								title: 'Model Size Limit',
+								key: 'modelSizeLimit',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/data/modelSizeLimit/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/data/modelSizeLimit/DataExtension.js',
+										name: 'DataExtension.js',
+										key: 'DataExtension.js'
+									}
+								]
 							}
 						]
 					},

@@ -24,6 +24,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -32,6 +33,7 @@
 					<tr>
 						<td>parameters</td>
 						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/manifestParameters" target="_parent">ManifestParameter</a>&gt;</td>
+						<td></td>
 						<td>No</td>
 						<td>Map of parameters.</td>
 						<td>1.15.0</td>
@@ -40,6 +42,7 @@
 					<tr>
 						<td>destinations</td>
 						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/destinations" target="_parent">Destination</a>&gt;</td>
+						<td></td>
 						<td>No</td>
 						<td>Map of destinations.</td>
 						<td>1.20.0</td>
@@ -48,6 +51,7 @@
 					<tr>
 						<td>filters</td>
 						<td>Object&lt;string,<a href="../../index.html#/learn/filters" target="_parent">Filter</a>&gt;</td>
+						<td></td>
 						<td>No</td>
 						<td>Map of filters.</td>
 						<td>1.24.0</td>
@@ -56,6 +60,7 @@
 					<tr>
 						<td>csrfTokens</td>
 						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/csrfTokens" target="_parent">CSRFToken</a>&gt;</td>
+						<td></td>
 						<td>No</td>
 						<td>
 							Map of CSRF tokens.
@@ -67,6 +72,7 @@
 					<tr>
 						<td>actionHandlers</td>
 						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/actionHandlers" target="_parent">ActionHandler</a>&gt;</td>
+						<td></td>
 						<td>No</td>
 						<td>
 							Map of action handlers for card actions.
@@ -78,14 +84,27 @@
 					<tr>
 						<td>enableMarkdown</td>
 						<td>boolean</td>
+						<td>false</td>
 						<td>No</td>
 						<td>Markdown enablement for Adaptive Card.</td>
 						<td>1.21.0</td>
 						<td>1.77</td>
 					</tr>
 					<tr>
+						<td>modelSizeLimit</td>
+						<td>Integer</td>
+						<td>1000</td>
+						<td>No</td>
+						<td>The maximum number of entries that are used for all list bindings inside the card.
+							E.g. for select filter and combo box. Use this property if you need to increase
+							the number of items above the default of 1000 items. This will impact performance.</td>
+						<td>1.55.0</td>
+						<td>1.115</td>
+					</tr>
+					<tr>
 						<td>messages</td>
 						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/customNoDataMessages" target="_parent">Custom No Data Messages</a>&gt;</td>
+						<td></td>
 						<td>No</td>
 						<td>
 							Allows the usage of sap.m.IllustratedMassage in content of the card.

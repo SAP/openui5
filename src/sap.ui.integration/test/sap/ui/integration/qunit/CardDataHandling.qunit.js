@@ -366,6 +366,63 @@ function (
 		}
 	};
 
+	var oManifest_ModelSizeLimit = {
+		"sap.card": {
+			"type": "List",
+			"configuration": {
+				"modelSizeLimit": 2,
+				"filters": {
+					"shipper": {
+						"type": "Select",
+						"label": "Shipper",
+						"item": {
+							"template": {
+								"key": "{name}",
+								"title": "{name}"
+							}
+						},
+						"data": {
+							"json": [
+								{ "name": "Name 1" },
+								{ "name": "Name 2" },
+								{ "name": "Name 3" },
+								{ "name": "Name 4" },
+								{ "name": "Name 5" },
+								{ "name": "Name 6" },
+								{ "name": "Name 7" },
+								{ "name": "Name 8" },
+								{ "name": "Name 9" },
+								{ "name": "Name 10" }
+							]
+						}
+					}
+				}
+			},
+			"data": {
+				"json": [
+					{ "name": "Name 1" },
+					{ "name": "Name 2" },
+					{ "name": "Name 3" },
+					{ "name": "Name 4" },
+					{ "name": "Name 5" },
+					{ "name": "Name 6" },
+					{ "name": "Name 7" },
+					{ "name": "Name 8" },
+					{ "name": "Name 9" },
+					{ "name": "Name 10" }
+				]
+			},
+			"header": {
+				"title": "Title"
+			},
+			"content": {
+				"item": {
+					"title": "{name}"
+				}
+			}
+		}
+	};
+
 	function testServiceOrRequestSection(sName, sTestTitle, oManifest, bShouldFail) {
 		QUnit.test(sTestTitle, function (assert) {
 
@@ -1567,4 +1624,36 @@ function (
 		});
 	});
 
+	QUnit.module("Request Model Configuration", {
+		beforeEach: function () {
+			this.oCard = new Card();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("model size limit", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var aItems = oCard.getCardContent().getInnerList().getItems(),
+				oFilterBar = oCard.getAggregation("_filterBar"),
+				oSelect = oFilterBar._getFilters()[0]._getSelect();
+
+			// Assert
+			assert.strictEqual(aItems.length, 2, "List has 2 items.");
+			assert.strictEqual(oSelect.getItems().length, 2, "Select filter has 2 items.");
+
+			done();
+		});
+
+		// Act
+		oCard.setManifest(oManifest_ModelSizeLimit);
+		oCard.placeAt(DOM_RENDER_LOCATION);
+	});
 });
