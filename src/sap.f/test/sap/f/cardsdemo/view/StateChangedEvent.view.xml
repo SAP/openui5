@@ -43,6 +43,14 @@
 					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
 				<Button text="Submit" press=".onSimulateSubmit" type="Accept"
 					visible="{= ${stateChangedEventPage>/selectedKey} === 'form' }" />
+				<Button text="Change date" press=".onChangeDate" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'calendar' }" />
+				<Button text="Change Month" press=".onChangeMonth" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'calendar' }" />
+				<Button text="Change date" press=".onChangeDate" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'calendarExtended' }" />
+				<Button text="Change Month" press=".onChangeMonth" type="Accept"
+					visible="{= ${stateChangedEventPage>/selectedKey} === 'calendarExtended' }" />
 			</OverflowToolbar>
 			<HBox>
 				<layoutData>
