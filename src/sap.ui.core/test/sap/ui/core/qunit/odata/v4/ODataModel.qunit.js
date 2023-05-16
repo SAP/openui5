@@ -2030,6 +2030,47 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("lock", function (assert) {
+		var oGroupLock = {
+				isLocked : function () {},
+				unlock : function () {}
+			},
+			oLock,
+			oModel = this.createModel();
+
+		this.mock(oModel).expects("isAutoGroup").withExactArgs("group").returns(true);
+		this.mock(oModel).expects("lockGroup")
+			.withExactArgs("group", sinon.match.same(oModel), true)
+			.returns(oGroupLock);
+
+		// code under test
+		oLock = oModel.lock("group");
+
+		this.mock(oGroupLock).expects("isLocked").withExactArgs().returns("~isLocked~");
+
+		// code under test
+		assert.strictEqual(oLock.isLocked("foo"), "~isLocked~", "arguments ignored");
+
+		this.mock(oGroupLock).expects("unlock").withExactArgs().returns("n/a");
+
+		// code under test
+		assert.strictEqual(oLock.unlock("bar"), undefined, "no return");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("lock: not an auto group", function (assert) {
+		var oModel = this.createModel();
+
+		this.mock(oModel).expects("isAutoGroup").withExactArgs("~sGroupId~").returns(false);
+		this.mock(oModel).expects("lockGroup").never();
+
+		assert.throws(function () {
+			// code under test
+			oModel.lock("~sGroupId~");
+		}, new Error("Group ID does not use automatic batch requests: ~sGroupId~"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("changeHttpHeaders", function (assert) {
 		var oModel = this.createModel(),
 			mHeaders = oModel.mHeaders,

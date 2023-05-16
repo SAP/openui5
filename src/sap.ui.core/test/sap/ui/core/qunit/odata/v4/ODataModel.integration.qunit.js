@@ -14690,11 +14690,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: update a quantity. The corresponding unit of measure must be sent, too.
+	//
+	// Lock the "$auto" group to delay a PATCH request (JIRA: CPOUI5ODATAV4-2052).
 	QUnit.test("Update quantity", function (assert) {
-		var sView = '\
+		var oLock,
+			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')/SO_2_SOITEM(\'10\')}">\
 	<Input id="quantity" value="{Quantity}"/>\
-	<Text id="quantityUnit" text="{QuantityUnit}"/>\
+	<Input id="quantityUnit" value="{QuantityUnit}"/>\
 </FlexBox>',
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
@@ -14727,6 +14730,38 @@ sap.ui.define([
 			that.oView.byId("quantity").getBinding("value").setValue("11.000");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.throws(function () {
+				// code under test
+				oLock = oModel.lock("$direct");
+			}, new Error("Group ID does not use automatic batch requests: $direct"));
+
+			// code under test
+			oLock = oModel.lock("$auto");
+
+			assert.strictEqual(oLock.isLocked(), true);
+
+			that.expectChange("quantityUnit", "DZ");
+
+			that.oView.byId("quantityUnit").getBinding("value").setValue("DZ");
+
+			return that.waitForChanges(assert, "no PATCH yet");
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')/SO_2_SOITEM('10')",
+					headers : {"If-Match" : "changed"},
+					payload : {
+						QuantityUnit : "DZ"
+					}
+				});
+
+			// code under test
+			oLock.unlock();
+
+			assert.strictEqual(oLock.isLocked(), undefined);
+
+			return that.waitForChanges(assert, "PATCH sent");
 		});
 	});
 
