@@ -1627,7 +1627,7 @@ sap.ui.define([
 	 * corresponding HTTP request uses the HTTP headers obtained via
 	 * {@link sap.ui.model.odata.v2.ODataModel#getHeaders} from this meta model's data model.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<Object<string,{StandardCode: string, Text: string, UnitSpecificScale: string}>|null>}
 	 *   A promise resolving with the currency customizing, which is a map from the currency key to
 	 *   an object with the following properties:
 	 *   <ul>
@@ -1663,7 +1663,7 @@ sap.ui.define([
 	 * corresponding HTTP request uses the HTTP headers obtained via
 	 * {@link sap.ui.model.odata.v2.ODataModel#getHeaders} from this meta model's data model.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<Object<string,{StandardCode: string, Text: string, UnitSpecificScale: string}>|null>}
 	 *   A promise resolving with the unit customizing, which is a map from the unit key to an
 	 *   object with the following properties:
 	 *   <ul>
