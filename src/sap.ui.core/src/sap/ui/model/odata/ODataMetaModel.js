@@ -327,6 +327,22 @@ sap.ui.define([
 	 */
 
 	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.AssociationSet
+	 *
+	 * An object representing an OData association set.
+	 *
+	 * @property {string} association
+	 *   The qualified name of the association set's association; the value is identical to the corresponding
+	 *   XML attribute value in the service metadata document.
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.AssociationSetEnd>} end
+	 *   The two ends of the association set
+	 * @property {string} name
+	 *   The association set's name
+	 *
+	 * @public
+	 */
+
+	/**
 	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.AssociationSetEnd
 	 *
 	 * An object representing one end of an OData association set.
@@ -470,6 +486,29 @@ sap.ui.define([
 	 * @property {string} [returnType]
 	 *   The qualified name of the function import's return type; the value is identical to the corresponding
 	 *   XML attribute value in the service metadata document.
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.model.odata.ODataMetaModel.Annotatable} sap.ui.model.odata.ODataMetaModel.EntityContainer
+	 *
+	 * An object representing an OData entity container.
+	 *
+	 * @property {string} $path
+	 *   The path to the entity container
+	 * @property {string} name
+	 *   The entity container's name
+	 * @property {string} namespace
+	 *   The entity container's namespace
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.AssociationSet>} [associationSet]
+	 *   The association sets in the entity container
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.EntitySet>} [entitySet]
+	 *   The entity sets in the entity container
+	 * @property {Array<sap.ui.model.odata.ODataMetaModel.FunctionImport>} [functionImport]
+	 *   The function imports in the entity container
+	 * @property {"false"|"true"} [isDefaultEntityContainer]
+	 *   Whether this is the default entity container
 	 *
 	 * @public
 	 */
@@ -1230,7 +1269,7 @@ sap.ui.define([
 	 * Returns the OData association end corresponding to the given entity type's navigation
 	 * property of given name.
 	 *
-	 * @param {object} oEntityType
+	 * @param {sap.ui.model.odata.ODataMetaModel.EntityType} oEntityType
 	 *   an entity type as returned by {@link #getODataEntityType getODataEntityType}
 	 * @param {string} sName
 	 *   the name of a navigation property within this entity type
@@ -1256,7 +1295,7 @@ sap.ui.define([
 	 * Returns the OData association <em>set</em> end corresponding to the given entity type's
 	 * navigation property of given name.
 	 *
-	 * @param {object} oEntityType
+	 * @param {sap.ui.model.odata.ODataMetaModel.EntityType} oEntityType
 	 *   an entity type as returned by {@link #getODataEntityType getODataEntityType}
 	 * @param {string} sName
 	 *   the name of a navigation property within this entity type
@@ -1306,7 +1345,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the entity container is returned as a path or as an object
-	 * @returns {object|string|undefined|null}
+	 * @returns {sap.ui.model.odata.ODataMetaModel.EntityContainer|string|undefined|null}
 	 *   (the path to) the default entity container; <code>undefined</code> (for a path) or
 	 *   <code>null</code> (for an object) if no such container is found
 	 * @public
@@ -1737,7 +1776,7 @@ sap.ui.define([
 	/**
 	 * Gets the single key property name for the given type.
 	 *
-	 * @param {object} oType The entity type
+	 * @param {sap.ui.model.odata.ODataMetaModel.EntityType} oType The entity type
 	 * @param {string} sTypePath The path to the entity type
 	 * @returns {string} The property path to the type's single key
 	 * @throws {Error} If the type does not have exactly one key
