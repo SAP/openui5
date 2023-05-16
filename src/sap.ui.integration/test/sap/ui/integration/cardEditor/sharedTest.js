@@ -130,7 +130,7 @@ function deleteCurrentValues(id) {
 	updateAllLayerCard();
 }
 
-function createCardEditorTag(id, changes, mode, language, designtime, previewPosition) {
+function createCardEditorTag(id, changes, mode, language, designtime, previewPosition, height) {
 	language = language || "";
 	var card = {
 		"manifest": "manifest.json",
@@ -142,11 +142,13 @@ function createCardEditorTag(id, changes, mode, language, designtime, previewPos
 		manifest["sap.card"].designtime = "withPreview/" + designtime;
 		card.manifest = manifest;
 	}
+	height = height || "",
 	previewPosition = previewPosition || "right";
 	return '<ui-integration-card-editor id="' + id +
 		'" preview-position="' + previewPosition +
 		'" mode="' + mode +
 		'" language="' + language +
+		'" height="' + height +
 		'" allow-dynamic-values="true" allow-settings="true" host="host"' +
 		'" card=\'' + JSON.stringify(card).replaceAll("'", "&apos;") +
 		'\'></ui-integration-card-editor>';
@@ -163,7 +165,7 @@ function loadCurrentValues(id) {
 	} else {
 		sLanguage = this._sLanguage || dom.getAttribute("language") || "";
 	}
-	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), sLanguage, dom.getAttribute("designtime") || "", dom.getAttribute("preview-position"));
+	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), sLanguage, dom.getAttribute("designtime") || "", dom.getAttribute("preview-position"), dom.getAttribute("height"));
 	dom.parentNode.replaceChild(div.firstChild, dom);
 }
 
@@ -293,6 +295,14 @@ function showEditorInDialog(oButton) {
 				}
 			})
 		});
+		oSeparateEditorDialog._onResize = function () {
+			Dialog.prototype._onResize.call(this);
+			var oDialogDom = oSeparateEditorDialog.getDomRef();
+			if (oDialogDom) {
+				var iHeight = oDialogDom.style.height;
+				oCardEditor.setHeight(iHeight);
+			}
+		};
 		oSeparateEditorDialog.open();
 	});
 }

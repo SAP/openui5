@@ -81,6 +81,9 @@
 				"stringInCols2": {
 					"value": ""
 				},
+				"maxItems": {
+					"value": 5
+				},
 				"integer": {
 					"value": 1
 				},
@@ -399,7 +402,7 @@
 					"value": "Location: {location}"
 				}
 			},
-			"maxItems": 4
+			"maxItems": "{parameters>/maxItems/value}"
 		}
 	}
 }
