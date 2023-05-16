@@ -260,7 +260,7 @@ sap.ui.define([
 		// TODO: The typeConfig can still provided by the user for legacy reasons. Once migration is completed, always create the typeConfig based
 		//  on the provided dataType.
 		if (!oProperty.isComplex() && !oProperty.typeConfig && oProperty.dataType && this.getParent()) {
-			var oTypeUtil = this.getParent().getControlDelegate().getTypeUtil();
+			var oTypeUtil = this.getParent().getControlDelegate().getTypeMap();
 			oProperty.typeConfig = oTypeUtil.getTypeConfig(oProperty.dataType, oProperty.formatOptions, oProperty.constraints);
 		}
 

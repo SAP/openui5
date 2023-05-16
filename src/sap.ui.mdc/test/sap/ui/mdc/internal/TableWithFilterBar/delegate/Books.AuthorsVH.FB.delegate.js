@@ -53,7 +53,7 @@ sap.ui.define([
 				if (!bSearchExists) {
 					aProperties.push({
 						  name: "$search",
-						  typeConfig: FilterBarDelegate.getTypeUtil().getTypeConfig("Edm.String", null, null)
+						  typeConfig: FilterBarDelegate.getTypeMap().getTypeConfig("Edm.String", null, null)
 					});
 				}
 

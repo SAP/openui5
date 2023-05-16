@@ -128,8 +128,8 @@ sap.ui.define([
 	QUnit.test("Check the delegation of PropertyHelper related functions", function(assert){
 
 		return this.oAdaptationFilterBar.initialized().then(function() {
-			assert.ok(this.oAdaptationFilterBar.getTypeUtil());
-			assert.equal(this.oAdaptationFilterBar.getTypeUtil(), this.oTestTable.getTypeUtil());
+			assert.ok(this.oAdaptationFilterBar.getTypeMap());
+			assert.equal(this.oAdaptationFilterBar.getTypeMap(), this.oTestTable.getTypeMap());
 
 			assert.ok(this.oAdaptationFilterBar.getPropertyHelper());
 			assert.equal(this.oAdaptationFilterBar.getPropertyHelper(), this.oTestTable.getPropertyHelper());

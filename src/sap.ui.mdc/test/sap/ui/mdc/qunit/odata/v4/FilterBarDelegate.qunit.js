@@ -105,8 +105,8 @@ sap.ui.define([
 	});
 
 	QUnit.test('Check TypeUtil', function(assert) {
-		assert.ok(FilterBarDelegate.getTypeUtil, "getTypeUtil exists");
-		assert.equal(FilterBarDelegate.getTypeUtil(), TypeUtil, "getTypeUtil is v4 typeutil instance");
+		assert.ok(FilterBarDelegate.getTypeMap, "getTypeMap exists");
+		assert.equal(FilterBarDelegate.getTypeMap(), TypeUtil, "getTypeMap is v4 typeutil instance");
 	});
 
 	QUnit.test('Check complex property ignored', function(assert) {

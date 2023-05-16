@@ -643,7 +643,7 @@ function(
 
     /**Not implemented yet**/
 
-    QUnit.test("getTypeUtil", function(assert) {
+    QUnit.test("getTypeMap", function(assert) {
         assert.ok(true, "This must be implemented by custom delegate");
     });
 

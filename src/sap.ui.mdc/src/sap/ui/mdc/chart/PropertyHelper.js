@@ -86,7 +86,7 @@ sap.ui.define([
 			var oFormatOptions = oProperty.formatOptions ? oProperty.formatOptions : null;
 			var oConstraints = oProperty.constraints ? oProperty.constraints : {};
 
-			oProperty.typeConfig = this.getParent().getControlDelegate().getTypeUtil().getTypeConfig(oProperty.dataType, oFormatOptions, oConstraints);
+			oProperty.typeConfig = this.getParent().getTypeMap().getTypeConfig(oProperty.dataType, oFormatOptions, oConstraints);
 		}
 
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);

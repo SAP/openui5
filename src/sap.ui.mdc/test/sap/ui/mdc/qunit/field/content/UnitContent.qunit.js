@@ -235,7 +235,7 @@ sap.ui.define([
 
 		var oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
 		var oGetUnitTypeInstanceStub;
-		var oTypeUtilStub = sinon.stub(FieldBaseDelegate, "getTypeUtil").callsFake(function () {
+		var oTypeUtilStub = sinon.stub(FieldBaseDelegate, "getTypeMap").callsFake(function () {
 			var oResult  = Object.assign({}, oTypeUtilStub.wrappedMethod.call(this), {getUnitTypeInstance: function () {
 				return false;
 			}});

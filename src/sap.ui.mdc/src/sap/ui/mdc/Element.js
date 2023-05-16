@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getControlDelegate as getControlDelegate
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPayload as getPayload
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeUtil as getTypeUtil
+  	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeMap as getTypeMap
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initControlDelegate as initControlDelegate
 	 *
 	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.initPropertyHelper as initPropertyHelper

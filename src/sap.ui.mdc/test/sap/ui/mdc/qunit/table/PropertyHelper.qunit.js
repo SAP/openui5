@@ -192,7 +192,7 @@ sap.ui.define([
 		beforeEach: function() {
 			sinon.stub(PropertyHelper.prototype, "getParent").returns({
 				getControlDelegate: sinon.stub().returns({
-					getTypeUtil: sinon.stub().returns({
+					getTypeMap: sinon.stub().returns({
 						getTypeConfig: function() {
 							return TypeUtil.getTypeConfig.apply(TypeUtil, arguments);
 						}
@@ -673,7 +673,7 @@ sap.ui.define([
 			this.oGetTypeConfigStub = sinon.stub().returns("MyFakeTypeConfig");
 			sinon.stub(PropertyHelper.prototype, "getParent").returns({
 				getControlDelegate: sinon.stub().returns({
-					getTypeUtil: sinon.stub().returns({
+					getTypeMap: sinon.stub().returns({
 						getTypeConfig: this.oGetTypeConfigStub
 					})
 				})

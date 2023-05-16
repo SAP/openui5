@@ -515,7 +515,7 @@ sap.ui.define([
 			var oConstraints = oOriginalType.getConstraints();
 			var oDelegate = this.oFormatOptions.delegate;
 			var oPayload = this.oFormatOptions.payload;
-			var sBaseType = oDelegate && oDelegate.getTypeUtil(oPayload).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
+			var sBaseType = oDelegate && oDelegate.getTypeMap(oPayload).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
 			if ((sBaseType === BaseType.Unit || sBaseType === BaseType.DateTime) &&
 					!oCondition.values[0][1] && oType._aCurrentValue) {
 				// TODO: if no unit provided use last one
@@ -969,7 +969,7 @@ sap.ui.define([
 		var oConstraints = oType.getConstraints();
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
-		var sBaseType = oDelegate ? oDelegate.getTypeUtil(oPayload).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String;
+		var sBaseType = oDelegate ? oDelegate.getTypeMap(oPayload).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String;
 
 		if (sBaseType === BaseType.Unit) {
 			sBaseType = BaseType.Numeric;

@@ -46,7 +46,7 @@ sap.ui.define([
 
         sinon.stub(this.oFilterBarBase, "_applyFilterConditionsChanges").returns(Promise.resolve());
         this.oFilterBarBase.initialized().then(function(){
-            sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: this.oFilterBarBase.getTypeUtil().getTypeConfig("sap.ui.model.type.String")});
+            sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: this.oFilterBarBase.getTypeMap().getTypeConfig("sap.ui.model.type.String")});
 
             var oCurrentState = this.oFilterBarBase.getCurrentState();
 
@@ -81,7 +81,7 @@ sap.ui.define([
 
         this.oFilterBarBase.initialized().then(function(){
 
-            sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: this.oFilterBarBase.getTypeUtil().getTypeConfig("sap.ui.model.type.String")});
+            sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: this.oFilterBarBase.getTypeMap().getTypeConfig("sap.ui.model.type.String")});
 
             this.oFilterBarBase._setXConditions(oDummyCondition)
             .then(function(){

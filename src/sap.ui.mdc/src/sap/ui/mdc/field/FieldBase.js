@@ -1135,7 +1135,7 @@ sap.ui.define([
 		if (oDataType && typeof oDataType === "object") {
 			return oDataType.getMetadata().getName();
 		} else if (this.bDelegateInitialized) {
-			return this.getTypeUtil().getDataTypeClassName(this.getDataType());
+			return this.getTypeMap().getDataTypeClassName(this.getDataType());
 		} else {
 			return this.getDataType();
 		}
@@ -1168,7 +1168,7 @@ sap.ui.define([
 		var sDataType = _getDataTypeName.call(this);
 		var oDataTypeConstraints = _getDataTypeConstraints.call(this);
 		var oDataTypeFormatOptions = _getDataTypeFormatOptions.call(this);
-		var sBaseType = this.getTypeUtil().getBaseType(sDataType, oDataTypeFormatOptions, oDataTypeConstraints);
+		var sBaseType = this.getTypeMap().getBaseType(sDataType, oDataTypeFormatOptions, oDataTypeConstraints);
 
 		return sBaseType;
 	};
@@ -3235,7 +3235,7 @@ sap.ui.define([
 			}
 		} else {
 			var sDataType = _getDataTypeName.call(this);
-			if (this.getTypeUtil().getBaseType(sDataType) === BaseType.Unit
+			if (this.getTypeMap().getBaseType(sDataType) === BaseType.Unit
 				&& Array.isArray(vValue) && vValue.length > 1 && (vValue[0] === undefined || vValue[0] === null) && !vValue[1]) { // as 0 is a valid number
 				//no number and no unit -> initial
 				return true;

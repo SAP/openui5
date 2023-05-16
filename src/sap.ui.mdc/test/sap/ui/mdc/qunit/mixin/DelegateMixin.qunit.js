@@ -177,12 +177,24 @@ sap.ui.define([
 
 	QUnit.test("getTypeUtil", function(assert) {
 		oSomeInstance = new TestClass();
+		sinon.spy(oSomeInstance, "getTypeMap");
+		return oSomeInstance.initControlDelegate().then(function () {
+			assert.notOk(oSomeInstance.getTypeMap.called, "getTypeMap not executed yet");
+			var oTypeMap = oSomeInstance.getTypeUtil();
+			assert.ok(oSomeInstance.getTypeMap.calledOnce, "getTypeUtil calls getTypeMap");
+			assert.equal(oTypeMap, oSomeInstance.getTypeMap(), "getTypeUtil returns getTypeMap result");
+			oSomeInstance.getTypeMap.restore();
+		});
+	});
+
+	QUnit.test("getTypeMap", function(assert) {
+		oSomeInstance = new TestClass();
 		assert.deepEqual(oSomeInstance.getDelegate(), {name: "sap/ui/mdc/BaseDelegate"}, "Default delegate configuration");
 
 		assert.throws(function () {
-			oSomeInstance.getTypeUtil();
+			oSomeInstance.getTypeMap();
 		}, function(oError) {
-			return oError instanceof Error && oError.message === "A delegate instance providing typeUtil is not (yet) available.";
+			return oError instanceof Error && oError.message === "A delegate instance providing a TypeMap is not (yet) available.";
 		},  "throws error if called before delegated is initialized");
 
 		oSomeInstance.initControlDelegate();
@@ -190,7 +202,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		oSomeInstance.awaitControlDelegate().then(function () {
-			assert.ok(oSomeInstance.getTypeUtil() === oSomeInstance._oDelegate.getTypeUtil(), "delegate returned");
+			assert.ok(oSomeInstance.getTypeMap() === oSomeInstance._oDelegate.getTypeMap(), "delegate returned");
 			done();
 		});
 	});

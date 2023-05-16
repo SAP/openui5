@@ -109,7 +109,7 @@ sap.ui.define([
 						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 						sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 						filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
-						typeConfig: oTable.getTypeUtil().getTypeConfig(oObj.$Type),
+						typeConfig: oTable.getTypeMap().getTypeConfig(oObj.$Type),
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1
 					});
 				}
@@ -143,7 +143,7 @@ sap.ui.define([
 		// if (bTableFilterEnabled) {
 		// 	mConditions = oTable.getConditions();
 		// 	var aPropertiesMetadata = oTable.getPropertyHelper().getProperties();
-		// 	oInnerFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata);
+		// 	oInnerFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata);
 
 		// 	if (oInnerFilterInfo.filters) {
 		// 		aFilters.push(oInnerFilterInfo.filters);
@@ -155,7 +155,7 @@ sap.ui.define([
 			if (mConditions) {
 
 				var aPropertiesMetadata = oFilterBar.getPropertyHelper().getProperties();
-				oOuterFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata);
+				oOuterFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata);
 
 				if (oOuterFilterInfo.filters) {
 					aFilters.push(oOuterFilterInfo.filters);

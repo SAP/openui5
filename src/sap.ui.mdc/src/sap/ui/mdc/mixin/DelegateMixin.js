@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * <li><code>getControlDelegate</code> - Returns the delegate instance, if available.</li>
 	 * <li><code>isControlDelegateInitialized</code> - Checks whether the control delegate is available.</li>
 	 * <li><code>getPayload</code> - Returns the payload object set for the delegate property.</li>
-	 * <li><code>getTypeUtil</code> - Returns the <code>typeUtil</code> made available by the delegate module</li>
+	 * <li><code>getTypeMap</code> - Returns the <code>typeUtil</code> made available by the delegate module</li>
 	 * <li><code>initControlDelegate</code> - Loads and initializes the delegate module related to the enhanced control.</li>
 	 * <li><code>initPropertyHelper</code> - Loads and initializes the property helper related to the enhanced control.</li>
 	 * <li><code>awaitPropertyHelper</code> - Provides access to the property helper initialization <code>Promise</code>.</li>
@@ -165,20 +165,25 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @throws Throws an error if the delegate module is not available
 	 */
 	DelegateMixin.getTypeUtil = function () {
-		if (!this._oTypeUtil) {
+		return this.getTypeMap();
+	};
+
+	/**
+	 * Returns the <code>TypeMap</code> made available by a delegate module.
+	 *
+	 * @protected
+	 * @returns {sap.ui.mdc.util.TypeMap} <code>TypeMap</code> object
+	 * @throws Throws an error if the delegate module is not available
+	 */
+	DelegateMixin.getTypeMap = function () {
+		if (!this._oTypeMap) {
 			if (!this._oDelegate) {
-				throw new Error("A delegate instance providing typeUtil is not (yet) available.");
+				throw new Error("A delegate instance providing a TypeMap is not (yet) available.");
 			}
-
-			var bCustomTypeUtil = this._oDelegate.getTypeUtil && this._oDelegate.getTypeUtil !== BaseDelegate.getTypeUtil;
-			if (bCustomTypeUtil) {
-				Log.warning("DelegateMixin: Delegate.getTypeUtil is final, please implement Delegate.getTypeMap instead.");
-			}
-
-			this._oTypeUtil = this._oDelegate.getTypeUtil(this._oPayload);
+			this._oTypeMap = this._oDelegate.getTypeMap(this._oPayload);
 		}
 
-		return this._oTypeUtil;
+		return this._oTypeMap;
 	};
 
 	/**
@@ -219,7 +224,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 			this._oDelegateInitialized = null;
 			this._oDelegate = null;
 			this._oPayload = null;
-			this._oTypeUtil = null;
+			this._oTypeMap = null;
 
 			if (fnExit) {
 				fnExit.apply(this, arguments);
@@ -240,6 +245,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 		this.getControlDelegate = DelegateMixin.getControlDelegate;
 		this.getPayload = DelegateMixin.getPayload;
 		this.getTypeUtil = DelegateMixin.getTypeUtil;
+		this.getTypeMap = DelegateMixin.getTypeMap;
 		this.initControlDelegate = DelegateMixin.initControlDelegate;
 	};
 

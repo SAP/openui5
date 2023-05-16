@@ -40,7 +40,7 @@ sap.ui.define([
 
 		if (bFilterEnabled) {
 			var aTableProperties = oMDCTable.getPropertyHelper().getProperties();
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeUtil(), oMDCTable.getConditions(), aTableProperties);
+			var oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), oMDCTable.getConditions(), aTableProperties);
 
 			if (oInnerFilterInfo.filters) {
 				aFilters.push(oInnerFilterInfo.filters);
@@ -52,7 +52,7 @@ sap.ui.define([
 
 			if (mConditions) {
 				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-				var oFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata);
+				var oFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata);
 
 				if (oFilterInfo.filters) {
 					aFilters.push(oFilterInfo.filters);
