@@ -496,7 +496,7 @@ sap.ui.define([
 	QUnit.test("applyParameters: simulate call from c'tor", function (assert) {
 		var oAggregation = {},
 			sApply = "A.P.P.L.E.",
-			oBinding = this.bindList("/EMPLOYEES"),
+			oBinding = this.bindList("/EMPLOYEES"), // already calls applyParameters!
 			oExpectation,
 			oModelMock = this.mock(this.oModel),
 			mParameters = {
@@ -516,6 +516,8 @@ sap.ui.define([
 			.returns({$filter : "bar"});
 		oExpectation = this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding).expects("fetchCache").callsFake(function () {
+			assert.ok(oBinding.hasOwnProperty("oQueryOptionsPromise"));
+			assert.strictEqual(oBinding.oQueryOptionsPromise, undefined);
 			// test if #removeCachesAndMessages is called before #fetchCache
 			assert.ok(oExpectation.called);
 		});
@@ -2884,6 +2886,7 @@ sap.ui.define([
 				oBinding = oModel.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
 					oFixture.mParameters);
 				oBinding.setContext(oContext);
+				assert.ok(oBinding.oQueryOptionsPromise);
 
 				this.mock(oBinding).expects("checkSuspended").never();
 				this.mock(oBinding).expects("hasPendingChanges").returns(false);
@@ -2904,6 +2907,7 @@ sap.ui.define([
 				this.mock(oBinding).expects("fetchCache").exactly(bSuspended ? 0 : 1)
 					.withExactArgs(sinon.match.same(oContext))
 					.callsFake(function () {
+						assert.strictEqual(oBinding.oQueryOptionsPromise, undefined);
 						this.oCache = {};
 						this.oCachePromise = SyncPromise.resolve(this.oCache);
 					});
@@ -2914,6 +2918,7 @@ sap.ui.define([
 				assert.strictEqual(oBinding.sort(oFixture.vSorters), oBinding, "chaining");
 
 				assert.strictEqual(oBinding.aSorters, aSorters);
+				assert.strictEqual(oBinding.oQueryOptionsPromise, undefined);
 			});
 		});
 	});
@@ -2982,6 +2987,7 @@ sap.ui.define([
 					$filter : sStaticFilter,
 					$$operationMode : OperationMode.Server
 				});
+				assert.ok(oBinding.oQueryOptionsPromise);
 
 				this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
 					.returns(aFilters);
@@ -2994,7 +3000,10 @@ sap.ui.define([
 				oBindingMock.expects("removeCachesAndMessages").exactly(bSuspended ? 0 : 1)
 					.withExactArgs("");
 				oBindingMock.expects("fetchCache").exactly(bSuspended ? 0 : 1)
-					.withExactArgs(sinon.match.same(oBinding.oContext));
+					.withExactArgs(sinon.match.same(oBinding.oContext))
+					.callsFake(function () {
+						assert.strictEqual(oBinding.oQueryOptionsPromise, undefined);
+					});
 				oBindingMock.expects("reset").exactly(bSuspended ? 0 : 1)
 					.withExactArgs(ChangeReason.Filter);
 				oBindingMock.expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
@@ -3069,6 +3078,7 @@ sap.ui.define([
 			oTransientBindingContextMock = this.mock(oTransientBindingContext);
 
 		oBinding = this.bindList("relative"); // unresolved
+		oBinding.oQueryOptionsPromise = "~oQueryOptionsPromise~";
 		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
@@ -3087,6 +3097,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
 		assert.strictEqual(oBinding.aPreviousData, undefined);
 		assert.strictEqual(oBinding.mQueryOptions, undefined);
+		assert.strictEqual(oBinding.oQueryOptionsPromise, undefined);
 		assert.strictEqual(oBinding.aSorters, undefined);
 
 		assert.throws(function () {
@@ -3095,6 +3106,7 @@ sap.ui.define([
 		});
 
 		oBinding = this.bindList("relative", Context.create(this.oModel, oParentBinding, "/foo"));
+		assert.ok(oBinding.oQueryOptionsPromise);
 		oBinding.aContexts = [oBindingContext];
 		oBinding.aContexts.unshift(oTransientBindingContext);
 		oBindingContextMock.expects("destroy").withExactArgs();
@@ -3109,6 +3121,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.strictEqual(oBinding.oHeaderContext, undefined);
+		assert.strictEqual(oBinding.oQueryOptionsPromise, undefined);
 	});
 
 	//*********************************************************************************************
@@ -5285,12 +5298,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doFetchQueryOptions", function (assert) {
+[false, true].forEach(function (bChanged) {
+	QUnit.test("doFetchQueryOptions: meta path changed = " + bChanged, function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
-			oContext = {},
+			oContext = {
+				getPath : function () {}
+			},
 			mMergedQueryOptions = {},
-			mResolvedQueryOptions = {"$filter" : "staticFilter", "$orderby" : "staticSorter"};
+			mResolvedQueryOptions = {"$filter" : "staticFilter", "$orderby" : "staticSorter"},
+			oQueryOptionsPromise;
 
+		assert.strictEqual(oBinding.oQueryOptionsPromise, undefined);
+		if (bChanged) {
+			oBinding.oQueryOptionsPromise = {$metaPath : "/different/path"};
+		}
+		this.mock(oContext).expects("getPath").twice().withExactArgs().returns("/TEAMS('0')");
+		this.mock(_Helper).expects("getMetaPath").twice().withExactArgs("/TEAMS('0')")
+			.returns("/TEAMS");
 		this.mock(oBinding).expects("fetchResolvedQueryOptions")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(SyncPromise.resolve(mResolvedQueryOptions));
@@ -5305,8 +5329,19 @@ sap.ui.define([
 			.returns(mMergedQueryOptions);
 
 		// code under test
-		assert.strictEqual(oBinding.doFetchQueryOptions(oContext).getResult(), mMergedQueryOptions);
+		oQueryOptionsPromise = oBinding.doFetchQueryOptions(oContext);
+
+		assert.strictEqual(oBinding.oQueryOptionsPromise, oQueryOptionsPromise);
+		assert.strictEqual(oQueryOptionsPromise.getResult(), mMergedQueryOptions);
+		assert.strictEqual(oQueryOptionsPromise.$metaPath, "/TEAMS");
+
+		// code under test (promise exists, meta path unchanged)
+		assert.strictEqual(oBinding.doFetchQueryOptions(oContext), oQueryOptionsPromise);
+
+		assert.strictEqual(oBinding.oQueryOptionsPromise, oQueryOptionsPromise);
+		assert.strictEqual(oQueryOptionsPromise.$metaPath, "/TEAMS");
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSharedRequest) {
