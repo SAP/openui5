@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * <li><code>getControlDelegate</code> - Returns the delegate instance, if available.</li>
 	 * <li><code>isControlDelegateInitialized</code> - Checks whether the control delegate is available.</li>
 	 * <li><code>getPayload</code> - Returns the payload object set for the delegate property.</li>
-	 * <li><code>getTypeMap</code> - Returns the <code>typeUtil</code> made available by the delegate module</li>
+	 * <li><code>getTypeMap</code> - Returns the <code>TypeMap</code> made available by the delegate module</li>
 	 * <li><code>initControlDelegate</code> - Loads and initializes the delegate module related to the enhanced control.</li>
 	 * <li><code>initPropertyHelper</code> - Loads and initializes the property helper related to the enhanced control.</li>
 	 * <li><code>awaitPropertyHelper</code> - Provides access to the property helper initialization <code>Promise</code>.</li>
@@ -163,6 +163,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @protected
 	 * @returns {sap.ui.mdc.util.TypeUtil|sap.ui.mdc.util.TypeMap} <code>TypeUtil</code> object
 	 * @throws Throws an error if the delegate module is not available
+ 	 * @deprecated (since 1.115.0) - please see {@link #getTypeMap}
 	 */
 	DelegateMixin.getTypeUtil = function () {
 		return this.getTypeMap();

@@ -212,6 +212,9 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./mixin/DelegateMixin.qunit",
 				sinon: true
 			},
+			/**
+			 * @deprecated since 1.114
+			 */
 			"TypeUtil": {
 				group: "Util",
 				module: "./util/TypeUtil.qunit",
@@ -220,6 +223,9 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+			/**
+			 * @deprecated since 1.114
+			 */
 			"ODataTypeUtil": {
 				group: "Util",
 				module: "./odata/TypeUtil.qunit",
@@ -228,6 +234,9 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: true
 			},
+			/**
+			 * @deprecated since 1.114
+			 */
 			"ODataV4TypeUtil": {
 				group: "Util",
 				module: "./odata/v4/TypeUtil.qunit",

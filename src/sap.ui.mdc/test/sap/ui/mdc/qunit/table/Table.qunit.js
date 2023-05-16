@@ -33,7 +33,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/mdc/library",
 	"sap/m/library",
-	"sap/ui/mdc/odata/TypeUtil",
+	"sap/ui/mdc/odata/TypeMap",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/m/plugins/CopyProvider",
@@ -89,7 +89,7 @@ sap.ui.define([
 	CoreLibrary,
 	MdcLibrary,
 	MLibrary,
-	TypeUtil,
+	ODataTypeMap,
 	TestModificationHandler,
 	ActionToolbarAction,
 	CopyProvider,
@@ -2997,7 +2997,7 @@ sap.ui.define([
 					name: "SampleField",
 					path: "SampleField",
 					label: "SampleLabel",
-					typeConfig: TypeUtil.getTypeConfig("Edm.String")
+					typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 				}
 			]);
 
@@ -3802,7 +3802,7 @@ sap.ui.define([
 				name: "firstName",
 				path: "firstName",
 				label: "First name",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
 					maxLength: 30
 				}),
 				visualSettings: {
@@ -3815,7 +3815,7 @@ sap.ui.define([
 				name: "lastName",
 				path: "lastName",
 				label: "Last name",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
 					maxLength: 30
 				}),
 				visualSettings: {
@@ -3827,7 +3827,7 @@ sap.ui.define([
 			}, {
 				name: "fullName",
 				label: "Full name",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String"),
 				propertyInfos: ["firstName", "lastName"],
 				visualSettings: {
 					widthCalculation: {
@@ -3837,7 +3837,7 @@ sap.ui.define([
 			}, {
 				name: "numberValue",
 				label: "Number value",
-				typeConfig: TypeUtil.getTypeConfig("Edm.Byte"),
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.Byte"),
 				visualSettings: {
 					widthCalculation: {
 						includeLabel: false
@@ -3846,7 +3846,7 @@ sap.ui.define([
 			}, {
 				name: "booleanValue",
 				label: "Boolean value",
-				typeConfig: TypeUtil.getTypeConfig("Edm.Boolean"),
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.Boolean"),
 				visualSettings: {
 					widthCalculation: {
 						includeLabel: false,
@@ -3856,7 +3856,7 @@ sap.ui.define([
 			}, {
 				name: "columnGap1",
 				label: "Test gap",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
 					maxLength: 32
 				}),
 				visualSettings: {
@@ -3867,20 +3867,20 @@ sap.ui.define([
 			}, {
 				name: "columnGap2",
 				label: "Test gap",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
 					maxLength: 32
 				})
 			}, {
 				name: "noWidthCalculation",
 				label: "No Width Calculation",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String"),
 				visualSettings: {
 					widthCalculation: null
 				}
 			}, {
 				name: "complexNoWidthCalculation",
 				label: "Complex with no width calculation",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String"),
 				propertyInfos: ["lastName", "noWidthCalculation"],
 				visualSettings: {
 					widthCalculation: {
@@ -3890,17 +3890,17 @@ sap.ui.define([
 			}, {
 				name: "stringValue_nomaxlength",
 				label: "String",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String")
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 			}, {
 				name: "stringValue_bigmaxlength",
 				label: "String",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
 					maxLength: 255
 				})
 			}, {
 				name: "stringValue_nolabeltruncate",
 				label: "stringValue_nolabeltruncate",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
 					maxLength: 5
 				}),
 				visualSettings: {
@@ -3912,7 +3912,7 @@ sap.ui.define([
 				name: "a",
 				label: "a",
 				required: true,
-				typeConfig: TypeUtil.getTypeConfig("Edm.Boolean"),
+				typeConfig: ODataTypeMap.getTypeConfig("Edm.Boolean"),
 				visualSettings: {
 					widthCalculation: {
 						minWidth: 1
@@ -3982,14 +3982,14 @@ sap.ui.define([
 			name: "firstName",
 			path: "firstName",
 			label: "First name",
-			typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
 				maxLength: 30
 			})
 		}, {
 			name: "lastName",
 			path: "lastName",
 			label: "Last name",
-			typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String", null, {
 				maxLength: 30
 			})
 		}]);
@@ -5516,7 +5516,7 @@ sap.ui.define([
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
 			label: "Name",
-			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+			typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")
 		}]);
 
 		this.oTable.setFilter(oFilter);
@@ -5578,7 +5578,7 @@ sap.ui.define([
 		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
 			name: "name",
 			label: "Name",
-			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+			typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")
 		}]);
 
 		this.oTable.setFilter(oFilter);

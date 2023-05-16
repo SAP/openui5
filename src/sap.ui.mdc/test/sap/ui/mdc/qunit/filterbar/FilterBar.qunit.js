@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/FilterField",
 	'sap/ui/model/json/JSONModel',
 	"sap/m/p13n/FlexUtil",
-	"sap/ui/mdc/odata/TypeUtil",
+	"sap/ui/mdc/odata/TypeMap",
 	'sap/ui/model/odata/type/String',
 	"sap/ui/mdc/util/FilterUtil",
 	'sap/base/util/merge',
@@ -27,7 +27,7 @@ sap.ui.define([
 	FilterField,
 	JSONModel,
 	FlexUtil,
-	TypeUtil,
+	ODataTypeMap,
 	StringType,
 	FilterUtil,
 	merge,
@@ -246,7 +246,7 @@ sap.ui.define([
 			}
 		});
 
-		sinon.stub(oFB, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+		sinon.stub(oFB, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")});
 		sinon.spy(oFB, "_applyInitialFilterConditions");
         sinon.stub(oFB, "awaitPropertyHelper").returns(Promise.resolve());
 
@@ -352,7 +352,7 @@ sap.ui.define([
 
 		sinon.spy(oFilterBar.getEngine(), "createChanges");
 		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
-		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")});
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
 		var done = assert.async();
@@ -407,7 +407,7 @@ sap.ui.define([
 
 		sinon.spy(oFilterBar.getEngine(), "createChanges");
 		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
-		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")});
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
 		var done = assert.async();
@@ -449,19 +449,19 @@ sap.ui.define([
 		var oProperty = {
 			name: "fieldPath1",
 			label: "Field Path",
-			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"),
+			typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String"),
 			visible: true
 		};
 		var oProperty2 = {
 				name: "fieldPath2",
 				label: "Field Path2",
-				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"),
+				typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String"),
 				visible: true
 		};
 		var oProperty3 = {
 				name: "$search",
 				label: "",
-				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"),
+				typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String"),
 				visible: true
 		};
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty, oProperty2, oProperty3]);
@@ -628,7 +628,7 @@ sap.ui.define([
 
 		var aPropertyInfo = [{
 			name: "key",
-			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"),
+			typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String"),
 			visible: true
 		}];
 
@@ -687,11 +687,11 @@ sap.ui.define([
 			name: "key",
 			maxConditions: 1,
 			visible: true,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}, {
 			name: "in",
 			visible: true,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}];
 
 		this.destroyTestObjects();
@@ -738,7 +738,7 @@ sap.ui.define([
 			name: "key",
 			maxConditions: -1,
 			visible: true,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}];
 
 		this.destroyTestObjects();
@@ -804,7 +804,7 @@ sap.ui.define([
 			name: "key",
 			maxConditions: -11,
 			visible: true,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}];
 
 		this.destroyTestObjects();
@@ -860,15 +860,15 @@ sap.ui.define([
 			name: "key",
 			maxConditions: -1,
 			visible: true,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}, {
 			name: "in1",
 			visible: true,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}, {
 			name: "in2",
 			visible: true,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}];
 
 		this.destroyTestObjects();
@@ -1515,9 +1515,9 @@ sap.ui.define([
 	QUnit.test("check _stringifyConditions", function (assert) {
 		var oProperty = {
 		   name: "test",
-		   typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+		   typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")
 		};
-		sinon.stub(oFilterBar, "getTypeMap").returns(TypeUtil);
+		sinon.stub(oFilterBar, "getTypeMap").returns(ODataTypeMap);
 		sinon.stub(oFilterBar, "_getPropertyByName").returns(oProperty);
 
 		var aConditions = [{operator: "EQ", values: ["string"], isEmpty: false, validated: "NotValidated"}];

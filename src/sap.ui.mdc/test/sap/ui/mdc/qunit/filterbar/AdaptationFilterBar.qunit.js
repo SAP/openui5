@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/Control",
 	"sap/ui/mdc/AggregationBaseDelegate",
-	"sap/ui/mdc/util/TypeUtil",
+	"sap/ui/mdc/odata/v4/TypeMap",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/ui/model/odata/type/DateTimeOffset",
@@ -22,7 +22,7 @@ sap.ui.define([
 	Table,
 	Control,
 	AggregationBaseDelegate,
-	TypeUtil,
+	ODataV4TypeMap,
 	JSONModel,
 	StringType,
 	DateTimeOffset,
@@ -201,17 +201,17 @@ sap.ui.define([
 				{
 					name: "key1",
 					path: "key1",
-					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+					typeConfig: ODataV4TypeMap.getTypeConfig("sap.ui.model.type.String")
 				},
 				{
 					name: "key2",
 					path: "key2",
-					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTimeOffset")
+					typeConfig: ODataV4TypeMap.getTypeConfig("sap.ui.model.odata.type.DateTimeOffset")
 				},
 				{
 					name: "key3",
 					path: "key3",
-					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+					typeConfig: ODataV4TypeMap.getTypeConfig("sap.ui.model.type.String")
 				}
 			];
 

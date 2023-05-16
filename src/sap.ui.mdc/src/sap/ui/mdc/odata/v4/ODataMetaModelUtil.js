@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/mdc/util/TypeUtil"], function(TypeUtil) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**

@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
-	"sap/ui/mdc/util/TypeUtil",
+	"sap/ui/mdc/DefaultTypeMap",
 	"sap/ui/mdc/FilterField",
 	"sap/m/p13n/FlexUtil",
 	"sap/ui/mdc/p13n/StateUtil",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	createAppEnvironment,
-	TypeUtil,
+	DefaultTypeMap,
 	FilterField,
 	FlexUtil,
 	StateUtil,
@@ -35,10 +35,10 @@ sap.ui.define([
 	var aPropertyInfo = [
 		{
 			name: "column0",
-			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+			typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")
 		}, {
 			name: "column1",
-			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+			typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")
 		}, {
 			name: "column2"
 		}, {

@@ -3,10 +3,10 @@
 sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/FilterField",
-    "sap/ui/mdc/odata/TypeUtil",
+    "sap/ui/mdc/DefaultTypeMap",
 	"sap/ui/mdc/enum/FilterBarValidationStatus"
 ], function (
-	FilterBarBase, FilterField, TypeUtil, FilterBarValidationStatus
+	FilterBarBase, FilterField, DefaultTypeMap, FilterBarValidationStatus
 ) {
 	"use strict";
 
@@ -410,7 +410,7 @@ sap.ui.define([
 
         var done = assert.async();
 
-        sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+        sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")});
 
 		this.oFilterBarBase.initialized().then(function () {
             // --> this would happen during runtime through a change
@@ -488,7 +488,7 @@ sap.ui.define([
     });
 
     QUnit.test("Check sync of ConditionModel with filterConditions after change appliance", function(assert){
-        sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+        sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")});
 
 		return this.oFilterBarBase.initialized().then(function () {
 
@@ -521,7 +521,7 @@ sap.ui.define([
 		sinon.stub(this.oFilterBarBase, "_getPropertyByName").callsFake(function(sKey){
 			return {
 				name: sKey,
-				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+				typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")
 			};
 		});
 
@@ -574,7 +574,7 @@ sap.ui.define([
 		sinon.stub(this.oFilterBarBase, "_getPropertyByName").callsFake(function(sKey){
 			return {
 				name: sKey,
-				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+				typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")
 			};
 		});
 
@@ -616,8 +616,8 @@ sap.ui.define([
         var done = assert.async();
 
 		var oStub = sinon.stub(this.oFilterBarBase, "_getPropertyByName");
-		oStub.withArgs("key1").returns({name: "key1", required: true, typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"), constraints: {maxLength: 4}});
-		oStub.withArgs("key2").returns({name: "key2", required: true, typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+		oStub.withArgs("key1").returns({name: "key1", required: true, typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String"), constraints: {maxLength: 4}});
+		oStub.withArgs("key2").returns({name: "key2", required: true, typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")});
 
 		sinon.stub(this.oFilterBarBase, "_getRequiredPropertyNames").returns(["key1", "key2"]);
 

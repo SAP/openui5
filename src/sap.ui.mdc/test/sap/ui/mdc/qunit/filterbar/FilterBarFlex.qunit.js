@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBarDelegate",
 	'sap/ui/mdc/FilterField',
 	'sap/ui/model/odata/type/String',
-	"sap/ui/mdc/odata/TypeUtil"
+	"sap/ui/mdc/odata/TypeMap"
 ], function(createAppEnvironment,
 	FilterBarFlexHandler,
 	ChangesWriteAPI,
@@ -17,9 +17,9 @@ sap.ui.define([
 	FilterBarDelegate,
 	FilterField,
 	StringType,
-	TypeUtil) {
+	ODataTypeMap
+	) {
 	'use strict';
-
 
 	function createAddConditionChangeDefinition(sOperator) {
 		sOperator = sOperator ? sOperator : "Contains";
@@ -306,11 +306,11 @@ sap.ui.define([
 		var aPropertyInfo = [{
 			name: "to_nav/field1",
 			maxConditions: 1,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}, {
 			name: "Category",
 			maxConditions: 1,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}];
 
 		var oStub = sinon.stub(this.oFilterBar, "_getPropertyByName");
@@ -354,11 +354,11 @@ sap.ui.define([
 		var aPropertyInfo = [{
 			name: "to_nav/field1",
 			maxConditions: 1,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}, {
 			name: "Category",
 			maxConditions: 1,
-			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
 		}];
 
 		var oStub = sinon.stub(this.oFilterBar, "_getPropertyByName");
