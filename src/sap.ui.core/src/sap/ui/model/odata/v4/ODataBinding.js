@@ -541,9 +541,7 @@ sap.ui.define([
 			var mQueryOptions = aResult[0].mQueryOptions,
 				bPreparedDeepCreate = that.prepareDeepCreate(oContext, mQueryOptions);
 
-			if (aResult[0].sReducedPath) {
-				that.sReducedPath = aResult[0].sReducedPath;
-			}
+			that.sReducedPath = aResult[0].sReducedPath;
 
 			// If there are mQueryOptions, the binding must create a cache. Do not create a cache if
 			// a deep create was prepared or for a virtual context
