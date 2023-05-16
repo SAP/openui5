@@ -124,7 +124,7 @@ sap.ui.define([
 	 * Returns the object with keys and values from which this enum type was created
 	 * or <code>undefined</code> if this is not an enum type.
 	 *
-	 * @returns {object|undefined} Object with enum keys and values or <code>undefined</code>
+	 * @returns {Object<string,string>|undefined} Object with enum keys and values or <code>undefined</code>
 	 * @public
 	 */
 	DataType.prototype.getEnumValues = function() {
@@ -176,7 +176,7 @@ sap.ui.define([
 	 * they are applied to controls. It is not intended to break-out of the value range
 	 * defined by a type.
 	 *
-	 * @param {function} fnNormalizer Function to apply for normalizing
+	 * @param {function(any):any} fnNormalizer Function to apply for normalizing
 	 * @public
 	 */
 	DataType.prototype.setNormalizer = function(fnNormalizer) {

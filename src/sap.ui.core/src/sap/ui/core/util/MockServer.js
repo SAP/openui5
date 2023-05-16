@@ -26,7 +26,6 @@ sap.ui
 			 * @param {string} [sId] id for the new server object; generated automatically if no non-empty id is given
 			 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
 			 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new object
-			 * @param {object} [oScope] scope object for resolving string based type and formatter references in bindings
 			 *
 			 * @class Class to mock http requests made to a remote server supporting the OData V2 REST protocol.
 			 * @extends sap.ui.base.ManagedObject
@@ -37,7 +36,7 @@ sap.ui
 			 * @alias sap.ui.core.util.MockServer
 			 */
 			var MockServer = ManagedObject.extend("sap.ui.core.util.MockServer", /** @lends sap.ui.core.util.MockServer.prototype */ {
-				constructor: function(sId, mSettings, oScope) {
+				constructor: function(sId, mSettings) {
 					ManagedObject.apply(this, arguments);
 					MockServer._aServers.push(this);
 				},
@@ -134,7 +133,7 @@ sap.ui
 						 *    HTTP status code to send with the response
 						 * @param {Object<string,string>} [mHeaders={}]
 						 *    HTTP Headers to send with the response
-						 * @param {object|string} [vBody=""]
+						 * @param {object|string|any[]|number|boolean} [vBody=""]
 						 *    A valid JSON-string or a JSON-stringifiable object that should be sent as response body
 						 * @public
 						 * @function

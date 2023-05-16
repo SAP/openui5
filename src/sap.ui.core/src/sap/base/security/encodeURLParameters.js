@@ -13,7 +13,7 @@ sap.ui.define(
 	 * @function
 	 * @since 1.58
 	 * @alias module:sap/base/security/encodeURLParameters
-	 * @param {Object} mParams The map of parameters to encode
+	 * @param {Object<string,string|number|boolean>} mParams The map of parameters to encode
 	 * @returns {string} The URL encoded parameter string
 	 * @SecValidate {0|return|XSS} validates the given string for a URL context
 	 * @example

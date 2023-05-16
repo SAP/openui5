@@ -232,7 +232,7 @@ sap.ui.define(['./Metadata', "sap/base/Log"],
 	 *
 	 * Please see the API documentation of {@link sap.ui.base.Object#isA} for more details.
 	 *
-	 * @param {object} oObject Object which will be checked whether it is an instance of the given type
+	 * @param {any} oObject Object which will be checked whether it is an instance of the given type
 	 * @param {string|string[]} vTypeName Type or types to check for
 	 * @returns {boolean} Whether the given object is an instance of the given type or of any of the given types
 	 * @public

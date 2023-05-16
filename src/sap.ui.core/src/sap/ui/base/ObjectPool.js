@@ -13,7 +13,7 @@ sap.ui.define(['./Object'],
 	 *
 	 * <code>oObjectClass</code> must implement the {@link sap.ui.base.Poolable} interface.
 	 *
-	 * @param {function} oObjectClass Constructor for the class of objects that this pool should manage
+	 * @param {function(new:Object)} oObjectClass Constructor for the class of objects that this pool should manage
 	 *
 	 * @class Manages a pool of objects for reuse, all of the same type;
 	 * the type has to be specified at construction time.
@@ -79,7 +79,7 @@ sap.ui.define(['./Object'],
 	 * are forwarded to the init method of the borrowed object.
 	 *
 	 * @param {...any} [args] optional initialization parameters for the borrowed object
-	 * @return {object} The borrowed object of the same type that has been specified for this pool
+	 * @return {Object} The borrowed object of the same type that has been specified for this pool
 	 * @public
 	 */
 	ObjectPool.prototype.borrowObject = function() {
@@ -99,7 +99,7 @@ sap.ui.define(['./Object'],
 	 * pool beforehand. The reset method is called on the object before it is added
 	 * to the set of free objects.
 	 *
-	 * @param {object} oObject The object to return to the pool
+	 * @param {Object} oObject The object to return to the pool
 	 * @public
 	 */
 	ObjectPool.prototype.returnObject = function(oObject) {
