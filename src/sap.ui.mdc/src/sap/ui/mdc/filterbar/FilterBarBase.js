@@ -305,8 +305,6 @@ sap.ui.define([
 
 		this._createInnerLayout();
 
-		this._bPersistValues = false;
-
 		this.getEngine().register(this, {
 			controller: {
 				Filter: new FilterController({control: this})
@@ -329,14 +327,12 @@ sap.ui.define([
 	 *
 	 * _cLayoutItem, the class which is being used to create FilterItems
 	 * _oFilterBarLayout, instance of the layout which needs to be a IFilterContainer derivation
-	 * _bPersistValues should be used to control the persistence of filter conditions
 	 *
 	 * In addition the aggregation "layout" of the FilterBarBase derivation should be set to the created instance of _oFilterBarLayout
 	 */
 	FilterBarBase.prototype._createInnerLayout = function() {
 		this._cLayoutItem = null;
 		this._oFilterBarLayout = null;
-		this._bPersistValues = false;
 		this._btnAdapt = null;
 		this.setAggregation("layout", this._oFilterBarLayout, true);
 	};
@@ -471,7 +467,7 @@ sap.ui.define([
 	/**
 	 * Returns the external conditions of the inner condition model.
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
-	 * The items are always returned, but the filter conditions are dependent on the <code>Value</code> assignment.
+	 *
 	 * @private
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
@@ -480,9 +476,7 @@ sap.ui.define([
 	FilterBarBase.prototype.getCurrentState = function() {
 		var oState = {};
 
-		if (this._bPersistValues) {
-			oState.filter = merge({}, this.getFilterConditions());
-		}
+		oState.filter = merge({}, this.getFilterConditions());
 
 		var aFilterItems = this.getFilterItems();
 		var aItems = [];
@@ -682,24 +676,16 @@ sap.ui.define([
 
 				var sFieldPath = sPath.substring("/conditions/".length);
 
-				if (this._bPersistValues) {
+				var aConditions = oEvent.getParameter("value");
 
-					var aConditions = oEvent.getParameter("value");
-
-					if (this._getPropertyByName(sFieldPath)) {
-						pConditionState = fAddConditionChange(sFieldPath, aConditions);
-					} else {
-						pConditionState = this._retrieveMetadata().then(function() {
-							return fAddConditionChange(sFieldPath, aConditions);
-						});
-					}
-
+				if (this._getPropertyByName(sFieldPath)) {
+					pConditionState = fAddConditionChange(sFieldPath, aConditions);
 				} else {
-					this._reportModelChange({
-						triggerSearch: false,
-						triggerFilterUpdate: true
+					pConditionState = this._retrieveMetadata().then(function() {
+						return fAddConditionChange(sFieldPath, aConditions);
 					});
 				}
+
 			}
 		}
 
@@ -1410,18 +1396,26 @@ sap.ui.define([
 				var mCurrentInternal = this._getModelConditions(oConditionModel, true);
 
 				oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
-				return this.getEngine().diffState(this, {Filter: mCurrentInternal}, {Filter: mNewInternal}).then(function(oStateDiff){
-					Object.keys(oStateDiff.Filter).forEach(function(sDiffPath){
-						oStateDiff.Filter[sDiffPath].forEach(function(oCondition){
-							if (oCondition.filtered !== false) {
-								oConditionModel.addCondition(sDiffPath, oCondition);
-							} else {
-								oConditionModel.removeCondition(sDiffPath, oCondition);
-							}
+
+				try {
+					return this.getEngine().diffState(this, { Filter: mCurrentInternal }, { Filter: mNewInternal }).then(function(oStateDiff) {
+						Object.keys(oStateDiff.Filter).forEach(function(sDiffPath) {
+							oStateDiff.Filter[sDiffPath].forEach(function(oCondition) {
+								if (oCondition.filtered !== false) {
+									oConditionModel.addCondition(sDiffPath, oCondition);
+								} else {
+									oConditionModel.removeCondition(sDiffPath, oCondition);
+								}
+							});
 						});
-					});
+						oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
+					}.bind(this));
+
+				} catch (ex) {
+					Log.error(ex.message);
 					oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
-				}.bind(this));
+				}
+
 			}.bind(this));
 
 		} else {
@@ -1849,7 +1843,7 @@ sap.ui.define([
 	 * @returns {map} Map containing the external conditions
 	 */
 	FilterBarBase.prototype.getConditions = function() {
-		var mConditions = this._bPersistValues ? this.getCurrentState().filter : this._getXConditions();
+		var mConditions = this.getCurrentState().filter;
 		if (mConditions && mConditions["$search"]) {
 			delete mConditions["$search"];
 		}
@@ -1907,8 +1901,6 @@ sap.ui.define([
 
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
-
-		this._bPersistValues = null;
 
 		this._oDelegate = null;
 

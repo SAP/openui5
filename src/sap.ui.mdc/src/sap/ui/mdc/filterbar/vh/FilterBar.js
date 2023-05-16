@@ -167,7 +167,6 @@ sap.ui.define(
 
 		FilterBar.prototype.init = function() {
 			FilterBarBase.prototype.init.apply(this, arguments);
-			this._bPersistValues = true;
 			this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 		};
 
