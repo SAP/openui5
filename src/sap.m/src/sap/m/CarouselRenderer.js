@@ -81,6 +81,7 @@ sap.ui.define([
 	CarouselRenderer._renderOpeningDiv = function (oRM, oCarousel) {
 		var sTooltip = oCarousel.getTooltip_AsString();
 		var sBackgroundDesign = "sapMCrslBackground-" + oCarousel.getBackgroundDesign();
+
 		//Outer carousel div
 		oRM.openStart("div", oCarousel)
 			.class("sapMCrsl")
@@ -191,7 +192,9 @@ sap.ui.define([
 			bShowIndicatorArrows = Device.system.desktop && mSettings.sArrowsPlacement === CarouselArrowsPlacement.PageIndicator,
 			sId = oCarousel.getId(),
 			aOffsetClasses = [],
-			iNumberOfItemsToShow = oCarousel._getNumberOfItemsToShow();
+			iNumberOfItemsToShow = oCarousel._getNumberOfItemsToShow(),
+			sPageIndicatorBackgroundDesign = "sapMCrslControlsBackground-" + oCarousel.getPageIndicatorBackgroundDesign(),
+			sPageIndicatorBorderDesign = "sapMCrslControlsBorder-" + oCarousel.getPageIndicatorBorderDesign();
 
 		// If there is only one page - do not render the indicator
 		if (iPageCount <= oCarousel._getNumberOfItemsToShow()) {
@@ -210,14 +213,16 @@ sap.ui.define([
 
 		if (bShowIndicatorArrows) {
 			oRM.openStart("div").class("sapMCrslControls");
-			aOffsetClasses.forEach(function (sClass) { oRM.class(sClass); });
-			oRM.openEnd();
-
-			oRM.openStart("div").class("sapMCrslControlsContainer");
-			aOffsetClasses.forEach(function (sClass) { oRM.class(sClass); });
-			oRM.openEnd();
 		} else {
 			oRM.openStart("div").class("sapMCrslControlsNoArrows");
+		}
+
+		oRM.class(sPageIndicatorBackgroundDesign).class(sPageIndicatorBorderDesign);
+		aOffsetClasses.forEach(function (sClass) { oRM.class(sClass); });
+		oRM.openEnd();
+
+		if (bShowIndicatorArrows) {
+			oRM.openStart("div").class("sapMCrslControlsContainer");
 			aOffsetClasses.forEach(function (sClass) { oRM.class(sClass); });
 			oRM.openEnd();
 		}

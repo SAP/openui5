@@ -123,4 +123,30 @@ describe("sap.m.Carousel", function() {
 
 		expect(takeScreenshot(myCarousel)).toLookAs("11_background_transparent");
 	});
+
+	// change page indicator background design - translucent
+	it("should change page indicator background design to translucent", function() {
+		// Shows the page indicator of the carousel
+		element(by.id("RB-Yes")).click();
+		element(by.id("RB-PI-Translucent")).click();
+		_moveToCarousel();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("12_pi_background_translucent");
+	});
+
+	// change page indicator background design - transparent
+	it("should change page indicator background design to transparent", function() {
+		element(by.id("RB-PI-Transparent")).click();
+		_moveToCarousel();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("13_pi_background_transparent");
+	});
+
+	// change page indicator border design - none
+	it("should change page indicator border design to none", function() {
+		element(by.id("RB-PI-B-None")).click();
+		_moveToCarousel();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("14_pi_border_none");
+	});
 });

@@ -59,6 +59,19 @@
 				tooltip="Toggles the page indicator of the carousel"
 				change=".onShowPageIndicatorChange" />
 
+			<Label text="Page indicator background design" />
+			<RadioButtonGroup columns="3" select=".onPageIndicatorBackgroundDesignSelect">
+				<RadioButton text="Solid" tooltip="Chooses a Solid background for the page indicator (Default)." />
+				<RadioButton text="Translucent" tooltip="Chooses a Translucent background for the page indicator." />
+				<RadioButton text="Transparent" tooltip="Chooses a Transparent background for the page indicator." />
+			</RadioButtonGroup>
+
+			<Label text="Page indicator border design" />
+			<RadioButtonGroup columns="2" select=".onPageIndicatorBorderDesignSelect">
+				<RadioButton text="Solid" tooltip="Chooses a Solid border for the page indicator (Default)." />
+				<RadioButton text="None" tooltip="Chooses no border for the page indicator." />
+			</RadioButtonGroup>
+
 			<Label text="Number of images to display (In this example up to 9)" />
 			<Input
 				type="Number"

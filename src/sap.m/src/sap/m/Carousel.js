@@ -54,6 +54,9 @@ sap.ui.define([
 	//shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;
 
+	//shortcut for sap.m.BorderDesign
+	var BorderDesign = library.BorderDesign;
+
 	var iDragRadius = 10;
 	var iMoveRadius = 20;
 	var bRtl = Core.getConfiguration().getRTL();
@@ -177,7 +180,21 @@ sap.ui.define([
 				 * @public
 				 * @since 1.110
 				 */
-				backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent}
+				backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent},
+
+				/**
+				 * Defines the carousel page indicator background design. Default is <code>sap.m.BackgroundDesign.Solid</code>.
+				 * @public
+				 * @since 1.115
+				 */
+				pageIndicatorBackgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
+
+				/**
+				 * Defines the carousel page indicator border design. Default is <code>sap.m.BorderDesign.Solid</code>.
+				 * @public
+				 * @since 1.115
+				 */
+				pageIndicatorBorderDesign : {type : "sap.m.BorderDesign", group : "Appearance", defaultValue : BorderDesign.Solid}
 			},
 			defaultAggregation : "pages",
 			aggregations : {
