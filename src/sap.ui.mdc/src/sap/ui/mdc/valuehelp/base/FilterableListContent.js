@@ -597,6 +597,19 @@ sap.ui.define([
 		return this.getFilterValue();
 	};
 
+	/**
+	 * Gets the conditions that are selecatble from list content
+	 *
+	 * This are validated conditions as other conditions are shown on the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel}
+	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} ListBindingInfo
+	 * @protected
+	 */
+	FilterableListContent.prototype.getSelectableConditions = function() {
+		return this.getConditions().filter(function(oCondition) {
+			return oCondition.validated === ConditionValidated.Validated;
+		});
+	};
+
 	function _addSearchConditionToConditionMap(oConditions, sFilterFields, sFilterValue) {
 		oConditions[sFilterFields] = sFilterValue ? [Condition.createCondition("Contains", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated)] : [];
 		return;

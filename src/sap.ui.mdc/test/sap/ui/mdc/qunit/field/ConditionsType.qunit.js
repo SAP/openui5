@@ -34,6 +34,21 @@ sap.ui.define([
 		}
 	};
 
+	function _checkCondition(assert, oCondition, sOperator, aValues, sValidated) {
+
+		assert.equal(oCondition.operator, sOperator, "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are arry");
+		assert.equal(oCondition.values.length, aValues.length, "Values length");
+		if (aValues.length > 0) {
+			assert.deepEqual(oCondition.values[0], aValues[0], "Values0 entry");
+		}
+		if (aValues.length > 1) {
+			assert.deepEqual(oCondition.values[1], aValues[1], "Values1 entry");
+		}
+		assert.equal(oCondition.validated, sValidated, "Validated");
+
+	}
+
 	QUnit.module("Default type", {
 		beforeEach: function() {
 			oConditionsType = new ConditionsType({operators: ["EQ"]});
@@ -128,10 +143,7 @@ sap.ui.define([
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 1, "1 condition returned");
-		assert.equal(aConditions[0].operator, "EQ", "Operator");
-		assert.ok(Array.isArray(aConditions[0].values), "values are arry");
-		assert.equal(aConditions[0].values.length, 1, "Values length");
-		assert.equal(aConditions[0].values[0], "Test", "Values entry");
+		_checkCondition(assert, aConditions[0], "EQ", ["Test"], ConditionValidated.NotValidated);
 
 	});
 
@@ -167,10 +179,7 @@ sap.ui.define([
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 1, "1 condition returned");
-		assert.equal(aConditions[0].operator, "EQ", "Operator");
-		assert.ok(Array.isArray(aConditions[0].values), "values are arry");
-		assert.equal(aConditions[0].values.length, 1, "Values length");
-		assert.equal(aConditions[0].values[0], 5, "Values entry");
+		_checkCondition(assert, aConditions[0], "EQ", [5], ConditionValidated.NotValidated);
 
 		oValueType.destroy();
 
@@ -344,6 +353,21 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Parsing: multiple values from Paste", function(assert) {
+
+		var aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		oConditionsType.setFormatOptions({operators: [], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		aConditions = oConditionsType.parseValue("I1\n!=I2\nI3	I5");
+		assert.ok(aConditions, "Result returned");
+		assert.ok(Array.isArray(aConditions), "Arry returned");
+		assert.equal(aConditions.length, 4, "3 condition returned");
+		_checkCondition(assert, aConditions[0], "EQ", ["X"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[1], "EQ", ["I1"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[2], "NE", ["I2"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[3], "BT", ["I3", "I5"], ConditionValidated.NotValidated);
+
+	});
+
 	QUnit.module("Async", {
 		beforeEach: function() {
 			oConditionsType = new ConditionsType({operators: ["EQ"], asyncParsing: fnAsync});
@@ -496,11 +520,7 @@ sap.ui.define([
 			assert.ok(aConditions, "Result returned");
 			assert.ok(Array.isArray(aConditions), "Arry returned");
 			assert.equal(aConditions.length, 1, "1 condition returned");
-			assert.equal(aConditions[0].operator, "EQ", "Operator");
-			assert.ok(Array.isArray(aConditions[0].values), "values are arry");
-			assert.equal(aConditions[0].values.length, 2, "Values length");
-			assert.equal(aConditions[0].values[0], "I2", "Values entry 0");
-			assert.equal(aConditions[0].values[1], "Item2", "Values entry 1");
+			_checkCondition(assert, aConditions[0], "EQ", ["I2", "Item2"], ConditionValidated.Validated);
 			fnDone();
 		});
 
@@ -572,8 +592,8 @@ sap.ui.define([
 
 	QUnit.module("currency type", {
 		beforeEach: function() {
-			var oCondition1 = Condition.createCondition("EQ", [[1.23, "EUR"]]);
-			var oCondition2 = Condition.createCondition("BT", [[1, "EUR"], [2, "EUR"]]);
+			var oCondition1 = Condition.createCondition("EQ", [[1.23, "EUR"]], undefined, undefined, ConditionValidated.NotValidated);
+			var oCondition2 = Condition.createCondition("BT", [[1, "EUR"], [2, "EUR"]], undefined, undefined, ConditionValidated.NotValidated);
 			var aConditions = [oCondition1, oCondition2];
 			oOriginalType = new CurrencyType();
 			oValueType = new CurrencyType({showMeasure: false});
@@ -627,15 +647,8 @@ sap.ui.define([
 
 		var aConditions = oUnitConditionsType.parseValue("USD");
 		assert.equal(aConditions.length, 2, "two conditions");
-		assert.equal(aConditions[0].values.length, 1, "Condition 0: Values length");
-		assert.equal(aConditions[0].operator, "EQ", "Condition 0: Operator");
-		assert.equal(aConditions[0].values[0][0], 1.23, "Condition 0: Values entry 0 number");
-		assert.equal(aConditions[0].values[0][1], "USD", "Condition 0: Values entry 0 unit");
-		assert.equal(aConditions[1].operator, "BT", "Condition 1: Operator");
-		assert.equal(aConditions[1].values[0][0], 1, "Condition 1: Values entry 0 number");
-		assert.equal(aConditions[1].values[0][1], "USD", "Condition 1: Values entry 0 unit");
-		assert.equal(aConditions[1].values[1][0], 2, "Condition 1: Values entry 1 number");
-		assert.equal(aConditions[1].values[1][1], "USD", "Condition 1: Values entry 1 unit");
+		_checkCondition(assert, aConditions[0], "EQ", [[1.23, "USD"]], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[1], "BT", [[1, "USD"], [2, "USD"]], ConditionValidated.NotValidated);
 
 //		aConditions = oUnitConditionsType.parseValue("");
 //		assert.equal(aConditions.length, 2, "two conditions");
@@ -654,10 +667,7 @@ sap.ui.define([
 		oUnitConditionsType.oFormatOptions.getConditions = function() {return [];};
 		aConditions = oUnitConditionsType.parseValue("EUR");
 		assert.equal(aConditions.length, 1, "one conditions");
-		assert.equal(aConditions[0].values.length, 1, "Condition 0: Values length");
-		assert.equal(aConditions[0].operator, "EQ", "Condition 0: Operator");
-		assert.equal(aConditions[0].values[0][0], 1, "Condition 0: Values entry 0 number");
-		assert.equal(aConditions[0].values[0][1], "EUR", "Condition 0: Values entry 0 unit");
+		_checkCondition(assert, aConditions[0], "EQ", [[1, "EUR"]], ConditionValidated.NotValidated);
 
 	});
 
@@ -670,18 +680,11 @@ sap.ui.define([
 
 		var aConditions = oUnitConditionsType.parseValue("USD");
 		assert.equal(aConditions.length, 2, "two conditions");
-		assert.equal(aConditions[0].values.length, 1, "Condition 0: Values length");
-		assert.equal(aConditions[0].operator, "EQ", "Condition 0: Operator");
-		assert.equal(aConditions[0].values[0][0], 1.23, "Condition 0: Values entry 0 number");
-		assert.equal(aConditions[0].values[0][1], "USD", "Condition 0: Values entry 0 unit");
+		_checkCondition(assert, aConditions[0], "EQ", [[1.23, "USD"]], ConditionValidated.NotValidated);
 		assert.deepEqual(aConditions[0].inParameters, oNavigateCondition.inParameters, "Condition 0: inParameters");
 		assert.deepEqual(aConditions[0].outParameters, oNavigateCondition.outParameters, "Condition 0: outParameters");
 		assert.deepEqual(aConditions[0].payload, oNavigateCondition.payload, "Condition 0: payload");
-		assert.equal(aConditions[1].operator, "BT", "Condition 1: Operator");
-		assert.equal(aConditions[1].values[0][0], 1, "Condition 1: Values entry 0 number");
-		assert.equal(aConditions[1].values[0][1], "USD", "Condition 1: Values entry 0 unit");
-		assert.equal(aConditions[1].values[1][0], 2, "Condition 1: Values entry 1 number");
-		assert.equal(aConditions[1].values[1][1], "USD", "Condition 1: Values entry 1 unit");
+		_checkCondition(assert, aConditions[1], "BT", [[1, "USD"], [2, "USD"]], ConditionValidated.NotValidated);
 		assert.deepEqual(aConditions[1].inParameters, oNavigateCondition.inParameters, "Condition 1: inParameters");
 		assert.deepEqual(aConditions[1].outParameters, oNavigateCondition.outParameters, "Condition 1: outParameters");
 		assert.deepEqual(aConditions[1].payload, oNavigateCondition.payload, "Condition 1: payload");

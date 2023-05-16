@@ -247,10 +247,129 @@ sap.ui.define([
 			return this.oFormatOptions.getConditions ? this.oFormatOptions.getConditions() : [];
 		}
 
-		var aConditions = SyncPromise.resolve().then(function() {
+		return this._parseValueToIndex(vValue, sSourceType, -1);
+
+	};
+
+	/**
+	 * Parses an external value of the given source type to an array of conditions that holds the value in model
+	 * representation.
+	 * These values are parsed using the given data type. Depending of the operator
+	 * and the configuration (set in <code>FormatOptions</code>) a value will be determined via given value help or delegate.
+	 *
+	 * @param {any} vValue
+	 *	The value to be parsed
+	 * @param {string} sSourceType
+	 *	The type of the given value; see
+	 *	{@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
+	 *	In addition to the standard source types <code>sap.ui.mdc.raw</code> can be used. In this case the value is not parsed and just
+	 *	used in the condition. If the value of the condition is an array representing data for a <code>CompositeType</code> the index of the needed raw value can be added to the
+	 *	name (For example if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
+	 * @param {int} iIndex
+	 *	Index where new conditions should be inserted, if -1 they will just be added
+	 * @return {null|sap.ui.mdc.condition.ConditionObject[]|Promise<null|sap.ui.mdc.condition.ConditionObject[]>}
+	 *	The array of conditions or a <code>Promise</code> resolving with the array of conditions.
+	 *  If there is no value <code>null</code> is returned.
+	 * @throws {sap.ui.model.ParseException}
+	 *	If parsing to the model type is not possible; the message of the exception is language
+	 *	dependent as it may be displayed on the UI
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	 ConditionsType.prototype._parseValueToIndex = function(vValue, sSourceType, iIndex) {
+
+		var aOperators = this.oFormatOptions.operators || [];
+		var bBetweenSupported = aOperators.indexOf("BT") >= 0 || aOperators.length === 0;
+		var aSeparatedText;
+		if (typeof vValue === "string") {
+			// Pasting from Excel on Windows always adds "\r\n" at the end, even if a single cell is selected
+			if (vValue.length && vValue.endsWith("\r\n")) {
+				vValue = vValue.substring(0, vValue.lastIndexOf("\r\n"));
+			}
+
+			if (bBetweenSupported) {
+				aSeparatedText = vValue.split(/\r\n|\r|\n/g); // use tap as delemiter for between
+			} else {
+				aSeparatedText = vValue.split(/\r\n|\r|\n|\t/g);
+			}
+		} else {
+			aSeparatedText = [vValue];
+		}
+
+		if (aSeparatedText.length > 1) {
+			return _parseMultipleValues.call(this, aSeparatedText, sSourceType, iIndex, bBetweenSupported);
+		} else {
+			return _parseSingleValue.call(this, vValue, sSourceType, iIndex);
+		}
+
+	};
+
+	function _parseSingleValue(vValue, sSourceType, iIndex) {
+
+		var fnParse = function(vValue, sSourceType) {
 			return this._oConditionType.parseValue(vValue, sSourceType);
-		}.bind(this)).then(function(oCondition) {
-			return _parseConditionToConditions.call(this, oCondition);
+		};
+		var fnHandleError = function(oException) {
+			throw oException;
+		};
+
+		return _parseValues.call(this, [vValue], sSourceType, iIndex, fnParse, fnHandleError);
+
+	}
+
+	function _parseMultipleValues(aValues, sSourceType, iIndex, bBetweenSupported) {
+
+		var oBTOperator = bBetweenSupported && FilterOperatorUtil.getOperator("BT");
+		var fnParse = function(vValue, sSourceType) {
+			return SyncPromise.resolve().then(function() {
+				// if multiple values are pasted deactivate input validation and determination of description for performance reasons.
+				// only paste as plain conditions (NotValidated)
+				// multiple values are only possible for strings
+				vValue = vValue.trim(); // remove whitspaces from the edges (as in copy source whitspaces might be used to align values)
+				if (bBetweenSupported) {
+					var aValues = vValue.split(/\t/g); // if two values exist, use it as Between and create a "a...z" value
+					if (aValues.length == 2 && aValues[0] && aValues[1]) {
+						vValue = oBTOperator.tokenFormat;
+						for (var j = 0; j < 2; j++) {
+							vValue = vValue.replace(new RegExp("\\{" + j + "\\}", "g"), aValues[j]);
+						}
+					}
+				}
+
+				return this._oConditionType._parseValue(vValue, "string", false);
+			}.bind(this));
+		};
+		var fnHandleError = function(oException) {
+			if (oException instanceof ParseException) {
+				throw new ParseException(this._oResourceBundle.getText("field.PASTE_ERROR"));
+			}
+			throw oException;
+		};
+
+		return _parseValues.call(this, aValues, sSourceType, iIndex, fnParse, fnHandleError);
+
+	}
+
+	function _parseValues(aValues, sSourceType, iIndex, fnParse, fnHandleError) {
+
+		var aSyncPromises = [];
+
+		for (var i = 0; i < aValues.length; i++) {
+			aSyncPromises.push(fnParse.call(this, aValues[i], sSourceType));
+		}
+
+		var aConditions = SyncPromise.all(aSyncPromises).then(function(aNewConditions) {
+			var aConditions = this.oFormatOptions.getConditions && this.oFormatOptions.getConditions();
+			for (var i = 0; i < aNewConditions.length; i++) {
+				aConditions = _parseConditionToConditions.call(this, aNewConditions[i], aConditions, iIndex);
+				if (iIndex >= 0) {
+					iIndex++;
+				}
+			}
+			return aConditions;
+		}.bind(this)).catch(function(oException) {
+			fnHandleError.call(this, oException);
 		}.bind(this)).unwrap();
 
 		if (aConditions instanceof Promise && this.oFormatOptions.asyncParsing) {
@@ -259,12 +378,11 @@ sap.ui.define([
 
 		return aConditions;
 
-	};
+	}
 
-	function _parseConditionToConditions(oCondition) {
+	function _parseConditionToConditions(oCondition, aConditions, iIndex) {
 
 		var bIsUnit = _isUnit(this.oFormatOptions.valueType);
-		var aConditions = this.oFormatOptions.getConditions && this.oFormatOptions.getConditions();
 		var iMaxConditions = _getMaxConditions.call(this);
 
 		if (iMaxConditions !== 1 && this.oFormatOptions.getConditions) {
@@ -277,8 +395,14 @@ sap.ui.define([
 					// if there is already a condition containing only a unit and no numeric value, remove it and use the new condition
 					aConditions.splice(0, 1);
 				}
-				if (FilterOperatorUtil.indexOfCondition(oCondition, aConditions) === -1) { // check if already exist
-					aConditions.push(oCondition);
+				if (FilterOperatorUtil.indexOfCondition(oCondition, aConditions) === -1) { // check if already exist (compare with old conditions as multiple values are checked for duplicates before)
+					if (iIndex >= 0 && aConditions.length > iIndex) {
+						// insert new condition
+						aConditions.splice(iIndex, 0, oCondition);
+					} else {
+						// add new condition
+						aConditions.push(oCondition);
+					}
 				} else {
 					throw new ParseException(this._oResourceBundle.getText("field.CONDITION_ALREADY_EXIST", [oCondition.values[0]]));
 				}

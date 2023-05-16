@@ -2605,6 +2605,65 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("pating multiple values", function(assert) {
+
+		var fnDone = assert.async();
+		oField.setDisplay(FieldDisplay.DescriptionValue);
+		oCore.applyChanges();
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent.focus();
+
+		var sPastedValues = "AA\nBB\nCC";
+		// var sPastedValues = "AA\nBB\nC	D\nEE";
+		var oFakeClipboardData = {
+				getData: function() {
+					return sPastedValues;
+				}
+		};
+
+		if (window.clipboardData) {
+			window.clipboardData.setData("text", sPastedValues);
+		}
+
+		qutils.triggerEvent("paste", oContent.getFocusDomRef(), {clipboardData: oFakeClipboardData});
+
+		assert.equal(iCount, 1, "change event fired once");
+		assert.equal(iParseError, 0, "ParseError event not fired");
+		assert.equal(iValidationError, 0, "ValidationError event not fired");
+		assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
+		assert.equal(sId, "F1", "change event fired on Field");
+		assert.equal(sValue, undefined, "change event value");
+		assert.ok(bValid, "change event valid");
+		assert.ok(oPromise, "Promise returned");
+		assert.equal(iSubmitCount, 0, "submit event not fired");
+		oPromise.then(function(vResult) {
+			assert.ok(vResult, "Promise resolved");
+			var aConditions = oField.getConditions();
+			assert.deepEqual(vResult, aConditions, "Promise returns same conditions like Field has set");
+			assert.equal(aConditions.length, 3, "Three conditions returned");
+			assert.equal(aConditions[0].operator, "EQ", "condition operator");
+			assert.equal(aConditions[0].values[0], "AA", "condition value");
+			assert.equal(aConditions[1].operator, "EQ", "condition operator");
+			assert.equal(aConditions[1].values[0], "BB", "condition value");
+			assert.equal(aConditions[2].operator, "EQ", "condition operator");
+			assert.equal(aConditions[2].values[0], "CC", "condition value");
+			var aTokens = oContent.getTokens ? oContent.getTokens() : [];
+			assert.equal(aTokens.length, 3, "MultiInput has three Tokens");
+			var oToken = aTokens[0];
+			assert.equal(oToken && oToken.getText(), "=AA", "Text on token set");
+			oToken = aTokens[1];
+			assert.equal(oToken && oToken.getText(), "=BB", "Text on token set");
+			oToken = aTokens[2];
+			assert.equal(oToken && oToken.getText(), "=CC", "Text on token set");
+			fnDone();
+		}).catch(function(oException) {
+			assert.notOk(true, "submit: Promise must not be rejected");
+			fnDone();
+		});
+
+	});
+
 	QUnit.module("Clone", {
 		beforeEach: function() {
 			oField = new FieldBase("F1", { conditions: "{cm>/conditions/Name}" });
