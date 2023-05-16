@@ -3604,7 +3604,7 @@ sap.ui.define([
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
 		// Note: we try to "calculate key predicate" because context path alone is no indication
-		// that entity is still transient! @see "@$ui5.keepTransientPath"
+		// that entity is still transient!
 		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS($uid=id-1-23)")
 			.returns(SyncPromise.resolve({"@$ui5.context.isTransient" : true}));
 

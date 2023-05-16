@@ -3084,7 +3084,7 @@ sap.ui.define([
 		oCache.visitResponse("Business Suite", mTypeForMetaPath);
 
 		// code under test
-		oCache.visitResponse({value : ["Business Suite"]}, mTypeForMetaPath, undefined, undefined,
+		oCache.visitResponse({value : ["Business Suite"]}, mTypeForMetaPath, undefined,
 			undefined, 0);
 
 		// code under test
@@ -3107,8 +3107,7 @@ sap.ui.define([
 		oCache.visitResponse(oInstance, mTypeForMetaPath);
 
 		// code under test
-		oCache.visitResponse({value : [oInstance]}, mTypeForMetaPath, undefined, undefined,
-			undefined, 0);
+		oCache.visitResponse({value : [oInstance]}, mTypeForMetaPath, undefined, undefined, 0);
 	});
 
 	//*********************************************************************************************
@@ -3373,9 +3372,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[undefined, false, true].forEach(function (bKeepTransientPath) {
+	[false, true].forEach(function (bMissingPredicate) {
 		var sTitle = "Cache#visitResponse: reportStateMessages for new entity"
-			+ ", keep transient path: " + bKeepTransientPath;
+			+ ", bMissingPredicate=" + bMissingPredicate;
 
 		QUnit.test(sTitle, function () {
 			var oCache = new _Cache(this.oRequestor, "SalesOrderList", {}, false,
@@ -3387,9 +3386,7 @@ sap.ui.define([
 				},
 				mExpectedMessages = {},
 				sTransientPredicate = "($uid=id-1-23)",
-				sMessagePath = bKeepTransientPath !== false
-					? sTransientPredicate
-					: "('0500000001')",
+				sMessagePath = bMissingPredicate ? sTransientPredicate : "('0500000001')",
 				mTypeForMetaPath = {
 					"/SalesOrderList" : {
 						"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "Messages"},
@@ -3400,9 +3397,7 @@ sap.ui.define([
 					}
 				};
 
-			if (bKeepTransientPath === undefined) {
-				// bKeepTransientPath === undefined does not want to keep, but we simulate a lack
-				// of key predicate and are thus forced to keep
+			if (bMissingPredicate) {
 				delete oData.SalesOrderID; // missing key property -> no key predicate available
 			}
 			mExpectedMessages[sMessagePath] = aMessages;
@@ -3412,8 +3407,7 @@ sap.ui.define([
 				.withExactArgs("original/resource/path", mExpectedMessages, [sMessagePath]);
 
 			// code under test
-			oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList", sTransientPredicate,
-				bKeepTransientPath);
+			oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList", sTransientPredicate);
 		});
 	});
 
@@ -3564,8 +3558,7 @@ sap.ui.define([
 					[sFirst, sSecond, sThird]);
 
 			// code under test
-			oCache.visitResponse(oData, mTypeForMetaPath, undefined, undefined, undefined,
-				oFixture.iStart);
+			oCache.visitResponse(oData, mTypeForMetaPath, undefined, undefined, oFixture.iStart);
 		});
 	});
 
@@ -3636,7 +3629,7 @@ sap.ui.define([
 					[bPredicate ? "('42')" : "5"]);
 
 			// code under test
-			oCache.visitResponse(oData, mTypeForMetaPath, undefined, undefined, undefined, 5);
+			oCache.visitResponse(oData, mTypeForMetaPath, undefined, undefined, 5);
 		});
 	});
 
@@ -3803,7 +3796,7 @@ sap.ui.define([
 			.withExactArgs("original/resource/path", mExpectedMessages, ["(1)"]);
 
 		// code under test
-		oCache.visitResponse(oData, mTypeForMetaPath, undefined, undefined, undefined, 0);
+		oCache.visitResponse(oData, mTypeForMetaPath, undefined, undefined, 0);
 
 		// check adjusted cache
 		assert.strictEqual(oData.value[0]["picture@odata.mediaReadLink"], "/~/img_1.jpg");
@@ -3851,7 +3844,7 @@ sap.ui.define([
 			.withExactArgs("original/resource/path", mExpectedMessages, undefined);
 
 		// code under test
-		oCache.visitResponse(oData, mTypeForMetaPath, undefined, "", false, undefined,
+		oCache.visitResponse(oData, mTypeForMetaPath, undefined, "", undefined,
 			bKeepReportedMessagesPath);
 
 		assert.strictEqual(oCache.sReportedMessagesPath, bSharedRequest || bKeepReportedMessagesPath
@@ -3986,7 +3979,7 @@ sap.ui.define([
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oElement), sinon.match.same(mTypeForMetaPath),
 				"/TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS",
-				"TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS('42')", false, undefined,
+				"TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS('42')", undefined,
 				"~bKeepReportedMessagesPath~");
 
 		// code under test
@@ -4021,7 +4014,7 @@ sap.ui.define([
 			.returns("~meta~path~");
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oNewElement), sinon.match.same(mTypeForMetaPath),
-				"~meta~path~", "~('42')", false, undefined, undefined);
+				"~meta~path~", "~('42')", undefined, undefined);
 
 		// code under test
 		oCache.replaceElement(aElements, undefined, "('42')", oNewElement, mTypeForMetaPath, "~");
@@ -6973,7 +6966,7 @@ sap.ui.define([
 		oCache.aElements = [];
 		oCache.aElements.$byPredicate = {};
 		this.mock(oCache).expects("visitResponse")
-			.withExactArgs(sinon.match.same(oResult), "~oFetchTypesResult~", undefined, undefined,
+			.withExactArgs(sinon.match.same(oResult), "~oFetchTypesResult~", undefined,
 				undefined, 2)
 			.callsFake(function () {
 				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
@@ -7229,7 +7222,7 @@ sap.ui.define([
 		oCache.aElements = aElements;
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
-				undefined, undefined, undefined, 2)
+				undefined, undefined, 2)
 			.callsFake(function () {
 				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
 				_Helper.setPrivateAnnotation(oElement1, "predicate", "new1");
@@ -7389,7 +7382,7 @@ sap.ui.define([
 
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
-				undefined, undefined, undefined, 2)
+				undefined, undefined, 2)
 			.callsFake(function () {
 				_Helper.setPrivateAnnotation(oElement, "predicate", "('foo')");
 			});
@@ -8353,13 +8346,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bDropTransientElement) {
-	[undefined, false, true].forEach(function (bKeepTransientPath) {
+	[false, true].forEach(function (bMissingPredicate) {
 		[undefined, "~mQueryOptions~"].forEach(function (mLateQueryOptions) {
-			var sTitle = "_Cache#create: bKeepTransientPath: " + bKeepTransientPath
+			var sTitle = "_Cache#create: bMissingPredicate: " + bMissingPredicate
 					+ ", bDropTransientElement: " + bDropTransientElement
 				+ ", mLateQueryOptions: " + mLateQueryOptions;
 
-		if (bKeepTransientPath !== false && bDropTransientElement) {
+		if (bMissingPredicate && bDropTransientElement) {
 			return;
 		}
 
@@ -8374,8 +8367,7 @@ sap.ui.define([
 				oInitialData = {
 					ID : "",
 					Name : "John Doe",
-					"@$ui5.foo" : "bar",
-					"@$ui5.keepTransientPath" : bKeepTransientPath
+					"@$ui5.foo" : "bar"
 				},
 				oEntityDataCleaned = {ID : "", Name : "John Doe"},
 				sPathInCache = "('0')/TEAM_2_EMPLOYEES",
@@ -8429,18 +8421,14 @@ sap.ui.define([
 			this.mock(oCountChangeListener).expects("onChange");
 			this.mock(oCache).expects("visitResponse")
 				.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
-					"/TEAMS/TEAM_2_EMPLOYEES", sPathInCache + sTransientPredicate,
-					bKeepTransientPath);
-			// bKeepTransientPath === undefined does not want to keep, but we simulate a lack of key
-			// predicate and are thus forced to keep
+					"/TEAMS/TEAM_2_EMPLOYEES", sPathInCache + sTransientPredicate);
+			// simulate a lack of key predicate => the transient predicate is kept
 			oHelperMock.expects("getPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oPostResult), "predicate")
-				.returns(bKeepTransientPath === undefined ? undefined : sPredicate);
-			if (bKeepTransientPath !== undefined) {
+				.returns(bMissingPredicate ? undefined : sPredicate);
+			if (!bMissingPredicate) {
 				oHelperMock.expects("setPrivateAnnotation")
 					.withExactArgs(sinon.match.same(oEntityDataCleaned), "predicate", sPredicate);
-			}
-			if (bKeepTransientPath === false) {
 				oHelperMock.expects("updateTransientPaths").exactly(bDropTransientElement ? 0 : 1)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 						sPredicate)
@@ -8453,21 +8441,20 @@ sap.ui.define([
 				.returns({$select : aSelectForPath});
 			oHelperMock.expects("updateSelected")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners),
-					sPathInCache
-						+ (bKeepTransientPath === false ? sPredicate : sTransientPredicate),
+					sPathInCache + (bMissingPredicate ? sTransientPredicate : sPredicate),
 					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult),
 					["ID", "Name"], undefined, true)
 				.callsFake(function () {
 					assert.strictEqual(arguments[3]["@$ui5.context.isTransient"], false);
 					arguments[2]["@$ui5.context.isTransient"] = false;
-					if (bKeepTransientPath === false) {
+					if (!bMissingPredicate) {
 						oEntityDataCleaned["@$ui5._"].predicate = sPredicate;
 					}
 					oEntityDataCleaned.ID = oPostResult.ID;
 				});
 			oCacheMock.expects("updateNestedCreates")
 				.withExactArgs(sPathInCache
-						+ (bKeepTransientPath === false ? sPredicate : sTransientPredicate),
+						+ (bMissingPredicate ? sTransientPredicate : sPredicate),
 					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult))
 				.returns("~bDeepCreate~");
 			oHelperMock.expects("setPrivateAnnotation")
@@ -8513,7 +8500,7 @@ sap.ui.define([
 				var oExpectedPrivateAnnotation = {};
 
 				assert.strictEqual(oTransientPromiseWrapper.getResult(), true);
-				if (bKeepTransientPath === false) {
+				if (!bMissingPredicate) {
 					oExpectedPrivateAnnotation.predicate = sPredicate;
 				}
 				oExpectedPrivateAnnotation.transientPredicate = sTransientPredicate;
@@ -8533,7 +8520,7 @@ sap.ui.define([
 				} else {
 					assert.strictEqual(aCollection.$byPredicate[sTransientPredicate],
 						oEntityDataCleaned, "still need access via transient predicate");
-					if (bKeepTransientPath === false) {
+					if (!bMissingPredicate) {
 						assert.strictEqual(aCollection.$byPredicate[sPredicate],
 							oEntityDataCleaned);
 					}
@@ -8866,7 +8853,7 @@ sap.ui.define([
 		var mQueryOptions = {},
 			oCache = this.createCache("Employees", mQueryOptions),
 			oCacheMock = this.mock(oCache),
-			oEntityData = {name : "John Doe", "@$ui5.keepTransientPath" : true},
+			oEntityData = {name : "John Doe"},
 			oGroupLock = {getGroupId : function () {}},
 			oHelperMock = this.mock(_Helper),
 			oPatchPromise1,
@@ -8951,7 +8938,7 @@ sap.ui.define([
 			.returns({});
 		oCacheMock.expects("visitResponse")
 			.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
-				"/Employees", sTransientPredicate, true);
+				"/Employees", sTransientPredicate);
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult), undefined,
@@ -10052,7 +10039,7 @@ sap.ui.define([
 							.resolves(oResult);
 						oCacheMock.expects("visitResponse").withExactArgs(
 								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
-								undefined, "", false, NaN, true)
+								undefined, "", NaN, true)
 							.callsFake(function () {
 								for (i = 0; i < iReceivedLength; i += 1) {
 									_Helper.setPrivateAnnotation(oFixture.aValues[i], "predicate",
@@ -10460,7 +10447,7 @@ sap.ui.define([
 			oVisitResponseExpectation = this.mock(oCache).expects("visitResponse")
 				.exactly(bSkip ? 0 : 1)
 				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
-					undefined, "", false, NaN, true);
+					undefined, "", NaN, true);
 
 			oUpdateSelectedExpectation = this.mock(_Helper).expects("updateSelected")
 				.exactly(bSkip ? 0 : 1)
@@ -12403,7 +12390,7 @@ sap.ui.define([
 		this.oModelInterfaceMock.expects("reportStateMessages").never();
 
 		// code under test
-		oCache.visitResponse({value : aResult}, mTypeForMetaPath, "/FOO", undefined, undefined, 0);
+		oCache.visitResponse({value : aResult}, mTypeForMetaPath, "/FOO", undefined, 0);
 
 		assert.strictEqual(aResult[1].list.$count, 3);
 		assert.strictEqual(aResult[1].list.$created, 0);
@@ -12447,7 +12434,7 @@ sap.ui.define([
 				sinon.match.same(oUnlockedCopy), undefined, undefined, undefined)
 			.resolves(oData);
 		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oData),
-			sinon.match.object, undefined, undefined, undefined, 0);
+			sinon.match.object, undefined, undefined, 0);
 
 		// code under test
 		return oCache.read(0, 3, 0, oGroupLock).then(function () {
@@ -12920,7 +12907,7 @@ sap.ui.define([
 			.returns(Promise.resolve(oResponse));
 		oCacheMock.expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypes), undefined,
-				undefined, undefined, 0)
+				undefined, 0)
 			.callsFake(function () {
 				if (Object.keys(mByPredicate).length > 0) {
 					oResponse.value.$byPredicate = mByPredicate;

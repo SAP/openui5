@@ -522,7 +522,6 @@ sap.ui.define([
 			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback) {
 		var aCollection = this.getValue(sPath),
 			sGroupId = oGroupLock.getGroupId(),
-			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
 			oPostBody,
 			fnResolve,
 			that = this;
@@ -596,13 +595,11 @@ sap.ui.define([
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 				that.visitResponse(oCreatedEntity, aResult[1],
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
-					sPath + sTransientPredicate, bKeepTransientPath);
+					sPath + sTransientPredicate);
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 				if (sPredicate) {
 					_Helper.setPrivateAnnotation(oEntityData, "predicate", sPredicate);
-					if (bKeepTransientPath) {
-						sPredicate = sTransientPredicate;
-					} else if (sTransientPredicate in aCollection.$byPredicate) {
+					if (sTransientPredicate in aCollection.$byPredicate) {
 						aCollection.$byPredicate[sPredicate] = oEntityData;
 						_Helper.updateTransientPaths(that.mChangeListeners, sTransientPredicate,
 							sPredicate);
@@ -1786,7 +1783,7 @@ sap.ui.define([
 		// Note: iStart is not needed here because we know we have a key predicate
 		this.visitResponse(oElement, mTypeForMetaPath,
 			_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, sPath)), sPath + sPredicate,
-			false, undefined, bKeepReportedMessagesPath);
+			undefined, bKeepReportedMessagesPath);
 	};
 
 	/**
@@ -2390,8 +2387,6 @@ sap.ui.define([
 	 * @param {string} [sRootMetaPath=this.sMetaPath] The absolute meta path for <code>oRoot</code>
 	 * @param {string} [sRootPath=""] Path to <code>oRoot</code>, relative to the cache; used to
 	 *   compute the target property of messages
-	 * @param {boolean} [bKeepTransientPath] Whether the transient path shall be used to report
-	 *   messages
 	 * @param {number} [iStart]
 	 *   The index in the collection where "oRoot.value" needs to be inserted or undefined if
 	 *   "oRoot" references a single entity.
@@ -2403,7 +2398,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, sRootMetaPath, sRootPath,
-			bKeepTransientPath, iStart, bKeepReportedMessagesPath) {
+			iStart, bKeepReportedMessagesPath) {
 		var aCachePaths,
 			bHasMessages = false,
 			mPathToODataMessages = {},
@@ -2501,7 +2496,7 @@ sap.ui.define([
 			sPredicate = that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
 			if (iIndex !== undefined) {
 				sInstancePath = _Helper.buildPath(sInstancePath, sPredicate || iIndex);
-			} else if (!bKeepTransientPath && sPredicate) {
+			} else if (sPredicate) {
 				aMatches = rEndsWithTransientPredicate.exec(sInstancePath);
 				if (aMatches) {
 					sInstancePath = sInstancePath.slice(0, -aMatches[0].length) + sPredicate;
@@ -3016,7 +3011,7 @@ sap.ui.define([
 			i;
 
 		this.sContext = oResult["@odata.context"];
-		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
+		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, iStart);
 		for (i = 0; i < iResultLength; i += 1) {
 			oElement = oResult.value[i];
 			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
@@ -3315,7 +3310,7 @@ sap.ui.define([
 			.then(function (oResponse) {
 				var mStillAliveElements;
 
-				that.visitResponse(oResponse, mTypes, undefined, undefined, undefined, 0);
+				that.visitResponse(oResponse, mTypes, undefined, undefined, 0);
 				mStillAliveElements = oResponse.value.$byPredicate || {};
 
 				aPredicates.forEach(function (sPredicate) {
@@ -3505,7 +3500,7 @@ sap.ui.define([
 				}
 				// Note: iStart makes no sense here (use NaN instead), but is not needed because
 				// we know we have key predicates
-				that.visitResponse(oResult, mTypeForMetaPath, undefined, "", false, NaN, true);
+				that.visitResponse(oResult, mTypeForMetaPath, undefined, "", NaN, true);
 				for (i = 0, n = oResult.value.length; i < n; i += 1) {
 					oElement = oResult.value[i];
 					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");

@@ -34267,18 +34267,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create entity for a ListBinding relative to a newly created entity
-	[false, true].forEach(function (bKeepTransientPath) {
-		var sTitle = "Create relative, on newly created entity, keep transient path: "
-				+ bKeepTransientPath;
-
-		QUnit.test(sTitle, function (assert) {
-			var oEmployeeCreatedContext,
-				oModel = this.createTeaBusiModel(),
-				sNestedTransientPath,
-				oTable,
-				oTeamCreatedContext,
-				sTransientPath,
-				sView = '\
+	QUnit.test("Create relative, on newly created entity", function (assert) {
+		var oEmployeeCreatedContext,
+			oModel = this.createTeaBusiModel(),
+			oTable,
+			oTeamCreatedContext,
+			sView = '\
 <FlexBox binding="{path : \'\',\
 		parameters : {\
 			$expand : {\
@@ -34291,103 +34285,85 @@ sap.ui.define([
 		<Input id="id" value="{ID}"/>\
 	</Table>\
 </FlexBox>',
-				that = this;
+			that = this;
 
-			this.expectChange("id", []);
+		this.expectChange("id", []);
 
-			return this.createView(assert, sView, oModel).then(function () {
-				// create a new team
-				that.expectRequest({
-						method : "POST",
-						url : "TEAMS",
-						payload : {}
-					}, {Team_Id : "23"});
+		return this.createView(assert, sView, oModel).then(function () {
+			// create a new team
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {}
+				}, {Team_Id : "23"});
 
-				oTeamCreatedContext = oModel.bindList("/TEAMS").create({
-						// private annotation, not to be used unless explicitly adviced to do so
-						"@$ui5.keepTransientPath" : bKeepTransientPath
-					}, true);
-				sTransientPath = oTeamCreatedContext.getPath();
+			oTeamCreatedContext = oModel.bindList("/TEAMS").create({}, true);
 
-				return Promise.all([
-					oTeamCreatedContext.created(),
-					that.waitForChanges(assert)
-				]);
-			}).then(function () {
-				assert.strictEqual(getNormalizedPath(oTeamCreatedContext),
-					bKeepTransientPath ? "/TEAMS($uid=...)" : "/TEAMS('23')");
-				if (bKeepTransientPath) {
-					assert.strictEqual(oTeamCreatedContext.getPath(), sTransientPath);
-				}
+			return Promise.all([
+				oTeamCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oTeamCreatedContext.getPath(), "/TEAMS('23')");
 
-				that.expectRequest("TEAMS('23')?$expand=TEAM_2_EMPLOYEES("
-						+ "$select=__CT__FAKE__Message/__FAKE__Messages,ID)", {
-						Team_Id : "23",
-						TEAM_2_EMPLOYEES : [{
-							ID : "3",
-							__CT__FAKE__Message : {__FAKE__Messages : []}
+			that.expectRequest("TEAMS('23')?$expand=TEAM_2_EMPLOYEES("
+					+ "$select=__CT__FAKE__Message/__FAKE__Messages,ID)", {
+					Team_Id : "23",
+					TEAM_2_EMPLOYEES : [{
+						ID : "3",
+						__CT__FAKE__Message : {__FAKE__Messages : []}
+					}]
+				})
+				.expectChange("id", ["3"])
+				.expectMessages([]);
+
+			that.oView.byId("form").setBindingContext(oTeamCreatedContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// create new relative entity
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('23')/TEAM_2_EMPLOYEES",
+					payload : {ID : null}
+				}, {
+					ID : "7",
+					__CT__FAKE__Message : {
+						__FAKE__Messages : [{
+							code : "1",
+							message : "Enter an ID",
+							numericSeverity : 3,
+							target : "ID",
+							transition : false
 						}]
-					})
-					.expectChange("id", ["3"])
-					.expectMessages([]);
+					}
+				})
+				.expectChange("id", [""]) // from setValue(null)
+				.expectChange("id", ["7", "3"])
+				.expectMessages([{
+					code : "1",
+					message : "Enter an ID",
+					target : "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/ID",
+					type : "Warning"
+				}]);
 
-				that.oView.byId("form").setBindingContext(oTeamCreatedContext);
+			oTable = that.oView.byId("table");
+			oEmployeeCreatedContext = oTable.getBinding("items").create({ID : null}, true);
 
-				return that.waitForChanges(assert);
-			}).then(function () {
-				// create new relative entity
-				that.expectRequest({
-						method : "POST",
-						url : "TEAMS('23')/TEAM_2_EMPLOYEES",
-						payload : {ID : null}
-					}, {
-						ID : "7",
-						__CT__FAKE__Message : {
-							__FAKE__Messages : [{
-								code : "1",
-								message : "Enter an ID",
-								numericSeverity : 3,
-								target : "ID",
-								transition : false
-							}]
-						}
-					})
-					.expectChange("id", [""]) // from setValue(null)
-					.expectChange("id", ["7", "3"])
-					.expectMessages([{
-						code : "1",
-						message : "Enter an ID",
-						target : bKeepTransientPath
-							? "/TEAMS($uid=...)/TEAM_2_EMPLOYEES($uid=...)/ID"
-							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/ID",
-						type : "Warning"
-					}]);
+			return Promise.all([
+				oEmployeeCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// the new one is at the top
+			var oInput = oTable.getItems()[0].getCells()[0];
 
-				oTable = that.oView.byId("table");
-				oEmployeeCreatedContext = oTable.getBinding("items").create({
-						// private annotation, not to be used unless explicitly adviced to do so
-						"@$ui5.keepTransientPath" : bKeepTransientPath,
-						ID : null
-					}, true);
-				sNestedTransientPath = oEmployeeCreatedContext.getPath();
+			assert.strictEqual(oEmployeeCreatedContext.getPath(),
+				 "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
+			assert.strictEqual(oInput.getBindingContext().getPath(),
+				oEmployeeCreatedContext.getPath(), "we got the right input control");
 
-				return Promise.all([
-					oEmployeeCreatedContext.created(),
-					that.waitForChanges(assert)
-				]);
-			}).then(function () {
-				// the new one is at the top
-				var oInput = oTable.getItems()[0].getCells()[0];
-
-				assert.strictEqual(oEmployeeCreatedContext.getPath(),
-					bKeepTransientPath
-					? sNestedTransientPath
-					: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
-				assert.strictEqual(oInput.getBindingContext().getPath(),
-					oEmployeeCreatedContext.getPath(), "we got the right input control");
-
-				return that.checkValueState(assert, oInput, "Warning", "Enter an ID");
-			});
+			return that.checkValueState(assert, oInput, "Warning", "Enter an ID");
 		});
 	});
 
