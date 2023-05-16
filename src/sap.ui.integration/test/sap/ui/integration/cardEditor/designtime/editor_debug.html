@@ -38,7 +38,7 @@
 			<option value="sap_hcb">SAP HCB</option>
 		</select>
 	</div>
-	<div id="editor" style="width: 80%;">
+	<div id="editor" style="width: 80%; height: 800px;">
 		<h3>Card Editor in Dialog</h3>
 		<div class="buttons">
 			<button onclick="showEditorInDialog(this)">
@@ -46,7 +46,7 @@
 			</button>
 		</div>
 		<h2>Admin Mode (only)</h2>
-		<ui-integration-card-editor id="cardEditorAdmin" preview-position="right" mode="admin" allow-dynamic-values="true" allow-settings="true">
+		<ui-integration-card-editor id="cardEditorAdmin" height="600px" preview-position="right" mode="admin" allow-dynamic-values="true" allow-settings="true">
 		</ui-integration-card-editor>
 		<div class="buttons">
 			<button onclick="showCurrentValues('cardEditorAdmin')">

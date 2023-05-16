@@ -18,11 +18,11 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 				aTrainers = aData[1],
 				aLocations = aData[2];
 
-			var aPreparedData = aAvailableTrainings.map(function (oTraining, i) {
+			var aPreparedData = aTrainers.map(function (oTrainer, i) {
 				return {
-					title: oTraining.training,
-					trainer: aTrainers[i].name,
-					location: aLocations[i].location
+					title: aAvailableTrainings[i % 4].training,
+					trainer: oTrainer.name,
+					location: aLocations[i % 4].location
 				};
 			});
 

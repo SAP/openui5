@@ -3058,6 +3058,7 @@ sap.ui.define([
 		if (sValue) {
 			this.setProperty("height", sValue);
 			document.body.style.setProperty("--sapUiIntegrationEditorFormHeight", sValue);
+			document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", sValue);
 		}
 	};
 

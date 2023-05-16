@@ -22,6 +22,24 @@
 			"fragment": "sap/ui5/test/cardeditor/listcard/viz/Input"
 		}
 	},
+	"maxItems": {
+		"manifestpath": "/sap.card/configuration/parameters/maxItems/value",
+		"type": "integer",
+		"label": "Max Items",
+		"visualization": {
+			"type": "Slider",
+			"settings": {
+				"value": "{currentSettings>value}",
+				"min": 0,
+				"max": 10,
+				"width": "100%",
+				"showAdvancedTooltip": true,
+				"showHandleTooltip": false,
+				"inputsAsTooltips": true,
+				"enabled": "{currentSettings>editable}"
+			}
+		}
+	},
 	"stringWithTextArea": {
 		"manifestpath": "/sap.card/configuration/parameters/stringWithTextArea/value",
 		"type": "string",

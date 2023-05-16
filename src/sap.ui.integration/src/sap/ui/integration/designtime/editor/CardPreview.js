@@ -105,9 +105,9 @@ sap.ui.define([
 					oRm.renderControl(oControl._getResizeToggleButton());
 				}
 				if (sPreviewPosition === "top" || sPreviewPosition === "bottom") {
-					document.body.style.setProperty("--sapUiIntegrationEditorPreviewWidth", oControl.getParentWidth());
-					document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", oControl.getParentHeight());
+					document.body.style.setProperty("--sapUiIntegrationEditorPreviewWidth", oControl.getEditor().getWidth());
 				}
+				document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", oControl.getEditor().getHeight());
 				oRm.close("div");
 			}
 		}
@@ -152,6 +152,7 @@ sap.ui.define([
 		Control.prototype.destroy.apply(this, arguments);
 		document.body.style.removeProperty("--sapUiIntegrationEditorPreviewWidth");
 		document.body.style.removeProperty("--sapUiIntegrationEditorPreviewHeight");
+		document.body.style.removeProperty("--sapUiIntegrationEditorPreviewCardHeight");
 	};
 
 	CardPreview.prototype.onAfterRendering = function () {
@@ -189,9 +190,10 @@ sap.ui.define([
 		}
 		if (oPreview) {
 			this.setAggregation("cardPreview", oPreview);
+			oPreview.removeStyleClass("sapUiIntegrationDTPreviewNoScale");
+			oPreview.removeStyleClass("sapUiIntegrationDTPreviewScale");
+			oPreview.removeStyleClass("sapUiIntegrationDTPreviewScaleSpec");
 			if (!this.getSettings().preview || this.getSettings().preview.scaled !== false) {
-				oPreview.removeStyleClass("sapUiIntegrationDTPreviewScale");
-				oPreview.removeStyleClass("sapUiIntegrationDTPreviewScaleSpec");
 				var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
 				if (this._getCurrentSize() !== "Full") {
 					if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
@@ -200,6 +202,8 @@ sap.ui.define([
 					} else {
 						oPreview.addStyleClass("sapUiIntegrationDTPreviewScale");
 					}
+				} else {
+					oPreview.addStyleClass("sapUiIntegrationDTPreviewNoScale");
 				}
 			} else {
 				oPreview.addStyleClass("sapUiIntegrationDTPreviewNoScale");
@@ -227,6 +231,7 @@ sap.ui.define([
 	 * returns the real scaled instance of the card
 	 */
 	CardPreview.prototype._getCardRealPreview = function () {
+		var that = this;
 		if (!this._oCardPreview) {
 			var bReadonly = !this.getSettings().preview.interactive;
 			this._oCardPreview = new Card({
@@ -255,6 +260,18 @@ sap.ui.define([
 		this._oCardPreview.refresh();
 		this._oCardPreview.editor = this._oCardPreview.editor || {};
 		this._oCardPreview.preview = this._oCardPreview.editor.preview = this;
+
+		this._oCardPreview.onAfterRendering = function () {
+			Card.prototype.onAfterRendering.call(this);
+			var oCardDom = that._oCardPreview.getDomRef();
+			if (oCardDom && that._getCurrentSize() !== "Full" ) {
+				var sHeight = oCardDom.offsetHeight;
+				document.body.style.setProperty("--sapUiIntegrationEditorPreviewCardHeight", sHeight + "px");
+				document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", (sHeight * 0.45 + 56)  + "px");
+			} else {
+				document.body.style.removeProperty("--sapUiIntegrationEditorPreviewCardHeight");
+			}
+		};
 		return this._oCardPreview;
 	};
 
@@ -442,11 +459,9 @@ sap.ui.define([
 		if (this._currentSize === "Normal") {
 			this.getEditor().setWidth(this.getParentWidth());
 			document.body.style.removeProperty("--sapUiIntegrationEditorPreviewWidth");
-			document.body.style.removeProperty("--sapUiIntegrationEditorPreviewHeight");
 		} else {
 			this.getEditor().setWidth("0");
 			document.body.style.setProperty("--sapUiIntegrationEditorPreviewWidth", this.getParentWidth());
-			document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", this.getParentHeight());
 		}
 	};
 

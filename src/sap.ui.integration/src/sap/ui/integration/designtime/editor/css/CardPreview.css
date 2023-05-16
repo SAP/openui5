@@ -57,7 +57,7 @@
 	transform: scale3d(0.45, 0.45, 1);
 	transform-origin: 0 0;
 	width: calc(400px + 10rem) !important;
-	height: calc(700px - 1.5rem) !important;
+	min-height: calc(700px - 1.5rem) !important;
 	position: absolute;
 }
 
@@ -65,18 +65,21 @@
 	transform: scale3d(0.45, 0.45, 1);
 	transform-origin: 100% 0;
 	width: calc(400px + 10rem) !important;
-	height: calc(700px - 1.5rem) !important;
+	min-height: calc(700px - 1.5rem) !important;
 	position: absolute
+}
+.sapUiIntegrationDTPreview .sapFCard.sapUiIntegrationDTPreviewNoScale {
+	min-height: 350px !important;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButton {
 	position: absolute !important;
-	margin: calc(350px - 2.8rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 8rem) !important;
+	margin: calc(var(--sapUiIntegrationEditorPreviewCardHeight, calc((350px - 3.3rem) / 0.45)) * 0.45 + 0.5rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 8rem) !important;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButtonSpec {
 	position: absolute !important;
-	margin: calc(350px - 2.8rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 8rem) 0 0 !important
+	margin: calc(var(--sapUiIntegrationEditorPreviewCardHeight, calc((350px - 3.3rem) / 0.45)) * 0.45 + 0.5rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 8rem) 0 0 !important
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButtonFull {
@@ -97,12 +100,12 @@
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButton {
 	position: absolute !important;
-	margin: calc(350px - 2.8rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 5rem) !important;
+	margin: calc(var(--sapUiIntegrationEditorPreviewCardHeight, calc((350px - 3.3rem) / 0.45)) * 0.45 + 0.5rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 5rem) !important;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonSpec {
 	position: absolute !important;
-	margin: calc(350px - 2.8rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 5rem) 0 0 !important
+	margin: calc(var(--sapUiIntegrationEditorPreviewCardHeight, calc((350px - 3.3rem) / 0.45)) * 0.45 + 0.5rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 5rem) 0 0 !important
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonFull {
@@ -115,12 +118,12 @@
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonOnly {
 	position: absolute !important;
-	margin: calc(350px - 2.8rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 6.5rem) !important;
+	margin: calc(var(--sapUiIntegrationEditorPreviewCardHeight, calc((350px - 3.3rem) / 0.45)) * 0.45 + 0.5rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 6.5rem) !important;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonOnlySpec {
 	position: absolute !important;
-	margin: calc(350px - 2.8rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 6.5rem) 0 0 !important
+	margin: calc(var(--sapUiIntegrationEditorPreviewCardHeight, calc((350px - 3.3rem) / 0.45)) * 0.45 + 0.5rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 6.5rem) 0 0 !important
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonOnlyFull {
