@@ -131,6 +131,9 @@ sap.ui.define([
 				},
 				isLocalResetEnabled: function() {
 					return false;
+				},
+				isPublishAvailable: function() {
+					return false;
 				}
 			};
 			sandbox.stub(FlSettings, "getInstance").resolves(oSettings);
