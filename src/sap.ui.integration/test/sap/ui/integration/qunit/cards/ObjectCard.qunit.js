@@ -88,7 +88,8 @@ sap.ui.define([
 						"value": "{lastName}"
 					},
 					{
-						"label": "Phone",
+						"label": "What is your phone number?",
+						"showColon": false,
 						"value": "{phone}",
 						"actions": [
 							{
@@ -849,6 +850,77 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ObjectCard_showColon = {
+		"sap.app": {
+			"id": "test.cards.object.card6",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"data": {
+				"json": {
+					"firstName": "Donna",
+					"lastName": "Moore",
+					"position": "Sales Executive",
+					"phone": "+1 202 555 5555",
+					"email": "my@mymail.com",
+					"photo": "images/Woman_avatar_01.png",
+					"showErrorStateIcon": true,
+					"showWarningStateIcon": false,
+					"showInformationStateIcon": true,
+					"CustomSuccessStateIcon": "sap-icon://activity-2"
+				}
+			},
+			"header": {
+				"icon": {
+					"src": "{photo}"
+				},
+				"title": "{firstName} {lastName}",
+				"subTitle": "{position}"
+			},
+			"content": {
+				"groups": [{
+					"title": "Contact Details",
+					"items": [{
+						"label": "First Name",
+						"value": "{firstName}"
+					},
+					{
+						"label": "Last Name",
+						"value": "{lastName}"
+					},
+					{
+						"label": "What is your phone number?",
+						"showColon": false,
+						"value": "{phone}",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "tel:{phone}"
+								}
+							}
+						]
+					},
+					{
+						"label": "Email",
+						"value": "{email}",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "mailto:{email}"
+								}
+							}
+						]
+					}
+					]
+				}
+				]
+			}
+		}
+	};
+
 	QUnit.module("Object Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -891,11 +963,8 @@ sap.ui.define([
 			// Group 1 assertions
 			assert.equal(aGroups[0].getItems().length, 12, "Should have 12 items.");
 			assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
-			assert.equal(aGroups[0].getItems()[1].getText(), oManifestContent.groups[0].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
-			assert.equal(aGroups[0].getItems()[3].getText(), oManifestContent.groups[0].items[1].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
-			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[6].getItems()[0].getText(), oData.phone, "Should have correct item value.");
 			assert.equal(aGroups[0].getItems()[9].getShowStateIcon(), oData.showErrorStateIcon, "Should have correct status icon value.");
 			assert.equal(aGroups[0].getItems()[10].getShowStateIcon(), oData.showWarningStateIcon, "Should have correct status icon value.");
@@ -906,17 +975,13 @@ sap.ui.define([
 			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
 			assert.equal(aGroups[1].getItems()[0].getText(), oManifestContent.groups[1].title, "Should have correct group title.");
 			assert.equal(aGroups[1].getItems()[1].getItems()[0].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct image source.");
-			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[0].getText(), oManifestContent.groups[1].items[0].label + ":", "Should have correct item label");
 			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
 
 			// Group 3 assertions
 			assert.equal(aGroups[2].getItems().length, 14, "Should have 14 items.");
 			assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
-			assert.equal(aGroups[2].getItems()[1].getText(), oManifestContent.groups[2].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[3].getText(), oManifestContent.groups[2].items[1].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[6].getItems()[0].getText(), oData.company.email, "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[8].getItems()[0].getText(), "newmail@example.com", "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[10].getItems()[0].getText(), oData.company.website, "Should have correct item value.");
@@ -1732,6 +1797,29 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest_EmptyLabelWithBinding);
 	});
 
+	QUnit.test("Label showColon property", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oObjectContent = this.oCard.getAggregation("_content");
+			var oContent = oObjectContent.getAggregation("_content");
+			var aGroups = oContent.getItems()[0].getContent();
+
+			Core.applyChanges();
+
+			assert.equal(aGroups[0].getItems()[1].getShowColon(), true, "'showColon' is set to true by default.");
+			assert.equal(aGroups[0].getItems()[5].getShowColon(), false, "'showColon' is correctly set to false from manifest.");
+
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ObjectCard_showColon);
+	});
+
 	[
 		"{/emptyObject}",
 		"{/emptyArray}",
@@ -2161,25 +2249,25 @@ sap.ui.define([
 			assert.strictEqual(oComboBox.getPlaceholder(), "Select", "ComboBox has correct placeholder.");
 			assert.strictEqual(oComboBox.getSelectedKey(), "reason1", "ComboBox has correct value.");
 			assert.strictEqual(oComboBox.getItems().length, 2, "ComboBox has 2 options.");
-			assert.strictEqual(oComboBox.getLabels()[0].getText(), "Reason:", "ComboBox is referenced to the correct label.");
+			assert.strictEqual(oComboBox.getLabels()[0].getText(), "Reason", "ComboBox is referenced to the correct label.");
 
 			// Assert Text Area
 			assert.ok(oTextArea.isA("sap.m.TextArea"), "TextArea is created.");
 			assert.strictEqual(oTextArea.getPlaceholder(), "Comment", "TextArea has correct placeholder.");
 			assert.strictEqual(oTextArea.getValue(), "Free text comment", "TextArea has correct value.");
 			assert.strictEqual(oTextArea.getRows(), 4, "TextArea has 4 rows.");
-			assert.strictEqual(oTextArea.getLabels()[0].getText(), "Comment:", "TextArea is referenced to the correct label.");
+			assert.strictEqual(oTextArea.getLabels()[0].getText(), "Comment", "TextArea is referenced to the correct label.");
 
 			// Assert Input
 			assert.ok(oInput.isA("sap.m.Input"), "oInput is created.");
 			assert.strictEqual(oInput.getPlaceholder(), "Enter user value", "Input has correct placeholder.");
 			assert.strictEqual(oInput.getValue(), "Initial value", "Input has correct value.");
-			assert.strictEqual(oInput.getLabels()[0].getText(), "User Value:", "Input is referenced to the correct label.");
+			assert.strictEqual(oInput.getLabels()[0].getText(), "User Value", "Input is referenced to the correct label.");
 
 			// Assert Duration
 			assert.ok(oTimePicker.isA("sap.m.TimePicker"), "oTimePicker is created.");
 			assert.strictEqual(oTimePicker.getValue(), "11:12", "Duration has correct value.");
-			assert.strictEqual(oTimePicker.getLabels()[0].getText(), "Duration:", "Duration is referenced to the correct label.");
+			assert.strictEqual(oTimePicker.getLabels()[0].getText(), "Duration", "Duration is referenced to the correct label.");
 
 			done();
 		});

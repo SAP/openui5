@@ -1438,6 +1438,17 @@
           "description": "Defines the label of the item",
           "type": "string"
         },
+        "showColon": {
+          "description": "Defines whether the colon next to the label is shown",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
         "value": {
           "description": "Represents the text, which is associated with the label",
           "oneOf": [

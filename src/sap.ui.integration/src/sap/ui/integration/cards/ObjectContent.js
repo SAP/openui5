@@ -374,9 +374,12 @@ sap.ui.define([
 
 	ObjectContent.prototype._createGroupItems = function (oItem, sPath) {
 		var vLabel = oItem.label,
+			bShowColon = oItem.showColon,
 			oLabel,
 			vVisible,
 			oControl;
+
+		oItem.showColon = (bShowColon === undefined) ? true : bShowColon;
 
 		if (typeof oItem.visible == "string") {
 			vVisible = !Utils.hasFalsyValueAsString(oItem.visible);
@@ -385,15 +388,12 @@ sap.ui.define([
 		}
 
 		if (vLabel) {
-			// Checks if the label ends with ":" and if not we just add the ":"
-			vLabel = BindingHelper.formattedProperty(vLabel, function (sValue) {
-				return sValue && (sValue[sValue.length - 1] === ":" ? sValue : sValue + ":");
-			});
 
 			oLabel = new Label({
 				text: vLabel,
 				visible: vVisible,
-				wrapping: oItem.labelWrapping
+				wrapping: oItem.labelWrapping,
+				showColon: oItem.showColon
 			}).addStyleClass("sapFCardObjectItemLabel");
 
 			oLabel.addEventDelegate({
