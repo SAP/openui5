@@ -1082,7 +1082,7 @@ sap.ui.define([
 			+ "parts:[{"
 			+ "    path:'LAST_MODIFIED_AT',"
 			+ "    type:'sap.ui.model.odata.type.DateTimeOffset',"
-			+ "    constraints:{'precision':7,'nullable':false,'V4':true},"
+			+ "    constraints:{'precision':7,'nullable':false},"
 			+ "    formatOptions:{'style':'long'},"
 			+ "    parameters:{'$$noPatch':true}"
 			+ "},{"
