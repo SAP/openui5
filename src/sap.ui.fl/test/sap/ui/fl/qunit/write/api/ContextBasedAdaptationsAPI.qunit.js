@@ -211,6 +211,39 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when not supported layer is provided", function(assert) {
+			this.mPropertyBag.layer = "VENDOR";
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function() {
+					return Version.Number.Draft;
+				}
+			});
+			var aReturnedVersions = [
+				{ version: Version.Number.Draft },
+				{ version: "2" },
+				{ version: "1" }
+			];
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
+			var oLoadStub = sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: []});
+
+			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function(oModel) {
+				assert.equal(oLoadStub.callCount, 0, "contextBasedAdaptations.load was called once");
+				assert.ok(oModel instanceof JSONModel, "then the result is of type JSONModel");
+				assert.deepEqual(ContextBasedAdaptationsAPI.getAdaptationsModel(this.mPropertyBag), oModel, "then the adaptations model is initialized in session");
+				assert.ok(oModel.updateAdaptations, "then the model was initialized with update function");
+				assert.ok(oModel.insertAdaptation, "then the model was initialized with insert function");
+				assert.deepEqual(oModel.getData(), {
+					allAdaptations: [],
+					adaptations: [],
+					count: 0,
+					displayedAdaptation: {},
+					contextBasedAdaptationsEnabled: false
+				}, "then the model was initialized with correct content");
+			}.bind(this));
+		});
+
 		QUnit.test("when a control and a layer were provided and a draft exists", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
@@ -233,6 +266,13 @@ sap.ui.define([
 				assert.deepEqual(ContextBasedAdaptationsAPI.getAdaptationsModel(this.mPropertyBag), oModel, "then the adaptations model is initialized in session");
 				assert.ok(oModel.updateAdaptations, "then the model was initialized with update function");
 				assert.ok(oModel.insertAdaptation, "then the model was initialized with insert function");
+				assert.deepEqual(oModel.getData(), {
+					allAdaptations: [],
+					adaptations: [],
+					count: 0,
+					displayedAdaptation: {},
+					contextBasedAdaptationsEnabled: true
+				}, "then the model was initialized with correct content");
 			}.bind(this));
 		});
 
@@ -257,6 +297,13 @@ sap.ui.define([
 				assert.deepEqual(ContextBasedAdaptationsAPI.getAdaptationsModel(this.mPropertyBag), oModel, "then the adaptations model is initialized in session");
 				assert.ok(oModel.updateAdaptations, "then the model was initialized with update function");
 				assert.ok(oModel.insertAdaptation, "then the model was initialized with insert function");
+				assert.deepEqual(oModel.getData(), {
+					allAdaptations: [],
+					adaptations: [],
+					count: 0,
+					displayedAdaptation: {},
+					contextBasedAdaptationsEnabled: true
+				}, "then the model was initialized with correct content");
 			}.bind(this));
 		});
 
@@ -377,7 +424,8 @@ sap.ui.define([
 					changedAt: "May 27, 2022",
 					type: "",
 					rank: 1
-				}
+				},
+				contextBasedAdaptationsEnabled: true
 			};
 			this.oExpectedEmptyData = {
 				allAdaptations: [this.oDefaultAdaptation],
@@ -394,7 +442,8 @@ sap.ui.define([
 					rank: 1,
 					title: "",
 					type: "DEFAULT"
-				}
+				},
+				contextBasedAdaptationsEnabled: true
 			};
 		},
 		afterEach: function() {
@@ -408,24 +457,24 @@ sap.ui.define([
 		});
 
 		QUnit.test("when only default adaptation is provided", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedEmptyData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedEmptyData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedEmptyData, "then the adaptations model is created correctly with empty values");
 		});
 
 		QUnit.test("when a filled list of adaptations is provided", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 		});
 
 		QUnit.test("when a filled list of adaptations is provided with FlexInfoSession", function(assert) {
 			sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "id-1591275572835-1" });
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			this.oExpectedFilledData.displayedAdaptation = this.oExpectedFilledData.adaptations[1];
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 		});
 
 		QUnit.test("when an empty list of adaptations is initialized and later updated with 2 adaptations", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedEmptyData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedEmptyData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedEmptyData, "then the adaptations model is created correctly with empty values");
 			oModel.updateAdaptations(this.oExpectedFilledData.allAdaptations);
 			oModel.switchDisplayedAdaptation(this.oExpectedFilledData.allAdaptations[0].id);
@@ -433,7 +482,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an empty list of adaptations is initialized and later 1 adaptation is inserted", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedEmptyData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedEmptyData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedEmptyData, "then the adaptations model is created correctly with empty values");
 			var oNewAdaptation = {
 				id: "id-1591275572999-1",
@@ -443,14 +492,14 @@ sap.ui.define([
 				},
 				title: "German Admin"
 			};
-			var oExpectedInsertedData = {allAdaptations: [oNewAdaptation, this.oDefaultAdaptation], adaptations: [oNewAdaptation], count: 1, displayedAdaptation: oNewAdaptation};
+			var oExpectedInsertedData = {allAdaptations: [oNewAdaptation, this.oDefaultAdaptation], adaptations: [oNewAdaptation], count: 1, displayedAdaptation: oNewAdaptation, contextBasedAdaptationsEnabled: true};
 			oModel.insertAdaptation(oNewAdaptation);
 			oModel.switchDisplayedAdaptation(oNewAdaptation.id);
 			assert.deepEqual(oModel.getData(), oExpectedInsertedData, "then the adaptations model is updated correctly");
 		});
 
 		QUnit.test("when a list of adaptations is initialized and later 1 adaptation is inserted", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			var oNewAdaptation = {
 				id: "id-1591275572999-1",
@@ -477,7 +526,8 @@ sap.ui.define([
 				allAdaptations: [oAdaptation1, oExpectedNewAdaptation, oAdaptation2, this.oDefaultAdaptation],
 				adaptations: [oAdaptation1, oExpectedNewAdaptation, oAdaptation2],
 				count: 3,
-				displayedAdaptation: oExpectedNewAdaptation
+				displayedAdaptation: oExpectedNewAdaptation,
+				contextBasedAdaptationsEnabled: true
 			};
 			oModel.insertAdaptation(oNewAdaptation);
 			oModel.switchDisplayedAdaptation(oNewAdaptation.id);
@@ -485,7 +535,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a list of adaptations is initialized and later the first adaptation is deleted", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			var oAdaptation = deepClone(this.oExpectedFilledData.adaptations[1]);
 			// rank is expected to decrease as the leading adaptation is deleted
@@ -494,7 +544,8 @@ sap.ui.define([
 				allAdaptations: [oAdaptation, this.oDefaultAdaptation],
 				adaptations: [oAdaptation],
 				count: 1,
-				displayedAdaptation: oAdaptation
+				displayedAdaptation: oAdaptation,
+				contextBasedAdaptationsEnabled: true
 			};
 			var sDisplayedAdaptationId = oModel.deleteAdaptation();
 			oModel.switchDisplayedAdaptation(sDisplayedAdaptationId);
@@ -503,14 +554,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a list of adaptations is initialized and later the last adaptation is deleted", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			var oAdaptation = this.oExpectedFilledData.adaptations[0];
 			var oExpectedFilledData = {
 				allAdaptations: [oAdaptation, this.oDefaultAdaptation],
 				adaptations: [oAdaptation],
 				count: 1,
-				displayedAdaptation: oAdaptation
+				displayedAdaptation: oAdaptation,
+				contextBasedAdaptationsEnabled: true
 			};
 			oModel.switchDisplayedAdaptation("id-1591275572835-1");
 			var sDisplayedAdaptationId = oModel.deleteAdaptation();
@@ -520,7 +572,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a list of adaptations is initialized and later an adaptation is created in the middle and then deleted again", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			var oAdaptation1 = this.oExpectedFilledData.adaptations[0];
 			var oAdaptation2 = this.oExpectedFilledData.adaptations[1];
@@ -536,7 +588,8 @@ sap.ui.define([
 				allAdaptations: [oAdaptation1, oAdaptation2, this.oDefaultAdaptation],
 				adaptations: [oAdaptation1, oAdaptation2],
 				count: 2,
-				displayedAdaptation: oAdaptation2
+				displayedAdaptation: oAdaptation2,
+				contextBasedAdaptationsEnabled: true
 			};
 			oModel.insertAdaptation(oNewAdaptation3);
 			oModel.switchDisplayedAdaptation(oNewAdaptation3.id);
@@ -547,13 +600,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a list of adaptations is initialized and later all adaptations are deleted", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			var oExpectedFilledData = {
 				allAdaptations: [this.oDefaultAdaptation],
 				adaptations: [],
 				count: 0,
-				displayedAdaptation: this.oDefaultAdaptation
+				displayedAdaptation: this.oDefaultAdaptation,
+				contextBasedAdaptationsEnabled: true
 			};
 			oModel.deleteAdaptation();
 			var sDisplayedAdaptationId = oModel.deleteAdaptation();
@@ -562,7 +616,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a list of adaptations is initialized and later the displayed adaptation is switched", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			var oExpectedDisplayedAdaptation = this.oExpectedFilledData.adaptations[1];
 			oModel.switchDisplayedAdaptation("id-1591275572835-1");
@@ -570,14 +624,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a list of adaptations is initialized and later the displayed adaptation is switched to the context-free adaptation", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			oModel.switchDisplayedAdaptation("DEFAULT");
 			assert.deepEqual(oModel.getProperty("/displayedAdaptation"), this.oDefaultAdaptation, "then the adaptations model is updated correctly");
 		});
 
 		QUnit.test("when a list of adaptations is initialized and later the displayed adaptation is updated", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.deepEqual(oModel.getData(), this.oExpectedFilledData, "then the adaptations model is created correctly");
 			var oAdaptation1 = deepClone(this.oExpectedFilledData.adaptations[0]);
 			oAdaptation1.rank = 2;
@@ -591,7 +645,8 @@ sap.ui.define([
 				allAdaptations: [oUpdatedAdaptation, oAdaptation1, this.oDefaultAdaptation],
 				adaptations: [oUpdatedAdaptation, oAdaptation1],
 				count: 2,
-				displayedAdaptation: oUpdatedAdaptation
+				displayedAdaptation: oUpdatedAdaptation,
+				contextBasedAdaptationsEnabled: true
 			};
 			var oContextBasedAdaptation = {
 				title: "DLM Main Pilot",
@@ -606,7 +661,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a list of adaptations is initialized and getIndexByAdaptationId is called", function(assert) {
-			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations);
+			var oModel = ContextBasedAdaptationsAPI.createModel(this.oExpectedFilledData.allAdaptations, undefined, true);
 			assert.strictEqual(oModel.getIndexByAdaptationId("id-1591275572834-1"), 0, "then the correct index is returned");
 			assert.strictEqual(oModel.getIndexByAdaptationId("id-1591275572835-1"), 1, "then the correct index is returned");
 		});
@@ -710,7 +765,8 @@ sap.ui.define([
 					rank: 1,
 					title: "",
 					type: "DEFAULT"
-				}
+				},
+				contextBasedAdaptationsEnabled: true
 			};
 			sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: oExpectedFilledData.allAdaptations});
 			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function() {
@@ -812,7 +868,8 @@ sap.ui.define([
 					changedBy: "Test User 1",
 					changedAt: "May 27, 2022",
 					rank: 1
-				}
+				},
+				contextBasedAdaptationsEnabled: true
 			};
 			sandbox.stub(Storage.contextBasedAdaptation, "load").resolves({adaptations: oExpectedFilledData.allAdaptations});
 			return ContextBasedAdaptationsAPI.initialize(this.mPropertyBag).then(function() {

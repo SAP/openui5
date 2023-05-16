@@ -268,10 +268,16 @@ sap.ui.define([
 			FlexInfoSession.set({isResetEnabled: false});
 			var oFlexObjectStateSaveStub = sandbox.stub(FlexObjectState, "saveFlexObjects").resolves({change: "test"});
 			var oFlexInfo = {isResetEnabled: true};
-			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(oFlexInfo);
+			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(new Promise(function(resolve) {
+				// Delay resolution to simulate a slow call
+				setTimeout(function() {
+					resolve(oFlexInfo);
+				}, 0);
+			}));
 			var mPropertyBag = { foo: "bar" };
-			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
+			return PersistenceWriteAPI.save(mPropertyBag).then(function(oFlexObject) {
 				assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
+				assert.deepEqual(oFlexObject, {change: "test"}, "Flex objects returned from saveFlexObjects are returned");
 				assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
 				assert.equal(oPersistenceWriteGetFlexInfoStub.callCount, 1, "the PersistenceWriteAPI getResetAndPublishInfo method was called");
 				assert.deepEqual(oPersistenceWriteGetFlexInfoStub.firstCall.args[0], mPropertyBag, "the PersistenceWriteAPI was called with the same arguments");
