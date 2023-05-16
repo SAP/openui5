@@ -1210,12 +1210,12 @@ sap.ui.define([
 		 * @property {string} [namespace="sap.ui.test.opa.pageObject"]
 		 *   Namespace prefix for the page object's actions and assertions.
 		 *   Use it if you use page objects from multiple projects in the same test build.
-		 * @property {Object<string,function>} [actions]
-		 *   A map of functions that can be used as arrangement or action in Opa tests.
+		 * @property {Object<string,function>|function} [actions]
+		 *   A map or a class of functions that can be used as arrangement or action in Opa tests.
 		 *   Only the test decides whether a function is used as arrangement or action. Each function typically
 		 *   contains one or multiple <code>waitFor</code> statements.
-		 * @property {Object<string,function>} [assertions]
-		 *   A map of functions that can be used as assertions in Opa tests.
+		 * @property {Object<string,function>|function} [assertions]
+		 *   A map or a class of functions that can be used as assertions in Opa tests.
 		 * @public
 		 * @since 1.25
 		 */
@@ -1243,6 +1243,16 @@ sap.ui.define([
 		 * @since 1.25
 		 */
 		Opa5.createPageObjects = function (mPageObjects) {
+			for (var key in mPageObjects) {
+				var oPageObject = mPageObjects[key];
+				if (typeof oPageObject.actions === "function") {
+					oPageObject.actions = convertClassToObjectMap(oPageObject.actions);
+				}
+				if (typeof oPageObject.assertions === "function") {
+					oPageObject.assertions = convertClassToObjectMap(oPageObject.assertions);
+				}
+			}
+
 			// prevent circular dependency by passing Opa5 as parameter
 			return PageObjectFactory.create(mPageObjects, Opa5);
 		};
@@ -1307,6 +1317,19 @@ sap.ui.define([
 				searchOpenDialogs: false,
 				autoWait: false
 			};
+		}
+
+		function convertClassToObjectMap(fnClass) {
+			var oDictionary = {};
+			Object.getOwnPropertyNames(fnClass.prototype)
+				.filter(function(sName) {
+					return sName !== 'constructor' && typeof fnClass.prototype[sName] === 'function';
+				})
+				.map(function(sName){
+					oDictionary[sName] = fnClass.prototype[sName];
+				}
+			);
+			return oDictionary;
 		}
 
 		$(function () {

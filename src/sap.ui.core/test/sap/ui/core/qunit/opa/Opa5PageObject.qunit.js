@@ -177,6 +177,34 @@ sap.ui.define([
 		assert.strictEqual(Opa.config.actions.onMyTestPage.iDoTheNeedful, noop, "kept the page");
 	});
 
+	QUnit.test("Should be able to pass actions and assertion as functions of a class", function(assert) {
+		var fnActions = function Actions() {
+			Opa5.call(this, arguments);
+		},
+		fnAssertions = function Assertions() {
+			Opa5.call(this, arguments);
+		};
+		Object.assign(fnActions.prototype, Opa5.prototype, {
+			iCanDoMagic: function(){},
+			iCanDoOtherThings: function(){}
+		});
+		Object.assign(fnAssertions.prototype, Opa5.prototype, {
+			iCanSeeIt: function(){},
+			iCanHearIt: function(){}
+		});
+
+		var oPage = Opa5.createPageObjects({
+			onMyFirstPage : {
+				actions : fnActions,
+				assertions : fnAssertions
+			}
+		});
+
+		assertPageObjectIsReturned(assert, oPage);
+		assertStandardActionsRegisteredFor(assert, "onMyFirstPage");
+		assertStandardAssertionsRegisteredFor(assert, "onMyFirstPage");
+	});
+
 	QUnit.module("Page Object - ViewName", {
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
