@@ -506,8 +506,11 @@ sap.ui.define([
 	});
 
 	QUnit.test('Accessibility Text', function (assert) {
-		var invisibleText = NavigationListItem._getInvisibleText();
-		assert.equal(invisibleText.getText(), '', "accessibility text is initially empty");
+		var groupItem = this.navigationList.getItems()[0];
+		var invisibleTextIdInitial = groupItem.getDomRef().getElementsByClassName("sapTntNavLIItem ")[0].getAttribute("aria-labelledby");
+		var invisibleTextInitial = document.getElementById(invisibleTextIdInitial);
+
+		assert.notOk(invisibleTextInitial, "accessibility text is initially empty");
 
 		var groupItem = this.navigationList.getItems()[0];
 
@@ -515,7 +518,10 @@ sap.ui.define([
 			srcControl: groupItem
 		});
 
-		assert.equal(invisibleText.getText(), 'Tree Item  Root 1 1 of 5', "accessibility text is correct");
+		var invisibleTextId = groupItem.getDomRef().getElementsByClassName("sapTntNavLIItem ")[0].getAttribute("aria-labelledby");
+		var invisibleText = document.getElementById(invisibleTextId);
+
+		assert.equal(invisibleText.innerText, 'Tree Item  Root 1 1 of 5', "accessibility text is correct");
 
 		var secondLevelItem = groupItem.getItems()[2];
 
@@ -526,7 +532,7 @@ sap.ui.define([
 			srcControl: secondLevelItem
 		});
 
-		assert.equal(invisibleText.getText(), 'Tree Item Selected Child 3 3 of 3', "accessibility text is correct");
+		assert.equal(invisibleText.innerText, 'Tree Item Selected Child 3 3 of 3', "accessibility text is correct");
 
 		this.navigationList.setExpanded(false);
 		Core.applyChanges();
@@ -535,7 +541,7 @@ sap.ui.define([
 			srcControl: groupItem
 		});
 
-		assert.equal(invisibleText.getText(), '', "accessibility text is empty");
+		assert.equal(invisibleText.innerText, '', "accessibility text is empty");
 	});
 
 	QUnit.test("Focus is prevented when clicking on <a> element", function (assert) {
