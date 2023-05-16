@@ -1856,6 +1856,67 @@ sap.ui.define([
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 4, "and versions.onAllChangesSaved is called a fourth time");
 			});
 		});
+
+		QUnit.test("Given remove variant as last draft file name", function(assert) {
+			var sParentVersion = "GUIDParentVersion";
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				versioningEnabled: true,
+				activeVersion: 1,
+				persistedVersion: sParentVersion,
+				draftFilenames: [this.oVariant.getId()],
+				versions: [
+					{version: Version.Number.Draft},
+					{version: 1}]
+			}));
+			var oResponse = {
+				response: [{
+					reference: sComponentId,
+					layer: Layer.CUSTOMER
+				}]
+			};
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
+
+			var oWriteStub = sandbox.stub(Storage, "write").resolves(oResponse);
+			var oUpdateStub = sandbox.stub(Storage, "update").resolves();
+			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
+			var oVersionsOnAllChangesSaved = sandbox.stub(Versions, "onAllChangesSaved");
+
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			})
+			.then(function () {
+				assert.equal(oWriteStub.callCount, 1, "then the write method was called one times,");
+				assert.equal(oUpdateStub.callCount, 0, "no update was called");
+				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
+				assert.equal(oWriteStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
+				assert.equal(oVersionsOnAllChangesSaved.callCount, 1, "and versions.onAllChangesSaved is called one time");
+			})
+			.then(function () {
+				oCompVariantStateMapForPersistencyKey.variants[0].setState(States.LifecycleState.DELETED);
+				var aReturnedBackendVersions = [{
+					version: "1"
+				}];
+				sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
+			})
+			.then(CompVariantState.persist.bind(undefined, {
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			}))
+			.then(function () {
+				assert.equal(oWriteStub.callCount, 1, "AFTER SOME CHANGES; still the write method was called one times,");
+				assert.equal(oUpdateStub.callCount, 0, "no update was called");
+				assert.equal(oRemoveStub.callCount, 1, "and one deletes were called");
+				assert.equal(oRemoveStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct in delete");
+				var mPropertyBag = {reference: sComponentId, layer: Layer.CUSTOMER};
+				var oVersionModel = Versions.getVersionsModel(mPropertyBag);
+				assert.equal(oVersionModel.getProperty("/draftFilenames").length, 0, "and no draft filename in version model");
+				assert.equal(oVersionModel.getProperty("/versions").length, 1, "and only one version left in version model");
+				assert.equal(oVersionModel.getProperty("/displayedVersion"), 1, "and displayedVersion is same as activeVersion in version model");
+				assert.equal(oVersionModel.getProperty("/persistedVersion"), 1, "and persistedVersion is same as activeVersion in version model");
+				assert.equal(oVersionsOnAllChangesSaved.callCount, 1, "and versions.onAllChangesSaved is called a one time");
+			});
+		});
 	});
 
 	QUnit.module("checkSVMControlsForDirty", {

@@ -313,7 +313,8 @@ sap.ui.define([
 			});
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				control: new Control()
+				control: new Control(),
+				version: "1"
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -323,8 +324,11 @@ sap.ui.define([
 				{version: "1"}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
-
-			return VersionsAPI.initialize(mPropertyBag).then(function () {
+			sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
+			return VersionsAPI.initialize(mPropertyBag)
+			// switch to another version
+			.then(VersionsAPI.loadVersionForApplication.bind(this, mPropertyBag))
+			.then(function () {
 				assert.equal(VersionsAPI.isOldVersionDisplayed(mPropertyBag), true, "then a 'true' is returned");
 			});
 		});
@@ -578,7 +582,8 @@ sap.ui.define([
 				{
 					activatedBy: "qunit",
 					activatedAt: "a while ago",
-					version: sActiveVersion
+					version: sActiveVersion,
+					isPublished: true
 				}
 			];
 

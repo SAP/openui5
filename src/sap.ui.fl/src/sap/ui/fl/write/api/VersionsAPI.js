@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	Versions,
 	Utils,
 	Version,
+	FeaturesAPI,
 	ManifestUtils,
 	ContextBasedAdaptationsAPI
 ) {
@@ -186,6 +188,17 @@ sap.ui.define([
 			}
 			oModel.setProperty("/displayedVersion", mPropertyBag.version);
 			oModel.setProperty("/persistedVersion", mPropertyBag.version);
+			if (mPropertyBag.version !== Version.Number.Draft && FeaturesAPI.isPublishAvailable()) {
+				var aVersions = oModel.getProperty("/versions");
+				if (aVersions.length) {
+					var oVersion = aVersions.find(function(oVersion) {
+						return oVersion.version === mPropertyBag.version;
+					});
+					if (oVersion) {
+						oModel.setProperty("/publishVersionEnabled", !oVersion.isPublished);
+					}
+				}
+			}
 		}
 
 		return incorporateAdaptationIdInSwitch(mPropertyBag)

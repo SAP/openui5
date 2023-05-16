@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
@@ -25,6 +26,7 @@ sap.ui.define([
 	ChangesController,
 	ControlVariantApplyAPI,
 	CompVariantState,
+	Versions,
 	ChangePersistenceFactory,
 	LayerUtils,
 	Utils
@@ -43,7 +45,6 @@ sap.ui.define([
 
 	function initFlexStateAndSetReference(mPropertyBag) {
 		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
-
 		return FlexState.initialize({
 			componentId: mPropertyBag.componentId || Utils.getAppComponentForControl(mPropertyBag.selector).getId(),
 			reference: mPropertyBag.reference,
@@ -243,9 +244,14 @@ sap.ui.define([
 	 */
 	FlexObjectState.saveFlexObjects = function(mPropertyBag) {
 		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		return saveCompEntities(mPropertyBag)
 		.then(saveChangePersistenceEntities.bind(this, mPropertyBag, oAppComponent))
 		.then(function() {
+			if (mPropertyBag.version !== undefined && Versions.hasVersionsModel(mPropertyBag)) {
+				var oModel = Versions.getVersionsModel(mPropertyBag);
+				mPropertyBag.version = oModel.getProperty("/displayedVersion");
+			}
 			if (mPropertyBag.layer) {
 				//TODO: sync the layer parameter name with new persistence and remove this line
 				mPropertyBag.currentLayer = mPropertyBag.layer;

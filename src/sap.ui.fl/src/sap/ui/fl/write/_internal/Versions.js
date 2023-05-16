@@ -28,103 +28,112 @@ sap.ui.define([
 	var BACKEND_REQUEST_LIMIT = MODEL_SIZE_LIMIT + 1;
 
 	function createModel(bVersioningEnabled, aVersions) {
+		var oModel = _prepareVersionsModel(bVersioningEnabled, aVersions);
+
+		oModel.setDefaultBindingMode(BindingMode.OneWay);
+		oModel.setSizeLimit(MODEL_SIZE_LIMIT);
+		// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
+		oModel.setDirtyChanges = function (bDirtyChanges) {
+			oModel.setProperty("/dirtyChanges", bDirtyChanges);
+			oModel.updateDraftVersion();
+			oModel.updateBindings(true);
+		};
+
+		oModel.updateDraftVersion = function () {
+			var aVersions = oModel.getProperty("/versions");
+			var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
+			var bDirtyChanges = oModel.getProperty("/dirtyChanges");
+			var bBackendDraft = oModel.getProperty("/backendDraft");
+			var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
+			oModel.setProperty("/draftAvailable", bDraftAvailable);
+
+			if (bDirtyChanges) {
+				oModel.setProperty("/displayedVersion", Version.Number.Draft);
+			}
+
+			// add draft
+			if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
+				aVersions.splice(0, 0, {version: Version.Number.Draft, type: Version.Type.Draft, filenames: [], isPublished: false});
+			}
+
+			// remove draft
+			if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
+				aVersions.shift();
+				oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
+			}
+
+			var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
+			oModel.setProperty("/activateEnabled", bActivateEnabled);
+		};
+
+		return oModel;
+	}
+
+	function _prepareVersionsModel(bVersioningEnabled, aVersions, oVersionsModel) {
+		var sPersistedBasisForDisplayedVersion;
+		var bPublishVersionEnabled = false;
+		var sActiveVersion = Version.Number.Original;
 		var bBackendDraft = _doesDraftExistInVersions(aVersions);
 		var aDraftFilenames = [];
 
-		var sActiveVersion = Version.Number.Original;
-		var bPublishVersionEnabled = false;
+		if (aVersions.length > 0) {
+			sPersistedBasisForDisplayedVersion = aVersions[0].version;
+		} else {
+			sPersistedBasisForDisplayedVersion = Version.Number.Original;
+		}
 
-		return Utils.getUShellService("URLParsing")
-			.then(function (oURLParsingService) {
-				var sPersistedBasisForDisplayedVersion = Utils.getParameter(
-					Version.UrlParameter,
-					oURLParsingService
-				);
-				if (!sPersistedBasisForDisplayedVersion) {
-					if (aVersions.length > 0) {
-						sPersistedBasisForDisplayedVersion = aVersions[0].version;
-					} else {
-						sPersistedBasisForDisplayedVersion = Version.Number.Original;
-					}
+		aVersions.forEach(function (oVersion) {
+			if (oVersion.version === Version.Number.Draft) {
+				oVersion.type = Version.Type.Draft;
+				oVersion.isPublished = false;
+				aDraftFilenames = oVersion.filenames;
+			} else {
+				if (sActiveVersion === Version.Number.Original) {
+					// no active version found yet; the first non-draft version is always the active version
+					oVersion.type = Version.Type.Active;
+					sActiveVersion = oVersion.version;
+				} else {
+					oVersion.type = Version.Type.Inactive;
 				}
+				//If the current selected version is not yet published, enable the publish button
+				//Original versions are not part of back end response, so publish button is not enabled by default value
+				if ((oVersion.version === sPersistedBasisForDisplayedVersion) && (oVersion.isPublished === false)) {
+					bPublishVersionEnabled = true;
+				}
+			}
+		});
 
-				aVersions.forEach(function (oVersion) {
-					if (oVersion.version === Version.Number.Draft) {
-						oVersion.type = Version.Type.Draft;
-						oVersion.isPublished = false;
-						aDraftFilenames = oVersion.filenames;
-					} else {
-						if (sActiveVersion === Version.Number.Original) {
-							// no active version found yet; the first non-draft version is always the active version
-							oVersion.type = Version.Type.Active;
-							sActiveVersion = oVersion.version;
-						} else {
-							oVersion.type = Version.Type.Inactive;
-						}
-						//If the current selected version is not yet published, enable the publish button
-						//Original versions are not part of back end response, so publish button is not enabled by default value
-						if ((oVersion.version === sPersistedBasisForDisplayedVersion) && (oVersion.isPublished === false)) {
-							bPublishVersionEnabled = true;
-						}
-					}
-				});
-
-				// TODO: need to update wording or add description
-				var oModel = new JSONModel({
-					publishVersionEnabled: bPublishVersionEnabled,
-					versioningEnabled: bVersioningEnabled,
-					versions: aVersions,
-					activeVersion: sActiveVersion,
-					backendDraft: bBackendDraft,
-					dirtyChanges: false,
-					draftAvailable: bBackendDraft,
-					activateEnabled: bBackendDraft,
-					persistedVersion: sPersistedBasisForDisplayedVersion,
-					displayedVersion: sPersistedBasisForDisplayedVersion,
-					draftFilenames: aDraftFilenames
-				});
-
-				oModel.setDefaultBindingMode(BindingMode.OneWay);
-				oModel.setSizeLimit(MODEL_SIZE_LIMIT);
-
-				// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
-				oModel.setDirtyChanges = function (bDirtyChanges) {
-					oModel.setProperty("/dirtyChanges", bDirtyChanges);
-					oModel.updateDraftVersion();
-					oModel.updateBindings(true);
-				};
-
-				oModel.updateDraftVersion = function () {
-					var aVersions = oModel.getProperty("/versions");
-					var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
-					var bDirtyChanges = oModel.getProperty("/dirtyChanges");
-					var bBackendDraft = oModel.getProperty("/backendDraft");
-					var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
-					oModel.setProperty("/draftAvailable", bDraftAvailable);
-
-					if (bDirtyChanges) {
-						oModel.setProperty("/displayedVersion", Version.Number.Draft);
-					}
-
-					// add draft
-					if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-						aVersions.splice(0, 0, {version: Version.Number.Draft, type: Version.Type.Draft, filenames: [], isPublished: false});
-					}
-
-					// remove draft
-					if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
-						aVersions.shift();
-						oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
-					}
-
-					var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
-					oModel.setProperty("/activateEnabled", bActivateEnabled);
-				};
-
-				return oModel;
+		if (oVersionsModel) {
+			oVersionsModel.setProperty("/publishVersionEnabled", bPublishVersionEnabled);
+			oVersionsModel.setProperty("/versioningEnabled", bVersioningEnabled);
+			oVersionsModel.setProperty("/versions", aVersions);
+			oVersionsModel.setProperty("/backendDraft", bBackendDraft);
+			oVersionsModel.setProperty("/dirtyChanges", false);
+			oVersionsModel.setProperty("/draftAvailable", bBackendDraft);
+			oVersionsModel.setProperty("/activateEnabled", bBackendDraft);
+			oVersionsModel.setProperty("/activeVersion", sActiveVersion);
+			oVersionsModel.setProperty("/persistedVersion", sPersistedBasisForDisplayedVersion);
+			oVersionsModel.setProperty("/displayedVersion", sPersistedBasisForDisplayedVersion);
+			oVersionsModel.setProperty("/draftFilenames", aDraftFilenames);
+			oVersionsModel.updateBindings(true);
+		} else {
+			oVersionsModel = new JSONModel({
+				publishVersionEnabled: bPublishVersionEnabled,
+				versioningEnabled: bVersioningEnabled,
+				versions: aVersions,
+				backendDraft: bBackendDraft,
+				dirtyChanges: false,
+				draftAvailable: bBackendDraft,
+				activateEnabled: bBackendDraft,
+				activeVersion: sActiveVersion,
+				persistedVersion: sPersistedBasisForDisplayedVersion,
+				displayedVersion: sPersistedBasisForDisplayedVersion,
+				draftFilenames: aDraftFilenames
 			});
-	}
+		}
 
+		return oVersionsModel;
+	}
 	// TODO: the handling should move to the FlexState as soon as it is ready
 	function _removeDirtyChanges(mPropertyBag, oDirtyChangeInfo) {
 		// remove all dirty changes
@@ -166,6 +175,16 @@ sap.ui.define([
 		return aVersions.some(function(oVersion) {
 			return oVersion.version === Version.Number.Draft;
 		});
+	}
+
+	function _updateVersionModelWhenDiscardOrActivate(oModel, iNewVersion) {
+		oModel.setProperty("/backendDraft", false);
+		oModel.setProperty("/dirtyChanges", false);
+		oModel.setProperty("/draftAvailable", false);
+		oModel.setProperty("/activateEnabled", false);
+		oModel.setProperty("/displayedVersion", iNewVersion);
+		oModel.setProperty("/persistedVersion", iNewVersion);
+		oModel.updateBindings(true);
 	}
 
 	/**
@@ -247,6 +266,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Update version model with backend information.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated version model for the application from the backend
+	 */
+	Versions.updateModelFromBackend = function(mPropertyBag) {
+		if (Versions.hasVersionsModel(mPropertyBag)) {
+			mPropertyBag.limit = BACKEND_REQUEST_LIMIT;
+			return Storage.versions.load(mPropertyBag)
+			.then(function (aVersions) {
+				var oVersionsModel = Versions.getVersionsModel(mPropertyBag);
+				return _prepareVersionsModel(oVersionsModel.getProperty("/versioningEnabled"), aVersions, oVersionsModel);
+			});
+		}
+	};
+
+	/**
 	 * Updates dirty changes and the backendDraft property of the model after a saveAll was called.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
@@ -316,16 +354,9 @@ sap.ui.define([
 				aVersions.shift();
 			}
 			aVersions.splice(0, 0, oVersion);
-			oModel.setProperty("/publishVersionEnabled", true);
-			oModel.setProperty("/backendDraft", false);
-			oModel.setProperty("/dirtyChanges", false);
-			oModel.setProperty("/draftAvailable", false);
-			oModel.setProperty("/publishVersionEnabled", true);
-			oModel.setProperty("/activateEnabled", false);
 			oModel.setProperty("/activeVersion", oVersion.version);
-			oModel.setProperty("/displayedVersion", oVersion.version);
-			oModel.setProperty("/persistedVersion", oVersion.version);
-			oModel.updateBindings(true);
+			oModel.setProperty("/publishVersionEnabled", true);
+			_updateVersionModelWhenDiscardOrActivate(oModel, oVersion.version);
 		});
 	};
 
@@ -341,20 +372,14 @@ sap.ui.define([
 	 */
 	Versions.discardDraft = function(mPropertyBag) {
 		var oModel = Versions.getVersionsModel(mPropertyBag);
-		var aVersions = oModel.getProperty("/versions");
 		var oDirtyChangesInfo = _getDirtyChangesInfo(mPropertyBag);
 		var bBackendDraftExists = oModel.getProperty("/backendDraft");
 		var oDiscardPromise = bBackendDraftExists ? Storage.versions.discardDraft(mPropertyBag) : Promise.resolve();
 
 		return oDiscardPromise.then(function () {
+			var aVersions = oModel.getProperty("/versions");
 			aVersions.shift();
-			oModel.setProperty("/backendDraft", false);
-			oModel.setProperty("/dirtyChanges", false);
-			oModel.setProperty("/draftAvailable", false);
-			oModel.setProperty("/activateEnabled", false);
-			oModel.setProperty("/displayedVersion", oModel.getProperty("/activeVersion"));
-			oModel.setProperty("/persistedVersion", oModel.getProperty("/activeVersion"));
-			oModel.updateBindings(true);
+			_updateVersionModelWhenDiscardOrActivate(oModel, oModel.getProperty("/activeVersion"));
 			// in case of a existing draft known by the backend;
 			// we remove dirty changes only after successful DELETE request
 			var bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag, oDirtyChangesInfo);
