@@ -263,12 +263,9 @@ sap.ui.define([
 			that = this;
 
 		this.oCheckUpdateCallToken = oCallToken;
-		if (this.bHasDeclaredType === undefined) {
-			this.bHasDeclaredType = !!vType;
-		}
-		if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any"
-				&& !bIsMeta) {
-			vType = oMetaModel.fetchUI5Type(sResolvedPath);
+		if (!vType && sResolvedPath && this.sInternalType !== "any" && !bIsMeta
+				&& !sResolvedPath.includes(sVirtualPath)) {
+			vType = oMetaModel.fetchUI5Type(this.sReducedPath || sResolvedPath);
 		}
 		if (vValue === undefined) {
 			// if called via #onChange, we need to fetch implicit values
@@ -287,9 +284,7 @@ sap.ui.define([
 							return vResult;
 						});
 				}
-				if (!that.sReducedPath || !that.isResolved()) {
-					// binding is unresolved or context was reset by another call to
-					// checkUpdateInternal
+				if (!that.isResolved()) {
 					return undefined;
 				}
 				if (sResolvedPath.includes(sVirtualPath)) {
@@ -330,7 +325,7 @@ sap.ui.define([
 			});
 			if (bForceUpdate && vValue.isFulfilled()) {
 				if (vType && vType.isFulfilled && vType.isFulfilled()) {
-					this.setType(vType.getResult(), this.sInternalType);
+					this.oType = vType.getResult();
 				}
 				this.vValue = vValue.getResult();
 			}
@@ -344,7 +339,7 @@ sap.ui.define([
 
 			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdateInternal
 				that.oCheckUpdateCallToken = undefined;
-				that.setType(oType, that.sInternalType);
+				that.oType = oType;
 				if (oCallToken.forceUpdate || that.vValue !== vValue) {
 					that.bInitial = false;
 					that.vValue = vValue;
@@ -677,6 +672,14 @@ sap.ui.define([
 			if (this.bRelative) {
 				this.checkSuspended(true);
 				this.deregisterChangeListener();
+				if (oContext) {
+					if (this.oType && this.sReducedPath && !this.bHasDeclaredType
+						&& _Helper.getMetaPath(this.oModel.resolve(this.sPath, oContext))
+							!== _Helper.getMetaPath(this.sReducedPath)) {
+						this.oType = undefined;
+					}
+					this.sReducedPath = undefined;
+				}
 			}
 			this.oContext = oContext;
 			this.sResumeChangeReason = undefined;
@@ -707,6 +710,7 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.setType = function (oType, _sInternalType) {
 		var oOldType = this.oType;
 
+		this.bHasDeclaredType = !!oType;
 		if (oType && oType.getName() === "sap.ui.model.odata.type.DateTimeOffset") {
 			oType.setV4();
 		}

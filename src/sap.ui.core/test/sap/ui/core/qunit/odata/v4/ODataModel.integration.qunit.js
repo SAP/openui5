@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
+	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/ValueListType",
@@ -35,7 +36,8 @@ sap.ui.define([
 ], function (Log, uid, UriParameters, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
 		Device, EventProvider, SyncPromise, Configuration, Controller, View, ChangeReason, Filter,
 		FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
-		ODataModel, ODataPropertyBinding, ValueListType, _Helper, TestUtils, XMLHelper) {
+		ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper, TestUtils,
+		XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -7290,7 +7292,7 @@ sap.ui.define([
 	// BCP: 2270183841
 	QUnit.test("BCP: 2270183841 - improve performance of ODLB#resume", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
-			fnSpy = sinon.spy(ODataPropertyBinding.prototype, "resumeInternal"),
+			fnSpy = this.spy(ODataPropertyBinding.prototype, "resumeInternal"),
 			sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
 	<Text id="id" text="{ID}"/>\
@@ -7333,6 +7335,135 @@ sap.ui.define([
 			return that.waitForChanges(assert, "resume");
 		}).then(function () {
 			assert.strictEqual(fnSpy.callCount, 0, "no #resumeInternal at all :-)");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table shows a number of cells and then we scroll down. See that property bindings
+	// do not recompute "static" information in vain.
+	// BCP: 156484 / 2023 (002075129500001564842023)
+	QUnit.test("BCP: 156484 / 2023 - improve performance of ODPrB#setContext", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			fnSpy = this.spy(ODataMetaModel.prototype, "fetchUI5Type"),
+			sView = '\
+<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
+	<Text id="id" text="{ID}"/>\
+	<Text id="name" text="{Name}"/>\
+	<Text id="age" text="{path:\'AGE\',type:\'sap.ui.model.odata.type.Int16\'\
+		,formatOptions:{\'minIntegerDigits\':3}}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=103", {
+				value : [{
+					AGE : 70,
+					ID : "0",
+					Name : "Frederic Fall"
+				}, {
+					AGE : 60,
+					ID : "1",
+					Name : "Jonathan Smith"
+				}, {
+					AGE : 50,
+					ID : "2",
+					Name : "Peter Burke"
+				}, {
+					AGE : 40,
+					ID : "3",
+					Name : "Carla Blue"
+				}, {
+					AGE : 30,
+					ID : "4",
+					Name : "John Field"
+				}, {
+					AGE : 20,
+					ID : "5",
+					Name : "Susan Bay"
+				}]
+			})
+			.expectChange("id", ["0", "1", "2"])
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
+			.expectChange("age", ["070", "060", "050"])
+			.expectChange("lastModifiedAt", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(fnSpy.callCount, 6, "initial #fetchUI5Type"); // was: 12
+
+			that.expectChange("id", [, "1", "2", "3"])
+				.expectChange("name", [, "Jonathan Smith", "Peter Burke", "Carla Blue"])
+				.expectChange("age", [, "060", "050", "040"]);
+
+			that.oView.byId("table").setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert, "scroll down 1x");
+		}).then(function () {
+			assert.strictEqual(fnSpy.callCount, 6, "no more #fetchUI5Type");
+
+			that.expectChange("id", [,,, "3", "4", "5"])
+				.expectChange("name", [,,, "Carla Blue", "John Field", "Susan Bay"])
+				.expectChange("age", [,,, "040", "030", "020"]);
+
+			that.oView.byId("table").setFirstVisibleRow(3);
+
+			return that.waitForChanges(assert, "scroll down 2x");
+		}).then(function () {
+			assert.strictEqual(fnSpy.callCount, 6, "no more #fetchUI5Type");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A field shows a property where the exact type depends on the parent entity.
+	// BCP: 156484 / 2023 (002075129500001564842023)
+	QUnit.test("BCP: 156484 / 2023 - type depends on parent entity", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			fnSpy = this.spy(ODataMetaModel.prototype, "fetchUI5Type"),
+			oText,
+			sView = '\
+<Text id="name" text="{Name}"/>', //TODO binding="{}"
+			that = this;
+
+		this.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oText = that.oView.byId("name");
+
+			assert.strictEqual(fnSpy.callCount, 0, "no #fetchUI5Type yet");
+
+			that.expectRequest("TEAMS('1')/Name", {value : "Team #1"})
+				.expectChange("name", "Team #1");
+
+			oText.setBindingContext(oModel.createBindingContext("/TEAMS('1')"));
+
+			return that.waitForChanges(assert, "TEAMS/Name");
+		}).then(function () {
+			var oType = oText.getBinding("text").getType();
+
+			assert.strictEqual(fnSpy.callCount, 1, "1st #fetchUI5Type");
+			assert.strictEqual(oType.getConstraints().maxLength, 40,
+				"Don't try this at home, kids!");
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				assert.throws(function () {
+					oType.validateValue("0123456789012345678901234567890123456789+");
+				}, /EnterTextMaxLength 40/);
+			});
+
+			that.expectRequest("EMPLOYEES('0')/Name", {value : "Frederic Fall"})
+				.expectChange("name", "Frederic Fall");
+
+			oText.setBindingContext(oModel.createBindingContext("/EMPLOYEES('0')"));
+
+			return that.waitForChanges(assert, "EMPLOYEES/Name");
+		}).then(function () {
+			var oType = oText.getBinding("text").getType();
+
+			assert.strictEqual(fnSpy.callCount, 2, "2nd #fetchUI5Type");
+			assert.strictEqual(oType.getConstraints().maxLength, 16,
+				"Don't try this at home, kids!");
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				assert.throws(function () {
+					oType.validateValue("0123456789ABCDEF+");
+				}, /EnterTextMaxLength 16/);
+			});
 		});
 	});
 
