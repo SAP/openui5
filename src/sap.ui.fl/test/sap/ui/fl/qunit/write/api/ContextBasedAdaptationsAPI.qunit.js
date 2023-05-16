@@ -55,60 +55,81 @@ sap.ui.define([
 		});
 	}
 
-	function verifyVariantsAndChanges(assert, oVariant, oCopiedVariant, bIsControlVariant, bIsChange) {
-		assert.strictEqual(oVariant.getChangeType(), oCopiedVariant.changeType, "there is the same change type");
-		assert.notStrictEqual(oVariant.getId(), oCopiedVariant.fileName, "there is a different filename");
-		assert.strictEqual(oVariant.getFileType(), oCopiedVariant.fileType, "there is the same file type");
-		assert.strictEqual(oVariant.getLayer(), oCopiedVariant.layer, "there is the same layer");
-		assert.strictEqual(oCopiedVariant.layer, Layer.CUSTOMER, "we have the layer as CUSTOMER");
-		assert.strictEqual(oVariant.getNamespace(), oCopiedVariant.namespace, "there is the same name space");
-		assert.strictEqual(oVariant.getSupportInformation().originalLanguage, oCopiedVariant.originalLanguage, "there is the same original language");
-		assert.strictEqual(oVariant.getFlexObjectMetadata().projectId, oCopiedVariant.projectId, "there is the same project id");
-		assert.strictEqual(oVariant.getFlexObjectMetadata().reference, oCopiedVariant.reference, "there is the same reference");
-		if (oVariant.getSupportInformation().user) {
-			assert.strictEqual(oVariant.getSupportInformation().generator, oCopiedVariant.support.generator, "there is the generator");
-			assert.strictEqual(oVariant.getSupportInformation().sapui5Version, oCopiedVariant.support.sapui5Version, "there is the same sapui5Version");
+	function verifyVariantsAndChanges(assert, oOriginal, oCopy, bIsControlVariant, bIsChange, aMappedVariantIds) {
+		assert.strictEqual(oOriginal.getChangeType(), oCopy.changeType, "there is the same change type");
+		assert.notStrictEqual(oOriginal.getId(), oCopy.fileName, "there is a different filename");
+		assert.strictEqual(oOriginal.getFileType(), oCopy.fileType, "there is the same file type");
+		assert.strictEqual(oOriginal.getLayer(), oCopy.layer, "there is the same layer");
+		assert.strictEqual(oCopy.layer, Layer.CUSTOMER, "we have the layer as CUSTOMER");
+		assert.strictEqual(oOriginal.getNamespace(), oCopy.namespace, "there is the same name space");
+		assert.strictEqual(oOriginal.getSupportInformation().originalLanguage, oCopy.originalLanguage, "there is the same original language");
+		assert.strictEqual(oOriginal.getFlexObjectMetadata().projectId, oCopy.projectId, "there is the same project id");
+		assert.strictEqual(oOriginal.getFlexObjectMetadata().reference, oCopy.reference, "there is the same reference");
+		if (oOriginal.getSupportInformation().user) {
+			assert.strictEqual(oOriginal.getSupportInformation().generator, oCopy.support.generator, "there is the generator");
+			assert.strictEqual(oOriginal.getSupportInformation().sapui5Version, oCopy.support.sapui5Version, "there is the same sapui5Version");
 		} else {
-			assert.deepEqual(oVariant.getSupportInformation(), oCopiedVariant.support, "there is the same support data");
+			assert.deepEqual(oOriginal.getSupportInformation(), oCopy.support, "there is the same support data");
 		}
-		assert.deepEqual(oVariant.getTexts(), oCopiedVariant.texts, "there is the same texts object");
+		var oOriginalTexts = oOriginal.getTexts();
+		assert.deepEqual(oOriginalTexts, oCopy.texts, "there is the same texts object");
+		assert.notStrictEqual(oOriginalTexts.variantName && oOriginalTexts.variantName.value, "Standard VENDOR", "Must never copy VENDOR variant");
+
+		var oOrigContent = oOriginal.getContent();
+		var oCopyContent = oCopy.content;
 
 		if (bIsChange) {
-			if (oCopiedVariant.selector.variantId) {
-				assert.strictEqual(oCopiedVariant.selector.persistencyKey, oVariant.getSelector().persistencyKey, "there is the same persistencyKey");
-				assert.notStrictEqual(oCopiedVariant.selector.variantId, oVariant.getSelector().variantId, "there is not the same variantId");
+			if (oCopy.selector.variantId) {
+				assert.strictEqual(oCopy.selector.persistencyKey, oOriginal.getSelector().persistencyKey, "there is the same persistencyKey");
+				assert.notStrictEqual(oCopy.selector.variantId, oOriginal.getSelector().variantId, "there is not the same variantId");
 			}
-			if (oCopiedVariant.content.defaultVariantName) {
-				assert.notStrictEqual(oCopiedVariant.selector.defaultVariantName, oVariant.getContent().defaultVariantName, "there is not the same defaultVariantName");
+			if (oCopyContent.defaultVariantName) { // V2 default change
+				if (oOrigContent.defaultVariantName === "id_1676895725424_1469_page") {
+					assert.equal(oCopyContent.defaultVariantName, oOrigContent.defaultVariantName, "set default content still points to not copied variant from VENDOR");
+				} else {
+					assert.ok(aMappedVariantIds[oOrigContent.defaultVariantName], "set Default change has a mapped variant");
+					assert.notStrictEqual(oCopyContent.defaultVariantName, oOrigContent.defaultVariantName, "there is not the same defaultVariantName");
+					assert.equal(oCopyContent.defaultVariantName, aMappedVariantIds[oOrigContent.defaultVariantName], "set default change mapped to created variant");
+				}
+			} else if (oCopyContent.defaultVariant) { // V4 default change
+				if (oOrigContent.defaultVariant === "id_1676895342319_007_flVariant") {
+					assert.equal(oCopyContent.defaultVariant, oOrigContent.defaultVariant, "set default content still points to not copied variant from VENDOR");
+				} else {
+					assert.ok(aMappedVariantIds[oOrigContent.defaultVariant], "set Default change has a mapped variant");
+					assert.notStrictEqual(oCopyContent.defaultVariant, oOrigContent.defaultVariant, "set default content remapped for copied variant from CUSTOMER");
+					assert.equal(oCopyContent.defaultVariant, aMappedVariantIds[oOrigContent.defaultVariant], "set default change mapped to created variant");
+				}
 			} else {
-				assert.deepEqual(oCopiedVariant.content, oVariant.getContent(), "there is the same content object");
+				assert.deepEqual(oCopyContent, oOrigContent, "there is the same content object");
 			}
-			assert.deepEqual(oCopiedVariant.dependentSelector, oVariant.getDependentSelectors(), "there is the same dependentSelector");
+			assert.deepEqual(oCopy.dependentSelector, oOriginal.getDependentSelectors(), "there is the same dependentSelector");
 		}
 
 		if (!bIsChange) {
-			assert.strictEqual(oVariant.getExecuteOnSelection(), oCopiedVariant.executeOnSelection, "there is the same executeOnSelection value");
-			assert.strictEqual(oVariant.getFavorite(), oCopiedVariant.favorite, "there is the same favorite value");
-			assert.strictEqual(oVariant.getStandardVariant(), oCopiedVariant.standardVariant, "there is the same standard variant value");
-			assert.notStrictEqual(oVariant.getVariantId(), oCopiedVariant.variantId, "there is the same variant id");
-			assert.deepEqual(oVariant.getContent(), oCopiedVariant.content, "there is the same content");
-			assert.deepEqual(oVariant.getContexts(), oCopiedVariant.contexts, "there is the same contexts");
-			assert.deepEqual(oVariant.getPersistencyKey(), oCopiedVariant.selector.persistencyKey, "there is the same selector");
+			assert.strictEqual(oOriginal.getExecuteOnSelection(), oCopy.executeOnSelection, "there is the same executeOnSelection value");
+			assert.strictEqual(oOriginal.getFavorite(), oCopy.favorite, "there is the same favorite value");
+			assert.strictEqual(oOriginal.getStandardVariant(), oCopy.standardVariant, "there is the same standard variant value");
+			assert.notStrictEqual(oOriginal.getVariantId(), oCopy.variantId, "there is the same variant id");
+			assert.deepEqual(oOrigContent, oCopyContent, "there is the same content");
+			assert.deepEqual(oOriginal.getContexts(), oCopy.contexts, "there is the same contexts");
 			if (bIsControlVariant) {
-				assert.strictEqual(oVariant.getVariantManagementReference(), oCopiedVariant.variantManagementReference, "there is the correct variant management reference");
-				assert.notStrictEqual(oVariant.getVariantReference(), oCopiedVariant.variantReference, "there is the correct variant reference");
+				assert.strictEqual(oOriginal.getVariantManagementReference(), oCopy.variantManagementReference, "there is the correct variant management reference");
+				assert.notStrictEqual(oOriginal.getVariantReference(), oCopy.variantReference, "there is the correct variant reference");
+			} else {
+				assert.deepEqual(oOriginal.getPersistencyKey(), oCopy.selector.persistencyKey, "there is the same selector");
 			}
 		}
 	}
 
-	function findVariantAndVerify(assert, aVariants, aCopiedChanges, bIsControlVariant) {
-		aVariants.forEach(function(oVariant) {
+	function findVariantAndVerify(assert, aOriginals, aCopiedChanges, bIsControlVariant, aMappedVariantIds) {
+		aOriginals.forEach(function(oOriginal) {
 			// find copied variant by text in list of copied variants
-			var oCopiedVariant = aCopiedChanges.find(function(oCopiedChange) {
-				return oCopiedChange.texts.variantName.value === oVariant.getName();
+			var oCopy = aCopiedChanges.find(function(oCopiedChange) {
+				return oCopiedChange.texts.variantName.value === oOriginal.getName();
 			});
-			assert.ok(oCopiedVariant !== undefined, "the correct copied comp variant is found");
-			verifyVariantsAndChanges(assert, oVariant, oCopiedVariant, bIsControlVariant);
+			aMappedVariantIds[oOriginal.sId] = oCopy.fileName;
+			assert.ok(oCopy !== undefined, "the correct copied comp variant is found");
+			verifyVariantsAndChanges(assert, oOriginal, oCopy, bIsControlVariant, false, {});
 		});
 	}
 
@@ -129,19 +150,15 @@ sap.ui.define([
 				var aChanges = aCustomerFlexObjects.filter(function(oFlexObject) {
 					return !oFlexObject.isA(sVariant);
 				});
-				if (aCompVariants.length > 0) {
-					findVariantAndVerify(assert, aCompVariants, aCopiedChangeDefinitions, false);
-				} else if (aControlVariants.length > 0) {
-					findVariantAndVerify(assert, aCompVariants, aCopiedChangeDefinitions, true);
-				}
-				if (aChanges.length > 0) {
-					aChanges.forEach(function(oChange) {
-						var oCopiedChange = aCopiedChangeDefinitions.find(function(oCopiedChange) {
-							return oCopiedChange.creation === oChange.getCreation();
-						});
-						verifyVariantsAndChanges(assert, oChange, oCopiedChange, false, true);
+				var aMappedVariantIds = {};
+				findVariantAndVerify(assert, aCompVariants, aCopiedChangeDefinitions, false, aMappedVariantIds);
+				findVariantAndVerify(assert, aControlVariants, aCopiedChangeDefinitions, true, aMappedVariantIds);
+				aChanges.forEach(function(oChange) {
+					var oCopiedChange = aCopiedChangeDefinitions.find(function(oCopiedChange) {
+						return oCopiedChange.creation === oChange.getCreation();
 					});
-				}
+					verifyVariantsAndChanges(assert, oChange, oCopiedChange, false, true, aMappedVariantIds);
+				});
 			});
 	}
 

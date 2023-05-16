@@ -291,10 +291,9 @@ sap.ui.define([
 	 */
 	function copyVariants(aVariants, aCopiedFlexObjects, mFileNames, sContextBasedAdaptationId) {
 		aVariants.forEach(function(oChange) {
-			var oCopiedVariant;
-			var sFileName = FlexUtils.createDefaultFileName(oChange.getId().split("_").pop());
 			// copy of CompVariant and FLVariant variants
-			oCopiedVariant = FlexObjectFactory.createFromFileContent(oChange.cloneFileContentWithNewId(sFileName));
+			var oCopiedVariant = FlexObjectFactory.createFromFileContent(oChange.cloneFileContentWithNewId());
+			var sFileName = oCopiedVariant.getId();
 			oCopiedVariant.setAdaptationId(sContextBasedAdaptationId);
 			aCopiedFlexObjects.push(oCopiedVariant);
 			mFileNames.set(oChange.getId(), sFileName);
