@@ -515,6 +515,7 @@ sap.ui.define([
 
 		this._oIntegrationRb = Core.getLibraryResourceBundle("sap.ui.integration");
 
+		this._iModelSizeLimit = 1000;
 		this._initModels();
 
 		this._oContentFactory = new ContentFactory(this);
@@ -603,11 +604,10 @@ sap.ui.define([
 	 * Initializes the internally used models.
 	 */
 	Card.prototype._initModels = function () {
-		this.setModel(new JSONModel());
+		var oModel = new JSONModel();
+		this.setModel(oModel);
 
 		INTERNAL_MODEL_NAMES.forEach(function (sModelName) {
-			var oModel;
-
 			switch (sModelName) {
 				case "context":
 					oModel = new ContextModel();
@@ -958,6 +958,14 @@ sap.ui.define([
 	Card.prototype.validateControls = function () {
 		this._validateContentControls(true);
 		return !this.getModel("messages").getProperty("/hasErrors");
+	};
+
+	/*
+	* @private
+	* @ui5-restricted sap.ui.integration
+	*/
+	Card.prototype.getModelSizeLimit = function () {
+		return this._iModelSizeLimit;
 	};
 
 	Card.prototype._validateContentControls = function (bShowValueState, bSkipFiringStateChangedEvent) {
@@ -1772,6 +1780,7 @@ sap.ui.define([
 			oModel = this.getModel(oDataSettings.name);
 		} else if (this._oDataProvider) {
 			oModel = new ObservableModel();
+			oModel.setSizeLimit(this.getModelSizeLimit());
 			this.setModel(oModel);
 		}
 
@@ -2526,7 +2535,9 @@ sap.ui.define([
 				return;
 			}
 
-			this.setModel(new ObservableModel(), sModelName);
+			var oModel = new ObservableModel();
+			oModel.setSizeLimit(this.getModelSizeLimit());
+			this.setModel(oModel, sModelName);
 			this._aCustomModels.push(sModelName);
 		}.bind(this));
 	};
@@ -2816,8 +2827,9 @@ sap.ui.define([
 		if (oData) {
 			each(oData, function (sModelName, oModelData) {
 				var oModel = new JSONModel(oModelData);
+				oModel.setSizeLimit(this.getModelSizeLimit());
 				oChildCard.setModel(oModel, sModelName);
-			});
+			}.bind(this));
 		}
 
 		if (typeof vManifest === "string") {
