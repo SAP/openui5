@@ -443,7 +443,10 @@ sap.ui.define([
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 		this.updateSelectAllCheckbox();
-		this._adaptBlockLayer();
+
+		if (!this.isPropertyInitial("showOverlay")) {
+			this._handleOverlay();
+		}
 
 		if (this._bFirePopinChanged) {
 			this._firePopinChangedEvent();
@@ -484,26 +487,31 @@ sap.ui.define([
 		return this;
 	};
 
-	Table.prototype._adaptBlockLayer = function(bLastTry) {
-		if (!this.getShowOverlay()) {
-			return;
-		}
-
-		var oBlockLayer = this.getDomRef("blockedLayer");
-		if (oBlockLayer) {
-			var aValidAttributes = ["id", "class", "tabindex"];
-			oBlockLayer.getAttributeNames().forEach(function(sAttribute) {
-				if (!aValidAttributes.includes(sAttribute)) {
-					oBlockLayer.removeAttribute(sAttribute);
-				}
-			});
-			oBlockLayer.setAttribute("role", "region");
-			oBlockLayer.setAttribute("aria-labelledby", [
-				TableRenderer.getAriaLabelledBy(this),
-				TableRenderer.getAriaAnnouncement("TABLE_INVALID")
-			].join(" ").trimLeft());
-		} else if (!bLastTry) {
-			setTimeout(this._adaptBlockLayer.bind(this, true));
+	Table.prototype._handleOverlay = function() {
+		var $Overlay = this.$("overlay");
+		if (this.getShowOverlay()) {
+			var oDomRef = this.getDomRef();
+			if (!$Overlay[0]) {
+				$Overlay = jQuery("<div></div>", {
+					"id": this.getId() + "-overlay",
+					"class": "sapUiOverlay sapMTableOverlay",
+					"role": "region",
+					"tabindex": "0",
+					"aria-labelledby": [
+						TableRenderer.getAriaLabelledBy(this),
+						TableRenderer.getAriaAnnouncement("TABLE_INVALID")
+					].join(" ").trimLeft()
+				}).appendTo(oDomRef);
+			}
+			if (oDomRef.contains(document.activeElement)) {
+				this._bIgnoreFocusIn = true;
+				$Overlay.trigger("focus");
+			}
+		} else {
+			if (document.activeElement == $Overlay[0]) {
+				this.focus();
+			}
+			$Overlay.remove();
 		}
 	};
 
@@ -529,9 +537,11 @@ sap.ui.define([
 	};
 
 	Table.prototype.setShowOverlay = function(bShow) {
-		this.setProperty("showOverlay", bShow, true);
-		this.setBlocked(this.getShowOverlay());
-		this._adaptBlockLayer();
+		var bSuppressInvalidate = (this.getDomRef() != null);
+		this.setProperty("showOverlay", bShow, bSuppressInvalidate);
+		if (bSuppressInvalidate) {
+			this._handleOverlay();
+		}
 		return this;
 	};
 
@@ -1152,6 +1162,12 @@ sap.ui.define([
 
 	// Handle shift-tab key
 	Table.prototype.onsaptabprevious = function(oEvent) {
+		if (oEvent.target.id === this.getId("overlay")) {
+			this._bIgnoreFocusIn = true;
+			this.$().attr("tabindex", "-1").trigger("focus").removeAttr("tabindex");
+			return;
+		}
+
 		if (oEvent.isMarked() || this.getKeyboardMode() == ListKeyboardMode.Edit) {
 			return;
 		}
@@ -1218,6 +1234,9 @@ sap.ui.define([
 			this._setFirstLastVisibleCells(oTarget);
 		} else if (oTarget.id == this.getId("nodata")) {
 			this._setFirstLastVisibleCells(oTarget);
+		} else if (!this._bIgnoreFocusIn && this.getShowOverlay()) {
+			this._bIgnoreFocusIn = true;
+			this.$("overlay").trigger("focus");
 		}
 
 		ListBase.prototype.onfocusin.call(this, oEvent);

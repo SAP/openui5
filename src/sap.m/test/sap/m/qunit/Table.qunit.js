@@ -244,7 +244,6 @@ sap.ui.define([
 	QUnit.module("Display");
 
 	QUnit.test("Basic Properties", function(assert) {
-		var done = assert.async();
 		var sut = createSUT(false, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -254,42 +253,38 @@ sap.ui.define([
 
 		assert.ok(sut.$().find("th").hasClass("sapMTableTH"), ".sapMTableTH added to 'th' elements");
 
-		assert.ok(!sut.$().children().hasClass("sapUiBlockLayer"), "Table overlay is not rendered as showOverlay=false");
+		assert.ok(!sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is not rendered as showOverlay=false");
 		sut.setShowOverlay(true);
 		Core.applyChanges();
-		var $BL = sut.$("blockedLayer");
+		var $Overlay = sut.$("overlay");
 		var sAriaLabelledBy = sut.getHeaderToolbar().getContent()[0].getId() + " " + InvisibleText.getStaticId("sap.m", "TABLE_INVALID");
-		assert.ok($BL.hasClass("sapUiBlockLayer"), "Table overlay is rendered as showOverlay=true");
-		assert.ok($BL.hasClass("sapUiBlockLayerOnly"), "Table overlay is rendered as showOverlay=true");
-		assert.equal($BL.attr("role"), "region", "Table overlay role is correct");
-		assert.equal($BL.attr("aria-labelledby"), sAriaLabelledBy, "aria-labelledby valid for overlay");
+		assert.ok($Overlay.hasClass("sapUiOverlay"), "Table overlay is rendered as showOverlay=true");
+		assert.ok($Overlay.hasClass("sapMTableOverlay"), "Table overlay is rendered as showOverlay=true");
+		assert.equal($Overlay.attr("role"), "region", "Table overlay role is correct");
+		assert.equal($Overlay.attr("aria-labelledby"), sAriaLabelledBy, "aria-labelledby valid for overlay");
 
 		sut.invalidate();
 		Core.applyChanges();
-		assert.notOk(sut.getDomRef("blockedLayer").getAttribute("aria-labelledby"), "There is no aria-labelledby for overlay after rerendering. It is not yet adapted");
 
-		setTimeout(function() {
-			$BL = sut.$("blockedLayer");
-			assert.ok($BL.hasClass("sapUiBlockLayer"), "Table overlay is rerendered as showOverlay=true");
-			assert.ok($BL.hasClass("sapUiBlockLayerOnly"), "Table overlay is rerendered as showOverlay=true");
-			assert.equal($BL.attr("role"), "region", "Table overlay role is correct after rerendering");
-			assert.equal($BL.attr("aria-labelledby"), sAriaLabelledBy, "aria-labelledby valid for overlay after rerendering");
+		$Overlay = sut.$("overlay");
+		assert.ok($Overlay.attr("aria-labelledby"), "There is already aria-labelledby for overlay after rerendering.");
+		assert.ok($Overlay.hasClass("sapUiOverlay"), "Table overlay is rerendered as showOverlay=true");
+		assert.ok($Overlay.hasClass("sapMTableOverlay"), "Table overlay is rerendered as showOverlay=true");
+		assert.equal($Overlay.attr("role"), "region", "Table overlay role is correct after rerendering");
+		assert.equal($Overlay.attr("aria-labelledby"), sAriaLabelledBy, "aria-labelledby valid for overlay after rerendering");
 
-			sut.setShowOverlay(false);
-			Core.applyChanges();
-			assert.notOk(sut.$("blockedLayer")[0], "Table overlay is removed as showOverlay=false");
+		sut.setShowOverlay(false);
+		Core.applyChanges();
+		assert.notOk(sut.getDomRef("overlay"), "Table overlay is removed as showOverlay=false");
 
-			sut.setVisible(false);
-			Core.applyChanges();
-			assert.ok(sut.$().length === 0, "Table has been removed from DOM");
+		sut.setVisible(false);
+		Core.applyChanges();
+		assert.ok(sut.$().length === 0, "Table has been removed from DOM");
 
-			assert.equal(sut.getItemsContainerDomRef(), sut.$("tblBody")[0]);
+		assert.equal(sut.getItemsContainerDomRef(), sut.$("tblBody")[0]);
 
-			//clean up
-			sut.destroy();
-
-			done();
-		});
+		//clean up
+		sut.destroy();
 	});
 
 	QUnit.test("Column Display", function(assert) {
@@ -1255,6 +1250,30 @@ sap.ui.define([
 		assert.ok(ListBase.getInvisibleText().getText().includes("Header Row"));
 		assert.equal(document.activeElement, $tblHeader[0]);
 
+		sut.setShowOverlay(true);
+		assert.equal(document.activeElement, sut.getDomRef("overlay"));
+
+		sut.setShowOverlay(false);
+		assert.equal(document.activeElement, $tblHeader[0]);
+
+		sut.setVisible(false).setShowOverlay(true);
+		Core.applyChanges();
+		assert.notOk(sut.getDomRef("overlay"), "There is no overlay for invisible table");
+
+		sut.setVisible(true);
+		Core.applyChanges();
+		assert.ok(sut.getDomRef("overlay"), "Overlay is rendered for the visible table");
+
+		sut.$("tblHeader").trigger("focus");
+		assert.ok(document.activeElement, sut.getDomRef("overlay"));
+
+		var fnFocusSpy = sinon.spy(jQuery.fn, "trigger");
+		qutils.triggerKeydown(sut.$("overlay"), KeyCodes.TAB, true, false, false);
+		assert.ok(fnFocusSpy.calledWith("focus"), "table is focused");
+		assert.equal(fnFocusSpy.getCalls().pop().thisValue[0].id, sut.getId(), "table is focused");
+		assert.notOk(sut.$().attr("tabindex"), "tab index is reverted");
+
+		fnFocusSpy.restore();
 		sut.destroy();
 	});
 
