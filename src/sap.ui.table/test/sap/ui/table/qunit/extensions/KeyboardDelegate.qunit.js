@@ -1117,6 +1117,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.test("Grouped", function(assert) {
 		this.oTable.setEnableGrouping(true);
 		this.oTable.setGroupBy(this.oTable._getVisibleColumns()[0]);

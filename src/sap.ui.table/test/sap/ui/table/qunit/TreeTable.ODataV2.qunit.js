@@ -135,7 +135,7 @@ sap.ui.define([
 
 			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
 				"Test that only one node is rendered, State: collapsed");
-			assert.ok(this.oTable.getCollapseRecursive(), "CollapseRecursive is true (default)");
+			assert.ok(oBinding.getCollapseRecursive(), "CollapseRecursive is true (default)");
 			// expand first node, 2 change events, 1 for expand, 1 when data is loaded
 			attachEventHandler(this.oTable, 1, fnHandler2, this);
 			this.oTable.expand(0);
@@ -648,8 +648,7 @@ sap.ui.define([
 
 			TableQUnitUtils.setDefaultSettings({
 				id: "table",
-				models: this.oDataModel,
-				rootLevel: 1
+				models: this.oDataModel
 			});
 
 			return this.oDataModel.metadataLoaded();
@@ -767,7 +766,8 @@ sap.ui.define([
 					}
 				},
 				parameters: {
-					numberOfExpandedLevels: 2
+					numberOfExpandedLevels: 2,
+					rootLevel: 1
 				}
 			}
 		});

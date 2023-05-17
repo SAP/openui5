@@ -446,6 +446,9 @@ sap.ui.define([
 		TableUtils.Grouping.showGroupMenuButton.restore();
 	});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.module("sap.ui.table.Table: Experimental Grouping", {
 		beforeEach: function() {
 			createTables();
@@ -490,6 +493,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.test("Activate / Deactivate", function(assert) {
 		var oBinding = oTable.getBinding();
 		var that = this;
@@ -523,6 +529,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.test("Collapse / Expand", function(assert) {
 		var that = this;
 

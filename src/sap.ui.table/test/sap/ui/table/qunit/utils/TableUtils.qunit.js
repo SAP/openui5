@@ -640,12 +640,18 @@ sap.ui.define([
 		assert.strictEqual(oInfo.row, null, "Row not found");
 		assert.strictEqual(oInfo.column, null, "Column not found");
 		assert.strictEqual(oInfo.cell, null, "Cell not found");
+	});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
+	QUnit.test("getRowColCell - grouping", function(assert) {
+		oTable.getColumns()[2].setVisible(false);
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable.getColumns()[1]);
 		oCore.applyChanges();
 
-		oInfo = TableUtils.getRowColCell(oTable, 1, 0, false);
+		var oInfo = TableUtils.getRowColCell(oTable, 1, 0, false);
 		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 2");
 		assert.strictEqual(oInfo.column, oTable.getColumns()[0], "Column 1");
 		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 2,1");

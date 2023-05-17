@@ -61,15 +61,6 @@ sap.ui.define([
 			};
 			this.oColumnSelectEventInfo = oColumnSelectEventInfo;
 
-			var oCellContextMenuEventInfo = {
-				name: "CellContextMenu",
-				lastCallParameters: null,
-				handler: sinon.spy(function(oEvent) {
-					oCellContextMenuEventInfo.lastCallParameters = oEvent.mParameters;
-				})
-			};
-			this.oCellContextMenuEventInfo = oCellContextMenuEventInfo;
-
 			var oBeforeOpenContextMenuEventInfo = {
 				name: "BeforeOpenContextMenu",
 				lastCallParameters: null,
@@ -83,7 +74,6 @@ sap.ui.define([
 			createTables();
 			initRowActions(oTable, 1, 1);
 			oTable.attachColumnSelect(this.oColumnSelectEventInfo.handler);
-			oTable.attachCellContextmenu(this.oCellContextMenuEventInfo.handler);
 			oTable.attachBeforeOpenContextMenu(this.oBeforeOpenContextMenuEventInfo.handler);
 		},
 		afterEach: function() {
@@ -100,7 +90,6 @@ sap.ui.define([
 		resetSpies: function() {
 			[
 				this.oColumnSelectEventInfo.handler,
-				this.oCellContextMenuEventInfo.handler,
 				this.oBeforeOpenContextMenuEventInfo.handler,
 				this.oUtilsOpenColumnContextMenu,
 				this.oUtilsCloseColumnContextMenu,
@@ -126,33 +115,7 @@ sap.ui.define([
 		},
 		assertNoEventsCalled: function(assert) {
 			this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
-			this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 			this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
-		},
-		assertAllColumnContextMenusClosed: function(assert) {
-			oTable.getColumns().forEach(function(oColumn) {
-				this.assertColumnContextMenuOpen(assert, oColumn, false);
-			}.bind(this));
-		},
-		assertColumnContextMenuOpen: function(assert, oColumn, bOpen) {
-			var oMenu = oColumn.getAggregation("menu");
-			var bMenuOpen = oMenu.bOpen;
-			assert.strictEqual(bMenuOpen, bOpen,
-				"The column context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (oColumn.getIndex() + 1) + ")");
-		},
-		assertNoColumnContextMenusExist: function(assert) {
-			oTable.getColumns().forEach(function(oColumn) {
-				this.assertColumnContextMenuExists(assert, oColumn, false);
-			}.bind(this));
-		},
-		assertColumnContextMenuExists: function(assert, oColumn, bExists) {
-			assert.strictEqual(oColumn.getAggregation("menu"), null,
-				"The column menu does" + (bExists ? " " : " not ") + "exist (Column: " + (oColumn.getIndex() + 1) + ")");
-		},
-		assertNoColumnHeaderCellMenusExist: function(assert) {
-			oTable.getColumns().forEach(function(oColumn) {
-				this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
-			}.bind(this));
 		},
 		assertColumnHeaderCellMenuExists: function(assert, oColumn, bExists) {
 			var $Column = oColumn.$();
@@ -176,28 +139,12 @@ sap.ui.define([
 			assert.strictEqual(bExists, bResizeButtonExists,
 				"The resize button does" + (bExists ? " " : " not ") + "exist (Column: " + oColumn.getIndex() + ")");
 		},
-		assertContentCellContextMenuOpen: function(assert, iRowIndex, iColumnIndex, bOpen) {
-			var bMenuOpen = oTable._oCellContextMenu && oTable._oCellContextMenu.bOpen;
-			var oCellElement = TableUtils.getCell(oTable, oTable.getRows()[iRowIndex].getCells()[iColumnIndex].getDomRef())[0];
-			var bMenuOpenAtSpecifiedCell = bMenuOpen && oTable._oCellContextMenu.oOpenerRef === oCellElement;
-			assert.strictEqual(bMenuOpenAtSpecifiedCell, bOpen,
-				"The data cell context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (iColumnIndex + 1)
-				+ ", Row: " + (iRowIndex + 1) + ")");
-		},
 		assertDefaultContentCellContextMenuExists: function(assert, bExists) {
 			if (bExists) {
 				assert.notEqual(oTable._oCellContextMenu, undefined, "The content cell context menu does exist");
 			} else {
 				assert.equal(oTable._oCellContextMenu, undefined, "The content cell context menu does not exist");
 			}
-		},
-		assertCustomContextMenuOpen: function(assert, bOpen) {
-			var oMenu = oTable.getContextMenu();
-			var bMenuOpen = oMenu.bOpen === true;
-			assert.strictEqual(bMenuOpen, bOpen, "The custom context menu is" + (bOpen ? " " : " not ") + "open");
-		},
-		assertFirstMenuItemHovered: function(assert, oMenu) {
-			assert.strictEqual(oMenu.oHoveredItem, oMenu.getItems()[0], "The first item in the menu is hovered");
 		}
 	});
 
@@ -244,7 +191,6 @@ sap.ui.define([
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
 			column: oColumnA
 		});
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 		this.resetSpies();
 
@@ -257,7 +203,6 @@ sap.ui.define([
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
 			column: oColumnB
 		});
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 		this.resetSpies();
 
@@ -274,7 +219,6 @@ sap.ui.define([
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
 			column: oColumnA
 		});
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 		this.resetSpies();
 
@@ -291,7 +235,6 @@ sap.ui.define([
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
 			column: oColumnB
 		});
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 		this.resetSpies();
 
@@ -329,7 +272,6 @@ sap.ui.define([
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
 			column: oColumnA
 		});
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 		this.resetSpies();
 
@@ -349,7 +291,6 @@ sap.ui.define([
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, true, {
 			column: oColumnA
 		});
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 
 		Device.system.desktop = bOriginalDeviceSystemDesktop;
@@ -357,11 +298,8 @@ sap.ui.define([
 
 	QUnit.test("openContextMenu - Content cells", function(assert) {
 		var oDomRef;
-		var aColumns = oTable.getColumns();
 		var aRows = oTable.getRows();
-		var oColumnA = aColumns[0];
 		var oCellA = aRows[0].getCells()[0];
-		var oColumnB = aColumns[1];
 		var oCellB = aRows[0].getCells()[1];
 		var oCustomContextMenu = new MenuM({
 			items: [
@@ -377,14 +315,6 @@ sap.ui.define([
 		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0], undefined),
 			"_openContentCellContextMenu was called");
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
-			rowIndex: 0,
-			columnIndex: 0,
-			columnId: oColumnA.getId(),
-			cellControl: oCellA,
-			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
-		});
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: 0,
@@ -401,14 +331,6 @@ sap.ui.define([
 		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0], oFakeEventObject),
 			"_openContentCellContextMenu was called");
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
-			rowIndex: 0,
-			columnIndex: 1,
-			columnId: oColumnB.getId(),
-			cellControl: oCellB,
-			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
-		});
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: 1,
@@ -426,14 +348,6 @@ sap.ui.define([
 		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
 		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
-			rowIndex: 0,
-			columnIndex: 0,
-			columnId: oColumnA.getId(),
-			cellControl: oCellA,
-			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
-		});
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 		this.resetSpies();
 
@@ -447,14 +361,6 @@ sap.ui.define([
 		assert.ok(this.oUtilsApplyColumnHeaderCellMenu.notCalled, "_applyColumnHeaderCellMenu was not called");
 		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
-			rowIndex: 0,
-			columnIndex: 0,
-			columnId: oColumnA.getId(),
-			cellControl: oCellA,
-			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
-		});
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: 0,
@@ -469,7 +375,6 @@ sap.ui.define([
 		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, oDomRef, undefined),
 			"_openContentCellContextMenu was called");
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: null,
@@ -486,7 +391,6 @@ sap.ui.define([
 		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, oDomRef, oFakeEventObject),
 			"_openContentCellContextMenu was called");
 		this.assertEventCalled(assert, this.oColumnSelectEventInfo, false);
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: null,
@@ -1066,5 +970,185 @@ sap.ui.define([
 		assert.ok(this.oUtilsRemoveColumnHeaderCellMenu.calledOnceWithExactly(oTable),
 			"_removeColumnHeaderCellMenu was called when the column header cell has lost the focus");
 		this.assertColumnHeaderCellMenuExists(assert, oColumn, false);
+	});
+
+	/**
+	 * @deprecated As of version 1.54
+	 */
+	QUnit.module("Context Menus - cellContextmenu", {
+		before: function() {
+			var oCellContextMenuEventInfo = {
+				name: "CellContextMenu",
+				lastCallParameters: null,
+				handler: sinon.spy(function(oEvent) {
+					oCellContextMenuEventInfo.lastCallParameters = oEvent.mParameters;
+				})
+			};
+			this.oCellContextMenuEventInfo = oCellContextMenuEventInfo;
+		},
+		beforeEach: function() {
+			createTables();
+			oTable.attachCellContextmenu(this.oCellContextMenuEventInfo.handler);
+		},
+		afterEach: function() {
+			destroyTables();
+			this.oCellContextMenuEventInfo.handler.resetHistory();
+		},
+		assertEventCalled: function(assert, oEventInfo, bCalled, mExpectedParameters) {
+			if (bCalled) {
+				assert.ok(oEventInfo.handler.calledOnce, oEventInfo.name + ": The event handler has been called");
+				assert.deepEqual(oEventInfo.lastCallParameters, Object.assign({id: oTable.getId()}, mExpectedParameters),
+					oEventInfo.name + ": The event object contains the correct parameters");
+			} else {
+				assert.ok(oEventInfo.handler.notCalled, oEventInfo.name + ": The event handler has not been called");
+			}
+
+			oEventInfo.handler.resetHistory();
+			oEventInfo.lastCallParameters = null;
+		}
+	});
+
+	/**
+	 * @deprecated As of version 1.54
+	 */
+	QUnit.test("openContextMenu - Header cells", function(assert) {
+		var oDomRef;
+		var oColumnA = oTable.getColumns()[0];
+		var oColumnB = oTable.getColumns()[1];
+		var bOriginalDeviceSystemDesktop = Device.system.desktop;
+
+		Device.system.desktop = true;
+		oColumnA.setFilterProperty("A");
+		oColumnB.setFilterProperty("A");
+
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+
+		oDomRef = oColumnB.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+
+		// Prevent the default action. The context menu should not be opened.
+		oTable.attachEventOnce("columnSelect", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+
+		// Make the first column invisible and open the menu of column 2 (which is not the first visible column).
+		oColumnA.setVisible(false);
+		oCore.applyChanges();
+
+		oDomRef = oColumnB.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+
+		oColumnA.setVisible(true);
+		oCore.applyChanges();
+
+		Device.system.desktop = false;
+
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+
+		oTable.attachEventOnce("columnSelect", function(oEvent) {
+			oEvent.preventDefault();
+		});
+		oDomRef = oColumnA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+
+		Device.system.desktop = bOriginalDeviceSystemDesktop;
+	});
+
+	/**
+	 * @deprecated As of version 1.54
+	 */
+	QUnit.test("openContextMenu - Content cells", function(assert) {
+		var oDomRef;
+		var aColumns = oTable.getColumns();
+		var aRows = oTable.getRows();
+		var oColumnA = aColumns[0];
+		var oCellA = aRows[0].getCells()[0];
+		var oColumnB = aColumns[1];
+		var oCellB = aRows[0].getCells()[1];
+		var oCustomContextMenu = new MenuM({
+			items: [
+				new MenuItemM({text: "ContextMenuItem"})
+			]
+		});
+		var oFakeEventObject = {};
+
+		oDomRef = oCellA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), false, "Returned false");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 0,
+			columnId: oColumnA.getId(),
+			cellControl: oCellA,
+			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
+			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
+		});
+		this.oCellContextMenuEventInfo.handler.resetHistory();
+
+		oTable.setContextMenu(oCustomContextMenu);
+		oDomRef = oCellB.getDomRef();
+		oFakeEventObject.target = oDomRef;
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oCellB.$(), oFakeEventObject), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 1,
+			columnId: oColumnB.getId(),
+			cellControl: oCellB,
+			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
+			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
+		});
+		this.oCellContextMenuEventInfo.handler.resetHistory();
+
+		oTable.attachEventOnce("cellContextmenu", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		oDomRef = oCellA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 0,
+			columnId: oColumnA.getId(),
+			cellControl: oCellA,
+			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
+			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
+		});
+		this.oCellContextMenuEventInfo.handler.resetHistory();
+
+		oTable.attachEventOnce("beforeOpenContextMenu", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		oDomRef = oCellA.getDomRef();
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
+			rowIndex: 0,
+			columnIndex: 0,
+			columnId: oColumnA.getId(),
+			cellControl: oCellA,
+			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
+			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
+		});
+		this.oCellContextMenuEventInfo.handler.resetHistory();
+
+		oDomRef = getRowHeader(0)[0];
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
+
+		oTable.setContextMenu(null);
+		oDomRef = getRowAction(0)[0];
+		oFakeEventObject.target = oDomRef;
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef, oFakeEventObject), false, "Returned false");
+		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 	});
 });
