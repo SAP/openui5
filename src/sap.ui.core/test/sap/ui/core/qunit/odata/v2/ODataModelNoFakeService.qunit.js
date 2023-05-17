@@ -483,23 +483,25 @@ sap.ui.define([
 	sUrl : "~url",
 	oExpected : {
 		bAsync : true,
+		mHeaders : {},
 		sMethod : "GET",
 		bUpdateAggregatedMessages : false,
 		bUseOData : true
 	}
 }, {
 	bAsync : undefined,
-	mHeaders : {"Content-Type" :  "~contenttype"},
+	mHeaders : {"Content-Type" : "~contenttype"},
 	sMessageScope : MessageScope.BusinessObject,
 	sMethod : "MERGE",
 	sUrl : "~url",
 	bUseBatch : true,
 	bWithCredentials : "{boolean} bWithCredentials",
 	oExpected : {
-		mAdditionalHeaders : {
+		bAsync : true,
+		mHeaders : {
+			"Content-Type" : "~contenttype",
 			"sap-message-scope" : MessageScope.BusinessObject
 		},
-		bAsync : true,
 		sMethod : "MERGE",
 		bUpdateAggregatedMessages : true,
 		bUseCredentials : true,
@@ -507,19 +509,39 @@ sap.ui.define([
 	}
 }, {
 	bAsync : undefined,
-	mHeaders : {"Foo" :  "bar"},
+	mHeaders : {"Content-Type" : "~contenttype", "sap-messages" : "transientOnly"},
+	sMessageScope : MessageScope.BusinessObject,
+	sMethod : "MERGE",
+	sUrl : "~url",
+	bUseBatch : true,
+	bWithCredentials : "{boolean} bWithCredentials",
+	oExpected : {
+		bAsync : true,
+		mHeaders : {
+			"Content-Type" : "~contenttype",
+			"sap-messages" : "transientOnly"
+		},
+		sMethod : "MERGE",
+		bUpdateAggregatedMessages : true,
+		bUseCredentials : true,
+		bUseGeneratedUID : true
+	}
+}, {
+	bAsync : undefined,
+	mHeaders : {"Foo" : "bar"},
 	bJSON : true,
 	sMessageScope : MessageScope.BusinessObject,
 	sMethod : "MERGE",
 	sUrl : "~url",
 	bWithCredentials : "{boolean} bWithCredentials",
 	oExpected : {
-		mAdditionalHeaders : {
-			"Content-Type" : "application/json",
-			"sap-message-scope" : MessageScope.BusinessObject,
-			"x-http-method" :  "MERGE"
-		},
 		bAsync : true,
+		mHeaders : {
+			"Content-Type" : "application/json",
+			"Foo" : "bar",
+			"sap-message-scope" : MessageScope.BusinessObject,
+			"x-http-method" : "MERGE"
+		},
 		sMethod : "POST",
 		bUpdateAggregatedMessages : true,
 		bUseCredentials : true
@@ -531,26 +553,28 @@ sap.ui.define([
 	sMethod : "~method",
 	sUrl : "~url/$count",
 	oExpected : {
-		mAdditionalHeaders : {
-			"Accept" :  "text/plain, */*;q=0.5",
+		bAsync : false,
+		mHeaders : {
+			"Accept" : "text/plain, */*;q=0.5",
 			"Content-Type" : "application/atom+xml",
+			"Foo" : "bar",
 			"If-Match" : "~etag"
 		},
-		bAsync : false,
 		sMethod : "~method",
 		bUpdateAggregatedMessages : false
 	}
 }, {
 	bAsync : false,
 	sETag : "~etag",
-	mHeaders : {"Foo" :  "bar"},
+	mHeaders : {"Foo" : "bar"},
 	sMethod : "DELETE",
 	sUrl : "~url",
 	oExpected : {
-		mAdditionalHeaders : {
+		bAsync : false,
+		mHeaders : {
+			"Foo" : "bar",
 			"If-Match" : "~etag"
 		},
-		bAsync : false,
 		sMethod : "DELETE",
 		bUpdateAggregatedMessages : false
 	}
@@ -562,8 +586,7 @@ sap.ui.define([
 			+ ", bUpdateAggregatedMessages: " + bUpdateAggregatedMessages;
 
 	QUnit.test(sTitle, function (assert) {
-		var mExpectedHeaders = Object.assign({}, oFixture.mHeaders,
-				oFixture.oExpected.mAdditionalHeaders),
+		var mExpectedHeaders = oFixture.oExpected.mHeaders,
 			oModel = {
 				_createRequestID : function () {},
 				// members
@@ -592,7 +615,9 @@ sap.ui.define([
 				user : "~user"
 			};
 
-		if (oFixture.sMessageScope === MessageScope.BusinessObject && !bIsMessageScopeSupported) {
+		if (!oFixture.mHeaders["sap-messages"]
+				&& oFixture.sMessageScope === MessageScope.BusinessObject
+				&& !bIsMessageScopeSupported) {
 			this.oLogMock.expects("error")
 				.withExactArgs("Message scope 'sap.ui.model.odata.MessageScope.BusinessObject' is"
 					+ " not supported by the service: ~serviceUrl", undefined,

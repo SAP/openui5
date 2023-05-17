@@ -3961,10 +3961,6 @@ sap.ui.define([
 			oGroupEntry = oRequestGroup.map[sRequestKey];
 			var oStoredRequest = oGroupEntry.request;
 			oRequest.deepPath = oStoredRequest.deepPath;
-			if (this.sMessageScope === MessageScope.BusinessObject) {
-				oRequest.headers["sap-message-scope"] = oStoredRequest.headers["sap-message-scope"];
-			}
-
 			if (oGroupEntry.bRefreshAfterChange === undefined) { // If not already defined, overwrite with new flag
 				oGroupEntry.bRefreshAfterChange = bRefreshAfterChange;
 			}
@@ -4966,14 +4962,13 @@ sap.ui.define([
 			mHeaders["Accept"] = "text/plain, */*;q=0.5";
 		}
 
-		// format handling
 		if (sMethod === "MERGE" && !this.bUseBatch) {
 			mHeaders["x-http-method"] = "MERGE";
 			sMethod = "POST";
 		}
 
-		// deep path handling
-		if (this.sMessageScope === MessageScope.BusinessObject) {
+		if (this.sMessageScope === MessageScope.BusinessObject
+				&& mHeaders["sap-messages"] !== "transientOnly") {
 			if (this.bIsMessageScopeSupported) {
 				mHeaders["sap-message-scope"] = this.sMessageScope;
 			} else {
