@@ -1,10 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/UI5Date"
-], function(Configuration, Islamic, UI5Date) {
+], function(Log, Configuration, Islamic, UI5Date) {
 	"use strict";
+	/* eslint-disable camelcase */
 
 	//@formatter:off
 	//Next customization MUST NOT overlap the test data defined for civil calendar (see oCivilTestData variable).
@@ -163,25 +165,24 @@ sap.ui.define([
 	//1. Instance related
 	QUnit.module("sap.ui.core.date.Islamic", {
 		beforeEach: function () {
-			this.sandbox = sinon.sandbox.create();
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
 			// set to "1" and it will fall-back to "A"
-			this.sandbox.stub(Configuration.getFormatSettings(), "getLegacyDateFormat")
-				.returns("1");
-			this.oSpyFormatSettings = this.sandbox.stub(Configuration.getFormatSettings(),
-				"getLegacyDateCalendarCustomizing");
-			this.oSpyFormatSettings.returns(customizingInfo);
-		},
-		afterEach: function () {
-			this.sandbox.restore();
+			this.stub(Configuration.getFormatSettings(), "getLegacyDateFormat").returns("1");
+			this.stub(Configuration.getFormatSettings(), "getLegacyDateCalendarCustomizing")
+				.returns(customizingInfo);
 		}
 	});
 
 	QUnit.test("with no arguments", function (assert) {
-		var clock = sinon.useFakeTimers(); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
+		var clock = sinon.useFakeTimers(); // 1, January 1970 (UTC) = 22 Shawwal 1389(22.10.1389)
 		var oIslamicDate = new Islamic(); //22 Shawwal 1389(22.10.1389)
 		var now = UI5Date.getInstance();// 1, January 1970
-		verifyDate(assert, "Constructor with no parameters must always return the Islamic date corresponding to the current " +
-		"Gregorian one.", oIslamicDate, 1389, 9, 22, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+		verifyDate(assert, "Constructor with no parameters must always return the Islamic date"
+				+ " corresponding to the current Gregorian one.",
+			 oIslamicDate, 1389, 9, 22, now.getUTCDay(), now.getUTCHours(), now.getUTCMinutes(),
+			 now.getUTCSeconds(), now.getUTCMilliseconds(), true);
 		clock.restore();
 	});
 
@@ -189,27 +190,39 @@ sap.ui.define([
 		var oIslamicDate;
 
 		oIslamicDate = new Islamic("invalid islamic date timestamp");
-		assert.ok(isInvalid(oIslamicDate), "Constructor with invalid string as timestamp must return an invalid date");
+		assert.ok(isInvalid(oIslamicDate),
+			"Constructor with invalid string as timestamp must return an invalid date");
 
 		oIslamicDate = new Islamic({});
-		assert.ok(isInvalid(oIslamicDate), "Constructor with object as parameter must return an invalid date");
+		assert.ok(isInvalid(oIslamicDate),
+			"Constructor with object as parameter must return an invalid date");
 
-		oIslamicDate = new Islamic(0); //1, January 1970 = 22 Shawwal 1389(22.10.1389)
+		oIslamicDate = new Islamic(0); //1, January 1970 (UTC) = 22 Shawwal 1389(22.10.1389)
 		var now = UI5Date.getInstance(0);
 
-		verifyDate(assert, "Constructor with value(timestamp)=0 must represents IslamicDate corresponding to the date of 1st January 1970 Gregorian/(1389/10/22 Islamic)",
-				oIslamicDate, 1389, 9, 22, now.getDay(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+		verifyDate(assert, "Constructor with value(timestamp)=0 must represents IslamicDate"
+				+ " corresponding to the date of 1st January 1970 Gregorian/(1389/10/22 Islamic)",
+			oIslamicDate, 1389, 9, 22, now.getUTCDay(), now.getUTCHours(), now.getUTCMinutes(),
+			now.getUTCSeconds(), now.getUTCMilliseconds(), true);
 
 		var iOneDay = 24 * 60 * 60 * 1000;
-		oIslamicDate = new Islamic(iOneDay); //2, January 1970 = 23 Shawwal 1389(23.10.1389)
+		oIslamicDate = new Islamic(iOneDay); //2, January 1970 (UTC) = 23 Shawwal 1389(23.10.1389)
 		var oGregorianDate = UI5Date.getInstance(iOneDay);
-		verifyDate(assert, "Constructor with value(timestamp)= 'one day after 01.01.1970' must represents IslamicDate corresponding to the date of 2nd January 1970 Gregorian/(1389/10/23 Islamic)",
-				oIslamicDate, 1389, 9, 23, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
+		verifyDate(assert, "Constructor with value(timestamp)= 'one day after 01.01.1970' must"
+				+ " represents IslamicDate corresponding to the date of 2nd January 1970 Gregorian"
+				+ "/(1389/10/23 Islamic)",
+			oIslamicDate, 1389, 9, 23, oGregorianDate.getUTCDay(), oGregorianDate.getUTCHours(),
+			oGregorianDate.getUTCMinutes(), oGregorianDate.getUTCSeconds(),
+			oGregorianDate.getUTCMilliseconds(), true);
 
 		oGregorianDate = UI5Date.getInstance(-iOneDay);
-		oIslamicDate = new Islamic(-iOneDay); //31, December 1969 = 21 Shawwal 1389(21.10.1389)
-		verifyDate(assert, "Constructor with value(timestamp)= 'one day before 01.01.1970' must represents IslamicDate corresponding to the date of 31st December 1970 Gregorian/(1389/10/21 Islamic)",
-				oIslamicDate, 1389, 9, 21, oGregorianDate.getDay(), oGregorianDate.getHours(), oGregorianDate.getMinutes(), oGregorianDate.getSeconds(), oGregorianDate.getMilliseconds());
+		oIslamicDate = new Islamic(-iOneDay); //31, December 1969 (UTC) = 21 Shawwal 1389(21.10.1389)
+		verifyDate(assert, "Constructor with value(timestamp)= 'one day before 01.01.1970' must"
+				+ " represents IslamicDate corresponding to the date of 31st December 1970"
+				+ " Gregorian/(1389/10/21 Islamic)",
+			oIslamicDate, 1389, 9, 21, oGregorianDate.getUTCDay(), oGregorianDate.getUTCHours(),
+			oGregorianDate.getUTCMinutes(), oGregorianDate.getUTCSeconds(),
+			oGregorianDate.getUTCMilliseconds(), true);
 	});
 
 	QUnit.test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function (assert) {
@@ -863,20 +876,25 @@ sap.ui.define([
 	}
 
 	function createIslamicDateFromTestEntry(oEntry, bUTC) {
-		return createDateFromTestEntry(oEntry.islamic, Islamic, bUTC);
+		var oDateEntry = oEntry.islamic;
+		if (bUTC) {
+			// eslint-disable-next-line new-cap
+			return new Islamic(Islamic.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.date,
+				oDateEntry.hours, oDateEntry.minutes, oDateEntry.seconds, oDateEntry.milliseconds));
+		} else {
+			return new Islamic(oDateEntry.year, oDateEntry.month, oDateEntry.date,
+				oDateEntry.hours, oDateEntry.minutes, oDateEntry.seconds, oDateEntry.milliseconds);
+		}
 	}
 
 	function createGregorianDateFromTestEntry(oEntry, bUTC) {
-		return createDateFromTestEntry(oEntry.gregorian, Date, bUTC);
-	}
-
-	function createDateFromTestEntry(oDateEntry, type, bUTC) {
+		var oDateEntry = oEntry.gregorian;
 		if (bUTC) {
-			return new type(type.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.date,
-					oDateEntry.hours, oDateEntry.minutes, oDateEntry.seconds, oDateEntry.milliseconds));
+			return UI5Date.getInstance(Date.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.date,
+				oDateEntry.hours, oDateEntry.minutes, oDateEntry.seconds, oDateEntry.milliseconds));
 		} else {
-			return new type(oDateEntry.year, oDateEntry.month, oDateEntry.date,
-					oDateEntry.hours, oDateEntry.minutes, oDateEntry.seconds, oDateEntry.milliseconds);
+			return UI5Date.getInstance(oDateEntry.year, oDateEntry.month, oDateEntry.date,
+				oDateEntry.hours, oDateEntry.minutes, oDateEntry.seconds, oDateEntry.milliseconds);
 		}
 	}
 
