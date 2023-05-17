@@ -754,7 +754,8 @@ sap.ui.define([
 	].forEach(function (oTemplate) {
 		QUnit.test("fetchQueryOptionsForOwnCache returns undefined: " + oTemplate.sPath,
 			function (assert) {
-				var oBinding;
+				var oBinding,
+					sResolvedPath = oTemplate.bRelative ? undefined : "/resolved/path";
 
 				oTemplate.oModel = {
 					resolve : function () {}
@@ -762,12 +763,12 @@ sap.ui.define([
 				oBinding = new ODataBinding(oTemplate);
 				this.mock(oBinding.oModel).expects("resolve")
 					.withExactArgs(oBinding.sPath, undefined)
-					.returns("/resolved/path");
+					.returns(sResolvedPath);
 
 				// code under test
 				assert.deepEqual(oBinding.fetchQueryOptionsForOwnCache().getResult(), {
 					mQueryOptions : undefined,
-					sReducedPath : "/resolved/path"
+					sReducedPath : sResolvedPath
 				});
 		});
 	});

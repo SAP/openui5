@@ -596,7 +596,7 @@ sap.ui.define([
 			that = this;
 
 		/*
-		 * Wraps the given query options (promise) and adds sResolvedPath so that it can be returned
+		 * Wraps the given query options (promise) and adds sReducedPath so that it can be returned
 		 * by fetchQueryOptionsForOwnCache.
 		 *
 		 * @param {object|sap.ui.base.SyncPromise} vQueryOptions
@@ -616,7 +616,7 @@ sap.ui.define([
 		}
 
 		if (this.oOperation // operation binding manages its cache on its own
-			|| this.bRelative && !oContext // unresolved binding
+			|| !sResolvedPath // unresolved binding
 			|| this.isMeta()) {
 			return wrapQueryOptions(undefined);
 		}
