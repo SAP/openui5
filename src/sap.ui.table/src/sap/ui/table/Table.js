@@ -4451,7 +4451,7 @@ sap.ui.define([
 				} else {
 					this.setSelectedIndex(iIndex);
 				}
-			} else if (bAdd || this._getSelectionPlugin().getSelectedCount() === 1) {
+			} else if (bAdd || this.getSelectedIndices().length === 1) {
 				this.removeSelectionInterval(iIndex, iIndex);
 			} else {
 				this.setSelectedIndex(iIndex);
