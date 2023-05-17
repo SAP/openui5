@@ -49,7 +49,7 @@ sap.ui.define([
 		if (!sReference) {
 			throw Error("The application ID could not be determined");
 		}
-		return FlexUtils.normalizeReference(sReference);
+		return sReference;
 	}
 
 	/**

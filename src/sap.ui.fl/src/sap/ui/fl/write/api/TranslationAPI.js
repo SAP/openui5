@@ -38,7 +38,7 @@ sap.ui.define([
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
 		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
-		return getDirtyChangesFromPersistence(Utils.normalizeReference(sFlexReference));
+		return getDirtyChangesFromPersistence(sFlexReference);
 	}
 
 	/**

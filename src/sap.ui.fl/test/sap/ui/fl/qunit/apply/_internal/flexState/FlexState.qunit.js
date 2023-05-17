@@ -384,7 +384,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when clearAndInitialize is called for two component references", function(assert) {
-			var sReferenceComponent2 = "second.reference.Component";
 			var sReference2 = "second.reference";
 			sandbox.spy(FlexState, "clearState");
 			this.oLoadFlexDataStub.resolves(mResponse);
@@ -404,11 +403,10 @@ sap.ui.define([
 				componentId: sComponentId
 			}))
 			.then(FlexState.clearAndInitialize.bind(null, {
-				reference: sReferenceComponent2,
+				reference: sReference2,
 				componentId: sComponentId
 			}))
 			.then(function() {
-				assert.ok(FlexState.clearState.calledWith(sReferenceComponent2), "then state was cleared for reference2.Component");
 				assert.ok(FlexState.clearState.calledWith(sReference2), "then state was cleared for reference2");
 			});
 		});

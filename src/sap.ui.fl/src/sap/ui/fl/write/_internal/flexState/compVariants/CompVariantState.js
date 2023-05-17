@@ -54,7 +54,7 @@ sap.ui.define([
 
 	function getPropertyFromVersionsModel(sPropertyName, mPropertyBag) {
 		var mPropertyBag = {
-			reference: Utils.normalizeReference(mPropertyBag.reference),
+			reference: mPropertyBag.reference,
 			layer: mPropertyBag.layer
 		};
 		if (Versions.hasVersionsModel(mPropertyBag)) {

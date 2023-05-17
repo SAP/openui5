@@ -43,7 +43,7 @@ sap.ui.define([
 
 		return Versions.getVersionsModel({
 			nonNormalizedReference: sReference,
-			reference: Utils.normalizeReference(sReference),
+			reference: sReference,
 			layer: mPropertyBag.layer
 		});
 	}
@@ -100,7 +100,7 @@ sap.ui.define([
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 
 		return Versions.initialize({
-			reference: Utils.normalizeReference(getFlexReferenceForControl(oAppComponent)),
+			reference: getFlexReferenceForControl(oAppComponent),
 			layer: mPropertyBag.layer
 		});
 	};
@@ -246,7 +246,7 @@ sap.ui.define([
 
 		return Versions.activate({
 			nonNormalizedReference: sReference,
-			reference: Utils.normalizeReference(sReference),
+			reference: sReference,
 			layer: mPropertyBag.layer,
 			title: mPropertyBag.title,
 			appComponent: Utils.getAppComponentForControl(mPropertyBag.control),
@@ -278,7 +278,7 @@ sap.ui.define([
 
 		return Versions.discardDraft({
 			nonNormalizedReference: sReference,
-			reference: Utils.normalizeReference(sReference),
+			reference: sReference,
 			layer: mPropertyBag.layer
 		})
 		.then(function(oDiscardInfo) {

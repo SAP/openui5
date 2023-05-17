@@ -464,10 +464,7 @@ sap.ui.define([
 	 */
 	FlexState.clearAndInitialize = function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
-
 		FlexState.clearState(mPropertyBag.reference);
-		FlexState.clearState(Utils.normalizeReference(mPropertyBag.reference));
-
 		return FlexState.initialize(mPropertyBag);
 	};
 

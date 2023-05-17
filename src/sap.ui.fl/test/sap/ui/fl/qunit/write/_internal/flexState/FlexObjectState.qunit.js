@@ -589,7 +589,7 @@ sap.ui.define([
 			});
 			var oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
 			assert.equal(FlexObjectState.hasDirtyFlexObjects({selector: this.appComponent}), true, "hasDirtyFlexObjects return true");
-			assert.equal(oStubGetChangePersistenceForComponent.callCount, 2, "getChangePersistenceForComponent called twice");
+			assert.equal(oStubGetChangePersistenceForComponent.calledOnce, true, "getChangePersistenceForComponent called once");
 			assert.equal(oStubCompStateHasDirtyChanges.calledOnce, true, "CompVariantState.hasDirtyChanges is not called");
 		});
 

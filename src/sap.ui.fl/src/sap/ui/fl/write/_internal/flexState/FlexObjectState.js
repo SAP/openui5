@@ -220,9 +220,6 @@ sap.ui.define([
 		if (ChangePersistenceFactory.getChangePersistenceForComponent(sReference).getDirtyChanges().length > 0) {
 			return true;
 		}
-		if (ChangePersistenceFactory.getChangePersistenceForComponent(Utils.normalizeReference(sReference)).getDirtyChanges().length > 0) {
-			return true;
-		}
 		return CompVariantState.hasDirtyChanges(sReference);
 	};
 
