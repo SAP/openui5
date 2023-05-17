@@ -1,9 +1,10 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/Buddhist",
 	"sap/ui/core/date/UI5Date"
-], function(Configuration, Buddhist, UI5Date) {
+], function(Log, Configuration, Buddhist, UI5Date) {
 	"use strict";
 
 	// Test data
@@ -15,10 +16,20 @@ sap.ui.define([
 		{Gregorian: {year: 1902, month: 1, day: 13}, Buddhist: {year: 2444, month: 1, day: 13}},
 		{Gregorian: {year: 1902, month: 3, day: 13}, Buddhist: {year: 2445, month: 3, day: 13}}
 	];
-
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	//1. Instance related
-	QUnit.module("sap.ui.core.date.Buddhist");
+	QUnit.module("sap.ui.core.date.Buddhist", {
+		beforeEach: function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
+			Configuration.setLanguage("en_US");
+		},
+		afterEach: function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 1, January 2513
@@ -233,7 +244,7 @@ sap.ui.define([
 	QUnit.test("Convert Gregorian to Buddhist dates", function (assert) {
 		var oGregorianDate, oExpectedBuddhistDate, oCalculatedBuddhistDate;
 		for (var i = 0; i < aTestData.length; i++) {
-			oGregorianDate = createGregorianDateFromTestEntry(aTestData[i], true);
+			oGregorianDate = createGregorianDateFromTestEntry(aTestData[i]);
 			oExpectedBuddhistDate = createBuddhistDateFromTestEntry(aTestData[i], true);
 			oCalculatedBuddhistDate = new Buddhist(oGregorianDate.getTime());
 			compareTwoDates(assert, "Gregorian2Buddhist " + i, oCalculatedBuddhistDate, oExpectedBuddhistDate);
@@ -244,7 +255,7 @@ sap.ui.define([
 		var oBuddhistDate, oExpectedGregorianDate, oCalculatedGregorianDate;
 		for (var i = 0; i < aTestData.length; i++) {
 			oBuddhistDate = createBuddhistDateFromTestEntry(aTestData[i], true);
-			oExpectedGregorianDate = createGregorianDateFromTestEntry(aTestData[i], true);
+			oExpectedGregorianDate = createGregorianDateFromTestEntry(aTestData[i]);
 			oCalculatedGregorianDate = oBuddhistDate.getJSDate();
 			compareTwoDates(assert, "Buddhist2Gregorian " + i, oCalculatedGregorianDate, oExpectedGregorianDate);
 		}
@@ -260,7 +271,6 @@ sap.ui.define([
 			"week": 0,
 			"year": 2565
 		}, "Jan 3rd 2022 is CW 1");
-		Configuration.setLanguage("en_US");
 	});
 
 
@@ -291,23 +301,16 @@ sap.ui.define([
 	function createBuddhistDateFromTestEntry(oEntry, bUTC) {
 		var oDateEntry = oEntry.Buddhist;
 		if (bUTC) {
+			// eslint-disable-next-line new-cap
 			return new Buddhist(Buddhist.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
 		} else {
 			return new Buddhist(oDateEntry.year, oDateEntry.month, oDateEntry.day);
 		}
 	}
 
-	function createGregorianDateFromTestEntry(oEntry, bUTC) {
-		return createDateFromTestEntry(oEntry, Date, bUTC);
-	}
-
-	function createDateFromTestEntry(oEntry, clType, bUTC) {
+	function createGregorianDateFromTestEntry(oEntry) {
 		var oDateEntry = oEntry.Gregorian;
-		if (bUTC) {
-			return new clType(clType.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
-		} else {
-			return new clType(oDateEntry.year, oDateEntry.month, oDateEntry.day);
-		}
+		return UI5Date.getInstance(Date.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
 	}
 
 	function isInvalid(oDate) {
