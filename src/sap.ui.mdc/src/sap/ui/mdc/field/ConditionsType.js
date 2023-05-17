@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/ui/mdc/field/splitValue',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -18,6 +19,7 @@ sap.ui.define([
 		ConditionType,
 		ConditionValidateException,
 		FilterOperatorUtil,
+		splitValue,
 		SimpleType,
 		FormatException,
 		ParseException,
@@ -281,24 +283,10 @@ sap.ui.define([
 
 		var aOperators = this.oFormatOptions.operators || [];
 		var bBetweenSupported = aOperators.indexOf("BT") >= 0 || aOperators.length === 0;
-		var aSeparatedText;
-		if (typeof vValue === "string") {
-			// Pasting from Excel on Windows always adds "\r\n" at the end, even if a single cell is selected
-			if (vValue.length && vValue.endsWith("\r\n")) {
-				vValue = vValue.substring(0, vValue.lastIndexOf("\r\n"));
-			}
+		var aSeparatedText = splitValue(vValue, !bBetweenSupported);
 
-			if (bBetweenSupported) {
-				aSeparatedText = vValue.split(/\r\n|\r|\n/g); // use tap as delemiter for between
-			} else {
-				aSeparatedText = vValue.split(/\r\n|\r|\n|\t/g);
-			}
-		} else {
-			aSeparatedText = [vValue];
-		}
-
-		if (aSeparatedText.length > 1) {
-			return _parseMultipleValues.call(this, aSeparatedText, sSourceType, iIndex, bBetweenSupported);
+		if (aSeparatedText.length > 1 || (bBetweenSupported && aSeparatedText.length === 1 && typeof aSeparatedText[0] === "string" && aSeparatedText[0].search(/\t/) >= 0)) {
+			return _parseMultipleValues.call(this, aSeparatedText, sSourceType, iIndex);
 		} else {
 			return _parseSingleValue.call(this, vValue, sSourceType, iIndex);
 		}
@@ -318,8 +306,10 @@ sap.ui.define([
 
 	}
 
-	function _parseMultipleValues(aValues, sSourceType, iIndex, bBetweenSupported) {
+	function _parseMultipleValues(aValues, sSourceType, iIndex) {
 
+		var aOperators = this.oFormatOptions.operators || [];
+		var bBetweenSupported = aOperators.indexOf("BT") >= 0 || aOperators.length === 0;
 		var oBTOperator = bBetweenSupported && FilterOperatorUtil.getOperator("BT");
 		var fnParse = function(vValue, sSourceType) {
 			return SyncPromise.resolve().then(function() {
@@ -566,6 +556,7 @@ sap.ui.define([
 		return null;
 
 	}
+
 
 	return ConditionsType;
 

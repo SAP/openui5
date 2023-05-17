@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
+	'sap/ui/mdc/field/splitValue',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/field/content/ContentFactory',
 	'sap/ui/mdc/Control',
@@ -43,6 +44,7 @@ sap.ui.define([
 	ConditionValidateException,
 	ConditionType,
 	ConditionsType,
+	splitValue,
 	BaseType,
 	ContentFactory,
 	Control,
@@ -1069,6 +1071,13 @@ sap.ui.define([
 
 		// for the purpose to copy from column in excel and paste in FilterField/MultiValueField
 		var sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
+		var aSeparatedText = splitValue(sOriginalText, true); // check without BT support as if TAB is inside the Paste logic needs to be used anyhow
+
+		if (aSeparatedText.length <= 1) {
+			// only one entry -> use default logic
+			return;
+		}
+
 		var oControl = oEvent.srcControl;
 		var sBoundProperty;
 		for (var sProperty in oControl.getMetadata().getAllProperties()) {
