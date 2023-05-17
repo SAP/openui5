@@ -1084,7 +1084,7 @@ sap.ui.define([
 			},
 
 			onVersionItemPress: function (oEvent) {
-				var oSelectedItem = sap.ui.getCore().byId("versionList").getSelectedItem(),
+				var oSelectedItem = Core.byId("versionList").getSelectedItem(),
 					oCustomData = oSelectedItem.getCustomData()[0];
 
 				if (oCustomData && oCustomData.getKey() === "path") {

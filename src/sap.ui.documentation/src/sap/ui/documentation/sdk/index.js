@@ -28,12 +28,12 @@
             type: "LOAD"
         });
             sap.ui.require([
+				"sap/ui/core/Core",
                 "sap/ui/core/ComponentContainer",
                 "sap/ui/core/Component",
                 "sap/ui/documentation/library",
-                "sap/base/Log",
-                "sap/ui/thirdparty/jquery"
-            ], function (ComponentContainer, Component, library, Log, jQuery) {
+                "sap/base/Log"
+            ], function (Core, ComponentContainer, Component, library, Log) {
                 var setDensityClass = function(sDensityClass) {
                     var sBodyDensityClass = Array.prototype.find.call(document.body.classList, function(el){
                         return el.includes("sapUiSize");
@@ -79,8 +79,8 @@
                 // the fl lib has to be loaded before the Component gets created
                 Promise.all([
                     loadInfo(),
-                    sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
-                    sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
+                    Core.loadLibrary("sap.ui.fl", {async: true}),
+                    Core.loadLibrary("sap.ui.rta", {async: true})
                 ]).then(function(){
 
                     Log.info("Samples paths added successfully");
@@ -157,14 +157,14 @@
                                     type: "SETTINGS",
                                     data: {
                                         "density": document.body.classList[1],
-                                        "theme": sap.ui.getCore().getConfiguration().getTheme(),
-                                        "RTL": sap.ui.getCore().getConfiguration().getRTL()
+                                        "theme": Core.getConfiguration().getTheme(),
+                                        "RTL": Core.getConfiguration().getRTL()
                                     }
                                 });
                                 } else if (eMessage.data.reason === "set") {
                                     setDensityClass(eMessage.data.data.density);
-                                    sap.ui.getCore().getConfiguration().setRTL(eMessage.data.data.RTL);
-                                    sap.ui.getCore().applyTheme(eMessage.data.data.theme);
+                                    Core.getConfiguration().setRTL(eMessage.data.data.RTL);
+                                    Core.applyTheme(eMessage.data.data.theme);
                                 }
                             }
                         });

@@ -2,12 +2,13 @@ sap.ui.require([
 	"sap/m/Shell",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core"
 ], function(
-	Shell, App, Page, ComponentContainer) {
+	Shell, App, Page, ComponentContainer, Core) {
 	"use strict";
 
-	sap.ui.getCore().attachInit(function() {
+	Core.attachInit(function() {
 		new Shell ({
 			app : new App ({
 				pages : [

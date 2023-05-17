@@ -5,6 +5,7 @@
 /*global history */
 sap.ui.define([
 		"sap/ui/documentation/library",
+		"sap/ui/core/Core",
 		"sap/ui/core/Fragment",
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
@@ -14,7 +15,7 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/base/strings/formatMessage",
 		"sap/ui/documentation/WebPageTitleUtil"
-	], function (library, Fragment, Controller, History, ResourceModel, Device, mobileLibrary, APIInfo,
+	], function (library, Core, Fragment, Controller, History, ResourceModel, Device, mobileLibrary, APIInfo,
 				 formatMessage, WebPageTitleUtil) {
 		"use strict";
 
@@ -30,7 +31,7 @@ sap.ui.define([
 		var BaseController = Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
 
 			// Prerequisites
-			_oCore: sap.ui.getCore(),
+			_oCore: Core,
 
 			formatMessage: formatMessage,
 
