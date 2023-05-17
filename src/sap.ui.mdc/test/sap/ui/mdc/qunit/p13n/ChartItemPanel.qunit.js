@@ -607,6 +607,8 @@ sap.ui.define([
 		assert.ok(oListItem.getCells()[2].getItems()[0].getIcon() == "sap-icon://decline", "Button has a delete icon");
 		assert.ok(oListItem.getCells()[2].getItems()[0].getType() == "Transparent", "Button transparent");
 
+		oListItem.destroy();
+
 	}.bind(this));
 
 	QUnit.test("_createListItem with template", function(assert){
@@ -618,6 +620,8 @@ sap.ui.define([
 		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
 		assert.ok(oListItem.getCells().length == 1, "List Item has 1 cell");
 		assert.ok(oListItem.getCells()[0].isA("sap.m.ComboBox"), "Cell 1 is of type sap.m.ComboBox");
+
+		oListItem.destroy();
 
 	}.bind(this));
 
@@ -638,6 +642,7 @@ sap.ui.define([
 		assert.ok(oListItem.getCells()[1].getItems()[0].getIcon() == "sap-icon://decline", "Button has a delete icon");
 		assert.ok(oListItem.getCells()[1].getItems()[0].getType() == "Transparent", "Button transparent");
 
+		oListItem.destroy();
 	}.bind(this));
 
 	QUnit.test("_createListItemMobile with template", function(assert){
