@@ -14,6 +14,11 @@
         ]
       },
       {
+        "id": "4676f992f3d74315a0c0d01bf1df3a166ed9034b",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: added new page indicator properties"
+      },
+      {
         "id": "af3460a6e3691996cf73fe1dcf5a79a310395399",
         "type": "FIX",
         "text": " sap.m.IllustratedMessage: Fixed layout on DOT breakpoint",

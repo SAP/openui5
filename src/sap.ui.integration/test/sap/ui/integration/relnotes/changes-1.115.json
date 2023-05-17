@@ -3,6 +3,11 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "13bda4dcf0b60c1e3a8030f19734e3fee00187a6",
+        "type": "FEATURE",
+        "text": " Integration cards: Added 'showColon' property for Object card items"
+      },
+      {
         "id": "d461385471630e21a6fefad3dfb9503db60323a7",
         "type": "FIX",
         "text": " Integration cards: Applying manifest changes no longer reports an error",
