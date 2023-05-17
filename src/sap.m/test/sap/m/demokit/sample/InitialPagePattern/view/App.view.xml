@@ -23,7 +23,7 @@
 		</headerContent>
 
 		<sections>
-			<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.sections.MessagePage" type="XML"/>
+			<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.sections.IllustratedMessage" type="XML"/>
 			<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.sections.ProductsTable" type="XML"/>
 			<core:Fragment fragmentName="sap.m.sample.InitialPagePattern.view.fragments.sections.SupplierDetails" type="XML"/>
 		</sections>

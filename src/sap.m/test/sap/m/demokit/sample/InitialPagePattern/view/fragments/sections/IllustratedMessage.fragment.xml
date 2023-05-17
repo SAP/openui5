@@ -5,11 +5,10 @@
 	<ObjectPageSection showTitle="false" visible="{= !${/selectedPurchase} }">
 		<subSections>
 			<ObjectPageSubSection class="sapUxAPObjectPageSubSectionFitContainer">
-				<m:MessagePage
-					showHeader="false"
-					icon="{= ${/inputPopulated} ? 'sap-icon://search' : 'sap-icon://product' }"
-					text="{= ${/inputPopulated} ? ${i18n>NotFound} : ${i18n>EnterPurchase} }"
-					description=""/>
+				<m:IllustratedMessage
+					illustrationType="{= ${/inputPopulated} ? 'sapIllus-ErrorScreen' : 'sapIllus-SearchFolder' }"
+					title="{= ${/inputPopulated} ? ${i18n>NotFoundTitle} : ${i18n>EnterPurchaseTitle} }"
+					description="{= ${/inputPopulated} ? ${i18n>NotFoundDescription} : ${i18n>EnterPurchaseDescription} }"/>
 			</ObjectPageSubSection>
 		</subSections>
 	</ObjectPageSection>
