@@ -63,7 +63,8 @@ sap.ui.define([
 							"SubCategoryId": "Notebooks",
 							"state": "Success",
 							"info": "27.45 EUR",
-							"infoState": "Success"
+							"infoState": "Success",
+							"Visibility": true
 
 						},
 						{
@@ -76,7 +77,18 @@ sap.ui.define([
 							"infoState": "Error",
 							"showInfoStateIcon": true,
 							"customInfoStatusIcon": "sap-icon://hint"
-
+						},
+						{
+							"Name": "Notebook Basic 19",
+							"Description": "Notebook Basic 19 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1002",
+							"SubCategoryId": "Notebooks",
+							"state": "Warning",
+							"info": "19.45 EUR",
+							"infoState": "Error",
+							"showInfoStateIcon": true,
+							"customInfoStatusIcon": "sap-icon://hint",
+							"Visibility": false
 						}
 					]
 				},
@@ -89,7 +101,8 @@ sap.ui.define([
 						"value": "{info}",
 						"state": "{infoState}",
 						"showStateIcon": "{showInfoStateIcon}",
-						"customStateIcon": "{customInfoStatusIcon}"
+						"customStateIcon": "{customInfoStatusIcon}",
+						"visible": "{Visibility}"
 					}
 				}
 			}
@@ -821,7 +834,9 @@ sap.ui.define([
 
 			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
 				oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1],
-				oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2];
+				oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2],
+				oListItem4 = this.oCard.getCardContent().getAggregation("_content").getItems()[3];
+
 
 			Core.applyChanges();
 
@@ -830,12 +845,57 @@ sap.ui.define([
 			assert.equal(oListItem2.$().find(".sapMObjStatusIcon").length, 0, "Status icon div is not rendered");
 			assert.equal(oListItem3.$().find(".sapMObjStatusShowIcon").length, 0, "Default status icon is not shown");
 			assert.equal(oListItem3.$().find(".sapMObjStatusShowCustomIcon").length, 1, "Custom status icon is shown");
+			assert.equal(oListItem2.$().find(".sapUiIntLCIInfo").length, 1, "Info is displayed when visibility is set to true");
+			assert.equal(oListItem3.$().find(".sapUiIntLCIInfo").length, 1, "Info is displayed when visibility is not defined");
+			assert.equal(oListItem4.$().find(".sapUiIntLCIInfo").length, 0, "Info is not displayed when visibility is set to false");
 
 			done();
 		}.bind(this));
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);
+	});
+
+	QUnit.test("Info visible property without binding", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "list.card.test.infoVisible"
+				},
+				"sap.card": {
+					"type": "List",
+
+					"content": {
+						"data": {
+							"json": [{
+								"Name": "Comfort Easy",
+								"Description": "32 GB Digital Assistant with high-resolution color screen"
+							}]
+						},
+						"item": {
+							"title": "{Name}",
+							"description": "{Description}",
+							"info": {
+								"value": "100",
+								"visible": false
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+			Core.applyChanges();
+
+			assert.equal(oListItem1.$().find(".sapUiIntLCIInfo").length, 0, "Info is not visible");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
 	});
 
 	QUnit.test("List Card - attributes", function (assert) {
