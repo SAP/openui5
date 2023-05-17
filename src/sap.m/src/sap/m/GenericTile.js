@@ -117,14 +117,12 @@ sap.ui.define([
 				frameType: {type: "sap.m.FrameType", group: "Misc", defaultValue: FrameType.OneByOne},
 				/**
 				 * Backend system context information
-				 * @private
 				 * @since 1.92.0
 				 * @experimental Since 1.92
 				 */
 				systemInfo: {type:"string",  group: "Misc", defaultValue:null},
 				/**
 				 * Application information such as ID/Shortcut
-				 * @private
 				 * @since 1.92.0
 				 * @experimental Since 1.92
 				 */
