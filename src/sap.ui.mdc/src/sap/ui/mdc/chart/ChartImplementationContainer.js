@@ -17,7 +17,7 @@ sap.ui.define([
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no id is given
 		 * @param {object} [mSettings] Initial settings for the new control
-		 * @class The ChartImplementationContainer creates a container for the <code>content</code> (chart) and and <code>noDataContent</code>. Based on the <code>showNoDataStruct</code> the <code>content</code> or <code>noDataContent</code> will be shown.
+		 * @class The <code>ChartImplementationContainer</code> creates a container for the <code>content</code> (chart) and <code>noDataContent</code>. Based on the <code>showNoDataStruct</code> the <code>content</code> or <code>noDataContent</code> will be shown.
 		 * @extends sap.ui.core.Control
 		 * @author SAP SE
 		 * @version ${version}
@@ -56,9 +56,9 @@ sap.ui.define([
 					},
 
 					/**
-					 * Control to show when there is no data available inside the chart.<br>
+					 * Control that is shown when there is no data available inside the chart.<br>
 					 * This can be used if the standard behavior of the used chart control needs to be overriden.<br>
-					 * To show this <code>noDataContent</code>, set {@link ap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct}
+					 * To show this <code>noDataContent</code>, set {@link ap.ui.mdc.chart.ChartImplementationContainer#showNoDataStruct showNoDataStruct}.
 					 *
 					 */
 					noDataContent: {
@@ -68,7 +68,7 @@ sap.ui.define([
 				},
 				associations: {
 					/**
-					 * Association to noData content set in the MDC Chart.<br>
+					 * Association to <code>noData</code> content set in the chart.<br>
 					 * If set, this will be used instead of the <code>noDataContent</code> aggregation.
 					 *
 					 */
@@ -95,7 +95,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the noDataStructs visibility.
+		 * Defines the <code>noDataStructs</code> visibility.
 		 *
 		 * @param {boolean} bValue visibility of the noDataStruct
 		 * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
