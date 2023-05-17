@@ -146,6 +146,11 @@ sap.ui.define([
 				},
 				getTargetIndex: function(oChange) {
 					return oChange.getContent().movedElements[0].targetIndex;
+				},
+				setIndexInRevertData: function(oChange, iIndex) {
+					var oRevertData = oChange.getRevertData();
+					oRevertData.index = iIndex;
+					oChange.setRevertData(oRevertData);
 				}
 			};
 		};

@@ -416,6 +416,11 @@ function(
 			},
 			getTargetIndex: function(oChange) {
 				return oChange.getContent().movedElements[0].targetIndex;
+			},
+			setIndexInRevertData: function(oChange, iIndex) {
+				var aRevertData = oChange.getRevertData();
+				aRevertData[0].index = iIndex;
+				oChange.setRevertData(aRevertData);
 			}
 		};
 	};

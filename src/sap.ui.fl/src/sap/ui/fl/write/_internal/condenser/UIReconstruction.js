@@ -203,6 +203,11 @@ sap.ui.define([
 
 		var aSortedUIElementIds = mUISimulatedStates[sContainerKey][sAggregationName];
 		if (isEqual(aTargetUIElementIds, aSortedUIElementIds)) {
+			aCondenserInfos.forEach(function(oCondenserInfo) {
+				if (oCondenserInfo.sameIndex) {
+					oCondenserInfo.change.condenserState = "delete";
+				}
+			});
 			return true;
 		}
 		return false;
@@ -330,12 +335,14 @@ sap.ui.define([
 			var aInitialElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.INITIAL_UI];
 			var bCorrectSortingFound = true;
 
-			// Verify whether the algorithm should be ready before ;)
 			if (
 				containsNoPlaceholder(aTargetElementIds)
 				|| containsOnlyCreateChanges(aCondenserInfos)
 			) {
 				sortAscendingByTargetIndex(aCondenserInfos);
+				// this should always be the correct sorting, but the function still needs to be called to
+				// remove obsolete changes during the simulation of Move
+				bCorrectSortingFound = isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialElementIds, aTargetElementIds, aCondenserInfos);
 			} else if (!isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialElementIds, aTargetElementIds, aCondenserInfos)) {
 				bCorrectSortingFound = false;
 				var iTimes = aCondenserInfos.length;
@@ -357,7 +364,15 @@ sap.ui.define([
 				throw Error("no correct sorting found for the container: " + sContainerKey);
 			}
 
+			aCondenserInfos = aCondenserInfos.filter(function(oCondenserInfo) {
+				return oCondenserInfo.change.condenserState !== "delete";
+			});
+
 			aSortedIndexRelatedChangesPerContainer.push(aCondenserInfos.map(function(oCondenserInfo) {
+				if (oCondenserInfo.revertIndex > -1) {
+					oCondenserInfo.setIndexInRevertData(oCondenserInfo.change, oCondenserInfo.revertIndex);
+					oCondenserInfo.sourceIndex = oCondenserInfo.revertIndex;
+				}
 				return oCondenserInfo.change;
 			}));
 		});

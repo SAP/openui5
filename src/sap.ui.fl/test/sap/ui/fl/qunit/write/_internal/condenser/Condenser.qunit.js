@@ -120,7 +120,7 @@ sap.ui.define([
 			modifier: JsControlTreeModifier,
 			appComponent: oAppComponent
 		};
-		return Reverter.revertMultipleChanges(aChanges.reverse(), mPropertyBag);
+		return Reverter.revertMultipleChanges([].concat(aChanges).reverse(), mPropertyBag);
 	}
 
 	function setPersistedState(aChanges, aIndicesForChangeState) {
@@ -162,16 +162,31 @@ sap.ui.define([
 			});
 			assert.strictEqual(aRemainingChanges.length, iChangesFlaggedSelectOrUpdate, "remaining changes have state 'select' or 'update'");
 
+			this.aChanges = aRemainingChanges;
 			return aRemainingChanges;
-		});
+		}.bind(this));
 	}
 
-	function revertAndApplyNew(aApplyChanges) {
+	function revertAndApplyNew() {
 		return revertMultipleChanges(this.aChanges)
 		.then(function() {
-			this.aChanges = aApplyChanges;
-			return applyChangeSequentially(aApplyChanges);
+			return applyChangeSequentially(this.aChanges);
 		}.bind(this));
+	}
+
+	function checkInitialStateAfterRevert(assert) {
+		assert.ok(true, "after the test, the Initial UI is shown again");
+		var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
+		var aGroups = oSmartForm.getGroups();
+		var aFirstGroupElements = aGroups[0].getGroupElements();
+		assert.strictEqual(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
+		assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
+		assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
+		assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
+		var aSecondGroupElements = aGroups[1].getGroupElements();
+		assert.strictEqual(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
+		assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
+		assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 1) + "BoundButton35");
 	}
 
 	QUnit.module("Given an app with a SmartForm", {
@@ -184,9 +199,10 @@ sap.ui.define([
 			this.aChanges = [];
 			this.bSkipRevertOnEnd = false;
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			if (!this.bSkipRevertOnEnd) {
 				return revertMultipleChanges(this.aChanges).then(function() {
+					checkInitialStateAfterRevert(assert);
 					sandbox.restore();
 				});
 			}
@@ -207,19 +223,19 @@ sap.ui.define([
 		QUnit.test("when (rename) changes have failed during the apply process", function(assert) {
 			var oFailedChange;
 			return loadChangesFromPath("renameChanges.json", assert, 9)
-				.then(function (aLoadedChanges) {
+				.then(function(aLoadedChanges) {
 					this.aChanges = aLoadedChanges;
 					return applyChangeSequentially(aLoadedChanges);
 				}.bind(this))
-				.then(function () {
+				.then(function() {
 					// Get one of the changes that would normally be condensed
-					oFailedChange = this.aChanges.find(function (oChange) {
+					oFailedChange = this.aChanges.find(function(oChange) {
 						return oChange.getId() === "id_1576490280160_42_renameField";
 					});
 					oFailedChange.markFailed();
 					return Condenser.condense(oAppComponent, this.aChanges);
 				}.bind(this))
-				.then(function (aRemainingChanges) {
+				.then(function(aRemainingChanges) {
 					assert.ok(aRemainingChanges.includes(oFailedChange), "then the failed change is not condensed");
 					assert.strictEqual(aRemainingChanges.length, 4, "then there is one more remaining change");
 				});
@@ -242,9 +258,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("multiple hide changes on the same control", function(assert) {
-			return loadApplyCondenseChanges.call(this, "hideChanges.json", 4, 1, assert).then(function(aRemainingChanges) {
-				assert.strictEqual(aRemainingChanges[0].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
-			});
+			return loadApplyCondenseChanges.call(this, "hideChanges.json", 4, 1, assert);
 		});
 
 		QUnit.test("hide unhide on the same control and move on another control", function(assert) {
@@ -252,9 +266,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("multiple reveal changes on the same control", function(assert) {
-			return loadApplyCondenseChanges.call(this, "unhideChanges.json", 4, 1, assert).then(function(aRemainingChanges) {
-				assert.strictEqual(aRemainingChanges[0].getChangeType(), "unhideControl", sChangeTypeMsg + "unhideControl");
-			});
+			return loadApplyCondenseChanges.call(this, "unhideChanges.json", 4, 1, assert);
 		});
 
 		QUnit.test("multiple reveal and hide on the same control - 1", function(assert) {
@@ -358,11 +370,7 @@ sap.ui.define([
 
 		QUnit.test("move and add within one group", function(assert) {
 			return loadApplyCondenseChanges.call(this, "addMoveSameGroup.json", 3, 2, assert)
-			.then(function(aRemainingChanges) {
-				assert.strictEqual(aRemainingChanges[0].condenserState, "select", "then the move change has condenser state 'select'");
-				assert.strictEqual(aRemainingChanges[1].condenserState, "select", "then the add change has condenser state 'select'");
-				return revertAndApplyNew.call(this, aRemainingChanges);
-			}.bind(this))
+			.then(revertAndApplyNew.bind(this))
 			.then(function() {
 				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
 				var aGroups = oSmartForm.getGroups();
@@ -379,11 +387,7 @@ sap.ui.define([
 
 		QUnit.test("move and add within one group and the add change is already persisted", function(assert) {
 			return loadApplyCondenseChanges.call(this, "addMoveSameGroup.json", 3, 2, assert, [0])
-			.then(function(aRemainingChanges) {
-				assert.strictEqual(aRemainingChanges[0].condenserState, "select", "then the move change has condenser state 'select'");
-				assert.strictEqual(aRemainingChanges[1].condenserState, "update", "then the add change has condenser state 'update'");
-				return revertAndApplyNew.call(this, aRemainingChanges);
-			}.bind(this))
+			.then(revertAndApplyNew.bind(this))
 			.then(function() {
 				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
 				var aGroups = oSmartForm.getGroups();
@@ -424,7 +428,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("move within one group", function(assert) {
-			return loadApplyCondenseChanges.call(this, "moveFirstAndLastControlsWithinOneGroup.json", 8, 2, assert)
+			return loadApplyCondenseChanges.call(this, "moveFirstAndLastControlsWithinOneGroup.json", 8, 1, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
 				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
@@ -485,7 +489,7 @@ sap.ui.define([
 				sName += " with some backend changes";
 			}
 			QUnit.test(sName, function(assert) {
-				return loadApplyCondenseChanges.call(this, "moveWithinTwoGroupsWithoutUnknowns.json", 30, 5, assert, aBackendChanges)
+				return loadApplyCondenseChanges.call(this, "moveWithinTwoGroupsWithoutUnknowns.json", 30, 3, assert, aBackendChanges)
 				.then(revertAndApplyNew.bind(this))
 				.then(function() {
 					var aExpectedChangeOrder;
@@ -496,22 +500,18 @@ sap.ui.define([
 							aChangeStates.push(oChange.getState());
 							aCondenserStates.push(oChange.condenserState);
 						});
-						assert.propEqual(aChangeStates, [States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.NEW, States.LifecycleState.NEW], "all remaining changes have the correct change state");
-						assert.propEqual(aCondenserStates, ["update", "update", "update", "select", "select"], "all remaining changes have the correct condenser state");
+						assert.propEqual(aChangeStates, [States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.NEW], "all remaining changes have the correct change state");
+						assert.propEqual(aCondenserStates, ["update", "update", "select"], "all remaining changes have the correct condenser state");
 						aExpectedChangeOrder = [
-							"id_1579608135402_40_moveControls",
-							"id_1579608136945_41_moveControls",
 							"id_1579608138773_42_moveControls",
-							"id_1579608174158_69_moveControls",
-							"id_1579608172989_68_moveControls"
+							"id_1579608136945_41_moveControls",
+							"id_1579608174158_69_moveControls"
 						];
 					} else {
 						aExpectedChangeOrder = [
 							"id_1579608171665_67_moveControls",
 							"id_1579608169292_65_moveControls",
-							"id_1579608170397_66_moveControls",
-							"id_1579608174158_69_moveControls",
-							"id_1579608172989_68_moveControls"
+							"id_1579608174158_69_moveControls"
 						];
 					}
 
@@ -706,7 +706,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("move between different aggregations", function(assert) {
-			return loadApplyCondenseChanges.call(this, "moveDifferentAggregations.json", 9, 3, assert)
+			return loadApplyCondenseChanges.call(this, "moveDifferentAggregations.json", 9, 2, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
 				var oBar = oAppComponent.byId("idMain1--bar");
@@ -797,7 +797,7 @@ sap.ui.define([
 
 		QUnit.test("calling Condenser twice in one session", function(assert) {
 			return loadApplyCondenseChanges.call(this, "moveToInitialUiReconstruction.json", 7, 0, assert)
-			.then(loadApplyCondenseChanges.bind(this, "moveWithinTwoGroupsWithoutUnknowns.json", 30, 5, assert));
+			.then(loadApplyCondenseChanges.bind(this, "moveWithinTwoGroupsWithoutUnknowns.json", 30, 3, assert));
 		});
 	});
 
@@ -820,14 +820,13 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("rename, hide/unhide and move in a template", function(assert) {
-			return loadApplyCondenseChanges.call(this, "templateChanges.json", 12, 5, assert).then(function(aRemainingChanges) {
+			return loadApplyCondenseChanges.call(this, "templateChanges.json", 12, 4, assert).then(function(aRemainingChanges) {
 				var sRenameChangeType = "rename";
 				var sMoveChangeType = "moveControls";
 				assert.strictEqual(aRemainingChanges[0].getChangeType(), sRenameChangeType, sChangeTypeMsg + sRenameChangeType);
 				assert.strictEqual(aRemainingChanges[1].getChangeType(), sRenameChangeType, sChangeTypeMsg + sRenameChangeType);
 				assert.strictEqual(aRemainingChanges[2].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
 				assert.strictEqual(aRemainingChanges[3].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
-				assert.strictEqual(aRemainingChanges[4].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
 			});
 		});
 	});
@@ -920,8 +919,15 @@ sap.ui.define([
 			]);
 			sandbox.stub(TableDelegate, "updateBindingInfo");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			return revertMultipleChanges(this.aChanges).then(function() {
+				assert.ok(true, "after the test, the Initial UI is shown again");
+				var oTable = sap.ui.getCore().byId("view--mdcTable");
+				var aColumns = oTable.getColumns();
+				assert.strictEqual(aColumns.length, 3, "Expected number of MDC columns: " + 3);
+				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", sValueMsg + "column0");
+				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column1", sValueMsg + "column1");
+				assert.strictEqual(aColumns[2].getId(), "view--mdcTable--column2", sValueMsg + "column2");
 				sandbox.restore();
 			});
 		},
