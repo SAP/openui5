@@ -163,16 +163,6 @@ sap.ui.define(
 			this._oFilterBarLayout.addEndContent(this._oShowAllFiltersBtn);
 		};
 
-		FilterBar.prototype.applySettings = function(mSettings, oScope) {
-			this._applySettings(mSettings, oScope);
-			this._waitForMetadata();
-		};
-
-		FilterBar.prototype._handleConditionModelPropertyChange = function() {
-			FilterBarBase.prototype._handleConditionModelPropertyChange.apply(this, arguments);
-			this.fireFiltersChanged({conditionsBased: true});
-		};
-
 
 		FilterBar.prototype.init = function() {
 			FilterBarBase.prototype.init.apply(this, arguments);
