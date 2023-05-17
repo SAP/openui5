@@ -740,7 +740,7 @@
 				<m:Label text="unit field"/>
 				<mdc:Field
 					id="F6-10"
-					value="{parts: [{path: 'WeightMeasure'}, {path: 'WeightUnit'}], type: 'sap.ui.model.type.Unit'}"
+					value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.type.Float', constraints: {minimum: 0}}, {path: 'WeightUnit', type: 'sap.ui.model.type.String', constraints: {maxLength: 3}}], type: 'sap.ui.model.type.Unit'}"
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
@@ -760,10 +760,10 @@
 				</mdc:Field>
 
 				<m:Label text="unit field in display mode"/>
-				<mdc:Field id="F6-11" value="{parts: [{path: 'WeightMeasure'}, {path: 'WeightUnit'}], type: 'sap.ui.model.type.Unit'}" display="Value" editMode="Display" change="handleChange" submit="handleSubmit"/>
+				<mdc:Field id="F6-11" value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.type.Float', constraints: {minimum: 0}}, {path: 'WeightUnit', type: 'sap.ui.model.type.String', constraints: {maxLength: 3}}], type: 'sap.ui.model.type.Unit'}" display="Value" editMode="Display" change="handleChange" submit="handleSubmit"/>
 
 				<m:Label text="input with unit"/>
-				<m:Input id="I6-11_2" value="{parts: [{path: 'WeightMeasure'}, {path: 'WeightUnit'}], type: 'sap.ui.model.type.Unit'}"/>
+				<m:Input id="I6-11_2" value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.type.Float', constraints: {minimum: 0}}, {path: 'WeightUnit', type: 'sap.ui.model.type.String', constraints: {maxLength: 3}}], type: 'sap.ui.model.type.Unit'}"/>
 
 
 				<c:Title text="Fields with type OData Unit"/>
@@ -771,7 +771,7 @@
 				<m:Label text="single odata-unit field (FL)"/>
 				<mdc:Field
 					id="F6-10_3"
-					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: 0 }}"
+					value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 13, decimals: 3}, constraints: {minimum: '0', precision: 13, scale: 3}}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: 0 }}"
 					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
@@ -794,7 +794,7 @@
 				<m:Label text="single odata-unit field (Dialog)"/>
 				<mdc:Field
 					id="F6-10_4"
-					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: '' }}"
+					value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 13, decimals: 3}, constraints: {minimum: '0', precision: 13, scale: 3}}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: 0 }}"
 					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
@@ -871,7 +871,7 @@
 				<m:Label text="single odata-unit field (Dialog - description)"/>
 				<mdc:Field
 					id="F6-10_5"
-					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {emptyString: ''}}"
+					value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 13, decimals: 3}, constraints: {minimum: '0', precision: 13, scale: 3}}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: 0 }}"
 					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Description" change="handleChange"
@@ -882,7 +882,7 @@
 				<m:Label text="single odata-unit field (without help)"/>
 				<mdc:Field
 					id="F6-10_6"
-					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {emptyString: 0}}"
+					value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 13, decimals: 3}, constraints: {minimum: '0', precision: 13, scale: 3}}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: 0 }}"
 					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
@@ -893,7 +893,7 @@
 				<m:Label text="odata-unit fields"/>
 				<mdc:Field
 					id="F6-10_1"
-					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {showMeasure: false, showNumber: true, emptyString : 0 }}"
+					value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 13, decimals: 3}, constraints: {minimum: '0', precision: 13, scale: 3}}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {showMeasure: false, showNumber: true, emptyString : 0 }}"
 					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
@@ -902,7 +902,7 @@
 				</mdc:Field>
 				<mdc:Field
 					id="F6-10_2"
-					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {showMeasure: true, showNumber: false, emptyString: 0}}"
+					value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 13, decimals: 3}, constraints: {minimum: '0', precision: 13, scale: 3}}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {showMeasure: true, showNumber: false, emptyString: 0}}"
 					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
@@ -924,11 +924,11 @@
 
 
 				<m:Label text="odata-unit field in display mode"/>
-				<mdc:Field id="F6-11_1" value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString : 0 }}" dataType="sap.ui.model.odata.type.Unit" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' display="Value" editMode="Display" change="handleChange" submit="handleSubmit"/>
+				<mdc:Field id="F6-11_1" value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 13, decimals: 3}, constraints: {minimum: '0', precision: 13, scale: 3}}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString : 0 }}" dataType="sap.ui.model.odata.type.Unit" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' display="Value" editMode="Display" change="handleChange" submit="handleSubmit"/>
 
 				<m:Label text="input with odata-unit"/>
 				<m:Input
-					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString : 0 }}">
+					value="{parts: [{path: 'WeightMeasure', type:'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 13, decimals: 3}, constraints: {minimum: '0', precision: 13, scale: 3}}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString : 0 }}">
 				</m:Input>
 
 

@@ -3,14 +3,16 @@
  */
 sap.ui.define([
 	"sap/ui/mdc/field/content/DefaultContent",
+	"sap/ui/core/library",
 	"sap/ui/model/Filter",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/ui/mdc/enums/FieldEditMode"
-], function(DefaultContent, Filter, isEmptyObject, merge, ObjectPath, FieldEditMode) {
+], function(DefaultContent, coreLibrary, Filter, isEmptyObject, merge, ObjectPath, FieldEditMode) {
 	"use strict";
 
+	var ValueState = coreLibrary.ValueState;
 
 	var _getUnitTypeInstance = function (oTypeUtil, oType, oFormatOptions, oConstraints, bShowNumber, bShowMeasure) {
 		return oTypeUtil.getUnitTypeInstance ? oTypeUtil.getUnitTypeInstance(oType, bShowNumber, bShowMeasure) : oTypeUtil.getDataTypeInstance(oType.getMetadata().getName(), oFormatOptions, oConstraints, {showNumber: bShowNumber, showMeasure: bShowMeasure});
@@ -59,8 +61,8 @@ sap.ui.define([
 				required: "{$field>/required}",
 				editable: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEditable },
 				enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
-				valueState: "{$field>/valueState}",
-				valueStateText: "{$field>/valueStateText}",
+				valueState: { path: "$field>/valueState", formatter: _setValueStateForControl },
+				valueStateText: { path: "$field>/valueStateText", formatter: _setValueStateTextForControl },
 				showValueHelp: false,
 				width: "70%",
 				tooltip: "{$field>/tooltip}",
@@ -116,8 +118,8 @@ sap.ui.define([
 				required: "{$field>/required}",
 				editable: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEditable },
 				enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
-				valueState: "{$field>/valueState}",
-				valueStateText: "{$field>/valueStateText}",
+				valueState: { path: "$field>/valueState", formatter: _setValueStateForControl },
+				valueStateText: { path: "$field>/valueStateText", formatter: _setValueStateTextForControl },
 				showValueHelp: false,
 				width: "70%",
 				tooltip: "{$field>/tooltip}",
@@ -164,9 +166,9 @@ sap.ui.define([
 					required: "{$field>/required}",
 					editable: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEditableUnit },
 					enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
-					valueState: "{$field>/valueState}",
+					valueState: { path: "$field>/valueState", formatter: _setValueStateForControl },
+					valueStateText: { path: "$field>/valueStateText", formatter: _setValueStateTextForControl },
 					valueHelpIconSrc: oContentFactory.getFieldHelpIcon(),
-					valueStateText: "{$field>/valueStateText}",
 					showValueHelp: "{$field>/_fieldHelpEnabled}",
 					ariaAttributes: "{$field>/_ariaAttributes}",
 					width: "30%",
@@ -214,6 +216,38 @@ sap.ui.define([
 			}
 		}
 	});
+
+	// called with contentent control as context
+	function _setValueStateForControl(sValueState) {
+
+		var oField = this.getParent();
+
+		if (!oField || !oField.isInvalidInput() || oField._isInvalidInputForContent(this)) {
+			// if there is no invalid input at all valueState seems to be set from outside -> just take it
+			// if there is invalid input on current control -> take ValueState
+			return sValueState;
+		} else {
+			return ValueState.None;
+		}
+
+	}
+
+	function _setValueStateTextForControl(sValueStateText) {
+
+		var oField = this.getParent();
+
+		if (!oField || !oField.isInvalidInput()) {
+			// if there is no invalid input at all valueState seems to be set from outside -> just take it
+			return sValueStateText;
+		} else if (oField._isInvalidInputForContent(this)) {
+			// if there is invalid input on current control -> take error of this exception (as we can only have one ValueStateText)
+			var oException = oField._getInvalidInputException(this);
+			return oException.message;
+		} else {
+			return "";
+		}
+
+	}
 
 	return UnitContent;
 });
