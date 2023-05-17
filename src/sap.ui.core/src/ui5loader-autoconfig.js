@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+
 /*
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
@@ -190,8 +191,17 @@
 			return vValue;
 		}
 
+		function set(sKey, vValue) {
+			if (mFrozenProperties[sKey]) {
+				ui5loader._.logger.error("Configuration option '" + sKey + "' was frozen and cannot be changed to " + vValue + "!");
+			} else {
+				oConfig[sKey] = vValue;
+			}
+		}
+
 		var GlobalConfigurationProvider = {
 			get: get,
+			set: set,
 			freeze: freeze
 		};
 
@@ -594,8 +604,32 @@
 			return vValue !== undefined ? vValue : vDefaultValue;
 		}
 
+		/**
+		 * Returns a writable base configuration instance
+		 * @returns {sap.base.config._Configuration} The writable base configuration
+		 */
+		function getWritableBootInstance() {
+			var oProvider = aProvider[0];
+
+			return {
+				set: function(sName, vValue) {
+					var rValidKey = /^[a-z][A-Za-z0-9]*$/;
+					if (rValidKey.test(sName)) {
+						oProvider.set(sName, vValue);
+					} else {
+						throw new TypeError(
+							"Invalid configuration key '" + sName + "'!"
+						);
+					}
+				},
+				get: get,
+				Type: TypeEnum
+			};
+		}
+
 		var Configuration = {
 			get: get,
+			getWritableBootInstance: getWritableBootInstance,
 			registerProvider: registerProvider,
 			Type: TypeEnum,
 			_: {

@@ -63,11 +63,19 @@
 	], function() {
 		// cascade 2: the loader configuration script
 		sap.ui.loader.config({
-			async:true
+			async: true
 		});
 		loadScripts([
-			"ui5loader-autoconfig.js"
-		]);
+			"sap/ui/core/boot/_bootConfig.js"
+		], function() {
+			// cascade 3: load autoconfig
+			loadScripts([
+				"ui5loader-autoconfig.js"
+			], function() {
+				// cascade 4: the boot script
+				loadScripts(["sap/ui/core/boot/_runBoot.js"]);
+			});
+		});
 	});
 
 }());

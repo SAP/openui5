@@ -325,6 +325,171 @@ builder:
       bundleOptions:
         optimize: false
         usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-boot.js
+        sections:
+          - mode: raw
+            filters:
+              - ui5loader.js
+            declareRawModules: false
+            resolve: true
+            sort: true
+          # - mode: preload
+          #   name: sap-ui-boot-preload
+          #   filters:
+          #     - sap/ui/core/boot.js
+          #     - "!ui5loader-autoconfig.js"
+          #   resolve: true
+          # - mode: bundleInfo
+          #   name: Calendar-preload.js
+          #   filters:
+          #     - sap/ui/core/date/
+          #   resolve: true
+          # - mode: bundleInfo
+          #   name: Eventing-preload.js
+          #   filters:
+          #     - sap/ui/events/jquery/EventSimulation.js
+          #   resolve: true
+          # - mode: bundleInfo
+          #   name: Theming-preload.js
+          #   filters:
+          #     - sap/ui/core/theming/ThemeManager.js
+          #   resolve: true
+          - mode: raw
+            filters:
+              - sap/ui/core/boot/_bootConfig.js
+            declareRawModules: false
+            resolve: true
+            sort: true
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+            sort: true
+          - mode: preload
+            name: sap-ui-core-preload
+            filters:
+              - sap/ui/core/boot/loadCalendar.js
+              - sap/ui/core/boot/loadModules.js
+              - sap/ui/core/boot/onInit.js
+              - sap/ui/core/boot/manifest.json
+              - sap/ui/core/boot.js
+            resolve: true
+          - mode: raw
+            filters:
+              - sap/ui/core/boot/_runBoot.js
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+        decorateBootstrapModule: true
+        addTryCatchRestartWrapper: true
+    - bundleDefinition:
+        name: sap-ui-boot-dbg.js
+        sections:
+          - mode: raw
+            filters:
+              - ui5loader.js
+            declareRawModules: false
+            resolve: true
+            sort: true
+          - mode: raw
+            filters:
+              - sap/ui/core/boot/_bootConfig.js
+            declareRawModules: false
+            resolve: true
+            sort: true
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+            sort: true
+          - mode: raw
+            filters:
+              - sap/ui/core/boot/_runBoot.js
+      bundleOptions:
+        optimize: false
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: Calendar-preload.js
+        defaultFileTypes:
+        - ".js"
+        sections:
+          - mode: provided
+            filters:
+            - ui5loader-autoconfig.js
+            - sap/ui/core/boot.js
+            resolve: true
+          - mode: preload
+            filters:
+            - sap/ui/core/date/
+            resolve: true
+            resolveConditional: false
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+        numberOfParts: 1
+    - bundleDefinition:
+        name: Library-preload.js
+        defaultFileTypes:
+        - ".js"
+        sections:
+          - mode: provided
+            filters:
+            - ui5loader-autoconfig.js
+            - sap/ui/core/boot.js
+            resolve: true
+          - mode: preload
+            filters:
+            - sap/ui/core/Lib.js
+            resolve: true
+            resolveConditional: false
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+        numberOfParts: 1
+    - bundleDefinition:
+        name: Theming-preload.js
+        defaultFileTypes:
+        - ".js"
+        sections:
+          - mode: provided
+            filters:
+            - ui5loader-autoconfig.js
+            - sap/ui/core/boot.js
+            - sap/ui/core/date/
+            - sap/ui/events/jquery/EventSimulation.js
+            resolve: true
+          - mode: preload
+            filters:
+            - sap/ui/core/theming/ThemeManager.js
+            resolve: true
+            resolveConditional: false
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+        numberOfParts: 1
+    - bundleDefinition:
+        name: Eventing-preload.js
+        defaultFileTypes:
+        - ".js"
+        sections:
+          - mode: provided
+            filters:
+            - ui5loader-autoconfig.js
+            - sap/ui/core/boot.js
+            - sap/ui/core/date/
+            resolve: true
+          - mode: preload
+            filters:
+            - sap/ui/events/jquery/EventSimulation.js
+            resolve: true
+            resolveConditional: false
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+        numberOfParts: 2
   jsdoc:
     excludes:
       - "jquery-*"
