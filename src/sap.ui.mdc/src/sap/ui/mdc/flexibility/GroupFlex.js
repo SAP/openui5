@@ -156,7 +156,12 @@ sap.ui.define([
 				targetAggregation: "groupLevels",
 				customAggregation: mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent).getGroupConditions().groupLevels,
 				classification: CondenserClassification.Destroy,
-				sourceIndex: oChange.getRevertData().index
+				sourceIndex: oChange.getRevertData().index,
+				setIndexInRevertData: function(oChange, iIndex) {
+					var oRevertData = oChange.getRevertData();
+					oRevertData.index = iIndex;
+					oChange.setRevertData(oRevertData);
+				}
 			};
 		}
 	});
@@ -171,7 +176,6 @@ sap.ui.define([
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "groupLevels",
 				classification: CondenserClassification.Move,
-				//sourceIndex: oChange.getContent().index,
 				sourceIndex: oChange.getRevertData().index,
 				customAggregation: mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent).getGroupConditions().groupLevels,
 				sourceContainer: oChange.getSelector(),
@@ -181,6 +185,11 @@ sap.ui.define([
 				},
 				getTargetIndex: function(oChange) {
 					return oChange.getContent().index;
+				},
+				setIndexInRevertData: function(oChange, iIndex) {
+					var oRevertData = oChange.getRevertData();
+					oRevertData.index = iIndex;
+					oChange.setRevertData(oRevertData);
 				}
 			};
 		}
