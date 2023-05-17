@@ -1,11 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate"
-], function(CalendarType, Configuration, Japanese, UI5Date, UniversalDate) {
+], function(Log, CalendarType, Configuration, Japanese, UI5Date, UniversalDate) {
 	"use strict";
 
 	// Test data
@@ -25,10 +26,20 @@ sap.ui.define([
 		{Gregorian: {year: 2019, month: 4, day: 1}, Japanese: {era: 236, year: 1, month:4, day: 1}},
 		{Gregorian: {year: 2032, month: 9, day: 1}, Japanese: {era: 236, year: 14, month:9, day: 1}}
 	];
-
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	//1. Instance related
-	QUnit.module("sap.ui.core.date.Japanese");
+	QUnit.module("sap.ui.core.date.Japanese", {
+		beforeEach: function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
+			Configuration.setLanguage("en_US");
+		},
+		afterEach: function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 1, January 45 Showa
@@ -134,7 +145,7 @@ sap.ui.define([
 	QUnit.test("with gregorian year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function (assert) {
 		var oJapaneseDate = null;
 		aTestData.forEach(function(oTestDate) {
-			oJapaneseDate = createDateFromTestEntry(oTestDate, Japanese);
+			oJapaneseDate = createJapaneseDateFromGregorianTestEntry(oTestDate);
 			verifyDateWithTestDate(assert, "Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
 		});
 	});
@@ -150,7 +161,7 @@ sap.ui.define([
 					Gregorian: oJapanese,
 					Japanese: oJapanese
 				};
-				oJapaneseDate = createDateFromTestEntry(oTestDate, Japanese);
+				oJapaneseDate = createJapaneseDateFromGregorianTestEntry(oTestDate);
 				verifyDateWithTestDate(assert, "Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
 			}
 		});
@@ -340,46 +351,49 @@ sap.ui.define([
 		}
 	});
 
-["getWeek", "getUTCWeek"].forEach(function(sMethodeName) {
-	// use 10:00 to avoid day shifting when using UTC
-	QUnit.test(sMethodeName + " (de)", function (assert) {
-		Configuration.setLanguage("de");
+[false, true].forEach(function (bUTC) {
+	var sMethodeName = bUTC ? "getUTCWeek" : "getWeek";
 
+	QUnit.test(sMethodeName + " (de)", function (assert) {
+		function createDate(aYear, iMonth, iOneDay) {
+			return bUTC
+				// eslint-disable-next-line new-cap
+				? new Japanese(Japanese.UTC(aYear, iMonth, iOneDay))
+				: new Japanese(aYear, iMonth, iOneDay);
+		}
+		Configuration.setLanguage("de");
 		/*
 		 *    Januar 2022 (236, 4)
 		 * Week Mo Tu We Th Fr Sa Su
 		 *  52                  1  2
 		 *   1   3  4  5  6  7  8  9
 		 */
-		assert.deepEqual(new Japanese([236, 4], 0, 1, 10)[sMethodeName](), {
+		assert.deepEqual(createDate([236, 4], 0, 1)[sMethodeName](), {
 			"week": 51,
 			"year": 2021
 		}, "Jan 1st 2022 is CW 52");
-		assert.deepEqual(new Japanese([236, 4], 0, 3, 10)[sMethodeName](), {
+		assert.deepEqual(createDate([236, 4], 0, 3)[sMethodeName](), {
 			"week": 0,
 			"year": 2022
 		}, "Jan 3rd 2022 is CW 1");
-
-
 		/*
 		 *    Januar 2016 (235, 28)
 		 * Week Mo Tu We Th Fr Sa Su
 		 *  53               1  2  3
 		 *   1   4  5  6  7  8  9 10
 		 */
-		assert.deepEqual(new Japanese([235, 28], 0, 1, 10)[sMethodeName](), {
+		assert.deepEqual(createDate([235, 28], 0, 1)[sMethodeName](), {
 			"week": 52,
 			"year": 2015
 		}, "Jan 1st 2016 is CW 53");
-		assert.deepEqual(new Japanese([235, 28], 0, 3, 10)[sMethodeName](), {
+		assert.deepEqual(createDate([235, 28], 0, 3)[sMethodeName](), {
 			"week": 52,
 			"year": 2015
 		}, "Jan 3rd 2016 is CW 53");
-		assert.deepEqual(new Japanese([235, 28], 0, 4, 10)[sMethodeName](), {
+		assert.deepEqual(createDate([235, 28], 0, 4)[sMethodeName](), {
 			"week": 0,
 			"year": 2016
 		}, "Jan 4th 2016 is CW 1");
-		Configuration.setLanguage("en_US");
 	});
 });
 
@@ -431,6 +445,7 @@ sap.ui.define([
 	function createJapaneseDateFromTestEntry(oEntry, bUTC) {
 		var oDateEntry = oEntry.Japanese;
 		if (bUTC) {
+			// eslint-disable-next-line new-cap
 			return new Japanese(Japanese.UTC([oDateEntry.era, oDateEntry.year], oDateEntry.month, oDateEntry.day));
 		} else {
 			return new Japanese([oDateEntry.era, oDateEntry.year], oDateEntry.month, oDateEntry.day);
@@ -438,16 +453,17 @@ sap.ui.define([
 	}
 
 	function createGregorianDateFromTestEntry(oEntry, bUTC) {
-		return createDateFromTestEntry(oEntry, Date, bUTC);
-	}
-
-	function createDateFromTestEntry(oEntry, clType, bUTC) {
 		var oDateEntry = oEntry.Gregorian;
 		if (bUTC) {
-			return new clType(clType.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
+			return UI5Date.getInstance(Date.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
 		} else {
-			return new clType(oDateEntry.year, oDateEntry.month, oDateEntry.day);
+			return UI5Date.getInstance(oDateEntry.year, oDateEntry.month, oDateEntry.day);
 		}
+	}
+
+	function createJapaneseDateFromGregorianTestEntry(oEntry) {
+		var oDateEntry = oEntry.Gregorian;
+		return new Japanese(oDateEntry.year, oDateEntry.month, oDateEntry.day);
 	}
 
 	function isInvalid(oDate) {
