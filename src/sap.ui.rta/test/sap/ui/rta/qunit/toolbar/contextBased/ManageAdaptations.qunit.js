@@ -168,7 +168,7 @@ sap.ui.define([
 				oAdaptationsTable.setSelectedItem(oAdaptationsTable.getItems()[0], true, true);
 
 				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
-				assert.ok(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
+				assert.notOk(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
 				assert.ok(oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
 
 				oMoveDownButton.firePress();
@@ -197,7 +197,7 @@ sap.ui.define([
 				oAdaptationsTable.setSelectedItem(oAdaptationsTable.getItems()[0], true, true);
 
 				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
-				assert.ok(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
+				assert.notOk(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
 				assert.ok(oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
 
 				oMoveDownButton.firePress();
@@ -428,7 +428,7 @@ sap.ui.define([
 				assert.ok(oSearchField.getEnabled(), "search field is present and enabled");
 				assert.strictEqual(oAdaptationsTable.getItems().length, 4, "correct amount of adaptations");
 				assert.ok(oAdaptationsTable.getDragDropConfig()[0].getEnabled(), "drag & drop is enabled");
-				assert.ok(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
+				assert.notOk(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
 				assert.ok(oMoveDownButton.getEnabled(), "MoveDownButton is enabled");
 				assert.ok(oDefaultContextTable.getVisible(), "default context table is visible");
 				oSearchField.setValue("something");
@@ -444,7 +444,7 @@ sap.ui.define([
 				assert.ok(oSearchField.getEnabled(), "search field is present and enabled");
 				assert.ok(oAdaptationsTable.getItems().length, 4, "correct amount of adaptations");
 				assert.ok(oAdaptationsTable.getDragDropConfig()[0].getEnabled(), "drag & drop is enabled");
-				assert.ok(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
+				assert.notOk(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
 				assert.ok(oMoveDownButton.getEnabled(), "MoveDownButton is enabled");
 				assert.ok(oDefaultContextTable.getVisible(), "default context table is visible");
 			});

@@ -17,6 +17,22 @@ sap.ui.define([
 						errorMessage: "Did not find the Open Manage Context-Based Adaptations dialog button"
 					});
 				},
+				iClickOnOpenManageAdaptationsDialogButtonWithOnlyOneAdaptation: function() {
+					return this.waitFor({
+						id: "openManageAdaptationsWithOnlyOneAdaptationDialogButton",
+						viewName: "sap.ui.rta.contextBased.Page",
+						actions: new Press(),
+						errorMessage: "Did not find the Open Manage Context-Based Adaptations dialog button"
+					});
+				},
+				iClickOnOpenManageAdaptationsDialogButtonWithTwoAdaptations: function() {
+					return this.waitFor({
+						id: "openManageAdaptationsWithTwoAdaptationsDialogButton",
+						viewName: "sap.ui.rta.contextBased.Page",
+						actions: new Press(),
+						errorMessage: "Did not find the Open Manage Context-Based Adaptations dialog button"
+					});
+				},
 				iClickOnManageAdaptationsWithErrorDialogButton: function() {
 					return this.waitFor({
 						id: "openManageAdaptationsWithErrorDialogButton",

@@ -75,6 +75,8 @@ function(
 					moveDown: moveDown.bind(this),
 					onDropSelectedAdaptation: onDropSelectedAdaptation.bind(this),
 					onSaveReorderedAdaptations: onSaveReorderedAdaptations.bind(this),
+					isAdaptationsSelected: isAdaptationsSelected.bind(this),
+					getIndexOfSelectedAdaptation: getIndexOfSelectedAdaptation.bind(this),
 					onClose: onCloseDialog.bind(this)
 				}
 			}).then(function(oDialog) {
@@ -83,7 +85,7 @@ function(
 				this.getToolbar().addDependent(this._oManageAdaptationDialog);
 			}.bind(this));
 		} else {
-			setEnabledPropertyOfMoveButton.call(this, false);
+			syncEnabledPropertyOfMoveButtons.call(this);
 			enableDragAndDropForAdaptationTable.call(this, true);
 			enableSaveButton.call(this, false);
 		}
@@ -136,17 +138,25 @@ function(
 	function onSelectionChange(oEvent) {
 		if (oEvent.getParameter("selected") === true) {
 			this._oControlConfigurationModel.setProperty("/isTableItemSelected", true);
-			if (isSearchFieldValueEmpty.call(this)) {
-				setEnabledPropertyOfMoveButton.call(this, true);
-			}
+			syncEnabledPropertyOfMoveButtons.call(this);
 		}
 	}
 
-	function setEnabledPropertyOfMoveButton(bIsEnabled) {
+	function syncEnabledPropertyOfMoveButtons() {
 		var oUpButton = getControlInDialog.call(this, "moveUpButton");
 		var oDownButton = getControlInDialog.call(this, "moveDownButton");
-		oUpButton.setEnabled(bIsEnabled);
-		oDownButton.setEnabled(bIsEnabled);
+		if (isSearchFieldValueEmpty.call(this)) {
+			if (isAdaptationsSelected.call(this)) {
+				oUpButton.setEnabled(getIndexOfSelectedAdaptation.call(this) > 0);
+				oDownButton.setEnabled(getIndexOfSelectedAdaptation.call(this) < this.oAdaptationsModel.getProperty("/count") - 1);
+			} else {
+				oUpButton.setEnabled(false);
+				oDownButton.setEnabled(false);
+			}
+		} else {
+			oUpButton.setEnabled(false);
+			oDownButton.setEnabled(false);
+		}
 	}
 
 	// ------ search field ------
@@ -157,7 +167,7 @@ function(
 		var oDefaultApplicationTable = getDefaultApplicationTable.call(this);
 		var sDefaultTableText = getDefaultApplicationTitle.call(this);
 		if (sQuery && sQuery.length > 0) {
-			setEnabledPropertyOfMoveButton.call(this, false);
+			syncEnabledPropertyOfMoveButtons.call(this);
 			enableDragAndDropForAdaptationTable.call(this, false);
 			//filter Table context
 			var oFilterByTitle = new Filter("title", FilterOperator.Contains, sQuery);
@@ -181,7 +191,7 @@ function(
 		} else {
 			enableDragAndDropForAdaptationTable.call(this, true);
 			if (this._oControlConfigurationModel.getProperty("/isTableItemSelected")) {
-				setEnabledPropertyOfMoveButton.call(this, true);
+				syncEnabledPropertyOfMoveButtons.call(this);
 			}
 			oDefaultApplicationTable.setVisible(true);
 		}
@@ -235,6 +245,7 @@ function(
 		// after move select the sibling
 		oTable.getItems()[iSiblingItemIndex].setSelected(true).focus();
 		enableSaveButton.call(this, didAdaptationsPriorityChange.call(this));
+		syncEnabledPropertyOfMoveButtons.call(this);
 	}
 
 	function onDropSelectedAdaptation(oEvent) {
@@ -316,6 +327,21 @@ function(
 
 	function enableDragAndDropForAdaptationTable(bIsEnabled) {
 		getAdaptationsTable.call(this).getDragDropConfig()[0].setEnabled(bIsEnabled);
+	}
+
+	function isAdaptationsSelected() {
+		var oAdaptationsTable = getAdaptationsTable.call(this);
+		return oAdaptationsTable.getSelectedContextPaths().length > 0;
+	}
+
+	function getIndexOfSelectedAdaptation() {
+		var oAdaptationsTable = getAdaptationsTable.call(this);
+		if (oAdaptationsTable.getSelectedContextPaths().length > 0) {
+			var aSplitedPath = oAdaptationsTable.getSelectedContextPaths()[0].split("/");
+			var iIndexOfSelectedItem = Number(aSplitedPath[aSplitedPath.length - 1]);
+			return iIndexOfSelectedItem;
+		}
+		return -1;
 	}
 
 	function onSaveReorderedAdaptations() {

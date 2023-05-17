@@ -9,6 +9,12 @@
 		<Button id="openManageAdaptationsDialogButton" text="Open Manage Context-Based Adaptation Dialog" press="onManageAdaptations"/>
 	</VBox>
 	<VBox class="sapUiSmallMargin">
+		<Button id="openManageAdaptationsWithOnlyOneAdaptationDialogButton" text="Open Manage Context-Based Adaptation Dialog with only one adaptation" press="onManageAdaptationsWithOnlyOneAdaptation"/>
+	</VBox>
+	<VBox class="sapUiSmallMargin">
+		<Button id="openManageAdaptationsWithTwoAdaptationsDialogButton" text="Open Manage Context-Based Adaptation Dialog with two adaptation" press="onManageAdaptationsWithTwoAdaptations"/>
+	</VBox>
+	<VBox class="sapUiSmallMargin">
 		<Button id="openManageAdaptationsWithErrorDialogButton" text="Open Manage Context-Based Adaptation Dialog (with error)" press="onManageAdaptationsWithBackendError"/>
 	</VBox>
 	<VBox class="sapUiSmallMargin">
