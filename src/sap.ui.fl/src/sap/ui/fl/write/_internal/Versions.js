@@ -356,6 +356,7 @@ sap.ui.define([
 			aVersions.splice(0, 0, oVersion);
 			oModel.setProperty("/activeVersion", oVersion.version);
 			oModel.setProperty("/publishVersionEnabled", true);
+			oModel.setProperty("/draftFilenames", []);
 			_updateVersionModelWhenDiscardOrActivate(oModel, oVersion.version);
 		});
 	};
