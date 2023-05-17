@@ -852,7 +852,8 @@ sap.ui.define([
 			maxValue: oItem.maxValue,
 			value: oItem.value,
 			visualMode: oItem.visualMode,
-			visible: BindingHelper.reuse(vVisible)
+			visible: BindingHelper.reuse(vVisible),
+			iconSize: "1rem"
 		});
 
 		return oControl;
