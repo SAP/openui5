@@ -77,6 +77,7 @@ sap.ui.define([
 
 	StringField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
+		var oItem;
 		if (!oVisualization) {
 			// check if value contains {{parameters.XX}} syntax
 			var aResult = oConfig.value ? oConfig.value.match(REGEXP_PARAMETERS) : undefined;
@@ -160,7 +161,7 @@ sap.ui.define([
 					};
 				}
 			} else if (oConfig.enum) {
-				var oItem = new ListItem({
+				oItem = new ListItem({
 					key: {
 						path: "currentSettings>"
 					},
@@ -186,7 +187,7 @@ sap.ui.define([
 					}
 				};
 			} else if (oConfig.values) {
-				var oItem = this.formatListItem(oConfig.values.item);
+				oItem = this.formatListItem(oConfig.values.item);
 				if (!oConfig.values.item.key) {
 					oConfig.values.item.key = oConfig.values.item.text;
 				}
@@ -282,6 +283,26 @@ sap.ui.define([
 			}
 		} else if (oVisualization.type === "TextArea") {
 			oVisualization.type = "sap/m/TextArea";
+		} else if (oVisualization.type === "Select" && oConfig.values) {
+			oItem = this.formatListItem(oConfig.values.item);
+			var oSettings = Object.assign({
+				selectedKey: {
+					path: 'currentSettings>value'
+				},
+				forceSelection: false,
+				editable: oConfig.editable,
+				visible: oConfig.visible,
+				showSecondaryValues: false,
+				width: "100%",
+				items: {
+					path: '',
+					template: oItem
+				}
+			}, oVisualization.settings || {});
+			oVisualization = {
+				type: Select,
+				settings: oSettings
+			};
 		}
 		this._visualization = oVisualization;
 		this.attachAfterInit(this._afterInit);
