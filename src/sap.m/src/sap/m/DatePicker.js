@@ -1220,7 +1220,7 @@ sap.ui.define([
 				showCloseButton: false,
 				showArrow: false,
 				showHeader: false,
-				placement: library.PlacementType.VerticalPreferedBottom,
+				placement: library.PlacementType.VerticalPreferredBottom,
 				contentWidth: this.$().closest(".sapUiSizeCompact").length > 0 ? "18rem" : "21rem",
 				beginButton: new Button({
 					type: library.ButtonType.Emphasized,
