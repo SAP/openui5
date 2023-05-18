@@ -1266,14 +1266,6 @@ sap.ui.define([
 			},
 			Rule: {
 				title: "QUnit Page for Support Assistant Rules",
-				loader: {
-					map: {
-						"*": {
-							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
-							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
-						}
-					}
-				},
 				ui5: {
 					libs: ["sap.m", "sap.ui.support", "sap.ui.unified"],  // to compensate sync loadLibrary
 					support: "silent",

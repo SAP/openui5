@@ -3,9 +3,8 @@
 
 
 sap.ui.define([
-	"sap/ui/support/RuleAnalyzer",
-	"sap/ui/thirdparty/sinon"
-], function (RuleAnalyzer, sinon) {
+	"sap/ui/support/RuleAnalyzer"
+], function (RuleAnalyzer) {
 	"use strict";
 
 
@@ -23,10 +22,7 @@ sap.ui.define([
 	return function(oSettings) {
 
 		QUnit.test(oSettings.ruleId, function(assert) {
-			this.clock = sinon.useFakeTimers();
-
 			var done = assert.async();
-
 
 			RuleAnalyzer.analyze({
 					type: oSettings.executionScopeType,
@@ -52,10 +48,6 @@ sap.ui.define([
 
 				done();
 			});
-
-			this.clock.tick(500);
-			this.clock.restore();
-
 		});
 	};
 });
