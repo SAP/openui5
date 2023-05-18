@@ -1467,7 +1467,8 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
-				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
+				iOffsetBottom = oPage._$contentContainer[0].getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop - iOffsetBottom),
 				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
@@ -1494,7 +1495,8 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
-				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
+				iOffsetBottom = oPage._$contentContainer[0].getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop - iOffsetBottom),
 				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
@@ -1525,7 +1527,8 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
-				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
+				iOffsetBottom = oPage._$contentContainer[0].getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop - iOffsetBottom),
 				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
@@ -1547,7 +1550,8 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
-				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
+				iOffsetBottom = oPage._$contentContainer[0].getBoundingClientRect().bottom - oSubSection.getDomRef().getBoundingClientRect().bottom,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop - iOffsetBottom);
 
 			oSubSection.getDomRef().style.paddingTop = "20px";
 			oPage._requestAdjustLayout(true);
