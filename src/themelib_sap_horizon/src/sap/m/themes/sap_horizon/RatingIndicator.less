@@ -53,11 +53,6 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 	text-shadow: @sapContent_TextShadow;
 }
 
-/* temporary workaround of an issue in the icon font */
-.sapMRI .sapUiIcon,
-.sapMRI .sapMImg {
-	top: -1px;
-}
 
 /* As font-size is set as an inline style, we need to override it for horizon only using important */
 
@@ -65,6 +60,7 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 .sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon,
 .sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon {
 	font-size: 75% !important;
+	vertical-align: baseline;
 }
 
 .sapUiSizeCompact {
@@ -75,6 +71,7 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 	&.sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon,
 	&.sapMRIDisabled .sapMRIIconSel .sapMRIunratedIcon {
 		font-size: 75% !important;
+		vertical-align: baseline;
 	}
 
 	& .sapMRISel,
