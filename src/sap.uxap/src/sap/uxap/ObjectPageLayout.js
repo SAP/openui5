@@ -2541,15 +2541,13 @@ sap.ui.define([
 
 		this.iFooterHeight = this._getFooterHeight();
 
-		var iSubSectionIndex = -1,
-			iSectionsContainerOffsetTop = this._$sectionsContainer.position().top;
+		var iSubSectionIndex = -1;
 
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
 				$this = oSectionBase.$(),
 				bPromoted = false,
-				oSection,
-				iSectionsTopMargin;
+				oSection;
 
 			if (!oInfo /* sectionBase is visible */ || !$this.length) {
 				return;
@@ -2626,9 +2624,8 @@ sap.ui.define([
 				bParentIsFirstVisibleSection = bUseIconTabBar /* there is only single section per tab */ || (oSectionBase.getParent() === this._oFirstVisibleSection);
 				bIsFirstVisibleSubSection = bParentIsFirstVisibleSection && (iSubSectionIndex === 0); /* index of *visible* subSections is first */
 				bIsFullscreenSection = oSectionBase.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
-				iSectionsTopMargin = oSection && oSection.$().length ? parseInt(oSection.$().css("marginTop")) : 0;
 
-				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, Math.ceil(realTop), iSectionsContainerOffsetTop, iSectionsTopMargin));
+				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, oSectionBase));
 			}
 
 		}, this);
@@ -2694,9 +2691,13 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection,
-		iSubSectionOffsetTop, iSectionsContainerOffsetTop, iSectionsTopMargin) {
+		oSectionBase) {
 
 		var iSectionsContainerHeight,
+			oContainerDimentions,
+			oSubSectionDimentons,
+			iOffsetTop,
+			iOffsetBottom,
 			iRemainingSectionContentHeight;
 
 		if (!bFullscreenSection) {
@@ -2720,7 +2721,11 @@ sap.ui.define([
 		if (this._bAllContentFitsContainer) {
 			// if we have a single fullscreen subsection [that takes the entire available height within the sections container]
 			// => subtract the heights above and bellow the subSection to *avoid having a scrollbar*, having in mind the top margin of the Section
-			iRemainingSectionContentHeight = (iSubSectionOffsetTop - iSectionsContainerOffsetTop) + iSectionsTopMargin + this.iFooterHeight;
+			oContainerDimentions = this._$sectionsContainer[0].getBoundingClientRect();
+			oSubSectionDimentons = oSectionBase.getDomRef().getBoundingClientRect();
+			iOffsetTop = oSubSectionDimentons.top - oContainerDimentions.top;
+			iOffsetBottom = oContainerDimentions.bottom - oSubSectionDimentons.bottom;
+			iRemainingSectionContentHeight = iOffsetTop + iOffsetBottom + this.iFooterHeight;
 			iSectionsContainerHeight -= iRemainingSectionContentHeight;
 		}
 
