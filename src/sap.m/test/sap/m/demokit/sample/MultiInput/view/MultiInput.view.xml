@@ -20,8 +20,8 @@
 			<core:Item key="{ProductId}" text="{Name}" />
 		</MultiInput>
 		<Label text="MultiInput with pre-selected tokens" labelFor="multiInput1"/>
-		<MultiInput id="multiInput1" width="70%" showValueHelp="false"/>
+		<MultiInput id="multiInput1" showSuggestion="false" width="70%" showValueHelp="false"/>
 		<Label text="MultiInput with single long token" labelFor="multiInput2"/>
-		<MultiInput id="multiInput2" width="300px" showValueHelp="false" />
+		<MultiInput id="multiInput2" showSuggestion="false" width="300px" showValueHelp="false" />
 	</l:VerticalLayout>
 </mvc:View>

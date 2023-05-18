@@ -139,6 +139,15 @@ function(
 				maxTokens: {type: "int", group: "Behavior"},
 
 				/**
+				 * If this is set to true, suggest event is fired when user types in the input.
+				 * Changing the suggestItems aggregation in suggest event listener will show suggestions within a popup.
+				 * When runs on phone, input will first open a dialog where the input and suggestions are shown.
+				 * When runs on a tablet, the suggestions are shown in a popup next to the input.
+				 * <b>Note:</b> Default value for this property is false for the {@link sap.m.Input}.
+				 */
+				showSuggestion : {type : "boolean", group : "Behavior", defaultValue : true},
+
+				/**
 				 * Changed when tokens are changed. The value for sap.ui.core.ISemanticFormContent interface.
 				 * @private
 				 */
@@ -358,7 +367,6 @@ function(
 		this._aTokenValidators = [];
 
 		this.setShowValueHelp(true);
-		this.setShowSuggestion(true);
 		this._getSuggestionsPopover().getPopover()
 			.attachBeforeOpen(function () {
 				if (that.isMobileDevice() !== true) {
