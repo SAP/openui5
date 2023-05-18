@@ -243,6 +243,22 @@ sap.ui.define([
 			if (bReadonly) {
 				this._oCardPreview.onfocusin = this._onfocusin.bind(this);
 			}
+			// for some Cards, such as component Card, need to reset the Card height for css since the Card Content
+			// will not trigger onAfterRendering of the Card after loaded, then the height value may be wrong
+			this._oCardPreview.attachEvent("_ready", function () {
+				var oCardContent = this._oCardPreview.getCardContent();
+				if (oCardContent) {
+					oCardContent.addEventDelegate({
+						"onAfterRendering": function() {
+							this._resetHeight();
+						}
+					}, this);
+				}
+			}.bind(this));
+			this._oCardPreview.onAfterRendering = function () {
+				Card.prototype.onAfterRendering.call(this);
+				that._resetHeight();
+			};
 		}
 		if (this._currentMode === "MockData") {
 			this._oCardPreview.setProperty("useMockData", true);
@@ -260,19 +276,18 @@ sap.ui.define([
 		this._oCardPreview.refresh();
 		this._oCardPreview.editor = this._oCardPreview.editor || {};
 		this._oCardPreview.preview = this._oCardPreview.editor.preview = this;
-
-		this._oCardPreview.onAfterRendering = function () {
-			Card.prototype.onAfterRendering.call(this);
-			var oCardDom = that._oCardPreview.getDomRef();
-			if (oCardDom && that._getCurrentSize() !== "Full" ) {
-				var sHeight = oCardDom.offsetHeight;
-				document.body.style.setProperty("--sapUiIntegrationEditorPreviewCardHeight", sHeight + "px");
-				document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", (sHeight * 0.45 + 56)  + "px");
-			} else {
-				document.body.style.removeProperty("--sapUiIntegrationEditorPreviewCardHeight");
-			}
-		};
 		return this._oCardPreview;
+	};
+
+	CardPreview.prototype._resetHeight = function () {
+		var oCardDom = this._oCardPreview.getDomRef();
+		if (oCardDom && this._getCurrentSize() !== "Full" ) {
+			var sHeight = oCardDom.offsetHeight;
+			document.body.style.setProperty("--sapUiIntegrationEditorPreviewCardHeight", sHeight + "px");
+			document.body.style.setProperty("--sapUiIntegrationEditorPreviewHeight", (sHeight * 0.45 + 56)  + "px");
+		} else {
+			document.body.style.removeProperty("--sapUiIntegrationEditorPreviewCardHeight");
+		}
 	};
 
 	/**

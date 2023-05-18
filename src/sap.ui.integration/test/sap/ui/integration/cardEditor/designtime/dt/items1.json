@@ -31,7 +31,7 @@
 			"settings": {
 				"value": "{currentSettings>value}",
 				"min": 0,
-				"max": 10,
+				"max": 20,
 				"width": "100%",
 				"showAdvancedTooltip": true,
 				"showHandleTooltip": false,
