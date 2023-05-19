@@ -591,18 +591,9 @@ sap.ui.define([
                 this._fnRejectInnerChartBound = reject;
             }.bind(this));
 
-            //load required modules before init of inner controls
-            var pLoadDelegate = this._loadDelegate().then(function(oDelegate){
-                return oDelegate;
-            }).then(function(oDelegate){
-                return this.initControlDelegate(oDelegate);
-            }.bind(this)).catch(function (error) {
-                this._fnRejectInitialized(error);
-            }.bind(this));
+            var pLoadDelegate = this.initControlDelegate();
 
-            var aInitPromises = [
-                pLoadDelegate
-            ];
+            var aInitPromises = [ pLoadDelegate ];
 
             if (this.isFilteringEnabled()) {
                 aInitPromises.push(this.retrieveInbuiltFilter());
@@ -610,7 +601,9 @@ sap.ui.define([
 
             //TODO: Refactor this so we use awaitPropertyHelper
             Promise.all(aInitPromises).then(function(){
-                this._initInnerControls();
+                if (!this.isDestroyed()) {
+                    this._initInnerControls();
+                }
             }.bind(this));
 
         };
@@ -750,7 +743,7 @@ sap.ui.define([
         };
 
         Chart.prototype._createBreadcrumbs = function () {
-            if (!this._oBreadcrumbs){
+            if (!this._oBreadcrumbs && !this._bIsDestroyed) {
                 this._oBreadcrumbs = new Breadcrumbs(this.getId() + "--breadcrumbs");
                 this._oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
                 this.setAggregation("_breadcrumbs", this._oBreadcrumbs);
