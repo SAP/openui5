@@ -135,6 +135,33 @@ sap.ui.define([
 		);
 
 	/**
+	 * Returns a format converting between the internal and external representation of a value for this type. The
+	 * implementation of this method by subclasses is optional.
+	 *
+	 * @returns {object}
+	 *   A format converting between the internal and external representation
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.ODataType.prototype.getFormat
+	 * @private
+	 */
+
+	/**
+	 * Returns a language-dependent placeholder text such as "e.g. <sample value>" where <sample value> is formatted
+	 * using this type.
+	 *
+	 * @returns {string|undefined}
+	 *   The language-dependent placeholder text or <code>undefined</code> if the type does not offer a placeholder
+	 *
+	 * @private
+	 * @ui5-restricted sap.m
+	 */
+	ODataType.prototype.getPlaceholderText = function () {
+		return this.getFormat && this.getFormat().getPlaceholderText && this.getFormat().getPlaceholderText();
+	};
+
+	/**
 	 * ODataTypes are immutable and do not allow modifying the type's constraints.
 	 * This function overwrites the <code>setConstraints</code> of
 	 * <code>sap.ui.model.SimpleType</code> and does nothing.
