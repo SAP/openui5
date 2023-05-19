@@ -689,6 +689,16 @@ sap.ui.define([
 		assert.equal(oDate.getDate(), 2);
 	});
 
+	//*****************************************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateType();
+
+		this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateInterval", {
 		beforeEach : function() {
@@ -867,6 +877,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateIntervalType();
+
+		this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
+
+	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateTime", {
 		beforeEach : function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
@@ -938,6 +958,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateTimeType();
+
+		this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
+
+	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateTimeInterval", {
 		beforeEach : function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
@@ -990,6 +1020,16 @@ sap.ui.define([
 		} catch (e) {
 			assert.ok(false, "validate test fails");
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateTimeIntervalType();
+
+		this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
 	});
 
 	//*********************************************************************************************
@@ -1689,6 +1729,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new TimeType();
+
+		this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
+
+	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.TimeInterval", {
 		beforeEach : function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
@@ -1740,6 +1790,16 @@ sap.ui.define([
 		} catch (e) {
 			assert.ok(false, "validate test fails");
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new TimeIntervalType();
+
+		this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
 	});
 
 	//*********************************************************************************************

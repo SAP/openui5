@@ -312,11 +312,26 @@ sap.ui.define([
 		});
 	}
 
+	module("sap.ui.model.odata.type.DateTimeBase");
+
 	//*********************************************************************************************
 	QUnit.test("DateTimeBase constraints undefined", function (assert) {
 		var oType = new DateTimeBase({}, undefined);
 
 		assert.deepEqual(oType.oConstraints, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateTimeBase();
+
+		this.mock(DateFormat.prototype).expects("getPlaceholderText").withExactArgs().callsFake(function () {
+			assert.strictEqual(this, oType.oFormat);
+			return "~placeholder";
+		});
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
 	});
 
 	//*********************************************************************************************
