@@ -257,9 +257,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.checkSuspended = function (bIfNoResumeChangeReason) {
-		var oRootBinding = this.getRootBinding();
-
-		if (oRootBinding && oRootBinding.isSuspended()
+		if (this.isRootBindingSuspended()
 				&& (!bIfNoResumeChangeReason || this.isRoot() || this.getResumeChangeReason())) {
 			throw new Error("Must not call method when the binding's root binding is suspended: "
 				+ this);

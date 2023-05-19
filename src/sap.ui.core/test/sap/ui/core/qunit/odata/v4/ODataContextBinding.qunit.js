@@ -198,8 +198,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[false, true].forEach(function (bSuspended) {
 		QUnit.test("initialize: resolved, suspended = " + bSuspended, function (assert) {
-			var oBinding = this.bindContext("/resolved"),
-				oRootBinding = {isSuspended : function () {}};
+			var oBinding = this.bindContext("/resolved");
 
 			assert.strictEqual(oBinding.bInitial, true);
 			this.mock(oBinding).expects("isResolved").withExactArgs()
@@ -207,8 +206,8 @@ sap.ui.define([
 					assert.strictEqual(oBinding.bInitial, false);
 					return true;
 				});
-			this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
-			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
+			this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs()
+				.returns(bSuspended);
 
 			this.mock(oBinding).expects("_fireChange")
 				.exactly(bSuspended ? 0 : 1)
@@ -1071,11 +1070,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: suspended root binding", function (assert) {
-		var oBinding = this.bindContext("~path~"),
-			oRootBinding = {isSuspended : function () {}};
+		var oBinding = this.bindContext("~path~");
 
-		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
-		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
 
 		assert.throws(function () {
 			// code under test

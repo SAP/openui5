@@ -2794,7 +2794,7 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#initialize
 	ODataListBinding.prototype.initialize = function () {
 		if (this.isResolved()) {
-			if (this.getRootBinding().isSuspended()) {
+			if (this.isRootBindingSuspended()) {
 				this.sResumeChangeReason = this.sChangeReason === "AddVirtualContext"
 					? ChangeReason.Change
 					: ChangeReason.Refresh;
@@ -3957,8 +3957,7 @@ sap.ui.define([
 					} else if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect) {
 						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
 					}
-					if (oContext.getBinding
-							&& oContext.getBinding().getRootBinding().isSuspended()) {
+					if (oContext.getBinding && oContext.getBinding().isRootBindingSuspended()) {
 						// when becoming suspended, remain silent until resume
 						this.oContext = oContext;
 						this.setResumeChangeReason(ChangeReason.Context);
