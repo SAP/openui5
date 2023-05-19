@@ -216,6 +216,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a language-dependent placeholder text such as "e.g. <sample value>" where <sample value> is formatted
+	 * using this type.
+	 *
+	 * @returns {string|undefined}
+	 *   The language-dependent placeholder text or <code>undefined</code> if the type does not offer a placeholder
+	 *
+	 * @private
+	 * @ui5-restricted sap.m
+	 */
+	DateTimeWithTimezone.prototype.getPlaceholderText = function () {
+		return getFormatter(this).getPlaceholderText();
+	};
+
+	/**
 	 * Parses the given value.
 	 *
 	 * @param {string|Date} vValue

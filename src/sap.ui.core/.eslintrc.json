@@ -9,7 +9,7 @@
 				"src/sap/ui/model/**/*.js"
 			],
 			"rules": {
-				"max-len": ["error", {"code": 100, "ignoreUrls": true}]
+				"max-len": ["error", {"code": 120, "ignoreUrls": true}]
 			}
 		},
 		{

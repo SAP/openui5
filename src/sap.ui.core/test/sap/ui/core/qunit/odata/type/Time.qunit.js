@@ -304,4 +304,17 @@ sap.ui.define([
 
 		assert.deepEqual(oType.parseValue("12:34:56.789", "string"), createTime(12, 34, 56, 789));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new Time();
+
+		this.mock(DateFormat.prototype).expects("getPlaceholderText").withExactArgs().callsFake(function () {
+			assert.strictEqual(this, oType.oFormat);
+			return "~placeholder";
+		});
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
 });

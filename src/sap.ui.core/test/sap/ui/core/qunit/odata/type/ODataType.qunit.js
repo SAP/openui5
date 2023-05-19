@@ -18,6 +18,7 @@ sap.ui.define([
 		}
 	});
 
+	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
 		var oType = new ODataType();
 
@@ -40,4 +41,25 @@ sap.ui.define([
 		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
 	});
 
+	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new ODataType();
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), undefined);
+
+		oType.getFormat = function () {};
+		var oTypeMock = this.mock(oType);
+		oTypeMock.expects("getFormat").withExactArgs().returns({/*format has no getPlaceholderText*/});
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), undefined);
+
+		var oFormat = {getPlaceholderText: function () {}};
+		oTypeMock.expects("getFormat").withExactArgs().twice().returns(oFormat);
+		this.mock(oFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
 });

@@ -7,9 +7,11 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/library",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/CalendarWeekNumbering"
-], function (extend, DateFormat, Locale, LocaleData, UniversalDate, library, Configuration, CalendarWeekNumbering) {
-		"use strict";
+	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/test/TestUtils"
+], function (extend, DateFormat, Locale, LocaleData, UniversalDate, library, Configuration, CalendarWeekNumbering,
+		TestUtils) {
+	"use strict";
 
 		// shortcut for sap.ui.core.CalendarType
 		var CalendarType = library.CalendarType;
@@ -4253,5 +4255,108 @@ sap.ui.define([
 		// code under test
 		oDate = oFormat.parse("2022 015");
 		assert.strictEqual(oFormat.format(oDate).toString(), "2022 015");
+	});
+
+	//*****************************************************************************************************************
+[
+	{method: "getDateInstance", result: "date.placeholder Dec 31, 2012"},
+	{method: "getDateTimeInstance", result: "date.placeholder Dec 31, 2012, 11:59:58 PM"},
+	{method: "getTimeInstance", result: "date.placeholder 11:59:58 PM"},
+	{method: "getDateTimeWithTimezoneInstance", result: "date.placeholder Dec 31, 2012, 11:59:58 PM Europe, Berlin"}
+].forEach(function (oFixture) {
+	QUnit.test("getPlaceholderText: " + oFixture.method, function (assert) {
+		this.clock = sinon.useFakeTimers(new Date(2012, 0).getTime());
+
+		TestUtils.withNormalizedMessages(function () {
+			// code under test
+			assert.strictEqual(DateFormat[oFixture.method]().getPlaceholderText(), oFixture.result);
+		});
+
+		this.clock.restore();
+	});
+});
+
+	//*****************************************************************************************************************
+[
+	{method: "getDateInstance", result: "date.placeholder Dec 22, 2012 – Dec 31, 2012"},
+	{method: "getDateTimeInstance", result: "date.placeholder Dec 22, 2012, 9:12:34 AM – Dec 31, 2012, 11:59:58 PM"},
+	{method: "getTimeInstance", result: "date.placeholder 9:12:34 AM – 11:59:58 PM"}
+].forEach(function (oFixture) {
+	QUnit.test("getPlaceholderText, with interval: " + oFixture.method, function (assert) {
+		this.clock = sinon.useFakeTimers(new Date(2012, 0).getTime());
+
+		TestUtils.withNormalizedMessages(function () {
+			// code under test
+			assert.strictEqual(DateFormat[oFixture.method]({interval: true}).getPlaceholderText(), oFixture.result);
+		});
+
+		this.clock.restore();
+	});
+});
+
+	//*****************************************************************************************************************
+[
+	{type: CalendarType.Gregorian, result: "date.placeholder Dec 31, 2012"},
+	{type: CalendarType.Buddhist, result: "date.placeholder Dec 31, 2555 BE"},
+	{type: CalendarType.Japanese, result: "date.placeholder Dec 31, 24 Heisei"},
+	{type: CalendarType.Islamic, result: "date.placeholder Saf. 17, 1434 AH"},
+	{type: CalendarType.Persian, result: "date.placeholder Dey 11, 1391 AP"}
+].forEach(function (oFixture) {
+	QUnit.test("getPlaceholderText: different calendar types: " + oFixture.type, function (assert) {
+		this.clock = sinon.useFakeTimers(new Date(2012, 0).getTime());
+
+		TestUtils.withNormalizedMessages(function () {
+			// code under test
+			assert.strictEqual(
+				DateFormat.getDateInstance({calendarType: oFixture.type}).getPlaceholderText(),
+				oFixture.result);
+		});
+
+		this.clock.restore();
+	});
+});
+
+	//*****************************************************************************************************************
+["getDateInstance", "getDateTimeInstance", "getTimeInstance"].forEach(function (sMethod) {
+	[false, true].forEach(function (bUTC) {
+	QUnit.test("getSampleValue single date, " + sMethod + "; UTC=" + bUTC, function (assert) {
+		var sExpectedDate = "2012-12-31T23:59:58.123" + (bUTC ? "Z" : "");
+
+		this.clock = sinon.useFakeTimers(new Date(2012, 0).getTime());
+
+		// code under test
+		assert.deepEqual(
+			DateFormat[sMethod]({UTC: bUTC}).getSampleValue(),
+			[new Date(sExpectedDate)]);
+
+		this.clock.restore();
+	});
+
+	QUnit.test("getSampleValue date interval, " + sMethod + "; UTC=" + bUTC, function (assert) {
+		var sExpectedEndDate = "2012-12-31T23:59:58.123" + (bUTC ? "Z" : ""),
+			sExpectedStartDate = "2012-12-22T09:12:34.567" + (bUTC ? "Z" : "");
+
+		this.clock = sinon.useFakeTimers(new Date(2012, 0).getTime());
+
+		// code under test
+		assert.deepEqual(
+			DateFormat[sMethod]({interval: true, UTC: bUTC}).getSampleValue(),
+			[[new Date(sExpectedStartDate), new Date(sExpectedEndDate)]]);
+
+		this.clock.restore();
+	});
+	});
+});
+
+	//*****************************************************************************************************************
+	QUnit.test("getSampleValue DateTimeWithTimezone", function (assert) {
+		this.clock = sinon.useFakeTimers(new Date(2012, 0).getTime());
+
+		// code under test
+		assert.deepEqual(
+			DateFormat.getDateTimeWithTimezoneInstance().getSampleValue(),
+			[new Date("2012-12-31T23:59:58.123"), "Europe/Berlin"]);
+
+		this.clock.restore();
 	});
 });
