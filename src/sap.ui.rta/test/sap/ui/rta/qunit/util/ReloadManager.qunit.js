@@ -212,8 +212,17 @@ sap.ui.define([
 			this.oGetReloadReasonsStub = sandbox.stub(ReloadInfoAPI, "getReloadReasonsForStart");
 			this.oReloadStub = sandbox.stub(ReloadManager, "triggerReload");
 			this.oAutoStartStub = sandbox.stub(ReloadManager, "enableAutomaticStart");
-			this.oLoadDraftStub = sandbox.stub(VersionsAPI, "loadDraftForApplication");
-			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oLoadVersionStubFinished = false;
+			var fnSlowCall = function() {
+				return new Promise(function(resolve) {
+					setTimeout(function() {
+						this.oLoadVersionStubFinished = true;
+						resolve();
+					}.bind(this), 0);
+				}.bind(this));
+			}.bind(this);
+			this.oLoadDraftStub = sandbox.stub(VersionsAPI, "loadDraftForApplication").callsFake(fnSlowCall);
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").callsFake(fnSlowCall);
 			ReloadManager.setUShellServices({URLParsing: "foo", CrossApplicationNavigation: "bar"});
 		},
 		afterEach: function() {
@@ -250,6 +259,10 @@ sap.ui.define([
 
 		QUnit.test("with versioning and with a reload reason", function(assert) {
 			this.oGetReloadReasonsStub.resolves({hasHigherLayerChanges: true});
+			this.oReloadStub.callsFake(function() {
+				assert.ok(this.oLoadVersionStubFinished, "then calls are properly chained");
+				return Promise.resolve();
+			}.bind(this));
 			return ReloadManager.handleReloadOnStart({versioningEnabled: true}).then(function() {
 				assert.strictEqual(this.oLoadDraftStub.callCount, 0, "the draft was not loaded");
 				assert.strictEqual(this.oLoadVersionStub.callCount, 1, "the version was loaded");
@@ -258,6 +271,10 @@ sap.ui.define([
 
 		QUnit.test("with versioning and a draft and with a reload reason", function(assert) {
 			this.oGetReloadReasonsStub.resolves({isDraftAvailable: true});
+			this.oReloadStub.callsFake(function() {
+				assert.ok(this.oLoadVersionStubFinished, "then calls are properly chained");
+				return Promise.resolve();
+			}.bind(this));
 			return ReloadManager.handleReloadOnStart({versioningEnabled: true}).then(function() {
 				assert.strictEqual(this.oLoadDraftStub.callCount, 1, "the draft was loaded");
 				assert.strictEqual(this.oLoadVersionStub.callCount, 0, "the version was not loaded");

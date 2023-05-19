@@ -1346,18 +1346,18 @@ sap.ui.define([
 				emphasizedAction: MessageBox.Action.YES
 			}).then(function(sAction) {
 				if (sAction === MessageBox.Action.YES) {
-					this._serializeToLrep()
+					return this._serializeToLrep()
 						.then(callbackFn);
 				} else if (sAction === MessageBox.Action.NO) {
 					// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
 					this.getCommandStack().removeAllCommands(true);
-					callbackFn();
+					return callbackFn();
 				}
-				return undefined;
+				return Promise.resolve();
 			}.bind(this));
-			return;
+			return Promise.resolve();
 		}
-		callbackFn();
+		return callbackFn();
 	}
 
 	function onSwitchAdaptation(oEvent) {
@@ -1368,15 +1368,20 @@ sap.ui.define([
 		var sAdaptationId = oEvent.getParameter("adaptationId");
 		this._sSwitchToAdaptationId = sAdaptationId;
 		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
-			switchAdaptation.bind(this, this._sSwitchToAdaptationId));
+			switchAdaptation.bind(this, this._sSwitchToAdaptationId))
+			.catch(function(oError) {
+				Utils.showMessageBox("error", "MSG_SWITCH_ADAPTATION_FAILED", {error: oError});
+				Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			});
 	}
 
 	function switchAdaptation(sAdaptationId) {
 		var sVersion = this._oVersionsModel.getProperty("/displayedVersion");
-		switchVersion.call(this, sVersion, sAdaptationId);
+		return switchVersion.call(this, sVersion, sAdaptationId);
 	}
 
 	function onSwitchVersion(oEvent) {
+		var fnCallback = oEvent.getParameter("callback") || function() {};
 		var sVersion = oEvent.getParameter("version");
 		var sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
 
@@ -1386,24 +1391,30 @@ sap.ui.define([
 		}
 
 		this._sSwitchToVersion = sVersion;
-		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "TIT_SWITCH_VERSION_DIALOG",
-			switchVersion.bind(this, this._sSwitchToVersion));
+		handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "TIT_SWITCH_VERSION_DIALOG",
+			switchVersion.bind(this, this._sSwitchToVersion))
+			.then(fnCallback)
+			.catch(function(oError) {
+				Utils.showMessageBox("error", "MSG_SWITCH_VERSION_FAILED", {error: oError});
+				Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			});
 	}
 
 	function switchVersion(sVersion, sAdaptationId) {
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
-		VersionsAPI.loadVersionForApplication({
+		return VersionsAPI.loadVersionForApplication({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer(),
 			version: sVersion,
 			adaptationId: sAdaptationId
+		}).then(function() {
+			var oReloadInfo = {
+				versionSwitch: true,
+				version: sVersion
+			};
+			ReloadManager.triggerReload(oReloadInfo);
 		});
-		var oReloadInfo = {
-			versionSwitch: true,
-			version: sVersion
-		};
-		ReloadManager.triggerReload(oReloadInfo);
 	}
 
 	function onPublishVersion() {
