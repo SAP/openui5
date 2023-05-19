@@ -645,6 +645,58 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"string_Select": {
+						"manifestpath": "/sap.card/configuration/parameters/string_Select/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"json": [
+									{ "text": 0.3, "key": "key1", "additionalText": 1293883200000, "icon": "sap-icon://accept" },
+									{ "text": 0.6, "key": "key2", "additionalText": 1293883200000, "icon": "sap-icon://cart" },
+									{ "text": 0.8, "key": "key3", "additionalText": 1293883200000, "icon": "sap-icon://zoom-in" }
+								],
+								"path": "/"
+							},
+							"item": {
+								"text": "Percent: {= format.percent(${text}) }",
+								"key": "{key}",
+								"additionalText": "datetime: {= format.dateTime(${additionalText}, {style: 'long'}) }",
+								"icon": "{icon}"
+							}
+						},
+						"visualization": {
+							"type": "Select"
+						}
+					},
+					"Customer_Select": {
+						"manifestpath": "/sap.card/configuration/parameters/Customer_Select/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						},
+						"visualization": {
+							"type": "Select",
+							"settings": {
+								"forceSelection": true,
+								"editable": true,
+								"visible": true,
+								"showSecondaryValues": true
+							}
+						}
+					},
 					"stringArrayNoValues": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArrayNoValues/value",
 						"label": "String Array With No Values",

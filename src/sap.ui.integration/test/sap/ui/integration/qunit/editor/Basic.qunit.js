@@ -3629,6 +3629,99 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("Select is created from dt class inline", function (assert) {
+			var dt = function () {
+				return new Designtime(
+					{
+						"form": {
+							"items": {
+								"string1": {
+									"manifestpath": "/sap.card/configuration/parameters/string1/value",
+									"type": "string",
+									"values": {
+										"data": {
+											"json": [
+												{ "text": 0.3, "key": "key1", "additionalText": 1293883200000, "icon": "sap-icon://accept" },
+												{ "text": 0.6, "key": "key2", "additionalText": 1293883200000, "icon": "sap-icon://cart" },
+												{ "text": 0.8, "key": "key3", "additionalText": 1293883200000, "icon": "sap-icon://zoom-in" }
+											],
+											"path": "/"
+										},
+										"item": {
+											"text": "Percent: {= format.percent(${text}) }",
+											"key": "{key}",
+											"additionalText": "datetime: {= format.dateTime(${additionalText}, {style: 'long'}) }",
+											"icon": "{icon}"
+										}
+									},
+									"visualization": {
+										"type": "Select"
+									}
+								},
+								"string2": {
+									"manifestpath": "/sap.card/configuration/parameters/string2/value",
+									"type": "string",
+									"values": {
+										"data": {
+											"json": [
+												{ "text": 0.3, "key": "key1", "additionalText": 1293883200000, "icon": "sap-icon://accept" },
+												{ "text": 0.6, "key": "key2", "additionalText": 1293883200000, "icon": "sap-icon://cart" },
+												{ "text": 0.8, "key": "key3", "additionalText": 1293883200000, "icon": "sap-icon://zoom-in" }
+											],
+											"path": "/"
+										},
+										"item": {
+											"text": "Percent: {= format.percent(${text}) }",
+											"key": "{key}",
+											"additionalText": "datetime: {= format.dateTime(${additionalText}, {style: 'long'}) }",
+											"icon": "{icon}"
+										}
+									},
+									"visualization": {
+										"type": "Select",
+										"settings": {
+											"forceSelection": true,
+											"editable": false
+										}
+									}
+								}
+							}
+						}
+					});
+			};
+
+			this.oEditor.setDesigntime(dt);
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oField1 = this.oEditor.getAggregation("_formContent")[2];
+					var oControl1 = oField1.getAggregation("_field");
+					assert.ok(oControl1.isA("sap.m.Select"), "Field 1: Control is Select");
+					assert.ok(oControl1.getEditable(), "Field 1: Control is editable");
+					assert.equal(oControl1.getItems().length, 3, "Field 1: Select lenght is OK");
+					var oField2 = this.oEditor.getAggregation("_formContent")[4];
+					var oControl2 = oField2.getAggregation("_field");
+					assert.ok(oControl2.isA("sap.m.Select"), "Field 2: Control is Select");
+					assert.ok(!oControl2.getEditable(), "Field 2: Control is NOT editable since 'editable' is false");
+					assert.equal(oControl2.getItems().length, 3, "Field 2: Select lenght is OK");
+					setTimeout(function () {
+						assert.equal(oField1._getCurrentProperty("value"), "", "Field 1: String1 Value '' correct");
+						assert.equal(oField2._getCurrentProperty("value"), "key1", "Field 2: String2 Value 'key1' correct since forceSelection is true");
+						oControl1.setSelectedKey("key2");
+						oControl1.fireChange({ selectedItem: oControl1.getItems()[1] });
+						oControl2.setSelectedKey("key3");
+						oControl2.fireChange({ selectedItem: oControl2.getItems()[2] });
+						setTimeout(function () {
+							assert.equal(oField1._getCurrentProperty("value"), "key2", "Field 1: String1 Value updated correct");
+							assert.equal(oField2._getCurrentProperty("value"), "key3", "Field 2: String2 Value updated correct");
+							resolve();
+						}, 1500);
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("IconSelect is created from dt class inline", function (assert) {
 			var dt = function () {
 				return new Designtime(

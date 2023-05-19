@@ -72,6 +72,9 @@
 				"stringWithRequestDestinationList": {
 					"value": ""
 				},
+				"string_Select": {
+					"value": "key2"
+				},
 				"stringArray": {
 					"value": [
 						"key1",
