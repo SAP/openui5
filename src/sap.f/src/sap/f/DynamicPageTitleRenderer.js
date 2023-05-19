@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"./library"], function (library) {
+	"./library", "sap/ui/Device"], function (library, Device) {
 	"use strict";
 
 	/**
@@ -224,7 +224,7 @@ sap.ui.define([
 
 	DynamicPageTitleRenderer._renderSnappedHeading = function (oRm, oDynamicPageTitleState) {
 		oRm.openStart("div", oDynamicPageTitleState.id + "-snapped-heading-wrapper");
-		if (!oDynamicPageTitleState.isSnapped) {
+		if (!oDynamicPageTitleState.isSnapped || (oDynamicPageTitleState.hasSnappedTitleOnMobile && Device.system.phone)) {
 			oRm.class("sapUiHidden");
 		}
 		oRm.openEnd();

@@ -1315,6 +1315,8 @@ function (
 			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
 			$STOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper,
 			oSnappedWrapper = this.oDynamicPageTitle.$snappedWrapper.context,
+			oSnappedHeadingWrapper,
+			oTitle,
 			$titleWrapper = this.oDynamicPage.$("header");
 
 		// Assert
@@ -1348,9 +1350,30 @@ function (
 		assert.notOk(oSnappedWrapper, "SnappedTitleOnMobile does not exist.");
 
 		// Cleanup
-		oUtil.toDesktopMode();
 		Device.orientation.landscape = false;
 		Device.orientation.portrait = true;
+
+		//Arrange
+		oTitle = this.oDynamicPageTitle.getHeading();
+		this.oDynamicPageTitle.setHeading(null);
+		this.oDynamicPageTitle.setAggregation("snappedHeading", new Title({text: "Test"}));
+
+		this.oDynamicPage.setHeaderExpanded(false);
+
+		this.oDynamicPage.invalidate();
+		Core.applyChanges();
+
+		this.oDynamicPage.setHeaderExpanded(true);
+		oSnappedHeadingWrapper = this.oDynamicPageTitle.$snappedHeadingWrapper;
+
+		assert.ok(oSnappedHeadingWrapper.hasClass("sapUiHidden"), "Snapped content is hidden on mobile when SnappedTitleOnMobile " +
+		"is set");
+
+		// Cleanup
+		oUtil.toDesktopMode();
+		this.oDynamicPageTitle.setHeading(oTitle);
+		this.oDynamicPage.setHeaderExpanded(false);
+
 	});
 
 	QUnit.test("No SnappedTitleOnMobile on Phone", function (assert) {
