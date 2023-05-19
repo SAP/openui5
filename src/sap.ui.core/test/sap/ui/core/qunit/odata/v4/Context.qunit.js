@@ -371,14 +371,12 @@ sap.ui.define([
 				fetchValue : function () {},
 				getHeaderContext : function () {}
 			},
-			oContext = Context.create(null, oBinding, "/foo"),
-			aElements = [];
+			oContext = Context.create(null, oBinding, "/foo");
 
-		aElements.$count = 42;
 		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
 		this.mock(oBinding).expects("fetchValue")
-			.withExactArgs("/foo", "~listener~", "bCached")
-			.returns(SyncPromise.resolve(Promise.resolve(aElements)));
+			.withExactArgs("/foo/$count", "~listener~", "bCached")
+			.returns(SyncPromise.resolve(Promise.resolve(42)));
 
 		return oContext.fetchValue(sPath, "~listener~", "bCached").then(function (oResult) {
 			assert.deepEqual(oResult, {$count : 42});

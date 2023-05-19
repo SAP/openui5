@@ -656,9 +656,9 @@ sap.ui.define([
 				sPath = sPath.slice(this.sPath.length + 1);
 			}
 			if (!sPath) {
-				return oBinding.fetchValue(this.sPath, oListener, bCached)
-					.then(function (aElements) {
-						return {$count : aElements.$count};
+				return oBinding.fetchValue(this.sPath + "/$count", oListener, bCached)
+					.then(function (iCount) {
+						return {$count : iCount};
 					});
 			} else if (sPath !== "$count") {
 				throw new Error("Invalid header path: " + sPath);
@@ -1281,10 +1281,10 @@ sap.ui.define([
 	 * @param {string} [sPath=""]
 	 *   A path relative to this context
 	 * @returns {Promise}
-	 *   A promise on the requested value; it is rejected if the context is a header context and the
-	 *   path is neither empty nor "$count".
+	 *   A promise on the requested value
 	 * @throws {Error}
-	 *   If the context's root binding is suspended
+	 *   If the context's root binding is suspended, or if the context is a header context and the
+	 *   path is neither empty nor "$count"
 	 *
 	 * @public
 	 * @see #getBinding
