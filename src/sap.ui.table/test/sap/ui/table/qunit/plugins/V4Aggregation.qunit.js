@@ -536,11 +536,8 @@ sap.ui.define([
 	aTestData2.forEach(function(oData) {
 		QUnit.test(oData.label, function(assert) {
 			var oContext = {
-				getValue: function(sKey) {
-					return oData.context[sKey];
-				},
 				getProperty: function(sPath) {
-					return sPath + "_value";
+					return sPath.startsWith("@$ui5") ? oData.context[sPath] : sPath + "_value";
 				}
 			};
 
@@ -563,10 +560,9 @@ sap.ui.define([
 	QUnit.test("Invalid return value of the group header formatter", function(assert) {
 		var oContextData = {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": false};
 		var oContext = {
-			getValue: function(sKey) {
-				return oContextData[sKey];
-			},
-			getProperty: function(sPath) {}
+			getProperty: function(sPath) {
+				return oContextData[sPath];
+			}
 		};
 		var oState = {context: oContext, Type: {Summary: "Summary", GroupHeader: "GroupHeader"}};
 		var oExpectedError = new Error("The group header title must be a string or undefined");
