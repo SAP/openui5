@@ -62,4 +62,46 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
 	});
+
+	//*********************************************************************************************
+[undefined, NaN, 0, Infinity, "foo"].forEach(function (vInput) {
+	QUnit.test("getEmptyValue: returns undefined for " + vInput, function (assert) {
+		// code under test
+		assert.strictEqual(new ODataType().getEmptyValue(vInput), undefined);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{parseEmptyValueToZero : false, nullable : true, result : null},
+	{parseEmptyValueToZero : false, nullable : false, result : null},
+	{parseEmptyValueToZero : true, nullable : true, result : null},
+	{parseEmptyValueToZero : true, nullable : false, result : "0"}
+].forEach(function (oFixture) {
+	var sTitle = "getEmptyValue: with format option parseEmptyValueToZero: " + oFixture.parseEmptyValueToZero
+			+ " and nullable constraints: " + oFixture.nullable;
+
+	QUnit.test(sTitle, function (assert) {
+		var oType = new ODataType();
+
+		oType.oFormatOptions = {parseEmptyValueToZero : oFixture.parseEmptyValueToZero};
+		oType.oConstraints = {nullable : oFixture.nullable};
+
+		// code under test
+		assert.strictEqual(oType.getEmptyValue(""), oFixture.result);
+		assert.strictEqual(oType.getEmptyValue(null), oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getEmptyValue: return numeric value", function (assert) {
+		var oType = new ODataType();
+
+		oType.oFormatOptions = {parseEmptyValueToZero : true};
+		oType.oConstraints = {nullable : false};
+
+		// code under test
+		assert.strictEqual(oType.getEmptyValue("", true), 0);
+		assert.strictEqual(oType.getEmptyValue(null, true), 0);
+	});
 });
