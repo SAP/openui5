@@ -67,6 +67,9 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.type.Int
 	 * @param {object} [oFormatOptions]
 	 *   type-specific format options; see subtypes
+	 * @param {boolean} [oFormatOptions.parseEmptyValueToZero=false]
+	 *   Whether the empty string and <code>null</code> are parsed to <code>0</code> if the <code>nullable</code>
+	 *   constraint is set to <code>false</code>; see {@link #parseValue parseValue}; since 1.115.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -80,6 +83,7 @@ sap.ui.define([
 					ODataType.apply(this, arguments);
 					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
+					this.checkParseEmptyValueToZero();
 				},
 				metadata : {
 					"abstract" : true
@@ -140,6 +144,7 @@ sap.ui.define([
 	Int.prototype.getFormat = function () {
 		if (!this.oFormat) {
 			var oFormatOptions = extend({groupingEnabled : true}, this.oFormatOptions);
+			delete oFormatOptions.parseEmptyValueToZero;
 			this.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
 		}
 
@@ -149,30 +154,36 @@ sap.ui.define([
 	/**
 	 * Parses the given value, which is expected to be of the given source type, to an Int in
 	 * number representation.
-	 * @param {number|string} vValue
-	 *   the value to be parsed. The empty string and <code>null</code> are parsed to
-	 *   <code>null</code>.
+	 *
+	 * @param {number|string|null} vValue
+	 *   The value to be parsed
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int",
+	 *   The source type (the expected type of <code>vValue</code>); may be "float", "int",
 	 *   "string", or a type with one of these types as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @throws {sap.ui.model.ParseException}
-	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to an
+	 *   If <code>sSourceType</code> is unsupported or if the given string cannot be parsed to an
 	 *   integer type
-	 * @returns {number}
-	 *   the parsed value
+	 * @returns {number|null}
+	 *   The parsed value. The empty string and <code>null</code> are parsed to:
+	 *   <ul>
+	 *     <li><code>0</code> if the <code>parseEmptyValueToZero</code> format option
+	 *       is set to <code>true</code> and the <code>nullable</code> constraint is set to <code>false</code>,</li>
+	 *     <li><code>null</code> otherwise.</li>
+	 *   </ul>
+	 *
 	 * @public
 	 */
 	Int.prototype.parseValue = function (vValue, sSourceType) {
-		var iResult;
-
-		if (vValue === null || vValue === "") {
-			return null;
+		var vEmptyValue = this.getEmptyValue(vValue, true);
+		if (vEmptyValue !== undefined) {
+			return vEmptyValue;
 		}
+
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				iResult = this.getFormat().parse(vValue);
+				var iResult = this.getFormat().parse(vValue);
 				if (isNaN(iResult)) {
 					throw new ParseException(getText("EnterInt"));
 				}

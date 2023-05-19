@@ -28,6 +28,10 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions]
 	 *   Format options as defined in {@link sap.ui.core.format.NumberFormat.getIntegerInstance}.
 	 *   In contrast to NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
+	 * @param {boolean} [oFormatOptions.parseEmptyValueToZero=false]
+	 *   Whether the empty string and <code>null</code> are parsed to <code>0</code> if the <code>nullable</code>
+	 *   constraint is set to <code>false</code>; see {@link sap.ui.model.odata.type.Int#parseValue parseValue};
+	 *   since 1.115.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link sap.ui.model.odata.type.Int#validateValue validateValue} throws an
 	 *   error if any constraint is violated
