@@ -1039,18 +1039,24 @@ sap.ui.define([
 [{
 	cache : null,
 	cacheImmutable : true,
-	fetchIfChildCanUseCacheCallCount : 1,
+	fetchIfChildCanUseCacheOnParentCount : 1,
 	title : "no cache"
 }, {
 	cache : null,
 	cacheImmutable : true,
-	fetchIfChildCanUseCacheCallCount : 1,
+	fetchIfChildCanUseCacheOnParentCount : 0,
+	title : "transient binding",
+	transient : true
+}, {
+	cache : null,
+	cacheImmutable : true,
+	fetchIfChildCanUseCacheOnParentCount : 1,
 	rejected : true,
 	title : "no cache, parent rejects"
 }, {
 	cache : undefined,
 	cacheImmutable : undefined,
-	fetchIfChildCanUseCacheCallCount : 0,
+	fetchIfChildCanUseCacheOnParentCount : 0,
 	title : "cache pending"
 }, {
 	cache : {
@@ -1058,7 +1064,7 @@ sap.ui.define([
 		setLateQueryOptions : function () {}
 	},
 	cacheImmutable : true,
-	fetchIfChildCanUseCacheCallCount : 0,
+	fetchIfChildCanUseCacheOnParentCount : 0,
 	title : "immutable cache"
 }, {
 	cache : {
@@ -1066,7 +1072,7 @@ sap.ui.define([
 		setLateQueryOptions : function () {}
 	},
 	cacheImmutable : true,
-	fetchIfChildCanUseCacheCallCount : 0,
+	fetchIfChildCanUseCacheOnParentCount : 0,
 	index : 42,
 	title : "non-virtual row context"
 }, {
@@ -1075,7 +1081,7 @@ sap.ui.define([
 		setLateQueryOptions : function () {}
 	},
 	cacheImmutable : true,
-	fetchIfChildCanUseCacheCallCount : 0,
+	fetchIfChildCanUseCacheOnParentCount : 0,
 	keptAlive : true,
 	title : "kept-alive context"
 }].forEach(function (oFixture) {
@@ -1154,15 +1160,16 @@ sap.ui.define([
 				oBinding.mLateQueryOptions = mLateQueryOptions;
 				return true;
 			});
+		oBindingMock.expects("isTransient").withExactArgs().returns(oFixture.transient);
 		if (oFixture.cache) {
 			this.mock(oFixture.cache).expects("setLateQueryOptions")
 				.withExactArgs(sinon.match.same(mLateQueryOptions));
 		}
 		this.mock(oBinding.oContext).expects("getBinding")
-			.exactly(oFixture.fetchIfChildCanUseCacheCallCount)
+			.exactly(oFixture.fetchIfChildCanUseCacheOnParentCount)
 			.withExactArgs().returns(oParentBinding);
 		this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
-			.exactly(oFixture.fetchIfChildCanUseCacheCallCount)
+			.exactly(oFixture.fetchIfChildCanUseCacheOnParentCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext), "navigation",
 				sinon.match(function (p) {
 					return p.getResult() === mLateQueryOptions;

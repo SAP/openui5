@@ -49479,61 +49479,85 @@ sap.ui.define([
 	// Alternatively delete the created (top-level) order context (CPOUI5ODATAV4-1975)
 	// Initial data: Create 2 + 2 (CPOUI5ODATAV4-2036)
 	// Deep create during view construction via controller events (BCP: 2370038939)
+	//
+	// Add a second level to see that the created promises are also rejected here, and that multiple
+	// calls to create in the first level also work when there is a second level.
+	// JIRA: CPOUI5ODATAV4-1976
 [false, true].forEach(function (bDelete) {
 	var sTitle = "CPOUI5ODATAV4-2034: Deep create, "
 			+ (bDelete ? "delete top-level context" : "reset changes");
 
 	QUnit.test(sTitle, function (assert) {
-		var oCreatedItemContext1,
-			oCreatedItemContext3,
-			oCreatedItemContext4,
-			oCreatedOrderContext,
-			oModel = this.createSalesOrdersModel(
-				{autoExpandSelect : true, updateGroupId : "update"}),
+		var oCreatedEmployeeContext1,
+			oCreatedEmployeeContext3,
+			oCreatedEmployeeContext4,
+			oCreatedTeamContext,
+			oEmployeesTable,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			sView = '\
-<Table id="orders" items="{/SalesOrderList}">\
-	<Text id="order" text="{SalesOrderID}"/>\
+<Table id="teams" items="{/TEAMS}">\
+	<Text id="id" text="{Team_Id}"/>\
 </Table>\
-<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
-	<Text id="note" text="{Note}"/>\
+<Table id="employees" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+	<Text id="employeeName" text="{Name}"/>\
+	<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : true}">\
+		<CustomListItem>\
+			<Text id="equipmentName" text="{Name}"/>\
+		</CustomListItem>\
+	</List>\
 </Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=99", {value : []})
-			.expectChange("order", [""])
-			.expectChange("note", ["AA", "BB"]);
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=99", {value : []})
+			.expectChange("id", [""])
+			.expectChange("employeeName", ["AA", "BB"])
+			.expectChange("equipmentName", ["AAA"]); // cannot take the employee into account
 
 		return this.createView(assert, sView, oModel, {
 			onInit : function () {
 				this.getView().attachModelContextChange(this.onModelContextChange, this);
 			},
 			onModelContextChange : function () {
-				oCreatedOrderContext = this.byId("orders").getBinding("items").create({
-					SO_2_SOITEM : [{Note : "AA"}, {Note : "BB"}]
+				oCreatedTeamContext = this.byId("teams").getBinding("items").create({
+					TEAM_2_EMPLOYEES : [
+						{Name : "AA", EMPLOYEE_2_EQUIPMENTS : [{Name : "AAA"}]},
+						{Name : "BB"}
+					]
 				});
-				this.byId("items").setBindingContext(oCreatedOrderContext);
+				oEmployeesTable = this.byId("employees");
+				oEmployeesTable.setBindingContext(oCreatedTeamContext);
 			}
 		}).then(function () {
-			var oItemsBinding = that.oView.byId("items").getBinding("items");
+			var oEmployeesBinding = oEmployeesTable.getBinding("items");
 
-			that.expectChange("note", ["DD", "CC", "AA", "BB"]);
+			that.expectChange("employeeName", ["DD", "CC", "AA", "BB"])
+				.expectChange("equipmentName", ["CCC"])
+				.expectChange("equipmentName", ["AAA"]); // moved to another row
 
-			oCreatedItemContext1 = oItemsBinding.getCurrentContexts()[0];
-			oCreatedItemContext3 = oItemsBinding.create({Note : "CC"});
-			oCreatedItemContext4 = oItemsBinding.create({Note : "DD"});
+			oCreatedEmployeeContext1 = oEmployeesBinding.getCurrentContexts()[0];
+			oCreatedEmployeeContext3 = oEmployeesBinding.create(
+				{Name : "CC", EMPLOYEE_2_EQUIPMENTS : [{Name : "CCC"}]});
+			oCreatedEmployeeContext4 = oEmployeesBinding.create({Name : "DD"});
 
 			return that.waitForChanges(assert, "create items");
 		}).then(function () {
+			var oCreatedEquipmentsContext1 = oEmployeesTable.getItems()[2].getCells()[1]
+					.getBinding("items").getAllCurrentContexts()[0],
+				oCreatedEquipmentsContext2 = oEmployeesTable.getItems()[1].getCells()[1]
+					.getBinding("items").getAllCurrentContexts()[0];
+
 			return Promise.all([
+				checkCanceled(assert, oCreatedTeamContext.created()),
+				checkCanceled(assert, oCreatedEmployeeContext1.created()),
+				// do not check the 2nd context from initial data, expect no "uncaught (in promise)"
+				checkCanceled(assert, oCreatedEmployeeContext3.created()),
+				checkCanceled(assert, oCreatedEmployeeContext4.created()),
+				checkCanceled(assert, oCreatedEquipmentsContext1.created()),
+				checkCanceled(assert, oCreatedEquipmentsContext2.created()),
 				// code under test
 				bDelete
-					? oCreatedOrderContext.delete()
+					? oCreatedTeamContext.delete()
 					: oModel.resetChanges(),
-				checkCanceled(assert, oCreatedOrderContext.created()),
-				checkCanceled(assert, oCreatedItemContext1.created()),
-				// do not check the 2nd context from initial data, await no "uncaught (in promise)"
-				checkCanceled(assert, oCreatedItemContext3.created()),
-				checkCanceled(assert, oCreatedItemContext4.created()),
 				that.waitForChanges(assert, bDelete ? "delete" : "resetChanges")
 			]);
 		});

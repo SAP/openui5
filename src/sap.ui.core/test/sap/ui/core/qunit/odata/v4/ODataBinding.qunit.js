@@ -1283,7 +1283,7 @@ sap.ui.define([
 //TODO May dependent bindings be created asynchronously e.g. in case of async views?
 
 	//*********************************************************************************************
-	QUnit.test("fetchCache: prepareDeepCreate", function (assert) {
+	QUnit.test("fetchCache: prepareDeepCreate prevents cache", function (assert) {
 		var oBinding = new ODataBinding({
 				oCache : null,
 				oCachePromise : SyncPromise.resolve(null),
