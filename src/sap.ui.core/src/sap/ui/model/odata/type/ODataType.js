@@ -135,6 +135,19 @@ sap.ui.define([
 		);
 
 	/**
+	 * Returns a format converting between the internal and external representation of a value for this type. The
+	 * implementation of this method by subclasses is optional.
+	 *
+	 * @returns {object}
+	 *   A format converting between the internal and external representation
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.ODataType.prototype.getFormat
+	 * @private
+	 */
+
+	/**
 	 * @see sap.ui.base.Object#getInterface
 	 *
 	 * @returns {object} this
@@ -142,6 +155,20 @@ sap.ui.define([
 	 */
 	ODataType.prototype.getInterface = function () {
 		return this;
+	};
+
+	/**
+	 * Returns a language-dependent placeholder text such as "e.g. <sample value>" where <sample value> is formatted
+	 * using this type.
+	 *
+	 * @returns {string|undefined}
+	 *   The language-dependent placeholder text or <code>undefined</code> if the type does not offer a placeholder
+	 *
+	 * @private
+	 * @ui5-restricted sap.m
+	 */
+	ODataType.prototype.getPlaceholderText = function () {
+		return this.getFormat && this.getFormat().getPlaceholderText && this.getFormat().getPlaceholderText();
 	};
 
 	/**

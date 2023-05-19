@@ -195,6 +195,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	TimeOfDay.prototype.getFormat = function () {
+		return getUiFormat(this);
+	};
+
+	/**
 	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
 	 * methods: <code>format</code> takes a Date and returns a date as a String in the format
 	 * expected by the model, <code>parse</code> converts from the String to a Date.

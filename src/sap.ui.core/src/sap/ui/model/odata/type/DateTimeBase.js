@@ -184,6 +184,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	DateTimeBase.prototype.getFormat = function () {
+		return getFormatter(this);
+	};
+
+	/**
 	 * Parses the given value to a <code>Date</code> instance (OData V2).
 	 *
 	 * @param {string|Date} vValue

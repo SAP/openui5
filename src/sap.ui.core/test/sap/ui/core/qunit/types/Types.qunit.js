@@ -1788,6 +1788,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(oDate.getDate(), 2);
 		});
 
+		//*****************************************************************************************************************
+		QUnit.test("getPlaceholderText", function (assert) {
+			var oType = new DateType();
+
+			this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+			// code under test
+			assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+		});
+
 		// time type tests
 		QUnit.module("time type");
 
@@ -1853,6 +1863,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 
 		});
 
+		//*********************************************************************************************
+		QUnit.test("getPlaceholderText", function (assert) {
+			var oType = new TimeType();
+
+			this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+			// code under test
+			assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+		});
+
 		// dateTime type tests
 		QUnit.module("dateTime type");
 
@@ -1916,6 +1936,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			}
 			assert.throws(function () { dateType.validateValue("24.01.2012 09:30:00"); }, checkValidateException, "validate test");
 			assert.throws(function () { dateType.validateValue("25.01.2012 10:30:00"); }, checkValidateException, "validate test");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("getPlaceholderText", function (assert) {
+			var oType = new DateTimeType();
+
+			this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+			// code under test
+			assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
 		});
 
 		// DateInterval type tests
@@ -2089,6 +2119,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			}, checkValidateException, "validate test");
 		});
 
+		//*********************************************************************************************
+		QUnit.test("getPlaceholderText", function (assert) {
+			var oType = new DateIntervalType();
+
+			this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+			// code under test
+			assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+		});
+
 		QUnit.module("DateTimeInterval type");
 
 		QUnit.test("DateTimeInterval formatValue", function (assert) {
@@ -2134,6 +2174,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "validate test fails");
 			}
+		});
+
+		//*********************************************************************************************
+		QUnit.test("getPlaceholderText", function (assert) {
+			var oType = new DateTimeIntervalType();
+
+			this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+			// code under test
+			assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
 		});
 
 		QUnit.module("TimeInterval type");
@@ -2183,6 +2233,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "validate test fails");
 			}
+		});
+
+		//*********************************************************************************************
+		QUnit.test("getPlaceholderText", function (assert) {
+			var oType = new TimeIntervalType();
+
+			this.mock(oType.oOutputFormat).expects("getPlaceholderText").withExactArgs().returns("~placeholder");
+
+			// code under test
+			assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
 		});
 
 
