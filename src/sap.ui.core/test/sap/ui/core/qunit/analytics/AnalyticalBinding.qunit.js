@@ -393,7 +393,7 @@ sap.ui.define([
 		}
 	});
 
-	//*********************************************************************************************
+	/** @deprecated As of version 1.20.0 */
 	QUnit.test("Eventing - ODataModel V1 - DataRequested and DataReceived", function (assert) {
 		var done = assert.async(),
 			oBinding,
