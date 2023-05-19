@@ -3,6 +3,21 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "3347fa9e86fac89cdb9b3d7c09bbfe58faaa91c2",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Horizon styles are now adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370075492"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370075470"
+          }
+        ]
+      },
+      {
         "id": "7bc4c7f6490d1d4f7fc9b1c0b30eb0e6ba375734",
         "type": "FEATURE",
         "text": " sap.m.Link: Implement Horizon theme changes"

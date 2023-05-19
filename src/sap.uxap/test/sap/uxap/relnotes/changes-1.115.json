@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "07454567203899f1d026aeebcc9e48debc3c9992",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Subsection sizing corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280192538"
+          }
+        ]
+      },
+      {
         "id": "56ca797f26e5ac15f1138b80bc88e85ef1397d04",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: fix empty SubSections height",

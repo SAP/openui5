@@ -3,6 +3,21 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "3347fa9e86fac89cdb9b3d7c09bbfe58faaa91c2",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Horizon styles are now adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370075492"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370075470"
+          }
+        ]
+      },
+      {
         "id": "40e90ecb0a500c4606d694f4ebb3a1b9f23003cb",
         "type": "FIX",
         "text": " sap.m.Label: Colon is now visible when the text is truncated",
