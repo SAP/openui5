@@ -40,53 +40,80 @@ sap.ui.define([
 		}, 3000); // simulate delay
 	};
 
-	SampleExtension.prototype._generateAppointmentsData = function(oSelectedDate) {
+
+	SampleExtension.prototype._buildAppointments = function(oStartDate, oAppointmentDates) {
 		var oFormatter = DateFormat.getDateTimeInstance({
-				pattern: "YYYY-MM-ddTHH:mm"
-			}),
-			oStartDate = UI5Date.getInstance(oSelectedDate),
-			oEndDate = UI5Date.getInstance(oSelectedDate),
-			aAppointmentDates = [];
+			pattern: "YYYY-MM-ddTHH:mm"
+		}),
+			aBuiltAppointments = [],
+			sStartDateString = oStartDate.toDateString();
 
-		// format as UTC dates, this is how all the dates are fed in the model
-
-		oStartDate.setHours(9, 0, 0, 0);
-		oEndDate.setHours(9, 30, 0, 0);
-
-		aAppointmentDates.push({
-			"start": oFormatter.format(oStartDate, true),
-			"end": oFormatter.format(oEndDate, true),
-			"title": "Daily meeting for " + oStartDate.toDateString(),
+		aBuiltAppointments.push({
+			"start": oFormatter.format(oAppointmentDates[0].startDate, true),
+			"end": oFormatter.format(oAppointmentDates[0].endDate, true),
+			"title": "Daily meeting for " + sStartDateString,
 			"text": "repetitive meeting",
 			"icon": "sap-icon://repost",
 			"type": "Type08"
 		});
 
-		oStartDate.setHours(12, 0);
-		oEndDate.setHours(13, 0);
-
-		aAppointmentDates.push({
-			"start": oFormatter.format(oStartDate, true),
-			"end": oFormatter.format(oEndDate, true),
-			"title": "Lunch for " +  oStartDate.toDateString(),
+		aBuiltAppointments.push({
+			"start": oFormatter.format(oAppointmentDates[1].startDate, true),
+			"end": oFormatter.format(oAppointmentDates[1].endDate, true),
+			"title": "Lunch for " + sStartDateString,
 			"text": "out of office",
 			"icon": "sap-icon://meal",
 			"type": "Type06"
 		});
 
-		oStartDate.setHours(18, 0);
-		oEndDate.setHours(18, 30);
-
-		aAppointmentDates.push({
-			"start": oFormatter.format(oStartDate, true),
-			"end": oFormatter.format(oEndDate, true),
-			"title": "Private appointment for " +  oStartDate.toDateString(),
+		aBuiltAppointments.push({
+			"start": oFormatter.format(oAppointmentDates[2].startDate, true),
+			"end": oFormatter.format(oAppointmentDates[2].endDate, true),
+			"title": "Private appointment for " + sStartDateString,
 			"icon": "sap-icon://locked",
 			"type": "Type13"
 		});
 
+		return aBuiltAppointments;
+	};
+
+	SampleExtension.prototype._generateAppointmentsData = function(oSelectedDate) {
+		var oStartDate = UI5Date.getInstance(oSelectedDate),
+			oFirstAppointmentStart = UI5Date.getInstance(oSelectedDate),
+			oFirstAppointmentEnd = UI5Date.getInstance(oSelectedDate),
+			oSecondAppointmentStart = UI5Date.getInstance(oSelectedDate),
+			oSecondAppointmentEnd = UI5Date.getInstance(oSelectedDate),
+			oThirdAppointmentStart = UI5Date.getInstance(oSelectedDate),
+			oThirdAppointmentEnd = UI5Date.getInstance(oSelectedDate),
+			aAppointments;
+
+		oFirstAppointmentStart.setHours(9, 0, 0, 0);
+		oFirstAppointmentEnd.setHours(9, 30, 0, 0);
+		oSecondAppointmentStart.setHours(12, 0);
+		oSecondAppointmentEnd.setHours(13, 0);
+		oThirdAppointmentStart.setHours(18, 0);
+		oThirdAppointmentEnd.setHours(18, 0);
+
+		aAppointments = this._buildAppointments(
+			oStartDate,
+			[
+				{
+					startDate: oFirstAppointmentStart,
+					endDate: oFirstAppointmentEnd
+				},
+				{
+					startDate: oSecondAppointmentStart,
+					endDate: oSecondAppointmentEnd
+				},
+				{
+					startDate: oThirdAppointmentStart,
+					endDate: oThirdAppointmentEnd
+				}
+			]
+		);
+
 		return {
-			"item": aAppointmentDates
+			"item": aAppointments
 		};
 	};
 

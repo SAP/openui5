@@ -4,8 +4,12 @@ sap.ui.define([
 	"sap/ui/integration/util/SkeletonCard",
 	"sap/ui/integration/library",
 	"sap/ui/integration/Host",
-	"sap/m/MessageToast"
-], function (Controller, JSONModel, SkeletonCard, library, Host, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/core/Core",
+	"sap/ui/unified/calendar/CalendarUtils",
+	"sap/ui/unified/calendar/CalendarDate"
+
+], function (Controller, JSONModel, SkeletonCard, library, Host, MessageToast, oCore, CalendarUtils, CalendarDate) {
 	"use strict";
 
 	var Submit = library.CardActionType.Submit;
@@ -82,29 +86,88 @@ sap.ui.define([
 		},
 
 		onChangeDate: function () {
-			var oCard = this.byId("demoCard");
+			var oCard = this.byId("demoCard"),
+				oChangeDateButton = oCore.byId("cardsplayground---stateChangedEvent--dateChangeButton"),
+				oChangeDateButton2 = oCore.byId("cardsplayground---stateChangedEvent--dateChangeButton2"),
+				iFirstDateIndex = 13,
+				iSecondDateIndex = 18,
+				iSeptemberIndex = 8,
+				iYear = 2019,
+				sFirstDateText = "13th",
+				sSecondDateText = "18th",
 
-			if (this._oChangedDate && this._oChangedDate.getDate() === 13) {
-				this._oChangedDate = new Date(2019, 8, 18);
+				sUnselectedDateName;
+
+
+			if (this._oChangedDate && this._oChangedDate.getDate() === iFirstDateIndex) {
+				this._oChangedDate = new Date(iYear, iSeptemberIndex, iSecondDateIndex);
+				sUnselectedDateName = sFirstDateText;
 			} else {
-				this._oChangedDate = new Date(2019, 8, 13);
+				this._oChangedDate = new Date(iYear, iSeptemberIndex, iFirstDateIndex);
+				sUnselectedDateName = sSecondDateText;
 			}
 
 			this._oSkeletonCard.getCardContent().changeDate(this._oChangedDate);
 			oCard.getCardContent().changeDate(this._oChangedDate);
+
+			if (oChangeDateButton) {
+				oChangeDateButton.setText("Change date to " + sUnselectedDateName);
+			}
+			if (oChangeDateButton2) {
+				oChangeDateButton2.setText("Change date to " + sUnselectedDateName);
+			}
 		},
 
 		onChangeMonth: function () {
-			var oCard = this.byId("demoCard");
+			var iSeptemberIndex = 8,
+				iAugustIndex = 7,
+				sSeptemberName = "September",
+				sAugustName = "August",
+				oCard = this.byId("demoCard"),
+				oChangeMonthButton = oCore.byId('cardsplayground---stateChangedEvent--monthChangeButton'),
+				oChangeMonthButton2 = oCore.byId('cardsplayground---stateChangedEvent--monthChangeButton2'),
+				sUnselectedMonthName;
 
-			if (this._oViewedMonth && this._oViewedMonth === 7) {
-				this._oViewedMonth = 8;
+
+			if (this._oViewedMonth && this._oViewedMonth === iAugustIndex) {
+				this._oViewedMonth = iSeptemberIndex;
+				sUnselectedMonthName = sAugustName;
 			} else {
-				this._oViewedMonth = 7;
+				this._oViewedMonth = iAugustIndex;
+				sUnselectedMonthName = sSeptemberName;
 			}
 
 			this._oSkeletonCard.getCardContent().changeMonth(this._oViewedMonth);
 			oCard.getCardContent().changeMonth(this._oViewedMonth);
+
+			if (oChangeMonthButton) {
+				oChangeMonthButton.setText("Change month to " + sUnselectedMonthName);
+			}
+			if (oChangeMonthButton2) {
+				oChangeMonthButton2.setText("Change month to " + sUnselectedMonthName);
+			}
+
+			var oFocusedDate = new Date(2019, this._oViewedMonth, 15),
+				oCalFocusedDate = CalendarDate.fromLocalJSDate(oFocusedDate),
+				oCalFirstRenderedDate = CalendarUtils._getFirstDateOfWeek(CalendarUtils._getFirstDateOfMonth(oCalFocusedDate)),
+				oCalLastDateInMonth = new CalendarDate(oFocusedDate.getFullYear(), oFocusedDate.getMonth() + 1, 1),
+				oCardActions = oCard.getCardContent().getActions(),
+				oSkeletonActions = this._oSkeletonCard.getCardContent().getActions(),
+				sUnselectedMonthName,
+				oCalLastRenderedDate;
+
+			oCalLastDateInMonth.setDate(oCalLastDateInMonth.getDate() - 1); // move a day backwards
+			oCalLastRenderedDate = CalendarUtils._getFirstDateOfWeek(oCalLastDateInMonth);
+			oCalLastRenderedDate.setDate(oCalLastRenderedDate.getDate() + 6); // move to the end of the week
+
+			oCardActions.fireAction(oCard.getCardContent(), "MonthChange", {
+				"firstDate": oCalFirstRenderedDate.toLocalJSDate(),
+				"lastDate": oCalLastRenderedDate.toLocalJSDate()
+			});
+			oSkeletonActions.fireAction(oCard.getCardContent(), "MonthChange", {
+				"firstDate": oCalFirstRenderedDate.toLocalJSDate(),
+				"lastDate": oCalLastRenderedDate.toLocalJSDate()
+			});
 		},
 
 		resolveManifest: function () {
