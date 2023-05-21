@@ -128,6 +128,23 @@
 		}));
 
 		oVL.addContent(new sap.m.Button({
+			text: "Extended Action",
+			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				sap.m.MessageBox.confirm("Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL", {
+					onClose: function (bConfirmed) {
+						jQuery.sap.log.info("Dialog is confirmed with" + bConfirmed);
+					},
+					icon: sap.m.MessageBox.Icon.INFORMATION,
+					title: "Set initial button focus",
+					actions: [new sap.m.MessageBox.ExtendedAction(sap.m.MessageBox.Action.YES, {id: 'testId1'}), new sap.m.MessageBox.ExtendedAction('NO', {id: 'testId2'})],
+					initialFocus: sap.m.MessageBox.Action.CANCEL
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Button({
 			text: "Custom button text",
 			width: "270px",
 			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,

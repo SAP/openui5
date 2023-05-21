@@ -276,6 +276,35 @@ sap.ui.define([
 		oMessageBox.destroy();
 	});
 
+	QUnit.test("extended action should contain custom id", function (assert) {
+		var oMessageBox, $TextArea,
+			sTextAreaId = "myTextArea",
+			oTextArea = new TextArea(sTextAreaId, {
+				value: sMessageText
+			});
+
+		MessageBox.show(oTextArea, {
+			title: sMessageTitle,
+			actions: [new MessageBox.ExtendedAction(MessageBox.Action.OK, {id: 'customId'}), MessageBox.Action.NO, "Custom Text"],
+			onClose: callback.bind(this, assert),
+			id: "messagebox1",
+			styleClass: sClassName
+		});
+		oCore.applyChanges();
+		oMessageBox = oCore.byId("messagebox1");
+		const extendedAction = oCore.byId("customId");
+		assert.equal(extendedAction.getId(), "customId");
+		assert.ok(oMessageBox, "Dialog should be created");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
+		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+		assert.ok(oMessageBox.$().hasClass(sClassName));
+		$TextArea = oCore.byId(sTextAreaId).$();
+		assert.equal($TextArea.length, 1, "TextArea should be created");
+
+		oMessageBox.destroy();
+	});
+
 	QUnit.test("show error", function (assert) {
 		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 		MessageBox.error(sMessageText, {

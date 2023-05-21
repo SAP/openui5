@@ -166,6 +166,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * An Extended action is a class holding an action plus the metadata related to the action
+	 *
+	 * @param {string} action or custom action that is extended
+	 * @param {object} actionMetaData that describes metadata about the action e.g. id
+	 *
+	 * @public
+	 */
+	MessageBox.ExtendedAction = class ExtendedAction {
+		constructor(action, actionMetaData){
+			this.action = action;
+			this.id = actionMetaData.id;
+		}
+	};
+
+	/**
 	 * Enumeration of the pre-defined icons that can be used in a MessageBox.
 	 * @enum {string}
 	 * @public
@@ -480,24 +495,42 @@ sap.ui.define([
 		}
 
 		/** creates a button for the given action */
-		function button(sAction, sButtonType) {
+		function button(action, sButtonType) {
 			var sText;
+			const extendedAction = extendAction(action);
 
 			// Don't check in ResourceBundle library if the button is with custom text
-			if (MessageBox.Action.hasOwnProperty(sAction)) {
-				sText = MessageBox._rb.getText("MSGBOX_" + sAction);
+			if (MessageBox.Action.hasOwnProperty(extendedAction.action)) {
+				sText = MessageBox._rb.getText("MSGBOX_" + extendedAction.action);
 			}
 
 			var oButton = new Button({
-				id: ElementMetadata.uid("mbox-btn-"),
-				text: sText || sAction,
+				id: extendedAction.id,
+				text: sText || extendedAction.action,
 				type: sButtonType,
 				press: function () {
-					oResult = sAction;
+					oResult = extendedAction.action;
 					oDialog.close();
 				}
 			});
 			return oButton;
+		}
+
+		/**
+		 * Takes an action / custom action (string value) or an already extended action and extends further by adding default metadata values where no metadata values are defined
+		 *
+		 * @param {string | sap.m.MessageBox.ExtendedAction} action can be either an already extended or a not extended action
+		 * @return {sap.m.MessageBox.ExtendedAction} extendedAction will contain default values where no values have been defined yet
+		 * */
+		function extendAction(action) {
+			const defaultActionMetadata = {
+				id: ElementMetadata.uid("mbox-btn-")
+			};
+			if (action instanceof MessageBox.ExtendedAction){
+				return jQuery.extend(new MessageBox.ExtendedAction(null, defaultActionMetadata), action);
+			} else {
+				return new MessageBox.ExtendedAction(action, defaultActionMetadata);
+			}
 		}
 
 		var sButtonType;
