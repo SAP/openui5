@@ -3603,5 +3603,56 @@
         ]
       }
     ]
+  },
+  "1.71.57": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "f21bd9fd4fed9dbee333e657fdd318b545813fc0",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: adjust aria attribute names",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370060332"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380029140"
+          }
+        ]
+      },
+      {
+        "id": "7665959ecb8a181843c36bd93b63fbd6a8e64031",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust click handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003578212023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003756512023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003754472023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003632232023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003796592023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370061824"
+          }
+        ]
+      }
+    ]
   }
 }
