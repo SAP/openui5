@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/dnd/DragInfo",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Core, Control, Element, Renderer, RenderManager, InvisibleText, EnabledPropagator, DragInfo, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/model/json/JSONModel"
+], function(Core, Control, Element, Renderer, RenderManager, InvisibleText, EnabledPropagator, DragInfo, createAndAppendDiv, JSONModel) {
 
 	"use strict";
 	/*global QUnit,sinon*/
@@ -1606,6 +1607,89 @@ sap.ui.define([
 
 		// cleanup
 		oParent.destroy();
+	});
+
+	QUnit.module("SupressInvalidate", {
+		before: function() {
+			this.oApiVerionStub = sinon.stub(PatchingControl.getMetadata().getRenderer(), "apiVersion").value(4);
+			this.oJSONModel = new JSONModel([{ header: "Header1"}, { header: "Header2"} ]);
+		},
+		beforeEach: function() {
+			this.oParent = new PatchingControl({
+				models: this.oJSONModel,
+				items: {
+					path: "/",
+					template: new PatchingControl({
+						header: "{header}"
+					})
+				}
+			});
+			this.oParent.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oParent.destroy();
+		},
+		after: function() {
+			this.oApiVerionStub.restore();
+			this.oJSONModel.destroy();
+		}
+	});
+
+	QUnit.test("Insert aggregation with bSupressInvalidate=true and binding propagation should be reflected in the child", function(assert) {
+		var oChild = this.oParent.getItems()[0];
+		var sId = oChild.getId();
+		this.oParent.destroyAggregation("items", "KeepDom");
+		assert.strictEqual(oChild.getDomRef().textContent, "Header1", "child dom is rendered correctly");
+
+		var oBinding = this.oParent.getBinding("items");
+		var oSecondContext = oBinding.getContexts(1, 1)[0];
+		var oNewChild = new PatchingControl(sId, {
+			header: "{header}"
+		}).setBindingContext(oSecondContext);
+
+		var oParentInvalidateSpy = sinon.spy(this.oParent, "invalidate");
+		var oNewChildInvalidateSpy = sinon.spy(oNewChild, "invalidate");
+		this.oParent.addAggregation("items", oNewChild, true);
+		assert.ok(oParentInvalidateSpy.notCalled, "Invalidate is not called on the parent");
+		assert.ok(oNewChildInvalidateSpy.calledOnce, "Invalidate is called for the header property change on the child");
+
+		this.oParent.invalidate();
+		Core.applyChanges();
+		assert.strictEqual(oNewChild.getDomRef().textContent, "Header2", "new child dom is rendered correctly");
+
+		oNewChildInvalidateSpy.restore();
+		oParentInvalidateSpy.restore();
+	});
+
+	QUnit.test("Move aggregation with bSupressInvalidate=true and rendering should start for the child only once", function(assert) {
+		var oAnotherParent = new PatchingControl({
+			models: this.oJSONModel,
+			items: {
+				path: "/",
+				template: new PatchingControl({
+					header: "{header}"
+				})
+			}
+		});
+		oAnotherParent.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oAnotherParent.destroyItems();
+		Core.applyChanges();
+
+		var oBinding = this.oParent.getBinding("items");
+		var oSecondContext = oBinding.getContexts(1, 1)[0];
+		var oChild = this.oParent.getItems()[0];
+		oChild.setBindingContext(oSecondContext);
+
+		oChild.onAfterRendering = sinon.spy();
+		oAnotherParent.addAggregation("items", oChild, true);
+		oAnotherParent.invalidate();
+		Core.applyChanges();
+
+		assert.strictEqual(oChild.getDomRef().textContent, "Header2", "child dom is rendered correctly");
+		assert.ok(oChild.onAfterRendering.calledOnce, "oChild.onAfterRendering is called only once");
 	});
 
 });

@@ -2444,7 +2444,7 @@ sap.ui.define([
 
 
 		fnTestCase(true, false, true);
-		fnTestCase(false, true, true);
+		fnTestCase(false, true, false);
 		fnTestCase(true, true, true);
 
 		//only if child and all parents do not suppress invalidate, it should be false
@@ -2981,10 +2981,12 @@ sap.ui.define([
 		this.obj1.bindProperty("value", "/value");
 		this.obj2.bindProperty("value", "/value");
 
-		var oSpy = sinon.spy(this.obj2, "invalidate");
+		var oSpy1 = sinon.spy(this.obj1, "invalidate");
+		var oSpy2 = sinon.spy(this.obj2, "invalidate");
 		this.obj1.addAggregation("subObjects", this.obj2);
 
-		assert.equal(oSpy.callCount, 0, 'invalidation on obj2 must not be called');
+		assert.equal(oSpy1.callCount, 0, 'invalidation on obj1 must not be called');
+		assert.equal(oSpy2.callCount, 1, 'invalidation on obj2 must be called');
 	});
 
 	QUnit.module("Events", {
