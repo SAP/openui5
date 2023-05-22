@@ -37,6 +37,7 @@ sap.ui.define(['sap/ui/mdc/enum/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/bas
 	* @param {object} oPayload Delegate payload object
 	* @return {sap.ui.mdc.util.TypeUtil|sap.ui.mdc.util.TypeMap} configured TypeUtil/TypeMap
 	* @since 1.79.0
+	* @deprecated (since 1.115.0) - please see {@link #getTypeMap}
 	*
 	*/
 	BaseDelegate.getTypeUtil = function (oPayload) {

@@ -9,7 +9,6 @@ sap.ui.define([
     "delegates/odata/v4/vizChart/ChartDelegate",
     "sap/chart/Chart",
     "sap/m/VBox",
-    "delegates/odata/TypeUtil",
     "sap/ui/mdc/chart/PropertyHelper",
     "sap/ui/mdc/chart/ChartImplementationContainer"
 ],
@@ -22,7 +21,6 @@ function(
     ChartDelegate,
     SapChart,
     VBox,
-    TypeUtil,
     ChartPropertyHelper,
     ChartImplementationContainer
 ) {

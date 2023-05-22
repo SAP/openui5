@@ -9,7 +9,7 @@
 sap.ui.define([
 	"delegates/json/FilterBarDelegate",
 	'sap/ui/mdc/util/IdentifierUtil',
-	'sap/ui/mdc/util/TypeUtil',
+	'sap/ui/mdc/DefaultTypeMap',
 	'sap/ui/model/type/Boolean',
 	'sap/ui/model/type/String',
 	'sap/ui/model/type/Integer',
@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/ui/model/type/DateTime',
 	'sap/ui/model/type/Time',
 	'sap/ui/model/type/Float'
-], function (FilterBarDelegate, IdentifierUtil, TypeUtil, BooleanType, StringType, IntegerType, DateType, DateTimeType, TimeType, FloatType) {
+], function (FilterBarDelegate, IdentifierUtil, DefaultTypeMap, BooleanType, StringType, IntegerType, DateType, DateTimeType, TimeType, FloatType) {
 	"use strict";
 
 	var FilterBarTestDelegate = Object.assign({}, FilterBarDelegate);
@@ -34,7 +34,7 @@ sap.ui.define([
 			maxConditions: 1,
 			typeConfig : {
 				className : sType,
-				typeInstance :	TypeUtil._normalizeType(sType, null, null)
+				typeInstance :	DefaultTypeMap._normalizeType(sType, null, null)
 			}
 		});
 
@@ -48,7 +48,7 @@ sap.ui.define([
 			display: "Description",
 			typeConfig : {
 				className : sType,
-				typeInstance :	TypeUtil._normalizeType(sType, null, { maxLength: 3})
+				typeInstance :	DefaultTypeMap._normalizeType(sType, null, { maxLength: 3})
 			}
 		});
 
@@ -61,7 +61,7 @@ sap.ui.define([
 			maxConditions: -1,
 			typeConfig : {
 				className : sType,
-				typeInstance :	TypeUtil._normalizeType(sType, null, null)
+				typeInstance :	DefaultTypeMap._normalizeType(sType, null, null)
 			}
 		});
 
@@ -73,7 +73,7 @@ sap.ui.define([
 			dataType : sType,
 			typeConfig : {
 				className : sType,
-				typeInstance :	TypeUtil._normalizeType(sType, null, null)
+				typeInstance :	DefaultTypeMap._normalizeType(sType, null, null)
 			}
 		});
 
@@ -85,7 +85,7 @@ sap.ui.define([
 			dataType : sType,
 			typeConfig : {
 				className : sType,
-				typeInstance :	TypeUtil._normalizeType(sType, null, null)
+				typeInstance :	DefaultTypeMap._normalizeType(sType, null, null)
 			}
 		});
 
@@ -97,7 +97,7 @@ sap.ui.define([
 			dataType : sType,
 			typeConfig : {
 				className : sType,
-				typeInstance :	TypeUtil._normalizeType(sType, null, {precision: 7})
+				typeInstance :	DefaultTypeMap._normalizeType(sType, null, {precision: 7})
 			}
 		});
 
@@ -109,7 +109,7 @@ sap.ui.define([
 			dataType : sType,
 			typeConfig : {
 				className : sType,
-				typeInstance :	TypeUtil._normalizeType(sType, null, null)
+				typeInstance :	DefaultTypeMap._normalizeType(sType, null, null)
 			}
 		});
 
@@ -121,7 +121,7 @@ sap.ui.define([
 			dataType : sType,
 			typeConfig : {
 				className : sType,
-				typeInstance :	TypeUtil._normalizeType(sType, null, { precision : 5, scale : 2})
+				typeInstance :	DefaultTypeMap._normalizeType(sType, null, { precision : 5, scale : 2})
 			}
 		});
 

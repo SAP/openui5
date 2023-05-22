@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBarDelegate",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/ChartDelegate",
-	"delegates/odata/v4/TypeUtil",
+	"sap/ui/mdc/odata/v4/TypeMap",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/ui/core/Core",
 	"sap/base/util/merge",
@@ -33,7 +33,7 @@ sap.ui.define([
 	FilterBarDelegate,
 	FilterField,
 	ChartDelegate,
-	TypeUtil,
+	ODataV4TypeMap,
 	StateHandlerRegistry,
 	oCore,
 	merge,
@@ -84,7 +84,7 @@ sap.ui.define([
 			aProperties.push({
 				name: mProperties[sProperty].name,
 				label: mProperties[sProperty].label,
-				typeConfig: TypeUtil.getTypeConfig(mProperties[sProperty].type),
+				typeConfig: ODataV4TypeMap.getTypeConfig(mProperties[sProperty].type),
 				filterable: mProperties[sProperty].filterable
 			});
 		}

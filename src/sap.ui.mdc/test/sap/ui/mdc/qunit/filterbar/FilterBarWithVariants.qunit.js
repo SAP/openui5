@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/mdc/util/TypeUtil",
+	"sap/ui/mdc/DefaultTypeMap",
 	"sap/ui/model/type/String"
 ], function (
 	FilterBar,
@@ -28,10 +28,11 @@ sap.ui.define([
 	URLHandler,
 	FlexState,
 	FlexControllerFactory,
-	TypeUtil,
+	DefaultTypeMap,
 	StringType
 ) {
 	"use strict";
+
 
 	/*
 	var oVariantMap = {
@@ -716,12 +717,12 @@ sap.ui.define([
 		var aProperties = [{
 				name: "Category",
 				type: "Edm.String",
-				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"),
+				typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String"),
 				visible: true
 			},{
 			name: "Name",
 			type: "Edm.String",
-			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"),
+			typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String"),
 			visible: true
 		}];
 		return oModel.initialize()

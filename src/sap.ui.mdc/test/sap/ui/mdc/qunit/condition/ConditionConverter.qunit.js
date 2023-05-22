@@ -7,7 +7,7 @@
 sap.ui.define([
 	"sap/ui/mdc/condition/ConditionConverter",
 	"sap/ui/mdc/condition/Condition",
-	"delegates/odata/v4/TypeUtil",
+	"sap/ui/mdc/odata/v4/TypeMap",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/type/Date",
@@ -26,7 +26,7 @@ sap.ui.define([
 ], function(
 	ConditionConverter,
 	Condition,
-	TypeUtil,
+	ODataV4TypeMap,
 	StringType,
 	DateType,
 	V4DateType,
@@ -57,9 +57,9 @@ sap.ui.define([
 		}
 
 		if (bToString) {
-			oResult = ConditionConverter.toString(oCondition, oType, TypeUtil);
+			oResult = ConditionConverter.toString(oCondition, oType, ODataV4TypeMap);
 		} else {
-			oResult = ConditionConverter.toType(oCondition, oType, TypeUtil);
+			oResult = ConditionConverter.toType(oCondition, oType, ODataV4TypeMap);
 		}
 
 		assert.equal(typeof oResult, "object", "Object returned");
