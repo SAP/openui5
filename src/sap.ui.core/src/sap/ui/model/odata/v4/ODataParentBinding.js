@@ -771,7 +771,7 @@ sap.ui.define([
 		}
 
 		if (bDependsOnOperation && !sResolvedChildPath.includes("/$Parameter/")
-				|| this.getRootBinding().isSuspended()
+				|| this.isRootBindingSuspended()
 				|| _Helper.isDataAggregation(this.mParameters)) {
 			// With data aggregation, no auto-$expand/$select is needed, but the child may still use
 			// the parent's cache

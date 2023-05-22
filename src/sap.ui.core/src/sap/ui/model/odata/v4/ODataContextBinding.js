@@ -973,11 +973,10 @@ sap.ui.define([
 				? SyncPromise.resolve(this.oCache)
 				: this.oCachePromise,
 			oError,
-			oRootBinding = this.getRootBinding(),
 			that = this;
 
 		// dependent binding will update its value when the suspended binding is resumed
-		if (oRootBinding && oRootBinding.isSuspended()) {
+		if (this.isRootBindingSuspended()) {
 			oError = new Error("Suspended binding provides no value");
 			oError.canceled = "noDebugLog";
 			throw oError;
@@ -1285,7 +1284,7 @@ sap.ui.define([
 		this.bInitial = false;
 		// Here no other code but the event for the ManagedObject is expected. The binding should be
 		// useable for controller code without calling initialize.
-		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
+		if (this.isResolved() && !this.isRootBindingSuspended()) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
