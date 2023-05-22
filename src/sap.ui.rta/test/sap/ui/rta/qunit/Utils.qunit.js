@@ -586,12 +586,8 @@ sap.ui.define([
 			this.oRenderer = {
 				getRootControl: function() {
 					return {
-						getOUnifiedShell: function() {
-							return {
-								getHeader: function() {
-									return { id: "mockedRenderer" };
-								}
-							};
+						getShellHeader: function() {
+							return { id: "mockedRenderer" };
 						}
 					};
 				}

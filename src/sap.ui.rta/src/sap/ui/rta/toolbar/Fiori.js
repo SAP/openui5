@@ -48,7 +48,7 @@ function(
 
 	Fiori.prototype.init = function () {
 		this._oRenderer = Utils.getFiori2Renderer();
-		this._oFioriHeader = this._oRenderer.getRootControl().getOUnifiedShell().getHeader();
+		this._oFioriHeader = this._oRenderer.getRootControl().getShellHeader();
 		Adaptation.prototype.init.apply(this, arguments);
 	};
 
