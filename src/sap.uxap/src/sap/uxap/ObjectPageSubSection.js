@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/ResizeHandler",
 	"./ObjectPageSectionBase",
 	"./ObjectPageLazyLoader",
 	"./BlockBase",
@@ -24,6 +25,7 @@ sap.ui.define([
 ], function(
 	jQuery,
 	Core,
+	ResizeHandler,
 	ObjectPageSectionBase,
 	ObjectPageLazyLoader,
 	BlockBase,
@@ -312,9 +314,25 @@ sap.ui.define([
 
 		oDom = this.getDomRef();
 		if (oDom) {
-			oDom.style.height = oValue;
+			oDom.style.height = this._height;
+			this._adaptDomHeight();
 		}
 	};
+
+	ObjectPageSubSection.prototype._toggleContentResizeListener = function(bEnable) {
+		if (bEnable && !this._iResizeId) {
+			this._iResizeId = ResizeHandler.register(this._getContentWrapper(), this._adaptDomHeight.bind(this));
+		}
+		if (!bEnable && this._iResizeId) {
+			ResizeHandler.deregister(this._iResizeId);
+			this._iResizeId = null;
+		}
+	};
+
+	ObjectPageSubSection.prototype._getContentWrapper = function() {
+		return this.getAggregation("_grid");
+	};
+
 
 	/**
 	 * Returns the control name text.
@@ -587,6 +605,10 @@ sap.ui.define([
 			return;
 		}
 
+		if (this.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS)) {
+			this._toggleContentResizeListener(true);
+		}
+
 		this._$spacer = oObjectPageLayout.$("spacer");
 
 		if (this._bShouldFocusSeeMoreLessButton && document.activeElement === document.body) {
@@ -607,12 +629,32 @@ sap.ui.define([
 			ObjectPageSectionBase.prototype.onBeforeRendering.call(this);
 		}
 
+		this._toggleContentResizeListener(false);
+
 		this._setAggregationProxy();
 		this._getGrid().removeAllContent();
 		this._applyLayout(oObjectPageLayout);
 		this.refreshSeeMoreVisibility();
 
 		this.toggleStyleClass("sapUxAPObjectPageSubSectionStashed", this._aStashedControls.length ? true : false);
+	};
+
+	ObjectPageSubSection.prototype._adaptDomHeight = function() {
+		var oDom = this.getDomRef();
+		if (!oDom) {
+			return;
+		}
+		if (this.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS) && this._height) {
+			oDom.style.height = (oDom.scrollHeight > Math.ceil(parseFloat(this._height))) ? "" : this._height;
+		}
+	};
+
+	ObjectPageSubSection.prototype._hasRestrictedHeight = function() {
+		var oDom = this.getDomRef();
+		if (!oDom) {
+			return;
+		}
+		return parseInt(oDom.style.height) > 0;
 	};
 
 	ObjectPageSubSection.prototype._applyLayout = function (oLayoutProvider) {

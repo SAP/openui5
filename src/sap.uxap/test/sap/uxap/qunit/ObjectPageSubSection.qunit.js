@@ -1631,7 +1631,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 		}, this);
 	});
 
-	QUnit.test("sapUxAPObjectPageSubSectionFitContainer with dynamic header title - has scroll when header bigger than allowed",
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer with dynamic header title - has scroll when content exceeds container",
 		function (assert) {
 			// Set-up
 			var oPage = this.oObjectPage,
@@ -1642,7 +1642,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 
 			assert.expect(2);
 
-			this.stub(oPage, "_headerBiggerThanAllowedToBeFixed").returns(true);
+			this.stub(oSubSection, "_hasRestrictedHeight").returns(false);
 
 			// Act
 			oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle());
@@ -1779,6 +1779,32 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 
 				done();
 			});
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer preserves the minimal content height", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oQunitFixtureElement = document.getElementById("qunit-fixture"),
+			sPageHeight = "200px",
+			sPageContentHeight = "300px",
+			done = assert.async();
+
+		// Setup: content height is bigger than page height
+		oSubSection.removeAllBlocks();
+		oQunitFixtureElement.style.height = sPageHeight;
+		oSubSection.addBlock(new sap.ui.core.HTML({content: '<div style="min-height:' + sPageContentHeight + '"></div>'}));
+
+		//act
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			assert.strictEqual(oSubSection.getDomRef().style.height, "", "the height of the section is not restricted");
+			oQunitFixtureElement.style.height = ""; // clean up
+			done();
+		}, this);
 	});
 
 	QUnit.module("Invalidation", {
