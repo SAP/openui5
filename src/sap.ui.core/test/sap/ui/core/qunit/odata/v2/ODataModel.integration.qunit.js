@@ -3640,9 +3640,7 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -3728,9 +3726,7 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -3766,9 +3762,7 @@ usePreliminaryContext : false}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=2&$top=2"
 			}, {
 				results : [{
@@ -3864,9 +3858,7 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -3903,9 +3895,7 @@ usePreliminaryContext : false}}">\
 
 		return this.createView(assert, sView, oModel).then(function() {
 			that.expectRequest({
-					headers : bWithMessageScope
-						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-						: {"sap-messages" : "transientOnly"},
+					headers : {"sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 						+ "&$filter=GrossAmount gt 100.0m"
 				}, {
@@ -4015,9 +4005,7 @@ usePreliminaryContext : false}}">\
 			.expectChange("salesOrderID", null)
 			.expectChange("salesOrderID", "1")
 			.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
 					+ "$filter=GrossAmount gt 100.0m"
 			}, {
@@ -4033,9 +4021,7 @@ usePreliminaryContext : false}}">\
 			.expectChange("itemPosition1", ["10~0~"])
 			.expectChange("grossAmount1", ["111.0"])
 			.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
 					+ "$filter=GrossAmount le 100.0m"
 			}, {
@@ -4076,9 +4062,7 @@ usePreliminaryContext : false}}">\
 			// assume a sideeffect removed entity (SalesOrderID='1',ItemPosition='10~0~')
 			// with refresh only the data and the messages for that data is updated
 			that.expectRequest({
-					headers : bWithMessageScope
-						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-						: {"sap-messages" : "transientOnly"},
+					headers : {"sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
 						+ "$filter=GrossAmount gt 100.0m"
 				}, {
@@ -4201,9 +4185,7 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -4238,9 +4220,7 @@ usePreliminaryContext : false}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-					headers : bWithMessageScope
-						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-						: {"sap-messages" : "transientOnly"},
+					headers : {"sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 						+ "&$orderby=GrossAmount asc"
 				}, {
@@ -4340,9 +4320,7 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -4516,9 +4494,7 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				headers : bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
-					: {"sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -4892,8 +4868,7 @@ usePreliminaryContext : false}}">\
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				batchNo : 1,
-				headers :
-					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -4940,8 +4915,7 @@ usePreliminaryContext : false}}">\
 		}).then(function (oFilter) {
 			that.expectRequest({
 					batchNo : 2,
-					headers :
-						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+					headers : {"sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 						+ "&$filter=(SalesOrderID eq '1' and ItemPosition eq '40')"
 						+ " or (SalesOrderID eq '1' and ItemPosition eq '10')"
@@ -5022,8 +4996,7 @@ usePreliminaryContext : false}}">\
 			})
 			.expectValue("carrierID", "1")
 			.expectRequest({
-				headers :
-					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "CarrierCollection('1')/carrierFlights"
 			}, {
 				results : [{
@@ -5110,8 +5083,7 @@ usePreliminaryContext : false}}">\
 				"sap-message" : getMessageHeader([oSalesOrderToItem10ToProductPriceError])
 			})
 			.expectRequest({
-				headers :
-					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
 			}, {
 				results : [{
@@ -5144,8 +5116,7 @@ usePreliminaryContext : false}}">\
 			assert.strictEqual(oTable.getItems().length, 0);
 
 			that.expectRequest({
-					headers :
-						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+					headers : {"sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
 				}, {
 					results : [{
@@ -7517,11 +7488,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 1,
 					encodeRequestUri : false,
-					headers : {
-						"Content-ID" : "~key~",
-						"sap-message-scope" : "BusinessObject",
-						"sap-messages" : "transientOnly"
-					},
+					headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 					method : "POST",
 					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
 				}, oSalesOrder42, {
@@ -7577,11 +7544,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 2,
 					encodeRequestUri : false,
-					headers : {
-						"Content-ID" : "~key~",
-						"sap-message-scope" : "BusinessObject",
-						"sap-messages" : "transientOnly"
-					},
+					headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 					method : "POST",
 					requestUri : "SalesOrder_Confirm?SalesOrderID='13'"
 				}, oSalesOrder13, {
@@ -7648,10 +7611,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			var oErrorResponse = createErrorResponse({message : "POST failed", statusCode : 400});
 			that.expectRequest({
 					encodeRequestUri : false,
-					headers : {
-						"Content-ID" : "~key~",
-						"sap-messages" : "transientOnly"
-					},
+					headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 					method : "POST",
 					requestUri : "SalesOrder_Confirm?SalesOrderID='foo'"
 				}, oErrorResponse)
@@ -7696,10 +7656,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			that.expectRequest({
 					encodeRequestUri : false,
-					headers : {
-						"Content-ID" : "~key~",
-						"sap-messages" : "transientOnly"
-					},
+					headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 					method : "POST",
 					requestUri : "SalesOrder_Confirm?SalesOrderID='foo'"
 				}, oErrorResponse)
@@ -7764,10 +7721,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				SalesOrderID : "1"
 			})
 			.expectRequest({
-				headers : {
-					"sap-message-scope" : "BusinessObject",
-					"sap-messages" : "transientOnly"
-				},
+				headers : {"sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -7805,10 +7759,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"sap-message" : getMessageHeader(oNoteError)
 				})
 				.expectRequest({
-					headers : {
-						"sap-message-scope" : "BusinessObject",
-						"sap-messages" : "transientOnly"
-					},
+					headers : {"sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 				}, {
 					results : [{
@@ -9723,11 +9674,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 1,
 					encodeRequestUri : false,
-					headers : {
-						"Content-ID" : "~key~",
-						"sap-message-scope" : "BusinessObject",
-						"sap-messages" : "transientOnly"
-					},
+					headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 					method : "POST",
 					requestUri : "SalesOrderItem_Clone?ItemPosition='10'&SalesOrderID='1'"
 				}, oResponse, {
@@ -9886,11 +9833,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 1,
 					encodeRequestUri : false,
-					headers : {
-						"Content-ID" : "~key~",
-						"sap-message-scope" : "BusinessObject",
-						"sap-messages" : "transientOnly"
-					},
+					headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 					method : "POST",
 					requestUri : "SalesOrderItem_Clone?ItemPosition='10'&SalesOrderID='1'"
 				}, oErrorPOST)
@@ -15441,7 +15384,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {"sap-message" : getMessageHeader([oMsgSalesOrder, oMsgSalesOrderToLineItems1])})
 			.expectRequest({
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=102",
-				headers : {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+				headers : {"sap-messages" : "transientOnly"}
 			}, {
 				results : [{
 					__metadata : {uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"},
