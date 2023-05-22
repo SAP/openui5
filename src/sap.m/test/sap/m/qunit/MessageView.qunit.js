@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/m/Link",
-	"sap/ui/core/message/Message"
+	"sap/ui/core/message/Message",
+	"sap/ui/core/InvisibleText"
 ], function(
 	qutils,
 	MessageView,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Core,
 	coreLibrary,
 	Link,
-	Message
+	Message,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -994,6 +996,43 @@ sap.ui.define([
 
 		assert.strictEqual(this.oMessageView.getDomRef().getAttribute("aria-label"), oResourceBundle.getText("MESSAGE_VIEW_ARIA_LABEL"), "The text for the aria-label attribute is set correctly");
 		assert.strictEqual(this.oMessageView.getDomRef().getAttribute("role"), "region", "The role attribute is rendered correctly");
+	});
+
+	QUnit.test("SegmentedButton aria-labelledby attribute should be rendered correctly", function (assert) {
+		//Arrange
+		var oMessageView = new MessageView("msgView", {
+			items: [
+				new MessageItem({
+					title: "Test",
+					description: "Test Description",
+					type: "Error"
+				}),
+				new MessageItem({
+					title: "Test",
+					description: "Test Description",
+					type: "Warning"
+				}),
+				new MessageItem({
+					title: "Test",
+					description: "Test Description",
+					type: "Success"
+				})
+			]
+		});
+		var	oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
+		oMessageView.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MESSAGEVIEW_SEGMENTED_BTN_DESCRIPTION"),
+		oInvisibleText = Core.byId(sInvisibleTextId);
+
+		//Assert
+		assert.strictEqual(oMessageView._oSegmentedButton._oItemNavigation.oDomRef.getAttribute("aria-labelledby"), sInvisibleTextId, "The aria-labelledby attribute is set correctly");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MESSAGEVIEW_SEGMENTED_BTN_DESCRIPTION"), "The aria-labelledby text is correct");
+
+		//Clean up
+		oMessageView.destroy();
 	});
 
 	QUnit.module("Binding", {

@@ -22,6 +22,7 @@ sap.ui.define([
 	"./Link",
 	"./MessageItem",
 	"./GroupHeaderListItem",
+	'sap/ui/core/InvisibleText',
 	"sap/ui/core/library",
 	"sap/ui/base/ManagedObject",
 	"./MessageViewRenderer",
@@ -49,6 +50,7 @@ sap.ui.define([
 	Link,
 	MessageItem,
 	GroupHeaderListItem,
+	InvisibleText,
 	coreLibrary,
 	ManagedObject,
 	MessageViewRenderer,
@@ -598,13 +600,16 @@ sap.ui.define([
 			content: "<span id=\"" + sCloseBtnDescrId + "\" class=\"sapMMsgViewHiddenContainer\">" + sCloseBtnDescr + "</span>"
 		});
 
-		var sHeadingDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_HEADING");
-		var sHeadingDescrId = this.getId() + "-HeadingDescr";
-		var oHeadingARIAHiddenDescr = new HTML(sHeadingDescrId, {
+		var sHeadingDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_HEADING"),
+		sHeadingDescrId = this.getId() + "-HeadingDescr",
+		sSegmentedBtnDescrId = InvisibleText.getStaticId("sap.m", "MESSAGEVIEW_SEGMENTED_BTN_DESCRIPTION"),
+		oHeadingARIAHiddenDescr = new HTML(sHeadingDescrId, {
 			content: "<span id=\"" + sHeadingDescrId + "\" class=\"sapMMsgViewHiddenContainer\" role=\"heading\">" + sHeadingDescr + "</span>"
 		});
 
-		this._oSegmentedButton = new SegmentedButton(this.getId() + "-segmented", {}).addStyleClass("sapMSegmentedButtonNoAutoWidth");
+		this._oSegmentedButton = new SegmentedButton(this.getId() + "-segmented", {
+			ariaLabelledBy: sSegmentedBtnDescrId
+		}).addStyleClass("sapMSegmentedButtonNoAutoWidth");
 
 		this._oListHeader = new Toolbar({
 			content: [this._oSegmentedButton, new ToolbarSpacer(), oCloseBtnARIAHiddenDescr, oHeadingARIAHiddenDescr]
