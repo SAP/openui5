@@ -53,7 +53,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Processing the response to activate the draft if the expected status is contained in the response object
+	 * Processing the response to create/read/update/delete adaptations if the expected status is contained in the response object
+	 * In case of a deletion the version list is reloaded because the draft might have been deleted on the backend
 	 * @param {object} oResponse - Object with response data
 	 * @param {number} oResponse.status - HTTP response code
 	 * @param {number} nExpectedStatus - Expected HTTP response code
@@ -61,24 +62,23 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.appId - Reference of the application
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @param {boolean} [bDelete=false] - Indicator whether the response was from a delete
-	 * @returns {object} Object with response data
+	 * @returns {Promise<object>} Object with response data
 	 */
 	function handleResponseForVersioning(oResponse, nExpectedStatus, mPropertyBag, bDelete) {
-		if (oResponse.status === nExpectedStatus) {
-			if (bDelete) {
-				Versions.updateModelFromBackend({
-					reference: mPropertyBag.appId,
-					layer: mPropertyBag.layer
-				});
-			} else {
-				Versions.onAllChangesSaved({
-					reference: mPropertyBag.appId,
-					layer: mPropertyBag.layer,
-					contextBasedAdaptation: true
-				});
-			}
+		if (bDelete) {
+			return Versions.updateModelFromBackend({
+				reference: mPropertyBag.appId,
+				layer: mPropertyBag.layer
+			}).then(function() {
+				return oResponse;
+			});
 		}
-		return oResponse;
+		Versions.onAllChangesSaved({
+			reference: mPropertyBag.appId,
+			layer: mPropertyBag.layer,
+			contextBasedAdaptation: true
+		});
+		return Promise.resolve(oResponse);
 	}
 
 	/**
@@ -412,9 +412,10 @@ sap.ui.define([
 		}).then(function(oResponse) {
 			var oModel = this.getAdaptationsModel(mPropertyBag);
 			oModel.insertAdaptation(mPropertyBag.contextBasedAdaptation);
-			handleResponseForVersioning(oResponse, 201, mPropertyBag);
+			return handleResponseForVersioning(oResponse, 201, mPropertyBag);
+		}.bind(this)).then(function() {
 			return FlexObjectState.getFlexObjects({ selector: mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true, currentLayer: Layer.CUSTOMER });
-		}.bind(this)).then(function(aFlexObjects) {
+		}).then(function(aFlexObjects) {
 			//currently getFlexObjects contains also VENDOR layer ctrl variant changes which need to be removed before copy
 			//TODO refactor when FlexObjectState.getFlexObjects will be refactored
 			var aCustomerFlexObjects = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aFlexObjects, Layer.CUSTOMER);
