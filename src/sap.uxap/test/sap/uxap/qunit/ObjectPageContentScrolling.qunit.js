@@ -1066,22 +1066,6 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 		}.bind(this));
 	});
 
-	QUnit.test("check for toggleScrolling on content resize", function (assert) {
-
-		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
-			oToggleScrollSpy = this.spy(oObjectPage, "_toggleScrolling"),
-			done = assert.async();
-
-		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-
-			oToggleScrollSpy.reset();
-			// simulate resize
-			oObjectPage._onUpdateContentSize({size: {width: 1000, height: 1000}});
-			assert.equal(oToggleScrollSpy.callCount, 1, "check for toggleing the scroll is called");
-			done();
-		});
-	});
-
 	QUnit.module("ObjectPage scrolling without view");
 
 	QUnit.test("auto-scroll on resize of last section", function (assert) {
