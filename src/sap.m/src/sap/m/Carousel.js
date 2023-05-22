@@ -17,6 +17,7 @@ sap.ui.define([
 	"./CarouselRenderer",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
+	"sap/base/util/isPlainObject",
 	"sap/m/ImageHelper",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/IconPool",
@@ -36,6 +37,7 @@ sap.ui.define([
 	CarouselRenderer,
 	KeyCodes,
 	Log,
+	isPlainObject,
 	ImageHelper,
 	jQuery
 	/*, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */
@@ -930,7 +932,11 @@ sap.ui.define([
 
 		if (this._bDragThresholdMet || Math.abs(this._iDx) > Math.abs(this._iDy) && (Math.abs(this._iDx) > iDragRadius)) {
 			this._bDragThresholdMet = true;
-			oEvent.preventDefault();
+
+			// prevent default action when mouse drag is used
+			if (isPlainObject(oEvent.touches[0])) {
+				oEvent.preventDefault();
+			}
 
 			if (this._bLockLeft && (this._iDx < 0)) {
 				this._iDx = this._iDx * (-iDragLimit) / (this._iDx - iDragLimit);
