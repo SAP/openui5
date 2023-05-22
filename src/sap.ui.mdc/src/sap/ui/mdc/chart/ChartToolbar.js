@@ -9,14 +9,14 @@ sap.ui.define([
         "sap/m/OverflowToolbarButton",
         "sap/m/OverflowToolbarToggleButton",
         "sap/m/Title",
-        "sap/ui/mdc/library",
         "sap/ui/mdc/chart/ChartTypeButton",
         "./ChartSelectionDetails",
         "sap/m/ToolbarSeparator",
         "sap/m/OverflowToolbarLayoutData",
         "sap/ui/core/library",
         "sap/ui/Device",
-        "sap/ui/core/ShortcutHintsMixin"
+        "sap/ui/core/ShortcutHintsMixin",
+        "sap/ui/mdc/enum/ChartToolbarActionType"
     ],
     function (
         Core,
@@ -25,14 +25,14 @@ sap.ui.define([
         OverflowButton,
         OverflowToggleButton,
         Title,
-        MDCLib,
         ChartTypeButton,
         ChartSelectionDetails,
         ToolbarSeparator,
         OverflowToolbarLayoutData,
         coreLibrary,
         Device,
-        ShortcutHintsMixin
+        ShortcutHintsMixin,
+        ChartToolbarActionType
     ) {
         "use strict";
 
@@ -118,7 +118,7 @@ sap.ui.define([
             //Check p13n mode property on the chart and enable only desired buttons
 			var aP13nMode = oMDCChart.getP13nMode() || [];
 
-            if (  aP13nMode.indexOf("Item") > -1 && (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.DrillDownUp) < 0)) {
+            if (  aP13nMode.indexOf("Item") > -1 && (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.DrillDownUp) < 0)) {
                 this._oDrillDownBtn = new OverflowButton(oMDCChart.getId() + "-drillDown", {
                     icon: "sap-icon://drill-down",
                     tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
@@ -136,7 +136,7 @@ sap.ui.define([
                 this._chartInternalButtonsToEnable.push(this._oDrillDownBtn);
             }
 
-            if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.Legend) < 0) {
+            if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.Legend) < 0) {
                 this._oLegendBtn = new OverflowToggleButton(oMDCChart.getId() +  "btnLegend", {
                     type: "Transparent",
                     text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
@@ -149,7 +149,7 @@ sap.ui.define([
                 this._chartInternalButtonsToEnable.push(this._oLegendBtn);
             }
 
-            if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.ZoomInOut)) {
+            if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.ZoomInOut)) {
                 this.oZoomInButton = new OverflowButton(oMDCChart.getId() + "btnZoomIn", {
                     icon: "sap-icon://zoom-in",
                     tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),

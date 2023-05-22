@@ -4,19 +4,18 @@
 
 sap.ui.define([
 	"./TableTypeBase",
-	"../library",
 	"sap/ui/core/library",
-	"sap/m/table/Util"
+	"sap/m/table/Util",
+	"sap/ui/mdc/enum/TableRowCountMode"
 ], function(
 	TableTypeBase,
-	library,
 	coreLibrary,
-	MTableUtil
+	MTableUtil,
+	TableRowCountMode
 ) {
 	"use strict";
 
 	var InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
-	var RowCountMode = library.RowCountMode;
 	var SortOrder = coreLibrary.SortOrder;
 
 	/**
@@ -42,13 +41,13 @@ sap.ui.define([
 				 * Defines how the table handles the row count.
 				 */
 				rowCountMode: {
-					type: "sap.ui.mdc.RowCountMode",
-					defaultValue: RowCountMode.Auto
+					type: "sap.ui.mdc.enum.TableRowCountMode",
+					defaultValue: TableRowCountMode.Auto
 				},
 				/**
 				 * Row count of the inner table.<br>
-				 * This property specifies the minimum row count if <code>sap.ui.mdc.RowCountMode.Auto</code> is used.<br>
-				 * This property specifies the row count if <code>sap.ui.mdc.RowCountMode.Fixed</code> is used.
+				 * This property specifies the minimum row count if <code>sap.ui.mdc.enum.TableRowCountMode.Auto</code> is used.<br>
+				 * This property specifies the row count if <code>sap.ui.mdc.enum.TableRowCountMode.Fixed</code> is used.
 				 */
 				rowCount: {
 					type: "int",
@@ -107,15 +106,15 @@ sap.ui.define([
 			var oRowMode = oGridTable.getRowMode();
 			var bHideEmptyRows = false;
 
-			if (oRowMode && (vValue === RowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.FixedRowMode") ||
-							 vValue === RowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.AutoRowMode"))) {
+			if (oRowMode && (vValue === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.FixedRowMode") ||
+							 vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.AutoRowMode"))) {
 				bHideEmptyRows = oRowMode.getHideEmptyRows();
 				oRowMode.destroy();
 				oRowMode = null;
 			}
 
 			if (!oRowMode) {
-				var RowMode = vValue === RowCountMode.Fixed ? InnerFixedRowMode : InnerAutoRowMode;
+				var RowMode = vValue === TableRowCountMode.Fixed ? InnerFixedRowMode : InnerAutoRowMode;
 				oGridTable.setRowMode(new RowMode({
 					hideEmptyRows: bHideEmptyRows
 				}));
@@ -132,7 +131,7 @@ sap.ui.define([
 	GridTableType.prototype._updateTableRowCount = function() {
 		var oGridTable = this.getInnerTable();
 
-		if (this.getRowCountMode() === RowCountMode.Fixed) {
+		if (this.getRowCountMode() === TableRowCountMode.Fixed) {
 			oGridTable.getRowMode().setRowCount(this.getRowCount());
 		} else {
 			oGridTable.getRowMode().setMinRowCount(this.getRowCount());

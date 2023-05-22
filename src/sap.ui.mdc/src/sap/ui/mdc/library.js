@@ -769,6 +769,7 @@
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.74
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.FilterBarP13nMode}
 	 */
 	thisLib.FilterBarP13nMode = {
 		/**
@@ -793,6 +794,7 @@
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableType}
 	 */
 	thisLib.TableType = {
 		/**
@@ -824,6 +826,7 @@
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.62
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableP13nMode}
 	 */
 	thisLib.TableP13nMode = {
 		/**
@@ -866,6 +869,7 @@
 	 * @ui5-restricted sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableGrowingMode}
 	 */
 	thisLib.GrowingMode = {
 		/**
@@ -897,6 +901,7 @@
 	 * @ui5-restricted sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableRowCountMode}
 	 */
 	thisLib.RowCountMode = {
 		/**
@@ -922,6 +927,7 @@
 	 * @since 1.64
 	 * @ui5-restricted sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ChartToolbarActionType}
 	 */
 	thisLib.ChartToolbarActionType = {
 		/**
@@ -958,6 +964,7 @@
 	 * @since 1.75
 	 * @ui5-restricted sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ChartP13nMode}
 	 */
 	thisLib.ChartP13nMode = {
 		/**
@@ -994,6 +1001,7 @@
 	 * @ui5-restricted sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableSelectionMode}
 	 */
 	thisLib.SelectionMode = {
 		/**
@@ -1027,6 +1035,7 @@
 	 * @ui5-restricted sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.60
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableRowAction}
 	 */
 	thisLib.RowAction = {
 		/**
@@ -1043,6 +1052,7 @@
 	 * @enum {string}
 	 * @private
 	 * @since 1.61
+	 * @deprecated (since 1.115.0) - No replacement available
 	 */
 	thisLib.FilterExpression = {
 		/**
@@ -1062,6 +1072,11 @@
 		Multi : "Multi"
 	};
 
+	/**
+	 * @enum {string}
+	 * @private
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ChartItemType}
+	 */
 	thisLib.ChartItemType = {
 		/**
 		 * Dimension Item
@@ -1075,6 +1090,11 @@
 		Measure: "Measure"
 	};
 
+	/**
+	 * @enum {string}
+	 * @private
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ChartItemRoleType}
+	 */
 	thisLib.ChartItemRoleType = {
 		/**
 		 * All dimensions with role "category" are assigned to the feed uid "categoryAxis".
@@ -1161,6 +1181,7 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableMultiSelectMode}
 	 */
 	thisLib.MultiSelectMode = {
 		/**

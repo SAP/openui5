@@ -31,7 +31,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Popup",
 	"sap/ui/core/library",
-	"sap/ui/mdc/library",
 	"sap/m/library",
 	"sap/ui/mdc/odata/TypeMap",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
@@ -56,7 +55,9 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/performance/trace/FESRHelper",
-	"sap/m/table/Util"
+	"sap/m/table/Util",
+	"sap/ui/mdc/enum/TableP13nMode",
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	TableQUnitUtils,
 	QUtils,
@@ -87,7 +88,6 @@ sap.ui.define([
 	Control,
 	Popup,
 	CoreLibrary,
-	MdcLibrary,
 	MLibrary,
 	ODataTypeMap,
 	TestModificationHandler,
@@ -112,13 +112,13 @@ sap.ui.define([
 	ByteType,
 	BooleanType,
 	FESRHelper,
-	MTableUtil
+	MTableUtil,
+	TableP13nMode,
+	TableType
 ) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
-	var P13nMode = MdcLibrary.TableP13nMode;
-	var TableType = MdcLibrary.TableType;
 	var aTestedTypes = ["Table", "ResponsiveTable"];
 	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 
@@ -4815,8 +4815,8 @@ sap.ui.define([
 			var oTable = oMDCTable || this.oTable;
 			var aModes = oTable.getP13nMode();
 
-			assert.strictEqual(oTable.isSortingEnabled(), aModes.includes(P13nMode.Sort), "#isSortingEnabled");
-			assert.strictEqual(oTable.isFilteringEnabled(), aModes.includes(P13nMode.Filter), "#isFilteringEnabled");
+			assert.strictEqual(oTable.isSortingEnabled(), aModes.includes(TableP13nMode.Sort), "#isSortingEnabled");
+			assert.strictEqual(oTable.isFilteringEnabled(), aModes.includes(TableP13nMode.Filter), "#isFilteringEnabled");
 		},
 		assertColumnDnD: function(assert, oMDCTable) {
 			var oTable = oMDCTable || this.oTable;

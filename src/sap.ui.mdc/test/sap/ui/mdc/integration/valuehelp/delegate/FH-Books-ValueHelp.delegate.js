@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"./ValueHelp.delegate",
-	"sap/ui/mdc/library",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
@@ -17,10 +16,10 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/mdc/enum/TableSelectionMode"
 ], function(
 	ODataV4ValueHelpDelegate,
-	library,
 	MTable,
 	MDCTable,
 	Conditions,
@@ -33,11 +32,11 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	UriParameters
+	UriParameters,
+	TableSelectionMode
 ) {
 	"use strict";
 
-	var SelectionMode = library.SelectionMode;
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
@@ -128,7 +127,7 @@ sap.ui.define([
 						showRowCount: true,
 						width: "100%",
 						height: "100%",
-						selectionMode: bMultiSelect ? SelectionMode.Multi : SelectionMode.Single,
+						selectionMode: bMultiSelect ? TableSelectionMode.Multi : TableSelectionMode.Single,
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",
 							payload: {

@@ -23,7 +23,8 @@ sap.ui.define([
         "sap/ui/events/KeyCodes",
         "sap/ui/mdc/util/InfoBar",
         "sap/ui/core/format/ListFormat",
-        "sap/ui/mdc/enum/ProcessingStrategy"
+        "sap/ui/mdc/enum/ProcessingStrategy",
+        "sap/ui/mdc/enum/ChartP13nMode"
     ],
     function (
         Core,
@@ -46,7 +47,8 @@ sap.ui.define([
         KeyCodes,
         InfoBar,
         ListFormat,
-        ProcessingStrategy
+        ProcessingStrategy,
+        ChartP13nMode
     ) {
         "use strict";
 
@@ -140,7 +142,7 @@ sap.ui.define([
                      * @since 1.88
                      */
                     p13nMode: {
-                        type: "sap.ui.mdc.ChartP13nMode[]",
+                        type: "sap.ui.mdc.enum.ChartP13nMode[]",
                         defaultValue: []
                     },
 
@@ -162,7 +164,7 @@ sap.ui.define([
                      * @since 1.88
                      */
                     ignoreToolbarActions: {
-                        type: "sap.ui.mdc.ChartToolbarActionType[]",
+                        type: "sap.ui.mdc.enum.ChartToolbarActionType[]",
                         defaultValue: []
                     },
 
@@ -486,17 +488,17 @@ sap.ui.define([
 
                 //as the p13nMode has no strict order we need to ensure the order of tabs here
                 if (mKeys.Item) {
-                    aSortedKeys.push(sap.ui.mdc.ChartP13nMode.Item);
+                    aSortedKeys.push(ChartP13nMode.Item);
                 }
                 if (mKeys.Sort) {
-                    aSortedKeys.push(sap.ui.mdc.ChartP13nMode.Sort);
+                    aSortedKeys.push(ChartP13nMode.Sort);
                 }
                 if (mKeys.Filter) {
-                    aSortedKeys.push(sap.ui.mdc.ChartP13nMode.Filter);
+                    aSortedKeys.push(ChartP13nMode.Filter);
                 }
                 if (mKeys.Type) {
                     this._typeBtnActive = true;
-                    aSortedKeys.push(sap.ui.mdc.ChartP13nMode.Type);
+                    aSortedKeys.push(ChartP13nMode.Type);
                 } else {
                     this._typeBtnActive = false;
                 }

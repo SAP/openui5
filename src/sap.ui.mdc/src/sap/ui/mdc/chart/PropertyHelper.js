@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper", "sap/ui/mdc/library"
+	"../util/PropertyHelper", "sap/ui/mdc/enum/ChartItemRoleType"
 ], function(
 	PropertyHelperBase,
-	MDCLib
+	ChartItemRoleType
 ) {
 	"use strict";
 
@@ -109,25 +109,25 @@ sap.ui.define([
 		var oAvailableRoles = {
 			groupable: [
 				{
-					key: MDCLib.ChartItemRoleType.category,
+					key: ChartItemRoleType.category,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
 				}, {
-					key: MDCLib.ChartItemRoleType.category2,
+					key: ChartItemRoleType.category2,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
 				}, {
-					key: MDCLib.ChartItemRoleType.series,
+					key: ChartItemRoleType.series,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
 				}
 			],
 			aggregatable: [
 				{
-					key: MDCLib.ChartItemRoleType.axis1,
+					key: ChartItemRoleType.axis1,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
 				}, {
-					key: MDCLib.ChartItemRoleType.axis2,
+					key: ChartItemRoleType.axis2,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
 				}, {
-					key: MDCLib.ChartItemRoleType.axis3,
+					key: ChartItemRoleType.axis3,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
 				}
 			]

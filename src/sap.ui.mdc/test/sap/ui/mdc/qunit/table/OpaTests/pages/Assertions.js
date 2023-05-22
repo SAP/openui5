@@ -5,28 +5,26 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"sap/ui/mdc/library",
 	"sap/ui/test/Opa5",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/Visible"
+	"sap/ui/test/matchers/Visible",
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
 	/** @type sap.ui.core.library */ CoreLibrary,
-	/** @type sap.ui.mdc.library */ MdcLibrary,
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.Opa5 */ waitForTable,
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.matchers.Ancestor */ Ancestor,
 	/** @type sap.ui.test.matchers.Properties */ Properties,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
-	/** @type sap.ui.test.matchers.Visible */ Visible) {
+	/** @type sap.ui.test.matchers.Visible */ Visible,
+	/** @type sap.ui.mdc.enum.TableType */ TableType) {
 	"use strict";
-
-	var TableType = MdcLibrary.TableType;
 
 	/**
 	 * @class Assertions

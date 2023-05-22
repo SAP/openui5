@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/m/Text",
 	"sap/ui/core/Item",
-	"sap/ui/mdc/library",
 	"sap/m/Button",
 	'sap/m/Column',
 	"sap/m/Table",
@@ -25,8 +24,9 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"sap/ui/events/KeyCodes"
-], function (BasePanel, Label, ColumnListItem, Select, Text, Item, MDCLib, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/mdc/enum/ChartItemRoleType"
+], function (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -1219,25 +1219,25 @@ sap.ui.define([
 		var oAvailableRoles = {
 			Dimension: [
 				{
-					key: MDCLib.ChartItemRoleType.category,
+					key: ChartItemRoleType.category,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
 				}, {
-					key: MDCLib.ChartItemRoleType.category2,
+					key: ChartItemRoleType.category2,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
 				}, {
-					key: MDCLib.ChartItemRoleType.series,
+					key: ChartItemRoleType.series,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
 				}
 			],
 			Measure: [
 				{
-					key: MDCLib.ChartItemRoleType.axis1,
+					key: ChartItemRoleType.axis1,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
 				}, {
-					key: MDCLib.ChartItemRoleType.axis2,
+					key: ChartItemRoleType.axis2,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
 				}, {
-					key: MDCLib.ChartItemRoleType.axis3,
+					key: ChartItemRoleType.axis3,
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
 				}
 			]

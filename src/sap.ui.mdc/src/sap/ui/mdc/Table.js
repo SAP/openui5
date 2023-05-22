@@ -12,7 +12,6 @@ sap.ui.define([
 	"./table/PropertyHelper",
 	"./table/utils/Personalization",
 	"./mixin/FilterIntegrationMixin",
-	"./library",
 	"sap/m/Text",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
@@ -48,7 +47,14 @@ sap.ui.define([
 	"sap/ui/mdc/enum/ProcessingStrategy",
 	"sap/ui/core/theming/Parameters",
 	"sap/base/Log",
-	"sap/ui/performance/trace/FESRHelper"
+	"sap/ui/performance/trace/FESRHelper",
+	"sap/ui/mdc/enum/TableMultiSelectMode",
+	"sap/ui/mdc/enum/TableSelectionMode",
+	"sap/ui/mdc/enum/TableP13nMode",
+	"sap/ui/mdc/enum/TableType",
+	"sap/ui/mdc/enum/TableGrowingMode", // load for availability
+	"sap/ui/mdc/enum/TableRowAction", // load for availability
+	"sap/ui/mdc/enum/TableRowCountMode" // load for availability
 ], function(
 	Control,
 	ActionToolbar,
@@ -59,7 +65,6 @@ sap.ui.define([
 	PropertyHelper,
 	PersonalizationUtils,
 	FilterIntegrationMixin,
-	library,
 	Text,
 	ToolbarSpacer,
 	Button,
@@ -95,17 +100,17 @@ sap.ui.define([
 	ProcessingStrategy,
 	ThemeParameters,
 	Log,
-	FESRHelper
+	FESRHelper,
+	TableMultiSelectMode,
+	TableSelectionMode,
+	TableP13nMode,
+	TableType
 ) {
 	"use strict";
 
-	var SelectionMode = library.SelectionMode;
-	var TableType = library.TableType;
-	var P13nMode = library.TableP13nMode;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
 	var ToolbarStyle = MLibrary.ToolbarStyle;
 	var IllustratedMessageType = MLibrary.IllustratedMessageType;
-	var MultiSelectMode = library.MultiSelectMode;
 	var TitleLevel = coreLibrary.TitleLevel;
 	var SortOrder = coreLibrary.SortOrder;
 	var internalMap = new window.WeakMap();
@@ -179,7 +184,7 @@ sap.ui.define([
 				 * @since 1.62
 				 */
 				p13nMode: {
-					type: "sap.ui.mdc.TableP13nMode[]",
+					type: "sap.ui.mdc.enum.TableP13nMode[]",
 					defaultValue: []
 				},
 				/**
@@ -253,8 +258,8 @@ sap.ui.define([
 				 * work properly if the count is known. Make sure the model/binding is configured to request the count from the service.
 				 */
 				selectionMode: {
-					type: "sap.ui.mdc.SelectionMode",
-					defaultValue: SelectionMode.None
+					type: "sap.ui.mdc.enum.TableSelectionMode",
+					defaultValue: TableSelectionMode.None
 				},
 				/**
 				 * Determines whether the number of rows is shown along with the header text. If set to <code>false</code>, the number of rows is not
@@ -401,9 +406,9 @@ sap.ui.define([
 				 * @since 1.93
 				 */
 				multiSelectMode : {
-					type: "sap.ui.mdc.MultiSelectMode",
+					type: "sap.ui.mdc.enum.TableMultiSelectMode",
 					group: "Behavior",
-					defaultValue: MultiSelectMode.Default
+					defaultValue: TableMultiSelectMode.Default
 				},
 
 				/**
@@ -465,7 +470,7 @@ sap.ui.define([
 				type: {
 					type: "sap.ui.mdc.table.TableTypeBase",
 					altTypes: [
-						"sap.ui.mdc.TableType"
+						"sap.ui.mdc.enum.TableType"
 					],
 					multiple: false
 				},
@@ -478,7 +483,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * This row can be used for user input to create new data if {@link sap.ui.mdc.TableType TableType} is "<code>Table</code>".
+				 * This row can be used for user input to create new data if {@link sap.ui.mdc.enum.TableType TableType} is "<code>Table</code>".
 				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
 				 */
 				creationRow: {
@@ -1778,7 +1783,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether filter personalization is enabled
 	 */
 	Table.prototype.isFilteringEnabled = function() {
-		return this.getActiveP13nModes().includes(P13nMode.Filter);
+		return this.getActiveP13nModes().includes(TableP13nMode.Filter);
 	};
 
 	/**
@@ -1788,7 +1793,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether sort personalization is enabled
 	 */
 	Table.prototype.isSortingEnabled = function() {
-		return this.getActiveP13nModes().includes(P13nMode.Sort);
+		return this.getActiveP13nModes().includes(TableP13nMode.Sort);
 	};
 
 	/**
@@ -1798,7 +1803,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether group personalization is enabled
 	 */
 	Table.prototype.isGroupingEnabled = function () {
-		return this.getActiveP13nModes().includes(P13nMode.Group);
+		return this.getActiveP13nModes().includes(TableP13nMode.Group);
 	};
 
 	/**
@@ -1808,11 +1813,11 @@ sap.ui.define([
 	 * @returns {boolean} Whether aggregation personalization is enabled
 	 */
 	Table.prototype.isAggregationEnabled = function () {
-		return this.getActiveP13nModes().includes(P13nMode.Aggregate);
+		return this.getActiveP13nModes().includes(TableP13nMode.Aggregate);
 	};
 
 	Table.prototype.getSupportedP13nModes = function() {
-		var aSupportedP13nModes = getIntersection(Object.keys(P13nMode), this._getType().getSupportedP13nModes());
+		var aSupportedP13nModes = getIntersection(Object.keys(TableP13nMode), this._getType().getSupportedP13nModes());
 
 		if (this.isControlDelegateInitialized()) {
 			aSupportedP13nModes = getIntersection(aSupportedP13nModes, this.getControlDelegate().getSupportedP13nModes(this));
@@ -2269,7 +2274,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._onRowPress = function(mPropertyBag) {
-		if (this.getSelectionMode() !== SelectionMode.SingleMaster) {
+		if (this.getSelectionMode() !== TableSelectionMode.SingleMaster) {
 			this.fireRowPress({
 				bindingContext: mPropertyBag.bindingContext
 			});

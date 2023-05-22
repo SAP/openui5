@@ -9,22 +9,21 @@
 sap.ui.define([
 	"./AggregationBaseDelegate",
 	"./util/loadModules",
-	"./library",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/library",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/mdc/enum/TableP13nMode",
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	AggregationBaseDelegate,
 	loadModules,
-	library,
 	Sorter,
 	coreLibrary,
-	Core
+	Core,
+	TableP13nMode,
+	TableType
 ) {
 	"use strict";
-
-	var P13nMode = library.TableP13nMode;
-	var TableType = library.TableType;
 
 	/**
 	 * Base delegate for {@link sap.ui.mdc.Table}.
@@ -432,14 +431,14 @@ sap.ui.define([
 	 * Gets the p13n modes that are supported by the combination of this delegate and the current table state (e.g. type).
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
-	 * @returns {sap.ui.mdc.TableP13nMode[]} The supported p13n modes.
+	 * @returns {sap.ui.mdc.enum.TableP13nMode[]} The supported p13n modes.
 	 * @private
 	 */
 	TableDelegate.getSupportedP13nModes = function(oTable) {
-		var aSupportedModes = [P13nMode.Column, P13nMode.Sort, P13nMode.Filter];
+		var aSupportedModes = [TableP13nMode.Column, TableP13nMode.Sort, TableP13nMode.Filter];
 
 		if (oTable._isOfType(TableType.ResponsiveTable)) {
-			aSupportedModes.push(P13nMode.Group);
+			aSupportedModes.push(TableP13nMode.Group);
 		}
 
 		return aSupportedModes;

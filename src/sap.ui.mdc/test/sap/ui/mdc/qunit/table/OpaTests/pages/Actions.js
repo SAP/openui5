@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/mdc/library",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
@@ -14,10 +13,10 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/testutils/opa/table/Actions",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
 	"sap/ui/test/actions/Drag",
-	"sap/ui/test/actions/Drop"
+	"sap/ui/test/actions/Drop",
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
-	/** @type sap.ui.mdc.library */ MdcLibrary,
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.actions.Press */ Press,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
@@ -27,10 +26,9 @@ sap.ui.define([
 	/** @type sap.ui.test.Opa5 */ TablePublicActions,
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.actions.Drag */ Drag,
-	/** @type sap.ui.test.actions.Drop */ Drop) {
+	/** @type sap.ui.test.actions.Drop */ Drop,
+	/** @type sap.ui.mdc.enum.TableType */ TableType) {
 	"use strict";
-
-	var TableType = MdcLibrary.TableType;
 
 	/**
 	 * This Actions are for the internal testing of the MDCTable only!

@@ -6,7 +6,6 @@ sap.ui.define([
     "sap/ui/mdc/odata/v4/ChartDelegate",
     "sap/ui/core/Core",
     "sap/m/Text",
-    "sap/ui/mdc/library",
     "sap/base/Log",
     'sap/ui/mdc/util/FilterUtil',
     'sap/ui/mdc/odata/v4/util/DelegateUtil',
@@ -20,12 +19,12 @@ sap.ui.define([
     "sap/ui/mdc/FilterBarDelegate",
     "sap/ui/model/Filter",
     "sap/ui/mdc/chart/PropertyHelper",
-    "sap/ui/thirdparty/jquery"
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/mdc/enum/ChartItemRoleType"
 ], function (
     V4ChartDelegate,
     Core,
     Text,
-    MDCLib,
     Log,
     FilterUtil,
     DelegateUtil,
@@ -39,7 +38,8 @@ sap.ui.define([
     FilterBarDelegate,
     Filter,
     PropertyHelper,
-    jQuery
+    jQuery,
+    ChartItemRoleType
 ) {
     "use strict";
     /**
@@ -318,10 +318,10 @@ sap.ui.define([
             return this._aChartTypeLayout;
         }
 
-        var aAxis1Only = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series];
-		var aAxis1And2 = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series];
-		var aCat2Axis1Only = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.category2];
-		var aCat1AllAxis = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.axis3, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series];
+        var aAxis1Only = [ChartItemRoleType.axis1, ChartItemRoleType.category, ChartItemRoleType.series];
+		var aAxis1And2 = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.category, ChartItemRoleType.series];
+		var aCat2Axis1Only = [ChartItemRoleType.axis1, ChartItemRoleType.category, ChartItemRoleType.category2];
+		var aCat1AllAxis = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.axis3, ChartItemRoleType.category, ChartItemRoleType.series];
 
         this._aChartTypeLayout = [
             {key: "column", allowedLayoutOptions: aAxis1Only},
@@ -379,7 +379,7 @@ sap.ui.define([
 
         //Default case -> everything allowed
         if (!oLayoutConfig) {
-            var aRoles = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.axis3, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.category2, MDCLib.ChartItemRoleType.series];
+            var aRoles = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.axis3, ChartItemRoleType.category, ChartItemRoleType.category2, ChartItemRoleType.series];
             oLayoutConfig = {key: oMDCChart.getChartType(), allowedLayoutOptions: aRoles};
         }
 
@@ -391,7 +391,7 @@ sap.ui.define([
         oLayoutConfig.templateConfig = aStandardSetup;
 
 
-        //var aRolesAvailable = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.axis3, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.category2, MDCLib.ChartItemRoleType.series];
+        //var aRolesAvailable = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.axis3, ChartItemRoleType.category, ChartItemRoleType.category2, ChartItemRoleType.series];
         var oArguments = {panelConfig: oLayoutConfig};
 
         var oPanel = new ChartItemPanel(oArguments);
