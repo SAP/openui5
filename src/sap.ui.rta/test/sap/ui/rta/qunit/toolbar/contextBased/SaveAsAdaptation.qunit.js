@@ -78,10 +78,11 @@ sap.ui.define([
 		return oToolbar;
 	}
 
+	var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
 		beforeEach: function() {
 			this.oGetAppComponentStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
-			this.oModel = ContextBasedAdaptationsAPI.createModel([]);
+			this.oModel = ContextBasedAdaptationsAPI.createModel([DEFAULT_ADAPTATION], DEFAULT_ADAPTATION, true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
 			this.oToolbar = initializeToolbar();
 			this.oSaveAsAdaptation = new SaveAsAdaptation({ toolbar: this.oToolbar });

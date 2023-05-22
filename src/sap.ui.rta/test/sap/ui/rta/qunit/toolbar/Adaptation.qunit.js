@@ -275,7 +275,7 @@ sap.ui.define([
 				},
 				oDefaultAdaptation
 			];
-			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources

@@ -88,7 +88,7 @@ sap.ui.define([
 				},
 				oDefaultAdaptation
 			];
-			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 
 			Versions.clearInstances();
 			this.oRestartFlpStub = sandbox.stub();
@@ -269,7 +269,7 @@ sap.ui.define([
 				},
 				oDefaultAdaptation
 			];
-			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(this.aAdaptations);
+			var oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(this.aAdaptations, this.aAdaptations[0], true);
 
 			this.oRemoveAllCommandsSpy = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");

@@ -427,7 +427,7 @@ sap.ui.define([
 			];
 			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
 			this.oRefreshAdaptationsModelStub = sandbox.stub(ContextBasedAdaptationsAPI, "refreshAdaptationModel").resolves("id_5678");
-			this.oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations);
+			this.oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 			this.oGetAdaptationsModelStub = sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oAdaptationsModel);
 		},
 		afterEach: function() {
