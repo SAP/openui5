@@ -1,8 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/date/Persian",
 	"sap/ui/core/date/UI5Date"
-], function(Persian, UI5Date) {
+], function(Log, Persian, UI5Date) {
 	"use strict";
 
 	// Test data
@@ -22,7 +23,13 @@ sap.ui.define([
 	];
 
 	//1. Instance related
-	QUnit.module("sap.ui.core.date.Persian");
+	QUnit.module("sap.ui.core.date.Persian", {
+		beforeEach: function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
+		}
+	});
 
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 11 Dey 1348 (11.10.1348)
@@ -236,7 +243,7 @@ sap.ui.define([
 	QUnit.test("Convert Gregorian to Persian dates", function (assert) {
 		var oGregorianDate, oExpectedPersianDate, oCalculatedPersianDate;
 		for (var i = 0; i < aTestData.length; i++) {
-			oGregorianDate = createGregorianDateFromTestEntry(aTestData[i], true);
+			oGregorianDate = createGregorianDateFromTestEntry(aTestData[i]);
 			oExpectedPersianDate = createPersianDateFromTestEntry(aTestData[i], true);
 			oCalculatedPersianDate = new Persian(oGregorianDate.getTime());
 			compareTwoDates(assert, "Gregorian2Persian " + i, oCalculatedPersianDate, oExpectedPersianDate);
@@ -247,7 +254,7 @@ sap.ui.define([
 		var oPersianDate, oExpectedGregorianDate, oCalculatedGregorianDate;
 		for (var i = 0; i < aTestData.length; i++) {
 			oPersianDate = createPersianDateFromTestEntry(aTestData[i], true);
-			oExpectedGregorianDate = createGregorianDateFromTestEntry(aTestData[i], true);
+			oExpectedGregorianDate = createGregorianDateFromTestEntry(aTestData[i]);
 			oCalculatedGregorianDate = oPersianDate.getJSDate();
 			compareTwoDates(assert, "Persian2Gregorian " + i, oCalculatedGregorianDate, oExpectedGregorianDate);
 		}
@@ -278,19 +285,18 @@ sap.ui.define([
 	}
 
 	function createPersianDateFromTestEntry(oEntry, bUTC) {
-		return createDateFromTestEntry(oEntry.Persian, Persian, bUTC);
-	}
-
-	function createGregorianDateFromTestEntry(oEntry, bUTC) {
-		return createDateFromTestEntry(oEntry.Gregorian, Date, bUTC);
-	}
-
-	function createDateFromTestEntry(oDateEntry, type, bUTC) {
+		var oDateEntry = oEntry.Persian;
 		if (bUTC) {
-			return new type(type.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
+			// eslint-disable-next-line new-cap
+			return new Persian(Persian.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
 		} else {
-			return new type(oDateEntry.year, oDateEntry.month, oDateEntry.day);
+			return new Persian(oDateEntry.year, oDateEntry.month, oDateEntry.day);
 		}
+	}
+
+	function createGregorianDateFromTestEntry(oEntry) {
+		var oDateEntry = oEntry.Gregorian;
+		return UI5Date.getInstance(Date.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
 	}
 
 	function isInvalid(oDate) {
