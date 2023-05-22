@@ -1,1 +1,1 @@
-:host{min-width:15rem;color:var(--sapField_TextColor);background-color:var(--sapField_Background)}:host .ui5-date-picker-input{min-width:inherit;color:inherit;background-color:inherit}
+:host{background-color:var(--sapField_Background);color:var(--sapField_TextColor);min-width:15rem}:host .ui5-date-picker-input{background-color:inherit;color:inherit;min-width:inherit}

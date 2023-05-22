@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/getEffectiveContentDensity", "sap/ui/webc/common/thirdparty/icons/navigation-up-arrow", "sap/ui/webc/common/thirdparty/icons/navigation-down-arrow", "sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement", "./generated/templates/WheelSliderTemplate.lit", "./Button", "./generated/themes/WheelSlider.css"], function (_exports, _UI5Element, _LitRenderer, _Device, _Keys, _getEffectiveContentDensity, _navigationUpArrow, _navigationDownArrow, _ScrollEnablement, _WheelSliderTemplate, _Button, _WheelSlider) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/getEffectiveContentDensity", "sap/ui/webc/common/thirdparty/icons/navigation-up-arrow", "sap/ui/webc/common/thirdparty/icons/navigation-down-arrow", "sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement", "./generated/templates/WheelSliderTemplate.lit", "./Button", "./generated/themes/WheelSlider.css"], function (_exports, _UI5Element, _customElement, _property, _event, _LitRenderer, _Device, _Keys, _getEffectiveContentDensity, _navigationUpArrow, _navigationDownArrow, _ScrollEnablement, _WheelSliderTemplate, _Button, _WheelSlider) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _getEffectiveContentDensity = _interopRequireDefault(_getEffectiveContentDensity);
   _ScrollEnablement = _interopRequireDefault(_ScrollEnablement);
@@ -13,100 +16,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Button = _interopRequireDefault(_Button);
   _WheelSlider = _interopRequireDefault(_WheelSlider);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @private
-   */
-  const metadata = {
-    tag: "ui5-wheelslider",
-    properties: /** @lends sap.ui.webcomponents.main.WheelSlider.prototype */{
-      /**
-       * Defines whether the component is disabled
-       * (default is set to <code>false</code>).
-       * A disabled component can't be pressed or
-       * focused, and it is not in the tab chain.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines the currently selected value
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      value: {
-        type: String,
-        defaultValue: "0"
-      },
-      /**
-       * Defines the label of the wheelslider.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      label: {
-        type: String,
-        defaultValue: ""
-      },
-      /**
-       * Indicates if the wheelslider is expanded.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      expanded: {
-        type: Boolean
-      },
-      _items: {
-        type: String,
-        multiple: true,
-        compareValues: true
-      },
-      _itemsToShow: {
-        type: Object,
-        multiple: true
-      },
-      /**
-       * Indicates if the wheelslider has a cyclic behaviour.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      cyclic: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.WheelSlider.prototype */{},
-    events: /** @lends sap.ui.webcomponents.main.WheelSlider.prototype */{
-      /**
-       * Fires when the wheel slider is expanded.
-       */
-      expand: {},
-      /**
-       * Fires when the wheel slider is collapsed.
-       */
-      collapse: {},
-      /**
-       *  Fires when new value is selected.
-       */
-      select: {
-        detail: {
-          value: {
-            type: String
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   const CELL_SIZE_COMPACT = 32;
   const CELL_SIZE_COZY = 46;
-
   /**
    * @class
    *
@@ -120,25 +38,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.WheelSlider
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.WheelSlider
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-wheelslider
    * @public
    * @since 1.0.0-rc.6
    */
-  class WheelSlider extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _WheelSlider.default;
-    }
-    static get template() {
-      return _WheelSliderTemplate.default;
-    }
+  let WheelSlider = class WheelSlider extends _UI5Element.default {
     constructor() {
       super();
       this._currentElementIndex = 0;
@@ -158,9 +64,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       this._buildItemsToShow();
     }
-    static get dependencies() {
-      return [_Button.default];
-    }
     onAfterRendering() {
       if (!this._scroller.scrollContainer) {
         this._scroller.scrollContainer = this.shadowRoot.querySelector(`#${this._id}--wrapper`);
@@ -171,8 +74,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (this.expanded) {
         const elements = this.shadowRoot.querySelectorAll(".ui5-wheelslider-item");
         for (let i = 0; i < elements.length; i++) {
-          if (elements[i].textContent === this.value) {
-            this._selectElementByIndex(Number(elements[i].dataset.itemIndex) + this._getCurrentRepetition() * this._items.length);
+          const el = elements[i];
+          if (el.textContent === this.value) {
+            this._selectElementByIndex(Number(el.dataset.itemIndex) + this._getCurrentRepetition() * this._items.length);
             return true;
           }
         }
@@ -231,7 +135,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
     _selectElement(element) {
-      if (element && this._items.indexOf(element.textContent) > -1) {
+      if (element && element.textContent && this._items.indexOf(element.textContent) > -1) {
         this._currentElementIndex = Number(element.dataset.itemIndex);
         this._selectElementByIndex(this._currentElementIndex);
       }
@@ -292,7 +196,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       return index;
     }
-
     /**
      *
      * @param {event} e Wheel Event
@@ -309,6 +212,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (e.timeStamp === this._prevWheelTimestamp || !this.expanded) {
         return;
       }
+      if (this._prevWheelTimestamp && (e.timeStamp < this._prevWheelTimestamp + 250 || !this.expanded)) {
+        return;
+      }
       if (e.deltaY > 0) {
         this._itemUp();
       } else if (e.deltaY < 0) {
@@ -317,12 +223,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._prevWheelTimestamp = e.timeStamp;
     }
     _onclick(e) {
-      if (!e.target.classList.contains("ui5-wheelslider-item")) {
+      const target = e.target;
+      if (!target.classList.contains("ui5-wheelslider-item")) {
         return;
       }
       if (this.expanded) {
-        this.value = e.target.textContent;
-        this._selectElement(e.target);
+        this.value = target.textContent || "";
+        this._selectElement(target);
         this.fireEvent("select", {
           value: this.value
         });
@@ -363,8 +270,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._selectLimitCell(e, true);
       }
     }
-    _selectLimitCell(event, isMax) {
-      event.preventDefault();
+    _selectLimitCell(e, isMax) {
+      e.preventDefault();
       const intexIncrease = this.cyclic ? this._items.length : 0;
       if (isMax) {
         this._selectElementByIndex(this._items.length - 1 + intexIncrease);
@@ -372,7 +279,55 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._selectElementByIndex(intexIncrease);
       }
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WheelSlider.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: "0"
+  })], WheelSlider.prototype, "value", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: ""
+  })], WheelSlider.prototype, "label", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WheelSlider.prototype, "expanded", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WheelSlider.prototype, "cyclic", void 0);
+  __decorate([(0, _property.default)({
+    multiple: true,
+    compareValues: true
+  })], WheelSlider.prototype, "_items", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    multiple: true
+  })], WheelSlider.prototype, "_itemsToShow", void 0);
+  WheelSlider = __decorate([(0, _customElement.default)({
+    tag: "ui5-wheelslider",
+    renderer: _LitRenderer.default,
+    styles: _WheelSlider.default,
+    template: _WheelSliderTemplate.default,
+    dependencies: [_Button.default]
+  })
+  /**
+   * Fires when new value is selected.
+   * @event sap.ui.webc.main.WheelSlider#select
+   */, (0, _event.default)("select", {
+    detail: {
+      value: {
+        type: String
+      }
+    }
+  })
+  /**
+   * Fires when the wheel slider is expanded.
+   * @event sap.ui.webc.main.WheelSlider#expand
+   */, (0, _event.default)("expand")
+  /**
+   * Fires when the wheel slider is collapsed.
+   * @event sap.ui.webc.main.WheelSlider#collapse
+   */, (0, _event.default)("collapse")], WheelSlider);
   WheelSlider.define();
   var _default = WheelSlider;
   _exports.default = _default;

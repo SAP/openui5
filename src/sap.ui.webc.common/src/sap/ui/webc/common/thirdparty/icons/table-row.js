@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/table-row", "./v4/table-row"], function (_exports, _Theme, _tableRow, _tableRow2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/table-row", "./v5/table-row"], function (_exports, _Theme, _tableRow, _tableRow2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _tableRow.pathData : _tableRow2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _tableRow.pathData : _tableRow2.pathData;
   _exports.pathData = pathData;
   var _default = "table-row";
   _exports.default = _default;

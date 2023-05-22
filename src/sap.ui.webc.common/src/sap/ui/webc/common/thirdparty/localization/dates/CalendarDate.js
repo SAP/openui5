@@ -1,14 +1,15 @@
-sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports, _UniversalDate) {
+sap.ui.define(["exports", "./UI5Date", "./UniversalDate"], function (_exports, _UI5Date, _UniversalDate) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _UI5Date = _interopRequireDefault(_UI5Date);
   _UniversalDate = _interopRequireDefault(_UniversalDate);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   class CalendarDate {
-    constructor() {
+    constructor(year, month, date, calendarType) {
       let aArgs = arguments,
         // eslint-disable-line
         oJSDate,
@@ -17,19 +18,18 @@ sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports,
       switch (aArgs.length) {
         case 0:
           // defaults to the current date
-          oNow = new Date();
+          oNow = _UI5Date.default.getInstance();
           return this.constructor(oNow.getFullYear(), oNow.getMonth(), oNow.getDate());
         case 1: // CalendarDate
         case 2:
           // CalendarDate, sCalendarType
           if (!(aArgs[0] instanceof CalendarDate)) {
-            throw new Error("Invalid arguments: the first argument must be of type sap.ui.unified.calendar.CalendarDate.");
+            throw new Error("Invalid arguments: the first argument must be of type CalendarDate.");
           }
           sCalendarType = aArgs[1] ? aArgs[1] : aArgs[0]._oUDate.sCalendarType;
           // Use source.valueOf() (returns the same point of time regardless calendar type) instead of
           // source's getters to avoid non-gregorian Year, Month and Date may be used to construct a Gregorian date
-          oJSDate = new Date(aArgs[0].valueOf());
-
+          oJSDate = _UI5Date.default.getInstance(aArgs[0].valueOf());
           // Make this date really local. Now getters are safe.
           oJSDate.setFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
           oJSDate.setHours(oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds(), oJSDate.getUTCMilliseconds());
@@ -41,9 +41,8 @@ sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports,
           checkNumericLike(aArgs[0], `Invalid year: ${aArgs[0]}`);
           checkNumericLike(aArgs[1], `Invalid month: ${aArgs[1]}`);
           checkNumericLike(aArgs[2], `Invalid date: ${aArgs[2]}`);
-          oJSDate = new Date(0, 0, 1);
+          oJSDate = _UI5Date.default.getInstance(0, 0, 1);
           oJSDate.setFullYear(aArgs[0], aArgs[1], aArgs[2]); // 2 digits year is not supported. If so, it is considered as full year as well.
-
           if (aArgs[3]) {
             sCalendarType = aArgs[3];
           }
@@ -64,7 +63,6 @@ sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports,
     getMonth() {
       return this._oUDate.getUTCMonth();
     }
-
     /**
      * Sets the given month as ordinal month of the year.
      * @param {int} month An integer between 0 and 11, representing the months January through December( or their
@@ -127,8 +125,7 @@ sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports,
     toLocalJSDate() {
       // Use this._oUDate.getTime()(returns the same point of time regardless calendar type)  instead of
       // this._oUDate's getters to avoid non-gregorian Year, Month and Date to be used to construct a Gregorian date
-      const oLocalDate = new Date(this._oUDate.getTime());
-
+      const oLocalDate = _UI5Date.default.getInstance(this._oUDate.getTime());
       // Make this date really local. Now getters are safe.
       oLocalDate.setFullYear(oLocalDate.getUTCFullYear(), oLocalDate.getUTCMonth(), oLocalDate.getUTCDate());
       oLocalDate.setHours(0, 0, 0, 0);
@@ -137,7 +134,7 @@ sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports,
     toUTCJSDate() {
       // Use this._oUDate.getTime()(returns the same point of time regardless calendar type)  instead of
       // this._oUDate's getters to avoid non-gregorian Year, Month and Date to be used to construct a Gregorian date
-      const oUTCDate = new Date(this._oUDate.getTime());
+      const oUTCDate = _UI5Date.default.getInstance(this._oUDate.getTime());
       oUTCDate.setUTCHours(0, 0, 0, 0);
       return oUTCDate;
     }
@@ -164,7 +161,7 @@ sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports,
       const oCalDate = new CalendarDate(0, 0, 1);
       let oUDate;
       try {
-        oUDate = _UniversalDate.default.getInstance(new Date(iTimestamp), sCalendarType);
+        oUDate = _UniversalDate.default.getInstance(_UI5Date.default.getInstance(iTimestamp), sCalendarType);
       } catch (e) {
         oUDate = new Date(NaN); // UniversalDate.getInstance may now throw an Exception - keep the old behavior
       }
@@ -179,23 +176,21 @@ sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports,
     }
     return new _UniversalDate.default(createUTCDate(oDate).getTime());
   }
-
   /**
    * Creates a JavaScript UTC Date corresponding to the given JavaScript Date.
    * @param {Date} oDate JavaScript date object. Time related information is cut.
    * @returns {Date} JavaScript date created from the date object, but this time considered as UTC date information.
    */
   function createUTCDate(oDate) {
-    const oUTCDate = new Date(Date.UTC(0, 0, 1));
+    const oUTCDate = new Date(Date.UTC(0, 0, 1)); // no need to replace with UI5Date as we are creating a new UTC date object
     oUTCDate.setUTCFullYear(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
     return oUTCDate;
   }
   function checkCalendarDate(oCalendarDate) {
     if (!(oCalendarDate instanceof CalendarDate)) {
-      throw new Error(`Invalid calendar date: [${oCalendarDate}]. Expected: sap.ui.unified.calendar.CalendarDate`);
+      throw new Error(`Invalid calendar date: [${oCalendarDate}]. Expected: CalendarDate`);
     }
   }
-
   /**
    * Verifies the given value is numeric like, i.e. 3, "3" and throws an error if it is not.
    * @param {any} value The value of any type to check. If null or undefined, this method throws an error.

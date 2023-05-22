@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/time-overtime", "./v4/time-overtime"], function (_exports, _Theme, _timeOvertime, _timeOvertime2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/time-overtime", "./v5/time-overtime"], function (_exports, _Theme, _timeOvertime, _timeOvertime2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _timeOvertime.pathData : _timeOvertime2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _timeOvertime.pathData : _timeOvertime2.pathData;
   _exports.pathData = pathData;
   var _default = "time-overtime";
   _exports.default = _default;

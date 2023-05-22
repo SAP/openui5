@@ -1,4 +1,4 @@
-sap.ui.define(["exports"], function (_exports) {
+sap.ui.define(["exports", "../generated/AssetParameters"], function (_exports, _AssetParameters) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -13,9 +13,9 @@ sap.ui.define(["exports"], function (_exports) {
         throw new Error(`The given language ${sLocaleId} does not adhere to BCP-47.`);
       }
       this.sLocaleId = sLocaleId;
-      this.sLanguage = aResult[1] || null;
-      this.sScript = aResult[2] || null;
-      this.sRegion = aResult[3] || null;
+      this.sLanguage = aResult[1] || _AssetParameters.DEFAULT_LANGUAGE;
+      this.sScript = aResult[2] || "";
+      this.sRegion = aResult[3] || "";
       this.sVariant = aResult[4] && aResult[4].slice(1) || null;
       this.sExtension = aResult[5] && aResult[5].slice(1) || null;
       this.sPrivateUse = aResult[6] || null;

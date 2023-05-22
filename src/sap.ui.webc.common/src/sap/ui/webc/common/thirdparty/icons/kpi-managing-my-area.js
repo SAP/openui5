@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/kpi-managing-my-area", "./v4/kpi-managing-my-area"], function (_exports, _Theme, _kpiManagingMyArea, _kpiManagingMyArea2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/kpi-managing-my-area", "./v5/kpi-managing-my-area"], function (_exports, _Theme, _kpiManagingMyArea, _kpiManagingMyArea2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _kpiManagingMyArea.pathData : _kpiManagingMyArea2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _kpiManagingMyArea.pathData : _kpiManagingMyArea2.pathData;
   _exports.pathData = pathData;
   var _default = "kpi-managing-my-area";
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/multiple-bar-chart", "./v4/multiple-bar-chart"], function (_exports, _Theme, _multipleBarChart, _multipleBarChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/multiple-bar-chart", "./v5/multiple-bar-chart"], function (_exports, _Theme, _multipleBarChart, _multipleBarChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _multipleBarChart.pathData : _multipleBarChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _multipleBarChart.pathData : _multipleBarChart2.pathData;
   _exports.pathData = pathData;
   var _default = "multiple-bar-chart";
   _exports.default = _default;

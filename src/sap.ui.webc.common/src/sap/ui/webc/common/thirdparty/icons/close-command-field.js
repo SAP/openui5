@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/close-command-field", "./v4/close-command-field"], function (_exports, _Theme, _closeCommandField, _closeCommandField2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/close-command-field", "./v5/close-command-field"], function (_exports, _Theme, _closeCommandField, _closeCommandField2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _closeCommandField.pathData : _closeCommandField2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _closeCommandField.pathData : _closeCommandField2.pathData;
   _exports.pathData = pathData;
   var _default = "close-command-field";
   _exports.default = _default;

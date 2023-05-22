@@ -48,6 +48,13 @@ sap.ui.define([
 				],
 				logo: new Avatar({
 					icon: "employee",
+					badge: new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					}),
 					image: new Button({
 						icon: "employee",
 						text: "Some text...",
@@ -65,15 +72,24 @@ sap.ui.define([
 						actions: [
 							new NotificationAction({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new NotificationAction({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new NotificationAction({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+								}
 							})
 						],
 						items: [
@@ -82,15 +98,24 @@ sap.ui.define([
 								actions: [
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									})
 								],
 								avatar: new Avatar({
@@ -131,15 +156,24 @@ sap.ui.define([
 								actions: [
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									})
 								],
 								avatar: new Avatar({
@@ -180,15 +214,24 @@ sap.ui.define([
 								actions: [
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									}),
 									new NotificationAction({
 										icon: "employee",
-										text: "Some text..."
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+										}
 									})
 								],
 								avatar: new Avatar({
@@ -237,19 +280,35 @@ sap.ui.define([
 						actions: [
 							new NotificationAction({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new NotificationAction({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new NotificationAction({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+								}
 							})
 						],
 						avatar: new Avatar({
 							icon: "employee",
+							badge: new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
 							image: new Button({
 								icon: "employee",
 								text: "Some text...",
@@ -312,6 +371,13 @@ sap.ui.define([
 								}
 							})
 						],
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						detailClick: function(oEvent) {
 							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
 						}
@@ -319,6 +385,13 @@ sap.ui.define([
 				],
 				profile: new Avatar({
 					icon: "employee",
+					badge: new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					}),
 					image: new Button({
 						icon: "employee",
 						text: "Some text...",

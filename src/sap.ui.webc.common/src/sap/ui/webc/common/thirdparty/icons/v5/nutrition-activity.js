@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "nutrition-activity";
+  var _default = "SAP-icons-v5/nutrition-activity";
   _exports.default = _default;
 });

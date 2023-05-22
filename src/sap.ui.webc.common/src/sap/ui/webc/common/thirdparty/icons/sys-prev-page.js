@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sys-prev-page", "./v4/sys-prev-page"], function (_exports, _Theme, _sysPrevPage, _sysPrevPage2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/sys-prev-page", "./v5/sys-prev-page"], function (_exports, _Theme, _sysPrevPage, _sysPrevPage2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sysPrevPage.pathData : _sysPrevPage2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _sysPrevPage.pathData : _sysPrevPage2.pathData;
   _exports.pathData = pathData;
   var _default = "sys-prev-page";
   _exports.default = _default;

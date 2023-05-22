@@ -7,17 +7,27 @@ sap.ui.define(["exports", "../InitialConfiguration", "../types/AnimationMode"], 
   _exports.setAnimationMode = _exports.getAnimationMode = void 0;
   _AnimationMode = _interopRequireDefault(_AnimationMode);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  let animationMode;
+  let curAnimationMode;
+  /**
+   * Returns the animation mode - "full", "basic", "minimal" or "none".
+   * @public
+   * @returns { AnimationMode }
+   */
   const getAnimationMode = () => {
-    if (animationMode === undefined) {
-      animationMode = (0, _InitialConfiguration.getAnimationMode)();
+    if (curAnimationMode === undefined) {
+      curAnimationMode = (0, _InitialConfiguration.getAnimationMode)();
     }
-    return animationMode;
+    return curAnimationMode;
   };
+  /**
+   * Sets the animation mode - "full", "basic", "minimal" or "none".
+   * @public
+   * @param { AnimationMode } animationMode
+   */
   _exports.getAnimationMode = getAnimationMode;
-  const setAnimationMode = newAnimationMode => {
-    if (Object.values(_AnimationMode.default).includes(newAnimationMode)) {
-      animationMode = newAnimationMode;
+  const setAnimationMode = animationMode => {
+    if (animationMode in _AnimationMode.default) {
+      curAnimationMode = animationMode;
     }
   };
   _exports.setAnimationMode = setAnimationMode;

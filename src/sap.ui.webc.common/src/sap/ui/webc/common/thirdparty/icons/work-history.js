@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/work-history", "./v4/work-history"], function (_exports, _Theme, _workHistory, _workHistory2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/work-history", "./v5/work-history"], function (_exports, _Theme, _workHistory, _workHistory2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _workHistory.pathData : _workHistory2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _workHistory.pathData : _workHistory2.pathData;
   _exports.pathData = pathData;
   var _default = "work-history";
   _exports.default = _default;

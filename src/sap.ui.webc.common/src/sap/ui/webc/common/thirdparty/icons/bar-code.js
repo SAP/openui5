@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bar-code", "./v4/bar-code"], function (_exports, _Theme, _barCode, _barCode2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/bar-code", "./v5/bar-code"], function (_exports, _Theme, _barCode, _barCode2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _barCode.pathData : _barCode2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _barCode.pathData : _barCode2.pathData;
   _exports.pathData = pathData;
   var _default = "bar-code";
   _exports.default = _default;

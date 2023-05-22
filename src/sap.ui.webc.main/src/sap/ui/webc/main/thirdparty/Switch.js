@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/icons/accept", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/less", "./Icon", "./types/SwitchDesign", "./generated/templates/SwitchTemplate.lit", "./generated/themes/Switch.css"], function (_exports, _UI5Element, _LitRenderer, _Keys, _Device, _i18nBundle, _AriaLabelHelper, _accept, _decline, _less, _Icon, _SwitchDesign, _SwitchTemplate, _Switch) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/icons/accept", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/less", "./Icon", "./types/SwitchDesign", "./generated/templates/SwitchTemplate.lit", "./generated/themes/Switch.css"], function (_exports, _UI5Element, _customElement, _property, _event, _LitRenderer, _Keys, _Device, _i18nBundle, _AriaLabelHelper, _accept, _decline, _less, _Icon, _SwitchDesign, _SwitchTemplate, _Switch) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,125 +6,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _Icon = _interopRequireDefault(_Icon);
   _SwitchDesign = _interopRequireDefault(_SwitchDesign);
   _SwitchTemplate = _interopRequireDefault(_SwitchTemplate);
   _Switch = _interopRequireDefault(_Switch);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-switch",
-    languageAware: true,
-    properties: /** @lends sap.ui.webcomponents.main.Switch.prototype */{
-      /**
-       * Defines the component design.
-       * <br><br>
-       * <b>Note:</b> If <code>Graphical</code> type is set,
-       * positive and negative icons will replace the <code>textOn</code> and <code>textOff</code>.
-       *
-       * @public
-       * @type {SwitchDesign}
-       * @defaultValue "Textual"
-       */
-      design: {
-        type: _SwitchDesign.default,
-        defaultValue: _SwitchDesign.default.Textual
-      },
-      /**
-       * Defines if the component is checked.
-       * <br><br>
-       * <b>Note:</b> The property can be changed with user interaction,
-       * either by cliking the component, or by pressing the <code>Enter</code> or <code>Space</code> key.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      checked: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is disabled.
-       * <br><br>
-       * <b>Note:</b> A disabled component is noninteractive.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines the text, displayed when the component is checked.
-       *
-       * <br><br>
-       * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off).
-       * <b>Note:</b> This property will have no effect if the theme is set to <code>sap_horizon</code>.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      textOn: {
-        type: String
-      },
-      /**
-       * Defines the text, displayed when the component is not checked.
-       * <br><br>
-       * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off).
-       * <b>Note:</b> This property will have no effect if the theme is set to <code>sap_horizon</code>.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      textOff: {
-        type: String
-      },
-      /**
-       * Sets the accessible aria name of the component.
-       *
-       * <b>Note</b>: We recommend that you set an accessibleNameRef pointing to an external label or at least an <code>accessibleName</code>.
-       * Providing an <code>accessibleNameRef</code> or an <code>accessibleName</code> is mandatory in the cases when <code>textOn</code> and <code>textOff</code> properties aren't set.
-       * @type {string}
-       * @defaultvalue: ""
-       * @public
-       * @since 1.2.0
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * Receives id(or many ids) of the elements that label the component.
-       *
-       * <b>Note</b>: We recommend that you set an accessibleNameRef pointing to an external label or at least an <code>accessibleName</code>.
-       * Providing an <code>accessibleNameRef</code> or an <code>accessibleName</code> is mandatory in the cases when <code>textOn</code> and <code>textOff</code> properties aren't set.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.1.0
-       */
-      accessibleNameRef: {
-        type: String,
-        defaultValue: ""
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Switch.prototype */{
-      /**
-       * Fired when the component checked state changes.
-       *
-       * @public
-       * @event
-       */
-      change: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var Switch_1;
   /**
    * @class
    *
@@ -159,50 +57,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Switch
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.Switch
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-switch
    * @public
    * @since 0.8.0
    */
-  class Switch extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return _Switch.default;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _SwitchTemplate.default;
-    }
+  let Switch = Switch_1 = class Switch extends _UI5Element.default {
     get sapNextIcon() {
       return this.checked ? "accept" : "less";
     }
-    _onclick(event) {
+    _onclick() {
       this.toggle();
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
+    _onkeydown(e) {
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
       }
-      if ((0, _Keys.isEnter)(event)) {
-        this.toggle();
+      if ((0, _Keys.isEnter)(e)) {
+        this._onclick();
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
-        this.toggle();
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
+        this._onclick();
       }
     }
     toggle() {
       if (!this.disabled) {
         this.checked = !this.checked;
-        this.fireEvent("change");
+        const changePrevented = !this.fireEvent("change", null, true);
         // Angular two way data binding;
-        this.fireEvent("value-changed");
+        const valueChagnePrevented = !this.fireEvent("value-changed", null, true);
+        if (changePrevented || valueChagnePrevented) {
+          this.checked = !this.checked;
+        }
       }
     }
     get graphical() {
@@ -217,7 +106,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _textOff() {
       return this.graphical ? "" : this.textOff;
     }
-    get tabIndex() {
+    get effectiveTabIndex() {
       return this.disabled ? undefined : "0";
     }
     get classes() {
@@ -232,7 +121,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       };
     }
-    get ariaDisabled() {
+    get effectiveAriaDisabled() {
       return this.disabled ? "true" : undefined;
     }
     get accessibilityOnText() {
@@ -247,13 +136,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get ariaLabelText() {
       return [(0, _AriaLabelHelper.getEffectiveAriaLabelText)(this), this.hiddenText].join(" ").trim();
     }
-    static get dependencies() {
-      return [_Icon.default];
-    }
     static async onDefine() {
-      Switch.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      Switch_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _SwitchDesign.default,
+    defaultValue: _SwitchDesign.default.Textual
+  })], Switch.prototype, "design", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Switch.prototype, "checked", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Switch.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)()], Switch.prototype, "textOn", void 0);
+  __decorate([(0, _property.default)()], Switch.prototype, "textOff", void 0);
+  __decorate([(0, _property.default)()], Switch.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: ""
+  })], Switch.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)()], Switch.prototype, "tooltip", void 0);
+  Switch = Switch_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-switch",
+    languageAware: true,
+    styles: _Switch.default,
+    renderer: _LitRenderer.default,
+    template: _SwitchTemplate.default,
+    dependencies: [_Icon.default]
+  })
+  /**
+   * Fired when the component checked state changes.
+   *
+   * @public
+   * @event sap.ui.webc.main.Switch#change
+   */, (0, _event.default)("change")], Switch);
   Switch.define();
   var _default = Switch;
   _exports.default = _default;

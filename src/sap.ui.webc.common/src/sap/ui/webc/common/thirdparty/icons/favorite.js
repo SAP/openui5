@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/favorite", "./v4/favorite"], function (_exports, _Theme, _favorite, _favorite2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/favorite", "./v5/favorite"], function (_exports, _Theme, _favorite, _favorite2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _favorite.pathData : _favorite2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _favorite.pathData : _favorite2.pathData;
   _exports.pathData = pathData;
   var _default = "favorite";
   _exports.default = _default;

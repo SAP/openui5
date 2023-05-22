@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/slim-arrow-right", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "./ResponsivePopover", "./Button", "./List", "./StandardListItem", "./Icon", "./generated/templates/MenuTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/Menu.css"], function (_exports, _UI5Element, _Keys, _Device, _i18nBundle, _slimArrowRight, _LitRenderer, _ResponsivePopover, _Button, _List, _StandardListItem, _Icon, _MenuTemplate, _i18nDefaults, _Menu) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/types/DOMReference", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/slim-arrow-right", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Integer", "./ResponsivePopover", "./Button", "./List", "./StandardListItem", "./Icon", "./BusyIndicator", "./generated/templates/MenuTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/Menu.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _DOMReference, _Keys, _Device, _i18nBundle, _slimArrowRight, _LitRenderer, _Integer, _ResponsivePopover, _Button, _List, _StandardListItem, _Icon, _BusyIndicator, _MenuTemplate, _i18nDefaults, _Menu) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,133 +6,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
+  _DOMReference = _interopRequireDefault(_DOMReference);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
+  _Integer = _interopRequireDefault(_Integer);
   _ResponsivePopover = _interopRequireDefault(_ResponsivePopover);
   _Button = _interopRequireDefault(_Button);
   _List = _interopRequireDefault(_List);
   _StandardListItem = _interopRequireDefault(_StandardListItem);
   _Icon = _interopRequireDefault(_Icon);
+  _BusyIndicator = _interopRequireDefault(_BusyIndicator);
   _MenuTemplate = _interopRequireDefault(_MenuTemplate);
   _Menu = _interopRequireDefault(_Menu);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-menu",
-    properties: /** @lends sap.ui.webcomponents.main.Menu.prototype */{
-      /**
-       * Defines the header text of the menu (displayed on mobile).
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      headerText: {
-        type: String
-      },
-      /**
-       * Defines if the menu is sub-menu (not first-level).
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       */
-      _isSubMenu: {
-        type: Boolean,
-        noAttribute: true
-      },
-      /**
-       * Stores parent menu item (if there is such).
-       * @type {object}
-       * @private
-       */
-      _parentMenuItem: {
-        type: Object
-      },
-      /**
-       * Stores menu item that have sub-menu opened.
-       * @type {object}
-       * @private
-       */
-      _openedSubMenuItem: {
-        type: Object
-      },
-      /**
-       * Stores id of a list item that opened sub-menu.
-       * @type {string}
-       * @private
-       */
-      _subMenuOpenerId: {
-        type: String
-      },
-      /**
-       * Defines the currently available menu items.
-       * (in case of non-phone devices these are the items of the menu,
-       * but for phone devices the items of the currently opened sub-menu
-       * will be populated here)
-       * @type {array}
-       * @private
-       */
-      _currentItems: {
-        type: Object,
-        multiple: true
-      },
-      /**
-       * Stores a list of parent menu items for each sub-menu (on phone).
-       * @type {array}
-       * @private
-       */
-      _parentItemsStack: {
-        type: Object,
-        multiple: true
-      },
-      /**
-       * Stores a responsive popover when it is opened.
-       * @type {object}
-       * @private
-       */
-      _popover: {
-        type: Object
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.Menu.prototype */{
-      /**
-       * Defines the items of this component.
-       *
-       * @type {sap.ui.webcomponents.main.IMenuItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement,
-        invalidateOnChildChange: true
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Menu.prototype */{
-      /**
-       * Fired when an item is being clicked.
-       *
-       * @event sap.ui.webcomponents.main.Menu#item-click
-       * @param {object} item The currently clicked menu item.
-       * @param {string} text The text of the currently clicked menu item.
-       * @public
-       */
-      "item-click": {
-        detail: {
-          item: {
-            type: Object
-          },
-          text: {
-            type: String
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var Menu_1;
   /**
    * @class
    *
@@ -160,35 +57,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * <h3>ES6 Module Import</h3>
    *
-   * <code>import @ui5/webcomponents/dist/Menu.js";</code>
+   * <code>import "@ui5/webcomponents/dist/Menu.js";</code>
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Menu
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.Menu
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-menu
-   * @appenddocs MenuItem
+   * @appenddocs sap.ui.webc.main.MenuItem
    * @since 1.3.0
    * @public
    */
-  class Menu extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get staticAreaStyles() {
-      return _Menu.default;
-    }
-    static get staticAreaTemplate() {
-      return _MenuTemplate.default;
-    }
-    static get dependencies() {
-      return [_ResponsivePopover.default, _Button.default, _List.default, _StandardListItem.default, _Icon.default];
-    }
+  let Menu = Menu_1 = class Menu extends _UI5Element.default {
     static async onDefine() {
-      Menu.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      Menu_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     get itemsWithChildren() {
       return !!this._currentItems.filter(item => item.item.items.length).length;
@@ -207,10 +89,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this._isSubMenu ? "Top" : "Bottom";
     }
     get labelBack() {
-      return Menu.i18nBundle.getText(_i18nDefaults.MENU_BACK_BUTTON_ARIA_LABEL);
+      return Menu_1.i18nBundle.getText(_i18nDefaults.MENU_BACK_BUTTON_ARIA_LABEL);
     }
     get labelClose() {
-      return Menu.i18nBundle.getText(_i18nDefaults.MENU_CLOSE_BUTTON_ARIA_LABEL);
+      return Menu_1.i18nBundle.getText(_i18nDefaults.MENU_CLOSE_BUTTON_ARIA_LABEL);
     }
     get isPhone() {
       return (0, _Device.isPhone)();
@@ -219,7 +101,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return !!this._parentMenuItem;
     }
     get menuHeaderTextPhone() {
-      return this.isSubMenuOpened ? this._parentMenuItem.text : this.headerText;
+      return this._parentMenuItem ? this._parentMenuItem.text : this.headerText;
     }
     onBeforeRendering() {
       !(0, _Device.isPhone)() && this._prepareCurrentItems(this.items);
@@ -228,13 +110,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._currentItems.forEach(item => {
         item.item._siblingsWithChildren = itemsWithChildren;
         item.item._siblingsWithIcon = itemsWithIcon;
+        const subMenu = item.item._subMenu;
+        const menuItem = item.item;
+        if (subMenu && subMenu.busy) {
+          subMenu.innerHTML = "";
+          this._cloneItems(menuItem, subMenu);
+        }
+        if (subMenu) {
+          subMenu.busy = item.item.busy;
+          subMenu.busyDelay = item.item.busyDelay;
+        }
       });
     }
-
+    onAfterRendering() {
+      if (!this.opener) {
+        return;
+      }
+      if (this.open) {
+        const rootNode = this.getRootNode();
+        const opener = this.opener instanceof HTMLElement ? this.opener : rootNode && rootNode.getElementById(this.opener);
+        if (opener) {
+          this.showAt(opener);
+        }
+      } else {
+        this.close();
+      }
+    }
     /**
      * Shows the Menu near the opener element.
      * @param {HTMLElement} opener the element that the popover is shown at
      * @public
+     * @method
+     * @name sap.ui.webc.main.Menu#showAt
      */
     async showAt(opener) {
       if ((0, _Device.isPhone)()) {
@@ -244,23 +151,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (!this._isSubMenu) {
         this._parentMenuItem = undefined;
       }
-      await this._getPopover();
-      this._popover.initialFocus = "";
+      const popover = await this._createPopover();
+      popover.initialFocus = "";
       for (let index = 0; index < this._currentItems.length; index++) {
         if (!this._currentItems[index].item.disabled) {
-          this._popover.initialFocus = `${this._id}-menu-item-${index}`;
+          popover.initialFocus = `${this._id}-menu-item-${index}`;
           break;
         }
       }
-      this._popover.showAt(opener);
+      popover.showAt(opener);
     }
-
     /**
      * Closes the Menu.
      * @public
+     * @method
+     * @name sap.ui.webc.main.Menu#close
      */
     close() {
-      if (Object.keys(this._popover).length) {
+      if (this._popover) {
         if ((0, _Device.isPhone)()) {
           this._parentItemsStack = [];
         }
@@ -268,21 +176,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._popover.resetFocus();
       }
     }
-    async _getPopover() {
-      this._popover = (await this.getStaticAreaItemDomRef()).querySelector("[ui5-responsive-popover]");
+    async _createPopover() {
+      const staticAreaItemDomRef = await this.getStaticAreaItemDomRef();
+      this._popover = staticAreaItemDomRef.querySelector("[ui5-responsive-popover]");
       return this._popover;
-    }
-    _beforePopoverClose() {
-      if (Object.keys(this._openedSubMenuItem).length) {
-        this._openedSubMenuItem._preventSubMenuClose = false;
-        this._closeItemSubMenu(this._openedSubMenuItem);
-      }
     }
     _navigateBack() {
       const parentMenuItem = this._parentItemsStack.pop();
       this.focus();
       if (parentMenuItem) {
-        this._prepareCurrentItems(parentMenuItem.parentElement.items);
+        const parentMenuItemParent = parentMenuItem.parentElement;
+        this._prepareCurrentItems(parentMenuItemParent.items);
         this._parentMenuItem = this._parentItemsStack.length ? this._parentItemsStack[this._parentItemsStack.length - 1] : undefined;
       }
     }
@@ -291,34 +195,40 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         return {
           item,
           position: index + 1,
-          ariaHasPopup: item.hasChildren ? "menu" : undefined
+          ariaHasPopup: item.hasSubmenu ? "menu" : undefined
         };
       });
     }
     _createSubMenu(item, openerId) {
-      const subMenu = document.createElement(this.constructor.getMetadata().getTag());
-      const fragment = document.createDocumentFragment();
+      const ctor = this.constructor;
+      const subMenu = document.createElement(ctor.getMetadata().getTag());
       subMenu._isSubMenu = true;
       subMenu.setAttribute("id", `submenu-${openerId}`);
       subMenu._parentMenuItem = item;
-      const subItems = item.children;
-      let clonedItem, idx;
-      for (idx = 0; idx < subItems.length; idx++) {
-        clonedItem = subItems[idx].cloneNode(true);
-        fragment.appendChild(clonedItem);
-      }
-      subMenu.appendChild(fragment);
+      subMenu.busy = item.busy;
+      subMenu.busyDelay = item.busyDelay;
+      this._cloneItems(item, subMenu);
       this.staticAreaItem.shadowRoot.querySelector(".ui5-menu-submenus").appendChild(subMenu);
       item._subMenu = subMenu;
     }
+    _cloneItems(item, menu) {
+      for (let i = 0; i < item.items.length; ++i) {
+        const clonedItem = item.items[i].cloneNode(true);
+        menu.appendChild(clonedItem);
+      }
+    }
     _openItemSubMenu(item, opener, actionId) {
+      const mainMenu = this._findMainMenu(item);
+      mainMenu.fireEvent("before-open", {
+        item
+      });
       item._subMenu.showAt(opener);
       item._preventSubMenuClose = true;
       this._openedSubMenuItem = item;
       this._subMenuOpenerId = actionId;
     }
-    _closeItemSubMenu(item, forceClose) {
-      if (Object.keys(item).length) {
+    _closeItemSubMenu(item, forceClose = false) {
+      if (item) {
         if (forceClose) {
           item._preventSubMenuClose = false;
           this._closeSubMenuPopover(item._subMenu, true);
@@ -327,24 +237,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }
     }
-    _closeSubMenuPopover(subMenu, forceClose) {
-      if (subMenu && Object.keys(subMenu).length) {
+    _closeSubMenuPopover(subMenu, forceClose = false) {
+      if (subMenu) {
         const parentItem = subMenu._parentMenuItem;
         if (forceClose || !parentItem._preventSubMenuClose) {
           subMenu.close();
           subMenu.remove();
-          parentItem._subMenu = {};
-          this._openedSubMenuItem = {};
+          parentItem._subMenu = undefined;
+          this._openedSubMenuItem = undefined;
           this._subMenuOpenerId = "";
         }
       }
     }
     _prepareSubMenuDesktopTablet(item, opener, actionId) {
-      if (actionId !== this._subMenuOpenerId || item.hasChildren) {
+      if (actionId !== this._subMenuOpenerId || item && item.hasSubmenu) {
         // close opened sub-menu if there is any opened
         this._closeItemSubMenu(this._openedSubMenuItem, true);
       }
-      if (item.hasChildren) {
+      if (item && item.hasSubmenu) {
         // create new sub-menu
         this._createSubMenu(item, actionId);
         this._openItemSubMenu(item, opener, actionId);
@@ -358,47 +268,54 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._parentMenuItem = item;
       this._parentItemsStack.push(item);
     }
-    _itemMouseOver(event) {
+    _itemMouseOver(e) {
       if ((0, _Device.isDesktop)()) {
         // respect mouseover only on desktop
-        const opener = event.target;
+        const opener = e.target;
         const item = opener.associatedItem;
         const hoverId = opener.getAttribute("id");
         opener.focus();
         this._prepareSubMenuDesktopTablet(item, opener, hoverId);
       }
     }
-    _itemMouseOut(event) {
+    _busyMouseOver() {
+      if (this._parentMenuItem) {
+        this._parentMenuItem._preventSubMenuClose = true;
+      }
+    }
+    _itemMouseOut(e) {
       if ((0, _Device.isDesktop)()) {
         // respect mouseover only on desktop
-        const item = event.target.associatedItem;
-        if (item.hasChildren && item._subMenu) {
+        const opener = e.target;
+        const item = opener.associatedItem;
+        if (item && item.hasSubmenu && item._subMenu) {
           // try to close the sub-menu
           item._preventSubMenuClose = false;
           this._closeItemSubMenu(item);
         }
       }
     }
-    _itemKeyDown(event) {
-      const isMenuClose = this.isRtl ? (0, _Keys.isRight)(event) : (0, _Keys.isLeft)(event);
-      const isMenuOpen = this.isRtl ? (0, _Keys.isLeft)(event) : (0, _Keys.isRight)(event);
-      if ((0, _Keys.isEnter)(event)) {
-        event.preventDefault();
+    _itemKeyDown(e) {
+      const isMenuClose = this.isRtl ? (0, _Keys.isRight)(e) : (0, _Keys.isLeft)(e);
+      const isMenuOpen = this.isRtl ? (0, _Keys.isLeft)(e) : (0, _Keys.isRight)(e);
+      if ((0, _Keys.isEnter)(e)) {
+        e.preventDefault();
       }
       if (isMenuOpen) {
-        const opener = event.target;
+        const opener = e.target;
         const item = opener.associatedItem;
         const hoverId = opener.getAttribute("id");
-        item.hasChildren && this._prepareSubMenuDesktopTablet(item, opener, hoverId);
+        item.hasSubmenu && this._prepareSubMenuDesktopTablet(item, opener, hoverId);
       } else if (isMenuClose && this._isSubMenu && this._parentMenuItem) {
-        this._parentMenuItem.parentElement._closeItemSubMenu(this._parentMenuItem, true);
+        const parentMenuItemParent = this._parentMenuItem.parentElement;
+        parentMenuItemParent._closeItemSubMenu(this._parentMenuItem, true);
       }
     }
-    _itemClick(event) {
-      const opener = event.detail.item;
+    _itemClick(e) {
+      const opener = e.detail.item;
       const item = opener.associatedItem;
       const actionId = opener.getAttribute("id");
-      if (!item.hasChildren) {
+      if (!item.hasSubmenu) {
         // click on an item that doesn't have sub-items fires an "item-click" event
         if (!this._isSubMenu) {
           if ((0, _Device.isPhone)()) {
@@ -412,13 +329,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           this._popover.close();
         } else {
           // find top-level menu and redirect event to it
-          let parentMenu = item.parentElement;
-          while (parentMenu._parentMenuItem) {
-            parentMenu._parentMenuItem._preventSubMenuClose = false;
-            this._closeItemSubMenu(parentMenu._parentMenuItem);
-            parentMenu = parentMenu._parentMenuItem.parentElement;
-          }
-          parentMenu._itemClick(event);
+          const mainMenu = this._findMainMenu(item);
+          mainMenu._itemClick(e);
         }
       } else if ((0, _Device.isPhone)()) {
         // prepares and opens sub-menu on phone
@@ -428,7 +340,159 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._prepareSubMenuDesktopTablet(item, opener, actionId);
       }
     }
-  }
+    _findMainMenu(item) {
+      let parentMenu = item.parentElement;
+      while (parentMenu._parentMenuItem) {
+        parentMenu._parentMenuItem._preventSubMenuClose = false;
+        this._closeItemSubMenu(parentMenu._parentMenuItem);
+        parentMenu = parentMenu._parentMenuItem.parentElement;
+      }
+      return parentMenu;
+    }
+    _beforePopoverOpen(e) {
+      const prevented = !this.fireEvent("before-open", {}, true, false);
+      if (prevented) {
+        this.open = false;
+        e.preventDefault();
+      }
+    }
+    _afterPopoverOpen() {
+      this.open = true;
+      this.fireEvent("after-open");
+    }
+    _beforePopoverClose(e) {
+      const prevented = !this.fireEvent("before-close", {
+        escPressed: e.detail.escPressed
+      }, true, false);
+      if (prevented) {
+        this.open = true;
+        e.preventDefault();
+        return;
+      }
+      if (this._openedSubMenuItem) {
+        this._openedSubMenuItem._preventSubMenuClose = false;
+        this._closeItemSubMenu(this._openedSubMenuItem);
+      }
+    }
+    _afterPopoverClose() {
+      this.open = false;
+      this.fireEvent("after-close");
+    }
+  };
+  __decorate([(0, _property.default)()], Menu.prototype, "headerText", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Menu.prototype, "open", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Menu.prototype, "busy", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 1000
+  })], Menu.prototype, "busyDelay", void 0);
+  __decorate([(0, _property.default)({
+    validator: _DOMReference.default,
+    defaultValue: ""
+  })], Menu.prototype, "opener", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], Menu.prototype, "_isSubMenu", void 0);
+  __decorate([(0, _property.default)()], Menu.prototype, "_subMenuOpenerId", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    multiple: true
+  })], Menu.prototype, "_currentItems", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    multiple: true
+  })], Menu.prototype, "_parentItemsStack", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    defaultValue: undefined
+  })], Menu.prototype, "_popover", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    defaultValue: undefined
+  })], Menu.prototype, "_parentMenuItem", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    defaultValue: undefined
+  })], Menu.prototype, "_openedSubMenuItem", void 0);
+  __decorate([(0, _slot.default)({
+    "default": true,
+    type: HTMLElement,
+    invalidateOnChildChange: true
+  })], Menu.prototype, "items", void 0);
+  Menu = Menu_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-menu",
+    renderer: _LitRenderer.default,
+    staticAreaStyles: _Menu.default,
+    staticAreaTemplate: _MenuTemplate.default,
+    dependencies: [_ResponsivePopover.default, _Button.default, _List.default, _StandardListItem.default, _Icon.default, _BusyIndicator.default]
+  })
+  /**
+   * Fired when an item is being clicked.
+   *
+   * @event sap.ui.webc.main.Menu#item-click
+   * @param { HTMLElement } item The currently clicked menu item.
+   * @param { string } text The text of the currently clicked menu item.
+   * @public
+   */, (0, _event.default)("item-click", {
+    detail: {
+      item: {
+        type: HTMLElement
+      },
+      text: {
+        type: String
+      }
+    }
+  })
+  /**
+   * Fired before the menu is opened. This event can be cancelled, which will prevent the menu from opening. <b>This event does not bubble.</b>
+   * <b>Note:</b> Since 1.14.0 the event is also fired before a sub-menu opens.
+   *
+   * @public
+   * @event sap.ui.webc.main.Menu#before-open
+   * @allowPreventDefault
+   * @since 1.10.0
+   * @param { HTMLElement } item The <code>ui5-menu-item</code> that triggers opening of the sub-menu or undefined when fired upon root menu opening. <b>Note:</b> available since 1.14.0.
+   */, (0, _event.default)("before-open", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired after the menu is opened. <b>This event does not bubble.</b>
+   *
+   * @public
+   * @event sap.ui.webc.main.Menu#after-open
+   * @since 1.10.0
+   */, (0, _event.default)("after-open")
+  /**
+   * Fired before the menu is closed. This event can be cancelled, which will prevent the menu from closing. <b>This event does not bubble.</b>
+   *
+   * @public
+   * @event sap.ui.webc.main.Menu#before-close
+   * @allowPreventDefault
+   * @param {boolean} escPressed Indicates that <code>ESC</code> key has triggered the event.
+   * @since 1.10.0
+   */, (0, _event.default)("before-close", {
+    detail: {
+      escPressed: {
+        type: Boolean
+      }
+    }
+  })
+  /**
+   * Fired after the menu is closed. <b>This event does not bubble.</b>
+   *
+   * @public
+   * @event sap.ui.webc.main.Menu#after-close
+   * @since 1.10.0
+   */, (0, _event.default)("after-close")], Menu);
   Menu.define();
   var _default = Menu;
   _exports.default = _default;

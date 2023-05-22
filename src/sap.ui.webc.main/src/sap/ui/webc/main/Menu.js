@@ -52,25 +52,109 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines if a loading indicator would be displayed inside the corresponding ui5-menu popover.
+				 */
+				busy: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Defines the delay in milliseconds, after which the busy indicator will be displayed inside the corresponding ui5-menu popover..
+				 */
+				busyDelay: {
+					type: "int",
+					defaultValue: 1000
+				},
+
+				/**
 				 * Defines the header text of the menu (displayed on mobile).
 				 */
 				headerText: {
 					type: "string",
 					defaultValue: ""
+				},
+
+				/**
+				 * Indicates if the menu is open
+				 */
+				open: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			defaultAggregation: "items",
 			aggregations: {
 
 				/**
-				 * Defines the items of this component.
+				 * Defines the items of this component. <br>
+				 * <br>
+				 * <b>Note:</b> Use <code>sap.ui.webc.main.MenuItem</code> for the intended design.
 				 */
 				items: {
 					type: "sap.ui.webc.main.IMenuItem",
 					multiple: true
 				}
 			},
+			associations: {
+
+				/**
+				 * Defines the ID or DOM Reference of the element that the menu is shown at
+				 */
+				opener: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					mapping: {
+						type: "property",
+						to: "opener"
+					}
+				}
+			},
 			events: {
+
+				/**
+				 * Fired after the menu is closed. <b>This event does not bubble.</b>
+				 */
+				afterClose: {
+					parameters: {}
+				},
+
+				/**
+				 * Fired after the menu is opened. <b>This event does not bubble.</b>
+				 */
+				afterOpen: {
+					parameters: {}
+				},
+
+				/**
+				 * Fired before the menu is closed. This event can be cancelled, which will prevent the menu from closing. <b>This event does not bubble.</b>
+				 */
+				beforeClose: {
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * Indicates that <code>ESC</code> key has triggered the event.
+						 */
+						escPressed: {
+							type: "boolean"
+						}
+					}
+				},
+
+				/**
+				 * Fired before the menu is opened. This event can be cancelled, which will prevent the menu from opening. <b>This event does not bubble.</b> <b>Note:</b> Since 1.14.0 the event is also fired before a sub-menu opens.
+				 */
+				beforeOpen: {
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * The <code>sap.ui.webc.main.MenuItem</code> that triggers opening of the sub-menu or undefined when fired upon root menu opening. <b>Note:</b> available since 1.14.0.
+						 */
+						item: {
+							type: "HTMLElement"
+						}
+					}
+				},
 
 				/**
 				 * Fired when an item is being clicked.
@@ -81,7 +165,7 @@ sap.ui.define([
 						 * The currently clicked menu item.
 						 */
 						item: {
-							type: "object"
+							type: "HTMLElement"
 						},
 
 						/**

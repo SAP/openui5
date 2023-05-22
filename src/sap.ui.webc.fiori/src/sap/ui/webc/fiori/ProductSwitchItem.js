@@ -84,8 +84,7 @@ sap.ui.define([
 				 * </ul>
 				 */
 				target: {
-					type: "string",
-					defaultValue: "_self"
+					type: "string"
 				},
 
 				/**

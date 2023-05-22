@@ -1,95 +1,153 @@
-sap.ui.define(["exports", "../FeaturesRegistry", "../Keys", "../util/FocusableElements"], function (_exports, _FeaturesRegistry, _Keys, _FocusableElements) {
+sap.ui.define(["exports", "../FeaturesRegistry", "../Keys", "../UI5Element", "../util/FocusableElements", "../util/getFastNavigationGroups", "../util/isElementClickable"], function (_exports, _FeaturesRegistry, _Keys, _UI5Element, _FocusableElements, _getFastNavigationGroups, _isElementClickable) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _getFastNavigationGroups = _interopRequireDefault(_getFastNavigationGroups);
+  _isElementClickable = _interopRequireDefault(_isElementClickable);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   class F6Navigation {
-    init() {
-      this.keydownHandler = this._keydownHandler.bind(this);
-      this.attachEventListeners();
+    constructor() {
       this.selectedGroup = null;
       this.groups = [];
+      this.keydownHandler = this._keydownHandler.bind(this);
+      this.attachEventListeners();
     }
     attachEventListeners() {
       document.addEventListener("keydown", this.keydownHandler);
     }
+    async groupElementToFocus(nextElement) {
+      const nextElementDomRef = (0, _UI5Element.instanceOfUI5Element)(nextElement) ? nextElement.getDomRef() : nextElement;
+      if (nextElementDomRef) {
+        if ((0, _isElementClickable.default)(nextElementDomRef)) {
+          return nextElementDomRef;
+        }
+        const elementToFocus = await (0, _FocusableElements.getFirstFocusableElement)(nextElementDomRef);
+        if (elementToFocus) {
+          return elementToFocus;
+        }
+      }
+    }
+    async findNextFocusableGroupElement(currentIndex) {
+      let elementToFocus;
+      /* eslint-disable no-await-in-loop */
+      for (let index = 0; index < this.groups.length; index++) {
+        let nextElement;
+        if (currentIndex > -1) {
+          if (currentIndex + 1 >= this.groups.length) {
+            currentIndex = 0;
+            nextElement = this.groups[currentIndex];
+          } else {
+            currentIndex += 1;
+            nextElement = this.groups[currentIndex];
+          }
+        } else {
+          currentIndex = 0;
+          nextElement = this.groups[currentIndex];
+        }
+        elementToFocus = await this.groupElementToFocus(nextElement);
+        if (elementToFocus) {
+          break;
+        }
+      }
+      /* eslint-enable no-await-in-loop */
+      return elementToFocus;
+    }
+    async findPreviousFocusableGroupElement(currentIndex) {
+      let elementToFocus;
+      /* eslint-disable no-await-in-loop */
+      for (let index = 0; index < this.groups.length; index++) {
+        let nextElement;
+        if (currentIndex > 0) {
+          // Handle the situation where the first focusable element of two neighbor groups is the same
+          // For example:
+          // <ui5-flexible-column-layout>
+          //     <ui5-list>
+          //         <ui5-li>List Item</ui5-li>
+          //     </ui5-list>
+          // </ui5-flexible-column-layout>
+          // Here for both FCL & List the firstFoccusableElement is the same (the ui5-li)
+          const firstFocusable = await this.groupElementToFocus(this.groups[currentIndex - 1]);
+          const shouldSkipParent = firstFocusable === (await this.groupElementToFocus(this.groups[currentIndex]));
+          currentIndex = shouldSkipParent ? currentIndex - 2 : currentIndex - 1;
+          if (currentIndex < 0) {
+            currentIndex = this.groups.length - 1;
+          }
+          nextElement = this.groups[currentIndex];
+        } else {
+          currentIndex = this.groups.length - 1;
+          nextElement = this.groups[currentIndex];
+        }
+        elementToFocus = await this.groupElementToFocus(nextElement);
+        if (elementToFocus) {
+          break;
+        }
+      }
+      /* eslint-enable no-await-in-loop */
+      return elementToFocus;
+    }
     async _keydownHandler(event) {
-      if ((0, _Keys.isF6Next)(event)) {
-        this.updateGroups();
-        if (this.groups.length < 1) {
-          return;
-        }
-        event.preventDefault();
-        const nextIndex = this.groups.indexOf(this.selectedGroup);
-        let nextElement = null;
-        if (nextIndex > -1) {
-          if (nextIndex + 1 >= this.groups.length) {
-            nextElement = this.groups[0];
-          } else {
-            nextElement = this.groups[nextIndex + 1];
-          }
-        } else {
-          nextElement = this.groups[0];
-        }
-        const elementToFocus = await (0, _FocusableElements.getFirstFocusableElement)(nextElement.isUI5Element ? nextElement.getDomRef() : nextElement, true);
-        elementToFocus.focus();
+      const forward = (0, _Keys.isF6Next)(event);
+      const backward = (0, _Keys.isF6Previous)(event);
+      if (!(forward || backward)) {
+        return;
       }
-      if ((0, _Keys.isF6Previous)(event)) {
-        this.updateGroups();
-        if (this.groups.length < 1) {
-          return;
-        }
-        event.preventDefault();
-        const nextIndex = this.groups.indexOf(this.selectedGroup);
-        let nextElement = null;
-        if (nextIndex > -1) {
-          if (nextIndex - 1 < 0) {
-            nextElement = this.groups[this.groups.length - 1];
-          } else {
-            // Handle the situation where the first focusable element of two neighbor groups is the same
-            // For example:
-            // <ui5-flexible-column-layout>
-            //     <ui5-list>
-            //         <ui5-li>List Item</ui5-li>
-            //     </ui5-list>
-            // </ui5-flexible-column-layout>
-            // Here for both FCL & List the firstFoccusableElement is the same (the ui5-li)
-
-            const firstFocusable = await (0, _FocusableElements.getFirstFocusableElement)(this.groups[nextIndex - 1], true);
-            const shouldSkipParent = firstFocusable === (await (0, _FocusableElements.getFirstFocusableElement)(this.groups[nextIndex], true));
-            nextElement = this.groups[shouldSkipParent ? nextIndex - 2 : nextIndex - 1];
-          }
-        } else {
-          nextElement = this.groups[this.groups.length - 1];
-        }
-        const elementToFocus = await (0, _FocusableElements.getFirstFocusableElement)(nextElement.isUI5Element ? nextElement.getDomRef() : nextElement, true);
-        elementToFocus.focus();
+      this.updateGroups();
+      if (this.groups.length < 1) {
+        return;
       }
+      event.preventDefault();
+      let elementToFocus;
+      if (this.groups.length === 0) {
+        elementToFocus = await this.groupElementToFocus(this.groups[0]);
+        return elementToFocus?.focus();
+      }
+      let currentIndex = -1;
+      if (this.selectedGroup) {
+        currentIndex = this.groups.indexOf(this.selectedGroup);
+      }
+      if (forward) {
+        elementToFocus = await this.findNextFocusableGroupElement(currentIndex);
+      }
+      if (backward) {
+        elementToFocus = await this.findPreviousFocusableGroupElement(currentIndex);
+      }
+      elementToFocus?.focus();
     }
     removeEventListeners() {
       document.removeEventListener("keydown", this.keydownHandler);
     }
     updateGroups() {
-      this.setSelectedGroup(document.activeElement);
-      this.setGroups();
+      this.setSelectedGroup();
+      this.groups = (0, _getFastNavigationGroups.default)(document.body);
     }
-    setGroups() {
-      this.groups = Array.from(document.querySelectorAll("[data-sap-ui-fastnavgroup='true']")).filter(group => group.clientWidth && window.getComputedStyle(group).visibility !== "hidden");
-    }
-    setSelectedGroup(element) {
-      while (element && element.getAttribute("data-sap-ui-fastnavgroup") !== "true" && element !== document.querySelector("html")) {
+    setSelectedGroup(root = window.document) {
+      const htmlElement = window.document.querySelector("html");
+      let element = this.deepActive(root);
+      while (element && element.getAttribute("data-sap-ui-fastnavgroup") !== "true" && element !== htmlElement) {
         element = element.parentElement ? element.parentNode : element.parentNode.host;
       }
       this.selectedGroup = element;
     }
+    deepActive(root) {
+      if (root.activeElement && root.activeElement.shadowRoot) {
+        return this.deepActive(root.activeElement.shadowRoot);
+      }
+      return root.activeElement;
+    }
     destroy() {
       this.removeEventListeners();
     }
+    static init() {
+      if (!this._instance) {
+        this._instance = new F6Navigation();
+      }
+      return this._instance;
+    }
   }
-  const F6HelperInstance = new F6Navigation();
-  (0, _FeaturesRegistry.registerFeature)("F6Navigation", F6HelperInstance);
+  (0, _FeaturesRegistry.registerFeature)("F6Navigation", F6Navigation);
   var _default = F6Navigation;
   _exports.default = _default;
 });

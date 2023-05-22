@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/umbrella", "./v4/umbrella"], function (_exports, _Theme, _umbrella, _umbrella2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/umbrella", "./v5/umbrella"], function (_exports, _Theme, _umbrella, _umbrella2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _umbrella.pathData : _umbrella2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _umbrella.pathData : _umbrella2.pathData;
   _exports.pathData = pathData;
   var _default = "umbrella";
   _exports.default = _default;

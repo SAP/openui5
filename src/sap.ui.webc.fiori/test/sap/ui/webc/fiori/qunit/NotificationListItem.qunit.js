@@ -19,19 +19,35 @@ sap.ui.define([
 				actions: [
 					new NotificationAction({
 						icon: "employee",
-						text: "Some text..."
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+						}
 					}),
 					new NotificationAction({
 						icon: "employee",
-						text: "Some text..."
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+						}
 					}),
 					new NotificationAction({
 						icon: "employee",
-						text: "Some text..."
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for NotificationAction with parameters: ", oEvent.getParameters());
+						}
 					})
 				],
 				avatar: new Avatar({
 					icon: "employee",
+					badge: new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					}),
 					image: new Button({
 						icon: "employee",
 						text: "Some text...",

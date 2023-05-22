@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "choropleth-chart";
+  var _default = "SAP-icons-v5/choropleth-chart";
   _exports.default = _default;
 });

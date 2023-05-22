@@ -31,8 +31,8 @@ sap.ui.define([
 	 *
 	 * User can choose interaction for creating tokens. Fiori Guidelines say that user should create tokens when:
 	 * <ul>
-	 *     <li>Type a value in the input and press enter or focus out the input field (<code>change</code> event is fired)
-	 *     <li>Select a value from the suggestion list</li> (<code>suggestion-item-select</code> event is fired)
+	 *     <li>Type a value in the input and press enter or focus out the input field (<code>change</code> event is fired)</li>
+	 *     <li>Select a value from the suggestion list (<code>suggestion-item-select</code> event is fired)</li>
 	 * </ul>
 	 *
 	 * @author SAP SE
@@ -56,7 +56,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
 					type: "string"

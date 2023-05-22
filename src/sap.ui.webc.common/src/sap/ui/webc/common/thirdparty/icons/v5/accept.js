@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "accept";
-  const pathData = "M432 153q8 8 8 18v2q0 9-9 18L220 407q-8 8-18 8-12 0-21-9l-93-97q-8-7-8-18 0-12 9-21 7-7 18-7 12 0 21 9l75 76 191-197q7-7 18-7 13 0 20 9z";
+  const pathData = "M186 384q-10 0-17-7l-97-93q-8-8-8-18 0-11 7-18 8-8 19-8 8 0 17 7l79 76 218-219q8-8 18-8t18 8 8 18q0 11-7 18L205 377q-7 7-19 7z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "accept";
+  var _default = "SAP-icons-v5/accept";
   _exports.default = _default;
 });

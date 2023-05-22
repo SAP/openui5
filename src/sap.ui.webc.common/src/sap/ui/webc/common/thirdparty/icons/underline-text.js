@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/underline-text", "./v4/underline-text"], function (_exports, _Theme, _underlineText, _underlineText2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/underline-text", "./v5/underline-text"], function (_exports, _Theme, _underlineText, _underlineText2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _underlineText.pathData : _underlineText2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _underlineText.pathData : _underlineText2.pathData;
   _exports.pathData = pathData;
   var _default = "underline-text";
   _exports.default = _default;

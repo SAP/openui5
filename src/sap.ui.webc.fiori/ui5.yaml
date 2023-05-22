@@ -47,7 +47,7 @@ customConfiguration:
       '@ui5/webcomponents-fiori':
         aliases: # used to convert ES6 imports to UI5 module paths
           "^@ui5\/webcomponents-fiori\/dist\/(.*?).js$": "sap/ui/webc/fiori/thirdparty/$1"
-          "^@zxing\/library$": "sap/ui/webc/fiori/lib/zxing"
+          "^@zxing\/library\/umd\/index.min.js$": "sap/ui/webc/fiori/lib/zxing"
         reverseAliases: # used by the middleware to serve third-party files as UI5 modules
           "^/resources/sap/ui/webc/fiori/thirdparty/(.*?)$": "@ui5/webcomponents-fiori/dist/$1"
         inputPath: "dist/" # where to find the web components
@@ -61,8 +61,9 @@ customConfiguration:
         generation: # if set, control wrappers will be generated
           suffix: "-ui5"
           replaceJSDocNamespaces: # replace namespaces in api.json
-            sap.ui.webcomponents.fiori.types: sap.ui.webc.fiori
-            sap.ui.webcomponents.fiori: sap.ui.webc.fiori
+            sap.ui.webc.base.types: sap.ui.webc.base
+            sap.ui.webc.main.types: sap.ui.webc.main
+            sap.ui.webc.fiori.types: sap.ui.webc.fiori
           noControl: # do not generate wrappers at all
             - sap.ui.webc.fiori.NotificationListItemBase
           noTestPage: # do not generate test pages for these controls
@@ -155,6 +156,7 @@ customConfiguration:
             sap.ui.webc.fiori.SideContentFallDown: 1.99.0
             sap.ui.webc.fiori.SideContentPosition: 1.99.0
             sap.ui.webc.fiori.SideContentVisibility: 1.99.0
+            sap.ui.webc.fiori.ViewSettingsDialogMode: 1.115.0
           designtime:
             sap.ui.webc.fiori.NotificationListItem:
               - hide

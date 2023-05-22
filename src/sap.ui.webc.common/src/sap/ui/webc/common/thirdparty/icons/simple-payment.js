@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/simple-payment", "./v4/simple-payment"], function (_exports, _Theme, _simplePayment, _simplePayment2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/simple-payment", "./v5/simple-payment"], function (_exports, _Theme, _simplePayment, _simplePayment2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _simplePayment.pathData : _simplePayment2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _simplePayment.pathData : _simplePayment2.pathData;
   _exports.pathData = pathData;
   var _default = "simple-payment";
   _exports.default = _default;

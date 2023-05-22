@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/offsite-work", "./v4/offsite-work"], function (_exports, _Theme, _offsiteWork, _offsiteWork2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/offsite-work", "./v5/offsite-work"], function (_exports, _Theme, _offsiteWork, _offsiteWork2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _offsiteWork.pathData : _offsiteWork2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _offsiteWork.pathData : _offsiteWork2.pathData;
   _exports.pathData = pathData;
   var _default = "offsite-work";
   _exports.default = _default;

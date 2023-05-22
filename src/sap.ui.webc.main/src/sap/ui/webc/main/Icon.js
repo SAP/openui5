@@ -10,6 +10,8 @@ sap.ui.define([
 ], function(WebComponent, library) {
 	"use strict";
 
+	var IconDesign = library.IconDesign;
+
 	/**
 	 * Constructor for a new <code>Icon</code>.
 	 *
@@ -62,6 +64,18 @@ sap.ui.define([
 	 * <code>&lt;ui5-icon name="tnt/antenna">&lt;/ui5-icon></code><br>
 	 * <code>&lt;ui5-icon name="business-suite/ab-testing">&lt;/ui5-icon></code>
 	 *
+	 * <br>
+	 * <br>
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.main.Icon</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>root - Used to style the outermost wrapper of the <code>sap.ui.webc.main.Icon</code></li>
+	 * </ul>
+	 *
+	 * <br>
+	 * <br>
 	 * <h3>Keyboard Handling</h3>
 	 *
 	 *
@@ -124,6 +138,30 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the component semantic design.
+				 *
+				 * <br>
+				 * <br>
+				 * <b>The available values are:</b>
+				 *
+				 *
+				 * <ul>
+				 *     <li><code>Contrast</code></li>
+				 *     <li><code>Critical</code></li>
+				 *     <li><code>Default</code></li>
+				 *     <li><code>Information</code></li>
+				 *     <li><code>Negative</code></li>
+				 *     <li><code>Neutral</code></li>
+				 *     <li><code>NonInteractive</code></li>
+				 *     <li><code>Positive</code></li>
+				 * </ul>
+				 */
+				design: {
+					type: "sap.ui.webc.main.IconDesign",
+					defaultValue: IconDesign.Default
+				},
+
+				/**
 				 * Defines the height of the control
 				 */
 				height: {
@@ -171,7 +209,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component should have a tooltip.
+				 * Defines whether the component should have a tooltip. <br>
+				 * <br>
+				 * <b>Note:</b> The tooltip text should be provided via the <code>accessible-name</code> property.
 				 */
 				showTooltip: {
 					type: "boolean",

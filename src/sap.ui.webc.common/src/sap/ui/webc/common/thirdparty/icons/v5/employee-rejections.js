@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "employee-rejections";
+  var _default = "SAP-icons-v5/employee-rejections";
   _exports.default = _default;
 });

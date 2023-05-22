@@ -178,14 +178,42 @@ sap.ui.define([
 				 * Fired when the input operation has finished by clicking the "OK" button or when the text in the input field has changed and the focus leaves the input field.
 				 */
 				change: {
-					parameters: {}
+					parameters: {
+						/**
+						 * The submitted value.
+						 */
+						value: {
+							type: "string"
+						},
+
+						/**
+						 * Indicator if the value is in correct format pattern and in valid range.
+						 */
+						valid: {
+							type: "boolean"
+						}
+					}
 				},
 
 				/**
 				 * Fired when the value of the <code>sap.ui.webc.main.TimePicker</code> is changed at each key stroke.
 				 */
 				input: {
-					parameters: {}
+					parameters: {
+						/**
+						 * The current value.
+						 */
+						value: {
+							type: "string"
+						},
+
+						/**
+						 * Indicator if the value is in correct format pattern and in valid range.
+						 */
+						valid: {
+							type: "boolean"
+						}
+					}
 				}
 			},
 			methods: ["closePicker", "formatValue", "isOpen", "isValid", "openPicker"],

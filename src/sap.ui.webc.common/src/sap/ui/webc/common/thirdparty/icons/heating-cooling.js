@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/heating-cooling", "./v4/heating-cooling"], function (_exports, _Theme, _heatingCooling, _heatingCooling2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/heating-cooling", "./v5/heating-cooling"], function (_exports, _Theme, _heatingCooling, _heatingCooling2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _heatingCooling.pathData : _heatingCooling2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _heatingCooling.pathData : _heatingCooling2.pathData;
   _exports.pathData = pathData;
   var _default = "heating-cooling";
   _exports.default = _default;

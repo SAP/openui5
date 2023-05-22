@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/general-leave-request", "./v4/general-leave-request"], function (_exports, _Theme, _generalLeaveRequest, _generalLeaveRequest2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/general-leave-request", "./v5/general-leave-request"], function (_exports, _Theme, _generalLeaveRequest, _generalLeaveRequest2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _generalLeaveRequest.pathData : _generalLeaveRequest2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _generalLeaveRequest.pathData : _generalLeaveRequest2.pathData;
   _exports.pathData = pathData;
   var _default = "general-leave-request";
   _exports.default = _default;

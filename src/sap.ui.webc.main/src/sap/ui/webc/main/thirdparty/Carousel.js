@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/types/AnimationMode", "sap/ui/webc/common/thirdparty/base/config/AnimationMode", "./generated/i18n/i18n-defaults", "./types/CarouselArrowsPlacement", "./generated/templates/CarouselTemplate.lit", "sap/ui/webc/common/thirdparty/icons/slim-arrow-left", "sap/ui/webc/common/thirdparty/icons/slim-arrow-right", "./Button", "./Label", "./generated/themes/Carousel.css"], function (_exports, _UI5Element, _LitRenderer, _Integer, _Keys, _i18nBundle, _ScrollEnablement, _ResizeHandler, _Render, _Device, _AnimationMode, _AnimationMode2, _i18nDefaults, _CarouselArrowsPlacement, _CarouselTemplate, _slimArrowLeft, _slimArrowRight, _Button, _Label, _Carousel) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/types/AnimationMode", "sap/ui/webc/common/thirdparty/base/config/AnimationMode", "./generated/i18n/i18n-defaults", "./types/CarouselArrowsPlacement", "./types/CarouselPageIndicatorStyle", "./types/BackgroundDesign", "./types/BorderDesign", "./generated/templates/CarouselTemplate.lit", "sap/ui/webc/common/thirdparty/icons/slim-arrow-left", "sap/ui/webc/common/thirdparty/icons/slim-arrow-right", "./Button", "./Label", "./generated/themes/Carousel.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _Integer, _Keys, _i18nBundle, _ScrollEnablement, _ResizeHandler, _Render, _Device, _AnimationMode, _AnimationMode2, _i18nDefaults, _CarouselArrowsPlacement, _CarouselPageIndicatorStyle, _BackgroundDesign, _BorderDesign, _CarouselTemplate, _slimArrowLeft, _slimArrowRight, _Button, _Label, _Carousel) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,180 +6,32 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _Integer = _interopRequireDefault(_Integer);
   _ScrollEnablement = _interopRequireDefault(_ScrollEnablement);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _AnimationMode = _interopRequireDefault(_AnimationMode);
   _CarouselArrowsPlacement = _interopRequireDefault(_CarouselArrowsPlacement);
+  _CarouselPageIndicatorStyle = _interopRequireDefault(_CarouselPageIndicatorStyle);
+  _BackgroundDesign = _interopRequireDefault(_BackgroundDesign);
+  _BorderDesign = _interopRequireDefault(_BorderDesign);
   _CarouselTemplate = _interopRequireDefault(_CarouselTemplate);
   _Button = _interopRequireDefault(_Button);
   _Label = _interopRequireDefault(_Label);
   _Carousel = _interopRequireDefault(_Carousel);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-carousel",
-    languageAware: true,
-    fastNavigation: true,
-    properties: /** @lends sap.ui.webcomponents.main.Carousel.prototype */{
-      /**
-       * Defines whether the carousel should loop, i.e show the first page after the last page is reached and vice versa.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      cyclic: {
-        type: Boolean
-      },
-      /**
-       * Defines the number of items per page on small size (up to 640px). One item per page shown by default.
-       * @type {Integer}
-       * @defaultvalue 1
-       * @public
-       */
-      itemsPerPageS: {
-        type: _Integer.default,
-        defaultValue: 1
-      },
-      /**
-       * Defines the number of items per page on medium size (from 640px to 1024px). One item per page shown by default.
-       * @type {Integer}
-       * @defaultvalue 1
-       * @public
-       */
-      itemsPerPageM: {
-        type: _Integer.default,
-        defaultValue: 1
-      },
-      /**
-       * Defines the number of items per page on large size (more than 1024px). One item per page shown by default.
-       * @type {Integer}
-       * @defaultvalue 1
-       * @public
-       */
-      itemsPerPageL: {
-        type: _Integer.default,
-        defaultValue: 1
-      },
-      /**
-       * Defines the visibility of the navigation arrows.
-       * If set to true the navigation arrows will be hidden.
-       * <br><br>
-       * <b>Note:</b> The navigation arrows are never displayed on touch devices.
-       * In this case, the user can swipe to navigate through the items.
-       * @type {boolean}
-       * @since 1.0.0-rc.15
-       * @defaultvalue false
-       * @public
-       */
-      hideNavigationArrows: {
-        type: Boolean
-      },
-      /**
-       * Defines the visibility of the paging indicator.
-       * If set to true the page indicator will be hidden.
-       * @type {boolean}
-       * @since 1.0.0-rc.15
-       * @defaultvalue false
-       * @public
-       */
-      hidePageIndicator: {
-        type: Boolean
-      },
-      /**
-       * Defines the index of the initially selected item.
-       * @type {Integer}
-       * @defaultvalue 0
-       * @private
-       */
-      _selectedIndex: {
-        type: _Integer.default,
-        defaultValue: 0
-      },
-      /**
-       * Defines the position of arrows.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Content</code></li>
-       * <li><code>Navigation</code></li>
-       * </ul>
-       * <br>
-       * When set to "Content", the arrows are placed on the sides of the current page.
-       * <br>
-       * When set to "Navigation", the arrows are placed on the sides of the page indicator.
-       * @type {CarouselArrowsPlacement}
-       * @defaultvalue "Content"
-       * @public
-       */
-      arrowsPlacement: {
-        type: _CarouselArrowsPlacement.default,
-        defaultValue: _CarouselArrowsPlacement.default.Content
-      },
-      /**
-       * Defines the carousel width in pixels.
-       * @private
-       */
-      _width: {
-        type: _Integer.default
-      },
-      /**
-       * Defines the carousel item width in pixels.
-       * @private
-       */
-      _itemWidth: {
-        type: _Integer.default
-      },
-      /**
-       * If set to true navigation arrows are shown.
-       * @private
-       * @since 1.0.0-rc.15
-       */
-      _visibleNavigationArrows: {
-        type: Boolean,
-        noAttribute: true
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.Carousel.prototype */{
-      /**
-       * Defines the content of the component.
-       * @type {HTMLElement[]}
-       * @slot content
-       * @public
-       */
-      "default": {
-        propertyName: "content",
-        type: HTMLElement,
-        individualSlots: true
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Carousel.prototype */{
-      /**
-       * Fired whenever the page changes due to user interaction,
-       * when the user clicks on the navigation arrows or while resizing,
-       * based on the <code>items-per-page-l</code>, <code>items-per-page-m</code> and <code>items-per-page-s</code> properties.
-       *
-       * @event
-       * @param {Integer} selectedIndex the current selected index
-       * @public
-       * @since 1.0.0-rc.7
-       */
-      navigate: {
-        detail: {
-          selectedIndex: {
-            type: _Integer.default
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var Carousel_1;
   /**
    * @class
    *
@@ -215,16 +67,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * When the <code>ui5-carousel</code> is focused the user can navigate between the items
    * with the following keyboard shortcuts:
    * <br>
+   * <ul>
+   * <li>[UP/DOWN] - Navigates to previous and next item</li>
+   * <li>[LEFT/RIGHT] - Navigates to previous and next item</li>
+   * </ul>
    *
-   * * <h4>Fast Navigation</h4>
+   * <h3>Fast Navigation</h3>
    * This component provides a build in fast navigation group which can be used via <code>F6 / Shift + F6</code> or <code> Ctrl + Alt(Option) + Down /  Ctrl + Alt(Option) + Up</code>.
    * In order to use this functionality, you need to import the following module:
    * <code>import "@ui5/webcomponents-base/dist/features/F6Navigation.js"</code>
    * <br><br>
    *
+   * <h3>CSS Shadow Parts</h3>
+   *
+   * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM.
+   * <br>
+   * The <code>ui5-carousel</code> exposes the following CSS Shadow Parts:
    * <ul>
-   * <li>[UP/DOWN] - Navigates to previous and next item</li>
-   * <li>[LEFT/RIGHT] - Navigates to previous and next item</li>
+   * <li>content - Used to style the content of the component</li>
    * </ul>
    *
    * <h3>ES6 Module Import</h3>
@@ -233,37 +93,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Carousel
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.Carousel
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-carousel
    * @since 1.0.0-rc.6
    * @public
    */
-  class Carousel extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _Carousel.default;
-    }
-    static get template() {
-      return _CarouselTemplate.default;
-    }
+  let Carousel = Carousel_1 = class Carousel extends _UI5Element.default {
     static get pageTypeLimit() {
       return 9;
     }
     constructor() {
       super();
       this._scrollEnablement = new _ScrollEnablement.default(this);
-      this._scrollEnablement.attachEvent("touchend", event => {
-        this._updateScrolling(event);
+      this._scrollEnablement.attachEvent("touchend", e => {
+        this._updateScrolling(e);
       });
       this._onResizeBound = this._onResize.bind(this);
       this._resizing = false; // indicates if the carousel is in process of resizing
-
       this._lastFocusedElements = [];
       this._orderOfLastFocusedPages = [];
     }
@@ -291,14 +138,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     _onResize() {
       const previousItemsPerPage = this.effectiveItemsPerPage;
-
       // Set the resizing flag to suppress animation while resizing
       this._resizing = true;
-
       // Change transitively effectiveItemsPerPage by modifying _width
       this._width = this.offsetWidth;
       this._itemWidth = Math.floor(this._width / this.effectiveItemsPerPage);
-
       // Items per page did not change or the current,
       // therefore page index does not need to be re-adjusted
       if (this.effectiveItemsPerPage === previousItemsPerPage) {
@@ -311,41 +155,42 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
       }
     }
-    _updateScrolling(event) {
-      if (!event) {
+    _updateScrolling(e) {
+      if (!e) {
         return;
       }
-      if (event.isLeft) {
+      if (e.isLeft) {
         this.navigateLeft();
-      } else if (event.isRight) {
+      } else if (e.isRight) {
         this.navigateRight();
       }
     }
-    async _onkeydown(event) {
-      if ((0, _Keys.isF7)(event)) {
-        this._handleF7Key(event);
+    async _onkeydown(e) {
+      if ((0, _Keys.isF7)(e)) {
+        this._handleF7Key(e);
         return;
       }
-      if (event.target !== this.getDomRef()) {
+      if (e.target !== this.getDomRef()) {
         return;
       }
-      if ((0, _Keys.isLeft)(event) || (0, _Keys.isDown)(event)) {
+      if ((0, _Keys.isLeft)(e) || (0, _Keys.isDown)(e)) {
         this.navigateLeft();
         await (0, _Render.renderFinished)();
         this.getDomRef().focus();
-      } else if ((0, _Keys.isRight)(event) || (0, _Keys.isUp)(event)) {
+      } else if ((0, _Keys.isRight)(e) || (0, _Keys.isUp)(e)) {
         this.navigateRight();
         await (0, _Render.renderFinished)();
         this.getDomRef().focus();
       }
     }
-    _onfocusin(event) {
-      if (event.target === this.getDomRef()) {
+    _onfocusin(e) {
+      const target = e.target;
+      if (target === this.getDomRef()) {
         return;
       }
       let pageIndex = -1;
       for (let i = 0; i < this.content.length; i++) {
-        if (this.content[i].contains(event.target)) {
+        if (this.content[i].contains(target)) {
           pageIndex = i;
           break;
         }
@@ -353,9 +198,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (pageIndex === -1) {
         return;
       }
-
       // Save reference of the last focused element for each page
-      this._lastFocusedElements[pageIndex] = event.target;
+      this._lastFocusedElements[pageIndex] = target;
       const sortedPageIndex = this._orderOfLastFocusedPages.indexOf(pageIndex);
       if (sortedPageIndex === -1) {
         this._orderOfLastFocusedPages.unshift(pageIndex);
@@ -373,13 +217,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._visibleNavigationArrows = true;
       }
     }
-    _handleF7Key(event) {
+    _handleF7Key(e) {
       const lastFocusedElement = this._lastFocusedElements[this._getLastFocusedActivePageIndex];
-      if (event.target === this.getDomRef() && lastFocusedElement) {
+      if (e.target === this.getDomRef() && lastFocusedElement) {
         lastFocusedElement.focus();
       } else {
         this.getDomRef().focus();
       }
+    }
+    get _backgroundDesign() {
+      return this.backgroundDesign.toLowerCase();
     }
     get _getLastFocusedActivePageIndex() {
       for (let i = 0; i < this._orderOfLastFocusedPages.length; i++) {
@@ -424,26 +271,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         });
       }
     }
-    _navButtonClick(event) {
-      if (event.target.hasAttribute("arrow-forward")) {
+    _navButtonClick(e) {
+      const button = e.target;
+      if (button.hasAttribute("arrow-forward")) {
         this.navigateRight();
       } else {
         this.navigateLeft();
       }
       this.focus();
     }
-
     /**
      * Changes the currently displayed page.
      * @param {Integer} itemIndex The index of the target page
      * @since 1.0.0-rc.15
+     * @method
+     * @name sap.ui.webc.main.Carousel#navigateTo
      * @public
      */
     navigateTo(itemIndex) {
       this._resizing = false;
       this._selectedIndex = itemIndex;
     }
-
     /**
      * Assuming that all items have the same width
      * @private
@@ -455,16 +303,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           id: `${this._id}-carousel-item-${idx + 1}`,
           item,
           tabIndex: visible ? "0" : "-1",
-          posinset: idx + 1,
-          setsize: this.content.length,
+          posinset: `${idx + 1}`,
+          setsize: `${this.content.length}`,
           styles: {
-            width: `${this._itemWidth}px`
+            width: `${this._itemWidth || 0}px`
           },
           classes: visible ? "" : "ui5-carousel-item--hidden"
         };
       });
     }
     get effectiveItemsPerPage() {
+      if (!this._width) {
+        return this.itemsPerPageL;
+      }
       if (this._width <= 640) {
         return this.itemsPerPageS;
       }
@@ -479,7 +330,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     isIndexInRange(index) {
       return index >= 0 && index <= this.pagesCount - 1;
     }
-
     /**
      * @private
      */
@@ -499,9 +349,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.pagesCount > 1;
     }
     get styles() {
+      const items = this._itemWidth || 0;
       return {
         content: {
-          transform: `translateX(${this._isRTL ? "" : "-"}${this._selectedIndex * this._itemWidth}px`
+          transform: `translateX(${this._isRTL ? "" : "-"}${this._selectedIndex * items}px`
         }
       };
     }
@@ -519,7 +370,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         },
         navigation: {
           "ui5-carousel-navigation-wrapper": true,
-          "ui5-carousel-navigation-with-buttons": this.renderNavigation && this.arrowsPlacement === _CarouselArrowsPlacement.default.Navigation && !this.hideNavigationArrows
+          "ui5-carousel-navigation-with-buttons": this.renderNavigation && this.arrowsPlacement === _CarouselArrowsPlacement.default.Navigation && !this.hideNavigationArrows,
+          [`ui5-carousel-navigation-wrapper-bg-${this.pageIndicatorBackgroundDesign.toLowerCase()}`]: true,
+          [`ui5-carousel-navigation-wrapper-border-${this.pageIndicatorBorderDesign.toLowerCase()}`]: true
         },
         navPrevButton: {
           "ui5-carousel-navigation-button--hidden": !this.hasPrev
@@ -534,7 +387,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return items > this.effectiveItemsPerPage ? items - this.effectiveItemsPerPage + 1 : 1;
     }
     get isPageTypeDots() {
-      return this.pagesCount < Carousel.pageTypeLimit;
+      if (this.pageIndicatorStyle === _CarouselPageIndicatorStyle.default.Numeric) {
+        return false;
+      }
+      return this.pagesCount < Carousel_1.pageTypeLimit;
     }
     get dots() {
       const dots = [];
@@ -542,16 +398,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       for (let index = 0; index < pages; index++) {
         dots.push({
           active: index === this._selectedIndex,
-          ariaLabel: Carousel.i18nBundle.getText(_i18nDefaults.CAROUSEL_DOT_TEXT, index + 1, pages)
+          ariaLabel: Carousel_1.i18nBundle.getText(_i18nDefaults.CAROUSEL_DOT_TEXT, index + 1, pages)
         });
       }
       return dots;
     }
-    get arrows() {
-      const showArrows = this._visibleNavigationArrows && this.hasManyPages && (0, _Device.isDesktop)();
+    get showArrows() {
+      const displayArrows = this._visibleNavigationArrows && this.hasManyPages && (0, _Device.isDesktop)();
       return {
-        content: !this.hideNavigationArrows && showArrows && this.arrowsPlacement === _CarouselArrowsPlacement.default.Content,
-        navigation: !this.hideNavigationArrows && showArrows && this.arrowsPlacement === _CarouselArrowsPlacement.default.Navigation
+        content: !this.hideNavigationArrows && displayArrows && this.arrowsPlacement === _CarouselArrowsPlacement.default.Content,
+        navigation: !this.hideNavigationArrows && displayArrows && this.arrowsPlacement === _CarouselArrowsPlacement.default.Navigation
       };
     }
     get hasPrev() {
@@ -570,20 +426,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this._isRTL ? this.pagesCount - (this.pagesCount - this._selectedIndex) + 1 : this._selectedIndex + 1;
     }
     get ofText() {
-      return Carousel.i18nBundle.getText(_i18nDefaults.CAROUSEL_OF_TEXT);
+      return Carousel_1.i18nBundle.getText(_i18nDefaults.CAROUSEL_OF_TEXT);
     }
     get ariaActiveDescendant() {
       return this.content.length ? `${this._id}-carousel-item-${this._selectedIndex + 1}` : undefined;
     }
     get nextPageText() {
-      return Carousel.i18nBundle.getText(_i18nDefaults.CAROUSEL_NEXT_ARROW_TEXT);
+      return Carousel_1.i18nBundle.getText(_i18nDefaults.CAROUSEL_NEXT_ARROW_TEXT);
     }
     get previousPageText() {
-      return Carousel.i18nBundle.getText(_i18nDefaults.CAROUSEL_PREVIOUS_ARROW_TEXT);
+      return Carousel_1.i18nBundle.getText(_i18nDefaults.CAROUSEL_PREVIOUS_ARROW_TEXT);
     }
-
     /**
      * The indices of the currently visible items of the component.
+     * @public
      * @readonly
      * @since 1.0.0-rc.15
      * @returns {Integer[]} the indices of the visible items
@@ -597,13 +453,95 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
       return visibleItemsIndices;
     }
-    static get dependencies() {
-      return [_Button.default, _Label.default];
-    }
     static async onDefine() {
-      Carousel.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      Carousel_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Carousel.prototype, "cyclic", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 1
+  })], Carousel.prototype, "itemsPerPageS", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 1
+  })], Carousel.prototype, "itemsPerPageM", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 1
+  })], Carousel.prototype, "itemsPerPageL", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Carousel.prototype, "hideNavigationArrows", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Carousel.prototype, "hidePageIndicator", void 0);
+  __decorate([(0, _property.default)({
+    type: _CarouselPageIndicatorStyle.default,
+    defaultValue: _CarouselPageIndicatorStyle.default.Default
+  })], Carousel.prototype, "pageIndicatorStyle", void 0);
+  __decorate([(0, _property.default)({
+    type: _BackgroundDesign.default,
+    defaultValue: _BackgroundDesign.default.Translucent
+  })], Carousel.prototype, "backgroundDesign", void 0);
+  __decorate([(0, _property.default)({
+    type: _BackgroundDesign.default,
+    defaultValue: _BackgroundDesign.default.Solid
+  })], Carousel.prototype, "pageIndicatorBackgroundDesign", void 0);
+  __decorate([(0, _property.default)({
+    type: _BorderDesign.default,
+    defaultValue: _BorderDesign.default.Solid
+  })], Carousel.prototype, "pageIndicatorBorderDesign", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 0
+  })], Carousel.prototype, "_selectedIndex", void 0);
+  __decorate([(0, _property.default)({
+    type: _CarouselArrowsPlacement.default,
+    defaultValue: _CarouselArrowsPlacement.default.Content
+  })], Carousel.prototype, "arrowsPlacement", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default
+  })], Carousel.prototype, "_width", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default
+  })], Carousel.prototype, "_itemWidth", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], Carousel.prototype, "_visibleNavigationArrows", void 0);
+  __decorate([(0, _slot.default)({
+    "default": true,
+    type: HTMLElement,
+    individualSlots: true
+  })], Carousel.prototype, "content", void 0);
+  Carousel = Carousel_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-carousel",
+    languageAware: true,
+    fastNavigation: true,
+    renderer: _LitRenderer.default,
+    styles: _Carousel.default,
+    template: _CarouselTemplate.default,
+    dependencies: [_Button.default, _Label.default]
+  })
+  /**
+   * Fired whenever the page changes due to user interaction,
+   * when the user clicks on the navigation arrows or while resizing,
+   * based on the <code>items-per-page-l</code>, <code>items-per-page-m</code> and <code>items-per-page-s</code> properties.
+   *
+   * @event sap.ui.webc.main.Carousel#navigate
+   * @param {Integer} selectedIndex the current selected index
+   * @public
+   * @since 1.0.0-rc.7
+   */, (0, _event.default)("navigate", {
+    detail: {
+      selectedIndex: {
+        type: _Integer.default
+      }
+    }
+  })], Carousel);
   Carousel.define();
   var _default = Carousel;
   _exports.default = _default;

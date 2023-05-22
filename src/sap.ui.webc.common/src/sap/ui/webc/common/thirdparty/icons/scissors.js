@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/scissors", "./v4/scissors"], function (_exports, _Theme, _scissors, _scissors2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/scissors", "./v5/scissors"], function (_exports, _Theme, _scissors, _scissors2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _scissors.pathData : _scissors2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _scissors.pathData : _scissors2.pathData;
   _exports.pathData = pathData;
   var _default = "scissors";
   _exports.default = _default;

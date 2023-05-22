@@ -1,52 +1,40 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.LinkDesign.prototype
+   * Different link designs.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.LinkDesign
    */
-  const LinkTypes = {
+  var LinkDesign;
+  (function (LinkDesign) {
     /**
      * default type (no special styling)
      * @public
      * @type {Default}
      */
-    Default: "Default",
+    LinkDesign["Default"] = "Default";
     /**
      * subtle type (appears as regular text, rather than a link)
      * @public
      * @type {Subtle}
      */
-    Subtle: "Subtle",
+    LinkDesign["Subtle"] = "Subtle";
     /**
      * emphasized type
      * @public
      * @type {Emphasized}
      */
-    Emphasized: "Emphasized"
-  };
-
-  /**
-   * @class
-   * Different types of Button.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.LinkDesign
-   * @public
-   * @enum {string}
-   */
-  class LinkDesign extends _DataType.default {
-    static isValid(value) {
-      return !!LinkTypes[value];
-    }
-  }
-  LinkDesign.generateTypeAccessors(LinkTypes);
+    LinkDesign["Emphasized"] = "Emphasized";
+  })(LinkDesign || (LinkDesign = {}));
   var _default = LinkDesign;
   _exports.default = _default;
 });

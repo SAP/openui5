@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/desktop-mobile", "./v4/desktop-mobile"], function (_exports, _Theme, _desktopMobile, _desktopMobile2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/desktop-mobile", "./v5/desktop-mobile"], function (_exports, _Theme, _desktopMobile, _desktopMobile2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _desktopMobile.pathData : _desktopMobile2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _desktopMobile.pathData : _desktopMobile2.pathData;
   _exports.pathData = pathData;
   var _default = "desktop-mobile";
   _exports.default = _default;

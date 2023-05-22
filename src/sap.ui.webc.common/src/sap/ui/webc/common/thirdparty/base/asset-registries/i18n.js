@@ -4,7 +4,7 @@ sap.ui.define(["exports", "../locale/getLocale", "../locale/languageChange", "..
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.registerI18nLoader = _exports.registerI18nBundle = _exports.getI18nBundleData = _exports.fetchI18nBundle = void 0;
+  _exports.registerI18nLoader = _exports.getI18nBundleData = _exports.fetchI18nBundle = void 0;
   _getLocale = _interopRequireDefault(_getLocale);
   _normalizeLocale = _interopRequireDefault(_normalizeLocale);
   _nextFallbackLocale = _interopRequireDefault(_nextFallbackLocale);
@@ -15,7 +15,6 @@ sap.ui.define(["exports", "../locale/getLocale", "../locale/languageChange", "..
   const bundleData = new Map();
   const bundlePromises = new Map();
   const loaders = new Map();
-
   /**
    * Registers i18n loader function for given package and locale.
    *
@@ -36,38 +35,30 @@ sap.ui.define(["exports", "../locale/getLocale", "../locale/languageChange", "..
   const getI18nBundleData = packageName => {
     return bundleData.get(packageName);
   };
-
-  /**
-   * @public
-   * @deprecated
-   */
   _exports.getI18nBundleData = getI18nBundleData;
-  const registerI18nBundle = (_packageName, _bundle) => {
-    throw new Error("This method has been removed. Use `registerI18nLoader` instead.");
-  };
-  _exports.registerI18nBundle = registerI18nBundle;
   const _hasLoader = (packageName, localeId) => {
     const bundleKey = `${packageName}/${localeId}`;
     return loaders.has(bundleKey);
   };
-
   // load bundle over the network once
   const _loadMessageBundleOnce = (packageName, localeId) => {
     const bundleKey = `${packageName}/${localeId}`;
     const loadMessageBundle = loaders.get(bundleKey);
-    if (!bundlePromises.get(bundleKey)) {
+    if (loadMessageBundle && !bundlePromises.get(bundleKey)) {
       bundlePromises.set(bundleKey, loadMessageBundle(localeId));
     }
-    return bundlePromises.get(bundleKey);
+    return bundlePromises.get(bundleKey); // Investigate if i18n loader exists and this won't return undefined.
   };
+
   const _showAssetsWarningOnce = packageName => {
     if (!warningShown.has(packageName)) {
-      console.warn(`[${packageName}]: Message bundle assets are not configured. Falling back to English texts.`, /* eslint-disable-line */
-      ` Add \`import "${packageName}/dist/Assets.js"\` in your bundle and make sure your build tool supports dynamic imports and JSON imports. See section "Assets" in the documentation for more information.`); /* eslint-disable-line */
+      console.warn(`[${packageName}]: Message bundle assets are not configured. Falling back to English texts.`, /* eslint-disable-line */` Add \`import "${packageName}/dist/Assets.js"\` in your bundle and make sure your build tool supports dynamic imports and JSON imports. See section "Assets" in the documentation for more information.`); /* eslint-disable-line */
       warningShown.add(packageName);
     }
   };
-
+  const useFallbackBundle = (packageName, localeId) => {
+    return localeId !== _AssetParameters.DEFAULT_LANGUAGE && !_hasLoader(packageName, localeId);
+  };
   /**
    * This method preforms the asynchronous task of fetching the actual text resources. It will fetch
    * each text resource over the network once (even for multiple calls to the same method).
@@ -80,11 +71,13 @@ sap.ui.define(["exports", "../locale/getLocale", "../locale/languageChange", "..
   const fetchI18nBundle = async packageName => {
     const language = (0, _getLocale.default)().getLanguage();
     const region = (0, _getLocale.default)().getRegion();
-    let localeId = (0, _normalizeLocale.default)(language + (region ? `-${region}` : ``));
-    while (localeId !== _AssetParameters.DEFAULT_LANGUAGE && !_hasLoader(packageName, localeId)) {
-      localeId = (0, _nextFallbackLocale.default)(localeId);
+    let localeId = language + (region ? `-${region}` : ``);
+    if (useFallbackBundle(packageName, localeId)) {
+      localeId = (0, _normalizeLocale.default)(localeId);
+      while (useFallbackBundle(packageName, localeId)) {
+        localeId = (0, _nextFallbackLocale.default)(localeId);
+      }
     }
-
     // use default language unless configured to always fetch it from the network
     const fetchDefaultLanguage = (0, _Language.getFetchDefaultLanguage)();
     if (localeId === _AssetParameters.DEFAULT_LANGUAGE && !fetchDefaultLanguage) {
@@ -98,17 +91,17 @@ sap.ui.define(["exports", "../locale/getLocale", "../locale/languageChange", "..
     try {
       const data = await _loadMessageBundleOnce(packageName, localeId);
       _setI18nBundleData(packageName, data);
-    } catch (e) {
+    } catch (error) {
+      const e = error;
       if (!reportedErrors.has(e.message)) {
         reportedErrors.add(e.message);
         console.error(e.message); /* eslint-disable-line */
       }
     }
   };
-
   // When the language changes dynamically (the user calls setLanguage), re-fetch all previously fetched bundles
   _exports.fetchI18nBundle = fetchI18nBundle;
-  (0, _languageChange.attachLanguageChange)(() => {
+  (0, _languageChange.attachLanguageChange)((lang /* eslint-disable-line */) => {
     const allPackages = [...bundleData.keys()];
     return Promise.all(allPackages.map(fetchI18nBundle));
   });

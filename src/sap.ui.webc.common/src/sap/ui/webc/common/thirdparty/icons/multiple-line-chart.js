@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/multiple-line-chart", "./v4/multiple-line-chart"], function (_exports, _Theme, _multipleLineChart, _multipleLineChart2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/multiple-line-chart", "./v5/multiple-line-chart"], function (_exports, _Theme, _multipleLineChart, _multipleLineChart2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _multipleLineChart.pathData : _multipleLineChart2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _multipleLineChart.pathData : _multipleLineChart2.pathData;
   _exports.pathData = pathData;
   var _default = "multiple-line-chart";
   _exports.default = _default;

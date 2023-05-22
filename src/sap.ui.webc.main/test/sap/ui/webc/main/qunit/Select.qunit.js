@@ -38,6 +38,12 @@ sap.ui.define([
 				],
 				change: function(oEvent) {
 					// console.log("Event change fired for Select with parameters: ", oEvent.getParameters());
+				},
+				close: function(oEvent) {
+					// console.log("Event close fired for Select with parameters: ", oEvent.getParameters());
+				},
+				open: function(oEvent) {
+					// console.log("Event open fired for Select with parameters: ", oEvent.getParameters());
 				}
 			});
 			this.oSelect.placeAt("uiArea");

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/cancel-share", "./v4/cancel-share"], function (_exports, _Theme, _cancelShare, _cancelShare2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/cancel-share", "./v5/cancel-share"], function (_exports, _Theme, _cancelShare, _cancelShare2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _cancelShare.pathData : _cancelShare2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _cancelShare.pathData : _cancelShare2.pathData;
   _exports.pathData = pathData;
   var _default = "cancel-share";
   _exports.default = _default;

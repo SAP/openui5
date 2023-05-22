@@ -8,16 +8,20 @@ sap.ui.define(["exports", "../types/CalendarType", "../InitialConfiguration"], f
   _CalendarType = _interopRequireDefault(_CalendarType);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   let calendarType;
+  /**
+   * Returns the configured or default calendar type.
+   * @public
+   * @returns { CalendarType } the effective calendar type
+   */
   const getCalendarType = () => {
     if (calendarType === undefined) {
       calendarType = (0, _InitialConfiguration.getCalendarType)();
     }
-    if (_CalendarType.default.isValid(calendarType)) {
+    if (calendarType && calendarType in _CalendarType.default) {
       return calendarType;
     }
     return _CalendarType.default.Gregorian;
   };
-
   // eslint-disable-line
   _exports.getCalendarType = getCalendarType;
 });

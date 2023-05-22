@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/icons/accept", "./Icon", "./Label", "./types/WrappingType", "./generated/i18n/i18n-defaults", "./generated/templates/CheckBoxTemplate.lit", "./generated/themes/CheckBox.css"], function (_exports, _Device, _UI5Element, _LitRenderer, _i18nBundle, _ValueState, _FeaturesRegistry, _AriaLabelHelper, _Keys, _accept, _Icon, _Label, _WrappingType, _i18nDefaults, _CheckBoxTemplate, _CheckBox) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/icons/accept", "./Icon", "./Label", "./types/WrappingType", "./generated/i18n/i18n-defaults", "./generated/themes/CheckBox.css", "./generated/templates/CheckBoxTemplate.lit"], function (_exports, _Device, _UI5Element, _customElement, _property, _slot, _event, _LitRenderer, _i18nBundle, _ValueState, _FeaturesRegistry, _AriaLabelHelper, _Keys, _accept, _Icon, _Label, _WrappingType, _i18nDefaults, _CheckBox, _CheckBoxTemplate) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,219 +6,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ValueState = _interopRequireDefault(_ValueState);
   _Icon = _interopRequireDefault(_Icon);
   _Label = _interopRequireDefault(_Label);
   _WrappingType = _interopRequireDefault(_WrappingType);
-  _CheckBoxTemplate = _interopRequireDefault(_CheckBoxTemplate);
   _CheckBox = _interopRequireDefault(_CheckBox);
+  _CheckBoxTemplate = _interopRequireDefault(_CheckBoxTemplate);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  let isGlobalHandlerAttached = false;
-  let activeCb = null;
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-checkbox",
-    languageAware: true,
-    properties: /** @lends sap.ui.webcomponents.main.CheckBox.prototype */{
-      /**
-       * Receives id(or many ids) of the elements that label the component
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.1.0
-       */
-      accessibleNameRef: {
-        type: String,
-        defaultValue: ""
-      },
-      /**
-       * Defines the accessible aria name of the component.
-       *
-       * @type {string}
-       * @public
-       * @defaultvalue ""
-       * @since 1.1.0
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * Defines whether the component is disabled.
-       * <br><br>
-       * <b>Note:</b> A disabled component is completely noninteractive.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is read-only.
-       * <br><br>
-       * <b>Note:</b> A red-only component is not editable,
-       * but still provides visual feedback upon user interaction.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      readonly: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the component is required.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.3.0
-       */
-      required: {
-        type: Boolean
-      },
-      /**
-      * Defines whether the component is displayed as partially checked.
-      * <br><br>
-      * <b>Note:</b> The indeterminate state can be set only programatically and can’t be achieved by user
-      * interaction and the resulting visual state depends on the values of the <code>indeterminate</code>
-      * and <code>checked</code> properties:
-      * <ul>
-      * <li> If the component is checked and indeterminate, it will be displayed as partially checked
-      * <li> If the component is checked and it is not indeterminate, it will be displayed as checked
-      * <li> If the component is not checked, it will be displayed as not checked regardless value of the indeterminate attribute
-      * </ul>
-      *
-      * @type {boolean}
-      * @defaultvalue false
-      * @public
-      * @since 1.0.0-rc.15
-      */
-      indeterminate: {
-        type: Boolean
-      },
-      /**
-       * Defines if the component is checked.
-       * <br><br>
-       * <b>Note:</b> The property can be changed with user interaction,
-       * either by cliking/tapping on the component, or by
-       * pressing the Enter or Space key.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      checked: {
-        type: Boolean
-      },
-      /**
-       * Defines the text of the component.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      text: {
-        type: String
-      },
-      /**
-       * Defines the value state of the component.
-       *
-       * <br><br>
-       * <b>Note:</b>
-       *
-       * <ul>
-       * <li><code>Warning</code></li>
-       * <li><code>Error</code></li>
-       * <li><code>None</code>(default)</li>
-       * <li><code>Success</code></li>
-       * <li><code>Information</code></li>
-       * </ul>
-       *
-       * @type {ValueState}
-       * @defaultvalue "None"
-       * @public
-       */
-      valueState: {
-        type: _ValueState.default,
-        defaultValue: _ValueState.default.None
-      },
-      /**
-       * Defines whether the component text wraps when there is not enough space.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code> - The text will be truncated with an ellipsis.</li>
-       * <li><code>Normal</code> - The text will wrap. The words will not be broken based on hyphenation.</li>
-       * </ul>
-       *
-       * @type {WrappingType}
-       * @defaultvalue "None"
-       * @public
-       */
-      wrappingType: {
-        type: _WrappingType.default,
-        defaultValue: _WrappingType.default.None
-      },
-      /**
-       * Determines the name with which the component will be submitted in an HTML form.
-       *
-       * <br><br>
-       * <b>Important:</b> For the <code>name</code> property to have effect, you must add the following import to your project:
-       * <code>import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";</code>
-       *
-       * <br><br>
-       * <b>Note:</b> When set, a native <code>input</code> HTML element
-       * will be created inside the component so that it can be submitted as
-       * part of an HTML form. Do not use this property unless you need to submit a form.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      name: {
-        type: String
-      },
-      /**
-       * Defines the active state (pressed or not) of the component.
-       * @private
-       */
-      active: {
-        type: Boolean
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.CheckBox.prototype */{
-      /**
-       * Fired when the component checked state changes.
-       *
-       * @public
-       * @event
-       */
-      change: {}
-    },
-    slots: /** @lends sap.ui.webcomponents.main.CheckBox.prototype */{
-      /**
-       * The slot is used to render native <code>input</code> HTML element within Light DOM to enable form submit,
-       * when <code>name</code> property is set.
-       * @type {HTMLElement[]}
-       * @slot
-       * @private
-       */
-      formSupport: {
-        type: HTMLElement
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var CheckBox_1;
+  let isGlobalHandlerAttached = false;
+  let activeCb;
   /**
    * @class
    *
@@ -246,6 +55,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    * property to <code>true</code>.
    *
    * <br><br>
+   * <h3>CSS Shadow Parts</h3>
+   *
+   * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM.
+   * <br>
+   * The <code>ui5-checkbox</code> exposes the following CSS Shadow Parts:
+   * <ul>
+   * <li>root - Used to style the outermost wrapper of the <code>ui5-checkbox</code></li>
+   * </ul>
+   *
+   * <br><br>
    * <h3>Keyboard Handling</h3>
    *
    * The user can use the following keyboard shortcuts to toggle the checked state of the <code>ui5-checkbox</code>.
@@ -260,24 +79,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.CheckBox
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.CheckBox
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-checkbox
    * @public
    */
-  class CheckBox extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _CheckBoxTemplate.default;
-    }
-    static get styles() {
-      return _CheckBox.default;
-    }
+  let CheckBox = CheckBox_1 = class CheckBox extends _UI5Element.default {
     constructor() {
       super();
       this._deactivate = () => {
@@ -294,9 +101,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       this._enableFormSupport();
     }
     _enableFormSupport() {
-      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-      if (FormSupport) {
-        FormSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
+      const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (formSupport) {
+        formSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
           nativeInput.disabled = element.disabled || !element.checked;
           nativeInput.value = element.checked ? "on" : "";
         });
@@ -322,33 +129,41 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     _onfocusout() {
       this.active = false;
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
+    _onkeydown(e) {
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
         this.active = true;
       }
-      if ((0, _Keys.isEnter)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
         this.toggle();
         this.active = true;
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
         this.toggle();
       }
       this.active = false;
     }
     toggle() {
       if (this.canToggle()) {
+        const lastState = {
+          checked: this.checked,
+          indeterminate: this.indeterminate
+        };
         if (this.indeterminate) {
           this.indeterminate = false;
           this.checked = true;
         } else {
           this.checked = !this.checked;
         }
-        this.fireEvent("change");
+        const changePrevented = !this.fireEvent("change", null, true);
         // Angular two way data binding
-        this.fireEvent("value-changed");
+        const valueChagnePrevented = !this.fireEvent("value-changed", null, true);
+        if (changePrevented || valueChagnePrevented) {
+          this.checked = lastState.checked;
+          this.indeterminate = lastState.indeterminate;
+        }
       }
       return this;
     }
@@ -357,9 +172,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     }
     valueStateTextMappings() {
       return {
-        "Error": CheckBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
-        "Warning": CheckBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING),
-        "Success": CheckBox.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS)
+        "Error": CheckBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_ERROR),
+        "Warning": CheckBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_WARNING),
+        "Success": CheckBox_1.i18nBundle.getText(_i18nDefaults.VALUE_STATE_SUCCESS)
       };
     }
     get ariaLabelText() {
@@ -375,10 +190,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     get ariaReadonly() {
       return this.readonly ? "true" : undefined;
     }
-    get ariaDisabled() {
+    get effectiveAriaDisabled() {
       return this.disabled ? "true" : undefined;
     }
-    get ariaChecked() {
+    get effectiveAriaChecked() {
       return this.indeterminate && this.checked ? "mixed" : this.checked;
     }
     get ariaLabelledBy() {
@@ -394,22 +209,66 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       return this.valueState !== _ValueState.default.None;
     }
     get valueStateText() {
-      return this.valueStateTextMappings()[this.valueState];
+      if (this.valueState !== _ValueState.default.None && this.valueState !== _ValueState.default.Information) {
+        return this.valueStateTextMappings()[this.valueState];
+      }
     }
-    get tabIndex() {
+    get effectiveTabIndex() {
       const tabindex = this.getAttribute("tabindex");
       return this.disabled ? undefined : tabindex || "0";
     }
     get isCompletelyChecked() {
       return this.checked && !this.indeterminate;
     }
-    static get dependencies() {
-      return [_Label.default, _Icon.default];
-    }
     static async onDefine() {
-      CheckBox.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      CheckBox_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)()], CheckBox.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)()], CheckBox.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], CheckBox.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], CheckBox.prototype, "readonly", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], CheckBox.prototype, "required", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], CheckBox.prototype, "indeterminate", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], CheckBox.prototype, "checked", void 0);
+  __decorate([(0, _property.default)()], CheckBox.prototype, "text", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], CheckBox.prototype, "valueState", void 0);
+  __decorate([(0, _property.default)({
+    type: _WrappingType.default,
+    defaultValue: _WrappingType.default.None
+  })], CheckBox.prototype, "wrappingType", void 0);
+  __decorate([(0, _property.default)()], CheckBox.prototype, "name", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], CheckBox.prototype, "active", void 0);
+  __decorate([(0, _slot.default)()], CheckBox.prototype, "formSupport", void 0);
+  CheckBox = CheckBox_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-checkbox",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _CheckBoxTemplate.default,
+    styles: _CheckBox.default,
+    dependencies: [_Label.default, _Icon.default]
+  })
+  /**
+   * Fired when the component checked state changes.
+   *
+   * @public
+   * @event sap.ui.webc.main.CheckBox#change
+   */, (0, _event.default)("change")], CheckBox);
   CheckBox.define();
   var _default = CheckBox;
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/clinical-tast-tracker", "./v4/clinical-tast-tracker"], function (_exports, _Theme, _clinicalTastTracker, _clinicalTastTracker2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/clinical-tast-tracker", "./v5/clinical-tast-tracker"], function (_exports, _Theme, _clinicalTastTracker, _clinicalTastTracker2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _clinicalTastTracker.pathData : _clinicalTastTracker2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _clinicalTastTracker.pathData : _clinicalTastTracker2.pathData;
   _exports.pathData = pathData;
   var _default = "clinical-tast-tracker";
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/newspaper", "./v4/newspaper"], function (_exports, _Theme, _newspaper, _newspaper2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/newspaper", "./v5/newspaper"], function (_exports, _Theme, _newspaper, _newspaper2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _newspaper.pathData : _newspaper2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _newspaper.pathData : _newspaper2.pathData;
   _exports.pathData = pathData;
   var _default = "newspaper";
   _exports.default = _default;

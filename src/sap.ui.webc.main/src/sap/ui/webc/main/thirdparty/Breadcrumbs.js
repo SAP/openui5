@@ -1,16 +1,20 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "sap/ui/webc/common/thirdparty/base/UI5Element", "./types/BreadcrumbsDesign", "./types/BreadcrumbsSeparatorStyle", "./BreadcrumbsItem", "./generated/i18n/i18n-defaults", "./Link", "./Label", "./ResponsivePopover", "./List", "./StandardListItem", "./Icon", "./Button", "./generated/templates/BreadcrumbsTemplate.lit", "./generated/templates/BreadcrumbsPopoverTemplate.lit", "./generated/themes/Breadcrumbs.css", "./generated/themes/BreadcrumbsPopover.css"], function (_exports, _ItemNavigation, _LitRenderer, _Keys, _Integer, _i18nBundle, _ResizeHandler, _NavigationMode, _UI5Element, _BreadcrumbsDesign, _BreadcrumbsSeparatorStyle, _BreadcrumbsItem, _i18nDefaults, _Link, _Label, _ResponsivePopover, _List, _StandardListItem, _Icon, _Button, _BreadcrumbsTemplate, _BreadcrumbsPopoverTemplate, _Breadcrumbs, _BreadcrumbsPopover) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "./types/BreadcrumbsDesign", "./types/BreadcrumbsSeparatorStyle", "./BreadcrumbsItem", "./generated/i18n/i18n-defaults", "./Link", "./Label", "./ResponsivePopover", "./List", "./StandardListItem", "./Icon", "./Button", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "./generated/templates/BreadcrumbsTemplate.lit", "./generated/templates/BreadcrumbsPopoverTemplate.lit", "./generated/themes/Breadcrumbs.css", "./generated/themes/BreadcrumbsPopover.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _ItemNavigation, _LitRenderer, _Keys, _Integer, _i18nBundle, _ResizeHandler, _NavigationMode, _BreadcrumbsDesign, _BreadcrumbsSeparatorStyle, _BreadcrumbsItem, _i18nDefaults, _Link, _Label, _ResponsivePopover, _List, _StandardListItem, _Icon, _Button, _slimArrowDown, _BreadcrumbsTemplate, _BreadcrumbsPopoverTemplate, _Breadcrumbs, _BreadcrumbsPopover) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _ItemNavigation = _interopRequireDefault(_ItemNavigation);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _Integer = _interopRequireDefault(_Integer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _NavigationMode = _interopRequireDefault(_NavigationMode);
-  _UI5Element = _interopRequireDefault(_UI5Element);
   _BreadcrumbsDesign = _interopRequireDefault(_BreadcrumbsDesign);
   _BreadcrumbsSeparatorStyle = _interopRequireDefault(_BreadcrumbsSeparatorStyle);
   _BreadcrumbsItem = _interopRequireDefault(_BreadcrumbsItem);
@@ -26,120 +30,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
   _Breadcrumbs = _interopRequireDefault(_Breadcrumbs);
   _BreadcrumbsPopover = _interopRequireDefault(_BreadcrumbsPopover);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Templates
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-breadcrumbs",
-    managedSlots: true,
-    languageAware: true,
-    slots: /** @lends sap.ui.webcomponents.main.Breadcrumbs.prototype */{
-      /**
-       * Defines the component items.
-       *
-       * <br><br>
-       * <b>Note:</b> Use the <code>ui5-breadcrumbs-item</code> component to define the desired items.
-       * @type {sap.ui.webcomponents.main.IBreadcrumbsItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement,
-        invalidateOnChildChange: true
-      }
-    },
-    properties: /** @lends sap.ui.webcomponents.main.Breadcrumbs.prototype */{
-      /**
-       * Defines the visual indication and behavior of the breadcrumbs.
-       * Available options are <code>Standard</code> (by default) and <code>NoCurrentPage</code>.
-       * <br><br>
-       * <b>Note:</b> The <code>Standard</code> breadcrumbs show the current page as the last item in the trail.
-       * The last item contains only plain text and is not a link.
-       *
-       * @type {BreadcrumbsDesign}
-       * @defaultvalue "Standard"
-       * @public
-      */
-      design: {
-        type: _BreadcrumbsDesign.default,
-        defaultValue: _BreadcrumbsDesign.default.Standard
-      },
-      /**
-       * Determines the visual style of the separator between the breadcrumb items.
-       *
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Slash</code></li>
-       * <li><code>BackSlash</code></li>
-       * <li><code>DoubleBackSlash</code></li>
-       * <li><code>DoubleGreaterThan</code></li>
-       * <li><code>DoubleSlash</code></li>
-       * <li><code>GreaterThan</code></li>
-       * </ul>
-       *
-       * @type {BreadcrumbsSeparatorStyle}
-       * @defaultvalue "Slash"
-       * @public
-       */
-      separatorStyle: {
-        type: _BreadcrumbsSeparatorStyle.default,
-        defaultValue: _BreadcrumbsSeparatorStyle.default.Slash
-      },
-      /**
-       * Holds the number of items in the overflow.
-       *
-       * @type {Integer}
-       * @defaultvalue 0
-       * @private
-       */
-      _overflowSize: {
-        type: _Integer.default,
-        noAttribute: true,
-        defaultValue: 0
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Breadcrumbs.prototype */{
-      /**
-       * Fires when a <code>BreadcrumbsItem</code> is clicked.
-       * <b>Note:</b> You can prevent browser location change by calling <code>event.preventDefault()</code>.
-       *
-       * @event sap.ui.webcomponents.main.Breadcrumbs#item-click
-       * @allowPreventDefault
-       * @param {HTMLElement} item The clicked item.
-       * @param {Boolean} altKey Returns whether the "ALT" key was pressed when the event was triggered.
-       * @param {Boolean} ctrlKey Returns whether the "CTRL" key was pressed when the event was triggered.
-       * @param {Boolean} metaKey Returns whether the "META" key was pressed when the event was triggered.
-       * @param {Boolean} shiftKey Returns whether the "SHIFT" key was pressed when the event was triggered.
-       * @public
-       */
-      "item-click": {
-        detail: {
-          item: {
-            type: HTMLElement
-          },
-          altKey: {
-            type: Boolean
-          },
-          ctrlKey: {
-            type: Boolean
-          },
-          metaKey: {
-            type: Boolean
-          },
-          shiftKey: {
-            type: Boolean
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var Breadcrumbs_1;
   /**
    * @class
    *
@@ -169,41 +67,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
    * <br>
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Breadcrumbs
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.Breadcrumbs
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-breadcrumbs
-   * @appenddocs BreadcrumbsItem
+   * @appenddocs sap.ui.webc.main.BreadcrumbsItem
    * @public
    * @since 1.0.0-rc.15
    */
-  class Breadcrumbs extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _BreadcrumbsTemplate.default;
-    }
-    static get staticAreaTemplate() {
-      return _BreadcrumbsPopoverTemplate.default;
-    }
-    static get styles() {
-      return _Breadcrumbs.default;
-    }
-    static get staticAreaStyles() {
-      return _BreadcrumbsPopover.default;
-    }
+  let Breadcrumbs = Breadcrumbs_1 = class Breadcrumbs extends _UI5Element.default {
     constructor() {
       super();
-      this._initItemNavigation();
-      this._onResizeHandler = this._updateOverflow.bind(this);
-
       // maps items to their widths
       this._breadcrumbItemWidths = new WeakMap();
       // the width of the interactive element that opens the overflow
       this._dropdownArrowLinkWidth = 0;
+      this._itemNavigation = new _ItemNavigation.default(this, {
+        navigationMode: _NavigationMode.default.Horizontal,
+        getItemsCallback: () => this._getFocusableItems()
+      });
+      this._onResizeHandler = this._updateOverflow.bind(this);
       this._labelFocusAdaptor = {
         id: `${this._id}-labelWrapper`,
         getlabelWrapper: this.getCurrentLocationLabelWrapper.bind(this),
@@ -213,13 +95,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
         },
         get _tabIndex() {
           const wrapper = this.getlabelWrapper();
-          return wrapper ? wrapper.getAttribute("tabindex") : undefined;
+          return wrapper?.getAttribute("tabindex") || "";
         }
       };
     }
     onInvalidation(changeInfo) {
       if (changeInfo.reason === "childchange") {
-        const itemIndex = this.getSlottedNodes("items").indexOf(changeInfo.child),
+        const itemIndex = this._getItems().indexOf(changeInfo.child),
           isInOverflow = itemIndex < this._overflowSize;
         if (isInOverflow) {
           // the content of an overflowing item has changed
@@ -228,6 +110,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
           this._overflowSize = itemIndex;
         }
       }
+    }
+    _getItems() {
+      return this.getSlottedNodes("items");
     }
     onBeforeRendering() {
       this._preprocessItems();
@@ -250,7 +135,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
         });
       }
     }
-
     /**
      * Obtains the items for navigation via keyboard
      * @private
@@ -265,56 +149,56 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       }
       return items;
     }
-    _onfocusin(event) {
-      const target = event.target,
+    _onfocusin(e) {
+      const target = e.target,
         labelWrapper = this.getCurrentLocationLabelWrapper(),
         currentItem = target === labelWrapper ? this._labelFocusAdaptor : target;
       this._itemNavigation.setCurrentItem(currentItem);
     }
-    _onkeydown(event) {
+    _onkeydown(e) {
       const isDropdownArrowFocused = this._isDropdownArrowFocused;
-      if ((0, _Keys.isShow)(event) && isDropdownArrowFocused && !this._isOverflowEmpty) {
-        event.preventDefault();
+      if ((0, _Keys.isShow)(e) && isDropdownArrowFocused && !this._isOverflowEmpty) {
+        e.preventDefault();
         this._toggleRespPopover();
         return;
       }
-      if ((0, _Keys.isSpace)(event) && isDropdownArrowFocused && !this._isOverflowEmpty && !this._isPickerOpen) {
-        event.preventDefault();
+      if ((0, _Keys.isSpace)(e) && isDropdownArrowFocused && !this._isOverflowEmpty && !this._isPickerOpen) {
+        e.preventDefault();
         return;
       }
-      if (((0, _Keys.isEnter)(event) || (0, _Keys.isSpace)(event)) && this._isCurrentLocationLabelFocused) {
-        this._onLabelPress();
+      if (((0, _Keys.isEnter)(e) || (0, _Keys.isSpace)(e)) && this._isCurrentLocationLabelFocused) {
+        this._onLabelPress(e);
       }
     }
-    _onkeyup(event) {
-      if (this._isDropdownArrowFocused && (0, _Keys.isSpace)(event) && !this._isOverflowEmpty && !this._isPickerOpen) {
+    _onkeyup(e) {
+      if (this._isDropdownArrowFocused && (0, _Keys.isSpace)(e) && !this._isOverflowEmpty && !this._isPickerOpen) {
         this._openRespPopover();
       }
     }
-
     /**
      * Caches the space required to render the content
      * @private
      */
     _cacheWidths() {
       const map = this._breadcrumbItemWidths,
-        items = this.getSlottedNodes("items"),
+        items = this._getItems(),
         label = this._currentLocationLabel;
       for (let i = this._overflowSize; i < items.length; i++) {
         const item = items[i],
           link = this.shadowRoot.querySelector(`#${item._id}-link-wrapper`);
-        map.set(item, this._getElementWidth(link) || 0);
+        map.set(item, this._getElementWidth(link));
       }
       if (items.length && this._endsWithCurrentLocationLabel && label) {
         const item = items[items.length - 1];
         map.set(item, this._getElementWidth(label));
       }
       if (!this._isOverflowEmpty) {
-        this._dropdownArrowLinkWidth = this._getElementWidth(this.shadowRoot.querySelector(".ui5-breadcrumbs-dropdown-arrow-link-wrapper"));
+        const arrow = this.shadowRoot.querySelector(".ui5-breadcrumbs-dropdown-arrow-link-wrapper");
+        this._dropdownArrowLinkWidth = this._getElementWidth(arrow);
       }
     }
     _updateOverflow() {
-      const items = this.getSlottedNodes("items"),
+      const items = this._getItems(),
         availableWidth = this.shadowRoot.querySelector(".ui5-breadcrumbs-root").offsetWidth;
       let requiredWidth = this._getTotalContentWidth(),
         overflowSize = 0;
@@ -328,18 +212,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
         if (this._isItemVisible(itemToOverflow)) {
           itemWidth = this._breadcrumbItemWidths.get(itemToOverflow) || 0;
         }
-
         // move the item to the overflow
         requiredWidth -= itemWidth;
         overflowSize++;
       }
       this._overflowSize = overflowSize;
-
       // if overflow was emptied while picker was open => close redundant popup
       if (this._isOverflowEmpty && this._isPickerOpen) {
         this.responsivePopover.close();
       }
-
       // if the last focused link has done into the overflow =>
       // ensure the first visible link is focusable
       const focusableItems = this._getFocusableItems();
@@ -351,35 +232,54 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       if (element) {
         return Math.ceil(element.getBoundingClientRect().width);
       }
+      return 0;
     }
     _getTotalContentWidth() {
-      const items = this.getSlottedNodes("items"),
+      const items = this._getItems(),
         widthsMap = this._breadcrumbItemWidths,
         totalLinksWidth = items.reduce((sum, link) => sum + widthsMap.get(link), 0);
       return totalLinksWidth;
     }
-    _onLinkPress(event) {
-      const link = event.target,
-        items = this.getSlottedNodes("items"),
-        item = items.find(x => `${x._id}-link` === link.id);
+    _onLinkPress(e) {
+      const link = e.target,
+        items = this._getItems(),
+        item = items.find(x => `${x._id}-link` === link.id),
+        {
+          altKey,
+          ctrlKey,
+          metaKey,
+          shiftKey
+        } = e.detail;
       if (!this.fireEvent("item-click", {
         item,
-        ...event.detail
+        altKey,
+        ctrlKey,
+        metaKey,
+        shiftKey
       }, true)) {
-        event.preventDefault();
+        e.preventDefault();
       }
     }
-    _onLabelPress(event) {
-      const items = this.getSlottedNodes("items"),
-        item = items[items.length - 1];
+    _onLabelPress(e) {
+      const items = this._getItems(),
+        item = items[items.length - 1],
+        {
+          altKey,
+          ctrlKey,
+          metaKey,
+          shiftKey
+        } = e;
       this.fireEvent("item-click", {
         item,
-        ...event.detail
+        altKey,
+        ctrlKey,
+        metaKey,
+        shiftKey
       });
     }
-    _onOverflowListItemSelect(event) {
-      const listItem = event.detail.selectedItems[0],
-        items = this.getSlottedNodes("items"),
+    _onOverflowListItemSelect(e) {
+      const listItem = e.detail.selectedItems[0],
+        items = this._getItems(),
         item = items.find(x => `${x._id}-li` === listItem.id);
       if (this.fireEvent("item-click", {
         item
@@ -400,7 +300,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
         this._openRespPopover();
       }
     }
-    async _closeRespPopover() {
+    _closeRespPopover() {
       this.responsivePopover && this.responsivePopover.close();
     }
     async _openRespPopover() {
@@ -421,17 +321,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       });
     }
     _getItemPositionText(position, size) {
-      return Breadcrumbs.i18nBundle.getText(_i18nDefaults.BREADCRUMB_ITEM_POS, position, size);
+      return Breadcrumbs_1.i18nBundle.getText(_i18nDefaults.BREADCRUMB_ITEM_POS, position, size);
     }
     _getItemAccessibleName(item, position, size) {
       const positionText = this._getItemPositionText(position, size);
-
+      const itemsText = item.textContent || "";
       // innerText is needed as it is no longer read out when label is set
       let text = "";
       if (item.accessibleName) {
-        text = `${item.textContent.trim()} ${item.accessibleName} ${positionText}`;
+        text = `${itemsText.trim()} ${item.accessibleName} ${positionText}`;
       } else {
-        text = `${item.textContent.trim()} ${positionText}`;
+        text = `${itemsText.trim()} ${positionText}`;
       }
       return text;
     }
@@ -439,13 +339,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       return this.shadowRoot.querySelector(".ui5-breadcrumbs-current-location > span");
     }
     get _visibleItems() {
-      return this.getSlottedNodes("items").slice(this._overflowSize).filter(i => this._isItemVisible(i));
+      return this._getItems().slice(this._overflowSize).filter(i => this._isItemVisible(i));
     }
     get _endsWithCurrentLocationLabel() {
       return this.design === _BreadcrumbsDesign.default.Standard;
     }
     get _currentLocationText() {
-      const items = this.getSlottedNodes("items");
+      const items = this._getItems();
       if (this._endsWithCurrentLocationLabel && items.length) {
         const item = items[items.length - 1];
         if (this._isItemVisible(item)) {
@@ -464,17 +364,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       const label = this.getCurrentLocationLabelWrapper();
       return label && label.tabIndex === 0;
     }
-
     /**
      * Returns the maximum allowed count of items in the overflow
      * with respect to the UX requirement to never overflow the last visible item
      */
     get _maxAllowedOverflowSize() {
-      const items = this.getSlottedNodes("items").filter(item => this._isItemVisible(item));
+      const items = this._getItems().filter(item => this._isItemVisible(item));
       // all items except tha last visible one are allowed to overflow by UX requirement
       return items.length - 1;
     }
-
     /**
      * Getter for the interactive element that opens the overflow
      * @private
@@ -482,21 +380,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
     get _dropdownArrowLink() {
       return this.shadowRoot.querySelector(".ui5-breadcrumbs-dropdown-arrow-link-wrapper [ui5-link]");
     }
-
     /**
      * Getter for the list of abstract breadcrumb items to be rendered as list-items inside the overflow
      */
     get _overflowItemsData() {
-      return this.getSlottedNodes("items").slice(0, this._overflowSize).filter(item => this._isItemVisible(item)).reverse();
+      return this._getItems().slice(0, this._overflowSize).filter(item => this._isItemVisible(item)).reverse();
     }
-
     /**
      * Getter for the list of abstract breadcrumb items to be rendered as links outside the overflow
      */
     get _linksData() {
       const items = this._visibleItems;
       const itemsCount = items.length; // get size before removing of current location
-
       if (this._endsWithCurrentLocationLabel) {
         items.pop();
       }
@@ -505,7 +400,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
         return item;
       });
     }
-
     /**
      * Getter for accessible name of the current location. Includes the position of the current location and the size of the breadcrumbs
      */
@@ -516,12 +410,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       if (!lastItem) {
         return positionText;
       }
+      const lastItemText = lastItem.textContent || "";
       if (lastItem.accessibleName) {
-        return `${lastItem.textContent.trim()} ${lastItem.accessibleName} ${positionText}`;
+        return `${lastItemText.trim()} ${lastItem.accessibleName} ${positionText}`;
       }
-      return `${lastItem.textContent.trim()} ${positionText}`;
+      return `${lastItemText.trim()} ${positionText}`;
     }
-
     /**
      * Getter for the list of links corresponding to the abstract breadcrumb items
      */
@@ -541,21 +435,77 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       return !!this.responsivePopover && this.responsivePopover.opened;
     }
     get _accessibleNameText() {
-      return Breadcrumbs.i18nBundle.getText(_i18nDefaults.BREADCRUMBS_ARIA_LABEL);
+      return Breadcrumbs_1.i18nBundle.getText(_i18nDefaults.BREADCRUMBS_ARIA_LABEL);
     }
     get _dropdownArrowAccessibleNameText() {
-      return Breadcrumbs.i18nBundle.getText(_i18nDefaults.BREADCRUMBS_OVERFLOW_ARIA_LABEL);
+      return Breadcrumbs_1.i18nBundle.getText(_i18nDefaults.BREADCRUMBS_OVERFLOW_ARIA_LABEL);
     }
     get _cancelButtonText() {
-      return Breadcrumbs.i18nBundle.getText(_i18nDefaults.BREADCRUMBS_CANCEL_BUTTON);
-    }
-    static get dependencies() {
-      return [_BreadcrumbsItem.default, _Link.default, _Label.default, _ResponsivePopover.default, _List.default, _StandardListItem.default, _Icon.default, _Button.default];
+      return Breadcrumbs_1.i18nBundle.getText(_i18nDefaults.BREADCRUMBS_CANCEL_BUTTON);
     }
     static async onDefine() {
-      Breadcrumbs.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      Breadcrumbs_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _BreadcrumbsDesign.default,
+    defaultValue: _BreadcrumbsDesign.default.Standard
+  })], Breadcrumbs.prototype, "design", void 0);
+  __decorate([(0, _property.default)({
+    type: _BreadcrumbsSeparatorStyle.default,
+    defaultValue: _BreadcrumbsSeparatorStyle.default.Slash
+  })], Breadcrumbs.prototype, "separatorStyle", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    noAttribute: true,
+    defaultValue: 0
+  })], Breadcrumbs.prototype, "_overflowSize", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    invalidateOnChildChange: true,
+    "default": true
+  })], Breadcrumbs.prototype, "items", void 0);
+  Breadcrumbs = Breadcrumbs_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-breadcrumbs",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _BreadcrumbsTemplate.default,
+    staticAreaTemplate: _BreadcrumbsPopoverTemplate.default,
+    styles: _Breadcrumbs.default,
+    staticAreaStyles: _BreadcrumbsPopover.default,
+    dependencies: [_BreadcrumbsItem.default, _Link.default, _Label.default, _ResponsivePopover.default, _List.default, _StandardListItem.default, _Icon.default, _Button.default]
+  })
+  /**
+   * Fires when a <code>BreadcrumbsItem</code> is clicked.
+   * <b>Note:</b> You can prevent browser location change by calling <code>event.preventDefault()</code>.
+   *
+   * @event sap.ui.webc.main.Breadcrumbs#item-click
+   * @allowPreventDefault
+   * @param {HTMLElement} item The clicked item.
+   * @param {Boolean} altKey Returns whether the "ALT" key was pressed when the event was triggered.
+   * @param {Boolean} ctrlKey Returns whether the "CTRL" key was pressed when the event was triggered.
+   * @param {Boolean} metaKey Returns whether the "META" key was pressed when the event was triggered.
+   * @param {Boolean} shiftKey Returns whether the "SHIFT" key was pressed when the event was triggered.
+   * @public
+   */, (0, _event.default)("item-click", {
+    detail: {
+      item: {
+        type: HTMLElement
+      },
+      altKey: {
+        type: Boolean
+      },
+      ctrlKey: {
+        type: Boolean
+      },
+      metaKey: {
+        type: Boolean
+      },
+      shiftKey: {
+        type: Boolean
+      }
+    }
+  })], Breadcrumbs);
   Breadcrumbs.define();
   var _default = Breadcrumbs;
   _exports.default = _default;

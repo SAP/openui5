@@ -19,13 +19,29 @@ sap.ui.define([
 				value: "Control value",
 				valueState: "Warning",
 				valueStateMessage: "Value State Message",
-				icon: new Icon({
-					color: "blue",
-					name: "add",
-					click: function(oEvent) {
-						// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-					}
-				}),
+				icon: [
+					new Icon({
+						color: "blue",
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new Icon({
+						color: "blue",
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new Icon({
+						color: "blue",
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					})
+				],
 				items: [
 					new ComboBoxGroupItem({
 						text: "Some text..."

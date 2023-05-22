@@ -60,39 +60,87 @@ sap.ui.define([
 				tokens: [
 					new Token({
 						text: "Some text...",
-						closeIcon: new Icon({
-							color: "blue",
-							name: "add",
-							click: function(oEvent) {
-								// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-							}
-						}),
+						closeIcon: [
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
 						select: function(oEvent) {
 							// console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
 						}
 					}),
 					new Token({
 						text: "Some text...",
-						closeIcon: new Icon({
-							color: "blue",
-							name: "add",
-							click: function(oEvent) {
-								// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-							}
-						}),
+						closeIcon: [
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
 						select: function(oEvent) {
 							// console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
 						}
 					}),
 					new Token({
 						text: "Some text...",
-						closeIcon: new Icon({
-							color: "blue",
-							name: "add",
-							click: function(oEvent) {
-								// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-							}
-						}),
+						closeIcon: [
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Icon({
+								color: "blue",
+								name: "add",
+								click: function(oEvent) {
+									// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
 						select: function(oEvent) {
 							// console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
 						}

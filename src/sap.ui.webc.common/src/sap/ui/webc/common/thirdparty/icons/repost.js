@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/repost", "./v4/repost"], function (_exports, _Theme, _repost, _repost2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/repost", "./v5/repost"], function (_exports, _Theme, _repost, _repost2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _repost.pathData : _repost2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _repost.pathData : _repost2.pathData;
   _exports.pathData = pathData;
   var _default = "repost";
   _exports.default = _default;

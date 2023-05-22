@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
 	"sap/ui/webc/main/Card",
-	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Card, Button) {
+	"sap/ui/webc/main/Button",
+	"sap/ui/webc/main/CardHeader"
+], function(createAndAppendDiv, Core, Card, Button, CardHeader) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -37,25 +38,163 @@ sap.ui.define([
 					})
 				],
 				header: [
-					new Button({
-						icon: "employee",
-						text: "Some text...",
+					new CardHeader({
+						subtitleText: "Some text...",
+						titleText: "Some text...",
+						action: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
+						avatar: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
 						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							// console.log("Event click fired for CardHeader with parameters: ", oEvent.getParameters());
 						}
 					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
+					new CardHeader({
+						subtitleText: "Some text...",
+						titleText: "Some text...",
+						action: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
+						avatar: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
 						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							// console.log("Event click fired for CardHeader with parameters: ", oEvent.getParameters());
 						}
 					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
+					new CardHeader({
+						subtitleText: "Some text...",
+						titleText: "Some text...",
+						action: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
+						avatar: [
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							}),
+							new Button({
+								icon: "employee",
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+								}
+							})
+						],
 						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							// console.log("Event click fired for CardHeader with parameters: ", oEvent.getParameters());
 						}
 					})
 				]

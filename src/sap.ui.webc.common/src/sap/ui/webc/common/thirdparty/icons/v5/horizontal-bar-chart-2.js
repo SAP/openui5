@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "horizontal-bar-chart-2";
+  var _default = "SAP-icons-v5/horizontal-bar-chart-2";
   _exports.default = _default;
 });

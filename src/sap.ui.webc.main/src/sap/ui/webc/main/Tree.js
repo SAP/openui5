@@ -70,6 +70,13 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the accessible name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
 				 * Defines the component footer text.
 				 */
 				footerText: {
@@ -155,6 +162,21 @@ sap.ui.define([
 				items: {
 					type: "sap.ui.webc.main.ITreeItem",
 					multiple: true
+				}
+			},
+			associations: {
+
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						type: "property",
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {
@@ -250,6 +272,13 @@ sap.ui.define([
 						 */
 						previouslySelectedItems: {
 							type: "Array"
+						},
+
+						/**
+						 * The item triggering the event.
+						 */
+						targetItem: {
+							type: "HTMLElement"
 						}
 					}
 				}
@@ -260,7 +289,7 @@ sap.ui.define([
 
 	/**
 	 * Perform Depth-First-Search walk on the tree and run a callback on each node
-	 * @param {function} callback function to execute on each node of the tree with 2 arguments: the node and the level
+	 * @param {function} callback function to execute on each node of the tree with 3 arguments: the node, the level and the index
 	 * @public
 	 * @name sap.ui.webc.main.Tree#walk
 	 * @function

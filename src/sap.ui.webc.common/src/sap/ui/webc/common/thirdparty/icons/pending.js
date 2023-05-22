@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pending", "./v4/pending"], function (_exports, _Theme, _pending, _pending2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/pending", "./v5/pending"], function (_exports, _Theme, _pending, _pending2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pending.pathData : _pending2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _pending.pathData : _pending2.pathData;
   _exports.pathData = pathData;
   var _default = "pending";
   _exports.default = _default;

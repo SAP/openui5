@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/trailer", "./v2/trailer"], function (_exports, _Theme, _trailer, _trailer2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "trailer";
-  const pathData = "M17 0h31v224h112v80h112v64h80v-96h144v208H17V0zm287 72h48l24 24V0h48v96l24-24h48l-96 96zM48 448h416V304h-80v96H240v-64H128v-80H48v192z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _trailer.accData;
+    }
   });
-  var _default = "trailer";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _trailer.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _trailer.pathData : _trailer2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/trailer";
   _exports.default = _default;
 });

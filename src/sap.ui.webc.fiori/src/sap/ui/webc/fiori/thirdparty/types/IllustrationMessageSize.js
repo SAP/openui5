@@ -1,19 +1,22 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
    * Different types of IllustrationMessageSize.
-   * @lends sap.ui.webcomponents.fiori.types.IllustrationMessageSize.prototype
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.fiori.types.IllustrationMessageSize
    * @since 1.5.0
    */
-  const IllustrationMessageSizes = {
+  var IllustrationMessageSize;
+  (function (IllustrationMessageSize) {
     /**
      * Automatically decides the <code>Illustration</code> size (<code>Base</code>, <code>Spot</code>,
      * <code>Dialog</code>, or <code>Scene</code>) depending on the <code>IllustratedMessage</code> container width.
@@ -23,48 +26,37 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], 
      * until changed by the app developer.
      *
      * @public
+     * @type {Auto}
      */
-    Auto: "Auto",
+    IllustrationMessageSize["Auto"] = "Auto";
     /**
      * Base <code>Illustration</code> size (XS breakpoint). Suitable for cards (two columns).
      *
      * <b>Note:</b> When <code>Base</code> is in use, no illustration is displayed.
      *
      * @public
+     * @type {Base}
      */
-    Base: "Base",
+    IllustrationMessageSize["Base"] = "Base";
     /**
      * Spot <code>Illustration</code> size (S breakpoint). Suitable for cards (four columns).
      * @public
+     * @type {Spot}
      */
-    Spot: "Spot",
+    IllustrationMessageSize["Spot"] = "Spot";
     /**
      * Dialog <code>Illustration</code> size (M breakpoint). Suitable for dialogs.
      * @public
+     * @type {Dialog}
      */
-    Dialog: "Dialog",
+    IllustrationMessageSize["Dialog"] = "Dialog";
     /**
      * Scene <code>Illustration</code> size (L breakpoint). Suitable for a <code>Page</code> or a table.
      * @public
+     * @type {Scene}
      */
-    Scene: "Scene"
-  };
-
-  /**
-   * @class
-   * Different types of IllustrationMessageSize.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.types.IllustrationMessageSize
-   * @public
-   * @enum {string}
-   */
-  class IllustrationMessageSize extends _DataType.default {
-    static isValid(value) {
-      return !!IllustrationMessageSizes[value];
-    }
-  }
-  IllustrationMessageSize.generateTypeAccessors(IllustrationMessageSizes);
+    IllustrationMessageSize["Scene"] = "Scene";
+  })(IllustrationMessageSize || (IllustrationMessageSize = {}));
   var _default = IllustrationMessageSize;
   _exports.default = _default;
 });

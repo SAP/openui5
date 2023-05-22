@@ -1,26 +1,17 @@
-sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollectionsAlias", "../config/Icons"], function (_exports, _getSharedResource, _IconCollectionsAlias, _Icons) {
+sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollectionsAlias", "../config/Icons", "../i18nBundle"], function (_exports, _getSharedResource, _IconCollectionsAlias, _Icons, _i18nBundle) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.registerIconLoader = _exports.registerIconBundle = _exports.registerIcon = _exports.getIconDataSync = _exports.getIconData = _exports._getRegisteredNames = void 0;
+  _exports.registerIconLoader = _exports.registerIcon = _exports.getIconDataSync = _exports.getIconData = _exports.getIconAccessibleName = _exports._getRegisteredNames = void 0;
   _getSharedResource = _interopRequireDefault(_getSharedResource);
-  _IconCollectionsAlias = _interopRequireDefault(_IconCollectionsAlias);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   const loaders = new Map();
   const registry = (0, _getSharedResource.default)("SVGIcons.registry", new Map());
   const iconCollectionPromises = (0, _getSharedResource.default)("SVGIcons.promises", new Map());
   const ICON_NOT_FOUND = "ICON_NOT_FOUND";
-
-  /**
-   * @deprecated
-   */
-  const registerIconBundle = async (collectionName, bundleData) => {
-    throw new Error("This method has been removed. Use `registerIconLoader` instead.");
-  };
-  _exports.registerIconBundle = registerIconBundle;
-  const registerIconLoader = async (collectionName, loader) => {
+  const registerIconLoader = (collectionName, loader) => {
     loaders.set(collectionName, loader);
   };
   _exports.registerIconLoader = registerIconLoader;
@@ -38,7 +29,7 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
     Object.keys(bundleData.data).forEach(iconName => {
       const iconData = bundleData.data[iconName];
       registerIcon(iconName, {
-        pathData: iconData.path,
+        pathData: iconData.path || iconData.paths,
         ltr: iconData.ltr,
         accData: iconData.acc,
         collection: bundleData.collection,
@@ -46,44 +37,43 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
       });
     });
   };
-
   // set
-  const registerIcon = (name, {
-    pathData,
-    ltr,
-    accData,
-    collection,
-    packageName
-  } = {}) => {
-    // eslint-disable-line
-    if (!collection) {
-      collection = (0, _Icons.getEffectiveDefaultIconCollection)();
-    }
-    const key = `${collection}/${name}`;
+  const registerIcon = (name, iconData) => {
+    const key = `${iconData.collection}/${name}`;
     registry.set(key, {
-      pathData,
-      ltr,
-      accData,
-      packageName
+      pathData: iconData.pathData,
+      ltr: iconData.ltr,
+      accData: iconData.accData,
+      packageName: iconData.packageName,
+      customTemplate: iconData.customTemplate,
+      viewBox: iconData.viewBox,
+      collection: iconData.collection
     });
   };
+  /**
+   * Processes the full icon name and splits it into - "name", "collection"
+   * to form the proper registry key ("collection/name") under which the icon is registered:
+   *
+   * - removes legacy protocol ("sap-icon://")
+   * - resolves aliases (f.e "SAP-icons-TNT/actor" => "tnt/actor")
+   * - determines theme dependant icon collection (f.e "home" => "SAP-icons-v4/home" in Quartz | "SAP-icons-v5/home" in Horizon)
+   *
+   * @param { string } name
+   * @return { object }
+   */
   _exports.registerIcon = registerIcon;
-  const _parseName = name => {
+  const processName = name => {
     // silently support ui5-compatible URIs
     if (name.startsWith("sap-icon://")) {
       name = name.replace("sap-icon://", "");
     }
     let collection;
     [name, collection] = name.split("/").reverse();
-    collection = collection || (0, _Icons.getEffectiveDefaultIconCollection)();
-
-    // Normalize collection name.
-    // - resolve `SAP-icons-TNT` to `tnt`.
-    // - resolve `BusinessSuiteInAppSymbols` to `business-suite`.
-    // - resolve `horizon` to `SAP-icons-v5`,
-    // Note: aliases can be made as a feature, if more collections need it or more aliases are needed.
-    collection = _normalizeCollection(collection);
     name = name.replace("icon-", "");
+    if (collection) {
+      collection = (0, _IconCollectionsAlias.getIconCollectionByAlias)(collection);
+    }
+    collection = (0, _Icons.getEffectiveIconCollection)(collection);
     const registryKey = `${collection}/${name}`;
     return {
       name,
@@ -91,22 +81,23 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
       registryKey
     };
   };
-  const getIconDataSync = nameProp => {
+  const getIconDataSync = name => {
     const {
       registryKey
-    } = _parseName(nameProp);
+    } = processName(name);
     return registry.get(registryKey);
   };
   _exports.getIconDataSync = getIconDataSync;
-  const getIconData = async nameProp => {
+  const getIconData = async name => {
     const {
       collection,
       registryKey
-    } = _parseName(nameProp);
+    } = processName(name);
     let iconData = ICON_NOT_FOUND;
     try {
       iconData = await _loadIconCollectionOnce(collection);
-    } catch (e) {
+    } catch (error) {
+      const e = error;
       console.error(e.message); /* eslint-disable-line */
     }
 
@@ -119,9 +110,29 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
     }
     return registry.get(registryKey);
   };
-
-  // test page usage only
+  /**
+   * Returns the accessible name for the given icon,
+   * or undefined if accessible name is not present.
+   *
+   * @param { string } name
+   * @return { Promise }
+   */
   _exports.getIconData = getIconData;
+  const getIconAccessibleName = async name => {
+    if (!name) {
+      return;
+    }
+    let iconData = getIconDataSync(name);
+    if (!iconData) {
+      iconData = await getIconData(name);
+    }
+    if (iconData && iconData !== ICON_NOT_FOUND && iconData.accData) {
+      const i18nBundle = await (0, _i18nBundle.getI18nBundle)(iconData.packageName);
+      return i18nBundle.getText(iconData.accData);
+    }
+  };
+  // test page usage only
+  _exports.getIconAccessibleName = getIconAccessibleName;
   const _getRegisteredNames = async () => {
     // fetch one icon of each collection to trigger the bundle load
     await getIconData("edit");
@@ -130,10 +141,4 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
     return Array.from(registry.keys());
   };
   _exports._getRegisteredNames = _getRegisteredNames;
-  const _normalizeCollection = collectionName => {
-    if (_IconCollectionsAlias.default[collectionName]) {
-      return _IconCollectionsAlias.default[collectionName];
-    }
-    return collectionName;
-  };
 });

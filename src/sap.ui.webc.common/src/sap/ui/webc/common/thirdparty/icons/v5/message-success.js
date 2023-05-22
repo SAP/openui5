@@ -21,6 +21,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "message-success";
+  var _default = "SAP-icons-v5/message-success";
   _exports.default = _default;
 });

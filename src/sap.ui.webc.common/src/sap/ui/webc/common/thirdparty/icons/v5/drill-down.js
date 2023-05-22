@@ -21,6 +21,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "drill-down";
+  var _default = "SAP-icons-v5/drill-down";
   _exports.default = _default;
 });

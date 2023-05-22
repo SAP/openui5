@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/locked", "./v4/locked"], function (_exports, _Theme, _locked, _locked2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/locked", "./v5/locked"], function (_exports, _Theme, _locked, _locked2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _locked.pathData : _locked2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _locked.pathData : _locked2.pathData;
   _exports.pathData = pathData;
   var _default = "locked";
   _exports.default = _default;

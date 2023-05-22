@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/expand-group", "./v4/expand-group"], function (_exports, _Theme, _expandGroup, _expandGroup2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/expand-group", "./v5/expand-group"], function (_exports, _Theme, _expandGroup, _expandGroup2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _expandGroup.pathData : _expandGroup2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _expandGroup.pathData : _expandGroup2.pathData;
   _exports.pathData = pathData;
   var _default = "expand-group";
   _exports.default = _default;

@@ -12,7 +12,7 @@ sap.ui.define(["exports"], function (_exports) {
   const getCaretPosition = field => {
     // Initialize
     let caretPos = 0;
-    if (field.selectionStart || field.selectionStart === "0") {
+    if (field.selectionStart || field.selectionStart === 0) {
       // Firefox support
       caretPos = field.selectionDirection === "backward" ? field.selectionStart : field.selectionEnd;
     }
@@ -20,11 +20,7 @@ sap.ui.define(["exports"], function (_exports) {
   };
   _exports.getCaretPosition = getCaretPosition;
   const setCaretPosition = (field, caretPos) => {
-    if (field.createTextRange) {
-      const range = field.createTextRange();
-      range.move("character", caretPos);
-      range.select();
-    } else if (field.selectionStart) {
+    if (field.selectionStart) {
       field.focus();
       field.setSelectionRange(caretPos, caretPos);
     } else {

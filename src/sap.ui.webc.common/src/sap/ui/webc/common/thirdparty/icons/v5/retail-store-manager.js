@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "retail-store-manager";
+  var _default = "SAP-icons-v5/retail-store-manager";
   _exports.default = _default;
 });

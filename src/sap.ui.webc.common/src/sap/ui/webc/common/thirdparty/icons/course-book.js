@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/course-book", "./v4/course-book"], function (_exports, _Theme, _courseBook, _courseBook2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/course-book", "./v5/course-book"], function (_exports, _Theme, _courseBook, _courseBook2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _courseBook.pathData : _courseBook2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _courseBook.pathData : _courseBook2.pathData;
   _exports.pathData = pathData;
   var _default = "course-book";
   _exports.default = _default;

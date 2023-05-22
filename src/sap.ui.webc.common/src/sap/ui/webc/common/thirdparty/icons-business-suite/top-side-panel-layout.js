@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/top-side-panel-layout", "./v2/top-side-panel-layout"], function (_exports, _Theme, _topSidePanelLayout, _topSidePanelLayout2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "top-side-panel-layout";
-  const pathData = "M0 512V0h512v512H0zm32-384h448V32H32v96zm128 32v320h320V160H160zM32 480h96V160H32v320z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _topSidePanelLayout.accData;
+    }
   });
-  var _default = "top-side-panel-layout";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _topSidePanelLayout.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _topSidePanelLayout.pathData : _topSidePanelLayout2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/top-side-panel-layout";
   _exports.default = _default;
 });

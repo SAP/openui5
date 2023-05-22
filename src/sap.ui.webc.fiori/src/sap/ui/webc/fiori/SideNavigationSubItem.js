@@ -71,6 +71,15 @@ sap.ui.define([
 					defaultValue: ""
 				}
 			},
+			events: {
+
+				/**
+				 * Fired when the component is activated either with a click/tap or by using the Enter or Space key.
+				 */
+				click: {
+					parameters: {}
+				}
+			},
 			designtime: "sap/ui/webc/fiori/designtime/SideNavigationSubItem.designtime"
 		}
 	});

@@ -1,58 +1,46 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.fiori.types.BarDesign.prototype
+   * Different types of Bar design
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.fiori.types.BarDesign
    */
-  const BarTypes = {
+  var BarDesign;
+  (function (BarDesign) {
     /**
      * Default type
      * @public
      * @type {Header}
      */
-    Header: "Header",
+    BarDesign["Header"] = "Header";
     /**
      * Subheader type
      * @public
      * @type {Subheader}
      */
-    Subheader: "Subheader",
+    BarDesign["Subheader"] = "Subheader";
     /**
      * Footer type
      * @public
      * @type {Footer}
      */
-    Footer: "Footer",
+    BarDesign["Footer"] = "Footer";
     /**
      * Floating Footer type - there is visible border on all sides
      * @public
      * @type {FloatingFooter}
      */
-    FloatingFooter: "FloatingFooter"
-  };
-
-  /**
-   * @class
-   * Different types of Bar.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.types.BarDesign
-   * @public
-   * @enum {string}
-   */
-  class BarDesign extends _DataType.default {
-    static isValid(value) {
-      return !!BarTypes[value];
-    }
-  }
-  BarDesign.generateTypeAccessors(BarTypes);
+    BarDesign["FloatingFooter"] = "FloatingFooter";
+  })(BarDesign || (BarDesign = {}));
   var _default = BarDesign;
   _exports.default = _default;
 });

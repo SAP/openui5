@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bullet-text", "./v4/bullet-text"], function (_exports, _Theme, _bulletText, _bulletText2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/bullet-text", "./v5/bullet-text"], function (_exports, _Theme, _bulletText, _bulletText2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _bulletText.pathData : _bulletText2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _bulletText.pathData : _bulletText2.pathData;
   _exports.pathData = pathData;
   var _default = "bullet-text";
   _exports.default = _default;

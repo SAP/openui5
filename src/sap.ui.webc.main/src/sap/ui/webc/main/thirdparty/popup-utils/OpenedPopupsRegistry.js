@@ -7,12 +7,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys"], function (
   _exports.removeOpenedPopup = _exports.getOpenedPopups = _exports.addOpenedPopup = void 0;
   let openedRegistry = [];
   const addOpenedPopup = (instance, parentPopovers = []) => {
-    if (!openedRegistry.includes(instance)) {
+    if (!openedRegistry.some(popup => popup.instance === instance)) {
       openedRegistry.push({
         instance,
         parentPopovers
       });
     }
+    _updateTopModalPopup();
     if (openedRegistry.length === 1) {
       attachGlobalListener();
     }
@@ -22,6 +23,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys"], function (
     openedRegistry = openedRegistry.filter(el => {
       return el.instance !== instance;
     });
+    _updateTopModalPopup();
     if (!openedRegistry.length) {
       detachGlobalListener();
     }
@@ -44,5 +46,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys"], function (
   };
   const detachGlobalListener = () => {
     document.removeEventListener("keydown", _keydownListener);
+  };
+  const _updateTopModalPopup = () => {
+    let popup;
+    let hasModal = false;
+    for (let i = openedRegistry.length - 1; i >= 0; i--) {
+      popup = openedRegistry[i].instance;
+      if (!hasModal && popup.isModal) {
+        popup.isTopModalPopup = true;
+        hasModal = true;
+      } else {
+        popup.isTopModalPopup = false;
+      }
+    }
   };
 });

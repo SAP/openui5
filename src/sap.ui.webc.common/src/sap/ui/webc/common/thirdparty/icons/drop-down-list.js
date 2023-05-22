@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/drop-down-list", "./v4/drop-down-list"], function (_exports, _Theme, _dropDownList, _dropDownList2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/drop-down-list", "./v5/drop-down-list"], function (_exports, _Theme, _dropDownList, _dropDownList2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _dropDownList.pathData : _dropDownList2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _dropDownList.pathData : _dropDownList2.pathData;
   _exports.pathData = pathData;
   var _default = "drop-down-list";
   _exports.default = _default;

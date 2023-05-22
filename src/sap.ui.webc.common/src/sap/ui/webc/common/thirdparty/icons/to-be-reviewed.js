@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/to-be-reviewed", "./v4/to-be-reviewed"], function (_exports, _Theme, _toBeReviewed, _toBeReviewed2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/to-be-reviewed", "./v5/to-be-reviewed"], function (_exports, _Theme, _toBeReviewed, _toBeReviewed2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _toBeReviewed.pathData : _toBeReviewed2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _toBeReviewed.pathData : _toBeReviewed2.pathData;
   _exports.pathData = pathData;
   var _default = "to-be-reviewed";
   _exports.default = _default;

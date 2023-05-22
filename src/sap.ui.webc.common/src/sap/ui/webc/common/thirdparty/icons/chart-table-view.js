@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/chart-table-view", "./v4/chart-table-view"], function (_exports, _Theme, _chartTableView, _chartTableView2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/chart-table-view", "./v5/chart-table-view"], function (_exports, _Theme, _chartTableView, _chartTableView2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _chartTableView.pathData : _chartTableView2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _chartTableView.pathData : _chartTableView2.pathData;
   _exports.pathData = pathData;
   var _default = "chart-table-view";
   _exports.default = _default;

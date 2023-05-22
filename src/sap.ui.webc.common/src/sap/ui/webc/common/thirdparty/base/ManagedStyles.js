@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "./util/createStyleInHead", "./util/createLinkInHead", "./CSP"], function (_exports, _createStyleInHead, _createLinkInHead, _CSP) {
+sap.ui.define(["exports", "./util/createStyleInHead", "./util/createLinkInHead", "./CSP", "./Runtimes"], function (_exports, _createStyleInHead, _createLinkInHead, _CSP, _Runtimes) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -12,7 +12,10 @@ sap.ui.define(["exports", "./util/createStyleInHead", "./util/createLinkInHead",
     return value ? `${name}|${value}` : name;
   };
   const createStyle = (data, name, value = "") => {
-    const content = typeof data === "string" ? data : data.content;
+    let content = typeof data === "string" ? data : data.content;
+    if (content.includes("[_ui5host]")) {
+      content = content.replaceAll("[_ui5host]", `[_ui5rt${(0, _Runtimes.getCurrentRuntimeIndex)()}]`);
+    }
     if ((0, _CSP.shouldUseLinks)()) {
       const attributes = {};
       attributes[name] = value;
@@ -31,13 +34,23 @@ sap.ui.define(["exports", "./util/createStyleInHead", "./util/createLinkInHead",
   };
   _exports.createStyle = createStyle;
   const updateStyle = (data, name, value = "") => {
-    const content = typeof data === "string" ? data : data.content;
+    let content = typeof data === "string" ? data : data.content;
+    if (content.includes("[_ui5host]")) {
+      content = content.replaceAll("[_ui5host]", `[_ui5rt${(0, _Runtimes.getCurrentRuntimeIndex)()}]`);
+    }
     if ((0, _CSP.shouldUseLinks)()) {
-      document.querySelector(`head>link[${name}="${value}"]`).href = (0, _CSP.getUrl)(data.packageName, data.fileName);
+      const link = document.querySelector(`head>link[${name}="${value}"]`);
+      link.href = (0, _CSP.getUrl)(data.packageName, data.fileName);
     } else if (document.adoptedStyleSheets) {
-      document.adoptedStyleSheets.find(sh => sh._ui5StyleId === getStyleId(name, value)).replaceSync(content || "");
+      const stylesheet = document.adoptedStyleSheets.find(sh => sh._ui5StyleId === getStyleId(name, value));
+      if (stylesheet) {
+        stylesheet.replaceSync(content || "");
+      }
     } else {
-      document.querySelector(`head>style[${name}="${value}"]`).textContent = content || "";
+      const style = document.querySelector(`head>style[${name}="${value}"]`);
+      if (style) {
+        style.textContent = content || "";
+      }
     }
   };
   _exports.updateStyle = updateStyle;
@@ -54,16 +67,12 @@ sap.ui.define(["exports", "./util/createStyleInHead", "./util/createLinkInHead",
   const removeStyle = (name, value = "") => {
     if ((0, _CSP.shouldUseLinks)()) {
       const linkElement = document.querySelector(`head>link[${name}="${value}"]`);
-      if (linkElement) {
-        linkElement.parentElement.removeChild(linkElement);
-      }
+      linkElement?.parentElement?.removeChild(linkElement);
     } else if (document.adoptedStyleSheets) {
       document.adoptedStyleSheets = document.adoptedStyleSheets.filter(sh => sh._ui5StyleId !== getStyleId(name, value));
     } else {
       const styleElement = document.querySelector(`head > style[${name}="${value}"]`);
-      if (styleElement) {
-        styleElement.parentElement.removeChild(styleElement);
-      }
+      styleElement?.parentElement?.removeChild(styleElement);
     }
   };
   _exports.removeStyle = removeStyle;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/util/isDefaultSlotProvided", "./types/ButtonDesign", "./generated/templates/ButtonTemplate.lit", "./Icon", "./generated/i18n/i18n-defaults", "./generated/themes/Button.css"], function (_exports, _UI5Element, _LitRenderer, _Keys, _AriaLabelHelper, _FeaturesRegistry, _i18nBundle, _Device, _isDefaultSlotProvided, _ButtonDesign, _ButtonTemplate, _Icon, _i18nDefaults, _Button) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/MarkedEvents", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/util/willShowContent", "./types/ButtonDesign", "./generated/templates/ButtonTemplate.lit", "./Icon", "./generated/i18n/i18n-defaults", "./generated/themes/Button.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _Keys, _AriaLabelHelper, _FeaturesRegistry, _i18nBundle, _MarkedEvents, _Icons, _Device, _willShowContent, _ButtonDesign, _ButtonTemplate, _Icon, _i18nDefaults, _Button) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,252 +6,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
-  _isDefaultSlotProvided = _interopRequireDefault(_isDefaultSlotProvided);
+  _willShowContent = _interopRequireDefault(_willShowContent);
   _ButtonDesign = _interopRequireDefault(_ButtonDesign);
   _ButtonTemplate = _interopRequireDefault(_ButtonTemplate);
   _Icon = _interopRequireDefault(_Icon);
   _Button = _interopRequireDefault(_Button);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+  var Button_1;
   let isGlobalHandlerAttached = false;
   let activeButton = null;
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-button",
-    languageAware: true,
-    properties: /** @lends sap.ui.webcomponents.main.Button.prototype */{
-      /**
-       * Defines the component design.
-       *
-       * <br><br>
-       * <b>The available values are:</b>
-       *
-       * <ul>
-       * <li><code>Default</code></li>
-       * <li><code>Emphasized</code></li>
-       * <li><code>Positive</code></li>
-       * <li><code>Negative</code></li>
-       * <li><code>Transparent</code></li>
-       * <li><code>Attention</code></li>
-       * </ul>
-       *
-       * @type {ButtonDesign}
-       * @defaultvalue "Default"
-       * @public
-       */
-      design: {
-        type: _ButtonDesign.default,
-        defaultValue: _ButtonDesign.default.Default
-      },
-      /**
-       * Defines whether the component is disabled.
-       * A disabled component can't be pressed or
-       * focused, and it is not in the tab chain.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines the icon, displayed as graphical element within the component.
-       * The SAP-icons font provides numerous options.
-       * <br><br>
-       * Example:
-       *
-       * See all the available icons within the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      icon: {
-        type: String
-      },
-      /**
-       * Defines whether the icon should be displayed after the component text.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      iconEnd: {
-        type: Boolean
-      },
-      /**
-       * When set to <code>true</code>, the component will
-       * automatically submit the nearest HTML form element on <code>press</code>.
-       * <br><br>
-       * <b>Note:</b> For the <code>submits</code> property to have effect, you must add the following import to your project:
-       * <code>import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";</code>
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      submits: {
-        type: Boolean
-      },
-      /**
-       * Defines the tooltip of the component.
-       * <br>
-       * <b>Note:</b> We recommend setting tooltip to icon-only components.
-       * @type {string}
-       * @defaultvalue: ""
-       * @public
-       * @since 1.2.0
-       */
-      tooltip: {
-        type: String
-      },
-      /**
-       * Used to switch the active state (pressed or not) of the component.
-       * @private
-       */
-      active: {
-        type: Boolean
-      },
-      /**
-       * Defines if a content has been added to the default slot
-       * @private
-       */
-      iconOnly: {
-        type: Boolean
-      },
-      /**
-       * Indicates if the elements is on focus
-       * @private
-       */
-      focused: {
-        type: Boolean
-      },
-      /**
-       * Indicates if the elements has a slotted icon
-       * @private
-       */
-      hasIcon: {
-        type: Boolean
-      },
-      /**
-       * Defines the accessible aria name of the component.
-       *
-       * @type {string}
-       * @defaultvalue: ""
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      accessibleName: {
-        type: String,
-        defaultValue: undefined
-      },
-      /**
-       * Receives id(or many ids) of the elements that label the component.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.1.0
-       */
-      accessibleNameRef: {
-        type: String,
-        defaultValue: ""
-      },
-      /**
-       * An object of strings that defines several additional accessibility attribute values
-       * for customization depending on the use case.
-       *
-       * It supports the following fields:
-       *
-       * <ul>
-       * 		<li><code>expanded</code>: Indicates whether the button, or another grouping element it controls, is currently expanded or collapsed. Accepts the following string values:
-       *			<ul>
-       *				<li><code>true</code></li>
-       *				<li><code>false</code></li>
-       *			</ul>
-       * 		</li>
-       * 		<li><code>hasPopup</code>: Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by the button. Accepts the following string values:
-       * 			<ul>
-       *				<li><code>Dialog</code></li>
-       *				<li><code>Grid</code></li>
-       *				<li><code>ListBox</code></li>
-       *				<li><code>Menu</code></li>
-       *				<li><code>Tree</code></li>
-       * 			</ul>
-       * 		</li>
-       * 		<li><code>controls</code>: Identifies the element (or elements) whose contents or presence are controlled by the button element. Accepts a string value.</li>
-       * </ul>
-       * @type {object}
-       * @public
-       * @since 1.2.0
-       */
-      accessibilityAttributes: {
-        type: Object
-      },
-      /**
-       * Indicates if the element if focusable
-       * @private
-       */
-      nonInteractive: {
-        type: Boolean
-      },
-      _iconSettings: {
-        type: Object
-      },
-      /**
-       * Defines the tabIndex of the component.
-       * @private
-       */
-      _tabIndex: {
-        type: String,
-        defaultValue: "0",
-        noAttribute: true
-      },
-      /**
-       * @since 1.0.0-rc.13
-       * @private
-       */
-      _isTouch: {
-        type: Boolean
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.Button.prototype */{
-      /**
-       * Defines the text of the component.
-       * <br><br>
-       * <b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
-       *
-       * @type {Node[]}
-       * @slot
-       * @public
-       */
-      "default": {
-        type: Node
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Button.prototype */{
-      /**
-       * Fired when the component is activated either with a
-       * mouse/tap or by using the Enter or Space key.
-       * <br><br>
-       * <b>Note:</b> The event will not be fired if the <code>disabled</code>
-       * property is set to <code>true</code>.
-       *
-       * @event
-       * @public
-       * @native
-       */
-      click: {}
-    }
-  };
-
   /**
    * @class
    *
@@ -290,28 +65,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Button
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.Button
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-button
-   * @implements sap.ui.webcomponents.main.IButton
+   * @implements sap.ui.webc.main.IButton
    * @public
    */
-  class Button extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return _Button.default;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _ButtonTemplate.default;
-    }
-    static get dependencies() {
-      return [_Icon.default];
-    }
+  let Button = Button_1 = class Button extends _UI5Element.default {
     constructor() {
       super();
       this._deactivate = () => {
@@ -323,8 +83,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         document.addEventListener("mouseup", this._deactivate);
         isGlobalHandlerAttached = true;
       }
-      const handleTouchStartEvent = event => {
-        event.isMarked = "button";
+      const handleTouchStartEvent = e => {
+        (0, _MarkedEvents.markEvent)(e, "button");
         if (this.nonInteractive) {
           return;
         }
@@ -338,58 +98,59 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     onEnterDOM() {
       this._isTouch = ((0, _Device.isPhone)() || (0, _Device.isTablet)()) && !(0, _Device.isCombi)();
     }
-    onBeforeRendering() {
-      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-      if (this.submits && !FormSupport) {
+    async onBeforeRendering() {
+      const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (this.submits && !formSupport) {
         console.warn(`In order for the "submits" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
       }
 
       this.iconOnly = this.isIconOnly;
       this.hasIcon = !!this.icon;
+      this.buttonTitle = this.tooltip || (await (0, _Icons.getIconAccessibleName)(this.icon));
     }
-    _onclick(event) {
+    _onclick(e) {
       if (this.nonInteractive) {
         return;
       }
-      event.isMarked = "button";
-      const FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-      if (FormSupport && this.submits) {
-        FormSupport.triggerFormSubmit(this);
+      (0, _MarkedEvents.markEvent)(e, "button");
+      const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (formSupport && this.submits) {
+        formSupport.triggerFormSubmit(this);
       }
       if ((0, _Device.isSafari)()) {
-        this.getDomRef().focus();
+        this.getDomRef()?.focus();
       }
     }
-    _onmousedown(event) {
+    _onmousedown(e) {
       if (this.nonInteractive || this._isTouch) {
         return;
       }
-      event.isMarked = "button";
+      (0, _MarkedEvents.markEvent)(e, "button");
       this.active = true;
       activeButton = this; // eslint-disable-line
     }
 
-    _ontouchend(event) {
+    _ontouchend() {
       this.active = false;
       if (activeButton) {
         activeButton.active = false;
       }
     }
-    _onmouseup(event) {
-      event.isMarked = "button";
+    _onmouseup(e) {
+      (0, _MarkedEvents.markEvent)(e, "button");
     }
-    _onkeydown(event) {
-      event.isMarked = "button";
-      if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
+    _onkeydown(e) {
+      (0, _MarkedEvents.markEvent)(e, "button");
+      if ((0, _Keys.isSpace)(e) || (0, _Keys.isEnter)(e)) {
         this.active = true;
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e) || (0, _Keys.isEnter)(e)) {
         this.active = false;
       }
     }
-    _onfocusout(_event) {
+    _onfocusout() {
       if (this.nonInteractive) {
         return;
       }
@@ -398,11 +159,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.focused = false;
       }
     }
-    _onfocusin(event) {
+    _onfocusin(e) {
       if (this.nonInteractive) {
         return;
       }
-      event.isMarked = "button";
+      (0, _MarkedEvents.markEvent)(e, "button");
       if ((0, _Device.isDesktop)()) {
         this.focused = true;
       }
@@ -414,10 +175,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (!this.icon) {
         return "";
       }
-      return this.isIconOnly ? "img" : "presentation";
+      return "presentation";
     }
     get isIconOnly() {
-      return !(0, _isDefaultSlotProvided.default)(this);
+      return !(0, _willShowContent.default)(this.text);
     }
     static typeTextMappings() {
       return {
@@ -427,7 +188,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       };
     }
     get buttonTypeText() {
-      return Button.i18nBundle.getText(Button.typeTextMappings()[this.design]);
+      return Button_1.i18nBundle.getText(Button_1.typeTextMappings()[this.design]);
     }
     get tabIndexValue() {
       const tabindex = this.getAttribute("tabindex");
@@ -443,9 +204,84 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
     }
     static async onDefine() {
-      Button.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      Button_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _ButtonDesign.default,
+    defaultValue: _ButtonDesign.default.Default
+  })], Button.prototype, "design", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)()], Button.prototype, "icon", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "iconEnd", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "submits", void 0);
+  __decorate([(0, _property.default)()], Button.prototype, "tooltip", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: undefined
+  })], Button.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: ""
+  })], Button.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)({
+    type: Object
+  })], Button.prototype, "accessibilityAttributes", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "active", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "iconOnly", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "focused", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "hasIcon", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "nonInteractive", void 0);
+  __decorate([(0, _property.default)({
+    noAttribute: true
+  })], Button.prototype, "buttonTitle", void 0);
+  __decorate([(0, _property.default)({
+    type: Object
+  })], Button.prototype, "_iconSettings", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: "0",
+    noAttribute: true
+  })], Button.prototype, "_tabIndex", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Button.prototype, "_isTouch", void 0);
+  __decorate([(0, _slot.default)({
+    type: Node,
+    "default": true
+  })], Button.prototype, "text", void 0);
+  Button = Button_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-button",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _ButtonTemplate.default,
+    styles: _Button.default,
+    dependencies: [_Icon.default]
+  })
+  /**
+   * Fired when the component is activated either with a
+   * mouse/tap or by using the Enter or Space key.
+   * <br><br>
+   * <b>Note:</b> The event will not be fired if the <code>disabled</code>
+   * property is set to <code>true</code>.
+   *
+   * @event sap.ui.webc.main.Button#click
+   * @public
+   * @native
+   */, (0, _event.default)("click")], Button);
   Button.define();
   var _default = Button;
   _exports.default = _default;

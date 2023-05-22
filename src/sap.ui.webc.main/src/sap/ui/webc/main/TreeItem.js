@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
+	var ListItemType = library.ListItemType;
 
 	/**
 	 * Constructor for a new <code>TreeItem</code>.
@@ -22,9 +23,18 @@ sap.ui.define([
 	 * @extends sap.ui.webc.common.WebComponent
 	 * @class
 	 *
-	 * <h3>Overview</h3> This is the item to use inside a <code>sap.ui.webc.main.Tree</code>. You can represent an arbitrary tree structure by recursively nesting tree items.
+	 * <h3>Overview</h3> The <code>sap.ui.webc.main.TreeItem</code> represents a node in a tree structure, shown as a <code>sap.ui.webc.main.List</code>. <br>
+	 * This is the item to use inside a <code>sap.ui.webc.main.Tree</code>. You can represent an arbitrary tree structure by recursively nesting tree items.
 	 *
-	 * <h3>Usage</h3> <code>sap.ui.webc.main.TreeItem</code> is an abstract element, representing a node in a <code>sap.ui.webc.main.Tree</code>. The tree itself is rendered as a list, and each <code>sap.ui.webc.main.TreeItem</code> is represented by a list item(<code>sap.ui.webc.main.TreeListItem</code>) in that list. Therefore, you should only use <code>sap.ui.webc.main.TreeItem</code> directly in your apps. The <code>sap.ui.webc.main.TreeListItem</code> list item is internal for the list, and not intended for public use.
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.main.TreeItem</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>title - Used to style the title of the tree list item</li>
+	 *     <li>additionalText - Used to style the additionalText of the tree list item</li>
+	 *     <li>icon - Used to style the icon of the tree list item</li>
+	 * </ul>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -46,15 +56,23 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the <code>additionalText</code>, displayed in the end of the tree item.
+				 * Defines the accessible name of the component.
 				 */
-				additionalText: {
+				accessibleName: {
 					type: "string"
 				},
 
 				/**
+				 * Defines the <code>additionalText</code>, displayed in the end of the tree item.
+				 */
+				additionalText: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines the state of the <code>additionalText</code>. <br>
-				 * Available options are: <code>"None"</code> (by default), <code>"Success"</code>, <code>"Warning"</code>, <code>"Information"</code> and <code>"Erorr"</code>.
+				 * Available options are: <code>"None"</code> (by default), <code>"Success"</code>, <code>"Warning"</code>, <code>"Information"</code> and <code>"Error"</code>.
 				 */
 				additionalTextState: {
 					type: "sap.ui.core.ValueState",
@@ -62,7 +80,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the tree node is expanded or collapsed. Only has visual effect for tree nodes with children.
+				 * Defines whether the tree list item will show a collapse or expand icon inside its toggle button.
 				 */
 				expanded: {
 					type: "boolean",
@@ -79,7 +97,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * If set, an icon will be displayed before the text, representing the tree item.
+				 * If set, an icon will be displayed before the text of the tree list item.
 				 */
 				icon: {
 					type: "string",
@@ -89,7 +107,7 @@ sap.ui.define([
 				/**
 				 * Defines whether the selection of a tree node is displayed as partially selected. <br>
 				 * <br>
-				 * <b>Note:</b> The indeterminate state can be set only programatically and can’t be achieved by user interaction, meaning that the resulting visual state depends on the values of the <code>indeterminate</code> and <code>selected</code> properties:
+				 * <b>Note:</b> The indeterminate state can be set only programmatically and can’t be achieved by user interaction, meaning that the resulting visual state depends on the values of the <code>indeterminate</code> and <code>selected</code> properties:
 				 * <ul>
 				 *     <li> If a tree node has both <code>selected</code> and <code>indeterminate</code> set to <code>true</code>, it is displayed as partially selected.
 				 *     <li> If a tree node has <code>selected</code> set to <code>true</code> and <code>indeterminate</code> set to <code>false</code>, it is displayed as selected.
@@ -103,7 +121,14 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the tree node is selected by the user. Only has effect if the <code>sap.ui.webc.main.Tree</code> is in one of the following modes: in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code>.
+				 * The navigated state of the list item. If set to <code>true</code>, a navigation indicator is displayed at the end of the list item.
+				 */
+				navigated: {
+					type: "boolean"
+				},
+
+				/**
+				 * Defines the selected state of the <code>ListItem</code>.
 				 */
 				selected: {
 					type: "boolean",
@@ -116,17 +141,45 @@ sap.ui.define([
 				text: {
 					type: "string",
 					defaultValue: ""
+				},
+
+				/**
+				 * Defines the visual indication and behavior of the list items. Available options are <code>Active</code> (by default), <code>Inactive</code>, <code>Detail</code> and <code>Navigation</code>. <br>
+				 * <br>
+				 * <b>Note:</b> When set to <code>Active</code> or <code>Navigation</code>, the item will provide visual response upon press and hover, while with type <code>Inactive</code> and <code>Detail</code> - will not.
+				 */
+				type: {
+					type: "sap.ui.webc.main.ListItemType",
+					defaultValue: ListItemType.Active
 				}
 			},
 			defaultAggregation: "items",
 			aggregations: {
 
 				/**
-				 * Defines the items of this component.
+				 * Defines the delete button, displayed in "Delete" mode. <b>Note:</b> While the slot allows custom buttons, to match design guidelines, please use the <code>sap.ui.webc.main.Button</code> component. <b>Note:</b> When the slot is not present, a built-in delete button will be displayed.
+				 */
+				deleteButton: {
+					type: "sap.ui.webc.main.IButton",
+					multiple: false,
+					slot: "deleteButton"
+				},
+
+				/**
+				 * Defines the items of the component. <br /> <br /> <b>Note:</b> Use <code>sap.ui.webc.main.TreeItem</code> or <code>sap.ui.webc.main.TreeItemCustom</code>
 				 */
 				items: {
 					type: "sap.ui.webc.main.ITreeItem",
 					multiple: true
+				}
+			},
+			events: {
+
+				/**
+				 * Fired when the user clicks on the detail button when type is <code>Detail</code>.
+				 */
+				detailClick: {
+					parameters: {}
 				}
 			},
 			methods: ["toggle"]

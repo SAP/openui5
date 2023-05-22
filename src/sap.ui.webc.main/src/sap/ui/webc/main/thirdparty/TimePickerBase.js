@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian", "sap/ui/webc/common/thirdparty/localization/DateFormat", "sap/ui/webc/common/thirdparty/base/asset-registries/LocaleData", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/icons/time-entry-request", "./Icon", "./ResponsivePopover", "./generated/templates/TimePickerTemplate.lit", "./generated/templates/TimePickerPopoverTemplate.lit", "./Input", "./Button", "./TimeSelection", "./generated/i18n/i18n-defaults", "./generated/themes/TimePicker.css", "./generated/themes/TimePickerPopover.css", "./generated/themes/ResponsivePopoverCommon.css"], function (_exports, _UI5Element, _LitRenderer, _i18nBundle, _getLocale, _ValueState, _Gregorian, _DateFormat, _LocaleData, _Keys, _timeEntryRequest, _Icon, _ResponsivePopover, _TimePickerTemplate, _TimePickerPopoverTemplate, _Input, _Button, _TimeSelection, _i18nDefaults, _TimePicker, _TimePickerPopover, _ResponsivePopoverCommon) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian", "sap/ui/webc/common/thirdparty/localization/DateFormat", "sap/ui/webc/common/thirdparty/base/asset-registries/LocaleData", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/icons/time-entry-request", "./Icon", "./ResponsivePopover", "./generated/templates/TimePickerTemplate.lit", "./generated/templates/TimePickerPopoverTemplate.lit", "./Input", "./Button", "./TimeSelection", "./generated/i18n/i18n-defaults", "./generated/themes/TimePicker.css", "./generated/themes/TimePickerPopover.css", "./generated/themes/ResponsivePopoverCommon.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _i18nBundle, _getLocale, _ValueState, _Gregorian, _DateFormat, _LocaleData, _Keys, _timeEntryRequest, _Icon, _ResponsivePopover, _TimePickerTemplate, _TimePickerPopoverTemplate, _Input, _Button, _TimeSelection, _i18nDefaults, _TimePicker, _TimePickerPopover, _ResponsivePopoverCommon) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _getLocale = _interopRequireDefault(_getLocale);
   _ValueState = _interopRequireDefault(_ValueState);
@@ -21,152 +25,31 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _TimePickerPopover = _interopRequireDefault(_TimePickerPopover);
   _ResponsivePopoverCommon = _interopRequireDefault(_ResponsivePopoverCommon);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // default calendar for bundling
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    languageAware: true,
-    managedSlots: true,
-    properties: /** @lends sap.ui.webcomponents.main.TimePickerBase.prototype */{
-      /**
-       * Defines a formatted time value.
-       *
-       * @type {string}
-       * @defaultvalue undefined
-       * @public
-       */
-      value: {
-        type: String,
-        defaultValue: undefined
-      },
-      /**
-       * Defines the value state of the <code>ui5-time-picker</code>.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>None</code></li>
-       * <li><code>Error</code></li>
-       * <li><code>Warning</code></li>
-       * <li><code>Success</code></li>
-       * <li><code>Information</code></li>
-       * </ul>
-       *
-       * @type {ValueState}
-       * @defaultvalue "None"
-       * @public
-       */
-      valueState: {
-        type: _ValueState.default,
-        defaultValue: _ValueState.default.None
-      },
-      /**
-       * Determines whether the <code>ui5-time-picker</code> is displayed as disabled.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Determines whether the <code>ui5-time-picker</code> is displayed as readonly.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      readonly: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      _isPickerOpen: {
-        type: Boolean,
-        noAttribute: true
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.TimePickerBase.prototype */{
-      /**
-       * Defines the value state message that will be displayed as pop up under the <code>ui5-time-picker</code>.
-       * <br><br>
-       *
-       * <b>Note:</b> If not specified, a default text (in the respective language) will be displayed.
-       * <br>
-       * <b>Note:</b> The <code>valueStateMessage</code> would be displayed,
-       * when the <code>ui5-time-picker</code> is in <code>Information</code>, <code>Warning</code> or <code>Error</code> value state.
-       * @type {HTMLElement}
-       * @since 1.0.0-rc.8
-       * @slot
-       * @public
-       */
-      valueStateMessage: {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.TimePickerBase.prototype */{
-      /**
-       * Fired when the input operation has finished by clicking the "OK" button or
-       * when the text in the input field has changed and the focus leaves the input field.
-       *
-       * @event
-       * @public
-      */
-      change: {},
-      /**
-       * Fired when the value of the <code>ui5-time-picker</code> is changed at each key stroke.
-       *
-       * @event
-       * @public
-      */
-      input: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var TimePickerBase_1;
   /**
    * @class
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.TimePickerBase
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.TimePickerBase
+   * @extends sap.ui.webc.base.UI5Element
    * @public
    * @since 1.0.0-rc.6
    */
-  class TimePickerBase extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _TimePicker.default;
-    }
-    static get staticAreaTemplate() {
-      return _TimePickerPopoverTemplate.default;
-    }
-    static get template() {
-      return _TimePickerTemplate.default;
-    }
-    static get dependencies() {
-      return [_Icon.default, _ResponsivePopover.default, _TimeSelection.default, _Input.default, _Button.default];
-    }
+  let TimePickerBase = TimePickerBase_1 = class TimePickerBase extends _UI5Element.default {
     static async onDefine() {
-      [TimePickerBase.i18nBundle] = await Promise.all([(0, _i18nBundle.getI18nBundle)("@ui5/webcomponents"), (0, _LocaleData.fetchCldr)((0, _getLocale.default)().getLanguage(), (0, _getLocale.default)().getRegion(), (0, _getLocale.default)().getScript())]);
-    }
-    static get staticAreaStyles() {
-      return [_ResponsivePopoverCommon.default, _TimePickerPopover.default];
+      [TimePickerBase_1.i18nBundle] = await Promise.all([(0, _i18nBundle.getI18nBundle)("@ui5/webcomponents"), (0, _LocaleData.fetchCldr)((0, _getLocale.default)().getLanguage(), (0, _getLocale.default)().getRegion(), (0, _getLocale.default)().getScript())]);
     }
     constructor() {
       super();
     }
-
     /**
      * @abstract
      * @protected
@@ -174,7 +57,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _placeholder() {
       return undefined;
     }
-
     /**
      * @abstract
      * @protected
@@ -188,8 +70,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _timeSelectionValue() {
       return this.tempValue;
     }
-    onTimeSelectionChange(event) {
-      this.tempValue = event.detail.value; // every time the user changes the sliders -> update tempValue
+    onTimeSelectionChange(e) {
+      this.tempValue = e.detail.value; // every time the user changes the sliders -> update tempValue
     }
 
     submitPickers() {
@@ -208,23 +90,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         inputField.select();
       }
     }
-    _updateValueAndFireEvents(value, normalizeValue, events) {
+    _updateValueAndFireEvents(value, normalizeValue, eventsNames) {
       if (value === this.value) {
         return;
       }
       const valid = this.isValid(value);
-      if (valid && normalizeValue) {
+      if (value !== undefined && valid && normalizeValue) {
+        // if value === undefined, valid is guaranteed to be falsy
         value = this.normalizeValue(value); // transform valid values (in any format) to the correct format
       }
 
-      if (!events.includes("input")) {
-        this.value = ""; // Do not remove! DurationPicker use case -> value is 05:10, user tries 05:12, after normalization value is changed back to 05:10 so no invalidation happens, but the input still shows 05:12. Thus we enforce invalidation with the ""
+      if (!eventsNames.includes("input")) {
+        this.value = ""; // Do not remove! DurationPicker (an external component extending TimePickerBase) use case -> value is 05:10, user tries 05:12, after normalization value is changed back to 05:10 so no invalidation happens, but the input still shows 05:12. Thus we enforce invalidation with the ""
         this.value = value;
       }
       this.tempValue = value; // if the picker is open, sync it
       this._updateValueState(); // Change the value state to Error/None, but only if needed
-      events.forEach(event => {
-        this.fireEvent(event, {
+      eventsNames.forEach(eventName => {
+        this.fireEvent(eventName, {
           value,
           valid
         });
@@ -240,27 +123,31 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.valueState = _ValueState.default.None;
       }
     }
-    async _handleInputChange(event) {
-      this._updateValueAndFireEvents(event.target.value, true, ["change", "value-changed"]);
+    _handleInputChange(e) {
+      const target = e.target;
+      this._updateValueAndFireEvents(target.value, true, ["change", "value-changed"]);
     }
-    async _handleInputLiveChange(event) {
-      this._updateValueAndFireEvents(event.target.value, false, ["input"]);
+    _handleInputLiveChange(e) {
+      const target = e.target;
+      this._updateValueAndFireEvents(target.value, false, ["input"]);
     }
-
     /**
      * Closes the picker
      * @public
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#closePicker
      */
     async closePicker() {
       const responsivePopover = await this._getPopover();
       responsivePopover.close();
       this._isPickerOpen = false;
     }
-
     /**
      * Opens the picker.
      * @async
      * @public
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#openPicker
      * @returns {Promise} Resolves when the picker is open
      */
     async openPicker() {
@@ -276,10 +163,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.openPicker();
       }
     }
-
     /**
      * Checks if the picker is open
      * @public
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#isOpen
      * @returns {boolean}
      */
     isOpen() {
@@ -303,6 +191,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if ((0, _Keys.isShow)(e)) {
         e.preventDefault();
         this.togglePicker();
+      }
+      const target = e.target;
+      if (this._getInput().isEqualNode(target) && this.isOpen() && ((0, _Keys.isTabNext)(e) || (0, _Keys.isTabPrevious)(e) || (0, _Keys.isF6Next)(e) || (0, _Keys.isF6Previous)(e))) {
+        this.closePicker();
       }
       if (this.isOpen()) {
         return;
@@ -333,28 +225,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     getFormat() {
       let dateFormat;
       if (this._isPattern) {
-        dateFormat = _DateFormat.default.getInstance({
+        dateFormat = _DateFormat.default.getDateInstance({
           pattern: this._formatPattern
         });
       } else {
-        dateFormat = _DateFormat.default.getInstance({
+        dateFormat = _DateFormat.default.getDateInstance({
           style: this._formatPattern
         });
       }
       return dateFormat;
     }
-
     /**
      * Formats a Java Script date object into a string representing a locale date and time
      * according to the <code>formatPattern</code> property of the TimePicker instance
      * @param {Date} date A Java Script date object to be formatted as string
      * @public
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#formatValue
      * @returns {string}
      */
     formatValue(date) {
       return this.getFormat().format(date);
     }
-
     /**
      * Checks if a value is valid against the current <code>formatPattern</code> value.
      *
@@ -362,10 +254,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * <b>Note:</b> an empty string is considered as valid value.
      * @param {string} value The value to be tested against the current date format
      * @public
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#isValid
      * @returns {boolean}
      */
     isValid(value) {
-      return value === "" || this.getFormat().parse(value);
+      if (value === "") {
+        return true;
+      }
+      return !!this.getFormat().parse(value);
     }
     normalizeValue(value) {
       if (value === "") {
@@ -388,7 +285,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const newValue = this.formatValue(date);
       this._updateValueAndFireEvents(newValue, true, ["change", "value-changed"]);
     }
-
     /**
      *
      * @param {event} e Wheel Event
@@ -400,19 +296,80 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       e.preventDefault();
     }
     get submitButtonLabel() {
-      return TimePickerBase.i18nBundle.getText(_i18nDefaults.TIMEPICKER_SUBMIT_BUTTON);
+      return TimePickerBase_1.i18nBundle.getText(_i18nDefaults.TIMEPICKER_SUBMIT_BUTTON);
     }
     get cancelButtonLabel() {
-      return TimePickerBase.i18nBundle.getText(_i18nDefaults.TIMEPICKER_CANCEL_BUTTON);
+      return TimePickerBase_1.i18nBundle.getText(_i18nDefaults.TIMEPICKER_CANCEL_BUTTON);
     }
-
     /**
      * @protected
      */
     get openIconName() {
       return "time-entry-request";
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    defaultValue: undefined
+  })], TimePickerBase.prototype, "value", void 0);
+  __decorate([(0, _property.default)({
+    type: _ValueState.default,
+    defaultValue: _ValueState.default.None
+  })], TimePickerBase.prototype, "valueState", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], TimePickerBase.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], TimePickerBase.prototype, "readonly", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], TimePickerBase.prototype, "_isPickerOpen", void 0);
+  __decorate([(0, _slot.default)()], TimePickerBase.prototype, "valueStateMessage", void 0);
+  TimePickerBase = TimePickerBase_1 = __decorate([(0, _customElement.default)({
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _TimePickerTemplate.default,
+    styles: _TimePicker.default,
+    staticAreaTemplate: _TimePickerPopoverTemplate.default,
+    staticAreaStyles: [_ResponsivePopoverCommon.default, _TimePickerPopover.default],
+    dependencies: [_Icon.default, _ResponsivePopover.default, _TimeSelection.default, _Input.default, _Button.default]
+  })
+  /**
+   * Fired when the input operation has finished by clicking the "OK" button or
+   * when the text in the input field has changed and the focus leaves the input field.
+  *
+  * @event sap.ui.webc.main.TimePickerBase#change
+   * @public
+   * @param {string} value The submitted value.
+   * @param {boolean} valid Indicator if the value is in correct format pattern and in valid range.
+  */, (0, _event.default)("change", {
+    detail: {
+      value: {
+        type: String
+      },
+      valid: {
+        type: Boolean
+      }
+    }
+  })
+  /**
+   * Fired when the value of the <code>ui5-time-picker</code> is changed at each key stroke.
+   *
+   * @event sap.ui.webc.main.TimePickerBase#input
+   * @public
+   * @param {string} value The current value.
+   * @param {boolean} valid Indicator if the value is in correct format pattern and in valid range.
+  */, (0, _event.default)("input", {
+    detail: {
+      value: {
+        type: String
+      },
+      valid: {
+        type: Boolean
+      }
+    }
+  })], TimePickerBase);
   var _default = TimePickerBase;
   _exports.default = _default;
 });

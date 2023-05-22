@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/templates/AvatarTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/Avatar.css", "./Icon", "./types/AvatarSize", "./types/AvatarShape", "./types/AvatarColorScheme"], function (_exports, _UI5Element, _LitRenderer, _i18nBundle, _Keys, _AvatarTemplate, _i18nDefaults, _Avatar, _Icon, _AvatarSize, _AvatarShape, _AvatarColorScheme) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/templates/AvatarTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/Avatar.css", "./Icon", "./types/AvatarSize", "./types/AvatarShape", "./types/AvatarColorScheme", "sap/ui/webc/common/thirdparty/icons/employee"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _LitRenderer, _i18nBundle, _ResizeHandler, _Render, _Keys, _AvatarTemplate, _i18nDefaults, _Avatar, _Icon, _AvatarSize, _AvatarShape, _AvatarColorScheme, _employee) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,7 +6,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
+  _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _AvatarTemplate = _interopRequireDefault(_AvatarTemplate);
   _Avatar = _interopRequireDefault(_Avatar);
   _Icon = _interopRequireDefault(_Icon);
@@ -14,202 +19,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _AvatarShape = _interopRequireDefault(_AvatarShape);
   _AvatarColorScheme = _interopRequireDefault(_AvatarColorScheme);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-avatar",
-    languageAware: true,
-    managedSlots: true,
-    properties: /** @lends sap.ui.webcomponents.main.Avatar.prototype */{
-      /**
-       * Defines if the avatar is interactive (focusable and pressable).
-       * @type {boolean}
-       * @defaultValue false
-       * @public
-       */
-      interactive: {
-        type: Boolean
-      },
-      /**
-       * Indicates if the elements is on focus
-       * @private
-       */
-      focused: {
-        type: Boolean
-      },
-      /**
-       * Defines the name of the UI5 Icon, that will be displayed.
-       * <br>
-       * <b>Note:</b> If <code>image</code> slot is provided, the property will be ignored.
-       * <br>
-       * <b>Note:</b> You should import the desired icon first, then use its name as "icon".
-       * <br><br>
-       * import "@ui5/webcomponents-icons/dist/{icon_name}.js"
-       * <br>
-       * <pre>&lt;ui5-avatar icon="employee"></pre>
-       *
-       * See all the available icons in the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      icon: {
-        type: String
-      },
-      /**
-       * Defines the displayed initials.
-       * <br>
-       * Up to two Latin letters can be displayed as initials.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      initials: {
-        type: String
-      },
-      /**
-       * Defines the shape of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Circle</code></li>
-       * <li><code>Square</code></li>
-       * </ul>
-       * @type {AvatarShape}
-       * @defaultvalue "Circle"
-       * @public
-       */
-      shape: {
-        type: _AvatarShape.default,
-        defaultValue: _AvatarShape.default.Circle
-      },
-      /**
-       * Defines predefined size of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>XS</code></li>
-       * <li><code>S</code></li>
-       * <li><code>M</code></li>
-       * <li><code>L</code></li>
-       * <li><code>XL</code></li>
-       * </ul>
-       * @type {AvatarSize}
-       * @defaultvalue "S"
-       * @public
-       */
-      size: {
-        type: _AvatarSize.default,
-        defaultValue: _AvatarSize.default.S
-      },
-      /**
-       * @private
-       */
-      _size: {
-        type: String,
-        defaultValue: _AvatarSize.default.S
-      },
-      /**
-       * Defines the background color of the desired image.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Accent1</code></li>
-       * <li><code>Accent2</code></li>
-       * <li><code>Accent3</code></li>
-       * <li><code>Accent4</code></li>
-       * <li><code>Accent5</code></li>
-       * <li><code>Accent6</code></li>
-       * <li><code>Accent7</code></li>
-       * <li><code>Accent8</code></li>
-       * <li><code>Accent9</code></li>
-       * <li><code>Accent10</code></li>
-       * <li><code>Placeholder</code></li>
-       * </ul>
-       * @type {AvatarColorScheme}
-       * @defaultvalue "Accent6"
-       * @public
-       */
-      colorScheme: {
-        type: _AvatarColorScheme.default,
-        defaultValue: _AvatarColorScheme.default.Accent6
-      },
-      /**
-       * @private
-       */
-      _colorScheme: {
-        type: String,
-        defaultValue: _AvatarColorScheme.default.Accent6
-      },
-      /**
-       * Defines the text alternative of the component.
-       * If not provided a default text alternative will be set, if present.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.0.0-rc.7
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * Defines the aria-haspopup value of the component when <code>interactive</code> property is <code>true</code>.
-       * <br><br>
-       * @type String
-       * @since 1.0.0-rc.15
-       * @protected
-       */
-      ariaHaspopup: {
-        type: String
-      },
-      _tabIndex: {
-        type: String,
-        noAttribute: true
-      },
-      _hasImage: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.Avatar.prototype */{
-      /**
-       * Receives the desired <code>&lt;img&gt;</code> tag
-       *
-       * <b>Note:</b> If you experience flickering of the provided image, you can hide the component until it is being defined with the following CSS:
-       * <br /> <br />
-       * <code>
-       *		ui5-avatar:not(:defined) { <br />
-       *			&nbsp;visibility: hidden; <br />
-       *		} <br />
-       * </code>
-       * @type {HTMLElement}
-       * @slot image
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      "default": {
-        propertyName: "image",
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Avatar.prototype */{
-      /**
-      * Fired on mouseup, space and enter if avatar is interactive
-      *
-      * @event
-      * @private
-      * @since 1.0.0-rc.11
-      */
-      click: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var Avatar_1;
   /**
    * @class
    *
@@ -236,40 +53,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Avatar
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.Avatar
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-avatar
    * @since 1.0.0-rc.6
-   * @implements sap.ui.webcomponents.main.IAvatar
+   * @implements sap.ui.webc.main.IAvatar
    * @public
    */
-  class Avatar extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _Avatar.default;
-    }
-    static get template() {
-      return _AvatarTemplate.default;
-    }
-    static get dependencies() {
-      return [_Icon.default];
+  let Avatar = Avatar_1 = class Avatar extends _UI5Element.default {
+    constructor() {
+      super();
+      this._handleResizeBound = this.handleResize.bind(this);
     }
     static async onDefine() {
-      Avatar.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      Avatar_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     get tabindex() {
       return this._tabIndex || (this.interactive ? "0" : "-1");
     }
-
     /**
      * Returns the effective avatar size.
      * @readonly
-     * @type { String }
+     * @type {string}
      * @defaultValue "S"
      * @private
      */
@@ -277,17 +82,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       // we read the attribute, because the "size" property will always have a default value
       return this.getAttribute("size") || this._size;
     }
-
     /**
      * Returns the effective background color.
      * @readonly
-     * @type { String }
+     * @type {string}
      * @defaultValue "Accent6"
      * @private
      */
     get _effectiveBackgroundColor() {
       // we read the attribute, because the "background-color" property will always have a default value
-      return this.getAttribute("_color-scheme") || this._colorScheme;
+      return this.getAttribute("color-scheme") || this._colorScheme;
     }
     get _role() {
       return this.interactive ? "button" : undefined;
@@ -296,8 +100,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this._getAriaHasPopup();
     }
     get validInitials() {
-      const validInitials = /^[a-zA-Z]{1,2}$/;
-      if (this.initials && validInitials.test(this.initials)) {
+      // initials should consist of only 1,2 or 3 latin letters
+      const validInitials = /^[a-zA-Zà-üÀ-Ü]{1,3}$/,
+        areInitialsValid = this.initials && validInitials.test(this.initials);
+      if (areInitialsValid) {
         return this.initials;
       }
       return null;
@@ -306,34 +112,70 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (this.accessibleName) {
         return this.accessibleName;
       }
-      return Avatar.i18nBundle.getText(_i18nDefaults.AVATAR_TOOLTIP) || undefined;
+      return Avatar_1.i18nBundle.getText(_i18nDefaults.AVATAR_TOOLTIP) || undefined;
     }
     get hasImage() {
       this._hasImage = !!this.image.length;
       return this._hasImage;
     }
+    get initialsContainer() {
+      return this.getDomRef().querySelector(".ui5-avatar-initials");
+    }
     onBeforeRendering() {
       this._onclick = this.interactive ? this._onClickHandler.bind(this) : undefined;
     }
-    _onClickHandler(event) {
+    async onAfterRendering() {
+      await (0, _Render.renderFinished)();
+      if (this.initials && !this.icon) {
+        this._checkInitials();
+      }
+    }
+    onEnterDOM() {
+      this.initialsContainer && _ResizeHandler.default.register(this.initialsContainer, this._handleResizeBound);
+    }
+    onExitDOM() {
+      this.initialsContainer && _ResizeHandler.default.deregister(this.initialsContainer, this._handleResizeBound);
+    }
+    handleResize() {
+      if (this.initials && !this.icon) {
+        this._checkInitials();
+      }
+    }
+    _checkInitials() {
+      const avatar = this.getDomRef(),
+        avatarInitials = avatar.querySelector(".ui5-avatar-initials");
+      // if there aren`t initalts set - the fallBack icon should be shown
+      if (!this.validInitials) {
+        avatarInitials.classList.add("ui5-avatar-initials-hidden");
+        return;
+      }
+      // if initials` width is bigger than the avatar, an icon should be shown inside the avatar
+      avatarInitials && avatarInitials.classList.remove("ui5-avatar-initials-hidden");
+      if (this.initials && this.initials.length === 3) {
+        if (avatarInitials && avatarInitials.scrollWidth > avatar.scrollWidth) {
+          avatarInitials.classList.add("ui5-avatar-initials-hidden");
+        }
+      }
+    }
+    _onClickHandler(e) {
       // prevent the native event and fire custom event to ensure the noConfict "ui5-click" is fired
-      event.stopPropagation();
+      e.stopPropagation();
       this.fireEvent("click");
     }
-    _onkeydown(event) {
+    _onkeydown(e) {
       if (!this.interactive) {
         return;
       }
-      if ((0, _Keys.isEnter)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
         this.fireEvent("click");
       }
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault(); // prevent scrolling
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault(); // prevent scrolling
       }
     }
 
-    _onkeyup(event) {
-      if (this.interactive && !event.shiftKey && (0, _Keys.isSpace)(event)) {
+    _onkeyup(e) {
+      if (this.interactive && !e.shiftKey && (0, _Keys.isSpace)(e)) {
         this.fireEvent("click");
       }
     }
@@ -351,7 +193,63 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       return this.ariaHaspopup;
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Avatar.prototype, "interactive", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Avatar.prototype, "focused", void 0);
+  __decorate([(0, _property.default)()], Avatar.prototype, "icon", void 0);
+  __decorate([(0, _property.default)()], Avatar.prototype, "initials", void 0);
+  __decorate([(0, _property.default)({
+    type: _AvatarShape.default,
+    defaultValue: _AvatarShape.default.Circle
+  })], Avatar.prototype, "shape", void 0);
+  __decorate([(0, _property.default)({
+    type: _AvatarSize.default,
+    defaultValue: _AvatarSize.default.S
+  })], Avatar.prototype, "size", void 0);
+  __decorate([(0, _property.default)({
+    type: _AvatarSize.default,
+    defaultValue: _AvatarSize.default.S
+  })], Avatar.prototype, "_size", void 0);
+  __decorate([(0, _property.default)({
+    type: _AvatarColorScheme.default,
+    defaultValue: _AvatarColorScheme.default.Accent6
+  })], Avatar.prototype, "colorScheme", void 0);
+  __decorate([(0, _property.default)({
+    type: _AvatarColorScheme.default,
+    defaultValue: _AvatarColorScheme.default.Accent6
+  })], Avatar.prototype, "_colorScheme", void 0);
+  __decorate([(0, _property.default)()], Avatar.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)()], Avatar.prototype, "ariaHaspopup", void 0);
+  __decorate([(0, _property.default)({
+    noAttribute: true
+  })], Avatar.prototype, "_tabIndex", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Avatar.prototype, "_hasImage", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    "default": true
+  })], Avatar.prototype, "image", void 0);
+  __decorate([(0, _slot.default)()], Avatar.prototype, "badge", void 0);
+  Avatar = Avatar_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-avatar",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    styles: _Avatar.default,
+    template: _AvatarTemplate.default,
+    dependencies: [_Icon.default]
+  })
+  /**
+  * Fired on mouseup, space and enter if avatar is interactive
+  *
+  * @event
+  * @private
+  * @since 1.0.0-rc.11
+  */, (0, _event.default)("click")], Avatar);
   Avatar.define();
   var _default = Avatar;
   _exports.default = _default;

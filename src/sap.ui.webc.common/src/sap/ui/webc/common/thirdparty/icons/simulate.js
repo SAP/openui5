@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/simulate", "./v4/simulate"], function (_exports, _Theme, _simulate, _simulate2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/simulate", "./v5/simulate"], function (_exports, _Theme, _simulate, _simulate2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _simulate.pathData : _simulate2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _simulate.pathData : _simulate2.pathData;
   _exports.pathData = pathData;
   var _default = "simulate";
   _exports.default = _default;

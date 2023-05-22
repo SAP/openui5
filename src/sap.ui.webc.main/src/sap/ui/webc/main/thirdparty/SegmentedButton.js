@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/i18n/i18n-defaults", "./SegmentedButtonItem", "./generated/templates/SegmentedButtonTemplate.lit", "./generated/themes/SegmentedButton.css"], function (_exports, _UI5Element, _ItemNavigation, _LitRenderer, _i18nBundle, _ResizeHandler, _Render, _Keys, _i18nDefaults, _SegmentedButtonItem, _SegmentedButtonTemplate, _SegmentedButton) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/i18n/i18n-defaults", "./SegmentedButtonItem", "./types/SegmentedButtonMode", "./generated/templates/SegmentedButtonTemplate.lit", "./generated/themes/SegmentedButton.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _ItemNavigation, _LitRenderer, _i18nBundle, _ResizeHandler, _Render, _Keys, _i18nDefaults, _SegmentedButtonItem, _SegmentedButtonMode, _SegmentedButtonTemplate, _SegmentedButton) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,73 +6,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
+  _slot = _interopRequireDefault(_slot);
   _ItemNavigation = _interopRequireDefault(_ItemNavigation);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _SegmentedButtonItem = _interopRequireDefault(_SegmentedButtonItem);
+  _SegmentedButtonMode = _interopRequireDefault(_SegmentedButtonMode);
   _SegmentedButtonTemplate = _interopRequireDefault(_SegmentedButtonTemplate);
   _SegmentedButton = _interopRequireDefault(_SegmentedButton);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-segmented-button",
-    altTag: "ui5-segmentedbutton",
-    languageAware: true,
-    properties: /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */{
-      /**
-       * Defines the accessible aria name of the component.
-       *
-       * @type {string}
-       * @defaultvalue: ""
-       * @public
-       * @since 1.0.3
-       */
-      accessibleName: {
-        type: String,
-        defaultValue: undefined
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */{
-      /**
-       * Defines the items of <code>ui5-segmented-button</code>.
-       * <br><br>
-       * <b>Note:</b> Multiple items are allowed.
-       * <br><br>
-       * <b>Note:</b> Use the <code>ui5-segmented-button-item</code> for the intended design.
-       * @type {sap.ui.webcomponents.main.ISegmentedButtonItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.SegmentedButton.prototype */{
-      /**
-       * Fired when the selected item changes.
-       *
-       * @event sap.ui.webcomponents.main.SegmentedButton#selection-change
-       * @param {HTMLElement} selectedItem the pressed item.
-       * @public
-       */
-      "selection-change": {
-        detail: {
-          selectedItem: {
-            type: HTMLElement
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var SegmentedButton_1;
   /**
    * @class
    *
@@ -90,39 +43,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.SegmentedButton
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.SegmentedButton
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-segmented-button
    * @since 1.0.0-rc.6
-   * @appenddocs SegmentedButtonItem
+   * @appenddocs sap.ui.webc.main.SegmentedButtonItem
    * @public
    */
-  class SegmentedButton extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _SegmentedButtonTemplate.default;
-    }
-    static get styles() {
-      return _SegmentedButton.default;
-    }
-    static get dependencies() {
-      return [_SegmentedButtonItem.default];
-    }
+  let SegmentedButton = SegmentedButton_1 = class SegmentedButton extends _UI5Element.default {
     static async onDefine() {
-      SegmentedButton.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+      SegmentedButton_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     constructor() {
       super();
       this._itemNavigation = new _ItemNavigation.default(this, {
         getItemsCallback: () => this.getSlottedNodes("items")
       });
-      this.absoluteWidthSet = false; // set to true whenever we set absolute width to the component
-      this.percentageWidthSet = false; //  set to true whenever we set 100% width to the component
+      this.absoluteWidthSet = false; // true when component width is set to absolute
+      this.percentageWidthSet = false; // true when component width is set to 100%
       this.hasPreviouslyFocusedItem = false;
       this._handleResizeBound = this._doLayout.bind(this);
     }
@@ -155,70 +93,97 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       await (0, _Render.renderFinished)();
       this.prepareToMeasureItems();
       this.widths = this.items.map(item => {
-        // +1 is added because for width 100.44px the offsetWidth property returns 100px and not 101px
+        // 1 is added because for width 100.44px the offsetWidth property is 100px and not 101px
         return item.offsetWidth + 1;
       });
     }
     normalizeSelection() {
-      this._selectedItem = this.items.filter(item => item.pressed).pop();
-      if (this._selectedItem) {
-        this.items.forEach(item => {
-          item.pressed = false;
-        });
-        this._selectedItem.pressed = true;
+      switch (this.mode) {
+        case _SegmentedButtonMode.default.SingleSelect:
+          {
+            const selectedItems = this.selectedItems;
+            const selectedItemIndex = this._selectedItem ? selectedItems.indexOf(this._selectedItem) : -1;
+            if (this._selectedItem && selectedItems.length > 1) {
+              selectedItems.splice(selectedItemIndex, 1);
+            }
+            const selectedItem = selectedItems.pop() || this.items[0];
+            this._applySingleSelection(selectedItem);
+            break;
+          }
+        default:
       }
     }
-    _selectItem(event) {
-      if (event.target.disabled || event.target === this.getDomRef()) {
+    _selectItem(e) {
+      const target = e.target;
+      const isTargetSegmentedButtonItem = target.hasAttribute("ui5-segmented-button-item");
+      if (target.disabled || target === this.getDomRef() || !isTargetSegmentedButtonItem) {
         return;
       }
-      if (event.target !== this._selectedItem) {
-        if (this._selectedItem) {
-          this._selectedItem.pressed = false;
-        }
-        this._selectedItem = event.target;
-        this.fireEvent("selection-change", {
-          selectedItem: this._selectedItem
-        });
+      switch (this.mode) {
+        case _SegmentedButtonMode.default.MultiSelect:
+          if (e instanceof KeyboardEvent) {
+            target.pressed = !target.pressed;
+          }
+          break;
+        default:
+          this._applySingleSelection(target);
       }
-      this._selectedItem.pressed = true;
-      this._itemNavigation.setCurrentItem(this._selectedItem);
+      this.fireEvent("selection-change", {
+        selectedItem: target,
+        selectedItems: this.selectedItems
+      });
+      this._itemNavigation.setCurrentItem(target);
+      target.focus();
       return this;
     }
-    _onclick(event) {
-      this._selectItem(event);
-      this.selectedItem.focus();
+    _applySingleSelection(item) {
+      this.items.forEach(currentItem => {
+        currentItem.pressed = false;
+      });
+      item.pressed = true;
+      this._selectedItem = item;
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isEnter)(event)) {
-        this._selectItem(event);
-      } else if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
+    _onclick(e) {
+      this._selectItem(e);
+    }
+    _onkeydown(e) {
+      if ((0, _Keys.isEnter)(e)) {
+        this._selectItem(e);
+      } else if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
-        this._selectItem(event);
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
+        this._selectItem(e);
       }
     }
-    _onfocusin(event) {
+    _onmousedown(e) {
+      const eventTarget = e.target;
+      const isTargetSegmentedButtonItem = eventTarget.hasAttribute("ui5-segmented-button-item");
+      if (isTargetSegmentedButtonItem) {
+        eventTarget.focus();
+        this._itemNavigation.setCurrentItem(eventTarget);
+        this.hasPreviouslyFocusedItem = true;
+      }
+    }
+    _onfocusin(e) {
       // If the component was previously focused,
-      // update the ItemNavigation to sync butons` tabindex values
+      // update the ItemNavigation to sync the button's tabindex values
       if (this.hasPreviouslyFocusedItem) {
-        this._itemNavigation.setCurrentItem(event.target);
+        this._itemNavigation.setCurrentItem(e.target);
         return;
       }
-
       // If the component is focused for the first time
-      // focus the selected item if such present
-      if (this.selectedItem) {
-        this.selectedItem.focus();
-        this._itemNavigation.setCurrentItem(this._selectedItem);
+      // focus the selected item if such is present
+      if (this.selectedItems.length) {
+        this.selectedItems[0].focus();
+        this._itemNavigation.setCurrentItem(this.selectedItems[0]);
         this.hasPreviouslyFocusedItem = true;
       }
     }
     async _doLayout() {
-      const itemsHaveWidth = this.widths && this.widths.some(item => item.offsetWidth > 2); // 2 are the pixel's added for rounding & IE
+      const itemsHaveWidth = this.widths && this.widths.some(itemWidth => itemWidth > 2); // 2 pixels added for rounding
       if (!itemsHaveWidth) {
         await this.measureItemsWidth();
       }
@@ -235,24 +200,74 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.percentageWidthSet = true;
       }
     }
-
     /**
      * Currently selected item.
      *
      * @readonly
-     * @type { sap.ui.webcomponents.main.ISegmentedButtonItem }
+     * @type {sap.ui.webc.main.ISegmentedButtonItem}
+     * @name sap.ui.webc.main.SegmentedButton.prototype.selectedItem
+     * @deprecated since 1.14.0. This method will be removed in the next major release.
+     * Please use the <code>selectedItems</code> property instead.
      * @public
      */
     get selectedItem() {
       return this._selectedItem;
     }
+    /**
+     * Returns an array of the currently selected items.
+     * @readonly
+     * @name sap.ui.webc.main.SegmentedButton.prototype.selectedItems
+     * @type {sap.ui.webc.main.ISegmentedButtonItem[]}
+     * @since 1.14.0
+     * @public
+     */
+    get selectedItems() {
+      return this.items.filter(item => item.pressed);
+    }
     get ariaDescribedBy() {
-      return SegmentedButton.i18nBundle.getText(_i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIBEDBY);
+      return SegmentedButton_1.i18nBundle.getText(_i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIBEDBY);
     }
     get ariaDescription() {
-      return SegmentedButton.i18nBundle.getText(_i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIPTION);
+      return SegmentedButton_1.i18nBundle.getText(_i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIPTION);
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    defaultValue: undefined
+  })], SegmentedButton.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    type: _SegmentedButtonMode.default,
+    defaultValue: _SegmentedButtonMode.default.SingleSelect
+  })], SegmentedButton.prototype, "mode", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    invalidateOnChildChange: true,
+    "default": true
+  })], SegmentedButton.prototype, "items", void 0);
+  SegmentedButton = SegmentedButton_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-segmented-button",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _SegmentedButtonTemplate.default,
+    styles: _SegmentedButton.default,
+    dependencies: [_SegmentedButtonItem.default]
+  })
+  /**
+   * Fired when the selected item changes.
+   *
+   * @event sap.ui.webc.main.SegmentedButton#selection-change
+   * @param {HTMLElement} selectedItem the pressed item. Note: deprecated since 1.14.0 and will be removed in the next major release, use the <code>selectedItems</code> parameter instead.
+   * @param {HTMLElement[]} selectedItems an array of selected items. Note: available since 1.14.0.
+   * @public
+   */, (0, _event.default)("selection-change", {
+    detail: {
+      selectedItem: {
+        type: HTMLElement
+      },
+      selectedItems: {
+        type: Array
+      }
+    }
+  })], SegmentedButton);
   SegmentedButton.define();
   var _default = SegmentedButton;
   _exports.default = _default;

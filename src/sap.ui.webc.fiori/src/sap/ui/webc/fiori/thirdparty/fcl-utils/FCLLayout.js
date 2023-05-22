@@ -9,7 +9,7 @@ sap.ui.define(["exports"], function (_exports) {
     return {
       desktop: {
         "OneColumn": {
-          layout: ["100%", 0, 0],
+          layout: ["100%", "0px", "0px"],
           arrows: [{
             visible: false,
             dir: null
@@ -19,7 +19,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "TwoColumnsStartExpanded": {
-          layout: ["67%", "33%", 0],
+          layout: ["67%", "33%", "0px"],
           arrows: [{
             visible: true,
             dir: "mirror"
@@ -29,22 +29,12 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "TwoColumnsMidExpanded": {
-          layout: ["33%", "67%", 0],
+          layout: ["33%", "67%", "0px"],
           arrows: [{
             visible: true,
             dir: null
           }, {
             visible: false,
-            dir: null
-          }]
-        },
-        "ThreeColumnsStartExpanded": {
-          layout: ["25%", "50%", "25%"],
-          arrows: [{
-            visible: true,
-            dir: null
-          }, {
-            visible: true,
             dir: null
           }]
         },
@@ -70,7 +60,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsStartExpandedEndHidden": {
-          layout: ["67%", "33%", 0],
+          layout: ["67%", "33%", "0px"],
           arrows: [{
             visible: true,
             dir: "mirror"
@@ -80,7 +70,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsMidExpandedEndHidden": {
-          layout: ["33%", "67%", 0],
+          layout: ["33%", "67%", "0px"],
           arrows: [{
             visible: true,
             dir: null
@@ -90,7 +80,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "MidColumnFullScreen": {
-          layout: [0, "100%", 0],
+          layout: ["0px", "100%", "0px"],
           arrows: [{
             visible: false,
             dir: null
@@ -100,7 +90,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "EndColumnFullScreen": {
-          layout: [0, 0, "100%"],
+          layout: ["0px", "0px", "100%"],
           arrows: [{
             visible: false,
             dir: null
@@ -112,7 +102,7 @@ sap.ui.define(["exports"], function (_exports) {
       },
       tablet: {
         "OneColumn": {
-          layout: ["100%", 0, 0],
+          layout: ["100%", "0px", "0px"],
           arrows: [{
             visible: false,
             dir: null
@@ -122,7 +112,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "TwoColumnsStartExpanded": {
-          layout: ["67%", "33%", 0],
+          layout: ["67%", "33%", "0px"],
           arrows: [{
             visible: true,
             dir: "mirror"
@@ -132,27 +122,17 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "TwoColumnsMidExpanded": {
-          layout: ["33%", "67%", 0],
+          layout: ["33%", "67%", "0px"],
           arrows: [{
             visible: true,
             dir: null
-          }, {
-            visible: false,
-            dir: null
-          }]
-        },
-        "ThreeColumnsStartExpanded": {
-          layout: ["67%", "33%", 0],
-          arrows: [{
-            visible: true,
-            dir: "mirror"
           }, {
             visible: false,
             dir: null
           }]
         },
         "ThreeColumnsMidExpanded": {
-          layout: [0, "67%", "33%"],
+          layout: ["0px", "67%", "33%"],
           arrows: [{
             visible: true,
             dir: null
@@ -162,7 +142,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsEndExpanded": {
-          layout: [0, "33%", "67%"],
+          layout: ["0px", "33%", "67%"],
           arrows: [{
             visible: false,
             dir: null
@@ -172,7 +152,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsStartExpandedEndHidden": {
-          layout: ["67%", "33%", 0],
+          layout: ["67%", "33%", "0px"],
           arrows: [{
             visible: true,
             dir: "mirror"
@@ -182,7 +162,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsMidExpandedEndHidden": {
-          layout: ["33%", "67%", 0],
+          layout: ["33%", "67%", "0px"],
           arrows: [{
             visible: true,
             dir: null
@@ -192,7 +172,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "MidColumnFullScreen": {
-          layout: [0, "100%", 0],
+          layout: ["0px", "100%", "0px"],
           arrows: [{
             visible: false,
             dir: null
@@ -202,7 +182,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "EndColumnFullScreen": {
-          layout: [0, 0, "100%"],
+          layout: ["0px", "0px", "100%"],
           arrows: [{
             visible: false,
             dir: null
@@ -214,7 +194,7 @@ sap.ui.define(["exports"], function (_exports) {
       },
       phone: {
         "OneColumn": {
-          layout: ["100%", 0, 0],
+          layout: ["100%", "0px", "0px"],
           arrows: [{
             visible: false,
             dir: null
@@ -224,7 +204,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "TwoColumnsStartExpanded": {
-          layout: [0, "100%", 0],
+          layout: ["0px", "100%", "0px"],
           arrows: [{
             visible: false,
             dir: null
@@ -234,17 +214,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "TwoColumnsMidExpanded": {
-          layout: [0, "100%", 0],
-          arrows: [{
-            visible: false,
-            dir: null
-          }, {
-            visible: false,
-            dir: null
-          }]
-        },
-        "ThreeColumnsStartExpanded": {
-          layout: [0, 0, "100%"],
+          layout: ["0px", "100%", "0px"],
           arrows: [{
             visible: false,
             dir: null
@@ -254,7 +224,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsMidExpanded": {
-          layout: [0, 0, "100%"],
+          layout: ["0px", "0px", "100%"],
           arrows: [{
             visible: false,
             dir: null
@@ -264,7 +234,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsEndExpanded": {
-          layout: [0, 0, "100%"],
+          layout: ["0px", "0px", "100%"],
           arrows: [{
             visible: false,
             dir: null
@@ -274,7 +244,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsStartExpandedEndHidden": {
-          layout: [0, 0, "100%"],
+          layout: ["0px", "0px", "100%"],
           arrows: [{
             visible: false,
             dir: null
@@ -284,7 +254,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "ThreeColumnsMidExpandedEndHidden": {
-          layout: [0, 0, "100%"],
+          layout: ["0px", "0px", "100%"],
           arrows: [{
             visible: false,
             dir: null
@@ -294,7 +264,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "MidColumnFullScreen": {
-          layout: [0, "100%", 0],
+          layout: ["0px", "100%", "0px"],
           arrows: [{
             visible: false,
             dir: null
@@ -304,7 +274,7 @@ sap.ui.define(["exports"], function (_exports) {
           }]
         },
         "EndColumnFullScreen": {
-          layout: [0, 0, "100%"],
+          layout: ["0px", "0px", "100%"],
           arrows: [{
             visible: false,
             dir: null

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/weather-proofing", "./v4/weather-proofing"], function (_exports, _Theme, _weatherProofing, _weatherProofing2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/weather-proofing", "./v5/weather-proofing"], function (_exports, _Theme, _weatherProofing, _weatherProofing2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _weatherProofing.pathData : _weatherProofing2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _weatherProofing.pathData : _weatherProofing2.pathData;
   _exports.pathData = pathData;
   var _default = "weather-proofing";
   _exports.default = _default;

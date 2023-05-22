@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/MediaRange", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/main/thirdparty/Button", "sap/ui/webc/main/thirdparty/Carousel", "./MediaGalleryItem", "./types/MediaGalleryItemLayout", "./types/MediaGalleryLayout", "./types/MediaGalleryMenuHorizontalAlign", "./types/MediaGalleryMenuVerticalAlign", "./generated/templates/MediaGalleryTemplate.lit", "./generated/themes/MediaGallery.css"], function (_exports, _ItemNavigation, _ResizeHandler, _Device, _MediaRange, _LitRenderer, _Integer, _NavigationMode, _UI5Element, _Button, _Carousel, _MediaGalleryItem, _MediaGalleryItemLayout, _MediaGalleryLayout, _MediaGalleryMenuHorizontalAlign, _MediaGalleryMenuVerticalAlign, _MediaGalleryTemplate, _MediaGallery) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/MediaRange", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/main/thirdparty/Button", "sap/ui/webc/main/thirdparty/Carousel", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "./MediaGalleryItem", "./types/MediaGalleryItemLayout", "./types/MediaGalleryLayout", "./types/MediaGalleryMenuHorizontalAlign", "./types/MediaGalleryMenuVerticalAlign", "./generated/themes/MediaGallery.css", "./generated/templates/MediaGalleryTemplate.lit"], function (_exports, _ItemNavigation, _ResizeHandler, _Device, _MediaRange, _LitRenderer, _Integer, _NavigationMode, _UI5Element, _Button, _Carousel, _customElement, _property, _slot, _event, _MediaGalleryItem, _MediaGalleryItemLayout, _MediaGalleryLayout, _MediaGalleryMenuHorizontalAlign, _MediaGalleryMenuVerticalAlign, _MediaGallery, _MediaGalleryTemplate) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -14,18 +14,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
   _UI5Element = _interopRequireDefault(_UI5Element);
   _Button = _interopRequireDefault(_Button);
   _Carousel = _interopRequireDefault(_Carousel);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _MediaGalleryItem = _interopRequireDefault(_MediaGalleryItem);
   _MediaGalleryItemLayout = _interopRequireDefault(_MediaGalleryItemLayout);
   _MediaGalleryLayout = _interopRequireDefault(_MediaGalleryLayout);
   _MediaGalleryMenuHorizontalAlign = _interopRequireDefault(_MediaGalleryMenuHorizontalAlign);
   _MediaGalleryMenuVerticalAlign = _interopRequireDefault(_MediaGalleryMenuVerticalAlign);
-  _MediaGalleryTemplate = _interopRequireDefault(_MediaGalleryTemplate);
   _MediaGallery = _interopRequireDefault(_MediaGallery);
+  _MediaGalleryTemplate = _interopRequireDefault(_MediaGalleryTemplate);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+  var MediaGallery_1;
   // The allowed number of thumbnail columns on each size
   // (relevant when <code>showAllThumbnails</code> is enabled)
   const COLUMNS_COUNT = {
@@ -34,187 +42,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
     "L": 3,
     "XL": 4
   };
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-media-gallery",
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.fiori.MediaGallery.prototype */{
-      /**
-       * Defines the component items.
-       *
-       * <br><br>
-       * <b>Note:</b> Only one selected item is allowed.
-       *
-       * <br><br>
-       * <b>Note:</b> Use the <code>ui5-media-gallery-item</code> component to define the desired items.
-       *
-       * @type {sap.ui.webcomponents.fiori.IMediaGalleryItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement,
-        individualSlots: true,
-        invalidateOnChildChange: true
-      }
-    },
-    properties: /** @lends sap.ui.webcomponents.fiori.MediaGallery.prototype */{
-      /**
-       * If set to <code>true</code>, all thumbnails are rendered in a scrollable container.
-       * If <code>false</code>, only up to five thumbnails are rendered, followed by
-       * an overflow button that shows the count of the remaining thumbnails.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      showAllThumbnails: {
-        type: Boolean
-      },
-      /**
-       * If enabled, a <code>display-area-click</code> event is fired
-       * when the user clicks or taps on the display area.
-       * <br>
-       * The display area is the central area that contains
-       * the enlarged content of the currently selected item.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      interactiveDisplayArea: {
-        type: Boolean
-      },
-      /**
-       * Determines the layout of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Auto</code></li>
-       * <li><code>Vertical</code></li>
-       * <li><code>Horizontal</code></li>
-       * </ul>
-       *
-       * @type {MediaGalleryLayout}
-       * @defaultvalue "Auto"
-       * @public
-       */
-      layout: {
-        type: _MediaGalleryLayout.default,
-        defaultValue: "Auto"
-      },
-      /**
-       * Determines the horizontal alignment of the thumbnails menu
-       * vs. the central display area.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Left</code></li>
-       * <li><code>Right</code></li>
-       * </ul>
-       *
-       * @type {MediaGalleryMenuHorizontalAlign}
-       * @defaultvalue "Left"
-       * @public
-       */
-      menuHorizontalAlign: {
-        type: _MediaGalleryMenuHorizontalAlign.default,
-        defaultValue: _MediaGalleryMenuHorizontalAlign.default.Left
-      },
-      /**
-       * Determines the vertical alignment of the thumbnails menu
-       * vs. the central display area.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Top</code></li>
-       * <li><code>Bottom</code></li>
-       * </ul>
-       *
-       * @type {MediaGalleryMenuVerticalAlign}
-       * @defaultvalue "Bottom"
-       * @public
-       */
-      menuVerticalAlign: {
-        type: _MediaGalleryMenuVerticalAlign.default,
-        defaultValue: _MediaGalleryMenuVerticalAlign.default.Bottom
-      },
-      /**
-       * Determines the actual applied layout type
-       * (esp. needed when the app did not specify a fixed layout type
-       * but selected <code>Auto</code> layout type).
-       * <br><br>
-       * Possible values are:
-       * <ul>
-       * <li><code>Vertical</code></li>
-       * <li><code>Horizontal</code></li>
-       * </ul>
-       *
-       * @type {MediaGalleryLayout}
-       * @defaultvalue "Vertical"
-       * @private
-       */
-      effectiveLayout: {
-        type: _MediaGalleryLayout.default,
-        defaultValue: "Vertical"
-      },
-      /**
-       * Defines the current media query size.
-       *
-       * @private
-       */
-      mediaRange: {
-        type: String
-      },
-      /**
-       * The number of items in the overflow.
-       *
-       * @private
-       */
-      _overflowSize: {
-        type: _Integer.default,
-        noAttribute: true,
-        defaultValue: 0
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.fiori.MediaGallery.prototype */{
-      /**
-       * Fired when selection is changed by user interaction.
-       *
-       * @event sap.ui.webcomponents.fiori.MediaGallery#selection-change
-       * @param {HTMLElement} item the selected item.
-       * @public
-       */
-      "selection-change": {
-        detail: {
-          item: {
-            type: HTMLElement
-          }
-        }
-      },
-      /**
-       * Fired when the thumbnails overflow button is clicked.
-       *
-       * @event sap.ui.webcomponents.fiori.MediaGallery#overflow-click
-       * @public
-       */
-      "overflow-click": {},
-      /**
-       * Fired when the display area is clicked.<br>
-       * The display area is the central area that contains
-       * the enlarged content of the currently selected item.
-       *
-       * @event sap.ui.webcomponents.fiori.MediaGallery#display-area-click
-       * @public
-       */
-      "display-area-click": {}
-    }
-  };
-
   /**
    * @class
    *
@@ -241,7 +68,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
    * <li>[UP/DOWN] - Navigates up and down the items</li>
    * <li>[HOME] - Navigates to first item</li>
    * <li>[END] - Navigates to the last item</li>
-   * <li>[SPACE/ENTER] - Select an item
+   * <li>[SPACE/ENTER] - Select an item</li>
    * </ul>
    * <br>
    *
@@ -252,19 +79,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.MediaGallery
-   * @extends UI5Element
+   * @alias sap.ui.webc.fiori.MediaGallery
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-media-gallery
-   * @appenddocs MediaGalleryItem
+   * @appenddocs sap.ui.webc.fiori.MediaGalleryItem
    * @public
    * @since 1.1.0
    */
-  class MediaGallery extends _UI5Element.default {
+  let MediaGallery = MediaGallery_1 = class MediaGallery extends _UI5Element.default {
     constructor() {
       super();
       this._onResize = this._updateLayout.bind(this);
-      this._selectedItem = null;
-      this._initItemNavigation();
+      this._itemNavigation = new _ItemNavigation.default(this, {
+        navigationMode: _NavigationMode.default.Auto,
+        getItemsCallback: () => this._getFocusableItems()
+      });
     }
     onEnterDOM() {
       !(0, _Device.isPhone)() && _ResizeHandler.default.register(this, this._onResize);
@@ -275,14 +104,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
     onAfterRendering() {
       this._updateLayout();
       this._updateSelection();
-    }
-    _initItemNavigation() {
-      if (!this._itemNavigation) {
-        this._itemNavigation = new _ItemNavigation.default(this, {
-          navigationMode: _NavigationMode.default.Auto,
-          getItemsCallback: () => this._getFocusableItems()
-        });
-      }
     }
     _updateSelection() {
       let itemToSelect = this.items.find(item => item.selected);
@@ -316,7 +137,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       this._toggleMainItem9x16size(this._shouldHaveWideDisplay);
     }
     _calculateOverflowSize(width, height) {
-      const marginSize = MediaGallery.THUMBNAIL_MARGIN;
+      const marginSize = MediaGallery_1.THUMBNAIL_MARGIN;
       let columnHeight, columnsCount;
       if (this.showAllThumbnails) {
         return 0;
@@ -332,13 +153,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
     }
     _toggleDisplaySquareSize(enable) {
       this._display.style.width = ""; // restore default width
-
       if (enable) {
-        const marginSize = MediaGallery.THUMBNAIL_MARGIN,
+        const marginSize = MediaGallery_1.THUMBNAIL_MARGIN,
           width = this._display.offsetWidth;
         let availableHeight = this.getDomRef().offsetHeight - 2 * marginSize;
         if (this.effectiveLayout === _MediaGalleryLayout.default.Vertical) {
-          availableHeight -= MediaGallery.THUMBNAIL_HEIGHT + marginSize;
+          availableHeight -= MediaGallery_1.THUMBNAIL_HEIGHT + marginSize;
         }
         if (width > availableHeight) {
           // set to square
@@ -361,7 +181,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       return this.layout;
     }
     _getMaxAllowedThumbnailsInColumn(columnHeight) {
-      let maxAllowedItems = Math.floor(columnHeight / MediaGallery.THUMBNAIL_HEIGHT);
+      let maxAllowedItems = Math.floor(columnHeight / MediaGallery_1.THUMBNAIL_HEIGHT);
       if (!this.showAllThumbnails) {
         maxAllowedItems = Math.min(maxAllowedItems, 5);
       }
@@ -386,7 +206,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       }
       return items;
     }
-    _selectItem(item, userInteraction) {
+    _selectItem(item, userInteraction = false) {
       if (item === this._selectedItem) {
         return;
       }
@@ -428,8 +248,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
         mainItem.appendChild(clone);
       }
     }
-    _onThumbnailClick(event) {
-      const item = event.target.closest("[ui5-media-gallery-item]");
+    _onThumbnailClick(e) {
+      const target = e.target;
+      const item = target.closest("[ui5-media-gallery-item]");
       if (item.disabled) {
         return;
       }
@@ -441,14 +262,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
     _onOverflowBtnClick() {
       this.fireEvent("overflow-click");
     }
-    _onDisplayAreaClick(event) {
+    _onDisplayAreaClick() {
       if (!this.interactiveDisplayArea) {
         return;
       }
       this.fireEvent("display-area-click");
     }
-    _onCarouselNavigate(event) {
-      const selectedIndex = event.detail.selectedIndex,
+    _onCarouselNavigate(e) {
+      const selectedIndex = e.detail.selectedIndex,
         item = this._selectableItems[selectedIndex];
       this.fireEvent("selection-change", {
         item
@@ -492,33 +313,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
       return this._mainItem && this._mainItem.layout === _MediaGalleryItemLayout.default.Wide;
     }
     get _shouldHaveWideDisplay() {
-      return this._mainItemHasWideLayout && this.showAllThumbnails && this.effectiveLayout === _MediaGalleryLayout.default.Horizontal;
+      return !!this._mainItemHasWideLayout && this.showAllThumbnails && this.effectiveLayout === _MediaGalleryLayout.default.Horizontal;
     }
     get _shouldHaveSquareDisplay() {
       // by default it should be square
       // with the only exception when a wide 9*16 item should be displayed
       return !this._shouldHaveWideDisplay;
-    }
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _MediaGalleryTemplate.default;
-    }
-    static get staticAreaTemplate() {
-      return _MediaGalleryTemplate.default;
-    }
-    static get styles() {
-      return [_MediaGallery.default];
-    }
-    static get staticAreaStyles() {
-      return null;
-    }
-    static get dependencies() {
-      return [_MediaGalleryItem.default, _Button.default, _Carousel.default];
     }
     static get THUMBNAIL_HEIGHT() {
       return 80; // px
@@ -527,8 +327,77 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
     static get THUMBNAIL_MARGIN() {
       return 16; // px
     }
-  }
+  };
 
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGallery.prototype, "showAllThumbnails", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MediaGallery.prototype, "interactiveDisplayArea", void 0);
+  __decorate([(0, _property.default)({
+    type: _MediaGalleryLayout.default,
+    defaultValue: _MediaGalleryLayout.default.Auto
+  })], MediaGallery.prototype, "layout", void 0);
+  __decorate([(0, _property.default)({
+    type: _MediaGalleryMenuHorizontalAlign.default,
+    defaultValue: _MediaGalleryMenuHorizontalAlign.default.Left
+  })], MediaGallery.prototype, "menuHorizontalAlign", void 0);
+  __decorate([(0, _property.default)({
+    type: _MediaGalleryMenuVerticalAlign.default,
+    defaultValue: _MediaGalleryMenuVerticalAlign.default.Bottom
+  })], MediaGallery.prototype, "menuVerticalAlign", void 0);
+  __decorate([(0, _property.default)({
+    type: _MediaGalleryLayout.default,
+    defaultValue: _MediaGalleryLayout.default.Vertical
+  })], MediaGallery.prototype, "effectiveLayout", void 0);
+  __decorate([(0, _property.default)()], MediaGallery.prototype, "mediaRange", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    noAttribute: true,
+    defaultValue: 0
+  })], MediaGallery.prototype, "_overflowSize", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    individualSlots: true,
+    invalidateOnChildChange: true,
+    "default": true
+  })], MediaGallery.prototype, "items", void 0);
+  MediaGallery = MediaGallery_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-media-gallery",
+    renderer: _LitRenderer.default,
+    styles: [_MediaGallery.default],
+    template: _MediaGalleryTemplate.default,
+    staticAreaTemplate: _MediaGalleryTemplate.default,
+    dependencies: [_MediaGalleryItem.default, _Button.default, _Carousel.default]
+  })
+  /**
+   * Fired when selection is changed by user interaction.
+   *
+   * @event sap.ui.webc.fiori.MediaGallery#selection-change
+   * @param {HTMLElement} item the selected item.
+   * @public
+   */, (0, _event.default)("selection-change", {
+    detail: {
+      item: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when the thumbnails overflow button is clicked.
+   *
+   * @event sap.ui.webc.fiori.MediaGallery#overflow-click
+   * @public
+   */, (0, _event.default)("overflow-click")
+  /**
+   * Fired when the display area is clicked.<br>
+   * The display area is the central area that contains
+   * the enlarged content of the currently selected item.
+   *
+   * @event sap.ui.webc.fiori.MediaGallery#display-area-click
+   * @public
+   */, (0, _event.default)("display-area-click")], MediaGallery);
   MediaGallery.define();
   var _default = MediaGallery;
   _exports.default = _default;

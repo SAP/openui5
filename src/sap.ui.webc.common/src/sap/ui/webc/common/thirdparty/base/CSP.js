@@ -8,9 +8,8 @@ sap.ui.define(["exports"], function (_exports) {
   const roots = new Map();
   let useLinks = false;
   let preloadLinks = true;
-
   /**
-   * Use this function to provide the path to the directory where the css resources for the given package will be served from
+   * Use this function to provide the path to the directory where the css resources for the given package will be served from.
    *
    * @public
    * @param packageName name of the package that is being configured
@@ -21,9 +20,13 @@ sap.ui.define(["exports"], function (_exports) {
   };
   _exports.setPackageCSSRoot = setPackageCSSRoot;
   const getUrl = (packageName, path) => {
-    return `${roots.get(packageName)}${path}`;
+    const packageCSSRoot = roots.get(packageName);
+    if (!packageCSSRoot) {
+      console.warn(`Root path to the CSS resources ${packageName} not provided - use "setPackageCSSRoot" to provide the root.`); // eslint-disable-line
+      return "";
+    }
+    return `${packageCSSRoot}${path}`;
   };
-
   /**
    * Call this function to enable or disable the usage of <link> tags instead of <style> tags to achieve CSP compliance
    * Example: "setUseLinks(true)" will unconditionally use <link> tags for all browsers;
@@ -36,7 +39,6 @@ sap.ui.define(["exports"], function (_exports) {
   const setUseLinks = use => {
     useLinks = use;
   };
-
   /**
    * Call this function to enable or disable the preloading of <link> tags.
    * Note: only taken into account when <link> tags are being used.

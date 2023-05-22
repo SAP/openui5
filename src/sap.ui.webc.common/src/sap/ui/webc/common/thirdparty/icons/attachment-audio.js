@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/attachment-audio", "./v4/attachment-audio"], function (_exports, _Theme, _attachmentAudio, _attachmentAudio2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/attachment-audio", "./v5/attachment-audio"], function (_exports, _Theme, _attachmentAudio, _attachmentAudio2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _attachmentAudio.pathData : _attachmentAudio2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _attachmentAudio.pathData : _attachmentAudio2.pathData;
   _exports.pathData = pathData;
   var _default = "attachment-audio";
   _exports.default = _default;

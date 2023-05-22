@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/media-reverse", "./v4/media-reverse"], function (_exports, _Theme, _mediaReverse, _mediaReverse2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/media-reverse", "./v5/media-reverse"], function (_exports, _Theme, _mediaReverse, _mediaReverse2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _mediaReverse.pathData : _mediaReverse2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _mediaReverse.pathData : _mediaReverse2.pathData;
   _exports.pathData = pathData;
   var _default = "media-reverse";
   _exports.default = _default;

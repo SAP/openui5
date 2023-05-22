@@ -11,10 +11,12 @@ sap.ui.define(["exports"], function (_exports) {
    * @param attributes - optional attributes to add to the tag
    * @returns {HTMLElement}
    */
-  const createStyleInHead = (cssText, attributes = {}) => {
+  const createStyleInHead = (cssText, attributes) => {
     const style = document.createElement("style");
     style.type = "text/css";
-    Object.entries(attributes).forEach(pair => style.setAttribute(...pair));
+    if (attributes) {
+      Object.entries(attributes).forEach(pair => style.setAttribute(...pair));
+    }
     style.textContent = cssText;
     document.head.appendChild(style);
     return style;

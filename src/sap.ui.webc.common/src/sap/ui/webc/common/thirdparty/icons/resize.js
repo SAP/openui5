@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/resize", "./v4/resize"], function (_exports, _Theme, _resize, _resize2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/resize", "./v5/resize"], function (_exports, _Theme, _resize, _resize2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _resize.pathData : _resize2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _resize.pathData : _resize2.pathData;
   _exports.pathData = pathData;
   var _default = "resize";
   _exports.default = _default;

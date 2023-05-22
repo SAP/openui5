@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "full-screen";
-  const pathData = "M461 10q11 0 18 7.5t7 18.5v128q0 11-7 18t-18 7-18.5-7-7.5-18V98l-70 70q-7 7-18 7t-18.5-7-7.5-18q0-10 8-18l70-71h-66q-11 0-18.5-7T307 36t7.5-18.5T333 10h128zM205 61q11 0 18.5 7.5T231 87t-7.5 18-18.5 7h-76v77q0 11-7.5 18.5T103 215t-18.5-7.5T77 189V87q0-11 7.5-18.5T103 61h102zm205 205q11 0 18 7t7 18v103q0 11-7 18t-18 7H307q-11 0-18-7t-7-18 7-18.5 18-7.5h77v-77q0-11 7.5-18t18.5-7zM180 419q11 0 18 7.5t7 18.5-7 18-18 7H52q-11 0-18.5-7T26 445V317q0-11 7.5-18.5T52 291t18 7.5 7 18.5v66l71-70q8-8 18-8 11 0 18 7.5t7 18.5-7 18l-70 70h66z";
+  const pathData = "M155 461q11 0 18 7t7 18-7 18.5-18 7.5H27q-11 0-18.5-7.5T1 486V359q0-11 7.5-18.5T27 333t18 7.5 7 18.5v66l104-105q7-7 18-7t18 7 7 18-7 18L88 461h67zM487 0q11 0 18 7.5t7 18.5v128q0 11-7 18t-18 7-18.5-7-7.5-18V88L356 192q-7 7-18 7t-18-7-7-18 7-18L425 51h-66q-11 0-18.5-7T333 26t7.5-18.5T359 0h128zM88 224q-12 0-19.5-7.5T61 197v-53q0-34 23-57t57-23h53q12 0 19.5 7.5T221 91t-7.5 19-19.5 7h-53q-12 0-19.5 7.5T114 144v53q0 12-7 19.5T88 224zm333 63q26 0 26 26v54q0 34-23 56.5T367 446h-53q-12 0-19.5-7t-7.5-19 7.5-19.5T314 393h53q12 0 19.5-7.5T394 366v-53q0-12 7.5-19t19.5-7z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -21,6 +21,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "full-screen";
+  var _default = "SAP-icons-v5/full-screen";
   _exports.default = _default;
 });

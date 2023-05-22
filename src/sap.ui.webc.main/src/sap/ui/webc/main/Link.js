@@ -82,11 +82,21 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
 					type: "string",
 					defaultValue: ""
+				},
+
+				/**
+				 * Defines the ARIA role of the component.
+				 *
+				 * <b>Note:</b> Use the "button" role in cases when navigation is not expected to occur and the href property is not defined.
+				 */
+				accessibleRole: {
+					type: "string",
+					defaultValue: "link"
 				},
 
 				/**

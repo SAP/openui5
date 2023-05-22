@@ -14,12 +14,10 @@ sap.ui.define(["exports"], function (_exports) {
     }
     el = document.createElement("span");
     el.style.display = "none";
-
     // Try with sapThemeMetaData-Base-baseLib first
     el.classList.add("sapThemeMetaData-Base-baseLib");
     document.body.appendChild(el);
     let metadata = getComputedStyle(el).backgroundImage;
-
     // Try with sapThemeMetaData-UI5-sap-ui-core only if the previous selector was not found
     if (metadata === "none") {
       el.classList.add("sapThemeMetaData-UI5-sap-ui-core");
@@ -78,7 +76,9 @@ sap.ui.define(["exports"], function (_exports) {
       return;
     }
     const metadata = parseThemeMetadata(metadataString);
-    return processThemeMetadata(metadata);
+    if (metadata) {
+      return processThemeMetadata(metadata);
+    }
   };
   var _default = getThemeDesignerTheme;
   _exports.default = _default;

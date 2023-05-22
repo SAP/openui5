@@ -1,47 +1,65 @@
-sap.ui.define(["exports", "./isNodeTabbable"], function (_exports, _isNodeTabbable) {
+sap.ui.define(["exports", "./isElementTabbable"], function (_exports, _isElementTabbable) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.getTabbableElements = _exports.getLastTabbableElement = void 0;
-  _isNodeTabbable = _interopRequireDefault(_isNodeTabbable);
+  _isElementTabbable = _interopRequireDefault(_isElementTabbable);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  const getTabbableElements = node => {
-    return getTabbables(node.children);
+  /**
+   * Returns the tabbable elements within the provided HTMLElement.
+   *
+   * @public
+   * @param { HTMLElement } el the component to operate on (component that slots or contains within its shadow root the items the user navigates among)
+   * @returns { Array<HTMLElement> } the tabbable elements
+   */
+  const getTabbableElements = el => {
+    return getTabbables([...el.children]);
   };
+  /**
+   * Returns the last tabbable element within the provided HTMLElement.
+   *
+   * @public
+   * @param { HTMLElement } el the component to operate on (component that slots or contains within its shadow root the items the user navigates among)
+   * @returns { HTMLElement | null } the last tabbable element or "null" if not found
+   */
   _exports.getTabbableElements = getTabbableElements;
-  const getLastTabbableElement = node => {
-    const tabbables = getTabbables(node.children);
+  const getLastTabbableElement = el => {
+    const tabbables = getTabbables([...el.children]);
     return tabbables.length ? tabbables[tabbables.length - 1] : null;
   };
   _exports.getLastTabbableElement = getLastTabbableElement;
   const getTabbables = (nodes, tabbables) => {
-    const tabbablesNodes = tabbables || [];
+    const tabbableElements = tabbables || [];
     if (!nodes) {
-      return tabbablesNodes;
+      return tabbableElements;
     }
-    Array.from(nodes).forEach(currentNode => {
-      if (currentNode.nodeType === Node.TEXT_NODE || currentNode.nodeType === Node.COMMENT_NODE || currentNode.hasAttribute("data-sap-no-tab-ref")) {
+    nodes.forEach(currentNode => {
+      if (currentNode.nodeType === Node.TEXT_NODE || currentNode.nodeType === Node.COMMENT_NODE) {
         return;
       }
-      if (currentNode.shadowRoot) {
+      let currentElement = currentNode;
+      if (currentElement.hasAttribute("data-sap-no-tab-ref")) {
+        return;
+      }
+      if (currentElement.shadowRoot) {
         // get the root node of the ShadowDom (1st none style tag)
-        const children = currentNode.shadowRoot.children;
-        currentNode = Array.from(children).find(node => node.tagName !== "STYLE");
+        const children = currentElement.shadowRoot.children;
+        currentElement = Array.from(children).find(node => node.tagName !== "STYLE");
       }
-      if (!currentNode) {
+      if (!currentElement) {
         return;
       }
-      if ((0, _isNodeTabbable.default)(currentNode)) {
-        tabbablesNodes.push(currentNode);
+      if ((0, _isElementTabbable.default)(currentElement)) {
+        tabbableElements.push(currentElement);
       }
-      if (currentNode.tagName === "SLOT") {
-        getTabbables(currentNode.assignedNodes(), tabbablesNodes);
+      if (currentElement.tagName === "SLOT") {
+        getTabbables(currentElement.assignedNodes(), tabbableElements);
       } else {
-        getTabbables(currentNode.children, tabbablesNodes);
+        getTabbables([...currentElement.children], tabbableElements);
       }
     });
-    return tabbablesNodes;
+    return tabbableElements;
   };
 });

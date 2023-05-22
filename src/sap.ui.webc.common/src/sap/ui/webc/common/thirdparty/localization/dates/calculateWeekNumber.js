@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports, _UniversalDate) {
+sap.ui.define(["exports", "./UniversalDate"], function (_exports, _UniversalDate) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -11,20 +11,18 @@ sap.ui.define(["exports", "sap/ui/core/date/UniversalDate"], function (_exports,
     let iWeekNum = 0;
     let iWeekDay = 0;
     const iFirstDayOfWeek = Number.isInteger(confFirstDayOfWeek) ? confFirstDayOfWeek : oLocaleData.getFirstDayOfWeek();
-
     // search Locale for containing "en-US", since sometimes
     // when any user settings have been defined, subtag "sapufmt" is added to the locale name
     // this is described inside sap.ui.core.Configuration file
     if (oLocale && oLocale.getLanguage() === "en" && oLocale.getRegion() === "US") {
       /*
-      	* in US the week starts with Sunday
-      	* The first week of the year starts with January 1st. But Dec. 31 is still in the last year
-      	* So the week beginning in December and ending in January has 2 week numbers
-      	*/
+          * in US the week starts with Sunday
+          * The first week of the year starts with January 1st. But Dec. 31 is still in the last year
+          * So the week beginning in December and ending in January has 2 week numbers
+          */
       const oJanFirst = new _UniversalDate.default(oDate.getTime());
       oJanFirst.setUTCFullYear(iYear, 0, 1);
       iWeekDay = oJanFirst.getUTCDay();
-
       // get the date for the same weekday like jan 1.
       const oCheckDate = new _UniversalDate.default(oDate.getTime());
       oCheckDate.setUTCDate(oCheckDate.getUTCDate() - oCheckDate.getUTCDay() + iWeekDay);

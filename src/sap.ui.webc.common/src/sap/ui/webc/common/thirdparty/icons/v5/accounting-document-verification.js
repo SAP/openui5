@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "accounting-document-verification";
+  var _default = "SAP-icons-v5/accounting-document-verification";
   _exports.default = _default;
 });

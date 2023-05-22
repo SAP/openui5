@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/soccer", "./v4/soccer"], function (_exports, _Theme, _soccer, _soccer2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/soccer", "./v5/soccer"], function (_exports, _Theme, _soccer, _soccer2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _soccer.pathData : _soccer2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _soccer.pathData : _soccer2.pathData;
   _exports.pathData = pathData;
   var _default = "soccer";
   _exports.default = _default;

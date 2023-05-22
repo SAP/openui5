@@ -10,7 +10,10 @@ sap.ui.define([
 ], function(WebComponent, library) {
 	"use strict";
 
+	var BackgroundDesign = library.BackgroundDesign;
+	var BorderDesign = library.BorderDesign;
 	var CarouselArrowsPlacement = library.CarouselArrowsPlacement;
+	var CarouselPageIndicatorStyle = library.CarouselPageIndicatorStyle;
 
 	/**
 	 * Constructor for a new <code>Carousel</code>.
@@ -50,12 +53,18 @@ sap.ui.define([
 	 *
 	 * <h4>Basic Navigation</h4> When the <code>sap.ui.webc.main.Carousel</code> is focused the user can navigate between the items with the following keyboard shortcuts: <br>
 	 *
-	 *
-	 *
-	 *
 	 * <ul>
 	 *     <li>[UP/DOWN] - Navigates to previous and next item</li>
 	 *     <li>[LEFT/RIGHT] - Navigates to previous and next item</li>
+	 * </ul>
+	 *
+	 *
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.main.Carousel</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>content - Used to style the content of the component</li>
 	 * </ul>
 	 *
 	 * @author SAP SE
@@ -90,6 +99,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the carousel's background design.
+				 */
+				backgroundDesign: {
+					type: "sap.ui.webc.main.BackgroundDesign",
+					defaultValue: BackgroundDesign.Translucent
+				},
+
+				/**
 				 * Defines whether the carousel should loop, i.e show the first page after the last page is reached and vice versa.
 				 */
 				cyclic: {
@@ -108,7 +125,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the visibility of the paging indicator. If set to true the page indicator will be hidden.
+				 * Defines the visibility of the page indicator. If set to true the page indicator will be hidden.
 				 */
 				hidePageIndicator: {
 					type: "boolean",
@@ -137,6 +154,34 @@ sap.ui.define([
 				itemsPerPageS: {
 					type: "int",
 					defaultValue: 1
+				},
+
+				/**
+				 * Defines the page indicator background design.
+				 */
+				pageIndicatorBackgroundDesign: {
+					type: "sap.ui.webc.main.BackgroundDesign",
+					defaultValue: BackgroundDesign.Solid
+				},
+
+				/**
+				 * Defines the page indicator border design.
+				 */
+				pageIndicatorBorderDesign: {
+					type: "sap.ui.webc.main.BorderDesign",
+					defaultValue: BorderDesign.Solid
+				},
+
+				/**
+				 * Defines the style of the page indicator. Available options are:
+				 * <ul>
+				 *     <li><code>Default</code> - The page indicator will be visualized as dots if there are fewer than 9 pages. If there are more pages, the page indicator will switch to displaying the current page and the total number of pages. (e.g. X of Y)</li>
+				 *     <li><code>Numeric</code> - The page indicator will display the current page and the total number of pages. (e.g. X of Y)</li>
+				 * </ul>
+				 */
+				pageIndicatorStyle: {
+					type: "sap.ui.webc.main.CarouselPageIndicatorStyle",
+					defaultValue: CarouselPageIndicatorStyle.Default
 				}
 			},
 			defaultAggregation: "content",

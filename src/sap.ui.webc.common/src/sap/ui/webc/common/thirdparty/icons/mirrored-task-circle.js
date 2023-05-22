@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/mirrored-task-circle", "./v4/mirrored-task-circle"], function (_exports, _Theme, _mirroredTaskCircle, _mirroredTaskCircle2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/mirrored-task-circle", "./v5/mirrored-task-circle"], function (_exports, _Theme, _mirroredTaskCircle, _mirroredTaskCircle2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _mirroredTaskCircle.pathData : _mirroredTaskCircle2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _mirroredTaskCircle.pathData : _mirroredTaskCircle2.pathData;
   _exports.pathData = pathData;
   var _default = "mirrored-task-circle";
   _exports.default = _default;

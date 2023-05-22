@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/crm-sales", "./v4/crm-sales"], function (_exports, _Theme, _crmSales, _crmSales2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/crm-sales", "./v5/crm-sales"], function (_exports, _Theme, _crmSales, _crmSales2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _crmSales.pathData : _crmSales2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _crmSales.pathData : _crmSales2.pathData;
   _exports.pathData = pathData;
   var _default = "crm-sales";
   _exports.default = _default;

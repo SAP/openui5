@@ -13,6 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
+	var ComboBoxFilter = library.ComboBoxFilter;
 
 	/**
 	 * Constructor for a new <code>MultiComboBox</code>.
@@ -29,8 +30,8 @@ sap.ui.define([
 	 *
 	 * The drop-down list is used for selecting and filtering values, it enables users to select one or more options from a predefined list. The control provides an editable input field to filter the list, and a dropdown arrow to expand/collapse the list of available options. The options in the list have checkboxes that permit multi-selection. Entered values are displayed as tokens. <h3>Structure</h3> The <code>sap.ui.webc.main.MultiComboBox</code> consists of the following elements:
 	 * <ul>
-	 *     <li> Tokenizer - a list of tokens with selected options.
-	 *     <li> Input field - displays the selected option/s as token/s. Users can type to filter the list.
+	 *     <li> Tokenizer - a list of tokens with selected options.</li>
+	 *     <li> Input field - displays the selected option/s as token/s. Users can type to filter the list.</li>
 	 *     <li> Drop-down arrow - expands\collapses the option list.</li>
 	 *     <li> Option list - the list of available options.</li>
 	 * </ul>
@@ -76,7 +77,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
 					type: "string"
@@ -107,8 +108,8 @@ sap.ui.define([
 				 * Defines the filter type of the component. Available options are: <code>StartsWithPerTerm</code>, <code>StartsWith</code>, <code>Contains</code> and <code>None</code>.
 				 */
 				filter: {
-					type: "string",
-					defaultValue: "StartsWithPerTerm"
+					type: "sap.ui.webc.main.ComboBoxFilter",
+					defaultValue: ComboBoxFilter.StartsWithPerTerm
 				},
 
 				/**
@@ -205,7 +206,7 @@ sap.ui.define([
 				 */
 				icon: {
 					type: "sap.ui.webc.main.IIcon",
-					multiple: false,
+					multiple: true,
 					slot: "icon"
 				},
 

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/program-triangles", "./v4/program-triangles"], function (_exports, _Theme, _programTriangles, _programTriangles2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/program-triangles", "./v5/program-triangles"], function (_exports, _Theme, _programTriangles, _programTriangles2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _programTriangles.pathData : _programTriangles2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _programTriangles.pathData : _programTriangles2.pathData;
   _exports.pathData = pathData;
   var _default = "program-triangles";
   _exports.default = _default;

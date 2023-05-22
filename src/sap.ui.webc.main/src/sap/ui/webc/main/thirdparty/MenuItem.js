@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], function (_exports, _UI5Element) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/types/Integer"], function (_exports, _UI5Element, _customElement, _property, _slot, _Integer) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,111 +6,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _Integer = _interopRequireDefault(_Integer);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-menu-item",
-    properties: /** @lends sap.ui.webcomponents.main.MenuItem.prototype */{
-      /**
-       * Defines the text of the tree item.
-       *
-       * @type {String}
-       * @defaultValue ""
-       * @public
-       */
-      text: {
-        type: String
-      },
-      /**
-       * Defines the icon to be displayed as graphical element within the component.
-       * The SAP-icons font provides numerous options.
-       * <br><br>
-       <b>* Example:</b>
-       * See all the available icons in the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      icon: {
-        type: String
-      },
-      /**
-       * Defines whether a visual separator should be rendered before the item.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      startsSection: {
-        type: Boolean
-      },
-      /**
-       * Defines whether <code>ui5-menu-item</code> is in disabled state.
-       * <br><br>
-       * <b>Note:</b> A disabled <code>ui5-menu-item</code> is noninteractive.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Indicates if the any of the element siblings have children items.
-       * @type {boolean}
-       * @private
-       */
-      _siblingsWithChildren: {
-        type: Boolean,
-        noAttribute: true
-      },
-      /**
-       * Indicates if the any of the element siblings have icon.
-       * @type {boolean}
-       * @private
-       */
-      _siblingsWithIcon: {
-        type: Boolean,
-        noAttribute: true
-      },
-      /**
-       * Stores Menu object with submenu items
-       * @type {object}
-       * @private
-       */
-      _subMenu: {
-        type: Object
-      },
-      /**
-       * Defines whether the submenu closing must be prevented
-       * @type {boolean}
-       * @private
-       */
-      _preventSubMenuClose: {
-        type: Boolean,
-        noAttribute: true
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.MenuItem.prototype */{
-      /**
-       * Defines the items of this component.
-       *
-       * @type {sap.ui.webcomponents.main.IMenuItem[]}
-       * @slot items
-       * @public
-       */
-      "default": {
-        propertyName: "items",
-        type: HTMLElement,
-        invalidateOnChildChange: true
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -125,34 +32,76 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    * and each <code>ui5-menu-item</code> is represented by a list item (<code>ui5-li</code>) in that list. Therefore, you should only use
    * <code>ui5-menu-item</code> directly in your apps. The <code>ui5-li</code> list item is internal for the list, and not intended for public use.
    *
-   * For the <code>ui5-menu-item</code>
    * <h3>ES6 Module Import</h3>
    *
-   * <code>import @ui5/webcomponents/dist/MenuItem.js";</code>
+   * <code>import "@ui5/webcomponents/dist/MenuItem.js";</code>
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.MenuItem
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.MenuItem
+   * @extends sap.ui.webc.base.UI5Element
+   * @abstract
    * @tagname ui5-menu-item
-   * @implements sap.ui.webcomponents.main.IMenuItem
+   * @implements sap.ui.webc.main.IMenuItem
    * @since 1.3.0
    * @public
    */
-  class MenuItem extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    get hasChildren() {
-      return !!this.items.length;
+  let MenuItem = class MenuItem extends _UI5Element.default {
+    get hasSubmenu() {
+      return !!(this.items.length || this.busy);
     }
     get hasDummyIcon() {
       return this._siblingsWithIcon && !this.icon;
     }
     get subMenuOpened() {
-      return !!Object.keys(this._subMenu).length;
+      return !!this._subMenu;
     }
-  }
+    get _additionalText() {
+      return this.hasSubmenu ? "" : this.additionalText;
+    }
+    get ariaLabelledByText() {
+      return `${this.text} ${this.accessibleName}`.trim();
+    }
+  };
+  __decorate([(0, _property.default)()], MenuItem.prototype, "text", void 0);
+  __decorate([(0, _property.default)()], MenuItem.prototype, "additionalText", void 0);
+  __decorate([(0, _property.default)()], MenuItem.prototype, "icon", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MenuItem.prototype, "startsSection", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MenuItem.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MenuItem.prototype, "busy", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 1000
+  })], MenuItem.prototype, "busyDelay", void 0);
+  __decorate([(0, _property.default)()], MenuItem.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], MenuItem.prototype, "_siblingsWithChildren", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], MenuItem.prototype, "_siblingsWithIcon", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], MenuItem.prototype, "_preventSubMenuClose", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    defaultValue: undefined
+  })], MenuItem.prototype, "_subMenu", void 0);
+  __decorate([(0, _slot.default)({
+    "default": true,
+    type: HTMLElement,
+    invalidateOnChildChange: true
+  })], MenuItem.prototype, "items", void 0);
+  MenuItem = __decorate([(0, _customElement.default)("ui5-menu-item")], MenuItem);
   MenuItem.define();
   var _default = MenuItem;
   _exports.default = _default;

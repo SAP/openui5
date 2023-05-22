@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pushpin-on", "./v4/pushpin-on"], function (_exports, _Theme, _pushpinOn, _pushpinOn2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/pushpin-on", "./v5/pushpin-on"], function (_exports, _Theme, _pushpinOn, _pushpinOn2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pushpinOn.pathData : _pushpinOn2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _pushpinOn.pathData : _pushpinOn2.pathData;
   _exports.pathData = pathData;
   var _default = "pushpin-on";
   _exports.default = _default;

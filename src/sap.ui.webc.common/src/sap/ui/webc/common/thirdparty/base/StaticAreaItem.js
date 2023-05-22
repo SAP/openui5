@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./util/getEffectiveContentDensity", "./CustomElementsScopeUtils", "./locale/getEffectiveDir"], function (_exports, _StaticArea, _updateShadowRoot, _Render, _getEffectiveContentDensity, _CustomElementsScopeUtils, _getEffectiveDir) {
+sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./util/getEffectiveContentDensity", "./CustomElementsScopeUtils", "./locale/getEffectiveDir", "./Runtimes"], function (_exports, _StaticArea, _updateShadowRoot, _Render, _getEffectiveContentDensity, _CustomElementsScopeUtils, _getEffectiveDir, _Runtimes) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -9,6 +9,8 @@ sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./u
   _getEffectiveContentDensity = _interopRequireDefault(_getEffectiveContentDensity);
   _getEffectiveDir = _interopRequireDefault(_getEffectiveDir);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  const pureTagName = "ui5-static-area-item";
+  const popupIntegrationAttr = "data-sap-ui-integration-popup-content";
   /**
    *
    * @class
@@ -23,10 +25,8 @@ sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./u
         mode: "open"
       });
     }
-
     /**
-     * @protected
-     * @param ownerElement The UI5Element instance that owns this static area item
+     * @param {UI5Element} ownerElement the UI5Element instance that owns this static area item
      */
     setOwnerElement(ownerElement) {
       this.ownerElement = ownerElement;
@@ -35,19 +35,20 @@ sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./u
         this.setAttribute("data-ui5-stable", this.ownerElement.getAttribute("data-ui5-static-stable")); // stable selector
       }
     }
-
     /**
      * Updates the shadow root of the static area item with the latest state, if rendered
-     * @protected
      */
     update() {
       if (this._rendered) {
-        this._updateContentDensity();
-        this._updateDirection();
+        this.updateAdditionalProperties();
         (0, _updateShadowRoot.default)(this.ownerElement, true);
       }
     }
-
+    updateAdditionalProperties() {
+      this._updateAdditionalAttrs();
+      this._updateContentDensity();
+      this._updateDirection();
+    }
     /**
      * Sets the correct content density based on the owner element's state
      * @private
@@ -62,20 +63,27 @@ sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./u
       }
     }
     _updateDirection() {
-      const dir = (0, _getEffectiveDir.default)(this.ownerElement);
-      if (dir) {
-        this.setAttribute("dir", dir);
-      } else {
-        this.removeAttribute("dir");
+      if (this.ownerElement) {
+        const dir = (0, _getEffectiveDir.default)(this.ownerElement);
+        if (dir) {
+          this.setAttribute("dir", dir);
+        } else {
+          this.removeAttribute("dir");
+        }
       }
     }
-
+    _updateAdditionalAttrs() {
+      this.setAttribute(`_ui5rt${(0, _Runtimes.getCurrentRuntimeIndex)()}`, "");
+      this.setAttribute("_ui5host", "");
+      this.setAttribute(pureTagName, "");
+      this.setAttribute(popupIntegrationAttr, "");
+    }
     /**
      * @protected
      * Returns reference to the DOM element where the current fragment is added.
      */
     async getDomRef() {
-      this._updateContentDensity();
+      this.updateAdditionalProperties();
       if (!this._rendered) {
         this._rendered = true;
         (0, _updateShadowRoot.default)(this.ownerElement, true);
@@ -84,12 +92,11 @@ sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./u
       return this.shadowRoot;
     }
     static getTag() {
-      const pureTag = "ui5-static-area-item";
-      const suffix = (0, _CustomElementsScopeUtils.getEffectiveScopingSuffixForTag)(pureTag);
+      const suffix = (0, _CustomElementsScopeUtils.getEffectiveScopingSuffixForTag)(pureTagName);
       if (!suffix) {
-        return pureTag;
+        return pureTagName;
       }
-      return `${pureTag}-${suffix}`;
+      return `${pureTagName}-${suffix}`;
     }
     static createInstance() {
       if (!customElements.get(StaticAreaItem.getTag())) {

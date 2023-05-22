@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/write-new", "./v4/write-new"], function (_exports, _Theme, _writeNew, _writeNew2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/write-new", "./v5/write-new"], function (_exports, _Theme, _writeNew, _writeNew2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _writeNew.pathData : _writeNew2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _writeNew.pathData : _writeNew2.pathData;
   _exports.pathData = pathData;
   var _default = "write-new";
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/lateness", "./v4/lateness"], function (_exports, _Theme, _lateness, _lateness2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/lateness", "./v5/lateness"], function (_exports, _Theme, _lateness, _lateness2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _lateness.pathData : _lateness2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _lateness.pathData : _lateness2.pathData;
   _exports.pathData = pathData;
   var _default = "lateness";
   _exports.default = _default;

@@ -6,13 +6,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "source-code";
-  const pathData = "M51.697 247.55q-3.977 4.97-3.977 9.941 0 3.977 3.977 8.948l138.19 150.12q2.983 4.971 2.983 10.936 0 9.942-5.965 13.919-4.971 3.976-10.936 3.976-7.953 0-14.913-6.959L4.971 266.44Q0 261.468 0 257.49q0-4.97 4.97-9.941L161.057 70.586q6.96-6.959 14.913-6.959 16.9 0 16.9 17.895 0 6.96-2.982 10.936zm455.332 0Q512 252.52 512 257.49q0 3.977-4.97 8.948L350.943 438.43q-6.96 6.96-14.913 6.96-5.965 0-10.936-3.977-5.965-3.977-5.965-13.919 0-6.96 3.977-10.936l138.19-150.12q2.983-4.971 2.983-8.948 0-4.97-2.983-9.941L323.107 92.458q-3.977-3.976-3.977-10.936 0-17.895 16.901-17.895 7.953 0 14.913 6.96z";
+  const pathData = "M51.3 248.031q-7.97 9.961 0 18.926L189.759 417.37q2.988 4.98 2.988 10.957 0 9.96-5.977 13.945-4.98 3.985-10.957 3.985-7.969 0-14.941-6.973L4.482 266.957q-8.964-8.965 0-18.926l156.39-177.307q6.972-6.973 14.941-6.973 16.934 0 16.934 17.93 0 6.973-2.988 10.957zm456.218 0q8.964 9.961 0 18.926l-156.39 172.327q-6.972 6.973-14.941 6.973-5.977 0-10.957-3.985-5.977-3.984-5.977-13.945 0-6.973 3.984-10.957l138.46-150.413q5.976-8.965 0-18.926L323.236 92.638q-3.984-3.984-3.984-10.957 0-17.93 16.934-17.93 7.969 0 14.941 6.973z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
   const accData = null;
   _exports.accData = accData;
-  const collection = "SAP-icons";
+  const collection = "SAP-icons-v4";
   const packageName = "@ui5/webcomponents-icons";
   (0, _Icons.registerIcon)(name, {
     pathData,
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "source-code";
+  var _default = "SAP-icons-v4/source-code";
   _exports.default = _default;
 });

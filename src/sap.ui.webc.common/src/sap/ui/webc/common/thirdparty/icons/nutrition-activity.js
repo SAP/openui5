@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/nutrition-activity", "./v4/nutrition-activity"], function (_exports, _Theme, _nutritionActivity, _nutritionActivity2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/nutrition-activity", "./v5/nutrition-activity"], function (_exports, _Theme, _nutritionActivity, _nutritionActivity2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _nutritionActivity.pathData : _nutritionActivity2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _nutritionActivity.pathData : _nutritionActivity2.pathData;
   _exports.pathData = pathData;
   var _default = "nutrition-activity";
   _exports.default = _default;

@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "overlay";
+  var _default = "SAP-icons-v5/overlay";
   _exports.default = _default;
 });

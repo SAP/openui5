@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/waiver", "./v4/waiver"], function (_exports, _Theme, _waiver, _waiver2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/waiver", "./v5/waiver"], function (_exports, _Theme, _waiver, _waiver2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _waiver.pathData : _waiver2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _waiver.pathData : _waiver2.pathData;
   _exports.pathData = pathData;
   var _default = "waiver";
   _exports.default = _default;

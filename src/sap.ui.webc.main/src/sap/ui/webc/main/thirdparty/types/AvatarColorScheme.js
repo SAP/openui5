@@ -1,101 +1,88 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * Different types of AvatarColorSchemes.
-   * @lends sap.ui.webcomponents.main.types.AvatarColorScheme.prototype
+   * Different types of AvatarColorScheme.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.AvatarColorScheme
    */
-  const AvatarColorSchemes = {
+  var AvatarColorScheme;
+  (function (AvatarColorScheme) {
     /**
      *
      * @public
      * @type {Accent1}
      */
-    Accent1: "Accent1",
+    AvatarColorScheme["Accent1"] = "Accent1";
     /**
      *
      * @public
      * @type {Accent2}
      */
-    Accent2: "Accent2",
+    AvatarColorScheme["Accent2"] = "Accent2";
     /**
      *
      * @public
      * @type {Accent3}
      */
-    Accent3: "Accent3",
+    AvatarColorScheme["Accent3"] = "Accent3";
     /**
      *
      * @public
      * @type {Accent4}
      */
-    Accent4: "Accent4",
+    AvatarColorScheme["Accent4"] = "Accent4";
     /**
      *
      * @public
      * @type {Accent5}
      */
-    Accent5: "Accent5",
+    AvatarColorScheme["Accent5"] = "Accent5";
     /**
      *
      * @public
      * @type {Accent6}
      */
-    Accent6: "Accent6",
+    AvatarColorScheme["Accent6"] = "Accent6";
     /**
      *
      * @public
      * @type {Accent7}
      */
-    Accent7: "Accent7",
+    AvatarColorScheme["Accent7"] = "Accent7";
     /**
      *
      * @public
      * @type {Accent8}
      */
-    Accent8: "Accent8",
+    AvatarColorScheme["Accent8"] = "Accent8";
     /**
      *
      * @public
      * @type {Accent9}
      */
-    Accent9: "Accent9",
+    AvatarColorScheme["Accent9"] = "Accent9";
     /**
      *
      * @public
      * @type {Accent10}
      */
-    Accent10: "Accent10",
+    AvatarColorScheme["Accent10"] = "Accent10";
     /**
      *
      * @public
      * @type {Placeholder}
      */
-    Placeholder: "Placeholder"
-  };
-
-  /**
-   * @class
-   * Different types of AvatarColorScheme.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.AvatarColorScheme
-   * @public
-   * @enum {string}
-   */
-  class AvatarColorScheme extends _DataType.default {
-    static isValid(value) {
-      return !!AvatarColorSchemes[value];
-    }
-  }
-  AvatarColorScheme.generateTypeAccessors(AvatarColorSchemes);
+    AvatarColorScheme["Placeholder"] = "Placeholder";
+  })(AvatarColorScheme || (AvatarColorScheme = {}));
   var _default = AvatarColorScheme;
   _exports.default = _default;
 });

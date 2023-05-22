@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/traffic-cone", "./v2/traffic-cone"], function (_exports, _Theme, _trafficCone, _trafficCone2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "traffic-cone";
-  const pathData = "M338 96h-68l18-96h32zm46 192H224q31-112 32-112h96zm64 153l32 7v64H128v-64l32-7 42-73h204z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _trafficCone.accData;
+    }
   });
-  var _default = "traffic-cone";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _trafficCone.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _trafficCone.pathData : _trafficCone2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/traffic-cone";
   _exports.default = _default;
 });

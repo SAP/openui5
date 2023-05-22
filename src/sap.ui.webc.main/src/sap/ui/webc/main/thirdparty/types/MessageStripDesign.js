@@ -1,58 +1,46 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.MessageStripDesign.prototype
+   * MessageStrip designs.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.MessageStripDesign
    */
-  const MessageStripDesigns = {
+  var MessageStripDesign;
+  (function (MessageStripDesign) {
     /**
      * Message should be just an information
      * @public
      * @type {Information}
      */
-    Information: "Information",
+    MessageStripDesign["Information"] = "Information";
     /**
      * Message is a success message
      * @public
      * @type {Positive}
      */
-    Positive: "Positive",
+    MessageStripDesign["Positive"] = "Positive";
     /**
      * Message is an error
      * @public
      * @type {Negative}
      */
-    Negative: "Negative",
+    MessageStripDesign["Negative"] = "Negative";
     /**
      * Message is a warning
      * @public
      * @type {Warning}
      */
-    Warning: "Warning"
-  };
-
-  /**
-   * @class
-   * Defines different types of MessageStrip.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.MessageStripDesign
-   * @public
-   * @enum {string}
-   */
-  class MessageStripDesign extends _DataType.default {
-    static isValid(value) {
-      return !!MessageStripDesigns[value];
-    }
-  }
-  MessageStripDesign.generateTypeAccessors(MessageStripDesigns);
+    MessageStripDesign["Warning"] = "Warning";
+  })(MessageStripDesign || (MessageStripDesign = {}));
   var _default = MessageStripDesign;
   _exports.default = _default;
 });

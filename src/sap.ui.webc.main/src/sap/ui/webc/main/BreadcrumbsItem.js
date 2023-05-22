@@ -21,7 +21,7 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>sap.ui.webc.main.BreadcrumbsItem</code> component defines the content of an item in <code>ui5-breadcumbs</code>.
+	 * The <code>sap.ui.webc.main.BreadcrumbsItem</code> component defines the content of an item in <code>sap.ui.webc.main.Breadcrumbs</code>.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -43,7 +43,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the item.
+				 * Defines the accessible ARIA name of the item.
 				 */
 				accessibleName: {
 					type: "string",

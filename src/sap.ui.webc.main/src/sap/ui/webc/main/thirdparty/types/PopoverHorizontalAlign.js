@@ -1,58 +1,46 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.PopoverHorizontalAlign.prototype
+   * Popover horizontal align types.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.PopoverHorizontalAlign
    */
-  const PopoverHorizontalAligns = {
+  var PopoverHorizontalAlign;
+  (function (PopoverHorizontalAlign) {
     /**
-     * Popover is centered
+     * Popover is centered.
      * @public
      * @type {Center}
      */
-    Center: "Center",
+    PopoverHorizontalAlign["Center"] = "Center";
     /**
-     * Popover opens on the left side of the target
+     * Popover is aligned with the left side of the target. When direction is RTL, it is right aligned.
      * @public
      * @type {Left}
      */
-    Left: "Left",
+    PopoverHorizontalAlign["Left"] = "Left";
     /**
-     * Popover opens on the right side of the target
+     * Popover is aligned with the right side of the target. When direction is RTL, it is left aligned.
      * @public
      * @type {Right}
      */
-    Right: "Right",
+    PopoverHorizontalAlign["Right"] = "Right";
     /**
-     * Popover is stretched
+     * Popover is stretched.
      * @public
      * @type {Stretch}
      */
-    Stretch: "Stretch"
-  };
-
-  /**
-   * @class
-   * Defines the horizontal alignment of <code>ui5-popover</code>
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.PopoverHorizontalAlign
-   * @public
-   * @enum {string}
-   */
-  class PopoverHorizontalAlign extends _DataType.default {
-    static isValid(value) {
-      return !!PopoverHorizontalAligns[value];
-    }
-  }
-  PopoverHorizontalAlign.generateTypeAccessors(PopoverHorizontalAligns);
+    PopoverHorizontalAlign["Stretch"] = "Stretch";
+  })(PopoverHorizontalAlign || (PopoverHorizontalAlign = {}));
   var _default = PopoverHorizontalAlign;
   _exports.default = _default;
 });

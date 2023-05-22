@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "target-group";
+  var _default = "SAP-icons-v5/target-group";
   _exports.default = _default;
 });

@@ -136,7 +136,7 @@ sap.ui.define([
 				 *
 				 * <br>
 				 * <br>
-				 * <b>Note:</b> by default the <code>titleText</code> and <code>decription</code>, and a <code>ShowMore/Less</code> button would be displayed.
+				 * <b>Note:</b> by default the <code>titleText</code> and <code>description</code>, and a <code>ShowMore/Less</code> button would be displayed.
 				 */
 				wrappingType: {
 					type: "sap.ui.webc.main.WrappingType",
@@ -185,7 +185,14 @@ sap.ui.define([
 				 * Fired when the <code>Close</code> button is pressed.
 				 */
 				close: {
-					parameters: {}
+					parameters: {
+						/**
+						 * the closed item.
+						 */
+						item: {
+							type: "HTMLElement"
+						}
+					}
 				}
 			},
 			designtime: "sap/ui/webc/fiori/designtime/NotificationListItem.designtime"

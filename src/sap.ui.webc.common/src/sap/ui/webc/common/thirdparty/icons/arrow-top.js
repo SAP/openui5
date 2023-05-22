@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/arrow-top", "./v4/arrow-top"], function (_exports, _Theme, _arrowTop, _arrowTop2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/arrow-top", "./v5/arrow-top"], function (_exports, _Theme, _arrowTop, _arrowTop2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _arrowTop.pathData : _arrowTop2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _arrowTop.pathData : _arrowTop2.pathData;
   _exports.pathData = pathData;
   var _default = "arrow-top";
   _exports.default = _default;

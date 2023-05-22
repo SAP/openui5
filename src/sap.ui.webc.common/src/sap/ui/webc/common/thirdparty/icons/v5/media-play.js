@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "media-play";
-  const pathData = "M425.5 226q8 5 13.5 13.5t5.5 16.5-5.5 16.5-13.5 13.5l-301 188q-9 6-19 6-11 0-20-6-8-5-13-13.5t-5-19.5V64q0-6 5-13.5t13-12.5q9-6 20-6 10 0 19 6zm-91 34l-192-121v241z";
+  const pathData = "M121.5 480q-6 0-11-3-14-8-14-23V57q0-15 14-23 13-6 26 2l269 199q11 6 11 21 0 13-11 21l-269 198q-8 5-15 5zm25-372v296l202-148z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "media-play";
+  var _default = "SAP-icons-v5/media-play";
   _exports.default = _default;
 });

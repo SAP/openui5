@@ -8,8 +8,9 @@ sap.ui.define(["exports", "../getSharedResource", "../FeaturesRegistry", "./getA
   _getSharedResource = _interopRequireDefault(_getSharedResource);
   _getActiveElement = _interopRequireDefault(_getActiveElement);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  const PopupUtilsData = (0, _getSharedResource.default)("PopupUtilsData", {});
-  PopupUtilsData.currentZIndex = PopupUtilsData.currentZIndex || 100;
+  const popupUtilsData = (0, _getSharedResource.default)("PopupUtilsData", {
+    currentZIndex: 100
+  });
   const getFocusedElement = () => {
     const element = (0, _getActiveElement.default)();
     return element && typeof element.focus === "function" ? element : null;
@@ -26,7 +27,11 @@ sap.ui.define(["exports", "../getSharedResource", "../FeaturesRegistry", "./getA
   const isNodeContainedWithin = (parent, child) => {
     let currentNode = parent;
     if (currentNode.shadowRoot) {
-      currentNode = Array.from(currentNode.shadowRoot.children).find(n => n.localName !== "style");
+      const children = Array.from(currentNode.shadowRoot.children);
+      currentNode = children.find(n => n.localName !== "style");
+      if (!currentNode) {
+        return false;
+      }
     }
     if (currentNode === child) {
       return true;
@@ -35,44 +40,48 @@ sap.ui.define(["exports", "../getSharedResource", "../FeaturesRegistry", "./getA
     if (childNodes) {
       return Array.from(childNodes).some(n => isNodeContainedWithin(n, child));
     }
+    return false;
   };
   const isPointInRect = (x, y, rect) => {
     return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
   };
-  const isClickInRect = (event, rect) => {
+  const isClickInRect = (e, rect) => {
     let x;
     let y;
-    if (event.touches) {
-      const touch = event.touches[0];
+    if (e instanceof MouseEvent) {
+      x = e.clientX;
+      y = e.clientY;
+    } else {
+      const touch = e.touches[0];
       x = touch.clientX;
       y = touch.clientY;
-    } else {
-      x = event.clientX;
-      y = event.clientY;
     }
     return isPointInRect(x, y, rect);
   };
   _exports.isClickInRect = isClickInRect;
+  function instanceOfPopup(object) {
+    return "isUI5Element" in object && "_show" in object;
+  }
   const getClosedPopupParent = el => {
     const parent = el.parentElement || el.getRootNode && el.getRootNode().host;
-    if (parent && (parent.showAt && parent.isUI5Element || parent.open && parent.isUI5Element || parent === document.documentElement)) {
+    if (parent && (instanceOfPopup(parent) || parent === document.documentElement)) {
       return parent;
     }
     return getClosedPopupParent(parent);
   };
   _exports.getClosedPopupParent = getClosedPopupParent;
   const getNextZIndex = () => {
-    const OpenUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
-    if (OpenUI5Support && OpenUI5Support.isLoaded()) {
+    const openUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
+    if (openUI5Support && openUI5Support.isLoaded()) {
       // use OpenUI5 for getting z-index values, if loaded
-      return OpenUI5Support.getNextZIndex();
+      return openUI5Support.getNextZIndex();
     }
-    PopupUtilsData.currentZIndex += 2;
-    return PopupUtilsData.currentZIndex;
+    popupUtilsData.currentZIndex += 2;
+    return popupUtilsData.currentZIndex;
   };
   _exports.getNextZIndex = getNextZIndex;
   const getCurrentZIndex = () => {
-    return PopupUtilsData.currentZIndex;
+    return popupUtilsData.currentZIndex;
   };
   _exports.getCurrentZIndex = getCurrentZIndex;
 });

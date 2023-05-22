@@ -6,9 +6,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "in-progress";
-  const pathData = "M336.5 373q11 0 19-7.5t8-18.5-8-19l-72-72V133q0-12-7.5-19.5t-19.5-7.5-19.5 7.5-7.5 19.5v134q0 10 8 18l80 80q8 8 19 8zm80-373q34 0 57 22.5t23 57.5v320q0 34-23 57t-57 23h-320q-35 0-57.5-23t-22.5-57V80q0-35 22.5-57.5T96.5 0h320zm27 80q0-12-7.5-19.5T416.5 53h-320q-12 0-19.5 7.5T69.5 80v320q0 12 7.5 19.5t19.5 7.5h320q12 0 19.5-7.5t7.5-19.5V80z";
+  const pathData = "M333 380q-11 0-18-7l-76-77q-8-8-8-18V151q0-26 26-26 25 0 25 26v117l69 69q8 8 8 18 0 11-7.5 18t-18.5 7zm58 100H121q-37 0-63.5-26T31 390V121q0-38 26.5-64T121 31h270q37 0 63 26t26 64v269q0 38-26 64t-63 26zM121 82q-16 0-27 11.5T83 121v269q0 16 11 27.5t27 11.5h270q16 0 27-11.5t11-27.5V121q0-16-11-27.5T391 82H121z";
   _exports.pathData = pathData;
-  const ltr = false;
+  const ltr = true;
   _exports.ltr = ltr;
   const accData = null;
   _exports.accData = accData;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "in-progress";
+  var _default = "SAP-icons-v5/in-progress";
   _exports.default = _default;
 });

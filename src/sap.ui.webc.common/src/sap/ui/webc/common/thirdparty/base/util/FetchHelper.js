@@ -13,7 +13,7 @@ sap.ui.define(["exports"], function (_exports) {
       fetchPromises.set(url, fetch(url));
     }
     const response = await fetchPromises.get(url);
-    if (!textPromises.get(url)) {
+    if (response && !textPromises.get(url)) {
       textPromises.set(url, response.text());
     }
     return textPromises.get(url);
@@ -24,7 +24,7 @@ sap.ui.define(["exports"], function (_exports) {
       fetchPromises.set(url, fetch(url));
     }
     const response = await fetchPromises.get(url);
-    if (!jsonPromises.get(url)) {
+    if (response && !jsonPromises.get(url)) {
       jsonPromises.set(url, response.json());
     }
     return jsonPromises.get(url);

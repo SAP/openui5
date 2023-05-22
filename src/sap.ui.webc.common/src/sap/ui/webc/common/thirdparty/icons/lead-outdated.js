@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/lead-outdated", "./v4/lead-outdated"], function (_exports, _Theme, _leadOutdated, _leadOutdated2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/lead-outdated", "./v5/lead-outdated"], function (_exports, _Theme, _leadOutdated, _leadOutdated2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _leadOutdated.pathData : _leadOutdated2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _leadOutdated.pathData : _leadOutdated2.pathData;
   _exports.pathData = pathData;
   var _default = "lead-outdated";
   _exports.default = _default;

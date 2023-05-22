@@ -1,36 +1,23 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "./Button", "./generated/templates/ToggleButtonTemplate.lit", "./generated/themes/ToggleButton.css"], function (_exports, _Keys, _Device, _Button, _ToggleButtonTemplate, _ToggleButton) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "./Button", "./generated/templates/ToggleButtonTemplate.lit", "./generated/themes/ToggleButton.css"], function (_exports, _customElement, _property, _Keys, _Device, _Button, _ToggleButtonTemplate, _ToggleButton) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
   _Button = _interopRequireDefault(_Button);
   _ToggleButtonTemplate = _interopRequireDefault(_ToggleButtonTemplate);
   _ToggleButton = _interopRequireDefault(_ToggleButton);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-toggle-button",
-    altTag: "ui5-togglebutton",
-    properties: /** @lends sap.ui.webcomponents.main.ToggleButton.prototype */{
-      /**
-       * Determines whether the component is displayed as pressed.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      pressed: {
-        type: Boolean
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -51,35 +38,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.ToggleButton
-   * @extends Button
+   * @alias sap.ui.webc.main.ToggleButton
+   * @extends sap.ui.webc.main.Button
    * @tagname ui5-toggle-button
    * @public
    */
-  class ToggleButton extends _Button.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get template() {
-      return _ToggleButtonTemplate.default;
-    }
-    static get styles() {
-      return [_Button.default.styles, _ToggleButton.default];
-    }
+  let ToggleButton = class ToggleButton extends _Button.default {
     _onclick() {
       this.pressed = !this.pressed;
       if ((0, _Device.isSafari)()) {
         this.getDomRef().focus();
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpaceShift)(event)) {
-        event.preventDefault();
+    _onkeyup(e) {
+      if ((0, _Keys.isSpaceShift)(e)) {
+        e.preventDefault();
         return;
       }
-      super._onkeyup(event);
+      super._onkeyup(e);
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ToggleButton.prototype, "pressed", void 0);
+  ToggleButton = __decorate([(0, _customElement.default)({
+    tag: "ui5-toggle-button",
+    template: _ToggleButtonTemplate.default,
+    styles: [_Button.default.styles, _ToggleButton.default]
+  })], ToggleButton);
   ToggleButton.define();
   var _default = ToggleButton;
   _exports.default = _default;

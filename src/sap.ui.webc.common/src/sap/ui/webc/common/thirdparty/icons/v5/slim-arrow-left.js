@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "slim-arrow-left";
+  var _default = "SAP-icons-v5/slim-arrow-left";
   _exports.default = _default;
 });

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/web-cam", "./v4/web-cam"], function (_exports, _Theme, _webCam, _webCam2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/web-cam", "./v5/web-cam"], function (_exports, _Theme, _webCam, _webCam2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _webCam.pathData : _webCam2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _webCam.pathData : _webCam2.pathData;
   _exports.pathData = pathData;
   var _default = "web-cam";
   _exports.default = _default;

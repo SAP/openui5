@@ -54,6 +54,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Indicates if the table row is navigated.
+				 */
+				navigated: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * Defines the row's selected state.
 				 */
 				selected: {

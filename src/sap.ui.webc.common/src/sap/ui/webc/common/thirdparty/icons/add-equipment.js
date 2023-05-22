@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/add-equipment", "./v4/add-equipment"], function (_exports, _Theme, _addEquipment, _addEquipment2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/add-equipment", "./v5/add-equipment"], function (_exports, _Theme, _addEquipment, _addEquipment2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _addEquipment.pathData : _addEquipment2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _addEquipment.pathData : _addEquipment2.pathData;
   _exports.pathData = pathData;
   var _default = "add-equipment";
   _exports.default = _default;

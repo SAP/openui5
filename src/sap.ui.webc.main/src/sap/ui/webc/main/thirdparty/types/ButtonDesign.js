@@ -1,70 +1,58 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.ButtonDesign.prototype
+   * Different Button designs.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.ButtonDesign
    */
-  const ButtonTypes = {
+  var ButtonDesign;
+  (function (ButtonDesign) {
     /**
      * default type (no special styling)
      * @public
      * @type {Default}
      */
-    Default: "Default",
+    ButtonDesign["Default"] = "Default";
     /**
      * accept type (green button)
      * @public
      * @type {Positive}
      */
-    Positive: "Positive",
+    ButtonDesign["Positive"] = "Positive";
     /**
      * reject style (red button)
      * @public
      * @type {Negative}
      */
-    Negative: "Negative",
+    ButtonDesign["Negative"] = "Negative";
     /**
      * transparent type
      * @public
      * @type {Transparent}
      */
-    Transparent: "Transparent",
+    ButtonDesign["Transparent"] = "Transparent";
     /**
      * emphasized type
      * @public
      * @type {Emphasized}
      */
-    Emphasized: "Emphasized",
+    ButtonDesign["Emphasized"] = "Emphasized";
     /**
      * attention type
      * @public
      * @type {Attention}
      */
-    Attention: "Attention"
-  };
-
-  /**
-   * @class
-   * Different types of Button.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.ButtonDesign
-   * @public
-   * @enum {string}
-   */
-  class ButtonDesign extends _DataType.default {
-    static isValid(value) {
-      return !!ButtonTypes[value];
-    }
-  }
-  ButtonDesign.generateTypeAccessors(ButtonTypes);
+    ButtonDesign["Attention"] = "Attention";
+  })(ButtonDesign || (ButtonDesign = {}));
   var _default = ButtonDesign;
   _exports.default = _default;
 });

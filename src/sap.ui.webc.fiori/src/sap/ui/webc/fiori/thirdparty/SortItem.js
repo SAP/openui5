@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], function (_exports, _UI5Element) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/customElement"], function (_exports, _UI5Element, _property, _customElement) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,41 +6,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _property = _interopRequireDefault(_property);
+  _customElement = _interopRequireDefault(_customElement);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-sort-item",
-    properties: /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */{
-      /**
-       * Defines the text of the component.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      text: {
-        type: String
-      },
-      /**
-       * Defines if the component is selected.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      selected: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */{
-      //
-    },
-    events: /** @lends sap.ui.webcomponents.fiori.SortItem.prototype */{
-      //
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -56,18 +31,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], func
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.SortItem
-   * @extends UI5Element
+   * @alias sap.ui.webc.fiori.SortItem
+   * @extends sap.ui.webc.base.UI5Element
+   * @abstract
    * @since 1.0.0-rc.16
    * @tagname ui5-sort-item
-   * @implements sap.ui.webcomponents.fiori.ISortItem
+   * @implements sap.ui.webc.fiori.ISortItem
    * @public
    */
-  class SortItem extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-  }
+  let SortItem = class SortItem extends _UI5Element.default {};
+  __decorate([(0, _property.default)()], SortItem.prototype, "text", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], SortItem.prototype, "selected", void 0);
+  SortItem = __decorate([(0, _customElement.default)("ui5-sort-item")], SortItem);
   SortItem.define();
   var _default = SortItem;
   _exports.default = _default;

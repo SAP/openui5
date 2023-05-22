@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/retail-store", "./v4/retail-store"], function (_exports, _Theme, _retailStore, _retailStore2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/retail-store", "./v5/retail-store"], function (_exports, _Theme, _retailStore, _retailStore2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _retailStore.pathData : _retailStore2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _retailStore.pathData : _retailStore2.pathData;
   _exports.pathData = pathData;
   var _default = "retail-store";
   _exports.default = _default;

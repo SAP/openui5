@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/open-command-field", "./v4/open-command-field"], function (_exports, _Theme, _openCommandField, _openCommandField2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/open-command-field", "./v5/open-command-field"], function (_exports, _Theme, _openCommandField, _openCommandField2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _openCommandField.pathData : _openCommandField2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _openCommandField.pathData : _openCommandField2.pathData;
   _exports.pathData = pathData;
   var _default = "open-command-field";
   _exports.default = _default;

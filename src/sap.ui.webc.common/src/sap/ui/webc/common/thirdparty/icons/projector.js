@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/projector", "./v4/projector"], function (_exports, _Theme, _projector, _projector2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/projector", "./v5/projector"], function (_exports, _Theme, _projector, _projector2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _projector.pathData : _projector2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _projector.pathData : _projector2.pathData;
   _exports.pathData = pathData;
   var _default = "projector";
   _exports.default = _default;

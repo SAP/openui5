@@ -122,6 +122,32 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: false,
 					slot: "subtitle"
+				},
+
+				/**
+				 * Defines the title of the component. <br>
+				 * <br>
+				 * <b>Note:</b> Using this slot, the default title text of illustration and the value of <code>title</code> property will be overwritten.
+				 */
+				title: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					slot: "title"
+				}
+			},
+			associations: {
+
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						type: "property",
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			}
 		}

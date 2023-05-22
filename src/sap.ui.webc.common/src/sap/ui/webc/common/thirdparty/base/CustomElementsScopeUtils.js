@@ -11,7 +11,6 @@ sap.ui.define(["exports"], function (_exports) {
     exclude: []
   };
   const tagsCache = new Map(); // true/false means the tag should/should not be cached, undefined means not known yet.
-
   /**
    * Sets the suffix to be used for custom elements scoping, f.e. pass "demo" to get tags such as "ui5-button-demo".
    * Note: by default all tags starting with "ui5-" will be scoped, unless you change this by calling "setCustomElementsScopingRules"
@@ -25,7 +24,6 @@ sap.ui.define(["exports"], function (_exports) {
     }
     suf = suffix;
   };
-
   /**
    * Returns the currently set scoping suffix, or undefined if not set.
    *
@@ -36,7 +34,6 @@ sap.ui.define(["exports"], function (_exports) {
   const getCustomElementsScopingSuffix = () => {
     return suf;
   };
-
   /**
    * Sets the rules, governing which custom element tags to scope and which not, f.e.
    * setCustomElementsScopingRules({include: [/^ui5-/]}, exclude: [/^ui5-mylib-/, /^ui5-carousel$/]);
@@ -61,7 +58,6 @@ sap.ui.define(["exports"], function (_exports) {
     rulesObj = rules;
     tagsCache.clear(); // reset the cache upon setting new rules
   };
-
   /**
    * Returns the rules, governing which custom element tags to scope and which not. By default, all elements
    * starting with "ui5-" are scoped. The default rules are: {include: [/^ui5-/]}.
@@ -73,7 +69,6 @@ sap.ui.define(["exports"], function (_exports) {
   const getCustomElementsScopingRules = () => {
     return rulesObj;
   };
-
   /**
    * Determines whether custom elements with the given tag should be scoped or not.
    * The tag is first matched against the "include" rules and then against the "exclude" rules and the
@@ -90,7 +85,6 @@ sap.ui.define(["exports"], function (_exports) {
     }
     return tagsCache.get(tag);
   };
-
   /**
    * Returns the currently set scoping suffix, if any and if the tag should be scoped, or undefined otherwise.
    *

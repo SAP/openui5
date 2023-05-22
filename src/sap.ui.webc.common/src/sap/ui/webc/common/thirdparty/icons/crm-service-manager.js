@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/crm-service-manager", "./v4/crm-service-manager"], function (_exports, _Theme, _crmServiceManager, _crmServiceManager2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/crm-service-manager", "./v5/crm-service-manager"], function (_exports, _Theme, _crmServiceManager, _crmServiceManager2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _crmServiceManager.pathData : _crmServiceManager2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _crmServiceManager.pathData : _crmServiceManager2.pathData;
   _exports.pathData = pathData;
   var _default = "crm-service-manager";
   _exports.default = _default;

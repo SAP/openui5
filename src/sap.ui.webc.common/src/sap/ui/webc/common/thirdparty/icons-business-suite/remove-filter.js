@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/remove-filter", "./v2/remove-filter"], function (_exports, _Theme, _removeFilter, _removeFilter2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "remove-filter";
-  const pathData = "M8 64h448v32L264 256v184l-64 72V256L8 96V64zm341 406l51-51-51-51 26-26 51 51 52-52 26 26-52 52 52 52-26 26-52-52-51 51z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _removeFilter.accData;
+    }
   });
-  var _default = "remove-filter";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _removeFilter.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _removeFilter.pathData : _removeFilter2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/remove-filter";
   _exports.default = _default;
 });

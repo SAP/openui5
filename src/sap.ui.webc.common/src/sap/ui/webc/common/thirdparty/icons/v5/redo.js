@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "redo";
-  const pathData = "M331.5 308q-8-8-8-18t8-18l60-60h-229q-33 0-55.5 22.5T84.5 290t22.5 55.5 55.5 22.5h98q12 0 19 7.5t7 18.5q0 26-26 26h-98q-27 0-50.5-10t-41.5-27.5-28-41.5-10-51 10-51 28-41.5T112 170t50.5-10h229l-60-59q-8-10-8-19 0-10 8-18t18-8 18 8l102 101q4 5 7 9t3 12q0 14-10 21l-102 101q-7 8-18 8t-18-8z";
+  const pathData = "M331.5 308q-8-8-8-18t8-18l60-60h-229q-33 0-55.5 22.5T84.5 290t22.5 55.5 55.5 22.5h98q12 0 19 7.5t7 18.5q0 26-26 26h-98q-27 0-51-10T70 382.5 42.5 341t-10-51 10-51T70 197.5t41.5-27.5 51-10h229l-60-59q-8-10-8-19 0-10 8-18t18-8 18 8l102 102q4 4 7 8t3 12q0 14-10 21l-102 101q-7 8-18 8t-18-8z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -21,6 +21,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "redo";
+  var _default = "SAP-icons-v5/redo";
   _exports.default = _default;
 });

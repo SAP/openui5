@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/monitor-payments", "./v4/monitor-payments"], function (_exports, _Theme, _monitorPayments, _monitorPayments2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/monitor-payments", "./v5/monitor-payments"], function (_exports, _Theme, _monitorPayments, _monitorPayments2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _monitorPayments.pathData : _monitorPayments2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _monitorPayments.pathData : _monitorPayments2.pathData;
   _exports.pathData = pathData;
   var _default = "monitor-payments";
   _exports.default = _default;

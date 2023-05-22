@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/vertical-grip", "./v4/vertical-grip"], function (_exports, _Theme, _verticalGrip, _verticalGrip2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/vertical-grip", "./v5/vertical-grip"], function (_exports, _Theme, _verticalGrip, _verticalGrip2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _verticalGrip.pathData : _verticalGrip2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _verticalGrip.pathData : _verticalGrip2.pathData;
   _exports.pathData = pathData;
   var _default = "vertical-grip";
   _exports.default = _default;

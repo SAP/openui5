@@ -163,7 +163,14 @@ sap.ui.define([
 				 * Fired when the <code>Close</code> button is pressed.
 				 */
 				close: {
-					parameters: {}
+					parameters: {
+						/**
+						 * the closed item.
+						 */
+						item: {
+							type: "HTMLElement"
+						}
+					}
 				},
 
 				/**

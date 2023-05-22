@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/opportunities", "./v4/opportunities"], function (_exports, _Theme, _opportunities, _opportunities2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/opportunities", "./v5/opportunities"], function (_exports, _Theme, _opportunities, _opportunities2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _opportunities.pathData : _opportunities2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _opportunities.pathData : _opportunities2.pathData;
   _exports.pathData = pathData;
   var _default = "opportunities";
   _exports.default = _default;

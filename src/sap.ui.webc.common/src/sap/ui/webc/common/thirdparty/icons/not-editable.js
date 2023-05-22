@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/not-editable", "./v4/not-editable"], function (_exports, _Theme, _notEditable, _notEditable2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/not-editable", "./v5/not-editable"], function (_exports, _Theme, _notEditable, _notEditable2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _notEditable.pathData : _notEditable2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _notEditable.pathData : _notEditable2.pathData;
   _exports.pathData = pathData;
   var _default = "not-editable";
   _exports.default = _default;

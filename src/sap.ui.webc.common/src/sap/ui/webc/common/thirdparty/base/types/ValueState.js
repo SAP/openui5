@@ -1,28 +1,52 @@
-sap.ui.define(["exports", "./DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * Different states.
+   * Different types of ValueStates.
+   *
+   * @readonly
+   * @enum {string}
+   * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.base.types.ValueState
    */
-  const ValueStates = {
-    None: "None",
-    Success: "Success",
-    Warning: "Warning",
-    Error: "Error",
-    Information: "Information"
-  };
-  class ValueState extends _DataType.default {
-    static isValid(value) {
-      return !!ValueStates[value];
-    }
-  }
-  ValueState.generateTypeAccessors(ValueStates);
+  var ValueState;
+  (function (ValueState) {
+    /**
+     *
+     * @public
+     * @type {None}
+     */
+    ValueState["None"] = "None";
+    /**
+     *
+     * @public
+     * @type {Success}
+     */
+    ValueState["Success"] = "Success";
+    /**
+     *
+     * @public
+     * @type {Warning}
+     */
+    ValueState["Warning"] = "Warning";
+    /**
+     *
+     * @public
+     * @type {Error}
+     */
+    ValueState["Error"] = "Error";
+    /**
+     *
+     * @public
+     * @type {Information}
+     */
+    ValueState["Information"] = "Information";
+  })(ValueState || (ValueState = {}));
   var _default = ValueState;
   _exports.default = _default;
 });

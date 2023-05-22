@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/employee-pane", "./v4/employee-pane"], function (_exports, _Theme, _employeePane, _employeePane2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/employee-pane", "./v5/employee-pane"], function (_exports, _Theme, _employeePane, _employeePane2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _employeePane.pathData : _employeePane2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _employeePane.pathData : _employeePane2.pathData;
   _exports.pathData = pathData;
   var _default = "employee-pane";
   _exports.default = _default;

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "basket";
-  const pathData = "M461.136 193q12 0 22 5.5t16.5 14.5 10 20 1.5 23l-53 175q-7 22-26.5 36t-42.5 14h-264q-23 0-42.5-13.5t-26.5-36.5l-53-175q-4-12-1.5-23t9-20 16-14.5 21.5-5.5h75l112-158q9-9 18-9 5 0 11 2t10 7l112 158h75zm-281 0h147l-75-103zm278 48h-414l52 175q9 17 24 17h264q9 0 15.5-4.5t8.5-12.5zm-206 48q20 0 34 14t14 34-14 34-34 14-34-14-14-34 14-34 34-14z";
+  const pathData = "M499.22 216q17 23 9 50l-46 172q-5 19-20 30.5t-35 11.5h-301q-20 0-35-11.5t-20-30.5l-47-172q-6-28 10-50 17-22 46-22h49l128-150q8-8 19.5-8t19.5 8l128 150h49q29 0 46 22zm-324-22h162l-81-95zm284 59q1-4-1-6t-5-2h-393q-4 0-6 2-1 2-1 6l47 171q0 5 6 5h301q4 0 6-5zm-202 35q20 0 34 14t14 34-14 34-34 14-34-14-14-34 14-34 34-14z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "basket";
+  var _default = "SAP-icons-v5/basket";
   _exports.default = _default;
 });

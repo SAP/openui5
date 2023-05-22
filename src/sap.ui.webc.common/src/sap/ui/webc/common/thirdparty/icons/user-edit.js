@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/user-edit", "./v4/user-edit"], function (_exports, _Theme, _userEdit, _userEdit2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/user-edit", "./v5/user-edit"], function (_exports, _Theme, _userEdit, _userEdit2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _userEdit.pathData : _userEdit2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _userEdit.pathData : _userEdit2.pathData;
   _exports.pathData = pathData;
   var _default = "user-edit";
   _exports.default = _default;

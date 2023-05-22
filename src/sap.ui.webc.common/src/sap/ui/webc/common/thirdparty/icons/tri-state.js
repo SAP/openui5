@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/tri-state", "./v4/tri-state"], function (_exports, _Theme, _triState, _triState2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/tri-state", "./v5/tri-state"], function (_exports, _Theme, _triState, _triState2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _triState.pathData : _triState2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _triState.pathData : _triState2.pathData;
   _exports.pathData = pathData;
   var _default = "tri-state";
   _exports.default = _default;

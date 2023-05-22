@@ -1,11 +1,16 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataInstance", "sap/ui/webc/common/thirdparty/localization/dates/CalendarDate", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "./CalendarPart", "./generated/templates/MonthPickerTemplate.lit", "./generated/themes/MonthPicker.css"], function (_exports, _getCachedLocaleDataInstance, _CalendarDate, _Keys, _Integer, _getLocale, _CalendarPart, _MonthPickerTemplate, _MonthPicker) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataInstance", "sap/ui/webc/common/thirdparty/localization/dates/convertMonthNumbersToMonthNames", "sap/ui/webc/common/thirdparty/localization/dates/transformDateToSecondaryType", "sap/ui/webc/common/thirdparty/localization/dates/CalendarDate", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./generated/i18n/i18n-defaults", "./CalendarPart", "./generated/templates/MonthPickerTemplate.lit", "./generated/themes/MonthPicker.css"], function (_exports, _customElement, _property, _event, _getCachedLocaleDataInstance, _convertMonthNumbersToMonthNames, _transformDateToSecondaryType, _CalendarDate, _Keys, _Integer, _getLocale, _i18nBundle, _i18nDefaults, _CalendarPart, _MonthPickerTemplate, _MonthPicker) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
   _getCachedLocaleDataInstance = _interopRequireDefault(_getCachedLocaleDataInstance);
+  _convertMonthNumbersToMonthNames = _interopRequireDefault(_convertMonthNumbersToMonthNames);
+  _transformDateToSecondaryType = _interopRequireDefault(_transformDateToSecondaryType);
   _CalendarDate = _interopRequireDefault(_CalendarDate);
   _Integer = _interopRequireDefault(_Integer);
   _getLocale = _interopRequireDefault(_getLocale);
@@ -13,50 +18,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
   _MonthPickerTemplate = _interopRequireDefault(_MonthPickerTemplate);
   _MonthPicker = _interopRequireDefault(_MonthPicker);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-monthpicker",
-    properties: /** @lends sap.ui.webcomponents.main.MonthPicker.prototype */{
-      /**
-       * An array of UTC timestamps representing the selected date or dates depending on the capabilities of the picker component.
-       * @type {Array}
-       * @public
-       */
-      selectedDates: {
-        type: _Integer.default,
-        multiple: true,
-        compareValues: true
-      },
-      _months: {
-        type: Object,
-        multiple: true
-      },
-      _hidden: {
-        type: Boolean,
-        noAttribute: true
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.MonthPicker.prototype */{
-      /**
-       * Fired when the user selects a month (space/enter/click).
-       * @public
-       * @event
-       */
-      change: {},
-      /**
-       * Fired when the timestamp changes - the user navigates with the keyboard or clicks with the mouse.
-       * @since 1.0.0-rc.9
-       * @public
-       * @event
-       */
-      navigate: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-  const PAGE_SIZE = 12; // Total months on a single page
-  const ROW_SIZE = 3; // Months per row (4 rows of 3 months each)
-
+  var MonthPicker_1;
+  const PAGE_SIZE = 12; // total months on a single page
+  const ROW_SIZE = 3; // months per row (4 rows of 3 months each)
   /**
    * Month picker component.
    *
@@ -66,23 +37,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.MonthPicker
-   * @extends CalendarPart
+   * @alias sap.ui.webc.main.MonthPicker
+   * @extends sap.ui.webc.main.CalendarPart
    * @tagname ui5-monthpicker
    * @public
    */
-  class MonthPicker extends _CalendarPart.default {
-    static get metadata() {
-      return metadata;
+  let MonthPicker = MonthPicker_1 = class MonthPicker extends _CalendarPart.default {
+    static async onDefine() {
+      MonthPicker_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
-    static get template() {
-      return _MonthPickerTemplate.default;
-    }
-    static get styles() {
-      return _MonthPicker.default;
+    get roleDescription() {
+      return MonthPicker_1.i18nBundle.getText(_i18nDefaults.MONTH_PICKER_DESCRIPTION);
     }
     onBeforeRendering() {
       this._buildMonths();
+    }
+    onAfterRendering() {
+      if (!this._hidden) {
+        this.focus();
+      }
     }
     _buildMonths() {
       if (this._hidden) {
@@ -96,7 +69,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
       const maxDate = this._maxDate; // store the value of the expensive getter
       const tempDate = new _CalendarDate.default(calendarDate, this._primaryCalendarType);
       let timestamp;
-
       /* eslint-disable no-loop-func */
       for (let i = 0; i < 12; i++) {
         tempDate.setMonth(i);
@@ -114,6 +86,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
           selected: isSelected,
           ariaSelected: isSelected ? "true" : "false",
           name: monthsNames[i],
+          nameInSecType: this.secondaryCalendarType && this._getDisplayedSecondaryMonthText(timestamp).text,
           disabled: isDisabled,
           classes: "ui5-mp-item"
         };
@@ -123,7 +96,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
         if (isDisabled) {
           month.classes += " ui5-mp-item--disabled";
         }
-        const quarterIndex = parseInt(i / ROW_SIZE);
+        const quarterIndex = Math.floor(i / ROW_SIZE);
         if (months[quarterIndex]) {
           months[quarterIndex].push(month);
         } else {
@@ -132,40 +105,39 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
       }
       this._months = months;
     }
-    onAfterRendering() {
-      if (!this._hidden) {
-        this.focus();
-      }
+    _getDisplayedSecondaryMonthText(timestamp) {
+      const monthsName = (0, _transformDateToSecondaryType.default)(this._primaryCalendarType, this.secondaryCalendarType, timestamp);
+      return (0, _convertMonthNumbersToMonthNames.default)(monthsName.firstDate.getMonth(), monthsName.lastDate.getMonth(), this.secondaryCalendarType);
     }
-    _onkeydown(event) {
+    _onkeydown(e) {
       let preventDefault = true;
-      if ((0, _Keys.isEnter)(event)) {
-        this._selectMonth(event);
-      } else if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
-      } else if ((0, _Keys.isLeft)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
+        this._selectMonth(e);
+      } else if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
+      } else if ((0, _Keys.isLeft)(e)) {
         this._modifyTimestampBy(-1);
-      } else if ((0, _Keys.isRight)(event)) {
+      } else if ((0, _Keys.isRight)(e)) {
         this._modifyTimestampBy(1);
-      } else if ((0, _Keys.isUp)(event)) {
+      } else if ((0, _Keys.isUp)(e)) {
         this._modifyTimestampBy(-ROW_SIZE);
-      } else if ((0, _Keys.isDown)(event)) {
+      } else if ((0, _Keys.isDown)(e)) {
         this._modifyTimestampBy(ROW_SIZE);
-      } else if ((0, _Keys.isPageUp)(event)) {
+      } else if ((0, _Keys.isPageUp)(e)) {
         this._modifyTimestampBy(-PAGE_SIZE);
-      } else if ((0, _Keys.isPageDown)(event)) {
+      } else if ((0, _Keys.isPageDown)(e)) {
         this._modifyTimestampBy(PAGE_SIZE);
-      } else if ((0, _Keys.isHome)(event) || (0, _Keys.isEnd)(event)) {
-        this._onHomeOrEnd((0, _Keys.isHome)(event));
-      } else if ((0, _Keys.isHomeCtrl)(event)) {
+      } else if ((0, _Keys.isHome)(e) || (0, _Keys.isEnd)(e)) {
+        this._onHomeOrEnd((0, _Keys.isHome)(e));
+      } else if ((0, _Keys.isHomeCtrl)(e)) {
         this._setTimestamp(parseInt(this._months[0][0].timestamp)); // first month of first row
-      } else if ((0, _Keys.isEndCtrl)(event)) {
+      } else if ((0, _Keys.isEndCtrl)(e)) {
         this._setTimestamp(parseInt(this._months[PAGE_SIZE / ROW_SIZE - 1][ROW_SIZE - 1].timestamp)); // last month of last row
       } else {
         preventDefault = false;
       }
       if (preventDefault) {
-        event.preventDefault();
+        e.preventDefault();
       }
     }
     _onHomeOrEnd(homePressed) {
@@ -178,10 +150,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
         }
       });
     }
-
     /**
-     * Sets the timestamp to an absolute value
-     * @param value
+     * Sets the timestamp to an absolute value.
+     * @param { number } value
      * @private
      */
     _setTimestamp(value) {
@@ -190,71 +161,68 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
         timestamp: this.timestamp
       });
     }
-
     /**
-     * Modifies timestamp by a given amount of months and, if necessary, loads the prev/next page
-     * @param amount
+     * Modifies timestamp by a given amount of months and,
+     * if necessary, loads the prev/next page.
+     * @param { number } amount
      * @private
      */
     _modifyTimestampBy(amount) {
       // Modify the current timestamp
       this._safelyModifyTimestampBy(amount, "month");
-
       // Notify the calendar to update its timestamp
       this.fireEvent("navigate", {
         timestamp: this.timestamp
       });
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event)) {
-        this._selectMonth(event);
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e)) {
+        this._selectMonth(e);
       }
     }
-
     /**
-     * User clicked with the mouser or pressed Enter/Space
-     * @param event
+     * Selects a month, when the user clicks or presses "Enter" or "Space".
+     * @param { Event } e
      * @private
      */
-    _selectMonth(event) {
-      event.preventDefault();
-      if (event.target.className.indexOf("ui5-mp-item") > -1) {
-        const timestamp = this._getTimestampFromDom(event.target);
+    _selectMonth(e) {
+      e.preventDefault();
+      const target = e.target;
+      if (target.className.indexOf("ui5-mp-item") > -1) {
+        const timestamp = this._getTimestampFromDom(target);
         this._safelySetTimestamp(timestamp);
         this.fireEvent("change", {
           timestamp: this.timestamp
         });
       }
     }
-
     /**
-     * Called from Calendar.js
+     * Called by the Calendar component.
      * @protected
+     * @returns { boolean }
      */
     _hasPreviousPage() {
       return this._calendarDate.getYear() !== this._minDate.getYear();
     }
-
     /**
-     * Called from Calendar.js
+     * Called by the Calendar component.
      * @protected
+     * @returns { boolean }
      */
     _hasNextPage() {
       return this._calendarDate.getYear() !== this._maxDate.getYear();
     }
-
     /**
-     * Called by Calendar.js
-     * User pressed the "<" button in the calendar header (same as PageUp)
+     * Called by Calendar.js.
+     * <b>Note:</b> when the user presses the "<" button in the calendar header (same as "PageUp")
      * @protected
      */
     _showPreviousPage() {
       this._modifyTimestampBy(-PAGE_SIZE);
     }
-
     /**
      * Called by Calendar.js
-     * User pressed the ">" button in the calendar header (same as PageDown)
+     * <b>Note:</b> when the user presses the ">" button in the calendar header (same as "PageDown")
      * @protected
      */
     _showNextPage() {
@@ -269,7 +237,36 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/localization/getCachedL
       const maxMonth = maxDate.getMonth();
       return year < minYear || year === minYear && month < minMonth || year > maxYear || year === maxYear && month > maxMonth;
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    multiple: true,
+    compareValues: true
+  })], MonthPicker.prototype, "selectedDates", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    multiple: true
+  })], MonthPicker.prototype, "_months", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], MonthPicker.prototype, "_hidden", void 0);
+  MonthPicker = MonthPicker_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-monthpicker",
+    template: _MonthPickerTemplate.default,
+    styles: _MonthPicker.default
+  })
+  /**
+   * Fired when the user selects a month via "Space", "Enter" or click.
+   * @public
+   * @event sap.ui.webc.main.MonthPicker#change
+   */, (0, _event.default)("change")
+  /**
+   * Fired when the timestamp changes - the user navigates with the keyboard or clicks with the mouse.
+   * @since 1.0.0-rc.9
+   * @public
+   * @event sap.ui.webc.main.MonthPicker#navigate
+   */, (0, _event.default)("navigate")], MonthPicker);
   MonthPicker.define();
   var _default = MonthPicker;
   _exports.default = _default;

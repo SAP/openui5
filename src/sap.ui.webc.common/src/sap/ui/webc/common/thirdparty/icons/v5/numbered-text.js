@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "numbered-text";
+  var _default = "SAP-icons-v5/numbered-text";
   _exports.default = _default;
 });

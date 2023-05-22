@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v2/business-capability", "./v3/business-capability"], function (_exports, _Theme, _businessCapability, _businessCapability2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "business-capability";
-  const pathData = "M255.72 64l-191 169 86 215h211l87-215zm0-32q11 0 21 8l192 169q17 15 9 36l-86 214q-3 10-11.5 15.5t-18.5 5.5h-211q-23 0-31-21l-86-214q-1-3-1.5-5.5t-.5-5.5q0-15 12-25l191-169q10-8 21-8z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "tnt";
-  const packageName = "@ui5/webcomponents-icons-tnt";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _businessCapability.accData;
+    }
   });
-  var _default = "business-capability";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _businessCapability.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _businessCapability.pathData : _businessCapability2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tnt/business-capability";
   _exports.default = _default;
 });

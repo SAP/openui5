@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/create-entry-time", "./v4/create-entry-time"], function (_exports, _Theme, _createEntryTime, _createEntryTime2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/create-entry-time", "./v5/create-entry-time"], function (_exports, _Theme, _createEntryTime, _createEntryTime2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _createEntryTime.pathData : _createEntryTime2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _createEntryTime.pathData : _createEntryTime2.pathData;
   _exports.pathData = pathData;
   var _default = "create-entry-time";
   _exports.default = _default;

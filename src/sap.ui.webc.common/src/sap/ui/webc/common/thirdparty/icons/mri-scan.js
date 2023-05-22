@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/mri-scan", "./v4/mri-scan"], function (_exports, _Theme, _mriScan, _mriScan2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/mri-scan", "./v5/mri-scan"], function (_exports, _Theme, _mriScan, _mriScan2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _mriScan.pathData : _mriScan2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _mriScan.pathData : _mriScan2.pathData;
   _exports.pathData = pathData;
   var _default = "mri-scan";
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/accounting-document-verification", "./v4/accounting-document-verification"], function (_exports, _Theme, _accountingDocumentVerification, _accountingDocumentVerification2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/accounting-document-verification", "./v5/accounting-document-verification"], function (_exports, _Theme, _accountingDocumentVerification, _accountingDocumentVerification2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _accountingDocumentVerification.pathData : _accountingDocumentVerification2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _accountingDocumentVerification.pathData : _accountingDocumentVerification2.pathData;
   _exports.pathData = pathData;
   var _default = "accounting-document-verification";
   _exports.default = _default;

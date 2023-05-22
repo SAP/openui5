@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/italic-text", "./v4/italic-text"], function (_exports, _Theme, _italicText, _italicText2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/italic-text", "./v5/italic-text"], function (_exports, _Theme, _italicText, _italicText2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _italicText.pathData : _italicText2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _italicText.pathData : _italicText2.pathData;
   _exports.pathData = pathData;
   var _default = "italic-text";
   _exports.default = _default;

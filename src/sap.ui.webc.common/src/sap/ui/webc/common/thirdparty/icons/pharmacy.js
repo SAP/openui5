@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pharmacy", "./v4/pharmacy"], function (_exports, _Theme, _pharmacy, _pharmacy2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/pharmacy", "./v5/pharmacy"], function (_exports, _Theme, _pharmacy, _pharmacy2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pharmacy.pathData : _pharmacy2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _pharmacy.pathData : _pharmacy2.pathData;
   _exports.pathData = pathData;
   var _default = "pharmacy";
   _exports.default = _default;

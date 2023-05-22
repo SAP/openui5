@@ -10,6 +10,8 @@ sap.ui.define([
 ], function(WebComponent, library) {
 	"use strict";
 
+	var SegmentedButtonMode = library.SegmentedButtonMode;
+
 	/**
 	 * Constructor for a new <code>SegmentedButton</code>.
 	 *
@@ -45,10 +47,29 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible aria name of the component.
+				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
-					type: "string"
+					type: "string",
+					defaultValue: undefined
+				},
+
+				/**
+				 * Defines the component selection mode.
+				 *
+				 * <br>
+				 * <br>
+				 * <b>The available values are:</b>
+				 *
+				 *
+				 * <ul>
+				 *     <li><code>SingleSelect</code></li>
+				 *     <li><code>MultiSelect</code></li>
+				 * </ul>
+				 */
+				mode: {
+					type: "sap.ui.webc.main.SegmentedButtonMode",
+					defaultValue: SegmentedButtonMode.SingleSelect
 				},
 
 				/**
@@ -82,15 +103,22 @@ sap.ui.define([
 				selectionChange: {
 					parameters: {
 						/**
-						 * the pressed item.
+						 * the pressed item. Note: deprecated since 1.14.0 and will be removed in the next major release, use the <code>selectedItems</code> parameter instead.
 						 */
 						selectedItem: {
 							type: "HTMLElement"
+						},
+
+						/**
+						 * an array of selected items. Note: available since 1.14.0.
+						 */
+						selectedItems: {
+							type: "HTMLElement[]"
 						}
 					}
 				}
 			},
-			getters: ["selectedItem"]
+			getters: ["selectedItem", "selectedItems"]
 		}
 	});
 
@@ -98,6 +126,13 @@ sap.ui.define([
 	 * Returns the currently selected item.
 	 * @public
 	 * @name sap.ui.webc.main.SegmentedButton#getSelectedItem
+	 * @function
+	 */
+
+	/**
+	 * Returns an array of the currently selected items.
+	 * @public
+	 * @name sap.ui.webc.main.SegmentedButton#getSelectedItems
 	 * @function
 	 */
 

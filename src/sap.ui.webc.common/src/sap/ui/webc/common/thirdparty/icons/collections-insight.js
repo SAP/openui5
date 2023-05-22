@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/collections-insight", "./v4/collections-insight"], function (_exports, _Theme, _collectionsInsight, _collectionsInsight2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/collections-insight", "./v5/collections-insight"], function (_exports, _Theme, _collectionsInsight, _collectionsInsight2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _collectionsInsight.pathData : _collectionsInsight2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _collectionsInsight.pathData : _collectionsInsight2.pathData;
   _exports.pathData = pathData;
   var _default = "collections-insight";
   _exports.default = _default;

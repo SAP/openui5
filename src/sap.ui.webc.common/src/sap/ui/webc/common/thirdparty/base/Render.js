@@ -11,11 +11,9 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
   const registeredElements = new Set();
   const eventProvider = new _EventProvider.default();
   const invalidatedWebComponents = new _RenderQueue.default(); // Queue for invalidated web components
-
   let renderTaskPromise, renderTaskPromiseResolve;
   let mutationObserverTimer;
   let queuePromise;
-
   /**
    * Schedules a render task (if not already scheduled) to render the component
    *
@@ -25,11 +23,9 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
   const renderDeferred = async webComponent => {
     // Enqueue the web component
     invalidatedWebComponents.add(webComponent);
-
     // Schedule a rendering task
     await scheduleRenderTask();
   };
-
   /**
    * Renders a component synchronously and adds it to the registry of rendered components
    *
@@ -41,7 +37,6 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
     registeredElements.add(webComponent);
     webComponent._render();
   };
-
   /**
    * Cancels the rendering of a component, if awaiting to be rendered, and removes it from the registry of rendered components
    *
@@ -52,7 +47,6 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
     invalidatedWebComponents.remove(webComponent);
     registeredElements.delete(webComponent);
   };
-
   /**
    * Schedules a rendering task, if not scheduled already
    */
@@ -62,15 +56,12 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
       queuePromise = new Promise(resolve => {
         window.requestAnimationFrame(() => {
           // Render all components in the queue
-
           // console.log(`--------------------RENDER TASK START------------------------------`); // eslint-disable-line
           invalidatedWebComponents.process(renderImmediately);
           // console.log(`--------------------RENDER TASK END------------------------------`); // eslint-disable-line
-
           // Resolve the promise so that callers of renderDeferred can continue
           queuePromise = null;
           resolve();
-
           // Wait for Mutation observer before the render task is considered finished
           if (!mutationObserverTimer) {
             mutationObserverTimer = setTimeout(() => {
@@ -85,7 +76,6 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
     }
     await queuePromise;
   };
-
   /**
    * return a promise that will be resolved once all invalidated web components are rendered
    */
@@ -124,7 +114,6 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
       renderTaskPromise = undefined;
     }
   };
-
   /**
    * Re-renders all UI5 Elements on the page, with the option to specify filters to rerender only some components.
    *
@@ -138,15 +127,16 @@ sap.ui.define(["exports", "./EventProvider", "./RenderQueue", "./CustomElementsR
    * etc...
    *
    * @public
-   * @param {Object|undefined} filters - Object with keys that can be "rtlAware" or "languageAware"
+   * @param {object|undefined} filters - Object with keys that can be "rtlAware" or "languageAware"
    * @returns {Promise<void>}
    */
   const reRenderAllUI5Elements = async filters => {
     registeredElements.forEach(element => {
-      const tag = element.constructor.getMetadata().getTag();
-      const rtlAware = (0, _RTLAwareRegistry.isRtlAware)(element.constructor);
-      const languageAware = element.constructor.getMetadata().isLanguageAware();
-      const themeAware = element.constructor.getMetadata().isThemeAware();
+      const ctor = element.constructor;
+      const tag = ctor.getMetadata().getTag();
+      const rtlAware = (0, _RTLAwareRegistry.isRtlAware)(ctor);
+      const languageAware = ctor.getMetadata().isLanguageAware();
+      const themeAware = ctor.getMetadata().isThemeAware();
       if (!filters || filters.tag === tag || filters.rtlAware && rtlAware || filters.languageAware && languageAware || filters.themeAware && themeAware) {
         renderDeferred(element);
       }

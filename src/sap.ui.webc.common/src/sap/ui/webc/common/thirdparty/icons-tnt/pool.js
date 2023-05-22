@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v2/pool", "./v3/pool"], function (_exports, _Theme, _pool, _pool2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "pool";
-  const pathData = "M112 0h288q13 0 22.5 9.5T432 32v448q0 14-9.5 23t-22.5 9H112q-14 0-23-9t-9-23V32q0-13 9-22.5T112 0zm160 480h128V64H272v416zm-160 0h128V64H112v416z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "tnt";
-  const packageName = "@ui5/webcomponents-icons-tnt";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _pool.accData;
+    }
   });
-  var _default = "pool";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _pool.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _pool.pathData : _pool2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tnt/pool";
   _exports.default = _default;
 });

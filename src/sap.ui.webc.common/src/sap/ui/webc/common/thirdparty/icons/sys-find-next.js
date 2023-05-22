@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sys-find-next", "./v4/sys-find-next"], function (_exports, _Theme, _sysFindNext, _sysFindNext2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/sys-find-next", "./v5/sys-find-next"], function (_exports, _Theme, _sysFindNext, _sysFindNext2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sysFindNext.pathData : _sysFindNext2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _sysFindNext.pathData : _sysFindNext2.pathData;
   _exports.pathData = pathData;
   var _default = "sys-find-next";
   _exports.default = _default;

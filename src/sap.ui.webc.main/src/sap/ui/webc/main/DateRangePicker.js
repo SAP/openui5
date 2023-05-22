@@ -66,14 +66,16 @@ sap.ui.define([
 				 * Defines the aria-label attribute for the component.
 				 */
 				accessibleName: {
-					type: "string"
+					type: "string",
+					defaultValue: ""
 				},
 
 				/**
 				 * Determines the symbol which separates the dates. If not supplied, the default time interval delimiter for the current locale will be used.
 				 */
 				delimiter: {
-					type: "string"
+					type: "string",
+					defaultValue: "-"
 				},
 
 				/**
@@ -111,6 +113,8 @@ sap.ui.define([
 
 				/**
 				 * Determines the maximum date available for selection.
+				 *
+				 * <b>Note:</b> If the formatPattern property is not set, the maxDate value must be provided in the ISO date format (YYYY-MM-dd).
 				 */
 				maxDate: {
 					type: "string",
@@ -119,6 +123,8 @@ sap.ui.define([
 
 				/**
 				 * Determines the minimum date available for selection.
+				 *
+				 * <b>Note:</b> If the formatPattern property is not set, the minDate value must be provided in the ISO date format (YYYY-MM-dd).
 				 */
 				minDate: {
 					type: "string",

@@ -37,7 +37,7 @@ sap.ui.define([
 	 *     <li>typing in the input field</li>
 	 * </ul>
 	 *
-	 * Programatically, to set date/time for the <code>DateTimePicker</code>, use the <code>value</code> property
+	 * Programmatically, to set date/time for the <code>DateTimePicker</code>, use the <code>value</code> property
 	 *
 	 * <h3>Formatting</h3>
 	 *
@@ -92,7 +92,8 @@ sap.ui.define([
 				 * Defines the aria-label attribute for the component.
 				 */
 				accessibleName: {
-					type: "string"
+					type: "string",
+					defaultValue: ""
 				},
 
 				/**
@@ -130,6 +131,8 @@ sap.ui.define([
 
 				/**
 				 * Determines the maximum date available for selection.
+				 *
+				 * <b>Note:</b> If the formatPattern property is not set, the maxDate value must be provided in the ISO date format (YYYY-MM-dd).
 				 */
 				maxDate: {
 					type: "string",
@@ -138,6 +141,8 @@ sap.ui.define([
 
 				/**
 				 * Determines the minimum date available for selection.
+				 *
+				 * <b>Note:</b> If the formatPattern property is not set, the minDate value must be provided in the ISO date format (YYYY-MM-dd).
 				 */
 				minDate: {
 					type: "string",

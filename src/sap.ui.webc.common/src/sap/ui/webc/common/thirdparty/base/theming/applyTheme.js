@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "../asset-registries/Themes", "../ManagedStyles", "./getThemeDesignerTheme", "./ThemeLoaded", "../FeaturesRegistry"], function (_exports, _Themes, _ManagedStyles, _getThemeDesignerTheme, _ThemeLoaded, _FeaturesRegistry) {
+sap.ui.define(["exports", "../asset-registries/Themes", "../ManagedStyles", "./getThemeDesignerTheme", "./ThemeLoaded", "../FeaturesRegistry", "../config/ThemeRoot", "../generated/AssetParameters", "../Runtimes"], function (_exports, _Themes, _ManagedStyles, _getThemeDesignerTheme, _ThemeLoaded, _FeaturesRegistry, _ThemeRoot, _AssetParameters, _Runtimes) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -26,48 +26,49 @@ sap.ui.define(["exports", "../asset-registries/Themes", "../ManagedStyles", "./g
   };
   const loadComponentPackages = async theme => {
     const registeredPackages = (0, _Themes.getRegisteredPackages)();
-    registeredPackages.forEach(async packageName => {
+    const packagesStylesPromises = [...registeredPackages].map(async packageName => {
       if (packageName === BASE_THEME_PACKAGE) {
         return;
       }
       const cssData = await (0, _Themes.getThemeProperties)(packageName, theme);
       if (cssData) {
-        (0, _ManagedStyles.createOrUpdateStyle)(cssData, "data-ui5-theme-properties", packageName);
+        (0, _ManagedStyles.createOrUpdateStyle)(cssData, `data-ui5-component-properties-${(0, _Runtimes.getCurrentRuntimeIndex)()}`, packageName);
       }
     });
+    return Promise.all(packagesStylesPromises);
   };
-  const detectExternalTheme = () => {
+  const detectExternalTheme = async theme => {
     // If theme designer theme is detected, use this
     const extTheme = (0, _getThemeDesignerTheme.default)();
     if (extTheme) {
       return extTheme;
     }
-
     // If OpenUI5Support is enabled, try to find out if it loaded variables
-    const OpenUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
-    if (OpenUI5Support) {
-      const varsLoaded = OpenUI5Support.cssVariablesLoaded();
+    const openUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
+    if (openUI5Support) {
+      const varsLoaded = openUI5Support.cssVariablesLoaded();
       if (varsLoaded) {
         return {
-          themeName: OpenUI5Support.getConfigurationSettingsObject().theme // just themeName, baseThemeName is only relevant for custom themes
+          themeName: openUI5Support.getConfigurationSettingsObject()?.theme,
+          baseThemeName: "" // baseThemeName is only relevant for custom themes
         };
       }
+    } else if ((0, _ThemeRoot.getThemeRoot)()) {
+      await (0, _ThemeRoot.attachCustomThemeStylesToHead)(theme);
+      return (0, _getThemeDesignerTheme.default)();
     }
   };
-
   const applyTheme = async theme => {
-    const extTheme = detectExternalTheme();
-
+    const extTheme = await detectExternalTheme(theme);
     // Only load theme_base properties if there is no externally loaded theme, or there is, but it is not being loaded
     if (!extTheme || theme !== extTheme.themeName) {
       await loadThemeBase(theme);
     } else {
       deleteThemeBase();
     }
-
     // Always load component packages properties. For non-registered themes, try with the base theme, if any
     const packagesTheme = (0, _Themes.isThemeRegistered)(theme) ? theme : extTheme && extTheme.baseThemeName;
-    await loadComponentPackages(packagesTheme);
+    await loadComponentPackages(packagesTheme || _AssetParameters.DEFAULT_THEME);
     (0, _ThemeLoaded.fireThemeLoaded)(theme);
   };
   var _default = applyTheme;

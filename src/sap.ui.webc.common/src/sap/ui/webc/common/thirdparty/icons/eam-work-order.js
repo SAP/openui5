@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/eam-work-order", "./v4/eam-work-order"], function (_exports, _Theme, _eamWorkOrder, _eamWorkOrder2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/eam-work-order", "./v5/eam-work-order"], function (_exports, _Theme, _eamWorkOrder, _eamWorkOrder2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _eamWorkOrder.pathData : _eamWorkOrder2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _eamWorkOrder.pathData : _eamWorkOrder2.pathData;
   _exports.pathData = pathData;
   var _default = "eam-work-order";
   _exports.default = _default;

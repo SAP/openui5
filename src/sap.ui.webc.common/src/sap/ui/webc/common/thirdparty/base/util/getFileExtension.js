@@ -12,8 +12,8 @@ sap.ui.define(["exports"], function (_exports) {
    * "file.with.many.dots.doc" -> ".doc"
    * ".gitignore"              -> ""
    *
-   * @param fileName - the file name
-   * @returns {string}
+   * @param { string } fileName - the file name
+   * @returns { string }
    */
   const getFileExtension = fileName => {
     const dotPos = fileName.lastIndexOf(".");

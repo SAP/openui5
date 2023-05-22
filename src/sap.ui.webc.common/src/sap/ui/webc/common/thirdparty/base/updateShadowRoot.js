@@ -1,11 +1,10 @@
-sap.ui.define(["exports", "./renderer/executeTemplate", "./theming/getConstructableStyle", "./theming/getEffectiveStyle", "./theming/getEffectiveLinksHrefs", "./CSP"], function (_exports, _executeTemplate, _getConstructableStyle, _getEffectiveStyle, _getEffectiveLinksHrefs, _CSP) {
+sap.ui.define(["exports", "./theming/getConstructableStyle", "./theming/getEffectiveStyle", "./theming/getEffectiveLinksHrefs", "./CSP"], function (_exports, _getConstructableStyle, _getEffectiveStyle, _getEffectiveLinksHrefs, _CSP) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _executeTemplate = _interopRequireDefault(_executeTemplate);
   _getConstructableStyle = _interopRequireDefault(_getConstructableStyle);
   _getEffectiveStyle = _interopRequireDefault(_getEffectiveStyle);
   _getEffectiveLinksHrefs = _interopRequireDefault(_getEffectiveLinksHrefs);
@@ -17,19 +16,35 @@ sap.ui.define(["exports", "./renderer/executeTemplate", "./theming/getConstructa
    */
   const updateShadowRoot = (element, forStaticArea = false) => {
     let styleStrOrHrefsArr;
-    const template = forStaticArea ? "staticAreaTemplate" : "template";
+    const ctor = element.constructor;
     const shadowRoot = forStaticArea ? element.staticAreaItem.shadowRoot : element.shadowRoot;
-    const renderResult = (0, _executeTemplate.default)(element.constructor[template], element);
+    let renderResult;
+    if (forStaticArea) {
+      renderResult = element.renderStatic(); // this is checked before calling updateShadowRoot
+    } else {
+      renderResult = element.render(); // this is checked before calling updateShadowRoot
+    }
+
+    if (!shadowRoot) {
+      console.warn(`There is no shadow root to update`); // eslint-disable-line
+      return;
+    }
     if ((0, _CSP.shouldUseLinks)()) {
-      styleStrOrHrefsArr = (0, _getEffectiveLinksHrefs.default)(element.constructor, forStaticArea);
+      styleStrOrHrefsArr = (0, _getEffectiveLinksHrefs.default)(ctor, forStaticArea);
     } else if (document.adoptedStyleSheets) {
       // Chrome
-      shadowRoot.adoptedStyleSheets = (0, _getConstructableStyle.default)(element.constructor, forStaticArea);
+      shadowRoot.adoptedStyleSheets = (0, _getConstructableStyle.default)(ctor, forStaticArea);
     } else {
       // FF, Safari
-      styleStrOrHrefsArr = (0, _getEffectiveStyle.default)(element.constructor, forStaticArea);
+      styleStrOrHrefsArr = (0, _getEffectiveStyle.default)(ctor, forStaticArea);
     }
-    element.constructor.render(renderResult, shadowRoot, styleStrOrHrefsArr, forStaticArea, {
+    if (ctor.renderer) {
+      ctor.renderer(renderResult, shadowRoot, styleStrOrHrefsArr, forStaticArea, {
+        host: element
+      });
+      return;
+    }
+    ctor.render(renderResult, shadowRoot, styleStrOrHrefsArr, forStaticArea, {
       host: element
     });
   };

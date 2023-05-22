@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "table-column";
-  const pathData = "M420 0q32 0 54 22.5T496 77v326q0 32-22 54.5T420 480H93q-32 0-54.5-22.5T16 403V77q0-32 22.5-54.5T93 0h327zM68 286h102v-91H68v91zm275 0h102v-91H343v91zM445 77q0-11-7-18.5T420 51h-77v92h102V77zM93 51q-11 0-18 7.5T68 77v66h102V51H93zM68 403q0 11 7 18.5t18 7.5h77v-92H68v66zm352 26q11 0 18-7.5t7-18.5v-66H343v92h77z";
+  const pathData = "M410 32q29 0 49.5 20.5T480 102v309q0 29-20.5 49T410 480H102q-29 0-49.5-20T32 411V102q0-29 20.5-49.5T102 32h308zM83 297h81v-81H83v81zm265 0h81v-81h-81v81zm81-195q0-8-5.5-13.5T410 83h-62v82h81v-63zM102 83q-8 0-13.5 5.5T83 102v63h81V83h-62zM83 411q0 8 5.5 13t13.5 5h62v-81H83v63zm327 18q8 0 13.5-5t5.5-13v-63h-81v81h62z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "table-column";
+  var _default = "SAP-icons-v5/table-column";
   _exports.default = _default;
 });

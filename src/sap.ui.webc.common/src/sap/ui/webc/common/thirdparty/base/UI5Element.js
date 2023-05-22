@@ -1,10 +1,10 @@
-sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata", "./EventProvider", "./util/getSingletonElementInstance", "./StaticAreaItem", "./updateShadowRoot", "./Render", "./CustomElementsRegistry", "./DOMObserver", "./config/NoConflict", "./locale/getEffectiveDir", "./types/DataType", "./util/StringHelper", "./util/isValidPropertyName", "./util/isDescendantOf", "./util/SlotsHelper", "./util/arraysAreEqual", "./util/getClassCopy", "./locale/RTLAwareRegistry", "./theming/preloadLinks"], function (_exports, _merge, _Boot, _UI5ElementMetadata, _EventProvider, _getSingletonElementInstance, _StaticAreaItem, _updateShadowRoot, _Render, _CustomElementsRegistry, _DOMObserver, _NoConflict, _getEffectiveDir, _DataType, _StringHelper, _isValidPropertyName, _isDescendantOf, _SlotsHelper, _arraysAreEqual, _getClassCopy, _RTLAwareRegistry, _preloadLinks) {
+sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata", "./EventProvider", "./util/getSingletonElementInstance", "./StaticAreaItem", "./updateShadowRoot", "./IgnoreCustomElements", "./Render", "./CustomElementsRegistry", "./DOMObserver", "./config/NoConflict", "./locale/getEffectiveDir", "./util/StringHelper", "./util/isValidPropertyName", "./util/SlotsHelper", "./util/arraysAreEqual", "./locale/RTLAwareRegistry", "./theming/preloadLinks", "./renderer/executeTemplate", "./Runtimes"], function (_exports, _merge, _Boot, _UI5ElementMetadata, _EventProvider, _getSingletonElementInstance, _StaticAreaItem, _updateShadowRoot, _IgnoreCustomElements, _Render, _CustomElementsRegistry, _DOMObserver, _NoConflict, _getEffectiveDir, _StringHelper, _isValidPropertyName, _SlotsHelper, _arraysAreEqual, _RTLAwareRegistry, _preloadLinks, _executeTemplate, _Runtimes) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.default = void 0;
+  _exports.instanceOfUI5Element = _exports.default = void 0;
   _merge = _interopRequireDefault(_merge);
   _UI5ElementMetadata = _interopRequireDefault(_UI5ElementMetadata);
   _EventProvider = _interopRequireDefault(_EventProvider);
@@ -12,21 +12,17 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
   _StaticAreaItem = _interopRequireDefault(_StaticAreaItem);
   _updateShadowRoot = _interopRequireDefault(_updateShadowRoot);
   _getEffectiveDir = _interopRequireDefault(_getEffectiveDir);
-  _DataType = _interopRequireDefault(_DataType);
   _isValidPropertyName = _interopRequireDefault(_isValidPropertyName);
-  _isDescendantOf = _interopRequireDefault(_isDescendantOf);
   _arraysAreEqual = _interopRequireDefault(_arraysAreEqual);
-  _getClassCopy = _interopRequireDefault(_getClassCopy);
   _preloadLinks = _interopRequireDefault(_preloadLinks);
+  _executeTemplate = _interopRequireDefault(_executeTemplate);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   let autoId = 0;
   const elementTimeouts = new Map();
   const uniqueDependenciesCache = new Map();
-
   /**
    * Triggers re-rendering of a UI5Element instance due to state change.
-   *
-   * @param  changeInfo An object with information about the change that caused invalidation.
+   * @param {ChangeInfo} changeInfo An object with information about the change that caused invalidation.
    * @private
    */
   function _invalidate(changeInfo) {
@@ -35,7 +31,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
     if (this._suppressInvalidation) {
       return;
     }
-
     // Call the onInvalidation hook
     this.onInvalidation(changeInfo);
     this._changedState.push(changeInfo);
@@ -45,21 +40,20 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       target: this
     });
   }
-  let metadata = {};
-
   /**
    * Base class for all UI5 Web Components
    *
    * @class
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.base.UI5Element
    * @extends HTMLElement
    * @public
    */
   class UI5Element extends HTMLElement {
     constructor() {
       super();
+      const ctor = this.constructor;
       this._changedState = []; // Filled on each invalidation, cleared on re-render (used for debugging)
       this._suppressInvalidation = true; // A flag telling whether all invalidations should be ignored. Initialized with "true" because a UI5Element can not be invalidated until it is rendered for the first time
       this._inDOM = false; // A flag telling whether the UI5Element is currently in the DOM tree of the document or not
@@ -72,15 +66,17 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         deferredResolve = resolve;
       });
       this._domRefReadyPromise._deferredResolve = deferredResolve;
-      this._initializeState();
+      this._doNotSyncAttributes = new Set(); // attributes that are excluded from attributeChangedCallback synchronization
+      this._state = {
+        ...ctor.getMetadata().getInitialState()
+      };
       this._upgradeAllProperties();
-      if (this.constructor._needsShadowDOM()) {
+      if (ctor._needsShadowDOM()) {
         this.attachShadow({
           mode: "open"
         });
       }
     }
-
     /**
      * Returns a unique ID for this UI5 Element
      *
@@ -93,17 +89,27 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       }
       return this.__id;
     }
-
+    render() {
+      const template = this.constructor.template;
+      return (0, _executeTemplate.default)(template, this);
+    }
+    renderStatic() {
+      const template = this.constructor.staticAreaTemplate;
+      return (0, _executeTemplate.default)(template, this);
+    }
     /**
      * Do not call this method from derivatives of UI5Element, use "onEnterDOM" only
      * @private
      */
     async connectedCallback() {
-      this.setAttribute(this.constructor.getMetadata().getPureTag(), "");
-      if (this.constructor.getMetadata().supportsF6FastNavigation()) {
+      const ctor = this.constructor;
+      this.setAttribute(`_ui5rt${(0, _Runtimes.getCurrentRuntimeIndex)()}`, "");
+      this.setAttribute("_ui5host", "");
+      this.setAttribute(ctor.getMetadata().getPureTag(), "");
+      if (ctor.getMetadata().supportsF6FastNavigation()) {
         this.setAttribute("data-sap-ui-fastnavgroup", "true");
       }
-      const slotsAreManaged = this.constructor.getMetadata().slotsAreManaged();
+      const slotsAreManaged = ctor.getMetadata().slotsAreManaged();
       this._inDOM = true;
       if (slotsAreManaged) {
         // always register the observer before yielding control to the main thread (await)
@@ -117,25 +123,21 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       (0, _Render.renderImmediately)(this);
       this._domRefReadyPromise._deferredResolve();
       this._fullyConnected = true;
-      if (typeof this.onEnterDOM === "function") {
-        this.onEnterDOM();
-      }
+      this.onEnterDOM();
     }
-
     /**
      * Do not call this method from derivatives of UI5Element, use "onExitDOM" only
      * @private
      */
     disconnectedCallback() {
-      const slotsAreManaged = this.constructor.getMetadata().slotsAreManaged();
+      const ctor = this.constructor;
+      const slotsAreManaged = ctor.getMetadata().slotsAreManaged();
       this._inDOM = false;
       if (slotsAreManaged) {
         this._stopObservingDOMChildren();
       }
       if (this._fullyConnected) {
-        if (typeof this.onExitDOM === "function") {
-          this.onExitDOM();
-        }
+        this.onExitDOM();
         this._fullyConnected = false;
       }
       if (this.staticAreaItem && this.staticAreaItem.parentElement) {
@@ -143,16 +145,36 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       }
       (0, _Render.cancelRender)(this);
     }
-
+    /**
+     * Called every time before the component renders.
+     * @public
+     */
+    onBeforeRendering() {}
+    /**
+     * Called every time after the component renders.
+     * @public
+     */
+    onAfterRendering() {}
+    /**
+     * Called on connectedCallback - added to the DOM.
+     * @public
+     */
+    onEnterDOM() {}
+    /**
+     * Called on disconnectedCallback - removed from the DOM.
+     * @public
+     */
+    onExitDOM() {}
     /**
      * @private
      */
     _startObservingDOMChildren() {
-      const shouldObserveChildren = this.constructor.getMetadata().hasSlots();
+      const ctor = this.constructor;
+      const shouldObserveChildren = ctor.getMetadata().hasSlots();
       if (!shouldObserveChildren) {
         return;
       }
-      const canSlotText = this.constructor.getMetadata().canSlotText();
+      const canSlotText = ctor.getMetadata().canSlotText();
       const mutationObserverOptions = {
         childList: true,
         subtree: canSlotText,
@@ -160,14 +182,12 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       };
       (0, _DOMObserver.observeDOMNode)(this, this._processChildren.bind(this), mutationObserverOptions);
     }
-
     /**
      * @private
      */
     _stopObservingDOMChildren() {
       (0, _DOMObserver.unobserveDOMNode)(this);
     }
-
     /**
      * Note: this method is also manually called by "compatibility/patchNodeValue.js"
      * @private
@@ -178,17 +198,16 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         await this._updateSlots();
       }
     }
-
     /**
      * @private
      */
     async _updateSlots() {
-      const slotsMap = this.constructor.getMetadata().getSlots();
-      const canSlotText = this.constructor.getMetadata().canSlotText();
+      const ctor = this.constructor;
+      const slotsMap = ctor.getMetadata().getSlots();
+      const canSlotText = ctor.getMetadata().canSlotText();
       const domChildren = Array.from(canSlotText ? this.childNodes : this.children);
       const slotsCachedContentMap = new Map(); // Store here the content of each slot before the mutation occurred
       const propertyNameToSlotMap = new Map(); // Used for reverse lookup to determine to which slot the property name corresponds
-
       // Init the _state object based on the supported slots and store the previous values
       for (const [slotName, slotData] of Object.entries(slotsMap)) {
         // eslint-disable-line
@@ -203,26 +222,26 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         // Determine the type of the child (mainly by the slot attribute)
         const slotName = (0, _SlotsHelper.getSlotName)(child);
         const slotData = slotsMap[slotName];
-
         // Check if the slotName is supported
         if (slotData === undefined) {
-          const validValues = Object.keys(slotsMap).join(", ");
-          console.warn(`Unknown slotName: ${slotName}, ignoring`, child, `Valid values are: ${validValues}`); // eslint-disable-line
+          if (slotName !== "default") {
+            const validValues = Object.keys(slotsMap).join(", ");
+            console.warn(`Unknown slotName: ${slotName}, ignoring`, child, `Valid values are: ${validValues}`); // eslint-disable-line
+          }
+
           return;
         }
-
         // For children that need individual slots, calculate them
         if (slotData.individualSlots) {
           const nextIndex = (autoIncrementMap.get(slotName) || 0) + 1;
           autoIncrementMap.set(slotName, nextIndex);
           child._individualSlot = `${slotName}-${nextIndex}`;
         }
-
         // Await for not-yet-defined custom elements
         if (child instanceof HTMLElement) {
           const localName = child.localName;
-          const isCustomElement = localName.includes("-");
-          if (isCustomElement) {
+          const shouldWaitForCustomElement = localName.includes("-") && !(0, _IgnoreCustomElements.shouldIgnoreCustomElement)(localName);
+          if (shouldWaitForCustomElement) {
             const isDefined = window.customElements.get(localName);
             if (!isDefined) {
               const whenDefinedPromise = window.customElements.whenDefined(localName); // Class registered, but instances not upgraded yet
@@ -236,16 +255,16 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
             window.customElements.upgrade(child);
           }
         }
-        child = this.constructor.getMetadata().constructor.validateSlotValue(child, slotData);
-
+        child = ctor.getMetadata().constructor.validateSlotValue(child, slotData);
         // Listen for any invalidation on the child if invalidateOnChildChange is true or an object (ignore when false or not set)
-        if (child.isUI5Element && slotData.invalidateOnChildChange) {
-          const method = (child.attachInvalidate || child._attachChange).bind(child);
-          method(this._getChildChangeListener(slotName));
+        if (instanceOfUI5Element(child) && slotData.invalidateOnChildChange) {
+          const childChangeListener = this._getChildChangeListener(slotName);
+          if (childChangeListener) {
+            child.attachInvalidate.call(child, childChangeListener);
+          }
         }
-
         // Listen for the slotchange event if the child is a slot itself
-        if ((0, _SlotsHelper.isSlot)(child)) {
+        if (child instanceof HTMLSlotElement) {
           this._attachSlotChange(child, slotName);
         }
         const propertyName = slotData.propertyName || slotName;
@@ -262,13 +281,11 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         }
       });
       await Promise.all(allChildrenUpgraded);
-
       // Distribute the child in the _state object, keeping the Light DOM order,
       // not the order elements are defined.
       slottedChildrenMap.forEach((children, propertyName) => {
         this._state[propertyName] = children.sort((a, b) => a.idx - b.idx).map(_ => _.child);
       });
-
       // Compare the content of each slot with the cached values and invalidate for the ones that changed
       let invalidated = false;
       for (const [slotName, slotData] of Object.entries(slotsMap)) {
@@ -283,7 +300,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
           invalidated = true;
         }
       }
-
       // If none of the slots had an invalidation due to changes to immediate children,
       // the change is considered to be text content of the default slot
       if (!invalidated) {
@@ -294,7 +310,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         });
       }
     }
-
     /**
      * Removes all children from the slot and detaches listeners, if any
      * @private
@@ -303,49 +318,47 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       const propertyName = slotData.propertyName || slotName;
       const children = this._state[propertyName];
       children.forEach(child => {
-        if (child && child.isUI5Element) {
-          const method = (child.detachInvalidate || child._detachChange).bind(child);
-          method(this._getChildChangeListener(slotName));
+        if (instanceOfUI5Element(child)) {
+          const childChangeListener = this._getChildChangeListener(slotName);
+          if (childChangeListener) {
+            child.detachInvalidate.call(child, childChangeListener);
+          }
         }
-        if ((0, _SlotsHelper.isSlot)(child)) {
+        if (child instanceof HTMLSlotElement) {
           this._detachSlotChange(child, slotName);
         }
       });
       this._state[propertyName] = [];
     }
-
     /**
      * Attach a callback that will be executed whenever the component is invalidated
      *
-     * @param callback
+     * @param {InvalidationInfo} callback
      * @public
      */
     attachInvalidate(callback) {
       this._eventProvider.attachEvent("invalidate", callback);
     }
-
     /**
      * Detach the callback that is executed whenever the component is invalidated
      *
-     * @param callback
+     * @param {InvalidationInfo} callback
      * @public
      */
     detachInvalidate(callback) {
       this._eventProvider.detachEvent("invalidate", callback);
     }
-
     /**
      * Callback that is executed whenever a monitored child changes its state
      *
-     * @param slotName the slot in which a child was invalidated
-     * @param childChangeInfo the changeInfo object for the child in the given slot
+     * @param {sting} slotName the slot in which a child was invalidated
+     * @param { ChangeInfo } childChangeInfo the changeInfo object for the child in the given slot
      * @private
      */
     _onChildChange(slotName, childChangeInfo) {
       if (!this.constructor.getMetadata().shouldInvalidateOnChildChange(slotName, childChangeInfo.type, childChangeInfo.name)) {
         return;
       }
-
       // The component should be invalidated as this type of change on the child is listened for
       // However, no matter what changed on the child (property/slot), the invalidation is registered as "type=slot" for the component itself
       _invalidate.call(this, {
@@ -355,87 +368,99 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         child: childChangeInfo.target
       });
     }
-
     /**
      * Do not override this method in derivatives of UI5Element
      * @private
      */
     attributeChangedCallback(name, oldValue, newValue) {
+      let newPropertyValue;
+      if (this._doNotSyncAttributes.has(name)) {
+        // This attribute is mutated internally, not by the user
+        return;
+      }
       const properties = this.constructor.getMetadata().getProperties();
       const realName = name.replace(/^ui5-/, "");
       const nameInCamelCase = (0, _StringHelper.kebabToCamelCase)(realName);
       if (properties.hasOwnProperty(nameInCamelCase)) {
         // eslint-disable-line
-        const propertyTypeClass = properties[nameInCamelCase].type;
-        if (propertyTypeClass === Boolean) {
-          newValue = newValue !== null;
-        } else if ((0, _isDescendantOf.default)(propertyTypeClass, _DataType.default)) {
-          newValue = propertyTypeClass.attributeToProperty(newValue);
+        const propData = properties[nameInCamelCase];
+        const propertyType = propData.type;
+        let propertyValidator = propData.validator;
+        if (propertyType && propertyType.isDataTypeClass) {
+          propertyValidator = propertyType;
         }
-        this[nameInCamelCase] = newValue;
+        if (propertyValidator) {
+          newPropertyValue = propertyValidator.attributeToProperty(newValue);
+        } else if (propertyType === Boolean) {
+          newPropertyValue = newValue !== null;
+        } else {
+          newPropertyValue = newValue;
+        }
+        this[nameInCamelCase] = newPropertyValue;
       }
     }
-
     /**
      * @private
      */
     _updateAttribute(name, newValue) {
-      if (!this.constructor.getMetadata().hasAttribute(name)) {
+      const ctor = this.constructor;
+      if (!ctor.getMetadata().hasAttribute(name)) {
         return;
       }
-      const properties = this.constructor.getMetadata().getProperties();
-      const propertyTypeClass = properties[name].type;
+      const properties = ctor.getMetadata().getProperties();
+      const propData = properties[name];
+      const propertyType = propData.type;
+      let propertyValidator = propData.validator;
       const attrName = (0, _StringHelper.camelToKebabCase)(name);
       const attrValue = this.getAttribute(attrName);
-      if (propertyTypeClass === Boolean) {
+      if (propertyType && propertyType.isDataTypeClass) {
+        propertyValidator = propertyType;
+      }
+      if (propertyValidator) {
+        const newAttrValue = propertyValidator.propertyToAttribute(newValue);
+        if (newAttrValue === null) {
+          // null means there must be no attribute for the current value of the property
+          this._doNotSyncAttributes.add(attrName); // skip the attributeChangedCallback call for this attribute
+          this.removeAttribute(attrName); // remove the attribute safely (will not trigger synchronization to the property value due to the above line)
+          this._doNotSyncAttributes.delete(attrName); // enable synchronization again for this attribute
+        } else {
+          this.setAttribute(attrName, newAttrValue);
+        }
+      } else if (propertyType === Boolean) {
         if (newValue === true && attrValue === null) {
           this.setAttribute(attrName, "");
         } else if (newValue === false && attrValue !== null) {
           this.removeAttribute(attrName);
         }
-      } else if ((0, _isDescendantOf.default)(propertyTypeClass, _DataType.default)) {
-        this.setAttribute(attrName, propertyTypeClass.propertyToAttribute(newValue));
       } else if (typeof newValue !== "object") {
         if (attrValue !== newValue) {
           this.setAttribute(attrName, newValue);
         }
       } // else { return; } // old object handling
     }
-
     /**
      * @private
      */
-    _upgradeProperty(prop) {
-      if (this.hasOwnProperty(prop)) {
+    _upgradeProperty(propertyName) {
+      if (this.hasOwnProperty(propertyName)) {
         // eslint-disable-line
-        const value = this[prop];
-        delete this[prop];
-        this[prop] = value;
+        const value = this[propertyName];
+        delete this[propertyName];
+        this[propertyName] = value;
       }
     }
-
     /**
      * @private
      */
     _upgradeAllProperties() {
       const allProps = this.constructor.getMetadata().getPropertiesList();
-      allProps.forEach(this._upgradeProperty, this);
+      allProps.forEach(this._upgradeProperty.bind(this));
     }
-
-    /**
-     * @private
-     */
-    _initializeState() {
-      this._state = {
-        ...this.constructor.getMetadata().getInitialState()
-      };
-    }
-
     /**
      * Returns a singleton event listener for the "change" event of a child in a given slot
      *
      * @param slotName the name of the slot, where the child is
-     * @returns {any}
+     * @returns {ChildChangeListener}
      * @private
      */
     _getChildChangeListener(slotName) {
@@ -444,12 +469,11 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       }
       return this._childChangeListeners.get(slotName);
     }
-
     /**
      * Returns a singleton slotchange event listener that invalidates the component due to changes in the given slot
      *
      * @param slotName the name of the slot, where the slot element (whose slotchange event we're listening to) is
-     * @returns {any}
+     * @returns {SlotChangeListener}
      * @private
      */
     _getSlotChangeListener(slotName) {
@@ -458,21 +482,21 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       }
       return this._slotChangeListeners.get(slotName);
     }
-
     /**
      * @private
      */
     _attachSlotChange(child, slotName) {
-      child.addEventListener("slotchange", this._getSlotChangeListener(slotName));
+      const slotChangeListener = this._getSlotChangeListener(slotName);
+      if (slotChangeListener) {
+        child.addEventListener("slotchange", slotChangeListener);
+      }
     }
-
     /**
      * @private
      */
     _detachSlotChange(child, slotName) {
       child.removeEventListener("slotchange", this._getSlotChangeListener(slotName));
     }
-
     /**
      * Whenever a slot element is slotted inside a UI5 Web Component, its slotchange event invalidates the component
      *
@@ -486,7 +510,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         reason: "slotchange"
       });
     }
-
     /**
      * A callback that is executed each time an already rendered component is invalidated (scheduled for re-rendering)
      *
@@ -514,70 +537,58 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
      *
      * @public
      */
-    onInvalidation(changeInfo) {}
-
+    onInvalidation(changeInfo) {} // eslint-disable-line
     /**
      * Do not call this method directly, only intended to be called by js
      * @protected
      */
     _render() {
-      const hasIndividualSlots = this.constructor.getMetadata().hasIndividualSlots();
-
+      const ctor = this.constructor;
+      const hasIndividualSlots = ctor.getMetadata().hasIndividualSlots();
       // suppress invalidation to prevent state changes scheduling another rendering
       this._suppressInvalidation = true;
-      if (typeof this.onBeforeRendering === "function") {
-        this.onBeforeRendering();
-      }
-
+      this.onBeforeRendering();
       // Intended for framework usage only. Currently ItemNavigation updates tab indexes after the component has updated its state but before the template is rendered
       if (this._onComponentStateFinalized) {
         this._onComponentStateFinalized();
       }
-
       // resume normal invalidation handling
       this._suppressInvalidation = false;
-
       // Update the shadow root with the render result
       /*
       if (this._changedState.length) {
-      	let element = this.localName;
-      	if (this.id) {
-      		element = `${element}#${this.id}`;
-      	}
-      	console.log("Re-rendering:", element, this._changedState.map(x => { // eslint-disable-line
-      		let res = `${x.type}`;
-      		if (x.reason) {
-      			res = `${res}(${x.reason})`;
-      		}
-      		res = `${res}: ${x.name}`;
-      		if (x.type === "property") {
-      			res = `${res} ${x.oldValue} => ${x.newValue}`;
-      		}
-      			return res;
-      	}));
+          let element = this.localName;
+          if (this.id) {
+              element = `${element}#${this.id}`;
+          }
+          console.log("Re-rendering:", element, this._changedState.map(x => { // eslint-disable-line
+              let res = `${x.type}`;
+              if (x.reason) {
+                  res = `${res}(${x.reason})`;
+              }
+              res = `${res}: ${x.name}`;
+              if (x.type === "property") {
+                  res = `${res} ${JSON.stringify(x.oldValue)} => ${JSON.stringify(x.newValue)}`;
+              }
+               return res;
+          }));
       }
       */
       this._changedState = [];
-
       // Update shadow root and static area item
-      if (this.constructor._needsShadowDOM()) {
+      if (ctor._needsShadowDOM()) {
         (0, _updateShadowRoot.default)(this);
       }
       if (this.staticAreaItem) {
         this.staticAreaItem.update();
       }
-
       // Safari requires that children get the slot attribute only after the slot tags have been rendered in the shadow DOM
       if (hasIndividualSlots) {
         this._assignIndividualSlotsToChildren();
       }
-
       // Call the onAfterRendering hook
-      if (typeof this.onAfterRendering === "function") {
-        this.onAfterRendering();
-      }
+      this.onAfterRendering();
     }
-
     /**
      * @private
      */
@@ -589,14 +600,12 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         }
       });
     }
-
     /**
      * @private
      */
     _waitForDomRef() {
       return this._domRefReadyPromise;
     }
-
     /**
      * Returns the DOM Element inside the Shadow Root that corresponds to the opening tag in the UI5 Web Component's template
      * *Note:* For logical (abstract) elements (items, options, etc...), returns the part of the parent's DOM that represents this option
@@ -619,7 +628,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
 
       return children[0];
     }
-
     /**
      * Returns the DOM Element marked with "data-sap-focus-ref" inside the template.
      * This is the element that will receive the focus by default.
@@ -632,7 +640,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         return focusRef || domRef;
       }
     }
-
     /**
      * Waits for dom ref and then returns the DOM Element marked with "data-sap-focus-ref" inside the template.
      * This is the element that will receive the focus by default.
@@ -642,19 +649,18 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       await this._waitForDomRef();
       return this.getFocusDomRef();
     }
-
     /**
      * Set the focus to the element, returned by "getFocusDomRef()" (marked by "data-sap-focus-ref")
+     * @param {FocusOptions} focusOptions additional options for the focus
      * @public
      */
-    async focus() {
+    async focus(focusOptions) {
       await this._waitForDomRef();
       const focusDomRef = this.getFocusDomRef();
       if (focusDomRef && typeof focusDomRef.focus === "function") {
-        focusDomRef.focus();
+        focusDomRef.focus(focusOptions);
       }
     }
-
     /**
      *
      * @public
@@ -679,7 +685,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         bubbles,
         cancelable
       });
-
       // This will be false if the no-conflict event is prevented
       const noConflictEventResult = this.dispatchEvent(noConflictEvent);
       if ((0, _NoConflict.skipOriginalEvent)(name)) {
@@ -691,23 +696,19 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         bubbles,
         cancelable
       });
-
       // This will be false if the normal event is prevented
       const normalEventResult = this.dispatchEvent(normalEvent);
-
       // Return false if any of the two events was prevented (its result was false).
       return normalEventResult && noConflictEventResult;
     }
-
     /**
      * Returns the actual children, associated with a slot.
      * Useful when there are transitive slots in nested component scenarios and you don't want to get a list of the slots, but rather of their content.
      * @public
      */
     getSlottedNodes(slotName) {
-      return (0, _SlotsHelper.getSlottedElementsList)(this[slotName]);
+      return (0, _SlotsHelper.getSlottedNodesList)(this[slotName]);
     }
-
     /**
      * Determines whether the component should be rendered in RTL mode or not.
      * Returns: "rtl", "ltr" or undefined
@@ -719,7 +720,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       (0, _RTLAwareRegistry.markAsRtlAware)(this.constructor); // if a UI5 Element calls this method, it's considered to be rtl-aware
       return (0, _getEffectiveDir.default)(this);
     }
-
     /**
      * Used to duck-type UI5 elements without using instanceof
      * @returns {boolean}
@@ -728,7 +728,9 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
     get isUI5Element() {
       return true;
     }
-
+    get classes() {
+      return {};
+    }
     /**
      * Do not override this method in derivatives of UI5Element, use metadata properties instead
      * @private
@@ -736,21 +738,18 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
     static get observedAttributes() {
       return this.getMetadata().getAttributesList();
     }
-
     /**
      * @private
      */
     static _needsShadowDOM() {
-      return !!this.template;
+      return !!this.template || Object.prototype.hasOwnProperty.call(this.prototype, "render");
     }
-
     /**
      * @private
      */
     static _needsStaticArea() {
-      return !!this.staticAreaTemplate;
+      return !!this.staticAreaTemplate || Object.prototype.hasOwnProperty.call(this.prototype, "renderStatic");
     }
-
     /**
      * @public
      */
@@ -767,14 +766,12 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       }
       return this.staticAreaItem.getDomRef();
     }
-
     /**
      * @private
      */
     static _generateAccessors() {
       const proto = this.prototype;
       const slotsAreManaged = this.getMetadata().slotsAreManaged();
-
       // Properties
       const properties = this.getMetadata().getProperties();
       for (const [prop, propData] of Object.entries(properties)) {
@@ -815,12 +812,20 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
           },
           set(value) {
             let isDifferent;
-            value = this.constructor.getMetadata().constructor.validatePropertyValue(value, propData);
+            const ctor = this.constructor;
+            const metadataCtor = ctor.getMetadata().constructor;
+            value = metadataCtor.validatePropertyValue(value, propData);
+            const propertyType = propData.type;
+            let propertyValidator = propData.validator;
             const oldState = this._state[prop];
-            if (propData.multiple && propData.compareValues) {
+            if (propertyType && propertyType.isDataTypeClass) {
+              propertyValidator = propertyType;
+            }
+            if (propertyValidator) {
+              isDifferent = !propertyValidator.valuesAreEqual(oldState, value);
+            } else if (Array.isArray(oldState) && Array.isArray(value) && propData.multiple && propData.compareValues) {
+              // compareValues is added for IE, test if needed now
               isDifferent = !(0, _arraysAreEqual.default)(oldState, value);
-            } else if ((0, _isDescendantOf.default)(propData.type, _DataType.default)) {
-              isDifferent = !propData.type.valuesAreEqual(oldState, value);
             } else {
               isDifferent = oldState !== value;
             }
@@ -837,7 +842,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
           }
         });
       }
-
       // Slots
       if (slotsAreManaged) {
         const slots = this.getMetadata().getSlots();
@@ -862,23 +866,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         }
       }
     }
-
-    /**
-     * Returns the metadata object for this UI5 Web Component Class
-     * @protected
-     */
-    static get metadata() {
-      return metadata;
-    }
-
-    /**
-     * Sets a new metadata object for this UI5 Web Component Class
-     * @protected
-     */
-    static set metadata(newMetadata) {
-      metadata = newMetadata;
-    }
-
     /**
      * Returns the CSS for this UI5 Web Component Class
      * @protected
@@ -886,7 +873,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
     static get styles() {
       return "";
     }
-
     /**
      * Returns the Static Area CSS for this UI5 Web Component Class
      * @protected
@@ -894,7 +880,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
     static get staticAreaStyles() {
       return "";
     }
-
     /**
      * Returns an array with the dependencies for this UI5 Web Component, which could be:
      *  - composed components (used in its shadow root or static area item)
@@ -905,7 +890,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
     static get dependencies() {
       return [];
     }
-
     /**
      * Returns a list of the unique dependencies for this UI5 Web Component
      *
@@ -916,18 +900,16 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         const filtered = this.dependencies.filter((dep, index, deps) => deps.indexOf(dep) === index);
         uniqueDependenciesCache.set(this, filtered);
       }
-      return uniqueDependenciesCache.get(this);
+      return uniqueDependenciesCache.get(this) || [];
     }
-
     /**
      * Returns a promise that resolves whenever all dependencies for this UI5 Web Component have resolved
      *
-     * @returns {Promise<any[]>}
+     * @returns {Promise}
      */
     static whenDependenciesDefined() {
       return Promise.all(this.getUniqueDependencies().map(dep => dep.define()));
     }
-
     /**
      * Hook that will be called upon custom element definition
      *
@@ -937,7 +919,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
     static async onDefine() {
       return Promise.resolve();
     }
-
     /**
      * Registers a UI5 Web Component in the browser window object
      * @public
@@ -947,7 +928,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       await (0, _Boot.boot)();
       await Promise.all([this.whenDependenciesDefined(), this.onDefine()]);
       const tag = this.getMetadata().getTag();
-      const altTag = this.getMetadata().getAltTag();
       const definedLocally = (0, _CustomElementsRegistry.isTagRegistered)(tag);
       const definedGlobally = customElements.get(tag);
       if (definedGlobally && !definedLocally) {
@@ -957,17 +937,9 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
         (0, _CustomElementsRegistry.registerTag)(tag);
         window.customElements.define(tag, this);
         (0, _preloadLinks.default)(this);
-        if (altTag && !customElements.get(altTag)) {
-          (0, _CustomElementsRegistry.registerTag)(altTag);
-          window.customElements.define(altTag, (0, _getClassCopy.default)(this, () => {
-            console.log(`The ${altTag} tag is deprecated and will be removed in the next release, please use ${tag} instead.`); // eslint-disable-line
-          }));
-        }
       }
-
       return this;
     }
-
     /**
      * Returns an instance of UI5ElementMetadata.js representing this UI5 Web Component's full metadata (its and its parents')
      * Note: not to be confused with the "get metadata()" method, which returns an object for this class's metadata only
@@ -990,6 +962,19 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
       return this._metadata;
     }
   }
+  /**
+   * Returns the metadata object for this UI5 Web Component Class
+   * @protected
+   */
+  UI5Element.metadata = {};
+  /**
+   * Always use duck-typing to cover all runtimes on the page.
+   * @returns {boolean}
+   */
+  const instanceOfUI5Element = object => {
+    return "isUI5Element" in object;
+  };
+  _exports.instanceOfUI5Element = instanceOfUI5Element;
   var _default = UI5Element;
   _exports.default = _default;
 });

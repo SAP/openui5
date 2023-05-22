@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/outbox", "./v4/outbox"], function (_exports, _Theme, _outbox, _outbox2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/outbox", "./v5/outbox"], function (_exports, _Theme, _outbox, _outbox2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _outbox.pathData : _outbox2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _outbox.pathData : _outbox2.pathData;
   _exports.pathData = pathData;
   var _default = "outbox";
   _exports.default = _default;

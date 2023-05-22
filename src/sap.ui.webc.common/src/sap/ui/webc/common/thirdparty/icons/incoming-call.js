@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/incoming-call", "./v4/incoming-call"], function (_exports, _Theme, _incomingCall, _incomingCall2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/incoming-call", "./v5/incoming-call"], function (_exports, _Theme, _incomingCall, _incomingCall2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _incomingCall.pathData : _incomingCall2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _incomingCall.pathData : _incomingCall2.pathData;
   _exports.pathData = pathData;
   var _default = "incoming-call";
   _exports.default = _default;

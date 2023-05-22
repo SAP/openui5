@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/wrench", "./v4/wrench"], function (_exports, _Theme, _wrench, _wrench2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/wrench", "./v5/wrench"], function (_exports, _Theme, _wrench, _wrench2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _wrench.pathData : _wrench2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _wrench.pathData : _wrench2.pathData;
   _exports.pathData = pathData;
   var _default = "wrench";
   _exports.default = _default;

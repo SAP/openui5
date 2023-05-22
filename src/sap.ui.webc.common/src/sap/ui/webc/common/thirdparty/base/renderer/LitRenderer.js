@@ -37,38 +37,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/lit-html/lit-html", "..
       return _unsafeHtml.unsafeHTML;
     }
   });
-  const effectiveHtml = (...args) => {
-    const LitStatic = (0, _FeaturesRegistry.getFeature)("LitStatic");
-    const fn = LitStatic ? LitStatic.html : _litHtml.html;
-    return fn(...args);
+  const effectiveHtml = (strings, ...values) => {
+    const litStatic = (0, _FeaturesRegistry.getFeature)("LitStatic");
+    const fn = litStatic ? litStatic.html : _litHtml.html;
+    return fn(strings, ...values);
   };
   _exports.html = effectiveHtml;
-  const effectiveSvg = (...args) => {
-    const LitStatic = (0, _FeaturesRegistry.getFeature)("LitStatic");
-    const fn = LitStatic ? LitStatic.svg : _litHtml.svg;
-    return fn(...args);
+  const effectiveSvg = (strings, ...values) => {
+    const litStatic = (0, _FeaturesRegistry.getFeature)("LitStatic");
+    const fn = litStatic ? litStatic.svg : _litHtml.svg;
+    return fn(strings, ...values);
   };
   _exports.svg = effectiveSvg;
-  const litRender = (templateResult, domNode, styleStrOrHrefsArr, forStaticArea, {
-    host
-  } = {}) => {
-    const OpenUI5Enablement = (0, _FeaturesRegistry.getFeature)("OpenUI5Enablement");
-    if (OpenUI5Enablement && !forStaticArea) {
-      templateResult = OpenUI5Enablement.wrapTemplateResultInBusyMarkup(effectiveHtml, host, templateResult);
+  const litRender = (templateResult, container, styleStrOrHrefsArr, forStaticArea, options) => {
+    const openUI5Enablement = (0, _FeaturesRegistry.getFeature)("OpenUI5Enablement");
+    if (openUI5Enablement && !forStaticArea) {
+      templateResult = openUI5Enablement.wrapTemplateResultInBusyMarkup(effectiveHtml, options.host, templateResult);
     }
     if (typeof styleStrOrHrefsArr === "string") {
       templateResult = effectiveHtml`<style>${styleStrOrHrefsArr}</style>${templateResult}`;
     } else if (Array.isArray(styleStrOrHrefsArr) && styleStrOrHrefsArr.length) {
       templateResult = effectiveHtml`${styleStrOrHrefsArr.map(href => effectiveHtml`<link type="text/css" rel="stylesheet" href="${href}">`)}${templateResult}`;
     }
-    (0, _litHtml.render)(templateResult, domNode, {
-      host
-    });
+    (0, _litHtml.render)(templateResult, container, options);
   };
   const scopeTag = (tag, tags, suffix) => {
-    const LitStatic = (0, _FeaturesRegistry.getFeature)("LitStatic");
-    if (LitStatic) {
-      return LitStatic.unsafeStatic((tags || []).includes(tag) ? `${tag}-${suffix}` : tag);
+    const litStatic = (0, _FeaturesRegistry.getFeature)("LitStatic");
+    if (litStatic) {
+      return litStatic.unsafeStatic((tags || []).includes(tag) ? `${tag}-${suffix}` : tag);
     }
   };
   _exports.scopeTag = scopeTag;

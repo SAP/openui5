@@ -21,6 +21,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "message-warning";
+  var _default = "SAP-icons-v5/message-warning";
   _exports.default = _default;
 });

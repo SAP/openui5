@@ -4,23 +4,43 @@ sap.ui.define(["exports"], function (_exports) {
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.default = void 0;
+  _exports.getIconCollectionByAlias = _exports.default = void 0;
   /**
-   * Supported icon collection names and aliases.
+   * Supported icon collection aliases.
    *
    * Users might specify a collection, using both the key and the value in the following key-value pairs,
    * e.g the following pairs are completely exchangeable:
-   * "SAP-icons-TNT/actor" and "tnt/actor", "BusinessSuiteInAppSymbols/3d" and "business-suite/3d",
-   * "SAP-icons-v5/accept" and "horizon/accept".
    *
-   * Note: technically, in the code we maintain the collections under the "value" name - "tnt", "business-suite",
-   * SAP-icons-v5" and "SAP-icons"(which does not have an alias).
+   * - "SAP-icons/accept" and "SAP-icons-v4/accept"
+   * - "horizon/accept" and "SAP-icons-v5/accept"
+   * - "SAP-icons-TNT/actor" and "tnt/actor"
+   * - "BusinessSuiteInAppSymbols/3d" and "business-suite/3d"
    */
-  const IconCollectionsAlias = {
-    "SAP-icons-TNT": "tnt",
-    "BusinessSuiteInAppSymbols": "business-suite",
-    "horizon": "SAP-icons-v5"
+  var IconCollectionsAlias;
+  (function (IconCollectionsAlias) {
+    IconCollectionsAlias["SAP-icons"] = "SAP-icons-v4";
+    IconCollectionsAlias["horizon"] = "SAP-icons-v5";
+    IconCollectionsAlias["SAP-icons-TNT"] = "tnt";
+    IconCollectionsAlias["BusinessSuiteInAppSymbols"] = "business-suite";
+  })(IconCollectionsAlias || (IconCollectionsAlias = {}));
+  /**
+   * Returns the mapped collection name for a given alias.
+   *
+   * <b>For example</b>:
+   * - "SAP-icons-TNT"resolves to "tnt"
+   * - "BusinessSuiteInAppSymbols" resolves to "business-suite"
+   * - "horizon" resolves to "SAP-icons-v5"
+   *
+   * @param { string } collectionName
+   * @return { string } the normalized collection name
+   */
+  const getIconCollectionByAlias = collectionName => {
+    if (IconCollectionsAlias[collectionName]) {
+      return IconCollectionsAlias[collectionName];
+    }
+    return collectionName;
   };
+  _exports.getIconCollectionByAlias = getIconCollectionByAlias;
   var _default = IconCollectionsAlias;
   _exports.default = _default;
 });

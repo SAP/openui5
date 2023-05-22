@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/filter-analytics", "./v4/filter-analytics"], function (_exports, _Theme, _filterAnalytics, _filterAnalytics2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/filter-analytics", "./v5/filter-analytics"], function (_exports, _Theme, _filterAnalytics, _filterAnalytics2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _filterAnalytics.pathData : _filterAnalytics2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _filterAnalytics.pathData : _filterAnalytics2.pathData;
   _exports.pathData = pathData;
   var _default = "filter-analytics";
   _exports.default = _default;

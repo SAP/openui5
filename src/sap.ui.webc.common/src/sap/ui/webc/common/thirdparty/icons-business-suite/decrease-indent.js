@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/decrease-indent", "./v2/decrease-indent"], function (_exports, _Theme, _decreaseIndent, _decreaseIndent2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "decrease-indent";
-  const pathData = "M109 96h403v64H109V96zm0 91v37h86v64h-86v37L0 256zm147 37h256v64H256v-64zm256 128v64H109v-64h403z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _decreaseIndent.accData;
+    }
   });
-  var _default = "decrease-indent";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _decreaseIndent.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _decreaseIndent.pathData : _decreaseIndent2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/decrease-indent";
   _exports.default = _default;
 });

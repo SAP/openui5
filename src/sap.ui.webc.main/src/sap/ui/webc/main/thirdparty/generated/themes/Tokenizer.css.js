@@ -8,12 +8,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   _parametersBundle = _interopRequireDefault(_parametersBundle);
   _parametersBundle2 = _interopRequireDefault(_parametersBundle2);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents-theming", "sap_fiori_3", () => _parametersBundle.default);
-  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents", "sap_fiori_3", () => _parametersBundle2.default);
-  var _default = {
+  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents-theming", "sap_fiori_3", async () => _parametersBundle.default);
+  (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents", "sap_fiori_3", async () => _parametersBundle2.default);
+  const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/Tokenizer.css",
-    content: ":host{display:inline-block;box-sizing:border-box;border:1px solid #000;height:2.25rem}.ui5-hidden-text{width:1px;overflow:hidden;color:transparent}.ui5-tokenizer-root{height:100%;display:flex;align-items:center;overflow-x:scroll;box-sizing:border-box;font-family:\"72override\",var(--sapFontFamily)}.ui5-tokenizer-no-padding{padding:0}.ui5-tokenizer-root.ui5-tokenizer-nmore--wrapper{overflow:hidden}.ui5-tokenizer--token--wrapper{display:inline-flex;align-items:center;box-sizing:border-box;height:100%}:host([expanded]) .ui5-tokenizer--content{display:inline-block;white-space:nowrap}.ui5-tokenizer--content{display:flex;flex-wrap:nowrap;align-items:center;overflow:auto;padding-inline-start:var(--_ui5_tokenizer_padding)}.ui5-tokenizer--content.ui5-tokenizer-nmore--content{overflow:hidden}.ui5-tokenizer-more-text{display:inline-block;margin-inline-start:.25rem;cursor:pointer;white-space:nowrap;font-size:var(--sapFontSize);font-weight:400;color:var(--sapField_TextColor)}:host([expanded]) .ui5-tokenizer--content{overflow:hidden;justify-content:flex-end}"
+    content: ".ui5-hidden-text {\n\tposition: absolute;\n\tclip: rect(1px,1px,1px,1px);\n\tuser-select: none;\n\tleft: -1000px; /* ensure the invisible texts are never part of the viewport */\n\ttop: -1000px;\n\tpointer-events: none;\n\tfont-size: 0;\n}\n\n:host {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\tborder: 1px solid black;\n\theight: 2.25rem;\n}\n\n.ui5-tokenizer-root {\n\theight: 100%;\n\tdisplay: flex;\n\talign-items: center;\n\toverflow-x: scroll;\n\tbox-sizing: border-box;\n\tfont-family: \"72override\", var(--sapFontFamily);\n}\n\n.ui5-tokenizer-no-padding {\n\tpadding: 0;\n}\n\n.ui5-tokenizer-root.ui5-tokenizer-nmore--wrapper {\n\toverflow: hidden;\n}\n\n.ui5-tokenizer--token--wrapper {\n\tdisplay: inline-flex;\n\talign-items: center;\n\tbox-sizing: border-box;\n\theight: 100%;\n}\n\n:host([expanded]) .ui5-tokenizer--content {\n\tdisplay: inline-block;\n\twhite-space: nowrap;\n}\n\n.ui5-tokenizer--content {\n\tdisplay: flex;\n\tflex-wrap: nowrap;\n\talign-items: center;\n\toverflow: hidden;\n\tpadding-inline-start: var(--_ui5_tokenizer_padding);\n}\n\n.ui5-tokenizer-more-text {\n\tdisplay: inline-block;\n\tmargin-inline-start: .25rem;\n\tcursor: pointer;\n\twhite-space: nowrap;\n\tfont-size: var(--sapFontSize);\n\tfont-weight: normal;\n\tcolor: var(--_ui5_tokenizer_n_more_text_color);\n}\n\n:host([expanded]) .ui5-tokenizer--content {\n\toverflow: hidden;\n\tjustify-content: flex-end;\n}"
   };
+  var _default = styleData;
   _exports.default = _default;
 });

@@ -10,7 +10,7 @@ sap.ui.define(["exports", "../generated/AssetParameters"], function (_exports, _
     const navigatorLanguage = () => {
       return navigator.language;
     };
-    const rawLocale = browserLanguages && browserLanguages[0] || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage;
+    const rawLocale = browserLanguages && browserLanguages[0] || navigatorLanguage();
     return rawLocale || _AssetParameters.DEFAULT_LANGUAGE;
   };
   _exports.default = _default;

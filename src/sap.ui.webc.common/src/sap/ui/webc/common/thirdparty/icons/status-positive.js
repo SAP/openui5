@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/status-positive", "./v4/status-positive"], function (_exports, _Theme, _statusPositive, _statusPositive2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/status-positive", "./v5/status-positive"], function (_exports, _Theme, _statusPositive, _statusPositive2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _statusPositive.pathData : _statusPositive2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _statusPositive.pathData : _statusPositive2.pathData;
   _exports.pathData = pathData;
   var _default = "status-positive";
   _exports.default = _default;

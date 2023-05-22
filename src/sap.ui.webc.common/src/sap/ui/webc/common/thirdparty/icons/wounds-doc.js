@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/wounds-doc", "./v4/wounds-doc"], function (_exports, _Theme, _woundsDoc, _woundsDoc2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/wounds-doc", "./v5/wounds-doc"], function (_exports, _Theme, _woundsDoc, _woundsDoc2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _woundsDoc.pathData : _woundsDoc2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _woundsDoc.pathData : _woundsDoc2.pathData;
   _exports.pathData = pathData;
   var _default = "wounds-doc";
   _exports.default = _default;

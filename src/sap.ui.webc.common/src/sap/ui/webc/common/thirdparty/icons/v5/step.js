@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "step";
-  const pathData = "M444 188q29 0 48.5 19.5T512 255q0 29-19.5 48.5T444 323q-20 0-36.5-11T383 282h-65q-8 19-25 30t-37 11-37-11-25-30h-64q-8 19-25 30t-37 11q-29 0-48-19.5T1 255q0-28 19-47.5T68 188q20 0 37 11t25 30h64q8-19 25-30t37-11 37 11 25 30h65q8-19 24.5-30t36.5-11z";
+  const pathData = "M160 448q-13 0-22.5-9.5T128 416t9-23l138-137-138-137q-9-11-9-23 0-13 9.5-22.5T160 64t23 9l160 160q9 10 9 23 0 12-9 23L183 439q-10 9-23 9zM26 378q-11 0-18.5-7.5T0 352q0-10 8-18l89-84-89-84q-8-8-8-18 0-11 7.5-18.5T26 122q10 0 17 7l109 102q8 8 8 19t-8 19L43 371q-7 7-17 7zm352 0q-11 0-18.5-7.5T352 352q0-10 8-18l89-84-89-84q-8-8-8-18 0-11 7.5-18.5T378 122q10 0 17 7l109 102q8 8 8 19t-8 19L395 371q-7 7-17 7z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
@@ -20,6 +20,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     collection,
     packageName
   });
-  var _default = "step";
+  var _default = "SAP-icons-v5/step";
   _exports.default = _default;
 });

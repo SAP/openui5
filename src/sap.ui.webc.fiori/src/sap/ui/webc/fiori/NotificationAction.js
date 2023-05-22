@@ -93,6 +93,22 @@ sap.ui.define([
 					type: "string",
 					defaultValue: ""
 				}
+			},
+			events: {
+
+				/**
+				 * Fired, when the action is pressed.
+				 */
+				click: {
+					parameters: {
+						/**
+						 * DOM ref of the clicked element
+						 */
+						targetRef: {
+							type: "HTMLElement"
+						}
+					}
+				}
 			}
 		}
 	});

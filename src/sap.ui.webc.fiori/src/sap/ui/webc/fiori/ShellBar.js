@@ -63,6 +63,45 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * An object of strings that defines several additional accessibility attribute values for customization depending on the use case.
+				 *
+				 * It supports the following fields:
+				 *
+				 *
+				 * <ul>
+				 *     <li><code>expanded</code>: Indicates whether the anchor element, or another grouping element it controls, is currently expanded or collapsed. Accepts the following string values:
+				 *         <ul>
+				 *             <li><code>true</code></li>
+				 *             <li><code>false</code></li>
+				 *         </ul>
+				 *     </li>
+				 *     <li><code>hasPopup</code>: Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by the anchor element. Accepts the following string values:
+				 *         <ul>
+				 *             <li><code>Dialog</code></li>
+				 *             <li><code>Grid</code></li>
+				 *             <li><code>ListBox</code></li>
+				 *             <li><code>Menu</code></li>
+				 *             <li><code>Tree</code></li>
+				 *         </ul>
+				 *     </li>
+				 * </ul>
+				 */
+				accessibilityAttributes: {
+					type: "object",
+					defaultValue: {}
+				},
+
+				/**
+				 * An object of strings that defines additional accessibility roles for further customization.
+				 *
+				 * It supports the following fields: - <code>logoRole</code>: the accessibility role for the <code>logo</code>
+				 */
+				accessibilityRoles: {
+					type: "object",
+					defaultValue: {}
+				},
+
+				/**
 				 * An object of strings that defines several additional accessibility texts for even further customization.
 				 *
 				 * It supports the following fields: - <code>profileButtonTitle</code>: defines the tooltip for the profile button - <code>logoTitle</code>: defines the tooltip for the logo
@@ -121,6 +160,15 @@ sap.ui.define([
 				 * Defines, if the product switch icon would be displayed.
 				 */
 				showProductSwitch: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Defines, if the Search Field would be displayed when there is a valid <code>searchField</code> slot. <br>
+				 * <b>Note:</b> By default the Search Field is not displayed.
+				 */
+				showSearchField: {
 					type: "boolean",
 					defaultValue: false
 				}

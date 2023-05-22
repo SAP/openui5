@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/customer-view", "./v4/customer-view"], function (_exports, _Theme, _customerView, _customerView2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/customer-view", "./v5/customer-view"], function (_exports, _Theme, _customerView, _customerView2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _customerView.pathData : _customerView2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _customerView.pathData : _customerView2.pathData;
   _exports.pathData = pathData;
   var _default = "customer-view";
   _exports.default = _default;

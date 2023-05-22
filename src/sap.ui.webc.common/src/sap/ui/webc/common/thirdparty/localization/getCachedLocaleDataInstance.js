@@ -10,7 +10,7 @@ sap.ui.define(["exports", "./LocaleData"], function (_exports, _LocaleData) {
   const cache = new Map();
   const getCachedLocaleDataInstance = locale => {
     if (!cache.has(locale)) {
-      cache.set(locale, _LocaleData.default.getInstance(locale));
+      cache.set(locale, new _LocaleData.default(locale));
     }
     return cache.get(locale);
   };

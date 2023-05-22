@@ -1,1 +1,1 @@
-.ui5-side-navigation-popover::part(content){padding:0}
+.ui5-side-navigation-popover::part(content){padding:0}.ui5-hidden-text{clip:rect(1px,1px,1px,1px);font-size:0;left:-1000px;pointer-events:none;position:absolute;top:-1000px;user-select:none}.ui5-side-navigation-in-popover{--_ui5-tree-toggle-box-width:1rem;--_ui5-tree-indent-step:0;width:auto}

@@ -1,46 +1,34 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.TabsOverflowMode.prototype
+   * Tabs overflow mode in TabContainer.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.TabsOverflowMode
    */
-  const TabsOverflowModes = {
+  var TabsOverflowMode;
+  (function (TabsOverflowMode) {
     /**
      * End type is used if there should be only one overflow with hidden the tabs at the end of the tab container.
      * @public
      * @type {End}
      */
-    End: "End",
+    TabsOverflowMode["End"] = "End";
     /**
      * StartAndEnd type is used if there should be two overflows on both ends of the tab container.
      * @public
      * @type {StartAndEnd}
      */
-    StartAndEnd: "StartAndEnd"
-  };
-
-  /**
-   * @class
-   * Different types of overflow modes.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.TabsOverflowMode
-   * @public
-   * @enum {string}
-   */
-  class TabsOverflowMode extends _DataType.default {
-    static isValid(value) {
-      return !!TabsOverflowModes[value];
-    }
-  }
-  TabsOverflowMode.generateTypeAccessors(TabsOverflowModes);
+    TabsOverflowMode["StartAndEnd"] = "StartAndEnd";
+  })(TabsOverflowMode || (TabsOverflowMode = {}));
   var _default = TabsOverflowMode;
   _exports.default = _default;
 });

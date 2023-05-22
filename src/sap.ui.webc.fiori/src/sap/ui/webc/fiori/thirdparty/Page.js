@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/MediaRange", "./types/PageBackgroundDesign", "./generated/templates/PageTemplate.lit", "./generated/themes/Page.css"], function (_exports, _UI5Element, _LitRenderer, _ResizeHandler, _MediaRange, _PageBackgroundDesign, _PageTemplate, _Page) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/MediaRange", "./types/PageBackgroundDesign", "./generated/templates/PageTemplate.lit", "./generated/themes/Page.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _LitRenderer, _ResizeHandler, _MediaRange, _PageBackgroundDesign, _PageTemplate, _Page) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _MediaRange = _interopRequireDefault(_MediaRange);
@@ -13,116 +16,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _PageTemplate = _interopRequireDefault(_PageTemplate);
   _Page = _interopRequireDefault(_Page);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-page",
-    managedSlots: true,
-    languageAware: true,
-    properties: /** @lends sap.ui.webcomponents.fiori.Page.prototype */{
-      /**
-       * Defines the background color of the <code>ui5-page</code>.
-       * <br><br>
-       * <b>Note:</b> When a ui5-list is placed inside the page, we recommend using “List” to ensure better color contrast.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Solid</code></li> (default)
-       * <li><code>Transparent</code></li>
-       * <li><code>List</code></li>
-       * </ul>
-       * @type {PageBackgroundDesign}
-       * @defaultvalue "Solid"
-       * @public
-       */
-      backgroundDesign: {
-        type: String,
-        defaultValue: _PageBackgroundDesign.default.Solid
-      },
-      /**
-       * Disables vertical scrolling of page content.
-       * If set to true, there will be no vertical scrolling at all.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      disableScrolling: {
-        type: Boolean
-      },
-      /**
-       * Defines if the footer should float over the content.
-       * <br><br>
-       * <b>Note:</b> When set to true the footer floats over the content with a slight offset from the bottom, otherwise it is fixed at the very bottom of the page.
-       * @type {boolean}
-       * @defaultvalue true
-       * @public
-       */
-      floatingFooter: {
-        type: Boolean
-      },
-      /**
-       * Defines the footer visibility.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      hideFooter: {
-        type: Boolean
-      },
-      /**
-       * Defines the current media query size.
-       *
-       * @type {string}
-       * @private
-       * @since 1.0.0-rc.15
-       */
-      mediaRange: {
-        type: String
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.fiori.Page.prototype */{
-      /**
-       * Defines the header HTML Element.
-       *
-       * @type {sap.ui.webcomponents.fiori.IBar}
-       * @slot
-       * @public
-       */
-      header: {
-        type: HTMLElement
-      },
-      /**
-       * Defines the content HTML Element.
-       *
-       * @type {HTMLElement[]}
-       * @slot content
-       * @public
-       */
-      "default": {
-        propertyName: "content",
-        type: HTMLElement
-      },
-      /**
-       * Defines the footer HTML Element.
-       *
-       * @type {sap.ui.webcomponents.fiori.IBar}
-       * @slot
-       * @public
-       */
-      footer: {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.fiori.Page.prototype */{}
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -142,6 +42,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * <b>Note:</b> <code>ui5-page</code> occipues the whole available space of its parent. In order to achieve the intended design you have to make sure
    * that there is enough space for the <code>ui5-page</code> to be rendered.
+   * <b>Note:</b> In order for the <code>ui5-page</code> to be displayed, the parent element should have fixed height.
    *
    *
    * <h3>ES6 Module Import</h3>
@@ -150,25 +51,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.Page
-   * @extends UI5Element
+   * @alias sap.ui.webc.fiori.Page
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-page
    * @since 1.0.0-rc.12
    * @public
    */
-  class Page extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _Page.default;
-    }
-    static get template() {
-      return _PageTemplate.default;
-    }
+  let Page = class Page extends _UI5Element.default {
     constructor() {
       super();
       this._updateMediaRange = this.updateMediaRange.bind(this);
@@ -201,7 +90,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         footer: {}
       };
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _PageBackgroundDesign.default,
+    defaultValue: _PageBackgroundDesign.default.Solid
+  })], Page.prototype, "backgroundDesign", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Page.prototype, "disableScrolling", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Page.prototype, "floatingFooter", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Page.prototype, "hideFooter", void 0);
+  __decorate([(0, _property.default)()], Page.prototype, "mediaRange", void 0);
+  __decorate([(0, _slot.default)()], Page.prototype, "header", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement,
+    "default": true
+  })], Page.prototype, "content", void 0);
+  __decorate([(0, _slot.default)()], Page.prototype, "footer", void 0);
+  Page = __decorate([(0, _customElement.default)({
+    tag: "ui5-page",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    styles: _Page.default,
+    template: _PageTemplate.default
+  })], Page);
   Page.define();
   var _default = Page;
   _exports.default = _default;

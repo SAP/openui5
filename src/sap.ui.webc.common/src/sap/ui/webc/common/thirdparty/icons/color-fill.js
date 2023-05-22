@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/color-fill", "./v4/color-fill"], function (_exports, _Theme, _colorFill, _colorFill2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/color-fill", "./v5/color-fill"], function (_exports, _Theme, _colorFill, _colorFill2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _colorFill.pathData : _colorFill2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _colorFill.pathData : _colorFill2.pathData;
   _exports.pathData = pathData;
   var _default = "color-fill";
   _exports.default = _default;

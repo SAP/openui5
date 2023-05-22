@@ -22,17 +22,29 @@ sap.ui.define([
 						items: [
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							})
-						]
+						],
+						click: function(oEvent) {
+							// console.log("Event click fired for SideNavigationItem with parameters: ", oEvent.getParameters());
+						}
 					}),
 					new SideNavigationItem({
 						icon: "employee",
@@ -40,17 +52,29 @@ sap.ui.define([
 						items: [
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							})
-						]
+						],
+						click: function(oEvent) {
+							// console.log("Event click fired for SideNavigationItem with parameters: ", oEvent.getParameters());
+						}
 					}),
 					new SideNavigationItem({
 						icon: "employee",
@@ -58,17 +82,29 @@ sap.ui.define([
 						items: [
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							})
-						]
+						],
+						click: function(oEvent) {
+							// console.log("Event click fired for SideNavigationItem with parameters: ", oEvent.getParameters());
+						}
 					})
 				],
 				header: [
@@ -101,17 +137,29 @@ sap.ui.define([
 						items: [
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							})
-						]
+						],
+						click: function(oEvent) {
+							// console.log("Event click fired for SideNavigationItem with parameters: ", oEvent.getParameters());
+						}
 					}),
 					new SideNavigationItem({
 						icon: "employee",
@@ -119,17 +167,29 @@ sap.ui.define([
 						items: [
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							})
-						]
+						],
+						click: function(oEvent) {
+							// console.log("Event click fired for SideNavigationItem with parameters: ", oEvent.getParameters());
+						}
 					}),
 					new SideNavigationItem({
 						icon: "employee",
@@ -137,17 +197,29 @@ sap.ui.define([
 						items: [
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							}),
 							new SideNavigationSubItem({
 								icon: "employee",
-								text: "Some text..."
+								text: "Some text...",
+								click: function(oEvent) {
+									// console.log("Event click fired for SideNavigationSubItem with parameters: ", oEvent.getParameters());
+								}
 							})
-						]
+						],
+						click: function(oEvent) {
+							// console.log("Event click fired for SideNavigationItem with parameters: ", oEvent.getParameters());
+						}
 					})
 				],
 				selectionChange: function(oEvent) {

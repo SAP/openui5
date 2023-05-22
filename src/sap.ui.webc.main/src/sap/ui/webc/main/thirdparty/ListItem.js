@@ -1,10 +1,15 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/edit", "sap/ui/webc/common/thirdparty/base/i18nBundle", "./types/ListItemType", "./types/ListMode", "./ListItemBase", "./RadioButton", "./CheckBox", "./Button", "./generated/i18n/i18n-defaults", "./generated/themes/ListItem.css"], function (_exports, _Keys, _decline, _edit, _i18nBundle, _ListItemType, _ListMode, _ListItemBase, _RadioButton, _CheckBox, _Button, _i18nDefaults, _ListItem) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/MarkedEvents", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/edit", "./types/ListItemType", "./types/ListMode", "./ListItemBase", "./RadioButton", "./CheckBox", "./Button", "./generated/i18n/i18n-defaults", "./generated/themes/ListItem.css", "./types/HasPopup", "sap/ui/webc/common/thirdparty/icons/slim-arrow-right"], function (_exports, _customElement, _Integer, _MarkedEvents, _Keys, _i18nBundle, _property, _event, _slot, _decline, _edit, _ListItemType, _ListMode, _ListItemBase, _RadioButton, _CheckBox, _Button, _i18nDefaults, _ListItem, _HasPopup, _slimArrowRight) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _Integer = _interopRequireDefault(_Integer);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
+  _slot = _interopRequireDefault(_slot);
   _ListItemType = _interopRequireDefault(_ListItemType);
   _ListMode = _interopRequireDefault(_ListMode);
   _ListItemBase = _interopRequireDefault(_ListItemBase);
@@ -12,106 +17,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
   _CheckBox = _interopRequireDefault(_CheckBox);
   _Button = _interopRequireDefault(_Button);
   _ListItem = _interopRequireDefault(_ListItem);
+  _HasPopup = _interopRequireDefault(_HasPopup);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    languageAware: true,
-    properties: /** @lends sap.ui.webcomponents.main.ListItem.prototype */{
-      /**
-       * Defines the visual indication and behavior of the list items.
-       * Available options are <code>Active</code> (by default), <code>Inactive</code> and <code>Detail</code>.
-       * <br><br>
-       * <b>Note:</b> When set to <code>Active</code>, the item will provide visual response upon press and hover,
-       * while with type <code>Inactive</code> and <code>Detail</code> - will not.
-       *
-       * @type {ListItemType}
-       * @defaultvalue "Active"
-       * @public
-      */
-      type: {
-        type: _ListItemType.default,
-        defaultValue: _ListItemType.default.Active
-      },
-      /**
-       * Indicates if the list item is active, e.g pressed down with the mouse or the keyboard keys.
-       *
-       * @type {boolean}
-       * @private
-      */
-      active: {
-        type: Boolean
-      },
-      /**
-       * Defines the tooltip of the component.
-       * @type {string}
-       * @defaultvalue ""
-       * @private
-       * @since 1.0.0-rc.15
-       */
-      title: {
-        type: String
-      },
-      /**
-       * Indicates if the list item is actionable, e.g has hover and pressed effects.
-       *
-       * @type {boolean}
-       * @private
-      */
-      actionable: {
-        type: Boolean
-      },
-      /**
-       * Used to define the role of the list item.
-       *
-       * @private
-       * @type {string}
-       * @defaultvalue "listitem"
-       * @since 1.0.0-rc.9
-       *
-       */
-      role: {
-        type: String,
-        defaultValue: "listitem"
-      },
-      /**
-       * Used to define the role of the list item.
-       *
-       * @private
-       * @type {string}
-       * @defaultvalue ""
-       * @since 1.3.0
-       *
-       */
-      accessibleRole: {
-        type: String
-      },
-      _mode: {
-        type: _ListMode.default,
-        defaultValue: _ListMode.default.None
-      },
-      _ariaHasPopup: {
-        type: String,
-        noAttribute: true
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.ListItem.prototype */{
-      /**
-       * Fired when the user clicks on the detail button when type is <code>Detail</code>.
-       *
-       * @event sap.ui.webcomponents.main.ListItem#detail-click
-       * @public
-       */
-      "detail-click": {},
-      _press: {},
-      _focused: {},
-      "_selection-requested": {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var ListItem_1;
   /**
    * @class
    * A class to serve as a base
@@ -119,24 +34,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.ListItem
-   * @extends ListItemBase
+   * @alias sap.ui.webc.main.ListItem
+   * @extends sap.ui.webc.main.ListItemBase
    * @public
    */
-  class ListItem extends _ListItemBase.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return [_ListItemBase.default.styles, _ListItem.default];
-    }
-    static get dependencies() {
-      return [_Button.default, _RadioButton.default, _CheckBox.default];
-    }
+  let ListItem = ListItem_1 = class ListItem extends _ListItemBase.default {
     constructor() {
       super();
-      this.deactivateByKey = event => {
-        if ((0, _Keys.isEnter)(event)) {
+      this.deactivateByKey = e => {
+        if ((0, _Keys.isEnter)(e)) {
           this.deactivate();
         }
       };
@@ -145,16 +51,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
           this.active = false;
         }
       };
-      const handleTouchStartEvent = event => {
-        this._onmousedown(event);
+      const handleTouchStartEvent = e => {
+        this._onmousedown(e);
       };
       this._ontouchstart = {
         handleEvent: handleTouchStartEvent,
         passive: true
       };
     }
-    onBeforeRendering(...params) {
-      this.actionable = this.type === _ListItemType.default.Active && this._mode !== _ListMode.default.Delete;
+    onBeforeRendering() {
+      this.actionable = (this.type === _ListItemType.default.Active || this.type === _ListItemType.default.Navigation) && this._mode !== _ListMode.default.Delete;
     }
     onEnterDOM() {
       document.addEventListener("mouseup", this.deactivate);
@@ -166,105 +72,108 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       document.removeEventListener("keyup", this.deactivateByKey);
       document.removeEventListener("touchend", this.deactivate);
     }
-    _onkeydown(event) {
-      super._onkeydown(event);
-      const itemActive = this.type === _ListItemType.default.Active;
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault();
+    _onkeydown(e) {
+      super._onkeydown(e);
+      const itemActive = this.type === _ListItemType.default.Active,
+        itemNavigated = this.typeNavigation;
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault();
       }
-      if (((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) && itemActive) {
+      if (((0, _Keys.isSpace)(e) || (0, _Keys.isEnter)(e)) && (itemActive || itemNavigated)) {
         this.activate();
       }
-      if ((0, _Keys.isEnter)(event)) {
-        this.fireItemPress(event);
+      if ((0, _Keys.isEnter)(e)) {
+        this.fireItemPress(e);
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) {
+    _onkeyup(e) {
+      if ((0, _Keys.isSpace)(e) || (0, _Keys.isEnter)(e)) {
         this.deactivate();
       }
-      if ((0, _Keys.isSpace)(event)) {
-        this.fireItemPress(event);
+      if ((0, _Keys.isSpace)(e)) {
+        this.fireItemPress(e);
       }
-      if (this.modeDelete && (0, _Keys.isDelete)(event)) {
+      if (this.modeDelete && (0, _Keys.isDelete)(e)) {
         this.onDelete();
       }
     }
-    _onmousedown(event) {
-      if (event.isMarked === "button") {
+    _onmousedown(e) {
+      if ((0, _MarkedEvents.getEventMark)(e) === "button") {
         return;
       }
       this.activate();
     }
-    _onmouseup(event) {
-      if (event.isMarked === "button") {
+    _onmouseup(e) {
+      if ((0, _MarkedEvents.getEventMark)(e) === "button") {
         return;
       }
       this.deactivate();
     }
-    _ontouchend(event) {
-      this._onmouseup(event);
+    _ontouchend(e) {
+      this._onmouseup(e);
     }
     _onfocusout() {
       super._onfocusout();
       this.deactivate();
     }
-    _onclick(event) {
-      if (event.isMarked === "button") {
+    _onclick(e) {
+      if ((0, _MarkedEvents.getEventMark)(e) === "button") {
         return;
       }
-      this.fireItemPress(event);
+      this.fireItemPress(e);
     }
-
     /*
      * Called when selection components in Single (ui5-radio-button)
      * and Multi (ui5-checkbox) selection modes are used.
      */
-    onMultiSelectionComponentPress(event) {
+    onMultiSelectionComponentPress(e) {
       if (this.isInactive) {
         return;
       }
       this.fireEvent("_selection-requested", {
         item: this,
-        selected: event.target.checked,
+        selected: e.target.checked,
         selectionComponentPressed: true
       });
     }
-    onSingleSelectionComponentPress(event) {
+    onSingleSelectionComponentPress(e) {
       if (this.isInactive) {
         return;
       }
       this.fireEvent("_selection-requested", {
         item: this,
-        selected: !event.target.selected,
+        selected: !e.target.checked,
         selectionComponentPressed: true
       });
     }
     activate() {
-      if (this.type === _ListItemType.default.Active) {
+      if (this.type === _ListItemType.default.Active || this.type === _ListItemType.default.Navigation) {
         this.active = true;
       }
     }
-    onDelete(event) {
+    onDelete() {
       this.fireEvent("_selection-requested", {
         item: this,
         selectionComponentPressed: false
       });
     }
-    onDetailClick(event) {
+    onDetailClick() {
       this.fireEvent("detail-click", {
         item: this,
         selected: this.selected
       });
     }
-    fireItemPress(event) {
+    fireItemPress(e) {
       if (this.isInactive) {
         return;
+      }
+      if ((0, _Keys.isEnter)(e)) {
+        e.preventDefault();
       }
       this.fireEvent("_press", {
         item: this,
         selected: this.selected,
-        key: event.key
+        key: e.key
       });
     }
     get isInactive() {
@@ -285,27 +194,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
     get modeDelete() {
       return this._mode === _ListMode.default.Delete;
     }
-
     /**
      * Used in UploadCollectionItem
      */
     get renderDeleteButton() {
       return this.modeDelete;
     }
-    get disableDeleteButton() {
-      return false;
-    }
     /**
      * End
      */
-
     get typeDetail() {
       return this.type === _ListItemType.default.Detail;
+    }
+    get typeNavigation() {
+      return this.type === _ListItemType.default.Navigation;
     }
     get typeActive() {
       return this.type === _ListItemType.default.Active;
     }
-    get ariaSelected() {
+    get _ariaSelected() {
       if (this.modeMultiSelect || this.modeSingleSelect) {
         return this.selected;
       }
@@ -313,25 +220,26 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
     }
     get ariaSelectedText() {
       let ariaSelectedText;
-
       // Selected state needs to be supported separately since now the role mapping is list -> listitem[]
       // to avoid the issue of nesting interactive elements, ex. (option -> radio/checkbox);
       // The text is added to aria-describedby because as part of the aria-labelledby
       // the whole content of the item is readout when the aria-labelledby value is changed.
-      if (this.ariaSelected !== undefined) {
-        ariaSelectedText = this.ariaSelected ? ListItem.i18nBundle.getText(_i18nDefaults.LIST_ITEM_SELECTED) : ListItem.i18nBundle.getText(_i18nDefaults.LIST_ITEM_NOT_SELECTED);
+      if (this._ariaSelected !== undefined) {
+        ariaSelectedText = this._ariaSelected ? ListItem_1.i18nBundle.getText(_i18nDefaults.LIST_ITEM_SELECTED) : ListItem_1.i18nBundle.getText(_i18nDefaults.LIST_ITEM_NOT_SELECTED);
       }
       return ariaSelectedText;
     }
     get deleteText() {
-      return ListItem.i18nBundle.getText(_i18nDefaults.DELETE);
+      return ListItem_1.i18nBundle.getText(_i18nDefaults.DELETE);
+    }
+    get hasDeleteButtonSlot() {
+      return !!this.deleteButton.length;
     }
     get _accessibleNameRef() {
       if (this.accessibleName) {
         // accessibleName is set - return labels excluding content
         return `${this._id}-invisibleText`;
       }
-
       // accessibleName is not set - return _accInfo.listItemAriaLabel including content
       return `${this._id}-content ${this._id}-invisibleText`;
     }
@@ -339,17 +247,69 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
       return {
         role: this.accessibleRole || this.role,
         ariaExpanded: undefined,
-        ariaLevel: undefined,
-        ariaLabel: ListItem.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_ITEM_CHECKBOX),
-        ariaLabelRadioButton: ListItem.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_ITEM_RADIO_BUTTON),
+        ariaLevel: this._level || undefined,
+        ariaLabel: ListItem_1.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_ITEM_CHECKBOX),
+        ariaLabelRadioButton: ListItem_1.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_ITEM_RADIO_BUTTON),
         ariaSelectedText: this.ariaSelectedText,
-        ariaHaspopup: this._ariaHasPopup || undefined
+        ariaHaspopup: this.ariaHaspopup || undefined
       };
     }
-    static async onDefine() {
-      ListItem.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+    get hasConfigurableMode() {
+      return true;
     }
-  }
+    static async onDefine() {
+      ListItem_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
+    }
+  };
+  __decorate([(0, _property.default)({
+    type: _ListItemType.default,
+    defaultValue: _ListItemType.default.Active
+  })], ListItem.prototype, "type", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ListItem.prototype, "navigated", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ListItem.prototype, "active", void 0);
+  __decorate([(0, _property.default)()], ListItem.prototype, "title", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ListItem.prototype, "actionable", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: "listitem"
+  })], ListItem.prototype, "role", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: undefined,
+    noAttribute: true
+  })], ListItem.prototype, "accessibleRoleDescription", void 0);
+  __decorate([(0, _property.default)()], ListItem.prototype, "accessibleRole", void 0);
+  __decorate([(0, _property.default)({
+    type: _ListMode.default,
+    defaultValue: _ListMode.default.None
+  })], ListItem.prototype, "_mode", void 0);
+  __decorate([(0, _property.default)({
+    type: _HasPopup.default,
+    noAttribute: true
+  })], ListItem.prototype, "ariaHaspopup", void 0);
+  __decorate([(0, _property.default)({
+    type: _Integer.default
+  })], ListItem.prototype, "_level", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], ListItem.prototype, "disableDeleteButton", void 0);
+  __decorate([(0, _slot.default)()], ListItem.prototype, "deleteButton", void 0);
+  ListItem = ListItem_1 = __decorate([(0, _customElement.default)({
+    languageAware: true,
+    styles: [_ListItemBase.default.styles, _ListItem.default],
+    dependencies: [_Button.default, _RadioButton.default, _CheckBox.default]
+  })
+  /**
+   * Fired when the user clicks on the detail button when type is <code>Detail</code>.
+   *
+   * @event sap.ui.webc.main.ListItem#detail-click
+   * @public
+   */, (0, _event.default)("detail-click"), (0, _event.default)("_press"), (0, _event.default)("_focused"), (0, _event.default)("_selection-requested")], ListItem);
   var _default = ListItem;
   _exports.default = _default;
 });

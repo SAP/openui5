@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/functional-location", "./v4/functional-location"], function (_exports, _Theme, _functionalLocation, _functionalLocation2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/functional-location", "./v5/functional-location"], function (_exports, _Theme, _functionalLocation, _functionalLocation2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _functionalLocation.pathData : _functionalLocation2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _functionalLocation.pathData : _functionalLocation2.pathData;
   _exports.pathData = pathData;
   var _default = "functional-location";
   _exports.default = _default;

@@ -5,7 +5,7 @@ sap.ui.define(["exports"], function (_exports) {
     value: true
   });
   _exports.default = void 0;
-  const flatstr = typeof chrome === "object" || typeof v8 === "object" ? (s, iConcatOps) => {
+  const flatstr = typeof window.chrome === "object" || typeof window.v8 === "object" ? (s, iConcatOps) => {
     if (iConcatOps > 2 && 40 * iConcatOps > s.length) {
       Number(s);
     }
@@ -20,7 +20,6 @@ sap.ui.define(["exports"], function (_exports) {
     "\\r": "\r",
     "\\t": "\t"
   };
-
   /**
    * Parses a .properties format
    * @param {string} sText the contents a of a .properties file

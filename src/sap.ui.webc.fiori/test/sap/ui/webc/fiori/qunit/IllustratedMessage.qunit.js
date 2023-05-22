@@ -44,6 +44,13 @@ sap.ui.define([
 					click: function(oEvent) {
 						// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 					}
+				}),
+				title: new Button({
+					icon: "employee",
+					text: "Some text...",
+					click: function(oEvent) {
+						// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+					}
 				})
 			});
 			this.oIllustratedMessage.placeAt("uiArea");

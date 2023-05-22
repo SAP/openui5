@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/navigation-up-arrow", "./v4/navigation-up-arrow"], function (_exports, _Theme, _navigationUpArrow, _navigationUpArrow2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/navigation-up-arrow", "./v5/navigation-up-arrow"], function (_exports, _Theme, _navigationUpArrow, _navigationUpArrow2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _navigationUpArrow.pathData : _navigationUpArrow2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _navigationUpArrow.pathData : _navigationUpArrow2.pathData;
   _exports.pathData = pathData;
   var _default = "navigation-up-arrow";
   _exports.default = _default;

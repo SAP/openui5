@@ -43,6 +43,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the additional text of the component.
+				 */
+				additionalText: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines the text of the component.
 				 */
 				text: {

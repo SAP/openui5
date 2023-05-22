@@ -1,52 +1,40 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+sap.ui.define(["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.default = void 0;
-  _DataType = _interopRequireDefault(_DataType);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   /**
-   * @lends sap.ui.webcomponents.main.types.BusyIndicatorSize.prototype
+   * Different BusyIndicator sizes.
+   *
+   * @readonly
+   * @enum {string}
    * @public
+   * @author SAP SE
+   * @alias sap.ui.webc.main.types.BusyIndicatorSize
    */
-  const BusyIndicatorSizes = {
+  var BusyIndicatorSize;
+  (function (BusyIndicatorSize) {
     /**
      * small size
      * @public
      * @type {Small}
      */
-    Small: "Small",
+    BusyIndicatorSize["Small"] = "Small";
     /**
      * medium size
      * @public
      * @type {Medium}
      */
-    Medium: "Medium",
+    BusyIndicatorSize["Medium"] = "Medium";
     /**
      * large size
      * @public
      * @type {Large}
      */
-    Large: "Large"
-  };
-
-  /**
-   * @class
-   * Different types of BusyIndicator.
-   * @constructor
-   * @author SAP SE
-   * @alias sap.ui.webcomponents.main.types.BusyIndicatorSize
-   * @public
-   * @enum {string}
-   */
-  class BusyIndicatorSize extends _DataType.default {
-    static isValid(value) {
-      return !!BusyIndicatorSizes[value];
-    }
-  }
-  BusyIndicatorSize.generateTypeAccessors(BusyIndicatorSizes);
+    BusyIndicatorSize["Large"] = "Large";
+  })(BusyIndicatorSize || (BusyIndicatorSize = {}));
   var _default = BusyIndicatorSize;
   _exports.default = _default;
 });

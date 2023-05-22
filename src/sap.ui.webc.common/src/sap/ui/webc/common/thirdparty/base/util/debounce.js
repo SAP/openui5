@@ -10,10 +10,9 @@ sap.ui.define(["exports"], function (_exports) {
    * @param fn {Function}
    * @param delay {Integer}
    */
-
   let debounceInterval = null;
   const debounce = (fn, delay) => {
-    clearTimeout(debounceInterval);
+    debounceInterval && clearTimeout(debounceInterval);
     debounceInterval = setTimeout(() => {
       debounceInterval = null;
       fn();

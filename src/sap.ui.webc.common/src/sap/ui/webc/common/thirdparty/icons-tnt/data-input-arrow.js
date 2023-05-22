@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v2/data-input-arrow", "./v3/data-input-arrow"], function (_exports, _Theme, _dataInputArrow, _dataInputArrow2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "data-input-arrow";
-  const pathData = "M0 350V192q0-7 7-7h201q7 0 7-7V69q0-6 7-6 3 0 4 1l282 200q8 6 0 12L226 478q-2 2-4 2-7 0-7-7V364q0-7-7-7H7q-7 0-7-7zm38-120v82q0 7 7 7h201q7 0 7 7v72q0 7 7 7 2 0 4-2l177-127q8-6 0-12L264 138q-1-1-4-1-7 0-7 6v73q0 7-7 7H45q-7 0-7 7z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "tnt";
-  const packageName = "@ui5/webcomponents-icons-tnt";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _dataInputArrow.accData;
+    }
   });
-  var _default = "data-input-arrow";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _dataInputArrow.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _dataInputArrow.pathData : _dataInputArrow2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tnt/data-input-arrow";
   _exports.default = _default;
 });

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/refresh", "./v4/refresh"], function (_exports, _Theme, _refresh, _refresh2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/refresh", "./v5/refresh"], function (_exports, _Theme, _refresh, _refresh2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _refresh.pathData : _refresh2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _refresh.pathData : _refresh2.pathData;
   _exports.pathData = pathData;
   var _default = "refresh";
   _exports.default = _default;

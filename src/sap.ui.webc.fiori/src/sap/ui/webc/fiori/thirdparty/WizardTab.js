@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/main/thirdparty/Icon", "./generated/templates/WizardTabTemplate.lit", "./generated/themes/WizardTab.css"], function (_exports, _UI5Element, _LitRenderer, _Keys, _Icon, _WizardTabTemplate, _WizardTab) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/main/thirdparty/Icon", "./generated/templates/WizardTabTemplate.lit", "./generated/themes/WizardTab.css"], function (_exports, _UI5Element, _customElement, _property, _event, _LitRenderer, _Keys, _Icon, _WizardTabTemplate, _WizardTab) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,125 +6,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _Icon = _interopRequireDefault(_Icon);
   _WizardTabTemplate = _interopRequireDefault(_WizardTabTemplate);
   _WizardTab = _interopRequireDefault(_WizardTab);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  const metadata = {
-    tag: "ui5-wizard-tab",
-    properties: /** @lends sap.ui.webcomponents.fiori.WizardTab.prototype */{
-      /**
-       * Defines the <code>icon</code> of the step.
-       * @type {string}
-       * @defaultvalue ""
-       * @private
-       */
-      icon: {
-        type: String
-      },
-      /**
-       * Defines the <code>titleText</code> of the step.
-       * @type {string}
-       * @defaultvalue ""
-       * @private
-       * @since 1.0.0-rc.15
-       */
-      titleText: {
-        type: String
-      },
-      /**
-       * Defines the <code>subtitleText</code> of the step.
-       * @type {string}
-       * @defaultvalue ""
-       * @private
-       * @since 1.0.0-rc.15
-       */
-      subtitleText: {
-        type: String
-      },
-      /**
-       * Defines the number that will be displayed in place of the <code>icon</code>, when it's missing.
-       * @type {string}
-       * @defaultvalue ""
-       * @private
-       */
-      number: {
-        type: String
-      },
-      /**
-       * Defines if the step is <code>disabled</code> - the step is not responding to user interaction.
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       */
-      disabled: {
-        type: Boolean
-      },
-      /**
-       * Defines if the step is <selected>selected</code>.
-       * <br><br>
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       */
-      selected: {
-        type: Boolean
-      },
-      /**
-       * Defines if the step's separator is hidden or not.
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       */
-      hideSeparator: {
-        type: Boolean
-      },
-      /**
-       * Defines if the step's separator is active or not.
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       */
-      activeSeparator: {
-        type: Boolean
-      },
-      /**
-       * Defines if the step's separator is dashed or not.
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       */
-      branchingSeparator: {
-        type: Boolean
-      },
-      /**
-       * Defines the tabindex of the step.
-       * @type {string}
-       * @defaultvalue -1
-       * @private
-       */
-      _tabIndex: {
-        type: String,
-        defaultValue: "-1"
-      },
-      _wizardTabAccInfo: {
-        type: Object
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.fiori.WizardTab.prototype */{},
-    events: /** @lends sap.ui.webcomponents.fiori.WizardTab.prototype */{
-      /**
-       * Fired when clicking on none disabled step.
-       *
-       * @event sap.ui.webcomponents.fiori.WizardTab#selection-change-requested
-       * @private
-       */
-      "selection-change-requested": {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
   /**
    * @class
    *
@@ -140,38 +36,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.fiori.WizardTab
-   * @extends UI5Element
+   * @alias sap.ui.webc.fiori.WizardTab
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-wizard-tab
    * @private
    */
-  class WizardTab extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _WizardTab.default;
-    }
-    static get template() {
-      return _WizardTabTemplate.default;
-    }
-    static get dependencies() {
-      return [_Icon.default];
-    }
+  let WizardTab = class WizardTab extends _UI5Element.default {
     _onclick() {
       if (!this.disabled) {
         this.fireEvent("selection-change-requested");
       }
     }
-    _onkeyup(event) {
+    _onkeyup(e) {
       if (this.disabled) {
         return;
       }
-      if (((0, _Keys.isSpace)(event) || (0, _Keys.isEnter)(event)) && !(0, _Keys.isSpaceShift)(event)) {
-        event.preventDefault();
+      if (((0, _Keys.isSpace)(e) || (0, _Keys.isEnter)(e)) && !(0, _Keys.isSpaceShift)(e)) {
+        e.preventDefault();
         this.fireEvent("selection-change-requested");
       }
     }
@@ -179,7 +60,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.fireEvent("focused");
     }
     get tabIndex() {
-      return this._tabIndex;
+      return Number(this._tabIndex);
     }
     get hasTexts() {
       return this.titleText || this.subtitleText;
@@ -193,7 +74,42 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "ariaDisabled": this.disabled ? "true" : undefined
       };
     }
-  }
+  };
+  __decorate([(0, _property.default)()], WizardTab.prototype, "icon", void 0);
+  __decorate([(0, _property.default)()], WizardTab.prototype, "titleText", void 0);
+  __decorate([(0, _property.default)()], WizardTab.prototype, "subtitleText", void 0);
+  __decorate([(0, _property.default)()], WizardTab.prototype, "number", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WizardTab.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WizardTab.prototype, "selected", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WizardTab.prototype, "hideSeparator", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WizardTab.prototype, "activeSeparator", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], WizardTab.prototype, "branchingSeparator", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: "-1"
+  })], WizardTab.prototype, "_tabIndex", void 0);
+  WizardTab = __decorate([(0, _customElement.default)({
+    tag: "ui5-wizard-tab",
+    renderer: _LitRenderer.default,
+    styles: _WizardTab.default,
+    template: _WizardTabTemplate.default,
+    dependencies: [_Icon.default]
+  })
+  /**
+   * Fired when clicking on none disabled step.
+   *
+   * @event sap.ui.webc.fiori.WizardTab#selection-change-requested
+   * @private
+   */, (0, _event.default)("selection-change-requested")], WizardTab);
   WizardTab.define();
   var _default = WizardTab;
   _exports.default = _default;

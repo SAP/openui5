@@ -1,25 +1,25 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v1/segmentation", "./v2/segmentation"], function (_exports, _Theme, _segmentation, _segmentation2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
-  const name = "segmentation";
-  const pathData = "M16 352v-96h64v-96h160V96h-64V0h160v96h-64v64h160v96h64v96H368v-96h32v-64H272v64h64v96H176v-96h64v-64H112v64h32v96h-32v64h32v96H16v-96h64v-64H16z";
-  _exports.pathData = pathData;
-  const ltr = false;
-  _exports.ltr = ltr;
-  const accData = null;
-  _exports.accData = accData;
-  const collection = "business-suite";
-  const packageName = "@ui5/webcomponents-icons-business-suite";
-  (0, _Icons.registerIcon)(name, {
-    pathData,
-    ltr,
-    collection,
-    packageName
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _segmentation.accData;
+    }
   });
-  var _default = "segmentation";
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _segmentation.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _segmentation.pathData : _segmentation2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-suite/segmentation";
   _exports.default = _default;
 });

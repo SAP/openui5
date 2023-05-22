@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/paper-plane", "./v4/paper-plane"], function (_exports, _Theme, _paperPlane, _paperPlane2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/paper-plane", "./v5/paper-plane"], function (_exports, _Theme, _paperPlane, _paperPlane2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _paperPlane.pathData : _paperPlane2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _paperPlane.pathData : _paperPlane2.pathData;
   _exports.pathData = pathData;
   var _default = "paper-plane";
   _exports.default = _default;

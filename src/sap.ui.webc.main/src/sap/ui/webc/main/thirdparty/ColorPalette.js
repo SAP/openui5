@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/types/CSSColor", "sap/ui/webc/common/thirdparty/base/types/ItemNavigationBehavior", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "./generated/templates/ColorPaletteTemplate.lit", "./generated/templates/ColorPaletteDialogTemplate.lit", "./ColorPaletteItem", "./Button", "./generated/i18n/i18n-defaults", "./generated/themes/ColorPalette.css", "./generated/themes/ColorPaletteStaticArea.css"], function (_exports, _UI5Element, _LitRenderer, _i18nBundle, _ItemNavigation, _CSSColor, _ItemNavigationBehavior, _Device, _Keys, _FeaturesRegistry, _ColorPaletteTemplate, _ColorPaletteDialogTemplate, _ColorPaletteItem, _Button, _i18nDefaults, _ColorPalette, _ColorPaletteStaticArea) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/types/CSSColor", "sap/ui/webc/common/thirdparty/base/types/ItemNavigationBehavior", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "./generated/templates/ColorPaletteTemplate.lit", "./generated/templates/ColorPaletteDialogTemplate.lit", "./ColorPaletteItem", "./Button", "./generated/i18n/i18n-defaults", "./generated/themes/ColorPalette.css", "./generated/themes/ColorPaletteStaticArea.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _LitRenderer, _i18nBundle, _ItemNavigation, _CSSColor, _ItemNavigationBehavior, _Device, _Keys, _FeaturesRegistry, _ColorPaletteTemplate, _ColorPaletteDialogTemplate, _ColorPaletteItem, _Button, _i18nDefaults, _ColorPalette, _ColorPaletteStaticArea) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ItemNavigation = _interopRequireDefault(_ItemNavigation);
   _CSSColor = _interopRequireDefault(_CSSColor);
@@ -17,104 +21,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ColorPalette = _interopRequireDefault(_ColorPalette);
   _ColorPaletteStaticArea = _interopRequireDefault(_ColorPaletteStaticArea);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-color-palette",
-    managedSlots: true,
-    properties: /** @lends sap.ui.webcomponents.main.ColorPalette.prototype */{
-      /**
-       * Defines whether the user can see the last used colors in the bottom of the component
-       * @type {boolean}
-       * @private
-       * @since 1.0.0-rc.15
-       */
-      showRecentColors: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the user can choose a custom color from a color picker
-       * <b>Note:</b> In order to use this property you need to import the following module: <code>"@ui5/webcomponents/dist/features/ColorPaletteMoreColors.js"</code>
-       * @type {boolean}
-       * @private
-       * @since 1.0.0-rc.15
-       */
-      showMoreColors: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the user can choose the default color from a button.
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       * @since 1.0.0-rc.16
-       */
-      showDefaultColor: {
-        type: Boolean
-      },
-      /**
-       * Defines the default color of the color palette
-       * <b>Note:</b> The default color should be a part of the ColorPalette colors</code>
-       * @type {CSSColor}
-       * @private
-       * @since 1.0.0-rc.16
-       */
-      defaultColor: {
-        type: _CSSColor.default
-      },
-      /**
-       * Defines the selected color.
-       * @type {CSSColor}
-       * @private
-       */
-      _selectedColor: {
-        type: _CSSColor.default
-      },
-      /**
-       * Defines if the palette is in Popup or Embeded mode.
-       * @type {CSSColor}
-       * @private
-       */
-      popupMode: {
-        type: Boolean
-      }
-    },
-    slots: /** @lends sap.ui.webcomponents.main.ColorPalette.prototype */{
-      /**
-       * Defines the <code>ui5-color-palette-item</code> elements.
-       * @type {sap.ui.webcomponents.main.IColorPaletteItem[]}
-       * @slot colors
-       * @public
-       */
-      "default": {
-        propertyName: "colors",
-        type: HTMLElement,
-        invalidateOnChildChange: true,
-        individualSlots: true
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.ColorPalette.prototype */{
-      /**
-       * Fired when the user selects a color.
-       *
-       * @event sap.ui.webcomponents.main.ColorPalette#item-click
-       * @public
-       * @since 1.0.0-rc.15
-       * @param {string} color the selected color
-       */
-      "item-click": {
-        detail: {
-          color: {
-            type: String
-          }
-        }
-      }
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var ColorPalette_1;
   /**
    * @class
    *
@@ -132,39 +46,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.ColorPalette
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.ColorPalette
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-color-palette
    * @since 1.0.0-rc.12
-   * @appenddocs ColorPaletteItem
+   * @appenddocs sap.ui.webc.main.ColorPaletteItem
    * @public
    */
-  class ColorPalette extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get styles() {
-      return _ColorPalette.default;
-    }
-    static get staticAreaStyles() {
-      return _ColorPaletteStaticArea.default;
-    }
-    static get template() {
-      return _ColorPaletteTemplate.default;
-    }
-    static get staticAreaTemplate() {
-      return _ColorPaletteDialogTemplate.default;
-    }
-    static get dependencies() {
-      const ColorPaletteMoreColors = (0, _FeaturesRegistry.getFeature)("ColorPaletteMoreColors");
-      return [_ColorPaletteItem.default, _Button.default].concat(ColorPaletteMoreColors ? ColorPaletteMoreColors.dependencies : []);
-    }
+  let ColorPalette = ColorPalette_1 = class ColorPalette extends _UI5Element.default {
     static async onDefine() {
-      const ColorPaletteMoreColors = (0, _FeaturesRegistry.getFeature)("ColorPaletteMoreColors");
-      [ColorPalette.i18nBundle] = await Promise.all([(0, _i18nBundle.getI18nBundle)("@ui5/webcomponents"), ColorPaletteMoreColors ? ColorPaletteMoreColors.init() : Promise.resolve()]);
+      const colorPaletteMoreColors = (0, _FeaturesRegistry.getFeature)("ColorPaletteMoreColors");
+      [ColorPalette_1.i18nBundle] = await Promise.all([(0, _i18nBundle.getI18nBundle)("@ui5/webcomponents"), colorPaletteMoreColors ? colorPaletteMoreColors.init() : Promise.resolve()]);
     }
     constructor() {
       super();
@@ -185,9 +77,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         item.index = index + 1;
       });
       if (this.showMoreColors) {
-        const ColorPaletteMoreColors = (0, _FeaturesRegistry.getFeature)("ColorPaletteMoreColors");
-        if (ColorPaletteMoreColors) {
-          this.moreColorsFeature = new ColorPaletteMoreColors();
+        const ColorPaletteMoreColorsClass = (0, _FeaturesRegistry.getFeature)("ColorPaletteMoreColors");
+        if (ColorPaletteMoreColorsClass) {
+          this.moreColorsFeature = new ColorPaletteMoreColorsClass();
         } else {
           throw new Error(`You have to import "@ui5/webcomponents/dist/features/ColorPaletteMoreColors.js" module to use the more-colors functionality.`);
         }
@@ -216,32 +108,35 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         color: this._selectedColor
       });
     }
-    _onclick(event) {
-      if (event.target.hasAttribute("ui5-color-palette-item")) {
-        this.selectColor(event.target);
+    _onclick(e) {
+      const target = e.target;
+      if (target.hasAttribute("ui5-color-palette-item")) {
+        this.selectColor(target);
       }
     }
-    _onkeyup(event) {
-      if ((0, _Keys.isSpace)(event) && event.target.hasAttribute("ui5-color-palette-item")) {
-        event.preventDefault();
-        this.selectColor(event.target);
+    _onkeyup(e) {
+      const target = e.target;
+      if ((0, _Keys.isSpace)(e) && target.hasAttribute("ui5-color-palette-item")) {
+        e.preventDefault();
+        this.selectColor(target);
       }
     }
-    _onkeydown(event) {
-      if ((0, _Keys.isEnter)(event) && event.target.hasAttribute("ui5-color-palette-item")) {
-        this.selectColor(event.target);
+    _onkeydown(e) {
+      const target = e.target;
+      if ((0, _Keys.isEnter)(e) && target.hasAttribute("ui5-color-palette-item")) {
+        this.selectColor(target);
       }
     }
-    _onDefaultColorKeyDown(event) {
-      if ((0, _Keys.isTabNext)(event) && this.popupMode) {
-        event.preventDefault();
+    _onDefaultColorKeyDown(e) {
+      if ((0, _Keys.isTabNext)(e) && this.popupMode) {
+        e.preventDefault();
         this._onDefaultColorClick();
       }
-      if ((0, _Keys.isDown)(event)) {
-        event.stopPropagation();
+      if ((0, _Keys.isDown)(e)) {
+        e.stopPropagation();
         this.focusColorElement(this.colorPaletteNavigationElements[1], this._itemNavigation);
-      } else if ((0, _Keys.isUp)(event)) {
-        event.stopPropagation();
+      } else if ((0, _Keys.isUp)(e)) {
+        e.stopPropagation();
         const lastElementInNavigation = this.colorPaletteNavigationElements[this.colorPaletteNavigationElements.length - 1];
         if (this.hasRecentColors) {
           this.focusColorElement(lastElementInNavigation, this._itemNavigationRecentColors);
@@ -253,14 +148,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }
     }
-    _onMoreColorsKeyDown(event) {
-      const index = this.colorPaletteNavigationElements.indexOf(event.target);
+    _onMoreColorsKeyDown(e) {
+      const target = e.target;
+      const index = this.colorPaletteNavigationElements.indexOf(target);
       const colorPaletteFocusIndex = this.displayedColors.length % this.rowSize * this.rowSize;
-      if ((0, _Keys.isUp)(event)) {
-        event.stopPropagation();
+      if ((0, _Keys.isUp)(e)) {
+        e.stopPropagation();
         this.focusColorElement(this.displayedColors[colorPaletteFocusIndex], this._itemNavigation);
-      } else if ((0, _Keys.isDown)(event)) {
-        event.stopPropagation();
+      } else if ((0, _Keys.isDown)(e)) {
+        e.stopPropagation();
         if (this.hasRecentColors) {
           this.focusColorElement(this.colorPaletteNavigationElements[index + 1], this._itemNavigationRecentColors);
         } else if (this.showDefaultColor) {
@@ -270,14 +166,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }
     }
-    _onColorContainerKeyDown(event) {
+    _onColorContainerKeyDown(e) {
+      const target = e.target;
       const lastElementInNavigation = this.colorPaletteNavigationElements[this.colorPaletteNavigationElements.length - 1];
-      if ((0, _Keys.isTabNext)(event) && this.popupMode) {
-        event.preventDefault();
-        this.selectColor(event.target);
+      if ((0, _Keys.isTabNext)(e) && this.popupMode) {
+        e.preventDefault();
+        this.selectColor(target);
       }
-      if ((0, _Keys.isUp)(event) && event.target === this.displayedColors[0] && this.colorPaletteNavigationElements.length > 1) {
-        event.stopPropagation();
+      if ((0, _Keys.isUp)(e) && target === this.displayedColors[0] && this.colorPaletteNavigationElements.length > 1) {
+        e.stopPropagation();
         if (this.showDefaultColor) {
           this.colorPaletteNavigationElements[0].focus();
         } else if (!this.showDefaultColor && this.hasRecentColors) {
@@ -285,8 +182,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         } else if (!this.showDefaultColor && this.showMoreColors) {
           lastElementInNavigation.focus();
         }
-      } else if ((0, _Keys.isDown)(event) && event.target === this.displayedColors[this.displayedColors.length - 1] && this.colorPaletteNavigationElements.length > 1) {
-        event.stopPropagation();
+      } else if ((0, _Keys.isDown)(e) && target === this.displayedColors[this.displayedColors.length - 1] && this.colorPaletteNavigationElements.length > 1) {
+        e.stopPropagation();
         const isRecentColorsNextElement = this.showDefaultColor && !this.showMoreColors && this.hasRecentColors || !this.showDefaultColor && !this.showMoreColors && this.hasRecentColors;
         if (this.showDefaultColor && this.showMoreColors) {
           this.colorPaletteNavigationElements[2].focus();
@@ -299,20 +196,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         }
       }
     }
-    _onRecentColorsContainerKeyDown(event) {
-      if ((0, _Keys.isUp)(event)) {
+    _onRecentColorsContainerKeyDown(e) {
+      if ((0, _Keys.isUp)(e)) {
         if (this.showMoreColors) {
-          this.colorPaletteNavigationElements[1 + this.showDefaultColor].focus();
+          const navigationElementsIndex = this.showDefaultColor ? 2 : 1;
+          this.colorPaletteNavigationElements[navigationElementsIndex].focus();
         } else if (!this.showMoreColors && this.colorPaletteNavigationElements.length > 1) {
           const colorPaletteFocusIndex = this.displayedColors.length % this.rowSize * this.rowSize;
-          event.stopPropagation();
+          e.stopPropagation();
           this.focusColorElement(this.displayedColors[colorPaletteFocusIndex], this._itemNavigation);
         }
-      } else if ((0, _Keys.isDown)(event)) {
+      } else if ((0, _Keys.isDown)(e)) {
         if (this.showDefaultColor) {
           this.colorPaletteNavigationElements[0].focus();
         } else {
-          event.stopPropagation();
+          e.stopPropagation();
           this.focusColorElement(this.displayedColors[0], this._itemNavigation);
         }
       }
@@ -339,7 +237,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this._setColor(this.defaultColor);
       }
     }
-
     /**
      * Returns the selected color.
      */
@@ -347,13 +244,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this._selectedColor;
     }
     get displayedColors() {
-      return this.getSlottedNodes("colors").filter(item => item.value).slice(0, 15);
+      const colors = this.getSlottedNodes("colors");
+      return colors.filter(item => item.value).slice(0, 15);
     }
     get colorContainerLabel() {
-      return ColorPalette.i18nBundle.getText(_i18nDefaults.COLORPALETTE_CONTAINER_LABEL);
+      return ColorPalette_1.i18nBundle.getText(_i18nDefaults.COLORPALETTE_CONTAINER_LABEL);
     }
     get colorPaleteMoreColorsText() {
-      return ColorPalette.i18nBundle.getText(_i18nDefaults.COLOR_PALETTE_MORE_COLORS_TEXT);
+      return ColorPalette_1.i18nBundle.getText(_i18nDefaults.COLOR_PALETTE_MORE_COLORS_TEXT);
     }
     get _showMoreColors() {
       return this.showMoreColors && this.moreColorsFeature;
@@ -374,8 +272,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this._recentColors;
     }
     get recentColorsElements() {
-      if (this.getDomRef()) {
-        return Array.from(this.getDomRef().querySelectorAll(".ui5-cp-recent-colors-wrapper [ui5-color-palette-item]")).filter(x => x.value !== "");
+      const domRef = this.getDomRef();
+      if (domRef) {
+        return Array.from(domRef.querySelectorAll(".ui5-cp-recent-colors-wrapper [ui5-color-palette-item]")).filter(x => x.value !== "");
       }
       return [];
     }
@@ -410,7 +309,57 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const dialog = await this._getDialog();
       return dialog.content[0].querySelector("[ui5-color-picker]");
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ColorPalette.prototype, "showRecentColors", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ColorPalette.prototype, "showMoreColors", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ColorPalette.prototype, "showDefaultColor", void 0);
+  __decorate([(0, _property.default)({
+    validator: _CSSColor.default
+  })], ColorPalette.prototype, "defaultColor", void 0);
+  __decorate([(0, _property.default)({
+    validator: _CSSColor.default
+  })], ColorPalette.prototype, "_selectedColor", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], ColorPalette.prototype, "popupMode", void 0);
+  __decorate([(0, _slot.default)({
+    "default": true,
+    type: HTMLElement,
+    invalidateOnChildChange: true,
+    individualSlots: true
+  })], ColorPalette.prototype, "colors", void 0);
+  ColorPalette = ColorPalette_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-color-palette",
+    renderer: _LitRenderer.default,
+    template: _ColorPaletteTemplate.default,
+    staticAreaTemplate: _ColorPaletteDialogTemplate.default,
+    styles: _ColorPalette.default,
+    staticAreaStyles: _ColorPaletteStaticArea.default,
+    get dependencies() {
+      const colorPaletteMoreColors = (0, _FeaturesRegistry.getFeature)("ColorPaletteMoreColors");
+      return [_ColorPaletteItem.default, _Button.default].concat(colorPaletteMoreColors ? colorPaletteMoreColors.dependencies : []);
+    }
+  })
+  /**
+   * Fired when the user selects a color.
+   *
+   * @event sap.ui.webc.main.ColorPalette#item-click
+   * @public
+   * @since 1.0.0-rc.15
+   * @param {string} color the selected color
+   */, (0, _event.default)("item-click", {
+    detail: {
+      color: {
+        type: String
+      }
+    }
+  })], ColorPalette);
   ColorPalette.define();
   var _default = ColorPalette;
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/ui-notifications", "./v4/ui-notifications"], function (_exports, _Theme, _uiNotifications, _uiNotifications2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/ui-notifications", "./v5/ui-notifications"], function (_exports, _Theme, _uiNotifications, _uiNotifications2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _uiNotifications.pathData : _uiNotifications2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _uiNotifications.pathData : _uiNotifications2.pathData;
   _exports.pathData = pathData;
   var _default = "ui-notifications";
   _exports.default = _default;

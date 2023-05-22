@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/templates/IconTemplate.lit", "./generated/themes/Icon.css"], function (_exports, _UI5Element, _LitRenderer, _Icons, _i18nBundle, _Keys, _IconTemplate, _Icon) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/renderer/executeTemplate", "./generated/templates/IconTemplate.lit", "./types/IconDesign", "./generated/themes/Icon.css"], function (_exports, _UI5Element, _LitRenderer, _customElement, _event, _property, _Icons, _i18nBundle, _Keys, _executeTemplate, _IconTemplate, _IconDesign, _Icon) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -7,158 +7,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
+  _customElement = _interopRequireDefault(_customElement);
+  _event = _interopRequireDefault(_event);
+  _property = _interopRequireDefault(_property);
+  _executeTemplate = _interopRequireDefault(_executeTemplate);
   _IconTemplate = _interopRequireDefault(_IconTemplate);
+  _IconDesign = _interopRequireDefault(_IconDesign);
   _Icon = _interopRequireDefault(_Icon);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
   const ICON_NOT_FOUND = "ICON_NOT_FOUND";
   const PRESENTATION_ROLE = "presentation";
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-icon",
-    languageAware: true,
-    themeAware: true,
-    properties: /** @lends sap.ui.webcomponents.main.Icon.prototype */{
-      /**
-       * Defines if the icon is interactive (focusable and pressable)
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.0.0-rc.8
-       */
-      interactive: {
-        type: Boolean
-      },
-      /**
-       * Defines the unique identifier (icon name) of the component.
-       * <br>
-       *
-       * To browse all available icons, see the
-       * <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">SAP Icons</ui5-link>,
-       * <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT" class="api-table-content-cell-link">SAP Fiori Tools</ui5-link> and
-       * <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">SAP Business Suite</ui5-link> collections.
-       * <br>
-       *
-       * Example:
-       * <br>
-       * <code>name='add'</code>, <code>name='delete'</code>, <code>name='employee'</code>.
-       * <br><br>
-       *
-       * <b>Note:</b> To use the SAP Fiori Tools icons,
-       * you need to set the <code>tnt</code> prefix in front of the icon's name.
-       * <br>
-       *
-       * Example:
-       * <br>
-       * <code>name='tnt/antenna'</code>, <code>name='tnt/actor'</code>, <code>name='tnt/api'</code>.
-       * <br><br>
-       *
-       * <b>Note:</b> To use the SAP Business Suite icons,
-       * you need to set the <code>business-suite</code> prefix in front of the icon's name.
-       * <br>
-       *
-       * Example:
-       * <br>
-       * <code>name='business-suite/3d'</code>, <code>name='business-suite/1x2-grid-layout'</code>, <code>name='business-suite/4x4-grid-layout'</code>.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-      */
-      name: {
-        type: String
-      },
-      /**
-       * Defines the text alternative of the component.
-       * If not provided a default text alternative will be set, if present.
-       * <br><br>
-       * <b>Note:</b> Every icon should have a text alternative in order to
-       * calculate its accessible name.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      accessibleName: {
-        type: String
-      },
-      /**
-       * Defines whether the component should have a tooltip.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      showTooltip: {
-        type: Boolean
-      },
-      /**
-       * Defines the accessibility role of the component.
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       * @since 1.1.0
-       */
-      accessibleRole: {
-        type: String
-      },
-      /**
-       * Defines the aria hidden state of the component.
-       * Note: If the role is presentation the default value of aria-hidden will be true.
-       * @private
-       * @since 1.0.0-rc.15
-       */
-      ariaHidden: {
-        type: String
-      },
-      /**
-       * @private
-       */
-      pathData: {
-        type: String,
-        noAttribute: true
-      },
-      /**
-       * @private
-       */
-      accData: {
-        type: Object,
-        noAttribute: true
-      },
-      /**
-       * @private
-       */
-      focused: {
-        type: Boolean
-      },
-      /**
-      * @private
-      */
-      invalid: {
-        type: Boolean
-      },
-      /**
-       * @private
-       */
-      effectiveAccessibleName: {
-        type: String,
-        defaultValue: undefined,
-        noAttribute: true
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Icon.prototype */{
-      /**
-       * Fired on mouseup, space and enter if icon is interactive
-       * @private
-       * @since 1.0.0-rc.8
-       */
-      click: {}
-    }
-  };
-
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -179,16 +44,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * <ul>
    * <li>
-   * <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons" class="api-table-content-cell-link">@ui5/webcomponents-icons</ui5-link> represents the "SAP-icons" collection and includes the following
-   * <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons" class="api-table-content-cell-link">icons</ui5-link>.
+   * <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons">@ui5/webcomponents-icons</ui5-link> represents the "SAP-icons" collection and includes the following
+   * <ui5-link target="_blank" href="https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons">icons</ui5-link>.
    * </li>
    * <li>
-   * <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons-tnt" class="api-table-content-cell-link">@ui5/webcomponents-icons-tnt</ui5-link> represents the "tnt" collection and includes the following
-   * <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT" class="api-table-content-cell-link">icons</ui5-link>.
+   * <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons-tnt">@ui5/webcomponents-icons-tnt</ui5-link> represents the "tnt" collection and includes the following
+   * <ui5-link target="_blank" href="https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT">icons</ui5-link>.
    * </li>
    * <li>
-   * <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons-business-suite" class="api-table-content-cell-link">@ui5/webcomponents-icons-icons-business-suite</ui5-link> represents the "business-suite" collection and includes the following
-   * <ui5-link target="_blank" href="https://sapui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/BusinessSuiteInAppSymbols" class="api-table-content-cell-link">icons</ui5-link>.
+   * <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons-business-suite">@ui5/webcomponents-icons-icons-business-suite</ui5-link> represents the "business-suite" collection and includes the following
+   * <ui5-link target="_blank" href="https://ui5.sap.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/BusinessSuiteInAppSymbols">icons</ui5-link>.
    * </li>
    * </ul>
    *
@@ -231,6 +96,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * <code>&lt;ui5-icon name="tnt/antenna">&lt;/ui5-icon></code><br>
    * <code>&lt;ui5-icon name="business-suite/ab-testing">&lt;/ui5-icon></code>
    *
+   * <br><br>
+   * <h3>CSS Shadow Parts</h3>
+   *
+   * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM.
+   * <br>
+   * The <code>ui5-icon</code> exposes the following CSS Shadow Parts:
+   * <ul>
+   * <li>root - Used to style the outermost wrapper of the <code>ui5-icon</code></li>
+   * </ul>
+   *
+   * <br><br>
    * <h3>Keyboard Handling</h3>
    *
    * <ul>
@@ -244,56 +120,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Icon
-   * @extends sap.ui.webcomponents.base.UI5Element
+   * @alias sap.ui.webc.main.Icon
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-icon
-   * @implements sap.ui.webcomponents.main.IIcon
+   * @implements sap.ui.webc.main.IIcon
    * @public
    */
-  class Icon extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _IconTemplate.default;
-    }
-    static get styles() {
-      return _Icon.default;
-    }
-    _onFocusInHandler(event) {
+  let Icon = class Icon extends _UI5Element.default {
+    _onFocusInHandler() {
       if (this.interactive) {
         this.focused = true;
       }
     }
-    _onFocusOutHandler(event) {
+    _onFocusOutHandler() {
       this.focused = false;
     }
-    _onkeydown(event) {
+    _onkeydown(e) {
       if (!this.interactive) {
         return;
       }
-      if ((0, _Keys.isEnter)(event)) {
+      if ((0, _Keys.isEnter)(e)) {
         this.fireEvent("click");
       }
-      if ((0, _Keys.isSpace)(event)) {
-        event.preventDefault(); // prevent scrolling
+      if ((0, _Keys.isSpace)(e)) {
+        e.preventDefault(); // prevent scrolling
       }
     }
 
-    _onkeyup(event) {
-      if (this.interactive && (0, _Keys.isSpace)(event)) {
+    _onkeyup(e) {
+      if (this.interactive && (0, _Keys.isSpace)(e)) {
         this.fireEvent("click");
       }
     }
-    _onClickHandler(event) {
-      // prevent the native event and fire custom event to ensure the noConfict "ui5-click" is fired
-      event.stopPropagation();
-      this.fireEvent("click");
-    }
-
     /**
     * Enforce "ltr" direction, based on the icons collection metadata.
     */
@@ -309,7 +167,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       return this.ariaHidden;
     }
-    get tabIndex() {
+    get _tabIndex() {
       return this.interactive ? "0" : undefined;
     }
     get isDecorative() {
@@ -334,24 +192,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (!iconData) {
         iconData = await (0, _Icons.getIconData)(name);
       }
-      if (iconData === ICON_NOT_FOUND) {
-        this.invalid = true;
-        /* eslint-disable-next-line */
-        return console.warn(`Required icon is not registered. You can either import the icon as a module in order to use it e.g. "@ui5/webcomponents-icons/dist/${name.replace("sap-icon://", "")}.js", or setup a JSON build step and import "@ui5/webcomponents-icons/dist/AllIcons.js".`);
-      }
       if (!iconData) {
         this.invalid = true;
         /* eslint-disable-next-line */
         return console.warn(`Required icon is not registered. Invalid icon name: ${this.name}`);
       }
-
+      if (iconData === ICON_NOT_FOUND) {
+        this.invalid = true;
+        /* eslint-disable-next-line */
+        return console.warn(`Required icon is not registered. You can either import the icon as a module in order to use it e.g. "@ui5/webcomponents-icons/dist/${name.replace("sap-icon://", "")}.js", or setup a JSON build step and import "@ui5/webcomponents-icons/dist/AllIcons.js".`);
+      }
+      this.viewBox = iconData.viewBox || "0 0 512 512";
+      if (iconData.customTemplate) {
+        iconData.pathData = [];
+        this.customSvg = (0, _executeTemplate.default)(iconData.customTemplate, this);
+      }
       // in case a new valid name is set, show the icon
       this.invalid = false;
-      this.pathData = iconData.pathData;
+      this.pathData = Array.isArray(iconData.pathData) ? iconData.pathData : [iconData.pathData];
       this.accData = iconData.accData;
       this.ltr = iconData.ltr;
       this.packageName = iconData.packageName;
-      this._onclick = this.interactive ? this._onClickHandler.bind(this) : undefined;
       this._onfocusout = this.interactive ? this._onFocusOutHandler.bind(this) : undefined;
       this._onfocusin = this.interactive ? this._onFocusInHandler.bind(this) : undefined;
       if (this.accessibleName) {
@@ -359,12 +220,61 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       } else if (this.accData) {
         const i18nBundle = await (0, _i18nBundle.getI18nBundle)(this.packageName);
         this.effectiveAccessibleName = i18nBundle.getText(this.accData) || undefined;
+      } else {
+        this.effectiveAccessibleName = undefined;
       }
     }
     get hasIconTooltip() {
       return this.showTooltip && this.effectiveAccessibleName;
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _IconDesign.default,
+    defaultValue: _IconDesign.default.Default
+  })], Icon.prototype, "design", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Icon.prototype, "interactive", void 0);
+  __decorate([(0, _property.default)()], Icon.prototype, "name", void 0);
+  __decorate([(0, _property.default)()], Icon.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Icon.prototype, "showTooltip", void 0);
+  __decorate([(0, _property.default)()], Icon.prototype, "accessibleRole", void 0);
+  __decorate([(0, _property.default)()], Icon.prototype, "ariaHidden", void 0);
+  __decorate([(0, _property.default)({
+    multiple: true
+  })], Icon.prototype, "pathData", void 0);
+  __decorate([(0, _property.default)({
+    type: Object,
+    defaultValue: undefined,
+    noAttribute: true
+  })], Icon.prototype, "accData", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Icon.prototype, "focused", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Icon.prototype, "invalid", void 0);
+  __decorate([(0, _property.default)({
+    noAttribute: true,
+    defaultValue: undefined
+  })], Icon.prototype, "effectiveAccessibleName", void 0);
+  Icon = __decorate([(0, _customElement.default)({
+    tag: "ui5-icon",
+    languageAware: true,
+    themeAware: true,
+    renderer: _LitRenderer.default,
+    template: _IconTemplate.default,
+    styles: _Icon.default
+  })
+  /**
+   * Fired on mouseup, <code>SPACE</code> and <code>ENTER</code>.
+   * - on mouse click, the icon fires native <code>click</code> event
+   * - on <code>SPACE</code> and <code>ENTER</code>, the icon fires custom <code>click</code> event
+   * @private
+   * @since 1.0.0-rc.8
+   */, (0, _event.default)("click")], Icon);
   Icon.define();
   var _default = Icon;
   _exports.default = _default;

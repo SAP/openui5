@@ -161,14 +161,14 @@ sap.ui.define([
 						 * The current layout
 						 */
 						layout: {
-							type: "FCLLayout"
+							type: "sap.ui.webc.fiori.FCLLayout"
 						},
 
 						/**
 						 * The effective column layout, f.e [67%, 33%, 0]
 						 */
 						columnLayout: {
-							type: "Array"
+							type: "array"
 						},
 
 						/**

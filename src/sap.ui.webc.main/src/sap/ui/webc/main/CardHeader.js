@@ -28,8 +28,9 @@ sap.ui.define([
 	 * <h3>CSS Shadow Parts</h3>
 	 *
 	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
-	 * The <code>sap.ui.webc.main.Card</code> exposes the following CSS Shadow Parts:
+	 * The <code>sap.ui.webc.main.CardHeader</code> exposes the following CSS Shadow Parts:
 	 * <ul>
+	 *     <li>root - Used to style the root DOM element of the CardHeader</li>
 	 *     <li>title - Used to style the title of the CardHeader</li>
 	 *     <li>subtitle - Used to style the subtitle of the CardHeader</li>
 	 *     <li>status - Used to style the status of the CardHeader</li>
@@ -43,11 +44,15 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @experimental Since 1.95.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.CardHeader
+	 * @implements sap.ui.webc.main.ICardHeader
 	 */
 	var CardHeader = WebComponent.extend("sap.ui.webc.main.CardHeader", {
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-card-header-ui5",
+			interfaces: [
+				"sap.ui.webc.main.ICardHeader"
+			],
 			properties: {
 
 				/**

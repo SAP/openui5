@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/activity-assigned-to-goal", "./v4/activity-assigned-to-goal"], function (_exports, _Theme, _activityAssignedToGoal, _activityAssignedToGoal2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/activity-assigned-to-goal", "./v5/activity-assigned-to-goal"], function (_exports, _Theme, _activityAssignedToGoal, _activityAssignedToGoal2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _activityAssignedToGoal.pathData : _activityAssignedToGoal2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _activityAssignedToGoal.pathData : _activityAssignedToGoal2.pathData;
   _exports.pathData = pathData;
   var _default = "activity-assigned-to-goal";
   _exports.default = _default;

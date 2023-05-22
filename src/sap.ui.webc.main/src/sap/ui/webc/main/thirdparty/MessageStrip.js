@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/information", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "./types/MessageStripDesign", "./generated/templates/MessageStripTemplate.lit", "./Icon", "./Button", "./generated/i18n/i18n-defaults", "./generated/themes/MessageStrip.css"], function (_exports, _UI5Element, _LitRenderer, _i18nBundle, _decline, _information, _sysEnter, _error, _alert, _MessageStripDesign, _MessageStripTemplate, _Icon, _Button, _i18nDefaults, _MessageStrip) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/information", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "./types/MessageStripDesign", "./generated/templates/MessageStripTemplate.lit", "./Icon", "./Button", "./generated/i18n/i18n-defaults", "./generated/themes/MessageStrip.css"], function (_exports, _UI5Element, _property, _slot, _event, _customElement, _LitRenderer, _i18nBundle, _decline, _information, _sysEnter, _error, _alert, _MessageStripDesign, _MessageStripTemplate, _Icon, _Button, _i18nDefaults, _MessageStrip) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,6 +6,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   });
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
+  _event = _interopRequireDefault(_event);
+  _customElement = _interopRequireDefault(_customElement);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _MessageStripDesign = _interopRequireDefault(_MessageStripDesign);
   _MessageStripTemplate = _interopRequireDefault(_MessageStripTemplate);
@@ -13,98 +17,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _Button = _interopRequireDefault(_Button);
   _MessageStrip = _interopRequireDefault(_MessageStrip);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Styles
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-message-strip",
-    altTag: "ui5-messagestrip",
-    languageAware: true,
-    fastNavigation: true,
-    properties: /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */{
-      /**
-       * Defines the component type.
-       * <br><br>
-       * <b>Note:</b> Available options are <code>"Information"</code>, <code>"Positive"</code>, <code>"Negative"</code>,
-       * and <code>"Warning"</code>.
-       *
-       * @type {MessageStripDesign}
-       * @defaultvalue "Information"
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      design: {
-        type: _MessageStripDesign.default,
-        defaultValue: _MessageStripDesign.default.Information
-      },
-      /**
-       * Defines whether the MessageStrip will show an icon in the beginning.
-       * You can directly provide an icon with the <code>icon</code> slot. Otherwise, the default icon for the type will be used.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      hideIcon: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the MessageStrip renders close button.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      hideCloseButton: {
-        type: Boolean
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */{
-      /**
-       * Defines the text of the component.
-       * <br><br>
-       * <b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
-       *
-       * @type {Node[]}
-       * @slot
-       * @public
-       */
-      "default": {
-        type: Node
-      },
-      /**
-       * Defines the content to be displayed as graphical element within the component.
-       * <br><br>
-       * <b>Note:</b> If no icon is given, the default icon for the component type will be used.
-       * The SAP-icons font provides numerous options.
-       * <br><br>
-       *
-       * See all the available icons in the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>.
-       *
-       * @type {sap.ui.webcomponents.main.IIcon}
-       * @slot
-       * @public
-       */
-      "icon": {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.MessageStrip.prototype */{
-      /**
-       * Fired when the close button is pressed either with a
-       * click/tap or by using the Enter or Space key.
-       *
-       * @event
-       * @public
-       */
-      close: {}
-    }
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var MessageStrip_1;
+  var DesignClassesMapping;
+  (function (DesignClassesMapping) {
+    DesignClassesMapping["Information"] = "ui5-message-strip-root--info";
+    DesignClassesMapping["Positive"] = "ui5-message-strip-root--positive";
+    DesignClassesMapping["Negative"] = "ui5-message-strip-root--negative";
+    DesignClassesMapping["Warning"] = "ui5-message-strip-root--warning";
+  })(DesignClassesMapping || (DesignClassesMapping = {}));
+  var IconMapping;
+  (function (IconMapping) {
+    IconMapping["Information"] = "information";
+    IconMapping["Positive"] = "sys-enter-2";
+    IconMapping["Negative"] = "error";
+    IconMapping["Warning"] = "alert";
+  })(IconMapping || (IconMapping = {}));
   /**
    * @class
    *
@@ -134,69 +68,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.MessageStrip
-   * @extends UI5Element
+   * @alias sap.ui.webc.main.MessageStrip
+   * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-message-strip
    * @public
    * @since 0.9.0
    */
-  class MessageStrip extends _UI5Element.default {
-    static get metadata() {
-      return metadata;
-    }
-    static get render() {
-      return _LitRenderer.default;
-    }
-    static get template() {
-      return _MessageStripTemplate.default;
-    }
-    static get styles() {
-      return _MessageStrip.default;
-    }
-    constructor() {
-      super();
-    }
+  let MessageStrip = MessageStrip_1 = class MessageStrip extends _UI5Element.default {
     _closeClick() {
-      this.fireEvent("close", {});
-    }
-    static get dependencies() {
-      return [_Icon.default, _Button.default];
+      this.fireEvent("close");
     }
     static async onDefine() {
-      MessageStrip.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
-    }
-    static designClassesMappings() {
-      return {
-        "Information": "ui5-message-strip-root--info",
-        "Positive": "ui5-message-strip-root--positive",
-        "Negative": "ui5-message-strip-root--negative",
-        "Warning": "ui5-message-strip-root--warning"
-      };
-    }
-    static iconMappings() {
-      return {
-        "Information": "information",
-        "Positive": "sys-enter-2",
-        "Negative": "error",
-        "Warning": "alert"
-      };
+      MessageStrip_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     static designAnnouncementMappings() {
+      const getTranslation = text => {
+        return MessageStrip_1.i18nBundle.getText(text);
+      };
       return {
-        "Information": MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_INFORMATION),
-        "Positive": MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_SUCCESS),
-        "Negative": MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_ERROR),
-        "Warning": MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_WARNING)
+        Information: getTranslation(_i18nDefaults.MESSAGE_STRIP_INFORMATION),
+        Positive: getTranslation(_i18nDefaults.MESSAGE_STRIP_SUCCESS),
+        Negative: getTranslation(_i18nDefaults.MESSAGE_STRIP_ERROR),
+        Warning: getTranslation(_i18nDefaults.MESSAGE_STRIP_WARNING)
       };
     }
     get hiddenText() {
-      return `${MessageStrip.designAnnouncementMappings()[this.design]} ${this.hideCloseButton ? "" : this._closableText}`;
+      return `${MessageStrip_1.designAnnouncementMappings()[this.design]} ${this.hideCloseButton ? "" : this._closableText}`;
     }
     get _closeButtonText() {
-      return MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_CLOSE_BUTTON);
+      return MessageStrip_1.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_CLOSE_BUTTON);
     }
     get _closableText() {
-      return MessageStrip.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_CLOSABLE);
+      return MessageStrip_1.i18nBundle.getText(_i18nDefaults.MESSAGE_STRIP_CLOSABLE);
     }
     get classes() {
       return {
@@ -212,12 +115,38 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.icon.length > 0;
     }
     get standardIconName() {
-      return MessageStrip.iconMappings()[this.design];
+      return IconMapping[this.design];
     }
     get designClasses() {
-      return MessageStrip.designClassesMappings()[this.design];
+      return DesignClassesMapping[this.design];
     }
-  }
+  };
+  __decorate([(0, _property.default)({
+    type: _MessageStripDesign.default,
+    defaultValue: _MessageStripDesign.default.Information
+  })], MessageStrip.prototype, "design", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MessageStrip.prototype, "hideIcon", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], MessageStrip.prototype, "hideCloseButton", void 0);
+  __decorate([(0, _slot.default)()], MessageStrip.prototype, "icon", void 0);
+  MessageStrip = MessageStrip_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-message-strip",
+    languageAware: true,
+    renderer: _LitRenderer.default,
+    template: _MessageStripTemplate.default,
+    styles: _MessageStrip.default,
+    dependencies: [_Icon.default, _Button.default]
+  })
+  /**
+   * Fired when the close button is pressed either with a
+   * click/tap or by using the Enter or Space key.
+   *
+   * @event sap.ui.webc.main.MessageStrip#close
+   * @public
+   */, (0, _event.default)("close")], MessageStrip);
   MessageStrip.define();
   var _default = MessageStrip;
   _exports.default = _default;

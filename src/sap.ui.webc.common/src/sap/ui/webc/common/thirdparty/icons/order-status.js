@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/order-status", "./v4/order-status"], function (_exports, _Theme, _orderStatus, _orderStatus2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/order-status", "./v5/order-status"], function (_exports, _Theme, _orderStatus, _orderStatus2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _orderStatus.pathData : _orderStatus2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _orderStatus.pathData : _orderStatus2.pathData;
   _exports.pathData = pathData;
   var _default = "order-status";
   _exports.default = _default;

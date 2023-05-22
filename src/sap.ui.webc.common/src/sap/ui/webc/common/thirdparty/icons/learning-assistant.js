@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/learning-assistant", "./v4/learning-assistant"], function (_exports, _Theme, _learningAssistant, _learningAssistant2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/learning-assistant", "./v5/learning-assistant"], function (_exports, _Theme, _learningAssistant, _learningAssistant2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _learningAssistant.pathData : _learningAssistant2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _learningAssistant.pathData : _learningAssistant2.pathData;
   _exports.pathData = pathData;
   var _default = "learning-assistant";
   _exports.default = _default;

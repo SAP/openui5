@@ -1,11 +1,15 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/util/PopupUtils", "sap/ui/webc/common/thirdparty/base/util/clamp", "./Popup", "./types/PopoverPlacementType", "./types/PopoverVerticalAlign", "./types/PopoverHorizontalAlign", "./popup-utils/PopoverRegistry", "./generated/templates/PopoverTemplate.lit", "./generated/themes/BrowserScrollbar.css", "./generated/themes/PopupsCommon.css", "./generated/themes/Popover.css"], function (_exports, _Integer, _Device, _PopupUtils, _clamp, _Popup, _PopoverPlacementType, _PopoverVerticalAlign, _PopoverHorizontalAlign, _PopoverRegistry, _PopoverTemplate, _BrowserScrollbar, _PopupsCommon, _Popover) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/types/DOMReference", "sap/ui/webc/common/thirdparty/base/util/PopupUtils", "sap/ui/webc/common/thirdparty/base/util/clamp", "./Popup", "./types/PopoverPlacementType", "./types/PopoverVerticalAlign", "./types/PopoverHorizontalAlign", "./popup-utils/PopoverRegistry", "./generated/templates/PopoverTemplate.lit", "./generated/themes/BrowserScrollbar.css", "./generated/themes/PopupsCommon.css", "./generated/themes/Popover.css"], function (_exports, _customElement, _property, _slot, _Integer, _Device, _DOMReference, _PopupUtils, _clamp, _Popup, _PopoverPlacementType, _PopoverVerticalAlign, _PopoverHorizontalAlign, _PopoverRegistry, _PopoverTemplate, _BrowserScrollbar, _PopupsCommon, _Popover) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.default = void 0;
+  _exports.instanceOfPopover = _exports.default = void 0;
+  _customElement = _interopRequireDefault(_customElement);
+  _property = _interopRequireDefault(_property);
+  _slot = _interopRequireDefault(_slot);
   _Integer = _interopRequireDefault(_Integer);
+  _DOMReference = _interopRequireDefault(_DOMReference);
   _clamp = _interopRequireDefault(_clamp);
   _Popup = _interopRequireDefault(_Popup);
   _PopoverPlacementType = _interopRequireDefault(_PopoverPlacementType);
@@ -16,215 +20,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
   _PopupsCommon = _interopRequireDefault(_PopupsCommon);
   _Popover = _interopRequireDefault(_Popover);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-  // Template
-
-  // Styles
-
-  const ARROW_SIZE = 8;
-
-  /**
-   * @public
-   */
-  const metadata = {
-    tag: "ui5-popover",
-    properties: /** @lends sap.ui.webcomponents.main.Popover.prototype */{
-      /**
-       * Defines the header text.
-       * <br><br>
-       * <b>Note:</b> If <code>header</code> slot is provided, the <code>headerText</code> is ignored.
-       *
-       * @type {string}
-       * @defaultvalue ""
-       * @public
-       */
-      headerText: {
-        type: String
-      },
-      /**
-       * Determines on which side the component is placed at.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Left</code></li>
-       * <li><code>Right</code></li>
-       * <li><code>Top</code></li>
-       * <li><code>Bottom</code></li>
-       * </ul>
-       *
-       * @type {PopoverPlacementType}
-       * @defaultvalue "Right"
-       * @public
-       */
-      placementType: {
-        type: _PopoverPlacementType.default,
-        defaultValue: _PopoverPlacementType.default.Right
-      },
-      /**
-       * Determines the horizontal alignment of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Center</code></li>
-       * <li><code>Left</code></li>
-       * <li><code>Right</code></li>
-       * <li><code>Stretch</code></li>
-       * </ul>
-       *
-       * @type {PopoverHorizontalAlign}
-       * @defaultvalue "Center"
-       * @public
-       */
-      horizontalAlign: {
-        type: _PopoverHorizontalAlign.default,
-        defaultValue: _PopoverHorizontalAlign.default.Center
-      },
-      /**
-       * Determines the vertical alignment of the component.
-       * <br><br>
-       * Available options are:
-       * <ul>
-       * <li><code>Center</code></li>
-       * <li><code>Top</code></li>
-       * <li><code>Bottom</code></li>
-       * <li><code>Stretch</code></li>
-       * </ul>
-       *
-       * @type {PopoverVerticalAlign}
-       * @defaultvalue "Center"
-       * @public
-       */
-      verticalAlign: {
-        type: _PopoverVerticalAlign.default,
-        defaultValue: _PopoverVerticalAlign.default.Center
-      },
-      /**
-       * Defines whether the component should close when
-       * clicking/tapping outside of the popover.
-       * If enabled, it blocks any interaction with the background.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      modal: {
-        type: Boolean
-      },
-      /**
-       * Defines whether the block layer will be shown if modal property is set to true.
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.0.0-rc.10
-       */
-      hideBackdrop: {
-        type: Boolean
-      },
-      /**
-       * Determines whether the component arrow is hidden.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       * @since 1.0.0-rc.15
-       */
-      hideArrow: {
-        type: Boolean
-      },
-      /**
-       * Determines if there is no enough space, the component can be placed
-       * over the target.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @public
-       */
-      allowTargetOverlap: {
-        type: Boolean
-      },
-      /**
-       * Defines the opener id of the element that the popover is shown at
-       * @public
-       * @type {String}
-       * @defaultvalue ""
-       * @since 1.2.0
-       */
-      opener: {
-        type: String
-      },
-      /**
-       * Defines whether the content is scrollable.
-       *
-       * @type {boolean}
-       * @defaultvalue false
-       * @private
-       */
-      disableScrolling: {
-        type: Boolean
-      },
-      /**
-       * Sets the X translation of the arrow
-       *
-       * @private
-       */
-      arrowTranslateX: {
-        type: _Integer.default,
-        defaultValue: 0,
-        noAttribute: true
-      },
-      /**
-       * Sets the Y translation of the arrow
-       *
-       * @private
-       */
-      arrowTranslateY: {
-        type: _Integer.default,
-        defaultValue: 0,
-        noAttribute: true
-      },
-      /**
-       * Returns the calculated placement depending on the free space
-       *
-       * @private
-       */
-      actualPlacementType: {
-        type: _PopoverPlacementType.default,
-        defaultValue: _PopoverPlacementType.default.Right
-      },
-      _maxHeight: {
-        type: _Integer.default,
-        noAttribute: true
-      },
-      _maxWidth: {
-        type: _Integer.default,
-        noAttribute: true
-      }
-    },
-    managedSlots: true,
-    slots: /** @lends sap.ui.webcomponents.main.Popover.prototype */{
-      /**
-       * Defines the header HTML Element.
-       *
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      header: {
-        type: HTMLElement
-      },
-      /**
-       * Defines the footer HTML Element.
-       *
-       * @type {HTMLElement[]}
-       * @slot
-       * @public
-       */
-      footer: {
-        type: HTMLElement
-      }
-    },
-    events: /** @lends sap.ui.webcomponents.main.Popover.prototype */{}
+  var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
-
+  var Popover_1;
+  const ARROW_SIZE = 8;
   /**
    * @class
    *
@@ -266,32 +70,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
    *
    * @constructor
    * @author SAP SE
-   * @alias sap.ui.webcomponents.main.Popover
-   * @extends Popup
+   * @alias sap.ui.webc.main.Popover
+   * @extends sap.ui.webc.main.Popup
    * @tagname ui5-popover
    * @since 1.0.0-rc.6
    * @public
    */
-  class Popover extends _Popup.default {
-    constructor() {
-      super();
-    }
-    static get metadata() {
-      return metadata;
-    }
-    static get styles() {
-      return [_BrowserScrollbar.default, _PopupsCommon.default, _Popover.default];
-    }
-    static get template() {
-      return _PopoverTemplate.default;
-    }
+  let Popover = Popover_1 = class Popover extends _Popup.default {
     static get VIEWPORT_MARGIN() {
       return 10; // px
     }
 
+    constructor() {
+      super();
+    }
     onAfterRendering() {
       if (!this.isOpen() && this.open) {
-        const opener = document.getElementById(this.opener);
+        let opener;
+        if (this.opener instanceof HTMLElement) {
+          opener = this.opener;
+        } else if (typeof this.opener === "string") {
+          opener = this.getRootNode().getElementById(this.opener);
+        }
         if (!opener) {
           console.warn("Valid opener id is required."); // eslint-disable-line
           return;
@@ -301,16 +101,25 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         this.close();
       }
     }
-    isOpenerClicked(event) {
-      const target = event.target;
-      return target === this._opener || target.getFocusDomRef && target.getFocusDomRef() === this._opener || event.composedPath().indexOf(this._opener) > -1;
+    isOpenerClicked(e) {
+      const target = e.target;
+      if (target === this._opener) {
+        return true;
+      }
+      const ui5ElementTarget = target;
+      if (ui5ElementTarget.getFocusDomRef && ui5ElementTarget.getFocusDomRef() === this._opener) {
+        return true;
+      }
+      return e.composedPath().indexOf(this._opener) > -1;
     }
-
     /**
      * Shows the popover.
      * @param {HTMLElement} opener the element that the popover is shown at
-     * @param {boolean} preventInitialFocus prevents applying the focus inside the popover
+     * @param {boolean} [preventInitialFocus=false] prevents applying the focus inside the popover
      * @public
+     * @async
+     * @method
+     * @name sap.ui.webc.main.Popover#showAt
      * @async
      * @returns {Promise} Resolved when the popover is open
      */
@@ -322,7 +131,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       this._openerRect = opener.getBoundingClientRect();
       await super._open(preventInitialFocus);
     }
-
     /**
      * Override for the _addOpenedPopup hook, which would otherwise just call addOpenedPopup(this)
      * @private
@@ -330,7 +138,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
     _addOpenedPopup() {
       (0, _PopoverRegistry.addOpenedPopover)(this);
     }
-
     /**
      * Override for the _removeOpenedPopup hook, which would otherwise just call removeOpenedPopup(this)
      * @private
@@ -362,7 +169,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
     isOpenerOutsideViewport(openerRect) {
       return openerRect.bottom < 0 || openerRect.top > window.innerHeight || openerRect.right < 0 || openerRect.left > window.innerWidth;
     }
-
     /**
      * @override
      */
@@ -393,17 +199,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       } else {
         placement = this.calcPlacement(this._openerRect, popoverSize);
       }
-      const stretching = this.horizontalAlign === _PopoverHorizontalAlign.default.Stretch;
       if (this._preventRepositionAndClose || this.isOpenerOutsideViewport(this._openerRect)) {
         return this.close();
       }
       this._oldPlacement = placement;
       this.actualPlacementType = placement.placementType;
-      let left = (0, _clamp.default)(this._left, Popover.VIEWPORT_MARGIN, document.documentElement.clientWidth - popoverSize.width - Popover.VIEWPORT_MARGIN);
+      let left = (0, _clamp.default)(this._left, Popover_1.VIEWPORT_MARGIN, document.documentElement.clientWidth - popoverSize.width - Popover_1.VIEWPORT_MARGIN);
       if (this.actualPlacementType === _PopoverPlacementType.default.Right) {
         left = Math.max(left, this._left);
       }
-      let top = (0, _clamp.default)(this._top, Popover.VIEWPORT_MARGIN, document.documentElement.clientHeight - popoverSize.height - Popover.VIEWPORT_MARGIN);
+      let top = (0, _clamp.default)(this._top, Popover_1.VIEWPORT_MARGIN, document.documentElement.clientHeight - popoverSize.height - Popover_1.VIEWPORT_MARGIN);
       if (this.actualPlacementType === _PopoverPlacementType.default.Bottom) {
         top = Math.max(top, this._top);
       }
@@ -415,11 +220,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         left: `${left}px`
       });
       super._show();
-      if (stretching && this._width) {
+      if (this.horizontalAlign === _PopoverHorizontalAlign.default.Stretch && this._width) {
         this.style.width = this._width;
       }
     }
-
     /**
      * Adjust the desired top position to compensate for shift of the screen
      * caused by opened keyboard on iOS which affects all elements with position:fixed.
@@ -453,7 +257,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
     get arrowDOM() {
       return this.shadowRoot.querySelector(".ui5-popover-arrow");
     }
-
     /**
      * @private
      */
@@ -475,7 +278,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         popoverSize.height = targetRect.height;
       }
       const arrowOffset = this.hideArrow ? 0 : ARROW_SIZE;
-
       // calc popover positions
       switch (placementType) {
         case _PopoverPlacementType.default.Top:
@@ -511,7 +313,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
           }
           break;
       }
-
       // correct popover positions
       if (isVertical) {
         if (popoverSize.width > clientWidth || left < 0) {
@@ -527,8 +328,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
           top -= top + popoverSize.height - clientHeight;
         }
       }
-      this._maxHeight = Math.round(maxHeight - Popover.VIEWPORT_MARGIN);
-      this._maxWidth = Math.round(maxWidth - Popover.VIEWPORT_MARGIN);
+      this._maxHeight = Math.round(maxHeight - Popover_1.VIEWPORT_MARGIN);
+      this._maxWidth = Math.round(maxWidth - Popover_1.VIEWPORT_MARGIN);
       if (this._left === undefined || Math.abs(this._left - left) > 1.5) {
         this._left = Math.round(left);
       }
@@ -544,7 +345,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         placementType
       };
     }
-
     /**
      * Calculates the position for the arrow.
      * @private
@@ -556,38 +356,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
      * @param {number} borderRadius Value of the border-radius property
      * @returns {{x: number, y: number}} Arrow's coordinates
      */
-    getArrowPosition(targetRect, {
-      width,
-      height
-    }, left, top, isVertical, borderRadius) {
-      let arrowXCentered = this.horizontalAlign === _PopoverHorizontalAlign.default.Center || this.horizontalAlign === _PopoverHorizontalAlign.default.Stretch;
-      if (this.horizontalAlign === _PopoverHorizontalAlign.default.Right && left <= targetRect.left) {
+    getArrowPosition(targetRect, popoverSize, left, top, isVertical, borderRadius) {
+      const horizontalAlign = this._actualHorizontalAlign;
+      let arrowXCentered = horizontalAlign === _PopoverHorizontalAlign.default.Center || horizontalAlign === _PopoverHorizontalAlign.default.Stretch;
+      if (horizontalAlign === _PopoverHorizontalAlign.default.Right && left <= targetRect.left) {
         arrowXCentered = true;
       }
-      if (this.horizontalAlign === _PopoverHorizontalAlign.default.Left && left + width >= targetRect.left + targetRect.width) {
+      if (horizontalAlign === _PopoverHorizontalAlign.default.Left && left + popoverSize.width >= targetRect.left + targetRect.width) {
         arrowXCentered = true;
       }
       let arrowTranslateX = 0;
       if (isVertical && arrowXCentered) {
-        arrowTranslateX = targetRect.left + targetRect.width / 2 - left - width / 2;
+        arrowTranslateX = targetRect.left + targetRect.width / 2 - left - popoverSize.width / 2;
       }
       let arrowTranslateY = 0;
       if (!isVertical) {
-        arrowTranslateY = targetRect.top + targetRect.height / 2 - top - height / 2;
+        arrowTranslateY = targetRect.top + targetRect.height / 2 - top - popoverSize.height / 2;
       }
-
       // Restricts the arrow's translate value along each dimension,
       // so that the arrow does not clip over the popover's rounded borders.
-      const safeRangeForArrowY = height / 2 - borderRadius - ARROW_SIZE / 2;
+      const safeRangeForArrowY = popoverSize.height / 2 - borderRadius - ARROW_SIZE / 2;
       arrowTranslateY = (0, _clamp.default)(arrowTranslateY, -safeRangeForArrowY, safeRangeForArrowY);
-      const safeRangeForArrowX = width / 2 - borderRadius - ARROW_SIZE / 2;
+      const safeRangeForArrowX = popoverSize.width / 2 - borderRadius - ARROW_SIZE / 2;
       arrowTranslateX = (0, _clamp.default)(arrowTranslateX, -safeRangeForArrowX, safeRangeForArrowX);
       return {
         x: Math.round(arrowTranslateX),
         y: Math.round(arrowTranslateY)
       };
     }
-
     /**
      * Fallbacks to new placement, prioritizing <code>Left</code> and <code>Right</code> placements.
      * @private
@@ -636,8 +432,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       return actualPlacementType;
     }
     getVerticalLeft(targetRect, popoverSize) {
-      let left;
-      switch (this.horizontalAlign) {
+      const horizontalAlign = this._actualHorizontalAlign;
+      let left = 0;
+      switch (horizontalAlign) {
         case _PopoverHorizontalAlign.default.Center:
         case _PopoverHorizontalAlign.default.Stretch:
           left = targetRect.left - (popoverSize.width - targetRect.width) / 2;
@@ -652,7 +449,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       return left;
     }
     getHorizontalTop(targetRect, popoverSize) {
-      let top;
+      let top = 0;
       switch (this.verticalAlign) {
         case _PopoverVerticalAlign.default.Center:
         case _PopoverVerticalAlign.default.Stretch:
@@ -668,30 +465,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       return top;
     }
     get isModal() {
-      // Required by Popup.js
       return this.modal;
     }
     get shouldHideBackdrop() {
-      // Required by Popup.js
       return this.hideBackdrop;
     }
     get _ariaLabelledBy() {
-      // Required by Popup.js
       if (!this._ariaLabel && this._displayHeader) {
         return "ui5-popup-header";
       }
       return undefined;
     }
-    get _ariaModal() {
-      // Required by Popup.js
-      return true;
-    }
     get styles() {
       return {
         ...super.styles,
         root: {
-          "max-height": `${this._maxHeight}px`,
-          "max-width": `${this._maxWidth}px`
+          "max-height": this._maxHeight ? `${this._maxHeight}px` : "",
+          "max-width": this._maxWidth ? `${this._maxWidth}px` : ""
         },
         arrow: {
           transform: `translate(${this.arrowTranslateX}px, ${this.arrowTranslateY}px)`
@@ -703,21 +493,98 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       allClasses.root["ui5-popover-root"] = true;
       return allClasses;
     }
-
     /**
      * Hook for descendants to hide header.
      */
     get _displayHeader() {
-      return this.header.length || this.headerText;
+      return !!(this.header.length || this.headerText);
     }
-
     /**
      * Hook for descendants to hide footer.
      */
     get _displayFooter() {
       return true;
     }
-  }
+    get _actualHorizontalAlign() {
+      if (this.effectiveDir === "rtl") {
+        if (this.horizontalAlign === _PopoverHorizontalAlign.default.Left) {
+          return _PopoverHorizontalAlign.default.Right;
+        }
+        if (this.horizontalAlign === _PopoverHorizontalAlign.default.Right) {
+          return _PopoverHorizontalAlign.default.Left;
+        }
+      }
+      return this.horizontalAlign;
+    }
+  };
+  __decorate([(0, _property.default)()], Popover.prototype, "headerText", void 0);
+  __decorate([(0, _property.default)({
+    type: _PopoverPlacementType.default,
+    defaultValue: _PopoverPlacementType.default.Right
+  })], Popover.prototype, "placementType", void 0);
+  __decorate([(0, _property.default)({
+    type: _PopoverHorizontalAlign.default,
+    defaultValue: _PopoverHorizontalAlign.default.Center
+  })], Popover.prototype, "horizontalAlign", void 0);
+  __decorate([(0, _property.default)({
+    type: _PopoverVerticalAlign.default,
+    defaultValue: _PopoverVerticalAlign.default.Center
+  })], Popover.prototype, "verticalAlign", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Popover.prototype, "modal", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Popover.prototype, "hideBackdrop", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Popover.prototype, "hideArrow", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Popover.prototype, "allowTargetOverlap", void 0);
+  __decorate([(0, _property.default)({
+    validator: _DOMReference.default
+  })], Popover.prototype, "opener", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Popover.prototype, "disableScrolling", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 0,
+    noAttribute: true
+  })], Popover.prototype, "arrowTranslateX", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: 0,
+    noAttribute: true
+  })], Popover.prototype, "arrowTranslateY", void 0);
+  __decorate([(0, _property.default)({
+    type: _PopoverPlacementType.default,
+    defaultValue: _PopoverPlacementType.default.Right
+  })], Popover.prototype, "actualPlacementType", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    noAttribute: true
+  })], Popover.prototype, "_maxHeight", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    noAttribute: true
+  })], Popover.prototype, "_maxWidth", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement
+  })], Popover.prototype, "header", void 0);
+  __decorate([(0, _slot.default)({
+    type: HTMLElement
+  })], Popover.prototype, "footer", void 0);
+  Popover = Popover_1 = __decorate([(0, _customElement.default)({
+    tag: "ui5-popover",
+    styles: [_BrowserScrollbar.default, _PopupsCommon.default, _Popover.default],
+    template: _PopoverTemplate.default
+  })], Popover);
+  const instanceOfPopover = object => {
+    return "showAt" in object;
+  };
+  _exports.instanceOfPopover = instanceOfPopover;
   Popover.define();
   var _default = Popover;
   _exports.default = _default;

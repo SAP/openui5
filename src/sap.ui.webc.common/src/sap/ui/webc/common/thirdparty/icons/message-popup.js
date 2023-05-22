@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/message-popup", "./v4/message-popup"], function (_exports, _Theme, _messagePopup, _messagePopup2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/message-popup", "./v5/message-popup"], function (_exports, _Theme, _messagePopup, _messagePopup2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _messagePopup.pathData : _messagePopup2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _messagePopup.pathData : _messagePopup2.pathData;
   _exports.pathData = pathData;
   var _default = "message-popup";
   _exports.default = _default;

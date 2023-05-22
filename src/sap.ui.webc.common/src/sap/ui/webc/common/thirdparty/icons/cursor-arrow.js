@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/cursor-arrow", "./v4/cursor-arrow"], function (_exports, _Theme, _cursorArrow, _cursorArrow2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/cursor-arrow", "./v5/cursor-arrow"], function (_exports, _Theme, _cursorArrow, _cursorArrow2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _cursorArrow.pathData : _cursorArrow2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _cursorArrow.pathData : _cursorArrow2.pathData;
   _exports.pathData = pathData;
   var _default = "cursor-arrow";
   _exports.default = _default;

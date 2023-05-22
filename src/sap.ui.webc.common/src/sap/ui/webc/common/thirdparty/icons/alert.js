@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/alert", "./v4/alert"], function (_exports, _Theme, _alert, _alert2) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v4/alert", "./v5/alert"], function (_exports, _Theme, _alert, _alert2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -18,7 +18,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./
     }
   });
   _exports.pathData = void 0;
-  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _alert.pathData : _alert2.pathData;
+  const pathData = (0, _Theme.isLegacyThemeFamily)() ? _alert.pathData : _alert2.pathData;
   _exports.pathData = pathData;
   var _default = "alert";
   _exports.default = _default;
