@@ -2,13 +2,14 @@
 sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
 	"sap/ui/mdc/field/content/SearchContent",
-	"sap/ui/mdc/Field",
+	"sap/ui/mdc/FilterField",
 	"sap/m/Text",
 	"sap/m/SearchField",
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/m/TextArea",
-	"sap/m/Token"
-], function(QUnit, SearchContent, Field, Text, SearchField, FieldMultiInput, TextArea, Token) {
+	"sap/m/Token",
+	"sap/ui/model/json/JSONModel"
+], function(QUnit, SearchContent, FilterField, Text, SearchField, FieldMultiInput, TextArea, Token, JSONModel) {
 	"use strict";
 
 	var oControlMap = {
@@ -84,9 +85,23 @@ sap.ui.define([
 		assert.deepEqual(SearchContent.getControlNames("EditForHelp"), [null], "Correct default controls returned for ContentMode 'EditForHelp'");
 	});
 
+	var iChangeEvent = 0;
+	function _myChangeHandler(oEvent) {
+		iChangeEvent++;
+	}
+
+	var iSubmitEvent = 0;
+	function _mySubmitHandler(oEvent) {
+		iSubmitEvent++;
+	}
+
 	QUnit.module("Content creation", {
 		beforeEach: function() {
-			this.oField = new Field({});
+			this.oField = new FilterField({
+				maxConditions: 1,
+				change: _myChangeHandler,
+				submit: _mySubmitHandler
+			});
 			this.aControls = [];
 		},
 		afterEach: function() {
@@ -97,6 +112,8 @@ sap.ui.define([
 					oControl.destroy();
 				}
 			}
+			iChangeEvent = 0;
+			iSubmitEvent = 0;
 		}
 	});
 
@@ -129,6 +146,7 @@ sap.ui.define([
 
 			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
 			var aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
+			this.aControls = aCreatedDisplayControls.concat(aCreatedEditControls);
 
 			assert.throws(
 				function() {
@@ -179,7 +197,36 @@ sap.ui.define([
 			assert.equal(aCreatedEditOperatorControls[0], null, "No control created for ContentMode 'EditOperator'.");
 
 			done();
+		}.bind(this));
+	});
+
+	QUnit.test("eventing", function(assert) {
+
+		var done = assert.async();
+		var oContentFactory = this.oField._oContentFactory;
+		var oModel = new JSONModel({ // fake model
+			conditions: []
 		});
+
+		this.oField.awaitControlDelegate().then(function() {
+			this.aControls = fnCreateControls(oContentFactory, "Edit", "-create");
+			var oSearchField = this.aControls[0];
+			oSearchField.setModel(oModel, "$field"); // To create binding
+
+			// for testing just fire event of SearchField. Do not test if SearchField behaves right on user-intercation, just test the API usage.
+			oSearchField.fireChange({value: "Test"});
+			assert.equal(iChangeEvent, 1, "Change event fired once");
+
+			oSearchField.fireSearch({clearButtonPressed: true});
+			assert.equal(iSubmitEvent, 0, "Submit event not fired");
+			oSearchField.fireSearch({escPressed: true});
+			assert.equal(iSubmitEvent, 0, "Submit event not fired");
+			oSearchField.fireSearch({searchButtonPressed: true});
+			assert.equal(iSubmitEvent, 1, "Submit event fired once");
+
+			done();
+		}.bind(this));
+
 	});
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
@@ -190,11 +237,11 @@ sap.ui.define([
 				var oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
 					var oInstance = oValue.instances[0];
-					var aControls = SearchContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
+					this.aControls = SearchContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
-					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
+					assert.ok(this.aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
 					done();
-				});
+				}.bind(this));
 			});
 		}
 	});
