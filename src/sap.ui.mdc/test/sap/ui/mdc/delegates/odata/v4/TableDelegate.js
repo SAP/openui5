@@ -84,7 +84,7 @@ sap.ui.define([
 
 		if (bFilterEnabled) {
 			var aTableProperties = oTable.getPropertyHelper().getProperties();
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeUtil(), oTable.getConditions(), aTableProperties);
+			var oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), oTable.getConditions(), aTableProperties);
 
 			if (oInnerFilterInfo.filters) {
 				aFilters.push(oInnerFilterInfo.filters);
@@ -107,7 +107,7 @@ sap.ui.define([
 		if (mConditions) {
 			var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
 			var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-			var oOuterFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
+			var oOuterFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata, aParameterNames);
 
 			if (oOuterFilterInfo.filters) {
 				aFilters.push(oOuterFilterInfo.filters);
@@ -212,7 +212,7 @@ sap.ui.define([
 
 					var oType;
 					try {
-						oType = TestTableDelegate.getTypeUtil().getTypeConfig(oDataObject.$Type, null, mConstraints);
+						oType = TestTableDelegate.getTypeMap().getTypeConfig(oDataObject.$Type, null, mConstraints);
 					} catch (error) {
 						Log.error(error);
 					}

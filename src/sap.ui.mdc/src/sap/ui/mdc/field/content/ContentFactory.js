@@ -123,7 +123,7 @@ sap.ui.define([
 			// DataType instance not already set, make sure to load module before creating control and corresponding ConditionType (In Field case Instance is set in Binding.)
 			var sDataType = this.getField().getDataType();
 			if (sDataType) {
-				sDataType = this.getField().getTypeUtil().getDataTypeClassName(sDataType); // map EDM-Types
+				sDataType = this.getField().getTypeMap().getDataTypeClassName(sDataType); // map EDM-Types
 				aControlNames.push(sDataType.replaceAll(".", "/"));
 			}
 		}
@@ -389,7 +389,7 @@ sap.ui.define([
 				// DataType instance not already set, make sure to load module before creating control and corresponding ConditionType (In Field case Instance is set in Binding.)
 				var sDataType = this.getField().getDataType();
 				if (sDataType) {
-					sDataType = this.getField().getTypeUtil().getDataTypeClassName(sDataType); // map EDM-Types
+					sDataType = this.getField().getTypeMap().getDataTypeClassName(sDataType); // map EDM-Types
 					sDataType = sDataType.replaceAll(".", "/");
 					try {
 						loadModules([sDataType])
@@ -423,7 +423,7 @@ sap.ui.define([
 	};
 
 	ContentFactory.prototype.checkDataTypeChanged = function(sDataType) {
-		sDataType = this.getField().getTypeUtil().getDataTypeClassName(sDataType); // map EDM-Types
+		sDataType = this.getField().getTypeMap().getDataTypeClassName(sDataType); // map EDM-Types
 
 		try {
 			// check data-type after we can be sure it's loaded to perform depending actions later
@@ -444,7 +444,7 @@ sap.ui.define([
 		if (!this._oDataType) {
 			var sDataType = this.getField().getDataType();
 			if (typeof sDataType === "string") {
-				this._oDataType = this.getField().getTypeUtil().getDataTypeInstance(sDataType, this.getField().getDataTypeFormatOptions(), this.getField().getDataTypeConstraints());
+				this._oDataType = this.getField().getTypeMap().getDataTypeInstance(sDataType, this.getField().getDataTypeFormatOptions(), this.getField().getDataTypeConstraints());
 				this._oDataType._bCreatedByField = true;
 			}
 		}

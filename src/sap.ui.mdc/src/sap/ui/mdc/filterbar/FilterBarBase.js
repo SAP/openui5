@@ -712,7 +712,7 @@ sap.ui.define([
 
 	FilterBarBase.prototype._toExternal = function(oProperty, oCondition) {
 		var oConditionExternal = merge({}, oCondition);
-		oConditionExternal = ConditionConverter.toString(oConditionExternal, oProperty.typeConfig.typeInstance, this.getTypeUtil());
+		oConditionExternal = ConditionConverter.toString(oConditionExternal, oProperty.typeConfig.typeInstance, this.getTypeMap());
 
 		this._cleanupCondition(oConditionExternal);
 
@@ -724,7 +724,7 @@ sap.ui.define([
 
 	FilterBarBase.prototype._toInternal = function(oProperty, oCondition) {
 		var oConditionInternal = merge({}, oCondition);
-		oConditionInternal = ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, this.getTypeUtil());
+		oConditionInternal = ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, this.getTypeMap());
 
 		this. _convertInOutParameters(oCondition, oConditionInternal, "inParameters", ConditionConverter.toType);
 		this. _convertInOutParameters(oCondition, oConditionInternal, "outParameters", ConditionConverter.toType);
@@ -739,7 +739,7 @@ sap.ui.define([
 				var oProperty = this._getPropertyByName(sName);
 				if (oProperty) {
 					var oOutCondition = Condition.createCondition("EQ", [oCondition[sParameterName][sKey]]);
-					var vValue = fnConverter(oOutCondition, oProperty.typeConfig.typeInstance, this.getTypeUtil());
+					var vValue = fnConverter(oOutCondition, oProperty.typeConfig.typeInstance, this.getTypeMap());
 					if (!oConditionConverted[sParameterName]) {
 						oConditionConverted[sParameterName] = {};
 					}

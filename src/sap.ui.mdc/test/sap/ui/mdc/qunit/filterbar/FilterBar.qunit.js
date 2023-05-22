@@ -1517,7 +1517,7 @@ sap.ui.define([
 		   name: "test",
 		   typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
 		};
-		sinon.stub(oFilterBar, "getTypeUtil").returns(TypeUtil);
+		sinon.stub(oFilterBar, "getTypeMap").returns(TypeUtil);
 		sinon.stub(oFilterBar, "_getPropertyByName").returns(oProperty);
 
 		var aConditions = [{operator: "EQ", values: ["string"], isEmpty: false, validated: "NotValidated"}];

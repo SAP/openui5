@@ -49,7 +49,7 @@ sap.ui.define([
 			if (!bSearchExists) {
 				oFilterBar.__aProperties.push({
 					name: "$search",
-					typeConfig: FilterBarDelegate.getTypeUtil().getTypeConfig("Edm.String", null, null)
+					typeConfig: FilterBarDelegate.getTypeMap().getTypeConfig("Edm.String", null, null)
 				});
 			}
 			fResolve(oFilterBar.__aProperties);
@@ -71,7 +71,7 @@ sap.ui.define([
 			type: oFF.getDataType(),
 			formatOptions: oFF.getDataTypeFormatOptions(),
 			constraints: oFF.getDataTypeConstraints(),
-			typeConfig: this.getTypeUtil().getTypeConfig(oFF.getDataType(), oFF.getDataTypeFormatOptions(), oFF.getDataTypeConstraints()),
+			typeConfig: this.getTypeMap().getTypeConfig(oFF.getDataType(), oFF.getDataTypeFormatOptions(), oFF.getDataTypeConstraints()),
 			required: oFF.getRequired(),
 			hiddenFilter: false,
 			visible: oFF.getVisible(),

@@ -158,7 +158,7 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype._initControlDelegate = function() {
 		return this.initControlDelegate().then(function() {
-			//this.getTypeUtil();
+			//this.getTypeMap();
 			if (!this._bIsBeingDestroyed) {
 				this._applyInitialFilterConditions();
 			}
@@ -194,11 +194,15 @@ sap.ui.define([
 	};
 
 	AdaptationFilterBar.prototype.getTypeUtil = function() {
+		return this.getTypeMap();
+	};
+
+	AdaptationFilterBar.prototype.getTypeMap = function() {
 		if (!this._getAdaptationControlInstance()) {
 			throw new Error("No adaptation control assigned yet.");
 		}
 
-		return this._getAdaptationControlInstance().getTypeUtil();
+		return this._getAdaptationControlInstance().getTypeMap();
 	};
 
 	AdaptationFilterBar.prototype.setMessageStrip = function(oStrip) {

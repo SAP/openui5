@@ -188,7 +188,7 @@ sap.ui.define([
 		},
 		_adjustDataTypeForUnit: function(oContentFactory) {
 			var oField = oContentFactory.getField();
-			var TypeUtil = oField.getTypeUtil();
+			var TypeUtil = oField.getTypeMap();
 			var oType = oContentFactory.retrieveDataType();
 			var oFormatOptions = oType.getFormatOptions();
 			var oConstraints = oType.getConstraints();

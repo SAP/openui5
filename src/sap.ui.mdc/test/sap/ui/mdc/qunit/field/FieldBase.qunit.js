@@ -274,8 +274,8 @@ sap.ui.define([
 		var oPayload = {x: 1};
 		var oDelegate = sap.ui.require("sap/ui/mdc/field/FieldBaseDelegate");
 
-		var oTypeUtil = oDelegate.getTypeUtil(oPayload); // pre-initialize typed typeutil
-		sinon.spy(oDelegate, "getTypeUtil");
+		var oTypeUtil = oDelegate.getTypeMap(oPayload); // pre-initialize typed typeutil
+		sinon.spy(oDelegate, "getTypeMap");
 		sinon.spy(oTypeUtil, "getDataTypeInstance");
 		sinon.spy(oTypeUtil, "getBaseType");
 
@@ -286,12 +286,12 @@ sap.ui.define([
 
 		oCore.applyChanges();
 
-		assert.ok(oDelegate.getTypeUtil.calledWith(oPayload), "getTypeUtil called");
+		assert.ok(oDelegate.getTypeMap.calledWith(oPayload), "getTypeMap called");
 		assert.ok(oTypeUtil.getDataTypeInstance.calledWith("sap.ui.model.type.String"), "getDataTypeClass called");
 		assert.ok(oTypeUtil.getBaseType.calledWith("sap.ui.model.type.String"), "getBaseType called");
 
 		oTypeUtil.getDataTypeInstance.restore();
-		oDelegate.getTypeUtil(oPayload).getBaseType.restore();
+		oDelegate.getTypeMap(oPayload).getBaseType.restore();
 
 	});
 

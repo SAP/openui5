@@ -332,9 +332,13 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				"P13n Testsuite": {
 					group: "p13n",
 					page: "test-resources/sap/ui/mdc/qunit/p13n/testsuite.p13n.qunit.html"
+				},
+
+				"BaseDelegate": {
+					group: "Delegates",
+					module: "./BaseDelegate.qunit",
+					sinon: true
 				}
-
-
 			}
 		});
 	}

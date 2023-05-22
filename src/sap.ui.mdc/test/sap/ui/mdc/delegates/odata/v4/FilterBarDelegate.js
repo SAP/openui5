@@ -484,7 +484,7 @@ sap.ui.define([
 		//and PropertyInfo, the usage of a complex 'name' (e.g. containing '/') might be reconsidered.
 		oProperty.name = sNavigationPropertyName ? sNavigationPropertyName + "/" + sKey : sKey;
 
-		oProperty.typeConfig = ODataFilterBarDelegate.getTypeUtil().getTypeConfig(oObj.$Type, oProperty.formatOptions, oProperty.constraints);
+		oProperty.typeConfig = ODataFilterBarDelegate.getTypeMap().getTypeConfig(oObj.$Type, oProperty.formatOptions, oProperty.constraints);
 
 		return oProperty;
 	};

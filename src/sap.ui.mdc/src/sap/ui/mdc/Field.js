@@ -401,7 +401,7 @@ sap.ui.define([
 		var bEqual = vValue1 === vValue2;
 		var sDataType = this.getContentFactory().getDataType() ? this.getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
 
-		if (!bEqual && this.getTypeUtil().getBaseType(sDataType) === BaseType.Unit && Array.isArray(vValue1) && Array.isArray(vValue2)) {
+		if (!bEqual && this.getTypeMap().getBaseType(sDataType) === BaseType.Unit && Array.isArray(vValue1) && Array.isArray(vValue2)) {
 			// in unit type the unit table is in there setting the value but not after parsing
 			// units must be set at least once. so if not set compare too
 			var vNumber1 = vValue1[0];

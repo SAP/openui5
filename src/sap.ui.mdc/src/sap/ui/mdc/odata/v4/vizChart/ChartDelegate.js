@@ -1593,7 +1593,7 @@ sap.ui.define([
 
 		if (bFilterEnabled) {
 			var aChartProperties = oChart.getPropertyHelper().getProperties();
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(this.getTypeUtil(), oChart.getConditions(), aChartProperties);
+			var oInnerFilterInfo = FilterUtil.getFilterInfo(this.getTypeMap(), oChart.getConditions(), aChartProperties);
 
 			if (oInnerFilterInfo.filters) {
 				aFilters.push(oInnerFilterInfo.filters);
@@ -1616,7 +1616,7 @@ sap.ui.define([
 		if (mConditions) {
 			var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
 			var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-			var oOuterFilterInfo = FilterUtil.getFilterInfo(this.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
+			var oOuterFilterInfo = FilterUtil.getFilterInfo(this.getTypeMap(), mConditions, aPropertiesMetadata, aParameterNames);
 
 			if (oOuterFilterInfo.filters) {
 				aFilters.push(oOuterFilterInfo.filters);

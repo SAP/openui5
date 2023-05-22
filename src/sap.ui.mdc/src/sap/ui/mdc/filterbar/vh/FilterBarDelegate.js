@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/mdc/FilterBarDelegate"], function(FilterBarDelegate) {
 	ValueHelpFilterBarDelegate.fetchProperties = function(oFilterBar) {
 		return Promise.resolve([{
 			name: "$search",
-			typeConfig: FilterBarDelegate.getTypeUtil().getTypeConfig("String", null, null)
+			typeConfig: FilterBarDelegate.getTypeMap().getTypeConfig("String", null, null)
 		}]);
 	};
 
