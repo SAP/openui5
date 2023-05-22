@@ -3,6 +3,17 @@
     "date": "May 2023",
     "notes": [
       {
+        "id": "14599a96b376eeb44a96599aa57749c272bf6e49",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: Avoid sending contradictory headers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370065797"
+          }
+        ]
+      },
+      {
         "id": "b4aea640d15fc595b25ad596f3d6bc4c7be2aee5",
         "type": "FIX",
         "text": " core/routing: log error when new options used in sync target",
