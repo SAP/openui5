@@ -1,11 +1,9 @@
 // define a root UIComponent which exposes the main view
 
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage"
+	"sap/ui/core/UIComponent"
 ], function(
-	/** @type sap.ui.core.UIComponent */ UIComponent,
-	/** @type sap.ui.fl.FakeLrepConnectorLocalStorage */ FakeLrepConnectorLocalStorage) {
+	/** @type sap.ui.core.UIComponent */ UIComponent) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.mdc.table.OpaTests.appMDCTreeTableV4.Component", {
@@ -15,8 +13,6 @@ sap.ui.define([
 		},
 
 		init: function() {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
-
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 		}
