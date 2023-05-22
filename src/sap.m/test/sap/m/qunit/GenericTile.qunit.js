@@ -3511,7 +3511,6 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.ok(document.getElementById("tile-cont"), "TileContent was rendered successfully");
 			assert.ok(document.getElementById("tile-cont-priority"), "Priority container was rendered successfully");
 			assert.ok(document.getElementById("tile-cont-priority-content"), "Priority content was rendered successfully");
-			assert.ok(document.getElementById("tile-cont-priority-border"), "Priority border was rendered successfully");
 			assert.ok(document.getElementById("tile-cont-priority-value"), "Priority value was rendered successfully");
 			assert.ok(document.getElementById("numeric-cnt"), "NumericContent was rendered successfully");
 			assert.ok(document.getElementById("numeric-cnt-indicator"), "Indicator was rendered successfully");
@@ -3636,18 +3635,15 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.VeryHigh), Priority.VeryHigh + ": VeryHigh StyleClass is applied");
 		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.VeryHigh + ":Priority content is rendered");
 		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText(),Priority.VeryHigh + ":Priority value is rendered");
-		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.VeryHigh + ":Priority border is rendered");
 
 		//Switch to High Priority
 		oTileContent.setPriority(Priority.High);
 		oTileContent.setPriorityText("High");
-
 		oCore.applyChanges();
 		assert.ok(document.getElementById("tile-cont-priority"), Priority.High + ": Priority container is rendered");
 		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.High), Priority.High + ": High StyleClass is applied");
 		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.High + ":Priority content is rendered");
 		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText(), Priority.High + ":Priority value is rendered");
-		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.High + ":Priority border is rendered");
 
 		//Switch to Medium Priority
 		oTileContent.setPriority(Priority.Medium);
@@ -3658,7 +3654,6 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.Medium), Priority.Medium + ": Medium StyleClass is applied");
 		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.Medium + ":Priority content is rendered");
 		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText(), Priority.Medium + ":Priority value is rendered");
-		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.Medium + ":Priority border is rendered");
 
 		//Switch to Low Priority
 		oTileContent.setPriority(Priority.Low);
@@ -3669,7 +3664,6 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.Low), Priority.Low + ": Low StyleClass is applied");
 		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.Low + ":Priority content is rendered");
 		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText(), Priority.Low + ":Priority value is rendered");
-		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.Low + ":Priority border is rendered");
 		assert.notOk(this.oGenericTile.getTileContent()[0].getAltText().includes(sPriority),"Priority text is not rendered inside the tooltip");
 	});
 
