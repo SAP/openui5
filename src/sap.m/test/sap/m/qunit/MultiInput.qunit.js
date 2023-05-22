@@ -2917,29 +2917,6 @@ sap.ui.define([
 		assert.strictEqual(result.getText(), "token", "then the return value is correct");
 	});
 
-	QUnit.test("_shouldSkipTokenCreationOnPaste", function (assert) {
-		// arrange
-		var bResult;
-
-		// act
-		bResult = this.multiInput1._shouldSkipTokenCreationOnPaste([]);
-
-		// assert
-		assert.ok(bResult, "should return 'true' and skip token creation if is called with empty array");
-
-		// act
-		bResult = this.multiInput1._shouldSkipTokenCreationOnPaste(["val1"]);
-
-		// assert
-		assert.ok(bResult, "should return 'true' and skip token creation if is called with array with one value");
-
-		// act
-		bResult = this.multiInput1._shouldSkipTokenCreationOnPaste(["val1", "val2"]);
-
-		// assert
-		assert.notOk(bResult, "should return 'false' and NOT skip token creation if is called with array with more than 1 value");
-	});
-
 	QUnit.module("Collapsed state (N-more)", {
 		beforeEach : function() {
 			this.multiInput = new MultiInput();
