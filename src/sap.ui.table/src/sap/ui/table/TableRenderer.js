@@ -81,7 +81,12 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		if (oScrollExtension.isVerticalScrollbarRequired() && !oScrollExtension.isVerticalScrollbarExternal()) {
 			rm.class("sapUiTableVScr"); // show vertical scrollbar
 		}
-		if (oTable.getEditable()) {
+		/*
+		* @UI5_V2_DEPRECATION_CHECK
+		* editable is a deprecated property of sap.ui.table.Table.
+		* Once the deprecated code is removed the following 3 lines of code will become obsolete.
+		*/
+		if (oTable.getEditable && oTable.getEditable()) {
 			rm.class("sapUiTableEdt"); // editable (background color)
 		}
 

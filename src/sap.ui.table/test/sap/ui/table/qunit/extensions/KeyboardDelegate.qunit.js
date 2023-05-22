@@ -5154,6 +5154,16 @@ sap.ui.define([
 		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
 		qutils.triggerKeydown(oElem, Key.ENTER, false, false, true);
 		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
+	});
+
+	/**
+	 * @deprecated As of version 1.115
+	 */
+	QUnit.test("On SelectAll - legacyMultiSelection", function(assert) {
+		oTable.clearSelection();
+		oCore.applyChanges();
+
+		var oElem = checkFocus(getSelectAll(true), assert);
 
 		oTable._enableLegacyMultiSelection();
 		// Space
@@ -5179,7 +5189,6 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var oElem1 = checkFocus(getRowHeader(0, true), assert);
-		var oElem2 = checkFocus(getRowHeader(1, true), assert);
 
 		// Space
 		this.assertSelection(assert, 0, false);
@@ -5197,6 +5206,17 @@ sap.ui.define([
 		this.assertSelection(assert, 0, true);
 		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
 		this.assertSelection(assert, 0, false);
+	});
+
+	/**
+	 * @deprecated As of version 1.115
+	 */
+	QUnit.test("On a Row Header - legacyMultiSelection", function(assert) {
+		oTable.clearSelection();
+		oCore.applyChanges();
+
+		var oElem1 = checkFocus(getRowHeader(0, true), assert);
+		var oElem2 = checkFocus(getRowHeader(1, true), assert);
 
 		oTable._enableLegacyMultiSelection();
 		//Space
@@ -5312,7 +5332,26 @@ sap.ui.define([
 		assert.strictEqual(iCallCount, 1, "Click handler called but selection not changed");
 		iCallCount = 0;
 		bPreventDefault = false;
+	});
 
+	/**
+	 * @deprecated As of version 1.115
+	 */
+	QUnit.test("On a Data Cell - SelectionBehavior = Row - legacyMultiSelection", function(assert) {
+		var iCallCount = 0;
+		var bPreventDefault = false;
+
+		oTable.clearSelection();
+		oTable.setSelectionBehavior(library.SelectionBehavior.Row);
+		oTable.attachCellClick(function(oEvent) {
+			iCallCount++;
+			if (bPreventDefault) {
+				oEvent.preventDefault();
+			}
+		});
+		oCore.applyChanges();
+
+		var oElem1 = checkFocus(getCell(0, 0, true), assert);
 		var oElem2 = checkFocus(getCell(1, 0, true), assert);
 		oTable._enableLegacyMultiSelection();
 		// Space
@@ -5386,7 +5425,6 @@ sap.ui.define([
 		oTable.attachCellClick(cellClickEventHandler);
 		oCore.applyChanges();
 
-		var oElem2 = checkFocus(getCell(1, 0, true), assert);
 		var oElem1 = checkFocus(getCell(0, 0, true), assert);
 
 		// Space
@@ -5406,15 +5444,29 @@ sap.ui.define([
 		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 4, "Click handler called: 4");
+	});
+
+	/**
+	 * @deprecated As of version 1.115
+	 */
+	QUnit.test("On a Data Cell - SelectionBehavior = RowSelector - legacyMultiSelection", function(assert) {
+		var cellClickEventHandler = this.spy();
+
+		oTable.clearSelection();
+		oTable.attachCellClick(cellClickEventHandler);
+		oCore.applyChanges();
+
+		var oElem2 = checkFocus(getCell(1, 0, true), assert);
+		var oElem1 = checkFocus(getCell(0, 0, true), assert);
 
 		oTable._enableLegacyMultiSelection();
 		// Space
 		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, false);
 		this.assertSelection(assert, 0, false);
-		assert.strictEqual(cellClickEventHandler.callCount, 5, "Click handler called: 5");
+		assert.strictEqual(cellClickEventHandler.callCount, 1, "Click handler called: 1");
 		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, true);
 		this.assertSelection(assert, 0, false);
-		assert.strictEqual(cellClickEventHandler.callCount, 6, "Click handler called: 6");
+		assert.strictEqual(cellClickEventHandler.callCount, 2, "Click handler called: 2");
 
 		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
 		this.assertSelection(assert, 0, true);
@@ -5440,10 +5492,10 @@ sap.ui.define([
 		// Enter
 		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
 		this.assertSelection(assert, 0, false);
-		assert.strictEqual(cellClickEventHandler.callCount, 7, "Click handler called: 7");
+		assert.strictEqual(cellClickEventHandler.callCount, 3, "Click handler called: 3");
 		qutils.triggerKeyup(oElem1, Key.ENTER, false, false, true);
 		this.assertSelection(assert, 0, false);
-		assert.strictEqual(cellClickEventHandler.callCount, 8, "Click handler called: 8");
+		assert.strictEqual(cellClickEventHandler.callCount, 4, "Click handler called: 4");
 	});
 
 	QUnit.test("On a Row Action Cell - SelectionBehavior = RowSelector", function(assert) {
