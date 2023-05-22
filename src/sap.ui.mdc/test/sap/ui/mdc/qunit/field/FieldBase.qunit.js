@@ -2605,7 +2605,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("pating multiple values", function(assert) {
+	QUnit.test("pasting multiple values", function(assert) {
 
 		var fnDone = assert.async();
 		oField.setDisplay(FieldDisplay.DescriptionValue);
@@ -2661,6 +2661,41 @@ sap.ui.define([
 			assert.notOk(true, "submit: Promise must not be rejected");
 			fnDone();
 		});
+
+	});
+
+	QUnit.test("pasting single value", function(assert) {
+
+		oField.setDisplay(FieldDisplay.DescriptionValue);
+		oCore.applyChanges();
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent.focus();
+
+		var sPastedValues = "AA";
+		var oFakeClipboardData = {
+				getData: function() {
+					return sPastedValues;
+				}
+		};
+
+		if (window.clipboardData) {
+			window.clipboardData.setData("text", sPastedValues);
+		}
+
+		qutils.triggerEvent("paste", oContent.getFocusDomRef(), {clipboardData: oFakeClipboardData});
+
+		assert.equal(iCount, 0, "change event not fired ");
+		assert.equal(iParseError, 0, "ParseError event not fired");
+		assert.equal(iValidationError, 0, "ValidationError event not fired");
+		assert.equal(iValidationSuccess, 0, "ValidationSuccess event not fired");
+		// faked paste-event don't triggers oninput event on Input control, so no LiveChange is fired
+		// assert.equal(iLiveCount, 1, "liveChange event fired once");
+		// assert.equal(sLiveId, "F1", "liveChange event fired on Field");
+		// assert.equal(sLiveValue, "AA", "liveChange event value");
+		assert.equal(iSubmitCount, 0, "submit event not fired");
+		var aConditions = oField.getConditions();
+		assert.equal(aConditions.length, 0, "No conditions returned");
 
 	});
 

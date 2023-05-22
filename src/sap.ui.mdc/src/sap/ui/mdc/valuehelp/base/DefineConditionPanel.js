@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/field/ConditionsType',
+	'sap/ui/mdc/field/splitValue',
 	'sap/ui/mdc/enum/EditMode',
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/enum/BaseType',
@@ -48,6 +49,7 @@ sap.ui.define([
 		FilterOperatorUtil,
 		Operator,
 		ConditionsType,
+		splitValue,
 		EditMode,
 		FieldDisplay,
 		BaseType,
@@ -587,8 +589,9 @@ sap.ui.define([
 		onPaste: function(oEvent) {
 			// for the purpose to copy from column in Excel and paste as new conditions
 			var sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
+			var aSeparatedText = splitValue(sOriginalText, true); // check without BT support as if TAB is inside the Paste logic needs to be used anyhow
 
-			if (sOriginalText.split(/\r\n|\r|\n/g).length > 1) { // if no linebreak just process normal paste-logic
+			if (aSeparatedText.length > 1) { // if no linebreak just process normal paste-logic
 				var oSource = oEvent.srcControl;
 				var sConditionPath = oSource.getBindingContext("$condition").getPath(); // Path to condition of the active control
 				var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition - to remove before adding new ones
