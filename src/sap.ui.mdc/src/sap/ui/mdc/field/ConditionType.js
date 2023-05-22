@@ -740,16 +740,31 @@ sap.ui.define([
 			// check if type allows to be null
 			if (FilterOperatorUtil.onlyEQ(aOperators)) {
 				// TODO: also for FilterField case?
+				var vCheckValue = null;
 				try {
 					if (oType.hasOwnProperty("_sParsedEmptyString") && oType._sParsedEmptyString !== null) { //TODO: find solution for all types
 						// empty string is parsed as empty string or "0", so validate for this
-						oType.validateValue(oType._sParsedEmptyString);
-					} else {
-						oType.validateValue(null);
+						vCheckValue = oType._sParsedEmptyString;
 					}
+					oType.validateValue(vCheckValue);
 				} catch (oException) {
 					if (oException instanceof ValidateException) {
-						throw new ConditionValidateException(oException.message, oException.violatedConstraints, null);
+						try {
+							if (oOriginalType && !bCompositeType) {
+								// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
+								// ValidateException might contain this as pattern. The user should see the pattern thats shown
+								// So try to validate date with the original type to get ValidateException with right pattern.
+								// Not for CompositeTypes as here the parts might have different configuartion what leads to different messages.
+								oOriginalType.validateValue(vCheckValue);
+							}
+							throw oException;
+						} catch (oException) {
+							if (oException instanceof ValidateException) {
+								// add condition to exception to improve mapping in FieldBase handleValidationError
+								throw new ConditionValidateException(oException.message, oException.violatedConstraints, null);
+							}
+							throw oException;
+						}
 					} else {
 						//validation breaks with runtime error -> just ignore
 						//TODO: is this the right way?

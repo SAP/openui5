@@ -515,6 +515,26 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Validating: invalid null value", function(assert) {
+
+		var oException;
+		sinon.spy(oValueType, "validateValue");
+		sinon.spy(oOriginalType, "validateValue");
+
+		try {
+			oConditionType.validateValue(null);
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+		assert.ok(oException && oException.message.startsWith("Enter a date after 01.01.2000"), "Pattern of original date used in message");
+		assert.deepEqual(oException && oException.getCondition(), null, "exception condition");
+		assert.ok(oValueType.validateValue.calledWith(null), "validateValue of ValueType called with null");
+		assert.ok(oOriginalType.validateValue.calledWith(null), "validateValue of originalDateType called with null");
+
+	});
+
 	var oDateTimeOffsetType;
 	var oStringType;
 	var oValueType2;
