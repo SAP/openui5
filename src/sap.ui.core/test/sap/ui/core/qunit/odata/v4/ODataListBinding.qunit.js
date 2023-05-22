@@ -4900,10 +4900,7 @@ sap.ui.define([
 		oInitialData : {},
 		sPredicate : "('bar')"
 	}, {
-		oInitialData : {},
-		bGetPredicate : true
-	}, {
-		oInitialData : {"@$ui5.keepTransientPath" : true}
+		oInitialData : {}
 	}].forEach(function (oFixture) {
 		var sTitle = "create: relative binding, initial data: "
 				+ JSON.stringify(oFixture.oInitialData) + ", predicate: " + oFixture.sPredicate;
@@ -4946,7 +4943,6 @@ sap.ui.define([
 				.returns(oCreateInCachePromise);
 			oCreateInCachePromise.then(function () {
 				oHelperMock.expects("getPrivateAnnotation")
-					.exactly(oFixture.sPredicate || oFixture.bGetPredicate ? 1 : 0)
 					.withExactArgs(sinon.match.same(oCreatedEntity), "predicate")
 					.returns(oFixture.sPredicate);
 				oBindingMock.expects("adjustPredicate").exactly(oFixture.sPredicate ? 1 : 0)

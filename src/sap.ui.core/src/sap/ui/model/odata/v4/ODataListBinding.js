@@ -859,13 +859,11 @@ sap.ui.define([
 			if (that.isTransient()) {
 				return;
 			}
-			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
-				// refreshSingle requires the new key predicate in oContext.getPath()
-				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
-				if (sPredicate) {
-					that.adjustPredicate(sTransientPredicate, sPredicate, oContext);
-					that.oModel.checkMessages();
-				}
+			// refreshSingle requires the new key predicate in oContext.getPath()
+			sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
+			if (sPredicate) {
+				that.adjustPredicate(sTransientPredicate, sPredicate, oContext);
+				that.oModel.checkMessages();
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
 			bDeepCreate = _Helper.getPrivateAnnotation(oCreatedEntity, "deepCreate");
