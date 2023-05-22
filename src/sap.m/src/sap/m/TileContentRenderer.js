@@ -124,11 +124,6 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
 				oRm.openStart("div", oControl.getId() + "-priority-content");
 				oRm.class("sapMTilePriorityCnt");
 				oRm.openEnd();
-				//Border
-				oRm.openStart("div", oControl.getId() + "-priority-border");
-				oRm.class("sapMTilePriorityBorder");
-				oRm.openEnd();
-				oRm.close("div");
 				//Value
 				oRm.openStart("span", oControl.getId() + "-priority-value");
 				oRm.class("sapMTilePriorityValue");
