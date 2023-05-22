@@ -1502,5 +1502,97 @@
         ]
       }
     ]
+  },
+  "1.96.20": {
+    "date": "May 2023",
+    "notes": [
+      {
+        "id": "b4bf6e268834cedc734d718ab743c895d4a6a508",
+        "type": "FIX",
+        "text": " sap.m.Input: Item selection on arrow up/down when autocomplete is off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370071603"
+          }
+        ]
+      },
+      {
+        "id": "2c613adac29607d4806e7fb52783fbb1af00df08",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: adjust aria attribute names",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370060332"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380029140"
+          }
+        ]
+      },
+      {
+        "id": "51a3122606eed7c1f6c7dfcdd9d2e6915a278db8",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust click handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003578212023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003756512023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003754472023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003632232023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003796592023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370061824"
+          }
+        ]
+      },
+      {
+        "id": "97e10882b7305b02ccc8089b998e001a21931f22",
+        "type": "FIX",
+        "text": " sap.m.Input: Typе-ahead now selects the first matching item from the suggestion list or table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270141561"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400001470182023"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075125900001634732023"
+          }
+        ]
+      },
+      {
+        "id": "4b10631197d1c61e2b3c21c3a1e47af657923bb5",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370036896"
+          }
+        ]
+      }
+    ]
   }
 }
