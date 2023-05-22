@@ -235,6 +235,17 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
+				 * If no tooltip has been provided for a column, the column header text will automatically be applied
+				 * as a tooltip for the column.
+				 *
+				 * @since 1.115
+				 */
+				useColumnLabelsAsTooltips: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
+				},
+				/**
 				 * Selection mode of the table. Specifies whether single or multiple rows can be selected and how the selection can be extended. It
 				 * may also influence the visual appearance.
 				 *
