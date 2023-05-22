@@ -3029,6 +3029,7 @@ sap.ui.define([
 
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout(true); // call adjust layout to calculate the new section sizes
+		this._toggleScrolling(!this._bAllContentFitsContainer || this._headerBiggerThanAllowedToBeFixed());
 	};
 
 	ObjectPageLayout.prototype.triggerPendingLayoutUpdates = function () {
@@ -4536,9 +4537,9 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._headerBiggerThanAllowedToBeFixed = function () {
-		var iControlHeight = this._getOwnHeight();
-
-		return this._getEntireHeaderHeight() > ObjectPageLayout.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE * iControlHeight;
+		var iControlHeight = this._getOwnHeight(),
+			iStickyAreaHeight = this._getEntireHeaderHeight() + this.iAnchorBarHeight;
+		return iStickyAreaHeight > ObjectPageLayout.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE * iControlHeight;
 	};
 
 	ObjectPageLayout.prototype._headerBiggerThanAllowedToBeExpandedInTitleArea = function () {
