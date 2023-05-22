@@ -53,22 +53,23 @@
 	width: var(--sapUiIntegrationEditorPreviewWidth, calc(400px + 10rem)) !important;
 }
 
-.sapUiIntegrationDTPreview .sapFCard.sapUiIntegrationDTPreviewScale {
-	transform: scale3d(0.45, 0.45, 1);
-	transform-origin: 0 0;
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewScaleBasic {
 	width: calc(400px + 10rem) !important;
 	min-height: calc(700px - 1.5rem) !important;
 	position: absolute;
 }
 
-.sapUiIntegrationDTPreview .sapFCard.sapUiIntegrationDTPreviewScaleSpec {
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewScaleBasic.withScale {
+	transform: scale3d(0.45, 0.45, 1);
+	transform-origin: 0 0;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewScaleBasic.withScaleSpec {
 	transform: scale3d(0.45, 0.45, 1);
 	transform-origin: 100% 0;
-	width: calc(400px + 10rem) !important;
-	min-height: calc(700px - 1.5rem) !important;
-	position: absolute
 }
-.sapUiIntegrationDTPreview .sapFCard.sapUiIntegrationDTPreviewNoScale {
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewNoScale {
 	min-height: 350px !important;
 }
 

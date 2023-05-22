@@ -191,16 +191,18 @@ sap.ui.define([
 		if (oPreview) {
 			this.setAggregation("cardPreview", oPreview);
 			oPreview.removeStyleClass("sapUiIntegrationDTPreviewNoScale");
-			oPreview.removeStyleClass("sapUiIntegrationDTPreviewScale");
-			oPreview.removeStyleClass("sapUiIntegrationDTPreviewScaleSpec");
+			oPreview.removeStyleClass("sapUiIntegrationDTPreviewScaleBasic");
+			oPreview.removeStyleClass("withScale");
+			oPreview.removeStyleClass("withScaleSpec");
 			if (!this.getSettings().preview || this.getSettings().preview.scaled !== false) {
 				var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
 				if (this._getCurrentSize() !== "Full") {
+					oPreview.addStyleClass("sapUiIntegrationDTPreviewScaleBasic");
 					if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
 						// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
-						oPreview.addStyleClass("sapUiIntegrationDTPreviewScaleSpec");
+						oPreview.addStyleClass("withScaleSpec");
 					} else {
-						oPreview.addStyleClass("sapUiIntegrationDTPreviewScale");
+						oPreview.addStyleClass("withScale");
 					}
 				} else {
 					oPreview.addStyleClass("sapUiIntegrationDTPreviewNoScale");
