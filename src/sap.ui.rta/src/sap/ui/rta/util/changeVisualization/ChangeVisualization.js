@@ -497,6 +497,7 @@ sap.ui.define([
 	ChangeVisualization.prototype._updateChangeIndicators = function() {
 		var oSelectors = this._oChangeIndicatorRegistry.getSelectorsWithRegisteredChanges();
 		var oIndicators = {};
+		this._mDisplayElementsKeyMap = {};
 		Object.keys(oSelectors).forEach(function(sSelectorId) {
 			var aChangesOnIndicator = oSelectors[sSelectorId];
 			var aRelevantChanges = this._filterRelevantChanges(oSelectors[sSelectorId]);
@@ -529,12 +530,22 @@ sap.ui.define([
 			var sOverlayId = oOverlay.getId();
 			if (!oChangeIndicator) {
 				this._createChangeIndicator(oOverlay, sSelectorId);
+				// Assumption: all changes on an indicator affect the same elements
+				var sDisplayElementsKey = aChangesOnIndicator[0].displayElementsKey;
+				// This map is built to collect indicators with the same display elements (e.g. OP Section & AnchorBar)
+				if (!this._mDisplayElementsKeyMap[sDisplayElementsKey]) {
+					this._mDisplayElementsKeyMap[sDisplayElementsKey] = [sSelectorId];
+				} else {
+					this._mDisplayElementsKeyMap[sDisplayElementsKey].push(sSelectorId);
+				}
 			} else if (oChangeIndicator.getOverlayId() !== sOverlayId) {
 				// Overlay id might change, e.g. during undo/redo of dirty changes
 				oChangeIndicator.setOverlayId(sOverlayId);
 			}
 			return undefined;
 		}.bind(this));
+
+		this._registerIndicatorBrowserEvents();
 
 		if (
 			!deepEqual(
@@ -546,6 +557,46 @@ sap.ui.define([
 				content: oIndicators
 			});
 		}
+	};
+
+	// Multiple indicators can refer to the same control (e.g. OP Section + AnchorBar),
+	// so when one of them is hovered/focused the other must also react to show the connection between them
+	ChangeVisualization.prototype._registerIndicatorBrowserEvents = function() {
+		Object.keys(this._mDisplayElementsKeyMap).forEach(function(sDisplayElementsKey) {
+			var aIndicators = this._mDisplayElementsKeyMap[sDisplayElementsKey].map(function(sSelectorId) {
+				return this._oChangeIndicatorRegistry.getChangeIndicator(sSelectorId);
+			}.bind(this));
+
+			function onIndicatorInteraction(bActivate, oEvent) {
+				aIndicators.forEach(function(oIndicator) {
+					if (oIndicator.getVisible()) {
+						oIndicator.onIndicatorBrowserInteraction(bActivate, oEvent);
+					}
+				});
+			}
+
+			// When the detail popover is opened all connected overlays should be selected
+			function onDetailPopoverOpened(oEvent) {
+				aIndicators.forEach(function(oIndicator) {
+					if (oIndicator.getVisible()) {
+						oIndicator.onDetailPopoverOpened(oEvent);
+					}
+				});
+			}
+
+			aIndicators.forEach(function(oIndicator) {
+				oIndicator.attachBrowserEvent("mouseover", onIndicatorInteraction.bind(this, true));
+				oIndicator.attachBrowserEvent("focusin", onIndicatorInteraction.bind(this, true));
+				oIndicator.attachBrowserEvent("mouseout", onIndicatorInteraction.bind(this, false));
+				oIndicator.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));
+				oIndicator.attachDetailPopoverOpened(onDetailPopoverOpened.bind(this));
+
+				var oOverlay = Core.byId(oIndicator.getOverlayId());
+				// De-selection of connected overlays must happen when the hover/focus leaves the overlay
+				oOverlay.attachBrowserEvent("mouseout", onIndicatorInteraction.bind(this, false));
+				oOverlay.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));
+			});
+		}.bind(this));
 	};
 
 	ChangeVisualization.prototype._filterRelevantChanges = function(aChangeVizInfo) {

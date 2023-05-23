@@ -172,7 +172,16 @@ sap.ui.define([
 		layer : "VENDOR",
 		afterAction : fnConfirmSection1IsOn2ndPosition,
 		afterUndo : fnConfirmSection1IsOn1stPosition,
-		afterRedo : fnConfirmSection1IsOn2ndPosition
+		afterRedo : fnConfirmSection1IsOn2ndPosition,
+		changeVisualization: function(oView) {
+			return {
+				displayElementId: "section1",
+				info: {
+					affectedControls: ["section1"],
+					displayControls: ["section1", oView.byId("op").getAggregation("_anchorBar").getContent()[2].getId()]
+				}
+			};
+		}
 	});
 
 	function fnConfirmIFrameSectionIsOn2ndPosition(oAppComponent, oViewAfterAction, assert) {
@@ -247,7 +256,16 @@ sap.ui.define([
 		layer : "VENDOR",
 		afterAction : fnConfirmIFrameSectionIsOn2ndPosition,
 		afterUndo : fnConfirmIFrameWasRemoved,
-		afterRedo : fnConfirmIFrameSectionIsOn2ndPosition
+		afterRedo : fnConfirmIFrameSectionIsOn2ndPosition,
+		changeVisualization: function(oView) {
+			return {
+				displayElementId: oView.byId("iFrameSection").getId(),
+				info: {
+					affectedControls: [oView.byId("iFrameSection").getId()],
+					displayControls: [oView.byId("iFrameSection").getId(), oView.byId("op").getAggregation("_anchorBar").getContent()[1].getId()]
+				}
+			};
+		}
 	});
 
 	// Update IFrame
@@ -333,7 +351,7 @@ sap.ui.define([
 	elementActionTest("Checking the rename action for a Section", {
 		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
-			'<uxap:ObjectPageLayout>' +
+			'<uxap:ObjectPageLayout id="op">' +
 				'<uxap:sections>' +
 					'<uxap:ObjectPageSection id="section" title="Title 1">' +
 						'<uxap:subSections>' +
@@ -420,7 +438,16 @@ sap.ui.define([
 		},
 		afterAction: fnConfirmSectionRenamedWithNewValue,
 		afterUndo: fnConfirmSectionIsRenamedWithOldValue,
-		afterRedo: fnConfirmSectionRenamedWithNewValue
+		afterRedo: fnConfirmSectionRenamedWithNewValue,
+		changeVisualization: function(oView) {
+			return {
+				displayElementId: "section",
+				info: {
+					affectedControls: ["section"],
+					displayControls: ["section", oView.byId("layout").getAggregation("_anchorBar").getContent()[0].getId()]
+				}
+			};
+		}
 	});
 
 	// Rename action of section with one subsection with NO title
@@ -717,7 +744,16 @@ sap.ui.define([
 		},
 		afterAction: fnConfirmSectionIsVisible,
 		afterUndo: fnConfirmSectionIsNotVisible,
-		afterRedo: fnConfirmSectionIsVisible
+		afterRedo: fnConfirmSectionIsVisible,
+		changeVisualization: function(oView) {
+			return {
+				displayElementId: "section",
+				info: {
+					affectedControls: ["section"],
+					displayControls: ["section", oView.byId("layout").getAggregation("_anchorBar").getContent()[0].getId()]
+				}
+			};
+		}
 	});
 
 	elementActionTest("Checking the rename action for a Section with one SubSection with title, when subSectionLayout='TitleOnLeft' ", {

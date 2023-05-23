@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/AddIFrame",
 	"sap/ui/fl/changeHandler/common/getTargetAggregationIndex",
 	"sap/ui/fl/changeHandler/common/createIFrame"
 ], function (
+	JsControlTreeModifier,
 	BaseAddIFrame,
 	getTargetAggregationIndex,
 	createIFrame
@@ -102,6 +104,30 @@ sap.ui.define([
 			oCondenserInfo.updateControl.id = oCondenserInfo.affectedControl.id + '-iframe';
 		}
 		return oCondenserInfo;
+	};
+
+	AddIFrameObjectPageLayout.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		var oSelector = oChange.getContent().selector;
+		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		var oAnchorBar = oElement.getParent().getAggregation("_anchorBar");
+		var aAffectedControls = [oSelector];
+		var aDisplayControls = [oSelector];
+
+		oAnchorBar.getAggregation("content").forEach(function(oAnchorBarItem) {
+			oAnchorBarItem.getAggregation("customData").some(function(oCustomData) {
+				if (
+					oCustomData.getKey() === "sectionId" &&
+					oElement.getId() === oCustomData.getProperty("value")
+				) {
+					aDisplayControls.push(oAnchorBarItem.getId());
+				}
+			});
+		});
+
+		return {
+			affectedControls: aAffectedControls,
+			displayControls: aDisplayControls
+		};
 	};
 
 	return AddIFrameObjectPageLayout;
