@@ -4958,7 +4958,7 @@ sap.ui.define([
 	});
 });
 
-//*****************************************************************************************************************
+	//*****************************************************************************************************************
 	QUnit.test("getSampleValue DateTimeWithTimezone", function (assert) {
 		this.stub(UI5Date, "getInstance").onFirstCall().returns({getFullYear: function () {return 2012;}})
 			.callThrough(); // only stub first call of UI5Date.getInstance to fake current year
