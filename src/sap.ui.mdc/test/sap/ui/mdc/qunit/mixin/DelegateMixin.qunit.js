@@ -177,6 +177,12 @@ sap.ui.define([
 
 	QUnit.test("getTypeUtil", function(assert) {
 		oSomeInstance = new TestClass();
+
+		if (!oSomeInstance.getTypeUtil) {
+			assert.ok(true, "Test not executed in legacy-free build");
+			return undefined;
+		}
+
 		sinon.spy(oSomeInstance, "getTypeMap");
 		return oSomeInstance.initControlDelegate().then(function () {
 			assert.notOk(oSomeInstance.getTypeMap.called, "getTypeMap not executed yet");
