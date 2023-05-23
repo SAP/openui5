@@ -436,6 +436,29 @@ sap.ui.define([
 		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
+	QUnit.test("Tests if creating tokens escapes text value", function(assert) {
+		var oMI = new MultiInput({
+			tokens: [
+				new Token({ text: "Token 1" })
+			]
+		}).placeAt("content");
+		var sText = '{"test":"abc"}';
+		var fnValidator = function(args){
+			return new Token({ text: args.text });
+		};
+
+		oMI.setValue(sText);
+		oMI.addValidator(fnValidator);
+		Core.applyChanges();
+
+		oMI.onsapenter();
+		Core.applyChanges();
+
+		assert.strictEqual(oMI.getTokens()[1].getText(), sText, "Token is created with escaped text");
+
+		oMI.destroy();
+	});
+
 	QUnit.test("test text validation on focus leave", function(assert) {
 		//arrange
 		var testTokenText = "C-Item";

@@ -1970,7 +1970,7 @@ function(
 		if (!this.getMaxTokens() || this.getTokens().length < this.getMaxTokens()) {
 			this._bIsValidating = true;
 			this.addValidateToken({
-				text: sValue,
+				text: ManagedObject.escapeSettingsValue(sValue),
 				token: oToken,
 				suggestionObject: oItem,
 				validationCallback: this._validationCallback.bind(this, iOldLength)
