@@ -201,8 +201,7 @@ sap.ui.define([
 					height: {type: "sap.ui.core.CSSSize", group: "Appearance"},
 					/**
 					* Enables grid layout in mobile view.
-                                        * @private
-                                        * @since 1.99
+        			* @since 1.99
 					* @experimental since 1.99
 					*/
 					gridLayout: {type: "boolean", defaultValue: false}
