@@ -63,10 +63,11 @@ sap.ui.define([
 		});
 	}
 
+	var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
 		beforeEach: function() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
-			this.oModel = ContextBasedAdaptationsAPI.createModel([]);
+			this.oModel = ContextBasedAdaptationsAPI.createModel([DEFAULT_ADAPTATION], DEFAULT_ADAPTATION, true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
 			this.oToolbar = initializeToolbar();
 			this.oManageAdaptations = new ManageAdaptations({ toolbar: this.oToolbar });
@@ -86,7 +87,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.module("the manage adaptations dialog is created with empty ", {
 			beforeEach: function() {
-				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: []});
+				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: [DEFAULT_ADAPTATION]});
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oManageAdaptations.openManageAdaptationDialog()
 					.then(function (oDialog) {

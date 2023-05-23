@@ -44,7 +44,8 @@ sap.ui.define([
 			this.oAddAdaptationsDialog = new AddAdaptationDialog({ toolbar: this.oToolbar });
 			var oTempAdaptationsModel = new JSONModel();
 			oTempAdaptationsModel.loadData("./model/adaptations.json", "", false);
-			this.oModel = ContextBasedAdaptationsAPI.createModel(oTempAdaptationsModel.getProperty("/adaptations"));
+			var aAdaptations = oTempAdaptationsModel.getProperty("/adaptations");
+			this.oModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 		},
 		onManageAdaptations: function() {
 			setStubsWithData.call(this);

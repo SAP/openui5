@@ -109,7 +109,18 @@ sap.ui.define([
 				return oAdaptationsPromise;
 			})
 			.then(function(oAdaptations) {
-				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, mPropertyBag.control, bContextBasedAdaptationsEnabled);
+				// Determine displayed adaptation
+				// Flex Info Session returns currently shown one based on Flex Data response
+				// If no longer available switch to highest ranked one
+				var oFlexInfoSession = FlexInfoSession.get(mPropertyBag.control) || {};
+				var oDisplayedAdaptation = oAdaptations.adaptations[0];
+				if (oFlexInfoSession.adaptationId) {
+					oDisplayedAdaptation = oAdaptations.adaptations.find(function(oAdaptation) {
+						return oAdaptation.id === oFlexInfoSession.adaptationId;
+					}) || oDisplayedAdaptation;
+				}
+
+				return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled);
 			})
 			.then(function(oModel) {
 				_mInstances[sReference] = _mInstances[sReference] || {};
@@ -121,16 +132,23 @@ sap.ui.define([
 
 	/**
 	 * Initializes and creates an new adaptation Model
-	 * @param {string[]} aAdaptations - List of adaptations from backend
-	 * @param {sap.ui.core.Control} oControl - Control for which the model is created
+	 * @param {object[]} aAdaptations - List of adaptations from backend
+	 * @param {object} oDisplayedAdaptation - Adaptation to be set as displayedAdaptation
 	 * @param {boolean} bContextBasedAdaptationsEnabled - Whether the feature is enabled
 	 * @returns {sap.ui.model.json.JSONModel} - Model of adaptations enhanced with additional properties
 	 */
-	ContextBasedAdaptationsAPI.createModel = function(aAdaptations, oControl, bContextBasedAdaptationsEnabled) {
+	ContextBasedAdaptationsAPI.createModel = function(aAdaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled) {
 		if (!Array.isArray(aAdaptations)) {
 			throw Error("Adaptations model can only be initialized with an array of adaptations");
 		}
+		if (bContextBasedAdaptationsEnabled && !oDisplayedAdaptation) {
+			throw Error("Invalid call, must pass displayed adaptation");
+		}
+		if (!bContextBasedAdaptationsEnabled && aAdaptations.length) {
+			throw Error("Invalid call, must not pass adaptations if feature is disabled");
+		}
 
+		// TODO Extract class
 		var oModel = new JSONModel({
 			allAdaptations: [],
 			adaptations: [],
@@ -194,8 +212,6 @@ sap.ui.define([
 		};
 		if (aAdaptations.length > 0) {
 			oModel.updateAdaptations(aAdaptations);
-			var oFlexInfoSession = FlexInfoSession.get(oControl) || {};
-			var oDisplayedAdaptation = oFlexInfoSession.adaptationId ? aAdaptations[oModel.getIndexByAdaptationId(oFlexInfoSession.adaptationId)] : aAdaptations[0];
 			oModel.setProperty("/displayedAdaptation", oDisplayedAdaptation);
 		}
 		return oModel;
@@ -267,25 +283,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Discards the model, initializes it again and sets the displayed adaptation.
+	 * Discards the model, initializes it again and returns the displayed adaptation.
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {string} Displayed adaptation id of the refreshed model
 	 */
 	ContextBasedAdaptationsAPI.refreshAdaptationModel = function(mPropertyBag) {
-		var sDisplayedAdaptationId = this.getDisplayedAdaptationId(mPropertyBag);
 		this.clearInstances();
 		return this.initialize(mPropertyBag)
 		.then(function(oModel) {
-			oModel.getProperty("/allAdaptations").some(function(oAdaptation) {
-				if (oAdaptation.id === sDisplayedAdaptationId) {
-					oModel.setProperty("/displayedAdaptation", oAdaptation);
-					oModel.updateBindings(true);
-					return true;
-				}
-				return false;
-			});
 			return oModel.getProperty("/displayedAdaptation/id");
 		});
 	};
@@ -513,7 +520,6 @@ sap.ui.define([
 		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
 		return Storage.contextBasedAdaptation.load({
 			layer: mPropertyBag.layer,
-			flexObject: mPropertyBag.parameters,
 			appId: mPropertyBag.appId,
 			version: getParentVersion(mPropertyBag)
 		}).then(function(oAdaptations) {
