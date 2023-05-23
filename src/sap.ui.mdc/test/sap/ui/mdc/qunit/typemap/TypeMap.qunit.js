@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/mdc/util/TypeMap",
-	"sap/ui/mdc/enum/BaseType"
+	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/model/type/String"
 ],
 function(
 	TypeMap,
-	BaseType
+	BaseType,
+	StringType
 ) {
     "use strict";
 
@@ -141,4 +143,23 @@ function(
 		assert.notOk(Array.from(TestTypeMap._getMap()).length > 1, "TypeMap does not contain additional data.");
 
 	});
+
+	QUnit.module("Type initialization", { beforeEach: function () {
+		TestTypeMap = Object.assign({}, TypeMap);
+		_mMap = TestTypeMap._getMap();
+		DerivedTestTypeMap = Object.assign({}, TestTypeMap);
+	}});
+
+	QUnit.test("initializeTypeFromValue", function(assert) {
+		var oType = new StringType();
+		assert.deepEqual(TestTypeMap.initializeTypeFromValue(oType, "Test"), {}, "empty object returned");
+		oType.destroy();
+	});
+
+	QUnit.test("initializeInternalType", function(assert) {
+		var oType = new StringType();
+		assert.deepEqual(TestTypeMap.initializeInternalType(oType, {}), undefined, "nothing returned");
+		oType.destroy();
+	});
+
 });
