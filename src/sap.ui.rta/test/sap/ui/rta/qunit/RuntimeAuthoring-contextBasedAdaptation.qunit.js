@@ -172,7 +172,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "canSave").returns(true);
 			this.oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
 			this.nVersionParameter = 1;
 			this.sAdaptationId = "id_1234";
 			return this.oRta.start();
@@ -273,7 +273,7 @@ sap.ui.define([
 
 			this.oRemoveAllCommandsSpy = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
 			this.oRemoveStub = sandbox.stub(ContextBasedAdaptationsAPI, "remove").resolves();
 			this.nVersionParameter = 1;
 			this.sAdaptationId = "id_5678";

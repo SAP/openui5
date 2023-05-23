@@ -132,33 +132,34 @@ sap.ui.define([
 	}
 
 	function triggerReloadOnStart(oReloadInfo, bVersioningEnabled, bDeveloperMode) {
-		if (mUShellServices.CrossApplicationNavigation && bVersioningEnabled) {
-			// clears FlexState and triggers reloading of the flex data without blocking
-			if (oReloadInfo.isDraftAvailable) {
-				VersionsAPI.loadDraftForApplication({
-					control: oReloadInfo.selector,
-					layer: oReloadInfo.layer,
-					allContexts: oReloadInfo.allContexts,
-					adaptationId: oReloadInfo.adaptationId
-				});
-			} else {
-				VersionsAPI.loadVersionForApplication({
+		return Promise.resolve().then(function() {
+			if (mUShellServices.CrossApplicationNavigation && bVersioningEnabled) {
+				// clears FlexState and triggers reloading of the flex data without blocking
+				if (oReloadInfo.isDraftAvailable) {
+					return VersionsAPI.loadDraftForApplication({
+						control: oReloadInfo.selector,
+						layer: oReloadInfo.layer,
+						allContexts: oReloadInfo.allContexts,
+						adaptationId: oReloadInfo.adaptationId
+					});
+				}
+				return VersionsAPI.loadVersionForApplication({
 					control: oReloadInfo.selector,
 					layer: oReloadInfo.layer,
 					allContexts: oReloadInfo.allContexts,
 					adaptationId: oReloadInfo.adaptationId
 				});
 			}
-		}
-		var sReason = getReloadMessageOnStart(oReloadInfo);
-		// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
-		var pMessageBox = bDeveloperMode ? Promise.resolve() : Utils.showMessageBox("information", sReason);
-		return pMessageBox.then(function() {
+			return undefined;
+		}).then(function() {
+			var sReason = getReloadMessageOnStart(oReloadInfo);
+			// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
+			return bDeveloperMode ? undefined : Utils.showMessageBox("information", sReason);
+		}).then(function() {
 			ReloadManager.enableAutomaticStart(oReloadInfo.layer, oReloadInfo.selector);
 			oReloadInfo.onStart = true;
 			return ReloadManager.triggerReload(oReloadInfo);
-		})
-		.then(function() {
+		}).then(function() {
 			return true;
 		});
 	}
