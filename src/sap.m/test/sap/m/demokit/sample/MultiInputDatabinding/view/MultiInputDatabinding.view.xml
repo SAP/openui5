@@ -11,6 +11,7 @@
 	<MultiInput
 		id="multiinput1"
 		showValueHelp="false"
+		showSuggestion="false"
 		tokens="{
 			path: '/ProductCollection',
 			sorter: { path: 'Name' }
