@@ -1255,6 +1255,31 @@ function(
 		};
 
 		/**
+		 * Handle when escape is pressed. Escaping unsaved input will restore
+		 * the last valid value. If the value cannot be parsed into a date,
+		 * the input will be cleared.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		TimePicker.prototype.onsapescape = function(oEvent) {
+			var oLastDate = this._parseValue(this.getLastValue(), true),
+				oInputDate = this._parseValue(this._getInputValue(), true),
+				sDisplayFormatLastDate = this._formatValue(oLastDate, false),
+				sDisplayFormatInputDate = this._formatValue(oInputDate, false),
+				sInputValue = this.getMaskMode() === "Off" ? this._getInputValue() : sDisplayFormatInputDate;
+
+			if (sInputValue !== sDisplayFormatLastDate) {
+				oEvent.setMarked();
+				oEvent.preventDefault();
+
+				this.updateDomValue(sDisplayFormatLastDate);
+				this.onValueRevertedByEscape(sDisplayFormatLastDate, sDisplayFormatInputDate);
+			}
+			this._bCheckForLiveChange = true;
+		};
+
+		/**
 		 * Handles the shift + pagedown and ctrl + shift + pagedown events.
 		 *
 		 * Decreases time by one minute or second.
@@ -1302,7 +1327,9 @@ function(
 
 				oEvent.preventDefault(); //ie expands the address bar on F4
 			} else if (!this._isMobileDevice()) {
-				MaskEnabler.onkeydown.call(this, oEvent);
+				if (iKC !== oKC.ESCAPE) {
+					MaskEnabler.onkeydown.call(this, oEvent);
+				}
 			} else {
 				if (iKC === KeyCodes.ENTER || iKC === KeyCodes.SPACE) {
 					this._openNumericPicker();
