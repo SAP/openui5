@@ -46,7 +46,7 @@ sap.ui.define([
 	 * Constructor for a Condition type.
 	 *
 	 * @class
-	 * This class represents a type that is used to map a single condition to a single-value control
+	 * This class represents a type that is used to map a single condition to a single-value control.
 	 *
 	 * @extends sap.ui.model.SimpleType
 	 *
@@ -67,9 +67,9 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] <code>BindingContext</code> of field. Used to get a key or description from the value help using in/out parameters. (In a table, the value help might be connected to a different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field, for example, for date types; a different type is used internally to have different <code>formatOptions</code>
-	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] additional Type used on other part of a field. (This is the case for unit fields.)
-	 * @param {sap.ui.model.Type[]} [oFormatOptions.compositeTypes] additional Types used for parts of a <code>CompositeType</code>
-	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field. Only used if <code>isUnit</code> is set. // TODO: better solution
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] additional type used on other part of a field. (For example, for unit fields.)
+	 * @param {sap.ui.model.Type[]} [oFormatOptions.compositeTypes] additional types used for parts of a <code>CompositeType</code>
+	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field.
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {sap.ui.mdc.condition.ConditionObject} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined and is just returned
 	 * @param {object} [oFormatOptions.delegate] Field delegate to handle model-specific logic
@@ -77,7 +77,7 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.preventGetDescription] If set, description is not read by <code>formatValue</code> as it is known that no description exists or might be set later
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
-	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance if the calling control
+	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance of the calling control
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionType
 	 */
@@ -107,16 +107,16 @@ sap.ui.define([
 
 	/**
 	 * Formats the given condition to an output value of the given target type.
-	 * This values are formatted using the given data type. Depending of the operator
-	 * and the configuration (set in <code>FormatOptions</code>) a description will be determined via given value help or delegate.
+	 * These values are formatted using the given data type. Depending on the operator
+	 * and the configuration (set in <code>FormatOptions</code>), a description will be determined by a given value help or delegate.
 	 *
 	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition
 	 *	The condition to be formatted
 	 * @param {string} sTargetType
-	 *	The target type; see {@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
-	 *	In addition to the standard target types <code>sap.ui.mdc.raw</code> can be used. In this case the value is not formatted and just
-	 *	forwarded to the target. If the value is an array representing data for a <code>CompositeType</code> the index of the needed raw value can be added to the
-	 *	name (For example if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
+	 *	The target type; see {@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}.
+	 *	In addition to the standard target types, <code>sap.ui.mdc.raw</code> can be used. In this case the value is not formatted and just
+	 *	forwarded to the target. If the value is an array representing data for a <code>CompositeType</code>, the index of the needed raw value can be added to the
+	 *	name (For example, if a unit should be forwarded as raw value, <code>sap.ui.mdc.raw:1</code> can be used).
 	 * @return {any|Promise}
 	 *	The formatted output value or a <code>Promise</code> resolving with the formatted value
 	 * @throws {sap.ui.model.FormatException}
@@ -287,23 +287,22 @@ sap.ui.define([
 	/**
 	 * Parses an external value of the given source type to a condition that holds the value in model
 	 * representation.
-	 * These values are parsed using the given data type. Depending of the operator
-	 * and the configuration (set in <code>FormatOptions</code>) a value will be determined via given value help or delegate.
+	 * These values are parsed using the given data type. Depending on the operator
+	 * and the configuration (set in <code>FormatOptions</code>), a value will be determined by a given value help or delegate.
 	 *
 	 * @param {any} vValue
-	 *	The value to be parsed
+	 *	The value that is parsed
 	 * @param {string} sSourceType
 	 *	The type of the given value; see
 	 *	{@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
-	 *	In addition to the standard source types <code>sap.ui.mdc.raw</code> can be used. In this case the value is not parsed and just
-	 *	used in the condition. If the value of the condition is an array representing data for a <code>CompositeType</code> the index of the needed raw value can be added to the
-	 *	name (For example if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
+	 *	In addition to the standard source types, <code>sap.ui.mdc.raw</code> can be used. In this case the value is not parsed and just
+	 *	used in the condition. If the value of the condition is an array representing data for a <code>CompositeType</code>, the index of the needed raw value can be added to the
+	 *	name (For example, if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
 	 * @return {null|sap.ui.mdc.condition.ConditionObject|Promise<null|sap.ui.mdc.condition.ConditionObject>}
 	 *	The condition or a <code>Promise</code> resolving with the condition.
-	 *  If there is no value <code>null</code> is returned.
+	 *  If there is no value, <code>null</code> is returned.
 	 * @throws {sap.ui.model.ParseException}
-	 *	If parsing to the model type is not possible; the message of the exception is language
-	 *	dependent as it may be displayed on the UI
+	 *	If parsing to the model type is not possible; the message of the exception is language-dependent as it may be displayed on the UI
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
@@ -326,25 +325,24 @@ sap.ui.define([
 	/**
 	 * Parses an external value of the given source type to a condition that holds the value in model
 	 * representation.
-	 * These values are parsed using the given data type. Depending of the operator
-	 * and the configuration (set in <code>FormatOptions</code>) a value will be determined via given value help or delegate.
+	 * These values are parsed using the given data type. Depending on the operator
+	 * and the configuration (set in <code>FormatOptions</code>) a value will be determined by a given value help or delegate.
 	 *
 	 * @param {any} vValue
-	 *	The value to be parsed
+	 *	The value that is parsed
 	 * @param {string} sSourceType
 	 *	The type of the given value; see
 	 *	{@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
-	 *	In addition to the standard source types <code>sap.ui.mdc.raw</code> can be used. In this case the value is not parsed and just
-	 *	used in the condition. If the value of the condition is an array representing data for a <code>CompositeType</code> the index of the needed raw value can be added to the
-	 *	name (For example if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
+	 *	In addition to the standard source types, <code>sap.ui.mdc.raw</code> can be used. In this case the value is not parsed and just
+	 *	used in the condition. If the value of the condition is an array representing data for a <code>CompositeType</code> ,the index of the needed raw value can be added to the
+	 *	name (For example, if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
 	 * @param {boolean} bInputValidationEnabled
 	 *	If set, input validation is enabled, otherwise disabled, even if delegate or ValueHelp allows it. (Pasting multiple values)
 	 * @return {null|sap.ui.mdc.condition.ConditionObject|Promise<null|sap.ui.mdc.condition.ConditionObject>}
 	 *	The condition or a <code>Promise</code> resolving with the condition.
-	 *  If there is no value <code>null</code> is returned.
+	 *  If there is no value, <code>null</code> is returned.
 	 * @throws {sap.ui.model.ParseException}
-	 *	If parsing to the model type is not possible; the message of the exception is language
-	 *	dependent as it may be displayed on the UI
+	 *	If parsing to the model type is not possible; the message of the exception is language-dependent as it may be displayed on the UI
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.ConditionsType
@@ -715,12 +713,12 @@ sap.ui.define([
 	 * Validates a given condition. The values of the condition are validated using the given data type.
 	 *
 	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition
-	 *	The condition to be validated
+	 *	The condition that is validated
 	 * @returns {void|Promise}
 	 *	<code>undefined</code> or a <code>Promise</code> resolving with an undefined value
 	 * @throws {sap.ui.mdc.condition.ConditionValidateException}
 	 *	If at least one of the values of the condition is not valid for the given data type; the message of the exception is
-	 *	language dependent as it may be displayed on the UI
+	 *	language-dependent as it may be displayed on the UI
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe

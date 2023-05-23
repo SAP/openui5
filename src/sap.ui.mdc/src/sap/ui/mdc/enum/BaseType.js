@@ -10,9 +10,9 @@ sap.ui.define(function() {
 	/**
 	 * Enumeration of the possible basic data types
 	 *
-	 * In {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
-	 * and {@link sap.ui.mdc.FilterField FilterField} different data types can be used. This data types might
-	 * be model dependent. To handle them model independent internally basic types are used.
+	 * In {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
+	 * and {@link sap.ui.mdc.FilterField FilterField}, different data types can be used. These data types might
+	 * be model-dependent. To handle them model-independently, basic types are used internally.
 	 *
 	 * @enum {string}
 	 * @private
@@ -41,7 +41,7 @@ sap.ui.define(function() {
 		Numeric: "Numeric",
 
 		/**
-		 * Data type represents a boolean
+		 * Data type represents a Boolean
 		 * @private
 		 * @ui5-restricted sap.fe
 		 * @MDC_PUBLIC_CANDIDATE
@@ -74,7 +74,7 @@ sap.ui.define(function() {
 
 		/**
 		 * Data type represents a unit.
-		 * This means a composite type with a number and a unit part is used.
+		 * A composite type with a number and a unit part is used.
 		 * @private
 		 * @ui5-restricted sap.fe
 		 * @MDC_PUBLIC_CANDIDATE

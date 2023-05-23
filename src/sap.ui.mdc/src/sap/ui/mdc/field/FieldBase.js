@@ -166,7 +166,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the value and/or description of the field is shown and in what order.
+				 * Defines whether the value and/or description of the field is shown and in which order.
 				 */
 				display: {
 					type: "sap.ui.mdc.enum.FieldDisplay",
@@ -185,7 +185,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the text directionality of the input field, for example <code>RTL</code>, <code>LTR</code>.
+				 * Defines the text directionality of the input field, for example, <code>RTL</code> or <code>LTR</code>.
 				 *
 				 * <b>Note:</b> If the rendered control doesn't support this feature, this property is ignored.
 				 */
@@ -196,8 +196,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines a short hint intended to aid the user with data entry when the control has no value.
-				 * If the value is <code>null</code> no placeholder is shown.
+				 * Defines a short hint intended to help the user with the data entry when the control has no value.
+				 * If the value is <code>null</code>, no placeholder is shown.
 				 *
 				 * <b>Note:</b> If the rendered control doesn't support this feature, this property is ignored.
 				 */
@@ -208,7 +208,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Visualizes the validation state of the control, for example <code>Error</code>, <code>Warning</code>, <code>Success</code>.
+				 * Visualizes the validation state of the control, for example, <code>Error</code>, <code>Warning</code> or <code>Success</code>.
 				 *
 				 * <b>Note:</b> The visualization of the <code>ValueState</code> property is handled by the inner rendered control.
 				 * If a control is set (using <code>content</code>, <code>contentEdit</code>, or <code>contentDisplay</code>), this control needs to support
@@ -221,7 +221,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the text that appears in the value state message pop-up. If this has not specified, a default text from the resource bundle is shown.
+				 * Defines the text that appears in the value state message pop-up. If this has not been specified, a default text from the resource bundle is shown.
 				 */
 				valueStateText: {
 					type: "string",
@@ -245,7 +245,7 @@ sap.ui.define([
 				 *
 				 * This property is only used for single-value fields.
 				 *
-				 * <b>Note</b> If the data type used doesn't support multiple lines an error is thrown.
+				 * <b>Note</b> If the data type used doesn't support multiple lines, an error is thrown.
 				 */
 				multipleLines: {
 					type: "boolean",
@@ -254,9 +254,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the maximum amount of conditions that are allowed for this field.
+				 * Sets the maximum number of conditions that are allowed for this field.
 				 *
-				 * The default value of -1 indicates that an unlimited amount of conditions can be defined.
+				 * The default value of -1 indicates that an unlimited number of conditions can be defined.
 				 *
 				 * <b>Note</b> If the data type used doesn't support multiple conditions, an error is thrown.
 				 */
@@ -269,11 +269,11 @@ sap.ui.define([
 				/**
 				 * Sets the conditions that represent the values of the field.
 				 *
-				 * This should be bound to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} using the corresponding fieldPath.
+				 * These should be bound to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} using the corresponding <code>fieldPath</code>.
 				 *
 				 * <b>Note:</b> For {@link sap.ui.mdc.FilterField FilterField} controls, the <code>conditions</code> property must be used to bind
 				 * {@link sap.ui.mdc.FilterField FilterField} to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.</br>
-				 * For example, for a {@link sap.ui.mdc.FilterField FilterField} control inside a {@link sap.ui.mdc.FilterBar FilterBar} control the binding looks like this:</br>
+				 * For example, for a {@link sap.ui.mdc.FilterField FilterField} control inside a {@link sap.ui.mdc.FilterBar FilterBar} control, the binding looks like this:</br>
 				 * <code>conditions="{$filters>/conditions/propertyPath}"</code> with the following data:
 				 * <ul>
 				 * <li><code>$filters</code> as the name of the condition model</li>
@@ -281,7 +281,7 @@ sap.ui.define([
 				 * <li><code>propertyPath</code> as the property name</li>
 				 * </ul>
 				 *
-				 * For an Any (see {@link sap.ui.model.FilterOperator}) {@link sap.ui.mdc.FilterField FilterField} control, the binding looks like this:</br>
+				 * For an <code>Any</code> (see {@link sap.ui.model.FilterOperator}) {@link sap.ui.mdc.FilterField FilterField} control, the binding looks like this:</br>
 				 * <code>conditions='{$filters>/conditions/navPath&#42;/propertyPath}'</code> with the following data:
 				 * <ul>
 				 * <li><code>$filters</code> as the name of the condition model</li>
@@ -306,8 +306,7 @@ sap.ui.define([
 				 *
 				 * This can be used by {@link sap.ui.mdc.FilterBar FilterBar} or {@link sap.ui.layout.form.Form Form} controls to create a {@link sap.m.Label Label} control for the field.
 				 *
-				 * @experimental
-				 * @since 1.62.0 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 * @since 1.62.0
 				 */
 				label: {
 					type: "string",
@@ -332,7 +331,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * If set, an empty <code>Field</code> renders an empty-indicator in display mode.
+				 * If set, an empty <code>Field</code> renders an empty indicator in display mode.
 				 *
 				 * This property only takes effect if <code>editMode</code> is set to <code>Display</code>.
 				 *
@@ -385,8 +384,8 @@ sap.ui.define([
 				/**
 				 * Optional content that can be rendered.
 				 *
-				 * Per default, depending on <code>editMode</code>, <code>multipleLines</code> and used data type a content control is rendered. For simple string types a {@link sap.m.Text Text}
-				 * control is rendered in display mode and a {@link sap.m.Input Input} control in edit mode. If a control is assigned in the <code>content</code> aggregation this will be
+				 * Per default, depending on <code>editMode</code>, <code>multipleLines</code> and the used data type, a content control is rendered. For simple string types, a {@link sap.m.Text Text}
+				 * control is rendered in display mode and a {@link sap.m.Input Input} control in edit mode. If a control is assigned in the <code>content</code> aggregation, this will be
 				 * rendered instead.
 				 *
 				 * <b>Note:</b> Bind the value-holding property of the control to <code>'$field>/conditions'</code>
@@ -407,8 +406,8 @@ sap.ui.define([
 				/**
 				 * Optional content to be rendered if the <code>editMode</code> property is not set to <code>Display</code>.
 				 *
-				 * Per default, depending on <code>multipleLines</code> and used data type a content control is rendered in edit mode. For simple string types a {@link sap.m.Input Input}
-				 * control is rendered in edit mode. If a control is assigned in the <code>contentEdit</code> aggregation this will be rendered instead.
+				 * Per default, depending on <code>multipleLines</code> and the used data type, a content control is rendered in edit mode. For simple string types, an {@link sap.m.Input Input}
+				 * control is rendered in edit mode. If a control is assigned in the <code>contentEdit</code> aggregation, this will be rendered instead.
 				 *
 				 * <b>Note:</b> If a control is assigned to the <code>content</code> aggregation, this one is ignored.
 				 *
@@ -432,8 +431,8 @@ sap.ui.define([
 				/**
 				 * Optional content to be rendered  if the <code>editMode</code> property is set to <code>Display</code>.
 				 *
-				 * Per default, depending on <code>multipleLines</code> and used data type a content control is rendered in display mode. For simple string types a {@link sap.m.Text Text}
-				 * control is rendered in display mode. If a control is assigned in the <code>contentEdit</code> aggregation this will be rendered instead.
+				 * Per default, depending on <code>multipleLines</code> and the used data type, a content control is rendered in display mode. For simple string types, a {@link sap.m.Text Text}
+				 * control is rendered in display mode. If a control is assigned in the <code>contentDisplay</code> aggregation, this will be rendered instead.
 				 *
 				 * <b>Note:</b> If a control is assigned to the <code>content</code> aggregation, this one is ignored.
 				 *
@@ -1024,7 +1023,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Here inheriting controls need to fire the control specific change event
+	 * Here inheriting controls need to fire the control-specific change event.
 	 * @protected
 	 */
 	FieldBase.prototype.fireChangeEvent = function(aConditions, bValid, vWrongValue, oPromise) {
@@ -1169,7 +1168,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Determines the <code>BaseType</code> of the currently used data type
+	 * Determines the <code>BaseType</code> of the currently used data type.
 	 * @returns {sap.ui.mdc.enum.BaseType} BaseType
 	 * @protected
 	 */
@@ -1193,7 +1192,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Gets the currently used content controls
+	 * Gets the currently used content controls.
 	 * @returns {sap.ui.core.Conterol[]} Array of content controls
 	 * @protected
 	 */
@@ -1218,7 +1217,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handler of the <code>ModelContextChange</code> event
+	 * Handler of the <code>ModelContextChange</code> event.
 	 * @param {object} oEvent event
 	 * @protected
 	 */
@@ -1246,7 +1245,7 @@ sap.ui.define([
 	 * Observes changes.
 	 *
 	 * To be enhanced by {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
-	 * {@link sap.ui.mdc.FilterField FilterField} or other inherited controls.
+	 * {@link sap.ui.mdc.FilterField FilterField}, or other inherited controls.
 	 *
 	 * @param {object} oChanges Changes
 	 * @protected
@@ -1358,9 +1357,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Triggers an update of the internal content controls
+	 * Triggers an update of the internal content controls.
 	 *
-	 * Should be calles if propertes are changed that might influence the content control
+	 * Should be called if properties are changed that might influence the content control.
 	 * @protected
 	 */
 	FieldBase.prototype.updateInternalContent = function() {
@@ -1524,7 +1523,7 @@ sap.ui.define([
 
 	/**
 	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
-	 * Registers invalidations event which is fired when width of the control is changed.
+	 * Registers invalidations event that is fired when width of the control is changed.
 	 *
 	 * @protected
 	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
@@ -1633,10 +1632,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Assigns a <code>Label</code> control to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField} or {@link sap.ui.mdc.FilterField FilterField} controls.
+	 * Assigns a <code>Label</code> control to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}, or {@link sap.ui.mdc.FilterField FilterField} controls.
 	 *
-	 * The text of the label is taken from the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField} or {@link sap.ui.mdc.FilterField FilterField} controls.
-	 * The <code>labelFor</code> association is set to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField} or {@link sap.ui.mdc.FilterField FilterField} control.
+	 * The text of the label is taken from the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}, or {@link sap.ui.mdc.FilterField FilterField} controls.
+	 * The <code>labelFor</code> association is set to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}, or {@link sap.ui.mdc.FilterField FilterField} control.
 	 *
 	 * @param {sap.ui.core.Label} oLabel Label control
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -1859,7 +1858,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks if all needed information are provided to create the internal content control.
+	 * Checks if all needed information is provided to create the internal content control.
 	 * If possible create internal controls.
 	 * @protected
 	 */
@@ -1874,10 +1873,10 @@ sap.ui.define([
 	/**
 	 * Triggers a check if all relevant properties are set to create the internal content control.
 	 *
-	 * To be sure that the check is not called multiple times it needs
+	 * To be sure that the check is not called multiple times, it needs
 	 * to be checked if there is a pending check.
 	 * Multiple calls might happen if properties are changed often or
-	 * the check is triggered in BindingContext update (what is often called in propagation).
+	 * the check is triggered during a <code>BindingContext</code> update (which is often called in propagation).
 	 * @protected
 	 */
 	FieldBase.prototype.triggerCheckCreateInternalContent = function() {
@@ -1989,7 +1988,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Destroys the internal content controls
+	 * Destroys the internal content controls.
 	 * @protected
 	 */
 	FieldBase.prototype.destroyInternalContent = function () {
@@ -2278,7 +2277,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if there is invalid input
+	 * Checks if there is invalid input.
 	 * @returns {boolean} True if there is invalid input
 	 * @protected
 	 */
@@ -3130,7 +3129,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Gets the icon that needs to be rendered for used value help
+	 * Gets the icon that needs to be rendered for used value help.
 	 * @returns {sap.ui.core.URI|null} Icon
 	 */
 	FieldBase.prototype._getFieldHelpIcon = function() {
@@ -3358,9 +3357,9 @@ sap.ui.define([
 	}
 
 	/**
-	 * Determines, based on conditions, the value returned by the <code>change</code> event
+	 * Determines, based on conditions, the value returned by the <code>change</code> event.
 	 * @param {sap.ui.mdc.field.ConditionType[]} aConditions Array of conditions
-	 * @returns {any} control dependent value for <code>change</code> event
+	 * @returns {any} control-dependent value for <code>change</code> event
 	 * @protected
 	 */
 	FieldBase.prototype.getResultForChangePromise = function(aConditions) {
@@ -3395,7 +3394,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the supported operators
+	 * Returns the supported operators.
 	 *
 	 * Needs to be overwritten by {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
 	 * and {@link sap.ui.mdc.FilterField FilterField}

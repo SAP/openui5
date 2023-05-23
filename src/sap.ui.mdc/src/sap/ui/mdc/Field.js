@@ -32,16 +32,16 @@ sap.ui.define([
 	 *
 	 * @class
 	 * The <code>Field</code> control is used to bind its value to data of a certain data type. Based on the data type settings, a default
-	 * control is rendered by the <code>Field</code>.
+	 * control is rendered by the <code>Field</code> as follows:
 	 *
 	 * <ul>
-	 * <li>In display mode normally a {@link sap.m.Text Text} control is rendered.</li>
-	 * <li>If <code>multipleLines</code> is set a {@link sap.m.ExpandableText ExpandableText} control is rendered.</li>
-	 * <li>If <code>fieldInfo</code> is set and it it configured to be triggerable a {@link sap.m.Link Link} control is rendered.</li>
-	 * <li>In edit mode normally a {@link sap.m.Input Input} control is rendered.</li>
-	 * <li>If <code>multipleLines</code> is set a {@link sap.m.TextArea TextArea} control is rendered.</li>
+	 * <li>In display mode, usually a {@link sap.m.Text Text} control is rendered.</li>
+	 * <li>If <code>multipleLines</code> is set, an {@link sap.m.ExpandableText ExpandableText} control is rendered.</li>
+	 * <li>If <code>fieldInfo</code> is set and it is configured to be triggerable, a {@link sap.m.Link Link} control is rendered.</li>
+	 * <li>In edit mode, usually an {@link sap.m.Input Input} control is rendered.</li>
+	 * <li>If <code>multipleLines</code> is set, a {@link sap.m.TextArea TextArea} control is rendered.</li>
 	 * <li>If a date type is used, a {@link sap.m.DatePicker DatePicker} control is rendered.</li>
-	 * <li>If a date-time type is used, a {@link sap.m.DateTimePicker DateTimePicker} control is rendered.</li>
+	 * <li>If a date/time type is used, a {@link sap.m.DateTimePicker DateTimePicker} control is rendered.</li>
 	 * <li>If a time type is used, a {@link sap.m.TimePicker TimePicker} control is rendered.</li>
 	 * <li>If a currency or unit type is used, two {@link sap.m.Input Input} controls are rendered, one for number and one for unit.</li>
 	 * </ul>
@@ -115,7 +115,7 @@ sap.ui.define([
 
 						/**
 						 * Returns a <code>Promise</code> for the change. The <code>Promise</code> returns the value if it is resolved.
-						 * If the <code>change</code> event is synchronous, the promise has already been already resolved. If it is asynchronous,
+						 * If the <code>change</code> event is synchronous, the <code>Promise</code> has already been already resolved. If it is asynchronous,
 						 * it will be resolved after the value has been updated.
 						 *
 						 * The <code>Field</code> should be set to busy during the parsing to prevent user input.
@@ -580,7 +580,7 @@ sap.ui.define([
 	 * Do not use the <code>conditions</code> property,
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
-	 * @param {object[]} aConditions Conditions to be set
+	 * @param {object[]} aConditions Conditions that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -597,7 +597,7 @@ sap.ui.define([
 	 * Do not use the <code>conditions</code> property,
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
-	 * @returns {object[]} conditions of the field
+	 * @returns {object[]} Conditions of the field
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -650,7 +650,7 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
-	 * @param {string} sDataType DataType to be set
+	 * @param {string} sDataType DataType that is set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -669,8 +669,7 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
-	 * @param {string} sDataType DataType to be set
-	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Value of property <code>dataType</code>
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -688,7 +687,7 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeConstraints Constraints to be set
+	 * @param {string} oDataTypeConstraints Constraints that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -707,8 +706,7 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeConstraints Constraints to be set
-	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Value of property <code>dataTypeConstraints</code>
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -726,7 +724,7 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeFormatOptions Format options to be set
+	 * @param {string} oDataTypeFormatOptions Format options that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -745,8 +743,7 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeFormatOptions Format options to be set
-	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Value of property <code>dataTypeFormatOptions</code>
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
