@@ -155,6 +155,29 @@ sap.ui.define([
 				});
 			});
 		});
+
+		QUnit.test("when a 'printDesignTimeMetadata' event is triggered", function(assert) {
+			var fnDone = assert.async();
+			var oConsoleStub = sandbox.stub(console, "log");
+			var oButtonOverlay = OverlayRegistry.getOverlay("button1");
+			var oButtonDesigntimeMetadata = oButtonOverlay.getDesignTimeMetadata().getData();
+
+			oConsoleStub
+				.callThrough()
+				.withArgs(oButtonDesigntimeMetadata)
+				.callsFake(function() {
+					assert.ok(true, "then the design time metadata is printed to console");
+					fnDone();
+				});
+
+			window.postMessage({
+				id: "ui5FlexibilitySupport.submodules.overlayInfo",
+				type: "printDesignTimeMetadata",
+				content: {
+					overlayId: oButtonOverlay.getId()
+				}
+			});
+		});
 	});
 
 	QUnit.done(function () {
