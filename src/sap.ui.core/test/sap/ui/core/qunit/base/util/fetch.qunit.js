@@ -110,4 +110,25 @@ sap.ui.define(["sap/base/util/fetch"], function(fetch) {
 			method: "HEAD"
 		}), TypeError, "A 'TypeError' should be thrown.");
 	});
+
+	QUnit.test("Run tests for valid response headers", function(assert) {
+		var fnOrigin = this.xhr.prototype.getAllResponseHeaders;
+
+		// BCP: 2370067548
+		// Whitespaces after the colon ":" are optional
+		this.xhr.prototype.getAllResponseHeaders = function() {
+			return "Header-with-whitespace: someValue,\r\nHeader-without-whitespace:someValue";
+		};
+		var pFetch = fetch("/foo").then(function() {
+			assert.ok(true, "Parsing headers w/ and w/o whitespaces shouldn't fail.");
+			this.xhr.prototype.getAllResponseHeaders = fnOrigin;
+		}.bind(this))
+		.catch(function(err) {
+			assert.ok(false, "The test shouldn't fail");
+		});
+
+		this.requests[0].respond(200, { "Content-Type": "application/json" }, '{ "id": 1, "name": "Alexa", "age": "18" }');
+
+		return pFetch;
+	});
 });

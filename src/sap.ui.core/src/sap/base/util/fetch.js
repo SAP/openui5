@@ -6,16 +6,18 @@ sap.ui.define([], function () {
 
 	function parseHeaders(sAllResponseHeaders) {
 		var result = new Headers();
-		sAllResponseHeaders.trim().split("\r\n").forEach(function (sHeader) {
-			if (sHeader) {
-				var pos = sHeader.indexOf(": ");
-				if (pos > 0) {
-					result.append(sHeader.slice(0, pos), sHeader.slice(pos + 2));
-				} else {
-					result.append(sHeader, "");
+		if (typeof sAllResponseHeaders === "string") {
+			sAllResponseHeaders.trim().split("\r\n").forEach(function (sHeader) {
+				if (sHeader) {
+					var pos = sHeader.indexOf(":");
+					if (pos > 0) {
+						result.append(sHeader.slice(0, pos), sHeader.slice(pos + 1));
+					} else {
+						result.append(sHeader, "");
+					}
 				}
-			}
-		});
+			});
+		}
 		return result;
 	}
 
