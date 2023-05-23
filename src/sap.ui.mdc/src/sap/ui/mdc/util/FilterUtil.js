@@ -9,6 +9,20 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 		function(IdentifierUtil, ConditionValidated, ConditionConverter, FilterConverter, Log, merge) {
 	"use strict";
 
+	// Added support for deprecated TypeUtil
+	var _getTypeMap = function (vTypeProvider) {
+
+		if (vTypeProvider && vTypeProvider.getTypeMap) {
+			return vTypeProvider.getTypeMap();
+		}
+
+		if (vTypeProvider && vTypeProvider.getTypeUtil) {
+			return vTypeProvider.getTypeUtil();
+		}
+
+		return vTypeProvider;
+	};
+
 	/**
 	 * Utility class used by mdc controls to create the filter statement
 	 *
@@ -109,7 +123,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				/**
 				 * Creates the filter statements based on the externalize conditions.<br>
 				 *
-				 * @param {sap.ui.mdc.Control|sap.ui.mdc.util.TypeUtil} vTypeProvider the MDC control instance or TypeUtil
+				 * @param {sap.ui.mdc.Control|sap.ui.mdc.util.TypeMap} vTypeProvider the MDC control instance or <code>TypeMap</code>
 				 * @param {map} mConditions - map with externalized conditions
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {array} aIgnoreProperties - an array of property names which should be not considered for filtering
@@ -140,7 +154,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 									//convert from externalized to model-specific value representation
 									for (i = 0; i < mConditions[sFieldPath].length; i++) {
 										oConditionInternal = merge({}, mConditions[sFieldPath][i]);
-										mInternalFilterConditions[sFieldPath].push(ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, vTypeProvider.getTypeMap ? vTypeProvider.getTypeMap() : vTypeProvider));
+										mInternalFilterConditions[sFieldPath].push(ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, _getTypeMap(vTypeProvider)));
 									}
 
 								} else {
