@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/base/util/merge",
-	"sap/ui/Device"
-], function(merge, Device) {
+	"sap/base/util/merge"
+], function(merge) {
 	"use strict";
 
 	var oCommonTests = {
@@ -23,9 +22,6 @@ sap.ui.define([
 		"actions/DnD": {
 			title: "QUnit Page for sap.ui.test.actions.Drag and sap.ui.test.actions.Drop",
 			module: "./actions/DnD.qunit",
-			qunit: {
-				noglobals: false
-			},
 			loader: {
 				paths: {
 					"sap/f/sample": "test-resources/sap/f/demokit/sample",
@@ -46,9 +42,6 @@ sap.ui.define([
 					"unitTests" : "test-resources/sap/ui/core/qunit/opa/"
 				}
 			},
-			qunit: {
-				noglobals: !Device.browser.safari
-			},
 			ui5: {
 				libs: "sap.m",
 				language: "en-US"
@@ -58,9 +51,6 @@ sap.ui.define([
 		"actions/Scroll": {
 			title: "QUnit Page for sap.ui.test.actions.Scroll",
 			module: "./actions/Scroll.qunit",
-			qunit: {
-				noglobals: false
-			},
 			loader: {
 				paths: {
 					"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample",
@@ -72,8 +62,7 @@ sap.ui.define([
 		"autowaiter/autoWaiter": {
 			title: "QUnit Page for sap.ui.test.autoWaiter",
 			qunit: {
-				reorder: false, // to ensure that _XHRWaiter tests are executed last
-				noglobals: !Device.browser.safari
+				reorder: false // to ensure that _XHRWaiter tests are executed last
 			},
 			// in sinon v4, there is a timing issue in autoWaiterAsync tests
 			sinon: {
@@ -207,9 +196,6 @@ sap.ui.define([
 					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
 				}
 			},
-			qunit: {
-				noglobals: false
-			},
 			module: "./launchers/iFrameLauncher.qunit"
 		},
 		"matchers/AggregationContainsPropertyEquals": {
@@ -307,9 +293,6 @@ sap.ui.define([
 		},
 		"opa5/autoWait": {
 			title: "QUnit Page for sap.ui.test.Opa5 - autoWait",
-			qunit: {
-				noglobals: false
-			},
 			loader: {
 				paths: {
 					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
@@ -422,10 +405,7 @@ sap.ui.define([
 		},
 		"_UsageReport": {
 			title: "QUnit Page for sap.ui.test._UsageReport",
-			module: "./_UsageReport.qunit",
-			qunit: {
-				noglobals: !Device.browser.safari
-			}
+			module: "./_UsageReport.qunit"
 		},
 		"RecordReplay": {
 			title: "QUnit Page for sap.ui.test.RecordReplay",
@@ -433,9 +413,6 @@ sap.ui.define([
 		},
 		"selectors/selectors": {
 			title: "QUnit Page for sap.ui.test.selectors",
-			qunit: {
-				noglobals: false
-			},
 			module: "./selectors/selectors.qunit"
 		},
 		"_BrowserLogCollector": {
@@ -451,9 +428,6 @@ sap.ui.define([
 	var oTestSuite = {
 		name: "TestSuite for sap.ui.core: GTP testcase CORE/OPA",
 		defaults: {
-			qunit: {
-				noglobals: true
-			},
 			ui5: {
 				animation: false
 			},
