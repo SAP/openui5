@@ -9,7 +9,7 @@
 	</script>
 	<script>
 		var oToggleBtnCompact = new sap.m.ToggleButton("toggleCompact", {
-			text: "Compact Mode",
+			text: "Change Compact / Cozy (default) Mode",
 			pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
 			press: function () {
 				jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
@@ -17,6 +17,85 @@
 			}
 		});
 
+		// There are specific controls with specific order, that should be included in the ToolHeader
+		// in the time when theme Horizon is the default theme of UI5.
+		// This is checked by UXC-016 Shell requirement, which is valid for the ToolHeader as well:
+		// "Products must provide a shell bar that follows a defined structure and responsive behavior."
+		var toolHeaderHorizon = new sap.tnt.ToolHeader("horizonToolHeader", {
+			content: [
+				new sap.m.Button({
+					icon: 'sap-icon://menu2',
+					type: sap.m.ButtonType.Transparent,
+					press: function() {
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				}),
+				new sap.m.Image ({
+					src: "./images/SAP_Logo.png",
+					press: function(){}
+				}),
+				new sap.m.Title ({
+					text: "Product name"
+				}),
+				new sap.m.Text ({
+					text: "Second title"
+				}),
+				new sap.m.ToolbarSpacer({
+					layoutData : new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+						minWidth: "20px"
+					})
+				}),
+				new sap.m.SearchField({
+					width: "16rem"
+				}),
+				new sap.m.ToolbarSpacer({
+					layoutData : new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+						minWidth: "20px"
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					icon: "sap-icon://source-code",
+					press: function() {
+					}
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					icon: "sap-icon://card",
+					press: function() {
+					}
+				}),
+				new sap.m.ToolbarSeparator(),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					icon: "sap-icon://action-settings",
+					press: function() {
+					}
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					icon: "sap-icon://bell",
+					press: function() {
+					}
+				}),
+				new sap.m.ToolbarSeparator(),
+				new sap.m.Avatar({
+					src: "images/Woman_avatar_01.png",
+					initials: "UI",
+					displaySize: "XS",
+					press: function(){},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				}),
+			]
+		});
+
+		// This is the content and structure of the ToolHeader, which was required with Fiori 3 theme
 		var toolHeader = new sap.tnt.ToolHeader("shellLike", {
 			content: [
 				new sap.m.Button({
@@ -99,7 +178,7 @@
 					})
 				})
 			]
-		});
+		}).addStyleClass("sapUiLargeMarginTop");
 
 		var toolHeaderIcons = new sap.tnt.ToolHeader("toolHeaderIcons", {
 			content: [
@@ -573,13 +652,14 @@
 				}),
 			]
 		}).addStyleClass("sapUiLargeMarginTop");
-	
+
 		var app = new sap.m.App("myApp", {initialPage:"tabBarPage"});
 		app.placeAt("body");
 		var initialPage = new sap.m.Page("tabBarPage", {
 			showHeader: false,
 			content: [
 			oToggleBtnCompact,
+			toolHeaderHorizon,
 			toolHeader,
 			toolHeaderIcons,
 			toolHeaderButtons,

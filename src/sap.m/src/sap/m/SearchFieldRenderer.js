@@ -78,12 +78,17 @@ sap.ui.define([
 				.class('sapMSFF');
 
 			if (!bShowSearchBtn) {
-				rm.class("sapMSFNS"); //no search button
+				rm.class("sapMSFNS"); // no search button
 			} else if (bShowRefreshButton) {
 				rm.class('sapMSFReload');
 			}
 
 			rm.openEnd();
+
+			rm.openStart("span", sId + "-staticSearchIcon");
+			rm.attr("aria-hidden", true);
+			rm.class('sapMSFSSI'); // static search icon (needed for the Search Field in the Tool Header)
+			rm.openEnd().close("span");
 
 			rm.voidStart('input', sId + "-I")
 				.class("sapMSFI")
