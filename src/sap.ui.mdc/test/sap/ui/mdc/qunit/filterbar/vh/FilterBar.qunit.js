@@ -47,23 +47,45 @@ sap.ui.define([
 		assert.equal(this.oFilterBar.getConditionModelName(), FilterBarBase.CONDITION_MODEL_NAME);
 	});
 
-	QUnit.test("get GO button", function (assert) {
+	QUnit.test("get GO/Search button visiblity", function (assert) {
 		var oButton = this.oFilterBar._btnSearch;
+
+		assert.equal(this.oFilterBar.getBasicSearchField(), null, "No Basis Search exist");
+		assert.notOk(this.oFilterBar._oShowAllFiltersBtn.getVisible(), "showAllFilters button is not visible");
+		assert.notOk(this.oFilterBar._oBtnFilters.getVisible(), "showFilters button is not visible");
+
 		assert.ok(oButton);
-		assert.ok(oButton.getVisible());
+
+		this.oFilterBar.setBasicSearchField(new FilterField({
+			conditions: "{$filters>/conditions/$search}",
+			maxConditions: 1,
+			delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
+		}));
+
+		assert.ok(!!this.oFilterBar.getBasicSearchField(), "Basic Search exist");
+
+		this.oFilterBar.addFilterItem(new FilterField({
+			conditions: "{$filters>/conditions/$search}",
+			maxConditions: 1,
+			delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
+		}));
+
+		assert.ok(this.oFilterBar._oBtnFilters.getVisible(), "showFilters button is visible");
+
+		assert.ok(oButton.getVisible(), "Search/Go button is visible");
 
 		this.oFilterBar.setShowGoButton(false);
-		assert.ok(!oButton.getVisible());
+		assert.notOk(oButton.getVisible(), "Search/Go button is not visible");
 
 		this.oFilterBar.setShowGoButton(true);
-		assert.ok(oButton.getVisible());
+		assert.ok(oButton.getVisible(), "Search/Go button is visible");
 
 		this.oFilterBar.setLiveMode(true);
 
 		if (this.oFilterBar._isPhone()) {
-			assert.ok(oButton.getVisible());
+			assert.ok(oButton.getVisible(), "Search/Go button is visible");
 		} else {
-			assert.ok(!oButton.getVisible());
+			assert.notOk(oButton.getVisible(), "Search/Go button is not visible");
 		}
 	});
 

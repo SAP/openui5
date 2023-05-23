@@ -154,12 +154,13 @@ sap.ui.define(
 
 			this._oFilterBarLayout.addControl(this._oBtnFilters);
 
-
 			this._oShowAllFiltersBtn = new Button(this.getId() + "-btnShowAllFilters", {
 				type: ButtonType.Transparent,
 				press: this._onShowAllFilters.bind(this),
-				text: this._oRb.getText("valuehelp.SHOWALLFILTERS")
+				text: this._oRb.getText("valuehelp.SHOWALLFILTERS"),
+				visible: false
 			});
+
 			this._oFilterBarLayout.addEndContent(this._oShowAllFiltersBtn);
 		};
 
