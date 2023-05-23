@@ -7,10 +7,10 @@
 sap.ui.define([
 	"sap/ui/mdc/table/PropertyHelper",
 	"sap/ui/mdc/table/Column",
-	"sap/ui/mdc/util/TypeUtil",
+	"sap/ui/mdc/DefaultTypeMap",
 	"sap/base/Log",
 	"sap/ui/model/type/String" // in LegacyFree-UI5 used data types needs to be loaded.
-], function(PropertyHelper, Column, TypeUtil, Log, StringType) {
+], function(PropertyHelper, Column, DefaultTypeMap, Log, StringType) {
 	"use strict";
 
 	QUnit.module("Validation", {
@@ -194,7 +194,7 @@ sap.ui.define([
 				getControlDelegate: sinon.stub().returns({
 					getTypeMap: sinon.stub().returns({
 						getTypeConfig: function() {
-							return TypeUtil.getTypeConfig.apply(TypeUtil, arguments);
+							return DefaultTypeMap.getTypeConfig.apply(DefaultTypeMap, arguments);
 						}
 					})
 				})

@@ -9,6 +9,12 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.test("getTypeUtil", function(assert) {
+
+		if (!BaseDelegate.getTypeUtil) {
+			assert.ok(true, "Test not executed in legacy-free build");
+			return undefined;
+		}
+
 		sinon.spy(BaseDelegate, "getTypeMap");
 		var oTypeUtil = BaseDelegate.getTypeUtil();
 		assert.ok(BaseDelegate.getTypeMap.calledOnce, "calls getTypeMap");
