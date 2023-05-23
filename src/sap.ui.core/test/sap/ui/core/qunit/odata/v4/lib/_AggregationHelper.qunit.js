@@ -240,6 +240,12 @@ sap.ui.define([
 			// code under test
 			_AggregationHelper.checkNodeProperty("~oOld~", "~oNew~", "Some/NodeID");
 		}, new Error('Unexpected structural change: Some/NodeID from "42" to [23]'));
+
+		oHelperMock.expects("drillDown").withExactArgs("~oOld~", "Some/NodeID").returns("42");
+		oHelperMock.expects("drillDown").withExactArgs("~oNew~", "Some/NodeID").returns(undefined);
+
+		// code under test (BCP: 2380047659)
+		_AggregationHelper.checkNodeProperty("~oOld~", "~oNew~", "Some/NodeID");
 	});
 
 	//*********************************************************************************************

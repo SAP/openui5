@@ -535,7 +535,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks that the NodeProperty ("the hierarchy node value") has not changed.
+		 * Checks that the NodeProperty ("the hierarchy node value") has not changed (if available).
 		 *
 		 * @param {object} oOld
 		 *   The old node object
@@ -552,7 +552,8 @@ sap.ui.define([
 			var vNewNodeID = _Helper.drillDown(oNew, sNodeProperty),
 				vOldNodeID = _Helper.drillDown(oOld, sNodeProperty);
 
-			if ((bMandatory || vOldNodeID !== undefined) && vOldNodeID !== vNewNodeID) {
+			if ((bMandatory || vOldNodeID !== undefined) && vNewNodeID !== undefined
+					 && vOldNodeID !== vNewNodeID) {
 				throw new Error("Unexpected structural change: " + sNodeProperty
 					+ " from " + JSON.stringify(vOldNodeID)
 					+ " to " + JSON.stringify(vNewNodeID));
