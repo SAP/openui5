@@ -1,38 +1,76 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
-	'sap/m/Popover',
-	'sap/m/Button',
-	'sap/m/library'
-], function (Controller, Popover, Button, library) {
+	'sap/m/MessageToast',
+	'sap/ui/Device'
+], function (Controller, MessageToast, Device) {
 	"use strict";
-
-	var ButtonType = library.ButtonType,
-		PlacementType = library.PlacementType;
 
 	return Controller.extend("sap.tnt.sample.ToolHeader.C", {
 
-		onUserNamePress: function (oEvent) {
-			var oPopover = new Popover({
-				showHeader: false,
-				placement: PlacementType.Bottom,
-				content: [
-					new Button({
-						text: 'Feedback',
-						type: ButtonType.Transparent
-					}),
-					new Button({
-						text: 'Help',
-						type: ButtonType.Transparent
-					}),
-					new Button({
-						text: 'Logout',
-						type: ButtonType.Transparent
-					})
-				]
-			}).addStyleClass('sapMOTAPopover sapTntToolHeaderPopover');
+		onAvatarPressed: function () {
+			MessageToast.show("Avatar pressed!");
+		},
 
-			oPopover.openBy(oEvent.getSource());
+		onLogoPressed: function () {
+			MessageToast.show("Logo pressed!");
+		},
+
+		_handleMediaChange: function () {
+			var rangeName = Device.media.getCurrentRange("StdExt").name;
+
+			switch (rangeName) {
+				// Shell Desktop
+				case "LargeDesktop":
+					this.byId("productName").setVisible(true);
+					this.byId("secondTitle").setVisible(true);
+					this.byId("searchField").setVisible(true);
+					this.byId("spacer").setVisible(true);
+					this.byId("searchButton").setVisible(false);
+					MessageToast.show("Screen width is corresponding to Large Desktop");
+					break;
+
+				// Tablet - Landscape
+				case "Desktop":
+					this.byId("productName").setVisible(true);
+					this.byId("secondTitle").setVisible(false);
+					this.byId("searchField").setVisible(true);
+					this.byId("spacer").setVisible(true);
+					this.byId("searchButton").setVisible(false);
+					MessageToast.show("Screen width is corresponding to Desktop");
+					break;
+
+				// Tablet - Portrait
+				case "Tablet":
+					this.byId("productName").setVisible(true);
+					this.byId("secondTitle").setVisible(true);
+					this.byId("searchButton").setVisible(true);
+					this.byId("searchField").setVisible(false);
+					this.byId("spacer").setVisible(false);
+					MessageToast.show("Screen width is corresponding to Tablet");
+					break;
+
+				case "Phone":
+					this.byId("searchButton").setVisible(true);
+					this.byId("searchField").setVisible(false);
+					this.byId("spacer").setVisible(false);
+					this.byId("productName").setVisible(false);
+					this.byId("secondTitle").setVisible(false);
+					MessageToast.show("Screen width is corresponding to Phone");
+					break;
+
+				default:
+					break;
+			}
+		},
+
+		onInit: function() {
+			Device.media.attachHandler(this._handleMediaChange, this);
+
+			this._handleMediaChange();
+		},
+
+		onExit: function() {
+			Device.media.detachHandler(this._handleMediaChange, this);
 		}
-
 	});
 });

@@ -5,18 +5,18 @@
 	controllerName="sap.tnt.sample.ToolHeader.C"
 	height="100%">
 	<ScrollContainer vertical="true" height="100%">
-		<tnt:ToolHeader id="shellLikeToolHeader" class="">
-			<Button icon="sap-icon://menu2" type="Transparent">
+		<tnt:ToolHeader id="shellLikeToolHeader" class="sapUiTinyMargin">
+			<Button icon="sap-icon://menu2" type="Transparent" tooltip="Menu">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>
 			</Button>
-			<Image src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed">
+			<Image src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed" tooltip="SAP Logo">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>
 			</Image>
-			<Title text="Prоduct Name" wrapping="false">
+			<Title text="Prоduct Name" wrapping="false" id="productName">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="Disappear"/>
 				</layoutData>
@@ -27,39 +27,41 @@
 				</layoutData>
 			</Text>
 			<ToolbarSpacer />
-			<SearchField width="16rem">
+			<SearchField width="16rem" id="searchField">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="Low" group="1"/>
 				</layoutData>
 			</SearchField>
-			<ToolbarSpacer>
+			<ToolbarSpacer id="spacer">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="Low" group="1"/>
 				</layoutData>
 			</ToolbarSpacer>
-			<Button icon="sap-icon://source-code" type="Transparent">
+			<Button visible="false" icon="sap-icon://search" type="Transparent" id="searchButton" tooltip="Search"/>
+			<OverflowToolbarButton icon="sap-icon://source-code" type="Transparent" tooltip="Action 1" text="Action 1">
 				<layoutData>
 					<OverflowToolbarLayoutData group="2"/>
 				</layoutData>
-			</Button>
-			<Button icon="sap-icon://card" type="Transparent">
+			</OverflowToolbarButton>
+			<OverflowToolbarButton icon="sap-icon://card" type="Transparent" tooltip="Action 2" text="Action 2">
 				<layoutData>
 					<OverflowToolbarLayoutData group="2"/>
 				</layoutData>
-			</Button>
+			</OverflowToolbarButton>
 			<ToolbarSeparator>
 				<layoutData>
 					<OverflowToolbarLayoutData group="2"/>
 				</layoutData>
 			</ToolbarSeparator>
-			<Button icon="sap-icon://action-settings" type="Transparent"/>
-			<Button icon="sap-icon://bell" type="Transparent">
+			<OverflowToolbarButton icon="sap-icon://action-settings" type="Transparent" text="Settings"/>
+			<Button icon="sap-icon://bell" type="Transparent" tooltip="Notification">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>
 			</Button>
-			<ToolbarSeparator />
-			<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed">
+			<tnt:ToolHeaderUtilitySeparator/>
+			<ToolbarSpacer width="1.125rem"/>
+			<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed" tooltip="Profile">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>

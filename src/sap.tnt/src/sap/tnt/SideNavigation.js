@@ -46,7 +46,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.34
 		 * @alias sap.tnt.SideNavigation
-		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/side-navigation/ Side Navigation}
 		 */
 		var SideNavigation = Control.extend('sap.tnt.SideNavigation', /** @lends sap.t.SideNavigation.prototype */ {
 			metadata: {

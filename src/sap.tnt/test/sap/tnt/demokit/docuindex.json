@@ -61,9 +61,7 @@
 				"since": "1.34",
 				"samples": [
 					"sap.tnt.sample.ToolHeader",
-					"sap.tnt.sample.ToolHeaderControls",
-					"sap.tnt.sample.ToolHeaderIconTabHeader",
-					"sap.tnt.sample.ToolHeaderFiori3"
+					"sap.tnt.sample.ToolHeaderIconTabHeader"
 				]
 			},
 			{
@@ -107,22 +105,12 @@
 			{
 				"id": "sap.tnt.sample.ToolHeader",
 				"name": "ToolHeader",
-				"description": "ToolHeader is useful for showing lists of action buttons"
-			},
-			{
-				"id": "sap.tnt.sample.ToolHeaderControls",
-				"name": "ToolHeader Controls",
-				"description": "ToolHeader can contain any controls"
+				"description": "ToolHeader that mimics the content of the Shell."
 			},
 			{
 				"id": "sap.tnt.sample.ToolHeaderIconTabHeader",
 				"name": "ToolHeader with IconTabHeader",
 				"description": "ToolHeader can contain IconTabHeader. When both controls are combined, the IconTabHeader supports only inline text. No icons can be used."
-			},
-			{
-				"id": "sap.tnt.sample.ToolHeaderFiori3",
-				"name": "ToolHeader - Fiori 3",
-				"description": "ToolHeader that mimics the content of Fiori 3 Shell."
 			},
 			{
 				"id": "sap.tnt.sample.ToolPage",

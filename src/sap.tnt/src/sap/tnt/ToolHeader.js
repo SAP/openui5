@@ -127,7 +127,6 @@ sap.ui.define([
 	* @public
 	* @since 1.34
 	* @alias sap.tnt.ToolHeader
-	* @see {@link fiori:https://experience.sap.com/fiori-design-web/tool-header/ Tool Header}
 	*/
 	var ToolHeader = OverflowToolbar.extend("sap.tnt.ToolHeader", /** @lends sap.tnt.ToolHeader.prototype */ {
 		metadata: {
