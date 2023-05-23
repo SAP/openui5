@@ -655,7 +655,7 @@ sap.ui.define([
 			// 1st try to resolve the oRef as a Container control
 			var oContainer = oRef;
 			if (typeof oContainer === "string") {
-				oContainer = Core.byId(oRef);
+				oContainer = Element.registry.get(oRef);
 			}
 			// if no container control is found use the corresponding UIArea
 			var bIsUIArea = false;
