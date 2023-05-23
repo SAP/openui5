@@ -25,7 +25,7 @@
 					<ToolbarSpacer/>
 					 <SegmentedButton accessibleName="Upload modes" selectionChange="handleSelectionChange">
                         <items>
-                            <SegmentedButtonItem text="Directory mode" pressed="true"></SegmentedButtonItem>
+                            <SegmentedButtonItem text="Directory Mode" pressed="true"></SegmentedButtonItem>
                             <SegmentedButtonItem text="File Mode"></SegmentedButtonItem>
                         </items>
                     </SegmentedButton>

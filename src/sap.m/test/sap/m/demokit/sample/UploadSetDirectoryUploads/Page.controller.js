@@ -18,10 +18,10 @@ sap.ui.define([
 			var oUploadSet = this.byId("UploadSet");
 			if (oItem) {
 				switch (oItem.getText()) {
-					case "File Uploads":
+					case "File Mode":
 						oUploadSet.setDirectory(false);
 						break;
-					case "Directory Uploads":
+					case "Directory Mode":
 						oUploadSet.setDirectory(true);
 						break;
 					default:
