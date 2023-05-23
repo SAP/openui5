@@ -2,3 +2,6 @@ target/
 test/
 .eslintignore
 pom.xml
+
+# Reinclude 'test/sap/ui/qunit/**' artifacts representing the UI5 TestRunner required by projects
+!test/sap/ui/qunit/**
