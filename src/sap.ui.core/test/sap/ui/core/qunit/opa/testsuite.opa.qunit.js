@@ -490,7 +490,8 @@ sap.ui.define([
 			oTestSuite.tests[name + "1"].page = oTestSuite.tests[name + "1"].page.replace("{qunitVersion}", "1");
 		}
 		if ( oTestSuite.tests[name + "2"].page ) {
-			oTestSuite.tests[name + "2"].page = oTestSuite.tests[name + "2"].page.replace("{qunitVersion}", "2") + "&sap-ui-qunitversion=2";
+			oTestSuite.tests[name + "2"].page = oTestSuite.tests[name + "2"].page.replace("{qunitVersion}", "2");
+			oTestSuite.tests[name + "2"].page += (oTestSuite.tests[name + "2"].page.includes("?") ? "&" : "?") + "sap-ui-qunitversion=2";
 		}
 
 		if ( oTestSuite.tests[name + "2"].title ) {
