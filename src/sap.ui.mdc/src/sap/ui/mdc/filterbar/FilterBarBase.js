@@ -998,15 +998,29 @@ sap.ui.define([
 		return vRetErrorState;
 	};
 
+	FilterBarBase.prototype._hasAppliancePromises = function() {
+		return (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) ? this._aOngoingChangeAppliance.slice() : null;
+	};
+
 	FilterBarBase.prototype._handleFilterItemSubmit = function(oEvent) {
 
 		var oPromise = oEvent.getParameter("promise");
 		if (oPromise) {
 			oPromise.then(function() {
-				this.triggerSearch();
+				var aWaitPromises = this._hasAppliancePromises();
+				if (!aWaitPromises) { // no changes
+					this.triggerSearch();
+				} else {
+					Promise.all(aWaitPromises).then(function() {
+						if (!this.getLiveMode()) {  // changes in livemode will triggerSearch via onModification
+							this.triggerSearch();
+						}
+					}.bind(this));
+				}
 			}.bind(this)).catch(function(oEx) {
 				Log.error(oEx);
-			});
+				this.triggerSearch().catch(function(oEx) { }); // catch rejected and do nothing
+			}.bind(this));
 		}
 	};
 
