@@ -404,7 +404,12 @@ sap.ui.define([
 							targetContainer: oChange.getSelector(),
 							targetAggregation: oAggregation.name,
 							classification: CondenserClassification.Destroy,
-							sourceIndex: oChange.getRevertData().index
+							sourceIndex: oChange.getRevertData().index,
+							setIndexInRevertData: function(oChange, iIndex) {
+								var oRevertData = oChange.getRevertData();
+								oRevertData.index = iIndex;
+								oChange.setRevertData(oRevertData);
+							}
 						};
 					});
 				}.bind(this)
@@ -433,6 +438,11 @@ sap.ui.define([
 							},
 							getTargetIndex: function(oChange) {
 								return oChange.getContent().index;
+							},
+							setIndexInRevertData: function(oChange, iIndex) {
+								var oRevertData = oChange.getRevertData();
+								oRevertData.index = iIndex;
+								oChange.setRevertData(oRevertData);
 							}
 						};
 					});

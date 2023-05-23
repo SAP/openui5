@@ -81,6 +81,12 @@ sap.ui.define([
 			} else {
 				aContainerElements.splice(iTargetIndex, 0, aContainerElements.splice(iCurrentSourceIndex, 1)[0]);
 			}
+
+			// changes with the same current source and target can be deleted, if the simulation is successful
+			oCondenserInfo.sameIndex = iCurrentSourceIndex === iTargetIndex;
+
+			// to enable a revert in the same session the previous index has to be saved during the simulation
+			oCondenserInfo.revertIndex = iCurrentSourceIndex;
 		}
 	};
 });

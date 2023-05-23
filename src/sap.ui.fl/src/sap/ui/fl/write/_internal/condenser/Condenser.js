@@ -496,7 +496,18 @@ sap.ui.define([
 		});
 	}
 
-	function handleChangeUpdate(aCondenserInfos, aReducedChanges) {
+	/**
+	 * Adding a change of the same classification to the map will only add it as updateChange to the condenser info,
+	 * which means that the condenser info holds the first (updateChange) and the last (change) change of the same classification.
+	 * If there is an updateChange attached to the condenser info object and that change is already persisted,
+	 * that change will be used over the newest change.
+	 *
+	 * @param {object[]} aCondenserInfos - Condenser info objects
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aReducedChanges - Array of reduced changes
+	 * @param {object[]} aReducedIndexRelatedChangesPerContainer - Array with index related reduced changes per container
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Updated reduced changes
+	 */
+	function handleChangeUpdate(aCondenserInfos, aReducedChanges, aReducedIndexRelatedChangesPerContainer) {
 		aCondenserInfos.forEach(function(oCondenserInfo) {
 			var oUpdateChange = oCondenserInfo.updateChange;
 			if (
@@ -506,16 +517,25 @@ sap.ui.define([
 				&& !_isEqual(oUpdateChange.getContent(), oCondenserInfo.change.getContent())
 				&& oUpdateChange.getState() !== States.LifecycleState.NEW
 			) {
-				var oCondensedChange = oCondenserInfo.change;
-				if (oUpdateChange.getId() !== oCondensedChange.getId()) {
-					var oNewContent = oCondensedChange.getContent();
+				var oLastChange = oCondenserInfo.change;
+				if (oUpdateChange.getId() !== oLastChange.getId()) {
+					var oNewContent = oLastChange.getContent();
 					oUpdateChange.setContent(oNewContent);
-					oCondensedChange.condenserState = "delete";
+					oUpdateChange.setRevertData(oLastChange.getRevertData());
+					oLastChange.condenserState = "delete";
 					aReducedChanges = aReducedChanges.map(function(oChange) {
-						if (oChange.getId() === oCondensedChange.getId()) {
+						if (oChange.getId() === oLastChange.getId()) {
 							return oUpdateChange;
 						}
 						return oChange;
+					});
+					aReducedIndexRelatedChangesPerContainer.forEach(function(aReducedIndexRelatedChanges, iIndex) {
+						aReducedIndexRelatedChangesPerContainer[iIndex] = aReducedIndexRelatedChanges.map(function(oChange) {
+							if (oChange.getId() === oLastChange.getId()) {
+								return oUpdateChange;
+							}
+							return oChange;
+						});
 					});
 				} else {
 					oUpdateChange.setState(States.LifecycleState.DIRTY);
@@ -611,9 +631,16 @@ sap.ui.define([
 				Measurement.end("Condenser_sort");
 
 				if (bSuccess) {
+					// during the simulation more changes can become obsolete
+					aReducedChanges = aReducedChanges.filter(function(oChange) {
+						return oChange.condenserState !== "delete";
+					});
+					aCondenserInfos = aCondenserInfos.filter(function(oCondenserInfo) {
+						return oCondenserInfo.change.condenserState !== "delete";
+					});
 					// until now aReducedChanges still has the newer changes.
 					// after replacing them with the older change they have to be sorted again
-					aReducedChanges = handleChangeUpdate(aCondenserInfos, aReducedChanges);
+					aReducedChanges = handleChangeUpdate(aCondenserInfos, aReducedChanges, aReducedIndexRelatedChangesPerContainer);
 					sortByInitialOrder(aChanges, aReducedChanges);
 					// sort the different containers independently
 					aReducedIndexRelatedChangesPerContainer.forEach(function(aReducedIndexRelatedChanges) {
