@@ -208,9 +208,7 @@ sap.ui.define([
 		},
 
 		onScrollToLoad: function() {
-			var oTriggerButton = this._oControl.getDomRef("triggerList");
-
-			if (this._bLoading || !oTriggerButton || oTriggerButton.style.display != "none") {
+			if (this._bLoading) {
 				return;
 			}
 
@@ -824,7 +822,7 @@ sap.ui.define([
 					this._bHadFocus = false;
 					jQuery(this._oControl.getNavigationRoot()).trigger("focus");
 				} else if (oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
-					var oFocusTarget = aItems[this._iLastItemsCount] || oControl;
+					var oFocusTarget = aItems[this._iLastItemsCount] || aItems[iItemsLength - 1] || oControl;
 					oFocusTarget && setTimeout(oFocusTarget.focus.bind(oFocusTarget));
 				}
 

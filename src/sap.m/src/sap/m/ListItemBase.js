@@ -1270,14 +1270,21 @@ function(
 	ListItemBase.prototype.onsaptabnext = function(oEvent) {
 		// check whether event is marked or not
 		var oList = this.getList();
-		if (!oList || oEvent.isMarked() || oList.getKeyboardMode() == ListKeyboardMode.Edit) {
+		if (!oList || oList.getKeyboardMode() == ListKeyboardMode.Edit) {
+			return;
+		}
+
+		var oTarget = oEvent.target;
+		if (document.activeElement.matches(".sapMListDummyArea")) {
+			oTarget = document.activeElement;
+		} else if (oEvent.isMarked()) {
 			return;
 		}
 
 		// if tab key is pressed while the last tabbable element of the list item
 		// has been focused, we forward tab to the last pseudo element of the table
 		var oLastTabbableDomRef = this.getTabbables().get(-1) || this.getDomRef();
-		if (oEvent.target === oLastTabbableDomRef) {
+		if (oTarget === oLastTabbableDomRef) {
 			oList.forwardTab(true);
 			oEvent.setMarked();
 		}
