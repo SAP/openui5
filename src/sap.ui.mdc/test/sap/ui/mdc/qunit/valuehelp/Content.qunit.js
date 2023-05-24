@@ -10,14 +10,16 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	"sap/ui/mdc/enum/ConditionValidated"
+	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/enum/OperatorValueType"
 ], function (
 		ValueHelpDelegate,
 		Content,
 		Condition,
 		FilterOperatorUtil,
 		Operator,
-		ConditionValidated
+		ConditionValidated,
+		OperatorValueType
 		) {
 	"use strict";
 
@@ -130,7 +132,7 @@ sap.ui.define([
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
 		FilterOperatorUtil.addOperator(oOperator);
@@ -149,7 +151,7 @@ sap.ui.define([
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
 		FilterOperatorUtil.addOperator(oOperator);

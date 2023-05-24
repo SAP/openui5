@@ -4,15 +4,15 @@
 sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enum/OperatorValueType',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/condition/Operator',
 	'sap/base/util/merge'
 ],
 	function(
 		Condition,
 		ConditionValidated,
+		OperatorValueType,
 		FilterOperatorUtil,
-		Operator,
 		merge
 	) {
 		"use strict";
@@ -125,7 +125,7 @@ sap.ui.define([
 		};
 
 		function _getLocalType (oTypeInstance, oOperator) {
-			if (oOperator && oOperator.valueTypes[0] && (oOperator.valueTypes[0] !== Operator.ValueType.Self && oOperator.valueTypes[0] !== Operator.ValueType.Static)) {
+			if (oOperator && oOperator.valueTypes[0] && (oOperator.valueTypes[0] !== OperatorValueType.Self && oOperator.valueTypes[0] !== OperatorValueType.Static)) {
 				// we have to create the type instance for the values
 				return oOperator._createLocalType(oOperator.valueTypes[0], oTypeInstance); //TODO: type for all values must be the same
 			}
@@ -137,7 +137,7 @@ sap.ui.define([
 			var aResult = [];
 
 			for (var i = 0; i < aValues.length; i++) {
-				if (!oOperator || (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static)) {
+				if (!oOperator || (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static)) {
 					// only add real values (no description in EQ case or static texts) (for unknown operators just copy to be compatible)
 					var vValue = aValues[i];
 					aResult.push(oTypeUtil.externalizeValue(vValue, oTypeInstance));

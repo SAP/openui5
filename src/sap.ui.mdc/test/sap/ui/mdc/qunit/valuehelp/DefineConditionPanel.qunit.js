@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/OperatorValueType",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/DateTime",
@@ -42,6 +43,7 @@ sap.ui.define([
 		BaseType,
 		ConditionValidated,
 		EditMode,
+		OperatorValueType,
 		StringType,
 		DateType,
 		DateTimeType,
@@ -240,7 +242,7 @@ sap.ui.define([
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
 		FilterOperatorUtil.addOperator(oOperator);
@@ -250,7 +252,7 @@ sap.ui.define([
 			filterOperator: "NE",
 			tokenParse: "^!=(.+)$",
 			tokenFormat: "!(={0})",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			exclude: true,
 			validateInput: true
 		});
@@ -637,7 +639,7 @@ sap.ui.define([
 				tokenFormat: "#tokenText#",
 				tokenText: "Text",
 				longText: "Longtext",
-				valueTypes: [Operator.ValueType.Self],
+				valueTypes: [OperatorValueType.Self],
 				createControl: function(oType, sPath, index, sId) {
 					return new Button({text: {path: sPath, type: oType}});
 				}

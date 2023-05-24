@@ -4,7 +4,7 @@
 sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/model/Filter',
-	"sap/ui/model/FilterOperator",
+	'sap/ui/model/FilterOperator',
 	'sap/ui/model/ParseException',
 	'sap/base/Log',
 	'sap/base/util/ObjectPath',
@@ -13,7 +13,8 @@ sap.ui.define([
 	'./Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/base/strings/escapeRegExp',
-	"sap/ui/mdc/enum/OperatorOverwrite"
+	'sap/ui/mdc/enum/OperatorOverwrite',
+	'sap/ui/mdc/enum/OperatorValueType'
 ], function(
 		BaseObject,
 		Filter,
@@ -26,7 +27,8 @@ sap.ui.define([
 		Condition,
 		ConditionValidated,
 		escapeRegExp,
-		OperatorOverwrite
+		OperatorOverwrite,
+		OperatorValueType
 	) {
 		"use strict";
 
@@ -35,6 +37,20 @@ sap.ui.define([
 		sap.ui.getCore().attachLocalizationChanged(function() {
 			oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		});
+
+		/**
+		 * Object type defining the structure of a <code>ValueType</code> for a {@link sap.ui.mdc.condition.Operator Operator}.
+		 *
+		 * @static
+		 * @constant
+		 * @typedef {object} sap.ui.mdc.condition.ValueType
+		 * @property {string} name name of the data type
+		 * @property {object} formatOptions <code>formatOptions</code> of the data type
+		 * @property {object} constraints <code>constraints</code> of the data type
+		 * @private
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
+		 */
 
 		/**
 		 * @class
@@ -56,11 +72,11 @@ sap.ui.define([
 		 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the <code>oConfiguration.tokenText</code> property if given.
 		 * @param {string[]|object[]} oConfiguration.valueTypes Array of type to be used. The length of the array defines the number of values that
 		 *                 need to be entered with the operator.<br>
-		 *                 If set to <code>Operator.ValueType.Self</code> the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
-		 *                 If set to <code>Operator.ValueType.SelfNoParse</code> same as <code>Operator.ValueType.Self</code>, except that the input value parsing will not be called.<br>
-		 *                 If set to <code>Operator.ValueType.Static</code> a simple string type is used to display static text.<br>
+		 *                 If set to {@link sap.ui.mdc.enum.OperatorValueType.Self OperatorValueType.Self} the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
+		 *                 If set to {@link sap.ui.mdc.enum.OperatorValueType.SelfNoParse OperatorValueType.SelfNoParse} same as {@link sap.ui.mdc.enum.OperatorValueType.Self OperatorValueType.Self}, except that the input value parsing will not be called.<br>
+		 *                 If set to {@link sap.ui.mdc.enum.OperatorValueType.Static OperatorValueType.Static} a simple string type is used to display static text.<br>
 		 *                 If set to a name of a data type an instance of this data type will be used.<br>
-		 *                 If set to an object with the properties <code>name</code>, <code>formatOptions</code> and <code>constraints</code>
+		 *                 If set to an object with structure {@link sap.ui.mdc.condition.ValueType}
 		 *                 an instance of the corresponding data type will be used. The type given via <code>name</code> must be loaded by the application.<br>
 		 * @param {string[]} [oConfiguration.paramTypes] Array of type parameters regexp
 		 * @param {string} [oConfiguration.longText] String representation of the operator as a long text.<br>
@@ -195,6 +211,7 @@ sap.ui.define([
 		 * @enum {string}
 		 * @private
 		 * @since 1.75
+		 * @deprecated as of 1.115.0, replaced by {@link sap.ui.mdc.enum.OperatorValueType OperatorValueType}
 		 */
 		Operator.ValueType = {
 				/**
@@ -350,7 +367,7 @@ sap.ui.define([
 
 			if (oCondition) {
 				for (var i = 0; i < this.valueTypes.length; i++) {
-					if (this.valueTypes[i] !== Operator.ValueType.Static) {
+					if (this.valueTypes[i] !== OperatorValueType.Static) {
 						var vValue = oCondition.values[i];
 						if (vValue === null || vValue === undefined || vValue === "") { //TODO:  empty has to use the oType information
 							isEmpty = true;
@@ -384,8 +401,8 @@ sap.ui.define([
 			var iCount = this.valueTypes.length;
 			var sTokenText = bHideOperator && iCount === 1 ? "{0}" : this.tokenFormat;
 			for (var i = 0; i < iCount; i++) {
-				if (this.valueTypes[i] !== Operator.ValueType.Static) {
-					if (this.valueTypes[i] !== Operator.ValueType.Self) {
+				if (this.valueTypes[i] !== OperatorValueType.Static) {
+					if (this.valueTypes[i] !== OperatorValueType.Self) {
 						oType = this._createLocalType(this.valueTypes[i], oType);
 					}
 					var vValue = aValues[i];
@@ -464,11 +481,11 @@ sap.ui.define([
 			if (aValues) {
 				aResult = [];
 				for (var i = 0; i < this.valueTypes.length; i++) {
-					if (this.valueTypes[i] && [Operator.ValueType.Self, Operator.ValueType.Static].indexOf(this.valueTypes[i]) === -1) {
+					if (this.valueTypes[i] && [OperatorValueType.Self, OperatorValueType.Static].indexOf(this.valueTypes[i]) === -1) {
 						oType = this._createLocalType(this.valueTypes[i], oType);
 					}
 					try {
-						if (this.valueTypes[i] !== Operator.ValueType.Static) {
+						if (this.valueTypes[i] !== OperatorValueType.Static) {
 							var vValue;
 							if (this.valueTypes[i]) {
 								vValue = this._parseValue(aValues[i], oType, aCompositeTypes);
@@ -552,8 +569,8 @@ sap.ui.define([
 			var iCount = this.valueTypes.length;
 
 			for (var i = 0; i < iCount; i++) {
-				if (this.valueTypes[i] && this.valueTypes[i] !== Operator.ValueType.Static) { // do not validate Description in EQ case
-					if ([Operator.ValueType.Self, Operator.ValueType.Static].indexOf(this.valueTypes[i]) === -1) {
+				if (this.valueTypes[i] && this.valueTypes[i] !== OperatorValueType.Static) { // do not validate Description in EQ case
+					if ([OperatorValueType.Self, OperatorValueType.Static].indexOf(this.valueTypes[i]) === -1) {
 						oType = this._createLocalType(this.valueTypes[i], oType);
 					}
 					if (aValues.length < i + 1) {
@@ -614,7 +631,7 @@ sap.ui.define([
 			var oConstraints;
 			var oUsedType;
 
-			if (vType === Operator.ValueType.SelfNoParse) {
+			if (vType === OperatorValueType.SelfNoParse) {
 				// create "clone" of original type but do not change value in parse or format
 				sType = oType.getMetadata().getName(); // type is already loaded because instance is provided
 				oFormatOptions = merge({}, oType.getFormatOptions());
@@ -641,7 +658,7 @@ sap.ui.define([
 				oUsedType = new TypeClass(oFormatOptions, oConstraints);
 				oUsedType._bCreatedByOperator = true; // to distinguish in Field between original type and Operator type on Operator change
 
-				if (vType === Operator.ValueType.SelfNoParse) {
+				if (vType === OperatorValueType.SelfNoParse) {
 					oUsedType.parseValue = function(vValue, sSourceType) {
 						TypeClass.prototype.parseValue.apply(this, arguments); // to check for parse exception
 						return vValue;
@@ -732,7 +749,7 @@ sap.ui.define([
 
 			if (this.test(sText) || (bDefaultOperator && sText && this.hasRequiredValues())) {
 				var aValues = this.parse(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes);
-				if (aValues.length == this.valueTypes.length || this.valueTypes[0] === Operator.ValueType.Static
+				if (aValues.length == this.valueTypes.length || this.valueTypes[0] === OperatorValueType.Static
 						|| (aValues.length === 1 && this.valueTypes.length === 2 && !this.valueTypes[1])) { // EQ also valid without description
 					var oCondition =  Condition.createCondition( this.name, aValues );
 					this.checkValidated(oCondition);
@@ -776,7 +793,7 @@ sap.ui.define([
 		 */
 		Operator.prototype.getCheckValue = function(oCondition) {
 
-			if (this.valueTypes[0] && this.valueTypes[0] === Operator.ValueType.Static) {
+			if (this.valueTypes[0] && this.valueTypes[0] === OperatorValueType.Static) {
 				return {}; // don't check value for static operators (might contain static text)
 			} else {
 				return {values: oCondition.values};
@@ -793,7 +810,7 @@ sap.ui.define([
 		 */
 		 Operator.prototype.hasRequiredValues = function() {
 
-			if (this.valueTypes[0] && this.valueTypes[0] !== Operator.ValueType.Static) {
+			if (this.valueTypes[0] && this.valueTypes[0] !== OperatorValueType.Static) {
 				return true;
 			} else {
 				return false;

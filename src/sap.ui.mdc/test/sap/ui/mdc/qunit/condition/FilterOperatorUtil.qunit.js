@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/enum/FieldDisplay",
+	"sap/ui/mdc/enum/OperatorValueType",
 	"sap/ui/model/Filter",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/odata/type/String",
@@ -32,6 +33,7 @@ sap.ui.define([
 	BaseType,
 	ConditionValidated,
 	FieldDisplay,
+	OperatorValueType,
 	Filter,
 	IntegerType,
 	StringType,
@@ -96,7 +98,7 @@ sap.ui.define([
 
 		var oOperator = new RangeOperator({
 			name: "TODAY",
-			valueTypes: [Operator.ValueType.Static],
+			valueTypes: [OperatorValueType.Static],
 			calcRange: function() {
 				return UniversalDateUtils.ranges.today();
 			},
@@ -172,7 +174,7 @@ sap.ui.define([
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
 		FilterOperatorUtil.addOperator(oMyOperator);
@@ -2252,7 +2254,7 @@ sap.ui.define([
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
 
@@ -2261,7 +2263,7 @@ sap.ui.define([
 			filterOperator: "LT",
 			tokenParse: "^<([^=].*)$",
 			tokenFormat: "<{0}",
-			valueTypes: [Operator.ValueType.Self]
+			valueTypes: [OperatorValueType.Self]
 		});
 
 		FilterOperatorUtil.setOperatorsForType("myType", [oMyEQ, oLowerThan], oMyEQ);
@@ -2296,7 +2298,7 @@ sap.ui.define([
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
 		var oMyOperator2 = new Operator({
@@ -2304,7 +2306,7 @@ sap.ui.define([
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
 

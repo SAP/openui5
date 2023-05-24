@@ -7,10 +7,10 @@ sap.ui.define([
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/enum/BaseType',
+	'sap/ui/mdc/enum/OperatorValueType',
 	'sap/ui/mdc/util/DateUtil',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
@@ -23,10 +23,10 @@ sap.ui.define([
 		ConditionsType,
 		ConditionValidateException,
 		FilterOperatorUtil,
-		Operator,
 		Condition,
 		ConditionValidated,
 		BaseType,
+		OperatorValueType,
 		DateUtil,
 		SimpleType,
 		FormatException,
@@ -122,9 +122,9 @@ sap.ui.define([
 			var sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, sBaseType);
 
 			for (var i = 0; i < oOperator.valueTypes.length; i++) {
-				if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static) {
+				if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static) {
 					if (sOption) { // only for standard operators  (dates are needed as local dates)
-						if (oOperator.valueTypes[i] === Operator.ValueType.Self) {
+						if (oOperator.valueTypes[i] === OperatorValueType.Self) {
 							aValues.push(DateUtil.typeToDate(oCondition.values[i], _getValueType.call(this), sBaseType));
 						} else {
 							var sOperatorBaseType = _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
@@ -176,12 +176,12 @@ sap.ui.define([
 				var aValues = [];
 
 				for (var i = 0; i < oOperator.valueTypes.length; i++) {
-					if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static) {
+					if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static) {
 						if (mLibrary.StandardDynamicDateRangeKeys[sOption]) { // only for standard operators (dates are returned as local dates)
-							if (oOperator.valueTypes[i] === Operator.ValueType.Self) {
+							if (oOperator.valueTypes[i] === OperatorValueType.Self) {
 								aValues.push(DateUtil.dateToType(oValue.values[i], _getValueType.call(this), sBaseType));
 							} else {
-								var sOperatorBaseType = oOperator.valueTypes[i] === Operator.ValueType.Self ? sBaseType : _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
+								var sOperatorBaseType = oOperator.valueTypes[i] === OperatorValueType.Self ? sBaseType : _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
 								if (sOperatorBaseType === BaseType.Date || sOperatorBaseType === BaseType.DateTime) {
 									aValues.push(DateUtil.dateToType(oValue.values[i], _getOperatorType.call(this, oOperator, i), sOperatorBaseType));
 								} else {

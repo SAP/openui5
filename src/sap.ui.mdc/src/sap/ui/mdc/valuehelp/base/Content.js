@@ -8,8 +8,8 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enum/OperatorValueType',
 	'sap/base/strings/formatMessage'
 ], function(
 	Element,
@@ -17,8 +17,8 @@ sap.ui.define([
 	ManagedObjectObserver,
 	Condition,
 	FilterOperatorUtil,
-	Operator,
 	ConditionValidated,
+	OperatorValueType,
 	formatMessage
 ) {
 	"use strict";
@@ -411,7 +411,7 @@ sap.ui.define([
 		var oOperator = _getOperator.call(this);
 
 		var aValues = [vValue];
-		if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== Operator.ValueType.Static && sDescription !== null && sDescription !== undefined) {
+		if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== OperatorValueType.Static && sDescription !== null && sDescription !== undefined) {
 			// description is supported
 			aValues.push(sDescription);
 		}

@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/m/DatePicker',
 	'sap/m/Slider',
 	'sap/ui/mdc/enum/BaseType',
-	"sap/ui/mdc/enum/OperatorOverwrite"
-], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider, BaseType, OperatorOverwrite) {
+	'sap/ui/mdc/enum/OperatorOverwrite',
+	'sap/ui/mdc/enum/OperatorValueType'
+], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider, BaseType, OperatorOverwrite, OperatorValueType) {
 	"use strict";
 
 	var getCustomYearFormat = function (date) {
@@ -27,7 +28,7 @@ sap.ui.define([
 		tokenParse: "^#tokenText#$",
 		tokenFormat: "#tokenText#",
 		filterOperator: ModelOperator.BT,
-		valueTypes: [Operator.ValueType.Static],
+		valueTypes: [OperatorValueType.Static],
 		calcRange: function() {
 			return [new UniversalDate(500, 0, 1), new UniversalDate(1500, 0, 1)];
 		},
@@ -42,7 +43,7 @@ sap.ui.define([
 		tokenText: "Renaissance",
 		tokenParse: "^#tokenText#$",
 		tokenFormat: "#tokenText#",
-		valueTypes: [Operator.ValueType.Static],
+		valueTypes: [OperatorValueType.Static],
 		getModelFilter: function (oCondition, sFieldPath) {
 			return new Filter({ path: sFieldPath, operator: "BT", value1: "1500-01-01", value2: "1600-01-01" });
 		}
@@ -54,7 +55,7 @@ sap.ui.define([
 		tokenText: "Modern",
 		tokenParse: "^#tokenText#$",
 		tokenFormat: "#tokenText#",
-		valueTypes: [Operator.ValueType.Static],
+		valueTypes: [OperatorValueType.Static],
 		getModelFilter: function (oCondition, sFieldPath) {
 			return new Filter({ path: sFieldPath, operator: "BT", value1: "1600-01-01", value2: getCustomYearFormat(new Date()) });
 		}
@@ -65,7 +66,7 @@ sap.ui.define([
 		name: "LASTYEAR",
 		tokenParse: "^#tokenText#$",
 		tokenFormat: "#tokenText#",
-		valueTypes: [Operator.ValueType.Static],
+		valueTypes: [OperatorValueType.Static],
 		getModelFilter: function (oCondition, sFieldPath) {
 			var currentDate = new Date();
 			return new Filter({ path: sFieldPath, operator: "BT", value1: getCustomYearFormat(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate())), value2: getCustomYearFormat(new Date(new Date().getFullYear(), currentDate.getMonth(), currentDate.getDate())) });
@@ -79,7 +80,7 @@ sap.ui.define([
 		tokenText: "Custom Range: $0-$1",
 		tokenParse: "^#tokenText#$",
 		tokenFormat: "#tokenText#",
-		valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
+		valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 		getModelFilter: function (oCondition, sFieldPath) {
 			return new Filter({ path: sFieldPath, operator: "BT", value1: oCondition.values[0], value2: oCondition.values[1] });
 		}
@@ -91,7 +92,7 @@ sap.ui.define([
 		tokenText: "Not in range: $0-$1",
 		tokenParse: "^#tokenText#$",
 		tokenFormat: "#tokenText#",
-		valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
+		valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 		exclude: true,
 		getModelFilter: function (oCondition, sFieldPath) {
 			return new Filter({ path: sFieldPath, operator: "BT", value1: oCondition.values[0], value2: oCondition.values[1] });

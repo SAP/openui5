@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/RangeOperator",
 	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/mdc/enum/OperatorValueType",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/type/Date",
@@ -29,6 +30,7 @@ sap.ui.define([
 	Operator,
 	RangeOperator,
 	BaseType,
+	OperatorValueType,
 	ValidateException,
 	FilterOperator,
 	DateType,
@@ -72,7 +74,7 @@ sap.ui.define([
 				tokenFormat: "{0}:::{1}",
 				longText: "My Range",
 				group: {id: 9, text: "My group"},
-				valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
+				valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 				validate: function(aValues, oType) {
 					// in Between 2 different Values must be defined
 					if (aValues.length === 2) { // if aValues has wrong length this is checked in default logic
@@ -285,7 +287,7 @@ sap.ui.define([
 				tokenParse: "^=(.+)$", // just some pattern
 				tokenFormat: "={0}",
 				longText: "My Equal",
-				valueTypes: [Operator.ValueType.Self]
+				valueTypes: [OperatorValueType.Self]
 			});
 			oOperatorDynamicDateOption = new OperatorDynamicDateOption("O1", {
 				key: "DateTime-Equal",
@@ -530,7 +532,7 @@ sap.ui.define([
 				name: "MyToday",
 				tokenText: "MyToday",
 				longText: "My Today",
-				valueTypes: [Operator.ValueType.Static],
+				valueTypes: [OperatorValueType.Static],
 				calcRange: function() {
 					return UniversalDateUtils.ranges.today();
 				},

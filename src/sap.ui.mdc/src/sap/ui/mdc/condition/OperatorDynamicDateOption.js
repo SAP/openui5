@@ -6,9 +6,9 @@ sap.ui.define([
 	'sap/m/DynamicDateOption',
 	'sap/m/DynamicDateValueHelpUIType',
 	'sap/m/Input',
-	'sap/ui/mdc/condition/Operator',
 	"sap/ui/mdc/enum/BaseType",
 	'sap/ui/mdc/enum/FieldDisplay',
+	'sap/ui/mdc/enum/OperatorValueType',
 	'sap/ui/mdc/util/DateUtil',
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/model/json/JSONModel',
@@ -20,9 +20,9 @@ sap.ui.define([
 		DynamicDateOption,
 		DynamicDateValueHelpUIType,
 		Input,
-		Operator,
 		BaseType,
 		FieldDisplay,
+		OperatorValueType,
 		DateUtil,
 		loadModules,
 		JSONModel,
@@ -164,7 +164,7 @@ sap.ui.define([
 
 				for (var i = 0; i < oOperator.valueTypes.length; i++) {
 					var vType = oOperator.valueTypes[i];
-					if (vType === Operator.ValueType.Self) {
+					if (vType === OperatorValueType.Self) {
 						var sType;
 						if (sBaseType === BaseType.DateTime) {
 							sType = "datetime";
@@ -174,7 +174,7 @@ sap.ui.define([
 						this._aUITypes.push(new DynamicDateValueHelpUIType({
 							type: sType
 						}));
-					} else if (!vType || vType === Operator.ValueType.Static) {
+					} else if (!vType || vType === OperatorValueType.Static) {
 						continue;
 					} else {
 						oType = oOperator._createLocalType(vType, oType);
@@ -251,13 +251,13 @@ sap.ui.define([
 							value1: oValue && oValue.values[1]
 						};
 						this._mChangeHandler[sControlId] = fnControlsUpdated;
-						if (vType !== Operator.ValueType.Self) {
+						if (vType !== OperatorValueType.Self) {
 							oType = oOperator._createLocalType(vType, oType);
 						}
 						var oInputControl = oOperator.createControl(oType, "internal>/" + sControlId + "/value" + i, i, sControlId + "-" + i);
 						oInputControl.setModel(this._oModel, "internal");
 						oControl.aControlsByParameters[sKey].push(oInputControl);
-					} else if (vType === Operator.ValueType.Self) {
+					} else if (vType === OperatorValueType.Self) {
 						// TODO: DatePicker or Calendar?
 						// convert internal value to date
 						if (oValue && oValue.values[i]) {
@@ -293,7 +293,7 @@ sap.ui.define([
 				// 	if (oOperator.createControl) {
 				// 		this._oModel.setProperty("/value0", oValue && oValue.values[0]);
 				// 		this._oModel.setProperty("/value1", oValue && oValue.values[1]);
-				// 	} else if (vType === Operator.ValueType.Self) {
+				// 	} else if (vType === OperatorValueType.Self) {
 				// 		if (oValue && oValue.values[i]) {
 				// 			oDate = DateUtil.typeToUniversalDate(oValue.values[i], oType);
 				// 			oDate = DateUtil.utcToLocal(oDate);
@@ -372,7 +372,7 @@ sap.ui.define([
 					if (oOperator.createControl) {
 						// use value from internal Model
 						vValue = this._oModel ? this._oModel.getProperty("/" + sControlId + "/value" + i) : null;
-					} else if (oOperator.valueTypes[i] === Operator.ValueType.Self) {
+					} else if (oOperator.valueTypes[i] === OperatorValueType.Self) {
 						// DatePicker used -> get Date Value
 						if (!oInputControl.isValidValue()) {
 							throw new ParseException(); // to show error state
@@ -428,7 +428,7 @@ sap.ui.define([
 				}
 			} else if (oOperator.valueTypes.length === 0) {
 				aRange = [];
-			} else if (oOperator.valueTypes[0] === Operator.ValueType.Self) {
+			} else if (oOperator.valueTypes[0] === OperatorValueType.Self) {
 				aRange = [];
 				for (i = 0; i < oValue.values.length; i++) {
 					aRange.push(oValue.values[i] ? DateUtil.typeToDate(oValue.values[i], oType, sBaseType) : oValue.values[i]);
@@ -438,7 +438,7 @@ sap.ui.define([
 					aRange.push(aRange[0]);
 				}
 				// TODO How to convert GT or GE.....
-			} else if ([Operator.ValueType.Self, Operator.ValueType.Static].indexOf(oOperator.valueTypes[0]) === -1) {
+			} else if ([OperatorValueType.Self, OperatorValueType.Static].indexOf(oOperator.valueTypes[0]) === -1) {
 				throw new Error("Cannot convert to date, use RangeOperator");
 			}
 			return aRange; // aRange contains local UI5Dates

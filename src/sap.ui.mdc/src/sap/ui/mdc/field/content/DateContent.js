@@ -4,17 +4,17 @@
 sap.ui.define([
 	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/enum/BaseType",
+	'sap/ui/mdc/enum/OperatorValueType',
 	"sap/ui/mdc/util/DateUtil",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"sap/ui/mdc/condition/Operator",
 	"sap/ui/core/library",
 	"sap/ui/model/Filter"
 ], function(
 	DefaultContent,
 	BaseType,
+	OperatorValueType,
 	DateUtil,
 	FilterOperatorUtil,
-	Operator,
 	coreLibrary,
 	Filter) {
 	"use strict";
@@ -271,7 +271,7 @@ sap.ui.define([
 				var aValueTypes = [];
 
 				for (var i = 0; i < oOperator.valueTypes.length; i++) {
-					if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static) {
+					if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static) {
 						aValueTypes.push("custom"); // provide value as it is to use type to format and parse // TODO: only if custom control?
 					}
 				}
