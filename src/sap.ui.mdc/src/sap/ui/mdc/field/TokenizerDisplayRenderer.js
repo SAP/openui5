@@ -27,10 +27,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/TokenizerRenderer', 'sap/m/library
 		}
 	};
 
-	TokenizerDisplayRenderer._renderTabIndex = function(oRm, oControl) {
-		oRm.attr("tabindex", "-1");
-	};
-
 	TokenizerDisplayRenderer._renderIndicatorTabIndex = function(oRm, oControl) {
 		oRm.attr("tabindex", "0");
 	};
