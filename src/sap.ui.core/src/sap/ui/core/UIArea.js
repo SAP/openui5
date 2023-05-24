@@ -932,10 +932,10 @@ sap.ui.define([
 			oCore._handleControlEvent(oEvent, sId);
 		}
 
-		// if the UIArea or the Core is locked then we do not dispatch
+		// if the UIArea is locked then we do not dispatch
 		// any event to the control => but they will still be dispatched
 		// as control event afterwards!
-		if (this.bLocked || (oCore && oCore.isLocked())) {
+		if (this.bLocked) {
 			return;
 		}
 
