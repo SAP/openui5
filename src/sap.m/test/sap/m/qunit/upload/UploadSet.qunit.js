@@ -1099,7 +1099,7 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("item"), "item is present");
 
 			var oItem = oEvent.getParameter("item");
-			assert.equal(oItem.getParameter("fileName"), sLongFileName, "event contain correct invalid file name");
+			assert.equal(oItem.getFileName(), sLongFileName, "event contain correct invalid file name");
 			done();
 		});
 
@@ -1144,7 +1144,7 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("item"), "item is present");
 
 			var oItem = oEvent.getParameter("item");
-			assert.equal(oItem.getParameter("fileName"), sLongFileName, "event contain correct invalid file name");
+			assert.equal(oItem.getFileName(), sLongFileName, "event contain correct invalid file name");
 			done();
 		});
 
@@ -1180,7 +1180,7 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("item"), "item is present");
 
 			var oItem = oEvent.getParameter("item");
-			assert.equal(oItem.getParameter("fileName"), "Sample File 2.txt", "event contain correct invalid file name");
+			assert.equal(oItem.getFileName(), "Sample File 2.txt", "event contain correct invalid file name");
 			done();
 		});
 
@@ -1218,7 +1218,7 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("item"), "item is present");
 
 			var oItem = oEvent.getParameter("item");
-			assert.equal(oItem.getParameter("fileName"), "Sample File 2.txt", "event contain correct invalid file name");
+			assert.equal(oItem.getFileName(), "Sample File 2.txt", "event contain correct invalid file name");
 			done();
 		});
 
