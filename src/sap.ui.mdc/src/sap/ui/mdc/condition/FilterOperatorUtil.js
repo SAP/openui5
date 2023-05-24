@@ -44,7 +44,7 @@ function(
 			oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		});
 
-		/**
+		/*
 		 * Standard operators for conditions
 		 * @namespace
 		 * @name sap.ui.mdc.condition.operators
@@ -72,7 +72,7 @@ function(
 		var FilterOperatorUtil = {
 
 				_mOperators: {
-					/**
+					/*
 					 * @class
 					 * "Equal to" operator
 					 *
@@ -234,7 +234,7 @@ function(
 						},
 						validateInput: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Between" operator
 					 *
@@ -281,7 +281,7 @@ function(
 							Operator.prototype.validate.apply(this, [aValues, oType]);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Not Between" operator
 					 *
@@ -308,7 +308,7 @@ function(
 							FilterOperatorUtil._mOperators.between.validate(aValues, oType);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Less Than" operator
 					 *
@@ -328,7 +328,7 @@ function(
 						tokenFormat: "<{0}",
 						valueTypes: [Operator.ValueType.Self]
 					}),
-					/**
+					/*
 					 * @class
 					 * "Not Less Than" operator
 					 * @name sap.ui.mdc.condition.operators.NOTLT
@@ -347,7 +347,7 @@ function(
 						valueTypes: [Operator.ValueType.Self],
 						exclude: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Greater Than" operator
 					 *
@@ -367,7 +367,7 @@ function(
 						tokenFormat: ">{0}",
 						valueTypes: [Operator.ValueType.Self]
 					}),
-					/**
+					/*
 					 * @class
 					 * "Not Greater Than" operator
 					 *
@@ -388,7 +388,7 @@ function(
 						valueTypes: [Operator.ValueType.Self],
 						exclude: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Less Then Or Equal To" operator
 					 *
@@ -412,7 +412,7 @@ function(
 						tokenFormat: "<={0}",
 						valueTypes: [Operator.ValueType.Self]
 					}),
-					/**
+					/*
 					 * @class
 					 * "Not Less Than Or Equal To" operator
 					 *
@@ -433,7 +433,7 @@ function(
 						valueTypes: [Operator.ValueType.Self],
 						exclude: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Greater Than Ot Equal To" operator
 					 *
@@ -457,7 +457,7 @@ function(
 						tokenFormat: ">={0}",
 						valueTypes: [Operator.ValueType.Self]
 					}),
-					/**
+					/*
 					 * @class
 					 * "NOT Greater Than Or Equal To" operator
 					 *
@@ -478,7 +478,7 @@ function(
 						valueTypes: [Operator.ValueType.Self],
 						exclude: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Starts With" operator
 					 *
@@ -498,7 +498,7 @@ function(
 						tokenFormat: "{0}*",
 						valueTypes: [Operator.ValueType.SelfNoParse]
 					}),
-					/**
+					/*
 					 * @class
 					 * "Does Not Start With" operator
 					 *
@@ -519,7 +519,7 @@ function(
 						valueTypes: [Operator.ValueType.SelfNoParse],
 						exclude: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Ends With" operator
 					 *
@@ -539,7 +539,7 @@ function(
 						tokenFormat: "*{0}",
 						valueTypes: [Operator.ValueType.SelfNoParse]
 					}),
-					/**
+					/*
 					 * @class
 					 * "Does Not End With" operator
 					 *
@@ -560,7 +560,7 @@ function(
 						valueTypes: [Operator.ValueType.SelfNoParse],
 						exclude: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Contains" operator
 					 *
@@ -580,7 +580,7 @@ function(
 						tokenFormat: "*{0}*",
 						valueTypes: [Operator.ValueType.SelfNoParse]
 					}),
-					/**
+					/*
 					 * @class
 					 * "Does Not Contain" operator
 					 *
@@ -601,7 +601,7 @@ function(
 						valueTypes: [Operator.ValueType.SelfNoParse],
 						exclude: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Not Equal To" operator
 					 *
@@ -622,7 +622,7 @@ function(
 						valueTypes: [Operator.ValueType.Self],
 						exclude: true
 					}),
-					/**
+					/*
 					 * @class
 					 * "Empty" operator
 					 *
@@ -661,7 +661,7 @@ function(
 							}
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Not Empty" operator
 					 *
@@ -701,7 +701,7 @@ function(
 							}
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Yesterday" operator
 					 *
@@ -724,7 +724,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Today" operator
 					 *
@@ -747,7 +747,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Tomorrow" operator
 					 *
@@ -770,7 +770,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last X Days" operator
 					 *
@@ -792,7 +792,7 @@ function(
 							return UniversalDateUtils.ranges.lastDays(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "First Date In This Week" operator
 					 *
@@ -815,7 +815,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last Date In This Week" operator
 					 *
@@ -838,7 +838,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "First Date In This Month" operator
 					 *
@@ -861,7 +861,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last Date In This Month" operator
 					 *
@@ -884,7 +884,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "First Date In This Quarter" operator
 					 *
@@ -907,7 +907,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last Date In This Quarter" operator
 					 *
@@ -930,7 +930,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "First Date In This Year" operator
 					 *
@@ -953,7 +953,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last Date In This Year" operator
 					 *
@@ -976,7 +976,7 @@ function(
 							return oDataType.formatValue(aRange[0], "string");
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Today -X/ +Y days" operator
 					 *
@@ -1009,7 +1009,7 @@ function(
 							return [UniversalDateUtils.resetStartTime(oStart), UniversalDateUtils.resetEndTime(oEnd)];
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next X Days" operator
 					 *
@@ -1031,7 +1031,7 @@ function(
 							return UniversalDateUtils.ranges.nextDays(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last Week" operator
 					 *
@@ -1051,7 +1051,7 @@ function(
 							return UniversalDateUtils.ranges.lastWeek();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "This Week" operator
 					 *
@@ -1071,7 +1071,7 @@ function(
 							return UniversalDateUtils.ranges.currentWeek();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next Week" operator
 					 *
@@ -1091,7 +1091,7 @@ function(
 							return UniversalDateUtils.ranges.nextWeek();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last X Weeks" operator
 					 *
@@ -1113,7 +1113,7 @@ function(
 							return UniversalDateUtils.ranges.lastWeeks(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next X Weeks" operator
 					 *
@@ -1135,7 +1135,7 @@ function(
 							return UniversalDateUtils.ranges.nextWeeks(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last Month" operator
 					 *
@@ -1155,7 +1155,7 @@ function(
 							return UniversalDateUtils.ranges.lastMonth();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "This Month" operator
 					 *
@@ -1175,7 +1175,7 @@ function(
 							return UniversalDateUtils.ranges.currentMonth();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next Month" operator
 					 *
@@ -1195,7 +1195,7 @@ function(
 							return UniversalDateUtils.ranges.nextMonth();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last X Months" operator
 					 *
@@ -1217,7 +1217,7 @@ function(
 							return UniversalDateUtils.ranges.lastMonths(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next X Months" operator
 					 *
@@ -1239,7 +1239,7 @@ function(
 							return UniversalDateUtils.ranges.nextMonths(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last Quarter" operator
 					 *
@@ -1259,7 +1259,7 @@ function(
 							return UniversalDateUtils.ranges.lastQuarter();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "This Quarter" operator
 					 *
@@ -1279,7 +1279,7 @@ function(
 							return UniversalDateUtils.ranges.currentQuarter();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next Quarter" operator
 					 *
@@ -1299,7 +1299,7 @@ function(
 							return UniversalDateUtils.ranges.nextQuarter();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last X Quarters" operator
 					 *
@@ -1321,7 +1321,7 @@ function(
 							return UniversalDateUtils.ranges.lastQuarters(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next X Quarters" operator
 					 *
@@ -1343,7 +1343,7 @@ function(
 							return UniversalDateUtils.ranges.nextQuarters(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "First Quarter" operator
 					 *
@@ -1363,7 +1363,7 @@ function(
 							return UniversalDateUtils.ranges.quarter(1);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Second Quarter" operator
 					 *
@@ -1383,7 +1383,7 @@ function(
 							return UniversalDateUtils.ranges.quarter(2);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Third Quarter" operator
 					 *
@@ -1403,7 +1403,7 @@ function(
 							return UniversalDateUtils.ranges.quarter(3);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Forth Quarter" operator
 					 *
@@ -1423,7 +1423,7 @@ function(
 							return UniversalDateUtils.ranges.quarter(4);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last Year" operator
 					 *
@@ -1443,7 +1443,7 @@ function(
 							return UniversalDateUtils.ranges.lastYear();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "This Year" operator
 					 *
@@ -1463,7 +1463,7 @@ function(
 							return UniversalDateUtils.ranges.currentYear();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next Year" operator
 					 *
@@ -1483,7 +1483,7 @@ function(
 							return UniversalDateUtils.ranges.nextYear();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last X Years" operator
 					 *
@@ -1505,7 +1505,7 @@ function(
 							return UniversalDateUtils.ranges.lastYears(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next X Years" operator
 					 *
@@ -1527,7 +1527,7 @@ function(
 							return UniversalDateUtils.ranges.nextYears(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Month" operator
 					 *
@@ -1607,7 +1607,7 @@ function(
 							}
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Month In Year" operator
 					 *
@@ -1709,7 +1709,7 @@ function(
 							return oField;
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Year To Date" operator
 					 *
@@ -1729,7 +1729,7 @@ function(
 							return UniversalDateUtils.ranges.yearToDate();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Date To Year" operator
 					 *
@@ -1749,7 +1749,7 @@ function(
 							return UniversalDateUtils.ranges.dateToYear();
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last X Minutes" operator
 					 *
@@ -1771,7 +1771,7 @@ function(
 							return UniversalDateUtils.ranges.lastMinutes(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next X Minutes" operator
 					 *
@@ -1793,7 +1793,7 @@ function(
 							return UniversalDateUtils.ranges.nextMinutes(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Last X Hours" operator
 					 *
@@ -1815,7 +1815,7 @@ function(
 							return UniversalDateUtils.ranges.lastHours(iDuration);
 						}
 					}),
-					/**
+					/*
 					 * @class
 					 * "Next X Hours" operator
 					 *
