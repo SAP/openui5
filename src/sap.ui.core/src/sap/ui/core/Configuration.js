@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/config",
+	"sap/base/strings/camelize",
 	"sap/base/util/deepClone",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject"
@@ -37,6 +38,7 @@ sap.ui.define([
 		Log,
 		assert,
 		BaseConfig,
+		camelize,
 		deepClone,
 		extend,
 		isEmptyObject
@@ -47,9 +49,39 @@ sap.ui.define([
 	var oConfiguration;
 	var M_SETTINGS;
 	var VERSION = "${version}";
+	var mCompatVersion;
 
 	// Helper Functions
 	var Object_hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+
+	function _calcCompatVersions() {
+		var PARAM_CVERS = "sapUiCompatversion";
+
+		function _getCVers(key){
+			var v = !key ? DEFAULT_CVERS || BASE_CVERS.toString()
+					: BaseConfig.get({
+						name: camelize(PARAM_CVERS + "-" + key.toLowerCase()),
+						type: BaseConfig.Type.String
+					}) || DEFAULT_CVERS || M_COMPAT_FEATURES[key] || BASE_CVERS.toString();
+			v = Version(v.toLowerCase() === "edge" ? VERSION : v);
+			//Only major and minor version are relevant
+			return Version(v.getMajor(), v.getMinor());
+		}
+
+		var DEFAULT_CVERS = BaseConfig.get({
+			name: PARAM_CVERS,
+			type: BaseConfig.Type.String
+		});
+		var BASE_CVERS = Version("1.14");
+		mCompatVersion = {};
+
+		mCompatVersion._default = _getCVers();
+		for (var n in M_COMPAT_FEATURES) {
+			mCompatVersion[n] = _getCVers(n);
+		}
+
+		return mCompatVersion;
+	}
 
 	function detectLanguage() {
 
@@ -372,24 +404,6 @@ sap.ui.define([
 				}).concat(config.modules);
 			}
 
-			var PARAM_CVERS = "compatversion";
-			var DEFAULT_CVERS = oCfg[PARAM_CVERS];
-			var BASE_CVERS = Version("1.14");
-			this._compatversion = {};
-
-			function _getCVers(key){
-				var v = !key ? DEFAULT_CVERS || BASE_CVERS.toString()
-						: oCfg[PARAM_CVERS + "-" + key.toLowerCase()] || DEFAULT_CVERS || M_COMPAT_FEATURES[key] || BASE_CVERS.toString();
-				v = Version(v.toLowerCase() === "edge" ? VERSION : v);
-				//Only major and minor version are relevant
-				return Version(v.getMajor(), v.getMinor());
-			}
-
-			this._compatversion._default = _getCVers();
-			for (var n in M_COMPAT_FEATURES) {
-				this._compatversion[n] = _getCVers(n);
-			}
-
 			var oUriParams;
 
 			// apply the settings from the url (only if not blocked by app configuration)
@@ -520,11 +534,6 @@ sap.ui.define([
 
 			config['xx-fiori2Adaptation'] = vAdaptations;
 
-			// determine default for binding syntax
-			if ( config["bindingSyntax"] === "default" ) {
-				config["bindingSyntax"] = (config.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
-			}
-
 			config["allowlistService"] = config["allowlistService"] || /* fallback to legacy config */ config["whitelistService"];
 
 			// Configure allowlistService / frameOptions via <meta> tag if not already defined via UI5 configuration
@@ -654,11 +663,11 @@ sap.ui.define([
 		 * @public
 		 */
 		getCompatibilityVersion : function (sFeature) {
-			if (typeof (sFeature) === "string" && this._compatversion[sFeature]) {
-				return this._compatversion[sFeature];
+			var mCompatVersion = _calcCompatVersions();
+			if (typeof (sFeature) === "string" && mCompatVersion[sFeature]) {
+				return mCompatVersion[sFeature];
 			}
-
-			return this._compatversion._default;
+			return mCompatVersion._default;
 		},
 
 		/**
@@ -1827,12 +1836,16 @@ sap.ui.define([
 		},
 
 		getBindingSyntax: function() {
-			return BaseConfig.get({
+			var sBindingSyntax = BaseConfig.get({
 				name: "sapUiBindingSyntax",
 				type: BaseConfig.Type.String,
-				defaultValue: (this.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex",
+				defaultValue: "default",
 				freeze: true
 			});
+			if ( sBindingSyntax === "default" ) {
+				sBindingSyntax = (this.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
+			}
+			return sBindingSyntax;
 		},
 
 		/**
