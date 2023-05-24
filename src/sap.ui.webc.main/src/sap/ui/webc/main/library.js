@@ -6,11 +6,12 @@
  * Initialization Code and shared classes of library sap.ui.webc.main
  */
 sap.ui.define([
+		"sap/ui/core/Lib",
 		"sap/ui/webc/common/library",
 		"./thirdparty/Assets",
 		"./library.config"
 	], // library dependency
-	function(commonLibrary) {
+	function(Library, commonLibrary) {
 
 		"use strict";
 
@@ -25,7 +26,7 @@ sap.ui.define([
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 */
-		var thisLib = sap.ui.getCore().initLibrary({
+		var thisLib = Library.init({
 			name: "sap.ui.webc.main",
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.ui.webc.common"],

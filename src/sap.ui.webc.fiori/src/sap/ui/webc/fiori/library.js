@@ -7,10 +7,11 @@
  */
 sap.ui.define([
 		"sap/ui/webc/common/library",
+		"sap/ui/core/Lib",
 		"./thirdparty/Assets",
 		"./library.config"
 	], // library dependency
-	function(commonLibrary) {
+	function(commonLibrary, Library) {
 
 		"use strict";
 
@@ -25,7 +26,7 @@ sap.ui.define([
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 */
-		var thisLib = sap.ui.getCore().initLibrary({
+		var thisLib = Library.init({
 			name: "sap.ui.webc.fiori",
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.ui.webc.common"],
