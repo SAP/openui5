@@ -24555,7 +24555,7 @@ sap.ui.define([
 						ArtistID : "0",
 						IsActiveEntity : true,
 						Messages : [],
-						_ : {
+						_ : { // in case we get a value, we will happily check it :-)
 							NodeID : "-0,true-"
 						},
 						defaultChannel : "360"
@@ -24890,6 +24890,8 @@ sap.ui.define([
 	// and request a side effect for all rows. Scroll up again and check that unexpected structural
 	// changes are properly detected.
 	// JIRA: CPOUI5ODATAV4-1849
+	//
+	// With RAP, NodeID is not available for side effects (BCP: 2380047659).
 [ //TODO "DescendantCount"
 	undefined, "ArtistID", "DistanceFromRoot", "DrillState", "IsActiveEntity", "NodeID", "order"
 ].forEach(function (sStructuralChange) {
@@ -25000,16 +25002,12 @@ sap.ui.define([
 						ArtistID : "2",
 						IsActiveEntity : true,
 						Name : "Gamma (updated)",
-						_ : {
-							NodeID : "2,true"
-						}
+						_ : null // not available w/ RAP for a non-hierarchical request
 					}, {
 						ArtistID : "3",
 						IsActiveEntity : true,
 						Name : "Delta (updated)",
-						_ : {
-							NodeID : "3,true"
-						}
+						_ : null // not available w/ RAP for a non-hierarchical request
 					}]
 				});
 
