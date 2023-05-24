@@ -16,6 +16,7 @@ sap.ui.define([
 		// Element, UIArea module references, lazily probed when needed
 		var Element;
 		var UIArea;
+		var StaticArea;
 
 		var oFocusInfoEventProvider = new EventProvider();
 		var FOCUS_INFO_EVENT = "focusInfo";
@@ -417,9 +418,12 @@ sap.ui.define([
 					if (oControlUIArea) {
 						oUIArea = UIArea.registry.get(oControlUIArea.getId());
 					} else {
-						var oPopupUIAreaDomRef = UIArea.getStaticAreaRef();
-						if (oPopupUIAreaDomRef.contains(oEvent.target)) {
-							oUIArea = UIArea.registry.get(oPopupUIAreaDomRef.id);
+						StaticArea = StaticArea || sap.ui.require("sap/ui/core/StaticArea");
+						if (StaticArea) {
+							var oPopupUIAreaDomRef = StaticArea.getDomRef();
+							if (oPopupUIAreaDomRef.contains(oEvent.target)) {
+								oUIArea = StaticArea.getUIArea();
+							}
 						}
 					}
 					if (oUIArea) {
