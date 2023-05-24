@@ -11,10 +11,12 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/type/String",
+	"sap/ui/model/type/Integer",
 	"sap/ui/performance/Measurement",
 	"sap/ui/thirdparty/URI"
 ], function (Log, JSTokenizer, BindingInfo, BindingParser, ExpressionParser, Icon,
-		InvisibleText, JSONModel, ODataUtils, Measurement, URI) {
+		InvisibleText, JSONModel, ODataUtils, StringType, Integer, Measurement, URI) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
