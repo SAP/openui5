@@ -94,7 +94,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds a SyncPromise to private annotations of the element and returns it.
+		 * Adds a rejectable SyncPromise to a private annotation of the element and returns it.
 		 *
 		 * @param {object} oElement - The cache element
 		 * @returns {sap.ui.base.SyncPromise} The promise
@@ -102,8 +102,7 @@ sap.ui.define([
 		 * @public
 		 */
 		addPromise : function (oElement) {
-			return new SyncPromise(function (fnResolve, fnReject) {
-				_Helper.setPrivateAnnotation(oElement, "resolve", fnResolve);
+			return new SyncPromise(function (_fnResolve, fnReject) {
 				_Helper.setPrivateAnnotation(oElement, "reject", fnReject);
 			});
 		},
@@ -350,23 +349,21 @@ sap.ui.define([
 		 * Cancels all nested creates within the given element.
 		 *
 		 * @param {object} oElement - The entity data in the cache
-		 * @param {string} sPostPath - The request path of the POST request (only used for logging)
-		 * @param {string} sGroupId - The group ID of the POST request
+		 * @param {string} sMessage - The error message to use
 		 *
 		 * @public
 		 */
-		cancelNestedCreates : function (oElement, sPostPath, sGroupId) {
+		cancelNestedCreates : function (oElement, sMessage) {
 			Object.keys(oElement).forEach(function (sKey) {
 				var oError,
 					vProperty = oElement[sKey];
 
 				if (vProperty && vProperty.$postBodyCollection) {
-					oError = new Error("Deep create of " + sKey + " canceled with POST " + sPostPath
-						+ "; group: " + sGroupId);
+					oError = new Error(sMessage);
 					oError.canceled = true;
 					vProperty.forEach(function (oChildElement) {
 						_Helper.getPrivateAnnotation(oChildElement, "reject")(oError);
-						_Helper.cancelNestedCreates(oChildElement, sPostPath, sGroupId);
+						_Helper.cancelNestedCreates(oChildElement, sMessage);
 					});
 				}
 			});
@@ -2335,24 +2332,6 @@ sap.ui.define([
 				}
 			}
 			return mHeaders;
-		},
-
-		/**
-		 * Resolves all nested creates within the given element.
-		 *
-		 * @param {object} oElement - The entity data in the cache
-		 */
-		resolveNestedCreates : function (oElement) {
-			Object.keys(oElement).forEach(function (sKey) {
-				var vProperty = oElement[sKey];
-
-				if (vProperty && vProperty.$postBodyCollection) { // within a deep create
-					vProperty.forEach(function (oChildElement) {
-						_Helper.getPrivateAnnotation(oChildElement, "resolve")();
-						_Helper.resolveNestedCreates(oChildElement);
-					});
-				}
-			});
 		},
 
 		/**

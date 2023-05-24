@@ -229,7 +229,7 @@ sap.ui.define([
 					oError = new Error("Deleted from deep create");
 					oError.canceled = true;
 					_Helper.getPrivateAnnotation(oEntity, "reject")(oError);
-					_Helper.cancelNestedCreates(oEntity, "(nested)", sTransientGroup);
+					_Helper.cancelNestedCreates(oEntity, "Deleted from deep create");
 				} else {
 					that.oRequestor.removePost(sTransientGroup, oEntity);
 				}
@@ -554,8 +554,8 @@ sap.ui.define([
 				return true;
 			}
 
-			_Helper.cancelNestedCreates(oEntityData, oPostPathPromise.getResult(),
-				oGroupLock.getGroupId());
+			_Helper.cancelNestedCreates(oEntityData, "Deep create of "
+				+ oPostPathPromise.getResult() + " canceled; group: " + oGroupLock.getGroupId());
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 			aCollection.splice(iIndex, 1);
 			aCollection.$created -= 1;
@@ -623,7 +623,8 @@ sap.ui.define([
 				_Helper.updateSelected(that.mChangeListeners, sResultingPath, oEntityData,
 					oCreatedEntity, aSelect, /*fnCheckKeyPredicate*/ undefined,
 					/*bOkIfMissing*/ true);
-				_Helper.resolveNestedCreates(oEntityData);
+				_Helper.cancelNestedCreates(oEntityData, "Deep create of " + sPostPath
+					+ " succeeded. Do not use this promise.");
 				_Helper.setPrivateAnnotation(oEntityData, "deepCreate",
 					// update properties from collections in a deep create
 					that.updateNestedCreates(sResultingPath, oEntityData, oCreatedEntity,

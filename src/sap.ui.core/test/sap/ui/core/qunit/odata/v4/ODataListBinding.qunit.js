@@ -4718,10 +4718,6 @@ sap.ui.define([
 		sGroupId : "deferred",
 		bInactive : true,
 		sTitle : "create: inactive, with deferred groupId"
-	}, {
-		bRelative : true,
-		bTransient : true,
-		sTitle : "create: transient binding"
 	}].forEach(function (oFixture) {
 		QUnit.test(oFixture.sTitle, function (assert) {
 			var oBinding,
@@ -4734,10 +4730,8 @@ sap.ui.define([
 				aCreatedElements = ["~element0~", "~element1~"],
 				oCreatePathPromise = {},
 				aCreatePromises = [
-					SyncPromise.resolve(
-						Promise.resolve(oFixture.bTransient ? undefined : aCreatedElements[0])),
-					SyncPromise.resolve(
-						Promise.resolve(oFixture.bTransient ? undefined : aCreatedElements[1]))
+					SyncPromise.resolve(Promise.resolve(aCreatedElements[0])),
+					SyncPromise.resolve(Promise.resolve(aCreatedElements[1]))
 				],
 				oHelperMock = this.mock(_Helper),
 				oModelMock = this.mock(this.oModel),
@@ -4773,9 +4767,9 @@ sap.ui.define([
 					iCurrentCreateNo = iCreateNo;
 
 				oBindingMock.expects("checkSuspended").withExactArgs();
-				oBindingMock.expects("getGroupId").exactly(oFixture.bTransient ? 0 : 1)
+				oBindingMock.expects("getGroupId")
 					.returns(oFixture.sGroupId || "$auto");
-				oModelMock.expects("isApiGroup").exactly(oFixture.bTransient ? 0 : 1)
+				oModelMock.expects("isApiGroup")
 					.withExactArgs(oFixture.sGroupId || "$auto")
 					.returns(oFixture.sGroupId === "deferred");
 				oBindingMock.expects("getUpdateGroupId").withExactArgs().returns(oFixture.sGroupId);
@@ -4796,26 +4790,26 @@ sap.ui.define([
 				oContextMock.expects("fetchValue").withExactArgs().resolves({});
 
 				aCreatePromises[iCurrentCreateNo].then(function () {
-					oHelperMock.expects("getPrivateAnnotation").exactly(oFixture.bTransient ? 0 : 1)
+					oHelperMock.expects("getPrivateAnnotation")
 						.withExactArgs(sinon.match.same(aCreatedElements[iCurrentCreateNo]),
 							"predicate")
 						.returns("~predicate~");
-					oBindingMock.expects("adjustPredicate").exactly(oFixture.bTransient ? 0 : 1)
+					oBindingMock.expects("adjustPredicate")
 						.withExactArgs(sinon.match(rTransientPredicate), "~predicate~",
 							sinon.match.same(aContexts[iCurrentCreateNo]));
-					oBindingMock.expects("fireEvent").exactly(oFixture.bTransient ? 0 : 1)
+					oBindingMock.expects("fireEvent")
 						.withExactArgs("createCompleted", {
 							context : sinon.match.same(aContexts[iCurrentCreateNo]),
 							success : true
 						});
-					oHelperMock.expects("getPrivateAnnotation").exactly(oFixture.bTransient ? 0 : 1)
+					oHelperMock.expects("getPrivateAnnotation")
 						.withExactArgs(sinon.match.same(aCreatedElements[iCurrentCreateNo]),
 							"deepCreate")
 						.returns(false);
-					oBindingMock.expects("lockGroup").exactly(oFixture.bTransient ? 0 : 1)
+					oBindingMock.expects("lockGroup")
 						.withExactArgs(oFixture.sGroupId === "$direct" ? "$direct" : "$auto")
 						.returns(oGroupLock);
-					oBindingMock.expects("refreshSingle").exactly(oFixture.bTransient ? 0 : 1)
+					oBindingMock.expects("refreshSingle")
 						.withExactArgs(sinon.match.same(aContexts[iCurrentCreateNo]),
 							sinon.match.same(oGroupLock))
 						.returns(aRefreshSinglePromises[iCurrentCreateNo]);
@@ -5182,6 +5176,13 @@ sap.ui.define([
 				oContext0,
 				oContext1,
 				oContextMock = this.mock(Context),
+				oError = new Error(),
+				oCreateInCachePromise0 = SyncPromise.resolve(bTransient
+					? Promise.reject(oError)
+					: Promise.resolve({})),
+				oCreateInCachePromise1 = SyncPromise.resolve(bTransient
+					? Promise.reject(oError)
+					: Promise.resolve({})),
 				oCreatePathMatcher = sinon.match(function (oPromise) {
 					return oPromise.getResult() === "EMPLOYEES";
 				}),
@@ -5189,6 +5190,7 @@ sap.ui.define([
 				oElement1 = {},
 				oGroupLock = {unlock : function () {}},
 				oHelperMock = this.mock(_Helper),
+				oModelMock = this.mock(this.oModel),
 				oNewContext0 = {
 					created : function () {},
 					fetchValue : function () {},
@@ -5201,8 +5203,11 @@ sap.ui.define([
 					getPath : function () {},
 					updateAfterCreate : function () {}
 				},
-				bNotAllowed = aAtEnd[0] && !aAtEnd[1];
+				bNotAllowed = aAtEnd[0] && !aAtEnd[1],
+				fnReporter0 = sinon.spy(),
+				fnReporter1 = sinon.spy();
 
+			this.oModel.bAutoExpandSelect = true;
 			oBinding.aContexts.push("~oContext~");
 			oBinding.bLengthFinal = true;
 			oBinding.iMaxLength = 0;
@@ -5217,12 +5222,24 @@ sap.ui.define([
 					sinon.match(function (bAtEndOfCreated) {
 						return bAtEndOfCreated === (oBinding.bFirstCreateAtEnd !== !!aAtEnd[0]);
 					}), sinon.match.func, sinon.match.func)
-				.returns(SyncPromise.resolve(Promise.resolve(bTransient ? undefined : {})));
+				.returns(oCreateInCachePromise0);
 			oContextMock.expects("create")
 				.withExactArgs(sinon.match.same(oBinding.oModel),
 					sinon.match.same(oBinding), sinon.match.string, -oBinding.iCreatedContexts - 1,
 					sinon.match.instanceOf(SyncPromise), undefined)
-				.returns(oNewContext0);
+				.callsFake(function () {
+					oNewContext0.oCreatedPromise = Promise.resolve(arguments[4]);
+					return oNewContext0;
+				});
+			this.mock(oBinding).expects("isTransient").atLeast(1)
+				.withExactArgs().returns(bTransient);
+			this.mock(oNewContext0).expects("created").exactly(bTransient ? 1 : 0)
+				.withExactArgs()
+				.callsFake(function () {
+					return oNewContext0.oCreatedPromise;
+				});
+			oModelMock.expects("getReporter").exactly(bTransient ? 1 : 0)
+				.withExactArgs().returns(fnReporter0);
 			this.mock(oNewContext0).expects("fetchValue").withExactArgs().resolves(oElement0);
 			oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oElement0), "context",
@@ -5258,13 +5275,23 @@ sap.ui.define([
 							return bAtEndOfCreated
 								=== (oBinding.bFirstCreateAtEnd !== !!aAtEnd[1]);
 						}), sinon.match.func, sinon.match.func)
-					.returns(SyncPromise.resolve(Promise.resolve(bTransient ? undefined : {})));
+					.returns(oCreateInCachePromise1);
 				oContextMock.expects("create")
 					.withExactArgs(sinon.match.same(oBinding.oModel),
 						sinon.match.same(oBinding), sinon.match.string,
 						-oBinding.iCreatedContexts - 1, sinon.match.instanceOf(SyncPromise),
 						undefined)
-					.returns(oNewContext1);
+					.callsFake(function () {
+						oNewContext1.oCreatedPromise = Promise.resolve(arguments[4]);
+						return oNewContext1;
+					});
+				this.mock(oNewContext1).expects("created").exactly(bTransient ? 1 : 0)
+					.withExactArgs()
+					.callsFake(function () {
+						return oNewContext1.oCreatedPromise;
+					});
+				oModelMock.expects("getReporter").exactly(bTransient ? 1 : 0)
+					.withExactArgs().returns(fnReporter1);
 				this.mock(oNewContext1).expects("fetchValue").withExactArgs().resolves(oElement1);
 				oHelperMock.expects("setPrivateAnnotation")
 					.withExactArgs(sinon.match.same(oElement1), "context",
@@ -5298,9 +5325,16 @@ sap.ui.define([
 			}
 
 			return Promise.all([
-				oContext0.created(),
-				oContext1 ? oContext1.created() : undefined
-			]);
+				oCreateInCachePromise0.catch(function () {}),
+				oCreateInCachePromise1.catch(function () {})
+			]).then(function () {
+				if (bTransient) {
+					sinon.assert.calledOnceWithExactly(fnReporter0, sinon.match.same(oError));
+					if (!bNotAllowed) {
+						sinon.assert.calledOnceWithExactly(fnReporter1, sinon.match.same(oError));
+					}
+				}
+			});
 		});
 	});
 });
@@ -10155,7 +10189,7 @@ sap.ui.define([
 			},
 			aCollection = ["~a~", "~b~"],
 			oContextMock = this.mock(Context),
-			aCreatedPromises = [SyncPromise.reject(), SyncPromise.reject()],
+			aCreatedPromises = [SyncPromise.reject("~oError~"), SyncPromise.reject("~oError~")],
 			aCreatedContexts = [{
 				nr : 0,
 				created : function () { return aCreatedPromises[0]; }
@@ -10165,7 +10199,9 @@ sap.ui.define([
 			}],
 			oExpectation,
 			oHelperMock = this.mock(_Helper),
+			oModelMock = this.mock(this.oModel),
 			mQueryOptions = bHasQueryOptions ? {$select : "~select~"} : undefined,
+			aReporters = [sinon.spy(), sinon.spy()],
 			that = this;
 
 		this.oModel.bAutoExpandSelect = true;
@@ -10190,6 +10226,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
 					"/resolved/path~predicate~" + i, i - 2, "~promise~" + i, false, true)
 				.returns(aCreatedContexts[i]);
+			oModelMock.expects("getReporter").withExactArgs().returns(aReporters[i]);
 			oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(oEntity, "context", sinon.match.same(aCreatedContexts[i]));
 			oHelperMock.expects("setPrivateAnnotation")
@@ -10205,6 +10242,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iCreatedContexts, 2);
 		assert.strictEqual(oBinding.iActiveContexts, 2);
 		assert.strictEqual(oBinding.bFirstCreateAtEnd, false);
+		sinon.assert.calledOnceWithExactly(aReporters[0], "~oError~");
+		sinon.assert.calledOnceWithExactly(aReporters[1], "~oError~");
 	});
 });
 

@@ -736,7 +736,7 @@ sap.ui.define([
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "reject").returns(fnReject);
 		oHelperMock.expects("cancelNestedCreates")
-			.withExactArgs(sinon.match.same(oElement), "(nested)", "updateGroup");
+			.withExactArgs(sinon.match.same(oElement), "Deleted from deep create");
 
 		// code under test
 		oPromise = oCache._delete(oGroupLock, undefined, "SO_2_SOITEM/-1", null, fnCallback);
@@ -8259,8 +8259,8 @@ sap.ui.define([
 
 				that.mock(_Helper).expects("cancelNestedCreates")
 					.exactly(bResetAndKeep && bInactive ? 0 : 1)
-					.withExactArgs(sinon.match.same(oCache.aElements[0]), "Employees",
-						"$inactive.$auto");
+					.withExactArgs(sinon.match.same(oCache.aElements[0]),
+						"Deep create of Employees canceled; group: $inactive.$auto");
 				that.mock(_Helper).expects("removeByPath")
 					.withExactArgs(sinon.match.same(oCache.mPostRequests), "",
 						sinon.match.same(oCache.aElements[0]))
@@ -8510,8 +8510,9 @@ sap.ui.define([
 					}
 					oEntityDataCleaned.ID = oPostResult.ID;
 				});
-			oHelperMock.expects("resolveNestedCreates")
-				.withExactArgs(sinon.match.same(oEntityDataCleaned));
+			oHelperMock.expects("cancelNestedCreates")
+				.withExactArgs(sinon.match.same(oEntityDataCleaned), "Deep create of " + sPostPath
+					+ " succeeded. Do not use this promise.");
 			oHelperMock.expects("getPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oEntityDataCleaned), "select")
 				.returns("~$select~");
@@ -9007,8 +9008,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult), undefined,
 				undefined, true);
-		oHelperMock.expects("resolveNestedCreates")
-			.withExactArgs(sinon.match.same(oCache.aElements[0]));
+		oHelperMock.expects("cancelNestedCreates")
+			.withExactArgs(sinon.match.same(oCache.aElements[0]),
+				"Deep create of Employees?foo=bar succeeded. Do not use this promise.");
 		oCacheMock.expects("updateNestedCreates")
 			.withExactArgs(sTransientPredicate, sinon.match.same(oCache.aElements[0]),
 				sinon.match.same(oPostResult), undefined);
