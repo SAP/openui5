@@ -567,7 +567,7 @@ sap.ui.define([
 						assert.equal(oSalesOrderLineItemSetCtx && oSalesOrderLineItemSetCtx.sDeepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')", "Deep path is set.");
 						that.oModel.createBindingContext("ToProduct", oSalesOrderLineItemSetCtx, undefined, function (oProductCtx) {
 							assert.equal(oProductCtx.sDeepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is set.");
-							assert.equal(that.oStubGetEntitySetByPath.callCount, 10, "Check number of cache misses.");
+							assert.equal(that.oStubGetEntitySetByPath.callCount, 11, "Check number of cache misses.");
 							assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
 							assert.equal(getLastRequest(that).deepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is set when request is triggered by createBindingContext.");
 							checkIfCacheEntriesAreValid(that.oModel, assert).then(done);

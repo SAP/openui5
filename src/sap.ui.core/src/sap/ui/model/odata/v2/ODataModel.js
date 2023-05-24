@@ -2559,12 +2559,20 @@ sap.ui.define([
 		var that = this,
 			oMetadata = this.oMetadata,
 			oEntityType,
-			oEntity = this._getObject(sPath),
 			aExpand = [], aSelect = [];
 
 		if (!this.oMetadata.isLoaded()) {
 			return true;
 		}
+		var bCanonical;
+		if (mParameters) {
+			bCanonical = mParameters.canonicalRequest;
+		}
+		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+		if (bCanonical) {
+			sPath = this.resolve(sPath, undefined, bCanonical) || sPath;
+		}
+		var oEntity = this._getObject(sPath);
 		oEntityType = this.oMetadata._getEntityTypeByPath(sPath);
 
 		// Created entities should never be reloaded, as they do not exist on

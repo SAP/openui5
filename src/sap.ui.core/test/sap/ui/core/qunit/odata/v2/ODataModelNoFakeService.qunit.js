@@ -8593,4 +8593,63 @@ sap.ui.define([
 		// code under test
 		fnCatchHandler("~oError");
 	});
+
+	//*********************************************************************************************
+[{
+	parameters: undefined,
+	expectedIsCanonicalRequestNeededParam: undefined,
+	expectedPath: "~path"
+}, {
+	parameters: null,
+	expectedIsCanonicalRequestNeededParam: undefined,
+	expectedPath: "~path"
+}, {
+	parameters: {},
+	expectedIsCanonicalRequestNeededParam: undefined,
+	expectedPath: "~path"
+}, {
+	parameters: {canonicalRequest: false},
+	expectedIsCanonicalRequestNeededParam: false,
+	expectedPath: "~path"
+}, {
+	parameters: {canonicalRequest: true},
+	expectedIsCanonicalRequestNeededParam: true,
+	resolvedPath: undefined,
+	expectedPath: "~path"
+}, {
+	parameters: {canonicalRequest: true},
+	expectedIsCanonicalRequestNeededParam: true,
+	resolvedPath: "~canonicalPath",
+	expectedPath: "~canonicalPath"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_isReloadNeeded: canonicalRequest can affect sPath #" + i, function (assert) {
+		var oModel = {
+				oMetadata: {
+					_getEntityTypeByPath: function () {},
+					isLoaded: function () {}
+				},
+				_isCanonicalRequestNeeded: function () {},
+				_isCreatedEntity: function () {},
+				_getObject: function () {},
+				resolve: function () {}
+			};
+
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		this.mock(oModel).expects("_isCanonicalRequestNeeded")
+			.withExactArgs(oFixture.expectedIsCanonicalRequestNeededParam)
+			.returns(!!oFixture.resolvedPath);
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("~path", undefined, true)
+			.exactly(oFixture.resolvedPath ? 1 : 0)
+			.returns(oFixture.resolvedPath);
+		this.mock(oModel).expects("_getObject").withExactArgs(oFixture.expectedPath).returns(/*not relevant*/undefined);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs(oFixture.expectedPath)
+			.returns(/*not relevant*/undefined);
+		this.mock(oModel).expects("_isCreatedEntity").withExactArgs(undefined).returns(false);
+
+		// code under test
+		ODataModel.prototype._isReloadNeeded.call(oModel, "~path", oFixture.parameters);
+	});
+});
 });

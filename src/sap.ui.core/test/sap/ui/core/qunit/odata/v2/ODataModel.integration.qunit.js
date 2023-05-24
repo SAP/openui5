@@ -19929,4 +19929,80 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: The expanded list defined in ODataModel#createEntry can be used to create a new
+	// ODataContextBinding, if that binding has parameter canonicalRequest set to true.
+	// BCP: 2370052919
+	QUnit.test("createEntry: expand is usable if canonicalRequests is enabled for context binding", function (assert) {
+		var oModel = createSalesOrdersModel({canonicalRequests: false}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+</FlexBox>\
+<FlexBox id="objectPage">\
+	<Text id="itemPosition" text="{ItemPosition}" />\
+	<Text id="productName" text="{ToProduct/Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata: {uri: "SalesOrderSet('1')"},
+				SalesOrderID: "1"
+			})
+			.expectValue("salesOrderID", "1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					created: true,
+					data: {
+						__metadata: {type: "GWSAMPLE_BASIC.SalesOrderLineItem"}
+					},
+					headers: {"Content-ID": "~key~", "sap-messages": "transientOnly"},
+					method: "POST",
+					requestUri: "SalesOrderSet('1')/ToLineItems"
+				}, {
+					data: {
+						__metadata: {uri: "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"},
+						ItemPosition: "10",
+						SalesOrderID: "1"
+					},
+					statusCode: 201
+				})
+				.expectRequest("$~key~?$expand=ToProduct&$select=ToProduct", {
+					__metadata: {uri: "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"},
+					ToProduct: {
+						__metadata: {uri: "ProductSet(ProductID='P1')"},
+						Name: "Product 1",
+						ProductID: "P1"
+					}
+				});
+
+			// code under test
+			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				expand: "ToProduct",
+				properties: {}
+			});
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemPosition", "10")
+				.expectValue("productName", "Product 1");
+
+			// code under test
+			that.oView.byId("objectPage").bindObject({
+				path: "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+				parameters: {
+					canonicalRequest: true,
+					expand: "ToProduct",
+					select: "ItemPosition,ToProduct/Name"
+				}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
