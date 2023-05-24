@@ -5186,12 +5186,20 @@ sap.ui.define([
 				nulled : null,
 				otherCollection : [{}]
 			},
+			oHelperMock = this.mock(_Helper),
 			fnReject0 = sinon.spy(),
 			fnReject1 = sinon.spy();
 
 		_Helper.setPrivateAnnotation(oCreatedElement0, "reject", fnReject0);
 		_Helper.setPrivateAnnotation(oCreatedElement1, "reject", fnReject1);
 		oElement.SO_2_SOITEM.$postBodyCollection = "~postBodyCollection~";
+		oHelperMock.expects("cancelNestedCreates")
+			.withExactArgs(sinon.match.same(oElement), "post/path", "update")
+			.callThrough(); // initial call
+		oHelperMock.expects("cancelNestedCreates")
+			.withExactArgs(sinon.match.same(oCreatedElement0), "post/path", "update");
+		oHelperMock.expects("cancelNestedCreates")
+			.withExactArgs(sinon.match.same(oCreatedElement1), "post/path", "update");
 
 		// code under test
 		_Helper.cancelNestedCreates(oElement, "post/path", "update");
@@ -5203,5 +5211,35 @@ sap.ui.define([
 						+ " post/path; group: update";
 			}));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolveNestedCreates", function () {
+		var oCreatedElement0 = {},
+			oCreatedElement1 = {},
+			oElement = {
+				SO_2_SOITEM : [oCreatedElement0, oCreatedElement1],
+				nulled : null,
+				otherCollection : [{}]
+			},
+			oHelperMock = this.mock(_Helper),
+			fnResolve0 = sinon.spy(),
+			fnResolve1 = sinon.spy();
+
+		_Helper.setPrivateAnnotation(oCreatedElement0, "resolve", fnResolve0);
+		_Helper.setPrivateAnnotation(oCreatedElement1, "resolve", fnResolve1);
+		oElement.SO_2_SOITEM.$postBodyCollection = "~postBodyCollection~";
+		oHelperMock.expects("resolveNestedCreates").withExactArgs(sinon.match.same(oElement))
+			.callThrough(); // initial call
+		oHelperMock.expects("resolveNestedCreates")
+			.withExactArgs(sinon.match.same(oCreatedElement0));
+		oHelperMock.expects("resolveNestedCreates")
+			.withExactArgs(sinon.match.same(oCreatedElement1));
+
+		// code under test
+		_Helper.resolveNestedCreates(oElement);
+
+		sinon.assert.calledOnceWithExactly(fnResolve0);
+		sinon.assert.calledOnceWithExactly(fnResolve1);
 	});
 });

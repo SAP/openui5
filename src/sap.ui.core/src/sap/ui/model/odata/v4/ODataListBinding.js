@@ -125,9 +125,6 @@ sap.ui.define([
 		// into aContexts' area of "created contexts"! And via "keep alive" or selection, we may
 		// end up w/ #created promise outside that area!
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
-		// Whether the binding is a nested binding within a deep create; it is true while using the
-		// parent cache so that it can contribute to the POST request (see #prepareDeepCreate)
-		this.bDeepCreate = false;
 		this.iDeletedContexts = 0; // number of (client-side) deleted contexts
 		this.oDiff = undefined;
 		this.aFilters = [];
@@ -273,8 +270,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.adjustPredicate = function (sTransientPredicate, sPredicate,
 			oContext) {
-		var aElements,
-			that = this;
+		var that = this;
 
 		/*
 		 * Replace $uid also in previous data to avoid useless diff in ODLB#getContexts.
@@ -295,16 +291,9 @@ sap.ui.define([
 		} else { // recursive call: we KNOW some parent context was affected
 			// => reduced path may, but need not, be affected; other contexts for sure are!
 			asODataParentBinding.prototype.adjustPredicate.apply(this, arguments);
-			if (this.mCacheQueryOptions) {
-				// There are cache query options, but #prepareDeepCreate prevented its creation
-				aElements = this.oContext.getAndRemoveValue(this.sPath);
+			if (this.mCacheQueryOptions && !this.oContext.getPath().includes("($uid=")) {
+				// There are mCacheQueryOptions, but #prepareDeepCreate prevented creating the cache
 				this.fetchCache(this.oContext, /*bIgnoreParentCache*/true);
-				if (aElements.length) { // after a deep create
-					this.oCachePromise.then(function (oCache) {
-						// copy the created elements into the newly created cache
-						oCache.setPersistedCollection(aElements);
-					});
-				}
 			}
 			this.oHeaderContext.adjustPredicate(sTransientPredicate, sPredicate);
 			this.aContexts.forEach(function (oContext) {
@@ -775,6 +764,9 @@ sap.ui.define([
 	 *       (see {@link sap.ui.model.odata.v4.ODataModel#bindList}),
 	 *     <li> <code>bInactive</code> is <code>true</code> and the list binding has a transient
 	 *       parent context (takes part in a deep create),
+	 *     <li> the list binding has a transient parent context (takes part in a deep create), but
+	 *       the <code>autoExpandSelect<code> parameter at the
+	 *       {@link sap.ui.model.odata.v4.ODataModel#constructor model} is not set,
 	 *     <li> an automatic refresh of the created entity cannot be performed and
 	 *       <code>bSkipRefresh</code> is missing. This could be caused by a side-effects refresh
 	 *       happening in parallel to creation (error thrown since 1.114.0; previously failed
@@ -801,6 +793,9 @@ sap.ui.define([
 		this.checkSuspended();
 		if (this.mParameters.$$aggregation) {
 			throw new Error("Cannot create in " + this + " when using data aggregation");
+		}
+		if (!this.oModel.bAutoExpandSelect && this.isTransient()) {
+			throw new Error("Deep create is only supported with autoExpandSelect");
 		}
 
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
@@ -857,7 +852,7 @@ sap.ui.define([
 		).then(function (oCreatedEntity) { // the entity was created on the server
 			var bDeepCreate, sGroupId, sPredicate;
 
-			if (that.isTransient()) {
+			if (!oCreatedEntity) { // a nested create
 				return;
 			}
 			// refreshSingle requires the new key predicate in oContext.getPath()
@@ -1494,12 +1489,21 @@ sap.ui.define([
 			that = this;
 
 		return this.oCachePromise.then(function (oCache) {
-			// ensure that the result is still relevant
+			var aElements;
+
 			if (that.bRelative && oContext !== that.oContext) {
 				return undefined;
 			}
 
 			if (oCache) {
+				if (!oCache.hasSentRequest() && ODataListBinding.isBelowCreated(oContext)) {
+					aElements = oContext.getAndRemoveValue(that.sPath);
+					if (aElements) { // there is a collection from a finished deep create
+						// copy the created elements into the newly created cache
+						oCache.setPersistedCollection(aElements);
+					}
+				}
+
 				return oCache.read(iIndex, iLength, iMaximumPrefetchSize, oGroupLock,
 					fnDataRequested
 				).then(function (oResult) {
@@ -2965,16 +2969,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prepares the nested binding for a deep create if there is a transient parent context. Adds a
-	 * transient collection to the parent binding's cache. Creates contexts for nested entities in
+	 * Prepares the nested binding for a deep create if it is below a transient parent context. Adds
+	 * a transient collection to the parent binding's cache. Creates contexts for nested entities in
 	 * the initial data.
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The parent context or <code>undefined</code> for absolute bindings
 	 * @param {object} mQueryOptions
-	 *   The binding's cache query options if it would create a cache
+	 *   The binding's cache query options
 	 * @returns {boolean}
-	 *   Whether the binding works with a transient parent context
+	 *   Whether the binding must not create a cache, because the context is virtual or transient or
+	 *   below a transient context, or there are no query options for a cache
 	 *
 	 * @private
 	 */
@@ -2982,17 +2987,30 @@ sap.ui.define([
 	ODataListBinding.prototype.prepareDeepCreate = function (oContext, mQueryOptions) {
 		var that = this;
 
-		if (!(oContext && oContext.isTransient && oContext.isTransient()) || this.bDeepCreate) {
-			// only relevant if the context is transient and the binding is not in deep create yet
-			this.bDeepCreate = false;
-			return false;
+		if (!oContext) {
+			// absolute or unresolved => create cache if there are query options
+			return !mQueryOptions;
+		}
+		if (oContext.iIndex === Context.VIRTUAL) {
+			return true; // virtual parent => no cache
+		}
+		if (!oContext.getPath().includes("($uid=")) {
+			// not below a transient context => create cache if there are query options
+			// Note: quasi-absolute bindings stop here because a base context has no "$uid"
+			return !mQueryOptions;
 		}
 
-		this.bDeepCreate = true;
-
 		// If there are mQueryOptions we must create a cache after the successful create
-		// (in adjustPredicate)
+		// (in #adjustPredicate)
 		this.mCacheQueryOptions = mQueryOptions;
+
+		if (!this.oModel.bAutoExpandSelect) {
+			// No deep create possible, but it must not create its own cache. It remains empty and
+			// silent until the parent binding created the entity. Then it creates a cache (in
+			// #adjustPredicate) and requests from the backend.
+			return true;
+		}
+
 		oContext.withCache(function (oCache, sPath) {
 				return oCache.addTransientCollection(sPath, mQueryOptions && mQueryOptions.$select);
 			}, this.sPath
@@ -3007,7 +3025,7 @@ sap.ui.define([
 
 				oContext = Context.create(that.oModel, that, sResolvedPath + sTransientPredicate,
 					i - aInitialDataCollection.length, oPromise, false, true);
-				oContext.created().catch(function () { /* avoid "Uncaught (in promise) */ });
+				oContext.created().catch(function () { /* avoid "Uncaught (in promise)" */ });
 
 				_Helper.setPrivateAnnotation(oInitialData, "context", oContext);
 				_Helper.setPrivateAnnotation(oInitialData, "firstCreateAtEnd", false);
@@ -4260,6 +4278,29 @@ sap.ui.define([
 		});
 
 		return aFilters.length === 1 ? aFilters[0] : new Filter({and : true, filters : aFilters});
+	};
+
+	/**
+	 * Returns whether the given context is created persisted or below a created persisted one.
+	 *
+	 * @param {sap.ui.model.Context} [oContext] - The context
+	 * @returns {boolean} Whether there is a create-persisted parent context
+	 *
+	 * @private
+	 */
+	ODataListBinding.isBelowCreated = function (oContext) {
+		var oBinding;
+
+		if (!(oContext && oContext.getBinding)) {
+			return false; // no V4 context
+		}
+		if (oContext.isTransient() === false) {
+			return true;
+		}
+		oBinding = oContext.getBinding();
+
+		return oBinding && oBinding.isRelative()
+			&& ODataListBinding.isBelowCreated(oBinding.getContext());
 	};
 
 	return ODataListBinding;

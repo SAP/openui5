@@ -279,7 +279,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.adjustPredicate = function (sTransientPredicate, sPredicate) {
 		asODataParentBinding.prototype.adjustPredicate.apply(this, arguments);
 		if (this.mCacheQueryOptions) {
-			// Note: this.oCache === null because of special case in #createAndSetCache
+			// There are mCacheQueryOptions, but #prepareDeepCreate prevented creating the cache
 			this.fetchCache(this.oContext, true);
 		}
 		if (this.oElementContext) {

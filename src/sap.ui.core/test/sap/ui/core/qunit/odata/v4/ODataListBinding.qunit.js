@@ -195,7 +195,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iCreatedContexts, 0);
 		assert.ok(oBinding.hasOwnProperty("iCurrentBegin"));
 		assert.ok(oBinding.hasOwnProperty("iCurrentEnd"));
-		assert.strictEqual(oBinding.bDeepCreate, false);
 		assert.strictEqual(oBinding.iDeletedContexts, 0);
 		assert.ok(oBinding.hasOwnProperty("oDiff"));
 		assert.ok(oBinding.hasOwnProperty("aFilters"));
@@ -1300,20 +1299,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchData: w/ cache", function (assert) {
+[
+	{hasSent : true},
+	{hasSent : false, isBelowCreated : false},
+	{hasSent : false, isBelowCreated : true, elements : undefined},
+	{hasSent : false, isBelowCreated : true, elements : []}
+].forEach(function (oFixture) {
+	QUnit.test("fetchData: w/ cache " + JSON.stringify(oFixture), function (assert) {
 		var oBinding,
-			oCache = {read : function () {}},
+			oCache = {
+				getCreatedElements : function () { return []; },
+				hasSentRequest : function () {},
+				read : function () {},
+				setPersistedCollection : function () {}
+			},
+			oContext = {
+				getAndRemoveValue : function () {},
+				getPath : function () { return "/TEAMS"; }
+			},
 			oData = {},
 			fnDataRequested = {/*function*/},
 			oGroupLock = {},
 			oPromise,
+			oReadMock,
+			oSetCollectionMock,
 			that = this;
 
+		oBinding = this.bindList("TEAM_2_EMPLOYEES");
 		this.mock(ODataListBinding.prototype).expects("fetchCache").callsFake(function () {
 			this.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
 		});
-		oBinding = this.bindList("/EMPLOYEES");
-		this.mock(oCache).expects("read")
+		oBinding.setContext(oContext);
+
+		this.mock(oCache).expects("hasSentRequest").withExactArgs().returns(oFixture.hasSent);
+		this.mock(ODataListBinding).expects("isBelowCreated").exactly(oFixture.hasSent ? 0 : 1)
+			.withExactArgs(sinon.match.same(oContext)).returns(oFixture.isBelowCreated);
+		this.mock(oContext).expects("getAndRemoveValue").exactly("elements" in oFixture ? 1 : 0)
+			.withExactArgs("TEAM_2_EMPLOYEES")
+			.returns(oFixture.elements);
+		oSetCollectionMock = this.mock(oCache).expects("setPersistedCollection")
+			.exactly(oFixture.elements ? 1 : 0)
+			.withExactArgs(sinon.match.same(oFixture.elements));
+		oReadMock = this.mock(oCache).expects("read")
 			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
 				sinon.match.same(fnDataRequested))
 			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
@@ -1330,15 +1357,16 @@ sap.ui.define([
 		this.oModel.bAutoExpandSelect = true;
 		this.mock(oBinding).expects("checkSuspended").never();
 
-		// code under test - must have no effect on absolute bindings
-		oBinding.setContext({});
-
 		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
 
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oData);
+			if (oFixture.elements) {
+				assert.ok(oSetCollectionMock.calledBefore(oReadMock));
+			}
 		});
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHasData) {
@@ -2874,8 +2902,6 @@ sap.ui.define([
 
 		// code under test (as called from #requestRefresh)
 		assert.ok(oBinding.refreshInternal("", "myGroup", /*_bCheckUpdate*/true).isFulfilled());
-
-		assert.strictEqual(oBinding.bDeepCreate, false);
 	});
 
 //*********************************************************************************************
@@ -4708,8 +4734,10 @@ sap.ui.define([
 				aCreatedElements = ["~element0~", "~element1~"],
 				oCreatePathPromise = {},
 				aCreatePromises = [
-					SyncPromise.resolve(Promise.resolve(aCreatedElements[0])),
-					SyncPromise.resolve(Promise.resolve(aCreatedElements[1]))
+					SyncPromise.resolve(
+						Promise.resolve(oFixture.bTransient ? undefined : aCreatedElements[0])),
+					SyncPromise.resolve(
+						Promise.resolve(oFixture.bTransient ? undefined : aCreatedElements[1]))
 				],
 				oHelperMock = this.mock(_Helper),
 				oModelMock = this.mock(this.oModel),
@@ -4803,8 +4831,6 @@ sap.ui.define([
 				oBinding = this.bindList("/EMPLOYEES");
 			}
 			oBindingMock = this.mock(oBinding);
-			oBindingMock.expects("isTransient").exactly(oFixture.bInactive ? 4 : 2).withExactArgs()
-				.returns(oFixture.bTransient);
 			expect();
 			oBinding.attachEvent("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add);
@@ -5051,7 +5077,7 @@ sap.ui.define([
 				getPath : function () { return "/TEAMS('1')"; }
 			});
 
-		this.mock(oBinding).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isTransient").twice().withExactArgs().returns(false);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("$auto");
 
 		assert.throws(function () {
@@ -5063,11 +5089,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: create w/o autoExpandSelect in transient binding", function (assert) {
+		var oBinding = this.bindList("TEAM_2_EMPLOYEES", {
+				getPath : function () { return "/TEAMS('1')"; }
+			});
+
+		this.mock(oBinding).expects("isTransient").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			oBinding.create();
+		}, new Error("Deep create is only supported with autoExpandSelect"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: inactive row in transient binding", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES", {
 				getPath : function () { return "/TEAMS('1')"; }
 			});
 
+		this.oModel.bAutoExpandSelect = true;
 		this.mock(oBinding).expects("isTransient").withExactArgs().returns(true);
 
 		assert.throws(function () {
@@ -5177,8 +5217,7 @@ sap.ui.define([
 					sinon.match(function (bAtEndOfCreated) {
 						return bAtEndOfCreated === (oBinding.bFirstCreateAtEnd !== !!aAtEnd[0]);
 					}), sinon.match.func, sinon.match.func)
-				.returns(SyncPromise.resolve(Promise.resolve({})));
-			oBindingMock.expects("isTransient").withExactArgs().returns(bTransient);
+				.returns(SyncPromise.resolve(Promise.resolve(bTransient ? undefined : {})));
 			oContextMock.expects("create")
 				.withExactArgs(sinon.match.same(oBinding.oModel),
 					sinon.match.same(oBinding), sinon.match.string, -oBinding.iCreatedContexts - 1,
@@ -5219,8 +5258,7 @@ sap.ui.define([
 							return bAtEndOfCreated
 								=== (oBinding.bFirstCreateAtEnd !== !!aAtEnd[1]);
 						}), sinon.match.func, sinon.match.func)
-					.returns(SyncPromise.resolve(Promise.resolve({})));
-				oBindingMock.expects("isTransient").withExactArgs().returns(bTransient);
+					.returns(SyncPromise.resolve(Promise.resolve(bTransient ? undefined : {})));
 				oContextMock.expects("create")
 					.withExactArgs(sinon.match.same(oBinding.oModel),
 						sinon.match.same(oBinding), sinon.match.string,
@@ -8299,60 +8337,45 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{mCacheQueryOptions : undefined},
-	{mCacheQueryOptions : {}, aElements : []},
-	{mCacheQueryOptions : {}, aElements : [{}, {}]}
+	{mCacheQueryOptions : {}, sContextPath : "/SalesOrderList($uid=1)"},
+	{mCacheQueryOptions : undefined, sContextPath : "/SalesOrderList($uid=1)"},
+	{mCacheQueryOptions : {}, sContextPath : "/SalesOrderList('42')", bFetch : true}
 ].forEach(function (oFixture) {
-	QUnit.test("adjustPredicate: " + JSON.stringify(oFixture), function (assert) {
-		var oBinding = this.bindList("SO_2_SOITEM",
-				Context.create({/*oModel*/}, oParentBinding, "/SalesOrderList($uid=1)")),
-			oCache = {
-				setPersistedCollection : function () {}
-			},
+	QUnit.test("adjustPredicate " + JSON.stringify(oFixture), function (assert) {
+		var oBinding = this.bindList("SO_2_SOITEM"),
+			oBindingMock = this.mock(oBinding),
+			sContextPath = oFixture.sContextPath,
+			oContext = Context.create({/*oModel*/}, oParentBinding, sContextPath),
 			oContext1 = {adjustPredicate : function () {}},
 			oContext2 = {adjustPredicate : function () {}},
 			oExpectation1,
-			oExpectation2,
-			done,
-			that = this;
+			oExpectation2;
 
-		oBinding.aPreviousData = ["/SalesOrderList($uid=1)/SO_2_SOITEM($uid=2)"];
+		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+		oBinding.setContext(oContext);
+		oBinding.aPreviousData = [sContextPath + "/SO_2_SOITEM($uid=2)"];
 		oBinding.aContexts = [,, oContext1, oContext2]; // sparse array
 		oBinding.mCacheQueryOptions = oFixture.mCacheQueryOptions;
 		this.mock(asODataParentBinding.prototype).expects("adjustPredicate").on(oBinding)
 			.withExactArgs("($uid=1)", "('42')");
-		this.mock(oBinding).expects("fetchCache").exactly(oFixture.mCacheQueryOptions ? 1 : 0)
-			.withExactArgs(sinon.match.same(oBinding.oContext), true)
-			.callsFake(function () {
-				done = assert.async();
-				oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
-				that.mock(oCache).expects("setPersistedCollection")
-					.exactly(oFixture.aElements.length ? 1 : 0)
-					.withExactArgs(sinon.match.same(oFixture.aElements));
-			});
+		oBindingMock.expects("fetchCache").exactly(oFixture.bFetch ? 1 : 0)
+			.withExactArgs(sinon.match.same(oContext), true);
 		this.mock(oBinding.oHeaderContext).expects("adjustPredicate")
 			.withExactArgs("($uid=1)", "('42')");
 		oExpectation1 = this.mock(oContext1).expects("adjustPredicate")
 			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
 		oExpectation2 = this.mock(oContext2).expects("adjustPredicate")
 			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
-		this.mock(oBinding.oContext).expects("getAndRemoveValue")
-			.exactly(oFixture.mCacheQueryOptions ? 1 : 0)
-			.withExactArgs("SO_2_SOITEM").returns(oFixture.aElements);
 
 		// code under test
 		oBinding.adjustPredicate("($uid=1)", "('42')");
-		oExpectation1.args[0][2]("/SalesOrderList($uid=1)/SO_2_SOITEM($uid=2)",
+		oExpectation1.args[0][2](sContextPath + "/SO_2_SOITEM($uid=2)",
 			"/SalesOrderList('42')/SO_2_SOITEM($uid=2)");
-		oExpectation2.args[0][2]("/SalesOrderList($uid=1)/SO_2_SOITEM($uid=3)",
+		oExpectation2.args[0][2](sContextPath + "/SO_2_SOITEM($uid=3)",
 			"/SalesOrderList('42')/SO_2_SOITEM($uid=3)");
 
 		assert.deepEqual(oBinding.aPreviousData, ["/SalesOrderList('42')/SO_2_SOITEM($uid=2)"]);
 		assert.notOk(oBinding.aPreviousData.hasOwnProperty("-1"));
-
-		if (done) {
-			oBinding.oCachePromise.then(done); // wait for the cache promise to be resolved
-		}
 	});
 });
 
@@ -10121,13 +10144,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHasQueryOptions) {
-	QUnit.test("prepareDeepCreate", function (assert) {
+	QUnit.test("prepareDeepCreate: queryOptions=" + bHasQueryOptions, function (assert) {
 		var oBinding = this.bindList("SO_2_SOITEM"),
 			oCache = {
 				addTransientCollection : function () {}
 			},
 			oContext = {
-				isTransient : function () {},
+				getPath : function () {},
 				withCache : function () {}
 			},
 			aCollection = ["~a~", "~b~"],
@@ -10145,7 +10168,9 @@ sap.ui.define([
 			mQueryOptions = bHasQueryOptions ? {$select : "~select~"} : undefined,
 			that = this;
 
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+		this.oModel.bAutoExpandSelect = true;
+		this.mock(oContext).expects("getPath")
+			.withExactArgs().returns("/SalesOrderList($uid=1)");
 		oExpectation = this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.func, "SO_2_SOITEM")
 			.returns(SyncPromise.resolve(aCollection));
@@ -10170,7 +10195,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.prepareDeepCreate(oContext, mQueryOptions), true);
 
 		assert.strictEqual(oBinding.mCacheQueryOptions, mQueryOptions);
-		assert.strictEqual(oBinding.bDeepCreate, true);
 		assert.deepEqual(oBinding.aContexts, aCreatedContexts);
 		assert.strictEqual(oBinding.iCreatedContexts, 2);
 		assert.strictEqual(oBinding.iActiveContexts, 2);
@@ -10186,31 +10210,43 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("prepareDeepCreate: transient context, but no autoExpandSelect", function (assert) {
+		var oBinding = this.bindList("SO_2_SOITEM"),
+			oContext = {
+				getPath : function () {}
+			};
+
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList($uid=1)");
+
+		// code under test
+		assert.strictEqual(oBinding.prepareDeepCreate(oContext, "~mQueryOptions~"), true);
+
+		assert.strictEqual(oBinding.mCacheQueryOptions, "~mQueryOptions~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("prepareDeepCreate: nothing to do", function (assert) {
 		var oBinding = this.bindList("SO_2_SOITEM"),
 			oContext = {
-				isTransient : function () {}
-			},
-			oContextMock = this.mock(oContext);
+				getPath : function () {}
+			};
 
 		// code under test - absolute or unresolved
 		assert.strictEqual(oBinding.prepareDeepCreate(undefined, "~mQueryOptions~"), false);
 
-		// code under test - base context
-		assert.strictEqual(oBinding.prepareDeepCreate({}, "~mQueryOptions~"), false);
+		// code under test - virtual context
+		assert.strictEqual(
+			oBinding.prepareDeepCreate({iIndex : Context.VIRTUAL}, "~mQueryOptions~"),
+			true);
 
-		oContextMock.expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").twice()
+			.withExactArgs().returns("/SalesOrderList('1')");
 
-		// code under test - context not transient
-		assert.strictEqual(oBinding.prepareDeepCreate(oContext, "~mQueryOptions~"), false);
+		// code under test - context not transient, query options
+		assert.strictEqual(oBinding.prepareDeepCreate(oContext, {}), false);
 
-		oBinding.bDeepCreate = true;
-		oContextMock.expects("isTransient").withExactArgs().returns(true);
-
-		// code under test - binding already has a transient collection
-		assert.strictEqual(oBinding.prepareDeepCreate(oContext, "~mQueryOptions~"), false);
-
-		assert.strictEqual(oBinding.bDeepCreate, false);
+		// code under test - context not transient, no query options
+		assert.strictEqual(oBinding.prepareDeepCreate(oContext, undefined), true);
 	});
 
 	//*********************************************************************************************
@@ -10303,6 +10339,51 @@ sap.ui.define([
 		}, function (oError) {
 			assert.strictEqual(oError, "~oError~");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isBelowCreated", function (assert) {
+		var oBinding = {
+				getContext : function () {},
+				isRelative : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oContext = {
+				getBinding : function () {},
+				isTransient : function () {}
+			},
+			oContextMock = this.mock(oContext),
+			oListBindingMock = this.mock(ODataListBinding);
+
+		assert.notOk(ODataListBinding.isBelowCreated(undefined), "no context");
+
+		assert.notOk(ODataListBinding.isBelowCreated({}), "base context");
+
+		oContextMock.expects("isTransient").withExactArgs().returns(false);
+
+		assert.ok(ODataListBinding.isBelowCreated(oContext), "created-persisted context");
+
+		oContextMock.expects("isTransient").withExactArgs().returns(undefined);
+		oContextMock.expects("getBinding").withExactArgs().returns(undefined);
+
+		assert.notOk(ODataListBinding.isBelowCreated(oContext), "unresolved standard context");
+
+		oContextMock.expects("isTransient").withExactArgs().returns(undefined);
+		oContextMock.expects("getBinding").withExactArgs().returns(oBinding);
+		oBindingMock.expects("isRelative").withExactArgs().returns(false);
+
+		assert.notOk(ODataListBinding.isBelowCreated(oContext), "context at absolute binding");
+
+		oListBindingMock.expects("isBelowCreated").withExactArgs(sinon.match.same(oContext))
+			.callThrough(); // initial call
+		oContextMock.expects("isTransient").withExactArgs().returns(true);
+		oContextMock.expects("getBinding").withExactArgs().returns(oBinding);
+		oBindingMock.expects("isRelative").withExactArgs().returns(true);
+		oBindingMock.expects("getContext").withExactArgs().returns("~oParentContext~");
+		oListBindingMock.expects("isBelowCreated").withExactArgs("~oParentContext~").returns("~");
+
+		assert.strictEqual(ODataListBinding.isBelowCreated(oContext), "~",
+			"nested transient context");
 	});
 });
 

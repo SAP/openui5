@@ -345,17 +345,6 @@ sap.ui.define([
 
 		this.mCacheQueryOptions = Object.assign({}, this.oModel.mUriParameters, mQueryOptions);
 		if (this.bRelative) { // quasi-absolute or relative binding
-			// The parent has to be persisted in order to know its key predicate when creating the
-			// child's own cache. Context#isTransient cannot be used exclusively here because it
-			// returns true for ODLB#create w/o bSkipRefresh, unless the refresh for the created
-			// entity is resolved too - but the entity's key predicate is already available.
-			if (oContext.isTransient && oContext.isTransient()
-				&& oContext.getProperty("@$ui5.context.isTransient")) {
-				// Note: sResourcePath is kind of preliminary here, no use to remember it!
-				this.oCache = null;
-				return null;
-			}
-
 			// mCacheByResourcePath has to be reset if parameters are changing
 			oCache = this.mCacheByResourcePath && this.mCacheByResourcePath[sResourcePath];
 			iGeneration = oContext.getGeneration && oContext.getGeneration() || 0;
@@ -536,15 +525,13 @@ sap.ui.define([
 		];
 		this.mCacheQueryOptions = undefined;
 		this.oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
-			var mQueryOptions = aResult[0].mQueryOptions,
-				bPreparedDeepCreate = that.prepareDeepCreate(oContext, mQueryOptions);
+			var mQueryOptions = aResult[0].mQueryOptions;
 
 			that.sReducedPath = aResult[0].sReducedPath;
 
-			// If there are mQueryOptions, the binding must create a cache. Do not create a cache if
-			// a deep create was prepared or for a virtual context
-			if (mQueryOptions && !bPreparedDeepCreate
-					&& !(oContext && oContext.iIndex === Context.VIRTUAL)) {
+			// If there are mQueryOptions, the binding must create a cache. Do not create a cache
+			// for a virtual context or if below a transient context
+			if (!that.prepareDeepCreate(oContext, mQueryOptions)) {
 				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
 					var oError;
 
@@ -1136,19 +1123,32 @@ sap.ui.define([
 
 	/**
 	 * Prepares the binding for a deep create if there is a transient parent context. The default
-	 * implementation does nothing.
+	 * implementation only checks whether a cache may be created, and keeps the mQueryOptions for
+	 * a later cache creation when below a transient context.
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} [_oContext]
-	 *   The parent context
-	 * @param {object} _mQueryOptions
-	 *   The binding's cache query options if it would create a cache
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The parent context or <code>undefined</code> for absolute bindings
+	 * @param {object} mQueryOptions
+	 *   The binding's cache query options
 	 * @returns {boolean}
-	 *   Whether the binding works with a transient parent context
+	 *   Whether the binding must not create a cache, because the context is virtual or transient or
+	 *   below a transient context, or there are no query options for a cache
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.prepareDeepCreate = function (_oContext, _mQueryOptions) {
-		return false;
+	ODataBinding.prototype.prepareDeepCreate = function (oContext, mQueryOptions) {
+		if (oContext) {
+			if (oContext.iIndex === Context.VIRTUAL) {
+				return true; // virtual parent => no cache
+			}
+			if (oContext.getPath().includes("($uid=")) {
+				// below a transient context => no cache, but keep the query options for a later
+				// creation in #adjustPredicate
+				this.mCacheQueryOptions = mQueryOptions;
+				return true;
+			}
+		}
+		return !mQueryOptions;
 	};
 
 	/**

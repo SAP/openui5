@@ -350,7 +350,7 @@ sap.ui.define([
 		 * Cancels all nested creates within the given element.
 		 *
 		 * @param {object} oElement - The entity data in the cache
-		 * @param {string} sPostPath - The request path of the POST request
+		 * @param {string} sPostPath - The request path of the POST request (only used for logging)
 		 * @param {string} sGroupId - The group ID of the POST request
 		 *
 		 * @public
@@ -366,6 +366,7 @@ sap.ui.define([
 					oError.canceled = true;
 					vProperty.forEach(function (oChildElement) {
 						_Helper.getPrivateAnnotation(oChildElement, "reject")(oError);
+						_Helper.cancelNestedCreates(oChildElement, sPostPath, sGroupId);
 					});
 				}
 			});
@@ -2337,6 +2338,24 @@ sap.ui.define([
 		},
 
 		/**
+		 * Resolves all nested creates within the given element.
+		 *
+		 * @param {object} oElement - The entity data in the cache
+		 */
+		resolveNestedCreates : function (oElement) {
+			Object.keys(oElement).forEach(function (sKey) {
+				var vProperty = oElement[sKey];
+
+				if (vProperty && vProperty.$postBodyCollection) { // within a deep create
+					vProperty.forEach(function (oChildElement) {
+						_Helper.getPrivateAnnotation(oChildElement, "resolve")();
+						_Helper.resolveNestedCreates(oChildElement);
+					});
+				}
+			});
+		},
+
+		/**
 		 * Searches all properties in oOld annotated with "@$ui5.updating" and restores the property
 		 * value in oNew.
 		 *
@@ -2780,7 +2799,7 @@ sap.ui.define([
 					} else if (Array.isArray(vSourceProperty)) {
 						// copy complete collection; no change events as long as collection-valued
 						// properties are not supported; transient entity collections from a deep
-						// insert are handled elsewhere
+						// create are handled elsewhere
 						if (!(vTargetProperty && vTargetProperty.$postBodyCollection)) {
 							oTarget[sProperty] = vSourceProperty;
 						}

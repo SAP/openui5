@@ -1033,52 +1033,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchCache: no own cache", function (assert) {
-		var mLateQueryOptions = {},
-			oBinding = new ODataBinding({
-				oCache : null,
-				oCachePromise : SyncPromise.resolve(null),
-				doCreateCache : function () {},
-				mLateQueryOptions : mLateQueryOptions,
-				oModel : {
-					oRequestor : {
-						ready : function () { return SyncPromise.resolve(); }
-					},
-					getReporter : getForbiddenReporter
-				},
-				sPath : "relative",
-				bRelative : true
-			}),
-			oContext = {},
-			oBindingMock = this.mock(oBinding);
-
-		oBindingMock.expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(sinon.match.same(oContext), undefined)
-			.returns(SyncPromise.resolve(Promise.resolve({
-				mQueryOptions : undefined,
-				sReducedPath : "/resolved/path"
-			})));
-		oBindingMock.expects("prepareDeepCreate")
-			.withExactArgs(sinon.match.same(oContext), undefined)
-			.returns(false);
-		oBindingMock.expects("createAndSetCache").never();
-
-		// code under test
-		oBinding.fetchCache(oContext);
-
-		assert.strictEqual(oBinding.oCache, undefined);
-		assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
-		assert.ok(oBinding.oCachePromise.isPending());
-
-		return oBinding.oCachePromise.then(function () {
-			assert.strictEqual(oBinding.oCache, null);
-			assert.strictEqual(oBinding.oCachePromise.getResult(), null);
-			assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
-			assert.strictEqual(oBinding.sReducedPath, "/resolved/path");
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("fetchCache: absolute binding", function (assert) {
 		var oOldCache = {},
 			mLateQueryOptions = {},
@@ -1329,38 +1283,6 @@ sap.ui.define([
 //TODO May dependent bindings be created asynchronously e.g. in case of async views?
 
 	//*********************************************************************************************
-	QUnit.test("fetchCache: relative to virtual context", function (assert) {
-		var oBinding = new ODataBinding({
-				oCache : null,
-				oCachePromise : SyncPromise.resolve(null),
-				oModel : {
-					oRequestor : {
-						ready : function () { return SyncPromise.resolve(); }
-					},
-					getReporter : getForbiddenReporter
-				},
-				bRelative : true
-			}),
-			oContext = {
-				iIndex : Context.VIRTUAL
-			};
-
-		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(sinon.match.same(oContext), undefined)
-			.returns(SyncPromise.resolve({}));
-		this.mock(oBinding).expects("prepareDeepCreate")
-			.withExactArgs(sinon.match.same(oContext), undefined).returns(false);
-		this.mock(oBinding).expects("fetchResourcePath").never();
-
-		// code under test
-		oBinding.fetchCache(oContext);
-
-		assert.strictEqual(oBinding.oCache, null);
-		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
-		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("fetchCache: prepareDeepCreate", function (assert) {
 		var oBinding = new ODataBinding({
 				oCache : null,
@@ -1410,6 +1332,8 @@ sap.ui.define([
 				}
 			});
 
+		this.mock(oBinding).expects("prepareDeepCreate")
+			.withExactArgs(undefined, undefined).returns(true);
 		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
@@ -1524,12 +1448,16 @@ sap.ui.define([
 				toString : function () { return "MyBinding"; }
 			}),
 			oBindingMock = this.mock(oBinding),
+			mCacheQueryOptions = {},
 			oContext = {},
 			oError = new Error("canonical path failure"),
 			fnReporter = sinon.spy();
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
-			.returns(SyncPromise.resolve({mQueryOptions : {}}));
+			.returns(SyncPromise.resolve({mQueryOptions : mCacheQueryOptions}));
+		oBindingMock.expects("prepareDeepCreate")
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(mCacheQueryOptions))
+			.returns(false);
 		oBindingMock.expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(SyncPromise.reject(oError));
@@ -1818,43 +1746,6 @@ sap.ui.define([
 		});
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("createAndSetCache: relative, transient parent", function (assert) {
-		var oBinding = new ODataBinding({
-				oCache : undefined,
-				oModel : {
-					mUriParameters : {}
-				},
-				bRelative : true
-			}),
-			oContext = {
-				getProperty : function () {},
-				isTransient : function () {}
-			},
-			mMergedQueryOptions = {},
-			mQueryOptions = {};
-
-		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
-				sinon.match.same(mQueryOptions))
-			.returns(mMergedQueryOptions);
-		this.mock(oContext).expects("isTransient")
-			.withExactArgs()
-			.returns(true);
-		this.mock(oContext).expects("getProperty")
-			.withExactArgs("@$ui5.context.isTransient")
-			.returns(true);
-
-		assert.strictEqual(
-			// code under test
-			oBinding.createAndSetCache(mQueryOptions, "/resource/path", oContext),
-			null
-		);
-
-		assert.strictEqual(oBinding.mCacheQueryOptions, mMergedQueryOptions);
-		assert.strictEqual(oBinding.oCache, null);
-	});
 
 	//*********************************************************************************************
 // undefined for the quasi-absolute binding (context has no getGeneration())
@@ -3366,9 +3257,38 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("prepareDeepCreate", function (assert) {
-		var oBinding = new ODataBinding();
+		var oBinding = new ODataBinding(),
+			oContext = {
+				getPath : function () { return "/SalesOrderList('1')/SO_2_BP"; }
+			},
+			oTransientContext = {
+				getPath : function () { return "/SalesOrderList($uid=1)/SO_2_BP"; }
+			},
+			oVirtualContext = {
+				getPath : function () { return "/SalesOrderList('1')/" + Context.VIRTUAL; },
+				iIndex : Context.VIRTUAL
+			};
 
-		// code under test
-		assert.strictEqual(oBinding.prepareDeepCreate(), false);
+		// code under test - no query options
+		assert.ok(oBinding.prepareDeepCreate(oContext, undefined));
+
+		// code under test - absolute
+		assert.notOk(oBinding.prepareDeepCreate(undefined, {}));
+
+		// code under test - virtual Context
+		assert.ok(oBinding.prepareDeepCreate(oVirtualContext, {}));
+
+		// code under test - non-virtual Context
+		assert.notOk(oBinding.prepareDeepCreate(oContext, {}));
+
+		// code under test - below transient Context, query options
+		assert.ok(oBinding.prepareDeepCreate(oTransientContext, "~mQueryOptions~"));
+
+		assert.strictEqual(oBinding.mCacheQueryOptions, "~mQueryOptions~");
+
+		// code under test - below transient Context, no query options
+		assert.ok(oBinding.prepareDeepCreate(oTransientContext, undefined));
+
+		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 	});
 });
