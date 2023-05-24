@@ -480,6 +480,8 @@ sap.ui.define([
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
 			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var mPropertyBag = {
 				changeType: "setTitle",
@@ -492,6 +494,7 @@ sap.ui.define([
 			var oChange = this.oModel.addVariantChange("variantMgmtId1", mPropertyBag);
 			assert.equal(oChange.getText("title"), mPropertyBag.title, "then the new change created with the new title");
 			assert.equal(oChange.getChangeType(), "setTitle", "then the new change created with 'setTitle' as changeType");
+			assert.equal(oChange.getAdaptationId(), "id_12345", "then the new change created with the current adaptationId");
 			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
 			assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].title, mPropertyBag.title, "then the new title updated in the VariantModel");
@@ -526,6 +529,8 @@ sap.ui.define([
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
 			var mPropertyBag = {
 				changeType: "setFavorite",
 				favorite: false,
@@ -538,6 +543,7 @@ sap.ui.define([
 			assert.equal(oChange.getContent().favorite, mPropertyBag.favorite, "then the new change created with the parameter 'favorite' in content");
 			assert.equal(oChange.getChangeType(), "setFavorite", "then the new change created with 'setFavorite' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
+			assert.equal(oChange.getAdaptationId(), "id_12345", "then the new change created with the current adaptationId");
 			assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].favorite, mPropertyBag.favorite, "then the parameter 'favorite' updated in the VariantModel");
 			assert.equal(fnSetVariantDataStub.callCount, 1, "then VariantManagementState.setVariant() was called");
@@ -571,6 +577,8 @@ sap.ui.define([
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
 			var mPropertyBag = {
 				changeType: "setVisible",
 				visible: false,
@@ -583,6 +591,7 @@ sap.ui.define([
 			assert.equal(oChange.getContent().visible, mPropertyBag.visible, "then the new change created with the parameter 'visible' in content");
 			assert.equal(oChange.getChangeType(), "setVisible", "then the new change created with 'setVisible' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
+			assert.equal(oChange.getAdaptationId(), "id_12345", "then the new change created with the current adaptationId");
 			assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].visible, mPropertyBag.visible, "then the parameter 'visible' updated in the VariantModel");
 			assert.equal(fnSetVariantDataStub.callCount, 1, "then VariantManagementState.setVariant() was called");
@@ -613,6 +622,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'addVariantChange' for 'setExecuteOnSelect' to add a change", function(assert) {
 			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
+			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(1);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
@@ -628,6 +639,7 @@ sap.ui.define([
 			assert.equal(oChange.getContent().executeOnSelect, mPropertyBag.executeOnSelect, "then the new change created with the parameter 'executeOnSelect' in content");
 			assert.equal(oChange.getChangeType(), "setExecuteOnSelect", "then the new change created with 'setExecuteOnSelect' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
+			assert.equal(oChange.getAdaptationId(), "id_12345", "then the new change created with the current adaptationId");
 			assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].executeOnSelect, mPropertyBag.executeOnSelect, "then the parameter 'executeOnSelect' updated in the VariantModel");
 			assert.ok(fnSetVariantDataStub.calledOnce, "then '_setVariantData' of VariantController called");
@@ -660,6 +672,8 @@ sap.ui.define([
 			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+			sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
 			var mPropertyBag = {
 				changeType: "setDefault",
 				defaultVariant: "variant0",
@@ -672,6 +686,7 @@ sap.ui.define([
 			assert.equal(oChange.getContent().defaultVariant, mPropertyBag.defaultVariant, "then the new change created with the parameter 'visible' in content");
 			assert.equal(oChange.getChangeType(), "setDefault", "then the new change created with 'setDefault' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_management_change", "then the new change created with 'ctrl_variant_change' as fileType");
+			assert.equal(oChange.getAdaptationId(), "id_12345", "then the new change created with the current adaptationId");
 			assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].defaultVariant, mPropertyBag.defaultVariant, "then the parameter 'defaultVariant' updated in the VariantModel");
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");

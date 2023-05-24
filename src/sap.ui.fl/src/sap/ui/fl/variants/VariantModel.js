@@ -980,6 +980,16 @@ sap.ui.define([
 		mNewChangeData.layer = mPropertyBag.layer;
 		mNewChangeData.generator = mPropertyBag.generator;
 
+		//add adaptationId
+		var mContextBasedAdaptationBag = {
+			layer: mPropertyBag.layer,
+			control: mPropertyBag.appComponent,
+			reference: this.sFlexReference
+		};
+		if (ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag)) {
+			mNewChangeData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+		}
+
 		if (mPropertyBag.changeType === "setDefault") {
 			mNewChangeData.fileType = "ctrl_variant_management_change";
 			mNewChangeData.selector = JsControlTreeModifier.getSelector(sVariantManagementReference, mPropertyBag.appComponent);
