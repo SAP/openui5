@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/mdc/tableOpaTests/mockserver/mockServer"
 ], function(
 	/** @type sap.ui.core.UIComponent */ UIComponent,
 	/** @type sap.ui.model.v4.ODataModel */ ODataModel,
-	/** @type sap.ui.fl.FakeLrepConnectorLocalStorage */ FakeLrepConnectorLocalStorage,
 	/** @type mockserver.mockServer */ MockServer) {
 	"use strict";
 
@@ -19,7 +17,6 @@ sap.ui.define([
 		},
 
 		init: function() {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			var oMockServer = new MockServer();
 			oMockServer.init();
 
