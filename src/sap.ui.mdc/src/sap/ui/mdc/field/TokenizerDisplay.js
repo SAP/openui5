@@ -53,6 +53,7 @@ sap.ui.define([
 	TokenizerDisplay.prototype.init = function() {
 		Tokenizer.prototype.init.apply(this, arguments);
 
+		this.setShouldRenderTabIndex(false);
 		this.allowTextSelection(true);
 		this.addStyleClass("sapUiMdcTokenizerDisplay");
 	};
