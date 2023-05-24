@@ -1,6 +1,8 @@
 sap.ui.define(function() {
 	"use strict";
 
+	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
+
 	return {
 		name: "MDCTable related tests", /* Just for a nice title on the pages */
 		defaults: {

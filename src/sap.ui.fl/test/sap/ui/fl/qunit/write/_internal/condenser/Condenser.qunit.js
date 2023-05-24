@@ -906,15 +906,25 @@ sap.ui.define([
 			this.aChanges = [];
 			sandbox.stub(TableDelegate, "fetchProperties").resolves([
 				{
-					name: "column0"
+					name: "column0",
+					label: "Column 0",
+					dataType: "String"
 				}, {
-					name: "column1"
+					name: "column1",
+					label: "Column 1",
+					dataType: "String"
 				}, {
-					name: "column2"
+					name: "column2",
+					label: "Column 2",
+					dataType: "String"
 				}, {
-					name: "column3"
+					name: "column3",
+					label: "Column 3",
+					dataType: "String"
 				}, {
-					name: "column4"
+					name: "column4",
+					label: "Column 4",
+					dataType: "String"
 				}
 			]);
 			sandbox.stub(TableDelegate, "updateBindingInfo");

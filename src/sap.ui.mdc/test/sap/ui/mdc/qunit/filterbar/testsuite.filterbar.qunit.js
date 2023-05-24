@@ -4,6 +4,9 @@ sap.ui.define([
 	Device
 ){
 	"use strict";
+
+	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
+
 	var oUnitTest =  {
 		name: "Package 'sap.ui.mdc.filterbar'",
 		defaults: {
