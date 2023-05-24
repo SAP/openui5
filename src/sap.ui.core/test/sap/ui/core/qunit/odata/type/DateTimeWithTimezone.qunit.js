@@ -753,4 +753,17 @@ sap.ui.define([
 		assert.strictEqual(oType.vEmptyTimezoneValue, oFixture.vValue);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getPlaceholderText", function (assert) {
+		var oType = new DateTimeWithTimezone();
+
+		this.mock(DateFormat.prototype).expects("getPlaceholderText").withExactArgs().callsFake(function () {
+			assert.strictEqual(this, oType.oFormat);
+			return "~placeholder";
+		});
+
+		// code under test
+		assert.strictEqual(oType.getPlaceholderText(), "~placeholder");
+	});
 });
