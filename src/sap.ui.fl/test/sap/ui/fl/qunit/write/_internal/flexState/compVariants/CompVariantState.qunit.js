@@ -820,6 +820,37 @@ sap.ui.define([
 			assert.strictEqual(this.oVariant.getFavorite(), true, "the favorite is set to true by a second change");
 			assert.strictEqual(this.oVariant.getChanges().length, 2, "two changes were written");
 		});
+
+		QUnit.test("Given updateVariant is called on a PUBLIC variant", function(assert) {
+			var oPublicVariantData = {
+				changeSpecificData: {
+					type: "pageVariant",
+					layer: Layer.PUBLIC,
+					texts: {
+						variantName: "initialName"
+					},
+					content: {},
+					favorite: false
+				},
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			};
+			var oPublicVariant = CompVariantState.addVariant(oPublicVariantData);
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: oPublicVariant.getVariantId(),
+				favorite: true,
+				layer: Layer.PUBLIC,
+				executeOnSelection: true,
+				contexts: {foo: "bar"},
+				name: "newName"
+			});
+			assert.strictEqual(oPublicVariant.getFavorite(), false, "and favorite is always set to false");
+			assert.strictEqual(oPublicVariant.getName(), "newName", "and the variant name is correct");
+			assert.deepEqual(oPublicVariant.getContexts(), {foo: "bar"}, "and the contexts are correct");
+			assert.strictEqual(oPublicVariant.getExecuteOnSelection(), true, "and executeOnSelection is correct");
+		});
 	});
 
 	QUnit.module("discardVariantContent", {
