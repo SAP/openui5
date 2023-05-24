@@ -749,7 +749,7 @@ sap.ui.define([
 					}
 					oConditionConverted[sParameterName][sKey] = vValue.values[0];
 				} else {
-					Log.error("mdc.FilterBar._convertInOutParameters: could not find property info for " + sName);
+					Log.error("mdc.FilterBar._convertInOutParameters: could not find property for '" + sName + "'");
 				}
 			}.bind(this));
 		}
@@ -806,7 +806,12 @@ sap.ui.define([
 		Object.keys(mConditionsInternal).forEach(function(sKey){
 			mConditionsInternal[sKey].forEach(function(oCondition, iConditionIndex){
 				var oProperty = this._getPropertyByName(sKey);
-				mConditionsInternal[sKey][iConditionIndex] = this._toInternal(oProperty, oCondition);
+				if (oProperty) {
+					mConditionsInternal[sKey][iConditionIndex] = this._toInternal(oProperty, oCondition);
+				} else {
+					Log.error("Property '" + sKey + "' does not exist");
+				}
+
 			}, this);
 		}, this);
 
@@ -1392,10 +1397,11 @@ sap.ui.define([
 			var oConditionModel = this._getConditionModel();
 
 			return pBeforeSet.then(function(){
-				var mNewInternal = this._internalizeConditions(mConditionsData);
-				var mCurrentInternal = this._getModelConditions(this._getConditionModel(), true);
 
-				this._oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
+				var mNewInternal = this._internalizeConditions(mConditionsData);
+				var mCurrentInternal = this._getModelConditions(oConditionModel, true);
+
+				oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
 				return this.getEngine().diffState(this, {Filter: mCurrentInternal}, {Filter: mNewInternal}).then(function(oStateDiff){
 					Object.keys(oStateDiff.Filter).forEach(function(sDiffPath){
 						oStateDiff.Filter[sDiffPath].forEach(function(oCondition){
@@ -1603,6 +1609,10 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._retrieveMetadata = function() {
+
+		if (this.isPropertyHelperFinal()) {
+			return Promise.resolve();
+		}
 
 		if (this._oMetadataAppliedPromise) {
 			return this._oMetadataAppliedPromise;
