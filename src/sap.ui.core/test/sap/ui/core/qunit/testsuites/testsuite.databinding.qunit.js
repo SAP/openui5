@@ -88,6 +88,7 @@ sap.ui.define(function() {
 			ListBinding: {
 				title: "sap.ui.model.ListBinding - QUnit Tests"
 			},
+			/** @deprecated As of version 1.11.1 */
 			MasterDetail: {
 				title: "QUnit tests: databinding MasterDetail"
 			},
@@ -100,6 +101,7 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
+			/** @deprecated As of version 1.66.0 */
 			ODataListBinding: {
 				title: "sap.ui.model.odata.ODataListBinding - QUnit Tests",
 				module: [
@@ -134,6 +136,7 @@ sap.ui.define(function() {
 					"test-resources/sap/ui/core/qunit/odata/ODataMetadataNoFakeService.qunit"
 				]
 			},
+			/** @deprecated As of version 1.48.0 */
 			ODataModel: {
 				title: "sap.ui.model.odata.ODataModel - QUnit Tests",
 				module: [
@@ -149,6 +152,7 @@ sap.ui.define(function() {
 					useFakeTimers: true
 				}
 			},
+			/** @deprecated As of version 1.28.0 */
 			ODataTreeBinding: {
 				title: "sap.ui.model.odata.ODataTreeBinding - QUnit Tests",
 				module: [
