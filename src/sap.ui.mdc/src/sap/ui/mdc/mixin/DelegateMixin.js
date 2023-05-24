@@ -196,7 +196,11 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 */
 	DelegateMixin.getControlDelegate = function () {
 		if (!this._oDelegate) {
-			throw new Error("A delegate instance is not (yet) available. You must call initControlDelegate before calling getControlDelegate.");
+			if (this.isDestroyed()) {
+				throw new Error("A delegate instance is not available. The object instance is destroyed.");
+			} else {
+				throw new Error("A delegate instance is not (yet) available. You must call initControlDelegate before calling getControlDelegate.");
+			}
 		}
 
 		return this._oDelegate;
