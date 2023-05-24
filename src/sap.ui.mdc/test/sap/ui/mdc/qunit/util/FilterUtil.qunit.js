@@ -5,9 +5,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/mdc/util/FilterUtil"
+	"sap/ui/mdc/util/FilterUtil",
+	"sap/ui/mdc/Control"
 ], function(
-	FilterUtil
+	FilterUtil,
+	Control
 ) {
 	"use strict";
 
@@ -89,6 +91,72 @@ sap.ui.define([
 		assert.equal(aMissingRequiredNames.length, 2);
 		assert.equal(aMissingRequiredNames[0], "A");
 		assert.equal(aMissingRequiredNames[1], "B");
+	});
+
+	QUnit.test("check key to path mapping in #getFilterInfo (keys are valid paths already --> backwards compatibility)", function(assert) {
+		var oControl = new Control({
+			delegate: {
+				payload: {},
+				name: "sap/ui/mdc/AggregationBaseDelegate"
+			}
+		});
+
+		return oControl.initControlDelegate()
+		.then(function(){
+
+			var oConditions = {
+				myProperty: [{
+					operator: "EQ",
+					values: [
+						"test"
+					]
+				}]
+			};
+			var aProperties = [
+				{name: "myProperty", path: "myProperty", typeConfig: oControl.getTypeMap().getTypeConfig("String", null, null)}
+			];
+
+			var oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
+
+			assert.equal(oFilterInfo.filters.sOperator, "EQ", "Correct operator set in model filter");
+			assert.equal(oFilterInfo.filters.sPath, "myProperty", "Correct path set in model filter");
+
+			return;
+
+		});
+	});
+
+	QUnit.test("check key to path mapping in #getFilterInfo (unique property keys are mapped to valid model paths)", function(assert) {
+		var oControl = new Control({
+			delegate: {
+				payload: {},
+				name: "sap/ui/mdc/AggregationBaseDelegate"
+			}
+		});
+
+		return oControl.initControlDelegate()
+		.then(function(){
+
+			var oConditions = {
+				keyMyProperty: [{
+					operator: "EQ",
+					values: [
+						"test"
+					]
+				}]
+			};
+			var aProperties = [
+				{name: "keyMyProperty", path: "path/to/property", typeConfig: oControl.getTypeMap().getTypeConfig("String", null, null)}
+			];
+
+			var oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
+
+			assert.equal(oFilterInfo.filters.sOperator, "EQ", "Correct operator set in model filter");
+			assert.equal(oFilterInfo.filters.sPath, "path/to/property", "Correct path set in model filter");
+
+			return;
+
+		});
 	});
 
 });

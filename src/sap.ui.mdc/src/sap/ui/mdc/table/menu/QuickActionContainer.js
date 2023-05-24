@@ -51,7 +51,7 @@ sap.ui.define([
 		this.destroyQuickActions(); // TODO: More efficient update would be good
 
 		if (oTable.isSortingEnabled()) {
-			var aSortableProperties = oPropertyHelper.getProperty(oColumn.getDataProperty()).getSortableProperties();
+			var aSortableProperties = oPropertyHelper.getProperty(oColumn.getPropertyKey()).getSortableProperties();
 			var aSortedProperties = oTable._getSortedProperties();
 
 			if (aSortableProperties.length > 0) {
@@ -83,7 +83,7 @@ sap.ui.define([
 		}
 
 		if (oTable.isGroupingEnabled()) {
-			var aGroupableProperties = oPropertyHelper.getProperty(oColumn.getDataProperty()).getGroupableProperties();
+			var aGroupableProperties = oPropertyHelper.getProperty(oColumn.getPropertyKey()).getGroupableProperties();
 			var aGroupedProperties = oTable._getGroupedProperties();
 
 			if (aGroupableProperties.length > 0) {
@@ -109,7 +109,7 @@ sap.ui.define([
 		}
 
 		if (oTable.isAggregationEnabled()) {
-			var aPropertiesThatCanBeTotaled = oPropertyHelper.getProperty(oColumn.getDataProperty()).getAggregatableProperties().filter(function(oProperty) {
+			var aPropertiesThatCanBeTotaled = oPropertyHelper.getProperty(oColumn.getPropertyKey()).getAggregatableProperties().filter(function(oProperty) {
 				return oProperty.extension && oProperty.extension.customAggregate;
 			});
 			var mAggregatedProperties = oTable._getAggregatedProperties();

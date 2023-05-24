@@ -16,6 +16,7 @@ sap.ui.define([
 
 		oFilterField = new FilterField(sFilterItemId, {
 			label: oProperty.label,
+			propertyKey: IdentifierUtil.getPropertyKey(oProperty),
 			dataType: oProperty.type,
 			dataTypeConstraints: merge({}, oProperty.constraints),
 			dataTypeFormatOptions: merge({}, oProperty.formatOptions),

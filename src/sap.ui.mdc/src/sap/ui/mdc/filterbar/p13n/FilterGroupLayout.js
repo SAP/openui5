@@ -33,12 +33,11 @@ sap.ui.define(['sap/ui/core/Control'
 	});
 
 	FilterGroupLayout.prototype._getFieldPath = function () {
-		return this._sFieldPath;
+		return this._oFilterField ? this._oFilterField.getPropertyKey() : null;
 	};
 
 	FilterGroupLayout.prototype.setFilterField = function (oFilterField) {
 		this._oFilterField = oFilterField;
-		this._sFieldPath = oFilterField.getFieldPath();
 	};
 
 	FilterGroupLayout.prototype.getIdForLabel = function () {
@@ -60,7 +59,6 @@ sap.ui.define(['sap/ui/core/Control'
 	FilterGroupLayout.prototype.exit = function () {
 		Control.prototype.exit.apply(this, arguments);
 		this._oFilterField = null;
-		this._sFieldPath = null;
 	};
 
 	return FilterGroupLayout;

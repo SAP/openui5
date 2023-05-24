@@ -89,6 +89,16 @@ sap.ui.define([
 					type: "string",
 					group: "Data",
 					defaultValue: null
+				},
+				/**
+				 * Key of the property the <code>FilterField</code> represents.
+				 *
+				 * @since 1.115.0
+				 */
+				propertyKey: {
+					type: "string",
+					group: "Data",
+					defaultValue: ""
 				}
 			},
 			events: {
@@ -141,7 +151,7 @@ sap.ui.define([
 		FieldBase.prototype.init.apply(this, arguments);
 
 		this._oObserver.observe(this, {
-			properties: ["value", "operators"]
+			properties: ["operators", "propertyKey"]
 		});
 
 	};
@@ -150,6 +160,16 @@ sap.ui.define([
 
 		FieldBase.prototype.exit.apply(this, arguments);
 
+	};
+
+	// TODO: remove fallback if propertyKey is used by stakeholders
+	FilterField.prototype.getPropertyKey = function() {
+		var sPropertyKey = this.getProperty("propertyKey");
+		if (!sPropertyKey) {
+			sPropertyKey = this.getFieldPath();
+		}
+
+		return sPropertyKey;
 	};
 
 	FilterField.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
@@ -178,6 +198,8 @@ sap.ui.define([
 			} else {
 				this.setProperty("_operators", oChanges.current, true);
 			}
+			this.updateInternalContent();
+		} else if (oChanges.name === "propertyKey") {
 			this.updateInternalContent();
 		}
 
@@ -392,6 +414,18 @@ sap.ui.define([
 		if (this.getCurrentContent().length === 0) {
 			// inner control not created, maybe it can be created bow (maybe ConditionModel assignment changed)
 			this.triggerCheckCreateInternalContent();
+		}
+
+	};
+
+	FilterField.prototype.isSearchField = function() {
+
+		if (this.isPropertyInitial("propertyKey")) {
+			return FieldBase.prototype.isSearchField.apply(this, arguments); // fallback to old logic based on binding path
+		} else {
+			var sPropertyKey = this.getPropertyKey();
+			var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
+			return regexp.test(sPropertyKey) && this.getMaxConditions() === 1;
 		}
 
 	};

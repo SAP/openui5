@@ -64,7 +64,7 @@ sap.ui.define([
                     // use the last entry of each drill-stack entry to built
                     // up the drill-path
                     var sDimText = dim.getLabel();
-                    var sDimKey = dim.getName();
+                    var sDimKey = dim.getPropertyKey();
 
                     // Set current drill position in breadcrumb control
                     if (index == 0) {
@@ -151,7 +151,7 @@ sap.ui.define([
 
                 var aFlexItemChanges = aDrilledItems.map(function(oDrillItem) {
 					return {
-						name: oDrillItem.getName(),
+						name: oDrillItem.getPropertyKey(),
 						visible: false
 					};
 				});

@@ -212,7 +212,7 @@ sap.ui.define([
 			return this._createColumnTemplate(oPropertyInfo, oTable).then(function(oTemplate) {
 				var oColumnInfo = this._getColumnInfo(oPropertyInfo, oTable);
 				oColumnInfo.template = oTemplate;
-				oColumnInfo.dataProperty = sPropertyName;
+				oColumnInfo.propertyKey = sPropertyName;
 				return new Column(oTable.getId() + "--" + oPropertyInfo.name, oColumnInfo);
 			}.bind(this));
 		}.bind(this));

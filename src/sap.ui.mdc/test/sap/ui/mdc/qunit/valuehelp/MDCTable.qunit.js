@@ -149,21 +149,21 @@ sap.ui.define([
 			selectionMode: sSelectionMode || "Multi",
 			columns: [ new Column({
 				header: "key", //Define the header text as present in the propertyinfo
-				dataProperty: "key", //Reference the column with the according propertyinfo object
+				propertyKey: "key", //Reference the column with the according propertyinfo object
 				template: new Text({ //Provide a cell template for the mdc Column
 					text: "{key}"
 				})
 			}),
 			new Column({
 				header: "text",
-				dataProperty: "text",
+				propertyKey: "text",
 				template: new Text({
 					text: "{text}"
 				})
 			}),
 			new Column({
 				header: "additionalText",
-				dataProperty: "additionalText",
+				propertyKey: "additionalText",
 				template: new Text({
 					text: "{additionalText}"
 				})

@@ -29,7 +29,7 @@ sap.ui.define([
 		var oController = oEngine.getController(oTable, sKey);
 
 		if (sKey === "Filter") {
-			var aFilterableProperties = oTable.getPropertyHelper().getProperty(oColumn.getDataProperty()).getFilterableProperties();
+			var aFilterableProperties = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey()).getFilterableProperties();
 			var aPropertyNames = aFilterableProperties.map(function(oProperty) {
 				return oProperty.name;
 			});

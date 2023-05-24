@@ -15,8 +15,8 @@ sap.ui.define([
 		var b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +
 		'<mdc:FilterBar id="myFilterBar" p13nMode="Value" delegate=\'' +  sDelegate + '\' filterConditions="' + sFilterConditions + '" propertyInfo=\'' + sPropertyInfo + '\'>' +
 		'<mdc:filterItems>' +
-		'<mdc:FilterField id="myFilterBar--prop2" conditions="{$filters>/conditions/prop2}" maxConditions="1"  dataType="sap.ui.model.type.String"/>' +
-		'<mdc:FilterField id="myFilterBar--prop3"  conditions="{$filters>/conditions/prop3}"  maxConditions="-1" dataType="sap.ui.model.type.String"/>' +
+		'<mdc:FilterField id="myFilterBar--prop2" conditions="{$filters>/conditions/prop2}" propertyKey="prop2" maxConditions="1"  dataType="sap.ui.model.type.String"/>' +
+		'<mdc:FilterField id="myFilterBar--prop3"  conditions="{$filters>/conditions/prop3}" propertyKey="prop3" maxConditions="-1" dataType="sap.ui.model.type.String"/>' +
 		'</mdc:filterItems>' +
 		'</mdc:FilterBar>' +
 		'</mvc:View>';
@@ -234,8 +234,8 @@ sap.ui.define([
 
 		if (oFB.getMetadata) {
 			assert.deepEqual(oFB.getFilterItems().length, 2, "expected items found");
-			assert.deepEqual(oFB.getFilterItems()[0].getFieldPath(), "prop2", "expected item at index 0 found");
-			assert.deepEqual(oFB.getFilterItems()[1].getFieldPath(), "prop3", "expected item at index 1 found");
+			assert.deepEqual(oFB.getFilterItems()[0].getPropertyKey(), "prop2", "expected item at index 0 found");
+			assert.deepEqual(oFB.getFilterItems()[1].getPropertyKey(), "prop3", "expected item at index 1 found");
 		}
 	}
 
@@ -329,9 +329,9 @@ sap.ui.define([
 
 		if (oFB.getMetadata) {
 			assert.deepEqual(oFB.getFilterItems().length, 3, "expected items found");
-			assert.deepEqual(oFB.getFilterItems()[0].getFieldPath(), "prop2", "expected item at index 0 found");
-			assert.deepEqual(oFB.getFilterItems()[1].getFieldPath(), "prop6", "expected item at index 1 found");
-			assert.deepEqual(oFB.getFilterItems()[2].getFieldPath(), "prop3", "expected item at index 2 found");
+			assert.deepEqual(oFB.getFilterItems()[0].getPropertyKey(), "prop2", "expected item at index 0 found");
+			assert.deepEqual(oFB.getFilterItems()[1].getPropertyKey(), "prop6", "expected item at index 1 found");
+			assert.deepEqual(oFB.getFilterItems()[2].getPropertyKey(), "prop3", "expected item at index 2 found");
 		}
 	}
 

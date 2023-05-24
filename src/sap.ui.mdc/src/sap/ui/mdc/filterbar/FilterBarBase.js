@@ -488,7 +488,7 @@ sap.ui.define([
 		var aItems = [];
 		aFilterItems.forEach(function(oFilterField){
 			aItems.push({
-				name: oFilterField.getFieldPath()
+				name: oFilterField.getPropertyKey()
 			});
 		});
 
@@ -955,7 +955,7 @@ sap.ui.define([
 						aReqFiltersWithoutValue = FilterUtil.getRequiredFieldNamesWithoutValues(this);
 					}
 
-					if (aReqFiltersWithoutValue.indexOf(oFilterField.getFieldPath()) < 0) {
+					if (aReqFiltersWithoutValue.indexOf(oFilterField.getPropertyKey()) < 0) {
 						oFilterField.setValueState(ValueState.None);
 					}
 				}
@@ -1035,7 +1035,7 @@ sap.ui.define([
 			this._aFIChanges = [];
 		}
 
-		this._aFIChanges.push({ name: oFilterField.getFieldPath(), promise: oEvent.getParameter("promise")});
+		this._aFIChanges.push({ name: oFilterField.getPropertyKey(), promise: oEvent.getParameter("promise")});
 	};
 
 	 /**
@@ -1497,7 +1497,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._filterItemRemoved = function(oFilterItem) {
-		this._applyFilterItemRemoved(oFilterItem.getFieldPath());
+		this._applyFilterItemRemoved(oFilterItem.getPropertyKey());
 
 		this._handleAssignedFilterNames(true);
 	};
@@ -1507,7 +1507,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._removeFilterFieldFromContent = function(oFilterItem) {
-		this._removeFilterFieldFromContentByName(oFilterItem.getFieldPath());
+		this._removeFilterFieldFromContentByName(oFilterItem.getPropertyKey());
 	};
 
 	FilterBarBase.prototype._removeFilterFieldFromContentByName = function(sFieldPath) {
@@ -1556,7 +1556,7 @@ sap.ui.define([
 			var oFilterField;
 
 			if (oChanges.object.isA && oChanges.object.isA("sap.ui.mdc.FilterField")) { // only visible is considered
-				oFilterField = oChanges.object; //this._getFilterField(oChanges.object.getFieldPath());
+				oFilterField = oChanges.object; //this._getFilterField(oChanges.object.getPropertyKey());
 				if (oFilterField) {
 					if (oChanges.current) {
 						this._filterItemInserted(oFilterField);
@@ -1571,7 +1571,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._getFilterItemLayout = function(oFilterField) {
-		return this._getFilterItemLayoutByName(oFilterField.getFieldPath());
+		return this._getFilterItemLayoutByName(oFilterField.getPropertyKey());
 	};
 	FilterBarBase.prototype._getFilterItemLayoutByName = function(sFieldPath) {
 		var oFilterItemLayout = null;
@@ -1592,7 +1592,7 @@ sap.ui.define([
 	FilterBarBase.prototype._getFilterField = function(sName) {
 		var oFilterField = null;
 		this.getFilterItems().some(function(oFilterItem) {
-			if (oFilterItem && oFilterItem.getFieldPath && (oFilterItem.getFieldPath() === sName)) {
+			if (oFilterItem && (oFilterItem.getPropertyKey() === sName)) {
 				oFilterField = oFilterItem;
 			}
 
@@ -1692,7 +1692,7 @@ sap.ui.define([
 		var oFilterField = null;
 		var aFilterFields = this.getFilterItems();
 		aFilterFields.some( function(oFF) {
-			if (oFF.getFieldPath() === sFieldName) {
+			if (oFF.getPropertyKey() === sFieldName) {
 				oFilterField = oFF;
 			}
 

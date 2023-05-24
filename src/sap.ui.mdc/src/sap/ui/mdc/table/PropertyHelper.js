@@ -293,7 +293,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PropertyHelper.prototype.getColumnClipboardSettings = function(oColumn) {
-		var oProperty = this.getProperty(oColumn.getDataProperty());
+		var oProperty = this.getProperty(oColumn.getPropertyKey());
 		if (!oProperty || oProperty.clipboardSettings === null) {
 			return null;
 		}
@@ -329,7 +329,7 @@ sap.ui.define([
 			return aColumnExportSettings;
 		}
 
-		var oProperty = this.getProperty(oColumn.getDataProperty());
+		var oProperty = this.getProperty(oColumn.getPropertyKey());
 
 		if (!oProperty) {
 			return aColumnExportSettings;
@@ -423,7 +423,7 @@ sap.ui.define([
 	 * possible
 	 */
 	PropertyHelper.prototype.calculateColumnWidth = function(oMDCColumn) {
-		var sPropertyName = oMDCColumn.getDataProperty();
+		var sPropertyName = oMDCColumn.getPropertyKey();
 		var oTable = oMDCColumn.getTable();
 
 		return oTable._getPropertyByNameAsync(sPropertyName).then(function(oProperty) {

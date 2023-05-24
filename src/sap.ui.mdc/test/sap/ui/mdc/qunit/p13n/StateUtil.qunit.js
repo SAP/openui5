@@ -57,7 +57,8 @@ sap.ui.define([
 	function createFilterItem(sPropertyName, oFilterBar, mPropertyBag) {
 		return new Promise(function(resolve, reject){
 			resolve(new FilterField({
-				conditions: "{$filters>/conditions/" + sPropertyName + "}"
+				conditions: "{$filters>/conditions/" + sPropertyName + "}",
+				propertyKey: sPropertyName
 			}));
 		});
 	}
@@ -611,7 +612,8 @@ sap.ui.define([
 
 		var fnCreateFilterItem = function(sPath) {
 			return new FilterField({
-				conditions: "{$filters>/conditions/" + sPath + "}"
+				conditions: "{$filters>/conditions/" + sPath + "}",
+				propertyKey: sPath
 			});
 		};
 
@@ -654,7 +656,8 @@ sap.ui.define([
 
 		var fnCreateFilterItem = function(sPath) {
 			return new FilterField({
-				conditions: "{$filters>/conditions/" + sPath + "}"
+				conditions: "{$filters>/conditions/" + sPath + "}",
+				propertyKey: sPath
 			});
 		};
 
@@ -700,7 +703,8 @@ sap.ui.define([
 
 		var fnCreateFilterItem = function(sPath) {
 			return new FilterField({
-				conditions: "{$filters>/conditions/" + sPath + "}"
+				conditions: "{$filters>/conditions/" + sPath + "}",
+				propertyKey: sPath
 			});
 		};
 
@@ -727,8 +731,8 @@ sap.ui.define([
 
 			assert.equal(this.oFilterBar.getFilterItems().length, 4, "FilterBar still has 4 items");
 
-			assert.equal(this.oFilterBar.getFilterItems()[2].getFieldPath(), oExternalState.items[0].name, "the item has been added on the correct positiion");
-			assert.equal(this.oFilterBar.getFilterItems()[3].getFieldPath(), oExternalState.items[1].name, "the item has been added on the correct positiion");
+			assert.equal(this.oFilterBar.getFilterItems()[2].getPropertyKey(), oExternalState.items[0].name, "the item has been added on the correct positiion");
+			assert.equal(this.oFilterBar.getFilterItems()[3].getPropertyKey(), oExternalState.items[1].name, "the item has been added on the correct positiion");
 
 			//when applying the same state again, no changes should be created
 			StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
@@ -743,7 +747,7 @@ sap.ui.define([
 		before: function(){
 			TableDelegate.fetchProperties = fetchProperties;
 			TableDelegate.addItem = function(sPropertyName) {
-				return Promise.resolve(new Column({dataProperty: sPropertyName}));
+				return Promise.resolve(new Column({propertyKey: sPropertyName}));
 			};
 			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
 
@@ -1024,7 +1028,7 @@ sap.ui.define([
 		before: function(){
 			TableDelegate.fetchProperties = fetchProperties;
 			TableDelegate.addItem = function(sPropertyName) {
-				return Promise.resolve(new Column({dataProperty: sPropertyName}));
+				return Promise.resolve(new Column({propertyKey: sPropertyName}));
 			};
 			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate" ' +
 				'delegate="{name: \'sap/ui/mdc/odata/v4/TableDelegate\', payload: {}}"></mdc:Table></mvc:View>';
@@ -1444,7 +1448,7 @@ sap.ui.define([
 				return ["Column","Sort","Filter","Group"];
 			};
 			TableDelegate.addItem = function(sPropertyName) {
-				return Promise.resolve(new Column({dataProperty: sPropertyName}));
+				return Promise.resolve(new Column({propertyKey: sPropertyName}));
 			};
 			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group"></mdc:Table></mvc:View>';
 

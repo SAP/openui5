@@ -14,10 +14,10 @@ sap.ui.define([
                 'delegate=\'' +  sDelegate + '\' ' +
                 'p13nMode="Column,Group,Sort">' +
                 '<mdc:columns>' +
-                    '<Column id="IDTableName_01" header="Name" dataProperty="name"></Column>' +
-                    '<Column id="IDTableYear" header="Founding Year" dataProperty="foundingYear"></Column>' +
-                    '<Column id="IDTablemodified" header="Changed By" dataProperty="modifiedBy"></Column>' +
-                    '<Column id="IDTableCreated" header="Created On" dataProperty="createdAt"></Column>' +
+                    '<Column id="IDTableName_01" header="Name" propertyKey="name"></Column>' +
+                    '<Column id="IDTableYear" header="Founding Year" propertyKey="foundingYear"></Column>' +
+                    '<Column id="IDTablemodified" header="Changed By" propertyKey="modifiedBy"></Column>' +
+                    '<Column id="IDTableCreated" header="Created On" propertyKey="createdAt"></Column>' +
                 '</mdc:columns>' +
             '</mdc:Table>' +
         '</mvc:View>';

@@ -15,9 +15,9 @@ sap.ui.define([
 				.then(function(oFoundColumn) {
 					if (!oFoundColumn) {
 						return Promise.resolve()
-							.then(oModifier.getProperty.bind(oModifier, oColumn, "dataProperty"))
-							.then(function(sDataProperty) {
-								if (sDataProperty === sName) {
+							.then(oModifier.getProperty.bind(oModifier, oColumn, "propertyKey"))
+							.then(function(sPropertyKey) {
+								if (sPropertyKey === sName) {
 									return oColumn;
 								}
 							});

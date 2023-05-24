@@ -54,7 +54,7 @@ sap.ui.define([
 						+ '\'payload\': \{\'collectionPath\': \'/testPath\' \}'
 					+ '\}">'
 						+ '<columns>'
-						+ '<mdcTable:Column id="myTable--columnA" header="Column A" dataProperty="colA">'
+						+ '<mdcTable:Column id="myTable--columnA" header="Column A" propertyKey="colA">'
 							+ '<m:Text />'
 						+ '</mdcTable:Column>'
 						+ '</columns>'

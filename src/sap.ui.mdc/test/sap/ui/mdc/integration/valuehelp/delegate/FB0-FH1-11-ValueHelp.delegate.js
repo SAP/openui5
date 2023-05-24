@@ -279,7 +279,7 @@ sap.ui.define([
 			});
 			if (oContext) {
 				var aDataProperties = oContent.getTable().getColumns().map(function (oColumn) {
-					return oColumn.getDataProperty && oColumn.getDataProperty();
+					return oColumn.getPropertyKey && oColumn.getPropertyKey();
 				});
 
 				if (aDataProperties.indexOf("countryOfOrigin_code") !== -1) {

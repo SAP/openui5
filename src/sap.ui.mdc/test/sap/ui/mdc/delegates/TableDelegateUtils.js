@@ -45,7 +45,7 @@ sap.ui.define([
 			var oColumnInfo = {
 				header: oProperty.label,
 				template: oTemplate || this.createColumnTemplate(oTable, oProperty),
-				dataProperty: sPropertyName
+				propertyKey: sPropertyName
 			};
 
 			if (oProperty.unit) {

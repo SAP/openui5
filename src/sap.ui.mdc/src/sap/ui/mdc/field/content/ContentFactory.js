@@ -205,13 +205,10 @@ sap.ui.define([
 		if (!oContentType) {
 			if (oField.getFieldInfo() && bIsTriggerable) {
 				oContentType = mContentTypes.Link;
+			} else if (oField.isSearchField()) {
+				oContentType = mContentTypes.Search;
 			} else {
-				var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
-				if (regexp.test(oField.getFieldPath()) && iMaxConditions === 1) {
-					oContentType = mContentTypes.Search;
-				} else {
-					oContentType = mContentTypes.Default;
-				}
+				oContentType = mContentTypes.Default;
 			}
 		}
 		return oContentType;

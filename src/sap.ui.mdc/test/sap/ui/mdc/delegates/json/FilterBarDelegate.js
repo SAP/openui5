@@ -50,6 +50,7 @@ sap.ui.define([
 		return oModifier.createControl("sap.ui.mdc.FilterField", oAppComponent, oView, sId, {
 			dataType: oProperty.typeConfig.className,
 			conditions: "{$filters>/conditions/" + sName + '}',
+			propertyKey: sName,
 			required: oProperty.required,
 			label: oProperty.label,
 			maxConditions: oProperty.maxConditions,

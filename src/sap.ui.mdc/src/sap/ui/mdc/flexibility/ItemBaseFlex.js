@@ -15,12 +15,12 @@ sap.ui.define([
 		 * implement control delegate specific hooks <code>addItem</code>
 		 *
 		 * @param {object} Delegate The control specific delegate
-		 * @param {string} sDataPropertyName The property name which should be added
+		 * @param {string} sPropertyKeyName The property name which should be added
 		 * @param {object} oControl The control defined as <code>selectorElement</code> in the change
 		 * @param {object} mPropertyBag Instance of property bag from Flex change API
 		 */
-		beforeAddItem: function(Delegate, sDataPropertyName, oControl, mPropertyBag) {
-			return Delegate.addItem.call(Delegate, sDataPropertyName, oControl, mPropertyBag);
+		beforeAddItem: function(Delegate, sPropertyKeyName, oControl, mPropertyBag) {
+			return Delegate.addItem.call(Delegate, sPropertyKeyName, oControl, mPropertyBag);
 		},
 
 		/**
@@ -135,7 +135,7 @@ sap.ui.define([
 			var bIsRevert = (sChangeReason === Util.REVERT);
 			this.beforeApply(oChange.getChangeType(), oControl, bIsRevert);
 			var oModifier = mPropertyBag.modifier, oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var sDataPropertyName = oChangeContent.name;
+			var sPropertyKeyName = oChangeContent.name;
 			var iIndex;
 			var aDefaultAggregation;
 			var oAggregation;
@@ -164,7 +164,7 @@ sap.ui.define([
 						return this._getDelegate(oDelegate.name);
 					}.bind(this))
 					.then(function(Delegate){
-						return this.beforeAddItem(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent);
+						return this.beforeAddItem(Delegate, sPropertyKeyName, oControl, mPropertyBag, oChangeContent);
 					}.bind(this))
 					.then(function(oRequestedItem){
 						return oRequestedItem;

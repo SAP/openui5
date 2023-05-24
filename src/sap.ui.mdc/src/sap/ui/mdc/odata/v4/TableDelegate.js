@@ -315,7 +315,7 @@ sap.ui.define([
 
 	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
 		var oPropertyHelper = oTable.getPropertyHelper();
-		var oProperty = oPropertyHelper.getProperty(oMDCColumn.getDataProperty());
+		var oProperty = oPropertyHelper.getProperty(oMDCColumn.getPropertyKey());
 		var aItems = [];
 
 		if (!oProperty) {
@@ -587,7 +587,7 @@ sap.ui.define([
 		var oVisiblePropertiesSet = new Set();
 
 		oTable.getColumns().forEach(function(oColumn) {
-			var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getDataProperty());
+			var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
 
 			if (!oProperty) {
 				return;
@@ -644,7 +644,7 @@ sap.ui.define([
 
 	// TODO: Move this to TablePropertyHelper (or even base PropertyHelper - another variant of getSimpleProperties?)
 	function getColumnProperties(oTable, oColumn) {
-		var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getDataProperty());
+		var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
 
 		if (!oProperty) {
 			return [];

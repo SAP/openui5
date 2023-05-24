@@ -17,24 +17,24 @@ sap.ui.define([
     //Store the fetched properties during pre-processing in here
     var aCachedProps;
 
-    SampleChartDelegate.addItem = function(sDataPropertyName, oMDCChart, mPropertyBag, sRole){
+    SampleChartDelegate.addItem = function(sPropertyKeyName, oMDCChart, mPropertyBag, sRole){
         //Pre-Processing -> Cache the needed propertyInfos
         if (mPropertyBag.modifier.targets === "xmlTree") {
-			return this.checkPropertyInfo(sDataPropertyName, oMDCChart, mPropertyBag).then(function(){
+			return this.checkPropertyInfo(sPropertyKeyName, oMDCChart, mPropertyBag).then(function(){
 
 					return this.fetchProperties(oMDCChart, mPropertyBag).then(function(aFetchedProps){
 						if (aFetchedProps) {
-							var oMDCItem = this.getMDCItemPrePos(sDataPropertyName, oMDCChart, sRole, aFetchedProps, mPropertyBag);
+							var oMDCItem = this.getMDCItemPrePos(sPropertyKeyName, oMDCChart, sRole, aFetchedProps, mPropertyBag);
 							return oMDCItem;
 						}
 
-						return ChartDelegate.addItem.call(this, sDataPropertyName, oMDCChart, mPropertyBag, sRole);
+						return ChartDelegate.addItem.call(this, sPropertyKeyName, oMDCChart, mPropertyBag, sRole);
 					}.bind(this));
 			}.bind(this));
 
 		}
 
-        return ChartDelegate.addItem.call(this, sDataPropertyName, oMDCChart, mPropertyBag, sRole);
+        return ChartDelegate.addItem.call(this, sPropertyKeyName, oMDCChart, mPropertyBag, sRole);
     };
 
     var fnGetFetchedPropertiesObject = function() {

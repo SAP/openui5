@@ -135,10 +135,10 @@ sap.ui.define([
 							}
 						},
 						columns: [
-								  new mdcColumn({importance: "High", header: "ID", dataProperty: "ID", template: new Text({text: "{ID}"}), width: "5rem"}),
-								  new mdcColumn({importance: "High", header: "Title", dataProperty: "title", template: new Text({text:  "{title}"})}),
-								  new mdcColumn({importance: "Low", header: "Description", dataProperty: "descr", template: new Text({text: "{descr}"})}),
-								  new mdcColumn({importance: "Low", header: "Published", dataProperty: "published", template: new Text({text: "{published}"})})
+								  new mdcColumn({importance: "High", header: "ID", propertyKey: "ID", template: new Text({text: "{ID}"}), width: "5rem"}),
+								  new mdcColumn({importance: "High", header: "Title", propertyKey: "title", template: new Text({text:  "{title}"})}),
+								  new mdcColumn({importance: "Low", header: "Description", propertyKey: "descr", template: new Text({text: "{descr}"})}),
+								  new mdcColumn({importance: "Low", header: "Published", propertyKey: "published", template: new Text({text: "{published}"})})
 								  ]
 					})
 				});

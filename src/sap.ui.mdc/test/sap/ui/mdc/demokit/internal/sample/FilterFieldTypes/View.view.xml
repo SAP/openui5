@@ -23,6 +23,7 @@
 			id="FF1"
 			label="myFF1"
 			conditions="{cm>/conditions/title}"
+			propertyKey="title"
 			display="ValueDescription"
 			maxConditions="-1"
 			valueHelp="VH1"
@@ -65,10 +66,10 @@
 									delegate='\{"name": "delegates/odata/v4/TableDelegate", "payload": \{"collectionName": "Books"\}\}'
 									threshold="50">
 									<mdc:columns>
-										<mdc:table.Column id="ColId" header="ID" dataProperty="ID">
+										<mdc:table.Column id="ColId" header="ID" propertyKey="ID">
 											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 										</mdc:table.Column>
-										<mdc:table.Column id="ColTitle" header="Title" dataProperty="title">
+										<mdc:table.Column id="ColTitle" header="Title" propertyKey="title">
 											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{title}" editMode="Display"/>
 										</mdc:table.Column>
 									</mdc:columns>
@@ -88,6 +89,7 @@
 		<mdc:FilterField
 			id="FF2"
 			conditions="{cm>/conditions/published}"
+			propertyKey="published"
 			dataType="sap.ui.model.odata.type.Date"
 			dataTypeFormatOptions='\{"style": "long"\}'
 			dataTypeConstraints='\{"V4": true\}'
@@ -110,6 +112,7 @@
 		<mdc:FilterField
 			id="FF3"
 			conditions="{cm>/conditions/price}"
+			propertyKey="price"
 			dataType="sap.ui.model.odata.type.Double"
 			dataTypeFormatOptions=""
 			dataTypeConstraints=""
@@ -133,6 +136,7 @@
 		<mdc:FilterField
 			id="FF4"
 			conditions="{cm>/conditions/published}"
+			propertyKey="published"
 			dataType="sap.ui.model.odata.type.Date"
 			dataTypeFormatOptions='\{"style": "long"\}'
 			dataTypeConstraints='\{"V4": true\}'
@@ -156,6 +160,7 @@
 		<mdc:FilterField
 			id="FF5"
 			conditions="{cm>/conditions/published}"
+			propertyKey="published"
 			dataType="sap.ui.model.odata.type.Date"
 			dataTypeFormatOptions='\{"style": "long"\}'
 			dataTypeConstraints='\{"V4": true\}'
@@ -168,6 +173,7 @@
 		<mdc:FilterField
 			id="FF6"
 			conditions="{cm>/conditions/dateOfBirth}"
+			propertyKey="dateOfBirth"
 			dataType="sap.ui.model.odata.type.Date"
 			dataTypeFormatOptions='\{"style": "long"\}'
 			dataTypeConstraints='\{"V4": true\}'
@@ -180,6 +186,7 @@
 		<mdc:FilterField
 			id="FF7"
 			conditions="{cm>/conditions/modifiedAt}"
+			propertyKey="modifiedAt"
 			dataType="sap.ui.model.odata.type.DateTimeOffset"
 			dataTypeFormatOptions='\{\}'
 			dataTypeConstraints='\{"precision": 7, "V4": true\}'

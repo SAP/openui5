@@ -104,11 +104,11 @@ sap.ui.define([
 	var sTableView1 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
 		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate" \}\'>' +
-		'<columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="Name">' +
+		'<columns><mdcTable:Column id="myTable--column0" header="column 0" propertyKey="Name">' +
 		'<m:Text text="{Name}" id="myTable--text0" /></mdcTable:Column>' +
-		'<mdcTable:Column id="myTable--column1" header="column 1" dataProperty="Country">' +
+		'<mdcTable:Column id="myTable--column1" header="column 1" propertyKey="Country">' +
 		'<m:Text text="{Country}" id="myTable--text1" /></mdcTable:Column>' +
-		'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
+		'<mdcTable:Column header="column 2" propertyKey="name_country"> ' +
 		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
 		'</Table></mvc:View>';
 
@@ -116,7 +116,7 @@ sap.ui.define([
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
 		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate" \}\'>' +
 		'<columns>' +
-		'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
+		'<mdcTable:Column header="column 2" propertyKey="name_country"> ' +
 		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
 		'</Table></mvc:View>';
 
@@ -172,7 +172,7 @@ sap.ui.define([
 				},
 				columns: [
 					new Column({
-						dataProperty: "Name",
+						propertyKey: "Name",
 						header: new Text({
 							text: "Column A"
 						}),
@@ -650,7 +650,7 @@ sap.ui.define([
 
 		this.oTable.addColumn(new Column({
 			header: "Value",
-			dataProperty: "Value",
+			propertyKey: "Value",
 			template: new Text({text: "Value"})
 		}));
 
@@ -1208,52 +1208,52 @@ sap.ui.define([
 				this.oTable.destroyColumns();
 				this.oTable.addColumn(new Column({
 					header: "CountryKey",
-					dataProperty: "CountryKey",
+					propertyKey: "CountryKey",
 					template: new Text({text: "CountryKey"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "CountryText",
-					dataProperty: "CountryText",
+					propertyKey: "CountryText",
 					template: new Text({text: "CountryText"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "CountryKey+CountryText",
-					dataProperty: "CountryKeyAndText",
+					propertyKey: "CountryKeyAndText",
 					template: new Text({text: "CountryKey CountryText"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "SalesAmount",
-					dataProperty: "SalesAmount",
+					propertyKey: "SalesAmount",
 					template: new Text({text: "SalesAmount"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "Currency",
-					dataProperty: "Currency",
+					propertyKey: "Currency",
 					template: new Text({text: "Currency"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "SalesAmount+Currency",
-					dataProperty: "SalesAmountAndCurrency",
+					propertyKey: "SalesAmountAndCurrency",
 					template: new Text({text: "SalesAmount Currency"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "SalesAmount+Region",
-					dataProperty: "SalesAmountAndRegion",
+					propertyKey: "SalesAmountAndRegion",
 					template: new Text({text: "SalesAmount Region"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "Currency+Region",
-					dataProperty: "CurrencyAndRegion",
+					propertyKey: "CurrencyAndRegion",
 					template: new Text({text: "Currency Region"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "SalesAmount+SalesAmountInLocalCurrency",
-					dataProperty: "SalesAmountAndSalesAmountInLocalCurrency",
+					propertyKey: "SalesAmountAndSalesAmountInLocalCurrency",
 					template: new Text({text: "SalesAmount SalesAmountInLocalCurrency"})
 				}));
 				this.oTable.addColumn(new Column({
 					header: "Region+RegionText",
-					dataProperty: "RegionAndRegionText",
+					propertyKey: "RegionAndRegionText",
 					template: new Text({text: "Region RegionText"})
 				}));
 				return this.oTable.getEngine().getModificationHandler().waitForChanges({
@@ -1467,7 +1467,7 @@ sap.ui.define([
 				}
 			}).addColumn(new Column({
 				header: "Name",
-				dataProperty: "Name",
+				propertyKey: "Name",
 				template: new Text({text: "Name"})
 			})).setModel(new ODataModel({
 				serviceUrl: "serviceUrl/",

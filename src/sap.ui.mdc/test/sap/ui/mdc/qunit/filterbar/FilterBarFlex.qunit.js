@@ -155,7 +155,8 @@ sap.ui.define([
 
 	function addItem(sPropertyName, oFilterBar, mPropertyBag) {
 		return Promise.resolve(new FilterField("comp---view--myFilterBar--" + sPropertyName, {
-			conditions:"{$filters>/conditions/" + sPropertyName + "}"
+			conditions:"{$filters>/conditions/" + sPropertyName + "}",
+			propertyKey: sPropertyName
 		}));
 	}
 
@@ -171,7 +172,7 @@ sap.ui.define([
 			FilterBarDelegate.addItem = addItem;
 		},
 		beforeEach: function() {
-			var sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Value"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}"  maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			var sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Value"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" propertyKey="Category" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" propertyKey="Name" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}" propertyKey="ProductID" maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
 			return createAppEnvironment(sFilterBarView, "FilterBar")
 			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;

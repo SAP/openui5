@@ -235,7 +235,8 @@ sap.ui.define([
 			//Provide simple 'addItem' hook for testing on 'AggregationBaseDelegate'
 			this.addItem = function(sKey, oControl){
 				return Promise.resolve(new FilterField({
-					conditions: "{$filters>/conditions/" + sKey + "}"
+					conditions: "{$filters>/conditions/" + sKey + "}",
+					propertyKey: sKey
 				}));
 			};
 			this.oAddStub = sinon.stub(AggregationBaseDelegate, "addItem");
@@ -518,7 +519,8 @@ sap.ui.define([
 		this.oParent.getFilterItems = function() {
 			return [
 				new FilterField({
-					conditions: "{$filters>/conditions/key1}"
+					conditions: "{$filters>/conditions/key1}",
+					propertyKey: "key1"
 				})
 			];
 		};
@@ -792,6 +794,7 @@ sap.ui.define([
 					path: "$custom>/data",
 					template: new FilterField({
 						conditions: "{$filters>/conditions/key1}",
+						propertyKey: "key1",
 						label: "{$custom>label}"
 					})
 				}
@@ -802,7 +805,8 @@ sap.ui.define([
 
 				sinon.stub(FBTestDelegate, "addItem").callsFake(function(sKey, oControl){
 					return Promise.resolve(new FilterField({
-						conditions: "{$filters>/conditions/" + sKey + "}"
+						conditions: "{$filters>/conditions/" + sKey + "}",
+						propertyKey: sKey
 					}));
 				});
 
@@ -922,7 +926,7 @@ sap.ui.define([
 				aP13nItems[1].visible = true;
 				oAdaptationFilterBar.setP13nData({items: aP13nItems});
 				this.oParent.addFilterItem(new FilterField({
-					fieldPath: "key2",
+					propertyKey: "key2",
 					conditions: "{$filters>/conditions/key2}"
 				}));
 

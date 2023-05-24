@@ -169,7 +169,7 @@ sap.ui.define([
 		var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : FlUtils.getAppComponentForControl(oFilterBar);
 		var oView = (mPropertyBag && mPropertyBag.view ) ? mPropertyBag.view : FlUtils.getViewForControl(oFilterBar);
 		var sViewId = mPropertyBag ? mPropertyBag.viewId : null;
-		var sName = oProperty.path || oProperty.name;
+		var sName = oProperty.name;
 		var oSelector = {};
 
 		if (oFilterBar.getId) {
@@ -192,6 +192,7 @@ sap.ui.define([
 			.then(oModifier.createControl.bind(oModifier, "sap.ui.mdc.FilterField", oAppComponent, oView, sId, {
 				dataType: oProperty.typeConfig.className,
 				conditions: "{$filters>/conditions/" + sName + '}',
+				propertyKey: sName,
 				required: oProperty.required,
 				label: oProperty.label || oProperty.name,
 				maxConditions: oProperty.maxConditions,

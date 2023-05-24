@@ -113,10 +113,18 @@ sap.ui.define([
 				},
 				/**
 				 * Defines data property related to the column.
-				 *
+				 * @deprecated Since 1.115. Please use <code>propertyKey</code> instead.
 				 * @since 1.84
 				 */
 				dataProperty: {
+					type: "string"
+				},
+				/**
+				 * Defines data property related to the column.
+				 *
+				 * @since 1.115
+				 */
+				propertyKey: {
 					type: "string"
 				},
 				/**
@@ -419,6 +427,12 @@ sap.ui.define([
 		return this;
 	};
 
+	//Temporary fallback for compatibility until the dataProperty can be removed
+	Column.prototype.getPropertyKey = function() {
+		var sPropertyKey = this.getProperty("propertyKey");
+		return sPropertyKey || this.getDataProperty();
+	};
+
 	/**
 	 * Sets a new tooltip for this object.
 	 *
@@ -518,7 +532,7 @@ sap.ui.define([
 	Column.prototype._readP13nValues = function() {
 		var oTable = this.getTable();
 		var vXConfig = oTable.getCurrentState().xConfig;
-		var sPropertyKey = this.getDataProperty();
+		var sPropertyKey = this.getPropertyKey();
 
 		if (vXConfig instanceof Promise) {
 			vXConfig.then(this._readP13nValues.bind(this));

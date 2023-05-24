@@ -150,6 +150,7 @@
 																		dataType="sap.ui.model.odata.type.String"
 																		width="100%"
 																		conditions="{$filters>/conditions/country_code}"
+																		propertyKey="country_code"
 																		operators="EQ,NE"
 																		valueState="{ path: '$filters>/fieldPath/country_code/valueState'}"
 																		valueStateText="{ path:'$filters>/fieldPath/country_code/valueStateText'}"
@@ -233,8 +234,8 @@
 													<mdcvc:MTable id="cities" keyPath="city" descriptionPath="text" filterFields="$search">
 														<mdcvc:filterBar>
 															<vhfb:FilterBar id="cities-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-																<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFCountry2" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" />
-																<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/region_code}" />
+																<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFCountry2" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/country_code}" propertyKey="country_code" operators="EQ,NE" />
+																<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/region_code}" propertyKey="region_code"/>
 															</vhfb:FilterBar>
 														</mdcvc:filterBar>
 														<Table id="cities-table" items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
