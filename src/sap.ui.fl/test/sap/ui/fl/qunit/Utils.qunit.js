@@ -1069,6 +1069,13 @@ sap.ui.define([
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, "?" + this.sAnotherParameter + "&" + this.sSearchParameter, "no change in the url");
 		});
+
+		QUnit.test("with hasUrlParameterWithValue is false and two another parameters at the end", function(assert) {
+			var sUrl = "?" + this.sAnotherParameter + "&" + this.sAnotherParameter;
+			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
+			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sAnotherParameter + "&" + this.sAnotherParameter, "no change in the url");
+		});
 	});
 
 	QUnit.module("Utils.getUShellService", {
