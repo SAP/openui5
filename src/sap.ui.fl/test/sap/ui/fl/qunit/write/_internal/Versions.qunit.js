@@ -291,7 +291,8 @@ sap.ui.define([
 
 		QUnit.test("with setDirtyChange(false) and a connector is configured which returns a list of versions with entries while an older version is displayed", function(assert) {
 			var sActiveVersion = "2";
-			// set displayedVersion to 1
+			// set displayedVersion to draft
+			_prepareUriParametersFromQuery(Version.Number.Draft);
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "com.sap.app",
@@ -325,6 +326,9 @@ sap.ui.define([
 			sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
 
 			return Versions.initialize(mPropertyBag)
+			.then(function(oModel) {
+				assert.equal(oModel.getProperty("/displayedVersion"), Version.Number.Draft, "when initial version model with url parameter displayedVersion is set correct");
+			})
 			// switch to another version
 			.then(VersionsAPI.loadVersionForApplication.bind(this, mPropertyBag))
 			.then(function() {
