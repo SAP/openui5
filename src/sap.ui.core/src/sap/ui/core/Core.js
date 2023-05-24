@@ -2050,6 +2050,9 @@ sap.ui.define([
 	 * @param {sap.ui.base.Metadata|object} [oEvent.getParameters.metadata] metadata for the added entity type.
 	 *         Either an instance of sap.ui.core.ElementMetadata if it is a Control or Element, or a library info object
 	 *         if it is a library. Note that the API of all metadata objects is not public yet and might change.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.support
 	 */
 
 	/**
@@ -2057,6 +2060,9 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction Callback to be called when the <code>libraryChanged</code> event is fired
 	 * @param {object} [oListener] Optional context object to call the callback on
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.support
 	 */
 	Core.prototype.attachLibraryChanged = function(fnFunction, oListener) {
 		_oEventProvider.attachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
@@ -2067,6 +2073,9 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction function to unregister
 	 * @param {object} [oListener] context object given during registration
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.support
 	 */
 	Core.prototype.detachLibraryChanged = function(fnFunction, oListener) {
 		_oEventProvider.detachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
