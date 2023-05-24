@@ -668,7 +668,7 @@
 		type: BaseConfig.Type.Object,
 		freeze: true
 	});
-	if (mResourceRoots[''] === 'string' ) {
+	if (typeof mResourceRoots[''] === 'string' ) {
 		sBaseUrl = mResourceRoots[''];
 	}
 
