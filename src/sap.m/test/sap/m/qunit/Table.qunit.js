@@ -2456,7 +2456,7 @@ sap.ui.define([
 		oTable.setContextualWidth("Phone");
 		clock.tick(10);
 		assert.ok(fnOnBeforeRendering.calledOnce, "Table rerendered to update popin-area");
-		assert.ok(fnGetInitialAccumulatedWidth.notCalled, "autoPopinMode recalculation prevent, since only the popin-area needs to be updated");
+		assert.ok(fnGetInitialAccumulatedWidth.calledOnce, "autoPopinMode recalculation happens since the rendering is started");
 		clock.restore();
 	});
 

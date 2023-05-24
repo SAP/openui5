@@ -1303,11 +1303,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._configureAutoPopin = function() {
-		// prevent recalculation when rerendering is caused when column is moved to the popin-area
-		if (this._mutex) {
-			return;
-		}
-
 		var aVisibleColumns = this.getColumns(true).filter(function(oColumn) {
 			return oColumn.getVisible();
 		});
