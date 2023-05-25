@@ -186,6 +186,67 @@ sap.ui.define([
         return oTestPromise;
     });
 
+    QUnit.test("check submit with liveMode and no changes", function(assert){
+
+		var fPromiseResolved;
+		var oPromise = new Promise(function(resolve) {
+			fPromiseResolved = resolve;
+		});
+
+		var oFilterField = new FilterField();
+		this.oFilterBarBase.addFilterItem(oFilterField);
+
+		this.oFilterBarBase.setLiveMode(true);
+
+		sinon.stub(this.oFilterBarBase, "triggerSearch").returns(fPromiseResolved());
+		//sinon.stub(this.oFilterBarBase, "_hasAppliancePromises").returns();
+
+
+		oFilterField.fireSubmit({ promise: Promise.resolve() });
+
+		return oPromise.then(function() {
+			assert.ok(this.oFilterBarBase.triggerSearch.calledOnce);
+			this.oFilterBarBase.triggerSearch.restore();
+
+			this.oFilterBarBase.setLiveMode(false);
+			oPromise = new Promise(function(resolve) {
+				fPromiseResolved = resolve;
+			});
+
+			sinon.stub(this.oFilterBarBase, "triggerSearch").returns(fPromiseResolved());
+			oFilterField.fireSubmit({ promise: Promise.resolve() });
+			return oPromise.then(function() {
+				assert.ok(this.oFilterBarBase.triggerSearch.calledOnce);
+				this.oFilterBarBase.triggerSearch.reset();
+			}.bind(this));
+		}.bind(this));
+    });
+
+    QUnit.test("check submit with changes and liveMode=true", function(assert){
+		var done = assert.async();
+
+		var fPromiseResolved;
+		var oPromise = new Promise(function(resolve) {
+			fPromiseResolved = resolve;
+		});
+
+		var oFilterField = new FilterField();
+		this.oFilterBarBase.addFilterItem(oFilterField);
+
+		this.oFilterBarBase.setLiveMode(true);
+
+		sinon.stub(this.oFilterBarBase, '_hasAppliancePromises').callsFake(function fakeFn() {
+			fPromiseResolved();
+			return [Promise.resolve()];
+		});
+
+		oFilterField.fireSubmit({ promise: Promise.resolve() });
+		oPromise.then(function() {
+			assert.ok(!this.oFilterBarBase.triggerSearch.calledOnce);
+			done();
+		}.bind(this));
+    });
+
     QUnit.test("Check 'valid' promise - do not provide parameter", function(assert){
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
 
