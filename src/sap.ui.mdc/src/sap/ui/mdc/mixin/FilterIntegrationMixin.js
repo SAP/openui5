@@ -56,7 +56,7 @@ sap.ui.define([
 
 	/**
 	 * Set an external IFilter source to connect it with the given control instance.
-	 *
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @param {sap.ui.mdc.IFilter} vFilter IFilter implementing instance.
 	 * @returns {sap.ui.mdc.Control} The MDC Control instance.
 	 */
