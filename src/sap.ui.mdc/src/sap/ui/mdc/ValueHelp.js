@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/FilterConverter',
-	'sap/ui/mdc/enum/SelectType',
+	'sap/ui/mdc/enum/ValueHelpSelectionType',
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/model/Context',
 	'sap/ui/model/FormatException',
@@ -17,14 +17,14 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
-	'sap/ui/mdc/enum/PropagationReason'
+	'sap/ui/mdc/enum/ValueHelpPropagationReason'
 ], function(
 	Element,
 	PromiseMixin,
 	Condition,
 	FilterOperatorUtil,
 	FilterConverter,
-	SelectType,
+	ValueHelpSelectionType,
 	ConditionValidated,
 	Context,
 	FormatException,
@@ -33,7 +33,7 @@ sap.ui.define([
 	ManagedObjectObserver,
 	merge,
 	deepEqual,
-	PropagationReason
+	ValueHelpPropagationReason
 ) {
 	"use strict";
 
@@ -855,7 +855,7 @@ sap.ui.define([
 			return; // if destroyed meanwhile, don't update
 		}
 
-		_onConditionPropagation.call(this, PropagationReason.ControlChange);
+		_onConditionPropagation.call(this, ValueHelpPropagationReason.ControlChange);
 		// as BindingContext of Field might change (happens if fast typed and ValueHelp not opened) update if needed
 		_updateBindingContext.call(this);
 	};
@@ -937,15 +937,15 @@ sap.ui.define([
 		var bSingleSelect = this.getMaxConditions() === 1;
 
 		if (bSingleSelect) {
-			aNextConditions = sType === SelectType.Remove ? [] : aEventConditions.slice(0,1);
+			aNextConditions = sType === ValueHelpSelectionType.Remove ? [] : aEventConditions.slice(0,1);
 		}
 
 
-		if (sType === SelectType.Set) {
+		if (sType === ValueHelpSelectionType.Set) {
 			aNextConditions = [].concat(bSingleSelect ? aEventConditions.slice(0,1) : aEventConditions);
 		}
 
-		if (sType === SelectType.Add) {
+		if (sType === ValueHelpSelectionType.Add) {
 			if (bSingleSelect) {
 				aNextConditions = aEventConditions.slice(0,1);
 			} else {
@@ -956,7 +956,7 @@ sap.ui.define([
 			}
 		}
 
-		if (sType === SelectType.Remove) {
+		if (sType === ValueHelpSelectionType.Remove) {
 			if (bSingleSelect) {
 				aNextConditions = [];
 			} else {
@@ -990,7 +990,7 @@ sap.ui.define([
 			FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 
 			this.fireSelect({conditions: aConditions, add: bAdd, close: bCloseAfterConfirm});
-			_onConditionPropagation.call(this, PropagationReason.Select);
+			_onConditionPropagation.call(this, ValueHelpPropagationReason.Select);
 		}
 	}
 

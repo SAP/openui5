@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldInput", // don't want to test async loading in Field here
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/mdc/enum/OperatorValueType",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Date",
@@ -42,7 +42,7 @@ sap.ui.define([
 		FieldInput,
 		BaseType,
 		ConditionValidated,
-		EditMode,
+		FieldEditMode,
 		OperatorValueType,
 		StringType,
 		DateType,
@@ -495,8 +495,8 @@ sap.ui.define([
 							assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
 							assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
 							assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
-							assert.equal(oField1 && oField1.getEditMode(), EditMode.ReadOnly, "Field1 is readonly");
-							assert.equal(oField2 && oField2.getEditMode(), EditMode.ReadOnly, "Field2 is readonly");
+							assert.equal(oField1 && oField1.getEditMode(), FieldEditMode.ReadOnly, "Field1 is readonly");
+							assert.equal(oField2 && oField2.getEditMode(), FieldEditMode.ReadOnly, "Field2 is readonly");
 							assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
 
 							oOperatorField.setValue("BT");
@@ -518,8 +518,8 @@ sap.ui.define([
 											assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
 											assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
 											assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
-											assert.equal(oField1 && oField1.getEditMode(), EditMode.Editable, "Field1 is editable");
-											assert.equal(oField2 && oField2.getEditMode(), EditMode.Editable, "Field2 is editable");
+											assert.equal(oField1 && oField1.getEditMode(), FieldEditMode.Editable, "Field1 is editable");
+											assert.equal(oField2 && oField2.getEditMode(), FieldEditMode.Editable, "Field2 is editable");
 											assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
 
 											fnDone();
@@ -852,7 +852,7 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
-			assert.equal(oField && oField.getEditMode(), EditMode.Display, "Field is in display mode");
+			assert.equal(oField && oField.getEditMode(), FieldEditMode.Display, "Field is in display mode");
 			assert.ok(oControl.isA("sap.m.Text"), "Field uses Text");
 			var oType = oField.getBindingInfo("value").type;
 			assert.ok(oType instanceof StringType, "Type of Field binding");
@@ -1049,7 +1049,7 @@ sap.ui.define([
 				aContent = oField.getAggregation("_content");
 				var oControl = aContent && aContent.length > 0 && aContent[0];
 
-				assert.equal(oField && oField.getEditMode(), EditMode.Editable, "Field is in edit mode");
+				assert.equal(oField && oField.getEditMode(), FieldEditMode.Editable, "Field is in edit mode");
 				assert.ok(oControl.isA("sap.m.DateTimePicker"), "Field uses DateTimePicker");
 				var oType = oField.getBindingInfo("value").type;
 				assert.ok(oType instanceof DateTimeType, "Type of Field binding");

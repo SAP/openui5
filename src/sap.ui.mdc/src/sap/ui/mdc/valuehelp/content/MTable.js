@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/mdc/util/Common',
 	'sap/base/strings/formatMessage',
 	'sap/base/util/merge',
-	'sap/ui/mdc/enum/SelectType',
+	'sap/ui/mdc/enum/ValueHelpSelectionType',
 	'sap/base/Log',
 	'sap/ui/core/Element'
 ], function(
@@ -33,7 +33,7 @@ sap.ui.define([
 	Common,
 	formatMessage,
 	merge,
-	SelectType,
+	ValueHelpSelectionType,
 	Log,
 	Element
 ) {
@@ -209,7 +209,7 @@ sap.ui.define([
 				var oValues = this.getItemFromContext(oItemContext);
 				return oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 			}.bind(this));
-			this._fireSelect({type: oParams.selected ? SelectType.Add : SelectType.Remove, conditions: aConditions});
+			this._fireSelect({type: oParams.selected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove, conditions: aConditions});
 			if (bIsTypeahead) {
 				this.fireConfirm();
 			}
@@ -224,7 +224,7 @@ sap.ui.define([
 		var bSingleSelectMaster = oTable.getMode() === ListMode.SingleSelectMaster; // Only in this mode the item will already have the desired selection state.
 		var bSelected = bSingleSelectMaster ? oItem.getSelected() : !oItem.getSelected();
 		oItem.setSelected(bSelected);
-		var sSelectType = bSelected ? SelectType.Add : SelectType.Remove;
+		var sSelectType = bSelected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove;
 
 		var oCondition = this.createCondition(oValues.key, oValues.description, oValues.payload);
 		this._fireSelect({type: sSelectType, conditions: [oCondition]});

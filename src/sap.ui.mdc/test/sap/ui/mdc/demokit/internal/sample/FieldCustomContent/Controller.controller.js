@@ -2,13 +2,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/m/MessageToast"
 ], function(
 	Controller,
 	oCore,
 	JSONModel,
-	EditMode,
+	FieldEditMode,
 	MessageToast
 	) {
 	"use strict";
@@ -21,14 +21,14 @@ sap.ui.define([
 			oCore.getMessageManager().registerObject(oView, true);
 
 			var oViewModel = new JSONModel({
-				editMode: EditMode.Editable
+				editMode: FieldEditMode.Editable
 			});
 			oView.setModel(oViewModel, "view");
 
 		},
 
 		formatEditMode: function(sEditMode) {
-			if (sEditMode === EditMode.Editable) {
+			if (sEditMode === FieldEditMode.Editable) {
 				return true;
 			} else {
 				return false;
@@ -36,7 +36,7 @@ sap.ui.define([
 		},
 
 		formatDisplayOnly: function(sEditMode) {
-			if (sEditMode === EditMode.Display) {
+			if (sEditMode === FieldEditMode.Display) {
 				return true;
 			} else {
 				return false;

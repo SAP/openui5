@@ -7,8 +7,8 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
-	"sap/ui/mdc/enum/EditMode"
-], function(DefaultContent, Filter, isEmptyObject, merge, ObjectPath, EditMode) {
+	"sap/ui/mdc/enum/FieldEditMode"
+], function(DefaultContent, Filter, isEmptyObject, merge, ObjectPath, FieldEditMode) {
 	"use strict";
 
 
@@ -142,7 +142,7 @@ sap.ui.define([
 		_addUnitControl: function(oContentFactory, aControls, sId, Input, InvisibleText) {
 			var oUnitConditionsType = oContentFactory.getUnitConditionsType();
 
-			if (oContentFactory.getField().getEditMode() === EditMode.EditableDisplay) {
+			if (oContentFactory.getField().getEditMode() === FieldEditMode.EditableDisplay) {
 				aControls[0].bindProperty("description", { path: "$field>/conditions", type: oUnitConditionsType });
 				aControls[0].setWidth("100%");
 				aControls[0].setFieldWidth("70%");

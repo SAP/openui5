@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/mdc/enum/ContentMode",
 	"sap/ui/mdc/util/loadModules",
 	"sap/ui/mdc/field/content/DefaultContent",
@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
 	"sap/ui/base/SyncPromise"
-], function(BaseObject, EditMode, ContentMode, loadModules, DefaultContent, SearchContent, DateContent, TimeContent, DateTimeContent, LinkContent, BooleanContent, UnitContent, ConditionType, ConditionsType, SyncPromise) {
+], function(BaseObject, FieldEditMode, ContentMode, loadModules, DefaultContent, SearchContent, DateContent, TimeContent, DateTimeContent, LinkContent, BooleanContent, UnitContent, ConditionType, ConditionsType, SyncPromise) {
 	"use strict";
 
 	/**
@@ -159,7 +159,7 @@ sap.ui.define([
 	/**
 	 * Determines in which {@link sap.ui.mdc.enum.ContentMode} the given content type is displayed.
 	 * @param {sap.ui.mdc.field.content.DefaultContent} oContentType The content type object
-	 * @param {sap.ui.mdc.enum.EditMode} sEditMode The display mode of the {@link sap.ui.mdc.field.FieldBase}
+	 * @param {sap.ui.mdc.enum.FieldEditMode} sEditMode The display mode of the {@link sap.ui.mdc.field.FieldBase}
 	 * @param {int} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
 	 * @param {boolean} bMultipleLines Determines if the content type has a multiple line input
 	 * @param {string[]} aOperators Names of the operators if the <code>EditOperator</code> content mode is used
@@ -169,7 +169,7 @@ sap.ui.define([
 	 */
 	ContentFactory.prototype.getContentMode = function(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators) {
 		var sContentMode = ContentMode.Edit;
-		if (sEditMode === EditMode.Display) {
+		if (sEditMode === FieldEditMode.Display) {
 			if (iMaxConditions !== 1) {
 				sContentMode = ContentMode.DisplayMultiValue;
 			} else if (bMultipleLines) {
@@ -222,19 +222,19 @@ sap.ui.define([
 	};
 
 	ContentFactory._getEnabled = function(sEditMode) {
-		return (sEditMode && sEditMode !== EditMode.Disabled);
+		return (sEditMode && sEditMode !== FieldEditMode.Disabled);
 	};
 
 	ContentFactory._getEditable = function(sEditMode) {
-		return (sEditMode === EditMode.Editable || sEditMode === EditMode.EditableReadOnly || sEditMode === EditMode.EditableDisplay);
+		return (sEditMode === FieldEditMode.Editable || sEditMode === FieldEditMode.EditableReadOnly || sEditMode === FieldEditMode.EditableDisplay);
 	};
 
 	ContentFactory._getDisplayOnly = function(sEditMode) {
-		return sEditMode && sEditMode !== EditMode.Editable;
+		return sEditMode && sEditMode !== FieldEditMode.Editable;
 	};
 
 	ContentFactory._getEditableUnit = function(sEditMode) {
-		return sEditMode === EditMode.Editable;
+		return sEditMode === FieldEditMode.Editable;
 	};
 
 	ContentFactory.prototype.getField = function() {
@@ -355,12 +355,12 @@ sap.ui.define([
 				oConditionType = this._oContentConditionTypes.content.oConditionType;
 				oConditionsType = this._oContentConditionTypes.content.oConditionsType;
 			}
-		} else if (sEditMode === EditMode.Display && oContentDisplay) {
+		} else if (sEditMode === FieldEditMode.Display && oContentDisplay) {
 			if (this._oContentConditionTypes.contentDisplay) {
 				oConditionType = this._oContentConditionTypes.contentDisplay.oConditionType;
 				oConditionsType = this._oContentConditionTypes.contentDisplay.oConditionsType;
 			}
-		} else if (sEditMode !== EditMode.Display && oContentEdit) {
+		} else if (sEditMode !== FieldEditMode.Display && oContentEdit) {
 			if (this._oContentConditionTypes.contentEdit) {
 				oConditionType = this._oContentConditionTypes.contentEdit.oConditionType;
 				oConditionsType = this._oContentConditionTypes.contentEdit.oConditionsType;

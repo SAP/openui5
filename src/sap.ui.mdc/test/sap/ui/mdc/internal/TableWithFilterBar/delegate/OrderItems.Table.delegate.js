@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enum/FieldDisplay",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/mdc/util/FilterUtil",
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/core/Core",
@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/type/Int32",
 	"sap/m/Text"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, EditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
 	"use strict";
 	var OrderItemssTableDelegate = Object.assign({}, ODataTableDelegate);
 	OrderItemssTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
@@ -72,7 +72,7 @@ sap.ui.define([
 		var oCtrlProperties = {
 			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
-			editMode: EditMode.Display,
+			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false
 		};

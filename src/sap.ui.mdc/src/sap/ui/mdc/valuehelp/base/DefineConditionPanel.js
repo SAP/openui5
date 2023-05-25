@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/field/splitValue',
-	'sap/ui/mdc/enum/EditMode',
+	'sap/ui/mdc/enum/FieldEditMode',
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
@@ -49,7 +49,7 @@ sap.ui.define([
 		FilterOperatorUtil,
 		ConditionsType,
 		splitValue,
-		EditMode,
+		FieldEditMode,
 		FieldDisplay,
 		BaseType,
 		ConditionValidated,
@@ -1414,7 +1414,7 @@ sap.ui.define([
 			value: {path: "$this>operator", type: this._oOperatorFieldType},
 			width: "100%",
 			display: FieldDisplay.Description,
-			editMode: EditMode.Editable,
+			editMode: FieldEditMode.Editable,
 			multipleLines: false,
 			valueHelp: this._sOperatorHelpId,
 			change: this.onSelectChange.bind(this),
@@ -1494,7 +1494,7 @@ sap.ui.define([
 		if (!sOperator) {
 			return this.getEditMode(); // do not change edit mode to prevent update if temporary no operator
 		} else if (bInvalid) {
-			return EditMode.ReadOnly;
+			return FieldEditMode.ReadOnly;
 		}
 
 		var oOperator = FilterOperatorUtil.getOperator(sOperator);
@@ -1504,7 +1504,7 @@ sap.ui.define([
 			bStaticText = true;
 		}
 
-		return bStaticText ? EditMode.Display : EditMode.Editable;
+		return bStaticText ? FieldEditMode.Display : FieldEditMode.Editable;
 
 	}
 

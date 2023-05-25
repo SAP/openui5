@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/TokenDisplay",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
 	"sap/ui/mdc/field/content/DefaultContent",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/condition/ConditionValidateException",
@@ -89,7 +89,7 @@ sap.ui.define([
 	TokenDisplay,
 	DynamicDateRangeConditionsType,
 	DefaultContent,
-	EditMode,
+	FieldEditMode,
 	FieldDisplay,
 	ConditionValidated,
 	ConditionValidateException,
@@ -404,11 +404,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("EditMode", function(assert) {
+	QUnit.test("FieldEditMode", function(assert) {
 
 		assert.ok(oField.getEditable(), "getEditable");
 
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
 		oCore.applyChanges();
 
@@ -421,7 +421,7 @@ sap.ui.define([
 		assert.notOk(oField.getEditable(), "getEditable");
 		// TODO: test for formatter
 
-		oField.setEditMode(EditMode.ReadOnly);
+		oField.setEditMode(FieldEditMode.ReadOnly);
 		oCore.applyChanges();
 
 		aContent = oField.getAggregation("_content");
@@ -434,7 +434,7 @@ sap.ui.define([
 		}
 		assert.notOk(oField.getEditable(), "getEditable");
 
-		oField.setEditMode(EditMode.Disabled);
+		oField.setEditMode(FieldEditMode.Disabled);
 		oCore.applyChanges();
 
 		aContent = oField.getAggregation("_content");
@@ -450,7 +450,7 @@ sap.ui.define([
 		oStub.withArgs("sap/ui/mdc/field/TokenizerDisplay").onFirstCall().returns(undefined);
 		oStub.callThrough();
 
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
 		oCore.applyChanges();
 
@@ -553,7 +553,7 @@ sap.ui.define([
 				assert.notEqual(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator not used in Field");
 				assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
 
-				oField.setEditMode(EditMode.Display);
+				oField.setEditMode(FieldEditMode.Display);
 				oCore.applyChanges();
 				assert.notOk(!!oField.getAggregation("_content"), "Field has no internal content");
 				assert.ok(oProgressIndicator.getDomRef(), "ProgressIndicator is rendered");
@@ -605,7 +605,7 @@ sap.ui.define([
 		assert.equal(aItems[1].getText(), "B", "Text of Item1");
 		assert.equal(oField._oContentFactory._oConditionType, oConditionType, "ConditionType of SegmentedButton used in Field");
 
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oCore.applyChanges();
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
@@ -616,7 +616,7 @@ sap.ui.define([
 		assert.ok(oField._oContentFactory._oConditionType, "ConditionType used");
 		assert.ok(oField._oContentFactory._oConditionType._bCreatedByField, "ConditionType is created by Field");
 
-		oField.setEditMode(EditMode.Edit);
+		oField.setEditMode(FieldEditMode.Edit);
 		oField.destroyContentEdit();
 		oCore.applyChanges();
 		aContent = oField.getAggregation("_content");
@@ -642,7 +642,7 @@ sap.ui.define([
 
 		assert.equal(jQuery("#L1").attr("for"), "F1-inner-inner", "Label points to DomRef of inner control");
 
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oCore.applyChanges();
 
 		assert.equal(jQuery("#L1").attr("for"), "F1-inner", "Label points to DomRef of inner control");
@@ -740,7 +740,7 @@ sap.ui.define([
 
 		// in display mode only one control
 		oContent1 = undefined; oContent2 = undefined;
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oCore.applyChanges();
 
 		aContent = oField.getAggregation("_content");
@@ -751,7 +751,7 @@ sap.ui.define([
 
 		// editable: again 2 Fields but currency readOnly
 		oContent1 = undefined; oContent2 = undefined;
-		oField.setEditMode(EditMode.EditableReadOnly);
+		oField.setEditMode(FieldEditMode.EditableReadOnly);
 		oCore.applyChanges();
 		aContent = oField.getAggregation("_content");
 		assert.equal(aContent.length, 2, "2 content controls");
@@ -777,7 +777,7 @@ sap.ui.define([
 		// editable:  but currency in display mode
 		oContent1 = undefined; oContent2 = undefined;
 		oField.setDataTypeFormatOptions({showMeasure: true});
-		oField.setEditMode(EditMode.EditableDisplay);
+		oField.setEditMode(FieldEditMode.EditableDisplay);
 		oCore.applyChanges();
 		aContent = oField.getAggregation("_content", []);
 		assert.equal(aContent.length, 1, "1 content control");
@@ -791,7 +791,7 @@ sap.ui.define([
 
 		// show empty indicator
 		oField.setShowEmptyIndicator(true);
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
 		oCore.applyChanges();
 
@@ -827,7 +827,7 @@ sap.ui.define([
 		assert.equal(jQuery(oContentDomRef.children[0]).css("display"), "none", "Empty indicator hidden");
 
 		// edit mode
-		oField.setEditMode(EditMode.Editable);
+		oField.setEditMode(FieldEditMode.Editable);
 		oCM.removeAllConditions();
 		oCM.checkUpdate(true, false); // update model syncronous
 		oCore.applyChanges();
@@ -900,7 +900,7 @@ sap.ui.define([
 		oField.setBindingContext(oContext);
 		oField.setValueHelp("X"); // just need ID
 		oField.setDataType("sap.ui.model.type.String");
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
 		oCore.applyChanges();
 		var oFormatOptions = oField.getFormatOptions();
@@ -922,7 +922,7 @@ sap.ui.define([
 		assert.ok(oFormatOptions.convertWhitespaces, "convertWhitespaces set");
 
 		oField.setDataType("sap.ui.model.type.Currency");
-		oField.setEditMode(EditMode.Editable);
+		oField.setEditMode(FieldEditMode.Editable);
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		oFormatOptions = oField.getFormatOptions();
@@ -1049,15 +1049,15 @@ sap.ui.define([
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
 
-			oFieldEditMulti = new FieldBase("F1", { editMode: EditMode.Editable, conditions: "{cm>/conditions/Name}" });
+			oFieldEditMulti = new FieldBase("F1", { editMode: FieldEditMode.Editable, conditions: "{cm>/conditions/Name}" });
 			oFieldEditSingle = new FieldBase("F2", {
-				editMode: EditMode.Editable,
+				editMode: FieldEditMode.Editable,
 				conditions: "{cm>/conditions/Name}",
 				maxConditions: 1,
 				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}} // to test V4 delegate
 			});
 			sinon.stub(oFieldEditSingle, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
-			oFieldDisplay = new FieldBase("F3", { editMode: EditMode.Display, conditions: "{cm>/conditions/Name}" });
+			oFieldDisplay = new FieldBase("F3", { editMode: FieldEditMode.Display, conditions: "{cm>/conditions/Name}" });
 			oFieldSearch = new FieldBase("F4", { maxConditions: 1, conditions: "{cm>/conditions/$search}" });
 			oFieldEditMulti.placeAt("content");
 			oFieldEditSingle.placeAt("content");
@@ -1208,7 +1208,7 @@ sap.ui.define([
 		oCondition = Condition.createCondition("EQ", [new Date(Date.UTC(2018, 11, 20))]);
 		oCM.addCondition("Date", oCondition);
 		var oFieldEditSingle2 = new FieldBase("F5", {
-			editMode: EditMode.Editable,
+			editMode: FieldEditMode.Editable,
 			conditions: "{cm>/conditions/Date}",
 			maxConditions: 1,
 			dataType: "sap.ui.model.odata.type.DateTime",
@@ -1222,7 +1222,7 @@ sap.ui.define([
 		oCondition = Condition.createCondition("BT", [new Date(Date.UTC(2020, 1, 6)), new Date(Date.UTC(2020, 1, 8))]);
 		oCM.addCondition("Date2", oCondition);
 		var oFieldEditSingle3 = new FieldBase("F6", {
-			editMode: EditMode.Editable,
+			editMode: FieldEditMode.Editable,
 			conditions: "{cm>/conditions/Date2}",
 			maxConditions: 1,
 			dataType: "sap.ui.model.odata.type.DateTime",
@@ -1234,7 +1234,7 @@ sap.ui.define([
 
 		// DynamicDateRange
 		var oFieldEditSingle4 = new FieldBase("F7", {
-			editMode: EditMode.Editable,
+			editMode: FieldEditMode.Editable,
 			conditions: "{cm>/conditions/Date}",
 			maxConditions: 1,
 			dataType: "sap.ui.model.odata.type.DateTime",
@@ -1245,7 +1245,7 @@ sap.ui.define([
 
 		// MultiInput with only EQ -> must use default help
 		var oFieldEditMulti2 = new FieldBase("F8", {
-			editMode: EditMode.Editable,
+			editMode: FieldEditMode.Editable,
 			conditions: "{cm>/conditions/Name}",
 			maxConditions: -1,
 			dataType: "sap.ui.model.type.Date",
@@ -1297,7 +1297,7 @@ sap.ui.define([
 				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "2018/12/20", "Value shown on DatePicker control");
 
 				// change edit mode
-				oFieldEditSingle2.setEditMode(EditMode.Display);
+				oFieldEditSingle2.setEditMode(FieldEditMode.Display);
 				oCore.applyChanges();
 				aContent = oFieldEditSingle2.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1312,7 +1312,7 @@ sap.ui.define([
 				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "06/02/2020 ... 08/02/2020", "Value shown on DateRangeSelection control");
 				assert.notOk(oFieldEditSingle3._sDefaultFieldHelp, "no Default Field help set");
 
-				oFieldEditSingle3.setEditMode(EditMode.Display);
+				oFieldEditSingle3.setEditMode(FieldEditMode.Display);
 				oCore.applyChanges();
 				aContent = oFieldEditSingle3.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1330,7 +1330,7 @@ sap.ui.define([
 				assert.deepEqual(oContent.getValue(), oCompareValue, "Value set on DynamicDateRange control");
 				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "20.12.2018", "Value shown on DynamicDateRange control");
 
-				oFieldEditSingle4.setEditMode(EditMode.Display);
+				oFieldEditSingle4.setEditMode(FieldEditMode.Display);
 				oCore.applyChanges();
 				aContent = oFieldEditSingle4.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1621,7 +1621,7 @@ sap.ui.define([
 		assert.ok(oLabel.isRequired(), "Label rendered as required");
 
 		sinon.spy(oLabel, "invalidate");
-		oFieldEditMulti.setEditMode(EditMode.ReadOnly);
+		oFieldEditMulti.setEditMode(FieldEditMode.ReadOnly);
 		oCore.applyChanges();
 		assert.ok(oLabel.invalidate.called, "Label invalidated"); // required for non-editable controls only removed in FormElement
 
@@ -1819,7 +1819,7 @@ sap.ui.define([
 
 		oButton = new Button("B1");
 		oButton.bindProperty("text", { path: '$field>/conditions', type: new ConditionsType() });
-		oFieldEditSingle.setEditMode(EditMode.Display);
+		oFieldEditSingle.setEditMode(FieldEditMode.Display);
 		oFieldEditSingle.setContentDisplay(oButton);
 		oCore.applyChanges();
 		assert.equal(oButton.getAriaLabelledBy().length, 1, "Inner control labelled");
@@ -2066,7 +2066,7 @@ sap.ui.define([
 			assert.equal(oField.getValueState(), "Error", "ValueState set on Field");
 
 			// on switch to display mode error must be removed (as wrong input is not stored)
-			oField.setEditMode(EditMode.Display);
+			oField.setEditMode(FieldEditMode.Display);
 			oCore.applyChanges();
 			assert.equal(oField.getValueState(), "None", "ValueState after switch to display mode");
 			aContent = oField.getAggregation("_content");
@@ -2349,7 +2349,7 @@ sap.ui.define([
 			assert.equal(oField.getValueState(), "Error", "ValueState");
 
 			// on switch to display mode error must be removed (as wrong input is not stored)
-			oField.setEditMode(EditMode.Display);
+			oField.setEditMode(FieldEditMode.Display);
 			oCore.applyChanges();
 			assert.equal(oField.getValueState(), "None", "ValueState after switch to display mode");
 			aContent = oField.getAggregation("_content");
@@ -3799,7 +3799,7 @@ sap.ui.define([
 
 		// no navigation in non-editable field
 		oFieldHelp.navigate.resetHistory();
-		oField.setEditMode(EditMode.ReadOnly);
+		oField.setEditMode(FieldEditMode.ReadOnly);
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.ok(oFieldHelp.navigate.notCalled, "navigate not called");
 		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
@@ -5464,7 +5464,7 @@ sap.ui.define([
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
 				maxConditions: 1, // TODO: needed for Link?
-				editMode: EditMode.Display,
+				editMode: FieldEditMode.Display,
 				fieldInfo: oFieldInfo,
 				//				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler
@@ -5526,7 +5526,7 @@ sap.ui.define([
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
 				maxConditions: 1, // TODO: needed for Link?
-				editMode: EditMode.Display,
+				editMode: FieldEditMode.Display,
 				fieldInfo: oFieldInfo,
 				//				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler

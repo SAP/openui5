@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides enumeration sap.ui.mdc.enum.SelectType
+// Provides enumeration sap.ui.mdc.enum.ValueHelpSelectionType
 sap.ui.define(function() {
 	"use strict";
 
@@ -14,10 +14,9 @@ sap.ui.define(function() {
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.90.1
-	 * @alias sap.ui.mdc.enum.SelectType
-     * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ValueHelpSelectionType}
+	 * @alias sap.ui.mdc.enum.ValueHelpSelectionType
 	 */
-	var SelectType = {
+	var ValueHelpSelectionType = {
 		/**
 		 * The given conditions are set and replace the existing ones.
 		 * @private
@@ -40,6 +39,6 @@ sap.ui.define(function() {
 		Remove: "Remove"
 	};
 
-	return SelectType;
+	return ValueHelpSelectionType;
 
 }, /* bExport= */ true);

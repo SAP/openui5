@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
 	"sap/ui/model/ParseException",
@@ -40,7 +40,7 @@ sap.ui.define([
 		MTable,
 		Condition,
 		ConditionValidated,
-		SelectType,
+		ValueHelpSelectionType,
 		FilterBar,
 		FilterField,
 		ParseException,
@@ -245,7 +245,7 @@ sap.ui.define([
 
 			assert.equal(iSelect, 1, "select event fired");
 			assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-			assert.equal(sType, SelectType.Add, "select event type");
+			assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
 			assert.equal(iConfirm, 1, "confirm event fired");
 			// TODO: clarify if Conditions should really not be updated and items not selected - so it is somehow not in sync
 			// assert.deepEqual(oMTable.getConditions(), aNewConditions, "MTable conditions");
@@ -1174,7 +1174,7 @@ sap.ui.define([
 		oTable.fireSelectionChange({listItems: [aItems[1]]});
 		assert.equal(iSelect, 1, "select event fired");
 		assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-		assert.equal(sType, SelectType.Remove, "select event type");
+		assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
 		assert.equal(iConfirm, 1, "confirm event fired");
 
 		oScrollContainer.getContent.restore();
@@ -1501,7 +1501,7 @@ sap.ui.define([
 				oTable.fireItemPress({listItem: oItem});
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-				assert.equal(sType, SelectType.Add, "select event type");
+				assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
 				assert.equal(iConfirm, 0, "confirm event not fired");
 				oItem = aItems[0];
 				assert.notOk(oItem.getSelected(), "Item0 not selected");
@@ -1522,7 +1522,7 @@ sap.ui.define([
 				oTable.fireSelectionChange({listItems: [aItems[1]]});
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-				assert.equal(sType, SelectType.Remove, "select event type");
+				assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
 				assert.equal(iConfirm, 0, "confirm event not fired");
 
 				oMTable.onHide();

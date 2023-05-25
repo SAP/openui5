@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	'sap/ui/Device',
-	'sap/ui/mdc/enum/EditMode',
+	'sap/ui/mdc/enum/FieldEditMode',
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/field/FieldBaseRenderer',
@@ -35,7 +35,7 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes'
 ], function(
 	Device,
-	EditMode,
+	FieldEditMode,
 	FieldDisplay,
 	ConditionValidated,
 	FieldBaseRenderer,
@@ -151,9 +151,9 @@ sap.ui.define([
 				 * Determines whether the field is editable, read-only, or disabled.
 				 */
 				editMode: {
-					type: "sap.ui.mdc.enum.EditMode",
+					type: "sap.ui.mdc.enum.FieldEditMode",
 					group: "Data",
-					defaultValue: EditMode.Editable
+					defaultValue: FieldEditMode.Editable
 				},
 
 				/**
@@ -774,7 +774,7 @@ sap.ui.define([
 		if (sPropertyName === "editMode") {
 			// only invalidate if switched between edit and display, not for redonly or disabled
 			var sOld = this.getEditMode();
-			if (sOld !== EditMode.Display && sOld !== EditMode.EditableDisplay && vValue !== EditMode.Display && vValue !== EditMode.EditableDisplay) {
+			if (sOld !== FieldEditMode.Display && sOld !== FieldEditMode.EditableDisplay && vValue !== FieldEditMode.Display && vValue !== FieldEditMode.EditableDisplay) {
 				bSuppressInvalidate = true;
 			}
 		} else if (sPropertyName !== "width" && sPropertyName !== "multipleLines" && sPropertyName !== "showEmptyIndicator") {
@@ -861,7 +861,7 @@ sap.ui.define([
 
 	FieldBase.prototype._handleNavigate = function(oEvent, iStep) {
 
-		if (this.getEditMode() === EditMode.Editable) {
+		if (this.getEditMode() === FieldEditMode.Editable) {
 			var oFieldHelp = _getFieldHelp.call(this);
 			var oSource = oEvent.srcControl;
 
@@ -1202,7 +1202,7 @@ sap.ui.define([
 		var oContent = this.getContent();
 
 		if (!oContent) {
-			if (this.getEditMode() === EditMode.Display) {
+			if (this.getEditMode() === FieldEditMode.Display) {
 				oContent = this.getContentDisplay();
 			} else {
 				oContent = this.getContentEdit();
@@ -1309,7 +1309,7 @@ sap.ui.define([
 			}
 
 			// in display mode rerender if changed from or to empty (show or hide empty-indicator)
-			if ((oChanges.current.length === 0 || oChanges.old.length === 0) && this.getShowEmptyIndicator() && this.getEditMode() === EditMode.Display && !this.getContent() && !this.getContentDisplay()) {
+			if ((oChanges.current.length === 0 || oChanges.old.length === 0) && this.getShowEmptyIndicator() && this.getEditMode() === FieldEditMode.Display && !this.getContent() && !this.getContentDisplay()) {
 				this.invalidate();
 			}
 		}
@@ -1350,7 +1350,7 @@ sap.ui.define([
 
 		if (oChanges.name === "editMode") {
 			_refreshLabel.call(this); // as required-idicator might set or removed on Label
-			if (this._bSettingsApplied && (oChanges.old === EditMode.Display || oChanges.old === EditMode.EditableDisplay || oChanges.current === EditMode.Display || oChanges.current === EditMode.EditableDisplay)) {
+			if (this._bSettingsApplied && (oChanges.old === FieldEditMode.Display || oChanges.old === FieldEditMode.EditableDisplay || oChanges.current === FieldEditMode.Display || oChanges.current === FieldEditMode.EditableDisplay)) {
 				// edit mode changed after settings applied (happens if edit mode is bound and binding updates after control initialization)
 				this.triggerCheckCreateInternalContent();
 			}
@@ -1908,8 +1908,8 @@ sap.ui.define([
 
 
 		if (oContent ||
-			(sEditMode === EditMode.Display && oContentDisplay) ||
-			(sEditMode !== EditMode.Display && oContentEdit)) {
+			(sEditMode === FieldEditMode.Display && oContentDisplay) ||
+			(sEditMode !== FieldEditMode.Display && oContentEdit)) {
 			this.destroyInternalContent();
 			var aContent = this.getCurrentContent(); // external set content
 			if (aContent.length === 1) {
@@ -2216,7 +2216,7 @@ sap.ui.define([
 	function _useDefaultFieldHelp(oContentType, aOperators, sEditMode, iMaxConditions) {
 
 		var oUseDefaultFieldHelp = oContentType.getUseDefaultFieldHelp();
-		if (oUseDefaultFieldHelp && !this._getValueHelp() && sEditMode !== EditMode.Display) {
+		if (oUseDefaultFieldHelp && !this._getValueHelp() && sEditMode !== FieldEditMode.Display) {
 			if ((iMaxConditions === 1 && oUseDefaultFieldHelp.single) || (iMaxConditions !== 1 && oUseDefaultFieldHelp.multi)) {
 				if (aOperators.length === 1) {
 					var bIsSingleValue = _isOnlyOneSingleValue.call(this, aOperators); // if operator not exists unse no field help
@@ -3011,7 +3011,7 @@ sap.ui.define([
 
 	function _handleHelpDataUpdate(oEvent) {
 
-		var isEditing = this.getEditMode() === EditMode.Editable && this.getCurrentContent().length > 0 &&
+		var isEditing = this.getEditMode() === FieldEditMode.Editable && this.getCurrentContent().length > 0 &&
 			sap.ui.getCore().getCurrentFocusedControlId() === this.getCurrentContent()[0].getId();
 
 		//		// also in display mode to get right text
@@ -3161,7 +3161,7 @@ sap.ui.define([
 		oFieldInfo.isTriggerable().then(function(bTriggerable) {
 			that._bTriggerable = bTriggerable;
 			var aContent = that.getAggregation("_content", []);
-			if (aContent.length > 0 && that.getEditMode() === EditMode.Display) {
+			if (aContent.length > 0 && that.getEditMode() === FieldEditMode.Display) {
 				_createInternalContentWrapper.call(that);
 				if (that._bTriggerable) {
 					aContent = that.getAggregation("_content", []);
@@ -3204,7 +3204,7 @@ sap.ui.define([
 			delegateName: this.getDelegate() && this.getDelegate().name,
 			payload: this.getPayload(),
 			preventGetDescription: this._bPreventGetDescription,
-			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getMaxConditions() !== 1, // also replace whitespaces in tokens
+			convertWhitespaces: this.getEditMode() === FieldEditMode.Display || this.getMaxConditions() !== 1, // also replace whitespaces in tokens
 			control: this,
 			defaultOperatorName : this.getDefaultOperator ? this.getDefaultOperator() : null,
 			getConditions: this.getConditions.bind(this), // to add condition in multi-value case
@@ -3286,7 +3286,7 @@ sap.ui.define([
 			delegateName: this.getDelegate() && this.getDelegate().name,
 			payload: this.getPayload(),
 			preventGetDescription: this._bPreventGetDescription,
-			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getEditMode() === EditMode.EditableDisplay,
+			convertWhitespaces: this.getEditMode() === FieldEditMode.Display || this.getEditMode() === FieldEditMode.EditableDisplay,
 			control: this,
 			getConditions: this.getConditions.bind(this), // TODO: better solution to update unit in all conditions
 			noFormatting: false

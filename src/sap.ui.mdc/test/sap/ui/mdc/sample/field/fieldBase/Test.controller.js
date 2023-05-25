@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated",
-	'sap/ui/mdc/enum/EditMode',
+	'sap/ui/mdc/enum/FieldEditMode',
 	"sap/m/Table",
 	"sap/m/ColumnListItem",
 	"sap/m/Column",
@@ -28,7 +28,7 @@ sap.ui.define([
 	FilterOperatorUtil,
 	Operator,
 	ConditionValidated,
-	EditMode,
+	FieldEditMode,
 	Table,
 	ColumnListItem,
 	Column,
@@ -347,9 +347,9 @@ sap.ui.define([
 			var oField = this.byId("F11");
 			var bPressed = oEvent.getParameter("pressed");
 			if (bPressed) {
-				oField.setEditMode(EditMode.Display);
+				oField.setEditMode(FieldEditMode.Display);
 			} else {
-				oField.setEditMode(EditMode.Editable);
+				oField.setEditMode(FieldEditMode.Editable);
 			}
 		},
 

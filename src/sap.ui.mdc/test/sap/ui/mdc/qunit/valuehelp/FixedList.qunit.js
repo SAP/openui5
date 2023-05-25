@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/FixedList",
 	"sap/ui/mdc/valuehelp/content/FixedListItem",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
 	"sap/m/library",
@@ -20,7 +20,7 @@ sap.ui.define([
 		FixedList,
 		FixedListItem,
 		Condition,
-		SelectType,
+		ValueHelpSelectionType,
 		ParseException,
 		FormatException,
 		mLibrary,
@@ -143,7 +143,7 @@ sap.ui.define([
 				oContent.fireItemPress({listItem: oItem});
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-				assert.equal(sType, SelectType.Set, "select event type");
+				assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 				assert.equal(iConfirm, 1, "confirm event fired");
 				assert.deepEqual(oFixedList.getConditions(), aNewConditions, "FixedList conditions");
 

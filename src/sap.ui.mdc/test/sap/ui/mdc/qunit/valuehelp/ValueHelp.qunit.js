@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/Container",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/core/Icon",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -22,7 +22,7 @@ sap.ui.define([
 		Container,
 		Condition,
 		ConditionValidated,
-		SelectType,
+		ValueHelpSelectionType,
 		Icon,
 		FormatException,
 		ParseException,
@@ -653,7 +653,7 @@ sap.ui.define([
 								 Condition.createCondition("EQ", ["X"]),
 								 Condition.createCondition("BT", ["A", "C"])
 								 ];
-		oContainer.fireSelect({type: SelectType.Set, conditions: aSelectConditions});
+		oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
 		var aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
 
@@ -662,7 +662,7 @@ sap.ui.define([
 							 Condition.createCondition("EQ", ["X"]),
 							 Condition.createCondition("EQ", ["Y"])
 							 ];
-		oContainer.fireSelect({type: SelectType.Add, conditions: aSelectConditions});
+		oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
 		var aCheckConditions = [
 								Condition.createCondition("EQ", ["X"]),
 								Condition.createCondition("BT", ["A", "C"]),
@@ -676,7 +676,7 @@ sap.ui.define([
 		aSelectConditions = [
 							 Condition.createCondition("EQ", ["X"])
 							 ];
-		oContainer.fireSelect({type: SelectType.Remove, conditions: aSelectConditions});
+		oContainer.fireSelect({type: ValueHelpSelectionType.Remove, conditions: aSelectConditions});
 		aCheckConditions = [
 								Condition.createCondition("BT", ["A", "C"]),
 								Condition.createCondition("EQ", ["X"]),
@@ -693,14 +693,14 @@ sap.ui.define([
 							 Condition.createCondition("EQ", ["X"]),
 							 Condition.createCondition("EQ", ["Y"])
 							 ];
-		oContainer.fireSelect({type: SelectType.Add, conditions: aSelectConditions});
+		oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
 		aCheckConditions = [
 								Condition.createCondition("EQ", ["X"])
 								];
 		aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aCheckConditions, "SingleSelect - Add: Only first condition taken");
 
-		oContainer.fireSelect({type: SelectType.Remove, conditions: []});
+		oContainer.fireSelect({type: ValueHelpSelectionType.Remove, conditions: []});
 		aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, [], "SingleSelect - Remove: Condition removed");
 
@@ -1111,7 +1111,7 @@ sap.ui.define([
 								 Condition.createCondition("EQ", ["X"]),
 								 Condition.createCondition("BT", ["A", "C"])
 								 ];
-		oContainer.fireSelect({type: SelectType.Set, conditions: aSelectConditions});
+		oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
 		var aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
 

@@ -4,11 +4,11 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/m/library",
 	"sap/m/MessageToast",
 	"sap/ui/core/Core"
-], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, mobileLibrary, MessageToast, oCore) {
+], function(Controller, Filter, FilterOperator, JSONModel, Condition, FieldEditMode, mobileLibrary, MessageToast, oCore) {
 	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
@@ -186,9 +186,9 @@ sap.ui.define([
 			var oField = this.byId(sId);
 			var bPressed = oEvent.getParameter("pressed");
 			if (bPressed) {
-				oField.setEditMode(EditMode.Display);
+				oField.setEditMode(FieldEditMode.Display);
 			} else {
-				oField.setEditMode(EditMode.Editable);
+				oField.setEditMode(FieldEditMode.Editable);
 			}
 		},
 

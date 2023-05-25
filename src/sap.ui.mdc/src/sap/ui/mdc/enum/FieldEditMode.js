@@ -13,10 +13,9 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.48.1
-	 * @alias sap.ui.mdc.enum.EditMode
- 	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.FieldEditMode}
+	 * @alias sap.ui.mdc.enum.FieldEditMode
 	 */
-	var EditMode = {
+	var FieldEditMode = {
 		/**
 		 * {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} is rendered in display mode
 		 * @private
@@ -65,6 +64,6 @@ sap.ui.define(function() {
 		EditableDisplay: "EditableDisplay"
 	};
 
-	return EditMode;
+	return FieldEditMode;
 
 }, /* bExport= */ true);

@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
 	"sap/ui/model/ParseException",
@@ -40,7 +40,7 @@ sap.ui.define([
 		MDCTable,
 		Condition,
 		ConditionValidated,
-		SelectType,
+		ValueHelpSelectionType,
 		FilterBar,
 		FilterField,
 		ParseException,

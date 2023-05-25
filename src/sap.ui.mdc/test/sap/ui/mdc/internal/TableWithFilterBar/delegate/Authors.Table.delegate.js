@@ -3,9 +3,9 @@ sap.ui.define([
 	"./Authors.FB.delegate",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/enum/FieldDisplay",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/model/odata/type/Int32"
-], function (ODataTableDelegate, AuthorsFBDelegate, Field, FieldDisplay, EditMode, Int32Type) {
+], function (ODataTableDelegate, AuthorsFBDelegate, Field, FieldDisplay, FieldEditMode, Int32Type) {
 	"use strict";
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
@@ -89,7 +89,7 @@ sap.ui.define([
 		var oCtrlProperties = {
 			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
-			editMode: EditMode.Display,
+			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false // set always to have property not initial
 		};
