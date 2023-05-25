@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/enum/TableP13nMode",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enum/TableType",
+	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	AggregationBaseDelegate,
 	loadModules,
@@ -21,7 +22,8 @@ sap.ui.define([
 	coreLibrary,
 	Core,
 	TableP13nMode,
-	TableType
+	TableType,
+	FilterUtil
 ) {
 	"use strict";
 
@@ -49,11 +51,12 @@ sap.ui.define([
 	 */
 	TableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		oBindingInfo.parameters = {};
-		oBindingInfo.filters = [];
 		oBindingInfo.sorter = [];
 
 		if (oTable._oMessageFilter) {
 			oBindingInfo.filters = [oTable._oMessageFilter];
+		} else {
+			oBindingInfo.filters = this.getFilters(oTable);
 		}
 
 		if (oTable._isOfType(TableType.ResponsiveTable)) {
@@ -75,6 +78,46 @@ sap.ui.define([
 				})
 				: oTable._getSorters()
 		);
+	};
+
+
+	/**
+	 * Returns filters that are used when updating the table's binding and are created based on the
+	 * filter conditions of the table and its associated filter control.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {sap.ui.model.Filter[]} Array of filters
+	 * @protected
+	 */
+	TableDelegate.getFilters = function(oTable) {
+		var bFilterEnabled = oTable.isFilteringEnabled();
+		var aP13nFilters = [], aFilterBarFilters = [];
+
+		if (bFilterEnabled) {
+			var aTableProperties = oTable.getPropertyHelper().getProperties();
+			var oP13nFilter = oTable.getConditions() || {};
+			var oInnerFilterInfo = FilterUtil.getFilterInfo(oTable, oP13nFilter, aTableProperties);
+
+			if (oInnerFilterInfo.filters) {
+				aP13nFilters.push(oInnerFilterInfo.filters);
+			}
+		}
+
+		var oFilterBar = Core.byId(oTable.getFilter());
+		if (oFilterBar) {
+			var mConditions = oFilterBar.getConditions();
+
+			if (mConditions) {
+				var aPropertiesMetadata = oFilterBar.getPropertyInfoSet ? oFilterBar.getPropertyInfoSet() : null;
+				var oFilterInfo = FilterUtil.getFilterInfo(oTable, mConditions, aPropertiesMetadata);
+
+				if (oFilterInfo.filters) {
+					aFilterBarFilters.push(oFilterInfo.filters);
+				}
+			}
+		}
+
+		return aP13nFilters.concat(aFilterBarFilters);
 	};
 
 	/**

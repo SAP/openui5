@@ -145,6 +145,19 @@ sap.ui.define([
 		});
 	};
 
+	QUnitUtils.waitForBindingUpdate = function(oTable) {
+		return oTable.awaitControlDelegate().then(function(oDelegate) {
+			return new Promise(function(resolve) {
+				var fnOriginalUpdateBinding = oDelegate.updateBinding;
+				oDelegate.updateBinding = function() {
+					fnOriginalUpdateBinding.apply(this, arguments);
+					oDelegate.updateBinding = fnOriginalUpdateBinding;
+					resolve();
+				};
+			});
+		});
+	};
+
 	QUnitUtils.openColumnMenu = function(oTable, iColumnIndex) {
 		return oTable.initialized().then(function() {
 			var oColumn = oTable._oTable.getColumns()[iColumnIndex];
