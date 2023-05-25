@@ -52,6 +52,15 @@ sap.ui.define([
 					},
 					exchangeRate: 0.51129,
 					amount: 40.90
+				},
+				{
+					expense: "Daily allowance Japan",
+					transactionAmount: {
+						size: 7000,
+						currency: "JPY"
+					},
+					exchangeRate: 0.0067,
+					amount: 46.69
 				}
 			];
 
