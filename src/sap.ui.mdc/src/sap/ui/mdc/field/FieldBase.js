@@ -666,7 +666,7 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.field.content.ContentFactory} oContentFactory the ContentFactory of the Field
 	 */
 	 FieldBase.prototype.getContentFactory = function() {
-		if (this._bIsBeingDestroyed || this.bIsDestroyed) {
+		if (this.isFieldDestroyed()) {
 			return;
 		}
 		if (!this._oContentFactory) {
@@ -687,7 +687,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp && !this._iFocusTimer && oFieldHelp.shouldOpenOnFocus() && !oFieldHelp.isOpen()) {
 			this._iFocusTimer = setTimeout(function () {
-				if (!this.bIsDestroyed && !oFieldHelp.isOpen()) {
+				if (!this.isFieldDestroyed() && !oFieldHelp.isOpen()) {
 					_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
 					this._redirectFocus(oEvent, oFieldHelp);
 				}
@@ -1258,7 +1258,7 @@ sap.ui.define([
 			if (this.getContentFactory().getDataType()) {
 				var fnCheck = function(sType) {
 					this.getContentFactory().checkDataTypeChanged(sType).then(function(bChanged) {
-						if (bChanged && !this._bIsBeingDestroyed) {
+						if (bChanged && !this.isFieldDestroyed()) {
 							this.initDataType();
 							this.destroyAggregation("_content");
 							this.getContentFactory().updateConditionType();
@@ -1706,7 +1706,7 @@ sap.ui.define([
 			}
 			this.getContentFactory().setNoFormatting(false); // initialize
 			this.awaitControlDelegate().then(function() {
-				if (!this.bIsDestroyed) {
+				if (!this.isFieldDestroyed()) {
 					var bHideOperator = _isOnlyOneSingleValue.call(this, this.getSupportedOperators());
 					if (bHideOperator !== this.getContentFactory().getHideOperator()) {
 						this.getContentFactory().setHideOperator(bHideOperator); // in single value eq Field hide operator
@@ -1865,7 +1865,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.checkCreateInternalContent = function() {
 
-		if (!this.bIsDestroyed && this.getVisible() && this.getContentFactory().getDataType()) {
+		if (!this.isFieldDestroyed() && this.getVisible() && this.getContentFactory().getDataType()) {
 			_createInternalContentWrapper.call(this);
 		}
 
@@ -1893,7 +1893,7 @@ sap.ui.define([
 
 	function _createInternalContent() {
 
-		if (this._bIsBeingDestroyed || this.bIsDestroyed) {
+		if (this.isFieldDestroyed()) {
 			return; // for destroyed field do nothing on internal control
 		}
 
@@ -1963,7 +1963,7 @@ sap.ui.define([
 			this._oCreateContentPromise = this.getContentFactory().createContent(oContentType, sContentMode, sId);
 			this._oCreateContentPromise.then(function(aControls) {
 				delete this._oCreateContentPromise; // after finished new creation request can be sync again (clear at the beginning as error might break function before end)
-				for (var iIndex = 0; iIndex < aControls.length; iIndex++) {
+				for (var iIndex = 0; iIndex < aControls.length; iIndex++) { // if already destroyed ContentFactory will not create any content control
 					var oControl = aControls[iIndex];
 					oControl.attachEvent("parseError", _handleParseError, this);
 					oControl.attachEvent("validationError", _handleValidationError, this);
@@ -2019,7 +2019,7 @@ sap.ui.define([
 	};
 
 	function _setModelOnContent(oContent) {
-		if (!this._oManagedObjectModel && !this._bIsBeingDestroyed) {
+		if (!this._oManagedObjectModel && !this.isFieldDestroyed()) {
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 		}
 		oContent.setModel(this._oManagedObjectModel, "$field");
@@ -2164,7 +2164,7 @@ sap.ui.define([
 
 		var oValueHelp = mDefaultHelps[sType].control;
 
-		if (oValueHelp && oValueHelp.bIsDestroyed) {
+		if (oValueHelp && oValueHelp.isDestroyed()) {
 			// someone destroyed FieldHelp -> initialize
 			mDefaultHelps[sType].control = undefined;
 			oValueHelp = undefined;
@@ -3427,9 +3427,9 @@ sap.ui.define([
 	/**
 	 * Checks if the field is configured to be a <code>SearchField</code>
 	 *
-	 * Needs to be overwritten by {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}
+	 * Needs to be overwritten by {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
 	 * and {@link sap.ui.mdc.FilterField FilterField}
-	 * @returns {boolean} True if confogures as search field
+	 * @returns {boolean} True if configures as search field
 	 * @protected
 	 * @since 1.115.0
 	 */
@@ -3459,7 +3459,16 @@ sap.ui.define([
 
 	}
 
-	FieldBase.prototype._isPropertyInitial = function(sPropertyName) {
+	/**
+	 * Returns whether the given property value is initial and has not been explicitly set or no binding exist.
+	 * Even after setting the default value or setting null/undefined (which also causes the default value to be set),
+	 * the property is no longer initial. A property can be reset to initial state by calling <code>resetProperty(sPropertyName)</code>.
+	 *
+	 * @param {string} sPropertyName the name of the property
+	 * @returns {boolean} true if the property is initial
+	 * @protected
+	 */
+	FieldBase.prototype.isFieldPropertyInitial = function(sPropertyName) {
 
 		// as bound propertys are never initial even if there is no existing binding right now check the binding too
 		if (this.isBound(sPropertyName) && !this.getBinding(sPropertyName)) {
@@ -3467,6 +3476,21 @@ sap.ui.define([
 		} else {
 			return this.isPropertyInitial(sPropertyName);
 		}
+
+	};
+
+	/**
+	 * Checks if the field is already destoyed or destruction has started.
+	 *
+	 * In this casse creation of internal content or binding must be prevented.
+	 *
+	 * @returns {boolean} True if destroyed or destruction has been started
+	 * @protected
+	 * @since 1.115.0
+	 */
+	FieldBase.prototype.isFieldDestroyed = function() {
+
+		return this.isDestroyed() || this.isDestroyStarted();
 
 	};
 

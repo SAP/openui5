@@ -319,7 +319,7 @@ sap.ui.define([
 		if (!this.bDelegateInitialized) {
 			// wait until delegate is loaded
 			this.awaitControlDelegate().then(function() {
-				if (!this.bIsDestroyed) {
+				if (!this.isFieldDestroyed()) {
 					_triggerConditionUpdate.call(this);
 				}
 			}.bind(this));
@@ -429,7 +429,7 @@ sap.ui.define([
 			if (!this.bDelegateInitialized) {
 				// wait until delegate is loaded
 				this.awaitControlDelegate().then(function() {
-					if (!this.bIsDestroyed) {
+					if (!this.isFieldDestroyed()) {
 						_initializeType.call(this, vValue);
 					}
 				}.bind(this));
@@ -498,7 +498,7 @@ sap.ui.define([
 		if (!this.bDelegateInitialized) {
 			// wait until delegate is loaded
 			this.awaitControlDelegate().then(function() {
-				if (!this.bIsDestroyed) {
+				if (!this.isFieldDestroyed()) {
 					_updateValue.call(this, aConditions);
 				}
 			}.bind(this));
@@ -558,7 +558,7 @@ sap.ui.define([
 
 	Field.prototype.checkCreateInternalContent = function() {
 
-		if (!this.bIsDestroyed && this.getContentFactory().getDataType() && !this._isPropertyInitial("editMode") && !this._isPropertyInitial("multipleLines")) {
+		if (!this.isFieldDestroyed() && this.getContentFactory().getDataType() && !this.isFieldPropertyInitial("editMode") && !this.isFieldPropertyInitial("multipleLines")) {
 			// If DataType is provided via Binding and EditMode is set the internal control can be created
 			// TODO: no control needed if just template for cloning
 			FieldBase.prototype.checkCreateInternalContent.apply(this, arguments);
