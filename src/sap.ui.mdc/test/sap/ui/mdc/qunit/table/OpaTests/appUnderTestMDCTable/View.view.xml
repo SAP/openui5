@@ -26,35 +26,65 @@
                     <variants:VariantManagement id="mdcTable-vm" for="mdcTable" />
                 </mdc:variant>
                 <mdc:columns>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--CreatedAt" header="Created On" tooltip="Created On" propertyKey="CreatedAt" importance="Low">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--CreatedAt" header="Created On" tooltip="Created On" propertyKey="CreatedAt">
                         <Text text="{CreatedAt}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="Low"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--ProductID" header="Product ID" tooltip="Product ID" propertyKey="ProductID" importance="High">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--ProductID" header="Product ID" tooltip="Product ID" propertyKey="ProductID">
                         <ObjectIdentifier title="{ProductID}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="High"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--Category" header="Category" propertyKey="Category" importance="Low">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--Category" header="Category" propertyKey="Category">
                         <Text text="{Category}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="Low"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--Name" header="Product Name" propertyKey="Name" importance="Low">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--Name" header="Product Name" propertyKey="Name">
                         <Text text="{Name}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="Low"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName" importance="Medium">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName">
                         <Text text="{SupplierName}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="Medium"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--Price" header="Unit Price of the Product" propertyKey="Price" hAlign="Right" importance="High">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--Price" header="Unit Price of the Product" propertyKey="Price" hAlign="Right">
                         <u:Currency xmlns:u="sap.ui.unified" value="{Price}" currency="{CurrencyCode}" useSymbol="false" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="High"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--WeightMeasure" header="Weight" propertyKey="WeightMeasure" hAlign="End" importance="Low">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--WeightMeasure" header="Weight" propertyKey="WeightMeasure" hAlign="End">
                         <ObjectNumber number="{WeightMeasure}" emphasized="false" textAlign="End" unit="{WeightUnit}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="Low"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--Width" header="Width" propertyKey="Width" hAlign="End" importance="Low">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--Width" header="Width" propertyKey="Width" hAlign="End">
                         <ObjectNumber number="{Width}" emphasized="false" textAlign="End" unit="{DimUnit}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="Low"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--Depth" header="Depth" propertyKey="Depth" hAlign="End" importance="Low">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--Depth" header="Depth" propertyKey="Depth" hAlign="End">
                         <ObjectNumber number="{Depth}" emphasized="false" textAlign="End" unit="{DimUnit}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="Low"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
-                    <mdcTable:Column id="mdcTable-vm--mdcTable--Height" header="Height" propertyKey="Height" hAlign="End" importance="Low">
+                    <mdcTable:Column id="mdcTable-vm--mdcTable--Height" header="Height" propertyKey="Height" hAlign="End">
                         <ObjectNumber number="{Height}" emphasized="false" textAlign="End" unit="{DimUnit}" />
+                        <mdcTable:extendedSettings>
+                            <mdcTable:ResponsiveColumnSettings importance="Low"/>
+                        </mdcTable:extendedSettings>
                     </mdcTable:Column>
                 </mdc:columns>
             </mdc:Table>

@@ -539,7 +539,7 @@ sap.ui.define([
 		var oResponsiveTable = this.getInnerTable();
 
 		if (PersonalizationUtils.isUserPersonalizationActive(oTable)
-		&& oResponsiveTable.getHiddenInPopin().includes(oColumn.getImportance())
+		&& oResponsiveTable.getHiddenInPopin().includes(oColumn.getInnerColumn().getImportance())
 		&& (oTable.getColumns().pop() === oColumn)) {
 			this._toggleShowDetails(false);
 		}

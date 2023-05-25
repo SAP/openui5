@@ -60,20 +60,35 @@
 			<IllustratedMessage />
 		</mdc:noData>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On" tooltip="Creation Date/Time" propertyKey="CreatedAt" importance="High">
+			<mdcTable:Column id="create" header="Created On" tooltip="Creation Date/Time" propertyKey="CreatedAt">
 				<Text text="{CreatedAt}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="High"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" tooltip="Product Identifier" propertyKey="ProductID" importance="High" required="true">
+			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" tooltip="Product Identifier" propertyKey="ProductID" required="true">
 				<ObjectIdentifier title="{ProductID}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="High"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" propertyKey="Category" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" propertyKey="Category">
 				<Text text="{Category}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="High"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" propertyKey="Name" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" propertyKey="Name">
 				<Text text="{Name}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="High"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName">
 				<Text text="{SupplierName}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="High"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
 
 		</mdc:columns>

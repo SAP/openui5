@@ -181,11 +181,11 @@ sap.ui.define([
 							}
 						},
 						columns: [
-							new mdcColumn({importance: "High", header: "ID", propertyKey: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
-							new mdcColumn({importance: "High", header: "Name", propertyKey: "name", template: new Field({value: "{name}", editMode: "Display"})}),
-							new mdcColumn({importance: "Low", header: "Country", propertyKey: "countryOfOrigin_code", template: new Field({value: "{countryOfOrigin_code}", additionalValue: "{countryOfOrigin/descr}", display: "Description", editMode: "Display"})}),
-							new mdcColumn({importance: "Low", header: "Region", propertyKey: "regionOfOrigin_code", template: new Field({value: "{regionOfOrigin_code}", additionalValue: "{regionOfOrigin/text}", display: "Description", editMode: "Display"})}),
-							new mdcColumn({importance: "Low", header: "City", propertyKey: "cityOfOrigin_city", template: new Field({value: "{cityOfOrigin_city}", additionalValue: "{cityOfOrigin/text}", display: "Description", editMode: "Display"})})
+							new mdcColumn({header: "ID", propertyKey: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
+							new mdcColumn({header: "Name", propertyKey: "name", template: new Field({value: "{name}", editMode: "Display"})}),
+							new mdcColumn({header: "Country", propertyKey: "countryOfOrigin_code", template: new Field({value: "{countryOfOrigin_code}", additionalValue: "{countryOfOrigin/descr}", display: "Description", editMode: "Display"})}),
+							new mdcColumn({header: "Region", propertyKey: "regionOfOrigin_code", template: new Field({value: "{regionOfOrigin_code}", additionalValue: "{regionOfOrigin/text}", display: "Description", editMode: "Display"})}),
+							new mdcColumn({header: "City", propertyKey: "cityOfOrigin_city", template: new Field({value: "{cityOfOrigin_city}", additionalValue: "{cityOfOrigin/text}", display: "Description", editMode: "Display"})})
 						]
 					});
 					break;
@@ -237,8 +237,8 @@ sap.ui.define([
 							}
 						},
 						columns: [
-							new mdcColumn({importance: "High", header: "ID", propertyKey: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
-							new mdcColumn({importance: "High", header: "Name", propertyKey: "name", template: new Field({value: "{name}", editMode: "Display"})})
+							new mdcColumn({header: "ID", propertyKey: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
+							new mdcColumn({header: "Name", propertyKey: "name", template: new Field({value: "{name}", editMode: "Display"})})
 						]
 					});
 					break;

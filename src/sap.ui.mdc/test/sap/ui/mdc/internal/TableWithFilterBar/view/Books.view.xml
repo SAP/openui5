@@ -875,13 +875,22 @@
 							<mdc:table.Column id="id4" header="Price" propertyKey="price">
 								<mdc:Field id="F_price" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{parts: [{path:'price', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}" editMode="Display" width="100%" multipleLines="false"/>
 							</mdc:table.Column>
-							<mdc:table.Column id="id5" header="Stock" propertyKey="stock" importance="High">
+							<mdc:table.Column id="id5" header="Stock" propertyKey="stock">
+								<mdc:extendedSettings>
+									<mdc:table.ResponsiveColumnSettings importance="High"/>
+								</mdc:extendedSettings>
 								<mdc:Field id="F_stock" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'stock', type:'sap.ui.model.odata.type.Int32'}" editMode="Display" width="100%" multipleLines="false"/>
 							</mdc:table.Column>
-							<mdc:table.Column id="id6" header="Genre" propertyKey="genre_code" importance="High">
+							<mdc:table.Column id="id6" header="Genre" propertyKey="genre_code">
+								<mdc:extendedSettings>
+									<mdc:table.ResponsiveColumnSettings importance="High"/>
+								</mdc:extendedSettings>
 								<mdc:Field id="F_genre_code" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" valueHelp="FHGenreSingle" display="Description" multipleLines="false"/>
 							</mdc:table.Column>
-							<mdc:table.Column id="id7" header="SubGenre" propertyKey="subgenre_code" importance="High">
+							<mdc:table.Column id="id7" header="SubGenre" propertyKey="subgenre_code">
+								<mdc:extendedSettings>
+									<mdc:table.ResponsiveColumnSettings importance="High"/>
+								</mdc:extendedSettings>
 								<mdc:Field id="F_subgenre_code" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'subgenre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" valueHelp="FHSubGenreSingle" display="Description" multipleLines="false"/>
 							</mdc:table.Column>
 						</mdc:columns>
@@ -1049,13 +1058,13 @@
 												placeholder="Search" />
 										</vhfb:basicSearchField>
 										<vhfb:filterItems>
-											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" 
-											conditions= "{$filters>/conditions/code}" 
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String"
+											conditions= "{$filters>/conditions/code}"
 											propertyKey="code"/>
-											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" 
-											conditions= "{$filters>/conditions/title}" 
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title"
+											conditions= "{$filters>/conditions/title}"
 											propertyKey="title"/>
-											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" 
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String"
 											conditions= "{$filters>/conditions/classification_code}"
 											propertyKey="classification_code"
 											display="Description" valueHelp="FHClassification"/>
