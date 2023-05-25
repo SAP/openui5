@@ -9,11 +9,13 @@ sap.ui.getCore().attachInit(function () {
 	sap.ui.require([
 		"sap/base/Log",
 		"sap/ui/core/library",
+		"sap/ui/core/date/UI5Date",
+		"sap/ui/core/format/DateFormat",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/ViewTemplate/types/pages/Main",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
-	], function (Log, library, Any, Main, opaTest, TestUtils) {
+	], function (Log, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils) {
 		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 			MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
 			ValueState = library.ValueState; // shortcut for sap.ui.core.ValueState
@@ -122,7 +124,8 @@ sap.ui.getCore().attachInit(function () {
 			When.onTheMainPage.enterInputValue("Identification::TimezoneID", "Europe/Berlin",
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 			Then.onTheMainPage.checkInputValue("Identification::DateTimeOffset",
-				"Apr 19, 2029, 8:25:21 AM Europe, Berlin",
+				DateFormat.getDateTimeWithTimezoneInstance()
+					.format(UI5Date.getInstance(2029, 3, 19, 8, 25, 21), "Europe/Berlin"),
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 
 			Then.onAnyPage.checkLog([{component : "sap.ui.model.odata.v4.ODataMetaModel",
