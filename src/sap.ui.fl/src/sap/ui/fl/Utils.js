@@ -719,7 +719,7 @@ sap.ui.define([
 				});
 				sParameters = "";
 				if (aFilterUrl.length > 0) {
-					sParameters = "?" + aFilterUrl.toString();
+					sParameters = "?" + aFilterUrl.join("&");
 				}
 			} else {
 				sParameters += (sParameters.length > 0 ? '&' : '?') + sParameterName + "=" + sParameterValue;
