@@ -138,6 +138,8 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 *
 	 * @protected
 	 * @returns {boolean} Whether the delegate module is loaded
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	DelegateMixin.isControlDelegateInitialized = function() {
 		return this.bDelegateInitialized;
@@ -148,6 +150,8 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 *
 	 * @protected
 	 * @returns {object} Payload set for delegate property
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	DelegateMixin.getPayload = function () {
 		if (!this._oPayload) {
@@ -176,6 +180,8 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @protected
 	 * @returns {sap.ui.mdc.util.TypeMap} <code>TypeMap</code> object
 	 * @throws Throws an error if the delegate module is not available
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	DelegateMixin.getTypeMap = function () {
 		if (!this._oTypeMap) {
@@ -194,6 +200,8 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @protected
 	 * @returns {sap.ui.mdc.BaseDelegate} <code>typeUtil</code> made available by a delegate module
 	 * @throws Throws an error if the delegate module is not available
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	DelegateMixin.getControlDelegate = function () {
 		if (!this._oDelegate) {
