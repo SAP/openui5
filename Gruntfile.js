@@ -20,6 +20,19 @@ module.exports = function(grunt) {
 		color: 'cyan'
 	});
 
+	// Load config extension script to allow overrides to "grunt" and "gruntData"
+	var configExtensionFile = grunt.option("config-extension");
+
+	grunt.log.error('!!! WARNING !!!');
+	grunt.log.error('The Grunt.js-based development setup is deprecated!');
+	grunt.log.error('Please use the UI5 Tooling-based development setup!');
+	if (!configExtensionFile) {
+		grunt.log.error([
+			'For more information about the OpenUI5 development setup, check here:',
+			'https://github.com/SAP/openui5/blob/master/docs/developing.md',
+		].join("\n\t"));
+	}
+
 	// Check for required Node.js version for grunt setup.
 	// The "engines" entry from package.json is not used as it has been adopted for the non-grunt dev setup.
 	// But as there are still use-case via the "--config-extension" approach, the minimum version for grunt
@@ -302,8 +315,6 @@ module.exports = function(grunt) {
 
 	};
 
-	// Load config extension script to allow overrides to "grunt" and "gruntData"
-	var configExtensionFile = grunt.option("config-extension");
 	if (configExtensionFile) {
 		configExtensionFile.split(',').forEach(file => require(path.resolve(file))(grunt, gruntData));
 	}

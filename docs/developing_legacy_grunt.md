@@ -4,6 +4,8 @@ Developing UI5
 
 This page explains the initial setup, development workflow, and how tests are executed.
 
+> The legacy Grunt-based setup will be discontinued in the near future. It is recommended to already switch to the [Standard Setup](developing.md#setting-up-the-openui5-development-environment) for working with the OpenUI5 repository.
+
 Setting up the UI5 development environment
 ------------------------------------------
 
@@ -37,7 +39,7 @@ npm install
 6. Point your browser to this server running UI5: [http://localhost:8080/testsuite/](http://localhost:8080/testsuite/)  - done!
 
 `grunt serve` has various configuration options, e.g. you can give the parameter `--port=9090` to use a different HTTP port.
- See the [documentation](tools.md) for more details.
+ See the [documentation](tools_legacy_grunt.md) for more details.
 
 
 The Development Process
@@ -61,7 +63,7 @@ Usage:
 grunt build
 ```
 
-Optionally, only selected libraries can be built or the copy of the test-resources folder can be skipped, see [the documentation](tools.md) for details.
+Optionally, only selected libraries can be built or the copy of the <code>test-resources</code> folder can be skipped; see [the documentation](tools_legacy_grunt.md) for details.
 
 The build is responsible for the following tasks:
 
