@@ -188,7 +188,7 @@ sap.ui.define([
 		this._updateShowHideAllButton(false);
 
 		oHeaderDOM && oHeaderDOM.classList.toggle("sapUxAPObjectPageSectionHeaderHidden", !this._isTitleVisible());
-		oHeaderDOM && oHeaderDOM.setAttribute("aria-hidden", !this._isTitleVisible());
+		oHeaderDOM && oHeaderDOM.setAttribute("aria-hidden", !this._isTitleAriaVisible());
 
 		if (oObjectPage && this.getDomRef()) {
 			oObjectPage._requestAdjustLayout();
@@ -322,9 +322,26 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	ObjectPageSection.prototype._isTitleVisible = function () {
-		return (this.getShowTitle() && this._getInternalTitleVisible())
-		|| this._getShouldDisplayExpandCollapseButton()
-		|| this._getShouldDisplayShowHideAllButton();
+		return (this.getShowTitle() && this._getInternalTitleVisible()) || this._getInternalTitleForceVisible();
+	};
+
+	/**
+	 * Determines if the <code>ObjectPageSection</code> title is visible for the aria.
+	 * @private
+	 * @returns {boolean}
+	 */
+	ObjectPageSection.prototype._isTitleAriaVisible = function () {
+		return this.getShowTitle() || this._getInternalTitleForceVisible();
+	};
+
+	/**
+	 * Determines if the <code>ObjectPageSection</code> title is forced to be visible.
+	 * This is the case when the <code>ObjectPageSection</code> displays the expand/collapse button or the show/hide all button.
+	 * @private
+	 * @returns {boolean}
+	 */
+	ObjectPageSection.prototype._getInternalTitleForceVisible = function () {
+		return this._getShouldDisplayExpandCollapseButton() || this._getShouldDisplayShowHideAllButton();
 	};
 
 	/**
