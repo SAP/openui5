@@ -11,6 +11,7 @@ sap.ui.define([
 	'./RangeOperator',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enum/OperatorValueType',
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/date/UniversalDateUtils',
@@ -29,6 +30,7 @@ function(
 		RangeOperator,
 		BaseType,
 		ConditionValidated,
+		OperatorValueType,
 		loadModules,
 		UniversalDate,
 		UniversalDateUtils,
@@ -96,7 +98,7 @@ function(
 						filterOperator: ModelOperator.EQ,
 						tokenParse: "^=([^=].*)$",
 						tokenFormat: "{1} ({0})", // all placeholder should use the {x} format - the text could be store in the resourcebundel file.
-						valueTypes: [Operator.ValueType.Self, null],
+						valueTypes: [OperatorValueType.Self, null],
 						displayFormats: {
 							DescriptionValue: "{1} ({0})",
 							ValueDescription: "{0} ({1})",
@@ -259,7 +261,7 @@ function(
 						filterOperator: ModelOperator.BT,
 						tokenParse: "^([^!].*)\\.\\.\\.(.+)$", // TODO: does this work?? At least also matches crap like ".....". I guess validation of value types needs to get rid of those.
 						tokenFormat: "{0}...{1}",
-						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
+						valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 						validate: function(aValues, oType) {
 							// in Between 2 different Values must be defined
 							if (aValues.length === 2) { // if aValues has wrong length this is checked in default logic
@@ -302,7 +304,7 @@ function(
 						filterOperator: ModelOperator.NB,
 						tokenParse: "^!(.+)\\.\\.\\.(.+)$",
 						tokenFormat: "!({0}...{1})",
-						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
+						valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 						exclude: true,
 						validate: function(aValues, oType) {
 							FilterOperatorUtil._mOperators.between.validate(aValues, oType);
@@ -326,7 +328,7 @@ function(
 						filterOperator: ModelOperator.LT,
 						tokenParse: "^<([^=].*)$",
 						tokenFormat: "<{0}",
-						valueTypes: [Operator.ValueType.Self]
+						valueTypes: [OperatorValueType.Self]
 					}),
 					/*
 					 * @class
@@ -344,7 +346,7 @@ function(
 						filterOperator: ModelOperator.GE,
 						tokenParse: "^!<([^=].*)$",
 						tokenFormat: "!(<{0})",
-						valueTypes: [Operator.ValueType.Self],
+						valueTypes: [OperatorValueType.Self],
 						exclude: true
 					}),
 					/*
@@ -365,7 +367,7 @@ function(
 						filterOperator: ModelOperator.GT,
 						tokenParse: "^>([^=].*)$",
 						tokenFormat: ">{0}",
-						valueTypes: [Operator.ValueType.Self]
+						valueTypes: [OperatorValueType.Self]
 					}),
 					/*
 					 * @class
@@ -385,7 +387,7 @@ function(
 						filterOperator: ModelOperator.LE,
 						tokenParse: "^!>([^=].*)$",
 						tokenFormat: "!(>{0})",
-						valueTypes: [Operator.ValueType.Self],
+						valueTypes: [OperatorValueType.Self],
 						exclude: true
 					}),
 					/*
@@ -410,7 +412,7 @@ function(
 						filterOperator: ModelOperator.LE,
 						tokenParse: "^<=(.+)$",
 						tokenFormat: "<={0}",
-						valueTypes: [Operator.ValueType.Self]
+						valueTypes: [OperatorValueType.Self]
 					}),
 					/*
 					 * @class
@@ -430,7 +432,7 @@ function(
 						filterOperator: ModelOperator.GT,
 						tokenParse: "^!<=(.+)$",
 						tokenFormat: "!(<={0})",
-						valueTypes: [Operator.ValueType.Self],
+						valueTypes: [OperatorValueType.Self],
 						exclude: true
 					}),
 					/*
@@ -455,7 +457,7 @@ function(
 						filterOperator: ModelOperator.GE,
 						tokenParse: "^>=(.+)$",
 						tokenFormat: ">={0}",
-						valueTypes: [Operator.ValueType.Self]
+						valueTypes: [OperatorValueType.Self]
 					}),
 					/*
 					 * @class
@@ -475,7 +477,7 @@ function(
 						filterOperator: ModelOperator.LT,
 						tokenParse: "^!>=(.+)$",
 						tokenFormat: "!(>={0})",
-						valueTypes: [Operator.ValueType.Self],
+						valueTypes: [OperatorValueType.Self],
 						exclude: true
 					}),
 					/*
@@ -496,7 +498,7 @@ function(
 						filterOperator: ModelOperator.StartsWith,
 						tokenParse: "^([^!\\*]+.*)\\*$",
 						tokenFormat: "{0}*",
-						valueTypes: [Operator.ValueType.SelfNoParse]
+						valueTypes: [OperatorValueType.SelfNoParse]
 					}),
 					/*
 					 * @class
@@ -516,7 +518,7 @@ function(
 						filterOperator: ModelOperator.NotStartsWith,
 						tokenParse: "^!([^\\*].*)\\*$",
 						tokenFormat: "!({0}*)",
-						valueTypes: [Operator.ValueType.SelfNoParse],
+						valueTypes: [OperatorValueType.SelfNoParse],
 						exclude: true
 					}),
 					/*
@@ -537,7 +539,7 @@ function(
 						filterOperator: ModelOperator.EndsWith,
 						tokenParse: "^\\*(.*[^\\*])$",
 						tokenFormat: "*{0}",
-						valueTypes: [Operator.ValueType.SelfNoParse]
+						valueTypes: [OperatorValueType.SelfNoParse]
 					}),
 					/*
 					 * @class
@@ -557,7 +559,7 @@ function(
 						filterOperator: ModelOperator.NotEndsWith,
 						tokenParse: "^!\\*(.*[^\\*])$",
 						tokenFormat: "!(*{0})",
-						valueTypes: [Operator.ValueType.SelfNoParse],
+						valueTypes: [OperatorValueType.SelfNoParse],
 						exclude: true
 					}),
 					/*
@@ -578,7 +580,7 @@ function(
 						filterOperator: ModelOperator.Contains,
 						tokenParse: "^\\*(.*)\\*$",
 						tokenFormat: "*{0}*",
-						valueTypes: [Operator.ValueType.SelfNoParse]
+						valueTypes: [OperatorValueType.SelfNoParse]
 					}),
 					/*
 					 * @class
@@ -598,7 +600,7 @@ function(
 						filterOperator: ModelOperator.NotContains,
 						tokenParse: "^!\\*(.*)\\*$",
 						tokenFormat: "!(*{0}*)",
-						valueTypes: [Operator.ValueType.SelfNoParse],
+						valueTypes: [OperatorValueType.SelfNoParse],
 						exclude: true
 					}),
 					/*
@@ -619,7 +621,7 @@ function(
 						filterOperator: ModelOperator.NE,
 						tokenParse: "^!=(.+)$",
 						tokenFormat: "!(={0})",
-						valueTypes: [Operator.ValueType.Self],
+						valueTypes: [OperatorValueType.Self],
 						exclude: true
 					}),
 					/*
@@ -716,7 +718,7 @@ function(
 					 */
 					yesterday: new RangeOperator({
 						name: "YESTERDAY",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.yesterday();
 						},
@@ -739,7 +741,7 @@ function(
 					 */
 					today: new RangeOperator({
 						name: "TODAY",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.today();
 						},
@@ -762,7 +764,7 @@ function(
 					 */
 					tomorrow: new RangeOperator({
 						name: "TOMORROW",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.tomorrow();
 						},
@@ -807,7 +809,7 @@ function(
 					 */
 					firstDayWeek: new RangeOperator({
 						name: "FIRSTDAYWEEK",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.firstDayOfWeek();
 						},
@@ -830,7 +832,7 @@ function(
 					 */
 					lastDayWeek: new RangeOperator({
 						name: "LASTDAYWEEK",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.lastDayOfWeek();
 						},
@@ -853,7 +855,7 @@ function(
 					 */
 					firstDayMonth: new RangeOperator({
 						name: "FIRSTDAYMONTH",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.firstDayOfMonth();
 						},
@@ -876,7 +878,7 @@ function(
 					 */
 					lastDayMonth: new RangeOperator({
 						name: "LASTDAYMONTH",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.lastDayOfMonth();
 						},
@@ -899,7 +901,7 @@ function(
 					 */
 					firstDayQuarter: new RangeOperator({
 						name: "FIRSTDAYQUARTER",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.firstDayOfQuarter();
 						},
@@ -922,7 +924,7 @@ function(
 					 */
 					lastDayQuarter: new RangeOperator({
 						name: "LASTDAYQUARTER",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.lastDayOfQuarter();
 						},
@@ -945,7 +947,7 @@ function(
 					 */
 					firstDayYear: new RangeOperator({
 						name: "FIRSTDAYYEAR",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.firstDayOfYear();
 						},
@@ -968,7 +970,7 @@ function(
 					 */
 					lastDayYear: new RangeOperator({
 						name: "LASTDAYYEAR",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.lastDayOfYear();
 						},
@@ -1046,7 +1048,7 @@ function(
 					 */
 					lastWeek: new RangeOperator({
 						name: "LASTWEEK",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.lastWeek();
 						}
@@ -1066,7 +1068,7 @@ function(
 					 */
 					thisWeek: new RangeOperator({
 						name: "THISWEEK",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.currentWeek();
 						}
@@ -1086,7 +1088,7 @@ function(
 					 */
 					nextWeek: new RangeOperator({
 						name: "NEXTWEEK",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.nextWeek();
 						}
@@ -1150,7 +1152,7 @@ function(
 					 */
 					lastMonth: new RangeOperator({
 						name: "LASTMONTH",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.lastMonth();
 						}
@@ -1170,7 +1172,7 @@ function(
 					 */
 					thisMonth: new RangeOperator({
 						name: "THISMONTH",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.currentMonth();
 						}
@@ -1190,7 +1192,7 @@ function(
 					 */
 					nextMonth: new RangeOperator({
 						name: "NEXTMONTH",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.nextMonth();
 						}
@@ -1254,7 +1256,7 @@ function(
 					 */
 					lastQuarter: new RangeOperator({
 						name: "LASTQUARTER",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.lastQuarter();
 						}
@@ -1274,7 +1276,7 @@ function(
 					 */
 					thisQuarter: new RangeOperator({
 						name: "THISQUARTER",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.currentQuarter();
 						}
@@ -1294,7 +1296,7 @@ function(
 					 */
 					nextQuarter: new RangeOperator({
 						name: "NEXTQUARTER",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.nextQuarter();
 						}
@@ -1358,7 +1360,7 @@ function(
 					 */
 					quarter1: new RangeOperator({
 						name: "QUARTER1",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.quarter(1);
 						}
@@ -1378,7 +1380,7 @@ function(
 					 */
 					quarter2: new RangeOperator({
 						name: "QUARTER2",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.quarter(2);
 						}
@@ -1398,7 +1400,7 @@ function(
 					 */
 					quarter3: new RangeOperator({
 						name: "QUARTER3",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.quarter(3);
 						}
@@ -1418,7 +1420,7 @@ function(
 					 */
 					quarter4: new RangeOperator({
 						name: "QUARTER4",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.quarter(4);
 						}
@@ -1438,7 +1440,7 @@ function(
 					 */
 					lastYear: new RangeOperator({
 						name: "LASTYEAR",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.lastYear();
 						}
@@ -1458,7 +1460,7 @@ function(
 					 */
 					thisYear: new RangeOperator({
 						name: "THISYEAR",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.currentYear();
 						}
@@ -1478,7 +1480,7 @@ function(
 					 */
 					nextYear: new RangeOperator({
 						name: "NEXTYEAR",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.nextYear();
 						}
@@ -1724,7 +1726,7 @@ function(
 					 */
 					yearToDate: new RangeOperator({
 						name: "YEARTODATE",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.yearToDate();
 						}
@@ -1744,7 +1746,7 @@ function(
 					 */
 					dateToYear: new RangeOperator({
 						name: "DATETOYEAR",
-						valueTypes: [Operator.ValueType.Static],
+						valueTypes: [OperatorValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.dateToYear();
 						}
@@ -2154,7 +2156,7 @@ function(
 					if (aOperators) {
 						for (var i = 0; i < aOperators.length; i++) {
 							var oOperator = this.getOperator(aOperators[i]);
-							if (oOperator && oOperator.validateInput && !oOperator.exclude && oOperator.valueTypes[0] && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+							if (oOperator && oOperator.validateInput && !oOperator.exclude && oOperator.valueTypes[0] && oOperator.valueTypes[0] !== OperatorValueType.Static) {
 								return oOperator;
 							}
 						}

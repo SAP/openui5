@@ -10,8 +10,8 @@ sap.ui.define([
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/type/String',
 	'sap/ui/mdc/enum/FieldDisplay',
+	'sap/ui/mdc/enum/OperatorValueType',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/enum/BaseType',
@@ -27,8 +27,8 @@ sap.ui.define([
 		ValidateException,
 		StringType,
 		FieldDisplay,
+		OperatorValueType,
 		FilterOperatorUtil,
-		Operator,
 		Condition,
 		ConditionValidateException,
 		BaseType,
@@ -589,7 +589,7 @@ sap.ui.define([
 		var fnSuccess = function(oResult) {
 			if (oResult) {
 				var aValues = [oResult.key];
-				if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== Operator.ValueType.Static) {
+				if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== OperatorValueType.Static) {
 					// description is supported
 					aValues.push(oResult.description);
 				}

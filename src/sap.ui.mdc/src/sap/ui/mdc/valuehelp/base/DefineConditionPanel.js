@@ -8,13 +8,13 @@ sap.ui.define([
 	'sap/base/util/deepEqual',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/field/splitValue',
 	'sap/ui/mdc/enum/EditMode',
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enum/OperatorValueType',
 	'sap/ui/mdc/Field',
 	'sap/ui/mdc/ValueHelp',
 	'sap/ui/mdc/valuehelp/Popover',
@@ -47,13 +47,13 @@ sap.ui.define([
 		deepEqual,
 		Condition,
 		FilterOperatorUtil,
-		Operator,
 		ConditionsType,
 		splitValue,
 		EditMode,
 		FieldDisplay,
 		BaseType,
 		ConditionValidated,
+		OperatorValueType,
 		Field,
 		ValueHelp,
 		Popover,
@@ -407,7 +407,7 @@ sap.ui.define([
 			var sOperator = oOperator.name;
 			var oCondition = Condition.createCondition(sOperator, oOperator.valueDefaults ? oOperator.valueDefaults : [], undefined, undefined, ConditionValidated.NotValidated);
 
-			if (oOperator.valueTypes[0] && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+			if (oOperator.valueTypes[0] && oOperator.valueTypes[0] !== OperatorValueType.Static) {
 				// mark the condition as initial and not modified by the user
 				oCondition.isInitial = true;
 			}
@@ -509,14 +509,14 @@ sap.ui.define([
 				if (oOperator && oOperatorOld) {
 					var bUpdate = false;
 
-					if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static ) {
+					if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== OperatorValueType.Static ) {
 						// type changed -> remove entered value (only if changed by user in Select)
 						// As Static text updated on condition change, don't delete it here.
 						if (iIndex >= 0) {
 							oCondition.values.forEach(function(value, index) {
 								if (value !== null) {
-									if ((oOperator.valueTypes[index] === Operator.ValueType.Self && oOperatorOld.valueTypes[index] === Operator.ValueType.SelfNoParse) ||
-											(oOperator.valueTypes[index] === Operator.ValueType.SelfNoParse && oOperatorOld.valueTypes[index] === Operator.ValueType.Self)) {
+									if ((oOperator.valueTypes[index] === OperatorValueType.Self && oOperatorOld.valueTypes[index] === OperatorValueType.SelfNoParse) ||
+											(oOperator.valueTypes[index] === OperatorValueType.SelfNoParse && oOperatorOld.valueTypes[index] === OperatorValueType.Self)) {
 										// as for Decimal values the type might change we need to format and parse again
 										var oType = _getFieldType.call(this, oOperator.name, index);
 										var oTypeOld = _getFieldType.call(this, oOperatorOld.name, index);
@@ -896,13 +896,13 @@ sap.ui.define([
 		var oDataType = _getType.call(this);
 		var oOperator = FilterOperatorUtil.getOperator(sOperator);
 
-		if (oOperator.valueTypes[iIndex] && [Operator.ValueType.Self, Operator.ValueType.Static].indexOf(oOperator.valueTypes[iIndex]) === -1) {
+		if (oOperator.valueTypes[iIndex] && [OperatorValueType.Self, OperatorValueType.Static].indexOf(oOperator.valueTypes[iIndex]) === -1) {
 			oDataType = oOperator._createLocalType(oOperator.valueTypes[iIndex], oDataType);
 		}
 
 		var bStaticText = false;
 
-		if (oOperator.valueTypes[iIndex] === Operator.ValueType.Static) {
+		if (oOperator.valueTypes[iIndex] === OperatorValueType.Static) {
 			bStaticText = true;
 			oDataType = _getDefaultType.call(this);
 		}
@@ -1137,7 +1137,7 @@ sap.ui.define([
 		for (i = 0; i < aConditions.length; i++) {
 			var oCondition = aConditions[i];
 			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-			if (oOperator && oOperator.valueTypes[0] === Operator.ValueType.Static && (oCondition.values.length === 0 || bTypeChange)) {
+			if (oOperator && oOperator.valueTypes[0] === OperatorValueType.Static && (oCondition.values.length === 0 || bTypeChange)) {
 				// if type changed the text needs to be new formatted (setting of type and conditions might be async.)
 				if (oOperator.getStaticText) {
 					var sText = oOperator.getStaticText(oDataType, _getBaseType.call(this, oDataType));
@@ -1500,7 +1500,7 @@ sap.ui.define([
 		var oOperator = FilterOperatorUtil.getOperator(sOperator);
 		var bStaticText = false;
 
-		if (oOperator && oOperator.valueTypes[0] === Operator.ValueType.Static) {
+		if (oOperator && oOperator.valueTypes[0] === OperatorValueType.Static) {
 			bStaticText = true;
 		}
 
@@ -1512,7 +1512,7 @@ sap.ui.define([
 
 		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
 
-		if (!oOperator || !oOperator.valueTypes[0] || (oOperator.valueTypes[0] === Operator.ValueType.Static && !oOperator.getStaticText)) {
+		if (!oOperator || !oOperator.valueTypes[0] || (oOperator.valueTypes[0] === OperatorValueType.Static && !oOperator.getStaticText)) {
 			return "XL8 L8 M8 S0";
 		} else {
 			return "";
@@ -1710,7 +1710,7 @@ sap.ui.define([
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 		var bInvalid = !!oCondition.invalid;
 
-		if (!bInvalid && oOperator.valueTypes.length > 0 && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+		if (!bInvalid && oOperator.valueTypes.length > 0 && oOperator.valueTypes[0] !== OperatorValueType.Static) {
 			// check only not static operators
 			if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1]) {
 				// two fields exist

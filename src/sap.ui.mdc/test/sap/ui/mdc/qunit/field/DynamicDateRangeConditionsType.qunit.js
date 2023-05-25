@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/enum/OperatorValueType",
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/FilterOperator",
@@ -26,6 +27,7 @@ sap.ui.define([
 		Operator,
 		OperatorDynamicDateOption,
 		ConditionValidated,
+		OperatorValueType,
 		DateType,
 		DateTimeOffsetType,
 		FilterOperator,
@@ -47,7 +49,7 @@ sap.ui.define([
 		filterOperator: FilterOperator.EQ,
 		tokenParse: "^#([^=].*)$",
 		tokenFormat: "#{0}",
-		valueTypes: [Operator.ValueType.Self]
+		valueTypes: [OperatorValueType.Self]
 	});
 	FilterOperatorUtil.addOperator(oOperator);
 	var oOperatorDynamicDateOption = new OperatorDynamicDateOption({

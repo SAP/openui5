@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/ConditionValidateException",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/enum/FieldDisplay",
+	"sap/ui/mdc/enum/OperatorValueType",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Date",
@@ -30,6 +31,7 @@ sap.ui.define([
 		ConditionValidateException,
 		ConditionValidated,
 		FieldDisplay,
+		OperatorValueType,
 		IntegerType,
 		CurrencyType,
 		DateType,
@@ -1361,7 +1363,7 @@ sap.ui.define([
 			filterOperator: "Contains",
 			tokenParse: "^\\*(.*)\\*$",
 			tokenFormat: "*{0}*",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: false
 		});
 		FilterOperatorUtil.addOperator(oOperator);
@@ -1371,7 +1373,7 @@ sap.ui.define([
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
 		FilterOperatorUtil.addOperator(oOperator);
@@ -1381,7 +1383,7 @@ sap.ui.define([
 			filterOperator: "NE",
 			tokenParse: "^!=(.+)$",
 			tokenFormat: "!(={0})",
-			valueTypes: [Operator.ValueType.Self],
+			valueTypes: [OperatorValueType.Self],
 			exclude: true,
 			validateInput: true
 		});
