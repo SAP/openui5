@@ -1382,7 +1382,7 @@ sap.ui.define([
 			this.clock.tick(500);
 
 			// Assert
-			assert.strictEqual(this.oSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'SearchField should be focused if there are no items in the list');
+			assert.strictEqual(this.oSelectDialog._oDialog.getContent()[1].getFocusDomRef().firstChild, document.activeElement, 'The list should be focused even if there are no items in the list');
 
 			// Clean up
 			this.oSelectDialog._oDialog.close();
@@ -1429,7 +1429,7 @@ sap.ui.define([
 			this.clock.tick(500);
 
 			// Assert
-			assert.strictEqual(this.oSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'SearchField should be focused when items appear later');
+			assert.strictEqual(this.oSelectDialog._oDialog.getContent()[1].getItems()[0].getFocusDomRef(), document.activeElement, 'First list element should be focused when items appear later');
 
 			// Clean up
 			this.oSelectDialog._oDialog.close();

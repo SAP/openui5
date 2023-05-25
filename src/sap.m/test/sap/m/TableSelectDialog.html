@@ -1113,6 +1113,58 @@
 			}
 		});
 
+<<<<<<< HEAD   (3b1c5d Merge "[FIX] sap.ui.fl - Remove invalid csrf in case of 403 )
+=======
+		var oTableSelectDialog15 = new sap.m.TableSelectDialog("TableSelectDialog15", {
+			title: "Choose several World Domination companions",
+			noDataText: "Sorry, no world domination companions available",
+			contentWidth: "1000px",
+			searchPlaceholder: "Placeholder text",
+			columns : [
+				fnCreateSimpleDialogColumns()
+			]
+		});
+
+		// set model & bind Aggregation
+		oTableSelectDialog14.setModel(oModel3);
+		oTableSelectDialog14.bindAggregation("items", "/items", oItemTemplate1);
+		oTableSelectDialog14.addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer");
+
+		var oButton15 = new sap.m.Button("Button15", {
+			text: "Select Dialog with custom placeholder",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				// open dialog
+				oTableSelectDialog15.open();
+			}
+		});
+
+		var oTableSelectDialog16 = new sap.m.TableSelectDialog("TableSelectDialog16", {
+			title: "Delayed loading",
+			noDataText: "Data is loading",
+			contentWidth: "1000px",
+			searchPlaceholder: "Placeholder text",
+			columns: [
+				fnCreateSimpleDialogColumns()
+			]
+		});
+
+		var oButton16 = new sap.m.Button("Button16", {
+			text: "Select Dialog with delayed loading",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				// open dialog
+				oTableSelectDialog16.open();
+
+				setTimeout(function () {
+					// initiate model & bind Aggregation
+					oTableSelectDialog16.setModel(oModel3);
+					oTableSelectDialog16.bindAggregation("items", "/items", oItemTemplate1);
+				}, 500);
+			}
+		});
+
+>>>>>>> CHANGE (5d2f67 [INTERNAL] sap.m.SelectDialog: Empty list is now focusable)
 		// create the application page
 		var oPage = new sap.m.Page("page", {
 			title:"Mobile TableSelectDialog Control",
@@ -1134,7 +1186,13 @@
 						oButton11,
 						oButton12,
 						oButton13,
+<<<<<<< HEAD   (3b1c5d Merge "[FIX] sap.ui.fl - Remove invalid csrf in case of 403 )
 						oButton14
+=======
+						oButton14,
+						oButton15,
+						oButton16
+>>>>>>> CHANGE (5d2f67 [INTERNAL] sap.m.SelectDialog: Empty list is now focusable)
 					]
 				})
 			]
