@@ -81,8 +81,9 @@
  */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/model/SimpleType"
-], function (SimpleType) {
+], function (Log, SimpleType) {
 	"use strict";
 
 	/**
@@ -146,6 +147,20 @@ sap.ui.define([
 	 * @name sap.ui.model.ODataType.prototype.getFormat
 	 * @private
 	 */
+
+	/**
+	 * Checks the <code>parseEmptyValueToZero</code> format option of this type and logs a warning
+	 * in case it is ignored.
+	 *
+	 * @private
+	 */
+	ODataType.prototype.checkParseEmptyValueToZero = function () {
+		if (this.oFormatOptions && this.oFormatOptions.parseEmptyValueToZero
+			&& (!this.oConstraints || this.oConstraints && this.oConstraints.nullable !== false)) {
+			Log.warning("The parseEmptyValueToZero format option is ignored as the nullable constraint"
+				+ " is not false.", null, this.getName());
+		}
+	};
 
 	/**
 	 * Returns this type's empty model value for the given value.
