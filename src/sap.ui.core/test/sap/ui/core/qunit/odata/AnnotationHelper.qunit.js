@@ -11,10 +11,25 @@ sap.ui.define([
 	"sap/ui/model/odata/AnnotationHelper",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
+	"sap/ui/model/odata/type/Boolean",
+	"sap/ui/model/odata/type/Byte",
+	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/odata/type/DateTimeOffset",
+	"sap/ui/model/odata/type/Decimal",
+	"sap/ui/model/odata/type/Double",
+	"sap/ui/model/odata/type/Guid",
+	"sap/ui/model/odata/type/Int16",
+	"sap/ui/model/odata/type/Int32",
+	"sap/ui/model/odata/type/Int64",
+	"sap/ui/model/odata/type/SByte",
+	"sap/ui/model/odata/type/Single",
+	"sap/ui/model/odata/type/String",
+	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Log, ObjectPath, BindingParser, ManagedObject, UI5Date, JSONModel, AnnotationHelper,
-		Basics, Expression, ODataModel, TestUtils
+], function (Log, ObjectPath, BindingParser, ManagedObject, UI5Date, JSONModel, AnnotationHelper, Basics, Expression,
+		Boolean, Byte, DateTime, DateTimeOffset, Decimal, Double, Guid, Int16, Int32, Int64, SByte, Single, StringType,
+		Time, ODataModel, TestUtils
 ) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
