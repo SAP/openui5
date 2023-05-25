@@ -148,6 +148,9 @@ sap.ui.define([
 				 * <code>CreationRow</code> template.
 				 *
 				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
+				 *
+				 * @experimental Do not use
+				 * @ui5-restricted sap.fe
 				 */
 				creationTemplate: {
 					type: "sap.ui.core.Control",

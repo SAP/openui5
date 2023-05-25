@@ -126,7 +126,6 @@ sap.ui.define([
 						autoBindOnInit: !bSuspended,
 						showRowCount: true,
 						width: "100%",
-						height: "100%",
 						selectionMode: bMultiSelect ? TableSelectionMode.Multi : TableSelectionMode.Single,
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",

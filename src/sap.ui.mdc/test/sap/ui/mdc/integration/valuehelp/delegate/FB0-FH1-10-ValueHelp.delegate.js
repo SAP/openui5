@@ -172,7 +172,6 @@ sap.ui.define([
 						autoBindOnInit: !bSuspended,
 						showRowCount: true,
 						width: "100%",
-						height: "100%",
 						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
 						type: new GridTableType({rowCountMode: "Auto"}),
 						delegate: {
@@ -229,7 +228,6 @@ sap.ui.define([
 						autoBindOnInit: !bSuspended,
 						showRowCount: true,
 						width: "100%",
-						height: "100%",
 						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
 						type: new GridTableType({rowCountMode: "Auto"}),
 						delegate: {

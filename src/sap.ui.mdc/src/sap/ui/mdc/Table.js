@@ -169,7 +169,8 @@ sap.ui.define([
 					invalidate: true
 				},
 				/**
-				 * Height of the table.
+				 * This property has no effect and will be rmoved soon.
+				 * @deprecated Do not use.
 				 */
 				height: {
 					type: "sap.ui.core.CSSSize",
@@ -292,15 +293,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines the text shown if the table has no data.
-				 *
-				 * @since 1.63
-				 */
-				noDataText: {
-					type: "string"
-				},
-
-				/**
 				 * Defines the sort conditions.
 				 *
 				 * <b>Note</b>: This property must not be bound.<br>
@@ -403,6 +395,9 @@ sap.ui.define([
 				 * checkbox in the column header, otherwise the Deselect All icon is rendered.
 				 *
 				 * This property is used with the <code>selectionMode="Multi"</code>.
+				 *
+				 * <b>Note:</b> This property has currently no effect for table types other than <code>ResponsiveTable</code> type. This is subject to change in future.
+				 *
 				 * @since 1.93
 				 */
 				multiSelectMode : {
@@ -485,6 +480,9 @@ sap.ui.define([
 				/**
 				 * This row can be used for user input to create new data if {@link sap.ui.mdc.enum.TableType TableType} is "<code>Table</code>".
 				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
+				 *
+				 * @experimental Do not use
+				 * @ui5-restricted sap.fe
 				 */
 				creationRow: {
 					type: "sap.ui.mdc.table.CreationRow",
@@ -668,7 +666,7 @@ sap.ui.define([
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiMdcTable");
-				oRm.style("height", oControl.getHeight() || "100%" /*TBD: Only needed for GridTable with Auto row count mode.*/);
+				oRm.style("height", "100%" /*TBD: Only needed for GridTable with Auto row count mode.*/);
 				oRm.style("width", oControl.getWidth());
 				oRm.openEnd();
 				oRm.renderControl(oControl.getAggregation("_content"));
@@ -1413,12 +1411,6 @@ sap.ui.define([
 		this._sLastNoDataTitle = vNoData.getTitle();
 	};
 
-	Table.prototype.setNoDataText = function(sNoData) {
-		this.setProperty("noDataText", sNoData, true);
-		this._updateInnerTableNoDataText();
-		return this;
-	};
-
 	Table.prototype._updateInnerTableNoDataText = function() {
 		if (this._oTable) {
 			this._oTable.setNoData(this._getNoDataText());
@@ -1426,11 +1418,6 @@ sap.ui.define([
 	};
 
 	Table.prototype._getNoDataText = function() {
-		var sNoDataText = this.getNoDataText();
-		if (sNoDataText) {
-			return sNoDataText;
-		}
-
 		var vNoData = this.getNoData();
 		if (vNoData && typeof vNoData == "string") {
 			return vNoData;

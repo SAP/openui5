@@ -24,9 +24,9 @@ sap.ui.define([
 		this.fnExecuteWhenDesigntimeIsLoaded(assert, function(mDesignTimeMetadata, fnDone) {
 			assert.ok(Object.keys(mDesignTimeMetadata.properties).length > 0, "properties are defined in the DesignTime metadata");
 
-			var aAllowedProperties = ["width", "height", "headerLevel",
+			var aAllowedProperties = ["width", "headerLevel",
 				"header", "headerVisible", "showRowCount", "threshold",
-				"noDataText", "enableExport", "busyIndicatorDelay","enableColumnResize",
+				"enableExport", "busyIndicatorDelay","enableColumnResize",
 				"showPasteButton", "multiSelectMode"];
 
 			for (var sKey in mDesignTimeMetadata.properties) {

@@ -108,7 +108,7 @@ sap.ui.define([
 				enableExport: true,
 				selectionMode: "Multi",
 				p13nMode: ["Column"],
-				noDataText: "This text is shown when no data is present in the table",
+				noData: "This text is shown when no data is present in the table",
 				delegate: {
 					name: "delegates/odata/v4/TableDelegate",
 					payload: {

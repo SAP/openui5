@@ -238,7 +238,7 @@
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
-								<mdc:Table id="VH5-Dia-Table" autoBindOnInit="true" selectionMode="SingleMaster" p13nMode="Column,Sort" width="100%" height="100%"
+								<mdc:Table id="VH5-Dia-Table" autoBindOnInit="true" selectionMode="SingleMaster" p13nMode="Column,Sort" width="100%"
 									delegate='\{"name": "sap/ui/mdc/sample/FieldValueHelp/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 									threshold="50">
 									<mdc:columns>

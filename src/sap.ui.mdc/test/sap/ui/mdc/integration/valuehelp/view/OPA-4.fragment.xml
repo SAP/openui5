@@ -21,7 +21,7 @@
 	xmlns:demo="sap.ui.v4demo.controls">
 
 	<Title class="sapUiSmallMarginBottom" level="H3" text="Simple Scenario" />
-	
+
 	<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate='\{"name": "delegates/odata/v4/FilterBarDelegate", "payload": \{"collectionName": "Books"\}\}'>
 		<mdc:dependents>
 			<mdc:ValueHelp
@@ -33,7 +33,6 @@
 							<mdc:Table autoBindOnInit="false"
 								id="mdcTable1"
 								width="100%"
-								height="100%"
 								headerVisible="true"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
 								p13nMode="Column,Sort"
@@ -55,13 +54,13 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-						
+
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 		</mdc:dependents>
 		<mdc:filterItems>
-			
+
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF1-10"
 				label="TestField"

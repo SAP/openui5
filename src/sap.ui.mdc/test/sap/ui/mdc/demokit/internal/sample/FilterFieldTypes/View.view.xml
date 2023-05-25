@@ -62,7 +62,7 @@
 					<mdc:dialog>
 						<mdcv:Dialog id="VH1-Dia" title="Book Title">
 							<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="title" filterFields="$search">
-								<mdc:Table id="VH1-Dia-Table" autoBindOnInit="true" selectionMode="Multi" p13nMode="Column,Sort" width="100%" height="100%"
+								<mdc:Table id="VH1-Dia-Table" autoBindOnInit="true" selectionMode="Multi" p13nMode="Column,Sort" width="100%"
 									delegate='\{"name": "delegates/odata/v4/TableDelegate", "payload": \{"collectionName": "Books"\}\}'
 									threshold="50">
 									<mdc:columns>

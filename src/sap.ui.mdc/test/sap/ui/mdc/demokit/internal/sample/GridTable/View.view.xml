@@ -16,9 +16,8 @@
 			header="Products"
 			delegate='\{ "name": "sap/ui/mdc/sample/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
 			selectionMode="Multi"
-			height="100%"
 			p13nMode="Column,Sort"
-			noDataText="This text is shown when no data is present in the table"
+			noData="This text is shown when no data is present in the table"
 			core:require="{Toast:'sap/m/MessageToast'}"
 			paste="Toast.show(${$parameters>data})"
 			enableExport="true"

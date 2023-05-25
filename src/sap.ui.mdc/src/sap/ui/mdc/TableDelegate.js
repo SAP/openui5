@@ -71,12 +71,14 @@ sap.ui.define([
 			}
 		}
 
+
+		var aSorters = this.getSorters(oTable);
 		oBindingInfo.sorter = oBindingInfo.sorter.concat(
 			oBindingInfo.sorter.length === 1
-				? oTable._getSorters().filter(function(oSorter) {
+				? aSorters.filter(function(oSorter) {
 					return oSorter.sPath !== oBindingInfo.sorter[0].sPath;
 				})
-				: oTable._getSorters()
+				: aSorters
 		);
 	};
 
@@ -145,6 +147,17 @@ sap.ui.define([
 		}
 
 		return new Sorter(sPath, bDescending, oTable._mFormatGroupHeaderInfo.formatter);
+	};
+
+	/**
+	 * Returns the sort conditions that are used when updating the table's binding.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @returns {sap.ui.model.Sorter[]} Sort Conditions
+	 * @protected
+	 */
+	TableDelegate.getSorters = function(oTable) {
+		return oTable._getSorters();
 	};
 
 	/**

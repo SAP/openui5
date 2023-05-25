@@ -31,7 +31,6 @@
 			type="ResponsiveTable"
 			p13nMode="Column,Sort,Filter"
 			selectionMode="Multi"
-			height="100%"
 			enableAutoColumnWidth="true"
 			paste="onPaste">
 		<mdc:actions>

@@ -102,8 +102,7 @@
 			showRowCount="false"
 			delegate='\{ "name": "sap/ui/mdc/sample/TableWithFilterBar/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}'
 			p13nMode="Column,Sort,Filter,Group"
-			selectionMode="Multi"
-			height="100%">
+			selectionMode="Multi">
 			<mdc:columns>
 				<mdcTable:Column id="_ID" header="ID" propertyKey="ID">
 					<Text text="{ID}"/>

@@ -224,9 +224,7 @@ sap.ui.define([
 			assert.equal(this.oTable.getDomRef().style.height, "100%", "Table has a default height");
 			assert.ok(!this.oTable.getDomRef().style.width, "Table has a no default width");
 			this.oTable.setWidth("200px");
-			this.oTable.setHeight("300px");
 			Core.applyChanges();
-			assert.equal(this.oTable.getDomRef().style.height, "300px", "Table has a custom height");
 			assert.equal(this.oTable.getDomRef().style.width, "200px", "Table has a custom width");
 		}.bind(this));
 	});
@@ -1420,52 +1418,6 @@ sap.ui.define([
 
 				this.oTable.setThreshold(null);
 				assert.equal(this.oTable._oTable.getGrowingThreshold(), this.oTable._oTable.getMetadata().getProperty("growingThreshold").defaultValue);
-				assert.equal(invalidateSpy.callCount, 0);
-
-				done();
-			}.bind(this));
-		}.bind(this));
-	});
-
-	QUnit.test("noDataText", function(assert) {
-		var done = assert.async();
-		var setNoDataSpy = sinon.spy(this.oTable, "setNoDataText");
-		var invalidateSpy = sinon.spy(this.oTable, "invalidate");
-		var sNoDataText = "Some No Data text";
-		this.oTable.setNoDataText(sNoDataText);
-
-		assert.equal(invalidateSpy.callCount, 0);
-		assert.ok(setNoDataSpy.returned(this.oTable));
-
-		this.oTable.initialized().then(function() {
-			invalidateSpy.reset();
-			assert.equal(this.oTable._oTable.getNoData(), this.oTable.getNoDataText());
-
-			this.oTable.setNoDataText();
-			assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
-
-			this.oTable.setNoDataText("foo");
-			assert.equal(this.oTable._oTable.getNoData(), "foo");
-
-			this.oTable.setNoDataText(undefined);
-			assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
-			assert.equal(invalidateSpy.callCount, 0);
-
-			this.oTable.setNoDataText("test");
-			this.oTable.setType("ResponsiveTable");
-
-			this.oTable.initialized().then(function() {
-				invalidateSpy.reset();
-				assert.equal(this.oTable._oTable.getNoData(), "test");
-
-				this.oTable.setNoDataText();
-				assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
-
-				this.oTable.setNoDataText("another text");
-				assert.equal(this.oTable._oTable.getNoData(), "another text");
-
-				this.oTable.setNoDataText(null);
-				assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
 				assert.equal(invalidateSpy.callCount, 0);
 
 				done();
