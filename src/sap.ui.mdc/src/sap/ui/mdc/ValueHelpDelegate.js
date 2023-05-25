@@ -215,7 +215,7 @@ sap.ui.define([
 	 * This callback may be used to update external fields.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
-	 * @param {sap.ui.mdc.enum.PropagationReason} sReason Reason why the method was invoked
+	 * @param {sap.ui.mdc.enum.ValueHelpPropagationReason} sReason Reason why the method was invoked
  	 * @param {object} oConfig current configuration provided by the calling control
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -288,10 +288,10 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {object} oChange Selection event configuration
-	 * @param {sap.ui.mdc.enum.SelectType} oChange.type Type of the selection change (add, remove)
+	 * @param {sap.ui.mdc.enum.ValueHelpSelectionType} oChange.type Type of the selection change (add, remove)
 	 * @param {object[]} oChange.conditions Array of changed conditions with structure {@link sap.ui.mdc.condition.ConditionObject ConditionObject}
 	 * @returns {object} oRestult Selection event configuration object
-	 * @returns {sap.ui.mdc.enum.SelectType} oRestult.type Type of the selection change (add, remove)
+	 * @returns {sap.ui.mdc.enum.ValueHelpSelectionType} oRestult.type Type of the selection change (add, remove)
 	 * @returns {object[]} oRestult.conditions Array of changed conditions with structure {@link sap.ui.mdc.condition.ConditionObject ConditionObject}
 	 * @private
 	 * @ui5-restricted sap.fe

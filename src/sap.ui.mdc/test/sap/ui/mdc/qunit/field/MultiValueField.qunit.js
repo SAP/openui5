@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/ValueHelp",
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/field/ConditionsType",
@@ -43,7 +43,7 @@ sap.ui.define([
 	ValueHelp,
 	ValueHelpDelegate,
 	Condition,
-	EditMode,
+	FieldEditMode,
 	FieldDisplay,
 	ConditionValidated,
 	ConditionsType,
@@ -153,9 +153,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("EditMode", function(assert) {
+	QUnit.test("FieldEditMode", function(assert) {
 
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
 		oCore.applyChanges();
 
@@ -164,7 +164,7 @@ sap.ui.define([
 		assert.ok(oContent, "content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 
-		oField.setEditMode(EditMode.ReadOnly);
+		oField.setEditMode(FieldEditMode.ReadOnly);
 		oCore.applyChanges();
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
@@ -221,12 +221,12 @@ sap.ui.define([
 		beforeEach: function() {
 			_initModel();
 			oFieldEdit = new MultiValueField("F1", {
-				editMode: EditMode.Editable,
+				editMode: FieldEditMode.Editable,
 				display: FieldDisplay.Description,
 				items: {path: "/items", template: oItemTemplate}
 				}).setModel(oModel);
 			oFieldDisplay = new MultiValueField("F2", {
-				editMode: EditMode.Display,
+				editMode: FieldEditMode.Display,
 				display: FieldDisplay.Description,
 				items: {path: "/items", template: oItemTemplate}
 				}).setModel(oModel);
@@ -297,7 +297,7 @@ sap.ui.define([
 			});
 			var oValueHelp = new ValueHelp("F1-H");
 			oField = new MultiValueField("F1", {
-				editMode: EditMode.Editable,
+				editMode: FieldEditMode.Editable,
 				display: FieldDisplay.Description,
 				items: {path: "/items", template: oItemTemplate},
 				valueHelp: oValueHelp,
@@ -368,7 +368,7 @@ sap.ui.define([
 			var oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
 
-			oField.setEditMode(EditMode.Display);
+			oField.setEditMode(FieldEditMode.Display);
 			setTimeout(function() { // async control creation in observeChanges
 				aContent = oField.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
@@ -377,7 +377,7 @@ sap.ui.define([
 				oField.destroy();
 				oField = new MultiValueField("F3", {
 					items: {path: "/items", template: oItemTemplate},
-					editMode: EditMode.Editable
+					editMode: FieldEditMode.Editable
 				});
 
 				setTimeout(function() { // async control creation in applySettings

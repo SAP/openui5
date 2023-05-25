@@ -4,14 +4,14 @@ sap.ui.define([
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enum/FieldDisplay",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Int32",
 	"sap/ui/model/odata/type/String",
 	"sap/m/Text"
-], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, EditMode, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text) {
+], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FieldEditMode, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 	BooksTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
@@ -131,7 +131,7 @@ sap.ui.define([
 		var oCtrlProperties = {
 			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
-			editMode: EditMode.Display,
+			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false // set always to have property not initial
 		};

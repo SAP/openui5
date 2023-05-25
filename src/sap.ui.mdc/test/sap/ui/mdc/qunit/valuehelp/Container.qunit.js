@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/Container",
 	"sap/ui/mdc/valuehelp/base/Content",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library"
@@ -18,7 +18,7 @@ sap.ui.define([
 		Container,
 		Content,
 		Condition,
-		SelectType,
+		ValueHelpSelectionType,
 		Icon,
 		JSONModel,
 		mLibrary
@@ -381,10 +381,10 @@ sap.ui.define([
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
 		oContainer.openContainer(); // just fake opening as only bound if open
-		oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
+		oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: ValueHelpSelectionType.Set});
 		assert.equal(iSelect, 1, "select event fired");
 		assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
-		assert.equal(sType, SelectType.Set, "select event type");
+		assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 
 	});
 

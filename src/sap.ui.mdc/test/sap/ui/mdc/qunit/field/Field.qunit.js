@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldInput",
@@ -43,7 +43,7 @@ sap.ui.define([
 	library,
 	Field,
 	Condition,
-	EditMode,
+	FieldEditMode,
 	FieldDisplay,
 	ConditionsType,
 	FieldInput,
@@ -190,9 +190,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("EditMode", function(assert) {
+	QUnit.test("FieldEditMode", function(assert) {
 
-		oField.setEditMode(EditMode.Display);
+		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
 		oCore.applyChanges();
 
@@ -201,7 +201,7 @@ sap.ui.define([
 		assert.ok(oContent, "content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
 
-		oField.setEditMode(EditMode.ReadOnly);
+		oField.setEditMode(FieldEditMode.ReadOnly);
 		oCore.applyChanges();
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
@@ -257,8 +257,8 @@ sap.ui.define([
 
 	QUnit.module("properties", {
 		beforeEach: function() {
-			oFieldEdit = new Field("F1", { editMode: EditMode.Editable });
-			oFieldDisplay = new Field("F2", { editMode: EditMode.Display });
+			oFieldEdit = new Field("F1", { editMode: FieldEditMode.Editable });
+			oFieldDisplay = new Field("F2", { editMode: FieldEditMode.Display });
 			oFieldEdit.placeAt("content");
 			oFieldDisplay.placeAt("content");
 			oCore.applyChanges();
@@ -1186,7 +1186,7 @@ sap.ui.define([
 			assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
 
 			oField.setMultipleLines(false);
-			oField.setEditMode(EditMode.Display);
+			oField.setEditMode(FieldEditMode.Display);
 			setTimeout(function() { // async control creation in observeChanges
 				aContent = oField.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1195,7 +1195,7 @@ sap.ui.define([
 				oField.destroy();
 				oField = new Field("F1", {
 					value: { path: "/value", type: oType },
-					editMode: EditMode.Editable,
+					editMode: FieldEditMode.Editable,
 					multipleLines: true,
 					change: _myChangeHandler
 				});
@@ -1576,7 +1576,7 @@ sap.ui.define([
 
 			oField2 = new Field("F12", {
 				value: {parts: [{path: "/dateTime", type: oType2}, {path: "/timezone", type: oType3}], type: oType},
-				editMode: EditMode.Display,
+				editMode: FieldEditMode.Display,
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField2.setModel(oModel);

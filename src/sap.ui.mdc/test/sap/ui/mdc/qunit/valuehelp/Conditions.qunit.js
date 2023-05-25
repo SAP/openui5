@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/enum/FieldDisplay",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/m/library",
@@ -23,7 +23,7 @@ sap.ui.define([
 		Condition,
 		ConditionValidated,
 		FieldDisplay,
-		SelectType,
+		ValueHelpSelectionType,
 		JSONModel,
 		StringType,
 		mLibrary,
@@ -165,7 +165,7 @@ sap.ui.define([
 				oDefineConditionPanel.fireConditionProcessed();
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-				assert.equal(sType, SelectType.Set, "select event type");
+				assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 				iSelect = 0;
 				aConditions = undefined;
 				sType = undefined;
@@ -189,7 +189,7 @@ sap.ui.define([
 				oDefineConditionPanel.fireConditionProcessed();
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, aCheckConditions, "select event conditions");
-				assert.equal(sType, SelectType.Set, "select event type");
+				assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 
 				oModel.setData({
 					_valid: false

@@ -6,13 +6,13 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/ListContent",
 	"sap/ui/mdc/util/loadModules",
 	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/model/ParseException"
 ], function(
 	ListContent,
 	loadModules,
 	ConditionValidated,
-	SelectType,
+	ValueHelpSelectionType,
 	ParseException
 ) {
 	"use strict";
@@ -183,7 +183,7 @@ sap.ui.define([
 //			this.fireRemoveConditions({conditions: this.getConditions()});
 			_setConditions.call(this, vKey, oItem.getLabel());
 //			this.fireAddConditions({conditions: this.getConditions()});
-			this.fireSelect({type: SelectType.Set, conditions: this.getConditions()});
+			this.fireSelect({type: ValueHelpSelectionType.Set, conditions: this.getConditions()});
 			this.fireConfirm();
 		}
 

@@ -8,11 +8,11 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/mdc/enum/SelectType',
+	'sap/ui/mdc/enum/ValueHelpSelectionType',
 	'sap/ui/core/Core',
 	'sap/base/util/deepEqual'
 ], function(
-	ODataV4ValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, SelectType, Core, deepEqual
+	ODataV4ValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, ValueHelpSelectionType, Core, deepEqual
 ) {
 	"use strict";
 
@@ -73,7 +73,7 @@ sap.ui.define([
 		var aConditions = oChange.conditions;
 		var aOldConditions = oContent.getConditions();
 
-		if (oChange.type === SelectType.Remove) {
+		if (oChange.type === ValueHelpSelectionType.Remove) {
 			for (var i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
 				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aOldConditions);

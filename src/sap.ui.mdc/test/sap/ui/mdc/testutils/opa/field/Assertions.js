@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"./waitForField",
 	"../Utils",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"../matchers/DOMRef"
 ], function(
 	Opa5,
@@ -18,7 +18,7 @@ sap.ui.define([
 	deepEqual,
 	waitForField,
 	Utils,
-	EditMode,
+	FieldEditMode,
 	DOMRef
 ) {
 	"use strict";

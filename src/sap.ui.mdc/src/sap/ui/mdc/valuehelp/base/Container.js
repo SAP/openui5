@@ -85,7 +85,7 @@ sap.ui.define([
 						/**
 						 * Type of the selection change (add, remove)
 						 */
-						type: { type: "sap.ui.mdc.enum.SelectType" },
+						type: { type: "sap.ui.mdc.enum.ValueHelpSelectionType" },
 						/**
 						 * Changed conditions
 						 *

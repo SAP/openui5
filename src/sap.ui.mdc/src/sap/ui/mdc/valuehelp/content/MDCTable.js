@@ -5,7 +5,7 @@
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/FilterableListContent',
 	'sap/ui/mdc/util/loadModules',
-	'sap/ui/mdc/enum/SelectType',
+	'sap/ui/mdc/enum/ValueHelpSelectionType',
 	'sap/m/library',
 	'sap/ui/table/library',
 	'sap/base/util/restricted/_throttle',
@@ -17,7 +17,7 @@ sap.ui.define([
 ], function(
 	FilterableListContent,
 	loadModules,
-	SelectType,
+	ValueHelpSelectionType,
 	mLibrary,
 	uiTableLibrary,
 	throttle,
@@ -60,7 +60,7 @@ sap.ui.define([
 		}.bind(this);
 
 		var _fireSelect = function (aConditions, bSelected) {
-			var sMultiSelectType = bSelected ? SelectType.Add : SelectType.Remove;
+			var sMultiSelectType = bSelected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove;
 			this._fireSelect({type: sMultiSelectType, conditions: aConditions});
 		};
 

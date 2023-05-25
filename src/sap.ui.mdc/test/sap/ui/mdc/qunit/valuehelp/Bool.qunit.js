@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/Bool",
 	"sap/ui/mdc/valuehelp/content/FixedListItem",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/odata/type/Boolean", // use odata type because of language dependent text
@@ -20,7 +20,7 @@ sap.ui.define([
 		Bool,
 		FixedListItem,
 		Condition,
-		SelectType,
+		ValueHelpSelectionType,
 		ParseException,
 		FormatException,
 		BooleanType,
@@ -147,7 +147,7 @@ sap.ui.define([
 				oContent.fireItemPress({listItem: oItem});
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-				assert.equal(sType, SelectType.Set, "select event type");
+				assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 				assert.equal(iConfirm, 1, "confirm event fired");
 				assert.deepEqual(oBool.getConditions(), aNewConditions, "FixedList conditions");
 

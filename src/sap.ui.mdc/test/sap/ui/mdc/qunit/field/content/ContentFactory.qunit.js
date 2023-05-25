@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/content/BooleanContent",
 	"sap/ui/mdc/field/content/UnitContent",
 	"sap/ui/mdc/field/content/SearchContent",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/mdc/enum/ContentMode",
 	"sap/ui/mdc/Link",
 	"sap/m/Text",
@@ -27,7 +27,7 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/TimePicker",
 	"sap/m/DynamicDateRange"
-], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, EditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TokenizerDisplay, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
+], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, FieldEditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TokenizerDisplay, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
 	"use strict";
 
 	QUnit.test("Constructor", function(assert) {
@@ -130,13 +130,13 @@ sap.ui.define([
 
 	QUnit.test("getContentMode", function(assert) {
 		/* ContentMode DisplayMultiValue */
-		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Display, -1, false, []), ContentMode.DisplayMultiValue, "ContentMode 'DisplayMultiValue' returned.");
+		assert.equal(this.oContentFactory.getContentMode(null, FieldEditMode.Display, -1, false, []), ContentMode.DisplayMultiValue, "ContentMode 'DisplayMultiValue' returned.");
 
 		/* ContentMode DisplayMultiLine */
-		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Display, 1, true, []), ContentMode.DisplayMultiLine, "ContentMode 'DisplayMultiLine' returned.");
+		assert.equal(this.oContentFactory.getContentMode(null, FieldEditMode.Display, 1, true, []), ContentMode.DisplayMultiLine, "ContentMode 'DisplayMultiLine' returned.");
 
 		/* ContentMode Display */
-		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Display, 1, false, []), ContentMode.Display, "ContentMode 'Display' returned.");
+		assert.equal(this.oContentFactory.getContentMode(null, FieldEditMode.Display, 1, false, []), ContentMode.Display, "ContentMode 'Display' returned.");
 
 		/* ContentMode Edit */
 		assert.equal(this.oContentFactory.getContentMode(null, null, 1, false, []), ContentMode.Edit, "ContentMode 'Edit' returned.");
@@ -153,7 +153,7 @@ sap.ui.define([
 
 		/* ContentMode EditForHelp */
 		this.oField.setValueHelp("X"); // just ID needed
-		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Editable, 1, false, []), ContentMode.EditForHelp, "ContentMode 'EditForHelp' returned.");
+		assert.equal(this.oContentFactory.getContentMode(null, FieldEditMode.Editable, 1, false, []), ContentMode.EditForHelp, "ContentMode 'EditForHelp' returned.");
 	});
 
 	QUnit.test("getContentType", function(assert) {

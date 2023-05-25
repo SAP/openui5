@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/enum/EditMode',
+	'sap/ui/mdc/enum/FieldEditMode',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/core/Control',
 	'sap/base/util/ObjectPath',
@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/m/ToggleButton'
 ], function(
-	EditMode,
+	FieldEditMode,
 	Condition,
 	Control,
 	ObjectPath,
@@ -35,9 +35,9 @@ sap.ui.define([
 				 * Whether the field is editable.
 				 */
 				editMode: {
-					type: "sap.ui.mdc.enum.EditMode",
+					type: "sap.ui.mdc.enum.FieldEditMode",
 					group: "Data",
-					defaultValue: EditMode.Editable
+					defaultValue: FieldEditMode.Editable
 				},
 
 				/**

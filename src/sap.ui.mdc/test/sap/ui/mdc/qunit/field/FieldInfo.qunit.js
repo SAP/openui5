@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
-	"sap/ui/mdc/enum/EditMode",
+	"sap/ui/mdc/enum/FieldEditMode",
 	"sap/ui/mdc/Field",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/mdc/link/FakeFlpConnector",
@@ -17,7 +17,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	Device,
-	EditMode,
+	FieldEditMode,
 	Field,
 	MockServer,
 	FakeFlpConnector,
@@ -83,7 +83,7 @@ sap.ui.define([
 
 			this.oField = new Field({
 				value: "click me",
-				editMode: EditMode.Display
+				editMode: FieldEditMode.Display
 			});
 			this.oField.setModel(this.oODataModel);
 			this.oField.bindElement({
@@ -142,7 +142,7 @@ sap.ui.define([
 
 			this.oField = new Field({
 				value: "click me",
-				editMode: EditMode.Display
+				editMode: FieldEditMode.Display
 			});
 			this.oField.setModel(this.oODataModel);
 			this.oField.bindElement({
@@ -228,7 +228,7 @@ sap.ui.define([
 
 			this.oField = new Field({
 				value: "click me",
-				editMode: EditMode.Display
+				editMode: FieldEditMode.Display
 			});
 			this.oField.setModel(this.oODataModel);
 			this.oField.bindElement({
@@ -288,7 +288,7 @@ sap.ui.define([
 
 			this.oField = new Field({
 				value: "click me",
-				editMode: EditMode.Display
+				editMode: FieldEditMode.Display
 			});
 			this.oField.setModel(this.oODataModel);
 			this.oField.bindElement({

@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/Dialog",
 	"sap/ui/mdc/valuehelp/base/Content",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ValueHelpSelectionType",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
@@ -26,7 +26,7 @@ sap.ui.define([
 		Dialog,
 		Content,
 		Condition,
-		SelectType,
+		ValueHelpSelectionType,
 		FieldDisplay,
 		Icon,
 		JSONModel,
@@ -717,15 +717,15 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
-					oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
+					oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: ValueHelpSelectionType.Set});
 					assert.equal(iSelect, 1, "select event fired");
 					assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
-					assert.equal(sType, SelectType.Set, "select event type");
+					assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 					assert.equal(iConfirm, 0, "ConfirmEvent not fired");
 
 					iSelect = 0;
 					iConfirm = 0;
-					oContent2.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
+					oContent2.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: ValueHelpSelectionType.Set});
 					assert.equal(iSelect, 0, "select event not fired for hidden content");
 
 					oValueHelpConfig = merge({}, oValueHelpConfig);
@@ -738,15 +738,15 @@ sap.ui.define([
 					setTimeout(function() { // wait until switched and model updated
 						iSelect = 0;
 						iConfirm = 0;
-						oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
+						oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: ValueHelpSelectionType.Set});
 						assert.equal(iSelect, 0, "select event not fired for hidden content");
 
 						iSelect = 0;
 						iConfirm = 0;
-						oContent2.fireSelect({conditions: [Condition.createItemCondition("Y", "Text")], type: SelectType.Set});
+						oContent2.fireSelect({conditions: [Condition.createItemCondition("Y", "Text")], type: ValueHelpSelectionType.Set});
 						assert.equal(iSelect, 1, "select event fired");
 						assert.deepEqual(aConditions, [Condition.createItemCondition("Y", "Text")], "select event conditions");
-						assert.equal(sType, SelectType.Set, "select event type");
+						assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 						assert.equal(iConfirm, 0, "ConfirmEvent not fired");
 						assert.notOk(bClose, "Close parameter not set");
 
@@ -791,7 +791,7 @@ sap.ui.define([
 				oTokenMultiInput.fireTokenUpdate({removedTokens: aTokens});
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
-				assert.equal(sType, SelectType.Remove, "select event type");
+				assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
 
 				oModel.setData({
 					_config: oValueHelpConfig,
@@ -837,7 +837,7 @@ sap.ui.define([
 				oButton.firePress();
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, [], "select event conditions");
-				assert.equal(sType, SelectType.Set, "select event type");
+				assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 
 				fnDone();
 			}).catch(function(oError) {

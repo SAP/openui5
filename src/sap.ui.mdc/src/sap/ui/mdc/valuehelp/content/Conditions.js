@@ -5,13 +5,13 @@
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/Content',
 	'sap/ui/mdc/util/loadModules',
-	'sap/ui/mdc/enum/SelectType',
+	'sap/ui/mdc/enum/ValueHelpSelectionType',
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/util/Common'
 ], function(
 	Content,
 	loadModules,
-	SelectType,
+	ValueHelpSelectionType,
 	ConditionValidated,
 	Common
 ) {
@@ -296,7 +296,7 @@ sap.ui.define([
 //		aConditions = Condition._removeInitialFlags(aConditions);
 //		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 
-		this.fireSelect({type: SelectType.Set, conditions: aNextConditions});
+		this.fireSelect({type: ValueHelpSelectionType.Set, conditions: aNextConditions});
 
 	}
 

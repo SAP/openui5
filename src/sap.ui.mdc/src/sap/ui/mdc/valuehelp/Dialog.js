@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/m/FlexItemData',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/mdc/util/Common',
-	'sap/ui/mdc/enum/SelectType',
+	'sap/ui/mdc/enum/ValueHelpSelectionType',
 	'sap/base/strings/formatMessage',
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleMessage'
@@ -24,7 +24,7 @@ sap.ui.define([
 	FlexItemData,
 	ResourceModel,
 	Common,
-	SelectType,
+	ValueHelpSelectionType,
 	formatMessage,
 	coreLibrary,
 	InvisibleMessage
@@ -635,7 +635,7 @@ sap.ui.define([
 									aRemovedConditions.push(aConditions[iIndex]);
 								});
 
-								this.fireSelect({type: SelectType.Remove, conditions: aRemovedConditions});
+								this.fireSelect({type: ValueHelpSelectionType.Remove, conditions: aRemovedConditions});
 							}
 
 						}.bind(this),
@@ -661,7 +661,7 @@ sap.ui.define([
 
 					this.oRemoveAllBtn = new Button(this.getId() + "-TokenRemoveAll", {
 						press: function(oEvent) {
-							this.fireSelect({type: SelectType.Set, conditions: []});
+							this.fireSelect({type: ValueHelpSelectionType.Set, conditions: []});
 
 							this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Polite);
 						}.bind(this),
