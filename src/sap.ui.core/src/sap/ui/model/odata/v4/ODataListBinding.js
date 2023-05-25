@@ -4007,6 +4007,7 @@ sap.ui.define([
 					if (this.mParameters.$$aggregation) {
 						_AggregationHelper.setPath(this.mParameters.$$aggregation, sResolvedPath);
 					} else if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect) {
+						this.mCanUseCachePromiseByChildPath = {};
 						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
 					}
 					if (oContext.getBinding && oContext.getBinding().isRootBindingSuspended()) {
