@@ -175,20 +175,13 @@ sap.ui.define([
 
 		assert.ok(!oFilterBar.getP13nMode());
 		assert.ok(!oFilterBar._getP13nModeItem());
-		assert.ok(!oFilterBar._getP13nModeValue());
 
 		oFilterBar.setP13nMode(["Item", "Value"]);
 		assert.ok(oFilterBar.getP13nMode());
 		assert.ok(oFilterBar._getP13nModeItem());
-		assert.ok(oFilterBar._getP13nModeValue());
 
 		oFilterBar.setP13nMode(["Item"]);
 		assert.ok(oFilterBar._getP13nModeItem());
-		assert.ok(!oFilterBar._getP13nModeValue());
-
-		oFilterBar.setP13nMode(["Value"]);
-		assert.ok(!oFilterBar._getP13nModeItem());
-		assert.ok(oFilterBar._getP13nModeValue());
 	});
 
 	QUnit.test("add Filter", function (assert) {
@@ -316,135 +309,34 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("check _handleConditionModelPropertyChange with liveMode=false and p13nValue=false", function (assert) {
+	QUnit.test("check _handleConditionModelPropertyChange", function (assert) {
+		var oCM = oFilterBar.getModel("$filters");
 
-		sinon.spy(oFilterBar, "fireSearch");
-		sinon.stub(oFilterBar, "getAssignedFilterNames").returns([]);
-		sinon.spy(oFilterBar.getEngine(), "createChanges");
-		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
-        sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
-
-		var done = assert.async();
-
-		var fResolve, oPromise = new Promise(function (resolve) {
+		var fResolve, oPromise = new Promise(function(resolve) {
 			fResolve = resolve;
 		});
 
-		oFilterBar.attachFiltersChanged(function (oEvent) {
+		oCM.detachPropertyChange(oFilterBar._handleConditionModelPropertyChange, oFilterBar);
+		sinon.spy(oFilterBar, "_handleConditionModelPropertyChange");
+		oCM.attachPropertyChange(oFilterBar._handleConditionModelPropertyChange, oFilterBar);
+
+		sinon.stub(oFilterBar, "_stringifyConditions").returns([Condition.createCondition("EQ", ["foo"])]);
+		sinon.stub(oFilterBar, "_addConditionChange").callsFake(function() {
 			fResolve();
 		});
 
-		oFilterBar.initialized().then(function () {
 
-			var oCM = oFilterBar.getModel("$filters");
-			oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
+		oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
 
-			oPromise.then(function () {
-				assert.ok(!oFilterBar.getEngine().createChanges.called);
-				oFilterBar.getEngine().createChanges.restore();
-				oFilterBar.getEngine()._processChanges.restore();
-				done();
-			});
+		return oPromise.then(function() {
+			assert.ok(oFilterBar._handleConditionModelPropertyChange.called);
 		});
 	});
-
-	QUnit.test("check _handleConditionModelPropertyChange with liveMode=false and p13nValue=true", function (assert) {
-
-		sinon.spy(oFilterBar.getEngine(), "createChanges");
-		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
-		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")});
-        sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
-
-		var done = assert.async();
-
-		oFilterBar.setP13nMode(["Value"]);
-
-		oFilterBar.initialized().then(function () {
-
-			var oCM = oFilterBar.getModel("$filters");
-			oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
-			assert.ok(oFilterBar.getEngine().createChanges.called);
-			oFilterBar.getEngine().createChanges.restore();
-			oFilterBar.getEngine()._processChanges.restore();
-			done();
-		});
-	});
-
-	QUnit.test("check _handleConditionModelPropertyChange  with liveMode=true  and p13nValue=false", function (assert) {
-
-		sinon.spy(oFilterBar, "triggerSearch");
-		sinon.stub(oFilterBar, "getAssignedFilterNames").returns([]);
-		sinon.spy(oFilterBar.getEngine(), "createChanges");
-        sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
-
-
-		oFilterBar.setLiveMode(true);
-		var done = assert.async();
-
-
-		var fResolve, oPromise = new Promise(function (resolve) {
-			fResolve = resolve;
-		});
-
-		oFilterBar.attachFiltersChanged(function (oEvent) {
-			fResolve();
-		});
-
-		oFilterBar.initialized().then(function () {
-			var oCM = oFilterBar.getModel("$filters");
-			oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
-
-			oPromise.then(function () {
-				assert.ok(!oFilterBar.getEngine().createChanges.called);
-				oFilterBar.getEngine().createChanges.restore();
-				done();
-			});
-		});
-
-	});
-
-	QUnit.test("check _handleConditionModelPropertyChange with liveMode=true and p13nValue=true", function (assert) {
-
-		sinon.spy(oFilterBar.getEngine(), "createChanges");
-		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
-		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")});
-        sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
-
-		var done = assert.async();
-
-		oFilterBar.setP13nMode(["Value"]);
-
-		oFilterBar.initialized().then(function () {
-
-			var oCM = oFilterBar.getModel("$filters");
-			oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
-			assert.ok(oFilterBar.getEngine().createChanges.called);
-			oFilterBar.getEngine().createChanges.restore();
-			oFilterBar.getEngine()._processChanges.restore();
-			done();
-		});
-	});
-
-
-	QUnit.test("check _getFilterField", function (assert) {
-		var oFilterField = new FilterField({ conditions: "{cm>/conditions/filter}", propertyKey: "filter" });
-
-		oFilterBar.addFilterItem(oFilterField);
-
-		assert.deepEqual(oFilterBar._getFilterField("filter"), oFilterField);
-
-		oFilterField.destroy();
-	});
-
 
 	QUnit.test("check getAssignedFiltersText", function (assert) {
 
 		var sLanguage = oCore.getConfiguration().getLanguage();
 		oCore.getConfiguration().setLanguage("EN");
-
-		var mText, fResolve, oPromise = new Promise(function (resolve) {
-			fResolve = resolve;
-		});
 
 		var oProperty = {
 			name: "fieldPath1",
@@ -468,19 +360,19 @@ sap.ui.define([
 		sinon.stub(oFilterBar, "_getPropertyByName").callsFake(function(sName) {
 			return FilterUtil.getPropertyByKey(oFilterBar.getPropertyInfoSet(), sName);
 		});
+		sinon.stub(oFilterBar, "_addConditionChange");
 
 		var done = assert.async();
 
-		mText = oFilterBar.getAssignedFiltersText();
+		var mText = oFilterBar.getAssignedFiltersText();
 		assert.equal(mText.filtersText, "No filters active");
 		assert.equal(mText.filtersTextExpanded, "No filters active");
 
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar.initializedWithMetadata().then(function () {
 
-			oFilterBar.attachFiltersChanged(function (oEvent) {
-				fResolve();
-			});
+		sinon.stub(oFilterBar, "_stringifyConditions").returns([Condition.createCondition("EQ", ["foo"])]);
+
 
 			var oCM = oFilterBar._getConditionModel();
 			oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
@@ -491,64 +383,61 @@ sap.ui.define([
 				delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
 			}));
 
-			oPromise.then(function () {
 
-				//with one filter not displayed on filterbar
+			//with one filter not displayed on filterbar
+			mText = oFilterBar.getAssignedFiltersText();
+			assert.equal(mText.filtersText, "1 filter active: Field Path");
+			assert.equal(mText.filtersTextExpanded, "1 filter active (1 hidden)");
+
+			assert.ok(oFilterBar.getControlDelegate());
+			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty, oProperty2, oProperty3]));
+
+			var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name);
+
+			oPromise.then(function(oFilterField) {
+
+				oFilterBar.addFilterItem(oFilterField);
+
+				// with two filters; one is displayed on filter bar, one not
+				oCM.addCondition("fieldPath2", Condition.createCondition("EQ", ["foo"]));
 				mText = oFilterBar.getAssignedFiltersText();
-				assert.equal(mText.filtersText, "1 filter active: Field Path");
-				assert.equal(mText.filtersTextExpanded, "1 filter active (1 hidden)");
+				assert.equal(mText.filtersText, "2 filters active: Field Path, Field Path2");
+				assert.equal(mText.filtersTextExpanded, "2 filters active (1 hidden)");
 
-				assert.ok(oFilterBar.getControlDelegate());
-				sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty, oProperty2, oProperty3]));
-
-				var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name);
-
-				oPromise.then(function (oFilterField) {
-
-					oFilterBar.addFilterItem(oFilterField);
-
-					// with two filters; one is displayed on filter bar, one not
-					oCM.addCondition("fieldPath2", Condition.createCondition("EQ", ["foo"]));
-					mText = oFilterBar.getAssignedFiltersText();
-					assert.equal(mText.filtersText, "2 filters active: Field Path, Field Path2");
-					assert.equal(mText.filtersTextExpanded, "2 filters active (1 hidden)");
-
-					//with basic search and two filter displayed on the filter bar
-					oCM.addCondition("$search", Condition.createCondition("EQ", ["foo"]));
-					mText = oFilterBar.getAssignedFiltersText();
-					assert.equal(mText.filtersText, "3 filters active: Search Terms, Field Path, Field Path2");
-					assert.equal(mText.filtersTextExpanded, "3 filters active (1 hidden)");
+				//with basic search and two filter displayed on the filter bar
+				oCM.addCondition("$search", Condition.createCondition("EQ", ["foo"]));
+				mText = oFilterBar.getAssignedFiltersText();
+				assert.equal(mText.filtersText, "3 filters active: Search Terms, Field Path, Field Path2");
+				assert.equal(mText.filtersTextExpanded, "3 filters active (1 hidden)");
 
 
-					//with basic search and one filter displayed on the filter bar
-					oCM.removeAllConditions("fieldPath1");
-					mText = oFilterBar.getAssignedFiltersText();
-					assert.equal(mText.filtersText, "2 filters active: Search Terms, Field Path2");
-					assert.equal(mText.filtersTextExpanded, "2 filters active");
+				//with basic search and one filter displayed on the filter bar
+				oCM.removeAllConditions("fieldPath1");
+				mText = oFilterBar.getAssignedFiltersText();
+				assert.equal(mText.filtersText, "2 filters active: Search Terms, Field Path2");
+				assert.equal(mText.filtersTextExpanded, "2 filters active");
 
 
-					//only with basic search
-					oCM.removeAllConditions("fieldPath2");
-					mText = oFilterBar.getAssignedFiltersText();
-					assert.equal(mText.filtersText, "1 filter active: Search Terms");
-					assert.equal(mText.filtersTextExpanded, "1 filter active");
+				//only with basic search
+				oCM.removeAllConditions("fieldPath2");
+				mText = oFilterBar.getAssignedFiltersText();
+				assert.equal(mText.filtersText, "1 filter active: Search Terms");
+				assert.equal(mText.filtersTextExpanded, "1 filter active");
 
-					//only with basic search
-					oCM.removeAllConditions("$search");
-					mText = oFilterBar.getAssignedFiltersText();
-					assert.equal(mText.filtersText, "No filters active");
-					assert.equal(mText.filtersTextExpanded, "No filters active");
+				//only with basic search
+				oCM.removeAllConditions("$search");
+				mText = oFilterBar.getAssignedFiltersText();
+				assert.equal(mText.filtersText, "No filters active");
+				assert.equal(mText.filtersTextExpanded, "No filters active");
 
 
-					oFilterBar.getControlDelegate().fetchProperties.restore();
+				oFilterBar.getControlDelegate().fetchProperties.restore();
 
-					oCore.getConfiguration().setLanguage(sLanguage);
-					done();
-				});
+				oCore.getConfiguration().setLanguage(sLanguage);
+				done();
 			});
 		});
 	});
-
 	QUnit.test("check fetchProperties", function (assert) {
 		var done = assert.async();
 
@@ -1084,21 +973,22 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(undefined);
 		var oCurrentState = oFilterBar.getCurrentState();
-		assert.deepEqual(oCurrentState, {}, "current state should react on p13nMode undefined");
+		assert.ok(!oCurrentState.items, "current state should not contain unnecessary attrbiutes");
+		assert.ok(oCurrentState, oCurrentState.filter, "current state should react on p13nMode undefined. Value is implicit.");
 
 		oFilterBar.setP13nMode(["Item"]);
 		oCurrentState = oFilterBar.getCurrentState();
 		assert.ok(oCurrentState.items, "current state should react on p13nMode Item");
-		assert.ok(!oCurrentState.filter, "current state should not contain unnecessary attrbiutes");
+		assert.ok(oCurrentState.filter, "current state should contail filter. Value is implicit.");
 
 		oFilterBar.setP13nMode(["Value"]);
 		oCurrentState = oFilterBar.getCurrentState();
-		assert.ok(oCurrentState.filter, "current state should react on p13nMode Value");
+		assert.ok(oCurrentState.filter, "current state should react on p13nMode Value.Value is implicit.");
 		assert.ok(!oCurrentState.items, "current state should not contain unnecessary attrbiutes");
 
 		oFilterBar.setP13nMode(["Item", "Value"]);
 		oCurrentState = oFilterBar.getCurrentState();
-		assert.ok(oCurrentState.filter, "current state should react on every p13nMode");
+		assert.ok(oCurrentState.filter, "current state should react on every p13nMode. Value is implicit.");
 		assert.ok(oCurrentState.items, "current state should react on every p13nMode");
 	});
 
@@ -1297,7 +1187,7 @@ sap.ui.define([
 		oCore.getConfiguration().setLanguage(sLanguage);
 	});
 
-	QUnit.test("check _handleConditionModelPropertyChange", function (assert) {
+	QUnit.test("check _handleConditionModelPropertyChange with navigation paths", function (assert) {
 
 		var oEvent1 = {
 			getParameter: function(s) {
@@ -1321,7 +1211,6 @@ sap.ui.define([
 
 		var oCondition;
 
-		sinon.stub(oFilterBar, "_getP13nModeValue").returns(true);
 		sinon.stub(oFilterBar, "_getPropertyByName").returns({});
 		oFilterBar.setP13nMode(["Value"]);
 		sinon.stub(oFilterBar.getEngine(), "createChanges").callsFake(function(mConfig) {

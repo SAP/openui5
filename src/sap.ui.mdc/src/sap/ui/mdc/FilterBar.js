@@ -65,14 +65,6 @@ sap.ui.define([
 					type: "boolean",
 					visibility: "hidden",
 					defaultValue: false
-				},
-				/**
-				 * Specifies if the personalization mode for filter conditions is supported.
-				 */
-				_p13nModeValue: {
-					type: "boolean",
-					visibility: "hidden",
-					defaultValue: false
 				}
 			}
 		},
@@ -92,7 +84,6 @@ sap.ui.define([
 	};
 
 	FilterBar.prototype.setP13nMode = function(aMode) {
-		var aOldMode = this.getP13nMode();
 		this.setProperty("p13nMode", aMode || [], false);
 
 		var oRegisterConfig = {
@@ -100,33 +91,20 @@ sap.ui.define([
 			controller: {}
 		};
 
+		var bItemAssigned = false;
 		aMode && aMode.forEach(function(sMode) {
-			if (!aOldMode || aOldMode.indexOf(sMode) < 0) {
-				this._setP13nMode(sMode, true);
-			}
 			if (sMode == "Item") {
+				bItemAssigned = true;
 				oRegisterConfig.controller["Item"] = new AdaptFiltersController({control: this});
-			}
-			if (sMode == "Value") {
-				oRegisterConfig.controller["Filter"] = new FilterController({control: this});
-			}
-		}.bind(this));
-		aOldMode && aOldMode.forEach(function(sMode) {
-			if (!aMode || aMode.indexOf(sMode) < 0) {
-				this._setP13nMode(sMode, false);
 			}
 		}.bind(this));
 
+		this._setP13nModeItem(bItemAssigned);
+
+		oRegisterConfig.controller["Filter"] = new FilterController({control: this});
 		this.getEngine().register(this, oRegisterConfig);
 
 		return this;
-	};
-
-	FilterBar.prototype._setP13nMode = function(sMode, bValue) {
-		switch (sMode) {
-			case "Item":  this._setP13nModeItem(bValue); break;
-			case "Value": this._setP13nModeValue(bValue); break;
-		}
 	};
 
 	FilterBar.prototype.setFilterConditions = function(mValue, bSuppressInvalidate) {
@@ -146,14 +124,6 @@ sap.ui.define([
 		this._oModel.setProperty("/_p13nModeItem", bValue, true);
 	};
 
-	FilterBar.prototype._getP13nModeValue = function() {
-		return this._oModel.getProperty("/_p13nModeValue");
-	};
-
-	FilterBar.prototype._setP13nModeValue = function(bValue) {
-		this._oModel.setProperty("/_p13nModeValue", bValue, false);
-		this._bPersistValues = bValue;
-	};
 
 	FilterBar.prototype._addButtons = function() {
 
@@ -236,9 +206,8 @@ sap.ui.define([
 	FilterBar.prototype.retrieveInbuiltFilter = function() {
 		var oInbuiltFilterPromise = FilterBarBase.prototype.retrieveInbuiltFilter.apply(this, arguments);
 		return oInbuiltFilterPromise.then(function(oInnerFB){
-			oInnerFB._bPersistValues = this._bPersistValues;
 			return oInnerFB;
-		}.bind(this));
+		});
 	};
 
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {

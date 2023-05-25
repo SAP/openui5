@@ -26,7 +26,6 @@ sap.ui.define([
 
 	QUnit.test("instanciable", function (assert) {
         assert.ok(this.oFilterBarBase, "FilterBarBase instance created");
-        assert.ok(!this.oFilterBarBase._bPersistValues, "Persistence is not given by default");
     });
 
     QUnit.test("getCurrentState returns conditions based on the persistence setting", function(assert){
@@ -51,13 +50,11 @@ sap.ui.define([
 
             var oCurrentState = this.oFilterBarBase.getCurrentState();
 
-            assert.ok(!oCurrentState.filter, "As the persistence for filter values is disabled, current state will not return filter conditions");
+            assert.ok(oCurrentState.filter, "The persistence for filter values is always enabled, current state will return filter conditions");
 
 
-            this.oFilterBarBase._bPersistValues = true;
             oCurrentState = this.oFilterBarBase.getCurrentState();
-
-            assert.ok(oCurrentState.filter, "Filter values are returned once the persistence is given");
+            assert.ok(oCurrentState.filter, "The persistence for filter values is always enabled, current state will return filter conditions");
 
             done();
         }.bind(this));
@@ -65,8 +62,6 @@ sap.ui.define([
 
     QUnit.test("'getConditions' should always return the externalized conditions", function(assert){
         var done = assert.async();
-
-        this.oFilterBarBase._bPersistValues = false;
 
         var oDummyCondition = {
             "key1": [
@@ -80,12 +75,16 @@ sap.ui.define([
               ]
         };
 
+
         this.oFilterBarBase.initialized().then(function(){
 
             sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: this.oFilterBarBase.getTypeMap().getTypeConfig("sap.ui.model.type.String")});
 
             this.oFilterBarBase._setXConditions(oDummyCondition)
             .then(function(){
+				// simulate change appliance
+				this.oFilterBarBase.setFilterConditions(this.oFilterBarBase._getXConditions());
+
                 assert.deepEqual(oDummyCondition, this.oFilterBarBase.getConditions(), "Condition returned without persistence active");
                 assert.ok(!this.oFilterBarBase.getConditions()["key1"][0].hasOwnProperty("isEmpty"), "External format");
                 assert.ok(!this.oFilterBarBase._getXConditions()["key1"][0].hasOwnProperty("isEmpty"), "External format");
@@ -174,10 +173,7 @@ sap.ui.define([
             fTestPromiseResolve();
         };
 
-
         this.oFilterBarBase.setBasicSearchField(oFilterField);
-
-        this.oFilterBarBase._bPersistValues = true;
 
         this.oFilterBarBase._handleConditionModelPropertyChange({ getParameter: function(sParam) {
             if (sParam === "path") {

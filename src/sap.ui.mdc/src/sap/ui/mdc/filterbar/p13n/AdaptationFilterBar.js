@@ -78,7 +78,6 @@ sap.ui.define([
 	AdaptationFilterBar.prototype.init = function() {
 		FilterBarBase.prototype.init.apply(this,arguments);
 		this.addStyleClass("sapUIAdaptationFilterBar");
-		this._bPersistValues = true;
 
 		this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 		this._fnResolveAdaptationControlPromise = null;
@@ -259,21 +258,15 @@ sap.ui.define([
 	AdaptationFilterBar.prototype.createConditionChanges = function() {
 		return Promise.all([this._oAdaptationControlPromise, this.awaitControlDelegate()]).then(function() {
 			var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
-			if (this._bPersistValues) {
-				//this._getAdaptationControlInstance(), "Filter", mConditions, true, true
-				return this.getEngine().createChanges({
-					control: this._getAdaptationControlInstance(),
-					applyAbsolute: true,
-					key: "Filter",
-					state: mConditions,
-					suppressAppliance: true
-				});
-			} else {
-				//TODO: currently only required once the parent FilterBar has p13nMode 'value' disabled.
-				this._getAdaptationControlInstance()._setXConditions(mConditions);
-				return Promise.resolve(null);
-			}
-			}.bind(this));
+
+			return this.getEngine().createChanges({
+				control: this._getAdaptationControlInstance(),
+				applyAbsolute: true,
+				key: "Filter",
+				state: mConditions,
+				suppressAppliance: true
+			});
+		}.bind(this));
 	};
 
 	/**
@@ -330,7 +323,7 @@ sap.ui.define([
 	 */
 	AdaptationFilterBar.prototype.createFilterFields = function(){
 		return this.initializedWithMetadata().then(function(){
-			var mConditions = this._bPersistValues ? this._getAdaptationControlInstance().getFilterConditions() : this._getAdaptationControlInstance()._getXConditions();
+			var mConditions = this._getAdaptationControlInstance().getFilterConditions();
 
 			this.setFilterConditions(mConditions);
 			var pConditions = this._setXConditions(mConditions);

@@ -344,7 +344,8 @@ sap.ui.define([
 		When.iPressDialogOk();
 
 		//check dirty flag
-		Then.theVariantManagementIsDirty(false);
+		//since 1.115 Value is always implicitly set.
+		Then.theVariantManagementIsDirty(true);
 
 		Then.iTeardownMyAppFrame();
 	});
