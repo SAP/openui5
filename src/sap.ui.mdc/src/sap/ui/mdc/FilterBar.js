@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController', "sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/base/util/merge", 'sap/base/Log', "sap/ui/core/library"
-], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary) {
+	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController', "sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/base/util/merge", 'sap/base/Log', "sap/ui/core/library", "sap/ui/mdc/enum/FilterBarP13nMode"
+], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary, FilterBarP13nMode) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -56,7 +56,7 @@ sap.ui.define([
 				 * @since 1.74
 				 */
 				p13nMode: {
-					type: "sap.ui.mdc.FilterBarP13nMode[]"
+					type: "sap.ui.mdc.enum.FilterBarP13nMode[]"
 				},
 				/**
 				 * Specifies if the personalization mode for filter items is supported.

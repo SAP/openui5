@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/mdc/table/TreeTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
 	"sap/ui/mdc/table/Column",
-	"sap/ui/mdc/library",
 	"sap/m/Text",
 	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Core",
@@ -16,7 +15,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Context",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/mdc/enum/TableMultiSelectMode",
+	"sap/ui/mdc/enum/TableSelectionMode",
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	TableQUnitUtils,
 	TableDelegate,
@@ -25,7 +27,6 @@ sap.ui.define([
 	TreeTableType,
 	ResponsiveTableType,
 	Column,
-	library,
 	Text,
 	PluginBase,
 	Core,
@@ -34,13 +35,13 @@ sap.ui.define([
 	JSONModel,
 	Sorter,
 	Context,
-	deepEqual
+	deepEqual,
+	TableMultiSelectMode,
+	TableSelectionMode,
+	TableType
 ) {
 	"use strict";
 
-	var TableType = library.TableType;
-	var SelectionMode = library.SelectionMode;
-	var MultiSelectMode = library.MultiSelectMode;
 	var sDelegatePath = "sap/ui/mdc/TableDelegate";
 
 	var fnOriginalUpdateBindingInfo = TableDelegate.updateBindingInfo;
@@ -116,7 +117,7 @@ sap.ui.define([
 		});
 
 		return this.initTable({
-			selectionMode: SelectionMode.Single,
+			selectionMode: TableSelectionMode.Single,
 			selectionChange: oSelectionChangeStub,
 			type: new GridTableType({
 				selectionLimit: 1337,
@@ -137,13 +138,13 @@ sap.ui.define([
 			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the plugin");
 			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
 
-			oTable.setSelectionMode(SelectionMode.None);
+			oTable.setSelectionMode(TableSelectionMode.None);
 			assert.notOk(oPlugin.getEnabled(), "Set selection mode to 'None': Selection plugin disabled");
 
-			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			oTable.setSelectionMode(TableSelectionMode.SingleMaster);
 			assert.equal(oPlugin.getSelectionMode(), "Single", "Set selection mode to 'SingleMaster': Selection mode of plugin set to 'Single'");
 
-			oTable.setSelectionMode(SelectionMode.Multi);
+			oTable.setSelectionMode(TableSelectionMode.Multi);
 			assert.equal(oPlugin.getSelectionMode(), "MultiToggle", "Set selection mode to 'Multi': Selection mode of plugin set to 'MultiToggle'");
 
 			oTable.getType().setSelectionLimit(123);
@@ -178,7 +179,7 @@ sap.ui.define([
 		});
 
 		return this.initTable({
-			selectionMode: SelectionMode.Single,
+			selectionMode: TableSelectionMode.Single,
 			selectionChange: oSelectionChangeStub,
 			type: new TreeTableType({
 				selectionLimit: 1337,
@@ -199,13 +200,13 @@ sap.ui.define([
 			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the plugin");
 			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
 
-			oTable.setSelectionMode(SelectionMode.None);
+			oTable.setSelectionMode(TableSelectionMode.None);
 			assert.notOk(oPlugin.getEnabled(), "Set selection mode to 'None': Selection plugin disabled");
 
-			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			oTable.setSelectionMode(TableSelectionMode.SingleMaster);
 			assert.equal(oPlugin.getSelectionMode(), "Single", "Set selection mode to 'SingleMaster': Selection mode of plugin set to 'Single'");
 
-			oTable.setSelectionMode(SelectionMode.Multi);
+			oTable.setSelectionMode(TableSelectionMode.Multi);
 			assert.equal(oPlugin.getSelectionMode(), "MultiToggle", "Set selection mode to 'Multi': Selection mode of plugin set to 'MultiToggle'");
 
 			oTable.getType().setSelectionLimit(123);
@@ -240,8 +241,8 @@ sap.ui.define([
 		});
 
 		return this.initTable({
-			selectionMode: SelectionMode.Single,
-			multiSelectMode: MultiSelectMode.ClearAll,
+			selectionMode: TableSelectionMode.Single,
+			multiSelectMode: TableMultiSelectMode.ClearAll,
 			selectionChange: oSelectionChangeStub,
 			type: new ResponsiveTableType()
 		}, function(oTable) {
@@ -255,18 +256,18 @@ sap.ui.define([
 			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the inner table");
 			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
 
-			oTable.setSelectionMode(SelectionMode.None);
+			oTable.setSelectionMode(TableSelectionMode.None);
 			assert.equal(oInnerTable.getMode(), "None", "Set selection mode to 'None': Inner table selection mode set to 'None'");
 
-			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			oTable.setSelectionMode(TableSelectionMode.SingleMaster);
 			assert.equal(oInnerTable.getMode(), "SingleSelectMaster",
 				"Set selection mode to 'SingleMaster': Inner table selection mode set to 'SingleSelectMaster'");
 
-			oTable.setSelectionMode(SelectionMode.Multi);
+			oTable.setSelectionMode(TableSelectionMode.Multi);
 			assert.equal(oInnerTable.getMode(), "MultiSelect",
 				"Set selection mode to 'Multi': Inner table selection mode set to 'MultiSelect'");
 
-			oTable.setMultiSelectMode(MultiSelectMode.Default);
+			oTable.setMultiSelectMode(TableMultiSelectMode.Default);
 			assert.equal(oInnerTable.getMultiSelectMode(), "SelectAll",
 				"Multi select mode set to 'Default': Inner table multi select mode set to 'SelectAll'");
 

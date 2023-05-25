@@ -5,29 +5,27 @@
 sap.ui.define([
 	"./GridTableType",
 	"./ResponsiveTableType",
-	"../library",
 	"sap/base/Log",
 	"sap/m/library",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	GridTableType,
 	ResponsiveTableType,
-	library,
 	Log,
 	MLibrary,
 	Label,
 	JSONModel,
 	ManagedObjectModel,
 	Control,
-	Core
+	Core,
+	TableType
 ) {
 	"use strict";
-
-	var TableType = library.TableType;
 
 	/**
 	 * Constructor for a new <code>Column</column>.

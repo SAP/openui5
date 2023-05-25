@@ -4,13 +4,13 @@
 sap.ui.define([
     "delegates/odata/v4/vizChart/ChartDelegate",
     "delegates/odata/v4/ODataMetaModelUtil",
-    "sap/ui/mdc/library",
     "./Books.FB.delegate",
 	"./GridTable.delegate",
     "sap/ui/mdc/enum/FieldDisplay",
     "sap/base/Log",
-	"sap/ui/core/Core"
-], function(ChartDelegate, ODataMetaModelUtil, MDCLib, BooksFBDelegate, GridTableDelegate, FieldDisplay, Log, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/mdc/enum/ChartItemRoleType"
+], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, Log, Core, ChartItemRoleType) {
     "use strict";
 
     var SampleChartDelegate = Object.assign({}, ChartDelegate);
@@ -202,7 +202,7 @@ sap.ui.define([
                             sortKey: sKey,
                             //typeConfig: this.getTypeMap().getTypeConfig(oObj.$Type, null, {}),
                             dataType: oObj.$Type,
-                            role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
+                            role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
                             textProperty:  sTextProperty
                         });
                     }

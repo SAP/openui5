@@ -3,22 +3,21 @@
  */
 sap.ui.define([
 	"../QUnitUtils",
-	"sap/ui/mdc/library",
 	"sap/ui/core/Core",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	MDCQUnitUtils,
-	Library,
 	Core,
 	ManagedObjectObserver,
 	qutils,
-	KeyCodes
+	KeyCodes,
+	TableType
 ) {
 	"use strict";
 
-	var TableType = Library.TableType;
 	var QUnitUtils = Object.assign({}, MDCQUnitUtils);
 
 	function getRowsAggregationName(oTable) {

@@ -1,0 +1,33 @@
+/*!
+ * ${copyright}
+ */
+
+sap.ui.define(function() {
+    "use strict";
+
+    /**
+     *
+     * Enumeration of the <code>multiSelectMode</code> in <code>ListBase</code>.
+     * @enum {string}
+     * @private
+     * @alias sap.ui.mdc.enum.TableMultiSelectMode
+     * @since 1.115
+     * @ui5-restricted sap.ui.mdc
+     */
+    var TableMultiSelectMode = {
+        /**
+         * Renders the <code>selectAll</code> checkbox (default behavior).
+         * @public
+         */
+        Default: "Default",
+
+        /**
+         * Renders the <code>clearAll</code> icon.
+         * @public
+         */
+        ClearAll: "ClearAll"
+    };
+
+    return TableMultiSelectMode;
+
+}, /* bExport= */ true);

@@ -1331,7 +1331,8 @@ sap.ui.define([
 							"sap.ui.mdc.app": "test-resources/sap/ui/mdc/sample/table",
 							"sap.ui.fl.testResources": "test-resources/sap/ui/fl/qunit/testResources",
 							delegates: "test-resources/sap/ui/mdc/delegates/"
-						}
+						},
+						libs: ["sap.ui.mdc"]
 					},
 					qunit: {
 						reorder: false

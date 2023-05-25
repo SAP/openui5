@@ -1,19 +1,18 @@
 sap.ui.define([
 	"./ValueHelp.delegate",
-	"sap/ui/mdc/library",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
-	"sap/m/Text"
-], function (ODataValueHelpDelegate, library, FilterField, FilterBar, MdcTable, MdcColumn, GridTableType, ResponsiveTableType, Text) {
+	"sap/m/Text",
+	"sap/ui/mdc/enum/TableGrowingMode",
+	"sap/ui/mdc/enum/TableRowCountMode",
+	"sap/ui/mdc/enum/TableSelectionMode",
+	"sap/ui/mdc/enum/TableP13nMode"
+], function (ODataValueHelpDelegate, FilterField, FilterBar, MdcTable, MdcColumn, GridTableType, ResponsiveTableType, Text, GrowingMode, TableRowCountMode, TableSelectionMode, TableP13nMode) {
 	"use strict";
-	var TableP13nMode = library.TableP13nMode;
-	var RowCountMode = library.RowCountMode;
-	var SelectionMode = library.SelectionMode;
-	var GrowingMode = library.GrowingMode;
 	var Delegate = Object.assign({}, ODataValueHelpDelegate);
 	Delegate.apiVersion = 2;//CLEANUP_DELEGATE
 
@@ -72,7 +71,7 @@ sap.ui.define([
 						autoBindOnInit: false,
 						width: "100%",
 						height: "100%",
-						selectionMode: bMultiSelect ? SelectionMode.Multi : SelectionMode.Single,
+						selectionMode: bMultiSelect ? TableSelectionMode.Multi : TableSelectionMode.Single,
 						p13nMode: [TableP13nMode.Sort],
 						delegate: {name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}},
 						threshold: 50,
@@ -114,12 +113,12 @@ sap.ui.define([
 						autoBindOnInit: false,
 						width: "100%",
 						height: "100%",
-						selectionMode: bMultiSelect ? SelectionMode.Multi : SelectionMode.Single,
+						selectionMode: bMultiSelect ? TableSelectionMode.Multi : TableSelectionMode.Single,
 						p13nMode: [TableP13nMode.Sort],
 						delegate: {name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}},
 						threshold: 50,
 						enableAutoColumnWidth: true,
-						type: new GridTableType({rowCountMode: RowCountMode.Auto}),
+						type: new GridTableType({rowCountMode: TableRowCountMode.Auto}),
 						columns: [
 							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"})}),
 							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})}),

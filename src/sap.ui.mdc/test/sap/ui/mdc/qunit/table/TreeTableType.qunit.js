@@ -3,16 +3,16 @@
 sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/TreeTableType",
-	"sap/ui/mdc/library"
+	"sap/ui/mdc/enum/TableP13nMode",
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	Table,
 	TreeTableType,
-	library
+	TableP13nMode,
+	TableType
 ) {
 	"use strict";
 
-	var TableType = library.TableType;
-	var P13nMode = library.TableP13nMode;
 
 	QUnit.module("Inner table initialization", {
 		afterEach: function() {
@@ -82,11 +82,11 @@ sap.ui.define([
 		var oTable = this.createTable();
 
 		assert.deepEqual(oTable.getType().getSupportedP13nModes(), [
-			P13nMode.Column,
-			P13nMode.Sort,
-			P13nMode.Filter,
-			P13nMode.Group, // The delegate is responsible to forbid this
-			P13nMode.Aggregate // The delegate is responsible to forbid this
+			TableP13nMode.Column,
+			TableP13nMode.Sort,
+			TableP13nMode.Filter,
+			TableP13nMode.Group, // The delegate is responsible to forbid this
+			TableP13nMode.Aggregate // The delegate is responsible to forbid this
 		]);
 	});
 

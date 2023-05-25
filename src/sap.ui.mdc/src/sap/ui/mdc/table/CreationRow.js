@@ -3,18 +3,16 @@
  */
 
 sap.ui.define([
-	"../library", "sap/ui/core/Element"
-], function(Library, Element) {
+	"sap/ui/core/Element", "sap/ui/mdc/enum/TableType"
+], function(Element, TableType) {
 	"use strict";
-
-	var TableType = Library.TableType;
 
 	/**
 	 * Constructor for a new <code>CreationRow</code>.
 	 *
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Row that allows the user to enter data in a row-shaped form if the {@link sap.ui.mdc.TableType TableType} is "<code>Table</code>".
+	 * @class Row that allows the user to enter data in a row-shaped form if the {@link sap.ui.mdc.enum.TableType TableType} is "<code>Table</code>".
 	 * The form elements are aligned with the columns of the table and are created automatically based on the
 	 * {@link sap.ui.mdc.table.Column#getCreationTemplate creationTemplate} aggregation of the {@link sap.ui.mdc.table.Column}.
 	 * @extends sap.ui.core.Element

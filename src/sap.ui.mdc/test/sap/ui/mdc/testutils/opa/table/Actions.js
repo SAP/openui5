@@ -17,7 +17,7 @@ sap.ui.define([
 	"./waitForColumnHeader",
 	"./waitForP13nButtonWithParentAndIcon",
 	"./waitForListItemInDialogWithLabel",
-	"sap/ui/mdc/library"
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	Opa5,
 	Properties,
@@ -33,11 +33,9 @@ sap.ui.define([
 	waitForColumnHeader,
 	waitForP13nButtonWithParentAndIcon,
 	waitForListItemInDialogWithLabel,
-	MdcLibrary
+	TableType
 ) {
 	"use strict";
-
-	var TableType = MdcLibrary.TableType;
 
 	var clickOnTheReorderButtonOfDialog = function(sDialogTitle) {
 		waitForP13nDialog.call(this, {

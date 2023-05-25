@@ -5,29 +5,29 @@
 sap.ui.define([
 	"./TableTypeBase",
 	"./utils/Personalization",
-	"../library",
 	"sap/m/Button",
 	"sap/m/plugins/ColumnResizer",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/mdc/enum/TableGrowingMode",
+	"sap/ui/mdc/enum/TableRowAction"
 ], function(
 	TableTypeBase,
 	PersonalizationUtils,
-	library,
 	Button,
 	ColumnResizer,
 	SegmentedButton,
 	SegmentedButtonItem,
 	Device,
-	Core
+	Core,
+	GrowingMode,
+	TableRowAction
 ) {
 	"use strict";
 
 	var InnerTable, InnerColumn, InnerRow;
-	var GrowingMode = library.GrowingMode;
-	var RowAction = library.RowAction;
 	/**
 	 * Constructor for a new <code>ResponsiveTableType</code>.
 	 *
@@ -52,7 +52,7 @@ sap.ui.define([
 				 * Specifies the growing mode.
 				 */
 				growingMode: {
-					type: "sap.ui.mdc.GrowingMode",
+					type: "sap.ui.mdc.enum.TableGrowingMode",
 					defaultValue: GrowingMode.Basic
 				},
 				/**
@@ -245,7 +245,7 @@ sap.ui.define([
 				return oRowAction.getType() == "Navigation";
 			});
 			if (!_oRowActionItem && oRowActionsInfo.items.length > 0) {
-				throw new Error("No RowAction of type 'Navigation' found. sap.m.Table only accepts RowAction of type 'Navigation'.");
+				throw new Error("No TableRowAction of type 'Navigation' found. sap.m.Table only accepts TableRowAction of type 'Navigation'.");
 			}
 
 			// Associate RowActionItem<Navigation> to template for reference
@@ -262,10 +262,10 @@ sap.ui.define([
 		if (fnVisibleFormatter) {
 			vRowType.formatter = function(sValue) {
 				var bVisible = fnVisibleFormatter(sValue);
-				return bVisible ? RowAction.Navigation : sType;
+				return bVisible ? TableRowAction.Navigation : sType;
 			};
 		} else {
-			vRowType = vRowType ? RowAction.Navigation : sType;
+			vRowType = vRowType ? TableRowAction.Navigation : sType;
 		}
 
 		// Depending on whether the property is bound, either bind or set

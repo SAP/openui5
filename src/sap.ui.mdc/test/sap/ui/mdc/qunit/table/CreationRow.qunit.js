@@ -1,10 +1,8 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/library", "sap/ui/mdc/Table", "sap/ui/mdc/table/CreationRow", "sap/ui/model/json/JSONModel"
-], function(Library, Table, CreationRow, JSONModel) {
+	"sap/ui/mdc/Table", "sap/ui/mdc/table/CreationRow", "sap/ui/model/json/JSONModel", "sap/ui/mdc/enum/TableType"
+], function(Table, CreationRow, JSONModel, TableType) {
 	"use strict";
-
-	var TableType = Library.TableType;
 
 	QUnit.module("Inner creation row", {
 		beforeEach: function() {

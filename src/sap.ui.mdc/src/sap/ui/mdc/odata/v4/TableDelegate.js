@@ -6,7 +6,6 @@ sap.ui.define([
 	"../../TableDelegate",
 	"../../table/V4AnalyticsPropertyHelper",
 	"../../util/loadModules",
-	"../../library",
 	"sap/m/ColumnPopoverSelectListItem",
 	"sap/m/MessageBox",
 	"sap/ui/core/Item",
@@ -14,12 +13,13 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/format/ListFormat",
 	"sap/ui/base/ManagedObjectObserver",
-	'sap/ui/mdc/odata/v4/TypeMap'
+	'sap/ui/mdc/odata/v4/TypeMap',
+	'sap/ui/mdc/enum/TableP13nMode',
+	'sap/ui/mdc/enum/TableType'
 ], function(
 	TableDelegate,
 	V4AnalyticsPropertyHelper,
 	loadModules,
-	library,
 	ColumnPopoverSelectListItem,
 	MessageBox,
 	Item,
@@ -27,14 +27,14 @@ sap.ui.define([
 	coreLibrary,
 	ListFormat,
 	ManagedObjectObserver,
-	ODataV4TypeMap
+	ODataV4TypeMap,
+	TableP13nMode,
+	TableType
 ) {
 	"use strict";
 
 	/*global Set */
 
-	var TableType = library.TableType;
-	var P13nMode = library.TableP13nMode;
 	var TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
 
 	/**
@@ -366,11 +366,11 @@ sap.ui.define([
 		var aSupportedModes = TableDelegate.getSupportedP13nModes.apply(this, arguments);
 
 		if (oTable._isOfType(TableType.Table)) {
-			if (!aSupportedModes.includes(P13nMode.Group)) {
-				aSupportedModes.push(P13nMode.Group);
+			if (!aSupportedModes.includes(TableP13nMode.Group)) {
+				aSupportedModes.push(TableP13nMode.Group);
 			}
-			if (!aSupportedModes.includes(P13nMode.Aggregate)) {
-				aSupportedModes.push(P13nMode.Aggregate);
+			if (!aSupportedModes.includes(TableP13nMode.Aggregate)) {
+				aSupportedModes.push(TableP13nMode.Aggregate);
 			}
 		}
 

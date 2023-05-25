@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	'sap/ui/core/Element',
-	'../library',
 	'sap/ui/core/IconPool',
-	'sap/ui/core/Core'
-], function(Element, library, IconPool, Core) {
+	'sap/ui/core/Core',
+	'sap/ui/mdc/enum/TableRowAction'
+], function(Element, IconPool, Core, TableRowAction) {
 	"use strict";
-
-	var RowAction = library.RowAction;
 
 	/**
 	 * Constructor for new RowActionItem.
@@ -39,11 +37,11 @@ sap.ui.define([
 				/**
 				 * Type of the row action item.
 				 *
-				 * As of version 1.98, only sap.ui.mdc.RowAction.Navigation is available.
+				 * As of version 1.98, only sap.ui.mdc.enum.TableRowAction.Navigation is available.
 				 * Setting the type ensures default values for the properties <code>icon</code> and <code>text</code>.
 				 * If an icon or text is set explicitly this setting is used.
 				 */
-				type: {type: "sap.ui.mdc.RowAction"},
+				type: {type: "sap.ui.mdc.enum.TableRowAction"},
 				/**
 				 * Text for the row action item.
 				 *
@@ -96,7 +94,7 @@ sap.ui.define([
 			sText = this.getText();
 		} else {
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			if (this.getType() === RowAction.Navigation) {
+			if (this.getType() === TableRowAction.Navigation) {
 				sText = oResourceBundle.getText("table.ROW_ACTION_ITEM_NAVIGATE");
 			}
 		}
@@ -107,7 +105,7 @@ sap.ui.define([
 		var oIcon;
 		if (this.getIcon()) {
 			oIcon = this.getIcon();
-		} else if (this.getType() === RowAction.Navigation) {
+		} else if (this.getType() === TableRowAction.Navigation) {
 			oIcon = IconPool.getIconURI(mThemeParameters["navigationIcon"]);
 		}
 		return oIcon;

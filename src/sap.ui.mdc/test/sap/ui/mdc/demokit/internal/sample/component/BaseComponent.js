@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/mdc/sample/mockserver/mockServer",
-	"sap/ui/mdc/library",
-	"sap/ui/model/json/JSONModel"
-], function(UIComponent, ODataModel, MockServer, library, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/mdc/enum/TableSelectionMode"
+], function(UIComponent, ODataModel, MockServer, JSONModel, TableSelectionMode) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.mdc.sample.BaseComponent", {
@@ -32,8 +32,8 @@ sap.ui.define([
 			this.setModel(oModel);
 
 			var aSelectionModes = [];
-			for (var p in library.SelectionMode) {
-				aSelectionModes.push({key: p, text: library.SelectionMode[p]});
+			for (var p in TableSelectionMode) {
+				aSelectionModes.push({key: p, text: TableSelectionMode[p]});
 			}
 			this.setModel(new JSONModel({"selectionmodes": aSelectionModes}), "tablesettings");
 		}

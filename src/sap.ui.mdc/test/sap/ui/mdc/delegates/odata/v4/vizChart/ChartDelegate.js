@@ -10,12 +10,12 @@ sap.ui.define([
 	"delegates/odata/v4/FilterBarDelegate",
     "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
     "delegates/odata/v4/ODataMetaModelUtil",
-    "sap/ui/mdc/library"
+    "sap/ui/mdc/enum/ChartItemRoleType"
 ], function (
     FilterBarDelegate,
     VizChartDelegate,
     ODataMetaModelUtil,
-    MDCLib
+    ChartItemRoleType
 ) {
 	"use strict";
 
@@ -125,7 +125,7 @@ sap.ui.define([
                             dataType: oObj.$Type,
                             //formatOptions: null,
                             //constraints: {},
-                            role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
+                            role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
                             criticality: null ,//To be implemented by FE
                             textProperty: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null //To be implemented by FE
                             //textFormatter: string-> can be used to provide a custom formatter for the textProperty

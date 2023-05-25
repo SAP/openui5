@@ -3,15 +3,13 @@
 sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
-	"sap/ui/mdc/library"
+	"sap/ui/mdc/enum/TableType"
 ], function(
 	Table,
 	GridTableType,
-	library
+	TableType
 ) {
 	"use strict";
-
-	var TableType = library.TableType;
 
 	QUnit.module("Inner table initialization", {
 		afterEach: function() {

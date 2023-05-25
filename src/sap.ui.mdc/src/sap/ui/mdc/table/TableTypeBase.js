@@ -3,19 +3,17 @@
  */
 
 sap.ui.define([
-	"../library",
 	"sap/ui/core/Element",
 	"sap/ui/core/dnd/DragDropInfo",
-	"sap/ui/model/base/ManagedObjectModel"
+	"sap/ui/model/base/ManagedObjectModel",
+	"sap/ui/mdc/enum/TableP13nMode"
 ], function(
-	library,
 	Element,
 	DragDropInfo,
-	ManagedObjectModel
+	ManagedObjectModel,
+	TableP13nMode
 ) {
 	"use strict";
-
-	var P13nMode = library.TableP13nMode;
 
 	/**
 	 * Constructor for a new <code>TableTypeBase</code>.
@@ -75,7 +73,7 @@ sap.ui.define([
 	};
 
 	TableTypeBase.prototype.getSupportedP13nModes = function() {
-		return Object.keys(P13nMode);
+		return Object.keys(TableP13nMode);
 	};
 
 	TableTypeBase.prototype.callHook = function(sHookName, oObject, mPropertyBag) {
@@ -123,7 +121,7 @@ sap.ui.define([
 			sourceAggregation: "columns",
 			targetAggregation: "columns",
 			dropPosition: "Between",
-			enabled: oTable.getActiveP13nModes().includes(P13nMode.Column),
+			enabled: oTable.getActiveP13nModes().includes(TableP13nMode.Column),
 			drop: [this._onColumnMove, this]
 		});
 		oDragDropInfo.bIgnoreMetadataCheck = true;
