@@ -1005,6 +1005,9 @@ sap.ui.define([
 		return vRetErrorState;
 	};
 
+	FilterBarBase.prototype._hasAppliancePromises = function() {
+		return (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) ? this._aOngoingChangeAppliance.slice() : null;
+	};
 	FilterBarBase.prototype._handleFilterItemSubmit = function(oEvent) {
 
 		var oPromise = oEvent.getParameter("promise");
@@ -1013,10 +1016,16 @@ sap.ui.define([
 			this._sReason = ReasonMode.Enter;
 
 			oPromise.then(function() {
-				var oWaitPromises = (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) ? this._aOngoingChangeAppliance.slice() : [Promise.resolve()];
-				Promise.all(oWaitPromises).then(function() {
+				var aWaitPromises = this._hasAppliancePromises();
+				if (!aWaitPromises) { // no changes
 					this.triggerSearch();
-				}.bind(this));
+				} else {
+					Promise.all(aWaitPromises).then(function() {
+						if (!this.getLiveMode()) {  // changes in livemode will triggerSearch via onModification
+							this.triggerSearch();
+						}
+					}.bind(this));
+				}
 			}.bind(this)).catch(function(oEx) {
 				Log.error(oEx);
 				this.triggerSearch().catch(function(oEx) { }); // catch rejected and do nothing
@@ -1367,7 +1376,6 @@ sap.ui.define([
 		}
 
 		return this._setXConditions(this.getFilterConditions()).then(function(){
-
 			this._reportModelChange({
 				triggerSearch: false,
 				triggerFilterUpdate: true,
