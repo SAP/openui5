@@ -1,3 +1,4 @@
+/*globals sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
 	"sap/ui/mdc/field/FieldBase",
@@ -195,12 +196,11 @@ sap.ui.define([
 
 			sBaseType = "";
 			iMaxConditions = 1;
-			this.oField.getFieldPath = function() {
-				return "*Name,Description*";
-			};
+			sinon.stub(this.oField, "isSearchField").returns(true);
 			this.oField.setMaxConditions(1);
 			assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, false), SearchContent, "SearchContent returned.");
 			assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, true), SearchContent, "SearchContent returned.");
+			this.oField.isSearchField.restore();
 
 			done();
 		}.bind(this));

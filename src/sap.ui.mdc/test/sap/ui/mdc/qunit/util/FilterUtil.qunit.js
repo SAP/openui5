@@ -6,10 +6,12 @@
 
 sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil",
-	"sap/ui/mdc/Control"
+	"sap/ui/mdc/Control",
+	"sap/ui/model/type/String" // needs to be loaded for legacyFree UI5
 ], function(
 	FilterUtil,
-	Control
+	Control,
+	StringType
 ) {
 	"use strict";
 
