@@ -94,7 +94,6 @@
 										autoBindOnInit="false"
 										header="Items"
 										width="100%"
-										height="100%"
 										selectionMode="Multi"
 										p13nMode="Sort"
 										delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Orders"\}\}'
@@ -126,7 +125,6 @@
 										autoBindOnInit="false"
 										header="Items"
 										width="100%"
-										height="100%"
 										selectionMode="Multi"
 										p13nMode="Sort"
 										delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Orders"\}\}'

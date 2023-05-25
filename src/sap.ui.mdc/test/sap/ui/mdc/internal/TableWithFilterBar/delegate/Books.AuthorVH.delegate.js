@@ -70,7 +70,6 @@ sap.ui.define([
 					oTable = new MdcTable(oCurrentContent.getId() + "--" +  "template1", {
 						autoBindOnInit: false,
 						width: "100%",
-						height: "100%",
 						selectionMode: bMultiSelect ? TableSelectionMode.Multi : TableSelectionMode.Single,
 						p13nMode: [TableP13nMode.Sort],
 						delegate: {name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}},
@@ -112,7 +111,6 @@ sap.ui.define([
 					oTable = new MdcTable(oCurrentContent.getId() + "--" +  "default", {
 						autoBindOnInit: false,
 						width: "100%",
-						height: "100%",
 						selectionMode: bMultiSelect ? TableSelectionMode.Multi : TableSelectionMode.Single,
 						p13nMode: [TableP13nMode.Sort],
 						delegate: {name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}},

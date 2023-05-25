@@ -43,7 +43,6 @@
 			delegate='\{ "name": "sap/ui/mdc/sample/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
 			p13nMode="Column,Sort,Filter,Group"
 			selectionMode="Multi"
-			height="100%"
 			enableAutoColumnWidth="true"
 			useColumnLabelsAsTooltips="true"
 			paste="onPaste"

@@ -25,10 +25,9 @@
 			filter="mdcFilterBar"
 			delegate='\{ "name": "sap/ui/mdc/sample/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
 			selectionMode="Multi"
-			height="100%"
 			p13nMode="Column,Sort"
 			filterConditions='\{"Category":[\{"operator":"EQ","values":["asd"],"isEmpty":null,"validated":"NotValidated"\}]\}'
-			noDataText="This text is shown when no data is present in the table"
+			noData="This text is shown when no data is present in the table"
 			paste="onPaste">
 		<mdc:type>
 			<mdcTable:GridTableType rowCountMode="Fixed" rowCount="20"/>

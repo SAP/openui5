@@ -18,7 +18,6 @@
                 delegate='\{ "name": "sap/ui/mdc/tableOpaTests/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
                 selectionMode="Multi"
                 p13nMode="Column,Sort,Filter,Group"
-                height="100%"
                 enableAutoColumnWidth="true">
                 <mdc:type>
                     <mdc:table.ResponsiveTableType detailsButtonSetting="Low,None" showDetailsButton="true" />

@@ -147,7 +147,6 @@ sap.ui.define([
 					autoBindOnInit: !bSuspended,
 					showRowCount: true,
 					width: "100%",
-					height: "100%",
 					selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
 					//					type: new ResponsiveTableType(),
 					delegate: {

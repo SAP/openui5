@@ -167,7 +167,6 @@
 													<mdc:Table id="FH-Books--mdc--gridtable"
 														autoBindOnInit="false"
 														width="100%"
-														height="100%"
 														selectionMode="Multi"
 														p13nMode="Column,Sort"
 														delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Books"\}\}'

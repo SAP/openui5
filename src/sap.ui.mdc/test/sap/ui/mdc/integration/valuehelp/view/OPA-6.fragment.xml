@@ -21,7 +21,7 @@
 	xmlns:demo="sap.ui.v4demo.controls"
 	xmlns:ce="sap.ui.codeeditor"
 	>
-	
+
 
 		<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate='\{"name": "delegates/odata/v4/FilterBarDelegate", "payload": \{"collectionName": "Books"\}\}'>
 		<mdc:dependents>
@@ -82,7 +82,6 @@
 							<mdc:Table autoBindOnInit="false"
 								id="mdcTable1"
 								width="100%"
-								height="100%"
 								headerVisible="true"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
@@ -108,7 +107,7 @@
 				</mdc:dialog>
 			</mdc:ValueHelp>
 
-			
+
 		</mdc:dependents>
 		<mdc:filterItems>
 

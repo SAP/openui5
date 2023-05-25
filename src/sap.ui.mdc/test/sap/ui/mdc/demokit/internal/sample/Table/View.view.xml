@@ -24,7 +24,6 @@
 			delegate='\{ "name": "sap/ui/mdc/sample/Table/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}'
 			p13nMode="Column,Sort,Filter"
 			selectionMode="Multi"
-			height="100%"
 			threshold="50">
 		<mdc:columns>
 			<mdcTable:Column id="ID" header="ID" propertyKey="ID" >  <!-- TODO what is the propertyKey doing? -->
