@@ -23,7 +23,8 @@ sap.ui.define([
 			},
 			"sap.ui.mdc.MultiValueField": {
 				properties: {
-					dataType: "sap.ui.model.type.String"
+					dataType: "sap.ui.model.type.String",
+					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
 				}
 			},
 			"sap.ui.mdc.FilterBar": {
@@ -45,7 +46,14 @@ sap.ui.define([
 			},
 			"sap.ui.mdc.Field": {
 				properties: {
-					dataType: "sap.ui.model.type.String"
+					dataType: "sap.ui.model.type.String",
+					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+				}
+			},
+			"sap.ui.mdc.FilterField": {
+				properties: {
+					dataType: "sap.ui.model.type.String",
+					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
 				}
 			},
 			"sap.ui.mdc.chart.ChartTypeButton": {
