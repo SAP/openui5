@@ -56,8 +56,10 @@ sap.ui.define([
 
 	TableContainer.prototype.insertFilterField = function(oControl, iIndex) {
 		var oFilterBar = oControl._oFilterField.getParent();
-		var sKey = oFilterBar._getPropertyByName(oControl._getFieldPath()).name;
-		this.mFilterItems[sKey] = oControl;
+		var oProperty = oFilterBar._getPropertyByName(oControl._getFieldPath());
+		if (oProperty) {
+			this.mFilterItems[oProperty.name] = oControl;
+		}
 	};
 
 	TableContainer.prototype.setP13nData = function(oAdaptationData) {
