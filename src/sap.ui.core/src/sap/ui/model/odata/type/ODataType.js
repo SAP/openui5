@@ -148,6 +148,38 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Returns this type's empty model value for the given value.
+	 * <b>Note:</b> This function is only to be used by numeric OData types.
+	 *
+	 * @param {number|string} vValue
+	 *   The value to check
+	 * @param {boolean} [bNumeric]
+	 *   Whether the type requires the empty value as number
+	 * @returns {null | "0" | 0 | undefined}
+	 *   <ul>
+	 *     <li><code>undefined</code> if the given value is not empty</li>
+	 *     <li><code>"0"</code> or <code>0</code> (if bNumeric is set <code>true</code>) if the
+	 *       <code>parseEmptyValueToZero</code> format option is set to <code>true</code> and the <code>nullable</code>
+	 *       constraint is set to <code>false</code></li>
+	 *     <li><code>null</code> otherwise</li>
+	 *   </ul>
+	 *
+	 * @private
+	 */
+	ODataType.prototype.getEmptyValue = function (vValue, bNumeric) {
+		if (vValue !== null && vValue !== "") {
+			return undefined;
+		}
+
+		if (this.oFormatOptions && this.oFormatOptions.parseEmptyValueToZero
+				&& this.oConstraints && this.oConstraints.nullable === false) {
+			return bNumeric ? 0 : "0";
+		}
+
+		return null;
+	};
+
+	/**
 	 * Returns a language-dependent placeholder text such as "e.g. <sample value>" where <sample value> is formatted
 	 * using this type.
 	 *
