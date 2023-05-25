@@ -38,8 +38,8 @@ sap.ui.define([
 	// shortcut for sap.m.ListMode
 	var ListMode = MLibrary.ListMode;
 
-	function _getDrillStackDimensions(oMDCChart) {
-		var aDrillStack = oMDCChart.getControlDelegate().getDrillStack(oMDCChart);
+	function _getDrillStackDimensions(oChart) {
+		var aDrillStack = oChart.getControlDelegate().getDrillStack(oChart);
 		var aStackDimensions = [];
 
 		aDrillStack.forEach(function(oStackEntry) {
@@ -65,13 +65,13 @@ sap.ui.define([
 
 	/**
 	 * Creates a drill down popover
-	 * @param oMDCChart
+	 * @param oChart
 	 * @returns {sap.ui.ResponsivePopover} the popover object
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	DrillStackHandler.createDrillDownPopover = function(oMDCChart) {
+	DrillStackHandler.createDrillDownPopover = function(oChart) {
 		var oList;
 		var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 
@@ -93,7 +93,7 @@ sap.ui.define([
 		});
 
 		var oPopover = new ResponsivePopover({
-			id: oMDCChart.getId() + "-drilldownPopover",
+			id: oChart.getId() + "-drilldownPopover",
 			contentWidth: "25rem",
 			contentHeight: "20rem",
 			placement: PlacementType.VerticalPreferredBottom,
@@ -122,12 +122,12 @@ sap.ui.define([
 					var sDimensionName = oContext.getObject().id;
 
 					//Call flex to capture current state before adding an item to the chart aggregation
-					oMDCChart.getEngine().createChanges({
-						control: oMDCChart,
+					oChart.getEngine().createChanges({
+						control: oChart,
 						key: "Item",
 						state: [{
 							name: sDimensionName,
-							position: oMDCChart.getItems().length
+							position: oChart.getItems().length
 						}]
 					});
 				}
@@ -150,13 +150,13 @@ sap.ui.define([
 		}
 
 		oPopover.addContent(oList);
-		oMDCChart._oDrillDownPopover = oPopover;
+		oChart._oDrillDownPopover = oPopover;
 		return oPopover;
 	};
 
 	/**
 	 * Shows the drill-down popover on the toolbar button of an mdc.Chart instance
-	 * @param {sap.ui.mdc.Chart} oMDCChart chart instance
+	 * @param {sap.ui.mdc.Chart} oChart chart instance
      * @param {sap.m.Button} oDrillBtn button which opens the popover
 	 * @returns {Promise} promise
 	 *
@@ -164,15 +164,15 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	DrillStackHandler.showDrillDownPopover = function(oMDCChart, oDrillBtn) {
+	DrillStackHandler.showDrillDownPopover = function(oChart, oDrillBtn) {
         //TODO: Rename "Measure" and "Dimensions"?
-		var pSortedDimensionsPromise = oMDCChart.getControlDelegate().getSortedDimensions(oMDCChart);
+		var pSortedDimensionsPromise = oChart.getControlDelegate().getSortedDimensions(oChart);
 		return pSortedDimensionsPromise.then(function(aSortedDimensions) {
-			var oDrillDownPopover = oMDCChart._oDrillDownPopover;
+			var oDrillDownPopover = oChart._oDrillDownPopover;
 			var aIgnoreDimensions;
 
 			// Ignore currently applied dimensions from drill-stack for selection
-			aIgnoreDimensions = _getDrillStackDimensions(oMDCChart);
+			aIgnoreDimensions = _getDrillStackDimensions(oChart);
 			aSortedDimensions = aSortedDimensions.filter(function(oDimension){ return aIgnoreDimensions.indexOf(oDimension.name) < 0; });
 
 			var oData = { items : [] };

@@ -24,35 +24,35 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc"
 		},
-		constructor: function(oMDCChart, mSettings) {
+		constructor: function(oChart, mSettings) {
 
-			if (!oMDCChart) {
+			if (!oChart) {
 				OverflowToolbarButton.apply(this);
 				return;
 			}
 
-			this.oMDCChartModel = oMDCChart.getManagedObjectModel();
+			this.oChartModel = oChart.getManagedObjectModel();
 			mSettings = merge(mSettings, {
 				type: "Transparent",
 				press: function(oEvent) {
-					this.displayChartTypes(oEvent.getSource(), oMDCChart);
+					this.displayChartTypes(oEvent.getSource(), oChart);
 				}.bind(this),
-				id: oMDCChart.getId() + "-btnChartType",
+				id: oChart.getId() + "-btnChartType",
 				icon: '{$chart>/getChartTypeInfo/icon}',
 				tooltip: '{$chart>/getChartTypeInfo/text}',
 				text: '{$chart>/getChartTypeInfo/text}',
 				ariaHasPopup: HasPopup.ListBox
 			});
-			this.oMDCChart = oMDCChart;
+			this.oChart = oChart;
 			OverflowToolbarButton.apply(this, [
 				mSettings
 			]);
-			this.setModel(this.oMDCChartModel, "$chart");
+			this.setModel(this.oChartModel, "$chart");
 
 			this._oObserver = new ManagedObjectObserver(function() {
-				this.oMDCChartModel.checkUpdate(true);
+				this.oChartModel.checkUpdate(true);
 			}.bind(this));
-			this._oObserver.observe(this.oMDCChart, {
+			this._oObserver.observe(this.oChart, {
 				aggregations: [
 					"items"
 				],
@@ -102,14 +102,14 @@ sap.ui.define([
 	/**
      * Shows popover to select chart type
      * @param oButton button opening the popover
-     * @param oMDCChart the chart
+     * @param oChart the chart
      *
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-	ChartTypeButton.prototype.displayChartTypes = function(oButton, oMDCChart) {
-		if (!oMDCChart || !oButton) {
+	ChartTypeButton.prototype.displayChartTypes = function(oButton, oChart) {
+		if (!oChart || !oButton) {
 			return;
 		}
 
@@ -143,7 +143,7 @@ sap.ui.define([
 
 		this.oReadyPromise.then(function() {
 			if (!this.oPopover){
-				this.oPopover = this._createPopover(oMDCChart);
+				this.oPopover = this._createPopover(oChart);
 
 				this.oPopover.attachAfterClose(function(){
 					this.oPopover.destroy();
@@ -160,14 +160,14 @@ sap.ui.define([
 
 	/**
 	 * Creates the popover
-	 * @param {sap.ui.mdc.Chart} oMDCChart chart
+	 * @param {sap.ui.mdc.Chart} oChart chart
      * @returns {sap.m.ResponsivePopover} the instance of the created popover
 	 *
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	ChartTypeButton.prototype._createPopover = function(oMDCChart) {
+	ChartTypeButton.prototype._createPopover = function(oChart) {
 		var oItemTemplate = new StandardListItem({
 			title: "{$chart>text}",
 			icon: "{$chart>icon}",
@@ -194,8 +194,8 @@ sap.ui.define([
 									"sap/ui/mdc/flexibility/Chart.flexibility"
 								], function(ChartFlex) {
 
-									oMDCChart.getEngine().createChanges({
-										control: oMDCChart,
+									oChart.getEngine().createChanges({
+										control: oChart,
 										key: "Type",
 										state: {
 											properties: {
@@ -203,7 +203,7 @@ sap.ui.define([
 											}
 										}
 									}).then(function(vResult) {
-										oMDCChart.getControlDelegate().requestToolbarUpdate(oMDCChart);
+										oChart.getControlDelegate().requestToolbarUpdate(oChart);
 									});
 
 								});
@@ -219,20 +219,20 @@ sap.ui.define([
 		var oSearchField = new SearchField({
 			placeholder: oRb.getText("chart.CHART_TYPE_SEARCH"),
 			liveChange: function(oEvent) {
-				if (oMDCChart){
+				if (oChart){
 					this._triggerSearchInPopover(oEvent, oList);
 				}
 			}.bind(this)
 		});
 
 		var oPopover = new ResponsivePopover({
-			id: oMDCChart.getId() + "-btnChartTypePopover",
+			id: oChart.getId() + "-btnChartTypePopover",
 			placement: PlacementType.VerticalPreferredBottom,
 			subHeader: oSearchField,
 			contentWidth: "25rem"
 		});
 
-		oPopover.setModel(this.oMDCChartModel, "$chart");
+		oPopover.setModel(this.oChartModel, "$chart");
 
 		//Show header only in mobile scenarios
 		//still support screen reader while on desktops.

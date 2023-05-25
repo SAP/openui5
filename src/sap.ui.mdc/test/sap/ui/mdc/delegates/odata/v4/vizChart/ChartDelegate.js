@@ -29,49 +29,49 @@ sap.ui.define([
     /**
      * Returns the relevant property infos based on the metadata used with the MDC chart instance.
      *
-     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
      * @returns {array} Array of the property infos to be used within MDC chart
      * @experimental
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-     ChartDelegate.fetchProperties = function (oMDCChart) {
+     ChartDelegate.fetchProperties = function (oChart) {
 
-        var oModel = this._getModel(oMDCChart);
+        var oModel = this._getModel(oChart);
         var pCreatePropertyInfos;
 
         if (!oModel) {
             pCreatePropertyInfos = new Promise(function (resolve) {
-                oMDCChart.attachModelContextChange({
+                oChart.attachModelContextChange({
                     resolver: resolve
                 }, onModelContextChange, this);
             }.bind(this)).then(function (oModel) {
-                return this._createPropertyInfos(oMDCChart.getDelegate().payload, oModel);
+                return this._createPropertyInfos(oChart.getDelegate().payload, oModel);
             }.bind(this));
         } else {
-            pCreatePropertyInfos = this._createPropertyInfos(oMDCChart.getDelegate().payload, oModel);
+            pCreatePropertyInfos = this._createPropertyInfos(oChart.getDelegate().payload, oModel);
         }
 
         return pCreatePropertyInfos.then(function (aProperties) {
-            if (oMDCChart.data) {
-                oMDCChart.data("$mdcChartPropertyInfo", aProperties);
+            if (oChart.data) {
+                oChart.data("$mdcChartPropertyInfo", aProperties);
             }
             return aProperties;
         });
     };
 
     function onModelContextChange(oEvent, oData) {
-        var oMDCChart = oEvent.getSource();
-        var oModel = this._getModel(oMDCChart);
+        var oChart = oEvent.getSource();
+        var oModel = this._getModel(oChart);
 
         if (oModel) {
-            oMDCChart.detachModelContextChange(onModelContextChange);
+            oChart.detachModelContextChange(onModelContextChange);
             oData.resolver(oModel);
         }
     }
 
     ChartDelegate._createPropertyInfos = function (oDelegatePayload, oModel) {
-        //var oMetadataInfo = oMDCChart.getDelegate().payload;
+        //var oMetadataInfo = oChart.getDelegate().payload;
         var aProperties = [];
         var sEntitySetPath = "/" + oDelegatePayload.collectionName;
         var oMetaModel = oModel.getMetaModel();
@@ -165,9 +165,9 @@ sap.ui.define([
         return aProperties;
     };
 
-    ChartDelegate.addItem = function (oMDCChart, sPropertyName, mPropertyBag, sRole) {
-        if (oMDCChart.getModel) {
-            return Promise.resolve(this._createMDCChartItem(sPropertyName, oMDCChart, sRole));
+    ChartDelegate.addItem = function (oChart, sPropertyName, mPropertyBag, sRole) {
+        if (oChart.getModel) {
+            return Promise.resolve(this._createMDCChartItem(sPropertyName, oChart, sRole));
         }
     };
 

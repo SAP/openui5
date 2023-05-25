@@ -36,14 +36,14 @@ sap.ui.define([
     /**
 	 * Updates the breadcrumbs shown on the MDC Chart
 	 *
-	 * @param {sap.ui.mdc.Chart} oMDCChart the MDC Chart to update the breadcrumbs on
+	 * @param {sap.ui.mdc.Chart} oChart the MDC Chart to update the breadcrumbs on
 	 * @param {*} oDrillableItems the drillable items
 	 *
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	DrillBreadcrumbs.prototype.updateDrillBreadcrumbs = function(oMDCChart, oDrillableItems) {
+	DrillBreadcrumbs.prototype.updateDrillBreadcrumbs = function(oChart, oDrillableItems) {
 
         var newLinks = [];
 
@@ -76,7 +76,7 @@ sap.ui.define([
                             dimensionText: sDimText
                         };
 
-                        var oCrumb = this._createCrumb(oMDCChart, oCrumbSettings);
+                        var oCrumb = this._createCrumb(oChart, oCrumbSettings);
                         newLinks.push(oCrumb);//note the links are added in an incorrect order need to reverse
                     }
 
@@ -126,7 +126,7 @@ sap.ui.define([
 
     /**
 	 * Creates a breadcrumb with given settings
-	 * @param oMDCChart the chart the breadcrumb is for
+	 * @param oChart the chart the breadcrumb is for
 	 * @param oCrumbSettings settings for the breadcrumb
 	 *
 	 * @returns {sap.m.Link} the created breadcrumb
@@ -135,7 +135,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	DrillBreadcrumbs.prototype._createCrumb = function(oMDCChart, oCrumbSettings) {
+	DrillBreadcrumbs.prototype._createCrumb = function(oChart, oCrumbSettings) {
 
 		var oCrumb = new Link({
 			text: oCrumbSettings.dimensionText,
@@ -143,7 +143,7 @@ sap.ui.define([
                 var iLinkIndex = this.indexOfLink(oControlEvent.getSource());
 
 				// get drill-path which was drilled-up and needs to be removed from mdc chart
-				var aCurrentDrillStack = oMDCChart.getControlDelegate().getDrillableItems(oMDCChart),
+				var aCurrentDrillStack = oChart.getControlDelegate().getDrillableItems(oChart),
 					aDrilledItems = aCurrentDrillStack.slice(iLinkIndex + 1);
 
                 //TODO: Why do we need this?
@@ -156,8 +156,8 @@ sap.ui.define([
 					};
 				});
 
-				oMDCChart.getEngine().createChanges({
-					control: oMDCChart,
+				oChart.getEngine().createChanges({
+					control: oChart,
 					key: "Item",
 					state: aFlexItemChanges
 				});
