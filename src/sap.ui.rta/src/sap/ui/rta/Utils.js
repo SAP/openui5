@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
@@ -24,6 +25,7 @@ function(
 	FlexUtils,
 	Layer,
 	FlexLayerUtils,
+	Version,
 	OverlayUtil,
 	DOMUtil,
 	ElementUtil,
@@ -640,6 +642,38 @@ function(
 				// check if movedOverlay is movable into the target aggregation
 				return fnHasMoveAction(oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove, oPlugin);
 			});
+	};
+
+	/**
+	 * Check if an existing draft would be overwritten if a change is done on the currently shown version
+	 * If so it opens a confirmation dialog.
+	 * @param {object} oVersionsModel The versions model
+	 * @return {Promise.<boolean>} It either resolves with an indicator whether a confirmation
+	 * was shown or rejects with "cancel" if cancel was pressed
+	 */
+	Utils.checkDraftOverwrite = function(oVersionsModel) {
+		var bBackEndDraftExists = oVersionsModel.getProperty("/backendDraft");
+		var bDraftDisplayed = oVersionsModel.getProperty("/displayedVersion") === Version.Number.Draft;
+
+		if (
+			bDraftDisplayed ||
+			!bBackEndDraftExists
+		) {
+			return Promise.resolve(false);
+		}
+
+		// warn the user: the existing draft would be discarded in case the user saves
+		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", {
+			titleKey: "TIT_DRAFT_DISCARD_DIALOG",
+			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			emphasizedAction: MessageBox.Action.OK
+		})
+		.then(function(sAction) {
+			if (sAction !== MessageBox.Action.OK) {
+				throw "cancel";
+			}
+			return true;
+		});
 	};
 
 	return Utils;

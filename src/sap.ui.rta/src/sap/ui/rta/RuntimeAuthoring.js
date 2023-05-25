@@ -1061,33 +1061,30 @@ sap.ui.define([
 	 * @returns {Promise} Resolves as soon as the MessageBox is closed
 	 */
 	function onStackModified() {
-		var bBackEndDraftExists = this._oVersionsModel.getProperty("/backendDraft");
-		var bDraftDisplayed = this._oVersionsModel.getProperty("/displayedVersion") === Version.Number.Draft;
 		var oCommandStack = this.getCommandStack();
 		var bCanUndo = oCommandStack.canUndo();
 
+		// FIXME Missing check whether action is saveable e.g. switching a view should not trigger this
+		// bCanUndo and _bUserDiscardedDraft seem to be redundant logic,
+		// because displayedVersion would be draft already
 		if (
 			!this.getShowToolbars() ||
 			!bCanUndo ||
-			this._bUserDiscardedDraft ||
-			bDraftDisplayed ||
-			!bBackEndDraftExists
+			this._bUserDiscardedDraft
 		) {
-			return modifyStack.call(this);
+			modifyStack.call(this);
+			return;
 		}
 
 		// warn the user: the existing draft would be discarded in case the user saves
-		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", {
-			titleKey: "TIT_DRAFT_DISCARD_DIALOG",
-			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-			emphasizedAction: MessageBox.Action.OK
-		})
-		.then(function(sAction) {
-			if (sAction === MessageBox.Action.OK) {
-				discardDraftConfirmed.call(this);
-			} else {
-				this.undo();
+		Utils.checkDraftOverwrite(this._oVersionsModel)
+		.then(function(bDialogShown) {
+			if (bDialogShown) {
+				this._bUserDiscardedDraft = true;
 			}
+			modifyStack.call(this);
+		}.bind(this), function() {
+			this.undo();
 		}.bind(this));
 	}
 
@@ -1431,11 +1428,6 @@ sap.ui.define([
 				MessageToast.show(sMessage);
 			}
 		});
-	}
-
-	function discardDraftConfirmed() {
-		this._bUserDiscardedDraft = true;
-		modifyStack.call(this);
 	}
 
 	function isOldVersionDisplayed() {

@@ -386,10 +386,6 @@ sap.ui.define([
 			return this.oRta.start();
 		},
 		afterEach: function() {
-			if (this.oRta._oDraftDiscardWarningPromise) {
-				this.oRta._oDraftDiscardWarningPromise = undefined;
-				this.oRta._oDraftDiscardWarningDialog.destroy();
-			}
 			this.oRta.destroy();
 			sandbox.restore();
 		}

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"../../RtaQunitUtils",
+	"sap/m/MessageBox",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
@@ -11,9 +12,11 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
+	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
+	MessageBox,
 	oCore,
 	Control,
 	Fragment,
@@ -23,6 +26,7 @@ sap.ui.define([
 	JSONModel,
 	Adaptation,
 	ManageAdaptations,
+	Utils,
 	sinon
 ) {
 	"use strict";
@@ -40,13 +44,14 @@ sap.ui.define([
 
 	function initializeToolbar() {
 		var oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
+		this.oRootControl = new Control();
 		var oToolbar = new Adaptation({
 			textResources: oRtaResourceBundle,
 			rtaInformation: {
 				flexSettings: {
 					layer: Layer.CUSTOMER
 				},
-				rootControl: new Control()
+				rootControl: this.oRootControl
 			}
 		});
 		oToolbar.setModel(oToolbarControlsModel, "controls");
@@ -69,7 +74,7 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
 			this.oModel = ContextBasedAdaptationsAPI.createModel([DEFAULT_ADAPTATION], DEFAULT_ADAPTATION, true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
-			this.oToolbar = initializeToolbar();
+			this.oToolbar = initializeToolbar.call(this);
 			this.oManageAdaptations = new ManageAdaptations({ toolbar: this.oToolbar });
 			this.oEvent = {
 				getSource: function() {
@@ -143,11 +148,24 @@ sap.ui.define([
 				};
 				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves(this.oContextBasedAdaptations);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
+
+				this.oVersionsModel = new JSONModel({
+					backendDraft: true,
+					displayedVersion: "0"
+				});
+				this.oManageAdaptations.setModel(this.oVersionsModel, "versions");
+				this.oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox");
+
 				return this.oManageAdaptations.openManageAdaptationDialog()
-					.then(function (oDialog) {
-						this.oDialog = oDialog;
-						return this.oToolbar._pFragmentLoaded;
-					}.bind(this));
+				.then(function (oDialog) {
+					this.oDialog = oDialog;
+					this.oMoveUpButton = getControl(this.oToolbar, "moveUpButton");
+					this.oMoveDownButton = getControl(this.oToolbar, "moveDownButton");
+					this.oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
+					this.oSaveButton = getControl(this.oToolbar, "manageAdaptations-saveButton");
+					this.oFirstTableItem = this.oAdaptationsTable.getItems()[0];
+					return this.oToolbar._pFragmentLoaded;
+				}.bind(this));
 			}
 		}, function() {
 			QUnit.test("and context-based adaptations are visible and correctly formatted", function(assert) {
@@ -157,89 +175,105 @@ sap.ui.define([
 			});
 
 			QUnit.test("and the priority of the context-based adaptations is first moved down then up again using the up and down button", function(assert) {
-				var oMoveUpButton = getControl(this.oToolbar, "moveUpButton");
-				var oMoveDownButton = getControl(this.oToolbar, "moveDownButton");
-				var oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
-				var oSaveAsButtonEnabled = getControl(this.oToolbar, "manageAdaptations-saveButton");
-				var oFirstTableItem = oAdaptationsTable.getItems()[0];
-				var sFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
+				var sFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
 					.mAggregations.items[0].getProperty("text");
-				oAdaptationsTable.getItems()[0].focus();
-				oAdaptationsTable.setSelectedItem(oAdaptationsTable.getItems()[0], true, true);
+				this.oAdaptationsTable.getItems()[0].focus();
+				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
 
-				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
-				assert.notOk(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
-				assert.ok(oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
+				assert.notOk(this.oSaveButton.getEnabled(), "Save Button is disabled");
+				assert.notOk(this.oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
+				assert.ok(this.oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
 
-				oMoveDownButton.firePress();
-				var sNewFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
+				this.oMoveDownButton.firePress();
+				var sNewFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
 					.mAggregations.items[0].getProperty("text");
 				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
-				assert.ok(oSaveAsButtonEnabled.getEnabled(), "Save Button is enabled");
+				assert.ok(this.oSaveButton.getEnabled(), "Save Button is enabled");
 
-				oMoveUpButton.firePress();
-				sNewFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
+				this.oMoveUpButton.firePress();
+				sNewFirstAdaptationText = this.oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
 					.mAggregations.items[0].getProperty("text");
 				assert.strictEqual(sFirstAdaptationText, sNewFirstAdaptationText, "origianl priority is visible");
-				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
+				assert.notOk(this.oSaveButton.getEnabled(), "Save Button is disabled");
 			});
 
 			QUnit.test("and the priority of the context-based adaptations is moved down and then save button is clicked", function(assert) {
-				var oReloadStub = sandbox.stub(ContextBasedAdaptationsAPI, "reorder").resolves();
-				var oMoveUpButton = getControl(this.oToolbar, "moveUpButton");
-				var oMoveDownButton = getControl(this.oToolbar, "moveDownButton");
-				var oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
-				var oSaveAsButtonEnabled = getControl(this.oToolbar, "manageAdaptations-saveButton");
-				var oFirstTableItem = oAdaptationsTable.getItems()[0];
+				this.oVersionsModel.setData({
+					backendDraft: true,
+					displayedVersion: "12345"
+				});
+
+				var oReorderStub = sandbox.stub(ContextBasedAdaptationsAPI, "reorder").resolves();
+				var oFirstTableItem = this.oAdaptationsTable.getItems()[0];
 				var sFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
 					.mAggregations.items[0].getProperty("text");
-				oAdaptationsTable.getItems()[0].focus();
-				oAdaptationsTable.setSelectedItem(oAdaptationsTable.getItems()[0], true, true);
+				this.oAdaptationsTable.getItems()[0].focus();
+				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
 
-				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
-				assert.notOk(oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
-				assert.ok(oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
+				assert.notOk(this.oSaveButton.getEnabled(), "Save Button is disabled");
+				assert.notOk(this.oMoveUpButton.getEnabled(), "MoveUpButton is enabled");
+				assert.ok(this.oMoveDownButton.getEnabled(), "oMoveDownButton is enabled");
 
-				oMoveDownButton.firePress();
+				this.oMoveDownButton.firePress();
 				var sNewFirstAdaptationText = oFirstTableItem.getCells()[1].mAggregations.content[0].mAggregations.items[0]
-					.mAggregations.items[0].getProperty("text");
+				.mAggregations.items[0].getProperty("text");
 				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
-				assert.ok(oSaveAsButtonEnabled.getEnabled(), "Save Button is enabled");
+				assert.ok(this.oSaveButton.getEnabled(), "Save Button is enabled");
 
-				assert.strictEqual(oReloadStub.callCount, 0, "reload stub is not called");
-				oSaveAsButtonEnabled.firePress();
-				assert.strictEqual(oReloadStub.callCount, 1, "reload stub is called");
-				assert.deepEqual(getRanks(this.oManageAdaptations.oAdaptationsModel), [1, 2], "ranks are updated correctly");
+				assert.strictEqual(oReorderStub.callCount, 0, "reorder stub is not called");
+
+				this.oShowMessageBoxStub.returns(Promise.reject("cancel"));
+				this.oSaveButton.firePress();
+
+				return new Promise(function(resolve) {
+					setTimeout(resolve, 0);
+				}).then(function() {
+					assert.strictEqual(this.oShowMessageBoxStub.callCount, 1, "Warning is shown");
+					assert.strictEqual(oReorderStub.callCount, 0, "reorder stub is not called");
+
+					this.oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+					this.oSaveButton.firePress();
+
+					return new Promise(function(resolve) {
+						setTimeout(resolve, 0);
+					});
+				}.bind(this)).then(function() {
+					assert.strictEqual(this.oShowMessageBoxStub.callCount, 2, "Warning is shown again");
+					assert.strictEqual(oReorderStub.callCount, 1, "reorder stub is called");
+					var mCalledProps = oReorderStub.getCall(0).args[0];
+					assert.strictEqual(mCalledProps.layer, "CUSTOMER", "reorder stub is called with correct layer");
+					assert.strictEqual(mCalledProps.control, this.oRootControl, "reorder stub is called with correct rootControl");
+					assert.deepEqual(mCalledProps.parameters, {priorities: ["id-1591275572835-1", "id-1591275572834-1"]}, "reorder stub is called with correct priorities");
+					assert.deepEqual(getRanks(this.oManageAdaptations.oAdaptationsModel), [1, 2], "ranks are updated correctly");
+				}.bind(this));
 			});
 
 			QUnit.test("and the priority of the context-based adaptations is changed using drag and drop", function(assert) {
-				var oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
-				var oSaveAsButtonEnabled = getControl(this.oToolbar, "manageAdaptations-saveButton");
-				assert.notOk(oSaveAsButtonEnabled.getEnabled(), "Save Button is disabled");
+				assert.notOk(this.oSaveButton.getEnabled(), "Save Button is disabled");
 
-				var oFirstTableItem = oAdaptationsTable.getItems()[0];
+				var oFirstTableItem = this.oAdaptationsTable.getItems()[0];
 				var sFirstAdaptationText = getAdaptationTitle(oFirstTableItem);
-				oAdaptationsTable.getItems()[0].focus();
-				oAdaptationsTable.setSelectedItem(oAdaptationsTable.getItems()[0], true, true);
+				this.oAdaptationsTable.getItems()[0].focus();
+				this.oAdaptationsTable.setSelectedItem(this.oAdaptationsTable.getItems()[0], true, true);
 				var oFakeEvent = {
 					getParameter: function(sProperty) {
 						if (sProperty === "droppedControl") {
-							return oAdaptationsTable.getItems()[1];
+							return this.oAdaptationsTable.getItems()[1];
 						} else if (sProperty === "draggedControl") {
 							return oFirstTableItem;
 						} else if (sProperty === "dropPosition") {
 							return "After";
 						}
 						return "";
-					},
+					}.bind(this),
 					getBindingContext: function() {
 						return oFirstTableItem.getBindingContext("contextBased");
 					}
 				};
-				oAdaptationsTable.getDragDropConfig()[0].mEventRegistry.drop[0].fFunction(oFakeEvent);
+				this.oAdaptationsTable.getDragDropConfig()[0].mEventRegistry.drop[0].fFunction(oFakeEvent);
 				var sNewFirstAdaptationText = getAdaptationTitle(oFirstTableItem);
 				assert.notEqual(sFirstAdaptationText, sNewFirstAdaptationText, "priority of adaptations has changed");
-				assert.ok(oSaveAsButtonEnabled.getEnabled(), "Save Button is enabled");
+				assert.ok(this.oSaveButton.getEnabled(), "Save Button is enabled");
 			});
 		});
 

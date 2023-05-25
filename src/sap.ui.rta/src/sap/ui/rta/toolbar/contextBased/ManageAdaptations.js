@@ -345,19 +345,21 @@ function(
 	}
 
 	function onSaveReorderedAdaptations() {
-		var oRtaInformation = this.getToolbar().getRtaInformation();
-		var aAdaptationPriorities = this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) { return oAdaptation.id; });
-		ContextBasedAdaptationsAPI.reorder({control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer, parameters: {priorities: aAdaptationPriorities}})
+		Utils.checkDraftOverwrite(this.getModel("versions")).then(function() {
+			var oRtaInformation = this.getToolbar().getRtaInformation();
+			var aAdaptationPriorities = this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) { return oAdaptation.id; });
+			return ContextBasedAdaptationsAPI.reorder({control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer, parameters: {priorities: aAdaptationPriorities}});
+		}.bind(this)).then(function() {
+			var oAllUpdatedAdaptations = Object.assign(this.oAdaptationsModel.getProperty("/allAdaptations"), this.oAdaptationsModel.getProperty("/adaptations"));
+			this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
+			onCloseDialog.call(this);
+		}.bind(this))
 		.catch(function(oError) {
-			Log.error(oError.stack);
-			var sMessage = "MSG_LREP_TRANSFER_ERROR";
-			var oOptions = { titleKey: "BTN_MANAGE_APP_CTX" };
-			oOptions.details = oError.userMessage;
-			Utils.showMessageBox("error", sMessage, oOptions);
+			if (oError !== "cancel") {
+				Utils.showMessageBox("error", "MSG_LREP_TRANSFER_ERROR", { titleKey: "BTN_MANAGE_APP_CTX", error: oError});
+				Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			}
 		});
-		var oAllUpdatedAdaptations = Object.assign(this.oAdaptationsModel.getProperty("/allAdaptations"), this.oAdaptationsModel.getProperty("/adaptations"));
-		this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
-		onCloseDialog.call(this);
 	}
 
 	function onCloseDialog() {
