@@ -654,37 +654,24 @@ sap.ui.define([
 		if (Core.isInitialized()) {
 			// core already initialized, do it now
 
-			// 1st try to resolve the oRef as a Container control
+			// 1st try to resolve the oRef as a container control
 			var oContainer = oRef;
-			if (typeof oContainer === "string") {
+			if (typeof oRef === "string") {
 				oContainer = Element.registry.get(oRef);
 			}
-			// if no container control is found use the corresponding UIArea
-			if (!(oContainer instanceof Element)) {
-				if (oRef.id === StaticArea.STATIC_UIAREA_ID) {
+
+			if (oContainer instanceof Element) {
+				if (!isSuitableAsContainer(oContainer)) {
+					Log.warning("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
+					return this;
+				}
+			} else {
+				// if no container control is found, use the corresponding UIArea
+				if (oRef === StaticArea.STATIC_UIAREA_ID
+					|| oRef && oRef.id === StaticArea.STATIC_UIAREA_ID) {
 					oContainer = StaticArea.getUIArea();
 				} else {
 					oContainer = UIArea.create(oRef);
-				}
-			} else {
-				var oContentAggInfo = oContainer.getMetadata().getAggregation("content");
-				var bContainerSupportsPlaceAt = true;
-
-				if (oContentAggInfo) {
-					if (!oContentAggInfo.multiple || oContentAggInfo.type != "sap.ui.core.Control") {
-						bContainerSupportsPlaceAt = false;
-					}
-				} else if (!oContainer.addContent ||
-						!oContainer.insertContent ||
-						!oContainer.removeAllContent) {
-					//Temporary workaround for sap.ui.commons.AbsoluteLayout to enable
-					// placeAt even when no content aggregation is available.
-					// TODO: Find a proper solution
-					bContainerSupportsPlaceAt = false;
-				}
-				if (!bContainerSupportsPlaceAt) {
-					Log.warning("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
-					return this;
 				}
 			}
 
@@ -716,6 +703,26 @@ sap.ui.define([
 		}
 		return this;
 	};
+
+	/**
+	 * Checks whether the given UI5 element is suitable as a container for placeAt
+	 * @param {sap.ui.core.Element} oContainer
+	 * @returns {boolean} Whether the given UI5 element is suitable as a container
+	 * @private
+	 */
+	function isSuitableAsContainer(oContainer) {
+		var oContentAggInfo = oContainer.getMetadata().getAggregation("content");
+		if (oContentAggInfo) {
+			return oContentAggInfo.multiple && oContentAggInfo.type === "sap.ui.core.Control";
+		}
+		// use duck typing to allow placeAt even when there's no 'content' aggregation available.
+		// TODO This is a workaround for sap.ui.commons.AbsoluteLayout, abandon when it's removed
+		return (
+			typeof oContainer.addContent === "function"
+			&& typeof oContainer.insertContent === "function"
+			&& typeof oContainer.removeAllContent === "function"
+		);
+	}
 
 	/*
 	 * Event handling
