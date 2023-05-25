@@ -618,6 +618,7 @@ sap.ui.define([
 						showValueHelp: false,
 						editable: true,
 						ariaAttributes: { role: "listbox", aria : { readonly: true, roledescription: this._oResourceBundle.getText("valuehelp.TOKENIZER_ARIA_ROLE_DESCRIPTION")}},
+						ariaLabelledBy: this.oTokenizerPanel,
 						tokenUpdate: function(oEvent) {
 							if (oEvent.getParameter("removedTokens")) {
 								var aRemovedTokens = oEvent.getParameter("removedTokens");
