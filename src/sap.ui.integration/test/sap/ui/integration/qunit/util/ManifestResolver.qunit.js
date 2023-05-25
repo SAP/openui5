@@ -466,6 +466,67 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("Resolve with syntax error in data provider", function (assert) {
+		// Arrange
+		var oManifest = {
+				"sap.app": {
+					"id": "manifestResolver.test.card.errorDataSyntax",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Object",
+					"extension": "./extensions/ExtensionSimulateFetchError",
+					"data": {
+						"request": {
+							"url": "./wrong_url.json"
+						}
+					},
+					"header": {
+						"title": "Syntax Error in Data Provider"
+					},
+					"content": {
+						"groups": [
+							{
+								"title": "Contact Details",
+								"items": [
+									{
+										"label": "First name",
+										"value": "{firstName}"
+									}
+								]
+							}
+						]
+					}
+				}
+			},
+			oCard = new SkeletonCard({
+				manifest: oManifest,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				var oExpectedResult = {
+						"message": {
+							"type": "error",
+							"title": "An error occurred",
+							"illustrationType": "sapIllus-ErrorScreen",
+							"illustrationSize": "Auto",
+							"description": "Error: Simulated fetch error"
+						}
+					},
+					oResult = oRes["sap.card"].content;
+
+				delete oResult.message.details;
+
+				// Assert
+				assert.deepEqual(oResult, oExpectedResult, "The content contains a message with correct error description.");
+
+				oCard.destroy();
+			});
+	});
+
 	QUnit.test("There should be no 'undefined' values", function (assert) {
 		// Arrange
 		var oManifest = {

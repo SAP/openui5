@@ -46,7 +46,7 @@ sap.ui.define([
 			sResponseText = mErrorInfo.requestErrorParams.responseText,
 			sIllustrationType = IllustratedMessageType.ErrorScreen,
 			sTitle = oResponse ? oResponse.status + " " + oResponse.statusText : oCard.getTranslatedText("CARD_ERROR_OCCURED"),
-			sDescription = oResponse ? oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION") : mErrorInfo.requestErrorParams.message,
+			sDescription = oResponse ? oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION") : mErrorInfo.requestErrorParams.message.toString(),
 			requestSettings = mErrorInfo.requestSettings,
 			sUrl = requestSettings.request ? requestSettings.request.url : "",
 			sDetails = oCard.getTranslatedText("CARD_ERROR_REQUEST_DETAILS", [sUrl]);
