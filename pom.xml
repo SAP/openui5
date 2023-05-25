@@ -103,6 +103,16 @@
 		<!-- internal properties, do not modify -->
 		<effective.npm.package.phase>${npm.package.phase}</effective.npm.package.phase>
 
+		<!-- Node.js settings -->
+		<node.version>16.19.0</node.version>
+		<node.gav>gav:org.nodejs.download.node:node</node.gav>
+		<node.location>${node.gav}</node.location>
+		<node.forceNoProxy>true</node.forceNoProxy>
+
+		<!-- NPM settings -->
+		<npm.version>9.6.0</npm.version>
+		<npm.registry>${xmake.import.NPM.0}</npm.registry>
+
 		<!-- skip eslint validation -->
 		<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
 		<!-- fail on eslint error -->
