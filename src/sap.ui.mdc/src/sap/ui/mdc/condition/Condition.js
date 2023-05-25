@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 		'sap/base/Log',
-		'sap/ui/mdc/enum/ConditionValidated'
+		'sap/ui/mdc/enums/ConditionValidated'
 	],
 	function(
 		Log,
@@ -21,10 +21,7 @@ sap.ui.define([
 		 * @namespace
 		 * @name sap.ui.mdc.condition
 		 * @since 1.61.0
-		 * @private
-		 * @experimental As of version 1.61
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 
 		/**
@@ -37,10 +34,7 @@ sap.ui.define([
 		 * @since 1.61.0
 		 * @alias sap.ui.mdc.condition.Condition
 		 *
-		 * @private
-		 * @experimental As of version 1.61
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		var Condition = {
 
@@ -55,11 +49,9 @@ sap.ui.define([
 				 * @property {object} [inParameters] In parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
 				 * @property {object} [outParameters] Out parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
 				 * @property {boolean} [isEmpty] If set, the condition is empty (used as dummy condition in {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel})
-				 * @property {sap.ui.mdc.enum.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the value help) and not shown in the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel} control
+				 * @property {sap.ui.mdc.enums.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the value help) and not shown in the {@link sap.ui.mdc.valuehelp.base.DefineConditionPanel DefineConditionPanel} control
 				 * @property {object} [payload] Payload of the condition. Set by application. Data needs to be stringified. (as stored and loaded in variants)
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 
 				/**
@@ -74,9 +66,7 @@ sap.ui.define([
 				 * @param {object} [oOutParameters] Out parameters of the condition. (Do not use it for new conditions, use payload instead.)
 				 * @param {object} [oPayload] Payload of the condition
 				 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the EQ operator along with <code>sKey</code> and <code>sDescription</code> as <code>aValues</code>
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 *
 				 */
 				createItemCondition: function(sKey, sDescription, oInParameters, oOutParameters, oPayload) {
@@ -97,12 +87,10 @@ sap.ui.define([
 				 * @param {any[]} aValues Array of values for the condition
 				 * @param {object} [oInParameters] In parameters of the condition. (Do not use it for new conditions, use payload instead.)
 				 * @param {object} [oOutParameters] Out parameters of the condition. (Do not use it for new conditions, use payload instead.)
-				 * @param {sap.ui.mdc.enum.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
+				 * @param {sap.ui.mdc.enums.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
 				 * @param {object} [oPayload] Payload of the condition
 				 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the given operator and values
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 *
 				 */
 				createCondition: function(sOperator, aValues, oInParameters, oOutParameters, sValidated, oPayload) {

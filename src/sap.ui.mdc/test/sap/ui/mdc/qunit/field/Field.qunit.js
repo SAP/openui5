@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/FieldEditMode",
-	"sap/ui/mdc/enum/FieldDisplay",
+	"sap/ui/mdc/enums/FieldEditMode",
+	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldInput",
 	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)

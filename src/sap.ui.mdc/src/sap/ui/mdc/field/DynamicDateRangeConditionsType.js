@@ -8,9 +8,9 @@ sap.ui.define([
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/mdc/enum/BaseType',
-	'sap/ui/mdc/enum/OperatorValueType',
+	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/BaseType',
+	'sap/ui/mdc/enums/OperatorValueType',
 	'sap/ui/mdc/util/DateUtil',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
@@ -49,14 +49,12 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @since 1.96.0
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 *
 	 * @param {object} [oFormatOptions] Formatting options
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting and parsing)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
-	 * @param {sap.ui.mdc.enum.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
+	 * @param {sap.ui.mdc.enums.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
 	 * @param {string} [oFormatOptions.ValueHelpID] ID of the value help to determine the key and description
 	 * @param {boolean} [oFormatOptions.hideOperator] If set, only the value of the condition is shown, but no operator. (Use it only if just one operator is supported.)
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions

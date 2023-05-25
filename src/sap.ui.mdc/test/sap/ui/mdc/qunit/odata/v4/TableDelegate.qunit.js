@@ -18,9 +18,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/test/TestUtils",
-	"sap/ui/mdc/enum/TableMultiSelectMode",
-	"sap/ui/mdc/enum/TableSelectionMode",
-	"sap/ui/mdc/enum/TableType",
+	"sap/ui/mdc/enums/TableMultiSelectMode",
+	"sap/ui/mdc/enums/TableSelectionMode",
+	"sap/ui/mdc/enums/TableType",
 	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	TableQUnitUtils,

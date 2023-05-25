@@ -10,11 +10,9 @@ sap.ui.define(function() {
      * Defines the personalization mode of the table.
      *
      * @enum {string}
-     * @alias sap.ui.mdc.enum.TableP13nMode
+     * @alias sap.ui.mdc.enums.TableP13nMode
      * @since 1.115
-     * @private
-     * @ui5-restricted sap.fe
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
     var TableP13nMode = {
         /**

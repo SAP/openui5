@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/ui/mdc/ValueHelp",
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/FieldEditMode",
-	"sap/ui/mdc/enum/FieldDisplay",
-	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/enums/FieldEditMode",
+	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/field/MultiValueFieldDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)

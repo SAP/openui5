@@ -17,7 +17,7 @@ sap.ui.define([
 	"./waitForColumnHeader",
 	"./waitForP13nButtonWithParentAndIcon",
 	"./waitForListItemInDialogWithLabel",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	Opa5,
 	Properties,

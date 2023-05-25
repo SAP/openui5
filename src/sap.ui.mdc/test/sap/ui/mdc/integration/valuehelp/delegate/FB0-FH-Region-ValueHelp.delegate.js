@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
 	'sap/base/util/merge',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
 	'sap/ui/model/odata/v4/OPropertyKeyBinding'

@@ -9,10 +9,7 @@ sap.ui.define([
 
 	/**
 	 * @class The <code>IFilterContainer</code> is the base container for the visualization of the filter items in the filter bar.
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.filterbar.IFilterContainer
 	 */
@@ -20,9 +17,7 @@ sap.ui.define([
 
 	/**
 	 * Creates the inner layout for the <code>IFilterContainer</code>.
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	IFilterContainer.prototype.init = function() {
 		Element.prototype.init.apply(this, arguments);
@@ -32,9 +27,7 @@ sap.ui.define([
 	/**
 	 * Getter for the inner layout item.
 	 * @returns {sap.ui.core.Control} Control instance of the inner layout item
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	IFilterContainer.prototype.getInner = function(){
 		return this.oLayout;
@@ -42,8 +35,7 @@ sap.ui.define([
 
 	/**
 	 * Inserts the inner content into the layout item.
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @param {sap.ui.mdc.FilterItem} oControl to be inserted
 	 * @param {int} iIndex Position where the control is added
 	 */
@@ -53,9 +45,7 @@ sap.ui.define([
 
 	/**
 	 * Removes the inner content from the layout item.
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {sap.ui.mdc.FilterItem} oControl Control that is removed
 	 */
 	IFilterContainer.prototype.removeFilterField = function(oControl) {
@@ -65,9 +55,7 @@ sap.ui.define([
 	/**
 	 * Returns the inner controls of the layout item.
 	 * @returns {sap.ui.mdc.FilterItem[]} Array of all inner controls in the layout item
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	IFilterContainer.prototype.getFilterFields = function() {
 		//return the inner controls as array
@@ -76,9 +64,7 @@ sap.ui.define([
 	/**
 	 * Overwrites the default exit to clean up the created layout properly.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	IFilterContainer.prototype.exit = function() {
 		Element.prototype.exit.apply(this, arguments);

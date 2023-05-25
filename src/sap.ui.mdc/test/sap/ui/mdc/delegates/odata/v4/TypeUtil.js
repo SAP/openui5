@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'delegates/odata/TypeUtil',
-	'sap/ui/mdc/enum/BaseType',
+	'sap/ui/mdc/enums/BaseType',
 	'sap/base/util/merge'
 ], function(ODataTypeUtil, BaseType, merge) {
 	"use strict";

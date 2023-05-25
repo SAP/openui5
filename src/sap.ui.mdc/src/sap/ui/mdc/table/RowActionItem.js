@@ -6,7 +6,7 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Core',
-	'sap/ui/mdc/enum/TableRowAction'
+	'sap/ui/mdc/enums/TableRowAction'
 ], function(Element, IconPool, Core, TableRowAction) {
 	"use strict";
 
@@ -23,10 +23,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @experimental
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @alias sap.ui.mdc.table.RowActionItem
 	 */
 
@@ -37,11 +34,11 @@ sap.ui.define([
 				/**
 				 * Type of the row action item.
 				 *
-				 * As of version 1.98, only sap.ui.mdc.enum.TableRowAction.Navigation is available.
+				 * As of version 1.98, only sap.ui.mdc.enums.TableRowAction.Navigation is available.
 				 * Setting the type ensures default values for the properties <code>icon</code> and <code>text</code>.
 				 * If an icon or text is set explicitly this setting is used.
 				 */
-				type: {type: "sap.ui.mdc.enum.TableRowAction"},
+				type: {type: "sap.ui.mdc.enums.TableRowAction"},
 				/**
 				 * Text for the row action item.
 				 *

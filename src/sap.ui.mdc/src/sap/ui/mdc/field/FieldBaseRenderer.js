@@ -5,7 +5,7 @@
 sap.ui.define([
 	'sap/ui/core/Renderer',
 	'sap/ui/core/IconPool',
-	'sap/ui/mdc/enum/FieldEditMode'
+	'sap/ui/mdc/enums/FieldEditMode'
 ], function(
 	Renderer,
 	IconPool,

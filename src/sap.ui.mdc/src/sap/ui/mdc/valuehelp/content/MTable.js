@@ -6,7 +6,7 @@ sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/FilterableListContent',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterConverter',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/util/loadModules',
 	'sap/m/library',
 	'sap/ui/model/FilterType',
@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/mdc/util/Common',
 	'sap/base/strings/formatMessage',
 	'sap/base/util/merge',
-	'sap/ui/mdc/enum/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/Log',
 	'sap/ui/core/Element'
 ], function(
@@ -52,11 +52,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.95.0
-	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.content.MTable
 	 */
 	var MTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MTable", /** @lends sap.ui.mdc.valuehelp.content.MTable.prototype */

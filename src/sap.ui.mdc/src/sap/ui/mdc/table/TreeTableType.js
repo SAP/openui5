@@ -19,10 +19,7 @@ sap.ui.define([
 	 * @class The table type info class for the metadata-driven table.
 	 * @extends sap.ui.mdc.table.GridTableType
 	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.109
 	 * @alias sap.ui.mdc.table.TreeTableType
 	 */

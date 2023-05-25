@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/mdc/sample/mockserver/mockServer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/enum/TableSelectionMode"
+	"sap/ui/mdc/enums/TableSelectionMode"
 ], function(UIComponent, ODataModel, MockServer, JSONModel, TableSelectionMode) {
 	"use strict";
 

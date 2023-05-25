@@ -7,8 +7,8 @@ sap.ui.define([
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/mdc/enum/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/ui/core/Core',
 	'sap/base/util/deepEqual'
 ], function(

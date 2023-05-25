@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/m/SegmentedButtonItem",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/enum/TableGrowingMode",
-	"sap/ui/mdc/enum/TableRowAction"
+	"sap/ui/mdc/enums/TableGrowingMode",
+	"sap/ui/mdc/enums/TableRowAction"
 ], function(
 	TableTypeBase,
 	PersonalizationUtils,
@@ -36,10 +36,7 @@ sap.ui.define([
 	 * @class The table type info class for the metadata-driven table.
 	 * @extends sap.ui.mdc.table.TableTypeBase
 	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.ResponsiveTableType
 	 */
@@ -52,7 +49,7 @@ sap.ui.define([
 				 * Specifies the growing mode.
 				 */
 				growingMode: {
-					type: "sap.ui.mdc.enum.TableGrowingMode",
+					type: "sap.ui.mdc.enums.TableGrowingMode",
 					defaultValue: GrowingMode.Basic
 				},
 				/**

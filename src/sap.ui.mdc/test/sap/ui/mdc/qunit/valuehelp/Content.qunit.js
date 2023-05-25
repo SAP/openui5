@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/OperatorValueType"
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorValueType"
 ], function (
 		ValueHelpDelegate,
 		Content,

@@ -8,9 +8,9 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	'sap/m/DatePicker',
 	'sap/m/Slider',
-	'sap/ui/mdc/enum/BaseType',
-	'sap/ui/mdc/enum/OperatorOverwrite',
-	'sap/ui/mdc/enum/OperatorValueType'
+	'sap/ui/mdc/enums/BaseType',
+	'sap/ui/mdc/enums/OperatorOverwrite',
+	'sap/ui/mdc/enums/OperatorValueType'
 ], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider, BaseType, OperatorOverwrite, OperatorValueType) {
 	"use strict";
 

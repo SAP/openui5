@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/m/FlexItemData',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/mdc/util/Common',
-	'sap/ui/mdc/enum/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/strings/formatMessage',
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleMessage'
@@ -39,9 +39,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.valuehelp.content.GroupLabel
 	 * @property {string} label Label with counter. The placeholder for counter needs to defined wihl <code>{0}</code>
 	 * @property {string} nnLabel Label without counter
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	// translation utils
@@ -64,11 +62,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.95.0
-	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.Dialog
 	 */
 	var Dialog = Container.extend("sap.ui.mdc.valuehelp.Dialog", /** @lends sap.ui.mdc.valuehelp.Dialog.prototype */

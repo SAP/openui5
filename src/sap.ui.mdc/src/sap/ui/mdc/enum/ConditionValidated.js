@@ -17,26 +17,22 @@ sap.ui.define(function() {
 	 * it is not defined if it is validated or not.
 	 *
 	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.78.0
 	 * @alias sap.ui.mdc.enum.ConditionValidated
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ConditionValidated}
 	 */
 	var ConditionValidated = {
 		/**
 		 * Condition is not validated
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		NotValidated: "NotValidated",
 
 		/**
 		 * Condition is validated
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Validated: "Validated"
 

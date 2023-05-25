@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/rta/api/startKeyUserAdaptation",
-	"sap/ui/mdc/enum/ChartToolbarActionType"
+	"sap/ui/mdc/enums/ChartToolbarActionType"
 ], function(Controller, startKeyUserAdaptation, ChartToolbarActionType) {
 	"use strict";
 

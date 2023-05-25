@@ -44,17 +44,17 @@ sap.ui.define([
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/table/menu/QuickActionContainer",
 	"sap/ui/mdc/table/menu/ItemContainer",
-	"sap/ui/mdc/enum/ProcessingStrategy",
+	"sap/ui/mdc/enums/ProcessingStrategy",
 	"sap/ui/core/theming/Parameters",
 	"sap/base/Log",
 	"sap/ui/performance/trace/FESRHelper",
-	"sap/ui/mdc/enum/TableMultiSelectMode",
-	"sap/ui/mdc/enum/TableSelectionMode",
-	"sap/ui/mdc/enum/TableP13nMode",
-	"sap/ui/mdc/enum/TableType",
-	"sap/ui/mdc/enum/TableGrowingMode", // load for availability
-	"sap/ui/mdc/enum/TableRowAction", // load for availability
-	"sap/ui/mdc/enum/TableRowCountMode" // load for availability
+	"sap/ui/mdc/enums/TableMultiSelectMode",
+	"sap/ui/mdc/enums/TableSelectionMode",
+	"sap/ui/mdc/enums/TableP13nMode",
+	"sap/ui/mdc/enums/TableType",
+	"sap/ui/mdc/enums/TableGrowingMode", // load for availability
+	"sap/ui/mdc/enums/TableRowAction", // load for availability
+	"sap/ui/mdc/enums/TableRowCountMode" // load for availability
 ], function(
 	Control,
 	ActionToolbar,
@@ -142,12 +142,10 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
-	 * @private
-	 * @experimental
 	 * @since 1.58
 	 * @alias sap.ui.mdc.Table
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
+   	 * @experimental As of version 1.58.0
 	 */
 	var Table = Control.extend("sap.ui.mdc.Table", {
 		metadata: {
@@ -185,7 +183,7 @@ sap.ui.define([
 				 * @since 1.62
 				 */
 				p13nMode: {
-					type: "sap.ui.mdc.enum.TableP13nMode[]",
+					type: "sap.ui.mdc.enums.TableP13nMode[]",
 					defaultValue: []
 				},
 				/**
@@ -259,7 +257,7 @@ sap.ui.define([
 				 * work properly if the count is known. Make sure the model/binding is configured to request the count from the service.
 				 */
 				selectionMode: {
-					type: "sap.ui.mdc.enum.TableSelectionMode",
+					type: "sap.ui.mdc.enums.TableSelectionMode",
 					defaultValue: TableSelectionMode.None
 				},
 				/**
@@ -401,7 +399,7 @@ sap.ui.define([
 				 * @since 1.93
 				 */
 				multiSelectMode : {
-					type: "sap.ui.mdc.enum.TableMultiSelectMode",
+					type: "sap.ui.mdc.enums.TableMultiSelectMode",
 					group: "Behavior",
 					defaultValue: TableMultiSelectMode.Default
 				},
@@ -465,7 +463,7 @@ sap.ui.define([
 				type: {
 					type: "sap.ui.mdc.table.TableTypeBase",
 					altTypes: [
-						"sap.ui.mdc.enum.TableType"
+						"sap.ui.mdc.enums.TableType"
 					],
 					multiple: false
 				},
@@ -478,7 +476,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * This row can be used for user input to create new data if {@link sap.ui.mdc.enum.TableType TableType} is "<code>Table</code>".
+				 * This row can be used for user input to create new data if {@link sap.ui.mdc.enums.TableType TableType} is "<code>Table</code>".
 				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
 				 *
 				 * @experimental Do not use
@@ -773,9 +771,7 @@ sap.ui.define([
 	 * Returns a <code>Promise</code> that resolves once the table has been initialized after the creation and changing of its type.
 	 *
 	 * @returns {Promise} A <code>Promise</code> that resolves after the table has been initialized
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	Table.prototype.initialized = function() {
 		return this._oTableReady.promise;
@@ -875,9 +871,7 @@ sap.ui.define([
 	 * @param {number} iIndex The index of the row that should be scrolled into the visible area
 	 * @since 1.76
 	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row with the given index
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	Table.prototype.scrollToIndex = function(iIndex) {
 		if (typeof iIndex !== "number") {
@@ -897,9 +891,7 @@ sap.ui.define([
 	 * @param {boolean} [bFirstInteractiveElement=false] Indicates whether to set the focus on the first interactive element inside the row
 	 * @since 1.86
 	 * @returns {Promise} A <code>Promise</code> that resolves after the focus has been set
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	Table.prototype.focusRow = function(iIndex, bFirstInteractiveElement) {
 		return this.scrollToIndex(iIndex).then(function() {
@@ -2423,10 +2415,7 @@ sap.ui.define([
 	 * Gets contexts that have been selected by the user.
 	 *
 	 * @returns {sap.ui.model.Context[]} The selected contexts
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental The API is subject to change.
+	 * @public
 	 */
 	Table.prototype.getSelectedContexts = function() {
 		if (this.isControlDelegateInitialized()) {
@@ -2439,9 +2428,7 @@ sap.ui.define([
 	/**
 	 * Clears the selection.
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	Table.prototype.clearSelection = function() {
 		if (this.isControlDelegateInitialized()) {
@@ -2459,9 +2446,7 @@ sap.ui.define([
 	 * Checks whether the table is bound.
 	 *
 	 * @returns {boolean} Whether the table is bound
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	Table.prototype.isTableBound = function() {
 		return this._getType().isTableBound();

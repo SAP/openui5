@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/FieldEditMode",
+	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/m/library",
 	"sap/m/MessageToast",
 	"sap/ui/core/Core"

@@ -3,8 +3,8 @@
 sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/TreeTableType",
-	"sap/ui/mdc/enum/TableP13nMode",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enums/TableP13nMode",
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	Table,
 	TreeTableType,

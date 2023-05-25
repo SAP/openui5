@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Visible",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
 	/** @type sap.ui.core.library */ CoreLibrary,
@@ -23,7 +23,7 @@ sap.ui.define([
 	/** @type sap.ui.test.matchers.Properties */ Properties,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
 	/** @type sap.ui.test.matchers.Visible */ Visible,
-	/** @type sap.ui.mdc.enum.TableType */ TableType) {
+	/** @type sap.ui.mdc.enums.TableType */ TableType) {
 	"use strict";
 
 	/**

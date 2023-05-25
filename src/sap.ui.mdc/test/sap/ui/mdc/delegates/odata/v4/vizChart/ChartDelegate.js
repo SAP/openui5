@@ -10,7 +10,7 @@ sap.ui.define([
 	"delegates/odata/v4/FilterBarDelegate",
     "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
     "delegates/odata/v4/ODataMetaModelUtil",
-    "sap/ui/mdc/enum/ChartItemRoleType"
+    "sap/ui/mdc/enums/ChartItemRoleType"
 ], function (
     FilterBarDelegate,
     VizChartDelegate,

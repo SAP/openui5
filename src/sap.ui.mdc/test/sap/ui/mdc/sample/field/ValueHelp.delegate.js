@@ -5,7 +5,7 @@
 sap.ui.define([
 	"./ValueHelpODataV2.delegate",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/base/util/merge",
 	"sap/base/util/deepEqual"
 ], function(

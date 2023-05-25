@@ -16,8 +16,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @class The <code>SelectionDetailsActions</code> is used to provide additional functionality to the Details popover.
 	 *
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.88
 	 * @alias sap.ui.mdc.chart.SelectionDetailsActions
 	 */

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
-	"sap/ui/mdc/enum/FieldEditMode",
+	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/Field",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/mdc/link/FakeFlpConnector",

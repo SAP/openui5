@@ -10,11 +10,9 @@ sap.ui.define(function() {
      * Defines the growing options of the responsive table.
      *
      * @enum {string}
-     * @alias sap.ui.mdc.enum.TableGrowingMode
+     * @alias sap.ui.mdc.enums.TableGrowingMode
      * @since 1.115
-     * @private
-     * @ui5-restricted sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
     var TableGrowingMode = {
         /**

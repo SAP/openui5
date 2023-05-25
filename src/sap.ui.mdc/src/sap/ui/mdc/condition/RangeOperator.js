@@ -32,9 +32,7 @@ function(
 	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @alias sap.ui.mdc.condition.RangeOperator
 	 * @since 1.74.0
 	 * @author SAP SE

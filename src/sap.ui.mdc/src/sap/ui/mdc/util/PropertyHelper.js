@@ -56,10 +56,7 @@ sap.ui.define([
 	 * @property {boolean} [caseSensitive=true]
 	 *   Whether filtering by this property is case-sensitive.
 	 *
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/*

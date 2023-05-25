@@ -5,15 +5,15 @@
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/FilterableListContent',
 	'sap/ui/mdc/util/loadModules',
-	'sap/ui/mdc/enum/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/m/library',
 	'sap/ui/table/library',
 	'sap/base/util/restricted/_throttle',
 	'sap/ui/mdc/util/Common',
 	'sap/base/Log',
 	'sap/ui/core/Element',
-	'sap/ui/mdc/enum/TableSelectionMode',
-	'sap/ui/mdc/enum/TableType'
+	'sap/ui/mdc/enums/TableSelectionMode',
+	'sap/ui/mdc/enums/TableType'
 ], function(
 	FilterableListContent,
 	loadModules,
@@ -275,11 +275,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.95.0
-	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.content.MDCTable
 	 */
 	var MDCTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MDCTable", /** @lends sap.ui.mdc.valuehelp.content.MDCTable.prototype */

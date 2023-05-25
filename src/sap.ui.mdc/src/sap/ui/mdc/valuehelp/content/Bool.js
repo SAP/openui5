@@ -184,7 +184,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the items are automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#addItem
@@ -201,7 +200,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the items are automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#insertItem
@@ -216,7 +214,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the items are automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#destroyItems
@@ -231,7 +228,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.valuehelp.content.FixedListItem[]} An array of the removed elements (might be empty)
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the items are automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#removeAllItems
@@ -247,7 +243,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.valuehelp.content.FixedListItem|null} The removed item or <code>null</code>
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the items are automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#removeItem
@@ -263,7 +258,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the property is automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#setUseFirstMatch
@@ -279,7 +273,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the property is automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#setUseAsValueHelp
@@ -295,7 +288,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the property is automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#setFilterList
@@ -311,7 +303,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the property is automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#setCaseSensitive

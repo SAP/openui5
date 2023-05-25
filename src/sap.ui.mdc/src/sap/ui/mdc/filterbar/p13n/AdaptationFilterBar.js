@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
 	"sap/base/util/merge",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/enum/PersistenceMode",
+	"sap/ui/mdc/enums/PersistenceMode",
 	"sap/ui/mdc/util/mapVersions"
 ], function(coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode, mapVersions) {
 	"use strict";

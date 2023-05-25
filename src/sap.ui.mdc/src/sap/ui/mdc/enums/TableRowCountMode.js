@@ -10,11 +10,9 @@ sap.ui.define(function() {
      * Defines the row count mode of the GridTable.
      *
      * @enum {string}
-     * @alias sap.ui.mdc.enum.TableRowCountMode
+     * @alias sap.ui.mdc.enums.TableRowCountMode
      * @since 1.115
-     * @private
-     * @ui5-restricted sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
     var TableRowCountMode = {
         /**

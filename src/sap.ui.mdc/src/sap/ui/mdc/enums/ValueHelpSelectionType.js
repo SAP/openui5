@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides enumeration sap.ui.mdc.enum.ValueHelpSelectionType
+// Provides enumeration sap.ui.mdc.enums.ValueHelpSelectionType
 sap.ui.define(function() {
 	"use strict";
 
@@ -14,7 +14,7 @@ sap.ui.define(function() {
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.90.1
-	 * @alias sap.ui.mdc.enum.ValueHelpSelectionType
+	 * @alias sap.ui.mdc.enums.ValueHelpSelectionType
 	 */
 	var ValueHelpSelectionType = {
 		/**

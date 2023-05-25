@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/enum/TableRowAction"
+	"sap/ui/mdc/enums/TableRowAction"
 ], function(Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore, RowActionItem, JSONModel, TableRowAction) {
 	"use strict";
 

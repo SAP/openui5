@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper", "sap/ui/mdc/enum/ChartItemRoleType"
+	"../util/PropertyHelper", "sap/ui/mdc/enums/ChartItemRoleType"
 ], function(
 	PropertyHelperBase,
 	ChartItemRoleType

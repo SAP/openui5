@@ -12,10 +12,10 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/field/FieldBaseDelegate", // bring back to default one
 	"sap/ui/mdc/field/FieldInput", // don't want to test async loading in Field here
-	"sap/ui/mdc/enum/BaseType",
-	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/FieldEditMode",
-	"sap/ui/mdc/enum/OperatorValueType",
+	"sap/ui/mdc/enums/BaseType",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/FieldEditMode",
+	"sap/ui/mdc/enums/OperatorValueType",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/DateTime",

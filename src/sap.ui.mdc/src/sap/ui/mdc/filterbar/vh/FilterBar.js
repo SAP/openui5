@@ -9,7 +9,7 @@ sap.ui.define(
 		"sap/ui/mdc/filterbar/aligned/FilterItemLayout",
 		"sap/ui/mdc/filterbar/vh/FilterContainer",
 		"sap/m/Button",
-		"sap/ui/mdc/enum/PersistenceMode"
+		"sap/ui/mdc/enums/PersistenceMode"
 	],
 	function (
 		mLibrary,
@@ -38,9 +38,7 @@ sap.ui.define(
 		 * @namespace
 		 * @name sap.ui.mdc.filterbar.vh
 		 * @since 1.84.0
-		 * @private
-		 * @experimental As of version 1.84
-		 * @ui5-restricted sap.ui.mdc
+		 * @public
 		 */
 
 		/**
@@ -56,9 +54,7 @@ sap.ui.define(
 		 * @author SAP SE
 		 * @version ${version}
 		 * @constructor
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 * @since 1.84.0
 		 * @alias sap.ui.mdc.filterbar.vh.FilterBar
 		 */
@@ -68,6 +64,13 @@ sap.ui.define(
 				metadata: {
 					library: "sap.ui.mdc",
 					properties: {
+						/**
+						 * Path to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+						 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
+						 * Do not bind or modify the module. This property can only be configured during control initialization.
+						 *
+						 * @experimental
+						 */
 						delegate: {
 							type: "object",
 							defaultValue: {

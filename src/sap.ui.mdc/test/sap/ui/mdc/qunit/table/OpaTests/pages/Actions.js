@@ -14,7 +14,7 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
 	/** @type sap.ui.test.Opa5 */ Opa5,
@@ -27,7 +27,7 @@ sap.ui.define([
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.actions.Drag */ Drag,
 	/** @type sap.ui.test.actions.Drop */ Drop,
-	/** @type sap.ui.mdc.enum.TableType */ TableType) {
+	/** @type sap.ui.mdc.enums.TableType */ TableType) {
 	"use strict";
 
 	/**

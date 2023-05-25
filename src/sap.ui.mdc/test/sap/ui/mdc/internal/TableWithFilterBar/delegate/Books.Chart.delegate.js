@@ -6,10 +6,10 @@ sap.ui.define([
     "delegates/odata/v4/ODataMetaModelUtil",
     "./Books.FB.delegate",
 	"./GridTable.delegate",
-    "sap/ui/mdc/enum/FieldDisplay",
+    "sap/ui/mdc/enums/FieldDisplay",
     "sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/enum/ChartItemRoleType"
+	"sap/ui/mdc/enums/ChartItemRoleType"
 ], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, Log, Core, ChartItemRoleType) {
     "use strict";
 

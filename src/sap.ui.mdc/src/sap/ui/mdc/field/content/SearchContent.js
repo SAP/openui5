@@ -11,7 +11,7 @@ sap.ui.define([
 
 	/**
 	 * Object-based definition of the search content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
-	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enum.ContentMode}.
+	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enums.ContentMode}.
 	 * @namespace
 	 * @author SAP SE
 	 * @private

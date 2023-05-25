@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual'
 ], function(

@@ -10,9 +10,11 @@ sap.ui.define(function() {
 	 * Defines the delta types of the <code>sap.ui.mdc.p13n.Engine</code>.
 	 *
 	 * @enum {string}
-	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.107
 	 * @alias sap.ui.mdc.enum.ProcessingStrategy
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ProcessingStrategy}
 	 */
 	var ProcessingStrategy = {
 		/**

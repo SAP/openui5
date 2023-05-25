@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/enum/FieldEditMode",
+	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/m/MessageToast"
 ], function(
 	Controller,

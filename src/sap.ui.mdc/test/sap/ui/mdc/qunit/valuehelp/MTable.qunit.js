@@ -10,8 +10,8 @@ sap.ui.define([
 	"delegates/odata/v4/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/ValueHelpSelectionType",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
 	"sap/ui/model/ParseException",

@@ -14,8 +14,8 @@ sap.ui.define([
 	"sap/ui/core/format/ListFormat",
 	"sap/ui/base/ManagedObjectObserver",
 	'sap/ui/mdc/odata/v4/TypeMap',
-	'sap/ui/mdc/enum/TableP13nMode',
-	'sap/ui/mdc/enum/TableType'
+	'sap/ui/mdc/enums/TableP13nMode',
+	'sap/ui/mdc/enums/TableType'
 ], function(
 	TableDelegate,
 	V4AnalyticsPropertyHelper,
@@ -45,10 +45,7 @@ sap.ui.define([
 	 * @namespace
 	 * @alias module:sap/ui/mdc/odata/v4/TableDelegate
 	 * @extends module:sap/ui/mdc/TableDelegate
-	 * @experimental
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.85
 	 */
 	var Delegate = Object.assign({}, TableDelegate);

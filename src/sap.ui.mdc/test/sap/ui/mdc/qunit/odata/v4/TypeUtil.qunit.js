@@ -7,7 +7,7 @@
 sap.ui.define([
 	'sap/ui/mdc/util/TypeUtil',
 	"delegates/odata/v4/TypeUtil",
-	'sap/ui/mdc/enum/BaseType',
+	'sap/ui/mdc/enums/BaseType',
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/DateTimeOffset",

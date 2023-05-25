@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/field/MultiValueFieldDelegate",
 	"sap/m/MessageBox",
 	"sap/m/Token",

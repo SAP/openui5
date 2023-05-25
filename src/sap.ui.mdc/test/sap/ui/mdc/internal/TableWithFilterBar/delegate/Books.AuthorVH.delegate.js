@@ -7,10 +7,10 @@ sap.ui.define([
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
 	"sap/m/Text",
-	"sap/ui/mdc/enum/TableGrowingMode",
-	"sap/ui/mdc/enum/TableRowCountMode",
-	"sap/ui/mdc/enum/TableSelectionMode",
-	"sap/ui/mdc/enum/TableP13nMode"
+	"sap/ui/mdc/enums/TableGrowingMode",
+	"sap/ui/mdc/enums/TableRowCountMode",
+	"sap/ui/mdc/enums/TableSelectionMode",
+	"sap/ui/mdc/enums/TableP13nMode"
 ], function (ODataValueHelpDelegate, FilterField, FilterBar, MdcTable, MdcColumn, GridTableType, ResponsiveTableType, Text, GrowingMode, TableRowCountMode, TableSelectionMode, TableP13nMode) {
 	"use strict";
 	var Delegate = Object.assign({}, ODataValueHelpDelegate);

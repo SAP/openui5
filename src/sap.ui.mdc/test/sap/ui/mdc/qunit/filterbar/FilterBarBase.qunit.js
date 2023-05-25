@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/FilterField",
     "sap/ui/mdc/DefaultTypeMap",
-	"sap/ui/mdc/enum/FilterBarValidationStatus",
+	"sap/ui/mdc/enums/FilterBarValidationStatus",
 	'sap/base/Log'
 ], function (
 	FilterBarBase, FilterField, DefaultTypeMap, FilterBarValidationStatus, Log

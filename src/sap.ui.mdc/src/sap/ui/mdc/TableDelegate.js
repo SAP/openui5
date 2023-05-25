@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/enum/TableP13nMode",
-	"sap/ui/mdc/enum/TableType",
+	"sap/ui/mdc/enums/TableP13nMode",
+	"sap/ui/mdc/enums/TableType",
 	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	AggregationBaseDelegate,
@@ -34,11 +34,8 @@ sap.ui.define([
 	 * @namespace
 	 * @alias module:sap/ui/mdc/TableDelegate
 	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
-	 * @experimental
 	 * @since 1.60
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	var TableDelegate = Object.assign({}, AggregationBaseDelegate);
 
@@ -487,7 +484,7 @@ sap.ui.define([
 	 * Gets the p13n modes that are supported by the combination of this delegate and the current table state (e.g. type).
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
-	 * @returns {sap.ui.mdc.enum.TableP13nMode[]} The supported p13n modes.
+	 * @returns {sap.ui.mdc.enums.TableP13nMode[]} The supported p13n modes.
 	 * @private
 	 */
 	TableDelegate.getSupportedP13nModes = function(oTable) {

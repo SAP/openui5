@@ -24,10 +24,7 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.95
+	 * @public
 	 * @since 1.95.0
 	 * @extends module:sap/ui/mdc/ValueHelpDelegate
 	 * @alias module:delegates/odata/v4/ValueHelpDelegate

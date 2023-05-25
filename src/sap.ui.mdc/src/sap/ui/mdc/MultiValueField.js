@@ -6,7 +6,7 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldBase',
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/ConditionValidated'
+	'sap/ui/mdc/enums/ConditionValidated'
 ], function(
 		library,
 		FieldBase,
@@ -43,10 +43,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.93.0
 	 *
-	 * @private
-	 * @experimental As of version 1.93
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
+   	 * @experimental As of version 1.93.0
 	 */
 	var Field = FieldBase.extend("sap.ui.mdc.MultiValueField", /* @lends sap.ui.mdc.MultiValueField.prototype */ {
 		metadata: {
@@ -196,7 +194,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.MultiValueField} <code>this</code> to allow method chaining.
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, this property is not supported for the <code>MultiValueField</code> control.
 	 * @ui5-not-supported
 	 */
@@ -352,7 +349,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setConditions
@@ -368,7 +364,6 @@ sap.ui.define([
 	 * @returns {object[]} conditions of the field
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#getConditions
@@ -387,7 +382,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#bindConditions
@@ -403,7 +397,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#unbindConditions
@@ -420,7 +413,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataType
@@ -437,7 +429,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataTypeConstraints
@@ -454,7 +445,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataTypeFormatOptions
@@ -468,7 +458,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated This property is not supported for multi-value fields.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setMultipleLines

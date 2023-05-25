@@ -4,7 +4,7 @@
 sap.ui.define([
 	'sap/ui/mdc/field/FieldBase',
 	'sap/ui/mdc/field/FieldBaseRenderer',
-	'sap/ui/mdc/enum/FieldDisplay',
+	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual'
 ], function(
@@ -55,10 +55,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.48.0
 	 *
-	 * @experimental As of version 1.48
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
+   	 * @experimental As of version 1.48.0
 	 */
 	var FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
 		metadata: {
@@ -270,9 +268,7 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 *
 	 * @since: 1.88.0
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FilterField.prototype.addOperator = function(vOperator) {
 		var aOperators = this.getSupportedOperators();
@@ -298,9 +294,7 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 *
 	 * @since: 1.88.0
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FilterField.prototype.addOperators = function(aOperators) {
 		if (!Array.isArray(aOperators)) {
@@ -320,9 +314,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 	 *
 	 * @since: 1.88.0
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FilterField.prototype.removeOperator = function(vOperator) {
 		var aOperators = this.getSupportedOperators();
@@ -345,9 +337,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
 	 *
 	 * @since: 1.88.0
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	*/
 	FilterField.prototype.removeOperators = function(aOperators) {
 		if (!Array.isArray(aOperators)) {
@@ -364,9 +354,7 @@ sap.ui.define([
 	 * Removes all operators from the list of known operators.
 	 *
 	 * @since: 1.88.0
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	*/
 	FilterField.prototype.removeAllOperators = function() {
 		this.setOperators([]);

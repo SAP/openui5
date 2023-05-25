@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/enum/ProcessingStrategy', 'sap/ui/mdc/condition/FilterOperatorUtil', './SelectionController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/deepEqual'
+	'sap/ui/mdc/enums/ProcessingStrategy', 'sap/ui/mdc/condition/FilterOperatorUtil', './SelectionController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/deepEqual'
 ], function (ProcessingStrategy, FilterOperatorUtil, BaseController, P13nBuilder, Log, merge, deepEqual) {
 	"use strict";
 

@@ -10,7 +10,7 @@ sap.ui.define(function() {
      * Enumeration of the <code>multiSelectMode</code> in <code>ListBase</code>.
      * @enum {string}
      * @private
-     * @alias sap.ui.mdc.enum.TableMultiSelectMode
+     * @alias sap.ui.mdc.enums.TableMultiSelectMode
      * @since 1.115
      * @ui5-restricted sap.ui.mdc
      */

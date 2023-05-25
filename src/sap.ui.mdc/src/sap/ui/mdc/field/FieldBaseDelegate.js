@@ -7,7 +7,7 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeMap', 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enum/ConditionValidated'
+	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeMap', 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enums/ConditionValidated'
 ], function(
 	BaseDelegate, ODataTypeMap, FormatException, Condition, ConditionValidated
 ) {
@@ -19,10 +19,7 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.72
+	 * @public
 	 * @since 1.72.0
 	 * @extends module:sap/ui/mdc/BaseDelegate
 	 * @alias module:sap/ui/mdc/field/FieldBaseDelegate
@@ -41,9 +38,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} [oControl] Instance of the calling control
 	 * @param {any[]} aValues key, description pair for the condition which is to be created.
 	 * @returns {undefined|object} Optionally returns a serializeable object to be stored in the condition payload field.
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.107.0
 	 */
 	FieldBaseDelegate.createConditionPayload = function (oField, oControl, aValues) {
@@ -61,9 +56,7 @@ sap.ui.define([
 	 * @param {any[]} aValues key, description pair for the condition which is to be created.
 	 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCurrentCondition currently available condition before the property change
  	 * @returns {undefined|sap.ui.mdc.condition.ConditionObject} Returns a condition object to be set on the control
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.107.0
 	 */
 	FieldBaseDelegate.createCondition = function (oField, oControl, aValues, oCurrentCondition) {
@@ -127,9 +120,7 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.valuehelp.ValueHelpItem|Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Object containing description, key, and payload. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
 	 * @since: 1.78.0
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FieldBaseDelegate.getItemForValue = function(oField, oValueHelp, oConfig) {
 
@@ -157,17 +148,15 @@ sap.ui.define([
 	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.) (Only filled in conditions of old variants.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.) (Only filled in conditions of old variants.)
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
-	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, if bound to one - NOT LONGER USED
-	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one - NOT LONGER USED
+	 * @param {undefined} oConditionModel <code>ConditionModel</code>, if bound to one - NOT LONGER USED
+	 * @param {undefined} sConditionModelName Name of the <code>ConditionModel</code>, if bound to one - NOT LONGER USED
 	 * @param {object} oConditionPayload Additional context information for this key
-	 * @param {sap.ui.core.Control} [oControl] Instance if the calling control
+	 * @param {sap.ui.core.Control} oControl Instance if the calling control is not the field itself
 	 * @param {sap.ui.model.Type} oType Type of the value
 	 * @returns {string|sap.ui.mdc.valuehelp.ValueHelpItem|Promise<string|sap.ui.mdc.valuehelp.ValueHelpItem>} Description for key or object containing description, key and payload. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if the description cannot be determined
 	 * @since: 1.78.0
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FieldBaseDelegate.getDescription = function(oField, oValueHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl, oType) {
 		var oConfig = {

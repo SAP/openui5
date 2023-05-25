@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/enum/BaseType',
+	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/model/SimpleType',
 	'sap/base/util/ObjectPath',
 	'sap/ui/mdc/util/DateUtil',
@@ -20,17 +20,14 @@ sap.ui.define([
 
 	/**
 	 * Configuration class for type-handling in MDC delegates.
-	 * Allows mapping of model-types to <code>sap.ui.mdc.enum.BaseType</code> and enables model-specific type configuration.
+	 * Allows mapping of model-types to <code>sap.ui.mdc.enums.BaseType</code> and enables model-specific type configuration.
 	 *
 	 * <b>Note:</b>
 	 * This utility is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 *
 	 * @namespace
 	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @experimental As of version 1.114.0
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.114.0
 	 * @alias sap.ui.mdc.util.TypeMap
 	 */
@@ -79,11 +76,9 @@ sap.ui.define([
 	 *
 	 * @final
 	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
-	 * @param {sap.ui.mdc.enum.BaseType|function} vBaseType BaseType fitting the given sType or method returning a BaseType based on type configuration
+	 * @param {sap.ui.mdc.enums.BaseType|function} vBaseType BaseType fitting the given sType or method returning a BaseType based on type configuration
 	 * @param {function} [fnOptions] Optional customizing method for formatoptions and constraints. See <code>sap.ui.mdc.DefaultTypeMap</code> for examples.
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.set = function (sType, vBaseType, fnOptions) {
 		this._set(sType, [vBaseType, fnOptions]);
@@ -95,19 +90,17 @@ sap.ui.define([
 	 * @final
 	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
 	 * @param {string} sAlias Alternative identifier for sType
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.setAlias = function (sType, sAlias) {
 		this._set(sType, sAlias);
 	};
 
 	/**
-	 * Returns the <code>sap.ui.mdc.enum.BaseType</code> or a method to resolve the BaseType dynamically for the given type
+	 * Returns the <code>sap.ui.mdc.enums.BaseType</code> or a method to resolve the BaseType dynamically for the given type
 	 *
 	 * @param {string} sType Objectpath string for sap.ui.model.SimpleType
-	 * @returns {sap.ui.mdc.enum.BaseType|function} BaseType configured for the sap.ui.model.SimpleType or function to resolve BaseType based on configuration
+	 * @returns {sap.ui.mdc.enums.BaseType|function} BaseType configured for the sap.ui.model.SimpleType or function to resolve BaseType based on configuration
 	 * @private
 	 */
 	TypeMap._getBaseType = function (sType) {
@@ -144,9 +137,7 @@ sap.ui.define([
 	 *
 	 * @final
 	 * @returns {Array} Array created from this TypeMap's internal map
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.export = function () {
 		return Array.from(this._getMap());
@@ -157,9 +148,7 @@ sap.ui.define([
 	 *
 	 * @final
 	 * @param {sap.ui.mdc.util.TypeMap} oTypeMap TypeMap to import
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.import = function (oTypeMap) {
 		oTypeMap.export().forEach(function (aEntry) {
@@ -171,9 +160,7 @@ sap.ui.define([
 	 * Prevents further manipulation of a TypeMap's data
 	 *
 	 * @final
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.freeze = function () {
 		this._getMap()._bFrozen = true;
@@ -188,10 +175,8 @@ sap.ui.define([
 	 * @param {string} sType Given type string or sap.ui.model.SimpleType
 	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
 	 * @param {object} oConstraints Used <code>Constraints</code>
-	 * @returns {sap.ui.mdc.enum.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @returns {sap.ui.mdc.enums.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
+	 * @public
 	 */
 	TypeMap.getBaseType = function(sType, oFormatOptions, oConstraints) {
 		var vBaseType = this._getBaseType(sType);
@@ -202,9 +187,7 @@ sap.ui.define([
 	 * @final
 	 * @param {sap.ui.model.SimpleType} oType Given type string or sap.ui.model.SimpleType
 	 * @returns {string} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.getBaseTypeForType = function(oType) {
 		return this.getBaseType(oType.getMetadata && oType.getMetadata().getName(), oType.getFormatOptions(), oType.getConstraints());
@@ -214,9 +197,7 @@ sap.ui.define([
 	 * @final
 	 * @param {string} sType Given model specific type
 	 * @returns {string} Data type name
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.getDataTypeClassName = function(sType) {
 		return this._getClass(sType) || sType;
@@ -226,9 +207,7 @@ sap.ui.define([
 	 * @final
 	 * @param {string} sDataType Class path as string where each name is separated by '.'
 	 * @returns {sap.ui.model.SimpleType} creates returns a dataType class
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.getDataTypeClass = function(sDataType) {
 		var TypeClass = ObjectPath.get(this.getDataTypeClassName(sDataType) || "");
@@ -245,9 +224,7 @@ sap.ui.define([
 	 * @param {object} [oConstraints] constraints for the dataType
 	 * @param {object} [oOptions] Additional options for overrides
 	 * @returns {sap.ui.model.SimpleType} creates returns an instance of the resolved dataType
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.getDataTypeInstance = function(sDataType, oFormatOptions, oConstraints, oOptions) {
 		var TypeClass = this.getDataTypeClass(sDataType);
@@ -264,9 +241,7 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions] formatoptions for the given dataType
 	 * @param {object} [oConstraints] constraints for the given dataType
 	 * @returns {sap.ui.mdc.TypeConfig} output returns typeConfig object
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.getTypeConfig = function(vType, oFormatOptions, oConstraints) {
 		var oType = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
@@ -284,9 +259,7 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions] formatoptions for the dataType
 	 * @param {object} [oConstraints] constraints for the dataType
 	 * @returns {string} converted value
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.externalizeValue = function(vValue, vType, oFormatOptions, oConstraints) {
 		var oTypeInstance = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
@@ -324,9 +297,7 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions] formatoptions for the dataType
 	 * @param {object} [oConstraints] constraints for the dataType
 	 * @returns {object} converted value
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	TypeMap.internalizeValue = function(vValue, vType, oFormatOptions, oConstraints) {
 		var oTypeInstance = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);

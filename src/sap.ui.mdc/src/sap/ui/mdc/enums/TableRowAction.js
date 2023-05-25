@@ -10,11 +10,9 @@ sap.ui.define(function() {
      * Defines the actions that can be used in the table.
      *
      * @enum {string}
-     * @alias sap.ui.mdc.enum.TableRowAction
+     * @alias sap.ui.mdc.enums.TableRowAction
      * @since 1.115
-     * @private
-     * @ui5-restricted sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
     var TableRowAction = {
         /**

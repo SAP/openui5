@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/mdc/DefaultTypeMap",
-	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/DateTime",

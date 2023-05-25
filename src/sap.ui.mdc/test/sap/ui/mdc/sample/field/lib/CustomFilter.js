@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/enum/FieldEditMode',
+	'sap/ui/mdc/enums/FieldEditMode',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/core/Control',
 	'sap/base/util/ObjectPath',
@@ -35,7 +35,7 @@ sap.ui.define([
 				 * Whether the field is editable.
 				 */
 				editMode: {
-					type: "sap.ui.mdc.enum.FieldEditMode",
+					type: "sap.ui.mdc.enums.FieldEditMode",
 					group: "Data",
 					defaultValue: FieldEditMode.Editable
 				},

@@ -6,7 +6,7 @@
 
 sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/ConditionValidated"
+	"sap/ui/mdc/enums/ConditionValidated"
 	], function(Condition, ConditionValidated) {
 	"use strict";
 

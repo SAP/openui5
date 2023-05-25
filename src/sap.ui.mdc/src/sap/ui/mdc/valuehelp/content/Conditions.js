@@ -5,8 +5,8 @@
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/Content',
 	'sap/ui/mdc/util/loadModules',
-	'sap/ui/mdc/enum/ValueHelpSelectionType',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/util/Common'
 ], function(
 	Content,
@@ -26,11 +26,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.95.0
-	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.content.Conditions
 	 */
 	 var Conditions = Content.extend(

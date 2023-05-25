@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
-	"sap/ui/mdc/enum/FieldEditMode"
+	"sap/ui/mdc/enums/FieldEditMode"
 ], function(DefaultContent, Filter, isEmptyObject, merge, ObjectPath, FieldEditMode) {
 	"use strict";
 
@@ -18,7 +18,7 @@ sap.ui.define([
 
 	/**
 	 * Object-based definition of the unit content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
-	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enum.ContentMode}.
+	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enums.ContentMode}.
 	 * @namespace
 	 * @author SAP SE
 	 * @private

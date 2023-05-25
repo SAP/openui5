@@ -11,7 +11,7 @@ sap.ui.define([
 		"sap/ui/mdc/condition/Condition",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/model/ChangeReason",
-		"sap/ui/mdc/enum/ConditionValidated"
+		"sap/ui/mdc/enums/ConditionValidated"
 		], function(ConditionModel, Condition, JSONModel, ChangeReason, ConditionValidated) {
 	"use strict";
 

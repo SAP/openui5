@@ -56,8 +56,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/performance/trace/FESRHelper",
 	"sap/m/table/Util",
-	"sap/ui/mdc/enum/TableP13nMode",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enums/TableP13nMode",
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	TableQUnitUtils,
 	QUtils,

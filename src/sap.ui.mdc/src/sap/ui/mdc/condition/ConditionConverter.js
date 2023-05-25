@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/mdc/enum/OperatorValueType',
+	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorValueType',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/base/util/merge'
 ],

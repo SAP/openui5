@@ -3,8 +3,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/FieldEditMode",
-	'sap/ui/mdc/enum/ConditionValidated',
+	"sap/ui/mdc/enums/FieldEditMode",
+	'sap/ui/mdc/enums/ConditionValidated',
 	"sap/m/MessageToast"
 ], function(
 	Controller,

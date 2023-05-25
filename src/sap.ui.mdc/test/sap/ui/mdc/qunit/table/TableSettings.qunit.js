@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/RowActionItem",
-	"sap/ui/mdc/enum/TableRowAction"
+	"sap/ui/mdc/enums/TableRowAction"
 ], function(Core, XMLView, JSONModel, RowSettings, RowActionItem, TableRowAction) {
 	'use strict';
 

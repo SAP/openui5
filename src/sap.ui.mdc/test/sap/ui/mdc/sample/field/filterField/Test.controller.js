@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterConverter",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	'sap/ui/mdc/enum/BaseType',
-	"sap/ui/mdc/enum/ConditionValidated",
+	'sap/ui/mdc/enums/BaseType',
+	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/m/DatePicker"

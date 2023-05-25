@@ -6,7 +6,7 @@
 
 sap.ui.define([
 	"sap/ui/mdc/util/DateUtil",
-	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/DateTime",

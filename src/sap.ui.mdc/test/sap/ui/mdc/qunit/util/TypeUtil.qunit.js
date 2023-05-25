@@ -7,7 +7,7 @@
 sap.ui.define([
 	"sap/ui/mdc/util/TypeUtil",
 	"sap/ui/model/SimpleType",
-	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/DateTime",
 	"sap/ui/model/type/Time",

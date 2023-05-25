@@ -152,7 +152,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change.
 	 * @param {object} mSettings The change details.
 	 * @param {Array} mSettings.conditions The filter conditions that should be applied to the table.
-	 * @param {sap.ui.mdc.enum.ProcessingStrategy|boolean} mSettings.strategy The processing strategy on how to apply the change.
+	 * @param {sap.ui.mdc.enums.ProcessingStrategy|boolean} mSettings.strategy The processing strategy on how to apply the change.
 	 */
 	PersonalizationUtils.createFilterChange = function(oTable, mSettings) {
 		oTable.getEngine().createChanges({

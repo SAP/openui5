@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/m/library",
-	"sap/ui/mdc/enum/ContentMode"
+	"sap/ui/mdc/enums/ContentMode"
 ], function(
 	mLibrary,
 	ContentMode
@@ -16,7 +16,7 @@ sap.ui.define([
 	/**
 	 * Object-based definition of the default content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
 	 * Default content can be overwritten to create new content types.
-	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enum.ContentMode}.
+	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enums.ContentMode}.
 	 * @namespace
 	 * @author SAP SE
 	 * @private
@@ -57,8 +57,8 @@ sap.ui.define([
 			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: false, single: true, multi: true };
 		},
 		/**
-		 * Determines which controls to return for a given {@link sap.ui.mdc.enum.ContentMode}.
-		 * @param {sap.ui.mdc.enum.ContentMode} sContentMode The given content mode
+		 * Determines which controls to return for a given {@link sap.ui.mdc.enums.ContentMode}.
+		 * @param {sap.ui.mdc.enums.ContentMode} sContentMode The given content mode
 		 * @param {string} sOperator Name of the operator if the <code>EditOperator</code> content mode is used
 		 * @returns {string[]} aControlNames Names of the determined controls
 		 */
@@ -99,8 +99,8 @@ sap.ui.define([
 			throw new Error("No control defined for content mode " + sContentMode);
 		},
 		/**
-		 * Determines if formatting of all conditions to a single value is supported for a {@link sap.ui.mdc.enum.ContentMode}.
-		 * @param {sap.ui.mdc.enum.ContentMode} sContentMode The given content mode
+		 * Determines if formatting of all conditions to a single value is supported for a {@link sap.ui.mdc.enums.ContentMode}.
+		 * @param {sap.ui.mdc.enums.ContentMode} sContentMode The given content mode
 		 * @returns {boolean} If set, the conditions will not be formatted (MultiInput value-property case)
 		 */
 		getNoFormatting: function(sContentMode) {
@@ -113,7 +113,7 @@ sap.ui.define([
 		/**
 		 * Creates the suitable controls for the given content mode and returns the control instances.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls this function
-		 * @param {sap.ui.mdc.enum.ContentMode} sContentMode a given content mode
+		 * @param {sap.ui.mdc.enums.ContentMode} sContentMode a given content mode
 		 * @param {string} sOperator Name of the operator if the <code>EditOperator</code> content mode is used
 		 * @param {Object[]} aControls Array containing the control classes that are to be created
 		 * @param {string} sId ID of the {@link sap.ui.mdc.field.FieldBase}

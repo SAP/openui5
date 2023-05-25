@@ -16,7 +16,7 @@ sap.ui.define([
         "sap/ui/core/library",
         "sap/ui/Device",
         "sap/ui/core/ShortcutHintsMixin",
-        "sap/ui/mdc/enum/ChartToolbarActionType"
+        "sap/ui/mdc/enums/ChartToolbarActionType"
     ],
     function (
         Core,

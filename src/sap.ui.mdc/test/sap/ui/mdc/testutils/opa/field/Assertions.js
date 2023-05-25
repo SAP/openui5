@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"./waitForField",
 	"../Utils",
-	"sap/ui/mdc/enum/FieldEditMode",
+	"sap/ui/mdc/enums/FieldEditMode",
 	"../matchers/DOMRef"
 ], function(
 	Opa5,

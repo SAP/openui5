@@ -11,10 +11,10 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
 	'./Condition',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/base/strings/escapeRegExp',
-	'sap/ui/mdc/enum/OperatorOverwrite',
-	'sap/ui/mdc/enum/OperatorValueType'
+	'sap/ui/mdc/enums/OperatorOverwrite',
+	'sap/ui/mdc/enums/OperatorValueType'
 ], function(
 		BaseObject,
 		Filter,
@@ -47,9 +47,7 @@ sap.ui.define([
 		 * @property {string} name name of the data type
 		 * @property {object} formatOptions <code>formatOptions</code> of the data type
 		 * @property {object} constraints <code>constraints</code> of the data type
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 
 		/**
@@ -72,9 +70,9 @@ sap.ui.define([
 		 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the <code>oConfiguration.tokenText</code> property if given.
 		 * @param {string[]|object[]} oConfiguration.valueTypes Array of type to be used. The length of the array defines the number of values that
 		 *                 need to be entered with the operator.<br>
-		 *                 If set to {@link sap.ui.mdc.enum.OperatorValueType.Self OperatorValueType.Self} the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
-		 *                 If set to {@link sap.ui.mdc.enum.OperatorValueType.SelfNoParse OperatorValueType.SelfNoParse} same as {@link sap.ui.mdc.enum.OperatorValueType.Self OperatorValueType.Self}, except that the input value parsing will not be called.<br>
-		 *                 If set to {@link sap.ui.mdc.enum.OperatorValueType.Static OperatorValueType.Static} a simple string type is used to display static text.<br>
+		 *                 If set to {@link sap.ui.mdc.enums.OperatorValueType.Self OperatorValueType.Self} the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
+		 *                 If set to {@link sap.ui.mdc.enums.OperatorValueType.SelfNoParse OperatorValueType.SelfNoParse} same as {@link sap.ui.mdc.enums.OperatorValueType.Self OperatorValueType.Self}, except that the input value parsing will not be called.<br>
+		 *                 If set to {@link sap.ui.mdc.enums.OperatorValueType.Static OperatorValueType.Static} a simple string type is used to display static text.<br>
 		 *                 If set to a name of a data type an instance of this data type will be used.<br>
 		 *                 If set to an object with structure {@link sap.ui.mdc.condition.ValueType}
 		 *                 an instance of the corresponding data type will be used. The type given via <code>name</code> must be loaded by the application.<br>
@@ -85,7 +83,7 @@ sap.ui.define([
 		 * @param {string} [oConfiguration.tokenText] String representation of the operator as a short text.<br>
 		 *                If the token text is not given, it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
 		 *                <code>operators.{oConfiguration.name}.tokenText</code>
-		 * @param {object} [oConfiguration.displayFormats] Pattern how different {@link sap.ui.mdc.enum.FieldDisplay displayFormats} are rendered
+		 * @param {object} [oConfiguration.displayFormats] Pattern how different {@link sap.ui.mdc.enums.FieldDisplay displayFormats} are rendered
 		 * @param {function} [oConfiguration.format] Function to format condition
 		 * @param {function} [oConfiguration.parse] Function to parse input into condition
 		 * @param {function} [oConfiguration.validate] Function to validate condition
@@ -101,9 +99,7 @@ sap.ui.define([
 		 * @constructor
 		 * @author SAP SE
 		 * @version ${version}
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 * @alias sap.ui.mdc.condition.Operator
 		 * @since 1.73.0
 		 * @author SAP SE
@@ -211,7 +207,7 @@ sap.ui.define([
 		 * @enum {string}
 		 * @private
 		 * @since 1.75
-		 * @deprecated as of 1.115.0, replaced by {@link sap.ui.mdc.enum.OperatorValueType OperatorValueType}
+		 * @deprecated as of 1.115.0, replaced by {@link sap.ui.mdc.enums.OperatorValueType OperatorValueType}
 		 */
 		Operator.ValueType = {
 				/**
@@ -264,7 +260,7 @@ sap.ui.define([
 		 *
  		 * This function can be overwritten see <code>overwrite("getLongText", ...)</code>
 		 *
- 		 * @param {sap.ui.mdc.enum.BaseType} sBaseType Basic type
+ 		 * @param {sap.ui.mdc.enums.BaseType} sBaseType Basic type
 		 * @returns {string} text
 		 *
 		 * @private
@@ -293,7 +289,7 @@ sap.ui.define([
 		 * @param {string} sFieldPath Path of filter
 		 * @param {sap.ui.model.Type} oType Data type of the used filter field
 		 * @param {boolean} [bCaseSensitive] creates a caseSensitive filter
-		 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
+		 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 		 * @returns {sap.ui.model.Filter} filter object
 		 * @private
 		 * @ui5-restricted sap.ui.mdc, sap.fe
@@ -386,7 +382,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 		 * @param {sap.ui.model.Type} [oType] Data type
-		 * @param {sap.ui.mdc.enum.FieldDisplay} [sDisplay] Display mode
+		 * @param {sap.ui.mdc.enums.FieldDisplay} [sDisplay] Display mode
 		 * @param {boolean} [bHideOperator=false] If set, only the value output is returned without any visible operator
 		 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
 		 * @returns {string} formatted text
@@ -465,7 +461,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sText Text
 		 * @param {sap.ui.model.Type} oType Data type
-		 * @param {sap.ui.mdc.enum.FieldDisplay} sDisplayFormat Display format
+		 * @param {sap.ui.mdc.enums.FieldDisplay} sDisplayFormat Display format
 		 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
 		 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
 		 * @returns {any[]} array of values
@@ -699,7 +695,7 @@ sap.ui.define([
 		 * In this function no type validation takes place.
 		 *
 		 * @param {string} sText Text
-		 * @param {sap.ui.mdc.enum.FieldDisplay} sDisplayFormat Display format
+		 * @param {sap.ui.mdc.enums.FieldDisplay} sDisplayFormat Display format
 		 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
 		 * @returns {string[]} array of value parts without operator sign
 		 *
@@ -736,7 +732,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sText Text
 		 * @param {sap.ui.model.Type} oType Data type
-		 * @param {sap.ui.mdc.enum.FieldDisplay} sDisplayFormat Display format
+		 * @param {sap.ui.mdc.enums.FieldDisplay} sDisplayFormat Display format
 		 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
 		 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
 		 * @returns {sap.ui.mdc.condition.ConditionObject} The condition for the text
@@ -908,12 +904,10 @@ sap.ui.define([
 		/**
 		 * Sets an overwrite function for some of the <code>operator</code> functions.
 		 *
-		 * @param {sap.ui.mdc.enum.OperatorOverwrite} sMethodName name of the function which will be overwritten
+		 * @param {sap.ui.mdc.enums.OperatorOverwrite} sMethodName name of the function which will be overwritten
 		 * @param {function} fnOverwrite new callback function
 		 * @returns {function} the original function
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 * @since: 1.113.0
 		 */
 		Operator.prototype.overwrite = function (sMethodName, fnOverwrite) {
@@ -922,7 +916,7 @@ sap.ui.define([
 				this._oMethodOverwrites[sMethodName] = fnOverwrite;
 				return fnPrevious.bind(this);
 			}
-			throw "Operator: Illegal overwrite detected. Please see sap.ui.mdc.enum.OperatorOverwrite";
+			throw "Operator: Illegal overwrite detected. Please see sap.ui.mdc.enums.OperatorOverwrite";
 		};
 
 		return Operator;

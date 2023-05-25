@@ -9,9 +9,11 @@ sap.ui.define(function() {
 	/**
 	 * Enumeration of the <code>OperatorOverwrite</code> in <code>Operator</code>.
 	 * @enum {string}
-	 * @public
 	 * @since 1.113
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+ 	 * @alias sap.ui.mdc.enum.OperatorOverwrite
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.OperatorOverwrite}
 	 */
 	var OperatorOverwrite = {
 		/**

@@ -23,9 +23,7 @@ sap.ui.define([
 		 * @version ${version}
 		 * @constructor
 		 *
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 * @since 1.105
 		 * @alias sap.ui.mdc.chart.ChartImplementationContainer
 		 */

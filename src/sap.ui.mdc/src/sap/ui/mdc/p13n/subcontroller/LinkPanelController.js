@@ -7,7 +7,7 @@ sap.ui.define([
 	"./SelectionController",
     "sap/ui/mdc/p13n/panels/LinkSelectionPanel",
     "sap/m/MessageBox",
-    "sap/ui/mdc/enum/TableMultiSelectMode"
+    "sap/ui/mdc/enums/TableMultiSelectMode"
 ], function (P13nBuilder, BaseController, SelectionPanel, MessageBox, TableMultiSelectMode) {
     "use strict";
 
