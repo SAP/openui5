@@ -326,4 +326,22 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 
 	});
 
+	QUnit.test("BlockBase has overflow-y hidden", function (assert) {
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
+			oSubSection = oOPL.getSections()[0].getSubSections()[0],
+			oBlock = oSubSection.getBlocks()[0],
+			done = assert.async();
+
+		assert.expect(1);
+
+		oSubSection.addStyleClass("sapUxAPObjectPageSubSectionFitContainer");
+
+		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Check
+			assert.strictEqual(oBlock.$().css("overflow-y"), "hidden", "Blockbase in .sapUxAPObjectPageSubSectionFitContainer SubSection has overflow-y hidden");
+			done();
+		});
+
+	});
+
 });
