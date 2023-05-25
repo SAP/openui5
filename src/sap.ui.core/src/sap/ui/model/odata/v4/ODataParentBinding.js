@@ -732,6 +732,7 @@ sap.ui.define([
 			iIndex = oContext.getIndex(),
 			bIsAdvertisement = sChildPath[0] === "#",
 			oMetaModel = this.oModel.getMetaModel(),
+			oParentContext = this.oContext, // Note: might disappear later on
 			aPromises,
 			sResolvedChildPath = this.oModel.resolve(sChildPath, oContext),
 			that = this;
@@ -787,7 +788,7 @@ sap.ui.define([
 			|| this.oCache === null
 			|| this.oCache && this.oCache.hasSentRequest();
 		aPromises = [
-			this.doFetchQueryOptions(this.oContext),
+			this.doFetchQueryOptions(oParentContext),
 			// After access to complete meta path of property, the metadata of all prefix paths
 			// is loaded so that synchronous access in wrapChildQueryOptions via getObject is
 			// possible
@@ -814,8 +815,8 @@ sap.ui.define([
 			if (sReducedChildMetaPath === undefined) {
 				// the child's data does not fit into this bindings's cache, try the parent
 				that.bHasPathReductionToParent = true;
-				return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
-					_Helper.getRelativePath(sResolvedChildPath, that.oContext.getPath()),
+				return oParentContext.getBinding().fetchIfChildCanUseCache(oParentContext,
+					_Helper.getRelativePath(sResolvedChildPath, oParentContext.getPath()),
 					vChildQueryOptions);
 			}
 
@@ -865,8 +866,9 @@ sap.ui.define([
 				if (that.oCache) {
 					that.oCache.setLateQueryOptions(that.mLateQueryOptions);
 				} else if (that.oCache === null) {
-					return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
-						that.sPath, SyncPromise.resolve(that.mLateQueryOptions))
+					return oParentContext.getBinding()
+						.fetchIfChildCanUseCache(oParentContext, that.sPath,
+							SyncPromise.resolve(that.mLateQueryOptions))
 						.then(function (sPath) {
 							return sPath && sReducedPath;
 						});
