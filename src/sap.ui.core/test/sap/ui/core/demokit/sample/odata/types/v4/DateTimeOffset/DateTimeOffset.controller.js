@@ -39,7 +39,7 @@ sap.ui.define([
 		},
 
 		formatTimezone: function (sTimezoneID) {
-			var oType = new DateTimeWithTimezone({showTimezone: 'Only'});
+			var oType = new DateTimeWithTimezone({showDate: false, showTime: false});
 
 			return sTimezoneID
 				? oType.formatValue([null, sTimezoneID], "string") + " (" + sTimezoneID + ")"
