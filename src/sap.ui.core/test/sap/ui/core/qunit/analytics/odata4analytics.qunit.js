@@ -1800,7 +1800,7 @@ sap.ui.define([
 			1);
 	});
 
-	//*********************************************************************************************
+/** @deprecated As of version 1.94.0 */
 [{
 	sModel : "sap/ui/model/odata/ODataModel",
 	iVersion : AnalyticalVersionInfo.V1
