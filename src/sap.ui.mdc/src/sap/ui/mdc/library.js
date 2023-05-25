@@ -717,8 +717,7 @@
 	 * @name sap.ui.mdc.IFilterSource.getConditions
 	 * @returns {map} a map containing the conditions according to the definition of the {@link sap.ui.mdc.condition.ConditionModel}
 	 * @since 1.80
-	 * @public
-	 * @function
+	 * @method
 	 */
 
 	/**
@@ -746,13 +745,53 @@
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 */
+
+	/**
+	 * The <code>validate</code> method should return a promise which resolves after the IFilter interface has handled its inner validation.
+	 * The <code>getConditions</code> method will be called subsequently by the filtered control.</li>
+	 *
+	 * @name sap.ui.mdc.IFilter.validate
+	 * @param {boolean} bSuppressSearch Determines whether the search should be suppressed. The default is <code>null<code>.
+	 * @returns {Promise} A promise resolving once the necessary result validation has been handled
+	 * @since 1.80
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @method
+	 */
+
+	/**
+	 * <b>Note:</b> The <code>getSearch</code> method can optionally be implemented and should return a string for approximate string matching implemented in the backend.</li>
+	 *
+	 * @name sap.ui.mdc.IFilter.getSearch
+	 * @returns {string} The search string to be used for an approximate string matching
+	 * @since 1.80
+	 * @ui5-restricted sap.fe
+	 * @method
+	 */
+
+	/**
+	 *
+	 * Fired when a filter value changes to display an overlay on the <code>sap.ui.mdc.Table</code> & <code>sap.ui.mdc.Chart</code> control.
+	 *
+	 * @name ap.ui.mdc.IFilter#filtersChanged
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 */
+
+	/**
+	 * Fired when a filter value changes to display an overlay on the <code>sap.ui.mdc.Table</code> & <code>sap.ui.mdc.Chart</code> control.
+	 *
+	 * @name ap.ui.mdc.IFilter#search
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 */
 
 	/**
 	 *
 	 * Interface for controls or entities which support the appliance of an externalized state representation.
-	 * The controls or entities have to implement the following APIs: <code>getCurrentState</code>, <code>getAdaptationConfigAttribute</code> & <code>initialized</code> methods.
+	 * The controls or entities have to implement the following APIs: <code>getCurrentState</code> & <code>initialized</code> methods.
 	 *
 	 * @since 1.75
 	 * @name sap.ui.mdc.IxState
