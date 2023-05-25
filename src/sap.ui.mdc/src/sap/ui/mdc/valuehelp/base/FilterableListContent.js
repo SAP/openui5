@@ -284,7 +284,7 @@ sap.ui.define([
 				return loadModules([
 					"sap/ui/mdc/FilterField"
 				]).then(function (aModules){
-					if (!oFilterBar.bIsDestroyed) {
+					if (!oFilterBar.isDestroyed()) {
 						var FilterField = aModules[0];
 						this._oSearchField = new FilterField(this.getId() + "-search", {
 							conditions: "{$filters>/conditions/" + sFilterFields + "}",

@@ -385,7 +385,7 @@ sap.ui.define([
 
 	FilterField.prototype.checkCreateInternalContent = function() {
 
-		if (!this.bIsDestroyed && !this.isPropertyInitial("dataType")) {
+		if (!this.isFieldDestroyed() && !this.isPropertyInitial("dataType")) {
 			// If DataType is set in applySettings we can assume it is final and DataTypeFormatOptions and DataTypeContraints are set too
 			// EditMode is not relevant as non editable FilterFields are not a use case in the moment.
 			// MultipleLines is also not used for FilterFields in the moment.

@@ -171,7 +171,7 @@ sap.ui.define([
 		if (oOrigin) {
 			var aContent = this.getContent();
 			var iIndex = aContent.indexOf(oOrigin);
-			if (this._oIconTabBar && iIndex !== -1 && !this._bIsBeingDestroyed) {
+			if (this._oIconTabBar && iIndex !== -1 && !this.isDestroyStarted()) {
 				// Content invalidated -> invalidate corresponding IconTabFilter
 				var aItems = this._oIconTabBar.getItems();
 				if (aItems[iIndex]) {

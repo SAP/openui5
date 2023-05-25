@@ -142,7 +142,7 @@ sap.ui.define([
 		}
 
 		var applyAfterPromise = function () {
-			if (!this.bIsDestroyed) {
+			if (!this.isDestroyed()) {
 				return this.applyFilters();
 			}
 		}.bind(this);

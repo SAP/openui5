@@ -134,7 +134,7 @@ sap.ui.define([
 					throw new Error("loadModules promise rejected in sap.ui.mdc.field.content.ContentFactory:createContent function call - could not load data type " + JSON.stringify(aControlNames));
 				})
 				.then(function(aControls) {
-					if (this.getField() && !this.getField()._bIsBeingDestroyed) {
+					if (this.getField() && !this.getField().isFieldDestroyed()) {
 						this.updateConditionType(); // to make sure to have current FormatOptions if Condition(s)Type already exist
 						return oContentType.create(this, sContentMode, this._sOperator, aControls, sId);
 					} else {
@@ -394,7 +394,7 @@ sap.ui.define([
 								throw new Error("loadModules promise rejected in sap.ui.mdc.field.content.ContentFactory:_setUsedConditionType function call - could not load controls " + sDataType);
 							})
 							.then(function(aModules) {
-								if (this.getField() && !this.getField()._bIsBeingDestroyed) {
+								if (this.getField() && !this.getField().isFieldDestroyed()) {
 									this.updateConditionType();
 								}
 							}.bind(this))

@@ -851,7 +851,7 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.onControlChange = function() {
 
-		if (this.bIsDestroyed) {
+		if (this.isDestroyed()) {
 			return; // if destroyed meanwhile, don't update
 		}
 

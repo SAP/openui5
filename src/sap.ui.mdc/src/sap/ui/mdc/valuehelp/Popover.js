@@ -83,7 +83,7 @@ sap.ui.define([
 		if (oOrigin) {
 			var oPopover = this.getAggregation("_container");
 			var oContent = this._oCurrentContent;
-			if (oPopover && oContent && oOrigin === oContent && !this._bIsBeingDestroyed) {
+			if (oPopover && oContent && oOrigin === oContent && !this.isDestroyStarted()) {
 				// Content invalidated -> invalidate Popover to rerender content
 				oPopover.invalidate(oOrigin);
 			} else { // standard logic
@@ -459,7 +459,7 @@ sap.ui.define([
 
 	Popover.prototype.exit = function () {
 		if (this._oCurrentContent) {
-			if (!this._oCurrentContent.bIsDestroyed) {
+			if (!this._oCurrentContent.isDestroyed()) {
 				this._oCurrentContent.destroy();
 			}
 			this._oCurrentContent = null;
