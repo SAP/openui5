@@ -703,7 +703,7 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._retrieveMetadata().then(function () {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 			assert.ok(oFilterBar.getControlDelegate());
 			var oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
@@ -760,7 +760,7 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._retrieveMetadata().then(function () {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 
 			assert.ok(oFilterBar.getControlDelegate());

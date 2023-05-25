@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/FilterField",
     "sap/ui/mdc/DefaultTypeMap",
-	"sap/ui/mdc/enum/FilterBarValidationStatus"
+	"sap/ui/mdc/enum/FilterBarValidationStatus",
+	'sap/base/Log'
 ], function (
-	FilterBarBase, FilterField, DefaultTypeMap, FilterBarValidationStatus
+	FilterBarBase, FilterField, DefaultTypeMap, FilterBarValidationStatus, Log
 ) {
 	"use strict";
 
@@ -789,5 +790,65 @@ sap.ui.define([
 		}.bind(this));
 
 	});
+
+    QUnit.test("_setXConditions with unknown properties", function(assert){
+        var done = assert.async();
+
+        var mDummyCondition = {
+            "key1": [
+                {
+                  "operator": "EQ",
+                  "values": [
+                    "SomeTestValue"
+                  ],
+                  "validated": "Validated"
+                }
+              ],
+             "unknown": [                {
+                  "operator": "EQ",
+                  "values": [
+                    "SomeTestValue"
+                  ],
+                  "validated": "Validated"
+                }]
+        };
+        var mResultCondition = {
+            "key1": [
+                {
+				  "isEmpty": false,
+                  "operator": "EQ",
+                  "values": [
+                    "SomeTestValue"
+                  ],
+                  "validated": "Validated"
+                }
+              ]
+        };
+
+
+        this.oFilterBarBase.initialized().then(function(){
+
+            sinon.stub(this.oFilterBarBase, "_getPropertyByName").callsFake(function(sPropertyName){
+				if (sPropertyName === "key1") {
+					return {name: "key1", typeConfig: this.oFilterBarBase.getTypeMap().getTypeConfig("sap.ui.model.type.String")};
+				} else {
+					return null;
+				}
+			}.bind(this));
+
+			sinon.spy(Log, "error");
+			assert.ok(!Log.error.called);
+
+            this.oFilterBarBase._setXConditions(mDummyCondition)
+            .then(function(){
+                assert.deepEqual(mResultCondition, this.oFilterBarBase.getInternalConditions(), "Condition returned without persistence active");
+				assert.ok(Log.error.calledOnce);
+				Log.error.restore();
+
+                done();
+            }.bind(this));
+        }.bind(this));
+
+    });
 
 });
