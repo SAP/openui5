@@ -24,8 +24,9 @@
 				</tnt:ToolHeader>
 			</tnt:header>
 			<tnt:sideContent>
-				<tnt:SideNavigation id="sideNavigation" selectedKey="{/selectedKey}" itemSelect="onSideNavigationItemSelect">
-					<tnt:NavigationList items="{path: '/navigation'}">
+				<tnt:SideNavigation id="sideNavigation" selectedKey="{/selectedKey}">
+					<tnt:NavigationList items="{path: '/navigation'}"
+						itemSelect="onSideNavigationItemSelect">
 						<tnt:NavigationListItem text="{title}" icon="{icon}" enabled="{enabled}" expanded="{expanded}" items="{path: 'items', templateShareable: false}" key="{key}" hasExpander="{hasExpander}" visible="{= !${hidden}}">
 							<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" key="{key}" enabled="{enabled}" visible="{= !${hidden}}">
 								<tnt:customData>
@@ -37,6 +38,17 @@
 							</tnt:customData>
 						</tnt:NavigationListItem>
 					</tnt:NavigationList>
+					<tnt:fixedItem>
+						<tnt:NavigationList itemSelect="onSideNavigationFixedItemPress">
+							<tnt:NavigationListItem icon="sap-icon://compare" key="legal"
+								text="{i18n>APP_INFORMATION_BTN_LEGAL}" />
+							<tnt:NavigationListItem icon="sap-icon://locked" key="privacy"
+								text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
+							<tnt:NavigationListItem icon="sap-icon://document-text"
+								key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
+								visible="{=!${versionData>/isOpenUI5}}" />
+						</tnt:NavigationList>
+					</tnt:fixedItem>
 				</tnt:SideNavigation>
 			</tnt:sideContent>
 			<tnt:mainContents>
