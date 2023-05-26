@@ -7,7 +7,6 @@ sap.ui.define(['./PropertyBinding'],
 	function(PropertyBinding) {
 	"use strict";
 
-
 	/**
 	 * Creates a new ClientPropertyBinding.
 	 *
@@ -63,7 +62,10 @@ sap.ui.define(['./PropertyBinding'],
 	 */
 	ClientPropertyBinding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
-			sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
+			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
+			if (MessageManager) {
+				MessageManager.removeMessages(this.getDataState().getControlMessages(), true);
+			}
 			this.oContext = oContext;
 			if (this.isRelative()) {
 				this.checkUpdate();

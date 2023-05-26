@@ -36,7 +36,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.getContext(), oContext);
 
-		this.mock(sap.ui.getCore()).expects("getMessageManager").withExactArgs()
+		this.mock(sap.ui).expects("require").withExactArgs("sap/ui/core/message/MessageManager")
 			.returns(oMessageManager);
 		this.mock(oBinding).expects("getDataState").withExactArgs().twice().returns(oDataState);
 		this.mock(oDataState).expects("getControlMessages").withExactArgs()

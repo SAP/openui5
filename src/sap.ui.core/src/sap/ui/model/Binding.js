@@ -206,8 +206,11 @@ sap.ui.define([
 		var mChangeParameters;
 
 		if (this.oContext != oContext) {
-			sap.ui.getCore().getMessageManager()
-				.removeMessages(this.getDataState().getControlMessages(), true);
+			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
+			if (MessageManager) {
+				MessageManager
+					.removeMessages(this.getDataState().getControlMessages(), true);
+			}
 			this.oContext = oContext;
 			this.getDataState().reset();
 			this.checkDataState();
@@ -774,8 +777,11 @@ sap.ui.define([
 		this.bIsBeingDestroyed = true;
 
 		if (oDataState) {
-			sap.ui.getCore().getMessageManager()
-				.removeMessages(oDataState.getControlMessages(), true);
+			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
+			if (MessageManager) {
+				MessageManager
+					.removeMessages(oDataState.getControlMessages(), true);
+			}
 			oDataState.setModelMessages();
 			if (oDataState.changed()) {
 				// notify controls synchronously that data state changed

@@ -699,6 +699,10 @@ sap.ui.define([
 			.withExactArgs("sap/ui/core/FocusHandler")
 			.atLeast(0)
 			.callThrough();
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/core/message/MessageManager")
+			.atLeast(0)
+			.callThrough();
 
 		// code under test
 		check(assert,

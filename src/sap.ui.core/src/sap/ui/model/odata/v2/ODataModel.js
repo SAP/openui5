@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageManager",
 	"sap/ui/core/message/MessageParser",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/BindingMode",
@@ -55,7 +56,7 @@ sap.ui.define([
 ], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding,
 		ODataTreeBinding, assert, Log, encodeURL, deepEqual, deepExtend, each, extend,
 		isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise, Configuration,
-		coreLibrary, Message, MessageParser, _Helper, BindingMode, BaseContext, FilterProcessor,
+		coreLibrary, Message, MessageManager, MessageParser, _Helper, BindingMode, BaseContext, FilterProcessor,
 		Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
 		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
 ) {
@@ -221,7 +222,6 @@ sap.ui.define([
 
 		constructor : function(vServiceUrl, mParameters) {
 			Model.apply(this, arguments);
-
 			var sUser,
 				sPassword,
 				mHeaders,
@@ -6403,7 +6403,7 @@ sap.ui.define([
 		} else {
 			delete this.mChangedEntities[sKey];
 		}
-		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey,
+		MessageManager.removeMessages(this.getMessagesByEntity(sKey,
 			/*bExcludePersistent*/!bDeleteEntity));
 
 		return pMetaDataLoaded;
@@ -6946,7 +6946,7 @@ sap.ui.define([
 			});
 			that._removeEntity(sKey);
 			//cleanup Messages for created Entry
-			sap.ui.getCore().getMessageManager().removeMessages(
+			MessageManager.removeMessages(
 				this.getMessagesByEntity(oContext.getPath(), true));
 		}
 	};
@@ -7636,6 +7636,10 @@ sap.ui.define([
 			delete this.pAnnotationsLoaded;
 		}
 
+		if (this.oMessageParser) {
+			this.oMessageParser.destroy();
+			delete this.oMessageParser;
+		}
 	};
 
 	/**

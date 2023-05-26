@@ -37,7 +37,6 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 
 			this.mMessages = null;
 			this.id = uid();
-			sap.ui.getCore().getMessageManager().registerMessageProcessor(this);
 		},
 
 		metadata : {
@@ -131,9 +130,21 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 *
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
+	 * @deprecated 1.115 Use {@link sap.ui.core.messages.MessageManager#updateMessages} instead
 	 */
 	MessageProcessor.prototype.fireMessageChange = function(mParameters) {
-		this.fireEvent("messageChange", mParameters);
+		var MessageManager =  sap.ui.require("sap/ui/core/message/MessageManager");
+		if (MessageManager) {
+			MessageManager.registerMessageProcessor(this);
+			MessageManager.updateMessages(mParameters.oldMessages, mParameters.newMessages);
+			this.fireEvent("messageChange", mParameters);
+		} else  {
+			sap.ui.require(["sap/ui/core/message/MessageManager"], function(MessageManager)  {
+				MessageManager.registerMessageProcessor(this);
+				MessageManager.updateMessages(mParameters.oldMessages, mParameters.newMessages);
+				this.fireEvent("messageChange", mParameters);
+			}.bind(this));
+		}
 		return this;
 	};
 	// the 'abstract methods' to be implemented by child classes
@@ -166,15 +177,6 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 */
 	MessageProcessor.prototype.getId = function() {
 		return this.id;
-	};
-
-	/**
-	 * Destroys the MessageProcessor Instance
-	 * @public
-	 */
-	MessageProcessor.prototype.destroy = function() {
-		sap.ui.getCore().getMessageManager().unregisterMessageProcessor(this);
-		EventProvider.prototype.destroy.apply(this, arguments);
 	};
 
 	return MessageProcessor;

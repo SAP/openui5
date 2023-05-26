@@ -903,7 +903,10 @@ sap.ui.define([
 		ManagedObject.prototype.destroy.apply(this, arguments);
 
 		// unregister for messaging (on MessageManager)
-		sap.ui.getCore().getMessageManager().unregisterObject(this);
+		var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
+		if (MessageManager) {
+			MessageManager.unregisterObject(this);
+		}
 
 		// manifest exit (unload includes, ... / unregister customzing)
 		//   => either call exit on the instance specific manifest or the static one on the ComponentMetadata
@@ -2573,7 +2576,16 @@ sap.ui.define([
 			 */
 			var bHandleValidation = oInstance.getMetadata()._getManifestEntry("/sap.ui5/handleValidation");
 			if (bHandleValidation !== undefined || vConfig.handleValidation) {
-				sap.ui.getCore().getMessageManager().registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
+				var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
+				if (MessageManager) {
+					MessageManager.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
+				} else {
+					sap.ui.require(["sap/ui/core/message/MessageManager"], function(MessageManager) {
+						if (!oInstance.isDestroyed()) {
+							MessageManager.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
+						}
+					});
+				}
 			}
 
 			// Some services may demand immediate startup
