@@ -600,6 +600,8 @@ sap.ui.define([
 				subSections: [oSubSection2]
 			});
 
+			this.oObjectPageSection3 = oObjectPageSection3;
+
 			var oEmbeddedPage = oCore.byId("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
@@ -634,6 +636,37 @@ sap.ui.define([
 		QUnit.test("when context menu (context menu) is opened on ObjectPageSection", function(assert) {
 			assert.expect(13);
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection1);
+			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
+				assert.ok(true, "the contextMenu is open");
+			});
+			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var sText = "";
+				oContextMenuControl.getItems().forEach(function(oItem) {
+					sText = sText + " - " + oItem.getKey();
+				});
+				if (oContextMenuControl.getItems().length === 5) {
+					assert.equal(oContextMenuControl.getItems().length, 5, " and 5 Menu Items are available");
+					assert.equal(oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "rename section is available");
+					assert.equal(oContextMenuControl.getItems()[0].getEnabled(), false, "rename section is disabled");
+					assert.equal(oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
+					assert.equal(oContextMenuControl.getItems()[1].getEnabled(), true, "add section is enabled");
+					assert.equal(oContextMenuControl.getItems()[1].getText(), "Add: Section", "add section has the correct text");
+					assert.equal(oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "remove section is available");
+					assert.equal(oContextMenuControl.getItems()[2].getEnabled(), true, "we can remove a section");
+					assert.equal(oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "cut sections available");
+					assert.equal(oContextMenuControl.getItems()[3].getEnabled(), true, "cut is enabled");
+					assert.equal(oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "paste is available");
+					assert.equal(oContextMenuControl.getItems()[4].getEnabled(), false, "we cannot paste a section");
+				} else {
+					assert.ok(false, sText);
+				}
+			}.bind(this));
+		});
+
+		QUnit.test("when context menu (context menu) is opened on ObjectPageSection3", function(assert) {
+			assert.expect(13);
+			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection3);
 			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});

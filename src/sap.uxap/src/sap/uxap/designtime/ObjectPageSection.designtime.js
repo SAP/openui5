@@ -51,7 +51,7 @@ sap.ui.define(["sap/uxap/library"],
 					changeType: "rename",
 					domRef: ".sapUxAPObjectPageSectionTitle",
 					isEnabled: function (oElement) {
-						return oElement.getShowTitle();
+						return oElement._getInternalTitleVisible();
 					},
 					validators: [
 						"noEmptyText"
