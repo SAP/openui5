@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/dt/DesignTimeMetadata"
 ],
-function (
+function(
 	DesignTimeMetadata
 ) {
 	"use strict";

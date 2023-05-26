@@ -84,12 +84,12 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 			this.oCutPaste.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when CutPaste is initialized", function(assert) {
 			var bElementMoverExist = !!this.oCutPaste.getElementMover();
 			assert.ok(bElementMoverExist, "parameter elementMover exists");
@@ -178,7 +178,7 @@ function(
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

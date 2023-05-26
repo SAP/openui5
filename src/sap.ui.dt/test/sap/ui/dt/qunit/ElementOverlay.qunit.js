@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"dt/control/SimpleScrollControl",
@@ -100,15 +100,15 @@ sap.ui.define([
 				init: function(oEvent) {
 					oEvent.getSource().placeInOverlayContainer();
 					// Wait until the overlay styles are applied (fixes IE11 timing issue)
-					this.attachEventOnce('geometryChanged', function() {
+					this.attachEventOnce("geometryChanged", function() {
 						fnDone();
 					});
 				}
 			});
-			this.oElementOverlay.attachEvent('applyStylesRequired', this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
+			this.oElementOverlay.attachEvent("applyStylesRequired", this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
 		},
 		afterEach: function() {
-			this.oElementOverlay.detachEvent('applyStylesRequired', this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
+			this.oElementOverlay.detachEvent("applyStylesRequired", this.oElementOverlay.applyStyles.bind(this.oElementOverlay));
 			this.oElementOverlay.destroy();
 			this.oButton.destroy();
 			sandbox.restore();
@@ -146,27 +146,27 @@ sap.ui.define([
 			this.oButton.setText("Lorem ipsum dolor sit amet...");
 			oCore.applyChanges();
 			return this.oElementOverlay.applyStyles()
-				.then(function() {
-					assert.notStrictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay changes its width");
+			.then(function() {
+				assert.notStrictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay changes its width");
 
-					sWidth = fnGetWidth(this.oElementOverlay);
+				sWidth = fnGetWidth(this.oElementOverlay);
 
-					// Explicitly disable overlay
-					this.oElementOverlay.setVisible(false);
-					this.oButton.setText("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...");
+				// Explicitly disable overlay
+				this.oElementOverlay.setVisible(false);
+				this.oButton.setText("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...");
 
-					assert.strictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay didn't change its width");
-				}.bind(this));
+				assert.strictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay didn't change its width");
+			}.bind(this));
 		});
 
 		QUnit.test("when overlay is destroyed and applyStyles function is called", function(assert) {
 			var oApplySizesSpy = sandbox.spy(this.oElementOverlay, "_applySizes");
 			this.oElementOverlay.destroy();
 			return this.oElementOverlay.applyStyles()
-				.then(function() {
-					assert.ok(true, "then applyStyles is returning a promise");
-					assert.strictEqual(oApplySizesSpy.callCount, 0, "then private _applySizes function is not called");
-				});
+			.then(function() {
+				assert.ok(true, "then applyStyles is returning a promise");
+				assert.strictEqual(oApplySizesSpy.callCount, 0, "then private _applySizes function is not called");
+			});
 		});
 
 		QUnit.test("elementModified event — property change ('visible')", function(assert) {
@@ -280,38 +280,38 @@ sap.ui.define([
 		QUnit.test("when CSS animation takes place in UI", function(assert) {
 			var style = document.createElement("style");
 			document.head.appendChild(style);
-			style.sheet.insertRule('\
+			style.sheet.insertRule("\
 				@keyframes example {\
 					from	{ width: 100px; }\
 					to		{ width: 200px; }\
 				}\
-			');
-			style.sheet.insertRule('\
+			");
+			style.sheet.insertRule("\
 				.sapUiDtTestAnimate {\
 					animation-name: example;\
 					animation-duration: 0.05s;\
 					animation-fill-mode: forwards;\
 				}\
-			');
+			");
 
 			var fnDone = assert.async();
 
 			this.oElementOverlay.attachEvent(
 				"geometryChanged",
 				sandbox.stub()
-					// First call triggered by the mutation for adding the CSS class to the DOM element
-					.onFirstCall().callsFake(function() {
-						assert.ok(true);
-					})
-					// Second call triggered by animationend event
-					.onSecondCall().callsFake(function() {
-						setTimeout(function() {
-							// setTimeout added to cover animation duration
-							assert.strictEqual(this.oButton.getDomRef().getBoundingClientRect().width, 200, "then the button width is correct");
-							assert.strictEqual(this.oButton.getDomRef().getBoundingClientRect().width, this.oElementOverlay.getDomRef().getBoundingClientRect().width, "then the overlay size is in sync");
-							fnDone();
-						}.bind(this), 51);
-					}.bind(this))
+				// First call triggered by the mutation for adding the CSS class to the DOM element
+				.onFirstCall().callsFake(function() {
+					assert.ok(true);
+				})
+				// Second call triggered by animationend event
+				.onSecondCall().callsFake(function() {
+					setTimeout(function() {
+						// setTimeout added to cover animation duration
+						assert.strictEqual(this.oButton.getDomRef().getBoundingClientRect().width, 200, "then the button width is correct");
+						assert.strictEqual(this.oButton.getDomRef().getBoundingClientRect().width, this.oElementOverlay.getDomRef().getBoundingClientRect().width, "then the overlay size is in sync");
+						fnDone();
+					}.bind(this), 51);
+				}.bind(this))
 			);
 			this.oButton.addStyleClass("sapUiDtTestAnimate");
 		});
@@ -433,9 +433,9 @@ sap.ui.define([
 			var oIsVisibleSpy = sinon.spy(this.oElementOverlay, "isVisible");
 			this.oElementOverlay.destroy();
 			return this.oElementOverlay.applyStyles()
-				.then(function() {
-					assert.equal(oIsVisibleSpy.callCount, 0, "the applyStyles function directly returned");
-				});
+			.then(function() {
+				assert.equal(oIsVisibleSpy.callCount, 0, "the applyStyles function directly returned");
+			});
 		});
 
 		QUnit.test("when the overlay is being renamed several times in a row", function(assert) {
@@ -447,7 +447,7 @@ sap.ui.define([
 				});
 			});
 			this.oElementOverlay.attachEventOnce("geometryChanged", fnHandlerSpy);
-			['text1', 'text2', 'text3'].forEach(function(sText) {
+			["text1", "text2", "text3"].forEach(function(sText) {
 				this.oButton.setText(sText);
 			}, this);
 		});
@@ -470,13 +470,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the 'visible' property is set to false and then back to true", function(assert) {
-			var sPreviousVisibility = this.oElementOverlay.getDomRef().style["visibility"];
+			var sPreviousVisibility = this.oElementOverlay.getDomRef().style.visibility;
 
 			this.oElementOverlay.setVisible(false);
-			assert.strictEqual(this.oElementOverlay.getDomRef().style["visibility"], "hidden", "first the visibility is set to hidden");
+			assert.strictEqual(this.oElementOverlay.getDomRef().style.visibility, "hidden", "first the visibility is set to hidden");
 
 			this.oElementOverlay.setVisible(true);
-			assert.strictEqual(this.oElementOverlay.getDomRef().style["visibility"], sPreviousVisibility, "then the visibility is reset to the original value");
+			assert.strictEqual(this.oElementOverlay.getDomRef().style.visibility, sPreviousVisibility, "then the visibility is reset to the original value");
 		});
 	});
 
@@ -503,9 +503,9 @@ sap.ui.define([
 			this.oLabel.setText("test");
 			oCore.applyChanges();
 			return this.oOverlay.applyStyles()
-				.then(function() {
-					assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
-				}.bind(this));
+			.then(function() {
+				assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
+			}.bind(this));
 		});
 	});
 
@@ -965,7 +965,7 @@ sap.ui.define([
 				this.oSimpleScrollControlOverlay = OverlayRegistry.getOverlay(this.oSimpleScrollControl);
 				this.oContent1Overlay = OverlayRegistry.getOverlay(this.oContent1);
 				// FIXME: when synced event is resolved including scrollbar synchronization
-				if (window.getComputedStyle(this.oContent1Overlay.getDomRef())["transform"] === "none") {
+				if (window.getComputedStyle(this.oContent1Overlay.getDomRef()).transform === "none") {
 					this.oContent1Overlay.attachEventOnce("geometryChanged", fnDone);
 				} else {
 					fnDone();
@@ -1265,7 +1265,7 @@ sap.ui.define([
 				metadata: {
 					designtime: {
 						domRef: ".sapUiDtTestSSCScrollContainer",
-						scrollContainers: null //not needed in this test
+						scrollContainers: null // not needed in this test
 					}
 				},
 				renderer: SimpleScrollControl.getMetadata().getRenderer().render
@@ -1458,7 +1458,6 @@ sap.ui.define([
 				]
 			});
 
-
 			oVerticalLayout.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -1522,7 +1521,6 @@ sap.ui.define([
 				]
 			});
 
-
 			oVerticalLayout.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -1535,9 +1533,9 @@ sap.ui.define([
 				setTimeout(function() {
 					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
 					var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0).get(0);
-					assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef)["display"], "block");
+					assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "block");
 					this.oScrollControlOverlay.attachEvent("geometryChanged", function() {
-						assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef)["display"], "none");
+						assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "none");
 						this.oDesignTime.destroy();
 						oVerticalLayout.destroy();
 						fnDone();
@@ -1577,7 +1575,6 @@ sap.ui.define([
 				]
 			});
 
-
 			oVerticalLayout.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -1589,7 +1586,7 @@ sap.ui.define([
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
 				var oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
 				var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0).get(0);
-				assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef)["display"], "block");
+				assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "block");
 				var oGeometryChangedSpy = sandbox.spy();
 				oTextAreaOverlay.attachEvent("geometryChanged", oGeometryChangedSpy);
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -1698,8 +1695,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Error handling", function () {
-		QUnit.test("when creating an ElementOverlay with incorrect elemement object", function (assert) {
+	QUnit.module("Error handling", function() {
+		QUnit.test("when creating an ElementOverlay with incorrect elemement object", function(assert) {
 			var oManagedObject = new ManagedObject();
 
 			assert.throws(

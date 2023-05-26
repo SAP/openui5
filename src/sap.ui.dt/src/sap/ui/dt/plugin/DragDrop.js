@@ -75,13 +75,12 @@ sap.ui.define([
 		Plugin.prototype.init.apply(this, arguments);
 
 		// We want to prevent the page from scrolling before getting to its children (=> useCapture "true")
-		document.addEventListener('touchmove', this._preventScrollOnTouch, true);
+		document.addEventListener("touchmove", this._preventScrollOnTouch, true);
 
 		this._dragScrollHandler = this._dragScroll.bind(this);
 		this._dragLeaveHandler = this._dragLeave.bind(this);
 		this._mScrollIntervals = {};
 	};
-
 
 	/*
 	 * @private
@@ -89,7 +88,7 @@ sap.ui.define([
 	DragDrop.prototype.exit = function() {
 		Plugin.prototype.exit.apply(this, arguments);
 
-		document.removeEventListener('touchmove', this._preventScrollOnTouch);
+		document.removeEventListener("touchmove", this._preventScrollOnTouch);
 
 		delete this._mElementOverlayDelegate;
 		delete this._mAggregationOverlayDelegate;
@@ -265,7 +264,7 @@ sap.ui.define([
 
 		// Fix for Firfox - Firefox only fires drag events when data is set
 		if (Device.browser.firefox && oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setData) {
-			oEvent.originalEvent.dataTransfer.setData('text/plain', '');
+			oEvent.originalEvent.dataTransfer.setData("text/plain", "");
 		}
 
 		this.setBusy(true);
@@ -288,7 +287,6 @@ sap.ui.define([
 		var touchStartY = oEvent.touches[0].pageY;
 
 		var oTouchedOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
-
 
 		function detachTouchHandlers() {
 			oTouchedOverlay.detachBrowserEvent("touchmove", touchMoveHandler, this);
@@ -511,7 +509,6 @@ sap.ui.define([
 		return this._oGhost;
 	};
 
-
 	/**
 	 * @private
 	 */
@@ -543,7 +540,7 @@ sap.ui.define([
 	DragDrop.prototype._onDragEnter = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
-			//if "true" returned, propagation won't be canceled
+			// if "true" returned, propagation won't be canceled
 			if (!this.onDragEnter(oOverlay)) {
 				oEvent.stopPropagation();
 			}
@@ -558,7 +555,7 @@ sap.ui.define([
 	DragDrop.prototype._onDragLeave = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
-			//if "true" returned, propagation won't be canceled
+			// if "true" returned, propagation won't be canceled
 			if (!this.onDragLeave(oOverlay)) {
 				oEvent.stopPropagation();
 			}
@@ -573,7 +570,7 @@ sap.ui.define([
 	DragDrop.prototype._onDragOver = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
-			//if "true" returned, propagation won't be canceled
+			// if "true" returned, propagation won't be canceled
 			if (!this.onDragOver(oOverlay)) {
 				oEvent.stopPropagation();
 			}
@@ -615,7 +612,6 @@ sap.ui.define([
 		oAggregationOverlay.detachBrowserEvent("dragleave", this._onAggregationDragLeave, this);
 		oAggregationOverlay.detachBrowserEvent("drop", this._onAggregationDrop, this);
 	};
-
 
 	/**
 	 * @private
@@ -660,7 +656,6 @@ sap.ui.define([
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Scroll ondrag enablement (only for non-webkit browsers) *
@@ -723,7 +718,6 @@ sap.ui.define([
 		if (iSizeQuarter < I_SCROLL_TRAP_SIZE) {
 			iTrapSize = iSizeQuarter;
 		}
-
 
 		if (iEventOffset < iTrapSize) {
 			this._mScrollIntervals[$element.attr("id")] = this._mScrollIntervals[$element.attr("id")] || {};

@@ -7,7 +7,7 @@
 sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/json/JSONModel"
-], function (
+], function(
 	ResourceModel,
 	JSONModel
 ) {
@@ -56,7 +56,7 @@ sap.ui.define([
 				sap.ui.require(aElements.map(function(s) {
 					return s.replace(/\./g, "/");
 				}), function() {
-					//all controls are loaded, now all libs are loaded
+					// all controls are loaded, now all libs are loaded
 					var mLazyLibraries = sap.ui.getCore().getLoadedLibraries();
 					try {
 						var oRuntimeResourceModel = new ResourceModel({
@@ -82,7 +82,7 @@ sap.ui.define([
 							}
 						});
 					} catch (e) {
-						/*eslint-disable no-empty*/
+						/* eslint-disable no-empty */
 					}
 					var aDesigntimePromises = [];
 					var aControlMetadata = [];
@@ -92,7 +92,7 @@ sap.ui.define([
 							aControlMetadata.push(arguments[i].getMetadata());
 						}
 					}
-					Promise.all(aDesigntimePromises).then(function (aElements) {
+					Promise.all(aDesigntimePromises).then(function(aElements) {
 						var i = 0;
 						aDesigntimeElements = aElements;
 						aModels = aDesigntimeElements.map(function(o) {
@@ -112,19 +112,19 @@ sap.ui.define([
 	var mModelChecks = {
 		"/": {
 			optional: false,
-			check: function (assert, oObject, sControlName) {
+			check: function(assert, oObject, sControlName) {
 				assert.strictEqual(typeof oObject, "object", sControlName + " is an object");
 			}
 		},
 		"/designtimeModule": {
 			optional: false,
-			check: function (assert, sString, sControlName) {
+			check: function(assert, sString, sControlName) {
 				assert.strictEqual(typeof sString, "string", sControlName + " defines /designtimeModule : " + sString);
 			}
 		},
 		"/actions": {
 			optional: true,
-			check: function (assert, mActions, sControlName) {
+			check: function(assert, mActions, sControlName) {
 				Object.keys(mActions).forEach(function(sAction) {
 					if (mActions[sAction].changeType) {
 						assert.strictEqual(typeof mActions[sAction].changeType, "string", sControlName + " defines " + sAction + " with changetype:" + mActions[sAction].changeType);
@@ -140,38 +140,38 @@ sap.ui.define([
 		},
 		"/name": {
 			optional: true,
-			check: function (assert, mEntry, sControlName) {
-				//name can be a string like this "{name}"
-				//TODO: be more strict here
+			check: function(assert, mEntry, sControlName) {
+				// name can be a string like this "{name}"
+				// TODO: be more strict here
 				if (typeof mEntry === "string" && mEntry.indexOf("{") === 0 && mEntry.indexOf("}") === mEntry.length - 1) {
 					return true;
 				}
-				//checking name.plural and name.singular if any
+				// checking name.plural and name.singular if any
 				var aKeys = ["singular", "plural"];
-				aKeys.forEach(function (sKey) {
+				aKeys.forEach(function(sKey) {
 					if (typeof mEntry[sKey] === "function") {
-						//special handling for old function definitions
+						// special handling for old function definitions
 						assert.strictEqual(typeof mEntry[sKey], "function", sControlName + " defines mandatory entry /name/" + sKey);
 					} else {
-						//normally it is defined as string
+						// normally it is defined as string
 						assert.strictEqual(typeof mEntry[sKey], "string", sControlName + " defines mandatory entry /name/" + sKey);
 					}
 				});
-				aKeys.forEach(function (sKey) {
+				aKeys.forEach(function(sKey) {
 					var bDTFound = false;
-					//special handling for old function definitions
+					// special handling for old function definitions
 					if (typeof mEntry[sKey] === "function") {
 						assert.strictEqual(typeof mEntry[sKey], "function", sControlName + " defines function for translation of entry /name/" + sKey);
 						assert.strictEqual(typeof mEntry[sKey](), "string", "Assuming that " + sKey + " with " + mEntry[sKey].toString() + " returns a translation at runtime");
 						return;
 					}
-					//proceed normally with a translation key
+					// proceed normally with a translation key
 					if (mEntry[sKey].toUpperCase() !== mEntry[sKey]) {
-						//TODO:this should be enabled before a release of the new design time data
+						// TODO:this should be enabled before a release of the new design time data
 						assert.ok(true, "Assuming that " + sKey + " with " + mEntry[sKey] + " needs currently no translation");
 						return;
 					}
-					//name/singular
+					// name/singular
 					if (mBundles.designtime) {
 						bDTFound = hasText(mEntry[sKey], mBundles.designtime);
 						assert.strictEqual(bDTFound, true, mEntry[sKey] + " found in designtime message bundle");
@@ -188,19 +188,19 @@ sap.ui.define([
 		},
 		"/palette": {
 			optional: true,
-			check: function (assert, mEntry, sControlName) {
+			check: function(assert, mEntry, sControlName) {
 				var aValidGroups = ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE", "DIALOG"];
 				assert.strictEqual(typeof mEntry, "object", sControlName + " defines optional entry /palette/");
 				assert.strictEqual(aValidGroups.indexOf(mEntry.group) > -1, true, "palette entry defines valid group " + mEntry.group);
-				if (mEntry.icons) { //icons in palette optional
+				if (mEntry.icons) { // icons in palette optional
 					return Promise.all(Object.keys(mEntry.icons).map(function(sKey) {
 						var sIcon = mEntry.icons[sKey];
 						assert.strictEqual(typeof sIcon, "string", "palette/icons/" + sKey + " entry defines icon path " + sIcon);
 
-						return new Promise(function (resolve, reject) {
+						return new Promise(function(resolve, reject) {
 							var xhr = new XMLHttpRequest();
 							xhr.open("GET", sap.ui.require.toUrl(sIcon) + "", true);
-							xhr.onload = function () {
+							xhr.onload = function() {
 								if (xhr.readyState === 4) {
 									if (xhr.status === 200) {
 										if (sIcon.indexOf(".svg") === sIcon.length - 4) {
@@ -220,14 +220,14 @@ sap.ui.define([
 		},
 		"/templates": {
 			optional: true,
-			check: function (assert, mEntry /* ,sControlName */) {
-				if (mEntry.create) { //icons in palette optional
+			check: function(assert, mEntry /* ,sControlName */) {
+				if (mEntry.create) { // icons in palette optional
 					var sCreateTemplate = mEntry.create;
 					assert.strictEqual(typeof sCreateTemplate, "string", "templates/create entry defines fragment path to " + sCreateTemplate);
-					return new Promise(function (resolve, reject) {
+					return new Promise(function(resolve, reject) {
 						var xhr = new XMLHttpRequest();
 						xhr.open("GET", sap.ui.require.toUrl(sCreateTemplate) + "", true);
-						xhr.onload = function () {
+						xhr.onload = function() {
 							if (xhr.readyState === 4) {
 								if (xhr.status === 200) {
 									assert.ok(xhr.responseXML.documentElement && xhr.responseXML.documentElement.localName === "FragmentDefinition", "File " + sCreateTemplate + " exists and starts with a FragmentDefinition node");

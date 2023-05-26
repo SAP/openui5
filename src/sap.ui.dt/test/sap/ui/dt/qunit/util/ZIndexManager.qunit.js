@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/util/ZIndexManager",
@@ -26,18 +26,18 @@ sap.ui.define([
 		}
 	};
 
-	QUnit.module("Given no open popups", function () {
-		QUnit.test("when getNextZIndex() is called to check basic functionality", function (assert) {
+	QUnit.module("Given no open popups", function() {
+		QUnit.test("when getNextZIndex() is called to check basic functionality", function(assert) {
 			assert.ok(Util.isInteger(ZIndexManager.getNextZIndex()), "then returned value is an integer");
 		});
-		QUnit.test("when getNextZIndex() is called multiple times without open popups", function (assert) {
+		QUnit.test("when getNextZIndex() is called multiple times without open popups", function(assert) {
 			var aIndexes = [];
 			for (var i = 0; i < 100; i++) {
 				aIndexes.push(ZIndexManager.getNextZIndex());
 			}
 
 			assert.ok(
-				aIndexes.every(function (iCurrent, iIndex, aSource) {
+				aIndexes.every(function(iCurrent, iIndex, aSource) {
 					return (
 						iIndex === 0 // do not check the first element of the array
 						|| iCurrent > aSource[iIndex - 1]
@@ -49,29 +49,29 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a non-adaptable popup is open", {
-		beforeEach: function () {
+		beforeEach: function() {
 			Popup.getNextZIndex(); // To force sap.ui.core.Popup to generate new z-index for BusyIndicator
 			BusyIndicator.show(0); // "0" is required to disable async behaviour
 			var oLogStub = sandbox.stub(Log, "error");
 			oLogStub.callThrough(); // Do not stub irrelevant errors in console
 			this.oLogStubWithArgs = oLogStub
-				.withArgs(
-					sinon.match(function (sMessage) {
-						return sMessage.includes('sap.ui.dt.util.ZIndexManager');
-					})
-				)
-				.returns();
+			.withArgs(
+				sinon.match(function(sMessage) {
+					return sMessage.includes("sap.ui.dt.util.ZIndexManager");
+				})
+			)
+			.returns();
 			this.iBusyIndicatorZIndex = BusyIndicator.oPopup._iZIndex;
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			BusyIndicator.hide();
 		}
-	}, function () {
-		QUnit.test("when getNextZIndex() is called to check return value type", function (assert) {
+	}, function() {
+		QUnit.test("when getNextZIndex() is called to check return value type", function(assert) {
 			assert.ok(Util.isInteger(ZIndexManager.getNextZIndex()), "the returned value is an integer");
 		});
-		QUnit.test("when getNextZIndex() is called to get the next 50 z-index values", function (assert) {
+		QUnit.test("when getNextZIndex() is called to get the next 50 z-index values", function(assert) {
 			var aIndexes = [];
 			var iEqualSequenceStartIndex;
 			for (var i = 0; i < 50; i++) {
@@ -79,7 +79,7 @@ sap.ui.define([
 			}
 
 			assert.ok(
-				aIndexes.every(function (iCurrent, iIndex, aSource) {
+				aIndexes.every(function(iCurrent, iIndex, aSource) {
 					if (iIndex === 0) {
 						return true; // Do not check the first element of the array
 					} else if (iCurrent > aSource[iIndex - 1] && iCurrent < this.iBusyIndicatorZIndex) {
@@ -101,16 +101,16 @@ sap.ui.define([
 		});
 	});
 	QUnit.module("Given an adaptable popup is open", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			sandbox.stub(Log, "error")
-				.callThrough()
-				.withArgs(
-					sinon.match(function (sMessage) {
-						return sMessage.includes('sap.ui.dt.util.ZIndexManager');
-					})
-				)
-				.returns();
+			.callThrough()
+			.withArgs(
+				sinon.match(function(sMessage) {
+					return sMessage.includes("sap.ui.dt.util.ZIndexManager");
+				})
+			)
+			.returns();
 			ZIndexManager.addPopupFilter(fnFilter);
 
 			this.oDialog = new Dialog(sAdaptableDialogId);
@@ -122,23 +122,23 @@ sap.ui.define([
 
 			this.oDialog.open();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDialog.destroy();
 			sandbox.restore();
 			ZIndexManager.removePopupFilter(fnFilter);
 		}
-	}, function () {
-		QUnit.test("when getNextZIndex() is called to check return value type", function (assert) {
+	}, function() {
+		QUnit.test("when getNextZIndex() is called to check return value type", function(assert) {
 			assert.ok(Util.isInteger(ZIndexManager.getNextZIndex()), "then returned value is an integer");
 		});
-		QUnit.test("when getNextZIndex() is called to get the next 10 z-index values", function (assert) {
+		QUnit.test("when getNextZIndex() is called to get the next 10 z-index values", function(assert) {
 			var aIndexes = [];
 			for (var i = 0; i < 10; i++) {
 				aIndexes.push(ZIndexManager.getNextZIndex());
 			}
 
 			assert.ok(
-				aIndexes.every(function (iCurrent, iIndex, aSource) {
+				aIndexes.every(function(iCurrent, iIndex, aSource) {
 					return (
 						iIndex === 0 // Do not check the first element of the array
 						|| (
@@ -156,7 +156,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an adaptable popup with greater z-index than a non-adaptable popup", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			ZIndexManager.addPopupFilter(fnFilter);
 			Popup.getNextZIndex(); // To force sap.ui.core.Popup to generate new z-index for BusyIndicator
@@ -171,18 +171,18 @@ sap.ui.define([
 
 			this.oDialog.open();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDialog.destroy();
 			BusyIndicator.hide();
 			ZIndexManager.removePopupFilter(fnFilter);
 		}
-	}, function () {
-		QUnit.test("when getZIndexBelowPopups() is called", function (assert) {
+	}, function() {
+		QUnit.test("when getZIndexBelowPopups() is called", function(assert) {
 			var iLowerZIndex = ZIndexManager.getZIndexBelowPopups();
 			assert.ok(iLowerZIndex < this.iDialogZIndex, "then the returned z-index was less than the adaptable popup z-index");
 			assert.ok(iLowerZIndex < BusyIndicator.oPopup._iZIndex, "then the returned z-index was lower than the non-adaptable popup z-index");
 		});
-		QUnit.test("when getNextZIndex() is called", function (assert) {
+		QUnit.test("when getNextZIndex() is called", function(assert) {
 			var iNextZIndex = ZIndexManager.getNextZIndex();
 			assert.ok(BusyIndicator.oPopup._iZIndex < this.iDialogZIndex, "then the z-index of the non-adaptable popup was less than the adaptable popup");
 			assert.ok(iNextZIndex > this.iDialogZIndex, "then the returned z-index was higher than the adaptable popup z-index");
@@ -190,7 +190,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a non-adaptable popup with greater z-index than an adaptable popup", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			ZIndexManager.addPopupFilter(fnFilter);
 			this.oDialog = new Dialog(sAdaptableDialogId);
@@ -203,18 +203,18 @@ sap.ui.define([
 
 			this.oDialog.open();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oDialog.destroy();
 			BusyIndicator.hide();
 			ZIndexManager.removePopupFilter(fnFilter);
 		}
-	}, function () {
-		QUnit.test("when getZIndexBelowPopups() is called", function (assert) {
+	}, function() {
+		QUnit.test("when getZIndexBelowPopups() is called", function(assert) {
 			var iLowerZIndex = ZIndexManager.getZIndexBelowPopups();
 			assert.ok(iLowerZIndex < this.iDialogZIndex, "then the returned z-index was less than the adaptable popup z-index");
 			assert.ok(iLowerZIndex < BusyIndicator.oPopup._iZIndex, "then the returned z-index was lower than the non-adaptable popup z-index");
 		});
-		QUnit.test("when getNextZIndex() is called", function (assert) {
+		QUnit.test("when getNextZIndex() is called", function(assert) {
 			var iNextZIndex = ZIndexManager.getNextZIndex();
 			assert.ok(BusyIndicator.oPopup._iZIndex > this.iDialogZIndex, "then the z-index of the adaptable popup was less than the non-adaptable popup");
 			assert.ok(iNextZIndex > this.iDialogZIndex, "then the returned z-index was higher than the adaptable popup z-index");

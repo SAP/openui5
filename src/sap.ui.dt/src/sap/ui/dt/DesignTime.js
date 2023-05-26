@@ -27,7 +27,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_difference",
 	"sap/base/util/isEmptyObject"
 ],
-function (
+function(
 	ManagedObject,
 	ElementOverlay,
 	AggregationOverlay,
@@ -255,19 +255,19 @@ function (
 				syncFailed: {}
 			}
 		},
-		constructor: function () {
+		constructor: function() {
 			// Storage for promises of pending overlays (overlays that are in creation phase)
 			this._sStatus = DesignTimeStatus.SYNCED;
 			this._mPendingOverlays = {};
 			this._oTaskManager = new TaskManager({
-				complete: function (oEvent) {
+				complete: function(oEvent) {
 					if (oEvent.getSource().isEmpty()) {
 						this._registerElementOverlays();
 						// TODO: get rid of this temporary solution with UICSFLEX-3718 BLI
 						// new teasks are created during element overlay registration
 						if (this._oTaskManager.isEmpty() && this._sStatus !== DesignTimeStatus.SYNCED) {
 							this._sStatus = DesignTimeStatus.SYNCED;
-							setTimeout(function () {
+							setTimeout(function() {
 								// checks if designTime status is still synced, due to asynchronity from setTimeout()
 								if (this._sStatus === DesignTimeStatus.SYNCED) {
 									this.fireSynced();
@@ -276,7 +276,7 @@ function (
 						}
 					}
 				}.bind(this),
-				add: function (oEvent) {
+				add: function(oEvent) {
 					if (oEvent.getSource().count() === 1) {
 						this._sStatus = DesignTimeStatus.SYNCING;
 						this.fireSyncing();
@@ -299,7 +299,7 @@ function (
 			this.getRootElements().forEach(this._createOverlaysForRootElement, this);
 
 			// Create overlays for future root elements
-			this.attachEvent("addRootElement", function (oEvent) {
+			this.attachEvent("addRootElement", function(oEvent) {
 				this._createOverlaysForRootElement(oEvent.getParameter("element"));
 			}, this);
 
@@ -309,19 +309,19 @@ function (
 			}, this);
 
 			// Attach processingStatusChange for future added plugins
-			this.attachEvent("addPlugin", function (oEvent) {
+			this.attachEvent("addPlugin", function(oEvent) {
 				var oPlugin = oEvent.getParameter("plugin");
 				oPlugin.attachEvent("processingStatusChange", this._onProcessingStatusChange, this);
 			}, this);
 
 			// Toggle root overlays visibility when property "enabled" is changed
-			this.attachEvent("enabledChanged", function (oEvent) {
+			this.attachEvent("enabledChanged", function(oEvent) {
 				var bValue = oEvent.getParameter("value");
 				var $OverlayContainer = Overlay.getOverlayContainer();
 				$OverlayContainer[bValue ? "show" : "hide"]();
 
 				// Ensure that the overlays are correct when the mode is enabled
-				this.getRootElements().forEach(function (oRootElement) {
+				this.getRootElements().forEach(function(oRootElement) {
 					var oRootElementOverlay = OverlayRegistry.getOverlay(oRootElement);
 					oRootElementOverlay.setVisible(bValue);
 
@@ -329,7 +329,7 @@ function (
 					if (bValue) {
 						this._oTaskManager.add({
 							type: "applyStyles",
-							callbackFn: oRootElementOverlay.applyStyles.bind(oRootElementOverlay, /*bForceScrollbarSync = */true),
+							callbackFn: oRootElementOverlay.applyStyles.bind(oRootElementOverlay, /* bForceScrollbarSync = */true),
 							overlayId: oRootElementOverlay.getId()
 						});
 					}
@@ -338,7 +338,7 @@ function (
 		}
 	});
 
-	DesignTime.prototype._onProcessingStatusChange = function (oEvent) {
+	DesignTime.prototype._onProcessingStatusChange = function(oEvent) {
 		if (oEvent.getParameter("processing")) {
 			this._oTaskManager.add({
 				type: "pluginInProcess",
@@ -352,7 +352,7 @@ function (
 		}
 	};
 
-	DesignTime.prototype._onApplyStylesRequired = function (oEvent) {
+	DesignTime.prototype._onApplyStylesRequired = function(oEvent) {
 		var mParameters = oEvent.getParameters();
 		var oOverlay = oEvent.getSource();
 		this._oTaskManager.add({
@@ -362,14 +362,14 @@ function (
 		}, "overlayId");
 	};
 
-	DesignTime.prototype._removeOverlayFromSyncingBatch = function (oElementOverlay) {
+	DesignTime.prototype._removeOverlayFromSyncingBatch = function(oElementOverlay) {
 		var iIndex = this._aOverlaysCreatedInLastBatch.indexOf(oElementOverlay);
 		if (iIndex !== -1) {
 			this._aOverlaysCreatedInLastBatch.splice(iIndex, 1);
 		}
 	};
 
-	DesignTime.prototype._registerElementOverlays = function () {
+	DesignTime.prototype._registerElementOverlays = function() {
 		var aElementOverlays = this._aOverlaysCreatedInLastBatch.slice();
 
 		if (!aElementOverlays.length) {
@@ -395,16 +395,16 @@ function (
 		// Layout to be available in OverlayRegistry already.
 
 		// 1. Register element overlays in OverlayRegistry:
-		aElementOverlays.forEach(function (oElementOverlay) {
+		aElementOverlays.forEach(function(oElementOverlay) {
 			OverlayRegistry.register(oElementOverlay);
-			oElementOverlay.attachBeforeDestroy(function (oEvent) {
+			oElementOverlay.attachBeforeDestroy(function(oEvent) {
 				OverlayRegistry.deregister(oEvent.getSource());
 			});
 		});
 
 		// 2. Register element overlays in plugins:
-		aElementOverlays.forEach(function (oElementOverlay) {
-			aPlugins.forEach(function (oPlugin) {
+		aElementOverlays.forEach(function(oElementOverlay) {
+			aPlugins.forEach(function(oPlugin) {
 				try {
 					oPlugin.callElementOverlayRegistrationMethods(oElementOverlay);
 				} catch (vError) {
@@ -424,7 +424,7 @@ function (
 		}, this);
 
 		// 3. Tell the world about this miracle
-		aElementOverlays.forEach(function (oElementOverlay) {
+		aElementOverlays.forEach(function(oElementOverlay) {
 			try {
 				this.fireElementOverlayCreated({
 					elementOverlay: oElementOverlay
@@ -450,17 +450,16 @@ function (
 	 * Called when the DesignTime is destroyed
 	 * @protected
 	 */
-	DesignTime.prototype.exit = function () {
+	DesignTime.prototype.exit = function() {
 		this._bDestroyPending = true;
 
 		// The plugins need to be destroyed before the overlays in order to go through the deregisterElementOverlay Methods
-		this.getPlugins().forEach(function (oPlugin) {
+		this.getPlugins().forEach(function(oPlugin) {
 			oPlugin.destroy();
 		});
 
 		this._oSelectionManager.destroy();
 		this._oTaskManager.destroy();
-
 
 		this._destroyAllOverlays();
 
@@ -473,7 +472,7 @@ function (
 	 * @return {sap.ui.dt.SelectionManager} the instance of the Selection Manager
 	 * @public
 	 */
-	DesignTime.prototype.getSelectionManager = function () {
+	DesignTime.prototype.getSelectionManager = function() {
 		return this._oSelectionManager;
 	};
 
@@ -482,7 +481,7 @@ function (
 	 * @return {sap.ui.dt.Plugin[]} an array of plugins
 	 * @protected
 	 */
-	DesignTime.prototype.getPlugins = function () {
+	DesignTime.prototype.getPlugins = function() {
 		return this.getAggregation("plugins") || [];
 	};
 
@@ -514,7 +513,7 @@ function (
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
-	DesignTime.prototype.addPlugin = function (oPlugin) {
+	DesignTime.prototype.addPlugin = function(oPlugin) {
 		this.addAggregation("plugins", oPlugin);
 		this.fireAddPlugin({
 			plugin: oPlugin
@@ -530,7 +529,7 @@ function (
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
-	DesignTime.prototype.insertPlugin = function (oPlugin, iIndex) {
+	DesignTime.prototype.insertPlugin = function(oPlugin, iIndex) {
 		this.insertAggregation("plugins", oPlugin, iIndex);
 		this.fireAddPlugin({
 			plugin: oPlugin
@@ -545,8 +544,8 @@ function (
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
-	DesignTime.prototype.removePlugin = function (oPlugin) {
-		this.getPlugins().forEach(function (oCurrentPlugin) {
+	DesignTime.prototype.removePlugin = function(oPlugin) {
+		this.getPlugins().forEach(function(oCurrentPlugin) {
 			if (oCurrentPlugin === oPlugin) {
 				oPlugin.setDesignTime(null);
 				oPlugin.detachEvent("processingStatusChange", this._onProcessingStatusChange, this);
@@ -563,8 +562,8 @@ function (
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
-	DesignTime.prototype.removeAllPlugins = function () {
-		this.getPlugins().forEach(function (oPlugin) {
+	DesignTime.prototype.removeAllPlugins = function() {
+		this.getPlugins().forEach(function(oPlugin) {
 			oPlugin.setDesignTime(null);
 			oPlugin.detachEvent("processingStatusChange", this._onProcessingStatusChange, this);
 		}.bind(this));
@@ -579,8 +578,8 @@ function (
 	 * @return {sap.ui.core.Element[]} rootElements of the DesignTime
 	 * @protected
 	 */
-	DesignTime.prototype.getRootElements = function () {
-		return (this.getAssociation("rootElements") || []).map(function (sElementId) {
+	DesignTime.prototype.getRootElements = function() {
+		return (this.getAssociation("rootElements") || []).map(function(sElementId) {
 			return ElementUtil.getElementInstance(sElementId);
 		});
 	};
@@ -591,7 +590,7 @@ function (
 	 * @return {object} designTimeMetadata for a specific element or className
 	 * @protected
 	 */
-	DesignTime.prototype.getDesignTimeMetadataFor = function (oElement) {
+	DesignTime.prototype.getDesignTimeMetadataFor = function(oElement) {
 		var sClassName;
 
 		if (typeof oElement === "string") { // backwards compatibility, should be dropped in future releases (>rel-1.54)
@@ -609,7 +608,7 @@ function (
 	 * @param {string|sap.ui.core.Element} vRootElement element or element's id
 	 * @protected
 	 */
-	DesignTime.prototype.addRootElement = function (vRootElement) {
+	DesignTime.prototype.addRootElement = function(vRootElement) {
 		this.addAssociation("rootElements", vRootElement);
 		this.fireAddRootElement({
 			element: vRootElement
@@ -621,7 +620,7 @@ function (
 	 * @param {sap.ui.base.ManagedObject} oRootElement - Root element
 	 * @private
 	 */
-	DesignTime.prototype._createOverlaysForRootElement = function (oRootElement) {
+	DesignTime.prototype._createOverlaysForRootElement = function(oRootElement) {
 		var iTaskId = this._oTaskManager.add({
 			type: "createOverlay",
 			element: oRootElement,
@@ -632,30 +631,30 @@ function (
 			root: true,
 			visible: this.getEnabled()
 		})
-			.then(
-				function (oElementOverlay) {
-					Overlay.getOverlayContainer().append(oElementOverlay.render());
-					this._oTaskManager.add({
-						type: "applyStyles",
-						callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
-						overlayId: oElementOverlay.getId()
-					}, "overlayId");
-					this._oTaskManager.complete(iTaskId);
-					return oElementOverlay;
-				}.bind(this),
-				function (vError) {
-					var oError = Util.propagateError(
-						vError,
-						"DesignTime#_createOverlaysForRootElement",
-						Util.printf("Root element with id = '{0}' initialization is failed", oRootElement.getId())
-					);
-					Log.error(Util.errorToString(oError));
-					this._oTaskManager.cancel(iTaskId);
-					this.fireSyncFailed({
-						error: oError
-					});
-				}.bind(this)
-			);
+		.then(
+			function(oElementOverlay) {
+				Overlay.getOverlayContainer().append(oElementOverlay.render());
+				this._oTaskManager.add({
+					type: "applyStyles",
+					callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
+					overlayId: oElementOverlay.getId()
+				}, "overlayId");
+				this._oTaskManager.complete(iTaskId);
+				return oElementOverlay;
+			}.bind(this),
+			function(vError) {
+				var oError = Util.propagateError(
+					vError,
+					"DesignTime#_createOverlaysForRootElement",
+					Util.printf("Root element with id = '{0}' initialization is failed", oRootElement.getId())
+				);
+				Log.error(Util.errorToString(oError));
+				this._oTaskManager.cancel(iTaskId);
+				this.fireSyncFailed({
+					error: oError
+				});
+			}.bind(this)
+		);
 	};
 
 	/**
@@ -664,7 +663,7 @@ function (
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
-	DesignTime.prototype.removeRootElement = function (vRootElement) {
+	DesignTime.prototype.removeRootElement = function(vRootElement) {
 		this.removeAssociation("rootElements", vRootElement);
 
 		this._destroyOverlaysForElement(ElementUtil.getElementInstance(vRootElement));
@@ -677,7 +676,7 @@ function (
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
-	DesignTime.prototype.removeAllRootElement = function () {
+	DesignTime.prototype.removeAllRootElement = function() {
 		this.removeAssociation("rootElements");
 
 		this._destroyAllOverlays();
@@ -691,10 +690,10 @@ function (
 	 * @public
 	 */
 	// TODO: replace with OverlayRegistry
-	DesignTime.prototype.getElementOverlays = function () {
+	DesignTime.prototype.getElementOverlays = function() {
 		var aElementOverlays = [];
 
-		this._iterateRootElements(function (oRootElement) {
+		this._iterateRootElements(function(oRootElement) {
 			aElementOverlays = aElementOverlays.concat(this._getAllElementOverlaysIn(oRootElement));
 		}, this);
 
@@ -725,7 +724,7 @@ function (
 	 * @return {Promise} - resolves with overlay as the only argument for specified Element
 	 * @private
 	 */
-	DesignTime.prototype.createOverlay = function (vArg) {
+	DesignTime.prototype.createOverlay = function(vArg) {
 		// Function can receive an element as the only argument or object with parameters
 		var mParams = Object.assign({}, isPlainObject(vArg) ? vArg : { element: vArg });
 		var iTaskId = this._oTaskManager.add({
@@ -757,56 +756,56 @@ function (
 			mParams.root = true;
 		}
 		this._mPendingOverlays[sElementId] = this._createElementOverlay(mParams)
-			.then(
-				// Fulfilled
-				function (oElementOverlay) {
-					return this._createChildren(oElementOverlay, mParams)
-						.then(function () {
-							// Remove overlay promise from the map only when it is "officially" available
-							// and registered everywhere (OverlayRegistry, Plugins, etc)
-							this.attachEventOnce("synced", function () {
-								delete this._mPendingOverlays[sElementId];
-							}, this);
+		.then(
+			// Fulfilled
+			function(oElementOverlay) {
+				return this._createChildren(oElementOverlay, mParams)
+				.then(function() {
+					// Remove overlay promise from the map only when it is "officially" available
+					// and registered everywhere (OverlayRegistry, Plugins, etc)
+					this.attachEventOnce("synced", function() {
+						delete this._mPendingOverlays[sElementId];
+					}, this);
 
-							// When DesignTime instance was destroyed during overlay creation process
-							if (this.bIsDestroyed) {
-								// TODO: refactor destroy() logic. See @676 & @788
-								oElementOverlay.detachEvent("destroyed", this._onElementOverlayDestroyed, this);
-								oElementOverlay.destroy();
-								this._oTaskManager.cancel(iTaskId);
-								return Promise.reject(Util.createError(
-									"DesignTime#createOverlay",
-									"while creating overlay, DesignTime instance has been destroyed"
-								));
-							// When element was destroyed during overlay creation process
-							} else if (oElementOverlay.bIsDestroyed) {
-								this._oTaskManager.cancel(iTaskId);
-								return Promise.reject(Util.createError(
-									"DesignTime#createOverlay",
-									"while creating children overlays, its parent overlay has been destroyed"
-								));
-							}
+					// When DesignTime instance was destroyed during overlay creation process
+					if (this.bIsDestroyed) {
+						// TODO: refactor destroy() logic. See @676 & @788
+						oElementOverlay.detachEvent("destroyed", this._onElementOverlayDestroyed, this);
+						oElementOverlay.destroy();
+						this._oTaskManager.cancel(iTaskId);
+						return Promise.reject(Util.createError(
+							"DesignTime#createOverlay",
+							"while creating overlay, DesignTime instance has been destroyed"
+						));
+						// When element was destroyed during overlay creation process
+					} else if (oElementOverlay.bIsDestroyed) {
+						this._oTaskManager.cancel(iTaskId);
+						return Promise.reject(Util.createError(
+							"DesignTime#createOverlay",
+							"while creating children overlays, its parent overlay has been destroyed"
+						));
+					}
 
-							this._aOverlaysCreatedInLastBatch.push(oElementOverlay);
-							this._oTaskManager.complete(iTaskId);
-							return oElementOverlay;
-						}.bind(this));
-				}.bind(this))
-			.catch(function (vError) {
-				var oError = Util.propagateError(
-					vError,
-					"DesignTime#createOverlay",
-					Util.printf("Failed attempt to create overlay for '{0}'", sElementId)
-				);
+					this._aOverlaysCreatedInLastBatch.push(oElementOverlay);
+					this._oTaskManager.complete(iTaskId);
+					return oElementOverlay;
+				}.bind(this));
+			}.bind(this))
+		.catch(function(vError) {
+			var oError = Util.propagateError(
+				vError,
+				"DesignTime#createOverlay",
+				Util.printf("Failed attempt to create overlay for '{0}'", sElementId)
+			);
 
-				// If it crashes by any reason, we must always remove pending Promise, otherwise
-				// potential second attempt for creating overlay will not be possible
-				delete this._mPendingOverlays[sElementId];
+			// If it crashes by any reason, we must always remove pending Promise, otherwise
+			// potential second attempt for creating overlay will not be possible
+			delete this._mPendingOverlays[sElementId];
 
-				this._oTaskManager.cancel(iTaskId);
+			this._oTaskManager.cancel(iTaskId);
 
-				return Promise.reject(oError);
-			}.bind(this));
+			return Promise.reject(oError);
+		}.bind(this));
 
 		return this._mPendingOverlays[sElementId];
 	};
@@ -817,7 +816,7 @@ function (
 	 * @return {Promise} Rejected promise with detailed error inside.
 	 * @private
 	 */
-	DesignTime.prototype._rejectCreateOverlay = function (oElement) {
+	DesignTime.prototype._rejectCreateOverlay = function(oElement) {
 		var sReason;
 
 		if (!oElement) {
@@ -838,7 +837,7 @@ function (
 		);
 	};
 
-	DesignTime.prototype._createAggregationOverlay = function (sAggregationName, oElement, mAggregationMetadata, bIsTemplateAggregation) {
+	DesignTime.prototype._createAggregationOverlay = function(sAggregationName, oElement, mAggregationMetadata, bIsTemplateAggregation) {
 		// TODO: Aggregation overlays should be registered at the same time as their ElementOverlays (currently they are registered *before*)
 		return new AggregationOverlay({
 			aggregationName: sAggregationName,
@@ -848,12 +847,12 @@ function (
 			designTimeMetadata: new AggregationDesignTimeMetadata({
 				data: mAggregationMetadata
 			}),
-			init: function (oEvent) {
+			init: function(oEvent) {
 				var oAggregationOverlay = oEvent.getSource();
 				oAggregationOverlay.attachEvent("destroyed", this._onAggregationOverlayDestroyed, this);
 				oAggregationOverlay.attachEvent("applyStylesRequired", this._onApplyStylesRequired, this);
 			}.bind(this),
-			beforeDestroy: function (oEvent) {
+			beforeDestroy: function(oEvent) {
 				var oAggregationOverlay = oEvent.getSource();
 				OverlayRegistry.deregister(oAggregationOverlay);
 				oAggregationOverlay.detachEvent("applyStylesRequired", this._onApplyStylesRequired, this);
@@ -872,14 +871,14 @@ function (
 	 * @return {Promise} returns Promise which is resolved when ElementOverlay is created and ready for use
 	 * @private
 	 */
-	DesignTime.prototype._createElementOverlay = function (mParams) {
+	DesignTime.prototype._createElementOverlay = function(mParams) {
 		var oElement = mParams.element;
 
 		function createElementOverlay(mParameters) {
 			return new ElementOverlay(mParameters);
 		}
 
-		return new Promise(function (fnResolve, fnReject) {
+		return new Promise(function(fnResolve, fnReject) {
 			createElementOverlay({
 				element: oElement,
 				isRoot: mParams.root,
@@ -891,7 +890,7 @@ function (
 					// on ElementOverlay and no Metadata will be loaded from the server for this Element.
 					this.getDesignTimeMetadataFor(oElement) instanceof ElementDesignTimeMetadata
 						? this.getDesignTimeMetadataFor(oElement)
-						: _curry(function (mMetadataExtension, mParentMetadata, oElement, mMetadata) {
+						: _curry(function(mMetadataExtension, mParentMetadata, oElement, mMetadata) {
 							mMetadata = merge({}, mMetadata, mMetadataExtension);
 
 							this._mMetadataOriginal = mMetadata;
@@ -904,7 +903,7 @@ function (
 							return mMetadata;
 						})(this.getDesignTimeMetadataFor(oElement), mParams.parentMetadata, oElement)
 				),
-				init: function (oEvent) {
+				init: function(oEvent) {
 					var oElementOverlay = oEvent.getSource();
 					fnResolve(oEvent.getSource());
 					oElementOverlay.attachEvent("destroyed", this._onElementOverlayDestroyed, this);
@@ -914,7 +913,7 @@ function (
 					oElementOverlay.attachEvent("editableChange", this._onEditableChanged, this);
 					oElementOverlay.attachEvent("applyStylesRequired", this._onApplyStylesRequired, this);
 				}.bind(this),
-				initFailed: function (sElementId, oEvent) {
+				initFailed: function(sElementId, oEvent) {
 					var oElementOverlay = oEvent.getSource();
 					var oError = Util.propagateError(
 						oEvent.getParameter("error"),
@@ -935,7 +934,7 @@ function (
 
 	function getAggregationBindingTemplates(oElementOverlay, aAggregationNames) {
 		var oElement = oElementOverlay.getElement();
-		return aAggregationNames.reduce(function (mTemplateAggregations, sAggregationName) {
+		return aAggregationNames.reduce(function(mTemplateAggregations, sAggregationName) {
 			var oTemplate = ElementUtil.getAggregationBindingTemplate(oElement, sAggregationName);
 			if (oTemplate) {
 				mTemplateAggregations[sAggregationName] = oTemplate;
@@ -953,7 +952,7 @@ function (
 	 * @returns {Promise} Resolves when whole hierarchy of children for specified ElementOverlay is created
 	 * @private
 	 */
-	DesignTime.prototype._createChildren = function (oElementOverlay, mParams) {
+	DesignTime.prototype._createChildren = function(oElementOverlay, mParams) {
 		var aAggregationNames = oElementOverlay.getAggregationNames();
 		var mParentAggregationMetadata = mParams.parentMetadata;
 		var mAggregationBindingTemplates = getAggregationBindingTemplates(oElementOverlay, aAggregationNames);
@@ -974,17 +973,17 @@ function (
 		}
 
 		return this._createChildrenOverlays(oElementOverlay, mParentAggregationMetadata, aTemplateAggregationNames, bIsPartOfTemplate, mAggregationBindingTemplates)
-			.then(this._createChildrenOverlays.bind(this, oElementOverlay, mParentAggregationMetadata, aAggregationNames, bIsCloneInsideTemplate));
+		.then(this._createChildrenOverlays.bind(this, oElementOverlay, mParentAggregationMetadata, aAggregationNames, bIsCloneInsideTemplate));
 	};
 
-	DesignTime.prototype._createChildrenOverlays = function (oElementOverlay, mParentAggregationMetadata, aAggregationNames, bIsPartOfTemplate, mAggregationBindingTemplates) {
+	DesignTime.prototype._createChildrenOverlays = function(oElementOverlay, mParentAggregationMetadata, aAggregationNames, bIsPartOfTemplate, mAggregationBindingTemplates) {
 		var bIsTemplateAggregation = !isEmptyObject(mAggregationBindingTemplates);
 		// Nested template inside a clone of another template
 		if (bIsTemplateAggregation && !bIsPartOfTemplate) {
 			return Promise.resolve();
 		}
 		return Promise.all(
-			aAggregationNames.map(function (sAggregationName) {
+			aAggregationNames.map(function(sAggregationName) {
 				var oElement = oElementOverlay.getElement();
 				var sElementClassName = oElement.getMetadata().getName();
 				var mAggregationMetadata = MetadataPropagationUtil.propagateMetadataToAggregationOverlay(
@@ -1007,26 +1006,26 @@ function (
 				}
 
 				return Promise.all(
-					aChildrenElements.map(function (sParentElementClassName, oChildElement) {
+					aChildrenElements.map(function(sParentElementClassName, oChildElement) {
 						return this.createOverlay({
 							element: oChildElement,
 							root: false,
 							parentMetadata: mAggregationMetadata,
 							isPartOfTemplate: bIsPartOfTemplate
 						})
-							// If creation of one of the children is aborted, we still continue our execution
-							.catch(function (oError) {
-								var mError = this._enrichChildCreationError(oError, oChildElement, sParentElementClassName, sAggregationName);
-								// Omit error message if the parent was already destroyed
-								// e.g. SimpleForm move where many elements are created/destroyed in a row
-								if (!oElement.isDestroyed() && !oElementOverlay.isDestroyed()) {
-									Log[mError.severity](mError.message);
-								}
-								return mError.errorObject;
-							}.bind(this));
+						// If creation of one of the children is aborted, we still continue our execution
+						.catch(function(oError) {
+							var mError = this._enrichChildCreationError(oError, oChildElement, sParentElementClassName, sAggregationName);
+							// Omit error message if the parent was already destroyed
+							// e.g. SimpleForm move where many elements are created/destroyed in a row
+							if (!oElement.isDestroyed() && !oElementOverlay.isDestroyed()) {
+								Log[mError.severity](mError.message);
+							}
+							return mError.errorObject;
+						}.bind(this));
 					}.bind(this, sElementClassName))
-				).then(function (aChildrenElementOverlays) {
-					aChildrenElementOverlays.map(function (oChildElementOverlay) {
+				).then(function(aChildrenElementOverlays) {
+					aChildrenElementOverlays.map(function(oChildElementOverlay) {
 						if (
 							oChildElementOverlay instanceof ElementOverlay
 							&& !oChildElementOverlay.bIsDestroyed
@@ -1038,8 +1037,8 @@ function (
 					return oAggregationOverlay;
 				}.bind(this));
 			}, this)
-		).then(function (aAggregationOverlays) {
-			aAggregationOverlays.forEach(function (oAggregationOverlay) {
+		).then(function(aAggregationOverlays) {
+			aAggregationOverlays.forEach(function(oAggregationOverlay) {
 				// Yes, it's possible that during initialization original ElementOverlay dies. TODO: add test case
 				if (oElementOverlay.bIsDestroyed) {
 					oAggregationOverlay.destroy();
@@ -1061,7 +1060,7 @@ function (
 	 * @returns {{severity: string, errorObject: Error, message: string}} Error map
 	 * @private
 	 */
-	DesignTime.prototype._enrichChildCreationError = function (oError, oElement, sParentElementClassName, sAggregationName) {
+	DesignTime.prototype._enrichChildCreationError = function(oError, oElement, sParentElementClassName, sAggregationName) {
 		var sSeverity = "error";
 		var sError = Util.errorToString(oError);
 
@@ -1097,7 +1096,7 @@ function (
 	 * @param {sap.ui.core.Element} oElement element
 	 * @private
 	 */
-	DesignTime.prototype._destroyOverlaysForElement = function (oElement) {
+	DesignTime.prototype._destroyOverlaysForElement = function(oElement) {
 		var oOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oOverlay) {
 			oOverlay.destroy();
@@ -1107,8 +1106,8 @@ function (
 	/**
 	 * @private
 	 */
-	DesignTime.prototype._destroyAllOverlays = function () {
-		this._iterateRootElements(function (oRootElement) {
+	DesignTime.prototype._destroyAllOverlays = function() {
+		this._iterateRootElements(function(oRootElement) {
 			this._destroyOverlaysForElement(oRootElement);
 		}, this);
 	};
@@ -1118,7 +1117,7 @@ function (
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
-	DesignTime.prototype._onElementOverlayDestroyed = function (oEvent) {
+	DesignTime.prototype._onElementOverlayDestroyed = function(oEvent) {
 		// In case of DesignTime instance destroy process we should not react on overlay destroy event
 		if (this._bDestroyPending) {
 			return;
@@ -1156,7 +1155,7 @@ function (
 		});
 	};
 
-	DesignTime.prototype._onElementDestroyed = function (oEvent) {
+	DesignTime.prototype._onElementDestroyed = function(oEvent) {
 		var sElementId = oEvent.getParameter("targetId");
 
 		this.removeRootElement(sElementId);
@@ -1167,7 +1166,7 @@ function (
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
-	DesignTime.prototype._onAggregationOverlayDestroyed = function (oEvent) {
+	DesignTime.prototype._onAggregationOverlayDestroyed = function(oEvent) {
 		// cancel open applyStyles tasks for the destroyed overlays in the task manager
 		this._oTaskManager.cancelBy({
 			type: "applyStyles",
@@ -1218,7 +1217,7 @@ function (
 			case "setParent":
 				// timeout is needed because UI5 controls & apps can temporary "detach" controls from control tree
 				// and add them again later, so the check if the control is detached from root element's tree is delayed
-				setTimeout(function () {
+				setTimeout(function() {
 					if (!this.bIsDestroyed) {
 						this._checkIfOverlayShouldBeDestroyed(oParams.target);
 					}
@@ -1230,7 +1229,7 @@ function (
 				delete oParams.target;
 
 				if (this.getStatus() === DesignTimeStatus.SYNCING) {
-					this.attachEventOnce("synced", oParams, function () {
+					this.attachEventOnce("synced", oParams, function() {
 						if (!oElementOverlay.bIsDestroyed) {
 							this.fireElementPropertyChanged(arguments[1]);
 						}
@@ -1275,7 +1274,7 @@ function (
 			var oParentOverlay = OverlayRegistry.getOverlay(oParent);
 			var oParentAggregationOverlay = oParentOverlay && oParentOverlay.getAggregationOverlay(sAggregationName);
 			if (!oParentAggregationOverlay) {
-				var onElementOverlayCreated = function (oEvent) {
+				var onElementOverlayCreated = function(oEvent) {
 					var oElementOverlay = oEvent.getParameter("elementOverlay");
 					if (oElementOverlay.getElement().getId() === oParent.getId()) {
 						var oParentAggregationOverlay = oElementOverlay.getAggregationOverlay(sAggregationName);
@@ -1290,7 +1289,7 @@ function (
 		}
 	};
 
-	DesignTime.prototype._addAggregation = function (oElement, oParentAggregationOverlay) {
+	DesignTime.prototype._addAggregation = function(oElement, oParentAggregationOverlay) {
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 
 		if (
@@ -1307,53 +1306,53 @@ function (
 				root: false,
 				parentMetadata: oParentAggregationOverlay.getDesignTimeMetadata().getData()
 			})
-				.then(function (oElementOverlay) {
-					var vInsertChildReply = oParentAggregationOverlay.insertChild(null, oElementOverlay);
-					if (vInsertChildReply === true) {
-						this._oTaskManager.add({
-							type: "applyStyles",
-							callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
-							overlayId: oElementOverlay.getId()
-						}, "overlayId");
+			.then(function(oElementOverlay) {
+				var vInsertChildReply = oParentAggregationOverlay.insertChild(null, oElementOverlay);
+				if (vInsertChildReply === true) {
+					this._oTaskManager.add({
+						type: "applyStyles",
+						callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
+						overlayId: oElementOverlay.getId()
+					}, "overlayId");
 
-						var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation("children", oElementOverlay);
+					var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation("children", oElementOverlay);
 
-						// `ElementOverlayAdded` event should be emitted only when overlays are ready to prevent
-						// an access to still syncing overlays (e.g. the overlay is still not available in overlay registry
-						// at this point and not registered in the plugins).
-						this.attachEventOnce("synced", oElementOverlay, function() {
-							if (!oElementOverlay.bIsDestroyed) {
-								this.fireElementOverlayAdded({
-									id: oElementOverlay.getId(),
-									targetIndex: iOverlayPosition,
-									targetId: oParentAggregationOverlay.getId(),
-									targetAggregation: oParentAggregationOverlay.getAggregationName()
-								});
-							}
-						}, this);
-					}
-					this._oTaskManager.complete(iTaskId);
-				}.bind(this))
-				.catch(function (sElementId, sAggregationOverlayId, vError) {
-					// In case of any crash or rejection the task has to be canceled
-					this._oTaskManager.cancel(iTaskId);
+					// `ElementOverlayAdded` event should be emitted only when overlays are ready to prevent
+					// an access to still syncing overlays (e.g. the overlay is still not available in overlay registry
+					// at this point and not registered in the plugins).
+					this.attachEventOnce("synced", oElementOverlay, function() {
+						if (!oElementOverlay.bIsDestroyed) {
+							this.fireElementOverlayAdded({
+								id: oElementOverlay.getId(),
+								targetIndex: iOverlayPosition,
+								targetId: oParentAggregationOverlay.getId(),
+								targetAggregation: oParentAggregationOverlay.getAggregationName()
+							});
+						}
+					}, this);
+				}
+				this._oTaskManager.complete(iTaskId);
+			}.bind(this))
+			.catch(function(sElementId, sAggregationOverlayId, vError) {
+				// In case of any crash or rejection the task has to be canceled
+				this._oTaskManager.cancel(iTaskId);
 
-					var oError = Util.propagateError(
-						vError,
-						"DesignTime#_onAddAggregation",
-						Util.printf(
-							"Failed to add new element overlay (elementId='{0}') into aggregation overlay (id='{1}')",
-							sElementId,
-							sAggregationOverlayId
-						)
-					);
+				var oError = Util.propagateError(
+					vError,
+					"DesignTime#_onAddAggregation",
+					Util.printf(
+						"Failed to add new element overlay (elementId='{0}') into aggregation overlay (id='{1}')",
+						sElementId,
+						sAggregationOverlayId
+					)
+				);
 
-					// Omit error message if the element was destroyed during overlay initialisation
-					// (e.g. SimpleForm case when multi-removal takes place)
-					if (!oElement.bIsDestroyed && !oParentAggregationOverlay.bIsDestroyed) {
-						Log.error(Util.errorToString(oError));
-					}
-				}.bind(this, oElement.getId(), oParentAggregationOverlay.getId()));
+				// Omit error message if the element was destroyed during overlay initialisation
+				// (e.g. SimpleForm case when multi-removal takes place)
+				if (!oElement.bIsDestroyed && !oParentAggregationOverlay.bIsDestroyed) {
+					Log.error(Util.errorToString(oError));
+				}
+			}.bind(this, oElement.getId(), oParentAggregationOverlay.getId()));
 		} else {
 			// This is necessary when ElementOverlay was created for an Element which is not inside RootElement
 			// and which is added to the RootElement later on (LayoutEditor use case). Thus, this ElementOverlay
@@ -1465,7 +1464,7 @@ function (
 	 * @param {boolean} bValue True for enabled
 	 * @public
 	 */
-	DesignTime.prototype.setEnabled = function (bValue) {
+	DesignTime.prototype.setEnabled = function(bValue) {
 		bValue = !!bValue;
 
 		if (this.getEnabled() !== bValue) {
@@ -1481,10 +1480,9 @@ function (
 	 * @returns {string} DesignTime status
 	 * @public
 	 */
-	DesignTime.prototype.getStatus = function () {
+	DesignTime.prototype.getStatus = function() {
 		return this._sStatus;
 	};
-
 
 	return DesignTime;
 });

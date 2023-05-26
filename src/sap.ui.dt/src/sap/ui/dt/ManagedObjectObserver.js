@@ -656,7 +656,7 @@ sap.ui.define([
 	 * @protected
 	 * @return {sap.ui.base.ManagedObject} The instance of the associated target to observe.
 	 */
-	ManagedObjectObserver.prototype.getTargetInstance = function () {
+	ManagedObjectObserver.prototype.getTargetInstance = function() {
 		return ElementUtil.getElementInstance(this.getTarget());
 	};
 
@@ -666,7 +666,7 @@ sap.ui.define([
 	 * @return {boolean} true if the aggregation is observable
 	 * @protected
 	 */
-	ManagedObjectObserver.prototype._isAggregationObservable = function (sAggregationName) {
+	ManagedObjectObserver.prototype._isAggregationObservable = function(sAggregationName) {
 		return (
 			this.getAggregations() === null
 			|| includes(this.getAggregations(), sAggregationName)

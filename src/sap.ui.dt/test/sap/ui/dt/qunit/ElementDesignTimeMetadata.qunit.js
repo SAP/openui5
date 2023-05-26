@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	ElementDesignTimeMetadata,
 	Core,
 	ElementUtil,
@@ -68,31 +68,31 @@ sap.ui.define([
 						},
 						testAggregation3: {
 							childNames: function(oElement) {
-								//fake 2 cases:
-								//1. childNames is a function, that returns the object
-								//2. singular and plural can be functions to handle cases with self made resource bundling
+								// fake 2 cases:
+								// 1. childNames is a function, that returns the object
+								// 2. singular and plural can be functions to handle cases with self made resource bundling
 								return {
 									singular: function() {
-										//fake own resource bundle handling
+										// fake own resource bundle handling
 										return "I18N_KEY" + oElement.getText();
 									},
 									plural: function() {
-										//fake own resource bundle handling
+										// fake own resource bundle handling
 										return "I18N_KEY_PLURAL" + oElement.getText();
 									}
 								};
 							},
 							displayName: function(oElement) {
-								//fake 2 cases:
-								//1. displayName is a function, that returns the object
-								//2. singular and plural can be functions to handle cases with self made resource bundling
+								// fake 2 cases:
+								// 1. displayName is a function, that returns the object
+								// 2. singular and plural can be functions to handle cases with self made resource bundling
 								return {
 									singular: function() {
-										//fake own resource bundle handling
+										// fake own resource bundle handling
 										return "I18N_KEY" + oElement.getText();
 									},
 									plural: function() {
-										//fake own resource bundle handling
+										// fake own resource bundle handling
 										return "I18N_KEY_PLURAL" + oElement.getText();
 									}
 								};
@@ -159,7 +159,7 @@ sap.ui.define([
 				getText: sandbox.stub().returns("simulateElement")
 			};
 			var oFakeLibBundle = {
-				getText: sandbox.stub().returnsArg(0), //just return i18n keys
+				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
 			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
@@ -184,7 +184,7 @@ sap.ui.define([
 				getText: sandbox.stub().returns("simulateElement")
 			};
 			var oFakeLibBundle = {
-				getText: sandbox.stub().returnsArg(0), //just return i18n keys
+				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
 			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
@@ -223,7 +223,7 @@ sap.ui.define([
 			};
 
 			var oFakeLibBundle = {
-				getText: sandbox.stub().returnsArg(0), //just return i18n keys
+				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
 			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);

@@ -239,7 +239,7 @@ sap.ui.define([
 				propagationInfos: [
 					{
 						relevantContainerElement: this.oVerticalLayout,
-						relevantContainerFunction: function () {
+						relevantContainerFunction: function() {
 							return true;
 						}
 					}

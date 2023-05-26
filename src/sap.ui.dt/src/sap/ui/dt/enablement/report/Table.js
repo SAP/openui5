@@ -66,7 +66,6 @@ sap.ui.define([
 			}
 		},
 
-
 		/**
 		 * Called when the Table is initialized
 		 * @protected
@@ -74,7 +73,6 @@ sap.ui.define([
 		init: function() {
 			this.setAggregation("_table", this._createTable());
 		},
-
 
 		/**
 		 * Called when the Table is destroyed
@@ -84,7 +82,6 @@ sap.ui.define([
 			clearTimeout(this._iFilterTimeout);
 			this.setData(null);
 		},
-
 
 		/**
 		 * Sets the data to display in the table
@@ -105,7 +102,6 @@ sap.ui.define([
 			}
 			this.setProperty("data", oData);
 		},
-
 
 		/**
 		 * Filters the table.
@@ -133,7 +129,6 @@ sap.ui.define([
 			}
 		},
 
-
 		/**
 		 * @private
 		 */
@@ -155,7 +150,6 @@ sap.ui.define([
 
 			return oTable;
 		},
-
 
 		/**
 		 * @private
@@ -179,18 +173,16 @@ sap.ui.define([
 			});
 		},
 
-
 		/**
 		 * @private
 		 */
 		_onSearch: function(oEvt) {
-			var sFilter = oEvt.getParameter('newValue');
+			var sFilter = oEvt.getParameter("newValue");
 			clearTimeout(this._iFilterTimeout);
 			this._iFilterTimeout = setTimeout(function() {
 				this.filter(sFilter);
 			}.bind(this), 100);
 		},
-
 
 		/**
 		 * @private
@@ -202,7 +194,6 @@ sap.ui.define([
 				})
 			);
 		},
-
 
 		/**
 		 * @private
@@ -218,7 +209,6 @@ sap.ui.define([
 			);
 		},
 
-
 		/**
 		 * @private
 		 */
@@ -230,14 +220,12 @@ sap.ui.define([
 			});
 		},
 
-
 		/**
 		 * @private
 		 */
 		_getTable: function() {
 			return this.getAggregation("_table");
 		},
-
 
 		/**
 		 * @private
@@ -246,7 +234,6 @@ sap.ui.define([
 			var oTable = this._getTable();
 			oTable.collapseAll();
 		},
-
 
 		/**
 		 * @private

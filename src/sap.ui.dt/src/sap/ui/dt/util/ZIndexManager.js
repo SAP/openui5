@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/base/util/restricted/_max",
 	"sap/base/util/restricted/_min"
-], function (
+], function(
 	Popup,
 	BusyIndicator,
 	Log,
@@ -48,10 +48,10 @@ sap.ui.define([
 
 	function getPopups() {
 		return InstanceManager.getOpenDialogs()
-			.concat(
-				InstanceManager.getOpenPopovers(),
-				BusyIndicator.oPopup && BusyIndicator.oPopup.isOpen() ? [BusyIndicator.oPopup] : []
-			);
+		.concat(
+			InstanceManager.getOpenPopovers(),
+			BusyIndicator.oPopup && BusyIndicator.oPopup.isOpen() ? [BusyIndicator.oPopup] : []
+		);
 	}
 
 	function getLastZIndex(iCurrent, iMax, aExistingIndices) {
@@ -62,12 +62,12 @@ sap.ui.define([
 			return iCurrent;
 		}
 
-		Log.error('sap.ui.dt.util.ZIndexManager: z-index limit has been exceeded, therefore all following calls receive the same z-Index = ' + iMax);
+		Log.error("sap.ui.dt.util.ZIndexManager: z-index limit has been exceeded, therefore all following calls receive the same z-Index = " + iMax);
 		return iMax;
 	}
 
 	function getZIndexFromPopups(aPopups) {
-		return aPopups.map(function (oPopupElement) {
+		return aPopups.map(function(oPopupElement) {
 			return oPopupElement._iZIndex || oPopupElement.oPopup._iZIndex;
 		});
 	}
@@ -97,15 +97,15 @@ sap.ui.define([
 		 * @returns {int} the next available z-index value
 		 * @public
 		 */
-		getNextZIndex: function () {
-			//get all open popups from InstanceManager
+		getNextZIndex: function() {
+			// get all open popups from InstanceManager
 			var aAllOpenPopups = getPopups();
 			var aValidatedPopups = [];
 			var aInvalidatedPopups = [];
 
 			aAllOpenPopups.forEach(function(oOpenPopup) {
 				// check if non-adaptable popup
-				var bValid = _aPopupFilters.every(function (fnFilter) {
+				var bValid = _aPopupFilters.every(function(fnFilter) {
 					return fnFilter(oOpenPopup);
 				});
 				bValid && _aPopupFilters.length > 0
@@ -136,7 +136,7 @@ sap.ui.define([
 		 * @returns {int} z-index below open popups
 		 * @public
 		 */
-		getZIndexBelowPopups: function () {
+		getZIndexBelowPopups: function() {
 			var aOpenPopups = getPopups();
 			var iLowestPopupZIndex;
 
@@ -159,7 +159,7 @@ sap.ui.define([
 		 * @param {function} fnFilter Filter function to be added
 		 * @public
 		 */
-		addPopupFilter: function (fnFilter) {
+		addPopupFilter: function(fnFilter) {
 			if (typeof fnFilter === "function") {
 				_aPopupFilters = _aPopupFilters.concat([fnFilter]);
 			}
@@ -170,7 +170,7 @@ sap.ui.define([
 		 * @param {function} fnFilter Filter function to be removed
 		 * @public
 		 */
-		removePopupFilter: function (fnFilter) {
+		removePopupFilter: function(fnFilter) {
 			_aPopupFilters = _aPopupFilters.filter(
 				function(fnExistingFilter) {
 					return fnExistingFilter === fnFilter;
@@ -184,7 +184,7 @@ sap.ui.define([
 		 * @returns {int} The next minimum z-index value
 		 * @private
 		 */
-		_getNextMinZIndex: function (iCurrent) {
+		_getNextMinZIndex: function(iCurrent) {
 			// deduct indices reserved from current z-index
 			var iMaxZIndex = iCurrent - Z_INDICES_RESERVED;
 			// initial minimum z-index

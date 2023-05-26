@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	ToolHooks.prototype.registerElementOverlay = function (oOverlay) {
+	ToolHooks.prototype.registerElementOverlay = function(oOverlay) {
 		oOverlay.getDesignTimeMetadata().getToolHooks().start(oOverlay.getElement());
 	};
 

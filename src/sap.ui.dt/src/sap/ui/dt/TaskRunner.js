@@ -30,7 +30,7 @@ function(
 	 * @alias sap.ui.dt.TaskManager
 	 * @experimental Since 1.69. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var TaskRunner = function (mParam) {
+	var TaskRunner = function(mParam) {
 		if (!mParam || !mParam.taskManager || !(mParam.taskManager instanceof TaskManager)) {
 			throw DtUtil.createError("TaskRunner#constructor", "sap.ui.dt.TaskRunner: TaskManager required");
 		}
@@ -42,7 +42,7 @@ function(
 		this._oTaskPromise = Promise.resolve();
 	};
 
-	TaskRunner.prototype._shouldObserveBreak = function () {
+	TaskRunner.prototype._shouldObserveBreak = function() {
 		if (
 			this.bIsStopped
 			|| !this._oTaskManager
@@ -54,7 +54,7 @@ function(
 		return false;
 	};
 
-	TaskRunner.prototype._observe = function (oEvent) {
+	TaskRunner.prototype._observe = function(oEvent) {
 		this._oTaskPromise = this._oTaskPromise.then(function() {
 			if (this._shouldObserveBreak()) {
 				this.stop();
@@ -64,36 +64,36 @@ function(
 		}.bind(this));
 	};
 
-	TaskRunner.prototype._runTasksFromManager = function () {
+	TaskRunner.prototype._runTasksFromManager = function() {
 		var aTasks = this._oTaskManager.getQueuedTasks(this._sObservedTaskType);
 		if (aTasks.length) {
 			this._runTasks(aTasks);
 		}
 	};
 
-	TaskRunner.prototype._runTasks = function (aTasks) {
-		aTasks.forEach(function (oTask) {
+	TaskRunner.prototype._runTasks = function(aTasks) {
+		aTasks.forEach(function(oTask) {
 			if (oTask.callbackFn) {
 				oTask.callbackFn()
-					.then(function () {
-						this._oTaskManager.complete(oTask.id);
-					}.bind(this))
-					.catch(function (vError) {
-						this._oTaskManager.complete(oTask.id);
-						BaseLog.error(DtUtil.errorToString(vError) + " / related task: " + JSON.stringify(oTask));
-					}.bind(this));
+				.then(function() {
+					this._oTaskManager.complete(oTask.id);
+				}.bind(this))
+				.catch(function(vError) {
+					this._oTaskManager.complete(oTask.id);
+					BaseLog.error(DtUtil.errorToString(vError) + " / related task: " + JSON.stringify(oTask));
+				}.bind(this));
 			}
 		}.bind(this));
 	};
 
-	TaskRunner.prototype.run = function (sTaskType) {
+	TaskRunner.prototype.run = function(sTaskType) {
 		this._sObservedTaskType = sTaskType || this._sInitialTaskType;
 		this.bIsStopped = false;
 		this._oTaskManager.attachAdd(this._observe, this);
 		this._observe();
 	};
 
-	TaskRunner.prototype.stop = function () {
+	TaskRunner.prototype.stop = function() {
 		this.bIsStopped = true;
 		this._oTaskManager.detachAdd(this._observe, this);
 	};

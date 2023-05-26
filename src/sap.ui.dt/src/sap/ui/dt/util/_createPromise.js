@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(function () {
+sap.ui.define(function() {
 	"use strict";
 
 	/**
@@ -11,21 +11,21 @@ sap.ui.define(function () {
 	 * @returns {object} Cancelable Promise
 	 * @private
 	 */
-	return function (fn) {
+	return function(fn) {
 		var bCancelled = false;
 		var oCancelPromise;
 		var fnCancelResolve;
 		var fnCancelReject;
-		var oPromise = new Promise(function (fnResolve, fnReject) {
+		var oPromise = new Promise(function(fnResolve, fnReject) {
 			fn(
-				function () {
+				function() {
 					if (!bCancelled) {
 						fnResolve.apply(this, arguments);
 					} else if (fnCancelResolve) {
 						fnCancelResolve.apply(this, arguments);
 					}
 				},
-				function () {
+				function() {
 					if (!bCancelled) {
 						fnReject.apply(this, arguments);
 					} else if (fnCancelReject) {
@@ -37,10 +37,10 @@ sap.ui.define(function () {
 
 		return {
 			promise: oPromise,
-			cancel: function () {
+			cancel: function() {
 				bCancelled = true;
 				if (!oCancelPromise) {
-					oCancelPromise = new Promise(function (fnResolve, fnReject) {
+					oCancelPromise = new Promise(function(fnResolve, fnReject) {
 						fnCancelResolve = fnResolve;
 						fnCancelReject = fnReject;
 					});

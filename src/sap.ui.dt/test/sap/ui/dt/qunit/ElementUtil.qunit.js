@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/ElementUtil",
@@ -172,7 +172,7 @@ sap.ui.define([
 		var CustomControl = Element.extend("CustomControl", {
 			metadata: {
 				associations: {
-					elements: { type: 'sap.ui.core.Control', multiple: true }
+					elements: { type: "sap.ui.core.Control", multiple: true }
 				}
 			}
 		});
@@ -636,7 +636,7 @@ sap.ui.define([
 			ElementUtil.removeAggregation(this.oVerticalLayout, "content", this.oHorizontalLayoutChild);
 			this.oHorizontalLayoutChild.destroy();
 			var iLengthAfter = this.oVerticalLayout.getContent().length;
-			assert.equal(iLengthAfter, iLengthBefore - 1, 'then the number of controls is right');
+			assert.equal(iLengthAfter, iLengthBefore - 1, "then the number of controls is right");
 		});
 		QUnit.test("when there is no AggregationMutator", function(assert) {
 			var oStub = sandbox.stub(ElementUtil, "getAggregationAccessors").returns({});
@@ -697,12 +697,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when getParent() is called for oButton", function(assert) {
-			assert.equal(ElementUtil.getParent(this.oButton), this.oHorizontalLayoutChild, 'then the right parent is returned');
+			assert.equal(ElementUtil.getParent(this.oButton), this.oHorizontalLayoutChild, "then the right parent is returned");
 		});
 
 		QUnit.test("when getParent() is called for a Component", function(assert) {
 			this.oCompContainer.setComponent(this.oComponent);
-			assert.equal(ElementUtil.getParent(this.oComponent), this.oCompContainer, 'then the ComponentContainer is returned');
+			assert.equal(ElementUtil.getParent(this.oComponent), this.oCompContainer, "then the ComponentContainer is returned");
 		});
 	});
 
@@ -735,7 +735,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when isElementValid() is called with invalid ManagedObject (non-Element and non-Component descendant)", function(assert) {
-			var CustomObject = ManagedObject.extend('customObject');
+			var CustomObject = ManagedObject.extend("customObject");
 			this.oObject = new CustomObject();
 			assert.equal(ElementUtil.isElementValid(this.oObject), false);
 		});
@@ -750,8 +750,8 @@ sap.ui.define([
 			}
 		}
 	}, function() {
-		QUnit.test("when getLabelForElement is called with a function", function (assert) {
-			var fnFunction = function (oElement) {
+		QUnit.test("when getLabelForElement is called with a function", function(assert) {
+			var fnFunction = function(oElement) {
 				return oElement.getId();
 			};
 			var oButton = new Button("testButton");
@@ -759,14 +759,14 @@ sap.ui.define([
 			oButton.destroy();
 		});
 
-		QUnit.test("when getLabelForElement is called with a label", function (assert) {
+		QUnit.test("when getLabelForElement is called with a label", function(assert) {
 			this.oLabelControl = new Label("id", {
 				text: "label"
 			});
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the label (getText())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a Button", function (assert) {
+		QUnit.test("when getLabelForElement is called with a Button", function(assert) {
 			this.oLabelControl = new Button("id", {
 				text: "Button text"
 			});
@@ -776,21 +776,21 @@ sap.ui.define([
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Button text", "then it returns the label (getLabelText())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a Group", function (assert) {
+		QUnit.test("when getLabelForElement is called with a Group", function(assert) {
 			this.oLabelControl = new InputListItem("id", {
 				label: "Input list item label"
 			});
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Input list item label", "then it returns the label (getLabel())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a SimpleForm", function (assert) {
+		QUnit.test("when getLabelForElement is called with a SimpleForm", function(assert) {
 			this.oLabelControl = new ObjectAttribute("id", {
 				title: "Object attribute title"
 			});
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Object attribute title", "then it returns the label (getTitle())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a Component", function (assert) {
+		QUnit.test("when getLabelForElement is called with a Component", function(assert) {
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent: function() {}
 			});
@@ -799,12 +799,12 @@ sap.ui.define([
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "componentObjectId", "then it returns the Id for a component object");
 		});
 
-		QUnit.test("when getLabelForElement is called with a Label without text property set", function (assert) {
+		QUnit.test("when getLabelForElement is called with a Label without text property set", function(assert) {
 			this.oLabelControl = new Label("id");
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "id", "then it returns the Id (getId())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a form element (withouth getLabelText) with Label as control", function (assert) {
+		QUnit.test("when getLabelForElement is called with a form element (withouth getLabelText) with Label as control", function(assert) {
 			this.oLabelControl = new FormElement("id", {
 				label: new Label({
 					text: "label"
@@ -813,7 +813,7 @@ sap.ui.define([
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the labels text (getLabel().getText())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a sap.f.DynamicPage (containing an sap.f.DynamicPageTitle, further containing an sap.m.Text)", function (assert) {
+		QUnit.test("when getLabelForElement is called with a sap.f.DynamicPage (containing an sap.f.DynamicPageTitle, further containing an sap.m.Text)", function(assert) {
 			this.oLabelControl = new DynamicPage({
 				title: new DynamicPageTitle({
 					heading: new Text({
@@ -824,7 +824,7 @@ sap.ui.define([
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the dynamic page's title (getTitle().getHeading().getText())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a sap.f.DynamicPage (containing an sap.f.DynamicPageTitle, further containing an sap.m.Label)", function (assert) {
+		QUnit.test("when getLabelForElement is called with a sap.f.DynamicPage (containing an sap.f.DynamicPageTitle, further containing an sap.m.Label)", function(assert) {
 			this.oLabelControl = new DynamicPage({
 				title: new DynamicPageTitle({
 					heading: new Label({
@@ -835,7 +835,7 @@ sap.ui.define([
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the dynamic page's title (getTitle().getHeading().getLabel().getText())");
 		});
 
-		QUnit.test("when getLabelForElement is called with an object which is not a managed object", function (assert) {
+		QUnit.test("when getLabelForElement is called with an object which is not a managed object", function(assert) {
 			assert.throws(
 				ElementUtil.getLabelForElement.bind(null, {}),
 				DtUtil.createError("ElementUtil#getLabelForElement", "A valid managed object instance should be passed as parameter", "sap.ui.dt"),
@@ -846,19 +846,19 @@ sap.ui.define([
 
 	QUnit.module("Given adjustIndexForMove()", {
 	}, function() {
-		QUnit.test("when adjustIndexForMove is called with non-similar source and target containers", function (assert) {
+		QUnit.test("when adjustIndexForMove is called with non-similar source and target containers", function(assert) {
 			assert.strictEqual(ElementUtil.adjustIndexForMove({value: "sourceContainer"}, {value: "targetContainer"}, 5, 10)
 				, 10, "then the passed target index is returned");
 		});
-		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index lower than the target index", function (assert) {
+		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index lower than the target index", function(assert) {
 			var oContainer = {value: "sameContainer"};
 			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, 5, 10), 9, "then the passed target index is returned decremented by 1");
 		});
-		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index greater than the target index", function (assert) {
+		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index greater than the target index", function(assert) {
 			var oContainer = {value: "sameContainer"};
 			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, 15, 10), 10, "then the passed target index is returned");
 		});
-		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index is not greater than -1", function (assert) {
+		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index is not greater than -1", function(assert) {
 			var oContainer = {value: "sameContainer"};
 			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, -1, 10), 10, "then the passed target index is returned");
 		});
@@ -902,7 +902,7 @@ sap.ui.define([
 			this.oListItem0 = this.oList.getItems()[0];
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			sandbox.restore();
@@ -998,7 +998,7 @@ sap.ui.define([
 								items: [
 									new VBox("vbox6", {
 										items: [
-											new Button("evil-btn1", {text: '{text}'})
+											new Button("evil-btn1", {text: "{text}"})
 										]
 									})
 								]
@@ -1017,7 +1017,7 @@ sap.ui.define([
 			this.oButton1 = this.oList.getItems()[3].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 			this.oButton2 = this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			this.oButton1.destroy();
@@ -1041,7 +1041,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a List with bound items and a List with unbound items", {
-		beforeEach: function () {
+		beforeEach: function() {
 			// create list with bound items
 			var oData = [
 				{text: "item1-bound"},
@@ -1051,7 +1051,7 @@ sap.ui.define([
 			this.oBoundList = new List("boundlist").setModel(oModel);
 			this.oBoundList.bindAggregation("items", {
 				path: "/",
-				template: new CustomListItem("item", {content: [new Button("item-btn", {text: '{text}'})]}),
+				template: new CustomListItem("item", {content: [new Button("item-btn", {text: "{text}"})]}),
 				templateShareable: false
 			});
 
@@ -1059,16 +1059,16 @@ sap.ui.define([
 			this.oFactoryBoundList.bindAggregation("items", {
 				path: "/",
 				factory: function(sId) {
-					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text: '{text}'})]});
+					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text: "{text}"})]});
 				}
 			});
 
-			//create list with unbound items
+			// create list with unbound items
 			this.oUnboundList = new List("unboundlist");
-			this.oUnboundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text: 'item1-unbound'})]}));
-			this.oUnboundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text: 'item2-unbound'})]}));
+			this.oUnboundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text: "item1-unbound"})]}));
+			this.oUnboundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text: "item2-unbound"})]}));
 
-			//create a HorizontalLayout containing the two lists
+			// create a HorizontalLayout containing the two lists
 			this.oVerticalLayout = new VerticalLayout("verticalLayout0", {
 				content: [this.oBoundList, this.oUnboundList, this.oFactoryBoundList]
 			});
@@ -1083,7 +1083,7 @@ sap.ui.define([
 			this.oUnboundChild = this.oUnboundList.getItems()[0].getContent()[0];
 			this.oFactoryBound = this.oFactoryBoundList.getItems()[0];
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oVerticalLayout.destroy();
 		}
 	}, function() {
@@ -1218,7 +1218,7 @@ sap.ui.define([
 			this.oItem2Select1 = this.oVBox1.getItems()[1].getSelectableItems()[1];
 			this.oItem1Select2 = this.oVBox2.getItems()[1].getSelectableItems()[0];
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			sandbox.restore();

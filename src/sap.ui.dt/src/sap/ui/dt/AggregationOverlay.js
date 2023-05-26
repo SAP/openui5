@@ -76,7 +76,7 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype._getAttributes = function () {
+	AggregationOverlay.prototype._getAttributes = function() {
 		return merge(
 			{},
 			Overlay.prototype._getAttributes.apply(this, arguments),
@@ -91,7 +91,7 @@ function(
 	 * @param {sap.ui.dt.ElementOverlay} oChild - Lookup ElementOverlay
 	 * @return {number} - position index in DOM
 	 */
-	AggregationOverlay.prototype._getChildIndex = function (oChild) {
+	AggregationOverlay.prototype._getChildIndex = function(oChild) {
 		var aChildren = this.getChildren();
 
 		var oPreviousSibling;
@@ -113,7 +113,7 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype.insertChild = function (iPosition, oChild) {
+	AggregationOverlay.prototype.insertChild = function(iPosition, oChild) {
 		/**
 		 * Legend:
 		 * iPosition - position in aggregation/association
@@ -129,14 +129,14 @@ function(
 			);
 		}
 
-		var iPreviousPosition = this.indexOfAggregation('children', oChild);
+		var iPreviousPosition = this.indexOfAggregation("children", oChild);
 
 		if (iPreviousPosition !== iPosition) {
 			// when child is already inside the aggregation but on different position, we need to remove it first
 			if (iPreviousPosition > -1) {
-				this.removeAggregation('children', oChild);
+				this.removeAggregation("children", oChild);
 			}
-			this.insertAggregation('children', oChild, iPosition);
+			this.insertAggregation("children", oChild, iPosition);
 
 			if (this.isRendered()) {
 				var iPositionInDom = this._getChildIndex(oChild);
@@ -144,7 +144,7 @@ function(
 
 				if (!bChildRendered) {
 					var oRenderResult = oChild.render(true);
-					//TODO: change when renderer does not return jquery object any more!
+					// TODO: change when renderer does not return jquery object any more!
 					oRenderResult = oRenderResult.jquery ? oRenderResult.get(0) : oRenderResult;
 				}
 
@@ -179,7 +179,7 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype.addChild = function (oChild, bSuppressedEvent) {
+	AggregationOverlay.prototype.addChild = function(oChild, bSuppressedEvent) {
 		this.insertChild(this.getChildren().length, oChild);
 
 		if (!bSuppressedEvent) {
@@ -190,9 +190,9 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype.render = function () {
+	AggregationOverlay.prototype.render = function() {
 		if (this.getChildren().length > 0 || this.getDesignTimeMetadata().getDomRef()) {
-			this.addStyleClass('sapUiDtAggregationOverlay');
+			this.addStyleClass("sapUiDtAggregationOverlay");
 			return Overlay.prototype.render.apply(this, arguments);
 		}
 		return undefined;
@@ -201,7 +201,7 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype._getRenderingParent = function () {
+	AggregationOverlay.prototype._getRenderingParent = function() {
 		if (Util.isInteger(this.getScrollContainerId())) {
 			return this.getParent().getScrollContainerById(this.getScrollContainerId());
 		}
@@ -211,7 +211,7 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype._setPosition = function ($Target, oGeometry, $Parent, bForceScrollbarSync) {
+	AggregationOverlay.prototype._setPosition = function($Target, oGeometry, $Parent, bForceScrollbarSync) {
 		// Apply Overlay position first, then extra logic based on this new position
 		Overlay.prototype._setPosition.apply(this, arguments);
 

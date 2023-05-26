@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/ui/core/Core"
-], function (
+], function(
 	OverlayUtil,
 	ControlDragDrop,
 	DesignTime,
@@ -61,7 +61,7 @@ sap.ui.define([
 			this.oDragDrop.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when an element is dragged over the first element of an aggregation", function(assert) {
 			this.oDragDrop.onDragStart(this.oButtonOverlay1);
 			this.oDragDrop.onDragEnter(this.oButtonOverlay0);

@@ -54,7 +54,7 @@ sap.ui.define([
 					type: "string"
 				},
 				create: {
-					type: "any" //function
+					type: "any" // function
 				},
 				timeout: {
 					type: "int",
@@ -86,7 +86,6 @@ sap.ui.define([
 		iStubCounter++;
 	};
 
-
 	/**
 	 * Called when the ElementEnablementTest is destroyed
 	 * @protected
@@ -106,7 +105,6 @@ sap.ui.define([
 			delete this._$TestAreaDomRef;
 		}
 	};
-
 
 	/**
 	 * @return {Promise} A promise providing the test results.
@@ -129,7 +127,6 @@ sap.ui.define([
 			return this._mResult;
 		}.bind(this));
 	};
-
 
 	/**
 	 * @private
@@ -164,7 +161,6 @@ sap.ui.define([
 		});
 	};
 
-
 	/**
 	 * @private
 	 */
@@ -178,7 +174,6 @@ sap.ui.define([
 		}
 		return this._oTestAreaDomRef;
 	};
-
 
 	/**
 	 * @private
@@ -231,7 +226,6 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-
 	/**
 	 * @private
 	 */
@@ -242,7 +236,6 @@ sap.ui.define([
 			"Each aggregation needs to be ignored or has a visible domRef maintained in the metadata",
 			this.getGroupPostfix()
 		);
-
 
 		if (this._bNoRenderer) {
 			this.addTest(mAggregationsTests.children,

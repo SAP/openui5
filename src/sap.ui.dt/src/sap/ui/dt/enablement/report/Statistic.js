@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Text",
 	"./StatisticRenderer"
-], function (
+], function(
 	Control,
 	JSONModel,
 	SimpleForm,
@@ -56,7 +56,6 @@ sap.ui.define([
 			}
 		},
 
-
 		init: function() {
 			this._oModel = null;
 			this.setAggregation("_form", this._createForm());
@@ -83,7 +82,6 @@ sap.ui.define([
 			}
 			this.setProperty("data", oData);
 		},
-
 
 		_createForm: function() {
 			var oForm = new SimpleForm(this.getId() + "--form", {

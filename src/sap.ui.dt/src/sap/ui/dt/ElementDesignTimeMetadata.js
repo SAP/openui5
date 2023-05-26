@@ -134,7 +134,7 @@ sap.ui.define([
 	 */
 	ElementDesignTimeMetadata.prototype.getAggregationNamesWithAction = function(sAction) {
 		var mAggregations = this.getAggregations();
-		return Object.keys(mAggregations).filter(function (sAggregation) {
+		return Object.keys(mAggregations).filter(function(sAggregation) {
 			return mAggregations[sAggregation].actions && mAggregations[sAggregation].actions[sAction];
 		});
 	};

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/AggregationOverlay",
 	"sap/ui/core/UIComponent",
 	"sap/m/Button"
-], function (
+], function(
 	OverlayRegistry,
 	ElementOverlay,
 	AggregationOverlay,
@@ -26,7 +26,7 @@ sap.ui.define([
 			this.oOverlay.destroy();
 			this.oButton.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("register()/deregister()/getOverlays()", function(assert) {
 			OverlayRegistry.register(this.oOverlay);
 			assert.strictEqual(OverlayRegistry.getOverlays().length, 1, "then OverlayRegistry has one overlay");
@@ -66,7 +66,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Validation", function () {
+	QUnit.module("Validation", function() {
 		QUnit.test("register()/deregister()", function(assert) {
 			assert.throws(
 				function() {
@@ -86,7 +86,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("getOverlay() for Component", {
-		beforeEach: function () {
+		beforeEach: function() {
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent: function() {}
 			});
@@ -97,19 +97,19 @@ sap.ui.define([
 				element: this.oComponent
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oElementOverlay.destroy();
 			this.oComponent.destroy();
 			OverlayRegistry.deregister(this.oElementOverlay);
 		}
-	}, function () {
-		QUnit.test("getOverlay() by object instance", function (assert) {
+	}, function() {
+		QUnit.test("getOverlay() by object instance", function(assert) {
 			OverlayRegistry.register(this.oElementOverlay);
 			assert.strictEqual(OverlayRegistry.getOverlays().length, 1);
 			assert.strictEqual(OverlayRegistry.getOverlay(this.oComponent), this.oElementOverlay);
 		});
 
-		QUnit.test("getOverlay() by id", function (assert) {
+		QUnit.test("getOverlay() by id", function(assert) {
 			OverlayRegistry.register(this.oElementOverlay);
 			assert.strictEqual(OverlayRegistry.getOverlays().length, 1);
 			assert.strictEqual(OverlayRegistry.getOverlay(this.oComponent.getId()), this.oElementOverlay);

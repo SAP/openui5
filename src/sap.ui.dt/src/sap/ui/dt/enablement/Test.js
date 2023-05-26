@@ -77,7 +77,6 @@ sap.ui.define([
 		SUITE: "Suite"
 	};
 
-
 	/**
 	 * Creates a new suite and returns it.
 	 *
@@ -97,7 +96,6 @@ sap.ui.define([
 			Test.TYPE.SUITE
 		);
 	};
-
 
 	/**
 	 * Adds a new group to an array.
@@ -120,7 +118,6 @@ sap.ui.define([
 		);
 	};
 
-
 	/**
 	 * Adds a new test to an array.
 	 *
@@ -142,7 +139,6 @@ sap.ui.define([
 			Test.TYPE.TEST
 		);
 	};
-
 
 	/**
 	 * Adds a new entry to an array.
@@ -183,7 +179,6 @@ sap.ui.define([
 		return mEntry;
 	};
 
-
 	/**
 	 * Runs the tests.
 	 *
@@ -192,7 +187,6 @@ sap.ui.define([
 	Test.prototype.run = function() {
 		throw new Error("Abstract method");
 	};
-
 
 	/**
 	 * Aggregates the tests results.
@@ -225,7 +219,6 @@ sap.ui.define([
 				};
 			}.bind(this));
 
-
 			mResult.result = mReducedResult.result;
 			mResult.status = mReducedResult.status;
 			mResult.statistic = mReducedResult.statistic;
@@ -234,14 +227,12 @@ sap.ui.define([
 		return mResult;
 	};
 
-
 	/**
 	 * @private
 	 */
 	Test.prototype._getResult = function(mPreviousValue, mCurrentValue) {
 		return !mPreviousValue.result ? false : mCurrentValue.result;
 	};
-
 
 	/**
 	 * @private
@@ -260,7 +251,6 @@ sap.ui.define([
 		}
 		return mStatistic;
 	};
-
 
 	/**
 	 * @private

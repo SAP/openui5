@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/enablement/Util",
@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/Core"
 ],
-function (
+function(
 	EnablementUtil,
 	DesignTime,
 	Button,
@@ -17,7 +17,7 @@ function (
 	"use strict";
 
 	QUnit.module("Given that a sap.mButton is tested", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			this.oButton = new Button({text: "my button"});
 			this.oButton.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -31,7 +31,7 @@ function (
 			this.oDesignTime.destroy();
 			this.oButton.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the getInfo is called", function(assert) {
 			var oElementTestInfo = EnablementUtil.getInfo(this.oButton);
 			assert.ok(oElementTestInfo.metadata, "metadata is retrieved");
@@ -64,7 +64,7 @@ function (
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when the getAggregationInfo is called for layout without content", function(assert) {
 			var oAggregationTestInfo = EnablementUtil.getAggregationInfo(this.oVerticalLayout, "content");
 			assert.strictEqual(oAggregationTestInfo.ignored, false, "aggregation isn't ignored in DT Metadata");
@@ -100,8 +100,8 @@ function (
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 		}
-	}, function () {
-		QUnit.test("when the getAggregationInfo is called for layout with content", function (assert) {
+	}, function() {
+		QUnit.test("when the getAggregationInfo is called for layout with content", function(assert) {
 			var oAggregationTestInfo = EnablementUtil.getAggregationInfo(this.oVerticalLayout, "content");
 			assert.strictEqual(oAggregationTestInfo.ignored, false, "aggregation isn't ignored in DT Metadata");
 			assert.strictEqual(oAggregationTestInfo.domRefDeclared, true, "domRef for content aggregation is declared in DT Metadata");

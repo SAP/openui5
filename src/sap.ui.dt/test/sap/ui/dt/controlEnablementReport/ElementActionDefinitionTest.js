@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject"
-], function (
+], function(
 	ManagedObject
 ) {
 	"use strict";
@@ -67,7 +67,6 @@ sap.ui.define([
 		});
 	};
 
-
 	/**
 	 * @returns {Promise} Resolves when the design time is loaded
 	 * @private
@@ -87,15 +86,14 @@ sap.ui.define([
 				}
 			);
 		}.bind(this))
-			.then(function(oElement) {
-				return oElement.getMetadata().loadDesignTime();
-			})
-			.catch(function(oError) {
-				this._bError = true;
-				return Promise.reject(oError);
-			});
+		.then(function(oElement) {
+			return oElement.getMetadata().loadDesignTime();
+		})
+		.catch(function(oError) {
+			this._bError = true;
+			return Promise.reject(oError);
+		});
 	};
-
 
 	/**
 	 * @param {object} oData - Design time data

@@ -1,10 +1,10 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/enablement/report/Statistic",
 	"sap/ui/core/Core"
 ],
-function (
+function(
 	Statistic,
 	oCore
 ) {
@@ -15,7 +15,7 @@ function (
 	};
 
 	QUnit.module("Given that a statistic report is created", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oResult = {
 				statistic: {
 					SUPPORTED: 10,
@@ -34,7 +34,7 @@ function (
 		afterEach: function() {
 			this.oStatistic.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when data are set", function(assert) {
 			var oStatistic = this.oStatistic;
 			assert.equal(getValue(oStatistic, "supported"), this.oResult.statistic.SUPPORTED, "then the supported value is displayed correctly");

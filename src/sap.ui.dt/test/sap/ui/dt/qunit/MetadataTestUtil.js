@@ -20,7 +20,7 @@ sap.ui.define([
 
 		createPropagateMetadataObject: function(sInstanceOf, sTestValue, vActions, sCustomProperty) {
 			return {
-				propagateMetadata: function (oElement, oRelevantContainer) {
+				propagateMetadata: function(oElement, oRelevantContainer) {
 					if (oElement.getMetadata().getName() === sInstanceOf) {
 						var mData = {
 							aggregations: {
@@ -64,7 +64,7 @@ sap.ui.define([
 
 		createPropagateRelevantContainerObject: function(sInstanceOf) {
 			return {
-				propagateRelevantContainer: function (oElement) {
+				propagateRelevantContainer: function(oElement) {
 					var sType = oElement.getMetadata().getName();
 					if (sType === sInstanceOf) {
 						return true;

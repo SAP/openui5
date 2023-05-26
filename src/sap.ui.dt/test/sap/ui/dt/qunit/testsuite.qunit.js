@@ -1,4 +1,4 @@
-sap.ui.define(function () {
+sap.ui.define(function() {
 	"use strict";
 	return {
 		name: "sap.ui.dt",
@@ -33,12 +33,12 @@ sap.ui.define(function () {
 			},
 			ControlObserver: {
 				coverage: {
-					only: ['sap/ui/dt/ControlObserver']
+					only: ["sap/ui/dt/ControlObserver"]
 				}
 			},
 			DesignTime: {
 				coverage: {
-					only: ['sap/ui/dt/DesignTime']
+					only: ["sap/ui/dt/DesignTime"]
 				},
 				ui5: {
 					resourceroots: {
@@ -48,17 +48,17 @@ sap.ui.define(function () {
 			},
 			DesignTimeMetadata: {
 				coverage: {
-					only: ['sap/ui/dt/DesignTimeMetadata']
+					only: ["sap/ui/dt/DesignTimeMetadata"]
 				}
 			},
 			DOMUtil: {
 				coverage: {
-					only: ['sap/ui/dt/DOMUtil']
+					only: ["sap/ui/dt/DOMUtil"]
 				}
 			},
 			DOMUtilRtl: {
 				coverage: {
-					only: ['sap/ui/dt/DOMUtil']
+					only: ["sap/ui/dt/DOMUtil"]
 				},
 				ui5: {
 					rtl: true
@@ -66,12 +66,12 @@ sap.ui.define(function () {
 			},
 			ElementDesignTimeMetadata: {
 				coverage: {
-					only: ['sap/ui/dt/ElementDesignTimeMetadata']
+					only: ["sap/ui/dt/ElementDesignTimeMetadata"]
 				}
 			},
 			ElementOverlay: {
 				coverage: {
-					only: ['sap/ui/dt/ElementOverlay']
+					only: ["sap/ui/dt/ElementOverlay"]
 				},
 				ui5: {
 					resourceroots: {
@@ -82,7 +82,7 @@ sap.ui.define(function () {
 			},
 			ElementOverlayRTL: {
 				coverage: {
-					only: ['sap/ui/dt/ElementOverlay']
+					only: ["sap/ui/dt/ElementOverlay"]
 				},
 				ui5: {
 					rtl: true
@@ -90,13 +90,13 @@ sap.ui.define(function () {
 			},
 			ElementUtil: {
 				coverage: {
-					only: ['sap/ui/dt/ElementUtil']
+					only: ["sap/ui/dt/ElementUtil"]
 				}
 			},
 
 			MetadataPropagationUtil: {
 				coverage: {
-					only: ['sap/ui/dt/MetadataPropagationUtil']
+					only: ["sap/ui/dt/MetadataPropagationUtil"]
 				},
 				ui5: {
 					resourceroots: {
@@ -106,17 +106,17 @@ sap.ui.define(function () {
 			},
 			MutationObserver: {
 				coverage: {
-					only: ['sap/ui/dt/MutationObserver']
+					only: ["sap/ui/dt/MutationObserver"]
 				}
 			},
 			OverlayRegistry: {
 				coverage: {
-					only: ['sap/ui/dt/OverlayRegistry']
+					only: ["sap/ui/dt/OverlayRegistry"]
 				}
 			},
 			OverlayUtil: {
 				coverage: {
-					only: ['sap/ui/dt/OverlayUtil']
+					only: ["sap/ui/dt/OverlayUtil"]
 				},
 				ui5: {
 					resourceroots: {
@@ -126,32 +126,32 @@ sap.ui.define(function () {
 			},
 			Plugin: {
 				coverage: {
-					only: ['sap/ui/dt/Plugin']
+					only: ["sap/ui/dt/Plugin"]
 				}
 			},
 			ScrollbarSynchronizer: {
 				coverage: {
-					only: ['sap/ui/dt/ScrollbarSynchronizer']
+					only: ["sap/ui/dt/ScrollbarSynchronizer"]
 				}
 			},
 			SelectionManager: {
 				coverage: {
-					only: ['sap/ui/dt/SelectionManager']
+					only: ["sap/ui/dt/SelectionManager"]
 				}
 			},
 			TaskManager: {
 				coverage: {
-					only: ['sap/ui/dt/TaskManager']
+					only: ["sap/ui/dt/TaskManager"]
 				}
 			},
 			TaskRunner: {
 				coverage: {
-					only: ['sap/ui/dt/TaskRunner']
+					only: ["sap/ui/dt/TaskRunner"]
 				}
 			},
 			ManagedObjectObserver: {
 				coverage: {
-					only: ['sap/ui/dt/ManagedObjectObserver']
+					only: ["sap/ui/dt/ManagedObjectObserver"]
 				}
 			},
 			Util: {
@@ -171,43 +171,43 @@ sap.ui.define(function () {
 			"plugin/ContextMenu": {
 				group: "Plugin",
 				coverage: {
-					only: ['sap/ui/dt/plugin/ContextMenu']
+					only: ["sap/ui/dt/plugin/ContextMenu"]
 				}
 			},
 			"plugin/CutPaste": {
 				group: "Plugin",
 				coverage: {
-					only: ['sap/ui/dt/plugin/CutPaste']
+					only: ["sap/ui/dt/plugin/CutPaste"]
 				}
 			},
 			"plugin/DragDrop": {
 				group: "Plugin",
 				coverage: {
-					only: ['sap/ui/dt/plugin/DragDrop']
+					only: ["sap/ui/dt/plugin/DragDrop"]
 				}
 			},
 			"plugin/ControlDragDrop": {
 				group: "Plugin",
 				coverage: {
-					only: ['sap/ui/dt/plugin/ControlDragDrop']
+					only: ["sap/ui/dt/plugin/ControlDragDrop"]
 				}
 			},
 			"plugin/ElementMover": {
 				group: "Plugin",
 				coverage: {
-					only: ['sap/ui/dt/plugin/ElementMover']
+					only: ["sap/ui/dt/plugin/ElementMover"]
 				}
 			},
 			"plugin/TabHandling": {
 				group: "Plugin",
 				coverage: {
-					only: ['sap/ui/dt/plugin/TabHandling']
+					only: ["sap/ui/dt/plugin/TabHandling"]
 				}
 			},
 			"plugin/ToolHooks": {
 				group: "Plugin",
 				coverage: {
-					only: ['sap/ui/dt/plugin/ToolHooks']
+					only: ["sap/ui/dt/plugin/ToolHooks"]
 				}
 			},
 
@@ -253,13 +253,13 @@ sap.ui.define(function () {
 			"enablement/Util": {
 				group: "Enablement",
 				coverage: {
-					only: ['sap/ui/dt/enablement']
+					only: ["sap/ui/dt/enablement"]
 				}
 			},
 			"enablement/ElementEnablement": {
 				group: "Enablement",
 				coverage: {
-					only: ['sap/ui/dt/enablement']
+					only: ["sap/ui/dt/enablement"]
 				}
 			},
 			"enablement/report/LibraryReport": {
@@ -271,13 +271,13 @@ sap.ui.define(function () {
 					}
 				},
 				coverage: {
-					only: ['sap/ui/dt/enablement']
+					only: ["sap/ui/dt/enablement"]
 				}
 			},
 			"enablement/report/QUnitReport": {
 				group: "Enablement",
 				coverage: {
-					only: ['sap/ui/dt/enablement']
+					only: ["sap/ui/dt/enablement"]
 				}
 			},
 			"enablement/report/Table": {
@@ -289,13 +289,13 @@ sap.ui.define(function () {
 					}
 				},
 				coverage: {
-					only: ['sap/ui/dt/test']
+					only: ["sap/ui/dt/test"]
 				}
 			},
 			"enablement/report/Statistic": {
 				group: "Enablement",
 				coverage: {
-					only: ['sap/ui/dt/enablement']
+					only: ["sap/ui/dt/enablement"]
 				}
 			},
 			"controlEnablementReport/LibraryScanner": {
@@ -309,7 +309,7 @@ sap.ui.define(function () {
 					}
 				},
 				coverage: {
-					only: ['sap/ui/dt/enablement']
+					only: ["sap/ui/dt/enablement"]
 				}
 			},
 			"Generic Testsuite": {

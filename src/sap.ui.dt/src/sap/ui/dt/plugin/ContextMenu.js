@@ -62,7 +62,7 @@ sap.ui.define([
 	var mainStyleClass = "sapUiDtContextMenu";
 	var miniMenuStyleClass = "sapUiDtContextMiniMenu";
 
-	ContextMenu.prototype.init = function () {
+	ContextMenu.prototype.init = function() {
 		this.oContextMenuControl = new Menu();
 		this.oContextMenuControl.attachItemSelected(this._onItemSelected, this);
 		this.oContextMenuControl.attachClosed(this._contextMenuClosed, this);
@@ -72,7 +72,7 @@ sap.ui.define([
 		this._aSubMenus = [];
 	};
 
-	ContextMenu.prototype.exit = function () {
+	ContextMenu.prototype.exit = function() {
 		delete this._aMenuItems;
 		if (this.oContextMenuControl) {
 			this.oContextMenuControl.destroy();
@@ -94,7 +94,7 @@ sap.ui.define([
 	 * @param {boolean} bRetrievedFromPlugin flag to mark if a menu item was retrieved from a plugin (in runtime)
 	 * @param {boolean} bPersistOneTime flag to mark that the Button persist the next Menu clearing
 	 */
-	ContextMenu.prototype.addMenuItem = function (mMenuItem, bRetrievedFromPlugin, bPersistOneTime) {
+	ContextMenu.prototype.addMenuItem = function(mMenuItem, bRetrievedFromPlugin, bPersistOneTime) {
 		var mMenuItemEntry = {
 			menuItem: mMenuItem,
 			fromPlugin: !!bRetrievedFromPlugin,
@@ -109,7 +109,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	ContextMenu.prototype.registerElementOverlay = function (oOverlay) {
+	ContextMenu.prototype.registerElementOverlay = function(oOverlay) {
 		oOverlay.attachBrowserEvent("click", this._openContextMenu, this);
 		oOverlay.attachBrowserEvent("touchstart", this._openContextMenu, this);
 		oOverlay.attachBrowserEvent("contextmenu", this._openContextMenu, this);
@@ -117,14 +117,13 @@ sap.ui.define([
 		oOverlay.attachBrowserEvent("keyup", this._onKeyUp, this);
 	};
 
-
 	/**
 	 * Additionally to super->deregisterOverlay this method detaches the browser events
 	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	ContextMenu.prototype.deregisterElementOverlay = function (oOverlay) {
+	ContextMenu.prototype.deregisterElementOverlay = function(oOverlay) {
 		oOverlay.detachBrowserEvent("click", this._openContextMenu, this);
 		oOverlay.detachBrowserEvent("touchstart", this._openContextMenu, this);
 		oOverlay.detachBrowserEvent("contextmenu", this._openContextMenu, this);
@@ -139,7 +138,7 @@ sap.ui.define([
 	 * @param {boolean} bIsSubMenu - Whether the new ContextMenu is a SubMenu opened by a menu item inside another ContextMenu
 	 * @param {object} oEvent - Click event of the menu
 	 */
-	ContextMenu.prototype.open = function (oOverlay, bContextMenu, bIsSubMenu, oEvent) {
+	ContextMenu.prototype.open = function(oOverlay, bContextMenu, bIsSubMenu, oEvent) {
 		var aSelectedOverlays;
 		function addMenuItems(oMenu, aMenuItems) {
 			aMenuItems.forEach(function(oMenuItem, index) {
@@ -183,13 +182,13 @@ sap.ui.define([
 		this.setContextElement(oNewContextElement);
 		this.getDesignTime().getSelectionManager().attachChange(this._onSelectionChanged, this);
 
-		aSelectedOverlays = this.getSelectedOverlays().filter(function (oElementOverlay) {
+		aSelectedOverlays = this.getSelectedOverlays().filter(function(oElementOverlay) {
 			return oElementOverlay !== oOverlay;
 		});
 		aSelectedOverlays.unshift(oOverlay);
 
 		// Keep all persisted menu items
-		this._aMenuItems = this._aMenuItems.filter(function (mMenuItemEntry) {
+		this._aMenuItems = this._aMenuItems.filter(function(mMenuItemEntry) {
 			if (mMenuItemEntry.bPersistOneTime) {
 				mMenuItemEntry.bPersistOneTime = false;
 				return true;
@@ -202,58 +201,58 @@ sap.ui.define([
 
 		var oPromise = Promise.resolve();
 		if (!bIsSubMenu) {
-			var oDtSyncPromise = _createPromise(function (resolve, reject) {
+			var oDtSyncPromise = _createPromise(function(resolve, reject) {
 				DtUtil.waitForSynced(this.getDesignTime())().then(resolve).catch(reject);
 			}.bind(this));
 			this._fnCancelMenuPromise = oDtSyncPromise.cancel;
 			oPromise = oDtSyncPromise.promise
-				.then(function() {
-					this._aGroupedItems = [];
-					this._aSubMenus = [];
-					var aPluginItemPromises = [];
-					var oPlugins = this.getDesignTime().getPlugins();
-					oPlugins.forEach(function (oPlugin) {
-						var vMenuItems = oPlugin.getMenuItems(aSelectedOverlays);
-						if (!(vMenuItems instanceof Promise)) {
-							vMenuItems = Promise.resolve(vMenuItems);
-						}
-						aPluginItemPromises.push(vMenuItems);
-					});
+			.then(function() {
+				this._aGroupedItems = [];
+				this._aSubMenus = [];
+				var aPluginItemPromises = [];
+				var oPlugins = this.getDesignTime().getPlugins();
+				oPlugins.forEach(function(oPlugin) {
+					var vMenuItems = oPlugin.getMenuItems(aSelectedOverlays);
+					if (!(vMenuItems instanceof Promise)) {
+						vMenuItems = Promise.resolve(vMenuItems);
+					}
+					aPluginItemPromises.push(vMenuItems);
+				});
 
-					var oPluginItemsPromise = _createPromise(function (resolve, reject) {
-						Promise.all(aPluginItemPromises).then(resolve).catch(reject);
-					});
-					this._fnCancelMenuPromise = oPluginItemsPromise.cancel;
-					return oPluginItemsPromise.promise;
-				}.bind(this))
-				.then(function(aPluginMenuItems) {
-					return aPluginMenuItems.reduce(function(aConcatinatedMenuItems, aMenuItems) {
-						return aConcatinatedMenuItems.concat(aMenuItems);
-					});
-				})
-				.then(function(aPluginMenuItems) {
-					aPluginMenuItems.forEach(function (mMenuItem) {
-						// Show only enabled items in Minimenu
-						var bEnabled = typeof mMenuItem.enabled === "function" ? mMenuItem.enabled(aSelectedOverlays) : mMenuItem.enabled;
-						if (!bEnabled && !bContextMenu) {
-							return;
-						}
-						if (mMenuItem.group !== undefined && !bContextMenu) {
-							this._addMenuItemToGroup(mMenuItem);
-						} else if (mMenuItem.submenu !== undefined) {
-							this._addSubMenu(mMenuItem);
-						} else {
-							this.addMenuItem(mMenuItem, true);
-						}
-					}.bind(this));
-
-					this._addItemGroupsToMenu();
-					delete this._fnCancelMenuPromise;
+				var oPluginItemsPromise = _createPromise(function(resolve, reject) {
+					Promise.all(aPluginItemPromises).then(resolve).catch(reject);
+				});
+				this._fnCancelMenuPromise = oPluginItemsPromise.cancel;
+				return oPluginItemsPromise.promise;
+			}.bind(this))
+			.then(function(aPluginMenuItems) {
+				return aPluginMenuItems.reduce(function(aConcatinatedMenuItems, aMenuItems) {
+					return aConcatinatedMenuItems.concat(aMenuItems);
+				});
+			})
+			.then(function(aPluginMenuItems) {
+				aPluginMenuItems.forEach(function(mMenuItem) {
+					// Show only enabled items in Minimenu
+					var bEnabled = typeof mMenuItem.enabled === "function" ? mMenuItem.enabled(aSelectedOverlays) : mMenuItem.enabled;
+					if (!bEnabled && !bContextMenu) {
+						return;
+					}
+					if (mMenuItem.group !== undefined && !bContextMenu) {
+						this._addMenuItemToGroup(mMenuItem);
+					} else if (mMenuItem.submenu !== undefined) {
+						this._addSubMenu(mMenuItem);
+					} else {
+						this.addMenuItem(mMenuItem, true);
+					}
 				}.bind(this));
+
+				this._addItemGroupsToMenu();
+				delete this._fnCancelMenuPromise;
+			}.bind(this));
 		}
 
 		oPromise.then(function() {
-			var aMenuItems = this._aMenuItems.map(function (mMenuItemEntry) {
+			var aMenuItems = this._aMenuItems.map(function(mMenuItemEntry) {
 				return mMenuItemEntry.menuItem;
 			});
 
@@ -265,12 +264,12 @@ sap.ui.define([
 
 			this.fireOpenedContextMenu();
 		}.bind(this))
-			.catch(function(oError) {
-				throw DtUtil.createError(
-					"ContextMenu#open",
-					"An error occurred during calling getMenuItems: " + oError
-				);
-			});
+		.catch(function(oError) {
+			throw DtUtil.createError(
+				"ContextMenu#open",
+				"An error occurred during calling getMenuItems: " + oError
+			);
+		});
 	};
 
 	/**
@@ -278,8 +277,8 @@ sap.ui.define([
 	 * @param  {object[]} aMenuItems List of menu items
 	 * @return {object[]}            Returned a sorted list of menu items; higher rank come later
 	 */
-	ContextMenu.prototype._sortMenuItems = function (aMenuItems) {
-		return aMenuItems.sort(function (mFirstEntry, mSecondEntry) {
+	ContextMenu.prototype._sortMenuItems = function(aMenuItems) {
+		return aMenuItems.sort(function(mFirstEntry, mSecondEntry) {
 			// Both entries do not have rank, do not change the order
 			if (!mFirstEntry.rank && !mSecondEntry.rank) {
 				return 0;
@@ -301,7 +300,7 @@ sap.ui.define([
 	 * @override
 	 * @private
 	 */
-	ContextMenu.prototype._onItemSelected = function (oEventItem) {
+	ContextMenu.prototype._onItemSelected = function(oEventItem) {
 		this._ensureSelection(this._oCurrentOverlay);
 
 		function callHandler(oMenuItem, oEventItem) {
@@ -315,7 +314,7 @@ sap.ui.define([
 
 		var sSelectedItemId = oEventItem.getParameter("item").getKey();
 
-		this._aMenuItems.some(function (mMenuItemEntry) {
+		this._aMenuItems.some(function(mMenuItemEntry) {
 			var oItem = mMenuItemEntry.menuItem;
 			if (sSelectedItemId === mMenuItemEntry.menuItem.id) {
 				callHandler.apply(this, [oItem, oEventItem]);
@@ -337,7 +336,7 @@ sap.ui.define([
 	 * Opens the Context Menu when user presses SHIFT-F10
 	 * @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
-	ContextMenu.prototype._onKeyUp = function (oEvent) {
+	ContextMenu.prototype._onKeyUp = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		// Prevents that the context menu opens after finishing a rename with ENTER
 		if (oEvent.keyCode === KeyCodes.ENTER && oOverlay.getIgnoreEnterKeyUpOnce()) {
@@ -373,7 +372,7 @@ sap.ui.define([
 	 * Needed for suppressing the scrolling on pressing SPACE when no other plugin is active.
 	 * @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
-	ContextMenu.prototype._onKeyDown = function (oEvent) {
+	ContextMenu.prototype._onKeyDown = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if ((oEvent.keyCode === KeyCodes.SPACE) &&
 			(oEvent.shiftKey === false) &&
@@ -404,7 +403,7 @@ sap.ui.define([
 	/**
 	 * Called when ContextMenu gets closed
 	 */
-	ContextMenu.prototype._contextMenuClosed = function () {
+	ContextMenu.prototype._contextMenuClosed = function() {
 		this.oContextMenuControl.removeStyleClass(miniMenuStyleClass);
 		this.fireClosedContextMenu();
 	};
@@ -420,7 +419,7 @@ sap.ui.define([
 	 * checks whether the given Overlay is selected, if not it does so
 	 * @param {object} oOverlay the Overlay which should be checked for
 	 */
-	ContextMenu.prototype._ensureSelection = function (oOverlay) {
+	ContextMenu.prototype._ensureSelection = function(oOverlay) {
 		if (oOverlay && !oOverlay.isSelected()) {
 			oOverlay.setSelected(true);
 		}
@@ -430,8 +429,8 @@ sap.ui.define([
 	 * checks whether a Plugin locks the opening of a new ContextMenu
 	 * @return {boolean} true, if locked; false if not
 	 */
-	ContextMenu.prototype._checkForPluginLock = function () {
-		//As long as Selection doesn't work correctly on ios we need to ensure that the ContextMenu opens even if a plugin mistakenly locks it
+	ContextMenu.prototype._checkForPluginLock = function() {
+		// As long as Selection doesn't work correctly on ios we need to ensure that the ContextMenu opens even if a plugin mistakenly locks it
 		if (Device.os.ios) {
 			return false;
 		}
@@ -447,8 +446,8 @@ sap.ui.define([
 	 * Adds single item to an array of groups
 	 * @param {object} mMenuItem The menu item to add to a group
 	 */
-	ContextMenu.prototype._addMenuItemToGroup = function (mMenuItem) {
-		var bGroupExists = this._aGroupedItems.some(function (_oGroupedItem) {
+	ContextMenu.prototype._addMenuItemToGroup = function(mMenuItem) {
+		var bGroupExists = this._aGroupedItems.some(function(_oGroupedItem) {
 			if (_oGroupedItem.sGroupName === mMenuItem.group) {
 				_oGroupedItem.aGroupedItems.push(mMenuItem);
 				return true;
@@ -467,8 +466,8 @@ sap.ui.define([
 	 * Adds a submenu to the list of submenus
 	 * @param {object} mMenuItem The menu item to add to a group
 	 */
-	ContextMenu.prototype._addSubMenu = function (mMenuItem) {
-		mMenuItem.submenu.forEach(function (oSubMenuItem) {
+	ContextMenu.prototype._addSubMenu = function(mMenuItem) {
+		mMenuItem.submenu.forEach(function(oSubMenuItem) {
 			if (!oSubMenuItem.handler) {
 				oSubMenuItem.handler = mMenuItem.handler;
 			}
@@ -485,9 +484,9 @@ sap.ui.define([
 	/**
 	 * Adds the grouped menu item to the collapsed version of a ContextMenu
 	 */
-	ContextMenu.prototype._addItemGroupsToMenu = function () {
-		this._aGroupedItems.forEach(function (oGroupedItem) {
-			//If there is only one menu item that belongs to a group we don't need that group
+	ContextMenu.prototype._addItemGroupsToMenu = function() {
+		this._aGroupedItems.forEach(function(oGroupedItem) {
+			// If there is only one menu item that belongs to a group we don't need that group
 			if (oGroupedItem.aGroupedItems.length === 1) {
 				this.addMenuItem(oGroupedItem.aGroupedItems[0], true);
 			} else {

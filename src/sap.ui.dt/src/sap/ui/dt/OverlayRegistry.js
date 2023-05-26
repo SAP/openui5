@@ -31,8 +31,8 @@ function(
 
 	var OverlayRegistry = {};
 
-	var S_ELEMENTOVERLAY_NAME = 'sap.ui.dt.ElementOverlay';
-	var S_AGGREGATIONOVERLAY_NAME = 'sap.ui.dt.AggregationOverlay';
+	var S_ELEMENTOVERLAY_NAME = "sap.ui.dt.ElementOverlay";
+	var S_AGGREGATIONOVERLAY_NAME = "sap.ui.dt.AggregationOverlay";
 
 	var mOverlays = {};
 	var mAliases = {};
@@ -53,7 +53,7 @@ function(
 		return mOverlays[sId] || mAliases[sId];
 	};
 
-	OverlayRegistry.getOverlays = function () {
+	OverlayRegistry.getOverlays = function() {
 		return Object.values(mOverlays);
 	};
 
@@ -64,8 +64,8 @@ function(
 	 */
 	OverlayRegistry.register = function(oOverlay) {
 		if (!isOverlay(oOverlay)) {
-			var sLocation = 'sap.ui.dt.OverlayRegistry#register';
-			var oError = new Error(sLocation + ' / Attempt to register illegal overlay');
+			var sLocation = "sap.ui.dt.OverlayRegistry#register";
+			var oError = new Error(sLocation + " / Attempt to register illegal overlay");
 			oError.name = sLocation;
 			throw oError;
 		}
@@ -74,7 +74,7 @@ function(
 
 		// create alias for ElementOverlay
 		if (oOverlay.getMetadata().getName() === S_ELEMENTOVERLAY_NAME) {
-			mAliases[oOverlay.getAssociation('element')] = oOverlay;
+			mAliases[oOverlay.getAssociation("element")] = oOverlay;
 		}
 	};
 
@@ -85,8 +85,8 @@ function(
 	 */
 	OverlayRegistry.deregister = function(oOverlay) {
 		if (!isOverlay(oOverlay)) {
-			var sLocation = 'sap.ui.dt.OverlayRegistry#deregister';
-			var oError = new Error(sLocation + ' / Attempt to deregister illegal overlay');
+			var sLocation = "sap.ui.dt.OverlayRegistry#deregister";
+			var oError = new Error(sLocation + " / Attempt to deregister illegal overlay");
 			oError.name = sLocation;
 			throw oError;
 		}
@@ -94,7 +94,7 @@ function(
 		delete mOverlays[oOverlay.getId()];
 
 		if (oOverlay.getMetadata().getName() === S_ELEMENTOVERLAY_NAME) {
-			delete mAliases[oOverlay.getAssociation('element')];
+			delete mAliases[oOverlay.getAssociation("element")];
 		}
 	};
 

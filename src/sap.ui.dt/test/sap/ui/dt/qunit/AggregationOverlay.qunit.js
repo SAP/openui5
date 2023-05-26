@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/Overlay",
@@ -43,7 +43,7 @@ sap.ui.define([
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when AggregationOverlay is initialized", function(assert) {
 			assert.strictEqual(this.oAggregationOverlay.getGeometry(), undefined, "geometry for the overlay is undefined when no children are given");
 			assert.strictEqual(DOMUtil.isVisible(this.oAggregationOverlay.getDomRef()), false, "aggregation is hidden because no children are given");
@@ -51,7 +51,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation with domRef DT metadata", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -74,7 +74,7 @@ sap.ui.define([
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when AggregationOverlay is initialized", function(assert) {
 			assert.strictEqual(this.oAggregationOverlay.getGeometry().domRef, this.oPage.$().find(">section").get(0), "domRef for the overlay is correct");
 			assert.strictEqual(DOMUtil.isVisible(this.oAggregationOverlay.getDomRef()), true, "aggregation is rendered");
@@ -97,24 +97,24 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			Promise.all(
-				[this.oButton1, this.oButton2].map(function (oElement) {
-					return new Promise(function (fnResolve) {
+				[this.oButton1, this.oButton2].map(function(oElement) {
+					return new Promise(function(fnResolve) {
 						// eslint-disable-next-line no-new
 						new ElementOverlay({
 							element: oElement,
-							init: function (oEvent) {
+							init: function(oEvent) {
 								fnResolve(oEvent.getSource());
 							}
 						});
 					});
 				})
-			).then(function (aOverlays) {
+			).then(function(aOverlays) {
 				this.oAggregationOverlay = new AggregationOverlay({
 					element: this.oPage,
 					isRoot: true,
 					designTimeMetadata: new AggregationDesignTimeMetadata(),
 					children: [aOverlays[0]],
-					init: function (oEvent) {
+					init: function(oEvent) {
 						Overlay.getOverlayContainer().append(oEvent.getSource().render());
 						this.oAggregationOverlay.applyStyles();
 						fnDone();
@@ -128,7 +128,7 @@ sap.ui.define([
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when AggregationOverlay is initialized", function(assert) {
 			assert.strictEqual(DOMUtil.isVisible(this.oAggregationOverlay.getDomRef()), true, "aggregation is rendered");
 		});
@@ -148,11 +148,11 @@ sap.ui.define([
 			this.oChildNotAdded.render();
 
 			sandbox.stub(this.oChildNotAdded, "fireEvent")
-				.callThrough()
-				.withArgs("afterRendering")
-				.callsFake(function() {
-					assert.ok(false, "then 'afterRendering' should not be called for a rendered ElementOverlay");
-				});
+			.callThrough()
+			.withArgs("afterRendering")
+			.callsFake(function() {
+				assert.ok(false, "then 'afterRendering' should not be called for a rendered ElementOverlay");
+			});
 
 			assert.ok(this.oChildNotAdded.isRendered(), "then the child ElementOverlay to be added is rendered");
 			this.oAggregationOverlay.addChild(this.oChildNotAdded);
@@ -183,7 +183,7 @@ sap.ui.define([
 			});
 
 			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
-			this.oAggregationOverlay.attachEventOnce('scrollSynced', fnDone);
+			this.oAggregationOverlay.attachEventOnce("scrollSynced", fnDone);
 			this.oAggregationOverlay.applyStyles();
 
 			this.oPageContentOverlay = this.oAggregationOverlay.getDomRef();
@@ -194,7 +194,7 @@ sap.ui.define([
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when AggregationOverlay is scrolled", function(assert) {
 			var done = assert.async();
 
@@ -244,7 +244,7 @@ sap.ui.define([
 			this.oAggregationLikeOverlay.destroy();
 			Overlay.removeOverlayContainer();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when asked for being an association", function(assert) {
 			assert.strictEqual(this.oAggregationOverlay.isAssociation(), false, "regular aggregation is no association");
 			assert.strictEqual(this.oAggregationLikeOverlay.isAssociation(), true, "aggregation-like association is an association");
@@ -252,7 +252,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created and is not rendered", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oPage = new Page();
 
 			this.oAggregationOverlay = new AggregationOverlay({
@@ -270,7 +270,7 @@ sap.ui.define([
 			this.oAggregationOverlay.destroy();
 			Overlay.removeOverlayContainer();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when this AggregationOverlay is rendered later and two browser events exist for it", function(assert) {
 			var fnDone = assert.async(2);
 			var sMockText1 = "mockContextText1";
@@ -278,8 +278,8 @@ sap.ui.define([
 			var sEventName = "mockEvent";
 
 			var fnEventHandler = sandbox.stub()
-				.withArgs(sinon.match.any, sMockText1).callsFake(fnDone)
-				.withArgs(sinon.match.any, sMockText2).callsFake(fnDone);
+			.withArgs(sinon.match.any, sMockText1).callsFake(fnDone)
+			.withArgs(sinon.match.any, sMockText2).callsFake(fnDone);
 
 			this.oAggregationOverlay.attachEventOnce("afterRendering", function(oEvent) {
 				assert.ok(true, "then AggregationOverlay is rendered");

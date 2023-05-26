@@ -35,7 +35,7 @@ sap.ui.define([
 				{text: "item2-bound"}
 			];
 			var oModel = new JSONModel(oData);
-			this.oCustomListItemTemplate = new CustomListItem(sIdPrefix + "boundListItem", {content: [new Button(sIdPrefix + "boundListItem-btn", {text: '{text}'})]});
+			this.oCustomListItemTemplate = new CustomListItem(sIdPrefix + "boundListItem", {content: [new Button(sIdPrefix + "boundListItem-btn", {text: "{text}"})]});
 			this.oBoundList = new List(sIdPrefix + "boundlist").setModel(oModel);
 			this.oBoundList.bindAggregation("items", {
 				path: "/",
@@ -43,12 +43,12 @@ sap.ui.define([
 				templateShareable: false
 			});
 
-			//create list with unbound items
+			// create list with unbound items
 			this.oUnBoundList = new List(sIdPrefix + "unboundlist");
-			this.oUnBoundList.addItem(new CustomListItem(sIdPrefix + "unboundlist-0", {content: [new Button(sIdPrefix + "item1-btn", {text: 'item1-unbound'})]}));
-			this.oUnBoundList.addItem(new CustomListItem(sIdPrefix + "unboundlist-1", {content: [new Button(sIdPrefix + "item2-btn", {text: 'item2-unbound'})]}));
+			this.oUnBoundList.addItem(new CustomListItem(sIdPrefix + "unboundlist-0", {content: [new Button(sIdPrefix + "item1-btn", {text: "item1-unbound"})]}));
+			this.oUnBoundList.addItem(new CustomListItem(sIdPrefix + "unboundlist-1", {content: [new Button(sIdPrefix + "item2-btn", {text: "item2-unbound"})]}));
 
-			//create a HorizontalLayout containing the two lists
+			// create a HorizontalLayout containing the two lists
 			this.oHorizontalLayout = new HorizontalLayout(sIdPrefix + "horizontalLayout", {
 				content: [this.oBoundList, this.oUnBoundList]
 			});

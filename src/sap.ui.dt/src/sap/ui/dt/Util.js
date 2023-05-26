@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @param {string|Error} vError - Accepts error string or Error object
 	 * @return {Error} - An Error object with error message inside
 	 */
-	Util.wrapError = function (vError) {
+	Util.wrapError = function(vError) {
 		var oError = vError instanceof Error && vError || new Error();
 
 		if (typeof vError === "string") {
@@ -54,7 +54,7 @@ sap.ui.define([
 	 * @param {string} sLibraryName - Library name which is considered as "home" library
 	 * @return {boolean} - true if specified error doesn't belong to the library
 	 */
-	Util.isForeignError = function (oError, sLibraryName) {
+	Util.isForeignError = function(oError, sLibraryName) {
 		if (oError instanceof Error) {
 			return oError.name.indexOf(sLibraryName || S_LIBRARY_NAME) === -1;
 		}
@@ -80,7 +80,7 @@ sap.ui.define([
 	 * @param {string} sLibraryName - Library name to which created error belong
 	 * @return {Error} - An Error object
 	 */
-	Util.createError = function (sLocation, sMessage, sLibraryName) {
+	Util.createError = function(sLocation, sMessage, sLibraryName) {
 		var oError = new Error();
 		var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + (sLocation ? "." + sLocation : "");
 		oError.name = "Error in " + sLocationFull;
@@ -94,7 +94,7 @@ sap.ui.define([
 	 * @param {string|Error} vError - Can be a string OR a standard Error object
 	 * @return {string} - Printable string
 	 */
-	Util.errorToString = function (vError) {
+	Util.errorToString = function(vError) {
 		if (typeof vError === "string") {
 			return vError;
 		} else if (vError instanceof Error) {
@@ -116,7 +116,7 @@ sap.ui.define([
 	 * @param {string} sLibraryName - Library name to which created error belong
 	 * @return {Error} - always an Error object with adjusted error message if necessary
 	 */
-	Util.propagateError = function (vError, sLocation, sMessage, sLibraryName) {
+	Util.propagateError = function(vError, sLocation, sMessage, sLibraryName) {
 		var oError = Util.wrapError(vError);
 
 		// Adding payload only if it wasn't added before explicitly.
@@ -143,7 +143,7 @@ sap.ui.define([
 	 * @param {*} vObject - Object to get type of
 	 * @returns {string}
 	 */
-	Util.getObjectType = function (vObject) {
+	Util.getObjectType = function(vObject) {
 		return (
 			(
 				vObject instanceof ManagedObject
@@ -177,7 +177,7 @@ sap.ui.define([
 	 * @param {*} vValue - Any value
 	 * @return {boolean} - true if specified value is an integer
 	 */
-	Util.isInteger = function (vValue) {
+	Util.isInteger = function(vValue) {
 		return isNumeric(vValue) && Math.ceil(vValue) === vValue;
 	};
 
@@ -203,7 +203,7 @@ sap.ui.define([
 	 * @param {Function} fnHandler - Function to be wrapped
 	 * @return {Function} - function which returns Promise object and call original function inside
 	 */
-	Util.wrapIntoPromise = function (fnHandler) {
+	Util.wrapIntoPromise = function(fnHandler) {
 		if (typeof fnHandler !== "function") {
 			throw Util.createError(
 				"Util#wrapIntoPromise",
@@ -211,9 +211,9 @@ sap.ui.define([
 				"sap.ui.dt"
 			);
 		}
-		return function () {
+		return function() {
 			var aArguments = Array.prototype.slice.call(arguments);
-			return Promise.resolve().then(function () {
+			return Promise.resolve().then(function() {
 				return fnHandler.apply(null, aArguments);
 			});
 		};
@@ -236,12 +236,12 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise.resolve() to the passed function's return value or a Promise.reject() when designTime fails to sync
 	 */
 	Util.waitForSynced = function(oDtInstance, fnOriginal) {
-		return function () {
-			fnOriginal = fnOriginal || function () {};
+		return function() {
+			fnOriginal = fnOriginal || function() {};
 			var aArguments = arguments;
-			return new Promise(function (fnResolve, fnReject) {
+			return new Promise(function(fnResolve, fnReject) {
 				if (oDtInstance.getStatus() === DesignTimeStatus.SYNCING) {
-					oDtInstance.attachEventOnce("synced", function () {
+					oDtInstance.attachEventOnce("synced", function() {
 						fnResolve(fnOriginal.apply(null, aArguments));
 					});
 					oDtInstance.attachEventOnce("syncFailed", fnReject);

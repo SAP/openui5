@@ -22,7 +22,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given smartform groups and groupElements", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oForm1 = new Form("form1", {
 				formContainers: [
 					new FormContainer("group1"),
@@ -34,14 +34,14 @@ sap.ui.define([
 			this.oGroup2 = oCore.byId("group2");
 			this.oElementMover = new ElementMover();
 
-			this.oForm1.placeAt('qunit-fixture');
+			this.oForm1.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oElementMover.destroy();
 			this.oForm1.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("Calling a _compareSourceAndTarget method, when the aggregation property of the source and target is same", function(assert) {
 			assert.strictEqual(this.oElementMover._compareSourceAndTarget({aggregation: "formElements"}, {aggregation: "formElements"}), true, "then there is no move operation and the command stack is empty");
 		});
@@ -135,7 +135,7 @@ sap.ui.define([
 					this.oButton2,
 					this.oButton3
 				]
-			}).placeAt('qunit-fixture');
+			}).placeAt("qunit-fixture");
 
 			oCore.applyChanges();
 
@@ -161,7 +161,7 @@ sap.ui.define([
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("Calling repositionOn method with button1 as source and button2 as target overlay", function(assert) {
 			this.oElementMover.repositionOn(this.oButton1Overlay, this.oButton2Overlay);
 			var aContent = this.oVerticalLayout.getContent();
@@ -211,7 +211,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

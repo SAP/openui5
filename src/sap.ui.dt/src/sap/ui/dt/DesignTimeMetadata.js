@@ -189,26 +189,26 @@ function(
 		);
 		function findAction(mActionMap) {
 			return Object.keys(mActionMap)
-				.map(function(sCommandName) {
-					var vAction = mActionMap[sCommandName];
-					if (sCommandName === "add" && !vAction.changeType) {
-						// Handle nested subactions
-						return {
-							delegate: "addDelegateProperty",
-							custom: "customAdd"
-						}[findAction(vAction)];
-					}
-					try {
-						var oActionData = evaluateAction(vAction, oElement);
-						return oActionData && (oActionData.changeType === sChangeType) && sCommandName;
-					} catch (vError) {
-						// If a function action expects to be called with a certain element
-						// it might throw an error when trying with other/without elements
-						// Silently fail in such cases
-						return undefined;
-					}
-				})
-				.filter(Boolean)[0];
+			.map(function(sCommandName) {
+				var vAction = mActionMap[sCommandName];
+				if (sCommandName === "add" && !vAction.changeType) {
+					// Handle nested subactions
+					return {
+						delegate: "addDelegateProperty",
+						custom: "customAdd"
+					}[findAction(vAction)];
+				}
+				try {
+					var oActionData = evaluateAction(vAction, oElement);
+					return oActionData && (oActionData.changeType === sChangeType) && sCommandName;
+				} catch (vError) {
+					// If a function action expects to be called with a certain element
+					// it might throw an error when trying with other/without elements
+					// Silently fail in such cases
+					return undefined;
+				}
+			})
+			.filter(Boolean)[0];
 		}
 
 		return findAction(mActions);
@@ -265,8 +265,8 @@ function(
 			return oLibResourceBundle.getText(sKey, aArgs);
 		}
 
-		//Fallback to old logic that tries to get the text from the libraries resource bundle
-		//TODO: remove the fallback after all libraries have introduced a library.designtime.js that will provide the resource bundle and texts
+		// Fallback to old logic that tries to get the text from the libraries resource bundle
+		// TODO: remove the fallback after all libraries have introduced a library.designtime.js that will provide the resource bundle and texts
 		oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(sLibraryName);
 		if (oLibResourceBundle && oLibResourceBundle.hasText(sKey)) {
 			return oLibResourceBundle.getText(sKey, aArgs);

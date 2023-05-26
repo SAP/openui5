@@ -217,7 +217,7 @@ function(
 	 * @returns {array} Empty array
 	 * @protected
 	 */
-	Plugin.prototype.getMenuItems = function () {
+	Plugin.prototype.getMenuItems = function() {
 		return [];
 	};
 
@@ -305,7 +305,7 @@ function(
 	 * @param  {string} sPluginId The ID of the plugin
 	 * @return {string}         Returns the text for the menu item
 	 */
-	Plugin.prototype.getActionText = function (oOverlay, mAction, sPluginId) {
+	Plugin.prototype.getActionText = function(oOverlay, mAction, sPluginId) {
 		var vName = mAction.name;
 		var oElement = oOverlay.getElement();
 		if (vName) {
@@ -314,7 +314,7 @@ function(
 			}
 			return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(oElement, vName) : "";
 		}
-		return sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText(sPluginId);
+		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText(sPluginId);
 	};
 
 	/**
@@ -323,7 +323,7 @@ function(
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Overlays to be checked
 	 * @returns {boolean} <code>false</code> by default
 	 */
-	Plugin.prototype.isAvailable = function () {
+	Plugin.prototype.isAvailable = function() {
 		return false;
 	};
 
@@ -334,7 +334,7 @@ function(
 	 * @override
 	 * @public
 	 */
-	Plugin.prototype.handler = function () {};
+	Plugin.prototype.handler = function() {};
 
 	/**
 	 * Checks if the plugin is enabled for a set of overlays
@@ -342,7 +342,7 @@ function(
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @returns {boolean} <code>true</code> if plugin is enabled
 	 */
-	Plugin.prototype.isEnabled = function (aElementOverlays) {
+	Plugin.prototype.isEnabled = function(aElementOverlays) {
 		// The default implementation considers only one overlay
 		if (!Array.isArray(aElementOverlays) || aElementOverlays.length > 1) {
 			return false;
@@ -375,7 +375,7 @@ function(
 	 * @param {string} mPropertyBag.group A group for buttons which should be grouped together in the MiniMenu
 	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
 	 */
-	Plugin.prototype._getMenuItems = function (aElementOverlays, mPropertyBag) {
+	Plugin.prototype._getMenuItems = function(aElementOverlays, mPropertyBag) {
 		var oMenuItem = this.enhanceItemWithResponsibleElement({
 			id: mPropertyBag.pluginId,
 			handler: this.handler.bind(this),
@@ -404,7 +404,7 @@ function(
 	 * @param {string} [sActionName] - Action name
 	 * @return {boolean} Indicates if the action is enabled
 	 */
-	Plugin.prototype.isResponsibleElementActionAvailable = function (oElementOverlay, sActionName) {
+	Plugin.prototype.isResponsibleElementActionAvailable = function(oElementOverlay, sActionName) {
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 		if (oDesignTimeMetadata) {
 			// TODO: support for sub actions required
@@ -447,7 +447,7 @@ function(
 	Plugin.prototype.enhanceItemWithResponsibleElement = function(oMenuItem, aElementOverlays, aActionNames) {
 		var aResponsibleElementOverlays = [];
 		var aActionsFromResponsibleElement = aActionNames || [this.getActionName()];
-		var bEnhanceMenuItem = aActionsFromResponsibleElement.some(function (sActionName) {
+		var bEnhanceMenuItem = aActionsFromResponsibleElement.some(function(sActionName) {
 			if (this.isResponsibleElementActionAvailable(aElementOverlays[0], sActionName)) {
 				aResponsibleElementOverlays = aElementOverlays.map(this.getResponsibleElementOverlay.bind(this));
 				return true;

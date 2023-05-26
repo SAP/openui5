@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/scrollLeftRTL"
-], function (
+], function(
 	ElementOverlay,
 	DesignTime,
 	OverlayRegistry,
@@ -44,7 +44,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oButton.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("then ", function(assert) {
 			var done = assert.async();
 			this.oOverlay.attachEventOnce("geometryChanged", function() {
@@ -94,8 +94,8 @@ sap.ui.define([
 			if (Device.browser.blink) {
 				iScrollLeftValue = -iScrollLeftValue;
 			}
-			jQuery(this.oOuterPanel.$().find('>.sapMPanelContent')).scrollLeftRTL(iScrollLeftValue);
-			this.oOuterPanel.$().find('>.sapMPanelContent').scrollTop(20);
+			jQuery(this.oOuterPanel.$().find(">.sapMPanelContent")).scrollLeftRTL(iScrollLeftValue);
+			this.oOuterPanel.$().find(">.sapMPanelContent").scrollTop(20);
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oOuterPanel]
@@ -115,9 +115,9 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 			this.oOuterPanel.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("then", function(assert) {
-			//Math.round is required for IE and Edge
+			// Math.round is required for IE and Edge
 			assert.equal(
 				Math.ceil(this.oButtonOverlay.$().offset().top),
 				Math.ceil(this.oButton.$().offset().top),

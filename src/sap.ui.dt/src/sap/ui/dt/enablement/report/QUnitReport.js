@@ -83,7 +83,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_createTest: function(oGroup) {
-			QUnit.test(oGroup.name + ": " + oGroup.message, function (assert) {
+			QUnit.test(oGroup.name + ": " + oGroup.message, function(assert) {
 				oGroup.children.forEach(function(oGroup) {
 					this._createAssertion(assert, oGroup);
 				}, this);

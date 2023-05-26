@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/core/Core"
 ],
-function (
+function(
 	DesignTime,
 	OverlayRegistry,
 	ObjectPageLayout,
@@ -22,9 +22,9 @@ function (
 	VBox,
 	oCore
 ) {
-	'use strict';
+	"use strict";
 
-	QUnit.module('Basic functionality', {
+	QUnit.module("Basic functionality", {
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
@@ -65,7 +65,7 @@ function (
 			this.oDesignTime.destroy();
 			this.oVBox.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("invisible section", function(assert) {
 			var fnDone = assert.async();
 

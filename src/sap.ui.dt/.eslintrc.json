@@ -15,10 +15,40 @@
 		"no-multi-spaces": "error",
 		"indent": ["error", "tab", {
 			"SwitchCase": 1,
-			"MemberExpression": "off"
+			"MemberExpression": 0
 		}],
 		"one-var": ["error", "never"],
 		"no-useless-call": "error",
-		"key-spacing": ["error", { "beforeColon": false }]
+		"key-spacing": ["error", { "beforeColon": false }],
+				
+		"comma-dangle": ["error", "never"],
+		"max-len": ["warn", {
+			"code": 140,
+			"ignorePattern": "@param|@returns|@description|&lt;|QUnit.test",
+			"ignoreUrls": true
+		}],
+		"space-before-function-paren": ["error", {
+			"anonymous": "never",
+			"named": "never",
+			"asyncArrow": "always"
+		}],
+		"no-multi-assign": ["error", { "ignoreNonDeclaration": true }],
+		"dot-notation": ["error", { "allowKeywords": true }],
+		"spaced-comment": ["error", "always", {
+			"line": { 
+				"exceptions": ["-"] 
+			},
+			"block": {
+				"markers": ["!"],
+				"exceptions": ["*"],
+				"balanced": true
+			}
+		
+		}],
+		"no-multiple-empty-lines": ["error", {"max": 1}],
+		"quotes": ["error", "double", {
+			"avoidEscape": true,
+			"allowTemplateLiterals": true
+		}]
 	}
 }

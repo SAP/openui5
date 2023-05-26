@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library"
 ],
-function () {
+function() {
 	"use strict";
 
 	/**
