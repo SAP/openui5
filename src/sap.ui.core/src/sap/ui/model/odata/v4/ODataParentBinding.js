@@ -861,7 +861,7 @@ sap.ui.define([
 				JSON.stringify(oProperty), sClassName);
 			return undefined;
 		}).then(function (sReducedPath) {
-			if (that.mLateQueryOptions) {
+			if (that.mLateQueryOptions && !that.isTransient()) {
 				if (that.oCache) {
 					that.oCache.setLateQueryOptions(that.mLateQueryOptions);
 				} else if (that.oCache === null) {

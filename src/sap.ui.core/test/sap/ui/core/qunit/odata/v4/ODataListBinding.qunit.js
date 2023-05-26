@@ -10172,8 +10172,14 @@ sap.ui.define([
 		this.mock(oContext).expects("getPath")
 			.withExactArgs().returns("/SalesOrderList($uid=1)");
 		oExpectation = this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.func, "SO_2_SOITEM")
-			.returns(SyncPromise.resolve(aCollection));
+			.withExactArgs(sinon.match.func, "SO_2_SOITEM");
+
+		// code under test
+		assert.strictEqual(oBinding.prepareDeepCreate(oContext, mQueryOptions), true);
+
+		this.mock(oCache).expects("addTransientCollection")
+			.withExactArgs("path/in/cache", bHasQueryOptions ? "~select~" : undefined)
+			.returns(aCollection);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
 		aCollection.forEach(function (oEntity, i) {
 			oHelperMock.expects("getPrivateAnnotation")
@@ -10191,21 +10197,14 @@ sap.ui.define([
 			oHelperMock.expects("deletePrivateAnnotation").withExactArgs(oEntity, "promise");
 		});
 
-		// code under test
-		assert.strictEqual(oBinding.prepareDeepCreate(oContext, mQueryOptions), true);
+		// code under test - callback
+		oExpectation.args[0][0](oCache, "path/in/cache");
 
 		assert.strictEqual(oBinding.mCacheQueryOptions, mQueryOptions);
 		assert.deepEqual(oBinding.aContexts, aCreatedContexts);
 		assert.strictEqual(oBinding.iCreatedContexts, 2);
 		assert.strictEqual(oBinding.iActiveContexts, 2);
 		assert.strictEqual(oBinding.bFirstCreateAtEnd, false);
-
-		this.mock(oCache).expects("addTransientCollection")
-			.withExactArgs("path/in/cache", bHasQueryOptions ? "~select~" : undefined)
-			.returns("~collection~");
-
-		// code under test - callback
-		assert.strictEqual(oExpectation.args[0][0](oCache, "path/in/cache"), "~collection~");
 	});
 });
 

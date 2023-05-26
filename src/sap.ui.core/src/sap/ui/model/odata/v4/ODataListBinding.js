@@ -3012,10 +3012,9 @@ sap.ui.define([
 		}
 
 		oContext.withCache(function (oCache, sPath) {
-				return oCache.addTransientCollection(sPath, mQueryOptions && mQueryOptions.$select);
-			}, this.sPath
-		).then(function (aInitialDataCollection) {
-			var sResolvedPath = that.getResolvedPath();
+			var aInitialDataCollection
+					= oCache.addTransientCollection(sPath, mQueryOptions && mQueryOptions.$select),
+				sResolvedPath = that.getResolvedPath();
 
 			that.aContexts = aInitialDataCollection.map(function (oInitialData, i) {
 				var oContext,
@@ -3035,7 +3034,7 @@ sap.ui.define([
 			});
 			that.iCreatedContexts = that.iActiveContexts = that.aContexts.length;
 			that.bFirstCreateAtEnd = false;
-		});
+		}, this.sPath);
 
 		return true;
 	};
