@@ -46,14 +46,18 @@ sap.ui.define([
 		// If it is not part of the runtime persistence, create it
 		// If there are no custom variants at all, the VariantModel will create the
 		// standard variant
-		var oUpdate = {};
+		var oUpdate = {
+			runtimeOnlyData: {
+				flexObjects: []
+			}
+		};
 		// TODO: remove fallback to empty array and adjust tests that don't use the whole changes structure
 		var aRelevantFlexObjects = []
 		.concat(mPropertyBag.storageResponse.changes.variants || [])
 		.concat(mPropertyBag.storageResponse.changes.variantDependentControlChanges || [])
 		.concat(mPropertyBag.storageResponse.changes.variantChanges || []);
 
-		aRelevantFlexObjects.some(function(oFlexObject) {
+		aRelevantFlexObjects.forEach(function(oFlexObject) {
 			var sVariantReference = oFlexObject.fileType === "ctrl_variant_change"
 				? oFlexObject.selector.id
 				: oFlexObject.variantReference;
@@ -67,14 +71,9 @@ sap.ui.define([
 					user: ControlVariantUtils.DEFAULT_AUTHOR,
 					reference: oFlexObject.reference
 				});
-				oUpdate = {
-					runtimeOnlyData: {
-						flexObjects: [oNewVariant]
-					}
-				};
-				return true;
+				oUpdate.runtimeOnlyData.flexObjects.push(oNewVariant);
+				aVariantIds.push(sVariantReference);
 			}
-			return false;
 		});
 
 		return oUpdate;
