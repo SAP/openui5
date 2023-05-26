@@ -5076,7 +5076,7 @@ sap.ui.define([
 				getPath : function () { return "/TEAMS('1')"; }
 			});
 
-		this.mock(oBinding).expects("isTransient").twice().withExactArgs().returns(false);
+		this.mock(oBinding).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("$auto");
 
 		assert.throws(function () {
@@ -5088,26 +5088,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: create w/o autoExpandSelect in transient binding", function (assert) {
-		var oBinding = this.bindList("TEAM_2_EMPLOYEES", {
-				getPath : function () { return "/TEAMS('1')"; }
-			});
-
-		this.mock(oBinding).expects("isTransient").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			oBinding.create();
-		}, new Error("Deep create is only supported with autoExpandSelect"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("create: inactive row in transient binding", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES", {
 				getPath : function () { return "/TEAMS('1')"; }
 			});
 
-		this.oModel.bAutoExpandSelect = true;
 		this.mock(oBinding).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oBinding).expects("checkDeepCreate").withExactArgs();
 
 		assert.throws(function () {
 			// code under test
@@ -5212,12 +5199,14 @@ sap.ui.define([
 				fnReporter0 = sinon.spy(),
 				fnReporter1 = sinon.spy();
 
-			this.oModel.bAutoExpandSelect = true;
+			oBinding.oContext = "~oParentContext~";
 			oBinding.aContexts.push("~oContext~");
 			oBinding.bLengthFinal = true;
 			oBinding.iMaxLength = 0;
 			oBindingMock.expects("getUpdateGroupId").twice()
 				.withExactArgs().returns("~update~");
+			oBindingMock.expects("isTransient").atLeast(3).withExactArgs().returns(bTransient);
+			oBindingMock.expects("checkDeepCreate").exactly(bTransient ? 2 : 0).withExactArgs();
 			oBindingMock.expects("lockGroup").exactly(bNotAllowed ? 1 : 2)
 				.withExactArgs("~update~", true, true, sinon.match.func)
 				.returns(oGroupLock);
@@ -5236,8 +5225,6 @@ sap.ui.define([
 					oNewContext0.oCreatedPromise = Promise.resolve(arguments[4]);
 					return oNewContext0;
 				});
-			this.mock(oBinding).expects("isTransient").atLeast(1)
-				.withExactArgs().returns(bTransient);
 			this.mock(oNewContext0).expects("created").exactly(bTransient ? 1 : 0)
 				.withExactArgs()
 				.callsFake(function () {
@@ -10427,6 +10414,37 @@ sap.ui.define([
 
 		assert.strictEqual(ODataListBinding.isBelowCreated(oContext), "~",
 			"nested transient context");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkDeepCreate", function (assert) {
+		var oBinding = this.bindList("SO_2_SOITEM");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkDeepCreate();
+		}, new Error("Deep create is only supported with autoExpandSelect"));
+
+		this.oModel.bAutoExpandSelect = true;
+		oBinding.oContext = {isTransient : function () { return true; }};
+
+		// code under test
+		oBinding.checkDeepCreate();
+
+		oBinding.oContext = {isTransient : function () { return false; }};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkDeepCreate();
+		}, new Error("Unexpected ODataContextBinding in deep create"));
+
+		oBinding = this.bindList("SO_2_SOITEM/SOITEM_2_SCHDL");
+		oBinding.oContext = {isTransient : function () { return true; }};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkDeepCreate();
+		}, new Error("Invalid path 'SO_2_SOITEM/SOITEM_2_SCHDL' in deep create"));
 	});
 });
 

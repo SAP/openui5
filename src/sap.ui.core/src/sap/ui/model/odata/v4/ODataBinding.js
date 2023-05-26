@@ -1035,8 +1035,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.isTransient = function () {
-		return this.bRelative && this.oContext && this.oContext.isTransient
-			&& this.oContext.isTransient();
+		return this.sReducedPath && this.sReducedPath.includes("($uid=");
 	};
 
 	/**
