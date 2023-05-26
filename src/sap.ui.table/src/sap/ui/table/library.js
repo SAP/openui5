@@ -7,13 +7,13 @@
  */
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/model/TreeAutoExpandMode",
+	"sap/ui/model/TreeAutoExpandMode", // TODO: Remove in UI5 2.0
 	"sap/ui/table/rowmodes/Type",
 	"sap/ui/core/library", // library dependency
 	"sap/ui/unified/library" // library dependency
 ], function(
 	Core,
-	TreeAutoExpandMode,
+	TreeAutoExpandMode, // TODO: Remove in UI5 2.0
 	RowModeType
 ) {
 	"use strict";
@@ -38,8 +38,10 @@ sap.ui.define([
 			"sap.ui.table.RowActionType",
 			"sap.ui.table.SelectionBehavior",
 			"sap.ui.table.SelectionMode",
+			/** @deprecated As of version 1.120 */
 			"sap.ui.table.SortOrder",
 			"sap.ui.table.VisibleRowCountMode",
+			/** @deprecated As of version 1.120 */
 			"sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
 			"sap.ui.table.plugins.SelectionMode"
 		],
@@ -212,6 +214,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
+	 * @deprecated As of version 1.120, replaced with <code>sap.ui.core.SortOrder</code>
 	 */
 	thisLib.SortOrder = {
 
@@ -330,6 +333,7 @@ sap.ui.define([
 	 * Enumeration of the <code>ResetAllMode</code> that can be used in a <code>TablePersoController</code>.
 	 * @enum {string}
 	 * @public
+	 * @deprecated As of version 1.115
 	 */
 	thisLib.ResetAllMode = {
 
@@ -352,10 +356,9 @@ sap.ui.define([
 		ServiceReset: "ServiceReset"
 	};
 
-	// map the new Column to the old ColumnHeader
-	thisLib.ColumnHeader = thisLib.Column;
+	/** @deprecated As of version 1.120 */
+	thisLib.ColumnHeader = thisLib.Column; // map the new Column to the old ColumnHeader
 
-	// copy sap.ui.model.TreeAutoExpandMode onto the legacy type sap.ui.table.TreeAutoExpandMode
 	/**
 	 * Different modes for setting the auto expand mode on tree or analytical bindings.
 	 *
@@ -364,6 +367,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @typedef {sap.ui.model.TreeAutoExpandMode}
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 

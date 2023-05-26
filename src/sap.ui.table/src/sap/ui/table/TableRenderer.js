@@ -11,6 +11,7 @@ sap.ui.define([
 	"./extensions/ExtensionBase",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/library",
 	"sap/base/Log"
 ], function(
 	Device,
@@ -20,11 +21,12 @@ sap.ui.define([
 	ExtensionBase,
 	Renderer,
 	IconPool,
+	CoreLibrary,
 	Log
 ) {
 	"use strict";
 
-	var SortOrder = library.SortOrder;
+	var SortOrder = CoreLibrary.SortOrder;
 	var ColumnUtils = TableUtils.Column;
 	var mFlexCellContentAlignment = {
 		Begin: "flex-start",
@@ -523,7 +525,12 @@ sap.ui.define([
 
 		if (bRenderIcons) {
 			var bFiltered = oColumn.getFiltered();
-			var bSorted = oColumn.getSorted();
+			var bSorted = oColumn.getSortOrder() !== SortOrder.None;
+
+			/** @deprecated As of version 1.120 */
+			if (!oColumn.getSorted()) {
+				bSorted = false;
+			}
 
 			if (bFiltered) {
 				rm.class("sapUiTableColFiltered");

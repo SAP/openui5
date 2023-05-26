@@ -11,32 +11,29 @@ sap.ui.define([
 	"./TableRenderer",
 	'./library',
 	'sap/ui/model/analytics/ODataModelAdapter',
-	'sap/ui/model/Sorter',
 	'sap/ui/unified/MenuItem',
 	'./utils/TableUtils',
 	"./plugins/BindingSelection",
 	"sap/base/Log",
-	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/model/controlhelper/TreeBindingProxy"
-],
-	function(
-		AnalyticalColumn,
-		Column,
-		Table,
-		TreeTable,
-		TableRenderer,
-		library,
-		ODataModelAdapter,
-		Sorter,
-		MenuItem,
-		TableUtils,
-		BindingSelectionPlugin,
-		Log,
-		assert,
-		jQuery,
-		TreeBindingProxy
-	) {
+	"sap/ui/model/controlhelper/TreeBindingProxy",
+	"sap/ui/core/library"
+], function(
+	AnalyticalColumn,
+	Column,
+	Table,
+	TreeTable,
+	TableRenderer,
+	library,
+	ODataModelAdapter,
+	MenuItem,
+	TableUtils,
+	BindingSelectionPlugin,
+	Log,
+	jQuery,
+	TreeBindingProxy,
+	CoreLibrary
+) {
 	"use strict";
 
 	var GroupEventType = library.GroupEventType;
@@ -420,8 +417,6 @@ sap.ui.define([
 				visible: oColumn.getVisible(),
 				grouped: oColumn.getGrouped(),
 				total: oColumn.getSummed(),
-				sorted: oColumn.getSorted(),
-				sortOrder: oColumn.getSortOrder(),
 				inResult: oColumn.getInResult(),
 				formatter: oColumn.getGroupHeaderFormatter()
 			});
@@ -443,8 +438,6 @@ sap.ui.define([
 				visible: oColumn.getVisible(),
 				grouped: oColumn.getGrouped(),
 				total: oColumn.getSummed(),
-				sorted: oColumn.getSorted(),
-				sortOrder: oColumn.getSortOrder(),
 				inResult: oColumn.getInResult(),
 				formatter: oColumn.getGroupHeaderFormatter()
 			});
@@ -653,12 +646,7 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["sortasc"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SORT_ASC"),
 				select: function() {
-					var oGroupColumnInfo = getGroupColumnInfo();
-
-					if (oGroupColumnInfo) {
-						var oColumn = oGroupColumnInfo.column;
-						oColumn._sort(false); //update Analytical Info triggered by aftersort in column
-					}
+					getGroupColumnInfo()?.column._sort(CoreLibrary.SortOrder.Ascending);
 				},
 				icon: "sap-icon://up"
 			});
@@ -669,12 +657,7 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["sortdesc"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SORT_DESC"),
 				select: function() {
-					var oGroupColumnInfo = getGroupColumnInfo();
-
-					if (oGroupColumnInfo) {
-						var oColumn = oGroupColumnInfo.column;
-						oColumn._sort(true); //update Analytical Info triggered by aftersort in column
-					}
+					getGroupColumnInfo()?.column._sort(CoreLibrary.SortOrder.Descending);
 				},
 				icon: "sap-icon://down"
 			});
@@ -1057,6 +1040,10 @@ sap.ui.define([
 		return 0;
 	};
 
+	/**
+	 * @deprecated As of version 1.115
+	 * @private
+	 */
 	AnalyticalTable.prototype._onPersoApplied = function() {
 		Table.prototype._onPersoApplied.apply(this, arguments);
 		this._aGroupedColumns = [];

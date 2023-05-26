@@ -1222,9 +1222,8 @@ sap.ui.define([
 			this.oTable.setSortConditions(oSortConditions);
 			this.oTable.rebind();
 
-			assert.equal(aInnerColumns[0].getSorted(), true);
 			assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
-			assert.equal(aInnerColumns[1].getSorted(), false);
+			assert.equal(aInnerColumns[1].getSortOrder(), "None");
 		}.bind(this));
 	});
 
