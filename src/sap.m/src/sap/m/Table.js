@@ -836,8 +836,9 @@ sap.ui.define([
 
 		// update the visible column count and colspan
 		// highlight, navigation and navigated indicator columns are getting rendered always
-		this._colCount = aVisibleColumns.length + 3 + !!ListBaseRenderer.ModeOrder[this.getMode()] + $headRow.find(".sapMListTblDummyCell").length;
-		this.$("tblBody").find(".sapMGHLICell").attr("colspan", this.getColSpan());
+		var iDummyColumnLength = $headRow.find(".sapMListTblDummyCell").length;
+		this._colCount = aVisibleColumns.length + 3 + !!ListBaseRenderer.ModeOrder[this.getMode()] + iDummyColumnLength;
+		this.$("tblBody").find(".sapMGHLICell").attr("colspan", this.getColSpan() - iDummyColumnLength);
 		this.$("nodata-text").attr("colspan", this.getColCount());
 
 		if (this.hasPopin()) {
@@ -1145,7 +1146,7 @@ sap.ui.define([
 		}
 
 		var $Row = jQuery();
-		if (oEvent.target.id == this.getId("nodata")) {
+		if (jQuery(oEvent.target).closest(this.getDomRef("nodata"))[0]) {
 			$Row = this.$("nodata");
 		} else if (this.isHeaderRowEvent(oEvent)) {
 			$Row = this.$("tblHeader");

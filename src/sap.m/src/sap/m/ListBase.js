@@ -2178,6 +2178,10 @@ function(
 
 		// clear invalidations
 		this._bItemNavigationInvalidated = false;
+
+		if (document.activeElement == oNavigationRoot) {
+			jQuery(oNavigationRoot).trigger("focus");
+		}
 	};
 
 	/*
@@ -2270,7 +2274,7 @@ function(
 			return;
 		}
 
-		if (oEvent.target.id == this.getId("nodata")) {
+		if (jQuery(this.getDomRef("nodata")).find(":sapTabbable").addBack().get(-1) == oEvent.target) {
 			this.forwardTab(true);
 			oEvent.setMarked();
 		}
