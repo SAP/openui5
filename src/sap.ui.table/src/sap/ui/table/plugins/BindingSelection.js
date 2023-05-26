@@ -60,6 +60,10 @@ sap.ui.define([
 	};
 
 	BindingSelection.prototype.setSelected = function(oRow, bSelected, mConfig) {
+		if (!this.isIndexSelectable(oRow.getIndex())) {
+			return;
+		}
+
 		if (mConfig && mConfig.range) {
 			var iLastSelectedIndex = this.getSelectedIndex();
 

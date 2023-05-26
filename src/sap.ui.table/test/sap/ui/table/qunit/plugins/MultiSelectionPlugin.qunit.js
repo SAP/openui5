@@ -229,6 +229,45 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("#setSelected", function(assert) {
+		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		var that = this;
+
+		function waitForSelectionChange() {
+			return new Promise(function(resolve) {
+				oMultiSelectionPlugin.attachEventOnce("selectionChange", resolve);
+			});
+		}
+
+		oMultiSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
+		assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [], "Select a row when not assigned to a table");
+
+		that.oTable.addPlugin(oMultiSelectionPlugin);
+		oMultiSelectionPlugin.setSelected(that.oTable.getRows()[0], true);
+
+		return waitForSelectionChange().then(function() {
+			assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [0], "Select a row");
+
+			oMultiSelectionPlugin.setSelected(that.oTable.getRows()[2], true, {range: true});
+			return waitForSelectionChange();
+		}).then(function() {
+			assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [0, 1, 2], "Select a range");
+
+			oMultiSelectionPlugin.setSelected(that.oTable.getRows()[1], false);
+			assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [0, 2], "Deselect a row");
+
+			oMultiSelectionPlugin.clearSelection();
+			that.oTable.getModel().setData();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			oMultiSelectionPlugin.setSelected(that.oTable.getRows()[0], true);
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 100);
+			});
+		}).then(function() {
+			assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [], "Select a row that is not selectable");
+		});
+	});
+
 	QUnit.module("Deselect All button", {
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
