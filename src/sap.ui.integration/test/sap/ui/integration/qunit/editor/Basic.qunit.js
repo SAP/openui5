@@ -1516,6 +1516,23 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("1 destination with label (as json)", function (assert) {
+			this.oEditor.setJson({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample", "label": "dest1 label" } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "dest1 label", "Label: Has dest1 label from destination label property");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("Start the editor in admin mode", function (assert) {
 			this.oEditor.setMode("admin");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} }, "destinations": { "dest1": { "name": "Sample" } } } } } });
@@ -4086,6 +4103,270 @@ sap.ui.define([
 						assert.equal(oField.getAggregation("_field").getItems().length, 0, "Content of Form contains: Destination Field items lengh OK");
 						resolve();
 					}, 8000);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Destinations defined in DT", {
+		beforeEach: function () {
+			Core.getConfiguration().setLanguage("en");
+			this.oHost = new Host("host");
+			this.oHost.getDestinations = function () {
+				return new Promise(function (resolve) {
+					setTimeout(function () {
+						var items = [
+							{
+								"name": "Products"
+							},
+							{
+								"name": "Orders"
+							},
+							{
+								"name": "Portal"
+							},
+							{
+								"name": "Northwind"
+							}
+						];
+						resolve(items);
+					}, 1000);
+				});
+			};
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oEditor = new Editor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Define destination in DT", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/destinationInDT",
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								},
+								"dest2": {
+									"label": "dest2 label defined in manifest",
+									"name": "Northwind"
+								},
+								"dest3": {
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
+					var oPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+					assert.equal(oPanel.getHeaderText(), "Destinations", "Panel: Header Text");
+					var DestinationLabel1 = aFormContent[1];
+					var DestinationComboBox1 = aFormContent[2].getAggregation("_field");
+					var DestinationLabel2 = aFormContent[3];
+					var DestinationComboBox2 = aFormContent[4].getAggregation("_field");
+					assert.ok(DestinationLabel1.isA("sap.m.Label"), "Label1: Form content contains a Label");
+					assert.equal(DestinationLabel1.getText(), "dest1 label defined in DT", "Label1: Has dest1 label from destination label property defined in DT");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					assert.ok(DestinationLabel2.isA("sap.m.Label"), "Label2: Form content contains a Label");
+					assert.equal(DestinationLabel2.getText(), "dest2 label defined in manifest", "Label2: Has dest2 label from destination label property defined in manifest");
+					assert.ok(!DestinationComboBox2.getEditable(), "Content of Form contains: Destination Field 2 is NOT editable");
+					setTimeout(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
+						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
+						assert.equal(DestinationComboBox1.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Key OK");
+						assert.equal(DestinationComboBox1.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Text OK");
+						var oItems = DestinationComboBox1.getItems();
+						assert.equal(oItems.length, 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oItems[0].getKey(), "Northwind", "Content of Form contains: Destination Field item 0 Key OK");
+						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
+						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
+						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
+						resolve();
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In content mode", function (assert) {
+			this.oEditor.setMode("content");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/destinationInDT",
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								},
+								"dest2": {
+									"label": "dest2 label defined in manifest",
+									"name": "Northwind"
+								},
+								"dest3": {
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					assert.ok(!aFormContent, "Editor: has no destinations");
+					setTimeout(function () {
+						resolve();
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In translation mode", function (assert) {
+			this.oEditor.setMode("translation");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/destinationInDT",
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								},
+								"dest2": {
+									"label": "dest2 label defined in manifest",
+									"name": "Northwind"
+								},
+								"dest3": {
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					assert.equal(aFormContent.length, 1, "Editor: has 1 item");
+					var oPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+					setTimeout(function () {
+						resolve();
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Define Destination Group in DT", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/customDestinationGroup",
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+					assert.equal(oPanel.getHeaderText(), "Destinations group label defined in DT", "Panel: Header Text");
+					assert.ok(!oPanel.getExpanded(), "Panel: not expanded");
+					var DestinationLabel1 = aFormContent[1];
+					var DestinationComboBox1 = aFormContent[2].getAggregation("_field");
+					assert.ok(DestinationLabel1.isA("sap.m.Label"), "Label1: Form content contains a Label");
+					assert.equal(DestinationLabel1.getText(), "dest1 label defined in DT", "Label1: Has dest1 label from destination label property defined in DT");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					setTimeout(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
+						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
+						assert.equal(DestinationComboBox1.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Key OK");
+						assert.equal(DestinationComboBox1.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Text OK");
+						var oItems = DestinationComboBox1.getItems();
+						assert.equal(oItems.length, 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oItems[0].getKey(), "Northwind", "Content of Form contains: Destination Field item 0 Key OK");
+						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
+						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
+						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
+						resolve();
+					}, 1500);
 				}.bind(this));
 			}.bind(this));
 		});

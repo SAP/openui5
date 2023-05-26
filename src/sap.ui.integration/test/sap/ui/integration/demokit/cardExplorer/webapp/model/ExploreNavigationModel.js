@@ -3340,6 +3340,27 @@ sap.ui.define([
 										key: 'Input.controller.js'
 									}
 								]
+							},
+							{
+								title: 'Destinations',
+								key: 'designtimeDestinations',
+								files: [
+									{
+										url: '/samples/designtimeDestinations/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeDestinations/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeDestinations/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							}
 						]
 					}

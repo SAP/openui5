@@ -31,11 +31,22 @@
 	"configuration": {
 		"destinations": {
 			"destinationName": {
+				"name": "Northwind",
 				"defaultUrl": "https://testurl.test",
 				"label": "{{TRANSLATABLE_LABEL}}"
 			}
 		}
 	}
+}</pre>
+			<p>
+				The label property with other ones can be set as destination parameters in Configuration Module too. <a href="../../index.html#/explore/playground/designtimeDestinations" target="_parent">Example</a>.
+			</p>
+			<pre class="lang-json">
+"destinationName.destination": {
+	"type": "destination",
+	"label": "label of Northwind defined in dt",
+	"editable": false,
+	"visible": true
 }</pre>
 
 			<h2 id="createfile">Create a Configuration Module and Register it in the Card Manifest</h2>

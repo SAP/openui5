@@ -24,6 +24,9 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	oHost.getDestinations = function () {
 		return Promise.resolve([
 			{
+				"name": "local"
+			},
+			{
 				name: "Northwind_V2"
 			},
 			{

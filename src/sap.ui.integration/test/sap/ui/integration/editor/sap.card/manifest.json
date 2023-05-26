@@ -285,18 +285,19 @@
 					"name": "Simple"
 				},
 				"local": {
-					"name": "local"
+					"name": "local",
+					"label": "local destination label defined in manifest"
 				},
 				"dest": {
 					"name": "JAM"
 				},
 				"destLabel": {
 					"name": "products",
-					"label": "Direct Destination Label"
+					"label": "Direct Destination Label defined in manifest"
 				},
 				"destLabelTrans": {
 					"name": "SF",
-					"label": "{{TRANSLATED_DESTINATION_LABEL}}"
+					"label": "{i18n>TRANSLATED_DESTINATION_LABEL} defined in manifest"
 				},
 				"northwind": {
 					"name": "Northwind"

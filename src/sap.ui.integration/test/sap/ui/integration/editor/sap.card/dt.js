@@ -2104,6 +2104,15 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}
 							}
 						}
+					},
+					"local.destination": {
+						"type": "destination",
+						"label": "local destination label defined in dt",
+						"editable": false
+					},
+					"northwind.destination": {
+						"type": "destination",
+						"label": "northwind destination label defined in dt"
 					}
 				}
 			},

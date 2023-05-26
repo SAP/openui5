@@ -38,6 +38,7 @@ sap.ui.define([
 					busy: { path: 'destinations>_loading' },
 					selectedKey: { path: 'currentSettings>value' },
 					width: "100%",
+					editable: { path: 'currentSettings>editable' },
 					items: {
 						path: "destinations>_values",
 						template: new ListItem({
