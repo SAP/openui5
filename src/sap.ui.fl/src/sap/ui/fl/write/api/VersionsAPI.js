@@ -105,6 +105,10 @@ sap.ui.define([
 		});
 	};
 
+	VersionsAPI.clearInstances = function () {
+		Versions.clearInstances();
+	};
+
 	/**
 	 * Returns a flag if a draft exists for the current application and layer.
 	 *

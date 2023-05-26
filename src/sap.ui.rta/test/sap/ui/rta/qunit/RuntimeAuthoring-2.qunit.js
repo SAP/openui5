@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
+	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
@@ -48,6 +49,7 @@ sap.ui.define([
 	ControlPersonalizationWriteAPI,
 	FeaturesAPI,
 	TranslationAPI,
+	FlexInfoSession,
 	Layer,
 	FlexUtils,
 	AppVariantUtils,
@@ -684,45 +686,70 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user)", function(assert) {
+		var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
+		function stubCBA() {
+			ContextBasedAdaptationsAPI.clearInstances();
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
-			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
-			sandbox.stub(FlexUtils, "getUShellService")
-			.callThrough()
-			.withArgs("AppLifeCycle")
-			.resolves({
+			this.oContextBasedAdaptationsAPILoadStub = sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: [{id: "12345"}, DEFAULT_ADAPTATION]});
+			this.oFlexUtilsGetAppDescriptor = sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "getUShellService").callThrough().withArgs("AppLifeCycle").resolves({
 				getCurrentApplication: function() {
 					return {
 						homePage: false
 					};
 				}
 			});
-
+		}
+		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user)", function(assert) {
+			stubCBA.call(this);
 			return this.oRta.start().then(function() {
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), true, "then the 'Context Based Adaptation' Menu Button is enabled");
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), true, "then the 'Context Based Adaptation' Menu Button is visible");
+				assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 1, "CBA Model is load");
 			}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user) but the current app is an overview page", function(assert) {
-			stubToolbarButtonsVisibility(true, true);
-			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
-			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}, "sap.ovp": {}});
-			sandbox.stub(FlexUtils, "getUShellService")
-			.callThrough()
-			.withArgs("AppLifeCycle")
-			.resolves({
-				getCurrentApplication: function() {
-					return {
-						homePage: false
-					};
-				}
-			});
+			stubCBA.call(this);
+			this.oFlexUtilsGetAppDescriptor.returns({"sap.app": {id: "1"}, "sap.ovp": {}});
 
 			return this.oRta.start().then(function() {
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), false, "then the 'Context Based Adaptation' Menu Button is not enabled");
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), false, "then the 'Context Based Adaptation' Menu Button is not visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is started a 2nd time, context based adaptation feature is available and data has changed on the backend and another adaptation has been shown by end user", function(assert) {
+			stubCBA.call(this);
+
+			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "12345" });
+			return ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"}).then(function() {
+				this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
+				this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
+
+				return this.oRta.start();
+			}.bind(this)).then(function() {
+				assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 2, "CBA Model is loaded again");
+				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), [{id: "12345", rank: 1}, {id: "67890", rank: 2}], "then the adaptations are up to date");
+				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "67890", "then the displayed adaptation is correct");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is doing a restart during switch, context based adaptation feature is available", function(assert) {
+			stubCBA.call(this);
+
+			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "12345" });
+			return ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"}).then(function() {
+				this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
+				this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
+				sandbox.stub(ReloadManager, "needsAutomaticStart").resolves(true);
+
+				return this.oRta.start();
+			}.bind(this)).then(function() {
+				assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 1, "CBA Model is not loaded again");
+				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), [{id: "12345", rank: 1}], "then the adaptations are still the same");
+				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "12345", "then the displayed adaptation is correct");
 			}.bind(this));
 		});
 

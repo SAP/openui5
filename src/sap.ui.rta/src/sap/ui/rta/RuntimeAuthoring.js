@@ -439,6 +439,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RuntimeAuthoring.prototype.start = function() {
+		var bIsAutomaticRestart = RuntimeAuthoring.needsRestart(this.getLayer());
 		var oDesignTimePromise;
 		var vError;
 		// Create DesignTime
@@ -452,8 +453,8 @@ sap.ui.define([
 			}
 
 			return this._loadUShellServicesPromise
-			.then(initVersioning.bind(this))
-			.then(initContextBasedAdaptations.bind(this))
+			.then(initVersioning.bind(this, bIsAutomaticRestart))
+			.then(initContextBasedAdaptations.bind(this, bIsAutomaticRestart))
 			/*
 			 Check if the application has personalized changes and reload without them;
 			 Also Check if the application has an available draft and if yes, reload with those changes.
@@ -573,7 +574,7 @@ sap.ui.define([
 					validateFlexEnabled(this);
 				}
 				this._sStatus = STARTED;
-				RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
+				RuntimeAuthoring.disableRestart(this.getLayer());
 				this.fireStart({
 					editablePluginsCount: this.getPluginManager().getEditableOverlaysCount()
 				});
@@ -1452,7 +1453,15 @@ sap.ui.define([
 		});
 	}
 
-	function initVersioning() {
+	/**
+	 * Inits version models. Clears old state if RTA is starting from end user mode (no switch)
+	 * @param {boolean} bIsAutomaticRestart - If true this is not an RTA start but a reload due to version/adaptation switch
+	 * @returns {Promise<void>} - Promise
+	 */
+	function initVersioning(bIsAutomaticRestart) {
+		if (!bIsAutomaticRestart) {
+			VersionsAPI.clearInstances();
+		}
 		return VersionsAPI.initialize({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer()
@@ -1461,7 +1470,15 @@ sap.ui.define([
 		}.bind(this));
 	}
 
-	function initContextBasedAdaptations() {
+	/**
+	 * Inits CBA models. Clears old state if RTA is starting from end user mode (no switch)
+	 * @param {boolean} bIsAutomaticRestart - If true this is not an RTA start but a reload due to version/adaptation switch
+	 * @returns {Promise<void>} - Promise
+	 */
+	function initContextBasedAdaptations(bIsAutomaticRestart) {
+		if (!bIsAutomaticRestart) {
+			ContextBasedAdaptationsAPI.clearInstances();
+		}
 		return ContextBasedAdaptationsAPI.initialize({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer()
