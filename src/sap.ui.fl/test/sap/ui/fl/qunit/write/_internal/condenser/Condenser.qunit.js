@@ -891,6 +891,33 @@ sap.ui.define([
 					assert.strictEqual(oContent.width, "10rem", "the width is correct");
 				});
 		});
+
+		[true, false].forEach(function(bPersistedChanges) {
+			var sName = "addIFrame and updateIFrame together + unclassified changes" + (bPersistedChanges ? " with some persisted changes" : "");
+			QUnit.test(sName, function(assert) {
+				var aPersistedChanges = bPersistedChanges ? [0, 1, 2, 3] : [];
+				// eslint-disable-next-line max-nested-callbacks
+				return ChangeHandlerStorage.registerChangeHandlersForControl("sap.uxap.ObjectPageSection", {
+					unclassified: {
+						completeChangeContent: sandbox.stub(),
+						applyChange: sandbox.stub(),
+						revertChange: sandbox.stub()
+					}
+				})
+				.then(loadApplyCondenseChanges.bind(this, "addIFrameUpdateIFrameUnclassified.json", 9, 5, assert, aPersistedChanges))
+				.then(function(aRemainingChanges) {
+					assert.strictEqual(aRemainingChanges[0].condenserState, bPersistedChanges ? "update" : "select", "the condenser state is set correctly");
+					assert.strictEqual(aRemainingChanges[0].getContent().url, "https://www.example.com", "the url got updated");
+					assert.strictEqual(aRemainingChanges[0].getContent().height, "100px", "the height got updated");
+					assert.strictEqual(aRemainingChanges[0].getContent().width, "10rem", "the width got updated");
+
+					assert.strictEqual(aRemainingChanges[1].condenserState, bPersistedChanges ? "update" : "select", "the condenser state is set correctly");
+					assert.strictEqual(aRemainingChanges[1].getContent().url, "https://www.example.com", "the url got updated");
+					assert.strictEqual(aRemainingChanges[1].getContent().height, "200px", "the height got updated");
+					assert.strictEqual(aRemainingChanges[1].getContent().width, "16rem", "the width got updated");
+				});
+			});
+		});
 	});
 
 	QUnit.module("Given a mdc Table", {

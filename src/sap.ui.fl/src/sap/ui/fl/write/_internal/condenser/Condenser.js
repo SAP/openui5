@@ -604,7 +604,11 @@ sap.ui.define([
 			// with unclassified changes no index relevant changes can be reduced
 			if (bUnclassifiedChanges) {
 				aAllIndexRelatedChanges.forEach(function(oChange) {
-					oChange.condenserState = "select";
+					// If the index-relevant change is only being updated, this does not cause side effects
+					// If they are being removed (condenserState "delete"), they must be set to "select"
+					if (oChange.condenserState !== "update") {
+						oChange.condenserState = "select";
+					}
 				});
 				addAllIndexRelatedChanges(aReducedChanges, aAllIndexRelatedChanges);
 			}
