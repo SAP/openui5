@@ -6,7 +6,7 @@
 sap.ui.define([
 	"sap/ui/fl/requireAsync",
 	"sap/base/Log"
-], function (
+], function(
 	requireAsync,
 	Log
 ) {
@@ -16,11 +16,11 @@ sap.ui.define([
 		registry: function() {
 			return requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/Registration");
 		},
-		handleError: function (oError) {
+		handleError: function(oError) {
 			Log.error(oError);
 		},
-		processTexts: function (oManifest, oChangeTexts) {
-			//TODO: optimize performance by creating map not using JSON.stringify/parse
+		processTexts: function(oManifest, oChangeTexts) {
+			// TODO: optimize performance by creating map not using JSON.stringify/parse
 			var sManifest = JSON.stringify(oManifest);
 			Object.keys(oChangeTexts).forEach(function(sTextKey) {
 				if (oChangeTexts[sTextKey].value[""]) {
@@ -32,7 +32,6 @@ sap.ui.define([
 			return JSON.parse(sManifest);
 		}
 	};
-
 
 	var ApplyStrategyFactory = {
 		/**

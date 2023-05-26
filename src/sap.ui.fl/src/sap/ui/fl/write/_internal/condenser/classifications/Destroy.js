@@ -22,7 +22,7 @@ sap.ui.define([
 				oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation,
 				oCondenserInfo.customAggregation, oCondenserInfo.affectedControlIdProperty
 			)
-			.then(function (aTargetContainerElementIds) {
+			.then(function(aTargetContainerElementIds) {
 				var aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(
 					mUIReconstructions, oCondenserInfo.targetContainer,
 					oCondenserInfo.targetAggregation, aTargetContainerElementIds

@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
-	var AppVariantWriteAPI = /**@lends sap.ui.fl.write.api.AppVariantWriteAPI */ {
+	var AppVariantWriteAPI = /** @lends sap.ui.fl.write.api.AppVariantWriteAPI */ {
 		/**
 		 * Saves the app variant to backend.
 		 *
@@ -62,12 +62,12 @@ sap.ui.define([
 			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 			mPropertyBag.reference = oFlexController.getComponentName();
 			return FeaturesAPI.isVersioningEnabled(mPropertyBag.layer)
-				.then(function (bVersioningEnabled) {
-					if (bVersioningEnabled) {
-						mPropertyBag.parentVersion = Versions.getVersionsModel(mPropertyBag).getProperty("/displayedVersion");
-					}
-					return SaveAs.saveAs(mPropertyBag);
-				});
+			.then(function(bVersioningEnabled) {
+				if (bVersioningEnabled) {
+					mPropertyBag.parentVersion = Versions.getVersionsModel(mPropertyBag).getProperty("/displayedVersion");
+				}
+				return SaveAs.saveAs(mPropertyBag);
+			});
 		},
 
 		/**

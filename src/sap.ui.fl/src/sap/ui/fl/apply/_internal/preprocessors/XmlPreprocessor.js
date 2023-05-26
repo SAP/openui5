@@ -62,7 +62,7 @@ sap.ui.define([
 
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			if (!Utils.isApplication(oAppComponent.getManifestObject())) {
-				//we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
+				// we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
 				return Promise.resolve(oView);
 			}
 
@@ -74,14 +74,14 @@ sap.ui.define([
 				Log.debug("flex processing view " + mProperties.id + " finished");
 				return oView;
 			})
-			.catch(function () {
+			.catch(function() {
 				Log.warning("Error happens when getting flex cache key! flexibility XML view preprocessing is skipped. " +
 				"The processing will be done later on the JS controls.");
 				return Promise.resolve(oView);
 			});
 		} catch (error) {
 			var sError = "view " + mProperties.id + ": " + error;
-			Log.info(sError); //to allow control usage in applications that do not work with UI flex and components
+			Log.info(sError); // to allow control usage in applications that do not work with UI flex and components
 			// throw new Error(sError); // throw again, when caller handles the promise
 			return Promise.resolve(oView);
 		}

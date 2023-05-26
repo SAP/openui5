@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/Cache",
@@ -476,7 +476,7 @@ sap.ui.define([
 			// returned cacheKey shouldn't contain this chars 'W/"abc123"' --> 'abc123'
 			var sEtag = 'W/"abc123"';
 			var sControlVariantId = "id_1541412437845_176_Copy";
-			var sCacheKeyResult = 'abc123'.concat('-', sControlVariantId);
+			var sCacheKeyResult = "abc123".concat("-", sControlVariantId);
 			var mComponentMock = {
 				name: "testComponent"
 			};
@@ -525,10 +525,10 @@ sap.ui.define([
 			this.oGetStorageResponseStub.resolves(oEntry);
 
 			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
-				.then(function(sCacheKey) {
-					assert.ok(sCacheKey, "then cachekey is returned");
-					assert.strictEqual(sCacheKey, sCacheKeyResult, "then the standard variants are filtered from the cache key");
-				});
+			.then(function(sCacheKey) {
+				assert.ok(sCacheKey, "then cachekey is returned");
+				assert.strictEqual(sCacheKey, sCacheKeyResult, "then the standard variants are filtered from the cache key");
+			});
 		});
 	});
 

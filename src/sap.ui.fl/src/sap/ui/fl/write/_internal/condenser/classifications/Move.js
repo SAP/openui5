@@ -27,7 +27,7 @@ sap.ui.define([
 					oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation,
 					oCondenserInfo.customAggregation, oCondenserInfo.affectedControlIdProperty
 				)
-			]).then(function (aSourceTargetElementIds) {
+			]).then(function(aSourceTargetElementIds) {
 				var aSourceContainerElementIds = aSourceTargetElementIds[0];
 				var aTargetContainerElementIds = aSourceTargetElementIds[1];
 

@@ -190,10 +190,10 @@ sap.ui.define([
 					return this;
 				},
 				style: function(p, v) {
-					sString += ('style=\"\{' + p + '=' + v + '\}\"');
+					sString += ('style=\"\{' + p + "=" + v + '\}\"');
 					return this;
 				},
-				'class': function(s) {
+				"class": function(s) {
 					sString += ('class=\"' + s + '\"');
 					return this;
 				},
@@ -269,7 +269,6 @@ sap.ui.define([
 
 			assert.equal(this.oVariantManagement.getTitle().getText(), "Hugo");
 		});
-
 
 		QUnit.test("Check getVariants", function(assert) {
 			var aItems = this.oVariantManagement.getVariants();
@@ -547,7 +546,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Create public checkbox on SaveAs Dialog for End - and KeyUser", function(assert) {
-			//end user
+			// end user
 			assert.ok(!this._oVM.oSaveAsDialog);
 
 			this._oVM.setSupportApplyAutomatically(false);
@@ -562,7 +561,7 @@ sap.ui.define([
 			this._oVM.oPublic.destroy();
 			this._oVM._createSaveAsDialog();
 
-			//key user
+			// key user
 			this._oVM.setSupportApplyAutomatically(true);
 			assert.ok(!this._oVM._bShowPublic);
 			assert.ok(this._oVM.oPublic.getVisible());
@@ -721,7 +720,6 @@ sap.ui.define([
 				setFavorite: function(bValue) { this.bFavorite = bValue;}
 			};
 
-
 			this._oVM._handleManageDefaultVariantChange(oRadioButton, oItem, true);
 			assert.ok(this._oVM.setDefaultKey.called);
 
@@ -797,7 +795,6 @@ sap.ui.define([
 			assert.ok(oListItem, "manage table item exists");
 			assert.ok(!oListItem.getVisible(), "manage table item is not visible");
 
-
 			var aRows = this._oVM.oManagementTable.getItems();
 			assert.ok(aRows);
 			assert.equal(aRows.length, 5);
@@ -807,7 +804,6 @@ sap.ui.define([
 			oListItem = this._oVM._getRowForKey(sItemKey);
 			assert.ok(oListItem, "manage table item exists");
 			assert.ok(oListItem.getVisible(), "manage table item is visible");
-
 
 			this._oVM._openManagementDialog();
 			aRows = this._oVM._getItems();
@@ -828,7 +824,7 @@ sap.ui.define([
 				var aRenamedItems = [];
 				var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
 
-				oData["variants"].forEach(function(oItem) {
+				oData.variants.forEach(function(oItem) {
 					if (!oItem.visible) {
 						aDelItems.push(oItem.key);
 					} else if (oItem.title !== oItem.originalTitle) {
@@ -844,7 +840,7 @@ sap.ui.define([
 				assert.ok(aRenamedItems);
 				assert.equal(aRenamedItems.length, 1);
 				assert.equal(aRenamedItems[0], "3");
-				assert.equal(oData["variants"][aRenamedItems[0]].title, "New 3");
+				assert.equal(oData.variants[aRenamedItems[0]].title, "New 3");
 			}.bind(this));
 
 			this._oVM._createManagementDialog();
@@ -917,7 +913,6 @@ sap.ui.define([
 			assert.equal(aDeletedItems.length, 0);
 		});
 
-
 		QUnit.test("Checking _handleManageSavePressed; deleted item is selected", function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
@@ -928,7 +923,7 @@ sap.ui.define([
 
 				var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
 
-				oData["variants"].forEach(function(oItem) {
+				oData.variants.forEach(function(oItem) {
 					if (!oItem.visible) {
 						aDelItems.push(oItem.key);
 					} else {
@@ -949,12 +944,12 @@ sap.ui.define([
 				assert.ok(aRenamedItems);
 				assert.equal(aRenamedItems.length, 1);
 				assert.equal(aRenamedItems[0], "3");
-				assert.equal(oData["variants"][aRenamedItems[0]].title, "New 3");
+				assert.equal(oData.variants[aRenamedItems[0]].title, "New 3");
 
 				assert.ok(aFavItems);
 				assert.equal(aFavItems.length, 1);
 				assert.equal(aFavItems[0], "4");
-				assert.ok(!oData["variants"][aFavItems[0]].favorite);
+				assert.ok(!oData.variants[aFavItems[0]].favorite);
 			}.bind(this));
 
 			this._oVM._createManagementDialog();
@@ -1208,7 +1203,6 @@ sap.ui.define([
 
 			sinon.stub(this._oVM.oManagementDialog, "isOpen").returns(true);
 
-
 			this._oVM._openManagementDialog();
 
 			this._oVM._handleManageSavePressed();
@@ -1221,7 +1215,7 @@ sap.ui.define([
 			assert.equal(oInput.getValue(), "One");
 			oInput.setValue("Two");
 
-			//setValue destroys the input while list binding is recreated....
+			// setValue destroys the input while list binding is recreated....
 			oInput = this._oVM.oManagementTable.getItems()[1].getCells()[1];
 			assert.ok(oInput);
 			assert.equal(oInput.getValue(), "Two");
@@ -1231,7 +1225,7 @@ sap.ui.define([
 			this._oVM._handleManageSavePressed();
 			assert.ok(!bSavePressed);
 
-			//setValue destroys the input while list binding is recreated....
+			// setValue destroys the input while list binding is recreated....
 			oInput = this._oVM.oManagementTable.getItems()[1].getCells()[1];
 			assert.ok(oInput);
 			assert.equal(oInput.getValue(), "Two");
@@ -1342,7 +1336,6 @@ sap.ui.define([
 			this._oVM._createManagementDialog();
 			assert.ok(this._oVM.oManagementDialog);
 
-
 			this._oVM.oManagementDialog.attachAfterOpen(function() {
 				assert.ok(this._oVM.getSupportContexts());
 
@@ -1350,7 +1343,7 @@ sap.ui.define([
 				assert.ok(aRows);
 				assert.equal(aRows.length, 5);
 
-				//standard
+				// standard
 				var aCells = aRows[0].getCells();
 				assert.ok(aCells);
 				assert.equal(aCells.length, 9);

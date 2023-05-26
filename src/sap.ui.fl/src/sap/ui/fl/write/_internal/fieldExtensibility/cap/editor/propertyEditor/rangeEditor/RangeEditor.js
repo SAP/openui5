@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/model/json/JSONModel"
-], function (
+], function(
 	BasePropertyEditor,
 	JSONModel
 ) {
@@ -45,7 +45,7 @@ sap.ui.define([
 		this.setModel(this._oContentModel, "contentModel");
 	};
 
-	RangeEditor.prototype.getExpectedWrapperCount = function () {
+	RangeEditor.prototype.getExpectedWrapperCount = function() {
 		return 2;
 	};
 

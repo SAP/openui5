@@ -38,7 +38,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given SmartBusinessWriteAPI", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oDescrChangeSpecificData1 = {
 				changeType: "appdescr_ovp_addNewCard",
 				content: {
@@ -84,7 +84,7 @@ sap.ui.define([
 				}
 			};
 			this.oDescrChangeSpecificData2 = {
-				changeType: 'appdescr_app_setTitle',
+				changeType: "appdescr_app_setTitle",
 				content: {
 					type: "XTIT",
 					maxLength: 20,
@@ -117,54 +117,54 @@ sap.ui.define([
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
-				})
-				.then(function() {
-					return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData2, appId: "reference.app"});
-				}.bind(this))
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 2, "then 2 Descriptor changes have been added to the persistence");
-					return SmartBusinessWriteAPI.create({
-						selector: {
-							appId: "reference.app"
-						},
-						id: "customer.reference.app.id",
-						"package": "TEST_PACKAGE",
-						transport: "U1YK123456",
-						layer: Layer.CUSTOMER
-					});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
-					// Get the app variant to be saved to backend
-					var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-					assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
-					assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
-					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
-					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then it is a correct changetype");
-					assert.strictEqual(oAppVariant.content[1].changeType, "appdescr_app_setTitle", "then it is a correct changetype");
-					assert.deepEqual(oAppVariant.content[1].content, {}, "then content is empty for setTitle change");
-					Object.keys(oAppVariant.content[1]).forEach(function(sKey) {
-						if (
-							sKey === "changeType"
+			.then(function(oDescriptorInlineChange) {
+				// Adds a descriptor change to its own persistence
+				return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+			})
+			.then(function() {
+				return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData2, appId: "reference.app"});
+			}.bind(this))
+			.then(function(oDescriptorInlineChange) {
+				// Adds a descriptor change to its own persistence
+				return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 2, "then 2 Descriptor changes have been added to the persistence");
+				return SmartBusinessWriteAPI.create({
+					selector: {
+						appId: "reference.app"
+					},
+					id: "customer.reference.app.id",
+					"package": "TEST_PACKAGE",
+					transport: "U1YK123456",
+					layer: Layer.CUSTOMER
+				});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+				// Get the app variant to be saved to backend
+				var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
+				assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
+				assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
+				assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
+				assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then it is a correct changetype");
+				assert.strictEqual(oAppVariant.content[1].changeType, "appdescr_app_setTitle", "then it is a correct changetype");
+				assert.deepEqual(oAppVariant.content[1].content, {}, "then content is empty for setTitle change");
+				Object.keys(oAppVariant.content[1]).forEach(function(sKey) {
+					if (
+						sKey === "changeType"
 							|| sKey === "content"
 							|| sKey === "texts"
-						) {
-							assert.ok("Correct properties being passed");
-						} else {
-							assert.notOk("Test should not succeed!");
-						}
-					});
-					var sTextKey = oAppVariant.id + "_sap.app.title";
-					assert.deepEqual(oAppVariant.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
-				}.bind(this));
+					) {
+						assert.ok("Correct properties being passed");
+					} else {
+						assert.notOk("Test should not succeed!");
+					}
+				});
+				var sTextKey = oAppVariant.id + "_sap.app.title";
+				assert.deepEqual(oAppVariant.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
+				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
+			}.bind(this));
 		});
 
 		QUnit.test("(S4/Hana Cloud system) when create is called to save an app variant in CUSTOMER with descriptor change already added into own persistence", function(assert) {
@@ -174,30 +174,30 @@ sap.ui.define([
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return SmartBusinessWriteAPI.create({
-						selector: {
-							appId: "reference.app"
-						},
-						id: "customer.reference.app.id",
-						layer: Layer.CUSTOMER
-					});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
-					// Get the app variant to be saved to backend
-					var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-					assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
-					assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
-					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
-					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
+			.then(function(oDescriptorInlineChange) {
+				// Adds a descriptor change to its own persistence
+				return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+				return SmartBusinessWriteAPI.create({
+					selector: {
+						appId: "reference.app"
+					},
+					id: "customer.reference.app.id",
+					layer: Layer.CUSTOMER
 				});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+				// Get the app variant to be saved to backend
+				var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
+				assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
+				assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
+				assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
+				assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
+				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence and submitting app variant to backend in VENDOR layer in a valid package failed", function(assert) {
@@ -209,32 +209,32 @@ sap.ui.define([
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return SmartBusinessWriteAPI.create({
-						selector: {
-							appId: "reference.app"
-						},
-						id: "customer.reference.app.id",
-						"package": "TEST_PACKAGE",
-						transport: "U1YK123456",
-						layer: Layer.VENDOR
-					});
-				})
-				.catch(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
-					// Get the app variant to be saved to backend
-					var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-					assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
-					assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
-					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
-					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
+			.then(function(oDescriptorInlineChange) {
+				// Adds a descriptor change to its own persistence
+				return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+				return SmartBusinessWriteAPI.create({
+					selector: {
+						appId: "reference.app"
+					},
+					id: "customer.reference.app.id",
+					"package": "TEST_PACKAGE",
+					transport: "U1YK123456",
+					layer: Layer.VENDOR
 				});
+			})
+			.catch(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+				// Get the app variant to be saved to backend
+				var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
+				assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
+				assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
+				assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
+				assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
+				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence and submitting app variant to backend in VENDOR layer in an empty package failed", function(assert) {
@@ -246,29 +246,29 @@ sap.ui.define([
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return SmartBusinessWriteAPI.create({
-						selector: {
-							appId: "reference.app"
-						},
-						id: "customer.reference.app.id",
-						"package": "",
-						transport: "U1YK123456",
-						layer: Layer.VENDOR
-					});
-				})
-				.then(function() {
-					assert.ok(false, "Should not succeed");
-				})
-				.catch(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
-					assert.ok(oNewConnectorCall.notCalled, "then backend call is never triggered");
+			.then(function(oDescriptorInlineChange) {
+				// Adds a descriptor change to its own persistence
+				return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+				return SmartBusinessWriteAPI.create({
+					selector: {
+						appId: "reference.app"
+					},
+					id: "customer.reference.app.id",
+					"package": "",
+					transport: "U1YK123456",
+					layer: Layer.VENDOR
 				});
+			})
+			.then(function() {
+				assert.ok(false, "Should not succeed");
+			})
+			.catch(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+				assert.ok(oNewConnectorCall.notCalled, "then backend call is never triggered");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence, no transport passed and submitting app variant to backend in VENDOR layer as a local object", function(assert) {
@@ -280,31 +280,31 @@ sap.ui.define([
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return SmartBusinessWriteAPI.create({
-						selector: {
-							appId: "reference.app"
-						},
-						id: "customer.reference.app.id",
-						"package": "$TMP",
-						layer: Layer.VENDOR
-					});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
-					// Get the app variant to be saved to backend
-					var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-					assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with an empty package");
-					assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
-					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
-					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
+			.then(function(oDescriptorInlineChange) {
+				// Adds a descriptor change to its own persistence
+				return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+				return SmartBusinessWriteAPI.create({
+					selector: {
+						appId: "reference.app"
+					},
+					id: "customer.reference.app.id",
+					"package": "$TMP",
+					layer: Layer.VENDOR
 				});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+				// Get the app variant to be saved to backend
+				var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
+				assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with an empty package");
+				assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
+				assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
+				assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
+				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence and submitting app variant to backend in CUSTOMER_BASE layer in an empty package failed", function(assert) {
@@ -316,29 +316,29 @@ sap.ui.define([
 
 			// Creates a descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData1, appId: "reference.app"})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a descriptor change to its own persistence
-					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
-				})
-				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return SmartBusinessWriteAPI.create({
-						selector: {
-							appId: "reference.app"
-						},
-						id: "customer.reference.app.id",
-						"package": "",
-						transport: "U1YK123456",
-						layer: Layer.CUSTOMER_BASE
-					});
-				})
-				.then(function() {
-					assert.ok(false, "Should not succeed");
-				})
-				.catch(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
-					assert.ok(oNewConnectorCall.notCalled, "then backend call is never triggered");
+			.then(function(oDescriptorInlineChange) {
+				// Adds a descriptor change to its own persistence
+				return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+			})
+			.then(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+				return SmartBusinessWriteAPI.create({
+					selector: {
+						appId: "reference.app"
+					},
+					id: "customer.reference.app.id",
+					"package": "",
+					transport: "U1YK123456",
+					layer: Layer.CUSTOMER_BASE
 				});
+			})
+			.then(function() {
+				assert.ok(false, "Should not succeed");
+			})
+			.catch(function() {
+				assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+				assert.ok(oNewConnectorCall.notCalled, "then backend call is never triggered");
+			});
 		});
 
 		QUnit.test("(S4/Hana Cloud system) when update is called to update a published app variant in CUSTOMER layer", function(assert) {
@@ -370,13 +370,13 @@ sap.ui.define([
 			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.update(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
-					assert.equal(oRequestPayload.content.length, 1, "then the app variant will be updated with 1 inline change");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "PUT"), "then the parameters are correct");
-				});
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+				var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
+				assert.equal(oRequestPayload.content.length, 1, "then the app variant will be updated with 1 inline change");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "PUT"), "then the parameters are correct");
+			});
 		});
 
 		QUnit.test("(S4/Hana Cloud system) when update is called to update a published app variant (having a new inline change) in CUSTOMER layer ", function(assert) {
@@ -409,34 +409,34 @@ sap.ui.define([
 
 			// Creates a first descriptor change
 			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData2, appId: "customer.reference.app.id"})
-				.then(function(oDescriptorInlineChange) {
-					// Adds a first descriptor change to its own persistence
-					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "customer.reference.app.id"});
-				}).then(function() {
-					return SmartBusinessWriteAPI.update(mPropertyBag);
-				})
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
-					assert.strictEqual(oRequestPayload.content[1].changeType, "appdescr_app_setTitle", "then it is a correct changetype");
-					assert.deepEqual(oRequestPayload.content[1].content, {}, "then content is empty for setTitle change");
-					var sTextKey = oRequestPayload.id + "_sap.app.title";
-					assert.deepEqual(oRequestPayload.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
-					Object.keys(oRequestPayload.content[1]).forEach(function(sKey) {
-						if (
-							sKey === "changeType"
+			.then(function(oDescriptorInlineChange) {
+				// Adds a first descriptor change to its own persistence
+				return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "customer.reference.app.id"});
+			}).then(function() {
+				return SmartBusinessWriteAPI.update(mPropertyBag);
+			})
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+				var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
+				assert.strictEqual(oRequestPayload.content[1].changeType, "appdescr_app_setTitle", "then it is a correct changetype");
+				assert.deepEqual(oRequestPayload.content[1].content, {}, "then content is empty for setTitle change");
+				var sTextKey = oRequestPayload.id + "_sap.app.title";
+				assert.deepEqual(oRequestPayload.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
+				Object.keys(oRequestPayload.content[1]).forEach(function(sKey) {
+					if (
+						sKey === "changeType"
 							|| sKey === "content"
 							|| sKey === "texts"
-						) {
-							assert.ok("Correct properties being passed");
-						} else {
-							assert.notOk("Test should not succeed!");
-						}
-					});
-					assert.equal(oRequestPayload.content.length, 2, "then the app variant will be updated with 2 inline changes");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "PUT"), "then the parameters are correct");
-				}.bind(this));
+					) {
+						assert.ok("Correct properties being passed");
+					} else {
+						assert.notOk("Test should not succeed!");
+					}
+				});
+				assert.equal(oRequestPayload.content.length, 2, "then the app variant will be updated with 2 inline changes");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "PUT"), "then the parameters are correct");
+			}.bind(this));
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when update is called to update a local app variant ($TMP) in CUSTOMER layer", function(assert) {
@@ -468,11 +468,11 @@ sap.ui.define([
 			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.update(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?sap-language=EN", "PUT"), "then the parameters are correct");
-				});
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?sap-language=EN", "PUT"), "then the parameters are correct");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when update is called to update an app variant with empty package in CUSTOMER layer", function(assert) {
@@ -504,14 +504,14 @@ sap.ui.define([
 			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.update(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?sap-language=EN", "PUT"), "then the parameters are correct");
-				})
-				.catch(function() {
-					assert.ok(false, "Should not fail");
-				});
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?sap-language=EN", "PUT"), "then the parameters are correct");
+			})
+			.catch(function() {
+				assert.ok(false, "Should not fail");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when update is called to update a published app variant in CUSTOMER layer", function(assert) {
@@ -544,11 +544,11 @@ sap.ui.define([
 			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.update(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123&sap-language=EN", "PUT"), "then the parameters are correct");
-				});
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123&sap-language=EN", "PUT"), "then the parameters are correct");
+			});
 		});
 
 		QUnit.test("(S4/Hana Cloud system) when remove is called to delete a published app variant in CUSTOMER layer", function(assert) {
@@ -561,10 +561,10 @@ sap.ui.define([
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "DELETE"), "then the parameters are correct");
-				});
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION", "DELETE"), "then the parameters are correct");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when remove is called to delete a local app variant ($TMP) in CUSTOMER layer", function(assert) {
@@ -573,15 +573,14 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-
 			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
-				});
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when remove is called to delete an app variant with empty package in CUSTOMER layer", function(assert) {
@@ -594,13 +593,13 @@ sap.ui.define([
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
-				})
-				.catch(function() {
-					assert.ok(false, "Should not fail");
-				});
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "DELETE"), "then the parameters are correct");
+			})
+			.catch(function() {
+				assert.ok(false, "Should not fail");
+			});
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when remove is called to delete a published app variant in CUSTOMER layer", function(assert) {
@@ -614,10 +613,10 @@ sap.ui.define([
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
-				.then(function() {
-					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
-				});
+			.then(function() {
+				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
+				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
+			});
 		});
 	});
 });

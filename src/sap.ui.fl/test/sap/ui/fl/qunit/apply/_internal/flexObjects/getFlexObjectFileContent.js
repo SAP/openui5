@@ -5,7 +5,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return function () {
+	return function() {
 		return {
 			fileName: "foo",
 			fileType: "change",

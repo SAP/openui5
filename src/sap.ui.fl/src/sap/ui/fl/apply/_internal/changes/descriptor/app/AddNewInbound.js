@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	function getAndCheckInboundId(oChangeContent) {
-		var aInbounds = Object.keys(oChangeContent["inbound"]);
+		var aInbounds = Object.keys(oChangeContent.inbound);
 		if (aInbounds.length > 1) {
 			throw new Error("It is not allowed to add more than one inbound");
 		}
@@ -49,20 +49,20 @@ sap.ui.define([
 		* @ui5-restricted sap.ui.fl.apply._internal
 		*/
 		applyChange: function(oManifest, oChange) {
-			if (!oManifest["sap.app"]["crossNavigation"]) {
-				oManifest["sap.app"]["crossNavigation"] = {};
+			if (!oManifest["sap.app"].crossNavigation) {
+				oManifest["sap.app"].crossNavigation = {};
 			}
 
-			if (!oManifest["sap.app"]["crossNavigation"]["inbounds"]) {
-				oManifest["sap.app"]["crossNavigation"]["inbounds"] = {};
+			if (!oManifest["sap.app"].crossNavigation.inbounds) {
+				oManifest["sap.app"].crossNavigation.inbounds = {};
 			}
 
 			var oChangeContent = oChange.getContent();
 			var sInboundId = getAndCheckInboundId(oChangeContent);
-			var oInboundInManifest = oManifest["sap.app"]["crossNavigation"]["inbounds"][sInboundId];
+			var oInboundInManifest = oManifest["sap.app"].crossNavigation.inbounds[sInboundId];
 			if (!oInboundInManifest) {
 				DescriptorChangeCheck.checkIdNamespaceCompliance(sInboundId, oChange);
-				oManifest["sap.app"]["crossNavigation"]["inbounds"][sInboundId] = oChangeContent["inbound"][sInboundId];
+				oManifest["sap.app"].crossNavigation.inbounds[sInboundId] = oChangeContent.inbound[sInboundId];
 			} else {
 				throw new Error("Inbound with ID \"" + sInboundId + "\" already exist.");
 			}

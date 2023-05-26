@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages",
@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ui5_addComponentUsages"
@@ -37,11 +37,11 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling '_applyChange' with a change containing two component usages", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change containing two component usages", function(assert) {
 			var oManifest = {
 				"sap.ui5": {
 					dependencies: {
@@ -65,12 +65,12 @@ sap.ui.define([
 			};
 			var oNewManifest = AddComponentUsages.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["componentUsages"]["existingUsage"]["name"], "my.used.existing", "the existing component usage is still there.");
-			assert.strictEqual(oNewManifest["sap.ui5"]["componentUsages"]["new.usage"], this.oChange.getContent()["componentUsages"]["new.usage"], "the first component usage is added");
-			assert.strictEqual(oNewManifest["sap.ui5"]["componentUsages"]["new.usage.2"], this.oChange.getContent()["componentUsages"]["new.usage.2"], "the second component usage is added");
+			assert.strictEqual(oNewManifest["sap.ui5"].componentUsages.existingUsage.name, "my.used.existing", "the existing component usage is still there.");
+			assert.strictEqual(oNewManifest["sap.ui5"].componentUsages["new.usage"], this.oChange.getContent().componentUsages["new.usage"], "the first component usage is added");
+			assert.strictEqual(oNewManifest["sap.ui5"].componentUsages["new.usage.2"], this.oChange.getContent().componentUsages["new.usage.2"], "the second component usage is added");
 		});
 
-		QUnit.test("when calling '_applyChange' with a change containing same component usage", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change containing same component usage", function(assert) {
 			var oManifest = {
 				"sap.ui5": {
 					dependencies: {
@@ -98,7 +98,7 @@ sap.ui.define([
 			"throws error");
 		});
 
-		QUnit.test("when calling '_applyChange' with a change containing one component usage and no manifest component usages", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change containing one component usage and no manifest component usages", function(assert) {
 			var oManifest = {
 				"sap.ui5": {
 					dependencies: {
@@ -108,8 +108,8 @@ sap.ui.define([
 			};
 			var oNewManifest = AddComponentUsages.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["componentUsages"]["new.usage"], this.oChange.getContent()["componentUsages"]["new.usage"], "the first component usage is added");
-			assert.strictEqual(oNewManifest["sap.ui5"]["componentUsages"]["new.usage.2"], this.oChange.getContent()["componentUsages"]["new.usage.2"], "the second component usage is added");
+			assert.strictEqual(oNewManifest["sap.ui5"].componentUsages["new.usage"], this.oChange.getContent().componentUsages["new.usage"], "the first component usage is added");
+			assert.strictEqual(oNewManifest["sap.ui5"].componentUsages["new.usage.2"], this.oChange.getContent().componentUsages["new.usage.2"], "the second component usage is added");
 		});
 	});
 

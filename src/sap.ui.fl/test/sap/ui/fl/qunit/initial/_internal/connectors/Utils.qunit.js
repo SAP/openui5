@@ -19,7 +19,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when addLanguageInfo is called", function (assert) {
+		QUnit.test("when addLanguageInfo is called", function(assert) {
 			var mParameters = {};
 			var mExpectedValue = {"sap-language": "en"};
 			sandbox.stub(Configuration, "getLanguage").returns("en");
@@ -28,7 +28,7 @@ sap.ui.define([
 			assert.throws(function() {Utils.addLanguageInfo();}, "without any param map then an error is thrown");
 		});
 
-		QUnit.test("when addSAPLogonLanguageInfo is called", function (assert) {
+		QUnit.test("when addSAPLogonLanguageInfo is called", function(assert) {
 			var mParameters = {};
 			var mExpectedValue = {"sap-language": "EN"};
 			sandbox.stub(Configuration, "getSAPLogonLanguage").returns("EN");
@@ -37,7 +37,7 @@ sap.ui.define([
 			assert.throws(function() {Utils.addSAPLogonLanguageInfo();}, "without any param map then an error is thrown");
 		});
 
-		QUnit.test("when getURL is called", function (assert) {
+		QUnit.test("when getURL is called", function(assert) {
 			var mParameters = {};
 			var mPropertyBag = {};
 			var sRoute;
@@ -76,7 +76,7 @@ sap.ui.define([
 		}
 	},
 	function() {
-		QUnit.test("when sendRequest is called with no method and an no initial connector, with payload", function (assert) {
+		QUnit.test("when sendRequest is called with no method and an no initial connector, with payload", function(assert) {
 			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
 			var mPropertyBag = {};
 			mPropertyBag.payload = "payload";
@@ -89,7 +89,7 @@ sap.ui.define([
 				response: "GET request successful",
 				status: 200
 			};
-			return Utils.sendRequest(sUrl, undefined, mPropertyBag).then(function (oResponse) {
+			return Utils.sendRequest(sUrl, undefined, mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, sExpectedResult, "with undefined sMethod then the GET request is successful");
 				assert.ok(oSetRequestHeaderSpy.calledOnce, "");
 				assert.equal(oSetRequestHeaderSpy.getCall(0).args[0], "X-CSRF-Token", "");
@@ -98,7 +98,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when sendRequest is called with GET method, with initial conncetor, no payload", function (assert) {
+		QUnit.test("when sendRequest is called with GET method, with initial conncetor, no payload", function(assert) {
 			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
 			var sMethod = "GET";
 			var mPropertyBag = {};
@@ -111,7 +111,7 @@ sap.ui.define([
 			this.server.respondWith("GET", "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE",
 				[200, {"Content-Type": "application/json"}, '{ "message": "GET request successful"}']);
 
-			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
+			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResponse) {
 				assert.equal(oSetRequestHeaderSpy.callCount, 3, "");
 				assert.equal(oSetRequestHeaderSpy.getCall(0).args[0], "Content-Type", "");
 				assert.equal(oSetRequestHeaderSpy.getCall(0).args[1], "Content-Type", "");
@@ -123,7 +123,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when sendRequest is called with POST method, intinial connector with token", function (assert) {
+		QUnit.test("when sendRequest is called with POST method, intinial connector with token", function(assert) {
 			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
 			var sMethod = "POST";
 			var mPropertyBag = {};
@@ -133,14 +133,14 @@ sap.ui.define([
 			this.server.respondWith("POST", "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE",
 				[200, {"Content-Type": "string"}, "POST request successful"]);
 
-			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function () {
+			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function() {
 				assert.ok(oSetRequestHeaderSpy.calledOnce, "");
 				assert.equal(oSetRequestHeaderSpy.getCall(0).args[0], "X-CSRF-Token", "");
 				assert.equal(oSetRequestHeaderSpy.getCall(0).args[1], "84343258f9d94804-gaFfTNfclP5uThxHR7StXFwu_GU", "");
 			});
 		});
 
-		QUnit.test("when sendRequest is called test with empty Response", function (assert) {
+		QUnit.test("when sendRequest is called test with empty Response", function(assert) {
 			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
 			var sMethod = "HEAD";
 			var mPropertyBag = {};
@@ -150,7 +150,7 @@ sap.ui.define([
 				[204, {"Content-Type": "application/json", "X-CSRF-Token": "84343258f9d94804-gaFfTNfclP5uThxHR7StXFwu_GU", Etag: "Etag"},
 					'{ "message": "POST request successful", "status": 204 }']);
 
-			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
+			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResponse) {
 				assert.equal(oResponse.xsrfToken, "84343258f9d94804-gaFfTNfclP5uThxHR7StXFwu_GU");
 				assert.equal(mPropertyBag.initialConnector.xsrfToken, "84343258f9d94804-gaFfTNfclP5uThxHR7StXFwu_GU");
 				assert.equal(oResponse.etag, "Etag");
@@ -159,7 +159,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when sendRequest is called test with cachable request", function (assert) {
+		QUnit.test("when sendRequest is called test with cachable request", function(assert) {
 			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/~dummytoken~/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
 			var sMethod = "HEAD";
 			var mPropertyBag = {};
@@ -169,13 +169,13 @@ sap.ui.define([
 				[204, {"Content-Type": "application/json", "X-CSRF-Token": "84343258f9d94804-gaFfTNfclP5uThxHR7StXFwu_GU"},
 					'{ "message": "POST request successful", "status": 204 }']);
 
-			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
+			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResponse) {
 				assert.equal(oResponse.xsrfToken, undefined);
 				assert.equal(mPropertyBag.initialConnector.xsrfToken, undefined);
 			});
 		});
 
-		QUnit.test("when sendRequest is called with Internal Server Error", function (assert) {
+		QUnit.test("when sendRequest is called with Internal Server Error", function(assert) {
 			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
 			var sMethod = "GET";
 			var mPropertyBag = {};
@@ -183,27 +183,27 @@ sap.ui.define([
 			this.server.respondWith("GET", "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE",
 				[500, {"Content-Type": "application/json" },
 					'{ "messages": [{"severity": "Error", "text": "Internal Server Error" }]}']);
-			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
+			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function(oError) {
 				assert.equal(oError.status, 500, "");
 				assert.equal(oError.userMessage, "Internal Server Error\n", "");
 			});
 		});
 
-		QUnit.test("when sendRequest is called with Bad Request return", function (assert) {
+		QUnit.test("when sendRequest is called with Bad Request return", function(assert) {
 			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
 			var sMethod = "GET";
 			var mPropertyBag = {};
 
 			this.server.respondWith("GET", "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE",
 				[400, {"Content-Type": "string" }, "Bad Request"]);
-			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
+			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function(oError) {
 				assert.equal(oError.status, 400, "");
 				assert.equal(oError.userMessage, "", "");
 			});
 		});
 	});
 });
-QUnit.done(function () {
-	'use strict';
+QUnit.done(function() {
+	"use strict";
 	document.getElementById("qunit-fixture").style.display = "none";
 });

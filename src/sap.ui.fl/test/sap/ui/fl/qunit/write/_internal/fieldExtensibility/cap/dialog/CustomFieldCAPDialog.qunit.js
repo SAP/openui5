@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
@@ -30,14 +30,14 @@ sap.ui.define([
 	function waitForDialog(oCAPDialog) {
 		return new Promise(function(resolve) {
 			sandbox.stub(oCAPDialog, "setProperty")
-				.callThrough()
-				.withArgs("_dialog")
-				.callsFake(function(sPropertyName, oDialog) {
-					oCAPDialog.setProperty.wrappedMethod.apply(this, arguments);
-					oDialog.attachEventOnce("afterOpen", function () {
-						resolve(oDialog);
-					});
+			.callThrough()
+			.withArgs("_dialog")
+			.callsFake(function(sPropertyName, oDialog) {
+				oCAPDialog.setProperty.wrappedMethod.apply(this, arguments);
+				oDialog.attachEventOnce("afterOpen", function() {
+					resolve(oDialog);
 				});
+			});
 		});
 	}
 
@@ -52,43 +52,43 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the dialog is opened", function(assert) {
 			var oDialogPromise = waitForDialog(this.oCAPDialog)
+			.then(function() {
+				var oEditor = this.oCAPDialog._oEditor;
+				return oEditor.ready()
 				.then(function() {
-					var oEditor = this.oCAPDialog._oEditor;
-					return oEditor.ready()
-						.then(function() {
-							assert.ok(oEditor.isReady(), "then the editor is initialized");
-							assert.deepEqual(
-								oEditor.getJson(),
-								oDefaultDefinition,
-								"then the default definition is loaded"
-							);
-						});
-				}.bind(this));
+					assert.ok(oEditor.isReady(), "then the editor is initialized");
+					assert.deepEqual(
+						oEditor.getJson(),
+						oDefaultDefinition,
+						"then the default definition is loaded"
+					);
+				});
+			}.bind(this));
 			this.oCAPDialog.open(oSampleEntityTypeInfo);
 			return oDialogPromise;
 		});
 
 		QUnit.test("when the dialog is opened twice", function(assert) {
 			var oDialogPromise = waitForDialog(this.oCAPDialog)
+			.then(function() {
+				var oEditor = this.oCAPDialog._oEditor;
+				return oEditor.ready()
 				.then(function() {
-					var oEditor = this.oCAPDialog._oEditor;
-					return oEditor.ready()
-						.then(function() {
-							oEditor.setJson({
-								element: {
-									name: "TestField",
-									type: "cds.String"
-								},
-								extend: "SampleType"
-							});
-							this.oCAPDialog.onCancel();
-							this.oCAPDialog.open(oSampleEntityTypeInfo);
-							assert.deepEqual(oEditor.getJson(),
-								oDefaultDefinition,
-								"then the editor data is reset"
-							);
-						}.bind(this));
+					oEditor.setJson({
+						element: {
+							name: "TestField",
+							type: "cds.String"
+						},
+						extend: "SampleType"
+					});
+					this.oCAPDialog.onCancel();
+					this.oCAPDialog.open(oSampleEntityTypeInfo);
+					assert.deepEqual(oEditor.getJson(),
+						oDefaultDefinition,
+						"then the editor data is reset"
+					);
 				}.bind(this));
+			}.bind(this));
 			this.oCAPDialog.open(oSampleEntityTypeInfo);
 			return oDialogPromise;
 		});
@@ -289,7 +289,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

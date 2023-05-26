@@ -52,7 +52,7 @@ sap.ui.define([
 			};
 
 			if (oChange._aDependentSelectorList) {
-				oChange._aDependentSelectorList.forEach(function (oSelector) {
+				oChange._aDependentSelectorList.forEach(function(oSelector) {
 					var mControlData = {
 						bPresent: !!JsControlTreeModifier.bySelector(oSelector, oAppComponent),
 						aAppliedChanges: [],
@@ -77,8 +77,8 @@ sap.ui.define([
 		}
 	}
 
-	function enhanceExportWithVariantChangeData (oChangePersistence, oExport) {
-		jQuery.each(oChangePersistence._mVariantsChanges, function (sChangeId, oChange) {
+	function enhanceExportWithVariantChangeData(oChangePersistence, oExport) {
+		jQuery.each(oChangePersistence._mVariantsChanges, function(sChangeId, oChange) {
 			oExport.mVariantsChanges[sChangeId] = {
 				mDefinition: oChange._oDefinition
 			};
@@ -88,7 +88,7 @@ sap.ui.define([
 	function enhanceWithChangetypeSpecificData(oExport, sExportParameterName, mControlData, sControlDataParameterName, aCustomDataChanges) {
 		if (aCustomDataChanges) {
 			mControlData[sControlDataParameterName] = aCustomDataChanges;
-			mControlData[sControlDataParameterName].map(function (sChangeId) {
+			mControlData[sControlDataParameterName].map(function(sChangeId) {
 				if (!(sChangeId in oExport[sExportParameterName])) {
 					oExport[sExportParameterName].push(sChangeId);
 				}
@@ -96,10 +96,10 @@ sap.ui.define([
 		}
 	}
 
-	function getChangesForControlFromCustomData (oControl, sIdentifier) {
+	function getChangesForControlFromCustomData(oControl, sIdentifier) {
 		var aCustomData = oControl.getCustomData();
 		var aChangeIds = [];
-		aCustomData.forEach(function (oCustomData) {
+		aCustomData.forEach(function(oCustomData) {
 			var sKey = oCustomData.getKey();
 			if (sKey.startsWith(sIdentifier)) {
 				aChangeIds.push(sKey.replace(sIdentifier, ""));
@@ -108,7 +108,7 @@ sap.ui.define([
 		return aChangeIds;
 	}
 
-	function enhanceExportWithControlData (oChangePersistence, oExport) {
+	function enhanceExportWithControlData(oChangePersistence, oExport) {
 		// collect applied changes
 
 		for (var sControlId in oChangePersistence._mChanges.mChanges) {
@@ -133,7 +133,7 @@ sap.ui.define([
 		}
 	}
 
-	return function (oChangePersistence) {
+	return function(oChangePersistence) {
 		if (!oChangePersistence) {
 			return;
 		}

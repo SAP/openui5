@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -34,38 +34,38 @@ sap.ui.define([], function () {
 
 			// ensure a Promise
 			return Promise.resolve(oRealStorage)
-				.then(function (oRealStorage) {
-					var aPromises = Object.keys(oRealStorage).map(function(sKey) {
-						var bIsFlexObject = sKey.includes(FL_PREFIX);
+			.then(function(oRealStorage) {
+				var aPromises = Object.keys(oRealStorage).map(function(sKey) {
+					var bIsFlexObject = sKey.includes(FL_PREFIX);
 
-						if (!bIsFlexObject) {
-							return;
-						}
+					if (!bIsFlexObject) {
+						return;
+					}
 
-						var vStorageEntry = oRealStorage[sKey];
-						var oFlexObject = mPropertyBag.storage._itemsStoredAsObjects ? vStorageEntry : JSON.parse(vStorageEntry);
-						var bSameReference = true;
-						if (mPropertyBag.reference) {
-							bSameReference = this.isSameReference(oFlexObject, mPropertyBag.reference);
-						}
+					var vStorageEntry = oRealStorage[sKey];
+					var oFlexObject = mPropertyBag.storage._itemsStoredAsObjects ? vStorageEntry : JSON.parse(vStorageEntry);
+					var bSameReference = true;
+					if (mPropertyBag.reference) {
+						bSameReference = this.isSameReference(oFlexObject, mPropertyBag.reference);
+					}
 
-						var bSameLayer = true;
-						if (mPropertyBag.layer) {
-							bSameLayer = oFlexObject.layer === mPropertyBag.layer;
-						}
+					var bSameLayer = true;
+					if (mPropertyBag.layer) {
+						bSameLayer = oFlexObject.layer === mPropertyBag.layer;
+					}
 
-						if (!bSameReference || !bSameLayer) {
-							return;
-						}
+					if (!bSameReference || !bSameLayer) {
+						return;
+					}
 
-						return fnPredicate({
-							changeDefinition: oFlexObject,
-							key: sKey
-						});
-					}.bind(this));
-
-					return Promise.all(aPromises);
+					return fnPredicate({
+						changeDefinition: oFlexObject,
+						key: sKey
+					});
 				}.bind(this));
+
+				return Promise.all(aPromises);
+			}.bind(this));
 		},
 
 		/**
@@ -79,7 +79,7 @@ sap.ui.define([], function () {
 			return this.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
 				aFlexObjects.push(mFlexObject);
 			})
-			.then(function () {
+			.then(function() {
 				return aFlexObjects;
 			});
 		},

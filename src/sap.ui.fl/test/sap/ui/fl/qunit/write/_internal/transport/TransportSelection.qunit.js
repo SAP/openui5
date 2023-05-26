@@ -28,17 +28,17 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.write._internal.transport.TransportSelection", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oTransportSelection = new TransportSelection();
 
 			this.oServer = sinon.fakeServer.create();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oServer.restore();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport with package", function (assert) {
+		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport with package", function(assert) {
 			var done = assert.async();
 			this.oServer.respondWith([
 				200,
@@ -55,18 +55,18 @@ sap.ui.define([
 				type: "variant"
 			};
 
-			var fOkay = function (oResult) {
-				assert.equal(oResult.getParameters().selectedTransport, '4711');
+			var fOkay = function(oResult) {
+				assert.equal(oResult.getParameters().selectedTransport, "4711");
 				done();
 			};
-			var fError = function () {
+			var fError = function() {
 				done();
 			};
 
 			this.oTransportSelection.selectTransport(oObject, fOkay, fError);
 		});
 
-		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport without package", function (assert) {
+		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport without package", function(assert) {
 			var done = assert.async();
 			this.oServer.respondWith([
 				200,
@@ -79,20 +79,20 @@ sap.ui.define([
 			this.oServer.autoRespond = true;
 			var oObject = {name: "testname", type: "variant"};
 
-			var fOkay = function (oResult) {
-				assert.equal(oResult.getParameters().selectedTransport, '');
+			var fOkay = function(oResult) {
+				assert.equal(oResult.getParameters().selectedTransport, "");
 				done();
 			};
-			var fError = function () {
+			var fError = function() {
 				done();
 			};
 
 			this.oTransportSelection.selectTransport(oObject, fOkay, fError);
 		});
 
-		QUnit.module("localObjectVisible", {}, function () {
+		QUnit.module("localObjectVisible", {}, function() {
 			function setupAndTest(sTestName, bLocalObjectVisible) {
-				QUnit.test(sTestName, function (assert) {
+				QUnit.test(sTestName, function(assert) {
 					var done = assert.async();
 					this.oServer.respondWith([
 						200,
@@ -104,7 +104,7 @@ sap.ui.define([
 						"{ \"localonly\":false, \"transports\":[{\"transportId\":\"4711\",\"owner\":\"TESTUSER\",\"description\":\"test transport1\",\"locked\" : false}] }"
 					]);
 					this.oServer.autoRespond = true;
-					var oSetLocalObjectVisibleSpy = sinon.stub(this.oTransportSelection, "_openDialog").callsFake(function () {
+					var oSetLocalObjectVisibleSpy = sinon.stub(this.oTransportSelection, "_openDialog").callsFake(function() {
 						assert.equal(oSetLocalObjectVisibleSpy.callCount, 1);
 						assert.equal(oSetLocalObjectVisibleSpy.getCall(0).args[0].localObjectVisible, bLocalObjectVisible);
 						done();
@@ -120,17 +120,16 @@ sap.ui.define([
 			setupAndTest("when localObjectVisible is set to false", false);
 		});
 
-
-		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport when LrepConnector is not available", function (assert) {
+		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport when LrepConnector is not available", function(assert) {
 			var done = assert.async();
 			var oObject = {name: "", type: "variant"};
 			sandbox.stub(FlUtils, "getLrepUrl").returns("");
-			var fOkay = function (oResult) {
+			var fOkay = function(oResult) {
 				assert.equal(oResult.getParameters().selectedTransport, "");
 				FlUtils.getLrepUrl.restore();
 				done();
 			};
-			var fError = function () {
+			var fError = function() {
 				done();
 			};
 
@@ -192,7 +191,7 @@ sap.ui.define([
 			var aMockLocalChanges = [oNewChange];
 			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
-			sandbox.stub(FlUtils, "getClient").returns('');
+			sandbox.stub(FlUtils, "getClient").returns("");
 			sandbox.stub(WriteUtils, "sendRequest").resolves();
 			assert.ok(this.oTransportSelection.checkTransportInfo(oMockTransportInfo), "then true is returned for a valid transport info");
 			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {reference: "aReference"}).then(function() {
@@ -215,7 +214,7 @@ sap.ui.define([
 				layer: sLayer
 			};
 
-			sandbox.stub(FlUtils, "getClient").returns('');
+			sandbox.stub(FlUtils, "getClient").returns("");
 			var oSendStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, oContentParameters).then(function() {
 				assert.equal(JSON.parse(oSendStub.getCall(0).args[2].payload).reference, sReference, "the reference is added to the request");
@@ -225,59 +224,59 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.fl.write._internal.transport.TransportSelection", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oTransportSelection = new TransportSelection();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("shall be instantiable", function (assert) {
+		QUnit.test("shall be instantiable", function(assert) {
 			assert.ok(this.oTransportSelection);
 		});
 
-		QUnit.test("_createEventObject", function (assert) {
+		QUnit.test("_createEventObject", function(assert) {
 			var oEvent = this.oTransportSelection._createEventObject({"package": "$TMP"}, {transportId: "1234"});
 			assert.equal(oEvent.mParameters.selectedPackage, "$TMP");
 			assert.equal(oEvent.mParameters.selectedTransport, "1234");
 			assert.equal(oEvent.getParameter("selectedPackage"), "$TMP");
 		});
 
-		QUnit.test("_toLREPObject", function (assert) {
+		QUnit.test("_toLREPObject", function(assert) {
 			var oObj = this.oTransportSelection._toLREPObject({
 				type: "variant",
 				name: "id_1414740501651_318",
 				namespace: "ns",
 				"package": ""
 			});
-			assert.ok(!oObj["package"]);
+			assert.ok(!oObj.package);
 			assert.equal(oObj.name, "id_1414740501651_318");
 		});
 
-		QUnit.test("_getTransport", function (assert) {
+		QUnit.test("_getTransport", function(assert) {
 			var oEvent = this.oTransportSelection._getTransport({transports: [{locked: true, transportId: "1234"}]});
 			assert.equal(oEvent.transportId, "1234");
 		});
 
-		QUnit.test("_checkDialog", function (assert) {
+		QUnit.test("_checkDialog", function(assert) {
 			var oEvent = this.oTransportSelection._checkDialog();
 			assert.ok(oEvent);
 		});
 
-		QUnit.test("_hasLock - with locked transport ", function (assert) {
+		QUnit.test("_hasLock - with locked transport ", function(assert) {
 			var oEvent = this.oTransportSelection._hasLock([{locked: true, transportId: "1234"}]);
 			assert.equal(oEvent.transportId, "1234");
 		});
 
-		QUnit.test("_hasLock - without locked transport ", function (assert) {
+		QUnit.test("_hasLock - without locked transport ", function(assert) {
 			var oEvent = this.oTransportSelection._hasLock([]);
 			assert.ok(!oEvent);
 		});
 
-		QUnit.test("_openDialog", function (assert) {
-			var fSuccess = function () {
+		QUnit.test("_openDialog", function(assert) {
+			var fSuccess = function() {
 			};
-			var fError = function () {
+			var fError = function() {
 			};
 			sandbox.spy(BusyIndicator, "hide");
 			var oEvent = this.oTransportSelection._openDialog({}, fSuccess, fError, false, "dummyStyleClass");
@@ -286,10 +285,10 @@ sap.ui.define([
 			oEvent.close();
 		});
 
-		QUnit.test("_openDialog with compact mode", function (assert) {
-			var fSuccess = function () {
+		QUnit.test("_openDialog with compact mode", function(assert) {
+			var fSuccess = function() {
 			};
-			var fError = function () {
+			var fError = function() {
 			};
 			sandbox.spy(BusyIndicator, "hide");
 			var oEvent = this.oTransportSelection._openDialog({}, fSuccess, fError, true, "dummyStyleClass");
@@ -298,7 +297,7 @@ sap.ui.define([
 			oEvent.close();
 		});
 
-		QUnit.test('setTransports should set the same transport for all (non-$TMP) changes after a transport popup', function (assert) {
+		QUnit.test("setTransports should set the same transport for all (non-$TMP) changes after a transport popup", function(assert) {
 			var oRootControl = new Control();
 			var oChange = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
@@ -326,14 +325,14 @@ sap.ui.define([
 			var oTransportSelection = new TransportSelection();
 			sandbox.stub(oTransportSelection, "openTransportSelection").returns(Promise.resolve(oTransportInfo));
 
-			return oTransportSelection.setTransports(aChanges, oRootControl).then(function () {
+			return oTransportSelection.setTransports(aChanges, oRootControl).then(function() {
 				assert.equal(aChanges[0].getRequest(), "testTransport1");
 				assert.equal(aChanges[1].getRequest(), "testTransport1");
 				assert.equal(aChanges[2].getRequest(), "testTransport1");
 			});
 		});
 
-		QUnit.test('setTransports should set a transport for non-$TMP changes without transport popup if a package name is already within the change', function (assert) {
+		QUnit.test("setTransports should set a transport for non-$TMP changes without transport popup if a package name is already within the change", function(assert) {
 			var oRootControl = new Control();
 			var oChange = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
@@ -360,12 +359,12 @@ sap.ui.define([
 
 			sandbox.stub(Transports, "getTransports").returns(Promise.resolve(oTransportResponse));
 
-			return this.oTransportSelection.setTransports([oChange], oRootControl).then(function () {
+			return this.oTransportSelection.setTransports([oChange], oRootControl).then(function() {
 				assert.equal(oChange.getRequest(), sSecondTransportId, "the request was set to the transport id returned from the backend call");
 			});
 		});
 
-		QUnit.test('should open the transport dialog if a customer wants to transport a change which is not locked on any transport', function (assert) {
+		QUnit.test("should open the transport dialog if a customer wants to transport a change which is not locked on any transport", function(assert) {
 			var done = assert.async();
 			var oRootControl = new Control();
 			var oChange = FlexObjectFactory.createFromFileContent({
@@ -386,7 +385,7 @@ sap.ui.define([
 				transports: aTransports
 			});
 
-			var fnSimulateDialogSelectionAndOk = function (oConfig, fOkay) {
+			var fnSimulateDialogSelectionAndOk = function(oConfig, fOkay) {
 				var oDialogSelection = {
 					selectedTransport: oConfig.transports[1], // second transport was selected
 					selectedPackage: oConfig.pkg,
@@ -394,7 +393,7 @@ sap.ui.define([
 				};
 
 				var oResponse = {
-					getParameters: function () {
+					getParameters: function() {
 						return oDialogSelection;
 					}
 				};
@@ -406,7 +405,7 @@ sap.ui.define([
 			// var oOpenDialogStub = sandbox.stub(oTransportSelection, "_openDialog", fnSimulateDialogSelectionAndOk);
 			var oOpenDialogStub = sandbox.stub(oTransportSelection, "_openDialog").callsFake(fnSimulateDialogSelectionAndOk);
 
-			oTransportSelection.setTransports([oChange], oRootControl).then(function () {
+			oTransportSelection.setTransports([oChange], oRootControl).then(function() {
 				assert.ok(oOpenDialogStub.calledOnce, "the dialog was opened");
 				var oOpenDialogArguments = oOpenDialogStub.getCall(0).args[0];
 				assert.equal(oOpenDialogArguments.hidePackage, true, "the package selection should be invisible");
@@ -416,7 +415,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test('setTransports should set a transport for all (non-$TMP) changes without transport popup if they are already locked within a open transport', function (assert) {
+		QUnit.test("setTransports should set a transport for all (non-$TMP) changes without transport popup if they are already locked within a open transport", function(assert) {
 			var oRootControl = new Control();
 			var oChange = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
@@ -455,14 +454,14 @@ sap.ui.define([
 
 			sandbox.stub(Transports, "getTransports").resolves(oTransportResponse);
 
-			return this.oTransportSelection.setTransports(aChanges, oRootControl).then(function () {
+			return this.oTransportSelection.setTransports(aChanges, oRootControl).then(function() {
 				assert.equal(aChanges[0].getRequest(), sSecondTransportId);
 				assert.equal(aChanges[1].getRequest(), sSecondTransportId);
 				assert.equal(aChanges[2].getRequest(), sSecondTransportId);
 			});
 		});
 
-		QUnit.test('setTransports should rejects with a "cancel" string if the transport dialog is cancelled', function (assert) {
+		QUnit.test('setTransports should rejects with a "cancel" string if the transport dialog is cancelled', function(assert) {
 			var oRootControl = new Control();
 			var aChanges = [
 				FlexObjectFactory.createFromFileContent({
@@ -475,7 +474,7 @@ sap.ui.define([
 			var oTransportSelection = new TransportSelection();
 			sandbox.stub(oTransportSelection, "openTransportSelection").resolves("cancel");
 
-			return oTransportSelection.setTransports(aChanges, oRootControl).catch(function (oError) {
+			return oTransportSelection.setTransports(aChanges, oRootControl).catch(function(oError) {
 				assert.equal(oError, "cancel");
 			});
 		});

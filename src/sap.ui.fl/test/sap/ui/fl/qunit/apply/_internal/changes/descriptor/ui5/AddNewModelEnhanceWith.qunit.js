@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith",
@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oChangeRelPath = new AppDescriptorChange({
 				content: {
 					modelId: "random"
@@ -42,11 +42,11 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling '_applyChange' with already given setting.enhanceWith array", function (assert) {
+		QUnit.test("when calling '_applyChange' with already given setting.enhanceWith array", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					id: "consumer.base.app"
@@ -77,7 +77,7 @@ sap.ui.define([
 			assert.equal(oNewManifest["sap.ui5"].models.random.settings.enhanceWith[2].bundleName, "consumer.base.app.i18n.i18n", "settings/enhanceWith is updated correctly.");
 		});
 
-		QUnit.test("when calling '_applyChange' with a wrong model type", function (assert) {
+		QUnit.test("when calling '_applyChange' with a wrong model type", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					id: "consumer.base.app"
@@ -95,7 +95,7 @@ sap.ui.define([
 			assert.notOk(oNewManifest["sap.ui5"].models.i18n.settings, "settings.enhanceWith is not updated.");
 		});
 
-		QUnit.test("when calling '_applyChange' with a wrong model name", function (assert) {
+		QUnit.test("when calling '_applyChange' with a wrong model name", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					id: "consumer.base.app"
@@ -113,7 +113,7 @@ sap.ui.define([
 			assert.notOk(oNewManifest["sap.ui5"].models.test.settings, "settings/enhanceWith is not updated.");
 		});
 
-		QUnit.test("when calling '_applyChange' with invalid absolute path", function (assert) {
+		QUnit.test("when calling '_applyChange' with invalid absolute path", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					id: "consumer.base.app"
@@ -134,7 +134,7 @@ sap.ui.define([
 			"throws error");
 		});
 
-		QUnit.test("when calling '_applyChange' without settings.enhanceWith property", function (assert) {
+		QUnit.test("when calling '_applyChange' without settings.enhanceWith property", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					id: "consumer.base.app"

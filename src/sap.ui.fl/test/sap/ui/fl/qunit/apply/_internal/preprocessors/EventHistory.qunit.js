@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/Core",
@@ -54,14 +54,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function () {
+				getId: function() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function () {
+				getId: function() {
 					return "id2";
 				}
 			};
@@ -96,14 +96,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function () {
+				getId: function() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function () {
+				getId: function() {
 					return "id2";
 				}
 			};
@@ -141,14 +141,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function () {
+				getId: function() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function () {
+				getId: function() {
 					return "id2";
 				}
 			};
@@ -184,7 +184,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

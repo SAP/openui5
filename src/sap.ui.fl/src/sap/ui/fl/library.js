@@ -22,7 +22,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	/**
 	 * The <code>sap.ui.fl.initial</code> namespace should contain all code that is
 	 * necessary to hook into the UI5 core and detect if SAPUI5 flexibility has
@@ -489,7 +488,7 @@ sap.ui.define([
 				"sap.ui.fl.util.IFrame": "sap/ui/fl/util/IFrame"
 			},
 			"sap.ui.support": {
-				//Configuration used for rule loading of Support Assistant
+				// Configuration used for rule loading of Support Assistant
 				publicRules: true
 			}
 		}

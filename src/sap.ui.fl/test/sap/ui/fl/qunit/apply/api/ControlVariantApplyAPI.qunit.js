@@ -123,15 +123,15 @@ sap.ui.define([
 				appComponent: this.oAppComponent
 			});
 			return this.oModel.initialize()
-				.then(function() {
-					this.oAppComponent.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
-					this.oComponent = new Component("EmbeddedComponent");
-					sandbox.stub(this.oModel, "waitForVMControlInit").resolves();
-					sandbox.stub(Utils, "getAppComponentForControl")
-						.callThrough()
-						.withArgs(this.oDummyControl).returns(this.oAppComponent)
-						.withArgs(this.oComponent).returns(this.oAppComponent);
-				}.bind(this));
+			.then(function() {
+				this.oAppComponent.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+				this.oComponent = new Component("EmbeddedComponent");
+				sandbox.stub(this.oModel, "waitForVMControlInit").resolves();
+				sandbox.stub(Utils, "getAppComponentForControl")
+				.callThrough()
+				.withArgs(this.oDummyControl).returns(this.oAppComponent)
+				.withArgs(this.oComponent).returns(this.oAppComponent);
+			}.bind(this));
 		},
 		afterEach: function() {
 			sandbox.restore();

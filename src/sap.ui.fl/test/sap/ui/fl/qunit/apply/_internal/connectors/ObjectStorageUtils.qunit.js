@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
-], function (
+], function(
 	Layer,
 	ObjectStorageUtils
 ) {
@@ -27,7 +27,7 @@ sap.ui.define([
 			this.oStorage.foo = JSON.stringify({name: "bar"});
 			this.oStorage.bar = JSON.stringify({name: "foobar"});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			delete this.oStorage;
 		}
 	}, function() {
@@ -36,7 +36,7 @@ sap.ui.define([
 				mFlexObject.changeDefinition.name += "called";
 				this.oStorage[mFlexObject.key] = (JSON.stringify(mFlexObject.changeDefinition));
 			}.bind(this))
-			.then(function () {
+			.then(function() {
 				parseAndAssertProperty(this.oStorage, this.sChangeKey1, "name", "change1called", "the callback was called and the value was changed", assert);
 				parseAndAssertProperty(this.oStorage, this.sChangeKey2, "name", "change2called", "the callback was called and the value was changed", assert);
 				parseAndAssertProperty(this.oStorage, this.sVariantKey1, "name", "variant1called", "the callback was called and the value was changed", assert);
@@ -50,11 +50,11 @@ sap.ui.define([
 			return ObjectStorageUtils.forEachObjectInStorage({
 				storage: this.oStorage,
 				reference: "sap.ui.fl.test"
-			}, function (mFlexObject) {
+			}, function(mFlexObject) {
 				mFlexObject.changeDefinition.name += "called";
 				this.oStorage[mFlexObject.key] = (JSON.stringify(mFlexObject.changeDefinition));
 			}.bind(this))
-			.then(function () {
+			.then(function() {
 				parseAndAssertProperty(this.oStorage, this.sChangeKey1, "name", "change1called", "the callback was called and the value was changed", assert);
 				parseAndAssertProperty(this.oStorage, this.sChangeKey2, "name", "change2called", "the callback was called and the value was changed", assert);
 				parseAndAssertProperty(this.oStorage, this.sVariantKey1, "name", "variant1", "the callback was not called", assert);
@@ -72,7 +72,7 @@ sap.ui.define([
 				mFlexObject.changeDefinition.name += "called";
 				this.oStorage[mFlexObject.key] = (JSON.stringify(mFlexObject.changeDefinition));
 			}.bind(this))
-			.then(function () {
+			.then(function() {
 				parseAndAssertProperty(this.oStorage, this.sChangeKey1, "name", "change1called", "the callback was called and the value was changed", assert);
 				parseAndAssertProperty(this.oStorage, this.sChangeKey2, "name", "change2called", "the callback was called and the value was changed", assert);
 				parseAndAssertProperty(this.oStorage, this.sVariantKey1, "name", "variant1", "the callback was not called", assert);
@@ -91,7 +91,7 @@ sap.ui.define([
 				mFlexObject.changeDefinition.name += "called";
 				this.oStorage[mFlexObject.key] = (JSON.stringify(mFlexObject.changeDefinition));
 			}.bind(this))
-			.then(function () {
+			.then(function() {
 				parseAndAssertProperty(this.oStorage, this.sChangeKey1, "name", "change1", "the callback was not called", assert);
 				parseAndAssertProperty(this.oStorage, this.sChangeKey2, "name", "change2", "the callback was not called", assert);
 				parseAndAssertProperty(this.oStorage, this.sVariantKey1, "name", "variant1called", "the callback was called and the value was changed", assert);
@@ -102,7 +102,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

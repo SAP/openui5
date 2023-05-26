@@ -20,7 +20,7 @@ function(
 			aFlexObjects.push(oControlVariant.content);
 		}
 
-		oControlVariant.controlChanges.forEach(function (oControlChange) {
+		oControlVariant.controlChanges.forEach(function(oControlChange) {
 			aFlexObjects.push(oControlChange);
 		});
 
@@ -73,7 +73,7 @@ function(
 
 			var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
 			var aDisassembleResponses = StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
-			//Add un-disassembled parts of the original response into the first response of the result array
+			// Add un-disassembled parts of the original response into the first response of the result array
 			delete oResponse.changes;
 			delete oResponse.variantSection;
 			merge(aDisassembleResponses[0] || {}, oResponse);
@@ -90,7 +90,7 @@ function(
 			};
 
 			// loop over a copy in reverse order to handle deletions accordingly
-			aFlexObjects.slice().reverse().forEach(function (oFlexObject, nIndex, aArray) {
+			aFlexObjects.slice().reverse().forEach(function(oFlexObject, nIndex, aArray) {
 				var bMoved = false;
 				if (oFlexObject.fileType === "variant") {
 					oResponse.comp.variants.unshift(oFlexObject);

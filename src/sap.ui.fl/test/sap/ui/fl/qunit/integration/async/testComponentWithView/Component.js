@@ -15,7 +15,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 		},
 
-		createContent: function () {
+		createContent: function() {
 			this.oViewPromise = XMLView.create({
 				viewName: "sap.ui.fl.qunit.integration.async.testComponentWithView.View",
 				id: this.createId("rootView"),

@@ -1,4 +1,4 @@
-/*global QUnit */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/util/IFrame",
@@ -32,17 +32,17 @@ sap.ui.define([
 
 	function checkUrl(assert, oIFrame, sExpectedUrl, sDescription) {
 		return (oIFrame._oSetUrlPromise || Promise.resolve())
-			.then(function() {
-				assert.strictEqual(
-					oIFrame.getUrl(),
-					sExpectedUrl,
-					"then the url is properly updated" || sDescription
-				);
-			});
+		.then(function() {
+			assert.strictEqual(
+				oIFrame.getUrl(),
+				sExpectedUrl,
+				"then the url is properly updated" || sDescription
+			);
+		});
 	}
 
 	QUnit.module("Basic properties", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -51,11 +51,11 @@ sap.ui.define([
 			});
 			return this.oIFrame._oSetUrlPromise;
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oIFrame.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when trying to set the url to an invalid value", function(assert) {
 			// eslint-disable-next-line no-script-url
 			this.oIFrame.setUrl("javascript:someJs");
@@ -67,14 +67,14 @@ sap.ui.define([
 			var sNewUrl = sOpenUI5Url + "#someNavParameter";
 			this.oIFrame.setUrl(sNewUrl);
 			return checkUrl(assert, this.oIFrame, sNewUrl)
-				.then(function() {
-					assert.strictEqual(oSetUrlSpy.callCount, 2);
-					assert.strictEqual(
-						oSetUrlSpy.firstCall.args[1],
-						"",
-						"then the iframe is unloaded"
-					);
-				});
+			.then(function() {
+				assert.strictEqual(oSetUrlSpy.callCount, 2);
+				assert.strictEqual(
+					oSetUrlSpy.firstCall.args[1],
+					"",
+					"then the iframe is unloaded"
+				);
+			});
 		});
 	});
 
@@ -92,8 +92,8 @@ sap.ui.define([
 		afterEach: function() {
 			this.oIFrame.destroy();
 		}
-	}, function () {
-		QUnit.test("IFrame should not be rendered", function (assert) {
+	}, function() {
+		QUnit.test("IFrame should not be rendered", function(assert) {
 			var oFixtureDom = document.getElementById("qunit-fixture");
 			assert.strictEqual(!!oFixtureDom.querySelector("iframe"), false, "No iframe is being rendered");
 		});
@@ -113,8 +113,8 @@ sap.ui.define([
 		afterEach: function() {
 			this.oIFrame.destroy();
 		}
-	}, function () {
-		QUnit.test("Title is rendered", function (assert) {
+	}, function() {
+		QUnit.test("Title is rendered", function(assert) {
 			var oFixtureDom = document.getElementById("qunit-fixture");
 			var oIframe = oFixtureDom.querySelector("iframe");
 			var sFrameTitle = oIframe.getAttribute("title");
@@ -143,8 +143,8 @@ sap.ui.define([
 			this.oIFrame.destroy();
 			this.oModel.destroy();
 		}
-	}, function () {
-		QUnit.test("getFocusDomRef", function (assert) {
+	}, function() {
+		QUnit.test("getFocusDomRef", function(assert) {
 			var oFocusDomRef = this.oIFrame.getFocusDomRef();
 			var oFixtureDom = document.getElementById("qunit-fixture");
 			var oIframe = oFixtureDom.querySelector("iframe");
@@ -158,14 +158,13 @@ sap.ui.define([
 			this.oModel.setProperty("/flavor", "sapui5");
 
 			return checkUrl(assert, this.oIFrame, sSapUI5Url)
-				.then(function() {
-					Core.applyChanges();
-					assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
-					assert.strictEqual(oFocusDomRef.getAttribute("src"), sSapUI5Url, "iframe src has changed to the expected one");
-				}.bind(this));
+			.then(function() {
+				Core.applyChanges();
+				assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
+				assert.strictEqual(oFocusDomRef.getAttribute("src"), sSapUI5Url, "iframe src has changed to the expected one");
+			}.bind(this));
 		});
 	});
-
 
 	QUnit.module("UserInfo binding (UserInfo service available)", {
 		beforeEach: function() {
@@ -184,7 +183,7 @@ sap.ui.define([
 			this.oIFrame.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("URL should contain user information", function(assert) {
 			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url + "?domain=sap.com", "URL is the expected one");
 		});
@@ -207,7 +206,7 @@ sap.ui.define([
 			this.oIFrame.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("URL should contain user information", function(assert) {
 			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url + "?domain=", "URL is the expected one");
 		});
@@ -229,14 +228,14 @@ sap.ui.define([
 			this.oIFrame.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("URL should not contain user information", function(assert) {
 			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url + "?domain=", "URL is the expected one");
 		});
 	});
 
 	QUnit.module("URL binding in XML view", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			return XMLView.create({
@@ -246,8 +245,8 @@ sap.ui.define([
 					'<IFrame id="iframe3" url="' + sOpenUI5Url + '?domain={$user>/domain}&amp;{anyModel>/anyProperty}" />' +
 					'<IFrame id="iframe4" url="{= \'' + sOpenUI5Url + '?domain=\' + ${$user>/domain} }" />' +
 					'<IFrame id="iframe5" url="{= \'' + sOpenUI5Url + '?domain=\' + (${$user>/domain}.indexOf(\'sap.com\') !== -1 ? \'SAP\' : \'EXTERNAL\') }" />' +
-				'</mvc:View>'
-			}).then(function (oView) {
+				"</mvc:View>"
+			}).then(function(oView) {
 				this.myView = oView;
 				var iFrame = this.myView.byId("iframe1");
 				this.myView.placeAt("qunit-fixture");
@@ -255,11 +254,11 @@ sap.ui.define([
 				return iFrame.waitForInit();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.myView.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("Non bound URL should be kept as is", function(assert) {
 			var iFrame = this.myView.byId("iframe1");
 			assert.strictEqual(iFrame.getUrl(), sOpenUI5Url, "Displayed URL is correct");
@@ -328,12 +327,12 @@ sap.ui.define([
 
 	function stubGetUShellService(sEmail, sFullName, sFirstName, sLastName) {
 		sandbox.stub(Utils, "getUShellService").resolves({
-			getUser: function () {
+			getUser: function() {
 				return {
-					getEmail: function () { return sEmail; },
-					getFullName: function () { return sFullName; },
-					getFirstName: function () { return sFirstName; },
-					getLastName: function () { return sLastName; }
+					getEmail: function() { return sEmail; },
+					getFullName: function() { return sFullName; },
+					getFirstName: function() { return sFirstName; },
+					getLastName: function() { return sLastName; }
 				};
 			}
 		});

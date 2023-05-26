@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/Utils",
@@ -47,7 +47,7 @@ sap.ui.define([
 			this.oSandbox = sinon.createSandbox();
 		},
 
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oGetTextStub = this.oSandbox.stub(Utils, "getText").callsFake(function(sTextKey) {
 				return sTextKey;
 			});
@@ -191,7 +191,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

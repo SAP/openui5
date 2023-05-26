@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
@@ -18,14 +18,14 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when formatting data with js or properties type", function (assert) {
+		QUnit.test("when formatting data with js or properties type", function(assert) {
 			var sFileType = "js";
 			var oData = "a plain text";
 			DataUtils.formatData(oData, sFileType);
 			assert.equal(DataUtils.formatData(oData, sFileType), oData, "then nothing is changed");
 		});
 
-		QUnit.test("when formatting data of other files type", function (assert) {
+		QUnit.test("when formatting data of other files type", function(assert) {
 			var oData = {};
 			var oStubbedJsonParse = sandbox.stub(JSON, "parse");
 			var oStubbedJsonStringify = sandbox.stub(JSON, "stringify");
@@ -34,7 +34,7 @@ sap.ui.define([
 			assert.ok(oStubbedJsonStringify.calledOnce, "then JSON stringify is called");
 		});
 
-		QUnit.test("when formatting invalid data", function (assert) {
+		QUnit.test("when formatting invalid data", function(assert) {
 			var oData = "invalidjsonformat";
 			var oStubbedDisplayError = sandbox.stub(ErrorUtils, "displayError");
 			var oFormatData = DataUtils.formatData(oData);
@@ -58,7 +58,7 @@ sap.ui.define([
 			assert.equal(DataUtils.cleanLeadingAndTrailingSlashes(sNameSpace), "path1/path2", "then a correct namespace string is returned");
 		});
 
-		QUnit.test("when endsStringWith function called", function (assert) {
+		QUnit.test("when endsStringWith function called", function(assert) {
 			var sString = "this is a string";
 			assert.equal(DataUtils.endsStringWith(sString, "string"), true, "then a correct result is returned");
 		});

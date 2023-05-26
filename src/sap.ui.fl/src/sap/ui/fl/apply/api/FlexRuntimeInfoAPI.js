@@ -58,7 +58,7 @@ sap.ui.define([
 			}
 
 			function filterBySelectors(oAppComponent, aControls, oChange) {
-				var aIdsOfPassedControls = aControls.map(function (oControl) {
+				var aIdsOfPassedControls = aControls.map(function(oControl) {
 					return oControl.id || oControl.getId();
 				});
 				var oSelector = oChange.getSelector();
@@ -83,11 +83,11 @@ sap.ui.define([
 
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 			return oFlexController.getComponentChanges({currentLayer: Layer.USER, includeCtrlVariants: true})
-			.then(function (aChanges) {
+			.then(function(aChanges) {
 				return aChanges
-					.filter(filterBySelectors.bind(this, oAppComponent, mPropertyBag.selectors))
-					.filter(filterByChangeType.bind(this, mPropertyBag.changeTypes))
-					.some(ifValidFileType);
+				.filter(filterBySelectors.bind(this, oAppComponent, mPropertyBag.selectors))
+				.filter(filterByChangeType.bind(this, mPropertyBag.changeTypes))
+				.some(ifValidFileType);
 			}.bind(this));
 		},
 

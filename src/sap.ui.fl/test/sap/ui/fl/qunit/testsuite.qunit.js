@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log"
-], function (
+], function(
 	merge,
 	Log
 ) {
@@ -1265,7 +1265,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/registry/Settings"]
 				}
 			},
-			//OVP key user test scenarios
+			// OVP key user test scenarios
 			"apply/_internal/changes/descriptor/ovp/ChangeCard": {
 				group: "Apply Internal - OVP Change card",
 				coverage: {
@@ -1299,10 +1299,10 @@ sap.ui.define([
 				case 200:
 				case 304:
 					var aLibraries = JSON.parse(this.responseText).libraries;
-					bCompAvailable = aLibraries.some(function (mLibrary) {
+					bCompAvailable = aLibraries.some(function(mLibrary) {
 						return mLibrary.name === "sap.ui.comp";
 					});
-					bMdcAvailable = aLibraries.some(function (mLibrary) {
+					bMdcAvailable = aLibraries.some(function(mLibrary) {
 						return mLibrary.name === "sap.ui.mdc";
 					});
 					break;

@@ -1,4 +1,4 @@
-/*global QUnit */
+/* global QUnit */
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
@@ -105,7 +105,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[13].getId(), sReference + "---mainView--" + sView + "--button7", "view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[14].getId(), sReference + "---mainView--" + sView + "--button8", "view content is in correct order"); // Main
 
-			var aTableItems = oView.byId(sView).byId('fragmentWithExtensionPoint3--customTable').getItems();
+			var aTableItems = oView.byId(sView).byId("fragmentWithExtensionPoint3--customTable").getItems();
 			var aTableCells = aTableItems[0].getCells();
 			assert.strictEqual(aTableCells.length, 1, "ExtensionPoint default content added to" + sView + " view into aggregation binding template");
 			var sTemplatePrefix = sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--";
@@ -128,8 +128,8 @@ sap.ui.define([
 		var iPoll = setInterval(function() {
 			var aPanelContent1 = oView.byId("sync").byId("Panel").getContent();
 			var aPanelContent2 = oView.byId("async").byId("Panel").getContent();
-			var aTableCells1 = oView.byId("sync").byId('fragmentWithExtensionPoint3--customTable').getItems()[0].getCells();
-			var aTableCells2 = oView.byId("async").byId('fragmentWithExtensionPoint3--customTable').getItems()[0].getCells();
+			var aTableCells1 = oView.byId("sync").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells();
+			var aTableCells2 = oView.byId("async").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells();
 			if (
 				aPanelContent1.length === 15
 				&& aPanelContent2.length === 15
@@ -143,30 +143,30 @@ sap.ui.define([
 	}
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync with 'flexExtensionPointEnabled: false'", {
-		before: function () {
+		before: function() {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
 			return createComponentAndContainer(SYNC);
 		},
 		after: destroyComponentAndContainer.bind(null, SYNC)
-	}, function () {
+	}, function() {
 		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
 			baseCheck(SYNC, assert);
 		});
 	});
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created async with 'flexExtensionPointEnabled: false'", {
-		before: function () {
+		before: function() {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
 			return createComponentAndContainer(ASYNC);
 		},
 		after: destroyComponentAndContainer.bind(null, ASYNC)
-	}, function () {
+	}, function() {
 		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
 			baseCheck(ASYNC, assert);
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

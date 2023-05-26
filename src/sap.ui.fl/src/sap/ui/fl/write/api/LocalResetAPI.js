@@ -39,12 +39,12 @@ sap.ui.define([
 		};
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 		return oChangePersistence.getAllUIChanges(mPropertyBag)
-			.filter(function(oChange) {
-				return (
-					oChange.getState() !== States.LifecycleState.DELETED
+		.filter(function(oChange) {
+			return (
+				oChange.getState() !== States.LifecycleState.DELETED
 					&& oChange.getVariantReference() === (sCurrentVariant || undefined)
-				);
-			});
+			);
+		});
 	}
 
 	function getNestedChangesForControlCheck(oTargetControl) {
@@ -68,30 +68,30 @@ sap.ui.define([
 
 		function checkChange(oChange) {
 			return oChange.getDependentSelectorList()
-				.map(function (sSelector) {
-					return JsControlTreeModifier.bySelector(sSelector, oComponent);
-				})
-				.filter(Boolean)
-				.some(function (oDependent) {
-					return isPartOfTargetControlTree(oDependent);
-				});
+			.map(function(sSelector) {
+				return JsControlTreeModifier.bySelector(sSelector, oComponent);
+			})
+			.filter(Boolean)
+			.some(function(oDependent) {
+				return isPartOfTargetControlTree(oDependent);
+			});
 		}
 
 		return checkChange;
 	}
 
-	LocalResetAPI.resetChanges = function (aChanges, oAppComponent) {
+	LocalResetAPI.resetChanges = function(aChanges, oAppComponent) {
 		// Reset in reverse order, make sure not to mutate the original order as it is used to restore
 		var aReverseChanges = aChanges.slice().reverse();
 
-		var aRevertQueue = aReverseChanges.map(function (oChange) {
+		var aRevertQueue = aReverseChanges.map(function(oChange) {
 			var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-			return function () {
+			return function() {
 				return PersistenceWriteAPI.remove({
 					change: oChange,
 					selector: oControl
 				})
-				.then(function () {
+				.then(function() {
 					oChange.setQueuedForRevert();
 					return ChangesWriteAPI.revert({
 						change: oChange,
@@ -103,9 +103,9 @@ sap.ui.define([
 		return Utils.execPromiseQueueSequentially(aRevertQueue);
 	};
 
-	LocalResetAPI.restoreChanges = function (aChanges, oAppComponent) {
-		var aApplyQueue = aChanges.map(function (oChange) {
-			return function () {
+	LocalResetAPI.restoreChanges = function(aChanges, oAppComponent) {
+		var aApplyQueue = aChanges.map(function(oChange) {
+			return function() {
 				oChange.restorePreviousState();
 				var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 				PersistenceWriteAPI.add({

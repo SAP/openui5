@@ -19,11 +19,10 @@ sap.ui.define([
 	];
 
 	var oConnectorImplementation = merge({}, FileListBaseConnector, {
-		getFileList: function () {
+		getFileList: function() {
 			return Promise.resolve(aFilePaths);
 		}
 	});
-
 
 	QUnit.module("Given FileListBaseConnector without implementation", {
 		afterEach: function() {
@@ -53,7 +52,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

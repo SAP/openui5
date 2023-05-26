@@ -66,9 +66,9 @@ sap.ui.define([
 	QUnit.module("Given a CAP system is identified", {
 		before: function() {
 			sandbox.stub(UriParameters.prototype, "get")
-				.callThrough()
-				.withArgs("sap-ui-fl-xx-capScenario")
-				.returns("true");
+			.callThrough()
+			.withArgs("sap-ui-fl-xx-capScenario")
+			.returns("true");
 			// Determine scenario
 			FieldExtensibility.onControlSelected(new ManagedObject());
 		},
@@ -93,7 +93,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -52,10 +52,10 @@ sap.ui.define([
 	function addRegistrationPromise(sKey, oPromise) {
 		mRegistrationPromises[sKey] = oPromise;
 		oPromise
-			.catch(function() {})
-			.then(function() {
-				delete mRegistrationPromises[sKey];
-			});
+		.catch(function() {})
+		.then(function() {
+			delete mRegistrationPromises[sKey];
+		});
 	}
 
 	function registerFlexChangeHandlers(oFlChangeHandlers) {
@@ -88,7 +88,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Returns an empty promise when all changeHandlers from all libraries are registered.
 		 */
-		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs: function () {
+		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs: function() {
 			var oAlreadyLoadedLibraries = Core.getLoadedLibraries();
 			Core.attachLibraryChanged(handleLibraryRegistrationAfterFlexLibraryIsLoaded);
 			var aPromises = [];

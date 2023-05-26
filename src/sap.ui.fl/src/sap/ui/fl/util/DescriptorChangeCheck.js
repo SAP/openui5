@@ -13,7 +13,7 @@ sap.ui.define([
 
 	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations) {
 		if (Array.isArray(oEntityPropertyChange)) {
-			oEntityPropertyChange.forEach(function (change) {
+			oEntityPropertyChange.forEach(function(change) {
 				formatEntityCheck(change, aSupportedProperties, aSupportedOperations);
 			});
 		} else {
@@ -88,7 +88,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations) {
-		var id = Object.keys(oChange).filter(function (key) {
+		var id = Object.keys(oChange).filter(function(key) {
 			return key.endsWith("Id");
 		}).shift();
 		if (!oChange[id]) {

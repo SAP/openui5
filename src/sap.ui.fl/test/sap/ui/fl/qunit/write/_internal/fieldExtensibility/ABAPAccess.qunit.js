@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/Log",
@@ -168,9 +168,9 @@ sap.ui.define([
 			var done = assert.async();
 
 			var oOpenNewWindowStub = oSandbox.stub(window, "open")
-				.onFirstCall()
-				.returns()
-				.callThrough();
+			.onFirstCall()
+			.returns()
+			.callThrough();
 
 			var oExpectedParams = {
 				target: {
@@ -274,7 +274,7 @@ sap.ui.define([
 			this.oServer.restore();
 			oSandbox.restore();
 		},
-		after: function () {
+		after: function() {
 			this.oView.destroy();
 		}
 	}, function() {
@@ -304,9 +304,9 @@ sap.ui.define([
 
 			var oControl = this.oView.byId("EntityType01.Prop2");
 			var oOpenNewWindowStub = oSandbox.stub(window, "open")
-				.onFirstCall()
-				.returns()
-				.callThrough();
+			.onFirstCall()
+			.returns()
+			.callThrough();
 
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
@@ -377,7 +377,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

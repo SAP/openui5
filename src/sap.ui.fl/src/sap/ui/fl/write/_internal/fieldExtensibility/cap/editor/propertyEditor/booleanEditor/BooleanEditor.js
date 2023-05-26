@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor"
-], function (
+], function(
 	BasePropertyEditor
 ) {
 	"use strict";

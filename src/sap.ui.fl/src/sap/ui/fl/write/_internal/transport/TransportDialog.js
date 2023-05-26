@@ -93,7 +93,6 @@ sap.ui.define([
 		}
 	});
 
-
 	/**
 	 * Initializes the control.
 	 *
@@ -247,7 +246,7 @@ sap.ui.define([
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_TRANSPORT_TT"),
 			width: "100%",
 			selectionChange: function() {
-				//if package field is visible but has no value, the OK button is disable
+				// if package field is visible but has no value, the OK button is disable
 				if (that._oPackageListItem.getVisible() && !that._oPackage.getValue()) {
 					return;
 				}
@@ -373,7 +372,7 @@ sap.ui.define([
 		var oLock;
 		var aTransports;
 
-		//get the transports into an array.
+		// get the transports into an array.
 		oLock = this._hasLock(oTransports.transports);
 
 		if (oLock) {
@@ -382,16 +381,16 @@ sap.ui.define([
 			aTransports = oTransports.transports;
 		}
 
-		//set the transports.
+		// set the transports.
 		this.setTransports(aTransports);
 
-		//pre-select one, if necessary.
+		// pre-select one, if necessary.
 		if (aTransports && aTransports.length === 1) {
 			this._oTransport.setValue(aTransports[0].description, true);
 			this.getButtons()[1].setEnabled(true);
 		}
 
-		//clear the transport combo-box, if necessary.
+		// clear the transport combo-box, if necessary.
 		if (!aTransports || aTransports.length === 0) {
 			this._oTransport.setSelectedKey(null);
 			this._oTransport.setValueState(ValueState.None);
@@ -432,7 +431,7 @@ sap.ui.define([
 		return null;
 	};
 
-	TransportDialog.prototype.setLocalObjectVisible = function (bLocalObjectVisible) {
+	TransportDialog.prototype.setLocalObjectVisible = function(bLocalObjectVisible) {
 		this._oLocalObjectButton.setVisible(bLocalObjectVisible);
 		this.setProperty("localObjectVisible", bLocalObjectVisible);
 	};
@@ -460,7 +459,7 @@ sap.ui.define([
 			// correct the title.
 			this.setTitle(this._oResources.getText("TRANSPORT_DIALOG_TITLE_SIMPLE"));
 
-			//disable local object button, as package has been set from outside and therefore should not be changed.
+			// disable local object button, as package has been set from outside and therefore should not be changed.
 			this.getButtons()[0].setVisible(false);
 		}
 
@@ -531,18 +530,18 @@ sap.ui.define([
 	 * @public
 	 */
 	TransportDialog.prototype.setHidePackage = function(bHide) {
-		//set the property itself.
+		// set the property itself.
 		this.setProperty("hidePackage", bHide);
 
-		//toggle package visibility.
+		// toggle package visibility.
 		this._oPackageListItem.setVisible(!bHide);
 
 		if (bHide) {
-			//set the local object button to enabled,
-			//as the end-user might want to "just" save the object without selecting a transport.
+			// set the local object button to enabled,
+			// as the end-user might want to "just" save the object without selecting a transport.
 			this.getButtons()[0].setEnabled(bHide);
 
-			//correct the title.
+			// correct the title.
 			this.setTitle(this._oResources.getText("TRANSPORT_DIALOG_TITLE_SIMPLE"));
 		}
 

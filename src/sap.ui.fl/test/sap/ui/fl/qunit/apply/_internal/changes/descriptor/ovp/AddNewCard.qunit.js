@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ovp/AddNewCard",
@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oManifest = {
 				"sap.ovp": {
 					cards: {
@@ -24,11 +24,11 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling '_applyChange' with a change to add new key user card", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change to add new key user card", function(assert) {
 			var oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ovp_addNewCard"
@@ -46,10 +46,10 @@ sap.ui.define([
 				}
 			});
 			var oNewManifest = AddNewCard.applyChange(this.oManifest, oChange);
-			assert.strictEqual(oNewManifest["sap.ovp"]["cards"]["customercard"]["model"], "modelX", "the manifest is updated correctly with new card.");
+			assert.strictEqual(oNewManifest["sap.ovp"].cards.customercard.model, "modelX", "the manifest is updated correctly with new card.");
 		});
 
-		QUnit.test("when calling '_applyChange' with a change to add no card", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change to add no card", function(assert) {
 			var oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ovp_addNewCard"
@@ -62,7 +62,7 @@ sap.ui.define([
 			"throws error");
 		});
 
-		QUnit.test("when calling '_applyChange' with a change to add new empty card", function (assert) {
+		QUnit.test("when calling '_applyChange' with a change to add new empty card", function(assert) {
 			var oChange = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_ovp_addNewCard"

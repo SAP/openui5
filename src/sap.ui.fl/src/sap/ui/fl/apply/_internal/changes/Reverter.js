@@ -75,7 +75,7 @@ sap.ui.define([
 			}
 			return undefined;
 		})
-		.then(function () {
+		.then(function() {
 			oChange.markRevertFinished();
 			return mControl.control;
 		})

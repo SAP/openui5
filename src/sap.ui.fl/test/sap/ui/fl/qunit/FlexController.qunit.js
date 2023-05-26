@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
@@ -126,17 +126,17 @@ sap.ui.define([
 		QUnit.test("when saveAll is called with skipping the cache", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, true)
-				.then(function() {
-					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true), "the app component, the layer and the flag were passed");
-				});
+			.then(function() {
+				assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true), "the app component, the layer and the flag were passed");
+			});
 		});
 
 		QUnit.test("when saveAll is called with bCondenseAnyLayer", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, false, false, Layer.VENDOR, false, true)
-				.then(function() {
-					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, false, undefined, undefined, undefined, true, Layer.VENDOR), "the app component and the flag were passed");
-				});
+			.then(function() {
+				assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, false, undefined, undefined, undefined, true, Layer.VENDOR), "the app component and the flag were passed");
+			});
 		});
 
 		QUnit.test("when saveAll is called with a layer and bRemoveOtherLayerChanges", function(assert) {
@@ -152,20 +152,20 @@ sap.ui.define([
 			var oRemoveStub = sandbox.stub(this.oFlexController._oChangePersistence, "removeDirtyChanges").resolves([]);
 			var oUrlHandlerStub = sandbox.stub(URLHandler, "update");
 			return this.oFlexController.saveAll(oComp, true, false, Layer.CUSTOMER, true)
-				.then(function() {
-					var aLayersToReset = oRemoveStub.firstCall.args[0];
-					assert.ok(aLayersToReset.includes(Layer.USER), "then dirty changes on higher layers are removed");
-					assert.ok(aLayersToReset.includes(Layer.VENDOR), "then dirty changes on lower layers are removed");
-					assert.ok(oUrlHandlerStub.notCalled, "then the page is not reloaded");
-				});
+			.then(function() {
+				var aLayersToReset = oRemoveStub.firstCall.args[0];
+				assert.ok(aLayersToReset.includes(Layer.USER), "then dirty changes on higher layers are removed");
+				assert.ok(aLayersToReset.includes(Layer.VENDOR), "then dirty changes on lower layers are removed");
+				assert.ok(oUrlHandlerStub.notCalled, "then the page is not reloaded");
+			});
 		});
 
 		QUnit.test("when saveAll is called without versioning", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, undefined, false)
-				.then(function() {
-					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, undefined, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
-				});
+			.then(function() {
+				assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, undefined, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
+			});
 		});
 
 		QUnit.test("when saveAll is called for a draft without filenames", function(assert) {
@@ -176,9 +176,9 @@ sap.ui.define([
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, undefined, true)
-				.then(function() {
-					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, Version.Number.Draft, []), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
-				});
+			.then(function() {
+				assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, Version.Number.Draft, []), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
+			});
 		});
 
 		QUnit.test("when saveAll is called for a draft with filenames", function(assert) {
@@ -203,9 +203,9 @@ sap.ui.define([
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, undefined, true)
-				.then(function() {
-					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, Version.Number.Draft, aFilenames), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
-				});
+			.then(function() {
+				assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, Version.Number.Draft, aFilenames), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
+			});
 		});
 
 		QUnit.test("when saveAll is called with skipping the cache and for draft", function(assert) {
@@ -215,9 +215,9 @@ sap.ui.define([
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, true, true)
-				.then(function() {
-					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, Version.Number.Original, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
-				});
+			.then(function() {
+				assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, Version.Number.Original, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
+			});
 		});
 
 		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, nParentVersion, nCallCount) {
@@ -275,9 +275,9 @@ sap.ui.define([
 			sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
 
 			return this.oFlexController.applyChange(oChange, oControl)
-				.catch(function() {
-					assert.ok(true, "then Promise was rejected");
-				});
+			.catch(function() {
+				assert.ok(true, "then Promise was rejected");
+			});
 		});
 
 		QUnit.test("addChange shall add a change", function(assert) {
@@ -300,17 +300,17 @@ sap.ui.define([
 			});
 
 			return this.oFlexController.addChange({}, oControl)
-				.then(function(oChange) {
-					assert.ok(oChange);
-					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
-					var aDirtyChanges = oChangePersistence.getDirtyChanges();
+			.then(function(oChange) {
+				assert.ok(oChange);
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
+				var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
-					assert.strictEqual(aDirtyChanges.length, 1);
-					assert.strictEqual(aDirtyChanges[0].getSelector().id, "Id1");
-					assert.strictEqual(aDirtyChanges[0].getNamespace(), "apps/testScenarioComponent/changes/");
-					assert.strictEqual(aDirtyChanges[0].getFlexObjectMetadata().reference, "testScenarioComponent");
-					oControl.destroy();
-				}.bind(this));
+				assert.strictEqual(aDirtyChanges.length, 1);
+				assert.strictEqual(aDirtyChanges[0].getSelector().id, "Id1");
+				assert.strictEqual(aDirtyChanges[0].getNamespace(), "apps/testScenarioComponent/changes/");
+				assert.strictEqual(aDirtyChanges[0].getFlexObjectMetadata().reference, "testScenarioComponent");
+				oControl.destroy();
+			}.bind(this));
 		});
 
 		QUnit.test("addPreparedChange shall add a change to flex persistence", function(assert) {
@@ -353,17 +353,17 @@ sap.ui.define([
 			});
 			var oRevertMultipleChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp, sSelectorString, sChangeTypeString)
-				.then(function() {
-					assert.ok(oRevertMultipleChangesStub.calledOnce, "the revertMultipleChanges is called once");
-					assert.deepEqual(oRevertMultipleChangesStub.args[0][0], aDeletedChanges, "with the correct changes");
-					assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getId(), "change2", "with the correct reverse order");
-					assert.deepEqual(URLHandler.update.getCall(0).args[0], {
-						parameters: [],
-						updateURL: true,
-						updateHashEntry: true,
-						model: oVariantModel
-					}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
-				});
+			.then(function() {
+				assert.ok(oRevertMultipleChangesStub.calledOnce, "the revertMultipleChanges is called once");
+				assert.deepEqual(oRevertMultipleChangesStub.args[0][0], aDeletedChanges, "with the correct changes");
+				assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getId(), "change2", "with the correct reverse order");
+				assert.deepEqual(URLHandler.update.getCall(0).args[0], {
+					parameters: [],
+					updateURL: true,
+					updateHashEntry: true,
+					model: oVariantModel
+				}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
+			});
 		});
 
 		QUnit.test("resetChanges for whole component shall call ChangePersistance.resetChanges(), reset control variant URL parameters but do not revert changes", function(assert) {
@@ -388,15 +388,15 @@ sap.ui.define([
 			});
 			var oRevertMultipleChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp)
-				.then(function() {
-					assert.equal(oRevertMultipleChangesStub.callCount, 0, "the revertMultipleChanges is not called");
-					assert.deepEqual(URLHandler.update.getCall(0).args[0], {
-						parameters: [],
-						updateURL: true,
-						updateHashEntry: true,
-						model: oVariantModel
-					}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
-				});
+			.then(function() {
+				assert.equal(oRevertMultipleChangesStub.callCount, 0, "the revertMultipleChanges is not called");
+				assert.deepEqual(URLHandler.update.getCall(0).args[0], {
+					parameters: [],
+					updateURL: true,
+					updateHashEntry: true,
+					model: oVariantModel
+				}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
+			});
 		});
 
 		QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {
@@ -442,21 +442,21 @@ sap.ui.define([
 			});
 
 			return this.oFlexController.addChange({}, oControl)
-				.then(function(oChange) {
-					assert.ok(oChange);
+			.then(function(oChange) {
+				assert.ok(oChange);
 
-					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
-					var aDirtyChanges = oChangePersistence.getDirtyChanges();
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
+				var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
-					assert.strictEqual(aDirtyChanges.length, 1);
-					assert.strictEqual(aDirtyChanges[0].getSelector().id, "Id1");
-					assert.ok(aDirtyChanges[0].getSelector().idIsLocal);
-					assert.strictEqual(aDirtyChanges[0].getNamespace(), "apps/testScenarioComponent/changes/");
-					assert.strictEqual(aDirtyChanges[0].getFlexObjectMetadata().reference, "testScenarioComponent");
-					oControl.destroy();
-				}.bind(this));
+				assert.strictEqual(aDirtyChanges.length, 1);
+				assert.strictEqual(aDirtyChanges[0].getSelector().id, "Id1");
+				assert.ok(aDirtyChanges[0].getSelector().idIsLocal);
+				assert.strictEqual(aDirtyChanges[0].getNamespace(), "apps/testScenarioComponent/changes/");
+				assert.strictEqual(aDirtyChanges[0].getFlexObjectMetadata().reference, "testScenarioComponent");
+				oControl.destroy();
+			}.bind(this));
 		});
-		//TODO non local id
+		// TODO non local id
 
 		QUnit.test("createAndApplyChange shall remove the change from the persistence and rethrow the error, if applying the change raised an exception", function(assert) {
 			var oControl = new Control();
@@ -551,9 +551,9 @@ sap.ui.define([
 
 		QUnit.test("throws an error of a change should be created but no control was passed", function(assert) {
 			return this.oFlexController.createChangeWithControlSelector({}, undefined)
-				.catch(function() {
-					assert.ok(true, "then an exception is thrown.");
-				});
+			.catch(function() {
+				assert.ok(true, "then an exception is thrown.");
+			});
 		});
 
 		QUnit.test("creates a change for controls with a stable ID which doesn't have the app component's ID as a prefix", function(assert) {
@@ -574,11 +574,11 @@ sap.ui.define([
 			sandbox.spy(JsControlTreeModifier, "getSelector");
 
 			return this.oFlexController.createChangeWithControlSelector({}, oControl)
-				.then(function(oChange) {
-					assert.deepEqual(oChange.getSelector().idIsLocal, false, "the selector flags the ID as NOT local.");
-					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
-					oControl.destroy();
-				});
+			.then(function(oChange) {
+				assert.deepEqual(oChange.getSelector().idIsLocal, false, "the selector flags the ID as NOT local.");
+				assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
+				oControl.destroy();
+			});
 		});
 
 		QUnit.test("creates a change for controls with a stable ID which has the app component's ID as a prefix", function(assert) {
@@ -591,11 +591,11 @@ sap.ui.define([
 			sandbox.spy(JsControlTreeModifier, "getSelector");
 
 			return this.oFlexController.createChangeWithControlSelector({}, oControl)
-				.then(function(oChange) {
-					assert.deepEqual(oChange.getSelector().idIsLocal, true, "the selector flags the ID as local");
-					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
-					oControl.destroy();
-				});
+			.then(function(oChange) {
+				assert.deepEqual(oChange.getSelector().idIsLocal, true, "the selector flags the ID as local");
+				assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
+				oControl.destroy();
+			});
 		});
 
 		QUnit.test("creates a change for a map of a control with ID, control type and appComponent", function(assert) {
@@ -616,10 +616,10 @@ sap.ui.define([
 			});
 
 			return this.oFlexController.createChangeWithControlSelector({}, mControl)
-				.then(function(oChange) {
-					assert.deepEqual(oChange.getSelector().idIsLocal, false, "the selector flags the ID as NOT local.");
-					assert.deepEqual(oChange.getSelector().id, this.oControl.getId(), "the selector flags the ID as NOT local.");
-				}.bind(this));
+			.then(function(oChange) {
+				assert.deepEqual(oChange.getSelector().idIsLocal, false, "the selector flags the ID as NOT local.");
+				assert.deepEqual(oChange.getSelector().id, this.oControl.getId(), "the selector flags the ID as NOT local.");
+			}.bind(this));
 		});
 
 		QUnit.test("throws an error if a map of a control has no appComponent or no ID or no controlType", function(assert) {
@@ -634,17 +634,17 @@ sap.ui.define([
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves(oDummyChangeHandler);
 
 			return this.oFlexController.createChangeWithControlSelector({}, mControl1)
-				.catch(function() {
-					assert.ok(true, "then an exception is thrown");
-				})
-				.then(this.oFlexController.createChangeWithControlSelector.bind(this.oFlexController, {}, mControl2))
-				.catch(function() {
-					assert.ok(true, "then an exception is thrown");
-				})
-				.then(this.oFlexController.createChangeWithControlSelector.bind(this.oFlexController, {}, mControl3))
-				.catch(function() {
-					assert.ok(true, "then an exception is thrown");
-				});
+			.catch(function() {
+				assert.ok(true, "then an exception is thrown");
+			})
+			.then(this.oFlexController.createChangeWithControlSelector.bind(this.oFlexController, {}, mControl2))
+			.catch(function() {
+				assert.ok(true, "then an exception is thrown");
+			})
+			.then(this.oFlexController.createChangeWithControlSelector.bind(this.oFlexController, {}, mControl3))
+			.catch(function() {
+				assert.ok(true, "then an exception is thrown");
+			});
 		});
 
 		QUnit.test("creates a change for extension point", function(assert) {
@@ -671,10 +671,10 @@ sap.ui.define([
 			sandbox.spy(JsControlTreeModifier, "getSelector");
 
 			return this.oFlexController.createChangeWithExtensionPointSelector({}, mExtensionPointReference)
-				.then(function(oChange) {
-					assert.deepEqual(oChange.getSelector(), mExpectedSelector, "the selector is correctly set");
-					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
-				});
+			.then(function(oChange) {
+				assert.deepEqual(oChange.getSelector(), mExpectedSelector, "the selector is correctly set");
+				assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
+			});
 		});
 	});
 
@@ -774,8 +774,8 @@ sap.ui.define([
 		QUnit.test("when applyVariantChanges is called with 2 unapplied changes. One of them has a wrong selector", function(assert) {
 			this.oChangeWithWrongSelector = FlexObjectFactory.createFromFileContent(labelChangeContent5);
 			return this.oFlexController.applyVariantChanges([this.oChange, this.oChangeWithWrongSelector], this.oComponent).then(function() {
-				assert.equal(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 1, "then 1 change added to map");
-				assert.deepEqual(this.oFlexController._oChangePersistence._mChangesInitial.mControlsWithDependencies["abc123"], [this.oChange.getId()], "then the control dependencies were added to the initial changes map");
+				assert.equal(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges.abc123.length, 1, "then 1 change added to map");
+				assert.deepEqual(this.oFlexController._oChangePersistence._mChangesInitial.mControlsWithDependencies.abc123, [this.oChange.getId()], "then the control dependencies were added to the initial changes map");
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 1, "then one change is applied");
 				assert.equal(this.oAddRunTimeChangeSpy.callCount, 2, "then two changes were added to the map and dependencies were updated");
 			}.bind(this));
@@ -783,8 +783,8 @@ sap.ui.define([
 
 		QUnit.test("when applyVariantChanges is called with 2 unapplied changes", function(assert) {
 			return this.oFlexController.applyVariantChanges([this.oChange, this.oChange2], this.oComponent).then(function() {
-				assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 2, "then 2 changes added to map");
-				assert.deepEqual(this.oFlexController._oChangePersistence._mChangesInitial.mControlsWithDependencies["abc123"], [this.oChange.getId(), this.oChange2.getId()], "then the control dependencies were added to the initial changes map");
+				assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges.abc123.length, 2, "then 2 changes added to map");
+				assert.deepEqual(this.oFlexController._oChangePersistence._mChangesInitial.mControlsWithDependencies.abc123, [this.oChange.getId(), this.oChange2.getId()], "then the control dependencies were added to the initial changes map");
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 2, "then two changes are applied");
 				assert.equal(this.oAddRunTimeChangeSpy.callCount, 2, "both changes were added to the map and dependencies were updated");
 			}.bind(this));
@@ -792,8 +792,8 @@ sap.ui.define([
 
 		QUnit.test("when applyVariantChanges is called with 3 unapplied changes with two different controls as selector", function(assert) {
 			return this.oFlexController.applyVariantChanges([this.oChange, this.oChange2, this.oChange4], this.oComponent).then(function() {
-				assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 2, "then 2 changes of the first control added to map");
-				assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["foo"].length, 1, "then 1 change of the second control added to map");
+				assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges.abc123.length, 2, "then 2 changes of the first control added to map");
+				assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges.foo.length, 1, "then 1 change of the second control added to map");
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 3, "then 3 changes are applied");
 				assert.equal(this.oAddRunTimeChangeSpy.callCount, 3, "then three changes were added to the map and dependencies were updated");
 			}.bind(this));
@@ -885,15 +885,15 @@ sap.ui.define([
 			return vReturnValue;
 		}
 
-		//a few checks for the selector/instance handling should be sufficient
+		// a few checks for the selector/instance handling should be sufficient
 		[true, false].forEach(function(bAsInstance) {
 			var sPrefix = bAsInstance ? "as instance" : "as selector";
 			QUnit.test(sPrefix + " with no changes", function(assert) {
 				return this.oFlexController.waitForChangesToBeApplied([{selector: getControl(this.oComponent, this.oControl, bAsInstance)}])
-					.then(function(oReturn) {
-						assert.ok(true, "then the function resolves");
-						assert.equal(oReturn, undefined, "the return value is undefined");
-					});
+				.then(function(oReturn) {
+					assert.ok(true, "then the function resolves");
+					assert.equal(oReturn, undefined, "the return value is undefined");
+				});
 			});
 
 			QUnit.test(sPrefix + "with 3 async queued changes", function(assert) {
@@ -901,10 +901,10 @@ sap.ui.define([
 				this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 				return this.oFlexController.waitForChangesToBeApplied([{selector: getControl(this.oComponent, this.oControl, bAsInstance)}])
-					.then(function(oReturn) {
-						assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
-						assert.equal(oReturn, undefined, "the return value is undefined");
-					}.bind(this));
+				.then(function(oReturn) {
+					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
+					assert.equal(oReturn, undefined, "the return value is undefined");
+				}.bind(this));
 			});
 
 			QUnit.test(sPrefix + "together with another control, with 3 async queued changes and another independent control with a change", function(assert) {
@@ -930,23 +930,23 @@ sap.ui.define([
 			var oChangeHandlerApplyChangeRejectStub = sandbox.stub().throws(new Error());
 			this.oGetChangeHandlerStub.restore();
 			this.oGetChangeHandlerStub = sandbox.stub(ChangeUtils, "getChangeHandler")
-				.onCall(0).resolves({
-					applyChange: oChangeHandlerApplyChangeRejectStub
-				})
-				.onCall(1).resolves({
-					applyChange: this.oChangeHandlerApplyChangeStub
-				})
-				.onCall(2).resolves({
-					applyChange: this.oChangeHandlerApplyChangeStub
-				});
+			.onCall(0).resolves({
+				applyChange: oChangeHandlerApplyChangeRejectStub
+			})
+			.onCall(1).resolves({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			})
+			.onCall(2).resolves({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			});
 
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
-					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "addCustomData was called 2 times");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "addCustomData was called 2 times");
+			}.bind(this));
 		});
 
 		QUnit.test("twice with 3 async queued changes", function(assert) {
@@ -956,9 +956,9 @@ sap.ui.define([
 
 			this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}]);
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
+			}.bind(this));
 		});
 
 		QUnit.test("with one async queued change throwing an error", function(assert) {
@@ -974,10 +974,10 @@ sap.ui.define([
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
-					assert.ok(true, "then the function resolves");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
+				assert.ok(true, "then the function resolves");
+			}.bind(this));
 		});
 
 		QUnit.test("twice with one async queued change throwing an error", function(assert) {
@@ -994,11 +994,11 @@ sap.ui.define([
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 			this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}]);
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function(oReturn) {
-					assert.equal(oReturn, undefined, "the return value is undefined");
-					assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
-					assert.ok(true, "then the function resolves");
-				}.bind(this));
+			.then(function(oReturn) {
+				assert.equal(oReturn, undefined, "the return value is undefined");
+				assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
+				assert.ok(true, "then the function resolves");
+			}.bind(this));
 		});
 
 		QUnit.test("with 3 async queued changes with 1 change whose selector points to no control", function(assert) {
@@ -1008,11 +1008,11 @@ sap.ui.define([
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange4];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
-					assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
-					assert.notOk(oChangePromiseSpy4.called, "addChangeProcessingPromise was not called");
-				});
+			.then(function() {
+				assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
+				assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
+				assert.notOk(oChangePromiseSpy4.called, "addChangeProcessingPromise was not called");
+			});
 		});
 
 		QUnit.test("with 3 async queued changes dependend on each other with an unavailable control dependency", function(assert) {
@@ -1024,15 +1024,15 @@ sap.ui.define([
 			var oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {});
 			this.oGetChangeHandlerStub.restore();
 			this.oGetChangeHandlerStub = sandbox.stub(ChangeUtils, "getChangeHandler")
-				.onCall(0).resolves({
-					applyChange: oChangeHandlerApplyChangeStub
-				})
-				.onCall(1).resolves({
-					applyChange: this.oChangeHandlerApplyChangeStub
-				})
-				.onCall(2).resolves({
-					applyChange: this.oChangeHandlerApplyChangeStub
-				});
+			.onCall(0).resolves({
+				applyChange: oChangeHandlerApplyChangeStub
+			})
+			.onCall(1).resolves({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			})
+			.onCall(2).resolves({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			});
 
 			var mDependencies = {
 				a2: {
@@ -1059,12 +1059,12 @@ sap.ui.define([
 
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 1, "addCustomData was called once");
-					assert.ok(oChangePromiseSpy.called, "change was in applying state when waitForChangesToBeApplied was called");
-					assert.notOk(oChangePromiseSpy2.called, "change was filtered out");
-					assert.notOk(oChangePromiseSpy3.called, "change was filtered out");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 1, "addCustomData was called once");
+				assert.ok(oChangePromiseSpy.called, "change was in applying state when waitForChangesToBeApplied was called");
+				assert.notOk(oChangePromiseSpy2.called, "change was filtered out");
+				assert.notOk(oChangePromiseSpy3.called, "change was filtered out");
+			}.bind(this));
 		});
 
 		QUnit.test("with 4 async queued changes depending on one another with the last change whose selector points to no control", function(assert) {
@@ -1098,13 +1098,13 @@ sap.ui.define([
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 
 			this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
-					assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
-					assert.notOk(oChangePromiseSpy3.called, "addChangeProcessingPromise was not called");
-					assert.notOk(oChangePromiseSpy4.called, "addChangeProcessingPromise was not called");
-					done();
-				});
+			.then(function() {
+				assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
+				assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
+				assert.notOk(oChangePromiseSpy3.called, "addChangeProcessingPromise was not called");
+				assert.notOk(oChangePromiseSpy4.called, "addChangeProcessingPromise was not called");
+				done();
+			});
 		});
 
 		QUnit.test("with 4 async queued changes depending on one another and the last change already failed", function(assert) {
@@ -1133,9 +1133,9 @@ sap.ui.define([
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl3);
 
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 4, "addCustomData was called 4 times");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 4, "addCustomData was called 4 times");
+			}.bind(this));
 		});
 
 		QUnit.test("with 3 async queued changes depending on on another with the last change failing", function(assert) {
@@ -1165,24 +1165,24 @@ sap.ui.define([
 			}));
 			this.oGetChangeHandlerStub.restore();
 			this.oGetChangeHandlerStub = sandbox.stub(ChangeUtils, "getChangeHandler")
-				.onCall(0).resolves({
-					applyChange: oChangeHandlerApplyChangeRejectStub
-				})
-				.onCall(1).resolves({
-					applyChange: this.oChangeHandlerApplyChangeStub
-				})
-				.onCall(2).resolves({
-					applyChange: this.oChangeHandlerApplyChangeStub
-				});
+			.onCall(0).resolves({
+				applyChange: oChangeHandlerApplyChangeRejectStub
+			})
+			.onCall(1).resolves({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			})
+			.onCall(2).resolves({
+				applyChange: this.oChangeHandlerApplyChangeStub
+			});
 
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl3);
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
-					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "two changes were applied");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "two changes were applied");
+			}.bind(this));
 		});
 
 		QUnit.test("with 3 changes that will be reverted", function(assert) {
@@ -1197,10 +1197,10 @@ sap.ui.define([
 				flexController: this.oFlexController
 			});
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function(oReturn) {
-					assert.equal(oReturn, undefined, "the return value is undefined");
-					assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 3, "all three changes got reverted");
-				}.bind(this));
+			.then(function(oReturn) {
+				assert.equal(oReturn, undefined, "the return value is undefined");
+				assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 3, "all three changes got reverted");
+			}.bind(this));
 		});
 
 		QUnit.test("with 2 changes that are both queued for apply and revert", function(assert) {
@@ -1215,10 +1215,10 @@ sap.ui.define([
 			});
 
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function() {
-					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "two changes were applied");
-					assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 2, "all two changes got reverted");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "two changes were applied");
+				assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 2, "all two changes got reverted");
+			}.bind(this));
 		});
 
 		QUnit.test("with a variant switch going on", function(assert) {
@@ -1231,10 +1231,10 @@ sap.ui.define([
 			}));
 
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
-				.then(function(oReturn) {
-					assert.equal(oReturn, undefined, "the return value is undefined");
-					assert.ok(bCalled, "the function waited for the variant switch");
-				});
+			.then(function(oReturn) {
+				assert.equal(oReturn, undefined, "the return value is undefined");
+				assert.ok(bCalled, "the function waited for the variant switch");
+			});
 		});
 
 		QUnit.test("with a change type filter and 3 queued changes - 1", function(assert) {
@@ -1244,11 +1244,11 @@ sap.ui.define([
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl, changeTypes: ["labelChange"]}])
-				.then(function() {
-					assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
-					assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
-					assert.notOk(oChangePromiseSpy3.called, "addChangeProcessingPromise was not called");
-				});
+			.then(function() {
+				assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
+				assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
+				assert.notOk(oChangePromiseSpy3.called, "addChangeProcessingPromise was not called");
+			});
 		});
 
 		QUnit.test("with a change type filter and 3 queued changes - 2", function(assert) {
@@ -1258,11 +1258,11 @@ sap.ui.define([
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl, changeTypes: ["myFancyChangeType"]}])
-				.then(function() {
-					assert.notOk(oChangePromiseSpy.called, "addChangeProcessingPromise was not called");
-					assert.notOk(oChangePromiseSpy2.called, "addChangeProcessingPromise was not called");
-					assert.ok(oChangePromiseSpy3.called, "addChangeProcessingPromise was called");
-				});
+			.then(function() {
+				assert.notOk(oChangePromiseSpy.called, "addChangeProcessingPromise was not called");
+				assert.notOk(oChangePromiseSpy2.called, "addChangeProcessingPromise was not called");
+				assert.ok(oChangePromiseSpy3.called, "addChangeProcessingPromise was called");
+			});
 		});
 	});
 

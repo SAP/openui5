@@ -39,7 +39,7 @@ sap.ui.define([
 
 	var FlexPerformanceTestUtil = {};
 
-	function _areAllChangesApplied () {
+	function _areAllChangesApplied() {
 		var oInstanceCache = ChangePersistenceFactory._instanceCache;
 		var sComponent = Object.keys(oInstanceCache)[0];
 		var aChanges = oInstanceCache[sComponent]._mChanges.aChanges;
@@ -48,7 +48,7 @@ sap.ui.define([
 		});
 	}
 
-	function _writeData (sControlId) {
+	function _writeData(sControlId) {
 		sControlId = sControlId || sIdForStatus;
 		var oLayout = oCore.byId("idMain1--Layout");
 		var sDurationText = sMassiveLabel + " = " + window.wpp.customMetrics[sMassiveLabel] + " ms";
@@ -79,7 +79,7 @@ sap.ui.define([
 			_writeData();
 			oCore.applyChanges();
 		})
-		.catch(function (vError) {
+		.catch(function(vError) {
 			Log.error(vError);
 		});
 	}
@@ -201,32 +201,32 @@ sap.ui.define([
 		}));
 	}
 
-	FlexPerformanceTestUtil.stopMeasurement = function (sMeasure) {
+	FlexPerformanceTestUtil.stopMeasurement = function(sMeasure) {
 		sMeasure = sMeasure || sMassiveLabel;
 		window.performance.measure(sMeasure, sMeasure + ".start");
 		window.wpp.customMetrics[sMeasure] = window.performance.getEntriesByName(sMeasure)[0].duration;
 	};
 
-	FlexPerformanceTestUtil.startMeasurement = function (sMeasure) {
+	FlexPerformanceTestUtil.startMeasurement = function(sMeasure) {
 		sMeasure = sMeasure || sMassiveLabel;
 		window.performance.mark(sMeasure + ".start");
 	};
 
-	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function (oComponent) {
+	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function(oComponent) {
 		// Monkey patching of FlexController.processXmlView function
 		var oFlexController = FlexControllerFactory.createForControl(oComponent);
 		var fnOriginalProcessXmlView = oFlexController.processXmlView.bind(oFlexController);
-		oFlexController.processXmlView = function () {
+		oFlexController.processXmlView = function() {
 			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
 			return fnOriginalProcessXmlView.apply(this, arguments)
-				.then(function (vReturn) {
-					FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
-					return vReturn;
-				});
+			.then(function(vReturn) {
+				FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
+				return vReturn;
+			});
 		};
 	};
 
-	FlexPerformanceTestUtil.waitForChangesAndWriteData = function (oControlToBeChanged) {
+	FlexPerformanceTestUtil.waitForChangesAndWriteData = function(oControlToBeChanged) {
 		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged}).then(function() {
 			_writeData();
 		});
@@ -236,7 +236,7 @@ sap.ui.define([
 		_writeData();
 	};
 
-	FlexPerformanceTestUtil.runPerformanceTests = function () {
+	FlexPerformanceTestUtil.runPerformanceTests = function() {
 		switch (FlUtils.getUrlParameter("sap-ui-fl-test-case")) {
 			case "diverse":
 				return _startDiverseScenario();
@@ -250,7 +250,7 @@ sap.ui.define([
 		}
 	};
 
-	FlexPerformanceTestUtil.updateVariant = function (oComponent) {
+	FlexPerformanceTestUtil.updateVariant = function(oComponent) {
 		var oVariantModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		return oVariantModel.updateCurrentVariant({
 			variantManagementReference: "idMain1--variantManagementOrdersTable",

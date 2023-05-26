@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
@@ -61,7 +61,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test('When providing change data via specific change info, Then', function(assert) {
+		QUnit.test("When providing change data via specific change info, Then", function(assert) {
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
 
 			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
@@ -85,27 +85,27 @@ sap.ui.define([
 			};
 
 			return this.oChangeHandler.completeChangeContent(this.oChange, mExpectedChangeContentWithBinding)
-				.catch(function(oError) {
-					assert.equal(oError.message, this.sBindingError, "the correct error is thrown");
-				});
+			.catch(function(oError) {
+				assert.equal(oError.message, this.sBindingError, "the correct error is thrown");
+			});
 		});
 
-		QUnit.test('When applying the property change on a js control tree and reverting it afterwards, Then', function(assert) {
+		QUnit.test("When applying the property change on a js control tree and reverting it afterwards, Then", function(assert) {
 			return this.oChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier})
-				.then(function() {
-					assert.equal(this.oButton.getText(), this.NEW_VALUE, "property text has changed as expected");
-					this.oChangeHandler.revertChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
-					assert.equal(this.oButton.getText(), this.OLD_VALUE, "property text has original value");
+			.then(function() {
+				assert.equal(this.oButton.getText(), this.NEW_VALUE, "property text has changed as expected");
+				this.oChangeHandler.revertChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
+				assert.equal(this.oButton.getText(), this.OLD_VALUE, "property text has original value");
 				 }.bind(this));
 		});
 
-		QUnit.test('When applying the property change on a xml control tree and reverting it afterwards, Then', function(assert) {
+		QUnit.test("When applying the property change on a xml control tree and reverting it afterwards, Then", function(assert) {
 			return this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier})
-				.then(function() {
-					assert.equal(this.oXmlButton.getAttribute("text"), this.NEW_VALUE, "property text has changed as expected");
-					this.oChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-					assert.equal(this.oXmlButton.getAttribute("text"), this.OLD_VALUE, "property text has original value");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oXmlButton.getAttribute("text"), this.NEW_VALUE, "property text has changed as expected");
+				this.oChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
+				assert.equal(this.oXmlButton.getAttribute("text"), this.OLD_VALUE, "property text has original value");
+			}.bind(this));
 		});
 
 		QUnit.test("When reverting an unapplied change", function(assert) {
@@ -120,13 +120,13 @@ sap.ui.define([
 			sandbox.stub(JsControlTreeModifier, "setProperty").throws(Error("testError"));
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier})
-				.catch(function(oError) {
-					assert.equal(oError.message, "Applying property changes failed: Error: testError", "applyChange throws the correct error");
-				});
+			.catch(function(oError) {
+				assert.equal(oError.message, "Applying property changes failed: Error: testError", "applyChange throws the correct error");
+			});
 		});
 
 		// TODO: enable again when apps have adapted
-		QUnit.skip('When applying a property change which sets a binding on a js control tree, Then', function(assert) {
+		QUnit.skip("When applying a property change which sets a binding on a js control tree, Then", function(assert) {
 			this.NEW_VALUE = "{i18n>textKey}";
 
 			this.mExpectedChangeContent = {
@@ -144,13 +144,13 @@ sap.ui.define([
 			this.oChange = new UIChange(this.mSpecificChangeData);
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier})
-				.catch(function(oError) {
-					assert.equal(oError.message, this.sBindingError, "applyChange throws the correct error");
-					assert.notOk(this.oButton.getBindingInfo("text"), "the bindingInfo was not set");
-				}.bind(this));
+			.catch(function(oError) {
+				assert.equal(oError.message, this.sBindingError, "applyChange throws the correct error");
+				assert.notOk(this.oButton.getBindingInfo("text"), "the bindingInfo was not set");
+			}.bind(this));
 		});
 
-		QUnit.test('When applying and reverting a property change which changes a binding on a js control tree, Then', function(assert) {
+		QUnit.test("When applying and reverting a property change which changes a binding on a js control tree, Then", function(assert) {
 			this.OLD_VALUE = "{path:'namedModel>/textKey'}";
 			this.oButton = new Button({text: this.OLD_VALUE});
 
@@ -174,19 +174,19 @@ sap.ui.define([
 			this.oChange = new UIChange(this.mSpecificChangeData);
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier})
-				.then(function() {
-					assert.equal(this.oButton.getBindingInfo("text"), undefined, "property text has no binding");
-					assert.equal(this.oButton.getText(), this.NEW_VALUE, "property text has changed as expected");
-					this.oChangeHandler.revertChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
-					assert.equal(this.oButton.getText(), this.OLD_BINDING_VALUE, "property text has changed back");
-					var oBindingInfo = this.oButton.getBindingInfo("text");
-					assert.equal(oBindingInfo.parts[0].path, "/textKey", "property value binding path has changed as expected");
-					assert.equal(oBindingInfo.parts[0].model, "namedModel", "property value binding model has changed as expected");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oButton.getBindingInfo("text"), undefined, "property text has no binding");
+				assert.equal(this.oButton.getText(), this.NEW_VALUE, "property text has changed as expected");
+				this.oChangeHandler.revertChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
+				assert.equal(this.oButton.getText(), this.OLD_BINDING_VALUE, "property text has changed back");
+				var oBindingInfo = this.oButton.getBindingInfo("text");
+				assert.equal(oBindingInfo.parts[0].path, "/textKey", "property value binding path has changed as expected");
+				assert.equal(oBindingInfo.parts[0].model, "namedModel", "property value binding model has changed as expected");
+			}.bind(this));
 		});
 
 		// TODO: enable again when apps have adapted
-		QUnit.skip('When applying a property change which sets a binding on a xml control tree, Then', function(assert) {
+		QUnit.skip("When applying a property change which sets a binding on a xml control tree, Then", function(assert) {
 			this.NEW_VALUE = "{i18n>textKey}";
 
 			this.mExpectedChangeContent = {
@@ -204,13 +204,13 @@ sap.ui.define([
 			this.oChange = new UIChange(this.mSpecificChangeData);
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier})
-				.catch(function(oError) {
-					assert.equal(oError.message, this.sBindingError, "applyChange throws the correct error");
-					assert.equal(this.oXmlButton.getAttribute("text"), this.OLD_VALUE, "the text property has not changed");
-				}.bind(this));
+			.catch(function(oError) {
+				assert.equal(oError.message, this.sBindingError, "applyChange throws the correct error");
+				assert.equal(this.oXmlButton.getAttribute("text"), this.OLD_VALUE, "the text property has not changed");
+			}.bind(this));
 		});
 
-		QUnit.test('When applying and reverting a property change which changes a binding on a xml control tree, Then', function(assert) {
+		QUnit.test("When applying and reverting a property change which changes a binding on a xml control tree, Then", function(assert) {
 			this.OLD_VALUE = "{i18n>textKey}";
 			this.oXmlDocument = this.oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
 			this.oXmlButton = this.oXmlDocument.childNodes[0];
@@ -230,12 +230,12 @@ sap.ui.define([
 			this.oChange = new UIChange(this.mSpecificChangeData);
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier})
-				.then(function() {
-					assert.equal(this.oXmlButton.getAttribute("text"), this.NEW_VALUE, "property value has original value");
-					assert.throws(function() {
-						this.oChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-					}, Error, "Revert change throws an error, because this is not supported yet.");
-				}.bind(this));
+			.then(function() {
+				assert.equal(this.oXmlButton.getAttribute("text"), this.NEW_VALUE, "property value has original value");
+				assert.throws(function() {
+					this.oChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
+				}, Error, "Revert change throws an error, because this is not supported yet.");
+			}.bind(this));
 		});
 	});
 

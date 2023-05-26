@@ -18,7 +18,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("mergeResults with empty aResponse", function (assert) {
+		QUnit.test("mergeResults with empty aResponse", function(assert) {
 			var DEFAULT_FEATURES = {
 				isKeyUser: false,
 				isKeyUserTranslationEnabled: false,
@@ -43,7 +43,7 @@ sap.ui.define([
 			assert.deepEqual(oResult, DEFAULT_FEATURES, "get default values");
 		});
 
-		QUnit.test("mergeResults with different responses", function (assert) {
+		QUnit.test("mergeResults with different responses", function(assert) {
 			var oResponse1 = {
 				layers: [],
 				features: {isProductiveSystem: false}
@@ -69,7 +69,7 @@ sap.ui.define([
 			assert.equal(oResult.isContextSharingEnabled, true, "isContextSharingEnabled is true");
 		});
 
-		QUnit.test("mergeResults handles the versioning flags", function (assert) {
+		QUnit.test("mergeResults handles the versioning flags", function(assert) {
 			var oResponse1 = {
 				layers: [Layer.VENDOR, Layer.CUSTOMER_BASE],
 				features: {isVersioningEnabled: false}
@@ -94,7 +94,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

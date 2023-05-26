@@ -104,7 +104,7 @@ sap.ui.define([
 	 * @param {boolean} [bPersisted] - Whether to set the state to PERSISTED after creation
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created flex object
 	 */
-	FlexObjectFactory.createFromFileContent = function (oFileContent, ObjectClass, bPersisted) {
+	FlexObjectFactory.createFromFileContent = function(oFileContent, ObjectClass, bPersisted) {
 		var oNewFileContent = Object.assign({}, oFileContent);
 		var FlexObjectClass = ObjectClass || getFlexObjectClass(oNewFileContent);
 		if (!FlexObjectClass) {
@@ -119,8 +119,8 @@ sap.ui.define([
 		);
 		var oMappingInfo = FlexObjectClass.getMappingInfo();
 		var mCreationInfo = FlexObject.mapFileContent(oNewFileContent, oMappingInfo);
-		var mProperties = Object.entries(mCreationInfo).reduce(function (mPropertyMap, aProperty) {
-			ObjectPath.set(aProperty[0].split('.'), aProperty[1], mPropertyMap);
+		var mProperties = Object.entries(mCreationInfo).reduce(function(mPropertyMap, aProperty) {
+			ObjectPath.set(aProperty[0].split("."), aProperty[1], mPropertyMap);
 			return mPropertyMap;
 		}, {});
 		var oFlexObject = new FlexObjectClass(mProperties);
@@ -235,7 +235,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} Created comp variant object
 	 */
-	FlexObjectFactory.createCompVariant = function (oFileContent) {
+	FlexObjectFactory.createCompVariant = function(oFileContent) {
 		oFileContent.generator = oFileContent.generator || "FlexObjectFactory.createCompVariant";
 		oFileContent.user = ObjectPath.get("support.user", oFileContent);
 		var mCompVariantContent = createBasePropertyBag(oFileContent);

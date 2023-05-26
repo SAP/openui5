@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/rta/util/UrlParser"
-], function (
+], function(
 	UIComponent,
 	FlexControllerFactory,
 	ChangePersistenceFactory,
@@ -25,7 +25,7 @@ sap.ui.define([
 		 * @public
 		 * @override
 		 */
-		init: function () {
+		init: function() {
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -38,14 +38,14 @@ sap.ui.define([
 			this.updateChangesModel();
 		},
 
-		updateChangesModel: function () {
-			this.oChangePersistence.getChangesForComponent()//{includeCtrlVariants: true})
-				.then(function (oChanges) {
-					this.getModel().setProperty("/changes", oChanges);
-				}.bind(this));
+		updateChangesModel: function() {
+			this.oChangePersistence.getChangesForComponent()// {includeCtrlVariants: true})
+			.then(function(oChanges) {
+				this.getModel().setProperty("/changes", oChanges);
+			}.bind(this));
 		},
 
-		createChangesAndSave: function (mChangeData, oControl) {
+		createChangesAndSave: function(mChangeData, oControl) {
 			ControlPersonalizationWriteAPI.add(
 				{
 					changes: [
@@ -56,21 +56,21 @@ sap.ui.define([
 					]
 				}
 			)
-				.then(this.oFlexController.saveAll.bind(this.oFlexController, false))
-				.then(this.updateChangesModel.bind(this));
+			.then(this.oFlexController.saveAll.bind(this.oFlexController, false))
+			.then(this.updateChangesModel.bind(this));
 		},
 
 		resetPersonalization: function(aControls) {
 			ControlPersonalizationWriteAPI.reset({selectors: aControls})
-				.then(this.updateChangesModel.bind(this));
+			.then(this.updateChangesModel.bind(this));
 		},
 
 		/**
 		 * Create the FakeLrep with localStorage
 		 * @private
 		 */
-		_createFakeLrep: function () {
-			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
+		_createFakeLrep: function() {
+			if (UrlParser.getParam("sap-rta-mock-lrep") !== false) {
 				FakeLrepConnectorLocalStorage.enableFakeConnector();
 			}
 		}

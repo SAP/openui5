@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
@@ -54,7 +54,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("isVariantByStartupParameter can detect a variant by the startup parameter", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns({
-				getComponentData: function () {
+				getComponentData: function() {
 					return {
 						startupParameters: {
 							"sap-app-id": ["someId"]
@@ -70,7 +70,7 @@ sap.ui.define([
 
 		QUnit.test("isVariantByStartupParameter returns false if no variant by the startup parameter is present", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns({
-				getComponentData: function () {
+				getComponentData: function() {
 					return {
 						startupParameters: {
 							"some-other-param": ["test"]
@@ -91,10 +91,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("convertBrowserLanguageToISO639_1 shall return the ISO 639-1 language of a RFC4646 language", function(assert) {
-			assert.equal(Utils.convertBrowserLanguageToISO639_1("en-us"), 'EN');
-			assert.equal(Utils.convertBrowserLanguageToISO639_1("de"), 'DE');
-			assert.equal(Utils.convertBrowserLanguageToISO639_1(""), '');
-			assert.equal(Utils.convertBrowserLanguageToISO639_1("hkjhkashik"), '');
+			assert.equal(Utils.convertBrowserLanguageToISO639_1("en-us"), "EN");
+			assert.equal(Utils.convertBrowserLanguageToISO639_1("de"), "DE");
+			assert.equal(Utils.convertBrowserLanguageToISO639_1(""), "");
+			assert.equal(Utils.convertBrowserLanguageToISO639_1("hkjhkashik"), "");
 		});
 
 		QUnit.test("isBinding shall return false if the property is null", function(assert) {
@@ -150,16 +150,16 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test('getViewForControl called with a view', function(assert) {
-			var oView = new View('view1');
+		QUnit.test("getViewForControl called with a view", function(assert) {
+			var oView = new View("view1");
 			assert.strictEqual(Utils.getViewForControl(oView), oView);
 		});
 
-		QUnit.test('getViewForControl called with a control containing a view', function(assert) {
-			var button1 = new Button('button1');
-			var oView = new View('view2');
-			var hLayout1 = new HorizontalLayout('hLayout1');
-			var vLayout1 = new VerticalLayout('vLayout1');
+		QUnit.test("getViewForControl called with a control containing a view", function(assert) {
+			var button1 = new Button("button1");
+			var oView = new View("view2");
+			var hLayout1 = new HorizontalLayout("hLayout1");
+			var vLayout1 = new VerticalLayout("vLayout1");
 			oView.addContent(button1);
 			oView.addContent(hLayout1);
 			hLayout1.addContent(vLayout1);
@@ -320,7 +320,8 @@ sap.ui.define([
 				}
 			};
 
-			assert.deepEqual(Utils.getParsedURLHash(oURLParsingService), oParameters, "then the url parameters calculated from the url are received");
+			assert.deepEqual(Utils.getParsedURLHash(oURLParsingService), oParameters,
+				"then the url parameters calculated from the url are received");
 		});
 
 		QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert) {
@@ -428,38 +429,38 @@ sap.ui.define([
 
 			QUnit.test("when Utils." + oFunction.name + " is called and there is no manifest['sap.app']", function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
-					.returns({});
+				.returns({});
 
 				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
 			});
 
 			QUnit.test("when Utils." + oFunction.name + " is called and there is no manifest['sap.app'].type", function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
-					.callThrough()
-					.withArgs("sap.app")
-					.returns({});
+				.callThrough()
+				.withArgs("sap.app")
+				.returns({});
 
 				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
 			});
 
 			QUnit.test("when Utils." + oFunction.name + " is called and manifest type is not '" + oFunction.type + "'", function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
-					.callThrough()
-					.withArgs("sap.app")
-					.returns({
-						type: "random"
-					});
+				.callThrough()
+				.withArgs("sap.app")
+				.returns({
+					type: "random"
+				});
 
 				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
 			});
 
 			QUnit.test("when Utils." + oFunction.name + " is called and manifest type is '" + oFunction.type + "'", function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
-					.callThrough()
-					.withArgs("sap.app")
-					.returns({
-						type: oFunction.type
-					});
+				.callThrough()
+				.withArgs("sap.app")
+				.returns({
+					type: oFunction.type
+				});
 
 				assert.ok(Utils[oFunction.name](this.oComponent), "then true is returned");
 			});
@@ -475,12 +476,12 @@ sap.ui.define([
 				return Promise.reject();
 			};
 
-			//Resolved promises
+			// Resolved promises
 			this.fnPromise1 = sandbox.stub().returns((Utils.FakePromise ? new Utils.FakePromise() : Promise.resolve()));
 			this.fnPromise2 = sandbox.stub().returns(fnResolve());
 			this.fnPromise3 = sandbox.stub().returns(fnResolve());
 
-			//Rejected promise without return
+			// Rejected promise without return
 			this.fnPromise4 = sandbox.stub().returns(fnReject());
 
 			// Failed promise execution
@@ -546,7 +547,8 @@ sap.ui.define([
 			return Utils.execPromiseQueueSequentially(this.aPromisesWithReject).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 				sinon.assert.callOrder(this.fnPromise2, this.fnPromise4);
-				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
+				assert.strictEqual(sandbox.spyLog.callCount, 1,
+					"then error log called once inside catch block, for the rejected promise without return");
 			}.bind(this));
 		});
 
@@ -562,7 +564,8 @@ sap.ui.define([
 			return Utils.execPromiseQueueSequentially(this.aPromisesResolveAfterReject).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 				sinon.assert.callOrder(this.fnPromise4, this.fnPromise1);
-				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
+				assert.strictEqual(sandbox.spyLog.callCount, 1,
+					"then error log called once inside catch block, for the rejected promise without return");
 			}.bind(this));
 		});
 
@@ -603,27 +606,27 @@ sap.ui.define([
 		});
 
 		[42, undefined, {then: 42}, {then: function() {}}]
-			.forEach(function(vResult) {
-				QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
-					var oFakePromise = new Utils.FakePromise(vResult)
-						.then(function(vValue) {
-							assert.strictEqual(vValue, vResult, "then the parameter is passed to the 'then' method");
-						});
-					assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
+		.forEach(function(vResult) {
+			QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
+				var oFakePromise = new Utils.FakePromise(vResult)
+				.then(function(vValue) {
+					assert.strictEqual(vValue, vResult, "then the parameter is passed to the 'then' method");
 				});
-
-				QUnit.test("when instanciated with " + vResult + " error value as second parameter", function(assert) {
-					vResult = vResult || "undefined";
-					var oFakePromise = new Utils.FakePromise(undefined, vResult)
-						.then(function() {
-							assert.notOk(true, "then the 'then' method shouldn't be called");
-						})
-						.catch(function(vError) {
-							assert.strictEqual(vError, vResult, "then the error parameter is passed to the 'catch' method");
-						});
-					assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
-				});
+				assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
 			});
+
+			QUnit.test("when instanciated with " + vResult + " error value as second parameter", function(assert) {
+				vResult = vResult || "undefined";
+				var oFakePromise = new Utils.FakePromise(undefined, vResult)
+				.then(function() {
+					assert.notOk(true, "then the 'then' method shouldn't be called");
+				})
+				.catch(function(vError) {
+					assert.strictEqual(vError, vResult, "then the error parameter is passed to the 'catch' method");
+				});
+				assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
+			});
+		});
 
 		QUnit.test("when instanciated with Promise.resolved() value as parameter", function(assert) {
 			var oFakePromise = new Utils.FakePromise(Promise.resolve(42));
@@ -751,14 +754,16 @@ sap.ui.define([
 				assert.notOk(true, "then the 'then' method shouldn't be called");
 			})
 			.catch(function(oErrorValue) {
-				assert.strictEqual(oErrorValue.name, sInitialErrorValue1, "then the correct error parameter is passed to the 'catch' method");
+				assert.strictEqual(oErrorValue.name, sInitialErrorValue1,
+					"then the correct error parameter is passed to the 'catch' method");
 				throw new Error(sInitialErrorValue2);
 			})
 			.then(function() {
 				assert.notOk(true, "then the second 'then' method shouldn't be called");
 			})
 			.catch(function(oErrorValue) {
-				assert.strictEqual(oErrorValue.name, sInitialErrorValue2, "then the correct error parameter is passed to the second 'catch' method");
+				assert.strictEqual(oErrorValue.name, sInitialErrorValue2,
+					"then the correct error parameter is passed to the second 'catch' method");
 			});
 		});
 
@@ -768,7 +773,8 @@ sap.ui.define([
 			new Utils.FakePromise(undefined, new Error(sInitialErrorValue1))
 			.catch(function(oErrorValue) {
 				var aWrongType = "should be an array";
-				assert.strictEqual(oErrorValue.message, sInitialErrorValue1, "then the correct error parameter is passed to the 'catch' method");
+				assert.strictEqual(oErrorValue.message, sInitialErrorValue1,
+					"then the correct error parameter is passed to the 'catch' method");
 				// provoke exception
 				aWrongType.some(function() {});
 			})
@@ -805,10 +811,11 @@ sap.ui.define([
 			var oPromise = Promise.resolve(oInitialValue)
 			.then(function(oValue, sPromiseIdentifier) {
 				var oInnerPromise = new Utils.FakePromise(oValue, undefined, sPromiseIdentifier)
-					.then(function(oValue, oInnerPromiseIdentifier) {
-						assert.strictEqual(oValue, oInitialValue, "then the inner 'then' method gets the right value");
-						assert.strictEqual(oInnerPromiseIdentifier, undefined, "then the inner 'then' method do not get the FakePromiseIdentifier");
-					});
+				.then(function(oValue, oInnerPromiseIdentifier) {
+					assert.strictEqual(oValue, oInitialValue, "then the inner 'then' method gets the right value");
+					assert.strictEqual(oInnerPromiseIdentifier, undefined,
+						"then the inner 'then' method do not get the FakePromiseIdentifier");
+				});
 				assert.ok(oInnerPromise instanceof Promise, "then the nested FakePromise returns a native Promise");
 			});
 			assert.ok(oPromise instanceof Promise, "then the returned value is a native Promise");
@@ -818,56 +825,56 @@ sap.ui.define([
 		QUnit.test("when FakePromise nested into a FakePromise and PromiseIdentifier is passed", function(assert) {
 			var oInitialValue = "42";
 			var oPromise = new Utils.FakePromise(oInitialValue)
-				.then(function(oValue, sPromiseIdentifier) {
-					var oInnerPromise = new Utils.FakePromise(oValue, undefined, sPromiseIdentifier)
-						.then(function(oValue, oInnerPromiseIdentifier) {
-							assert.strictEqual(oValue, oInitialValue, "then the inner 'then' method gets the right value");
-							assert.strictEqual(oInnerPromiseIdentifier, Utils.FakePromise.fakePromiseIdentifier,
-								"then the inner 'then' method gets the FakePromiseIdentifier");
-						});
-					assert.ok(oInnerPromise instanceof Utils.FakePromise, "then the nested FakePromise returns a FakePromise");
+			.then(function(oValue, sPromiseIdentifier) {
+				var oInnerPromise = new Utils.FakePromise(oValue, undefined, sPromiseIdentifier)
+				.then(function(oValue, oInnerPromiseIdentifier) {
+					assert.strictEqual(oValue, oInitialValue, "then the inner 'then' method gets the right value");
+					assert.strictEqual(oInnerPromiseIdentifier, Utils.FakePromise.fakePromiseIdentifier,
+						"then the inner 'then' method gets the FakePromiseIdentifier");
 				});
+				assert.ok(oInnerPromise instanceof Utils.FakePromise, "then the nested FakePromise returns a FakePromise");
+			});
 			assert.ok(oPromise instanceof Utils.FakePromise, "then the returned value is a FakePromise");
 			return oPromise;
 		});
 
 		QUnit.test("when complex scenario with FakePromise into a Promise", function(assert) {
 			return Promise.resolve()
-				.then(function(oValue, sPromiseIdentifier) {
-					return new Utils.FakePromise(oValue, undefined, sPromiseIdentifier);
-				})
-				.then(function() {
-					// provoke exception
-					"should be an array".some(function() {});
-				})
-				.then(function() {
-					assert.notOk(true, "then the 'then' method shouldn't be called");
-				})
-				.then(function() {
-					assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
-				})
-				.catch(function(oErrorValue) {
-					assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
-				})
-				.then(function() {
-					//Return rejected FakePromise to native to ensure it settles
-					return new Utils.FakePromise(undefined, new Error("some error"));
-				})
-				.then(function() {
-					assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
-				})
-				.catch(function(oErrorValue) {
-					assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
-				});
+			.then(function(oValue, sPromiseIdentifier) {
+				return new Utils.FakePromise(oValue, undefined, sPromiseIdentifier);
+			})
+			.then(function() {
+				// provoke exception
+				"should be an array".some(function() {});
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
+			})
+			.catch(function(oErrorValue) {
+				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
+			})
+			.then(function() {
+				// Return rejected FakePromise to native to ensure it settles
+				return new Utils.FakePromise(undefined, new Error("some error"));
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
+			})
+			.catch(function(oErrorValue) {
+				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
+			});
 		});
 
 		QUnit.test("when a thenable is returned from FakePromise.then", function(assert) {
 			var oPromise = new Utils.FakePromise()
-				.then(function() {
-					return {
-						then: function() {}
-					};
-				});
+			.then(function() {
+				return {
+					then: function() {}
+				};
+			});
 
 			assert.notOk(oPromise instanceof Utils.FakePromise, "then the returned value is not wrapped in another FakePromise");
 		});
@@ -903,14 +910,19 @@ sap.ui.define([
 		afterEach: function() {}
 	}, function() {
 		QUnit.test("when called with existing Change keys", function(assert) {
-			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId()), this.oChange1, "then the correct change is returned");
-			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange2.getId()), this.oChange2, "then the correct change is returned");
-			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange3.getId()), this.oChange3, "then the correct change is returned");
-			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange4.getId()), this.oChange4, "then the correct change is returned");
+			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId()), this.oChange1,
+				"then the correct change is returned");
+			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange2.getId()), this.oChange2,
+				"then the correct change is returned");
+			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange3.getId()), this.oChange3,
+				"then the correct change is returned");
+			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange4.getId()), this.oChange4,
+				"then the correct change is returned");
 		});
 
 		QUnit.test("when called with not existing Change keys", function(assert) {
-			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined, "then no change is returned");
+			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined,
+				"then no change is returned");
 		});
 	});
 
@@ -924,7 +936,8 @@ sap.ui.define([
 		QUnit.test("scenario " + Scenario.VersionedAppVariant + ": New VersionedAppVariant", function(assert) {
 			this.sErrorText += "in a versioned app variant scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace,
+				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.VersionedAppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
@@ -940,7 +953,8 @@ sap.ui.define([
 		QUnit.test("scenario " + Scenario.AppVariant + ": New AppVariant", function(assert) {
 			this.sErrorText += "in an app variant scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "projectId"), sLrepRootNamespace,
+				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.AppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
@@ -956,7 +970,8 @@ sap.ui.define([
 		QUnit.test("scenario " + Scenario.AdaptationProject + ": Customer adapts existing app", function(assert) {
 			this.sErrorText += "in a adaptation project scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/adapt/projectId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AdaptationProject, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AdaptationProject, "projectId"), sLrepRootNamespace,
+				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.AdaptationProject, "projectId");},
 				Error(this.sNoBaseIdErrorText),
@@ -971,7 +986,8 @@ sap.ui.define([
 
 		QUnit.test("scenario " + Scenario.FioriElementsFromScratch + ": Customer adapts new Fiori elements app", function(assert) {
 			var sLrepRootNamespace = "apps/baseId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.FioriElementsFromScratch), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.FioriElementsFromScratch), sLrepRootNamespace,
+				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.FioriElementsFromScratch);},
 				Error(this.sNoBaseIdErrorText),
@@ -981,7 +997,8 @@ sap.ui.define([
 
 		QUnit.test("scenario " + Scenario.UiAdaptation + ": Customer adapts existing app using RTA", function(assert) {
 			var sLrepRootNamespace = "apps/baseId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.UiAdaptation), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.UiAdaptation), sLrepRootNamespace,
+				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.UiAdaptation);},
 				Error(this.sNoBaseIdErrorText),
@@ -1005,10 +1022,10 @@ sap.ui.define([
 			this.sParameterName = "parameterName";
 			this.sParameterValue = "parameterValue";
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("parameter name doesnt exist", function(assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(null);
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
@@ -1041,10 +1058,10 @@ sap.ui.define([
 			this.sSearchParameter = this.sParameterName + "=" + this.sParameterValue;
 			this.sAnotherParameter = "test=true";
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("with hasUrlParameterWithValue is true", function(assert) {
 			var sUrl = "?" + this.sSearchParameter;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
@@ -1107,32 +1124,32 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("with empty parameter", function(assert) {
 			return Utils.getUShellService()
-				.then(function (oUShellService) {
-					assert.notOk(oUShellService, "then the method resolves to undefined");
-				});
+			.then(function(oUShellService) {
+				assert.notOk(oUShellService, "then the method resolves to undefined");
+			});
 		});
 
 		QUnit.test("with ushell container is not available", function(assert) {
 			Utils.getUshellContainer.restore();
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			return Utils.getUShellService("validService")
-				.then(function (oUShellService) {
-					assert.strictEqual(oUShellService, undefined, "then the method resolves undefined");
-				});
+			.then(function(oUShellService) {
+				assert.strictEqual(oUShellService, undefined, "then the method resolves undefined");
+			});
 		});
 
 		QUnit.test("with invalid service", function(assert) {
 			return Utils.getUShellService("invalid-service")
-				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("Not available service: ") > -1, "then the promise rejects");
-				});
+			.catch(function(vError) {
+				assert.ok(vError.message.indexOf("Not available service: ") > -1, "then the promise rejects");
+			});
 		});
 
 		QUnit.test("with valid service", function(assert) {
 			return Utils.getUShellService("validService")
-				.then(function (oUShellService) {
-					assert.strictEqual(oUShellService, "validServiceResult", "then the expected service is returned");
-				});
+			.then(function(oUShellService) {
+				assert.strictEqual(oUShellService, "validServiceResult", "then the expected service is returned");
+			});
 		});
 	});
 
@@ -1159,38 +1176,42 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("with empty services list", function(assert) {
 			return Utils.getUShellServices([])
-				.then(function (mUshellServices) {
-					assert.ok(isEmptyObject(mUshellServices), "then the returned services map is empty");
-				});
+			.then(function(mUshellServices) {
+				assert.ok(isEmptyObject(mUshellServices), "then the returned services map is empty");
+			});
 		});
 
 		QUnit.test("with ushell container is not available", function(assert) {
 			Utils.getUshellContainer.restore();
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			return Utils.getUShellServices([])
-				.then(function (mUshellServices) {
-					assert.ok(isEmptyObject(mUshellServices), "then the returned services map is empty");
-					return Utils.getUShellServices(["validService1"]);
-				})
-				.then(function (mUshellServices) {
-					assert.strictEqual(mUshellServices["validService1"], undefined, "then the expected service is available with key only in the returned map");
-				});
+			.then(function(mUshellServices) {
+				assert.ok(isEmptyObject(mUshellServices), "then the returned services map is empty");
+				return Utils.getUShellServices(["validService1"]);
+			})
+			.then(function(mUshellServices) {
+				assert.strictEqual(mUshellServices.validService1, undefined,
+					"then the expected service is available with key only in the returned map");
+			});
 		});
 
 		QUnit.test("with invalid service", function(assert) {
 			return Utils.getUShellServices(["invalid-service"])
-				.catch(function (oError) {
-					assert.ok(oError.message.indexOf("Invalid service: ") > -1, "then the promise is rejected");
-				});
+			.catch(function(oError) {
+				assert.ok(oError.message.indexOf("Invalid service: ") > -1, "then the promise is rejected");
+			});
 		});
 
 		QUnit.test("with valid services list", function(assert) {
 			return Utils.getUShellServices(["validService1", "validService2", "validService3"])
-				.then(function (mUshellServices) {
-					assert.strictEqual(mUshellServices["validService1"], "validService1Result", "then the expected service is available in the returned map");
-					assert.strictEqual(mUshellServices["validService2"], "validService2Result", "then the expected service is available in the returned map");
-					assert.strictEqual(mUshellServices["validService3"], "validService3Result", "then the expected service is available in the returned map");
-				});
+			.then(function(mUshellServices) {
+				assert.strictEqual(mUshellServices.validService1, "validService1Result",
+					"then the expected service is available in the returned map");
+				assert.strictEqual(mUshellServices.validService2, "validService2Result",
+					"then the expected service is available in the returned map");
+				assert.strictEqual(mUshellServices.validService3, "validService3Result",
+					"then the expected service is available in the returned map");
+			});
 		});
 	});
 

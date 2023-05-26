@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/transport/Transports",
@@ -34,7 +34,7 @@ sap.ui.define([
 		};
 
 		return Transports.getTransports(oObject).then(function(oResult) {
-			assert.equal(oResult.transports[0].transportId, '4711');
+			assert.equal(oResult.transports[0].transportId, "4711");
 			assert.equal(oResult.localonly, false);
 		});
 	});
@@ -71,7 +71,7 @@ sap.ui.define([
 			}]
 		};
 
-		return Transports.makeChangesTransportable(oParams)["catch"](function() {
+		return Transports.makeChangesTransportable(oParams).catch(function() {
 			assert.ok(true);
 		});
 	});
@@ -83,12 +83,12 @@ sap.ui.define([
 
 		oParams = {transportId: "testtransport1"};
 
-		return Transports.makeChangesTransportable(oParams)["catch"](function() {
+		return Transports.makeChangesTransportable(oParams).catch(function() {
 			assert.ok(true);
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

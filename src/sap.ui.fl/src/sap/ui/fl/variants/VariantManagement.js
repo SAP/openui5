@@ -206,7 +206,7 @@ sap.ui.define([
 						/**
 						 * Indicates the check box state for 'Public'.
 						 */
-						'public': {
+						"public": {
 							type: "boolean"
 						},
 
@@ -358,7 +358,7 @@ sap.ui.define([
 		};
 	};
 
-	/// <EVENT FORWARDING>
+	// / <EVENT FORWARDING>
 	VariantManagement.prototype.attachCancel = function(mProps, fnCallback, oObj) {
 		this.attachEvent("cancel", mProps, fnCallback, oObj);
 		return this;
@@ -545,7 +545,6 @@ sap.ui.define([
 		}
 	};
 
-
 	VariantManagement.prototype._fireManage = function(oEvent) {
 		this._handleAllListeners(oEvent, this._aManageEventHandlers);
 	};
@@ -582,10 +581,9 @@ sap.ui.define([
 
 		return this;
 	};
-	/// </EVENT FORWARDING>
+	// / </EVENT FORWARDING>
 
-
-	///<OVERWRITES>
+	// /<OVERWRITES>
 
 	VariantManagement.prototype._createSaveAsDialog = function() {
 		this._oVM._createSaveAsDialog();
@@ -661,11 +659,10 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype.setShowExecuteOnSelection = function(bValue) {
-		//this.setProperty("showExecuteOnSelection", bValue);
+		// this.setProperty("showExecuteOnSelection", bValue);
 		this._oVM.setSupportApplyAutomatically(bValue);
 		return this;
 	};
-
 
 	VariantManagement.prototype.setShowSetAsDefault = function(bValue) {
 		this.setProperty("showSetAsDefault", bValue);
@@ -694,7 +691,6 @@ sap.ui.define([
 	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sClass, oRolesComponentContainer) {
 		this._oVM.openManagementDialog(bCreateAlways, sClass, oRolesComponentContainer);
 	};
-
 
 	VariantManagement.prototype.openSaveAsDialogForKeyUser = function(sClass, oRolesComponentContainer) {
 		this._oVM.openSaveAsDialog(sClass, oRolesComponentContainer);
@@ -764,14 +760,14 @@ sap.ui.define([
 	VariantManagement.prototype.getStandardVariantKey = function() {
 		return this._oVM.getStandardVariantKey();
 	};
-	/// </OVERWRITES>
+	// / </OVERWRITES>
 
 	VariantManagement.prototype._getEmbeddedVM = function() {
 		return this._oVM;
 	};
 
 	VariantManagement.prototype._updateWithSettingsInfo = function() {
-		flSettings.getInstance().then(function (oSettings) {
+		flSettings.getInstance().then(function(oSettings) {
 			if (this._oVM) {
 				this._oVM.setShowSaveAs(oSettings.isVariantPersonalizationEnabled());
 				this._oVM.setSupportPublic(oSettings.isPublicFlVariantEnabled());
@@ -797,7 +793,6 @@ sap.ui.define([
 
 		return this;
 	};
-
 
 	/**
 	 * Reinitializes the inner model registration. This is necessary when using a session dependent <code>VariantManagement</code>
@@ -841,7 +836,6 @@ sap.ui.define([
 					this._oVM.setModel(oModel, sModelName);
 
 					this._oVM.setSupportDefault(true);
-
 
 					this._createItemsModel(sModelName);
 
@@ -899,7 +893,6 @@ sap.ui.define([
 			contexts: "{" + sModelName + ">contexts}",
 			originalContexts: "{" + sModelName + ">originalContexts}"
 		});
-
 
 		this._oVM.bindAggregation("items", {
 			path: this.oContext + "/variants",
@@ -993,7 +986,6 @@ sap.ui.define([
 		return bExecuteOnSelection;
 	};
 
-
 	// exit destroy all controls created in init
 	VariantManagement.prototype.exit = function() {
 		this._oVM.detachManage(this._fireManage, this);
@@ -1035,7 +1027,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
 	 */
-	VariantManagement.prototype._getToolbarInteractive = function () {
+	VariantManagement.prototype._getToolbarInteractive = function() {
 		return true;
 	};
 

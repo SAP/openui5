@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
@@ -57,7 +57,7 @@ sap.ui.define([
 				return Promise.resolve(aResults);
 			}
 		},
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oSandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
@@ -163,7 +163,6 @@ sap.ui.define([
 			aPromises.push(ABAPExtensibilityVariantFactory.getInstance(this.oControl).then(function(oInstance) {
 				assert.ok(oInstance.getMetadata().isA("sap.ui.fl.write._internal.fieldExtensibility.MultiTenantABAPExtensibilityVariant"));
 
-
 				aPromises.push(ABAPExtensibilityVariantFactory.getInstance(this.oControl).then(function(oInstance2) {
 					assert.equal(oInstance2, oInstance, "Same instance expected");
 				}));
@@ -179,7 +178,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

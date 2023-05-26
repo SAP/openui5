@@ -35,7 +35,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	/**
 	 * Returns the type of "sap.app" from the manifest object passed.
 	 * @param {sap.ui.core.Manifest} oManifest - Manifest object
@@ -80,7 +79,7 @@ sap.ui.define([
 		 * @param {string} [sCallStack] - Passes the callstack to the logging function
 		 */
 		formatAndLogMessage: function(sLogType, aMessageComponents, aValuesToInsert, sCallStack) {
-			var sLogMessage = aMessageComponents.join(' ');
+			var sLogMessage = aMessageComponents.join(" ");
 			sLogMessage = formatMessage(sLogMessage, aValuesToInsert);
 			Log[sLogType](sLogMessage, sCallStack || "");
 		},
@@ -195,7 +194,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl
 		 */
 		getComponentForControl: function(oControl) {
-			function getComponentIdForControl (oControl) {
+			function getComponentIdForControl(oControl) {
 				var sComponentId = Component.getOwnerIdFor(oControl);
 				if (!sComponentId) {
 					if (oControl && typeof oControl.getParent === "function") {
@@ -317,7 +316,6 @@ sap.ui.define([
 			return Utils.convertBrowserLanguageToISO639_1(sLanguage);
 		},
 
-
 		/**
 		 * Converts the browser language into a 2-character ISO 639-1 language. If the browser language is in format RFC4646, the first part will be
 		 * used: For example en-us will be converted to EN. If the browser language already is in ISO 639-1, it will be returned after an upper case
@@ -416,7 +414,7 @@ sap.ui.define([
 		createDefaultFileName: function(sNameAddition) {
 			var sFileName = uid().replace(/-/g, "_");
 			if (sNameAddition) {
-				sFileName += '_' + sNameAddition;
+				sFileName += "_" + sNameAddition;
 			}
 			return sFileName;
 		},
@@ -426,8 +424,8 @@ sap.ui.define([
 			if (sFileType === "ctrl_variant") {
 				sSubfolder = "variants";
 			}
-			var sReferenceName = oPropertyBag.reference.replace('.Component', '');
-			var sNamespace = 'apps/' + sReferenceName + "/" + sSubfolder + "/";
+			var sReferenceName = oPropertyBag.reference.replace(".Component", "");
+			var sNamespace = "apps/" + sReferenceName + "/" + sSubfolder + "/";
 			return sNamespace;
 		},
 
@@ -723,7 +721,7 @@ sap.ui.define([
 					sParameters = "?" + aFilterUrl.join("&");
 				}
 			} else {
-				sParameters += (sParameters.length > 0 ? '&' : '?') + sParameterName + "=" + sParameterValue;
+				sParameters += (sParameters.length > 0 ? "&" : "?") + sParameterName + "=" + sParameterValue;
 			}
 			return sParameters;
 		},
@@ -747,7 +745,7 @@ sap.ui.define([
 		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {string} The value of the given parameter or undefined
 		 */
-		getParameter: function (sParameterName, oURLParsingService) {
+		getParameter: function(sParameterName, oURLParsingService) {
 			if (oURLParsingService) {
 				var mParsedHash = Utils.getParsedURLHash(oURLParsingService);
 				return mParsedHash.params &&
@@ -782,7 +780,7 @@ sap.ui.define([
 		 * @param {string} sAggregationName - Aggregation name
 		 * @returns {sap.ui.base.ManagedObject[]|Element[]} Aggregation content
 		 */
-		getAggregation: function (oParent, sAggregationName) {
+		getAggregation: function(oParent, sAggregationName) {
 			var oAggregation = Utils.findAggregation(oParent, sAggregationName);
 			if (oAggregation) {
 				return oParent[oAggregation._sGetter]();
@@ -796,7 +794,7 @@ sap.ui.define([
 		 * @param {string} sPropertyName - Property name
 		 * @returns {any} Value of the property
 		 */
-		getProperty: function (oControl, sPropertyName) {
+		getProperty: function(oControl, sPropertyName) {
 			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
 			if (oMetadata) {
 				var sPropertyGetter = oMetadata._sGetter;
@@ -826,12 +824,12 @@ sap.ui.define([
 		 * @param {array} aServiceNames - List of service names
 		 * @returns {Promise<object>} Resolves to an object with the requested ushell services
 		 */
-		getUShellServices: function (aServiceNames) {
-			var aServicePromises = aServiceNames.map(function (sServiceName) {
+		getUShellServices: function(aServiceNames) {
+			var aServicePromises = aServiceNames.map(function(sServiceName) {
 				return this.getUShellService(sServiceName);
 			}.bind(this));
-			return Promise.all(aServicePromises).then(function (aServices) {
-				return aServiceNames.reduce(function (mServices, sService, iIndex) {
+			return Promise.all(aServicePromises).then(function(aServices) {
+				return aServiceNames.reduce(function(mServices, sService, iIndex) {
 					mServices[sService] = aServices && aServices[iIndex];
 					return mServices;
 				}, {});

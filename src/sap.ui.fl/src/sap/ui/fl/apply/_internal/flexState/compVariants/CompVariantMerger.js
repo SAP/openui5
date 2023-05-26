@@ -14,13 +14,13 @@ sap.ui.define([
 	"use strict";
 
 	var mChangeHandlers = {
-		addFavorite: function (oVariant) {
+		addFavorite: function(oVariant) {
 			oVariant.setFavorite(true);
 		},
-		removeFavorite: function (oVariant) {
+		removeFavorite: function(oVariant) {
 			oVariant.setFavorite(false);
 		},
-		updateVariant: function (oVariant, oChange) {
+		updateVariant: function(oVariant, oChange) {
 			var oChangeContent = oChange.getContent();
 			if (oChangeContent.executeOnSelection !== undefined) {
 				oVariant.setExecuteOnSelection(oChangeContent.executeOnSelection);
@@ -40,7 +40,7 @@ sap.ui.define([
 				oVariant.setName(sVariantName, /* bSkipStateChange = */ true);
 			}
 		},
-		standardVariant: function (oVariant, oChange) {
+		standardVariant: function(oVariant, oChange) {
 			// legacy change on standard variants
 			oVariant.setExecuteOnSelection(oChange.getContent().executeOnSelect);
 		}
@@ -49,7 +49,7 @@ sap.ui.define([
 	function getChangesMappedByVariant(mCompVariants) {
 		var mChanges = {};
 
-		mCompVariants.changes.forEach(function (oChange) {
+		mCompVariants.changes.forEach(function(oChange) {
 			var sVariantId = oChange.getSelector().variantId || oChange.getContent().key;
 			if (!mChanges[sVariantId]) {
 				mChanges[sVariantId] = [];
@@ -107,7 +107,7 @@ sap.ui.define([
 	function applyChangesOnVariant(mChanges, oVariant) {
 		var sVariantId = oVariant.getVariantId();
 		if (mChanges[sVariantId]) {
-			mChanges[sVariantId].forEach(function (oChange) {
+			mChanges[sVariantId].forEach(function(oChange) {
 				applyChangeOnVariant(oVariant, oChange);
 			});
 		}
@@ -124,13 +124,13 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return {
-		merge: function (sPersistencyKey, mCompData, oStandardVariantInput) {
+		merge: function(sPersistencyKey, mCompData, oStandardVariantInput) {
 			var aVariants = mCompData.nonPersistedVariants.concat(mCompData.variants);
 			var mChanges = getChangesMappedByVariant(mCompData);
 
 			// check for an overwritten standard variant
 			var oStandardVariant;
-			aVariants.forEach(function (oVariant) {
+			aVariants.forEach(function(oVariant) {
 				if (oVariant.getContent() && oVariant.getContent().standardvariant) {
 					oStandardVariant = oVariant;
 				}
@@ -141,7 +141,7 @@ sap.ui.define([
 				oStandardVariant = createVariant(sPersistencyKey, oStandardVariantInput);
 			} else {
 				// remove all standard variant entries
-				aVariants = aVariants.filter(function (oVariant) {
+				aVariants = aVariants.filter(function(oVariant) {
 					return !oVariant.getContent() || !oVariant.getContent().standardvariant;
 				});
 			}
@@ -157,7 +157,7 @@ sap.ui.define([
 			if (oStandardVariantChange) {
 				mChanges[oStandardVariant.getVariantId()] = mChanges[oStandardVariant.getVariantId()] || [];
 				mChanges[oStandardVariant.getVariantId()].push(oStandardVariantChange);
-				mChanges[oStandardVariant.getVariantId()].sort(function (a, b) {
+				mChanges[oStandardVariant.getVariantId()].sort(function(a, b) {
 					if (a.getCreation() < b.getCreation()) {
 						return -1;
 					}
@@ -170,7 +170,6 @@ sap.ui.define([
 			applyChangesOnVariant(mChanges, oStandardVariant);
 
 			mCompData.standardVariant = oStandardVariant;
-
 
 			return {
 				standardVariant: oStandardVariant,

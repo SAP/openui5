@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function createChangeHandler (bSkipCreateLayout) {
+	function createChangeHandler(bSkipCreateLayout) {
 		return BaseAddViaDelegate.createAddViaDelegateChangeHandler({
 			addProperty: function() {},
 			aggregationName: "formElements",

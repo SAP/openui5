@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
@@ -171,15 +171,15 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when a parameterized selector is created", function(assert) {
 			this.oExecuteStub
-				.onFirstCall()
-				.callsFake(function(oData, sParameter) {
-					assert.strictEqual(
-						sParameter,
-						"foo",
-						"then the execute function is called with the parameter value for the respective getter call"
-					);
-					return this.oExpectedResult[sParameter];
-				}.bind(this));
+			.onFirstCall()
+			.callsFake(function(oData, sParameter) {
+				assert.strictEqual(
+					sParameter,
+					"foo",
+					"then the execute function is called with the parameter value for the respective getter call"
+				);
+				return this.oExpectedResult[sParameter];
+			}.bind(this));
 			assert.strictEqual(
 				this.oDataSelector.get({ sampleKey: "foo" }),
 				this.oExpectedResult.foo,
@@ -357,7 +357,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

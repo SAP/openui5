@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 /* eslint-disable no-implicit-globals */
 var iOriginalMaxDepth = QUnit.dump.maxDepth;
 QUnit.dump.maxDepth = 10;
@@ -469,13 +469,13 @@ sap.ui.define([
 				controlChanges: [oResponse.variantDependentControlChanges[0]]
 			};
 			sandbox.stub(VariantManagementState, "getVariant")
-				.callThrough()
-				.withArgs({
-					vReference: "variantManagementId",
-					vmReference: "variantManagementId",
-					reference: this.oChangePersistence.getComponentName()
-				})
-				.returns(oVariant);
+			.callThrough()
+			.withArgs({
+				vReference: "variantManagementId",
+				vmReference: "variantManagementId",
+				reference: this.oChangePersistence.getComponentName()
+			})
+			.returns(oVariant);
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: oResponse
 			});
@@ -868,12 +868,12 @@ sap.ui.define([
 			sandbox.spy(this.oChangePersistence, "_deleteChangeInMap");
 
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function(fnGetChangesMap) {
-					var mChanges = fnGetChangesMap().mChanges;
-					var oChangeForDeletion = mChanges["controlId"][1]; // second change for 'controlId' shall be removed
-					this.oChangePersistence.deleteChange(oChangeForDeletion, true);
-					assert.ok(this.oChangePersistence._deleteChangeInMap.calledWith(oChangeForDeletion, true), "then _deleteChangeInMap() was called with the correct parameters");
-				}.bind(this));
+			.then(function(fnGetChangesMap) {
+				var mChanges = fnGetChangesMap().mChanges;
+				var oChangeForDeletion = mChanges.controlId[1]; // second change for 'controlId' shall be removed
+				this.oChangePersistence.deleteChange(oChangeForDeletion, true);
+				assert.ok(this.oChangePersistence._deleteChangeInMap.calledWith(oChangeForDeletion, true), "then _deleteChangeInMap() was called with the correct parameters");
+			}.bind(this));
 		});
 
 		QUnit.test("removeChange with dirty and not dirty changes", function(assert) {
@@ -943,7 +943,6 @@ sap.ui.define([
 				}
 			};
 
-
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: {
 					changes: [oChangeWithViewPrefix, oChangeWithoutViewPrefix, oChangeWithPrefixAndLocalId, oChangeWithViewAndAdditionalPrefixes]
@@ -958,12 +957,12 @@ sap.ui.define([
 			};
 
 			return this.oChangePersistence.getChangesForView(mPropertyBag)
-				.then(function(aChanges) {
-					assert.strictEqual(aChanges.length, 3, "then two changes belonging to the view were returned");
-					assert.strictEqual(aChanges[0].getId(), "changeWithViewPrefix", "then the change with view prefix was returned");
-					assert.strictEqual(aChanges[1].getId(), "changeWithPrefixAndLocalId", "then the change with view prefix was returned");
-					assert.strictEqual(aChanges[2].getId(), "changeWithViewAndAdditionalPrefixes", "then the change with view and additional prefixes was returned");
-				});
+			.then(function(aChanges) {
+				assert.strictEqual(aChanges.length, 3, "then two changes belonging to the view were returned");
+				assert.strictEqual(aChanges[0].getId(), "changeWithViewPrefix", "then the change with view prefix was returned");
+				assert.strictEqual(aChanges[1].getId(), "changeWithPrefixAndLocalId", "then the change with view prefix was returned");
+				assert.strictEqual(aChanges[2].getId(), "changeWithViewAndAdditionalPrefixes", "then the change with view and additional prefixes was returned");
+			});
 		});
 
 		QUnit.test("when getChangesForView is called with an embedded component and a view ID existing both for app and embedded components", function(assert) {
@@ -1004,10 +1003,10 @@ sap.ui.define([
 			};
 
 			return this.oChangePersistence.getChangesForView(mPropertyBag)
-				.then(function(aChanges) {
-					assert.strictEqual(aChanges.length, 1, "then only one change is returned");
-					assert.strictEqual(aChanges[0].getId(), "change1View2", "then only the change belonging to the embedded component was returned");
-				});
+			.then(function(aChanges) {
+				assert.strictEqual(aChanges.length, 1, "then only one change is returned");
+				assert.strictEqual(aChanges[0].getId(), "change1View2", "then only the change belonging to the embedded component was returned");
+			});
 		});
 
 		QUnit.test("when getChangesForView is called with an extension point selector containing a view ID", function(assert) {
@@ -1093,7 +1092,6 @@ sap.ui.define([
 				}
 			};
 
-
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: {
 					changes: [oChange1View1, oChange1View2, oChange2View2, oChange3View3, oChange4View3, oChange4View1]
@@ -1116,11 +1114,11 @@ sap.ui.define([
 			};
 
 			return this.oChangePersistence.getChangesForView(mPropertyBag)
-				.then(function(aChanges) {
-					assert.strictEqual(aChanges.length, 2, "then only two change were returned");
-					assert.strictEqual(aChanges[0].getId(), "change1View1", "then only the change with the correct viewId of the selector was returned");
-					assert.strictEqual(aChanges[1].getId(), "change4View1", "then only the change with the correct viewId of the selector was returned");
-				});
+			.then(function(aChanges) {
+				assert.strictEqual(aChanges.length, 2, "then only two change were returned");
+				assert.strictEqual(aChanges[0].getId(), "change1View1", "then only the change with the correct viewId of the selector was returned");
+				assert.strictEqual(aChanges[1].getId(), "change4View1", "then only the change with the correct viewId of the selector was returned");
+			});
 		});
 
 		QUnit.test("_getChangesFromMapByNames returns array of changes with corresponding name", function(assert) {
@@ -1178,12 +1176,12 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function() {
-					return this.oChangePersistence._getChangesFromMapByNames(aNames);
-				}.bind(this))
-				.then(function(aChanges) {
-					assert.deepEqual(aChanges, aExpectedChanges, " 2 changes should be found");
-				});
+			.then(function() {
+				return this.oChangePersistence._getChangesFromMapByNames(aNames);
+			}.bind(this))
+			.then(function(aChanges) {
+				assert.deepEqual(aChanges, aExpectedChanges, " 2 changes should be found");
+			});
 		});
 
 		QUnit.test("when calling transportAllUIChanges successfully", function(assert) {
@@ -1195,37 +1193,37 @@ sap.ui.define([
 			var sLayer = Layer.CUSTOMER;
 
 			var oMockCompVariant1 = {
-				getRequest: function () {
+				getRequest: function() {
 					return "$TMP";
 				},
-				getLayer: function () {
+				getLayer: function() {
 					return sLayer;
 				}
 			};
 
 			var oMockCompVariant2 = {
-				getRequest: function () {
+				getRequest: function() {
 					return "some_transport_id";
 				},
-				getLayer: function () {
+				getLayer: function() {
 					return sLayer;
 				}
 			};
 
 			var oMockCompVariant3 = {
-				getRequest: function () {
+				getRequest: function() {
 					return "";
 				},
-				getLayer: function () {
+				getLayer: function() {
 					return sLayer;
 				}
 			};
 
 			var oMockCompVariant4 = {
-				getRequest: function () {
+				getRequest: function() {
 					return "";
 				},
-				getLayer: function () {
+				getLayer: function() {
 					return Layer.USER;
 				}
 			};
@@ -1255,7 +1253,6 @@ sap.ui.define([
 					}
 				}
 			});
-
 
 			return this.oChangePersistence.transportAllUIChanges(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors).then(function() {
 				assert.equal(fnGetChangesForComponentStub.callCount, 1, "then getChangesForComponent called once");
@@ -1287,15 +1284,15 @@ sap.ui.define([
 			this.oChangePersistence.addDirtyChange(oCustomerChange);
 
 			return this.oChangePersistence.removeDirtyChanges(Layer.VENDOR)
-				.then(function(aChangesToBeRemoved) {
-					assert.strictEqual(aChangesToBeRemoved.length, 1, "one change is removed");
-					assert.strictEqual(aChangesToBeRemoved[0], oVendorChange, "the removed change is on the specified layer");
-					assert.strictEqual(
-						this.oChangePersistence.getDirtyChanges().length,
-						1,
-						"only one change remains in the ChangePersistence"
-					);
-				}.bind(this));
+			.then(function(aChangesToBeRemoved) {
+				assert.strictEqual(aChangesToBeRemoved.length, 1, "one change is removed");
+				assert.strictEqual(aChangesToBeRemoved[0], oVendorChange, "the removed change is on the specified layer");
+				assert.strictEqual(
+					this.oChangePersistence.getDirtyChanges().length,
+					1,
+					"only one change remains in the ChangePersistence"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when calling removeDirtyChanges with multiple layers", function(assert) {
@@ -1316,16 +1313,16 @@ sap.ui.define([
 			this.oChangePersistence.addDirtyChange(oCustomerChange);
 
 			return this.oChangePersistence.removeDirtyChanges([Layer.VENDOR, Layer.USER])
-				.then(function(aChangesToBeRemoved) {
-					assert.strictEqual(aChangesToBeRemoved.length, 2, "two changes are removed");
-					assert.ok(aChangesToBeRemoved.includes(oVendorChange), "the VENDOR change is removed");
-					assert.ok(aChangesToBeRemoved.includes(oUserChange), "the USER change is removed");
-					assert.strictEqual(
-						this.oChangePersistence.getDirtyChanges().length,
-						1,
-						"only one change remains in the ChangePersistence"
-					);
-				}.bind(this));
+			.then(function(aChangesToBeRemoved) {
+				assert.strictEqual(aChangesToBeRemoved.length, 2, "two changes are removed");
+				assert.ok(aChangesToBeRemoved.includes(oVendorChange), "the VENDOR change is removed");
+				assert.ok(aChangesToBeRemoved.includes(oUserChange), "the USER change is removed");
+				assert.strictEqual(
+					this.oChangePersistence.getDirtyChanges().length,
+					1,
+					"only one change remains in the ChangePersistence"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when calling removeDirtyChanges without any layer specified", function(assert) {
@@ -1346,9 +1343,9 @@ sap.ui.define([
 			this.oChangePersistence.addDirtyChange(oCustomerChange);
 
 			return this.oChangePersistence.removeDirtyChanges()
-				.then(function(aChangesToBeRemoved) {
-					assert.strictEqual(aChangesToBeRemoved.length, 3, "all changes are removed");
-				});
+			.then(function(aChangesToBeRemoved) {
+				assert.strictEqual(aChangesToBeRemoved.length, 3, "all changes are removed");
+			});
 		});
 
 		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer", function(assert) {
@@ -1602,25 +1599,25 @@ sap.ui.define([
 				}
 			});
 			var oMockCompVariant1 = {
-				getRequest: function () {
+				getRequest: function() {
 					return "$TMP";
 				},
-				getState: function () {
+				getState: function() {
 					return States.LifecycleState.NEW;
 				},
-				getLayer: function () {
+				getLayer: function() {
 					return Layer.CUSTOMER;
 				}
 			};
 
 			var oMockCompVariant2 = {
-				getRequest: function () {
+				getRequest: function() {
 					return "some_transport_id";
 				},
-				getState: function () {
+				getState: function() {
 					return States.LifecycleState.PERSISTED;
 				},
-				getLayer: function () {
+				getLayer: function() {
 					return Layer.VENDOR;
 				}
 			};
@@ -1629,13 +1626,13 @@ sap.ui.define([
 				getId: function() {
 					return "oMockCompVariant3";
 				},
-				getRequest: function () {
+				getRequest: function() {
 					return "some_transport_id";
 				},
-				getState: function () {
+				getState: function() {
 					return States.LifecycleState.PERSISTED;
 				},
-				getLayer: function () {
+				getLayer: function() {
 					return Layer.CUSTOMER;
 				}
 			};
@@ -1667,7 +1664,7 @@ sap.ui.define([
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
 				assert.equal(oResetArgs.reference, "MyComponent");
 				assert.equal(oResetArgs.layer, Layer.CUSTOMER);
-				assert.equal(oResetArgs.changes.length, 3); //oCUSTOMERChange1, oCUSTOMERChange2, oMockCompVariant3
+				assert.equal(oResetArgs.changes.length, 3); // oCUSTOMERChange1, oCUSTOMERChange2, oMockCompVariant3
 				assert.equal(oResetArgs.changes[0].getId(), "oCUSTOMERChange1");
 				assert.equal(oResetArgs.changes[1].getId(), "oCUSTOMERChange2");
 				assert.equal(oResetArgs.changes[2].getId(), "oMockCompVariant3");
@@ -1783,13 +1780,13 @@ sap.ui.define([
 			assert.equal(oCheckDependenciesStub.lastCall.args[2], this._oAppComponentInstance, "the app component instance was passed");
 		});
 
-		QUnit.test("'addChangeAndUpdateDependencies' function is called", function (assert) {
+		QUnit.test("'addChangeAndUpdateDependencies' function is called", function(assert) {
 			var oChange = createChange("fileNameChange0");
 			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange);
 			assert.strictEqual(this.oChangePersistence._mChanges.aChanges[0].getId(), oChange.getId(), "then the change is added to the change persistence");
 		});
 
-		QUnit.test("'addChangeAndUpdateDependencies' function is called with referenced change", function (assert) {
+		QUnit.test("'addChangeAndUpdateDependencies' function is called with referenced change", function(assert) {
 			var oChange0 = createChange("fileNameChange0");
 			var oChange1 = createChange("fileNameChange1");
 			var oChangeInBetween = createChange("fileNameChangeInBetween");
@@ -1853,11 +1850,11 @@ sap.ui.define([
 			assert.ok(aChanges);
 			assert.strictEqual(aChanges.length, 3);
 			assert.strictEqual(aChanges[0], newChange1);
-			assert.strictEqual(mChangesEntries["Gizorillus1"], newChange1);
+			assert.strictEqual(mChangesEntries.Gizorillus1, newChange1);
 			assert.strictEqual(aChanges[1], newChange2);
-			assert.strictEqual(mChangesEntries["Gizorillus2"], newChange2);
+			assert.strictEqual(mChangesEntries.Gizorillus2, newChange2);
 			assert.strictEqual(aChanges[2], newChange3);
-			assert.strictEqual(mChangesEntries["Gizorillus3"], newChange3);
+			assert.strictEqual(mChangesEntries.Gizorillus3, newChange3);
 		});
 
 		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function(assert) {
@@ -1866,9 +1863,9 @@ sap.ui.define([
 			sandbox.stub(this.oChangePersistence, "addDirtyChange").returns(oChangeContent);
 			sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
 			sandbox.stub(Utils, "getAppComponentForControl")
-				.callThrough()
-				.withArgs(this._oComponentInstance)
-				.callsFake(done);
+			.callThrough()
+			.withArgs(this._oComponentInstance)
+			.callsFake(done);
 
 			var fnAddPropagationListenerStub = sandbox.spy(this.oChangePersistence, "_addPropagationListener");
 
@@ -2045,7 +2042,6 @@ sap.ui.define([
 			},
 			oCustomContent2
 		);
-
 
 		return [
 			oChangePersistence.addChange(oChangeContent, oComponentInstance),
@@ -2390,7 +2386,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Shall not call condenser when persisted changes contain different namespaces", function (assert) {
+		QUnit.test("Shall not call condenser when persisted changes contain different namespaces", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
@@ -2908,17 +2904,17 @@ sap.ui.define([
 			var oDeleteChangeSpy = sandbox.spy(Cache, "deleteChange");
 
 			return this.oChangePersistence.saveDirtyChanges()
-				.then(function() {
-					assert.equal(oAddChangeSpy.callCount, 5, "then addChange was called for all changes");
-					assert.strictEqual(oAddChangeSpy.lastCall.args[1].fileName, oChangeContent5.fileName, "the correct change was passed");
-					aSavedChanges.forEach(function(oSavedChange) {
-						this.oChangePersistence.deleteChange(oSavedChange);
-					}.bind(this));
-					return this.oChangePersistence.saveDirtyChanges();
-				}.bind(this))
-				.then(function() {
-					assert.ok(oDeleteChangeSpy.calledWith(this._mComponentProperties, aSavedChanges[4].convertToFileContent()));
+			.then(function() {
+				assert.equal(oAddChangeSpy.callCount, 5, "then addChange was called for all changes");
+				assert.strictEqual(oAddChangeSpy.lastCall.args[1].fileName, oChangeContent5.fileName, "the correct change was passed");
+				aSavedChanges.forEach(function(oSavedChange) {
+					this.oChangePersistence.deleteChange(oSavedChange);
 				}.bind(this));
+				return this.oChangePersistence.saveDirtyChanges();
+			}.bind(this))
+			.then(function() {
+				assert.ok(oDeleteChangeSpy.calledWith(this._mComponentProperties, aSavedChanges[4].convertToFileContent()));
+			}.bind(this));
 		});
 
 		QUnit.test("shall remove the change from the dirty changes, after it has been saved", function(assert) {
@@ -3010,16 +3006,16 @@ sap.ui.define([
 
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			return this.oChangePersistence.saveDirtyChanges()
-				.catch(function(oError) {
-					assert.equal(oError, oRaisedError, "the error object is correct");
-					return this.oChangePersistence.getChangesForComponent();
-				}.bind(this))
-				.then(function(aChanges) {
-					assert.equal(aChanges.length, 1, "Change is not deleted from the cache");
-					var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
-					assert.equal(aDirtyChanges.length, 1, "Change is still a dirty change");
-					assert.equal(this._updateCacheAndDirtyStateSpy.callCount, 0, "no update of cache and dirty state took place");
-				}.bind(this));
+			.catch(function(oError) {
+				assert.equal(oError, oRaisedError, "the error object is correct");
+				return this.oChangePersistence.getChangesForComponent();
+			}.bind(this))
+			.then(function(aChanges) {
+				assert.equal(aChanges.length, 1, "Change is not deleted from the cache");
+				var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
+				assert.equal(aDirtyChanges.length, 1, "Change is still a dirty change");
+				assert.equal(this._updateCacheAndDirtyStateSpy.callCount, 0, "no update of cache and dirty state took place");
+			}.bind(this));
 		});
 
 		QUnit.test("shall keep a change in the dirty changes, if it has a DELETE state", function(assert) {

@@ -12,13 +12,13 @@ sap.ui.define([
 			throw new Error("No sap.app/crossNavigation path exists in the manifest");
 		}
 
-		if (!oManifest["sap.app"]["crossNavigation"].hasOwnProperty("inbounds")) {
+		if (!oManifest["sap.app"].crossNavigation.hasOwnProperty("inbounds")) {
 			throw new Error("No sap.app/crossNavigation/inbounds path exists in the manifest");
 		}
 	}
 
 	function getAndCheckInboundId(oChangeContent) {
-		var sInbounds = oChangeContent["inboundId"];
+		var sInbounds = oChangeContent.inboundId;
 		if (sInbounds === "") {
 			throw new Error("The ID of your inbound is empty");
 		}
@@ -30,8 +30,8 @@ sap.ui.define([
 
 	function merge(oManifest, sInboundId) {
 		var oInbound = {};
-		oInbound[sInboundId] = oManifest["sap.app"]["crossNavigation"]["inbounds"][sInboundId];
-		oManifest["sap.app"]["crossNavigation"]["inbounds"] = oInbound;
+		oInbound[sInboundId] = oManifest["sap.app"].crossNavigation.inbounds[sInboundId];
+		oManifest["sap.app"].crossNavigation.inbounds = oInbound;
 	}
 
 	/**
@@ -61,7 +61,7 @@ sap.ui.define([
 		applyChange: function(oManifest, oChange) {
 			checkManifestPath(oManifest);
 			var sInboundId = getAndCheckInboundId(oChange.getContent());
-			if (oManifest["sap.app"]["crossNavigation"]["inbounds"][sInboundId]) {
+			if (oManifest["sap.app"].crossNavigation.inbounds[sInboundId]) {
 				merge(oManifest, sInboundId);
 			} else {
 				throw new Error("No inbound exists with the ID \"" + sInboundId + "\" in sap.app/crossNavigation/inbounds");

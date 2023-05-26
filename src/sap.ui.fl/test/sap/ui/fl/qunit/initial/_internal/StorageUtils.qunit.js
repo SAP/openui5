@@ -20,13 +20,13 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 	var TEST_CONNECTORS = ["apply/someConnector", "write/someConnector"];
 
-	function sortConnectors (mConnectors) {
+	function sortConnectors(mConnectors) {
 		return mConnectors.sort(function(oConnectorA, oConnectorB) {
 			return oConnectorA.connector > oConnectorB.connector ? -1 : 1;
 		});
 	}
 
-	function getEmptyFlexDataWithIndex (iIndex) {
+	function getEmptyFlexDataWithIndex(iIndex) {
 		return {
 			appDescriptorChanges: [],
 			index: iIndex,
@@ -149,11 +149,11 @@ sap.ui.define([
 				fileType: "other"
 			};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("with all kinds of changes", function (assert) {
+	}, function() {
+		QUnit.test("with all kinds of changes", function(assert) {
 			var aTestData = [
 				this.oCtrlVariantUser, this.oCtrlVariantCustomer, this.oCtrlVariantUserWithVMR, this.oCtrlVariantCustomerWithVMR,
 				// oVariantChangeUser2 & oVariantChangeUser1 are set in this order to check the sort functionality
@@ -211,10 +211,10 @@ sap.ui.define([
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
 			this.oConfigurationSpy = sandbox.spy(oCore.getConfiguration(), "getFlexibilityServices");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when getStaticFileConnector is called", function(assert) {
 			return Utils.getStaticFileConnector().then(function(mConnectors) {
 				assert.equal(this.oGetConnectorsSpy.callCount, 0, "the getConnector is NOT called");
@@ -244,10 +244,10 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when getStaticFileConnector is called", function(assert) {
 			return Utils.getStaticFileConnector().then(function(mConnectors) {
 				assert.equal(this.oGetConnectorsSpy.callCount, 0, "the getConnector is NOT called");
@@ -282,10 +282,10 @@ sap.ui.define([
 				{connector: "NeoLrepConnector", layers: [Layer.ALL]}
 			]);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when getLoadConnectors is called", function(assert) {
 			return Utils.getLoadConnectors().then(function(mConnectors) {
 				var mConnectorsSorted = sortConnectors(mConnectors);
@@ -306,10 +306,10 @@ sap.ui.define([
 			]);
 			this.oRequireStub = FlQUnitUtils.stubSapUiRequireDynamically(sandbox, checkModuleName);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when getLoadConnectors is called", function(assert) {
 			return Utils.getLoadConnectors().then(function(mConnectors) {
 				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
@@ -342,10 +342,10 @@ sap.ui.define([
 			]);
 			this.oRequireStub = FlQUnitUtils.stubSapUiRequireDynamically(sandbox, checkModuleName);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when getLoadConnectors is called", function(assert) {
 			return Utils.getLoadConnectors().then(function(mConnectors) {
 				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
@@ -378,10 +378,10 @@ sap.ui.define([
 			]);
 			this.oRequireStub = FlQUnitUtils.stubSapUiRequireDynamically(sandbox, checkModuleName);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when getLoadConnectors is called", function(assert) {
 			return Utils.getConnectors().then(function(mConnectors) {
 				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
@@ -394,7 +394,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

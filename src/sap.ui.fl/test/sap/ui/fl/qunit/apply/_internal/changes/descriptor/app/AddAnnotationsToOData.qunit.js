@@ -1,11 +1,11 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/fl/Layer"
 ],
-function (
+function(
 	AddAnnotationsToOData,
 	AppDescriptorChange,
 	Layer
@@ -19,29 +19,29 @@ function (
 
 	function assertManifestOData(assert, oDataSources, isDefaultOData, sODataDataSource, isSettingsCreatedByMerge) {
 		assert.strictEqual(oDataSources.hasOwnProperty(sODataDataSource), true, ALREADY_EXISTING.replace("{0}", "object equipment"));
-		assert.strictEqual(oDataSources[sODataDataSource]["uri"], "/sap/opu/odata/snce/PO_S_SRV;v=2/", ALREADY_EXISTING.replace("{0}", "uri"));
+		assert.strictEqual(oDataSources[sODataDataSource].uri, "/sap/opu/odata/snce/PO_S_SRV;v=2/", ALREADY_EXISTING.replace("{0}", "uri"));
 		assert.strictEqual(oDataSources[sODataDataSource].hasOwnProperty("settings"), true, ALREADY_EXISTING.replace("{0}", ""));
 
 		if (isDefaultOData) {
-			assert.strictEqual(oDataSources[sODataDataSource]["type"], undefined);
+			assert.strictEqual(oDataSources[sODataDataSource].type, undefined);
 		} else {
-			assert.strictEqual(oDataSources[sODataDataSource]["type"], "OData", ALREADY_EXISTING.replace("{0}", "typ"));
+			assert.strictEqual(oDataSources[sODataDataSource].type, "OData", ALREADY_EXISTING.replace("{0}", "typ"));
 		}
 
 		if (!isSettingsCreatedByMerge) {
-			assert.strictEqual(oDataSources[sODataDataSource]["settings"]["odataVersion"], "2.0", ALREADY_EXISTING.replace("{0}", "settings odataVersion"));
-			assert.strictEqual(oDataSources[sODataDataSource]["settings"]["localUri"], "model/metadata.xml", ALREADY_EXISTING.replace("{0}", "settings localUri"));
-			assert.strictEqual(oDataSources[sODataDataSource]["settings"]["maxAge"], 360, ALREADY_EXISTING.replace("{0}", "settings maxAge"));
+			assert.strictEqual(oDataSources[sODataDataSource].settings.odataVersion, "2.0", ALREADY_EXISTING.replace("{0}", "settings odataVersion"));
+			assert.strictEqual(oDataSources[sODataDataSource].settings.localUri, "model/metadata.xml", ALREADY_EXISTING.replace("{0}", "settings localUri"));
+			assert.strictEqual(oDataSources[sODataDataSource].settings.maxAge, 360, ALREADY_EXISTING.replace("{0}", "settings maxAge"));
 		}
 	}
 
 	function assertAlreadyExistingAnnotationsInManifest(assert, oDataSources, aAlreadyExistedAnnotations) {
 		aAlreadyExistedAnnotations.forEach(function(sAnnotation) {
 			assert.strictEqual(oDataSources.hasOwnProperty(sAnnotation), true, ALREADY_EXISTING.replace("{0}", "object annotation"));
-			assert.strictEqual(oDataSources[sAnnotation]["type"], "ODataAnnotation", ALREADY_EXISTING.replace("{0}", "type"));
-			assert.strictEqual(oDataSources[sAnnotation]["uri"], "/" + sAnnotation, ALREADY_EXISTING.replace("{0}", "uri"));
+			assert.strictEqual(oDataSources[sAnnotation].type, "ODataAnnotation", ALREADY_EXISTING.replace("{0}", "type"));
+			assert.strictEqual(oDataSources[sAnnotation].uri, "/" + sAnnotation, ALREADY_EXISTING.replace("{0}", "uri"));
 			assert.strictEqual(oDataSources[sAnnotation].hasOwnProperty("settings"), true, ALREADY_EXISTING.replace("{0}", "object settings"));
-			assert.strictEqual(oDataSources[sAnnotation]["settings"]["localUri"], "model/" + sAnnotation + ".xml", ALREADY_EXISTING.replace("{0}", "settings localUri"));
+			assert.strictEqual(oDataSources[sAnnotation].settings.localUri, "model/" + sAnnotation + ".xml", ALREADY_EXISTING.replace("{0}", "settings localUri"));
 		});
 	}
 
@@ -49,8 +49,8 @@ function (
 		assert.strictEqual(Object.keys(oDataSources).map(function(sDataSource) {return oDataSources[sDataSource];}).length, expectedLenght, SIZE_AFTER_MERGE);
 		aExpectedNewAnnotations.forEach(function(sAnnotation) {
 			assert.strictEqual(oDataSources.hasOwnProperty(sAnnotation), true, ADDED_ANNOTATION.replace("{0}", "object annotation"));
-			assert.strictEqual(oDataSources[sAnnotation]["type"], "ODataAnnotation", ADDED_ANNOTATION.replace("{0}", "type"));
-			assert.strictEqual(oDataSources[sAnnotation]["uri"], "/" + sAnnotation, ADDED_ANNOTATION.replace("{0}", "uri"));
+			assert.strictEqual(oDataSources[sAnnotation].type, "ODataAnnotation", ADDED_ANNOTATION.replace("{0}", "type"));
+			assert.strictEqual(oDataSources[sAnnotation].uri, "/" + sAnnotation, ADDED_ANNOTATION.replace("{0}", "uri"));
 		});
 	}
 
@@ -60,7 +60,7 @@ function (
 	}
 
 	QUnit.module("applyChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oManifest1 = {
 				"sap.app": {
 					dataSources: {
@@ -216,7 +216,7 @@ function (
 			});
 		}
 	}, function() {
-		QUnit.test("when calling '_applyChange' by adding new annotation to OData with not defined 'dataSourceId' property => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotation to OData with not defined 'dataSourceId' property => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.CUSTOMER,
@@ -238,21 +238,21 @@ function (
 			"throws error that there is no mandatory 'dataSourceId' property defined");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotation to an empty manifest (sap.app.dataSources) => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotation to an empty manifest (sap.app.dataSources) => ERROR", function(assert) {
 			assert.throws(function() {
 				AddAnnotationsToOData.applyChange(this.oManifestDataSourcesEmpty, this.oChangeNotExistingDataSourceId);
 			}, Error("There are no dataSources in the manifest at all"),
 			"throws error that there is no dataSource in the manifest at all");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotation to a not existing dataSourceId in manifest => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotation to a not existing dataSourceId in manifest => ERROR", function(assert) {
 			assert.throws(function() {
 				AddAnnotationsToOData.applyChange(this.oManifest1, this.oChangeNotExistingDataSourceId);
 			}, Error("There is no dataSource 'notExistingODataDataSource' existing in the manifest. You can only add annotations to already existing dataSources in the manifest"),
 			"throws error that the specified dataSource is not existing in the manifest");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotation to existing dataSourceId in manifest but type is not correct => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotation to existing dataSourceId in manifest but type is not correct => ERROR", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -289,7 +289,7 @@ function (
 			"throws error that the dataSourceId exists but is not type of 'OData'");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotation to OData with not compliant namespace => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotation to OData with not compliant namespace => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.CUSTOMER,
@@ -312,7 +312,7 @@ function (
 			"throws error that namespace prefix is missing");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without 'dataSource' object => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without 'dataSource' object => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -329,7 +329,7 @@ function (
 			"throws error that the 'dataSource' object is not defined");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with empty 'dataSource' object => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with empty 'dataSource' object => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -347,7 +347,7 @@ function (
 			"throws error that the 'dataSource' object is empty");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with dataSource object type not 'ODataAnnotation' => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with dataSource object type not 'ODataAnnotation' => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				layer: Layer.VENDOR,
 				changeType: "appdescr_app_AddAnnotationsToOData",
@@ -378,7 +378,7 @@ function (
 			"throws error that the dataSource annotation is not type of 'ODataAnnotation'");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without 'annotations' array property => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without 'annotations' array property => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.CUSTOMER,
@@ -400,7 +400,7 @@ function (
 			"throws error that the mandatory 'annotations' property is not defined");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with empty 'annotations' array property => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with empty 'annotations' array property => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				content: {
@@ -422,7 +422,7 @@ function (
 			"throws error that the 'annotations' property is empty");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without having the annotation in the 'annotations' array property => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without having the annotation in the 'annotations' array property => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -453,7 +453,7 @@ function (
 			"throws error that the an annotation is defined in 'dataSource' but not defined in the 'annotations' array property");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with not supported 'annotationsInsertPosition' => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with not supported 'annotationsInsertPosition' => ERROR", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -480,14 +480,14 @@ function (
 			"throws error that the defined 'annotationsInsertPosition' is not supported.");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with having an annotation in the 'annotations' array property which not exists in the change dataSource property and in the manifest => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with having an annotation in the 'annotations' array property which not exists in the change dataSource property and in the manifest => ERROR", function(assert) {
 			assert.throws(function() {
 				AddAnnotationsToOData.applyChange(this.oManifest1, this.oChangeNoDataSourceOrNotSupported);
 			}, Error("The annotation 'notExistsInChangeDataSourceAndManifestOrNotSupportedType' is part of 'annotations' array property but does not exists in the change property 'dataSource' and in the manifest (or it is not type of 'ODataAnnotation' in the manifest)"),
 			"throws error that an annotation which is defined in the annotations array does not exists in the change property 'dataSource' and in the manifest");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding an existing annotation which is not of type 'ODataAnnotation' to an existing OData => ERROR", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding an existing annotation which is not of type 'ODataAnnotation' to an existing OData => ERROR", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -525,7 +525,7 @@ function (
 			"throws error that an annotation which is defined in the annotations array does exists in the manifest but is not of type 'ODataAnnotation'");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding a single annotation to an existing OData at the beginning => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding a single annotation to an existing OData at the beginning => SUCCESS", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -544,13 +544,13 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(this.oManifest1, oChange);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 3, ["annotation1"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["annotation1", "equipmentanno"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 3, ["annotation1"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["annotation1", "equipmentanno"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding a single annotation to an existing OData at the beginning without setting 'annotationsInsertPosition' (default: 'BEGINNING') => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding a single annotation to an existing OData at the beginning without setting 'annotationsInsertPosition' (default: 'BEGINNING') => SUCCESS", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -568,31 +568,31 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(this.oManifest1, oChange);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 3, ["annotation1"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["annotation1", "equipmentanno"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 3, ["annotation1"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["annotation1", "equipmentanno"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding a single annotation to an existing OData at the end => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding a single annotation to an existing OData at the end => SUCCESS", function(assert) {
 			var oNewManifest = AddAnnotationsToOData.applyChange(this.oManifest1, this.oChangeAddOneAnnotationEnd);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 3, ["annotation1"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["equipmentanno", "annotation1"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 3, ["annotation1"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["equipmentanno", "annotation1"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData at the beginning => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData at the beginning => SUCCESS", function(assert) {
 			var oNewManifest = AddAnnotationsToOData.applyChange(this.oManifest1, this.oChangeAddTwoAnnotationsBeginning);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 4, ["annotation1", "annotation2"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["annotation1", "annotation2", "equipmentanno"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 4, ["annotation1", "annotation2"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["annotation1", "annotation2", "equipmentanno"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData at the beginning without setting 'annotationsInsertPosition' (default: 'BEGINNING') => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData at the beginning without setting 'annotationsInsertPosition' (default: 'BEGINNING') => SUCCESS", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -614,22 +614,22 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(this.oManifest1, oChange);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 4, ["annotation1", "annotation2"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["annotation1", "annotation2", "equipmentanno"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 4, ["annotation1", "annotation2"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["annotation1", "annotation2", "equipmentanno"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData at the end => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData at the end => SUCCESS", function(assert) {
 			var oNewManifest = AddAnnotationsToOData.applyChange(this.oManifest1, this.oChangeAddTwoAnnotationsEnd);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 4, ["annotation1", "annotation2"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["equipmentanno", "annotation1", "annotation2"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 4, ["annotation1", "annotation2"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["equipmentanno", "annotation1", "annotation2"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData and reference to an existing ODataAnnotation in the base desriptor at the end => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData and reference to an existing ODataAnnotation in the base desriptor at the end => SUCCESS", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -652,13 +652,13 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(this.oManifest2, oChange);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno", "customer.existingAnnotation"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 5, ["annotation1", "annotation2"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["equipmentanno", "annotation1", "annotation2", "customer.existingAnnotation"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno", "customer.existingAnnotation"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 5, ["annotation1", "annotation2"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["equipmentanno", "annotation1", "annotation2", "customer.existingAnnotation"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData and reference to an existing ODataAnnotation in the base desriptor at the beginning => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData and reference to an existing ODataAnnotation in the base desriptor at the beginning => SUCCESS", function(assert) {
 			var oChange = new AppDescriptorChange({
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				layer: Layer.VENDOR,
@@ -681,13 +681,13 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(this.oManifest2, oChange);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno", "customer.existingAnnotation"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 5, ["annotation1", "annotation2"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["customer.existingAnnotation", "annotation1", "annotation2", "equipmentanno"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno", "customer.existingAnnotation"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 5, ["annotation1", "annotation2"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["customer.existingAnnotation", "annotation1", "annotation2", "equipmentanno"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData without having an 'annotations' property => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData without having an 'annotations' property => SUCCESS", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -706,13 +706,13 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(oManifest, this.oChangeAddTwoAnnotationsBeginning);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], []);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 3, ["annotation1", "annotation2"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["annotation1", "annotation2"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, []);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 3, ["annotation1", "annotation2"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["annotation1", "annotation2"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData with empty 'annotations' property => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData with empty 'annotations' property => SUCCESS", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -732,13 +732,13 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(oManifest, this.oChangeAddTwoAnnotationsEnd);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], []);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 3, ["annotation1", "annotation2"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["annotation1", "annotation2"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, []);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 3, ["annotation1", "annotation2"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["annotation1", "annotation2"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding an annotations to an existing OData. The existing OData in the manifest does not have 'type' property (default: OData) => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding an annotations to an existing OData. The existing OData in the manifest does not have 'type' property (default: OData) => SUCCESS", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -764,13 +764,13 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(oManifest, this.oChangeAddOneAnnotationEnd);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], true, "equipment", false);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], ["equipmentanno"]);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 3, ["annotation1"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["equipmentanno", "annotation1"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, true, "equipment", false);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, ["equipmentanno"]);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 3, ["annotation1"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["equipmentanno", "annotation1"]);
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without having 'settings' object and 'annotations' property => SUCCESS", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without having 'settings' object and 'annotations' property => SUCCESS", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -784,10 +784,10 @@ function (
 
 			var oNewManifest = AddAnnotationsToOData.applyChange(oManifest, this.oChangeAddTwoAnnotationsBeginning);
 
-			assertManifestOData(assert, oNewManifest["sap.app"]["dataSources"], false, "equipment", true);
-			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"]["dataSources"], []);
-			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"]["dataSources"], 3, ["annotation1", "annotation2"]);
-			assertAnnotationArray(assert, oNewManifest["sap.app"]["dataSources"]["equipment"]["settings"]["annotations"], ["annotation1", "annotation2"]);
+			assertManifestOData(assert, oNewManifest["sap.app"].dataSources, false, "equipment", true);
+			assertAlreadyExistingAnnotationsInManifest(assert, oNewManifest["sap.app"].dataSources, []);
+			assertDataSourcesLengthAfterMergeAndNewAnnotations(assert, oNewManifest["sap.app"].dataSources, 3, ["annotation1", "annotation2"]);
+			assertAnnotationArray(assert, oNewManifest["sap.app"].dataSources.equipment.settings.annotations, ["annotation1", "annotation2"]);
 		});
 	});
 

@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 /* eslint-disable max-nested-callbacks */
 
 sap.ui.define([
@@ -223,22 +223,22 @@ sap.ui.define([
 		QUnit.test("when (rename) changes have failed during the apply process", function(assert) {
 			var oFailedChange;
 			return loadChangesFromPath("renameChanges.json", assert, 9)
-				.then(function(aLoadedChanges) {
-					this.aChanges = aLoadedChanges;
-					return applyChangeSequentially(aLoadedChanges);
-				}.bind(this))
-				.then(function() {
-					// Get one of the changes that would normally be condensed
-					oFailedChange = this.aChanges.find(function(oChange) {
-						return oChange.getId() === "id_1576490280160_42_renameField";
-					});
-					oFailedChange.markFailed();
-					return Condenser.condense(oAppComponent, this.aChanges);
-				}.bind(this))
-				.then(function(aRemainingChanges) {
-					assert.ok(aRemainingChanges.includes(oFailedChange), "then the failed change is not condensed");
-					assert.strictEqual(aRemainingChanges.length, 4, "then there is one more remaining change");
+			.then(function(aLoadedChanges) {
+				this.aChanges = aLoadedChanges;
+				return applyChangeSequentially(aLoadedChanges);
+			}.bind(this))
+			.then(function() {
+				// Get one of the changes that would normally be condensed
+				oFailedChange = this.aChanges.find(function(oChange) {
+					return oChange.getId() === "id_1576490280160_42_renameField";
 				});
+				oFailedChange.markFailed();
+				return Condenser.condense(oAppComponent, this.aChanges);
+			}.bind(this))
+			.then(function(aRemainingChanges) {
+				assert.ok(aRemainingChanges.includes(oFailedChange), "then the failed change is not condensed");
+				assert.strictEqual(aRemainingChanges.length, 4, "then there is one more remaining change");
+			});
 		});
 
 		QUnit.test("rename changes, then trigger condensing while another variant is active (= changes are reverted)", function(assert) {
@@ -251,7 +251,7 @@ sap.ui.define([
 				// Simulate changing the active variant - revert the applied changes
 				this.bSkipRevertOnEnd = true;
 				return revertMultipleChanges(this.aChanges)
-					.then(Condenser.condense.bind(this, oAppComponent, aChanges));
+				.then(Condenser.condense.bind(this, oAppComponent, aChanges));
 			}.bind(this)).then(function(aRemainingChanges) {
 				assert.strictEqual(aRemainingChanges.length, 9, "Reverted changes are not condensed");
 			});
@@ -472,9 +472,9 @@ sap.ui.define([
 				return applyChangeSequentially(aLoadedChanges);
 			}.bind(this)).then(function() {
 				sandbox.stub(MoveControls, "getCondenserInfo")
-					.onSecondCall()
-					.throws()
-					.callThrough();
+				.onSecondCall()
+				.throws()
+				.callThrough();
 
 				return Condenser.condense(oAppComponent, this.aChanges);
 			}.bind(this))
@@ -875,21 +875,21 @@ sap.ui.define([
 		QUnit.test("only updateIFrame without addIFrame", function(assert) {
 			// Simulate having the addIFrame not part of the Condenser, e.g. because it's in an already active version
 			return loadChangesFromPath("updateIFrame.json", assert, 4)
-				.then(function(aLoadedChanges) {
-					this.aChanges = this.aChanges.concat(aLoadedChanges);
-					return applyChangeSequentially(this.aChanges);
-				}.bind(this))
-				.then(function() {
-					var aChanges = this.aChanges.slice(1);
-					return Condenser.condense(oAppComponent, aChanges);
-				}.bind(this))
-				.then(function(aRemainingChanges) {
-					assert.strictEqual(aRemainingChanges.length, 1, "the updates are condensed to 1 change");
-					var oContent = aRemainingChanges[0].getContent();
-					assert.strictEqual(oContent.height, "100px", "the height is correct");
-					assert.strictEqual(oContent.url, "https://www.example.com", "the url is correct");
-					assert.strictEqual(oContent.width, "10rem", "the width is correct");
-				});
+			.then(function(aLoadedChanges) {
+				this.aChanges = this.aChanges.concat(aLoadedChanges);
+				return applyChangeSequentially(this.aChanges);
+			}.bind(this))
+			.then(function() {
+				var aChanges = this.aChanges.slice(1);
+				return Condenser.condense(oAppComponent, aChanges);
+			}.bind(this))
+			.then(function(aRemainingChanges) {
+				assert.strictEqual(aRemainingChanges.length, 1, "the updates are condensed to 1 change");
+				var oContent = aRemainingChanges[0].getContent();
+				assert.strictEqual(oContent.height, "100px", "the height is correct");
+				assert.strictEqual(oContent.url, "https://www.example.com", "the url is correct");
+				assert.strictEqual(oContent.width, "10rem", "the width is correct");
+			});
 		});
 
 		[true, false].forEach(function(bPersistedChanges) {

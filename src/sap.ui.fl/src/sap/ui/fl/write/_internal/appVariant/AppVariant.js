@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/base/util/isPlainObject"
-], function (
+], function(
 	ManagedObject,
 	Utils,
 	LrepConnector,
@@ -101,7 +101,7 @@ sap.ui.define([
 	 */
 	AppVariant.prototype.setTransportRequest = function(sTransportRequest) {
 		try {
-			//partial check: length le 20, alphanumeric, upper case, no space not underscore - data element in ABAP: TRKORR, CHAR20
+			// partial check: length le 20, alphanumeric, upper case, no space not underscore - data element in ABAP: TRKORR, CHAR20
 			Utils.checkTransportRequest(sTransportRequest);
 		} catch (oError) {
 			return Promise.reject(oError);
@@ -137,7 +137,7 @@ sap.ui.define([
 	 */
 	AppVariant.prototype.setPackage = function(sPackage) {
 		try {
-			//partial check: length le 30, alphanumeric, upper case, / for namespace, no space, no underscore - data element in ABAP: DEVCLASS, CHAR30
+			// partial check: length le 30, alphanumeric, upper case, / for namespace, no space, no underscore - data element in ABAP: DEVCLASS, CHAR30
 			Utils.checkPackage(sPackage);
 		} catch (oError) {
 			return Promise.reject(oError);
@@ -153,7 +153,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	AppVariant.prototype.getDefinition = function () {
+	AppVariant.prototype.getDefinition = function() {
 		return this._oDefinition;
 	};
 
@@ -257,12 +257,12 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	AppVariant.prototype.addDescriptorInlineChange = function(oDescriptorInlineChange) {
-		//TODO: This method will be optimized and go to other class in the follow up change
+		// TODO: This method will be optimized and go to other class in the follow up change
 		return new Promise(function(resolve) {
 			var fSetHostingIdForTextKey = function(_oDescriptorInlineChange, sId) {
-				//providing "hosting id" for appdescr_app_setTitle and similar
-				//"hosting id" is app variant id
-				if (_oDescriptorInlineChange["setHostingIdForTextKey"]) {
+				// providing "hosting id" for appdescr_app_setTitle and similar
+				// "hosting id" is app variant id
+				if (_oDescriptorInlineChange.setHostingIdForTextKey) {
 					_oDescriptorInlineChange.setHostingIdForTextKey(sId);
 				}
 			};

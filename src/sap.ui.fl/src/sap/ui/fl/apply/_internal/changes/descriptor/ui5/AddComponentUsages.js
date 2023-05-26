@@ -8,7 +8,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	/**
 	 * Descriptor change merger for change type <code>appdescr_ui5_addComponentUsages</code>.
 	 * Adds component usages under <code>sap.ui5/componentUsages</code> node and creates parent node if not yet existing.
@@ -37,8 +36,8 @@ sap.ui.define([
 			var oChangeComponentUsages = oChange.getContent().componentUsages;
 
 			// sap.ui5 node is mandatory in UI5 manifest
-			if (!oManifest["sap.ui5"]["componentUsages"]) {
-				oManifest["sap.ui5"]["componentUsages"] = {};
+			if (!oManifest["sap.ui5"].componentUsages) {
+				oManifest["sap.ui5"].componentUsages = {};
 			}
 			var oManifestComponentUsages = oManifest["sap.ui5"].componentUsages;
 
@@ -51,7 +50,6 @@ sap.ui.define([
 			});
 			return oManifest;
 		}
-
 
 	};
 

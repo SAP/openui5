@@ -38,7 +38,6 @@ sap.ui.define([
 			return oManifest;
 		}
 
-
 	};
 
 	return SetRegistrationIds;

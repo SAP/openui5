@@ -45,7 +45,7 @@ function(
 
 	function getAppIdFromManifest(oManifest) {
 		if (oManifest) {
-			var APP_ID_AT_DESIGN_TIME = "${pro" + "ject.art" + "ifactId}"; //avoid replaced by content of ${project.artifactId} placeholder at build steps
+			var APP_ID_AT_DESIGN_TIME = "${pro" + "ject.art" + "ifactId}"; // avoid replaced by content of ${project.artifactId} placeholder at build steps
 			var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
 			var sAppId = oSapApp && oSapApp.id;
 			if (sAppId === APP_ID_AT_DESIGN_TIME) {
@@ -91,7 +91,7 @@ function(
 		 * @param {sap.ui.core.Control} oControl - Control for the application determination
 		 * @return {string} Reference of the application
 		 */
-		getFlexReferenceForControl: function (oControl) {
+		getFlexReferenceForControl: function(oControl) {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			return oAppComponent && getFlexReference({
 				manifest: oAppComponent.getManifestObject(),
@@ -99,7 +99,7 @@ function(
 			});
 		},
 
-		getOvpEntry: function (oManifest) {
+		getOvpEntry: function(oManifest) {
 			return oManifest.getEntry ? oManifest.getEntry("sap.ovp") : oManifest["sap.ovp"];
 		},
 
@@ -131,7 +131,7 @@ function(
 			return oSapUi5Entry && oSapUi5Entry.componentName || getAppIdFromManifest(oManifest);
 		},
 
-		isFlexExtensionPointHandlingEnabled: function (oView) {
+		isFlexExtensionPointHandlingEnabled: function(oView) {
 			var oAppComponent = Utils.getAppComponentForControl(oView);
 			return !!(oAppComponent
 				&& oAppComponent.getManifestEntry("sap.ui5")

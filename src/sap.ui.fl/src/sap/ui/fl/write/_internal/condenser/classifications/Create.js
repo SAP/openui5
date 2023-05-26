@@ -26,7 +26,7 @@ sap.ui.define([
 				oCondenserInfo.targetContainer, sAggregationName,
 				oCondenserInfo.customAggregation, oCondenserInfo.affectedControlIdProperty
 			)
-			.then(function (aTargetContainerElementIds) {
+			.then(function(aTargetContainerElementIds) {
 				var aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);
 				var iIndex = aContainerElementIds.indexOf(oCondenserInfo.affectedControl);
 				// if the index is -1 the element was already removed by a different add change

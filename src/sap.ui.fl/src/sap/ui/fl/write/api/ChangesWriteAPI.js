@@ -87,15 +87,15 @@ sap.ui.define([
 				}
 
 				return AppVariantInlineChangeFactory.createDescriptorInlineChange(oInlineChange)
-					.then(function (oAppDescriptorChangeContent) {
-						return new DescriptorChangeFactory().createNew(
-							sReference, oAppDescriptorChangeContent, sLayer, mPropertyBag.selector
-						);
-					})
-					.catch(function(oError) {
-						Log.error("the change could not be created.", oError.message);
-						throw oError;
-					});
+				.then(function(oAppDescriptorChangeContent) {
+					return new DescriptorChangeFactory().createNew(
+						sReference, oAppDescriptorChangeContent, sLayer, mPropertyBag.selector
+					);
+				})
+				.catch(function(oError) {
+					Log.error("the change could not be created.", oError.message);
+					throw oError;
+				});
 			}
 
 			if (mPropertyBag.changeSpecificData.changeType === "codeExt") {

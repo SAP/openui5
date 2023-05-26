@@ -35,7 +35,7 @@ sap.ui.define([
 		},
 		isLanguageInfoRequired: true,
 		loadFlexData: function(mPropertyBag) {
-			return BackendConnector.sendRequest.call(KeyUserConnector, mPropertyBag).then(function (oResult) {
+			return BackendConnector.sendRequest.call(KeyUserConnector, mPropertyBag).then(function(oResult) {
 				oResult.contents.map(function(oContent, iIndex, oResult) {
 					oResult[iIndex].changes = (oContent.changes || []).concat(oContent.compVariants);
 				});

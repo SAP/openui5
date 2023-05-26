@@ -67,18 +67,18 @@ sap.ui.define([
 	};
 
 	FakeLrepConnector.forTesting = {
-		getNumberOfChanges: function (oConnector, sReference) {
+		getNumberOfChanges: function(oConnector, sReference) {
 			return oConnector.loadFlexData({reference: sReference})
-			.then(function (aResponses) {
-				return aResponses.reduce(function (iNumberOfChanges, oResponse) {
+			.then(function(aResponses) {
+				return aResponses.reduce(function(iNumberOfChanges, oResponse) {
 					return iNumberOfChanges + oResponse.changes.length;
 				}, 0);
 			});
 		},
-		spyMethod: function (sandbox, assert, oConnector, sMethod) {
+		spyMethod: function(sandbox, assert, oConnector, sMethod) {
 			var oSpy = sandbox.spy(oConnector, sMethod);
 
-			return function (iNumberOfExpectedObjects, iCallIndex) {
+			return function(iNumberOfExpectedObjects, iCallIndex) {
 				iCallIndex = iCallIndex || 0;
 				var iNumberOfObjects = oSpy.getCall(iCallIndex).args[0].flexObjects.length;
 				assert.equal(iNumberOfObjects, iNumberOfExpectedObjects, sMethod + " was called " + iNumberOfExpectedObjects + " times");
@@ -92,7 +92,7 @@ sap.ui.define([
 			oConnector.storage = oNewStorage;
 		},
 		synchronous: {
-			clearAll: function (oStorage) {
+			clearAll: function(oStorage) {
 				var fnRemoveItem = function(sKey) {
 					var bIsFlexObject = sKey.includes(FL_PREFIX);
 
@@ -105,7 +105,7 @@ sap.ui.define([
 
 				Object.keys(oStorage).map(fnRemoveItem);
 			},
-			store: function (oStorage, sKey, oItem) {
+			store: function(oStorage, sKey, oItem) {
 				var sFlexKey = ObjectStorageUtils.createFlexKey(sKey);
 				var sItem = JSON.stringify(oItem);
 				oStorage.setItem(sFlexKey, sItem);

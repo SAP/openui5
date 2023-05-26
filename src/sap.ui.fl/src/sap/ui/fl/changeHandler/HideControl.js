@@ -37,15 +37,14 @@ sap.ui.define([
 	HideControl.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		return Promise.resolve()
-			.then(oModifier.getVisible.bind(oModifier, oControl))
-			.then(function(bVisible) {
-				oChange.setRevertData({
-					originalValue: bVisible
-				});
-				oModifier.setVisible(oControl, false);
+		.then(oModifier.getVisible.bind(oModifier, oControl))
+		.then(function(bVisible) {
+			oChange.setRevertData({
+				originalValue: bVisible
 			});
+			oModifier.setVisible(oControl, false);
+		});
 	};
-
 
 	/**
 	 * Reverts previously applied change
@@ -61,14 +60,14 @@ sap.ui.define([
 		var mRevertData = oChange.getRevertData();
 
 		return Promise.resolve()
-			.then(function() {
-				if (mRevertData) {
-					mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
-					oChange.resetRevertData();
-				} else {
-					Log.error("Attempt to revert an unapplied change.");
-				}
-			});
+		.then(function() {
+			if (mRevertData) {
+				mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
+				oChange.resetRevertData();
+			} else {
+				Log.error("Attempt to revert an unapplied change.");
+			}
+		});
 	};
 
 	/**

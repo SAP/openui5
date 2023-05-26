@@ -31,7 +31,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	function createChange (sChangeId, sSelectorId, oCustomDef) {
+	function createChange(sChangeId, sSelectorId, oCustomDef) {
 		return FlexObjectFactory.createFromFileContent(Object.assign(
 			{
 				fileName: sChangeId,
@@ -46,7 +46,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Reset/Restore", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oFooElement = new VBox("fooElement");
 			this.oBarElement = new VBox("barElement");
 			this.oElement = new VBox("parentElement", {
@@ -68,12 +68,12 @@ sap.ui.define([
 			this.oChangePersistence.addDirtyChange(aChanges[1]);
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oElement.destroy();
 		}
-	}, function () {
-		QUnit.test("when the isEnabled check is called", function (assert) {
+	}, function() {
+		QUnit.test("when the isEnabled check is called", function(assert) {
 			assert.ok(
 				LocalResetAPI.isResetEnabled(this.oFooElement, {
 					layer: Layer.CUSTOMER
@@ -89,40 +89,40 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when changes are reset", function (assert) {
+		QUnit.test("when changes are reset", function(assert) {
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
 			var oRemoveStub = sandbox.stub(PersistenceWriteAPI, "remove").resolves();
 			var oRevertStub = sandbox.stub(ChangesWriteAPI, "revert").resolves();
 			return LocalResetAPI.resetChanges(aNestedChanges, this.oComponent)
-				.then(function () {
-					assert.strictEqual(oRemoveStub.callCount, 2, "Then all changes are removed");
-					assert.strictEqual(oRevertStub.callCount, 2, "Then all changes are reverted");
-					assert.strictEqual(
-						oRevertStub.firstCall.args[0].change.getId(),
-						"foo2",
-						"then the changes are reverted in the correct order"
-					);
-				});
+			.then(function() {
+				assert.strictEqual(oRemoveStub.callCount, 2, "Then all changes are removed");
+				assert.strictEqual(oRevertStub.callCount, 2, "Then all changes are reverted");
+				assert.strictEqual(
+					oRevertStub.firstCall.args[0].change.getId(),
+					"foo2",
+					"then the changes are reverted in the correct order"
+				);
+			});
 		});
 
-		QUnit.test("when a reset is restored", function (assert) {
+		QUnit.test("when a reset is restored", function(assert) {
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
-			sandbox.stub(PersistenceWriteAPI, "remove").callsFake(function (aArguments) {
+			sandbox.stub(PersistenceWriteAPI, "remove").callsFake(function(aArguments) {
 				// Simulate deletion to validate that the state is restored
 				this.oChangePersistence.deleteChange(aArguments.change);
 				return Promise.resolve();
 			}.bind(this));
 			sandbox.stub(ChangesWriteAPI, "revert").resolves();
 
-			return LocalResetAPI.resetChanges(aNestedChanges, this.oComponent).then(function () {
+			return LocalResetAPI.resetChanges(aNestedChanges, this.oComponent).then(function() {
 				var oAddStub = sandbox.stub(PersistenceWriteAPI, "add");
 				var oApplyStub = sandbox.stub(ChangesWriteAPI, "apply").resolves();
 
-				return LocalResetAPI.restoreChanges(aNestedChanges, this.oComponent).then(function () {
+				return LocalResetAPI.restoreChanges(aNestedChanges, this.oComponent).then(function() {
 					assert.strictEqual(oAddStub.callCount, 2, "Then all changes are added again");
 					assert.strictEqual(oApplyStub.callCount, 2, "Then all changes are applied again");
 					assert.strictEqual(
@@ -131,7 +131,7 @@ sap.ui.define([
 						"then the changes are applied in the correct order"
 					);
 					assert.deepEqual(
-						aNestedChanges.map(function (oChange) {
+						aNestedChanges.map(function(oChange) {
 							return oChange.getState();
 						}),
 						[States.LifecycleState.PERSISTED, States.LifecycleState.NEW],
@@ -145,7 +145,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when a reset containing dependent changes is restored", function (assert) {
+		QUnit.test("when a reset containing dependent changes is restored", function(assert) {
 			assert.expect(2);
 
 			var aNestedChanges = [
@@ -155,9 +155,9 @@ sap.ui.define([
 
 			var oBySelectorStub = sandbox.stub(JsControlTreeModifier, "bySelector");
 			sandbox.stub(PersistenceWriteAPI, "add");
-			sandbox.stub(ChangesWriteAPI, "apply").callsFake(function (oPayload) {
+			sandbox.stub(ChangesWriteAPI, "apply").callsFake(function(oPayload) {
 				// Simulate async apply
-				return Promise.resolve().then(function () {
+				return Promise.resolve().then(function() {
 					if (oPayload.change === aNestedChanges[0]) {
 						assert.ok(
 							oBySelectorStub.neverCalledWith({ id: "addedControlId" }),
@@ -167,7 +167,7 @@ sap.ui.define([
 				});
 			});
 
-			return LocalResetAPI.restoreChanges(aNestedChanges, this.oComponent).then(function () {
+			return LocalResetAPI.restoreChanges(aNestedChanges, this.oComponent).then(function() {
 				assert.ok(
 					oBySelectorStub.withArgs({ id: "addedControlId" }).calledOnce,
 					"then the selector for the second change is looked up later"
@@ -177,7 +177,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Nested change collection", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oElement = new VBox("element", {
 				items: [
 					new VBox("childElement")
@@ -195,12 +195,12 @@ sap.ui.define([
 			this.oChangePersistence = new ChangePersistence(oComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(oComponent.name);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oParentElement.destroy();
 		}
-	}, function () {
-		QUnit.test("when the checked control is the selector of a change", function (assert) {
+	}, function() {
+		QUnit.test("when the checked control is the selector of a change", function(assert) {
 			var aChanges = [createChange("foo", "element")];
 			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
@@ -214,7 +214,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when the selector of a change is part of the searched control tree", function (assert) {
+		QUnit.test("when the selector of a change is part of the searched control tree", function(assert) {
 			var aChanges = [
 				createChange("foo", "element"),
 				createChange("bar", "childElement")
@@ -231,7 +231,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a dependent selector of a change is part of the searched control tree", function (assert) {
+		QUnit.test("when a dependent selector of a change is part of the searched control tree", function(assert) {
 			var aChanges = [createChange("foo", "element", {
 				dependentSelector: {
 					someDependentSelector: {
@@ -251,7 +251,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change was already deleted", function (assert) {
+		QUnit.test("when a change was already deleted", function(assert) {
 			var aChanges = [createChange("foo", "element")];
 			aChanges[0].setState(States.LifecycleState.DELETED);
 			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
@@ -266,13 +266,13 @@ sap.ui.define([
 			);
 		});
 
-		function getFilenamesForChanges (aChanges) {
-			return aChanges.map(function (oChange) {
+		function getFilenamesForChanges(aChanges) {
+			return aChanges.map(function(oChange) {
 				return oChange.getId();
 			});
 		}
 
-		QUnit.test("when a variant reference is specified", function (assert) {
+		QUnit.test("when a variant reference is specified", function(assert) {
 			var aChanges = [
 				createChange("foo", "element", {
 					variantReference: "fooVariant"
@@ -304,7 +304,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when the selector of a change is the parent of the searched element", function (assert) {
+		QUnit.test("when the selector of a change is the parent of the searched element", function(assert) {
 			var aChanges = [createChange("foo", "parentElement")];
 			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
@@ -318,7 +318,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when the selector of a change is a sibling of the searched element", function (assert) {
+		QUnit.test("when the selector of a change is a sibling of the searched element", function(assert) {
 			var aChanges = [createChange("foo", "siblingElement")];
 			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
@@ -333,7 +333,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

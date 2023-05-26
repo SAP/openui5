@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/model/base/ManagedObjectModel"
-], function (
+], function(
 	Element,
 	ManagedObjectModel
 ) {
@@ -57,7 +57,7 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function () {
+		constructor: function() {
 			Element.apply(this, arguments);
 
 			this._oManagedObjectModel = new ManagedObjectModel(
@@ -65,15 +65,15 @@ sap.ui.define([
 				this.getData()
 			);
 
-			["data", "name", "object"].forEach(function (sName) {
-				this["set" + capitalize(sName)] = function () {
+			["data", "name", "object"].forEach(function(sName) {
+				this["set" + capitalize(sName)] = function() {
 					throw new Error("sap.ui.fl.util.ManagedObjectModel: Can't change the value of `" + sName + "` after the object is initialized. Please recreate the object with correct values in the constructor.");
 				};
 			}, this);
 		}
 	});
 
-	ManagedObjectModelFantomas.prototype.setParent = function (oNewParent) {
+	ManagedObjectModelFantomas.prototype.setParent = function(oNewParent) {
 		var oOldParent = this.getParent();
 
 		if (oOldParent) {
@@ -87,7 +87,7 @@ sap.ui.define([
 		Element.prototype.setParent.apply(this, arguments);
 	};
 
-	ManagedObjectModelFantomas.prototype.exit = function () {
+	ManagedObjectModelFantomas.prototype.exit = function() {
 		this._oManagedObjectModel.destroy();
 	};
 

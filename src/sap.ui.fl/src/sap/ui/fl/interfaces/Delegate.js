@@ -65,7 +65,6 @@ sap.ui.define([
 	 * @since 1.78
 	 */
 
-
 	/**
 	 * Object containing the control representations.
 	 *
@@ -81,8 +80,7 @@ sap.ui.define([
 	 * @since 1.78
 	 */
 
-	//TODO add link to app developer guide when it includes delegate description and test utility
-
+	// TODO add link to app developer guide when it includes delegate description and test utility
 
 	/**
 	 * Interface for SAPUI5 flexibility delegates.
@@ -129,7 +127,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		getPropertyInfo: function(/*mPropertyBag*/) {
+		getPropertyInfo: function(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		},
 
@@ -151,7 +149,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		getRepresentedProperties: function(/*mPropertyBag*/) {
+		getRepresentedProperties: function(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		},
 
@@ -180,7 +178,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		createLabel: function(/*mPropertyBag*/) {
+		createLabel: function(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		},
 
@@ -210,7 +208,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		createControlForProperty: function(/*mPropertyBag*/) {
+		createControlForProperty: function(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		},
 
@@ -238,7 +236,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		createLayout: function(/*mPropertyBag*/) {
+		createLayout: function(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		}
 	};

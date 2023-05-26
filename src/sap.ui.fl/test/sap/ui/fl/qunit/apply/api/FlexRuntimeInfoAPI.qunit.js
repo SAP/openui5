@@ -29,8 +29,8 @@ sap.ui.define([
 
 	function mockFlexController(oControl, oReturn) {
 		sandbox.stub(ChangesController, "getFlexControllerInstance")
-			.withArgs(oControl)
-			.returns(oReturn);
+		.withArgs(oControl)
+		.returns(oReturn);
 	}
 
 	QUnit.module("isPersonalized", {
@@ -82,7 +82,6 @@ sap.ui.define([
 			var oChangeContent3 = {fileName: "change3", fileType: "change", variantReference: "variant1", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType2", layer: Layer.USER};
 			var oVariantChangeContent0 = {fileName: "variantChange0", fileType: "ctrl_variant_change", layer: Layer.USER, selector: {id: "variantManagementId"}, changeType: "changeType1"};
 			var oVariantManagementChangeContent0 = {fileName: "variantManagementChange0", fileType: "ctrl_variant_management_change", layer: Layer.USER, changeType: "changeType1", selector: {id: "variantManagementId"}, content: {defaultVariant: "defaultVariant0"}};
-
 
 			var oMockedWrappedContent = {
 				changes: {
@@ -240,7 +239,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("waitForChanges", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.aObjectsToDestroy = [];
 		},
 		afterEach: function() {
@@ -347,7 +346,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

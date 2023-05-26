@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/descriptorRelated/internal/Utils",
@@ -64,7 +64,7 @@ sap.ui.define([
 			}), undefined);
 		});
 
-		QUnit.test("checkEntityPropertyChange failure", function (assert) {
+		QUnit.test("checkEntityPropertyChange failure", function(assert) {
 			assert.throws(function() {
 				Utils.checkEntityPropertyChange({
 					entityPropertyChange: {
@@ -185,7 +185,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

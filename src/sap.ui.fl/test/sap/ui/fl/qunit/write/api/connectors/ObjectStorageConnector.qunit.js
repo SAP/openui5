@@ -143,11 +143,11 @@ sap.ui.define([
 	function assertFileWritten(assert, oStorage, oData, sMessage) {
 		return values(oData).map(function(oFlexObject) {
 			return getFlexObjectFromStorage(oFlexObject, oStorage)
-				.then(function(vItem) {
-					var oItem = oStorage._itemsStoredAsObjects ? vItem : JSON.parse(vItem);
-					assert.ok(!!Date.parse(oItem.creation), "then creation property was set for the flex item");
-					assert.deepEqual(oFlexObject, oItem, oItem.fileName + sMessage);
-				});
+			.then(function(vItem) {
+				var oItem = oStorage._itemsStoredAsObjects ? vItem : JSON.parse(vItem);
+				assert.ok(!!Date.parse(oItem.creation), "then creation property was set for the flex item");
+				assert.deepEqual(oFlexObject, oItem, oItem.fileName + sMessage);
+			});
 		});
 	}
 
@@ -169,41 +169,41 @@ sap.ui.define([
 		}, function() {
 			QUnit.test("when write is called with various changes", function(assert) {
 				return saveListWithConnector(oConnector, values(oTestData))
-					.then(function() {
-						return Promise.all([assertFileWritten(assert, oConnector.storage, oTestData, " was written")]);
-					})
-					.then(function() {
-						return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
-					})
-					.then(function(aFlexData) {
-						assert.strictEqual(aFlexData[0].changes.length, 3, "three changes are returned");
-						assert.ok(aFlexData[0].cacheKey, "the cacheKey got calculated");
+				.then(function() {
+					return Promise.all([assertFileWritten(assert, oConnector.storage, oTestData, " was written")]);
+				})
+				.then(function() {
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
+				})
+				.then(function(aFlexData) {
+					assert.strictEqual(aFlexData[0].changes.length, 3, "three changes are returned");
+					assert.ok(aFlexData[0].cacheKey, "the cacheKey got calculated");
 
-						// clean up
-						return removeListFromStorage(oConnector.storage, values(oTestData));
-					});
+					// clean up
+					return removeListFromStorage(oConnector.storage, values(oTestData));
+				});
 			});
 
 			QUnit.test("when write is called with changes created with the same timestamp", function(assert) {
 				var nCurrentTimestamp = Date.now();
 				sandbox.stub(Date, "now").returns(nCurrentTimestamp);
 				return saveListWithConnector(oConnector, values(oTestData))
-					.then(function() {
-						var aCreationFields = [];
-						return Promise.all([
-							values(oTestData)
-							.map(function (oFlexObject) {
-								return getFlexObjectFromStorage(oFlexObject, oConnector.storage)
-									.then(function (vItem) {
-										aCreationFields.push(oConnector.storage._itemsStoredAsObjects ? vItem.creation : JSON.parse(vItem).creation);
-									});
-							})
-						])
-							.then(function () {
-								var iTotalChanges = aCreationFields.length;
-								assert.strictEqual(_uniq(aCreationFields).length, iTotalChanges);
+				.then(function() {
+					var aCreationFields = [];
+					return Promise.all([
+						values(oTestData)
+						.map(function(oFlexObject) {
+							return getFlexObjectFromStorage(oFlexObject, oConnector.storage)
+							.then(function(vItem) {
+								aCreationFields.push(oConnector.storage._itemsStoredAsObjects ? vItem.creation : JSON.parse(vItem).creation);
 							});
+						})
+					])
+					.then(function() {
+						var iTotalChanges = aCreationFields.length;
+						assert.strictEqual(_uniq(aCreationFields).length, iTotalChanges);
 					});
+				});
 			});
 
 			QUnit.test("when loadFeatures is called", function(assert) {

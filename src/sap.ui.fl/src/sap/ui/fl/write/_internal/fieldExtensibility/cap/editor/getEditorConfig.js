@@ -5,7 +5,7 @@
  * @experimental
  */
 sap.ui.define([
-], function () {
+], function() {
 	"use strict";
 
 	return function(oCustomConfig) {
@@ -125,7 +125,7 @@ sap.ui.define([
 					label: "Default",
 					path: "default/val",
 					defaultValue: "",
-					type: "{/element/type}" //"{path: '/element/type', formatter: '._getEditorForType'}"
+					type: "{/element/type}" // "{path: '/element/type', formatter: '._getEditorForType'}"
 				},
 				readonly: {
 					tags: ["validation"],

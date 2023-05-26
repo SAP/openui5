@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils"
-], function (
+], function(
 	Utils
 ) {
 	"use strict";
@@ -19,12 +19,12 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
 	 */
 
-	function updateTokenInConnectorAndSendRequest (mPropertyBag, sUrl, sMethod) {
+	function updateTokenInConnectorAndSendRequest(mPropertyBag, sUrl, sMethod) {
 		if (mPropertyBag.initialConnector) {
 			delete mPropertyBag.initialConnector.xsrfToken;
 		}
 		return Utils.sendRequest(mPropertyBag.tokenUrl, "HEAD", {initialConnector: mPropertyBag.initialConnector})
-            .then(Utils.sendRequest.bind(undefined, sUrl, sMethod, mPropertyBag));
+		.then(Utils.sendRequest.bind(undefined, sUrl, sMethod, mPropertyBag));
 	}
 
 	/**
@@ -49,8 +49,8 @@ sap.ui.define([
 			return; // continue
 		}
 
-		if (typeof oTarget[sKey] === 'object') {
-			Object.keys(oSource[sKey]).forEach(function (sInnerKey) {
+		if (typeof oTarget[sKey] === "object") {
+			Object.keys(oSource[sKey]).forEach(function(sInnerKey) {
 				addToObject(oSource[sKey], oTarget[sKey], sInnerKey);
 			});
 		}
@@ -69,7 +69,7 @@ sap.ui.define([
 		 * @param {string} [sDataType] Expected data type of the response
 		 * @returns {object} Resolving with an object of options
 		 */
-		getRequestOptions: function (oInitialConnector, sTokenUrl, vFlexObjects, sContentType, sDataType) {
+		getRequestOptions: function(oInitialConnector, sTokenUrl, vFlexObjects, sContentType, sDataType) {
 			var oOptions = {
 				tokenUrl: sTokenUrl,
 				initialConnector: oInitialConnector
@@ -100,13 +100,13 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
-		sendRequest: function (sUrl, sMethod, mPropertyBag) {
+		sendRequest: function(sUrl, sMethod, mPropertyBag) {
 			if (
 				!mPropertyBag.initialConnector
 				|| (
 					!mPropertyBag.initialConnector.xsrfToken
-					&& !(sMethod === 'GET') // For GET and HEAD operations, there is no need to fetch a token
-					&& !(sMethod === 'HEAD')
+					&& !(sMethod === "GET") // For GET and HEAD operations, there is no need to fetch a token
+					&& !(sMethod === "HEAD")
 				)
 			) {
 				return updateTokenInConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
@@ -115,9 +115,9 @@ sap.ui.define([
 			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResult) {
 				return oResult;
 			})
-			.catch(function (oFirstError) {
+			.catch(function(oFirstError) {
 				if (oFirstError.status === 403) {
-					//token is invalid, get a new token and retry
+					// token is invalid, get a new token and retry
 					return updateTokenInConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
 				}
 				throw oFirstError;
@@ -132,8 +132,8 @@ sap.ui.define([
 		 */
 		mergeResults: function(aResponses) {
 			var oResult = {};
-			aResponses.forEach(function (oResponse) {
-				Object.keys(oResponse).forEach(function (sKey) {
+			aResponses.forEach(function(oResponse) {
+				Object.keys(oResponse).forEach(function(sKey) {
 					addToObject(oResponse, oResult, sKey);
 				});
 			});

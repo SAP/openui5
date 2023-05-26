@@ -1,4 +1,4 @@
-/*global QUnit */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/Component",
@@ -175,23 +175,23 @@ sap.ui.define([
 
 		var checkChangesContent = function(sReference) {
 			var mChanges = ChangePersistenceFactory._instanceCache["sap.ui.fl.qunit.extensionPoint.testAppLegacy"]._mChangesEntries;
-			//Changes on async view carries no ep info
+			// Changes on async view carries no ep info
 			assert.equal(mChanges[sReference + "_EP1_async_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo(), null, "oChange1 carries no extension point info");
 			assert.equal(mChanges[sReference + "_EP3_async_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo(), null, "oChange3 carries no extension point info");
 			assert.equal(mChanges[sReference + "_EP1_async_CUSTOMER_BASE_addXMLAtExtensionPoint"].getExtensionPointInfo(), null, "oChange9 carries no extension point info");
 
-			//Changes on fragments inside of async view requires ep info
+			// Changes on fragments inside of async view requires ep info
 			assert.equal(mChanges[sReference + "_EP4_async_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP4", "oChange5 carries EP4 extension point info");
 			assert.equal(mChanges[sReference + "_EP5_async_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP5", "oChange7 carries EP5 extension point info");
 			assert.equal(mChanges[sReference + "_EP8_inner_async_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP8_inner", "oChange9 carries EP8_inner extension point info");
 			assert.equal(mChanges[sReference + "_EP10_inner_async_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP10_inner", "oChange10 carries EP10_inner extension point info");
 
-			//Changes on async view requires ep info
+			// Changes on async view requires ep info
 			assert.equal(mChanges[sReference + "_EP1_sync_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP1", "oChange0 carries EP1 extension point info");
 			assert.equal(mChanges[sReference + "_EP3_sync_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP3", "oChange2 carries EP3 extension point info");
 			assert.equal(mChanges[sReference + "_EP1_sync_CUSTOMER_BASE_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP1", "oChange8 carries EP1 extension point info");
 
-			//Changes on fragments inside of async view requires ep info
+			// Changes on fragments inside of async view requires ep info
 			assert.equal(mChanges[sReference + "_EP4_sync_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP4", "oChange4 carries EP4 extension point info");
 			assert.equal(mChanges[sReference + "_EP5_sync_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP5", "oChange6 carries EP5 extension point info");
 			assert.equal(mChanges[sReference + "_EP8_inner_sync_VENDOR_addXMLAtExtensionPoint"].getExtensionPointInfo().name, "EP8_inner", "oChange9 carries EP8_inner extension point info");
@@ -280,7 +280,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

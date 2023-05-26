@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent"
-], function (UIComponent) {
+], function(UIComponent) {
 	"use strict";
 
 	/**
@@ -16,7 +16,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.comp, sap.ui.fl
 	 */
-
 
 	/**
 	 * Provides a UI component for context sharing.

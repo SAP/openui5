@@ -9,6 +9,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	//just for compatibility reasons
+	// just for compatibility reasons
 	return BaseTreeModifier;
 });

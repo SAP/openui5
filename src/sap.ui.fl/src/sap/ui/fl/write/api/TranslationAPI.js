@@ -64,7 +64,7 @@ sap.ui.define([
 		return [].concat(
 			FlexObjectState.getDirtyFlexObjects(mPropertyBag),
 			getDirtyDescriptorChanges(mPropertyBag)
-		).some(function (oChange) {
+		).some(function(oChange) {
 			return !isEmptyObject(oChange.getTexts());
 		});
 	};
@@ -81,7 +81,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} Resolves after the download is completed;
 	 */
-	TranslationAPI.getTexts = function (mPropertyBag) {
+	TranslationAPI.getTexts = function(mPropertyBag) {
 		if (!mPropertyBag.selector) {
 			return Promise.reject("No selector was provided");
 		}
@@ -99,7 +99,7 @@ sap.ui.define([
 		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
 		return Promise.resolve()
-			.then(Storage.translation.getTexts.bind(undefined, mPropertyBag));
+		.then(Storage.translation.getTexts.bind(undefined, mPropertyBag));
 	};
 
 	/**
@@ -112,7 +112,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves after the languages are retrieved;
 	 * rejects if an error occurs or parameters are missing
 	 */
-	TranslationAPI.getSourceLanguages = function (mPropertyBag) {
+	TranslationAPI.getSourceLanguages = function(mPropertyBag) {
 		if (!mPropertyBag.selector) {
 			return Promise.reject("No selector was provided");
 		}
@@ -124,13 +124,13 @@ sap.ui.define([
 		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
 		return Storage.translation.getSourceLanguages(mPropertyBag)
-			.then(function (aLanguages) {
-				var sCurrentLanguage = Core.getConfiguration().getLanguage();
-				if (!aLanguages.includes(sCurrentLanguage) && TranslationAPI.hasTranslationRelevantDirtyChanges(mPropertyBag)) {
-					aLanguages.push(sCurrentLanguage);
-				}
-				return aLanguages;
-			});
+		.then(function(aLanguages) {
+			var sCurrentLanguage = Core.getConfiguration().getLanguage();
+			if (!aLanguages.includes(sCurrentLanguage) && TranslationAPI.hasTranslationRelevantDirtyChanges(mPropertyBag)) {
+				aLanguages.push(sCurrentLanguage);
+			}
+			return aLanguages;
+		});
 	};
 
 	/**
@@ -142,7 +142,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves after the file was uploaded;
 	 * rejects if an error occurs or a parameter is missing
 	 */
-	TranslationAPI.uploadTranslationTexts = function (mPropertyBag) {
+	TranslationAPI.uploadTranslationTexts = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
@@ -151,7 +151,7 @@ sap.ui.define([
 		}
 
 		return Promise.resolve()
-			.then(Storage.translation.postTranslationTexts.bind(undefined, mPropertyBag));
+		.then(Storage.translation.postTranslationTexts.bind(undefined, mPropertyBag));
 	};
 
 	return TranslationAPI;

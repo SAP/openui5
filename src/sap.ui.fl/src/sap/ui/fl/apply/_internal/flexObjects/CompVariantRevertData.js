@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/RevertData"
-], function (RevertData) {
+], function(RevertData) {
 	"use strict";
 
 	/**

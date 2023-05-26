@@ -56,32 +56,32 @@ sap.ui.define([
 			var sXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<HBox id="hbox">' +
-						'<items>' +
+						"<items>" +
 							'<Label id="label1" />' +
 							'<core:ExtensionPoint name="ExtensionPoint1" />' +
 							'<Label id="label2" />' +
-						'</items>' +
-						'<dependents>' +
+						"</items>" +
+						"<dependents>" +
 							'<Label id="label3" />' +
 							'<core:ExtensionPoint name="ExtensionPoint4" />' +
-						'</dependents>' +
-					'</HBox>' +
+						"</dependents>" +
+					"</HBox>" +
 					'<Panel id="panel">' +
-						'<content>' +
+						"<content>" +
 							'<core:ExtensionPoint name="ExtensionPoint2" />' +
 							'<Label id="label4" />' +
 							'<core:ExtensionPoint name="ExtensionPoint3" >' +
 								'<Label id="ep3-label1" text="Extension point label1 - default content" />' +
 								'<Label id="ep3-label2" text="Extension point label2 - default content" />' +
-							'</core:ExtensionPoint>' +
-						'</content>' +
-					'</Panel>' +
+							"</core:ExtensionPoint>" +
+						"</content>" +
+					"</Panel>" +
 					'<HBox id="hbox1">' +
-						'<items>' +
+						"<items>" +
 							'<core:ExtensionPoint name="' + sExtensionPointName5 + '" />' +
-						'</items>' +
-					'</HBox>' +
-				'</mvc:View>';
+						"</items>" +
+					"</HBox>" +
+				"</mvc:View>";
 			return XMLView.create({id: "testComponent---myView", definition: sXmlString})
 			.then(function(oXMLView) {
 				this.oXMLView = oXMLView;
@@ -101,20 +101,26 @@ sap.ui.define([
 			var oObserverDestroySpy = sandbox.spy(ManagedObjectObserver.prototype, "destroy");
 			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			var mExtensionPoint = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId()).length, 1, "then after registration one item is registered by parent");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), mExtensionPoint, "then after registration one item is registered by viewId");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId()).length, 1,
+				"then after registration one item is registered by parent");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), mExtensionPoint,
+				"then after registration one item is registered by viewId");
 			ExtensionPointRegistry.clear();
 			assert.equal(oObserverDisconnectSpy.callCount, 1, "then after exit the disconnect function for the observer is called");
 			assert.equal(oObserverDestroySpy.callCount, 1, "then after exit the destroy function for the observer is called");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId()).length, 0, "then after exit the registration map for parentId is empty");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), undefined, "then after exit the registration map for viewId is empty");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId()).length, 0,
+				"then after exit the registration map for parentId is empty");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), undefined,
+				"then after exit the registration map for viewId is empty");
 		});
 		QUnit.test("given the extensionpoint is the single node in aggregation when calling 'registerExtensionPoint'", function(assert) {
 			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			var oObserverObserveSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			var mExtensionPoint = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName5, this.oHBoxWithSingleEP, "items", 0);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oHBoxWithSingleEP.getId()).length, 1, "then after registration one item is registered by parent");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName5, this.oXMLView), mExtensionPoint, "then after registration one item is registered by viewId");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oHBoxWithSingleEP.getId()).length, 1,
+				"then after registration one item is registered by parent");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName5, this.oXMLView), mExtensionPoint,
+				"then after registration one item is registered by viewId");
 			assert.equal(oObserverObserveSpy.callCount, 1, "then after registration one observer is registered");
 		});
 		QUnit.test("given the extensionpoint in an aggregation with cardinality '0..1'", function(assert) {
@@ -125,7 +131,8 @@ sap.ui.define([
 			var mExtensionPoint = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName5, this.oHBoxWithSingleEP, "items", 0);
 			assert.equal(oObserverObserveSpy.callCount, 1, "then after registration one observer is registered");
 			mExtensionPoint.targetControl.addItem(oLabel1);
-			assert.propEqual(mExtensionPoint.aggregation, ["newLabel1"], "and after adding an object the observer uses an array for the aggregation");
+			assert.propEqual(mExtensionPoint.aggregation, ["newLabel1"],
+				"and after adding an object the observer uses an array for the aggregation");
 			oLabel1.destroy();
 		});
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
@@ -135,20 +142,30 @@ sap.ui.define([
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
 			var oLabel1 = new Label("newLabel1");
 			var oLabel2 = new Label("newLabel2");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0, "the index is '0' for the first extension point at the beginning");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is '2' for the second extension point at the beginning");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0,
+				"the index is '0' for the first extension point at the beginning");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index is '2' for the second extension point at the beginning");
 			mExtensionPointInfo2.targetControl.addContent(oLabel1);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0, "the index is the same as before when a control is added at a higher index");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is the same as before when a control is added at a higher index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0,
+				"the index is the same as before when a control is added at a higher index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index is the same as before when a control is added at a higher index");
 			mExtensionPointInfo2.targetControl.insertContent(oLabel2, 0);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0, "the index is the same as before when a control is added at the same index");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 2, "the index is increased when a control is added at a lower index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0,
+				"the index is the same as before when a control is added at the same index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 2,
+				"the index is increased when a control is added at a lower index");
 			mExtensionPointInfo2.targetControl.removeContent(oLabel1);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0, "the index is the same as before when a control is removed from a higher index");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 2, "the index is the same as before when a control is removed from a higher index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0,
+				"the index is the same as before when a control is removed from a higher index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 2,
+				"the index is the same as before when a control is removed from a higher index");
 			mExtensionPointInfo2.targetControl.removeContent(oLabel2);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0, "the index is the same as before when a control is removed from the same index");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is decreased when a control is removed from a lower index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0,
+				"the index is the same as before when a control is removed from the same index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index is decreased when a control is removed from a lower index");
 			oLabel1.destroy();
 			oLabel2.destroy();
 		});
@@ -161,32 +178,50 @@ sap.ui.define([
 			var oLabel2 = new Label("newLabel4");
 			var oLabel3 = new Label("newLabel5");
 			var oLabel4 = new Label("newLabel6");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the index is '1' for the first extension point at the beginning");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is '1' for the second extension point at the beginning");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1,
+				"the index is '1' for the first extension point at the beginning");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index is '1' for the second extension point at the beginning");
 			mExtensionPointInfo1.targetControl.addItem(oLabel1);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the index is the same as before when a control is added at a higher index");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index in the other aggregation stays the same");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1,
+				"the index is the same as before when a control is added at a higher index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index in the other aggregation stays the same");
 			mExtensionPointInfo1.targetControl.insertItem(oLabel2, 0);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 2, "the index is increased when a control is added at a lower index");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index in the other aggregation stays the same");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 2,
+				"the index is increased when a control is added at a lower index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index in the other aggregation stays the same");
 			mExtensionPointInfo1.targetControl.removeItem(oLabel1);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 2, "the index is the same as before when a control is removed from a higher index");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index in the other aggregation stays the same");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 2,
+				"the index is the same as before when a control is removed from a higher index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index in the other aggregation stays the same");
 			mExtensionPointInfo1.targetControl.removeItem(oLabel2);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the index is decreased when a control is removed from a lower index");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index in the other aggregation stays the same");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1,
+				"the index is decreased when a control is removed from a lower index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index in the other aggregation stays the same");
 			mExtensionPointInfo4.targetControl.addDependent(oLabel3);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the index in the other aggregation stays the same");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index stays the same as before when a control is added at the same index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1,
+				"the index in the other aggregation stays the same");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index stays the same as before when a control is added at the same index");
 			mExtensionPointInfo4.targetControl.insertDependent(oLabel4, 0);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the index in the other aggregation stays the same");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 2, "the index is increased when a control is added at a lower index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1,
+				"the index in the other aggregation stays the same");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 2,
+				"the index is increased when a control is added at a lower index");
 			mExtensionPointInfo4.targetControl.removeDependent(oLabel3);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the index in the other aggregation stays the same");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 2, "the index stays the same when a control is removed from the same index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1,
+				"the index in the other aggregation stays the same");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 2,
+				"the index stays the same when a control is removed from the same index");
 			mExtensionPointInfo4.targetControl.removeDependent(oLabel4);
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the in the other aggregation index stays the same");
-			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is decreased when a control is removed from a lower index");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1,
+				"the in the other aggregation index stays the same");
+			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1,
+				"the index is decreased when a control is removed from a lower index");
 			oLabel1.destroy();
 			oLabel2.destroy();
 			oLabel3.destroy();
@@ -199,39 +234,49 @@ sap.ui.define([
 			var mExtensionPointInfo3 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var mExtensionPointInfo4 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName4, this.oHBox, "dependents", 1);
 
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName1, this.oXMLView), mExtensionPointInfo1, "the correct extension point info is returned");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), mExtensionPointInfo2, "the correct extension point info is returned");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName3, this.oXMLView), mExtensionPointInfo3, "the correct extension point info is returned");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName4, this.oXMLView), mExtensionPointInfo4, "the correct extension point info is returned");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName1, this.oXMLView), mExtensionPointInfo1,
+				"the correct extension point info is returned");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), mExtensionPointInfo2,
+				"the correct extension point info is returned");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName3, this.oXMLView), mExtensionPointInfo3,
+				"the correct extension point info is returned");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName4, this.oXMLView), mExtensionPointInfo4,
+				"the correct extension point info is returned");
 		});
 
 		QUnit.test("when calling 'getExtensionPointInfo' with invalid parameters", function(assert) {
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 
-			assert.throws(function () {
+			assert.throws(function() {
 				ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName1, {});
 			}, "then an exception is thrown when there is no correct view object.");
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo("not_registered_EP", this.oXMLView), undefined, "undefined is returned for an invalid extension point name");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo("not_registered_EP", this.oXMLView), undefined,
+				"undefined is returned for an invalid extension point name");
 			var oFakeView = {
-				getId: function () {
+				getId: function() {
 					return "not_registered_view";
 				}
 			};
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, oFakeView), undefined, "undefined is returned for a not registered view name");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, oFakeView), undefined,
+				"undefined is returned for a not registered view name");
 		});
 
 		QUnit.test("when calling 'getExtensionPointInfoByParentId' with valid parameters", function(assert) {
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			var mExtensionPointInfo3 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId), [mExtensionPointInfo2, mExtensionPointInfo3],
-				"the correct extension point info into an array is returned");
+			assert.deepEqual(
+				ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId),
+				[mExtensionPointInfo2, mExtensionPointInfo3],
+				"the correct extension point info into an array is returned"
+			);
 		});
 
 		QUnit.test("when calling 'getExtensionPointInfoByParentId' with invalid parameters", function(assert) {
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName1, this.oPanel, "content", 0);
-			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId("invalidParentId"), [], "then an empty array is returned");
+			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfoByParentId("invalidParentId"), [],
+				"then an empty array is returned");
 		});
 
 		QUnit.test("when calling 'getExtensionPointInfoByViewId' with valid parameters", function(assert) {
@@ -279,8 +324,10 @@ sap.ui.define([
 			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 2, "before the destroy there are two default controls");
 			this.oLabel.destroy();
 			mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
-			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 1, "then the removed default control is also removed from the registry entry");
-			assert.strictEqual(mExtensionPointInfo.defaultContent[0].getId(), this.oLabel2.getId(), "then the remaining control is the remaining label");
+			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 1,
+				"then the removed default control is also removed from the registry entry");
+			assert.strictEqual(mExtensionPointInfo.defaultContent[0].getId(), this.oLabel2.getId(),
+				"then the remaining control is the remaining label");
 		});
 	});
 
@@ -295,52 +342,53 @@ sap.ui.define([
 			var sXmlString =
 				'<mvc:View id="myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<HBox id="hbox">' +
-						'<items>' +
+						"<items>" +
 							'<Label id="label1" />' +
 							'<core:ExtensionPoint name="ExtensionPoint1">' +
-								'<core:Fragment id="defaultFragment" fragmentName="sap.ui.fl.qunit.extensionPoint.testApp.fragments.Default" type="XML" />' +
-							'</core:ExtensionPoint>' +
+								'<core:Fragment id="defaultFragment" ' +
+								'fragmentName="sap.ui.fl.qunit.extensionPoint.testApp.fragments.Default" type="XML" />' +
+							"</core:ExtensionPoint>" +
 							'<Label id="label2" />' +
-						'</items>' +
-					'</HBox>' +
+						"</items>" +
+					"</HBox>" +
 					'<Panel id="panel">' +
-						'<content>' +
+						"<content>" +
 							'<core:ExtensionPoint name="ExtensionPoint2" />' +
 							'<Label id="label3" />' +
 							'<core:ExtensionPoint name="ExtensionPoint3">' +
 								'<Label id="ep3-label1" text="Extension point label1 - default content" />' +
 								'<Label id="ep3-label2" text="Extension point label2 - default content" />' +
-							'</core:ExtensionPoint>' +
-						'</content>' +
-					'</Panel>' +
-				'</mvc:View>';
+							"</core:ExtensionPoint>" +
+						"</content>" +
+					"</Panel>" +
+				"</mvc:View>";
 
 			return Component.create({
 				name: "testComponent",
 				id: "testComponent",
 				componentData: {}
 			})
-				.then(function(_oComp) {
-					this.oComponent = _oComp;
-					return this.oComponent.runAsOwner(function() {
-						if (sap.ui.getCore().byId("myView")) {
-							sap.ui.getCore().byId("myView").destroy();
-						}
-						return XMLView.create({
-							id: "myView",
-							definition: sXmlString,
-							async: true
-						})
-						.then(function(oXMLView) {
-							this.oXMLView = oXMLView;
-							this.oHBox = this.oXMLView.getContent()[0];
-							this.oPanel = this.oXMLView.getContent()[1];
-						}.bind(this));
+			.then(function(_oComp) {
+				this.oComponent = _oComp;
+				return this.oComponent.runAsOwner(function() {
+					if (sap.ui.getCore().byId("myView")) {
+						sap.ui.getCore().byId("myView").destroy();
+					}
+					return XMLView.create({
+						id: "myView",
+						definition: sXmlString,
+						async: true
+					})
+					.then(function(oXMLView) {
+						this.oXMLView = oXMLView;
+						this.oHBox = this.oXMLView.getContent()[0];
+						this.oPanel = this.oXMLView.getContent()[1];
 					}.bind(this));
-				}.bind(this))
-				.then(function() {
-					oCore.applyChanges();
-				});
+				}.bind(this));
+			}.bind(this))
+			.then(function() {
+				oCore.applyChanges();
+			});
 		},
 		afterEach: function() {
 			this.oComponent.destroy();
@@ -368,7 +416,8 @@ sap.ui.define([
 			assert.equal(mExtensionPointInfo3.index, 1, "then parameter 'index' is correct");
 			var oDefaultContentLabel1 = this.oPanel.getContent()[1];
 			var oDefaultContentLabel2 = this.oPanel.getContent()[2];
-			assert.deepEqual(mExtensionPointInfo3.defaultContent, [oDefaultContentLabel1, oDefaultContentLabel2], "then parameter 'defaultAggregation' is correct");
+			assert.deepEqual(mExtensionPointInfo3.defaultContent, [oDefaultContentLabel1, oDefaultContentLabel2],
+				"then parameter 'defaultAggregation' is correct");
 		});
 
 		QUnit.test("when calling function 'getExtensionPointInfo' for an extension point with default fragment", function(assert) {
@@ -378,11 +427,12 @@ sap.ui.define([
 			assert.deepEqual(mExtensionPointInfo1.targetControl, this.oHBox, "then parameter 'targetControl' is correct");
 			assert.equal(mExtensionPointInfo1.aggregationName, "items", "then parameter 'aggregationName' is correct");
 			assert.equal(mExtensionPointInfo1.index, 1, "then parameter 'index' is correct");
-			assert.deepEqual(mExtensionPointInfo1.defaultContent, [oCore.byId("myView--defaultFragment--defaultButton")], "then parameter 'defaultAggregation' is correct");
+			assert.deepEqual(mExtensionPointInfo1.defaultContent, [oCore.byId("myView--defaultFragment--defaultButton")],
+				"then parameter 'defaultAggregation' is correct");
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

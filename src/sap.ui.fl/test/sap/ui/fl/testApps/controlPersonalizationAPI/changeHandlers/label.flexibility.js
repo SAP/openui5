@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-], function () {
+], function() {
 	"use strict";
 
 	return {
-		//new change handler
+		// new change handler
 		changeLabel: {
 			changeHandler: {
 				applyChange: function(oChange, oControl) {

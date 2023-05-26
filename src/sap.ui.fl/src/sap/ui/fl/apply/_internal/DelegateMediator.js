@@ -55,7 +55,7 @@ sap.ui.define([
 	function getDefaultDelegateInfo(oControl, sModelType) {
 		sModelType = getModelTypeForControl(oControl, sModelType);
 		var aDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType];
-		return (aDelegateInfo || []).map(function (mDelegateInfo) {
+		return (aDelegateInfo || []).map(function(mDelegateInfo) {
 			mDelegateInfo.payload = {};
 			return mDelegateInfo;
 		});
@@ -63,27 +63,27 @@ sap.ui.define([
 
 	function loadDelegates(oModifier, oControl, aDelegates) {
 		if (!aDelegates.length) {
-			//it is a valid case to ask for a delegate and there is none
-			//a broken delegate is logged below
+			// it is a valid case to ask for a delegate and there is none
+			// a broken delegate is logged below
 			return Promise.resolve([]);
 		}
 		var aPromises = [];
-		aDelegates.forEach(function (mDelegateInfo) {
-			aPromises.push(function (aLoadedDelegates) {
+		aDelegates.forEach(function(mDelegateInfo) {
+			aPromises.push(function(aLoadedDelegates) {
 				return requireAsync(mDelegateInfo.name)
-					.then(function (oDelegate) {
-						mDelegateInfo.instance = oDelegate || {};
-						aLoadedDelegates.push(mDelegateInfo);
-						return aLoadedDelegates;
-					})
-					.catch(function(oError) {
-						Log.error("Failed to load the delegate for the control " + oModifier.getId(oControl) +
+				.then(function(oDelegate) {
+					mDelegateInfo.instance = oDelegate || {};
+					aLoadedDelegates.push(mDelegateInfo);
+					return aLoadedDelegates;
+				})
+				.catch(function(oError) {
+					Log.error("Failed to load the delegate for the control " + oModifier.getId(oControl) +
 							"\n" + oError.message);
-						return aLoadedDelegates;
-					});
+					return aLoadedDelegates;
+				});
 			});
 		});
-		return aPromises.reduce(function (oPreviousPromise, oCurrentPromise) {
+		return aPromises.reduce(function(oPreviousPromise, oCurrentPromise) {
 			return oPreviousPromise.then(oCurrentPromise);
 		}, Promise.resolve([]));
 	}
@@ -171,7 +171,7 @@ sap.ui.define([
 	}
 
 	function validateInputParameters(oControl, oModifier) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function(resolve, reject) {
 			if (!oControl) {
 				reject(new Error("The control parameter is missing"));
 			}
@@ -192,14 +192,14 @@ sap.ui.define([
 	}
 
 	function isValidType(mPropertyBag) {
-		return Object.values(DelegateMediator.types).some(function (sDelegateMediatorType) {
+		return Object.values(DelegateMediator.types).some(function(sDelegateMediatorType) {
 			return sDelegateMediatorType === mPropertyBag.delegateType;
 		});
 	}
 
 	function isCompetingDelegateAlreadyRegistered(mPropertyBag) {
 		var aDefaultDelegates = DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] || [];
-		var aDefaultDelegateTypes = aDefaultDelegates.map(function (mDefaultDelegateInfo) {
+		var aDefaultDelegateTypes = aDefaultDelegates.map(function(mDefaultDelegateInfo) {
 			return mDefaultDelegateInfo.delegateType;
 		});
 		return aDefaultDelegateTypes.indexOf(DelegateMediator.types.COMPLETE) > -1
@@ -207,7 +207,7 @@ sap.ui.define([
 			|| (mPropertyBag.delegateType === DelegateMediator.types.COMPLETE && aDefaultDelegateTypes.length);
 	}
 
-	DelegateMediator.getKnownDefaultDelegateLibraries = function () {
+	DelegateMediator.getKnownDefaultDelegateLibraries = function() {
 		return ["sap.ui.comp"]; // OdataV2Delegate is defined in sap.ui.comp
 	};
 
@@ -220,10 +220,10 @@ sap.ui.define([
 	 * @param {string} [sModelType] - Model type, if none is provided the default model of oControl is taken instead
 	 * @returns {string[]} Required libraries
 	 */
-	DelegateMediator.getRequiredLibrariesForDefaultDelegate = function (aDelegateNames, oControl, sModelType) {
+	DelegateMediator.getRequiredLibrariesForDefaultDelegate = function(aDelegateNames, oControl, sModelType) {
 		sModelType = getModelTypeForControl(oControl, sModelType);
 		var aDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType] || [];
-		return aDelegateInfo.reduce(function (aRequiredLibNames, mDelegateInfo) {
+		return aDelegateInfo.reduce(function(aRequiredLibNames, mDelegateInfo) {
 			var bIsDefaultDelegate = aDelegateNames.indexOf(mDelegateInfo.name) > -1;
 			return aRequiredLibNames.concat(Object.keys((bIsDefaultDelegate && mDelegateInfo.requiredLibraries) || {}));
 		}, []);
@@ -235,7 +235,7 @@ sap.ui.define([
 	 * @param {string} sModelType - Delegate model type
 	 * @returns {boolean} <code>true</code> if a delegate is already registered for the model type
 	 */
-	DelegateMediator.isDelegateRegistered = function (sModelType) {
+	DelegateMediator.isDelegateRegistered = function(sModelType) {
 		return !!DelegateMediator._mDefaultDelegateItems[sModelType];
 	};
 
@@ -248,7 +248,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.delegateType - Defines the type of the default delegate. Please look at <code>DelegageMediator.types</code> for possible entries
 	 * @param {object} [mPropertyBag.requiredLibraries] - map of required libraries
 	 */
-	DelegateMediator.registerDefaultDelegate = function (mPropertyBag) {
+	DelegateMediator.registerDefaultDelegate = function(mPropertyBag) {
 		if (!(mPropertyBag.modelType && mPropertyBag.delegate)) {
 			throw new Error("'modelType' and 'delegate' properties are required for registration!");
 		}
@@ -280,23 +280,23 @@ sap.ui.define([
 	 * @param {boolean} [bSupportsDefault] - Include default delegate if no instance specific delegate is available
 	 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
 	 */
-	DelegateMediator.getDelegateForControl = function (oControl, oModifier, sModelType, bSupportsDefault) {
+	DelegateMediator.getDelegateForControl = function(oControl, oModifier, sModelType, bSupportsDefault) {
 		return validateInputParameters(oControl, oModifier)
-			.then(function () {
-				return oModifier.getFlexDelegate(oControl);
-			})
-			.then(function (mInstanceSpecificDelegate) {
-				var aDelegateInfo = (bSupportsDefault && getDefaultDelegateInfo(oControl, sModelType)) || [];
-				if (mInstanceSpecificDelegate) {
-					//instance specific delegate always takes over
-					aDelegateInfo.push(mInstanceSpecificDelegate);
-				}
-				return loadDelegates(oModifier, oControl, aDelegateInfo);
-			})
-			.then(mergeDelegates.bind(this));
+		.then(function() {
+			return oModifier.getFlexDelegate(oControl);
+		})
+		.then(function(mInstanceSpecificDelegate) {
+			var aDelegateInfo = (bSupportsDefault && getDefaultDelegateInfo(oControl, sModelType)) || [];
+			if (mInstanceSpecificDelegate) {
+				// instance specific delegate always takes over
+				aDelegateInfo.push(mInstanceSpecificDelegate);
+			}
+			return loadDelegates(oModifier, oControl, aDelegateInfo);
+		})
+		.then(mergeDelegates.bind(this));
 	};
 
-	DelegateMediator.clear = function () {
+	DelegateMediator.clear = function() {
 		DelegateMediator._mDefaultDelegateItems = {};
 	};
 

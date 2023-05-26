@@ -41,7 +41,7 @@ sap.ui.define([
 		return Object.assign(UIChange.getMappingInfo(), {});
 	};
 
-	UpdatableChange.prototype.popLatestRevertInfo = function () {
+	UpdatableChange.prototype.popLatestRevertInfo = function() {
 		var oLatestRevertInfo = this.getRevertInfo().pop();
 		this.removeRevertInfo(oLatestRevertInfo);
 		return oLatestRevertInfo;

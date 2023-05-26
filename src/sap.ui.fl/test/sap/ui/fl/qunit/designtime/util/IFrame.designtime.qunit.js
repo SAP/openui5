@@ -1,5 +1,5 @@
 /* eslint-disable max-nested-callbacks */
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Label",
@@ -154,7 +154,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

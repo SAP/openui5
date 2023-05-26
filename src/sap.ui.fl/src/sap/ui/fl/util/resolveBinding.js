@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils"
-], function (
+], function(
 	ManagedObject,
 	FlUtils
 ) {
@@ -57,7 +57,7 @@ sap.ui.define([
 		var oHelperControl = new HelperControl();
 
 		var aParts = oBindingInfo.parts || [oBindingInfo];
-		aParts.forEach(function (oBindingPart) {
+		aParts.forEach(function(oBindingPart) {
 			var sModelName = oBindingPart.model;
 			if (sModelName) {
 				oHelperControl.setModel(oReferenceControl.getModel(sModelName), sModelName);

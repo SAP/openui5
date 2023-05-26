@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
-	var PersistenceWriteAPI = /**@lends sap.ui.fl.write.api.PersistenceWriteAPI */ {};
+	var PersistenceWriteAPI = /** @lends sap.ui.fl.write.api.PersistenceWriteAPI */ {};
 
 	/**
 	 * Retrieves the changes from the flex persistence for the selector.
@@ -75,9 +75,9 @@ sap.ui.define([
 		mPropertyBag.includeCtrlVariants = true;
 		mPropertyBag.invalidateCache = false;
 		return PersistenceWriteAPI._getUIChanges(mPropertyBag)
-			.then(function(aChanges) {
-				return aChanges.length > 0;
-			});
+		.then(function(aChanges) {
+			return aChanges.length > 0;
+		});
 	}
 
 	/**
@@ -107,14 +107,14 @@ sap.ui.define([
 		mPropertyBag.upToLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer();
 
 		return FlexObjectState.getFlexObjects(mPropertyBag)
-			.then(function(aFlexObjects) {
-				return aFlexObjects.filter(function(oFlexObject) {
-					return LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer);
-				});
-			})
-			.then(function(aFilteredFlexObjects) {
-				return aFilteredFlexObjects.length > 0;
+		.then(function(aFlexObjects) {
+			return aFlexObjects.filter(function(oFlexObject) {
+				return LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer);
 			});
+		})
+		.then(function(aFilteredFlexObjects) {
+			return aFilteredFlexObjects.length > 0;
+		});
 	};
 
 	/**
@@ -135,7 +135,7 @@ sap.ui.define([
 	PersistenceWriteAPI.save = function(mPropertyBag) {
 		return FlexObjectState.saveFlexObjects(mPropertyBag).then(function(oFlexObject) {
 			if (oFlexObject && oFlexObject.length !== 0) {
-				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResult) {
+				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResult) {
 					// adaptationId and isEndUserAdaptation needs to be taken from flex info session if available
 					var oExistingFlexInfo = FlexInfoSession.get(mPropertyBag.selector) || {};
 					oResult.adaptationId = oExistingFlexInfo.adaptationId;
@@ -180,18 +180,18 @@ sap.ui.define([
 			// because of control variant reset logic through setVisible change and app descriptor changes
 			if (bIsLayerTransportable) {
 				return Storage.getFlexInfo(mPropertyBag)
-					.then(function(oResponse) {
-						oFlexInfo.allContextsProvided = oResponse.allContextsProvided === undefined || oResponse.allContextsProvided;
-						oFlexInfo.isResetEnabled = oResponse.isResetEnabled;
-						// Together with publish info from back end,
-						// system setting info for publish availability also need to be checked
-						oFlexInfo.isPublishEnabled = bIsPublishAvailable && oResponse.isPublishEnabled;
-						return oFlexInfo;
-					})
-					.catch(function(oError) {
-						Log.error("Sending request to flex/info route failed: " + oError.message);
-						return oFlexInfo;
-					});
+				.then(function(oResponse) {
+					oFlexInfo.allContextsProvided = oResponse.allContextsProvided === undefined || oResponse.allContextsProvided;
+					oFlexInfo.isResetEnabled = oResponse.isResetEnabled;
+					// Together with publish info from back end,
+					// system setting info for publish availability also need to be checked
+					oFlexInfo.isPublishEnabled = bIsPublishAvailable && oResponse.isPublishEnabled;
+					return oFlexInfo;
+				})
+				.catch(function(oError) {
+					Log.error("Sending request to flex/info route failed: " + oError.message);
+					return oFlexInfo;
+				});
 			}
 			return oFlexInfo;
 		});
@@ -252,7 +252,7 @@ sap.ui.define([
 		mPropertyBag.styleClass = mPropertyBag.styleClass || "";
 		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 		return ChangesController.getFlexControllerInstance(oAppComponent)
-			._oChangePersistence.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
+		._oChangePersistence.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
 	};
 
 	/**
@@ -289,30 +289,33 @@ sap.ui.define([
 		var oFlexController;
 		var oAppComponent;
 		return Promise.resolve()
-			.then(function () {
-				if (!mPropertyBag.selector) {
-					return Promise.reject(new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId()));
-				}
-				oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-				if (!oAppComponent) {
-					return Promise.reject(new Error("Invalid application component for selector, change could not be removed with id: " + mPropertyBag.change.getId()));
-				}
-				// descriptor change
-				if (isDescriptorChange(mPropertyBag.change)) {
-					var oDescriptorFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
-					oDescriptorFlexController.deleteChange(mPropertyBag.change);
-					return undefined;
-				}
-				var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
-				oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
-				// remove custom data for flex change
-				if (oElement) {
-					FlexCustomData.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
-				}
-				// delete from flex persistence map
-				oFlexController.deleteChange(mPropertyBag.change);
+		.then(function() {
+			if (!mPropertyBag.selector) {
+				return Promise.reject(
+					new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId()));
+			}
+			oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+			if (!oAppComponent) {
+				return Promise.reject(
+					new Error("Invalid application component for selector, change could not be removed with id: "
+					+ mPropertyBag.change.getId()));
+			}
+			// descriptor change
+			if (isDescriptorChange(mPropertyBag.change)) {
+				var oDescriptorFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
+				oDescriptorFlexController.deleteChange(mPropertyBag.change);
 				return undefined;
-			});
+			}
+			var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
+			oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
+			// remove custom data for flex change
+			if (oElement) {
+				FlexCustomData.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
+			}
+			// delete from flex persistence map
+			oFlexController.deleteChange(mPropertyBag.change);
+			return undefined;
+		});
 	};
 
 	/**
@@ -328,9 +331,9 @@ sap.ui.define([
 	 * @returns {Promise} Resolves with object that decides if warning should be shown
 	 *
 	 */
-	 PersistenceWriteAPI.getChangesWarning = function (mPropertyBag) {
-		return this._getUIChanges(mPropertyBag).then(function (aChanges) {
-			var bHasChangesFromOtherSystem = aChanges.some(function (oChange) {
+	 PersistenceWriteAPI.getChangesWarning = function(mPropertyBag) {
+		return this._getUIChanges(mPropertyBag).then(function(aChanges) {
+			var bHasChangesFromOtherSystem = aChanges.some(function(oChange) {
 				return oChange.isChangeFromOtherSystem();
 			});
 
@@ -397,11 +400,11 @@ sap.ui.define([
 	 */
 	PersistenceWriteAPI._getUIChanges = function(mPropertyBag) {
 		if (mPropertyBag.layer) {
-			//TODO: sync the layer parameter name with new persistence and remove this line
+			// TODO: sync the layer parameter name with new persistence and remove this line
 			mPropertyBag.currentLayer = mPropertyBag.layer;
 		}
 
-		//TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectState expect a control
+		// TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectState expect a control
 		return FlexObjectState.getFlexObjects(mPropertyBag);
 	};
 

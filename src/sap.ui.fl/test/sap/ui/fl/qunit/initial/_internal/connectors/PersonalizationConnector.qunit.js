@@ -26,7 +26,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given Personalization connector with a fake XHR", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.xhr = sandbox.useFakeXMLHttpRequest();
 			mockResponse.call(this, '{"changes":[]}');
 		},
@@ -35,30 +35,30 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as 'json' is returned", function (assert) {
+		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as 'json' is returned", function(assert) {
 			var oMockResponse = {changes: []};
 			mockResponse.call(this, JSON.stringify(oMockResponse), "json");
-			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function (oResult) {
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function(oResult) {
 				assert.deepEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, oMockResponse, "then xhr.onLoad was called with the right response");
 				assert.deepEqual(oResult, oMockResponse, "then the default response is returned");
 			}.bind(this));
 		});
 
-		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as default is returned", function (assert) {
-			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function (oResult) {
+		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as default is returned", function(assert) {
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function(oResult) {
 				assert.strictEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, JSON.stringify(oResult), "then xhr.onLoad was called with the right response");
 				assert.deepEqual(oResult, {changes: []}, "then the default response is returned");
 			}.bind(this));
 		});
 
-		QUnit.test("given a mock server, when loading flex data is triggered with the correct url", function (assert) {
-			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function () {
+		QUnit.test("given a mock server, when loading flex data is triggered with the correct url", function(assert) {
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function() {
 				assert.equal(this.oXHR.url, "/flexPersonalization/flex/personalization/v1/data/reference", "url is correct");
 			}.bind(this));
 		});
 
-		QUnit.test("loadFlexData also requests and stores an xsrf token", function (assert) {
-			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function () {
+		QUnit.test("loadFlexData also requests and stores an xsrf token", function(assert) {
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function() {
 				assert.equal(PersonalizationConnector.xsrfToken, newToken, "the token was stored correct");
 			});
 		});
@@ -66,7 +66,7 @@ sap.ui.define([
 		QUnit.test("loadFlexData trigger the correct request to back end" +
 			"- store token value" +
 			"- return cacheKey value" +
-			"- merges the compVariants in the changes", function (assert) {
+			"- merges the compVariants in the changes", function(assert) {
 			var mPropertyBag = {
 				url: "/flexPersonalization",
 				reference: "reference"
@@ -82,7 +82,7 @@ sap.ui.define([
 				status: "200",
 				etag: "abc123"
 			});
-			return PersonalizationConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
+			return PersonalizationConnector.loadFlexData(mPropertyBag).then(function(oFlexData) {
 				assert.ok(oStubGetUrlWithQueryParameters.calledOnce, "getUrl is called once");
 				assert.equal(oStubGetUrlWithQueryParameters.getCall(0).args[0], "/flex/personalization/v1/data/", "with correct route path");
 				assert.deepEqual(oStubGetUrlWithQueryParameters.getCall(0).args[1], mPropertyBag, "with correct property bag");
@@ -99,7 +99,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

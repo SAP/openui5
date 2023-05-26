@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function emptify (vValue) {
+	function emptify(vValue) {
 		if (!vValue) {
 			return "";
 		}
@@ -24,33 +24,33 @@ sap.ui.define([
 	 * @return {Promise<object>} Resolving to dictionary listing current user properties or empty object if no user or error
 	 * @ui5-restricted sap.ui.fl
 	 */
-	return function () {
+	return function() {
 		var oUShellContainer = Utils.getUshellContainer();
 		if (oUShellContainer) {
 			return Utils.getUShellService("UserInfo")
-				.then(function(oUserInfoService) {
-					if (!oUserInfoService) {
-						return {};
-					}
-					var oUserInfo = oUserInfoService.getUser();
-					if (!oUserInfo) {
-						return {};
-					}
-					var sEmail = emptify(oUserInfo.getEmail());
-					var sDomain;
-					if (sEmail) {
-						sDomain = emptify(/@(.*)/.exec(sEmail)[1]);
-					} else {
-						sDomain = "";
-					}
-					return {
-						fullName: emptify(oUserInfo.getFullName()),
-						firstName: emptify(oUserInfo.getFirstName()),
-						lastName: emptify(oUserInfo.getLastName()),
-						email: sEmail,
-						domain: sDomain
-					};
-				})
+			.then(function(oUserInfoService) {
+				if (!oUserInfoService) {
+					return {};
+				}
+				var oUserInfo = oUserInfoService.getUser();
+				if (!oUserInfo) {
+					return {};
+				}
+				var sEmail = emptify(oUserInfo.getEmail());
+				var sDomain;
+				if (sEmail) {
+					sDomain = emptify(/@(.*)/.exec(sEmail)[1]);
+				} else {
+					sDomain = "";
+				}
+				return {
+					fullName: emptify(oUserInfo.getFullName()),
+					firstName: emptify(oUserInfo.getFirstName()),
+					lastName: emptify(oUserInfo.getLastName()),
+					email: sEmail,
+					domain: sDomain
+				};
+			})
 			.catch(function(vError) {
 				Log.error("Unexpected exception when reading shell user info: " + vError.toString());
 				return {};

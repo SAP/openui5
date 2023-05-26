@@ -32,7 +32,7 @@ function(
 	 */
 
 	return {
-		enableFakeConnector: function (mPropertyBag) {
+		enableFakeConnector: function(mPropertyBag) {
 			var sJsonPath = mPropertyBag ? mPropertyBag.sInitialComponentJsonPath : undefined;
 			FakeLrepConnector.setFlexibilityServicesAndClearCache("SessionStorageConnector", sJsonPath);
 		},
@@ -40,10 +40,10 @@ function(
 			FakeLrepConnector.disableFakeConnector();
 		},
 		forTesting: {
-			spyWrite: function (sandbox, assert) {
+			spyWrite: function(sandbox, assert) {
 				return FakeLrepConnector.forTesting.spyMethod(sandbox, assert, SessionStorageConnector, "write");
 			},
-			getNumberOfChanges: function (sReference) {
+			getNumberOfChanges: function(sReference) {
 				return FakeLrepConnector.forTesting.getNumberOfChanges(SessionStorageConnector, sReference);
 			},
 			clear: function(mPropertyBag) {
@@ -53,7 +53,7 @@ function(
 				FakeLrepConnector.forTesting.setStorage(SessionStorageConnector, oNewStorage);
 			},
 			synchronous: {
-				clearAll: function () {
+				clearAll: function() {
 					FakeLrepConnector.forTesting.synchronous.clearAll(window.sessionStorage);
 				},
 				getNumberOfChanges: function(sReference) {

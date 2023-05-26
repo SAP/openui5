@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/Core",
@@ -16,13 +16,13 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.initial._internal.changeHandlers.ChangeHandlerRegistration", {
-		beforeEach: function () {
+		beforeEach: function() {
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("the registry can identify flexChangeHandlers from already loaded libraries", function (assert) {
+		QUnit.test("the registry can identify flexChangeHandlers from already loaded libraries", function(assert) {
 			var oFlChangeHandlerObject = {foo: "bar"};
 
 			var aLoadedLibraries = [
@@ -45,7 +45,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("the registry registration rejects when error occurs", function (assert) {
+		QUnit.test("the registry registration rejects when error occurs", function(assert) {
 			var oLoadedLibrary1 = {
 				extensions: {
 					flChangeHandlers: {}
@@ -63,7 +63,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("the registry can identify flexChangeHandlers from loaded libraries after fl was loaded", function (assert) {
+		QUnit.test("the registry can identify flexChangeHandlers from loaded libraries after fl was loaded", function(assert) {
 			var oFlChangeHandlerObject = {foo: "bar"};
 			var oMockedLibraryChangedEvent = {
 				parameters: {
@@ -75,7 +75,7 @@ sap.ui.define([
 					}
 				}
 			};
-			oMockedLibraryChangedEvent.getParameter = function (key) {
+			oMockedLibraryChangedEvent.getParameter = function(key) {
 				return oMockedLibraryChangedEvent.parameters[key];
 			};
 
@@ -91,7 +91,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("the registry does nothing if a library was changes, but not added", function (assert) {
+		QUnit.test("the registry does nothing if a library was changes, but not added", function(assert) {
 			var oFlChangeHandlerObject = {foo: "bar"};
 			var oMockedLibraryChangedEvent = {
 				parameters: {
@@ -103,7 +103,7 @@ sap.ui.define([
 					}
 				}
 			};
-			oMockedLibraryChangedEvent.getParameter = function (key) {
+			oMockedLibraryChangedEvent.getParameter = function(key) {
 				return oMockedLibraryChangedEvent.parameters[key];
 			};
 
@@ -118,7 +118,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("the registry does nothing if a later loaded library has no change handlers", function (assert) {
+		QUnit.test("the registry does nothing if a later loaded library has no change handlers", function(assert) {
 			var oMockedLibraryChangedEvent = {
 				parameters: {
 					operation: "add",
@@ -127,7 +127,7 @@ sap.ui.define([
 					}
 				}
 			};
-			oMockedLibraryChangedEvent.getParameter = function (key) {
+			oMockedLibraryChangedEvent.getParameter = function(key) {
 				return oMockedLibraryChangedEvent.parameters[key];
 			};
 
@@ -159,7 +159,7 @@ sap.ui.define([
 						}
 					}
 				};
-				oMockedLibraryChangedEvent.getParameter = function (key) {
+				oMockedLibraryChangedEvent.getParameter = function(key) {
 					return oMockedLibraryChangedEvent.parameters[key];
 				};
 
@@ -208,7 +208,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

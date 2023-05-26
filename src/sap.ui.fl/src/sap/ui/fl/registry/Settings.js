@@ -22,13 +22,13 @@ sap.ui.define([
 		var oUShellContainer = Utils.getUshellContainer();
 		if (oUShellContainer) {
 			return Utils.getUShellService("UserInfo")
-				.then(function(oUserInfoService) {
-					var oUser = oUserInfoService.getUser();
-					return oUser && oUser.getId();
-				})
-				.catch(function(oError) {
-					Log.error("Error getting service from Unified Shell: " + oError.message);
-				});
+			.then(function(oUserInfoService) {
+				var oUser = oUserInfoService.getUser();
+				return oUser && oUser.getId();
+			})
+			.catch(function(oError) {
+				Log.error("Error getting service from Unified Shell: " + oError.message);
+			});
 		}
 		return Promise.resolve();
 	}
@@ -93,37 +93,37 @@ sap.ui.define([
 	Settings._loadSettings = function() {
 		var oSettings;
 		var oLoadingPromise = Storage.loadFeatures()
-			.then(function(oLoadedSettings) {
-				oSettings = oLoadedSettings;
-				return retrieveUserId(oSettings);
-			})
-			.then(function (sUserId) {
-				if (!oSettings) {
-					Log.error("The request for flexibility settings failed; A default response is generated and returned to consuming APIs");
-					// in case the back end cannot respond resolve with a default response
-					oSettings = {
-						isKeyUser: false,
-						isKeyUserTranslationEnabled: false,
-						isVariantSharingEnabled: false,
-						isVariantPersonalizationEnabled: true,
-						isAtoAvailable: false,
-						isAtoEnabled: false,
-						isAppVariantSaveAsEnabled: false,
-						isContextSharingEnabled: true,
-						isContextBasedAdaptationEnabled: false,
-						isCondensingEnabled: false,
-						isProductiveSystem: true,
-						isPublicLayerAvailable: false,
-						isLocalResetEnabled: false,
-						isVariantAdaptationEnabled: false,
-						versioning: {},
-						_bFlexChangeMode: false,
-						_bFlexibilityAdaptationButtonAllowed: false
-					};
-				}
-				oSettings.userId = sUserId;
-				return Settings._storeInstance(oSettings);
-			});
+		.then(function(oLoadedSettings) {
+			oSettings = oLoadedSettings;
+			return retrieveUserId(oSettings);
+		})
+		.then(function(sUserId) {
+			if (!oSettings) {
+				Log.error("The request for flexibility settings failed; A default response is generated and returned to consuming APIs");
+				// in case the back end cannot respond resolve with a default response
+				oSettings = {
+					isKeyUser: false,
+					isKeyUserTranslationEnabled: false,
+					isVariantSharingEnabled: false,
+					isVariantPersonalizationEnabled: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isAppVariantSaveAsEnabled: false,
+					isContextSharingEnabled: true,
+					isContextBasedAdaptationEnabled: false,
+					isCondensingEnabled: false,
+					isProductiveSystem: true,
+					isPublicLayerAvailable: false,
+					isLocalResetEnabled: false,
+					isVariantAdaptationEnabled: false,
+					versioning: {},
+					_bFlexChangeMode: false,
+					_bFlexibilityAdaptationButtonAllowed: false
+				};
+			}
+			oSettings.userId = sUserId;
+			return Settings._storeInstance(oSettings);
+		});
 		Settings._oLoadSettingsPromise = oLoadingPromise;
 		return oLoadingPromise;
 	};
@@ -254,7 +254,7 @@ sap.ui.define([
 	 */
 	Settings.prototype.isVersioningEnabled = function(sLayer) {
 		// there may be a versioning information for all layers
-		return !!(this._oSettings.versioning[sLayer] || this._oSettings.versioning["ALL"]);
+		return !!(this._oSettings.versioning[sLayer] || this._oSettings.versioning.ALL);
 	};
 
 	/**
@@ -311,7 +311,6 @@ sap.ui.define([
 		return this._getBooleanProperty("isPublicFlVariantEnabled");
 	};
 
-
 	/**
 	 * Checks whether sharing of <code>sap.ui.fl</code> variants can be based on contexts.
 	 *
@@ -320,7 +319,6 @@ sap.ui.define([
 	Settings.prototype.isContextSharingEnabled = function() {
 		return this._getBooleanProperty("isContextSharingEnabled");
 	};
-
 
 	/**
 	 * Checks whether personalization of variants is enabled or not.
@@ -408,7 +406,7 @@ sap.ui.define([
 	};
 
 	// Used for stubbing in tests
-	Settings.prototype._getHostname = function () {
+	Settings.prototype._getHostname = function() {
 		return document.location.hostname;
 	};
 
@@ -419,7 +417,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} <code>true</code> if it is a customer system
 	 */
-	 Settings.prototype.isCustomerSystem = function () {
+	 Settings.prototype.isCustomerSystem = function() {
 		var sSystemType = this._oSettings.systemType;
 		var bIsCustomerSystem = {
 			CUSTOMER: true,

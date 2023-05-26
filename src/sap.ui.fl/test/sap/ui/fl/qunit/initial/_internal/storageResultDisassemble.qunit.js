@@ -302,7 +302,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("storageResultDisassemble - comp variants", {}, function() {
-		QUnit.test("Given storageResultDisassemble is called with a response containing a comp section", function (assert) {
+		QUnit.test("Given storageResultDisassemble is called with a response containing a comp section", function(assert) {
 			var oResponse = {
 				changes: [],
 				comp: {},
@@ -311,7 +311,7 @@ sap.ui.define([
 			assert.deepEqual(storageResultDisassemble(oResponse), [oResponse], "response was not changed");
 		});
 
-		QUnit.test("Given storageResultDisassemble is called with a response containing NO / only initial comp section", function (assert) {
+		QUnit.test("Given storageResultDisassemble is called with a response containing NO / only initial comp section", function(assert) {
 			var aChanges = [{
 				fileName: "change1",
 				fileType: "change",
@@ -399,7 +399,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

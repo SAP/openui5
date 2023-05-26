@@ -48,10 +48,10 @@ sap.ui.define([
 			componentData: {},
 			manifest: Utils.getAppDescriptor(oControl),
 			componentId: Utils.getAppComponentForControl(oControl).getId()
-		}).then(function () {
+		}).then(function() {
 			var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
 			var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
-			//Store external input data to FlexState so they can be restored after invalidating cache
+			// Store external input data to FlexState so they can be restored after invalidating cache
 			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey, mPropertyBag.standardVariant, mPropertyBag.variants, sSVMControlId);
 			return mCompVariantsMap._initialize(sPersistencyKey, mPropertyBag.variants, sSVMControlId);
 		});
@@ -110,10 +110,10 @@ sap.ui.define([
 		 */
 		loadVariants: function(mPropertyBag) {
 			return getCompEntities(mPropertyBag)
-				.then(function(mCompMaps) {
-					var sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
-					return CompVariantMerger.merge(sPersistencyKey, mCompMaps, mPropertyBag.standardVariant, mPropertyBag.control);
-				});
+			.then(function(mCompMaps) {
+				var sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
+				return CompVariantMerger.merge(sPersistencyKey, mCompMaps, mPropertyBag.standardVariant, mPropertyBag.control);
+			});
 		},
 
 		/**

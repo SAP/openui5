@@ -67,13 +67,13 @@ sap.ui.define([
 		// check is only executed once and influenced by technical parameters
 		// Default is set via applyVariantManagementChange instead
 		return aCtrlVariantManagementChanges
-			.reverse()
-			.map(function(oVariantManagementChange) {
-				return oVariantManagementChange.getContent().defaultVariant;
-			})
-			.find(function(sDesiredDefaultVariantId) {
-				return aVariantIds.includes(sDesiredDefaultVariantId);
-			});
+		.reverse()
+		.map(function(oVariantManagementChange) {
+			return oVariantManagementChange.getContent().defaultVariant;
+		})
+		.find(function(sDesiredDefaultVariantId) {
+			return aVariantIds.includes(sDesiredDefaultVariantId);
+		});
 	}
 
 	function createVariantManagement(aFlexObjects, aVariants, sReference, sVMReference) {
@@ -96,7 +96,11 @@ sap.ui.define([
 					&& sVMReference === oFlexObject.getSelector().id
 				);
 			});
-			sCurrentVariantReference = getInitialCurrentVariant(sReference, aCtrlVariantManagementChanges, aRelevantVariants) || sVMReference;
+			sCurrentVariantReference = getInitialCurrentVariant(
+				sReference,
+				aCtrlVariantManagementChanges,
+				aRelevantVariants
+			) || sVMReference;
 			ObjectPath.set(
 				[sReference, sVMReference],
 				sCurrentVariantReference,
@@ -209,24 +213,24 @@ sap.ui.define([
 		});
 
 		aFlexObjects
-			.filter(function(oFlexObject) {
-				return oFlexObject.getFileType() === "ctrl_variant_change";
-			})
-			.forEach(function(oVariantChange) {
-				var oVariantEntry = findVariant(oVariantManagementsMap, oVariantChange);
-				applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap);
-			});
+		.filter(function(oFlexObject) {
+			return oFlexObject.getFileType() === "ctrl_variant_change";
+		})
+		.forEach(function(oVariantChange) {
+			var oVariantEntry = findVariant(oVariantManagementsMap, oVariantChange);
+			applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap);
+		});
 
 		aFlexObjects
-			.filter(function(oFlexObject) {
-				return oFlexObject.getFileType() === "ctrl_variant_management_change";
-			})
-			.forEach(function(oVariantManagementChange) {
-				var oVariantManagementEntry = oVariantManagementsMap[oVariantManagementChange.getSelector().id];
-				if (oVariantManagementEntry) {
-					applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange);
-				}
-			});
+		.filter(function(oFlexObject) {
+			return oFlexObject.getFileType() === "ctrl_variant_management_change";
+		})
+		.forEach(function(oVariantManagementChange) {
+			var oVariantManagementEntry = oVariantManagementsMap[oVariantManagementChange.getSelector().id];
+			if (oVariantManagementEntry) {
+				applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange);
+			}
+		});
 
 		Object.values(oVariantManagementsMap).forEach(function(oVariantManagement) {
 			// Standard variant should always be at the first position, all others are sorted alphabetically

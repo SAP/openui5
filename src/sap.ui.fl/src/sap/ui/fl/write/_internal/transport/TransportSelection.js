@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @public
 	 */
 	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass, bLocalObjectVisible) {
-		//No transport selection unless Lrep connector is available
+		// No transport selection unless Lrep connector is available
 		if (!FlUtils.getLrepUrl()) {
 			fOkay(this._createEventObject(oObjectInfo, {transportId: ""}));
 			return;
@@ -77,18 +77,18 @@ sap.ui.define([
 		};
 
 		var sLayerType = LayerUtils.getCurrentLayer();
-		//First check the current layer
+		// First check the current layer
 		if (sLayerType && ((sLayerType === Layer.CUSTOMER) || (sLayerType === Layer.CUSTOMER_BASE))) {
-			//CUSTOMER layer --> retrieve the settings and check if ATO is enabled
-			FlexSettings.getInstance().then(function (oSettings) {
+			// CUSTOMER layer --> retrieve the settings and check if ATO is enabled
+			FlexSettings.getInstance().then(function(oSettings) {
 				if (oSettings.isAtoEnabled()) {
-					//ATO is enabled
+					// ATO is enabled
 					if (!(oObjectInfo && oObjectInfo.name && oObjectInfo.namespace && oObjectInfo.type)) {
-						//Object info is not completed (public scenario)+ ATO is enabled + CUSTOMER layer: No getTransport is necessary
+						// Object info is not completed (public scenario)+ ATO is enabled + CUSTOMER layer: No getTransport is necessary
 						var oTransport = { transportId: "ATO_NOTIFICATION" };
 						fOkay(this._createEventObject(oObjectInfo, oTransport));
 					} else {
-						//Object info is completed (delete/reset scenario) --> retrieve transport info to distinguish local object
+						// Object info is completed (delete/reset scenario) --> retrieve transport info to distinguish local object
 						retrieveTransportInfo.apply(this, [oObjectInfo, fOkay, fError, bCompactMode, sStyleClass, true]);
 					}
 				} else {
@@ -112,7 +112,7 @@ sap.ui.define([
 		return {
 			mParameters: {
 				selectedTransport: oTransport.transportId,
-				selectedPackage: oObjectInfo["package"],
+				selectedPackage: oObjectInfo.package,
 				dialog: false
 			},
 			getParameters: function() {
@@ -289,7 +289,7 @@ sap.ui.define([
 						iChangeIdx--;
 						// set the transport for the next request
 						return fnSetTransports(aChanges, iChangeIdx, oControl, sTransport, bFromDialog);
-					}, function () {
+					}, function() {
 						return null;
 					});
 				}
@@ -335,7 +335,7 @@ sap.ui.define([
 				}
 			};
 			var fnError = function(oError) {
-				if (oError.sId === 'cancel') {
+				if (oError.sId === "cancel") {
 					resolve(oError.sId);
 				} else {
 					reject(oError);
@@ -374,7 +374,7 @@ sap.ui.define([
 		// Pass list of changes to be transported with transport request to backend
 		var aTransportData = Transports.convertToChangeTransportData(aAllLocalChanges, aAppVariantDescriptors);
 		var oTransportParams = {};
-		//packageName is '' in CUSTOMER layer (no package input field in transport dialog)
+		// packageName is '' in CUSTOMER layer (no package input field in transport dialog)
 		oTransportParams.package = oTransportInfo.packageName;
 		oTransportParams.transportId = oTransportInfo.transport;
 		oTransportParams.changeIds = aTransportData;

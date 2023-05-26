@@ -160,7 +160,7 @@ sap.ui.define([
 	};
 
 	UIChange.prototype.isValidForDependencyMap = function() {
-		//Change without id in selector should be skipped from adding dependencies process
+		// Change without id in selector should be skipped from adding dependencies process
 		return !!this.getSelector().id;
 	};
 
@@ -343,7 +343,7 @@ sap.ui.define([
 		}
 		this.setDependentSelectors(oCurrentDependentSelectors);
 
-		//remove dependency list so that it will be created again in method getDependentSelectorList
+		// remove dependency list so that it will be created again in method getDependentSelectorList
 		delete this._aDependentSelectorList;
 	};
 

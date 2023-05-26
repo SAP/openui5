@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 QUnit.config.autostart = false;
 
@@ -92,14 +92,14 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			if (this.oComponent) {
 				this.oComponent.destroy();
 			}
 		}
-	}, function () {
-		QUnit.test("applies the change after the recreation of the changed control", function (assert) {
+	}, function() {
+		QUnit.test("applies the change after the recreation of the changed control", function(assert) {
 			var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
 			var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 			sandbox.stub(Utils, "isApplication").returns(true);
@@ -110,7 +110,7 @@ sap.ui.define([
 				manifest: true,
 				componentData: {
 					async: true,
-					cacheKey: new Date().toString() //Needs to be different each time
+					cacheKey: new Date().toString() // Needs to be different each time
 				}
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
@@ -130,7 +130,7 @@ sap.ui.define([
 		});
 
 		if (!CacheManager._isSupportedEnvironment()) {
-			QUnit.test("All further tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
+			QUnit.test("All further tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function(assert) {
 				assert.ok(true, "Environment: system [" + JSON.stringify(Device.system) + "],  browser: " + JSON.stringify(Device.browser));
 			});
 		} else {
@@ -251,8 +251,8 @@ sap.ui.define([
 				}.bind(this)).then(function(oView) {
 					var oCacheManagerCall = oCacheManagerSpy.getCall(0);
 					var sCachedXml = oCacheManagerCall.args[1].xml;
-					//as cached xml string will vary in different browsers (especially namespace handling), we will parse the xml again (without tabs and newlines to reduce unwanted text nodes)
-					var oCachedXmlDocument = XMLHelper.parse(sCachedXml.replace(/[\n\t]/g, '')).documentElement;
+					// as cached xml string will vary in different browsers (especially namespace handling), we will parse the xml again (without tabs and newlines to reduce unwanted text nodes)
+					var oCachedXmlDocument = XMLHelper.parse(sCachedXml.replace(/[\n\t]/g, "")).documentElement;
 					assert.equal(oCachedXmlDocument.localName, "View", "the view is included in the cache");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].localName, "SimpleForm", "the simple form is included in the cache");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes.length, 4, "the simple form content includes the new nodes from the change");
@@ -291,7 +291,7 @@ sap.ui.define([
 
 				sandbox.stub(Component.prototype, "getModel")
 				.returns({
-					getCurrentControlVariantIds: function () {
+					getCurrentControlVariantIds: function() {
 						return ["currentVariantReferenceInitial"];
 					},
 					getVariantManagementControlIds: function() {
@@ -341,7 +341,7 @@ sap.ui.define([
 
 				sandbox.stub(Component.prototype, "getModel")
 				.onFirstCall().returns({
-					getCurrentControlVariantIds: function () {
+					getCurrentControlVariantIds: function() {
 						return ["currentVariantReferenceInitial"];
 					},
 					getVariantManagementControlIds: function() {
@@ -349,7 +349,7 @@ sap.ui.define([
 					}
 				})
 				.onSecondCall().returns({
-					getCurrentControlVariantIds: function () {
+					getCurrentControlVariantIds: function() {
 						return ["currentVariantReferenceChanged"];
 					},
 					getVariantManagementControlIds: function() {
@@ -398,7 +398,7 @@ sap.ui.define([
 
 				sandbox.stub(Component.prototype, "getModel")
 				.returns({
-					getCurrentControlVariantIds: function () {
+					getCurrentControlVariantIds: function() {
 						return ["currentVariantReferenceInitial"];
 					},
 					getVariantManagementControlIds: function() {
@@ -431,7 +431,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

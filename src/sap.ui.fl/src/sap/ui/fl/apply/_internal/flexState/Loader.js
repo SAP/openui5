@@ -31,13 +31,13 @@ sap.ui.define([
 				mFlexData.variantChanges,
 				mFlexData.variantDependentControlChanges,
 				mFlexData.variantManagementChanges
-			].forEach(function (aFlexItems) {
-				aFlexItems.forEach(function (oFlexItem) {
+			].forEach(function(aFlexItems) {
+				aFlexItems.forEach(function(oFlexItem) {
 					if (!oFlexItem.selector.idIsLocal) {
 						oFlexItem.selector = getIdIsLocalTrueObject(oFlexItem.selector);
 
 						if (oFlexItem.dependentSelector) {
-							Object.keys(oFlexItem.dependentSelector).forEach(function (sCategory) {
+							Object.keys(oFlexItem.dependentSelector).forEach(function(sCategory) {
 								if (Array.isArray(oFlexItem.dependentSelector[sCategory])) {
 									oFlexItem.dependentSelector[sCategory] =
 										oFlexItem.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
@@ -117,7 +117,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted context
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
 		 */
-		loadFlexData: function (mPropertyBag) {
+		loadFlexData: function(mPropertyBag) {
 			var sComponentName = ManifestUtils.getBaseComponentNameFromManifest(mPropertyBag.manifest);
 
 			if (mPropertyBag.partialFlexData) {

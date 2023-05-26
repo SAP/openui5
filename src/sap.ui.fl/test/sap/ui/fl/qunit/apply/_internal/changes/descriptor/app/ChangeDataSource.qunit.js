@@ -1,17 +1,17 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange"
 ],
-function (
+function(
 	ChangeDataSource,
 	AppDescriptorChange
 ) {
 	"use strict";
 
 	QUnit.module("applyChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oChangeUri = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_app_changeDataSource"
@@ -75,8 +75,8 @@ function (
 				}
 			});
 		}
-	}, function () {
-		QUnit.test("when calling '_applyChange' with a updateable dataSource", function (assert) {
+	}, function() {
+		QUnit.test("when calling '_applyChange' with a updateable dataSource", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -99,7 +99,7 @@ function (
 			assert.equal(oNewManifest["sap.app"].dataSources.ppm.settings.maxAge, "100", "dataSource is updated correctly");
 		});
 
-		QUnit.test("when calling '_applyChange' with no updateable dataSource", function (assert) {
+		QUnit.test("when calling '_applyChange' with no updateable dataSource", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -110,16 +110,16 @@ function (
 				}
 			};
 
-			assert.throws(function () {
+			assert.throws(function() {
 				ChangeDataSource.applyChange(oManifest, this.oChangeUri);
 			}, Error("Nothing to update. DataSource with ID \"ppm\" does not exist."), "throws an error");
 
-			assert.throws(function () {
+			assert.throws(function() {
 				ChangeDataSource.applyChange(oManifest, this.oChangeSettings);
 			}, Error("Nothing to update. DataSource with ID \"ppm\" does not exist."), "throws an error");
 		});
 
-		QUnit.test("when calling '_applyChange' with supported change array", function (assert) {
+		QUnit.test("when calling '_applyChange' with supported change array", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -134,7 +134,7 @@ function (
 			assert.equal(oNewManifest["sap.app"].dataSources.ppm.settings.maxAge, "100", "dataSource is updated correctly");
 		});
 
-		QUnit.test("when calling '_applyChange' with unsupported operation type", function (assert) {
+		QUnit.test("when calling '_applyChange' with unsupported operation type", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -145,23 +145,23 @@ function (
 				}
 			};
 
-			assert.throws(function () {
+			assert.throws(function() {
 				ChangeDataSource.applyChange(oManifest, this.oChangeInsert);
 			}, Error("Operation INSERT is not supported. The supported 'operation' is UPDATE|UPSERT"),
 			"throws error");
 		});
 
-		QUnit.test("when calling '_applyChange' with wrong manifest", function (assert) {
+		QUnit.test("when calling '_applyChange' with wrong manifest", function(assert) {
 			var oManifest = {
 				"sap.app": {}
 			};
-			assert.throws(function () {
+			assert.throws(function() {
 				ChangeDataSource.applyChange(oManifest, this.oChangeArray);
 			}, Error("No sap.app/dataSource found in manifest.json"),
 			"throws error");
 		});
 
-		QUnit.test("when calling '_applyChange' with no value to update", function (assert) {
+		QUnit.test("when calling '_applyChange' with no value to update", function(assert) {
 			var oManifest = {
 				"sap.app": {
 					dataSources: {
@@ -174,16 +174,16 @@ function (
 					}
 				}
 			};
-			assert.throws(function () {
+			assert.throws(function() {
 				ChangeDataSource.applyChange(oManifest, this.oChangeUri);
 			}, Error("Path does not contain a value. 'UPDATE' operation is not appropriate."), "throws error");
 
-			assert.throws(function () {
+			assert.throws(function() {
 				ChangeDataSource.applyChange(oManifest, this.oChangeSettings);
 			}, Error("Path does not contain a value. 'UPDATE' operation is not appropriate."), "throws error");
 		});
 
-		QUnit.done(function () {
+		QUnit.done(function() {
 			document.getElementById("qunit-fixture").style.display = "none";
 		});
 	});

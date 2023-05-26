@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/util/ManagedObjectModel",
@@ -13,7 +13,7 @@ sap.ui.define([
 
 	QUnit.module("Basic functionality", {
 
-		beforeEach: function () {
+		beforeEach: function() {
 			this.sModelName = "testModel";
 			this.oElement = new FixtureElement();
 			this.oManagedObjectModel = new ManagedObjectModel({
@@ -21,21 +21,21 @@ sap.ui.define([
 				name: this.sModelName
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oManagedObjectModel.destroy();
 			this.oElement.destroy();
 		}
-	}, function () {
-		QUnit.test("when created, it should be an instance of sap.ui.core.Element", function (assert) {
+	}, function() {
+		QUnit.test("when created, it should be an instance of sap.ui.core.Element", function(assert) {
 			assert.ok(this.oManagedObjectModel instanceof Element);
 		});
 
-		QUnit.test("when added to dependents aggregation of Element, the named model should be set on the Element object", function (assert) {
+		QUnit.test("when added to dependents aggregation of Element, the named model should be set on the Element object", function(assert) {
 			this.oElement.addDependent(this.oManagedObjectModel);
 			assert.ok(this.oElement.getModel(this.sModelName).isA("sap.ui.model.base.ManagedObjectModel"));
 		});
 
-		QUnit.test("when moved from one Element to another, the model should be removed automatically", function (assert) {
+		QUnit.test("when moved from one Element to another, the model should be removed automatically", function(assert) {
 			var oElement1 = new FixtureElement();
 			var oElement2 = new FixtureElement();
 
@@ -49,28 +49,28 @@ sap.ui.define([
 			oElement2.destroy();
 		});
 
-		QUnit.test("when try to change the `data` property, it should throw an Error", function (assert) {
-			assert.throws(function () {
+		QUnit.test("when try to change the `data` property, it should throw an Error", function(assert) {
+			assert.throws(function() {
 				this.oManagedObjectModel.setData({});
 			});
 		});
 
-		QUnit.test("when try to change the `name` property, it should throw an Error", function (assert) {
-			assert.throws(function () {
-				this.oManagedObjectModel.setName('newName');
+		QUnit.test("when try to change the `name` property, it should throw an Error", function(assert) {
+			assert.throws(function() {
+				this.oManagedObjectModel.setName("newName");
 			});
 		});
 
-		QUnit.test("when try to change the `object` association, it should throw an Error", function (assert) {
+		QUnit.test("when try to change the `object` association, it should throw an Error", function(assert) {
 			var oAnotherElement = new FixtureElement();
-			assert.throws(function () {
+			assert.throws(function() {
 				this.oManagedObjectModel.setObject(oAnotherElement);
 			});
 			oAnotherElement.destroy();
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -15,7 +15,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	QUnit.module("When loading flex response", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -24,50 +24,50 @@ sap.ui.define([
 			var oReturnObj = {returnObjProp: "return"};
 			ObjectPathConnector.setJsonPath(sPath);
 			sandbox.stub(LoaderExtensions, "loadResource")
-				.callThrough()
-				.withArgs({
-					dataType: "json",
-					url: sPath,
-					async: true
-				})
-				.resolves(oReturnObj);
+			.callThrough()
+			.withArgs({
+				dataType: "json",
+				url: sPath,
+				async: true
+			})
+			.resolves(oReturnObj);
 
 			return ObjectPathConnector.loadFlexData()
-				.then(function(oResponse) {
-					assert.deepEqual(oResponse, Object.assign(StorageUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
-				});
+			.then(function(oResponse) {
+				assert.deepEqual(oResponse, Object.assign(StorageUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
+			});
 		});
 
 		QUnit.test("when json path is passed", function(assert) {
 			var sPath = "/somePath";
 			var oReturnObj = {returnObjProp: "return"};
 			sandbox.stub(LoaderExtensions, "loadResource")
-				.callThrough()
-				.withArgs({
-					dataType: "json",
-					url: sPath,
-					async: true
-				})
-				.resolves(oReturnObj);
+			.callThrough()
+			.withArgs({
+				dataType: "json",
+				url: sPath,
+				async: true
+			})
+			.resolves(oReturnObj);
 
 			return ObjectPathConnector.loadFlexData({path: sPath})
-				.then(function(oResponse) {
-					assert.deepEqual(oResponse, Object.assign(StorageUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
-				});
+			.then(function(oResponse) {
+				assert.deepEqual(oResponse, Object.assign(StorageUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
+			});
 		});
 
 		QUnit.test("when no path is passed", function(assert) {
 			ObjectPathConnector.setJsonPath();
 
 			return ObjectPathConnector.loadFlexData({})
-				.then(function(oResponse) {
-					assert.deepEqual(oResponse, undefined, "then no data is returned");
-				});
+			.then(function(oResponse) {
+				assert.deepEqual(oResponse, undefined, "then no data is returned");
+			});
 		});
 	});
 
 	QUnit.module("When loading flex settings", {
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -81,42 +81,42 @@ sap.ui.define([
 			var sPath = "somePath";
 
 			sandbox.stub(LoaderExtensions, "loadResource")
-				.callThrough()
-				.withArgs({
-					dataType: "json",
-					url: sPath,
-					async: true
-				})
-				.resolves(oReturnedJson);
+			.callThrough()
+			.withArgs({
+				dataType: "json",
+				url: sPath,
+				async: true
+			})
+			.resolves(oReturnedJson);
 
 			return ObjectPathConnector.loadFeatures({path: sPath})
-				.then(function (oSettings) {
-					assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
-				});
+			.then(function(oSettings) {
+				assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
+			});
 		});
 
-		QUnit.test("then settings are not returned", function (assert) {
+		QUnit.test("then settings are not returned", function(assert) {
 			var oReturnedSettings = {};
 			var oReturnedJson = {};
 			var sPath = "somePath";
 
 			sandbox.stub(LoaderExtensions, "loadResource")
-				.callThrough()
-				.withArgs({
-					dataType: "json",
-					url: sPath,
-					async: true
-				})
-				.resolves(oReturnedJson);
+			.callThrough()
+			.withArgs({
+				dataType: "json",
+				url: sPath,
+				async: true
+			})
+			.resolves(oReturnedJson);
 
 			return ObjectPathConnector.loadFeatures({path: sPath})
-				.then(function (oSettings) {
-					assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
-				});
+			.then(function(oSettings) {
+				assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
+			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

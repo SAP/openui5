@@ -38,8 +38,8 @@ sap.ui.define([
 		}
 	}
 
-	return function () {
-		return Utils.getUShellService("AppLifeCycle").then(function (oAppLifeCycleService) {
+	return function() {
+		return Utils.getUShellService("AppLifeCycle").then(function(oAppLifeCycleService) {
 			if (oAppLifeCycleService) {
 				var oCurrentApp = oAppLifeCycleService.getCurrentApplication();
 				if (oCurrentApp.componentInstance) {
@@ -47,7 +47,7 @@ sap.ui.define([
 				}
 
 				// potential cFLP scenario with the instance running in an iFrame where the top has no access to the componentInstance
-				return oCurrentApp.getIntent().then(function (oIntent) {
+				return oCurrentApp.getIntent().then(function(oIntent) {
 					// The iFrame ID is not public API and may change in the future. Until there is an API, this is the way how to get any hold on the app at all
 					var iFrame = document.getElementById("application-" + oIntent.semanticObject + "-" + oIntent.action);
 					if (!iFrame) {
@@ -56,32 +56,32 @@ sap.ui.define([
 					}
 
 					// to use the iFrame scope, the code has to be called via eval
-					return iFrame.contentWindow.eval('' +
-'							new Promise(function (resolve) {' +
-'								sap.ui.require([' +
+					return iFrame.contentWindow.eval("" +
+"							new Promise(function (resolve) {" +
+"								sap.ui.require([" +
 '									"sap/ui/fl/ChangePersistenceFactory",' +
 '									"sap/ui/fl/Utils",' +
 '									"sap/ui/fl/support/_internal/extractChangeDependencies"' +
-'								], function (' +
-'									ChangePersistenceFactory,' +
-'									Utils,' +
-'									extractChangeDependencies' +
-'								) {' +
+"								], function (" +
+"									ChangePersistenceFactory," +
+"									Utils," +
+"									extractChangeDependencies" +
+"								) {" +
 '									Utils.getUShellService("AppLifeCycle").then(function (oAppLifeCycleService) {' +
-'										return oAppLifeCycleService.getCurrentApplication().componentInstance;' +
-'									}).then(function (oCurrentAppContainerObject) {' +
-'										if (oCurrentAppContainerObject) {' +
-'											var oAppComponent = oCurrentAppContainerObject.oContainer.getComponentInstance();' +
-'											resolve(extractChangeDependencies(ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent)));' +
-'										};' +
-'								});' +
-'							});' +
-'						});');
+"										return oAppLifeCycleService.getCurrentApplication().componentInstance;" +
+"									}).then(function (oCurrentAppContainerObject) {" +
+"										if (oCurrentAppContainerObject) {" +
+"											var oAppComponent = oCurrentAppContainerObject.oContainer.getComponentInstance();" +
+"											resolve(extractChangeDependencies(ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent)));" +
+"										};" +
+"								});" +
+"							});" +
+"						});");
 				});
 			}
 
 			// standalone case
-			var aApplications = Component.registry.filter(function (oComponent) {
+			var aApplications = Component.registry.filter(function(oComponent) {
 				return oComponent.getManifestObject().getRawJson()["sap.app"].type === "application";
 			});
 

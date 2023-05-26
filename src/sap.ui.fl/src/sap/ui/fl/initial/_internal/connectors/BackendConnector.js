@@ -42,7 +42,7 @@ sap.ui.define([
 			return InitialUtils.sendRequest(sDataUrl, "GET", {
 				initialConnector: this,
 				xsrfToken: this.xsrfToken}
-			).then(function (oResult) {
+			).then(function(oResult) {
 				var oResponse = oResult.response;
 				if (oResult.etag) {
 					oResponse.cacheKey = oResult.etag;
@@ -63,7 +63,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function(mPropertyBag) {
-			return this.sendRequest(mPropertyBag).then(function (oResponse) {
+			return this.sendRequest(mPropertyBag).then(function(oResponse) {
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
 				return oResponse;
 			});

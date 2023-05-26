@@ -28,7 +28,7 @@ sap.ui.define([
 
 			this.oVM.setShowExecuteOnSelection(true);
 
-			FlSettings.getInstance().then(function () {
+			FlSettings.getInstance().then(function() {
 				if (this.oVM) {
 					this.oVM._oVM.setSupportPublic(true);
 				}

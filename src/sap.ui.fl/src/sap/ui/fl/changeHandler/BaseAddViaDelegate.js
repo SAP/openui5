@@ -58,7 +58,7 @@ sap.ui.define([
 		 * @public
 		 */
 		createAddViaDelegateChangeHandler: function(mAddViaDelegateSettings) {
-			/****************** Utility functions with access to mAddViaDelegateSettings ******************/
+			/** **************** Utility functions with access to mAddViaDelegateSettings ******************/
 
 			function getNewFieldId(sNewPropertyId) {
 				return sNewPropertyId + mAddViaDelegateSettings.fieldSuffix;
@@ -93,30 +93,30 @@ sap.ui.define([
 					modelType: sModelType,
 					supportsDefault: mAddViaDelegateSettings.supportsDefault
 				})
-					.then(function (oDelegate) {
-						var bCondensingSupported = !isFunction(oDelegate.instance.createLayout);
-						return bCondensingSupported || skipCreateLayout(mChange.getSupportInformation().oDataInformation);
-					});
+				.then(function(oDelegate) {
+					var bCondensingSupported = !isFunction(oDelegate.instance.createLayout);
+					return bCondensingSupported || skipCreateLayout(mChange.getSupportInformation().oDataInformation);
+				});
 			}
 
 			function getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate) {
 				var mDelegateSettings = merge({}, mDelegatePropertyBag);
 				mDelegateSettings.fieldSelector.id = getNewFieldId(mDelegateSettings.fieldSelector.id);
 				return oDelegate.createControlForProperty(mDelegateSettings)
-					.then(function(mSpecificControlInfo) {
-						if (skipCreateLabel(oChangeODataInformation)) {
-							return mSpecificControlInfo;
-						}
-						var sNewFieldId = mDelegatePropertyBag.modifier.getId(mSpecificControlInfo.control);
-						mDelegatePropertyBag.labelFor = sNewFieldId;
-						return oDelegate.createLabel(mDelegatePropertyBag).then(function(oLabel) {
-							return {
-								label: oLabel,
-								control: mSpecificControlInfo.control,
-								valueHelp: mSpecificControlInfo.valueHelp
-							};
-						});
+				.then(function(mSpecificControlInfo) {
+					if (skipCreateLabel(oChangeODataInformation)) {
+						return mSpecificControlInfo;
+					}
+					var sNewFieldId = mDelegatePropertyBag.modifier.getId(mSpecificControlInfo.control);
+					mDelegatePropertyBag.labelFor = sNewFieldId;
+					return oDelegate.createLabel(mDelegatePropertyBag).then(function(oLabel) {
+						return {
+							label: oLabel,
+							control: mSpecificControlInfo.control,
+							valueHelp: mSpecificControlInfo.valueHelp
+						};
 					});
+				});
 			}
 
 			function getControlsFromDelegate(oChangeContent, mDelegate, mPropertyBag, oChangeODataInformation) {
@@ -128,24 +128,24 @@ sap.ui.define([
 				var oDelegate = mDelegate.instance;
 
 				return Promise.resolve()
-					.then(function() {
-						if (
-							isFunction(oDelegate.createLayout)
+				.then(function() {
+					if (
+						isFunction(oDelegate.createLayout)
 							&& !skipCreateLayout(oChangeODataInformation)
-						) {
-							return oDelegate.createLayout(mDelegatePropertyBag);
-						}
-					})
-					.then(function(mLayoutControlInfo) {
-						if (ObjectPath.get("control", mLayoutControlInfo)) {
-							mLayoutControlInfo.layoutControl = true;
-							return mLayoutControlInfo;
-						}
-						return getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate);
-					});
+					) {
+						return oDelegate.createLayout(mDelegatePropertyBag);
+					}
+				})
+				.then(function(mLayoutControlInfo) {
+					if (ObjectPath.get("control", mLayoutControlInfo)) {
+						mLayoutControlInfo.layoutControl = true;
+						return mLayoutControlInfo;
+					}
+					return getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate);
+				});
 			}
 
-			/****************** Change Handler ******************/
+			/** **************** Change Handler ******************/
 			return {
 				/**
 				 * Added a property from the model's metadata via delegate
@@ -175,13 +175,13 @@ sap.ui.define([
 					if (mPropertyBag.modifier.bySelector(mFieldSelector, oAppComponent, mPropertyBag.view)) {
 						return Base.markAsNotApplicable(
 							"Control to be created already exists:" + (mFieldSelector.id || mFieldSelector),
-							/*bAsync*/true
+							/* bAsync */true
 						);
 					}
 					var oRevertData = {
 						newFieldSelector: mFieldSelector
 					};
-					//revert data will be enhanced later on, but should be attached to the change so that the addProperty-hook can access it and enhance it
+					// revert data will be enhanced later on, but should be attached to the change so that the addProperty-hook can access it and enhance it
 					oChange.setRevertData(oRevertData);
 
 					var sModelType = getModelType(oChangeContent);
@@ -191,7 +191,7 @@ sap.ui.define([
 						modifier: mPropertyBag.modifier,
 						modelType: sModelType,
 						supportsDefault: mAddViaDelegateSettings.supportsDefault
-					}).then(function (mDelegate) {
+					}).then(function(mDelegate) {
 						return getControlsFromDelegate(oChangeContent, mDelegate, mCreateProperties, oChangeODataInformation);
 					}).then(function(mInnerControls) {
 						var mAddPropertySettings = merge({},
@@ -203,20 +203,20 @@ sap.ui.define([
 							mPropertyBag
 						);
 						//------------------------
-						//Call 'addProperty' hook!
+						// Call 'addProperty' hook!
 						//------------------------
 						return Promise.resolve()
-							.then(function() {
-								return mAddViaDelegateSettings.addProperty(mAddPropertySettings);
-							})
-							.then(function() {
-								if (mInnerControls.valueHelp) {
-									var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
-									var oRevertData = oChange.getRevertData();
-									oRevertData.valueHelpSelector = oValueHelpSelector;
-									oChange.setRevertData(oRevertData);
-								}
-							});
+						.then(function() {
+							return mAddViaDelegateSettings.addProperty(mAddPropertySettings);
+						})
+						.then(function() {
+							if (mInnerControls.valueHelp) {
+								var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
+								var oRevertData = oChange.getRevertData();
+								oRevertData.valueHelpSelector = oValueHelpSelector;
+								oChange.setRevertData(oRevertData);
+							}
+						});
 					});
 				},
 
@@ -240,41 +240,41 @@ sap.ui.define([
 					var oNewField = oModifier.bySelector(mFieldSelector, oAppComponent);
 
 					var oParentControl = oChange.getDependentControl(mAddViaDelegateSettings.parentAlias, mPropertyBag)
-						|| /*fallback and legacy changes*/ oControl;
+						|| /* fallback and legacy changes */ oControl;
 
 					return Promise.resolve()
-						.then(oModifier.removeAggregation.bind(oModifier, oParentControl, mAddViaDelegateSettings.aggregationName, oNewField))
-						.then(oModifier.destroy.bind(oModifier, oNewField))
-						.then(function() {
-							if (mValueHelpSelector) {
-								var oValueHelp = oModifier.bySelector(mValueHelpSelector, oAppComponent);
-								return Promise.resolve()
-									.then(oModifier.removeAggregation.bind(oModifier, oParentControl, "dependents", oValueHelp))
-									.then(oModifier.destroy.bind(oModifier, oValueHelp));
-							}
-						})
-						.then(function() {
-							var mAddPropertySettings = merge({},
-								{
-									control: oControl,
-									change: oChange
-								},
-								mPropertyBag
-							);
+					.then(oModifier.removeAggregation.bind(oModifier, oParentControl, mAddViaDelegateSettings.aggregationName, oNewField))
+					.then(oModifier.destroy.bind(oModifier, oNewField))
+					.then(function() {
+						if (mValueHelpSelector) {
+							var oValueHelp = oModifier.bySelector(mValueHelpSelector, oAppComponent);
+							return Promise.resolve()
+							.then(oModifier.removeAggregation.bind(oModifier, oParentControl, "dependents", oValueHelp))
+							.then(oModifier.destroy.bind(oModifier, oValueHelp));
+						}
+					})
+					.then(function() {
+						var mAddPropertySettings = merge({},
+							{
+								control: oControl,
+								change: oChange
+							},
+							mPropertyBag
+						);
 
-							if (isFunction(mAddViaDelegateSettings.revertAdditionalControls)) {
-								//-------------------------------------
-								//Call 'revertAdditionalControls' hook!
-								//-------------------------------------
-								return Promise.resolve()
-									.then(function() {
-										return mAddViaDelegateSettings.revertAdditionalControls(mAddPropertySettings);
-									})
-									.then(function() {
-										oChange.resetRevertData();
-									});
-							}
-						});
+						if (isFunction(mAddViaDelegateSettings.revertAdditionalControls)) {
+							//-------------------------------------
+							// Call 'revertAdditionalControls' hook!
+							//-------------------------------------
+							return Promise.resolve()
+							.then(function() {
+								return mAddViaDelegateSettings.revertAdditionalControls(mAddPropertySettings);
+							})
+							.then(function() {
+								oChange.resetRevertData();
+							});
+						}
+					});
 				},
 
 				/**
@@ -329,11 +329,11 @@ sap.ui.define([
 						oContent.newFieldIndex = mSpecificChangeInfo.index;
 					}
 					if (mSpecificChangeInfo.oDataServiceVersion) {
-						//used to connect to change handler mediator
+						// used to connect to change handler mediator
 						oContent.oDataServiceVersion = mSpecificChangeInfo.oDataServiceVersion;
 					}
 					if (mSpecificChangeInfo.modelType && mAddViaDelegateSettings.supportsDefault) {
-						//used to connect to default delegate
+						// used to connect to default delegate
 						oContent.modelType = mSpecificChangeInfo.modelType;
 					}
 					oChange.setContent(oContent);
@@ -353,34 +353,34 @@ sap.ui.define([
 
 				getCondenserInfo: function(oChange, mPropertyBag) {
 					return checkCondensingEnabled(oChange, mPropertyBag)
-						.then(function (bCondensingEnabled) {
-							if (!bCondensingEnabled) {
-								return undefined;
-							}
+					.then(function(bCondensingEnabled) {
+						if (!bCondensingEnabled) {
+							return undefined;
+						}
 
-							if (
-								!oChange.getContent().newFieldSelector
+						if (
+							!oChange.getContent().newFieldSelector
 								|| !oChange.getContent().parentId
 								|| !mAddViaDelegateSettings.aggregationName
-							) {
-								return undefined;
-							}
+						) {
+							return undefined;
+						}
 
-							return {
-								affectedControl: oChange.getContent().newFieldSelector,
-								classification: CondenserClassification.Create,
-								targetContainer: oChange.getContent().parentId,
-								targetAggregation: mAddViaDelegateSettings.aggregationName,
-								setTargetIndex: function (oChange, iNewTargetIndex) {
-									var oChangeContent = oChange.getContent();
-									oChangeContent.newFieldIndex = iNewTargetIndex;
-									oChange.setContent(oChangeContent);
-								},
-								getTargetIndex: function(oChange) {
-									return oChange.getContent().newFieldIndex;
-								}
-							};
-						});
+						return {
+							affectedControl: oChange.getContent().newFieldSelector,
+							classification: CondenserClassification.Create,
+							targetContainer: oChange.getContent().parentId,
+							targetAggregation: mAddViaDelegateSettings.aggregationName,
+							setTargetIndex: function(oChange, iNewTargetIndex) {
+								var oChangeContent = oChange.getContent();
+								oChangeContent.newFieldIndex = iNewTargetIndex;
+								oChange.setContent(oChangeContent);
+							},
+							getTargetIndex: function(oChange) {
+								return oChange.getContent().newFieldIndex;
+							}
+						};
+					});
 				}
 			};
 		}

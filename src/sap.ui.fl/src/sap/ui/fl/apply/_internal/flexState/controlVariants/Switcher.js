@@ -111,14 +111,14 @@ sap.ui.define([
 		 */
 		switchVariant: function(mPropertyBag) {
 			return Promise.resolve().then(function() {
-				//TODO: should be a function in FlexState e.g. getUIChanges()
+				// TODO: should be a function in FlexState e.g. getUIChanges()
 				mPropertyBag.changesMap = mPropertyBag.flexController._oChangePersistence.getChangesMapForComponent().mChanges;
 				var mChangesToBeSwitched = _getControlChangesForVariantSwitch(mPropertyBag);
 
 				return Reverter.revertMultipleChanges(mChangesToBeSwitched.changesToBeReverted, mPropertyBag)
-				//TODO: apply variantChanges() should be moved out of flex controller
-					.then(mPropertyBag.flexController.applyVariantChanges.bind(mPropertyBag.flexController, mChangesToBeSwitched.changesToBeApplied, mPropertyBag.appComponent))
-					.then(VariantManagementState.setCurrentVariant.bind(null, mPropertyBag));
+				// TODO: apply variantChanges() should be moved out of flex controller
+				.then(mPropertyBag.flexController.applyVariantChanges.bind(mPropertyBag.flexController, mChangesToBeSwitched.changesToBeApplied, mPropertyBag.appComponent))
+				.then(VariantManagementState.setCurrentVariant.bind(null, mPropertyBag));
 			});
 		}
 

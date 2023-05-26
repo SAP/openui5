@@ -17,19 +17,19 @@ sap.ui.define([], function() {
 		var oRequireStub = sandbox.stub(sap.ui, "require");
 		aStubInformation.forEach(function(oStubInformation) {
 			oRequireStub
-				.withArgs(oStubInformation.name)
-				.callsFake(function(sModuleName, fnSuccess, fnError) {
-					// the function can be called synchronously, then there is no success / error function
-					// and the stub has to be returned directly
-					if (!fnSuccess) {
-						return oStubInformation.stub;
-					}
-					if (oStubInformation.error) {
-						fnError(oStubInformation.stub);
-					} else {
-						fnSuccess(oStubInformation.stub);
-					}
-				});
+			.withArgs(oStubInformation.name)
+			.callsFake(function(sModuleName, fnSuccess, fnError) {
+				// the function can be called synchronously, then there is no success / error function
+				// and the stub has to be returned directly
+				if (!fnSuccess) {
+					return oStubInformation.stub;
+				}
+				if (oStubInformation.error) {
+					fnError(oStubInformation.stub);
+				} else {
+					fnSuccess(oStubInformation.stub);
+				}
+			});
 		});
 		oRequireStub.callThrough();
 		return oRequireStub;

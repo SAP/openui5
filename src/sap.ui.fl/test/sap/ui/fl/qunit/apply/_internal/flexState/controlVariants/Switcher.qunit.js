@@ -69,19 +69,19 @@ sap.ui.define([
 			sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			sandbox.stub(VariantManagementState, "setCurrentVariant");
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
-				.callThrough()
-				.withArgs(Object.assign(
-					_pick(this.mPropertyBag, ["vmReference"]), {
-						vReference: this.mPropertyBag.currentVReference
-					}
-				))
-				.returns(this.aSourceVariantChanges)
-				.withArgs(Object.assign(
-					_pick(this.mPropertyBag, ["vmReference"]), {
-						vReference: this.mPropertyBag.newVReference
-					}
-				))
-				.returns(this.aTargetControlChangesForVariant);
+			.callThrough()
+			.withArgs(Object.assign(
+				_pick(this.mPropertyBag, ["vmReference"]), {
+					vReference: this.mPropertyBag.currentVReference
+				}
+			))
+			.returns(this.aSourceVariantChanges)
+			.withArgs(Object.assign(
+				_pick(this.mPropertyBag, ["vmReference"]), {
+					vReference: this.mPropertyBag.newVReference
+				}
+			))
+			.returns(this.aTargetControlChangesForVariant);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -89,11 +89,11 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when called", function(assert) {
 			return Switcher.switchVariant(this.mPropertyBag)
-				.then(function() {
-					assert.ok(Reverter.revertMultipleChanges.calledWith(this.aSourceVariantChanges.reverse(), this.mPropertyBag), "then revert of changes was correctly triggered");
-					assert.ok(this.oFlexController.applyVariantChanges.calledWith(this.aTargetControlChangesForVariant, this.oAppComponent), "then apply of changes was correctly triggered");
-					assert.ok(VariantManagementState.setCurrentVariant.calledWith(this.mPropertyBag), "then setting current variant was correctly triggered");
-				}.bind(this));
+			.then(function() {
+				assert.ok(Reverter.revertMultipleChanges.calledWith(this.aSourceVariantChanges.reverse(), this.mPropertyBag), "then revert of changes was correctly triggered");
+				assert.ok(this.oFlexController.applyVariantChanges.calledWith(this.aTargetControlChangesForVariant, this.oAppComponent), "then apply of changes was correctly triggered");
+				assert.ok(VariantManagementState.setCurrentVariant.calledWith(this.mPropertyBag), "then setting current variant was correctly triggered");
+			}.bind(this));
 		});
 	});
 

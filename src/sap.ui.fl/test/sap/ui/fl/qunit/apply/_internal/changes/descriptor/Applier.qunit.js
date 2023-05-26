@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
@@ -40,16 +40,16 @@ sap.ui.define([
 	}
 
 	QUnit.module("Runtime: applyChange", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
-				.then(function(oTestApplierManifestResponse) {
-					return oTestApplierManifestResponse.json();
-				})
-				.then(function(oTestApplierManifestResponseJSON) {
-					this.oManifest = oTestApplierManifestResponseJSON;
-					done();
-				}.bind(this));
+			.then(function(oTestApplierManifestResponse) {
+				return oTestApplierManifestResponse.json();
+			})
+			.then(function(oTestApplierManifestResponseJSON) {
+				this.oManifest = oTestApplierManifestResponseJSON;
+				done();
+			}.bind(this));
 
 			this.RuntimeStrategy = ApplyStrategyFactory.getRuntimeStrategy();
 
@@ -61,11 +61,11 @@ sap.ui.define([
 
 			this.fnLogSpy = sandbox.stub(Log, "error");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling 'applyChange' with one runtime descriptor change ", function (assert) {
+		QUnit.test("when calling 'applyChange' with one runtime descriptor change ", function(assert) {
 			var aChanges = [{
 				changeType: "appdescr_ui5_addLibraries",
 				content: {
@@ -84,7 +84,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'applyChange' with three conflicting runtime 'appdescr_ui5_addLibraries' changes ", function (assert) {
+		QUnit.test("when calling 'applyChange' with three conflicting runtime 'appdescr_ui5_addLibraries' changes ", function(assert) {
 			var aChanges = [
 				{
 					changeType: "appdescr_ui5_addLibraries",
@@ -121,16 +121,16 @@ sap.ui.define([
 			return Applier.applyChanges(this.oManifest, aChanges, this.RuntimeStrategy).then(function(oNewManifest) {
 				assert.equal(this.fnAddLibrarySpy.callCount, 3, "AddLibrary.applyChange is called three times");
 				// last change wins!
-				var oNewLib = oNewManifest["sap.ui5"]["dependencies"]["libs"]["descriptor.mocha133"];
+				var oNewLib = oNewManifest["sap.ui5"].dependencies.libs["descriptor.mocha133"];
 				var oExpectedNewLib = {minVersion: "1.60.9"};
 				assert.equal(oNewLib.minVersion, oExpectedNewLib.minVersion, "minVersion is correct");
 				assert.equal(oNewLib.lazy, oExpectedNewLib.lazy, "lazy is correct");
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'applyChange' with mixed build and runtime change types ", function (assert) {
+		QUnit.test("when calling 'applyChange' with mixed build and runtime change types ", function(assert) {
 			var aChanges = [
-				{ //runtime change
+				{ // runtime change
 					changeType: "appdescr_ui5_addLibraries",
 					content: {
 						libraries: {
@@ -139,7 +139,7 @@ sap.ui.define([
 							}
 						}
 					}
-				}, { //buildtime change
+				}, { // buildtime change
 					changeType: "appdescr_app_changeDataSource",
 					content: {
 						dataSourceId: "ppm",
@@ -149,7 +149,7 @@ sap.ui.define([
 							propertyValue: "newuri"
 						}
 					}
-				}, {//buildtime change
+				}, {// buildtime change
 					changeType: "appdescr_ui5_addNewModelEnhanceWith",
 					content: {
 						modelId: "ppm"
@@ -157,7 +157,7 @@ sap.ui.define([
 					texts: {
 						i18n: "resources/i18n/i18n.properties"
 					}
-				}, {//buildtime change
+				}, {// buildtime change
 					changeType: "appdescr_ui5_addComponentUsages",
 					content: {
 						componentUsages: {
@@ -183,7 +183,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'applyChange' with change that needs text postprocessing correctly ", function (assert) {
+		QUnit.test("when calling 'applyChange' with change that needs text postprocessing correctly ", function(assert) {
 			var aChanges = [
 				 {
 					changeType: "appdescr_app_setTitle",
@@ -214,7 +214,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'applyChange' with change that needs text postprocessing with unexpected language value ", function (assert) {
+		QUnit.test("when calling 'applyChange' with change that needs text postprocessing with unexpected language value ", function(assert) {
 			var aChanges = [
 				 {
 					changeType: "appdescr_app_setTitle",
@@ -246,7 +246,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'applyChange' with not implemented change ", function (assert) {
+		QUnit.test("when calling 'applyChange' with not implemented change ", function(assert) {
 			var aChanges = [
 				 {
 					changeType: "appdescr_app_notImplemented",
@@ -263,7 +263,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'applyChange' for text change without text property ", function (assert) {
+		QUnit.test("when calling 'applyChange' for text change without text property ", function(assert) {
 			var aChanges = [
 				 {
 					changeType: "appdescr_app_setTitle",

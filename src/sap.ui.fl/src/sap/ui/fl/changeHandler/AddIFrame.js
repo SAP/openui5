@@ -44,24 +44,24 @@ sap.ui.define([
 		var iIndex;
 		var oIFrame;
 		return Promise.resolve()
-			.then(oModifier.findAggregation.bind(oModifier, oControl, sAggregationName))
-			.then(function(oAggregationDefinition) {
-				if (!oAggregationDefinition) {
-					throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
-				}
-				return getTargetAggregationIndex(oChange, oControl, mPropertyBag);
-			})
-			.then(function(iRetrievedIndex) {
-				iIndex = iRetrievedIndex;
-				return createIFrame(oChange, mPropertyBag, oChangeContent.selector);
-			})
-			.then(function(oCreatedIFrame) {
-				oIFrame = oCreatedIFrame;
-				return oModifier.insertAggregation(oControl, sAggregationName, oIFrame, iIndex, oView);
-			})
-			.then(function() {
-				oChange.setRevertData([oModifier.getId(oIFrame)]);
-			});
+		.then(oModifier.findAggregation.bind(oModifier, oControl, sAggregationName))
+		.then(function(oAggregationDefinition) {
+			if (!oAggregationDefinition) {
+				throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
+			}
+			return getTargetAggregationIndex(oChange, oControl, mPropertyBag);
+		})
+		.then(function(iRetrievedIndex) {
+			iIndex = iRetrievedIndex;
+			return createIFrame(oChange, mPropertyBag, oChangeContent.selector);
+		})
+		.then(function(oCreatedIFrame) {
+			oIFrame = oCreatedIFrame;
+			return oModifier.insertAggregation(oControl, sAggregationName, oIFrame, iIndex, oView);
+		})
+		.then(function() {
+			oChange.setRevertData([oModifier.getId(oIFrame)]);
+		});
 	};
 
 	/**
@@ -92,11 +92,11 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view Application view
 	 * @ui5-restricted sap.ui.fl
 	 */
-	AddIFrame.completeChangeContent = function (oChange, oSpecificChangeInfo, mPropertyBag) {
+	AddIFrame.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
 		// Required settings
-		["targetAggregation", "baseId", "url"].forEach(function (sRequiredProperty) {
+		["targetAggregation", "baseId", "url"].forEach(function(sRequiredProperty) {
 			if (!Object.prototype.hasOwnProperty.call(oSpecificChangeInfo.content, sRequiredProperty)) {
 				throw new Error("Attribute missing from the change specific content '" + sRequiredProperty + "'");
 			}

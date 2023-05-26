@@ -30,9 +30,9 @@ sap.ui.define([
 	 * @param {string} oRootPath - root context where the propertyPath starts
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
-	return function (vChanges, oRootPath) {
+	return function(vChanges, oRootPath) {
 		if (Array.isArray(vChanges)) {
-			vChanges.forEach(function (oEntityProp) {
+			vChanges.forEach(function(oEntityProp) {
 				setPropValueByPath(oEntityProp, oRootPath);
 			});
 		} else {

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/json/JSONModel"
-], function (
+], function(
 	UIComponent,
 	Layer,
 	ResourceModel,
@@ -16,7 +16,7 @@ sap.ui.define([
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.fl.support.apps.contentbrowser.Component", {
-		init: function () {
+		init: function() {
 			var that = this;
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
@@ -30,10 +30,9 @@ sap.ui.define([
 			var sMessages = [];
 			var oMessagesModel = new JSONModel(sMessages);
 			this.setModel(oMessagesModel, "messages");
-			sap.ui.require(["sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils"], function (ErrorUtils) {
+			sap.ui.require(["sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils"], function(ErrorUtils) {
 				ErrorUtils.setMessagesModel(that, oMessagesModel);
 			});
-
 
 			var oContentJson = {};
 			var oContentJsonModel = new JSONModel(oContentJson);
@@ -83,7 +82,6 @@ sap.ui.define([
 			manifest: "json"
 		}
 	});
-
 
 	return Component;
 });

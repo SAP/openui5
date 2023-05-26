@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetAbstract",
@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oChange = new AppDescriptorChange({
 				content: {
 					"abstract": false
@@ -27,25 +27,25 @@ sap.ui.define([
 			this.oChangeEmpty = new AppDescriptorChange({ content: { } });
 			this.oChangeError = new AppDescriptorChange({ content: { otherFlag: "test" } });
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling '_applyChange' with abstract set to false", function (assert) {
+		QUnit.test("when calling '_applyChange' with abstract set to false", function(assert) {
 			var oNewManifest = SetAbstract.applyChange(this.oManifestEmpty, this.oChange);
 			assert.equal(oNewManifest["sap.fiori"].abstract, false, "abstract is set correctly.");
 
-			oNewManifest = SetAbstract.applyChange(oNewManifest, this.oChange); //abstract is already set in manifest
+			oNewManifest = SetAbstract.applyChange(oNewManifest, this.oChange); // abstract is already set in manifest
 			assert.equal(oNewManifest["sap.fiori"].abstract, false, "abstract is updated correctly.");
 		});
 
-		QUnit.test("when calling '_applyChange' with incorrect change content", function (assert) {
+		QUnit.test("when calling '_applyChange' with incorrect change content", function(assert) {
 			assert.throws(function() {
 				SetAbstract.applyChange(this.oManifestEmpty, this.oChangeAbstractSetTrue);
 			}, Error("The current change value of property abstract is 'true'. Only allowed value for property abstract is boolean 'false'"),
 			"throws error");
 
-			var oManifest = { "sap.fiori": { "abstract": false }}; //abstract is not set in manifest
+			var oManifest = { "sap.fiori": { "abstract": false }}; // abstract is not set in manifest
 
 			assert.throws(function() {
 				SetAbstract.applyChange(oManifest, this.oChangeAbstractSetTrue);

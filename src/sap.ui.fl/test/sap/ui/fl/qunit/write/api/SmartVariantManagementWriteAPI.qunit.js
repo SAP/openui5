@@ -83,11 +83,11 @@ sap.ui.define([
 			apiFunctionName: "setDefaultVariantId",
 			compVariantStateFunctionName: "setDefault"
 		}].forEach(function(testData) {
-			QUnit.test("When " + testData.details + " is called", function (assert) {
+			QUnit.test("When " + testData.details + " is called", function(assert) {
 				// mock control
 				var sPersistencyKey = "thePersistencyKey";
 				var oSVMControl = {
-					getPersonalizableControlPersistencyKey: function () {
+					getPersonalizableControlPersistencyKey: function() {
 						return sPersistencyKey;
 					}
 				};
@@ -137,13 +137,13 @@ sap.ui.define([
 
 		var sPersistencyKey = "someKey";
 
-		QUnit.test("when removeVariant is called", function (assert) {
+		QUnit.test("when removeVariant is called", function(assert) {
 			var mPropertyBag = {};
 			var sReference = "the.app.id";
 			var oGetFlexReferenceForControlStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			var oCompVariantStateRemoveVariantStub = sandbox.stub(CompVariantState, "removeVariant").resolves();
 
-			return SmartVariantManagementWriteAPI.removeVariant(mPropertyBag).then(function () {
+			return SmartVariantManagementWriteAPI.removeVariant(mPropertyBag).then(function() {
 				assert.equal(oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control, "then the reference was requested for the passed control,");
 				assert.equal(oCompVariantStateRemoveVariantStub.callCount, 1, "then the CompVariantState.removeVariant was called");
 				assert.equal(oCompVariantStateRemoveVariantStub.getCall(0).args[0], mPropertyBag, "and the propertyBag was passed");
@@ -358,13 +358,13 @@ sap.ui.define([
 					}
 				}
 			}
-		}].forEach(function (testData) {
-			QUnit.test("When updateVariant is called, " + testData.details, function (assert) {
+		}].forEach(function(testData) {
+			QUnit.test("When updateVariant is called, " + testData.details, function(assert) {
 				var sReference = "odata.app";
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
-				oControl.getPersistencyKey = function () {
+				oControl.getPersistencyKey = function() {
 					return sPersistencyKey;
 				};
 
@@ -404,7 +404,6 @@ sap.ui.define([
 					}
 				}));
 
-
 				return FlexState.clearAndInitialize({
 					reference: sReference,
 					componentId: oAppComponent.getId(),
@@ -416,10 +415,10 @@ sap.ui.define([
 						name: "sStandardVariantTitle"
 					},
 					variants: aVariants
-				})).then(function () {
+				})).then(function() {
 					testData.updateVariantPropertyBag.control = oControl;
 					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
-				}).then(function (oVariant) {
+				}).then(function(oVariant) {
 					assert.equal(oVariant.getChanges().length, 1, "one change was added");
 					var oChange = oVariant.getChanges()[0];
 					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
@@ -638,7 +637,7 @@ sap.ui.define([
 				changeAdaptationId: undefined,
 				variantAdaptationId: undefined
 			}
-		}, {//no real use case for user layer setContext change
+		}, {// no real use case for user layer setContext change
 			details: "contexts are set user dependent, but the variant does not belong to to the same layer",
 			updateVariantPropertyBag: {
 				isUserDependent: true,
@@ -665,13 +664,13 @@ sap.ui.define([
 				changeAdaptationId: undefined,
 				variantAdaptationId: undefined
 			}
-		}].forEach(function (testData) {
-			QUnit.test("When updateVariant is called with adaptationId, " + testData.details, function (assert) {
+		}].forEach(function(testData) {
+			QUnit.test("When updateVariant is called with adaptationId, " + testData.details, function(assert) {
 				var sReference = "odata.app";
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
-				oControl.getPersistencyKey = function () {
+				oControl.getPersistencyKey = function() {
 					return sPersistencyKey;
 				};
 
@@ -722,7 +721,6 @@ sap.ui.define([
 					}
 				));
 
-
 				return FlexState.clearAndInitialize({
 					reference: sReference,
 					componentId: oAppComponent.getId(),
@@ -734,10 +732,10 @@ sap.ui.define([
 						name: "sStandardVariantTitle"
 					},
 					variants: aVariants
-				})).then(function () {
+				})).then(function() {
 					testData.updateVariantPropertyBag.control = oControl;
 					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
-				}).then(function (oVariant) {
+				}).then(function(oVariant) {
 					assert.equal(oVariant.getChanges().length, 1, "one change was added");
 					var oChange = oVariant.getChanges()[0];
 					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
@@ -769,8 +767,8 @@ sap.ui.define([
 			testDetails: "on a variant with a package name",
 			packageName: "PACKAGE_A",
 			expectedChange: true
-		}].forEach(function (oTestData) {
-			QUnit.test("When updateVariant is called " + oTestData.testDetails, function (assert) {
+		}].forEach(function(oTestData) {
+			QUnit.test("When updateVariant is called " + oTestData.testDetails, function(assert) {
 				var sReference = "odata.app";
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
@@ -820,7 +818,7 @@ sap.ui.define([
 					control: oControl,
 					standardVariant: {},
 					variants: []
-				})).then(function () {
+				})).then(function() {
 					return SmartVariantManagementWriteAPI.updateVariant({
 						control: oControl,
 						layer: Layer.VENDOR,
@@ -829,7 +827,7 @@ sap.ui.define([
 						packageName: "PACKAGE_A",
 						transportId: "transport1"
 					});
-				}).then(function (oVariant) {
+				}).then(function(oVariant) {
 					if (oTestData.expectedChange) {
 						assert.equal(oVariant.getChanges().length, 1, "one change was added");
 						assert.equal(oVariant.getChanges()[0].getFlexObjectMetadata().packageName, "PACKAGE_A", "the packageName was set correct");
@@ -1082,8 +1080,8 @@ sap.ui.define([
 				favorite: false,
 				action: undefined
 			}
-		}].forEach(function (testData) {
-			QUnit.test("When updateVariant is called with " + testData.details, function (assert) {
+		}].forEach(function(testData) {
+			QUnit.test("When updateVariant is called with " + testData.details, function(assert) {
 				var sReference = "an.app";
 				testData.propertyBag.reference = sReference;
 				testData.propertyBag.persistencyKey = sPersistencyKey;
@@ -1109,7 +1107,7 @@ sap.ui.define([
 					manifest: {},
 					componentData: {}
 				}).then(Settings.getInstance)
-				.then(function () {
+				.then(function() {
 					switch (testData.details) {
 						case "a new name for a variant":
 						case "a new executeOnSelection flag":
@@ -1141,7 +1139,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns true", function (assert) {
+		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns true", function(assert) {
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true,
@@ -1151,13 +1149,13 @@ sap.ui.define([
 			sandbox.stub(WriteStorage, "loadFeatures").resolves(oSetting);
 
 			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantSharingEnabled");
-			return SmartVariantManagementWriteAPI.isVariantSharingEnabled().then(function (bFlag) {
+			return SmartVariantManagementWriteAPI.isVariantSharingEnabled().then(function(bFlag) {
 				assert.equal(bFlag, true, "the true flag is returned");
 				assert.equal(isVariantSharingEnabledSpy.callCount, 1, "called once");
 			});
 		});
 
-		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns false", function (assert) {
+		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns false", function(assert) {
 			var oSetting = {
 				isKeyUser: false,
 				isAtoAvailable: true,
@@ -1167,13 +1165,13 @@ sap.ui.define([
 			sandbox.stub(WriteStorage, "loadFeatures").resolves(oSetting);
 
 			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantSharingEnabled");
-			return SmartVariantManagementWriteAPI.isVariantSharingEnabled().then(function (bFlag) {
+			return SmartVariantManagementWriteAPI.isVariantSharingEnabled().then(function(bFlag) {
 				assert.equal(bFlag, false, "the false flag is returned");
 				assert.equal(isVariantSharingEnabledSpy.callCount, 1, "called once");
 			});
 		});
 
-		QUnit.test("When isVariantPersonalizationEnabled() is called it calls the Settings instance and returns true", function (assert) {
+		QUnit.test("When isVariantPersonalizationEnabled() is called it calls the Settings instance and returns true", function(assert) {
 			var oSetting = {
 				isVariantPersonalizationEnabled: true
 			};
@@ -1181,13 +1179,13 @@ sap.ui.define([
 			sandbox.stub(WriteStorage, "loadFeatures").resolves(oSetting);
 
 			var isVariantPersonalizationEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantPersonalizationEnabled");
-			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function (bFlag) {
+			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function(bFlag) {
 				assert.equal(bFlag, true, "the true flag is returned");
 				assert.equal(isVariantPersonalizationEnabledSpy.callCount, 1, "called once");
 			});
 		});
 
-		QUnit.test("When isVariantPersonalizationEnabled() is called it calls the Settings instance and returns false", function (assert) {
+		QUnit.test("When isVariantPersonalizationEnabled() is called it calls the Settings instance and returns false", function(assert) {
 			var oSetting = {
 				isVariantPersonalizationEnabled: false
 			};
@@ -1195,7 +1193,7 @@ sap.ui.define([
 			sandbox.stub(WriteStorage, "loadFeatures").resolves(oSetting);
 
 			var isVariantPersonalizationEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantPersonalizationEnabled");
-			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function (bFlag) {
+			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function(bFlag) {
 				assert.equal(bFlag, false, "the false flag is returned");
 				assert.equal(isVariantPersonalizationEnabledSpy.callCount, 1, "called once");
 			});
@@ -1203,20 +1201,20 @@ sap.ui.define([
 	});
 
 	QUnit.module("loadVariants with legacy content", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			FlexState.clearState();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			this.oControl && this.oControl.destroy();
 		}
-	}, function () {
-		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", function (assert) {
+	}, function() {
+		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", function(assert) {
 			this.oControl = new Control();
 			var sPersistencyKey = "variantManagement1";
-			this.oControl.getPersonalizableControlPersistencyKey = function () {
+			this.oControl.getPersonalizableControlPersistencyKey = function() {
 				return sPersistencyKey;
 			};
 
@@ -1231,16 +1229,16 @@ sap.ui.define([
 			return SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oControl,
 				standardVariant: {}
-			}).then(function (oResponse) {
+			}).then(function(oResponse) {
 				oVariant = oResponse.variants[0]; // user variant with 2 legacy changes (addFavorite & removeFavorite)
-			}).then(function () {
+			}).then(function() {
 				SmartVariantManagementWriteAPI.updateVariant({
 					isUserDependent: true,
 					id: oVariant.getId(),
 					control: this.oControl,
 					favorite: true
 				});
-			}.bind(this)).then(function () {
+			}.bind(this)).then(function() {
 				var aVariantChanges = oVariant.getChanges();
 				assert.equal(aVariantChanges.length, 3, "a new change was created");
 				assert.equal(aVariantChanges[2].getChangeType(), "updateVariant", "a new update was written");
@@ -1294,14 +1292,14 @@ sap.ui.define([
 				componentId: "__component0",
 				manifest: {},
 				componentData: {}
-			}).then(function () {
+			}).then(function() {
 				return SmartVariantManagementWriteAPI.removeVariant({
 					reference: sReference,
 					persistencyKey: sPersistencyKey,
 					id: "test_variant",
 					control: oControl
 				});
-			}).then(function (oRemovedVariant) {
+			}).then(function(oRemovedVariant) {
 				assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
 				var aRevertData = oRemovedVariant.getRevertData();
 				assert.equal(aRevertData.length, 1, "revertData was stored");
@@ -1368,7 +1366,7 @@ sap.ui.define([
 				componentId: "__component0",
 				manifest: {},
 				componentData: {}
-			}).then(function () {
+			}).then(function() {
 				return SmartVariantManagementWriteAPI.removeVariant({
 					layer: Layer.CUSTOMER,
 					reference: sReference,
@@ -1376,7 +1374,7 @@ sap.ui.define([
 					id: "test_variant",
 					control: oControl
 				});
-			}).then(function (oRemovedVariant) {
+			}).then(function(oRemovedVariant) {
 				assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
 				var aRevertData = oRemovedVariant.getRevertData();
 				assert.equal(aRevertData.length, 1, "revertData was stored");
@@ -1432,38 +1430,38 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given TransportSelection was requested and a PUBLIC layer is available", function (assert) {
+		QUnit.test("Given TransportSelection was requested and a PUBLIC layer is available", function(assert) {
 			// Stub to check for the actual call of the TransportSelection function (no direct stubbing due to the .apply usage)
 			var oUtilsStub = sandbox.stub(Utils, "getLrepUrl");
 
-			return new Promise(function (resolve) {
+			return new Promise(function(resolve) {
 				var oTransportSelection = SmartVariantManagementWriteAPI._getTransportSelection();
 				oTransportSelection.selectTransport({}, resolve);
-			}).then(function () {
+			}).then(function() {
 				assert.equal(oUtilsStub.callCount, 0, "the TransportSelection.selectTransport was not called");
 			});
 		});
 
-		QUnit.test("Given TransportSelection was requested and a PUBLIC layer is available", function (assert) {
+		QUnit.test("Given TransportSelection was requested and a PUBLIC layer is available", function(assert) {
 			// Stub to check for the actual call of the TransportSelection function (no direct stubbing due to the .call usage)
 			// returns empty to not trigger further functionality within the selectTransport
 			var oUtilsStub = sandbox.stub(Utils, "getLrepUrl").returns("");
 			sandbox.stub(UriParameters, "fromQuery").returns({
-				get: function () {
+				get: function() {
 					return Layer.VENDOR;
 				}
 			});
 
-			return new Promise(function (resolve) {
+			return new Promise(function(resolve) {
 				var oTransportSelection = SmartVariantManagementWriteAPI._getTransportSelection();
 				oTransportSelection.selectTransport({}, resolve);
-			}).then(function () {
+			}).then(function() {
 				assert.equal(oUtilsStub.callCount, 1, "the TransportSelection.selectTransport was called");
 			});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

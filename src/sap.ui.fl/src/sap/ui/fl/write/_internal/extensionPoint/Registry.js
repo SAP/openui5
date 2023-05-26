@@ -31,7 +31,7 @@ sap.ui.define([
 
 	function onParentDestroy(oEvent) {
 		var sParentId = oEvent.object.getId();
-		mExtensionPointsByParent[sParentId].forEach(function (oExtensionPoint) {
+		mExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			mExtensionPointsByViewId[oExtensionPoint.view.getId()][oExtensionPoint.name].bParentIsDestroyed = true;
 		});
 	}
@@ -141,7 +141,7 @@ sap.ui.define([
 	 * @param {Object} oView - View object
 	 * @returns {Object} mExtensionPointInfo - Map of extension point information
 	 */
-	ExtensionPointRegistry.getExtensionPointInfo = function (sExtensionPointName, oView) {
+	ExtensionPointRegistry.getExtensionPointInfo = function(sExtensionPointName, oView) {
 		return mExtensionPointsByViewId[oView.getId()]
 			&& mExtensionPointsByViewId[oView.getId()][sExtensionPointName];
 	};
@@ -151,7 +151,7 @@ sap.ui.define([
 	 * @param {string} oViewId - ID of the view
 	 * @returns {object} Map of extension points
 	 */
-	ExtensionPointRegistry.getExtensionPointInfoByViewId = function (oViewId) {
+	ExtensionPointRegistry.getExtensionPointInfoByViewId = function(oViewId) {
 		return mExtensionPointsByViewId[oViewId] || {};
 	};
 
@@ -161,7 +161,7 @@ sap.ui.define([
 	 * @param {string} sParentId - ID of the extension point parent control
 	 * @returns {Array} Array of extension point information
 	 */
-	ExtensionPointRegistry.getExtensionPointInfoByParentId = function (sParentId) {
+	ExtensionPointRegistry.getExtensionPointInfoByParentId = function(sParentId) {
 		return mExtensionPointsByParent[sParentId] || [];
 	};
 

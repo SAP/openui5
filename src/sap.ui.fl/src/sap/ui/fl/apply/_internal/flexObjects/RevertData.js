@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject"
-], function (ManagedObject) {
+], function(ManagedObject) {
 	"use strict";
 
 	/**

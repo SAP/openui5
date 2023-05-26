@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/base/Log",
 	"sap/base/util/isPlainObject"
-], function (
+], function(
 	ManagedObject,
 	Utils,
 	Log,

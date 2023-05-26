@@ -35,26 +35,26 @@ sap.ui.define([
 		var oUnstashedControl;
 
 		return Promise.resolve()
-			.then(oModifier.getStashed.bind(oModifier, oControl))
-			.then(function(bPreviouslyStashed) {
-				oChange.setRevertData({
-					originalValue: bPreviouslyStashed
-				});
-				oUnstashedControl = oModifier.setStashed(oControl, bStashed, mPropertyBag.appComponent) || oControl;
-				//old way including move, new way will have separate move change
-				//only applicable for XML modifier
-				if (mContent.parentAggregationName) {
-					var sTargetAggregation = mContent.parentAggregationName;
-					var oTargetParent = oModifier.getParent(oUnstashedControl);
-					return Promise.resolve()
-						.then(oModifier.removeAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oUnstashedControl))
-						.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oUnstashedControl, mContent.index, mPropertyBag.view));
-				}
-				return undefined;
-			})
-			.then(function() {
-				return oUnstashedControl;
+		.then(oModifier.getStashed.bind(oModifier, oControl))
+		.then(function(bPreviouslyStashed) {
+			oChange.setRevertData({
+				originalValue: bPreviouslyStashed
 			});
+			oUnstashedControl = oModifier.setStashed(oControl, bStashed, mPropertyBag.appComponent) || oControl;
+			// old way including move, new way will have separate move change
+			// only applicable for XML modifier
+			if (mContent.parentAggregationName) {
+				var sTargetAggregation = mContent.parentAggregationName;
+				var oTargetParent = oModifier.getParent(oUnstashedControl);
+				return Promise.resolve()
+				.then(oModifier.removeAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oUnstashedControl))
+				.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oUnstashedControl, mContent.index, mPropertyBag.view));
+			}
+			return undefined;
+		})
+		.then(function() {
+			return oUnstashedControl;
+		});
 	};
 
 	/**
@@ -81,7 +81,7 @@ sap.ui.define([
 	 */
 	UnstashControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 		if (oSpecificChangeInfo.content) {
-			//old way including move, new way will have separate move change
+			// old way including move, new way will have separate move change
 			oChange.setContent(oSpecificChangeInfo.content);
 		}
 	};

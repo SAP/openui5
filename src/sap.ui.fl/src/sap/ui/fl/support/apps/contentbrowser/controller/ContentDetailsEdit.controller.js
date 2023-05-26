@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/UIComponent"
-], function (
+], function(
 	Controller,
 	LRepConnector,
 	DataUtils,
@@ -51,7 +51,7 @@ sap.ui.define([
 		 * Handles data binding and route matching.
 		 * @public
 		 */
-		onInit: function () {
+		onInit: function() {
 			this._initAndBindSelectedContentModel();
 			var oRouter = UIComponent.getRouterFor(this);
 			oRouter.getRoute("ContentDetailsEdit").attachMatched(this._onRouteMatched, this);
@@ -61,7 +61,7 @@ sap.ui.define([
 		 * Creates and binds of the model for the selected content.
 		 * @private
 		 */
-		_initAndBindSelectedContentModel: function () {
+		_initAndBindSelectedContentModel: function() {
 			this.oSelectedContentModel = new JSONModel();
 			this.getView().setModel(this.oSelectedContentModel, "selectedContent");
 		},
@@ -73,7 +73,7 @@ sap.ui.define([
 		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onRouteMatched: function (oRouteMatch) {
+		_onRouteMatched: function(oRouteMatch) {
 			var that = this;
 			var mRouteArguments = oRouteMatch.getParameter("arguments");
 
@@ -94,7 +94,7 @@ sap.ui.define([
 
 			return LRepConnector.getContent(oModelData.layer, sContentSuffix, null, null, true).then(
 				that._onContentReceived.bind(that, oModelData, oPage, sContentSuffix),
-				function () {
+				function() {
 					oPage.setBusy(false);
 				}
 			);
@@ -110,13 +110,13 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onContentReceived: function (oModelData, oPage, sContentSuffix, oData) {
+		_onContentReceived: function(oModelData, oPage, sContentSuffix, oData) {
 			return LRepConnector.getContent(oModelData.layer, sContentSuffix, true).then(
-				function (oMetadata) {
+				function(oMetadata) {
 					oModelData.data = DataUtils.formatData(oData, oModelData.fileType);
 					oModelData.metadata = oMetadata;
 					this.oSelectedContentModel.setData(oModelData);
-					oModelData.metadata.some(function (oMetadata) {
+					oModelData.metadata.some(function(oMetadata) {
 						if (oMetadata.name === "layer") {
 							if (oMetadata.value === "CUSTOMER") {
 								this.getView().byId("activeVersionCheckBox").setVisible(true);
@@ -127,7 +127,7 @@ sap.ui.define([
 						}
 					}.bind(this));
 					oPage.setBusy(false);
-				}.bind(this), function () {
+				}.bind(this), function() {
 					oPage.setBusy(false);
 				}
 			);
@@ -138,7 +138,7 @@ sap.ui.define([
 		 * Checks the current layer, namespace, filename, and file type and select correct transport id (through a dialog if necessary) and trigger save request of file.
 		 * @public
 		 */
-		onSave: function () {
+		onSave: function() {
 			var that = this;
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var bOnActivatedVersion = this.getView().byId("activeVersionCheckBox").getSelected();
@@ -148,13 +148,13 @@ sap.ui.define([
 			var sPackageFromContent;
 			var sTransportId;
 			var sPackageName;
-			oContentData.metadata.some(function (oMetadata) {
+			oContentData.metadata.some(function(oMetadata) {
 				if (oMetadata.name === "layer") {
 					sLayer = oMetadata.value;
 					return true;
 				}
 			});
-			oContentData.metadata.some(function (mMetadata) {
+			oContentData.metadata.some(function(mMetadata) {
 				if (mMetadata.name === "transportId") {
 					sTransportIdFromContent = mMetadata.value;
 					return true;
@@ -163,7 +163,7 @@ sap.ui.define([
 			try {
 				sPackageFromContent = JSON.parse(oContentData.data).packageName;
 			} catch (e) {
-				//when content is not in JSON format (Ex: js or code_ext file), package is undefined but does not break the code.
+				// when content is not in JSON format (Ex: js or code_ext file), package is undefined but does not break the code.
 			}
 
 			if ((sLayer === Layer.USER) ||
@@ -189,7 +189,7 @@ sap.ui.define([
 					beginButton: new Button({
 						text: "{i18n>confirm}",
 						type: ButtonType.Reject,
-						press: function () {
+						press: function() {
 							sPackageName = oPackageInput.getValue();
 							sTransportId = oTransportInput.getValue();
 							oDialog.close();
@@ -198,11 +198,11 @@ sap.ui.define([
 					}),
 					endButton: new Button({
 						text: "{i18n>cancel}",
-						press: function () {
+						press: function() {
 							oDialog.close();
 						}
 					}),
-					afterClose: function () {
+					afterClose: function() {
 						oDialog.destroy();
 					}
 				});
@@ -217,7 +217,7 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "saveFiles" promise
 		 * @private
 		 */
-		_saveFile: function (sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName, bSupport) {
+		_saveFile: function(sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName, bSupport) {
 			return LRepConnector.saveFile(sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName, bSupport).then(this._navToDisplayMode.bind(this));
 		},
 
@@ -226,7 +226,7 @@ sap.ui.define([
 		 * Navigates back to "Display" mode of the content.
 		 * @public
 		 */
-		onCancel: function () {
+		onCancel: function() {
 			this._navToDisplayMode();
 		},
 
@@ -235,7 +235,7 @@ sap.ui.define([
 		 * Gathers layer, namespace, filename, and file type information and navigates to "ContentDetailsFlip" target.
 		 * @private
 		 */
-		_navToDisplayMode: function () {
+		_navToDisplayMode: function() {
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var oContentData = oSelectedContentModel.getData();
 			var oRouter = UIComponent.getRouterFor(this);

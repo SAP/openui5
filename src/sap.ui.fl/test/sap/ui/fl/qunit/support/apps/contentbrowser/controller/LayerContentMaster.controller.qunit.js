@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/controller/LayerContentMaster.controller",
@@ -32,15 +32,15 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("on LRep content received", function(assert) {
 			var oPage = {
-				setBusy: function () {}
+				setBusy: function() {}
 			};
 			var oData = {};
 			var oStubbedFilterList = sandbox.stub(oController, "filterListByQuery");
 			var oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
 			sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return {
-						setData: function () {}
+						setData: function() {}
 					};
 				}
 			});
@@ -67,9 +67,9 @@ sap.ui.define([
 				}
 			]);
 			var eSelectionEvent = {
-				getSource: function () {
+				getSource: function() {
 					return {
-						getBindingContextPath: function () {
+						getBindingContextPath: function() {
 							return "/1";
 						}
 					};
@@ -78,7 +78,7 @@ sap.ui.define([
 			oController.sLayer = sLayer;
 			oController.sNamespace = "1stLevel/2ndLevel/";
 			sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return oModel;
 				}
 			});
@@ -106,9 +106,9 @@ sap.ui.define([
 				}
 			]);
 			var oSelectionEvent = {
-				getSource: function () {
+				getSource: function() {
 					return {
-						getBindingContextPath: function () {
+						getBindingContextPath: function() {
 							return "/0";
 						}
 					};
@@ -117,7 +117,7 @@ sap.ui.define([
 			oController.sLayer = sLayer;
 			oController.sNamespace = "1stLevel/2ndLevel/";
 			sandbox.stub(oController, "getView").returns({
-				getModel: function () {
+				getModel: function() {
 					return oModel;
 				}
 			});
