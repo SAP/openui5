@@ -463,34 +463,48 @@ sap.ui.define([
 		}
 	}, function() {
 		[{
-			flexObject: createVariant({
+			flexObjects: [createVariant({
 				variantReference: sVariantManagementReference,
 				fileName: "customVariant"
-			}),
+			})],
 			responseKey: "variants",
 			testName: "custom variant"
 		},
 		{
-			flexObject: FlexObjectFactory.createUIChange({
+			flexObjects: [
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "customVariant"
+				}),
+				createVariant({
+					variantReference: "secondVariant",
+					fileName: "customVariant2"
+				})
+			],
+			responseKey: "variants",
+			testName: "multiple custom variants"
+		},
+		{
+			flexObjects: [FlexObjectFactory.createUIChange({
 				id: "someUIChange",
 				layer: Layer.CUSTOMER,
 				variantReference: sStandardVariantReference
-			}),
+			})],
 			responseKey: "variantDependentControlChanges",
-			testName: "UI change depending on the standard variant"
+			testName: "a UI change depending on the standard variant"
 		},
 		{
-			flexObject: FlexObjectFactory.createUIChange({
+			flexObjects: [FlexObjectFactory.createUIChange({
 				variantReference: sVariantManagementReference,
 				id: "someVariantChange",
 				fileType: "ctrl_variant_change",
 				changeType: "setTitle",
 				selector: { id: sStandardVariantReference}
-			}),
+			})],
 			responseKey: "variantChanges",
-			testName: "variant change (e.g. setTitle)"
+			testName: "a variant change (e.g. setTitle)"
 		}].forEach(function(oTestInput) {
-			var sName = "when the storageResponse contains a " + oTestInput.testName;
+			var sName = "when the storageResponse contains " + oTestInput.testName;
 			QUnit.test(sName, function(assert) {
 				var oInitialPrepareSpy = sandbox.spy(InitialPrepareFunctions, "variants");
 
@@ -500,7 +514,7 @@ sap.ui.define([
 					// eslint-disable-next-line max-nested-callbacks
 					.then(function(oOriginalResponse) {
 						var oResponseAddition = { changes: {} };
-						oResponseAddition.changes[oTestInput.responseKey] = toFileContent([oTestInput.flexObject]);
+						oResponseAddition.changes[oTestInput.responseKey] = toFileContent(oTestInput.flexObjects);
 						return merge(
 							oOriginalResponse,
 							oResponseAddition
@@ -522,6 +536,13 @@ sap.ui.define([
 						sStandardVariantReference,
 						"then the standard variant is automatically added based on the existing variant"
 					);
+					if (oTestInput.flexObjects.length === 2) {
+						assert.strictEqual(
+							oVariantsMap["secondVariant"].variants[0].key,
+							"secondVariant",
+							"then the standard variant is automatically added based on the existing variant"
+						);
+					}
 				});
 			});
 		});
