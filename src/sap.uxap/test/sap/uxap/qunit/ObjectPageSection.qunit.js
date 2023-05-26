@@ -31,7 +31,7 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 			// By default title is not centered, CSS:0120061532 0001349139 2014
 			var oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection");
 			assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"), true, "My first section title never visible");
-			assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").attr("aria-hidden"), "true", "My first section title is ignored by the screen reader");
+			assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").attr("aria-hidden"), undefined, "My first section title is NOT ignored by the screen reader");
 			// Test by finding own class
 			assert.strictEqual(oSectionWithTwoSubSection.$().find('.mysubsectiontotest').length == 2, true, "Section with two SubSections");
 
@@ -81,6 +81,7 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		Core.applyChanges();
 
 		assert.strictEqual(oObjectPageLayout.getSections()[0]._getInternalTitleVisible(), true, "title is displayed when there is only 1 section");
+		assert.strictEqual(oObjectPageLayout.getSections()[0]._isTitleAriaVisible(), true, "title is displayed when there is only 1 section");
 
 		oObjectPageLayout.destroy();
 	});
@@ -116,6 +117,9 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 
 		assert.strictEqual(aSections[0]._getInternalTitleVisible(), false, "title is hidden when there is more than 1 section");
 		assert.strictEqual(aSections[1]._getInternalTitleVisible(), false, "title is hidden when there is more than 1 section");
+
+		assert.strictEqual(aSections[0]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
+		assert.strictEqual(aSections[1]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
 
 		oObjectPageLayout.destroy();
 	});

@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 	};
 
 	ObjectPageSectionRenderer.render = function (oRm, oControl) {
-		var sTitle, bTitleVisible,
+		var sTitle, bTitleVisible, bTitleAriaHidden,
 			bAccessibilityOn = Configuration.getAccessibility(),
 			oLabelledBy = oControl.getAggregation("ariaLabelledBy"),
 			oHeading = oControl.getHeading(),
@@ -26,6 +26,7 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 
 		sTitle = oControl._getTitle();
 		bTitleVisible = oControl._isTitleVisible();
+		bTitleAriaHidden = !oControl._isTitleAriaVisible();
 
 		oRm.openStart("section", oControl)
 			.class("sapUxAPObjectPageSection");
@@ -59,10 +60,14 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 		oRm.openStart("div", oControl.getId() + "-header")
 			.attr("role", "heading")
 			.attr("aria-level", oControl._getARIALevel())
-			.attr("aria-hidden", !bTitleVisible)
 			.class("sapUxAPObjectPageSectionHeader")
-			.class(bTitleVisible ? "" : "sapUxAPObjectPageSectionHeaderHidden")
-			.openEnd();
+			.class(bTitleVisible ? "" : "sapUxAPObjectPageSectionHeaderHidden");
+
+		if (bTitleAriaHidden) {
+			oRm.attr("aria-hidden", "true");
+		}
+
+		oRm.openEnd();
 
 		oRm.openStart("div", oControl.getId() + "-title")
 			.class("sapUxAPObjectPageSectionTitle");
