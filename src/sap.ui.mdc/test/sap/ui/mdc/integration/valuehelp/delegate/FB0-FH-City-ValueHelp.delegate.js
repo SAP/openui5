@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/table/ResponsiveColumnSettings",
 	"sap/m/library",
 	"sap/m/Table",
 	"sap/m/Column",
@@ -29,6 +30,7 @@ sap.ui.define([
 	Field,
 	mdcTable,
 	mdcColumn,
+	mdcResponsiveColumnSettings,
 	mLibrary,
 	Table,
 	Column,
@@ -156,10 +158,10 @@ sap.ui.define([
 						}
 					},
 					columns: [
-					          new mdcColumn({importance: "High", header: "City", propertyKey: "city", template: new Field({value: "{city}", editMode: "Display"})}),
-					          new mdcColumn({importance: "High", header: "Name", propertyKey: "text", template: new Field({value: "{text}", editMode: "Display"})}),
-					          new mdcColumn({importance: "Low", header: "Country", propertyKey: "country_code", template: new Field({value: "{country_code}"/*, additionalValue: "{countryOfOrigin/text}", display: "Description"*/, editMode: "Display"})}),
-					          new mdcColumn({importance: "Low", header: "Region", propertyKey: "region_code", template: new Field({value: "{region_code}"/*, additionalValue: "{regionOfOrigin/text}", display: "Description"*/, editMode: "Display"})})
+					          new mdcColumn({extendedSettings: new mdcResponsiveColumnSettings({importance: "High"}), header: "City", propertyKey: "city", template: new Field({value: "{city}", editMode: "Display"})}),
+					          new mdcColumn({extendedSettings: new mdcResponsiveColumnSettings({importance: "High"}), header: "Name", propertyKey: "text", template: new Field({value: "{text}", editMode: "Display"})}),
+					          new mdcColumn({extendedSettings: new mdcResponsiveColumnSettings({importance: "Low"}), header: "Country", propertyKey: "country_code", template: new Field({value: "{country_code}"/*, additionalValue: "{countryOfOrigin/text}", display: "Description"*/, editMode: "Display"})}),
+					          new mdcColumn({extendedSettings: new mdcResponsiveColumnSettings({importance: "Low"}), header: "Region", propertyKey: "region_code", template: new Field({value: "{region_code}"/*, additionalValue: "{regionOfOrigin/text}", display: "Description"*/, editMode: "Display"})})
 					          ]
 				});
 				oCurrentContent.setTable(oCurrentTable);

@@ -37,20 +37,35 @@
 			<OverflowToolbarButton icon="sap-icon://activate" tooltip="Apply table state config" press="applyTableStateConfig"/>
 		</mdc:actions>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On"propertyKey="CreatedAt" importance="Low">
+			<mdcTable:Column id="create" header="Created On" propertyKey="CreatedAt">
 				<Text text="{CreatedAt}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="Low"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" propertyKey="ProductID" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" propertyKey="ProductID">
 				<ObjectIdentifier title="{ProductID}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="High"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" propertyKey="Category" importance="Low">
+			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" propertyKey="Category">
 				<Text text="{Category}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="Low"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" propertyKey="Name" importance="Low">
+			<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" propertyKey="Name">
 				<Text text="{Name}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="Low"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName" importance="Medium">
+			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" propertyKey="SupplierName">
 				<Text text="{SupplierName}"/>
+				<mdcTable:extendedSettings>
+					<mdcTable:ResponsiveColumnSettings importance="Medium"/>
+				</mdcTable:extendedSettings>
 			</mdcTable:Column>
 		</mdc:columns>
 		<mdc:variant>

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/TreeTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
+	"sap/ui/mdc/table/ResponsiveColumnSettings",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
 	"sap/m/plugins/PluginBase",
@@ -27,6 +28,7 @@ sap.ui.define([
 	GridTableType,
 	TreeTableType,
 	ResponsiveTableType,
+	ResponsiveColumnSettings,
 	Column,
 	Text,
 	PluginBase,
@@ -324,7 +326,9 @@ sap.ui.define([
 							text: "Column A"
 						}),
 						hAlign: "Begin",
-						importance: "High",
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "High"
+						}),
 						template: new Text({
 							text: "Column A"
 						})
