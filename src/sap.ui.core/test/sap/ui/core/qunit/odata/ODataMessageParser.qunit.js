@@ -212,7 +212,7 @@ sap.ui.define([
 						success: function() {
 							var aMessages = oMessageModel.getProperty("/");
 							assert.equal(aMessages.length, mTestOptions.numMessages, mTestOptions.numMessages + " messages set after the function import");
-							assert.equal(aMessages[aMessages.length - 1].target, mTestOptions.lastTarget, "Message has correct target");
+							assert.equal(aMessages[aMessages.length - 1].getTargets()[0], mTestOptions.lastTarget, "Message has correct target");
 
 							if (mTestOptions.final) {
 								testFunctionTarget._running = false;
@@ -578,7 +578,7 @@ sap.ui.define([
 			oParser.parse(oResponse, oRequest);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products(1)", "target is read from the provided key");
 
 
 			//request uri:          fakeservice://testdata/odata/northwind/Products
@@ -587,14 +587,14 @@ sap.ui.define([
 			oParser.parse(oResponse, oRequest);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products", "target is parsed from the requestUri");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products", "target is parsed from the requestUri");
 
 			oRequest2.requestUri = sServiceURI + "/Products";
 			oResponse.body = JSON.stringify(oResponseHeaderSapMessageObject2);
 			oParser.parse(oResponse, oRequest2);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products(1)", "target is read from the provided key");
 			assert.equal(aNewMessages[0].code, "888", "target is read from the provided key");
 			assert.equal(aOldMessages.length, 1, "Remove message.");
 
@@ -604,7 +604,7 @@ sap.ui.define([
 			oParser.parse(oResponse, oRequest);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products", "target is parsed from the requestUri");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products", "target is parsed from the requestUri");
 
 			done();
 		});
@@ -667,7 +667,7 @@ sap.ui.define([
 			oParser.parse(oResponse, oRequest);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products(1)/name", "target is relative to newly created product");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products(1)/name", "target is relative to newly created product");
 
 
 			//request uri:          fakeservice://testdata/odata/northwind/Categories(1)/Products
@@ -681,7 +681,7 @@ sap.ui.define([
 			oParser.parse(oResponse, oRequest);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products(1)/name", "target is relative to newly created product");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products(1)/name", "target is relative to newly created product");
 
 
 			done();
@@ -866,7 +866,7 @@ sap.ui.define([
 						success: function() {
 							var aMessages = oMessageModel.getProperty("/");
 							assert.equal(aMessages.length, mTestOptions.numMessages, mTestOptions.numMessages + " messages set after the function import");
-							assert.equal(aMessages[aMessages.length - 1].target, mTestOptions.lastTarget, "Message has correct target");
+							assert.equal(aMessages[aMessages.length - 1].getTargets()[0], mTestOptions.lastTarget, "Message has correct target");
 
 							if (mTestOptions.final) {
 								testFunctionTarget._running = false;
@@ -1282,11 +1282,11 @@ sap.ui.define([
 			var aMessages = oMessageModel.getProperty("/");
 			assert.equal(aMessages.length, 3, "Three messages from the back-end");
 			assert.equal(aMessages[0].persistent, false, "First message should not be persistent");
-			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
-			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
-			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
 			return read("/TransientTest1");
 		}).then(function() {
@@ -1294,15 +1294,15 @@ sap.ui.define([
 			assert.equal(aMessages.length, 5, "Five messages - 3 new ones from the back-end");
 
 			assert.equal(aMessages[0].persistent, true, "First message should be persistent");
-			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
-			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[2].persistent, false, "Third message should not be persistent");
-			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[3].persistent, true, "Fourth message should be persistent");
-			assert.equal(aMessages[3].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[3].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[4].persistent, true, "Fifth message should be persistent");
-			assert.equal(aMessages[4].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[4].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
 			oModel.destroy();
 			done();
@@ -1334,11 +1334,11 @@ sap.ui.define([
 			var aMessages = oMessageModel.getProperty("/");
 			assert.equal(aMessages.length, 3, "Three messages from the back-end");
 			assert.equal(aMessages[0].persistent, false, "First message should not be persistent");
-			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
-			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
-			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
 			oMessageManager.removeAllMessages();
 
@@ -1351,11 +1351,11 @@ sap.ui.define([
 			var aMessages = oMessageModel.getProperty("/");
 			assert.equal(aMessages.length, 3, "Three messages from the back-end");
 			assert.equal(aMessages[0].persistent, false, "First message should not be persistent");
-			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
-			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
-			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
 			oMessageManager.removeMessages(aMessages[0]);
 			oMessageManager.removeMessages(aMessages[2]);
@@ -1364,7 +1364,7 @@ sap.ui.define([
 
 			assert.equal(aMessages.length, 1, "One message left after removal of two messages");
 			assert.equal(aMessages[0].persistent, true, "First message should not be persistent");
-			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
 			return read("/TransientTest1");
 		}).then(function() {
@@ -1373,13 +1373,13 @@ sap.ui.define([
 			assert.equal(aMessages.length, 4, "Five messages - 3 new ones from the back-end");
 
 			assert.equal(aMessages[0].persistent, true, "First message should be persistent");
-			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[1].persistent, false, "Second message should not be persistent");
-			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
-			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[3].persistent, true, "Fourth message should be persistent");
-			assert.equal(aMessages[3].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[3].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
 			aMessages[0].setPersistent(false);
 			aMessages[2].setPersistent(false);
@@ -1390,11 +1390,11 @@ sap.ui.define([
 			var aMessages = oMessageModel.getProperty("/");
 			assert.equal(aMessages.length, 3, "Three messages from the back-end, all previous messages removed after being set to non-persistent");
 			assert.equal(aMessages[0].persistent, false, "First message should not be persistent");
-			assert.equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[1].persistent, true, "Second message should be persistent");
-			assert.equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[1].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 			assert.equal(aMessages[2].persistent, true, "Third message should be persistent");
-			assert.equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			assert.equal(aMessages[2].getTargets()[0], "/TransientTest1/SupplierID", "Message has correct target");
 
 
 			oModel.destroy();
@@ -1428,7 +1428,7 @@ sap.ui.define([
 		read("/Products(ContextId='CLF%2812%29SEMANTIC_OBJ%287%29Product%2810%29OBJECT_KEY%2811%29ZTEST_GD_02%289%29DRAFT_KEY%2836%29005056ba-1dcb-1ee7-8ec6-ae98ab359923')").then(function() {
 			var aMessages = oMessageModel.getProperty("/");
 			assert.equal(aMessages.length, 2, "Two messages from the back-end");
-			assert.equal(aMessages[0].target, "/Products(ContextId='CLF(12)SEMANTIC_OBJ(7)Product(10)OBJECT_KEY(11)ZTEST_GD_02(9)DRAFT_KEY(36)005056ba-1dcb-1ee7-8ec6-ae98ab359923')/ProductName", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/Products(ContextId='CLF(12)SEMANTIC_OBJ(7)Product(10)OBJECT_KEY(11)ZTEST_GD_02(9)DRAFT_KEY(36)005056ba-1dcb-1ee7-8ec6-ae98ab359923')/ProductName", "Message has correct target");
 			assert.ok(oBinding.getDataState().getChanges(), "Messages propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propagated to binding");
@@ -1471,7 +1471,7 @@ sap.ui.define([
 		read("/Products(1)", {urlParameters:{"$expand":"Supplier"}}).then(function() {
 			var aMessages = oMessageModel.getProperty("/");
 			assert.equal(aMessages.length,1, "One message from the back-end");
-			assert.equal(aMessages[0].target, "/Suppliers(1)/Name", "Message has correct target");
+			assert.equal(aMessages[0].getTargets()[0], "/Suppliers(1)/Name", "Message has correct target");
 			assert.ok(oBinding.getDataState().getChanges(), "Messages propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propagated to binding");
@@ -1562,7 +1562,7 @@ sap.ui.define([
 			oParser.parse(oResponseGET200MsgScope, oRequest, undefined, undefined, true);
 			assert.equal(aNewMessages.length, 1);
 			assert.equal(aNewMessages[0].technical, false, "non-technical");
-			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products(1)", "target is read from the provided key");
 
 			oParser.parse(oResponseGET400MsgScope, oRequest, undefined, undefined, true);
 			assert.equal(aNewMessages.length, 1, "New technical message created.");
@@ -1623,7 +1623,7 @@ sap.ui.define([
 			oParser.parse(oResponseGET200MsgScope, oRequest);
 			assert.equal(aNewMessages.length, 1);
 			assert.equal(aNewMessages[0].technical, false, "non-technical");
-			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products(1)", "target is read from the provided key");
 
 			oParser.parse(oResponseGET400MsgScope, oRequest);
 			assert.equal(aNewMessages.length, 1, "New technical message created.");
@@ -1722,14 +1722,14 @@ sap.ui.define([
 			oParser.parse(oResponseGET200, oRequest);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products(1)", "Correct target");
-			assert.equal(aNewMessages[0].fullTarget, "/Products(1)", "Correct full target");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products(1)", "Correct target");
+			assert.equal(aNewMessages[0].aFullTargets[0], "/Products(1)", "Correct full target");
 
 			oParser.parse(oResponseGET400, oRequest);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products(1)", "Correct target");
-			assert.equal(aNewMessages[0].fullTarget, "/Products(1)", "Correct full target");
+			assert.equal(aNewMessages[0].getTargets()[0], "/Products(1)", "Correct target");
+			assert.equal(aNewMessages[0].aFullTargets[0], "/Products(1)", "Correct full target");
 			assert.equal(aNewMessages[0].technical, true);
 
 			assert.equal(aOldMessages.length, 1);
