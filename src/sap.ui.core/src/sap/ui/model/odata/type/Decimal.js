@@ -178,6 +178,9 @@ sap.ui.define([
 	 *   Note that <code>maxFractionDigits</code> and <code>minFractionDigits</code> are set to
 	 *   the value of the constraint <code>scale</code> unless it is "variable". They can however
 	 *   be overwritten.
+	 * @param {boolean} [oFormatOptions.parseEmptyValueToZero=false]
+	 *   Whether the empty string and <code>null</code> are parsed to <code>"0"</code> if the <code>nullable</code>
+	 *   constraint is set to <code>false</code>; see {@link #parseValue parseValue}; since 1.115.0
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 	 *   by default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
@@ -216,6 +219,7 @@ sap.ui.define([
 					ODataType.apply(this, arguments);
 					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
+					this.checkParseEmptyValueToZero();
 				}
 			}
 		);
@@ -275,6 +279,7 @@ sap.ui.define([
 			}
 			Object.assign(oFormatOptions, this.oFormatOptions);
 			oFormatOptions.parseAsString = true;
+			delete oFormatOptions.parseEmptyValueToZero;
 			this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
 
@@ -285,27 +290,32 @@ sap.ui.define([
 	 * Parses the given value, which is expected to be of the given type, to a decimal in
 	 * <code>string</code> representation.
 	 *
-	 * @param {string|number} vValue
-	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
-	 *   <code>null</code>
+	 * @param {string|number|null} vValue
+	 *   The value to be parsed
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int",
+	 *   The source type (the expected type of <code>vValue</code>); may be "float", "int",
 	 *   "string", or a type with one of these types as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @returns {string}
-	 *   the parsed value
+	 * @returns {string|null}
+	 *   The parsed value. The empty string and <code>null</code> are parsed to:
+	 *   <ul>
+	 *     <li><code>"0"</code> if the <code>parseEmptyValueToZero</code> format option
+	 *       is set to <code>true</code> and the <code>nullable</code> constraint is set to <code>false</code>,</li>
+	 *     <li><code>null</code> otherwise.</li>
+	 *   </ul>
 	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
 	 *   Decimal
 	 * @public
 	 */
 	Decimal.prototype.parseValue = function (vValue, sSourceType) {
-		var sResult;
-
-		if (vValue === null || vValue === "") {
-			return null;
+		var vEmptyValue = this.getEmptyValue(vValue);
+		if (vEmptyValue !== undefined) {
+			return vEmptyValue;
 		}
+
+		var sResult;
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
 				sResult = this.getFormat().parse(vValue);

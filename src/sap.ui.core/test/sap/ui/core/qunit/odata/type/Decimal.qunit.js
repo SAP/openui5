@@ -47,6 +47,26 @@ sap.ui.define([
 		assert.strictEqual(oType.oFormat, null, "no formatter preload");
 	});
 
+	//*****************************************************************************************
+	QUnit.test("constructor calls checkParseEmptyValueToZero", function (assert) {
+		var oConstraints = {scale : 3};
+		var oFormatOptions = {"~formatOption" : "foo"};
+
+		var oExpectation = this.mock(ODataType.prototype).expects("checkParseEmptyValueToZero")
+				.withExactArgs()
+				.callsFake(function () {
+					assert.deepEqual(this.oConstraints, oConstraints);
+					assert.strictEqual(this.oFormatOptions, oFormatOptions);
+				});
+
+		// code under test
+		var oType = new Decimal(oFormatOptions, oConstraints);
+
+		assert.ok(oExpectation.calledOn(oType));
+		assert.deepEqual(oType.oConstraints, oConstraints);
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+
 	//*********************************************************************************************
 	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
 		function (assert) {
@@ -548,14 +568,34 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getFormat", function (assert) {
-		var oType = new Decimal();
+		var oType = new Decimal({parseEmptyValueToZero : true}, {nullable : false});
 
 		assert.strictEqual(oType.oFormat, null);
 
-		// code under test
-		var oResult = oType.getFormat();
+		this.mock(NumberFormat).expects("getFloatInstance")
+			.withExactArgs({
+				groupingEnabled : true,
+				maxFractionDigits: 0,
+				maxIntegerDigits : Infinity,
+				minFractionDigits: 0,
+				parseAsString: true,
+				preserveDecimals: true
+			})
+			.returns("~floatInstance");
 
-		assert.ok(oResult instanceof NumberFormat);
-		assert.strictEqual(oType.oFormat, oResult);
+		// code under test
+		assert.strictEqual(oType.getFormat(), "~floatInstance");
+
+		assert.strictEqual(oType.oFormat, "~floatInstance");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue calls getEmptyValue", function (assert) {
+		var oType = new Decimal();
+
+		this.mock(oType).expects("getEmptyValue").withExactArgs("~emptyString").returns("~emptyValue");
+
+		// code under test
+		assert.strictEqual(oType.parseValue("~emptyString", "foo"), "~emptyValue");
 	});
 });
