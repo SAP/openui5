@@ -9,11 +9,15 @@ sap.ui.define([
 	"./WizardStepRenderer",
 	"./Button",
 	"./TitlePropagationSupport",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/library"
 ],
-	function(library, Control, InvisibleText, WizardStepRenderer, Button, TitlePropagationSupport, Log) {
+	function(library, Control, InvisibleText, WizardStepRenderer, Button, TitlePropagationSupport, Log, coreLibrary) {
 
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new WizardStep.
@@ -67,7 +71,17 @@ sap.ui.define([
 				 * When a step is optional an "(Optional)" label is displayed under the step's title.
 				 * @since 1.54
 				 */
-				optional: {type: "boolean", group: "Appearance", defaultValue: false}
+				optional: {type: "boolean", group: "Appearance", defaultValue: false},
+				/**
+				 * Defines the semantic level of the step title.
+				 * @private
+				 */
+				_titleLevel: {
+					type: "sap.ui.core.TitleLevel",
+					group: "Appearance",
+					defaultValue: TitleLevel.H3,
+					visibility: "hidden"
+				}
 			},
 			events: {
 				/**

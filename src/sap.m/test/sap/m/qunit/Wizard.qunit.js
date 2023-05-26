@@ -86,6 +86,26 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("stepTitleLevel property", function (assert) {
+		//assert
+		assert.strictEqual(this.oWizard.getStepTitleLevel(), "H3", "default steps title level is correct");
+
+		//act
+		this.oWizard.setStepTitleLevel(sap.ui.core.TitleLevel.H5);
+		Core.applyChanges();
+
+		//assert
+		assert.strictEqual(this.oWizard.getStepTitleLevel(), "H5", "steps title level is updated");
+
+		//arrange
+		var sWizardFirstStepId = this.oWizard.getSteps()[0].getId(),
+		oTitleDomRef = document.getElementById(sWizardFirstStepId + "-Title");
+
+		//assert
+		assert.strictEqual(oTitleDomRef.tagName, "H5", "HTML element is changed");
+	});
+
+
 	QUnit.test("getId() should return correct id", function (assert) {
 		var sId = this.oWizard.getId();
 		assert.strictEqual(sId, this.sWizardId, "#" + sId + " should be equal to #" + this.sWizardId);

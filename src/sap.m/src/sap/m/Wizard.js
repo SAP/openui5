@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./WizardProgressNavigator",
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
@@ -19,6 +20,7 @@ sap.ui.define([
 	library,
 	Control,
 	Core,
+	coreLibrary,
 	ScrollEnablement,
 	WizardProgressNavigator,
 	ResponsivePaddingsEnablement,
@@ -33,6 +35,9 @@ sap.ui.define([
 		// shortcut for sap.m.PageBackgroundDesign
 		var WizardBackgroundDesign = library.PageBackgroundDesign;
 		var WizardRenderMode = library.WizardRenderMode;
+
+		// shortcut for sap.ui.core.TitleLevel
+		var TitleLevel = coreLibrary.TitleLevel;
 
 		/**
 		 * Constructor for a new Wizard.
@@ -153,6 +158,15 @@ sap.ui.define([
 						type: "sap.m.WizardRenderMode",
 						group: "Appearance",
 						defaultValue: WizardRenderMode.Scroll
+					},
+					/**
+					 * Defines the semantic level of the step title. When using "Auto" the default value is taken into account.
+					 * @since 1.115
+					 */
+					stepTitleLevel: {
+						type: "sap.ui.core.TitleLevel",
+						group: "Appearance",
+						defaultValue: TitleLevel.H3
 					}
 				},
 				defaultAggregation: "steps",
@@ -243,7 +257,8 @@ sap.ui.define([
 		};
 
 		Wizard.prototype.onBeforeRendering = function () {
-			var oStep = this._getStartingStep();
+			var oStep = this._getStartingStep(),
+			sStepTitleLevel = (this.getStepTitleLevel() === TitleLevel.Auto) ? TitleLevel.H3 : this.getStepTitleLevel();
 
 			if (!this._isStepCountInRange()) {
 				Log.error("The Wizard is supposed to handle from 3 to 8 steps.");
@@ -255,6 +270,10 @@ sap.ui.define([
 				this._activateStep(oStep);
 				oStep._setNumberInvisibleText(1);
 			}
+
+			this.getSteps().forEach(function(oStep){
+				oStep.setProperty("_titleLevel", sStepTitleLevel);
+			});
 		};
 
 		Wizard.prototype.onAfterRendering = function () {
