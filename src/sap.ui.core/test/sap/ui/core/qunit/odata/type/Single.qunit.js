@@ -46,6 +46,26 @@ sap.ui.define([
 		assert.strictEqual(oType.oFormat, null, "no formatter preload");
 	});
 
+	//*****************************************************************************************
+	QUnit.test("constructor calls checkParseEmptyValueToZero", function (assert) {
+		var oConstraints = {nullable : false}; // otherwise there are no constraints set to the type
+		var oFormatOptions = {"~formatOption" : "foo"};
+
+		var oExpectation = this.mock(ODataType.prototype).expects("checkParseEmptyValueToZero")
+				.withExactArgs()
+				.callsFake(function () {
+					assert.deepEqual(this.oConstraints, oConstraints);
+					assert.strictEqual(this.oFormatOptions, oFormatOptions);
+				});
+
+		// code under test
+		var oType = new Single(oFormatOptions, oConstraints);
+
+		assert.ok(oExpectation.calledOn(oType));
+		assert.deepEqual(oType.oConstraints, oConstraints);
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+
 	//*********************************************************************************************
 	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
 		function (assert) {
@@ -170,6 +190,18 @@ sap.ui.define([
 			.returns("string");
 		assert.strictEqual(oType.parseValue(" 1,000.234", "sap.ui.core.CSSSize"),
 			Math.fround(1000.234));
+	});
+
+	//*****************************************************************************************
+	QUnit.test("parseValue calls getEmptyValue", function (assert) {
+		var oType = new Single();
+
+		this.mock(oType).expects("getEmptyValue")
+			.withExactArgs("~emptyString", /*bNumeric*/ true)
+			.returns("~emptyValue");
+
+		// code under test
+		assert.strictEqual(oType.parseValue("~emptyString", "foo"), "~emptyValue");
 	});
 
 	//*********************************************************************************************
@@ -311,14 +343,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getFormat", function (assert) {
-		var oType = new Single();
+		var oType = new Single({parseEmptyValueToZero : true}, {nullable : false});
 
 		assert.strictEqual(oType.oFormat, null);
 
-		// code under test
-		var oResult = oType.getFormat();
+		this.mock(NumberFormat).expects("getFloatInstance")
+			.withExactArgs({groupingEnabled : true, preserveDecimals: true})
+			.returns("~floatInstance");
 
-		assert.ok(oResult instanceof NumberFormat);
-		assert.strictEqual(oType.oFormat, oResult);
+		// code under test
+		assert.strictEqual(oType.getFormat(), "~floatInstance");
 	});
 });
