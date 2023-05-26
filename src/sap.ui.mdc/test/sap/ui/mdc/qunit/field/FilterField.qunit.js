@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/mdc/enums/BaseType",
 	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",

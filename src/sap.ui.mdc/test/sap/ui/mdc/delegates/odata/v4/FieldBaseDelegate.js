@@ -23,10 +23,7 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.74
+	 * @public
 	 * @since 1.74.0
 	 * @extends module:sap/ui/mdc/field/FieldBaseDelegate
 	 * @alias module:delegates/odata/v4/FieldBaseDelegate

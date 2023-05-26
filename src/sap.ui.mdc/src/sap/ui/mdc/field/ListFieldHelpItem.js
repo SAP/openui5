@@ -25,7 +25,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.86.0
 	 * @deprecated as of 1.114.0, replaced by {@link sap.ui.mdc.valuehelp.content.FixedListItem FixedListItem}
 	 * @alias sap.ui.mdc.field.ListFieldHelpItem

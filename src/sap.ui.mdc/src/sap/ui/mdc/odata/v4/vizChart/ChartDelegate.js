@@ -20,7 +20,7 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/mdc/chart/PropertyHelper",
     "sap/ui/thirdparty/jquery",
-    "sap/ui/mdc/enum/ChartItemRoleType"
+    "sap/ui/mdc/enums/ChartItemRoleType"
 ], function (
     V4ChartDelegate,
     Core,

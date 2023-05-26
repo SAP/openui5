@@ -10,11 +10,9 @@ sap.ui.define(function() {
      * Defines the mode of the table.
      *
      * @enum {string}
-     * @alias sap.ui.mdc.enum.TableSelectionMode
+     * @alias sap.ui.mdc.enums.TableSelectionMode
      * @since 1.115
-     * @private
-     * @ui5-restricted sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
     var TableSelectionMode = {
         /**

@@ -10,9 +10,11 @@ sap.ui.define(function() {
 	 * Enumeration of the possible validation types.
 	 *
 	 * @enum {int}
-	 * @public
 	 * @since 1.110
 	 * @alias sap.ui.mdc.enum.FilterBarValidationStatus
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.FilterBarValidationStatus}
 	 */
 	var FilterBarValidationStatus = {
 

@@ -15,69 +15,54 @@ sap.ui.define(function() {
 	 * be model-dependent. To handle them model-independently, basic types are used internally.
 	 *
 	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @experimental As of version 1.74.0
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.74.0
 	 * @alias sap.ui.mdc.enum.BaseType
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.BaseType}
 	 */
 	var BaseType = {
 		/**
 		 * Data type represents a string
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		String: "String",
 
 		/**
 		 * Data type represents a number.
 		 * (This can be integer, float or any other numeric type.)
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Numeric: "Numeric",
 
 		/**
 		 * Data type represents a Boolean
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Boolean: "Boolean",
 
 		/**
 		 * Data type represents a date
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Date: "Date",
 
 		/**
 		 * Data type represents a time
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Time: "Time",
 
 		/**
 		 * Data type represents a date with time
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		DateTime: "DateTime",
 
 		/**
 		 * Data type represents a unit.
 		 * A composite type with a number and a unit part is used.
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Unit: "Unit"
 	};

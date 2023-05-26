@@ -5,7 +5,7 @@
  */
 
 // sap.ui.mdc.BaseDelegate
-sap.ui.define(['sap/ui/mdc/enum/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/base/Log"], function (BaseType, DefaultTypeMap, Log) {
+sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/base/Log"], function (BaseType, DefaultTypeMap, Log) {
 	"use strict";
 
 	/**
@@ -18,10 +18,7 @@ sap.ui.define(['sap/ui/mdc/enum/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/bas
 	 * @namespace
 	 * @alias module:sap/ui/mdc/BaseDelegate
 	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental
+	 * @public
 	 * @since 1.79.0
 	 */
 	var BaseDelegate = {};

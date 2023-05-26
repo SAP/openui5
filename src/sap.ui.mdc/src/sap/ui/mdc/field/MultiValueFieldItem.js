@@ -20,11 +20,8 @@ sap.ui.define([
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @constructor
-	 * @private
 	 * @since 1.93.0
-	 * @experimental As of version 1.93
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @alias sap.ui.mdc.field.MultiValueFieldItem
 	 */
 	var MultiValueFieldItem = Element.extend("sap.ui.mdc.field.MultiValueFieldItem", /** @lends sap.ui.mdc.field.MultiValueFieldItem.prototype */

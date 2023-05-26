@@ -8,7 +8,7 @@ sap.ui.define([
 	"./ValueHelp.delegate",
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/model/ParseException',
 	'sap/ui/core/Core'
 ], function(

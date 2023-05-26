@@ -9,7 +9,7 @@ sap.ui.define(function() {
      * @enum {string}
      * @private
      * @since 1.115
-     * @alias sap.ui.mdc.enum.ChartItemRoleType
+     * @alias sap.ui.mdc.enums.ChartItemRoleType
      */
     var ChartItemRoleType = {
         /**

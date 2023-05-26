@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/mdc/util/TypeMap",
-	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/model/type/String"
 ],
 function(

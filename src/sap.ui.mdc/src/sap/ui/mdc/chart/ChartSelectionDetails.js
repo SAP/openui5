@@ -26,9 +26,7 @@ sap.ui.define([
          * @author SAP SE
          * @version ${version}
          * @constructor
-         * @private
-         * @ui5-restricted sap.fe
-         * @MDC_PUBLIC_CANDIDATE
+         * @public
          * @since 1.88
          * @alias sap.ui.mdc.chart.ChartSelectionDetails
          */

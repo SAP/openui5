@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/m/ToggleButton',
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/condition/FilterOperatorUtil'
 ], function(
 	Control,

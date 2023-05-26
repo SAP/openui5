@@ -15,39 +15,31 @@ sap.ui.define(function() {
 	 * For the {@link sap.ui.mdc.FilterField FilterField} control, this enumeration defines how key and description of equal conditions are formatted.
 	 *
 	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.48.0
 	 * @alias sap.ui.mdc.enum.FieldDisplay
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.FieldDisplay}
 	 */
 	var FieldDisplay = {
 		/**
 		 * Only the value (key) is displayed
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Value: "Value",
 		/**
 		 * Only the description is displayed
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Description: "Description",
 		/**
 		 * The value (key) and the description are displayed in the field. The description is displayed after the value (key) in brackets.
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		ValueDescription: "ValueDescription",
 		/**
 		 * The description and the value (key) are displayed in the field. The value (key) is displayed after the description in brackets.
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		DescriptionValue: "DescriptionValue"
 	};

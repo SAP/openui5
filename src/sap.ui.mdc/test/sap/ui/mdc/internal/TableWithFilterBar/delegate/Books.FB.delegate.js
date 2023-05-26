@@ -7,7 +7,7 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/mdc/enum/FilterBarValidationStatus"
+	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', "sap/ui/mdc/enums/FilterBarValidationStatus"
 ], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, FilterBarValidationStatus) {
 	"use strict";
 

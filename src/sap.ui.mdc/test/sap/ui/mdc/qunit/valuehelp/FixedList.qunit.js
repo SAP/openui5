@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/FixedList",
 	"sap/ui/mdc/valuehelp/content/FixedListItem",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/ValueHelpSelectionType",
+	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
 	"sap/m/library",

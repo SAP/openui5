@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/Popover",
 	"sap/ui/mdc/valuehelp/base/Content",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/ValueHelpSelectionType",
+	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",

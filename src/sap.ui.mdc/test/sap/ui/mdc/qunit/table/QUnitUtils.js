@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	MDCQUnitUtils,
 	Core,

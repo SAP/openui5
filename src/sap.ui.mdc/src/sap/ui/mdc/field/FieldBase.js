@@ -3,9 +3,9 @@
  */
 sap.ui.define([
 	'sap/ui/Device',
-	'sap/ui/mdc/enum/FieldEditMode',
-	'sap/ui/mdc/enum/FieldDisplay',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/FieldEditMode',
+	'sap/ui/mdc/enums/FieldDisplay',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Condition',
@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/field/splitValue',
-	'sap/ui/mdc/enum/BaseType',
+	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/field/content/ContentFactory',
 	'sap/ui/mdc/Control',
 	"sap/ui/mdc/util/loadModules",
@@ -77,10 +77,7 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.mdc.field
 	 * @since 1.58.0
-	 * @private
-	 * @experimental As of version 1.58
-	 * @ui5-restricted sap.ui.mdc sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -108,10 +105,7 @@ sap.ui.define([
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.58
+	 * @public
 	 */
 	var FieldBase = Control.extend("sap.ui.mdc.field.FieldBase", /* @lends sap.ui.mdc.field.FieldBase.prototype */ {
 		metadata: {
@@ -151,7 +145,7 @@ sap.ui.define([
 				 * Determines whether the field is editable, read-only, or disabled.
 				 */
 				editMode: {
-					type: "sap.ui.mdc.enum.FieldEditMode",
+					type: "sap.ui.mdc.enums.FieldEditMode",
 					group: "Data",
 					defaultValue: FieldEditMode.Editable
 				},
@@ -169,7 +163,7 @@ sap.ui.define([
 				 * Defines whether the value and/or description of the field is shown and in which order.
 				 */
 				display: {
-					type: "sap.ui.mdc.enum.FieldDisplay",
+					type: "sap.ui.mdc.enums.FieldDisplay",
 					defaultValue: FieldDisplay.Value
 				},
 
@@ -269,7 +263,7 @@ sap.ui.define([
 				/**
 				 * Sets the conditions that represent the values of the field.
 				 *
-				 * These should be bound to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} using the corresponding <code>fieldPath</code>.
+				* These should be bound to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} using the corresponding <code>fieldPath</code>.
 				 *
 				 * <b>Note:</b> For {@link sap.ui.mdc.FilterField FilterField} controls, the <code>conditions</code> property must be used to bind
 				 * {@link sap.ui.mdc.FilterField FilterField} to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.</br>
@@ -280,16 +274,6 @@ sap.ui.define([
 				 * <li><code>/conditions/</code> as a required static part of the binding</li>
 				 * <li><code>propertyPath</code> as the property name</li>
 				 * </ul>
-				 *
-				 * For an <code>Any</code> (see {@link sap.ui.model.FilterOperator}) {@link sap.ui.mdc.FilterField FilterField} control, the binding looks like this:</br>
-				 * <code>conditions='{$filters>/conditions/navPath&#42;/propertyPath}'</code> with the following data:
-				 * <ul>
-				 * <li><code>$filters</code> as the name of the condition model</li>
-				 * <li><code>/conditions/</code> as a required static part of the binding</li>
-				 * <li><code>navPath&#42;/</code> as the navigation property name</li>
-				 * <li><code>propertyPath</code> as the property name</li>
-				 * </ul>
-				 * Between <code>navPath</code> and <code>propertyPath</code>, <b>&#42;/</b> is required.
 				 *
 				 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
 				 */
@@ -1170,7 +1154,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the <code>BaseType</code> of the currently used data type.
-	 * @returns {sap.ui.mdc.enum.BaseType} BaseType
+	 * @returns {sap.ui.mdc.enums.BaseType} BaseType
 	 * @protected
 	 */
 	FieldBase.prototype.getBaseType = function() {
@@ -1641,10 +1625,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Label} oLabel Label control
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.62.0
+	 * @public
 	 * @since 1.62.0 Disclaimer: this function is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 	 */
 	FieldBase.prototype.connectLabel = function(oLabel) {

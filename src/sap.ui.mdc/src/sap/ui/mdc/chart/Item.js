@@ -15,9 +15,7 @@ sap.ui.define([
      * @class The <code>Item</code> control for the chart/property metadata used within MDC Chart. An instance can be created to override the default/metadata behavior.
      * @extends sap.ui.core.Element
      * @author SAP SE
-     * @private
-     * @ui5-restricted sap.fe
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      * @since 1.88
      * @alias sap.ui.mdc.chart.Item
      */
@@ -28,8 +26,8 @@ sap.ui.define([
                 library: "sap.ui.mdc",
                 properties: {
                     /**
-                     * @deprecated Since 1.115. Please use <code>propertyKey</code> instead.
                      * The unique identifier of the chart item that reflects the name of the data property in the resulting data set.
+                     * @deprecated Since 1.115. Please use <code>propertyKey</code> instead.
                      */
                     name: {
                         type: "string"

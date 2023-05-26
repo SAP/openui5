@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/chart/Chart",
 	"sap/m/Button",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-	"sap/ui/mdc/enum/ActionToolbarActionAlignment",
+	"sap/ui/mdc/enums/ActionToolbarActionAlignment",
 	"sap/m/ToolbarSeparator",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/IllustratedMessage"

@@ -6,7 +6,7 @@ sap.ui.define([
 	"./TableTypeBase",
 	"sap/ui/core/library",
 	"sap/m/table/Util",
-	"sap/ui/mdc/enum/TableRowCountMode"
+	"sap/ui/mdc/enums/TableRowCountMode"
 ], function(
 	TableTypeBase,
 	coreLibrary,
@@ -26,10 +26,7 @@ sap.ui.define([
 	 * @class The table type info class for the metadata-driven table.
 	 * @extends sap.ui.mdc.table.TableTypeBase
 	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.GridTableType
 	 */
@@ -41,13 +38,13 @@ sap.ui.define([
 				 * Defines how the table handles the row count.
 				 */
 				rowCountMode: {
-					type: "sap.ui.mdc.enum.TableRowCountMode",
+					type: "sap.ui.mdc.enums.TableRowCountMode",
 					defaultValue: TableRowCountMode.Auto
 				},
 				/**
 				 * Row count of the inner table.<br>
-				 * This property specifies the minimum row count if <code>sap.ui.mdc.enum.TableRowCountMode.Auto</code> is used.<br>
-				 * This property specifies the row count if <code>sap.ui.mdc.enum.TableRowCountMode.Fixed</code> is used.
+				 * This property specifies the minimum row count if <code>sap.ui.mdc.enums.TableRowCountMode.Auto</code> is used.<br>
+				 * This property specifies the row count if <code>sap.ui.mdc.enums.TableRowCountMode.Fixed</code> is used.
 				 */
 				rowCount: {
 					type: "int",

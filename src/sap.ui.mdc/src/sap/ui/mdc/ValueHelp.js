@@ -8,8 +8,8 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/FilterConverter',
-	'sap/ui/mdc/enum/ValueHelpSelectionType',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/model/Context',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
-	'sap/ui/mdc/enum/ValueHelpPropagationReason'
+	'sap/ui/mdc/enums/ValueHelpPropagationReason'
 ], function(
 	Element,
 	PromiseMixin,
@@ -42,10 +42,7 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.mdc.valuehelp
 	 * @since 1.95.0
-	 * @private
-	 * @experimental As of version 1.95
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -55,10 +52,7 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.mdc.valuehelp.base
 	 * @since 1.95.0
-	 * @private
-	 * @experimental As of version 1.95
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -68,10 +62,7 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.mdc.valuehelp.content
 	 * @since 1.95.0
-	 * @private
-	 * @experimental As of version 1.95
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -88,12 +79,10 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.95.0
-	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.ValueHelp
+	 * @experimental As of version 1.95.0
 	 */
 	var ValueHelp = Element.extend("sap.ui.mdc.ValueHelp", /** @lends sap.ui.mdc.ValueHelp.prototype */
 	{
@@ -336,7 +325,7 @@ sap.ui.define([
 	 * @param {int} [oConfig.maxConditions=-1] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Type} [oConfig.dataType] Type of the key (required for condition panel)
 	 * @param {string[]} [oConfig.operators] Possible operators to be used in the condition
-	 * @param {sap.ui.mdc.enum.FieldDisplay} [oConfig.display] Defines whether the value and/or description of the field is shown and in what order
+	 * @param {sap.ui.mdc.enums.FieldDisplay} [oConfig.display] Defines whether the value and/or description of the field is shown and in what order
 	 * @param {object} [oConfig.delegate] Field delegate to handle model-specific logic (required for condition panel)
 	 * @param {object} [oConfig.delegateName] Field delegate name to handle model-specific logic (required for condition panel)
 	 * @param {object} [oConfig.payload] Payload of the field delegate (required for condition panel)
@@ -786,9 +775,7 @@ sap.ui.define([
 	 * @property {boolean} checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @property {boolean} [caseSensitive] If set, the check is done case sensitive
 	 * @property {sap.ui.core.Control} control Instance of the calling control
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**

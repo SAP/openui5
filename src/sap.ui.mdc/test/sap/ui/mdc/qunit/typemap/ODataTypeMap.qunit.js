@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/mdc/odata/TypeMap",
-	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/Time",

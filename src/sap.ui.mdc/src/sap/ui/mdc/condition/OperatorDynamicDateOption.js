@@ -6,9 +6,9 @@ sap.ui.define([
 	'sap/m/DynamicDateOption',
 	'sap/m/DynamicDateValueHelpUIType',
 	'sap/m/Input',
-	"sap/ui/mdc/enum/BaseType",
-	'sap/ui/mdc/enum/FieldDisplay',
-	'sap/ui/mdc/enum/OperatorValueType',
+	"sap/ui/mdc/enums/BaseType",
+	'sap/ui/mdc/enums/FieldDisplay',
+	'sap/ui/mdc/enums/OperatorValueType',
 	'sap/ui/mdc/util/DateUtil',
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/model/json/JSONModel',
@@ -76,7 +76,7 @@ sap.ui.define([
 					/**
 					 * Basic type of the corresponding filter field.
 					 */
-					baseType: { type: "sap.ui.mdc.enum.BaseType" }
+					baseType: { type: "sap.ui.mdc.enums.BaseType" }
 				}
 			}
 		});

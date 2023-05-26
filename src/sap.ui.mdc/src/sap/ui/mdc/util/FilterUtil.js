@@ -5,7 +5,7 @@
 // ------------------------------------------------------------------------------------------
 // Utility class used mdc table and chart
 // ------------------------------------------------------------------------------------------
-sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValidated', "sap/ui/mdc/condition/ConditionConverter", 'sap/ui/mdc/condition/FilterConverter', 'sap/base/Log', 'sap/base/util/merge'],
+sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionValidated', "sap/ui/mdc/condition/ConditionConverter", 'sap/ui/mdc/condition/FilterConverter', 'sap/base/Log', 'sap/base/util/merge'],
 		function(IdentifierUtil, ConditionValidated, ConditionConverter, FilterConverter, Log, merge) {
 	"use strict";
 
@@ -27,10 +27,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 	 * Utility class used by mdc controls to create the filter statement
 	 *
 	 * @namespace
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.util.FilterUtil
 	 */
@@ -42,9 +39,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {string} sKey - name of the property
 				 * @returns {object}  PropertyInfo object for a given name, or <code>null</code>
-				 * @private
-				 * @ui5-restricted sap.ui.mdc, sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				getPropertyByKey : function(aPropertiesMetadata, sKey) {
 					var oPropertyInfo = null;
@@ -82,9 +77,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * @returns {array} mResultingConditions.["propertyName"] conditions addressed by the property name
 				 * @returns {string} mResultingConditions.["propertyName"].operator operator for a single condition
 				 * @returns {array} mResultingConditions.["propertyName"].values values for a single condition
-				 * @private
-				 * @ui5-restricted sap.ui.mdc, sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				getConditionsMap : function(oFilterBar, aPropertyNames) {
 					var aPropertyConditions, oPropertyCondition, mResultingConditions = {};
@@ -128,9 +121,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {array} aIgnoreProperties - an array of property names which should be not considered for filtering
 				 * @returns {object} Object with filters
-				 * @private
-				 * @ui5-restricted sap.ui.mdc
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				getFilterInfo: function(vTypeProvider, mConditionsPerKey, aPropertiesMetadata, aIgnoreProperties) {
 
@@ -195,9 +186,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
 				 * @returns {string[]} Array containing the required field names without a value
 				 * If there are no such fields, or all required filters are filled, an empty array is returned.
-				 * @private
-				 * @ui5-restricted sap.ui.mdc, sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				getRequiredFieldNamesWithoutValues: function(oFilterBar) {
 					var aReqFiltersWithoutValue = [];

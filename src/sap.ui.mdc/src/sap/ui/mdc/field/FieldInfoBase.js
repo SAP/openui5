@@ -29,11 +29,8 @@ sap.ui.define([
 	 * @extends sap.ui.mdc.Element
 	 * @version ${version}
 	 * @constructor
-	 * @private
 	 * @since 1.54.0
-	 * @experimental As of version 1.54
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @alias sap.ui.mdc.field.FieldInfoBase
 	 */
 	var FieldInfoBase = Element.extend("sap.ui.mdc.field.FieldInfoBase", /** @lends sap.ui.mdc.field.FieldInfoBase.prototype */
@@ -58,9 +55,7 @@ sap.ui.define([
 	/**
 	 * Returns <code>true</code> as a <code>Promise</code> result if the control created by <code>Field</code> can be triggered.
 	 * @returns {Promise<boolean>} <code>Promise</code> resolving into <code>true</code> if <code>FieldInfo</code> is clickable
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FieldInfoBase.prototype.isTriggerable = function() {
 		throw new Error("sap.ui.mdc.field.FieldInfoBase: method isTriggerable must be redefined");
@@ -70,9 +65,7 @@ sap.ui.define([
 	 * Returns href as a <code>Promise</code> that defines the target navigation of the <code>Link</code> control created by <code>Field</code>.
 	 * If direct navigation is used, href is returned. If the information panel contains more content than only one link, <code>null</code> is returned.
 	 * @returns {Promise<string|null>} Result of <code>Promise</code> is href with values {string | null}
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FieldInfoBase.prototype.getTriggerHref = function() {
 		throw new Error("sap.ui.mdc.field.FieldInfoBase: method getTriggerHref must be redefined");
@@ -82,9 +75,7 @@ sap.ui.define([
 	 * Returns a <code>Promise</code> resolving into an {@link sap.ui.mdc.link.DirectLinkObject} containing the <code>href</code> and <code>target</code> of a direct navigation link.
 	 * Returns a <code>Promise</code> resolving into null if there is no direct link.
 	 * @returns {Promise<sap.ui.mdc.link.DirectLinkObject|null>} <code>Promise</code> resolving into <code>null</code> or a {@link sap.ui.mdc.link.DirectLinkObject}
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FieldInfoBase.prototype.getDirectLinkHrefAndTarget = function() {
 		throw new Error("sap.ui.mdc.field.FieldInfoBase: method getDirectLinkHrefAndTarget must be redefined");
@@ -95,9 +86,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl Optional control reference to which the popover is
 	 * attached. By default the parent is used as reference.
 	 * @returns {Promise} <code>Promise</code> that is resolved once the popover has been created
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FieldInfoBase.prototype.open = function(oControl) {
 		oControl = oControl ? oControl : this.getParent();
@@ -130,9 +119,7 @@ sap.ui.define([
 	 * Returns the content of the popover.
 	 * @param {Function} [fnGetAutoClosedControl] Function returning the <code>Popover</code> control that is created in <code>createPopover</code>
 	 * @returns {Promise<sap.ui.Control>} <code>Promise</code> with a popover content of type sap.ui.Control as result
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	FieldInfoBase.prototype.getContent = function(fnGetAutoClosedControl) {
 		throw new Error("sap.ui.mdc.field.FieldInfoBase: method getContent must be redefined");
@@ -151,7 +138,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the parent control.
-	 * @returns {sap.ui.mdc.Field} <code>Field</code> control
+	 * @returns {string | string[] | null} control instance reference
 	 * @protected
 	 */
 	FieldInfoBase.prototype.getSourceControl = function() {

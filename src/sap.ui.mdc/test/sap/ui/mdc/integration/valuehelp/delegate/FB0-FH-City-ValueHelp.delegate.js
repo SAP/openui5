@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/ConditionValidated'
+	'sap/ui/mdc/enums/ConditionValidated'
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,

@@ -65,11 +65,11 @@ sap.ui.define([
 	 *   This object contains all relevant properties for visual adjustments.
 	 * @property {Object} [visualSettings.widthCalculation]
 	 *   This object contains all properties and their default values for the column width calculation
-	 * @property {integer} [visualSettings.widthCalculation.minWidth=2]
+	 * @property {int} [visualSettings.widthCalculation.minWidth=2]
 	 *   The minimum content width in rem
-	 * @property {integer} [visualSettings.widthCalculation.maxWidth=19]
+	 * @property {int} [visualSettings.widthCalculation.maxWidth=19]
 	 *   The maximum content width in rem
-	 * @property {integer} [visualSettings.widthCalculation.defaultWidth=8]
+	 * @property {int} [visualSettings.widthCalculation.defaultWidth=8]
 	 *   The default column content width when type check fails
 	 * @property {float} [visualSettings.widthCalculation.gap=0]
 	 *   The additional content width in rem
@@ -85,10 +85,7 @@ sap.ui.define([
 	 *   The availability of this property makes the <code>PropertyInfo</code> a complex <code>PropertyInfo</code>. Provides a list of related
 	 *   properties (by name). These related properties must not themselves be complex.
 	 *
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**

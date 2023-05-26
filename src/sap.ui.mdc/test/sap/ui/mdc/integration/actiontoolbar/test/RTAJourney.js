@@ -7,7 +7,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-    "sap/ui/mdc/enum/ActionToolbarActionAlignment",
+    "sap/ui/mdc/enums/ActionToolbarActionAlignment",
     "sap/ui/mdc/ActionToolbarTesting/pages/App",
     "test-resources/sap/ui/rta/internal/integration/pages/Adaptation"
 ], function(

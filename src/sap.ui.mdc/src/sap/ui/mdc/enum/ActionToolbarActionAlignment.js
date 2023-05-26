@@ -9,23 +9,19 @@ sap.ui.define(function() {
 	 * Defines the alignment of the <code>ActionToolbarAction</code> action control.
 	 *
 	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.88
 	 * @alias sap.ui.mdc.enum.ActionToolbarActionAlignment
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ActionToolbarActionAlignment}
 	 */
 	var ActionToolbarActionAlignment = {
 		/**
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Begin: "Begin",
 		/**
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		End: "End"
 	};

@@ -23,8 +23,8 @@ sap.ui.define([
         "sap/ui/events/KeyCodes",
         "sap/ui/mdc/util/InfoBar",
         "sap/ui/core/format/ListFormat",
-        "sap/ui/mdc/enum/ProcessingStrategy",
-        "sap/ui/mdc/enum/ChartP13nMode"
+        "sap/ui/mdc/enums/ProcessingStrategy",
+        "sap/ui/mdc/enums/ChartP13nMode"
     ],
     function (
         Core,
@@ -68,12 +68,11 @@ sap.ui.define([
          * @version ${version}
          * @constructor
          *
-         * @private
-         * @ui5-restricted sap.fe
-         * @MDC_PUBLIC_CANDIDATE
+         * @public
          *
          * @since 1.88
          * @alias sap.ui.mdc.Chart
+         * @experimental As of version 1.88
          */
         var Chart = Control.extend("sap.ui.mdc.Chart", /** @lends sap.ui.mdc.Chart.prototype */ {
             metadata: {
@@ -142,7 +141,7 @@ sap.ui.define([
                      * @since 1.88
                      */
                     p13nMode: {
-                        type: "sap.ui.mdc.enum.ChartP13nMode[]",
+                        type: "sap.ui.mdc.enums.ChartP13nMode[]",
                         defaultValue: []
                     },
 
@@ -164,7 +163,7 @@ sap.ui.define([
                      * @since 1.88
                      */
                     ignoreToolbarActions: {
-                        type: "sap.ui.mdc.enum.ChartToolbarActionType[]",
+                        type: "sap.ui.mdc.enums.ChartToolbarActionType[]",
                         defaultValue: []
                     },
 
@@ -457,9 +456,7 @@ sap.ui.define([
 	 * @property {string} [textProperty]
 	 * 	The text property used for the dimension
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 
@@ -556,9 +553,7 @@ sap.ui.define([
          * Getter for <code>Conditions</code> set in the personalization settings.
          * @returns {object} Filters set in the chart
          *
-         * @private
-         * @ui5-restricted sap.fe
-         * @MDC_PUBLIC_CANDIDATE
+         * @public
          */
         // Part of sap.ui.mdc.IFilterSource
         Chart.prototype.getConditions = function() {
@@ -978,9 +973,7 @@ sap.ui.define([
          * Retrieves the selection handler of the inner chart.
          * @returns {object} Selection handler of the inner chart
          *
-         * @private
-         * @ui5-restricted sap.ui.mdc, sap.fe
-         * @MDC_PUBLIC_CANDIDATE
+         * @public
          */
         Chart.prototype.getSelectionHandler = function () {
             return this.getControlDelegate().getInnerChartSelectionHandler(this);
@@ -992,9 +985,7 @@ sap.ui.define([
          *
          * @returns {object} Layout configuration
          *
-         * @private
-         * @ui5-restricted sap.ui.mdc
-         * @MDC_PUBLIC_CANDIDATE
+         * @public
          */
         Chart.prototype.getChartTypeLayoutConfig = function() {
             return this.getControlDelegate().getChartTypeLayoutConfig();

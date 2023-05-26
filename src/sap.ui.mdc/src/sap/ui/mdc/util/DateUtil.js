@@ -4,7 +4,7 @@
 sap.ui.define([
 		'sap/ui/core/library',
 		'sap/ui/core/date/UI5Date',
-		'sap/ui/mdc/enum/BaseType',
+		'sap/ui/mdc/enums/BaseType',
 		'sap/base/util/merge'
 	],
 	function(
@@ -123,7 +123,7 @@ sap.ui.define([
 				 *
 				 * @param {any} vDate Date
 				 * @param {sap.ui.model.SimpleType} oType Data type
-				 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 				 * @return {string} Date as ISOString
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
@@ -146,7 +146,7 @@ sap.ui.define([
 				 *
 				 * @param {string} sISODate Date
 				 * @param {sap.ui.model.SimpleType} oType Data type
-				 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 				 * @return {any} Date for type
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
@@ -171,7 +171,7 @@ sap.ui.define([
 				 *
 				 * @param {Date} oDate the date to convert
 				 * @param {sap.ui.model.SimpleType} oType Data type
-				 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 				 * @returns {any} date in type representation
 				 * @private
 				 */
@@ -199,7 +199,7 @@ sap.ui.define([
 				 *
 				 * @param {any} vDate date in type representation
 				 * @param {sap.ui.model.SimpleType} oType Data type
-				 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 				 * @returns {Date} JSDate (local)
 				 * @private
 				 */

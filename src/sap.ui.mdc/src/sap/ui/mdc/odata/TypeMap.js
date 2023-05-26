@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'../DefaultTypeMap',
-	'sap/ui/mdc/enum/BaseType'
+	'sap/ui/mdc/enums/BaseType'
 ], function(DefaultTypeMap, BaseType) {
 "use strict";
 
@@ -14,10 +14,7 @@ sap.ui.define([
 	* @extends sap.ui.mdc.DefaultTypeMap
 	* @author SAP SE
 	* @version ${version}
-	* @private
-	* @ui5-restricted sap.fe
-	* @MDC_PUBLIC_CANDIDATE
-	* @experimental As of version 1.114.0
+	* @public
 	* @alias sap.ui.mdc.odata.TypeMap
 	* @since 1.114.0
 	* @author SAP SE

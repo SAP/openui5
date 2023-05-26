@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	GridTableType,
 	ResponsiveTableType,
@@ -35,10 +35,7 @@ sap.ui.define([
 	 * @class The column for the metadata-driven table with the template, which is shown if the rows have data.
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.58
 	 * @alias sap.ui.mdc.table.Column
 	 */

@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarActionRenderer",
-	"sap/ui/mdc/enum/ActionToolbarActionAlignment"
+	"sap/ui/mdc/enums/ActionToolbarActionAlignment"
 ], function(Control, ActionToolbarActionRenderer, ActionToolbarActionAlignment) {
 	"use strict";
 
@@ -21,11 +21,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @private
 	 * @since 1.58
-	 * @experimental As of version 1.58
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @alias sap.ui.mdc.actiontoolbar.ActionToolbarAction
 	 */
 	var ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {

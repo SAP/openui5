@@ -7,11 +7,9 @@ sap.ui.define(function () {
      * Enumeration of the propagation reason in the condition propagation callback of the {@link sap.ui.mdc.ValueHelp ValueHelp}
      *
      * @enum {string}
-     * @private
-     * @ui5-restricted sap.fe
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      * @since 1.100.0
-     * @alias sap.ui.mdc.enum.ValueHelpPropagationReason
+     * @alias sap.ui.mdc.enums.ValueHelpPropagationReason
      */
     var ValueHelpPropagationReason = {
         /**

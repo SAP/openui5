@@ -10,11 +10,9 @@ sap.ui.define(function() {
      * Defines the type of table used in the MDC table.
      *
      * @enum {string}
-     * @alias sap.ui.mdc.enum.TableType
+     * @alias sap.ui.mdc.enums.TableType
      * @since 1.115
-     * @private
-     * @ui5-restricted sap.fe
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
     var TableType = {
         /**

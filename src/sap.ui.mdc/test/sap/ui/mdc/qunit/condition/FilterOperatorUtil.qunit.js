@@ -10,10 +10,10 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/RangeOperator",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/BaseType",
-	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/mdc/enum/FieldDisplay",
-	"sap/ui/mdc/enum/OperatorValueType",
+	"sap/ui/mdc/enums/BaseType",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/OperatorValueType",
 	"sap/ui/model/Filter",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/odata/type/String",
@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/core/date/UI5Date",
 	"sap/m/library",
-	"sap/ui/mdc/enum/OperatorOverwrite"
+	"sap/ui/mdc/enums/OperatorOverwrite"
 ], function(
 	FilterOperatorUtil,
 	Operator,

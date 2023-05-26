@@ -56,7 +56,7 @@ sap.ui.define([
 
 	/**
 	 * Set an external IFilter source to connect it with the given control instance.
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @param {sap.ui.mdc.IFilter} vFilter IFilter implementing instance.
 	 * @returns {sap.ui.mdc.Control} The MDC Control instance.
 	 */
@@ -172,9 +172,7 @@ sap.ui.define([
 	/**
 	 * Executes a rebind considering the provided external and inbuilt filtering.
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.98
 	 */
 	FilterIntegrationMixin.rebind = function() {

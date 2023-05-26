@@ -43,14 +43,12 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @since 1.62.0
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 *
 	 * @param {object} [oFormatOptions] Formatting options
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting, parsing and validating)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
-	 * @param {sap.ui.mdc.enum.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
+	 * @param {sap.ui.mdc.enums.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
 	 * @param {string} [oFormatOptions.valueHelpID] ID of the value help to determine the key and description
 	 * @param {boolean} [oFormatOptions.hideOperator] If set, only the value of the condition is shown, but no operator. (Use it only if just one operator is supported.)
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
@@ -149,9 +147,7 @@ sap.ui.define([
 	 * @throws {sap.ui.model.FormatException}
 	 *	If formatting to the target type is not possible
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ConditionsType.prototype.formatValue = function(aConditions, sTargetType) {
 
@@ -232,9 +228,7 @@ sap.ui.define([
 	 * @throws {sap.ui.model.ParseException}
 	 *	If parsing to the model type is not possible; the message of the exception is language-dependent as it may be displayed on the UI
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ConditionsType.prototype.parseValue = function(vValue, sSourceType) {
 
@@ -458,9 +452,7 @@ sap.ui.define([
 	 *	If at least one of the values of the conditions is not valid for the given data type; the message of the exception is
 	 *	language-dependent as it may be displayed on the UI
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ConditionsType.prototype.validateValue = function(aConditions) {
 

@@ -17,8 +17,8 @@ sap.ui.define([
 	'sap/ui/mdc/util/IdentifierUtil',
 	'sap/ui/mdc/util/FilterUtil',
 	"sap/ui/mdc/filterbar/PropertyHelper",
-	"sap/ui/mdc/enum/ReasonMode",
-	"sap/ui/mdc/enum/FilterBarValidationStatus",
+	"sap/ui/mdc/enums/ReasonMode",
+	"sap/ui/mdc/enums/FilterBarValidationStatus",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/m/library",
 	"sap/m/Button",
@@ -230,16 +230,16 @@ sap.ui.define([
 					/**
 					 * Indicates the initial reason for the search. This can either be:<br>
 					 * <ul>
-					 *     <li><code>{@link sap.ui.mdc.enum.ReasonMode.Variant}</code>: Search is triggered based on variant settings</li>
-					 *     <li><code>{@link sap.ui.mdc.enum.ReasonMode.Enter}</code>: Search is triggered based on pressing Enter in a filter field</li>
-					 *     <li><code>{@link sap.ui.mdc.enum.ReasonMode.Go}</code>: Search is triggered based on pressing the Go button</li>
-					 *     <li><code>{@link sap.ui.mdc.enum.ReasonMode.Unclear}</code>: Any other reasons for the search</li>
+					 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Variant}</code>: Search is triggered based on variant settings</li>
+					 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Enter}</code>: Search is triggered based on pressing Enter in a filter field</li>
+					 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Go}</code>: Search is triggered based on pressing the Go button</li>
+					 *     <li><code>{@link sap.ui.mdc.enums.ReasonMode.Unclear}</code>: Any other reasons for the search</li>
 					 * </ul>
 					 *
 					 * @since 1.111.0
 					 */
 					reason: {
-						type: "sap.ui.mdc.enum.ReasonMode"
+						type: "sap.ui.mdc.enums.ReasonMode"
 					}
 				},
 
@@ -468,9 +468,7 @@ sap.ui.define([
 	 * Returns the external conditions of the inner condition model.
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBarBase</code>
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
@@ -497,9 +495,7 @@ sap.ui.define([
 	 * Note: filters annotated with hiddenFilters will not be considered
 	 *
 	 * @returns {Array} array of labels of filters with value assignment
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	FilterBarBase.prototype.getAssignedFilterNames = function() {
 		var sName, aFilterNames = null, oModel = this._getConditionModel();
@@ -610,9 +606,7 @@ sap.ui.define([
 	 * <b>Example for expanded filter bar</b>:<br>
 	 * <i>3 filters active (1 hidden)</i>
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @returns {map} A map containing the text information
 	 * @returns {map.filtersText} A string that is displayed if the filter bar is collapsed
 	 * @returns {map.filtersTextExpanded} A string that is displayed if the filter bar is expanded
@@ -848,9 +842,7 @@ sap.ui.define([
 
 	/**
 	 * Triggers the search.
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
@@ -868,10 +860,7 @@ sap.ui.define([
 	/**
 	 * Returns a <code>Promise</code> for the asynchronous validation of filters.
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {boolean} bSuppressSearch Determines if the <code>search</code> event is triggered after successful validation
 	 * @returns {Promise} Returns a <code>Promise</code> that resolves after the validation of erroneous fields has been propagated.
 	 *
@@ -1042,10 +1031,8 @@ sap.ui.define([
 	  * Checks the validation status of the filter fields.
 	  * <b>Note:</b><br>
 	  * This method returns the current inner state of the filter bar.
-	  * @private
-	  * @MDC_PUBLIC_CANDIDATE
-	  * @ui5-restricted sap.ui.mdc, sap.fe
-	  * @returns {sap.ui.mdc.enum.FilterBarValidationStatus} Returns the validation status
+	  * @public
+	  * @returns {sap.ui.mdc.enums.FilterBarValidationStatus} Returns the validation status
 	  */
 	FilterBarBase.prototype.checkFilters = function() {
 		var vRetErrorState = this._checkAsyncValidation();
@@ -1262,9 +1249,7 @@ sap.ui.define([
 	/**
 	 * Returns the state of initialization.
 	 * This method does not trigger the retrieval of the metadata.
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @returns {Promise} Resolves after the initial filters have been applied
 	 */
 	FilterBarBase.prototype.initialized = function() {
@@ -1275,9 +1260,7 @@ sap.ui.define([
 	/**
 	 * Returns the state of initialization.
 	 * This method triggers the retrieval of the metadata.
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @returns {Promise} Resolves after the initial filters have been applied and the metadata has been obtained
 	 */
 	FilterBarBase.prototype.initializedWithMetadata = function() {
@@ -1854,9 +1837,7 @@ sap.ui.define([
 	/**
 	 * Returns the value of the basic search condition.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @returns {string} Value of search condition or empty
 	 */
 	FilterBarBase.prototype.getSearch = function() {

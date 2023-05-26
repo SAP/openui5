@@ -9,32 +9,26 @@ sap.ui.define(function() {
 	 * Defines the behavior of the {@link sap.ui.mdc.Link}.
 	 *
 	 * @enum {number}
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.114
 	 * @alias sap.ui.mdc.enum.LinkType
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.LinkType}
 	 */
 	var LinkType = {
 		/**
 		 * {@link sap.ui.mdc.Link} is rendered as a {@link sap.m.Text}
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Text: 0,
 		/**
 		 * {@link sap.ui.mdc.Link} is rendered as a {@link sap.m.Link} that works as a direct link
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		DirectLink: 1,
 		/**
 		 * {@link sap.ui.mdc.Link} is rendered as a {@link sap.m.Link} that opens a popover when pressed
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 		Popover: 2
 	};

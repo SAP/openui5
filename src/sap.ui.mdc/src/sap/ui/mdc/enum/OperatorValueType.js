@@ -9,11 +9,11 @@ sap.ui.define(function() {
 	 * Defines what data type is used for parse or format the condition values on a {@link sap.ui.mdc.condition.Operator Operator}.
 	 *
 	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.75
 	 * @alias sap.ui.mdc.enum.OperatorValueType
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.OperatorValueType}
 	 */
 	var OperatorValueType = {
 		/**

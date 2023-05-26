@@ -10,11 +10,9 @@ sap.ui.define(function() {
      * Defines the personalization mode of the chart.
      *
      * @enum {string}
-     * @alias sap.ui.mdc.enum.ChartP13nMode
+     * @alias sap.ui.mdc.enums.ChartP13nMode
      * @since 1.115
-     * @private
-     * @ui5-restricted sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
     var ChartP13nMode = {
         /**

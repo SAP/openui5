@@ -25,7 +25,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/mdc/enum/ChartItemRoleType"
+	"sap/ui/mdc/enums/ChartItemRoleType"
 ], function (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType) {
 	"use strict";
 

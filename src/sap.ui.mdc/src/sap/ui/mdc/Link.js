@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/Title",
 	"sap/ui/layout/library",
-	"sap/ui/mdc/enum/LinkType"
+	"sap/ui/mdc/enums/LinkType"
 ], function(FieldInfoBase,
 	jQuery,
 	BindingMode,
@@ -36,9 +36,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.link.DirectLinkObject
 	 * @property {string} target The target of the retrieved direct link
 	 * @property {string} href The href of the retrieved direct link
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -46,19 +44,15 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.link.BaseLineObject
 	 * @property {string} id ID of a base line {@link sap.ui.mdc.link.LinkItem}
 	 * @property {boolean} visible Visibility of a base line {@link sap.ui.mdc.link.LinkItem}
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
 	 * Object holding information regarding the behavior of the {@link sap.ui.mdc.Link}.
 	 * @typedef {object} sap.ui.mdc.link.LinkType
-	 * @property {sap.ui.mdc.enum.LinkType} type Text | DirectLink | Popup (default)
+	 * @property {sap.ui.mdc.enums.LinkType} type Text | DirectLink | Popup (default)
 	 * @property {sap.ui.mdc.link.LinkItem} directLink Instance of {@link sap.ui.mdc.link.LinkItem} that is used for direct navigation
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -66,9 +60,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.link.LinkTypeWrapper
 	 * @property {sap.ui.mdc.link.LinkType} initialType Initial {@link sap.ui.mdc.link.LinkType}
 	 * @property {Promise<sap.ui.mdc.link.LinkType>} runtimeType Optional <code>Promise</code> that resolves into the {@link sap.ui.mdc.link.LinkType} that overwrites the initial {@link sap.ui.mdc.link.LinkType}.
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -92,10 +84,8 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.Link
 	 * @since 1.74
 	 *
-	 * @experimental As of version 1.74
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
+   	 * @experimental As of version 1.74.0
 	 */
 	var Link = FieldInfoBase.extend("sap.ui.mdc.Link", /** @lends sap.ui.mdc.Link.prototype */ {
 		metadata: {
@@ -492,9 +482,7 @@ sap.ui.define([
 
 	/**
 	 * @returns {Promise<sap.ui.core.Control[]>} Resolves an array of type {@link sap.ui.core.Control}
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	Link.prototype.retrieveAdditionalContent = function() {
 		if (this._aAdditionalContent) {
@@ -537,9 +525,7 @@ sap.ui.define([
 
 	/**
 	 * @returns {Promise<undefined|sap.ui.mdc.link.LinkType>} Returns <code>undefined</code> or a {@link sap.ui.mdc.link.LinkType}, once resolved
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	Link.prototype.retrieveLinkType = function() {
 		if (this.awaitControlDelegate()) {
@@ -554,9 +540,7 @@ sap.ui.define([
 	/**
 	 * Calls the <code>modifyLinkItems</code> function of <code>Delegate</code> before returning the <code>LinkItem</code> objects.
 	 * @returns {Promise<sap.ui.mdc.link.LinkItem[]>} Resolves an array of type {@link sap.ui.mdc.link.LinkItem}
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	Link.prototype.retrieveLinkItems = function() {
 		var oBindingContext = this._getControlBindingContext();

@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
 	'delegates/odata/v4/ODataMetaModelUtil',
-	'sap/ui/mdc/enum/FieldDisplay',
+	'sap/ui/mdc/enums/FieldDisplay',
 	"sap/ui/fl/Utils",
 	"sap/ui/mdc/FilterBarDelegate",
 	'sap/base/util/ObjectPath',

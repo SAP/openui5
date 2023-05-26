@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
-	"sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	Table,
 	GridTableType,

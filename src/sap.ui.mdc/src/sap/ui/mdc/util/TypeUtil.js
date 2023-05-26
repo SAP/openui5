@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-		'sap/ui/mdc/enum/BaseType',
+		'sap/ui/mdc/enums/BaseType',
 		'sap/base/util/ObjectPath',
 		'sap/base/util/isEmptyObject',
 		'sap/base/util/merge',
@@ -69,7 +69,7 @@ sap.ui.define([
 		 * @param {string} sType Given type string or sap.ui.model.SimpleType
 		 * @param {object} oFormatOptions Used <code>FormatOptions</code>
 		 * @param {object} oConstraints Used <code>Constraints</code>
-		 * @returns {sap.ui.mdc.enum.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
+		 * @returns {sap.ui.mdc.enums.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */

@@ -60,10 +60,7 @@ sap.ui.define([
 	 * @property {string[]} [customAggregate.contextDefiningProperties]
 	 *   A list of related properties (by name) that are the context-defining properties of the <code>CustomAggregate</code>.
 	 *
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**

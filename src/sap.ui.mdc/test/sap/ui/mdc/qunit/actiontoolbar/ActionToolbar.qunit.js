@@ -1,6 +1,6 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enum/ActionToolbarActionAlignment", "sap/ui/core/Core"
+	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enums/ActionToolbarActionAlignment", "sap/ui/core/Core"
 ], function(ActionToolbar, Button, Title, Text, ActionToolbarAction, ActionToolbarActionAlignment, oCore) {
 	"use strict";
 

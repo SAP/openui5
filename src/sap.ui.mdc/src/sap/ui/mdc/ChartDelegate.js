@@ -15,9 +15,7 @@ sap.ui.define([
 	 * @alias module:sap/ui/mdc/ChartDelegate
 	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
 	 * @since 1.88
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 *
 	 */
 	var ChartDelegate = Object.assign({}, AggregationBaseDelegate);
@@ -26,9 +24,7 @@ sap.ui.define([
 	 * Notifies the inner chart to zoom in.
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.zoomIn = function (oMDCChart) {
 	};
@@ -37,9 +33,7 @@ sap.ui.define([
 	 * Notifies the inner chart to zoom out.
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.zoomOut = function (oMDCChart) {
 	};
@@ -51,9 +45,7 @@ sap.ui.define([
 	 * @property {boolean} enabled Zooming is enabled if set to <code>true</code>
 	 * @property {number} currentZoomLevel Current zoom level of the chart in percent (between 0 and 1)
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -61,9 +53,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {sap.ui.mdc.chart.ZoomState} Current <code>ZoomState</code> of the inner chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getZoomState = function (oMDCChart) {
 		// return { enable: false, currentZoomLevel: 1 };
@@ -145,9 +135,7 @@ sap.ui.define([
 	 * @param {string} [sRole] New role for given item
 	 * @returns {Promise<sap.ui.mdc.chart.Item>} <code>Promise</code> that resolves with new chart <code>Item</code> as parameter
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.addItem = function (oMDCChart, sPropertyName, mPropertyBag, sRole) {
 		return Promise.resolve(null);
@@ -161,9 +149,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag The property bag containing useful information about the change
 	 * @returns {Promise<boolean>} <code>Promise</code> containing information whether the item was deleted
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.removeItem = function (oMDCChart, oItem, mPropertyBag) {
 		return Promise.resolve(true);
@@ -176,9 +162,7 @@ sap.ui.define([
      * @property {string} eventId  ID of the selection event
      * @property {sap.ui.core.Control} listener Reference to inner chart
      *
-     * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
 
 	/**
@@ -187,9 +171,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {sap.ui.mdc.chart.SelectionDetails} Event handler for SelectionDetails
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getInnerChartSelectionHandler = function (oMDCChart) {
 	};
@@ -201,9 +183,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Chart for which the legend visibility is set
 	 * @param {boolean} bVisible Shows legend, if set to <code>true</code>
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.setLegendVisible = function (oMDCChart, bVisible) {
 	};
@@ -217,9 +197,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.chart.Item} oMDCChartItem Chart item that is inserted into the inner chart
 	 * @param {int} iIndex The index into which the chart item is inserted
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.insertItemToInnerChart = function (oMDCChart, oMDCChartItem, iIndex) {
 	};
@@ -232,9 +210,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Chart from which the item is removed
 	 * @param {sap.ui.mdc.chart.Item} oMDCChartItem Chart item that is removed from the inner chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	*/
 	ChartDelegate.removeItemFromInnerChart = function (oMDCChart, oMDCChartItem) {
 	};
@@ -245,9 +221,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {Promise} Resolved once the inner chart has been initialized
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.initializeInnerChart = function (oMDCChart) {
 	};
@@ -258,9 +232,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.createInitialChartContent = function (oMDCChart) {
 	};
@@ -271,9 +243,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
 	 * @returns {sap.ui.core.Control} Instance of the inner chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getInnerChart = function (oMDCChart) {
 	};
@@ -287,9 +257,7 @@ sap.ui.define([
 	 * @property {string} text Name of the current chart type
 	 * @property {boolean} selected Whether the chart type is the one currently used
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -299,9 +267,7 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Information about the current chart type
 	 * @throws {Error} Error thrown if inner chart is not initialized yet
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getChartTypeInfo = function (oMDCChart) {
 	};
@@ -312,9 +278,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Array containing the currently available chart types
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getAvailableChartTypes = function (oMDCChart) {
 	};
@@ -327,9 +291,7 @@ sap.ui.define([
 	 * @property {string} key identifier for the chart type
 	 * @property {string[]} allowedLayoutOptions Layout configuration of chart type
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -338,9 +300,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.mdc.chart.ChartTypeLayoutConfig[]} chart type layout config
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getChartTypeLayoutConfig = function () {
 	};
@@ -353,9 +313,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {array} Array containing the drill stack
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getDrillStack = function (oMDCChart) {
 	};
@@ -367,9 +325,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {Promise<sap.ui.mdc.chart.Item[]>} <code>Promise</code> containing an array of dimensions that is sorted
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getSortedDimensions = function (oMDCChart) {
 	};
@@ -381,9 +337,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {sap.ui.mdc.chart.Item[]} Array of MDC items that are drillable
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getDrillableItems = function (oMDCChart) {
 	};
@@ -395,9 +349,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sChartType New chart type
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.setChartType = function (sChartType) {
 	};
@@ -407,9 +359,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.changedNoDataStruct = function (oMDCChart) {
 	};
@@ -420,9 +370,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to chart
 	 * @param {string} sText Text to show when there is no data displayed in the chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.setNoDataText = function (oMDCChart, sText) {
 	};
@@ -433,9 +381,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @param {function} fnCallbackDataLoaded Callback function when data is loaded
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.createInnerChartContent = function (oMDCChart, fnCallbackDataLoaded) {
 	};
@@ -447,9 +393,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo BindingInfo of the chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.rebind = function (oMDCChart, oBindingInfo) {
 	};
@@ -460,9 +404,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {boolean} <code>true</code> if inner chart is bound; <code>false</code> if not
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getInnerChartBound = function (oMDCChart) {
 	};
@@ -474,9 +416,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} BindingInfo object
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getBindingInfo = function (oMDCChart) {
 	};
@@ -487,9 +427,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo Binding info of the chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.updateBindingInfo = function (oMDCChart, oBindingInfo) {
 	};
@@ -501,9 +439,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @param {boolean} bVisible <code>true</code> for visible, <code>false</code> for invisible
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.setChartTooltipVisibility = function (oMDCChart, bVisible) {
 	};
@@ -519,9 +455,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {string} Internal ID for the sap.chart.Chart
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getInternalChartNameFromPropertyNameAndKind = function (sName, sKind, oMDCChart) {
 	};
@@ -534,9 +468,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
 	 * @returns {sap.ui.mdc.chart.PropertyInfo} PropertyInfo object
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	ChartDelegate.getPropertyFromNameAndKind = function (sName, sKind, oMDCChart) {
 	};
@@ -547,9 +479,7 @@ sap.ui.define([
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
      * @returns {Promise<sap.ui.mdc.chart.PropertyInfo[]>} Array of the property infos that is used within the chart
      *
-     * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
 	ChartDelegate.fetchProperties = function (oMDCChart) {
 	};
@@ -560,9 +490,7 @@ sap.ui.define([
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the chart
      * @param {boolean} bShow Shows overlay if set to <code>true</code>
      *
-     * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
-     * @MDC_PUBLIC_CANDIDATE
+     * @public
      */
 	ChartDelegate.showOverlay = function (oMDCChart, bShow) {
 	};

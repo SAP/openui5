@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldMultiInput", // to have it loaded before rendering starts
 	"sap/m/Token", // to have it loaded before rendering starts
 	"sap/m/ExpandableText", // to have it loaded before rendering starts
-	"sap/ui/mdc/enum/FilterBarValidationStatus",
+	"sap/ui/mdc/enums/FilterBarValidationStatus",
 	'sap/base/Log'
 ], function (Controller, UIComponent, FilterField, FilterBar, Column, ColumnListItem, MessageToast, Table, Text, FieldBaseDelegate, FieldMultiInput, Token, ExpandableText, FilterBarValidationStatus, Log) {
 

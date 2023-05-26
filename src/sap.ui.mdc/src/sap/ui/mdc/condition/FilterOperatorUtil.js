@@ -6,12 +6,12 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/ValidateException',
 	'sap/base/Log',
-	'sap/ui/mdc/enum/FieldDisplay',
+	'sap/ui/mdc/enums/FieldDisplay',
 	'./Operator',
 	'./RangeOperator',
-	'sap/ui/mdc/enum/BaseType',
-	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/mdc/enum/OperatorValueType',
+	'sap/ui/mdc/enums/BaseType',
+	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorValueType',
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/date/UniversalDateUtils',
@@ -51,10 +51,7 @@ function(
 		 * @namespace
 		 * @name sap.ui.mdc.condition.operators
 		 * @since 1.73.0
-		 * @private
-		 * @experimental As of version 1.73
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
+		 * @public
 		 */
 
 		/**
@@ -66,10 +63,7 @@ function(
 		 * @since 1.73.0
 		 * @alias sap.ui.mdc.condition.FilterOperatorUtil
 		 *
-		 * @private
-		 * @ui5-restricted sap.fe
-		 * @MDC_PUBLIC_CANDIDATE
-		 * @experimental As of version 1.73
+		 * @public
 		 */
 		var FilterOperatorUtil = {
 
@@ -87,10 +81,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.EQ
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					equal: new Operator({
 						name: "EQ",
@@ -250,10 +241,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.BT
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					between: new Operator({
 						name: "BT",
@@ -294,10 +282,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NOTBT
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notBetween: new Operator({
 						name: "NOTBT",
@@ -318,10 +303,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LT
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lessThan: new Operator({
 						name: "LT",
@@ -336,10 +318,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NOTLT
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notLessThan: new Operator({
 						name: "NOTLT",
@@ -357,10 +336,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.GT
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					greaterThan: new Operator({
 						name: "GT",
@@ -377,10 +353,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NOTGT
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notGreaterThan: new Operator({
 						name: "NOTGT",
@@ -401,10 +374,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LE
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lessEqual: new Operator({
 						name: "LE",
@@ -422,10 +392,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NOTLE
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notLessEqual: new Operator({
 						name: "NOTLE",
@@ -446,10 +413,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.GE
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					greaterEqual: new Operator({
 						name: "GE",
@@ -467,10 +431,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NOTGE
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notGreaterEqual: new Operator({
 						name: "NOTGE",
@@ -488,10 +449,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.StartsWith
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					startsWith: new Operator({
 						name: "StartsWith",
@@ -508,10 +466,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NotStartsWith
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notStartsWith: new Operator({
 						name: "NotStartsWith",
@@ -529,10 +484,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.EndsWith
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					endsWith: new Operator({
 						name: "EndsWith",
@@ -549,10 +501,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NotEndsWith
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notEndsWith: new Operator({
 						name: "NotEndsWith",
@@ -570,10 +519,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.Contains
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					contains: new Operator({
 						name: "Contains",
@@ -590,10 +536,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NotContains
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notContains: new Operator({
 						name: "NotContains",
@@ -611,10 +554,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NE
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notEqual: new Operator({
 						name: "NE",
@@ -632,10 +572,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.Empty
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					empty: new Operator({
 						name: "Empty",
@@ -671,10 +608,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NotEmpty
 					 * @extends sap.ui.mdc.condition.Operator
 					 * @since 1.73.0
-					 * @private
-					 * @experimental As of version 1.73
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					notEmpty: new Operator({
 						name: "NotEmpty",
@@ -711,10 +645,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.YESTERDAY
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					yesterday: new RangeOperator({
 						name: "YESTERDAY",
@@ -734,10 +665,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.TODAY
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					today: new RangeOperator({
 						name: "TODAY",
@@ -757,10 +685,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.TOMORROW
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					tomorrow: new RangeOperator({
 						name: "TOMORROW",
@@ -780,10 +705,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTDAYS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastDays: new RangeOperator({
 						name: "LASTDAYS",
@@ -802,10 +724,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.FIRSTDAYWEEK
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					firstDayWeek: new RangeOperator({
 						name: "FIRSTDAYWEEK",
@@ -825,10 +744,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTDAYWEEK
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastDayWeek: new RangeOperator({
 						name: "LASTDAYWEEK",
@@ -848,10 +764,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.FIRSTDAYMONTH
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					firstDayMonth: new RangeOperator({
 						name: "FIRSTDAYMONTH",
@@ -871,10 +784,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTDAYMONTH
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastDayMonth: new RangeOperator({
 						name: "LASTDAYMONTH",
@@ -894,10 +804,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.FIRSTDAYQUARTER
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					firstDayQuarter: new RangeOperator({
 						name: "FIRSTDAYQUARTER",
@@ -917,10 +824,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTDAYQUARTER
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastDayQuarter: new RangeOperator({
 						name: "LASTDAYQUARTER",
@@ -940,10 +844,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.FIRSTDAYYEAR
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					firstDayYear: new RangeOperator({
 						name: "FIRSTDAYYEAR",
@@ -963,10 +864,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTDAYYEAR
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastDayYear: new RangeOperator({
 						name: "LASTDAYYEAR",
@@ -986,10 +884,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.TODAYFROMTO
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					todayFromTo: new RangeOperator({
 						name: "TODAYFROMTO",
@@ -1019,10 +914,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTDAYS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextDays: new RangeOperator({
 						name: "NEXTDAYS",
@@ -1041,10 +933,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTWEEK
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastWeek: new RangeOperator({
 						name: "LASTWEEK",
@@ -1061,10 +950,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.THISWEEK
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					thisWeek: new RangeOperator({
 						name: "THISWEEK",
@@ -1081,10 +967,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTWEEK
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextWeek: new RangeOperator({
 						name: "NEXTWEEK",
@@ -1101,10 +984,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTWEEKS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastWeeks: new RangeOperator({
 						name: "LASTWEEKS",
@@ -1123,10 +1003,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTWEEKS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextWeeks: new RangeOperator({
 						name: "NEXTWEEKS",
@@ -1145,10 +1022,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTMONTH
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastMonth: new RangeOperator({
 						name: "LASTMONTH",
@@ -1165,10 +1039,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.THISMONTH
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					thisMonth: new RangeOperator({
 						name: "THISMONTH",
@@ -1185,10 +1056,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTMONTH
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextMonth: new RangeOperator({
 						name: "NEXTMONTH",
@@ -1205,10 +1073,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTMONTHS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastMonths: new RangeOperator({
 						name: "LASTMONTHS",
@@ -1227,10 +1092,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTMONTHS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextMonths: new RangeOperator({
 						name: "NEXTMONTHS",
@@ -1249,10 +1111,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTQUARTER
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastQuarter: new RangeOperator({
 						name: "LASTQUARTER",
@@ -1269,10 +1128,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.THISQUARTER
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					thisQuarter: new RangeOperator({
 						name: "THISQUARTER",
@@ -1289,10 +1145,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTQUARTER
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextQuarter: new RangeOperator({
 						name: "NEXTQUARTER",
@@ -1309,10 +1162,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTQUARTERS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastQuarters: new RangeOperator({
 						name: "LASTQUARTERS",
@@ -1331,10 +1181,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTQUARTERS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextQuarters: new RangeOperator({
 						name: "NEXTQUARTERS",
@@ -1353,10 +1200,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.QUARTER1
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					quarter1: new RangeOperator({
 						name: "QUARTER1",
@@ -1373,10 +1217,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.QUARTER2
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					quarter2: new RangeOperator({
 						name: "QUARTER2",
@@ -1393,10 +1234,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.QUARTER3
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					quarter3: new RangeOperator({
 						name: "QUARTER3",
@@ -1413,10 +1251,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.QUARTER4
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					quarter4: new RangeOperator({
 						name: "QUARTER4",
@@ -1433,10 +1268,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTYEAR
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastYear: new RangeOperator({
 						name: "LASTYEAR",
@@ -1453,10 +1285,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.THISYEAR
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.86.0
-					 * @private
-					 * @experimental As of version 1.86
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					thisYear: new RangeOperator({
 						name: "THISYEAR",
@@ -1473,10 +1302,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTYEAR
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextYear: new RangeOperator({
 						name: "NEXTYEAR",
@@ -1493,10 +1319,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTYEARS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastYears: new RangeOperator({
 						name: "LASTYEARS",
@@ -1515,10 +1338,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTYEARS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextYears: new RangeOperator({
 						name: "NEXTYEARS",
@@ -1537,10 +1357,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.SPECIFICMONTH
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.85.0
-					 * @private
-					 * @experimental As of version 1.85
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					specificMonth: new RangeOperator({
 						name: "SPECIFICMONTH",
@@ -1617,10 +1434,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.SPECIFICMONTHINYEAR
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					specificMonthInYear: new RangeOperator({
 						name: "SPECIFICMONTHINYEAR",
@@ -1719,10 +1533,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.YEARTODATE
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.74.0
-					 * @private
-					 * @experimental As of version 1.74
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					yearToDate: new RangeOperator({
 						name: "YEARTODATE",
@@ -1739,10 +1550,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.DATETOYEAR
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.99.0
-					 * @private
-					 * @experimental As of version 1.99
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					dateToYear: new RangeOperator({
 						name: "DATETOYEAR",
@@ -1759,10 +1567,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTMINUTES
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.112.0
-					 * @private
-					 * @experimental As of version 1.112
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastMinutes: new RangeOperator({
 						name: "LASTMINUTES",
@@ -1781,10 +1586,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTMINUTES
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.112.0
-					 * @private
-					 * @experimental As of version 1.112
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextMinutes: new RangeOperator({
 						name: "NEXTMINUTES",
@@ -1803,10 +1605,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.LASTHOURS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.112.0
-					 * @private
-					 * @experimental As of version 1.112
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					lastHours: new RangeOperator({
 						name: "LASTHOURS",
@@ -1825,10 +1624,7 @@ function(
 					 * @name sap.ui.mdc.condition.operators.NEXTHOURS
 					 * @extends sap.ui.mdc.condition.RangeOperator
 					 * @since 1.112.0
-					 * @private
-					 * @experimental As of version 1.112
-					 * @ui5-restricted sap.fe
-					 * @MDC_PUBLIC_CANDIDATE
+					 * @public
 					 */
 					nextHours: new RangeOperator({
 						name: "NEXTHOURS",
@@ -1849,9 +1645,7 @@ function(
 				 *
 				 * @param {sap.ui.mdc.condition.Operator} oOperator Operator
 				 *
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				addOperator: function(oOperator) {
 
@@ -1865,9 +1659,7 @@ function(
 				 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
 				 *
 				 * @since: 1.88.0
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				addOperators: function(aOperators) {
 					if (!Array.isArray(aOperators)) {
@@ -1887,9 +1679,7 @@ function(
  				 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
 				 *
 				 * @since: 1.88.0
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				removeOperators: function(aOperators) {
 					if (!Array.isArray(aOperators)) {
@@ -1907,9 +1697,7 @@ function(
 				 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 				 *
 				 * @since: 1.88.0
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				 removeOperator: function(vOperator) {
 					if (typeof vOperator  === "string") {
@@ -1927,16 +1715,14 @@ function(
 				/**
 				 * Adds operators to the list of valid operators for a type.
 				 *
-				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
 				 * @param {sap.ui.mdc.condition.Operator[]} aOperators Operators
 				 * @param {sap.ui.mdc.condition.Operator|string} vDefaultOperator The default operator instance or default operator name
 				 *
  				 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
  				 * <b>Note</b>: <code>vDefaultOperator</code> must exist as a valid operator for the type.
 				 *
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				setOperatorsForType: function(sType, aOperators, vDefaultOperator) {
 					if (!Array.isArray(aOperators)) {
@@ -1961,15 +1747,13 @@ function(
 				/**
 				 * Sets the default operator for the list of operators for a type.
 				 *
-				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
 				 * @param {sap.ui.mdc.condition.Operator|string} vDefaultOperator The default operator instance or default operator name
 				 *
  				 * <b>Note</b>: <code>vDefaultOperator</code> must exist as a valid operator for the type.
 				 *
 				 * @since: 1.88.0
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				setDefaultOperatorForType: function(sType, vDefaultOperator) {
 					if (!FilterOperatorUtil._mDefaultOpsForType[sType]) {
@@ -1987,13 +1771,11 @@ function(
 				/**
 				 * Adds an operator to the list of valid operators for a type.
 				 *
-				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
 				 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 				 *
 				 * @since: 1.88.0
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				addOperatorForType: function(sType, vOperator) {
 					FilterOperatorUtil.insertOperatorForType(sType, vOperator);
@@ -2002,14 +1784,12 @@ function(
 				/**
 				 * Inserts an operator into the list of valid operators for a type.
 				 *
-				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
 				 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 				 * @param {int} idx Index of the operator in the list of operators for this type
 				 *
 				 * @since: 1.88.0
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				insertOperatorForType: function(sType, vOperator, idx) {
 					if (!FilterOperatorUtil._mDefaultOpsForType[sType]) {
@@ -2026,13 +1806,11 @@ function(
 				/**
 				 * Removes an operator from the list of valid operators for a type.
 				 *
-				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
 				 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 				 *
 				 * @since: 1.88.0
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				removeOperatorForType: function(sType, vOperator) {
 					var sName;
@@ -2052,12 +1830,10 @@ function(
 				/**
 				 * Returns all available default operators for the given type.
 				 *
-				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
 				 * @returns {string[]} an array with the supported filter operator names
 				 *
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				getOperatorsForType: function(sType) {
 
@@ -2075,12 +1851,10 @@ function(
 				/**
 				 * Returns the default operator for the given basic type.
 				 *
-				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
 				 * @returns {sap.ui.mdc.condition.Operator} the default operator for the given type
 				 *
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				getDefaultOperator: function(sType) {
 
@@ -2121,9 +1895,7 @@ function(
 				 * @param {string} sOperator Name of the operator
 				 * @returns {sap.ui.mdc.condition.Operator|undefined} the operator object, or <code>undefined<code> if the operator with the requested name does not exist
 				 *
-				 * @private
-				 * @ui5-restricted sap.fe
-				 * @MDC_PUBLIC_CANDIDATE
+				 * @public
 				 */
 				getOperator: function(sOperator) {
 
@@ -2381,7 +2153,7 @@ function(
 				/**
 				 * Returns the operator object for the given <code>DynamicDateOption</code> name.
 				 * @param {string} sOption Name of the operator
-				 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 				 * @returns {sap.ui.mdc.condition.Operator|undefined} the operator object, or <code>undefined</code> if the operator with the requested name does not exist
 				 *
 				 * @private
@@ -2419,7 +2191,7 @@ function(
 				 *
 				 * @param {sap.ui.mdc.condition.Operator} oOperator Condition to check
 				 * @param {object} oDynamicDateRangeKeys Keys for <code>DynamicDateOption</code>
-				 * @param {sap.ui.mdc.enum.BaseType} sBaseType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sBaseType Basic type
 				 * @returns {string} <code>DynamicDateOption</code>
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
@@ -2444,7 +2216,7 @@ function(
 				 * Determines the corresponding custom <code>DynamicDateOption</code> for an <code>Operator</code>
 				 *
 				 * @param {sap.ui.mdc.condition.Operator} oOperator Condition to check
-				 * @param {sap.ui.mdc.enum.BaseType} sBaseType Basic type
+				 * @param {sap.ui.mdc.enums.BaseType} sBaseType Basic type
 				 * @returns {string} <code>DynamicDateOption</code>
 				 * @private
 				 * @ui5-restricted sap.ui.mdc

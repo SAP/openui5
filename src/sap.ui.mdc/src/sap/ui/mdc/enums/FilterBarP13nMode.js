@@ -10,11 +10,9 @@ sap.ui.define(function() {
      * Defines the personalization mode of the filter bar.
      *
      * @enum {string}
-     * @alias sap.ui.mdc.enum.FilterBarP13nMode
+     * @alias sap.ui.mdc.enums.FilterBarP13nMode
      * @since 1.115
-     * @private
-     * @MDC_PUBLIC_CANDIDATE
-     * @ui5-restricted sap.ui.mdc, sap.fe
+     * @public
      */
     var FilterBarP13nMode = {
         /**

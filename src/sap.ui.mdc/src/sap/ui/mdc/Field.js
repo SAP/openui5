@@ -4,8 +4,8 @@
 sap.ui.define([
 	'sap/ui/mdc/field/FieldBase',
 	'sap/ui/mdc/field/FieldBaseRenderer',
-	'sap/ui/mdc/enum/FieldDisplay',
-	'sap/ui/mdc/enum/BaseType',
+	'sap/ui/mdc/enums/FieldDisplay',
+	'sap/ui/mdc/enums/BaseType',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
 	'sap/ui/model/BindingMode',
@@ -57,11 +57,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.54.0
-	 * @experimental As of version 1.54
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
+  	 * @experimental As of version 1.54.0
 	 */
 	var Field = FieldBase.extend("sap.ui.mdc.Field", /* @lends sap.ui.mdc.Field.prototype */ {
 		metadata: {
@@ -252,7 +250,6 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, this property is not supported for the <code>Field</code>.
 	 * @ui5-not-supported
 	 */
@@ -589,7 +586,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setConditions
@@ -605,7 +601,6 @@ sap.ui.define([
 	 * @returns {object[]} Conditions of the field
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getConditions
@@ -624,7 +619,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#bindConditions
@@ -640,7 +634,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#unbindConditions
@@ -659,7 +652,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataType
@@ -677,7 +669,6 @@ sap.ui.define([
 	 * @returns {this} Value of property <code>dataType</code>
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataType
@@ -696,7 +687,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataTypeConstraints
@@ -714,7 +704,6 @@ sap.ui.define([
 	 * @returns {this} Value of property <code>dataTypeConstraints</code>
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataTypeConstraints
@@ -733,7 +722,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataTypeFormatOptions
@@ -751,7 +739,6 @@ sap.ui.define([
 	 * @returns {this} Value of property <code>dataTypeFormatOptions</code>
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataTypeFormatOptions

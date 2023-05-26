@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/util/IdentifierUtil',
 	'sap/ui/model/ParseException',
 	'sap/ui/core/Core'

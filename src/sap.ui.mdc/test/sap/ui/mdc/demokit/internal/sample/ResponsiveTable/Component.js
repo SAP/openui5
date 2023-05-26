@@ -3,7 +3,7 @@
 sap.ui.define([
 	"../component/BaseComponent",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/enum/TableGrowingMode"
+	"sap/ui/mdc/enums/TableGrowingMode"
 ], function(BaseComponent, JSONModel, GrowingMode) {
 	"use strict";
 

@@ -6,9 +6,9 @@ sap.ui.define([
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/mdc/valuehelp/base/ListContent',
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/util/Common',
-	'sap/ui/mdc/enum/PersistenceMode',
+	'sap/ui/mdc/enums/PersistenceMode',
 	'sap/m/p13n/Engine',
 	'sap/base/util/merge',
 	'sap/ui/mdc/p13n/StateUtil'
@@ -37,11 +37,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.95.0
-	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.base.FilterableListContent
 	 */
 	var FilterableListContent = ListContent.extend("sap.ui.mdc.valuehelp.base.FilterableListContent", /** @lends sap.ui.mdc.valuehelp.base.FilterableListContent.prototype */
@@ -113,10 +110,6 @@ sap.ui.define([
 				}
 			},
 			associations: {
-				filters: {
-					type: "sap.ui.mdc.IFilter",
-					multiple: true
-				}
 			},
 			events: {
 			}

@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/base/util/UriParameters",
-	"sap/ui/mdc/enum/TableSelectionMode"
+	"sap/ui/mdc/enums/TableSelectionMode"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,

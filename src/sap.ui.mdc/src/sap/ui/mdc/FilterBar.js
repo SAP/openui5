@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController', "sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/base/util/merge", 'sap/base/Log', "sap/ui/core/library", "sap/ui/mdc/enum/FilterBarP13nMode"
+	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController', "sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/base/util/merge", 'sap/base/Log', "sap/ui/core/library", "sap/ui/mdc/enums/FilterBarP13nMode"
 ], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary, FilterBarP13nMode) {
 	"use strict";
 
@@ -21,12 +21,10 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @private
-	 * @experimental
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.FilterBar
+   	 * @experimental As of version 1.61.0
 	 */
 	var FilterBar = FilterBarBase.extend("sap.ui.mdc.FilterBar", {
 		metadata: {
@@ -56,7 +54,7 @@ sap.ui.define([
 				 * @since 1.74
 				 */
 				p13nMode: {
-					type: "sap.ui.mdc.enum.FilterBarP13nMode[]"
+					type: "sap.ui.mdc.enums.FilterBarP13nMode[]"
 				},
 				/**
 				 * Specifies if the personalization mode for filter items is supported.
@@ -229,9 +227,7 @@ sap.ui.define([
 	/**
 	 * Returns the external conditions of the inner condition model.
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#p13nMode} property configuration.
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBar</code>
 	 */
 	FilterBar.prototype.getCurrentState = function() {
@@ -245,9 +241,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the focus on the first filter in error state.
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @returns {sap.ui.mdc.FilterField | null} Returns the first filter field in error state
 	 */
 	FilterBar.prototype.setFocusOnFirstErroneousField = function() {

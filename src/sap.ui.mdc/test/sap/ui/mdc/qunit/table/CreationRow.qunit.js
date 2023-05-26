@@ -1,6 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/Table", "sap/ui/mdc/table/CreationRow", "sap/ui/model/json/JSONModel", "sap/ui/mdc/enum/TableType"
+	"sap/ui/mdc/Table", "sap/ui/mdc/table/CreationRow", "sap/ui/model/json/JSONModel", "sap/ui/mdc/enums/TableType"
 ], function(Table, CreationRow, JSONModel, TableType) {
 	"use strict";
 

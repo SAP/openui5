@@ -13,19 +13,16 @@
 	"use strict";
 
 	/**
-	 * The SAPUI5 library that contains the metadata-driven controls and other entities.
-	 *
-	 * SAP Internal
-	 * This library is restricted to use by SAP internal projects only.
+	 * OpenUI5 library that contains metadata-driven composite controls that can be extended
+	 * for use with any SAPUI5 model and data protocol.
 	 *
 	 * @namespace
 	 * @alias sap.ui.mdc
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.80
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @experimental As of version 1.54 Disclaimer: Usage Restrictions: The components of this library are under development and documented as private. Their APIs are subject to change and should not be used in productive scenarios without further agreement. A general availability of sap.ui.mdc will be announced via the usual channels.
+	 * @public
+	 * @experimental As of version 1.54
 	 */
 	 var thisLib = sap.ui.getCore().initLibrary({
 		version: "${version}",
@@ -805,10 +802,9 @@
 	 *
 	 * @enum {string}
 	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.74
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.FilterBarP13nMode}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.FilterBarP13nMode}
 	 */
 	thisLib.FilterBarP13nMode = {
 		/**
@@ -831,9 +827,8 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableType}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.TableType}
 	 */
 	thisLib.TableType = {
 		/**
@@ -863,9 +858,8 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.62
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableP13nMode}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.TableP13nMode}
 	 */
 	thisLib.TableP13nMode = {
 		/**
@@ -906,9 +900,8 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableGrowingMode}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.TableGrowingMode}
 	 */
 	thisLib.GrowingMode = {
 		/**
@@ -938,9 +931,8 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableRowCountMode}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.TableRowCountMode}
 	 */
 	thisLib.RowCountMode = {
 		/**
@@ -965,8 +957,7 @@
 	 * @private
 	 * @since 1.64
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ChartToolbarActionType}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ChartToolbarActionType}
 	 */
 	thisLib.ChartToolbarActionType = {
 		/**
@@ -1002,8 +993,7 @@
 	 * @private
 	 * @since 1.75
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ChartP13nMode}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ChartP13nMode}
 	 */
 	thisLib.ChartP13nMode = {
 		/**
@@ -1038,9 +1028,8 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableSelectionMode}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.TableSelectionMode}
 	 */
 	thisLib.SelectionMode = {
 		/**
@@ -1072,9 +1061,8 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.60
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableRowAction}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.TableRowAction}
 	 */
 	thisLib.RowAction = {
 		/**
@@ -1114,7 +1102,7 @@
 	/**
 	 * @enum {string}
 	 * @private
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ChartItemType}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ChartItemType}
 	 */
 	thisLib.ChartItemType = {
 		/**
@@ -1132,7 +1120,7 @@
 	/**
 	 * @enum {string}
 	 * @private
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.ChartItemRoleType}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.ChartItemRoleType}
 	 */
 	thisLib.ChartItemRoleType = {
 		/**
@@ -1220,7 +1208,7 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enum.TableMultiSelectMode}
+	 * @deprecated (since 1.115.0) - please see {@link sap.ui.mdc.enums.TableMultiSelectMode}
 	 */
 	thisLib.MultiSelectMode = {
 		/**
@@ -1258,10 +1246,7 @@
 	 * @namespace
 	 * @name sap.ui.mdc.enum
 	 * @since 1.74.0
-	 * @private
-	 * @experimental As of version 1.74
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	/**
@@ -1275,9 +1260,7 @@
 	/**
 	 * @namespace
 	 * @name sap.ui.mdc.filterbar
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @since 1.112.0
 	 */
 
@@ -1304,7 +1287,7 @@
 	 *   The group name of the group identifier
 	 * @property {boolean} [caseSensitive = false]
 	 *   Defines that the filter value is treated as case-sensitive if set to <code>true</code>
-	 * @property {sap.ui.mdc.enum.FieldDisplay} [display]
+	 * @property {sap.ui.mdc.enums.FieldDisplay} [display]
 	 *   Describes how the value will be presented to the user
 	 * @property {boolean} [hiddenFilter = false]
 	 *   Defines if the filter is visible in the filter bar
@@ -1313,19 +1296,14 @@
 	 * @property {int} maxConditions
 	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @since 1.112.0
 	 */
 
 	/**
 	 * @namespace
 	 * @name sap.ui.mdc.chart
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.112.0
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 
 	/**
@@ -1337,42 +1315,27 @@
 	/**
 	 * @namespace
 	 * @name sap.ui.mdc.State.XCondition
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.113.0
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	/**
 	 * @namespace
 	 * @name sap.ui.mdc.State.Items
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.114.0
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	/**
 	 * @namespace
 	 * @name sap.ui.mdc.State.Sorters
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.114.0
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	/**
 	 * @namespace
 	 * @name sap.ui.mdc.State.GroupLevels
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.114.0
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	/**
 	 * @namespace
 	 * @name sap.ui.mdc.State.Aggregations
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @experimental As of version 1.114.0
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 */
 	/**
 	 * Defines the values for each filter field path of a condition.
@@ -1381,9 +1344,7 @@
 	 * @property {string} operator of the condition
 	 * @property {Array} values of the condition
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	/**
 	 * Defines the <code>items</code> to be added to the controls default aggregation.
@@ -1393,9 +1354,7 @@
 	 * @property {int} [position] of the item in the aggregation
 	 * @property {boolean} [visible = true] State of the item
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	/**
 	 * Defines the <code>sorters</code> to be added to the controls sorting state.
@@ -1405,9 +1364,7 @@
 	 * @property {boolean} descending Sort order for this item
 	 * @property {boolean} [sorted = true] Defines if the item has to be sorted
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	/**
 	 * Defines the <code>groupes</code> to be added to the controls grouping state.
@@ -1416,9 +1373,7 @@
 	 * @property {string} name of the grouped item
 	 * @property {boolean} [grouped = true] Defines if the item has to be grouped
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	/**
 	 * Defines the <code>aggregations</code> to be added to the controls agreggation state.
@@ -1428,9 +1383,7 @@
 	 * @typedef {object} sap.ui.mdc.State.Aggregations
 	 * @property {boolean} [aggregated = true] Defines if the item has to be aggregated
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 	/**
 	 * The <code>State</code> object describes the interface to apply and retrieve the current adaptation state from mdc controls.
@@ -1444,9 +1397,7 @@
 	 * @property {sap.ui.mdc.State.GroupLevels[]} [groupLevels] Describes the grouped fields
 	 * @property {sap.ui.mdc.State.Aggregations} [aggregations] Describes the aggregated fields
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 */
 
 	return thisLib;

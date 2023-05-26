@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
 	"delegates/odata/v4/FilterBarDelegate",
-	'sap/ui/mdc/enum/FieldDisplay'
+	'sap/ui/mdc/enums/FieldDisplay'
 ], function(FilterBarDelegate, FieldDisplay) {
 	"use strict";
 

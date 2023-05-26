@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/Content',
-	'sap/ui/mdc/enum/ConditionValidated'
+	'sap/ui/mdc/enums/ConditionValidated'
 ], function(
 	Content,
 	ConditionValidated
@@ -23,11 +23,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.95.0
-	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.base.ListContent
 	 */
 	var ListContent = Content.extend("sap.ui.mdc.valuehelp.base.ListContent", /** @lends sap.ui.mdc.valuehelp.base.ListContent.prototype */

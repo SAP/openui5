@@ -23,11 +23,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @since 1.114.0
-	 * @experimental As of version 1.114
 	 * @alias sap.ui.mdc.valuehelp.content.FixedListItem
 	 */
 	var FixedListItem = ListItem.extend("sap.ui.mdc.valuehelp.content.FixedListItem", /** @lends sap.ui.mdc.valuehelp.content.FixedListItem.prototype */ { metadata : {

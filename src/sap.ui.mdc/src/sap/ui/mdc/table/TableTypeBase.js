@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/model/base/ManagedObjectModel",
-	"sap/ui/mdc/enum/TableP13nMode"
+	"sap/ui/mdc/enums/TableP13nMode"
 ], function(
 	Element,
 	DragDropInfo,
@@ -23,11 +23,8 @@ sap.ui.define([
 	 * @class The table type info base class for the metadata-driven table. Base class with no implementation.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
+	 * @public
 	 * @abstract
-	 * @experimental
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.TableTypeBase
 	 */

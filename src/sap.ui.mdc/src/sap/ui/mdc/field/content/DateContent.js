@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"sap/ui/mdc/field/content/DefaultContent",
-	"sap/ui/mdc/enum/BaseType",
-	'sap/ui/mdc/enum/OperatorValueType',
+	"sap/ui/mdc/enums/BaseType",
+	'sap/ui/mdc/enums/OperatorValueType',
 	"sap/ui/mdc/util/DateUtil",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/core/library",
@@ -25,7 +25,7 @@ sap.ui.define([
 
 	/**
 	 * Object-based definition of the date content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
-	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enum.ContentMode}.
+	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enums.ContentMode}.
 	 * @namespace
 	 * @author SAP SE
 	 * @private

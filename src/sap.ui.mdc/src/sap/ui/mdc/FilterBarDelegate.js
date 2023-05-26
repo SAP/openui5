@@ -6,17 +6,14 @@
 // Delegate class used to help create content in the filterbar and fill relevant metadata
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
-sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarValidationStatus"], function(AggregationBaseDelegate, FilterBarValidationStatus) {
+sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBarValidationStatus"], function(AggregationBaseDelegate, FilterBarValidationStatus) {
 	"use strict";
 	/**
 	 * @class Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.FilterBar FilterBar}.
 	 * This class provides method calls, which are called by the <code>FilterBar</code> at specific operations and allows to overwrite an internal behaviour..
 	 *
 	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.FilterBarDelegate
 	 */
@@ -28,9 +25,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 * Consequently the parameter <code>mPropertyBag</code> is only passed during preprocessing. In runtime scenarios (such as opening a personalization dialog), this
 	 * method might be called without the parameter <code>mPropertyBag</code>.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {string} sPropertyName The name of the property info object/JSON
 	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 	 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility change API
@@ -53,9 +48,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 * Consequently the parameter <code>mPropertyBag</code> is only passed during preprocessing. In runtime scenarios (such as opening a personalization dialog), this
 	 * method can be called without the parameter <code>mPropertyBag</code>.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {sap.ui.core.Control} oItem The control instance that was removed
 	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 	 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility
@@ -71,9 +64,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 * This method is called during the appliance of the add condition change.
 	 * The intention is to update the {@link sap.ui.mdc.FilterBar#propertyInfo} property.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {string} sPropertyName The name of a property
 	 * @param {sap.ui.mdc.Control} oControl The instance of a filter bar
 	 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
@@ -87,9 +78,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 * This method is called during the appliance of the remove condition change.
 	 * The intention is to update the  {@link sap.ui.mdc.FilterBar#propertyInfo} property.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {string} sPropertyName The name of a property
 	 * @param {sap.ui.mdc.Control} oControl The instance of a filter bar
 	 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
@@ -103,9 +92,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	/**
 	 * Retrieves the relevant metadata for a given payload and returns the property info array.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 	 * @returns {Promise<sap.ui.mdc.filterbar.PropertyInfo[]>} Once resolved, an array of property info objects is returned
 	 */
@@ -116,9 +103,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	/**
 	 * This method is called when the Clear button is pressed.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {sap.ui.mdc.Control} oControl The instance of a filter bar
 	 * @returns {Promise} <code>Promise</code> that is resolved once the action has been completed
 	 */
@@ -129,13 +114,11 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	/**
 	 * A validator to evaluate the filter bar state.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of an <code>sap.ui.mdc.FilterBar</code>
 	 * @param {map} [mValidation] Object describing the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
-	 * @param {string} [mValidation.status] Status of the validation {@link sap.ui.mdc.enum.FilterBarValidationStatus}
-	 * @returns {sap.ui.mdc.enum.FilterBarValidationStatus} The inner filter bar state
+	 * @param {string} [mValidation.status] Status of the validation {@link sap.ui.mdc.enums.FilterBarValidationStatus}
+	 * @returns {sap.ui.mdc.enums.FilterBarValidationStatus} The inner filter bar state
 	 */
     FilterBarDelegate.determineValidationState = function(oFilterBar) {
 		 return oFilterBar.checkFilters();
@@ -144,12 +127,10 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	/**
 	 * Visualizes the filter bar validation state.
 	 *
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @public
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of an <code>sap.ui.mdc.FilterBar</code>
 	 * @param {map} mValidation Describes the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
-	 * @param {sap.ui.mdc.enum.FilterBarValidationStatus} mValidation.status Status of the validation as returned via {@link sap.ui.mdc.filterbar.FilterBarBase#checkValidationState checkValidationState}
+	 * @param {sap.ui.mdc.enums.FilterBarValidationStatus} mValidation.status Status of the validation as returned via {@link sap.ui.mdc.filterbar.FilterBarBase#checkValidationState checkValidationState}
 	 */
     FilterBarDelegate.visualizeValidationState = function(oFilterBar, mValidation) {
 		 var sErrorMessage;
