@@ -104,4 +104,48 @@ sap.ui.define([
 		assert.strictEqual(oType.getEmptyValue("", true), 0);
 		assert.strictEqual(oType.getEmptyValue(null, true), 0);
 	});
+
+	//*****************************************************************************************
+[undefined, {"~constraint" : 2}].forEach(function (oConstraints) {
+	QUnit.test("checkParseEmptyValueToZero logs warning", function (assert) {
+		var oODataType = {
+				oConstraints : oConstraints, // nullable is only in the constraints if it's value is false
+				oFormatOptions : {parseEmptyValueToZero : true},
+				getName : function () {}
+			};
+
+		this.mock(oODataType).expects("getName").withExactArgs().returns("~sModuleName");
+		this.oLogMock.expects("warning").withExactArgs("The parseEmptyValueToZero format option is ignored as"
+			+ " the nullable constraint is not false.", null, "~sModuleName");
+
+		// coder under test
+		ODataType.prototype.checkParseEmptyValueToZero.call(oODataType);
+	});
+});
+
+	//*****************************************************************************************
+[{
+	oConstraints : {"~constraint" : 2},
+	oFormatOptions : undefined
+}, {
+	oConstraints : {"~constraint" : 2},
+	oFormatOptions : {"~formatOption" : "foo"}
+}, {
+	oConstraints : {nullable : false},
+	oFormatOptions : {parseEmptyValueToZero : true}
+}].forEach(function (oFixture, i) {
+	QUnit.test("checkParseEmptyValueToZero does not log warning " + i, function (assert) {
+		var oODataType = {
+				oConstraints : oFixture.oConstraints,
+				oFormatOptions : oFixture.oFormatOptions,
+				getName : function () {}
+			};
+
+		this.mock(oODataType).expects("getName").never();
+		this.oLogMock.expects("warning").never();
+
+		// coder under test
+		ODataType.prototype.checkParseEmptyValueToZero.call(oODataType);
+	});
+});
 });
