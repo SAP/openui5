@@ -50,22 +50,30 @@ sap.ui.define([
 			["technicalParameters", VariantsApplyUtil.VARIANT_TECHNICAL_PARAMETER],
 			oComponentData
 		) || [];
+		var aVariantIds = aVariants.map(function(oVariant) {
+			return oVariant.getId();
+		});
 
 		// Check if variant is set via url parameter
-		var oDesiredSelectedVariant = aVariants.find(function(oVariant) {
-			return aVariantReferencesFromUrl.includes(oVariant.getId());
+		var oDesiredSelectedVariantId = aVariantIds.find(function(sVariantId) {
+			return aVariantReferencesFromUrl.includes(sVariantId);
 		});
-		if (oDesiredSelectedVariant) {
-			return oDesiredSelectedVariant.getId();
+		if (oDesiredSelectedVariantId) {
+			return oDesiredSelectedVariantId;
 		}
 
-		// Check setDefault changes
+		// Determine latest current variant selection based on setDefault changes
+		// Not used for setting the actual default variant because the initialCurrentVariant
+		// check is only executed once and influenced by technical parameters
+		// Default is set via applyVariantManagementChange instead
 		return aCtrlVariantManagementChanges
 			.reverse()
 			.map(function(oVariantManagementChange) {
 				return oVariantManagementChange.getContent().defaultVariant;
 			})
-			.filter(Boolean)[0];
+			.find(function(sDesiredDefaultVariantId) {
+				return aVariantIds.includes(sDesiredDefaultVariantId);
+			});
 	}
 
 	function createVariantManagement(aFlexObjects, aVariants, sReference, sVMReference) {
@@ -175,7 +183,13 @@ sap.ui.define([
 
 	function applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange) {
 		// Currently only setDefault
-		oVariantManagementEntry.defaultVariant = oVariantManagementChange.getContent().defaultVariant;
+		var sDesiredDefaultVariant = oVariantManagementChange.getContent().defaultVariant;
+		// Only set default if the variant exists
+		if (oVariantManagementEntry.variants.some(function(oVariant) {
+			return oVariant.key === sDesiredDefaultVariant;
+		})) {
+			oVariantManagementEntry.defaultVariant = sDesiredDefaultVariant;
+		}
 	}
 
 	function createVariantsMap(aFlexObjects, sReference) {
@@ -209,7 +223,9 @@ sap.ui.define([
 			})
 			.forEach(function(oVariantManagementChange) {
 				var oVariantManagementEntry = oVariantManagementsMap[oVariantManagementChange.getSelector().id];
-				applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange);
+				if (oVariantManagementEntry) {
+					applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange);
+				}
 			});
 
 		Object.values(oVariantManagementsMap).forEach(function(oVariantManagement) {

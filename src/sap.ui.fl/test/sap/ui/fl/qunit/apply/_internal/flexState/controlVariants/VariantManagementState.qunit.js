@@ -809,6 +809,36 @@ sap.ui.define([
 				"then the technical parameter wins over the setDefault change"
 			);
 		});
+
+		QUnit.test("when the variant that was set as default was removed", function(assert) {
+			stubFlexObjectsSelector([
+				// Default variant was set via perso change but is no longer available, e.g. because of version switch
+				FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange",
+					layer: Layer.USER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: sVariantManagementReference
+					},
+					content: {
+						defaultVariant: "customVariant"
+					}
+				})
+			]);
+
+			assert.strictEqual(
+				VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].currentVariant,
+				sVariantManagementReference,
+				"then the current variant falls back to the standard variant"
+			);
+
+			assert.strictEqual(
+				VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].defaultVariant,
+				sVariantManagementReference,
+				"then the default variant falls back to the standard variant"
+			);
+		});
 	});
 
 	QUnit.module("Variant-related selectors", {
