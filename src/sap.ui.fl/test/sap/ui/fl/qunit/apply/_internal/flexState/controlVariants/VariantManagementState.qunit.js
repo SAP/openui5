@@ -100,13 +100,17 @@ sap.ui.define([
 			cleanup();
 		}
 	}, function() {
-		QUnit.test("when there are existing flex objects", function(assert) {
+		QUnit.test("when there are existing flex objects (including a CompVariant)", function(assert) {
 			var oUIChange = FlexObjectFactory.createUIChange({
 				id: "someUIChange",
 				layer: Layer.CUSTOMER,
 				variantReference: sStandardVariantReference
 			});
-			stubFlexObjectsSelector([oUIChange]);
+			var oCompVariant = FlexObjectFactory.createCompVariant({
+				id: "someCompVariant",
+				layer: Layer.CUSTOMER
+			});
+			stubFlexObjectsSelector([oUIChange, oCompVariant]);
 
 			assert.deepEqual(
 				VariantManagementState.getVariantManagementMap().get({ reference: sReference }),

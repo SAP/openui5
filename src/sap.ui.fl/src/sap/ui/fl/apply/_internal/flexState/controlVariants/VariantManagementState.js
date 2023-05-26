@@ -118,11 +118,14 @@ sap.ui.define([
 				);
 			}),
 			controlChanges: aFlexObjects.filter(function(oFlexObject) {
-				var bCorrectFileType = oFlexObject.getFileType() === "change";
+				var bCorrectFlexObjectType = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.UIChange");
+				if (!bCorrectFlexObjectType) {
+					return false;
+				}
 				var bOwnControlChange = oFlexObject.getVariantReference() === oVariantInstance.getId();
 				var bControlChangeOfReferencedVariant = oFlexObject.getVariantReference() === oVariantInstance.getVariantReference();
 				var bLowerLayerChange = LayerUtils.compareAgainstCurrentLayer(oFlexObject.getLayer(), oVariantInstance.getLayer()) === -1;
-				return bCorrectFileType && (bOwnControlChange || bControlChangeOfReferencedVariant && bLowerLayerChange);
+				return bOwnControlChange || bControlChangeOfReferencedVariant && bLowerLayerChange;
 			}),
 			key: oVariantInstance.getId(),
 			title: oVariantInstance.getName(),
