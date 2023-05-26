@@ -277,7 +277,8 @@ sap.ui.define([
 		var oInputField = this.getToolbar().getControl("addAdaptationDialog--saveAdaptation-title-input");
 		var bEnable;
 		var bRolesSelectedAndValidTitle = this._oContextComponentInstance.getSelectedContexts().role.length > 0
-			&& oInputField.getValueState() === ValueState.None;
+			&& oInputField.getValueState() === ValueState.None
+			&& oInputField.getValue().length > 0;
 		if (this._bIsEditMode && this._mEditProperties && this.oDialogModel) {
 			bEnable = bRolesSelectedAndValidTitle
 				// check that some of the properties title, priority, roles have been changed
