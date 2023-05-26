@@ -125,7 +125,12 @@ sap.ui.define([
 				/**
 				 * Defines the layout type of the attributes.
 				 */
-				attributesLayoutType: { type: "sap.ui.integration.AttributesLayoutType", defaultValue: AttributesLayoutType.TwoColumns }
+				attributesLayoutType: { type: "sap.ui.integration.AttributesLayoutType", defaultValue: AttributesLayoutType.TwoColumns },
+
+				/**
+				 * Defines whether the info should be visible.
+				 */
+				infoVisible: {type: "boolean", defaultValue: true}
 			},
 			aggregations: {
 				microchart: { type: "sap.ui.integration.controls.Microchart", multiple: false },

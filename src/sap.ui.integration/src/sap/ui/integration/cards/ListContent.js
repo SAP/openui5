@@ -296,6 +296,7 @@ sap.ui.define([
 				highlightText: mItem.highlightText,
 				info: mItem.info && mItem.info.value,
 				infoState: mItem.info && mItem.info.state,
+				infoVisible: mItem.info && mItem.info.visible,
 				showInfoStateIcon: mItem.info && mItem.info.showStateIcon,
 				customInfoStatusIcon: mItem.info && mItem.info.customStateIcon,
 				attributes: []

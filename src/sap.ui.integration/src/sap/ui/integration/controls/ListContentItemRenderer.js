@@ -111,7 +111,7 @@ sap.ui.define([
 			.text(sTitle)
 			.close("div");
 
-		if (sInfo && !oLI.getDescription()) {
+		if (sInfo && !oLI.getDescription() && oLI.getInfoVisible()) {
 			this.renderInfo(rm, oLI);
 		}
 
@@ -132,7 +132,7 @@ sap.ui.define([
 			.text(sDescription)
 			.close("div");
 
-		if (sInfo) {
+		if (sInfo && oLI.getInfoVisible()) {
 			this.renderInfo(rm, oLI);
 		}
 
